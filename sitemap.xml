@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://example.com/index.html</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>http://example.com/products.html</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>http://example.com/impressum.html</loc>
+    <lastmod>2026-07-25</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/datenschutz.html</loc>
+    <lastmod>2026-07-25</lastmod>
+  </url>
+</urlset>

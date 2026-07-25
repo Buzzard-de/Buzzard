@@ -35,8 +35,10 @@ if (-not $token) {
 $defaultRepo = 'Buzzard/buzzard'
 $repo = if ($env:GITHUB_REPO) { $env:GITHUB_REPO } else {
     $input = Read-Host "Gib den GitHub-Repo-Pfad ein (z.B. Buzzard/buzzard) [Standard: $defaultRepo]"
-    if ([string]::IsNullOrWhiteSpace($input)) { $defaultRepo } else { $input }
+    if ([string]::IsNullOrWhiteSpace($input)) { $defaultRepo } else { $input.Trim() }
 }
+
+Write-Host "Verwende GitHub-Repo: $repo"
 
 if ($repo -notmatch '^[^/]+/[^/]+$') {
     Write-Error "Ungültiges Repo-Format. Verwende owner/repo, z.B. Buzzard/buzzard."

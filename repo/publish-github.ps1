@@ -78,16 +78,28 @@ if (-not $repoExists) {
     if ($owner -ieq $user.login) {
         $body = @{ name = $name; private = $false; description = 'Buzzard static website'; auto_init = $false }
         Invoke-RestMethod -Uri 'https://api.github.com/user/repos' -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
+        Write-Host "Repository $repo wurde erstellt."
     } else {
-        try {
-            $body = @{ name = $name; private = $false; description = 'Buzzard static website' }
-            Invoke-RestMethod -Uri "https://api.github.com/orgs/$owner/repos" -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
-        } catch {
-            Write-Error "Repo existiert nicht und konnte nicht automatisch erstellt werden. Erstelle es manuell auf GitHub oder prüfe, ob du Zugriff auf die Organisation $owner hast."
-            exit 1
+        $fallbackRepo = "$($user.login)/$name"
+        $choice = Read-Host "Du hast keine Berechtigung zum Erstellen in der Organisation '$owner'. Soll das Repository stattdessen unter deinem Benutzer '$fallbackRepo' erstellt werden? [J/n]"
+        if ([string]::IsNullOrWhiteSpace($choice) -or $choice -match '^[JjYy]') {
+            $repo = $fallbackRepo
+            $owner = $user.login
+            $repoApiUrl = "https://api.github.com/repos/$repo"
+            $body = @{ name = $name; private = $false; description = 'Buzzard static website'; auto_init = $false }
+            Invoke-RestMethod -Uri 'https://api.github.com/user/repos' -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
+            Write-Host "Repository $repo wurde erstellt."
+        } else {
+            try {
+                $body = @{ name = $name; private = $false; description = 'Buzzard static website' }
+                Invoke-RestMethod -Uri "https://api.github.com/orgs/$owner/repos" -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
+                Write-Host "Repository $repo wurde erstellt."
+            } catch {
+                Write-Error "Repo existiert nicht und konnte nicht automatisch erstellt werden. Erstelle es manuell auf GitHub oder prüfe, ob du Zugriff auf die Organisation $owner hast."
+                exit 1
+            }
         }
     }
-    Write-Host "Repository $repo wurde erstellt."
 } else {
     Write-Host "Repository $repo existiert bereits."
 }

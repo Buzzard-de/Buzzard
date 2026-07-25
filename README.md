@@ -39,10 +39,10 @@ cd C:\Users\yanli\buzzard
 powershell -NoProfile -ExecutionPolicy Bypass -File .\repo\publish-github.ps1
 ```
 
-   Oder nutze den neuen Wrapper, falls du die PowerShell-Ausführungsrichtlinie umgehen möchtest:
+   Oder nutze den neuen Wrapper, um den Start einfacher zu machen:
 
 ```powershell
-.\repo\publish-github.cmd
+.\publish-github.cmd
 ```
 
 4. Wenn das Skript nach dem Token fragt, füge deinen GitHub-PAT ein.

@@ -84,8 +84,17 @@ if (-not $repoExists) {
 
     if ($owner -ieq $user.login) {
         $body = @{ name = $name; private = $false; description = 'Buzzard static website'; auto_init = $false }
-        Invoke-RestMethod -Uri 'https://api.github.com/user/repos' -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
-        Write-Host "Repository $repo wurde erstellt."
+        try {
+            Invoke-RestMethod -Uri 'https://api.github.com/user/repos' -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
+            Write-Host "Repository $repo wurde erstellt."
+        } catch {
+            if ($_.Exception.Response -and $_.Exception.Response.StatusCode.Value__ -eq 403) {
+                Write-Error "Fehler beim Erstellen des Repositories: Resource not accessible by personal access token. Dein PAT benötigt die Berechtigung 'repo'. Erstelle einen neuen PAT mit der Scope 'repo' und versuche es erneut."
+            } else {
+                Write-Error "Fehler beim Erstellen des Repositories: $($_.Exception.Message)"
+            }
+            exit 1
+        }
     } else {
         $fallbackRepo = "$($user.login)/$name"
         $choice = Read-Host "Du hast keine Berechtigung zum Erstellen in der Organisation '$owner'. Soll das Repository stattdessen unter deinem Benutzer '$fallbackRepo' erstellt werden? [J/n]"
@@ -94,15 +103,28 @@ if (-not $repoExists) {
             $owner = $user.login
             $repoApiUrl = "https://api.github.com/repos/$repo"
             $body = @{ name = $name; private = $false; description = 'Buzzard static website'; auto_init = $false }
-            Invoke-RestMethod -Uri 'https://api.github.com/user/repos' -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
-            Write-Host "Repository $repo wurde erstellt."
+            try {
+                Invoke-RestMethod -Uri 'https://api.github.com/user/repos' -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
+                Write-Host "Repository $repo wurde erstellt."
+            } catch {
+                if ($_.Exception.Response -and $_.Exception.Response.StatusCode.Value__ -eq 403) {
+                    Write-Error "Fehler beim Erstellen des Repositories: Resource not accessible by personal access token. Dein PAT benötigt die Berechtigung 'repo'. Erstelle einen neuen PAT mit der Scope 'repo' und versuche es erneut."
+                } else {
+                    Write-Error "Fehler beim Erstellen des Repositories: $($_.Exception.Message)"
+                }
+                exit 1
+            }
         } else {
             try {
                 $body = @{ name = $name; private = $false; description = 'Buzzard static website' }
                 Invoke-RestMethod -Uri "https://api.github.com/orgs/$owner/repos" -Method Post -Headers $apiHeaders -Body (ConvertTo-Json $body) -ErrorAction Stop
                 Write-Host "Repository $repo wurde erstellt."
             } catch {
-                Write-Error "Repo existiert nicht und konnte nicht automatisch erstellt werden. Erstelle es manuell auf GitHub oder prüfe, ob du Zugriff auf die Organisation $owner hast."
+                if ($_.Exception.Response -and $_.Exception.Response.StatusCode.Value__ -eq 403) {
+                    Write-Error "Fehler beim Erstellen des Repositories in der Organisation: Resource not accessible by personal access token. Prüfe, ob dein PAT Zugriff auf diese Organisation hat und ob du dazu berechtigt bist."
+                } else {
+                    Write-Error "Repo existiert nicht und konnte nicht automatisch erstellt werden. Erstelle es manuell auf GitHub oder prüfe, ob du Zugriff auf die Organisation $owner hast."
+                }
                 exit 1
             }
         }

@@ -60,6 +60,9 @@ try {
 } catch {
     if ($_.Exception.Response -and $_.Exception.Response.StatusCode.Value__ -eq 404) {
         $repoExists = $false
+    } elseif ($_.Exception.Response -and $_.Exception.Response.StatusCode.Value__ -eq 401) {
+        Write-Error "GitHub API-Fehler: 401 Unauthorized. Dein PAT ist ungültig oder hat nicht die nötigen Berechtigungen. Erstelle einen neuen Token mit mindestens 'repo' oder 'contents: read' und 'pages: write' und versuche es erneut."
+        exit 1
     } else {
         Write-Error "GitHub API-Fehler: $($_.Exception.Message)"
         exit 1
@@ -71,7 +74,11 @@ if (-not $repoExists) {
     try {
         $user = Invoke-RestMethod -Uri 'https://api.github.com/user' -Method Get -Headers $apiHeaders -ErrorAction Stop
     } catch {
-        Write-Error "Kann GitHub-Benutzerinformationen nicht abrufen: $($_.Exception.Message)"
+        if ($_.Exception.Response -and $_.Exception.Response.StatusCode.Value__ -eq 401) {
+            Write-Error "GitHub-Authentifizierung fehlgeschlagen: 401 Unauthorized. Dein PAT ist ungültig oder hat nicht die richtigen Rechte. Erstelle einen neuen Token und gib ihn erneut ein."
+        } else {
+            Write-Error "Kann GitHub-Benutzerinformationen nicht abrufen: $($_.Exception.Message)"
+        }
         exit 1
     }
 

@@ -24,20 +24,29 @@ Wenn du eine andere Empfängeradresse möchtest, ändere das `action`-Attribut i
 - Netlify: Drag & drop des Ordners oder Git‑Verbindung; FormSubmit funktioniert weiterhin.
 - Andere: S3/Cloudflare Pages/Vercel sind ebenfalls möglich.
 
-## GitHub Repo & Push
+## GitHub Pages URL
 
-1. Erstelle das Repository `Buzzard/buzzard` auf GitHub oder nutze den Skript-Workflow, um es automatisch anzulegen.
-2. Erstelle einen GitHub-Personal-Access-Token (PAT) mit mindestens `repo`-Berechtigungen.
-3. Starte das Publish-Skript und gib den Token bei der Abfrage ein:
+Wenn dein Repo `Buzzard/buzzard` heißt, wird deine Seite später voraussichtlich unter `https://buzzard.github.io/buzzard/` erreichbar sein. Wenn du ein anderes Repo nutzt, passe die Links in `sitemap.xml`, `index.html` und `products.html` entsprechend an.
+
 
 ```powershell
 cd C:\Users\yanli\buzzard
-.\repo\publish-github.ps1
 ```
 
-4. Wenn du deinen PAT nicht als Umgebungsvariable setzen möchtest, wird das Skript dich beim Start danach fragen.
+3. Starte das Publish-Skript:
 
-5. Wenn dein Repository-Pfad anders lautet, gib ihn beim Start als `owner/repo` ein, z. B. `MeinBenutzername/buzzard`.
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\repo\publish-github.ps1
+```
+
+   Oder nutze den neuen Wrapper, falls du die PowerShell-Ausführungsrichtlinie umgehen möchtest:
+
+```powershell
+.\repo\publish-github.cmd
+```
+
+4. Wenn das Skript nach dem Token fragt, füge deinen GitHub-PAT ein.
+5. Wenn das Skript nach dem Repository fragt, gib den Repo-Pfad als `owner/repo` ein, z. B. `Buzzard/buzzard`.
 
 Das Skript erstellt das Repository, wenn es noch nicht existiert, macht es öffentlich und pusht deinen Code zu GitHub.
 

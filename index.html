@@ -3,154 +3,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buzzard Kfz-Teile</title>
+    <title>Buzzard – Kfz-Teile Online Shop | Autoteile kaufen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="logo/logo.png">
     <link rel="apple-touch-icon" href="logo/logo-192.png">
-    <link rel="icon" href="logo/logo-192.png" sizes="192x192">
-    <link rel="icon" href="logo/logo-512.png" sizes="512x512">
     <link rel="manifest" href="manifest.json">
-    <meta name="description" content="Buzzard Kfz-Teile — hochwertige Ersatzteile und professionelle Beratung für Werkstätten und Fahrzeughalter in Deutschland.">
-    <meta property="og:title" content="Buzzard Kfz-Teile">
-    <meta property="og:description" content="Hochwertige Ersatzteile, schnelle Lieferung und technische Unterstützung.">
-    <meta property="og:url" content="https://buzzard.github.io/buzzard/">
-    <meta property="og:image" content="https://buzzard.github.io/buzzard/logo/logo.png">
-    <meta name="theme-color" content="#161616">
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Buzzard Kfz-Teile",
-            "url": "https://buzzard.github.io/buzzard",
-            "logo": "https://buzzard.github.io/buzzard/logo/logo.png",
-            "contactPoint": [{
-                "@type": "ContactPoint",
-                "telephone": "+49 30 0000000",
-                "contactType": "customer service",
-                "areaServed": "DE",
-                "availableLanguage": ["German"]
-            }]
-        }
-        </script>
+    <link rel="canonical" href="https://buzzard-de.github.io/Buzzard/">
+    <meta name="description" content="Buzzard – Über 1.000.000 hochwertige Autoteile von Top-Marken. Kostenloser Versand ab 79€, schnelle Lieferung 1-3 Werktage.">
+    <meta property="og:title" content="Buzzard Kfz-Teile – Autoteile Online Shop">
+    <meta property="og:description" content="Über 1.000.000 hochwertige Autoteile von Top-Marken. Kostenloser Versand ab 79€.">
+    <meta property="og:url" content="https://buzzard-de.github.io/Buzzard/">
+    <meta property="og:image" content="https://buzzard-de.github.io/Buzzard/logo/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
-    <a class="skip-link" href="#maincontent">Zum Inhalt springen</a>
-    <header>
-        <nav role="navigation" aria-label="Hauptnavigation">
-            <div class="brand">
-                <img src="logo/logo.png" alt="Buzzard Logo" />
-                <div>
-                    <h1>BUZZARD</h1>
-                    <span>Kfz-Teile</span>
+
+    <!-- TOP INFO BAR -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <span><svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14M5 8a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2v-8a2 2 0 00-2-2M5 8V6a2 2 0 012-2h10a2 2 0 012 2v2"/></svg> KOSTENLOSER VERSAND AB 79€</span>
+            <span><svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> SCHNELLE LIEFERUNG 1-3 WERKTAGE</span>
+            <span><svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M12 8v4l3 3"/></svg> 30 TAGE RÜCKGABERECHT</span>
+            <span class="tp-stars">★★★★★ <strong>4.8/5</strong> TRUSTPILOT</span>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand" aria-label="Buzzard Startseite">
+                <img src="logo/logo.png" alt="Buzzard Logo" width="48" height="48" decoding="async">
+                <span class="brand-name">BUZZARD</span>
+            </a>
+
+            <div class="search-wrap">
+                <div class="search-bar">
+                    <input type="search" placeholder="Produkte, Marken oder Teilenummer suchen..." aria-label="Suche">
+                    <div class="search-divider"></div>
+                    <select aria-label="Kategorie wählen">
+                        <option>Alle Kategorien</option>
+                        <option>Automotive</option>
+                        <option>Öle &amp; Flüssigkeiten</option>
+                        <option>Bremsen</option>
+                        <option>Fahrwerk &amp; Lenkung</option>
+                        <option>Elektrik &amp; Zündung</option>
+                        <option>Karosserie</option>
+                        <option>Werkzeuge</option>
+                        <option>Pflege &amp; Reinigung</option>
+                    </select>
+                    <button class="search-btn" aria-label="Suchen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    </button>
                 </div>
             </div>
 
-            <ul class="nav-links">
-                <li><a href="index.html">Start</a></li>
-                <li><a href="products.html">Produkte</a></li>
-                <li><a href="#services">Dienstleistungen</a></li>
-                <li><a href="#about">Über uns</a></li>
-                <li><a href="#contact">Kontakt</a></li>
-            </ul>
-        </nav>
+            <button class="vin-btn-header">
+                <span class="vin-tag">VIN</span>
+                <span class="vin-text">MIT VIN / FAHRZEUG<br>PASSENDE TEILE FINDEN</span>
+            </button>
+
+            <div class="header-actions">
+                <a href="#" class="hdr-action">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>Mein Konto<br><small>Anmelden</small></span>
+                </a>
+                <a href="#" class="hdr-action">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    <span>Wunschliste<br><small>0 Artikel</small></span>
+                </a>
+                <a href="#" class="hdr-action cart-action">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
+                    <span>Warenkorb<br><small class="cart-price">0,00 €</small></span>
+                </a>
+            </div>
+        </div>
     </header>
 
+    <!-- MAIN NAVIGATION -->
+    <nav class="main-nav" role="navigation" aria-label="Kategorien">
+        <div class="main-nav-inner">
+            <ul>
+                <li class="has-dropdown">
+                    <a href="#">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M19 17H5a2 2 0 01-2-2V7a2 2 0 012-2h2l2-2h6l2 2h2a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg>
+                        AUTOMOTIVE <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M6 9l6 6 6-6"/></svg>
+                    </a>
+                </li>
+                <li><a href="#">ÖLE &amp; FLÜSSIGKEITEN</a></li>
+                <li><a href="#">BREMSEN</a></li>
+                <li><a href="#">FAHRWERK &amp; LENKUNG</a></li>
+                <li><a href="#">ELEKTRIK &amp; ZÜNDUNG</a></li>
+                <li><a href="#">KAROSSERIE</a></li>
+                <li><a href="#">WERKZEUGE</a></li>
+                <li><a href="#">PFLEGE &amp; REINIGUNG</a></li>
+                <li class="angebote-link"><a href="#">ANGEBOTE %</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <main id="maincontent">
+
+        <!-- HERO SECTION -->
         <section class="hero">
-            <div class="hero-more">Premium Ersatzteile</div>
-            <h2>Wir definieren Qualität und Sicherheit bei Autoteilen neu</h2>
-            <p>Buzzard bietet langlebige, leistungsorientierte Ersatzteile für Werkstätten und Fahrzeughalter. Jedes Teil wird sorgfältig ausgewählt, um sicheres Fahren und lange Lebensdauer zu gewährleisten.</p>
-            <div class="hero-buttons">
-                <a class="cta" href="products.html">Katalog ansehen</a>
-                <a class="cta cta-secondary" href="#contact">Angebot anfordern</a>
+            <div class="hero-inner">
+
+                <!-- LEFT: Content + Vehicle Finder -->
+                <div class="hero-left">
+                    <h1 class="hero-headline">
+                        QUALITÄT, AUF DIE SIE<br>
+                        <span class="hero-headline-gold">SICH VERLASSEN KÖNNEN.</span>
+                    </h1>
+                    <p class="hero-sub">Über 1.000.000 hochwertige Autoteile von Top-Marken.<br>Schnell geliefert, sicher bezahlt.</p>
+                    <div class="hero-checks">
+                        <span><svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg> TOP MARKEN</span>
+                        <span><svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg> BESTE PREISE</span>
+                        <span><svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg> SICHERE ZAHLUNG</span>
+                    </div>
+
+                    <div class="vehicle-finder">
+                        <div class="vf-title">PASSENDE TEILE FÜR IHR FAHRZEUG FINDEN</div>
+                        <div class="vf-row">
+                            <select aria-label="Marke"><option value="">Marke auswählen</option></select>
+                            <select aria-label="Modell"><option value="">Modell auswählen</option></select>
+                            <select aria-label="Jahr"><option value="">Jahr auswählen</option></select>
+                        </div>
+                        <div class="vf-row vf-row2">
+                            <select aria-label="Motorisierung"><option value="">Motorisierung auswählen</option></select>
+                            <button class="vf-search-btn">FAHRZEUG SUCHEN <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                        </div>
+                        <div class="vf-vin">
+                            ODER MIT VIN / FAHRGESTELLNUMMER SUCHEN
+                            <button class="vin-pill">VIN</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CENTER: Eagle Logo -->
+                <div class="hero-center">
+                    <div class="hero-glow-wrap">
+                        <div class="hero-glow-bg"></div>
+                        <img src="logo/logo.png" alt="Buzzard" class="hero-eagle" width="520" height="340" decoding="async">
+                    </div>
+                </div>
+
+                <!-- RIGHT: Trust Badges -->
+                <div class="hero-right">
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="24" height="24"><path d="M5 8h14M5 8a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2v-8a2 2 0 00-2-2M5 8V6a2 2 0 012-2h10a2 2 0 012 2v2"/></svg>
+                        </div>
+                        <div>
+                            <strong>KOSTENLOSER VERSAND</strong>
+                            <span>ab 79€ Bestellwert</span>
+                        </div>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="24" height="24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div>
+                            <strong>SCHNELLE LIEFERUNG</strong>
+                            <span>1-3 Werktage</span>
+                        </div>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="24" height="24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                        </div>
+                        <div>
+                            <strong>30 TAGE RÜCKGABERECHT</strong>
+                            <span>Ohne Risiko einkaufen</span>
+                        </div>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="24" height="24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <div>
+                            <strong>SICHERE ZAHLUNG</strong>
+                            <span>SSL verschlüsselt.</span>
+                        </div>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="24" height="24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+                        </div>
+                        <div>
+                            <strong>ÜBER 1.000.000 TEILE</strong>
+                            <span>von Top-Marken</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
-        <section id="products" class="section">
-            <h2>Top-Produktkategorien</h2>
-            <div class="feature-list">
-                <div class="feature">
-                    <h3>Motorenteile</h3>
-                    <p>Kolben, Ventile, Dichtungen und weitere Komponenten für optimale Motorleistung.</p>
+        <!-- BENEFITS STRIP -->
+        <section class="benefits-strip" aria-label="Vorteile">
+            <div class="benefits-inner">
+                <div class="benefit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="28" height="28"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    <div>
+                        <strong>TOP PREISE</strong>
+                        <span>Dauerhaft günstig</span>
+                    </div>
                 </div>
-                <div class="feature">
-                    <h3>Bremssysteme</h3>
-                    <p>Bremsbeläge, Bremsscheiben, Bremszylinder und Zubehör für sichere Bremsen.</p>
+                <div class="benefit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="28" height="28"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                    <div>
+                        <strong>EXPERTEN SUPPORT</strong>
+                        <span>Mo-Fr 8-18 Uhr</span>
+                    </div>
                 </div>
-                <div class="feature">
-                    <h3>Fahrwerk &amp; Lenkung</h3>
-                    <p>Stoßdämpfer, Federn, Spurstangen und Lenkungsteile für Stabilität und Komfort.</p>
+                <div class="benefit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="28" height="28"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+                    <div>
+                        <strong>ÜBER 1.000.000 TEILE</strong>
+                        <span>Sofort verfügbar</span>
+                    </div>
                 </div>
-                <div class="feature">
-                    <h3>Elektrik &amp; Beleuchtung</h3>
-                    <p>Batterien, Lichtsysteme, Sensoren und elektrische Ersatzteile.</p>
+                <div class="benefit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#c9a840" stroke-width="1.8" width="28" height="28"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    <div>
+                        <strong>SICHERE ZAHLUNG</strong>
+                        <span>Verschlüsselt &amp; sicher</span>
+                    </div>
                 </div>
-            </div>
-        </section>
-
-        <section id="services" class="section">
-            <h2>Unsere Dienstleistungen</h2>
-            <div class="feature-list">
-                <div class="feature">
-                    <h3>Teileabgleich</h3>
-                    <p>Wir finden schnell das richtige Teil für Ihr Fahrzeug.</p>
-                </div>
-                <div class="feature">
-                    <h3>Großhandel</h3>
-                    <p>Attraktive Konditionen für Werkstätten und Händler.</p>
-                </div>
-                <div class="feature">
-                    <h3>Garantierte Qualität</h3>
-                    <p>Nur geprüfte Lieferanten und Herstellergarantien.</p>
-                </div>
-                <div class="feature">
-                    <h3>Technische Beratung</h3>
-                    <p>Fachkundige Unterstützung bei Auswahl und Einbau.</p>
+                <div class="benefit benefit-tp">
+                    <div class="tp-logo-sm">★★★★★</div>
+                    <div>
+                        <strong>TRUSTPILOT 4.8/5</strong>
+                        <span>Ausgezeichnet</span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="section">
-            <h2>Über uns</h2>
-            <p>Buzzard verbindet jahrelange Erfahrung im Teilevertrieb mit einem sorgfältigen Qualitätsanspruch. Unser Ziel: zufriedene Kunden durch passende Teile, faire Preise und zuverlässige Lieferung.</p>
+        <!-- CATEGORY GRID -->
+        <section class="categories" aria-label="Produktkategorien">
+            <div class="categories-inner">
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-reifen">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><circle cx="40" cy="40" r="34" stroke="#c9a840" stroke-width="3"/><circle cx="40" cy="40" r="16" stroke="#c9a840" stroke-width="3"/><line x1="40" y1="6" x2="40" y2="24" stroke="#c9a840" stroke-width="2.5"/><line x1="40" y1="56" x2="40" y2="74" stroke="#c9a840" stroke-width="2.5"/><line x1="6" y1="40" x2="24" y2="40" stroke="#c9a840" stroke-width="2.5"/><line x1="56" y1="40" x2="74" y2="40" stroke="#c9a840" stroke-width="2.5"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>REIFEN &amp; FELGEN</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-oel">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><path d="M28 12h24l4 8v40a4 4 0 01-4 4H28a4 4 0 01-4-4V20l4-8z" stroke="#c9a840" stroke-width="3"/><line x1="24" y1="28" x2="56" y2="28" stroke="#c9a840" stroke-width="2.5"/><path d="M40 36v16M33 43h14" stroke="#c9a840" stroke-width="2.5"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>MOTORENÖLE</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-bremse">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><circle cx="40" cy="40" r="30" stroke="#c9a840" stroke-width="3"/><circle cx="40" cy="40" r="12" stroke="#c9a840" stroke-width="3"/><line x1="24" y1="20" x2="30" y2="30" stroke="#c9a840" stroke-width="2.5"/><line x1="56" y1="20" x2="50" y2="30" stroke="#c9a840" stroke-width="2.5"/><line x1="56" y1="60" x2="50" y2="50" stroke="#c9a840" stroke-width="2.5"/><line x1="24" y1="60" x2="30" y2="50" stroke="#c9a840" stroke-width="2.5"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>BREMSEN</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-batterie">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><rect x="12" y="24" width="56" height="36" rx="4" stroke="#c9a840" stroke-width="3"/><line x1="32" y1="24" x2="32" y2="16" stroke="#c9a840" stroke-width="3"/><line x1="48" y1="24" x2="48" y2="16" stroke="#c9a840" stroke-width="3"/><line x1="26" y1="42" x2="38" y2="42" stroke="#c9a840" stroke-width="2.5"/><line x1="32" y1="36" x2="32" y2="48" stroke="#c9a840" stroke-width="2.5"/><line x1="46" y1="42" x2="54" y2="42" stroke="#c9a840" stroke-width="2.5"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>BATTERIEN</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-filter">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><rect x="20" y="16" width="40" height="48" rx="8" stroke="#c9a840" stroke-width="3"/><line x1="28" y1="30" x2="52" y2="30" stroke="#c9a840" stroke-width="2.5"/><line x1="28" y1="38" x2="52" y2="38" stroke="#c9a840" stroke-width="2.5"/><line x1="28" y1="46" x2="52" y2="46" stroke="#c9a840" stroke-width="2.5"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>FILTER</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-zuendung">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><line x1="40" y1="8" x2="40" y2="28" stroke="#c9a840" stroke-width="3"/><path d="M28 28h24v16l-4 4H32l-4-4V28z" stroke="#c9a840" stroke-width="3"/><line x1="40" y1="48" x2="40" y2="56" stroke="#c9a840" stroke-width="3"/><path d="M34 56h12l-2 8H36l-2-8z" stroke="#c9a840" stroke-width="2.5"/><line x1="40" y1="36" x2="40" y2="40" stroke="#c9a840" stroke-width="2.5"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>ZÜNDUNG</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-wischer">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><path d="M16 60 A36 36 0 0 1 64 60" stroke="#c9a840" stroke-width="3" fill="none"/><line x1="40" y1="60" x2="22" y2="30" stroke="#c9a840" stroke-width="3"/><circle cx="40" cy="60" r="4" fill="#c9a840"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>SCHEIBENWISCHER</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+                <a href="#" class="cat-card">
+                    <div class="cat-img cat-img-pflege">
+                        <svg viewBox="0 0 80 80" fill="none" width="64" height="64"><path d="M30 14h20v8l6 6v28a4 4 0 01-4 4H28a4 4 0 01-4-4V28l6-6V14z" stroke="#c9a840" stroke-width="3"/><path d="M30 14c0-4 20-4 20 0" stroke="#c9a840" stroke-width="2.5"/><path d="M34 42c0 4 12 4 12 0" stroke="#c9a840" stroke-width="2.5"/></svg>
+                    </div>
+                    <div class="cat-label">
+                        <span>PFLEGEPRODUKTE</span>
+                        <small>Jetzt entdecken</small>
+                    </div>
+                </a>
+            </div>
         </section>
 
-        <section id="contact" class="section">
-            <h2>Kontakt</h2>
-            <div class="contact-grid">
-                <div class="contact-card">
-                    <h3>Kontaktieren Sie uns</h3>
-                    <p>Senden Sie uns Ihre Fragen oder Angebotsanfragen — wir melden uns schnellstmöglich.</p>
-                    <form id="contactForm" action="https://formsubmit.co/ajax/info@buzzard.com" method="POST">
-                        <input type="hidden" name="_subject" value="Neue Anfrage von Buzzard Webseite">
-                        <input type="hidden" name="_captcha" value="false">
-                        <label for="name">Ihr Name</label>
-                        <input id="name" name="name" type="text" placeholder="Geben Sie Ihren Namen ein" required />
-                        <label for="email">E-Mail</label>
-                        <input id="email" name="email" type="email" placeholder="Ihre E-Mail-Adresse" required />
-                        <label for="message">Ihre Nachricht</label>
-                        <textarea id="message" name="message" rows="5" placeholder="Schreiben Sie Ihre Anfrage" required></textarea>
-                        <button type="submit">Senden</button>
-                        <div id="formMessage" role="status" aria-live="polite" style="margin-top:12px;color:var(--muted)"></div>
-                    </form>
+        <!-- BRANDS SECTION -->
+        <section class="brands" aria-label="Marken">
+            <div class="brands-inner">
+                <div class="brands-header">
+                    <h2>TOP MARKEN. HÖCHSTE QUALITÄT.</h2>
+                    <a href="#" class="brands-link">ALLE MARKEN ANZEIGEN <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
                 </div>
-                <div class="contact-card">
-                    <h3>Firmendaten</h3>
-                    <p>Adresse: Dautphetal, Deutschland</p>
-                    <p>Telefon: +49 30 0000000</p>
-                    <p>Email: <a href="mailto:info@buzzard.com">info@buzzard.com</a></p>
-                    <p>Öffnungszeiten: Montag-Freitag 09:00 - 18:00</p>
+                <div class="brands-logos">
+                    <div class="brand-logo">BOSCH</div>
+                    <div class="brand-logo">MANN<br><small>FILTER</small></div>
+                    <div class="brand-logo">MAHLE</div>
+                    <div class="brand-logo"><span style="color:#e2001a">brembo</span></div>
+                    <div class="brand-logo">Castrol</div>
+                    <div class="brand-logo">LIQUI<br><small>MOLY</small></div>
+                    <div class="brand-logo">Continental</div>
+                    <div class="brand-logo">Michelin</div>
+                    <div class="brand-logo">BILSTEIN</div>
+                    <div class="brand-logo">Valeo</div>
                 </div>
             </div>
         </section>
+
+        <!-- TRUSTPILOT BAR -->
+        <div class="trustpilot-bar">
+            <div class="tp-inner">
+                <span class="tp-stars-green">★★★★★</span>
+                <span>Hervorragend <strong>4.8/5</strong> basierend auf 2.543 Bewertungen</span>
+                <span class="tp-brand">Trustpilot</span>
+            </div>
+        </div>
+
     </main>
 
-    <footer class="footer">
-        <p>© 2026 Buzzard. Alle Rechte vorbehalten.</p>
-        <p>
-            <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a>
-        </p>
+    <!-- AI ASSISTANT WIDGET -->
+    <div class="ai-widget" aria-label="Buzzard AI Assistent">
+        <div class="ai-widget-inner">
+            <div class="ai-avatar">
+                <img src="logo/logo.png" alt="Buzzard AI" width="36" height="36">
+                <span class="ai-online"></span>
+            </div>
+            <div class="ai-text">
+                <strong>Buzzard AI</strong>
+                <p>Ich helfe Ihnen, das passende Teil für Ihr Fahrzeug zu finden.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <img src="logo/logo.png" alt="Buzzard" width="40" height="40">
+                <span>BUZZARD</span>
+            </div>
+            <div class="footer-links">
+                <a href="impressum.html">Impressum</a>
+                <a href="datenschutz.html">Datenschutz</a>
+                <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+            </div>
+            <p class="footer-copy">© 2026 Buzzard. Alle Rechte vorbehalten.</p>
+        </div>
     </footer>
-    <script src="scripts.js"></script>
+
+    <script src="scripts.js" defer></script>
 </body>
 </html>

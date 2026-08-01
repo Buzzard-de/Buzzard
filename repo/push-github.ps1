@@ -1,5 +1,6 @@
 $git = 'C:\Program Files\Git\cmd\git.exe'
-$repoPath = 'C:\Users\yanli\buzzard'
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$repoPath = Join-Path $scriptDir '..'
 $sshDir = "$env:USERPROFILE\.ssh"
 
 if (-not (Test-Path $git)) {
@@ -18,13 +19,13 @@ if (-not (Test-Path ".git")) {
     & $git init
 }
 
-& $git config user.name "BUzzard"
+& $git config user.name "Buzzard"
 & $git config user.email "info@buzzard.com"
 & $git add .
 & $git commit -m "Initial commit: Buzzard static site and GitHub Pages workflow" 2>$null
 & $git branch -M main
 & $git remote remove origin 2>$null
-& $git remote add origin git@github.com:Buzzard/buzzard.git
+& $git remote add origin git@github.com:Buzzard-de/Buzzard.git
 
 if (-not (Test-Path $sshDir)) {
     New-Item -ItemType Directory -Path $sshDir -Force | Out-Null

@@ -1,25 +1,19 @@
-# Lokaler Repo‑Ordner für Buzzard
+# Repo Deploy Helfer
 
-Dieser Ordner dient als lokaler Platzhalter für das Git‑Repository.
+Dieser Ordner enthält Hilfsskripte für den Push nach GitHub.
 
-Anleitung zum Initialisieren und Pushen nach GitHub:
+## Skripte
+
+- `publish-github.ps1`: setzt Remote und pusht nach `main`
+- `push-github-https.ps1`: setzt HTTPS-Modus und ruft `publish-github.ps1` auf
+- `publish-github.cmd`: CMD-Wrapper für `publish-github.ps1`
+
+## Schnellstart
 
 ```powershell
 cd C:\Users\yanli\buzzard
-# Initialisiere Git (falls noch nicht vorhanden)
-git init
-git branch -M main
-git add .
-git commit -m "Initial commit: Buzzard static site"
-# Füge das Remote-Repository hinzu (ersetze URL durch dein Repo)
-# SSH:
-git remote add origin git@github.com:Buzzard/buzzard.git
-git push -u origin main
-# Oder HTTPS:
-# git remote add origin https://github.com/Buzzard/buzzard.git
-# git push -u origin main
+setx GITHUB_REPO "Buzzard-de/Buzzard"
+.\publish-github.cmd
 ```
 
-Hinweis:
-- Auf diesem System ist `git` scheinbar nicht installiert; installiere Git falls nötig: https://git-scm.com/download/win
-- Wenn du möchtest, kann ich das Remote‑Repo über die GitHub API anlegen — dafür benötige ich ein temporäres PAT mit den Scopes `repo` und `workflow`.
+Voraussetzung: `git` ist installiert und im PATH verfügbar.

@@ -24,3 +24,6 @@ buzzard.zip
 
 # Tools
 /tools/
+
+# Local server plugin data
+server/data/

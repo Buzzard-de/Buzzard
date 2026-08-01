@@ -1,68 +1,91 @@
 # Buzzard – Kfz-Teile (Statische Webseite)
 
-Kurzanleitung zum lokalen Testen, Deployment und Konfiguration.
+Kurzanleitung für lokalen Test und Deployment auf GitHub Pages.
 
 ## Lokal starten
 
-Mit Python 3 im Projektordner:
-
-```powershell
-python -m http.server 8000
-# Öffne dann http://localhost:8000 im Browser
-```
-
-Oder mit einem beliebigen Static‑Server / Live Server in VS Code.
-
-## Kontaktformular
-
-Das Formular sendet per [FormSubmit.co](https://formsubmit.co) an `info@buzzard.com`.
-Wenn du eine andere Empfängeradresse möchtest, ändere das `action`-Attribut im Formular in `index.html`.
-
-## Deployment‑Optionen
-
-- GitHub Pages: Repository erstellen, Branch `gh-pages` oder `main` nutzen, Pages aktivieren.
-- Netlify: Drag & drop des Ordners oder Git‑Verbindung; FormSubmit funktioniert weiterhin.
-- Andere: S3/Cloudflare Pages/Vercel sind ebenfalls möglich.
-
-## GitHub Pages URL
-
-Wenn dein Repo `Buzzard/buzzard` heißt, wird deine Seite später voraussichtlich unter `https://buzzard.github.io/buzzard/` erreichbar sein. Wenn du ein anderes Repo nutzt, passe die Links in `sitemap.xml`, `index.html` und `products.html` entsprechend an.
-
+Im Projektordner:
 
 ```powershell
 cd C:\Users\yanli\buzzard
+python -m http.server 8000
 ```
 
-3. Starte das Publish-Skript:
+Dann `http://localhost:8000` im Browser öffnen.
+
+## Lokale API
+
+Zusätzlich ist eine lokale API verfügbar, die das Kontaktformular im Entwicklungsmodus verarbeitet.
+
+1. Wechsle in den API-Ordner:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\repo\publish-github.ps1
+cd C:\Users\yanli\buzzard\server
 ```
 
-   Oder nutze den neuen Wrapper, um den Start einfacher zu machen:
+2. Starte den Server:
 
 ```powershell
+node server.js
+```
+
+Die API läuft unter `http://localhost:3000`.
+
+## Kontaktformular
+
+Im Browser wird das Formular bei `localhost`, `127.0.0.1` und `file://` an die lokale API gesendet.
+Im Produktionsbetrieb bleibt das Formular bei FormSubmit für die E-Mail-Zustellung.
+
+## Deployment auf GitHub Pages
+
+1. Stelle sicher, dass `git` installiert ist:
+   https://git-scm.com/download/win
+
+2. Optional: Setze `GITHUB_REPO` (Standard ist `Buzzard-de/Buzzard`).
+
+3. Starte das Skript im Projektordner:
+
+```powershell
+cd C:\Users\yanli\buzzard
 .\publish-github.cmd
 ```
 
-4. Wenn das Skript nach dem Token fragt, füge deinen GitHub-PAT ein.
-5. Wenn das Skript nach dem Repository fragt, gib den Repo-Pfad als `owner/repo` ein, z. B. `Buzzard/buzzard`.
+Vor dem Push kannst du alle vorbereitenden Checks ohne Login laufen lassen:
 
-Das Skript erstellt das Repository, wenn es noch nicht existiert, macht es öffentlich und pusht deinen Code zu GitHub.
+```powershell
+cd C:\Users\yanli\buzzard\repo
+powershell -NoProfile -ExecutionPolicy Bypass -File .\preflight-no-login.ps1
+```
 
-## SEO & Accessibility – To Do / Empfehlungen
+4. Folge der Authentifizierung von Git (SSH oder HTTPS/PAT), falls abgefragt.
 
-- Füge aussagekräftige Meta‑Tags pro Seite hinzu (Title/Description/OpenGraph).
-- Optimiere `logo/logo.png` in Web‑optimierte Formate (`webp`, verschiedene Größen).
-- Erstelle `sitemap.xml` und reiche die URL bei Suchmaschinen ein.
-- Überprüfe Kontrast und Tastaturnavigation; Skip‑Link bereits eingebaut.
+Alternativ kannst du `repo\push-github-https.ps1` verwenden, um den Push per HTTPS auszuführen:
 
-Hinweis: Ersetze in `sitemap.xml` und in den JSON‑LD Blöcken (`index.html`, `products.html`) die Platzhalter‑Domain `https://example.com` durch deine echte Website‑URL, damit Suchmaschinen die korrekten Links indexieren.
+```powershell
+cd C:\Users\yanli\buzzard\repo
+powershell -NoProfile -ExecutionPolicy Bypass -File .\push-github-https.ps1
+```
 
-## Weiteres
+Hinweis: Das Skript pusht in ein bereits vorhandenes Repository. Falls das Repository noch nicht existiert, erstelle es zuerst auf GitHub.
 
-Wenn du möchtest, erstelle ich:
+## GitHub Pages URL
 
-- optimierte Bildvarianten (`logo-128.png`, `logo-192.png`, `logo-512.png`) und ein Web‑Manifest;
-- eine ZIP‑Export‑Datei des Projekts;
-- ein Impressum/Datenschutz mit konkreten Unternehmensdaten (ich habe Vorlagen hinzugefügt).
+Wenn das Repo `Buzzard-de/Buzzard` heißt, wird die Seite voraussichtlich unter
+
+`https://buzzard-de.github.io/Buzzard/`
+
+verfügbar sein.
+
+## Backup / Optionales
+
+Unnötige Hilfsskripte und alte Dateien wurden in `backup/` verschoben.
+
+## Nächste Schritte
+
+## Go-Live Checkliste
+
+- `git` installiert und Push nach `main` erfolgreich
+- GitHub Actions Workflow `Deploy to GitHub Pages` grün
+- Seite unter `https://buzzard-de.github.io/Buzzard/` erreichbar
+- Kontaktformular lokal getestet (`http://localhost:3000/api/contact`)
+- Impressum/Datenschutz mit echten Unternehmensdaten ersetzt

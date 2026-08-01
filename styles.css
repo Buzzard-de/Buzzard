@@ -1222,3 +1222,158 @@ select, input, button { font-family: inherit; }
     .products-grid { grid-template-columns: repeat(2, 1fr); }
     .contact-inner { gap: 28px; }
 }
+
+/* ===========================
+   BRAND LOGO IDENTITIES
+   =========================== */
+.brand-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.brand-logo span { font-weight: 900; letter-spacing: 0.04em; line-height: 1.1; }
+.brand-logo small { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; opacity: 0.8; }
+
+.brand-bosch { border-color: rgba(220,30,30,0.4) !important; }
+.brand-bosch span { color: #fff; font-size: 1rem; }
+.brand-bosch:hover { background: rgba(220,30,30,0.1) !important; border-color: #dc1e1e !important; }
+
+.brand-mann span { color: #f5a623; font-size: 0.9rem; }
+.brand-mann small { color: #f5a623; }
+.brand-mann:hover { background: rgba(245,166,35,0.1) !important; border-color: rgba(245,166,35,0.5) !important; }
+
+.brand-mahle span { color: #e8e8e8; font-size: 1rem; letter-spacing: 0.1em; }
+.brand-mahle:hover { background: rgba(255,255,255,0.06) !important; }
+
+.brand-brembo { border-color: rgba(220,30,30,0.4) !important; }
+.brand-brembo span { color: #e2001a; font-size: 1rem; font-style: italic; font-weight: 900; }
+.brand-brembo:hover { background: rgba(226,0,26,0.1) !important; border-color: #e2001a !important; }
+
+.brand-castrol { border-color: rgba(0,140,0,0.4) !important; }
+.brand-castrol span { color: #00a651; font-size: 0.95rem; font-style: italic; }
+.brand-castrol:hover { background: rgba(0,166,81,0.1) !important; border-color: #00a651 !important; }
+
+.brand-liqui { border-color: rgba(255,200,0,0.4) !important; }
+.brand-liqui span { color: #ffc800; font-size: 0.9rem; }
+.brand-liqui small { color: #ffc800; }
+.brand-liqui:hover { background: rgba(255,200,0,0.1) !important; border-color: #ffc800 !important; }
+
+.brand-conti span { color: #ccc; font-size: 0.72rem; }
+.brand-conti:hover { background: rgba(255,140,0,0.08) !important; }
+
+.brand-michelin { border-color: rgba(0,100,200,0.4) !important; }
+.brand-michelin span { color: #0064c8; font-size: 0.85rem; font-style: italic; }
+.brand-michelin:hover { background: rgba(0,100,200,0.1) !important; border-color: #0064c8 !important; }
+
+.brand-bilstein { border-color: rgba(255,210,0,0.4) !important; }
+.brand-bilstein span { color: #ffd200; font-size: 0.85rem; letter-spacing: 0.06em; }
+.brand-bilstein:hover { background: rgba(255,210,0,0.1) !important; border-color: #ffd200 !important; }
+
+.brand-valeo { border-color: rgba(0,120,200,0.4) !important; }
+.brand-valeo span { color: #0078c8; font-size: 0.95rem; font-style: italic; }
+.brand-valeo:hover { background: rgba(0,120,200,0.1) !important; border-color: #0078c8 !important; }
+
+/* ===========================
+   ANIMATIONS
+   =========================== */
+@keyframes heroPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes eagleFloat {
+    0%, 100% { transform: scale(1.12) translateY(-8%); }
+    50% { transform: scale(1.12) translateY(-10.5%); }
+}
+@keyframes glowRing {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* Apply float animation to eagle */
+.hero-eagle {
+    animation: eagleFloat 4s ease-in-out infinite !important;
+}
+/* Animated glow bg */
+.hero-glow-bg {
+    animation: heroPulse 3s ease-in-out infinite !important;
+}
+/* Pulsing ring behind eagle */
+.hero-glow-wrap::before {
+    content: '';
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 30%;
+    background: radial-gradient(ellipse, rgba(201,168,64,0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: heroPulse 2.5s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Entrance animations for sections */
+.hero-left { animation: fadeInUp 0.7s ease both; }
+.hero-right { animation: fadeInUp 0.7s ease 0.2s both; }
+.benefits-inner .benefit { animation: fadeInUp 0.5s ease both; }
+.benefits-inner .benefit:nth-child(1) { animation-delay: 0.05s; }
+.benefits-inner .benefit:nth-child(2) { animation-delay: 0.1s; }
+.benefits-inner .benefit:nth-child(3) { animation-delay: 0.15s; }
+.benefits-inner .benefit:nth-child(4) { animation-delay: 0.2s; }
+.benefits-inner .benefit:nth-child(5) { animation-delay: 0.25s; }
+
+/* Category card shine effect on hover */
+.cat-card {
+    position: relative;
+    overflow: hidden;
+}
+.cat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    transition: left 0.4s ease;
+    pointer-events: none;
+}
+.cat-card:hover::after { left: 150%; }
+.cat-card:hover .cat-img svg { filter: drop-shadow(0 0 8px rgba(201,168,64,0.6)); transform: scale(1.05); transition: all 0.3s ease; }
+.cat-img svg { transition: all 0.3s ease; }
+
+/* Brand logo transitions */
+.brand-logo { transition: all 0.25s ease; transform: scale(1); }
+.brand-logo:hover { transform: scale(1.04); }
+
+/* Smooth scroll behavior is already set */
+/* Better focus styles */
+:focus-visible { outline: 2px solid rgba(201,168,64,0.8); outline-offset: 3px; }
+
+/* Better product card on products page */
+.product-card { transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease; }
+.product-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,64,0.2); }
+
+/* Hero section: better glow ring on platform */
+.hero-center::after {
+    content: '';
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55%;
+    height: 4px;
+    background: radial-gradient(ellipse, rgba(201,168,64,0.6) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(4px);
+    pointer-events: none;
+    animation: heroPulse 2.5s ease-in-out infinite;
+}

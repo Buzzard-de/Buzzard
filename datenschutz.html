@@ -1,76 +1,192 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Datenschutz – Buzzard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="logo/logo.png">
-  <link rel="canonical" href="https://buzzard-de.github.io/Buzzard/datenschutz.html">
-  <meta name="theme-color" content="#161616">
-  <meta name="description" content="Datenschutzerklärung für Buzzard Kfz-Teile">
-  <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Datenschutz &#x2013; Buzzard</title>
+    <meta name="description" content="Datenschutzerkl&#xE4;rung von Buzzard Kfz-Teile &#x2013; Informationen zur Verarbeitung personenbezogener Daten gem&#xE4;&#xDF; DSGVO.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="datenschutz.html">
+    <link rel="icon" href="logo/logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <nav role="navigation" aria-label="Hauptnavigation">
-      <div class="brand">
-        <img src="logo/logo.png" alt="Buzzard Logo" width="54" height="54" decoding="async">
-        <div><h1>BUZZARD</h1><span>Kfz-Teile</span></div>
-      </div>
-      <ul class="nav-links">
-        <li><a href="index.html">Start</a></li>
-        <li><a href="products.html">Produkte</a></li>
-        <li><a href="impressum.html">Impressum</a></li>
-        <li><a href="datenschutz.html" aria-current="page">Datenschutz</a></li>
-      </ul>
+
+    <!-- TOP INFO BAR -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <span><svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 8h14M5 8a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2v-8a2 2 0 00-2-2M5 8V6a2 2 0 012-2h10a2 2 0 012 2v2"/></svg> KOSTENLOSER VERSAND AB 79&#x20AC;</span>
+            <span><svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> SCHNELLE LIEFERUNG 1-3 WERKTAGE</span>
+            <span><svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M12 8v4l3 3"/></svg> 30 TAGE R&#xDC;CKGABERECHT</span>
+            <span class="tp-stars">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605; <strong>4.8/5</strong> TRUSTPILOT</span>
+        </div>
+    </div>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand" aria-label="Buzzard Startseite">
+                <img src="logo/logo.png" alt="Buzzard Logo" width="48" height="48" decoding="async">
+                <span class="brand-name">BUZZARD</span>
+            </a>
+            <div class="search-wrap">
+                <div class="search-bar">
+                    <input type="search" placeholder="Produkte, Marken oder Teilenummer suchen..." aria-label="Suche">
+                    <div class="search-divider"></div>
+                    <select aria-label="Kategorie w&#xE4;hlen">
+                        <option>Alle Kategorien</option>
+                        <option>Automotive</option>
+                        <option>&#xD6;le &amp; Fl&#xFC;ssigkeiten</option>
+                        <option>Bremsen</option>
+                        <option>Fahrwerk &amp; Lenkung</option>
+                        <option>Elektrik &amp; Z&#xFC;ndung</option>
+                        <option>Karosserie</option>
+                        <option>Werkzeuge</option>
+                        <option>Pflege &amp; Reinigung</option>
+                    </select>
+                    <button class="search-btn" aria-label="Suchen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    </button>
+                </div>
+            </div>
+            <button class="vin-btn-header">
+                <span class="vin-tag">VIN</span>
+                <span class="vin-text">MIT VIN / FAHRZEUG<br>PASSENDE TEILE FINDEN</span>
+            </button>
+            <div class="header-actions">
+                <a href="#" class="hdr-action">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>Mein Konto<br><small>Anmelden</small></span>
+                </a>
+                <a href="#" class="hdr-action">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    <span>Wunschliste<br><small>0 Artikel</small></span>
+                </a>
+                <a href="#" class="hdr-action cart-action">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
+                    <span>Warenkorb<br><small class="cart-price">0,00 &#x20AC;</small></span>
+                </a>
+            </div>
+        </div>
+    </header>
+    <nav class="main-nav" role="navigation" aria-label="Kategorien">
+        <div class="main-nav-inner">
+            <ul>
+                <li><a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M19 17H5a2 2 0 01-2-2V7a2 2 0 012-2h2l2-2h6l2 2h2a2 2 0 012 2v8a2 2 0 01-2 2z"/></svg> AUTOMOTIVE</a></li>
+                <li><a href="products.html">&#xD6;LE &amp; FL&#xDC;SSIGKEITEN</a></li>
+                <li><a href="products.html">BREMSEN</a></li>
+                <li><a href="products.html">FAHRWERK &amp; LENKUNG</a></li>
+                <li><a href="products.html">ELEKTRIK &amp; Z&#xDC;NDUNG</a></li>
+                <li><a href="products.html">KAROSSERIE</a></li>
+                <li><a href="products.html">WERKZEUGE</a></li>
+                <li><a href="products.html">PFLEGE &amp; REINIGUNG</a></li>
+                <li class="angebote-link"><a href="products.html">ANGEBOTE %</a></li>
+            </ul>
+        </div>
     </nav>
-  </header>
 
-  <main id="maincontent" role="main" class="section">
-    <h2>Datenschutzerklärung</h2>
-    <p>Diese Datenschutzerklärung beschreibt, welche personenbezogenen Daten wir verarbeiten und zu welchen Zwecken.</p>
+    <main>
+        <section class="page-hero">
+            <div class="page-hero-inner">
+                <nav class="page-hero-breadcrumb" aria-label="Breadcrumb">
+                    <a href="index.html">Startseite</a> <span>/</span> <span>Datenschutz</span>
+                </nav>
+                <h1>Datenschutzerkl&#xE4;rung</h1>
+                <p>Informationen zur Verarbeitung Ihrer personenbezogenen Daten gem&#xE4;&#xDF; DSGVO</p>
+            </div>
+        </section>
 
-    <section>
-      <h3>Verantwortlicher</h3>
-      <p><strong>Buzzard Kfz-Teile</strong><br>
-      Musterstraße 12<br>
-      35232 Dautphetal<br>
-      Deutschland<br>
-      E-Mail: <a href="mailto:info@buzzard.com">info@buzzard.com</a></p>
-    </section>
+        <div class="subpage-content">
 
-    <section>
-      <h3>Erhebung und Speicherung personenbezogener Daten</h3>
-      <p>Beim Kontaktformular werden Name, E-Mail-Adresse und Nachricht verarbeitet. Diese Daten benötigen wir, um Ihre Anfrage zu beantworten.</p>
-    </section>
+            <section>
+                <h2>Verantwortlicher</h2>
+                <p>
+                    <strong>Buzzard Kfz-Teile</strong><br>
+                    Dautphetal, Deutschland<br>
+                    E-Mail: <a href="mailto:info@buzzard.com">info@buzzard.com</a><br>
+                    Telefon: <a href="tel:+4930000000">+49 30 0000000</a>
+                </p>
+                <p>Der Verantwortliche im Sinne der Datenschutz-Grundverordnung (DSGVO) und anderer nationaler Datenschutzgesetze sowie sonstiger datenschutzrechtlicher Bestimmungen ist die oben genannte Person.</p>
+            </section>
 
-    <section>
-      <h3>Kontaktformular</h3>
-      <p>Bei Nutzung des Kontaktformulars werden die eingegebenen Daten an den lokalen Server oder in der Produktion an FormSubmit übertragen.</p>
-    </section>
+            <section>
+                <h2>Erhebung personenbezogener Daten</h2>
+                <h3>Kontaktformular</h3>
+                <p>Wenn Sie unser Kontaktformular nutzen, erheben wir folgende personenbezogene Daten:</p>
+                <ul>
+                    <li><strong>Name</strong> &#x2013; zur Anrede und Identifikation</li>
+                    <li><strong>E-Mail-Adresse</strong> &#x2013; zur Beantwortung Ihrer Anfrage</li>
+                    <li><strong>Nachricht</strong> &#x2013; Inhalt Ihrer Anfrage</li>
+                </ul>
+                <p>Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Erf&#xFC;llung eines Vertrags bzw. vorvertragliche Ma&#xDF;nahmen) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Bearbeitung Ihrer Anfrage). Ihre Daten werden ausschlie&#xDF;lich zur Beantwortung Ihrer Anfrage verwendet und nicht an Dritte weitergegeben.</p>
 
-    <section>
-      <h3>Server-Log-Daten</h3>
-      <p>Beim Besuch unserer Website werden standardmäßig technische Logdaten wie IP-Adresse, Browsertyp und Zugriffszeitpunkt verarbeitet. Diese Daten dienen der Fehleranalyse und Sicherheit.</p>
-    </section>
+                <h3>Automatisch erhobene Daten</h3>
+                <p>Beim Aufrufen unserer Website werden durch den Hosting-Anbieter (GitHub Pages) automatisch Informationen in Server-Log-Dateien gespeichert, die Ihr Browser automatisch &#xFC;bermittelt. Dies sind:</p>
+                <ul>
+                    <li>IP-Adresse des anfragenden Rechners (anonymisiert)</li>
+                    <li>Datum und Uhrzeit des Zugriffs</li>
+                    <li>Name und URL der abgerufenen Datei</li>
+                    <li>Website, von der der Zugriff erfolgt (Referrer-URL)</li>
+                    <li>Verwendeter Browser und ggf. das Betriebssystem</li>
+                </ul>
+                <p>Diese Daten werden nicht mit anderen Datenquellen zusammengef&#xFC;hrt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Sicherheit und dem stabilen Betrieb der Website).</p>
+            </section>
 
-    <section>
-      <h3>Cookies und Tracking</h3>
-      <p>Diese Website verwendet aktuell keine Tracking-Cookies. Sollte Analytics oder ein anderes Drittanbietertool eingesetzt werden, muss diese Erklärung ergänzt werden.</p>
-    </section>
+            <section>
+                <h2>Hosting &#x2013; GitHub Pages</h2>
+                <p>Diese Website wird &#xFC;ber <strong>GitHub Pages</strong> (GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA) gehostet. GitHub kann beim Aufruf der Website technische Verbindungsdaten (insbesondere IP-Adressen) verarbeiten. Weitere Informationen finden Sie in der <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener noreferrer">Datenschutzerkl&#xE4;rung von GitHub</a>.</p>
+                <p>Die Nutzung von GitHub Pages erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wir haben ein berechtigtes Interesse an einer zuverl&#xE4;ssigen Darstellung unseres Online-Angebots.</p>
+            </section>
 
-    <section>
-      <h3>Hinweis</h3>
-      <p>Diese Datenschutzerklärung ist als Vorlage gedacht. Passen Sie den Text bitte an Ihr tatsächliches Geschäftsmodell und die eingesetzten Services an.</p>
-    </section>
-  </main>
+            <section>
+                <h2>Cookies und Tracking</h2>
+                <p>Diese Website verwendet <strong>keine Tracking-Cookies</strong> und setzt kein Web-Analytics-Tool (z.&#x202F;B. Google Analytics) ein. Es werden keine Cookies gesetzt, die Ihr Verhalten &#xFC;ber diese Website hinaus verfolgen. Technisch notwendige Session-Cookies k&#xF6;nnen tempor&#xE4;r f&#xFC;r die Funktionalit&#xE4;t des Warenkorbs verwendet werden und werden nach dem Schlie&#xDF;en des Browsers automatisch gel&#xF6;scht.</p>
+            </section>
 
-  <footer class="footer">
-    <p><a href="index.html">Zurück zur Startseite</a> · <a href="impressum.html">Impressum</a></p>
-  </footer>
+            <section>
+                <h2>Rechte der betroffenen Person</h2>
+                <p>Sie haben gegen&#xFC;ber uns folgende Rechte hinsichtlich der Sie betreffenden personenbezogenen Daten:</p>
+                <ul>
+                    <li><strong>Recht auf Auskunft</strong> (Art. 15 DSGVO) &#x2013; Sie k&#xF6;nnen Auskunft &#xFC;ber Ihre bei uns gespeicherten Daten verlangen.</li>
+                    <li><strong>Recht auf Berichtigung</strong> (Art. 16 DSGVO) &#x2013; Sie k&#xF6;nnen die Berichtigung unrichtiger Daten verlangen.</li>
+                    <li><strong>Recht auf L&#xF6;schung</strong> (Art. 17 DSGVO) &#x2013; Sie k&#xF6;nnen die L&#xF6;schung Ihrer Daten verlangen, soweit keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</li>
+                    <li><strong>Recht auf Einschr&#xE4;nkung der Verarbeitung</strong> (Art. 18 DSGVO) &#x2013; Sie k&#xF6;nnen die Einschr&#xE4;nkung der Verarbeitung Ihrer Daten verlangen.</li>
+                    <li><strong>Recht auf Daten&#xFC;bertragbarkeit</strong> (Art. 20 DSGVO) &#x2013; Sie k&#xF6;nnen Ihre Daten in einem g&#xE4;ngigen, maschinenlesbaren Format erhalten.</li>
+                    <li><strong>Recht auf Widerspruch</strong> (Art. 21 DSGVO) &#x2013; Sie k&#xF6;nnen der Verarbeitung Ihrer Daten widersprechen, sofern diese auf Art. 6 Abs. 1 lit. f DSGVO beruht.</li>
+                    <li><strong>Beschwerderecht</strong> &#x2013; Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbeh&#xF6;rde zu beschweren.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Kontakt f&#xFC;r Datenschutzanfragen</h2>
+                <p>F&#xFC;r Fragen zum Datenschutz oder zur Aus&#xFC;bung Ihrer Rechte wenden Sie sich bitte an:</p>
+                <p>
+                    Buzzard Kfz-Teile<br>
+                    Dautphetal, Deutschland<br>
+                    E-Mail: <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+                </p>
+                <p>Wir werden Ihre Anfrage so schnell wie m&#xF6;glich, sp&#xE4;testens jedoch innerhalb von 30 Tagen, beantworten.</p>
+                <p><small>Stand: August 2026</small></p>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <img src="logo/logo.png" alt="Buzzard" width="40" height="40">
+                <span>BUZZARD</span>
+            </div>
+            <div class="footer-links">
+                <a href="impressum.html">Impressum</a>
+                <a href="datenschutz.html">Datenschutz</a>
+                <a href="index.html#contact">Kontakt</a>
+                <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+            </div>
+            <p class="footer-copy">&#xA9; 2026 Buzzard. Alle Rechte vorbehalten.</p>
+        </div>
+    </footer>
+
 </body>
 </html>

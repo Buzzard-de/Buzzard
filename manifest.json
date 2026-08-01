@@ -4,10 +4,9 @@
   "start_url": "/Buzzard/",
   "scope": "/Buzzard/",
   "display": "standalone",
-  "theme_color": "#161616",
-  "background_color": "#070707",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
   "icons": [
-    { "src": "logo/logo-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "logo/logo-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "logo/logo.png", "sizes": "any", "type": "image/png", "purpose": "any maskable" }
   ]
 }

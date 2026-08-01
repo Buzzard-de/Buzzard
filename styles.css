@@ -273,12 +273,12 @@ select, input, button { font-family: inherit; }
 .hero-inner {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 48px 24px 40px;
+    padding: 40px 24px 36px;
     display: grid;
-    grid-template-columns: 1fr 500px 280px;
-    gap: 24px;
+    grid-template-columns: minmax(0,420px) 1fr minmax(0,260px);
+    gap: 28px;
     align-items: center;
-    min-height: 520px;
+    min-height: 500px;
 }
 
 /* Hero Left */
@@ -404,25 +404,45 @@ select, input, button { font-family: inherit; }
 }
 .hero-glow-wrap {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    max-width: 560px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: radial-gradient(ellipse at 50% 40%, rgba(201,168,64,0.12) 0%, rgba(201,168,64,0.04) 50%, transparent 75%);
+}
+/* Fade out the bottom BUZZARD text from logo.png */
+.hero-glow-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 52%;
+    background: linear-gradient(to top, #0a0a0a 45%, rgba(10,10,10,0.7) 70%, transparent 100%);
+    z-index: 3;
+    pointer-events: none;
 }
 .hero-glow-bg {
     position: absolute;
-    inset: -40px;
-    background: radial-gradient(ellipse at center, rgba(201,168,64,0.18) 0%, rgba(201,168,64,0.06) 40%, transparent 70%);
-    border-radius: 50%;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 50%, rgba(201,168,64,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse at 50% 85%, rgba(180,120,0,0.3) 0%, transparent 40%);
     pointer-events: none;
+    z-index: 2;
 }
 .hero-eagle {
     width: 100%;
-    max-width: 500px;
     height: auto;
+    display: block;
     position: relative;
     z-index: 1;
-    filter: drop-shadow(0 0 40px rgba(201,168,64,0.4)) drop-shadow(0 0 80px rgba(201,168,64,0.15));
-    border-radius: 8px;
+    transform: scale(1.12) translateY(-8%);
+    transform-origin: top center;
+    filter:
+        drop-shadow(0 0 30px rgba(201,168,64,0.65))
+        drop-shadow(0 0 80px rgba(201,168,64,0.3))
+        brightness(1.08) saturate(1.1);
 }
 
 /* Hero Right – Trust badges */
@@ -548,7 +568,34 @@ select, input, button { font-family: inherit; }
     justify-content: center;
     background: #141414;
     padding: 20px;
+    position: relative;
+    overflow: hidden;
 }
+.cat-img::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+.cat-card:hover .cat-img::before { opacity: 0.8; }
+.cat-img-reifen { background: #0d0d0d; }
+.cat-img-reifen::before { background: radial-gradient(ellipse at bottom, rgba(60,60,60,0.6), transparent 70%); }
+.cat-img-oel { background: #0a0c08; }
+.cat-img-oel::before { background: radial-gradient(ellipse at bottom, rgba(80,60,0,0.5), transparent 70%); }
+.cat-img-bremse { background: #0d0a0a; }
+.cat-img-bremse::before { background: radial-gradient(ellipse at bottom, rgba(80,20,20,0.5), transparent 70%); }
+.cat-img-batterie { background: #080a0d; }
+.cat-img-batterie::before { background: radial-gradient(ellipse at bottom, rgba(10,40,80,0.5), transparent 70%); }
+.cat-img-filter { background: #0c0a06; }
+.cat-img-filter::before { background: radial-gradient(ellipse at bottom, rgba(100,60,0,0.4), transparent 70%); }
+.cat-img-zuendung { background: #0d0c08; }
+.cat-img-zuendung::before { background: radial-gradient(ellipse at bottom, rgba(201,168,64,0.15), transparent 70%); }
+.cat-img-wischer { background: #080c0d; }
+.cat-img-wischer::before { background: radial-gradient(ellipse at bottom, rgba(20,60,80,0.4), transparent 70%); }
+.cat-img-pflege { background: #080d0a; }
+.cat-img-pflege::before { background: radial-gradient(ellipse at bottom, rgba(20,80,40,0.3), transparent 70%); }
+.cat-img svg { position: relative; z-index: 1; width: 52px; height: 52px; }
 .cat-label {
     padding: 10px 8px;
     text-align: center;

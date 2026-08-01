@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://buzzard-de.github.io/Buzzard/sitemap.xml
+Sitemap: https://www.buzzard24.de/sitemap.xml

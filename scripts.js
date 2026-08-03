@@ -1,6 +1,126 @@
+/* ================================================
+   Buzzard – scripts.js
+   Warenkorb, Filter, Suche, Formular, Navigation
+   ================================================ */
+
 document.addEventListener('DOMContentLoaded', function () {
 
-  /* ── Kontaktformular ──────────────────────────────── */
+  /* ══════════════════════════════════════════════
+     WARENKORB (localStorage)
+     ══════════════════════════════════════════════ */
+  const Cart = {
+    get: () => JSON.parse(localStorage.getItem('buzzard_cart') || '[]'),
+    save(items) { localStorage.setItem('buzzard_cart', JSON.stringify(items)); },
+    add(name, price) {
+      const items = this.get();
+      const existing = items.find(i => i.name === name);
+      if (existing) { existing.qty += 1; } else { items.push({ name, price, qty: 1 }); }
+      this.save(items);
+      this.updateHeader();
+    },
+    total() { return this.get().reduce((s, i) => s + i.price * i.qty, 0); },
+    count() { return this.get().reduce((s, i) => s + i.qty, 0); },
+    updateHeader() {
+      const count = this.count();
+      const total = this.total();
+      // Preis-Anzeige aktualisieren
+      document.querySelectorAll('.cart-price').forEach(el => {
+        el.textContent = total.toFixed(2).replace('.', ',') + ' €';
+      });
+      // Warenkorb-Label
+      document.querySelectorAll('.cart-action span').forEach(el => {
+        if (el.childNodes[0]) el.childNodes[0].textContent = count > 0 ? `Warenkorb (${count})` : 'Warenkorb';
+      });
+      // Badge
+      let badge = document.getElementById('cart-badge');
+      const cartSvg = document.querySelector('.cart-action svg');
+      if (count > 0) {
+        if (!badge && cartSvg) {
+          badge = document.createElement('span');
+          badge.id = 'cart-badge';
+          badge.style.cssText = 'position:absolute;top:-6px;right:-6px;background:#c9a840;color:#111;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:1;';
+          cartSvg.style.position = 'relative';
+          cartSvg.parentElement.style.position = 'relative';
+          cartSvg.parentElement.appendChild(badge);
+        }
+        if (badge) { badge.textContent = count; badge.style.display = 'flex'; }
+      } else if (badge) {
+        badge.style.display = 'none';
+      }
+    }
+  };
+
+  Cart.updateHeader();
+
+  // "In den Warenkorb" Buttons
+  document.querySelectorAll('.product-card-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const card  = this.closest('.product-card');
+      const name  = card?.querySelector('.product-card-name')?.textContent?.trim() || 'Artikel';
+      const raw   = card?.querySelector('.product-card-price')?.textContent?.trim() || '0';
+      const price = parseFloat(raw.replace(',', '.').replace(/[^\d.]/g, '')) || 0;
+      Cart.add(name, price);
+      const orig = this.textContent;
+      this.textContent = '✓ Hinzugefügt';
+      this.style.cssText = 'background:rgba(34,197,94,0.15);border-color:#22c55e;color:#22c55e;';
+      setTimeout(() => { this.textContent = orig; this.style.cssText = ''; }, 1800);
+    });
+  });
+
+  /* ══════════════════════════════════════════════
+     PRODUKT-FILTER (URL-Parameter + Buttons)
+     ══════════════════════════════════════════════ */
+  const filterBtns   = document.querySelectorAll('.filter-btn');
+  const productCards = document.querySelectorAll('.product-card');
+
+  function applyFilter(f) {
+    const filter = (f || 'alle').toLowerCase().trim();
+    filterBtns.forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
+    productCards.forEach(card => {
+      const cat   = (card.querySelector('.product-card-category')?.textContent || '').toLowerCase().trim();
+      const match = filter === 'alle' || cat === filter || cat.includes(filter) || filter.includes(cat);
+      card.style.display = match ? '' : 'none';
+    });
+  }
+
+  const urlFilter = new URLSearchParams(window.location.search).get('filter');
+  if (urlFilter && filterBtns.length) applyFilter(urlFilter);
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function () {
+      applyFilter(this.dataset.filter);
+      const next = this.dataset.filter === 'alle'
+        ? window.location.pathname
+        : `${window.location.pathname}?filter=${encodeURIComponent(this.dataset.filter)}`;
+      history.replaceState(null, '', next);
+    });
+  });
+
+  /* ══════════════════════════════════════════════
+     SUCHE
+     ══════════════════════════════════════════════ */
+  const searchInput = document.querySelector('.search-bar input[type="search"]');
+  const searchBtn   = document.querySelector('.search-btn');
+
+  function doSearch() {
+    const q = searchInput?.value?.trim();
+    if (q) window.location.href = `products.html?q=${encodeURIComponent(q)}`;
+  }
+
+  if (searchBtn) searchBtn.addEventListener('click', doSearch);
+  if (searchInput) searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  const urlQ = new URLSearchParams(window.location.search).get('q');
+  if (urlQ && productCards.length) {
+    productCards.forEach(card => {
+      card.style.display = card.textContent.toLowerCase().includes(urlQ.toLowerCase()) ? '' : 'none';
+    });
+    if (searchInput) searchInput.value = urlQ;
+  }
+
+  /* ══════════════════════════════════════════════
+     KONTAKTFORMULAR
+     ══════════════════════════════════════════════ */
   const form = document.getElementById('contactForm');
   const msg  = document.getElementById('formMessage');
 

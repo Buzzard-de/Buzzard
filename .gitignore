@@ -5,7 +5,14 @@ Thumbs.db
 # Node
 node_modules/
 npm-debug.log*
-yarn-error.log
+yarn-error.log*
+.next/
+out/
+tsconfig.tsbuildinfo
+
+# Screenshots (local only)
+screenshot-*.png
+website-*.png
 
 # VSCode
 .vscode/

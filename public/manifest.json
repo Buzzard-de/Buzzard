@@ -1,12 +1,17 @@
 {
   "name": "Buzzard Kfz-Teile",
   "short_name": "Buzzard",
-  "start_url": "/Buzzard/",
-  "scope": "/Buzzard/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#0a0a0a",
   "background_color": "#0a0a0a",
   "icons": [
-    { "src": "logo/logo.png", "sizes": "any", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/logo/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

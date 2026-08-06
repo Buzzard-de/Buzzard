@@ -1,0 +1,7 @@
+Contact: mailto:info@buzzard.com
+Expires: 2027-08-06T23:59:00.000Z
+Preferred-Languages: de, en
+Canonical: https://buzzard24.de/.well-known/security.txt
+
+# Buzzard Kfz-Teile – Sicherheitskontakt
+# Melden Sie Schwachstellen bitte per E-Mail an info@buzzard.com

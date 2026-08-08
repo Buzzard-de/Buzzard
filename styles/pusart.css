@@ -1075,10 +1075,7 @@ body:has(.home-fullscreen) #maincontent {
   background: linear-gradient(135deg, #141414 0%, #0a0a0a 60%, rgba(201, 160, 102, 0.12) 100%);
   border: 1px solid var(--border-gold);
   border-radius: 6px;
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 24px;
-  align-items: center;
+  display: block;
   flex-shrink: 0;
 }
 

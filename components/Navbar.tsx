@@ -21,6 +21,14 @@ export default function Navbar() {
   return (
     <nav className="main-nav" role="navigation" aria-label="Hauptnavigation">
       <div className="main-nav-inner">
+        <button type="button" className="vehicle-select-btn" onClick={openVehicleModal}>
+          <CategoryIcon name="car" size={22} />
+          <span>
+            <strong>{t("nav.vehicleSelect")}</strong>
+            <small>{vehicleLabel}</small>
+          </span>
+        </button>
+
         <button
           type="button"
           className="all-categories-btn"
@@ -41,14 +49,6 @@ export default function Navbar() {
             </li>
           ))}
         </ul>
-
-        <button type="button" className="vehicle-select-btn" onClick={openVehicleModal}>
-          <CategoryIcon name="car" size={22} />
-          <span>
-            <strong>{t("nav.vehicleSelect")}</strong>
-            <small>{vehicleLabel}</small>
-          </span>
-        </button>
       </div>
     </nav>
   );

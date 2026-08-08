@@ -138,4 +138,12 @@ export function isCategoryOrDescendant(categoryId: string, ancestorId: string): 
   return false;
 }
 
+/** Product category matches page category when either is an ancestor of the other. */
+export function isCategoryInScope(productCategoryId: string, pageCategoryId: string): boolean {
+  return (
+    isCategoryOrDescendant(productCategoryId, pageCategoryId) ||
+    isCategoryOrDescendant(pageCategoryId, productCategoryId)
+  );
+}
+
 export { categories as categoryTree };

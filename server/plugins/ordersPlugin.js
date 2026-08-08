@@ -2,6 +2,15 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { getSession, extractToken } = require("../lib/customerAuth");
+const { verifyPaymentIntent } = require("../lib/paymentVerification");
+const {
+  createRateLimiter,
+  createDuplicateGuard,
+  getClientIp,
+  isSafeId,
+  normalizeText,
+} = require("../lib/security");
+const { logSecurityEvent } = require("../lib/securityLog");
 
 const rootDir = path.join(__dirname, "..", "..");
 const dataDir = path.join(__dirname, "..", "data");
@@ -22,6 +31,8 @@ const COUPONS = {
 
 const VALID_PAYMENTS = new Set(["paypal", "stripe", "klarna", "sepa"]);
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const orderRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 10, keyPrefix: "orders:" });
+const duplicateGuard = createDuplicateGuard(60_000);
 
 let productIndex = null;
 
@@ -54,10 +65,6 @@ function writeOrders(orders) {
   fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2), "utf8");
 }
 
-function normalizeText(value, max = 200) {
-  return String(value || "").trim().slice(0, max);
-}
-
 function validateCoupon(code, subtotal) {
   const normalized = normalizeText(code, 32).toUpperCase();
   if (!normalized) return { valid: false, discount: 0 };
@@ -72,19 +79,22 @@ function validateCoupon(code, subtotal) {
 }
 
 function resolveLine(productId, variantIds, qty) {
+  if (!isSafeId(productId)) return null;
   const products = loadProducts();
   const product = products.get(productId);
   if (!product) return null;
 
-  const selected = (product.variants || []).filter((v) => variantIds.includes(v.id));
+  const safeVariantIds = (variantIds || []).filter((id) => isSafeId(id));
+  const selected = (product.variants || []).filter((v) => safeVariantIds.includes(v.id));
   const variantPrice = selected.find((v) => v.price && v.price.amount)?.price?.amount;
   const unitPrice = variantPrice ?? product.price.amount;
   const sku = selected.find((v) => v.sku)?.sku || product.sku;
   const stock = selected.find((v) => typeof v.stock === "number")?.stock ?? product.stock;
-  if (stock < qty || product.stock_status === "out_of_stock") return null;
+  const safeQty = Math.min(Math.max(Number(qty) || 0, 1), 99);
+  if (stock < safeQty || product.stock_status === "out_of_stock") return null;
 
   const variantLabel = selected.map((v) => `${v.label}: ${v.value}`).join(", ");
-  const lineTotal = Math.round(unitPrice * qty * 100) / 100;
+  const lineTotal = Math.round(unitPrice * safeQty * 100) / 100;
   const vatRate = product.vat_rate;
   const vatAmount = Math.round((lineTotal - lineTotal / (1 + vatRate / 100)) * 100) / 100;
 
@@ -92,9 +102,9 @@ function resolveLine(productId, variantIds, qty) {
     productId: product.id,
     name: product.name,
     sku,
-    variantIds,
+    variantIds: safeVariantIds,
     variantLabel,
-    qty,
+    qty: safeQty,
     unitPrice,
     lineTotal,
     vatRate,
@@ -146,6 +156,7 @@ function nextOrderNumber(existing) {
 function sanitizePublicOrder(order) {
   const clone = { ...order };
   delete clone.internalId;
+  delete clone.paymentTransactionId;
   return clone;
 }
 
@@ -162,7 +173,14 @@ function validatePayload(body) {
   if (!VALID_PAYMENTS.has(body.paymentProvider)) return "invalid_payment";
   if (!body.acceptTerms || !body.acceptPrivacy) return "invalid_legal";
   if (!EMAIL_REGEX.test(normalizeText(body.customer.email, 254).toLowerCase())) return "invalid_email";
+  if (body.clientPaymentStatus && body.clientPaymentStatus !== "pending") return "invalid_payment_state";
   return null;
+}
+
+function buildDuplicateKey(body, quote) {
+  const email = normalizeText(body.customer.email, 254).toLowerCase();
+  const lineKey = quote.lines.map((line) => `${line.productId}:${line.qty}`).join("|");
+  return `${email}:${quote.total}:${lineKey}`;
 }
 
 module.exports = {
@@ -193,6 +211,10 @@ module.exports = {
     });
 
     app.post("/api/orders", (req, res) => {
+      if (orderRateLimit(req, { key: getClientIp(req) })) {
+        return res.status(429).json({ success: false, errorKey: "security.rateLimited" });
+      }
+
       const body = req.body || {};
       const validationError = validatePayload(body);
       if (validationError) {
@@ -204,10 +226,32 @@ module.exports = {
         return res.status(400).json({ success: false, errorKey: "checkout.stockError" });
       }
 
+      const duplicateKey = buildDuplicateKey(body, quote);
+      if (duplicateGuard(duplicateKey)) {
+        return res.status(409).json({ success: false, errorKey: "checkout.duplicateOrder" });
+      }
+
       const orders = readOrders();
       const orderNumber = nextOrderNumber(orders);
       const now = new Date().toISOString();
       const customerSession = getSession(extractToken(req));
+
+      const payment = verifyPaymentIntent({
+        provider: body.paymentProvider,
+        orderNumber,
+        amount: quote.total,
+        currency: quote.currency,
+      });
+      if (!payment.ok) {
+        logSecurityEvent({
+          type: "payment_verification_failed",
+          success: false,
+          ip: getClientIp(req),
+          path: "/api/orders",
+          detail: { provider: body.paymentProvider, orderNumber },
+        });
+        return res.status(402).json({ success: false, errorKey: payment.errorKey });
+      }
 
       const order = {
         id: crypto.randomUUID(),
@@ -220,14 +264,14 @@ module.exports = {
           firstName: normalizeText(body.customer.firstName, 100),
           lastName: normalizeText(body.customer.lastName, 100),
           phone: normalizeText(body.customer.phone, 40),
-          guest: body.customer.guest !== false,
+          guest: body.customer.guest !== false && !customerSession,
         },
         shippingAddress: body.shippingAddress,
         billingAddress: body.billingSameAsShipping ? body.shippingAddress : body.billingAddress,
         shippingMethodId: body.shippingMethodId || "standard",
         paymentProvider: body.paymentProvider,
         paymentStatus: "paid",
-        paymentTransactionId: `${String(body.paymentProvider).toUpperCase()}-${orderNumber}`,
+        paymentTransactionId: payment.transactionId,
         lines: quote.lines,
         subtotal: quote.subtotal,
         shipping: quote.shipping,
@@ -242,6 +286,15 @@ module.exports = {
 
       orders.push(order);
       writeOrders(orders);
+
+      logSecurityEvent({
+        type: "order_created",
+        success: true,
+        ip: getClientIp(req),
+        userId: customerSession?.customerId || null,
+        path: "/api/orders",
+        detail: { orderNumber, total: quote.total, demoPayment: Boolean(payment.demo) },
+      });
 
       return res.status(201).json({ success: true, order: sanitizePublicOrder(order) });
     });

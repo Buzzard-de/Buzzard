@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { hashPassword, verifyPassword, needsRehash } = require("./password");
+const { createRateLimiter, getClientIp } = require("./security");
+const { logSecurityEvent } = require("./securityLog");
 
 const dataDir = path.join(__dirname, "..", "data");
 const sessionsFile = path.join(dataDir, "customer-sessions.json");
@@ -9,9 +12,8 @@ const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const RESET_TTL_MS = 60 * 60 * 1000;
 
 const sessions = new Map();
-const loginAttempts = new Map();
-const MAX_ATTEMPTS = 8;
-const WINDOW_MS = 15 * 60 * 1000;
+const loginRateLimit = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 8, keyPrefix: "customer-login:" });
+const resetRateLimit = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 5, keyPrefix: "customer-reset:" });
 
 function ensureDataDir() {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
@@ -31,10 +33,6 @@ function writeJson(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
 }
 
-function hashPassword(password) {
-  return crypto.createHash("sha256").update(String(password)).digest("hex");
-}
-
 function loadSessions() {
   for (const entry of readJson(sessionsFile, [])) {
     if (entry.session?.expiresAt > Date.now()) sessions.set(entry.token, entry.session);
@@ -52,18 +50,6 @@ function persistSessions() {
 
 function createToken() {
   return crypto.randomBytes(32).toString("hex");
-}
-
-function rateLimited(key) {
-  const now = Date.now();
-  const records = (loginAttempts.get(key) || []).filter((ts) => now - ts < WINDOW_MS);
-  if (records.length >= MAX_ATTEMPTS) {
-    loginAttempts.set(key, records);
-    return true;
-  }
-  records.push(now);
-  loginAttempts.set(key, records);
-  return false;
 }
 
 function createSession(customer) {
@@ -92,20 +78,61 @@ function publicUser(customer) {
   };
 }
 
-function login(email, password, verifyPassword) {
+function login(email, password, verifyPasswordFn, req) {
+  const ip = req ? getClientIp(req) : "unknown";
   const key = String(email).trim().toLowerCase();
-  if (rateLimited(key)) return { success: false, errorKey: "account.auth.rateLimited" };
 
-  const customer = verifyPassword(key, password);
-  if (!customer) return { success: false, errorKey: "account.auth.invalid" };
+  if (loginRateLimit(req || { headers: {}, socket: { remoteAddress: ip } }, { key: `${ip}:${key}` })) {
+    logSecurityEvent({
+      type: "customer_login_rate_limited",
+      success: false,
+      ip,
+      email: key,
+      path: "/api/account/login",
+    });
+    return { success: false, errorKey: "account.auth.rateLimited" };
+  }
+
+  const customer = verifyPasswordFn(key, password);
+  if (!customer) {
+    logSecurityEvent({
+      type: "customer_login_failed",
+      success: false,
+      ip,
+      email: key,
+      path: "/api/account/login",
+    });
+    return { success: false, errorKey: "account.auth.invalid" };
+  }
+
+  if (needsRehash(customer.password_hash)) {
+    const customerStore = require("./customerStore");
+    customerStore.updatePasswordHash(customer.id, password);
+  }
 
   const session = createSession(customer);
+  logSecurityEvent({
+    type: "customer_login",
+    success: true,
+    ip,
+    userId: customer.id,
+    email: customer.email,
+    path: "/api/account/login",
+  });
   return { success: true, ...session };
 }
 
-function logout(token) {
+function logout(token, req) {
   sessions.delete(token);
   persistSessions();
+  if (req) {
+    logSecurityEvent({
+      type: "customer_logout",
+      success: true,
+      ip: getClientIp(req),
+      path: "/api/account/logout",
+    });
+  }
 }
 
 function getSession(token) {
@@ -128,6 +155,12 @@ function extractToken(req) {
 function requireCustomer(req, res) {
   const session = getSession(extractToken(req));
   if (!session) {
+    logSecurityEvent({
+      type: "customer_auth_required",
+      success: false,
+      ip: getClientIp(req),
+      path: req.url,
+    });
     res.status(401).json({ success: false, errorKey: "account.auth.required" });
     return null;
   }
@@ -136,17 +169,20 @@ function requireCustomer(req, res) {
   return session;
 }
 
-function createResetToken(customerId) {
+function createResetToken(customerId, req) {
+  if (resetRateLimit(req, { key: customerId })) {
+    return { limited: true };
+  }
   const token = createToken();
-  const tokens = readJson(resetFile, []).filter((t) => t.expiresAt > Date.now());
+  const tokens = readJson(resetFile, []).filter((entry) => entry.expiresAt > Date.now());
   tokens.push({ token, customerId, expiresAt: Date.now() + RESET_TTL_MS, createdAt: new Date().toISOString() });
   writeJson(resetFile, tokens);
-  return token;
+  return { token };
 }
 
 function consumeResetToken(token) {
   const tokens = readJson(resetFile, []);
-  const idx = tokens.findIndex((t) => t.token === token && t.expiresAt > Date.now());
+  const idx = tokens.findIndex((entry) => entry.token === token && entry.expiresAt > Date.now());
   if (idx < 0) return null;
   const entry = tokens[idx];
   tokens.splice(idx, 1);

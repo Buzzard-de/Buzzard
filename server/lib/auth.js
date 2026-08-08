@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { hashPassword, verifyPassword, needsRehash } = require("./password");
+const { createRateLimiter, getClientIp } = require("./security");
+const { logSecurityEvent } = require("./securityLog");
 
 const dataDir = path.join(__dirname, "..", "data");
 const usersFile = path.join(dataDir, "admin-users.json");
@@ -9,6 +12,7 @@ const seedFile = path.join(__dirname, "..", "..", "data", "buzzard_admin_users.s
 
 const sessions = new Map();
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
+const loginRateLimit = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 8, keyPrefix: "admin-login:" });
 
 function ensureDataDir() {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
@@ -38,15 +42,6 @@ function seedUsers() {
   writeJson(usersFile, users);
 }
 
-function hashPassword(password) {
-  return crypto.createHash("sha256").update(String(password)).digest("hex");
-}
-
-function loadUsers() {
-  seedUsers();
-  return readJson(usersFile, []);
-}
-
 function persistSessions() {
   const entries = [...sessions.entries()].map(([token, session]) => ({ token, session }));
   writeJson(sessionsFile, entries);
@@ -68,12 +63,49 @@ function createToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-function login(email, password) {
+function upgradePasswordHash(user, password) {
+  if (!needsRehash(user.password_hash)) return;
   const users = loadUsers();
-  const user = users.find((u) => u.email.toLowerCase() === String(email).trim().toLowerCase());
-  if (!user || user.password_hash !== hashPassword(password)) {
+  const idx = users.findIndex((entry) => entry.id === user.id);
+  if (idx < 0) return;
+  users[idx].password_hash = hashPassword(password);
+  writeJson(usersFile, users);
+}
+
+function loadUsers() {
+  seedUsers();
+  return readJson(usersFile, []);
+}
+
+function login(email, password, req) {
+  const ip = req ? getClientIp(req) : "unknown";
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+
+  if (loginRateLimit(req || { headers: {}, socket: { remoteAddress: ip } }, { key: `${ip}:${normalizedEmail}` })) {
+    logSecurityEvent({
+      type: "admin_login_rate_limited",
+      success: false,
+      ip,
+      email: normalizedEmail,
+      path: "/api/admin/login",
+    });
+    return { success: false, errorKey: "admin.auth.rateLimited" };
+  }
+
+  const users = loadUsers();
+  const user = users.find((entry) => entry.email.toLowerCase() === normalizedEmail);
+  if (!user || !verifyPassword(password, user.password_hash)) {
+    logSecurityEvent({
+      type: "admin_login_failed",
+      success: false,
+      ip,
+      email: normalizedEmail,
+      path: "/api/admin/login",
+    });
     return { success: false, errorKey: "admin.auth.invalid" };
   }
+
+  upgradePasswordHash(user, password);
 
   const token = createToken();
   const session = {
@@ -86,6 +118,16 @@ function login(email, password) {
   sessions.set(token, session);
   persistSessions();
 
+  logSecurityEvent({
+    type: "admin_login",
+    success: true,
+    ip,
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    path: "/api/admin/login",
+  });
+
   return {
     success: true,
     token,
@@ -93,9 +135,17 @@ function login(email, password) {
   };
 }
 
-function logout(token) {
+function logout(token, req) {
   sessions.delete(token);
   persistSessions();
+  if (req) {
+    logSecurityEvent({
+      type: "admin_logout",
+      success: true,
+      ip: getClientIp(req),
+      path: "/api/admin/logout",
+    });
+  }
 }
 
 function getSession(token) {
@@ -120,6 +170,12 @@ function requireAuth(req, res) {
   const token = extractToken(req);
   const session = getSession(token);
   if (!session) {
+    logSecurityEvent({
+      type: "admin_auth_required",
+      success: false,
+      ip: getClientIp(req),
+      path: req.url,
+    });
     res.status(401).json({ success: false, errorKey: "admin.auth.required" });
     return null;
   }

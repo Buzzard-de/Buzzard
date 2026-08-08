@@ -1,11 +1,11 @@
-# Buzzard Cursor Package 06 — Customer Account
+# Buzzard Cursor Package 07 — Security
 
 Files:
-- `CURSOR_PACKAGE_06_CUSTOMER_ACCOUNT_INSTRUCTIONS.md`
-- `buzzard_customer_account_spec.json`
+- `CURSOR_PACKAGE_07_SECURITY_INSTRUCTIONS.md`
+- `buzzard_security_spec.json`
 
 Dependencies:
-Package 01 + Package 02 + Package 03 + Package 04 + Package 05.
+Packages 01–06.
 
 Goal:
-Build the customer-facing account system including registration, login, dashboard, orders, addresses and wishlist with secure server-side authorization and multilingual/RTL support.
+Harden authentication, authorization, API protection, payment verification, logging, audit trails, secrets handling, and production security headers.

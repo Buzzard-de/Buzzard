@@ -2,15 +2,17 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL, URLSearchParams } = require('url');
+const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
+const { logSecurityEvent } = require('./lib/securityLog');
 
 const port = process.env.PORT || 3000;
 const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
+const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
 
 function setCommonHeaders(res) {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  setSecurityHeaders(res);
 }
 
 function setApiCorsHeaders(req, res) {
@@ -215,9 +217,20 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (apiRateLimit(req)) {
+      logSecurityEvent({
+        type: 'api_rate_limited',
+        success: false,
+        ip: req.headers['x-forwarded-for'] || req.socket?.remoteAddress,
+        path: pathname,
+      });
+      sendJson(res, 429, publicErrorBody('security.rateLimited'));
+      return;
+    }
+
     const route = matchRoute(req.method, pathname);
     if (!route) {
-      sendJson(res, 404, { message: 'API-Endpunkt nicht gefunden.' });
+      sendJson(res, 404, publicErrorBody('security.notFound'));
       return;
     }
 
@@ -229,7 +242,13 @@ const server = http.createServer(async (req, res) => {
       route.handler(req, res);
     } catch (error) {
       console.error('API error:', error);
-      sendJson(res, 500, { message: 'Serverfehler im API-Endpunkt.' });
+      logSecurityEvent({
+        type: 'api_error',
+        success: false,
+        path: pathname,
+        detail: { message: error.message },
+      });
+      sendJson(res, 500, publicErrorBody('security.internalError'));
     }
     return;
   }

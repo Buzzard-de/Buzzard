@@ -12,6 +12,7 @@ const PERMISSIONS = {
     "analytics.export",
     "seo.read",
     "seo.write",
+    "automation.read",
   ],
   order_manager: [
     "orders.read",
@@ -22,6 +23,8 @@ const PERMISSIONS = {
     "audit.read",
     "analytics.read",
     "analytics.export",
+    "automation.read",
+    "automation.run",
   ],
   read_only: [
     "products.read",
@@ -31,6 +34,7 @@ const PERMISSIONS = {
     "logistics.read",
     "audit.read",
     "analytics.read",
+    "automation.read",
   ],
 };
 

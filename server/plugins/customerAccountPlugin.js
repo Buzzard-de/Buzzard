@@ -79,6 +79,22 @@ module.exports = {
         newValue: result.customer.id,
       });
 
+      try {
+        const automationEngine = require("../lib/automationEngine");
+        automationEngine.emit(
+          "new_customer",
+          {
+            email: result.customer.email,
+            customerId: result.customer.id,
+            language: req.body.language || "de",
+            marketingConsent: Boolean(req.body.marketing),
+          },
+          { idempotencyKey: result.customer.id }
+        );
+      } catch {
+        /* non-blocking */
+      }
+
       return res.status(201).json({
         success: true,
         token: session.token,

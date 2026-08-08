@@ -354,4 +354,18 @@ export const catalog: TranslationTree = {
     PL: "Polen",
     TR: "Türkei",
   },
+  ai: {
+    chat: {
+      open: "KI-Assistent",
+      close: "Chat schließen",
+      title: "Buzzard Assistent",
+      subtitle: "KI-Unterstützung · Kein Mensch",
+      placeholder: "Frage zu Produkten, Bestellung oder Versand…",
+      send: "Senden",
+      escalate: "Menschlichen Support kontaktieren",
+      thinking: "Antwort wird erstellt…",
+      error: "Der Assistent ist gerade nicht erreichbar.",
+      disclaimer: "Ich bin ein KI-Assistent und gebe nur verifizierte Shop-Daten weiter.",
+    },
+  },
 };

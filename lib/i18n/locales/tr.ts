@@ -342,4 +342,18 @@ export const catalog: TranslationTree = {
     PL: "Polonya",
     TR: "Türkiye",
   },
+  ai: {
+    chat: {
+      open: "Yapay zeka asistanı",
+      close: "Sohbeti kapat",
+      title: "Buzzard asistanı",
+      subtitle: "Yapay zeka desteği · İnsan değil",
+      placeholder: "Ürün, sipariş veya kargo hakkında sorun…",
+      send: "Gönder",
+      escalate: "İnsan desteği",
+      thinking: "Yanıt oluşturuluyor…",
+      error: "Asistan şu anda kullanılamıyor.",
+      disclaimer: "Ben bir yapay zeka asistanıyım ve yalnızca doğrulanmış mağaza verilerini paylaşırım.",
+    },
+  },
 };

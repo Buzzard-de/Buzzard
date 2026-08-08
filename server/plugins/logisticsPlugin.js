@@ -119,6 +119,25 @@ module.exports = {
         oldValue: null,
         newValue: JSON.stringify(patch),
       });
+      if (patch.status === "delivered") {
+        try {
+          const automationEngine = require("../lib/automationEngine");
+          const order = readOrders().find((o) => o.orderNumber === shipment.orderNumber);
+          automationEngine.emit(
+            "order_delivered",
+            {
+              orderNumber: shipment.orderNumber,
+              email: order?.customer?.email,
+              shipmentId: shipment.id,
+              language: "de",
+              marketingConsent: true,
+            },
+            { idempotencyKey: `delivered:${shipment.id}` }
+          );
+        } catch {
+          /* non-blocking */
+        }
+      }
       return res.json({ success: true, shipment });
     });
 
@@ -157,6 +176,24 @@ module.exports = {
         oldValue: null,
         newValue: status,
       });
+      if (status === "refunded") {
+        try {
+          const automationEngine = require("../lib/automationEngine");
+          const order = readOrders().find((o) => o.orderNumber === entry.orderNumber);
+          automationEngine.emit(
+            "refund",
+            {
+              orderNumber: entry.orderNumber,
+              email: order?.customer?.email,
+              returnId: entry.id,
+              language: "de",
+            },
+            { idempotencyKey: `refund:${entry.id}` }
+          );
+        } catch {
+          /* non-blocking */
+        }
+      }
       return res.json({ success: true, returnRequest: entry });
     });
 
@@ -192,6 +229,21 @@ module.exports = {
         items,
         reason: String(reason).trim().slice(0, 500),
       });
+      try {
+        const automationEngine = require("../lib/automationEngine");
+        automationEngine.emit(
+          "return_request",
+          {
+            orderNumber: order.orderNumber,
+            email: order.customer?.email,
+            returnId: entry.id,
+            language: "de",
+          },
+          { idempotencyKey: entry.id }
+        );
+      } catch {
+        /* non-blocking */
+      }
       return res.status(201).json({ success: true, returnRequest: entry });
     });
   },

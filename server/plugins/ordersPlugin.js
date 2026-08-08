@@ -344,6 +344,22 @@ module.exports = {
         detail: { orderNumber, total: quote.total, demoPayment: Boolean(payment.demo) },
       });
 
+      try {
+        const automationEngine = require("../lib/automationEngine");
+        const automationPayload = {
+          orderNumber,
+          email: order.customer.email,
+          customerId: order.customerId,
+          language: body.language || "de",
+          marketingConsent: body.marketingConsent !== false,
+          total: quote.total,
+        };
+        automationEngine.emit("new_order", automationPayload, { idempotencyKey: orderNumber });
+        automationEngine.emit("payment_confirmed", automationPayload, { idempotencyKey: `pay:${orderNumber}` });
+      } catch {
+        /* automation is non-blocking */
+      }
+
       return res.status(201).json({ success: true, order: attachShipments(order) });
     });
 

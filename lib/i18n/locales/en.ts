@@ -342,4 +342,18 @@ export const catalog: TranslationTree = {
     PL: "Poland",
     TR: "Turkey",
   },
+  ai: {
+    chat: {
+      open: "AI assistant",
+      close: "Close chat",
+      title: "Buzzard assistant",
+      subtitle: "AI support · Not a human",
+      placeholder: "Ask about products, orders, or shipping…",
+      send: "Send",
+      escalate: "Contact human support",
+      thinking: "Generating reply…",
+      error: "The assistant is currently unavailable.",
+      disclaimer: "I am an AI assistant and only share verified shop data.",
+    },
+  },
 };

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "cust-demo-001",
+    "email": "kunde@buzzard.de",
+    "password": "BuzzardKunde2026!",
+    "firstName": "Anna",
+    "lastName": "Müller",
+    "country": "DE",
+    "phone": "+49 170 1234567",
+    "emailVerified": true
+  }
+]

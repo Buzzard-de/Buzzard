@@ -1,5 +1,6 @@
 "use client";
 
+import { AccountProvider } from "@/lib/account/context";
 import { CartProvider } from "@/lib/cart";
 import { HomeUIProvider } from "@/lib/home-ui";
 import { LocaleProvider } from "@/lib/i18n/context";
@@ -11,17 +12,19 @@ import ShopModals from "./ShopModals";
 export default function ShopProviders({ children }: { children: React.ReactNode }) {
   return (
     <LocaleProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <ShopProvider>
-            <HomeUIProvider>
-              {children}
-              <MegaMenuOverlay />
-              <ShopModals />
-            </HomeUIProvider>
-          </ShopProvider>
-        </WishlistProvider>
-      </CartProvider>
+      <AccountProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <ShopProvider>
+              <HomeUIProvider>
+                {children}
+                <MegaMenuOverlay />
+                <ShopModals />
+              </HomeUIProvider>
+            </ShopProvider>
+          </WishlistProvider>
+        </CartProvider>
+      </AccountProvider>
     </LocaleProvider>
   );
 }

@@ -1,0 +1,288 @@
+.account-app {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - var(--header-h) - var(--nav-h));
+  gap: 0;
+}
+
+.account-sidebar {
+  border-right: 1px solid var(--border);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.account-welcome p {
+  color: #888;
+  font-size: 0.78rem;
+  margin-bottom: 4px;
+}
+
+.account-welcome strong {
+  display: block;
+  color: var(--gold);
+  font-size: 1rem;
+}
+
+.account-welcome small {
+  color: #aaa;
+  font-size: 0.75rem;
+}
+
+.account-nav {
+  display: grid;
+  gap: 4px;
+}
+
+.account-nav a {
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #ccc;
+  font-size: 0.88rem;
+}
+
+.account-nav a:hover,
+.account-nav a.active {
+  background: rgba(201, 160, 102, 0.12);
+  color: var(--gold);
+}
+
+.account-main {
+  padding: 24px;
+  overflow: auto;
+}
+
+.account-page h1 {
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.account-lead {
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.account-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.account-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.account-stat strong {
+  display: block;
+  font-size: 1.5rem;
+  color: var(--gold);
+}
+
+.account-stat span {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+.account-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.account-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.account-panel h2 {
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.account-order-list {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.account-order-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.account-order-list strong {
+  display: block;
+}
+
+.account-order-list span {
+  color: #888;
+  font-size: 0.82rem;
+}
+
+.account-table-wrap {
+  overflow-x: auto;
+}
+
+.account-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.account-table th,
+.account-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+}
+
+.account-table th {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.account-auth {
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.account-auth-card {
+  width: min(440px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  display: grid;
+  gap: 14px;
+}
+
+.account-auth-card h1 {
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.account-auth-card label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.account-auth-card input,
+.account-auth-card select {
+  width: 100%;
+}
+
+.account-auth-links {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.account-auth-links a {
+  color: var(--gold);
+}
+
+.account-login-hint {
+  font-size: 0.78rem;
+  color: #666;
+  padding: 10px;
+  background: rgba(201, 160, 102, 0.08);
+  border-radius: 6px;
+}
+
+.account-form label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.account-address-list {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.account-inline-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.account-tracking {
+  margin-top: 12px;
+  color: var(--gold);
+  font-size: 0.88rem;
+}
+
+.account-loading {
+  padding: 48px;
+  text-align: center;
+  color: #888;
+}
+
+[dir="rtl"] .account-sidebar {
+  border-right: none;
+  border-left: 1px solid var(--border);
+}
+
+[dir="rtl"] .account-table th,
+[dir="rtl"] .account-table td {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .account-app {
+    grid-template-columns: 1fr;
+  }
+
+  .account-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .account-nav {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .account-main {
+    padding: 16px;
+  }
+
+  .account-table thead {
+    display: none;
+  }
+
+  .account-table tr {
+    display: block;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px;
+  }
+
+  .account-table td {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    padding: 6px 8px;
+  }
+}

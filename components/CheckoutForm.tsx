@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { fetchAccountAddresses } from "@/lib/account/client";
+import { useAccount } from "@/lib/account/context";
 import {
   CHECKOUT_COUNTRIES,
   SHIPPING_METHODS,
@@ -39,6 +41,7 @@ function stepIndex(step: CheckoutStep): number {
 export default function CheckoutForm() {
   const router = useRouter();
   const { t } = useLocale();
+  const { user: accountUser, ready: accountReady } = useAccount();
   const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
   const [step, setStep] = useState<CheckoutStep>("customer");
   const [loading, setLoading] = useState(false);
@@ -52,6 +55,40 @@ export default function CheckoutForm() {
   const [billingAddress, setBillingAddress] = useState(emptyAddress());
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+
+  useEffect(() => {
+    if (!accountReady || !accountUser) return;
+
+    setCustomer((prev) => ({
+      ...prev,
+      email: accountUser.email,
+      firstName: accountUser.firstName,
+      lastName: accountUser.lastName,
+      phone: accountUser.phone || "",
+      guest: false,
+    }));
+
+    fetchAccountAddresses()
+      .then((addresses) => {
+        const preferred =
+          addresses.find((a) => a.isDefaultShipping) ||
+          addresses.find((a) => a.isDefaultBilling) ||
+          addresses[0];
+        if (!preferred) return;
+
+        const address = {
+          firstName: preferred.firstName,
+          lastName: preferred.lastName,
+          street: preferred.street,
+          zip: preferred.zip,
+          city: preferred.city,
+          country: preferred.country,
+        };
+        setShippingAddress(address);
+        setBillingAddress(address);
+      })
+      .catch(() => {});
+  }, [accountReady, accountUser]);
 
   const quote = useMemo(() => {
     if (items.length === 0) return null;
@@ -220,7 +257,9 @@ export default function CheckoutForm() {
                 onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
                 autoComplete="tel"
               />
-              <p className="checkout-hint">{t("checkout.guestHint")}</p>
+              <p className="checkout-hint">
+                {accountReady && accountUser ? t("account.loggedInCheckout") : t("checkout.guestHint")}
+              </p>
             </section>
           )}
 

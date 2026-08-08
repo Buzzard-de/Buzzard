@@ -29,6 +29,8 @@ function saveWishlistIds(ids: string[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
 }
 
+export { saveWishlistIds };
+
 interface WishlistContextValue {
   ids: string[];
   ready: boolean;

@@ -27,8 +27,8 @@ function setApiCorsHeaders(req, res) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Vary", "Origin");
   }
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept,Authorization");
 }
 
 function addRoute(method, routePath, handler) {
@@ -53,6 +53,9 @@ const app = {
   },
   patch(routePath, handler) {
     addRoute('PATCH', routePath, handler);
+  },
+  delete(routePath, handler) {
+    addRoute('DELETE', routePath, handler);
   }
 };
 
@@ -220,7 +223,7 @@ const server = http.createServer(async (req, res) => {
 
     req.params = route.params;
     try {
-      if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+      if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH' || req.method === 'DELETE') {
         req.body = await parseBody(req);
       }
       route.handler(req, res);

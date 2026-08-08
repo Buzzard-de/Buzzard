@@ -24,6 +24,7 @@ import { saveConfirmedOrder, submitOrder } from "@/lib/orders";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
 import { useLocale } from "@/lib/i18n/context";
+import { trackMarketingEvent } from "@/lib/marketing/events";
 
 const STEPS: CheckoutStep[] = [
   "customer",
@@ -107,6 +108,15 @@ export default function CheckoutForm() {
 
   const paymentProviders = listPaymentProviders();
 
+  useEffect(() => {
+    if (step === "review") {
+      trackMarketingEvent("begin_checkout", { value: total, currency: "EUR" });
+    }
+    if (step === "payment") {
+      trackMarketingEvent("add_payment_info", { payment_provider: paymentProvider });
+    }
+  }, [step, total, paymentProvider]);
+
   if (items.length === 0) {
     return (
       <div className="shop-empty">
@@ -186,6 +196,11 @@ export default function CheckoutForm() {
     }
 
     saveConfirmedOrder(response.order);
+    trackMarketingEvent("purchase", {
+      transaction_id: response.order.orderNumber,
+      value: response.order.total,
+      currency: response.order.currency,
+    });
     clear();
     router.push(`/checkout/erfolg/?order=${encodeURIComponent(response.order.orderNumber)}`);
   }

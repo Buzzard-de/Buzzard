@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { isSafeProductId } from "@/lib/security";
+import { trackMarketingEvent } from "@/lib/marketing/events";
 
 const STORAGE_KEY = "buzzard_wishlist";
 
@@ -52,11 +53,13 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   const toggle = useCallback((productId: string) => {
     const current = getWishlistIds();
-    const next = current.includes(productId)
+    const removing = current.includes(productId);
+    const next = removing
       ? current.filter((id) => id !== productId)
       : [...current, productId];
     saveWishlistIds(next);
     setIds(next);
+    if (!removing) trackMarketingEvent("add_to_wishlist", { product_id: productId });
   }, []);
 
   const has = useCallback((productId: string) => ids.includes(productId), [ids]);

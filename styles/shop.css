@@ -1053,6 +1053,43 @@ html[dir="rtl"] .checkout-nav {
   font-size: 0.88rem;
 }
 
+.consent-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1200;
+  padding: 16px;
+  background: rgba(10, 10, 10, 0.96);
+  border-top: 1px solid var(--border);
+}
+
+.consent-banner-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
+}
+
+.consent-banner p {
+  color: #ccc;
+  font-size: 0.88rem;
+}
+
+.consent-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: #aaa;
+  font-size: 0.82rem;
+}
+
+.consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 @media (max-width: 900px) {
   .cart-layout,
   .checkout-layout,

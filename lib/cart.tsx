@@ -23,6 +23,7 @@ import {
   type CartLineItem,
 } from "@/lib/cart/types";
 import { resolveLinePricing } from "@/lib/checkout/totals";
+import { trackMarketingEvent } from "@/lib/marketing/events";
 
 const STORAGE_KEY = "buzzard_cart";
 const COUPON_KEY = "buzzard_coupon";
@@ -171,6 +172,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       persist(next);
       window.dispatchEvent(new Event("buzzard-cart-updated"));
+      trackMarketingEvent("add_to_cart", {
+        product_id: input.productId,
+        quantity: nextItem.qty,
+        value: nextItem.unitPrice * nextItem.qty,
+      });
       setTimeout(() => setAdding(false), 300);
       return true;
     },
@@ -179,8 +185,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const remove = useCallback(
     (lineId: string) => {
-      persist(readCart().filter((i) => i.lineId !== lineId));
+      const current = readCart();
+      const target = current.find((i) => i.lineId === lineId);
+      persist(current.filter((i) => i.lineId !== lineId));
       window.dispatchEvent(new Event("buzzard-cart-updated"));
+      if (target) {
+        trackMarketingEvent("remove_from_cart", {
+          product_id: target.productId,
+          quantity: target.qty,
+        });
+      }
     },
     [persist]
   );

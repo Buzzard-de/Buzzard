@@ -5,6 +5,7 @@ import {
   getProductBySlug,
   getProductStaticParams,
 } from "@/lib/products";
+import { buildProductMetadata } from "@/lib/seo/metadata";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -18,13 +19,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) return { title: "Produkt – Buzzard" };
-  return {
-    title: product.seo.title,
-    description: product.seo.description,
-    alternates: {
-      canonical: `https://buzzard24.de${product.url}`,
-    },
-  };
+  return buildProductMetadata(product);
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {

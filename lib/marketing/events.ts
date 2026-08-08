@@ -14,7 +14,10 @@ export type MarketingEventName =
   | "login"
   | "add_to_wishlist"
   | "select_shipping"
-  | "language_change";
+  | "language_change"
+  | "ai_chat_open"
+  | "ai_chat_message"
+  | "ai_recommendation_click";
 
 export interface MarketingEventPayload {
   [key: string]: string | number | boolean | null | undefined | Record<string, unknown>;

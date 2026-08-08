@@ -13,6 +13,7 @@ import GlobalStructuredData from "./seo/GlobalStructuredData";
 import ConsentBanner from "./marketing/ConsentBanner";
 import MarketingScripts from "./marketing/MarketingScripts";
 import PageViewTracker from "./marketing/PageViewTracker";
+import AiChatWidget from "./ai/AiChatWidget";
 
 export default function ShopProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -27,6 +28,7 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
               <LocaleHead />
               <PageViewTracker />
               <ConsentBanner />
+              <AiChatWidget />
               <MarketingScripts />
               <MegaMenuOverlay />
                 <ShopModals />

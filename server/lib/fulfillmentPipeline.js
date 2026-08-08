@@ -103,6 +103,16 @@ function createFulfillmentsForOrder(order, productsById) {
         error: submission.error,
         retryCount: (fulfillment.retryCount || 0) + 1,
       });
+      try {
+        const automationEngine = require("./automationEngine");
+        automationEngine.emit(
+          "supplier_import_failure",
+          { supplierId, orderNumber: order.orderNumber, error: submission.error },
+          { idempotencyKey: `${order.orderNumber}:${supplierId}:fail` }
+        );
+      } catch {
+        /* non-blocking */
+      }
       results.push({ fulfillment, supplierOrder, shipment: null, error: submission.error });
       continue;
     }
@@ -139,6 +149,22 @@ function createFulfillmentsForOrder(order, productsById) {
         trackingUrl: getTrackingUrl(submission.trackingCarrier, submission.trackingNumber),
         status: "handed_to_carrier",
       });
+      try {
+        const automationEngine = require("./automationEngine");
+        automationEngine.emit(
+          "order_shipped",
+          {
+            orderNumber: order.orderNumber,
+            email: order.customer?.email,
+            shipmentId: shipment.id,
+            trackingNumber: submission.trackingNumber,
+            language: "de",
+          },
+          { idempotencyKey: `ship:${shipment.id}` }
+        );
+      } catch {
+        /* non-blocking */
+      }
     }
 
     results.push({ fulfillment, supplierOrder, shipment });

@@ -198,7 +198,12 @@ function loadPlugins() {
 }
 
 app.get('/api/status', (req, res) => {
-  sendJson(res, 200, { status: 'ok', app: 'Buzzard API' });
+  sendJson(res, 200, {
+    status: 'ok',
+    app: 'Buzzard API',
+    health: '/api/health',
+    docs: 'BUZZARD_MASTER_IMPLEMENTATION.md',
+  });
 });
 
 loadPlugins();

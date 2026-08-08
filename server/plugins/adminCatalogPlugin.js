@@ -8,6 +8,8 @@ const supplierStore = require("../lib/supplierStore");
 const importPipeline = require("../lib/importPipeline");
 const syncLog = require("../lib/syncLog");
 const pricing = require("../lib/pricing");
+const { validateImportPayload } = require("../lib/security");
+const { logSecurityEvent } = require("../lib/securityLog");
 
 const ordersFile = path.join(__dirname, "..", "data", "orders.json");
 
@@ -188,15 +190,26 @@ module.exports = {
       const { supplierId, format, payload, csvText, mode } = req.body || {};
       if (!supplierId) return res.status(400).json({ success: false, errorKey: "admin.import.supplierRequired" });
 
+      const validated = validateImportPayload(req.body || {});
+      if (!validated.ok) return res.status(400).json({ success: false, errorKey: validated.errorKey });
+
       let job;
       try {
-        if (format === "csv") job = importPipeline.importFromCsv(csvText || payload, supplierId, { mode });
-        else if (format === "manual") job = importPipeline.importManual(payload, supplierId, { mode: "manual" });
-        else job = importPipeline.importFromJson(payload, supplierId, { mode: mode || "full" });
+        if (validated.format === "csv") job = importPipeline.importFromCsv(csvText || validated.payload, supplierId, { mode });
+        else if (validated.format === "manual") job = importPipeline.importManual(validated.payload, supplierId, { mode: "manual" });
+        else job = importPipeline.importFromJson(validated.payload, supplierId, { mode: mode || "full" });
         audit(req, { action: "import", entityType: "supplier", entityId: supplierId, field: format, oldValue: null, newValue: job.id });
         return res.json({ success: true, job });
       } catch (error) {
-        return res.status(500).json({ success: false, errorKey: "admin.import.failed", message: error.message });
+        logSecurityEvent({
+          type: "admin_import_failed",
+          success: false,
+          ip: req.headers["x-forwarded-for"] || req.socket?.remoteAddress,
+          userId: req.adminUser?.userId,
+          path: "/api/admin/import",
+          detail: { supplierId, format },
+        });
+        return res.status(500).json({ success: false, errorKey: "admin.import.failed" });
       }
     });
 

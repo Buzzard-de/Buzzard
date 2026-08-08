@@ -6,13 +6,13 @@ module.exports = {
   register(app) {
     app.post("/api/admin/login", (req, res) => {
       const { email, password } = req.body || {};
-      const result = login(email, password);
+      const result = login(email, password, req);
       if (!result.success) return res.status(401).json(result);
       return res.json(result);
     });
 
     app.post("/api/admin/logout", (req, res) => {
-      logout(extractToken(req));
+      logout(extractToken(req), req);
       return res.json({ success: true });
     });
 

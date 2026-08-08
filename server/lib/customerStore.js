@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { hashPassword, publicUser } = require("./customerAuth");
+const { hashPassword, verifyPassword: verifyPasswordHash } = require("./password");
+const { publicUser } = require("./customerAuth");
 
 const dataDir = path.join(__dirname, "..", "data");
 const customersFile = path.join(dataDir, "customers.json");
@@ -65,7 +66,7 @@ function findById(id) {
 
 function verifyPassword(email, password) {
   const customer = findByEmail(email);
-  if (!customer || customer.password_hash !== hashPassword(password)) return null;
+  if (!customer || !verifyPasswordHash(password, customer.password_hash)) return null;
   return customer;
 }
 
@@ -117,6 +118,20 @@ function updatePassword(customerId, newPassword) {
   customers[idx].password_hash = hashPassword(newPassword);
   writeCustomers(customers);
   return true;
+}
+
+function updatePasswordHash(customerId, newPassword) {
+  return updatePassword(customerId, newPassword);
+}
+
+function exportCustomerData(customerId) {
+  const customer = findById(customerId);
+  if (!customer) return null;
+  const { password_hash, ...safe } = customer;
+  return {
+    exportedAt: new Date().toISOString(),
+    customer: safe,
+  };
 }
 
 function listAddresses(customerId) {
@@ -219,6 +234,8 @@ module.exports = {
   register,
   updateProfile,
   updatePassword,
+  updatePasswordHash,
+  exportCustomerData,
   listAddresses,
   upsertAddress,
   deleteAddress,

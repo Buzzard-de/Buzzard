@@ -79,13 +79,13 @@ module.exports = {
     });
 
     app.post("/api/account/login", (req, res) => {
-      const result = login(req.body?.email, req.body?.password, customerStore.verifyPassword);
+      const result = login(req.body?.email, req.body?.password, customerStore.verifyPassword, req);
       if (!result.success) return res.status(401).json(result);
       return res.json(result);
     });
 
     app.post("/api/account/logout", (req, res) => {
-      logout(extractToken(req));
+      logout(extractToken(req), req);
       return res.json({ success: true });
     });
 
@@ -201,11 +201,32 @@ module.exports = {
       return res.json({ success: true, preferences });
     });
 
+    app.get("/api/account/export", (req, res) => {
+      const session = requireCustomer(req, res);
+      if (!session) return;
+      const exportData = customerStore.exportCustomerData(session.customerId);
+      if (!exportData) return res.status(404).json({ success: false, errorKey: "account.notFound" });
+      logAudit({
+        userId: session.customerId,
+        userEmail: session.email,
+        action: "export",
+        entityType: "customer",
+        entityId: session.customerId,
+        field: null,
+        oldValue: null,
+        newValue: "data_export",
+      });
+      return res.json({ success: true, export: exportData });
+    });
+
     app.post("/api/account/password-reset/request", (req, res) => {
       const email = String(req.body?.email || "").trim().toLowerCase();
       const customer = customerStore.findByEmail(email);
       if (customer) {
-        const token = createResetToken(customer.id);
+        const reset = createResetToken(customer.id, req);
+        if (reset.limited) {
+          return res.status(429).json({ success: false, errorKey: "security.rateLimited" });
+        }
         logAudit({
           userId: customer.id,
           userEmail: customer.email,
@@ -219,7 +240,7 @@ module.exports = {
         return res.json({
           success: true,
           message: "If the email exists, a reset link was generated.",
-          resetToken: token,
+          resetToken: reset.token,
         });
       }
       return res.json({ success: true, message: "If the email exists, a reset link was generated." });

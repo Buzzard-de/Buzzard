@@ -57,6 +57,25 @@ export function isSafeProductId(id: string): boolean {
   return SAFE_ID_REGEX.test(id) && id.length <= 64;
 }
 
+export function isSafeId(id: string, maxLength = 64): boolean {
+  return SAFE_ID_REGEX.test(id) && id.length > 0 && id.length <= maxLength;
+}
+
+export function sanitizeCouponCode(code: string | null | undefined): string {
+  if (!code) return "";
+  return clampText(code.replace(/[^A-Z0-9_-]/gi, "").toUpperCase(), 32);
+}
+
+export function redactSecrets<T extends Record<string, unknown>>(input: T): T {
+  const clone = { ...input };
+  for (const key of Object.keys(clone)) {
+    if (/password|secret|token|authorization|credential|api/i.test(key)) {
+      clone[key as keyof T] = "[redacted]" as T[keyof T];
+    }
+  }
+  return clone;
+}
+
 export function isSafeName(name: string): boolean {
   const trimmed = clampText(name, LIMITS.name);
   return trimmed.length >= 2 && SAFE_TEXT_REGEX.test(trimmed);
@@ -108,7 +127,7 @@ export const SECURITY_HEADERS = {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://formsubmit.co",
+    "connect-src 'self' https://formsubmit.co http://localhost:3001 http://localhost:3004 http://127.0.0.1:3001 http://127.0.0.1:3004",
     "upgrade-insecure-requests",
   ].join("; "),
   permissionsPolicy: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",

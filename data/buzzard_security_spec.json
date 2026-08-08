@@ -1,0 +1,33 @@
+{
+  "package": "07",
+  "name": "Buzzard Security and Authorization",
+  "roles": [
+    "customer",
+    "administrator",
+    "catalog_manager",
+    "order_manager",
+    "read_only"
+  ],
+  "security": {
+    "server_side_authorization": true,
+    "password_hashing": true,
+    "secure_sessions": true,
+    "rate_limiting": true,
+    "input_validation": true,
+    "audit_logging": true,
+    "secret_management": true,
+    "payment_server_verification": true,
+    "plain_text_passwords": false,
+    "raw_card_storage": false
+  },
+  "protection_targets": [
+    "customer_data",
+    "orders",
+    "products",
+    "supplier_data",
+    "supplier_credentials",
+    "admin_functions",
+    "payment_flow",
+    "api"
+  ]
+}

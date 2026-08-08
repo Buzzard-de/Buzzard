@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const { requireAuth } = require('../lib/auth');
+const { requirePermission } = require('../lib/rbac');
 
 const dataDir = path.join(__dirname, '..', 'data');
 const submissionsFile = path.join(dataDir, 'submissions.json');
@@ -110,6 +112,8 @@ module.exports = {
     });
 
     app.get('/api/submissions', (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, 'orders.read')) return;
       const submissions = readSubmissions();
       return res.json({ submissions });
     });

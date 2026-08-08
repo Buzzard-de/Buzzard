@@ -8,6 +8,7 @@ import { ShopProvider } from "@/lib/shop";
 import { WishlistProvider } from "@/lib/wishlist";
 import MegaMenuOverlay from "./MegaMenuOverlay";
 import ShopModals from "./ShopModals";
+import LocaleHead from "./LocaleHead";
 
 export default function ShopProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -17,8 +18,9 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
           <WishlistProvider>
             <ShopProvider>
               <HomeUIProvider>
-                {children}
-                <MegaMenuOverlay />
+              {children}
+              <LocaleHead />
+              <MegaMenuOverlay />
                 <ShopModals />
               </HomeUIProvider>
             </ShopProvider>

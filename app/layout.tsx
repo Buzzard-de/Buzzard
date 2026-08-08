@@ -9,6 +9,7 @@ import { SECURITY_HEADERS } from "@/lib/security";
 import "@/styles/globals.css";
 import "@/styles/pusart.css";
 import "@/styles/shop.css";
+import "@/styles/rtl.css";
 
 const inter = Inter({
   subsets: ["latin"],

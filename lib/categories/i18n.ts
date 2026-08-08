@@ -1,13 +1,14 @@
-import type { BuzzardLocale } from "./types";
+import type { BuzzardLocale } from "@/lib/i18n/types";
 import { categoryLabelsDe } from "./translations/de.generated";
+import { categoryLabelsEn } from "./translations/en.generated";
 import { categoryLabelsAr } from "./translations/ar.generated";
 
 export function getCategoryLabel(
   category: { id: string; name: string },
   locale: BuzzardLocale = "de"
 ): string {
-  if (locale === "tr") return category.name;
   if (locale === "de") return categoryLabelsDe[category.id] ?? category.name;
+  if (locale === "en") return categoryLabelsEn[category.id] ?? category.name;
   if (locale === "ar") return categoryLabelsAr[category.id] ?? category.name;
   return category.name;
 }

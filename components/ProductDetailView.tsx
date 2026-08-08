@@ -8,8 +8,8 @@ import ProductStructuredData from "./ProductStructuredData";
 import ProductSvg from "./ProductSvg";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
+import { useLocale } from "@/lib/i18n/context";
 import {
-  formatPrice,
   formatVatInfo,
   stockStatusLabel,
   getCategoryLabelForProduct,
@@ -18,6 +18,7 @@ import {
   getShippingCost,
   FREE_SHIPPING_THRESHOLD,
 } from "@/lib/products";
+import { localizePublicProduct } from "@/lib/products/i18n";
 import type { PublicProduct, ProductVariant } from "@/lib/products/types";
 
 interface ProductDetailViewProps {
@@ -38,22 +39,24 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
   const router = useRouter();
   const { add } = useCart();
   const { toggle, has } = useWishlist();
+  const { locale, t, formatPrice } = useLocale();
+  const localizedProduct = useMemo(() => localizePublicProduct(product, locale), [product, locale]);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
-  const inWishlist = has(product.id);
-  const categoryLabel = getCategoryLabelForProduct(product);
-  const related = getRelatedProducts(product);
-  const boughtTogether = getFrequentlyBoughtTogether(product);
-  const variantGroups = useMemo(() => groupVariants(product.variants), [product.variants]);
+  const inWishlist = has(localizedProduct.id);
+  const categoryLabel = getCategoryLabelForProduct(localizedProduct, locale);
+  const related = getRelatedProducts(localizedProduct).map((item) => localizePublicProduct(item, locale));
+  const boughtTogether = getFrequentlyBoughtTogether(localizedProduct).map((item) => localizePublicProduct(item, locale));
+  const variantGroups = useMemo(() => groupVariants(localizedProduct.variants), [localizedProduct.variants]);
 
-  const selectedVariantList = product.variants.filter((v) => selectedVariants[v.type] === v.id);
+  const selectedVariantList = localizedProduct.variants.filter((v) => selectedVariants[v.type] === v.id);
   const activePrice =
-    selectedVariantList.find((v) => v.price)?.price?.amount ?? product.price;
-  const activeSku = selectedVariantList.find((v) => v.sku)?.sku ?? product.sku;
+    selectedVariantList.find((v) => v.price)?.price?.amount ?? localizedProduct.price;
+  const activeSku = selectedVariantList.find((v) => v.sku)?.sku ?? localizedProduct.sku;
   const activeStock =
-    selectedVariantList.find((v) => typeof v.stock === "number")?.stock ?? product.stock;
-  const canBuy = activeStock > 0 && product.stockStatus !== "out_of_stock";
+    selectedVariantList.find((v) => typeof v.stock === "number")?.stock ?? localizedProduct.stock;
+  const canBuy = activeStock > 0 && localizedProduct.stockStatus !== "out_of_stock";
 
   function selectVariant(type: string, variantId: string) {
     setSelectedVariants((prev) => ({ ...prev, [type]: variantId }));
@@ -61,7 +64,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
   function handleAdd() {
     const variantIds = Object.values(selectedVariants);
-    const ok = add({ productId: product.id, variantIds, qty });
+    const ok = add({ productId: localizedProduct.id, variantIds, qty });
     if (!ok) return;
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -69,54 +72,54 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
   function handleBuyNow() {
     const variantIds = Object.values(selectedVariants);
-    add({ productId: product.id, variantIds, qty });
+    add({ productId: localizedProduct.id, variantIds, qty });
     router.push("/checkout/");
   }
 
   return (
     <>
-      <ProductStructuredData product={product} categoryLabel={categoryLabel} />
+      <ProductStructuredData product={localizedProduct} categoryLabel={categoryLabel} />
 
       <div className="product-detail">
         <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Startseite</Link>
           <span>/</span>
-          <Link href="/products/">Produkte</Link>
+          <Link href="/products/">{t("product.products")}</Link>
           <span>/</span>
-          <span>{product.name}</span>
+          <span>{localizedProduct.name}</span>
         </nav>
 
         <div className="product-detail-layout">
-          <ProductGallery images={product.images} imageKey={product.imageKey} name={product.name} />
+          <ProductGallery images={localizedProduct.images} imageKey={localizedProduct.imageKey} name={localizedProduct.name} />
 
           <div className="product-detail-info">
-            <span className="product-detail-brand">{product.brand}</span>
+            <span className="product-detail-brand">{localizedProduct.brand}</span>
             <span className="product-card-category">{categoryLabel}</span>
-            <h1>{product.name}</h1>
+            <h1>{localizedProduct.name}</h1>
             <p className="product-detail-sku">
               SKU: <strong>{activeSku}</strong>
-              {product.eanGtin && (
+              {localizedProduct.eanGtin && (
                 <>
                   {" "}
-                  · EAN: <strong>{product.eanGtin}</strong>
+                  · EAN: <strong>{localizedProduct.eanGtin}</strong>
                 </>
               )}
             </p>
 
             <div className="product-detail-pricing">
               <p className="product-detail-price">{formatPrice(activePrice)}</p>
-              {product.compareAtPrice && product.compareAtPrice > activePrice && (
-                <p className="product-detail-compare">{formatPrice(product.compareAtPrice)}</p>
+              {localizedProduct.compareAtPrice && localizedProduct.compareAtPrice > activePrice && (
+                <p className="product-detail-compare">{formatPrice(localizedProduct.compareAtPrice)}</p>
               )}
-              <p className="product-detail-vat">{formatVatInfo(activePrice, product.vatRate)}</p>
+              <p className="product-detail-vat">{formatVatInfo(activePrice, localizedProduct.vatRate, locale)}</p>
             </div>
 
-            <p className={`product-stock status-${product.stockStatus}${activeStock < 10 ? " low" : ""}`}>
-              {stockStatusLabel(product.stockStatus)} · {activeStock} Stück
+            <p className={`product-stock status-${localizedProduct.stockStatus}${activeStock < 10 ? " low" : ""}`}>
+              {stockStatusLabel(localizedProduct.stockStatus, locale)} · {activeStock}
             </p>
 
-            {product.shortDescription && (
-              <p className="product-detail-lead">{product.shortDescription}</p>
+            {localizedProduct.shortDescription && (
+              <p className="product-detail-lead">{localizedProduct.shortDescription}</p>
             )}
 
             {variantGroups.size > 0 && (
@@ -154,9 +157,9 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                 </button>
               </div>
               <button type="button" className="shop-btn-primary" onClick={handleAdd} disabled={!canBuy}>
-                {added ? "✓ Im Warenkorb" : "In den Warenkorb"}
+                {added ? `✓ ${t("product.addedToCart")}` : t("product.addToCart")}
               </button>
-              {product.buyNowEnabled && (
+              {localizedProduct.buyNowEnabled && (
                 <button type="button" className="shop-btn-secondary" onClick={handleBuyNow} disabled={!canBuy}>
                   Jetzt kaufen
                 </button>
@@ -164,14 +167,14 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               <button
                 type="button"
                 className={`shop-btn-secondary wishlist-btn${inWishlist ? " active" : ""}`}
-                onClick={() => toggle(product.id)}
+                onClick={() => toggle(localizedProduct.id)}
               >
                 {inWishlist ? "♥ Auf Wunschliste" : "♡ Wunschliste"}
               </button>
             </div>
 
             <div className="product-trust-box">
-              <p>Kostenloser Versand ab {formatPrice(FREE_SHIPPING_THRESHOLD)}</p>
+              <p>{t("product.freeShippingFrom").replace("{amount}", formatPrice(FREE_SHIPPING_THRESHOLD))}</p>
               <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
               <p>14 Tage Rückgaberecht · Sichere Zahlung</p>
             </div>
@@ -180,14 +183,14 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
         <section className="product-detail-section">
           <h2>Beschreibung</h2>
-          <p>{product.description}</p>
+          <p>{localizedProduct.description}</p>
         </section>
 
-        {Object.keys(product.attributes).length > 0 && (
+        {Object.keys(localizedProduct.attributes).length > 0 && (
           <section className="product-detail-section">
             <h2>Technische Daten</h2>
             <dl className="product-spec-table">
-              {Object.entries(product.attributes).map(([key, value]) => (
+              {Object.entries(localizedProduct.attributes).map(([key, value]) => (
                 <div key={key}>
                   <dt>{key.replace(/_/g, " ")}</dt>
                   <dd>{value}</dd>
@@ -197,11 +200,11 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
           </section>
         )}
 
-        {product.documents.length > 0 && (
+        {localizedProduct.documents.length > 0 && (
           <section className="product-detail-section">
             <h2>Dokumente</h2>
             <ul className="product-doc-list">
-              {product.documents.map((doc) => (
+              {localizedProduct.documents.map((doc) => (
                 <li key={doc.url}>
                   <a href={doc.url} target="_blank" rel="noopener noreferrer">
                     {doc.title}
@@ -214,7 +217,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
         {related.length > 0 && (
           <section className="product-detail-section">
-            <h2>Ähnliche Produkte</h2>
+            <h2>{t("product.similar")}</h2>
             <div className="products-grid products-grid-compact">
               {related.map((item) => (
                 <article key={item.id} className="product-card">

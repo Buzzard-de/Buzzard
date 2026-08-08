@@ -1,4 +1,4 @@
-export type BuzzardLocale = "de" | "tr" | "ar";
+export type { BuzzardLocale } from "@/lib/i18n/types";
 
 export interface BuzzardCategory {
   id: string;

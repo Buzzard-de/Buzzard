@@ -1,0 +1,35 @@
+{
+  "prod-000001": {
+    "en": {
+      "name": "Premium Brake Disc Test Product",
+      "short_description": "Package 02 test product – premium brake disc with variants.",
+      "description": "This test product validates the Buzzard product architecture: variants, SEO URL, stock status, technical attributes and cart integration.",
+      "seo": {
+        "title": "Premium Brake Disc Test Product | Buzzard",
+        "description": "Premium front axle brake disc with corrosion-resistant coating."
+      }
+    },
+    "tr": {
+      "name": "Premium Fren Diski Test Ürünü",
+      "short_description": "Paket 02 test ürünü – varyantlı premium fren diski.",
+      "description": "Bu test ürünü Buzzard ürün mimarisini doğrular: varyantlar, SEO URL, stok durumu ve sepet entegrasyonu."
+    },
+    "ar": {
+      "name": "قرص فرامل premium تجريبي",
+      "short_description": "منتج اختبار Package 02 – قرص فرامل premium مع متغيرات.",
+      "description": "يتحقق هذا المنتج التجريبي من بنية منتج Buzzard: المتغيرات، SEO، حالة المخزون وتكامل السلة."
+    }
+  },
+  "bremsscheibe-280": {
+    "en": {
+      "name": "Front Brake Disc 280mm",
+      "short_description": "High-quality brake disc for the front axle.",
+      "description": "Reliable brake disc with precise fit and durable coating."
+    },
+    "ar": {
+      "name": "قرص فرامل أمامي 280 مم",
+      "short_description": "قرص فرامل عالي الجودة للمحور الأمامي.",
+      "description": "قرص فرامل موثوق مع ملاءمة دقيقة وطلاء متين."
+    }
+  }
+}

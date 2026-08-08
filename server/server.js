@@ -27,7 +27,7 @@ function setApiCorsHeaders(req, res) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Vary", "Origin");
   }
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept");
 }
 
@@ -47,6 +47,12 @@ const app = {
   },
   post(routePath, handler) {
     addRoute('POST', routePath, handler);
+  },
+  put(routePath, handler) {
+    addRoute('PUT', routePath, handler);
+  },
+  patch(routePath, handler) {
+    addRoute('PATCH', routePath, handler);
   }
 };
 

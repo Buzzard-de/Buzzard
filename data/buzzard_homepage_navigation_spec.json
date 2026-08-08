@@ -1,0 +1,50 @@
+{
+  "project": "Buzzard",
+  "document": "Homepage and Navigation Master",
+  "version": "1.0.0",
+  "layout": {
+    "header": [
+      "top utility bar",
+      "main header",
+      "search",
+      "account",
+      "wishlist",
+      "cart"
+    ],
+    "mega_menu": {
+      "type": "three_panel",
+      "left": "All 41 main categories in exact menu order",
+      "center": "Subcategories for selected main category in clean parallel columns",
+      "right": "Featured products, best sellers, campaigns or promotional content",
+      "mobile": "Full-screen expandable accordion navigation",
+      "tablet": "Responsive overlay/two-panel navigation"
+    },
+    "homepage_sections": [
+      "premium hero",
+      "category discovery",
+      "featured products",
+      "best sellers",
+      "campaigns",
+      "category highlights",
+      "trust features",
+      "brands",
+      "newsletter",
+      "footer"
+    ]
+  },
+  "brand": {
+    "name": "Buzzard",
+    "style": "premium, modern, trustworthy",
+    "visual_direction": "black and gold, clean typography, restrained effects"
+  },
+  "responsive": [
+    "desktop",
+    "laptop",
+    "tablet",
+    "smartphone"
+  ],
+  "dependencies": [
+    "Package 01: buzzard_categories.json",
+    "Package 02: buzzard_product_schema.json"
+  ]
+}

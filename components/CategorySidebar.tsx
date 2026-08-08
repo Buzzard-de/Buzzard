@@ -21,6 +21,8 @@ import type { BuzzardCategory } from "@/lib/categories/types";
 interface CategorySidebarProps {
   activeId: string;
   onSelect: (id: string) => void;
+  /** Used inside mega menu overlay – always visible, no separate backdrop */
+  embedded?: boolean;
 }
 
 interface AccordionNodeProps {
@@ -91,7 +93,7 @@ function AccordionNode({
   );
 }
 
-export default function CategorySidebar({ activeId, onSelect }: CategorySidebarProps) {
+export default function CategorySidebar({ activeId, onSelect, embedded = false }: CategorySidebarProps) {
   const homeUI = useHomeUI();
   const isMobile = useIsMobileNav();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set([activeId]));
@@ -131,18 +133,23 @@ export default function CategorySidebar({ activeId, onSelect }: CategorySidebarP
 
   function handleNavigate() {
     homeUI?.closeSidebar();
+    homeUI?.closeMegaMenu();
   }
+
+  const isOpen = embedded || homeUI?.sidebarOpen;
 
   return (
     <>
-      <button
-        type="button"
-        className={`sidebar-backdrop${homeUI?.sidebarOpen ? " open" : ""}`}
-        aria-label="Menü schließen"
-        onClick={homeUI?.closeSidebar}
-      />
+      {!embedded && (
+        <button
+          type="button"
+          className={`sidebar-backdrop${homeUI?.sidebarOpen ? " open" : ""}`}
+          aria-label="Menü schließen"
+          onClick={homeUI?.closeSidebar}
+        />
+      )}
       <aside
-        className={`home-sidebar${homeUI?.sidebarOpen ? " open" : ""}${isMobile ? " mobile-nav" : ""}`}
+        className={`home-sidebar${isOpen ? " open" : ""}${isMobile ? " mobile-nav" : ""}${embedded ? " embedded" : ""}`}
         aria-label="Hauptkategorien"
       >
         <div className="home-sidebar-head">
@@ -151,7 +158,7 @@ export default function CategorySidebar({ activeId, onSelect }: CategorySidebarP
             type="button"
             className="sidebar-close-btn"
             aria-label="Schließen"
-            onClick={homeUI?.closeSidebar}
+            onClick={embedded ? homeUI?.closeMegaMenu : homeUI?.closeSidebar}
           >
             ×
           </button>

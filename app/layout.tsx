@@ -3,6 +3,7 @@ import { Barlow_Condensed, Inter } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";
+import TopUtilityBar from "@/components/TopUtilityBar";
 import ShopProviders from "@/components/ShopProviders";
 import { SECURITY_HEADERS } from "@/lib/security";
 import "@/styles/globals.css";
@@ -50,7 +51,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" className={`${inter.variable} ${barlow.variable}`}>
+    <html lang="de" className={`${inter.variable} ${barlow.variable}`} suppressHydrationWarning>
       <head>
         <meta httpEquiv="Content-Security-Policy" content={SECURITY_HEADERS.contentSecurityPolicy} />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ShopProviders>
+          <TopUtilityBar />
           <Header />
           <Navbar />
           <main id="maincontent">{children}</main>

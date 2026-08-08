@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import ProductSvg from "./ProductSvg";
 import { useCart } from "@/lib/cart";
@@ -13,6 +13,7 @@ import {
   getAllProducts,
   getCategoryLabelForProduct,
   paginateProducts,
+  sortProducts,
 } from "@/lib/products";
 import { findCategoryBySlugPath, getCategoryLabel, DEFAULT_LOCALE } from "@/lib/categories";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
@@ -25,7 +26,10 @@ interface ProductListProps {
 
 export default function ProductList({ categorySlug }: ProductListProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const filter = searchParams.get("filter") || "alle";
+  const sort = searchParams.get("sort") || "default";
   const query = sanitizeSearchQuery(searchParams.get("q"));
   const page = Math.max(1, Number(searchParams.get("page") || "1") || 1);
   const kategorieSlug = categorySlug || searchParams.get("kategorie");
@@ -39,8 +43,9 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
   const result = useMemo(() => {
     const filtered = filterProducts(getAllProducts(), filter, query, kategorie);
-    return paginateProducts(filtered, page, PAGE_SIZE);
-  }, [filter, query, kategorie, page]);
+    const sorted = sortProducts(filtered, sort);
+    return paginateProducts(sorted, page, PAGE_SIZE);
+  }, [filter, sort, query, kategorie, page]);
 
   function pageHref(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -80,9 +85,30 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         </div>
       )}
 
-      <p className="products-result-count">
-        {result.total} Produkt{result.total === 1 ? "" : "e"} gefunden
-      </p>
+      <div className="products-toolbar">
+        <p className="products-result-count">
+          {result.total} Produkt{result.total === 1 ? "" : "e"} gefunden
+        </p>
+        <label className="products-sort">
+          Sortieren
+          <select
+            value={sort}
+            onChange={(e) => {
+              const params = new URLSearchParams(searchParams.toString());
+              if (e.target.value === "default") params.delete("sort");
+              else params.set("sort", e.target.value);
+              const qs = params.toString();
+              router.push(qs ? `${pathname}?${qs}` : pathname);
+            }}
+          >
+            <option value="default">Standard</option>
+            <option value="name-asc">Name A–Z</option>
+            <option value="price-asc">Preis aufsteigend</option>
+            <option value="price-desc">Preis absteigend</option>
+            <option value="bestseller">Bestseller</option>
+          </select>
+        </label>
+      </div>
 
       {result.items.length === 0 ? (
         <div className="products-empty">

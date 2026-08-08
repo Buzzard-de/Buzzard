@@ -51,6 +51,10 @@ function ensureDataDir() {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 }
 
+function salesEnabled() {
+  return process.env.NEXT_PUBLIC_SALES_ENABLED === "1" || process.env.BUZZARD_SALES_ENABLED === "1";
+}
+
 function resolveLocale(locale) {
   return ["de", "en", "tr", "ar"].includes(locale) ? locale : "de";
 }
@@ -200,7 +204,9 @@ function handleMessage(input) {
       const query = extractProductQuery(userMessage) || input.productContext?.name;
       products = recommendationService.searchForRecommendations(query, 4);
       if (products.length) {
-        const list = products.map((p) => `${p.name} (${p.price?.toFixed(2)} €)`).join("; ");
+        const list = salesEnabled()
+          ? products.map((p) => `${p.name} (${p.price?.toFixed(2)} €)`).join("; ")
+          : products.map((p) => p.name).join("; ");
         reply =
           locale === "de"
             ? `Hier sind passende Produkte aus unserem Katalog: ${list}`

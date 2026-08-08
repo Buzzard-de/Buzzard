@@ -21,6 +21,8 @@ import {
 import { localizePublicProduct } from "@/lib/products/i18n";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 import type { PublicProduct, ProductVariant } from "@/lib/products/types";
+import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
+import PriceLabel from "@/components/shop/PriceLabel";
 
 interface ProductDetailViewProps {
   product: PublicProduct;
@@ -116,11 +118,15 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             </p>
 
             <div className="product-detail-pricing">
-              <p className="product-detail-price">{formatPrice(activePrice)}</p>
-              {localizedProduct.compareAtPrice && localizedProduct.compareAtPrice > activePrice && (
-                <p className="product-detail-compare">{formatPrice(localizedProduct.compareAtPrice)}</p>
-              )}
-              <p className="product-detail-vat">{formatVatInfo(activePrice, localizedProduct.vatRate, locale)}</p>
+              <PriceLabel amount={activePrice} className="product-detail-price" />
+              {showPrices() &&
+                localizedProduct.compareAtPrice &&
+                localizedProduct.compareAtPrice > activePrice && (
+                  <p className="product-detail-compare">{formatPrice(localizedProduct.compareAtPrice)}</p>
+                )}
+              {showPrices() ? (
+                <p className="product-detail-vat">{formatVatInfo(activePrice, localizedProduct.vatRate, locale)}</p>
+              ) : null}
             </div>
 
             <p className={`product-stock status-${localizedProduct.stockStatus}${activeStock < 10 ? " low" : ""}`}>
@@ -156,22 +162,28 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             )}
 
             <div className="product-detail-actions">
-              <div className="qty-control qty-control-lg">
-                <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Menge reduzieren">
-                  −
-                </button>
-                <span aria-live="polite">{qty}</span>
-                <button type="button" onClick={() => setQty(qty + 1)} aria-label="Menge erhöhen">
-                  +
-                </button>
-              </div>
-              <button type="button" className="shop-btn-primary" onClick={handleAdd} disabled={!canBuy}>
-                {added ? `✓ ${t("product.addedToCart")}` : t("product.addToCart")}
-              </button>
-              {localizedProduct.buyNowEnabled && (
-                <button type="button" className="shop-btn-secondary" onClick={handleBuyNow} disabled={!canBuy}>
-                  Jetzt kaufen
-                </button>
+              {isCheckoutEnabled() ? (
+                <>
+                  <div className="qty-control qty-control-lg">
+                    <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Menge reduzieren">
+                      −
+                    </button>
+                    <span aria-live="polite">{qty}</span>
+                    <button type="button" onClick={() => setQty(qty + 1)} aria-label="Menge erhöhen">
+                      +
+                    </button>
+                  </div>
+                  <button type="button" className="shop-btn-primary" onClick={handleAdd} disabled={!canBuy}>
+                    {added ? `✓ ${t("product.addedToCart")}` : t("product.addToCart")}
+                  </button>
+                  {localizedProduct.buyNowEnabled && (
+                    <button type="button" className="shop-btn-secondary" onClick={handleBuyNow} disabled={!canBuy}>
+                      Jetzt kaufen
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p className="checkout-hint">{t("catalog.salesDisabled")}</p>
               )}
               <button
                 type="button"
@@ -183,8 +195,12 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             </div>
 
             <div className="product-trust-box">
-              <p>{t("product.freeShippingFrom").replace("{amount}", formatPrice(FREE_SHIPPING_THRESHOLD))}</p>
-              <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
+              {showPrices() ? (
+                <>
+                  <p>{t("product.freeShippingFrom").replace("{amount}", formatPrice(FREE_SHIPPING_THRESHOLD))}</p>
+                  <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
+                </>
+              ) : null}
               <p>14 Tage Rückgaberecht · Sichere Zahlung</p>
             </div>
           </div>
@@ -237,7 +253,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                     <Link href={item.url} className="product-card-name">
                       {item.name}
                     </Link>
-                    <span className="product-card-price">{formatPrice(item.price)}</span>
+                    <PriceLabel amount={item.price} className="product-card-price" />
                   </div>
                 </article>
               ))}
@@ -258,7 +274,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                     <Link href={item.url} className="product-card-name">
                       {item.name}
                     </Link>
-                    <span className="product-card-price">{formatPrice(item.price)}</span>
+                    <PriceLabel amount={item.price} className="product-card-price" />
                   </div>
                 </article>
               ))}

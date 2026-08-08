@@ -23,6 +23,8 @@ import { listPaymentProviders } from "@/lib/payments";
 import { saveConfirmedOrder, submitOrder, fetchOrderQuote } from "@/lib/orders";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
+import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import { isCheckoutEnabled } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 
@@ -159,6 +161,10 @@ export default function CheckoutForm() {
       trackMarketingEvent("add_payment_info", { payment_provider: paymentProvider });
     }
   }, [step, total, paymentProvider]);
+
+  if (!isCheckoutEnabled()) {
+    return <CatalogOnlyNotice />;
+  }
 
   if (items.length === 0) {
     return (

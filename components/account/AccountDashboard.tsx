@@ -6,7 +6,8 @@ import { useAccount } from "@/lib/account/context";
 import { fetchAccountOrders } from "@/lib/account/client";
 import type { CustomerOrder } from "@/lib/account/types";
 import { useLocale } from "@/lib/i18n/context";
-import { formatPrice } from "@/lib/products";
+import { showPrices } from "@/lib/shop/mode";
+import PriceLabel from "@/components/shop/PriceLabel";
 
 export default function AccountDashboard() {
   const { user, addressCount, wishlistCount } = useAccount();
@@ -44,7 +45,7 @@ export default function AccountDashboard() {
                   <span>{t(`account.status.${order.status}`)}</span>
                 </div>
                 <div>
-                  <span>{formatPrice(order.total)}</span>
+                  {showPrices() ? <PriceLabel amount={order.total} /> : null}
                   <Link href={`/konto/bestellung/?order=${encodeURIComponent(order.orderNumber)}`}>{t("account.view")}</Link>
                 </div>
               </li>

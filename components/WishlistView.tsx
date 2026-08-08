@@ -7,11 +7,13 @@ import { localizePublicProduct } from "@/lib/products/i18n";
 import { useCart } from "@/lib/cart";
 import { useLocale } from "@/lib/i18n/context";
 import ProductSvg from "./ProductSvg";
+import PriceLabel from "@/components/shop/PriceLabel";
+import { isCheckoutEnabled } from "@/lib/shop/mode";
 
 export default function WishlistView() {
   const { ids, toggle } = useWishlist();
   const { add } = useCart();
-  const { locale, t, formatPrice } = useLocale();
+  const { locale, t } = useLocale();
 
   if (ids.length === 0) {
     return (
@@ -38,12 +40,18 @@ export default function WishlistView() {
               </Link>
               <div className="wishlist-item-body">
                 <Link href={localized.url}>{localized.name}</Link>
-                <span>{formatPrice(localized.price)}</span>
+                <PriceLabel amount={localized.price} />
               </div>
               <div className="wishlist-item-actions">
-                <button type="button" className="shop-btn-primary" onClick={() => add({ productId: product.id })}>
-                  {t("product.addToCart")}
-                </button>
+                {isCheckoutEnabled() ? (
+                  <button type="button" className="shop-btn-primary" onClick={() => add({ productId: product.id })}>
+                    {t("product.addToCart")}
+                  </button>
+                ) : (
+                  <Link href={localized.url} className="shop-btn-primary">
+                    {t("product.viewProduct")}
+                  </Link>
+                )}
                 <button type="button" className="cart-remove" onClick={() => toggle(id)}>
                   {t("cart.remove")}
                 </button>

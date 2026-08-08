@@ -7,7 +7,8 @@ import { fetchAccountOrder } from "@/lib/account/client";
 import type { CustomerOrder } from "@/lib/account/types";
 import { useLocale } from "@/lib/i18n/context";
 import type { Shipment } from "@/lib/logistics/types";
-import { formatPrice } from "@/lib/products";
+import { showPrices } from "@/lib/shop/mode";
+import PriceLabel from "@/components/shop/PriceLabel";
 
 function ShipmentCard({ shipment, t }: { shipment: Shipment; t: (key: string) => string }) {
   return (
@@ -69,14 +70,18 @@ function OrderDetailInner() {
           {(order.lines || []).map((line, idx) => (
             <li key={idx}>
               <span>{line.qty}× {line.name}</span>
-              <span>{formatPrice(line.lineTotal)}</span>
+              {showPrices() ? <PriceLabel amount={line.lineTotal} /> : null}
             </li>
           ))}
         </ul>
-        <div className="cart-summary-row"><span>{t("cart.subtotal")}</span><span>{formatPrice(order.subtotal || 0)}</span></div>
-        <div className="cart-summary-row"><span>{t("cart.shipping")}</span><span>{formatPrice(order.shipping || 0)}</span></div>
-        <div className="cart-summary-row"><span>{t("cart.vat")}</span><span>{formatPrice(order.vatAmount || 0)}</span></div>
-        <div className="cart-summary-row cart-summary-total"><span>{t("cart.total")}</span><span>{formatPrice(order.total)}</span></div>
+        {showPrices() ? (
+          <>
+            <div className="cart-summary-row"><span>{t("cart.subtotal")}</span><PriceLabel amount={order.subtotal || 0} /></div>
+            <div className="cart-summary-row"><span>{t("cart.shipping")}</span><PriceLabel amount={order.shipping || 0} /></div>
+            <div className="cart-summary-row"><span>{t("cart.vat")}</span><PriceLabel amount={order.vatAmount || 0} /></div>
+            <div className="cart-summary-row cart-summary-total"><span>{t("cart.total")}</span><PriceLabel amount={order.total} /></div>
+          </>
+        ) : null}
       </div>
 
       {shipments.length > 0 ? (

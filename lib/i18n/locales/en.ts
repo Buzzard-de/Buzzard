@@ -316,6 +316,8 @@ export const catalog: TranslationTree = {
     added: "Added",
     freeShippingFrom: "Free shipping from {amount}",
     allProducts: "All products",
+    priceOnRequest: "Price on request",
+    viewProduct: "View product",
     stock: {
       in_stock: "In stock",
       low_stock: "Only a few left",
@@ -330,6 +332,11 @@ export const catalog: TranslationTree = {
   },
   homeRails: {
     new: "New arrivals",
+  },
+  catalog: {
+    browseOnlyTitle: "Catalog mode only",
+    browseOnlyText: "Online sales are not active yet. You can browse products and find information.",
+    salesDisabled: "Online ordering is currently unavailable.",
   },
   country: {
     DE: "Germany",

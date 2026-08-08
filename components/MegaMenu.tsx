@@ -1,53 +1,63 @@
 "use client";
 
-import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
 import BrandsStrip from "./BrandsStrip";
-import HomeHero from "./HomeHero";
 import PopularCategories from "./PopularCategories";
-import { trustBadges } from "@/lib/categories";
-import type { MegaMenuContent } from "@/types";
+import { formatCategoryLabel } from "@/lib/categories";
+import type { CategoryTreeNode } from "@/types";
 
 interface MegaMenuProps {
-  content: MegaMenuContent;
+  mainCategory?: CategoryTreeNode;
+  subCategories: CategoryTreeNode[];
+  activeSubId: string;
+  onSubSelect: (subId: string) => void;
 }
 
-export default function MegaMenu({ content }: MegaMenuProps) {
+export default function MegaMenu({
+  mainCategory,
+  subCategories,
+  activeSubId,
+  onSubSelect,
+}: MegaMenuProps) {
+  if (!mainCategory) return null;
+
   return (
-    <section className="mega-panel" aria-label={content.title}>
-      <h2 className="mega-panel-title">{content.title}</h2>
+    <section className="mega-panel" aria-label={mainCategory.label}>
+      <h2 className="mega-panel-title">{formatCategoryLabel(mainCategory)}</h2>
+      <p className="mega-panel-subtitle">Unterkategorien</p>
 
-      <div className="mega-panel-grid">
-        {content.groups.map((group) => (
-          <div key={group.title} className="mega-panel-group">
-            <div className="mega-panel-group-head">
-              <CategoryIcon name={group.icon} size={20} />
-              <h3>{group.title}</h3>
-            </div>
-            <ul>
-              {group.links.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+      <ul className="subcategory-list">
+        {subCategories.map((sub) => (
+          <li key={sub.id}>
+            <button
+              type="button"
+              className={`subcategory-item${activeSubId === sub.id ? " active" : ""}`}
+              onClick={() => onSubSelect(sub.id)}
+            >
+              {sub.icon && <CategoryIcon name={sub.icon} size={18} />}
+              <span className="subcategory-label">{formatCategoryLabel(sub)}</span>
+              <svg
+                className="chevron"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                width="14"
+                height="14"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
 
-      <PopularCategories />
-      <BrandsStrip variant="mega" />
-
-      <div className="mega-trust-row mega-trust-row--inline">
-        {trustBadges.map((badge) => (
-          <div key={badge.label} className="mega-trust-item">
-            <CategoryIcon name={badge.icon} size={22} />
-            <span>{badge.label}</span>
-          </div>
-        ))}
-      </div>
-
-      <HomeHero />
+      {mainCategory.id === "01" && (
+        <>
+          <PopularCategories />
+          <BrandsStrip variant="mega" />
+        </>
+      )}
     </section>
   );
 }

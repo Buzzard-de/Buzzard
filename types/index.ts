@@ -24,18 +24,30 @@ export interface NavCategory {
   hasMegaMenu?: boolean;
 }
 
+export interface CategoryTreeNode {
+  id: string;
+  slug: string;
+  label: string;
+  icon?: string;
+  productFilter?: string;
+  children?: CategoryTreeNode[];
+}
+
+export interface SidebarCategory {
+  id: string;
+  slug: string;
+  label: string;
+  icon: string;
+}
+
+/** @deprecated Use CategoryTreeNode subcategories instead */
 export interface MegaMenuGroup {
   title: string;
   icon: string;
   links: { label: string; href: string }[];
 }
 
-export interface SidebarCategory {
-  id: string;
-  label: string;
-  icon: string;
-}
-
+/** @deprecated Use CategoryTreeNode hierarchy instead */
 export interface MegaMenuContent {
   id: string;
   title: string;

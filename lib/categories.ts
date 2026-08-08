@@ -1,10 +1,39 @@
-import type {
-  CategoryCard,
-  MainNavLink,
-  MegaMenuContent,
-  PopularProduct,
-  SidebarCategory,
-} from "@/types";
+import type { CategoryCard, MainNavLink, PopularProduct } from "@/types";
+import {
+  categoryTree,
+  defaultMainCategoryId,
+  findMainCategory,
+  getSubCategories,
+  getSubSubCategories,
+  getDefaultSubCategoryId,
+  findCategoryBySlug,
+  categoryHref,
+  formatCategoryLabel,
+} from "@/lib/category-tree";
+
+export {
+  categoryTree,
+  defaultMainCategoryId,
+  findMainCategory,
+  getSubCategories,
+  getSubSubCategories,
+  getDefaultSubCategoryId,
+  findCategoryBySlug,
+  categoryHref,
+  formatCategoryLabel,
+};
+
+/** Linke Spalte: alle Hauptkategorien (01–13, erweiterbar auf 40) */
+export const mainCategories = categoryTree.map((cat) => ({
+  id: cat.id,
+  slug: cat.slug,
+  label: cat.label,
+  icon: cat.icon ?? "car",
+}));
+
+/** Abwärtskompatibilität */
+export const sidebarCategories = mainCategories;
+export const defaultMegaMenuId = defaultMainCategoryId;
 
 export const mainNavLinks: MainNavLink[] = [
   { label: "STARTSEITE", href: "/" },
@@ -13,95 +42,6 @@ export const mainNavLinks: MainNavLink[] = [
   { label: "MARKEN", href: "/products/" },
   { label: "HILFE & KONTAKT", href: "/impressum/" },
 ];
-
-export const sidebarCategories: SidebarCategory[] = [
-  { id: "automotive", label: "AUTOMOTIVE", icon: "car" },
-  { id: "sport", label: "SPORT & OUTDOOR", icon: "sport" },
-  { id: "haus", label: "HAUS & WOHNEN", icon: "home" },
-  { id: "garten", label: "GARTEN", icon: "garden" },
-  { id: "werkzeug", label: "WERKZEUG & MASCHINEN", icon: "tools" },
-  { id: "bau", label: "BAU & RENOVIERUNG", icon: "build" },
-  { id: "elektronik", label: "ELEKTRONIK", icon: "electronics" },
-  { id: "haushalt", label: "HAUSHALTSGERÄTE", icon: "appliance" },
-  { id: "pflege", label: "PFLEGE & REINIGUNG", icon: "care" },
-  { id: "tier", label: "TIERBEDARF", icon: "pet" },
-  { id: "lebensmittel", label: "LEBENSMITTEL & GETRÄNKE", icon: "food" },
-  { id: "baby", label: "BABY & KIND", icon: "baby" },
-  { id: "mode", label: "MODE & ACCESSOIRES", icon: "fashion" },
-];
-
-export const megaMenuContent: Record<string, MegaMenuContent> = {
-  automotive: {
-    id: "automotive",
-    title: "AUTOMOTIVE",
-    groups: [
-      {
-        title: "WARTUNG & SERVICE",
-        icon: "oil",
-        links: [
-          { label: "Motoröle", href: "/products/?filter=motorenöle" },
-          { label: "Filter & Öle", href: "/products/?filter=filter" },
-          { label: "Bremsflüssigkeit", href: "/products/?filter=bremsen" },
-          { label: "Kühlflüssigkeit", href: "/products/?filter=motorenöle" },
-        ],
-      },
-      {
-        title: "ERSATZTEILE",
-        icon: "parts",
-        links: [
-          { label: "Motor & Motorteile", href: "/products/" },
-          { label: "Bremsanlage", href: "/products/?filter=bremsen" },
-          { label: "Fahrwerk & Lenkung", href: "/products/?filter=fahrwerk" },
-          { label: "Elektrik & Zündung", href: "/products/?filter=zündung" },
-        ],
-      },
-      {
-        title: "ZUBEHÖR & TUNING",
-        icon: "tuning",
-        links: [
-          { label: "Innenraum", href: "/products/" },
-          { label: "Beleuchtung", href: "/products/" },
-          { label: "Transport", href: "/products/" },
-          { label: "Reifen & Felgen", href: "/products/" },
-        ],
-      },
-      {
-        title: "PFLEGE & REINIGUNG",
-        icon: "care",
-        links: [
-          { label: "Autopflege", href: "/products/" },
-          { label: "Innenraumreiniger", href: "/products/" },
-          { label: "Felgenreiniger", href: "/products/" },
-          { label: "Scheibenreiniger", href: "/products/" },
-        ],
-      },
-    ],
-  },
-  sport: {
-    id: "sport",
-    title: "SPORT & OUTDOOR",
-    groups: [
-      {
-        title: "FITNESS",
-        icon: "sport",
-        links: [
-          { label: "Trainingsgeräte", href: "/products/" },
-          { label: "Yoga & Pilates", href: "/products/" },
-        ],
-      },
-      {
-        title: "OUTDOOR",
-        icon: "garden",
-        links: [
-          { label: "Camping", href: "/products/" },
-          { label: "Wandern", href: "/products/" },
-        ],
-      },
-    ],
-  },
-};
-
-export const defaultMegaMenuId = "automotive";
 
 export const trustBadges = [
   { label: "TOP MARKEN", icon: "star" },
@@ -154,14 +94,14 @@ export const filterOptions = [
 ] as const;
 
 export const homeCategories: CategoryCard[] = [
-  { id: "reifen", label: "REIFEN & FELGEN", href: "/products/" },
-  { id: "oele", label: "MOTORENÖLE", href: "/products/?filter=motorenöle", filter: "motorenöle" },
-  { id: "bremsen", label: "BREMSEN", href: "/products/?filter=bremsen", filter: "bremsen" },
+  { id: "reifen", label: "REIFEN & FELGEN", href: categoryHref({ slug: "automotive/zubehoer-tuning/reifen-felgen" }) },
+  { id: "oele", label: "MOTORENÖLE", href: categoryHref({ slug: "automotive/wartung-service/motoroele", productFilter: "motorenöle" }), filter: "motorenöle" },
+  { id: "bremsen", label: "BREMSEN", href: categoryHref({ slug: "automotive/ersatzteile/bremsanlage", productFilter: "bremsen" }), filter: "bremsen" },
   { id: "batterien", label: "BATTERIEN", href: "/products/?filter=batterien", filter: "batterien" },
-  { id: "filter", label: "FILTER", href: "/products/?filter=filter", filter: "filter" },
-  { id: "zuendung", label: "ZÜNDUNG", href: "/products/?filter=zündung", filter: "zündung" },
+  { id: "filter", label: "FILTER", href: categoryHref({ slug: "automotive/wartung-service/filter-oele", productFilter: "filter" }), filter: "filter" },
+  { id: "zuendung", label: "ZÜNDUNG", href: categoryHref({ slug: "automotive/ersatzteile/elektrik", productFilter: "zündung" }), filter: "zündung" },
   { id: "wischer", label: "SCHEIBENWISCHER", href: "/products/?filter=fahrwerk", filter: "fahrwerk" },
-  { id: "pflege", label: "PFLEGEPRODUKTE", href: "/products/" },
+  { id: "pflege", label: "PFLEGEPRODUKTE", href: categoryHref({ slug: "automotive/pflege-reinigung/autopflege" }) },
 ];
 
 export const brands = [

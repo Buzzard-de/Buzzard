@@ -8,12 +8,15 @@ import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useShop } from "@/lib/shop";
 import { filterProducts, formatPrice, products } from "@/lib/products";
+import { findCategoryBySlug } from "@/lib/categories";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
 
 export default function ProductList() {
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter") || "alle";
   const query = sanitizeSearchQuery(searchParams.get("q"));
+  const kategorieSlug = searchParams.get("kategorie");
+  const kategorie = kategorieSlug ? findCategoryBySlug(kategorieSlug) : null;
   const rawVin = searchParams.get("vin");
   const vin = rawVin ? normalizeVin(rawVin) : null;
   const { vehicle } = useShop();
@@ -31,6 +34,13 @@ export default function ProductList() {
 
   return (
     <div className="products-main">
+      {kategorie && (
+        <div className="vehicle-filter-banner">
+          <span>
+            Kategorie: <strong>{kategorie.id}. {kategorie.label}</strong>
+          </span>
+        </div>
+      )}
       {(vehicle || vin) && (
         <div className="vehicle-filter-banner">
           {vehicle && (

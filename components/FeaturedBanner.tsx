@@ -5,13 +5,27 @@ import { useState } from "react";
 import ProductSvg from "./ProductSvg";
 import CategoryIcon from "./CategoryIcon";
 import BrandsStrip from "./BrandsStrip";
-import { popularProducts, trustBadges } from "@/lib/categories";
+import { categoryHref, formatCategoryLabel, popularProducts, trustBadges } from "@/lib/categories";
 import { useCart } from "@/lib/cart";
 import { getProductById, formatPrice } from "@/lib/products";
+import type { CategoryTreeNode } from "@/types";
 
-export default function FeaturedBanner() {
+interface FeaturedBannerProps {
+  mainCategory?: CategoryTreeNode;
+  subCategories: CategoryTreeNode[];
+  subSubCategories: CategoryTreeNode[];
+  activeSubId: string;
+}
+
+export default function FeaturedBanner({
+  mainCategory,
+  subCategories,
+  subSubCategories,
+  activeSubId,
+}: FeaturedBannerProps) {
   const { add } = useCart();
   const [addedId, setAddedId] = useState<string | null>(null);
+  const activeSub = subCategories.find((sub) => sub.id === activeSubId);
 
   function handleAdd(productId: string) {
     const product = getProductById(productId);
@@ -22,7 +36,29 @@ export default function FeaturedBanner() {
   }
 
   return (
-    <aside className="home-promo" aria-label="Angebote und beliebte Produkte">
+    <aside className="home-promo" aria-label="Unter-Unterkategorien und Angebote">
+      {activeSub && (
+        <div className="promo-section promo-section--subsub">
+          <h2 className="promo-title">UNTER-UNTERKATEGORIEN</h2>
+          <p className="promo-context">{formatCategoryLabel(activeSub)}</p>
+          <ul className="subsubcategory-list">
+            {subSubCategories.map((leaf) => (
+              <li key={leaf.id}>
+                <Link href={categoryHref(leaf)} className="subsubcategory-link">
+                  <span className="subsubcategory-id">{leaf.id}</span>
+                  <span>{leaf.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {mainCategory && (
+            <Link href={categoryHref(activeSub)} className="promo-all-link">
+              Alle in {activeSub.label} →
+            </Link>
+          )}
+        </div>
+      )}
+
       <div className="promo-section">
         <h2 className="promo-title">TOP ANGEBOTE</h2>
 

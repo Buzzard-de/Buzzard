@@ -1,7 +1,7 @@
 "use client";
 
 import CategoryIcon from "./CategoryIcon";
-import { sidebarCategories } from "@/lib/categories";
+import { mainCategories, formatCategoryLabel } from "@/lib/categories";
 import { useHomeUI } from "@/lib/home-ui";
 
 interface CategorySidebarProps {
@@ -27,10 +27,10 @@ export default function CategorySidebar({ activeId, onSelect }: CategorySidebarP
       />
       <aside
         className={`home-sidebar${homeUI?.sidebarOpen ? " open" : ""}`}
-        aria-label="Kategorien"
+        aria-label="Hauptkategorien"
       >
         <div className="home-sidebar-head">
-          <strong>Kategorien</strong>
+          <strong>Hauptkategorien</strong>
           <button
             type="button"
             className="sidebar-close-btn"
@@ -41,7 +41,7 @@ export default function CategorySidebar({ activeId, onSelect }: CategorySidebarP
           </button>
         </div>
         <ul className="home-sidebar-list">
-          {sidebarCategories.map((cat) => (
+          {mainCategories.map((cat) => (
             <li key={cat.id}>
               <button
                 type="button"
@@ -49,7 +49,7 @@ export default function CategorySidebar({ activeId, onSelect }: CategorySidebarP
                 onClick={() => handleSelect(cat.id)}
               >
                 <CategoryIcon name={cat.icon} size={16} />
-                <span>{cat.label}</span>
+                <span>{formatCategoryLabel(cat)}</span>
                 <svg
                   className="chevron"
                   viewBox="0 0 24 24"

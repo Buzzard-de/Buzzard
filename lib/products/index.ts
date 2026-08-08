@@ -16,6 +16,7 @@ export {
   getFrequentlyBoughtTogether,
   filterProducts,
   paginateProducts,
+  sortProducts,
   searchProducts,
   getProductStaticParams,
   getLegacyProductParams,

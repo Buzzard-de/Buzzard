@@ -170,6 +170,22 @@ export function filterProducts(
   return result;
 }
 
+export function sortProducts(items: PublicProduct[], sort: string): PublicProduct[] {
+  const list = [...items];
+  switch (sort) {
+    case "price-asc":
+      return list.sort((a, b) => a.price - b.price);
+    case "price-desc":
+      return list.sort((a, b) => b.price - a.price);
+    case "name-asc":
+      return list.sort((a, b) => a.name.localeCompare(b.name, "de"));
+    case "bestseller":
+      return list.sort((a, b) => a.price - b.price);
+    default:
+      return list;
+  }
+}
+
 export function paginateProducts(
   items: PublicProduct[],
   page = 1,

@@ -1,0 +1,31 @@
+{
+  "package": "03",
+  "name": "Buzzard Homepage and Navigation",
+  "dependencies": [
+    "buzzard_categories.json",
+    "buzzard_product_schema.json"
+  ],
+  "desktop": {
+    "mega_menu": {
+      "panels": 3,
+      "left": "41 main categories",
+      "center": "selected category subcategories",
+      "right": "featured products/promotions"
+    }
+  },
+  "mobile": {
+    "navigation": "full-screen accordion",
+    "all_main_categories": true
+  },
+  "search": {
+    "global": true,
+    "fields": ["name", "sku", "ean_gtin", "brand", "category", "attributes"]
+  },
+  "responsive": ["desktop", "laptop", "tablet", "smartphone"],
+  "languages": ["tr", "de", "en", "ar"],
+  "rtl": true,
+  "brand": {
+    "name": "Buzzard",
+    "direction": "premium black and gold"
+  }
+}

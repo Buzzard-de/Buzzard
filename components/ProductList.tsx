@@ -2,14 +2,22 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ProductSvg from "./ProductSvg";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useShop } from "@/lib/shop";
-import { filterProducts, formatPrice, products } from "@/lib/products";
+import {
+  filterProducts,
+  formatPrice,
+  getAllProducts,
+  getCategoryLabelForProduct,
+  paginateProducts,
+} from "@/lib/products";
 import { findCategoryBySlugPath, getCategoryLabel, DEFAULT_LOCALE } from "@/lib/categories";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
+
+const PAGE_SIZE = 12;
 
 interface ProductListProps {
   categorySlug?: string;
@@ -19,6 +27,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter") || "alle";
   const query = sanitizeSearchQuery(searchParams.get("q"));
+  const page = Math.max(1, Number(searchParams.get("page") || "1") || 1);
   const kategorieSlug = categorySlug || searchParams.get("kategorie");
   const kategorie = kategorieSlug ? findCategoryBySlugPath(kategorieSlug) : null;
   const rawVin = searchParams.get("vin");
@@ -28,7 +37,18 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const { toggle, has } = useWishlist();
   const [addedId, setAddedId] = useState<string | null>(null);
 
-  const filtered = filterProducts(products, filter, query, kategorie);
+  const result = useMemo(() => {
+    const filtered = filterProducts(getAllProducts(), filter, query, kategorie);
+    return paginateProducts(filtered, page, PAGE_SIZE);
+  }, [filter, query, kategorie, page]);
+
+  function pageHref(nextPage: number) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (nextPage <= 1) params.delete("page");
+    else params.set("page", String(nextPage));
+    const q = params.toString();
+    return q ? `?${q}` : "?";
+  }
 
   function handleAdd(id: string, name: string, price: number) {
     add({ id, name, price });
@@ -60,49 +80,76 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         </div>
       )}
 
-      {filtered.length === 0 ? (
+      <p className="products-result-count">
+        {result.total} Produkt{result.total === 1 ? "" : "e"} gefunden
+      </p>
+
+      {result.items.length === 0 ? (
         <div className="products-empty">
           <p>Keine Produkte gefunden.</p>
         </div>
       ) : (
-        <div className="products-grid">
-          {filtered.map((product) => (
-            <article key={product.id} className="product-card">
-              <Link href={`/products/${product.id}/`} className="product-card-img">
-                <ProductSvg imageKey={product.imageKey} />
-              </Link>
-              <div className="product-card-body">
-                <span className="product-card-category">{product.categoryLabel}</span>
-                <Link href={`/products/${product.id}/`} className="product-card-name">
-                  {product.name}
+        <>
+          <div className="products-grid">
+            {result.items.map((product) => (
+              <article key={product.id} className="product-card">
+                <Link href={product.url} className="product-card-img">
+                  <ProductSvg imageKey={product.imageKey ?? "oel"} />
                 </Link>
-                <span className="product-card-price">{formatPrice(product.price)}</span>
-                <div className="product-card-actions">
-                  <button
-                    type="button"
-                    className="product-card-btn"
-                    style={
-                      addedId === product.id
-                        ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
-                        : undefined
-                    }
-                    onClick={() => handleAdd(product.id, product.name, product.price)}
-                  >
-                    {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
-                  </button>
-                  <button
-                    type="button"
-                    className={`product-wishlist-btn${has(product.id) ? " active" : ""}`}
-                    onClick={() => toggle(product.id)}
-                    aria-label="Wunschliste"
-                  >
-                    {has(product.id) ? "♥" : "♡"}
-                  </button>
+                <div className="product-card-body">
+                  <span className="product-card-category">
+                    {getCategoryLabelForProduct(product)}
+                  </span>
+                  <Link href={product.url} className="product-card-name">
+                    {product.name}
+                  </Link>
+                  <span className="product-card-sku">SKU: {product.sku}</span>
+                  <span className="product-card-price">{formatPrice(product.price)}</span>
+                  <div className="product-card-actions">
+                    <button
+                      type="button"
+                      className="product-card-btn"
+                      style={
+                        addedId === product.id
+                          ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
+                          : undefined
+                      }
+                      onClick={() => handleAdd(product.id, product.name, product.price)}
+                    >
+                      {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                    </button>
+                    <button
+                      type="button"
+                      className={`product-wishlist-btn${has(product.id) ? " active" : ""}`}
+                      onClick={() => toggle(product.id)}
+                      aria-label="Wunschliste"
+                    >
+                      {has(product.id) ? "♥" : "♡"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+
+          {result.totalPages > 1 && (
+            <nav className="products-pagination" aria-label="Seiten">
+              {page > 1 && (
+                <Link href={pageHref(page - 1)} className="products-page-btn">
+                  ← Zurück
+                </Link>
+              )}
+              <span>
+                Seite {result.page} von {result.totalPages}
+              </span>
+              {page < result.totalPages && (
+                <Link href={pageHref(page + 1)} className="products-page-btn">
+                  Weiter →
+                </Link>
+              )}
+            </nav>
+          )}
+        </>
       )}
     </div>
   );

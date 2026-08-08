@@ -1,21 +1,29 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetailView from "@/components/ProductDetailView";
-import { getProductById, products } from "@/lib/products";
+import { getLegacyProductParams, getProductById } from "@/lib/products";
 
 export function generateStaticParams() {
-  return products.map((p) => ({ id: p.id }));
+  return getLegacyProductParams();
 }
 
-export function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
-  return params.then(({ id }) => {
-    const product = getProductById(id);
-    return {
-      title: product ? `${product.name} – Buzzard` : "Produkt – Buzzard",
-    };
-  });
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const product = getProductById(id);
+  if (!product) return { title: "Produkt – Buzzard" };
+  return {
+    title: product.seo.title,
+    description: product.seo.description,
+    alternates: { canonical: `https://buzzard24.de${product.url}` },
+  };
 }
 
-export default async function ProductDetailPage({
+/** Legacy URL alias – canonical SEO URL is /produkt/[slug]/ */
+export default async function LegacyProductPage({
   params,
 }: {
   params: Promise<{ id: string }>;

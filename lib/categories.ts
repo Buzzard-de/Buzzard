@@ -78,19 +78,23 @@ export const trustBadges = [
   { label: "SICHERE ZAHLUNG", icon: "shield" },
 ];
 
-export const popularProducts: PopularProduct[] = getProductsForCategory(
-  getCategoryById("cat-05")!,
-  3
-).map((product) => ({
-  id: product.id,
-  productId: product.id,
-  name: product.name,
-  price: product.price,
-  oldPrice: Math.round(product.price * 1.25 * 100) / 100,
-  discount: 20,
-  rating: 5,
-  imageKey: product.imageKey,
-}));
+export function getPopularProducts(): PopularProduct[] {
+  const automotive = getCategoryById("cat-05");
+  if (!automotive) return [];
+  return getProductsForCategory(automotive, 3).map((product) => ({
+    id: product.id,
+    productId: product.id,
+    name: product.name,
+    price: product.price,
+    oldPrice: product.compareAtPrice ?? Math.round(product.price * 1.25 * 100) / 100,
+    discount: product.compareAtPrice
+      ? Math.round((1 - product.price / product.compareAtPrice) * 100)
+      : 20,
+    rating: 5,
+    imageKey: product.imageKey ?? "oel",
+    href: product.url,
+  }));
+}
 
 export const filterOptions = getChildren("cat-05").map((cat) => ({
   id: cat.id,

@@ -29,11 +29,11 @@ export default function WishlistView() {
           if (!product) return null;
           return (
             <li key={id} className="wishlist-item">
-              <Link href={`/products/${id}/`} className="wishlist-item-img">
-                <ProductSvg imageKey={product.imageKey} />
+              <Link href={product.url} className="wishlist-item-img">
+                <ProductSvg imageKey={product.imageKey ?? "oel"} />
               </Link>
               <div className="wishlist-item-body">
-                <Link href={`/products/${id}/`}>{product.name}</Link>
+                <Link href={product.url}>{product.name}</Link>
                 <span>{formatPrice(product.price)}</span>
               </div>
               <div className="wishlist-item-actions">

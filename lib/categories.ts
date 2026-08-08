@@ -14,12 +14,17 @@ import {
   getAllCategoryPaths,
   getAllCategoryStaticParams,
   splitSubcategoriesIntoColumns,
+  getCategoryAncestors,
+  getCategoryBreadcrumb,
+  collectDescendantIds,
+  isCategoryOrDescendant,
   categoryTree,
 } from "@/lib/categories/service";
 
 export const MAIN_CATEGORY_COUNT = categoryCatalog.main_category_count;
 import { getCategoryLabel, formatMenuLabel } from "@/lib/categories/i18n";
 import { getMainCategoryIcon } from "@/lib/categories/icons";
+import { getProductsForCategory } from "@/lib/products";
 
 export const DEFAULT_LOCALE: BuzzardLocale = "de";
 
@@ -36,6 +41,10 @@ export {
   getAllCategoryPaths,
   getAllCategoryStaticParams,
   splitSubcategoriesIntoColumns,
+  getCategoryAncestors,
+  getCategoryBreadcrumb,
+  collectDescendantIds,
+  isCategoryOrDescendant,
   categoryTree,
   getCategoryLabel,
   formatMenuLabel,
@@ -69,48 +78,25 @@ export const trustBadges = [
   { label: "SICHERE ZAHLUNG", icon: "shield" },
 ];
 
-export const popularProducts: PopularProduct[] = [
-  {
-    id: "castrol-edge",
-    productId: "motoroel-5w30",
-    name: "Castrol Edge 5W-30 Motoröl 5L",
-    price: 64.99,
-    oldPrice: 89.99,
-    discount: 25,
-    rating: 5,
-    imageKey: "oel",
-  },
-  {
-    id: "bosch-wischer",
-    productId: "scheibenwischer-set",
-    name: "Bosch Aerotwin Scheibenwischer Set",
-    price: 19.99,
-    oldPrice: 24.99,
-    discount: 20,
-    rating: 5,
-    imageKey: "wischer",
-  },
-  {
-    id: "michelin-pilot",
-    productId: "reifen-pilot-sport",
-    name: "Michelin Pilot Sport 4 Reifen 225/45 R17",
-    price: 89.99,
-    oldPrice: 119.99,
-    discount: 25,
-    rating: 5,
-    imageKey: "tire",
-  },
-];
+export const popularProducts: PopularProduct[] = getProductsForCategory(
+  getCategoryById("cat-05")!,
+  3
+).map((product) => ({
+  id: product.id,
+  productId: product.id,
+  name: product.name,
+  price: product.price,
+  oldPrice: Math.round(product.price * 1.25 * 100) / 100,
+  discount: 20,
+  rating: 5,
+  imageKey: product.imageKey,
+}));
 
-export const filterOptions = [
-  { id: "alle", label: "Alle" },
-  { id: "bremsen", label: "Bremsen" },
-  { id: "motorenöle", label: "Motorenöle" },
-  { id: "filter", label: "Filter" },
-  { id: "zündung", label: "Zündung" },
-  { id: "batterien", label: "Batterien" },
-  { id: "fahrwerk", label: "Fahrwerk" },
-] as const;
+export const filterOptions = getChildren("cat-05").map((cat) => ({
+  id: cat.id,
+  label: getCategoryLabel(cat, DEFAULT_LOCALE),
+  href: categoryHref(cat),
+}));
 
 function homeCard(category: BuzzardCategory): CategoryCard {
   return {
@@ -120,18 +106,12 @@ function homeCard(category: BuzzardCategory): CategoryCard {
   };
 }
 
-const textileChildren = getChildren("cat-01");
-const cosmetics = getCategoryById("cat-02");
-const cleaning = getCategoryById("cat-03");
-const automotive = getCategoryById("cat-05");
+export function getFeaturedSubcategories(mainId: string, limit = 6): CategoryCard[] {
+  return getChildren(mainId).slice(0, limit).map(homeCard);
+}
 
-export const homeCategories: CategoryCard[] = [
-  ...(textileChildren[0] ? [homeCard(textileChildren[0])] : []),
-  ...(textileChildren[1] ? [homeCard(textileChildren[1])] : []),
-  ...(cosmetics ? [homeCard(cosmetics)] : []),
-  ...(cleaning ? [homeCard(cleaning)] : []),
-  ...(automotive ? [homeCard(automotive)] : []),
-];
+/** @deprecated Use getFeaturedSubcategories(mainCategoryId) */
+export const homeCategories: CategoryCard[] = getFeaturedSubcategories("cat-01", 6);
 
 export const brands = [
   { name: "BOSCH", className: "brand-bosch" },

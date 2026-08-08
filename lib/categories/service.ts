@@ -5,17 +5,23 @@ const { categories } = categoryCatalog;
 
 const byId = new Map<string, BuzzardCategory>();
 const bySlugPath = new Map<string, BuzzardCategory>();
+const parentById = new Map<string, string>();
 
 function register(node: BuzzardCategory, slugPath: string[]) {
   byId.set(node.id, node);
   bySlugPath.set(slugPath.join("/"), node);
 }
 
-function indexTree(nodes: BuzzardCategory[], parentSlugs: string[] = []) {
+function indexTree(
+  nodes: BuzzardCategory[],
+  parentSlugs: string[] = [],
+  parentId?: string
+) {
   for (const node of nodes) {
     const slugPath = [...parentSlugs, node.slug];
     register(node, slugPath);
-    if (node.children?.length) indexTree(node.children, slugPath);
+    if (parentId) parentById.set(node.id, parentId);
+    if (node.children?.length) indexTree(node.children, slugPath, node.id);
   }
 }
 
@@ -87,6 +93,49 @@ export function splitSubcategoriesIntoColumns(
     cols[index % columnCount].push(item);
   });
   return cols.filter((col) => col.length > 0);
+}
+
+export function getParentCategory(id: string): BuzzardCategory | undefined {
+  const parentId = parentById.get(id);
+  return parentId ? byId.get(parentId) : undefined;
+}
+
+export function getCategoryAncestors(id: string): BuzzardCategory[] {
+  const ancestors: BuzzardCategory[] = [];
+  let current = parentById.get(id);
+  while (current) {
+    const node = byId.get(current);
+    if (!node) break;
+    ancestors.unshift(node);
+    current = parentById.get(node.id);
+  }
+  return ancestors;
+}
+
+export function getCategoryBreadcrumb(id: string): BuzzardCategory[] {
+  const node = byId.get(id);
+  if (!node) return [];
+  return [...getCategoryAncestors(id), node];
+}
+
+export function collectDescendantIds(id: string): string[] {
+  const node = byId.get(id);
+  if (!node) return [];
+  const ids = [id];
+  for (const child of node.children ?? []) {
+    ids.push(...collectDescendantIds(child.id));
+  }
+  return ids;
+}
+
+export function isCategoryOrDescendant(categoryId: string, ancestorId: string): boolean {
+  if (categoryId === ancestorId) return true;
+  let current = parentById.get(categoryId);
+  while (current) {
+    if (current === ancestorId) return true;
+    current = parentById.get(current);
+  }
+  return false;
 }
 
 export { categories as categoryTree };

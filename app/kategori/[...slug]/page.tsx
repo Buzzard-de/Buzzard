@@ -3,8 +3,10 @@ import Link from "next/link";
 import { Suspense } from "react";
 import ProductList from "@/components/ProductList";
 import {
+  categoryHref,
   findCategoryBySlugPath,
   getAllCategoryStaticParams,
+  getCategoryBreadcrumb,
   getCategoryLabel,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
@@ -45,6 +47,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     );
   }
 
+  const breadcrumb = getCategoryBreadcrumb(category.id);
   const name = getCategoryLabel(category, DEFAULT_LOCALE);
   const children = category.children ?? [];
 
@@ -54,8 +57,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <div className="page-hero-inner">
           <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
             <Link href="/">Startseite</Link>
-            <span>/</span>
-            <span>{name}</span>
+            {breadcrumb.map((crumb, index) => (
+              <span key={crumb.id}>
+                <span>/</span>
+                {index === breadcrumb.length - 1 ? (
+                  <span>{getCategoryLabel(crumb, DEFAULT_LOCALE)}</span>
+                ) : (
+                  <Link href={categoryHref(crumb)}>{getCategoryLabel(crumb, DEFAULT_LOCALE)}</Link>
+                )}
+              </span>
+            ))}
           </nav>
           <h1>{name}</h1>
           {children.length > 0 && (
@@ -67,7 +78,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       {children.length > 0 && (
         <section className="subpage-content category-children-grid">
           {children.map((child) => (
-            <Link key={child.id} href={child.url.endsWith("/") ? child.url : `${child.url}/`} className="category-child-card">
+            <Link key={child.id} href={categoryHref(child)} className="category-child-card">
               {getCategoryLabel(child, DEFAULT_LOCALE)}
             </Link>
           ))}

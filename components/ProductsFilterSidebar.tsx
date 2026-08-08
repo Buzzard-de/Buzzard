@@ -5,15 +5,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { filterOptions } from "@/lib/categories";
 import { isAllowedFilter } from "@/lib/security";
 
+const allOptions = [{ id: "alle", label: "Alle Kategorien" }, ...filterOptions];
+
 export default function ProductsFilterSidebar() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeFilter = isAllowedFilter(searchParams.get("filter") || "alle", filterOptions)
+  const activeFilter = isAllowedFilter(searchParams.get("filter") || "alle", allOptions)
     ? searchParams.get("filter") || "alle"
     : "alle";
 
   function setFilter(filter: string) {
-    if (!isAllowedFilter(filter, filterOptions)) return;
+    if (!isAllowedFilter(filter, allOptions)) return;
     const params = new URLSearchParams(searchParams.toString());
     if (filter === "alle") params.delete("filter");
     else params.set("filter", filter);
@@ -23,9 +25,9 @@ export default function ProductsFilterSidebar() {
 
   return (
     <aside className="home-sidebar products-filter-sidebar" aria-label="Kategoriefilter">
-      <h2 className="category-sidebar-title">Produktfilter</h2>
+      <h2 className="category-sidebar-title">Automotive-Kategorien</h2>
       <ul className="home-sidebar-list">
-        {filterOptions.map((opt) => (
+        {allOptions.map((opt) => (
           <li key={opt.id}>
             <button
               type="button"
@@ -38,6 +40,7 @@ export default function ProductsFilterSidebar() {
         ))}
       </ul>
       <div className="category-sidebar-links">
+        <Link href="/kategori/otomotiv/">→ Alle Automotive-Kategorien</Link>
         <Link href="/">← Startseite</Link>
       </div>
     </aside>

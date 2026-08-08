@@ -107,7 +107,11 @@ function createFulfillmentsForOrder(order, productsById) {
         const automationEngine = require("./automationEngine");
         automationEngine.emit(
           "supplier_import_failure",
-          { supplierId, orderNumber: order.orderNumber, error: submission.error },
+          {
+            supplierId,
+            orderNumber: order.orderNumber,
+            error: submission.error || "Supplier submission failed",
+          },
           { idempotencyKey: `${order.orderNumber}:${supplierId}:fail` }
         );
       } catch {

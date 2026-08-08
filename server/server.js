@@ -5,7 +5,7 @@ const { URL, URLSearchParams } = require('url');
 const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
@@ -279,4 +279,9 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(port, () => {
   console.log(`Buzzard API server running on http://localhost:${port}`);
+});
+
+server.on("error", (err) => {
+  console.error("Buzzard API server failed to start:", err.message);
+  process.exit(1);
 });

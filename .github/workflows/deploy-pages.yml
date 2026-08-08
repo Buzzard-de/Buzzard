@@ -29,6 +29,15 @@ jobs:
           cache: npm
 
       - name: Install and build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://buzzard24.de
+          NEXT_PUBLIC_BUZZARD_API_URL: ${{ vars.BUZZARD_API_URL || secrets.BUZZARD_API_URL || 'https://buzzard-api.onrender.com' }}
+          NEXT_PUBLIC_AI_CHAT_ENABLED: "1"
+          NEXT_PUBLIC_GA4_ID: ${{ vars.NEXT_PUBLIC_GA4_ID || secrets.NEXT_PUBLIC_GA4_ID || '' }}
+          NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID || secrets.NEXT_PUBLIC_GTM_ID || '' }}
+          NEXT_PUBLIC_META_PIXEL_ID: ${{ vars.NEXT_PUBLIC_META_PIXEL_ID || secrets.NEXT_PUBLIC_META_PIXEL_ID || '' }}
+          NEXT_PUBLIC_TIKTOK_PIXEL_ID: ${{ vars.NEXT_PUBLIC_TIKTOK_PIXEL_ID || secrets.NEXT_PUBLIC_TIKTOK_PIXEL_ID || '' }}
+          NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || secrets.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '' }}
         run: npm ci && npm run build
 
       - name: Configure GitHub Pages

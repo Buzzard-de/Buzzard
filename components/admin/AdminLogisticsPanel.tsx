@@ -45,7 +45,7 @@ function AdminLogisticsPanelInner() {
   const [filter, setFilter] = useState(searchParams.get("order") || "");
   const [trackingDraft, setTrackingDraft] = useState<Record<string, string>>({});
 
-  async function load() {
+  const load = useCallback(async () => {
     const orderNumber = filter.trim() || undefined;
     const [f, s, so, r] = await Promise.all([
       fetchAdminFulfillments(orderNumber),
@@ -57,11 +57,11 @@ function AdminLogisticsPanelInner() {
     setShipments(s);
     setSupplierOrders(so);
     setReturns(orderNumber ? r.filter((item) => item.orderNumber === orderNumber) : r);
-  }
+  }, [filter]);
 
   const refresh = useCallback(() => {
     load().catch(() => {});
-  }, [filter]);
+  }, [load]);
 
   useEffect(() => {
     refresh();
@@ -69,7 +69,7 @@ function AdminLogisticsPanelInner() {
 
   async function handleRetry(id: string) {
     await retryAdminFulfillment(id);
-    load();
+    await load();
   }
 
   async function handleShipmentUpdate(shipment: Shipment, status?: string) {

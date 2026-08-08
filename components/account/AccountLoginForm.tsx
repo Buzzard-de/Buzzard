@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "@/lib/account/context";
 import { useLocale } from "@/lib/i18n/context";
+import { isProductionBuild } from "@/lib/api/config";
 
 export default function AccountLoginForm() {
   const router = useRouter();
@@ -22,8 +23,12 @@ export default function AccountLoginForm() {
     try {
       await login(email, password);
       router.push("/konto/");
-    } catch {
-      setError(t("account.auth.invalid"));
+    } catch (err) {
+      if (err instanceof Error && err.message === "account.apiUnavailable") {
+        setError(t("account.apiUnavailable"));
+      } else {
+        setError(t("account.auth.invalid"));
+      }
     } finally {
       setLoading(false);
     }
@@ -42,7 +47,9 @@ export default function AccountLoginForm() {
           {" · "}
           <Link href="/konto/passwort-vergessen/">{t("account.forgotPassword")}</Link>
         </p>
-        <p className="account-login-hint">Demo: kunde@buzzard.de / BuzzardKunde2026!</p>
+        {!isProductionBuild() ? (
+          <p className="account-login-hint">Demo: kunde@buzzard.de / BuzzardKunde2026!</p>
+        ) : null}
       </form>
     </div>
   );

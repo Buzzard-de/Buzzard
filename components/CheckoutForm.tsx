@@ -20,7 +20,7 @@ import {
 } from "@/lib/checkout";
 import { useCart } from "@/lib/cart";
 import { listPaymentProviders } from "@/lib/payments";
-import { saveConfirmedOrder, submitOrder } from "@/lib/orders";
+import { saveConfirmedOrder, submitOrder, fetchOrderQuote } from "@/lib/orders";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
 import { useLocale } from "@/lib/i18n/context";
@@ -56,6 +56,49 @@ export default function CheckoutForm() {
   const [billingAddress, setBillingAddress] = useState(emptyAddress());
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+  const [serverQuote, setServerQuote] = useState<{
+    subtotal: number;
+    shipping: number;
+    discount: number;
+    vatAmount: number;
+    total: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (items.length === 0) {
+      setServerQuote(null);
+      return;
+    }
+
+    let cancelled = false;
+    fetchOrderQuote({
+      lines: items.map((item) => ({
+        productId: item.productId,
+        variantIds: item.variantIds,
+        qty: item.qty,
+      })),
+      shippingMethodId,
+      couponCode: couponCode || undefined,
+      country: shippingAddress.country || "DE",
+    }).then((response) => {
+      if (cancelled) return;
+      if (response.success && response.quote) {
+        setServerQuote({
+          subtotal: response.quote.subtotal,
+          shipping: response.quote.shipping,
+          discount: response.quote.discount,
+          vatAmount: response.quote.vatAmount,
+          total: response.quote.total,
+        });
+      } else {
+        setServerQuote(null);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [items, shippingMethodId, couponCode, shippingAddress.country]);
 
   useEffect(() => {
     if (!accountReady || !accountUser) return;
@@ -205,11 +248,11 @@ export default function CheckoutForm() {
     router.push(`/checkout/erfolg/?order=${encodeURIComponent(response.order.orderNumber)}`);
   }
 
-  const displaySubtotal = quote?.subtotal ?? subtotal;
-  const displayShipping = quote?.shipping ?? shipping;
-  const displayDiscount = quote?.discount ?? discount;
-  const displayVat = quote?.vatAmount ?? vatAmount;
-  const displayTotal = quote?.total ?? total;
+  const displaySubtotal = serverQuote?.subtotal ?? quote?.subtotal ?? subtotal;
+  const displayShipping = serverQuote?.shipping ?? quote?.shipping ?? shipping;
+  const displayDiscount = serverQuote?.discount ?? quote?.discount ?? discount;
+  const displayVat = serverQuote?.vatAmount ?? quote?.vatAmount ?? vatAmount;
+  const displayTotal = serverQuote?.total ?? quote?.total ?? total;
 
   return (
     <div className="checkout-page">

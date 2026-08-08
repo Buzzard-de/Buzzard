@@ -36,24 +36,33 @@ export const megaMenuContent: Record<string, MegaMenuContent> = {
     title: "AUTOMOTIVE",
     groups: [
       {
+        title: "WARTUNG & SERVICE",
+        icon: "oil",
+        links: [
+          { label: "Motoröle", href: "/products/?filter=motorenöle" },
+          { label: "Filter & Öle", href: "/products/?filter=filter" },
+          { label: "Bremsflüssigkeit", href: "/products/?filter=bremsen" },
+          { label: "Kühlflüssigkeit", href: "/products/?filter=motorenöle" },
+        ],
+      },
+      {
         title: "ERSATZTEILE",
         icon: "parts",
         links: [
           { label: "Motor & Motorteile", href: "/products/" },
           { label: "Bremsanlage", href: "/products/?filter=bremsen" },
           { label: "Fahrwerk & Lenkung", href: "/products/?filter=fahrwerk" },
-          { label: "Filter & Öle", href: "/products/?filter=filter" },
           { label: "Elektrik & Zündung", href: "/products/?filter=zündung" },
         ],
       },
       {
-        title: "ÖLE & FLÜSSIGKEITEN",
-        icon: "oil",
+        title: "ZUBEHÖR & TUNING",
+        icon: "tuning",
         links: [
-          { label: "Motoröle", href: "/products/?filter=motorenöle" },
-          { label: "Getriebeöle", href: "/products/?filter=motorenöle" },
-          { label: "Bremsflüssigkeit", href: "/products/?filter=bremsen" },
-          { label: "Kühlflüssigkeit", href: "/products/?filter=motorenöle" },
+          { label: "Innenraum", href: "/products/" },
+          { label: "Beleuchtung", href: "/products/" },
+          { label: "Transport", href: "/products/" },
+          { label: "Reifen & Felgen", href: "/products/" },
         ],
       },
       {
@@ -64,35 +73,6 @@ export const megaMenuContent: Record<string, MegaMenuContent> = {
           { label: "Innenraumreiniger", href: "/products/" },
           { label: "Felgenreiniger", href: "/products/" },
           { label: "Scheibenreiniger", href: "/products/" },
-        ],
-      },
-      {
-        title: "BATTERIEN & ZUBEHÖR",
-        icon: "battery",
-        links: [
-          { label: "Starterbatterien", href: "/products/?filter=batterien" },
-          { label: "Ladegeräte", href: "/products/" },
-          { label: "Kabel & Stecker", href: "/products/" },
-        ],
-      },
-      {
-        title: "REIFEN & FELGEN",
-        icon: "tire",
-        links: [
-          { label: "Sommerreifen", href: "/products/" },
-          { label: "Winterreifen", href: "/products/" },
-          { label: "Felgen", href: "/products/" },
-          { label: "Reifen Zubehör", href: "/products/" },
-        ],
-      },
-      {
-        title: "ZUBEHÖR & TUNING",
-        icon: "tuning",
-        links: [
-          { label: "Innenraum", href: "/products/" },
-          { label: "Außenbereich", href: "/products/" },
-          { label: "Beleuchtung", href: "/products/" },
-          { label: "Transport", href: "/products/" },
         ],
       },
     ],

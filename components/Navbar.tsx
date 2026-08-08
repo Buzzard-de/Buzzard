@@ -4,9 +4,11 @@ import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
 import { mainNavLinks } from "@/lib/categories";
 import { useShop } from "@/lib/shop";
+import { useHomeUI } from "@/lib/home-ui";
 
 export default function Navbar() {
   const { openVehicleModal, vehicle, vin } = useShop();
+  const homeUI = useHomeUI();
 
   const vehicleLabel = vehicle
     ? `${vehicle.brand} ${vehicle.model}`
@@ -17,12 +19,16 @@ export default function Navbar() {
   return (
     <nav className="main-nav" role="navigation" aria-label="Hauptnavigation">
       <div className="main-nav-inner">
-        <Link href="/" className="all-categories-btn">
+        <button
+          type="button"
+          className="all-categories-btn"
+          onClick={homeUI?.toggleSidebar}
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
             <path d="M3 6h18M3 12h18M3 18h18" />
           </svg>
           ALLE KATEGORIEN
-        </Link>
+        </button>
 
         <ul className="main-nav-links">
           {mainNavLinks.map((link) => (

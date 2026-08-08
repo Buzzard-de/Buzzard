@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import ProductSvg from "./ProductSvg";
-import { popularProducts } from "@/lib/categories";
+import CategoryIcon from "./CategoryIcon";
+import BrandsStrip from "./BrandsStrip";
+import { popularProducts, trustBadges } from "@/lib/categories";
 import { useCart } from "@/lib/cart";
 import { getProductById, formatPrice } from "@/lib/products";
 
@@ -23,25 +25,46 @@ export default function FeaturedBanner() {
     <aside className="home-promo" aria-label="Angebote und beliebte Produkte">
       <div className="promo-section">
         <h2 className="promo-title">TOP ANGEBOTE</h2>
+
         <div className="promo-deal-card">
           <div className="promo-deal-image">
-            <svg viewBox="0 0 120 80" fill="none" width="100%" height="100%">
-              <circle cx="60" cy="40" r="32" stroke="#c9a066" strokeWidth="4" />
-              <circle cx="60" cy="40" r="18" stroke="#c9a066" strokeWidth="2" strokeDasharray="4 3" />
-              <rect x="78" y="28" width="28" height="24" rx="4" fill="#c9a066" opacity="0.85" />
-            </svg>
+            <ProductSvg imageKey="tire" />
           </div>
           <div className="promo-deal-body">
-            <span className="promo-deal-tag">BREMSSEN AKTION</span>
-            <strong>BIS ZU -25%</strong>
-            <Link href="/products/?filter=bremsen" className="promo-deal-btn">
+            <span className="promo-deal-tag">WINTERREIFEN</span>
+            <strong>BIS ZU -30%</strong>
+            <Link href="/products/" className="promo-deal-btn">
               JETZT SPAREN
+            </Link>
+          </div>
+        </div>
+
+        <div className="promo-deal-card">
+          <div className="promo-deal-image">
+            <ProductSvg imageKey="batterie" />
+          </div>
+          <div className="promo-deal-body">
+            <span className="promo-deal-tag">BATTERIEN</span>
+            <strong>AB 69,99 €</strong>
+            <Link href="/products/?filter=batterien" className="promo-deal-btn">
+              ENTDECKEN
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="promo-section">
+      <div className="promo-trust-list">
+        {trustBadges.map((badge) => (
+          <div key={badge.label} className="promo-trust-item">
+            <CategoryIcon name={badge.icon} size={20} />
+            <span>{badge.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <BrandsStrip variant="promo" />
+
+      <div className="promo-section promo-section--products">
         <h2 className="promo-title">BELIEBTE PRODUKTE</h2>
         <ul className="popular-products">
           {popularProducts.map((product) => (

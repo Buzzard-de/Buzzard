@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
+import BrandsStrip from "./BrandsStrip";
+import HomeHero from "./HomeHero";
+import PopularCategories from "./PopularCategories";
 import { trustBadges } from "@/lib/categories";
 import type { MegaMenuContent } from "@/types";
 
@@ -30,7 +35,10 @@ export default function MegaMenu({ content }: MegaMenuProps) {
         ))}
       </div>
 
-      <div className="mega-trust-row">
+      <PopularCategories />
+      <BrandsStrip variant="mega" />
+
+      <div className="mega-trust-row mega-trust-row--inline">
         {trustBadges.map((badge) => (
           <div key={badge.label} className="mega-trust-item">
             <CategoryIcon name={badge.icon} size={22} />
@@ -38,6 +46,8 @@ export default function MegaMenu({ content }: MegaMenuProps) {
           </div>
         ))}
       </div>
+
+      <HomeHero />
     </section>
   );
 }

@@ -1,8 +1,17 @@
 import CategoryIcon from "./CategoryIcon";
+import { trustBadges } from "@/lib/categories";
 
 export default function ServiceBar() {
   return (
     <section className="service-bar" aria-label="Service-Informationen">
+      <div className="service-trust-row" aria-label="Vorteile">
+        {trustBadges.map((badge) => (
+          <div key={badge.label} className="service-trust-item">
+            <CategoryIcon name={badge.icon} size={20} />
+            <span>{badge.label}</span>
+          </div>
+        ))}
+      </div>
       <div className="service-bar-inner">
         <div className="service-item">
           <CategoryIcon name="phone" size={28} />

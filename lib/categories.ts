@@ -18,6 +18,7 @@ import {
   getCategoryBreadcrumb,
   collectDescendantIds,
   isCategoryOrDescendant,
+  isCategoryInScope,
   categoryTree,
 } from "@/lib/categories/service";
 
@@ -45,6 +46,7 @@ export {
   getCategoryBreadcrumb,
   collectDescendantIds,
   isCategoryOrDescendant,
+  isCategoryInScope,
   categoryTree,
   getCategoryLabel,
   formatMenuLabel,

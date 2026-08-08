@@ -1,5 +1,5 @@
 import type { BuzzardCategory } from "@/lib/categories/types";
-import { collectDescendantIds, isCategoryOrDescendant, getCategoryById } from "@/lib/categories/service";
+import { collectDescendantIds, isCategoryInScope, getCategoryById } from "@/lib/categories/service";
 import { getCategoryLabel } from "@/lib/categories/i18n";
 import type { BuzzardLocale } from "@/lib/i18n/types";
 import { sanitizeSearchQuery } from "@/lib/security";
@@ -142,14 +142,14 @@ export function filterProducts(
   let result = items;
 
   if (buzzardCategory) {
-    result = result.filter((p) => isCategoryOrDescendant(p.categoryId, buzzardCategory.id));
+    result = result.filter((p) => isCategoryInScope(p.categoryId, buzzardCategory.id));
   } else if (filter && filter !== "alle") {
     if (filter.startsWith("cat-")) {
-      result = result.filter((p) => isCategoryOrDescendant(p.categoryId, filter));
+      result = result.filter((p) => isCategoryInScope(p.categoryId, filter));
     } else {
       const categoryId = legacyFilterToCategoryId[filter];
       if (categoryId) {
-        result = result.filter((p) => isCategoryOrDescendant(p.categoryId, categoryId));
+        result = result.filter((p) => isCategoryInScope(p.categoryId, categoryId));
       }
     }
   }

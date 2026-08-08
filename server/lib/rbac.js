@@ -8,6 +8,8 @@ const PERMISSIONS = {
     "sync.run",
     "imports.run",
     "audit.read",
+    "analytics.read",
+    "analytics.export",
   ],
   order_manager: [
     "orders.read",
@@ -16,6 +18,8 @@ const PERMISSIONS = {
     "logistics.write",
     "products.read",
     "audit.read",
+    "analytics.read",
+    "analytics.export",
   ],
   read_only: [
     "products.read",
@@ -24,6 +28,7 @@ const PERMISSIONS = {
     "orders.read",
     "logistics.read",
     "audit.read",
+    "analytics.read",
   ],
 };
 

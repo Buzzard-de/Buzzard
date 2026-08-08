@@ -861,7 +861,7 @@ select, input, button { font-family: inherit; }
     .search-wrap { order: 3; max-width: 100%; flex-basis: 100%; }
     .header-inner { flex-wrap: wrap; height: auto; padding: 12px; gap: 10px; }
     .site-header { height: auto; }
-    .main-nav { top: 0; position: static; overflow-x: auto; }
+    .main-nav { top: 0; position: sticky; overflow: visible; height: auto; min-height: var(--nav-h); }
     .main-nav ul { flex-wrap: nowrap; overflow-x: auto; }
     .main-nav li a { padding: 0 10px; font-size: 0.72rem; }
     .hero-inner { grid-template-columns: 1fr; padding: 24px 16px; }

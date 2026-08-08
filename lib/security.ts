@@ -116,19 +116,64 @@ export function markFormSubmitted(storageKey: string): void {
   }
 }
 
-export const SECURITY_HEADERS = {
-  contentSecurityPolicy: [
+function unique(values: string[]): string[] {
+  return [...new Set(values.filter(Boolean))];
+}
+
+export function buildContentSecurityPolicy(): string {
+  const apiOrigin = (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
+  const connectSrc = unique([
+    "'self'",
+    "https://formsubmit.co",
+    apiOrigin,
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3004",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3004",
+    "https://www.google-analytics.com",
+    "https://region1.google-analytics.com",
+    "https://www.googletagmanager.com",
+    "https://connect.facebook.net",
+    "https://analytics.tiktok.com",
+  ]);
+
+  const scriptSrc = unique([
+    "'self'",
+    "'unsafe-inline'",
+    "https://www.googletagmanager.com",
+    "https://connect.facebook.net",
+    "https://analytics.tiktok.com",
+  ]);
+
+  const imgSrc = unique([
+    "'self'",
+    "data:",
+    "blob:",
+    "https://www.google-analytics.com",
+    "https://www.googletagmanager.com",
+    "https://www.facebook.com",
+  ]);
+
+  return [
     "default-src 'self'",
     "base-uri 'self'",
     "form-action 'self' https://formsubmit.co",
     "frame-ancestors 'none'",
     "object-src 'none'",
-    "script-src 'self' 'unsafe-inline'",
+    `script-src ${scriptSrc.join(" ")}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    `img-src ${imgSrc.join(" ")}`,
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://formsubmit.co http://localhost:3001 http://localhost:3004 http://127.0.0.1:3001 http://127.0.0.1:3004",
+    `connect-src ${connectSrc.join(" ")}`,
     "upgrade-insecure-requests",
-  ].join("; "),
+  ].join("; ");
+}
+
+export const SECURITY_HEADERS = {
+  get contentSecurityPolicy() {
+    return buildContentSecurityPolicy();
+  },
   permissionsPolicy: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
 } as const;

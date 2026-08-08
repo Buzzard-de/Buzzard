@@ -1,4 +1,5 @@
 import { SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
+import { absoluteUrl } from "@/lib/seo/config";
 
 export const DEFAULT_LOCALE: BuzzardLocale = "de";
 export const LOCALE_PREFIX_PATTERN = /^\/(de|en|tr|ar)(\/|$)/;
@@ -28,6 +29,6 @@ export function hreflangAlternates(path = "/"): Array<{ locale: BuzzardLocale; h
   const basePath = stripLocalePrefix(normalized).path;
   return SUPPORTED_LOCALES.map((locale) => ({
     locale,
-    href: localizePath(basePath, locale),
+    href: absoluteUrl(localizePath(basePath, locale)),
   }));
 }

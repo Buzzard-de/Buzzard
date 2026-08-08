@@ -7,6 +7,7 @@ import TopUtilityBar from "@/components/TopUtilityBar";
 import ShopProviders from "@/components/ShopProviders";
 import { SECURITY_HEADERS } from "@/lib/security";
 import { marketingConfig } from "@/lib/marketing/config";
+import { SITE_URL } from "@/lib/seo/config";
 import "@/styles/globals.css";
 import "@/styles/pusart.css";
 import "@/styles/shop.css";
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   title: "Buzzard – Online-Shop | Produkte kaufen",
   description:
     "Buzzard – Über 1.000.000 Produkte in den Kategorien Textil, Kosmetik, Reinigung, Schule und mehr. Kostenloser Versand ab 79€.",
-  metadataBase: new URL("https://buzzard24.de"),
+  metadataBase: new URL(SITE_URL),
   manifest: "/manifest.json",
   referrer: "strict-origin-when-cross-origin",
   icons: { icon: "/logo/logo.png", apple: "/logo/logo.png" },

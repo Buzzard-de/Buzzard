@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAdminAuth } from "@/lib/admin/context";
+import { isProductionBuild } from "@/lib/api/config";
 
 export default function AdminLoginForm() {
   const router = useRouter();
@@ -19,8 +20,12 @@ export default function AdminLoginForm() {
     try {
       await login(email, password);
       router.push("/admin/");
-    } catch {
-      setError("Anmeldung fehlgeschlagen. E-Mail oder Passwort ungültig.");
+    } catch (err) {
+      if (err instanceof Error && err.message === "admin.apiUnavailable") {
+        setError("Admin-Service derzeit nicht erreichbar. Bitte später erneut versuchen.");
+      } else {
+        setError("Anmeldung fehlgeschlagen. E-Mail oder Passwort ungültig.");
+      }
     } finally {
       setLoading(false);
     }
@@ -45,7 +50,9 @@ export default function AdminLoginForm() {
         <button type="submit" className="shop-btn-primary" disabled={loading}>
           {loading ? "Anmelden…" : "Anmelden"}
         </button>
-        <p className="admin-login-hint">Demo: admin@buzzard.de / BuzzardAdmin2026!</p>
+        {!isProductionBuild() ? (
+          <p className="admin-login-hint">Demo: admin@buzzard.de / BuzzardAdmin2026!</p>
+        ) : null}
       </form>
     </div>
   );

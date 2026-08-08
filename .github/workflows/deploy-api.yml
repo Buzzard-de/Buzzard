@@ -1,0 +1,27 @@
+name: Deploy Buzzard API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "data/**"
+      - "package.json"
+      - "render.yaml"
+  workflow_dispatch:
+
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger Render deploy hook
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+
+      - name: Render hook missing
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL == '' }}
+        run: |
+          echo "Set RENDER_DEPLOY_HOOK_URL in repository secrets after connecting render.yaml to Render."
+          echo "Default API URL for frontend: https://buzzard-api.onrender.com"

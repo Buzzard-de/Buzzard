@@ -6,6 +6,7 @@ import { sendAiChatMessage } from "@/lib/ai/client";
 import type { AiChatMessage, AiChatProduct } from "@/lib/ai/types";
 import { useLocale } from "@/lib/i18n/context";
 import { isRtlLocale } from "@/lib/i18n";
+import { isAiChatEnabled } from "@/lib/api/config";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 
 const SESSION_KEY = "buzzard_ai_chat_session";
@@ -68,7 +69,7 @@ export default function AiChatWidget() {
     handleSend(t("ai.chat.escalate"));
   }
 
-  if (process.env.NEXT_PUBLIC_AI_CHAT_ENABLED === "0") return null;
+  if (!isAiChatEnabled()) return null;
 
   return (
     <>

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: buzzard-api
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm ci
+    startCommand: node server/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: BUZZARD_AI_CHAT_ENABLED
+        value: "1"

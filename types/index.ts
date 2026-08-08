@@ -9,8 +9,11 @@ export type ProductCategory =
 export interface Product {
   id: string;
   name: string;
+  /** Legacy automotive filter id */
   category: ProductCategory;
   categoryLabel: string;
+  /** Buzzard category id from buzzard_categories.json */
+  categoryId: string;
   price: number;
   imageKey: string;
   description?: string;

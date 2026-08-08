@@ -1,5 +1,6 @@
 import type { BuzzardLocale } from "./types";
 import { categoryLabelsDe } from "./translations/de.generated";
+import { categoryLabelsAr } from "./translations/ar.generated";
 
 export function getCategoryLabel(
   category: { id: string; name: string },
@@ -7,7 +8,7 @@ export function getCategoryLabel(
 ): string {
   if (locale === "tr") return category.name;
   if (locale === "de") return categoryLabelsDe[category.id] ?? category.name;
-  // Arabic placeholder: fall back to Turkish source until dedicated AR catalog exists.
+  if (locale === "ar") return categoryLabelsAr[category.id] ?? category.name;
   return category.name;
 }
 

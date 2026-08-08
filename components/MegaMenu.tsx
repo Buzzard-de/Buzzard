@@ -8,6 +8,7 @@ import {
   categoryHref,
   formatMenuLabel,
   getCategoryLabel,
+  getChildren,
   getMainCategoryIcon,
   splitSubcategoriesIntoColumns,
   DEFAULT_LOCALE,
@@ -19,6 +20,46 @@ interface MegaMenuProps {
   subCategories: BuzzardCategory[];
   activeSubId: string;
   onSubSelect: (subId: string) => void;
+}
+
+function SubcategoryGroup({
+  sub,
+  mainCategory,
+  activeSubId,
+  onSubSelect,
+}: {
+  sub: BuzzardCategory;
+  mainCategory: BuzzardCategory;
+  activeSubId: string;
+  onSubSelect: (subId: string) => void;
+}) {
+  const level3 = getChildren(sub.id);
+
+  return (
+    <li role="listitem" className="subcategory-group">
+      <Link
+        href={categoryHref(sub)}
+        className={`subcategory-link${activeSubId === sub.id ? " active" : ""}`}
+        onMouseEnter={() => onSubSelect(sub.id)}
+        onFocus={() => onSubSelect(sub.id)}
+      >
+        <CategoryIcon name={getMainCategoryIcon(mainCategory.id)} size={16} />
+        <span>{getCategoryLabel(sub, DEFAULT_LOCALE)}</span>
+      </Link>
+      {level3.length > 0 && (
+        <ul className="subsubcategory-list" role="list">
+          {level3.map((child) => (
+            <li key={child.id} role="listitem">
+              <Link href={categoryHref(child)} className="subsubcategory-link">
+                <span className="subsubcategory-id">{child.menu_order}.</span>
+                <span>{getCategoryLabel(child, DEFAULT_LOCALE)}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  );
 }
 
 export default function MegaMenu({
@@ -45,28 +86,20 @@ export default function MegaMenu({
         {columns.map((column, columnIndex) => (
           <ul key={columnIndex} className="subcategory-column" role="list">
             {column.map((sub) => (
-              <li key={sub.id} role="listitem">
-                <Link
-                  href={categoryHref(sub)}
-                  className={`subcategory-link${activeSubId === sub.id ? " active" : ""}`}
-                  onMouseEnter={() => onSubSelect(sub.id)}
-                  onFocus={() => onSubSelect(sub.id)}
-                >
-                  <CategoryIcon name={getMainCategoryIcon(mainCategory.id)} size={16} />
-                  <span>{getCategoryLabel(sub, DEFAULT_LOCALE)}</span>
-                </Link>
-              </li>
+              <SubcategoryGroup
+                key={sub.id}
+                sub={sub}
+                mainCategory={mainCategory}
+                activeSubId={activeSubId}
+                onSubSelect={onSubSelect}
+              />
             ))}
           </ul>
         ))}
       </div>
 
-      {mainCategory.id === "cat-01" && (
-        <>
-          <PopularCategories />
-          <BrandsStrip variant="mega" />
-        </>
-      )}
+      <PopularCategories mainCategoryId={mainCategory.id} />
+      {mainCategory.id === "cat-05" && <BrandsStrip variant="mega" />}
     </section>
   );
 }

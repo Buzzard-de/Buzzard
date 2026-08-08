@@ -10,12 +10,12 @@ import {
   formatMenuLabel,
   getCategoryById,
   getCategoryLabel,
-  popularProducts,
+  getChildren,
   trustBadges,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
 import { useCart } from "@/lib/cart";
-import { getProductById, formatPrice } from "@/lib/products";
+import { formatPrice, getProductById, getProductsForCategory } from "@/lib/products";
 import type { BuzzardCategory } from "@/lib/categories/types";
 
 interface FeaturedBannerProps {
@@ -27,6 +27,9 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
   const { add } = useCart();
   const [addedId, setAddedId] = useState<string | null>(null);
   const activeSub = activeSubId ? getCategoryById(activeSubId) : undefined;
+  const level3 = activeSub ? getChildren(activeSub.id) : [];
+  const promoSubs = mainCategory ? getChildren(mainCategory.id).slice(0, 2) : [];
+  const categoryProducts = mainCategory ? getProductsForCategory(mainCategory, 3) : [];
 
   function handleAdd(productId: string) {
     const product = getProductById(productId);
@@ -53,35 +56,40 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
         </div>
       )}
 
-      <div className="promo-section">
-        <h2 className="promo-title">TOP ANGEBOTE</h2>
-
-        <div className="promo-deal-card">
-          <div className="promo-deal-image">
-            <ProductSvg imageKey="tire" />
-          </div>
-          <div className="promo-deal-body">
-            <span className="promo-deal-tag">WINTERREIFEN</span>
-            <strong>BIS ZU -30%</strong>
-            <Link href="/products/" className="promo-deal-btn">
-              JETZT SPAREN
-            </Link>
-          </div>
+      {level3.length > 0 && (
+        <div className="promo-section promo-section--subsub">
+          <h2 className="promo-title">WEITERE UNTERKATEGORIEN</h2>
+          <ul className="subsubcategory-list">
+            {level3.slice(0, 6).map((child) => (
+              <li key={child.id}>
+                <Link href={categoryHref(child)} className="subsubcategory-link">
+                  <span>{getCategoryLabel(child, DEFAULT_LOCALE)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
+      )}
 
-        <div className="promo-deal-card">
-          <div className="promo-deal-image">
-            <ProductSvg imageKey="batterie" />
-          </div>
-          <div className="promo-deal-body">
-            <span className="promo-deal-tag">BATTERIEN</span>
-            <strong>AB 69,99 €</strong>
-            <Link href="/products/?filter=batterien" className="promo-deal-btn">
-              ENTDECKEN
-            </Link>
-          </div>
+      {promoSubs.length > 0 && (
+        <div className="promo-section">
+          <h2 className="promo-title">TOP ANGEBOTE</h2>
+          {promoSubs.map((sub, index) => (
+            <div key={sub.id} className="promo-deal-card">
+              <div className="promo-deal-image">
+                <ProductSvg imageKey={index === 0 ? "tire" : "batterie"} />
+              </div>
+              <div className="promo-deal-body">
+                <span className="promo-deal-tag">{getCategoryLabel(sub, DEFAULT_LOCALE).toUpperCase()}</span>
+                <strong>JETZT ENTDECKEN</strong>
+                <Link href={categoryHref(sub)} className="promo-deal-btn">
+                  ANSEHEN
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
 
       <div className="promo-trust-list">
         {trustBadges.map((badge) => (
@@ -94,39 +102,39 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
 
       <BrandsStrip variant="promo" />
 
-      <div className="promo-section promo-section--products">
-        <h2 className="promo-title">BELIEBTE PRODUKTE</h2>
-        <ul className="popular-products">
-          {popularProducts.map((product) => (
-            <li key={product.id} className="popular-product">
-              <Link href={`/products/${product.productId}/`} className="popular-product-img">
-                <ProductSvg imageKey={product.imageKey} />
-              </Link>
-              <div className="popular-product-body">
-                <Link href={`/products/${product.productId}/`} className="popular-product-name">
-                  {product.name}
+      {categoryProducts.length > 0 && (
+        <div className="promo-section promo-section--products">
+          <h2 className="promo-title">BELIEBTE PRODUKTE</h2>
+          <ul className="popular-products">
+            {categoryProducts.map((product) => (
+              <li key={product.id} className="popular-product">
+                <Link href={`/products/${product.id}/`} className="popular-product-img">
+                  <ProductSvg imageKey={product.imageKey} />
                 </Link>
-                <div className="popular-product-stars">
-                  {"★".repeat(product.rating)}
-                  <span>{product.rating}.0</span>
+                <div className="popular-product-body">
+                  <Link href={`/products/${product.id}/`} className="popular-product-name">
+                    {product.name}
+                  </Link>
+                  <div className="popular-product-stars">
+                    {"★".repeat(5)}
+                    <span>5.0</span>
+                  </div>
+                  <div className="popular-product-prices">
+                    <span className="popular-product-price">{formatPrice(product.price)}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="popular-add-btn"
+                    onClick={() => handleAdd(product.id)}
+                  >
+                    {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                  </button>
                 </div>
-                <div className="popular-product-prices">
-                  <span className="popular-product-price">{formatPrice(product.price)}</span>
-                  <span className="popular-product-old">{formatPrice(product.oldPrice)}</span>
-                  <span className="popular-product-discount">-{product.discount}%</span>
-                </div>
-                <button
-                  type="button"
-                  className="popular-add-btn"
-                  onClick={() => handleAdd(product.productId)}
-                >
-                  {addedId === product.productId ? "✓ Hinzugefügt" : "In den Warenkorb"}
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </aside>
   );
 }

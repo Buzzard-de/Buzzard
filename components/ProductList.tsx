@@ -28,7 +28,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const { toggle, has } = useWishlist();
   const [addedId, setAddedId] = useState<string | null>(null);
 
-  const filtered = filterProducts(products, filter, query);
+  const filtered = filterProducts(products, filter, query, kategorie);
 
   function handleAdd(id: string, name: string, price: number) {
     add({ id, name, price });

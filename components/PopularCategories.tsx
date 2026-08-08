@@ -1,18 +1,25 @@
 import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
-import { homeCategories } from "@/lib/categories";
-import { getMainCategoryIcon } from "@/lib/categories/icons";
+import { getFeaturedSubcategories, getMainCategoryIcon } from "@/lib/categories";
 
-export default function PopularCategories() {
+interface PopularCategoriesProps {
+  mainCategoryId?: string;
+}
+
+export default function PopularCategories({ mainCategoryId = "cat-01" }: PopularCategoriesProps) {
+  const cards = getFeaturedSubcategories(mainCategoryId, 6);
+
+  if (cards.length === 0) return null;
+
   return (
     <section className="popular-categories" aria-label="Beliebte Kategorien">
       <h3 className="popular-categories-title">BELIEBTE KATEGORIEN</h3>
       <ul className="popular-categories-grid">
-        {homeCategories.map((cat) => (
+        {cards.map((cat) => (
           <li key={cat.id}>
             <Link href={cat.href} className="popular-category-card">
               <span className="popular-category-icon">
-                <CategoryIcon name={getMainCategoryIcon(cat.id.split("-").slice(0, 2).join("-"))} size={28} />
+                <CategoryIcon name={getMainCategoryIcon(mainCategoryId)} size={28} />
               </span>
               <span className="popular-category-label">{cat.label}</span>
             </Link>

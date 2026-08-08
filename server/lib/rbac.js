@@ -10,6 +10,8 @@ const PERMISSIONS = {
     "audit.read",
     "analytics.read",
     "analytics.export",
+    "seo.read",
+    "seo.write",
   ],
   order_manager: [
     "orders.read",

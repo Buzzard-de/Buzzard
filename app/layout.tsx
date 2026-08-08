@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import TopUtilityBar from "@/components/TopUtilityBar";
 import ShopProviders from "@/components/ShopProviders";
 import { SECURITY_HEADERS } from "@/lib/security";
+import { marketingConfig } from "@/lib/marketing/config";
 import "@/styles/globals.css";
 import "@/styles/pusart.css";
 import "@/styles/shop.css";
@@ -41,6 +42,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: marketingConfig.searchConsoleVerification
+    ? { google: marketingConfig.searchConsoleVerification }
+    : undefined,
   other: {
     "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   },

@@ -13,6 +13,7 @@ import { useShop } from "@/lib/shop";
 import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
 import { formatPrice } from "@/lib/products";
+import { trackMarketingEvent } from "@/lib/marketing/events";
 
 export default function Header() {
   const router = useRouter();
@@ -29,8 +30,10 @@ export default function Header() {
     e?.preventDefault();
     homeUI?.closeMobileSearch();
     const q = query.trim();
-    if (q) router.push(`/products/?q=${encodeURIComponent(q)}`);
-    else router.push("/products/");
+    if (q) {
+      trackMarketingEvent("search", { search_term: q });
+      router.push(`/products/?q=${encodeURIComponent(q)}`);
+    } else router.push("/products/");
   }
 
   function openMenu() {

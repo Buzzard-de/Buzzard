@@ -9,6 +9,10 @@ import { WishlistProvider } from "@/lib/wishlist";
 import MegaMenuOverlay from "./MegaMenuOverlay";
 import ShopModals from "./ShopModals";
 import LocaleHead from "./LocaleHead";
+import GlobalStructuredData from "./seo/GlobalStructuredData";
+import ConsentBanner from "./marketing/ConsentBanner";
+import MarketingScripts from "./marketing/MarketingScripts";
+import PageViewTracker from "./marketing/PageViewTracker";
 
 export default function ShopProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -18,8 +22,12 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
           <WishlistProvider>
             <ShopProvider>
               <HomeUIProvider>
+              <GlobalStructuredData />
               {children}
               <LocaleHead />
+              <PageViewTracker />
+              <ConsentBanner />
+              <MarketingScripts />
               <MegaMenuOverlay />
                 <ShopModals />
               </HomeUIProvider>

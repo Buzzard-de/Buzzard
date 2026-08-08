@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import ProductGallery from "./ProductGallery";
 import ProductStructuredData from "./ProductStructuredData";
 import ProductSvg from "./ProductSvg";
@@ -19,6 +19,7 @@ import {
   FREE_SHIPPING_THRESHOLD,
 } from "@/lib/products";
 import { localizePublicProduct } from "@/lib/products/i18n";
+import { trackMarketingEvent } from "@/lib/marketing/events";
 import type { PublicProduct, ProductVariant } from "@/lib/products/types";
 
 interface ProductDetailViewProps {
@@ -57,6 +58,14 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
   const activeStock =
     selectedVariantList.find((v) => typeof v.stock === "number")?.stock ?? localizedProduct.stock;
   const canBuy = activeStock > 0 && localizedProduct.stockStatus !== "out_of_stock";
+
+  useEffect(() => {
+    trackMarketingEvent("view_item", {
+      product_id: localizedProduct.id,
+      item_name: localizedProduct.name,
+      value: activePrice,
+    });
+  }, [localizedProduct.id, localizedProduct.name, activePrice]);
 
   function selectVariant(type: string, variantId: string) {
     setSelectedVariants((prev) => ({ ...prev, [type]: variantId }));

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import ProductList from "@/components/ProductList";
+import JsonLd from "@/components/seo/JsonLd";
 import {
   categoryHref,
   findCategoryBySlugPath,
@@ -10,6 +11,8 @@ import {
   getCategoryLabel,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
+import { buildCategoryMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema, categoryBreadcrumbItems } from "@/lib/seo/structured-data";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string[] }>;
@@ -25,11 +28,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   if (!category) {
     return { title: "Kategorie – Buzzard" };
   }
-  const name = getCategoryLabel(category, DEFAULT_LOCALE);
-  return {
-    title: `${name} – Buzzard`,
-    description: `${name} bei Buzzard online entdecken. Große Auswahl, schnelle Lieferung, faire Preise.`,
-  };
+  return buildCategoryMetadata(category, DEFAULT_LOCALE);
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
@@ -53,6 +52,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <>
+      <JsonLd data={breadcrumbSchema(categoryBreadcrumbItems(breadcrumb, DEFAULT_LOCALE))} />
       <section className="page-hero">
         <div className="page-hero-inner">
           <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">

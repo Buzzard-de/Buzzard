@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import ProductsFilterSidebar from "@/components/ProductsFilterSidebar";
 import ProductList from "@/components/ProductList";
+import ProductsSeoGuard from "@/components/seo/ProductsSeoGuard";
 
 export const metadata: Metadata = {
   title: "Produkte – Buzzard",
@@ -24,6 +25,9 @@ export default function ProductsPage() {
       </section>
 
       <section className="subpage-content products-page-layout">
+        <Suspense fallback={null}>
+          <ProductsSeoGuard />
+        </Suspense>
         <Suspense fallback={<aside className="home-sidebar" />}>
           <ProductsFilterSidebar />
         </Suspense>

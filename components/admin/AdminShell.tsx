@@ -7,6 +7,7 @@ import { useAdminAuth } from "@/lib/admin/context";
 const NAV = [
   { href: "/admin/", label: "Dashboard" },
   { href: "/admin/analytics/", label: "Analytics" },
+  { href: "/admin/seo/", label: "SEO" },
   { href: "/admin/products/", label: "Produkte" },
   { href: "/admin/suppliers/", label: "Lieferanten" },
   { href: "/admin/sync/", label: "Sync & Import" },

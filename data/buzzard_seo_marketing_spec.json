@@ -1,0 +1,52 @@
+{
+  "package": "11",
+  "name": "Buzzard SEO Google Marketing",
+  "seo": [
+    "metadata",
+    "canonical",
+    "hreflang",
+    "sitemap",
+    "robots",
+    "structured_data",
+    "redirects"
+  ],
+  "structured_data": [
+    "Organization",
+    "WebSite",
+    "BreadcrumbList",
+    "Product",
+    "Offer",
+    "AggregateRating",
+    "Review",
+    "Article"
+  ],
+  "analytics": [
+    "GA4",
+    "GTM",
+    "Google Ads"
+  ],
+  "marketing": [
+    "Google Merchant Center",
+    "eBay",
+    "Amazon",
+    "Meta",
+    "TikTok"
+  ],
+  "consent": true,
+  "centralized_event_layer": true,
+  "multilingual": [
+    "de",
+    "tr",
+    "en",
+    "ar"
+  ],
+  "local_seo": true,
+  "performance": [
+    "LCP",
+    "CLS",
+    "INP"
+  ],
+  "feed_adapter": true,
+  "fake_reviews": false,
+  "fake_ratings": false
+}

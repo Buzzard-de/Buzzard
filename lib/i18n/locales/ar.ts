@@ -259,6 +259,37 @@ export const catalog: TranslationTree = {
       invalid: "منتج غير صالح.",
     },
   },
+  logistics: {
+    shipping: {
+      pickup: "الاستلام من المتجر",
+      unavailable: "الشحن غير متاح إلى هذا البلد.",
+    },
+    shipment: {
+      sectionTitle: "الشحنات",
+      title: "شحنة",
+      trackingPending: "جاري تجهيز التتبع…",
+      status: {
+        pending: "قيد الانتظار",
+        preparing: "قيد التجهيز",
+        handed_to_carrier: "تم تسليمها لشركة الشحن",
+        in_transit: "في الطريق",
+        out_for_delivery: "خارج للتسليم",
+        delivered: "تم التسليم",
+        exception: "مشكلة في التسليم",
+        returned: "مرتجع",
+      },
+    },
+    fulfillment: {
+      notFound: "لم يتم العثور على التنفيذ.",
+      alreadyConfirmed: "تم التأكيد بالفعل.",
+      retryFailed: "فشلت إعادة المحاولة.",
+    },
+    return: {
+      invalidRequest: "طلب إرجاع غير صالح.",
+      invalidStatus: "حالة إرجاع غير صالحة.",
+      notFound: "لم يتم العثور على الإرجاع.",
+    },
+  },
   footer: {
     imprint: "البيانات القانونية",
     privacy: "الخصوصية",

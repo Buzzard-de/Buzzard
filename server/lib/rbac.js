@@ -9,12 +9,20 @@ const PERMISSIONS = {
     "imports.run",
     "audit.read",
   ],
-  order_manager: ["orders.read", "orders.write", "products.read", "audit.read"],
+  order_manager: [
+    "orders.read",
+    "orders.write",
+    "logistics.read",
+    "logistics.write",
+    "products.read",
+    "audit.read",
+  ],
   read_only: [
     "products.read",
     "suppliers.read",
     "sync.read",
     "orders.read",
+    "logistics.read",
     "audit.read",
   ],
 };

@@ -43,6 +43,7 @@ export interface CustomerOrder {
   discount?: number;
   trackingNumber?: string | null;
   trackingCarrier?: string | null;
+  shipments?: import("@/lib/logistics/types").Shipment[];
   shippingAddress?: AccountAddress;
 }
 

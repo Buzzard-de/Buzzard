@@ -201,6 +201,42 @@
   margin-bottom: 12px;
 }
 
+.admin-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-toolbar input {
+  flex: 1;
+  max-width: 320px;
+  background: #111;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.admin-section {
+  margin-top: 28px;
+}
+
+.admin-section h2 {
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.admin-inline-input {
+  width: 100%;
+  min-width: 140px;
+  background: #111;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 8px;
+}
+
 .admin-list {
   margin: 0;
   padding-left: 18px;

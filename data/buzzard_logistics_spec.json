@@ -1,0 +1,39 @@
+{
+  "package": "09",
+  "name": "Buzzard Shipping Logistics and Dropshipping",
+  "fulfillment_models": [
+    "warehouse",
+    "dropshipping",
+    "multi_supplier"
+  ],
+  "shipping_methods": [
+    "standard",
+    "express",
+    "pickup",
+    "free_shipping"
+  ],
+  "carriers": [
+    "DHL",
+    "DPD",
+    "GLS",
+    "Hermes",
+    "UPS"
+  ],
+  "carrier_adapter": true,
+  "multi_supplier_orders": true,
+  "shipment_split": true,
+  "tracking": true,
+  "returns": true,
+  "white_label": true,
+  "blind_shipping": true,
+  "server_side_shipping_calculation": true,
+  "idempotent_supplier_orders": true,
+  "customer_notifications": true,
+  "languages": [
+    "de",
+    "tr",
+    "en",
+    "ar"
+  ],
+  "rtl": true
+}

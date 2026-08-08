@@ -1,0 +1,42 @@
+{
+  "freeShippingThreshold": 79,
+  "currency": "EUR",
+  "methods": {
+    "standard": {
+      "baseCost": 5.99,
+      "freeEligible": true,
+      "etaDays": "2-4",
+      "labelKey": "checkout.shippingStandard"
+    },
+    "express": {
+      "baseCost": 12.99,
+      "freeEligible": false,
+      "etaDays": "1-2",
+      "labelKey": "checkout.shippingExpress"
+    },
+    "pickup": {
+      "baseCost": 0,
+      "freeEligible": false,
+      "etaDays": "0",
+      "countries": ["DE"],
+      "labelKey": "logistics.shipping.pickup"
+    }
+  },
+  "countrySurcharges": {
+    "AT": 2.5,
+    "CH": 4.99,
+    "NL": 1.5,
+    "BE": 1.5,
+    "FR": 2.0,
+    "IT": 2.5,
+    "PL": 3.0,
+    "TR": 6.99
+  },
+  "weightSurchargePerKg": 1.2,
+  "classSurcharges": {
+    "standard": 0,
+    "bulky": 5.0,
+    "heavy": 8.0
+  },
+  "defaultWarehouseId": "SUP-INTERNAL-001"
+}

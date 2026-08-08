@@ -10,6 +10,7 @@ const NAV = [
   { href: "/admin/suppliers/", label: "Lieferanten" },
   { href: "/admin/sync/", label: "Sync & Import" },
   { href: "/admin/orders/", label: "Bestellungen" },
+  { href: "/admin/logistics/", label: "Logistik" },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {

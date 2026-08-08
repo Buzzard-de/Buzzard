@@ -7,6 +7,8 @@ import { useCart } from "@/lib/cart";
 import { useLocale } from "@/lib/i18n/context";
 import { getAllProducts, getCategoryLabelForProduct } from "@/lib/products";
 import { localizePublicProduct } from "@/lib/products/i18n";
+import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
+import PriceLabel from "@/components/shop/PriceLabel";
 import type { PublicProduct } from "@/lib/products/types";
 
 interface HomeProductRailProps {
@@ -31,7 +33,7 @@ function selectProducts(variant: HomeProductRailProps["variant"], items: PublicP
 
 export default function HomeProductRail({ title, variant = "all", limit = 8 }: HomeProductRailProps) {
   const { add } = useCart();
-  const { locale, t, formatPrice } = useLocale();
+  const { locale, t } = useLocale();
   const [addedId, setAddedId] = useState<string | null>(null);
   const items = selectProducts(variant, getAllProducts()).slice(0, limit);
 
@@ -66,18 +68,28 @@ export default function HomeProductRail({ title, variant = "all", limit = 8 }: H
               </Link>
               <span className="product-card-sku">{getCategoryLabelForProduct(localized, locale)}</span>
               <div className="product-card-prices">
-                <span className="product-card-price">{formatPrice(localized.price)}</span>
-                {localized.compareAtPrice && localized.compareAtPrice > localized.price && (
-                  <span className="product-card-compare">{formatPrice(localized.compareAtPrice)}</span>
-                )}
+                <PriceLabel amount={localized.price} className="product-card-price" />
+                {showPrices() &&
+                  localized.compareAtPrice &&
+                  localized.compareAtPrice > localized.price && (
+                    <span className="product-card-compare">
+                      <PriceLabel amount={localized.compareAtPrice} />
+                    </span>
+                  )}
               </div>
-              <button
-                type="button"
-                className="product-card-btn"
-                onClick={() => handleAdd(product)}
-              >
-                {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
-              </button>
+              {isCheckoutEnabled() ? (
+                <button
+                  type="button"
+                  className="product-card-btn"
+                  onClick={() => handleAdd(product)}
+                >
+                  {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
+                </button>
+              ) : (
+                <Link href={localized.url} className="product-card-btn">
+                  {t("product.viewProduct")}
+                </Link>
+              )}
             </div>
           </article>
         );})}

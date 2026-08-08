@@ -18,6 +18,8 @@ import {
 import { localizePublicProduct } from "@/lib/products/i18n";
 import { findCategoryBySlugPath, getCategoryLabel } from "@/lib/categories";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
+import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
+import PriceLabel from "@/components/shop/PriceLabel";
 
 const PAGE_SIZE = 12;
 
@@ -29,7 +31,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const { locale, t, formatPrice } = useLocale();
+  const { locale, t } = useLocale();
   const filter = searchParams.get("filter") || "alle";
   const sort = searchParams.get("sort") || "default";
   const query = sanitizeSearchQuery(searchParams.get("q"));
@@ -105,8 +107,12 @@ export default function ProductList({ categorySlug }: ProductListProps) {
           >
             <option value="default">Standard</option>
             <option value="name-asc">Name A–Z</option>
-            <option value="price-asc">Preis aufsteigend</option>
-            <option value="price-desc">Preis absteigend</option>
+            {showPrices() ? (
+              <>
+                <option value="price-asc">Preis aufsteigend</option>
+                <option value="price-desc">Preis absteigend</option>
+              </>
+            ) : null}
             <option value="bestseller">Bestseller</option>
           </select>
         </label>
@@ -134,20 +140,26 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                     {localized.name}
                   </Link>
                   <span className="product-card-sku">SKU: {localized.sku}</span>
-                  <span className="product-card-price">{formatPrice(localized.price)}</span>
+                  <PriceLabel amount={localized.price} className="product-card-price" />
                   <div className="product-card-actions">
-                    <button
-                      type="button"
-                      className="product-card-btn"
-                      style={
-                        addedId === product.id
-                          ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
-                          : undefined
-                      }
-                      onClick={() => handleAdd(product.id)}
-                    >
-                      {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
-                    </button>
+                    {isCheckoutEnabled() ? (
+                      <button
+                        type="button"
+                        className="product-card-btn"
+                        style={
+                          addedId === product.id
+                            ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
+                            : undefined
+                        }
+                        onClick={() => handleAdd(product.id)}
+                      >
+                        {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
+                      </button>
+                    ) : (
+                      <Link href={localized.url} className="product-card-btn">
+                        {t("product.viewProduct")}
+                      </Link>
+                    )}
                     <button
                       type="button"
                       className={`product-wishlist-btn${has(product.id) ? " active" : ""}`}

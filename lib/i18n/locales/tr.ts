@@ -316,6 +316,8 @@ export const catalog: TranslationTree = {
     added: "Eklendi",
     freeShippingFrom: "{amount} üzeri ücretsiz kargo",
     allProducts: "Tüm ürünler",
+    priceOnRequest: "Fiyat için sorun",
+    viewProduct: "Ürünü gör",
     stock: {
       in_stock: "Stokta",
       low_stock: "Az kaldı",
@@ -330,6 +332,11 @@ export const catalog: TranslationTree = {
   },
   homeRails: {
     new: "Yeni ürünler",
+  },
+  catalog: {
+    browseOnlyTitle: "Yalnızca katalog modu",
+    browseOnlyText: "Online satış henüz aktif değil. Ürünleri inceleyebilirsiniz.",
+    salesDisabled: "Online sipariş şu anda mümkün değil.",
   },
   country: {
     DE: "Almanya",

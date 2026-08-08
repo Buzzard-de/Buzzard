@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { fetchAccountOrders } from "@/lib/account/client";
 import type { CustomerOrder } from "@/lib/account/types";
 import { useLocale } from "@/lib/i18n/context";
-import { formatPrice } from "@/lib/products";
+import { showPrices } from "@/lib/shop/mode";
+import PriceLabel from "@/components/shop/PriceLabel";
 
 export default function AccountOrderList() {
   const { t } = useLocale();
@@ -27,7 +28,7 @@ export default function AccountOrderList() {
               <tr>
                 <th>{t("account.orderNumber")}</th>
                 <th>{t("account.statusLabel")}</th>
-                <th>{t("cart.total")}</th>
+                {showPrices() ? <th>{t("cart.total")}</th> : null}
                 <th>{t("account.date")}</th>
                 <th></th>
               </tr>
@@ -37,7 +38,11 @@ export default function AccountOrderList() {
                 <tr key={order.orderNumber}>
                   <td>{order.orderNumber}</td>
                   <td>{t(`account.status.${order.status}`)}</td>
-                  <td>{formatPrice(order.total)}</td>
+                  {showPrices() ? (
+                    <td>
+                      <PriceLabel amount={order.total} />
+                    </td>
+                  ) : null}
                   <td>{new Date(order.createdAt).toLocaleDateString("de-DE")}</td>
                   <td>
                     <Link href={`/konto/bestellung/?order=${encodeURIComponent(order.orderNumber)}`}>{t("account.view")}</Link>

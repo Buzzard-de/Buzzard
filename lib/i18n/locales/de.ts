@@ -328,6 +328,8 @@ export const catalog: TranslationTree = {
     added: "Hinzugefügt",
     freeShippingFrom: "Kostenloser Versand ab {amount}",
     allProducts: "Alle Produkte",
+    priceOnRequest: "Preis auf Anfrage",
+    viewProduct: "Produkt ansehen",
     stock: {
       in_stock: "Auf Lager",
       low_stock: "Nur noch wenige verfügbar",
@@ -343,16 +345,10 @@ export const catalog: TranslationTree = {
   homeRails: {
     new: "Neuheiten",
   },
-  country: {
-    DE: "Deutschland",
-    AT: "Österreich",
-    CH: "Schweiz",
-    NL: "Niederlande",
-    BE: "Belgien",
-    FR: "Frankreich",
-    IT: "Italien",
-    PL: "Polen",
-    TR: "Türkei",
+  catalog: {
+    browseOnlyTitle: "Nur Katalogmodus",
+    browseOnlyText: "Der Online-Verkauf ist derzeit nicht aktiv. Sie können Produkte ansehen und sich informieren.",
+    salesDisabled: "Online-Bestellungen sind derzeit nicht möglich.",
   },
   ai: {
     chat: {

@@ -316,6 +316,8 @@ export const catalog: TranslationTree = {
     added: "تمت الإضافة",
     freeShippingFrom: "شحن مجاني من {amount}",
     allProducts: "جميع المنتجات",
+    priceOnRequest: "السعر عند الطلب",
+    viewProduct: "عرض المنتج",
     stock: {
       in_stock: "متوفر",
       low_stock: "كمية محدودة",
@@ -330,6 +332,11 @@ export const catalog: TranslationTree = {
   },
   homeRails: {
     new: "وصل حديثًا",
+  },
+  catalog: {
+    browseOnlyTitle: "وضع الكatalog فقط",
+    browseOnlyText: "البيع عبر الإنترنت غير نشط بعد. يمكنك تصفح المنتجات والاطلاع على المعلومات.",
+    salesDisabled: "الطلب عبر الإنترنت غير متاح حاليًا.",
   },
   country: {
     DE: "ألمانيا",

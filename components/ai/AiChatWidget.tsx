@@ -7,6 +7,7 @@ import type { AiChatMessage, AiChatProduct } from "@/lib/ai/types";
 import { useLocale } from "@/lib/i18n/context";
 import { isRtlLocale } from "@/lib/i18n";
 import { isAiChatEnabled } from "@/lib/api/config";
+import { showPrices } from "@/lib/shop/mode";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 
 const SESSION_KEY = "buzzard_ai_chat_session";
@@ -119,7 +120,9 @@ export default function AiChatWidget() {
               {products.map((product) => (
                 <Link key={product.id} href={product.url} className="ai-chat-product">
                   <span>{product.name}</span>
-                  {typeof product.price === "number" ? <small>{product.price.toFixed(2)} €</small> : null}
+                  {showPrices() && typeof product.price === "number" ? (
+                    <small>{product.price.toFixed(2)} €</small>
+                  ) : null}
                 </Link>
               ))}
             </div>

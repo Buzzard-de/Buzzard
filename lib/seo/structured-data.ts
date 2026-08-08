@@ -3,6 +3,7 @@ import { getCategoryLabel } from "@/lib/categories/i18n";
 import type { BuzzardLocale } from "@/lib/i18n/types";
 import type { PublicProduct } from "@/lib/products/types";
 import { absoluteUrl, SITE_URL } from "./config";
+import { showPrices } from "@/lib/shop/mode";
 
 export function organizationSchema() {
   return {
@@ -61,16 +62,20 @@ export function productSchema(product: PublicProduct, categoryLabel: string) {
       name: product.brand,
     },
     category: categoryLabel,
-    offers: {
-      "@type": "Offer",
-      url: absoluteUrl(product.url),
-      priceCurrency: "EUR",
-      price: product.price.toFixed(2),
-      availability:
-        product.stockStatus === "out_of_stock"
-          ? "https://schema.org/OutOfStock"
-          : "https://schema.org/InStock",
-    },
+    ...(showPrices()
+      ? {
+          offers: {
+            "@type": "Offer",
+            url: absoluteUrl(product.url),
+            priceCurrency: "EUR",
+            price: product.price.toFixed(2),
+            availability:
+              product.stockStatus === "out_of_stock"
+                ? "https://schema.org/OutOfStock"
+                : "https://schema.org/InStock",
+          },
+        }
+      : {}),
   };
 }
 

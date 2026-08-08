@@ -15,7 +15,9 @@ import {
   DEFAULT_LOCALE,
 } from "@/lib/categories";
 import { useCart } from "@/lib/cart";
-import { formatPrice, getProductById, getProductsForCategory } from "@/lib/products";
+import { getProductById, getProductsForCategory } from "@/lib/products";
+import { isCheckoutEnabled } from "@/lib/shop/mode";
+import PriceLabel from "@/components/shop/PriceLabel";
 import type { BuzzardCategory } from "@/lib/categories/types";
 
 interface FeaturedBannerProps {
@@ -120,15 +122,21 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
                     <span>5.0</span>
                   </div>
                   <div className="popular-product-prices">
-                    <span className="popular-product-price">{formatPrice(product.price)}</span>
+                    <PriceLabel amount={product.price} className="popular-product-price" />
                   </div>
-                  <button
-                    type="button"
-                    className="popular-add-btn"
-                    onClick={() => handleAdd(product.id)}
-                  >
-                    {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
-                  </button>
+                  {isCheckoutEnabled() ? (
+                    <button
+                      type="button"
+                      className="popular-add-btn"
+                      onClick={() => handleAdd(product.id)}
+                    >
+                      {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                    </button>
+                  ) : (
+                    <Link href={product.url} className="popular-add-btn">
+                      Produkt ansehen
+                    </Link>
+                  )}
                 </div>
               </li>
             ))}

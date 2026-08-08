@@ -4,10 +4,13 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { lineSubtotal } from "@/lib/cart/types";
+import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import PriceLabel from "@/components/shop/PriceLabel";
+import ProductSvg from "./ProductSvg";
 import { formatPrice } from "@/lib/products";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/checkout/shipping";
-import ProductSvg from "./ProductSvg";
 import { getProductUrl } from "@/lib/products";
+import { isCheckoutEnabled } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function CartView() {
@@ -28,6 +31,10 @@ export default function CartView() {
   } = useCart();
   const { t } = useLocale();
   const [couponInput, setCouponInput] = useState(couponCode);
+
+  if (!isCheckoutEnabled()) {
+    return <CatalogOnlyNotice />;
+  }
 
   if (items.length === 0) {
     return (
@@ -77,7 +84,9 @@ export default function CartView() {
                   <span className="cart-item-variant">{item.variantLabel}</span>
                 )}
                 {item.sku && <span className="cart-item-sku">SKU: {item.sku}</span>}
-                <span className="cart-item-price">{formatPrice(item.unitPrice)}</span>
+                <span className="cart-item-price">
+                  <PriceLabel amount={item.unitPrice} />
+                </span>
                 <div className="cart-item-actions">
                   <div className="qty-control">
                     <button

@@ -7,15 +7,16 @@ import ProductSvg from "./ProductSvg";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useShop } from "@/lib/shop";
+import { useLocale } from "@/lib/i18n/context";
 import {
   filterProducts,
-  formatPrice,
   getAllProducts,
   getCategoryLabelForProduct,
   paginateProducts,
   sortProducts,
 } from "@/lib/products";
-import { findCategoryBySlugPath, getCategoryLabel, DEFAULT_LOCALE } from "@/lib/categories";
+import { localizePublicProduct } from "@/lib/products/i18n";
+import { findCategoryBySlugPath, getCategoryLabel } from "@/lib/categories";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
 
 const PAGE_SIZE = 12;
@@ -28,6 +29,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const { locale, t, formatPrice } = useLocale();
   const filter = searchParams.get("filter") || "alle";
   const sort = searchParams.get("sort") || "default";
   const query = sanitizeSearchQuery(searchParams.get("q"));
@@ -66,7 +68,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
       {kategorie && (
         <div className="vehicle-filter-banner">
           <span>
-            Kategorie: <strong>{getCategoryLabel(kategorie, DEFAULT_LOCALE)}</strong>
+            Kategorie: <strong>{getCategoryLabel(kategorie, locale)}</strong>
           </span>
         </div>
       )}
@@ -112,25 +114,27 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
       {result.items.length === 0 ? (
         <div className="products-empty">
-          <p>Keine Produkte gefunden.</p>
+          <p>{t("product.empty")}</p>
         </div>
       ) : (
         <>
           <div className="products-grid">
-            {result.items.map((product) => (
+            {result.items.map((product) => {
+              const localized = localizePublicProduct(product, locale);
+              return (
               <article key={product.id} className="product-card">
-                <Link href={product.url} className="product-card-img">
-                  <ProductSvg imageKey={product.imageKey ?? "oel"} />
+                <Link href={localized.url} className="product-card-img">
+                  <ProductSvg imageKey={localized.imageKey ?? "oel"} />
                 </Link>
                 <div className="product-card-body">
                   <span className="product-card-category">
-                    {getCategoryLabelForProduct(product)}
+                    {getCategoryLabelForProduct(localized, locale)}
                   </span>
-                  <Link href={product.url} className="product-card-name">
-                    {product.name}
+                  <Link href={localized.url} className="product-card-name">
+                    {localized.name}
                   </Link>
-                  <span className="product-card-sku">SKU: {product.sku}</span>
-                  <span className="product-card-price">{formatPrice(product.price)}</span>
+                  <span className="product-card-sku">SKU: {localized.sku}</span>
+                  <span className="product-card-price">{formatPrice(localized.price)}</span>
                   <div className="product-card-actions">
                     <button
                       type="button"
@@ -142,7 +146,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                       }
                       onClick={() => handleAdd(product.id)}
                     >
-                      {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                      {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
                     </button>
                     <button
                       type="button"
@@ -155,7 +159,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                   </div>
                 </div>
               </article>
-            ))}
+            );})}
           </div>
 
           {result.totalPages > 1 && (

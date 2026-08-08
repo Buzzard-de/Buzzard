@@ -10,32 +10,34 @@ import {
   type ReactNode,
 } from "react";
 import { translate } from "./translations";
+import { detectLocale, persistLocale, hasManualLocaleOverride } from "./detect";
+import { setRuntimeLocale } from "./runtime";
+import { formatDate, formatDateTime, formatNumber, formatPrice, formatPercent } from "./format";
 import { isRtlLocale, LOCALE_LABELS, SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
-
-const STORAGE_KEY = "buzzard_locale";
+import { getAccountToken } from "@/lib/account/client";
 
 interface LocaleContextValue {
   locale: BuzzardLocale;
-  setLocale: (locale: BuzzardLocale) => void;
+  setLocale: (locale: BuzzardLocale, manual?: boolean) => void;
   t: (key: string) => string;
   dir: "ltr" | "rtl";
+  formatPrice: (amount: number, currency?: string) => string;
+  formatNumber: (value: number) => string;
+  formatPercent: (value: number) => string;
+  formatDate: (value: Date | string | number) => string;
+  formatDateTime: (value: Date | string | number) => string;
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-function detectLocale(): BuzzardLocale {
-  if (typeof window === "undefined") return "de";
+async function syncAccountLanguage(locale: BuzzardLocale) {
+  if (!getAccountToken()) return;
   try {
-    const stored = localStorage.getItem(STORAGE_KEY) as BuzzardLocale | null;
-    if (stored && SUPPORTED_LOCALES.includes(stored)) return stored;
+    const { updateAccountPreferences } = await import("@/lib/account/client");
+    await updateAccountPreferences({ language: locale });
   } catch {
-    /* ignore */
+    /* ignore when API unavailable */
   }
-  const browser = navigator.language.slice(0, 2).toLowerCase();
-  if (browser === "de" || browser === "en" || browser === "tr" || browser === "ar") {
-    return browser;
-  }
-  return "de";
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
@@ -48,18 +50,32 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!ready || hasManualLocaleOverride()) return;
+    import("@/lib/account/client").then(({ fetchAccountMe, getAccountToken }) => {
+      if (!getAccountToken()) return;
+      fetchAccountMe()
+        .then((me) => {
+          const lang = me.preferences?.language as BuzzardLocale | undefined;
+          if (lang && SUPPORTED_LOCALES.includes(lang)) {
+            setLocaleState(lang);
+          }
+        })
+        .catch(() => {});
+    });
+  }, [ready]);
+
+  useEffect(() => {
     if (!ready) return;
-    document.documentElement.lang = locale;
+    setRuntimeLocale(locale);
+    document.documentElement.lang = locale === "ar" ? "ar" : locale;
     document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
-    try {
-      localStorage.setItem(STORAGE_KEY, locale);
-    } catch {
-      /* ignore */
-    }
+    persistLocale(locale);
   }, [locale, ready]);
 
-  const setLocale = useCallback((next: BuzzardLocale) => {
+  const setLocale = useCallback((next: BuzzardLocale, manual = true) => {
     setLocaleState(next);
+    persistLocale(next, manual);
+    if (manual) syncAccountLanguage(next);
   }, []);
 
   const value = useMemo(
@@ -68,6 +84,11 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       setLocale,
       t: (key: string) => translate(locale, key),
       dir: isRtlLocale(locale) ? "rtl" : "ltr",
+      formatPrice: (amount, currency = "EUR") => formatPrice(amount, locale, currency),
+      formatNumber: (value) => formatNumber(value, locale),
+      formatPercent: (value) => formatPercent(value, locale),
+      formatDate: (value) => formatDate(value, locale),
+      formatDateTime: (value) => formatDateTime(value, locale),
     }),
     [locale, setLocale]
   );

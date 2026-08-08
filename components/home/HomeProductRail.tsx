@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 import ProductSvg from "@/components/ProductSvg";
 import { useCart } from "@/lib/cart";
-import { formatPrice, getAllProducts, getCategoryLabelForProduct } from "@/lib/products";
+import { useLocale } from "@/lib/i18n/context";
+import { getAllProducts, getCategoryLabelForProduct } from "@/lib/products";
+import { localizePublicProduct } from "@/lib/products/i18n";
 import type { PublicProduct } from "@/lib/products/types";
 
 interface HomeProductRailProps {
@@ -29,6 +31,7 @@ function selectProducts(variant: HomeProductRailProps["variant"], items: PublicP
 
 export default function HomeProductRail({ title, variant = "all", limit = 8 }: HomeProductRailProps) {
   const { add } = useCart();
+  const { locale, t, formatPrice } = useLocale();
   const [addedId, setAddedId] = useState<string | null>(null);
   const items = selectProducts(variant, getAllProducts()).slice(0, limit);
 
@@ -45,25 +48,27 @@ export default function HomeProductRail({ title, variant = "all", limit = 8 }: H
       <div className="home-section-head">
         <h2>{title}</h2>
         <Link href="/products/" className="home-section-link">
-          Alle Produkte →
+          {t("product.allProducts")} →
         </Link>
       </div>
       <div className="products-grid products-grid-compact">
-        {items.map((product) => (
+        {items.map((product) => {
+          const localized = localizePublicProduct(product, locale);
+          return (
           <article key={product.id} className="product-card">
-            <Link href={product.url} className="product-card-img">
-              <ProductSvg imageKey={product.imageKey ?? "oel"} />
+            <Link href={localized.url} className="product-card-img">
+              <ProductSvg imageKey={localized.imageKey ?? "oel"} />
             </Link>
             <div className="product-card-body">
-              <span className="product-card-category">{product.brand}</span>
-              <Link href={product.url} className="product-card-name">
-                {product.name}
+              <span className="product-card-category">{localized.brand}</span>
+              <Link href={localized.url} className="product-card-name">
+                {localized.name}
               </Link>
-              <span className="product-card-sku">{getCategoryLabelForProduct(product)}</span>
+              <span className="product-card-sku">{getCategoryLabelForProduct(localized, locale)}</span>
               <div className="product-card-prices">
-                <span className="product-card-price">{formatPrice(product.price)}</span>
-                {product.compareAtPrice && product.compareAtPrice > product.price && (
-                  <span className="product-card-compare">{formatPrice(product.compareAtPrice)}</span>
+                <span className="product-card-price">{formatPrice(localized.price)}</span>
+                {localized.compareAtPrice && localized.compareAtPrice > localized.price && (
+                  <span className="product-card-compare">{formatPrice(localized.compareAtPrice)}</span>
                 )}
               </div>
               <button
@@ -71,11 +76,11 @@ export default function HomeProductRail({ title, variant = "all", limit = 8 }: H
                 className="product-card-btn"
                 onClick={() => handleAdd(product)}
               >
-                {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
               </button>
             </div>
           </article>
-        ))}
+        );})}
       </div>
     </section>
   );

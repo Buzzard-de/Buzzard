@@ -53,6 +53,50 @@ const mainDe = {
   "cat-41": "Angebote & Sonderkollektionen",
 };
 
+const mainEn = {
+  "cat-01": "Textiles",
+  "cat-02": "Cosmetics & Personal Care",
+  "cat-03": "Cleaning Products",
+  "cat-04": "School & Office Supplies",
+  "cat-05": "Automotive",
+  "cat-06": "Pet Supplies",
+  "cat-07": "Garden",
+  "cat-08": "Work Safety & Workwear",
+  "cat-09": "Tools & Hardware",
+  "cat-10": "Home & Living",
+  "cat-11": "Furniture",
+  "cat-12": "Electronics",
+  "cat-13": "Home Appliances",
+  "cat-14": "Sports & Outdoor",
+  "cat-15": "Shoes",
+  "cat-16": "Bags & Accessories",
+  "cat-17": "Mother & Baby",
+  "cat-18": "Toys & Kids",
+  "cat-19": "Hobby & Leisure",
+  "cat-20": "Livestock & Farm Equipment",
+  "cat-21": "Construction",
+  "cat-22": "Electrical & Lighting",
+  "cat-23": "Water, Heating & Plumbing",
+  "cat-24": "Kitchen & Dining",
+  "cat-25": "Food & Beverages",
+  "cat-26": "Pet Food",
+  "cat-27": "Health & Wellness",
+  "cat-28": "Office & Business",
+  "cat-29": "Packaging & Shipping",
+  "cat-30": "Industrial & Commercial Equipment",
+  "cat-31": "Security & Surveillance",
+  "cat-32": "Travel & Luggage",
+  "cat-33": "Garden Hobby & Camping",
+  "cat-34": "Seasonal & Celebrations",
+  "cat-35": "Decoration",
+  "cat-36": "Personal Electronics & Mobile",
+  "cat-37": "Photo & Video",
+  "cat-38": "Computer & Gaming",
+  "cat-39": "Vehicle & Mobility",
+  "cat-40": "Energy & Solar",
+  "cat-41": "Offers & Special Collections",
+};
+
 const mainAr = {
   "cat-01": "النسيج",
   "cat-02": "التجميل والعناية الشخصية",
@@ -521,11 +565,13 @@ function translateTurkishName(name) {
 }
 
 const de = {};
+const en = {};
 const ar = {};
 
 function walk(nodes) {
   for (const node of nodes) {
     de[node.id] = mainDe[node.id] ?? translateTurkishName(node.name);
+    en[node.id] = mainEn[node.id] ?? node.name;
     ar[node.id] = mainAr[node.id] ?? node.name;
     if (node.children?.length) walk(node.children);
   }
@@ -541,5 +587,6 @@ export const ${constName}: Record<string, string> = ${JSON.stringify(labels, nul
 }
 
 writeLocaleFile("de.generated.ts", "categoryLabelsDe", de);
+writeLocaleFile("en.generated.ts", "categoryLabelsEn", en);
 writeLocaleFile("ar.generated.ts", "categoryLabelsAr", ar);
-console.log("Generated", Object.keys(de).length, "German and", Object.keys(ar).length, "Arabic labels");
+console.log("Generated", Object.keys(de).length, "German,", Object.keys(en).length, "English and", Object.keys(ar).length, "Arabic labels");

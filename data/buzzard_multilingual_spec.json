@@ -1,0 +1,52 @@
+{
+  "package": "08",
+  "name": "Buzzard Multilingual and RTL",
+  "launch_languages": [
+    "de",
+    "tr",
+    "en",
+    "ar"
+  ],
+  "default_language": "de",
+  "default_currency": "EUR",
+  "routing": {
+    "localized": true,
+    "pattern": "/{locale}/..."
+  },
+  "detection": {
+    "browser_language": true,
+    "country_locale": true,
+    "manual_override_priority": true
+  },
+  "rtl": {
+    "arabic": true,
+    "document_direction": true,
+    "logical_css": true
+  },
+  "translation_domains": [
+    "common",
+    "navigation",
+    "categories",
+    "products",
+    "cart",
+    "checkout",
+    "account",
+    "orders",
+    "errors",
+    "marketing",
+    "footer",
+    "admin"
+  ],
+  "seo": {
+    "localized_metadata": true,
+    "canonical": true,
+    "hreflang": true
+  },
+  "fallback_language": "de",
+  "responsive": [
+    "desktop",
+    "laptop",
+    "tablet",
+    "smartphone"
+  ]
+}

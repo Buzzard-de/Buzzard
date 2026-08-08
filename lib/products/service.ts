@@ -1,6 +1,7 @@
 import type { BuzzardCategory } from "@/lib/categories/types";
 import { collectDescendantIds, isCategoryOrDescendant, getCategoryById } from "@/lib/categories/service";
 import { getCategoryLabel } from "@/lib/categories/i18n";
+import type { BuzzardLocale } from "@/lib/i18n/types";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { productCatalog } from "./source";
 import type {
@@ -96,9 +97,9 @@ export function getLegacyProductParams(): { id: string }[] {
   return activePublicProducts.map((p) => ({ id: p.id }));
 }
 
-export function getCategoryLabelForProduct(product: PublicProduct): string {
+export function getCategoryLabelForProduct(product: PublicProduct, locale: BuzzardLocale = "de"): string {
   const category = getCategoryById(product.categoryId);
-  return category ? getCategoryLabel(category, "de") : product.categoryId;
+  return category ? getCategoryLabel(category, locale) : product.categoryId;
 }
 
 export function getProductsForCategory(category: BuzzardCategory, limit?: number): PublicProduct[] {

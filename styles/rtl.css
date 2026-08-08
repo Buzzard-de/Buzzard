@@ -1,0 +1,58 @@
+html[dir="rtl"] .site-header,
+html[dir="rtl"] .header-inner,
+html[dir="rtl"] .header-actions,
+html[dir="rtl"] .footer-inner,
+html[dir="rtl"] .footer-links,
+html[dir="rtl"] .mega-menu-shell-head,
+html[dir="rtl"] .mega-menu-panels,
+html[dir="rtl"] .product-card-actions,
+html[dir="rtl"] .cart-summary-row,
+html[dir="rtl"] .account-shortcuts,
+html[dir="rtl"] .account-inline-actions,
+html[dir="rtl"] .checkout-head,
+html[dir="rtl"] .shop-page-head {
+  direction: rtl;
+}
+
+html[dir="rtl"] .language-selector select,
+html[dir="rtl"] .search-form input,
+html[dir="rtl"] .account-auth-card input,
+html[dir="rtl"] .account-form input,
+html[dir="rtl"] .checkout-section input,
+html[dir="rtl"] .checkout-section select,
+html[dir="rtl"] .checkout-section textarea {
+  text-align: right;
+}
+
+html[dir="rtl"] .product-card-price,
+html[dir="rtl"] .cart-badge,
+html[dir="rtl"] .account-stat strong,
+html[dir="rtl"] .hdr-action small {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+html[dir="rtl"] .checkout-back-link,
+html[dir="rtl"] .home-rail-head a {
+  transform: scaleX(-1);
+  display: inline-block;
+}
+
+html[dir="rtl"] .mega-menu-close {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
+}
+
+html[dir="rtl"] .brand-text,
+html[dir="rtl"] .product-detail-price,
+html[dir="rtl"] .cart-summary-total span:last-child {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+@media (max-width: 768px) {
+  html[dir="rtl"] .mobile-menu-btn {
+    margin-inline-end: 0;
+    margin-inline-start: auto;
+  }
+}

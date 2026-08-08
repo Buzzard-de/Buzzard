@@ -3,14 +3,14 @@ import CategoryIcon from "./CategoryIcon";
 import { homeCategories } from "@/lib/categories";
 
 const iconMap: Record<string, string> = {
-  reifen: "tire",
-  oele: "oil",
-  bremsen: "parts",
-  batterien: "battery",
-  filter: "filter",
-  zuendung: "parts",
-  wischer: "parts",
-  pflege: "care",
+  kleider: "fashion",
+  tshirts: "fashion",
+  hemden: "fashion",
+  hosen: "fashion",
+  jacken: "fashion",
+  kinder: "baby",
+  hautpflege: "care",
+  reinigung: "home",
 };
 
 export default function PopularCategories() {
@@ -22,7 +22,7 @@ export default function PopularCategories() {
           <li key={cat.id}>
             <Link href={cat.href} className="popular-category-card">
               <span className="popular-category-icon">
-                <CategoryIcon name={iconMap[cat.id] || "car"} size={28} />
+                <CategoryIcon name={iconMap[cat.id] || "fashion"} size={28} />
               </span>
               <span className="popular-category-label">{cat.label}</span>
             </Link>

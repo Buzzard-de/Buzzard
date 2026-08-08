@@ -23,12 +23,12 @@ export {
   formatCategoryLabel,
 };
 
-/** Linke Spalte: alle Hauptkategorien (01–13, erweiterbar auf 40) */
+/** Linke Spalte: alle Hauptkategorien (erweiterbar auf 40) */
 export const mainCategories = categoryTree.map((cat) => ({
   id: cat.id,
   slug: cat.slug,
   label: cat.label,
-  icon: cat.icon ?? "car",
+  icon: cat.icon ?? "fashion",
 }));
 
 /** Abwärtskompatibilität */
@@ -94,14 +94,14 @@ export const filterOptions = [
 ] as const;
 
 export const homeCategories: CategoryCard[] = [
-  { id: "reifen", label: "REIFEN & FELGEN", href: categoryHref({ slug: "automotive/zubehoer-tuning/reifen-felgen" }) },
-  { id: "oele", label: "MOTORENÖLE", href: categoryHref({ slug: "automotive/wartung-service/motoroele", productFilter: "motorenöle" }), filter: "motorenöle" },
-  { id: "bremsen", label: "BREMSEN", href: categoryHref({ slug: "automotive/ersatzteile/bremsanlage", productFilter: "bremsen" }), filter: "bremsen" },
-  { id: "batterien", label: "BATTERIEN", href: "/products/?filter=batterien", filter: "batterien" },
-  { id: "filter", label: "FILTER", href: categoryHref({ slug: "automotive/wartung-service/filter-oele", productFilter: "filter" }), filter: "filter" },
-  { id: "zuendung", label: "ZÜNDUNG", href: categoryHref({ slug: "automotive/ersatzteile/elektrik", productFilter: "zündung" }), filter: "zündung" },
-  { id: "wischer", label: "SCHEIBENWISCHER", href: "/products/?filter=fahrwerk", filter: "fahrwerk" },
-  { id: "pflege", label: "PFLEGEPRODUKTE", href: categoryHref({ slug: "automotive/pflege-reinigung/autopflege" }) },
+  { id: "kleider", label: "KLEIDER", href: categoryHref({ slug: "textil/damenbekleidung/kleider" }) },
+  { id: "tshirts", label: "T-SHIRTS", href: categoryHref({ slug: "textil/damenbekleidung/t-shirts" }) },
+  { id: "hemden", label: "HEMDEN", href: categoryHref({ slug: "textil/herrenbekleidung/hemden" }) },
+  { id: "hosen", label: "HOSEN", href: categoryHref({ slug: "textil/damenbekleidung/hosen" }) },
+  { id: "jacken", label: "JACKEN", href: categoryHref({ slug: "textil/damenbekleidung/jacken" }) },
+  { id: "kinder", label: "KINDERBEKLEIDUNG", href: categoryHref({ slug: "textil/kinderbekleidung" }) },
+  { id: "hautpflege", label: "HAUTPFLEGE", href: categoryHref({ slug: "kosmetik-koerperpflege/hautpflege" }) },
+  { id: "reinigung", label: "REINIGUNG", href: categoryHref({ slug: "reinigungsprodukte/haushaltsreinigung" }) },
 ];
 
 export const brands = [

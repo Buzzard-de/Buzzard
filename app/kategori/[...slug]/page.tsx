@@ -1,0 +1,84 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Suspense } from "react";
+import ProductList from "@/components/ProductList";
+import {
+  findCategoryBySlugPath,
+  getAllCategoryStaticParams,
+  getCategoryLabel,
+  DEFAULT_LOCALE,
+} from "@/lib/categories";
+
+interface CategoryPageProps {
+  params: Promise<{ slug: string[] }>;
+}
+
+export async function generateStaticParams() {
+  return getAllCategoryStaticParams();
+}
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const category = findCategoryBySlugPath(slug.join("/"));
+  if (!category) {
+    return { title: "Kategorie – Buzzard" };
+  }
+  const name = getCategoryLabel(category, DEFAULT_LOCALE);
+  return {
+    title: `${name} – Buzzard`,
+    description: `${name} bei Buzzard online entdecken. Große Auswahl, schnelle Lieferung, faire Preise.`,
+  };
+}
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = await params;
+  const category = findCategoryBySlugPath(slug.join("/"));
+
+  if (!category) {
+    return (
+      <section className="shop-page">
+        <div className="shop-empty">
+          <h1>Kategorie nicht gefunden</h1>
+          <Link href="/" className="shop-btn-primary">Zur Startseite</Link>
+        </div>
+      </section>
+    );
+  }
+
+  const name = getCategoryLabel(category, DEFAULT_LOCALE);
+  const children = category.children ?? [];
+
+  return (
+    <>
+      <section className="page-hero">
+        <div className="page-hero-inner">
+          <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
+            <Link href="/">Startseite</Link>
+            <span>/</span>
+            <span>{name}</span>
+          </nav>
+          <h1>{name}</h1>
+          {children.length > 0 && (
+            <p>{children.length} Unterkategorien verfügbar</p>
+          )}
+        </div>
+      </section>
+
+      {children.length > 0 && (
+        <section className="subpage-content category-children-grid">
+          {children.map((child) => (
+            <Link key={child.id} href={child.url.endsWith("/") ? child.url : `${child.url}/`} className="category-child-card">
+              {getCategoryLabel(child, DEFAULT_LOCALE)}
+            </Link>
+          ))}
+        </section>
+      )}
+
+      <section className="subpage-content products-page-layout">
+        <Suspense fallback={<div className="products-grid" />}>
+          <ProductList categorySlug={slug.join("/")} />
+        </Suspense>
+      </section>
+    </>
+  );
+}

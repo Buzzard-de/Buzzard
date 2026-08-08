@@ -1,17 +1,7 @@
 import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
 import { homeCategories } from "@/lib/categories";
-
-const iconMap: Record<string, string> = {
-  kleider: "fashion",
-  tshirts: "fashion",
-  hemden: "fashion",
-  hosen: "fashion",
-  jacken: "fashion",
-  kinder: "baby",
-  hautpflege: "care",
-  reinigung: "home",
-};
+import { getMainCategoryIcon } from "@/lib/categories/icons";
 
 export default function PopularCategories() {
   return (
@@ -22,7 +12,7 @@ export default function PopularCategories() {
           <li key={cat.id}>
             <Link href={cat.href} className="popular-category-card">
               <span className="popular-category-icon">
-                <CategoryIcon name={iconMap[cat.id] || "fashion"} size={28} />
+                <CategoryIcon name={getMainCategoryIcon(cat.id.split("-").slice(0, 2).join("-"))} size={28} />
               </span>
               <span className="popular-category-label">{cat.label}</span>
             </Link>

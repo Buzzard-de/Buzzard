@@ -1,14 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
 import BrandsStrip from "./BrandsStrip";
 import PopularCategories from "./PopularCategories";
-import { formatCategoryLabel } from "@/lib/categories";
-import type { CategoryTreeNode } from "@/types";
+import {
+  categoryHref,
+  formatMenuLabel,
+  getCategoryLabel,
+  getMainCategoryIcon,
+  splitSubcategoriesIntoColumns,
+  DEFAULT_LOCALE,
+} from "@/lib/categories";
+import type { BuzzardCategory } from "@/lib/categories/types";
 
 interface MegaMenuProps {
-  mainCategory?: CategoryTreeNode;
-  subCategories: CategoryTreeNode[];
+  mainCategory?: BuzzardCategory;
+  subCategories: BuzzardCategory[];
   activeSubId: string;
   onSubSelect: (subId: string) => void;
 }
@@ -21,38 +29,39 @@ export default function MegaMenu({
 }: MegaMenuProps) {
   if (!mainCategory) return null;
 
+  const columns = splitSubcategoriesIntoColumns(subCategories, subCategories.length > 8 ? 3 : 2);
+
   return (
-    <section className="mega-panel" aria-label={mainCategory.label}>
-      <h2 className="mega-panel-title">{formatCategoryLabel(mainCategory)}</h2>
+    <section className="mega-panel" aria-label={getCategoryLabel(mainCategory, DEFAULT_LOCALE)}>
+      <div className="mega-panel-head">
+        <h2 className="mega-panel-title">{formatMenuLabel(mainCategory, DEFAULT_LOCALE)}</h2>
+        <Link href={categoryHref(mainCategory)} className="mega-panel-all-link">
+          Alle anzeigen →
+        </Link>
+      </div>
       <p className="mega-panel-subtitle">Unterkategorien</p>
 
-      <ul className="subcategory-list">
-        {subCategories.map((sub) => (
-          <li key={sub.id}>
-            <button
-              type="button"
-              className={`subcategory-item${activeSubId === sub.id ? " active" : ""}`}
-              onClick={() => onSubSelect(sub.id)}
-            >
-              {sub.icon && <CategoryIcon name={sub.icon} size={18} />}
-              <span className="subcategory-label">{formatCategoryLabel(sub)}</span>
-              <svg
-                className="chevron"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                width="14"
-                height="14"
-              >
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
-          </li>
+      <div className="subcategory-columns" role="list">
+        {columns.map((column, columnIndex) => (
+          <ul key={columnIndex} className="subcategory-column" role="list">
+            {column.map((sub) => (
+              <li key={sub.id} role="listitem">
+                <Link
+                  href={categoryHref(sub)}
+                  className={`subcategory-link${activeSubId === sub.id ? " active" : ""}`}
+                  onMouseEnter={() => onSubSelect(sub.id)}
+                  onFocus={() => onSubSelect(sub.id)}
+                >
+                  <CategoryIcon name={getMainCategoryIcon(mainCategory.id)} size={16} />
+                  <span>{getCategoryLabel(sub, DEFAULT_LOCALE)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         ))}
-      </ul>
+      </div>
 
-      {mainCategory.id === "01" && (
+      {mainCategory.id === "cat-01" && (
         <>
           <PopularCategories />
           <BrandsStrip variant="mega" />

@@ -94,14 +94,14 @@ export const filterOptions = [
 ] as const;
 
 export const homeCategories: CategoryCard[] = [
-  { id: "kleider", label: "KLEIDER", href: categoryHref({ slug: "textil/damenbekleidung/kleider" }) },
-  { id: "tshirts", label: "T-SHIRTS", href: categoryHref({ slug: "textil/damenbekleidung/t-shirts" }) },
-  { id: "hemden", label: "HEMDEN", href: categoryHref({ slug: "textil/herrenbekleidung/hemden" }) },
-  { id: "hosen", label: "HOSEN", href: categoryHref({ slug: "textil/damenbekleidung/hosen" }) },
-  { id: "jacken", label: "JACKEN", href: categoryHref({ slug: "textil/damenbekleidung/jacken" }) },
-  { id: "kinder", label: "KINDERBEKLEIDUNG", href: categoryHref({ slug: "textil/kinderbekleidung" }) },
-  { id: "hautpflege", label: "HAUTPFLEGE", href: categoryHref({ slug: "kosmetik-koerperpflege/hautpflege" }) },
-  { id: "reinigung", label: "REINIGUNG", href: categoryHref({ slug: "reinigungsprodukte/haushaltsreinigung" }) },
+  { id: "kleider", label: "KLEIDER", href: categoryHref({ slug: "textile/women-clothing/dresses" }) },
+  { id: "tshirts", label: "T-SHIRTS", href: categoryHref({ slug: "textile/women-clothing/t-shirts" }) },
+  { id: "hemden", label: "HEMDEN", href: categoryHref({ slug: "textile/men-clothing/shirts" }) },
+  { id: "hosen", label: "HOSEN", href: categoryHref({ slug: "textile/women-clothing/trousers" }) },
+  { id: "jacken", label: "JACKEN", href: categoryHref({ slug: "textile/women-clothing/jackets" }) },
+  { id: "kinder", label: "KINDERBEKLEIDUNG", href: categoryHref({ slug: "textile/kids-clothing" }) },
+  { id: "hautpflege", label: "HAUTPFLEGE", href: categoryHref({ slug: "cosmetics-personal-care/skin-care" }) },
+  { id: "reinigung", label: "REINIGUNG", href: categoryHref({ slug: "cleaning-products/household-cleaning" }) },
 ];
 
 export const brands = [

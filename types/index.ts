@@ -72,6 +72,7 @@ export interface MainNavLink {
   href: string;
 }
 
+/** @deprecated Use CartLineItem from @/lib/cart/types */
 export interface CartItem {
   id: string;
   name: string;
@@ -86,6 +87,7 @@ export interface SavedVehicle {
   engine: string;
 }
 
+/** @deprecated Use CheckoutPayload from @/lib/checkout/types */
 export interface CheckoutData {
   name: string;
   email: string;

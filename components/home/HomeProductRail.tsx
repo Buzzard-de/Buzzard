@@ -35,7 +35,7 @@ export default function HomeProductRail({ title, variant = "all", limit = 8 }: H
   if (items.length === 0) return null;
 
   function handleAdd(product: PublicProduct) {
-    add({ id: product.id, name: product.name, price: product.price });
+    add({ productId: product.id });
     setAddedId(product.id);
     setTimeout(() => setAddedId(null), 1500);
   }

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import CheckoutSuccess from "@/components/CheckoutSuccess";
 
 export const metadata = {
@@ -7,7 +8,9 @@ export const metadata = {
 export default function CheckoutSuccessPage() {
   return (
     <section className="shop-page">
-      <CheckoutSuccess />
+      <Suspense fallback={<div className="checkout-success"><p>…</p></div>}>
+        <CheckoutSuccess />
+      </Suspense>
     </section>
   );
 }

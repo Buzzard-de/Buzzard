@@ -37,7 +37,7 @@ export default function WishlistView() {
                 <span>{formatPrice(product.price)}</span>
               </div>
               <div className="wishlist-item-actions">
-                <button type="button" className="shop-btn-primary" onClick={() => add(product)}>
+                <button type="button" className="shop-btn-primary" onClick={() => add({ productId: product.id })}>
                   In den Warenkorb
                 </button>
                 <button type="button" className="cart-remove" onClick={() => toggle(id)}>

@@ -1,73 +1,80 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { parseJsonSafely, sanitizeDisplayText } from "@/lib/security";
-
-const ORDER_STORAGE_KEY = "buzzard_last_order";
-
-interface OrderSummary {
-  id: string;
-  total: number;
-  customer: { name: string; email: string };
-}
-
-function isOrderSummary(value: unknown): value is OrderSummary {
-  if (!value || typeof value !== "object") return false;
-  const order = value as Partial<OrderSummary>;
-  return (
-    typeof order.id === "string" &&
-    typeof order.total === "number" &&
-    !!order.customer &&
-    typeof order.customer.name === "string" &&
-    typeof order.customer.email === "string"
-  );
-}
+import { clearConfirmedOrder, fetchOrder, loadConfirmedOrder } from "@/lib/orders";
+import type { PublicOrder } from "@/lib/orders/types";
+import { formatPrice } from "@/lib/products";
+import { useLocale } from "@/lib/i18n/context";
 
 export default function CheckoutSuccess() {
-  const [order, setOrder] = useState<OrderSummary | null>(null);
+  const searchParams = useSearchParams();
+  const { t } = useLocale();
+  const [order, setOrder] = useState<PublicOrder | null>(null);
 
   useEffect(() => {
-    const raw =
-      sessionStorage.getItem(ORDER_STORAGE_KEY) ||
-      localStorage.getItem(ORDER_STORAGE_KEY);
+    let active = true;
 
-    const parsed = parseJsonSafely(raw, isOrderSummary);
-    if (parsed) {
-      setOrder({
-        id: sanitizeDisplayText(parsed.id, 32),
-        total: parsed.total,
-        customer: {
-          name: sanitizeDisplayText(parsed.customer.name, 100),
-          email: sanitizeDisplayText(parsed.customer.email, 254),
-        },
-      });
+    async function load() {
+      const orderNumber = searchParams.get("order");
+      if (orderNumber) {
+        const remote = await fetchOrder(orderNumber);
+        if (remote && active) {
+          setOrder(remote);
+          clearConfirmedOrder();
+          return;
+        }
+      }
+
+      const cached = loadConfirmedOrder();
+      if (cached && active) {
+        setOrder(cached);
+        clearConfirmedOrder();
+      }
     }
 
-    sessionStorage.removeItem(ORDER_STORAGE_KEY);
-    localStorage.removeItem(ORDER_STORAGE_KEY);
-  }, []);
+    load();
+    return () => {
+      active = false;
+    };
+  }, [searchParams]);
 
   return (
     <div className="checkout-success">
       <div className="checkout-success-icon">✓</div>
-      <h1>Bestellung erfolgreich!</h1>
+      <h1>{t("checkout.successTitle")}</h1>
       {order ? (
         <>
           <p>
-            Vielen Dank, {order.customer.name}. Ihre Bestellung{" "}
-            <strong>{order.id}</strong> wurde erhalten.
+            {t("checkout.successThanks")} {order.customer.firstName} {order.customer.lastName}.{" "}
+            {t("checkout.successOrder")} <strong>{order.orderNumber}</strong>.
           </p>
+          <div className="checkout-success-summary">
+            <div className="cart-summary-row">
+              <span>{t("cart.total")}</span>
+              <span>{formatPrice(order.total)}</span>
+            </div>
+            <div className="cart-summary-row">
+              <span>{t("checkout.statusLabel")}</span>
+              <span>{t(`checkout.status.${order.status}`)}</span>
+            </div>
+          </div>
           <p className="checkout-success-email">
-            Eine Bestätigung wurde an {order.customer.email} gesendet.
+            {t("checkout.successEmail").replace("{email}", order.customer.email)}
           </p>
+          <p className="checkout-success-support">{t("checkout.successSupport")}</p>
         </>
       ) : (
-        <p>Ihre Bestellung wurde erfolgreich übermittelt.</p>
+        <p>{t("checkout.successGeneric")}</p>
       )}
       <div className="checkout-success-actions">
-        <Link href="/products/" className="shop-btn-primary">Weiter einkaufen</Link>
-        <Link href="/" className="shop-btn-secondary">Zur Startseite</Link>
+        <Link href="/products/" className="shop-btn-primary">
+          {t("checkout.successContinue")}
+        </Link>
+        <Link href="/" className="shop-btn-secondary">
+          {t("checkout.successHome")}
+        </Link>
       </div>
     </div>
   );

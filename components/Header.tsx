@@ -18,7 +18,7 @@ export default function Header() {
   const pathname = usePathname();
   const homeUI = useHomeUI();
   const { t } = useLocale();
-  const { count, total, ready } = useCart();
+  const { count, subtotal, ready } = useCart();
   const { count: wishlistCount, ready: wishlistReady } = useWishlist();
   const { openVinModal } = useShop();
   const [query, setQuery] = useState("");
@@ -120,7 +120,7 @@ export default function Header() {
             <span>
               {t("header.cart")}
               <small className="cart-price" suppressHydrationWarning>
-                {ready ? formatPrice(total) : "0,00 €"}
+                {ready ? formatPrice(subtotal) : "0,00 €"}
               </small>
             </span>
           </Link>

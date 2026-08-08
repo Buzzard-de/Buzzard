@@ -55,8 +55,8 @@ export default function ProductList({ categorySlug }: ProductListProps) {
     return q ? `?${q}` : "?";
   }
 
-  function handleAdd(id: string, name: string, price: number) {
-    add({ id, name, price });
+  function handleAdd(id: string) {
+    add({ productId: id });
     setAddedId(id);
     setTimeout(() => setAddedId(null), 1800);
   }
@@ -140,7 +140,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                           ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
                           : undefined
                       }
-                      onClick={() => handleAdd(product.id, product.name, product.price)}
+                      onClick={() => handleAdd(product.id)}
                     >
                       {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
                     </button>

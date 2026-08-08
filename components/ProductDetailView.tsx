@@ -60,13 +60,16 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
   }
 
   function handleAdd() {
-    add({ id: product.id, name: product.name, price: activePrice }, qty);
+    const variantIds = Object.values(selectedVariants);
+    const ok = add({ productId: product.id, variantIds, qty });
+    if (!ok) return;
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
 
   function handleBuyNow() {
-    add({ id: product.id, name: product.name, price: activePrice }, qty);
+    const variantIds = Object.values(selectedVariants);
+    add({ productId: product.id, variantIds, qty });
     router.push("/checkout/");
   }
 

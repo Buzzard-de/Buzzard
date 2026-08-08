@@ -23,7 +23,7 @@ export default function ServiceBar() {
         <div className="service-item">
           <CategoryIcon name="mail" size={28} />
           <div>
-            <strong>E-MAIL SUPPORT</strong>
+            <strong>E-MAIL-HILFE</strong>
             <span>info@buzzard.com</span>
           </div>
         </div>

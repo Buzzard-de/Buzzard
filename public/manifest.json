@@ -1,6 +1,7 @@
 {
-  "name": "Buzzard Kfz-Teile",
+  "name": "Buzzard Online-Shop",
   "short_name": "Buzzard",
+  "lang": "de",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

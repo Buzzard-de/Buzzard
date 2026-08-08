@@ -17,7 +17,7 @@ export default function CartView() {
     return (
       <div className="shop-empty">
         <h1>Ihr Warenkorb ist leer</h1>
-        <p>Stöbern Sie in unserem Katalog und legen Sie Teile in den Warenkorb.</p>
+        <p>Stöbern Sie in unserem Katalog und legen Sie Produkte in den Warenkorb.</p>
         <Link href="/products/" className="shop-btn-primary">Zum Shop</Link>
       </div>
     );

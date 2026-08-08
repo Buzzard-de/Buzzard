@@ -94,8 +94,8 @@ export const categoryTree: CategoryTreeNode[] = [
         label: "HAARPFLEGE",
         icon: "care",
         children: [
-          { id: "02.02.01", slug: "cosmetics-personal-care/hair-care/shampoos", label: "Shampoos" },
-          { id: "02.02.02", slug: "cosmetics-personal-care/hair-care/conditioners", label: "Conditioner" },
+          { id: "02.02.01", slug: "cosmetics-personal-care/hair-care/shampoos", label: "Shampoo" },
+          { id: "02.02.02", slug: "cosmetics-personal-care/hair-care/conditioners", label: "Haarspülung" },
           { id: "02.02.03", slug: "cosmetics-personal-care/hair-care/styling-products", label: "Stylingprodukte" },
           { id: "02.02.04", slug: "cosmetics-personal-care/hair-care/hair-treatments", label: "Haarkuren" },
         ],
@@ -107,8 +107,8 @@ export const categoryTree: CategoryTreeNode[] = [
         icon: "care",
         children: [
           { id: "02.03.01", slug: "cosmetics-personal-care/body-care/shower-gel", label: "Duschgel & Seife" },
-          { id: "02.03.02", slug: "cosmetics-personal-care/body-care/body-lotions", label: "Bodylotions" },
-          { id: "02.03.03", slug: "cosmetics-personal-care/body-care/deodorants", label: "Deodorants" },
+          { id: "02.03.02", slug: "cosmetics-personal-care/body-care/body-lotions", label: "Bodylotion" },
+          { id: "02.03.03", slug: "cosmetics-personal-care/body-care/deodorants", label: "Deo" },
           { id: "02.03.04", slug: "cosmetics-personal-care/body-care/hand-care", label: "Handpflege" },
         ],
       },

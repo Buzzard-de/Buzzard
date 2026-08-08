@@ -21,16 +21,16 @@ const barlow = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "Buzzard – Kfz-Teile Online Shop | Autoteile kaufen",
+  title: "Buzzard – Online-Shop | Produkte kaufen",
   description:
-    "Buzzard – Über 1.000.000 hochwertige Autoteile von Top-Marken. Kostenloser Versand ab 79€, schnelle Lieferung 1-3 Werktage.",
+    "Buzzard – Über 1.000.000 Produkte in den Kategorien Textil, Kosmetik, Reinigung, Schule und mehr. Kostenloser Versand ab 79€.",
   metadataBase: new URL("https://buzzard24.de"),
   manifest: "/manifest.json",
   referrer: "strict-origin-when-cross-origin",
   icons: { icon: "/logo/logo.png", apple: "/logo/logo.png" },
   openGraph: {
-    title: "Buzzard Kfz-Teile – Autoteile Online Shop",
-    description: "Über 1.000.000 hochwertige Autoteile von Top-Marken. Kostenloser Versand ab 79€.",
+    title: "Buzzard – Online-Shop",
+    description: "Über 1.000.000 Produkte. Kostenloser Versand ab 79€, schnelle Lieferung 1–3 Werktage.",
     url: "https://buzzard24.de/",
     images: ["/logo/logo.png"],
     type: "website",

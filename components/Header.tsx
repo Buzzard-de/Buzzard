@@ -49,7 +49,7 @@ export default function Header() {
           <Image src="/logo/logo.png" alt="Buzzard Logo" width={52} height={52} priority />
           <div className="brand-text">
             <span className="brand-name">BUZZARD</span>
-            <span className="brand-tagline">DRIVEN BY QUALITY</span>
+            <span className="brand-tagline">QUALITÄT. LEISTUNG. VERTRAUEN.</span>
           </div>
         </Link>
 
@@ -108,7 +108,7 @@ export default function Header() {
             </svg>
             <span>
               Wunschliste
-              <small>{wishlistReady && wishlistCount > 0 ? `${wishlistCount} Artikel` : "Mein Favoriten"}</small>
+              <small>{wishlistReady && wishlistCount > 0 ? `${wishlistCount} Artikel` : "Meine Favoriten"}</small>
             </span>
           </Link>
           <Link href="/warenkorb/" className="hdr-action cart-action">

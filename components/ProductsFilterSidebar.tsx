@@ -23,7 +23,7 @@ export default function ProductsFilterSidebar() {
 
   return (
     <aside className="home-sidebar products-filter-sidebar" aria-label="Kategoriefilter">
-      <h2 className="category-sidebar-title">Filter</h2>
+      <h2 className="category-sidebar-title">Produktfilter</h2>
       <ul className="home-sidebar-list">
         {filterOptions.map((opt) => (
           <li key={opt.id}>

@@ -7,7 +7,7 @@ import ProductList from "@/components/ProductList";
 export const metadata: Metadata = {
   title: "Produkte – Buzzard",
   description:
-    "Kfz-Ersatzteile und Zubehör bei Buzzard. Bremsen, Motorenöle, Filter, Zündung, Batterien, Fahrwerk und mehr.",
+    "Produkte bei Buzzard: Textil, Kosmetik, Reinigung, Schule & Bürobedarf und mehr – schnell geliefert, fair bepreist.",
 };
 
 export default function ProductsPage() {
@@ -18,8 +18,8 @@ export default function ProductsPage() {
           <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
             <Link href="/">Startseite</Link> <span>/</span> <span>Produkte</span>
           </nav>
-          <h1>Kfz-Ersatzteile &amp; Zubehör</h1>
-          <p>Hochwertige Teile für alle Fahrzeugmarken – schnell geliefert, fair bepreist.</p>
+          <h1>Produkte &amp; Sortiment</h1>
+          <p>Hochwertige Artikel in allen Kategorien – schnell geliefert, fair bepreist.</p>
         </div>
       </section>
 

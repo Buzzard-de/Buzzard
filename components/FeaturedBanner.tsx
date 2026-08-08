@@ -5,27 +5,28 @@ import { useState } from "react";
 import ProductSvg from "./ProductSvg";
 import CategoryIcon from "./CategoryIcon";
 import BrandsStrip from "./BrandsStrip";
-import { categoryHref, formatCategoryLabel, popularProducts, trustBadges } from "@/lib/categories";
+import {
+  categoryHref,
+  formatMenuLabel,
+  getCategoryById,
+  getCategoryLabel,
+  popularProducts,
+  trustBadges,
+  DEFAULT_LOCALE,
+} from "@/lib/categories";
 import { useCart } from "@/lib/cart";
 import { getProductById, formatPrice } from "@/lib/products";
-import type { CategoryTreeNode } from "@/types";
+import type { BuzzardCategory } from "@/lib/categories/types";
 
 interface FeaturedBannerProps {
-  mainCategory?: CategoryTreeNode;
-  subCategories: CategoryTreeNode[];
-  subSubCategories: CategoryTreeNode[];
+  mainCategory?: BuzzardCategory;
   activeSubId: string;
 }
 
-export default function FeaturedBanner({
-  mainCategory,
-  subCategories,
-  subSubCategories,
-  activeSubId,
-}: FeaturedBannerProps) {
+export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBannerProps) {
   const { add } = useCart();
   const [addedId, setAddedId] = useState<string | null>(null);
-  const activeSub = subCategories.find((sub) => sub.id === activeSubId);
+  const activeSub = activeSubId ? getCategoryById(activeSubId) : undefined;
 
   function handleAdd(productId: string) {
     const product = getProductById(productId);
@@ -36,26 +37,19 @@ export default function FeaturedBanner({
   }
 
   return (
-    <aside className="home-promo" aria-label="Unter-Unterkategorien und Angebote">
-      {activeSub && (
-        <div className="promo-section promo-section--subsub">
-          <h2 className="promo-title">UNTER-UNTERKATEGORIEN</h2>
-          <p className="promo-context">{formatCategoryLabel(activeSub)}</p>
-          <ul className="subsubcategory-list">
-            {subSubCategories.map((leaf) => (
-              <li key={leaf.id}>
-                <Link href={categoryHref(leaf)} className="subsubcategory-link">
-                  <span className="subsubcategory-id">{leaf.id}</span>
-                  <span>{leaf.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          {mainCategory && (
+    <aside className="home-promo" aria-label="Angebote und Empfehlungen">
+      {mainCategory && (
+        <div className="promo-section promo-section--context">
+          <h2 className="promo-title">AUSGEWÄHLTE KATEGORIE</h2>
+          <p className="promo-context">{formatMenuLabel(mainCategory, DEFAULT_LOCALE)}</p>
+          {activeSub && (
             <Link href={categoryHref(activeSub)} className="promo-all-link">
-              Alle in {activeSub.label} →
+              {getCategoryLabel(activeSub, DEFAULT_LOCALE)} entdecken →
             </Link>
           )}
+          <Link href={categoryHref(mainCategory)} className="promo-all-link">
+            Gesamte Kategorie ansehen →
+          </Link>
         </div>
       )}
 

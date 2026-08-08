@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
-import { mainCategories, formatCategoryLabel } from "@/lib/categories";
+import { mainCategories } from "@/lib/categories";
 import { useHomeUI } from "@/lib/home-ui";
 
 interface CategorySidebarProps {
@@ -43,13 +44,15 @@ export default function CategorySidebar({ activeId, onSelect }: CategorySidebarP
         <ul className="home-sidebar-list">
           {mainCategories.map((cat) => (
             <li key={cat.id}>
-              <button
-                type="button"
+              <Link
+                href={cat.href}
                 className={`home-sidebar-item${activeId === cat.id ? " active" : ""}`}
-                onClick={() => handleSelect(cat.id)}
+                aria-current={activeId === cat.id ? "page" : undefined}
+                onMouseEnter={() => handleSelect(cat.id)}
+                onFocus={() => handleSelect(cat.id)}
               >
                 <CategoryIcon name={cat.icon} size={16} />
-                <span>{formatCategoryLabel(cat)}</span>
+                <span>{cat.label}</span>
                 <svg
                   className="chevron"
                   viewBox="0 0 24 24"
@@ -58,10 +61,11 @@ export default function CategorySidebar({ activeId, onSelect }: CategorySidebarP
                   strokeWidth="2"
                   width="14"
                   height="14"
+                  aria-hidden="true"
                 >
                   <path d="M9 18l6-6-6-6" />
                 </svg>
-              </button>
+              </Link>
             </li>
           ))}
         </ul>

@@ -1,0 +1,3100 @@
+{
+  "project": "Buzzard",
+  "document": "Buzzard Category Master",
+  "version": "1.0.0",
+  "language": "tr",
+  "main_category_count": 41,
+  "rules": {
+    "desktop_left_column": "show all 41 main categories in menu order; never replace with demo categories",
+    "category_source": "single JSON data source",
+    "clickable": "all level 1 and level 2 items are clickable; architecture supports level 3 and level 4",
+    "responsive": true,
+    "future_safe": true,
+    "seo_urls": true
+  },
+  "categories": [
+    {
+      "id": "cat-01",
+      "menu_order": 1,
+      "name": "Tekstil",
+      "slug": "tekstil",
+      "url": "/kategori/tekstil",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-01-01",
+          "menu_order": 1,
+          "name": "Kadın Giyim",
+          "slug": "kadin-giyim",
+          "url": "/kategori/tekstil/kadin-giyim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-02",
+          "menu_order": 2,
+          "name": "Erkek Giyim",
+          "slug": "erkek-giyim",
+          "url": "/kategori/tekstil/erkek-giyim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-03",
+          "menu_order": 3,
+          "name": "Çocuk Giyim",
+          "slug": "cocuk-giyim",
+          "url": "/kategori/tekstil/cocuk-giyim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-04",
+          "menu_order": 4,
+          "name": "Bebek Giyim",
+          "slug": "bebek-giyim",
+          "url": "/kategori/tekstil/bebek-giyim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-05",
+          "menu_order": 5,
+          "name": "İç Giyim",
+          "slug": "ic-giyim",
+          "url": "/kategori/tekstil/ic-giyim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-06",
+          "menu_order": 6,
+          "name": "Ev Tekstili",
+          "slug": "ev-tekstili",
+          "url": "/kategori/tekstil/ev-tekstili",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-07",
+          "menu_order": 7,
+          "name": "Çorap",
+          "slug": "corap",
+          "url": "/kategori/tekstil/corap",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-08",
+          "menu_order": 8,
+          "name": "Çanta & Aksesuar",
+          "slug": "canta-and-aksesuar",
+          "url": "/kategori/tekstil/canta-and-aksesuar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-01-09",
+          "menu_order": 9,
+          "name": "İş & Outdoor Tekstili",
+          "slug": "is-and-outdoor-tekstili",
+          "url": "/kategori/tekstil/is-and-outdoor-tekstili",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-02",
+      "menu_order": 2,
+      "name": "Kozmetik & Kişisel Bakım",
+      "slug": "kozmetik-and-kisisel-bakim",
+      "url": "/kategori/kozmetik-and-kisisel-bakim",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-02-01",
+          "menu_order": 1,
+          "name": "Cilt Bakımı",
+          "slug": "cilt-bakimi",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/cilt-bakimi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-02-02",
+          "menu_order": 2,
+          "name": "Saç Bakımı",
+          "slug": "sac-bakimi",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/sac-bakimi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-02-03",
+          "menu_order": 3,
+          "name": "Makyaj",
+          "slug": "makyaj",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/makyaj",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-02-04",
+          "menu_order": 4,
+          "name": "Parfüm",
+          "slug": "parfum",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/parfum",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-02-05",
+          "menu_order": 5,
+          "name": "Ağız & Diş Bakımı",
+          "slug": "agiz-and-dis-bakimi",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/agiz-and-dis-bakimi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-02-06",
+          "menu_order": 6,
+          "name": "Vücut Bakımı",
+          "slug": "vucut-bakimi",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/vucut-bakimi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-02-07",
+          "menu_order": 7,
+          "name": "Tıraş & Erkek Bakımı",
+          "slug": "tiras-and-erkek-bakimi",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/tiras-and-erkek-bakimi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-02-08",
+          "menu_order": 8,
+          "name": "Kişisel Hijyen",
+          "slug": "kisisel-hijyen",
+          "url": "/kategori/kozmetik-and-kisisel-bakim/kisisel-hijyen",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-03",
+      "menu_order": 3,
+      "name": "Temizlik Ürünleri",
+      "slug": "temizlik-urunleri",
+      "url": "/kategori/temizlik-urunleri",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-03-01",
+          "menu_order": 1,
+          "name": "Çamaşır Temizliği",
+          "slug": "camasir-temizligi",
+          "url": "/kategori/temizlik-urunleri/camasir-temizligi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-03-02",
+          "menu_order": 2,
+          "name": "Bulaşık Temizliği",
+          "slug": "bulasik-temizligi",
+          "url": "/kategori/temizlik-urunleri/bulasik-temizligi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-03-03",
+          "menu_order": 3,
+          "name": "Ev Temizliği",
+          "slug": "ev-temizligi",
+          "url": "/kategori/temizlik-urunleri/ev-temizligi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-03-04",
+          "menu_order": 4,
+          "name": "Mutfak Temizliği",
+          "slug": "mutfak-temizligi",
+          "url": "/kategori/temizlik-urunleri/mutfak-temizligi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-03-05",
+          "menu_order": 5,
+          "name": "Banyo & WC",
+          "slug": "banyo-and-wc",
+          "url": "/kategori/temizlik-urunleri/banyo-and-wc",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-03-06",
+          "menu_order": 6,
+          "name": "Profesyonel Temizlik",
+          "slug": "profesyonel-temizlik",
+          "url": "/kategori/temizlik-urunleri/profesyonel-temizlik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-03-07",
+          "menu_order": 7,
+          "name": "Kağıt Ürünleri",
+          "slug": "kagit-urunleri",
+          "url": "/kategori/temizlik-urunleri/kagit-urunleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-03-08",
+          "menu_order": 8,
+          "name": "Temizlik Ekipmanları",
+          "slug": "temizlik-ekipmanlari",
+          "url": "/kategori/temizlik-urunleri/temizlik-ekipmanlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-04",
+      "menu_order": 4,
+      "name": "Okul & Kırtasiye",
+      "slug": "okul-and-kirtasiye",
+      "url": "/kategori/okul-and-kirtasiye",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-04-01",
+          "menu_order": 1,
+          "name": "Okul Malzemeleri",
+          "slug": "okul-malzemeleri",
+          "url": "/kategori/okul-and-kirtasiye/okul-malzemeleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-04-02",
+          "menu_order": 2,
+          "name": "Kırtasiye",
+          "slug": "kirtasiye",
+          "url": "/kategori/okul-and-kirtasiye/kirtasiye",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-04-03",
+          "menu_order": 3,
+          "name": "Ofis Malzemeleri",
+          "slug": "ofis-malzemeleri",
+          "url": "/kategori/okul-and-kirtasiye/ofis-malzemeleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-04-04",
+          "menu_order": 4,
+          "name": "Sanat & Hobi Malzemeleri",
+          "slug": "sanat-and-hobi-malzemeleri",
+          "url": "/kategori/okul-and-kirtasiye/sanat-and-hobi-malzemeleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-04-05",
+          "menu_order": 5,
+          "name": "Çanta & Kalem Kutuları",
+          "slug": "canta-and-kalem-kutulari",
+          "url": "/kategori/okul-and-kirtasiye/canta-and-kalem-kutulari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-04-06",
+          "menu_order": 6,
+          "name": "Schultüte & Okul Başlangıcı",
+          "slug": "schultute-and-okul-baslangici",
+          "url": "/kategori/okul-and-kirtasiye/schultute-and-okul-baslangici",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-05",
+      "menu_order": 5,
+      "name": "Otomotiv",
+      "slug": "otomotiv",
+      "url": "/kategori/otomotiv",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-05-01",
+          "menu_order": 1,
+          "name": "Motor Yağları & Sıvılar",
+          "slug": "motor-yaglari-and-sivilar",
+          "url": "/kategori/otomotiv/motor-yaglari-and-sivilar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-02",
+          "menu_order": 2,
+          "name": "Filtreler",
+          "slug": "filtreler",
+          "url": "/kategori/otomotiv/filtreler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-03",
+          "menu_order": 3,
+          "name": "Fren Sistemi",
+          "slug": "fren-sistemi",
+          "url": "/kategori/otomotiv/fren-sistemi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-04",
+          "menu_order": 4,
+          "name": "Akü & Elektrik",
+          "slug": "aku-and-elektrik",
+          "url": "/kategori/otomotiv/aku-and-elektrik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-05",
+          "menu_order": 5,
+          "name": "Lastik & Jant",
+          "slug": "lastik-and-jant",
+          "url": "/kategori/otomotiv/lastik-and-jant",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-06",
+          "menu_order": 6,
+          "name": "Aydınlatma",
+          "slug": "aydinlatma",
+          "url": "/kategori/otomotiv/aydinlatma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-07",
+          "menu_order": 7,
+          "name": "Silecek & Cam Ürünleri",
+          "slug": "silecek-and-cam-urunleri",
+          "url": "/kategori/otomotiv/silecek-and-cam-urunleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-08",
+          "menu_order": 8,
+          "name": "Araç Bakım & Temizlik",
+          "slug": "arac-bakim-and-temizlik",
+          "url": "/kategori/otomotiv/arac-bakim-and-temizlik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-09",
+          "menu_order": 9,
+          "name": "İç Aksesuar",
+          "slug": "ic-aksesuar",
+          "url": "/kategori/otomotiv/ic-aksesuar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-10",
+          "menu_order": 10,
+          "name": "Dış Aksesuar",
+          "slug": "dis-aksesuar",
+          "url": "/kategori/otomotiv/dis-aksesuar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-11",
+          "menu_order": 11,
+          "name": "Yedek Parça",
+          "slug": "yedek-parca",
+          "url": "/kategori/otomotiv/yedek-parca",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-05-12",
+          "menu_order": 12,
+          "name": "Garaj & Servis Ekipmanları",
+          "slug": "garaj-and-servis-ekipmanlari",
+          "url": "/kategori/otomotiv/garaj-and-servis-ekipmanlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-06",
+      "menu_order": 6,
+      "name": "Pet",
+      "slug": "pet",
+      "url": "/kategori/pet",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-06-01",
+          "menu_order": 1,
+          "name": "Kedi",
+          "slug": "kedi",
+          "url": "/kategori/pet/kedi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-02",
+          "menu_order": 2,
+          "name": "Köpek",
+          "slug": "kopek",
+          "url": "/kategori/pet/kopek",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-03",
+          "menu_order": 3,
+          "name": "Kuş",
+          "slug": "kus",
+          "url": "/kategori/pet/kus",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-04",
+          "menu_order": 4,
+          "name": "Balık & Akvaryum",
+          "slug": "balik-and-akvaryum",
+          "url": "/kategori/pet/balik-and-akvaryum",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-05",
+          "menu_order": 5,
+          "name": "Kemirgenler",
+          "slug": "kemirgenler",
+          "url": "/kategori/pet/kemirgenler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-06",
+          "menu_order": 6,
+          "name": "Pet Mama",
+          "slug": "pet-mama",
+          "url": "/kategori/pet/pet-mama",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-07",
+          "menu_order": 7,
+          "name": "Ödül & Atıştırmalık",
+          "slug": "odul-and-atistirmalik",
+          "url": "/kategori/pet/odul-and-atistirmalik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-08",
+          "menu_order": 8,
+          "name": "Oyuncak",
+          "slug": "oyuncak",
+          "url": "/kategori/pet/oyuncak",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-09",
+          "menu_order": 9,
+          "name": "Yatak & Taşıma",
+          "slug": "yatak-and-tasima",
+          "url": "/kategori/pet/yatak-and-tasima",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-06-10",
+          "menu_order": 10,
+          "name": "Bakım & Hijyen",
+          "slug": "bakim-and-hijyen",
+          "url": "/kategori/pet/bakim-and-hijyen",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-07",
+      "menu_order": 7,
+      "name": "Bahçe",
+      "slug": "bahce",
+      "url": "/kategori/bahce",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-07-01",
+          "menu_order": 1,
+          "name": "Bahçe Aletleri",
+          "slug": "bahce-aletleri",
+          "url": "/kategori/bahce/bahce-aletleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-02",
+          "menu_order": 2,
+          "name": "Sulama & Su Depolama",
+          "slug": "sulama-and-su-depolama",
+          "url": "/kategori/bahce/sulama-and-su-depolama",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-03",
+          "menu_order": 3,
+          "name": "IBC Tanklar & Aksesuarları",
+          "slug": "ibc-tanklar-and-aksesuarlari",
+          "url": "/kategori/bahce/ibc-tanklar-and-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-04",
+          "menu_order": 4,
+          "name": "Yağmur Suyu Toplama",
+          "slug": "yagmur-suyu-toplama",
+          "url": "/kategori/bahce/yagmur-suyu-toplama",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-05",
+          "menu_order": 5,
+          "name": "Seralar",
+          "slug": "seralar",
+          "url": "/kategori/bahce/seralar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-06",
+          "menu_order": 6,
+          "name": "Tohum & Yetiştirme",
+          "slug": "tohum-and-yetistirme",
+          "url": "/kategori/bahce/tohum-and-yetistirme",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-07",
+          "menu_order": 7,
+          "name": "Saksı & Dikim",
+          "slug": "saksi-and-dikim",
+          "url": "/kategori/bahce/saksi-and-dikim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-08",
+          "menu_order": 8,
+          "name": "Bahçe Mobilyaları",
+          "slug": "bahce-mobilyalari",
+          "url": "/kategori/bahce/bahce-mobilyalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-09",
+          "menu_order": 9,
+          "name": "Barbekü & Mangal",
+          "slug": "barbeku-and-mangal",
+          "url": "/kategori/bahce/barbeku-and-mangal",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-07-10",
+          "menu_order": 10,
+          "name": "Bitki Bakımı",
+          "slug": "bitki-bakimi",
+          "url": "/kategori/bahce/bitki-bakimi",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-08",
+      "menu_order": 8,
+      "name": "İş Güvenliği & İş Kıyafetleri",
+      "slug": "is-guvenligi-and-is-kiyafetleri",
+      "url": "/kategori/is-guvenligi-and-is-kiyafetleri",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-08-01",
+          "menu_order": 1,
+          "name": "İş Ayakkabıları",
+          "slug": "is-ayakkabilari",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-ayakkabilari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-02",
+          "menu_order": 2,
+          "name": "İş Elbiseleri",
+          "slug": "is-elbiseleri",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-elbiseleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-03",
+          "menu_order": 3,
+          "name": "Reflektif Kıyafetler",
+          "slug": "reflektif-kiyafetler",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-04",
+          "menu_order": 4,
+          "name": "Eldiven",
+          "slug": "eldiven",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/eldiven",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-05",
+          "menu_order": 5,
+          "name": "Baret & Baş Koruma",
+          "slug": "baret-and-bas-koruma",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-06",
+          "menu_order": 6,
+          "name": "Göz Koruma",
+          "slug": "goz-koruma",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/goz-koruma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-07",
+          "menu_order": 7,
+          "name": "Kulak Koruma",
+          "slug": "kulak-koruma",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/kulak-koruma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-08",
+          "menu_order": 8,
+          "name": "Solunum Koruma",
+          "slug": "solunum-koruma",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/solunum-koruma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-09",
+          "menu_order": 9,
+          "name": "Diz Koruma",
+          "slug": "diz-koruma",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/diz-koruma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-08-10",
+          "menu_order": 10,
+          "name": "İş Güvenliği Aksesuarları",
+          "slug": "is-guvenligi-aksesuarlari",
+          "url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-09",
+      "menu_order": 9,
+      "name": "Aletler & Hırdavat",
+      "slug": "aletler-and-hirdavat",
+      "url": "/kategori/aletler-and-hirdavat",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-09-01",
+          "menu_order": 1,
+          "name": "El Aletleri",
+          "slug": "el-aletleri",
+          "url": "/kategori/aletler-and-hirdavat/el-aletleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-09-02",
+          "menu_order": 2,
+          "name": "Elektrikli El Aletleri",
+          "slug": "elektrikli-el-aletleri",
+          "url": "/kategori/aletler-and-hirdavat/elektrikli-el-aletleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-09-03",
+          "menu_order": 3,
+          "name": "Akülü Aletler",
+          "slug": "akulu-aletler",
+          "url": "/kategori/aletler-and-hirdavat/akulu-aletler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-09-04",
+          "menu_order": 4,
+          "name": "Ölçüm Aletleri",
+          "slug": "olcum-aletleri",
+          "url": "/kategori/aletler-and-hirdavat/olcum-aletleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-09-05",
+          "menu_order": 5,
+          "name": "Kesme & Delme",
+          "slug": "kesme-and-delme",
+          "url": "/kategori/aletler-and-hirdavat/kesme-and-delme",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-09-06",
+          "menu_order": 6,
+          "name": "Bağlantı Elemanları",
+          "slug": "baglanti-elemanlari",
+          "url": "/kategori/aletler-and-hirdavat/baglanti-elemanlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-09-07",
+          "menu_order": 7,
+          "name": "Hırdavat",
+          "slug": "hirdavat",
+          "url": "/kategori/aletler-and-hirdavat/hirdavat",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-09-08",
+          "menu_order": 8,
+          "name": "Atölye Ekipmanları",
+          "slug": "atolye-ekipmanlari",
+          "url": "/kategori/aletler-and-hirdavat/atolye-ekipmanlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-10",
+      "menu_order": 10,
+      "name": "Ev & Yaşam",
+      "slug": "ev-and-yasam",
+      "url": "/kategori/ev-and-yasam",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-10-01",
+          "menu_order": 1,
+          "name": "Mutfak",
+          "slug": "mutfak",
+          "url": "/kategori/ev-and-yasam/mutfak",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-10-02",
+          "menu_order": 2,
+          "name": "Banyo",
+          "slug": "banyo",
+          "url": "/kategori/ev-and-yasam/banyo",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-10-03",
+          "menu_order": 3,
+          "name": "Yatak Odası",
+          "slug": "yatak-odasi",
+          "url": "/kategori/ev-and-yasam/yatak-odasi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-10-04",
+          "menu_order": 4,
+          "name": "Salon",
+          "slug": "salon",
+          "url": "/kategori/ev-and-yasam/salon",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-10-05",
+          "menu_order": 5,
+          "name": "Depolama",
+          "slug": "depolama",
+          "url": "/kategori/ev-and-yasam/depolama",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-10-06",
+          "menu_order": 6,
+          "name": "Ev Organizasyonu",
+          "slug": "ev-organizasyonu",
+          "url": "/kategori/ev-and-yasam/ev-organizasyonu",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-10-07",
+          "menu_order": 7,
+          "name": "Ev Aksesuarları",
+          "slug": "ev-aksesuarlari",
+          "url": "/kategori/ev-and-yasam/ev-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-10-08",
+          "menu_order": 8,
+          "name": "Ev Güvenliği",
+          "slug": "ev-guvenligi",
+          "url": "/kategori/ev-and-yasam/ev-guvenligi",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-11",
+      "menu_order": 11,
+      "name": "Mobilya",
+      "slug": "mobilya",
+      "url": "/kategori/mobilya",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-11-01",
+          "menu_order": 1,
+          "name": "Salon Mobilyaları",
+          "slug": "salon-mobilyalari",
+          "url": "/kategori/mobilya/salon-mobilyalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-11-02",
+          "menu_order": 2,
+          "name": "Yatak Odası Mobilyaları",
+          "slug": "yatak-odasi-mobilyalari",
+          "url": "/kategori/mobilya/yatak-odasi-mobilyalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-11-03",
+          "menu_order": 3,
+          "name": "Ofis Mobilyaları",
+          "slug": "ofis-mobilyalari",
+          "url": "/kategori/mobilya/ofis-mobilyalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-11-04",
+          "menu_order": 4,
+          "name": "Bahçe Mobilyaları",
+          "slug": "bahce-mobilyalari",
+          "url": "/kategori/mobilya/bahce-mobilyalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-11-05",
+          "menu_order": 5,
+          "name": "Çocuk Mobilyaları",
+          "slug": "cocuk-mobilyalari",
+          "url": "/kategori/mobilya/cocuk-mobilyalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-11-06",
+          "menu_order": 6,
+          "name": "Raf & Dolap",
+          "slug": "raf-and-dolap",
+          "url": "/kategori/mobilya/raf-and-dolap",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-11-07",
+          "menu_order": 7,
+          "name": "Masa & Sandalye",
+          "slug": "masa-and-sandalye",
+          "url": "/kategori/mobilya/masa-and-sandalye",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-12",
+      "menu_order": 12,
+      "name": "Elektronik",
+      "slug": "elektronik",
+      "url": "/kategori/elektronik",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-12-01",
+          "menu_order": 1,
+          "name": "Telefon Aksesuarları",
+          "slug": "telefon-aksesuarlari",
+          "url": "/kategori/elektronik/telefon-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-12-02",
+          "menu_order": 2,
+          "name": "Bilgisayar Aksesuarları",
+          "slug": "bilgisayar-aksesuarlari",
+          "url": "/kategori/elektronik/bilgisayar-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-12-03",
+          "menu_order": 3,
+          "name": "Kablo & Adaptör",
+          "slug": "kablo-and-adaptor",
+          "url": "/kategori/elektronik/kablo-and-adaptor",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-12-04",
+          "menu_order": 4,
+          "name": "Şarj Ürünleri",
+          "slug": "sarj-urunleri",
+          "url": "/kategori/elektronik/sarj-urunleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-12-05",
+          "menu_order": 5,
+          "name": "Ses Sistemleri",
+          "slug": "ses-sistemleri",
+          "url": "/kategori/elektronik/ses-sistemleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-12-06",
+          "menu_order": 6,
+          "name": "Akıllı Ev",
+          "slug": "akilli-ev",
+          "url": "/kategori/elektronik/akilli-ev",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-12-07",
+          "menu_order": 7,
+          "name": "Güvenlik Kameraları",
+          "slug": "guvenlik-kameralari",
+          "url": "/kategori/elektronik/guvenlik-kameralari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-12-08",
+          "menu_order": 8,
+          "name": "Elektronik Aksesuarlar",
+          "slug": "elektronik-aksesuarlar",
+          "url": "/kategori/elektronik/elektronik-aksesuarlar",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-13",
+      "menu_order": 13,
+      "name": "Elektrikli Ev Aletleri",
+      "slug": "elektrikli-ev-aletleri",
+      "url": "/kategori/elektrikli-ev-aletleri",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-13-01",
+          "menu_order": 1,
+          "name": "Mutfak Aletleri",
+          "slug": "mutfak-aletleri",
+          "url": "/kategori/elektrikli-ev-aletleri/mutfak-aletleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-13-02",
+          "menu_order": 2,
+          "name": "Kahve & İçecek",
+          "slug": "kahve-and-icecek",
+          "url": "/kategori/elektrikli-ev-aletleri/kahve-and-icecek",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-13-03",
+          "menu_order": 3,
+          "name": "Temizlik Aletleri",
+          "slug": "temizlik-aletleri",
+          "url": "/kategori/elektrikli-ev-aletleri/temizlik-aletleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-13-04",
+          "menu_order": 4,
+          "name": "Kişisel Bakım Aletleri",
+          "slug": "kisisel-bakim-aletleri",
+          "url": "/kategori/elektrikli-ev-aletleri/kisisel-bakim-aletleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-13-05",
+          "menu_order": 5,
+          "name": "Isıtma & Soğutma",
+          "slug": "isitma-and-sogutma",
+          "url": "/kategori/elektrikli-ev-aletleri/isitma-and-sogutma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-13-06",
+          "menu_order": 6,
+          "name": "Küçük Ev Aletleri",
+          "slug": "kucuk-ev-aletleri",
+          "url": "/kategori/elektrikli-ev-aletleri/kucuk-ev-aletleri",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-14",
+      "menu_order": 14,
+      "name": "Spor & Outdoor",
+      "slug": "spor-and-outdoor",
+      "url": "/kategori/spor-and-outdoor",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-14-01",
+          "menu_order": 1,
+          "name": "Fitness",
+          "slug": "fitness",
+          "url": "/kategori/spor-and-outdoor/fitness",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-02",
+          "menu_order": 2,
+          "name": "Koşu",
+          "slug": "kosu",
+          "url": "/kategori/spor-and-outdoor/kosu",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-03",
+          "menu_order": 3,
+          "name": "Bisiklet",
+          "slug": "bisiklet",
+          "url": "/kategori/spor-and-outdoor/bisiklet",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-04",
+          "menu_order": 4,
+          "name": "Bisiklet Giyim & Ekipman",
+          "slug": "bisiklet-giyim-and-ekipman",
+          "url": "/kategori/spor-and-outdoor/bisiklet-giyim-and-ekipman",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-05",
+          "menu_order": 5,
+          "name": "Kamp",
+          "slug": "kamp",
+          "url": "/kategori/spor-and-outdoor/kamp",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-06",
+          "menu_order": 6,
+          "name": "Yürüyüş",
+          "slug": "yuruyus",
+          "url": "/kategori/spor-and-outdoor/yuruyus",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-07",
+          "menu_order": 7,
+          "name": "Outdoor Giyim",
+          "slug": "outdoor-giyim",
+          "url": "/kategori/spor-and-outdoor/outdoor-giyim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-08",
+          "menu_order": 8,
+          "name": "Spor Çantaları",
+          "slug": "spor-cantalari",
+          "url": "/kategori/spor-and-outdoor/spor-cantalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-09",
+          "menu_order": 9,
+          "name": "Hidrasyon",
+          "slug": "hidrasyon",
+          "url": "/kategori/spor-and-outdoor/hidrasyon",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-14-10",
+          "menu_order": 10,
+          "name": "Takım Sporları",
+          "slug": "takim-sporlari",
+          "url": "/kategori/spor-and-outdoor/takim-sporlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-15",
+      "menu_order": 15,
+      "name": "Ayakkabı",
+      "slug": "ayakkabi",
+      "url": "/kategori/ayakkabi",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-15-01",
+          "menu_order": 1,
+          "name": "Kadın Ayakkabı",
+          "slug": "kadin-ayakkabi",
+          "url": "/kategori/ayakkabi/kadin-ayakkabi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-15-02",
+          "menu_order": 2,
+          "name": "Erkek Ayakkabı",
+          "slug": "erkek-ayakkabi",
+          "url": "/kategori/ayakkabi/erkek-ayakkabi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-15-03",
+          "menu_order": 3,
+          "name": "Çocuk Ayakkabı",
+          "slug": "cocuk-ayakkabi",
+          "url": "/kategori/ayakkabi/cocuk-ayakkabi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-15-04",
+          "menu_order": 4,
+          "name": "Spor Ayakkabı",
+          "slug": "spor-ayakkabi",
+          "url": "/kategori/ayakkabi/spor-ayakkabi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-15-05",
+          "menu_order": 5,
+          "name": "Koşu Ayakkabısı",
+          "slug": "kosu-ayakkabisi",
+          "url": "/kategori/ayakkabi/kosu-ayakkabisi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-15-06",
+          "menu_order": 6,
+          "name": "İş Ayakkabısı",
+          "slug": "is-ayakkabisi",
+          "url": "/kategori/ayakkabi/is-ayakkabisi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-15-07",
+          "menu_order": 7,
+          "name": "Outdoor Ayakkabı",
+          "slug": "outdoor-ayakkabi",
+          "url": "/kategori/ayakkabi/outdoor-ayakkabi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-15-08",
+          "menu_order": 8,
+          "name": "Terlik & Sandalet",
+          "slug": "terlik-and-sandalet",
+          "url": "/kategori/ayakkabi/terlik-and-sandalet",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-16",
+      "menu_order": 16,
+      "name": "Çanta & Aksesuar",
+      "slug": "canta-and-aksesuar",
+      "url": "/kategori/canta-and-aksesuar",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-16-01",
+          "menu_order": 1,
+          "name": "Günlük Çantalar",
+          "slug": "gunluk-cantalar",
+          "url": "/kategori/canta-and-aksesuar/gunluk-cantalar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-16-02",
+          "menu_order": 2,
+          "name": "Sırt Çantaları",
+          "slug": "sirt-cantalari",
+          "url": "/kategori/canta-and-aksesuar/sirt-cantalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-16-03",
+          "menu_order": 3,
+          "name": "Seyahat Çantaları",
+          "slug": "seyahat-cantalari",
+          "url": "/kategori/canta-and-aksesuar/seyahat-cantalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-16-04",
+          "menu_order": 4,
+          "name": "Cüzdan",
+          "slug": "cuzdan",
+          "url": "/kategori/canta-and-aksesuar/cuzdan",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-16-05",
+          "menu_order": 5,
+          "name": "Valiz",
+          "slug": "valiz",
+          "url": "/kategori/canta-and-aksesuar/valiz",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-16-06",
+          "menu_order": 6,
+          "name": "Kemer",
+          "slug": "kemer",
+          "url": "/kategori/canta-and-aksesuar/kemer",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-16-07",
+          "menu_order": 7,
+          "name": "Şapka & Bere",
+          "slug": "sapka-and-bere",
+          "url": "/kategori/canta-and-aksesuar/sapka-and-bere",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-16-08",
+          "menu_order": 8,
+          "name": "Şemsiye",
+          "slug": "semsiye",
+          "url": "/kategori/canta-and-aksesuar/semsiye",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-17",
+      "menu_order": 17,
+      "name": "Anne & Bebek",
+      "slug": "anne-and-bebek",
+      "url": "/kategori/anne-and-bebek",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-17-01",
+          "menu_order": 1,
+          "name": "Bebek Giyim",
+          "slug": "bebek-giyim",
+          "url": "/kategori/anne-and-bebek/bebek-giyim",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-17-02",
+          "menu_order": 2,
+          "name": "Bebek Bakımı",
+          "slug": "bebek-bakimi",
+          "url": "/kategori/anne-and-bebek/bebek-bakimi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-17-03",
+          "menu_order": 3,
+          "name": "Beslenme",
+          "slug": "beslenme",
+          "url": "/kategori/anne-and-bebek/beslenme",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-17-04",
+          "menu_order": 4,
+          "name": "Bebek Odası",
+          "slug": "bebek-odasi",
+          "url": "/kategori/anne-and-bebek/bebek-odasi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-17-05",
+          "menu_order": 5,
+          "name": "Oyuncak",
+          "slug": "oyuncak",
+          "url": "/kategori/anne-and-bebek/oyuncak",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-17-06",
+          "menu_order": 6,
+          "name": "Bebek Arabası & Taşıma",
+          "slug": "bebek-arabasi-and-tasima",
+          "url": "/kategori/anne-and-bebek/bebek-arabasi-and-tasima",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-17-07",
+          "menu_order": 7,
+          "name": "Güvenlik",
+          "slug": "guvenlik",
+          "url": "/kategori/anne-and-bebek/guvenlik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-17-08",
+          "menu_order": 8,
+          "name": "Anne Ürünleri",
+          "slug": "anne-urunleri",
+          "url": "/kategori/anne-and-bebek/anne-urunleri",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-18",
+      "menu_order": 18,
+      "name": "Oyuncak & Çocuk",
+      "slug": "oyuncak-and-cocuk",
+      "url": "/kategori/oyuncak-and-cocuk",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-18-01",
+          "menu_order": 1,
+          "name": "Eğitici Oyuncaklar",
+          "slug": "egitici-oyuncaklar",
+          "url": "/kategori/oyuncak-and-cocuk/egitici-oyuncaklar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-18-02",
+          "menu_order": 2,
+          "name": "Bebek Oyuncakları",
+          "slug": "bebek-oyuncaklari",
+          "url": "/kategori/oyuncak-and-cocuk/bebek-oyuncaklari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-18-03",
+          "menu_order": 3,
+          "name": "Araç & Kumandalı Oyuncaklar",
+          "slug": "arac-and-kumandali-oyuncaklar",
+          "url": "/kategori/oyuncak-and-cocuk/arac-and-kumandali-oyuncaklar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-18-04",
+          "menu_order": 4,
+          "name": "Yapboz",
+          "slug": "yapboz",
+          "url": "/kategori/oyuncak-and-cocuk/yapboz",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-18-05",
+          "menu_order": 5,
+          "name": "Kutu Oyunları",
+          "slug": "kutu-oyunlari",
+          "url": "/kategori/oyuncak-and-cocuk/kutu-oyunlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-18-06",
+          "menu_order": 6,
+          "name": "Dış Mekan Oyuncakları",
+          "slug": "dis-mekan-oyuncaklari",
+          "url": "/kategori/oyuncak-and-cocuk/dis-mekan-oyuncaklari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-18-07",
+          "menu_order": 7,
+          "name": "Parti & Kutlama",
+          "slug": "parti-and-kutlama",
+          "url": "/kategori/oyuncak-and-cocuk/parti-and-kutlama",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-19",
+      "menu_order": 19,
+      "name": "Hobi & Eğlence",
+      "slug": "hobi-and-eglence",
+      "url": "/kategori/hobi-and-eglence",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-19-01",
+          "menu_order": 1,
+          "name": "El Sanatları",
+          "slug": "el-sanatlari",
+          "url": "/kategori/hobi-and-eglence/el-sanatlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-19-02",
+          "menu_order": 2,
+          "name": "Modelcilik",
+          "slug": "modelcilik",
+          "url": "/kategori/hobi-and-eglence/modelcilik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-19-03",
+          "menu_order": 3,
+          "name": "Koleksiyon",
+          "slug": "koleksiyon",
+          "url": "/kategori/hobi-and-eglence/koleksiyon",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-19-04",
+          "menu_order": 4,
+          "name": "Müzik Aksesuarları",
+          "slug": "muzik-aksesuarlari",
+          "url": "/kategori/hobi-and-eglence/muzik-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-19-05",
+          "menu_order": 5,
+          "name": "Puzzle",
+          "slug": "puzzle",
+          "url": "/kategori/hobi-and-eglence/puzzle",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-19-06",
+          "menu_order": 6,
+          "name": "Masa Oyunları",
+          "slug": "masa-oyunlari",
+          "url": "/kategori/hobi-and-eglence/masa-oyunlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-19-07",
+          "menu_order": 7,
+          "name": "Kendin Yap",
+          "slug": "kendin-yap",
+          "url": "/kategori/hobi-and-eglence/kendin-yap",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-20",
+      "menu_order": 20,
+      "name": "Evcil Hayvan & Hayvancılık Ekipmanları",
+      "slug": "evcil-hayvan-and-hayvancilik-ekipmanlari",
+      "url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-20-01",
+          "menu_order": 1,
+          "name": "Ahır Ekipmanları",
+          "slug": "ahir-ekipmanlari",
+          "url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-20-02",
+          "menu_order": 2,
+          "name": "Çiftlik Ekipmanları",
+          "slug": "ciftlik-ekipmanlari",
+          "url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-20-03",
+          "menu_order": 3,
+          "name": "Hayvan Sulukları",
+          "slug": "hayvan-suluklari",
+          "url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-20-04",
+          "menu_order": 4,
+          "name": "Yemlikler",
+          "slug": "yemlikler",
+          "url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-20-05",
+          "menu_order": 5,
+          "name": "Çit & Kafes",
+          "slug": "cit-and-kafes",
+          "url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-20-06",
+          "menu_order": 6,
+          "name": "Hayvan Bakım Ekipmanları",
+          "slug": "hayvan-bakim-ekipmanlari",
+          "url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-21",
+      "menu_order": 21,
+      "name": "Yapı & İnşaat",
+      "slug": "yapi-and-insaat",
+      "url": "/kategori/yapi-and-insaat",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-21-01",
+          "menu_order": 1,
+          "name": "Yapı Malzemeleri",
+          "slug": "yapi-malzemeleri",
+          "url": "/kategori/yapi-and-insaat/yapi-malzemeleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-21-02",
+          "menu_order": 2,
+          "name": "İzolasyon",
+          "slug": "izolasyon",
+          "url": "/kategori/yapi-and-insaat/izolasyon",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-21-03",
+          "menu_order": 3,
+          "name": "Boya & Sıva",
+          "slug": "boya-and-siva",
+          "url": "/kategori/yapi-and-insaat/boya-and-siva",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-21-04",
+          "menu_order": 4,
+          "name": "Yapıştırıcılar",
+          "slug": "yapistiricilar",
+          "url": "/kategori/yapi-and-insaat/yapistiricilar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-21-05",
+          "menu_order": 5,
+          "name": "Çatı & Oluk",
+          "slug": "cati-and-oluk",
+          "url": "/kategori/yapi-and-insaat/cati-and-oluk",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-21-06",
+          "menu_order": 6,
+          "name": "Kapı & Pencere Aksesuarları",
+          "slug": "kapi-and-pencere-aksesuarlari",
+          "url": "/kategori/yapi-and-insaat/kapi-and-pencere-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-21-07",
+          "menu_order": 7,
+          "name": "Montaj Ürünleri",
+          "slug": "montaj-urunleri",
+          "url": "/kategori/yapi-and-insaat/montaj-urunleri",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-22",
+      "menu_order": 22,
+      "name": "Elektrik & Aydınlatma",
+      "slug": "elektrik-and-aydinlatma",
+      "url": "/kategori/elektrik-and-aydinlatma",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-22-01",
+          "menu_order": 1,
+          "name": "LED Aydınlatma",
+          "slug": "led-aydinlatma",
+          "url": "/kategori/elektrik-and-aydinlatma/led-aydinlatma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-22-02",
+          "menu_order": 2,
+          "name": "Ampuller",
+          "slug": "ampuller",
+          "url": "/kategori/elektrik-and-aydinlatma/ampuller",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-22-03",
+          "menu_order": 3,
+          "name": "Priz & Anahtar",
+          "slug": "priz-and-anahtar",
+          "url": "/kategori/elektrik-and-aydinlatma/priz-and-anahtar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-22-04",
+          "menu_order": 4,
+          "name": "Kablo",
+          "slug": "kablo",
+          "url": "/kategori/elektrik-and-aydinlatma/kablo",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-22-05",
+          "menu_order": 5,
+          "name": "Uzatma Kabloları",
+          "slug": "uzatma-kablolari",
+          "url": "/kategori/elektrik-and-aydinlatma/uzatma-kablolari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-22-06",
+          "menu_order": 6,
+          "name": "Sigorta & Koruma",
+          "slug": "sigorta-and-koruma",
+          "url": "/kategori/elektrik-and-aydinlatma/sigorta-and-koruma",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-22-07",
+          "menu_order": 7,
+          "name": "Dış Mekan Aydınlatma",
+          "slug": "dis-mekan-aydinlatma",
+          "url": "/kategori/elektrik-and-aydinlatma/dis-mekan-aydinlatma",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-23",
+      "menu_order": 23,
+      "name": "Su, Isıtma & Tesisat",
+      "slug": "su-isitma-and-tesisat",
+      "url": "/kategori/su-isitma-and-tesisat",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-23-01",
+          "menu_order": 1,
+          "name": "Su Depoları",
+          "slug": "su-depolari",
+          "url": "/kategori/su-isitma-and-tesisat/su-depolari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-23-02",
+          "menu_order": 2,
+          "name": "Pompa",
+          "slug": "pompa",
+          "url": "/kategori/su-isitma-and-tesisat/pompa",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-23-03",
+          "menu_order": 3,
+          "name": "Musluk & Vana",
+          "slug": "musluk-and-vana",
+          "url": "/kategori/su-isitma-and-tesisat/musluk-and-vana",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-23-04",
+          "menu_order": 4,
+          "name": "Boru & Bağlantı",
+          "slug": "boru-and-baglanti",
+          "url": "/kategori/su-isitma-and-tesisat/boru-and-baglanti",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-23-05",
+          "menu_order": 5,
+          "name": "Filtreler",
+          "slug": "filtreler",
+          "url": "/kategori/su-isitma-and-tesisat/filtreler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-23-06",
+          "menu_order": 6,
+          "name": "Bahçe Sulama",
+          "slug": "bahce-sulama",
+          "url": "/kategori/su-isitma-and-tesisat/bahce-sulama",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-23-07",
+          "menu_order": 7,
+          "name": "Isıtma Ekipmanları",
+          "slug": "isitma-ekipmanlari",
+          "url": "/kategori/su-isitma-and-tesisat/isitma-ekipmanlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-24",
+      "menu_order": 24,
+      "name": "Mutfak & Yemek",
+      "slug": "mutfak-and-yemek",
+      "url": "/kategori/mutfak-and-yemek",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-24-01",
+          "menu_order": 1,
+          "name": "Tencere & Tavalar",
+          "slug": "tencere-and-tavalar",
+          "url": "/kategori/mutfak-and-yemek/tencere-and-tavalar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-24-02",
+          "menu_order": 2,
+          "name": "Pişirme Gereçleri",
+          "slug": "pisirme-gerecleri",
+          "url": "/kategori/mutfak-and-yemek/pisirme-gerecleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-24-03",
+          "menu_order": 3,
+          "name": "Saklama Kapları",
+          "slug": "saklama-kaplari",
+          "url": "/kategori/mutfak-and-yemek/saklama-kaplari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-24-04",
+          "menu_order": 4,
+          "name": "Mutfak Gereçleri",
+          "slug": "mutfak-gerecleri",
+          "url": "/kategori/mutfak-and-yemek/mutfak-gerecleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-24-05",
+          "menu_order": 5,
+          "name": "Bıçaklar",
+          "slug": "bicaklar",
+          "url": "/kategori/mutfak-and-yemek/bicaklar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-24-06",
+          "menu_order": 6,
+          "name": "Masa Servisi",
+          "slug": "masa-servisi",
+          "url": "/kategori/mutfak-and-yemek/masa-servisi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-24-07",
+          "menu_order": 7,
+          "name": "Kahve & Çay Aksesuarları",
+          "slug": "kahve-and-cay-aksesuarlari",
+          "url": "/kategori/mutfak-and-yemek/kahve-and-cay-aksesuarlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-25",
+      "menu_order": 25,
+      "name": "Gıda & İçecek",
+      "slug": "gida-and-icecek",
+      "url": "/kategori/gida-and-icecek",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-25-01",
+          "menu_order": 1,
+          "name": "Temel Gıda",
+          "slug": "temel-gida",
+          "url": "/kategori/gida-and-icecek/temel-gida",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-25-02",
+          "menu_order": 2,
+          "name": "Atıştırmalık",
+          "slug": "atistirmalik",
+          "url": "/kategori/gida-and-icecek/atistirmalik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-25-03",
+          "menu_order": 3,
+          "name": "İçecek",
+          "slug": "icecek",
+          "url": "/kategori/gida-and-icecek/icecek",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-25-04",
+          "menu_order": 4,
+          "name": "Kahve & Çay",
+          "slug": "kahve-and-cay",
+          "url": "/kategori/gida-and-icecek/kahve-and-cay",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-25-05",
+          "menu_order": 5,
+          "name": "Kuru Gıda",
+          "slug": "kuru-gida",
+          "url": "/kategori/gida-and-icecek/kuru-gida",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-25-06",
+          "menu_order": 6,
+          "name": "Konserve",
+          "slug": "konserve",
+          "url": "/kategori/gida-and-icecek/konserve",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-25-07",
+          "menu_order": 7,
+          "name": "Paketli Gıda",
+          "slug": "paketli-gida",
+          "url": "/kategori/gida-and-icecek/paketli-gida",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-26",
+      "menu_order": 26,
+      "name": "Evcil Hayvan Maması",
+      "slug": "evcil-hayvan-mamasi",
+      "url": "/kategori/evcil-hayvan-mamasi",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-26-01",
+          "menu_order": 1,
+          "name": "Kedi Maması",
+          "slug": "kedi-mamasi",
+          "url": "/kategori/evcil-hayvan-mamasi/kedi-mamasi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-26-02",
+          "menu_order": 2,
+          "name": "Köpek Maması",
+          "slug": "kopek-mamasi",
+          "url": "/kategori/evcil-hayvan-mamasi/kopek-mamasi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-26-03",
+          "menu_order": 3,
+          "name": "Kuş Yemi",
+          "slug": "kus-yemi",
+          "url": "/kategori/evcil-hayvan-mamasi/kus-yemi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-26-04",
+          "menu_order": 4,
+          "name": "Balık Yemi",
+          "slug": "balik-yemi",
+          "url": "/kategori/evcil-hayvan-mamasi/balik-yemi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-26-05",
+          "menu_order": 5,
+          "name": "Kemirgen Yemi",
+          "slug": "kemirgen-yemi",
+          "url": "/kategori/evcil-hayvan-mamasi/kemirgen-yemi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-26-06",
+          "menu_order": 6,
+          "name": "Özel Beslenme",
+          "slug": "ozel-beslenme",
+          "url": "/kategori/evcil-hayvan-mamasi/ozel-beslenme",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-27",
+      "menu_order": 27,
+      "name": "Sağlık & Wellness",
+      "slug": "saglik-and-wellness",
+      "url": "/kategori/saglik-and-wellness",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-27-01",
+          "menu_order": 1,
+          "name": "Fitness & Wellness",
+          "slug": "fitness-and-wellness",
+          "url": "/kategori/saglik-and-wellness/fitness-and-wellness",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-27-02",
+          "menu_order": 2,
+          "name": "Masaj Ürünleri",
+          "slug": "masaj-urunleri",
+          "url": "/kategori/saglik-and-wellness/masaj-urunleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-27-03",
+          "menu_order": 3,
+          "name": "Uyku & Rahatlama",
+          "slug": "uyku-and-rahatlama",
+          "url": "/kategori/saglik-and-wellness/uyku-and-rahatlama",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-27-04",
+          "menu_order": 4,
+          "name": "Kişisel Bakım Aksesuarları",
+          "slug": "kisisel-bakim-aksesuarlari",
+          "url": "/kategori/saglik-and-wellness/kisisel-bakim-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-27-05",
+          "menu_order": 5,
+          "name": "Evde Bakım Ürünleri",
+          "slug": "evde-bakim-urunleri",
+          "url": "/kategori/saglik-and-wellness/evde-bakim-urunleri",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-28",
+      "menu_order": 28,
+      "name": "Ofis & İşletme",
+      "slug": "ofis-and-isletme",
+      "url": "/kategori/ofis-and-isletme",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-28-01",
+          "menu_order": 1,
+          "name": "Ofis Mobilyaları",
+          "slug": "ofis-mobilyalari",
+          "url": "/kategori/ofis-and-isletme/ofis-mobilyalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-28-02",
+          "menu_order": 2,
+          "name": "Ofis Kırtasiye",
+          "slug": "ofis-kirtasiye",
+          "url": "/kategori/ofis-and-isletme/ofis-kirtasiye",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-28-03",
+          "menu_order": 3,
+          "name": "Yazıcı Sarf",
+          "slug": "yazici-sarf",
+          "url": "/kategori/ofis-and-isletme/yazici-sarf",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-28-04",
+          "menu_order": 4,
+          "name": "Paketleme",
+          "slug": "paketleme",
+          "url": "/kategori/ofis-and-isletme/paketleme",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-28-05",
+          "menu_order": 5,
+          "name": "Etiketleme",
+          "slug": "etiketleme",
+          "url": "/kategori/ofis-and-isletme/etiketleme",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-28-06",
+          "menu_order": 6,
+          "name": "Depo Organizasyonu",
+          "slug": "depo-organizasyonu",
+          "url": "/kategori/ofis-and-isletme/depo-organizasyonu",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-28-07",
+          "menu_order": 7,
+          "name": "POS & Mağaza Ekipmanı",
+          "slug": "pos-and-magaza-ekipmani",
+          "url": "/kategori/ofis-and-isletme/pos-and-magaza-ekipmani",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-29",
+      "menu_order": 29,
+      "name": "Paketleme & Kargo",
+      "slug": "paketleme-and-kargo",
+      "url": "/kategori/paketleme-and-kargo",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-29-01",
+          "menu_order": 1,
+          "name": "Karton Kutular",
+          "slug": "karton-kutular",
+          "url": "/kategori/paketleme-and-kargo/karton-kutular",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-29-02",
+          "menu_order": 2,
+          "name": "Kargo Poşetleri",
+          "slug": "kargo-posetleri",
+          "url": "/kategori/paketleme-and-kargo/kargo-posetleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-29-03",
+          "menu_order": 3,
+          "name": "Balonlu Ambalaj",
+          "slug": "balonlu-ambalaj",
+          "url": "/kategori/paketleme-and-kargo/balonlu-ambalaj",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-29-04",
+          "menu_order": 4,
+          "name": "Bant",
+          "slug": "bant",
+          "url": "/kategori/paketleme-and-kargo/bant",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-29-05",
+          "menu_order": 5,
+          "name": "Etiketler",
+          "slug": "etiketler",
+          "url": "/kategori/paketleme-and-kargo/etiketler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-29-06",
+          "menu_order": 6,
+          "name": "Dolgu Malzemeleri",
+          "slug": "dolgu-malzemeleri",
+          "url": "/kategori/paketleme-and-kargo/dolgu-malzemeleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-29-07",
+          "menu_order": 7,
+          "name": "Palet & Streç",
+          "slug": "palet-and-strec",
+          "url": "/kategori/paketleme-and-kargo/palet-and-strec",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-30",
+      "menu_order": 30,
+      "name": "Sanayi & Ticari Ekipman",
+      "slug": "sanayi-and-ticari-ekipman",
+      "url": "/kategori/sanayi-and-ticari-ekipman",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-30-01",
+          "menu_order": 1,
+          "name": "Depo Ekipmanları",
+          "slug": "depo-ekipmanlari",
+          "url": "/kategori/sanayi-and-ticari-ekipman/depo-ekipmanlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-30-02",
+          "menu_order": 2,
+          "name": "Taşıma Ekipmanları",
+          "slug": "tasima-ekipmanlari",
+          "url": "/kategori/sanayi-and-ticari-ekipman/tasima-ekipmanlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-30-03",
+          "menu_order": 3,
+          "name": "Atölye Ekipmanları",
+          "slug": "atolye-ekipmanlari",
+          "url": "/kategori/sanayi-and-ticari-ekipman/atolye-ekipmanlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-30-04",
+          "menu_order": 4,
+          "name": "Kompresörler",
+          "slug": "kompresorler",
+          "url": "/kategori/sanayi-and-ticari-ekipman/kompresorler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-30-05",
+          "menu_order": 5,
+          "name": "Jeneratörler",
+          "slug": "jeneratorler",
+          "url": "/kategori/sanayi-and-ticari-ekipman/jeneratorler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-30-06",
+          "menu_order": 6,
+          "name": "Makine Aksesuarları",
+          "slug": "makine-aksesuarlari",
+          "url": "/kategori/sanayi-and-ticari-ekipman/makine-aksesuarlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-31",
+      "menu_order": 31,
+      "name": "Güvenlik & Gözetim",
+      "slug": "guvenlik-and-gozetim",
+      "url": "/kategori/guvenlik-and-gozetim",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-31-01",
+          "menu_order": 1,
+          "name": "Güvenlik Kameraları",
+          "slug": "guvenlik-kameralari",
+          "url": "/kategori/guvenlik-and-gozetim/guvenlik-kameralari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-31-02",
+          "menu_order": 2,
+          "name": "Alarm Sistemleri",
+          "slug": "alarm-sistemleri",
+          "url": "/kategori/guvenlik-and-gozetim/alarm-sistemleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-31-03",
+          "menu_order": 3,
+          "name": "Sensörler",
+          "slug": "sensorler",
+          "url": "/kategori/guvenlik-and-gozetim/sensorler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-31-04",
+          "menu_order": 4,
+          "name": "Kapı Güvenliği",
+          "slug": "kapi-guvenligi",
+          "url": "/kategori/guvenlik-and-gozetim/kapi-guvenligi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-31-05",
+          "menu_order": 5,
+          "name": "Kasa & Kilit",
+          "slug": "kasa-and-kilit",
+          "url": "/kategori/guvenlik-and-gozetim/kasa-and-kilit",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-31-06",
+          "menu_order": 6,
+          "name": "Güvenlik Aksesuarları",
+          "slug": "guvenlik-aksesuarlari",
+          "url": "/kategori/guvenlik-and-gozetim/guvenlik-aksesuarlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-32",
+      "menu_order": 32,
+      "name": "Seyahat & Valiz",
+      "slug": "seyahat-and-valiz",
+      "url": "/kategori/seyahat-and-valiz",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-32-01",
+          "menu_order": 1,
+          "name": "Valizler",
+          "slug": "valizler",
+          "url": "/kategori/seyahat-and-valiz/valizler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-32-02",
+          "menu_order": 2,
+          "name": "Seyahat Çantaları",
+          "slug": "seyahat-cantalari",
+          "url": "/kategori/seyahat-and-valiz/seyahat-cantalari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-32-03",
+          "menu_order": 3,
+          "name": "Seyahat Aksesuarları",
+          "slug": "seyahat-aksesuarlari",
+          "url": "/kategori/seyahat-and-valiz/seyahat-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-32-04",
+          "menu_order": 4,
+          "name": "Boyun Yastıkları",
+          "slug": "boyun-yastiklari",
+          "url": "/kategori/seyahat-and-valiz/boyun-yastiklari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-32-05",
+          "menu_order": 5,
+          "name": "Pasaport & Evrak Aksesuarları",
+          "slug": "pasaport-and-evrak-aksesuarlari",
+          "url": "/kategori/seyahat-and-valiz/pasaport-and-evrak-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-32-06",
+          "menu_order": 6,
+          "name": "Araç İçi Seyahat",
+          "slug": "arac-ici-seyahat",
+          "url": "/kategori/seyahat-and-valiz/arac-ici-seyahat",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-33",
+      "menu_order": 33,
+      "name": "Hobi Bahçe & Kamp",
+      "slug": "hobi-bahce-and-kamp",
+      "url": "/kategori/hobi-bahce-and-kamp",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-33-01",
+          "menu_order": 1,
+          "name": "Kamp Ekipmanları",
+          "slug": "kamp-ekipmanlari",
+          "url": "/kategori/hobi-bahce-and-kamp/kamp-ekipmanlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-33-02",
+          "menu_order": 2,
+          "name": "Karavan Aksesuarları",
+          "slug": "karavan-aksesuarlari",
+          "url": "/kategori/hobi-bahce-and-kamp/karavan-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-33-03",
+          "menu_order": 3,
+          "name": "Piknik",
+          "slug": "piknik",
+          "url": "/kategori/hobi-bahce-and-kamp/piknik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-33-04",
+          "menu_order": 4,
+          "name": "Balıkçılık",
+          "slug": "balikcilik",
+          "url": "/kategori/hobi-bahce-and-kamp/balikcilik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-33-05",
+          "menu_order": 5,
+          "name": "Outdoor Pişirme",
+          "slug": "outdoor-pisirme",
+          "url": "/kategori/hobi-bahce-and-kamp/outdoor-pisirme",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-33-06",
+          "menu_order": 6,
+          "name": "Fener & Işık",
+          "slug": "fener-and-isik",
+          "url": "/kategori/hobi-bahce-and-kamp/fener-and-isik",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-34",
+      "menu_order": 34,
+      "name": "Mevsimlik & Kutlama",
+      "slug": "mevsimlik-and-kutlama",
+      "url": "/kategori/mevsimlik-and-kutlama",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-34-01",
+          "menu_order": 1,
+          "name": "Noel & Yılbaşı",
+          "slug": "noel-and-yilbasi",
+          "url": "/kategori/mevsimlik-and-kutlama/noel-and-yilbasi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-34-02",
+          "menu_order": 2,
+          "name": "Doğum Günü",
+          "slug": "dogum-gunu",
+          "url": "/kategori/mevsimlik-and-kutlama/dogum-gunu",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-34-03",
+          "menu_order": 3,
+          "name": "Düğün & Nişan",
+          "slug": "dugun-and-nisan",
+          "url": "/kategori/mevsimlik-and-kutlama/dugun-and-nisan",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-34-04",
+          "menu_order": 4,
+          "name": "Parti Malzemeleri",
+          "slug": "parti-malzemeleri",
+          "url": "/kategori/mevsimlik-and-kutlama/parti-malzemeleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-34-05",
+          "menu_order": 5,
+          "name": "Dekorasyon",
+          "slug": "dekorasyon",
+          "url": "/kategori/mevsimlik-and-kutlama/dekorasyon",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-34-06",
+          "menu_order": 6,
+          "name": "Balkon & Bahçe Sezonu",
+          "slug": "balkon-and-bahce-sezonu",
+          "url": "/kategori/mevsimlik-and-kutlama/balkon-and-bahce-sezonu",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-35",
+      "menu_order": 35,
+      "name": "Dekorasyon",
+      "slug": "dekorasyon",
+      "url": "/kategori/dekorasyon",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-35-01",
+          "menu_order": 1,
+          "name": "Duvar Dekoru",
+          "slug": "duvar-dekoru",
+          "url": "/kategori/dekorasyon/duvar-dekoru",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-35-02",
+          "menu_order": 2,
+          "name": "Mum & Koku",
+          "slug": "mum-and-koku",
+          "url": "/kategori/dekorasyon/mum-and-koku",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-35-03",
+          "menu_order": 3,
+          "name": "Ayna",
+          "slug": "ayna",
+          "url": "/kategori/dekorasyon/ayna",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-35-04",
+          "menu_order": 4,
+          "name": "Çerçeve",
+          "slug": "cerceve",
+          "url": "/kategori/dekorasyon/cerceve",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-35-05",
+          "menu_order": 5,
+          "name": "Dekoratif Aksesuar",
+          "slug": "dekoratif-aksesuar",
+          "url": "/kategori/dekorasyon/dekoratif-aksesuar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-35-06",
+          "menu_order": 6,
+          "name": "Mevsim Dekoru",
+          "slug": "mevsim-dekoru",
+          "url": "/kategori/dekorasyon/mevsim-dekoru",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-36",
+      "menu_order": 36,
+      "name": "Kişisel Elektronik & Mobil",
+      "slug": "kisisel-elektronik-and-mobil",
+      "url": "/kategori/kisisel-elektronik-and-mobil",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-36-01",
+          "menu_order": 1,
+          "name": "Akıllı Saat",
+          "slug": "akilli-saat",
+          "url": "/kategori/kisisel-elektronik-and-mobil/akilli-saat",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-36-02",
+          "menu_order": 2,
+          "name": "Kulaklık",
+          "slug": "kulaklik",
+          "url": "/kategori/kisisel-elektronik-and-mobil/kulaklik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-36-03",
+          "menu_order": 3,
+          "name": "Powerbank",
+          "slug": "powerbank",
+          "url": "/kategori/kisisel-elektronik-and-mobil/powerbank",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-36-04",
+          "menu_order": 4,
+          "name": "Telefon Kılıfları",
+          "slug": "telefon-kiliflari",
+          "url": "/kategori/kisisel-elektronik-and-mobil/telefon-kiliflari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-36-05",
+          "menu_order": 5,
+          "name": "Tablet Aksesuarları",
+          "slug": "tablet-aksesuarlari",
+          "url": "/kategori/kisisel-elektronik-and-mobil/tablet-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-36-06",
+          "menu_order": 6,
+          "name": "Mobil Şarj",
+          "slug": "mobil-sarj",
+          "url": "/kategori/kisisel-elektronik-and-mobil/mobil-sarj",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-37",
+      "menu_order": 37,
+      "name": "Fotoğraf & Video",
+      "slug": "fotograf-and-video",
+      "url": "/kategori/fotograf-and-video",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-37-01",
+          "menu_order": 1,
+          "name": "Kamera Aksesuarları",
+          "slug": "kamera-aksesuarlari",
+          "url": "/kategori/fotograf-and-video/kamera-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-37-02",
+          "menu_order": 2,
+          "name": "Tripod",
+          "slug": "tripod",
+          "url": "/kategori/fotograf-and-video/tripod",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-37-03",
+          "menu_order": 3,
+          "name": "Işık",
+          "slug": "isik",
+          "url": "/kategori/fotograf-and-video/isik",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-37-04",
+          "menu_order": 4,
+          "name": "Mikrofon",
+          "slug": "mikrofon",
+          "url": "/kategori/fotograf-and-video/mikrofon",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-37-05",
+          "menu_order": 5,
+          "name": "Depolama Kartları",
+          "slug": "depolama-kartlari",
+          "url": "/kategori/fotograf-and-video/depolama-kartlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-37-06",
+          "menu_order": 6,
+          "name": "Stüdyo Aksesuarları",
+          "slug": "studyo-aksesuarlari",
+          "url": "/kategori/fotograf-and-video/studyo-aksesuarlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-38",
+      "menu_order": 38,
+      "name": "Bilgisayar & Gaming",
+      "slug": "bilgisayar-and-gaming",
+      "url": "/kategori/bilgisayar-and-gaming",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-38-01",
+          "menu_order": 1,
+          "name": "Laptop Aksesuarları",
+          "slug": "laptop-aksesuarlari",
+          "url": "/kategori/bilgisayar-and-gaming/laptop-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-38-02",
+          "menu_order": 2,
+          "name": "Klavye & Mouse",
+          "slug": "klavye-and-mouse",
+          "url": "/kategori/bilgisayar-and-gaming/klavye-and-mouse",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-38-03",
+          "menu_order": 3,
+          "name": "Monitör Aksesuarları",
+          "slug": "monitor-aksesuarlari",
+          "url": "/kategori/bilgisayar-and-gaming/monitor-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-38-04",
+          "menu_order": 4,
+          "name": "Gaming Aksesuarları",
+          "slug": "gaming-aksesuarlari",
+          "url": "/kategori/bilgisayar-and-gaming/gaming-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-38-05",
+          "menu_order": 5,
+          "name": "Webcam",
+          "slug": "webcam",
+          "url": "/kategori/bilgisayar-and-gaming/webcam",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-38-06",
+          "menu_order": 6,
+          "name": "USB Aksesuarları",
+          "slug": "usb-aksesuarlari",
+          "url": "/kategori/bilgisayar-and-gaming/usb-aksesuarlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-39",
+      "menu_order": 39,
+      "name": "Araç & Mobilite",
+      "slug": "arac-and-mobilite",
+      "url": "/kategori/arac-and-mobilite",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-39-01",
+          "menu_order": 1,
+          "name": "Bisiklet Aksesuarları",
+          "slug": "bisiklet-aksesuarlari",
+          "url": "/kategori/arac-and-mobilite/bisiklet-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-39-02",
+          "menu_order": 2,
+          "name": "E-Scooter Aksesuarları",
+          "slug": "e-scooter-aksesuarlari",
+          "url": "/kategori/arac-and-mobilite/e-scooter-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-39-03",
+          "menu_order": 3,
+          "name": "Motosiklet Aksesuarları",
+          "slug": "motosiklet-aksesuarlari",
+          "url": "/kategori/arac-and-mobilite/motosiklet-aksesuarlari",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-39-04",
+          "menu_order": 4,
+          "name": "Taşıma Sistemleri",
+          "slug": "tasima-sistemleri",
+          "url": "/kategori/arac-and-mobilite/tasima-sistemleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-39-05",
+          "menu_order": 5,
+          "name": "Araç İçi Elektronik",
+          "slug": "arac-ici-elektronik",
+          "url": "/kategori/arac-and-mobilite/arac-ici-elektronik",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-40",
+      "menu_order": 40,
+      "name": "Enerji & Solar",
+      "slug": "enerji-and-solar",
+      "url": "/kategori/enerji-and-solar",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-40-01",
+          "menu_order": 1,
+          "name": "Solar Paneller",
+          "slug": "solar-paneller",
+          "url": "/kategori/enerji-and-solar/solar-paneller",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-40-02",
+          "menu_order": 2,
+          "name": "Solar Şarj",
+          "slug": "solar-sarj",
+          "url": "/kategori/enerji-and-solar/solar-sarj",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-40-03",
+          "menu_order": 3,
+          "name": "Power Station",
+          "slug": "power-station",
+          "url": "/kategori/enerji-and-solar/power-station",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-40-04",
+          "menu_order": 4,
+          "name": "Aküler",
+          "slug": "akuler",
+          "url": "/kategori/enerji-and-solar/akuler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-40-05",
+          "menu_order": 5,
+          "name": "İnvertörler",
+          "slug": "invertorler",
+          "url": "/kategori/enerji-and-solar/invertorler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-40-06",
+          "menu_order": 6,
+          "name": "Kamp Enerjisi",
+          "slug": "kamp-enerjisi",
+          "url": "/kategori/enerji-and-solar/kamp-enerjisi",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-40-07",
+          "menu_order": 7,
+          "name": "Enerji Aksesuarları",
+          "slug": "enerji-aksesuarlari",
+          "url": "/kategori/enerji-and-solar/enerji-aksesuarlari",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "cat-41",
+      "menu_order": 41,
+      "name": "Fırsatlar & Özel Koleksiyonlar",
+      "slug": "firsatlar-and-ozel-koleksiyonlar",
+      "url": "/kategori/firsatlar-and-ozel-koleksiyonlar",
+      "level": 1,
+      "children": [
+        {
+          "id": "cat-41-01",
+          "menu_order": 1,
+          "name": "Yeni Gelenler",
+          "slug": "yeni-gelenler",
+          "url": "/kategori/firsatlar-and-ozel-koleksiyonlar/yeni-gelenler",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-41-02",
+          "menu_order": 2,
+          "name": "Çok Satanlar",
+          "slug": "cok-satanlar",
+          "url": "/kategori/firsatlar-and-ozel-koleksiyonlar/cok-satanlar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-41-03",
+          "menu_order": 3,
+          "name": "Fırsat Ürünleri",
+          "slug": "firsat-urunleri",
+          "url": "/kategori/firsatlar-and-ozel-koleksiyonlar/firsat-urunleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-41-04",
+          "menu_order": 4,
+          "name": "Sezon Ürünleri",
+          "slug": "sezon-urunleri",
+          "url": "/kategori/firsatlar-and-ozel-koleksiyonlar/sezon-urunleri",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-41-05",
+          "menu_order": 5,
+          "name": "Outlet",
+          "slug": "outlet",
+          "url": "/kategori/firsatlar-and-ozel-koleksiyonlar/outlet",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-41-06",
+          "menu_order": 6,
+          "name": "Markalı Koleksiyonlar",
+          "slug": "markali-koleksiyonlar",
+          "url": "/kategori/firsatlar-and-ozel-koleksiyonlar/markali-koleksiyonlar",
+          "level": 2,
+          "children": []
+        },
+        {
+          "id": "cat-41-07",
+          "menu_order": 7,
+          "name": "Kurumsal Özel Ürünler",
+          "slug": "kurumsal-ozel-urunler",
+          "url": "/kategori/firsatlar-and-ozel-koleksiyonlar/kurumsal-ozel-urunler",
+          "level": 2,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,39 +1,58 @@
 import type { CategoryCard, MainNavLink, PopularProduct } from "@/types";
+import type { BuzzardCategory, BuzzardLocale } from "@/lib/categories/types";
+import { categoryCatalog } from "@/lib/categories/source";
 import {
-  categoryTree,
-  defaultMainCategoryId,
-  findMainCategory,
-  getSubCategories,
-  getSubSubCategories,
+  getMainCategories,
+  getCategoryById,
+  getChildren,
+  getDefaultMainCategoryId,
   getDefaultSubCategoryId,
-  findCategoryBySlug,
+  findCategoryBySlugPath,
+  findCategoryByUrl,
   categoryHref,
-  formatCategoryLabel,
-} from "@/lib/category-tree";
+  categoryProductsHref,
+  getAllCategoryPaths,
+  getAllCategoryStaticParams,
+  splitSubcategoriesIntoColumns,
+  categoryTree,
+} from "@/lib/categories/service";
+
+export const MAIN_CATEGORY_COUNT = categoryCatalog.main_category_count;
+import { getCategoryLabel, formatMenuLabel } from "@/lib/categories/i18n";
+import { getMainCategoryIcon } from "@/lib/categories/icons";
+
+export const DEFAULT_LOCALE: BuzzardLocale = "de";
 
 export {
-  categoryTree,
-  defaultMainCategoryId,
-  findMainCategory,
-  getSubCategories,
-  getSubSubCategories,
+  getMainCategories,
+  getCategoryById,
+  getChildren,
+  getDefaultMainCategoryId,
   getDefaultSubCategoryId,
-  findCategoryBySlug,
+  findCategoryBySlugPath,
+  findCategoryByUrl,
   categoryHref,
-  formatCategoryLabel,
+  categoryProductsHref,
+  getAllCategoryPaths,
+  getAllCategoryStaticParams,
+  splitSubcategoriesIntoColumns,
+  categoryTree,
+  getCategoryLabel,
+  formatMenuLabel,
+  getMainCategoryIcon,
 };
 
-/** Linke Spalte: alle Hauptkategorien (erweiterbar auf 40) */
-export const mainCategories = categoryTree.map((cat) => ({
+/** Linke Spalte: alle 41 Hauptkategorien aus JSON */
+export const mainCategories = getMainCategories().map((cat) => ({
   id: cat.id,
   slug: cat.slug,
-  label: cat.label,
-  icon: cat.icon ?? "fashion",
+  label: formatMenuLabel(cat, DEFAULT_LOCALE),
+  icon: getMainCategoryIcon(cat.id),
+  href: categoryHref(cat),
 }));
 
-/** Abwärtskompatibilität */
 export const sidebarCategories = mainCategories;
-export const defaultMegaMenuId = defaultMainCategoryId;
+export const defaultMegaMenuId = getDefaultMainCategoryId();
 
 export const mainNavLinks: MainNavLink[] = [
   { label: "STARTSEITE", href: "/" },
@@ -93,15 +112,25 @@ export const filterOptions = [
   { id: "fahrwerk", label: "Fahrwerk" },
 ] as const;
 
+function homeCard(category: BuzzardCategory): CategoryCard {
+  return {
+    id: category.id,
+    label: getCategoryLabel(category, DEFAULT_LOCALE).toUpperCase(),
+    href: categoryHref(category),
+  };
+}
+
+const textileChildren = getChildren("cat-01");
+const cosmetics = getCategoryById("cat-02");
+const cleaning = getCategoryById("cat-03");
+const automotive = getCategoryById("cat-05");
+
 export const homeCategories: CategoryCard[] = [
-  { id: "kleider", label: "KLEIDER", href: categoryHref({ slug: "textile/women-clothing/dresses" }) },
-  { id: "tshirts", label: "T-SHIRTS", href: categoryHref({ slug: "textile/women-clothing/t-shirts" }) },
-  { id: "hemden", label: "HEMDEN", href: categoryHref({ slug: "textile/men-clothing/shirts" }) },
-  { id: "hosen", label: "HOSEN", href: categoryHref({ slug: "textile/women-clothing/trousers" }) },
-  { id: "jacken", label: "JACKEN", href: categoryHref({ slug: "textile/women-clothing/jackets" }) },
-  { id: "kinder", label: "KINDERBEKLEIDUNG", href: categoryHref({ slug: "textile/kids-clothing" }) },
-  { id: "hautpflege", label: "HAUTPFLEGE", href: categoryHref({ slug: "cosmetics-personal-care/skin-care" }) },
-  { id: "reinigung", label: "REINIGUNG", href: categoryHref({ slug: "cleaning-products/household-cleaning" }) },
+  ...(textileChildren[0] ? [homeCard(textileChildren[0])] : []),
+  ...(textileChildren[1] ? [homeCard(textileChildren[1])] : []),
+  ...(cosmetics ? [homeCard(cosmetics)] : []),
+  ...(cleaning ? [homeCard(cleaning)] : []),
+  ...(automotive ? [homeCard(automotive)] : []),
 ];
 
 export const brands = [
@@ -116,3 +145,30 @@ export const brands = [
   { name: "BILSTEIN", className: "brand-bilstein" },
   { name: "Valeo", className: "brand-valeo" },
 ];
+
+/** @deprecated Use formatMenuLabel */
+export function formatCategoryLabel(node: { id: string; menu_order?: number; name: string }) {
+  const cat = getCategoryById(node.id);
+  if (cat) return formatMenuLabel(cat, DEFAULT_LOCALE);
+  return node.id;
+}
+
+/** @deprecated Use findCategoryBySlugPath */
+export function findCategoryBySlug(slug: string) {
+  return findCategoryBySlugPath(slug);
+}
+
+/** @deprecated Use getChildren */
+export function getSubCategories(mainId: string) {
+  return getChildren(mainId);
+}
+
+/** @deprecated Use getChildren */
+export function getSubSubCategories(mainId: string, subId: string) {
+  return getChildren(subId);
+}
+
+/** @deprecated Use getCategoryById */
+export function findMainCategory(mainId: string) {
+  return getCategoryById(mainId);
+}

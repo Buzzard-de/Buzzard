@@ -108,11 +108,11 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
           <ul className="popular-products">
             {categoryProducts.map((product) => (
               <li key={product.id} className="popular-product">
-                <Link href={`/products/${product.id}/`} className="popular-product-img">
-                  <ProductSvg imageKey={product.imageKey} />
+                <Link href={product.url} className="popular-product-img">
+                  <ProductSvg imageKey={product.imageKey ?? "oel"} />
                 </Link>
                 <div className="popular-product-body">
-                  <Link href={`/products/${product.id}/`} className="popular-product-name">
+                  <Link href={product.url} className="popular-product-name">
                     {product.name}
                   </Link>
                   <div className="popular-product-stars">

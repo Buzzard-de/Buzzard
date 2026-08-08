@@ -1,0 +1,858 @@
+{
+  "project": "Buzzard",
+  "document": "Product Catalog Master",
+  "version": "1.0.0",
+  "products": [
+    {
+      "id": "prod-000001",
+      "sku": "BUZ-AUTO-000001",
+      "ean_gtin": "4006633001001",
+      "brand": "Buzzard Premium",
+      "name": "Premium Bremsscheibe Testprodukt",
+      "short_description": "Testprodukt für Package 02 – Premium Bremsscheibe mit Varianten.",
+      "description": "Dieses Testprodukt validiert die Buzzard-Produktarchitektur: Varianten, SEO-URL, Lagerstatus, technische Attribute und Warenkorb-Integration. Hochwertige Bremsscheibe für die Vorderachse mit korrosionsbeständiger Beschichtung.",
+      "category_id": "cat-05-03",
+      "category_ids": [
+        "cat-05-03",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [
+        {
+          "title": "Produktdatenblatt (PDF)",
+          "url": "/documents/buzzard-test-bremsscheibe.pdf"
+        }
+      ],
+      "attributes": {
+        "image_key": "bremsen-disc",
+        "durchmesser": "280 mm",
+        "material": "Gusseisen verzinkt",
+        "achse": "Vorderachse",
+        "oem_referenz": "Compatible OEM"
+      },
+      "variants": [
+        {
+          "id": "var-size-280",
+          "type": "size",
+          "label": "Durchmesser",
+          "value": "280 mm",
+          "sku": "BUZ-AUTO-000001-280",
+          "price": {
+            "amount": 34.9,
+            "currency": "EUR"
+          },
+          "stock": 24,
+          "stock_status": "in_stock"
+        },
+        {
+          "id": "var-size-300",
+          "type": "size",
+          "label": "Durchmesser",
+          "value": "300 mm",
+          "sku": "BUZ-AUTO-000001-300",
+          "price": {
+            "amount": 39.9,
+            "currency": "EUR"
+          },
+          "stock": 12,
+          "stock_status": "in_stock"
+        },
+        {
+          "id": "var-color-silver",
+          "type": "color",
+          "label": "Oberfläche",
+          "value": "Silber",
+          "sku": "BUZ-AUTO-000001-SLV",
+          "stock": 20,
+          "stock_status": "in_stock"
+        },
+        {
+          "id": "var-color-black",
+          "type": "color",
+          "label": "Oberfläche",
+          "value": "Schwarz lackiert",
+          "sku": "BUZ-AUTO-000001-BLK",
+          "stock": 8,
+          "stock_status": "low_stock"
+        },
+        {
+          "id": "var-vehicle-vw",
+          "type": "vehicle",
+          "label": "Fahrzeug",
+          "value": "VW Golf VII 1.6 TDI",
+          "sku": "BUZ-AUTO-000001-VW",
+          "stock": 10,
+          "stock_status": "in_stock"
+        }
+      ],
+      "price": {
+        "amount": 34.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 44.9,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 44,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-INTERNAL-001",
+      "supplier_sku": "WH-BRAKE-280-PREM",
+      "supplier_price": {
+        "amount": 21.5,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 3.4,
+        "length_cm": 30,
+        "width_cm": 30,
+        "height_cm": 8,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "premium-bremsscheibe-testprodukt",
+        "title": "Premium Bremsscheibe Testprodukt | Buzzard",
+        "description": "Buzzard Testprodukt – Premium Bremsscheibe mit Varianten, SEO und Warenkorb-Integration."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "bremsscheibe-280",
+      "sku": "BUZ-AUTO-000002",
+      "ean_gtin": "4006633001234",
+      "brand": "ATE",
+      "name": "Bremsscheibe Vorderachse 280mm",
+      "short_description": "Hochwertige Bremsscheibe für die Vorderachse. Durchmesser 280 mm, OEM-kompatibel.",
+      "description": "Hochwertige Bremsscheibe für die Vorderachse. Durchmesser 280 mm, OEM-kompatibel.",
+      "category_id": "cat-05-03",
+      "category_ids": [
+        "cat-05-03",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "bremsen-disc",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 34.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 41.88,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 24,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000002",
+      "supplier_price": {
+        "amount": 21.64,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "bremsscheibe-vorderachse-280mm",
+        "title": "Bremsscheibe Vorderachse 280mm | Buzzard",
+        "description": "Bremsscheibe Vorderachse 280mm bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "bremsbelaege-vorder",
+      "sku": "BUZ-AUTO-000003",
+      "ean_gtin": "4006633001235",
+      "brand": "Bosch",
+      "name": "Bremsbeläge Satz Vorderachse",
+      "short_description": "Bremsbelag-Satz für die Vorderachse mit Verschleißanzeiger.",
+      "description": "Bremsbelag-Satz für die Vorderachse mit Verschleißanzeiger.",
+      "category_id": "cat-05-03",
+      "category_ids": [
+        "cat-05-03",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "bremsen-pads",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 28.5,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 34.2,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 31,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000003",
+      "supplier_price": {
+        "amount": 17.67,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "bremsbelaege-satz-vorderachse",
+        "title": "Bremsbeläge Satz Vorderachse | Buzzard",
+        "description": "Bremsbeläge Satz Vorderachse bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "motoroel-5w30",
+      "sku": "BUZ-AUTO-000004",
+      "ean_gtin": "4006633001236",
+      "brand": "Castrol",
+      "name": "Motoröl 5W-30 Fullsynthetic 5L",
+      "short_description": "Vollsynthetisches Motoröl 5W-30 für Benzin- und Dieselmotoren.",
+      "description": "Vollsynthetisches Motoröl 5W-30 für Benzin- und Dieselmotoren.",
+      "category_id": "cat-05-01",
+      "category_ids": [
+        "cat-05-01",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "oel",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 42.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 51.48,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 50,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000004",
+      "supplier_price": {
+        "amount": 26.6,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "motoroel-5w30-fullsynthetic-5l",
+        "title": "Motoröl 5W-30 Fullsynthetic 5L | Buzzard",
+        "description": "Motoröl 5W-30 Fullsynthetic 5L bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "oelfilter",
+      "sku": "BUZ-AUTO-000005",
+      "ean_gtin": "4006633001237",
+      "brand": "MANN-FILTER",
+      "name": "Ölfilter Universal OEM-kompatibel",
+      "short_description": "Universal Ölfilter mit hoher Filtrationsleistung.",
+      "description": "Universal Ölfilter mit hoher Filtrationsleistung.",
+      "category_id": "cat-05-02",
+      "category_ids": [
+        "cat-05-02",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "filter-oil",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 8.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": null,
+      "vat_rate": 19,
+      "stock": 80,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000005",
+      "supplier_price": {
+        "amount": 5.52,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "oelfilter-universal-oem",
+        "title": "Ölfilter Universal OEM-kompatibel | Buzzard",
+        "description": "Ölfilter Universal OEM-kompatibel bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "innenraumfilter",
+      "sku": "BUZ-AUTO-000006",
+      "ean_gtin": "4006633001238",
+      "brand": "MANN-FILTER",
+      "name": "Innenraumfilter Pollenfilter Premium",
+      "short_description": "Aktivkohle-Innenraumfilter für saubere Luft im Fahrzeug.",
+      "description": "Aktivkohle-Innenraumfilter für saubere Luft im Fahrzeug.",
+      "category_id": "cat-05-02",
+      "category_ids": [
+        "cat-05-02",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "filter-cabin",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 12.5,
+        "currency": "EUR"
+      },
+      "compare_at_price": null,
+      "vat_rate": 19,
+      "stock": 45,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000006",
+      "supplier_price": {
+        "amount": 7.75,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "innenraumfilter-pollenfilter-premium",
+        "title": "Innenraumfilter Pollenfilter Premium | Buzzard",
+        "description": "Innenraumfilter Pollenfilter Premium bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "zuendkerze-ngk",
+      "sku": "BUZ-AUTO-000007",
+      "ean_gtin": "4006633001239",
+      "brand": "NGK",
+      "name": "Zündkerze Iridium IX NGK",
+      "short_description": "Iridium-Zündkerze für optimale Zündung und lange Lebensdauer.",
+      "description": "Iridium-Zündkerze für optimale Zündung und lange Lebensdauer.",
+      "category_id": "cat-05-11",
+      "category_ids": [
+        "cat-05-11",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "zuendung",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 9.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": null,
+      "vat_rate": 19,
+      "stock": 120,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000007",
+      "supplier_price": {
+        "amount": 6.14,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "zuendkerze-iridium-ix-ngk",
+        "title": "Zündkerze Iridium IX NGK | Buzzard",
+        "description": "Zündkerze Iridium IX NGK bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "batterie-72ah",
+      "sku": "BUZ-AUTO-000008",
+      "ean_gtin": "4006633001240",
+      "brand": "Varta",
+      "name": "Starterbatterie 12V 72Ah 680A",
+      "short_description": "Starterbatterie 72Ah mit 680A Kaltstartstrom.",
+      "description": "Starterbatterie 72Ah mit 680A Kaltstartstrom.",
+      "category_id": "cat-05-04",
+      "category_ids": [
+        "cat-05-04",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "batterie",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 89.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 107.88,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 15,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000008",
+      "supplier_price": {
+        "amount": 55.74,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "starterbatterie-12v-72ah",
+        "title": "Starterbatterie 12V 72Ah 680A | Buzzard",
+        "description": "Starterbatterie 12V 72Ah 680A bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "stossdaempfer",
+      "sku": "BUZ-AUTO-000009",
+      "ean_gtin": "4006633001241",
+      "brand": "BILSTEIN",
+      "name": "Stoßdämpfer Vorderachse Gas",
+      "short_description": "Gasdruck-Stoßdämpfer für die Vorderachse.",
+      "description": "Gasdruck-Stoßdämpfer für die Vorderachse.",
+      "category_id": "cat-05-11",
+      "category_ids": [
+        "cat-05-11",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "fahrwerk",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 64.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 77.88,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 12,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000009",
+      "supplier_price": {
+        "amount": 40.24,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "stossdaempfer-vorderachse-gas",
+        "title": "Stoßdämpfer Vorderachse Gas | Buzzard",
+        "description": "Stoßdämpfer Vorderachse Gas bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "getriebeoel-75w90",
+      "sku": "BUZ-AUTO-000010",
+      "ean_gtin": "4006633001242",
+      "brand": "LIQUI MOLY",
+      "name": "Getriebeöl 75W-90 Vollsynthetisch 1L",
+      "short_description": "Vollsynthetisches Getriebeöl 75W-90 für Schaltgetriebe.",
+      "description": "Vollsynthetisches Getriebeöl 75W-90 für Schaltgetriebe.",
+      "category_id": "cat-05-01",
+      "category_ids": [
+        "cat-05-01",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "oel-gear",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 18.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": null,
+      "vat_rate": 19,
+      "stock": 38,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000010",
+      "supplier_price": {
+        "amount": 11.72,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "getriebeoel-75w90-1l",
+        "title": "Getriebeöl 75W-90 Vollsynthetisch 1L | Buzzard",
+        "description": "Getriebeöl 75W-90 Vollsynthetisch 1L bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "bremsfluessigkeit-dot4",
+      "sku": "BUZ-AUTO-000011",
+      "ean_gtin": "4006633001243",
+      "brand": "ATE",
+      "name": "Bremsflüssigkeit DOT 4 500ml",
+      "short_description": "Bremsflüssigkeit DOT 4, 500 ml Flasche.",
+      "description": "Bremsflüssigkeit DOT 4, 500 ml Flasche.",
+      "category_id": "cat-05-03",
+      "category_ids": [
+        "cat-05-03",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "bremsen-fluid",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 7.5,
+        "currency": "EUR"
+      },
+      "compare_at_price": null,
+      "vat_rate": 19,
+      "stock": 60,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000011",
+      "supplier_price": {
+        "amount": 4.65,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "bremsfluessigkeit-dot4-500ml",
+        "title": "Bremsflüssigkeit DOT 4 500ml | Buzzard",
+        "description": "Bremsflüssigkeit DOT 4 500ml bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "keilrippenriemen",
+      "sku": "BUZ-AUTO-000012",
+      "ean_gtin": "4006633001244",
+      "brand": "Continental",
+      "name": "Keilrippenriemen 6PK1548",
+      "short_description": "Keilrippenriemen 6PK1548 für Nebenaggregate.",
+      "description": "Keilrippenriemen 6PK1548 für Nebenaggregate.",
+      "category_id": "cat-05-11",
+      "category_ids": [
+        "cat-05-11",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "fahrwerk-belt",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 22.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 27.48,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 27,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000012",
+      "supplier_price": {
+        "amount": 14.2,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "keilrippenriemen-6pk1548",
+        "title": "Keilrippenriemen 6PK1548 | Buzzard",
+        "description": "Keilrippenriemen 6PK1548 bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "frostschutz-g12",
+      "sku": "BUZ-AUTO-000013",
+      "ean_gtin": "4006633001245",
+      "brand": "LIQUI MOLY",
+      "name": "Kühlerfrostschutzmittel G12+ 5L",
+      "short_description": "Frostschutzmittel G12+ für Kühlwasserkreislauf, 5 Liter.",
+      "description": "Frostschutzmittel G12+ für Kühlwasserkreislauf, 5 Liter.",
+      "category_id": "cat-05-01",
+      "category_ids": [
+        "cat-05-01",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "oel-coolant",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 16.9,
+        "currency": "EUR"
+      },
+      "compare_at_price": null,
+      "vat_rate": 19,
+      "stock": 33,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000013",
+      "supplier_price": {
+        "amount": 10.48,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "frostschutz-g12-plus-5l",
+        "title": "Kühlerfrostschutzmittel G12+ 5L | Buzzard",
+        "description": "Kühlerfrostschutzmittel G12+ 5L bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "scheibenwischer-set",
+      "sku": "BUZ-AUTO-000014",
+      "ean_gtin": "4006633001246",
+      "brand": "Bosch",
+      "name": "Bosch Aerotwin Scheibenwischer Set",
+      "short_description": "Aerotwin Wischerblatt-Set für optimale Sicht bei Regen.",
+      "description": "Aerotwin Wischerblatt-Set für optimale Sicht bei Regen.",
+      "category_id": "cat-05-07",
+      "category_ids": [
+        "cat-05-07",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "wischer",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 19.99,
+        "currency": "EUR"
+      },
+      "compare_at_price": null,
+      "vat_rate": 19,
+      "stock": 42,
+      "stock_status": "in_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000014",
+      "supplier_price": {
+        "amount": 12.39,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "bosch-aerotwin-scheibenwischer-set",
+        "title": "Bosch Aerotwin Scheibenwischer Set | Buzzard",
+        "description": "Bosch Aerotwin Scheibenwischer Set bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "reifen-pilot-sport",
+      "sku": "BUZ-AUTO-000015",
+      "ean_gtin": "4006633001247",
+      "brand": "Michelin",
+      "name": "Michelin Pilot Sport 4 Reifen 225/45 R17",
+      "short_description": "Sommerreifen Michelin Pilot Sport 4, 225/45 R17.",
+      "description": "Sommerreifen Michelin Pilot Sport 4, 225/45 R17.",
+      "category_id": "cat-05-05",
+      "category_ids": [
+        "cat-05-05",
+        "cat-05"
+      ],
+      "images": [],
+      "documents": [],
+      "attributes": {
+        "image_key": "tire",
+        "material": "OEM-kompatibel"
+      },
+      "variants": [],
+      "price": {
+        "amount": 89.99,
+        "currency": "EUR"
+      },
+      "compare_at_price": {
+        "amount": 107.99,
+        "currency": "EUR"
+      },
+      "vat_rate": 19,
+      "stock": 8,
+      "stock_status": "low_stock",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_sku": "SUP-BUZ-AUTO-000015",
+      "supplier_price": {
+        "amount": 55.79,
+        "currency": "EUR"
+      },
+      "shipping": {
+        "weight_kg": 1.2,
+        "length_cm": 20,
+        "width_cm": 20,
+        "height_cm": 10,
+        "class": "standard"
+      },
+      "seo": {
+        "slug": "michelin-pilot-sport-4-225-45-r17",
+        "title": "Michelin Pilot Sport 4 Reifen 225/45 R17 | Buzzard",
+        "description": "Michelin Pilot Sport 4 Reifen 225/45 R17 bei Buzzard online kaufen. Schnelle Lieferung, faire Preise."
+      },
+      "status": "active",
+      "buy_now_enabled": true,
+      "created_at": "2026-08-08T00:00:00.000Z",
+      "updated_at": "2026-08-08T00:00:00.000Z"
+    }
+  ]
+}

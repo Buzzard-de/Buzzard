@@ -6,16 +6,15 @@ export type ProductCategory =
   | "batterien"
   | "fahrwerk";
 
+/** @deprecated Legacy shape – prefer PublicProduct from @/lib/products/types */
 export interface Product {
   id: string;
   name: string;
-  /** Legacy automotive filter id */
-  category: ProductCategory;
-  categoryLabel: string;
-  /** Buzzard category id from buzzard_categories.json */
+  category?: ProductCategory;
+  categoryLabel?: string;
   categoryId: string;
   price: number;
-  imageKey: string;
+  imageKey?: string;
   description?: string;
   stock?: number;
 }

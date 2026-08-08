@@ -600,6 +600,254 @@
   gap: 8px;
 }
 
+.products-result-count {
+  font-size: 0.82rem;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.product-card-sku {
+  display: block;
+  font-size: 0.68rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.products-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+  font-size: 0.82rem;
+  color: #aaa;
+}
+
+.products-page-btn {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.product-detail-brand {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.product-detail-sku {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 8px 0 12px;
+}
+
+.product-detail-pricing {
+  margin-bottom: 12px;
+}
+
+.product-detail-compare {
+  color: #777;
+  text-decoration: line-through;
+  font-size: 0.95rem;
+}
+
+.product-detail-vat {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.product-detail-lead {
+  color: #ccc;
+  margin: 12px 0 16px;
+}
+
+.product-stock.status-out_of_stock {
+  color: #ef4444;
+}
+
+.product-stock.status-preorder {
+  color: #f59e0b;
+}
+
+.product-variant-groups {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.product-variant-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.product-variant-group legend {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.product-variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-variant-btn {
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.product-variant-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201, 160, 102, 0.1);
+}
+
+.product-trust-box {
+  margin-top: 20px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.78rem;
+  color: #aaa;
+  display: grid;
+  gap: 6px;
+}
+
+.product-detail-section {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.product-detail-section h2 {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.product-spec-table {
+  display: grid;
+  gap: 10px;
+}
+
+.product-spec-table div {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.product-spec-table dt {
+  color: #888;
+  text-transform: capitalize;
+}
+
+.product-doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-doc-list a {
+  color: var(--gold);
+}
+
+.products-grid-compact {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.product-gallery-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.product-gallery-main img {
+  max-width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+}
+
+.product-gallery-thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.product-gallery-thumb {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.product-gallery-thumb.active {
+  border-color: var(--gold);
+}
+
+.product-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-gallery-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-gallery-zoom img {
+  max-width: 92vw;
+  max-height: 92vh;
+}
+
+.product-gallery-zoom-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.product-reviews-empty {
+  color: #777;
+  font-size: 0.88rem;
+}
+
 @media (max-width: 900px) {
   .cart-layout,
   .checkout-layout,

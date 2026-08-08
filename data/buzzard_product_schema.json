@@ -1,0 +1,83 @@
+{
+  "project": "Buzzard",
+  "document": "Product Catalog Master",
+  "version": "1.0.0",
+  "purpose": "Scalable, data-driven product catalog architecture",
+  "product_fields": {
+    "id": "Unique internal product ID",
+    "sku": "Unique Buzzard SKU",
+    "ean_gtin": "EAN/GTIN when available",
+    "brand": "Brand",
+    "name": "Customer-facing name",
+    "short_description": "Short description",
+    "description": "Full description",
+    "category_id": "Primary category ID",
+    "category_ids": "Additional category IDs",
+    "images": "Array of image URLs",
+    "documents": "Manuals/datasheets/certificates",
+    "attributes": "Flexible specifications",
+    "variants": "Size/color/model/pack/vehicle variants",
+    "price": "Customer sale price",
+    "compare_at_price": "Optional reference price",
+    "vat_rate": "VAT rate",
+    "stock": "Available stock",
+    "stock_status": "in_stock, low_stock, out_of_stock, preorder",
+    "supplier_id": "Private supplier reference",
+    "supplier_sku": "Supplier product code",
+    "supplier_price": "Private purchase price",
+    "shipping": "Weight/dimensions/shipping class",
+    "seo": "Slug/title/description",
+    "status": "draft/active/paused/archived",
+    "created_at": "Creation timestamp",
+    "updated_at": "Last update timestamp"
+  },
+  "example_product": {
+    "id": "prod-000001",
+    "sku": "BUZ-AUTO-000001",
+    "ean_gtin": "",
+    "brand": "Example Brand",
+    "name": "Example Product",
+    "short_description": "Short description.",
+    "description": "Full description.",
+    "category_id": "cat-05",
+    "category_ids": [
+      "cat-05",
+      "cat-05-08"
+    ],
+    "images": [],
+    "documents": [],
+    "attributes": {
+      "example_attribute": "example_value"
+    },
+    "variants": [],
+    "price": {
+      "amount": 0,
+      "currency": "EUR"
+    },
+    "compare_at_price": null,
+    "vat_rate": 19,
+    "stock": 0,
+    "stock_status": "out_of_stock",
+    "supplier_id": "",
+    "supplier_sku": "",
+    "supplier_price": {
+      "amount": 0,
+      "currency": "EUR"
+    },
+    "shipping": {
+      "weight_kg": 0,
+      "length_cm": 0,
+      "width_cm": 0,
+      "height_cm": 0,
+      "class": "standard"
+    },
+    "seo": {
+      "slug": "example-product",
+      "title": "Example Product | Buzzard",
+      "description": "SEO description."
+    },
+    "status": "draft",
+    "created_at": "",
+    "updated_at": ""
+  }
+}

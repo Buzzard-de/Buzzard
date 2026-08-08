@@ -8,7 +8,7 @@ import {
   getShippingCost,
 } from "@/lib/products";
 import ProductSvg from "./ProductSvg";
-import { getProductById } from "@/lib/products";
+import { getProductById, getProductUrl } from "@/lib/products";
 
 export default function CartView() {
   const { items, total, remove, updateQty } = useCart();
@@ -43,11 +43,11 @@ export default function CartView() {
             const product = getProductById(item.id);
             return (
               <li key={item.id} className="cart-item">
-                <Link href={`/products/${item.id}/`} className="cart-item-img">
+                <Link href={getProductUrl(item.id)} className="cart-item-img">
                   <ProductSvg imageKey={product?.imageKey || "default"} />
                 </Link>
                 <div className="cart-item-body">
-                  <Link href={`/products/${item.id}/`} className="cart-item-name">{item.name}</Link>
+                  <Link href={getProductUrl(item.id)} className="cart-item-name">{item.name}</Link>
                   <span className="cart-item-price">{formatPrice(item.price)}</span>
                   <div className="cart-item-actions">
                     <div className="qty-control">

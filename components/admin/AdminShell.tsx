@@ -1,0 +1,54 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useAdminAuth } from "@/lib/admin/context";
+
+const NAV = [
+  { href: "/admin/", label: "Dashboard" },
+  { href: "/admin/products/", label: "Produkte" },
+  { href: "/admin/suppliers/", label: "Lieferanten" },
+  { href: "/admin/sync/", label: "Sync & Import" },
+  { href: "/admin/orders/", label: "Bestellungen" },
+];
+
+export default function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAdminAuth();
+
+  async function handleLogout() {
+    await logout();
+    router.push("/admin/login/");
+  }
+
+  return (
+    <div className="admin-app">
+      <aside className="admin-sidebar">
+        <div className="admin-brand">
+          <strong>BUZZARD</strong>
+          <span>Admin</span>
+        </div>
+        <nav className="admin-nav">
+          {NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={pathname === item.href || pathname.startsWith(item.href.slice(0, -1)) && item.href !== "/admin/" ? "active" : ""}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="admin-user">
+          <p>{user?.name}</p>
+          <small>{user?.role}</small>
+          <button type="button" className="shop-btn-secondary" onClick={handleLogout}>
+            Abmelden
+          </button>
+        </div>
+      </aside>
+      <main className="admin-main">{children}</main>
+    </div>
+  );
+}

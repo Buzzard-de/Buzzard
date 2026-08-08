@@ -1,0 +1,56 @@
+{
+  "project": "Buzzard",
+  "document": "Supplier Category Mapping",
+  "version": "1.0.0",
+  "mappings": [
+    {
+      "id": "map-001",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_category": "Brakes",
+      "buzzard_category_id": "cat-05-03",
+      "active": true
+    },
+    {
+      "id": "map-002",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_category": "Brake Pads",
+      "buzzard_category_id": "cat-05-03",
+      "active": true
+    },
+    {
+      "id": "map-003",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_category": "Engine Oil",
+      "buzzard_category_id": "cat-05-08",
+      "active": true
+    },
+    {
+      "id": "map-004",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_category": "Filters",
+      "buzzard_category_id": "cat-05-04",
+      "active": true
+    },
+    {
+      "id": "map-005",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_category": "Ignition",
+      "buzzard_category_id": "cat-05-06",
+      "active": true
+    },
+    {
+      "id": "map-006",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_category": "Battery",
+      "buzzard_category_id": "cat-05-07",
+      "active": true
+    },
+    {
+      "id": "map-007",
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_category": "Suspension",
+      "buzzard_category_id": "cat-05-05",
+      "active": true
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "usr-admin-001",
+    "email": "admin@buzzard.de",
+    "password": "BuzzardAdmin2026!",
+    "name": "Buzzard Administrator",
+    "role": "administrator"
+  },
+  {
+    "id": "usr-catalog-001",
+    "email": "catalog@buzzard.de",
+    "password": "BuzzardCatalog2026!",
+    "name": "Katalog Manager",
+    "role": "catalog_manager"
+  },
+  {
+    "id": "usr-orders-001",
+    "email": "orders@buzzard.de",
+    "password": "BuzzardOrders2026!",
+    "name": "Order Manager",
+    "role": "order_manager"
+  },
+  {
+    "id": "usr-readonly-001",
+    "email": "readonly@buzzard.de",
+    "password": "BuzzardRead2026!",
+    "name": "Read Only User",
+    "role": "read_only"
+  }
+]

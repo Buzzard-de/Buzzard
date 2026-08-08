@@ -1,0 +1,51 @@
+{
+  "project": "Buzzard",
+  "document": "Supplier Master",
+  "version": "1.0.0",
+  "suppliers": [
+    {
+      "supplier_id": "SUP-INTERNAL-001",
+      "supplier_name": "Buzzard Internal Warehouse",
+      "contact_email": "warehouse@buzzard.de",
+      "contact_phone": "+49 30 1234567",
+      "website": "https://buzzard24.de",
+      "feed_type": "manual",
+      "api_endpoint": null,
+      "auth_type": "none",
+      "currency": "EUR",
+      "vat_handling": "gross",
+      "dropshipping": false,
+      "white_label": true,
+      "blind_shipping": false,
+      "default_markup_percent": 45,
+      "minimum_margin_percent": 15,
+      "safety_stock": 2,
+      "active": true,
+      "sync_status": "idle",
+      "last_sync_at": null,
+      "notes": "Internal stock for test and flagship products."
+    },
+    {
+      "supplier_id": "SUP-DEMO-001",
+      "supplier_name": "Demo Automotive Parts GmbH",
+      "contact_email": "orders@demo-automotive.example",
+      "contact_phone": "+49 89 9876543",
+      "website": "https://demo-automotive.example",
+      "feed_type": "json",
+      "api_endpoint": "https://demo-automotive.example/api/products.json",
+      "auth_type": "api_key",
+      "currency": "EUR",
+      "vat_handling": "net",
+      "dropshipping": true,
+      "white_label": true,
+      "blind_shipping": true,
+      "default_markup_percent": 38,
+      "minimum_margin_percent": 12,
+      "safety_stock": 1,
+      "active": true,
+      "sync_status": "idle",
+      "last_sync_at": null,
+      "notes": "Demo B2B supplier for automotive catalog sync tests."
+    }
+  ]
+}

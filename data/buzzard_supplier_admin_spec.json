@@ -1,0 +1,18 @@
+{
+  "package": "05",
+  "name": "Buzzard Supplier Integration and Admin",
+  "imports": ["REST_API", "XML", "CSV", "JSON", "MANUAL"],
+  "sync_modes": ["manual", "scheduled", "full", "incremental"],
+  "private_supplier_data": true,
+  "category_mapping": "supplier_category_to_buzzard_category_id",
+  "inventory_sync": true,
+  "price_sync": true,
+  "content_sync": true,
+  "dropshipping_ready": true,
+  "white_label_ready": true,
+  "marketplace_ready": ["eBay", "Amazon", "Google Shopping"],
+  "automotive_tecdoc_ready": true,
+  "admin_roles": ["administrator", "catalog_manager", "order_manager", "read_only"],
+  "audit_log": true,
+  "retry_failed_imports": true
+}

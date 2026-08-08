@@ -1,167 +1,504 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { useCart } from "@/lib/cart";
-import { formatPrice, getShippingCost } from "@/lib/products";
+import { FormEvent, useMemo, useState } from "react";
 import {
-  LIMITS,
-  clampText,
-  isSafeName,
-  isValidEmail,
-  isValidGermanZip,
-} from "@/lib/security";
-import type { CheckoutData } from "@/types";
+  CHECKOUT_COUNTRIES,
+  SHIPPING_METHODS,
+  calculateOrderQuote,
+  cartLinesToInput,
+  emptyAddress,
+  emptyCustomer,
+  validateCheckoutPayload,
+  validateCustomer,
+  validateAddress,
+  type CheckoutPayload,
+  type CheckoutStep,
+} from "@/lib/checkout";
+import { useCart } from "@/lib/cart";
+import { listPaymentProviders } from "@/lib/payments";
+import { saveConfirmedOrder, submitOrder } from "@/lib/orders";
+import type { PaymentProviderId } from "@/lib/payments/types";
+import { formatPrice } from "@/lib/products";
+import { useLocale } from "@/lib/i18n/context";
 
-const ORDER_STORAGE_KEY = "buzzard_last_order";
+const STEPS: CheckoutStep[] = [
+  "customer",
+  "shipping",
+  "billing",
+  "shipping_method",
+  "payment",
+  "review",
+];
+
+function stepIndex(step: CheckoutStep): number {
+  return STEPS.indexOf(step);
+}
 
 export default function CheckoutForm() {
   const router = useRouter();
-  const { items, total, clear } = useCart();
+  const { t } = useLocale();
+  const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
+  const [step, setStep] = useState<CheckoutStep>("customer");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [shippingMethodId, setShippingMethodId] = useState("standard");
+  const [paymentProvider, setPaymentProvider] = useState<PaymentProviderId>("paypal");
+  const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
+
+  const [customer, setCustomer] = useState(emptyCustomer());
+  const [shippingAddress, setShippingAddress] = useState(emptyAddress());
+  const [billingAddress, setBillingAddress] = useState(emptyAddress());
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+
+  const quote = useMemo(() => {
+    if (items.length === 0) return null;
+    return calculateOrderQuote(
+      cartLinesToInput(
+        items.map((item) => ({
+          productId: item.productId,
+          variantIds: item.variantIds,
+          qty: item.qty,
+        }))
+      ),
+      shippingMethodId,
+      couponCode || undefined
+    );
+  }, [items, shippingMethodId, couponCode]);
+
+  const paymentProviders = listPaymentProviders();
 
   if (items.length === 0) {
     return (
       <div className="shop-empty">
-        <h1>Keine Artikel zur Kasse</h1>
-        <p>Ihr Warenkorb ist leer.</p>
+        <h1>{t("checkout.emptyTitle")}</h1>
+        <p>{t("checkout.emptyText")}</p>
+        <Link href="/products/" className="shop-btn-primary">
+          {t("cart.shopCta")}
+        </Link>
       </div>
     );
   }
 
-  const shipping = getShippingCost(total);
-  const grandTotal = total + shipping;
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    const form = e.currentTarget;
-    const data: CheckoutData = {
-      name: clampText((form.elements.namedItem("name") as HTMLInputElement).value, LIMITS.name),
-      email: clampText((form.elements.namedItem("email") as HTMLInputElement).value, LIMITS.email).toLowerCase(),
-      street: clampText((form.elements.namedItem("street") as HTMLInputElement).value, LIMITS.street),
-      zip: clampText((form.elements.namedItem("zip") as HTMLInputElement).value, LIMITS.zip),
-      city: clampText((form.elements.namedItem("city") as HTMLInputElement).value, LIMITS.city),
-      payment: (form.elements.namedItem("payment") as HTMLSelectElement).value as CheckoutData["payment"],
+  function buildPayload(): CheckoutPayload {
+    return {
+      customer,
+      shippingAddress,
+      billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
+      billingSameAsShipping,
+      shippingMethodId,
+      paymentProvider,
+      couponCode: couponCode || undefined,
+      acceptTerms,
+      acceptPrivacy,
     };
-
-    if (!data.name || !data.email || !data.street || !data.zip || !data.city) {
-      setError("Bitte alle Pflichtfelder ausfüllen.");
-      setLoading(false);
-      return;
-    }
-
-    if (!isSafeName(data.name)) {
-      setError("Bitte geben Sie einen gültigen Namen ein.");
-      setLoading(false);
-      return;
-    }
-
-    if (!isValidEmail(data.email)) {
-      setError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-      setLoading(false);
-      return;
-    }
-
-    if (!isValidGermanZip(data.zip)) {
-      setError("Bitte geben Sie eine gültige deutsche PLZ (5 Ziffern) ein.");
-      setLoading(false);
-      return;
-    }
-
-    if (!["paypal", "card", "invoice"].includes(data.payment)) {
-      setError("Ungültige Zahlungsmethode.");
-      setLoading(false);
-      return;
-    }
-
-    await new Promise((r) => setTimeout(r, 800));
-
-    const order = {
-      id: `BZ-${Date.now()}`,
-      date: new Date().toISOString(),
-      items,
-      total: grandTotal,
-      customer: data,
-    };
-
-    try {
-      sessionStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
-      localStorage.removeItem(ORDER_STORAGE_KEY);
-    } catch {
-      setError("Speichern der Bestellung fehlgeschlagen. Bitte erneut versuchen.");
-      setLoading(false);
-      return;
-    }
-
-    clear();
-    router.push("/checkout/erfolg/");
   }
+
+  function goNext() {
+    setErrorKey(null);
+    const payload = buildPayload();
+    if (step === "customer") {
+      const err = validateCustomer(payload.customer);
+      if (err) return setErrorKey(err);
+    }
+    if (step === "shipping") {
+      const err = validateAddress(payload.shippingAddress);
+      if (err) return setErrorKey(err);
+    }
+    if (step === "billing" && !billingSameAsShipping) {
+      const err = validateAddress(payload.billingAddress);
+      if (err) return setErrorKey(err);
+    }
+    const idx = stepIndex(step);
+    if (idx < STEPS.length - 1) setStep(STEPS[idx + 1]);
+  }
+
+  function goBack() {
+    setErrorKey(null);
+    const idx = stepIndex(step);
+    if (idx > 0) setStep(STEPS[idx - 1]);
+  }
+
+  async function handlePlaceOrder(e: FormEvent) {
+    e.preventDefault();
+    setErrorKey(null);
+    const payload = buildPayload();
+    const validationError = validateCheckoutPayload(payload);
+    if (validationError) {
+      setErrorKey(validationError);
+      return;
+    }
+
+    setLoading(true);
+    const response = await submitOrder({
+      ...payload,
+      lines: items.map((item) => ({
+        productId: item.productId,
+        variantIds: item.variantIds,
+        qty: item.qty,
+      })),
+    });
+
+    setLoading(false);
+
+    if (!response.success || !response.order) {
+      setErrorKey(response.errorKey || "checkout.orderFailed");
+      return;
+    }
+
+    saveConfirmedOrder(response.order);
+    clear();
+    router.push(`/checkout/erfolg/?order=${encodeURIComponent(response.order.orderNumber)}`);
+  }
+
+  const displaySubtotal = quote?.subtotal ?? subtotal;
+  const displayShipping = quote?.shipping ?? shipping;
+  const displayDiscount = quote?.discount ?? discount;
+  const displayVat = quote?.vatAmount ?? vatAmount;
+  const displayTotal = quote?.total ?? total;
 
   return (
     <div className="checkout-page">
-      <h1 className="shop-page-title">Kasse</h1>
+      <div className="checkout-head">
+        <h1 className="shop-page-title">{t("checkout.title")}</h1>
+        <Link href="/warenkorb/" className="checkout-back-link">
+          ← {t("checkout.backToCart")}
+        </Link>
+      </div>
+
+      <ol className="checkout-steps" aria-label={t("checkout.progress")}>
+        {STEPS.map((s, i) => (
+          <li
+            key={s}
+            className={`checkout-step${step === s ? " active" : ""}${stepIndex(step) > i ? " done" : ""}`}
+          >
+            <span>{i + 1}</span>
+            {t(`checkout.step.${s}`)}
+          </li>
+        ))}
+      </ol>
+
       <div className="checkout-layout">
-        <form className="checkout-form" onSubmit={handleSubmit} noValidate>
-          <h2>Lieferadresse</h2>
-          <label htmlFor="name">Name *</label>
-          <input id="name" name="name" required autoComplete="name" maxLength={LIMITS.name} />
+        <div className="checkout-form-panel">
+          {step === "customer" && (
+            <section className="checkout-section">
+              <h2>{t("checkout.step.customer")}</h2>
+              <label>{t("checkout.email")} *</label>
+              <input
+                type="email"
+                value={customer.email}
+                onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+                autoComplete="email"
+                required
+              />
+              <div className="checkout-row">
+                <div>
+                  <label>{t("checkout.firstName")} *</label>
+                  <input
+                    value={customer.firstName}
+                    onChange={(e) => setCustomer({ ...customer, firstName: e.target.value })}
+                    autoComplete="given-name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label>{t("checkout.lastName")} *</label>
+                  <input
+                    value={customer.lastName}
+                    onChange={(e) => setCustomer({ ...customer, lastName: e.target.value })}
+                    autoComplete="family-name"
+                    required
+                  />
+                </div>
+              </div>
+              <label>{t("checkout.phone")}</label>
+              <input
+                type="tel"
+                value={customer.phone || ""}
+                onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                autoComplete="tel"
+              />
+              <p className="checkout-hint">{t("checkout.guestHint")}</p>
+            </section>
+          )}
 
-          <label htmlFor="email">E-Mail *</label>
-          <input id="email" name="email" type="email" required autoComplete="email" maxLength={LIMITS.email} />
+          {step === "shipping" && (
+            <section className="checkout-section">
+              <h2>{t("checkout.step.shipping")}</h2>
+              <AddressFields
+                address={shippingAddress}
+                onChange={setShippingAddress}
+                t={t}
+                prefix="shipping"
+              />
+            </section>
+          )}
 
-          <label htmlFor="street">Straße & Hausnummer *</label>
-          <input id="street" name="street" required autoComplete="street-address" maxLength={LIMITS.street} />
+          {step === "billing" && (
+            <section className="checkout-section">
+              <h2>{t("checkout.step.billing")}</h2>
+              <label className="checkout-checkbox">
+                <input
+                  type="checkbox"
+                  checked={billingSameAsShipping}
+                  onChange={(e) => setBillingSameAsShipping(e.target.checked)}
+                />
+                {t("checkout.billingSame")}
+              </label>
+              {!billingSameAsShipping && (
+                <AddressFields
+                  address={billingAddress}
+                  onChange={setBillingAddress}
+                  t={t}
+                  prefix="billing"
+                />
+              )}
+            </section>
+          )}
 
-          <div className="checkout-row">
-            <div>
-              <label htmlFor="zip">PLZ *</label>
-              <input id="zip" name="zip" required autoComplete="postal-code" inputMode="numeric" pattern="\d{5}" maxLength={5} />
-            </div>
-            <div>
-              <label htmlFor="city">Stadt *</label>
-              <input id="city" name="city" required autoComplete="address-level2" maxLength={LIMITS.city} />
-            </div>
-          </div>
+          {step === "shipping_method" && (
+            <section className="checkout-section">
+              <h2>{t("checkout.step.shipping_method")}</h2>
+              <div className="checkout-option-list">
+                {SHIPPING_METHODS.map((method) => (
+                  <label key={method.id} className="checkout-option">
+                    <input
+                      type="radio"
+                      name="shippingMethod"
+                      value={method.id}
+                      checked={shippingMethodId === method.id}
+                      onChange={() => setShippingMethodId(method.id)}
+                    />
+                    <span>
+                      <strong>{t(method.labelKey)}</strong>
+                      <small>{t(method.descriptionKey)} · {method.etaDays} {t("checkout.days")}</small>
+                    </span>
+                    <em>
+                      {method.id === "standard" && displaySubtotal - displayDiscount >= 79
+                        ? t("cart.shippingFree")
+                        : formatPrice(method.baseCost)}
+                    </em>
+                  </label>
+                ))}
+              </div>
+            </section>
+          )}
 
-          <h2>Zahlungsart</h2>
-          <label htmlFor="payment">Zahlungsmethode</label>
-          <select id="payment" name="payment" defaultValue="paypal">
-            <option value="paypal">PayPal</option>
-            <option value="card">Kreditkarte</option>
-            <option value="invoice">Rechnung (B2B)</option>
-          </select>
+          {step === "payment" && (
+            <section className="checkout-section">
+              <h2>{t("checkout.step.payment")}</h2>
+              <div className="checkout-option-list">
+                {paymentProviders.map((provider) => (
+                  <label key={provider.id} className="checkout-option">
+                    <input
+                      type="radio"
+                      name="paymentProvider"
+                      value={provider.id}
+                      checked={paymentProvider === provider.id}
+                      onChange={() => setPaymentProvider(provider.id)}
+                    />
+                    <span>
+                      <strong>{t(provider.labelKey)}</strong>
+                      <small>{t(provider.descriptionKey)}</small>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <p className="checkout-trust">{t("checkout.paymentSecure")}</p>
+            </section>
+          )}
 
-          {error && <p className="shop-modal-error">{error}</p>}
+          {step === "review" && (
+            <form className="checkout-section" onSubmit={handlePlaceOrder}>
+              <h2>{t("checkout.step.review")}</h2>
+              <div className="checkout-review-block">
+                <h3>{t("checkout.reviewCustomer")}</h3>
+                <p>
+                  {customer.firstName} {customer.lastName}
+                  <br />
+                  {customer.email}
+                </p>
+              </div>
+              <div className="checkout-review-block">
+                <h3>{t("checkout.reviewShipping")}</h3>
+                <p>
+                  {shippingAddress.street}
+                  <br />
+                  {shippingAddress.zip} {shippingAddress.city}
+                  <br />
+                  {t(`country.${shippingAddress.country}`)}
+                </p>
+              </div>
+              <label className="checkout-checkbox">
+                <input
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  required
+                />
+                {t("checkout.acceptTerms")}{" "}
+                <Link href="/impressum/" target="_blank">
+                  {t("checkout.termsLink")}
+                </Link>
+              </label>
+              <label className="checkout-checkbox">
+                <input
+                  type="checkbox"
+                  checked={acceptPrivacy}
+                  onChange={(e) => setAcceptPrivacy(e.target.checked)}
+                  required
+                />
+                {t("checkout.acceptPrivacy")}{" "}
+                <Link href="/datenschutz/" target="_blank">
+                  {t("checkout.privacyLink")}
+                </Link>
+              </label>
+              {errorKey && <p className="shop-modal-error">{t(errorKey)}</p>}
+              <button type="submit" className="shop-btn-primary" disabled={loading}>
+                {loading ? t("checkout.placing") : `${t("checkout.placeOrder")} – ${formatPrice(displayTotal)}`}
+              </button>
+            </form>
+          )}
 
-          <button type="submit" className="shop-btn-primary" disabled={loading}>
-            {loading ? "Bestellung wird verarbeitet…" : `Jetzt kaufen – ${formatPrice(grandTotal)}`}
-          </button>
-        </form>
+          {step !== "review" && (
+            <>
+              {errorKey && <p className="shop-modal-error">{t(errorKey)}</p>}
+              <div className="checkout-nav">
+                {stepIndex(step) > 0 && (
+                  <button type="button" className="shop-btn-secondary" onClick={goBack}>
+                    {t("checkout.back")}
+                  </button>
+                )}
+                <button type="button" className="shop-btn-primary" onClick={goNext}>
+                  {t("checkout.next")}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
 
-        <aside className="cart-summary">
-          <h2>Ihre Bestellung</h2>
+        <aside className="cart-summary checkout-summary">
+          <h2>{t("checkout.orderSummary")}</h2>
           <ul className="checkout-items">
             {items.map((item) => (
-              <li key={item.id}>
-                <span>{item.qty}× {item.name}</span>
-                <span>{formatPrice(item.price * item.qty)}</span>
+              <li key={item.lineId}>
+                <span>
+                  {item.qty}× {item.name}
+                  {item.variantLabel ? ` (${item.variantLabel})` : ""}
+                </span>
+                <span>{formatPrice(item.unitPrice * item.qty)}</span>
               </li>
             ))}
           </ul>
           <div className="cart-summary-row">
-            <span>Versand</span>
-            <span>{shipping === 0 ? "Kostenlos" : formatPrice(shipping)}</span>
+            <span>{t("cart.subtotal")}</span>
+            <span>{formatPrice(displaySubtotal)}</span>
+          </div>
+          {displayDiscount > 0 && (
+            <div className="cart-summary-row">
+              <span>{t("cart.discount")}</span>
+              <span>−{formatPrice(displayDiscount)}</span>
+            </div>
+          )}
+          <div className="cart-summary-row">
+            <span>{t("cart.shipping")}</span>
+            <span>{displayShipping === 0 ? t("cart.shippingFree") : formatPrice(displayShipping)}</span>
+          </div>
+          <div className="cart-summary-row">
+            <span>{t("cart.vat")}</span>
+            <span>{formatPrice(displayVat)}</span>
           </div>
           <div className="cart-summary-row cart-summary-total">
-            <span>Gesamt</span>
-            <span>{formatPrice(grandTotal)}</span>
+            <span>{t("cart.total")}</span>
+            <span>{formatPrice(displayTotal)}</span>
           </div>
         </aside>
       </div>
     </div>
+  );
+}
+
+function AddressFields({
+  address,
+  onChange,
+  t,
+  prefix,
+}: {
+  address: ReturnType<typeof emptyAddress>;
+  onChange: (next: typeof address) => void;
+  t: (key: string) => string;
+  prefix: string;
+}) {
+  return (
+    <>
+      <div className="checkout-row">
+        <div>
+          <label htmlFor={`${prefix}-firstName`}>{t("checkout.firstName")} *</label>
+          <input
+            id={`${prefix}-firstName`}
+            value={address.firstName}
+            onChange={(e) => onChange({ ...address, firstName: e.target.value })}
+            autoComplete="given-name"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor={`${prefix}-lastName`}>{t("checkout.lastName")} *</label>
+          <input
+            id={`${prefix}-lastName`}
+            value={address.lastName}
+            onChange={(e) => onChange({ ...address, lastName: e.target.value })}
+            autoComplete="family-name"
+            required
+          />
+        </div>
+      </div>
+      <label htmlFor={`${prefix}-street`}>{t("checkout.street")} *</label>
+      <input
+        id={`${prefix}-street`}
+        value={address.street}
+        onChange={(e) => onChange({ ...address, street: e.target.value })}
+        autoComplete="street-address"
+        required
+      />
+      <div className="checkout-row">
+        <div>
+          <label htmlFor={`${prefix}-zip`}>{t("checkout.zip")} *</label>
+          <input
+            id={`${prefix}-zip`}
+            value={address.zip}
+            onChange={(e) => onChange({ ...address, zip: e.target.value })}
+            autoComplete="postal-code"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor={`${prefix}-city`}>{t("checkout.city")} *</label>
+          <input
+            id={`${prefix}-city`}
+            value={address.city}
+            onChange={(e) => onChange({ ...address, city: e.target.value })}
+            autoComplete="address-level2"
+            required
+          />
+        </div>
+      </div>
+      <label htmlFor={`${prefix}-country`}>{t("checkout.country")} *</label>
+      <select
+        id={`${prefix}-country`}
+        value={address.country}
+        onChange={(e) => onChange({ ...address, country: e.target.value })}
+        autoComplete="country"
+        required
+      >
+        {CHECKOUT_COUNTRIES.map((country) => (
+          <option key={country.code} value={country.code}>
+            {t(country.labelKey)}
+          </option>
+        ))}
+      </select>
+    </>
   );
 }

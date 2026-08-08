@@ -1,87 +1,162 @@
 "use client";
 
 import Link from "next/link";
+import { FormEvent, useState } from "react";
 import { useCart } from "@/lib/cart";
-import {
-  FREE_SHIPPING_THRESHOLD,
-  formatPrice,
-  getShippingCost,
-} from "@/lib/products";
+import { lineSubtotal } from "@/lib/cart/types";
+import { formatPrice } from "@/lib/products";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/checkout/shipping";
 import ProductSvg from "./ProductSvg";
-import { getProductById, getProductUrl } from "@/lib/products";
+import { getProductUrl } from "@/lib/products";
+import { useLocale } from "@/lib/i18n/context";
 
 export default function CartView() {
-  const { items, total, remove, updateQty } = useCart();
+  const {
+    items,
+    subtotal,
+    shipping,
+    discount,
+    vatAmount,
+    total,
+    freeShippingRemaining,
+    couponCode,
+    couponErrorKey,
+    remove,
+    updateQty,
+    applyCoupon,
+    clearCoupon,
+  } = useCart();
+  const { t } = useLocale();
+  const [couponInput, setCouponInput] = useState(couponCode);
 
   if (items.length === 0) {
     return (
       <div className="shop-empty">
-        <h1>Ihr Warenkorb ist leer</h1>
-        <p>Stöbern Sie in unserem Katalog und legen Sie Produkte in den Warenkorb.</p>
-        <Link href="/products/" className="shop-btn-primary">Zum Shop</Link>
+        <h1>{t("cart.emptyTitle")}</h1>
+        <p>{t("cart.emptyText")}</p>
+        <Link href="/products/" className="shop-btn-primary">
+          {t("cart.shopCta")}
+        </Link>
       </div>
     );
   }
 
-  const shipping = getShippingCost(total);
-  const grandTotal = total + shipping;
-  const untilFree = FREE_SHIPPING_THRESHOLD - total;
+  function handleCoupon(e: FormEvent) {
+    e.preventDefault();
+    if (!couponInput.trim()) {
+      clearCoupon();
+      return;
+    }
+    applyCoupon(couponInput);
+  }
 
   return (
     <div className="cart-page">
-      <h1 className="shop-page-title">Warenkorb</h1>
+      <h1 className="shop-page-title">{t("cart.title")}</h1>
 
-      {untilFree > 0 && (
+      {freeShippingRemaining > 0 && (
         <p className="cart-shipping-hint">
-          Noch {formatPrice(untilFree)} bis zum kostenlosen Versand ab {formatPrice(FREE_SHIPPING_THRESHOLD)}
+          {t("cart.freeShippingHint")
+            .replace("{amount}", formatPrice(freeShippingRemaining))
+            .replace("{threshold}", formatPrice(FREE_SHIPPING_THRESHOLD))}
         </p>
       )}
 
       <div className="cart-layout">
         <ul className="cart-items">
-          {items.map((item) => {
-            const product = getProductById(item.id);
-            return (
-              <li key={item.id} className="cart-item">
-                <Link href={getProductUrl(item.id)} className="cart-item-img">
-                  <ProductSvg imageKey={product?.imageKey || "default"} />
+          {items.map((item) => (
+            <li key={item.lineId} className="cart-item">
+              <Link href={getProductUrl(item.productId)} className="cart-item-img">
+                <ProductSvg imageKey={item.imageKey || "default"} />
+              </Link>
+              <div className="cart-item-body">
+                <Link href={getProductUrl(item.productId)} className="cart-item-name">
+                  {item.name}
                 </Link>
-                <div className="cart-item-body">
-                  <Link href={getProductUrl(item.id)} className="cart-item-name">{item.name}</Link>
-                  <span className="cart-item-price">{formatPrice(item.price)}</span>
-                  <div className="cart-item-actions">
-                    <div className="qty-control">
-                      <button type="button" onClick={() => updateQty(item.id, item.qty - 1)} aria-label="Menge reduzieren">−</button>
-                      <span>{item.qty}</span>
-                      <button type="button" onClick={() => updateQty(item.id, item.qty + 1)} aria-label="Menge erhöhen">+</button>
-                    </div>
-                    <button type="button" className="cart-remove" onClick={() => remove(item.id)}>Entfernen</button>
+                {item.variantLabel && (
+                  <span className="cart-item-variant">{item.variantLabel}</span>
+                )}
+                {item.sku && <span className="cart-item-sku">SKU: {item.sku}</span>}
+                <span className="cart-item-price">{formatPrice(item.unitPrice)}</span>
+                <div className="cart-item-actions">
+                  <div className="qty-control">
+                    <button
+                      type="button"
+                      onClick={() => updateQty(item.lineId, item.qty - 1)}
+                      aria-label={t("cart.qtyDecrease")}
+                    >
+                      −
+                    </button>
+                    <span>{item.qty}</span>
+                    <button
+                      type="button"
+                      onClick={() => updateQty(item.lineId, item.qty + 1)}
+                      aria-label={t("cart.qtyIncrease")}
+                    >
+                      +
+                    </button>
                   </div>
+                  <button type="button" className="cart-remove" onClick={() => remove(item.lineId)}>
+                    {t("cart.remove")}
+                  </button>
                 </div>
-                <strong className="cart-item-total">{formatPrice(item.price * item.qty)}</strong>
-              </li>
-            );
-          })}
+              </div>
+              <strong className="cart-item-total">{formatPrice(lineSubtotal(item))}</strong>
+            </li>
+          ))}
         </ul>
 
         <aside className="cart-summary">
-          <h2>Bestellübersicht</h2>
+          <h2>{t("cart.summary")}</h2>
+          <form className="cart-coupon" onSubmit={handleCoupon}>
+            <label htmlFor="coupon">{t("cart.couponLabel")}</label>
+            <div className="cart-coupon-row">
+              <input
+                id="coupon"
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                placeholder={t("cart.couponPlaceholder")}
+                maxLength={32}
+              />
+              <button type="submit" className="shop-btn-secondary">
+                {t("cart.couponApply")}
+              </button>
+            </div>
+            {couponCode && (
+              <button type="button" className="cart-coupon-clear" onClick={clearCoupon}>
+                {t("cart.couponRemove")}: {couponCode}
+              </button>
+            )}
+            {couponErrorKey && <p className="shop-modal-error">{t(couponErrorKey)}</p>}
+          </form>
           <div className="cart-summary-row">
-            <span>Zwischensumme</span>
-            <span>{formatPrice(total)}</span>
+            <span>{t("cart.subtotal")}</span>
+            <span>{formatPrice(subtotal)}</span>
+          </div>
+          {discount > 0 && (
+            <div className="cart-summary-row cart-summary-discount">
+              <span>{t("cart.discount")}</span>
+              <span>−{formatPrice(discount)}</span>
+            </div>
+          )}
+          <div className="cart-summary-row">
+            <span>{t("cart.shipping")}</span>
+            <span>{shipping === 0 ? t("cart.shippingFree") : formatPrice(shipping)}</span>
           </div>
           <div className="cart-summary-row">
-            <span>Versand</span>
-            <span>{shipping === 0 ? "Kostenlos" : formatPrice(shipping)}</span>
+            <span>{t("cart.vat")}</span>
+            <span>{formatPrice(vatAmount)}</span>
           </div>
           <div className="cart-summary-row cart-summary-total">
-            <span>Gesamt</span>
-            <span>{formatPrice(grandTotal)}</span>
+            <span>{t("cart.total")}</span>
+            <span>{formatPrice(total)}</span>
           </div>
           <Link href="/checkout/" className="shop-btn-primary cart-checkout-btn">
-            Zur Kasse
+            {t("cart.checkout")}
           </Link>
-          <Link href="/products/" className="shop-btn-secondary">Weiter einkaufen</Link>
+          <Link href="/products/" className="shop-btn-secondary">
+            {t("cart.continue")}
+          </Link>
         </aside>
       </div>
     </div>

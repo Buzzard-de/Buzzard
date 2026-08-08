@@ -15,12 +15,20 @@ function setCommonHeaders(res) {
 
 function setApiCorsHeaders(req, res) {
   const origin = req.headers.origin;
-  if (origin === 'http://localhost:8000' || origin === 'http://localhost:3000' || origin === 'null') {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
+  const allowed = new Set([
+    "http://localhost:8000",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://buzzard24.de",
+    "https://www.buzzard24.de",
+    "null",
+  ]);
+  if (origin && allowed.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Accept');
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept");
 }
 
 function addRoute(method, routePath, handler) {

@@ -34,7 +34,7 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
   function handleAdd(productId: string) {
     const product = getProductById(productId);
     if (!product) return;
-    add(product);
+    add({ productId: productId });
     setAddedId(productId);
     setTimeout(() => setAddedId(null), 1800);
   }

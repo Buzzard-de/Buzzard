@@ -1,0 +1,48 @@
+{
+  "package": "04",
+  "name": "Buzzard Purchase Flow",
+  "flow": [
+    "product_detail",
+    "cart",
+    "checkout",
+    "payment",
+    "order_confirmation"
+  ],
+  "cart": {
+    "multi_product": true,
+    "variants": true,
+    "coupons": true,
+    "shipping_rules": true
+  },
+  "checkout": {
+    "guest": true,
+    "billing_shipping_separate": true,
+    "countries": true,
+    "multilingual": true,
+    "rtl": true
+  },
+  "payment": {
+    "provider_abstraction": true,
+    "card_data_storage": false,
+    "providers_ready": ["PayPal", "Stripe", "Klarna", "SEPA"]
+  },
+  "orders": {
+    "server_side": true,
+    "statuses": [
+      "pending",
+      "payment_pending",
+      "paid",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+      "refunded"
+    ]
+  },
+  "security": {
+    "server_side_price_validation": true,
+    "server_side_stock_validation": true,
+    "server_side_discount_validation": true,
+    "server_side_payment_validation": true
+  }
+}

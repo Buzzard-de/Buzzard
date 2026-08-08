@@ -9,86 +9,102 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { products } from "@/lib/products";
-import type { CartItem, Product } from "@/types";
+import {
+  calculateOrderQuote,
+  cartLinesToInput,
+} from "@/lib/checkout";
+import { calculateShippingCost, freeShippingRemaining } from "@/lib/checkout/shipping";
+import { validateCoupon } from "@/lib/checkout/coupons";
+import {
+  cartCount,
+  cartSubtotal,
+  createCartLineId,
+  migrateLegacyCart,
+  type CartLineItem,
+} from "@/lib/cart/types";
+import { resolveLinePricing } from "@/lib/checkout/totals";
 
 const STORAGE_KEY = "buzzard_cart";
+const COUPON_KEY = "buzzard_coupon";
 
-function normalizeCartItems(raw: Partial<CartItem>[]): CartItem[] {
-  return raw
-    .map((item) => {
-      if (!item.name || typeof item.price !== "number") return null;
-
-      const id =
-        item.id ||
-        products.find((p) => p.name === item.name)?.id;
-
-      if (!id) return null;
-
-      return {
-        id,
-        name: item.name,
-        price: item.price,
-        qty: Math.max(1, Number(item.qty) || 1),
-      };
-    })
-    .filter((item): item is CartItem => item !== null);
+export interface AddToCartInput {
+  productId: string;
+  variantIds?: string[];
+  qty?: number;
 }
 
-export function getCartItems(): CartItem[] {
+function readCart(): CartLineItem[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as Partial<CartItem>[];
-    const normalized = normalizeCartItems(raw);
-    if (normalized.length !== raw.length) {
-      saveCartItems(normalized);
-    }
-    return normalized;
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as unknown[];
+    const migrated = migrateLegacyCart(Array.isArray(raw) ? raw : []);
+    return migrated;
   } catch {
     localStorage.removeItem(STORAGE_KEY);
     return [];
   }
 }
 
-export function saveCartItems(items: CartItem[]): void {
+function writeCart(items: CartLineItem[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
-export function getCartTotal(items: CartItem[]): number {
-  return items.reduce((sum, item) => sum + item.price * item.qty, 0);
+function readCoupon(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return localStorage.getItem(COUPON_KEY) || "";
+  } catch {
+    return "";
+  }
 }
 
-export function getCartCount(items: CartItem[]): number {
-  return items.reduce((sum, item) => sum + item.qty, 0);
+function writeCoupon(code: string): void {
+  localStorage.setItem(COUPON_KEY, code);
 }
 
 interface CartContextValue {
-  items: CartItem[];
+  items: CartLineItem[];
   count: number;
+  subtotal: number;
+  shipping: number;
+  discount: number;
+  vatAmount: number;
   total: number;
+  freeShippingRemaining: number;
+  couponCode: string;
+  couponErrorKey: string | null;
   ready: boolean;
-  add: (product: Pick<Product, "id" | "name" | "price">, qty?: number) => void;
-  remove: (id: string) => void;
-  updateQty: (id: string, qty: number) => void;
+  add: (input: AddToCartInput) => boolean;
+  remove: (lineId: string) => void;
+  updateQty: (lineId: string, qty: number) => void;
+  applyCoupon: (code: string) => boolean;
+  clearCoupon: () => void;
   clear: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartLineItem[]>([]);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponErrorKey, setCouponErrorKey] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [adding, setAdding] = useState(false);
 
-  const persist = useCallback((next: CartItem[]) => {
-    saveCartItems(next);
+  const persist = useCallback((next: CartLineItem[]) => {
+    writeCart(next);
     setItems(next);
   }, []);
 
   useLayoutEffect(() => {
-    setItems(getCartItems());
+    setItems(readCart());
+    setCouponCode(readCoupon());
     setReady(true);
 
-    const sync = () => setItems(getCartItems());
+    const sync = () => {
+      setItems(readCart());
+      setCouponCode(readCoupon());
+    };
     window.addEventListener("storage", sync);
     window.addEventListener("buzzard-cart-updated", sync);
     return () => {
@@ -97,58 +113,150 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const totals = useMemo(() => {
+    const subtotal = cartSubtotal(items);
+    const coupon = validateCoupon(couponCode, subtotal);
+    const discount = coupon.valid ? coupon.discount : 0;
+    const discounted = Math.max(0, subtotal - discount);
+    const shipping = calculateShippingCost(discounted, "standard");
+    const quote = calculateOrderQuote(
+      cartLinesToInput(
+        items.map((item) => ({
+          productId: item.productId,
+          variantIds: item.variantIds,
+          qty: item.qty,
+        }))
+      ),
+      "standard",
+      coupon.valid ? coupon.normalizedCode : undefined
+    );
+    return {
+      subtotal,
+      shipping,
+      discount,
+      vatAmount: quote?.vatAmount ?? 0,
+      total: quote?.total ?? discounted + shipping,
+      freeShippingRemaining: freeShippingRemaining(discounted),
+    };
+  }, [items, couponCode]);
+
   const add = useCallback(
-    (product: Pick<Product, "id" | "name" | "price">, qty = 1) => {
-      const current = getCartItems();
-      const existing = current.find((i) => i.id === product.id);
+    (input: AddToCartInput) => {
+      if (adding) return false;
+      const variantIds = input.variantIds ?? [];
+      const qty = Math.max(1, input.qty ?? 1);
+      const priced = resolveLinePricing(input.productId, variantIds, qty);
+      if (!priced) return false;
+
+      setAdding(true);
+      const lineId = createCartLineId(input.productId, variantIds);
+      const current = readCart();
+      const existing = current.find((i) => i.lineId === lineId);
+      const nextItem: CartLineItem = {
+        lineId,
+        productId: input.productId,
+        name: priced.name,
+        sku: priced.sku,
+        unitPrice: priced.unitPrice,
+        qty: existing ? existing.qty + qty : qty,
+        variantIds,
+        variantLabel: priced.variantLabel,
+        imageKey: priced.imageKey,
+        vatRate: priced.vatRate,
+      };
+
       const next = existing
-        ? current.map((i) =>
-            i.id === product.id ? { ...i, qty: i.qty + qty } : i
-          )
-        : [...current, { id: product.id, name: product.name, price: product.price, qty }];
+        ? current.map((i) => (i.lineId === lineId ? nextItem : i))
+        : [...current, nextItem];
+
       persist(next);
       window.dispatchEvent(new Event("buzzard-cart-updated"));
+      setTimeout(() => setAdding(false), 300);
+      return true;
     },
-    [persist]
+    [adding, persist]
   );
 
   const remove = useCallback(
-    (id: string) => {
-      persist(getCartItems().filter((i) => i.id !== id));
+    (lineId: string) => {
+      persist(readCart().filter((i) => i.lineId !== lineId));
       window.dispatchEvent(new Event("buzzard-cart-updated"));
     },
     [persist]
   );
 
   const updateQty = useCallback(
-    (id: string, qty: number) => {
+    (lineId: string, qty: number) => {
       if (qty < 1) {
-        remove(id);
+        remove(lineId);
         return;
       }
-      persist(getCartItems().map((i) => (i.id === id ? { ...i, qty } : i)));
+      const current = readCart();
+      const target = current.find((i) => i.lineId === lineId);
+      if (!target) return;
+      const priced = resolveLinePricing(target.productId, target.variantIds, qty);
+      if (!priced) return;
+      persist(
+        current.map((i) =>
+          i.lineId === lineId ? { ...i, qty, unitPrice: priced.unitPrice } : i
+        )
+      );
       window.dispatchEvent(new Event("buzzard-cart-updated"));
     },
     [persist, remove]
   );
 
+  const applyCoupon = useCallback(
+    (code: string) => {
+      const normalized = code.trim().toUpperCase();
+      const result = validateCoupon(normalized, cartSubtotal(readCart()));
+      if (!result.valid) {
+        setCouponErrorKey(result.errorKey ?? "checkout.couponInvalid");
+        return false;
+      }
+      writeCoupon(result.normalizedCode || normalized);
+      setCouponCode(result.normalizedCode || normalized);
+      setCouponErrorKey(null);
+      window.dispatchEvent(new Event("buzzard-cart-updated"));
+      return true;
+    },
+    []
+  );
+
+  const clearCoupon = useCallback(() => {
+    writeCoupon("");
+    setCouponCode("");
+    setCouponErrorKey(null);
+    window.dispatchEvent(new Event("buzzard-cart-updated"));
+  }, []);
+
   const clear = useCallback(() => {
     persist([]);
+    clearCoupon();
     window.dispatchEvent(new Event("buzzard-cart-updated"));
-  }, [persist]);
+  }, [persist, clearCoupon]);
 
   const value = useMemo(
     () => ({
       items,
-      count: getCartCount(items),
-      total: getCartTotal(items),
+      count: cartCount(items),
+      subtotal: totals.subtotal,
+      shipping: totals.shipping,
+      discount: totals.discount,
+      vatAmount: totals.vatAmount,
+      total: totals.total,
+      freeShippingRemaining: totals.freeShippingRemaining,
+      couponCode,
+      couponErrorKey,
       ready,
       add,
       remove,
       updateQty,
+      applyCoupon,
+      clearCoupon,
       clear,
     }),
-    [items, ready, add, remove, updateQty, clear]
+    [items, totals, couponCode, couponErrorKey, ready, add, remove, updateQty, applyCoupon, clearCoupon, clear]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
@@ -158,4 +266,17 @@ export function useCart() {
   const ctx = useContext(CartContext);
   if (!ctx) throw new Error("useCart must be used within CartProvider");
   return ctx;
+}
+
+/** Backward-compatible helpers */
+export function getCartItems(): CartLineItem[] {
+  return readCart();
+}
+
+export function getCartTotal(items: CartLineItem[] = readCart()): number {
+  return cartSubtotal(items);
+}
+
+export function getCartCount(items: CartLineItem[] = readCart()): number {
+  return cartCount(items);
 }

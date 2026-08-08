@@ -37,9 +37,15 @@ export async function submitOrder(request: CreateOrderRequest): Promise<CreateOr
   }
 
   try {
+    const accountToken =
+      typeof window !== "undefined" ? sessionStorage.getItem("buzzard_account_token") : null;
     const res = await fetch(`${base}/api/orders`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(accountToken ? { Authorization: `Bearer ${accountToken}` } : {}),
+      },
       body: JSON.stringify(request),
     });
     return (await res.json()) as CreateOrderResponse;

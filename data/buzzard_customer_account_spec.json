@@ -1,0 +1,29 @@
+{
+  "package": "06",
+  "name": "Buzzard Customer Account",
+  "features": [
+    "registration",
+    "login",
+    "logout",
+    "password_reset",
+    "email_verification",
+    "dashboard",
+    "profile",
+    "addresses",
+    "orders",
+    "order_detail",
+    "wishlist",
+    "notification_preferences"
+  ],
+  "languages": ["de", "tr", "en", "ar"],
+  "rtl": true,
+  "security": {
+    "password_hashing": true,
+    "server_side_authorization": true,
+    "secure_sessions": true,
+    "rate_limiting": true,
+    "plain_text_passwords": false,
+    "payment_card_storage": false
+  },
+  "responsive": ["desktop", "laptop", "tablet", "smartphone"]
+}

@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { getSession, extractToken } = require("../lib/customerAuth");
 
 const rootDir = path.join(__dirname, "..", "..");
 const dataDir = path.join(__dirname, "..", "data");
@@ -206,10 +207,12 @@ module.exports = {
       const orders = readOrders();
       const orderNumber = nextOrderNumber(orders);
       const now = new Date().toISOString();
+      const customerSession = getSession(extractToken(req));
 
       const order = {
         id: crypto.randomUUID(),
         orderNumber,
+        customerId: customerSession?.customerId || null,
         status: "paid",
         createdAt: now,
         customer: {
@@ -233,6 +236,8 @@ module.exports = {
         total: quote.total,
         currency: quote.currency,
         couponCode: quote.couponCode,
+        trackingNumber: null,
+        trackingCarrier: null,
       };
 
       orders.push(order);

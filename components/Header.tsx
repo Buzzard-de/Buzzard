@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import LanguageSelector from "./LanguageSelector";
 import SearchAutocomplete from "./SearchAutocomplete";
+import { useAccount } from "@/lib/account/context";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useShop } from "@/lib/shop";
@@ -18,6 +19,7 @@ export default function Header() {
   const pathname = usePathname();
   const homeUI = useHomeUI();
   const { t } = useLocale();
+  const { user: accountUser, ready: accountReady } = useAccount();
   const { count, subtotal, ready } = useCart();
   const { count: wishlistCount, ready: wishlistReady } = useWishlist();
   const { openVinModal } = useShop();
@@ -92,7 +94,11 @@ export default function Header() {
             </svg>
             <span>
               {t("header.account")}
-              <small>{t("header.login")}</small>
+              <small>
+                {accountReady && accountUser
+                  ? accountUser.firstName
+                  : t("header.login")}
+              </small>
             </span>
           </Link>
           <Link href="/wunschliste/" className="hdr-action hdr-action--wishlist">

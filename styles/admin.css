@@ -249,6 +249,90 @@
   color: #888;
 }
 
+.admin-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-tab-nav button {
+  background: #111;
+  border: 1px solid var(--border);
+  color: #ccc;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.admin-tab-nav button.active,
+.admin-tab-nav button:hover {
+  color: var(--gold);
+  border-color: rgba(201, 160, 102, 0.35);
+}
+
+.admin-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.admin-stat-estimate strong {
+  color: #d4a574;
+}
+
+.admin-chart {
+  color: var(--gold);
+}
+
+.admin-bar-chart {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-bar-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 180px) 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-bar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.admin-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(201, 160, 102, 0.35), var(--gold));
+}
+
+.admin-bar-label,
+.admin-bar-value {
+  font-size: 0.78rem;
+  color: #ccc;
+}
+
+.admin-line-chart svg {
+  width: 100%;
+  height: 180px;
+  display: block;
+}
+
+.admin-line-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 10px;
+  font-size: 0.72rem;
+  color: #888;
+}
+
 @media (max-width: 900px) {
   .admin-app {
     grid-template-columns: 1fr;

@@ -1,0 +1,52 @@
+{
+  "package": "10",
+  "name": "Buzzard Admin Dashboard and Analytics",
+  "kpis": [
+    "revenue",
+    "orders",
+    "average_order_value",
+    "units_sold",
+    "new_customers",
+    "conversion_rate",
+    "refunds",
+    "shipping_cost",
+    "estimated_gross_profit",
+    "stock_alerts"
+  ],
+  "date_filters": [
+    "today",
+    "yesterday",
+    "last_7_days",
+    "last_30_days",
+    "month_to_date",
+    "previous_month",
+    "year_to_date",
+    "custom"
+  ],
+  "analytics": [
+    "sales",
+    "products",
+    "categories",
+    "customers",
+    "orders",
+    "inventory",
+    "suppliers",
+    "finance",
+    "returns"
+  ],
+  "exports": [
+    "CSV",
+    "Excel-compatible",
+    "JSON"
+  ],
+  "roles": [
+    "administrator",
+    "catalog_manager",
+    "order_manager",
+    "read_only"
+  ],
+  "server_side_aggregation": true,
+  "responsive": true,
+  "multilingual": true,
+  "rtl": true
+}

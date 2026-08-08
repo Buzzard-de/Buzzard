@@ -1,41 +1,57 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchAdminOrders, fetchAdminProducts, fetchAdminSuppliers, fetchSyncLogs } from "@/lib/admin/client";
+import { fetchAnalyticsOverview, fetchSalesAnalytics } from "@/lib/analytics/client";
+import type { AnalyticsOverview } from "@/lib/analytics/types";
+import { formatPrice } from "@/lib/products";
+import Link from "next/link";
+import SimpleLineChart from "./charts/SimpleLineChart";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ products: 0, suppliers: 0, orders: 0, syncJobs: 0, failedImports: 0 });
+  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [trend, setTrend] = useState<Array<{ label: string; value: number }>>([]);
 
   useEffect(() => {
-    Promise.all([fetchAdminProducts(), fetchAdminSuppliers(), fetchAdminOrders(), fetchSyncLogs()])
-      .then(([products, supplierData, orders, sync]) => {
-        setStats({
-          products: products.length,
-          suppliers: supplierData.suppliers.length,
-          orders: orders.length,
-          syncJobs: sync.syncJobs.length,
-          failedImports: sync.importLogs.filter((l) => l.retry_status === "pending").length,
-        });
+    Promise.all([fetchAnalyticsOverview("last_30_days"), fetchSalesAnalytics("last_30_days")])
+      .then(([ov, sales]) => {
+        setOverview(ov);
+        setTrend(sales.trend.map((row) => ({ label: row.date, value: row.revenue })));
       })
       .catch(() => {});
   }, []);
 
+  const kpis = overview?.kpis;
+
   return (
     <div className="admin-page">
-      <h1>Dashboard</h1>
-      <div className="admin-stat-grid">
-        <article className="admin-stat"><strong>{stats.products}</strong><span>Produkte</span></article>
-        <article className="admin-stat"><strong>{stats.suppliers}</strong><span>Lieferanten</span></article>
-        <article className="admin-stat"><strong>{stats.orders}</strong><span>Bestellungen</span></article>
-        <article className="admin-stat"><strong>{stats.syncJobs}</strong><span>Sync-Jobs</span></article>
-        <article className="admin-stat"><strong>{stats.failedImports}</strong><span>Fehler (offen)</span></article>
+      <div className="admin-page-head">
+        <h1>Dashboard</h1>
+        <Link href="/admin/analytics/" className="shop-btn-secondary">Analytics öffnen</Link>
       </div>
+
+      {kpis && (
+        <div className="admin-stat-grid">
+          <article className="admin-stat"><strong>{formatPrice(kpis.revenue)}</strong><span>Umsatz (30 Tage)</span></article>
+          <article className="admin-stat"><strong>{kpis.orders}</strong><span>Bestellungen</span></article>
+          <article className="admin-stat"><strong>{formatPrice(kpis.averageOrderValue)}</strong><span>Ø Warenkorb</span></article>
+          <article className="admin-stat"><strong>{kpis.unitsSold}</strong><span>Einheiten</span></article>
+          <article className="admin-stat"><strong>{kpis.newCustomers}</strong><span>Neue Kunden</span></article>
+          <article className="admin-stat"><strong>{kpis.stockAlerts}</strong><span>Bestandswarnungen</span></article>
+        </div>
+      )}
+
       <section className="admin-panel">
-        <h2>Hinweise</h2>
+        <h2>Umsatz-Trend</h2>
+        <SimpleLineChart points={trend} valuePrefix="€ " />
+      </section>
+
+      <section className="admin-panel">
+        <h2>Schnellzugriff</h2>
         <ul className="admin-list">
-          <li>Lieferantenpreise und API-Secrets sind nur im Admin/API sichtbar.</li>
-          <li>Die 41 Buzzard-Hauptkategorien bleiben die Navigations-Quelle.</li>
-          <li>Importe laufen über die normalisierte Pipeline (JSON/CSV/manuell).</li>
+          <li><Link href="/admin/orders/">Bestellungen verwalten</Link></li>
+          <li><Link href="/admin/logistics/">Logistik & Sendungen</Link></li>
+          <li><Link href="/admin/products/">Produkte & Bestand</Link></li>
+          <li><Link href="/admin/analytics/">Detaillierte Reports</Link></li>
         </ul>
       </section>
     </div>

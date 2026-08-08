@@ -259,6 +259,37 @@ export const catalog: TranslationTree = {
       invalid: "Geçersiz ürün.",
     },
   },
+  logistics: {
+    shipping: {
+      pickup: "Mağazadan teslim alma",
+      unavailable: "Bu ülkeye kargo yapılamıyor.",
+    },
+    shipment: {
+      sectionTitle: "Gönderiler",
+      title: "Gönderi",
+      trackingPending: "Takip bilgisi hazırlanıyor…",
+      status: {
+        pending: "Beklemede",
+        preparing: "Hazırlanıyor",
+        handed_to_carrier: "Kargo firmasına verildi",
+        in_transit: "Yolda",
+        out_for_delivery: "Teslimat günü",
+        delivered: "Teslim edildi",
+        exception: "Teslimat sorunu",
+        returned: "İade edildi",
+      },
+    },
+    fulfillment: {
+      notFound: "Fulfillment bulunamadı.",
+      alreadyConfirmed: "Zaten onaylandı.",
+      retryFailed: "Yeniden deneme başarısız.",
+    },
+    return: {
+      invalidRequest: "Geçersiz iade talebi.",
+      invalidStatus: "Geçersiz iade durumu.",
+      notFound: "İade bulunamadı.",
+    },
+  },
   footer: {
     imprint: "Künye",
     privacy: "Gizlilik",

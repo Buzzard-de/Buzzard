@@ -11,18 +11,14 @@ const {
   normalizeText,
 } = require("../lib/security");
 const { logSecurityEvent } = require("../lib/securityLog");
+const { calculateShipping } = require("../lib/shippingEngine");
+const fulfillmentPipeline = require("../lib/fulfillmentPipeline");
+const fulfillmentStore = require("../lib/fulfillmentStore");
 
 const rootDir = path.join(__dirname, "..", "..");
 const dataDir = path.join(__dirname, "..", "data");
 const ordersFile = path.join(dataDir, "orders.json");
 const productsFile = path.join(rootDir, "data", "buzzard_products.json");
-
-const FREE_SHIPPING_THRESHOLD = 79;
-const STANDARD_SHIPPING = 5.99;
-const SHIPPING_METHODS = {
-  standard: { baseCost: STANDARD_SHIPPING, freeEligible: true },
-  express: { baseCost: 12.99, freeEligible: false },
-};
 
 const COUPONS = {
   BUZZARD10: { type: "percent", value: 10, minSubtotal: 30 },
@@ -102,6 +98,8 @@ function resolveLine(productId, variantIds, qty) {
     productId: product.id,
     name: product.name,
     sku,
+    supplierId: product.supplier_id || "SUP-INTERNAL-001",
+    shippingClass: product.shipping?.class || "standard",
     variantIds: safeVariantIds,
     variantLabel,
     qty: safeQty,
@@ -113,7 +111,20 @@ function resolveLine(productId, variantIds, qty) {
   };
 }
 
-function calculateQuote(lines, shippingMethodId, couponCode) {
+function attachShipments(order) {
+  const clone = sanitizePublicOrder(order);
+  clone.shipments = fulfillmentStore
+    .listShipmentsForOrder(order.orderNumber)
+    .map(fulfillmentStore.sanitizeShipment);
+  const tracked = clone.shipments.find((s) => s.trackingNumber);
+  if (tracked) {
+    clone.trackingNumber = tracked.trackingNumber;
+    clone.trackingCarrier = tracked.carrier;
+  }
+  return clone;
+}
+
+function calculateQuote(lines, shippingMethodId, couponCode, country = "DE") {
   const resolved = [];
   for (const line of lines) {
     const priced = resolveLine(line.productId, line.variantIds || [], line.qty);
@@ -125,9 +136,20 @@ function calculateQuote(lines, shippingMethodId, couponCode) {
   const coupon = validateCoupon(couponCode, subtotal);
   const discount = coupon.valid ? coupon.discount : 0;
   const discountedSubtotal = Math.max(0, subtotal - discount);
-  const method = SHIPPING_METHODS[shippingMethodId] || SHIPPING_METHODS.standard;
-  let shipping = method.baseCost;
-  if (method.freeEligible && discountedSubtotal >= FREE_SHIPPING_THRESHOLD) shipping = 0;
+  const products = loadProducts();
+  const shippingResult = calculateShipping({
+    lines: resolved.map((line) => ({
+      productId: line.productId,
+      qty: line.qty,
+      shippingClass: line.shippingClass,
+    })),
+    methodId: shippingMethodId,
+    country,
+    subtotal: discountedSubtotal,
+    productsById: products,
+  });
+  if (shippingResult.errorKey) return { errorKey: shippingResult.errorKey };
+  const shipping = shippingResult.shipping ?? 0;
   const vatAmount = Math.round(resolved.reduce((sum, line) => sum + line.vatAmount, 0) * 100) / 100;
   const total = Math.round((discountedSubtotal + shipping) * 100) / 100;
 
@@ -139,7 +161,7 @@ function calculateQuote(lines, shippingMethodId, couponCode) {
     discount,
     vatAmount,
     total,
-    freeShippingRemaining: Math.max(0, FREE_SHIPPING_THRESHOLD - discountedSubtotal),
+    freeShippingRemaining: shippingResult.freeShippingRemaining ?? 0,
     shippingMethodId,
     couponCode: coupon.valid ? coupon.normalizedCode : undefined,
   };
@@ -188,13 +210,16 @@ module.exports = {
     ensureDataDir();
 
     app.post("/api/checkout/quote", (req, res) => {
-      const { lines, shippingMethodId = "standard", couponCode } = req.body || {};
+      const { lines, shippingMethodId = "standard", couponCode, country = "DE" } = req.body || {};
       if (!Array.isArray(lines) || lines.length === 0) {
         return res.status(400).json({ success: false, errorKey: "checkout.errorRequired" });
       }
-      const quote = calculateQuote(lines, shippingMethodId, couponCode);
+      const quote = calculateQuote(lines, shippingMethodId, couponCode, country);
       if (!quote) {
         return res.status(400).json({ success: false, errorKey: "checkout.stockError" });
+      }
+      if (quote.errorKey) {
+        return res.status(400).json({ success: false, errorKey: quote.errorKey });
       }
       return res.json({
         success: true,
@@ -221,9 +246,18 @@ module.exports = {
         return res.status(400).json({ success: false, errorKey: "checkout.errorRequired" });
       }
 
-      const quote = calculateQuote(body.lines, body.shippingMethodId || "standard", body.couponCode);
+      const country = String(body.shippingAddress?.country || "DE").toUpperCase();
+      const quote = calculateQuote(
+        body.lines,
+        body.shippingMethodId || "standard",
+        body.couponCode,
+        country
+      );
       if (!quote) {
         return res.status(400).json({ success: false, errorKey: "checkout.stockError" });
+      }
+      if (quote.errorKey) {
+        return res.status(400).json({ success: false, errorKey: quote.errorKey });
       }
 
       const duplicateKey = buildDuplicateKey(body, quote);
@@ -287,6 +321,20 @@ module.exports = {
       orders.push(order);
       writeOrders(orders);
 
+      fulfillmentPipeline.createFulfillmentsForOrder(order, loadProducts());
+      const shipments = fulfillmentStore.listShipmentsForOrder(orderNumber);
+      const tracked = shipments.find((s) => s.trackingNumber);
+      const orderIdx = orders.length - 1;
+      orders[orderIdx].status = shipments.some((s) => s.status !== "pending") ? "processing" : "paid";
+      if (tracked) {
+        orders[orderIdx].trackingNumber = tracked.trackingNumber;
+        orders[orderIdx].trackingCarrier = tracked.carrier;
+      }
+      writeOrders(orders);
+      order.status = orders[orderIdx].status;
+      order.trackingNumber = orders[orderIdx].trackingNumber;
+      order.trackingCarrier = orders[orderIdx].trackingCarrier;
+
       logSecurityEvent({
         type: "order_created",
         success: true,
@@ -296,7 +344,7 @@ module.exports = {
         detail: { orderNumber, total: quote.total, demoPayment: Boolean(payment.demo) },
       });
 
-      return res.status(201).json({ success: true, order: sanitizePublicOrder(order) });
+      return res.status(201).json({ success: true, order: attachShipments(order) });
     });
 
     app.get("/api/orders/:orderNumber", (req, res) => {
@@ -305,7 +353,7 @@ module.exports = {
       if (!order) {
         return res.status(404).json({ success: false, errorKey: "checkout.orderNotFound" });
       }
-      return res.json({ success: true, order: sanitizePublicOrder(order) });
+      return res.json({ success: true, order: attachShipments(order) });
     });
   },
 };

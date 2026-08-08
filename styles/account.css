@@ -233,6 +233,42 @@
   font-size: 0.88rem;
 }
 
+.account-shipments {
+  margin-top: 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.account-shipments h2 {
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.account-shipment {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.account-shipment-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.account-shipment-status {
+  font-size: 0.78rem;
+  color: #aaa;
+}
+
+.account-shipment-pending {
+  margin-top: 8px;
+  color: #888;
+  font-size: 0.82rem;
+}
+
 .account-loading {
   padding: 48px;
   text-align: center;

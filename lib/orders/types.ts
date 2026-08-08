@@ -30,6 +30,9 @@ export interface PublicOrder {
   total: number;
   currency: string;
   couponCode?: string;
+  trackingNumber?: string | null;
+  trackingCarrier?: string | null;
+  shipments?: import("@/lib/logistics/types").Shipment[];
 }
 
 export interface CreateOrderRequest {
@@ -56,6 +59,7 @@ export interface QuoteRequest {
   lines: Array<{ productId: string; variantIds: string[]; qty: number }>;
   shippingMethodId: string;
   couponCode?: string;
+  country?: string;
 }
 
 export interface QuoteResponse {

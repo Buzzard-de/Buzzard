@@ -259,6 +259,37 @@ export const catalog: TranslationTree = {
       invalid: "Invalid product.",
     },
   },
+  logistics: {
+    shipping: {
+      pickup: "Store pickup",
+      unavailable: "Shipping unavailable to this country.",
+    },
+    shipment: {
+      sectionTitle: "Shipments",
+      title: "Shipment",
+      trackingPending: "Tracking is being prepared…",
+      status: {
+        pending: "Pending",
+        preparing: "Preparing",
+        handed_to_carrier: "Handed to carrier",
+        in_transit: "In transit",
+        out_for_delivery: "Out for delivery",
+        delivered: "Delivered",
+        exception: "Delivery exception",
+        returned: "Returned",
+      },
+    },
+    fulfillment: {
+      notFound: "Fulfillment not found.",
+      alreadyConfirmed: "Already confirmed.",
+      retryFailed: "Retry failed.",
+    },
+    return: {
+      invalidRequest: "Invalid return request.",
+      invalidStatus: "Invalid return status.",
+      notFound: "Return not found.",
+    },
+  },
   footer: {
     imprint: "Legal notice",
     privacy: "Privacy",

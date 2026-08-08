@@ -10,6 +10,7 @@ const {
   consumeResetToken,
 } = require("../lib/customerAuth");
 const customerStore = require("../lib/customerStore");
+const fulfillmentStore = require("../lib/fulfillmentStore");
 const { logAudit } = require("../lib/audit");
 
 const ordersFile = path.join(__dirname, "..", "data", "orders.json");
@@ -27,6 +28,14 @@ function readOrders() {
 function sanitizeOrder(order) {
   const clone = { ...order };
   delete clone.paymentTransactionId;
+  clone.shipments = fulfillmentStore
+    .listShipmentsForOrder(order.orderNumber)
+    .map(fulfillmentStore.sanitizeShipment);
+  const tracked = clone.shipments.find((s) => s.trackingNumber);
+  if (tracked) {
+    clone.trackingNumber = tracked.trackingNumber;
+    clone.trackingCarrier = tracked.carrier;
+  }
   return clone;
 }
 

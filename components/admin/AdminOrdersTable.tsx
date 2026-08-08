@@ -53,6 +53,8 @@ export default function AdminOrdersTable() {
                   >
                     {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
+                  {" "}
+                  <a href={`/admin/logistics/?order=${encodeURIComponent(order.orderNumber)}`}>Logistik</a>
                 </td>
               </tr>
             ))}

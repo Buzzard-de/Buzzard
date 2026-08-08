@@ -271,6 +271,37 @@ export const catalog: TranslationTree = {
       invalid: "Produkt ungültig.",
     },
   },
+  logistics: {
+    shipping: {
+      pickup: "Abholung im Shop",
+      unavailable: "Versand in dieses Land nicht verfügbar.",
+    },
+    shipment: {
+      sectionTitle: "Sendungen",
+      title: "Sendung",
+      trackingPending: "Tracking wird vorbereitet…",
+      status: {
+        pending: "Ausstehend",
+        preparing: "Wird vorbereitet",
+        handed_to_carrier: "An Carrier übergeben",
+        in_transit: "Unterwegs",
+        out_for_delivery: "Zustellung heute",
+        delivered: "Zugestellt",
+        exception: "Problem bei der Zustellung",
+        returned: "Retourniert",
+      },
+    },
+    fulfillment: {
+      notFound: "Fulfillment nicht gefunden.",
+      alreadyConfirmed: "Bereits bestätigt.",
+      retryFailed: "Erneuter Versuch fehlgeschlagen.",
+    },
+    return: {
+      invalidRequest: "Ungültige Rücksendeanfrage.",
+      invalidStatus: "Ungültiger Rücksendestatus.",
+      notFound: "Rücksendung nicht gefunden.",
+    },
+  },
   footer: {
     imprint: "Impressum",
     privacy: "Datenschutz",

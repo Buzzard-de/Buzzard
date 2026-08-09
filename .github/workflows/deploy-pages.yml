@@ -33,6 +33,13 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://buzzard24.de
           NEXT_PUBLIC_SALES_ENABLED: "0"
           NEXT_PUBLIC_BUZZARD_API_URL: ${{ vars.BUZZARD_API_URL || secrets.BUZZARD_API_URL || 'https://buzzard-api.onrender.com' }}
+          NEXT_PUBLIC_CATALOG_SEO: "1"
+          NEXT_PUBLIC_VEHICLE_API: "1"
+          NEXT_PUBLIC_LOCALIZATION_FEEDS: "1"
+          NEXT_PUBLIC_CUSTOMER_CHECKOUT: "1"
+          NEXT_PUBLIC_CUSTOMER_SUPPORT: "1"
+          NEXT_PUBLIC_CRM_LOYALTY: "1"
+          NEXT_PUBLIC_ANALYTICS_DASHBOARD: "1"
           NEXT_PUBLIC_AI_CHAT_ENABLED: "1"
           NEXT_PUBLIC_GA4_ID: ${{ vars.NEXT_PUBLIC_GA4_ID || secrets.NEXT_PUBLIC_GA4_ID || '' }}
           NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID || secrets.NEXT_PUBLIC_GTM_ID || '' }}

@@ -162,6 +162,60 @@ export function isSupplierIntegrationHubEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isOrderManagementV32Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_ORDER_MANAGEMENT_V32 === "0") return false;
+  if (process.env.NEXT_PUBLIC_ORDER_MANAGEMENT_V32 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isFulfillmentV33Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_FULFILLMENT_V33 === "0") return false;
+  if (process.env.NEXT_PUBLIC_FULFILLMENT_V33 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isLogisticsV34Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_LOGISTICS_V34 === "0") return false;
+  if (process.env.NEXT_PUBLIC_LOGISTICS_V34 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isMarketplaceV35Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_MARKETPLACE_V35 === "0") return false;
+  if (process.env.NEXT_PUBLIC_MARKETPLACE_V35 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isPaymentsV36Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_PAYMENTS_V36 === "0") return false;
+  if (process.env.NEXT_PUBLIC_PAYMENTS_V36 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isInternationalV37Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_INTERNATIONAL_V37 === "0") return false;
+  if (process.env.NEXT_PUBLIC_INTERNATIONAL_V37 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isSecurityV38Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_SECURITY_V38 === "0") return false;
+  if (process.env.NEXT_PUBLIC_SECURITY_V38 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isAnalyticsV39Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_ANALYTICS_V39 === "0") return false;
+  if (process.env.NEXT_PUBLIC_ANALYTICS_V39 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
+export function isMasterAdminV40Enabled(): boolean {
+  if (process.env.NEXT_PUBLIC_MASTER_ADMIN_V40 === "0") return false;
+  if (process.env.NEXT_PUBLIC_MASTER_ADMIN_V40 === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

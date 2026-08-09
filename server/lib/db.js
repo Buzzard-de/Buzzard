@@ -2900,6 +2900,347 @@ function migrateSupplierIntegrationHubV31() {
 }
 
 migrateSupplierIntegrationHubV31();
+function migrateOrderManagementV32() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS oms32_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS oms32_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM oms32_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO oms32_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-OMS",
+      "Buzzard Demo Order Pipeline",
+      "active",
+      JSON.stringify({ version: "3.2", module: "Order Management System" })
+    );
+  }
+}
+
+migrateOrderManagementV32();
+
+
+function migrateFulfillmentV33() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS ful33_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS ful33_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM ful33_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO ful33_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-FUL",
+      "Buzzard Demo Warehouse",
+      "active",
+      JSON.stringify({ version: "3.3", module: "Fulfillment & Warehouse" })
+    );
+  }
+}
+
+migrateFulfillmentV33();
+
+
+function migrateLogisticsV34() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS log34_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS log34_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM log34_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO log34_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-LOG",
+      "Buzzard Demo Shipping Hub",
+      "active",
+      JSON.stringify({ version: "3.4", module: "Logistics & Shipping" })
+    );
+  }
+}
+
+migrateLogisticsV34();
+
+
+function migrateMarketplaceV35() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS mkt35_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS mkt35_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM mkt35_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO mkt35_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-MKT",
+      "Buzzard Demo Marketplace",
+      "active",
+      JSON.stringify({ version: "3.5", module: "Marketplace Integration" })
+    );
+  }
+}
+
+migrateMarketplaceV35();
+
+
+function migratePaymentsV36() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS pay36_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pay36_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM pay36_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO pay36_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-PAY",
+      "Buzzard Demo Payments",
+      "active",
+      JSON.stringify({ version: "3.6", module: "Payments & Finance" })
+    );
+  }
+}
+
+migratePaymentsV36();
+
+
+function migrateInternationalV37() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS int37_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS int37_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM int37_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO int37_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-INT",
+      "Buzzard Demo EU Markets",
+      "active",
+      JSON.stringify({ version: "3.7", module: "Europe & International" })
+    );
+  }
+}
+
+migrateInternationalV37();
+
+
+function migrateSecurityV38() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS sec38_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS sec38_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM sec38_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO sec38_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-SEC",
+      "Buzzard Demo Security",
+      "active",
+      JSON.stringify({ version: "3.8", module: "Security & Compliance" })
+    );
+  }
+}
+
+migrateSecurityV38();
+
+
+function migrateAnalyticsV39() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS anl39_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS anl39_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM anl39_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO anl39_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-ANL",
+      "Buzzard Demo Analytics",
+      "active",
+      JSON.stringify({ version: "3.9", module: "Analytics & BI" })
+    );
+  }
+}
+
+migrateAnalyticsV39();
+
+
+function migrateMasterAdminV40() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS mad40_records(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      data_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS mad40_jobs(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+  `);
+
+  const count = db.prepare("SELECT COUNT(*) n FROM mad40_records").get().n;
+  if (count === 0) {
+    db.prepare(`
+      INSERT INTO mad40_records(code, name, status, data_json)
+      VALUES(?,?,?,?)
+    `).run(
+      "DEMO-MASTER",
+      "Buzzard Platform Control",
+      "active",
+      JSON.stringify({ version: "4.0", module: "Master Admin & Platform Control" })
+    );
+  }
+}
+
+migrateMasterAdminV40();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

@@ -2760,6 +2760,147 @@ function migrateProductCatalogPimV30() {
 
 migrateProductCatalogPimV30();
 
+function migrateSupplierIntegrationHubV31() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supih_suppliers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      country TEXT DEFAULT 'DE',
+      status TEXT DEFAULT 'active',
+      feed_type TEXT DEFAULT 'api',
+      base_url TEXT DEFAULT '',
+      feed_url TEXT DEFAULT '',
+      auth_type TEXT DEFAULT 'none',
+      credentials_ref TEXT DEFAULT '',
+      api_version TEXT DEFAULT '',
+      supports_dropshipping INTEGER DEFAULT 0,
+      supports_blind_shipping INTEGER DEFAULT 0,
+      supports_white_label INTEGER DEFAULT 0,
+      supports_api INTEGER DEFAULT 0,
+      supports_xml INTEGER DEFAULT 0,
+      supports_csv INTEGER DEFAULT 0,
+      supports_ftp INTEGER DEFAULT 0,
+      default_currency TEXT DEFAULT 'EUR',
+      lead_time_days INTEGER DEFAULT 2,
+      last_sync_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS supih_mappings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      supplier_sku TEXT NOT NULL,
+      buzzard_sku TEXT NOT NULL,
+      barcode TEXT DEFAULT '',
+      category_hint TEXT DEFAULT '',
+      brand_hint TEXT DEFAULT '',
+      price_multiplier REAL DEFAULT 1,
+      active INTEGER DEFAULT 1,
+      UNIQUE(supplier_id, supplier_sku)
+    );
+    CREATE TABLE IF NOT EXISTS supih_product_snapshots (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      supplier_sku TEXT,
+      buzzard_sku TEXT,
+      supplier_price REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      stock_qty INTEGER DEFAULT 0,
+      lead_time_days INTEGER DEFAULT 0,
+      raw_ref TEXT DEFAULT '',
+      captured_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS supih_sync_jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      job_type TEXT DEFAULT 'full',
+      status TEXT DEFAULT 'queued',
+      records_read INTEGER DEFAULT 0,
+      records_created INTEGER DEFAULT 0,
+      records_updated INTEGER DEFAULT 0,
+      records_failed INTEGER DEFAULT 0,
+      started_at TEXT,
+      completed_at TEXT,
+      error_message TEXT DEFAULT ''
+    );
+    CREATE TABLE IF NOT EXISTS supih_sync_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      job_id INTEGER,
+      level TEXT DEFAULT 'info',
+      message TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS supih_shipping_methods (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      code TEXT,
+      name TEXT,
+      carrier TEXT DEFAULT '',
+      service TEXT DEFAULT '',
+      price REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      estimated_days INTEGER DEFAULT 2,
+      active INTEGER DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS supih_orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      buzzard_order_number TEXT,
+      supplier_order_number TEXT DEFAULT '',
+      status TEXT DEFAULT 'queued',
+      dropship INTEGER DEFAULT 1,
+      blind_shipping INTEGER DEFAULT 0,
+      white_label INTEGER DEFAULT 0,
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const supplierCount = db.prepare("SELECT COUNT(*) n FROM supih_suppliers").get().n;
+  if (supplierCount === 0) {
+    const result = db
+      .prepare(`
+        INSERT INTO supih_suppliers(
+          code, name, country, feed_type, base_url, feed_url, supports_dropshipping,
+          supports_blind_shipping, supports_white_label, supports_api, supports_xml,
+          default_currency, lead_time_days
+        )
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+      `)
+      .run(
+        "DEMO-SUP",
+        "Demo B2B Supplier",
+        "DE",
+        "xml",
+        "https://supplier.example/api",
+        "https://supplier.example/feed.xml",
+        1,
+        1,
+        1,
+        1,
+        1,
+        "EUR",
+        2
+      );
+
+    db.prepare(`
+      INSERT INTO supih_mappings(supplier_id, supplier_sku, buzzard_sku, barcode, brand_hint)
+      VALUES(?,?,?,?,?)
+    `).run(result.lastInsertRowid, "SUP-5W30", "BZ-OIL-5W30", "4008177104722", "Castrol");
+
+    db.prepare(`
+      INSERT INTO supih_shipping_methods(supplier_id, code, name, carrier, service, price, estimated_days)
+      VALUES(?,?,?,?,?,?,?)
+    `).run(result.lastInsertRowid, "DE-DHL", "Standard DHL", "DHL", "Standard", 4.99, 2);
+  }
+}
+
+migrateSupplierIntegrationHubV31();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

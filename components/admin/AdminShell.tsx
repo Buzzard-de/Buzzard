@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin/context";
+import AdminApiStatusBanner from "./AdminApiStatusBanner";
 
 const NAV = [
   { href: "/admin/", label: "Dashboard" },
@@ -69,7 +70,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </button>
         </div>
       </aside>
-      <main className="admin-main">{children}</main>
+      <main className="admin-main">
+        <AdminApiStatusBanner />
+        {children}
+      </main>
     </div>
   );
 }

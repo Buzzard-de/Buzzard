@@ -13,6 +13,7 @@ const NAV = [
   { href: "/admin/seo/", label: "SEO" },
   { href: "/admin/products/", label: "Produkte" },
   { href: "/admin/catalog/", label: "Katalog & SEO" },
+  { href: "/admin/pim-catalog/", label: "PIM v1.9" },
   { href: "/admin/localization/", label: "Localization" },
   { href: "/admin/customer-checkout/", label: "Checkout" },
   { href: "/admin/customer-support/", label: "Support" },

@@ -302,6 +302,22 @@ Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_WMS_INVENTORY=0`
 Tables: `wms_warehouses`, `wms_locations`, `wms_inventory`, `wms_stock_movements`, `wms_reservations`, `wms_warehouse_jobs`, `wms_transfers`, `wms_stocktakes`.
 Frontend admin: `/admin/wms-inventory/`. Set `NEXT_PUBLIC_WMS_INVENTORY=1`.
 
+## PIM Catalog Plugin (v1.9)
+
+The `pimCatalogPlugin.js` module adds central product information management:
+
+- `GET /api/pim-catalog/categories|brands|products|feed` — public catalog and marketplace feed
+- `GET /api/pim-catalog/products/:sku` — full product graph (translations, attributes, variants, media, SEO)
+- `POST|PATCH /api/admin/pim-catalog/products` — master product CRUD
+- `POST /api/admin/pim-catalog/translations|attributes|media|seo|variants` — enrich product data
+- `GET /api/admin/pim-catalog/completeness|import-jobs` — completeness KPIs and import queue
+- `POST /api/admin/pim-catalog/import` — bulk import job boundary
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_PIM_CATALOG=0`.
+Tables: `pim_categories`, `pim_brands`, `pim_products`, `pim_product_translations`, `pim_product_attributes`, `pim_product_variants`, `pim_product_media`, `pim_product_seo`, `pim_catalog_import_jobs`.
+Frontend admin: `/admin/pim-catalog/`. Set `NEXT_PUBLIC_PIM_CATALOG=1`.
+Note: Existing `/admin/catalog/` (Catalog SEO v0.8) remains separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

@@ -17,11 +17,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Trigger Render deploy hook
-        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
-        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
-
-      - name: Render hook missing
-        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL == '' }}
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          echo "Set RENDER_DEPLOY_HOOK_URL in repository secrets after connecting render.yaml to Render."
-          echo "Default API URL for frontend: https://buzzard-api.onrender.com"
+          if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
+            curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
+            echo "Render deploy hook triggered."
+          else
+            echo "RENDER_DEPLOY_HOOK_URL is not set."
+            echo "Connect render.yaml in the Render dashboard or add the deploy hook secret."
+            echo "Default API URL for frontend: https://buzzard-api.onrender.com"
+          fi

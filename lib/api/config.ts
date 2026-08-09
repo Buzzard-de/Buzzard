@@ -66,6 +66,12 @@ export function isMarketingCenterEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isMarketplaceHubEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_MARKETPLACE_HUB === "0") return false;
+  if (process.env.NEXT_PUBLIC_MARKETPLACE_HUB === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

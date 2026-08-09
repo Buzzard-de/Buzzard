@@ -247,6 +247,23 @@ Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_MARKETING_CENTER
 Tables: `marketing_campaigns`, `marketing_campaign_spend`, `marketing_campaign_conversions`, `marketing_center_events`, `marketing_provider_connections`.
 Frontend admin: `/admin/marketing-center/`. Set `NEXT_PUBLIC_MARKETING_CENTER=1`.
 
+## Marketplace Hub Plugin (v1.5)
+
+The `marketplaceHubPlugin.js` module adds multi-channel marketplace operations:
+
+- `GET /api/admin/marketplace-hub/marketplaces` — channel connections with listing/job counts
+- `PATCH /api/admin/marketplace-hub/marketplaces/:code` — connect/disconnect channel (demo)
+- `POST /api/admin/marketplace-hub/sync/stock|prices|orders` — queue sync jobs
+- `POST /api/admin/marketplace-hub/listings` — upsert channel listing
+- `POST /api/admin/marketplace-hub/sku-map` — SKU/channel mapping
+- `GET /api/admin/marketplace-hub/sync-jobs|channel-orders` — sync logs and imported orders
+- `POST /api/admin/marketplace-hub/sync-jobs/:id/result` — worker result boundary
+- `POST /api/marketplace-hub/order-webhook` — marketplace order import webhook
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_MARKETPLACE_HUB=0`.
+Tables: `marketplace_channels`, `marketplace_listings`, `marketplace_sync_jobs`, `marketplace_channel_orders`, `marketplace_sku_mappings`.
+Frontend admin: `/admin/marketplace-hub/`. Set `NEXT_PUBLIC_MARKETPLACE_HUB=1`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

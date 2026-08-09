@@ -9,6 +9,7 @@ const NAV = [
   { href: "/admin/analytics/", label: "Analytics" },
   { href: "/admin/analytics-dashboard/", label: "Executive KPIs" },
   { href: "/admin/marketing-center/", label: "Marketing Center" },
+  { href: "/admin/marketplace-hub/", label: "Marketplace Hub" },
   { href: "/admin/seo/", label: "SEO" },
   { href: "/admin/products/", label: "Produkte" },
   { href: "/admin/catalog/", label: "Katalog & SEO" },

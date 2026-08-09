@@ -146,6 +146,18 @@ function collectHealth() {
     }
   }
 
+  let marketplaceHub = { enabled: false };
+  if (process.env.BUZZARD_MARKETPLACE_HUB !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      marketplaceHub = {
+        enabled: true,
+        ...require("../lib/marketplaceHub").getMarketplaceHubStatus(),
+      };
+    } catch (error) {
+      marketplaceHub = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -161,6 +173,7 @@ function collectHealth() {
     crmLoyalty,
     analyticsDashboard,
     marketingCenter,
+    marketplaceHub,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

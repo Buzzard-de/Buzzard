@@ -45,6 +45,7 @@ module.exports = {
           category: req.query?.category,
           minPrice: req.query?.minPrice,
           maxPrice: req.query?.maxPrice,
+          vehicleId: req.query?.vehicleId,
         })
       );
     });

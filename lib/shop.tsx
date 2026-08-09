@@ -12,9 +12,21 @@ import {
 import type { SavedVehicle, ShopModal } from "@/types";
 import { isValidVin, normalizeVin } from "@/lib/security";
 import { isValidSavedVehicle, sanitizeSavedVehicle } from "@/lib/validate-vehicle";
-import { vehicleBrands, vehicleEngines, vehicleYears } from "@/lib/vehicles";
+import {
+  getActiveVehicleCatalog,
+  loadVehicleCatalog,
+  resolveVehicleId,
+  type VehicleCatalog,
+} from "@/lib/vehicles";
 
-export { vehicleBrands, vehicleEngines, vehicleYears };
+export { getActiveVehicleCatalog, loadVehicleCatalog, resolveVehicleId, type VehicleCatalog };
+export {
+  enginesForVehicleSelection,
+  yearsForVehicleSelection,
+  vehicleBrands,
+  vehicleEngines,
+  vehicleYears,
+} from "@/lib/vehicles";
 
 const VEHICLE_KEY = "buzzard_vehicle";
 const VIN_KEY = "buzzard_vin";
@@ -52,6 +64,7 @@ interface ShopContextValue {
   modal: ShopModal;
   vehicle: SavedVehicle | null;
   vin: string | null;
+  vehicleCatalog: VehicleCatalog;
   openVehicleModal: () => void;
   openVinModal: () => void;
   closeModal: () => void;
@@ -66,15 +79,35 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [modal, setModal] = useState<ShopModal>(null);
   const [vehicle, setVehicleState] = useState<SavedVehicle | null>(null);
   const [vin, setVinState] = useState<string | null>(null);
+  const [vehicleCatalog, setVehicleCatalog] = useState<VehicleCatalog>(getActiveVehicleCatalog());
 
   useEffect(() => {
     setVehicleState(getSavedVehicle());
     setVinState(getSavedVin());
+    loadVehicleCatalog()
+      .then((catalog) => {
+        setVehicleCatalog(catalog);
+        const saved = getSavedVehicle();
+        if (saved && !saved.vehicleId && catalog.fromApi) {
+          const vehicleId = resolveVehicleId(catalog, saved);
+          if (vehicleId) {
+            const enriched = { ...saved, vehicleId };
+            saveVehicle(enriched);
+            setVehicleState(enriched);
+          }
+        }
+      })
+      .catch(() => setVehicleCatalog(getActiveVehicleCatalog()));
   }, []);
 
   const setVehicle = useCallback((v: SavedVehicle) => {
-    saveVehicle(v);
-    setVehicleState(v);
+    const catalog = getActiveVehicleCatalog();
+    const enriched: SavedVehicle = {
+      ...v,
+      vehicleId: resolveVehicleId(catalog, v) ?? v.vehicleId,
+    };
+    saveVehicle(enriched);
+    setVehicleState(enriched);
     setModal(null);
   }, []);
 
@@ -98,6 +131,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       modal,
       vehicle,
       vin,
+      vehicleCatalog,
       openVehicleModal: () => setModal("vehicle"),
       openVinModal: () => setModal("vin"),
       closeModal: () => setModal(null),
@@ -105,7 +139,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       setVin,
       clearVehicle,
     }),
-    [modal, vehicle, vin, setVehicle, setVin, clearVehicle]
+    [modal, vehicle, vin, vehicleCatalog, setVehicle, setVin, clearVehicle]
   );
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

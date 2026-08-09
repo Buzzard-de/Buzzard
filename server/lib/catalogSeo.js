@@ -49,9 +49,15 @@ function listProducts(filters = {}) {
     SELECT p.*, c.name category, c.slug category_slug
     FROM products p
     LEFT JOIN categories c ON c.id = p.category_id
-    WHERE p.active = 1
   `;
   const args = [];
+  if (filters.vehicleId) {
+    sql += `
+      INNER JOIN compatibility comp ON comp.product_sku = p.sku AND comp.vehicle_id = ?
+    `;
+    args.push(Number(filters.vehicleId));
+  }
+  sql += " WHERE p.active = 1";
   if (filters.q) {
     sql += " AND (p.name LIKE ? OR p.sku LIKE ? OR p.description LIKE ?)";
     args.push(`%${filters.q}%`, `%${filters.q}%`, `%${filters.q}%`);

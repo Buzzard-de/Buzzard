@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import ProductDetailView from "@/components/ProductDetailView";
+import ProductDetailLoader from "@/components/ProductDetailLoader";
 import {
   getProductBySlug,
   getProductStaticParams,
@@ -25,11 +24,5 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = getProductBySlug(slug);
-  if (!product) notFound();
-
-  return (
-    <section className="shop-page">
-      <ProductDetailView product={product} />
-    </section>
-  );
+  return <ProductDetailLoader slug={slug} staticProduct={product} />;
 }

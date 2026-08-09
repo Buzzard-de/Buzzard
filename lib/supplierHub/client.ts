@@ -121,3 +121,14 @@ export async function fetchTecDocCompatibility(sku: string): Promise<SupplierHub
   if (!res.ok) throw new Error("supplierHub.requestFailed");
   return (await res.json()) as SupplierHubCompatibility[];
 }
+
+export async function fetchCompatibleSkusForVehicle(vehicleId: number): Promise<string[]> {
+  const base = apiBase();
+  if (!base) throw new Error("supplierHub.apiUnavailable");
+  const res = await fetch(`${base}/api/tecdoc/compatibility/vehicle/${vehicleId}`, {
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error("supplierHub.requestFailed");
+  const data = (await res.json()) as { skus?: string[] };
+  return data.skus || [];
+}

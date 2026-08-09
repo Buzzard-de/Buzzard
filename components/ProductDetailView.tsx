@@ -23,6 +23,7 @@ import { trackMarketingEvent } from "@/lib/marketing/events";
 import type { PublicProduct, ProductVariant } from "@/lib/products/types";
 import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
+import TecDocFitmentNote from "@/components/TecDocFitmentNote";
 
 interface ProductDetailViewProps {
   product: PublicProduct;
@@ -132,6 +133,8 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             <p className={`product-stock status-${localizedProduct.stockStatus}${activeStock < 10 ? " low" : ""}`}>
               {stockStatusLabel(localizedProduct.stockStatus, locale)} · {activeStock}
             </p>
+
+            <TecDocFitmentNote sku={activeSku} />
 
             {localizedProduct.shortDescription && (
               <p className="product-detail-lead">{localizedProduct.shortDescription}</p>

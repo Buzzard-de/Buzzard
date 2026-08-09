@@ -55,15 +55,28 @@ export async function fetchCatalogCategories(): Promise<CatalogCategory[]> {
 export async function fetchCatalogProducts(filters?: {
   q?: string;
   category?: string;
+  vehicleId?: number;
 }): Promise<CatalogProduct[]> {
   const base = apiBase();
   if (!base) throw new Error("catalogSeo.apiUnavailable");
   const url = new URL(`${base}/api/catalog/products`);
   if (filters?.q) url.searchParams.set("q", filters.q);
   if (filters?.category) url.searchParams.set("category", filters.category);
+  if (filters?.vehicleId) url.searchParams.set("vehicleId", String(filters.vehicleId));
   const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("catalogSeo.requestFailed");
   return (await res.json()) as CatalogProduct[];
+}
+
+export async function fetchCatalogProductBySlug(slug: string): Promise<CatalogProduct> {
+  const base = apiBase();
+  if (!base) throw new Error("catalogSeo.apiUnavailable");
+  const res = await fetch(`${base}/api/catalog/products/slug/${encodeURIComponent(slug)}`, {
+    headers: { Accept: "application/json" },
+  });
+  const data = (await res.json()) as CatalogProduct & { error?: string };
+  if (!res.ok) throw new Error(data.error || "catalogSeo.requestFailed");
+  return data;
 }
 
 export async function fetchAdminCatalogProducts(): Promise<CatalogProduct[]> {

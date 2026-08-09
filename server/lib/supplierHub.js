@@ -239,6 +239,13 @@ function listCompatibilityForSku(sku) {
     .all(sku);
 }
 
+function listCompatibleSkusForVehicle(vehicleId) {
+  return db
+    .prepare("SELECT DISTINCT product_sku FROM compatibility WHERE vehicle_id = ? ORDER BY product_sku")
+    .all(vehicleId)
+    .map((row) => row.product_sku);
+}
+
 function listMargins() {
   const rows = db
     .prepare(`
@@ -281,6 +288,7 @@ module.exports = {
   seedDemoVehicles,
   linkCompatibility,
   listCompatibilityForSku,
+  listCompatibleSkusForVehicle,
   listMargins,
   getSupplierHubStatus,
   parseSupplierFeed,

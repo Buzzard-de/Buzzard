@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductSvg from "./ProductSvg";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
@@ -17,9 +17,13 @@ import {
 } from "@/lib/products";
 import { localizePublicProduct } from "@/lib/products/i18n";
 import { findCategoryBySlugPath, getCategoryLabel } from "@/lib/categories";
+import { isLiveCatalogEnabled, loadLiveCatalogProducts, mergeCatalogProducts } from "@/lib/catalogSeo/runtime";
+import { fetchCompatibleSkusForVehicle } from "@/lib/supplierHub/client";
+import { isVehicleApiEnabled } from "@/lib/api/config";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
 import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
+import type { PublicProduct } from "@/lib/products/types";
 
 const PAGE_SIZE = 12;
 
@@ -44,12 +48,76 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const { add } = useCart();
   const { toggle, has } = useWishlist();
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [catalogProducts, setCatalogProducts] = useState<PublicProduct[]>([]);
+  const [compatibleSkus, setCompatibleSkus] = useState<string[] | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(isLiveCatalogEnabled());
+
+  useEffect(() => {
+    if (!isLiveCatalogEnabled()) {
+      setCatalogProducts([]);
+      setCatalogLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setCatalogLoading(true);
+    loadLiveCatalogProducts({
+      q: query || undefined,
+      category: kategorieSlug || undefined,
+      vehicleId: vehicle?.vehicleId,
+    })
+      .then((items) => {
+        if (!cancelled) setCatalogProducts(items);
+      })
+      .catch(() => {
+        if (!cancelled) setCatalogProducts([]);
+      })
+      .finally(() => {
+        if (!cancelled) setCatalogLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query, kategorieSlug, vehicle?.vehicleId]);
+
+  useEffect(() => {
+    if (!vehicle?.vehicleId || !isVehicleApiEnabled()) {
+      setCompatibleSkus(null);
+      return;
+    }
+
+    let cancelled = false;
+    fetchCompatibleSkusForVehicle(vehicle.vehicleId)
+      .then((skus) => {
+        if (!cancelled) setCompatibleSkus(skus);
+      })
+      .catch(() => {
+        if (!cancelled) setCompatibleSkus(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [vehicle?.vehicleId]);
+
+  const allProducts = useMemo(() => {
+    const staticItems = getAllProducts();
+    if (!isLiveCatalogEnabled()) return staticItems;
+    return mergeCatalogProducts(staticItems, catalogProducts);
+  }, [catalogProducts]);
 
   const result = useMemo(() => {
-    const filtered = filterProducts(getAllProducts(), filter, query, kategorie);
+    let filtered = filterProducts(allProducts, filter, query, kategorie);
+
+    if (vehicle?.vehicleId && compatibleSkus && compatibleSkus.length > 0) {
+      const skuSet = new Set(compatibleSkus);
+      filtered = filtered.filter((product) => skuSet.has(product.sku));
+    }
+
     const sorted = sortProducts(filtered, sort);
     return paginateProducts(sorted, page, PAGE_SIZE);
-  }, [filter, sort, query, kategorie, page]);
+  }, [allProducts, filter, sort, query, kategorie, page, vehicle?.vehicleId, compatibleSkus]);
 
   function pageHref(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -78,7 +146,11 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         <div className="vehicle-filter-banner">
           {vehicle && (
             <span>
-              Teile für: <strong>{vehicle.brand} {vehicle.model} ({vehicle.year})</strong>
+              Teile für:{" "}
+              <strong>
+                {vehicle.brand} {vehicle.model} ({vehicle.year})
+                {vehicle.engine ? ` · ${vehicle.engine}` : ""}
+              </strong>
             </span>
           )}
           {vin && (
@@ -86,12 +158,21 @@ export default function ProductList({ categorySlug }: ProductListProps) {
               VIN: <strong>{vin}</strong>
             </span>
           )}
+          {vehicle?.vehicleId && compatibleSkus && compatibleSkus.length > 0 && (
+            <span>TecDoc-Filter: {compatibleSkus.length} passende SKU(s)</span>
+          )}
         </div>
+      )}
+
+      {isLiveCatalogEnabled() && !catalogLoading && catalogProducts.length > 0 && (
+        <p className="admin-note">
+          {catalogProducts.length} Live-Katalog-Produkt(e) aus der Buzzard API eingebunden.
+        </p>
       )}
 
       <div className="products-toolbar">
         <p className="products-result-count">
-          {result.total} Produkt{result.total === 1 ? "" : "e"} gefunden
+          {catalogLoading ? "Produkte werden geladen…" : `${result.total} Produkt${result.total === 1 ? "" : "e"} gefunden`}
         </p>
         <label className="products-sort">
           Sortieren
@@ -118,7 +199,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         </label>
       </div>
 
-      {result.items.length === 0 ? (
+      {!catalogLoading && result.items.length === 0 ? (
         <div className="products-empty">
           <p>{t("product.empty")}</p>
         </div>
@@ -127,51 +208,58 @@ export default function ProductList({ categorySlug }: ProductListProps) {
           <div className="products-grid">
             {result.items.map((product) => {
               const localized = localizePublicProduct(product, locale);
+              const imageKey = localized.imageKey ?? (localized.images[0] ? undefined : "oel");
               return (
-              <article key={product.id} className="product-card">
-                <Link href={localized.url} className="product-card-img">
-                  <ProductSvg imageKey={localized.imageKey ?? "oel"} />
-                </Link>
-                <div className="product-card-body">
-                  <span className="product-card-category">
-                    {getCategoryLabelForProduct(localized, locale)}
-                  </span>
-                  <Link href={localized.url} className="product-card-name">
-                    {localized.name}
+                <article key={product.id} className="product-card">
+                  <Link href={localized.url} className="product-card-img">
+                    {localized.images[0] ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={localized.images[0]} alt={localized.name} />
+                    ) : (
+                      <ProductSvg imageKey={imageKey ?? "oel"} />
+                    )}
                   </Link>
-                  <span className="product-card-sku">SKU: {localized.sku}</span>
-                  <PriceLabel amount={localized.price} className="product-card-price" />
-                  <div className="product-card-actions">
-                    {isCheckoutEnabled() ? (
+                  <div className="product-card-body">
+                    <span className="product-card-category">
+                      {product.attributes?.category || getCategoryLabelForProduct(localized, locale)}
+                    </span>
+                    <Link href={localized.url} className="product-card-name">
+                      {localized.name}
+                    </Link>
+                    <span className="product-card-sku">SKU: {localized.sku}</span>
+                    <PriceLabel amount={localized.price} className="product-card-price" />
+                    <div className="product-card-actions">
+                      {isCheckoutEnabled() ? (
+                        <button
+                          type="button"
+                          className="product-card-btn"
+                          style={
+                            addedId === product.id
+                              ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
+                              : undefined
+                          }
+                          onClick={() => handleAdd(product.id)}
+                        >
+                          {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
+                        </button>
+                      ) : (
+                        <Link href={localized.url} className="product-card-btn">
+                          {t("product.viewProduct")}
+                        </Link>
+                      )}
                       <button
                         type="button"
-                        className="product-card-btn"
-                        style={
-                          addedId === product.id
-                            ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
-                            : undefined
-                        }
-                        onClick={() => handleAdd(product.id)}
+                        className={`product-wishlist-btn${has(product.id) ? " active" : ""}`}
+                        onClick={() => toggle(product.id)}
+                        aria-label="Wunschliste"
                       >
-                        {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
+                        {has(product.id) ? "♥" : "♡"}
                       </button>
-                    ) : (
-                      <Link href={localized.url} className="product-card-btn">
-                        {t("product.viewProduct")}
-                      </Link>
-                    )}
-                    <button
-                      type="button"
-                      className={`product-wishlist-btn${has(product.id) ? " active" : ""}`}
-                      onClick={() => toggle(product.id)}
-                      aria-label="Wunschliste"
-                    >
-                      {has(product.id) ? "♥" : "♡"}
-                    </button>
+                    </div>
                   </div>
-                </div>
-              </article>
-            );})}
+                </article>
+              );
+            })}
           </div>
 
           {result.totalPages > 1 && (

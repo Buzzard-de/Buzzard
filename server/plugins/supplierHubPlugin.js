@@ -119,6 +119,13 @@ module.exports = {
       return res.json(result);
     });
 
+    app.get("/api/tecdoc/compatibility/vehicle/:vehicleId", (req, res) => {
+      return res.json({
+        vehicleId: Number(req.params.vehicleId),
+        skus: supplierHub.listCompatibleSkusForVehicle(req.params.vehicleId),
+      });
+    });
+
     app.get("/api/tecdoc/compatibility/:sku", (req, res) => {
       return res.json(supplierHub.listCompatibilityForSku(req.params.sku));
     });

@@ -115,6 +115,7 @@ The `supplierHubPlugin.js` module adds supplier registry, feed sync, margins and
 - `POST /api/vehicles/seed` — seed demo vehicles (admin)
 - `POST /api/tecdoc/compatibility/link` — link SKU to vehicle (auth required)
 - `GET /api/tecdoc/compatibility/:sku` — compatibility rows for SKU
+- `GET /api/tecdoc/compatibility/vehicle/:vehicleId` — compatible SKUs for vehicle
 
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_SUPPLIER_HUB=0`.
 Tables: `suppliers`, `supplier_products`, `sync_runs`, `vehicles`, `compatibility`, `sync_errors`.

@@ -85,6 +85,8 @@ export interface SavedVehicle {
   model: string;
   year: string;
   engine: string;
+  /** SQLite vehicle id when loaded from /api/vehicles (TecDoc compatibility) */
+  vehicleId?: number;
 }
 
 /** @deprecated Use CheckoutPayload from @/lib/checkout/types */

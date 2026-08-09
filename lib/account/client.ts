@@ -65,6 +65,7 @@ export async function accountRegister(body: Record<string, unknown>): Promise<{ 
       password: String(body.password || ""),
       name: name || String(body.email || ""),
     });
+    saveAccountToken(data.token);
     return { token: data.token, user: mapStoreUser(data.user, String(body.country || "DE")) };
   }
   const data = await request<{ success: boolean; token: string; user: AccountUser }>("/api/account/register", {
@@ -78,6 +79,7 @@ export async function accountRegister(body: Record<string, unknown>): Promise<{ 
 export async function accountLogin(email: string, password: string): Promise<{ token: string; user: AccountUser }> {
   if (isSqliteStoreEnabled()) {
     const data = await storeLogin(email, password);
+    saveAccountToken(data.token);
     return { token: data.token, user: mapStoreUser(data.user) };
   }
   const data = await request<{ success: boolean; token: string; user: AccountUser }>("/api/account/login", {

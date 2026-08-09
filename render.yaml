@@ -52,6 +52,8 @@ services:
         value: "1"
       - key: BUZZARD_PAYMENTS_FINANCE
         value: "1"
+      - key: BUZZARD_ORDER_MANAGEMENT
+        value: "1"
       - key: DEFAULT_PAYMENT_PROVIDER
         value: stripe
       - key: DEFAULT_CARRIER

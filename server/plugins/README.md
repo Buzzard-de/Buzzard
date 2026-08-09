@@ -351,6 +351,22 @@ Tables: `finance_payment_providers`, `finance_payment_methods`, `finance_payment
 Frontend admin: `/admin/payments-finance/`. Set `NEXT_PUBLIC_PAYMENTS_FINANCE=1`.
 Note: Existing commercial integrations (`/api/payments/session`) remain separate. Sales remain disabled on storefront.
 
+## Order Management Plugin (v2.2)
+
+The `orderManagementPlugin.js` module adds central order orchestration (OMS):
+
+- `POST /api/order-management/orders` — unified order creation with idempotency
+- `GET /api/order-management/orders/:orderNumber` — order detail with items, events, fulfillment links
+- `GET /api/order-management/customer/:customerId/orders` — customer order history
+- `GET /api/admin/order-management/overview|orders` — admin OMS dashboard
+- `PATCH /api/admin/order-management/orders/:id/status|payment|fulfillment` — lifecycle updates
+- `POST /api/admin/order-management/orders/:id/cancel|split|fulfillment-link|note` — cancellation, split orders, fulfillment linkage
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ORDER_MANAGEMENT=0`.
+Tables: `oms_orders`, `oms_order_items`, `oms_order_splits`, `oms_order_events`, `oms_order_notes`, `oms_fulfillment_links`, `oms_order_idempotency`.
+Frontend admin: `/admin/order-management/`. Set `NEXT_PUBLIC_ORDER_MANAGEMENT=1`.
+Note: Existing JSON checkout (`/api/orders`) and SQLite orders (`/api/db/orders`) remain separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

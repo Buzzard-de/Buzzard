@@ -24,6 +24,7 @@ const NAV = [
   { href: "/admin/orders/", label: "Bestellungen" },
   { href: "/admin/logistics/", label: "Logistik" },
   { href: "/admin/logistics-fulfillment/", label: "Logistics v1.7" },
+  { href: "/admin/wms-inventory/", label: "WMS v1.8" },
   { href: "/admin/automation/", label: "Automation" },
 ];
 

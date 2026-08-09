@@ -286,6 +286,22 @@ Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_LOGISTICS_FULFIL
 Tables: `logistics_carriers`, `logistics_shipping_services`, `logistics_shipments`, `logistics_tracking_events`, `logistics_fulfillment_jobs`, `logistics_returns`.
 Frontend admin: `/admin/logistics-fulfillment/`. Set `NEXT_PUBLIC_LOGISTICS_FULFILLMENT=1`.
 
+## WMS Inventory Plugin (v1.8)
+
+The `wmsInventoryPlugin.js` module adds warehouse management and inventory control:
+
+- `GET|POST /api/admin/wms-inventory/warehouses` — warehouse registry
+- `POST /api/admin/wms-inventory/locations` — bin/location setup
+- `GET /api/admin/wms-inventory/inventory|low-stock|movements|jobs` — stock overview
+- `POST /api/admin/wms-inventory/inventory/movement` — goods in/out/damage
+- `POST /api/admin/wms-inventory/inventory/reserve` — order reservations
+- `POST /api/admin/wms-inventory/jobs|transfers|stocktakes` — pick/pack jobs, transfers, cycle counts
+- `POST /api/wms-inventory/scan` — barcode lookup
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_WMS_INVENTORY=0`.
+Tables: `wms_warehouses`, `wms_locations`, `wms_inventory`, `wms_stock_movements`, `wms_reservations`, `wms_warehouse_jobs`, `wms_transfers`, `wms_stocktakes`.
+Frontend admin: `/admin/wms-inventory/`. Set `NEXT_PUBLIC_WMS_INVENTORY=1`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

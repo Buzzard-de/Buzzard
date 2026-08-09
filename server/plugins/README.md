@@ -59,6 +59,7 @@ SQLite orders and admin (prefixed to avoid conflicts with JSON checkout):
 - `PATCH /api/db/admin/products/:id` — update product
 - `POST /api/db/admin/shipments` — create mock shipment
 - `GET /api/db/status` — SQLite backend status
+- `GET /api/orders` — v0.4 alias for authenticated order list (JWT)
 
 Environment variables:
 

@@ -5,6 +5,8 @@ import type {
   QuoteRequest,
   QuoteResponse,
 } from "./types";
+import { isSqliteStoreEnabled } from "@/lib/store/config";
+import { mapStoreOrderToPublic, storeCreateOrder } from "@/lib/store";
 
 const SESSION_ORDER_KEY = "buzzard_confirmed_order";
 
@@ -36,9 +38,43 @@ export async function submitOrder(request: CreateOrderRequest): Promise<CreateOr
     return { success: false, errorKey: "checkout.apiUnavailable" };
   }
 
+  const accountToken =
+    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_account_token") : null;
+
+  if (isSqliteStoreEnabled() && accountToken) {
+    try {
+      const result = await storeCreateOrder({
+        countryCode: request.shippingAddress?.country || "DE",
+        currency: "EUR",
+        shippingAddress: request.shippingAddress as unknown as Record<string, unknown>,
+      });
+      return {
+        success: true,
+        order: mapStoreOrderToPublic(
+          {
+            id: result.orderId,
+            order_number: result.orderNumber,
+            country_code: request.shippingAddress?.country || "DE",
+            currency: "EUR",
+            subtotal: result.subtotal,
+            shipping: result.shipping,
+            tax: result.tax,
+            total: result.total,
+            status: result.status,
+            created_at: new Date().toISOString(),
+          },
+          request.customer.email
+        ),
+      };
+    } catch (err) {
+      return {
+        success: false,
+        errorKey: err instanceof Error ? err.message : "checkout.apiUnavailable",
+      };
+    }
+  }
+
   try {
-    const accountToken =
-      typeof window !== "undefined" ? sessionStorage.getItem("buzzard_account_token") : null;
     const res = await fetch(`${base}/api/orders`, {
       method: "POST",
       headers: {

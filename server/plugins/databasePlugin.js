@@ -1,8 +1,6 @@
-const crypto = require("crypto");
 const { db } = require("../lib/db");
 const { hashPassword, signUser, requireAuth, requireAdmin, ensureAdmin } = require("../lib/dbAuth");
-const { calculateShipping } = require("../lib/dbShipping");
-const { createPaymentSession } = require("../lib/dbPayments");
+const { createOrderFromCartWithPayment } = require("../lib/dbOrders");
 const { createShipment } = require("../lib/dbCarriers");
 
 function isEnabled() {
@@ -13,8 +11,16 @@ function publicProduct(product) {
   return { ...product, active: Boolean(product.active) };
 }
 
-function orderNumber() {
-  return `BZ-${new Date().getFullYear()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+function listUserOrders(userId) {
+  return db
+    .prepare(`
+      SELECT id, order_number, country_code, currency, subtotal, shipping, tax, total,
+             status, shipping_status, payment_status, created_at
+      FROM orders
+      WHERE user_id = ?
+      ORDER BY id DESC
+    `)
+    .all(userId);
 }
 
 module.exports = {
@@ -27,7 +33,7 @@ module.exports = {
     ensureAdmin();
 
     app.get("/api/db/status", (_req, res) => {
-      res.json({ ok: true, service: "buzzard-backend", version: "0.3.0", storage: "sqlite" });
+      res.json({ ok: true, service: "buzzard-backend", version: "0.4.0", storage: "sqlite" });
     });
 
     app.post("/api/auth/register", (req, res) => {
@@ -156,98 +162,44 @@ module.exports = {
       return res.json({ ok: true });
     });
 
-    app.post("/api/db/orders", async (req, res) => {
+    async function handleCreateOrder(req, res) {
       if (!requireAuth(req, res)) return;
       const { countryCode = "DE", currency = "EUR", shippingAddress } = req.body || {};
-      const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(req.user.sub);
-      if (!cart) return res.status(400).json({ error: "Cart is empty" });
-      const items = db
-        .prepare(`
-          SELECT ci.product_id, ci.quantity, p.sku, p.name, p.price_eur, p.weight_kg, p.stock
-          FROM cart_items ci
-          JOIN products p ON p.id = ci.product_id
-          WHERE ci.cart_id = ?
-        `)
-        .all(cart.id);
-      if (!items.length) return res.status(400).json({ error: "Cart is empty" });
-      for (const item of items) {
-        if (item.quantity > item.stock) {
-          return res.status(409).json({ error: `Insufficient stock: ${item.sku}` });
-        }
-      }
-      const subtotal = items.reduce((sum, item) => sum + item.price_eur * item.quantity, 0);
-      const weight = items.reduce((sum, item) => sum + item.weight_kg * item.quantity, 0);
-      const shipping = calculateShipping(countryCode, weight, subtotal);
-      const tax = Number((subtotal * 0.19).toFixed(2));
-      const total = Number((subtotal + shipping + tax).toFixed(2));
-      const number = orderNumber();
-
       try {
-        const orderId = db.transaction(() => {
-          const created = db
-            .prepare(`
-              INSERT INTO orders(
-                order_number, user_id, country_code, currency, subtotal, shipping, tax, total, shipping_address
-              ) VALUES(?,?,?,?,?,?,?,?,?)
-            `)
-            .run(
-              number,
-              req.user.sub,
-              countryCode,
-              currency,
-              subtotal,
-              shipping,
-              tax,
-              total,
-              JSON.stringify(shippingAddress || {})
-            );
-          for (const item of items) {
-            db.prepare(`
-              INSERT INTO order_items(order_id, product_id, sku, name, unit_price_eur, quantity)
-              VALUES(?,?,?,?,?,?)
-            `).run(
-              created.lastInsertRowid,
-              item.product_id,
-              item.sku,
-              item.name,
-              item.price_eur,
-              item.quantity
-            );
-            db.prepare("UPDATE products SET stock = stock - ? WHERE id = ?").run(item.quantity, item.product_id);
-          }
-          db.prepare("DELETE FROM cart_items WHERE cart_id = ?").run(cart.id);
-          return created.lastInsertRowid;
-        })();
-
-        const payment = await createPaymentSession({ orderNumber: number, total, currency });
+        const result = await createOrderFromCartWithPayment(req.user.sub, {
+          countryCode,
+          currency,
+          shippingAddress,
+        });
+        if (result.error) {
+          return res.status(result.status || 400).json({ error: result.error });
+        }
         return res.status(201).json({
-          orderId,
-          orderNumber: number,
-          subtotal,
-          shipping,
-          tax,
-          total,
-          payment,
+          id: result.orderId,
+          orderId: result.orderId,
+          orderNumber: result.orderNumber,
+          subtotal: result.subtotal,
+          shipping: result.shipping,
+          tax: result.tax,
+          total: result.total,
+          status: result.status,
+          payment: result.payment,
         });
       } catch (error) {
         console.error("SQLite order error:", error);
         return res.status(500).json({ error: "Internal server error" });
       }
-    });
+    }
 
-    app.get("/api/db/orders", (req, res) => {
+    app.post("/api/db/orders", handleCreateOrder);
+
+    function handleListOrders(req, res) {
       if (!requireAuth(req, res)) return;
-      const rows = db
-        .prepare(`
-          SELECT id, order_number, country_code, currency, subtotal, shipping, tax, total,
-                 status, shipping_status, payment_status, created_at
-          FROM orders
-          WHERE user_id = ?
-          ORDER BY id DESC
-        `)
-        .all(req.user.sub);
-      return res.json(rows);
-    });
+      return res.json(listUserOrders(req.user.sub));
+    }
+
+    app.get("/api/db/orders", handleListOrders);
+    app.get("/api/orders", handleListOrders);
 
     app.get("/api/db/admin/orders", (req, res) => {
       if (!requireAdmin(req, res)) return;

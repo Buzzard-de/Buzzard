@@ -1,4 +1,14 @@
 import type { AccountAddress, AccountPreferences, AccountUser, CustomerOrder } from "./types";
+import { isSqliteStoreEnabled } from "@/lib/store/config";
+import {
+  mapStoreOrder,
+  mapStoreUser,
+  storeListOrders,
+  storeLogin,
+  storeLogout,
+  storeMe,
+  storeRegister,
+} from "@/lib/store";
 
 const TOKEN_KEY = "buzzard_account_token";
 
@@ -38,6 +48,15 @@ export function getAccountToken(): string | null {
 }
 
 export async function accountRegister(body: Record<string, unknown>): Promise<{ token: string; user: AccountUser }> {
+  if (isSqliteStoreEnabled()) {
+    const name = [body.firstName, body.lastName].filter(Boolean).join(" ").trim();
+    const data = await storeRegister({
+      email: String(body.email || ""),
+      password: String(body.password || ""),
+      name: name || String(body.email || ""),
+    });
+    return { token: data.token, user: mapStoreUser(data.user, String(body.country || "DE")) };
+  }
   const data = await request<{ success: boolean; token: string; user: AccountUser }>("/api/account/register", {
     method: "POST",
     body: JSON.stringify(body),
@@ -47,6 +66,10 @@ export async function accountRegister(body: Record<string, unknown>): Promise<{ 
 }
 
 export async function accountLogin(email: string, password: string): Promise<{ token: string; user: AccountUser }> {
+  if (isSqliteStoreEnabled()) {
+    const data = await storeLogin(email, password);
+    return { token: data.token, user: mapStoreUser(data.user) };
+  }
   const data = await request<{ success: boolean; token: string; user: AccountUser }>("/api/account/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -56,6 +79,10 @@ export async function accountLogin(email: string, password: string): Promise<{ t
 }
 
 export async function accountLogout(): Promise<void> {
+  if (isSqliteStoreEnabled()) {
+    await storeLogout();
+    return;
+  }
   try {
     await request("/api/account/logout", { method: "POST", body: "{}" });
   } finally {
@@ -69,6 +96,15 @@ export async function fetchAccountMe(): Promise<{
   addressCount: number;
   wishlistCount: number;
 }> {
+  if (isSqliteStoreEnabled()) {
+    const user = await storeMe();
+    return {
+      user: mapStoreUser(user),
+      preferences: { language: "de", marketing: false, transactional: true },
+      addressCount: 0,
+      wishlistCount: 0,
+    };
+  }
   return request("/api/account/me");
 }
 
@@ -99,6 +135,10 @@ export async function deleteAccountAddress(id: string): Promise<void> {
 }
 
 export async function fetchAccountOrders(): Promise<CustomerOrder[]> {
+  if (isSqliteStoreEnabled()) {
+    const orders = await storeListOrders();
+    return orders.map(mapStoreOrder);
+  }
   const data = await request<{ success: boolean; orders: CustomerOrder[] }>("/api/account/orders");
   return data.orders;
 }

@@ -7,6 +7,17 @@ import type {
   ImportLogEntry,
   SyncJob,
 } from "./types";
+import { isSqliteStoreEnabled } from "@/lib/store/config";
+import {
+  mapStoreAdminOrder,
+  mapStoreAdminUser,
+  mapStoreProduct,
+  storeAdminOrders,
+  storeAdminProducts,
+  storeLogin,
+  storeLogout,
+  storeMe,
+} from "@/lib/store";
 
 const TOKEN_KEY = "buzzard_admin_token";
 
@@ -46,6 +57,15 @@ export function getAdminToken(): string | null {
 }
 
 export async function adminLogin(email: string, password: string): Promise<{ token: string; user: AdminUser }> {
+  if (isSqliteStoreEnabled()) {
+    const data = await storeLogin(email, password);
+    if (data.user.role !== "admin") {
+      clearAdminToken();
+      throw new Error("admin.auth.invalid");
+    }
+    saveAdminToken(data.token);
+    return { token: data.token, user: mapStoreAdminUser(data.user) };
+  }
   const data = await request<{ success: boolean; token: string; user: AdminUser }>("/api/admin/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -55,6 +75,10 @@ export async function adminLogin(email: string, password: string): Promise<{ tok
 }
 
 export async function adminLogout(): Promise<void> {
+  if (isSqliteStoreEnabled()) {
+    await storeLogout();
+    return;
+  }
   try {
     await request("/api/admin/logout", { method: "POST", body: "{}" });
   } finally {
@@ -63,11 +87,27 @@ export async function adminLogout(): Promise<void> {
 }
 
 export async function fetchAdminMe(): Promise<AdminUser> {
+  if (isSqliteStoreEnabled()) {
+    const user = await storeMe();
+    if (user.role !== "admin") throw new Error("admin.auth.required");
+    return mapStoreAdminUser(user);
+  }
   const data = await request<{ success: boolean; user: AdminUser }>("/api/admin/me");
   return data.user;
 }
 
 export async function fetchAdminProducts(q?: string): Promise<AdminProduct[]> {
+  if (isSqliteStoreEnabled()) {
+    const products = await storeAdminProducts();
+    const filtered = q
+      ? products.filter(
+          (p) =>
+            p.name.toLowerCase().includes(q.toLowerCase()) ||
+            p.sku.toLowerCase().includes(q.toLowerCase())
+        )
+      : products;
+    return filtered.map(mapStoreProduct);
+  }
   const qs = q ? `?q=${encodeURIComponent(q)}` : "";
   const data = await request<{ success: boolean; products: AdminProduct[] }>(`/api/admin/products${qs}`);
   return data.products;
@@ -125,6 +165,10 @@ export async function retryImport(logId: string): Promise<SyncJob> {
 }
 
 export async function fetchAdminOrders(): Promise<AdminOrder[]> {
+  if (isSqliteStoreEnabled()) {
+    const orders = await storeAdminOrders();
+    return orders.map(mapStoreAdminOrder);
+  }
   const data = await request<{ success: boolean; orders: AdminOrder[] }>("/api/admin/orders");
   return data.orders;
 }

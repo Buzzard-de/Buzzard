@@ -12,6 +12,12 @@ export function isAiChatEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isSqliteStoreEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_SQLITE_STORE === "0") return false;
+  if (process.env.NEXT_PUBLIC_SQLITE_STORE === "1") return isApiConfigured();
+  return false;
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

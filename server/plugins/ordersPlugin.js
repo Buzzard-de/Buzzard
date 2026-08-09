@@ -235,7 +235,44 @@ module.exports = {
       });
     });
 
-    app.post("/api/orders", (req, res) => {
+    app.post("/api/orders", async (req, res) => {
+      if (process.env.BUZZARD_DB_ENABLED !== "0") {
+        const body = req.body || {};
+        const isGuestCheckout = Array.isArray(body.lines) && body.lines.length > 0;
+        if (!isGuestCheckout) {
+          const { extractToken, verifyToken } = require("../lib/dbAuth");
+          const token = extractToken(req);
+          if (token) {
+            try {
+              const user = verifyToken(token);
+              const { createOrderFromCartWithPayment } = require("../lib/dbOrders");
+              const result = await createOrderFromCartWithPayment(user.sub, {
+                countryCode: String(body.countryCode || body.shippingAddress?.country || "DE").toUpperCase(),
+                currency: body.currency || "EUR",
+                shippingAddress: body.shippingAddress || {},
+              });
+              if (result.error) {
+                return res.status(result.status || 400).json({ success: false, error: result.error });
+              }
+              return res.status(201).json({
+                success: true,
+                id: result.orderId,
+                orderId: result.orderId,
+                orderNumber: result.orderNumber,
+                subtotal: result.subtotal,
+                shipping: result.shipping,
+                tax: result.tax,
+                total: result.total,
+                status: result.status,
+                payment: result.payment,
+              });
+            } catch {
+              return res.status(401).json({ success: false, errorKey: "account.auth.required" });
+            }
+          }
+        }
+      }
+
       if (orderRateLimit(req, { key: getClientIp(req) })) {
         return res.status(429).json({ success: false, errorKey: "security.rateLimited" });
       }

@@ -1,5 +1,5 @@
 const { db } = require("../lib/db");
-const { hashPassword, signUser, requireAuth, requireAdmin, ensureAdmin } = require("../lib/dbAuth");
+const { hashPassword, signUser, requireAuth, requireAdmin, ensureAdmin, authenticateUser } = require("../lib/dbAuth");
 const { createOrderFromCartWithPayment } = require("../lib/dbOrders");
 const { createShipment } = require("../lib/dbCarriers");
 
@@ -59,7 +59,7 @@ module.exports = {
       const user = db
         .prepare("SELECT id, email, name, role, password_hash FROM users WHERE email = ?")
         .get(String(email || "").toLowerCase());
-      if (!user || user.password_hash !== hashPassword(password || "")) {
+      if (!user || !authenticateUser(user, password || "")) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
       delete user.password_hash;

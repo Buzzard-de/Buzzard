@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL, URLSearchParams } = require('url');
+const { isDefaultJwtSecret } = require('./lib/dbAuth');
 const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
 
@@ -286,6 +287,11 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(port, () => {
   console.log(`Buzzard API server running on http://localhost:${port}`);
+  if (process.env.NODE_ENV === "production" && isDefaultJwtSecret()) {
+    console.warn(
+      "SECURITY WARNING: JWT_SECRET is unset — set JWT_SECRET in production (Render env / .env.local)."
+    );
+  }
 });
 
 server.on("error", (err) => {

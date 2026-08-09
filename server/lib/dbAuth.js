@@ -1,12 +1,8 @@
-const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { db } = require("./db");
+const { hashPassword, verifyPassword, needsRehash } = require("./password");
 
 const secret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "DEV_ONLY_CHANGE_ME";
-
-function hashPassword(password) {
-  return crypto.createHash("sha256").update(String(password || "")).digest("hex");
-}
 
 function signUser(user) {
   return jwt.sign({ sub: user.id, email: user.email, role: user.role }, secret, { expiresIn: "7d" });
@@ -52,23 +48,54 @@ function ensureAdmin() {
   const password = process.env.ADMIN_PASSWORD;
   if (!email || !password) return;
 
-  const exists = db.prepare("SELECT id FROM users WHERE email = ?").get(email.toLowerCase());
-  if (!exists) {
+  const normalized = email.toLowerCase();
+  const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(normalized);
+  const passwordHash = hashPassword(password);
+
+  if (!existing) {
     db.prepare("INSERT INTO users(email, password_hash, role, name) VALUES(?,?,?,?)").run(
-      email.toLowerCase(),
-      hashPassword(password),
+      normalized,
+      passwordHash,
       "admin",
       "Buzzard Admin"
     );
+    return;
   }
+
+  db.prepare("UPDATE users SET password_hash = ?, role = 'admin' WHERE id = ?").run(
+    passwordHash,
+    existing.id
+  );
+}
+
+function authenticateUser(user, password) {
+  if (!user || !verifyPassword(password, user.password_hash)) {
+    return false;
+  }
+  if (needsRehash(user.password_hash)) {
+    db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(hashPassword(password), user.id);
+  }
+  return true;
+}
+
+function getJwtSecret() {
+  return secret;
+}
+
+function isDefaultJwtSecret() {
+  return secret === "DEV_ONLY_CHANGE_ME";
 }
 
 module.exports = {
   hashPassword,
+  verifyPassword,
   signUser,
   verifyToken,
   extractToken,
   requireAuth,
   requireAdmin,
   ensureAdmin,
+  authenticateUser,
+  getJwtSecret,
+  isDefaultJwtSecret,
 };

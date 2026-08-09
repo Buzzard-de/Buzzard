@@ -69,6 +69,22 @@ Environment variables:
 
 See `server/docs/schema-notes.md` for production schema expansion notes.
 
+## Commercial Integrations Plugin (v0.5)
+
+The `commercialIntegrationsPlugin.js` module adds production-oriented adapter boundaries:
+
+- `GET /api/admin/integrations` — credential/config status (admin auth)
+- `POST /api/payments/session` — Stripe/PayPal/Klarna adapter boundary
+- `POST /api/shipping/label` — DHL/DPD/GLS/UPS label adapter boundary
+- `POST /api/tax/quote` — VAT/tax calculation boundary
+- `GET /api/fx/rate` — exchange-rate boundary
+- `POST /api/suppliers/import` — supplier feed import boundary
+- `POST /api/tecdoc/compatibility` — TecDoc compatibility boundary
+- `POST /api/dropship/forward` — dropshipping order forwarding boundary
+- `POST /api/webhooks/:provider` — webhook stub (501 until configured)
+
+Disable with `BUZZARD_COMMERCIAL_INTEGRATIONS=0`. Adapter logic lives in `server/lib/commercialIntegrations.js`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

@@ -353,3 +353,39 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.integration-groups {
+  display: grid;
+  gap: 16px;
+}
+
+.integration-group h2 {
+  margin-top: 0;
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.integration-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.integration-row:last-child {
+  border-bottom: 0;
+}
+
+.integration-status-ok {
+  color: #8fd48f;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.integration-status-pending {
+  color: #d7b66a;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}

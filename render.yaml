@@ -16,6 +16,8 @@ services:
         value: "1"
       - key: BUZZARD_DB_ENABLED
         value: "1"
+      - key: BUZZARD_COMMERCIAL_INTEGRATIONS
+        value: "1"
       - key: JWT_SECRET
         generateValue: true
       - key: ADMIN_EMAIL

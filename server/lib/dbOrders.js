@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const { db } = require("./db");
 const { calculateShipping } = require("./dbShipping");
+const { calculateTaxSync } = require("./commercialIntegrations");
 const { createPaymentSession } = require("./dbPayments");
 
 function orderNumber() {
@@ -31,7 +32,10 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
   const subtotal = items.reduce((sum, item) => sum + item.price_eur * item.quantity, 0);
   const weight = items.reduce((sum, item) => sum + item.weight_kg * item.quantity, 0);
   const shipping = calculateShipping(countryCode, weight, subtotal);
-  const tax = Number((subtotal * 0.19).toFixed(2));
+  const taxInfo = calculateTaxSync(countryCode, subtotal, shipping);
+  const tax =
+    taxInfo.tax ??
+    Number(((subtotal + shipping) * (taxInfo.rate ?? 0.19)).toFixed(2));
   const total = Number((subtotal + shipping + tax).toFixed(2));
   const number = orderNumber();
 

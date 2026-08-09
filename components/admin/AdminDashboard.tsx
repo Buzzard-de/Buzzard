@@ -65,6 +65,7 @@ export default function AdminDashboard() {
           <li><Link href="/admin/orders/">Bestellungen verwalten</Link></li>
           <li><Link href="/admin/logistics/">Logistik & Sendungen</Link></li>
           <li><Link href="/admin/products/">Produkte & Bestand</Link></li>
+          <li><Link href="/admin/integrations/">Commercial Integrations</Link></li>
           <li><Link href="/admin/analytics/">Detaillierte Reports</Link></li>
         </ul>
       </section>

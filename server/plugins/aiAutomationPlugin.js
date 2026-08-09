@@ -50,11 +50,21 @@ function collectHealth() {
     }
   }
 
+  let commercial = { enabled: false };
+  if (process.env.BUZZARD_COMMERCIAL_INTEGRATIONS !== "0") {
+    try {
+      commercial = { enabled: true, ...require("../lib/commercialIntegrations").getIntegrationStatus() };
+    } catch (error) {
+      commercial = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
     timestamp: new Date().toISOString(),
     database,
+    commercial,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

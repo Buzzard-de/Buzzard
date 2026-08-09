@@ -18,6 +18,12 @@ services:
         value: "1"
       - key: BUZZARD_COMMERCIAL_INTEGRATIONS
         value: "1"
+      - key: BUZZARD_ORDER_AUTOMATION
+        value: "1"
+      - key: DEFAULT_PAYMENT_PROVIDER
+        value: stripe
+      - key: DEFAULT_CARRIER
+        value: dhl
       - key: JWT_SECRET
         generateValue: true
       - key: ADMIN_EMAIL

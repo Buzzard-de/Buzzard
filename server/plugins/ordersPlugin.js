@@ -397,6 +397,13 @@ module.exports = {
         /* automation is non-blocking */
       }
 
+      try {
+        const orderAutomation = require("../lib/orderAutomation");
+        orderAutomation.queueOrderCreated(orderNumber);
+      } catch {
+        /* non-blocking */
+      }
+
       return res.status(201).json({ success: true, order: attachShipments(order) });
     });
 

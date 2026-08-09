@@ -88,9 +88,19 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
   };
 }
 
+function triggerOrderAutomation(orderNumber) {
+  try {
+    const orderAutomation = require("./orderAutomation");
+    orderAutomation.queueOrderCreated(orderNumber);
+  } catch {
+    /* non-blocking */
+  }
+}
+
 async function createOrderFromCartWithPayment(userId, options) {
   const result = createOrderFromCart(userId, options);
   if (result.error) return result;
+  triggerOrderAutomation(result.orderNumber);
   const payment = await createPaymentSession({
     orderNumber: result.orderNumber,
     total: result.total,

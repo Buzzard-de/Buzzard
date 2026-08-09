@@ -87,6 +87,38 @@ CREATE TABLE IF NOT EXISTS order_items (
  quantity INTEGER NOT NULL,
  FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS integration_events (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ event_key TEXT UNIQUE NOT NULL,
+ type TEXT NOT NULL,
+ order_number TEXT,
+ provider TEXT,
+ status TEXT NOT NULL,
+ payload TEXT,
+ created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS automation_jobs (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ job_key TEXT UNIQUE NOT NULL,
+ type TEXT NOT NULL,
+ order_number TEXT,
+ status TEXT NOT NULL DEFAULT 'queued',
+ attempts INTEGER NOT NULL DEFAULT 0,
+ next_run_at TEXT,
+ last_error TEXT,
+ payload TEXT,
+ created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS order_flow (
+ order_number TEXT PRIMARY KEY,
+ payment_status TEXT NOT NULL DEFAULT 'pending',
+ fulfillment_status TEXT NOT NULL DEFAULT 'pending',
+ shipping_status TEXT NOT NULL DEFAULT 'pending',
+ supplier_status TEXT NOT NULL DEFAULT 'pending',
+ tracking_number TEXT,
+ last_error TEXT,
+ updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 `);
 
 function seed() {

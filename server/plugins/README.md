@@ -85,6 +85,22 @@ The `commercialIntegrationsPlugin.js` module adds production-oriented adapter bo
 
 Disable with `BUZZARD_COMMERCIAL_INTEGRATIONS=0`. Adapter logic lives in `server/lib/commercialIntegrations.js`.
 
+## Order Automation Plugin (v0.6)
+
+The `orderAutomationPlugin.js` module orchestrates payment, fulfillment, shipping and supplier flows:
+
+- `GET /api/admin/automation-status` — jobs, events, order-flow aggregates
+- `POST /api/automation/order-created` — queue payment + fulfillment jobs
+- `POST /api/webhooks/payment` — idempotent payment webhook model
+- `POST /api/admin/shipment-created` — mark order shipped + tracking
+- `POST /api/admin/supplier-result` — supplier/dropship status update
+- `GET /api/admin/jobs`, `POST /api/admin/jobs/:id/retry`
+- `GET /api/admin/events` — integration event log
+- `GET /api/admin/order-flow/:orderNumber` — per-order orchestration detail
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ORDER_AUTOMATION=0`.
+Tables: `integration_events`, `automation_jobs`, `order_flow` in `server/data/buzzard.db`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

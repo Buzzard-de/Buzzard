@@ -389,3 +389,20 @@
   font-size: 0.75rem;
   letter-spacing: 0.04em;
 }
+
+.automation-queue-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.automation-queue-form input {
+  flex: 1;
+  min-width: 220px;
+  background: #151515;
+  color: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}

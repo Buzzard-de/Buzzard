@@ -187,8 +187,13 @@ function parseBody(req) {
 
 function loadPlugins() {
   const pluginFiles = fs.readdirSync(pluginsDir).filter(file => file.endsWith('.js'));
+  const priority = ['orderAutomationPlugin.js'];
+  const sorted = [
+    ...priority.filter(file => pluginFiles.includes(file)),
+    ...pluginFiles.filter(file => !priority.includes(file)).sort(),
+  ];
 
-  for (const file of pluginFiles) {
+  for (const file of sorted) {
     const plugin = require(path.join(pluginsDir, file));
     if (plugin && typeof plugin.register === 'function') {
       plugin.register(app);

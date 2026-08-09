@@ -182,6 +182,18 @@ function collectHealth() {
     }
   }
 
+  let pimCatalog = { enabled: false };
+  if (process.env.BUZZARD_PIM_CATALOG !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      pimCatalog = {
+        enabled: true,
+        ...require("../lib/pimCatalog").getPimCatalogStatus(),
+      };
+    } catch (error) {
+      pimCatalog = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -200,6 +212,7 @@ function collectHealth() {
     marketplaceHub,
     logisticsFulfillment,
     wmsInventory,
+    pimCatalog,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

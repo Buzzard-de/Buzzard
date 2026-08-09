@@ -1342,6 +1342,179 @@ function migrateWmsInventoryV18() {
 
 migrateWmsInventoryV18();
 
+function migratePimCatalogV19() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS pim_categories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parent_id INTEGER,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      active INTEGER DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS pim_brands (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      active INTEGER DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS pim_products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sku TEXT UNIQUE NOT NULL,
+      brand_id INTEGER,
+      category_id INTEGER,
+      ean TEXT,
+      gtin TEXT,
+      status TEXT DEFAULT 'draft',
+      price REAL DEFAULT 0,
+      cost REAL DEFAULT 0,
+      weight_kg REAL DEFAULT 0,
+      stock INTEGER DEFAULT 0,
+      completeness INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(brand_id) REFERENCES pim_brands(id),
+      FOREIGN KEY(category_id) REFERENCES pim_categories(id)
+    );
+    CREATE TABLE IF NOT EXISTS pim_product_translations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER NOT NULL,
+      language TEXT NOT NULL,
+      title TEXT,
+      short_description TEXT,
+      description TEXT,
+      UNIQUE(product_id, language),
+      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_product_attributes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER NOT NULL,
+      attribute_key TEXT NOT NULL,
+      attribute_value TEXT,
+      unit TEXT,
+      UNIQUE(product_id, attribute_key),
+      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_product_variants (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER NOT NULL,
+      variant_sku TEXT UNIQUE,
+      option_name TEXT,
+      option_value TEXT,
+      ean TEXT,
+      price_delta REAL DEFAULT 0,
+      stock INTEGER DEFAULT 0,
+      active INTEGER DEFAULT 1,
+      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_product_media (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER NOT NULL,
+      media_type TEXT DEFAULT 'image',
+      url TEXT,
+      alt_text TEXT,
+      sort_order INTEGER DEFAULT 0,
+      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_product_seo (
+      product_id INTEGER PRIMARY KEY,
+      meta_title TEXT,
+      meta_description TEXT,
+      slug TEXT UNIQUE,
+      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_catalog_import_jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      source_type TEXT,
+      source_name TEXT,
+      status TEXT DEFAULT 'queued',
+      items_total INTEGER DEFAULT 0,
+      items_processed INTEGER DEFAULT 0,
+      error_message TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      finished_at TEXT
+    );
+  `);
+
+  const categoryCount = db.prepare("SELECT COUNT(*) n FROM pim_categories").get().n;
+  if (categoryCount === 0) {
+    const categories = [
+      ["AUT", "Automotive", "automotive"],
+      ["TXT", "Textile", "textile"],
+      ["COS", "Kozmetik & Kişisel Bakım", "cosmetics"],
+      ["CLN", "Temizlik Ürünleri", "cleaning"],
+      ["SCH", "Okul & Kırtasiye", "school-stationery"],
+      ["PET", "Pet", "pet"],
+      ["GAR", "Bahçe", "garden"],
+      ["SAF", "İş Güvenliği & İş Kıyafetleri", "safety-workwear"],
+      ["HOM", "Home & Living", "home-living"],
+      ["SPT", "Sports & Outdoor", "sports-outdoor"],
+      ["ELE", "Elektronik", "electronics"],
+      ["APP", "Appliances", "appliances"],
+    ];
+    const insertCategory = db.prepare(
+      "INSERT INTO pim_categories(code, name, slug) VALUES(?,?,?)"
+    );
+    categories.forEach((row) => insertCategory.run(...row));
+
+    db.prepare("INSERT INTO pim_brands(name, slug) VALUES(?,?)").run("Buzzard Demo", "buzzard-demo");
+
+    const categoryId = db.prepare("SELECT id FROM pim_categories WHERE code = ?").get("AUT").id;
+    const brandId = db.prepare("SELECT id FROM pim_brands LIMIT 1").get().id;
+    const result = db
+      .prepare(`
+        INSERT INTO pim_products(sku, brand_id, category_id, ean, price, cost, weight_kg, stock, status)
+        VALUES(?,?,?,?,?,?,?,?,?)
+      `)
+      .run("BZ-OIL-5W30", brandId, categoryId, "4000000000012", 39.9, 22, 1, 120, "published");
+    const productId = result.lastInsertRowid;
+
+    db.prepare(`
+      INSERT INTO pim_product_translations(product_id, language, title, short_description, description)
+      VALUES(?,?,?,?,?)
+    `).run(
+      productId,
+      "de-DE",
+      "Premium Motoröl 5W-30",
+      "Hochwertiges Motoröl",
+      "Für moderne Fahrzeuge geeignet."
+    );
+    db.prepare(`
+      INSERT INTO pim_product_translations(product_id, language, title, short_description, description)
+      VALUES(?,?,?,?,?)
+    `).run(
+      productId,
+      "en-GB",
+      "Premium Motor Oil 5W-30",
+      "Premium engine oil",
+      "Suitable for modern vehicles."
+    );
+    db.prepare(`
+      INSERT INTO pim_product_attributes(product_id, attribute_key, attribute_value, unit)
+      VALUES(?,?,?,?)
+    `).run(productId, "Viscosity", "5W-30", "");
+    db.prepare(`
+      INSERT INTO pim_product_media(product_id, media_type, url, alt_text, sort_order)
+      VALUES(?,?,?,?,?)
+    `).run(productId, "image", "https://example.com/demo-oil.jpg", "Premium Motoröl 5W-30", 0);
+    db.prepare(`
+      INSERT INTO pim_product_seo(product_id, meta_title, meta_description, slug)
+      VALUES(?,?,?,?)
+    `).run(
+      productId,
+      "Premium Motoröl 5W-30 | Buzzard",
+      "Premium Motoröl 5W-30 für moderne Fahrzeuge.",
+      "premium-motoroel-5w30"
+    );
+
+    db.prepare("UPDATE pim_products SET completeness = 100, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
+      productId
+    );
+  }
+}
+
+migratePimCatalogV19();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

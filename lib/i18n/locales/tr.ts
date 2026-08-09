@@ -112,6 +112,7 @@ export const catalog: TranslationTree = {
     shippingStandardDesc: "Güvenilir teslimat",
     shippingExpress: "Ekspres kargo",
     shippingExpressDesc: "Öncelikli işlem",
+    deliveryEstimate: "Tahmini teslimat: {estimate}",
     payPaypal: "PayPal",
     payPaypalDesc: "PayPal ile güvenli ödeme",
     payStripe: "Kart (Stripe)",

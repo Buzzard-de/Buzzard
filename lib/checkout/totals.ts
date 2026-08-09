@@ -1,7 +1,7 @@
 import { getProductById } from "@/lib/products/service";
 import type { ProductVariant } from "@/lib/products/types";
 import { validateCoupon } from "./coupons";
-import { calculateShippingCost, freeShippingRemaining } from "./shipping";
+import { calculateShippingCostForLines, freeShippingRemaining } from "./shipping";
 import type { CheckoutCartLineInput, OrderLineQuote, OrderQuote } from "./types";
 
 export function buildVariantLabel(variants: ProductVariant[], variantIds: string[]): string {
@@ -64,7 +64,12 @@ export function calculateOrderQuote(
   const coupon = validateCoupon(couponCode, subtotal);
   const discount = coupon.valid ? coupon.discount : 0;
   const discountedSubtotal = Math.max(0, subtotal - discount);
-  const shipping = calculateShippingCost(discountedSubtotal, shippingMethodId, countryCode);
+  const shipping = calculateShippingCostForLines(
+    discountedSubtotal,
+    shippingMethodId,
+    countryCode,
+    lines
+  );
   const vatAmount =
     Math.round(resolved.reduce((sum, line) => sum + line.vatAmount, 0) * 100) / 100;
   const total = Math.round((discountedSubtotal + shipping) * 100) / 100;

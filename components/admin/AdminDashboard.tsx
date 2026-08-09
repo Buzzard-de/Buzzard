@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchAnalyticsOverview, fetchSalesAnalytics } from "@/lib/analytics/client";
 import type { AnalyticsOverview } from "@/lib/analytics/types";
+import { getDemoOrderStats } from "@/lib/commerce";
 import { formatPrice } from "@/lib/products";
 import Link from "next/link";
 import SimpleLineChart from "./charts/SimpleLineChart";
@@ -10,6 +11,7 @@ import SimpleLineChart from "./charts/SimpleLineChart";
 export default function AdminDashboard() {
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
   const [trend, setTrend] = useState<Array<{ label: string; value: number }>>([]);
+  const [demoStats] = useState(getDemoOrderStats);
 
   useEffect(() => {
     Promise.all([fetchAnalyticsOverview("last_30_days"), fetchSalesAnalytics("last_30_days")])
@@ -21,6 +23,7 @@ export default function AdminDashboard() {
   }, []);
 
   const kpis = overview?.kpis;
+  const showDemoFallback = !kpis;
 
   return (
     <div className="admin-page">
@@ -38,6 +41,17 @@ export default function AdminDashboard() {
           <article className="admin-stat"><strong>{kpis.newCustomers}</strong><span>Neue Kunden</span></article>
           <article className="admin-stat"><strong>{kpis.stockAlerts}</strong><span>Bestandswarnungen</span></article>
         </div>
+      )}
+
+      {showDemoFallback && (
+        <section className="admin-panel">
+          <h2>Demo-Daten (v0.2)</h2>
+          <p className="admin-note">Live-Analytics sind ohne API nicht verfügbar. Demo-Bestellungen aus dem E-Commerce-Starter:</p>
+          <div className="admin-stat-grid">
+            <article className="admin-stat"><strong>{formatPrice(demoStats.revenue)}</strong><span>Demo-Umsatz</span></article>
+            <article className="admin-stat"><strong>{demoStats.orders}</strong><span>Demo-Bestellungen</span></article>
+          </div>
+        </section>
       )}
 
       <section className="admin-panel">

@@ -13,7 +13,7 @@ import {
   calculateOrderQuote,
   cartLinesToInput,
 } from "@/lib/checkout";
-import { calculateShippingCost, freeShippingRemaining } from "@/lib/checkout/shipping";
+import { calculateShippingCostForLines, freeShippingRemaining } from "@/lib/checkout/shipping";
 import { validateCoupon } from "@/lib/checkout/coupons";
 import {
   cartCount,
@@ -121,15 +121,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const coupon = validateCoupon(couponCode, subtotal);
     const discount = coupon.valid ? coupon.discount : 0;
     const discounted = Math.max(0, subtotal - discount);
-    const shipping = calculateShippingCost(discounted, "standard", countryCode);
+    const lineInputs = items.map((item) => ({
+      productId: item.productId,
+      variantIds: item.variantIds,
+      qty: item.qty,
+    }));
+    const shipping = calculateShippingCostForLines(discounted, "standard", countryCode, lineInputs);
     const quote = calculateOrderQuote(
-      cartLinesToInput(
-        items.map((item) => ({
-          productId: item.productId,
-          variantIds: item.variantIds,
-          qty: item.qty,
-        }))
-      ),
+      cartLinesToInput(lineInputs),
       "standard",
       coupon.valid ? coupon.normalizedCode : undefined,
       countryCode

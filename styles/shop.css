@@ -467,6 +467,12 @@
   margin-bottom: 16px;
 }
 
+.checkout-delivery-estimate {
+  margin: -8px 0 16px;
+  color: #888;
+  font-size: 0.88rem;
+}
+
 .checkout-section label,
 .checkout-form label {
   display: block;

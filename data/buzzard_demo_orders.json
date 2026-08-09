@@ -1,0 +1,20 @@
+[
+  {
+    "id": "BZ-10001",
+    "date": "2026-08-08",
+    "customer": "Demo Customer",
+    "country": "DE",
+    "status": "Paid",
+    "totalEUR": 92.89,
+    "items": 2
+  },
+  {
+    "id": "BZ-10002",
+    "date": "2026-08-09",
+    "customer": "Demo Customer",
+    "country": "FR",
+    "status": "Processing",
+    "totalEUR": 54.8,
+    "items": 1
+  }
+]

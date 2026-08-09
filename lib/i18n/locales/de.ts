@@ -124,6 +124,7 @@ export const catalog: TranslationTree = {
     shippingStandardDesc: "DHL / DPD – zuverlässig und günstig",
     shippingExpress: "Expressversand",
     shippingExpressDesc: "Priorisierte Bearbeitung",
+    deliveryEstimate: "Voraussichtliche Lieferung: {estimate}",
     payPaypal: "PayPal",
     payPaypalDesc: "Schnell und sicher mit PayPal",
     payStripe: "Karte (Stripe)",

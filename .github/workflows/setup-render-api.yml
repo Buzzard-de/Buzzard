@@ -28,7 +28,10 @@ jobs:
             export RENDER_API_KEY="$RENDER_API_KEY_INPUT"
           fi
           if [ -z "$RENDER_API_KEY" ]; then
-            echo "Set repository secret RENDER_API_KEY or provide render_api_key workflow input."
+            echo "::error::RENDER_API_KEY fehlt."
+            echo "1) GitHub → Buzzard-de/Buzzard → Settings → Secrets → Actions → RENDER_API_KEY"
+            echo "2) Oder Cursor Cloud Environment → Secrets → RENDER_API_KEY"
+            echo "3) Oder Blueprint: https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard"
             exit 1
           fi
           node scripts/render-bootstrap.mjs

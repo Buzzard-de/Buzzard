@@ -1,0 +1,5 @@
+{
+  "install": "npm ci\ncd server && npm ci",
+  "start": "node scripts/auto-render-if-ready.mjs",
+  "terminals": []
+}

@@ -241,6 +241,8 @@ const server = http.createServer(async (req, res) => {
 
     req.params = route.params;
     try {
+      const queryParams = Object.fromEntries(requestUrl.searchParams.entries());
+      req.query = queryParams;
       if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH' || req.method === 'DELETE') {
         req.body = await parseBody(req);
       }

@@ -41,11 +41,20 @@ function collectHealth() {
   const suppliers = supplierStore.listSuppliers?.() || [];
   const lowStock = products.filter((p) => p.stock > 0 && p.stock < 10);
   const failedFulfillments = fulfillmentStore.readFulfillments().filter((f) => f.status === "failed");
+  let database = { enabled: false };
+  if (process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      database = require("../lib/db").getDatabaseHealth();
+    } catch (error) {
+      database = { enabled: true, error: error.message };
+    }
+  }
 
   return {
     status: "ok",
     app: "Buzzard API",
     timestamp: new Date().toISOString(),
+    database,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     rootDir: .
-    buildCommand: npm ci
+    buildCommand: cd server && npm ci
     startCommand: node server/server.js
     healthCheckPath: /api/health
     envVars:
@@ -14,3 +14,11 @@ services:
         value: 10000
       - key: BUZZARD_AI_CHAT_ENABLED
         value: "1"
+      - key: BUZZARD_DB_ENABLED
+        value: "1"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@buzzard.de
+      - key: ADMIN_PASSWORD
+        generateValue: true

@@ -72,6 +72,7 @@ services:
         value: "1"
       - key: BUZZARD_SUPPLIER_INTEGRATION_HUB
         value: "1"
+      - key: BUZZARD_ORDER_MANAGEMENT_V32
         value: "1"
       - key: BUZZARD_FULFILLMENT_V33
         value: "1"
@@ -89,6 +90,14 @@ services:
         value: "1"
       - key: BUZZARD_MASTER_ADMIN_V40
         value: "1"
+      - key: PUBLIC_BASE_URL
+        value: https://buzzard24.de
+      - key: DEFAULT_SUPPLIER_MODE
+        value: manual
+      - key: BUZZARD_ABANDONED_CART_DELAY_HOURS
+        value: "24"
+      - key: BUZZARD_SALES_ENABLED
+        value: "0"
       - key: DEFAULT_PAYMENT_PROVIDER
         value: stripe
       - key: DEFAULT_CARRIER

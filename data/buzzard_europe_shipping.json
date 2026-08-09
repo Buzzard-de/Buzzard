@@ -1,0 +1,149 @@
+{
+  "DEFAULT": {
+    "freeShippingFrom": 100,
+    "rates": [
+      {
+        "maxKg": 2,
+        "price": 7.99
+      },
+      {
+        "maxKg": 5,
+        "price": 10.99
+      },
+      {
+        "maxKg": 10,
+        "price": 15.99
+      },
+      {
+        "maxKg": 20,
+        "price": 24.99
+      }
+    ]
+  },
+  "DE": {
+    "freeShippingFrom": 79,
+    "rates": [
+      {
+        "maxKg": 2,
+        "price": 4.99
+      },
+      {
+        "maxKg": 5,
+        "price": 6.99
+      },
+      {
+        "maxKg": 10,
+        "price": 9.99
+      },
+      {
+        "maxKg": 20,
+        "price": 14.99
+      }
+    ]
+  },
+  "FR": {
+    "freeShippingFrom": 99,
+    "rates": [
+      {
+        "maxKg": 2,
+        "price": 8.99
+      },
+      {
+        "maxKg": 5,
+        "price": 11.99
+      },
+      {
+        "maxKg": 10,
+        "price": 16.99
+      },
+      {
+        "maxKg": 20,
+        "price": 25.99
+      }
+    ]
+  },
+  "NL": {
+    "freeShippingFrom": 99,
+    "rates": [
+      {
+        "maxKg": 2,
+        "price": 7.99
+      },
+      {
+        "maxKg": 5,
+        "price": 9.99
+      },
+      {
+        "maxKg": 10,
+        "price": 14.99
+      },
+      {
+        "maxKg": 20,
+        "price": 22.99
+      }
+    ]
+  },
+  "PL": {
+    "freeShippingFrom": 449,
+    "rates": [
+      {
+        "maxKg": 2,
+        "price": 29.99
+      },
+      {
+        "maxKg": 5,
+        "price": 39.99
+      },
+      {
+        "maxKg": 10,
+        "price": 54.99
+      },
+      {
+        "maxKg": 20,
+        "price": 79.99
+      }
+    ]
+  },
+  "CH": {
+    "freeShippingFrom": 129,
+    "rates": [
+      {
+        "maxKg": 2,
+        "price": 12.99
+      },
+      {
+        "maxKg": 5,
+        "price": 18.99
+      },
+      {
+        "maxKg": 10,
+        "price": 29.99
+      },
+      {
+        "maxKg": 20,
+        "price": 44.99
+      }
+    ]
+  },
+  "GB": {
+    "freeShippingFrom": 99,
+    "rates": [
+      {
+        "maxKg": 2,
+        "price": 9.99
+      },
+      {
+        "maxKg": 5,
+        "price": 14.99
+      },
+      {
+        "maxKg": 10,
+        "price": 21.99
+      },
+      {
+        "maxKg": 20,
+        "price": 34.99
+      }
+    ]
+  }
+}

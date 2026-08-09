@@ -12,6 +12,7 @@ import {
   cartLinesToInput,
   emptyAddress,
   emptyCustomer,
+  getCountry,
   validateCheckoutPayload,
   validateCustomer,
   validateAddress,
@@ -27,6 +28,7 @@ import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
 import { isCheckoutEnabled } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
+import { useMarket } from "@/lib/market/context";
 
 const STEPS: CheckoutStep[] = [
   "customer",
@@ -44,6 +46,7 @@ function stepIndex(step: CheckoutStep): number {
 export default function CheckoutForm() {
   const router = useRouter();
   const { t } = useLocale();
+  const { countryCode } = useMarket();
   const { user: accountUser, ready: accountReady } = useAccount();
   const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
   const [step, setStep] = useState<CheckoutStep>("customer");
@@ -65,6 +68,11 @@ export default function CheckoutForm() {
     vatAmount: number;
     total: number;
   } | null>(null);
+
+  useEffect(() => {
+    setShippingAddress((prev) => ({ ...prev, country: countryCode }));
+    setBillingAddress((prev) => ({ ...prev, country: countryCode }));
+  }, [countryCode]);
 
   useEffect(() => {
     if (items.length === 0) {
@@ -431,7 +439,7 @@ export default function CheckoutForm() {
                   <br />
                   {shippingAddress.zip} {shippingAddress.city}
                   <br />
-                  {t(`country.${shippingAddress.country}`)}
+                  {getCountry(shippingAddress.country)?.name ?? shippingAddress.country}
                 </p>
               </div>
               <label className="checkout-checkbox">
@@ -598,7 +606,7 @@ function AddressFields({
       >
         {CHECKOUT_COUNTRIES.map((country) => (
           <option key={country.code} value={country.code}>
-            {t(country.labelKey)}
+            {country.name}
           </option>
         ))}
       </select>

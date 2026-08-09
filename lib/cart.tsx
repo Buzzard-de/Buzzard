@@ -24,6 +24,7 @@ import {
 } from "@/lib/cart/types";
 import { resolveLinePricing } from "@/lib/checkout/totals";
 import { trackMarketingEvent } from "@/lib/marketing/events";
+import { useMarket } from "@/lib/market/context";
 
 const STORAGE_KEY = "buzzard_cart";
 const COUPON_KEY = "buzzard_coupon";
@@ -86,6 +87,7 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { countryCode } = useMarket();
   const [items, setItems] = useState<CartLineItem[]>([]);
   const [couponCode, setCouponCode] = useState("");
   const [couponErrorKey, setCouponErrorKey] = useState<string | null>(null);
@@ -119,7 +121,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const coupon = validateCoupon(couponCode, subtotal);
     const discount = coupon.valid ? coupon.discount : 0;
     const discounted = Math.max(0, subtotal - discount);
-    const shipping = calculateShippingCost(discounted, "standard");
+    const shipping = calculateShippingCost(discounted, "standard", countryCode);
     const quote = calculateOrderQuote(
       cartLinesToInput(
         items.map((item) => ({
@@ -129,7 +131,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }))
       ),
       "standard",
-      coupon.valid ? coupon.normalizedCode : undefined
+      coupon.valid ? coupon.normalizedCode : undefined,
+      countryCode
     );
     return {
       subtotal,
@@ -137,9 +140,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       discount,
       vatAmount: quote?.vatAmount ?? 0,
       total: quote?.total ?? discounted + shipping,
-      freeShippingRemaining: freeShippingRemaining(discounted),
+      freeShippingRemaining: freeShippingRemaining(discounted, countryCode),
     };
-  }, [items, couponCode]);
+  }, [items, couponCode, countryCode]);
 
   const add = useCallback(
     (input: AddToCartInput) => {

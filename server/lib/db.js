@@ -2568,6 +2568,198 @@ function migrateAdvancedSearchV29() {
 
 migrateAdvancedSearchV29();
 
+function migrateProductCatalogPimV30() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS pim30_brands (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      status TEXT DEFAULT 'active',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim30_categories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parent_id INTEGER,
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      level INTEGER DEFAULT 1,
+      status TEXT DEFAULT 'active',
+      sort_order INTEGER DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS pim30_products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sku TEXT UNIQUE NOT NULL,
+      parent_sku TEXT DEFAULT '',
+      barcode TEXT DEFAULT '',
+      brand_id INTEGER,
+      category_id INTEGER,
+      product_type TEXT DEFAULT 'simple',
+      status TEXT DEFAULT 'draft',
+      cost_price REAL DEFAULT 0,
+      selling_price REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      tax_class TEXT DEFAULT 'standard',
+      stock_qty INTEGER DEFAULT 0,
+      weight_kg REAL DEFAULT 0,
+      supplier_id TEXT DEFAULT '',
+      supplier_sku TEXT DEFAULT '',
+      supplier_feed_ref TEXT DEFAULT '',
+      tecdoc_ref TEXT DEFAULT '',
+      completeness INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim30_product_translations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER,
+      language TEXT,
+      title TEXT DEFAULT '',
+      short_description TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      meta_title TEXT DEFAULT '',
+      meta_description TEXT DEFAULT '',
+      slug TEXT DEFAULT '',
+      UNIQUE(product_id, language)
+    );
+    CREATE TABLE IF NOT EXISTS pim30_product_attributes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER,
+      attribute_code TEXT,
+      attribute_value TEXT,
+      language TEXT DEFAULT '',
+      UNIQUE(product_id, attribute_code, language)
+    );
+    CREATE TABLE IF NOT EXISTS pim30_product_media (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER,
+      media_type TEXT DEFAULT 'image',
+      url TEXT,
+      alt_text TEXT DEFAULT '',
+      sort_order INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'active'
+    );
+    CREATE TABLE IF NOT EXISTS pim30_product_variants (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parent_product_id INTEGER,
+      sku TEXT UNIQUE NOT NULL,
+      barcode TEXT DEFAULT '',
+      option_json TEXT DEFAULT '{}',
+      selling_price REAL DEFAULT 0,
+      stock_qty INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'active'
+    );
+  `);
+
+  const brandCount = db.prepare("SELECT COUNT(*) n FROM pim30_brands").get().n;
+  if (brandCount === 0) {
+    const brand = db.prepare("INSERT INTO pim30_brands(name, slug) VALUES(?,?)");
+    brand.run("Castrol", "castrol");
+    brand.run("Michelin", "michelin");
+    brand.run("Buzzard Care", "buzzard-care");
+    brand.run("Buzzard Garden", "buzzard-garden");
+
+    const category = db.prepare(`
+      INSERT INTO pim30_categories(parent_id, name, slug, level)
+      VALUES(?,?,?,?)
+    `);
+    category.run(null, "Automotive", "automotive", 1);
+    category.run(null, "Garden", "garden", 1);
+
+    const auto = db.prepare("SELECT id FROM pim30_categories WHERE slug = 'automotive'").get();
+    category.run(auto.id, "Motor Oils", "motor-oils", 2);
+    category.run(auto.id, "Tires", "tires", 2);
+    category.run(auto.id, "Car Care", "car-care", 2);
+
+    const garden = db.prepare("SELECT id FROM pim30_categories WHERE slug = 'garden'").get();
+    category.run(garden.id, "Water Storage & Irrigation", "water-storage-irrigation", 2);
+
+    const castrol = db.prepare("SELECT id FROM pim30_brands WHERE slug = 'castrol'").get();
+    const motorOils = db.prepare("SELECT id FROM pim30_categories WHERE slug = 'motor-oils'").get();
+
+    const product = db
+      .prepare(`
+        INSERT INTO pim30_products(
+          sku, barcode, brand_id, category_id, product_type, status, cost_price, selling_price,
+          stock_qty, supplier_id, supplier_sku, tecdoc_ref
+        )
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+      `)
+      .run(
+        "BZ-OIL-5W30",
+        "4008177104722",
+        castrol.id,
+        motorOils.id,
+        "simple",
+        "active",
+        32,
+        49.9,
+        40,
+        "SUP-DEMO",
+        "CAST-5W30",
+        "TEC-00001"
+      );
+
+    db.prepare(`
+      INSERT INTO pim30_product_translations(
+        product_id, language, title, short_description, description, meta_title, meta_description, slug
+      )
+      VALUES(?,?,?,?,?,?,?,?)
+    `).run(
+      product.lastInsertRowid,
+      "de",
+      "Castrol Edge 5W-30 Motoröl",
+      "Premium Motoröl",
+      "Hochwertiges 5W-30 Motoröl für kompatible Fahrzeuge.",
+      "Castrol Edge 5W-30 | Buzzard",
+      "Premium Motoröl bei Buzzard",
+      "castrol-edge-5w30"
+    );
+
+    db.prepare(`
+      INSERT INTO pim30_product_translations(product_id, language, title, description)
+      VALUES(?,?,?,?)
+    `).run(
+      product.lastInsertRowid,
+      "en",
+      "Castrol Edge 5W-30 Engine Oil",
+      "Premium 5W-30 engine oil for compatible vehicles."
+    );
+
+    db.prepare(`
+      INSERT INTO pim30_product_attributes(product_id, attribute_code, attribute_value)
+      VALUES(?,?,?)
+    `).run(product.lastInsertRowid, "viscosity", "5W-30");
+
+    db.prepare(`
+      INSERT INTO pim30_product_attributes(product_id, attribute_code, attribute_value)
+      VALUES(?,?,?)
+    `).run(product.lastInsertRowid, "volume", "5L");
+
+    db.prepare(`
+      INSERT INTO pim30_product_media(product_id, media_type, url, alt_text)
+      VALUES(?,?,?,?)
+    `).run(
+      product.lastInsertRowid,
+      "image",
+      "/media/demo/castrol-edge-5w30.jpg",
+      "Castrol Edge 5W-30 Motoröl"
+    );
+
+    const row = db.prepare("SELECT * FROM pim30_products WHERE id = ?").get(product.lastInsertRowid);
+    let score = 0;
+    if (row.sku) score += 10;
+    if (row.barcode) score += 5;
+    if (row.brand_id) score += 10;
+    if (row.category_id) score += 10;
+    if (row.selling_price > 0) score += 10;
+    if (row.stock_qty >= 0) score += 5;
+    score += 15 + 10 + 5 + 10 + 10;
+    db.prepare("UPDATE pim30_products SET completeness = ? WHERE id = ?").run(Math.min(100, score), row.id);
+  }
+}
+
+migrateProductCatalogPimV30();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

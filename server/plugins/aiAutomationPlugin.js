@@ -314,6 +314,18 @@ function collectHealth() {
     }
   }
 
+  let productCatalogPim = { enabled: false };
+  if (process.env.BUZZARD_PRODUCT_CATALOG_PIM !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      productCatalogPim = {
+        enabled: true,
+        ...require("../lib/productCatalogPim").getProductCatalogPimStatus(),
+      };
+    } catch (error) {
+      productCatalogPim = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -343,6 +355,7 @@ function collectHealth() {
     reviewsRatings,
     aiCenter,
     advancedSearch,
+    productCatalogPim,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

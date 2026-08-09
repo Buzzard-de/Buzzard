@@ -2279,6 +2279,111 @@ function migrateMarketingLoyaltyV26() {
 
 migrateMarketingLoyaltyV26();
 
+function migrateReviewsRatingsV27() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS revr_reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_sku TEXT NOT NULL,
+      customer_id INTEGER,
+      customer_name TEXT DEFAULT '',
+      order_number TEXT DEFAULT '',
+      rating INTEGER NOT NULL,
+      title TEXT DEFAULT '',
+      body TEXT NOT NULL,
+      status TEXT DEFAULT 'pending',
+      verified_purchase INTEGER DEFAULT 0,
+      risk_flag TEXT DEFAULT 'none',
+      helpful_count INTEGER DEFAULT 0,
+      report_count INTEGER DEFAULT 0,
+      language TEXT DEFAULT 'de',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS revr_review_media (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      review_id INTEGER,
+      media_type TEXT DEFAULT 'image',
+      storage_key TEXT,
+      url TEXT,
+      alt_text TEXT DEFAULT '',
+      status TEXT DEFAULT 'pending',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS revr_review_votes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      review_id INTEGER,
+      customer_id INTEGER,
+      vote TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(review_id, customer_id)
+    );
+    CREATE TABLE IF NOT EXISTS revr_review_replies (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      review_id INTEGER,
+      author_type TEXT,
+      author_name TEXT,
+      body TEXT,
+      status TEXT DEFAULT 'published',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS revr_review_reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      review_id INTEGER,
+      customer_id INTEGER,
+      reason TEXT,
+      status TEXT DEFAULT 'open',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS revr_product_rating_stats (
+      product_sku TEXT PRIMARY KEY,
+      review_count INTEGER DEFAULT 0,
+      average_rating REAL DEFAULT 0,
+      rating_1 INTEGER DEFAULT 0,
+      rating_2 INTEGER DEFAULT 0,
+      rating_3 INTEGER DEFAULT 0,
+      rating_4 INTEGER DEFAULT 0,
+      rating_5 INTEGER DEFAULT 0,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const reviewCount = db.prepare("SELECT COUNT(*) n FROM revr_reviews").get().n;
+  if (reviewCount === 0) {
+    const customer = db.prepare("SELECT id, first_name, last_name FROM crmcs_customers LIMIT 1").get();
+    const customerId = customer?.id || 1;
+    const customerName = customer
+      ? `${customer.first_name || ""} ${customer.last_name || ""}`.trim() || "Demo Kunde"
+      : "Demo Kunde";
+
+    db.prepare(`
+      INSERT INTO revr_reviews(
+        product_sku, customer_id, customer_name, order_number, rating, title, body,
+        status, verified_purchase
+      )
+      VALUES(?,?,?,?,?,?,?,?,?)
+    `).run(
+      "BZ-OIL-5W30",
+      customerId,
+      customerName,
+      "BZ-2026-DEMO01",
+      5,
+      "Sehr gutes Produkt",
+      "Schnelle Lieferung und gute Qualität.",
+      "published",
+      1
+    );
+
+    db.prepare(`
+      INSERT INTO revr_product_rating_stats(
+        product_sku, review_count, average_rating, rating_1, rating_2, rating_3, rating_4, rating_5
+      )
+      VALUES(?,?,?,?,?,?,?,?)
+    `).run("BZ-OIL-5W30", 1, 5, 0, 0, 0, 0, 1);
+  }
+}
+
+migrateReviewsRatingsV27();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

@@ -22,6 +22,7 @@ const NAV = [
   { href: "/admin/crm-customer-service/", label: "CRM v2.4" },
   { href: "/admin/returns-rma/", label: "RMA v2.5" },
   { href: "/admin/marketing-loyalty/", label: "Mktg v2.6" },
+  { href: "/admin/reviews-ratings/", label: "Reviews v2.7" },
   { href: "/admin/localization/", label: "Localization" },
   { href: "/admin/customer-checkout/", label: "Checkout" },
   { href: "/admin/customer-support/", label: "Support" },

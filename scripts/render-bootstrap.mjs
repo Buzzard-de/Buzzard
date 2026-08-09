@@ -37,6 +37,7 @@ const ENV_VARS = [
   { key: "BUZZARD_CRM_CUSTOMER_SERVICE", value: "1" },
   { key: "BUZZARD_RETURNS_RMA", value: "1" },
   { key: "BUZZARD_MARKETING_LOYALTY", value: "1" },
+  { key: "BUZZARD_REVIEWS_RATINGS", value: "1" },
   { key: "DEFAULT_PAYMENT_PROVIDER", value: "stripe" },
   { key: "DEFAULT_CARRIER", value: "dhl" },
   { key: "ADMIN_EMAIL", value: "admin@buzzard.de" },

@@ -3,9 +3,10 @@ services:
     name: buzzard-api
     runtime: node
     plan: free
+    region: frankfurt
     repo: https://github.com/Buzzard-de/Buzzard
     branch: main
-    autoDeploy: true
+    autoDeployTrigger: commit
     rootDir: .
     buildCommand: cd server && npm ci
     startCommand: node server/server.js

@@ -35,6 +35,18 @@ Der Build landet im Ordner `out/`. Der GitHub Actions Workflow baut und deployed
 
 Live-Domain: https://www.buzzard24.de
 
+## Buzzard API (Render)
+
+Admin-Panels und dynamische Module benötigen die Node-API unter `https://buzzard-api.onrender.com`.
+
+**Einmalig live schalten** (kein GitHub-Secret nötig):
+
+1. [Render Blueprint öffnen](https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard)
+2. Mit GitHub anmelden und Blueprint deployen (`buzzard-api`, Region Frankfurt)
+3. Health prüfen: `GET https://buzzard-api.onrender.com/api/health`
+
+Alternativ: GitHub Secret `RENDER_API_KEY` setzen und Workflow **Setup Render API** ausführen.
+
 ## Lokale API (optional)
 
 Der Ordner `server/` enthält eine optionale lokale API für das Kontaktformular im Entwicklungsmodus.

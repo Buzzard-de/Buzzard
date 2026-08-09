@@ -32,6 +32,7 @@ jobs:
         env:
           NEXT_PUBLIC_SITE_URL: https://buzzard24.de
           NEXT_PUBLIC_SALES_ENABLED: "0"
+          NEXT_PUBLIC_SQLITE_STORE: "1"
           NEXT_PUBLIC_BUZZARD_API_URL: ${{ vars.BUZZARD_API_URL || secrets.BUZZARD_API_URL || 'https://buzzard-api.onrender.com' }}
           NEXT_PUBLIC_CATALOG_SEO: "1"
           NEXT_PUBLIC_VEHICLE_API: "1"

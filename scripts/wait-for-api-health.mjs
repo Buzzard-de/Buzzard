@@ -6,12 +6,14 @@
  * Env:
  *   HEALTH_TIMEOUT_MS — max wait (default 15 min)
  *   FAST_FAIL_NO_SERVER=1 — exit immediately when Render returns x-render-routing: no-server
+ *   ALLOW_UNPROVISIONED=1 — exit 0 with warning when no-server (CI when Blueprint not connected yet)
  */
 
 const DEFAULT_URL = "https://buzzard-api.onrender.com";
 const HEALTH_PATH = "/api/health";
 const timeoutMs = Number(process.env.HEALTH_TIMEOUT_MS || 15 * 60 * 1000);
 const fastFailNoServer = process.env.FAST_FAIL_NO_SERVER === "1";
+const allowUnprovisioned = process.env.ALLOW_UNPROVISIONED === "1";
 const baseUrl = (process.argv[2] || process.env.BUZZARD_API_URL || DEFAULT_URL).replace(/\/$/, "");
 const healthUrl = `${baseUrl}${HEALTH_PATH}`;
 
@@ -46,6 +48,10 @@ async function main() {
       if (fastFailNoServer && response.status === 404 && routing === "no-server") {
         console.error("Render reports no-server — buzzard-api was never provisioned.");
         printSetupHelp();
+        if (allowUnprovisioned) {
+          console.warn("ALLOW_UNPROVISIONED=1 — continuing without live API.");
+          return;
+        }
         process.exit(1);
       }
 

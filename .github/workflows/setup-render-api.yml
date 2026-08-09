@@ -1,0 +1,34 @@
+name: Setup Render API
+
+on:
+  workflow_dispatch:
+    inputs:
+      render_api_key:
+        description: Render API key (Account Settings → API Keys)
+        required: false
+        type: string
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bootstrap buzzard-api on Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID || '' }}
+          RENDER_API_KEY_INPUT: ${{ inputs.render_api_key }}
+        run: |
+          if [ -z "$RENDER_API_KEY" ]; then
+            export RENDER_API_KEY="$RENDER_API_KEY_INPUT"
+          fi
+          if [ -z "$RENDER_API_KEY" ]; then
+            echo "Set repository secret RENDER_API_KEY or provide render_api_key workflow input."
+            exit 1
+          fi
+          node scripts/render-bootstrap.mjs

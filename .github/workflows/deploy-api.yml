@@ -8,6 +8,7 @@ on:
       - "data/**"
       - "package.json"
       - "render.yaml"
+      - "scripts/render-bootstrap.mjs"
   workflow_dispatch:
 
 jobs:
@@ -16,15 +17,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Trigger Render deploy hook
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Deploy to Render
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID || '' }}
         run: |
           if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
             curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
             echo "Render deploy hook triggered."
-          else
-            echo "RENDER_DEPLOY_HOOK_URL is not set."
-            echo "Connect render.yaml in the Render dashboard or add the deploy hook secret."
-            echo "Default API URL for frontend: https://buzzard-api.onrender.com"
+            exit 0
           fi
+
+          if [ -n "$RENDER_API_KEY" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL is not set; redeploying via Render API."
+            node scripts/render-bootstrap.mjs
+            exit 0
+          fi
+
+          echo "No Render deploy hook or API key configured."
+          echo "Run workflow 'Setup Render API' once, or connect render.yaml in Render:"
+          echo "https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard"
+          echo "Default API URL for frontend: https://buzzard-api.onrender.com"

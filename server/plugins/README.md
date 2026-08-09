@@ -229,6 +229,24 @@ Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ANALYTICS_DASHBO
 Tables: `analytics_orders`, `analytics_events`, `analytics_customers`.
 Does not replace the JSON-based `/api/admin/analytics/*` engine in `analyticsPlugin.js`.
 
+## Marketing Center Plugin (v1.4)
+
+The `marketingCenterPlugin.js` module adds campaign management, UTM tracking, and ad platform adapter boundaries:
+
+- `POST /api/marketing-center/events` — UTM-aware marketing event ingestion
+- `POST /api/marketing-center/conversion` — campaign conversion attribution
+- `GET /api/marketing-center/campaign/:slug` — campaign landing URL by UTM slug
+- `GET /api/admin/marketing-center/summary` — spend, revenue, ROAS KPIs
+- `GET /api/admin/marketing-center/campaigns` — campaign list with ROAS
+- `POST /api/admin/marketing-center/campaigns` — create campaign
+- `POST /api/admin/marketing-center/campaigns/:id/spend` — record ad spend
+- `GET /api/admin/marketing-center/channels|utm|providers` — channel and UTM breakdowns
+- `PATCH /api/admin/marketing-center/providers/:provider` — toggle provider adapter (demo)
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_MARKETING_CENTER=0`.
+Tables: `marketing_campaigns`, `marketing_campaign_spend`, `marketing_campaign_conversions`, `marketing_center_events`, `marketing_provider_connections`.
+Frontend admin: `/admin/marketing-center/`. Set `NEXT_PUBLIC_MARKETING_CENTER=1`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

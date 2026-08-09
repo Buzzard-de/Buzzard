@@ -1,4 +1,5 @@
 import { maybeTrackAnalyticsDashboard } from "@/lib/analyticsDashboard/tracker";
+import { maybeTrackMarketingCenter } from "@/lib/marketingCenter/tracker";
 
 export type MarketingEventName =
   | "page_view"
@@ -42,6 +43,7 @@ export function trackMarketingEvent(name: MarketingEventName, payload: Marketing
   });
   window.dispatchEvent(new CustomEvent("buzzard:analytics", { detail: { name, payload } }));
   maybeTrackAnalyticsDashboard(name, payload);
+  maybeTrackMarketingCenter(name, payload);
 }
 
 if (typeof window !== "undefined") {

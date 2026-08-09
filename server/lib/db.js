@@ -755,6 +755,141 @@ function migrateAnalyticsDashboard() {
 
 migrateAnalyticsDashboard();
 
+function migrateMarketingCenter() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS marketing_campaigns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
+      channel TEXT NOT NULL,
+      objective TEXT DEFAULT 'sales',
+      status TEXT DEFAULT 'draft',
+      budget REAL DEFAULT 0,
+      start_date TEXT,
+      end_date TEXT,
+      utm_source TEXT,
+      utm_medium TEXT,
+      utm_campaign TEXT,
+      coupon_code TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS marketing_campaign_spend (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      campaign_id INTEGER,
+      spend REAL NOT NULL,
+      currency TEXT DEFAULT 'EUR',
+      spend_date TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(campaign_id) REFERENCES marketing_campaigns(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS marketing_campaign_conversions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      campaign_id INTEGER,
+      order_number TEXT,
+      revenue REAL,
+      currency TEXT DEFAULT 'EUR',
+      source TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(campaign_id, order_number),
+      FOREIGN KEY(campaign_id) REFERENCES marketing_campaigns(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS marketing_center_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id TEXT,
+      event_type TEXT,
+      campaign TEXT,
+      source TEXT,
+      medium TEXT,
+      country_code TEXT,
+      product_sku TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS marketing_provider_connections (
+      provider TEXT PRIMARY KEY,
+      enabled INTEGER DEFAULT 0,
+      account_label TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const providers = ["google_ads", "meta", "tiktok", "ebay", "amazon", "google_shopping"];
+  const insertProvider = db.prepare(
+    "INSERT OR IGNORE INTO marketing_provider_connections(provider) VALUES(?)"
+  );
+  providers.forEach((provider) => insertProvider.run(provider));
+
+  const campaignCount = db.prepare("SELECT COUNT(*) n FROM marketing_campaigns").get().n;
+  if (campaignCount === 0) {
+    const insertCampaign = db.prepare(`
+      INSERT INTO marketing_campaigns(name, channel, objective, status, budget, start_date, end_date, utm_source, utm_medium, utm_campaign, coupon_code)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?)
+    `);
+    insertCampaign.run(
+      "Summer Europe",
+      "google_ads",
+      "sales",
+      "active",
+      5000,
+      "2026-08-01",
+      "2026-08-31",
+      "google",
+      "cpc",
+      "summer-europe",
+      "SUMMER10"
+    );
+    insertCampaign.run(
+      "Social Launch",
+      "meta",
+      "sales",
+      "active",
+      2500,
+      "2026-08-01",
+      "2026-08-31",
+      "meta",
+      "paid_social",
+      "social-launch",
+      "WELCOME10"
+    );
+    insertCampaign.run(
+      "Marketplace Push",
+      "amazon",
+      "sales",
+      "active",
+      3000,
+      "2026-08-01",
+      "2026-08-31",
+      "amazon",
+      "marketplace",
+      "marketplace-push",
+      ""
+    );
+
+    const insertSpend = db.prepare(
+      "INSERT INTO marketing_campaign_spend(campaign_id, spend, spend_date) VALUES(?,?,?)"
+    );
+    insertSpend.run(1, 1650, "2026-08-08");
+    insertSpend.run(2, 900, "2026-08-08");
+    insertSpend.run(3, 1200, "2026-08-08");
+
+    const insertConversion = db.prepare(
+      "INSERT INTO marketing_campaign_conversions(campaign_id, order_number, revenue, source) VALUES(?,?,?,?)"
+    );
+    insertConversion.run(1, "BZ-MKT-1001", 5200, "google");
+    insertConversion.run(1, "BZ-MKT-1002", 1800, "google");
+    insertConversion.run(2, "BZ-MKT-1003", 3100, "meta");
+    insertConversion.run(3, "BZ-MKT-1004", 4200, "amazon");
+
+    const insertEvent = db.prepare(`
+      INSERT INTO marketing_center_events(session_id, event_type, campaign, source, medium, country_code, product_sku)
+      VALUES(?,?,?,?,?,?,?)
+    `);
+    insertEvent.run("mc1", "page_view", "summer-europe", "google", "cpc", "DE", "");
+    insertEvent.run("mc2", "page_view", "social-launch", "meta", "paid_social", "DE", "");
+    insertEvent.run("mc3", "view_item", "summer-europe", "google", "cpc", "DE", "BZ-OIL-5W30");
+    insertEvent.run("mc4", "add_to_cart", "summer-europe", "google", "cpc", "DE", "BZ-OIL-5W30");
+  }
+}
+
+migrateMarketingCenter();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

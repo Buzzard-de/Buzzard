@@ -68,6 +68,15 @@ function collectHealth() {
     }
   }
 
+  let supplierHub = { enabled: false };
+  if (process.env.BUZZARD_SUPPLIER_HUB !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      supplierHub = { enabled: true, ...require("../lib/supplierHub").getSupplierHubStatus() };
+    } catch (error) {
+      supplierHub = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -75,6 +84,7 @@ function collectHealth() {
     database,
     commercial,
     orderAutomation,
+    supplierHub,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

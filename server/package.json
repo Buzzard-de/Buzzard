@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "better-sqlite3": "^11.8.1",
+    "fast-xml-parser": "^4.5.3",
     "jsonwebtoken": "^9.0.2"
   }
 }

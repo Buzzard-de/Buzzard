@@ -101,6 +101,26 @@ The `orderAutomationPlugin.js` module orchestrates payment, fulfillment, shippin
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ORDER_AUTOMATION=0`.
 Tables: `integration_events`, `automation_jobs`, `order_flow` in `server/data/buzzard.db`.
 
+## Supplier Hub Plugin (v0.7)
+
+The `supplierHubPlugin.js` module adds supplier registry, feed sync, margins and TecDoc compatibility:
+
+- `GET/POST /api/admin/supplier-hub/suppliers` — supplier registry
+- `PATCH /api/admin/supplier-hub/suppliers/:id` — update supplier
+- `GET /api/admin/supplier-hub/suppliers/:id/products` — mapped supplier products
+- `POST /api/admin/supplier-hub/suppliers/:id/sync` — JSON/XML feed sync (demo parser)
+- `GET /api/admin/supplier-hub/sync-runs` — sync history
+- `GET /api/admin/supplier-hub/margins` — cost vs sell margin view
+- `GET /api/vehicles` — vehicle selector data (public)
+- `POST /api/vehicles/seed` — seed demo vehicles (admin)
+- `POST /api/tecdoc/compatibility/link` — link SKU to vehicle (auth required)
+- `GET /api/tecdoc/compatibility/:sku` — compatibility rows for SKU
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_SUPPLIER_HUB=0`.
+Tables: `suppliers`, `supplier_products`, `sync_runs`, `vehicles`, `compatibility`, `sync_errors`.
+
+Environment: `TECDOC_API_URL`, `TECDOC_API_KEY`, optional `SUPPLIER_SYNC_CRON` (future cron hook).
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

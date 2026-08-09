@@ -119,6 +119,66 @@ CREATE TABLE IF NOT EXISTS order_flow (
  last_error TEXT,
  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS suppliers (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ code TEXT UNIQUE NOT NULL,
+ name TEXT NOT NULL,
+ country TEXT,
+ feed_type TEXT NOT NULL DEFAULT 'manual',
+ feed_url TEXT,
+ api_key TEXT,
+ active INTEGER NOT NULL DEFAULT 1,
+ dropship INTEGER NOT NULL DEFAULT 0,
+ created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS supplier_products (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ supplier_id INTEGER NOT NULL,
+ supplier_sku TEXT NOT NULL,
+ buzzard_sku TEXT,
+ name TEXT,
+ cost_eur REAL,
+ stock INTEGER NOT NULL DEFAULT 0,
+ active INTEGER NOT NULL DEFAULT 1,
+ updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ UNIQUE(supplier_id, supplier_sku),
+ FOREIGN KEY(supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS sync_runs (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ supplier_id INTEGER NOT NULL,
+ status TEXT NOT NULL,
+ imported INTEGER NOT NULL DEFAULT 0,
+ updated INTEGER NOT NULL DEFAULT 0,
+ errors INTEGER NOT NULL DEFAULT 0,
+ message TEXT,
+ started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY(supplier_id) REFERENCES suppliers(id)
+);
+CREATE TABLE IF NOT EXISTS vehicles (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ make TEXT NOT NULL,
+ model TEXT NOT NULL,
+ year_from INTEGER,
+ year_to INTEGER,
+ engine TEXT
+);
+CREATE TABLE IF NOT EXISTS compatibility (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ product_sku TEXT NOT NULL,
+ vehicle_id INTEGER NOT NULL,
+ status TEXT NOT NULL DEFAULT 'compatible',
+ source TEXT NOT NULL DEFAULT 'tecdoc_adapter',
+ UNIQUE(product_sku, vehicle_id),
+ FOREIGN KEY(vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS sync_errors (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ supplier_id INTEGER,
+ message TEXT NOT NULL,
+ payload TEXT,
+ created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 `);
 
 function seed() {

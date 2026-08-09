@@ -1,8 +1,11 @@
 import type {
   SupplierHubCompatibility,
   SupplierHubMargin,
+  SupplierHubOrder,
+  SupplierHubSourcingRow,
   SupplierHubStatus,
   SupplierHubSupplier,
+  SupplierHubSyncJob,
   SupplierHubSyncResult,
   SupplierHubSyncRun,
   SupplierHubVehicle,
@@ -131,4 +134,43 @@ export async function fetchCompatibleSkusForVehicle(vehicleId: number): Promise<
   if (!res.ok) throw new Error("supplierHub.requestFailed");
   const data = (await res.json()) as { skus?: string[] };
   return data.skus || [];
+}
+
+export async function queueSupplierSyncAll(): Promise<{ suppliers: number; queued: number }> {
+  return request<{ suppliers: number; queued: number }>("/api/admin/supplier-hub/sync", {
+    method: "POST",
+    body: "{}",
+  });
+}
+
+export async function fetchSupplierSyncJobs(): Promise<SupplierHubSyncJob[]> {
+  return request("/api/admin/supplier-hub/sync-jobs");
+}
+
+export async function searchSourcing(filters?: {
+  sku?: string;
+  category?: string;
+}): Promise<SupplierHubSourcingRow[]> {
+  const params = new URLSearchParams();
+  if (filters?.sku) params.set("sku", filters.sku);
+  if (filters?.category) params.set("category", filters.category);
+  const query = params.toString();
+  return request(`/api/admin/supplier-hub/sourcing/search${query ? `?${query}` : ""}`);
+}
+
+export async function fetchSupplierOrders(): Promise<SupplierHubOrder[]> {
+  return request("/api/admin/supplier-hub/supplier-orders");
+}
+
+export async function createSupplierOrder(body: {
+  supplierId: number;
+  orderNumber: string;
+  shippingMethod?: string;
+  whiteLabel?: boolean;
+  blindShipping?: boolean;
+}): Promise<SupplierHubOrder> {
+  return request("/api/admin/supplier-hub/supplier-orders", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 }

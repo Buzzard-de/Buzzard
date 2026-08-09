@@ -101,15 +101,20 @@ The `orderAutomationPlugin.js` module orchestrates payment, fulfillment, shippin
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ORDER_AUTOMATION=0`.
 Tables: `integration_events`, `automation_jobs`, `order_flow` in `server/data/buzzard.db`.
 
-## Supplier Hub Plugin (v0.7)
+## Supplier Hub Plugin (v0.7 → v1.6)
 
-The `supplierHubPlugin.js` module adds supplier registry, feed sync, margins and TecDoc compatibility:
+The `supplierHubPlugin.js` module adds supplier registry, feed sync, margins, TecDoc compatibility and v1.6 B2B sourcing:
 
-- `GET/POST /api/admin/supplier-hub/suppliers` — supplier registry
-- `PATCH /api/admin/supplier-hub/suppliers/:id` — update supplier
-- `GET /api/admin/supplier-hub/suppliers/:id/products` — mapped supplier products
+- `GET/POST /api/admin/supplier-hub/suppliers` — supplier registry with scoring & capability flags
+- `PATCH /api/admin/supplier-hub/suppliers/:id` — update supplier profile
+- `GET/POST /api/admin/supplier-hub/suppliers/:id/products` — mapped supplier products
 - `POST /api/admin/supplier-hub/suppliers/:id/sync` — JSON/XML feed sync (demo parser)
-- `GET /api/admin/supplier-hub/sync-runs` — sync history
+- `POST /api/admin/supplier-hub/sync` — queue stock/price/catalog sync jobs for all active suppliers
+- `GET /api/admin/supplier-hub/sync-jobs` — sync job queue
+- `POST /api/admin/supplier-hub/sync-jobs/:id/result` — worker result boundary
+- `GET /api/admin/supplier-hub/sourcing/search` — supplier selection engine
+- `POST/GET /api/admin/supplier-hub/supplier-orders` — dropship order queue
+- `GET /api/admin/supplier-hub/sync-runs` — feed sync history
 - `GET /api/admin/supplier-hub/margins` — cost vs sell margin view
 - `GET /api/vehicles` — vehicle selector data (public)
 - `POST /api/vehicles/seed` — seed demo vehicles (admin)
@@ -118,9 +123,8 @@ The `supplierHubPlugin.js` module adds supplier registry, feed sync, margins and
 - `GET /api/tecdoc/compatibility/vehicle/:vehicleId` — compatible SKUs for vehicle
 
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_SUPPLIER_HUB=0`.
-Tables: `suppliers`, `supplier_products`, `sync_runs`, `vehicles`, `compatibility`, `sync_errors`.
-
-Environment: `TECDOC_API_URL`, `TECDOC_API_KEY`, optional `SUPPLIER_SYNC_CRON` (future cron hook).
+Tables: `suppliers`, `supplier_products`, `sync_runs`, `supplier_sync_jobs`, `supplier_orders`, `vehicles`, `compatibility`, `sync_errors`.
+Frontend admin: `/admin/supplier-hub/`.
 
 ## Catalog SEO Plugin (v0.8)
 

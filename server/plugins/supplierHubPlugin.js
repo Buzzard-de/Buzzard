@@ -98,6 +98,52 @@ module.exports = {
       return res.json(supplierHub.listMargins());
     });
 
+    app.post("/api/admin/supplier-hub/suppliers/:id/products", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      const result = supplierHub.upsertSupplierProduct(req.params.id, req.body || {});
+      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      return res.json(result);
+    });
+
+    app.post("/api/admin/supplier-hub/sync", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      return res.json(supplierHub.queueSupplierSyncAll());
+    });
+
+    app.get("/api/admin/supplier-hub/sync-jobs", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      return res.json(supplierHub.listSupplierSyncJobs());
+    });
+
+    app.post("/api/admin/supplier-hub/sync-jobs/:id/result", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      const result = supplierHub.updateSupplierSyncJobResult(req.params.id, req.body || {});
+      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      return res.json(result);
+    });
+
+    app.get("/api/admin/supplier-hub/sourcing/search", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      return res.json(
+        supplierHub.searchSourcing({
+          sku: req.query?.sku,
+          category: req.query?.category,
+        })
+      );
+    });
+
+    app.post("/api/admin/supplier-hub/supplier-orders", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      const result = supplierHub.createSupplierOrder(req.body || {});
+      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      return res.status(result.status || 201).json(result.order);
+    });
+
+    app.get("/api/admin/supplier-hub/supplier-orders", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      return res.json(supplierHub.listSupplierOrders());
+    });
+
     app.get("/api/vehicles", (req, res) => {
       return res.json(
         supplierHub.listVehicles({

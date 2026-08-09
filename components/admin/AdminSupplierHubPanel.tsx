@@ -5,17 +5,24 @@ import { getAdminToken } from "@/lib/admin/client";
 import {
   createSupplier,
   fetchMargins,
+  fetchSupplierHubStatus,
+  fetchSupplierOrders,
+  fetchSupplierSyncJobs,
   fetchSuppliers,
   fetchSyncRuns,
-  fetchSupplierHubStatus,
   fetchVehicles,
+  queueSupplierSyncAll,
+  searchSourcing,
   seedDemoVehicles,
   syncSupplierFeed,
 } from "@/lib/supplierHub/client";
 import type {
   SupplierHubMargin,
+  SupplierHubOrder,
+  SupplierHubSourcingRow,
   SupplierHubStatus,
   SupplierHubSupplier,
+  SupplierHubSyncJob,
   SupplierHubSyncRun,
   SupplierHubVehicle,
 } from "@/lib/supplierHub/types";
@@ -32,7 +39,12 @@ export default function AdminSupplierHubPanel() {
   const [runs, setRuns] = useState<SupplierHubSyncRun[]>([]);
   const [margins, setMargins] = useState<SupplierHubMargin[]>([]);
   const [vehicles, setVehicles] = useState<SupplierHubVehicle[]>([]);
+  const [syncJobs, setSyncJobs] = useState<SupplierHubSyncJob[]>([]);
+  const [supplierOrders, setSupplierOrders] = useState<SupplierHubOrder[]>([]);
+  const [sourcing, setSourcing] = useState<SupplierHubSourcingRow[]>([]);
+  const [searchSku, setSearchSku] = useState("BZ-OIL-5W30");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [code, setCode] = useState("");
@@ -41,19 +53,26 @@ export default function AdminSupplierHubPanel() {
 
   const reload = useCallback(async () => {
     setError("");
-    const [supplierRows, runRows, marginRows, vehicleRows, hubStatus] = await Promise.all([
+    const [supplierRows, runRows, marginRows, vehicleRows, hubStatus, jobRows, orderRows, sourcingRows] =
+      await Promise.all([
       fetchSuppliers(),
       fetchSyncRuns(15),
       fetchMargins(),
       fetchVehicles(),
       fetchSupplierHubStatus().catch(() => null),
+      fetchSupplierSyncJobs().catch(() => []),
+      fetchSupplierOrders().catch(() => []),
+      searchSourcing({ sku: searchSku }).catch(() => []),
     ]);
     setSuppliers(supplierRows);
     setRuns(runRows);
     setMargins(marginRows);
     setVehicles(vehicleRows);
     setStatus(hubStatus);
-  }, []);
+    setSyncJobs(jobRows);
+    setSupplierOrders(orderRows);
+    setSourcing(sourcingRows);
+  }, [searchSku]);
 
   useEffect(() => {
     if (!getAdminToken()) {
@@ -110,21 +129,48 @@ export default function AdminSupplierHubPanel() {
     }
   }
 
+  async function handleQueueSyncAll() {
+    setBusy(true);
+    setError("");
+    try {
+      const result = await queueSupplierSyncAll();
+      await reload();
+      setMessage(`Sync queued: ${result.queued} jobs across ${result.suppliers} suppliers`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "supplierHub.requestFailed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleSourcingSearch() {
+    setBusy(true);
+    setError("");
+    try {
+      setSourcing(await searchSourcing({ sku: searchSku.trim() || undefined }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "supplierHub.requestFailed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (loading) return <p>Supplier Hub wird geladen…</p>;
 
   return (
     <div className="admin-page">
       <div className="admin-page-head">
-        <h1>Supplier Hub + TecDoc</h1>
+        <h1>Supplier Hub v1.6</h1>
         {status?.version && <span className="admin-note">API v{status.version}</span>}
       </div>
 
       <p className="admin-note">
-        Lieferanten-Registry, Feed-Sync (JSON/XML), Margen und Fahrzeug-/TecDoc-Kompatibilität. Keine Live-Credentials
-        enthalten — TecDoc erfordert eine kommerzielle Lizenz.
+        B2B-Lieferanten, Feed-Sync, Sourcing-Engine, Dropship-Queue, Margen und TecDoc-Kompatibilität.
+        Keine Live-Credentials — TecDoc erfordert eine kommerzielle Lizenz.
       </p>
 
       {error && <p className="shop-modal-error">{error}</p>}
+      {message && <p className="admin-message">{message}</p>}
 
       {status && (
         <div className="admin-stat-grid">
@@ -137,8 +183,12 @@ export default function AdminSupplierHubPanel() {
             <span>Supplier-Produkte</span>
           </article>
           <article className="admin-stat">
-            <strong>{status.totals.vehicles}</strong>
-            <span>Fahrzeuge</span>
+            <strong>{status.totals.queuedJobs ?? 0}</strong>
+            <span>Queued Jobs</span>
+          </article>
+          <article className="admin-stat">
+            <strong>{status.totals.supplierOrders ?? 0}</strong>
+            <span>Dropship Orders</span>
           </article>
           <article className="admin-stat">
             <strong>{status.tecdocConfigured ? "JA" : "DEMO"}</strong>
@@ -146,6 +196,75 @@ export default function AdminSupplierHubPanel() {
           </article>
         </div>
       )}
+
+      <section className="admin-panel">
+        <h2>Sourcing Engine</h2>
+        <div className="automation-queue-form">
+          <input value={searchSku} onChange={(e) => setSearchSku(e.target.value)} placeholder="SKU / EAN / TecDoc" />
+          <button type="button" className="shop-btn-primary" disabled={busy} onClick={handleSourcingSearch}>
+            Suchen
+          </button>
+        </div>
+        {sourcing.length > 0 && (
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Lieferant</th>
+                  <th>SKU</th>
+                  <th>Bestand</th>
+                  <th>Kosten</th>
+                  <th>Rating</th>
+                  <th>Lead Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sourcing.map((row) => (
+                  <tr key={`${row.supplier}-${row.supplier_sku}`}>
+                    <td>{row.supplier_name}</td>
+                    <td>{row.supplier_sku}</td>
+                    <td>{row.stock}</td>
+                    <td>{row.cost?.toFixed(2)} €</td>
+                    <td>{row.rating}</td>
+                    <td>{row.lead_time_days}d</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section className="admin-panel">
+        <h2>Sync Queue</h2>
+        <button type="button" className="shop-btn-primary" disabled={busy} onClick={handleQueueSyncAll}>
+          Stock + Price + Catalog sync queue
+        </button>
+        {syncJobs.length > 0 && (
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Lieferant</th>
+                  <th>Typ</th>
+                  <th>Entity</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {syncJobs.slice(0, 15).map((job) => (
+                  <tr key={job.id}>
+                    <td>{job.supplier}</td>
+                    <td>{job.job_type}</td>
+                    <td>{job.entity_key}</td>
+                    <td>{job.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <section className="admin-panel">
         <h2>Lieferant anlegen</h2>
@@ -175,6 +294,8 @@ export default function AdminSupplierHubPanel() {
                   <th>Code</th>
                   <th>Feed</th>
                   <th>Produkte</th>
+                  <th>Rating</th>
+                  <th>Queued</th>
                   <th>Modus</th>
                   <th></th>
                 </tr>
@@ -185,7 +306,9 @@ export default function AdminSupplierHubPanel() {
                     <td>{s.name}</td>
                     <td>{s.code}</td>
                     <td>{s.feed_type}</td>
-                    <td>{s.product_count ?? 0}</td>
+                    <td>{s.products ?? s.product_count ?? 0}</td>
+                    <td>{s.rating ?? "—"}</td>
+                    <td>{s.queuedJobs ?? 0}</td>
                     <td>{s.dropship ? "DROPSHIP" : "STANDARD"}</td>
                     <td>
                       <button
@@ -231,6 +354,38 @@ export default function AdminSupplierHubPanel() {
                     <td>{run.updated}</td>
                     <td>{run.errors}</td>
                     <td>{run.started_at}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section className="admin-panel">
+        <h2>Dropship Orders</h2>
+        {supplierOrders.length === 0 ? (
+          <p className="admin-note">Noch keine Dropship-Bestellungen in der Queue.</p>
+        ) : (
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Lieferant</th>
+                  <th>Order</th>
+                  <th>Status</th>
+                  <th>White Label</th>
+                  <th>Blind Ship</th>
+                </tr>
+              </thead>
+              <tbody>
+                {supplierOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td>{order.supplier_name}</td>
+                    <td>{order.order_number}</td>
+                    <td>{order.status}</td>
+                    <td>{order.white_label ? "YES" : "NO"}</td>
+                    <td>{order.blind_shipping ? "YES" : "NO"}</td>
                   </tr>
                 ))}
               </tbody>

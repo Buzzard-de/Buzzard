@@ -6,6 +6,9 @@ import ProductDetailView from "@/components/ProductDetailView";
 import JsonLd from "@/components/seo/JsonLd";
 import { fetchProductJsonLd } from "@/lib/catalogSeo/client";
 import { isLiveCatalogEnabled, loadLiveCatalogProductBySlug } from "@/lib/catalogSeo/runtime";
+import { useLocale } from "@/lib/i18n/context";
+import { useMarket } from "@/lib/market/context";
+import { isLiveLocalizationEnabled, loadLocalizedProductBySlug } from "@/lib/localizationFeeds/runtime";
 import type { PublicProduct } from "@/lib/products/types";
 
 interface ProductDetailLoaderProps {
@@ -14,9 +17,13 @@ interface ProductDetailLoaderProps {
 }
 
 export default function ProductDetailLoader({ slug, staticProduct }: ProductDetailLoaderProps) {
+  const { locale } = useLocale();
+  const { countryCode } = useMarket();
   const [product, setProduct] = useState<PublicProduct | null>(staticProduct ?? null);
   const [apiJsonLd, setApiJsonLd] = useState<Record<string, unknown> | null>(null);
-  const [loading, setLoading] = useState(!staticProduct && isLiveCatalogEnabled());
+  const [loading, setLoading] = useState(
+    !staticProduct && (isLiveLocalizationEnabled() || isLiveCatalogEnabled())
+  );
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
@@ -26,21 +33,34 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
       return;
     }
 
-    if (!isLiveCatalogEnabled()) {
+    const canLoad = isLiveLocalizationEnabled() || isLiveCatalogEnabled();
+    if (!canLoad) {
       setMissing(true);
       setLoading(false);
       return;
     }
 
     let cancelled = false;
-    loadLiveCatalogProductBySlug(slug)
-      .then(async (live) => {
-        if (cancelled) return;
-        if (!live) {
-          setMissing(true);
-          return;
-        }
-        setProduct(live);
+
+    async function loadProduct() {
+      let live: PublicProduct | null = null;
+
+      if (isLiveLocalizationEnabled()) {
+        live = await loadLocalizedProductBySlug(slug, locale, countryCode);
+      }
+      if (!live && isLiveCatalogEnabled()) {
+        live = await loadLiveCatalogProductBySlug(slug);
+      }
+
+      if (cancelled) return;
+      if (!live) {
+        setMissing(true);
+        return;
+      }
+
+      setProduct(live);
+
+      if (live.attributes?.source === "catalog-api" || live.id.startsWith("catalog-")) {
         const numericId = Number(String(live.id).replace(/^catalog-/, ""));
         if (Number.isFinite(numericId)) {
           try {
@@ -49,8 +69,13 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
             setApiJsonLd(null);
           }
         }
+      }
+    }
+
+    loadProduct()
+      .catch(() => {
+        if (!cancelled) setMissing(true);
       })
-      .catch(() => setMissing(true))
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -58,7 +83,7 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
     return () => {
       cancelled = true;
     };
-  }, [slug, staticProduct]);
+  }, [slug, staticProduct, locale, countryCode]);
 
   if (loading) {
     return (

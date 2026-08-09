@@ -30,6 +30,12 @@ export function isVehicleApiEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isLocalizationFeedsEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_LOCALIZATION_FEEDS === "0") return false;
+  if (process.env.NEXT_PUBLIC_LOCALIZATION_FEEDS === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

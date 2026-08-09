@@ -194,6 +194,51 @@ CREATE TABLE IF NOT EXISTS product_audit (
  details TEXT,
  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS locales (
+ code TEXT PRIMARY KEY,
+ name TEXT NOT NULL,
+ currency TEXT NOT NULL,
+ country_code TEXT NOT NULL,
+ active INTEGER NOT NULL DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS product_translations (
+ product_id INTEGER NOT NULL,
+ locale TEXT NOT NULL,
+ name TEXT NOT NULL,
+ description TEXT DEFAULT '',
+ seo_title TEXT DEFAULT '',
+ seo_description TEXT DEFAULT '',
+ slug TEXT DEFAULT '',
+ PRIMARY KEY(product_id, locale),
+ FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS category_translations (
+ category_id INTEGER NOT NULL,
+ locale TEXT NOT NULL,
+ name TEXT NOT NULL,
+ slug TEXT DEFAULT '',
+ PRIMARY KEY(category_id, locale),
+ FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS price_overrides (
+ product_id INTEGER NOT NULL,
+ locale TEXT NOT NULL,
+ currency TEXT NOT NULL,
+ price REAL NOT NULL,
+ PRIMARY KEY(product_id, locale),
+ FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS shipping_rates (
+ country_code TEXT NOT NULL,
+ method TEXT NOT NULL,
+ price REAL NOT NULL,
+ free_from REAL NOT NULL DEFAULT 0,
+ PRIMARY KEY(country_code, method)
+);
+CREATE TABLE IF NOT EXISTS tax_rates (
+ country_code TEXT PRIMARY KEY,
+ rate REAL NOT NULL
+);
 `);
 
 function slugify(value) {
@@ -250,6 +295,103 @@ function migrateCatalogSeo() {
 }
 
 migrateCatalogSeo();
+
+const DEFAULT_LOCALES = [
+  ["de-DE", "Deutsch", "EUR", "DE"],
+  ["en-GB", "English", "GBP", "GB"],
+  ["fr-FR", "Français", "EUR", "FR"],
+  ["nl-NL", "Nederlands", "EUR", "NL"],
+  ["pl-PL", "Polski", "PLN", "PL"],
+  ["tr-TR", "Türkçe", "TRY", "TR"],
+  ["sr-RS", "Srpski", "RSD", "RS"],
+  ["bs-BA", "Bosanski", "BAM", "BA"],
+  ["sq-AL", "Shqip", "ALL", "AL"],
+  ["mk-MK", "Македонски", "MKD", "MK"],
+  ["bg-BG", "Български", "BGN", "BG"],
+  ["ro-RO", "Română", "RON", "RO"],
+  ["el-GR", "Ελληνικά", "EUR", "GR"],
+  ["hr-HR", "Hrvatski", "EUR", "HR"],
+  ["hu-HU", "Magyar", "HUF", "HU"],
+  ["cs-CZ", "Čeština", "CZK", "CZ"],
+  ["sk-SK", "Slovenčina", "EUR", "SK"],
+  ["sl-SI", "Slovenščina", "EUR", "SI"],
+  ["it-IT", "Italiano", "EUR", "IT"],
+  ["es-ES", "Español", "EUR", "ES"],
+];
+
+const DEFAULT_TAX_RATES = [
+  ["DE", 0.19],
+  ["FR", 0.2],
+  ["NL", 0.21],
+  ["PL", 0.23],
+  ["GB", 0.2],
+  ["TR", 0.2],
+  ["RS", 0.2],
+  ["BA", 0.17],
+  ["AL", 0.2],
+  ["MK", 0.18],
+  ["BG", 0.2],
+  ["RO", 0.21],
+  ["GR", 0.24],
+  ["HR", 0.25],
+  ["HU", 0.27],
+  ["CZ", 0.21],
+  ["SK", 0.23],
+  ["SI", 0.22],
+  ["IT", 0.22],
+  ["ES", 0.21],
+];
+
+function migrateLocalizationFeeds() {
+  const insertLocale = db.prepare(
+    "INSERT OR IGNORE INTO locales(code, name, currency, country_code) VALUES(?,?,?,?)"
+  );
+  for (const row of DEFAULT_LOCALES) insertLocale.run(...row);
+
+  const insertTax = db.prepare("INSERT OR IGNORE INTO tax_rates(country_code, rate) VALUES(?,?)");
+  for (const row of DEFAULT_TAX_RATES) insertTax.run(...row);
+
+  const shippingCount = db.prepare("SELECT COUNT(*) n FROM shipping_rates").get().n;
+  if (shippingCount === 0) {
+    const insertShipping = db.prepare(
+      "INSERT INTO shipping_rates(country_code, method, price, free_from) VALUES(?,?,?,?)"
+    );
+    insertShipping.run("DE", "standard", 4.99, 49);
+    insertShipping.run("GB", "standard", 6.99, 59);
+    insertShipping.run("TR", "standard", 5.99, 49);
+  }
+
+  const translationCount = db.prepare("SELECT COUNT(*) n FROM product_translations").get().n;
+  if (translationCount === 0) {
+    const products = db.prepare("SELECT id, name, description, slug, seo_title, seo_description FROM products LIMIT 3").all();
+    const insertTranslation = db.prepare(`
+      INSERT OR IGNORE INTO product_translations(product_id, locale, name, description, seo_title, seo_description, slug)
+      VALUES(?,?,?,?,?,?,?)
+    `);
+    for (const product of products) {
+      insertTranslation.run(
+        product.id,
+        "de-DE",
+        product.name,
+        product.description || "",
+        product.seo_title || product.name,
+        product.seo_description || product.description || "",
+        product.slug || slugify(product.name)
+      );
+      insertTranslation.run(
+        product.id,
+        "en-GB",
+        `${product.name} (EN)`,
+        product.description || "",
+        `${product.name} | BUZZARD`,
+        product.seo_description || product.description || "",
+        product.slug || slugify(product.name)
+      );
+    }
+  }
+}
+
+migrateLocalizationFeeds();
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

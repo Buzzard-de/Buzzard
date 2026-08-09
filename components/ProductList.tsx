@@ -18,8 +18,14 @@ import {
 import { localizePublicProduct } from "@/lib/products/i18n";
 import { findCategoryBySlugPath, getCategoryLabel } from "@/lib/categories";
 import { isLiveCatalogEnabled, loadLiveCatalogProducts, mergeCatalogProducts } from "@/lib/catalogSeo/runtime";
+import {
+  isLiveLocalizationEnabled,
+  loadLocalizedCatalogProducts,
+  mergeLocalizedProducts,
+} from "@/lib/localizationFeeds/runtime";
 import { fetchCompatibleSkusForVehicle } from "@/lib/supplierHub/client";
 import { isVehicleApiEnabled } from "@/lib/api/config";
+import { useMarket } from "@/lib/market/context";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
 import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
@@ -36,6 +42,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { locale, t } = useLocale();
+  const { countryCode, currency } = useMarket();
   const filter = searchParams.get("filter") || "alle";
   const sort = searchParams.get("sort") || "default";
   const query = sanitizeSearchQuery(searchParams.get("q"));
@@ -50,10 +57,12 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const [addedId, setAddedId] = useState<string | null>(null);
   const [catalogProducts, setCatalogProducts] = useState<PublicProduct[]>([]);
   const [compatibleSkus, setCompatibleSkus] = useState<string[] | null>(null);
-  const [catalogLoading, setCatalogLoading] = useState(isLiveCatalogEnabled());
+  const [catalogLoading, setCatalogLoading] = useState(
+    isLiveLocalizationEnabled() || isLiveCatalogEnabled()
+  );
 
   useEffect(() => {
-    if (!isLiveCatalogEnabled()) {
+    if (!isLiveLocalizationEnabled() && !isLiveCatalogEnabled()) {
       setCatalogProducts([]);
       setCatalogLoading(false);
       return;
@@ -61,11 +70,26 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
     let cancelled = false;
     setCatalogLoading(true);
-    loadLiveCatalogProducts({
-      q: query || undefined,
-      category: kategorieSlug || undefined,
-      vehicleId: vehicle?.vehicleId,
-    })
+
+    async function loadCatalog() {
+      if (isLiveLocalizationEnabled()) {
+        return loadLocalizedCatalogProducts({
+          uiLocale: locale,
+          countryCode,
+          currency,
+          q: query || undefined,
+          category: kategorieSlug || undefined,
+          vehicleId: vehicle?.vehicleId,
+        });
+      }
+      return loadLiveCatalogProducts({
+        q: query || undefined,
+        category: kategorieSlug || undefined,
+        vehicleId: vehicle?.vehicleId,
+      });
+    }
+
+    loadCatalog()
       .then((items) => {
         if (!cancelled) setCatalogProducts(items);
       })
@@ -79,7 +103,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
     return () => {
       cancelled = true;
     };
-  }, [query, kategorieSlug, vehicle?.vehicleId]);
+  }, [query, kategorieSlug, vehicle?.vehicleId, locale, countryCode, currency]);
 
   useEffect(() => {
     if (!vehicle?.vehicleId || !isVehicleApiEnabled()) {
@@ -103,8 +127,13 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
   const allProducts = useMemo(() => {
     const staticItems = getAllProducts();
-    if (!isLiveCatalogEnabled()) return staticItems;
-    return mergeCatalogProducts(staticItems, catalogProducts);
+    if (isLiveLocalizationEnabled()) {
+      return mergeLocalizedProducts(staticItems, catalogProducts);
+    }
+    if (isLiveCatalogEnabled()) {
+      return mergeCatalogProducts(staticItems, catalogProducts);
+    }
+    return staticItems;
   }, [catalogProducts]);
 
   const result = useMemo(() => {
@@ -164,9 +193,10 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         </div>
       )}
 
-      {isLiveCatalogEnabled() && !catalogLoading && catalogProducts.length > 0 && (
+      {(isLiveLocalizationEnabled() || isLiveCatalogEnabled()) && !catalogLoading && catalogProducts.length > 0 && (
         <p className="admin-note">
-          {catalogProducts.length} Live-Katalog-Produkt(e) aus der Buzzard API eingebunden.
+          {catalogProducts.length} Live-Produkt(e) aus der Buzzard API
+          {isLiveLocalizationEnabled() ? ` (${countryCode}, ${currency})` : ""} eingebunden.
         </p>
       )}
 

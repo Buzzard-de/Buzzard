@@ -17,6 +17,9 @@ import {
   detectMarketCountryCode,
   getDeliverableMarketCountry,
 } from "./countries";
+import { fetchCountryConfig } from "@/lib/localizationFeeds/client";
+import { isLocalizationFeedsEnabled } from "@/lib/api/config";
+import type { LocalizationCountryConfig } from "@/lib/localizationFeeds/types";
 import type { MarketCountry } from "./types";
 import {
   hasManualCountryOverride,
@@ -39,6 +42,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   const { setLocale } = useLocale();
   const [countryCode, setCountryCodeState] = useState(defaultMarketCountryCode());
   const [ready, setReady] = useState(false);
+  const [apiCountryConfig, setApiCountryConfig] = useState<LocalizationCountryConfig | null>(null);
 
   useEffect(() => {
     const stored = readStoredCountryCode();
@@ -73,18 +77,28 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     if (country) setCountryCodeState(country.code);
   }, [ready]);
 
+  useEffect(() => {
+    if (!ready || !isLocalizationFeedsEnabled()) {
+      setApiCountryConfig(null);
+      return;
+    }
+    fetchCountryConfig(countryCode)
+      .then(setApiCountryConfig)
+      .catch(() => setApiCountryConfig(null));
+  }, [countryCode, ready]);
+
   const country = getDeliverableMarketCountry(countryCode) ?? getDeliverableMarketCountry("DE")!;
 
   const value = useMemo(
     (): MarketContextValue => ({
       countryCode: country.code,
       country,
-      currency: country.currency,
+      currency: apiCountryConfig?.locale?.currency || country.currency,
       deliveryDays: country.deliveryDays,
-      taxRate: country.taxRate,
+      taxRate: apiCountryConfig?.taxRate ?? country.taxRate,
       setCountryCode,
     }),
-    [country, setCountryCode]
+    [country, setCountryCode, apiCountryConfig]
   );
 
   return <MarketContext.Provider value={value}>{children}</MarketContext.Provider>;

@@ -142,6 +142,23 @@ Extended columns on `products`/`categories`; tables `product_images`, `product_a
 
 Environment: `PUBLIC_BASE_URL`, `DEFAULT_MARGIN`, `MIN_MARGIN`.
 
+## Localization Feeds Plugin (v0.9)
+
+The `localizationFeedsPlugin.js` module adds multilingual catalog, country pricing and merchant feeds:
+
+- `GET /api/localization/locales` — supported locale/country/currency list
+- `GET /api/localization/country/:country` — tax, shipping and locale config
+- `GET /api/localization/catalog` — localized product catalog (`?locale=`, `?country=`, filters)
+- `GET /api/localization/products/slug/:slug` — localized product detail
+- `GET /api/localization/feed/google.xml` — Google Merchant RSS feed
+- `GET /api/admin/localization/status` — admin overview
+- `POST /api/admin/localization/products/:id/translation` — upsert translation
+- `POST /api/admin/localization/products/:id/price` — locale price override
+- `POST /api/admin/localization/shipping-rate` — shipping rate table
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_LOCALIZATION_FEEDS=0`.
+Tables: `locales`, `product_translations`, `category_translations`, `price_overrides`, `shipping_rates`, `tax_rates`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

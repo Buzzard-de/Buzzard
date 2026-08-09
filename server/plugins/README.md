@@ -334,6 +334,23 @@ Tables: extends `users`; adds `identity_sessions`, `identity_verification_tokens
 Frontend admin: `/admin/identity-security/`. Set `NEXT_PUBLIC_IDENTITY_SECURITY=1`.
 Note: Existing `/api/auth/*` (database plugin) remains separate.
 
+## Payments Finance Plugin (v2.1)
+
+The `paymentsFinancePlugin.js` module adds payment and financial transaction foundations:
+
+- `GET /api/payments-finance/methods` — enabled provider methods
+- `POST /api/payments-finance/intents` — create payment intent with idempotency
+- `POST /api/payments-finance/intents/:id/confirm|refunds` — capture and refund flows
+- `POST /api/payments-finance/webhook` — provider payment webhook boundary
+- `POST /api/payments-finance/invoices` — invoice records
+- `POST /api/payments-finance/provider/payout-webhook|dispute-webhook` — reconciliation boundaries
+- `GET /api/admin/payments-finance/overview|payments|refunds|invoices|payouts|disputes|audit`
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_PAYMENTS_FINANCE=0`.
+Tables: `finance_payment_providers`, `finance_payment_methods`, `finance_payment_intents`, `finance_payment_transactions`, `finance_refunds`, `finance_invoices`, `finance_payouts`, `finance_disputes`, `finance_audit`.
+Frontend admin: `/admin/payments-finance/`. Set `NEXT_PUBLIC_PAYMENTS_FINANCE=1`.
+Note: Existing commercial integrations (`/api/payments/session`) remain separate. Sales remain disabled on storefront.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

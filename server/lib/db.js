@@ -1604,6 +1604,136 @@ function migrateIdentitySecurityV20() {
 
 migrateIdentitySecurityV20();
 
+function migratePaymentsFinanceV21() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS finance_payment_providers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      enabled INTEGER DEFAULT 0,
+      environment TEXT DEFAULT 'test',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS finance_payment_methods (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      provider_id INTEGER,
+      code TEXT NOT NULL,
+      name TEXT NOT NULL,
+      currency TEXT DEFAULT 'EUR',
+      active INTEGER DEFAULT 1,
+      FOREIGN KEY(provider_id) REFERENCES finance_payment_providers(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS finance_payment_intents (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_number TEXT NOT NULL,
+      provider_id INTEGER,
+      method_id INTEGER,
+      external_id TEXT,
+      amount REAL NOT NULL,
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'requires_payment',
+      idempotency_key TEXT UNIQUE,
+      customer_email TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(provider_id) REFERENCES finance_payment_providers(id),
+      FOREIGN KEY(method_id) REFERENCES finance_payment_methods(id)
+    );
+    CREATE TABLE IF NOT EXISTS finance_payment_transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      payment_intent_id INTEGER,
+      type TEXT NOT NULL,
+      amount REAL NOT NULL,
+      currency TEXT DEFAULT 'EUR',
+      external_id TEXT,
+      status TEXT DEFAULT 'pending',
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(payment_intent_id) REFERENCES finance_payment_intents(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS finance_refunds (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      payment_intent_id INTEGER,
+      external_id TEXT,
+      amount REAL NOT NULL,
+      currency TEXT DEFAULT 'EUR',
+      reason TEXT,
+      status TEXT DEFAULT 'pending',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(payment_intent_id) REFERENCES finance_payment_intents(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS finance_invoices (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_number TEXT UNIQUE NOT NULL,
+      invoice_number TEXT UNIQUE NOT NULL,
+      customer_email TEXT,
+      net_amount REAL DEFAULT 0,
+      tax_amount REAL DEFAULT 0,
+      gross_amount REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'issued',
+      issued_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS finance_payouts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      provider_id INTEGER,
+      external_payout_id TEXT,
+      amount REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'pending',
+      payout_date TEXT,
+      reconciled INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(provider_id) REFERENCES finance_payment_providers(id)
+    );
+    CREATE TABLE IF NOT EXISTS finance_disputes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      payment_intent_id INTEGER,
+      provider_code TEXT,
+      external_case_id TEXT,
+      amount REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'open',
+      reason TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(payment_intent_id) REFERENCES finance_payment_intents(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS finance_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_type TEXT,
+      reference_id TEXT,
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const providerCount = db.prepare("SELECT COUNT(*) n FROM finance_payment_providers").get().n;
+  if (providerCount === 0) {
+    const insertProvider = db.prepare(
+      "INSERT INTO finance_payment_providers(code, name, enabled, environment) VALUES(?,?,?,?)"
+    );
+    insertProvider.run("stripe", "Stripe", 0, "test");
+    insertProvider.run("paypal", "PayPal", 0, "test");
+    insertProvider.run("klarna", "Klarna", 0, "test");
+
+    const ids = Object.fromEntries(
+      db
+        .prepare("SELECT id, code FROM finance_payment_providers")
+        .all()
+        .map((row) => [row.code, row.id])
+    );
+    const insertMethod = db.prepare(
+      "INSERT INTO finance_payment_methods(provider_id, code, name, currency) VALUES(?,?,?,?)"
+    );
+    insertMethod.run(ids.stripe, "card", "Credit / Debit Card", "EUR");
+    insertMethod.run(ids.stripe, "apple_pay", "Apple Pay", "EUR");
+    insertMethod.run(ids.paypal, "paypal", "PayPal", "EUR");
+    insertMethod.run(ids.klarna, "klarna", "Klarna", "EUR");
+  }
+}
+
+migratePaymentsFinanceV21();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

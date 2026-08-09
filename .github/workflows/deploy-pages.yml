@@ -46,6 +46,7 @@ jobs:
           NEXT_PUBLIC_WMS_INVENTORY: "1"
           NEXT_PUBLIC_PIM_CATALOG: "1"
           NEXT_PUBLIC_IDENTITY_SECURITY: "1"
+          NEXT_PUBLIC_PAYMENTS_FINANCE: "1"
           NEXT_PUBLIC_AI_CHAT_ENABLED: "1"
           NEXT_PUBLIC_GA4_ID: ${{ vars.NEXT_PUBLIC_GA4_ID || secrets.NEXT_PUBLIC_GA4_ID || '' }}
           NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID || secrets.NEXT_PUBLIC_GTM_ID || '' }}

@@ -170,6 +170,18 @@ function collectHealth() {
     }
   }
 
+  let wmsInventory = { enabled: false };
+  if (process.env.BUZZARD_WMS_INVENTORY !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      wmsInventory = {
+        enabled: true,
+        ...require("../lib/wmsInventory").getWmsInventoryStatus(),
+      };
+    } catch (error) {
+      wmsInventory = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -187,6 +199,7 @@ function collectHealth() {
     marketingCenter,
     marketplaceHub,
     logisticsFulfillment,
+    wmsInventory,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

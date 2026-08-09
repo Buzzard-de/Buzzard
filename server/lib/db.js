@@ -1221,6 +1221,127 @@ function migrateLogisticsFulfillmentV17() {
 
 migrateLogisticsFulfillmentV17();
 
+function migrateWmsInventoryV18() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS wms_warehouses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      country_code TEXT DEFAULT 'DE',
+      address TEXT,
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS wms_locations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      warehouse_id INTEGER,
+      code TEXT NOT NULL,
+      zone TEXT,
+      bin_type TEXT DEFAULT 'standard',
+      UNIQUE(warehouse_id, code),
+      FOREIGN KEY(warehouse_id) REFERENCES wms_warehouses(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS wms_inventory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      warehouse_id INTEGER,
+      location_id INTEGER,
+      product_sku TEXT NOT NULL,
+      barcode TEXT,
+      on_hand INTEGER DEFAULT 0,
+      reserved INTEGER DEFAULT 0,
+      damaged INTEGER DEFAULT 0,
+      reorder_point INTEGER DEFAULT 10,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(warehouse_id, location_id, product_sku),
+      FOREIGN KEY(warehouse_id) REFERENCES wms_warehouses(id) ON DELETE CASCADE,
+      FOREIGN KEY(location_id) REFERENCES wms_locations(id) ON DELETE SET NULL
+    );
+    CREATE TABLE IF NOT EXISTS wms_stock_movements (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      warehouse_id INTEGER,
+      location_id INTEGER,
+      product_sku TEXT,
+      barcode TEXT,
+      movement_type TEXT,
+      quantity INTEGER,
+      reference TEXT,
+      user_id INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS wms_reservations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      warehouse_id INTEGER,
+      location_id INTEGER,
+      product_sku TEXT,
+      quantity INTEGER,
+      order_number TEXT,
+      status TEXT DEFAULT 'reserved',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS wms_warehouse_jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      warehouse_id INTEGER,
+      order_number TEXT,
+      job_type TEXT,
+      status TEXT DEFAULT 'queued',
+      assigned_to INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      finished_at TEXT,
+      FOREIGN KEY(warehouse_id) REFERENCES wms_warehouses(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS wms_transfers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      from_warehouse_id INTEGER,
+      to_warehouse_id INTEGER,
+      product_sku TEXT,
+      quantity INTEGER,
+      status TEXT DEFAULT 'requested',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS wms_stocktakes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      warehouse_id INTEGER,
+      location_id INTEGER,
+      product_sku TEXT,
+      system_qty INTEGER,
+      counted_qty INTEGER,
+      variance INTEGER,
+      status TEXT DEFAULT 'open',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const warehouseCount = db.prepare("SELECT COUNT(*) n FROM wms_warehouses").get().n;
+  if (warehouseCount === 0) {
+    const insertWarehouse = db.prepare(
+      "INSERT INTO wms_warehouses(code, name, country_code, address) VALUES(?,?,?,?)"
+    );
+    insertWarehouse.run("DE-01", "Buzzard Hauptlager", "DE", "Hessen");
+    insertWarehouse.run("DE-02", "Buzzard Süddepot", "DE", "Bayern");
+
+    const mainId = db.prepare("SELECT id FROM wms_warehouses WHERE code = ?").get("DE-01").id;
+    const insertLocation = db.prepare(
+      "INSERT INTO wms_locations(warehouse_id, code, zone, bin_type) VALUES(?,?,?,?)"
+    );
+    insertLocation.run(mainId, "A-01-01", "A", "standard");
+    insertLocation.run(mainId, "A-01-02", "A", "standard");
+    insertLocation.run(mainId, "B-02-01", "B", "oversize");
+
+    const locationId = db.prepare("SELECT id FROM wms_locations WHERE code = ?").get("A-01-01").id;
+    const insertInventory = db.prepare(`
+      INSERT INTO wms_inventory(
+        warehouse_id, location_id, product_sku, barcode, on_hand, reserved, damaged, reorder_point
+      )
+      VALUES(?,?,?,?,?,?,?,?)
+    `);
+    insertInventory.run(mainId, locationId, "BZ-OIL-5W30", "4000000000012", 120, 12, 0, 20);
+    insertInventory.run(mainId, locationId, "BZ-GARDEN-001", "4000000000029", 8, 2, 0, 15);
+  }
+}
+
+migrateWmsInventoryV18();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

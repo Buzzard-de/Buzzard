@@ -486,6 +486,22 @@ Tables: `srch_products`, `srch_synonyms`, `srch_events`.
 Frontend admin: `/admin/advanced-search/`. Set `NEXT_PUBLIC_ADVANCED_SEARCH=1`.
 Note: Existing SQLite `products` catalog and storefront search remain separate. OpenSearch/Elasticsearch ready boundary.
 
+## Product Catalog PIM Plugin (v3.0)
+
+The `productCatalogPimPlugin.js` module adds core PIM foundations:
+
+- `POST|GET /api/product-catalog-pim/brands|categories` — brand and category master data
+- `POST /api/product-catalog-pim/products` — create product with supplier/TecDoc fields
+- `GET /api/product-catalog-pim/products/:sku` — product detail with translations, attributes, media, variants
+- `PUT /api/product-catalog-pim/products/:sku/translation/:language` — multilingual content and SEO
+- `POST /api/product-catalog-pim/products/:sku/attributes|media|variants` — attributes, media metadata, variants
+- `GET /api/admin/product-catalog-pim/overview|products` — admin PIM dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_PRODUCT_CATALOG_PIM=0`.
+Tables: `pim30_brands`, `pim30_categories`, `pim30_products`, `pim30_product_translations`, `pim30_product_attributes`, `pim30_product_media`, `pim30_product_variants`.
+Frontend admin: `/admin/product-catalog-pim/`. Set `NEXT_PUBLIC_PRODUCT_CATALOG_PIM=1`.
+Note: Existing `/api/pim-catalog/*` (v1.9) remains separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

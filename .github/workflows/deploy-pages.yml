@@ -56,6 +56,7 @@ jobs:
           NEXT_PUBLIC_REVIEWS_RATINGS: "1"
           NEXT_PUBLIC_AI_CENTER: "1"
           NEXT_PUBLIC_ADVANCED_SEARCH: "1"
+          NEXT_PUBLIC_PRODUCT_CATALOG_PIM: "1"
           NEXT_PUBLIC_AI_CHAT_ENABLED: "1"
           NEXT_PUBLIC_GA4_ID: ${{ vars.NEXT_PUBLIC_GA4_ID || secrets.NEXT_PUBLIC_GA4_ID || '' }}
           NEXT_PUBLIC_GTM_ID: ${{ vars.NEXT_PUBLIC_GTM_ID || secrets.NEXT_PUBLIC_GTM_ID || '' }}

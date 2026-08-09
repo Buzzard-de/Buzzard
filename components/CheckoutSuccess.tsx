@@ -17,6 +17,11 @@ export default function CheckoutSuccess() {
     let active = true;
 
     async function load() {
+      const cached = loadConfirmedOrder();
+      if (cached && active) {
+        setOrder(cached);
+      }
+
       const orderNumber = searchParams.get("order");
       if (orderNumber) {
         const remote = await fetchOrder(orderNumber);
@@ -27,9 +32,7 @@ export default function CheckoutSuccess() {
         }
       }
 
-      const cached = loadConfirmedOrder();
       if (cached && active) {
-        setOrder(cached);
         clearConfirmedOrder();
       }
     }

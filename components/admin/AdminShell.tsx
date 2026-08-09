@@ -5,6 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin/context";
 import AdminApiStatusBanner from "./AdminApiStatusBanner";
 
+function isNavActive(pathname: string, href: string): boolean {
+  if (href === "/admin/") {
+    return pathname === "/admin/" || pathname === "/admin";
+  }
+  return pathname === href || pathname.startsWith(href);
+}
+
 const NAV = [
   { href: "/admin/", label: "Dashboard" },
   { href: "/admin/analytics/", label: "Analytics" },
@@ -74,7 +81,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <Link
               key={item.href}
               href={item.href}
-              className={pathname === item.href || pathname.startsWith(item.href.slice(0, -1)) && item.href !== "/admin/" ? "active" : ""}
+              className={isNavActive(pathname, item.href) ? "active" : ""}
             >
               {item.label}
             </Link>

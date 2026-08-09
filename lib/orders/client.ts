@@ -6,7 +6,7 @@ import type {
   QuoteResponse,
 } from "./types";
 import { isSqliteStoreEnabled } from "@/lib/store/config";
-import { mapStoreOrderToPublic, storeCreateOrder } from "@/lib/store";
+import { mapStoreOrderToPublic, storeCreateOrder, storeGetOrderByNumber } from "@/lib/store";
 
 const SESSION_ORDER_KEY = "buzzard_confirmed_order";
 
@@ -93,6 +93,22 @@ export async function submitOrder(request: CreateOrderRequest): Promise<CreateOr
 export async function fetchOrder(orderNumber: string): Promise<PublicOrder | null> {
   const base = apiBase();
   if (!base) return null;
+
+  const accountToken =
+    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_account_token") : null;
+
+  if (isSqliteStoreEnabled() && accountToken) {
+    try {
+      const order = await storeGetOrderByNumber(orderNumber);
+      const meEmail =
+        typeof window !== "undefined"
+          ? JSON.parse(sessionStorage.getItem("buzzard_account_user") || "{}")?.email || ""
+          : "";
+      return mapStoreOrderToPublic(order, meEmail);
+    } catch {
+      return null;
+    }
+  }
 
   try {
     const res = await fetch(`${base}/api/orders/${encodeURIComponent(orderNumber)}`, {

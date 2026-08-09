@@ -201,6 +201,20 @@ module.exports = {
     app.get("/api/db/orders", handleListOrders);
     app.get("/api/orders", handleListOrders);
 
+    app.get("/api/db/orders/:orderNumber", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      const order = db
+        .prepare(`
+          SELECT id, order_number, country_code, currency, subtotal, shipping, tax, total,
+                 status, shipping_status, payment_status, created_at
+          FROM orders
+          WHERE order_number = ? AND user_id = ?
+        `)
+        .get(req.params.orderNumber, req.user.sub);
+      if (!order) return res.status(404).json({ error: "Order not found" });
+      return res.json(order);
+    });
+
     app.get("/api/db/admin/orders", (req, res) => {
       if (!requireAdmin(req, res)) return;
       return res.json(db.prepare("SELECT * FROM orders ORDER BY id DESC").all());
@@ -209,6 +223,13 @@ module.exports = {
     app.get("/api/db/admin/products", (req, res) => {
       if (!requireAdmin(req, res)) return;
       return res.json(db.prepare("SELECT * FROM products ORDER BY id DESC").all());
+    });
+
+    app.get("/api/db/admin/products/:id", (req, res) => {
+      if (!requireAdmin(req, res)) return;
+      const product = db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
+      if (!product) return res.status(404).json({ error: "Product not found" });
+      return res.json(product);
     });
 
     app.patch("/api/db/admin/products/:id", (req, res) => {
@@ -229,6 +250,24 @@ module.exports = {
         product.id
       );
       return res.json(db.prepare("SELECT * FROM products WHERE id = ?").get(product.id));
+    });
+
+    app.patch("/api/db/admin/orders/:orderNumber/status", (req, res) => {
+      if (!requireAdmin(req, res)) return;
+      const { status } = req.body || {};
+      if (!status) return res.status(400).json({ error: "status required" });
+      const order = db
+        .prepare("SELECT * FROM orders WHERE order_number = ?")
+        .get(req.params.orderNumber);
+      if (!order) return res.status(404).json({ error: "Order not found" });
+      db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, order.id);
+      return res.json(
+        db.prepare(`
+          SELECT id, order_number, country_code, currency, subtotal, shipping, tax, total,
+                 status, shipping_status, payment_status, created_at
+          FROM orders WHERE id = ?
+        `).get(order.id)
+      );
     });
 
     app.post("/api/db/admin/shipments", async (req, res) => {

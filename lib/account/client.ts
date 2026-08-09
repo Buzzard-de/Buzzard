@@ -109,6 +109,10 @@ export async function fetchAccountMe(): Promise<{
 }
 
 export async function updateAccountProfile(patch: Partial<AccountUser>): Promise<AccountUser> {
+  if (isSqliteStoreEnabled()) {
+    const me = await fetchAccountMe();
+    return { ...me.user, ...patch };
+  }
   const data = await request<{ success: boolean; user: AccountUser }>("/api/account/profile", {
     method: "PUT",
     body: JSON.stringify(patch),
@@ -117,11 +121,13 @@ export async function updateAccountProfile(patch: Partial<AccountUser>): Promise
 }
 
 export async function fetchAccountAddresses(): Promise<AccountAddress[]> {
+  if (isSqliteStoreEnabled()) return [];
   const data = await request<{ success: boolean; addresses: AccountAddress[] }>("/api/account/addresses");
   return data.addresses;
 }
 
 export async function saveAccountAddress(address: Partial<AccountAddress> & { id?: string }): Promise<AccountAddress> {
+  if (isSqliteStoreEnabled()) throw new Error("account.addressesUnavailable");
   const path = address.id ? `/api/account/addresses/${encodeURIComponent(address.id)}` : "/api/account/addresses";
   const data = await request<{ success: boolean; address: AccountAddress }>(path, {
     method: address.id ? "PUT" : "POST",
@@ -131,6 +137,7 @@ export async function saveAccountAddress(address: Partial<AccountAddress> & { id
 }
 
 export async function deleteAccountAddress(id: string): Promise<void> {
+  if (isSqliteStoreEnabled()) throw new Error("account.addressesUnavailable");
   await request(`/api/account/addresses/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 
@@ -144,6 +151,12 @@ export async function fetchAccountOrders(): Promise<CustomerOrder[]> {
 }
 
 export async function fetchAccountOrder(orderNumber: string): Promise<CustomerOrder> {
+  if (isSqliteStoreEnabled()) {
+    const orders = await storeListOrders();
+    const order = orders.find((o) => o.order_number === orderNumber);
+    if (!order) throw new Error("account.order.notFound");
+    return mapStoreOrder(order);
+  }
   const data = await request<{ success: boolean; order: CustomerOrder }>(
     `/api/account/orders/${encodeURIComponent(orderNumber)}`
   );
@@ -151,11 +164,13 @@ export async function fetchAccountOrder(orderNumber: string): Promise<CustomerOr
 }
 
 export async function fetchAccountWishlist(): Promise<string[]> {
+  if (isSqliteStoreEnabled()) return [];
   const data = await request<{ success: boolean; productIds: string[] }>("/api/account/wishlist");
   return data.productIds;
 }
 
 export async function syncAccountWishlist(productIds: string[]): Promise<string[]> {
+  if (isSqliteStoreEnabled()) return productIds;
   const data = await request<{ success: boolean; productIds: string[] }>("/api/account/wishlist", {
     method: "PUT",
     body: JSON.stringify({ productIds }),
@@ -164,6 +179,7 @@ export async function syncAccountWishlist(productIds: string[]): Promise<string[
 }
 
 export async function updateAccountPreferences(preferences: AccountPreferences): Promise<AccountPreferences> {
+  if (isSqliteStoreEnabled()) return preferences;
   const data = await request<{ success: boolean; preferences: AccountPreferences }>("/api/account/preferences", {
     method: "PUT",
     body: JSON.stringify(preferences),

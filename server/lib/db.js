@@ -389,6 +389,21 @@ function migrateLocalizationFeeds() {
       );
     }
   }
+
+  const demoCosts = {
+    "BZ-OIL-5W30": [24, 39.9],
+    "BZ-CLEAN-001": [7, 12.9],
+    "BZ-GARDEN-001": [28, 49.9],
+    "BZ-HOME-001": [15, 24.9],
+    "BZ-PET-001": [18, 29.9],
+    "BZ-SPORT-001": [6, 14.9],
+  };
+  const restorePrice = db.prepare(
+    "UPDATE products SET supplier_cost_eur = ?, price_eur = ? WHERE sku = ? AND (price_eur IS NULL OR price_eur <= 0)"
+  );
+  for (const [sku, [cost, price]] of Object.entries(demoCosts)) {
+    restorePrice.run(cost, price, sku);
+  }
 }
 
 migrateLocalizationFeeds();

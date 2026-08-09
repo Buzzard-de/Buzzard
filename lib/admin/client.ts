@@ -12,8 +12,11 @@ import {
   mapStoreAdminOrder,
   mapStoreAdminUser,
   mapStoreProduct,
+  storeAdminGetProduct,
   storeAdminOrders,
   storeAdminProducts,
+  storeAdminUpdateOrderStatus,
+  storeAdminUpdateProduct,
   storeLogin,
   storeLogout,
   storeMe,
@@ -114,11 +117,28 @@ export async function fetchAdminProducts(q?: string): Promise<AdminProduct[]> {
 }
 
 export async function fetchAdminProduct(id: string): Promise<AdminProduct> {
+  if (isSqliteStoreEnabled()) {
+    const product = await storeAdminGetProduct(Number(id));
+    return mapStoreProduct(product);
+  }
   const data = await request<{ success: boolean; product: AdminProduct }>(`/api/admin/products/${encodeURIComponent(id)}`);
   return data.product;
 }
 
+function mapAdminPatchToStore(patch: Partial<AdminProduct>) {
+  return {
+    name: patch.name,
+    stock: patch.stock,
+    price_eur: patch.price?.amount,
+    active: patch.status ? patch.status === "active" : undefined,
+  };
+}
+
 export async function updateAdminProduct(id: string, patch: Partial<AdminProduct>): Promise<AdminProduct> {
+  if (isSqliteStoreEnabled()) {
+    const product = await storeAdminUpdateProduct(Number(id), mapAdminPatchToStore(patch));
+    return mapStoreProduct(product);
+  }
   const data = await request<{ success: boolean; product: AdminProduct }>(`/api/admin/products/${encodeURIComponent(id)}`, {
     method: "PUT",
     body: JSON.stringify(patch),
@@ -127,6 +147,10 @@ export async function updateAdminProduct(id: string, patch: Partial<AdminProduct
 }
 
 export async function setProductStatus(id: string, status: string): Promise<AdminProduct> {
+  if (isSqliteStoreEnabled()) {
+    const product = await storeAdminUpdateProduct(Number(id), { active: status === "active" });
+    return mapStoreProduct(product);
+  }
   const data = await request<{ success: boolean; product: AdminProduct }>(
     `/api/admin/products/${encodeURIComponent(id)}/status`,
     { method: "PATCH", body: JSON.stringify({ status }) }
@@ -174,6 +198,10 @@ export async function fetchAdminOrders(): Promise<AdminOrder[]> {
 }
 
 export async function updateOrderStatus(orderNumber: string, status: string): Promise<AdminOrder> {
+  if (isSqliteStoreEnabled()) {
+    const order = await storeAdminUpdateOrderStatus(orderNumber, status);
+    return mapStoreAdminOrder(order);
+  }
   const data = await request<{ success: boolean; order: AdminOrder }>(
     `/api/admin/orders/${encodeURIComponent(orderNumber)}/status`,
     { method: "PATCH", body: JSON.stringify({ status }) }

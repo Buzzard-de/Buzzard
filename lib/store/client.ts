@@ -143,6 +143,12 @@ export async function storeAdminProducts(): Promise<StoreProduct[]> {
   });
 }
 
+export async function storeAdminGetProduct(id: number): Promise<StoreProduct> {
+  return storeFetch<StoreProduct>(`/api/db/admin/products/${id}`, {
+    headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
+  });
+}
+
 export async function storeAdminUpdateProduct(
   id: number,
   patch: Partial<Pick<StoreProduct, "price_eur" | "stock" | "active" | "name" | "description">>
@@ -152,4 +158,19 @@ export async function storeAdminUpdateProduct(
     body: JSON.stringify(patch),
     headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
   });
+}
+
+export async function storeAdminUpdateOrderStatus(
+  orderNumber: string,
+  status: string
+): Promise<StoreOrder> {
+  return storeFetch<StoreOrder>(`/api/db/admin/orders/${encodeURIComponent(orderNumber)}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+    headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
+  });
+}
+
+export async function storeGetOrderByNumber(orderNumber: string): Promise<StoreOrder> {
+  return storeFetch<StoreOrder>(`/api/db/orders/${encodeURIComponent(orderNumber)}`);
 }

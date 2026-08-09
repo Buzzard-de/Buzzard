@@ -52,7 +52,7 @@ function ensureDataDir() {
 }
 
 function salesEnabled() {
-  return process.env.NEXT_PUBLIC_SALES_ENABLED === "1" || process.env.BUZZARD_SALES_ENABLED === "1";
+  return process.env.BUZZARD_SALES_ENABLED === "1";
 }
 
 function resolveLocale(locale) {

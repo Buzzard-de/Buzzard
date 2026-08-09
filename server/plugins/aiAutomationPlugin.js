@@ -206,6 +206,18 @@ function collectHealth() {
     }
   }
 
+  let paymentsFinance = { enabled: false };
+  if (process.env.BUZZARD_PAYMENTS_FINANCE !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      paymentsFinance = {
+        enabled: true,
+        ...require("../lib/paymentsFinance").getPaymentsFinanceStatus(),
+      };
+    } catch (error) {
+      paymentsFinance = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -226,6 +238,7 @@ function collectHealth() {
     wmsInventory,
     pimCatalog,
     identitySecurity,
+    paymentsFinance,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

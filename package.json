@@ -7,7 +7,8 @@
     "build": "node scripts/sync-redirects.mjs && next build && node scripts/post-export.mjs",
     "start": "next start",
     "lint": "next lint",
-    "security:audit": "npm audit --audit-level=high"
+    "security:audit": "npm audit --audit-level=high",
+    "verify:go-live": "node scripts/verify-go-live.mjs"
   },
   "dependencies": {
     "next": "^15.1.0",

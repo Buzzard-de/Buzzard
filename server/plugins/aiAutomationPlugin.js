@@ -446,6 +446,19 @@ function collectHealth() {
     }
   }
 
+  let contactSubmissions = { enabled: true, count: 0 };
+  try {
+    const fs = require("fs");
+    const path = require("path");
+    const file = path.join(__dirname, "..", "data", "submissions.json");
+    if (fs.existsSync(file)) {
+      const rows = JSON.parse(fs.readFileSync(file, "utf8") || "[]");
+      contactSubmissions = { enabled: true, count: Array.isArray(rows) ? rows.length : 0 };
+    }
+  } catch (error) {
+    contactSubmissions = { enabled: true, error: error.message };
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -486,6 +499,7 @@ function collectHealth() {
     securityV38,
     analyticsV39,
     masterAdminV40,
+    contactSubmissions,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

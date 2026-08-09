@@ -132,6 +132,12 @@ export function isMarketingLoyaltyEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isReviewsRatingsEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_REVIEWS_RATINGS === "0") return false;
+  if (process.env.NEXT_PUBLIC_REVIEWS_RATINGS === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

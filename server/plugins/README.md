@@ -438,6 +438,24 @@ Tables: `mktloy_campaigns`, `mktloy_promotion_uses`, `mktloy_loyalty_tiers`, `mk
 Frontend admin: `/admin/marketing-loyalty/`. Set `NEXT_PUBLIC_MARKETING_LOYALTY=1`.
 Note: Existing `/api/admin/marketing-center/*` (v1.4) and `/api/admin/crm-loyalty/*` (v1.2) remain separate.
 
+## Reviews & Ratings Plugin (v2.7)
+
+The `reviewsRatingsPlugin.js` module adds product reviews, moderation and rating aggregates:
+
+- `POST /api/reviews-ratings/reviews` — submit product review with optional media metadata
+- `GET /api/reviews-ratings/products/:sku/reviews` — published reviews and rating stats
+- `GET /api/reviews-ratings/customers/:id/reviews` — customer review history
+- `POST /api/reviews-ratings/reviews/:id/helpful|report` — helpful votes and abuse reports
+- `GET /api/admin/reviews-ratings/overview|reviews` — admin review dashboard
+- `PATCH /api/admin/reviews-ratings/reviews/:id/moderate` — moderation lifecycle
+- `POST /api/admin/reviews-ratings/reviews/:id/reply` — seller replies
+- `PATCH /api/admin/reviews-ratings/media/:id/moderate` — media moderation boundary
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_REVIEWS_RATINGS=0`.
+Tables: `revr_reviews`, `revr_review_media`, `revr_review_votes`, `revr_review_replies`, `revr_review_reports`, `revr_product_rating_stats`.
+Frontend admin: `/admin/reviews-ratings/`. Set `NEXT_PUBLIC_REVIEWS_RATINGS=1`.
+Note: Existing `reviews` table (v1.0 customer checkout) remains separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

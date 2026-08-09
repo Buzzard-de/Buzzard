@@ -278,6 +278,18 @@ function collectHealth() {
     }
   }
 
+  let reviewsRatings = { enabled: false };
+  if (process.env.BUZZARD_REVIEWS_RATINGS !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      reviewsRatings = {
+        enabled: true,
+        ...require("../lib/reviewsRatings").getReviewsRatingsStatus(),
+      };
+    } catch (error) {
+      reviewsRatings = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -304,6 +316,7 @@ function collectHealth() {
     crmCustomerService,
     returnsRma,
     marketingLoyalty,
+    reviewsRatings,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

@@ -500,6 +500,64 @@ function migrateCustomerCheckout() {
 
 migrateCustomerCheckout();
 
+function migrateCustomerSupport() {
+  ensureColumn("notifications", "channel", "TEXT DEFAULT 'in_app'");
+  ensureColumn("notifications", "status", "TEXT DEFAULT 'unread'");
+  ensureColumn("notifications", "subject", "TEXT DEFAULT ''");
+  ensureColumn("notifications", "body", "TEXT DEFAULT ''");
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS tickets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ticket_number TEXT UNIQUE NOT NULL,
+      user_id INTEGER,
+      order_number TEXT,
+      subject TEXT NOT NULL,
+      category TEXT DEFAULT 'general',
+      priority TEXT DEFAULT 'normal',
+      status TEXT DEFAULT 'open',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
+    );
+    CREATE TABLE IF NOT EXISTS ticket_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ticket_id INTEGER NOT NULL,
+      user_id INTEGER,
+      sender_type TEXT NOT NULL,
+      message TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(ticket_id) REFERENCES tickets(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS tracking_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_number TEXT NOT NULL,
+      carrier TEXT,
+      tracking_number TEXT,
+      status TEXT,
+      location TEXT,
+      event_time TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS support_templates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      active INTEGER DEFAULT 1
+    );
+  `);
+
+  const templateCount = db.prepare("SELECT COUNT(*) n FROM support_templates").get().n;
+  if (templateCount === 0) {
+    const insertTemplate = db.prepare("INSERT INTO support_templates(title, body) VALUES(?,?)");
+    insertTemplate.run("Order status", "We are checking the current status of your Buzzard order.");
+    insertTemplate.run("Shipping delay", "We are checking the shipment status with the carrier.");
+    insertTemplate.run("Return request", "Please provide the order number and the reason for the return.");
+  }
+}
+
+migrateCustomerSupport();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

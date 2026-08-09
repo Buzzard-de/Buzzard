@@ -104,6 +104,15 @@ function collectHealth() {
     }
   }
 
+  let customerSupport = { enabled: false };
+  if (process.env.BUZZARD_CUSTOMER_SUPPORT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      customerSupport = { enabled: true, ...require("../lib/customerSupport").getCustomerSupportStatus() };
+    } catch (error) {
+      customerSupport = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -115,6 +124,7 @@ function collectHealth() {
     catalogSeo,
     localizationFeeds,
     customerCheckout,
+    customerSupport,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

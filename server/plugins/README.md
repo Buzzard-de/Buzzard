@@ -179,6 +179,24 @@ The `customerCheckoutPlugin.js` module adds address book, checkout drafts, shipp
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CUSTOMER_CHECKOUT=0`.
 Tables: `coupons`, `wishlists`, `reviews`, `notifications`, `checkout_drafts`, `shipping_methods`.
 
+## Customer Support Plugin (v1.1)
+
+The `customerSupportPlugin.js` module adds support tickets, order tracking timeline and notification queue boundaries:
+
+- `POST/GET /api/customer/support/tickets` — create/list support tickets (JWT)
+- `GET /api/customer/support/tickets/:id` — ticket detail + messages
+- `POST /api/customer/support/tickets/:id/messages` — customer reply
+- `GET /api/customer/orders/:orderNumber/tracking` — shipment timeline
+- `GET /api/admin/customer-support/status` — admin overview
+- `GET/PATCH /api/admin/customer-support/tickets` — ticket queue + status
+- `POST /api/admin/customer-support/tickets/:id/reply` — admin reply
+- `POST /api/admin/customer-support/tracking-event` — add tracking event
+- `POST /api/admin/customer-support/notifications/email|whatsapp` — queue outbound notifications
+- `GET /api/admin/customer-support/templates` — canned response templates
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CUSTOMER_SUPPORT=0`.
+Tables: `tickets`, `ticket_messages`, `tracking_events`, `support_templates` (+ extended `notifications` columns).
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

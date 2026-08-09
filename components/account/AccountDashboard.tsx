@@ -30,7 +30,7 @@ export default function AccountDashboard() {
       <div className="account-shortcuts">
         <Link href="/konto/bestellungen/" className="shop-btn-secondary">{t("account.viewOrders")}</Link>
         <Link href="/konto/adressen/" className="shop-btn-secondary">{t("account.manageAddresses")}</Link>
-        <Link href="/impressum/" className="shop-btn-secondary">{t("account.support")}</Link>
+        <Link href="/konto/support/" className="shop-btn-secondary">{t("account.support")}</Link>
       </div>
       <section className="account-panel">
         <h2>{t("account.recentOrders")}</h2>

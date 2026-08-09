@@ -12,6 +12,7 @@ const NAV = [
   { href: "/admin/catalog/", label: "Katalog & SEO" },
   { href: "/admin/localization/", label: "Localization" },
   { href: "/admin/customer-checkout/", label: "Checkout" },
+  { href: "/admin/customer-support/", label: "Support" },
   { href: "/admin/suppliers/", label: "Lieferanten" },
   { href: "/admin/supplier-hub/", label: "Supplier Hub" },
   { href: "/admin/integrations/", label: "Integrations" },

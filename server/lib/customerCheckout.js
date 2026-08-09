@@ -209,10 +209,9 @@ function listNotifications(userId) {
 }
 
 function markNotificationRead(userId, notificationId) {
-  db.prepare("UPDATE notifications SET read_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?").run(
-    notificationId,
-    userId
-  );
+  db.prepare(
+    "UPDATE notifications SET read_at = CURRENT_TIMESTAMP, status = 'read' WHERE id = ? AND user_id = ?"
+  ).run(notificationId, userId);
   return { ok: true };
 }
 

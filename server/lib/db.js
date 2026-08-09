@@ -890,6 +890,130 @@ function migrateMarketingCenter() {
 
 migrateMarketingCenter();
 
+function migrateMarketplaceHub() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS marketplace_channels (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      enabled INTEGER DEFAULT 0,
+      account_label TEXT DEFAULT '',
+      status TEXT DEFAULT 'disconnected',
+      last_sync TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS marketplace_listings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      marketplace_id INTEGER,
+      product_sku TEXT NOT NULL,
+      channel_sku TEXT,
+      title TEXT,
+      price REAL,
+      currency TEXT DEFAULT 'EUR',
+      stock INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'draft',
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(marketplace_id, product_sku),
+      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS marketplace_sync_jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      marketplace_id INTEGER,
+      job_type TEXT NOT NULL,
+      entity_key TEXT,
+      payload_json TEXT,
+      status TEXT DEFAULT 'queued',
+      attempts INTEGER DEFAULT 0,
+      error_message TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      finished_at TEXT,
+      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS marketplace_channel_orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      marketplace_id INTEGER,
+      external_order_id TEXT,
+      internal_order_number TEXT,
+      status TEXT DEFAULT 'imported',
+      total REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      customer_country TEXT,
+      imported_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(marketplace_id, external_order_id),
+      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS marketplace_sku_mappings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      marketplace_id INTEGER,
+      product_sku TEXT,
+      channel_sku TEXT,
+      UNIQUE(marketplace_id, product_sku),
+      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
+    );
+  `);
+
+  const channels = [
+    ["amazon", "Amazon"],
+    ["ebay", "eBay"],
+    ["google_shopping", "Google Shopping"],
+    ["tiktok_shop", "TikTok Shop"],
+  ];
+  const insertChannel = db.prepare(
+    "INSERT OR IGNORE INTO marketplace_channels(code, name) VALUES(?, ?)"
+  );
+  channels.forEach(([code, name]) => insertChannel.run(code, name));
+
+  const listingCount = db.prepare("SELECT COUNT(*) n FROM marketplace_listings").get().n;
+  if (listingCount === 0) {
+    const ids = Object.fromEntries(
+      db.prepare("SELECT id, code FROM marketplace_channels").all().map((row) => [row.code, row.id])
+    );
+    const insertListing = db.prepare(`
+      INSERT INTO marketplace_listings(marketplace_id, product_sku, channel_sku, title, price, currency, stock, status)
+      VALUES(?,?,?,?,?,?,?,?)
+    `);
+    insertListing.run(
+      ids.amazon,
+      "BZ-OIL-5W30",
+      "AMZ-BZ-OIL-5W30",
+      "Premium Motoröl 5W-30",
+      39.9,
+      "EUR",
+      48,
+      "published"
+    );
+    insertListing.run(
+      ids.ebay,
+      "BZ-OIL-5W30",
+      "EB-BZ-OIL-5W30",
+      "Premium Motoröl 5W-30",
+      39.9,
+      "EUR",
+      48,
+      "published"
+    );
+    insertListing.run(
+      ids.google_shopping,
+      "BZ-OIL-5W30",
+      "BZ-OIL-5W30",
+      "Premium Motoröl 5W-30",
+      39.9,
+      "EUR",
+      48,
+      "published"
+    );
+
+    const insertOrder = db.prepare(`
+      INSERT INTO marketplace_channel_orders(marketplace_id, external_order_id, internal_order_number, status, total, currency, customer_country)
+      VALUES(?,?,?,?,?,?,?)
+    `);
+    insertOrder.run(ids.amazon, "AMZ-90001", "BZ-MP-1001", "imported", 79.8, "EUR", "DE");
+    insertOrder.run(ids.ebay, "EB-55002", "BZ-MP-1002", "imported", 39.9, "EUR", "FR");
+  }
+}
+
+migrateMarketplaceHub();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

@@ -71,6 +71,23 @@ services:
       - key: BUZZARD_PRODUCT_CATALOG_PIM
         value: "1"
       - key: BUZZARD_SUPPLIER_INTEGRATION_HUB
+      - key: BUZZARD_ORDER_MANAGEMENT_V32
+        value: "1"
+      - key: BUZZARD_FULFILLMENT_V33
+        value: "1"
+      - key: BUZZARD_LOGISTICS_V34
+        value: "1"
+      - key: BUZZARD_MARKETPLACE_V35
+        value: "1"
+      - key: BUZZARD_PAYMENTS_V36
+        value: "1"
+      - key: BUZZARD_INTERNATIONAL_V37
+        value: "1"
+      - key: BUZZARD_SECURITY_V38
+        value: "1"
+      - key: BUZZARD_ANALYTICS_V39
+        value: "1"
+      - key: BUZZARD_MASTER_ADMIN_V40
         value: "1"
       - key: DEFAULT_PAYMENT_PROVIDER
         value: stripe

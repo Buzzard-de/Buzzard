@@ -338,6 +338,114 @@ function collectHealth() {
     }
   }
 
+  let orderManagementV32 = { enabled: false };
+  if (process.env.BUZZARD_ORDER_MANAGEMENT_V32 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      orderManagementV32 = {
+        enabled: true,
+        ...require("../lib/orderManagementV32").getOrderManagementV32Status(),
+      };
+    } catch (error) {
+      orderManagementV32 = { enabled: true, error: error.message };
+    }
+  }
+
+  let fulfillmentV33 = { enabled: false };
+  if (process.env.BUZZARD_FULFILLMENT_V33 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      fulfillmentV33 = {
+        enabled: true,
+        ...require("../lib/fulfillmentV33").getFulfillmentV33Status(),
+      };
+    } catch (error) {
+      fulfillmentV33 = { enabled: true, error: error.message };
+    }
+  }
+
+  let logisticsV34 = { enabled: false };
+  if (process.env.BUZZARD_LOGISTICS_V34 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      logisticsV34 = {
+        enabled: true,
+        ...require("../lib/logisticsV34").getLogisticsV34Status(),
+      };
+    } catch (error) {
+      logisticsV34 = { enabled: true, error: error.message };
+    }
+  }
+
+  let marketplaceV35 = { enabled: false };
+  if (process.env.BUZZARD_MARKETPLACE_V35 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      marketplaceV35 = {
+        enabled: true,
+        ...require("../lib/marketplaceV35").getMarketplaceV35Status(),
+      };
+    } catch (error) {
+      marketplaceV35 = { enabled: true, error: error.message };
+    }
+  }
+
+  let paymentsV36 = { enabled: false };
+  if (process.env.BUZZARD_PAYMENTS_V36 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      paymentsV36 = {
+        enabled: true,
+        ...require("../lib/paymentsV36").getPaymentsV36Status(),
+      };
+    } catch (error) {
+      paymentsV36 = { enabled: true, error: error.message };
+    }
+  }
+
+  let internationalV37 = { enabled: false };
+  if (process.env.BUZZARD_INTERNATIONAL_V37 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      internationalV37 = {
+        enabled: true,
+        ...require("../lib/internationalV37").getInternationalV37Status(),
+      };
+    } catch (error) {
+      internationalV37 = { enabled: true, error: error.message };
+    }
+  }
+
+  let securityV38 = { enabled: false };
+  if (process.env.BUZZARD_SECURITY_V38 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      securityV38 = {
+        enabled: true,
+        ...require("../lib/securityV38").getSecurityV38Status(),
+      };
+    } catch (error) {
+      securityV38 = { enabled: true, error: error.message };
+    }
+  }
+
+  let analyticsV39 = { enabled: false };
+  if (process.env.BUZZARD_ANALYTICS_V39 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      analyticsV39 = {
+        enabled: true,
+        ...require("../lib/analyticsV39").getAnalyticsV39Status(),
+      };
+    } catch (error) {
+      analyticsV39 = { enabled: true, error: error.message };
+    }
+  }
+
+  let masterAdminV40 = { enabled: false };
+  if (process.env.BUZZARD_MASTER_ADMIN_V40 !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      masterAdminV40 = {
+        enabled: true,
+        ...require("../lib/masterAdminV40").getMasterAdminV40Status(),
+      };
+    } catch (error) {
+      masterAdminV40 = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -369,6 +477,15 @@ function collectHealth() {
     advancedSearch,
     productCatalogPim,
     supplierIntegrationHub,
+    orderManagementV32,
+    fulfillmentV33,
+    logisticsV34,
+    marketplaceV35,
+    paymentsV36,
+    internationalV37,
+    securityV38,
+    analyticsV39,
+    masterAdminV40,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

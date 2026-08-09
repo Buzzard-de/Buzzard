@@ -517,6 +517,131 @@ Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_SUPPLIER_INTEGRA
 Tables: `supih_suppliers`, `supih_mappings`, `supih_product_snapshots`, `supih_sync_jobs`, `supih_sync_logs`, `supih_shipping_methods`, `supih_orders`.
 Frontend admin: `/admin/supplier-integration-hub/`. Set `NEXT_PUBLIC_SUPPLIER_INTEGRATION_HUB=1`.
 Note: Existing `/api/admin/supplier-hub/*` (v1.6) remains separate.
+## Order Management System Plugin (v3.2)
+
+The `orderManagementV32Plugin.js` module adds order management system foundations:
+
+- `POST|GET /api/order-management-v32/records` — module records
+- `GET /api/order-management-v32/records/:code` — record lookup
+- `PATCH /api/order-management-v32/records/:id` — update record
+- `POST|GET /api/order-management-v32/jobs` — background jobs
+- `GET /api/admin/order-management-v32/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ORDER_MANAGEMENT_V32=0`.
+Tables: `oms32_records`, `oms32_jobs`.
+Frontend admin: `/admin/order-management-v32/`. Set `NEXT_PUBLIC_ORDER_MANAGEMENT_V32=1`.
+
+## Fulfillment & Warehouse Plugin (v3.3)
+
+The `fulfillmentV33Plugin.js` module adds fulfillment & warehouse foundations:
+
+- `POST|GET /api/fulfillment-v33/records` — module records
+- `GET /api/fulfillment-v33/records/:code` — record lookup
+- `PATCH /api/fulfillment-v33/records/:id` — update record
+- `POST|GET /api/fulfillment-v33/jobs` — background jobs
+- `GET /api/admin/fulfillment-v33/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_FULFILLMENT_V33=0`.
+Tables: `ful33_records`, `ful33_jobs`.
+Frontend admin: `/admin/fulfillment-v33/`. Set `NEXT_PUBLIC_FULFILLMENT_V33=1`.
+
+## Logistics & Shipping Plugin (v3.4)
+
+The `logisticsV34Plugin.js` module adds logistics & shipping foundations:
+
+- `POST|GET /api/logistics-v34/records` — module records
+- `GET /api/logistics-v34/records/:code` — record lookup
+- `PATCH /api/logistics-v34/records/:id` — update record
+- `POST|GET /api/logistics-v34/jobs` — background jobs
+- `GET /api/admin/logistics-v34/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_LOGISTICS_V34=0`.
+Tables: `log34_records`, `log34_jobs`.
+Frontend admin: `/admin/logistics-v34/`. Set `NEXT_PUBLIC_LOGISTICS_V34=1`.
+
+## Marketplace Integration Plugin (v3.5)
+
+The `marketplaceV35Plugin.js` module adds marketplace integration foundations:
+
+- `POST|GET /api/marketplace-v35/records` — module records
+- `GET /api/marketplace-v35/records/:code` — record lookup
+- `PATCH /api/marketplace-v35/records/:id` — update record
+- `POST|GET /api/marketplace-v35/jobs` — background jobs
+- `GET /api/admin/marketplace-v35/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_MARKETPLACE_V35=0`.
+Tables: `mkt35_records`, `mkt35_jobs`.
+Frontend admin: `/admin/marketplace-v35/`. Set `NEXT_PUBLIC_MARKETPLACE_V35=1`.
+
+## Payments & Finance Plugin (v3.6)
+
+The `paymentsV36Plugin.js` module adds payments & finance foundations:
+
+- `POST|GET /api/payments-v36/records` — module records
+- `GET /api/payments-v36/records/:code` — record lookup
+- `PATCH /api/payments-v36/records/:id` — update record
+- `POST|GET /api/payments-v36/jobs` — background jobs
+- `GET /api/admin/payments-v36/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_PAYMENTS_V36=0`.
+Tables: `pay36_records`, `pay36_jobs`.
+Frontend admin: `/admin/payments-v36/`. Set `NEXT_PUBLIC_PAYMENTS_V36=1`.
+
+## Europe & International Plugin (v3.7)
+
+The `internationalV37Plugin.js` module adds europe & international foundations:
+
+- `POST|GET /api/international-v37/records` — module records
+- `GET /api/international-v37/records/:code` — record lookup
+- `PATCH /api/international-v37/records/:id` — update record
+- `POST|GET /api/international-v37/jobs` — background jobs
+- `GET /api/admin/international-v37/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_INTERNATIONAL_V37=0`.
+Tables: `int37_records`, `int37_jobs`.
+Frontend admin: `/admin/international-v37/`. Set `NEXT_PUBLIC_INTERNATIONAL_V37=1`.
+
+## Security & Compliance Plugin (v3.8)
+
+The `securityV38Plugin.js` module adds security & compliance foundations:
+
+- `POST|GET /api/security-v38/records` — module records
+- `GET /api/security-v38/records/:code` — record lookup
+- `PATCH /api/security-v38/records/:id` — update record
+- `POST|GET /api/security-v38/jobs` — background jobs
+- `GET /api/admin/security-v38/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_SECURITY_V38=0`.
+Tables: `sec38_records`, `sec38_jobs`.
+Frontend admin: `/admin/security-v38/`. Set `NEXT_PUBLIC_SECURITY_V38=1`.
+
+## Analytics & BI Plugin (v3.9)
+
+The `analyticsV39Plugin.js` module adds analytics & bi foundations:
+
+- `POST|GET /api/analytics-v39/records` — module records
+- `GET /api/analytics-v39/records/:code` — record lookup
+- `PATCH /api/analytics-v39/records/:id` — update record
+- `POST|GET /api/analytics-v39/jobs` — background jobs
+- `GET /api/admin/analytics-v39/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ANALYTICS_V39=0`.
+Tables: `anl39_records`, `anl39_jobs`.
+Frontend admin: `/admin/analytics-v39/`. Set `NEXT_PUBLIC_ANALYTICS_V39=1`.
+
+## Master Admin & Platform Control Plugin (v4.0)
+
+The `masterAdminV40Plugin.js` module adds master admin & platform control foundations:
+
+- `POST|GET /api/master-admin-v40/records` — module records
+- `GET /api/master-admin-v40/records/:code` — record lookup
+- `PATCH /api/master-admin-v40/records/:id` — update record
+- `POST|GET /api/master-admin-v40/jobs` — background jobs
+- `GET /api/admin/master-admin-v40/overview` — admin dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_MASTER_ADMIN_V40=0`.
+Tables: `mad40_records`, `mad40_jobs`.
+Frontend admin: `/admin/master-admin-v40/`. Set `NEXT_PUBLIC_MASTER_ADMIN_V40=1`.
 
 ## Plugin hinzufügen
 

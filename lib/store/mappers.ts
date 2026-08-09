@@ -118,3 +118,26 @@ export function mapStoreAdminOrder(order: StoreOrder): AdminOrder {
     },
   };
 }
+
+export interface StoreAddress {
+  id: number;
+  name: string;
+  line1: string;
+  city: string;
+  postal_code: string;
+  country_code: string;
+  phone?: string | null;
+}
+
+export function mapStoreAddress(address: StoreAddress): import("@/lib/account/types").AccountAddress {
+  const { firstName, lastName } = splitName(address.name);
+  return {
+    id: String(address.id),
+    firstName,
+    lastName,
+    street: address.line1,
+    zip: address.postal_code,
+    city: address.city,
+    country: address.country_code,
+  };
+}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin/context";
+import { ADMIN_NAV_GROUPS, adminHref } from "@/lib/admin/nav.config.mjs";
 import AdminApiStatusBanner from "./AdminApiStatusBanner";
 
 function isNavActive(pathname: string, href: string): boolean {
@@ -11,53 +12,6 @@ function isNavActive(pathname: string, href: string): boolean {
   }
   return pathname === href || pathname.startsWith(href);
 }
-
-const NAV = [
-  { href: "/admin/", label: "Dashboard" },
-  { href: "/admin/analytics/", label: "Analytics" },
-  { href: "/admin/analytics-dashboard/", label: "Executive KPIs" },
-  { href: "/admin/marketing-center/", label: "Marketing Center" },
-  { href: "/admin/marketplace-hub/", label: "Marketplace Hub" },
-  { href: "/admin/seo/", label: "SEO" },
-  { href: "/admin/products/", label: "Produkte" },
-  { href: "/admin/catalog/", label: "Katalog & SEO" },
-  { href: "/admin/pim-catalog/", label: "PIM v1.9" },
-  { href: "/admin/identity-security/", label: "Security v2.0" },
-  { href: "/admin/payments-finance/", label: "Finance v2.1" },
-  { href: "/admin/order-management/", label: "OMS v2.2" },
-  { href: "/admin/cart-checkout/", label: "Cart v2.3" },
-  { href: "/admin/crm-customer-service/", label: "CRM v2.4" },
-  { href: "/admin/returns-rma/", label: "RMA v2.5" },
-  { href: "/admin/marketing-loyalty/", label: "Mktg v2.6" },
-  { href: "/admin/reviews-ratings/", label: "Reviews v2.7" },
-  { href: "/admin/ai-center/", label: "AI v2.8" },
-  { href: "/admin/advanced-search/", label: "Search v2.9" },
-  { href: "/admin/product-catalog-pim/", label: "PIM v3.0" },
-  { href: "/admin/supplier-integration-hub/", label: "Supplier v3.1" },
-  { href: "/admin/order-management-v32/", label: "OMS v3.2" },
-  { href: "/admin/fulfillment-v33/", label: "Fulfill v3.3" },
-  { href: "/admin/logistics-v34/", label: "Logistics v3.4" },
-  { href: "/admin/marketplace-v35/", label: "Market v3.5" },
-  { href: "/admin/payments-v36/", label: "Pay v3.6" },
-  { href: "/admin/international-v37/", label: "Intl v3.7" },
-  { href: "/admin/security-v38/", label: "Security v3.8" },
-  { href: "/admin/analytics-v39/", label: "Analytics v3.9" },
-  { href: "/admin/master-admin-v40/", label: "Master v4.0" },
-  { href: "/admin/localization/", label: "Localization" },
-  { href: "/admin/customer-checkout/", label: "Checkout" },
-  { href: "/admin/customer-support/", label: "Support" },
-  { href: "/admin/contact-submissions/", label: "Kontakt" },
-  { href: "/admin/crm-loyalty/", label: "CRM & Loyalty" },
-  { href: "/admin/suppliers/", label: "Lieferanten" },
-  { href: "/admin/supplier-hub/", label: "Supplier Hub" },
-  { href: "/admin/integrations/", label: "Integrations" },
-  { href: "/admin/sync/", label: "Sync & Import" },
-  { href: "/admin/orders/", label: "Bestellungen" },
-  { href: "/admin/logistics/", label: "Logistik" },
-  { href: "/admin/logistics-fulfillment/", label: "Logistics v1.7" },
-  { href: "/admin/wms-inventory/", label: "WMS v1.8" },
-  { href: "/admin/automation/", label: "Automation" },
-];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -77,14 +31,22 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <span>Admin</span>
         </div>
         <nav className="admin-nav">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={isNavActive(pathname, item.href) ? "active" : ""}
-            >
-              {item.label}
-            </Link>
+          {ADMIN_NAV_GROUPS.map((group) => (
+            <div key={group.id} className="admin-nav-group">
+              <p className="admin-nav-group-label">{group.label}</p>
+              {group.items.map((item) => {
+                const href = adminHref(item.slug);
+                return (
+                  <Link
+                    key={item.slug || "dashboard"}
+                    href={href}
+                    className={isNavActive(pathname, href) ? "active" : ""}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
           ))}
         </nav>
         <div className="admin-user">

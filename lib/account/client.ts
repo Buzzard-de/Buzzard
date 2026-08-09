@@ -1,6 +1,15 @@
 import type { AccountAddress, AccountPreferences, AccountUser, CustomerOrder } from "./types";
+import {
+  createCustomerAddress,
+  deleteCustomerAddress,
+  fetchCustomerProfile,
+  updateCustomerAddress,
+  addCustomerWishlistItem,
+  removeCustomerWishlistItem,
+} from "@/lib/customerCheckout/client";
 import { isSqliteStoreEnabled } from "@/lib/store/config";
 import {
+  mapStoreAddress,
   mapStoreOrder,
   mapStoreUser,
   storeListOrders,
@@ -8,6 +17,7 @@ import {
   storeLogout,
   storeMe,
   storeRegister,
+  storeUpdateMe,
 } from "@/lib/store";
 
 const TOKEN_KEY = "buzzard_account_token";
@@ -90,6 +100,26 @@ export async function accountLogout(): Promise<void> {
   }
 }
 
+async function fetchSqliteProfile() {
+  try {
+    return await fetchCustomerProfile();
+  } catch {
+    const user = await storeMe();
+    return { user, addresses: [], wishlist: [] as Array<number | string> };
+  }
+}
+
+function addressToStoreBody(address: Partial<AccountAddress>) {
+  return {
+    firstName: address.firstName,
+    lastName: address.lastName,
+    street: address.street,
+    zip: address.zip,
+    city: address.city,
+    country: address.country,
+  };
+}
+
 export async function fetchAccountMe(): Promise<{
   user: AccountUser;
   preferences: AccountPreferences;
@@ -97,12 +127,17 @@ export async function fetchAccountMe(): Promise<{
   wishlistCount: number;
 }> {
   if (isSqliteStoreEnabled()) {
-    const user = await storeMe();
+    const profile = await fetchSqliteProfile();
     return {
-      user: mapStoreUser(user),
+      user: mapStoreUser({
+        id: profile.user.id,
+        email: profile.user.email,
+        name: profile.user.name,
+        role: profile.user.role === "admin" ? "admin" : "customer",
+      }),
       preferences: { language: "de", marketing: false, transactional: true },
-      addressCount: 0,
-      wishlistCount: 0,
+      addressCount: profile.addresses.length,
+      wishlistCount: profile.wishlist.length,
     };
   }
   return request("/api/account/me");
@@ -110,6 +145,11 @@ export async function fetchAccountMe(): Promise<{
 
 export async function updateAccountProfile(patch: Partial<AccountUser>): Promise<AccountUser> {
   if (isSqliteStoreEnabled()) {
+    const name = [patch.firstName, patch.lastName].filter(Boolean).join(" ").trim();
+    if (name) {
+      const user = await storeUpdateMe({ name });
+      return mapStoreUser(user, patch.country || "DE");
+    }
     const me = await fetchAccountMe();
     return { ...me.user, ...patch };
   }
@@ -121,13 +161,22 @@ export async function updateAccountProfile(patch: Partial<AccountUser>): Promise
 }
 
 export async function fetchAccountAddresses(): Promise<AccountAddress[]> {
-  if (isSqliteStoreEnabled()) return [];
+  if (isSqliteStoreEnabled()) {
+    const profile = await fetchSqliteProfile();
+    return profile.addresses.map(mapStoreAddress);
+  }
   const data = await request<{ success: boolean; addresses: AccountAddress[] }>("/api/account/addresses");
   return data.addresses;
 }
 
 export async function saveAccountAddress(address: Partial<AccountAddress> & { id?: string }): Promise<AccountAddress> {
-  if (isSqliteStoreEnabled()) throw new Error("account.addressesUnavailable");
+  if (isSqliteStoreEnabled()) {
+    const body = addressToStoreBody(address);
+    const saved = address.id
+      ? await updateCustomerAddress(address.id, body)
+      : await createCustomerAddress(body);
+    return mapStoreAddress(saved);
+  }
   const path = address.id ? `/api/account/addresses/${encodeURIComponent(address.id)}` : "/api/account/addresses";
   const data = await request<{ success: boolean; address: AccountAddress }>(path, {
     method: address.id ? "PUT" : "POST",
@@ -137,7 +186,10 @@ export async function saveAccountAddress(address: Partial<AccountAddress> & { id
 }
 
 export async function deleteAccountAddress(id: string): Promise<void> {
-  if (isSqliteStoreEnabled()) throw new Error("account.addressesUnavailable");
+  if (isSqliteStoreEnabled()) {
+    await deleteCustomerAddress(id);
+    return;
+  }
   await request(`/api/account/addresses/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 
@@ -164,13 +216,27 @@ export async function fetchAccountOrder(orderNumber: string): Promise<CustomerOr
 }
 
 export async function fetchAccountWishlist(): Promise<string[]> {
-  if (isSqliteStoreEnabled()) return [];
+  if (isSqliteStoreEnabled()) {
+    const profile = await fetchSqliteProfile();
+    return profile.wishlist.map(String);
+  }
   const data = await request<{ success: boolean; productIds: string[] }>("/api/account/wishlist");
   return data.productIds;
 }
 
 export async function syncAccountWishlist(productIds: string[]): Promise<string[]> {
-  if (isSqliteStoreEnabled()) return productIds;
+  if (isSqliteStoreEnabled()) {
+    const profile = await fetchSqliteProfile();
+    const current = new Set(profile.wishlist.map(String));
+    const next = new Set(productIds.map(String));
+    for (const id of next) {
+      if (!current.has(id)) await addCustomerWishlistItem(id);
+    }
+    for (const id of current) {
+      if (!next.has(id)) await removeCustomerWishlistItem(id);
+    }
+    return productIds;
+  }
   const data = await request<{ success: boolean; productIds: string[] }>("/api/account/wishlist", {
     method: "PUT",
     body: JSON.stringify({ productIds }),
@@ -188,6 +254,7 @@ export async function updateAccountPreferences(preferences: AccountPreferences):
 }
 
 export async function requestPasswordReset(email: string): Promise<{ resetToken?: string }> {
+  if (isSqliteStoreEnabled()) throw new Error("account.featureUnavailable");
   return request("/api/account/password-reset/request", {
     method: "POST",
     body: JSON.stringify({ email }),
@@ -199,10 +266,12 @@ export async function confirmPasswordReset(body: {
   password: string;
   passwordConfirm: string;
 }): Promise<void> {
+  if (isSqliteStoreEnabled()) throw new Error("account.featureUnavailable");
   await request("/api/account/password-reset/confirm", { method: "POST", body: JSON.stringify(body) });
 }
 
 export async function requestAccountDeletion(): Promise<string> {
+  if (isSqliteStoreEnabled()) throw new Error("account.featureUnavailable");
   const data = await request<{ success: boolean; requestedAt: string }>("/api/account/deletion-request", {
     method: "POST",
     body: "{}",

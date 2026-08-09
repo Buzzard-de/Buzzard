@@ -246,6 +246,8 @@ export const catalog: TranslationTree = {
     defaultShipping: "Standard-Lieferadresse",
     save: "Speichern",
     saved: "Gespeichert.",
+    saveError: "Speichern fehlgeschlagen.",
+    featureUnavailable: "Diese Funktion ist im Demo-Modus noch nicht verfügbar.",
     ordersTitle: "Meine Bestellungen",
     orderNumber: "Bestellnummer",
     statusLabel: "Status",
@@ -337,6 +339,9 @@ export const catalog: TranslationTree = {
       invalidStatus: "Ungültiger Rücksendestatus.",
       notFound: "Rücksendung nicht gefunden.",
     },
+  },
+  a11y: {
+    skipToContent: "Zum Inhalt springen",
   },
   footer: {
     imprint: "Impressum",

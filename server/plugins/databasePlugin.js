@@ -74,6 +74,18 @@ module.exports = {
       return res.json(user);
     });
 
+    app.patch("/api/me", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      const { name } = req.body || {};
+      if (name) {
+        db.prepare("UPDATE users SET name = ? WHERE id = ?").run(String(name).trim(), req.user.sub);
+      }
+      const user = db
+        .prepare("SELECT id, email, name, role, created_at FROM users WHERE id = ?")
+        .get(req.user.sub);
+      return res.json(user);
+    });
+
     app.get("/api/categories", (_req, res) => {
       return res.json(db.prepare("SELECT * FROM categories ORDER BY name").all());
     });

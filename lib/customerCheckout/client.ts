@@ -135,3 +135,50 @@ export async function fetchProductReviews(productId: string): Promise<
 > {
   return request(`/api/customer/products/${encodeURIComponent(productId)}/reviews`);
 }
+
+export interface CustomerProfileResponse {
+  user: { id: number; email: string; name: string; role: string };
+  addresses: Array<{
+    id: number;
+    name: string;
+    line1: string;
+    city: string;
+    postal_code: string;
+    country_code: string;
+    phone?: string | null;
+  }>;
+  wishlist: Array<number | string>;
+}
+
+export async function fetchCustomerProfile(): Promise<CustomerProfileResponse> {
+  return request<CustomerProfileResponse>("/api/customer/profile");
+}
+
+export async function createCustomerAddress(body: Record<string, unknown>): Promise<CustomerProfileResponse["addresses"][0]> {
+  return request("/api/customer/addresses", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function updateCustomerAddress(
+  id: string,
+  body: Record<string, unknown>
+): Promise<CustomerProfileResponse["addresses"][0]> {
+  return request(`/api/customer/addresses/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function deleteCustomerAddress(id: string): Promise<void> {
+  await request(`/api/customer/addresses/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+export async function addCustomerWishlistItem(productId: string): Promise<void> {
+  await request(`/api/customer/wishlist/${encodeURIComponent(productId)}`, { method: "POST", body: "{}" });
+}
+
+export async function removeCustomerWishlistItem(productId: string): Promise<void> {
+  await request(`/api/customer/wishlist/${encodeURIComponent(productId)}`, { method: "DELETE" });
+}

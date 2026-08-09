@@ -77,6 +77,32 @@ function deleteAddress(userId, addressId) {
   return { ok: true };
 }
 
+function updateAddress(userId, addressId, body) {
+  const existing = db
+    .prepare("SELECT * FROM addresses WHERE id = ? AND user_id = ?")
+    .get(addressId, userId);
+  if (!existing) return { error: "Address not found", status: 404 };
+  const address = normalizeAddressInput(body);
+  if (!address.name || !address.line1 || !address.city || !address.postalCode || !address.countryCode) {
+    return { error: "Complete address required", status: 400 };
+  }
+  db.prepare(`
+    UPDATE addresses
+    SET name = ?, line1 = ?, city = ?, postal_code = ?, country_code = ?, phone = ?
+    WHERE id = ? AND user_id = ?
+  `).run(
+    address.name,
+    address.line1,
+    address.city,
+    address.postalCode,
+    address.countryCode,
+    address.phone,
+    addressId,
+    userId
+  );
+  return { address: db.prepare("SELECT * FROM addresses WHERE id = ?").get(addressId) };
+}
+
 function addWishlistItem(userId, productId) {
   db.prepare("INSERT OR IGNORE INTO wishlists(user_id, product_id) VALUES(?,?)").run(
     userId,
@@ -267,6 +293,7 @@ module.exports = {
   listShippingMethods,
   getCustomerProfile,
   createAddress,
+  updateAddress,
   deleteAddress,
   addWishlistItem,
   removeWishlistItem,

@@ -26,7 +26,22 @@
 
 .admin-nav {
   display: grid;
-  gap: 6px;
+  gap: 12px;
+}
+
+.admin-nav-group {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-nav-group-label {
+  margin: 0;
+  padding: 4px 12px 2px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666;
 }
 
 .admin-nav a {

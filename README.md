@@ -15,6 +15,17 @@ styles/           Globale CSS
 public/           Statische Assets
 ```
 
+## Architektur
+
+| Schicht | Technologie | Hinweis |
+|---------|-------------|---------|
+| Frontend | Next.js static export → GitHub Pages | `NEXT_PUBLIC_*` wird beim Build gebacken |
+| API | Node + SQLite (Render) | `BUZZARD_*` Flags auf dem Server |
+| Katalog | Statische JSON-Dateien in `data/` | Produktseiten, Kategorien |
+| Bestellungen/Konto | SQLite via API | wenn `NEXT_PUBLIC_SQLITE_STORE=1` |
+
+**Dual-Stack:** Mit `NEXT_PUBLIC_SQLITE_STORE=1` (Production) nutzen Konto, Warenkorb und Admin die SQLite-API. Ohne Flag läuft der Legacy JSON-Modus lokal.
+
 ## Lokal starten (VS Code / Cursor)
 
 **Voraussetzungen:** Node.js 20+ (siehe `.nvmrc`)
@@ -52,6 +63,7 @@ npm run dev:api    # nur API
 | `npm run typecheck` | TypeScript prüfen |
 | `npm run verify:go-live` | Production-Routen + API prüfen |
 | `npm run verify:local` | Lokale Routen prüfen |
+| `npm run security:audit` | npm audit (high+) |
 
 ## Build & Deployment
 

@@ -67,6 +67,13 @@ module.exports = {
       return res.status(201).json(result.address);
     });
 
+    app.patch("/api/customer/addresses/:id", (req, res) => {
+      if (!requireCustomer(req, res)) return;
+      const result = customerCheckout.updateAddress(req.user.sub, req.params.id, req.body || {});
+      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      return res.json(result.address);
+    });
+
     app.delete("/api/customer/addresses/:id", (req, res) => {
       if (!requireCustomer(req, res)) return;
       return res.json(customerCheckout.deleteAddress(req.user.sub, req.params.id));

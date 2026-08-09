@@ -234,6 +234,8 @@ export const catalog: TranslationTree = {
     defaultShipping: "Varsayılan teslimat adresi",
     save: "Kaydet",
     saved: "Kaydedildi.",
+    saveError: "Kaydedilemedi.",
+    featureUnavailable: "Bu özellik demo modunda henüz kullanılamıyor.",
     ordersTitle: "Siparişlerim",
     orderNumber: "Sipariş no",
     statusLabel: "Durum",
@@ -325,6 +327,9 @@ export const catalog: TranslationTree = {
       invalidStatus: "Geçersiz iade durumu.",
       notFound: "İade bulunamadı.",
     },
+  },
+  a11y: {
+    skipToContent: "İçeriğe atla",
   },
   footer: {
     imprint: "Künye",

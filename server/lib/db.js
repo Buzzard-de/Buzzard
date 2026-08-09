@@ -1515,6 +1515,95 @@ function migratePimCatalogV19() {
 
 migratePimCatalogV19();
 
+function migrateIdentitySecurityV20() {
+  [
+    ["users", "first_name", "TEXT DEFAULT ''"],
+    ["users", "last_name", "TEXT DEFAULT ''"],
+    ["users", "status", "TEXT DEFAULT 'active'"],
+    ["users", "email_verified", "INTEGER DEFAULT 0"],
+    ["users", "twofa_enabled", "INTEGER DEFAULT 0"],
+    ["users", "twofa_secret", "TEXT DEFAULT ''"],
+    ["users", "updated_at", "TEXT"],
+  ].forEach(([table, column, definition]) => ensureColumn(table, column, definition));
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS identity_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      refresh_hash TEXT UNIQUE,
+      user_agent TEXT,
+      ip_hash TEXT,
+      expires_at TEXT,
+      revoked INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS identity_verification_tokens (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      token_hash TEXT UNIQUE,
+      token_type TEXT,
+      expires_at TEXT,
+      used INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS identity_login_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT,
+      success INTEGER,
+      ip_hash TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS identity_security_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      event_type TEXT,
+      ip_hash TEXT,
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS identity_privacy_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      request_type TEXT,
+      status TEXT DEFAULT 'requested',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS identity_addresses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      type TEXT DEFAULT 'shipping',
+      first_name TEXT,
+      last_name TEXT,
+      company TEXT,
+      street TEXT,
+      house_number TEXT,
+      postal_code TEXT,
+      city TEXT,
+      country_code TEXT,
+      phone TEXT,
+      is_default INTEGER DEFAULT 0,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+
+  const admin = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get();
+  if (admin) {
+    db.prepare(`
+      UPDATE users
+      SET email_verified = 1, status = 'active', first_name = COALESCE(NULLIF(first_name, ''), 'Buzzard'), last_name = COALESCE(NULLIF(last_name, ''), 'Admin'),
+          updated_at = COALESCE(updated_at, CURRENT_TIMESTAMP)
+      WHERE id = ?
+    `).run(admin.id);
+  }
+  db.prepare("UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL OR updated_at = ''").run();
+}
+
+migrateIdentitySecurityV20();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

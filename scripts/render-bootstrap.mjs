@@ -30,6 +30,7 @@ const ENV_VARS = [
   { key: "BUZZARD_LOGISTICS_FULFILLMENT", value: "1" },
   { key: "BUZZARD_WMS_INVENTORY", value: "1" },
   { key: "BUZZARD_PIM_CATALOG", value: "1" },
+  { key: "BUZZARD_IDENTITY_SECURITY", value: "1" },
   { key: "DEFAULT_PAYMENT_PROVIDER", value: "stripe" },
   { key: "DEFAULT_CARRIER", value: "dhl" },
   { key: "ADMIN_EMAIL", value: "admin@buzzard.de" },

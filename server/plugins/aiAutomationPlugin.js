@@ -326,6 +326,18 @@ function collectHealth() {
     }
   }
 
+  let supplierIntegrationHub = { enabled: false };
+  if (process.env.BUZZARD_SUPPLIER_INTEGRATION_HUB !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      supplierIntegrationHub = {
+        enabled: true,
+        ...require("../lib/supplierIntegrationHub").getSupplierIntegrationHubStatus(),
+      };
+    } catch (error) {
+      supplierIntegrationHub = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -356,6 +368,7 @@ function collectHealth() {
     aiCenter,
     advancedSearch,
     productCatalogPim,
+    supplierIntegrationHub,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

@@ -502,6 +502,22 @@ Tables: `pim30_brands`, `pim30_categories`, `pim30_products`, `pim30_product_tra
 Frontend admin: `/admin/product-catalog-pim/`. Set `NEXT_PUBLIC_PRODUCT_CATALOG_PIM=1`.
 Note: Existing `/api/pim-catalog/*` (v1.9) remains separate.
 
+## Supplier Integration Hub Plugin (v3.1)
+
+The `supplierIntegrationHubPlugin.js` module adds B2B supplier connectivity foundations:
+
+- `POST|GET /api/supplier-integration-hub/suppliers` — supplier registry
+- `GET /api/supplier-integration-hub/suppliers/:code` — supplier detail with mappings and shipping
+- `POST /api/supplier-integration-hub/suppliers/:code/mappings|sync|snapshot|shipping-methods` — SKU mapping, sync jobs, price/stock snapshots
+- `GET /api/supplier-integration-hub/sync-jobs` — sync job history
+- `POST /api/supplier-integration-hub/orders` — dropship supplier order routing boundary
+- `GET /api/admin/supplier-integration-hub/overview` — admin supplier dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_SUPPLIER_INTEGRATION_HUB=0`.
+Tables: `supih_suppliers`, `supih_mappings`, `supih_product_snapshots`, `supih_sync_jobs`, `supih_sync_logs`, `supih_shipping_methods`, `supih_orders`.
+Frontend admin: `/admin/supplier-integration-hub/`. Set `NEXT_PUBLIC_SUPPLIER_INTEGRATION_HUB=1`.
+Note: Existing `/api/admin/supplier-hub/*` (v1.6) remains separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

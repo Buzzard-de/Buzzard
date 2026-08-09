@@ -26,6 +26,7 @@ const NAV = [
   { href: "/admin/ai-center/", label: "AI v2.8" },
   { href: "/admin/advanced-search/", label: "Search v2.9" },
   { href: "/admin/product-catalog-pim/", label: "PIM v3.0" },
+  { href: "/admin/supplier-integration-hub/", label: "Supplier v3.1" },
   { href: "/admin/localization/", label: "Localization" },
   { href: "/admin/customer-checkout/", label: "Checkout" },
   { href: "/admin/customer-support/", label: "Support" },

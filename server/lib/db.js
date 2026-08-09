@@ -5,7 +5,12 @@ const Database = require("better-sqlite3");
 const dataDir = path.join(__dirname, "..", "data");
 fs.mkdirSync(dataDir, { recursive: true });
 
-const dbPath = path.join(dataDir, "buzzard.db");
+const dbPath = process.env.BUZZARD_DB_PATH
+  ? path.resolve(process.env.BUZZARD_DB_PATH)
+  : path.join(dataDir, "buzzard.db");
+if (process.env.BUZZARD_DB_PATH) {
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+}
 const db = new Database(dbPath);
 db.pragma("foreign_keys = ON");
 

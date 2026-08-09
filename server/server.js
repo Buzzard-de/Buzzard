@@ -16,16 +16,25 @@ function setCommonHeaders(res) {
   setSecurityHeaders(res);
 }
 
-function setApiCorsHeaders(req, res) {
-  const origin = req.headers.origin;
-  const allowed = new Set([
+function getAllowedOrigins() {
+  const defaults = [
     "http://localhost:8000",
     "http://localhost:3000",
     "http://localhost:3001",
     "https://buzzard24.de",
     "https://www.buzzard24.de",
     "null",
-  ]);
+  ];
+  const extra = (process.env.BUZZARD_CORS_ORIGINS || "")
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+  return new Set([...defaults, ...extra]);
+}
+
+function setApiCorsHeaders(req, res) {
+  const origin = req.headers.origin;
+  const allowed = getAllowedOrigins();
   if (origin && allowed.has(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Vary", "Origin");

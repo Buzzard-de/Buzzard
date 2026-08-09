@@ -1,3 +1,5 @@
+# Buzzard API — Render Blueprint (https://render.com/docs/blueprint-spec)
+# Persistent SQLite: upgrade to paid plan, add disk mount /var/data, set BUZZARD_DB_PATH=/var/data/buzzard.db
 services:
   - type: web
     name: buzzard-api

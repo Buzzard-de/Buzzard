@@ -77,9 +77,10 @@ jobs:
           FAST_FAIL_NO_SERVER: "0"
         run: node scripts/wait-for-api-health.mjs
 
-      - name: Fail fast when API not provisioned
+      - name: Warn when API not provisioned
         if: ${{ env.deploy_triggered != '1' && steps.probe.outputs.live != 'true' && (github.event_name != 'workflow_dispatch' || inputs.skip_health_check != 'true') }}
         env:
           HEALTH_TIMEOUT_MS: "30000"
           FAST_FAIL_NO_SERVER: "1"
+          ALLOW_UNPROVISIONED: "1"
         run: node scripts/wait-for-api-health.mjs

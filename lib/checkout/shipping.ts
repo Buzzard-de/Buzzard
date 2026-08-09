@@ -1,9 +1,7 @@
-import {
-  calculateMarketShipping,
-  freeShippingRemaining as marketFreeShippingRemaining,
-  getFreeShippingThreshold,
-} from "@/lib/market/shipping";
+import { calculateMarketShipping, freeShippingRemaining as marketFreeShippingRemaining, getFreeShippingThreshold } from "@/lib/market/shipping";
+import { calculateLinesWeightKg } from "@/lib/market/weight";
 import { defaultMarketCountryCode } from "@/lib/market/countries";
+import type { CheckoutCartLineInput } from "./types";
 import type { ShippingMethodOption } from "./types";
 
 export const FREE_SHIPPING_THRESHOLD = 79;
@@ -47,6 +45,16 @@ export function calculateShippingCost(
   }
 
   return method.baseCost;
+}
+
+export function calculateShippingCostForLines(
+  subtotal: number,
+  methodId: string,
+  countryCode = defaultMarketCountryCode(),
+  lines: CheckoutCartLineInput[] = []
+): number {
+  const weightKg = lines.length ? calculateLinesWeightKg(lines) : 2;
+  return calculateShippingCost(subtotal, methodId, countryCode, weightKg);
 }
 
 export function freeShippingRemaining(

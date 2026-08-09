@@ -25,6 +25,7 @@ import { saveConfirmedOrder, submitOrder, fetchOrderQuote } from "@/lib/orders";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
 import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { isCheckoutEnabled } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
@@ -46,7 +47,7 @@ function stepIndex(step: CheckoutStep): number {
 export default function CheckoutForm() {
   const router = useRouter();
   const { t } = useLocale();
-  const { countryCode } = useMarket();
+  const { countryCode, deliveryDays } = useMarket();
   const { user: accountUser, ready: accountReady } = useAccount();
   const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
   const [step, setStep] = useState<CheckoutStep>("customer");
@@ -372,6 +373,9 @@ export default function CheckoutForm() {
           {step === "shipping_method" && (
             <section className="checkout-section">
               <h2>{t("checkout.step.shipping_method")}</h2>
+              <p className="checkout-delivery-estimate">
+                {t("checkout.deliveryEstimate").replace("{estimate}", deliveryDays)}
+              </p>
               <div className="checkout-option-list">
                 {SHIPPING_METHODS.map((method) => (
                   <label key={method.id} className="checkout-option">
@@ -384,10 +388,10 @@ export default function CheckoutForm() {
                     />
                     <span>
                       <strong>{t(method.labelKey)}</strong>
-                      <small>{t(method.descriptionKey)} · {method.etaDays} {t("checkout.days")}</small>
+                      <small>{t(method.descriptionKey)} · {deliveryDays}</small>
                     </span>
                     <em>
-                      {method.id === "standard" && displaySubtotal - displayDiscount >= 79
+                      {method.id === "standard" && displaySubtotal - displayDiscount >= getFreeShippingThreshold(countryCode)
                         ? t("cart.shippingFree")
                         : formatPrice(method.baseCost)}
                     </em>

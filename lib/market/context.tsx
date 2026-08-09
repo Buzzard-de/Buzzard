@@ -29,6 +29,7 @@ interface MarketContextValue {
   country: MarketCountry;
   currency: string;
   deliveryDays: string;
+  taxRate: number;
   setCountryCode: (code: string, manual?: boolean) => void;
 }
 
@@ -80,6 +81,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       country,
       currency: country.currency,
       deliveryDays: country.deliveryDays,
+      taxRate: country.taxRate,
       setCountryCode,
     }),
     [country, setCountryCode]

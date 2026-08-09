@@ -31,6 +31,19 @@ jobs:
         with:
           node-version: 20
 
+      - name: Probe API
+        id: probe
+        run: |
+          code=$(curl -sS -o /tmp/health.json -w "%{http_code}" "https://buzzard-api.onrender.com/api/health" || echo "000")
+          routing=$(curl -sSI "https://buzzard-api.onrender.com/api/health" | awk -F': ' 'tolower($1)=="x-render-routing"{print $2}' | tr -d '\r')
+          echo "http_code=$code" >> "$GITHUB_OUTPUT"
+          echo "routing=$routing" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "200" ]; then
+            echo "live=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "live=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Deploy to Render
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
@@ -57,6 +70,16 @@ jobs:
 
           echo "deploy_triggered=$DEPLOYED" >> "$GITHUB_ENV"
 
-      - name: Verify API health
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_health_check != 'true' }}
+      - name: Verify API health (full wait after deploy)
+        if: ${{ (env.deploy_triggered == '1' || steps.probe.outputs.live == 'true') && (github.event_name != 'workflow_dispatch' || inputs.skip_health_check != 'true') }}
+        env:
+          HEALTH_TIMEOUT_MS: "900000"
+          FAST_FAIL_NO_SERVER: "0"
+        run: node scripts/wait-for-api-health.mjs
+
+      - name: Fail fast when API not provisioned
+        if: ${{ env.deploy_triggered != '1' && steps.probe.outputs.live != 'true' && (github.event_name != 'workflow_dispatch' || inputs.skip_health_check != 'true') }}
+        env:
+          HEALTH_TIMEOUT_MS: "30000"
+          FAST_FAIL_NO_SERVER: "1"
         run: node scripts/wait-for-api-health.mjs

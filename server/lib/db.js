@@ -1841,6 +1841,104 @@ function migrateOrderManagementV22() {
 
 migrateOrderManagementV22();
 
+function migrateCartCheckoutV23() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS cc_carts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      token TEXT UNIQUE NOT NULL,
+      customer_id INTEGER,
+      email TEXT,
+      country TEXT DEFAULT 'DE',
+      currency TEXT DEFAULT 'EUR',
+      coupon TEXT,
+      status TEXT DEFAULT 'active',
+      expires_at TEXT DEFAULT (datetime('now', '+30 days'))
+    );
+    CREATE TABLE IF NOT EXISTS cc_cart_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      cart_id INTEGER NOT NULL,
+      sku TEXT NOT NULL,
+      title TEXT,
+      qty INTEGER NOT NULL,
+      price REAL NOT NULL,
+      tax REAL DEFAULT 19,
+      UNIQUE(cart_id, sku),
+      FOREIGN KEY(cart_id) REFERENCES cc_carts(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS cc_coupons (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      type TEXT NOT NULL,
+      value REAL NOT NULL,
+      min_order REAL DEFAULT 0,
+      active INTEGER DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS cc_shipping_rates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      country TEXT NOT NULL,
+      code TEXT NOT NULL,
+      name TEXT NOT NULL,
+      price REAL NOT NULL,
+      min_days INTEGER,
+      max_days INTEGER,
+      active INTEGER DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS cc_checkout_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      token TEXT UNIQUE NOT NULL,
+      cart_id INTEGER,
+      email TEXT,
+      country TEXT,
+      currency TEXT,
+      shipping_id INTEGER,
+      payment_method TEXT,
+      shipping_json TEXT,
+      billing_json TEXT,
+      subtotal REAL,
+      discount REAL,
+      shipping REAL,
+      tax REAL,
+      total REAL,
+      status TEXT DEFAULT 'open',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(cart_id) REFERENCES cc_carts(id)
+    );
+  `);
+
+  const couponCount = db.prepare("SELECT COUNT(*) n FROM cc_coupons").get().n;
+  if (couponCount === 0) {
+    db.prepare("INSERT INTO cc_coupons(code, type, value, min_order) VALUES(?,?,?,?)").run(
+      "WELCOME10",
+      "percent",
+      10,
+      30
+    );
+  }
+
+  const shippingCount = db.prepare("SELECT COUNT(*) n FROM cc_shipping_rates").get().n;
+  if (shippingCount === 0) {
+    const insert = db.prepare(`
+      INSERT INTO cc_shipping_rates(country, code, name, price, min_days, max_days)
+      VALUES(?,?,?,?,?,?)
+    `);
+    for (const [country, price] of [
+      ["DE", 4.99],
+      ["AT", 8.99],
+      ["BE", 9.49],
+      ["NL", 9.49],
+      ["FR", 9.99],
+      ["PL", 10.99],
+      ["IT", 12.99],
+      ["ES", 13.99],
+    ]) {
+      insert.run(country, "standard", "Standard Delivery", price, 2, 5);
+    }
+    insert.run("DE", "express", "Express Delivery", 11.99, 1, 2);
+  }
+}
+
+migrateCartCheckoutV23();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

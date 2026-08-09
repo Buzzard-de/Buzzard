@@ -367,6 +367,24 @@ Tables: `oms_orders`, `oms_order_items`, `oms_order_splits`, `oms_order_events`,
 Frontend admin: `/admin/order-management/`. Set `NEXT_PUBLIC_ORDER_MANAGEMENT=1`.
 Note: Existing JSON checkout (`/api/orders`) and SQLite orders (`/api/db/orders`) remain separate.
 
+## Cart Checkout Plugin (v2.3)
+
+The `cartCheckoutPlugin.js` module adds cart and checkout foundations:
+
+- `POST /api/cart-checkout/carts` — create cart with token
+- `GET /api/cart-checkout/carts/:token` — cart with items and VAT totals
+- `POST|PATCH /api/cart-checkout/carts/:token/items` — add/update line items
+- `POST /api/cart-checkout/carts/:token/coupon` — apply coupon (e.g. WELCOME10)
+- `GET /api/cart-checkout/shipping/:country` — EU shipping rates
+- `POST /api/cart-checkout/sessions` — start checkout session
+- `POST /api/cart-checkout/sessions/:token/validate|complete` — validation and payment handoff
+- `GET /api/admin/cart-checkout/overview|carts|sessions|coupons|shipping-rates`
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CART_CHECKOUT=0`.
+Tables: `cc_carts`, `cc_cart_items`, `cc_coupons`, `cc_shipping_rates`, `cc_checkout_sessions`.
+Frontend admin: `/admin/cart-checkout/`. Set `NEXT_PUBLIC_CART_CHECKOUT=1`.
+Note: Existing `/api/cart/*` (database plugin) and `/api/checkout/*` (orders plugin) remain separate. Sales remain disabled on storefront.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

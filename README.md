@@ -1,52 +1,80 @@
 # Buzzard – Kfz-Teile (Next.js)
 
-Online-Shop für Kfz-Ersatzteile, aufgebaut mit Next.js App Router.
+Online-Shop für Kfz-Ersatzteile mit Next.js App Router, statischem GitHub-Pages-Frontend und optionaler Node-API (SQLite + Admin-Module v1.x–v4.0).
 
 ## Projektstruktur
 
 ```
-app/              Seiten (Startseite, Produkte, Impressum, Datenschutz)
-components/       Header, Navbar, MegaMenu, CategorySidebar, FeaturedBanner, ProductList, Footer
-public/           Statische Assets (Logo, manifest, robots.txt, CNAME)
-styles/           Globale CSS-Dateien
-lib/              Produktdaten, Kategorien, Warenkorb-Logik
-types/            TypeScript-Typen
+app/              Next.js Seiten (Shop, Admin, Konto)
+components/       UI-Komponenten
+lib/              Frontend-Clients, Shop-Logik, API-Config
+server/           Node-API (SQLite, Plugins, Admin-Routen)
+scripts/          Build, Deploy-Helfer, Verify
+data/             Seed-Daten, Kategorien
+styles/           Globale CSS
+public/           Statische Assets
 ```
 
-## Lokal starten
+## Lokal starten (VS Code / Cursor)
 
-```powershell
-cd C:\Users\yanli\buzzard
+**Voraussetzungen:** Node.js 20+ (siehe `.nvmrc`)
+
+```bash
+git clone https://github.com/Buzzard-de/Buzzard.git
+cd Buzzard
+cp .env.local.example .env.local
 npm install
-npm run dev
+npm run dev:all
 ```
 
-Dann `http://localhost:3000` im Browser öffnen.
+| URL | Zweck |
+|-----|--------|
+| http://localhost:3000 | Shop |
+| http://localhost:3001/api/health | API Health |
+| http://localhost:3000/admin/ | Admin (Login: siehe `.env.local.example`) |
+
+**Einzeln starten:**
+
+```bash
+npm run dev        # nur Frontend
+npm run dev:api    # nur API
+```
+
+**VS Code / Cursor:** Task **„Buzzard: Dev (Frontend + API)“** (Strg+Shift+B) oder Debug **„Buzzard Full Stack“**.
+
+## Scripts
+
+| Befehl | Beschreibung |
+|--------|--------------|
+| `npm run dev:all` | Frontend + API parallel |
+| `npm run build` | Statischer Export → `out/` |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript prüfen |
+| `npm run verify:go-live` | Production-Routen + API prüfen |
+| `npm run verify:local` | Lokale Routen prüfen |
 
 ## Build & Deployment
 
-Statischer Export für GitHub Pages:
+Statischer Export für **GitHub Pages** — deployt automatisch bei Push auf `main`.
 
-```powershell
-npm run build
-```
+Live: https://buzzard24.de
 
-Der Build landet im Ordner `out/`. Der GitHub Actions Workflow baut und deployed automatisch bei Push auf `main`.
+## Buzzard API (Render) — später
 
-Live-Domain: https://www.buzzard24.de
+Admin-Module mit echten KPIs brauchen die Node-API auf Render (`https://buzzard-api.onrender.com`).
 
-## Buzzard API (Render)
+**Go-Live (wenn bereit):**
 
-Admin-Panels und dynamische Module benötigen die Node-API unter `https://buzzard-api.onrender.com`.
+1. https://github.com/apps/render → GitHub-App installieren
+2. https://render.com → New → Blueprint → Repo **Buzzard-de/Buzzard**
+3. Health: `GET https://buzzard-api.onrender.com/api/health`
 
-**Einmalig live schalten** (kein GitHub-Secret nötig):
+Alternativ: GitHub Secret `RENDER_API_KEY` + Workflow **Setup Render API**.
 
-1. [Render Blueprint öffnen](https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard)
-2. Mit GitHub anmelden und Blueprint deployen (`buzzard-api`, Region Frankfurt)
-3. Health prüfen: `GET https://buzzard-api.onrender.com/api/health`
+Lokal funktioniert alles ohne Render — siehe **Lokal starten** oben.
 
-Alternativ: GitHub Secret `RENDER_API_KEY` setzen und Workflow **Setup Render API** ausführen.
+## Weitere Docs
 
-## Lokale API (optional)
-
-Der Ordner `server/` enthält eine optionale lokale API für das Kontaktformular im Entwicklungsmodus.
+- `BUZZARD_MASTER_IMPLEMENTATION.md` — Architektur & Module
+- `server/plugins/README.md` — API-Endpunkte
+- `data/BUZZARD_FINAL_GO_LIVE_CHECKLIST.md` — Go-Live-Checkliste

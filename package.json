@@ -2,13 +2,23 @@
   "name": "buzzard",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
+    "dev:api": "npm --prefix server run dev",
+    "dev:all": "node scripts/dev-all.mjs",
     "build": "node scripts/sync-redirects.mjs && next build && node scripts/post-export.mjs",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "npm --prefix server install",
     "security:audit": "npm audit --audit-level=high",
-    "verify:go-live": "node scripts/verify-go-live.mjs"
+    "verify:go-live": "node scripts/verify-go-live.mjs",
+    "verify:local": "BUZZARD_SITE_URL=http://localhost:3000 BUZZARD_API_URL=http://localhost:3001 node scripts/verify-go-live.mjs",
+    "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001"
   },
   "dependencies": {
     "next": "^15.1.0",

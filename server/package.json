@@ -1,10 +1,14 @@
 {
   "name": "buzzard-api",
   "version": "1.0.0",
-  "description": "Local API for Buzzard static website",
+  "description": "Buzzard Node API (SQLite, admin modules, plugins)",
   "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.8.1",

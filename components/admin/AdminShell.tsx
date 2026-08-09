@@ -23,6 +23,7 @@ const NAV = [
   { href: "/admin/sync/", label: "Sync & Import" },
   { href: "/admin/orders/", label: "Bestellungen" },
   { href: "/admin/logistics/", label: "Logistik" },
+  { href: "/admin/logistics-fulfillment/", label: "Logistics v1.7" },
   { href: "/admin/automation/", label: "Automation" },
 ];
 

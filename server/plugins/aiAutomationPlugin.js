@@ -158,6 +158,18 @@ function collectHealth() {
     }
   }
 
+  let logisticsFulfillment = { enabled: false };
+  if (process.env.BUZZARD_LOGISTICS_FULFILLMENT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      logisticsFulfillment = {
+        enabled: true,
+        ...require("../lib/logisticsFulfillment").getLogisticsFulfillmentStatus(),
+      };
+    } catch (error) {
+      logisticsFulfillment = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -174,6 +186,7 @@ function collectHealth() {
     analyticsDashboard,
     marketingCenter,
     marketplaceHub,
+    logisticsFulfillment,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

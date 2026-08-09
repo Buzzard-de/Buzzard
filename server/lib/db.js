@@ -1119,6 +1119,108 @@ function migrateSupplierHubV16() {
 
 migrateSupplierHubV16();
 
+function migrateLogisticsFulfillmentV17() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS logistics_carriers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      country_scope TEXT DEFAULT 'EU',
+      enabled INTEGER DEFAULT 1,
+      api_connected INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS logistics_shipping_services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      carrier_id INTEGER,
+      code TEXT,
+      name TEXT,
+      max_weight_kg REAL DEFAULT 31.5,
+      base_price REAL DEFAULT 0,
+      delivery_days_min INTEGER DEFAULT 2,
+      delivery_days_max INTEGER DEFAULT 5,
+      countries TEXT DEFAULT 'DE',
+      active INTEGER DEFAULT 1,
+      FOREIGN KEY(carrier_id) REFERENCES logistics_carriers(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS logistics_shipments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_number TEXT UNIQUE NOT NULL,
+      carrier_id INTEGER,
+      service_id INTEGER,
+      tracking_number TEXT,
+      label_url TEXT,
+      status TEXT DEFAULT 'pending',
+      shipping_cost REAL DEFAULT 0,
+      destination_country TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      shipped_at TEXT,
+      FOREIGN KEY(carrier_id) REFERENCES logistics_carriers(id),
+      FOREIGN KEY(service_id) REFERENCES logistics_shipping_services(id)
+    );
+    CREATE TABLE IF NOT EXISTS logistics_tracking_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      shipment_id INTEGER NOT NULL,
+      status TEXT,
+      location TEXT,
+      message TEXT,
+      event_time TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(shipment_id) REFERENCES logistics_shipments(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS logistics_fulfillment_jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_number TEXT,
+      job_type TEXT,
+      status TEXT DEFAULT 'queued',
+      attempts INTEGER DEFAULT 0,
+      error_message TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      finished_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS logistics_returns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      rma_number TEXT UNIQUE NOT NULL,
+      order_number TEXT,
+      customer_id INTEGER,
+      reason TEXT,
+      status TEXT DEFAULT 'requested',
+      carrier_code TEXT,
+      return_tracking TEXT,
+      refund_status TEXT DEFAULT 'pending',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const carrierCount = db.prepare("SELECT COUNT(*) n FROM logistics_carriers").get().n;
+  if (carrierCount === 0) {
+    const insertCarrier = db.prepare(
+      "INSERT INTO logistics_carriers(code, name, country_scope) VALUES(?,?,?)"
+    );
+    insertCarrier.run("DHL", "DHL", "EU");
+    insertCarrier.run("DPD", "DPD", "EU");
+    insertCarrier.run("GLS", "GLS", "EU");
+    insertCarrier.run("UPS", "UPS", "GLOBAL");
+    insertCarrier.run("EVRI", "Evri / Hermes", "UK/EU");
+
+    const ids = Object.fromEntries(
+      db.prepare("SELECT id, code FROM logistics_carriers").all().map((row) => [row.code, row.id])
+    );
+    const insertService = db.prepare(`
+      INSERT INTO logistics_shipping_services(
+        carrier_id, code, name, max_weight_kg, base_price, delivery_days_min, delivery_days_max, countries
+      )
+      VALUES(?,?,?,?,?,?,?,?)
+    `);
+    insertService.run(ids.DHL, "standard", "DHL Paket Standard", 31.5, 4.99, 1, 3, "DE,AT,BE,NL,FR");
+    insertService.run(ids.DHL, "express", "DHL Express", 31.5, 11.99, 1, 2, "DE,AT,BE,NL,FR");
+    insertService.run(ids.DPD, "standard", "DPD Classic", 31.5, 5.49, 2, 4, "DE,AT,BE,NL,FR,PL");
+    insertService.run(ids.GLS, "standard", "GLS Standard", 40, 5.29, 2, 4, "DE,AT,BE,NL,FR,PL,CZ");
+    insertService.run(ids.UPS, "standard", "UPS Standard", 70, 8.99, 2, 5, "DE,FR,NL,BE,PL,IT,ES");
+  }
+}
+
+migrateLogisticsFulfillmentV17();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

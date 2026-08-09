@@ -268,6 +268,24 @@ Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_MARKETPLACE_HUB=
 Tables: `marketplace_channels`, `marketplace_listings`, `marketplace_sync_jobs`, `marketplace_channel_orders`, `marketplace_sku_mappings`.
 Frontend admin: `/admin/marketplace-hub/`. Set `NEXT_PUBLIC_MARKETPLACE_HUB=1`.
 
+## Logistics Fulfillment Plugin (v1.7)
+
+The `logisticsFulfillmentPlugin.js` module adds carrier-based shipping, label jobs, tracking and RMA returns:
+
+- `GET /api/logistics-fulfillment/shipping/options/:country` — shipping services by destination
+- `POST /api/admin/logistics-fulfillment/shipments/quote` — quote cheapest service for weight/country
+- `POST /api/admin/logistics-fulfillment/shipments` — create shipment + label fulfillment job
+- `POST /api/admin/logistics-fulfillment/shipments/:id/label-result` — carrier label callback
+- `GET /api/admin/logistics-fulfillment/shipments|carriers|jobs|returns` — admin operations
+- `PATCH /api/admin/logistics-fulfillment/returns/:id` — approve/update RMA
+- `GET /api/logistics-fulfillment/shipments/:orderNumber/tracking` — customer tracking timeline
+- `POST /api/logistics-fulfillment/carrier/webhook` — carrier status webhook
+- `POST|GET /api/logistics-fulfillment/returns` — customer RMA requests
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_LOGISTICS_FULFILLMENT=0`.
+Tables: `logistics_carriers`, `logistics_shipping_services`, `logistics_shipments`, `logistics_tracking_events`, `logistics_fulfillment_jobs`, `logistics_returns`.
+Frontend admin: `/admin/logistics-fulfillment/`. Set `NEXT_PUBLIC_LOGISTICS_FULFILLMENT=1`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

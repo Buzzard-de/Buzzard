@@ -2051,6 +2051,119 @@ function migrateCrmCustomerServiceV24() {
 
 migrateCrmCustomerServiceV24();
 
+function migrateReturnsRmaV25() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS rma_returns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      rma_number TEXT UNIQUE NOT NULL,
+      order_number TEXT NOT NULL,
+      customer_id INTEGER,
+      customer_email TEXT,
+      reason TEXT NOT NULL,
+      type TEXT DEFAULT 'refund',
+      status TEXT DEFAULT 'requested',
+      customer_note TEXT DEFAULT '',
+      return_address_json TEXT,
+      shipping_label_status TEXT DEFAULT 'pending',
+      shipping_tracking TEXT DEFAULT '',
+      inspection_status TEXT DEFAULT 'pending',
+      inspection_due_at TEXT,
+      refund_status TEXT DEFAULT 'not_requested',
+      refund_amount REAL DEFAULT 0,
+      exchange_order_number TEXT DEFAULT '',
+      warranty_claim INTEGER DEFAULT 0,
+      risk_flag TEXT DEFAULT 'none',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS rma_return_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      return_id INTEGER,
+      order_item_id INTEGER,
+      sku TEXT,
+      title TEXT,
+      quantity INTEGER,
+      unit_price REAL,
+      condition TEXT DEFAULT 'unknown',
+      restockable INTEGER DEFAULT 0,
+      inspection_note TEXT DEFAULT '',
+      FOREIGN KEY(return_id) REFERENCES rma_returns(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS rma_return_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      return_id INTEGER,
+      event_type TEXT,
+      old_status TEXT,
+      new_status TEXT,
+      message TEXT,
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS rma_return_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      return_id INTEGER,
+      note TEXT,
+      internal INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS rma_return_labels (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      return_id INTEGER,
+      carrier TEXT,
+      service TEXT,
+      label_url TEXT,
+      tracking_number TEXT,
+      status TEXT DEFAULT 'requested',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS rma_warranty_claims (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      return_id INTEGER,
+      claim_number TEXT UNIQUE NOT NULL,
+      warranty_type TEXT DEFAULT 'manufacturer',
+      status TEXT DEFAULT 'submitted',
+      manufacturer TEXT DEFAULT '',
+      product_sku TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const returnCount = db.prepare("SELECT COUNT(*) n FROM rma_returns").get().n;
+  if (returnCount === 0) {
+    const result = db
+      .prepare(`
+        INSERT INTO rma_returns(
+          rma_number, order_number, customer_id, customer_email, reason, type, status,
+          inspection_due_at, refund_amount
+        )
+        VALUES(?,?,?,?,?,?,?,datetime('now','+48 hours'),?)
+      `)
+      .run(
+        `RMA-${new Date().getFullYear()}-DEMO01`,
+        "BZ-2026-DEMO01",
+        1,
+        "demo@buzzard.de",
+        "damaged",
+        "refund",
+        "requested",
+        84.79
+      );
+
+    db.prepare(`
+      INSERT INTO rma_return_items(return_id, order_item_id, sku, title, quantity, unit_price)
+      VALUES(?,?,?,?,?,?)
+    `).run(result.lastInsertRowid, null, "BZ-OIL-5W30", "Premium Motoröl 5W-30", 1, 39.9);
+
+    db.prepare(`
+      INSERT INTO rma_return_events(return_id, event_type, old_status, new_status, message)
+      VALUES(?,?,?,?,?)
+    `).run(result.lastInsertRowid, "return_created", null, "requested", "Demo return created");
+  }
+}
+
+migrateReturnsRmaV25();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

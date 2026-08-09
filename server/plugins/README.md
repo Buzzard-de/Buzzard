@@ -404,6 +404,21 @@ Tables: `crmcs_customers`, `crmcs_customer_tags`, `crmcs_customer_events`, `crmc
 Frontend admin: `/admin/crm-customer-service/`. Set `NEXT_PUBLIC_CRM_CUSTOMER_SERVICE=1`.
 Note: Existing `/api/admin/customer-support/*` (v1.1) and `/api/admin/crm-loyalty/*` (v1.2) remain separate.
 
+## Returns RMA Plugin (v2.5)
+
+The `returnsRmaPlugin.js` module adds returns, refunds, exchanges and warranty foundations:
+
+- `POST /api/returns-rma/returns` — customer return request with items
+- `GET /api/returns-rma/returns/:rmaNumber` — RMA detail with items, events, labels, warranty
+- `GET /api/admin/returns-rma/overview|returns` — admin RMA dashboard
+- `PATCH /api/admin/returns-rma/returns/:id/status|inspection` — lifecycle and inspection
+- `POST /api/admin/returns-rma/returns/:id/label|refund|exchange|warranty|note` — labels, refunds, exchanges, warranty claims
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_RETURNS_RMA=0`.
+Tables: `rma_returns`, `rma_return_items`, `rma_return_events`, `rma_return_notes`, `rma_return_labels`, `rma_warranty_claims`.
+Frontend admin: `/admin/returns-rma/`. Set `NEXT_PUBLIC_RETURNS_RMA=1`.
+Note: Existing `logistics_returns` (v1.7) and JSON checkout returns remain separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

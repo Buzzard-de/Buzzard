@@ -91,9 +91,9 @@ services:
       - key: BUZZARD_MASTER_ADMIN_V40
         value: "1"
       - key: PUBLIC_BASE_URL
-        value: https://buzzard24.de
+        value: "https://buzzard24.de"
       - key: DEFAULT_SUPPLIER_MODE
-        value: manual
+        value: "manual"
       - key: BUZZARD_ABANDONED_CART_DELAY_HOURS
         value: "24"
       - key: BUZZARD_SALES_ENABLED

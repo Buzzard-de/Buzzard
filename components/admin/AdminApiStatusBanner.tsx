@@ -5,7 +5,7 @@ import { apiBaseUrl, isApiConfigured } from "@/lib/api/config";
 
 const BLUEPRINT_URL =
   "https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard";
-const API_HEALTH_URL = "https://buzzard-api.onrender.com/api/health";
+const RENDER_GITHUB_APP = "https://github.com/apps/render";
 
 type ApiState = "checking" | "live" | "unconfigured" | "down";
 
@@ -66,11 +66,15 @@ export default function AdminApiStatusBanner() {
         Render. GitHub Pages ist live — die API muss einmalig verbunden werden.
       </p>
       <p>
-        <a href={BLUEPRINT_URL} target="_blank" rel="noopener noreferrer">
-          Render Blueprint deployen
+        <a href={RENDER_GITHUB_APP} target="_blank" rel="noopener noreferrer">
+          Render GitHub App
         </a>
         {" · "}
-        Health: <code>{API_HEALTH_URL}</code>
+        <a href={BLUEPRINT_URL} target="_blank" rel="noopener noreferrer">
+          Blueprint deployen
+        </a>
+        {" · "}
+        Health: <code>{apiBaseUrl() || "https://buzzard-api.onrender.com"}/api/health</code>
       </p>
       {moduleCount === null && (
         <p>

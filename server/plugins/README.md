@@ -385,6 +385,25 @@ Tables: `cc_carts`, `cc_cart_items`, `cc_coupons`, `cc_shipping_rates`, `cc_chec
 Frontend admin: `/admin/cart-checkout/`. Set `NEXT_PUBLIC_CART_CHECKOUT=1`.
 Note: Existing `/api/cart/*` (database plugin) and `/api/checkout/*` (orders plugin) remain separate. Sales remain disabled on storefront.
 
+## CRM Customer Service Plugin (v2.4)
+
+The `crmCustomerServicePlugin.js` module adds CRM profiles and support ticket foundations:
+
+- `POST /api/crm-customer-service/customers` — create customer profile
+- `GET /api/crm-customer-service/customers/:id` — profile with tags, timeline, tickets
+- `POST /api/crm-customer-service/tickets` — create support ticket
+- `GET /api/crm-customer-service/tickets/:number` — ticket detail with messages and notes
+- `GET /api/admin/crm-customer-service/overview|customers|tickets` — admin CRM dashboard
+- `PATCH /api/admin/crm-customer-service/customers/:id` — update profile and consent fields
+- `POST /api/admin/crm-customer-service/customers/:id/tags` — customer tags
+- `PATCH /api/admin/crm-customer-service/tickets/:id` — status, priority, assignment
+- `POST /api/admin/crm-customer-service/tickets/:id/messages|notes` — replies and internal notes
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CRM_CUSTOMER_SERVICE=0`.
+Tables: `crmcs_customers`, `crmcs_customer_tags`, `crmcs_customer_events`, `crmcs_tickets`, `crmcs_ticket_messages`, `crmcs_ticket_notes`.
+Frontend admin: `/admin/crm-customer-service/`. Set `NEXT_PUBLIC_CRM_CUSTOMER_SERVICE=1`.
+Note: Existing `/api/admin/customer-support/*` (v1.1) and `/api/admin/crm-loyalty/*` (v1.2) remain separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

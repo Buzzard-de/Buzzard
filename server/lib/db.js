@@ -1939,6 +1939,118 @@ function migrateCartCheckoutV23() {
 
 migrateCartCheckoutV23();
 
+function migrateCrmCustomerServiceV24() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS crmcs_customers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      external_user_id INTEGER,
+      email TEXT UNIQUE NOT NULL,
+      first_name TEXT DEFAULT '',
+      last_name TEXT DEFAULT '',
+      phone TEXT DEFAULT '',
+      country_code TEXT DEFAULT 'DE',
+      language TEXT DEFAULT 'de-DE',
+      segment TEXT DEFAULT 'standard',
+      status TEXT DEFAULT 'active',
+      marketing_email INTEGER DEFAULT 0,
+      marketing_sms INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS crmcs_customer_tags (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      customer_id INTEGER,
+      tag TEXT,
+      UNIQUE(customer_id, tag),
+      FOREIGN KEY(customer_id) REFERENCES crmcs_customers(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS crmcs_customer_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      customer_id INTEGER,
+      event_type TEXT,
+      reference TEXT,
+      message TEXT,
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS crmcs_tickets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ticket_number TEXT UNIQUE NOT NULL,
+      customer_id INTEGER,
+      subject TEXT NOT NULL,
+      category TEXT DEFAULT 'general',
+      priority TEXT DEFAULT 'normal',
+      status TEXT DEFAULT 'open',
+      channel TEXT DEFAULT 'web',
+      assigned_agent TEXT,
+      sla_due_at TEXT,
+      order_number TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(customer_id) REFERENCES crmcs_customers(id)
+    );
+    CREATE TABLE IF NOT EXISTS crmcs_ticket_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ticket_id INTEGER,
+      sender_type TEXT,
+      sender_name TEXT,
+      message TEXT,
+      internal INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(ticket_id) REFERENCES crmcs_tickets(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS crmcs_ticket_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ticket_id INTEGER,
+      note TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(ticket_id) REFERENCES crmcs_tickets(id) ON DELETE CASCADE
+    );
+  `);
+
+  const customerCount = db.prepare("SELECT COUNT(*) n FROM crmcs_customers").get().n;
+  if (customerCount === 0) {
+    const customer = db
+      .prepare(`
+        INSERT INTO crmcs_customers(email, first_name, last_name, phone, country_code, language, segment, marketing_email)
+        VALUES(?,?,?,?,?,?,?,?)
+      `)
+      .run("demo@buzzard.de", "Demo", "Kunde", "", "DE", "de-DE", "standard", 1);
+
+    db.prepare(`
+      INSERT INTO crmcs_customer_events(customer_id, event_type, reference, message)
+      VALUES(?,?,?,?)
+    `).run(customer.lastInsertRowid, "customer_created", "", "Demo customer created");
+
+    const ticket = db
+      .prepare(`
+        INSERT INTO crmcs_tickets(
+          ticket_number, customer_id, subject, category, priority, status, channel,
+          assigned_agent, sla_due_at, order_number
+        )
+        VALUES(?,?,?,?,?,?,?,?,datetime('now','+24 hours'),?)
+      `)
+      .run(
+        `TKT-${new Date().getFullYear()}-DEMO001`,
+        customer.lastInsertRowid,
+        "Demo support request",
+        "order",
+        "normal",
+        "open",
+        "web",
+        "Nesrin",
+        "BZ-2026-DEMO01"
+      );
+
+    db.prepare(`
+      INSERT INTO crmcs_ticket_messages(ticket_id, sender_type, sender_name, message)
+      VALUES(?,?,?,?)
+    `).run(ticket.lastInsertRowid, "customer", "Demo Kunde", "Where is my order?");
+  }
+}
+
+migrateCrmCustomerServiceV24();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

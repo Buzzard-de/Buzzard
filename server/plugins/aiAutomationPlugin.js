@@ -302,6 +302,18 @@ function collectHealth() {
     }
   }
 
+  let advancedSearch = { enabled: false };
+  if (process.env.BUZZARD_ADVANCED_SEARCH !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      advancedSearch = {
+        enabled: true,
+        ...require("../lib/advancedSearch").getAdvancedSearchStatus(),
+      };
+    } catch (error) {
+      advancedSearch = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -330,6 +342,7 @@ function collectHealth() {
     marketingLoyalty,
     reviewsRatings,
     aiCenter,
+    advancedSearch,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

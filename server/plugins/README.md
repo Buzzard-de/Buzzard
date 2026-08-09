@@ -471,6 +471,21 @@ Tables: `aictr_sessions`, `aictr_messages`, `aictr_jobs`, `aictr_audit`, `aictr_
 Frontend admin: `/admin/ai-center/`. Set `NEXT_PUBLIC_AI_CENTER=1`.
 Note: Existing `/api/ai/chat` (aiAutomationPlugin) and storefront chat remain separate.
 
+## Advanced Search Plugin (v2.9)
+
+The `advancedSearchPlugin.js` module adds product discovery and search analytics foundations:
+
+- `GET /api/advanced-search/suggest` — autocomplete suggestions
+- `GET /api/advanced-search` — full-text search with filters, sorting and pagination
+- `POST /api/advanced-search/:sku/click` — search click tracking
+- `POST /api/admin/advanced-search/products|synonyms` — index and synonym management
+- `GET /api/admin/advanced-search/overview|zero-results` — admin search dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ADVANCED_SEARCH=0`.
+Tables: `srch_products`, `srch_synonyms`, `srch_events`.
+Frontend admin: `/admin/advanced-search/`. Set `NEXT_PUBLIC_ADVANCED_SEARCH=1`.
+Note: Existing SQLite `products` catalog and storefront search remain separate. OpenSearch/Elasticsearch ready boundary.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

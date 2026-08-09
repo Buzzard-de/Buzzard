@@ -2455,6 +2455,119 @@ function migrateAiCenterV28() {
 
 migrateAiCenterV28();
 
+function migrateAdvancedSearchV29() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS srch_products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sku TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT DEFAULT '',
+      category TEXT DEFAULT '',
+      subcategory TEXT DEFAULT '',
+      brand TEXT DEFAULT '',
+      price REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      rating REAL DEFAULT 0,
+      review_count INTEGER DEFAULT 0,
+      stock INTEGER DEFAULT 0,
+      tags TEXT DEFAULT '',
+      attributes_json TEXT DEFAULT '{}',
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS srch_synonyms (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      term TEXT UNIQUE NOT NULL,
+      synonyms_json TEXT NOT NULL,
+      active INTEGER DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS srch_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      query TEXT,
+      normalized_query TEXT,
+      customer_id INTEGER,
+      result_count INTEGER DEFAULT 0,
+      clicked_sku TEXT DEFAULT '',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const productCount = db.prepare("SELECT COUNT(*) n FROM srch_products").get().n;
+  if (productCount === 0) {
+    const insert = db.prepare(`
+      INSERT INTO srch_products(
+        sku, title, description, category, subcategory, brand, price, rating, review_count, stock, tags, attributes_json
+      )
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+    `);
+    insert.run(
+      "BZ-OIL-5W30",
+      "Castrol Edge 5W-30 Motor Oil",
+      "Premium engine oil for compatible vehicles",
+      "Automotive",
+      "Motor Oils",
+      "Castrol",
+      49.9,
+      4.8,
+      124,
+      40,
+      "oil,motor,5w30,engine",
+      '{"viscosity":"5W-30","volume":"5L"}'
+    );
+    insert.run(
+      "BZ-TIRE-2055516",
+      "205/55 R16 Premium Tire",
+      "Passenger car summer tire",
+      "Automotive",
+      "Tires",
+      "Buzzard Premium",
+      79.9,
+      4.5,
+      87,
+      22,
+      "tire,tyre,205/55 R16,summer",
+      '{"size":"205/55 R16","season":"summer"}'
+    );
+    insert.run(
+      "BZ-CLEAN-001",
+      "Vehicle Interior Cleaner",
+      "Interior cleaning product",
+      "Automotive",
+      "Car Care",
+      "Buzzard Care",
+      9.9,
+      4.7,
+      52,
+      100,
+      "cleaner,car care,interior",
+      '{"volume":"500ml"}'
+    );
+    insert.run(
+      "BZ-GARDEN-001",
+      "Garden Water Storage Tank 1000L",
+      "IBC-compatible water storage solution",
+      "Garden",
+      "Water Storage & Irrigation",
+      "Buzzard Garden",
+      299.0,
+      4.6,
+      31,
+      12,
+      "garden,water tank,IBC,irrigation",
+      '{"capacity":"1000L"}'
+    );
+
+    const synonym = db.prepare("INSERT INTO srch_synonyms(term, synonyms_json) VALUES(?,?)");
+    synonym.run("motoröl", '["engine oil","motor oil","öl"]');
+    synonym.run("reifen", '["tire","tyre"]');
+    synonym.run("auto", '["automotive","car","vehicle"]');
+    synonym.run("kühlerfrostschutz", '["antifreeze","coolant"]');
+  }
+}
+
+migrateAdvancedSearchV29();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

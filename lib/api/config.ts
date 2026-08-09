@@ -144,6 +144,12 @@ export function isAiCenterEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isAdvancedSearchEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_ADVANCED_SEARCH === "0") return false;
+  if (process.env.NEXT_PUBLIC_ADVANCED_SEARCH === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

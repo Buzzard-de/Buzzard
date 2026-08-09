@@ -90,6 +90,12 @@ export function isPimCatalogEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isIdentitySecurityEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_IDENTITY_SECURITY === "0") return false;
+  if (process.env.NEXT_PUBLIC_IDENTITY_SECURITY === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

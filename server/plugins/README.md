@@ -318,6 +318,22 @@ Tables: `pim_categories`, `pim_brands`, `pim_products`, `pim_product_translation
 Frontend admin: `/admin/pim-catalog/`. Set `NEXT_PUBLIC_PIM_CATALOG=1`.
 Note: Existing `/admin/catalog/` (Catalog SEO v0.8) remains separate.
 
+## Identity Security Plugin (v2.0)
+
+The `identitySecurityPlugin.js` module adds customer identity and security foundations:
+
+- `POST /api/identity-security/auth/register|login|refresh|logout|verify-email|password-reset*` — auth flows with refresh sessions
+- `GET|PATCH /api/identity-security/account` — profile management
+- `GET|POST|DELETE /api/identity-security/account/addresses` — extended address book
+- `POST /api/identity-security/account/2fa/setup|disable` — 2FA/TOTP boundary
+- `POST|GET /api/identity-security/privacy/request|requests` — GDPR export/delete requests
+- `GET /api/admin/identity-security/overview|audit|sessions` — admin security dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_IDENTITY_SECURITY=0`.
+Tables: extends `users`; adds `identity_sessions`, `identity_verification_tokens`, `identity_login_attempts`, `identity_security_audit`, `identity_privacy_requests`, `identity_addresses`.
+Frontend admin: `/admin/identity-security/`. Set `NEXT_PUBLIC_IDENTITY_SECURITY=1`.
+Note: Existing `/api/auth/*` (database plugin) remains separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

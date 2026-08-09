@@ -266,6 +266,18 @@ function collectHealth() {
     }
   }
 
+  let marketingLoyalty = { enabled: false };
+  if (process.env.BUZZARD_MARKETING_LOYALTY !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      marketingLoyalty = {
+        enabled: true,
+        ...require("../lib/marketingLoyalty").getMarketingLoyaltyStatus(),
+      };
+    } catch (error) {
+      marketingLoyalty = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -291,6 +303,7 @@ function collectHealth() {
     cartCheckout,
     crmCustomerService,
     returnsRma,
+    marketingLoyalty,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

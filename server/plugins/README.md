@@ -419,6 +419,25 @@ Tables: `rma_returns`, `rma_return_items`, `rma_return_events`, `rma_return_note
 Frontend admin: `/admin/returns-rma/`. Set `NEXT_PUBLIC_RETURNS_RMA=1`.
 Note: Existing `logistics_returns` (v1.7) and JSON checkout returns remain separate.
 
+## Marketing & Loyalty Plugin (v2.6)
+
+The `marketingLoyaltyPlugin.js` module adds campaigns, coupons, loyalty tiers, referrals and marketing consent:
+
+- `POST /api/marketing-loyalty/campaigns` — create campaign/coupon
+- `GET /api/marketing-loyalty/campaigns` — list campaigns
+- `PATCH /api/admin/marketing-loyalty/campaigns/:id` — update campaign
+- `POST /api/marketing-loyalty/campaigns/:code/apply|use` — validate and record promotion usage
+- `POST /api/marketing-loyalty/accounts|points` — loyalty account and points ledger
+- `GET /api/marketing-loyalty/:customerId` — loyalty profile with tier and ledger
+- `POST /api/marketing-loyalty/referrals/create|complete` — referral codes and rewards
+- `GET|PUT /api/marketing-loyalty/preferences/:customerId` — marketing consent boundary
+- `GET /api/admin/marketing-loyalty/overview` — admin marketing dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_MARKETING_LOYALTY=0`.
+Tables: `mktloy_campaigns`, `mktloy_promotion_uses`, `mktloy_loyalty_tiers`, `mktloy_loyalty_accounts`, `mktloy_loyalty_ledger`, `mktloy_referrals`, `mktloy_marketing_preferences`.
+Frontend admin: `/admin/marketing-loyalty/`. Set `NEXT_PUBLIC_MARKETING_LOYALTY=1`.
+Note: Existing `/api/admin/marketing-center/*` (v1.4) and `/api/admin/crm-loyalty/*` (v1.2) remain separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

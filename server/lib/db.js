@@ -2164,6 +2164,121 @@ function migrateReturnsRmaV25() {
 
 migrateReturnsRmaV25();
 
+function migrateMarketingLoyaltyV26() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS mktloy_campaigns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      type TEXT DEFAULT 'coupon',
+      status TEXT DEFAULT 'draft',
+      audience_segment TEXT DEFAULT 'all',
+      discount_type TEXT DEFAULT 'percent',
+      discount_value REAL DEFAULT 0,
+      minimum_order REAL DEFAULT 0,
+      max_uses INTEGER DEFAULT 0,
+      used_count INTEGER DEFAULT 0,
+      starts_at TEXT,
+      ends_at TEXT,
+      channel TEXT DEFAULT 'all',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS mktloy_promotion_uses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      campaign_id INTEGER,
+      customer_id INTEGER,
+      order_number TEXT,
+      discount_amount REAL DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS mktloy_loyalty_tiers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE,
+      name TEXT,
+      min_points INTEGER,
+      multiplier REAL DEFAULT 1,
+      benefits_json TEXT DEFAULT '{}'
+    );
+    CREATE TABLE IF NOT EXISTS mktloy_loyalty_accounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      customer_id INTEGER UNIQUE,
+      tier_id INTEGER,
+      points_balance INTEGER DEFAULT 0,
+      lifetime_points INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS mktloy_loyalty_ledger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      customer_id INTEGER,
+      points INTEGER,
+      type TEXT,
+      reference TEXT,
+      description TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS mktloy_referrals (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      referrer_customer_id INTEGER,
+      referred_customer_id INTEGER,
+      code TEXT UNIQUE,
+      status TEXT DEFAULT 'pending',
+      reward_points INTEGER DEFAULT 250,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS mktloy_marketing_preferences (
+      customer_id INTEGER PRIMARY KEY,
+      email_opt_in INTEGER DEFAULT 0,
+      sms_opt_in INTEGER DEFAULT 0,
+      push_opt_in INTEGER DEFAULT 0,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const tierCount = db.prepare("SELECT COUNT(*) n FROM mktloy_loyalty_tiers").get().n;
+  if (tierCount === 0) {
+    const insertTier = db.prepare(`
+      INSERT INTO mktloy_loyalty_tiers(code, name, min_points, multiplier, benefits_json)
+      VALUES(?,?,?,?,?)
+    `);
+    insertTier.run("BRONZE", "Bronze", 0, 1, '{"shipping":"standard"}');
+    insertTier.run("SILVER", "Silver", 1000, 1.1, '{"discount":5}');
+    insertTier.run("GOLD", "Gold", 5000, 1.25, '{"discount":10,"priority_support":true}');
+    insertTier.run("PLATINUM", "Platinum", 15000, 1.5, '{"discount":15,"priority_support":true,"early_access":true}');
+  }
+
+  const campaignCount = db.prepare("SELECT COUNT(*) n FROM mktloy_campaigns").get().n;
+  if (campaignCount === 0) {
+    db.prepare(`
+      INSERT INTO mktloy_campaigns(
+        code, name, type, status, audience_segment, discount_type, discount_value,
+        minimum_order, max_uses, channel
+      )
+      VALUES(?,?,?,?,?,?,?,?,?,?)
+    `).run("WELCOME10", "Welcome discount", "coupon", "active", "new_customers", "percent", 10, 49, 500, "email");
+
+    const customer = db.prepare("SELECT id FROM crmcs_customers LIMIT 1").get();
+    if (customer) {
+      const bronze = db.prepare("SELECT id FROM mktloy_loyalty_tiers WHERE code = 'BRONZE'").get();
+      db.prepare(`
+        INSERT INTO mktloy_loyalty_accounts(customer_id, tier_id, points_balance, lifetime_points)
+        VALUES(?,?,?,?)
+      `).run(customer.id, bronze.id, 120, 120);
+      db.prepare(`
+        INSERT INTO mktloy_loyalty_ledger(customer_id, points, type, reference, description)
+        VALUES(?,?,?,?,?)
+      `).run(customer.id, 120, "signup", "WELCOME", "Welcome bonus");
+      db.prepare(`
+        INSERT INTO mktloy_marketing_preferences(customer_id, email_opt_in, sms_opt_in)
+        VALUES(?,?,?)
+      `).run(customer.id, 1, 0);
+    }
+  }
+}
+
+migrateMarketingLoyaltyV26();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

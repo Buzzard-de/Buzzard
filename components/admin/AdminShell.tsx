@@ -16,6 +16,7 @@ const NAV = [
   { href: "/admin/pim-catalog/", label: "PIM v1.9" },
   { href: "/admin/identity-security/", label: "Security v2.0" },
   { href: "/admin/payments-finance/", label: "Finance v2.1" },
+  { href: "/admin/order-management/", label: "OMS v2.2" },
   { href: "/admin/localization/", label: "Localization" },
   { href: "/admin/customer-checkout/", label: "Checkout" },
   { href: "/admin/customer-support/", label: "Support" },

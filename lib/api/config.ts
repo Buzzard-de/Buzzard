@@ -102,6 +102,12 @@ export function isPaymentsFinanceEnabled(): boolean {
   return isApiConfigured();
 }
 
+export function isOrderManagementEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_ORDER_MANAGEMENT === "0") return false;
+  if (process.env.NEXT_PUBLIC_ORDER_MANAGEMENT === "1") return isApiConfigured();
+  return isApiConfigured();
+}
+
 export function isProductionBuild(): boolean {
   return process.env.NODE_ENV === "production";
 }

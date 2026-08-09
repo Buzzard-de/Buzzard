@@ -218,6 +218,18 @@ function collectHealth() {
     }
   }
 
+  let orderManagement = { enabled: false };
+  if (process.env.BUZZARD_ORDER_MANAGEMENT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      orderManagement = {
+        enabled: true,
+        ...require("../lib/orderManagement").getOrderManagementStatus(),
+      };
+    } catch (error) {
+      orderManagement = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -239,6 +251,7 @@ function collectHealth() {
     pimCatalog,
     identitySecurity,
     paymentsFinance,
+    orderManagement,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

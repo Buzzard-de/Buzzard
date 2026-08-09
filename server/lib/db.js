@@ -1734,6 +1734,113 @@ function migratePaymentsFinanceV21() {
 
 migratePaymentsFinanceV21();
 
+function migrateOrderManagementV22() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS oms_orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_number TEXT UNIQUE NOT NULL,
+      customer_id INTEGER,
+      customer_email TEXT,
+      channel TEXT DEFAULT 'web',
+      currency TEXT DEFAULT 'EUR',
+      subtotal REAL DEFAULT 0,
+      shipping_total REAL DEFAULT 0,
+      discount_total REAL DEFAULT 0,
+      tax_total REAL DEFAULT 0,
+      grand_total REAL DEFAULT 0,
+      payment_status TEXT DEFAULT 'pending',
+      fulfillment_status TEXT DEFAULT 'unfulfilled',
+      order_status TEXT DEFAULT 'pending',
+      shipping_address_json TEXT,
+      billing_address_json TEXT,
+      parent_order_id INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS oms_order_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER,
+      product_sku TEXT NOT NULL,
+      title TEXT,
+      quantity INTEGER NOT NULL,
+      unit_price REAL NOT NULL,
+      tax_rate REAL DEFAULT 0,
+      supplier_id INTEGER,
+      warehouse_id INTEGER,
+      reserved_quantity INTEGER DEFAULT 0,
+      fulfilled_quantity INTEGER DEFAULT 0,
+      cancelled_quantity INTEGER DEFAULT 0,
+      FOREIGN KEY(order_id) REFERENCES oms_orders(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS oms_order_splits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parent_order_id INTEGER,
+      child_order_id INTEGER,
+      split_reason TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS oms_order_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER,
+      event_type TEXT,
+      old_status TEXT,
+      new_status TEXT,
+      message TEXT,
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS oms_order_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER,
+      note TEXT,
+      internal INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS oms_fulfillment_links (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER,
+      order_item_id INTEGER,
+      supplier_id INTEGER,
+      warehouse_id INTEGER,
+      shipment_id INTEGER,
+      status TEXT DEFAULT 'queued',
+      external_reference TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS oms_order_idempotency (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      idempotency_key TEXT UNIQUE NOT NULL,
+      order_id INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const orderCount = db.prepare("SELECT COUNT(*) n FROM oms_orders").get().n;
+  if (orderCount === 0) {
+    const result = db
+      .prepare(`
+        INSERT INTO oms_orders(
+          order_number, customer_id, customer_email, channel, currency,
+          subtotal, shipping_total, tax_total, grand_total, payment_status, order_status
+        )
+        VALUES(?,?,?,?,?,?,?,?,?,?,?)
+      `)
+      .run("BZ-2026-DEMO01", 1, "demo@example.com", "web", "EUR", 79.8, 4.99, 13.55, 84.79, "paid", "confirmed");
+
+    db.prepare(`
+      INSERT INTO oms_order_items(order_id, product_sku, title, quantity, unit_price, tax_rate, reserved_quantity)
+      VALUES(?,?,?,?,?,?,?)
+    `).run(result.lastInsertRowid, "BZ-OIL-5W30", "Premium Motoröl 5W-30", 2, 39.9, 19, 2);
+
+    db.prepare(`
+      INSERT INTO oms_order_events(order_id, event_type, old_status, new_status, message)
+      VALUES(?,?,?,?,?)
+    `).run(result.lastInsertRowid, "order_created", null, "confirmed", "Demo order created");
+  }
+}
+
+migrateOrderManagementV22();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

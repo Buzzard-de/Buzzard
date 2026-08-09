@@ -87,6 +87,13 @@ export async function storeMe(): Promise<StoreUser> {
   return storeFetch<StoreUser>("/api/me");
 }
 
+export async function storeUpdateMe(body: { name?: string }): Promise<StoreUser> {
+  return storeFetch<StoreUser>("/api/me", {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
 export async function storeCategories(): Promise<StoreCategory[]> {
   return storeFetch<StoreCategory[]>("/api/categories");
 }

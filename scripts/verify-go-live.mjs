@@ -7,6 +7,8 @@
  *   BUZZARD_SITE_URL=https://buzzard24.de node scripts/verify-go-live.mjs
  */
 
+import { ADMIN_ROUTE_SLUGS } from "../lib/admin/nav.config.mjs";
+
 const SITE = (process.env.BUZZARD_SITE_URL || "https://buzzard24.de").replace(/\/$/, "");
 const API = (process.env.BUZZARD_API_URL || "https://buzzard-api.onrender.com").replace(/\/$/, "");
 
@@ -24,63 +26,23 @@ const STOREFRONT_ROUTES = [
   "/konto/registrieren/",
   "/konto/bestellungen/",
   "/konto/adressen/",
+  "/konto/profil/",
+  "/konto/einstellungen/",
+  "/konto/passwort-vergessen/",
   "/konto/support/",
   "/konto/loyalty/",
   "/kategori/tekstil/",
   "/kategori/otomotiv/",
+  "/en/",
+  "/tr/",
+  "/ar/",
   "/impressum/",
   "/datenschutz/",
   "/sitemap.xml",
   "/robots.txt",
 ];
 
-const ADMIN_ROUTES = [
-  "",
-  "login",
-  "analytics",
-  "analytics-dashboard",
-  "marketing-center",
-  "marketplace-hub",
-  "seo",
-  "products",
-  "catalog",
-  "pim-catalog",
-  "identity-security",
-  "payments-finance",
-  "order-management",
-  "cart-checkout",
-  "crm-customer-service",
-  "returns-rma",
-  "marketing-loyalty",
-  "reviews-ratings",
-  "ai-center",
-  "advanced-search",
-  "product-catalog-pim",
-  "supplier-integration-hub",
-  "order-management-v32",
-  "fulfillment-v33",
-  "logistics-v34",
-  "marketplace-v35",
-  "payments-v36",
-  "international-v37",
-  "security-v38",
-  "analytics-v39",
-  "master-admin-v40",
-  "localization",
-  "customer-checkout",
-  "customer-support",
-  "contact-submissions",
-  "crm-loyalty",
-  "suppliers",
-  "supplier-hub",
-  "integrations",
-  "sync",
-  "orders",
-  "logistics",
-  "logistics-fulfillment",
-  "wms-inventory",
-  "automation",
-];
+const ADMIN_ROUTES = ADMIN_ROUTE_SLUGS;
 
 async function checkUrl(url) {
   try {

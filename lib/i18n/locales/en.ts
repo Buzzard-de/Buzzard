@@ -234,6 +234,8 @@ export const catalog: TranslationTree = {
     defaultShipping: "Default shipping address",
     save: "Save",
     saved: "Saved.",
+    saveError: "Could not save.",
+    featureUnavailable: "This feature is not available in demo mode yet.",
     ordersTitle: "My orders",
     orderNumber: "Order number",
     statusLabel: "Status",
@@ -325,6 +327,9 @@ export const catalog: TranslationTree = {
       invalidStatus: "Invalid return status.",
       notFound: "Return not found.",
     },
+  },
+  a11y: {
+    skipToContent: "Skip to content",
   },
   footer: {
     imprint: "Legal notice",

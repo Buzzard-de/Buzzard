@@ -234,6 +234,8 @@ export const catalog: TranslationTree = {
     defaultShipping: "عنوان الشحن الافتراضي",
     save: "حفظ",
     saved: "تم الحفظ.",
+    saveError: "تعذر الحفظ.",
+    featureUnavailable: "هذه الميزة غير متاحة في وضع العرض التجريبي بعد.",
     ordersTitle: "طلباتي",
     orderNumber: "رقم الطلب",
     statusLabel: "الحالة",
@@ -325,6 +327,9 @@ export const catalog: TranslationTree = {
       invalidStatus: "حالة إرجاع غير صالحة.",
       notFound: "لم يتم العثور على الإرجاع.",
     },
+  },
+  a11y: {
+    skipToContent: "انتقل إلى المحتوى",
   },
   footer: {
     imprint: "البيانات القانونية",

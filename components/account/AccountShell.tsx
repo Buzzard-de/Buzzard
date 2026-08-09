@@ -6,15 +6,22 @@ import { useAccount } from "@/lib/account/context";
 import { useLocale } from "@/lib/i18n/context";
 
 const NAV = [
-  { href: "/konto/", labelKey: "account.nav.dashboard" },
-  { href: "/konto/bestellungen/", labelKey: "account.nav.orders" },
-  { href: "/konto/adressen/", labelKey: "account.nav.addresses" },
-  { href: "/konto/support/", labelKey: "account.nav.support" },
-  { href: "/konto/loyalty/", labelKey: "account.nav.loyalty" },
-  { href: "/wunschliste/", labelKey: "account.nav.wishlist" },
-  { href: "/konto/profil/", labelKey: "account.nav.profile" },
-  { href: "/konto/einstellungen/", labelKey: "account.nav.settings" },
+  { href: "/konto/", labelKey: "account.nav.dashboard", matchPrefix: false },
+  { href: "/konto/bestellungen/", labelKey: "account.nav.orders", matchPrefix: true },
+  { href: "/konto/adressen/", labelKey: "account.nav.addresses", matchPrefix: false },
+  { href: "/konto/support/", labelKey: "account.nav.support", matchPrefix: false },
+  { href: "/konto/loyalty/", labelKey: "account.nav.loyalty", matchPrefix: false },
+  { href: "/wunschliste/", labelKey: "account.nav.wishlist", matchPrefix: false },
+  { href: "/konto/profil/", labelKey: "account.nav.profile", matchPrefix: false },
+  { href: "/konto/einstellungen/", labelKey: "account.nav.settings", matchPrefix: false },
 ];
+
+function isNavActive(pathname: string, href: string, matchPrefix: boolean): boolean {
+  if (matchPrefix) {
+    return pathname === href || pathname.startsWith(href);
+  }
+  return pathname === href;
+}
 
 export default function AccountShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -40,7 +47,7 @@ export default function AccountShell({ children }: { children: React.ReactNode }
             <Link
               key={item.href}
               href={item.href}
-              className={pathname === item.href ? "active" : ""}
+              className={isNavActive(pathname, item.href, item.matchPrefix) ? "active" : ""}
             >
               {t(item.labelKey)}
             </Link>

@@ -169,19 +169,40 @@ function extractToken(req) {
 function requireAuth(req, res) {
   const token = extractToken(req);
   const session = getSession(token);
-  if (!session) {
-    logSecurityEvent({
-      type: "admin_auth_required",
-      success: false,
-      ip: getClientIp(req),
-      path: req.url,
-    });
-    res.status(401).json({ success: false, errorKey: "admin.auth.required" });
-    return null;
+  if (session) {
+    req.adminUser = session;
+    req.adminToken = token;
+    return session;
   }
-  req.adminUser = session;
-  req.adminToken = token;
-  return session;
+
+  if (token) {
+    try {
+      const { verifyToken } = require("./dbAuth");
+      const user = verifyToken(token);
+      if (user.role === "admin") {
+        req.adminUser = {
+          userId: user.sub,
+          email: user.email,
+          name: user.name || user.email,
+          role: user.role,
+        };
+        req.user = user;
+        req.adminToken = token;
+        return req.adminUser;
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+
+  logSecurityEvent({
+    type: "admin_auth_required",
+    success: false,
+    ip: getClientIp(req),
+    path: req.url,
+  });
+  res.status(401).json({ success: false, errorKey: "admin.auth.required" });
+  return null;
 }
 
 module.exports = {

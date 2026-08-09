@@ -24,6 +24,7 @@ export default function AccountAddressBook() {
   const [addresses, setAddresses] = useState<AccountAddress[]>([]);
   const [form, setForm] = useState<Partial<AccountAddress>>(empty());
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
   async function load() {
     setAddresses(await fetchAccountAddresses());
@@ -35,10 +36,15 @@ export default function AccountAddressBook() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    await saveAccountAddress({ ...form, id: editingId || undefined });
-    setForm(empty());
-    setEditingId(null);
-    load();
+    setError("");
+    try {
+      await saveAccountAddress({ ...form, id: editingId || undefined });
+      setForm(empty());
+      setEditingId(null);
+      await load();
+    } catch {
+      setError(t("account.saveError"));
+    }
   }
 
   return (
@@ -73,6 +79,7 @@ export default function AccountAddressBook() {
         </label>
         <label className="checkout-checkbox"><input type="checkbox" checked={!!form.isDefaultShipping} onChange={(e) => setForm({ ...form, isDefaultShipping: e.target.checked })} /> {t("account.defaultShipping")}</label>
         <button type="submit" className="shop-btn-primary">{t("account.save")}</button>
+        {error && <p className="account-error">{error}</p>}
       </form>
     </div>
   );

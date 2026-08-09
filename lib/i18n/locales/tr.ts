@@ -300,6 +300,10 @@ export const catalog: TranslationTree = {
     label: "Dil seçin",
     srLabel: "Dil",
   },
+  market: {
+    label: "Ülke seçin",
+    srLabel: "Ülke",
+  },
   seo: {
     siteTitle: "Buzzard – Online Mağaza | Ürün satın alın",
     siteDescription:

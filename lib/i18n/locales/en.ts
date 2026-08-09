@@ -300,6 +300,10 @@ export const catalog: TranslationTree = {
     label: "Choose language",
     srLabel: "Language",
   },
+  market: {
+    label: "Choose country",
+    srLabel: "Country",
+  },
   seo: {
     siteTitle: "Buzzard – Online Shop | Buy products",
     siteDescription:

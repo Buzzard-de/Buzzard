@@ -49,7 +49,8 @@ export function resolveLinePricing(
 export function calculateOrderQuote(
   lines: CheckoutCartLineInput[],
   shippingMethodId: string,
-  couponCode?: string
+  couponCode?: string,
+  countryCode?: string
 ): OrderQuote | null {
   const resolved: OrderLineQuote[] = [];
 
@@ -63,7 +64,7 @@ export function calculateOrderQuote(
   const coupon = validateCoupon(couponCode, subtotal);
   const discount = coupon.valid ? coupon.discount : 0;
   const discountedSubtotal = Math.max(0, subtotal - discount);
-  const shipping = calculateShippingCost(discountedSubtotal, shippingMethodId);
+  const shipping = calculateShippingCost(discountedSubtotal, shippingMethodId, countryCode);
   const vatAmount =
     Math.round(resolved.reduce((sum, line) => sum + line.vatAmount, 0) * 100) / 100;
   const total = Math.round((discountedSubtotal + shipping) * 100) / 100;
@@ -76,7 +77,7 @@ export function calculateOrderQuote(
     discount,
     vatAmount,
     total,
-    freeShippingRemaining: freeShippingRemaining(discountedSubtotal),
+    freeShippingRemaining: freeShippingRemaining(discountedSubtotal, countryCode),
     shippingMethodId,
     couponCode: coupon.valid ? coupon.normalizedCode : undefined,
   };

@@ -15,6 +15,7 @@ html[dir="rtl"] .shop-page-head {
 }
 
 html[dir="rtl"] .language-selector select,
+html[dir="rtl"] .country-selector select,
 html[dir="rtl"] .search-form input,
 html[dir="rtl"] .account-auth-card input,
 html[dir="rtl"] .account-form input,

@@ -8,10 +8,11 @@ import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
 import PriceLabel from "@/components/shop/PriceLabel";
 import ProductSvg from "./ProductSvg";
 import { formatPrice } from "@/lib/products";
-import { FREE_SHIPPING_THRESHOLD } from "@/lib/checkout/shipping";
+import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { getProductUrl } from "@/lib/products";
 import { isCheckoutEnabled } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
+import { useMarket } from "@/lib/market/context";
 
 export default function CartView() {
   const {
@@ -30,6 +31,8 @@ export default function CartView() {
     clearCoupon,
   } = useCart();
   const { t } = useLocale();
+  const { countryCode } = useMarket();
+  const freeShippingThreshold = getFreeShippingThreshold(countryCode);
   const [couponInput, setCouponInput] = useState(couponCode);
 
   if (!isCheckoutEnabled()) {
@@ -65,7 +68,7 @@ export default function CartView() {
         <p className="cart-shipping-hint">
           {t("cart.freeShippingHint")
             .replace("{amount}", formatPrice(freeShippingRemaining))
-            .replace("{threshold}", formatPrice(FREE_SHIPPING_THRESHOLD))}
+            .replace("{threshold}", formatPrice(freeShippingThreshold))}
         </p>
       )}
 

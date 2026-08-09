@@ -1,3 +1,9 @@
+import {
+  calculateMarketShipping,
+  freeShippingRemaining as marketFreeShippingRemaining,
+  getFreeShippingThreshold,
+} from "@/lib/market/shipping";
+import { defaultMarketCountryCode } from "@/lib/market/countries";
 import type { ShippingMethodOption } from "./types";
 
 export const FREE_SHIPPING_THRESHOLD = 79;
@@ -26,17 +32,28 @@ export function getShippingMethod(id: string): ShippingMethodOption | undefined 
 
 export function calculateShippingCost(
   subtotal: number,
-  methodId: string
+  methodId: string,
+  countryCode = defaultMarketCountryCode(),
+  weightKg = 2
 ): number {
   if (subtotal <= 0) return 0;
+
+  const standard = calculateMarketShipping(countryCode, weightKg, subtotal);
+  if (methodId === "standard") return standard;
+
   const method = getShippingMethod(methodId) ?? SHIPPING_METHODS[0];
-  if (subtotal >= FREE_SHIPPING_THRESHOLD && method.id === "standard") {
-    return 0;
+  if (method.id === "express") {
+    return standard > 0 ? standard + (method.baseCost - SHIPPING_METHODS[0].baseCost) : method.baseCost;
   }
+
   return method.baseCost;
 }
 
-export function freeShippingRemaining(subtotal: number): number {
-  if (subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
-  return Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+export function freeShippingRemaining(
+  subtotal: number,
+  countryCode = defaultMarketCountryCode()
+): number {
+  return marketFreeShippingRemaining(subtotal, countryCode);
 }
+
+export { getFreeShippingThreshold };

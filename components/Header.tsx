@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import LanguageSelector from "./LanguageSelector";
+import CountrySelector from "./CountrySelector";
 import SearchAutocomplete from "./SearchAutocomplete";
 import { useAccount } from "@/lib/account/context";
 import { useCart } from "@/lib/cart";
@@ -83,6 +84,7 @@ export default function Header() {
         </button>
 
         <LanguageSelector />
+        <CountrySelector />
 
         {pathname !== "/" && (
           <button type="button" className="vin-header-btn" onClick={openVinModal}>

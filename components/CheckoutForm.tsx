@@ -22,6 +22,7 @@ import {
 import { useCart } from "@/lib/cart";
 import { listPaymentProviders } from "@/lib/payments";
 import { saveConfirmedOrder, submitOrder, fetchOrderQuote } from "@/lib/orders";
+import { ensureServerCartSynced } from "@/lib/store/cartSync";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
 import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
@@ -328,6 +329,13 @@ export default function CheckoutForm() {
     }
 
     setLoading(true);
+    const cartSynced = await ensureServerCartSynced(items);
+    if (!cartSynced) {
+      setLoading(false);
+      setErrorKey("checkout.cartSyncFailed");
+      return;
+    }
+
     const response = await submitOrder({
       ...payload,
       lines: items.map((item) => ({

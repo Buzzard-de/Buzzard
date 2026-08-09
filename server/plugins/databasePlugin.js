@@ -2,6 +2,7 @@ const { db } = require("../lib/db");
 const { hashPassword, signUser, requireAuth, requireAdmin, ensureAdmin, authenticateUser } = require("../lib/dbAuth");
 const { createOrderFromCartWithPayment } = require("../lib/dbOrders");
 const { createShipment } = require("../lib/dbCarriers");
+const { syncCatalogProducts, findProductBySku } = require("../lib/catalogProductSync");
 
 function isEnabled() {
   return process.env.BUZZARD_DB_ENABLED !== "0";
@@ -23,6 +24,31 @@ function listUserOrders(userId) {
     .all(userId);
 }
 
+function getOrCreateCart(userId) {
+  let cart = db.prepare("SELECT * FROM carts WHERE user_id = ?").get(userId);
+  if (!cart) {
+    const created = db.prepare("INSERT INTO carts(user_id) VALUES(?)").run(userId);
+    cart = { id: created.lastInsertRowid };
+  }
+  return cart;
+}
+
+function readCartPayload(cartId) {
+  const items = db
+    .prepare(`
+      SELECT ci.product_id, ci.quantity, p.sku, p.name, p.price_eur, p.weight_kg
+      FROM cart_items ci
+      JOIN products p ON p.id = ci.product_id
+      WHERE ci.cart_id = ?
+    `)
+    .all(cartId);
+  return {
+    items,
+    subtotal: items.reduce((sum, item) => sum + item.price_eur * item.quantity, 0),
+    weight: items.reduce((sum, item) => sum + item.weight_kg * item.quantity, 0),
+  };
+}
+
 module.exports = {
   register(app) {
     if (!isEnabled()) {
@@ -31,6 +57,10 @@ module.exports = {
     }
 
     ensureAdmin();
+    const catalogSync = syncCatalogProducts();
+    if (catalogSync.synced) {
+      console.log(`SQLite catalog sync: ${catalogSync.synced} SKU rows upserted`);
+    }
 
     app.get("/api/db/status", (_req, res) => {
       res.json({ ok: true, service: "buzzard-backend", version: "0.4.0", storage: "sqlite" });
@@ -111,6 +141,12 @@ module.exports = {
       return res.json(db.prepare(sql).all(...args).map(publicProduct));
     });
 
+    app.get("/api/products/by-sku/:sku", (req, res) => {
+      const product = findProductBySku(decodeURIComponent(req.params.sku));
+      if (!product) return res.status(404).json({ error: "Product not found" });
+      return res.json(publicProduct(product));
+    });
+
     app.get("/api/products/:id", (req, res) => {
       const product = db
         .prepare(`
@@ -126,40 +162,98 @@ module.exports = {
 
     app.post("/api/cart/items", (req, res) => {
       if (!requireAuth(req, res)) return;
-      const { productId, quantity = 1 } = req.body || {};
-      const product = db.prepare("SELECT * FROM products WHERE id = ? AND active = 1").get(productId);
+      const { productId, sku, quantity = 1 } = req.body || {};
+      let product = null;
+      if (productId) {
+        product = db.prepare("SELECT * FROM products WHERE id = ? AND active = 1").get(productId);
+      } else if (sku) {
+        product = findProductBySku(String(sku));
+      }
       if (!product || quantity < 1 || quantity > product.stock) {
         return res.status(400).json({ error: "Invalid product or quantity" });
       }
-      let cart = db.prepare("SELECT * FROM carts WHERE user_id = ?").get(req.user.sub);
-      if (!cart) {
-        const created = db.prepare("INSERT INTO carts(user_id) VALUES(?)").run(req.user.sub);
-        cart = { id: created.lastInsertRowid };
-      }
+      const cart = getOrCreateCart(req.user.sub);
       db.prepare(`
         INSERT INTO cart_items(cart_id, product_id, quantity) VALUES(?,?,?)
         ON CONFLICT(cart_id, product_id) DO UPDATE SET quantity = quantity + excluded.quantity
-      `).run(cart.id, productId, quantity);
-      return res.json({ ok: true });
+      `).run(cart.id, product.id, quantity);
+      return res.json({ ok: true, productId: product.id });
     });
 
     app.get("/api/cart", (req, res) => {
       if (!requireAuth(req, res)) return;
       const cart = db.prepare("SELECT * FROM carts WHERE user_id = ?").get(req.user.sub);
       if (!cart) return res.json({ items: [], subtotal: 0, weight: 0 });
-      const items = db
-        .prepare(`
-          SELECT ci.product_id, ci.quantity, p.sku, p.name, p.price_eur, p.weight_kg
-          FROM cart_items ci
-          JOIN products p ON p.id = ci.product_id
-          WHERE ci.cart_id = ?
-        `)
-        .all(cart.id);
-      return res.json({
-        items,
-        subtotal: items.reduce((sum, item) => sum + item.price_eur * item.quantity, 0),
-        weight: items.reduce((sum, item) => sum + item.weight_kg * item.quantity, 0),
-      });
+      return res.json(readCartPayload(cart.id));
+    });
+
+    app.patch("/api/cart/items/:productId", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      const productId = Number(req.params.productId);
+      const { quantity } = req.body || {};
+      const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(req.user.sub);
+      if (!cart) return res.status(404).json({ error: "Cart not found" });
+
+      if (!Number.isFinite(quantity) || quantity < 1) {
+        db.prepare("DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?").run(cart.id, productId);
+        return res.json({ ok: true });
+      }
+
+      const product = db.prepare("SELECT * FROM products WHERE id = ? AND active = 1").get(productId);
+      if (!product || quantity > product.stock) {
+        return res.status(400).json({ error: "Invalid product or quantity" });
+      }
+
+      db.prepare(`
+        INSERT INTO cart_items(cart_id, product_id, quantity) VALUES(?,?,?)
+        ON CONFLICT(cart_id, product_id) DO UPDATE SET quantity = excluded.quantity
+      `).run(cart.id, productId, quantity);
+      return res.json({ ok: true });
+    });
+
+    app.put("/api/cart/sync", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      const { items = [] } = req.body || {};
+      if (!Array.isArray(items)) {
+        return res.status(400).json({ error: "items must be an array" });
+      }
+
+      const cart = getOrCreateCart(req.user.sub);
+      const resolved = [];
+
+      for (const entry of items) {
+        const sku = String(entry?.sku || "").trim();
+        const quantity = Number(entry?.quantity);
+        if (!sku || !Number.isFinite(quantity) || quantity < 1) continue;
+
+        const product = findProductBySku(sku);
+        if (!product) continue;
+        if (quantity > product.stock) {
+          return res.status(409).json({ error: `Insufficient stock: ${sku}` });
+        }
+
+        const existing = resolved.find((row) => row.productId === product.id);
+        if (existing) {
+          existing.quantity += quantity;
+          if (existing.quantity > product.stock) {
+            return res.status(409).json({ error: `Insufficient stock: ${sku}` });
+          }
+        } else {
+          resolved.push({ productId: product.id, quantity });
+        }
+      }
+
+      db.transaction(() => {
+        db.prepare("DELETE FROM cart_items WHERE cart_id = ?").run(cart.id);
+        const insert = db.prepare(`
+          INSERT INTO cart_items(cart_id, product_id, quantity) VALUES(?,?,?)
+        `);
+        for (const row of resolved) {
+          insert.run(cart.id, row.productId, row.quantity);
+        }
+      })();
+
+      return res.json(readCartPayload(cart.id));
     });
 
     app.delete("/api/cart/items/:productId", (req, res) => {

@@ -111,11 +111,33 @@ export async function storeFetchCart(): Promise<StoreCart> {
   return storeFetch<StoreCart>("/api/cart");
 }
 
-export async function storeAddToCart(productId: number, quantity = 1): Promise<void> {
+export async function storeAddToCart(body: {
+  productId?: number;
+  sku?: string;
+  quantity?: number;
+}): Promise<void> {
   await storeFetch("/api/cart/items", {
     method: "POST",
-    body: JSON.stringify({ productId, quantity }),
+    body: JSON.stringify(body),
   });
+}
+
+export async function storeUpdateCartItem(productId: number, quantity: number): Promise<void> {
+  await storeFetch(`/api/cart/items/${productId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ quantity }),
+  });
+}
+
+export async function storeSyncCart(items: Array<{ sku: string; quantity: number }>): Promise<StoreCart> {
+  return storeFetch<StoreCart>("/api/cart/sync", {
+    method: "PUT",
+    body: JSON.stringify({ items }),
+  });
+}
+
+export async function storeProductBySku(sku: string): Promise<StoreProduct> {
+  return storeFetch<StoreProduct>(`/api/products/by-sku/${encodeURIComponent(sku)}`);
 }
 
 export async function storeRemoveFromCart(productId: number): Promise<void> {

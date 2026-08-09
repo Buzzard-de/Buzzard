@@ -134,6 +134,7 @@ export const catalog: TranslationTree = {
     errorLegal: "يرجى قبول الشروط.",
     apiUnavailable: "خدمة الطلب غير متاحة.",
     orderFailed: "فشل الطلب.",
+    cartSyncFailed: "تعذر مزامنة السلة مع الخادم. يرجى المحاولة مرة أخرى.",
     duplicateOrder: "تم إرسال هذا الطلب للتو. تحقق من حسابك أو انتظر قليلاً.",
     orderNotFound: "الطلب غير موجود.",
     stockError: "بعض المنتجات غير متوفرة.",

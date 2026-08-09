@@ -146,6 +146,7 @@ export const catalog: TranslationTree = {
     errorLegal: "Bitte AGB und Datenschutz bestätigen.",
     apiUnavailable: "Bestellservice derzeit nicht erreichbar. Bitte später erneut versuchen.",
     orderFailed: "Bestellung fehlgeschlagen. Bitte erneut versuchen.",
+    cartSyncFailed: "Warenkorb konnte nicht mit dem Server synchronisiert werden. Bitte erneut versuchen.",
     duplicateOrder: "Diese Bestellung wurde gerade übermittelt. Bitte prüfen Sie Ihr Konto oder warten Sie kurz.",
     orderNotFound: "Bestellung nicht gefunden.",
     stockError: "Ein oder mehrere Artikel sind nicht mehr verfügbar.",

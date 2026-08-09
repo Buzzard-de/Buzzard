@@ -134,6 +134,7 @@ export const catalog: TranslationTree = {
     errorLegal: "Please accept terms and privacy policy.",
     apiUnavailable: "Order service unavailable. Please try again later.",
     orderFailed: "Order failed. Please try again.",
+    cartSyncFailed: "Cart could not be synced with the server. Please try again.",
     duplicateOrder: "This order was just submitted. Check your account or wait a moment.",
     orderNotFound: "Order not found.",
     stockError: "One or more items are no longer available.",

@@ -134,6 +134,7 @@ export const catalog: TranslationTree = {
     errorLegal: "Şartları kabul edin.",
     apiUnavailable: "Sipariş servisi kullanılamıyor.",
     orderFailed: "Sipariş başarısız.",
+    cartSyncFailed: "Sepet sunucu ile senkronize edilemedi. Lütfen tekrar deneyin.",
     duplicateOrder: "Bu sipariş az önce gönderildi. Hesabınızı kontrol edin veya kısa süre bekleyin.",
     orderNotFound: "Sipariş bulunamadı.",
     stockError: "Bazı ürünler artık mevcut değil.",

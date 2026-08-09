@@ -19,6 +19,8 @@ import {
 } from "./client";
 import type { AccountUser } from "./types";
 import { getWishlistIds, saveWishlistIds } from "@/lib/wishlist";
+import { readLocalCart } from "@/lib/cart/storage";
+import { syncAccountCart } from "@/lib/store/cartSync";
 
 interface AccountContextValue {
   user: AccountUser | null;
@@ -55,6 +57,10 @@ export function AccountProvider({ children }: { children: ReactNode }) {
       const merged = await syncAccountWishlist(localIds);
       saveWishlistIds(merged);
       setWishlistCount(merged.length);
+    }
+    const localCart = readLocalCart();
+    if (localCart.length || getAccountToken()) {
+      await syncAccountCart(localCart);
     }
   }, []);
 

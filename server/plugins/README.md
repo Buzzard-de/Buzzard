@@ -121,6 +121,26 @@ Tables: `suppliers`, `supplier_products`, `sync_runs`, `vehicles`, `compatibilit
 
 Environment: `TECDOC_API_URL`, `TECDOC_API_KEY`, optional `SUPPLIER_SYNC_CRON` (future cron hook).
 
+## Catalog SEO Plugin (v0.8)
+
+The `catalogSeoPlugin.js` module adds SQLite catalog management, pricing rules and SEO endpoints:
+
+- `GET /api/catalog/categories` — active categories with slugs
+- `GET /api/catalog/products` — search/filter (`?q=`, `?category=`, price range)
+- `GET /api/catalog/products/slug/:slug` — product detail + images
+- `GET /api/catalog/products/:id/jsonld` — structured Product JSON-LD
+- `GET /api/catalog/sitemap.xml`, `/api/catalog/robots.txt` — SEO feed endpoints
+- `GET/POST /api/admin/catalog/products` — admin product list/create
+- `PATCH /api/admin/catalog/products/:id` — update/deactivate products
+- `POST /api/admin/catalog/products/bulk-price` — margin-based bulk repricing
+- `POST /api/admin/catalog/products/:id/images` — product image URLs
+- `POST /api/admin/catalog/categories` — create category
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CATALOG_SEO=0`.
+Extended columns on `products`/`categories`; tables `product_images`, `product_audit`.
+
+Environment: `PUBLIC_BASE_URL`, `DEFAULT_MARGIN`, `MIN_MARGIN`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

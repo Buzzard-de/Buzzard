@@ -77,6 +77,15 @@ function collectHealth() {
     }
   }
 
+  let catalogSeo = { enabled: false };
+  if (process.env.BUZZARD_CATALOG_SEO !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      catalogSeo = { enabled: true, ...require("../lib/catalogSeo").getCatalogSeoStatus() };
+    } catch (error) {
+      catalogSeo = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -85,6 +94,7 @@ function collectHealth() {
     commercial,
     orderAutomation,
     supplierHub,
+    catalogSeo,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

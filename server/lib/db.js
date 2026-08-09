@@ -179,7 +179,77 @@ CREATE TABLE IF NOT EXISTS sync_errors (
  payload TEXT,
  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS product_images (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ product_id INTEGER NOT NULL,
+ url TEXT NOT NULL,
+ alt_text TEXT DEFAULT '',
+ sort_order INTEGER DEFAULT 0,
+ FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS product_audit (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ product_id INTEGER,
+ action TEXT,
+ details TEXT,
+ created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 `);
+
+function slugify(value) {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9äöüß\s-]/gi, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function ensureColumn(table, column, definition) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name);
+  if (!columns.includes(column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
+function migrateCatalogSeo() {
+  ensureColumn("categories", "slug", "TEXT");
+  ensureColumn("categories", "active", "INTEGER NOT NULL DEFAULT 1");
+  ensureColumn("products", "slug", "TEXT");
+  ensureColumn("products", "supplier_cost_eur", "REAL DEFAULT 0");
+  ensureColumn("products", "margin_floor", "REAL DEFAULT 0.12");
+  ensureColumn("products", "image_url", "TEXT DEFAULT ''");
+  ensureColumn("products", "seo_title", "TEXT DEFAULT ''");
+  ensureColumn("products", "seo_description", "TEXT DEFAULT ''");
+  ensureColumn("products", "updated_at", "TEXT");
+
+  const categories = db.prepare("SELECT id, name, slug FROM categories").all();
+  const updateCategorySlug = db.prepare("UPDATE categories SET slug = ? WHERE id = ?");
+  for (const row of categories) {
+    if (!row.slug) updateCategorySlug.run(slugify(row.name), row.id);
+  }
+
+  const products = db.prepare("SELECT id, sku, name, slug, seo_title, seo_description FROM products").all();
+  const updateProductMeta = db.prepare(`
+    UPDATE products
+    SET slug = ?, seo_title = ?, seo_description = ?, updated_at = COALESCE(updated_at, CURRENT_TIMESTAMP)
+    WHERE id = ?
+  `);
+  for (const row of products) {
+    const slug = row.slug || slugify(row.name || row.sku);
+    const seoTitle = row.seo_title || `${row.name} | BUZZARD`;
+    const seoDescription = row.seo_description || row.name || "";
+    updateProductMeta.run(slug, seoTitle, seoDescription, row.id);
+  }
+
+  db.exec(`
+    UPDATE products
+    SET updated_at = COALESCE(updated_at, created_at, datetime('now'))
+    WHERE updated_at IS NULL OR updated_at = ''
+  `);
+}
+
+migrateCatalogSeo();
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

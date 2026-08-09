@@ -122,6 +122,18 @@ function collectHealth() {
     }
   }
 
+  let analyticsDashboard = { enabled: false };
+  if (process.env.BUZZARD_ANALYTICS_DASHBOARD !== "0" && process.env.BUZZARD_DB_ENABLED !== "0") {
+    try {
+      analyticsDashboard = {
+        enabled: true,
+        ...require("../lib/analyticsDashboard").getAnalyticsDashboardStatus(),
+      };
+    } catch (error) {
+      analyticsDashboard = { enabled: true, error: error.message };
+    }
+  }
+
   return {
     status: "ok",
     app: "Buzzard API",
@@ -135,6 +147,7 @@ function collectHealth() {
     customerCheckout,
     customerSupport,
     crmLoyalty,
+    analyticsDashboard,
     integrations: {
       payment: { configured: Boolean(process.env.PAYMENT_PROVIDER_SECRET), demoMode: !process.env.PAYMENT_PROVIDER_SECRET },
       supplier: { configured: Boolean(process.env.SUPPLIER_API_SECRET), demoMode: !process.env.SUPPLIER_API_SECRET },

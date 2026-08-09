@@ -671,6 +671,90 @@ function migrateCrmLoyalty() {
 
 migrateCrmLoyalty();
 
+function migrateAnalyticsDashboard() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS analytics_orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_number TEXT UNIQUE,
+      country_code TEXT,
+      category TEXT,
+      product_sku TEXT,
+      product_name TEXT,
+      revenue REAL,
+      cost REAL,
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'paid',
+      source TEXT DEFAULT 'direct',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS analytics_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      session_id TEXT,
+      event_type TEXT,
+      page TEXT,
+      product_sku TEXT,
+      source TEXT,
+      country_code TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS analytics_customers (
+      user_id INTEGER PRIMARY KEY,
+      orders_count INTEGER DEFAULT 0,
+      lifetime_value REAL DEFAULT 0,
+      first_order_at TEXT,
+      last_order_at TEXT,
+      country_code TEXT,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+
+  const orderCount = db.prepare("SELECT COUNT(*) n FROM analytics_orders").get().n;
+  if (orderCount === 0) {
+    const insertOrder = db.prepare(`
+      INSERT INTO analytics_orders(order_number, country_code, category, product_sku, product_name, revenue, cost, source, created_at)
+      VALUES(?,?,?,?,?,?,?,?,datetime('now', ?))
+    `);
+    [
+      ["BZ1001", "DE", "Automotive", "OIL-5W30", "Premium Motoröl 5W-30", 79, 45, "google", "-2 days"],
+      ["BZ1002", "DE", "Garden", "GARDEN-001", "Garten Bewässerungsset", 119, 68, "direct", "-2 days"],
+      ["BZ1003", "FR", "Automotive", "BRAKE-001", "Bremsbelag Set", 149, 91, "google", "-1 days"],
+      ["BZ1004", "NL", "Home", "HOME-001", "Home Organizer", 59, 31, "instagram", "-1 days"],
+      ["BZ1005", "PL", "Sports", "SPORT-001", "Running Performance Set", 129, 76, "google", "-0 days"],
+      ["BZ1006", "DE", "Cleaning", "CLEAN-001", "Universal Fahrzeugreiniger", 39, 19, "direct", "-0 days"],
+    ].forEach((row) => insertOrder.run(...row));
+
+    const insertEvent = db.prepare(`
+      INSERT INTO analytics_events(session_id, event_type, page, product_sku, source, country_code, created_at)
+      VALUES(?,?,?,?,?,?,datetime('now', ?))
+    `);
+    [
+      ["s1", "page_view", "/", "", "google", "DE", "-2 days"],
+      ["s2", "product_view", "/product/oil", "OIL-5W30", "google", "DE", "-2 days"],
+      ["s3", "add_to_cart", "/product/oil", "OIL-5W30", "google", "DE", "-2 days"],
+      ["s4", "checkout_start", "/checkout", "OIL-5W30", "google", "DE", "-2 days"],
+      ["s5", "purchase", "/checkout", "OIL-5W30", "google", "DE", "-2 days"],
+      ["s6", "page_view", "/", "", "direct", "DE", "-1 days"],
+      ["s7", "product_view", "/product/garden", "GARDEN-001", "direct", "DE", "-1 days"],
+      ["s8", "add_to_cart", "/product/garden", "GARDEN-001", "direct", "DE", "-1 days"],
+      ["s9", "checkout_start", "/checkout", "GARDEN-001", "direct", "DE", "-1 days"],
+      ["s10", "purchase", "/checkout", "GARDEN-001", "direct", "DE", "-1 days"],
+      ["s11", "page_view", "/", "", "instagram", "NL", "-1 days"],
+      ["s12", "product_view", "/product/home", "HOME-001", "instagram", "NL", "-1 days"],
+      ["s13", "add_to_cart", "/product/home", "HOME-001", "instagram", "NL", "-1 days"],
+      ["s14", "checkout_start", "/checkout", "HOME-001", "instagram", "NL", "-1 days"],
+      ["s15", "purchase", "/checkout", "HOME-001", "instagram", "NL", "-1 days"],
+      ["s16", "page_view", "/", "", "google", "PL", "-0 days"],
+      ["s17", "product_view", "/product/sport", "SPORT-001", "google", "PL", "-0 days"],
+      ["s18", "add_to_cart", "/product/sport", "SPORT-001", "google", "PL", "-0 days"],
+      ["s19", "checkout_start", "/checkout", "SPORT-001", "google", "PL", "-0 days"],
+      ["s20", "purchase", "/checkout", "SPORT-001", "google", "PL", "-0 days"],
+    ].forEach((row) => insertEvent.run(...row));
+  }
+}
+
+migrateAnalyticsDashboard();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

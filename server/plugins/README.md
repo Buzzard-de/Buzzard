@@ -214,6 +214,21 @@ The `crmLoyaltyPlugin.js` module adds CRM profiles, loyalty points, rewards, seg
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CRM_LOYALTY=0`.
 Tables: `crm_profiles`, `loyalty_accounts`, `loyalty_ledger`, `rewards`, `customer_segments`, `customer_segment_members`, `offers`, `abandoned_carts`, `recovery_campaigns`.
 
+## Analytics Dashboard Plugin (v1.3)
+
+The `analyticsDashboardPlugin.js` module adds SQLite-backed executive KPIs, funnel and attribution analytics:
+
+- `POST /api/analytics/events` — consent-aware event ingestion boundary
+- `GET /api/admin/analytics-dashboard/status` — admin overview
+- `GET /api/admin/analytics-dashboard/summary` — revenue, AOV, conversion KPIs
+- `GET /api/admin/analytics-dashboard/daily` — daily revenue series
+- `GET /api/admin/analytics-dashboard/countries|categories|products|sources` — breakdowns
+- `GET /api/admin/analytics-dashboard/funnel` — conversion funnel metrics
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_ANALYTICS_DASHBOARD=0`.
+Tables: `analytics_orders`, `analytics_events`, `analytics_customers`.
+Does not replace the JSON-based `/api/admin/analytics/*` engine in `analyticsPlugin.js`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

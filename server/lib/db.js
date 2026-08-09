@@ -558,6 +558,119 @@ function migrateCustomerSupport() {
 
 migrateCustomerSupport();
 
+function migrateCrmLoyalty() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS crm_profiles (
+      user_id INTEGER PRIMARY KEY,
+      phone TEXT,
+      country_code TEXT,
+      language TEXT DEFAULT 'de-DE',
+      marketing_email INTEGER DEFAULT 0,
+      marketing_sms INTEGER DEFAULT 0,
+      marketing_whatsapp INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS loyalty_accounts (
+      user_id INTEGER PRIMARY KEY,
+      points INTEGER DEFAULT 0,
+      lifetime_points INTEGER DEFAULT 0,
+      tier TEXT DEFAULT 'Bronze',
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS loyalty_ledger (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      points INTEGER NOT NULL,
+      reason TEXT,
+      reference TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS rewards (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE,
+      title TEXT,
+      points_cost INTEGER,
+      discount_type TEXT,
+      discount_value REAL,
+      active INTEGER DEFAULT 1
+    );
+    CREATE TABLE IF NOT EXISTS customer_segments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE,
+      description TEXT,
+      rules_json TEXT
+    );
+    CREATE TABLE IF NOT EXISTS customer_segment_members (
+      segment_id INTEGER,
+      user_id INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY(segment_id, user_id),
+      FOREIGN KEY(segment_id) REFERENCES customer_segments(id) ON DELETE CASCADE,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS offers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      title TEXT,
+      code TEXT,
+      discount_type TEXT,
+      discount_value REAL,
+      status TEXT DEFAULT 'active',
+      expires_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS abandoned_carts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      cart_key TEXT UNIQUE,
+      subtotal REAL,
+      currency TEXT DEFAULT 'EUR',
+      item_count INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'open',
+      last_seen_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      recovered_at TEXT,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS recovery_campaigns (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      abandoned_cart_id INTEGER,
+      channel TEXT,
+      status TEXT DEFAULT 'queued',
+      scheduled_at TEXT,
+      sent_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(abandoned_cart_id) REFERENCES abandoned_carts(id) ON DELETE CASCADE
+    );
+  `);
+
+  const rewardCount = db.prepare("SELECT COUNT(*) n FROM rewards").get().n;
+  if (rewardCount === 0) {
+    const insertReward = db.prepare(
+      "INSERT INTO rewards(code, title, points_cost, discount_type, discount_value) VALUES(?,?,?,?,?)"
+    );
+    insertReward.run("REWARD5", "5 EUR reward", 500, "fixed", 5);
+    insertReward.run("REWARD15", "15 EUR reward", 1200, "fixed", 15);
+  }
+
+  const segmentCount = db.prepare("SELECT COUNT(*) n FROM customer_segments").get().n;
+  if (segmentCount === 0) {
+    const insertSegment = db.prepare(
+      "INSERT INTO customer_segments(name, description, rules_json) VALUES(?,?,?)"
+    );
+    insertSegment.run("New Customers", "First purchase / newly registered", '{"orders":0}');
+    insertSegment.run("Repeat Customers", "Customers with repeat purchases", '{"orders_min":2}');
+    insertSegment.run("High Value", "High lifetime value customers", '{"lifetime_value_min":500}');
+    insertSegment.run("Cart Recovery", "Open abandoned cart", '{"abandoned_cart":true}');
+  }
+}
+
+migrateCrmLoyalty();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

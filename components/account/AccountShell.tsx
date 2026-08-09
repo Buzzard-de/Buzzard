@@ -10,6 +10,7 @@ const NAV = [
   { href: "/konto/bestellungen/", labelKey: "account.nav.orders" },
   { href: "/konto/adressen/", labelKey: "account.nav.addresses" },
   { href: "/konto/support/", labelKey: "account.nav.support" },
+  { href: "/konto/loyalty/", labelKey: "account.nav.loyalty" },
   { href: "/wunschliste/", labelKey: "account.nav.wishlist" },
   { href: "/konto/profil/", labelKey: "account.nav.profile" },
   { href: "/konto/einstellungen/", labelKey: "account.nav.settings" },

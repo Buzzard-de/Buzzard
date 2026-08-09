@@ -197,6 +197,23 @@ The `customerSupportPlugin.js` module adds support tickets, order tracking timel
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CUSTOMER_SUPPORT=0`.
 Tables: `tickets`, `ticket_messages`, `tracking_events`, `support_templates` (+ extended `notifications` columns).
 
+## CRM Loyalty Plugin (v1.2)
+
+The `crmLoyaltyPlugin.js` module adds CRM profiles, loyalty points, rewards, segments, offers and cart recovery:
+
+- `GET/PUT /api/customer/crm/profile` — CRM profile + consent fields (JWT)
+- `GET /api/customer/loyalty` — points, ledger, rewards catalog
+- `POST /api/customer/loyalty/redeem` — redeem reward for personalized offer code
+- `POST /api/customer/cart/abandoned|recovered` — abandoned cart tracking
+- `GET /api/customer/offers` — active personalized offers
+- `GET /api/admin/crm-loyalty/status` — admin overview
+- `GET /api/admin/crm-loyalty/segments|abandoned-carts|offers|loyalty` — CRM dashboards
+- `POST /api/admin/crm-loyalty/points/earn` — manual/admin points credit
+- `POST /api/admin/crm-loyalty/recovery-campaigns/queue` — queue cart recovery campaigns
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CRM_LOYALTY=0`.
+Tables: `crm_profiles`, `loyalty_accounts`, `loyalty_ledger`, `rewards`, `customer_segments`, `customer_segment_members`, `offers`, `abandoned_carts`, `recovery_campaigns`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

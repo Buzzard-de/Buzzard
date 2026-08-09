@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useState,
@@ -25,6 +26,9 @@ import {
 import { resolveLinePricing } from "@/lib/checkout/totals";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 import { useMarket } from "@/lib/market/context";
+import { markCartRecovered, trackAbandonedCart } from "@/lib/crmLoyalty/client";
+import { shouldUseCrmLoyaltyApi } from "@/lib/crmLoyalty/runtime";
+import { getAccountToken } from "@/lib/account/client";
 
 const STORAGE_KEY = "buzzard_cart";
 const COUPON_KEY = "buzzard_coupon";
@@ -143,6 +147,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
   }, [items, couponCode, countryCode]);
 
+  useEffect(() => {
+    if (!ready || !shouldUseCrmLoyaltyApi() || !getAccountToken()) return;
+    if (items.length === 0) return;
+
+    const timer = window.setTimeout(() => {
+      trackAbandonedCart({
+        subtotal: cartSubtotal(items),
+        currency: "EUR",
+        itemCount: cartCount(items),
+      }).catch(() => {});
+    }, 1500);
+
+    return () => window.clearTimeout(timer);
+  }, [ready, items]);
+
   const add = useCallback(
     (input: AddToCartInput) => {
       if (adding) return false;
@@ -249,6 +268,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clear = useCallback(() => {
     persist([]);
     clearCoupon();
+    if (shouldUseCrmLoyaltyApi() && getAccountToken()) {
+      markCartRecovered().catch(() => {});
+    }
     window.dispatchEvent(new Event("buzzard-cart-updated"));
   }, [persist, clearCoupon]);
 

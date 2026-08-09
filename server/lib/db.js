@@ -408,6 +408,98 @@ function migrateLocalizationFeeds() {
 
 migrateLocalizationFeeds();
 
+function migrateCustomerCheckout() {
+  ensureColumn("addresses", "phone", "TEXT DEFAULT ''");
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS coupons (
+      code TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      value REAL NOT NULL,
+      min_order REAL DEFAULT 0,
+      active INTEGER DEFAULT 1,
+      expires_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS wishlists (
+      user_id INTEGER NOT NULL,
+      product_id TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY(user_id, product_id),
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      product_id TEXT NOT NULL,
+      rating INTEGER NOT NULL,
+      title TEXT DEFAULT '',
+      body TEXT DEFAULT '',
+      status TEXT DEFAULT 'pending',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
+    );
+    CREATE TABLE IF NOT EXISTS notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      message TEXT NOT NULL,
+      read_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS checkout_drafts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER UNIQUE NOT NULL,
+      address_id INTEGER,
+      country_code TEXT,
+      currency TEXT,
+      shipping_method TEXT,
+      coupon_code TEXT,
+      notes TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS shipping_methods (
+      country_code TEXT NOT NULL,
+      code TEXT NOT NULL,
+      name TEXT NOT NULL,
+      price REAL NOT NULL,
+      free_from REAL DEFAULT 0,
+      PRIMARY KEY(country_code, code)
+    );
+  `);
+
+  const couponCount = db.prepare("SELECT COUNT(*) n FROM coupons").get().n;
+  if (couponCount === 0) {
+    const insertCoupon = db.prepare(
+      "INSERT INTO coupons(code, type, value, min_order) VALUES(?,?,?,?)"
+    );
+    insertCoupon.run("WELCOME10", "percent", 10, 30);
+    insertCoupon.run("BUZZARD5", "fixed", 5, 50);
+  }
+
+  const methodCount = db.prepare("SELECT COUNT(*) n FROM shipping_methods").get().n;
+  if (methodCount === 0) {
+    const insertMethod = db.prepare(
+      "INSERT INTO shipping_methods(country_code, code, name, price, free_from) VALUES(?,?,?,?,?)"
+    );
+    [
+      ["DE", "standard", "DHL Standard", 4.99, 79],
+      ["DE", "express", "Express", 9.99, 149],
+      ["FR", "standard", "Standard", 8.99, 99],
+      ["NL", "standard", "Standard", 7.99, 99],
+      ["PL", "standard", "Standard", 29.99, 449],
+      ["GB", "standard", "Standard", 9.99, 99],
+      ["TR", "standard", "Standard", 5.99, 49],
+      ["RS", "standard", "Standard", 6.99, 59],
+      ["BA", "standard", "Standard", 6.99, 59],
+    ].forEach((row) => insertMethod.run(...row));
+  }
+}
+
+migrateCustomerCheckout();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

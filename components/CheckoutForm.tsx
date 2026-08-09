@@ -30,6 +30,14 @@ import { isCheckoutEnabled } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 import { useMarket } from "@/lib/market/context";
+import { shouldUseCustomerCheckoutApi } from "@/lib/customerCheckout/runtime";
+import {
+  fetchCustomerCheckoutQuote,
+  fetchShippingMethods,
+  saveCustomerCheckoutDraft,
+} from "@/lib/customerCheckout/client";
+import type { CustomerShippingMethod } from "@/lib/customerCheckout/types";
+import { getAccountToken } from "@/lib/account/client";
 
 const STEPS: CheckoutStep[] = [
   "customer",
@@ -69,6 +77,8 @@ export default function CheckoutForm() {
     vatAmount: number;
     total: number;
   } | null>(null);
+  const [apiShippingMethods, setApiShippingMethods] = useState<CustomerShippingMethod[]>([]);
+  const useCustomerCheckoutApi = shouldUseCustomerCheckoutApi();
 
   useEffect(() => {
     setShippingAddress((prev) => ({ ...prev, country: countryCode }));
@@ -82,16 +92,41 @@ export default function CheckoutForm() {
     }
 
     let cancelled = false;
-    fetchOrderQuote({
-      lines: items.map((item) => ({
-        productId: item.productId,
-        variantIds: item.variantIds,
-        qty: item.qty,
-      })),
-      shippingMethodId,
-      couponCode: couponCode || undefined,
-      country: shippingAddress.country || "DE",
-    }).then((response) => {
+
+    async function loadQuote() {
+      if (useCustomerCheckoutApi) {
+        const cartSubtotal = items.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
+        try {
+          const quote = await fetchCustomerCheckoutQuote({
+            subtotal: cartSubtotal,
+            countryCode: shippingAddress.country || countryCode,
+            shippingMethod: shippingMethodId,
+            couponCode: couponCode || undefined,
+          });
+          if (cancelled) return;
+          setServerQuote({
+            subtotal: quote.subtotal,
+            shipping: quote.shipping,
+            discount: quote.discount,
+            vatAmount: quote.vatAmount,
+            total: quote.total,
+          });
+        } catch {
+          if (!cancelled) setServerQuote(null);
+        }
+        return;
+      }
+
+      const response = await fetchOrderQuote({
+        lines: items.map((item) => ({
+          productId: item.productId,
+          variantIds: item.variantIds,
+          qty: item.qty,
+        })),
+        shippingMethodId,
+        couponCode: couponCode || undefined,
+        country: shippingAddress.country || "DE",
+      });
       if (cancelled) return;
       if (response.success && response.quote) {
         setServerQuote({
@@ -104,12 +139,52 @@ export default function CheckoutForm() {
       } else {
         setServerQuote(null);
       }
-    });
+    }
+
+    loadQuote();
 
     return () => {
       cancelled = true;
     };
-  }, [items, shippingMethodId, couponCode, shippingAddress.country]);
+  }, [items, shippingMethodId, couponCode, shippingAddress.country, countryCode, useCustomerCheckoutApi]);
+
+  useEffect(() => {
+    if (!useCustomerCheckoutApi) return;
+    const country = shippingAddress.country || countryCode;
+    let cancelled = false;
+    fetchShippingMethods(country)
+      .then((methods) => {
+        if (cancelled) return;
+        setApiShippingMethods(methods);
+        if (methods.length > 0) {
+          setShippingMethodId((current) =>
+            methods.some((method) => method.code === current) ? current : methods[0].code
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setApiShippingMethods([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [useCustomerCheckoutApi, shippingAddress.country, countryCode]);
+
+  useEffect(() => {
+    if (!useCustomerCheckoutApi || !getAccountToken()) return;
+    saveCustomerCheckoutDraft({
+      country_code: shippingAddress.country || countryCode,
+      shipping_method: shippingMethodId,
+      coupon_code: couponCode || "",
+    }).catch(() => {});
+  }, [
+    useCustomerCheckoutApi,
+    step,
+    shippingAddress.country,
+    countryCode,
+    shippingMethodId,
+    couponCode,
+  ]);
 
   useEffect(() => {
     if (!accountReady || !accountUser) return;
@@ -161,6 +236,22 @@ export default function CheckoutForm() {
   }, [items, shippingMethodId, couponCode]);
 
   const paymentProviders = listPaymentProviders();
+  const shippingOptions =
+    useCustomerCheckoutApi && apiShippingMethods.length > 0
+      ? apiShippingMethods.map((method) => ({
+          id: method.code,
+          labelKey: method.name,
+          descriptionKey: "checkout.shippingStandardDesc",
+          baseCost: method.price,
+          freeFrom: method.free_from,
+        }))
+      : SHIPPING_METHODS.map((method) => ({
+          id: method.id,
+          labelKey: method.labelKey,
+          descriptionKey: method.descriptionKey,
+          baseCost: method.baseCost,
+          freeFrom: getFreeShippingThreshold(countryCode),
+        }));
 
   useEffect(() => {
     if (step === "review") {
@@ -377,7 +468,7 @@ export default function CheckoutForm() {
                 {t("checkout.deliveryEstimate").replace("{estimate}", deliveryDays)}
               </p>
               <div className="checkout-option-list">
-                {SHIPPING_METHODS.map((method) => (
+                {shippingOptions.map((method) => (
                   <label key={method.id} className="checkout-option">
                     <input
                       type="radio"
@@ -387,11 +478,19 @@ export default function CheckoutForm() {
                       onChange={() => setShippingMethodId(method.id)}
                     />
                     <span>
-                      <strong>{t(method.labelKey)}</strong>
-                      <small>{t(method.descriptionKey)} · {deliveryDays}</small>
+                      <strong>
+                        {useCustomerCheckoutApi && apiShippingMethods.length > 0
+                          ? method.labelKey
+                          : t(method.labelKey)}
+                      </strong>
+                      <small>
+                        {useCustomerCheckoutApi && apiShippingMethods.length > 0
+                          ? `${formatPrice(method.baseCost)} · ${deliveryDays}`
+                          : `${t(method.descriptionKey)} · ${deliveryDays}`}
+                      </small>
                     </span>
                     <em>
-                      {method.id === "standard" && displaySubtotal - displayDiscount >= getFreeShippingThreshold(countryCode)
+                      {displaySubtotal - displayDiscount >= method.freeFrom
                         ? t("cart.shippingFree")
                         : formatPrice(method.baseCost)}
                     </em>

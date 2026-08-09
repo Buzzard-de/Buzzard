@@ -159,6 +159,26 @@ The `localizationFeedsPlugin.js` module adds multilingual catalog, country prici
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_LOCALIZATION_FEEDS=0`.
 Tables: `locales`, `product_translations`, `category_translations`, `price_overrides`, `shipping_rates`, `tax_rates`.
 
+## Customer Checkout Plugin (v1.0)
+
+The `customerCheckoutPlugin.js` module adds address book, checkout drafts, shipping methods, coupons, wishlist, reviews and notifications:
+
+- `GET /api/customer/shipping-methods/:country` — country shipping options
+- `GET /api/customer/profile` — profile, addresses, wishlist (JWT)
+- `POST/DELETE /api/customer/addresses` — address book (JWT)
+- `POST/DELETE /api/customer/wishlist/:productId` — wishlist (JWT)
+- `POST /api/customer/reviews`, `GET /api/customer/products/:id/reviews` — product reviews
+- `POST /api/customer/coupons/validate` — coupon validation
+- `PUT/GET /api/customer/checkout/draft` — persisted checkout draft (JWT)
+- `POST /api/customer/checkout/quote` — subtotal/discount/shipping/tax quote
+- `GET /api/customer/notifications` — customer notifications (JWT)
+- `GET /api/admin/customer-checkout/status` — admin overview
+- `GET/PATCH /api/admin/customer-checkout/reviews` — review moderation
+- `GET/POST /api/admin/customer-checkout/coupons` — coupon management
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_CUSTOMER_CHECKOUT=0`.
+Tables: `coupons`, `wishlists`, `reviews`, `notifications`, `checkout_drafts`, `shipping_methods`.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

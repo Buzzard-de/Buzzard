@@ -9,7 +9,17 @@ on:
       - "package.json"
       - "render.yaml"
       - "scripts/render-bootstrap.mjs"
+      - "scripts/wait-for-api-health.mjs"
   workflow_dispatch:
+    inputs:
+      skip_health_check:
+        description: Skip /api/health verification (emergency only)
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 jobs:
   deploy-api:
@@ -27,19 +37,26 @@ jobs:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID || '' }}
         run: |
+          set -euo pipefail
+          DEPLOYED=0
+
           if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
             curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
             echo "Render deploy hook triggered."
-            exit 0
-          fi
-
-          if [ -n "$RENDER_API_KEY" ]; then
+            DEPLOYED=1
+          elif [ -n "$RENDER_API_KEY" ]; then
             echo "RENDER_DEPLOY_HOOK_URL is not set; redeploying via Render API."
             node scripts/render-bootstrap.mjs
-            exit 0
+            DEPLOYED=1
+          else
+            echo "No Render deploy hook or API key configured."
+            echo "If render.yaml Blueprint is connected, Render auto-deploys from git pushes."
+            echo "One-time setup:"
+            echo "https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard"
           fi
 
-          echo "No Render deploy hook or API key configured."
-          echo "Run workflow 'Setup Render API' once, or connect render.yaml in Render:"
-          echo "https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard"
-          echo "Default API URL for frontend: https://buzzard-api.onrender.com"
+          echo "deploy_triggered=$DEPLOYED" >> "$GITHUB_ENV"
+
+      - name: Verify API health
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_health_check != 'true' }}
+        run: node scripts/wait-for-api-health.mjs

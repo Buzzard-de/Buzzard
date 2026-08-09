@@ -1014,6 +1014,111 @@ function migrateMarketplaceHub() {
 
 migrateMarketplaceHub();
 
+function migrateSupplierHubV16() {
+  [
+    ["suppliers", "api_enabled", "INTEGER NOT NULL DEFAULT 0"],
+    ["suppliers", "xml_enabled", "INTEGER NOT NULL DEFAULT 0"],
+    ["suppliers", "tecdoc_enabled", "INTEGER NOT NULL DEFAULT 0"],
+    ["suppliers", "white_label_enabled", "INTEGER NOT NULL DEFAULT 0"],
+    ["suppliers", "blind_shipping", "INTEGER NOT NULL DEFAULT 0"],
+    ["suppliers", "currency", "TEXT DEFAULT 'EUR'"],
+    ["suppliers", "rating", "REAL DEFAULT 0"],
+    ["suppliers", "lead_time_days", "INTEGER DEFAULT 3"],
+    ["suppliers", "status", "TEXT DEFAULT 'active'"],
+    ["supplier_products", "product_sku", "TEXT"],
+    ["supplier_products", "brand", "TEXT"],
+    ["supplier_products", "category", "TEXT"],
+    ["supplier_products", "ean", "TEXT"],
+    ["supplier_products", "tecdoc_article", "TEXT"],
+  ].forEach(([table, column, definition]) => ensureColumn(table, column, definition));
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_sync_jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      job_type TEXT,
+      entity_key TEXT,
+      status TEXT DEFAULT 'queued',
+      attempts INTEGER DEFAULT 0,
+      error_message TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      finished_at TEXT,
+      FOREIGN KEY(supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS supplier_orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      supplier_id INTEGER,
+      order_number TEXT,
+      supplier_order_number TEXT,
+      status TEXT DEFAULT 'queued',
+      shipping_method TEXT,
+      white_label INTEGER DEFAULT 0,
+      blind_shipping INTEGER DEFAULT 0,
+      payload_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(supplier_id, order_number),
+      FOREIGN KEY(supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
+    );
+  `);
+
+  db.prepare(`
+    UPDATE supplier_products
+    SET product_sku = buzzard_sku
+    WHERE (product_sku IS NULL OR product_sku = '') AND buzzard_sku IS NOT NULL AND buzzard_sku <> ''
+  `).run();
+
+  const demoCount = db.prepare("SELECT COUNT(*) n FROM suppliers WHERE code LIKE 'SUP-%'").get().n;
+  if (demoCount === 0) {
+    const insertSupplier = db.prepare(`
+      INSERT INTO suppliers(code, name, country, feed_type, api_enabled, xml_enabled, tecdoc_enabled, dropship, white_label_enabled, blind_shipping, currency, rating, lead_time_days, status)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `);
+    insertSupplier.run("SUP-DE-01", "Demo B2B Automotive Supplier", "DE", "api", 1, 1, 1, 1, 1, 1, "EUR", 4.8, 2, "active");
+    insertSupplier.run("SUP-DE-02", "Demo Garden & Home Supplier", "DE", "xml", 1, 1, 0, 1, 1, 1, "EUR", 4.5, 3, "active");
+    insertSupplier.run("SUP-NL-01", "Demo EU General Supplier", "NL", "manual", 0, 1, 0, 1, 0, 0, "EUR", 4.2, 4, "active");
+
+    const ids = Object.fromEntries(
+      db.prepare("SELECT id, code FROM suppliers WHERE code LIKE 'SUP-%'").all().map((row) => [row.code, row.id])
+    );
+    const insertProduct = db.prepare(`
+      INSERT INTO supplier_products(supplier_id, supplier_sku, product_sku, buzzard_sku, name, cost_eur, stock, brand, category, ean, tecdoc_article, active)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,1)
+    `);
+    if (ids["SUP-DE-01"]) {
+      insertProduct.run(
+        ids["SUP-DE-01"],
+        "SUP-OIL-5W30",
+        "BZ-OIL-5W30",
+        "BZ-OIL-5W30",
+        "Premium Motoröl 5W-30",
+        22,
+        150,
+        "DemoBrand",
+        "Automotive",
+        "4000000000012",
+        "TD-5W30-001"
+      );
+    }
+    if (ids["SUP-DE-02"]) {
+      insertProduct.run(
+        ids["SUP-DE-02"],
+        "SUP-GARDEN-001",
+        "BZ-GARDEN-001",
+        "BZ-GARDEN-001",
+        "Garten Bewässerungsset",
+        25,
+        80,
+        "DemoGarden",
+        "Garden",
+        "4000000000029",
+        ""
+      );
+    }
+  }
+}
+
+migrateSupplierHubV16();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

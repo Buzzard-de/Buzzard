@@ -456,6 +456,21 @@ Tables: `revr_reviews`, `revr_review_media`, `revr_review_votes`, `revr_review_r
 Frontend admin: `/admin/reviews-ratings/`. Set `NEXT_PUBLIC_REVIEWS_RATINGS=1`.
 Note: Existing `reviews` table (v1.0 customer checkout) remains separate.
 
+## AI Center Plugin (v2.8)
+
+The `aiCenterPlugin.js` module adds provider-agnostic AI orchestration foundations:
+
+- `POST /api/ai-center/sessions|chat` — assistant sessions and intent-routed chat
+- `GET /api/ai-center/sessions/:token` — session history
+- `POST /api/ai-center/recommend|product-copy|translate|review-sentiment|smart-search` — AI job boundaries
+- `POST /api/ai-center/jobs/:id/retry` — retry queued AI jobs
+- `GET /api/admin/ai-center/overview|jobs` — admin AI dashboard
+
+Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_AI_CENTER=0`.
+Tables: `aictr_sessions`, `aictr_messages`, `aictr_jobs`, `aictr_audit`, `aictr_prompt_versions`.
+Frontend admin: `/admin/ai-center/`. Set `NEXT_PUBLIC_AI_CENTER=1`.
+Note: Existing `/api/ai/chat` (aiAutomationPlugin) and storefront chat remain separate.
+
 ## Plugin hinzufügen
 
 Neue Plugins kannst du so anlegen:

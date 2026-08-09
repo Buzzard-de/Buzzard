@@ -2384,6 +2384,77 @@ function migrateReviewsRatingsV27() {
 
 migrateReviewsRatingsV27();
 
+function migrateAiCenterV28() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS aictr_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_token TEXT UNIQUE NOT NULL,
+      customer_id INTEGER,
+      language TEXT DEFAULT 'de',
+      channel TEXT DEFAULT 'web',
+      status TEXT DEFAULT 'active',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS aictr_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id INTEGER,
+      role TEXT NOT NULL,
+      intent TEXT DEFAULT '',
+      content TEXT NOT NULL,
+      model TEXT DEFAULT 'adapter',
+      prompt_version TEXT DEFAULT 'v1',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS aictr_jobs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      job_type TEXT NOT NULL,
+      entity_type TEXT DEFAULT '',
+      entity_id TEXT DEFAULT '',
+      input_json TEXT,
+      output_json TEXT,
+      status TEXT DEFAULT 'queued',
+      model TEXT DEFAULT 'adapter',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      completed_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS aictr_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id INTEGER,
+      customer_id INTEGER,
+      action TEXT,
+      intent TEXT,
+      risk_level TEXT DEFAULT 'low',
+      human_handoff INTEGER DEFAULT 0,
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS aictr_prompt_versions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      version TEXT,
+      purpose TEXT,
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  const promptCount = db.prepare("SELECT COUNT(*) n FROM aictr_prompt_versions").get().n;
+  if (promptCount === 0) {
+    const insert = db.prepare(`
+      INSERT INTO aictr_prompt_versions(name, version, purpose)
+      VALUES(?,?,?)
+    `);
+    insert.run("commerce-assistant", "v1", "General customer commerce assistant");
+    insert.run("product-copy", "v1", "Product description generation");
+    insert.run("translation", "v1", "Multilingual product/content translation");
+    insert.run("review-sentiment", "v1", "Review sentiment classification");
+    insert.run("smart-search", "v1", "Search query normalization and intent");
+  }
+}
+
+migrateAiCenterV28();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

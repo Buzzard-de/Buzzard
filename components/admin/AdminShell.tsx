@@ -20,6 +20,7 @@ const NAV = [
   { href: "/admin/order-management/", label: "OMS v2.2" },
   { href: "/admin/cart-checkout/", label: "Cart v2.3" },
   { href: "/admin/crm-customer-service/", label: "CRM v2.4" },
+  { href: "/admin/returns-rma/", label: "RMA v2.5" },
   { href: "/admin/localization/", label: "Localization" },
   { href: "/admin/customer-checkout/", label: "Checkout" },
   { href: "/admin/customer-support/", label: "Support" },

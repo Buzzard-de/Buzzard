@@ -59,7 +59,7 @@ export default function StoreShop() {
     }
     setLoading(true);
     try {
-      await storeAddToCart(productId, 1);
+      await storeAddToCart({ productId, quantity: 1 });
       await reload();
       setView("cart");
     } catch (err) {

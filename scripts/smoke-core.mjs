@@ -113,6 +113,16 @@ async function main() {
   } else {
     pass("Load active products");
 
+    const sku = products.body[0]?.sku;
+    if (sku) {
+      const bySku = await request(`/api/products/by-sku/${encodeURIComponent(sku)}`);
+      if (bySku.ok && bySku.body?.sku === sku) {
+        pass("Resolve product by SKU");
+      } else {
+        fail("Resolve product by SKU");
+      }
+    }
+
     const addCart = await request("/api/cart/items", {
       method: "POST",
       headers: auth,
@@ -129,6 +139,30 @@ async function main() {
       pass("Read SQLite cart");
     } else {
       fail("Read SQLite cart");
+    }
+
+    const patchCart = await request(`/api/cart/items/${productId}`, {
+      method: "PATCH",
+      headers: auth,
+      body: JSON.stringify({ quantity: 2 }),
+    });
+    if (patchCart.ok) {
+      pass("Update SQLite cart quantity");
+    } else {
+      fail("Update SQLite cart quantity", patchCart.body?.error || String(patchCart.status));
+    }
+
+    const syncCart = await request("/api/cart/sync", {
+      method: "PUT",
+      headers: auth,
+      body: JSON.stringify({
+        items: [{ sku: products.body[0]?.sku, quantity: 3 }],
+      }),
+    });
+    if (syncCart.ok && syncCart.body?.items?.length >= 1) {
+      pass("Bulk sync SQLite cart");
+    } else {
+      fail("Bulk sync SQLite cart", syncCart.body?.error || String(syncCart.status));
     }
 
     const order = await request("/api/db/orders", {

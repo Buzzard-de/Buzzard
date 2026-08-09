@@ -20,18 +20,34 @@ import {
   cartCount,
   cartSubtotal,
   createCartLineId,
-  migrateLegacyCart,
   type CartLineItem,
 } from "@/lib/cart/types";
+import {
+  COUPON_STORAGE_KEY,
+  dispatchCartUpdated,
+  readLocalCart,
+  writeLocalCart,
+} from "@/lib/cart/storage";
 import { resolveLinePricing } from "@/lib/checkout/totals";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 import { useMarket } from "@/lib/market/context";
 import { markCartRecovered, trackAbandonedCart } from "@/lib/crmLoyalty/client";
 import { shouldUseCrmLoyaltyApi } from "@/lib/crmLoyalty/runtime";
 import { getAccountToken } from "@/lib/account/client";
+import {
+  clearServerCart,
+  scheduleServerCartSync,
+  shouldSyncCartWithApi,
+  syncAccountCart,
+} from "@/lib/store/cartSync";
 
-const STORAGE_KEY = "buzzard_cart";
-const COUPON_KEY = "buzzard_coupon";
+function readCart(): CartLineItem[] {
+  return readLocalCart();
+}
+
+function writeCart(items: CartLineItem[]): void {
+  writeLocalCart(items);
+}
 
 export interface AddToCartInput {
   productId: string;
@@ -39,33 +55,17 @@ export interface AddToCartInput {
   qty?: number;
 }
 
-function readCart(): CartLineItem[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as unknown[];
-    const migrated = migrateLegacyCart(Array.isArray(raw) ? raw : []);
-    return migrated;
-  } catch {
-    localStorage.removeItem(STORAGE_KEY);
-    return [];
-  }
-}
-
-function writeCart(items: CartLineItem[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
-
 function readCoupon(): string {
   if (typeof window === "undefined") return "";
   try {
-    return localStorage.getItem(COUPON_KEY) || "";
+    return localStorage.getItem(COUPON_STORAGE_KEY) || "";
   } catch {
     return "";
   }
 }
 
 function writeCoupon(code: string): void {
-  localStorage.setItem(COUPON_KEY, code);
+  localStorage.setItem(COUPON_STORAGE_KEY, code);
 }
 
 interface CartContextValue {
@@ -101,6 +101,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const persist = useCallback((next: CartLineItem[]) => {
     writeCart(next);
     setItems(next);
+    scheduleServerCartSync(next);
   }, []);
 
   useLayoutEffect(() => {
@@ -119,6 +120,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("buzzard-cart-updated", sync);
     };
   }, []);
+
+  useEffect(() => {
+    if (!ready || !shouldSyncCartWithApi()) return;
+    syncAccountCart()
+      .then((merged) => setItems(merged))
+      .catch(() => {});
+  }, [ready]);
 
   const totals = useMemo(() => {
     const subtotal = cartSubtotal(items);
@@ -192,7 +200,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         : [...current, nextItem];
 
       persist(next);
-      window.dispatchEvent(new Event("buzzard-cart-updated"));
+      dispatchCartUpdated();
       trackMarketingEvent("add_to_cart", {
         product_id: input.productId,
         quantity: nextItem.qty,
@@ -209,7 +217,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const current = readCart();
       const target = current.find((i) => i.lineId === lineId);
       persist(current.filter((i) => i.lineId !== lineId));
-      window.dispatchEvent(new Event("buzzard-cart-updated"));
+      dispatchCartUpdated();
       if (target) {
         trackMarketingEvent("remove_from_cart", {
           product_id: target.productId,
@@ -236,7 +244,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           i.lineId === lineId ? { ...i, qty, unitPrice: priced.unitPrice } : i
         )
       );
-      window.dispatchEvent(new Event("buzzard-cart-updated"));
+      dispatchCartUpdated();
     },
     [persist, remove]
   );
@@ -252,7 +260,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       writeCoupon(result.normalizedCode || normalized);
       setCouponCode(result.normalizedCode || normalized);
       setCouponErrorKey(null);
-      window.dispatchEvent(new Event("buzzard-cart-updated"));
+      dispatchCartUpdated();
       return true;
     },
     []
@@ -262,16 +270,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     writeCoupon("");
     setCouponCode("");
     setCouponErrorKey(null);
-    window.dispatchEvent(new Event("buzzard-cart-updated"));
+    dispatchCartUpdated();
   }, []);
 
   const clear = useCallback(() => {
     persist([]);
     clearCoupon();
+    clearServerCart().catch(() => {});
     if (shouldUseCrmLoyaltyApi() && getAccountToken()) {
       markCartRecovered().catch(() => {});
     }
-    window.dispatchEvent(new Event("buzzard-cart-updated"));
+    dispatchCartUpdated();
   }, [persist, clearCoupon]);
 
   const value = useMemo(

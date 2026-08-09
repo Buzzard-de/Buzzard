@@ -11,6 +11,7 @@ export {
   getAllProducts,
   getProductById,
   getProductBySlug,
+  getProductBySku,
   getProductsForCategory,
   getRelatedProducts,
   getFrequentlyBoughtTogether,

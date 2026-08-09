@@ -85,6 +85,25 @@ export function getProductBySlug(slug: string): PublicProduct | undefined {
   return product?.status === "active" ? toPublicProduct(product) : undefined;
 }
 
+export function getProductBySku(sku: string): { product: PublicProduct; variantIds: string[] } | undefined {
+  const normalized = sku.trim();
+  if (!normalized) return undefined;
+
+  for (const product of rawProducts) {
+    if (product.status !== "active") continue;
+    if (product.sku === normalized) {
+      return { product: toPublicProduct(product), variantIds: [] };
+    }
+    for (const variant of product.variants || []) {
+      if (variant.sku === normalized) {
+        return { product: toPublicProduct(product), variantIds: [variant.id] };
+      }
+    }
+  }
+
+  return undefined;
+}
+
 export function getRawProductById(id: string): BuzzardProduct | undefined {
   return byId.get(id);
 }

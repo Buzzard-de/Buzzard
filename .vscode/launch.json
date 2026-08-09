@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Buzzard API",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/server",
+      "program": "${workspaceFolder}/server/server.js",
+      "env": {
+        "PORT": "3001",
+        "BUZZARD_DB_ENABLED": "1"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Next.js Dev",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Buzzard Full Stack",
+      "configurations": ["Next.js Dev", "Buzzard API"]
+    }
+  ]
+}

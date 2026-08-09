@@ -1,5 +1,10 @@
 {
   "install": "npm ci\ncd server && npm ci",
   "start": "node scripts/auto-render-if-ready.mjs",
-  "terminals": []
+  "terminals": [
+    {
+      "name": "buzzard-dev",
+      "command": "npm run dev:all"
+    }
+  ]
 }

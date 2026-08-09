@@ -14,8 +14,12 @@ tsconfig.tsbuildinfo
 screenshot-*.png
 website-*.png
 
-# VSCode
-.vscode/
+# VSCode — team config checked in; personal overrides stay local
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 
 # Python
 __pycache__/
@@ -28,6 +32,8 @@ buzzard.zip
 
 # Secrets
 .env
+.env.local
+.env*.local
 
 # Tools
 /tools/

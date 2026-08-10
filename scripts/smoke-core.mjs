@@ -210,6 +210,44 @@ async function main() {
     fail("Admin login (SQLite JWT)", adminLogin.body?.error || "check ADMIN_EMAIL/ADMIN_PASSWORD");
   }
 
+  const suggest = await request("/api/advanced-search/suggest?q=brem");
+  if (suggest.ok && Array.isArray(suggest.body?.suggestions)) {
+    pass("Advanced search suggest");
+  } else {
+    fail("Advanced search suggest", String(suggest.status));
+  }
+
+  const sku = products.body?.[0]?.sku;
+  if (sku) {
+    const reviews = await request(`/api/reviews-ratings/products/${encodeURIComponent(sku)}/reviews`);
+    if (reviews.ok && reviews.body?.stats) {
+      pass("Product reviews API");
+    } else {
+      fail("Product reviews API", String(reviews.status));
+    }
+  }
+
+  const couponValidate = await request("/api/customer/coupons/validate", {
+    method: "POST",
+    body: JSON.stringify({ code: "WELCOME10", subtotal: 50 }),
+  });
+  if (couponValidate.ok && couponValidate.body?.valid) {
+    pass("Coupon validation (WELCOME10)");
+  } else {
+    fail("Coupon validation", couponValidate.body?.error || String(couponValidate.status));
+  }
+
+  const paymentSession = await request("/api/payments/session", {
+    method: "POST",
+    headers: auth,
+    body: JSON.stringify({ provider: "stripe", orderId: "SMOKE-001", amount: 19.99, currency: "EUR" }),
+  });
+  if (paymentSession.ok && paymentSession.body?.provider === "stripe") {
+    pass("Payment session adapter (stripe, no keys)");
+  } else {
+    fail("Payment session adapter", paymentSession.body?.error || String(paymentSession.status));
+  }
+
   console.log("");
   if (failed > 0) {
     console.error(`${failed} smoke check(s) failed.`);

@@ -1,5 +1,6 @@
 # Buzzard API — Render Blueprint (https://render.com/docs/blueprint-spec)
 # Persistent SQLite: upgrade to paid plan, add disk mount /var/data, set BUZZARD_DB_PATH=/var/data/buzzard.db
+# After deploy: node scripts/sync-search-index.mjs (syncs existing catalog to search index)
 services:
   - type: web
     name: buzzard-api
@@ -110,3 +111,11 @@ services:
         value: admin@buzzard.de
       - key: ADMIN_PASSWORD
         generateValue: true
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false

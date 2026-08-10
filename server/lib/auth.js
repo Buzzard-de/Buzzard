@@ -4,6 +4,8 @@ const crypto = require("crypto");
 const { hashPassword, verifyPassword, needsRehash } = require("./password");
 const { createRateLimiter, getClientIp } = require("./security");
 const { logSecurityEvent } = require("./securityLog");
+const { isLocked, getLockoutInfo, recordFailure, clearFailures } = require("./accountLockout");
+const adminTwoFactor = require("./adminTwoFactor");
 
 const dataDir = path.join(__dirname, "..", "data");
 const usersFile = path.join(dataDir, "admin-users.json");
@@ -77,9 +79,40 @@ function loadUsers() {
   return readJson(usersFile, []);
 }
 
+function createSession(user) {
+  const token = createToken();
+  const session = {
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    expiresAt: Date.now() + SESSION_TTL_MS,
+  };
+  sessions.set(token, session);
+  persistSessions();
+  return { token, session };
+}
+
 function login(email, password, req) {
   const ip = req ? getClientIp(req) : "unknown";
   const normalizedEmail = String(email || "").trim().toLowerCase();
+
+  const lockout = getLockoutInfo("admin", normalizedEmail);
+  if (lockout.locked) {
+    logSecurityEvent({
+      type: "admin_login_locked",
+      success: false,
+      ip,
+      email: normalizedEmail,
+      path: "/api/admin/login",
+      detail: { retryAfterSec: lockout.retryAfterSec },
+    });
+    return {
+      success: false,
+      errorKey: "admin.auth.locked",
+      retryAfterSec: lockout.retryAfterSec,
+    };
+  }
 
   if (loginRateLimit(req || { headers: {}, socket: { remoteAddress: ip } }, { key: `${ip}:${normalizedEmail}` })) {
     logSecurityEvent({
@@ -95,28 +128,52 @@ function login(email, password, req) {
   const users = loadUsers();
   const user = users.find((entry) => entry.email.toLowerCase() === normalizedEmail);
   if (!user || !verifyPassword(password, user.password_hash)) {
+    const failure = recordFailure("admin", normalizedEmail, {
+      ip,
+      email: normalizedEmail,
+      path: "/api/admin/login",
+    });
     logSecurityEvent({
       type: "admin_login_failed",
       success: false,
       ip,
       email: normalizedEmail,
       path: "/api/admin/login",
+      detail: { remainingAttempts: failure.remainingAttempts },
     });
+    if (failure.locked) {
+      return {
+        success: false,
+        errorKey: "admin.auth.locked",
+        retryAfterSec: failure.retryAfterSec,
+      };
+    }
     return { success: false, errorKey: "admin.auth.invalid" };
   }
 
   upgradePasswordHash(user, password);
+  clearFailures("admin", normalizedEmail);
 
-  const token = createToken();
-  const session = {
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    expiresAt: Date.now() + SESSION_TTL_MS,
-  };
-  sessions.set(token, session);
-  persistSessions();
+  if (adminTwoFactor.isEnabled(normalizedEmail)) {
+    const challengeToken = adminTwoFactor.createChallenge(user);
+    logSecurityEvent({
+      type: "admin_login_2fa_required",
+      success: true,
+      ip,
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      path: "/api/admin/login",
+    });
+    return {
+      success: true,
+      requires2FA: true,
+      challengeToken,
+      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+    };
+  }
+
+  const { token } = createSession(user);
 
   logSecurityEvent({
     type: "admin_login",
@@ -126,6 +183,57 @@ function login(email, password, req) {
     email: user.email,
     role: user.role,
     path: "/api/admin/login",
+  });
+
+  return {
+    success: true,
+    token,
+    user: { id: user.id, email: user.email, name: user.name, role: user.role },
+  };
+}
+
+function verifyTwoFactor(challengeToken, code, req) {
+  const ip = req ? getClientIp(req) : "unknown";
+  const challenge = adminTwoFactor.consumeChallenge(challengeToken);
+  if (!challenge) {
+    logSecurityEvent({
+      type: "admin_login_2fa_failed",
+      success: false,
+      ip,
+      path: "/api/admin/login/2fa",
+      detail: { reason: "invalid_challenge" },
+    });
+    return { success: false, errorKey: "admin.2fa.challengeExpired" };
+  }
+
+  if (!adminTwoFactor.verifyLoginCode(challenge.email, code)) {
+    logSecurityEvent({
+      type: "admin_login_2fa_failed",
+      success: false,
+      ip,
+      email: challenge.email,
+      path: "/api/admin/login/2fa",
+    });
+    return { success: false, errorKey: "admin.2fa.invalidCode" };
+  }
+
+  const user = {
+    id: challenge.userId,
+    email: challenge.email,
+    name: challenge.name,
+    role: challenge.role,
+  };
+  const { token } = createSession(user);
+
+  logSecurityEvent({
+    type: "admin_login",
+    success: true,
+    ip,
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    path: "/api/admin/login/2fa",
+    detail: { via2FA: true },
   });
 
   return {
@@ -207,6 +315,7 @@ function requireAuth(req, res) {
 
 module.exports = {
   login,
+  verifyTwoFactor,
   logout,
   getSession,
   extractToken,

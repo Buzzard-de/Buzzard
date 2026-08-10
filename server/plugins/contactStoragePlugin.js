@@ -83,6 +83,15 @@ module.exports = {
         return res.status(429).json({ message: 'Zu viele Anfragen. Bitte versuchen Sie es in einigen Minuten erneut.' });
       }
 
+      if (req.body?._honey || req.body?._website) {
+        return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.' });
+      }
+
+      const startedAt = Number(req.body?._formStarted || 0);
+      if (startedAt > 0 && Date.now() - startedAt < 3000) {
+        return res.status(400).json({ message: 'Bitte Formular kurz ausfüllen und erneut senden.' });
+      }
+
       const name = normalizeText(req.body && req.body.name);
       const email = normalizeText(req.body && req.body.email).toLowerCase();
       const message = normalizeText(req.body && req.body.message);

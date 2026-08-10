@@ -17,7 +17,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = getProductBySlug(slug);
-  if (!product) return { title: "Produkt – Buzzard" };
+  if (!product) return { title: "Produkt nicht gefunden" };
   return buildProductMetadata(product);
 }
 

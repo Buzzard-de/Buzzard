@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Datenschutz – Buzzard",
+  title: "Datenschutz",
   description:
-    "Datenschutzerklärung von Buzzard Kfz-Teile – Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO.",
+    "Datenschutzerklärung von Buzzard24 (Buzzard Kfz-Teile) – Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO.",
 };
 
 export default function DatenschutzPage() {

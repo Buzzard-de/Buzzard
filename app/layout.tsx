@@ -8,7 +8,7 @@ import ShopProviders from "@/components/ShopProviders";
 import SkipLink from "@/components/SkipLink";
 import { SECURITY_HEADERS } from "@/lib/security";
 import { marketingConfig } from "@/lib/marketing/config";
-import { SITE_URL } from "@/lib/seo/config";
+import { SEO_DEFAULTS, SITE_URL } from "@/lib/seo/config";
 import "@/styles/globals.css";
 import "@/styles/pusart.css";
 import "@/styles/shop.css";
@@ -26,19 +26,26 @@ const barlow = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "Buzzard – Online-Shop | Produkte kaufen",
-  description:
-    "Buzzard – Über 1.000.000 Produkte in den Kategorien Textil, Kosmetik, Reinigung, Schule und mehr. Kostenloser Versand ab 79€.",
+  title: {
+    default: SEO_DEFAULTS.defaultTitle,
+    template: `%s | ${SEO_DEFAULTS.siteName}`,
+  },
+  description: SEO_DEFAULTS.defaultDescription,
   metadataBase: new URL(SITE_URL),
   manifest: "/manifest.json",
   referrer: "strict-origin-when-cross-origin",
   icons: { icon: "/logo/logo.png", apple: "/logo/logo.png" },
+  alternates: {
+    canonical: `${SITE_URL}/`,
+  },
   openGraph: {
-    title: "Buzzard – Online-Shop",
-    description: "Über 1.000.000 Produkte. Kostenloser Versand ab 79€, schnelle Lieferung 1–3 Werktage.",
-    url: "https://buzzard24.de/",
+    title: SEO_DEFAULTS.defaultTitle,
+    description: SEO_DEFAULTS.defaultDescription,
+    url: `${SITE_URL}/`,
+    siteName: SEO_DEFAULTS.siteName,
     images: ["/logo/logo.png"],
     type: "website",
+    locale: "de_DE",
   },
   robots: {
     index: true,

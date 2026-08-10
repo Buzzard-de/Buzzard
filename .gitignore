@@ -38,5 +38,6 @@ buzzard.zip
 # Tools
 /tools/
 
-# Local server plugin data
+# Local server plugin data (SQLite DB + backups from npm run db:backup)
 server/data/
+server/data/backups/

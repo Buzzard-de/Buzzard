@@ -41,6 +41,7 @@ export const catalog: TranslationTree = {
   search: {
     recent: "عمليات البحث الأخيرة",
     suggestions: "اقتراحات",
+    relatedTerms: "مصطلحات ذات صلة",
     noResults: "لا نتائج",
     sortLabel: "ترتيب",
     sortName: "الاسم أ–ي",

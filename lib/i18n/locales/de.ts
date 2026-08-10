@@ -53,6 +53,7 @@ export const catalog: TranslationTree = {
   search: {
     recent: "Zuletzt gesucht",
     suggestions: "Vorschläge",
+    relatedTerms: "Suchbegriffe",
     noResults: "Keine Treffer",
     sortLabel: "Sortieren",
     sortName: "Name A–Z",

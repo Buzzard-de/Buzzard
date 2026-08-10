@@ -76,15 +76,23 @@ module.exports = {
 
     app.post("/api/payments/session", async (req, res) => {
       if (!requireAnyAuth(req, res)) return;
-      const { provider = "stripe", orderId, amount, currency = "EUR" } = req.body || {};
+      const {
+        provider = "stripe",
+        orderId,
+        amount,
+        currency = "EUR",
+        successUrl,
+        cancelUrl,
+      } = req.body || {};
       if (!payments[provider]) {
         return res.status(400).json({ error: "Unsupported payment provider" });
       }
       try {
-        return res.json(await payments[provider]({ orderId, amount, currency }));
+        const payload = { orderId, amount, currency, successUrl, cancelUrl };
+        return res.json(await payments[provider](payload));
       } catch (error) {
         console.error("Payment session error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ error: error.message || "Internal server error" });
       }
     });
 

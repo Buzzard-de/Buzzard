@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { fetchSearchSuggestions, type SearchSuggestion } from "@/lib/advancedSearch/storefront";
+import { isAdvancedSearchEnabled } from "@/lib/api/config";
 import { useLocale } from "@/lib/i18n/context";
 import { searchProducts } from "@/lib/products";
 import { formatPrice } from "@/lib/products/format";
 import { sanitizeSearchQuery } from "@/lib/security";
+import { showPrices } from "@/lib/shop/mode";
 
 const RECENT_KEY = "buzzard_recent_searches";
 
@@ -27,7 +30,10 @@ export default function SearchAutocomplete({
   const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [recent, setRecent] = useState<string[]>([]);
+  const [apiSuggestions, setApiSuggestions] = useState<SearchSuggestion[]>([]);
+  const [apiLoading, setApiLoading] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     try {
@@ -45,9 +51,46 @@ export default function SearchAutocomplete({
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  const suggestions = sanitizeSearchQuery(query)
+  const loadApiSuggestions = useCallback(async (term: string) => {
+    if (!isAdvancedSearchEnabled()) {
+      setApiSuggestions([]);
+      return;
+    }
+    const q = sanitizeSearchQuery(term);
+    if (!q || q.length < 2) {
+      setApiSuggestions([]);
+      return;
+    }
+    setApiLoading(true);
+    try {
+      const suggestions = await fetchSearchSuggestions(q);
+      setApiSuggestions(suggestions.slice(0, 8));
+    } catch {
+      setApiSuggestions([]);
+    } finally {
+      setApiLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      void loadApiSuggestions(query);
+    }, 220);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, loadApiSuggestions]);
+
+  const localSuggestions = sanitizeSearchQuery(query)
     ? searchProducts(query, { pageSize: 6 }).items
     : [];
+
+  const apiProductSuggestions = apiSuggestions.filter((item) => item.type === "product");
+  const apiKeywordSuggestions = apiSuggestions.filter((item) => item.type === "keyword");
+  const hasApiResults = apiProductSuggestions.length > 0 || apiKeywordSuggestions.length > 0;
+  const hasLocalResults = localSuggestions.length > 0;
+  const showEmpty = Boolean(sanitizeSearchQuery(query)) && !hasApiResults && !hasLocalResults && !apiLoading;
 
   function saveRecent(term: string) {
     const next = [term, ...recent.filter((r) => r !== term)].slice(0, 5);
@@ -64,6 +107,12 @@ export default function SearchAutocomplete({
     if (q) saveRecent(q);
     setOpen(false);
     router.push(q ? `/products/?q=${encodeURIComponent(q)}` : "/products/");
+  }
+
+  function productHref(suggestion: SearchSuggestion): string {
+    if (suggestion.slug) return `/produkt/${suggestion.slug}/`;
+    if (suggestion.sku) return `/products/?q=${encodeURIComponent(suggestion.sku)}`;
+    return `/products/?q=${encodeURIComponent(suggestion.text)}`;
   }
 
   return (
@@ -116,24 +165,64 @@ export default function SearchAutocomplete({
               </ul>
             </div>
           )}
-          {suggestions.length > 0 && (
+
+          {isAdvancedSearchEnabled() && apiProductSuggestions.length > 0 && (
             <div className="search-suggestions-section">
               <p>{t("search.suggestions")}</p>
               <ul>
-                {suggestions.map((product) => (
-                  <li key={product.id}>
-                    <Link href={product.url} onClick={() => setOpen(false)}>
-                      <span>{product.name}</span>
-                      <small>{product.sku} · {formatPrice(product.price)}</small>
+                {apiProductSuggestions.map((item) => (
+                  <li key={`${item.sku || item.text}`}>
+                    <Link href={productHref(item)} onClick={() => setOpen(false)}>
+                      <span>{item.text}</span>
+                      {item.sku ? <small>{item.sku}</small> : null}
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
           )}
-          {query && suggestions.length === 0 && (
+
+          {isAdvancedSearchEnabled() && apiKeywordSuggestions.length > 0 && (
+            <div className="search-suggestions-section">
+              <p>{t("search.relatedTerms") || "Suchbegriffe"}</p>
+              <ul>
+                {apiKeywordSuggestions.map((item) => (
+                  <li key={item.text}>
+                    <button type="button" onClick={() => goSearch(item.text)}>
+                      {item.text}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {!hasApiResults && localSuggestions.length > 0 && (
+            <div className="search-suggestions-section">
+              <p>{t("search.suggestions")}</p>
+              <ul>
+                {localSuggestions.map((product) => (
+                  <li key={product.id}>
+                    <Link href={product.url} onClick={() => setOpen(false)}>
+                      <span>{product.name}</span>
+                      <small>
+                        {product.sku}
+                        {showPrices() ? ` · ${formatPrice(product.price)}` : ""}
+                      </small>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {showEmpty && (
             <p className="search-suggestions-empty">{t("search.noResults")}</p>
           )}
+
+          {apiLoading && sanitizeSearchQuery(query) && !hasApiResults && !hasLocalResults ? (
+            <p className="search-suggestions-empty">…</p>
+          ) : null}
         </div>
       )}
     </div>

@@ -14,16 +14,12 @@ const { logSecurityEvent } = require("../lib/securityLog");
 const { calculateShipping } = require("../lib/shippingEngine");
 const fulfillmentPipeline = require("../lib/fulfillmentPipeline");
 const fulfillmentStore = require("../lib/fulfillmentStore");
+const { validateCoupon } = require("../lib/coupons");
 
 const rootDir = path.join(__dirname, "..", "..");
 const dataDir = path.join(__dirname, "..", "data");
 const ordersFile = path.join(dataDir, "orders.json");
 const productsFile = path.join(rootDir, "data", "buzzard_products.json");
-
-const COUPONS = {
-  BUZZARD10: { type: "percent", value: 10, minSubtotal: 30 },
-  WELCOME5: { type: "fixed", value: 5, minSubtotal: 25 },
-};
 
 const VALID_PAYMENTS = new Set(["paypal", "stripe", "klarna", "sepa"]);
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,17 +57,14 @@ function writeOrders(orders) {
   fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2), "utf8");
 }
 
-function validateCoupon(code, subtotal) {
-  const normalized = normalizeText(code, 32).toUpperCase();
-  if (!normalized) return { valid: false, discount: 0 };
-  const coupon = COUPONS[normalized];
-  if (!coupon) return { valid: false, discount: 0 };
-  if (coupon.minSubtotal && subtotal < coupon.minSubtotal) return { valid: false, discount: 0 };
-  const discount =
-    coupon.type === "percent"
-      ? Math.round(subtotal * (coupon.value / 100) * 100) / 100
-      : Math.min(coupon.value, subtotal);
-  return { valid: true, discount, normalizedCode: normalized };
+function validateCouponForOrder(code, subtotal) {
+  const result = validateCoupon(code, subtotal);
+  if (!result.valid) return { valid: false, discount: 0 };
+  return {
+    valid: true,
+    discount: result.discount,
+    normalizedCode: result.normalizedCode,
+  };
 }
 
 function resolveLine(productId, variantIds, qty) {
@@ -133,7 +126,7 @@ function calculateQuote(lines, shippingMethodId, couponCode, country = "DE") {
   }
 
   const subtotal = resolved.reduce((sum, line) => sum + line.lineTotal, 0);
-  const coupon = validateCoupon(couponCode, subtotal);
+  const coupon = validateCouponForOrder(couponCode, subtotal);
   const discount = coupon.valid ? coupon.discount : 0;
   const discountedSubtotal = Math.max(0, subtotal - discount);
   const products = loadProducts();

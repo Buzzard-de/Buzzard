@@ -1,4 +1,29 @@
 const { db } = require("./db");
+const fs = require("fs");
+const path = require("path");
+
+let skuSlugIndex = null;
+
+function getSkuSlugIndex() {
+  if (skuSlugIndex) return skuSlugIndex;
+  skuSlugIndex = new Map();
+  try {
+    const productsFile = path.join(__dirname, "..", "..", "data", "buzzard_products.json");
+    const raw = JSON.parse(fs.readFileSync(productsFile, "utf8"));
+    for (const product of raw.products || []) {
+      if (product.status !== "active") continue;
+      const slug = product.seo?.slug;
+      if (!slug) continue;
+      if (product.sku) skuSlugIndex.set(product.sku, slug);
+      for (const variant of product.variants || []) {
+        if (variant.sku) skuSlugIndex.set(variant.sku, slug);
+      }
+    }
+  } catch {
+    /* catalog optional at runtime */
+  }
+  return skuSlugIndex;
+}
 
 function isEnabled() {
   return process.env.BUZZARD_ADVANCED_SEARCH !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -84,7 +109,12 @@ function suggest(query) {
 
   return {
     suggestions: [
-      ...products.map((row) => ({ type: "product", text: row.title, sku: row.sku })),
+      ...products.map((row) => ({
+        type: "product",
+        text: row.title,
+        sku: row.sku,
+        slug: getSkuSlugIndex().get(row.sku) || null,
+      })),
       ...synonyms.map((row) => ({ type: "keyword", text: row.term })),
     ],
   };

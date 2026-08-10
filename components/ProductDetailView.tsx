@@ -23,6 +23,7 @@ import { trackMarketingEvent } from "@/lib/marketing/events";
 import type { PublicProduct, ProductVariant } from "@/lib/products/types";
 import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
+import ProductReviews from "@/components/ProductReviews";
 import TecDocFitmentNote from "@/components/TecDocFitmentNote";
 
 interface ProductDetailViewProps {
@@ -285,10 +286,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
           </section>
         )}
 
-        <section className="product-detail-section product-reviews">
-          <h2>Bewertungen</h2>
-          <p className="product-reviews-empty">Noch keine Bewertungen. Seien Sie der Erste!</p>
-        </section>
+        <ProductReviews sku={activeSku} />
       </div>
     </>
   );

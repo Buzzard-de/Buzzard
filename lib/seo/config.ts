@@ -12,6 +12,9 @@ export const SEO_DEFAULTS = {
 };
 
 export function absoluteUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) {
+    return path.endsWith("/") ? path : `${path}/`;
+  }
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${SITE_URL}${normalized.endsWith("/") ? normalized : `${normalized}/`}`;
 }

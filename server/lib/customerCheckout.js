@@ -1,4 +1,5 @@
 const { db } = require("./db");
+const { validateCoupon, lookupDbCoupon } = require("./coupons");
 
 function isEnabled() {
   return process.env.BUZZARD_CUSTOMER_CHECKOUT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -143,28 +144,23 @@ function listApprovedReviews(productId) {
 }
 
 function validateCouponCode(code, subtotal) {
-  const normalized = String(code || "")
-    .trim()
-    .toUpperCase();
-  if (!normalized) return { error: "Coupon code required", status: 400 };
-  const coupon = db.prepare("SELECT * FROM coupons WHERE code = ? AND active = 1").get(normalized);
-  if (!coupon) return { error: "Coupon not found", status: 404 };
-  if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
-    return { error: "Coupon expired", status: 400 };
+  const result = validateCoupon(code, subtotal);
+  if (!result.valid) {
+    if (result.errorKey === "checkout.couponEmpty") {
+      return { error: "Coupon code required", status: 400 };
+    }
+    if (result.errorKey === "checkout.couponMinSubtotal") {
+      return { error: "Minimum order not reached", status: 400 };
+    }
+    return { error: "Coupon not found", status: 404 };
   }
-  if (Number(subtotal) < coupon.min_order) {
-    return { error: `Minimum order ${coupon.min_order}`, status: 400 };
-  }
-  const discount =
-    coupon.type === "percent"
-      ? Number(((Number(subtotal) * coupon.value) / 100).toFixed(2))
-      : Math.min(coupon.value, Number(subtotal));
+  const coupon = lookupDbCoupon(code);
   return {
     valid: true,
-    code: coupon.code,
-    discount,
-    type: coupon.type,
-    value: coupon.value,
+    code: result.normalizedCode,
+    discount: result.discount,
+    type: coupon?.type || "percent",
+    value: coupon?.value || 0,
   };
 }
 

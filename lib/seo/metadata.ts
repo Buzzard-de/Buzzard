@@ -33,7 +33,7 @@ export function buildProductMetadata(
   const canonicalPath = override?.canonical || localizePath(product.url, locale);
   const canonical = absoluteUrl(canonicalPath);
   const alternates = hreflangAlternates(product.url).reduce<Record<string, string>>((acc, alt) => {
-    acc[alt.locale] = absoluteUrl(alt.href);
+    acc[alt.locale] = alt.href;
     return acc;
   }, {});
 

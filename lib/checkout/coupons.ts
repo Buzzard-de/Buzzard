@@ -5,9 +5,10 @@ export interface CouponDefinition {
   minSubtotal?: number;
 }
 
+/** Matches SQLite seed coupons — see server/lib/coupons.js */
 const COUPONS: CouponDefinition[] = [
-  { code: "BUZZARD10", type: "percent", value: 10, minSubtotal: 30 },
-  { code: "WELCOME5", type: "fixed", value: 5, minSubtotal: 25 },
+  { code: "WELCOME10", type: "percent", value: 10, minSubtotal: 30 },
+  { code: "BUZZARD5", type: "fixed", value: 5, minSubtotal: 50 },
 ];
 
 export function normalizeCouponCode(code: string | undefined): string {

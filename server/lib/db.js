@@ -1912,11 +1912,17 @@ function migrateCartCheckoutV23() {
 
   const couponCount = db.prepare("SELECT COUNT(*) n FROM cc_coupons").get().n;
   if (couponCount === 0) {
+    const insertCcCoupon = db.prepare(
+      "INSERT INTO cc_coupons(code, type, value, min_order) VALUES(?,?,?,?)"
+    );
+    insertCcCoupon.run("WELCOME10", "percent", 10, 30);
+    insertCcCoupon.run("BUZZARD5", "fixed", 5, 50);
+  } else if (!db.prepare("SELECT code FROM cc_coupons WHERE code = ?").get("BUZZARD5")) {
     db.prepare("INSERT INTO cc_coupons(code, type, value, min_order) VALUES(?,?,?,?)").run(
-      "WELCOME10",
-      "percent",
-      10,
-      30
+      "BUZZARD5",
+      "fixed",
+      5,
+      50
     );
   }
 

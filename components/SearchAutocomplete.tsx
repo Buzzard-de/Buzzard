@@ -184,7 +184,7 @@ export default function SearchAutocomplete({
 
           {isAdvancedSearchEnabled() && apiKeywordSuggestions.length > 0 && (
             <div className="search-suggestions-section">
-              <p>{t("search.relatedTerms") || "Suchbegriffe"}</p>
+              <p>{t("search.relatedTerms")}</p>
               <ul>
                 {apiKeywordSuggestions.map((item) => (
                   <li key={item.text}>

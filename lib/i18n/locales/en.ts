@@ -41,6 +41,7 @@ export const catalog: TranslationTree = {
   search: {
     recent: "Recent searches",
     suggestions: "Suggestions",
+    relatedTerms: "Related terms",
     noResults: "No results",
     sortLabel: "Sort",
     sortName: "Name A–Z",

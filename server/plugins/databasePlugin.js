@@ -11,6 +11,8 @@ const {
   enforceAuthRateLimit,
   logAuthFailure,
 } = require("../lib/authSecurity");
+const { getLockoutInfo, recordFailure, clearFailures } = require("../lib/accountLockout");
+const { getClientIp } = require("../lib/security");
 
 function isEnabled() {
   return process.env.BUZZARD_DB_ENABLED !== "0";
@@ -100,21 +102,44 @@ module.exports = {
 
     app.post("/api/auth/login", (req, res) => {
       const { email, password } = req.body || {};
+      const normalizedEmail = normalizeEmail(email);
+      const ip = getClientIp(req);
+      const lockout = getLockoutInfo("auth", normalizedEmail);
+      if (lockout.locked) {
+        return res.status(423).json({
+          error: "Account temporarily locked",
+          errorKey: "auth.locked",
+          retryAfterSec: lockout.retryAfterSec,
+        });
+      }
       if (!enforceAuthRateLimit(req, res, { scope: "login", email, path: "/api/auth/login" })) {
         return;
       }
       if (!isValidEmail(email) || typeof password !== "string" || password.length === 0 || password.length > 128) {
+        recordFailure("auth", normalizedEmail, { ip, email: normalizedEmail, path: "/api/auth/login" });
         logAuthFailure(req, { type: "auth_login_failed", email, path: "/api/auth/login" });
         return res.status(401).json({ error: "Invalid credentials" });
       }
-      const normalizedEmail = normalizeEmail(email);
       const user = db
         .prepare("SELECT id, email, name, role, password_hash FROM users WHERE email = ?")
         .get(normalizedEmail);
       if (!user || !authenticateUser(user, password)) {
+        const failure = recordFailure("auth", normalizedEmail, {
+          ip,
+          email: normalizedEmail,
+          path: "/api/auth/login",
+        });
         logAuthFailure(req, { type: "auth_login_failed", email: normalizedEmail, path: "/api/auth/login" });
+        if (failure.locked) {
+          return res.status(423).json({
+            error: "Account temporarily locked",
+            errorKey: "auth.locked",
+            retryAfterSec: failure.retryAfterSec,
+          });
+        }
         return res.status(401).json({ error: "Invalid credentials" });
       }
+      clearFailures("auth", normalizedEmail);
       delete user.password_hash;
       return res.json({ user, token: signUser(user) });
     });

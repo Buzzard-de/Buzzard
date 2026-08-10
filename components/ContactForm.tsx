@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   LIMITS,
   canSubmitForm,
@@ -10,11 +10,17 @@ import {
 } from "@/lib/security";
 
 const RATE_LIMIT_KEY = "buzzard_contact_last";
+const MIN_SUBMIT_MS = 3000;
 
 export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
   const [sending, setSending] = useState(false);
+  const [formStartedAt, setFormStartedAt] = useState(0);
+
+  useEffect(() => {
+    setFormStartedAt(Date.now());
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,7 +28,13 @@ export default function ContactForm() {
 
     const form = e.currentTarget;
     const honey = (form.elements.namedItem("_honey") as HTMLInputElement)?.value;
-    if (honey) return;
+    const website = (form.elements.namedItem("_website") as HTMLInputElement)?.value;
+    if (honey || website) return;
+
+    if (Date.now() - formStartedAt < MIN_SUBMIT_MS) {
+      setMessage("Bitte Formular kurz ausfüllen und erneut senden.");
+      return;
+    }
 
     if (!canSubmitForm(RATE_LIMIT_KEY)) {
       setMessage("Bitte warten Sie eine Minute, bevor Sie erneut senden.");
@@ -81,6 +93,8 @@ export default function ContactForm() {
   return (
     <form id="contactForm" onSubmit={handleSubmit} noValidate>
       <input type="text" name="_honey" tabIndex={-1} autoComplete="off" style={{ display: "none" }} aria-hidden="true" />
+      <input type="text" name="_website" tabIndex={-1} autoComplete="off" style={{ position: "absolute", left: "-9999px" }} aria-hidden="true" />
+      <input type="hidden" name="_formStarted" value={String(formStartedAt)} />
       <label htmlFor="name">Ihr Name</label>
       <input id="name" name="name" type="text" placeholder="Max Mustermann" autoComplete="name" required maxLength={LIMITS.name} />
       <label htmlFor="email">E-Mail-Adresse</label>

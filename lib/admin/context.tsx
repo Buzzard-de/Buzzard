@@ -15,7 +15,7 @@ import type { AdminUser } from "./types";
 interface AdminAuthContextValue {
   user: AdminUser | null;
   ready: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, totpCode?: string, challengeToken?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -46,8 +46,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const result = await adminLogin(email, password);
+  const login = useCallback(async (email: string, password: string, totpCode?: string, challengeToken?: string) => {
+    const result = await adminLogin(email, password, totpCode, challengeToken);
+    if (result.requires2FA) {
+      throw new Error("admin.auth.requires2FA");
+    }
     setUser(result.user);
   }, []);
 

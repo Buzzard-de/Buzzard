@@ -7,6 +7,13 @@ import type {
   ImportLogEntry,
   SyncJob,
 } from "./types";
+import type {
+  AdminLoginResult,
+  AdminTwoFactorStatus,
+  LockoutEntry,
+  SecurityEvent,
+  SecurityOverview,
+} from "./securityTypes";
 import { isSqliteStoreEnabled } from "@/lib/store/config";
 import {
   mapStoreAdminOrder,
@@ -59,7 +66,12 @@ export function getAdminToken(): string | null {
   return sessionStorage.getItem(TOKEN_KEY);
 }
 
-export async function adminLogin(email: string, password: string): Promise<{ token: string; user: AdminUser }> {
+export async function adminLogin(
+  email: string,
+  password: string,
+  totpCode?: string,
+  challengeToken?: string
+): Promise<AdminLoginResult> {
   if (isSqliteStoreEnabled()) {
     const data = await storeLogin(email, password);
     if (data.user.role !== "admin") {
@@ -69,10 +81,40 @@ export async function adminLogin(email: string, password: string): Promise<{ tok
     saveAdminToken(data.token);
     return { token: data.token, user: mapStoreAdminUser(data.user) };
   }
-  const data = await request<{ success: boolean; token: string; user: AdminUser }>("/api/admin/login", {
+
+  if (challengeToken && totpCode) {
+    const data = await request<{
+      success: boolean;
+      token: string;
+      user: AdminUser;
+    }>("/api/admin/login/2fa", {
+      method: "POST",
+      body: JSON.stringify({ challengeToken, code: totpCode }),
+    });
+    saveAdminToken(data.token);
+    return { token: data.token, user: data.user };
+  }
+
+  const data = await request<{
+    success: boolean;
+    token?: string;
+    user: AdminUser;
+    requires2FA?: boolean;
+    challengeToken?: string;
+  }>("/api/admin/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
+
+  if (data.requires2FA && data.challengeToken) {
+    return {
+      requires2FA: true,
+      challengeToken: data.challengeToken,
+      user: data.user,
+    };
+  }
+
+  if (!data.token) throw new Error("admin.auth.invalid");
   saveAdminToken(data.token);
   return { token: data.token, user: data.user };
 }
@@ -212,4 +254,47 @@ export async function updateOrderStatus(orderNumber: string, status: string): Pr
 export async function fetchAuditLog(): Promise<AuditEntry[]> {
   const data = await request<{ success: boolean; entries: AuditEntry[] }>("/api/admin/audit");
   return data.entries;
+}
+
+export async function fetchSecurityDashboard(): Promise<{
+  events: SecurityEvent[];
+  overview: SecurityOverview;
+  lockouts: LockoutEntry[];
+}> {
+  const data = await request<{
+    success: boolean;
+    events: SecurityEvent[];
+    overview: SecurityOverview;
+    lockouts: LockoutEntry[];
+  }>("/api/admin/security/events");
+  return { events: data.events, overview: data.overview, lockouts: data.lockouts };
+}
+
+export async function fetchAdminTwoFactorStatus(): Promise<AdminTwoFactorStatus> {
+  const data = await request<{ success: boolean; enabled: boolean; enabledAt: string | null }>(
+    "/api/admin/security/2fa/status"
+  );
+  return { enabled: data.enabled, enabledAt: data.enabledAt };
+}
+
+export async function setupAdminTwoFactor(): Promise<{ secret: string; otpauthUri: string }> {
+  const data = await request<{ success: boolean; secret: string; otpauthUri: string }>(
+    "/api/admin/security/2fa/setup",
+    { method: "POST", body: "{}" }
+  );
+  return { secret: data.secret, otpauthUri: data.otpauthUri };
+}
+
+export async function enableAdminTwoFactor(code: string): Promise<void> {
+  await request("/api/admin/security/2fa/enable", {
+    method: "POST",
+    body: JSON.stringify({ code }),
+  });
+}
+
+export async function disableAdminTwoFactor(password: string, code: string): Promise<void> {
+  await request("/api/admin/security/2fa/disable", {
+    method: "POST",
+    body: JSON.stringify({ password, code }),
+  });
 }

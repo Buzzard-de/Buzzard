@@ -3,6 +3,14 @@ const { hashPassword, signUser, requireAuth, requireAdmin, ensureAdmin, authenti
 const { createOrderFromCartWithPayment } = require("../lib/dbOrders");
 const { createShipment } = require("../lib/dbCarriers");
 const { syncCatalogProducts, findProductBySku } = require("../lib/catalogProductSync");
+const {
+  normalizeEmail,
+  isValidEmail,
+  isValidPassword,
+  isValidName,
+  enforceAuthRateLimit,
+  logAuthFailure,
+} = require("../lib/authSecurity");
 
 function isEnabled() {
   return process.env.BUZZARD_DB_ENABLED !== "0";
@@ -68,28 +76,43 @@ module.exports = {
 
     app.post("/api/auth/register", (req, res) => {
       const { email, password, name } = req.body || {};
-      if (!email || !password || !name || password.length < 8) {
+      if (!enforceAuthRateLimit(req, res, { scope: "register", email, path: "/api/auth/register" })) {
+        return;
+      }
+      if (!isValidEmail(email) || !isValidPassword(password) || !isValidName(name)) {
         return res.status(400).json({
           error: "Name, valid email and password of at least 8 characters are required",
         });
       }
+      const normalizedEmail = normalizeEmail(email);
+      const normalizedName = String(name).trim().slice(0, 100);
       try {
         const info = db
           .prepare("INSERT INTO users(email, password_hash, name) VALUES(?,?,?)")
-          .run(email.toLowerCase(), hashPassword(password), name);
+          .run(normalizedEmail, hashPassword(password), normalizedName);
         const user = db.prepare("SELECT id, email, name, role FROM users WHERE id = ?").get(info.lastInsertRowid);
         return res.status(201).json({ user, token: signUser(user) });
       } catch {
+        logAuthFailure(req, { type: "auth_register_rejected", email: normalizedEmail, path: "/api/auth/register" });
         return res.status(409).json({ error: "Email already exists" });
       }
     });
 
     app.post("/api/auth/login", (req, res) => {
       const { email, password } = req.body || {};
+      if (!enforceAuthRateLimit(req, res, { scope: "login", email, path: "/api/auth/login" })) {
+        return;
+      }
+      if (!isValidEmail(email) || typeof password !== "string" || password.length === 0 || password.length > 128) {
+        logAuthFailure(req, { type: "auth_login_failed", email, path: "/api/auth/login" });
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      const normalizedEmail = normalizeEmail(email);
       const user = db
         .prepare("SELECT id, email, name, role, password_hash FROM users WHERE email = ?")
-        .get(String(email || "").toLowerCase());
-      if (!user || !authenticateUser(user, password || "")) {
+        .get(normalizedEmail);
+      if (!user || !authenticateUser(user, password)) {
+        logAuthFailure(req, { type: "auth_login_failed", email: normalizedEmail, path: "/api/auth/login" });
         return res.status(401).json({ error: "Invalid credentials" });
       }
       delete user.password_hash;

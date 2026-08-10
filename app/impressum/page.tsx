@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Impressum – Buzzard",
-  description: "Impressum von Buzzard Kfz-Teile – Angaben gemäß § 5 TMG.",
+  title: "Impressum",
+  description: "Impressum von Buzzard24 (Buzzard Kfz-Teile) – Angaben gemäß § 5 TMG.",
 };
 
 export default function ImpressumPage() {

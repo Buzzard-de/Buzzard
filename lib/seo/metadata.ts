@@ -65,10 +65,10 @@ export function buildCategoryMetadata(
   override?: SeoOverride
 ): Metadata {
   const name = getCategoryLabel(category, locale);
-  const title = override?.title || `${name} – Buzzard`;
+  const title = override?.title || `${name} – Kfz-Teile`;
   const description =
     override?.description ||
-    `${name} bei Buzzard online entdecken. Große Auswahl, schnelle Lieferung, faire Preise.`;
+    `${name} bei Buzzard24 online entdecken – Kfz-Teile und Autoteile bei buzzard24.de. Große Auswahl, schnelle Lieferung.`;
   const path = category.url.endsWith("/") ? category.url : `${category.url}/`;
   const canonical = absoluteUrl(override?.canonical || localizePath(path, locale));
 

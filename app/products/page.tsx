@@ -6,9 +6,12 @@ import ProductList from "@/components/ProductList";
 import ProductsSeoGuard from "@/components/seo/ProductsSeoGuard";
 
 export const metadata: Metadata = {
-  title: "Produkte – Buzzard",
+  title: "Kfz-Teile & Autoteile – Produkte",
   description:
-    "Produkte bei Buzzard: Textil, Kosmetik, Reinigung, Schule & Bürobedarf und mehr – schnell geliefert, fair bepreist.",
+    "Buzzard24 Produkte: Kfz-Teile, Autoteile, Motoröl, Bremsen, Filter und Fahrzeugzubehör – große Auswahl bei buzzard24.de.",
+  alternates: {
+    canonical: "https://buzzard24.de/products/",
+  },
 };
 
 export default function ProductsPage() {

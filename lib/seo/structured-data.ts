@@ -2,14 +2,16 @@ import type { BuzzardCategory } from "@/lib/categories/types";
 import { getCategoryLabel } from "@/lib/categories/i18n";
 import type { BuzzardLocale } from "@/lib/i18n/types";
 import type { PublicProduct } from "@/lib/products/types";
-import { absoluteUrl, SITE_URL } from "./config";
+import { absoluteUrl, SEO_DEFAULTS, SITE_URL } from "./config";
 import { showPrices } from "@/lib/shop/mode";
 
 export function organizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Buzzard",
+    name: SEO_DEFAULTS.siteName,
+    legalName: SEO_DEFAULTS.legalName,
+    alternateName: SEO_DEFAULTS.alternateNames,
     url: SITE_URL,
     logo: `${SITE_URL}/logo/logo.png`,
     contactPoint: {
@@ -20,12 +22,31 @@ export function organizationSchema() {
   };
 }
 
+export function onlineStoreSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    name: SEO_DEFAULTS.siteName,
+    alternateName: SEO_DEFAULTS.alternateNames,
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo/logo.png`,
+    image: `${SITE_URL}/logo/logo.png`,
+    inLanguage: ["de-DE", "en", "tr", "ar"],
+    areaServed: {
+      "@type": "Country",
+      name: "Germany",
+    },
+  };
+}
+
 export function websiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Buzzard",
+    name: SEO_DEFAULTS.siteName,
+    alternateName: SEO_DEFAULTS.alternateNames,
     url: SITE_URL,
+    inLanguage: ["de-DE", "en", "tr", "ar"],
     potentialAction: {
       "@type": "SearchAction",
       target: `${SITE_URL}/products/?q={search_term_string}`,
@@ -54,6 +75,7 @@ export function productSchema(product: PublicProduct, categoryLabel: string) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
+    url: absoluteUrl(product.url),
     description: product.shortDescription || product.description,
     sku: product.sku,
     ...(product.eanGtin ? { gtin13: product.eanGtin } : {}),

@@ -1,6 +1,7 @@
 {
-  "name": "Buzzard Online-Shop",
-  "short_name": "Buzzard",
+  "name": "Buzzard24 – Kfz-Teile Online-Shop",
+  "short_name": "Buzzard24",
+  "description": "Kfz-Teile und Autoteile bei buzzard24.de",
   "lang": "de",
   "start_url": "/",
   "scope": "/",

@@ -162,20 +162,33 @@ function safePath(requestPath) {
   return path.join(rootDir, cleaned);
 }
 
+const MAX_BODY_BYTES = 256 * 1024;
+
 function parseBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
-    req.on('data', chunk => chunks.push(chunk));
-    req.on('end', () => {
-      const raw = Buffer.concat(chunks).toString('utf8');
-      const contentType = (req.headers['content-type'] || '').split(';')[0].trim();
+    let totalBytes = 0;
+
+    req.on("data", (chunk) => {
+      totalBytes += chunk.length;
+      if (totalBytes > MAX_BODY_BYTES) {
+        reject(new Error("Payload too large"));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+
+    req.on("end", () => {
+      const raw = Buffer.concat(chunks).toString("utf8");
+      const contentType = (req.headers["content-type"] || "").split(";")[0].trim();
 
       if (!raw) {
         resolve({});
         return;
       }
 
-      if (contentType === 'application/json') {
+      if (contentType === "application/json") {
         try {
           resolve(JSON.parse(raw));
         } catch (error) {
@@ -184,14 +197,14 @@ function parseBody(req) {
         return;
       }
 
-      if (contentType === 'application/x-www-form-urlencoded') {
+      if (contentType === "application/x-www-form-urlencoded") {
         resolve(Object.fromEntries(new URLSearchParams(raw)));
         return;
       }
 
       resolve({});
     });
-    req.on('error', reject);
+    req.on("error", reject);
   });
 }
 
@@ -270,7 +283,8 @@ const server = http.createServer(async (req, res) => {
         path: pathname,
         detail: { message: error.message },
       });
-      sendJson(res, 500, publicErrorBody('security.internalError'));
+      const statusCode = error.message === 'Payload too large' ? 413 : 500;
+      sendJson(res, statusCode, publicErrorBody(statusCode === 413 ? 'security.payloadTooLarge' : 'security.internalError'));
     }
     return;
   }

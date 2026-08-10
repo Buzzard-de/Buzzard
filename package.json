@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "postinstall": "npm --prefix server install",
     "security:audit": "npm audit --audit-level=high",
+    "security:check": "node scripts/security-check.mjs",
     "verify:go-live": "node scripts/verify-go-live.mjs",
     "verify:local": "BUZZARD_SITE_URL=http://localhost:3000 BUZZARD_API_URL=http://localhost:3001 node scripts/verify-go-live.mjs",
     "test:smoke": "node scripts/smoke-core.mjs",

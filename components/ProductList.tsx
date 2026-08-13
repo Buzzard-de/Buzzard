@@ -244,7 +244,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                   <Link href={localized.url} className="product-card-img">
                     {localized.images[0] ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={localized.images[0]} alt={localized.name} />
+                      <img src={localized.images[0]} alt={localized.name} loading="lazy" decoding="async" />
                     ) : (
                       <ProductSvg imageKey={imageKey ?? "oel"} />
                     )}

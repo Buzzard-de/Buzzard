@@ -101,6 +101,27 @@ export function productSchema(product: PublicProduct, categoryLabel: string) {
   };
 }
 
+export function categoryCollectionSchema(
+  category: BuzzardCategory,
+  locale: BuzzardLocale,
+  description: string
+) {
+  const name = getCategoryLabel(category, locale);
+  const path = category.url.endsWith("/") ? category.url : `${category.url}/`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url: absoluteUrl(path),
+    isPartOf: {
+      "@type": "WebSite",
+      name: SEO_DEFAULTS.siteName,
+      url: SITE_URL,
+    },
+  };
+}
+
 export function categoryBreadcrumbItems(
   breadcrumb: BuzzardCategory[],
   locale: BuzzardLocale

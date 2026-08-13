@@ -71,17 +71,28 @@ export function buildCategoryMetadata(
     `${name} bei Buzzard24 online entdecken – Kfz-Teile und Autoteile bei buzzard24.de. Große Auswahl, schnelle Lieferung.`;
   const path = category.url.endsWith("/") ? category.url : `${category.url}/`;
   const canonical = absoluteUrl(override?.canonical || localizePath(path, locale));
+  const alternates = hreflangAlternates(path).reduce<Record<string, string>>((acc, alt) => {
+    acc[alt.locale] = alt.href;
+    return acc;
+  }, {});
 
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { canonical, languages: alternates },
     openGraph: {
       title,
       description,
       url: canonical,
       siteName: SEO_DEFAULTS.siteName,
       type: "website",
+      locale: locale === "ar" ? "ar_SA" : `${locale}_${locale.toUpperCase()}`,
+      images: [`${SITE_URL}/logo/logo.png`],
+    },
+    twitter: {
+      card: SEO_DEFAULTS.twitterCard,
+      title,
+      description,
     },
     robots: robotsFromOverride(override),
   };

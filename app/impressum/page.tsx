@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Impressum",
@@ -69,6 +70,12 @@ export default function ImpressumPage() {
             Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen
             dem deutschen Urheberrecht.
           </p>
+        </section>
+
+        <section className="contact-form">
+          <h2>Kontakt</h2>
+          <p>Schreiben Sie uns — wir melden uns so schnell wie möglich.</p>
+          <ContactForm />
         </section>
       </div>
     </>

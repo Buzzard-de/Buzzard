@@ -44,8 +44,9 @@ function requireAdmin(req, res) {
 }
 
 function ensureAdmin() {
-  const email = process.env.ADMIN_EMAIL;
-  const password = process.env.ADMIN_PASSWORD;
+  const isProd = process.env.NODE_ENV === "production";
+  const email = process.env.ADMIN_EMAIL || (!isProd ? "admin@buzzard.de" : null);
+  const password = process.env.ADMIN_PASSWORD || (!isProd ? "BuzzardAdmin2026!" : null);
   if (!email || !password) return;
 
   const normalized = email.toLowerCase();

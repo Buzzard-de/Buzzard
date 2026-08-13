@@ -4,5 +4,17 @@
     "to": "/produkt/bremsscheibe-vorderachse-280mm/",
     "permanent": true,
     "note": "Legacy product URL redirect"
+  },
+  {
+    "from": "/kontakt/",
+    "to": "/impressum/",
+    "permanent": true,
+    "note": "Contact page alias"
+  },
+  {
+    "from": "/hilfe/",
+    "to": "/impressum/",
+    "permanent": true,
+    "note": "Help page alias"
   }
 ]

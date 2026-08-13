@@ -174,21 +174,28 @@ async function main() {
         shippingAddress: { street: "Teststraße 1", city: "Berlin", zip: "10115", country: "DE" },
       }),
     });
-    if (order.status === 201 && order.body?.orderNumber) {
+    const salesOn = process.env.BUZZARD_SALES_ENABLED === "1";
+    if (!salesOn) {
+      if (order.status === 403 && order.body?.code === "sales_disabled") {
+        pass("Order blocked in catalog mode (sales_disabled)");
+      } else {
+        fail("Order blocked in catalog mode", order.body?.error || String(order.status));
+      }
+    } else if (order.status === 201 && order.body?.orderNumber) {
       pass(`Create order ${order.body.orderNumber}`);
     } else {
       fail("Create order", order.body?.error || String(order.status));
     }
 
     const orders = await request("/api/db/orders", { headers: auth });
-    if (orders.ok && Array.isArray(orders.body) && orders.body.length >= 1) {
+    if (orders.ok && Array.isArray(orders.body)) {
       pass("List customer orders");
     } else {
       fail("List customer orders");
     }
 
     const orderNumber = order.body?.orderNumber;
-    if (orderNumber) {
+    if (salesOn && orderNumber) {
       const one = await request(`/api/db/orders/${encodeURIComponent(orderNumber)}`, { headers: auth });
       if (one.ok && one.body?.order_number === orderNumber) {
         pass("Fetch order by number");

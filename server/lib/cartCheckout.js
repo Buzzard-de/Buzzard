@@ -151,6 +151,10 @@ function listShippingRates(country) {
 }
 
 function createCheckoutSession(body = {}) {
+  const { assertSalesEnabled } = require("./salesMode");
+  const blocked = assertSalesEnabled();
+  if (blocked) return blocked;
+
   const cart = getActiveCart(body.cartToken || body.cart_token);
   if (!cart) return { error: "Cart not found", status: 404 };
 
@@ -213,6 +217,10 @@ function validateCheckoutSession(token) {
 }
 
 function completeCheckoutSession(token) {
+  const { assertSalesEnabled } = require("./salesMode");
+  const blocked = assertSalesEnabled();
+  if (blocked) return blocked;
+
   const session = db.prepare("SELECT * FROM cc_checkout_sessions WHERE token = ?").get(token);
   if (!session) return { error: "Checkout not found", status: 404 };
 

@@ -318,6 +318,8 @@ module.exports = {
 
     async function handleCreateOrder(req, res) {
       if (!requireAuth(req, res)) return;
+      const { requireSalesEnabled } = require("../lib/salesMode");
+      if (!requireSalesEnabled(req, res)) return;
       const { countryCode = "DE", currency = "EUR", shippingAddress } = req.body || {};
       try {
         const result = await createOrderFromCartWithPayment(req.user.sub, {

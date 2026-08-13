@@ -70,7 +70,7 @@ export const mainNavLinks: MainNavLink[] = [
   { label: "ANGEBOTE", href: "/products/" },
   { label: "NEUHEITEN", href: "/products/" },
   { label: "MARKEN", href: "/products/" },
-  { label: "HILFE & KONTAKT", href: "/impressum/" },
+  { label: "HILFE & KONTAKT", href: "/hilfe/" },
 ];
 
 export const trustBadges = [

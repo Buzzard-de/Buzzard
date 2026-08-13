@@ -18,28 +18,25 @@ export const homeCampaigns = [
   {
     id: "camp-1",
     tag: "AUTOMOTIVE",
-    title: "Bis zu -30% auf ausgewählte Teile",
+    title: "Automotive-Katalog entdecken",
     href: "/kategorie/automotive/",
     imageKey: "tire",
   },
   {
     id: "camp-2",
     tag: "TEXTIL",
-    title: "Neue Saisonkollektion",
+    title: "Textil & Mode durchstöbern",
     href: "/kategorie/textil/",
     imageKey: "oel",
   },
   {
     id: "camp-3",
-    tag: "ANGEBOTE",
-    title: "Top-Seller der Woche",
-    href: "/products/?sort=bestseller",
+    tag: "KATALOG",
+    title: "Demo-Sortiment ansehen",
+    href: "/products/",
     imageKey: "batterie",
   },
 ];
 
-export const homeReviews = [
-  { id: "r1", name: "Michael K.", text: "Schnelle Lieferung und top Qualität. Sehr empfehlenswert!", rating: 5 },
-  { id: "r2", name: "Sarah M.", text: "Große Auswahl, faire Preise und unkomplizierter Service.", rating: 5 },
-  { id: "r3", name: "Thomas B.", text: "Buzzard ist mein go-to Shop für Automotive-Teile.", rating: 5 },
-];
+/** Reserved for live reviews once sales are enabled. */
+export const homeReviews: { id: string; name: string; text: string; rating: number }[] = [];

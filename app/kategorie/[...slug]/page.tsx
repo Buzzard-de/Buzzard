@@ -49,7 +49,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const breadcrumb = getCategoryBreadcrumb(category.id);
   const name = getCategoryLabel(category, DEFAULT_LOCALE);
   const children = category.children ?? [];
-  const description = `${name} bei Buzzard24 online entdecken – Kfz-Teile und Autoteile bei buzzard24.de.`;
+  const description = `${name} bei Buzzard24 — Kategorie im Demo-Katalog. Produkte entdecken und informieren.`;
 
   return (
     <>

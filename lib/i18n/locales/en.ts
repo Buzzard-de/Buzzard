@@ -1,7 +1,14 @@
 import type { TranslationTree } from "../types-catalog";
 
 export const catalog: TranslationTree = {
-  topBar: { shipping: "Free shipping from €79", returns: "30-day returns", trust: "Trusted Shops · 4.8/5" },
+  topBar: {
+    shipping: "Free shipping from €79",
+    returns: "30-day returns",
+    trust: "Trusted Shops · 4.8/5",
+    catalogPreview: "Catalog preview — online ordering coming soon",
+    catalogCategories: "41 categories · demo catalog",
+    catalogSupport: "Advice & contact available",
+  },
   header: {
     searchPlaceholder: "Search products, brands, SKU, categories…",
     account: "My Account",
@@ -16,10 +23,10 @@ export const catalog: TranslationTree = {
   nav: { allCategories: "ALL CATEGORIES", vehicleSelect: "VEHICLE SELECT", vehiclePlaceholder: "Select vehicle" },
   megaMenu: { close: "Close menu", mainCategories: "Main categories", categories: "Categories" },
   hero: {
-    kicker: "QUALITY. PERFORMANCE. TRUST.",
+    kicker: "CATALOG. DISCOVER. LEARN.",
     title: "Discover our range",
-    text: "Over 1,000,000 products – fast delivery, fair prices, secure checkout.",
-    cta: "Shop now",
+    text: "Browse our demo catalog across textiles, automotive, electronics and more — online sales launching soon.",
+    cta: "Browse catalog",
     secondary: "All categories",
   },
   home: {

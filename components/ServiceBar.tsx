@@ -1,11 +1,27 @@
 import CategoryIcon from "./CategoryIcon";
-import { trustBadges } from "@/lib/categories";
+import { isSalesEnabled } from "@/lib/shop/mode";
+
+const catalogBadges = [
+  { label: "GROSSE KATEGORIEAUSWAHL", icon: "star" },
+  { label: "PRODUKTINFORMATIONEN", icon: "box" },
+  { label: "SUPPORT ERREICHBAR", icon: "phone" },
+  { label: "VERKAUF FOLGT DEMNÄCHST", icon: "shield" },
+] as const;
+
+const salesBadges = [
+  { label: "TOP MARKEN", icon: "star" },
+  { label: "SCHNELLE LIEFERUNG", icon: "truck" },
+  { label: "KOSTENLOSER VERSAND", icon: "box" },
+  { label: "SICHERE ZAHLUNG", icon: "shield" },
+] as const;
 
 export default function ServiceBar() {
+  const badges = isSalesEnabled() ? salesBadges : catalogBadges;
+
   return (
     <section className="service-bar" aria-label="Service-Informationen">
       <div className="service-trust-row" aria-label="Vorteile">
-        {trustBadges.map((badge) => (
+        {badges.map((badge) => (
           <div key={badge.label} className="service-trust-item">
             <CategoryIcon name={badge.icon} size={20} />
             <span>{badge.label}</span>
@@ -23,22 +39,22 @@ export default function ServiceBar() {
         <div className="service-item">
           <CategoryIcon name="mail" size={28} />
           <div>
-            <strong>E-MAIL-HILFE</strong>
+            <strong>E-MAIL</strong>
             <span>info@buzzard.com</span>
           </div>
         </div>
         <div className="service-item">
           <CategoryIcon name="return" size={28} />
           <div>
-            <strong>30 TAGE RÜCKGABERECHT</strong>
-            <span>Zufrieden oder Geld zurück</span>
+            <strong>HILFE & FAQ</strong>
+            <span>/hilfe/</span>
           </div>
         </div>
         <div className="service-item">
           <CategoryIcon name="lock" size={28} />
           <div>
-            <strong>SICHER EINKAUFEN</strong>
-            <span>Ihre Daten sind geschützt</span>
+            <strong>DATENSCHUTZ</strong>
+            <span>DSGVO-konform</span>
           </div>
         </div>
       </div>

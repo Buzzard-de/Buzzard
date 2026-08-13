@@ -12,9 +12,9 @@
     "note": "Contact page alias"
   },
   {
-    "from": "/hilfe/",
-    "to": "/impressum/",
-    "permanent": true,
-    "note": "Help page alias"
+    "from": "/faq/",
+    "to": "/hilfe/",
+    "permanent": false,
+    "note": "FAQ redirect to help page"
   }
 ]

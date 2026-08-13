@@ -229,6 +229,9 @@ module.exports = {
     });
 
     app.post("/api/orders", async (req, res) => {
+      const { requireSalesEnabled } = require("../lib/salesMode");
+      if (!requireSalesEnabled(req, res)) return;
+
       if (process.env.BUZZARD_DB_ENABLED !== "0") {
         const body = req.body || {};
         const isGuestCheckout = Array.isArray(body.lines) && body.lines.length > 0;

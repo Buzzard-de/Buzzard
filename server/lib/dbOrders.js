@@ -3,12 +3,16 @@ const { db } = require("./db");
 const { calculateShipping } = require("./dbShipping");
 const { calculateTaxSync } = require("./commercialIntegrations");
 const { createPaymentSession } = require("./dbPayments");
+const { assertSalesEnabled } = require("./salesMode");
 
 function orderNumber() {
   return `BZ-${new Date().getFullYear()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 }
 
 function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shippingAddress = {} } = {}) {
+  const blocked = assertSalesEnabled();
+  if (blocked) return blocked;
+
   const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(userId);
   if (!cart) return { error: "Cart is empty", status: 400 };
 

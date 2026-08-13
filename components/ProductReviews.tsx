@@ -33,6 +33,7 @@ export default function ProductReviews({ sku }: { sku: string }) {
   const [body, setBody] = useState("");
   const [rating, setRating] = useState(5);
   const [submitting, setSubmitting] = useState(false);
+  const [apiUnavailable, setApiUnavailable] = useState(false);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -40,9 +41,11 @@ export default function ProductReviews({ sku }: { sku: string }) {
     if (data) {
       setStats(data.stats);
       setReviews(data.reviews);
+      setApiUnavailable(false);
     } else {
       setStats(null);
       setReviews([]);
+      setApiUnavailable(isReviewsRatingsEnabled());
     }
     setLoading(false);
   }, [sku]);
@@ -98,7 +101,11 @@ export default function ProductReviews({ sku }: { sku: string }) {
           </p>
         </div>
       ) : (
-        <p className="product-reviews-empty">Noch keine veröffentlichten Bewertungen.</p>
+        <p className="product-reviews-empty">
+          {apiUnavailable
+            ? "Bewertungen werden geladen, sobald unser Backend online ist. Katalog und Produktdetails bleiben verfügbar."
+            : "Noch keine veröffentlichten Bewertungen."}
+        </p>
       )}
 
       <ul className="product-reviews-list">
@@ -115,7 +122,7 @@ export default function ProductReviews({ sku }: { sku: string }) {
         ))}
       </ul>
 
-      {isReviewsRatingsEnabled() ? (
+      {isReviewsRatingsEnabled() && !apiUnavailable ? (
         <form className="product-review-form" onSubmit={handleSubmit}>
           <h3>Bewertung schreiben</h3>
           <label>

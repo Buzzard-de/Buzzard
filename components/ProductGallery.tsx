@@ -47,7 +47,7 @@ export default function ProductGallery({ images, imageKey, name }: ProductGaller
               onClick={() => setActiveIndex(index)}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" loading="lazy" />
+              <img src={src} alt="" loading="lazy" decoding="async" />
             </button>
           ))}
         </div>

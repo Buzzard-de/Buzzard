@@ -130,6 +130,12 @@
   color: #f5e6b8;
 }
 
+.admin-api-banner--live {
+  background: #0f2418;
+  border-color: #3d8b5f;
+  color: #d4f0de;
+}
+
 .admin-api-banner strong {
   display: block;
   margin-bottom: 6px;

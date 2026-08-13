@@ -26,21 +26,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   for (const { slug } of getProductStaticParams()) {
-    entries.push({
-      url: absoluteUrl(`/produkt/${slug}/`),
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    });
+    entries.push(
+      ...localizedEntries(`/produkt/${slug}/`, 0.8)
+    );
   }
 
   for (const { slug } of getAllCategoryStaticParams()) {
-    entries.push({
-      url: absoluteUrl(`/kategori/${slug.join("/")}/`),
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    });
+    entries.push(
+      ...localizedEntries(`/kategori/${slug.join("/")}/`, 0.7)
+    );
   }
 
   return entries;

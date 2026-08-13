@@ -15,6 +15,7 @@ import ConsentBanner from "./marketing/ConsentBanner";
 import MarketingScripts from "./marketing/MarketingScripts";
 import PageViewTracker from "./marketing/PageViewTracker";
 import AiChatWidget from "./ai/AiChatWidget";
+import StorefrontApiBanner from "./StorefrontApiBanner";
 
 export default function ShopProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -26,6 +27,7 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
             <ShopProvider>
               <HomeUIProvider>
               <GlobalStructuredData />
+              <StorefrontApiBanner />
               {children}
               <LocaleHead />
               <PageViewTracker />

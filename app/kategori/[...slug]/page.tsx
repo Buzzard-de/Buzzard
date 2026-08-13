@@ -12,7 +12,7 @@ import {
   DEFAULT_LOCALE,
 } from "@/lib/categories";
 import { buildCategoryMetadata } from "@/lib/seo/metadata";
-import { breadcrumbSchema, categoryBreadcrumbItems } from "@/lib/seo/structured-data";
+import { breadcrumbSchema, categoryBreadcrumbItems, categoryCollectionSchema } from "@/lib/seo/structured-data";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string[] }>;
@@ -49,10 +49,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const breadcrumb = getCategoryBreadcrumb(category.id);
   const name = getCategoryLabel(category, DEFAULT_LOCALE);
   const children = category.children ?? [];
+  const description = `${name} bei Buzzard24 online entdecken – Kfz-Teile und Autoteile bei buzzard24.de.`;
 
   return (
     <>
       <JsonLd data={breadcrumbSchema(categoryBreadcrumbItems(breadcrumb, DEFAULT_LOCALE))} />
+      <JsonLd data={categoryCollectionSchema(category, DEFAULT_LOCALE, description)} />
       <section className="page-hero">
         <div className="page-hero-inner">
           <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">

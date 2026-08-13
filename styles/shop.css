@@ -2,6 +2,40 @@
    Shop Pages & Modals
    ============================ */
 
+.storefront-api-banner {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 44px 10px 16px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #3a3a3a;
+  color: #ccc;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.storefront-api-banner strong {
+  color: var(--gold);
+}
+
+.storefront-api-banner-dismiss {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: #888;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.storefront-api-banner-dismiss:hover {
+  color: #fff;
+}
+
 .shop-page {
   max-width: 1200px;
   margin: 0 auto;

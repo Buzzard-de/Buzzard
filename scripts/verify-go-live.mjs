@@ -11,6 +11,9 @@ import { ADMIN_ROUTE_SLUGS } from "../lib/admin/nav.config.mjs";
 
 const SITE = (process.env.BUZZARD_SITE_URL || "https://buzzard24.de").replace(/\/$/, "");
 const API = (process.env.BUZZARD_API_URL || "https://buzzard-api.onrender.com").replace(/\/$/, "");
+const RETRIES = Number(process.env.BUZZARD_VERIFY_RETRIES || 3);
+const RETRY_DELAY_MS = Number(process.env.BUZZARD_VERIFY_RETRY_MS || 4000);
+const RETRYABLE_STATUSES = new Set([502, 503, 504]);
 
 const STOREFRONT_ROUTES = [
   "/",
@@ -37,6 +40,8 @@ const STOREFRONT_ROUTES = [
   "/tr/",
   "/ar/",
   "/impressum/",
+  "/kontakt/",
+  "/hilfe/",
   "/datenschutz/",
   "/sitemap.xml",
   "/robots.txt",
@@ -44,13 +49,30 @@ const STOREFRONT_ROUTES = [
 
 const ADMIN_ROUTES = ADMIN_ROUTE_SLUGS;
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function checkUrl(url) {
-  try {
-    const res = await fetch(url, { redirect: "follow" });
-    return { url, status: res.status, ok: res.ok };
-  } catch (error) {
-    return { url, status: 0, ok: false, error: error.message };
+  let last = { url, status: 0, ok: false, error: "unknown" };
+
+  for (let attempt = 1; attempt <= RETRIES; attempt += 1) {
+    try {
+      const res = await fetch(url, { redirect: "follow" });
+      const result = { url, status: res.status, ok: res.ok };
+      if (result.ok || !RETRYABLE_STATUSES.has(result.status) || attempt === RETRIES) {
+        return result;
+      }
+      last = result;
+    } catch (error) {
+      last = { url, status: 0, ok: false, error: error.message };
+      if (attempt === RETRIES) return last;
+    }
+
+    await sleep(RETRY_DELAY_MS);
   }
+
+  return last;
 }
 
 async function main() {

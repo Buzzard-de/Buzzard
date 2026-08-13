@@ -19,14 +19,14 @@ export const homeCampaigns = [
     id: "camp-1",
     tag: "AUTOMOTIVE",
     title: "Bis zu -30% auf ausgewählte Teile",
-    href: "/kategori/otomotiv/",
+    href: "/kategorie/automotive/",
     imageKey: "tire",
   },
   {
     id: "camp-2",
     tag: "TEXTIL",
     title: "Neue Saisonkollektion",
-    href: "/kategori/tekstil/",
+    href: "/kategorie/textil/",
     imageKey: "oel",
   },
   {

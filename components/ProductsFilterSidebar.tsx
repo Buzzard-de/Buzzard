@@ -40,7 +40,7 @@ export default function ProductsFilterSidebar() {
         ))}
       </ul>
       <div className="category-sidebar-links">
-        <Link href="/kategori/otomotiv/">→ Alle Automotive-Kategorien</Link>
+        <Link href="/kategorie/automotive/">→ Alle Automotive-Kategorien</Link>
         <Link href="/">← Startseite</Link>
       </div>
     </aside>

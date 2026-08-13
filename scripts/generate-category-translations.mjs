@@ -4,8 +4,9 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
+const catalogPath = path.join(root, "data/buzzard_categories.json");
 const source = JSON.parse(
-  fs.readFileSync(path.join(root, "data/buzzard_categories.json"), "utf8")
+  fs.readFileSync(catalogPath, "utf8")
 );
 
 /** German overrides for main categories (exact). */
@@ -547,10 +548,69 @@ const trWordDe = {
   Şapka: "Hut",
   Şarj: "Laden",
   Şemsiye: "Regenschirm",
+  Hırka: "Strickjacke",
+  Sütyen: "BH",
+  Külot: "Slip",
+  İçlik: "Unterwäsche",
+  Allık: "Rouge",
+  Fondöten: "Foundation",
+  Kapatıcı: "Concealer",
+  Macunu: "Paste",
+  Fırçası: "Bürste",
+  Gargarası: "Mundspülung",
+  İpi: "Zahnseide",
+  Beyazlatma: "Aufhellung",
+  Spreyi: "Spray",
+  Şampuan: "Shampoo",
+  Yağı: "Öl",
+  Gelenler: "Neuheiten",
+  Satanlar: "Bestseller",
+  Ürünleri: "Produkte",
+  Ürünler: "Produkte",
+  Koleksiyonlar: "Kollektionen",
+  Özel: "Sonder",
+  Kurumsal: "Geschäftskunden",
+  Sezon: "Saison",
+  Fırsat: "Angebot",
+  Enerjisi: "Energie",
+  Aksesuarları: "Zubehör",
+};
+
+const trPhraseDe = {
+  "Kadın Giyim": "Damenbekleidung",
+  "Erkek Giyim": "Herrenbekleidung",
+  "Çocuk Giyim": "Kinderbekleidung",
+  "Bebek Giyim": "Babybekleidung",
+  "İç Giyim": "Unterwäsche",
+  "Ev Tekstili": "Haushaltstextilien",
+  "Yeni Gelenler": "Neuheiten",
+  "Çok Satanlar": "Bestseller",
+  "Fırsat Ürünleri": "Angebotsprodukte",
+  "Sezon Ürünleri": "Saisonprodukte",
+  "Markalı Koleksiyonlar": "Markenkollektionen",
+  "Kurumsal Özel Ürünler": "Geschäftskunden-Sonderprodukte",
+  "Kamp Enerjisi": "Camping-Energie",
+  "Enerji Aksesuarları": "Energie-Zubehör",
+  "Diş Macunu": "Zahnpasta",
+  "Diş Fırçası": "Zahnbürste",
+  "Ağız Gargarası": "Mundspülung",
+  "Diş İpi": "Zahnseide",
+  "Diş Beyazlatma": "Zahnaufhellung",
+  "Vücut Spreyi": "Körperspray",
+  "Kadın Parfüm": "Damenduft",
+  "Erkek Parfüm": "Herrenduft",
+  "Unisex Parfüm": "Unisex-Duft",
+  "Termal İçlik": "Thermo-Unterwäsche",
+  "Haar Yağı": "Haaröl",
+  "Motor Yağı": "Motoröl",
+  "Cam Suyu": "Scheibenwasser",
+  "Fren Balatası": "Bremsbelag",
+  "Akıllı Ev": "Smart Home",
 };
 
 function translateTurkishName(name) {
   if (trDe[name]) return trDe[name];
+  if (trPhraseDe[name]) return trPhraseDe[name];
 
   return name
     .split(/\s*&\s*/)
@@ -564,20 +624,48 @@ function translateTurkishName(name) {
     .join(" & ");
 }
 
+function slugToGermanLabel(slug) {
+  const parts = slug.split("-").filter(Boolean);
+  return parts
+    .map((part) =>
+      part
+        .replace(/ae/g, "ä")
+        .replace(/oe/g, "ö")
+        .replace(/ue/g, "ü")
+        .replace(/^./, (c) => c.toUpperCase())
+    )
+    .join(" ");
+}
+
+function toGermanLabel(node) {
+  const sourceName = node.legacy_name ?? node.name;
+  let label = mainDe[node.id] ?? trPhraseDe[sourceName] ?? translateTurkishName(sourceName);
+  if (/[ğşİıĞŞÇ]/.test(label)) {
+    label = slugToGermanLabel(node.slug);
+  }
+  return label;
+}
+
 const de = {};
 const en = {};
 const ar = {};
 
 function walk(nodes) {
   for (const node of nodes) {
-    de[node.id] = mainDe[node.id] ?? translateTurkishName(node.name);
-    en[node.id] = mainEn[node.id] ?? node.name;
-    ar[node.id] = mainAr[node.id] ?? node.name;
+    const sourceName = node.legacy_name ?? node.name;
+    de[node.id] = toGermanLabel(node);
+    en[node.id] = mainEn[node.id] ?? sourceName;
+    ar[node.id] = mainAr[node.id] ?? sourceName;
+    if (node.legacy_name) {
+      node.name = de[node.id];
+    }
     if (node.children?.length) walk(node.children);
   }
 }
 
 walk(source.categories);
+
+fs.writeFileSync(catalogPath, `${JSON.stringify(source, null, 2)}\n`, "utf8");
 
 function writeLocaleFile(filename, constName, labels) {
   const out = `/** Auto-generated category labels. Edit scripts/generate-category-translations.mjs and re-run. */

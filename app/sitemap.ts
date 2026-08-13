@@ -33,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   for (const { slug } of getAllCategoryStaticParams()) {
     entries.push(
-      ...localizedEntries(`/kategori/${slug.join("/")}/`, 0.7)
+      ...localizedEntries(`/kategorie/${slug.join("/")}/`, 0.7)
     );
   }
 

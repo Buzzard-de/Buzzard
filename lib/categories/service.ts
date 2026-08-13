@@ -3,13 +3,19 @@ import { categoryCatalog } from "./source";
 
 const { categories } = categoryCatalog;
 
+const CATEGORY_PATH = "/kategorie";
+
 const byId = new Map<string, BuzzardCategory>();
 const bySlugPath = new Map<string, BuzzardCategory>();
+const byLegacySlugPath = new Map<string, BuzzardCategory>();
 const parentById = new Map<string, string>();
 
 function register(node: BuzzardCategory, slugPath: string[]) {
   byId.set(node.id, node);
   bySlugPath.set(slugPath.join("/"), node);
+  if (node.legacy_slug_path) {
+    byLegacySlugPath.set(node.legacy_slug_path, node);
+  }
 }
 
 function indexTree(
@@ -51,22 +57,25 @@ export function getDefaultSubCategoryId(mainId: string): string {
 
 export function findCategoryBySlugPath(slugPath: string): BuzzardCategory | undefined {
   const normalized = slugPath.replace(/^\/+|\/+$/g, "");
-  return bySlugPath.get(normalized);
+  return bySlugPath.get(normalized) ?? byLegacySlugPath.get(normalized);
 }
 
 export function findCategoryByUrl(url: string): BuzzardCategory | undefined {
-  const match = url.match(/^\/kategori\/(.+)$/);
+  const match = url.match(/^\/kategor(?:ie|i)\/(.+)$/);
   if (!match) return undefined;
   return findCategoryBySlugPath(match[1]);
 }
 
 export function getSlugPath(category: BuzzardCategory): string {
-  const match = category.url.match(/^\/kategori\/(.+)$/);
+  const match = category.url.match(/^\/kategor(?:ie|i)\/(.+)$/);
   return match ? match[1] : category.slug;
 }
 
 export function categoryHref(category: BuzzardCategory): string {
-  return category.url.endsWith("/") ? category.url : `${category.url}/`;
+  const href = category.url.startsWith(CATEGORY_PATH)
+    ? category.url
+    : `${CATEGORY_PATH}/${category.slug}`;
+  return href.endsWith("/") ? href : `${href}/`;
 }
 
 /** Legacy query param support for product filtering pages. */

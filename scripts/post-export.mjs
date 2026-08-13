@@ -3,7 +3,10 @@ import path from "path";
 
 const rootDir = process.cwd();
 const outDir = path.join(rootDir, "out");
-const redirectsFile = path.join(rootDir, "data", "buzzard_redirects.json");
+const redirectFiles = [
+  path.join(rootDir, "data", "buzzard_redirects.json"),
+  path.join(rootDir, "data", "category_legacy_redirects.json"),
+];
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -35,8 +38,13 @@ if (!fs.existsSync(outDir)) {
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "", "utf8");
 console.log("post-export: wrote .nojekyll");
 
-if (fs.existsSync(redirectsFile)) {
-  const redirects = JSON.parse(fs.readFileSync(redirectsFile, "utf8"));
+const redirects = [];
+for (const redirectsFile of redirectFiles) {
+  if (!fs.existsSync(redirectsFile)) continue;
+  redirects.push(...JSON.parse(fs.readFileSync(redirectsFile, "utf8")));
+}
+
+if (redirects.length > 0) {
   for (const rule of redirects) {
     const from = String(rule.from || "").replace(/^\/+|\/+$/g, "");
     const to = String(rule.to || "");

@@ -8,6 +8,10 @@ export interface BuzzardCategory {
   url: string;
   level: number;
   children: BuzzardCategory[];
+  legacy_name?: string;
+  legacy_slug?: string;
+  legacy_slug_path?: string;
+  legacy_url?: string;
 }
 
 export interface BuzzardCategoryDocument {

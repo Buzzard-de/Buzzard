@@ -7,6 +7,8 @@ import { clearConfirmedOrder, fetchOrder, loadConfirmedOrder } from "@/lib/order
 import type { PublicOrder } from "@/lib/orders/types";
 import { formatPrice } from "@/lib/products";
 import { useLocale } from "@/lib/i18n/context";
+import { isCheckoutEnabled } from "@/lib/shop/mode";
+import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
 
 export default function CheckoutSuccess() {
   const searchParams = useSearchParams();
@@ -42,6 +44,22 @@ export default function CheckoutSuccess() {
       active = false;
     };
   }, [searchParams]);
+
+  if (!isCheckoutEnabled() && !order) {
+    return (
+      <div className="checkout-success">
+        <CatalogOnlyNotice />
+        <div className="checkout-success-actions">
+          <Link href="/products/" className="shop-btn-primary">
+            {t("checkout.successContinue")}
+          </Link>
+          <Link href="/" className="shop-btn-secondary">
+            {t("checkout.successHome")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="checkout-success">

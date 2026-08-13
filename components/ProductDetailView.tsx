@@ -205,7 +205,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                   <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
                 </>
               ) : null}
-              <p>14 Tage Rückgaberecht · Sichere Zahlung</p>
+              <p>{showPrices() ? "14 Tage Rückgaberecht · Sichere Zahlung" : t("catalog.productInfo")}</p>
             </div>
           </div>
         </div>

@@ -2,11 +2,18 @@ import Link from "next/link";
 import CategoryIcon from "@/components/CategoryIcon";
 import BrandsStrip from "@/components/BrandsStrip";
 import { getFeaturedSubcategories } from "@/lib/categories";
-import { homeReviews } from "@/lib/navigation/home-config";
-import { trustBadges } from "@/lib/categories";
+import { isSalesEnabled } from "@/lib/shop/mode";
+
+const catalogTrust = [
+  { label: "Große Kategorieauswahl", icon: "star" },
+  { label: "Transparente Infos", icon: "box" },
+  { label: "Support erreichbar", icon: "phone" },
+  { label: "Verkauf folgt demnächst", icon: "shield" },
+] as const;
 
 export default function HomeTrustReviews() {
   const highlights = getFeaturedSubcategories("cat-01", 6);
+  const salesOn = isSalesEnabled();
 
   return (
     <>
@@ -24,9 +31,9 @@ export default function HomeTrustReviews() {
       </section>
 
       <section className="home-section home-trust" aria-labelledby="home-trust-title">
-        <h2 id="home-trust-title">Warum Buzzard?</h2>
+        <h2 id="home-trust-title">{salesOn ? "Warum Buzzard?" : "Ihr Vorteil"}</h2>
         <div className="home-trust-grid">
-          {trustBadges.map((badge) => (
+          {catalogTrust.map((badge) => (
             <div key={badge.label} className="home-trust-item">
               <CategoryIcon name={badge.icon} size={24} />
               <span>{badge.label}</span>
@@ -36,19 +43,20 @@ export default function HomeTrustReviews() {
         <BrandsStrip variant="promo" />
       </section>
 
-      <section className="home-section home-reviews" aria-labelledby="home-reviews-title">
-        <h2 id="home-reviews-title">Kundenstimmen</h2>
-        <div className="home-reviews-grid">
-          {homeReviews.map((review) => (
-            <blockquote key={review.id} className="home-review-card">
-              <p>{review.text}</p>
-              <footer>
-                {"★".repeat(review.rating)} · {review.name}
-              </footer>
-            </blockquote>
-          ))}
-        </div>
-      </section>
+      {!salesOn && (
+        <section className="home-section home-reviews" aria-labelledby="home-status-title">
+          <h2 id="home-status-title">Shop-Status</h2>
+          <div className="home-review-card">
+            <p>
+              Buzzard24 befindet sich im <strong>Katalogmodus</strong>. Sie können Produkte und Kategorien
+              erkunden. Preise und Bestellungen werden mit dem Verkaufsstart freigeschaltet.
+            </p>
+            <footer>
+              <Link href="/hilfe/">Mehr erfahren → Hilfe & FAQ</Link>
+            </footer>
+          </div>
+        </section>
+      )}
     </>
   );
 }

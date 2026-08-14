@@ -98,6 +98,86 @@ from .backup_restore import BackupRestoreManager
 from .system_health import SystemHealthDashboard
 from .integration_tests import IntegrationTests
 from .error_center import ProductionErrorCenter
+from .security_arch import SecurityArchitecture
+from .identity_access import IdentityAccessControl
+from .role_permissions import RolePermissionManager
+from .secrets_mgmt import SecretsKeyManagement
+from .privacy_min import PrivacyDataMinimization
+from .gdpr_governance import GDPRDataGovernance
+from .consent_retention import ConsentRetention
+from .security_monitor import SecurityMonitoring
+from .threat_detection import ThreatDetection
+from .security_incident import SecurityIncidentCenter
+from .distributed_data import DistributedDataProcessing
+from .db_scaling import DatabaseScaling
+from .cache_perf import CachePerformance
+from .parallel_jobs import ParallelJobEngine
+from .queue_scaling import QueueScaling
+from .api_gateway import APIGatewayLoadControl
+from .observability import ObservabilityMetrics
+from .resource_opt import ResourceOptimization
+from .high_availability import HighAvailability
+from .disaster_recovery import DisasterRecovery
+from .reasoning_engine import AdvancedReasoningEngine
+from .agent_memory import AgentMemoryRetrieval
+from .agent_eval import AgentEvaluation
+from .agent_selfcheck import AgentSelfCheck
+from .multi_debate import MultiAgentDebate
+from .decision_explain import DecisionExplanation
+from .uncertainty_engine import UncertaintyEngine
+from .continuous_learning import ContinuousLearningPipeline
+from .model_quality import ModelQualityMonitor
+from .ai_council import AICouncilIntelligence
+from .procurement_intel import ProcurementIntelligence
+from .supplier_disc_adv import SupplierDiscoveryAdvanced
+from .supplier_negotiation import SupplierNegotiationIntel
+from .purchase_forecast import PurchaseForecasting
+from .lead_time import LeadTimeIntelligence
+from .supply_risk import SupplyRiskRadar
+from .purchase_order import PurchaseOrderIntel
+from .supplier_scorecards import SupplierScorecards
+from .sourcing_opt import SourcingOptimization
+from .supply_chain_cc import SupplyChainCommandCenter
+from .customer_intel import CustomerIntelligence
+from .customer_segment import CustomerSegmentation
+from .customer_ltv import CustomerLifetimeValue
+from .sales_forecast import SalesForecasting
+from .lead_intel import LeadIntelligence
+from .conversion_intel import ConversionIntelligence
+from .basket_analysis import BasketAnalysis
+from .retention_intel import RetentionIntelligence
+from .customer_service import CustomerServiceIntel
+from .sales_command import SalesCommandCenter
+from .marketing_attrib import MarketingAttribution
+from .campaign_intel import CampaignIntelligence
+from .creative_perf import CreativePerformance
+from .seo_advanced import SEOIntelligenceAdvanced
+from .social_trend import SocialTrendIntelligence
+from .content_opportunity import ContentOpportunityEngine
+from .ad_budget import AdBudgetOptimizer
+from .roas_forecast import ROASForecasting
+from .promo_optimize import PromotionOptimization
+from .marketing_command import MarketingCommandCenter
+from .country_ops import CountryOperationsManager
+from .intl_tax import InternationalTaxIntel
+from .xborder_compliance import CrossBorderCompliance
+from .intl_payments import InternationalPayments
+from .local_logistics import LocalLogisticsNetwork
+from .country_suppliers import CountrySupplierNetworks
+from .local_competitor import LocalCompetitorRadar
+from .market_launch import MarketLaunchOperations
+from .intl_risk import InternationalRiskCenter
+from .global_ops_cc import GlobalOperationsCommandCenter
+from .business_os import BusinessOperatingSystem
+from .executive_intel import ExecutiveIntelligence
+from .strategic_planning import StrategicPlanningAI
+from .kpi_intel import KPIIntelligence
+from .cashflow_intel import CashFlowIntelligence
+from .growth_opportunity import GrowthOpportunityEngine
+from .decision_support import DecisionSupportCenter
+from .enterprise_memory import EnterpriseMemory
+from .autonomous_business import AutonomousBusinessWorkflow
+from .business_ai_center import BusinessAICenter
 from .matcher import ProductMatcher
 from .mission import MissionEngine
 from .multilingual import MultilingualMemory
@@ -240,4 +320,84 @@ __all__ = [
     "SystemHealthDashboard",
     "IntegrationTests",
     "ProductionErrorCenter",
+    "SecurityArchitecture",
+    "IdentityAccessControl",
+    "RolePermissionManager",
+    "SecretsKeyManagement",
+    "PrivacyDataMinimization",
+    "GDPRDataGovernance",
+    "ConsentRetention",
+    "SecurityMonitoring",
+    "ThreatDetection",
+    "SecurityIncidentCenter",
+    "DistributedDataProcessing",
+    "DatabaseScaling",
+    "CachePerformance",
+    "ParallelJobEngine",
+    "QueueScaling",
+    "APIGatewayLoadControl",
+    "ObservabilityMetrics",
+    "ResourceOptimization",
+    "HighAvailability",
+    "DisasterRecovery",
+    "AdvancedReasoningEngine",
+    "AgentMemoryRetrieval",
+    "AgentEvaluation",
+    "AgentSelfCheck",
+    "MultiAgentDebate",
+    "DecisionExplanation",
+    "UncertaintyEngine",
+    "ContinuousLearningPipeline",
+    "ModelQualityMonitor",
+    "AICouncilIntelligence",
+    "ProcurementIntelligence",
+    "SupplierDiscoveryAdvanced",
+    "SupplierNegotiationIntel",
+    "PurchaseForecasting",
+    "LeadTimeIntelligence",
+    "SupplyRiskRadar",
+    "PurchaseOrderIntel",
+    "SupplierScorecards",
+    "SourcingOptimization",
+    "SupplyChainCommandCenter",
+    "CustomerIntelligence",
+    "CustomerSegmentation",
+    "CustomerLifetimeValue",
+    "SalesForecasting",
+    "LeadIntelligence",
+    "ConversionIntelligence",
+    "BasketAnalysis",
+    "RetentionIntelligence",
+    "CustomerServiceIntel",
+    "SalesCommandCenter",
+    "MarketingAttribution",
+    "CampaignIntelligence",
+    "CreativePerformance",
+    "SEOIntelligenceAdvanced",
+    "SocialTrendIntelligence",
+    "ContentOpportunityEngine",
+    "AdBudgetOptimizer",
+    "ROASForecasting",
+    "PromotionOptimization",
+    "MarketingCommandCenter",
+    "CountryOperationsManager",
+    "InternationalTaxIntel",
+    "CrossBorderCompliance",
+    "InternationalPayments",
+    "LocalLogisticsNetwork",
+    "CountrySupplierNetworks",
+    "LocalCompetitorRadar",
+    "MarketLaunchOperations",
+    "InternationalRiskCenter",
+    "GlobalOperationsCommandCenter",
+    "BusinessOperatingSystem",
+    "ExecutiveIntelligence",
+    "StrategicPlanningAI",
+    "KPIIntelligence",
+    "CashFlowIntelligence",
+    "GrowthOpportunityEngine",
+    "DecisionSupportCenter",
+    "EnterpriseMemory",
+    "AutonomousBusinessWorkflow",
+    "BusinessAICenter",
 ]

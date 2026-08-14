@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v100
+# Buzzard Intelligence v1–v120
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -97,6 +97,26 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v98 | `global_logistics.py` | `buzzard_v98.json` |
 | v99 | `local_marketplace.py` | `buzzard_v99.json` |
 | v100 | `ai_center.py` | `buzzard_v100.json` |
+| v101 | `error_handling.py` | `buzzard_v101.json` |
+| v102 | `input_validation.py` | `buzzard_v102.json` |
+| v103 | `schema_validation.py` | `buzzard_v103.json` |
+| v104 | `api_retry.py` | `buzzard_v104.json` |
+| v105 | `rate_limit.py` | `buzzard_v105.json` |
+| v106 | `circuit_breaker.py` | `buzzard_v106.json` |
+| v107 | `credential_validation.py` | `buzzard_v107.json` |
+| v108 | `data_integrity.py` | `buzzard_v108.json` |
+| v109 | `conflict_resolution.py` | `buzzard_v109.json` |
+| v110 | `source_freshness.py` | `buzzard_v110.json` |
+| v111 | `data_provenance.py` | `buzzard_v111.json` |
+| v112 | `audit_integrity.py` | `buzzard_v112.json` |
+| v113 | `agent_health.py` | `buzzard_v113.json` |
+| v114 | `mission_recovery.py` | `buzzard_v114.json` |
+| v115 | `queue_recovery.py` | `buzzard_v115.json` |
+| v116 | `approval_guardrails.py` | `buzzard_v116.json` |
+| v117 | `backup_restore.py` | `buzzard_v117.json` |
+| v118 | `system_health.py` | `buzzard_v118.json` |
+| v119 | `integration_tests.py` | `buzzard_v119.json` |
+| v120 | `error_center.py` | `buzzard_v120.json` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -254,6 +274,48 @@ python main.py aicenter-demo
 python main.py aicenter-report
 python main.py init
 ```
+
+## v101–v120 Error Resilience Bundle — neu
+
+20 JSON-Module für Production Hardening: Fehlerbehandlung, Validierung, Retry/Backoff, Recovery und Readiness.
+
+| Version | Modul | CLI-Präfix | Zweck |
+|---------|-------|------------|-------|
+| v101 | `error_handling.py` | `uerr-*` | Unified Error Handling |
+| v102 | `input_validation.py` | `inval-*` | Input Validation |
+| v103 | `schema_validation.py` | `svalid-*` | Schema Validation |
+| v104 | `api_retry.py` | `retry-*` | API Retry & Backoff |
+| v105 | `rate_limit.py` | `ratelimit-*` | Rate Limit Manager |
+| v106 | `circuit_breaker.py` | `cbreak-*` | Timeout & Circuit Breaker |
+| v107 | `credential_validation.py` | `credval-*` | Credential & Secret Validation |
+| v108 | `data_integrity.py` | `dinteg-*` | Data Integrity Checks |
+| v109 | `conflict_resolution.py` | `conflict-*` | Duplicate & Conflict Resolution |
+| v110 | `source_freshness.py` | `fresh-*` | Source Freshness Monitor |
+| v111 | `data_provenance.py` | `proven-*` | Data Provenance & Lineage |
+| v112 | `audit_integrity.py` | `audit-*` | Audit Log Integrity |
+| v113 | `agent_health.py` | `aghealth-*` | Agent Health Monitor |
+| v114 | `mission_recovery.py` | `mrecover-*` | Mission Recovery Manager |
+| v115 | `queue_recovery.py` | `qrecover-*` | Queue & Job Recovery |
+| v116 | `approval_guardrails.py` | `guard-*` | Human Approval Guardrails |
+| v117 | `backup_restore.py` | `backup-*` | Backup & Restore Manager |
+| v118 | `system_health.py` | `syshealth-*` | System Health Dashboard |
+| v119 | `integration_tests.py` | `e2etest-*` | End-to-End Integration Tests |
+| v120 | `error_center.py` | `errctr-*` | Production Readiness & Error Center |
+
+### CLI (Beispiel)
+
+```bash
+cd intelligence
+python main.py init-v101
+python main.py uerr-demo
+python main.py uerr-report
+python main.py init-v120
+python main.py errctr-demo
+python main.py errctr-report
+python main.py init
+```
+
+Checkliste: `intelligence/error_resilience/MASTER_ERROR_CHECKLIST.md`
 
 ## v33 Competitor Intelligence — neu
 
@@ -912,7 +974,29 @@ intelligence/
 │   ├── global_customs.py
 │   ├── global_logistics.py
 │   ├── local_marketplace.py
-│   └── ai_center.py
+│   ├── ai_center.py
+│   ├── error_handling.py
+│   ├── input_validation.py
+│   ├── schema_validation.py
+│   ├── api_retry.py
+│   ├── rate_limit.py
+│   ├── circuit_breaker.py
+│   ├── credential_validation.py
+│   ├── data_integrity.py
+│   ├── conflict_resolution.py
+│   ├── source_freshness.py
+│   ├── data_provenance.py
+│   ├── audit_integrity.py
+│   ├── agent_health.py
+│   ├── mission_recovery.py
+│   ├── queue_recovery.py
+│   ├── approval_guardrails.py
+│   ├── backup_restore.py
+│   ├── system_health.py
+│   ├── integration_tests.py
+│   └── error_center.py
+├── error_resilience/
+│   └── MASTER_ERROR_CHECKLIST.md
 ├── live_connectors/
 │   ├── amazon_creators.py
 │   ├── ebay.py
@@ -1020,5 +1104,26 @@ intelligence/
     ├── Buzzard_Intelligence_v98_Global_Logistics_Intelligence.zip
     ├── Buzzard_Intelligence_v99_Local_Marketplace_Intelligence.zip
     ├── Buzzard_Intelligence_v100_Buzzard_AI_Intelligence_Center.zip
+    ├── Buzzard_Intelligence_v101_v120_Error_Resilience_COMPLETE.zip
+    ├── Buzzard_Intelligence_v101_Unified_Error_Handling.zip
+    ├── Buzzard_Intelligence_v102_Input_Validation.zip
+    ├── Buzzard_Intelligence_v103_Schema_Validation.zip
+    ├── Buzzard_Intelligence_v104_API_Retry_Backoff.zip
+    ├── Buzzard_Intelligence_v105_Rate_Limit_Manager.zip
+    ├── Buzzard_Intelligence_v106_Timeout_Circuit_Breaker.zip
+    ├── Buzzard_Intelligence_v107_Credential_Secret_Validation.zip
+    ├── Buzzard_Intelligence_v108_Data_Integrity_Checks.zip
+    ├── Buzzard_Intelligence_v109_Duplicate_Conflict_Resolution.zip
+    ├── Buzzard_Intelligence_v110_Source_Freshness_Monitor.zip
+    ├── Buzzard_Intelligence_v111_Data_Provenance_Lineage.zip
+    ├── Buzzard_Intelligence_v112_Audit_Log_Integrity.zip
+    ├── Buzzard_Intelligence_v113_Agent_Health_Monitor.zip
+    ├── Buzzard_Intelligence_v114_Mission_Recovery_Manager.zip
+    ├── Buzzard_Intelligence_v115_Queue_Job_Recovery.zip
+    ├── Buzzard_Intelligence_v116_Human_Approval_Guardrails.zip
+    ├── Buzzard_Intelligence_v117_Backup_Restore_Manager.zip
+    ├── Buzzard_Intelligence_v118_System_Health_Dashboard.zip
+    ├── Buzzard_Intelligence_v119_End_to_End_Integration_Tests.zip
+    ├── Buzzard_Intelligence_v120_Production_Readiness_Error_Center.zip
     └── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
 ```

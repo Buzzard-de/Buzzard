@@ -106,6 +106,26 @@ from buzzard_intelligence import (
     GlobalLogisticsIntel,
     LocalMarketplaceIntel,
     AIIntelligenceCenter,
+    UnifiedErrorHandling,
+    InputValidation,
+    SchemaValidation,
+    APIRetryBackoff,
+    RateLimitManager,
+    CircuitBreaker,
+    CredentialValidation,
+    DataIntegrityChecks,
+    ConflictResolution,
+    SourceFreshnessMonitor,
+    DataProvenance,
+    AuditLogIntegrity,
+    AgentHealthMonitor,
+    MissionRecoveryManager,
+    QueueJobRecovery,
+    HumanApprovalGuardrails,
+    BackupRestoreManager,
+    SystemHealthDashboard,
+    IntegrationTests,
+    ProductionErrorCenter,
 )
 from live_connectors import (
     AmazonCreatorsClient,
@@ -124,7 +144,7 @@ def load_live_env():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v100 + Live Data Connectors"
+        description="Buzzard Intelligence v1–v120 + Live Data Connectors"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -225,6 +245,26 @@ def main():
     sub.add_parser("init-v98", help="Create v98 global logistics intelligence store")
     sub.add_parser("init-v99", help="Create v99 local marketplace intelligence store")
     sub.add_parser("init-v100", help="Create v100 Buzzard AI intelligence center store")
+    sub.add_parser("init-v101", help="Create v101 unified error handling store")
+    sub.add_parser("init-v102", help="Create v102 input validation store")
+    sub.add_parser("init-v103", help="Create v103 schema validation store")
+    sub.add_parser("init-v104", help="Create v104 API retry & backoff store")
+    sub.add_parser("init-v105", help="Create v105 rate limit manager store")
+    sub.add_parser("init-v106", help="Create v106 timeout & circuit breaker store")
+    sub.add_parser("init-v107", help="Create v107 credential & secret validation store")
+    sub.add_parser("init-v108", help="Create v108 data integrity checks store")
+    sub.add_parser("init-v109", help="Create v109 duplicate & conflict resolution store")
+    sub.add_parser("init-v110", help="Create v110 source freshness monitor store")
+    sub.add_parser("init-v111", help="Create v111 data provenance & lineage store")
+    sub.add_parser("init-v112", help="Create v112 audit log integrity store")
+    sub.add_parser("init-v113", help="Create v113 agent health monitor store")
+    sub.add_parser("init-v114", help="Create v114 mission recovery manager store")
+    sub.add_parser("init-v115", help="Create v115 queue & job recovery store")
+    sub.add_parser("init-v116", help="Create v116 human approval guardrails store")
+    sub.add_parser("init-v117", help="Create v117 backup & restore manager store")
+    sub.add_parser("init-v118", help="Create v118 system health dashboard store")
+    sub.add_parser("init-v119", help="Create v119 end-to-end integration tests store")
+    sub.add_parser("init-v120", help="Create v120 production readiness & error center store")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -834,6 +874,46 @@ def main():
     sub.add_parser("lmarket-report", help="v99 report")
     sub.add_parser("aicenter-demo", help="v100 add demo data")
     sub.add_parser("aicenter-report", help="v100 report")
+    sub.add_parser("uerr-demo", help="v101 add demo data")
+    sub.add_parser("uerr-report", help="v101 report")
+    sub.add_parser("inval-demo", help="v102 add demo data")
+    sub.add_parser("inval-report", help="v102 report")
+    sub.add_parser("svalid-demo", help="v103 add demo data")
+    sub.add_parser("svalid-report", help="v103 report")
+    sub.add_parser("retry-demo", help="v104 add demo data")
+    sub.add_parser("retry-report", help="v104 report")
+    sub.add_parser("ratelimit-demo", help="v105 add demo data")
+    sub.add_parser("ratelimit-report", help="v105 report")
+    sub.add_parser("cbreak-demo", help="v106 add demo data")
+    sub.add_parser("cbreak-report", help="v106 report")
+    sub.add_parser("credval-demo", help="v107 add demo data")
+    sub.add_parser("credval-report", help="v107 report")
+    sub.add_parser("dinteg-demo", help="v108 add demo data")
+    sub.add_parser("dinteg-report", help="v108 report")
+    sub.add_parser("conflict-demo", help="v109 add demo data")
+    sub.add_parser("conflict-report", help="v109 report")
+    sub.add_parser("fresh-demo", help="v110 add demo data")
+    sub.add_parser("fresh-report", help="v110 report")
+    sub.add_parser("proven-demo", help="v111 add demo data")
+    sub.add_parser("proven-report", help="v111 report")
+    sub.add_parser("audit-demo", help="v112 add demo data")
+    sub.add_parser("audit-report", help="v112 report")
+    sub.add_parser("aghealth-demo", help="v113 add demo data")
+    sub.add_parser("aghealth-report", help="v113 report")
+    sub.add_parser("mrecover-demo", help="v114 add demo data")
+    sub.add_parser("mrecover-report", help="v114 report")
+    sub.add_parser("qrecover-demo", help="v115 add demo data")
+    sub.add_parser("qrecover-report", help="v115 report")
+    sub.add_parser("guard-demo", help="v116 add demo data")
+    sub.add_parser("guard-report", help="v116 report")
+    sub.add_parser("backup-demo", help="v117 add demo data")
+    sub.add_parser("backup-report", help="v117 report")
+    sub.add_parser("syshealth-demo", help="v118 add demo data")
+    sub.add_parser("syshealth-report", help="v118 report")
+    sub.add_parser("e2etest-demo", help="v119 add demo data")
+    sub.add_parser("e2etest-report", help="v119 report")
+    sub.add_parser("errctr-demo", help="v120 add demo data")
+    sub.add_parser("errctr-report", help="v120 report")
 
     sub.add_parser("live-health", help="Live connector credential health check")
     live_ebay = sub.add_parser("live-ebay", help="Live eBay Browse API search")
@@ -1003,6 +1083,26 @@ def main():
     v98 = GlobalLogisticsIntel()
     v99 = LocalMarketplaceIntel()
     v100 = AIIntelligenceCenter()
+    v101 = UnifiedErrorHandling()
+    v102 = InputValidation()
+    v103 = SchemaValidation()
+    v104 = APIRetryBackoff()
+    v105 = RateLimitManager()
+    v106 = CircuitBreaker()
+    v107 = CredentialValidation()
+    v108 = DataIntegrityChecks()
+    v109 = ConflictResolution()
+    v110 = SourceFreshnessMonitor()
+    v111 = DataProvenance()
+    v112 = AuditLogIntegrity()
+    v113 = AgentHealthMonitor()
+    v114 = MissionRecoveryManager()
+    v115 = QueueJobRecovery()
+    v116 = HumanApprovalGuardrails()
+    v117 = BackupRestoreManager()
+    v118 = SystemHealthDashboard()
+    v119 = IntegrationTests()
+    v120 = ProductionErrorCenter()
 
     if args.cmd == "init":
         v1.init()
@@ -1101,6 +1201,26 @@ def main():
         v98.init()
         v99.init()
         v100.init()
+        v101.init()
+        v102.init()
+        v103.init()
+        v104.init()
+        v105.init()
+        v106.init()
+        v107.init()
+        v108.init()
+        v109.init()
+        v110.init()
+        v111.init()
+        v112.init()
+        v113.init()
+        v114.init()
+        v115.init()
+        v116.init()
+        v117.init()
+        v118.init()
+        v119.init()
+        v120.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -1197,6 +1317,26 @@ def main():
         print(f"v98 global logistics intelligence store ready at {Path(v98.path).resolve()}")
         print(f"v99 local marketplace intelligence store ready at {Path(v99.path).resolve()}")
         print(f"v100 Buzzard AI intelligence center store ready at {Path(v100.path).resolve()}")
+        print(f"v101 unified error handling store ready at {Path(v101.path).resolve()}")
+        print(f"v102 input validation store ready at {Path(v102.path).resolve()}")
+        print(f"v103 schema validation store ready at {Path(v103.path).resolve()}")
+        print(f"v104 API retry & backoff store ready at {Path(v104.path).resolve()}")
+        print(f"v105 rate limit manager store ready at {Path(v105.path).resolve()}")
+        print(f"v106 timeout & circuit breaker store ready at {Path(v106.path).resolve()}")
+        print(f"v107 credential & secret validation store ready at {Path(v107.path).resolve()}")
+        print(f"v108 data integrity checks store ready at {Path(v108.path).resolve()}")
+        print(f"v109 duplicate & conflict resolution store ready at {Path(v109.path).resolve()}")
+        print(f"v110 source freshness monitor store ready at {Path(v110.path).resolve()}")
+        print(f"v111 data provenance & lineage store ready at {Path(v111.path).resolve()}")
+        print(f"v112 audit log integrity store ready at {Path(v112.path).resolve()}")
+        print(f"v113 agent health monitor store ready at {Path(v113.path).resolve()}")
+        print(f"v114 mission recovery manager store ready at {Path(v114.path).resolve()}")
+        print(f"v115 queue & job recovery store ready at {Path(v115.path).resolve()}")
+        print(f"v116 human approval guardrails store ready at {Path(v116.path).resolve()}")
+        print(f"v117 backup & restore manager store ready at {Path(v117.path).resolve()}")
+        print(f"v118 system health dashboard store ready at {Path(v118.path).resolve()}")
+        print(f"v119 end-to-end integration tests store ready at {Path(v119.path).resolve()}")
+        print(f"v120 production readiness & error center store ready at {Path(v120.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -1485,6 +1625,66 @@ def main():
     elif args.cmd == "init-v100":
         v100.init()
         print(f"v100 Buzzard AI intelligence center store ready at {Path(v100.path).resolve()}")
+    elif args.cmd == "init-v101":
+        v101.init()
+        print(f"v101 unified error handling store ready at {Path(v101.path).resolve()}")
+    elif args.cmd == "init-v102":
+        v102.init()
+        print(f"v102 input validation store ready at {Path(v102.path).resolve()}")
+    elif args.cmd == "init-v103":
+        v103.init()
+        print(f"v103 schema validation store ready at {Path(v103.path).resolve()}")
+    elif args.cmd == "init-v104":
+        v104.init()
+        print(f"v104 API retry & backoff store ready at {Path(v104.path).resolve()}")
+    elif args.cmd == "init-v105":
+        v105.init()
+        print(f"v105 rate limit manager store ready at {Path(v105.path).resolve()}")
+    elif args.cmd == "init-v106":
+        v106.init()
+        print(f"v106 timeout & circuit breaker store ready at {Path(v106.path).resolve()}")
+    elif args.cmd == "init-v107":
+        v107.init()
+        print(f"v107 credential & secret validation store ready at {Path(v107.path).resolve()}")
+    elif args.cmd == "init-v108":
+        v108.init()
+        print(f"v108 data integrity checks store ready at {Path(v108.path).resolve()}")
+    elif args.cmd == "init-v109":
+        v109.init()
+        print(f"v109 duplicate & conflict resolution store ready at {Path(v109.path).resolve()}")
+    elif args.cmd == "init-v110":
+        v110.init()
+        print(f"v110 source freshness monitor store ready at {Path(v110.path).resolve()}")
+    elif args.cmd == "init-v111":
+        v111.init()
+        print(f"v111 data provenance & lineage store ready at {Path(v111.path).resolve()}")
+    elif args.cmd == "init-v112":
+        v112.init()
+        print(f"v112 audit log integrity store ready at {Path(v112.path).resolve()}")
+    elif args.cmd == "init-v113":
+        v113.init()
+        print(f"v113 agent health monitor store ready at {Path(v113.path).resolve()}")
+    elif args.cmd == "init-v114":
+        v114.init()
+        print(f"v114 mission recovery manager store ready at {Path(v114.path).resolve()}")
+    elif args.cmd == "init-v115":
+        v115.init()
+        print(f"v115 queue & job recovery store ready at {Path(v115.path).resolve()}")
+    elif args.cmd == "init-v116":
+        v116.init()
+        print(f"v116 human approval guardrails store ready at {Path(v116.path).resolve()}")
+    elif args.cmd == "init-v117":
+        v117.init()
+        print(f"v117 backup & restore manager store ready at {Path(v117.path).resolve()}")
+    elif args.cmd == "init-v118":
+        v118.init()
+        print(f"v118 system health dashboard store ready at {Path(v118.path).resolve()}")
+    elif args.cmd == "init-v119":
+        v119.init()
+        print(f"v119 end-to-end integration tests store ready at {Path(v119.path).resolve()}")
+    elif args.cmd == "init-v120":
+        v120.init()
+        print(f"v120 production readiness & error center store ready at {Path(v120.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -2607,6 +2807,146 @@ def main():
     elif args.cmd == "aicenter-report":
         v100.init()
         print(v100.report())
+    elif args.cmd == "uerr-demo":
+        v101.init()
+        v101.demo()
+        print("Demo-Unified-Error-Handling gespeichert.")
+    elif args.cmd == "uerr-report":
+        v101.init()
+        print(v101.report())
+    elif args.cmd == "inval-demo":
+        v102.init()
+        v102.demo()
+        print("Demo-Input-Validierung gespeichert.")
+    elif args.cmd == "inval-report":
+        v102.init()
+        print(v102.report())
+    elif args.cmd == "svalid-demo":
+        v103.init()
+        v103.demo()
+        print("Demo-Schema-Validierung gespeichert.")
+    elif args.cmd == "svalid-report":
+        v103.init()
+        print(v103.report())
+    elif args.cmd == "retry-demo":
+        v104.init()
+        v104.demo()
+        print("Demo-API-Retry-Backoff gespeichert.")
+    elif args.cmd == "retry-report":
+        v104.init()
+        print(v104.report())
+    elif args.cmd == "ratelimit-demo":
+        v105.init()
+        v105.demo()
+        print("Demo-Rate-Limit-Manager gespeichert.")
+    elif args.cmd == "ratelimit-report":
+        v105.init()
+        print(v105.report())
+    elif args.cmd == "cbreak-demo":
+        v106.init()
+        v106.demo()
+        print("Demo-Circuit-Breaker gespeichert.")
+    elif args.cmd == "cbreak-report":
+        v106.init()
+        print(v106.report())
+    elif args.cmd == "credval-demo":
+        v107.init()
+        v107.demo()
+        print("Demo-Credential-Validierung gespeichert.")
+    elif args.cmd == "credval-report":
+        v107.init()
+        print(v107.report())
+    elif args.cmd == "dinteg-demo":
+        v108.init()
+        v108.demo()
+        print("Demo-Datenintegritäts-Checks gespeichert.")
+    elif args.cmd == "dinteg-report":
+        v108.init()
+        print(v108.report())
+    elif args.cmd == "conflict-demo":
+        v109.init()
+        v109.demo()
+        print("Demo-Konflikt-Auflösung gespeichert.")
+    elif args.cmd == "conflict-report":
+        v109.init()
+        print(v109.report())
+    elif args.cmd == "fresh-demo":
+        v110.init()
+        v110.demo()
+        print("Demo-Quellen-Aktualität gespeichert.")
+    elif args.cmd == "fresh-report":
+        v110.init()
+        print(v110.report())
+    elif args.cmd == "proven-demo":
+        v111.init()
+        v111.demo()
+        print("Demo-Daten-Herkunft gespeichert.")
+    elif args.cmd == "proven-report":
+        v111.init()
+        print(v111.report())
+    elif args.cmd == "audit-demo":
+        v112.init()
+        v112.demo()
+        print("Demo-Audit-Log-Integrität gespeichert.")
+    elif args.cmd == "audit-report":
+        v112.init()
+        print(v112.report())
+    elif args.cmd == "aghealth-demo":
+        v113.init()
+        v113.demo()
+        print("Demo-Agent-Health-Monitor gespeichert.")
+    elif args.cmd == "aghealth-report":
+        v113.init()
+        print(v113.report())
+    elif args.cmd == "mrecover-demo":
+        v114.init()
+        v114.demo()
+        print("Demo-Mission-Recovery gespeichert.")
+    elif args.cmd == "mrecover-report":
+        v114.init()
+        print(v114.report())
+    elif args.cmd == "qrecover-demo":
+        v115.init()
+        v115.demo()
+        print("Demo-Queue-Recovery gespeichert.")
+    elif args.cmd == "qrecover-report":
+        v115.init()
+        print(v115.report())
+    elif args.cmd == "guard-demo":
+        v116.init()
+        v116.demo()
+        print("Demo-Freigabe-Guardrails gespeichert.")
+    elif args.cmd == "guard-report":
+        v116.init()
+        print(v116.report())
+    elif args.cmd == "backup-demo":
+        v117.init()
+        v117.demo()
+        print("Demo-Backup-Restore gespeichert.")
+    elif args.cmd == "backup-report":
+        v117.init()
+        print(v117.report())
+    elif args.cmd == "syshealth-demo":
+        v118.init()
+        v118.demo()
+        print("Demo-System-Health-Dashboard gespeichert.")
+    elif args.cmd == "syshealth-report":
+        v118.init()
+        print(v118.report())
+    elif args.cmd == "e2etest-demo":
+        v119.init()
+        v119.demo()
+        print("Demo-Integrationstests gespeichert.")
+    elif args.cmd == "e2etest-report":
+        v119.init()
+        print(v119.report())
+    elif args.cmd == "errctr-demo":
+        v120.init()
+        v120.demo()
+        print("Demo-Error-Center gespeichert.")
+    elif args.cmd == "errctr-report":
+        v120.init()
+        print(v120.report())
     elif args.cmd == "live-health":
         load_live_env()
         print(live_health_report())

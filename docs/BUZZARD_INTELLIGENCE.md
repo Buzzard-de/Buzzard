@@ -256,6 +256,31 @@ Definition of Done: integriert, getestet, autorisierte Live-Quellen, sicher, beo
 
 Archive: `intelligence/archive/Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip`
 
+## Master Integration Complete Package — neu
+
+Gemeinsame Systemhülle: zentrale Konfiguration, SQLite-Gates, Audit-Event-Log, Preflight und Go-Live-Prüfung unter `intelligence/master_integration/`.
+
+| CLI | Zweck |
+|-----|-------|
+| `mint-init` | Master-Integration initialisieren |
+| `mint-health` | DB, Config und Gate-Health |
+| `mint-test` | Automatischer Preflight |
+| `mint-status` | Gate-Status-Übersicht |
+| `mint-go-live` | Go-Live-Check (PASS/APPROVED erforderlich) |
+| `mint-dod` | Definition of Done |
+
+```bash
+cd intelligence
+python main.py mint-init
+python main.py mint-health
+python main.py mint-test
+python main.py mint-go-live
+```
+
+**Abgrenzung:** v40 `master-*` = JSON Master Core · `mint-*` = System-Integrationshülle · `prod-*` = Dokumentations-Checklisten
+
+Archive: `intelligence/archive/Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip`
+
 ## v71–v100 Bundle — neu
 
 30 JSON-Module für Research-Automatisierung, Qualität, Multi-Agent, Einkauf/Preis, Sortiment, Länder-Märkte und AI Center.
@@ -1077,6 +1102,14 @@ intelligence/
 │   ├── status.py
 │   ├── 01_architecture_integration/ … 13_go_live/
 │   └── README.md
+├── master_integration/
+│   ├── MANIFEST.json
+│   ├── README.md
+│   ├── core.py
+│   ├── status.py
+│   ├── config/system.json
+│   ├── docs/DEFINITION_OF_DONE.md
+│   └── tests/test_master.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -1198,5 +1231,6 @@ intelligence/
     ├── Buzzard_Intelligence_v121_v200_ALL_REMAINING_COMPLETE.zip
     ├── Buzzard_Intelligence_v121 … v200 (80 einzelne ZIPs)
     ├── Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip
+    ├── Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip
     └── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
 ```

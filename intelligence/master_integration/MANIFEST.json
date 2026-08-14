@@ -1,0 +1,6 @@
+{
+  "name": "Buzzard Intelligence Master Integration",
+  "covers": "v21-v200 integration and final production gates",
+  "status": "production-candidate scaffold",
+  "next_step": "connect authorized live connectors, run integration tests, clear gates, deploy"
+}

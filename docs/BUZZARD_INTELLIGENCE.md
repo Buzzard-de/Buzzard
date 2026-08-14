@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v6
+# Buzzard Intelligence v1–v7
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -12,6 +12,7 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v4 | `scheduler.py` | `buzzard_intelligence_v4.db` |
 | v5 | `api_layer.py` | `buzzard_intelligence_v5.db` |
 | v6 | `analysis.py` | liest v2 Memory |
+| v7 | `trends.py` | liest v2 Memory |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -21,50 +22,52 @@ Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 cd intelligence
 pip install -r requirements.txt
 python main.py init
-python main.py seed-de
+python main.py demo-trends
+python main.py trends
+```
+
+## v7 Trend & Opportunity — neu
+
+Zeitreihen-Signale aus v2 Memory-Beobachtungen.
+
+| Signal | Beschreibung |
+|--------|--------------|
+| STEIGEND / FALLEND / STABIL | Popularitätsänderung über Zeit |
+| PreisΔ | Preisänderung über Zeitreihe |
+| Momentum | Beobachtungsfrequenz (14-Tage-Fenster) |
+| Opportunity-Score | Erklärbarer Score (≠ Kaufempfehlung) |
+| Datenlücken | Hauptkategorien ohne Beobachtungen |
+
+### Wichtig
+
+- Opportunity-Score ist **keine** Entscheidung oder Verkaufsprognose
+- Bei < 2 Datenpunkten: „DATEN UNZUREICHEND“
+- Score erst ab 3 Beobachtungen
+
+```bash
+python main.py demo-trends   # Zeitreihen-Demo (Motoröl steigend, Schlauch fallend)
+python main.py trends        # Trend- & Opportunity-Bericht
+```
+
+## v6 Analysis
+
+Markt-/Kategorie-Analyse, Events, Länder-Sichtbarkeit.
+
+```bash
 python main.py demo
 python main.py analyze
 ```
 
-## v6 Analysis — neu
+## v5–v1
 
-Markt- und Kategorie-Analyse aus v2 Memory-Daten.
-
-| Signal | Quelle |
-|--------|--------|
-| Häufig beobachtete Produkte | Beobachtungsdichte (≠ Verkäufe) |
-| Popularitätssignale | `observations.popularity` |
-| Preisänderungen | v2 `events` (`PRICE_CHANGE`) |
-| Popularität up/down | `POPULARITY_UP` / `POPULARITY_DOWN` |
-| Neue Entdeckungen | `NEW_DISCOVERY` |
-| Kategorie-Dichte | Hauptkategorien (level 1) |
-| Länder-Sichtbarkeit | Beobachtungen pro Land |
-| Daten-Warnung | bei < 5 Beobachtungen |
-
-### Wichtig
-
-- Keine „Bestseller“-Aussagen ohne verifizierte Verkaufszahlen
-- Keine automatischen Shop-Entscheidungen
-- Bericht dient der menschlichen Auswertung
-
-```bash
-python main.py demo      # DE Demo-Produkte in Automotive
-python main.py analyze   # Vollständiger Analysebericht
-```
-
-## v5 API Layer
-
-Offizielle APIs/Feeds, env-basierte Auth. Siehe v5-Dokumentation.
-
-## v4–v1
-
-Scheduler, Collector, Memory, Database — unverändert nutzbar.
+API Layer, Scheduler, Collector, Memory, Database — parallel nutzbar.
 
 ## Alle CLI-Befehle
 
 | Befehl | Version |
 |--------|---------|
 | `init` | v1 + v2 + v4 + v5 |
+| `demo-trends` / `trends` | v7 |
 | `demo` / `analyze` | v6 |
 | `sources` / `add-api` / `test-apis` | v5 |
 | `seed-tasks-de` / `run` | v4 |
@@ -75,6 +78,7 @@ Scheduler, Collector, Memory, Database — unverändert nutzbar.
 ## Grenzen
 
 - Keine Shop-/Katalog-Änderungen
+- Keine erfundenen Verkaufszahlen
 - SQLite lokal
 
 ## Dateien
@@ -88,7 +92,8 @@ intelligence/
 │   ├── collector.py
 │   ├── scheduler.py
 │   ├── api_layer.py
-│   └── analysis.py
+│   ├── analysis.py
+│   └── trends.py
 └── archive/
-    └── Buzzard_Intelligence_v6_Analysis.zip
+    └── Buzzard_Intelligence_v7_Trend_Opportunity.zip
 ```

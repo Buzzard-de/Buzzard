@@ -224,7 +224,7 @@ def load_live_env():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v200 + Live Data Connectors + Production Completion + Master Integration"
+        description="Buzzard Intelligence v1–v200 + Live Connectors + Production + Master Integration + Final Go-Live"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -1256,6 +1256,13 @@ def main():
     sub.add_parser("mint-status", help="Show master integration gate status")
     sub.add_parser("mint-go-live", help="Run go-live gate check (all gates must be PASS/APPROVED)")
     sub.add_parser("mint-dod", help="Show master integration definition of done")
+
+    sub.add_parser("fint-preflight", help="Run final integration preflight (required checklists)")
+    sub.add_parser("fint-test", help="Run final integration pytest suite")
+    sub.add_parser("fint-go-live", help="Run final go-live check (blocked without real verification)")
+    sub.add_parser("fint-status", help="Show final integration/test/go-live status")
+    sub.add_parser("fint-gate", help="Show final go-live gate document")
+    sub.add_parser("fint-dod", help="Show final definition of done")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4374,6 +4381,41 @@ def main():
         from master_integration.status import read_doc
 
         print(read_doc("DEFINITION_OF_DONE.md"))
+    elif args.cmd == "fint-preflight":
+        from final_integration.status import run_preflight
+
+        code, message = run_preflight()
+        print(message)
+        if code:
+            raise SystemExit(code)
+    elif args.cmd == "fint-test":
+        from final_integration.status import run_tests
+
+        code = run_tests()
+        if code:
+            raise SystemExit(code)
+    elif args.cmd == "fint-go-live":
+        from final_integration.status import run_go_live_check
+
+        code, message = run_go_live_check()
+        print(message)
+        if code:
+            raise SystemExit(code)
+    elif args.cmd == "fint-status":
+        from final_integration.status import integration_status
+
+        code, message = integration_status()
+        print(message)
+        if code:
+            raise SystemExit(code)
+    elif args.cmd == "fint-gate":
+        from final_integration.status import read_doc
+
+        print(read_doc("09_go_live", "GO_LIVE_GATE.md"))
+    elif args.cmd == "fint-dod":
+        from final_integration.status import read_doc
+
+        print(read_doc("FINAL_DEFINITION_OF_DONE.md"))
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

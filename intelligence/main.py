@@ -28,12 +28,13 @@ from buzzard_intelligence import (
     ConnectorHub,
     ProductMatcher,
     PriceIntel,
+    DemandForecast,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v25 (Memory … Product Matching, Price Intelligence)"
+        description="Buzzard Intelligence v1–v26 (Memory … Price Intelligence, Demand Forecasting)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -59,6 +60,7 @@ def main():
     sub.add_parser("init-v23", help="Create v23 connector hub schema only")
     sub.add_parser("init-v24", help="Create v24 product matching schema only")
     sub.add_parser("init-v25", help="Create v25 price intelligence schema only")
+    sub.add_parser("init-v26", help="Create v26 demand forecasting schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -379,6 +381,20 @@ def main():
     sub.add_parser("price-demo", help="v25 add demo price observations")
     sub.add_parser("price-report", help="v25 price intelligence report")
 
+    demand_observation = sub.add_parser(
+        "demand-observation", help="v26 add a demand observation"
+    )
+    demand_observation.add_argument("--product-id", required=True)
+    demand_observation.add_argument("--value", type=float, required=True)
+    demand_observation.add_argument("--period", required=True)
+
+    demand_forecast = sub.add_parser("demand-forecast", help="v26 forecast demand for product")
+    demand_forecast.add_argument("--product-id", required=True)
+    demand_forecast.add_argument("--window", type=int, default=7)
+
+    sub.add_parser("demand-demo", help="v26 add demo demand data")
+    sub.add_parser("demand-report", help="v26 demand forecasting report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -462,6 +478,7 @@ def main():
     v23 = ConnectorHub()
     v24 = ProductMatcher()
     v25 = PriceIntel()
+    v26 = DemandForecast()
 
     if args.cmd == "init":
         v1.init()
@@ -485,6 +502,7 @@ def main():
         v23.init()
         v24.init()
         v25.init()
+        v26.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -506,6 +524,7 @@ def main():
         print(f"v23 connector hub ready at {Path(v23.path).resolve()}")
         print(f"v24 product matching ready at {Path(v24.path).resolve()}")
         print(f"v25 price intelligence ready at {Path(v25.path).resolve()}")
+        print(f"v26 demand forecasting ready at {Path(v26.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -569,6 +588,9 @@ def main():
     elif args.cmd == "init-v25":
         v25.init()
         print(f"v25 price intelligence ready at {Path(v25.path).resolve()}")
+    elif args.cmd == "init-v26":
+        v26.init()
+        print(f"v26 demand forecasting ready at {Path(v26.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1037,6 +1059,19 @@ def main():
     elif args.cmd == "price-report":
         v25.init()
         print(v25.report())
+    elif args.cmd == "demand-observation":
+        v26.init()
+        print(v26.add_observation(args.product_id, args.value, args.period))
+    elif args.cmd == "demand-forecast":
+        v26.init()
+        print(v26.forecast(args.product_id, args.window))
+    elif args.cmd == "demand-demo":
+        v26.init()
+        v26.demo()
+        print("Demo-Nachfragedaten gespeichert.")
+    elif args.cmd == "demand-report":
+        v26.init()
+        print(v26.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

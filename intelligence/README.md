@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v25
+# Buzzard Intelligence v1–v26
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -22,6 +22,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v23 | `connectors.py` | Connector Hub (API/Feed-Verbindungen, Capabilities, Health) |
 | v24 | `matcher.py` | Product Matching (kanonische Produkte, Listings, Score) |
 | v25 | `price.py` | Price Intelligence (Preisbeobachtungen, Signale, Statistik) |
+| v26 | `forecast.py` | Demand Forecasting (Nachfrage-Zeitreihen, Prognose, Trend) |
 
 ## Setup
 
@@ -33,6 +34,24 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v26 Demand Forecasting
+
+- Tägliche/wöchentliche Nachfrage-Beobachtungen speichern
+- Trend, gleitender Durchschnitt und Richtung (RISING/FALLING/STABLE)
+- Einfache Forward-Prognose mit datenbasierter Konfidenz
+- Bei weniger als 3 Beobachtungen: explizit „Daten unzureichend“
+- Keine Verkaufsgarantie; Saison/Kampagnen/Out-of-Stock separat modellieren
+
+```bash
+python main.py init-v26
+python main.py demand-demo
+python main.py demand-report
+python main.py demand-observation --product-id "EAN-123" --value 120 --period "2026-08-01"
+python main.py demand-forecast --product-id "EAN-123" --window 7
+```
+
+Archive: `archive/Buzzard_Intelligence_v26_Demand_Forecasting.zip`
 
 ## v25 Price Intelligence
 

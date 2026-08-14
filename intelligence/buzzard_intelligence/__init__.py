@@ -6,6 +6,7 @@ from .connectors import ConnectorHub
 from .council import Council
 from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
+from .forecast import DemandForecast
 from .gateway import AIGateway
 from .memory import MemoryEngine
 from .market import MarketEngine
@@ -28,6 +29,7 @@ __all__ = [
     "Analyzer",
     "APILayer",
     "CategoryDiscovery",
+    "DemandForecast",
     "Collector",
     "CompetitorIntel",
     "ConnectorHub",

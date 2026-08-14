@@ -46,6 +46,7 @@ intelligence/buzzard_web_research_v22.db
 intelligence/buzzard_connector_hub_v23.db
 intelligence/buzzard_product_matching_v24.db
 intelligence/buzzard_price_v25.db
+intelligence/buzzard_demand_v26.db
 intelligence/buzzard_memory_snapshot.json
 
 # Archives

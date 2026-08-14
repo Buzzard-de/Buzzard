@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v25
+# Buzzard Intelligence v1–v26
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -22,8 +22,31 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v23 | `connectors.py` | `buzzard_connector_hub_v23.db` |
 | v24 | `matcher.py` | `buzzard_product_matching_v24.db` |
 | v25 | `price.py` | `buzzard_price_v25.db` |
+| v26 | `forecast.py` | `buzzard_demand_v26.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v26 Demand Forecasting — neu
+
+Nachfrage-Prognose aus Zeitreihen-Signalen — **Entscheidungshilfe, keine Verkaufsgarantie**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Beobachtungen | Produkt-ID, Periode, Nachfragewert |
+| Prognose | Trend, Richtung (RISING/FALLING/STABLE), Forecast-Wert |
+| Konfidenz | Datenmenge-basiert, max. 0,95 |
+| Regel | Mindestens 3 Beobachtungen; Saison/Kampagnen separat modellieren |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v26
+python main.py demand-demo
+python main.py demand-report
+python main.py demand-observation --product-id "EAN-123" --value 120 --period "2026-08-01"
+python main.py demand-forecast --product-id "EAN-123" --window 7
+```
 
 ## v25 Price Intelligence — neu
 
@@ -416,7 +439,8 @@ intelligence/
 │   ├── research.py
 │   ├── connectors.py
 │   ├── matcher.py
-│   └── price.py
+│   ├── price.py
+│   └── forecast.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -435,5 +459,6 @@ intelligence/
     ├── Buzzard_Intelligence_v22_Web_Research.zip
     ├── Buzzard_Intelligence_v23_Connector_Hub.zip
     ├── Buzzard_Intelligence_v24_Product_Matching.zip
-    └── Buzzard_Intelligence_v25_Price_Intelligence.zip
+    ├── Buzzard_Intelligence_v25_Price_Intelligence.zip
+    └── Buzzard_Intelligence_v26_Demand_Forecasting.zip
 ```

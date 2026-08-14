@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v29
+# Buzzard Intelligence v1–v30
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -26,8 +26,32 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v27 | `supplier_match.py` | `buzzard_supplier_match_v27.db` |
 | v28 | `selection.py` | `buzzard_product_selection_v28.db` |
 | v29 | `verify.py` | `buzzard_official_verification_v29.db` |
+| v30 | `mission.py` | `buzzard_mission_v30.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v30 Autonomous Mission — neu
+
+Mission-Orchestrator für v20–v29 — **Recherche autonom, Handelsentscheidungen mit Menschen-Freigabe**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Mission | Ziel → 12 Experten-Aufgaben mit Priorität und Abhängigkeiten |
+| Agenten | Market, Category, Competitor, Supplier, Matching, Price, Demand, Profit, Trust, Risk, Verification, Council |
+| Status | PLANNED → RUNNING → WAITING_HUMAN → APPROVED/REJECTED |
+| Regel | Kein autonomer Einkauf/Zahlung/rechtliche Freigabe |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v30
+python main.py mission-demo
+python main.py mission-board
+python main.py mission-create --title "Neue Automotive-Produktchancen in Deutschland recherchieren"
+python main.py mission-result --task-id 1 --agent "Market Intelligence" --result "Nachfrage-Signal positiv" --confidence 0.85
+python main.py mission-approve --mission-id 1 --decision APPROVED --note "Prüfung abgeschlossen."
+```
 
 ## v29 Official Verification — neu
 
@@ -512,7 +536,8 @@ intelligence/
 │   ├── forecast.py
 │   ├── supplier_match.py
 │   ├── selection.py
-│   └── verify.py
+│   ├── verify.py
+│   └── mission.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -535,5 +560,6 @@ intelligence/
     ├── Buzzard_Intelligence_v26_Demand_Forecasting.zip
     ├── Buzzard_Intelligence_v27_Supplier_Matching.zip
     ├── Buzzard_Intelligence_v28_Product_Selection.zip
-    └── Buzzard_Intelligence_v29_Official_Verification.zip
+    ├── Buzzard_Intelligence_v29_Official_Verification.zip
+    └── Buzzard_Intelligence_v30_Autonomous_Mission.zip
 ```

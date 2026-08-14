@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v29
+# Buzzard Intelligence v1–v30
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -26,6 +26,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v27 | `supplier_match.py` | Supplier Matching (Lieferanten-Ranking, Recherche-Priorität) |
 | v28 | `selection.py` | Product Selection (PRIORITY/REVIEW/HOLD/REJECT) |
 | v29 | `verify.py` | Official Verification (Claims, Quellen, Status) |
+| v30 | `mission.py` | Autonomous Mission (12 Agenten, Menschen-Freigabe) |
 
 ## Setup
 
@@ -37,6 +38,26 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v30 Autonomous Mission
+
+- Oberziel → 12 Experten-Aufgaben (Market … Council Manager)
+- Priorität, Abhängigkeiten, Ergebnisse, Belege, Audit-Log
+- Status: PLANNED → RUNNING → WAITING_HUMAN → APPROVED/REJECTED
+- Kein autonomer Einkauf, Zahlung oder rechtliche Freigabe
+
+```bash
+python main.py init-v30
+python main.py mission-demo
+python main.py mission-board
+python main.py mission-create --title "Neue Automotive-Produktchancen in Deutschland recherchieren"
+python main.py mission-result --task-id 1 --agent "Market Intelligence" --result "Nachfrage-Signal positiv" --confidence 0.85
+python main.py mission-approve --mission-id 1 --decision APPROVED --note "Prüfung abgeschlossen."
+```
+
+v20 `orch-board` = Orchestrator-Pinnwand · v30 `mission-board` = Mission-Pinnwand.
+
+Archive: `archive/Buzzard_Intelligence_v30_Autonomous_Mission.zip`
 
 ## v29 Official Verification
 

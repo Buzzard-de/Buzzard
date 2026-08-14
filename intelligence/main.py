@@ -32,12 +32,13 @@ from buzzard_intelligence import (
     SupplierMatcher,
     ProductSelector,
     OfficialVerifier,
+    MissionEngine,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v29 (Memory … Product Selection, Official Verification)"
+        description="Buzzard Intelligence v1–v30 (Memory … Official Verification, Autonomous Mission)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -67,6 +68,7 @@ def main():
     sub.add_parser("init-v27", help="Create v27 supplier matching schema only")
     sub.add_parser("init-v28", help="Create v28 product selection schema only")
     sub.add_parser("init-v29", help="Create v29 official verification schema only")
+    sub.add_parser("init-v30", help="Create v30 autonomous mission schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -458,6 +460,26 @@ def main():
     sub.add_parser("verify-demo", help="v29 add demo verification records")
     sub.add_parser("verify-report", help="v29 official verification report")
 
+    mission_create = sub.add_parser("mission-create", help="v30 create an intelligence mission")
+    mission_create.add_argument("--title", required=True)
+    mission_create.add_argument("--details", default="")
+    mission_create.add_argument("--priority", type=int, default=10)
+
+    mission_result = sub.add_parser("mission-result", help="v30 record task result")
+    mission_result.add_argument("--task-id", type=int, required=True)
+    mission_result.add_argument("--agent", required=True)
+    mission_result.add_argument("--result", required=True)
+    mission_result.add_argument("--confidence", type=float, default=0.8)
+    mission_result.add_argument("--evidence", default="")
+
+    mission_approve = sub.add_parser("mission-approve", help="v30 human approval gate")
+    mission_approve.add_argument("--mission-id", type=int, required=True)
+    mission_approve.add_argument("--decision", required=True)
+    mission_approve.add_argument("--note", default="")
+
+    sub.add_parser("mission-demo", help="v30 add demo mission")
+    sub.add_parser("mission-board", help="v30 autonomous mission board")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -545,6 +567,7 @@ def main():
     v27 = SupplierMatcher()
     v28 = ProductSelector()
     v29 = OfficialVerifier()
+    v30 = MissionEngine()
 
     if args.cmd == "init":
         v1.init()
@@ -572,6 +595,7 @@ def main():
         v27.init()
         v28.init()
         v29.init()
+        v30.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -597,6 +621,7 @@ def main():
         print(f"v27 supplier matching ready at {Path(v27.path).resolve()}")
         print(f"v28 product selection ready at {Path(v28.path).resolve()}")
         print(f"v29 official verification ready at {Path(v29.path).resolve()}")
+        print(f"v30 autonomous mission ready at {Path(v30.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -672,6 +697,9 @@ def main():
     elif args.cmd == "init-v29":
         v29.init()
         print(f"v29 official verification ready at {Path(v29.path).resolve()}")
+    elif args.cmd == "init-v30":
+        v30.init()
+        print(f"v30 autonomous mission ready at {Path(v30.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1225,6 +1253,30 @@ def main():
     elif args.cmd == "verify-report":
         v29.init()
         print(v29.report())
+    elif args.cmd == "mission-create":
+        v30.init()
+        print(v30.create_mission(args.title, args.details, args.priority))
+    elif args.cmd == "mission-result":
+        v30.init()
+        print(
+            v30.add_result(
+                args.task_id,
+                args.agent,
+                args.result,
+                args.confidence,
+                args.evidence,
+            )
+        )
+    elif args.cmd == "mission-approve":
+        v30.init()
+        print(v30.approve(args.mission_id, args.decision, args.note))
+    elif args.cmd == "mission-demo":
+        v30.init()
+        v30.demo()
+        print("Demo-Mission angelegt.")
+    elif args.cmd == "mission-board":
+        v30.init()
+        print(v30.board())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

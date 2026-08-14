@@ -11,6 +11,7 @@ from .gateway import AIGateway
 from .memory import MemoryEngine
 from .market import MarketEngine
 from .matcher import ProductMatcher
+from .mission import MissionEngine
 from .multilingual import MultilingualMemory
 from .orchestrator import CouncilOrchestrator
 from .price import PriceIntel
@@ -42,6 +43,7 @@ __all__ = [
     "IntelligenceDB",
     "MemoryEngine",
     "MarketEngine",
+    "MissionEngine",
     "ProductMatcher",
     "MultilingualMemory",
     "OfficialVerifier",

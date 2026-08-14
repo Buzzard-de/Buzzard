@@ -224,7 +224,7 @@ def load_live_env():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v200 + Live Data Connectors"
+        description="Buzzard Intelligence v1–v200 + Live Data Connectors + Production Completion"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -1244,6 +1244,11 @@ def main():
     sub.add_parser("live-google-ads", help="Live Google Ads campaign query (last 7 days)")
     live_fetch = sub.add_parser("live-fetch", help="Fetch an authorized public URL")
     live_fetch.add_argument("--url", required=True)
+
+    sub.add_parser("prod-checklist", help="Show final production master checklist")
+    sub.add_parser("prod-gate", help="Show go-live gate checklist")
+    sub.add_parser("prod-status", help="Show production completion status summary")
+    sub.add_parser("prod-workstreams", help="List final production workstreams")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4310,6 +4315,29 @@ def main():
     elif args.cmd == "live-health":
         load_live_env()
         print(live_health_report())
+    elif args.cmd == "prod-checklist":
+        from production.status import read_doc
+
+        print(read_doc("FINAL_MASTER_CHECKLIST.md"))
+    elif args.cmd == "prod-gate":
+        from production.status import read_doc
+
+        print(read_doc("13_go_live/README.md"))
+    elif args.cmd == "prod-status":
+        load_live_env()
+        from production.status import production_status
+
+        print(production_status())
+    elif args.cmd == "prod-workstreams":
+        from production.status import PRODUCTION_DIR, workstreams
+
+        print("=== BUZZARD PRODUCTION WORKSTREAMS ===")
+        for name in workstreams():
+            readme = PRODUCTION_DIR / name / "README.md"
+            title = name.replace("_", " ")
+            print(f"\n## {title}")
+            if readme.exists():
+                print(readme.read_text(encoding="utf-8").strip())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

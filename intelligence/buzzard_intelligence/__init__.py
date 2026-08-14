@@ -7,6 +7,7 @@ from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
 from .memory import MemoryEngine
 from .multilingual import MultilingualMemory
+from .profit import ProfitEngine
 from .reporting import Reporter
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
@@ -24,6 +25,7 @@ __all__ = [
     "IntelligenceDB",
     "MemoryEngine",
     "MultilingualMemory",
+    "ProfitEngine",
     "Reporter",
     "Scheduler",
     "SEED_CATEGORIES",

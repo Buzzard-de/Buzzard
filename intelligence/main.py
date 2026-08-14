@@ -18,12 +18,13 @@ from buzzard_intelligence import (
     TrendEngine,
     MultilingualMemory,
     TrustEngine,
+    ProfitEngine,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v15 (Memory … Competitor Intel, Authenticity & Trust)"
+        description="Buzzard Intelligence v1–v16 (Memory … Trust, Profitability)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -39,6 +40,7 @@ def main():
     sub.add_parser("init-v13", help="Create v13 multilingual intelligence schema only")
     sub.add_parser("init-v14", help="Create v14 competitor intelligence schema only")
     sub.add_parser("init-v15", help="Create v15 authenticity/trust schema only")
+    sub.add_parser("init-v16", help="Create v16 profitability schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -169,6 +171,26 @@ def main():
     sub.add_parser("trust-demo", help="v15 add demo authenticity/trust data")
     sub.add_parser("trust-report", help="v15 authenticity and trust report")
 
+    profit_calc = sub.add_parser("profit-calc", help="v16 calculate product profitability")
+    profit_calc.add_argument("--name", required=True)
+    profit_calc.add_argument("--sale", type=float, required=True)
+    profit_calc.add_argument("--cost", type=float, required=True)
+    profit_calc.add_argument("--shipping", type=float, default=0)
+    profit_calc.add_argument("--marketplace", type=float, default=0)
+    profit_calc.add_argument("--payment", type=float, default=0)
+    profit_calc.add_argument("--ads", type=float, default=0)
+    profit_calc.add_argument("--packaging", type=float, default=0)
+    profit_calc.add_argument("--other", type=float, default=0)
+    profit_calc.add_argument(
+        "--tax",
+        type=float,
+        default=0,
+        help="Steuer-/MwSt.-Effekt als direkter EUR-Aufwand",
+    )
+
+    sub.add_parser("profit-demo", help="v16 add demo profitability records")
+    sub.add_parser("profit-report", help="v16 profitability report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -242,6 +264,7 @@ def main():
     v13 = MultilingualMemory()
     v14 = CompetitorIntel()
     v15 = TrustEngine()
+    v16 = ProfitEngine()
 
     if args.cmd == "init":
         v1.init()
@@ -255,6 +278,7 @@ def main():
         v13.init()
         v14.init()
         v15.init()
+        v16.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -266,6 +290,7 @@ def main():
         print(f"v13 multilingual ready at {Path(v13.path).resolve()}")
         print(f"v14 competitor intel ready at {Path(v14.path).resolve()}")
         print(f"v15 trust engine ready at {Path(v15.path).resolve()}")
+        print(f"v16 profit engine ready at {Path(v16.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -299,6 +324,9 @@ def main():
     elif args.cmd == "init-v15":
         v15.init()
         print(f"v15 trust engine ready at {Path(v15.path).resolve()}")
+    elif args.cmd == "init-v16":
+        v16.init()
+        print(f"v16 profit engine ready at {Path(v16.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -529,6 +557,29 @@ def main():
     elif args.cmd == "trust-report":
         v15.init()
         print(v15.report())
+    elif args.cmd == "profit-calc":
+        v16.init()
+        print(
+            v16.calculate(
+                args.name,
+                args.sale,
+                args.cost,
+                args.shipping,
+                args.marketplace,
+                args.payment,
+                args.ads,
+                args.packaging,
+                args.other,
+                args.tax,
+            )
+        )
+    elif args.cmd == "profit-demo":
+        v16.init()
+        v16.demo()
+        print("Demo-Rentabilitätsdaten gespeichert.")
+    elif args.cmd == "profit-report":
+        v16.init()
+        print(v16.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

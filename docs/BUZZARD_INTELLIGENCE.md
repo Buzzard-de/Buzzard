@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v15
+# Buzzard Intelligence v1–v16
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -12,10 +12,32 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v13 | `multilingual.py` | `buzzard_multilingual_v13.db` |
 | v14 | `competitor.py` | `buzzard_competitor_v14.db` |
 | v15 | `trust.py` | `buzzard_trust_v15.db` |
+| v16 | `profit.py` | `buzzard_profit_v16.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v15 Authenticity & Trust — neu
+## v16 Profitability — neu
+
+Produktbezogene Rentabilitätsberechnung mit mathematischer Entscheidungshilfe — **kein Ersatz für Steuerberatung**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Kosten | Einkauf, Versand, Marktplatz-, Zahlungs-, Werbe-, Verpackungskosten |
+| Steuer | MwSt./Steuer als direkter EUR-Aufwand |
+| Schwellwert | Nettogewinn < €0,50 → `GEWINN_ZU_GERING` |
+| Status | GEEIGNET, GEWINN_ZU_GERING, VERLUST |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v16
+python main.py profit-demo
+python main.py profit-report
+python main.py profit-calc --name "Beispiel Produkt" --sale 29.90 --cost 12 --shipping 4 --marketplace 2.99 --payment 0.90 --ads 2 --packaging 0.50 --other 0.30 --tax 0
+```
+
+## v15 Authenticity & Trust
 
 Vertrauens- und Authentizitätssignale für Produkte, Marken und Lieferanten — **keine automatische „Original“-Markierung**.
 
@@ -157,7 +179,8 @@ intelligence/
 │   ├── shared_memory.py
 │   ├── multilingual.py
 │   ├── competitor.py
-│   └── trust.py
+│   ├── trust.py
+│   └── profit.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -166,5 +189,6 @@ intelligence/
     ├── Buzzard_Intelligence_v12_Shared_Memory.zip
     ├── Buzzard_Intelligence_v13_Multilingual.zip
     ├── Buzzard_Intelligence_v14_Competitor_Intelligence.zip
-    └── Buzzard_Intelligence_v15_Authenticity_Trust.zip
+    ├── Buzzard_Intelligence_v15_Authenticity_Trust.zip
+    └── Buzzard_Intelligence_v16_Profitability.zip
 ```

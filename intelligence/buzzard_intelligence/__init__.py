@@ -18,6 +18,36 @@ from .learning_memory import LearningMemory
 from .memory import MemoryEngine
 from .market import MarketEngine
 from .master_core import MasterCore
+from .authorized_research import AuthorizedResearch
+from .public_connectors import PublicConnectors
+from .normalization import NormalizationEngine
+from .source_reliability import SourceReliability
+from .change_detection import ChangeDetection
+from .rival_product import RivalProductTracker
+from .rival_category import RivalCategoryMap
+from .rival_price import RivalPriceTracker
+from .market_radar import MarketRadar
+from .opportunity_discovery import OpportunityDiscovery
+from .product_radar import ProductRadar
+from .brand_intel import BrandIntel
+from .supplier_verify import SupplierVerifier
+from .supplier_performance import SupplierPerformance
+from .supplier_price import SupplierPriceCompare
+from .stock_intel import StockIntel
+from .shipping_intel import ShippingIntel
+from .marketplace_intel import MarketplaceIntel
+from .seo_intel import SEOIntel
+from .advertising_intel import AdvertisingIntel
+from .review_intel import ReviewIntel
+from .promotion_intel import PromotionIntel
+from .seasonality_intel import SeasonalityIntel
+from .crossborder_intel import CrossBorderIntel
+from .eu_compliance import EUComplianceMonitor
+from .fx_intel import FXIntel
+from .landed_cost import LandedCostCalculator
+from .profit_optimizer import ProfitOptimizer
+from .portfolio_manager import PortfolioManager
+from .command_center import CommandCenter
 from .matcher import ProductMatcher
 from .mission import MissionEngine
 from .multilingual import MultilingualMemory
@@ -80,4 +110,34 @@ __all__ = [
     "TaxonomyEngine",
     "TrendEngine",
     "TrustEngine",
+    "AuthorizedResearch",
+    "PublicConnectors",
+    "NormalizationEngine",
+    "SourceReliability",
+    "ChangeDetection",
+    "RivalProductTracker",
+    "RivalCategoryMap",
+    "RivalPriceTracker",
+    "MarketRadar",
+    "OpportunityDiscovery",
+    "ProductRadar",
+    "BrandIntel",
+    "SupplierVerifier",
+    "SupplierPerformance",
+    "SupplierPriceCompare",
+    "StockIntel",
+    "ShippingIntel",
+    "MarketplaceIntel",
+    "SEOIntel",
+    "AdvertisingIntel",
+    "ReviewIntel",
+    "PromotionIntel",
+    "SeasonalityIntel",
+    "CrossBorderIntel",
+    "EUComplianceMonitor",
+    "FXIntel",
+    "LandedCostCalculator",
+    "ProfitOptimizer",
+    "PortfolioManager",
+    "CommandCenter",
 ]

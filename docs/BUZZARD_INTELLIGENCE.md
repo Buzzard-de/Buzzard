@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v40
+# Buzzard Intelligence v1–v70
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -37,6 +37,36 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v38 | `scenario.py` | `buzzard_v38.json` |
 | v39 | `intel_dashboard.py` | `buzzard_v39.json` |
 | v40 | `master_core.py` | `buzzard_v40.json` |
+| v41 | `authorized_research.py` | `buzzard_v41.json` |
+| v42 | `public_connectors.py` | `buzzard_v42.json` |
+| v43 | `normalization.py` | `buzzard_v43.json` |
+| v44 | `source_reliability.py` | `buzzard_v44.json` |
+| v45 | `change_detection.py` | `buzzard_v45.json` |
+| v46 | `rival_product.py` | `buzzard_v46.json` |
+| v47 | `rival_category.py` | `buzzard_v47.json` |
+| v48 | `rival_price.py` | `buzzard_v48.json` |
+| v49 | `market_radar.py` | `buzzard_v49.json` |
+| v50 | `opportunity_discovery.py` | `buzzard_v50.json` |
+| v51 | `product_radar.py` | `buzzard_v51.json` |
+| v52 | `brand_intel.py` | `buzzard_v52.json` |
+| v53 | `supplier_verify.py` | `buzzard_v53.json` |
+| v54 | `supplier_performance.py` | `buzzard_v54.json` |
+| v55 | `supplier_price.py` | `buzzard_v55.json` |
+| v56 | `stock_intel.py` | `buzzard_v56.json` |
+| v57 | `shipping_intel.py` | `buzzard_v57.json` |
+| v58 | `marketplace_intel.py` | `buzzard_v58.json` |
+| v59 | `seo_intel.py` | `buzzard_v59.json` |
+| v60 | `advertising_intel.py` | `buzzard_v60.json` |
+| v61 | `review_intel.py` | `buzzard_v61.json` |
+| v62 | `promotion_intel.py` | `buzzard_v62.json` |
+| v63 | `seasonality_intel.py` | `buzzard_v63.json` |
+| v64 | `crossborder_intel.py` | `buzzard_v64.json` |
+| v65 | `eu_compliance.py` | `buzzard_v65.json` |
+| v66 | `fx_intel.py` | `buzzard_v66.json` |
+| v67 | `landed_cost.py` | `buzzard_v67.json` |
+| v68 | `profit_optimizer.py` | `buzzard_v68.json` |
+| v69 | `portfolio_manager.py` | `buzzard_v69.json` |
+| v70 | `command_center.py` | `buzzard_v70.json` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -67,6 +97,58 @@ python main.py master-report
 ```
 
 **Abgrenzung:** v9 `alerts` · v19 `risk-*` · v16 `profit-*` · v32 `category-*` · v33 `rivals-*`
+
+## v41–v70 Bundle — neu
+
+30 JSON-Module für autorisierte Web-Recherche, Connectors, Wettbewerb, Lieferanten, operative Markt-Intelligence, Compliance, Kosten und Command Center.
+
+| Version | Modul | CLI-Präfix | Zweck |
+|---------|-------|------------|-------|
+| v41 | `authorized_research.py` | `authres-*` | Authorized Web Research |
+| v42 | `public_connectors.py` | `pubconn-*` | Public API Data Connectors |
+| v43 | `normalization.py` | `norm-*` | Data Normalization & Deduplication |
+| v44 | `source_reliability.py` | `srscore-*` | Source Reliability Scoring |
+| v45 | `change_detection.py` | `cdetect-*` | Change Detection |
+| v46 | `rival_product.py` | `rprod-*` | Competitor Product Tracking |
+| v47 | `rival_category.py` | `rcatmap-*` | Competitor Category Mapping |
+| v48 | `rival_price.py` | `rprice-*` | Competitor Price Tracking |
+| v49 | `market_radar.py` | `mradar-*` | Market Trend Radar |
+| v50 | `opportunity_discovery.py` | `oppdisc-*` | Opportunity Discovery |
+| v51 | `product_radar.py` | `pradar-*` | Product Trend Radar |
+| v52 | `brand_intel.py` | `brand-*` | Brand Intelligence |
+| v53 | `supplier_verify.py` | `sverify-*` | Supplier Verification |
+| v54 | `supplier_performance.py` | `sperf-*` | Supplier Performance Tracking |
+| v55 | `supplier_price.py` | `sprice-*` | Supplier Price Comparison |
+| v56 | `stock_intel.py` | `stock-*` | Stock & Availability Intelligence |
+| v57 | `shipping_intel.py` | `ship-*` | Shipping & Delivery Intelligence |
+| v58 | `marketplace_intel.py` | `mplace-*` | Marketplace Intelligence |
+| v59 | `seo_intel.py` | `seo-*` | SEO & Search Demand Intelligence |
+| v60 | `advertising_intel.py` | `advert-*` | Advertising Intelligence |
+| v61 | `review_intel.py` | `revintel-*` | Customer Review Intelligence |
+| v62 | `promotion_intel.py` | `promo-*` | Promotion & Discount Intelligence |
+| v63 | `seasonality_intel.py` | `season-*` | Seasonality Intelligence |
+| v64 | `crossborder_intel.py` | `xborder-*` | Cross-Border Market Intelligence |
+| v65 | `eu_compliance.py` | `eucomp-*` | EU & Germany Compliance Monitor |
+| v66 | `fx_intel.py` | `fx-*` | Currency & FX Intelligence |
+| v67 | `landed_cost.py` | `lcost-*` | Landed Cost Calculator |
+| v68 | `profit_optimizer.py` | `profopt-*` | Advanced Profitability Optimizer |
+| v69 | `portfolio_manager.py` | `port-*` | Portfolio & Category Portfolio Manager |
+| v70 | `command_center.py` | `cmdctr-*` | Real-Time Intelligence Command Center |
+
+### CLI (Beispiel)
+
+```bash
+cd intelligence
+python main.py init-v41
+python main.py authres-demo
+python main.py authres-report
+python main.py init-v70
+python main.py cmdctr-demo
+python main.py cmdctr-report
+python main.py init
+```
+
+**Abgrenzung:** v22 `research-*` · v23 `connector-*` · v25 `price-*` · v37 `compliance-*` · v65 `eucomp-*`
 
 ## v33 Competitor Intelligence — neu
 
@@ -665,7 +747,37 @@ intelligence/
 │   ├── compliance_intel.py
 │   ├── scenario.py
 │   ├── intel_dashboard.py
-│   └── master_core.py
+│   ├── master_core.py
+│   ├── authorized_research.py
+│   ├── public_connectors.py
+│   ├── normalization.py
+│   ├── source_reliability.py
+│   ├── change_detection.py
+│   ├── rival_product.py
+│   ├── rival_category.py
+│   ├── rival_price.py
+│   ├── market_radar.py
+│   ├── opportunity_discovery.py
+│   ├── product_radar.py
+│   ├── brand_intel.py
+│   ├── supplier_verify.py
+│   ├── supplier_performance.py
+│   ├── supplier_price.py
+│   ├── stock_intel.py
+│   ├── shipping_intel.py
+│   ├── marketplace_intel.py
+│   ├── seo_intel.py
+│   ├── advertising_intel.py
+│   ├── review_intel.py
+│   ├── promotion_intel.py
+│   ├── seasonality_intel.py
+│   ├── crossborder_intel.py
+│   ├── eu_compliance.py
+│   ├── fx_intel.py
+│   ├── landed_cost.py
+│   ├── profit_optimizer.py
+│   ├── portfolio_manager.py
+│   └── command_center.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -700,5 +812,36 @@ intelligence/
     ├── Buzzard_Intelligence_v37_Risk_Compliance.zip
     ├── Buzzard_Intelligence_v38_Profitability_Scenario.zip
     ├── Buzzard_Intelligence_v39_Intelligence_Dashboard.zip
-    └── Buzzard_Intelligence_v40_Master_Intelligence_Core.zip
+    ├── Buzzard_Intelligence_v40_Master_Intelligence_Core.zip
+    ├── Buzzard_Intelligence_v41_v70_ALL_REMAINING.zip
+    ├── Buzzard_Intelligence_v41_Authorized_Web_Research.zip
+    ├── Buzzard_Intelligence_v42_Public_API_Data_Connectors.zip
+    ├── Buzzard_Intelligence_v43_Data_Normalization_and_Deduplication.zip
+    ├── Buzzard_Intelligence_v44_Source_Reliability_Scoring.zip
+    ├── Buzzard_Intelligence_v45_Change_Detection.zip
+    ├── Buzzard_Intelligence_v46_Competitor_Product_Tracking.zip
+    ├── Buzzard_Intelligence_v47_Competitor_Category_Mapping.zip
+    ├── Buzzard_Intelligence_v48_Competitor_Price_Tracking.zip
+    ├── Buzzard_Intelligence_v49_Market_Trend_Radar.zip
+    ├── Buzzard_Intelligence_v50_Opportunity_Discovery.zip
+    ├── Buzzard_Intelligence_v51_Product_Trend_Radar.zip
+    ├── Buzzard_Intelligence_v52_Brand_Intelligence.zip
+    ├── Buzzard_Intelligence_v53_Supplier_Verification.zip
+    ├── Buzzard_Intelligence_v54_Supplier_Performance_Tracking.zip
+    ├── Buzzard_Intelligence_v55_Supplier_Price_Comparison.zip
+    ├── Buzzard_Intelligence_v56_Stock_and_Availability_Intelligence.zip
+    ├── Buzzard_Intelligence_v57_Shipping_and_Delivery_Intelligence.zip
+    ├── Buzzard_Intelligence_v58_Marketplace_Intelligence.zip
+    ├── Buzzard_Intelligence_v59_SEO_and_Search_Demand_Intelligence.zip
+    ├── Buzzard_Intelligence_v60_Advertising_Intelligence.zip
+    ├── Buzzard_Intelligence_v61_Customer_Review_Intelligence.zip
+    ├── Buzzard_Intelligence_v62_Promotion_and_Discount_Intelligence.zip
+    ├── Buzzard_Intelligence_v63_Seasonality_Intelligence.zip
+    ├── Buzzard_Intelligence_v64_Cross-Border_Market_Intelligence.zip
+    ├── Buzzard_Intelligence_v65_EU_and_Germany_Compliance_Monitor.zip
+    ├── Buzzard_Intelligence_v66_Currency_and_FX_Intelligence.zip
+    ├── Buzzard_Intelligence_v67_Landed_Cost_Calculator.zip
+    ├── Buzzard_Intelligence_v68_Advanced_Profitability_Optimizer.zip
+    ├── Buzzard_Intelligence_v69_Portfolio_and_Category_Portfolio_Manager.zip
+    └── Buzzard_Intelligence_v70_Real-Time_Intelligence_Command_Center.zip
 ```

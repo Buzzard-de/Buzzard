@@ -43,12 +43,42 @@ from buzzard_intelligence import (
     ScenarioEngine,
     IntelligenceDashboard,
     MasterCore,
+    AuthorizedResearch,
+    PublicConnectors,
+    NormalizationEngine,
+    SourceReliability,
+    ChangeDetection,
+    RivalProductTracker,
+    RivalCategoryMap,
+    RivalPriceTracker,
+    MarketRadar,
+    OpportunityDiscovery,
+    ProductRadar,
+    BrandIntel,
+    SupplierVerifier,
+    SupplierPerformance,
+    SupplierPriceCompare,
+    StockIntel,
+    ShippingIntel,
+    MarketplaceIntel,
+    SEOIntel,
+    AdvertisingIntel,
+    ReviewIntel,
+    PromotionIntel,
+    SeasonalityIntel,
+    CrossBorderIntel,
+    EUComplianceMonitor,
+    FXIntel,
+    LandedCostCalculator,
+    ProfitOptimizer,
+    PortfolioManager,
+    CommandCenter,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v40 (Memory … Competitor Monitor, Master Core)"
+        description="Buzzard Intelligence v1–v70 (Memory … Command Center)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -89,6 +119,36 @@ def main():
     sub.add_parser("init-v38", help="Create v38 profitability scenario store")
     sub.add_parser("init-v39", help="Create v39 intelligence dashboard store")
     sub.add_parser("init-v40", help="Create v40 master intelligence core store")
+    sub.add_parser("init-v41", help="Create v41 authorized web research")
+    sub.add_parser("init-v42", help="Create v42 public API data connectors")
+    sub.add_parser("init-v43", help="Create v43 data normalization store")
+    sub.add_parser("init-v44", help="Create v44 source reliability scoring store")
+    sub.add_parser("init-v45", help="Create v45 change detection store")
+    sub.add_parser("init-v46", help="Create v46 competitor product tracking store")
+    sub.add_parser("init-v47", help="Create v47 competitor category mapping store")
+    sub.add_parser("init-v48", help="Create v48 competitor price tracking store")
+    sub.add_parser("init-v49", help="Create v49 market trend radar store")
+    sub.add_parser("init-v50", help="Create v50 opportunity discovery store")
+    sub.add_parser("init-v51", help="Create v51 product trend radar store")
+    sub.add_parser("init-v52", help="Create v52 brand intelligence store")
+    sub.add_parser("init-v53", help="Create v53 supplier verification store")
+    sub.add_parser("init-v54", help="Create v54 supplier performance tracking store")
+    sub.add_parser("init-v55", help="Create v55 supplier price comparison store")
+    sub.add_parser("init-v56", help="Create v56 stock & availability intelligence store")
+    sub.add_parser("init-v57", help="Create v57 shipping & delivery intelligence store")
+    sub.add_parser("init-v58", help="Create v58 marketplace intelligence store")
+    sub.add_parser("init-v59", help="Create v59 SEO & search demand intelligence store")
+    sub.add_parser("init-v60", help="Create v60 advertising intelligence store")
+    sub.add_parser("init-v61", help="Create v61 customer review intelligence store")
+    sub.add_parser("init-v62", help="Create v62 promotion & discount intelligence store")
+    sub.add_parser("init-v63", help="Create v63 seasonality intelligence store")
+    sub.add_parser("init-v64", help="Create v64 cross-border market intelligence store")
+    sub.add_parser("init-v65", help="Create v65 EU & Germany compliance monitor store")
+    sub.add_parser("init-v66", help="Create v66 currency & FX intelligence store")
+    sub.add_parser("init-v67", help="Create v67 landed cost calculator store")
+    sub.add_parser("init-v68", help="Create v68 advanced profitability optimizer store")
+    sub.add_parser("init-v69", help="Create v69 portfolio manager store")
+    sub.add_parser("init-v70", help="Create v70 real-time intelligence command center store")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -578,6 +638,66 @@ def main():
     sub.add_parser("idash-report", help="v39 intelligence dashboard report")
     sub.add_parser("master-demo", help="v40 add demo master core data")
     sub.add_parser("master-report", help="v40 master intelligence core report")
+    sub.add_parser("authres-demo", help="v41 add demo data")
+    sub.add_parser("authres-report", help="v41 report")
+    sub.add_parser("pubconn-demo", help="v42 add demo data")
+    sub.add_parser("pubconn-report", help="v42 report")
+    sub.add_parser("norm-demo", help="v43 add demo data")
+    sub.add_parser("norm-report", help="v43 report")
+    sub.add_parser("srscore-demo", help="v44 add demo data")
+    sub.add_parser("srscore-report", help="v44 report")
+    sub.add_parser("cdetect-demo", help="v45 add demo data")
+    sub.add_parser("cdetect-report", help="v45 report")
+    sub.add_parser("rprod-demo", help="v46 add demo data")
+    sub.add_parser("rprod-report", help="v46 report")
+    sub.add_parser("rcatmap-demo", help="v47 add demo data")
+    sub.add_parser("rcatmap-report", help="v47 report")
+    sub.add_parser("rprice-demo", help="v48 add demo data")
+    sub.add_parser("rprice-report", help="v48 report")
+    sub.add_parser("mradar-demo", help="v49 add demo data")
+    sub.add_parser("mradar-report", help="v49 report")
+    sub.add_parser("oppdisc-demo", help="v50 add demo data")
+    sub.add_parser("oppdisc-report", help="v50 report")
+    sub.add_parser("pradar-demo", help="v51 add demo data")
+    sub.add_parser("pradar-report", help="v51 report")
+    sub.add_parser("brand-demo", help="v52 add demo data")
+    sub.add_parser("brand-report", help="v52 report")
+    sub.add_parser("sverify-demo", help="v53 add demo data")
+    sub.add_parser("sverify-report", help="v53 report")
+    sub.add_parser("sperf-demo", help="v54 add demo data")
+    sub.add_parser("sperf-report", help="v54 report")
+    sub.add_parser("sprice-demo", help="v55 add demo data")
+    sub.add_parser("sprice-report", help="v55 report")
+    sub.add_parser("stock-demo", help="v56 add demo data")
+    sub.add_parser("stock-report", help="v56 report")
+    sub.add_parser("ship-demo", help="v57 add demo data")
+    sub.add_parser("ship-report", help="v57 report")
+    sub.add_parser("mplace-demo", help="v58 add demo data")
+    sub.add_parser("mplace-report", help="v58 report")
+    sub.add_parser("seo-demo", help="v59 add demo data")
+    sub.add_parser("seo-report", help="v59 report")
+    sub.add_parser("advert-demo", help="v60 add demo data")
+    sub.add_parser("advert-report", help="v60 report")
+    sub.add_parser("revintel-demo", help="v61 add demo data")
+    sub.add_parser("revintel-report", help="v61 report")
+    sub.add_parser("promo-demo", help="v62 add demo data")
+    sub.add_parser("promo-report", help="v62 report")
+    sub.add_parser("season-demo", help="v63 add demo data")
+    sub.add_parser("season-report", help="v63 report")
+    sub.add_parser("xborder-demo", help="v64 add demo data")
+    sub.add_parser("xborder-report", help="v64 report")
+    sub.add_parser("eucomp-demo", help="v65 add demo data")
+    sub.add_parser("eucomp-report", help="v65 report")
+    sub.add_parser("fx-demo", help="v66 add demo data")
+    sub.add_parser("fx-report", help="v66 report")
+    sub.add_parser("lcost-demo", help="v67 add demo data")
+    sub.add_parser("lcost-report", help="v67 report")
+    sub.add_parser("profopt-demo", help="v68 add demo data")
+    sub.add_parser("profopt-report", help="v68 report")
+    sub.add_parser("port-demo", help="v69 add demo data")
+    sub.add_parser("port-report", help="v69 report")
+    sub.add_parser("cmdctr-demo", help="v70 add demo data")
+    sub.add_parser("cmdctr-report", help="v70 report")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -677,6 +797,36 @@ def main():
     v38 = ScenarioEngine()
     v39 = IntelligenceDashboard()
     v40 = MasterCore()
+    v41 = AuthorizedResearch()
+    v42 = PublicConnectors()
+    v43 = NormalizationEngine()
+    v44 = SourceReliability()
+    v45 = ChangeDetection()
+    v46 = RivalProductTracker()
+    v47 = RivalCategoryMap()
+    v48 = RivalPriceTracker()
+    v49 = MarketRadar()
+    v50 = OpportunityDiscovery()
+    v51 = ProductRadar()
+    v52 = BrandIntel()
+    v53 = SupplierVerifier()
+    v54 = SupplierPerformance()
+    v55 = SupplierPriceCompare()
+    v56 = StockIntel()
+    v57 = ShippingIntel()
+    v58 = MarketplaceIntel()
+    v59 = SEOIntel()
+    v60 = AdvertisingIntel()
+    v61 = ReviewIntel()
+    v62 = PromotionIntel()
+    v63 = SeasonalityIntel()
+    v64 = CrossBorderIntel()
+    v65 = EUComplianceMonitor()
+    v66 = FXIntel()
+    v67 = LandedCostCalculator()
+    v68 = ProfitOptimizer()
+    v69 = PortfolioManager()
+    v70 = CommandCenter()
 
     if args.cmd == "init":
         v1.init()
@@ -715,6 +865,36 @@ def main():
         v38.init()
         v39.init()
         v40.init()
+        v41.init()
+        v42.init()
+        v43.init()
+        v44.init()
+        v45.init()
+        v46.init()
+        v47.init()
+        v48.init()
+        v49.init()
+        v50.init()
+        v51.init()
+        v52.init()
+        v53.init()
+        v54.init()
+        v55.init()
+        v56.init()
+        v57.init()
+        v58.init()
+        v59.init()
+        v60.init()
+        v61.init()
+        v62.init()
+        v63.init()
+        v64.init()
+        v65.init()
+        v66.init()
+        v67.init()
+        v68.init()
+        v69.init()
+        v70.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -751,6 +931,36 @@ def main():
         print(f"v38 profitability scenario ready at {Path(v38.path).resolve()}")
         print(f"v39 intelligence dashboard ready at {Path(v39.path).resolve()}")
         print(f"v40 master core ready at {Path(v40.path).resolve()}")
+        print(f"v41 authorized web research ready at {Path(v41.path).resolve()}")
+        print(f"v42 public API data connectors ready at {Path(v42.path).resolve()}")
+        print(f"v43 data normalization store ready at {Path(v43.path).resolve()}")
+        print(f"v44 source reliability scoring store ready at {Path(v44.path).resolve()}")
+        print(f"v45 change detection store ready at {Path(v45.path).resolve()}")
+        print(f"v46 competitor product tracking store ready at {Path(v46.path).resolve()}")
+        print(f"v47 competitor category mapping store ready at {Path(v47.path).resolve()}")
+        print(f"v48 competitor price tracking store ready at {Path(v48.path).resolve()}")
+        print(f"v49 market trend radar store ready at {Path(v49.path).resolve()}")
+        print(f"v50 opportunity discovery store ready at {Path(v50.path).resolve()}")
+        print(f"v51 product trend radar store ready at {Path(v51.path).resolve()}")
+        print(f"v52 brand intelligence store ready at {Path(v52.path).resolve()}")
+        print(f"v53 supplier verification store ready at {Path(v53.path).resolve()}")
+        print(f"v54 supplier performance tracking store ready at {Path(v54.path).resolve()}")
+        print(f"v55 supplier price comparison store ready at {Path(v55.path).resolve()}")
+        print(f"v56 stock & availability intelligence store ready at {Path(v56.path).resolve()}")
+        print(f"v57 shipping & delivery intelligence store ready at {Path(v57.path).resolve()}")
+        print(f"v58 marketplace intelligence store ready at {Path(v58.path).resolve()}")
+        print(f"v59 SEO & search demand intelligence store ready at {Path(v59.path).resolve()}")
+        print(f"v60 advertising intelligence store ready at {Path(v60.path).resolve()}")
+        print(f"v61 customer review intelligence store ready at {Path(v61.path).resolve()}")
+        print(f"v62 promotion & discount intelligence store ready at {Path(v62.path).resolve()}")
+        print(f"v63 seasonality intelligence store ready at {Path(v63.path).resolve()}")
+        print(f"v64 cross-border market intelligence store ready at {Path(v64.path).resolve()}")
+        print(f"v65 EU & Germany compliance monitor store ready at {Path(v65.path).resolve()}")
+        print(f"v66 currency & FX intelligence store ready at {Path(v66.path).resolve()}")
+        print(f"v67 landed cost calculator store ready at {Path(v67.path).resolve()}")
+        print(f"v68 advanced profitability optimizer store ready at {Path(v68.path).resolve()}")
+        print(f"v69 portfolio manager store ready at {Path(v69.path).resolve()}")
+        print(f"v70 real-time intelligence command center store ready at {Path(v70.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -859,6 +1069,96 @@ def main():
     elif args.cmd == "init-v40":
         v40.init()
         print(f"v40 master core ready at {Path(v40.path).resolve()}")
+    elif args.cmd == "init-v41":
+        v41.init()
+        print(f"v41 authorized web research ready at {Path(v41.path).resolve()}")
+    elif args.cmd == "init-v42":
+        v42.init()
+        print(f"v42 public API data connectors ready at {Path(v42.path).resolve()}")
+    elif args.cmd == "init-v43":
+        v43.init()
+        print(f"v43 data normalization store ready at {Path(v43.path).resolve()}")
+    elif args.cmd == "init-v44":
+        v44.init()
+        print(f"v44 source reliability scoring store ready at {Path(v44.path).resolve()}")
+    elif args.cmd == "init-v45":
+        v45.init()
+        print(f"v45 change detection store ready at {Path(v45.path).resolve()}")
+    elif args.cmd == "init-v46":
+        v46.init()
+        print(f"v46 competitor product tracking store ready at {Path(v46.path).resolve()}")
+    elif args.cmd == "init-v47":
+        v47.init()
+        print(f"v47 competitor category mapping store ready at {Path(v47.path).resolve()}")
+    elif args.cmd == "init-v48":
+        v48.init()
+        print(f"v48 competitor price tracking store ready at {Path(v48.path).resolve()}")
+    elif args.cmd == "init-v49":
+        v49.init()
+        print(f"v49 market trend radar store ready at {Path(v49.path).resolve()}")
+    elif args.cmd == "init-v50":
+        v50.init()
+        print(f"v50 opportunity discovery store ready at {Path(v50.path).resolve()}")
+    elif args.cmd == "init-v51":
+        v51.init()
+        print(f"v51 product trend radar store ready at {Path(v51.path).resolve()}")
+    elif args.cmd == "init-v52":
+        v52.init()
+        print(f"v52 brand intelligence store ready at {Path(v52.path).resolve()}")
+    elif args.cmd == "init-v53":
+        v53.init()
+        print(f"v53 supplier verification store ready at {Path(v53.path).resolve()}")
+    elif args.cmd == "init-v54":
+        v54.init()
+        print(f"v54 supplier performance tracking store ready at {Path(v54.path).resolve()}")
+    elif args.cmd == "init-v55":
+        v55.init()
+        print(f"v55 supplier price comparison store ready at {Path(v55.path).resolve()}")
+    elif args.cmd == "init-v56":
+        v56.init()
+        print(f"v56 stock & availability intelligence store ready at {Path(v56.path).resolve()}")
+    elif args.cmd == "init-v57":
+        v57.init()
+        print(f"v57 shipping & delivery intelligence store ready at {Path(v57.path).resolve()}")
+    elif args.cmd == "init-v58":
+        v58.init()
+        print(f"v58 marketplace intelligence store ready at {Path(v58.path).resolve()}")
+    elif args.cmd == "init-v59":
+        v59.init()
+        print(f"v59 SEO & search demand intelligence store ready at {Path(v59.path).resolve()}")
+    elif args.cmd == "init-v60":
+        v60.init()
+        print(f"v60 advertising intelligence store ready at {Path(v60.path).resolve()}")
+    elif args.cmd == "init-v61":
+        v61.init()
+        print(f"v61 customer review intelligence store ready at {Path(v61.path).resolve()}")
+    elif args.cmd == "init-v62":
+        v62.init()
+        print(f"v62 promotion & discount intelligence store ready at {Path(v62.path).resolve()}")
+    elif args.cmd == "init-v63":
+        v63.init()
+        print(f"v63 seasonality intelligence store ready at {Path(v63.path).resolve()}")
+    elif args.cmd == "init-v64":
+        v64.init()
+        print(f"v64 cross-border market intelligence store ready at {Path(v64.path).resolve()}")
+    elif args.cmd == "init-v65":
+        v65.init()
+        print(f"v65 EU & Germany compliance monitor store ready at {Path(v65.path).resolve()}")
+    elif args.cmd == "init-v66":
+        v66.init()
+        print(f"v66 currency & FX intelligence store ready at {Path(v66.path).resolve()}")
+    elif args.cmd == "init-v67":
+        v67.init()
+        print(f"v67 landed cost calculator store ready at {Path(v67.path).resolve()}")
+    elif args.cmd == "init-v68":
+        v68.init()
+        print(f"v68 advanced profitability optimizer store ready at {Path(v68.path).resolve()}")
+    elif args.cmd == "init-v69":
+        v69.init()
+        print(f"v69 portfolio manager store ready at {Path(v69.path).resolve()}")
+    elif args.cmd == "init-v70":
+        v70.init()
+        print(f"v70 real-time intelligence command center store ready at {Path(v70.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1561,6 +1861,216 @@ def main():
     elif args.cmd == "master-report":
         v40.init()
         print(v40.report())
+    elif args.cmd == "authres-demo":
+        v41.init()
+        v41.demo()
+        print("Demo-Autorisierte Web-Recherche gespeichert.")
+    elif args.cmd == "authres-report":
+        v41.init()
+        print(v41.report())
+    elif args.cmd == "pubconn-demo":
+        v42.init()
+        v42.demo()
+        print("Demo-Public-API-Connectors gespeichert.")
+    elif args.cmd == "pubconn-report":
+        v42.init()
+        print(v42.report())
+    elif args.cmd == "norm-demo":
+        v43.init()
+        v43.demo()
+        print("Demo-Daten-Normalisierung gespeichert.")
+    elif args.cmd == "norm-report":
+        v43.init()
+        print(v43.report())
+    elif args.cmd == "srscore-demo":
+        v44.init()
+        v44.demo()
+        print("Demo-Quellen-Zuverlässigkeit gespeichert.")
+    elif args.cmd == "srscore-report":
+        v44.init()
+        print(v44.report())
+    elif args.cmd == "cdetect-demo":
+        v45.init()
+        v45.demo()
+        print("Demo-Änderungserkennung gespeichert.")
+    elif args.cmd == "cdetect-report":
+        v45.init()
+        print(v45.report())
+    elif args.cmd == "rprod-demo":
+        v46.init()
+        v46.demo()
+        print("Demo-Wettbewerber-Produkt-Tracking gespeichert.")
+    elif args.cmd == "rprod-report":
+        v46.init()
+        print(v46.report())
+    elif args.cmd == "rcatmap-demo":
+        v47.init()
+        v47.demo()
+        print("Demo-Wettbewerber-Kategorie-Mapping gespeichert.")
+    elif args.cmd == "rcatmap-report":
+        v47.init()
+        print(v47.report())
+    elif args.cmd == "rprice-demo":
+        v48.init()
+        v48.demo()
+        print("Demo-Wettbewerber-Preis-Tracking gespeichert.")
+    elif args.cmd == "rprice-report":
+        v48.init()
+        print(v48.report())
+    elif args.cmd == "mradar-demo":
+        v49.init()
+        v49.demo()
+        print("Demo-Markt-Trend-Radar gespeichert.")
+    elif args.cmd == "mradar-report":
+        v49.init()
+        print(v49.report())
+    elif args.cmd == "oppdisc-demo":
+        v50.init()
+        v50.demo()
+        print("Demo-Chancen-Entdeckung gespeichert.")
+    elif args.cmd == "oppdisc-report":
+        v50.init()
+        print(v50.report())
+    elif args.cmd == "pradar-demo":
+        v51.init()
+        v51.demo()
+        print("Demo-Produkt-Trend-Radar gespeichert.")
+    elif args.cmd == "pradar-report":
+        v51.init()
+        print(v51.report())
+    elif args.cmd == "brand-demo":
+        v52.init()
+        v52.demo()
+        print("Demo-Marken-Intelligence gespeichert.")
+    elif args.cmd == "brand-report":
+        v52.init()
+        print(v52.report())
+    elif args.cmd == "sverify-demo":
+        v53.init()
+        v53.demo()
+        print("Demo-Lieferanten-Verifizierung gespeichert.")
+    elif args.cmd == "sverify-report":
+        v53.init()
+        print(v53.report())
+    elif args.cmd == "sperf-demo":
+        v54.init()
+        v54.demo()
+        print("Demo-Lieferanten-Performance gespeichert.")
+    elif args.cmd == "sperf-report":
+        v54.init()
+        print(v54.report())
+    elif args.cmd == "sprice-demo":
+        v55.init()
+        v55.demo()
+        print("Demo-Lieferanten-Preisvergleich gespeichert.")
+    elif args.cmd == "sprice-report":
+        v55.init()
+        print(v55.report())
+    elif args.cmd == "stock-demo":
+        v56.init()
+        v56.demo()
+        print("Demo-Bestand-Intelligence gespeichert.")
+    elif args.cmd == "stock-report":
+        v56.init()
+        print(v56.report())
+    elif args.cmd == "ship-demo":
+        v57.init()
+        v57.demo()
+        print("Demo-Versand-Intelligence gespeichert.")
+    elif args.cmd == "ship-report":
+        v57.init()
+        print(v57.report())
+    elif args.cmd == "mplace-demo":
+        v58.init()
+        v58.demo()
+        print("Demo-Marktplatz-Intelligence gespeichert.")
+    elif args.cmd == "mplace-report":
+        v58.init()
+        print(v58.report())
+    elif args.cmd == "seo-demo":
+        v59.init()
+        v59.demo()
+        print("Demo-SEO-Intelligence gespeichert.")
+    elif args.cmd == "seo-report":
+        v59.init()
+        print(v59.report())
+    elif args.cmd == "advert-demo":
+        v60.init()
+        v60.demo()
+        print("Demo-Werbe-Intelligence gespeichert.")
+    elif args.cmd == "advert-report":
+        v60.init()
+        print(v60.report())
+    elif args.cmd == "revintel-demo":
+        v61.init()
+        v61.demo()
+        print("Demo-Kundenbewertungs-Intelligence gespeichert.")
+    elif args.cmd == "revintel-report":
+        v61.init()
+        print(v61.report())
+    elif args.cmd == "promo-demo":
+        v62.init()
+        v62.demo()
+        print("Demo-Promotion-Intelligence gespeichert.")
+    elif args.cmd == "promo-report":
+        v62.init()
+        print(v62.report())
+    elif args.cmd == "season-demo":
+        v63.init()
+        v63.demo()
+        print("Demo-Saisonalitäts-Intelligence gespeichert.")
+    elif args.cmd == "season-report":
+        v63.init()
+        print(v63.report())
+    elif args.cmd == "xborder-demo":
+        v64.init()
+        v64.demo()
+        print("Demo-Grenzüberschreitende Markt-Intelligence gespeichert.")
+    elif args.cmd == "xborder-report":
+        v64.init()
+        print(v64.report())
+    elif args.cmd == "eucomp-demo":
+        v65.init()
+        v65.demo()
+        print("Demo-EU-Compliance-Monitor gespeichert.")
+    elif args.cmd == "eucomp-report":
+        v65.init()
+        print(v65.report())
+    elif args.cmd == "fx-demo":
+        v66.init()
+        v66.demo()
+        print("Demo-Währungs-Intelligence gespeichert.")
+    elif args.cmd == "fx-report":
+        v66.init()
+        print(v66.report())
+    elif args.cmd == "lcost-demo":
+        v67.init()
+        v67.demo()
+        print("Demo-Landed-Cost-Rechner gespeichert.")
+    elif args.cmd == "lcost-report":
+        v67.init()
+        print(v67.report())
+    elif args.cmd == "profopt-demo":
+        v68.init()
+        v68.demo()
+        print("Demo-Profitabilitäts-Optimierer gespeichert.")
+    elif args.cmd == "profopt-report":
+        v68.init()
+        print(v68.report())
+    elif args.cmd == "port-demo":
+        v69.init()
+        v69.demo()
+        print("Demo-Portfolio-Manager gespeichert.")
+    elif args.cmd == "port-report":
+        v69.init()
+        print(v69.report())
+    elif args.cmd == "cmdctr-demo":
+        v70.init()
+        v70.demo()
+        print("Demo-Command-Center gespeichert.")
+    elif args.cmd == "cmdctr-report":
+        v70.init()
+        print(v70.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

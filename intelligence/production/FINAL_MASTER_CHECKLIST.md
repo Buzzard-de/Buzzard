@@ -1,7 +1,7 @@
 # BUZZARD — FINAL MASTER CHECKLIST
 
 ## A. Architecture
-- [ ] v21-v200 modules integrated
+- [x] v21-v200 modules integrated
 - [ ] common configuration
 - [ ] common data model
 - [ ] event/task bus

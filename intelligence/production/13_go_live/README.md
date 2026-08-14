@@ -1,7 +1,7 @@
 # Go-Live Gate
 
 Go-Live erst wenn:
-[ ] v21-v200 integriert
+[x] v21-v200 integriert
 [ ] Live Connectoren erfolgreich getestet
 [ ] Datenpipeline stabil
 [ ] Memory integriert

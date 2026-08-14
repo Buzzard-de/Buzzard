@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v16
+# Buzzard Intelligence v1–v17
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -13,6 +13,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v14 | `competitor.py` | Legale Wettbewerbs-/Marktbeobachtungen aus öffentlichen Quellen |
 | v15 | `trust.py` | Authentizität & Vertrauen (Produkte, Nachweise, Verifizierung) |
 | v16 | `profit.py` | Rentabilitätsberechnung und Entscheidungshilfe |
+| v17 | `market.py` | Länder- und Marktchancen-Vergleich |
 
 ## Setup
 
@@ -24,6 +25,23 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v17 Market Opportunity
+
+- Märkte: Nachfrage, Wettbewerb, Logistik, Risiko je Land
+- Produktchancen mit Score über Länder hinweg (DE, TR, VAE, SA, …)
+- Fehlende Daten = Lücke, nicht automatisch 0
+- Score ist Vergleichswerkzeug — keine Verkaufsgarantie
+
+```bash
+python main.py init-v17
+python main.py market-demo
+python main.py market-report
+python main.py market-add --country DE --market Deutschland --demand 80 --competition 60 --logistics 85 --risk 20
+python main.py opportunity-add --country DE --category Automotive --product "5W-30 Motoröl" --demand 85 --competition 55 --margin 75 --logistics 80 --risk 20
+```
+
+Archive: `archive/Buzzard_Intelligence_v17_Market_Opportunity.zip`
 
 ## v16 Profitability
 

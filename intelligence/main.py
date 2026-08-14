@@ -2,11 +2,11 @@
 import argparse
 from pathlib import Path
 
-from buzzard_intelligence import IntelligenceDB, MemoryEngine, SEED_CATEGORIES
+from buzzard_intelligence import Collector, IntelligenceDB, MemoryEngine, SEED_CATEGORIES
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Buzzard Intelligence v1 + v2 Memory")
+    parser = argparse.ArgumentParser(description="Buzzard Intelligence v1 + v2 Memory + v3 Collector")
     sub = parser.add_subparsers(dest="cmd")
 
     sub.add_parser("init", help="Create v1 + v2 SQLite schemas")
@@ -21,6 +21,20 @@ def main():
 
     memory = sub.add_parser("memory", help="Search v2 memory by product, brand, or category")
     memory.add_argument("query")
+
+    collect = sub.add_parser("collect", help="Collect one public HTML source (v3, robots.txt aware)")
+    collect.add_argument("--url", required=True)
+    collect.add_argument("--category", required=True)
+    collect.add_argument("--subcategory", default="")
+    collect.add_argument("--country", default="DE")
+    collect.add_argument("--platform", default="public_web")
+
+    collect_list = sub.add_parser("collect-list", help="Collect multiple URLs from a text file (v3)")
+    collect_list.add_argument("file", help="One URL per line; lines starting with # are ignored")
+    collect_list.add_argument("--category", required=True)
+    collect_list.add_argument("--subcategory", default="")
+    collect_list.add_argument("--country", default="DE")
+    collect_list.add_argument("--platform", default="public_web")
 
     p = sub.add_parser("add-observation", help="Record a sourced observation (v2 memory engine)")
     p.add_argument("--category", required=True)
@@ -40,6 +54,7 @@ def main():
     args = parser.parse_args()
     v1 = IntelligenceDB()
     v2 = MemoryEngine()
+    v3 = Collector(v2)
 
     if args.cmd == "init":
         v1.init()
@@ -64,6 +79,18 @@ def main():
         count_v1 = v1.seed_categories_de()
         count_v2 = v2.seed_categories_de()
         print(f"Seeded {count_v1} German main categories into v1 and {count_v2} into v2.")
+    elif args.cmd == "collect":
+        v3.init()
+        print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))
+    elif args.cmd == "collect-list":
+        v3.init()
+        urls = [
+            line.strip()
+            for line in Path(args.file).read_text(encoding="utf-8").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        ]
+        for result in v3.collect_list(urls, args.category, args.subcategory, args.country, args.platform):
+            print(result)
     elif args.cmd == "add-observation":
         v2.init()
         result = v2.observe(

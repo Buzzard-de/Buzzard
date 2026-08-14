@@ -1,18 +1,15 @@
-# Buzzard Intelligence v1 + v2 Memory + v3 Collector
+# Buzzard Intelligence v1 + v2 Memory + v3 Collector + v4 Scheduler
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
-## Zweck
+## Module
 
-**v1** — Kategorien, Beobachtungen, einfache Reports  
-**v2 Memory** — persistenter Speicher mit Änderungserkennung  
-**v3 Collector** — robots.txt-konforme Sammlung öffentlicher HTML-Quellen
-
-- JSON-LD `Product`-Daten oder Title/H1 auslesen
-- Beobachtungen in v2 Memory speichern
-- Kein CAPTCHA-/Login-/Paywall-Bypass
-
-**Keine automatischen Entscheidungen** — nur quellenbasierte Informationen.
+| Version | Modul | Zweck |
+|---------|-------|-------|
+| v1 | `database.py` | Kategorien, Beobachtungen, Reports |
+| v2 | `memory.py` | Speicher + Änderungserkennung |
+| v3 | `collector.py` | robots.txt-konforme HTML-Sammlung |
+| v4 | `scheduler.py` | Aufgaben-Registry, Intervalle, Prioritäten |
 
 ## Setup
 
@@ -21,56 +18,50 @@ cd intelligence
 pip install -r requirements.txt
 python main.py init
 python main.py seed-de
-python main.py report-v2
+python main.py seed-tasks-de
+python main.py tasks
 ```
 
-## Befehle
+## v4 Scheduler
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `init` | v1 + v2 Schema anlegen |
-| `seed-de` | 41 deutsche Buzzard-Hauptkategorien |
-| `collect --url ...` | Eine öffentliche HTML-Seite sammeln (v3) |
-| `collect-list sources.txt` | Mehrere URLs aus Datei |
-| `add-observation` | Manuelle Beobachtung (v2) |
-| `changes` | Erkannte Änderungen |
-| `memory <query>` | Speichersuche |
-| `export-memory` | JSON-Snapshot |
+Platzhalter-Aufgaben pro Kategorie (ohne URL = inaktiv), echte Aufgaben mit Quellen-URL:
+
+```bash
+python main.py add-task \
+  --category "Automotive" \
+  --url "https://example.com/product-page" \
+  --interval 1440 \
+  --priority 10
+
+python main.py run
+python main.py tasks
+```
+
+- Mindestintervall: **60 Minuten** (Standard 1440 = 24 h)
+- Status: `WAITING_SOURCE`, `PENDING`, `SUCCESS`, `ERROR`
+- Führt fällige Aufgaben über v3 Collector aus
 
 ## v3 Collector
 
 ```bash
-python main.py collect \
-  --url "https://example.com/product-page" \
-  --category "Automotive" \
-  --subcategory "Bremssystem" \
-  --country DE
-
+python main.py collect --url "https://example.com/page" --category "Automotive"
 python main.py collect-list examples/sources.example.txt --category "Automotive"
 ```
 
-## Beispiel (manuell)
+## v2 Memory
 
 ```bash
-python main.py add-observation \
-  --category "Automotive" \
-  --subcategory "Bremssystem" \
-  --product "Beispiel Bremsbelag" \
-  --price 49.90 \
-  --source-url "https://example.com/public-page"
-
+python main.py add-observation --category "Automotive" --product "Demo" --source-url "https://example.com"
 python main.py changes
-python main.py memory "bremsbelag"
+python main.py memory "demo"
+python main.py export-memory
 ```
 
-## Dateien
+## Archive
 
-| Pfad | Inhalt |
-|------|--------|
-| `buzzard_intelligence/database.py` | v1 |
-| `buzzard_intelligence/memory.py` | v2 |
-| `buzzard_intelligence/collector.py` | v3 |
-| `examples/sources.example.txt` | URL-Liste Vorlage |
-| `archive/Buzzard_Intelligence_v3_Collector.zip` | Original v3 |
+- `archive/Buzzard_Intelligence_v1.zip`
+- `archive/Buzzard_Intelligence_v2_Memory.zip`
+- `archive/Buzzard_Intelligence_v3_Collector.zip`
+- `archive/Buzzard_Intelligence_v4_Scheduler.zip`
 
-Siehe auch: `docs/BUZZARD_INTELLIGENCE.md`
+Siehe: `docs/BUZZARD_INTELLIGENCE.md`

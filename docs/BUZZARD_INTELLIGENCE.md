@@ -1,16 +1,17 @@
-# Buzzard Intelligence v1 + v2 Memory + v3 Collector
+# Buzzard Intelligence v1–v4
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
 ## Überblick
 
-| Aspekt | Details |
-|--------|---------|
-| v1 Speicher | SQLite `intelligence/buzzard_intelligence.db` |
-| v2 Speicher | SQLite `intelligence/buzzard_intelligence_v2.db` |
-| Export | `intelligence/buzzard_memory_snapshot.json` (gitignored) |
-| Sprache | Python 3.10+ |
-| Archive | v1, v2, v3 ZIPs unter `intelligence/archive/` |
+| Version | Modul | Speicher |
+|---------|-------|----------|
+| v1 | `database.py` | `buzzard_intelligence.db` |
+| v2 | `memory.py` | `buzzard_intelligence_v2.db` |
+| v3 | `collector.py` | nutzt v2 |
+| v4 | `scheduler.py` | `buzzard_intelligence_v4.db` |
+
+Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
 ## Schnellstart
 
@@ -19,81 +20,74 @@ cd intelligence
 pip install -r requirements.txt
 python main.py init
 python main.py seed-de
-python main.py report-v2
+python main.py seed-tasks-de
+python main.py tasks
 ```
 
-## v3 Collector — neu
+## v4 Scheduler — neu
 
-Legal-public-source collector on top of v2 Memory.
-
-| Schritt | Verhalten |
-|---------|-----------|
-| robots.txt | Zugriff nur wenn erlaubt; bei Unklarheit: Abbruch |
-| Fetch | Langsame Anfragen, Research User-Agent |
-| Parse | JSON-LD `Product`, sonst Title/H1 |
-| Store | v2 `observe()` mit Quellen-URL und Konfidenz 0.80 |
-
-### Grenzen (v3)
-
-- Kein CAPTCHA-, Login-, Bot-Schutz- oder Paywall-Bypass
-- Nur HTML — für APIs/Feeds spätere Adapter
-- „Bestseller“ nur wenn Quelle das explizit veröffentlicht
-- 1,5 s Pause zwischen Requests in `collect-list`
-
-### Befehle
-
-```bash
-python main.py collect \
-  --url "https://example.com/product-page" \
-  --category "Automotive" \
-  --subcategory "Bremssystem"
-
-python main.py collect-list examples/sources.example.txt --category "Automotive"
-```
-
-## v2 Memory
+Orchestrierungsschicht über v3 Collector.
 
 | Feature | Beschreibung |
 |---------|--------------|
-| `events` | Preis-, Popularitäts-, Entdeckungs-Ereignisse |
-| `--confidence` | 0.0–1.0 (Standard 0.70; Collector nutzt 0.80) |
-| `memory <query>` | Speichersuche |
-| `export-memory` | JSON-Snapshot |
+| `scan_tasks` | Kategorie, URL, Intervall, Priorität, Status |
+| `seed-tasks-de` | 41 Platzhalter-Aufgaben (`WAITING_SOURCE`, inaktiv) |
+| `add-task` | Echte Quelle mit URL registrieren |
+| `run` | Fällige aktive Aufgaben ausführen |
+| `tasks` | Aufgabenliste |
 
-## Alle Befehle
+```bash
+python main.py add-task \
+  --category "Automotive" \
+  --subcategory "Bremssystem" \
+  --url "https://example.com/product-page" \
+  --interval 1440 \
+  --priority 10
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `init` | v1 + v2 Schema |
-| `seed-de` | 41 deutsche Hauptkategorien |
-| `collect` | v3 Einzel-URL |
-| `collect-list` | v3 URL-Datei |
-| `add-observation` | Manuelle v2 Beobachtung |
-| `changes` | Änderungsreport |
-| `memory` | Suche |
-| `export-memory` | JSON-Export |
+python main.py run
+```
 
-## Integration mit Buzzard Shop
+- Mindestintervall: 60 Minuten
+- Kein automatisches Crawling ohne konfigurierte URL
+- Produktion: später PostgreSQL/Redis/Celery möglich
 
-| Bereich | Status |
-|---------|--------|
-| `data/buzzard_categories.json` | DE-Hauptkategorien als Seed |
-| Admin AI Center | Geplant |
-| Produktimport | **Nicht aktiv** — Katalog-Modus |
-| Shop-Preise | Unverändert |
+## v3 Collector
+
+robots.txt-aware HTML-Sammlung → v2 Memory. Siehe v3-Abschnitt in vorherigen Releases.
+
+## v2 Memory
+
+Änderungserkennung (Preis, Popularität, Entdeckungen), Suche, JSON-Export.
+
+## Alle CLI-Befehle
+
+| Befehl | Version |
+|--------|---------|
+| `init` | v1 + v2 + v4 |
+| `seed-de` | v1 + v2 |
+| `seed-tasks-de` | v4 |
+| `add-task` | v4 |
+| `tasks` / `run` | v4 |
+| `collect` / `collect-list` | v3 |
+| `add-observation` / `changes` / `memory` / `export-memory` | v2 |
+| `report` | v1 |
+
+## Grenzen
+
+- Keine Shop-/Katalog-Änderungen
+- Kein CAPTCHA-/Login-Bypass
+- SQLite lokal; kein Production-Deploy ohne separates Konzept
 
 ## Dateien
 
 ```
 intelligence/
 ├── main.py
-├── examples/sources.example.txt
 ├── buzzard_intelligence/
-│   ├── database.py          # v1
-│   ├── memory.py            # v2
-│   └── collector.py         # v3
+│   ├── database.py
+│   ├── memory.py
+│   ├── collector.py
+│   └── scheduler.py
 └── archive/
-    ├── Buzzard_Intelligence_v1.zip
-    ├── Buzzard_Intelligence_v2_Memory.zip
-    └── Buzzard_Intelligence_v3_Collector.zip
+    └── Buzzard_Intelligence_v4_Scheduler.zip
 ```

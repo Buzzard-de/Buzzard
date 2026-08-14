@@ -4,6 +4,7 @@ from .collector import Collector
 from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
 from .memory import MemoryEngine
+from .reporting import Reporter
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
 from .trends import TrendEngine
@@ -15,6 +16,7 @@ __all__ = [
     "Collector",
     "IntelligenceDB",
     "MemoryEngine",
+    "Reporter",
     "Scheduler",
     "SEED_CATEGORIES",
     "TrendEngine",

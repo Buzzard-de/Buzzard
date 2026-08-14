@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v8
+# Buzzard Intelligence v1–v9
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -6,14 +6,10 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 
 | Version | Modul | Speicher |
 |---------|-------|----------|
-| v1 | `database.py` | `buzzard_intelligence.db` |
-| v2 | `memory.py` | `buzzard_intelligence_v2.db` |
-| v3 | `collector.py` | nutzt v2 |
-| v4 | `scheduler.py` | `buzzard_intelligence_v4.db` |
-| v5 | `api_layer.py` | `buzzard_intelligence_v5.db` |
-| v6 | `analysis.py` | liest v2 |
-| v7 | `trends.py` | liest v2 |
-| v8 | `discovery.py` | `buzzard_intelligence_v8.db` |
+| v1–v8 | … | siehe vorherige Abschnitte |
+| v9 | `reporting.py` | `buzzard_intelligence_v9.db` (Warnungen) |
+
+Liest zusätzlich v2 Memory und v8 Discovery für Alert-Generierung.
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -23,55 +19,47 @@ Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 cd intelligence
 pip install -r requirements.txt
 python main.py init
-python main.py sync-categories
-python main.py demo-discovery
-python main.py discover
+python main.py demo-reporting
+python main.py intel-report
+python main.py alerts
 ```
 
-## v8 Category Discovery — neu
+## v9 Reporting & Alerts — neu
 
-Kategoriebaum-Erweiterung mit Quellen-Nachweis.
+| Befehl | Beschreibung |
+|--------|--------------|
+| `refresh-alerts` | Warnungen aus Memory/Discovery-Events neu aufbauen |
+| `intel-report` | Management-Übersicht (7-Tage-Fenster) |
+| `alerts` | Aktive Warnungen nach Schweregrad |
+| `queue` | Priorisierte Review-Warteschlange |
+| `demo-reporting` | Demo-Daten v6/v7/v8 + Alert-Refresh |
 
-| Feature | Beschreibung |
-|---------|--------------|
-| `sync-categories` | Lädt bekannte Kategorien aus `data/buzzard_categories.json` |
-| `add-category` | Neues Kategorie-Signal mit Quelle und Konfidenz |
-| `discover` | Report: Signale, Ereignisse, Abdeckungslücken |
-| Normalisierung | Gleiche Kategorie in unterschiedlicher Schreibweise erkennen |
+### Warnungstypen
+
+- `NEW_PRODUCT` — v2 `NEW_DISCOVERY`
+- `NEW_CATEGORY` — v8 Kategorie-Signale
+- `PRICE_CHANGE` — v2 Preis-Events
+- `TREND` — Popularität steigend/fallend
+- `DATA_GAP` — zu wenig Beobachtungen
 
 ### Wichtig
 
-- Signale sind **keine** automatischen Shop-Entscheidungen
-- Vor Aufnahme: Quelle und Rechtemäßigkeit prüfen
-- Erweitert den 41-Hauptkategorien-Omorga, ersetzt ihn nicht
+- Warnungen sind **Prüfprioritäten**, keine Shop-Automatik
+- Keine Verkaufsprognosen oder Bestseller-Behauptungen
 
-```bash
-python main.py add-category \
-  --name "Bremsbeläge" \
-  --parent "Bremsystem" \
-  --level 3 \
-  --source "demo-source"
+## v8–v1
 
-python main.py demo-discovery
-python main.py discover
-```
+Unverändert nutzbar (`discover`, `trends`, `analyze`, `collect`, …).
 
-## v7 Trends / v6 Analysis
-
-Siehe vorherige Abschnitte — `demo-trends`, `trends`, `demo`, `analyze`.
-
-## Alle CLI-Befehle
+## Alle CLI-Befehle (Auszug)
 
 | Befehl | Version |
 |--------|---------|
-| `init` | v1 + v2 + v4 + v5 + v8 |
-| `sync-categories` / `add-category` / `discover` / `demo-discovery` | v8 |
-| `demo-trends` / `trends` | v7 |
-| `demo` / `analyze` | v6 |
-| `sources` / `add-api` / `test-apis` | v5 |
-| `seed-tasks-de` / `run` | v4 |
-| `collect` | v3 |
-| `add-observation` / `changes` / `memory` | v2 |
+| `init` | v1 + v2 + v4 + v5 + v8 + v9 |
+| `refresh-alerts` / `intel-report` / `alerts` / `queue` | v9 |
+| `sync-categories` / `discover` | v8 |
+| `trends` | v7 |
+| `analyze` | v6 |
 
 ## Grenzen
 
@@ -84,7 +72,7 @@ Siehe vorherige Abschnitte — `demo-trends`, `trends`, `demo`, `analyze`.
 intelligence/
 ├── main.py
 ├── buzzard_intelligence/
-│   └── discovery.py
+│   └── reporting.py
 └── archive/
-    └── Buzzard_Intelligence_v8_Category_Discovery.zip
+    └── Buzzard_Intelligence_v9_Reporting_Alerts.zip
 ```

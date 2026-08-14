@@ -9,6 +9,7 @@ from buzzard_intelligence import (
     Collector,
     IntelligenceDB,
     MemoryEngine,
+    Reporter,
     Scheduler,
     SEED_CATEGORIES,
     TrendEngine,
@@ -17,7 +18,7 @@ from buzzard_intelligence import (
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v8 (Memory, Collector, Scheduler, API, Analysis, Trends, Discovery)"
+        description="Buzzard Intelligence v1–v9 (Memory … Discovery, Reporting)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -27,6 +28,7 @@ def main():
     sub.add_parser("init-v4", help="Create v4 scheduler schema only")
     sub.add_parser("init-v5", help="Create v5 API layer schema only")
     sub.add_parser("init-v8", help="Create v8 category discovery schema only")
+    sub.add_parser("init-v9", help="Create v9 reporting/alerts schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -47,6 +49,11 @@ def main():
     sub.add_parser("sync-categories", help="v8 load known categories from data/buzzard_categories.json")
     sub.add_parser("demo-discovery", help="v8 add German demo category signals")
     sub.add_parser("discover", help="v8 category discovery report")
+    sub.add_parser("refresh-alerts", help="v9 rebuild alerts from memory/discovery events")
+    sub.add_parser("intel-report", help="v9 management intelligence report")
+    sub.add_parser("alerts", help="v9 active intelligence alerts")
+    sub.add_parser("queue", help="v9 prioritized intelligence queue")
+    sub.add_parser("demo-reporting", help="v9 demo data + alert refresh")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -115,6 +122,7 @@ def main():
     v6 = Analyzer(v2)
     v7 = TrendEngine(v2)
     v8 = CategoryDiscovery()
+    v9 = Reporter(v2, v8)
 
     if args.cmd == "init":
         v1.init()
@@ -122,11 +130,13 @@ def main():
         v4.init()
         v5.init()
         v8.init()
+        v9.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
         print(f"v5 API layer ready at {Path(v5.path).resolve()}")
         print(f"v8 category discovery ready at {Path(v8.path).resolve()}")
+        print(f"v9 reporting ready at {Path(v9.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -142,6 +152,9 @@ def main():
     elif args.cmd == "init-v8":
         v8.init()
         print(f"v8 category discovery ready at {Path(v8.path).resolve()}")
+    elif args.cmd == "init-v9":
+        v9.init()
+        print(f"v9 reporting ready at {Path(v9.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -238,6 +251,21 @@ def main():
                 args.confidence,
             )
         )
+    elif args.cmd == "refresh-alerts":
+        count = v9.refresh_alerts()
+        print(f"{count} aktive Warnungen aktualisiert.")
+    elif args.cmd == "intel-report":
+        v9.init()
+        print(v9.report())
+    elif args.cmd == "alerts":
+        v9.init()
+        print(v9.alerts())
+    elif args.cmd == "queue":
+        v9.init()
+        print(v9.priority_queue())
+    elif args.cmd == "demo-reporting":
+        count = v9.demo()
+        print(f"Demo-Daten geladen, {count} Warnungen erzeugt.")
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

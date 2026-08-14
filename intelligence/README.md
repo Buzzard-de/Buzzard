@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v8
+# Buzzard Intelligence v1–v9
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -6,10 +6,8 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 
 | Version | Modul | Zweck |
 |---------|-------|-------|
-| v1–v5 | … | Memory, Collector, Scheduler, API |
-| v6 | `analysis.py` | Markt-/Kategorie-Analyse |
-| v7 | `trends.py` | Trend- & Opportunity-Signale |
-| v8 | `discovery.py` | Kategorie-Entdeckung & Normalisierung |
+| v1–v8 | … | Memory, Collector, Scheduler, API, Analysis, Trends, Discovery |
+| v9 | `reporting.py` | Management-Reports, Warnungen, Prioritäts-Warteschlange |
 
 ## Setup
 
@@ -17,33 +15,25 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 cd intelligence
 pip install -r requirements.txt
 python main.py init
-python main.py sync-categories
-python main.py demo-discovery
-python main.py discover
+python main.py demo-reporting
+python main.py intel-report
+python main.py alerts
+python main.py queue
 ```
 
-## v8 Category Discovery
+## v9 Reporting & Alerts
 
-Erweitert den Kategoriebaum mit quellenbasierten Signalen — **keine automatischen Shop-Änderungen**.
+Aggregiert Signale aus v2 Memory und v8 Discovery — **keine automatischen Entscheidungen**.
 
 ```bash
-python main.py add-category \
-  --name "Bremsbeläge" \
-  --parent "Bremsystem" \
-  --level 3 \
-  --source "https://example.com/feed" \
-  --confidence 0.85
-
-python main.py discover
+python main.py refresh-alerts
+python main.py intel-report
+python main.py alerts
+python main.py queue
 ```
 
-## Weitere Befehle
+Warnungstypen: `NEW_PRODUCT`, `NEW_CATEGORY`, `PRICE_CHANGE`, `TREND`, `DATA_GAP`
 
-```bash
-python main.py demo && python main.py analyze      # v6
-python main.py demo-trends && python main.py trends # v7
-```
-
-Archive: `archive/Buzzard_Intelligence_v1.zip` … `v8_Category_Discovery.zip`
+Archive: `archive/Buzzard_Intelligence_v9_Reporting_Alerts.zip`
 
 Siehe: `docs/BUZZARD_INTELLIGENCE.md`

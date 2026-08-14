@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v22
+# Buzzard Intelligence v1–v23
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -19,8 +19,35 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v20 | `orchestrator.py` | `buzzard_council_v20.db` |
 | v21 | `gateway.py` | `buzzard_ai_gateway_v21.db` |
 | v22 | `research.py` | `buzzard_web_research_v22.db` |
+| v23 | `connectors.py` | `buzzard_connector_hub_v23.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v23 Connector Hub — neu
+
+Zentraler Connector-Layer für autorisierte API-/Feed-Verbindungen — **keine API-Keys im Code**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Connectors | Name, Typ, Base-URL, Env-Variable für API-Key |
+| Capabilities | Produkte, Preise, Bestand, Bestellungen, Tracking (inbound/outbound) |
+| Health | UNKNOWN, HEALTHY, DEGRADED, ERROR, DISABLED |
+| Sync-Runs | Protokoll für Synchronisationsläufe |
+| Regel | Nur offizielle/autorisierte Verbindungen; Adapter je Provider |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v23
+python main.py connector-demo
+python main.py connector-report
+python main.py connector-add --name "Example Supplier API" --kind supplier --base-url "https://api.example.com" --key-env "BUZZARD_EXAMPLE_KEY"
+python main.py connector-capability --connector "Example Supplier API" --name products --direction inbound
+python main.py connector-health --connector "Example Supplier API" --status healthy
+```
+
+Echte Provider-Adapter werden separat angebunden.
 
 ## v22 Web Research — neu
 

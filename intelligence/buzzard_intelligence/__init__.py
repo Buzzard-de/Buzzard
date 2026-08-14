@@ -2,6 +2,7 @@ from .analysis import Analyzer
 from .api_layer import APILayer
 from .collector import Collector
 from .competitor import CompetitorIntel
+from .connectors import ConnectorHub
 from .council import Council
 from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
@@ -27,6 +28,7 @@ __all__ = [
     "CategoryDiscovery",
     "Collector",
     "CompetitorIntel",
+    "ConnectorHub",
     "Council",
     "CouncilOrchestrator",
     "AIGateway",

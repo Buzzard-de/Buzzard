@@ -25,12 +25,13 @@ from buzzard_intelligence import (
     CouncilOrchestrator,
     AIGateway,
     WebResearch,
+    ConnectorHub,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v22 (Memory … AI Gateway, Web Research)"
+        description="Buzzard Intelligence v1–v23 (Memory … AI Gateway, Web Research, Connector Hub)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -53,6 +54,7 @@ def main():
     sub.add_parser("init-v20", help="Create v20 council orchestrator schema only")
     sub.add_parser("init-v21", help="Create v21 AI agent gateway schema only")
     sub.add_parser("init-v22", help="Create v22 web research schema only")
+    sub.add_parser("init-v23", help="Create v23 connector hub schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -311,6 +313,27 @@ def main():
     sub.add_parser("research-demo", help="v22 add demo web research records")
     sub.add_parser("research-report", help="v22 web research report")
 
+    connector_add = sub.add_parser("connector-add", help="v23 register an API/feed connector")
+    connector_add.add_argument("--name", required=True)
+    connector_add.add_argument("--kind", required=True)
+    connector_add.add_argument("--base-url", required=True)
+    connector_add.add_argument("--key-env", default="")
+
+    connector_capability = sub.add_parser(
+        "connector-capability", help="v23 add a connector capability"
+    )
+    connector_capability.add_argument("--connector", required=True)
+    connector_capability.add_argument("--name", required=True)
+    connector_capability.add_argument("--direction", default="inbound")
+
+    connector_health = sub.add_parser("connector-health", help="v23 set connector health status")
+    connector_health.add_argument("--connector", required=True)
+    connector_health.add_argument("--status", required=True)
+    connector_health.add_argument("--note", default="")
+
+    sub.add_parser("connector-demo", help="v23 add demo connector records")
+    sub.add_parser("connector-report", help="v23 connector hub report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -391,6 +414,7 @@ def main():
     v20 = CouncilOrchestrator()
     v21 = AIGateway()
     v22 = WebResearch()
+    v23 = ConnectorHub()
 
     if args.cmd == "init":
         v1.init()
@@ -411,6 +435,7 @@ def main():
         v20.init()
         v21.init()
         v22.init()
+        v23.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -429,6 +454,7 @@ def main():
         print(f"v20 council orchestrator ready at {Path(v20.path).resolve()}")
         print(f"v21 AI gateway ready at {Path(v21.path).resolve()}")
         print(f"v22 web research ready at {Path(v22.path).resolve()}")
+        print(f"v23 connector hub ready at {Path(v23.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -483,6 +509,9 @@ def main():
     elif args.cmd == "init-v22":
         v22.init()
         print(f"v22 web research ready at {Path(v22.path).resolve()}")
+    elif args.cmd == "init-v23":
+        v23.init()
+        print(f"v23 connector hub ready at {Path(v23.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -882,6 +911,22 @@ def main():
     elif args.cmd == "research-report":
         v22.init()
         print(v22.report())
+    elif args.cmd == "connector-add":
+        v23.init()
+        print(v23.add_connector(args.name, args.kind, args.base_url, args.key_env))
+    elif args.cmd == "connector-capability":
+        v23.init()
+        print(v23.add_capability(args.connector, args.name, args.direction))
+    elif args.cmd == "connector-health":
+        v23.init()
+        print(v23.set_health(args.connector, args.status, args.note))
+    elif args.cmd == "connector-demo":
+        v23.init()
+        v23.demo()
+        print("Demo-Connector-Daten gespeichert.")
+    elif args.cmd == "connector-report":
+        v23.init()
+        print(v23.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

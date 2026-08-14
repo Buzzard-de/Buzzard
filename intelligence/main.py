@@ -15,12 +15,13 @@ from buzzard_intelligence import (
     SEED_CATEGORIES,
     SharedMemory,
     TrendEngine,
+    MultilingualMemory,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v12 (Memory … Council, Voice, Shared Memory)"
+        description="Buzzard Intelligence v1–v13 (Memory … Voice, Shared Memory, Multilingual)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -33,6 +34,7 @@ def main():
     sub.add_parser("init-v9", help="Create v9 reporting/alerts schema only")
     sub.add_parser("init-v10", help="Create v10 council integration schema only")
     sub.add_parser("init-v12", help="Create v12 shared memory schema only")
+    sub.add_parser("init-v13", help="Create v13 multilingual intelligence schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -108,6 +110,17 @@ def main():
     shared_link.add_argument("--to-id", type=int, required=True)
     shared_link.add_argument("--relation", default="related")
 
+    term_add = sub.add_parser("term-add", help="v13 register a multilingual term for a canonical entity")
+    term_add.add_argument("--language", required=True)
+    term_add.add_argument("--text", required=True)
+    term_add.add_argument("--canonical", required=True)
+    term_add.add_argument("--entity", default="")
+    term_add.add_argument("--source", default="system")
+    term_add.add_argument("--confidence", type=float, default=0.8)
+
+    sub.add_parser("ml-demo", help="v13 add demo multilingual product terms")
+    sub.add_parser("ml-report", help="v13 multilingual intelligence report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -178,6 +191,7 @@ def main():
     v9 = Reporter(v2, v8)
     v10 = Council()
     v12 = SharedMemory()
+    v13 = MultilingualMemory()
 
     if args.cmd == "init":
         v1.init()
@@ -188,6 +202,7 @@ def main():
         v9.init()
         v10.init()
         v12.init()
+        v13.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -196,6 +211,7 @@ def main():
         print(f"v9 reporting ready at {Path(v9.path).resolve()}")
         print(f"v10 council ready at {Path(v10.path).resolve()}")
         print(f"v12 shared memory ready at {Path(v12.path).resolve()}")
+        print(f"v13 multilingual ready at {Path(v13.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -220,6 +236,9 @@ def main():
     elif args.cmd == "init-v12":
         v12.init()
         print(f"v12 shared memory ready at {Path(v12.path).resolve()}")
+    elif args.cmd == "init-v13":
+        v13.init()
+        print(f"v13 multilingual ready at {Path(v13.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -391,6 +410,25 @@ def main():
     elif args.cmd == "shared-link":
         v12.init()
         print(v12.link(args.from_id, args.to_id, args.relation))
+    elif args.cmd == "term-add":
+        v13.init()
+        print(
+            v13.add(
+                args.language,
+                args.text,
+                args.canonical,
+                args.entity,
+                args.source,
+                args.confidence,
+            )
+        )
+    elif args.cmd == "ml-demo":
+        v13.init()
+        v13.demo()
+        print("Demo-Mehrsprachdaten gespeichert.")
+    elif args.cmd == "ml-report":
+        v13.init()
+        print(v13.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v12
+# Buzzard Intelligence v1–v13
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -9,6 +9,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v1–v10 | … | Memory → Council |
 | v11 | `voice/` | Sprach-UI (Browser Speech API + Flask) |
 | v12 | `shared_memory.py` | Langfristige Shared Memory (Entscheidungen, Aufgaben, Konversationen) |
+| v13 | `multilingual.py` | Mehrsprachige Begriffe und kanonische Entitäten |
 
 ## Setup
 
@@ -20,6 +21,21 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v13 Multilingual Intelligence
+
+- TR, DE, EN, AR, FR, ES, IT, NL, PL
+- Kanonische Entitäten mit mehrsprachigen Begriffen
+- Quellen, Konfidenz, Übersetzungsstatus (UNVERIFIED)
+
+```bash
+python main.py init-v13
+python main.py ml-demo
+python main.py ml-report
+python main.py term-add --language de --text "Motoröl 5W-30" --canonical "5W-30 Motor Yağı" --entity product
+```
+
+Archive: `archive/Buzzard_Intelligence_v13_Multilingual.zip`
 
 ## v12 Shared Memory
 

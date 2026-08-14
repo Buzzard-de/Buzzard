@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v12
+# Buzzard Intelligence v1–v13
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -9,10 +9,32 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v1–v10 | … | siehe vorherige Abschnitte |
 | v11 | `voice/` | kein eigener DB-Speicher (UI-Schicht) |
 | v12 | `shared_memory.py` | `buzzard_shared_memory_v12.db` |
+| v13 | `multilingual.py` | `buzzard_multilingual_v13.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v12 Shared Memory — neu
+## v13 Multilingual Intelligence — neu
+
+Mehrsprachige Begriffs- und Entitätszuordnung — unabhängig von v2 Produkt-Memory.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Sprachen | tr, de, en, ar, fr, es, it, nl, pl |
+| Kanonische Entitäten | Produkt-/Kategoriebegriffe über Sprachen hinweg |
+| Quellen & Konfidenz | Automatische Übersetzungen bleiben UNVERIFIED |
+| Sprachabdeckung | Beobachtungen und Quellen pro Sprache |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v13
+python main.py ml-demo
+python main.py ml-report
+python main.py term-add --language de --text "Motoröl 5W-30" --canonical "5W-30 Motor Yağı" --entity product
+```
+
+## v12 Shared Memory
 
 Langfristige gemeinsame Wissensbasis — unabhängig von v2 Produkt-Memory und v11 Voice.
 
@@ -85,11 +107,13 @@ Council, Reporting, Discovery, … — unverändert nutzbar.
 ```
 intelligence/
 ├── buzzard_intelligence/
-│   └── shared_memory.py
+│   ├── shared_memory.py
+│   └── multilingual.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
 └── archive/
     ├── Buzzard_Intelligence_v11_Voice_Interface.zip
-    └── Buzzard_Intelligence_v12_Shared_Memory.zip
+    ├── Buzzard_Intelligence_v12_Shared_Memory.zip
+    └── Buzzard_Intelligence_v13_Multilingual.zip
 ```

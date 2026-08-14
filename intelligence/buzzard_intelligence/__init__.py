@@ -8,6 +8,7 @@ from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
 from .forecast import DemandForecast
 from .gateway import AIGateway
+from .learning_memory import LearningMemory
 from .memory import MemoryEngine
 from .market import MarketEngine
 from .matcher import ProductMatcher
@@ -41,6 +42,7 @@ __all__ = [
     "CouncilOrchestrator",
     "AIGateway",
     "IntelligenceDB",
+    "LearningMemory",
     "MemoryEngine",
     "MarketEngine",
     "MissionEngine",

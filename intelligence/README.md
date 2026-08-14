@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v30
+# Buzzard Intelligence v1–v31
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -27,6 +27,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v28 | `selection.py` | Product Selection (PRIORITY/REVIEW/HOLD/REJECT) |
 | v29 | `verify.py` | Official Verification (Claims, Quellen, Status) |
 | v30 | `mission.py` | Autonomous Mission (12 Agenten, Menschen-Freigabe) |
+| v31 | `learning_memory.py` | Learning & Memory (FACT/SIGNAL/LESSON, Recall) |
 
 ## Setup
 
@@ -38,6 +39,27 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v31 Learning & Memory
+
+- Persistente Intelligence-Ergebnisse: FACT, SIGNAL, DECISION, LESSON, PREFERENCE
+- Quelle, Konfidenz, Status und Audit-Trail
+- Recall-Suche; Widersprüche als CONFLICT
+- Keine erfundenen Fakten; kritische Regeln ohne Menschen-Freigabe unverändert
+
+```bash
+python main.py init-v31
+python main.py learn-demo
+python main.py learn-report
+python main.py learn-recall --query "Motoröl"
+python main.py learn-remember --kind FACT --topic "Automotive" --text "Beispiel-Fund" --confidence 0.85 --source "https://example.com"
+python main.py learn-lesson --topic "Lieferant" --text "Unverifizierte Lieferanten nicht priorisieren."
+python main.py learn-status --memory-id 1 --status OUTDATED
+```
+
+v2 `memory` = Produktbeobachtungen · v12 `remember`/`recall` = Shared Memory · v31 `learn-*` = Learning Memory.
+
+Archive: `archive/Buzzard_Intelligence_v31_Learning_Memory.zip`
 
 ## v30 Autonomous Mission
 

@@ -33,12 +33,13 @@ from buzzard_intelligence import (
     ProductSelector,
     OfficialVerifier,
     MissionEngine,
+    LearningMemory,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v30 (Memory … Official Verification, Autonomous Mission)"
+        description="Buzzard Intelligence v1–v31 (Memory … Autonomous Mission, Learning Memory)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -69,6 +70,7 @@ def main():
     sub.add_parser("init-v28", help="Create v28 product selection schema only")
     sub.add_parser("init-v29", help="Create v29 official verification schema only")
     sub.add_parser("init-v30", help="Create v30 autonomous mission schema only")
+    sub.add_parser("init-v31", help="Create v31 learning memory schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -480,6 +482,28 @@ def main():
     sub.add_parser("mission-demo", help="v30 add demo mission")
     sub.add_parser("mission-board", help="v30 autonomous mission board")
 
+    learn_remember = sub.add_parser("learn-remember", help="v31 store a learning memory entry")
+    learn_remember.add_argument("--kind", required=True)
+    learn_remember.add_argument("--topic", required=True)
+    learn_remember.add_argument("--text", required=True)
+    learn_remember.add_argument("--confidence", type=float, default=0.8)
+    learn_remember.add_argument("--source", default="")
+
+    learn_lesson = sub.add_parser("learn-lesson", help="v31 store a lesson learned")
+    learn_lesson.add_argument("--topic", required=True)
+    learn_lesson.add_argument("--text", required=True)
+
+    learn_recall = sub.add_parser("learn-recall", help="v31 search learning memory")
+    learn_recall.add_argument("--query", required=True)
+    learn_recall.add_argument("--limit", type=int, default=20)
+
+    learn_status = sub.add_parser("learn-status", help="v31 set learning memory status")
+    learn_status.add_argument("--memory-id", type=int, required=True)
+    learn_status.add_argument("--status", required=True)
+
+    sub.add_parser("learn-demo", help="v31 add demo learning memory records")
+    sub.add_parser("learn-report", help="v31 learning memory report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -568,6 +592,7 @@ def main():
     v28 = ProductSelector()
     v29 = OfficialVerifier()
     v30 = MissionEngine()
+    v31 = LearningMemory()
 
     if args.cmd == "init":
         v1.init()
@@ -596,6 +621,7 @@ def main():
         v28.init()
         v29.init()
         v30.init()
+        v31.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -622,6 +648,7 @@ def main():
         print(f"v28 product selection ready at {Path(v28.path).resolve()}")
         print(f"v29 official verification ready at {Path(v29.path).resolve()}")
         print(f"v30 autonomous mission ready at {Path(v30.path).resolve()}")
+        print(f"v31 learning memory ready at {Path(v31.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -700,6 +727,9 @@ def main():
     elif args.cmd == "init-v30":
         v30.init()
         print(f"v30 autonomous mission ready at {Path(v30.path).resolve()}")
+    elif args.cmd == "init-v31":
+        v31.init()
+        print(f"v31 learning memory ready at {Path(v31.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1277,6 +1307,25 @@ def main():
     elif args.cmd == "mission-board":
         v30.init()
         print(v30.board())
+    elif args.cmd == "learn-remember":
+        v31.init()
+        print(v31.remember(args.kind, args.topic, args.text, args.confidence, args.source))
+    elif args.cmd == "learn-lesson":
+        v31.init()
+        print(v31.lesson(args.topic, args.text))
+    elif args.cmd == "learn-recall":
+        v31.init()
+        print(v31.recall(args.query, args.limit))
+    elif args.cmd == "learn-status":
+        v31.init()
+        print(v31.set_status(args.memory_id, args.status))
+    elif args.cmd == "learn-demo":
+        v31.init()
+        v31.demo()
+        print("Demo-Learning-Memory gespeichert.")
+    elif args.cmd == "learn-report":
+        v31.init()
+        print(v31.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

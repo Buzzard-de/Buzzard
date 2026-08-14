@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v30
+# Buzzard Intelligence v1–v31
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -27,8 +27,35 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v28 | `selection.py` | `buzzard_product_selection_v28.db` |
 | v29 | `verify.py` | `buzzard_official_verification_v29.db` |
 | v30 | `mission.py` | `buzzard_mission_v30.db` |
+| v31 | `learning_memory.py` | `buzzard_learning_memory_v31.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v31 Learning & Memory — neu
+
+Persistentes Lernen aus Intelligence-Ergebnissen — **keine erfundenen Fakten**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Typen | FACT, SIGNAL, DECISION, LESSON, PREFERENCE |
+| Status | ACTIVE, NEEDS_REVIEW, OUTDATED, CONFLICT, ARCHIVED |
+| Recall | Textsuche mit Konfidenz und Quelle |
+| Regel | Alte Einträge werden nicht still gelöscht; Widersprüche → CONFLICT |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v31
+python main.py learn-demo
+python main.py learn-report
+python main.py learn-recall --query "Motoröl"
+python main.py learn-remember --kind FACT --topic "Automotive" --text "Beispiel-Fund" --confidence 0.85 --source "https://example.com"
+python main.py learn-lesson --topic "Lieferant" --text "Unverifizierte Lieferanten nicht priorisieren."
+python main.py learn-status --memory-id 1 --status OUTDATED
+```
+
+v2 `memory` = Produktbeobachtungen · v12 `remember`/`recall` = Shared Memory · v31 `learn-*` = Learning Memory.
 
 ## v30 Autonomous Mission — neu
 
@@ -537,7 +564,8 @@ intelligence/
 │   ├── supplier_match.py
 │   ├── selection.py
 │   ├── verify.py
-│   └── mission.py
+│   ├── mission.py
+│   └── learning_memory.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -561,5 +589,6 @@ intelligence/
     ├── Buzzard_Intelligence_v27_Supplier_Matching.zip
     ├── Buzzard_Intelligence_v28_Product_Selection.zip
     ├── Buzzard_Intelligence_v29_Official_Verification.zip
-    └── Buzzard_Intelligence_v30_Autonomous_Mission.zip
+    ├── Buzzard_Intelligence_v30_Autonomous_Mission.zip
+    └── Buzzard_Intelligence_v31_Learning_Memory.zip
 ```

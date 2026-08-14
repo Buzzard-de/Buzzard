@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v10
+# Buzzard Intelligence v1–v11
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -6,83 +6,62 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 
 | Version | Modul | Speicher |
 |---------|-------|----------|
-| v1–v9 | … | siehe vorherige Abschnitte |
-| v10 | `council.py` | `buzzard_council_v10.db` |
+| v1–v10 | … | siehe vorherige Abschnitte |
+| v11 | `voice/` | kein eigener DB-Speicher (UI-Schicht) |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## Schnellstart
+## v11 Voice Interface — neu
+
+Lokale Sprach-Oberfläche mit Flask + Browser Speech API.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Spracheingabe | Browser Speech Recognition (DE/TR) |
+| Sprachausgabe | Speech Synthesis |
+| REST | `POST /api/message`, `GET /api/health` |
+| Backend | Routet zu v9 `Reporter` und v10 `Council` |
+
+### Start
 
 ```bash
 cd intelligence
 pip install -r requirements.txt
-python main.py init
-python main.py demo-reporting
-python main.py sync-council
-python main.py inbox
-python main.py council-board
+python main.py voice
 ```
 
-## v10 Council Integration — neu
+Öffne: http://127.0.0.1:8787
 
-Review-Workflow zwischen Intelligence und menschlicher Entscheidung.
+### Sprachbefehle (Beispiele)
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `inbox` | Offene Intelligence-Ereignisse |
-| `council-board` | Status, Bewertungen, Audit-Trail |
-| `council-event` | Ereignis manuell anlegen |
-| `council-assign` | Zuständigkeit zuweisen |
-| `council-review` | Bewertung/Entscheidung dokumentieren |
-| `sync-council` | v9-Warnungen in Posteingang importieren |
-| `demo-council` | Demo-Ereignisse |
+- „Bericht“ / „Status“ → Management-Report (Auszug)
+- „Warnungen“ / „Alerts“ → aktive v9-Warnungen
+- „Posteingang“ / „Inbox“ → v10 Review-Posteingang
+- „Hilfe“ → verfügbare Befehle
 
-### Regeln
+### Wichtig
 
-1. Intelligence liefert Daten und Signale
-2. Intelligence trifft **keine** alleinigen Geschäftsentscheidungen
-3. Reviewer dokumentieren Bewertungen
-4. Jedes Ereignis hat Quelle und Zeitstempel
-5. Verifizierungsstatus (`UNVERIFIED`) für kritische Infos
+- Kein eigenes Sprach-KI-Modell
+- Keine persistente Konversationshistorie in v11
+- Produktion: externer STT/TTS-Provider über Backend empfohlen
+- Browser-Support für Speech Recognition variiert
 
-```bash
-python main.py council-event \
-  --type CATEGORY_DISCOVERY \
-  --title "Neues Kategorie-Signal" \
-  --source "https://example.com" \
-  --priority 8
+## v10–v1
 
-python main.py council-assign --event-id 1 --agent "Category Lead"
-python main.py council-review --event-id 1 --decision "DEFER" --note "Quelle prüfen"
-```
-
-## v9–v1
-
-Reporting, Discovery, Trends, Analysis, Collector, … — unverändert nutzbar.
-
-## Alle CLI-Befehle (Auszug)
-
-| Befehl | Version |
-|--------|---------|
-| `init` | v1 + v2 + v4 + v5 + v8 + v9 + v10 |
-| `inbox` / `council-board` / `sync-council` | v10 |
-| `intel-report` / `alerts` | v9 |
-| `discover` | v8 |
-| `trends` | v7 |
-| `analyze` | v6 |
+Council, Reporting, Discovery, … — unverändert nutzbar.
 
 ## Grenzen
 
-- Keine Shop-/Katalog-Änderungen ohne manuelle Freigabe
-- v10 ist Kommunikations-/Review-Kern, kein Multi-Agent-Orchestrator
+- Keine Shop-/Katalog-Änderungen
+- Voice-Server nur lokal (`127.0.0.1:8787`)
 
 ## Dateien
 
 ```
 intelligence/
-├── main.py
-├── buzzard_intelligence/
-│   └── council.py
+├── voice/
+│   ├── server.py
+│   └── web/index.html
 └── archive/
-    └── Buzzard_Intelligence_v10_Council_Integration.zip
+    └── Buzzard_Intelligence_v11_Voice_Interface.zip
 ```

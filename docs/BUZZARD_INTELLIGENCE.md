@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v4
+# Buzzard Intelligence v1–v5
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -10,6 +10,7 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v2 | `memory.py` | `buzzard_intelligence_v2.db` |
 | v3 | `collector.py` | nutzt v2 |
 | v4 | `scheduler.py` | `buzzard_intelligence_v4.db` |
+| v5 | `api_layer.py` | `buzzard_intelligence_v5.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -20,54 +21,59 @@ cd intelligence
 pip install -r requirements.txt
 python main.py init
 python main.py seed-de
-python main.py seed-tasks-de
-python main.py tasks
+python main.py sources
 ```
 
-## v4 Scheduler — neu
+## v5 API Layer — neu
 
-Orchestrierungsschicht über v3 Collector.
+Nachhaltige Quellen-Anbindung statt HTML-Crawl wo möglich:
 
-| Feature | Beschreibung |
-|---------|--------------|
-| `scan_tasks` | Kategorie, URL, Intervall, Priorität, Status |
-| `seed-tasks-de` | 41 Platzhalter-Aufgaben (`WAITING_SOURCE`, inaktiv) |
-| `add-task` | Echte Quelle mit URL registrieren |
-| `run` | Fällige aktive Aufgaben ausführen |
-| `tasks` | Aufgabenliste |
+- Offizielle API
+- JSON/XML/CSV-Feed
+- Erlaubte offene Datenquellen
+
+### Sicherheit
+
+- API-Keys nur via Umgebungsvariable (`BUZZARD_API_KEY` oder `--auth-env`)
+- Kein CAPTCHA-/Login-/Rate-Limit-Bypass
+- Connector-Framework — plattformspezifische Adapter folgen separat
+
+### Befehle
 
 ```bash
-python main.py add-task \
+python main.py add-api \
+  --name "Example Catalog API" \
+  --base-url "https://example.com/api/products" \
   --category "Automotive" \
-  --subcategory "Bremssystem" \
-  --url "https://example.com/product-page" \
-  --interval 1440 \
-  --priority 10
+  --country DE \
+  --auth-env BUZZARD_API_KEY
 
-python main.py run
+python main.py sources
+python main.py test-apis
+python main.py schema
 ```
 
-- Mindestintervall: 60 Minuten
-- Kein automatisches Crawling ohne konfigurierte URL
-- Produktion: später PostgreSQL/Redis/Celery möglich
+Schema-Vorlage: `intelligence/buzzard_intelligence/source_schema.json`
+
+## v4 Scheduler
+
+Aufgaben-Registry mit Priorität/Intervall, Ausführung via v3 Collector.
 
 ## v3 Collector
 
-robots.txt-aware HTML-Sammlung → v2 Memory. Siehe v3-Abschnitt in vorherigen Releases.
+robots.txt-aware HTML → v2 Memory.
 
 ## v2 Memory
 
-Änderungserkennung (Preis, Popularität, Entdeckungen), Suche, JSON-Export.
+Änderungserkennung, Suche, JSON-Export.
 
 ## Alle CLI-Befehle
 
 | Befehl | Version |
 |--------|---------|
-| `init` | v1 + v2 + v4 |
-| `seed-de` | v1 + v2 |
-| `seed-tasks-de` | v4 |
-| `add-task` | v4 |
-| `tasks` / `run` | v4 |
+| `init` | v1 + v2 + v4 + v5 |
+| `sources` / `add-api` / `test-apis` / `schema` | v5 |
+| `seed-tasks-de` / `add-task` / `tasks` / `run` | v4 |
 | `collect` / `collect-list` | v3 |
 | `add-observation` / `changes` / `memory` / `export-memory` | v2 |
 | `report` | v1 |
@@ -75,8 +81,8 @@ robots.txt-aware HTML-Sammlung → v2 Memory. Siehe v3-Abschnitt in vorherigen R
 ## Grenzen
 
 - Keine Shop-/Katalog-Änderungen
-- Kein CAPTCHA-/Login-Bypass
-- SQLite lokal; kein Production-Deploy ohne separates Konzept
+- Kein Blind-Crawl wenn API/Feed verfügbar
+- SQLite lokal
 
 ## Dateien
 
@@ -87,7 +93,9 @@ intelligence/
 │   ├── database.py
 │   ├── memory.py
 │   ├── collector.py
-│   └── scheduler.py
+│   ├── scheduler.py
+│   ├── api_layer.py
+│   └── source_schema.json
 └── archive/
-    └── Buzzard_Intelligence_v4_Scheduler.zip
+    └── Buzzard_Intelligence_v5_API_Layer.zip
 ```

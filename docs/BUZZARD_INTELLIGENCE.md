@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v13
+# Buzzard Intelligence v1–v14
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -10,10 +10,33 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v11 | `voice/` | kein eigener DB-Speicher (UI-Schicht) |
 | v12 | `shared_memory.py` | `buzzard_shared_memory_v12.db` |
 | v13 | `multilingual.py` | `buzzard_multilingual_v13.db` |
+| v14 | `competitor.py` | `buzzard_competitor_v14.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v13 Multilingual Intelligence — neu
+## v14 Competitor Intelligence — neu
+
+Legale Wettbewerbs- und Marktbeobachtungen aus **öffentlichen Quellen** — keine Scraping-Umgehung, keine privaten Daten.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Wettbewerber | Öffentliche Shops/Marktplätze mit Land und Quelle |
+| Kategorien | Sichtbare Haupt-/Unterkategorien pro Wettbewerber |
+| Produkte | Veröffentlichte Preise, Marken, Popularitätssignale |
+| Ethik | Nur legale, öffentliche Informationen |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v14
+python main.py competitor-demo
+python main.py competitor-report
+python main.py competitor-add --name "Example Store" --country DE --source "https://example.com"
+python main.py competitor-product --competitor "Example Store" --category Automotive --name "Beispiel Produkt" --price 49.90 --currency EUR --source "https://example.com/product"
+```
+
+## v13 Multilingual Intelligence
 
 Mehrsprachige Begriffs- und Entitätszuordnung — unabhängig von v2 Produkt-Memory.
 
@@ -108,12 +131,14 @@ Council, Reporting, Discovery, … — unverändert nutzbar.
 intelligence/
 ├── buzzard_intelligence/
 │   ├── shared_memory.py
-│   └── multilingual.py
+│   ├── multilingual.py
+│   └── competitor.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
 └── archive/
     ├── Buzzard_Intelligence_v11_Voice_Interface.zip
     ├── Buzzard_Intelligence_v12_Shared_Memory.zip
-    └── Buzzard_Intelligence_v13_Multilingual.zip
+    ├── Buzzard_Intelligence_v13_Multilingual.zip
+    └── Buzzard_Intelligence_v14_Competitor_Intelligence.zip
 ```

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v17
+# Buzzard Intelligence v1–v18
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -14,6 +14,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v15 | `trust.py` | Authentizität & Vertrauen (Produkte, Nachweise, Verifizierung) |
 | v16 | `profit.py` | Rentabilitätsberechnung und Entscheidungshilfe |
 | v17 | `market.py` | Länder- und Marktchancen-Vergleich |
+| v18 | `supplier.py` | Lieferantenrecherche und Integrationsbewertung |
 
 ## Setup
 
@@ -25,6 +26,23 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v18 Supplier Intelligence
+
+- Lieferantenprofile: Land, B2B-Status, Quelle
+- Integrationsfähigkeiten: API, XML, Dropshipping, TecDoc, White-label, …
+- Vertrauens- und Integrationsscore (recherchebasiert)
+- Keine automatische „vertrauenswürdig“-Markierung
+
+```bash
+python main.py init-v18
+python main.py supplier-demo
+python main.py supplier-report
+python main.py supplier-add --name "Example Supplier" --country DE --b2b yes --source "https://example.com"
+python main.py supplier-capability --supplier "Example Supplier" --capability API --status verified --evidence "https://example.com/api-docs"
+```
+
+Archive: `archive/Buzzard_Intelligence_v18_Supplier_Intelligence.zip`
 
 ## v17 Market Opportunity
 

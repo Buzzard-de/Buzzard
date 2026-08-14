@@ -5,6 +5,7 @@ from .database import IntelligenceDB
 from .memory import MemoryEngine
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
+from .trends import TrendEngine
 
 __all__ = [
     "Analyzer",
@@ -14,4 +15,5 @@ __all__ = [
     "MemoryEngine",
     "Scheduler",
     "SEED_CATEGORIES",
+    "TrendEngine",
 ]

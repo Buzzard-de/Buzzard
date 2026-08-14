@@ -27,6 +27,7 @@ intelligence/.venv/
 intelligence/*.db
 intelligence/buzzard_intelligence.db
 intelligence/buzzard_intelligence_v2.db
+intelligence/buzzard_intelligence_v4.db
 intelligence/buzzard_memory_snapshot.json
 
 # Archives

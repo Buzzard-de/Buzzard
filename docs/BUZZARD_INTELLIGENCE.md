@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v9
+# Buzzard Intelligence v1–v10
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -6,10 +6,8 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 
 | Version | Modul | Speicher |
 |---------|-------|----------|
-| v1–v8 | … | siehe vorherige Abschnitte |
-| v9 | `reporting.py` | `buzzard_intelligence_v9.db` (Warnungen) |
-
-Liest zusätzlich v2 Memory und v8 Discovery für Alert-Generierung.
+| v1–v9 | … | siehe vorherige Abschnitte |
+| v10 | `council.py` | `buzzard_council_v10.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -20,51 +18,63 @@ cd intelligence
 pip install -r requirements.txt
 python main.py init
 python main.py demo-reporting
-python main.py intel-report
-python main.py alerts
+python main.py sync-council
+python main.py inbox
+python main.py council-board
 ```
 
-## v9 Reporting & Alerts — neu
+## v10 Council Integration — neu
+
+Review-Workflow zwischen Intelligence und menschlicher Entscheidung.
 
 | Befehl | Beschreibung |
 |--------|--------------|
-| `refresh-alerts` | Warnungen aus Memory/Discovery-Events neu aufbauen |
-| `intel-report` | Management-Übersicht (7-Tage-Fenster) |
-| `alerts` | Aktive Warnungen nach Schweregrad |
-| `queue` | Priorisierte Review-Warteschlange |
-| `demo-reporting` | Demo-Daten v6/v7/v8 + Alert-Refresh |
+| `inbox` | Offene Intelligence-Ereignisse |
+| `council-board` | Status, Bewertungen, Audit-Trail |
+| `council-event` | Ereignis manuell anlegen |
+| `council-assign` | Zuständigkeit zuweisen |
+| `council-review` | Bewertung/Entscheidung dokumentieren |
+| `sync-council` | v9-Warnungen in Posteingang importieren |
+| `demo-council` | Demo-Ereignisse |
 
-### Warnungstypen
+### Regeln
 
-- `NEW_PRODUCT` — v2 `NEW_DISCOVERY`
-- `NEW_CATEGORY` — v8 Kategorie-Signale
-- `PRICE_CHANGE` — v2 Preis-Events
-- `TREND` — Popularität steigend/fallend
-- `DATA_GAP` — zu wenig Beobachtungen
+1. Intelligence liefert Daten und Signale
+2. Intelligence trifft **keine** alleinigen Geschäftsentscheidungen
+3. Reviewer dokumentieren Bewertungen
+4. Jedes Ereignis hat Quelle und Zeitstempel
+5. Verifizierungsstatus (`UNVERIFIED`) für kritische Infos
 
-### Wichtig
+```bash
+python main.py council-event \
+  --type CATEGORY_DISCOVERY \
+  --title "Neues Kategorie-Signal" \
+  --source "https://example.com" \
+  --priority 8
 
-- Warnungen sind **Prüfprioritäten**, keine Shop-Automatik
-- Keine Verkaufsprognosen oder Bestseller-Behauptungen
+python main.py council-assign --event-id 1 --agent "Category Lead"
+python main.py council-review --event-id 1 --decision "DEFER" --note "Quelle prüfen"
+```
 
-## v8–v1
+## v9–v1
 
-Unverändert nutzbar (`discover`, `trends`, `analyze`, `collect`, …).
+Reporting, Discovery, Trends, Analysis, Collector, … — unverändert nutzbar.
 
 ## Alle CLI-Befehle (Auszug)
 
 | Befehl | Version |
 |--------|---------|
-| `init` | v1 + v2 + v4 + v5 + v8 + v9 |
-| `refresh-alerts` / `intel-report` / `alerts` / `queue` | v9 |
-| `sync-categories` / `discover` | v8 |
+| `init` | v1 + v2 + v4 + v5 + v8 + v9 + v10 |
+| `inbox` / `council-board` / `sync-council` | v10 |
+| `intel-report` / `alerts` | v9 |
+| `discover` | v8 |
 | `trends` | v7 |
 | `analyze` | v6 |
 
 ## Grenzen
 
 - Keine Shop-/Katalog-Änderungen ohne manuelle Freigabe
-- SQLite lokal
+- v10 ist Kommunikations-/Review-Kern, kein Multi-Agent-Orchestrator
 
 ## Dateien
 
@@ -72,7 +82,7 @@ Unverändert nutzbar (`discover`, `trends`, `analyze`, `collect`, …).
 intelligence/
 ├── main.py
 ├── buzzard_intelligence/
-│   └── reporting.py
+│   └── council.py
 └── archive/
-    └── Buzzard_Intelligence_v9_Reporting_Alerts.zip
+    └── Buzzard_Intelligence_v10_Council_Integration.zip
 ```

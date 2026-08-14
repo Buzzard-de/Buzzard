@@ -7,6 +7,7 @@ from buzzard_intelligence import (
     Analyzer,
     CategoryDiscovery,
     Collector,
+    Council,
     IntelligenceDB,
     MemoryEngine,
     Reporter,
@@ -18,7 +19,7 @@ from buzzard_intelligence import (
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v9 (Memory … Discovery, Reporting)"
+        description="Buzzard Intelligence v1–v10 (Memory … Reporting, Council)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -29,6 +30,7 @@ def main():
     sub.add_parser("init-v5", help="Create v5 API layer schema only")
     sub.add_parser("init-v8", help="Create v8 category discovery schema only")
     sub.add_parser("init-v9", help="Create v9 reporting/alerts schema only")
+    sub.add_parser("init-v10", help="Create v10 council integration schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -54,6 +56,28 @@ def main():
     sub.add_parser("alerts", help="v9 active intelligence alerts")
     sub.add_parser("queue", help="v9 prioritized intelligence queue")
     sub.add_parser("demo-reporting", help="v9 demo data + alert refresh")
+    sub.add_parser("inbox", help="v10 council review inbox")
+    sub.add_parser("council-board", help="v10 council status board")
+    sub.add_parser("demo-council", help="v10 demo council events")
+    sub.add_parser("sync-council", help="v10 import open v9 alerts into council inbox")
+
+    council_event = sub.add_parser("council-event", help="v10 create intelligence event")
+    council_event.add_argument("--type", required=True)
+    council_event.add_argument("--title", required=True)
+    council_event.add_argument("--details", default="")
+    council_event.add_argument("--source", default="")
+    council_event.add_argument("--priority", type=int, default=5)
+    council_event.add_argument("--from-agent", default="Buzzard Intelligence")
+
+    council_assign = sub.add_parser("council-assign", help="v10 assign event to reviewer")
+    council_assign.add_argument("--event-id", type=int, required=True)
+    council_assign.add_argument("--agent", required=True)
+
+    council_review = sub.add_parser("council-review", help="v10 record event review decision")
+    council_review.add_argument("--event-id", type=int, required=True)
+    council_review.add_argument("--decision", required=True)
+    council_review.add_argument("--note", default="")
+    council_review.add_argument("--agent", default="Council Manager")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -123,6 +147,7 @@ def main():
     v7 = TrendEngine(v2)
     v8 = CategoryDiscovery()
     v9 = Reporter(v2, v8)
+    v10 = Council()
 
     if args.cmd == "init":
         v1.init()
@@ -131,12 +156,14 @@ def main():
         v5.init()
         v8.init()
         v9.init()
+        v10.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
         print(f"v5 API layer ready at {Path(v5.path).resolve()}")
         print(f"v8 category discovery ready at {Path(v8.path).resolve()}")
         print(f"v9 reporting ready at {Path(v9.path).resolve()}")
+        print(f"v10 council ready at {Path(v10.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -155,6 +182,9 @@ def main():
     elif args.cmd == "init-v9":
         v9.init()
         print(f"v9 reporting ready at {Path(v9.path).resolve()}")
+    elif args.cmd == "init-v10":
+        v10.init()
+        print(f"v10 council ready at {Path(v10.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -266,6 +296,37 @@ def main():
     elif args.cmd == "demo-reporting":
         count = v9.demo()
         print(f"Demo-Daten geladen, {count} Warnungen erzeugt.")
+    elif args.cmd == "inbox":
+        v10.init()
+        print(v10.inbox())
+    elif args.cmd == "council-board":
+        v10.init()
+        print(v10.council_board())
+    elif args.cmd == "demo-council":
+        v10.init()
+        v10.demo()
+        print("Demo-Intelligence-Ereignisse erstellt.")
+    elif args.cmd == "sync-council":
+        imported = v10.sync_from_alerts(v9)
+        print(f"{imported} Warnungen in den Council-Posteingang übernommen.")
+    elif args.cmd == "council-event":
+        v10.init()
+        print(
+            v10.create_event(
+                args.type,
+                args.title,
+                args.details,
+                args.source,
+                args.priority,
+                args.from_agent,
+            )
+        )
+    elif args.cmd == "council-assign":
+        v10.init()
+        print(v10.assign(args.event_id, args.agent))
+    elif args.cmd == "council-review":
+        v10.init()
+        print(v10.review(args.event_id, args.decision, args.note, args.agent))
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

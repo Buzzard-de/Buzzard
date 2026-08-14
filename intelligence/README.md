@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v21
+# Buzzard Intelligence v1–v22
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -18,6 +18,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v19 | `risk.py` | Risiko- & Compliance-Signale (Priorität, Review-Workflow) |
 | v20 | `orchestrator.py` | Council-Orchestrierung (Aufgaben, Experten, Meinungen) |
 | v21 | `gateway.py` | AI Agent Gateway (Provider, Agent-Profile, API-Adapter) |
+| v22 | `research.py` | Web Research (Aufgaben, Quellen, Erkenntnisse) |
 
 ## Setup
 
@@ -29,6 +30,24 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v22 Web Research
+
+- Forschungsaufgaben mit Query und Zweck
+- Öffentliche Web-Quellen (URL, Titel, Domain)
+- Erkenntnisse mit Konfidenz, verknüpft mit Quelle
+- Kein CAPTCHA-/Login-Bypass; Einzelquelle ≠ verifiziert
+
+```bash
+python main.py init-v22
+python main.py research-demo
+python main.py research-report
+python main.py research-create --query "Germany automotive aftermarket trends" --purpose "Market Intelligence"
+python main.py research-source --research-id 1 --url "https://example.com" --title "Example source"
+python main.py research-finding --research-id 1 --source-id 1 --claim "Example claim" --confidence 0.85
+```
+
+Archive: `archive/Buzzard_Intelligence_v22_Web_Research.zip`
 
 ## v21 AI Agent Gateway
 

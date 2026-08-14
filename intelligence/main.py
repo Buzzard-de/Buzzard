@@ -24,12 +24,13 @@ from buzzard_intelligence import (
     RiskEngine,
     CouncilOrchestrator,
     AIGateway,
+    WebResearch,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v21 (Memory … Council Orchestrator, AI Gateway)"
+        description="Buzzard Intelligence v1–v22 (Memory … AI Gateway, Web Research)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -51,6 +52,7 @@ def main():
     sub.add_parser("init-v19", help="Create v19 risk/compliance schema only")
     sub.add_parser("init-v20", help="Create v20 council orchestrator schema only")
     sub.add_parser("init-v21", help="Create v21 AI agent gateway schema only")
+    sub.add_parser("init-v22", help="Create v22 web research schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -289,6 +291,26 @@ def main():
     sub.add_parser("ai-providers", help="v21 list configured AI providers")
     sub.add_parser("ai-demo", help="v21 add demo AI gateway provider")
 
+    research_create = sub.add_parser("research-create", help="v22 create a web research job")
+    research_create.add_argument("--query", required=True)
+    research_create.add_argument("--purpose", default="General Intelligence")
+
+    research_source = sub.add_parser("research-source", help="v22 add a public web source to research")
+    research_source.add_argument("--research-id", type=int, required=True)
+    research_source.add_argument("--url", required=True)
+    research_source.add_argument("--title", default="")
+    research_source.add_argument("--domain", default="")
+
+    research_finding = sub.add_parser("research-finding", help="v22 add a sourced finding to research")
+    research_finding.add_argument("--research-id", type=int, required=True)
+    research_finding.add_argument("--source-id", type=int, required=True)
+    research_finding.add_argument("--claim", required=True)
+    research_finding.add_argument("--confidence", type=float, default=0.8)
+    research_finding.add_argument("--note", default="")
+
+    sub.add_parser("research-demo", help="v22 add demo web research records")
+    sub.add_parser("research-report", help="v22 web research report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -368,6 +390,7 @@ def main():
     v19 = RiskEngine()
     v20 = CouncilOrchestrator()
     v21 = AIGateway()
+    v22 = WebResearch()
 
     if args.cmd == "init":
         v1.init()
@@ -387,6 +410,7 @@ def main():
         v19.init()
         v20.init()
         v21.init()
+        v22.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -404,6 +428,7 @@ def main():
         print(f"v19 risk engine ready at {Path(v19.path).resolve()}")
         print(f"v20 council orchestrator ready at {Path(v20.path).resolve()}")
         print(f"v21 AI gateway ready at {Path(v21.path).resolve()}")
+        print(f"v22 web research ready at {Path(v22.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -455,6 +480,9 @@ def main():
     elif args.cmd == "init-v21":
         v21.init()
         print(f"v21 AI gateway ready at {Path(v21.path).resolve()}")
+    elif args.cmd == "init-v22":
+        v22.init()
+        print(f"v22 web research ready at {Path(v22.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -830,6 +858,30 @@ def main():
     elif args.cmd == "ai-demo":
         v21.init()
         print(v21.demo())
+    elif args.cmd == "research-create":
+        v22.init()
+        print(v22.create_research(args.query, args.purpose))
+    elif args.cmd == "research-source":
+        v22.init()
+        print(v22.add_source(args.research_id, args.url, args.title, args.domain))
+    elif args.cmd == "research-finding":
+        v22.init()
+        print(
+            v22.add_finding(
+                args.research_id,
+                args.source_id,
+                args.claim,
+                args.confidence,
+                args.note,
+            )
+        )
+    elif args.cmd == "research-demo":
+        v22.init()
+        v22.demo()
+        print("Demo-Forschungsdaten gespeichert.")
+    elif args.cmd == "research-report":
+        v22.init()
+        print(v22.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

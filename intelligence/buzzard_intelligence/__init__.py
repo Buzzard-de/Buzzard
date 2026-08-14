@@ -12,6 +12,7 @@ from .multilingual import MultilingualMemory
 from .orchestrator import CouncilOrchestrator
 from .profit import ProfitEngine
 from .reporting import Reporter
+from .research import WebResearch
 from .risk import RiskEngine
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
@@ -36,6 +37,7 @@ __all__ = [
     "ProfitEngine",
     "Reporter",
     "RiskEngine",
+    "WebResearch",
     "Scheduler",
     "SEED_CATEGORIES",
     "SharedMemory",

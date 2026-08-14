@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v21
+# Buzzard Intelligence v1–v22
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -18,10 +18,36 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v19 | `risk.py` | `buzzard_risk_v19.db` |
 | v20 | `orchestrator.py` | `buzzard_council_v20.db` |
 | v21 | `gateway.py` | `buzzard_ai_gateway_v21.db` |
+| v22 | `research.py` | `buzzard_web_research_v22.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v21 AI Agent Gateway — neu
+## v22 Web Research — neu
+
+Strukturierte, legale Web-Recherche für den Council — **kein Scraping-Umgehung, keine erfundenen Fakten**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Aufgaben | Query, Zweck, Status |
+| Quellen | URL, Titel, Domain, Öffentlichkeit |
+| Erkenntnisse | Claim + Konfidenz, verknüpft mit Quelle |
+| Regeln | robots.txt respektieren; Einzelquelle ≠ verifiziert |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v22
+python main.py research-demo
+python main.py research-report
+python main.py research-create --query "Germany automotive aftermarket trends" --purpose "Market Intelligence"
+python main.py research-source --research-id 1 --url "https://example.com" --title "Example source" --domain "example.com"
+python main.py research-finding --research-id 1 --source-id 1 --claim "Example claim" --confidence 0.85
+```
+
+Echte Such-/Fetch-Adapter werden separat angebunden.
+
+## v21 AI Agent Gateway
 
 Provider-unabhängiges Gateway für echte AI-Modelle — **keine automatischen Handelsentscheidungen**.
 
@@ -311,7 +337,8 @@ intelligence/
 │   ├── supplier.py
 │   ├── risk.py
 │   ├── orchestrator.py
-│   └── gateway.py
+│   ├── gateway.py
+│   └── research.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -326,5 +353,6 @@ intelligence/
     ├── Buzzard_Intelligence_v18_Supplier_Intelligence.zip
     ├── Buzzard_Intelligence_v19_Risk_Compliance.zip
     ├── Buzzard_Intelligence_v20_Council_Orchestrator.zip
-    └── Buzzard_Intelligence_v21_AI_Agent_Gateway.zip
+    ├── Buzzard_Intelligence_v21_AI_Agent_Gateway.zip
+    └── Buzzard_Intelligence_v22_Web_Research.zip
 ```

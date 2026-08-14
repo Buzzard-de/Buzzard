@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v100
+# Buzzard Intelligence v1–v120
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite/JSON), getrennt vom Node-Shop.
 
@@ -54,6 +54,8 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite/JSON), getren
 | v81–v90 | `price_optimize.py` … `cat_portfolio.py` | Preis, Einkauf, Sortiment, Portfolio (JSON) |
 | v91–v99 | `germany_market.py` … `local_marketplace.py` | Länder- & Markt-Intelligence (JSON) |
 | v100 | `ai_center.py` | Buzzard AI Intelligence Center (JSON) |
+| v101–v110 | `error_handling.py` … `source_freshness.py` | Error Handling, Validierung, Resilience (JSON) |
+| v111–v120 | `data_provenance.py` … `error_center.py` | Provenance, Recovery, Production Readiness (JSON) |
 
 ## Setup
 
@@ -215,6 +217,45 @@ python main.py init   # unified init v1–v100
 ```
 
 Archive: `archive/Buzzard_Intelligence_v71_v100_COMPLETE.zip` (+ einzelne v71–v100 ZIPs)
+
+## v101–v120 Error Resilience Bundle
+
+20 JSON-Module für Production Hardening — Fehlerbehandlung, Validierung, Retry, Recovery und Readiness.
+
+| Version | Modul | CLI-Präfix | Zweck |
+|---------|-------|------------|-------|
+| v101 | `error_handling.py` | `uerr-*` | Unified Error Handling |
+| v102 | `input_validation.py` | `inval-*` | Input Validation |
+| v103 | `schema_validation.py` | `svalid-*` | Schema Validation |
+| v104 | `api_retry.py` | `retry-*` | API Retry & Backoff |
+| v105 | `rate_limit.py` | `ratelimit-*` | Rate Limit Manager |
+| v106 | `circuit_breaker.py` | `cbreak-*` | Timeout & Circuit Breaker |
+| v107 | `credential_validation.py` | `credval-*` | Credential & Secret Validation |
+| v108 | `data_integrity.py` | `dinteg-*` | Data Integrity Checks |
+| v109 | `conflict_resolution.py` | `conflict-*` | Duplicate & Conflict Resolution |
+| v110 | `source_freshness.py` | `fresh-*` | Source Freshness Monitor |
+| v111 | `data_provenance.py` | `proven-*` | Data Provenance & Lineage |
+| v112 | `audit_integrity.py` | `audit-*` | Audit Log Integrity |
+| v113 | `agent_health.py` | `aghealth-*` | Agent Health Monitor |
+| v114 | `mission_recovery.py` | `mrecover-*` | Mission Recovery Manager |
+| v115 | `queue_recovery.py` | `qrecover-*` | Queue & Job Recovery |
+| v116 | `approval_guardrails.py` | `guard-*` | Human Approval Guardrails |
+| v117 | `backup_restore.py` | `backup-*` | Backup & Restore Manager |
+| v118 | `system_health.py` | `syshealth-*` | System Health Dashboard |
+| v119 | `integration_tests.py` | `e2etest-*` | End-to-End Integration Tests |
+| v120 | `error_center.py` | `errctr-*` | Production Readiness & Error Center |
+
+```bash
+python main.py init-v101
+python main.py uerr-demo && python main.py uerr-report
+python main.py init-v120
+python main.py errctr-demo && python main.py errctr-report
+python main.py init   # unified init v1–v120
+```
+
+Checkliste: `error_resilience/MASTER_ERROR_CHECKLIST.md`
+
+Archive: `archive/Buzzard_Intelligence_v101_v120_Error_Resilience_COMPLETE.zip`
 
 ## v33 Competitor Intelligence
 

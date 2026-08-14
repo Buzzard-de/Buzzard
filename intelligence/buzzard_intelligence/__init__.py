@@ -78,6 +78,26 @@ from .global_customs import GlobalCustomsIntel
 from .global_logistics import GlobalLogisticsIntel
 from .local_marketplace import LocalMarketplaceIntel
 from .ai_center import AIIntelligenceCenter
+from .error_handling import UnifiedErrorHandling
+from .input_validation import InputValidation
+from .schema_validation import SchemaValidation
+from .api_retry import APIRetryBackoff
+from .rate_limit import RateLimitManager
+from .circuit_breaker import CircuitBreaker
+from .credential_validation import CredentialValidation
+from .data_integrity import DataIntegrityChecks
+from .conflict_resolution import ConflictResolution
+from .source_freshness import SourceFreshnessMonitor
+from .data_provenance import DataProvenance
+from .audit_integrity import AuditLogIntegrity
+from .agent_health import AgentHealthMonitor
+from .mission_recovery import MissionRecoveryManager
+from .queue_recovery import QueueJobRecovery
+from .approval_guardrails import HumanApprovalGuardrails
+from .backup_restore import BackupRestoreManager
+from .system_health import SystemHealthDashboard
+from .integration_tests import IntegrationTests
+from .error_center import ProductionErrorCenter
 from .matcher import ProductMatcher
 from .mission import MissionEngine
 from .multilingual import MultilingualMemory
@@ -200,4 +220,24 @@ __all__ = [
     "GlobalLogisticsIntel",
     "LocalMarketplaceIntel",
     "AIIntelligenceCenter",
+    "UnifiedErrorHandling",
+    "InputValidation",
+    "SchemaValidation",
+    "APIRetryBackoff",
+    "RateLimitManager",
+    "CircuitBreaker",
+    "CredentialValidation",
+    "DataIntegrityChecks",
+    "ConflictResolution",
+    "SourceFreshnessMonitor",
+    "DataProvenance",
+    "AuditLogIntegrity",
+    "AgentHealthMonitor",
+    "MissionRecoveryManager",
+    "QueueJobRecovery",
+    "HumanApprovalGuardrails",
+    "BackupRestoreManager",
+    "SystemHealthDashboard",
+    "IntegrationTests",
+    "ProductionErrorCenter",
 ]

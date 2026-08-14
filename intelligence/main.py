@@ -23,12 +23,13 @@ from buzzard_intelligence import (
     SupplierIntel,
     RiskEngine,
     CouncilOrchestrator,
+    AIGateway,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v20 (Memory … Risk, Council Orchestrator)"
+        description="Buzzard Intelligence v1–v21 (Memory … Council Orchestrator, AI Gateway)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -49,6 +50,7 @@ def main():
     sub.add_parser("init-v18", help="Create v18 supplier intelligence schema only")
     sub.add_parser("init-v19", help="Create v19 risk/compliance schema only")
     sub.add_parser("init-v20", help="Create v20 council orchestrator schema only")
+    sub.add_parser("init-v21", help="Create v21 AI agent gateway schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -278,6 +280,15 @@ def main():
     sub.add_parser("orch-demo", help="v20 add demo council orchestration workflow")
     sub.add_parser("orch-board", help="v20 council orchestrator board")
 
+    ai_add_provider = sub.add_parser("ai-add-provider", help="v21 register an AI provider")
+    ai_add_provider.add_argument("--name", required=True)
+    ai_add_provider.add_argument("--base-url", required=True)
+    ai_add_provider.add_argument("--model", required=True)
+    ai_add_provider.add_argument("--api-key-env", default="BUZZARD_AI_API_KEY")
+
+    sub.add_parser("ai-providers", help="v21 list configured AI providers")
+    sub.add_parser("ai-demo", help="v21 add demo AI gateway provider")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -356,6 +367,7 @@ def main():
     v18 = SupplierIntel()
     v19 = RiskEngine()
     v20 = CouncilOrchestrator()
+    v21 = AIGateway()
 
     if args.cmd == "init":
         v1.init()
@@ -374,6 +386,7 @@ def main():
         v18.init()
         v19.init()
         v20.init()
+        v21.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -390,6 +403,7 @@ def main():
         print(f"v18 supplier intel ready at {Path(v18.path).resolve()}")
         print(f"v19 risk engine ready at {Path(v19.path).resolve()}")
         print(f"v20 council orchestrator ready at {Path(v20.path).resolve()}")
+        print(f"v21 AI gateway ready at {Path(v21.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -438,6 +452,9 @@ def main():
     elif args.cmd == "init-v20":
         v20.init()
         print(f"v20 council orchestrator ready at {Path(v20.path).resolve()}")
+    elif args.cmd == "init-v21":
+        v21.init()
+        print(f"v21 AI gateway ready at {Path(v21.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -797,6 +814,22 @@ def main():
     elif args.cmd == "orch-board":
         v20.init()
         print(v20.board())
+    elif args.cmd == "ai-add-provider":
+        v21.init()
+        print(
+            v21.add_provider(
+                args.name,
+                args.base_url,
+                args.model,
+                args.api_key_env,
+            )
+        )
+    elif args.cmd == "ai-providers":
+        v21.init()
+        print(v21.providers())
+    elif args.cmd == "ai-demo":
+        v21.init()
+        print(v21.demo())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

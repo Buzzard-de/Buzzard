@@ -22,12 +22,13 @@ from buzzard_intelligence import (
     MarketEngine,
     SupplierIntel,
     RiskEngine,
+    CouncilOrchestrator,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v19 (Memory … Supplier Intel, Risk & Compliance)"
+        description="Buzzard Intelligence v1–v20 (Memory … Risk, Council Orchestrator)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -47,6 +48,7 @@ def main():
     sub.add_parser("init-v17", help="Create v17 market opportunity schema only")
     sub.add_parser("init-v18", help="Create v18 supplier intelligence schema only")
     sub.add_parser("init-v19", help="Create v19 risk/compliance schema only")
+    sub.add_parser("init-v20", help="Create v20 council orchestrator schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -256,6 +258,26 @@ def main():
     sub.add_parser("risk-demo", help="v19 add demo risk/compliance records")
     sub.add_parser("risk-report", help="v19 risk and compliance report")
 
+    orch_create = sub.add_parser("orch-create", help="v20 create a council orchestration task")
+    orch_create.add_argument("--title", required=True)
+    orch_create.add_argument("--details", default="")
+    orch_create.add_argument("--priority", type=int, default=5)
+    orch_create.add_argument("--created-by", default="Council Manager")
+
+    orch_assign = sub.add_parser("orch-assign", help="v20 assign task to expert agent")
+    orch_assign.add_argument("--task-id", type=int, required=True)
+    orch_assign.add_argument("--agent", required=True)
+
+    orch_opinion = sub.add_parser("orch-opinion", help="v20 record expert opinion on a task")
+    orch_opinion.add_argument("--task-id", type=int, required=True)
+    orch_opinion.add_argument("--agent", required=True)
+    orch_opinion.add_argument("--decision", required=True)
+    orch_opinion.add_argument("--confidence", type=float, default=0.8)
+    orch_opinion.add_argument("--note", default="")
+
+    sub.add_parser("orch-demo", help="v20 add demo council orchestration workflow")
+    sub.add_parser("orch-board", help="v20 council orchestrator board")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -333,6 +355,7 @@ def main():
     v17 = MarketEngine()
     v18 = SupplierIntel()
     v19 = RiskEngine()
+    v20 = CouncilOrchestrator()
 
     if args.cmd == "init":
         v1.init()
@@ -350,6 +373,7 @@ def main():
         v17.init()
         v18.init()
         v19.init()
+        v20.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -365,6 +389,7 @@ def main():
         print(f"v17 market engine ready at {Path(v17.path).resolve()}")
         print(f"v18 supplier intel ready at {Path(v18.path).resolve()}")
         print(f"v19 risk engine ready at {Path(v19.path).resolve()}")
+        print(f"v20 council orchestrator ready at {Path(v20.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -410,6 +435,9 @@ def main():
     elif args.cmd == "init-v19":
         v19.init()
         print(f"v19 risk engine ready at {Path(v19.path).resolve()}")
+    elif args.cmd == "init-v20":
+        v20.init()
+        print(f"v20 council orchestrator ready at {Path(v20.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -738,6 +766,37 @@ def main():
     elif args.cmd == "risk-report":
         v19.init()
         print(v19.report())
+    elif args.cmd == "orch-create":
+        v20.init()
+        print(
+            v20.create_task(
+                args.title,
+                args.details,
+                args.priority,
+                args.created_by,
+            )
+        )
+    elif args.cmd == "orch-assign":
+        v20.init()
+        print(v20.assign(args.task_id, args.agent))
+    elif args.cmd == "orch-opinion":
+        v20.init()
+        print(
+            v20.add_opinion(
+                args.task_id,
+                args.agent,
+                args.decision,
+                args.confidence,
+                args.note,
+            )
+        )
+    elif args.cmd == "orch-demo":
+        v20.init()
+        v20.demo()
+        print("Demo-Council-Orchestrierung gespeichert.")
+    elif args.cmd == "orch-board":
+        v20.init()
+        print(v20.board())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

@@ -11,6 +11,8 @@ lib/              Frontend-Clients, Shop-Logik, API-Config
 server/           Node-API (SQLite, Plugins, Admin-Routen)
 scripts/          Build, Deploy-Helfer, Verify
 data/             Seed-Daten, Kategorien
+intelligence/     Python MVP: Markt-/Produkt-Intelligence (SQLite)
+docs/             Go-Live, Security, Intelligence-Doku
 styles/           Globale CSS
 public/           Statische Assets
 ```
@@ -88,5 +90,6 @@ Lokal funktioniert alles ohne Render — siehe **Lokal starten** oben.
 ## Weitere Docs
 
 - `BUZZARD_MASTER_IMPLEMENTATION.md` — Architektur & Module
+- `docs/BUZZARD_INTELLIGENCE.md` — Python Intelligence MVP
 - `server/plugins/README.md` — API-Endpunkte
 - `data/BUZZARD_FINAL_GO_LIVE_CHECKLIST.md` — Go-Live-Checkliste

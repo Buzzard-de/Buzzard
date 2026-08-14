@@ -24,7 +24,13 @@ def read_doc(name):
 def production_status():
     from live_connectors import live_health_report
 
-    module_count = len(list((INTELLIGENCE_DIR / "buzzard_intelligence").glob("*.py")))
+    module_count = len(
+        [
+            p
+            for p in (INTELLIGENCE_DIR / "buzzard_intelligence").glob("*.py")
+            if p.name != "__init__.py"
+        ]
+    )
     json_stores = len(list(INTELLIGENCE_DIR.glob("buzzard_v*.json")))
     archives = len(list((INTELLIGENCE_DIR / "archive").glob("*.zip")))
     workstream_dirs = len(workstreams())

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v40
+# Buzzard Intelligence v1–v70
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite/JSON), getrennt vom Node-Shop.
 
@@ -37,6 +37,19 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite/JSON), getren
 | v38 | `scenario.py` | Profitability & Scenario (JSON) |
 | v39 | `intel_dashboard.py` | Intelligence Dashboard (JSON) |
 | v40 | `master_core.py` | Master Intelligence Core v21–v39 (JSON) |
+| v41 | `authorized_research.py` | Authorized Web Research (JSON) |
+| v42 | `public_connectors.py` | Public API Data Connectors (JSON) |
+| v43 | `normalization.py` | Data Normalization & Deduplication (JSON) |
+| v44 | `source_reliability.py` | Source Reliability Scoring (JSON) |
+| v45 | `change_detection.py` | Change Detection (JSON) |
+| v46–v48 | `rival_*.py` | Wettbewerber-Produkt/Kategorie/Preis (JSON) |
+| v49–v51 | `*_radar.py`, `opportunity_discovery.py` | Trend-Radar & Chancen (JSON) |
+| v52–v55 | `brand_intel.py`, `supplier_*.py` | Marke & Lieferant (JSON) |
+| v56–v60 | `stock/shipping/marketplace/seo/advertising` | Operative Markt-Intelligence (JSON) |
+| v61–v64 | `review/promotion/seasonality/crossborder` | Kunden & Märkte (JSON) |
+| v65–v68 | `eu_compliance/fx/landed_cost/profit_optimizer` | Compliance & Kosten (JSON) |
+| v69 | `portfolio_manager.py` | Portfolio Manager (JSON) |
+| v70 | `command_center.py` | Real-Time Command Center (JSON) |
 
 ## Setup
 
@@ -76,6 +89,57 @@ python main.py init   # unified init v1–v40
 **Abgrenzung:** v9 `alerts` · v19 `risk-*` · v16 `profit-*` · v32 `category-*` · v33 `rivals-*` · v37 `compliance-*`
 
 Archive: `archive/Buzzard_Intelligence_v33_to_v40_COMPLETE.zip` (+ einzelne v34–v40 ZIPs)
+
+## v41–v70 JSON Intelligence Bundle
+
+30 weitere JSON-Module auf Basis von `json_store.py` — autorisierte/öffentliche Quellen, auditierbar, Menschen-Freigabe für irreversible Entscheidungen.
+
+| Version | Modul | CLI-Präfix | Zweck |
+|---------|-------|------------|-------|
+| v41 | `authorized_research.py` | `authres-*` | Authorized Web Research |
+| v42 | `public_connectors.py` | `pubconn-*` | Public API Data Connectors |
+| v43 | `normalization.py` | `norm-*` | Data Normalization & Deduplication |
+| v44 | `source_reliability.py` | `srscore-*` | Source Reliability Scoring |
+| v45 | `change_detection.py` | `cdetect-*` | Change Detection |
+| v46 | `rival_product.py` | `rprod-*` | Competitor Product Tracking |
+| v47 | `rival_category.py` | `rcatmap-*` | Competitor Category Mapping |
+| v48 | `rival_price.py` | `rprice-*` | Competitor Price Tracking |
+| v49 | `market_radar.py` | `mradar-*` | Market Trend Radar |
+| v50 | `opportunity_discovery.py` | `oppdisc-*` | Opportunity Discovery |
+| v51 | `product_radar.py` | `pradar-*` | Product Trend Radar |
+| v52 | `brand_intel.py` | `brand-*` | Brand Intelligence |
+| v53 | `supplier_verify.py` | `sverify-*` | Supplier Verification |
+| v54 | `supplier_performance.py` | `sperf-*` | Supplier Performance Tracking |
+| v55 | `supplier_price.py` | `sprice-*` | Supplier Price Comparison |
+| v56 | `stock_intel.py` | `stock-*` | Stock & Availability Intelligence |
+| v57 | `shipping_intel.py` | `ship-*` | Shipping & Delivery Intelligence |
+| v58 | `marketplace_intel.py` | `mplace-*` | Marketplace Intelligence |
+| v59 | `seo_intel.py` | `seo-*` | SEO & Search Demand Intelligence |
+| v60 | `advertising_intel.py` | `advert-*` | Advertising Intelligence |
+| v61 | `review_intel.py` | `revintel-*` | Customer Review Intelligence |
+| v62 | `promotion_intel.py` | `promo-*` | Promotion & Discount Intelligence |
+| v63 | `seasonality_intel.py` | `season-*` | Seasonality Intelligence |
+| v64 | `crossborder_intel.py` | `xborder-*` | Cross-Border Market Intelligence |
+| v65 | `eu_compliance.py` | `eucomp-*` | EU & Germany Compliance Monitor |
+| v66 | `fx_intel.py` | `fx-*` | Currency & FX Intelligence |
+| v67 | `landed_cost.py` | `lcost-*` | Landed Cost Calculator |
+| v68 | `profit_optimizer.py` | `profopt-*` | Advanced Profitability Optimizer |
+| v69 | `portfolio_manager.py` | `port-*` | Portfolio & Category Portfolio Manager |
+| v70 | `command_center.py` | `cmdctr-*` | Real-Time Intelligence Command Center |
+
+```bash
+python main.py init-v41
+python main.py authres-demo
+python main.py authres-report
+python main.py init-v70
+python main.py cmdctr-demo
+python main.py cmdctr-report
+python main.py init   # unified init v1–v70
+```
+
+**Abgrenzung:** v22 `research-*` · v23 `connector-*` · v25 `price-*` · v33 `rivals-*` · v37 `compliance-*` · v65 `eucomp-*`
+
+Archive: `archive/Buzzard_Intelligence_v41_v70_ALL_REMAINING.zip` (+ einzelne v41–v70 ZIPs)
 
 ## v33 Competitor Intelligence
 

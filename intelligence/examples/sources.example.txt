@@ -1,0 +1,5 @@
+# Example public URLs for v3 collector (one per line).
+# Lines starting with # are ignored.
+# Only add robots.txt-allowed, publicly accessible HTML product pages.
+
+# https://example.com/product-page

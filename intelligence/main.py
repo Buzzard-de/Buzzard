@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 
 from buzzard_intelligence import (
+    APILayer,
     Collector,
     IntelligenceDB,
     MemoryEngine,
@@ -13,14 +14,15 @@ from buzzard_intelligence import (
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1 + v2 Memory + v3 Collector + v4 Scheduler"
+        description="Buzzard Intelligence v1–v5 (Memory, Collector, Scheduler, API Layer)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
-    sub.add_parser("init", help="Create v1 + v2 + v4 SQLite schemas")
+    sub.add_parser("init", help="Create v1 + v2 + v4 + v5 SQLite schemas")
     sub.add_parser("init-v1", help="Create v1 SQLite schema only")
     sub.add_parser("init-v2", help="Create v2 memory schema only")
     sub.add_parser("init-v4", help="Create v4 scheduler schema only")
+    sub.add_parser("init-v5", help="Create v5 API layer schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -31,6 +33,9 @@ def main():
     sub.add_parser("export-memory", help="Export v2 memory snapshot to JSON")
     sub.add_parser("tasks", help="List v4 scan tasks")
     sub.add_parser("run", help="Run due v4 scan tasks via v3 collector")
+    sub.add_parser("sources", help="List v5 API/feed sources")
+    sub.add_parser("test-apis", help="Test enabled v5 API sources")
+    sub.add_parser("schema", help="Show v5 source schema example JSON")
 
     memory = sub.add_parser("memory", help="Search v2 memory by product, brand, or category")
     memory.add_argument("query")
@@ -58,6 +63,16 @@ def main():
     add_task.add_argument("--interval", type=int, default=1440, help="Minutes between runs (min 60)")
     add_task.add_argument("--priority", type=int, default=5)
 
+    add_api = sub.add_parser("add-api", help="Register a v5 official API or feed source")
+    add_api.add_argument("--name", required=True)
+    add_api.add_argument("--base-url", required=True)
+    add_api.add_argument("--category", required=True)
+    add_api.add_argument("--country", default="DE")
+    add_api.add_argument("--platform", default="official_api")
+    add_api.add_argument("--interval", type=int, default=1440)
+    add_api.add_argument("--priority", type=int, default=8)
+    add_api.add_argument("--auth-env", default="BUZZARD_API_KEY")
+
     p = sub.add_parser("add-observation", help="Record a sourced observation (v2 memory engine)")
     p.add_argument("--category", required=True)
     p.add_argument("--subcategory", default="")
@@ -78,14 +93,17 @@ def main():
     v2 = MemoryEngine()
     v3 = Collector(v2)
     v4 = Scheduler(v3)
+    v5 = APILayer()
 
     if args.cmd == "init":
         v1.init()
         v2.init()
         v4.init()
+        v5.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
+        print(f"v5 API layer ready at {Path(v5.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -95,6 +113,9 @@ def main():
     elif args.cmd == "init-v4":
         v4.init()
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
+    elif args.cmd == "init-v5":
+        v5.init()
+        print(f"v5 API layer ready at {Path(v5.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -134,6 +155,28 @@ def main():
     elif args.cmd == "run":
         v4.init()
         print(v4.run_due())
+    elif args.cmd == "sources":
+        v5.init()
+        print(v5.list_sources())
+    elif args.cmd == "add-api":
+        v5.init()
+        print(
+            v5.add_source(
+                args.name,
+                args.base_url,
+                args.category,
+                args.country,
+                args.platform,
+                args.interval,
+                args.priority,
+                args.auth_env,
+            )
+        )
+    elif args.cmd == "test-apis":
+        v5.init()
+        print(v5.test_all())
+    elif args.cmd == "schema":
+        print(v5.schema_example())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

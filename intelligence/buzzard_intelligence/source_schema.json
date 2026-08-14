@@ -1,0 +1,18 @@
+{
+  "source": {
+    "name": "Human readable source name",
+    "base_url": "https://official.example/api",
+    "type": "official_api|json_feed|xml_feed|csv_feed|public_web",
+    "category": "Automotive",
+    "country": "DE",
+    "platform": "official_api",
+    "auth": {
+      "method": "bearer|api_key|oauth2|none",
+      "environment_variable": "BUZZARD_API_KEY"
+    },
+    "schedule": {
+      "interval_minutes": 1440,
+      "priority": 8
+    }
+  }
+}

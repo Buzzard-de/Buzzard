@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v10
+# Buzzard Intelligence v1–v11
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -6,8 +6,8 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 
 | Version | Modul | Zweck |
 |---------|-------|-------|
-| v1–v9 | … | Memory → Reporting |
-| v10 | `council.py` | Review-Workflow, Posteingang, Audit-Trail |
+| v1–v10 | … | Memory → Council |
+| v11 | `voice/` | Sprach-UI (Browser Speech API + Flask) |
 
 ## Setup
 
@@ -15,27 +15,24 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 cd intelligence
 pip install -r requirements.txt
 python main.py init
-python main.py demo-reporting
-python main.py sync-council
-python main.py inbox
-python main.py council-board
+python main.py voice
 ```
 
-## v10 Council Integration
+Browser: http://127.0.0.1:8787
 
-Trennt **Intelligence-Signale** von **menschlichen Entscheidungen**.
+## v11 Voice Interface
+
+- Deutsch / Türkisch (Browser Speech Recognition)
+- Sprachausgabe via Speech Synthesis
+- Befehle: **Bericht**, **Warnungen**, **Posteingang**, **Hilfe**
+- Anbindung an v9 Reporting und v10 Council
 
 ```bash
-python main.py council-event \
-  --type TREND \
-  --title "Steigendes Produktsignal" \
-  --details "..." \
-  --source "https://example.com"
-
-python main.py council-assign --event-id 1 --agent "Review Lead"
-python main.py council-review --event-id 1 --decision "WATCH" --note "Beobachten"
+python main.py voice --host 127.0.0.1 --port 8787
 ```
 
-Archive: `archive/Buzzard_Intelligence_v10_Council_Integration.zip`
+Kein eigenes KI-Modell — nutzt den lokalen Intelligence-Stack.
+
+Archive: `archive/Buzzard_Intelligence_v11_Voice_Interface.zip`
 
 Siehe: `docs/BUZZARD_INTELLIGENCE.md`

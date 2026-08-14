@@ -19,7 +19,7 @@ from buzzard_intelligence import (
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v10 (Memory … Reporting, Council)"
+        description="Buzzard Intelligence v1–v11 (Memory … Council, Voice)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -78,6 +78,10 @@ def main():
     council_review.add_argument("--decision", required=True)
     council_review.add_argument("--note", default="")
     council_review.add_argument("--agent", default="Council Manager")
+
+    voice = sub.add_parser("voice", help="v11 start local voice interface server")
+    voice.add_argument("--host", default="127.0.0.1")
+    voice.add_argument("--port", type=int, default=8787)
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -327,6 +331,11 @@ def main():
     elif args.cmd == "council-review":
         v10.init()
         print(v10.review(args.event_id, args.decision, args.note, args.agent))
+    elif args.cmd == "voice":
+        from voice.server import main as voice_main
+
+        print(f"Voice interface: http://{args.host}:{args.port}")
+        voice_main(host=args.host, port=args.port)
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

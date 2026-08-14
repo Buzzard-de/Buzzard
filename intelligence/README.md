@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v19
+# Buzzard Intelligence v1–v20
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -16,6 +16,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v17 | `market.py` | Länder- und Marktchancen-Vergleich |
 | v18 | `supplier.py` | Lieferantenrecherche und Integrationsbewertung |
 | v19 | `risk.py` | Risiko- & Compliance-Signale (Priorität, Review-Workflow) |
+| v20 | `orchestrator.py` | Council-Orchestrierung (Aufgaben, Experten, Meinungen) |
 
 ## Setup
 
@@ -27,6 +28,26 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v20 Council Orchestrator
+
+- Experten-Agenten: Market, Competitor, Supplier, Profitability, Risk, …
+- Aufgabenverteilung, Status-Tracking, Meinungssammlung
+- Widersprüchliche Meinungen bleiben erhalten
+- Keine automatische Endentscheidung — finale Entscheidung beim Menschen
+
+```bash
+python main.py init-v20
+python main.py orch-demo
+python main.py orch-board
+python main.py orch-create --title "5W-30 Motoröl Recherche" --priority 9
+python main.py orch-assign --task-id 1 --agent "Supplier Intelligence"
+python main.py orch-opinion --task-id 1 --agent "Risk & Compliance" --decision REVIEW --confidence 0.90 --note "Dokumentenprüfung erforderlich"
+```
+
+v10 `council-board` = Review-Posteingang · v20 `orch-board` = Orchestrator-Pinnwand.
+
+Archive: `archive/Buzzard_Intelligence_v20_Council_Orchestrator.zip`
 
 ## v19 Risk & Compliance
 

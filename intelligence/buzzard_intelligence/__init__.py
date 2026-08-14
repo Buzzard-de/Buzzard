@@ -8,6 +8,7 @@ from .discovery import CategoryDiscovery
 from .memory import MemoryEngine
 from .market import MarketEngine
 from .multilingual import MultilingualMemory
+from .orchestrator import CouncilOrchestrator
 from .profit import ProfitEngine
 from .reporting import Reporter
 from .risk import RiskEngine
@@ -25,6 +26,7 @@ __all__ = [
     "Collector",
     "CompetitorIntel",
     "Council",
+    "CouncilOrchestrator",
     "IntelligenceDB",
     "MemoryEngine",
     "MarketEngine",

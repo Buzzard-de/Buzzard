@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v19
+# Buzzard Intelligence v1–v20
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -16,10 +16,36 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v17 | `market.py` | `buzzard_market_v17.db` |
 | v18 | `supplier.py` | `buzzard_supplier_v18.db` |
 | v19 | `risk.py` | `buzzard_risk_v19.db` |
+| v20 | `orchestrator.py` | `buzzard_council_v20.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v19 Risk & Compliance — neu
+## v20 Council Orchestrator — neu
+
+Erweitert v10 Council um Aufgabenverteilung, Expertenmeinungen und Orchestrierung — **keine automatische Endentscheidung**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Experten | Market, Category, Competitor, Supplier, Trust, Profit, Risk, … |
+| Aufgaben | Priorität, Status, Zuweisung, Abhängigkeiten |
+| Meinungen | Mehrere Expertenmeinungen pro Aufgabe (auch widersprüchlich) |
+| Regel | Finale Handelsentscheidung beim Menschen |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v20
+python main.py orch-demo
+python main.py orch-board
+python main.py orch-create --title "5W-30 Motoröl Recherche" --priority 9
+python main.py orch-assign --task-id 1 --agent "Supplier Intelligence"
+python main.py orch-opinion --task-id 1 --agent "Risk & Compliance" --decision REVIEW --confidence 0.90 --note "Dokumentenprüfung erforderlich"
+```
+
+**Hinweis:** v10 `council-board` = Review-Posteingang · v20 `orch-board` = Orchestrator-Pinnwand.
+
+## v19 Risk & Compliance
 
 Zentralisierte Risiko- und Compliance-Signale für Produkte, Lieferanten und Märkte — **keine Rechtsberatung**.
 
@@ -252,7 +278,8 @@ intelligence/
 │   ├── profit.py
 │   ├── market.py
 │   ├── supplier.py
-│   └── risk.py
+│   ├── risk.py
+│   └── orchestrator.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -265,5 +292,6 @@ intelligence/
     ├── Buzzard_Intelligence_v16_Profitability.zip
     ├── Buzzard_Intelligence_v17_Market_Opportunity.zip
     ├── Buzzard_Intelligence_v18_Supplier_Intelligence.zip
-    └── Buzzard_Intelligence_v19_Risk_Compliance.zip
+    ├── Buzzard_Intelligence_v19_Risk_Compliance.zip
+    └── Buzzard_Intelligence_v20_Council_Orchestrator.zip
 ```

@@ -17,12 +17,13 @@ from buzzard_intelligence import (
     SharedMemory,
     TrendEngine,
     MultilingualMemory,
+    TrustEngine,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v14 (Memory … Multilingual, Competitor Intel)"
+        description="Buzzard Intelligence v1–v15 (Memory … Competitor Intel, Authenticity & Trust)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -37,6 +38,7 @@ def main():
     sub.add_parser("init-v12", help="Create v12 shared memory schema only")
     sub.add_parser("init-v13", help="Create v13 multilingual intelligence schema only")
     sub.add_parser("init-v14", help="Create v14 competitor intelligence schema only")
+    sub.add_parser("init-v15", help="Create v15 authenticity/trust schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -143,6 +145,30 @@ def main():
     sub.add_parser("competitor-demo", help="v14 add demo competitor intelligence data")
     sub.add_parser("competitor-report", help="v14 competitor/market intelligence report")
 
+    trust_product = sub.add_parser("trust-product", help="v15 register a product for authenticity review")
+    trust_product.add_argument("--name", required=True)
+    trust_product.add_argument("--brand", default="")
+    trust_product.add_argument("--supplier", default="")
+    trust_product.add_argument("--source", default="")
+
+    trust_evidence = sub.add_parser("trust-evidence", help="v15 add evidence document for a product")
+    trust_evidence.add_argument("--product-id", type=int, required=True)
+    trust_evidence.add_argument("--type", required=True)
+    trust_evidence.add_argument("--issuer", default="")
+    trust_evidence.add_argument("--reference", default="")
+
+    trust_verify = sub.add_parser("trust-verify", help="v15 update product verification status")
+    trust_verify.add_argument("--product-id", type=int, required=True)
+    trust_verify.add_argument(
+        "--status",
+        required=True,
+        help="UNVERIFIED, PENDING, VERIFIED, REJECTED, DISPUTED",
+    )
+    trust_verify.add_argument("--note", default="")
+
+    sub.add_parser("trust-demo", help="v15 add demo authenticity/trust data")
+    sub.add_parser("trust-report", help="v15 authenticity and trust report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -215,6 +241,7 @@ def main():
     v12 = SharedMemory()
     v13 = MultilingualMemory()
     v14 = CompetitorIntel()
+    v15 = TrustEngine()
 
     if args.cmd == "init":
         v1.init()
@@ -227,6 +254,7 @@ def main():
         v12.init()
         v13.init()
         v14.init()
+        v15.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -237,6 +265,7 @@ def main():
         print(f"v12 shared memory ready at {Path(v12.path).resolve()}")
         print(f"v13 multilingual ready at {Path(v13.path).resolve()}")
         print(f"v14 competitor intel ready at {Path(v14.path).resolve()}")
+        print(f"v15 trust engine ready at {Path(v15.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -267,6 +296,9 @@ def main():
     elif args.cmd == "init-v14":
         v14.init()
         print(f"v14 competitor intel ready at {Path(v14.path).resolve()}")
+    elif args.cmd == "init-v15":
+        v15.init()
+        print(f"v15 trust engine ready at {Path(v15.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -481,6 +513,22 @@ def main():
     elif args.cmd == "competitor-report":
         v14.init()
         print(v14.report())
+    elif args.cmd == "trust-product":
+        v15.init()
+        print(v15.add_product(args.name, args.brand, args.supplier, args.source))
+    elif args.cmd == "trust-evidence":
+        v15.init()
+        print(v15.add_evidence(args.product_id, args.type, args.issuer, args.reference))
+    elif args.cmd == "trust-verify":
+        v15.init()
+        print(v15.verify(args.product_id, args.status, args.note))
+    elif args.cmd == "trust-demo":
+        v15.init()
+        v15.demo()
+        print("Demo-Vertrauensdaten gespeichert.")
+    elif args.cmd == "trust-report":
+        v15.init()
+        print(v15.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

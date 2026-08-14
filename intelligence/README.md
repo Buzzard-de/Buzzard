@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v5
+# Buzzard Intelligence v1–v6
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -10,7 +10,8 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v2 | `memory.py` | Speicher + Änderungserkennung |
 | v3 | `collector.py` | robots.txt-konforme HTML-Sammlung |
 | v4 | `scheduler.py` | Aufgaben-Registry, Intervalle |
-| v5 | `api_layer.py` | Offizielle APIs/Feeds statt Blind-Crawl |
+| v5 | `api_layer.py` | Offizielle APIs/Feeds |
+| v6 | `analysis.py` | Markt-/Kategorie-Analyse aus v2 Memory |
 
 ## Setup
 
@@ -19,44 +20,30 @@ cd intelligence
 pip install -r requirements.txt
 python main.py init
 python main.py seed-de
-python main.py sources
+python main.py demo
+python main.py analyze
 ```
+
+## v6 Analysis
+
+Entscheidungsunterstützung aus v2 Memory — **keine Bestseller-Behauptungen ohne Verkaufsdaten**.
+
+```bash
+python main.py demo
+python main.py analyze
+```
+
+Bericht enthält: häufigste Beobachtungen, Popularitätssignale, Preis-/Popularitäts-Events, Kategorie-Dichte, Länder-Sichtbarkeit, Daten-Warnung.
 
 ## v5 API Layer
 
-API-Schlüssel **nur** über Umgebungsvariablen (z. B. `BUZZARD_API_KEY`), nie im Code.
-
 ```bash
-export BUZZARD_API_KEY="your-key-here"
-
-python main.py add-api \
-  --name "Example Catalog API" \
-  --base-url "https://example.com/api/products" \
-  --category "Automotive"
-
-python main.py sources
+python main.py add-api --name "Example" --base-url "https://example.com/api" --category "Automotive"
 python main.py test-apis
-python main.py schema
-```
-
-Quellen-Schema: `buzzard_intelligence/source_schema.json`
-
-## v4 Scheduler
-
-```bash
-python main.py seed-tasks-de
-python main.py add-task --category "Automotive" --url "https://example.com/page"
-python main.py run
-```
-
-## v3 Collector
-
-```bash
-python main.py collect --url "https://example.com/page" --category "Automotive"
 ```
 
 ## Archive
 
-- `archive/Buzzard_Intelligence_v1.zip` … `v5_API_Layer.zip`
+`archive/Buzzard_Intelligence_v1.zip` … `v6_Analysis.zip`
 
 Siehe: `docs/BUZZARD_INTELLIGENCE.md`

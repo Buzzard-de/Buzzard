@@ -4,6 +4,7 @@ from pathlib import Path
 
 from buzzard_intelligence import (
     APILayer,
+    Analyzer,
     Collector,
     IntelligenceDB,
     MemoryEngine,
@@ -14,7 +15,7 @@ from buzzard_intelligence import (
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v5 (Memory, Collector, Scheduler, API Layer)"
+        description="Buzzard Intelligence v1–v6 (Memory, Collector, Scheduler, API, Analysis)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -36,6 +37,8 @@ def main():
     sub.add_parser("sources", help="List v5 API/feed sources")
     sub.add_parser("test-apis", help="Test enabled v5 API sources")
     sub.add_parser("schema", help="Show v5 source schema example JSON")
+    sub.add_parser("analyze", help="v6 market/category analysis report from v2 memory")
+    sub.add_parser("demo", help="v6 add German demo observations to v2 memory")
 
     memory = sub.add_parser("memory", help="Search v2 memory by product, brand, or category")
     memory.add_argument("query")
@@ -94,6 +97,7 @@ def main():
     v3 = Collector(v2)
     v4 = Scheduler(v3)
     v5 = APILayer()
+    v6 = Analyzer(v2)
 
     if args.cmd == "init":
         v1.init()
@@ -177,6 +181,12 @@ def main():
         print(v5.test_all())
     elif args.cmd == "schema":
         print(v5.schema_example())
+    elif args.cmd == "analyze":
+        v6.init()
+        print(v6.full_report())
+    elif args.cmd == "demo":
+        v6.demo()
+        print("Demo-Beobachtungen in v2 Memory gespeichert.")
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

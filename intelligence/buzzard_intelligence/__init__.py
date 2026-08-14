@@ -1,3 +1,4 @@
+from .analysis import Analyzer
 from .api_layer import APILayer
 from .collector import Collector
 from .database import IntelligenceDB
@@ -6,6 +7,7 @@ from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
 
 __all__ = [
+    "Analyzer",
     "APILayer",
     "Collector",
     "IntelligenceDB",

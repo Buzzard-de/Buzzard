@@ -5,6 +5,7 @@ from pathlib import Path
 from buzzard_intelligence import (
     APILayer,
     Analyzer,
+    CategoryDiscovery,
     Collector,
     IntelligenceDB,
     MemoryEngine,
@@ -16,7 +17,7 @@ from buzzard_intelligence import (
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v7 (Memory, Collector, Scheduler, API, Analysis, Trends)"
+        description="Buzzard Intelligence v1–v8 (Memory, Collector, Scheduler, API, Analysis, Trends, Discovery)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -25,6 +26,7 @@ def main():
     sub.add_parser("init-v2", help="Create v2 memory schema only")
     sub.add_parser("init-v4", help="Create v4 scheduler schema only")
     sub.add_parser("init-v5", help="Create v5 API layer schema only")
+    sub.add_parser("init-v8", help="Create v8 category discovery schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -42,6 +44,16 @@ def main():
     sub.add_parser("demo", help="v6 add German demo observations to v2 memory")
     sub.add_parser("demo-trends", help="v7 add time-series demo data to v2 memory")
     sub.add_parser("trends", help="v7 trend and opportunity report from v2 memory")
+    sub.add_parser("sync-categories", help="v8 load known categories from data/buzzard_categories.json")
+    sub.add_parser("demo-discovery", help="v8 add German demo category signals")
+    sub.add_parser("discover", help="v8 category discovery report")
+
+    add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
+    add_category.add_argument("--name", required=True)
+    add_category.add_argument("--parent", default="")
+    add_category.add_argument("--level", type=int, default=1)
+    add_category.add_argument("--source", required=True)
+    add_category.add_argument("--confidence", type=float, default=0.8)
 
     memory = sub.add_parser("memory", help="Search v2 memory by product, brand, or category")
     memory.add_argument("query")
@@ -102,16 +114,19 @@ def main():
     v5 = APILayer()
     v6 = Analyzer(v2)
     v7 = TrendEngine(v2)
+    v8 = CategoryDiscovery()
 
     if args.cmd == "init":
         v1.init()
         v2.init()
         v4.init()
         v5.init()
+        v8.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
         print(f"v5 API layer ready at {Path(v5.path).resolve()}")
+        print(f"v8 category discovery ready at {Path(v8.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -124,6 +139,9 @@ def main():
     elif args.cmd == "init-v5":
         v5.init()
         print(f"v5 API layer ready at {Path(v5.path).resolve()}")
+    elif args.cmd == "init-v8":
+        v8.init()
+        print(f"v8 category discovery ready at {Path(v8.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -197,6 +215,29 @@ def main():
     elif args.cmd == "trends":
         v7.init()
         print(v7.report())
+    elif args.cmd == "sync-categories":
+        v8.init()
+        count = v8.sync_known_categories()
+        print(f"{count} bekannte Buzzard-Kategorien synchronisiert.")
+    elif args.cmd == "demo-discovery":
+        v8.init()
+        v8.sync_known_categories()
+        v8.demo()
+        print("Demo-Kategorie-Signale gespeichert.")
+    elif args.cmd == "discover":
+        v8.init()
+        print(v8.report())
+    elif args.cmd == "add-category":
+        v8.init()
+        print(
+            v8.add_candidate(
+                args.name,
+                args.parent,
+                args.level,
+                args.source,
+                args.confidence,
+            )
+        )
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

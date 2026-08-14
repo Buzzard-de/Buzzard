@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v7
+# Buzzard Intelligence v1–v8
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -11,8 +11,9 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v3 | `collector.py` | nutzt v2 |
 | v4 | `scheduler.py` | `buzzard_intelligence_v4.db` |
 | v5 | `api_layer.py` | `buzzard_intelligence_v5.db` |
-| v6 | `analysis.py` | liest v2 Memory |
-| v7 | `trends.py` | liest v2 Memory |
+| v6 | `analysis.py` | liest v2 |
+| v7 | `trends.py` | liest v2 |
+| v8 | `discovery.py` | `buzzard_intelligence_v8.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -22,63 +23,59 @@ Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 cd intelligence
 pip install -r requirements.txt
 python main.py init
-python main.py demo-trends
-python main.py trends
+python main.py sync-categories
+python main.py demo-discovery
+python main.py discover
 ```
 
-## v7 Trend & Opportunity — neu
+## v8 Category Discovery — neu
 
-Zeitreihen-Signale aus v2 Memory-Beobachtungen.
+Kategoriebaum-Erweiterung mit Quellen-Nachweis.
 
-| Signal | Beschreibung |
-|--------|--------------|
-| STEIGEND / FALLEND / STABIL | Popularitätsänderung über Zeit |
-| PreisΔ | Preisänderung über Zeitreihe |
-| Momentum | Beobachtungsfrequenz (14-Tage-Fenster) |
-| Opportunity-Score | Erklärbarer Score (≠ Kaufempfehlung) |
-| Datenlücken | Hauptkategorien ohne Beobachtungen |
+| Feature | Beschreibung |
+|---------|--------------|
+| `sync-categories` | Lädt bekannte Kategorien aus `data/buzzard_categories.json` |
+| `add-category` | Neues Kategorie-Signal mit Quelle und Konfidenz |
+| `discover` | Report: Signale, Ereignisse, Abdeckungslücken |
+| Normalisierung | Gleiche Kategorie in unterschiedlicher Schreibweise erkennen |
 
 ### Wichtig
 
-- Opportunity-Score ist **keine** Entscheidung oder Verkaufsprognose
-- Bei < 2 Datenpunkten: „DATEN UNZUREICHEND“
-- Score erst ab 3 Beobachtungen
+- Signale sind **keine** automatischen Shop-Entscheidungen
+- Vor Aufnahme: Quelle und Rechtemäßigkeit prüfen
+- Erweitert den 41-Hauptkategorien-Omorga, ersetzt ihn nicht
 
 ```bash
-python main.py demo-trends   # Zeitreihen-Demo (Motoröl steigend, Schlauch fallend)
-python main.py trends        # Trend- & Opportunity-Bericht
+python main.py add-category \
+  --name "Bremsbeläge" \
+  --parent "Bremsystem" \
+  --level 3 \
+  --source "demo-source"
+
+python main.py demo-discovery
+python main.py discover
 ```
 
-## v6 Analysis
+## v7 Trends / v6 Analysis
 
-Markt-/Kategorie-Analyse, Events, Länder-Sichtbarkeit.
-
-```bash
-python main.py demo
-python main.py analyze
-```
-
-## v5–v1
-
-API Layer, Scheduler, Collector, Memory, Database — parallel nutzbar.
+Siehe vorherige Abschnitte — `demo-trends`, `trends`, `demo`, `analyze`.
 
 ## Alle CLI-Befehle
 
 | Befehl | Version |
 |--------|---------|
-| `init` | v1 + v2 + v4 + v5 |
+| `init` | v1 + v2 + v4 + v5 + v8 |
+| `sync-categories` / `add-category` / `discover` / `demo-discovery` | v8 |
 | `demo-trends` / `trends` | v7 |
 | `demo` / `analyze` | v6 |
 | `sources` / `add-api` / `test-apis` | v5 |
 | `seed-tasks-de` / `run` | v4 |
 | `collect` | v3 |
 | `add-observation` / `changes` / `memory` | v2 |
-| `report` | v1 |
 
 ## Grenzen
 
-- Keine Shop-/Katalog-Änderungen
-- Keine erfundenen Verkaufszahlen
+- Keine Shop-/Katalog-Änderungen ohne manuelle Freigabe
 - SQLite lokal
 
 ## Dateien
@@ -87,13 +84,7 @@ API Layer, Scheduler, Collector, Memory, Database — parallel nutzbar.
 intelligence/
 ├── main.py
 ├── buzzard_intelligence/
-│   ├── database.py
-│   ├── memory.py
-│   ├── collector.py
-│   ├── scheduler.py
-│   ├── api_layer.py
-│   ├── analysis.py
-│   └── trends.py
+│   └── discovery.py
 └── archive/
-    └── Buzzard_Intelligence_v7_Trend_Opportunity.zip
+    └── Buzzard_Intelligence_v8_Category_Discovery.zip
 ```

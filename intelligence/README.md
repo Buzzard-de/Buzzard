@@ -102,7 +102,7 @@ Archive: `archive/Buzzard_Intelligence_Live_Data_Connector_Pack.zip`
 
 ## Marketplace & Website Monitoring Pack
 
-Katalog von 44 E-Commerce-/Marketplace-/Retail-Sites mit Legal Policies, Scheduler und Observation Schema (`website_monitoring/`).
+Katalog von 46 E-Commerce-/Marketplace-/Retail-Sites mit Legal Policies, Scheduler und Observation Schema (`website_monitoring/`).
 
 | CLI | Zweck |
 |-----|-------|
@@ -125,7 +125,7 @@ Alle Sites starten mit `enabled: false` und `NOT_CONNECTED`. Erst nach Zugangsve
 
 **Abgrenzung:** `live-*` = Live API Adapter · `wsmon-*` = Site-Katalog + Policies · `mplace-*` = v58 JSON Modul
 
-Archive: `archive/Buzzard_Intelligence_Marketplace_Website_Monitoring.zip`
+Archive: `archive/Buzzard_Intelligence_Marketplace_Website_Monitoring.zip` (+ `Buzzard_Intelligence_Marketplace_Website_Monitoring_UPDATED.zip`)
 
 ## Final Production Completion Package
 

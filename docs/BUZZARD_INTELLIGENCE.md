@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v31
+# Buzzard Intelligence v1–v32
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -28,8 +28,35 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v29 | `verify.py` | `buzzard_official_verification_v29.db` |
 | v30 | `mission.py` | `buzzard_mission_v30.db` |
 | v31 | `learning_memory.py` | `buzzard_learning_memory_v31.db` |
+| v32 | `categories.py` | `buzzard_category_intelligence_v32.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v32 Category Intelligence — neu
+
+Zentraler Kategorie-Katalog (100+) mit Marktsignalen und Recherche-Warteschlange — **kein automatischer Produktkauf**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Katalog | 100+ Kategorien, owned/fehlend-Status |
+| Signale | Nachfrage, Wettbewerb, Lieferant, Marge, Risiko → Chancen-Score |
+| Queue | Priorisierte Recherche-Warteschlange |
+| Regel | Kategoriechance ≠ sichere Annahme ohne Marktsignale |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v32
+python main.py category-seed
+python main.py category-demo
+python main.py category-report
+python main.py category-queue
+python main.py category-signal --category "Automotive" --demand 90 --competition 70 --supplier 85 --margin 80 --risk 20
+python main.py category-owned --category "Automotive"
+```
+
+v8 `discover` = Kategorie-Entdeckung · v32 `category-*` = Kategorie-Katalog & Priorität.
 
 ## v31 Learning & Memory — neu
 
@@ -565,7 +592,8 @@ intelligence/
 │   ├── selection.py
 │   ├── verify.py
 │   ├── mission.py
-│   └── learning_memory.py
+│   ├── learning_memory.py
+│   └── categories.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -590,5 +618,6 @@ intelligence/
     ├── Buzzard_Intelligence_v28_Product_Selection.zip
     ├── Buzzard_Intelligence_v29_Official_Verification.zip
     ├── Buzzard_Intelligence_v30_Autonomous_Mission.zip
-    └── Buzzard_Intelligence_v31_Learning_Memory.zip
+    ├── Buzzard_Intelligence_v31_Learning_Memory.zip
+    └── Buzzard_Intelligence_v32_Category_Intelligence.zip
 ```

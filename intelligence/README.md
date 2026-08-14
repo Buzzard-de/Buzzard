@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v31
+# Buzzard Intelligence v1–v32
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -28,6 +28,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v29 | `verify.py` | Official Verification (Claims, Quellen, Status) |
 | v30 | `mission.py` | Autonomous Mission (12 Agenten, Menschen-Freigabe) |
 | v31 | `learning_memory.py` | Learning & Memory (FACT/SIGNAL/LESSON, Recall) |
+| v32 | `categories.py` | Category Intelligence (100+ Kategorien, Signale, Queue) |
 
 ## Setup
 
@@ -39,6 +40,28 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v32 Category Intelligence
+
+- 100+ Kategorien als zentraler Forschungs-Katalog
+- Marktsignale: Nachfrage, Wettbewerb, Lieferant, Marge, Risiko → Chancen-Score
+- Vorhanden/fehlend-Status für Buzzard-Kategorien
+- Recherche-Warteschlange nach Priorität
+- Kein automatischer Produktkauf
+
+```bash
+python main.py init-v32
+python main.py category-seed
+python main.py category-demo
+python main.py category-report
+python main.py category-queue
+python main.py category-signal --category "Automotive" --demand 90 --competition 70 --supplier 85 --margin 80 --risk 20
+python main.py category-owned --category "Automotive"
+```
+
+v8 `discover` = Kategorie-Entdeckung · v32 `category-*` = Katalog & Priorität.
+
+Archive: `archive/Buzzard_Intelligence_v32_Category_Intelligence.zip`
 
 ## v31 Learning & Memory
 

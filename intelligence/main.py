@@ -34,12 +34,13 @@ from buzzard_intelligence import (
     OfficialVerifier,
     MissionEngine,
     LearningMemory,
+    CategoryIntel,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v31 (Memory … Autonomous Mission, Learning Memory)"
+        description="Buzzard Intelligence v1–v32 (Memory … Learning Memory, Category Intelligence)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -71,6 +72,7 @@ def main():
     sub.add_parser("init-v29", help="Create v29 official verification schema only")
     sub.add_parser("init-v30", help="Create v30 autonomous mission schema only")
     sub.add_parser("init-v31", help="Create v31 learning memory schema only")
+    sub.add_parser("init-v32", help="Create v32 category intelligence schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -504,6 +506,22 @@ def main():
     sub.add_parser("learn-demo", help="v31 add demo learning memory records")
     sub.add_parser("learn-report", help="v31 learning memory report")
 
+    category_signal = sub.add_parser("category-signal", help="v32 add category market signal")
+    category_signal.add_argument("--category", required=True)
+    category_signal.add_argument("--demand", type=float, default=None)
+    category_signal.add_argument("--competition", type=float, default=None)
+    category_signal.add_argument("--supplier", type=float, default=None)
+    category_signal.add_argument("--margin", type=float, default=None)
+    category_signal.add_argument("--risk", type=float, default=None)
+
+    category_owned = sub.add_parser("category-owned", help="v32 mark category as present in Buzzard")
+    category_owned.add_argument("--category", required=True)
+
+    sub.add_parser("category-seed", help="v32 seed 100+ category catalog")
+    sub.add_parser("category-queue", help="v32 category research queue")
+    sub.add_parser("category-report", help="v32 category intelligence report")
+    sub.add_parser("category-demo", help="v32 seed catalog and demo signals")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -593,6 +611,7 @@ def main():
     v29 = OfficialVerifier()
     v30 = MissionEngine()
     v31 = LearningMemory()
+    v32 = CategoryIntel()
 
     if args.cmd == "init":
         v1.init()
@@ -622,6 +641,7 @@ def main():
         v29.init()
         v30.init()
         v31.init()
+        v32.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -649,6 +669,7 @@ def main():
         print(f"v29 official verification ready at {Path(v29.path).resolve()}")
         print(f"v30 autonomous mission ready at {Path(v30.path).resolve()}")
         print(f"v31 learning memory ready at {Path(v31.path).resolve()}")
+        print(f"v32 category intelligence ready at {Path(v32.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -730,6 +751,9 @@ def main():
     elif args.cmd == "init-v31":
         v31.init()
         print(f"v31 learning memory ready at {Path(v31.path).resolve()}")
+    elif args.cmd == "init-v32":
+        v32.init()
+        print(f"v32 category intelligence ready at {Path(v32.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1326,6 +1350,34 @@ def main():
     elif args.cmd == "learn-report":
         v31.init()
         print(v31.report())
+    elif args.cmd == "category-seed":
+        v32.init()
+        print(v32.seed())
+    elif args.cmd == "category-signal":
+        v32.init()
+        print(
+            v32.add_signal(
+                args.category,
+                args.demand,
+                args.competition,
+                args.supplier,
+                args.margin,
+                args.risk,
+            )
+        )
+    elif args.cmd == "category-owned":
+        v32.init()
+        print(v32.set_owned(args.category))
+    elif args.cmd == "category-queue":
+        v32.init()
+        print(v32.queue())
+    elif args.cmd == "category-report":
+        v32.init()
+        print(v32.report())
+    elif args.cmd == "category-demo":
+        v32.init()
+        v32.demo()
+        print("Demo-Kategorie-Intelligence gespeichert.")
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

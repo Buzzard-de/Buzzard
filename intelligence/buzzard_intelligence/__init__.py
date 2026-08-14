@@ -1,5 +1,6 @@
 from .analysis import Analyzer
 from .api_layer import APILayer
+from .categories import CategoryIntel
 from .collector import Collector
 from .competitor import CompetitorIntel
 from .connectors import ConnectorHub
@@ -34,6 +35,7 @@ __all__ = [
     "Analyzer",
     "APILayer",
     "CategoryDiscovery",
+    "CategoryIntel",
     "DemandForecast",
     "Collector",
     "CompetitorIntel",

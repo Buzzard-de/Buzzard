@@ -1,40 +1,43 @@
-# Buzzard Intelligence v1
+# Buzzard Intelligence v1 + v2 Memory
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
 ## Zweck
 
-- Kategorien (3 Ebenen) und Produktbeobachtungen speichern
-- Preis, Plattform, Land, Quelle, Popularität erfassen
-- Wiederholte Beobachtungen vergleichen und reporten
-- **Keine automatischen Entscheidungen** — nur quellenbasierte Informationen
+**v1** — Kategorien, Beobachtungen, einfache Reports  
+**v2 Memory** — persistente Hafıza mit Änderungserkennung:
 
-## Wichtig
+- Preisänderungen (`PRICE_CHANGE`)
+- Popularitätsänderungen (`POPULARITY_UP` / `POPULARITY_DOWN`)
+- Neue Entdeckungen (`NEW_DISCOVERY`)
+- Speichersuche und JSON-Export
+- Konfidenz-Score pro Beobachtung
 
-Dieses MVP crawlt **nicht** automatisch das Web. Erweiterungen nur über erlaubte APIs, Feeds, XML/CSV und robots.txt-konforme Quellen.
+**Keine automatischen Entscheidungen** — nur quellenbasierte Informationen.
 
 ## Setup
 
 ```bash
 cd intelligence
-python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python main.py init
-python main.py seed-de        # 41 deutsche Buzzard-Hauptkategorien
-python main.py report
+python main.py seed-de
+python main.py report-v2
 ```
 
 ## Befehle
 
 | Befehl | Beschreibung |
 |--------|--------------|
-| `init` | SQLite-Schema anlegen |
-| `seed-de` | Deutsche Hauptkategorien aus `data/buzzard_categories.json` |
-| `seed` | Legacy 100+ TR-Kategorien (Original-Paket) |
-| `add-observation` | Produktbeobachtung mit `--source-url` speichern |
-| `report` | Übersicht |
-| `changes` | Letzte Beobachtungen |
+| `init` | v1 + v2 Schema anlegen |
+| `seed-de` | 41 deutsche Buzzard-Hauptkategorien (v1 + v2) |
+| `seed` | Legacy 100+ TR-Kategorien |
+| `add-observation` | Beobachtung mit `--source-url`, optional `--confidence` |
+| `report` | v1 Übersicht |
+| `report-v2` | v2 Memory-Übersicht inkl. Ereignisse |
+| `changes` | Erkannte Änderungen (Preis, Popularität, Entdeckungen) |
+| `memory <query>` | Speichersuche |
+| `export-memory` | JSON-Snapshot nach `buzzard_memory_snapshot.json` |
 
 ## Beispiel
 
@@ -48,25 +51,22 @@ python main.py add-observation \
   --price 49.90 \
   --currency EUR \
   --popularity 82 \
+  --confidence 0.85 \
   --source-url "https://example.com/public-page"
 
-python main.py report
 python main.py changes
+python main.py memory "bremsbelag"
+python main.py export-memory
 ```
 
 ## Dateien
 
 | Pfad | Inhalt |
 |------|--------|
-| `buzzard_intelligence/database.py` | SQLite-Logik |
+| `buzzard_intelligence/database.py` | v1 SQLite-Logik |
+| `buzzard_intelligence/memory.py` | v2 Memory Engine |
 | `buzzard_intelligence/seed_categories_de.json` | 41 DE-Hauptkategorien |
-| `buzzard_intelligence.db` | Lokale DB (gitignored) |
-| `archive/Buzzard_Intelligence_v1.zip` | Original-Upload |
-
-## Integration (später)
-
-- Anbindung an Admin AI Center / Render API
-- Sync mit `data/buzzard_categories.json`
-- Feed/API-Importer (kein Blind-Crawl)
+| `archive/Buzzard_Intelligence_v1.zip` | Original v1 |
+| `archive/Buzzard_Intelligence_v2_Memory.zip` | Original v2 |
 
 Siehe auch: `docs/BUZZARD_INTELLIGENCE.md`

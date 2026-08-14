@@ -26,6 +26,8 @@ __pycache__/
 intelligence/.venv/
 intelligence/*.db
 intelligence/buzzard_intelligence.db
+intelligence/buzzard_intelligence_v2.db
+intelligence/buzzard_memory_snapshot.json
 
 # Archives
 buzzard.zip

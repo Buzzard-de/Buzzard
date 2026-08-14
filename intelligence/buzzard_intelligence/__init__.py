@@ -5,6 +5,7 @@ from .council import Council
 from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
 from .memory import MemoryEngine
+from .multilingual import MultilingualMemory
 from .reporting import Reporter
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
@@ -19,6 +20,7 @@ __all__ = [
     "Council",
     "IntelligenceDB",
     "MemoryEngine",
+    "MultilingualMemory",
     "Reporter",
     "Scheduler",
     "SEED_CATEGORIES",

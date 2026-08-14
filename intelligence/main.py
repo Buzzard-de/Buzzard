@@ -13,13 +13,14 @@ from buzzard_intelligence import (
     Reporter,
     Scheduler,
     SEED_CATEGORIES,
+    SharedMemory,
     TrendEngine,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v11 (Memory … Council, Voice)"
+        description="Buzzard Intelligence v1–v12 (Memory … Council, Voice, Shared Memory)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -31,6 +32,7 @@ def main():
     sub.add_parser("init-v8", help="Create v8 category discovery schema only")
     sub.add_parser("init-v9", help="Create v9 reporting/alerts schema only")
     sub.add_parser("init-v10", help="Create v10 council integration schema only")
+    sub.add_parser("init-v12", help="Create v12 shared memory schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -82,6 +84,29 @@ def main():
     voice = sub.add_parser("voice", help="v11 start local voice interface server")
     voice.add_argument("--host", default="127.0.0.1")
     voice.add_argument("--port", type=int, default=8787)
+
+    remember = sub.add_parser("remember", help="v12 store a shared memory entry")
+    remember.add_argument("--type", required=True, help="DECISION, TASK, PREFERENCE, CONVERSATION, …")
+    remember.add_argument("--text", required=True)
+    remember.add_argument("--source", default="system")
+    remember.add_argument("--confidence", type=float, default=0.8)
+    remember.add_argument("--tags", default="")
+    remember.add_argument("--entity", default="")
+
+    recall = sub.add_parser("recall", help="v12 search shared memory")
+    recall.add_argument("--query", required=True)
+
+    sub.add_parser("shared-timeline", help="v12 shared memory timeline (newest first)")
+
+    memory_status = sub.add_parser("memory-status", help="v12 update shared memory status")
+    memory_status.add_argument("--id", type=int, required=True)
+    memory_status.add_argument("--status", required=True, help="ACTIVE, VERIFIED, DISPUTED, ARCHIVED, REJECTED")
+    memory_status.add_argument("--actor", default="system")
+
+    shared_link = sub.add_parser("shared-link", help="v12 link two shared memory entries")
+    shared_link.add_argument("--from-id", type=int, required=True)
+    shared_link.add_argument("--to-id", type=int, required=True)
+    shared_link.add_argument("--relation", default="related")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -152,6 +177,7 @@ def main():
     v8 = CategoryDiscovery()
     v9 = Reporter(v2, v8)
     v10 = Council()
+    v12 = SharedMemory()
 
     if args.cmd == "init":
         v1.init()
@@ -161,6 +187,7 @@ def main():
         v8.init()
         v9.init()
         v10.init()
+        v12.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -168,6 +195,7 @@ def main():
         print(f"v8 category discovery ready at {Path(v8.path).resolve()}")
         print(f"v9 reporting ready at {Path(v9.path).resolve()}")
         print(f"v10 council ready at {Path(v10.path).resolve()}")
+        print(f"v12 shared memory ready at {Path(v12.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -189,6 +217,9 @@ def main():
     elif args.cmd == "init-v10":
         v10.init()
         print(f"v10 council ready at {Path(v10.path).resolve()}")
+    elif args.cmd == "init-v12":
+        v12.init()
+        print(f"v12 shared memory ready at {Path(v12.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -336,6 +367,30 @@ def main():
 
         print(f"Voice interface: http://{args.host}:{args.port}")
         voice_main(host=args.host, port=args.port)
+    elif args.cmd == "remember":
+        v12.init()
+        print(
+            v12.add(
+                args.type,
+                args.text,
+                args.source,
+                args.confidence,
+                args.tags,
+                args.entity,
+            )
+        )
+    elif args.cmd == "recall":
+        v12.init()
+        print(v12.search(args.query))
+    elif args.cmd == "shared-timeline":
+        v12.init()
+        print(v12.timeline())
+    elif args.cmd == "memory-status":
+        v12.init()
+        print(v12.update_status(args.id, args.status, args.actor))
+    elif args.cmd == "shared-link":
+        v12.init()
+        print(v12.link(args.from_id, args.to_id, args.relation))
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v18
+# Buzzard Intelligence v1–v19
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -15,6 +15,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v16 | `profit.py` | Rentabilitätsberechnung und Entscheidungshilfe |
 | v17 | `market.py` | Länder- und Marktchancen-Vergleich |
 | v18 | `supplier.py` | Lieferantenrecherche und Integrationsbewertung |
+| v19 | `risk.py` | Risiko- & Compliance-Signale (Priorität, Review-Workflow) |
 
 ## Setup
 
@@ -26,6 +27,23 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v19 Risk & Compliance
+
+- Risikotypen: AUTHENTICITY, SUPPLIER, PRODUCT_SAFETY, CUSTOMS, TAX, IP_TRADEMARK, …
+- Schweregrad: LOW, MEDIUM, HIGH, CRITICAL
+- Prioritätsscore 0–100; fehlende Quelle erhöht Priorität
+- Keine Rechtsberatung; Risikosignale ≠ rechtlicher Verstoß
+
+```bash
+python main.py init-v19
+python main.py risk-demo
+python main.py risk-report
+python main.py risk-add --entity "Beispiel Produkt" --type PRODUCT_SAFETY --severity HIGH --source official-source --country DE
+python main.py risk-verify --risk-id 1 --status UNDER_REVIEW --note "Prüfung gestartet"
+```
+
+Archive: `archive/Buzzard_Intelligence_v19_Risk_Compliance.zip`
 
 ## v18 Supplier Intelligence
 

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v14
+# Buzzard Intelligence v1–v15
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -11,10 +11,34 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v12 | `shared_memory.py` | `buzzard_shared_memory_v12.db` |
 | v13 | `multilingual.py` | `buzzard_multilingual_v13.db` |
 | v14 | `competitor.py` | `buzzard_competitor_v14.db` |
+| v15 | `trust.py` | `buzzard_trust_v15.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v14 Competitor Intelligence — neu
+## v15 Authenticity & Trust — neu
+
+Vertrauens- und Authentizitätssignale für Produkte, Marken und Lieferanten — **keine automatische „Original“-Markierung**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Status | UNVERIFIED, PENDING, VERIFIED, REJECTED, DISPUTED |
+| Nachweise | Rechnungen, Herstellerdaten, Lieferantendokumente |
+| Vertrauensscore | Erklärbarer Score je Verifizierungsstatus |
+| Risiko | Signale statt Fälschungsvorwürfe — menschliche Prüfung möglich |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v15
+python main.py trust-demo
+python main.py trust-report
+python main.py trust-product --name "Beispiel Produkt" --brand "Example" --supplier "Example Supplier"
+python main.py trust-evidence --product-id 1 --type INVOICE --issuer "Example Supplier" --reference "DOC-001"
+python main.py trust-verify --product-id 1 --status VERIFIED --note "Quelle geprüft"
+```
+
+## v14 Competitor Intelligence
 
 Legale Wettbewerbs- und Marktbeobachtungen aus **öffentlichen Quellen** — keine Scraping-Umgehung, keine privaten Daten.
 
@@ -132,7 +156,8 @@ intelligence/
 ├── buzzard_intelligence/
 │   ├── shared_memory.py
 │   ├── multilingual.py
-│   └── competitor.py
+│   ├── competitor.py
+│   └── trust.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -140,5 +165,6 @@ intelligence/
     ├── Buzzard_Intelligence_v11_Voice_Interface.zip
     ├── Buzzard_Intelligence_v12_Shared_Memory.zip
     ├── Buzzard_Intelligence_v13_Multilingual.zip
-    └── Buzzard_Intelligence_v14_Competitor_Intelligence.zip
+    ├── Buzzard_Intelligence_v14_Competitor_Intelligence.zip
+    └── Buzzard_Intelligence_v15_Authenticity_Trust.zip
 ```

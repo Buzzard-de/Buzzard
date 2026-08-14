@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v14
+# Buzzard Intelligence v1–v15
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -11,6 +11,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v12 | `shared_memory.py` | Langfristige Shared Memory (Entscheidungen, Aufgaben, Konversationen) |
 | v13 | `multilingual.py` | Mehrsprachige Begriffe und kanonische Entitäten |
 | v14 | `competitor.py` | Legale Wettbewerbs-/Marktbeobachtungen aus öffentlichen Quellen |
+| v15 | `trust.py` | Authentizität & Vertrauen (Produkte, Nachweise, Verifizierung) |
 
 ## Setup
 
@@ -22,6 +23,24 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v15 Authenticity & Trust
+
+- Produktquelle, Marke, Lieferant und Verifizierungsstatus
+- Nachweisdokumente (Rechnung, Herstellerdaten, …)
+- Status: UNVERIFIED → PENDING → VERIFIED / REJECTED / DISPUTED
+- Keine automatische „Original“-Markierung; Risikosignale ≠ Fälschungsvorwurf
+
+```bash
+python main.py init-v15
+python main.py trust-demo
+python main.py trust-report
+python main.py trust-product --name "Beispiel Produkt" --brand "Example" --supplier "Example Supplier"
+python main.py trust-evidence --product-id 1 --type INVOICE --issuer "Example Supplier" --reference "DOC-001"
+python main.py trust-verify --product-id 1 --status VERIFIED --note "Quelle geprüft"
+```
+
+Archive: `archive/Buzzard_Intelligence_v15_Authenticity_Trust.zip`
 
 ## v14 Competitor Intelligence
 

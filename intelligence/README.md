@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v70
+# Buzzard Intelligence v1–v100
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite/JSON), getrennt vom Node-Shop.
 
@@ -50,6 +50,10 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite/JSON), getren
 | v65–v68 | `eu_compliance/fx/landed_cost/profit_optimizer` | Compliance & Kosten (JSON) |
 | v69 | `portfolio_manager.py` | Portfolio Manager (JSON) |
 | v70 | `command_center.py` | Real-Time Command Center (JSON) |
+| v71–v80 | `research_jobs.py` … `workflow_auto.py` | Research, Qualität, Agenten, Workflow (JSON) |
+| v81–v90 | `price_optimize.py` … `cat_portfolio.py` | Preis, Einkauf, Sortiment, Portfolio (JSON) |
+| v91–v99 | `germany_market.py` … `local_marketplace.py` | Länder- & Markt-Intelligence (JSON) |
+| v100 | `ai_center.py` | Buzzard AI Intelligence Center (JSON) |
 
 ## Setup
 
@@ -164,6 +168,53 @@ python main.py init   # unified init v1–v70
 **Abgrenzung:** v22 `research-*` · v23 `connector-*` · v25 `price-*` · v33 `rivals-*` · v37 `compliance-*` · v65 `eucomp-*`
 
 Archive: `archive/Buzzard_Intelligence_v41_v70_ALL_REMAINING.zip` (+ einzelne v41–v70 ZIPs)
+
+## v71–v100 JSON Intelligence Bundle
+
+30 weitere JSON-Module — Research-Automatisierung, Qualität, Agenten, Einkauf/Preis, Sortiment, Länder-Märkte und AI Center.
+
+| Version | Modul | CLI-Präfix | Zweck |
+|---------|-------|------------|-------|
+| v71 | `research_jobs.py` | `rjobs-*` | Automated Research Jobs |
+| v72 | `data_quality.py` | `dqc-*` | Data Quality Control |
+| v73 | `multi_agent.py` | `magent-*` | Multi-Agent Collaboration |
+| v74 | `hypothesis.py` | `hypoth-*` | Hypothesis Engine |
+| v75 | `fact_check.py` | `fcheck-*` | Fact Checking & Counter Verification |
+| v76 | `opportunity_rank.py` | `oprank-*` | Opportunity Ranking |
+| v77 | `product_discovery.py` | `pdisc-*` | Product Discovery |
+| v78 | `supplier_discovery.py` | `sdisc-*` | Supplier Discovery |
+| v79 | `market_entry.py` | `mentry-*` | Market Entry Planner |
+| v80 | `workflow_auto.py` | `wflow-*` | Intelligence Workflow Automation |
+| v81 | `price_optimize.py` | `dprice-*` | Dynamic Price Optimization |
+| v82 | `margin_intel.py` | `dmargin-*` | Dynamic Margin Intelligence |
+| v83 | `roas_intel.py` | `roas-*` | Advertising ROAS Intelligence |
+| v84 | `inventory_plan.py` | `invplan-*` | Inventory Planning |
+| v85 | `demand_purchase.py` | `dpurch-*` | Demand to Purchasing |
+| v86 | `purchase_price.py` | `psell-*` | Purchasing to Selling Price |
+| v87 | `cross_sell.py` | `xsell-*` | Cross-Sell Intelligence |
+| v88 | `bundle_intel.py` | `bundle-*` | Bundle Intelligence |
+| v89 | `assortment_opt.py` | `assort-*` | Assortment Optimization |
+| v90 | `cat_portfolio.py` | `catport-*` | Category Portfolio Intelligence |
+| v91 | `germany_market.py` | `demark-*` | Germany Market Intelligence |
+| v92 | `eu_market.py` | `eumark-*` | EU Market Intelligence |
+| v93 | `turkey_market.py` | `trmark-*` | Türkiye Market Intelligence |
+| v94 | `gulf_market.py` | `gulfmark-*` | Gulf Market Intelligence |
+| v95 | `intl_expansion.py` | `intl-*` | International Expansion Intelligence |
+| v96 | `global_currency.py` | `gcfx-*` | Global Currency Intelligence |
+| v97 | `global_customs.py` | `gcustoms-*` | Global Customs Intelligence |
+| v98 | `global_logistics.py` | `glog-*` | Global Logistics Intelligence |
+| v99 | `local_marketplace.py` | `lmarket-*` | Local Marketplace Intelligence |
+| v100 | `ai_center.py` | `aicenter-*` | Buzzard AI Intelligence Center |
+
+```bash
+python main.py init-v71
+python main.py rjobs-demo && python main.py rjobs-report
+python main.py init-v100
+python main.py aicenter-demo && python main.py aicenter-report
+python main.py init   # unified init v1–v100
+```
+
+Archive: `archive/Buzzard_Intelligence_v71_v100_COMPLETE.zip` (+ einzelne v71–v100 ZIPs)
 
 ## v33 Competitor Intelligence
 

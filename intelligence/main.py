@@ -76,6 +76,36 @@ from buzzard_intelligence import (
     ProfitOptimizer,
     PortfolioManager,
     CommandCenter,
+    ResearchJobsEngine,
+    DataQualityControl,
+    MultiAgentCollaboration,
+    HypothesisEngine,
+    FactCheckingEngine,
+    OpportunityRanking,
+    ProductDiscoveryIntel,
+    SupplierDiscoveryIntel,
+    MarketEntryPlanner,
+    WorkflowAutomation,
+    DynamicPriceOptimizer,
+    DynamicMarginIntel,
+    ROASIntel,
+    InventoryPlanner,
+    DemandToPurchasing,
+    PurchaseToSellingPrice,
+    CrossSellIntel,
+    BundleIntel,
+    AssortmentOptimizer,
+    CategoryPortfolioIntel,
+    GermanyMarketIntel,
+    EUMarketIntel,
+    TurkeyMarketIntel,
+    GulfMarketIntel,
+    IntlExpansionIntel,
+    GlobalCurrencyIntel,
+    GlobalCustomsIntel,
+    GlobalLogisticsIntel,
+    LocalMarketplaceIntel,
+    AIIntelligenceCenter,
 )
 from live_connectors import (
     AmazonCreatorsClient,
@@ -94,7 +124,7 @@ def load_live_env():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v70 + Live Data Connectors"
+        description="Buzzard Intelligence v1–v100 + Live Data Connectors"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -165,6 +195,36 @@ def main():
     sub.add_parser("init-v68", help="Create v68 advanced profitability optimizer store")
     sub.add_parser("init-v69", help="Create v69 portfolio manager store")
     sub.add_parser("init-v70", help="Create v70 real-time intelligence command center store")
+    sub.add_parser("init-v71", help="Create v71 automated research jobs store")
+    sub.add_parser("init-v72", help="Create v72 data quality control store")
+    sub.add_parser("init-v73", help="Create v73 multi-agent collaboration store")
+    sub.add_parser("init-v74", help="Create v74 hypothesis engine store")
+    sub.add_parser("init-v75", help="Create v75 fact checking store")
+    sub.add_parser("init-v76", help="Create v76 opportunity ranking store")
+    sub.add_parser("init-v77", help="Create v77 product discovery store")
+    sub.add_parser("init-v78", help="Create v78 supplier discovery store")
+    sub.add_parser("init-v79", help="Create v79 market entry planner store")
+    sub.add_parser("init-v80", help="Create v80 workflow automation store")
+    sub.add_parser("init-v81", help="Create v81 dynamic price optimization store")
+    sub.add_parser("init-v82", help="Create v82 dynamic margin intelligence store")
+    sub.add_parser("init-v83", help="Create v83 advertising ROAS intelligence store")
+    sub.add_parser("init-v84", help="Create v84 inventory planning store")
+    sub.add_parser("init-v85", help="Create v85 demand to purchasing store")
+    sub.add_parser("init-v86", help="Create v86 purchasing to selling price store")
+    sub.add_parser("init-v87", help="Create v87 cross-sell intelligence store")
+    sub.add_parser("init-v88", help="Create v88 bundle intelligence store")
+    sub.add_parser("init-v89", help="Create v89 assortment optimization store")
+    sub.add_parser("init-v90", help="Create v90 category portfolio intelligence store")
+    sub.add_parser("init-v91", help="Create v91 Germany market intelligence store")
+    sub.add_parser("init-v92", help="Create v92 EU market intelligence store")
+    sub.add_parser("init-v93", help="Create v93 Türkiye market intelligence store")
+    sub.add_parser("init-v94", help="Create v94 Gulf market intelligence store")
+    sub.add_parser("init-v95", help="Create v95 international expansion intelligence store")
+    sub.add_parser("init-v96", help="Create v96 global currency intelligence store")
+    sub.add_parser("init-v97", help="Create v97 global customs intelligence store")
+    sub.add_parser("init-v98", help="Create v98 global logistics intelligence store")
+    sub.add_parser("init-v99", help="Create v99 local marketplace intelligence store")
+    sub.add_parser("init-v100", help="Create v100 Buzzard AI intelligence center store")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -714,6 +774,66 @@ def main():
     sub.add_parser("port-report", help="v69 report")
     sub.add_parser("cmdctr-demo", help="v70 add demo data")
     sub.add_parser("cmdctr-report", help="v70 report")
+    sub.add_parser("rjobs-demo", help="v71 add demo data")
+    sub.add_parser("rjobs-report", help="v71 report")
+    sub.add_parser("dqc-demo", help="v72 add demo data")
+    sub.add_parser("dqc-report", help="v72 report")
+    sub.add_parser("magent-demo", help="v73 add demo data")
+    sub.add_parser("magent-report", help="v73 report")
+    sub.add_parser("hypoth-demo", help="v74 add demo data")
+    sub.add_parser("hypoth-report", help="v74 report")
+    sub.add_parser("fcheck-demo", help="v75 add demo data")
+    sub.add_parser("fcheck-report", help="v75 report")
+    sub.add_parser("oprank-demo", help="v76 add demo data")
+    sub.add_parser("oprank-report", help="v76 report")
+    sub.add_parser("pdisc-demo", help="v77 add demo data")
+    sub.add_parser("pdisc-report", help="v77 report")
+    sub.add_parser("sdisc-demo", help="v78 add demo data")
+    sub.add_parser("sdisc-report", help="v78 report")
+    sub.add_parser("mentry-demo", help="v79 add demo data")
+    sub.add_parser("mentry-report", help="v79 report")
+    sub.add_parser("wflow-demo", help="v80 add demo data")
+    sub.add_parser("wflow-report", help="v80 report")
+    sub.add_parser("dprice-demo", help="v81 add demo data")
+    sub.add_parser("dprice-report", help="v81 report")
+    sub.add_parser("dmargin-demo", help="v82 add demo data")
+    sub.add_parser("dmargin-report", help="v82 report")
+    sub.add_parser("roas-demo", help="v83 add demo data")
+    sub.add_parser("roas-report", help="v83 report")
+    sub.add_parser("invplan-demo", help="v84 add demo data")
+    sub.add_parser("invplan-report", help="v84 report")
+    sub.add_parser("dpurch-demo", help="v85 add demo data")
+    sub.add_parser("dpurch-report", help="v85 report")
+    sub.add_parser("psell-demo", help="v86 add demo data")
+    sub.add_parser("psell-report", help="v86 report")
+    sub.add_parser("xsell-demo", help="v87 add demo data")
+    sub.add_parser("xsell-report", help="v87 report")
+    sub.add_parser("bundle-demo", help="v88 add demo data")
+    sub.add_parser("bundle-report", help="v88 report")
+    sub.add_parser("assort-demo", help="v89 add demo data")
+    sub.add_parser("assort-report", help="v89 report")
+    sub.add_parser("catport-demo", help="v90 add demo data")
+    sub.add_parser("catport-report", help="v90 report")
+    sub.add_parser("demark-demo", help="v91 add demo data")
+    sub.add_parser("demark-report", help="v91 report")
+    sub.add_parser("eumark-demo", help="v92 add demo data")
+    sub.add_parser("eumark-report", help="v92 report")
+    sub.add_parser("trmark-demo", help="v93 add demo data")
+    sub.add_parser("trmark-report", help="v93 report")
+    sub.add_parser("gulfmark-demo", help="v94 add demo data")
+    sub.add_parser("gulfmark-report", help="v94 report")
+    sub.add_parser("intl-demo", help="v95 add demo data")
+    sub.add_parser("intl-report", help="v95 report")
+    sub.add_parser("gcfx-demo", help="v96 add demo data")
+    sub.add_parser("gcfx-report", help="v96 report")
+    sub.add_parser("gcustoms-demo", help="v97 add demo data")
+    sub.add_parser("gcustoms-report", help="v97 report")
+    sub.add_parser("glog-demo", help="v98 add demo data")
+    sub.add_parser("glog-report", help="v98 report")
+    sub.add_parser("lmarket-demo", help="v99 add demo data")
+    sub.add_parser("lmarket-report", help="v99 report")
+    sub.add_parser("aicenter-demo", help="v100 add demo data")
+    sub.add_parser("aicenter-report", help="v100 report")
 
     sub.add_parser("live-health", help="Live connector credential health check")
     live_ebay = sub.add_parser("live-ebay", help="Live eBay Browse API search")
@@ -853,6 +973,36 @@ def main():
     v68 = ProfitOptimizer()
     v69 = PortfolioManager()
     v70 = CommandCenter()
+    v71 = ResearchJobsEngine()
+    v72 = DataQualityControl()
+    v73 = MultiAgentCollaboration()
+    v74 = HypothesisEngine()
+    v75 = FactCheckingEngine()
+    v76 = OpportunityRanking()
+    v77 = ProductDiscoveryIntel()
+    v78 = SupplierDiscoveryIntel()
+    v79 = MarketEntryPlanner()
+    v80 = WorkflowAutomation()
+    v81 = DynamicPriceOptimizer()
+    v82 = DynamicMarginIntel()
+    v83 = ROASIntel()
+    v84 = InventoryPlanner()
+    v85 = DemandToPurchasing()
+    v86 = PurchaseToSellingPrice()
+    v87 = CrossSellIntel()
+    v88 = BundleIntel()
+    v89 = AssortmentOptimizer()
+    v90 = CategoryPortfolioIntel()
+    v91 = GermanyMarketIntel()
+    v92 = EUMarketIntel()
+    v93 = TurkeyMarketIntel()
+    v94 = GulfMarketIntel()
+    v95 = IntlExpansionIntel()
+    v96 = GlobalCurrencyIntel()
+    v97 = GlobalCustomsIntel()
+    v98 = GlobalLogisticsIntel()
+    v99 = LocalMarketplaceIntel()
+    v100 = AIIntelligenceCenter()
 
     if args.cmd == "init":
         v1.init()
@@ -921,6 +1071,36 @@ def main():
         v68.init()
         v69.init()
         v70.init()
+        v71.init()
+        v72.init()
+        v73.init()
+        v74.init()
+        v75.init()
+        v76.init()
+        v77.init()
+        v78.init()
+        v79.init()
+        v80.init()
+        v81.init()
+        v82.init()
+        v83.init()
+        v84.init()
+        v85.init()
+        v86.init()
+        v87.init()
+        v88.init()
+        v89.init()
+        v90.init()
+        v91.init()
+        v92.init()
+        v93.init()
+        v94.init()
+        v95.init()
+        v96.init()
+        v97.init()
+        v98.init()
+        v99.init()
+        v100.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -987,6 +1167,36 @@ def main():
         print(f"v68 advanced profitability optimizer store ready at {Path(v68.path).resolve()}")
         print(f"v69 portfolio manager store ready at {Path(v69.path).resolve()}")
         print(f"v70 real-time intelligence command center store ready at {Path(v70.path).resolve()}")
+        print(f"v71 automated research jobs store ready at {Path(v71.path).resolve()}")
+        print(f"v72 data quality control store ready at {Path(v72.path).resolve()}")
+        print(f"v73 multi-agent collaboration store ready at {Path(v73.path).resolve()}")
+        print(f"v74 hypothesis engine store ready at {Path(v74.path).resolve()}")
+        print(f"v75 fact checking store ready at {Path(v75.path).resolve()}")
+        print(f"v76 opportunity ranking store ready at {Path(v76.path).resolve()}")
+        print(f"v77 product discovery store ready at {Path(v77.path).resolve()}")
+        print(f"v78 supplier discovery store ready at {Path(v78.path).resolve()}")
+        print(f"v79 market entry planner store ready at {Path(v79.path).resolve()}")
+        print(f"v80 workflow automation store ready at {Path(v80.path).resolve()}")
+        print(f"v81 dynamic price optimization store ready at {Path(v81.path).resolve()}")
+        print(f"v82 dynamic margin intelligence store ready at {Path(v82.path).resolve()}")
+        print(f"v83 advertising ROAS intelligence store ready at {Path(v83.path).resolve()}")
+        print(f"v84 inventory planning store ready at {Path(v84.path).resolve()}")
+        print(f"v85 demand to purchasing store ready at {Path(v85.path).resolve()}")
+        print(f"v86 purchasing to selling price store ready at {Path(v86.path).resolve()}")
+        print(f"v87 cross-sell intelligence store ready at {Path(v87.path).resolve()}")
+        print(f"v88 bundle intelligence store ready at {Path(v88.path).resolve()}")
+        print(f"v89 assortment optimization store ready at {Path(v89.path).resolve()}")
+        print(f"v90 category portfolio intelligence store ready at {Path(v90.path).resolve()}")
+        print(f"v91 Germany market intelligence store ready at {Path(v91.path).resolve()}")
+        print(f"v92 EU market intelligence store ready at {Path(v92.path).resolve()}")
+        print(f"v93 Türkiye market intelligence store ready at {Path(v93.path).resolve()}")
+        print(f"v94 Gulf market intelligence store ready at {Path(v94.path).resolve()}")
+        print(f"v95 international expansion intelligence store ready at {Path(v95.path).resolve()}")
+        print(f"v96 global currency intelligence store ready at {Path(v96.path).resolve()}")
+        print(f"v97 global customs intelligence store ready at {Path(v97.path).resolve()}")
+        print(f"v98 global logistics intelligence store ready at {Path(v98.path).resolve()}")
+        print(f"v99 local marketplace intelligence store ready at {Path(v99.path).resolve()}")
+        print(f"v100 Buzzard AI intelligence center store ready at {Path(v100.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -1185,6 +1395,96 @@ def main():
     elif args.cmd == "init-v70":
         v70.init()
         print(f"v70 real-time intelligence command center store ready at {Path(v70.path).resolve()}")
+    elif args.cmd == "init-v71":
+        v71.init()
+        print(f"v71 automated research jobs store ready at {Path(v71.path).resolve()}")
+    elif args.cmd == "init-v72":
+        v72.init()
+        print(f"v72 data quality control store ready at {Path(v72.path).resolve()}")
+    elif args.cmd == "init-v73":
+        v73.init()
+        print(f"v73 multi-agent collaboration store ready at {Path(v73.path).resolve()}")
+    elif args.cmd == "init-v74":
+        v74.init()
+        print(f"v74 hypothesis engine store ready at {Path(v74.path).resolve()}")
+    elif args.cmd == "init-v75":
+        v75.init()
+        print(f"v75 fact checking store ready at {Path(v75.path).resolve()}")
+    elif args.cmd == "init-v76":
+        v76.init()
+        print(f"v76 opportunity ranking store ready at {Path(v76.path).resolve()}")
+    elif args.cmd == "init-v77":
+        v77.init()
+        print(f"v77 product discovery store ready at {Path(v77.path).resolve()}")
+    elif args.cmd == "init-v78":
+        v78.init()
+        print(f"v78 supplier discovery store ready at {Path(v78.path).resolve()}")
+    elif args.cmd == "init-v79":
+        v79.init()
+        print(f"v79 market entry planner store ready at {Path(v79.path).resolve()}")
+    elif args.cmd == "init-v80":
+        v80.init()
+        print(f"v80 workflow automation store ready at {Path(v80.path).resolve()}")
+    elif args.cmd == "init-v81":
+        v81.init()
+        print(f"v81 dynamic price optimization store ready at {Path(v81.path).resolve()}")
+    elif args.cmd == "init-v82":
+        v82.init()
+        print(f"v82 dynamic margin intelligence store ready at {Path(v82.path).resolve()}")
+    elif args.cmd == "init-v83":
+        v83.init()
+        print(f"v83 advertising ROAS intelligence store ready at {Path(v83.path).resolve()}")
+    elif args.cmd == "init-v84":
+        v84.init()
+        print(f"v84 inventory planning store ready at {Path(v84.path).resolve()}")
+    elif args.cmd == "init-v85":
+        v85.init()
+        print(f"v85 demand to purchasing store ready at {Path(v85.path).resolve()}")
+    elif args.cmd == "init-v86":
+        v86.init()
+        print(f"v86 purchasing to selling price store ready at {Path(v86.path).resolve()}")
+    elif args.cmd == "init-v87":
+        v87.init()
+        print(f"v87 cross-sell intelligence store ready at {Path(v87.path).resolve()}")
+    elif args.cmd == "init-v88":
+        v88.init()
+        print(f"v88 bundle intelligence store ready at {Path(v88.path).resolve()}")
+    elif args.cmd == "init-v89":
+        v89.init()
+        print(f"v89 assortment optimization store ready at {Path(v89.path).resolve()}")
+    elif args.cmd == "init-v90":
+        v90.init()
+        print(f"v90 category portfolio intelligence store ready at {Path(v90.path).resolve()}")
+    elif args.cmd == "init-v91":
+        v91.init()
+        print(f"v91 Germany market intelligence store ready at {Path(v91.path).resolve()}")
+    elif args.cmd == "init-v92":
+        v92.init()
+        print(f"v92 EU market intelligence store ready at {Path(v92.path).resolve()}")
+    elif args.cmd == "init-v93":
+        v93.init()
+        print(f"v93 Türkiye market intelligence store ready at {Path(v93.path).resolve()}")
+    elif args.cmd == "init-v94":
+        v94.init()
+        print(f"v94 Gulf market intelligence store ready at {Path(v94.path).resolve()}")
+    elif args.cmd == "init-v95":
+        v95.init()
+        print(f"v95 international expansion intelligence store ready at {Path(v95.path).resolve()}")
+    elif args.cmd == "init-v96":
+        v96.init()
+        print(f"v96 global currency intelligence store ready at {Path(v96.path).resolve()}")
+    elif args.cmd == "init-v97":
+        v97.init()
+        print(f"v97 global customs intelligence store ready at {Path(v97.path).resolve()}")
+    elif args.cmd == "init-v98":
+        v98.init()
+        print(f"v98 global logistics intelligence store ready at {Path(v98.path).resolve()}")
+    elif args.cmd == "init-v99":
+        v99.init()
+        print(f"v99 local marketplace intelligence store ready at {Path(v99.path).resolve()}")
+    elif args.cmd == "init-v100":
+        v100.init()
+        print(f"v100 Buzzard AI intelligence center store ready at {Path(v100.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -2097,6 +2397,216 @@ def main():
     elif args.cmd == "cmdctr-report":
         v70.init()
         print(v70.report())
+    elif args.cmd == "rjobs-demo":
+        v71.init()
+        v71.demo()
+        print("Demo-Automatisierte-Recherche-Jobs gespeichert.")
+    elif args.cmd == "rjobs-report":
+        v71.init()
+        print(v71.report())
+    elif args.cmd == "dqc-demo":
+        v72.init()
+        v72.demo()
+        print("Demo-Datenqualitäts-Kontrolle gespeichert.")
+    elif args.cmd == "dqc-report":
+        v72.init()
+        print(v72.report())
+    elif args.cmd == "magent-demo":
+        v73.init()
+        v73.demo()
+        print("Demo-Multi-Agent-Kollaboration gespeichert.")
+    elif args.cmd == "magent-report":
+        v73.init()
+        print(v73.report())
+    elif args.cmd == "hypoth-demo":
+        v74.init()
+        v74.demo()
+        print("Demo-Hypothesen-Engine gespeichert.")
+    elif args.cmd == "hypoth-report":
+        v74.init()
+        print(v74.report())
+    elif args.cmd == "fcheck-demo":
+        v75.init()
+        v75.demo()
+        print("Demo-Faktenprüfung gespeichert.")
+    elif args.cmd == "fcheck-report":
+        v75.init()
+        print(v75.report())
+    elif args.cmd == "oprank-demo":
+        v76.init()
+        v76.demo()
+        print("Demo-Chancen-Ranking gespeichert.")
+    elif args.cmd == "oprank-report":
+        v76.init()
+        print(v76.report())
+    elif args.cmd == "pdisc-demo":
+        v77.init()
+        v77.demo()
+        print("Demo-Produkt-Entdeckung gespeichert.")
+    elif args.cmd == "pdisc-report":
+        v77.init()
+        print(v77.report())
+    elif args.cmd == "sdisc-demo":
+        v78.init()
+        v78.demo()
+        print("Demo-Lieferanten-Entdeckung gespeichert.")
+    elif args.cmd == "sdisc-report":
+        v78.init()
+        print(v78.report())
+    elif args.cmd == "mentry-demo":
+        v79.init()
+        v79.demo()
+        print("Demo-Markteintritts-Planer gespeichert.")
+    elif args.cmd == "mentry-report":
+        v79.init()
+        print(v79.report())
+    elif args.cmd == "wflow-demo":
+        v80.init()
+        v80.demo()
+        print("Demo-Workflow-Automatisierung gespeichert.")
+    elif args.cmd == "wflow-report":
+        v80.init()
+        print(v80.report())
+    elif args.cmd == "dprice-demo":
+        v81.init()
+        v81.demo()
+        print("Demo-Dynamische-Preisoptimierung gespeichert.")
+    elif args.cmd == "dprice-report":
+        v81.init()
+        print(v81.report())
+    elif args.cmd == "dmargin-demo":
+        v82.init()
+        v82.demo()
+        print("Demo-Dynamische-Margen-Intelligence gespeichert.")
+    elif args.cmd == "dmargin-report":
+        v82.init()
+        print(v82.report())
+    elif args.cmd == "roas-demo":
+        v83.init()
+        v83.demo()
+        print("Demo-ROAS-Intelligence gespeichert.")
+    elif args.cmd == "roas-report":
+        v83.init()
+        print(v83.report())
+    elif args.cmd == "invplan-demo":
+        v84.init()
+        v84.demo()
+        print("Demo-Bestandsplanung gespeichert.")
+    elif args.cmd == "invplan-report":
+        v84.init()
+        print(v84.report())
+    elif args.cmd == "dpurch-demo":
+        v85.init()
+        v85.demo()
+        print("Demo-Nachfrage-zu-Einkauf gespeichert.")
+    elif args.cmd == "dpurch-report":
+        v85.init()
+        print(v85.report())
+    elif args.cmd == "psell-demo":
+        v86.init()
+        v86.demo()
+        print("Demo-Einkauf-zu-Verkaufspreis gespeichert.")
+    elif args.cmd == "psell-report":
+        v86.init()
+        print(v86.report())
+    elif args.cmd == "xsell-demo":
+        v87.init()
+        v87.demo()
+        print("Demo-Cross-Sell-Intelligence gespeichert.")
+    elif args.cmd == "xsell-report":
+        v87.init()
+        print(v87.report())
+    elif args.cmd == "bundle-demo":
+        v88.init()
+        v88.demo()
+        print("Demo-Bundle-Intelligence gespeichert.")
+    elif args.cmd == "bundle-report":
+        v88.init()
+        print(v88.report())
+    elif args.cmd == "assort-demo":
+        v89.init()
+        v89.demo()
+        print("Demo-Sortiments-Optimierung gespeichert.")
+    elif args.cmd == "assort-report":
+        v89.init()
+        print(v89.report())
+    elif args.cmd == "catport-demo":
+        v90.init()
+        v90.demo()
+        print("Demo-Kategorie-Portfolio-Intelligence gespeichert.")
+    elif args.cmd == "catport-report":
+        v90.init()
+        print(v90.report())
+    elif args.cmd == "demark-demo":
+        v91.init()
+        v91.demo()
+        print("Demo-Deutschland-Markt-Intelligence gespeichert.")
+    elif args.cmd == "demark-report":
+        v91.init()
+        print(v91.report())
+    elif args.cmd == "eumark-demo":
+        v92.init()
+        v92.demo()
+        print("Demo-EU-Markt-Intelligence gespeichert.")
+    elif args.cmd == "eumark-report":
+        v92.init()
+        print(v92.report())
+    elif args.cmd == "trmark-demo":
+        v93.init()
+        v93.demo()
+        print("Demo-Türkei-Markt-Intelligence gespeichert.")
+    elif args.cmd == "trmark-report":
+        v93.init()
+        print(v93.report())
+    elif args.cmd == "gulfmark-demo":
+        v94.init()
+        v94.demo()
+        print("Demo-Golf-Markt-Intelligence gespeichert.")
+    elif args.cmd == "gulfmark-report":
+        v94.init()
+        print(v94.report())
+    elif args.cmd == "intl-demo":
+        v95.init()
+        v95.demo()
+        print("Demo-Internationale-Expansion gespeichert.")
+    elif args.cmd == "intl-report":
+        v95.init()
+        print(v95.report())
+    elif args.cmd == "gcfx-demo":
+        v96.init()
+        v96.demo()
+        print("Demo-Globale-Währungs-Intelligence gespeichert.")
+    elif args.cmd == "gcfx-report":
+        v96.init()
+        print(v96.report())
+    elif args.cmd == "gcustoms-demo":
+        v97.init()
+        v97.demo()
+        print("Demo-Globale-Zoll-Intelligence gespeichert.")
+    elif args.cmd == "gcustoms-report":
+        v97.init()
+        print(v97.report())
+    elif args.cmd == "glog-demo":
+        v98.init()
+        v98.demo()
+        print("Demo-Globale-Logistik-Intelligence gespeichert.")
+    elif args.cmd == "glog-report":
+        v98.init()
+        print(v98.report())
+    elif args.cmd == "lmarket-demo":
+        v99.init()
+        v99.demo()
+        print("Demo-Lokale-Marktplatz-Intelligence gespeichert.")
+    elif args.cmd == "lmarket-report":
+        v99.init()
+        print(v99.report())
+    elif args.cmd == "aicenter-demo":
+        v100.init()
+        v100.demo()
+        print("Demo-AI-Intelligence-Center gespeichert.")
+    elif args.cmd == "aicenter-report":
+        v100.init()
+        print(v100.report())
     elif args.cmd == "live-health":
         load_live_env()
         print(live_health_report())

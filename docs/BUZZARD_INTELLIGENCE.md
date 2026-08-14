@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v70
+# Buzzard Intelligence v1–v100
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -67,6 +67,36 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v68 | `profit_optimizer.py` | `buzzard_v68.json` |
 | v69 | `portfolio_manager.py` | `buzzard_v69.json` |
 | v70 | `command_center.py` | `buzzard_v70.json` |
+| v71 | `research_jobs.py` | `buzzard_v71.json` |
+| v72 | `data_quality.py` | `buzzard_v72.json` |
+| v73 | `multi_agent.py` | `buzzard_v73.json` |
+| v74 | `hypothesis.py` | `buzzard_v74.json` |
+| v75 | `fact_check.py` | `buzzard_v75.json` |
+| v76 | `opportunity_rank.py` | `buzzard_v76.json` |
+| v77 | `product_discovery.py` | `buzzard_v77.json` |
+| v78 | `supplier_discovery.py` | `buzzard_v78.json` |
+| v79 | `market_entry.py` | `buzzard_v79.json` |
+| v80 | `workflow_auto.py` | `buzzard_v80.json` |
+| v81 | `price_optimize.py` | `buzzard_v81.json` |
+| v82 | `margin_intel.py` | `buzzard_v82.json` |
+| v83 | `roas_intel.py` | `buzzard_v83.json` |
+| v84 | `inventory_plan.py` | `buzzard_v84.json` |
+| v85 | `demand_purchase.py` | `buzzard_v85.json` |
+| v86 | `purchase_price.py` | `buzzard_v86.json` |
+| v87 | `cross_sell.py` | `buzzard_v87.json` |
+| v88 | `bundle_intel.py` | `buzzard_v88.json` |
+| v89 | `assortment_opt.py` | `buzzard_v89.json` |
+| v90 | `cat_portfolio.py` | `buzzard_v90.json` |
+| v91 | `germany_market.py` | `buzzard_v91.json` |
+| v92 | `eu_market.py` | `buzzard_v92.json` |
+| v93 | `turkey_market.py` | `buzzard_v93.json` |
+| v94 | `gulf_market.py` | `buzzard_v94.json` |
+| v95 | `intl_expansion.py` | `buzzard_v95.json` |
+| v96 | `global_currency.py` | `buzzard_v96.json` |
+| v97 | `global_customs.py` | `buzzard_v97.json` |
+| v98 | `global_logistics.py` | `buzzard_v98.json` |
+| v99 | `local_marketplace.py` | `buzzard_v99.json` |
+| v100 | `ai_center.py` | `buzzard_v100.json` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
@@ -174,6 +204,56 @@ python main.py live-fetch --url "https://example.com"
 **Regeln:** Secrets nur in `.env` · kein CAPTCHA-/Login-Bypass · `NOT_CONFIGURED` statt Fake-Daten
 
 **Abgrenzung:** v23 `connector-*` = Hub-Metadaten · v42 `pubconn-*` = JSON-Stub · `live-*` = Live-Adapter
+
+## v71–v100 Bundle — neu
+
+30 JSON-Module für Research-Automatisierung, Qualität, Multi-Agent, Einkauf/Preis, Sortiment, Länder-Märkte und AI Center.
+
+| Version | Modul | CLI-Präfix | Zweck |
+|---------|-------|------------|-------|
+| v71 | `research_jobs.py` | `rjobs-*` | Automated Research Jobs |
+| v72 | `data_quality.py` | `dqc-*` | Data Quality Control |
+| v73 | `multi_agent.py` | `magent-*` | Multi-Agent Collaboration |
+| v74 | `hypothesis.py` | `hypoth-*` | Hypothesis Engine |
+| v75 | `fact_check.py` | `fcheck-*` | Fact Checking & Counter Verification |
+| v76 | `opportunity_rank.py` | `oprank-*` | Opportunity Ranking |
+| v77 | `product_discovery.py` | `pdisc-*` | Product Discovery |
+| v78 | `supplier_discovery.py` | `sdisc-*` | Supplier Discovery |
+| v79 | `market_entry.py` | `mentry-*` | Market Entry Planner |
+| v80 | `workflow_auto.py` | `wflow-*` | Intelligence Workflow Automation |
+| v81 | `price_optimize.py` | `dprice-*` | Dynamic Price Optimization |
+| v82 | `margin_intel.py` | `dmargin-*` | Dynamic Margin Intelligence |
+| v83 | `roas_intel.py` | `roas-*` | Advertising ROAS Intelligence |
+| v84 | `inventory_plan.py` | `invplan-*` | Inventory Planning |
+| v85 | `demand_purchase.py` | `dpurch-*` | Demand to Purchasing |
+| v86 | `purchase_price.py` | `psell-*` | Purchasing to Selling Price |
+| v87 | `cross_sell.py` | `xsell-*` | Cross-Sell Intelligence |
+| v88 | `bundle_intel.py` | `bundle-*` | Bundle Intelligence |
+| v89 | `assortment_opt.py` | `assort-*` | Assortment Optimization |
+| v90 | `cat_portfolio.py` | `catport-*` | Category Portfolio Intelligence |
+| v91 | `germany_market.py` | `demark-*` | Germany Market Intelligence |
+| v92 | `eu_market.py` | `eumark-*` | EU Market Intelligence |
+| v93 | `turkey_market.py` | `trmark-*` | Türkiye Market Intelligence |
+| v94 | `gulf_market.py` | `gulfmark-*` | Gulf Market Intelligence |
+| v95 | `intl_expansion.py` | `intl-*` | International Expansion Intelligence |
+| v96 | `global_currency.py` | `gcfx-*` | Global Currency Intelligence |
+| v97 | `global_customs.py` | `gcustoms-*` | Global Customs Intelligence |
+| v98 | `global_logistics.py` | `glog-*` | Global Logistics Intelligence |
+| v99 | `local_marketplace.py` | `lmarket-*` | Local Marketplace Intelligence |
+| v100 | `ai_center.py` | `aicenter-*` | Buzzard AI Intelligence Center |
+
+### CLI (Beispiel)
+
+```bash
+cd intelligence
+python main.py init-v71
+python main.py rjobs-demo
+python main.py rjobs-report
+python main.py init-v100
+python main.py aicenter-demo
+python main.py aicenter-report
+python main.py init
+```
 
 ## v33 Competitor Intelligence — neu
 
@@ -802,7 +882,37 @@ intelligence/
 │   ├── landed_cost.py
 │   ├── profit_optimizer.py
 │   ├── portfolio_manager.py
-│   └── command_center.py
+│   ├── command_center.py
+│   ├── research_jobs.py
+│   ├── data_quality.py
+│   ├── multi_agent.py
+│   ├── hypothesis.py
+│   ├── fact_check.py
+│   ├── opportunity_rank.py
+│   ├── product_discovery.py
+│   ├── supplier_discovery.py
+│   ├── market_entry.py
+│   ├── workflow_auto.py
+│   ├── price_optimize.py
+│   ├── margin_intel.py
+│   ├── roas_intel.py
+│   ├── inventory_plan.py
+│   ├── demand_purchase.py
+│   ├── purchase_price.py
+│   ├── cross_sell.py
+│   ├── bundle_intel.py
+│   ├── assortment_opt.py
+│   ├── cat_portfolio.py
+│   ├── germany_market.py
+│   ├── eu_market.py
+│   ├── turkey_market.py
+│   ├── gulf_market.py
+│   ├── intl_expansion.py
+│   ├── global_currency.py
+│   ├── global_customs.py
+│   ├── global_logistics.py
+│   ├── local_marketplace.py
+│   └── ai_center.py
 ├── live_connectors/
 │   ├── amazon_creators.py
 │   ├── ebay.py
@@ -879,5 +989,36 @@ intelligence/
     ├── Buzzard_Intelligence_v68_Advanced_Profitability_Optimizer.zip
     ├── Buzzard_Intelligence_v69_Portfolio_and_Category_Portfolio_Manager.zip
     ├── Buzzard_Intelligence_v70_Real-Time_Intelligence_Command_Center.zip
+    ├── Buzzard_Intelligence_v71_v100_COMPLETE.zip
+    ├── Buzzard_Intelligence_v71_Automated_Research_Jobs.zip
+    ├── Buzzard_Intelligence_v72_Data_Quality_Control.zip
+    ├── Buzzard_Intelligence_v73_Multi_Agent_Collaboration.zip
+    ├── Buzzard_Intelligence_v74_Hypothesis_Engine.zip
+    ├── Buzzard_Intelligence_v75_Fact_Checking_Counter_Verification.zip
+    ├── Buzzard_Intelligence_v76_Opportunity_Ranking.zip
+    ├── Buzzard_Intelligence_v77_Product_Discovery.zip
+    ├── Buzzard_Intelligence_v78_Supplier_Discovery.zip
+    ├── Buzzard_Intelligence_v79_Market_Entry_Planner.zip
+    ├── Buzzard_Intelligence_v80_Intelligence_Workflow_Automation.zip
+    ├── Buzzard_Intelligence_v81_Dynamic_Price_Optimization.zip
+    ├── Buzzard_Intelligence_v82_Dynamic_Margin_Intelligence.zip
+    ├── Buzzard_Intelligence_v83_Advertising_ROAS_Intelligence.zip
+    ├── Buzzard_Intelligence_v84_Inventory_Planning.zip
+    ├── Buzzard_Intelligence_v85_Demand_to_Purchasing.zip
+    ├── Buzzard_Intelligence_v86_Purchasing_to_Selling_Price.zip
+    ├── Buzzard_Intelligence_v87_Cross_Sell_Intelligence.zip
+    ├── Buzzard_Intelligence_v88_Bundle_Intelligence.zip
+    ├── Buzzard_Intelligence_v89_Assortment_Optimization.zip
+    ├── Buzzard_Intelligence_v90_Category_Portfolio_Intelligence.zip
+    ├── Buzzard_Intelligence_v91_Germany_Market_Intelligence.zip
+    ├── Buzzard_Intelligence_v92_EU_Market_Intelligence.zip
+    ├── Buzzard_Intelligence_v93_T_rkiye_Market_Intelligence.zip
+    ├── Buzzard_Intelligence_v94_Gulf_Market_Intelligence.zip
+    ├── Buzzard_Intelligence_v95_International_Expansion_Intelligence.zip
+    ├── Buzzard_Intelligence_v96_Global_Currency_Intelligence.zip
+    ├── Buzzard_Intelligence_v97_Global_Customs_Intelligence.zip
+    ├── Buzzard_Intelligence_v98_Global_Logistics_Intelligence.zip
+    ├── Buzzard_Intelligence_v99_Local_Marketplace_Intelligence.zip
+    ├── Buzzard_Intelligence_v100_Buzzard_AI_Intelligence_Center.zip
     └── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
 ```

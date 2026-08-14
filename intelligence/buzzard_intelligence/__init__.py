@@ -48,6 +48,36 @@ from .landed_cost import LandedCostCalculator
 from .profit_optimizer import ProfitOptimizer
 from .portfolio_manager import PortfolioManager
 from .command_center import CommandCenter
+from .research_jobs import ResearchJobsEngine
+from .data_quality import DataQualityControl
+from .multi_agent import MultiAgentCollaboration
+from .hypothesis import HypothesisEngine
+from .fact_check import FactCheckingEngine
+from .opportunity_rank import OpportunityRanking
+from .product_discovery import ProductDiscoveryIntel
+from .supplier_discovery import SupplierDiscoveryIntel
+from .market_entry import MarketEntryPlanner
+from .workflow_auto import WorkflowAutomation
+from .price_optimize import DynamicPriceOptimizer
+from .margin_intel import DynamicMarginIntel
+from .roas_intel import ROASIntel
+from .inventory_plan import InventoryPlanner
+from .demand_purchase import DemandToPurchasing
+from .purchase_price import PurchaseToSellingPrice
+from .cross_sell import CrossSellIntel
+from .bundle_intel import BundleIntel
+from .assortment_opt import AssortmentOptimizer
+from .cat_portfolio import CategoryPortfolioIntel
+from .germany_market import GermanyMarketIntel
+from .eu_market import EUMarketIntel
+from .turkey_market import TurkeyMarketIntel
+from .gulf_market import GulfMarketIntel
+from .intl_expansion import IntlExpansionIntel
+from .global_currency import GlobalCurrencyIntel
+from .global_customs import GlobalCustomsIntel
+from .global_logistics import GlobalLogisticsIntel
+from .local_marketplace import LocalMarketplaceIntel
+from .ai_center import AIIntelligenceCenter
 from .matcher import ProductMatcher
 from .mission import MissionEngine
 from .multilingual import MultilingualMemory
@@ -140,4 +170,34 @@ __all__ = [
     "ProfitOptimizer",
     "PortfolioManager",
     "CommandCenter",
+    "ResearchJobsEngine",
+    "DataQualityControl",
+    "MultiAgentCollaboration",
+    "HypothesisEngine",
+    "FactCheckingEngine",
+    "OpportunityRanking",
+    "ProductDiscoveryIntel",
+    "SupplierDiscoveryIntel",
+    "MarketEntryPlanner",
+    "WorkflowAutomation",
+    "DynamicPriceOptimizer",
+    "DynamicMarginIntel",
+    "ROASIntel",
+    "InventoryPlanner",
+    "DemandToPurchasing",
+    "PurchaseToSellingPrice",
+    "CrossSellIntel",
+    "BundleIntel",
+    "AssortmentOptimizer",
+    "CategoryPortfolioIntel",
+    "GermanyMarketIntel",
+    "EUMarketIntel",
+    "TurkeyMarketIntel",
+    "GulfMarketIntel",
+    "IntlExpansionIntel",
+    "GlobalCurrencyIntel",
+    "GlobalCustomsIntel",
+    "GlobalLogisticsIntel",
+    "LocalMarketplaceIntel",
+    "AIIntelligenceCenter",
 ]

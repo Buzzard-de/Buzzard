@@ -7,6 +7,7 @@ from buzzard_intelligence import (
     Analyzer,
     CategoryDiscovery,
     Collector,
+    CompetitorIntel,
     Council,
     IntelligenceDB,
     MemoryEngine,
@@ -21,7 +22,7 @@ from buzzard_intelligence import (
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v13 (Memory … Voice, Shared Memory, Multilingual)"
+        description="Buzzard Intelligence v1–v14 (Memory … Multilingual, Competitor Intel)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -35,6 +36,7 @@ def main():
     sub.add_parser("init-v10", help="Create v10 council integration schema only")
     sub.add_parser("init-v12", help="Create v12 shared memory schema only")
     sub.add_parser("init-v13", help="Create v13 multilingual intelligence schema only")
+    sub.add_parser("init-v14", help="Create v14 competitor intelligence schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -121,6 +123,26 @@ def main():
     sub.add_parser("ml-demo", help="v13 add demo multilingual product terms")
     sub.add_parser("ml-report", help="v13 multilingual intelligence report")
 
+    competitor_add = sub.add_parser("competitor-add", help="v14 register a public competitor/store")
+    competitor_add.add_argument("--name", required=True)
+    competitor_add.add_argument("--country", default="")
+    competitor_add.add_argument("--source", required=True)
+
+    competitor_product = sub.add_parser(
+        "competitor-product", help="v14 record a public competitor product observation"
+    )
+    competitor_product.add_argument("--competitor", required=True)
+    competitor_product.add_argument("--category", required=True)
+    competitor_product.add_argument("--name", required=True)
+    competitor_product.add_argument("--brand", default="")
+    competitor_product.add_argument("--price", type=float)
+    competitor_product.add_argument("--currency", default="EUR")
+    competitor_product.add_argument("--popularity", type=float)
+    competitor_product.add_argument("--source", required=True)
+
+    sub.add_parser("competitor-demo", help="v14 add demo competitor intelligence data")
+    sub.add_parser("competitor-report", help="v14 competitor/market intelligence report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -192,6 +214,7 @@ def main():
     v10 = Council()
     v12 = SharedMemory()
     v13 = MultilingualMemory()
+    v14 = CompetitorIntel()
 
     if args.cmd == "init":
         v1.init()
@@ -203,6 +226,7 @@ def main():
         v10.init()
         v12.init()
         v13.init()
+        v14.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -212,6 +236,7 @@ def main():
         print(f"v10 council ready at {Path(v10.path).resolve()}")
         print(f"v12 shared memory ready at {Path(v12.path).resolve()}")
         print(f"v13 multilingual ready at {Path(v13.path).resolve()}")
+        print(f"v14 competitor intel ready at {Path(v14.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -239,6 +264,9 @@ def main():
     elif args.cmd == "init-v13":
         v13.init()
         print(f"v13 multilingual ready at {Path(v13.path).resolve()}")
+    elif args.cmd == "init-v14":
+        v14.init()
+        print(f"v14 competitor intel ready at {Path(v14.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -429,6 +457,30 @@ def main():
     elif args.cmd == "ml-report":
         v13.init()
         print(v13.report())
+    elif args.cmd == "competitor-add":
+        v14.init()
+        print(v14.add_competitor(args.name, args.country, args.source))
+    elif args.cmd == "competitor-product":
+        v14.init()
+        print(
+            v14.add_product(
+                args.competitor,
+                args.category,
+                args.name,
+                args.brand,
+                args.price,
+                args.currency,
+                args.popularity,
+                args.source,
+            )
+        )
+    elif args.cmd == "competitor-demo":
+        v14.init()
+        v14.demo()
+        print("Demo-Wettbewerbsdaten gespeichert.")
+    elif args.cmd == "competitor-report":
+        v14.init()
+        print(v14.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

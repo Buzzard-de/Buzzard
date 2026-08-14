@@ -1,6 +1,7 @@
 from .analysis import Analyzer
 from .api_layer import APILayer
 from .collector import Collector
+from .competitor import CompetitorIntel
 from .council import Council
 from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
@@ -17,6 +18,7 @@ __all__ = [
     "APILayer",
     "CategoryDiscovery",
     "Collector",
+    "CompetitorIntel",
     "Council",
     "IntelligenceDB",
     "MemoryEngine",

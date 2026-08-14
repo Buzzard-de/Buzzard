@@ -365,7 +365,8 @@ intelligence/
 │   ├── risk.py
 │   ├── orchestrator.py
 │   ├── gateway.py
-│   └── research.py
+│   ├── research.py
+│   └── connectors.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -381,5 +382,6 @@ intelligence/
     ├── Buzzard_Intelligence_v19_Risk_Compliance.zip
     ├── Buzzard_Intelligence_v20_Council_Orchestrator.zip
     ├── Buzzard_Intelligence_v21_AI_Agent_Gateway.zip
-    └── Buzzard_Intelligence_v22_Web_Research.zip
+    ├── Buzzard_Intelligence_v22_Web_Research.zip
+    └── Buzzard_Intelligence_v23_Connector_Hub.zip
 ```

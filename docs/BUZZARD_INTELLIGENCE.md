@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v26
+# Buzzard Intelligence v1–v27
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -23,8 +23,31 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v24 | `matcher.py` | `buzzard_product_matching_v24.db` |
 | v25 | `price.py` | `buzzard_price_v25.db` |
 | v26 | `forecast.py` | `buzzard_demand_v26.db` |
+| v27 | `supplier_match.py` | `buzzard_supplier_match_v27.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v27 Supplier Matching — neu
+
+Lieferanten-Ranking für Produkt/Kategorie — **Recherche-Priorität, keine Freigabe**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Lieferanten | Vertrauen, Integration, Logistik, Risiko, Dropshipping, White-Label, Nachweise |
+| Matching | Gewichteter Score mit erklärbaren Gründen |
+| Status | TOP_PRIORITY, GOOD_CANDIDATE, LOW_PRIORITY, REVIEW |
+| Regel | Fehlende Daten ≠ hohe Konfidenz; Risiko/Authentizität separat prüfen |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v27
+python main.py supplier-match-demo
+python main.py supplier-match-report
+python main.py supplier-match-add --name "Example Supplier" --category "Automotive" --trust 85 --integration 90 --logistics 80 --risk 15
+python main.py supplier-match-run --product "5W-30 Motoröl" --category "Automotive"
+```
 
 ## v26 Demand Forecasting — neu
 
@@ -440,7 +463,8 @@ intelligence/
 │   ├── connectors.py
 │   ├── matcher.py
 │   ├── price.py
-│   └── forecast.py
+│   ├── forecast.py
+│   └── supplier_match.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -460,5 +484,6 @@ intelligence/
     ├── Buzzard_Intelligence_v23_Connector_Hub.zip
     ├── Buzzard_Intelligence_v24_Product_Matching.zip
     ├── Buzzard_Intelligence_v25_Price_Intelligence.zip
-    └── Buzzard_Intelligence_v26_Demand_Forecasting.zip
+    ├── Buzzard_Intelligence_v26_Demand_Forecasting.zip
+    └── Buzzard_Intelligence_v27_Supplier_Matching.zip
 ```

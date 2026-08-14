@@ -29,12 +29,13 @@ from buzzard_intelligence import (
     ProductMatcher,
     PriceIntel,
     DemandForecast,
+    SupplierMatcher,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v26 (Memory … Price Intelligence, Demand Forecasting)"
+        description="Buzzard Intelligence v1–v27 (Memory … Demand Forecasting, Supplier Matching)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -61,6 +62,7 @@ def main():
     sub.add_parser("init-v24", help="Create v24 product matching schema only")
     sub.add_parser("init-v25", help="Create v25 price intelligence schema only")
     sub.add_parser("init-v26", help="Create v26 demand forecasting schema only")
+    sub.add_parser("init-v27", help="Create v27 supplier matching schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -395,6 +397,28 @@ def main():
     sub.add_parser("demand-demo", help="v26 add demo demand data")
     sub.add_parser("demand-report", help="v26 demand forecasting report")
 
+    supplier_match_add = sub.add_parser(
+        "supplier-match-add", help="v27 register supplier for matching"
+    )
+    supplier_match_add.add_argument("--name", required=True)
+    supplier_match_add.add_argument("--category", required=True)
+    supplier_match_add.add_argument("--trust", type=float, default=None)
+    supplier_match_add.add_argument("--integration", type=float, default=None)
+    supplier_match_add.add_argument("--logistics", type=float, default=None)
+    supplier_match_add.add_argument("--risk", type=float, default=None)
+    supplier_match_add.add_argument("--dropshipping", type=float, default=None)
+    supplier_match_add.add_argument("--whitelabel", type=float, default=None)
+    supplier_match_add.add_argument("--evidence", type=float, default=None)
+
+    supplier_match_run = sub.add_parser(
+        "supplier-match-run", help="v27 match suppliers for product/category"
+    )
+    supplier_match_run.add_argument("--product", required=True)
+    supplier_match_run.add_argument("--category", required=True)
+
+    sub.add_parser("supplier-match-demo", help="v27 add demo supplier matching data")
+    sub.add_parser("supplier-match-report", help="v27 supplier matching report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -479,6 +503,7 @@ def main():
     v24 = ProductMatcher()
     v25 = PriceIntel()
     v26 = DemandForecast()
+    v27 = SupplierMatcher()
 
     if args.cmd == "init":
         v1.init()
@@ -503,6 +528,7 @@ def main():
         v24.init()
         v25.init()
         v26.init()
+        v27.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -525,6 +551,7 @@ def main():
         print(f"v24 product matching ready at {Path(v24.path).resolve()}")
         print(f"v25 price intelligence ready at {Path(v25.path).resolve()}")
         print(f"v26 demand forecasting ready at {Path(v26.path).resolve()}")
+        print(f"v27 supplier matching ready at {Path(v27.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -591,6 +618,9 @@ def main():
     elif args.cmd == "init-v26":
         v26.init()
         print(f"v26 demand forecasting ready at {Path(v26.path).resolve()}")
+    elif args.cmd == "init-v27":
+        v27.init()
+        print(f"v27 supplier matching ready at {Path(v27.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1072,6 +1102,31 @@ def main():
     elif args.cmd == "demand-report":
         v26.init()
         print(v26.report())
+    elif args.cmd == "supplier-match-add":
+        v27.init()
+        print(
+            v27.add_supplier(
+                args.name,
+                args.category,
+                args.trust,
+                args.integration,
+                args.logistics,
+                args.risk,
+                args.dropshipping,
+                args.whitelabel,
+                args.evidence,
+            )
+        )
+    elif args.cmd == "supplier-match-run":
+        v27.init()
+        print(v27.match(args.product, args.category))
+    elif args.cmd == "supplier-match-demo":
+        v27.init()
+        v27.demo()
+        print("Demo-Lieferanten-Matching gespeichert.")
+    elif args.cmd == "supplier-match-report":
+        v27.init()
+        print(v27.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

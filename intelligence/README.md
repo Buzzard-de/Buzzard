@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v26
+# Buzzard Intelligence v1–v27
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -23,6 +23,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v24 | `matcher.py` | Product Matching (kanonische Produkte, Listings, Score) |
 | v25 | `price.py` | Price Intelligence (Preisbeobachtungen, Signale, Statistik) |
 | v26 | `forecast.py` | Demand Forecasting (Nachfrage-Zeitreihen, Prognose, Trend) |
+| v27 | `supplier_match.py` | Supplier Matching (Lieferanten-Ranking, Recherche-Priorität) |
 
 ## Setup
 
@@ -34,6 +35,23 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v27 Supplier Matching
+
+- Lieferanten für Produkt/Kategorie vergleichen und Recherche-Priorität setzen
+- Signale: Vertrauen, Integration, Logistik, Risiko, Dropshipping, White-Label, Nachweise
+- Status: TOP_PRIORITY, GOOD_CANDIDATE, LOW_PRIORITY, REVIEW
+- Score ist keine Lieferanten-Freigabe; Risiko/Authentizität separat prüfen
+
+```bash
+python main.py init-v27
+python main.py supplier-match-demo
+python main.py supplier-match-report
+python main.py supplier-match-add --name "Example Supplier" --category "Automotive" --trust 85 --integration 90 --logistics 80 --risk 15
+python main.py supplier-match-run --product "5W-30 Motoröl" --category "Automotive"
+```
+
+Archive: `archive/Buzzard_Intelligence_v27_Supplier_Matching.zip`
 
 ## v26 Demand Forecasting
 

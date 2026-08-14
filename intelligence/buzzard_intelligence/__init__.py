@@ -22,6 +22,7 @@ from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
 from .shared_memory import SharedMemory
 from .supplier import SupplierIntel
+from .supplier_match import SupplierMatcher
 from .trust import TrustEngine
 from .trends import TrendEngine
 
@@ -50,6 +51,7 @@ __all__ = [
     "SEED_CATEGORIES",
     "SharedMemory",
     "SupplierIntel",
+    "SupplierMatcher",
     "TrendEngine",
     "TrustEngine",
 ]

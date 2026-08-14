@@ -150,6 +150,31 @@ python main.py init
 
 **Abgrenzung:** v22 `research-*` · v23 `connector-*` · v25 `price-*` · v37 `compliance-*` · v65 `eucomp-*`
 
+## Live Data Connector Pack — neu
+
+Echte API-Adapter unter `intelligence/live_connectors/` für autorisierte Live-Daten.
+
+| Connector | CLI | Credentials (`.env`) |
+|-----------|-----|----------------------|
+| eBay Browse API | `live-ebay --query` | `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET` |
+| Amazon Creators API | `live-amazon --query` | `AMAZON_*` + Partner Tag |
+| Google Ads API | `live-google-ads` | `GOOGLE_ADS_*` |
+| Authorized URL Fetcher | `live-fetch --url` | optional `BUZZARD_USER_AGENT` |
+
+### CLI
+
+```bash
+cd intelligence
+cp .env.example .env
+python main.py live-health
+python main.py live-ebay --query "5W-30 Motoröl"
+python main.py live-fetch --url "https://example.com"
+```
+
+**Regeln:** Secrets nur in `.env` · kein CAPTCHA-/Login-Bypass · `NOT_CONFIGURED` statt Fake-Daten
+
+**Abgrenzung:** v23 `connector-*` = Hub-Metadaten · v42 `pubconn-*` = JSON-Stub · `live-*` = Live-Adapter
+
 ## v33 Competitor Intelligence — neu
 
 Strukturiertes Wettbewerber-Tracking aus öffentlichen Quellen — **kein CAPTCHA-/Login-Bypass**.
@@ -778,6 +803,16 @@ intelligence/
 │   ├── profit_optimizer.py
 │   ├── portfolio_manager.py
 │   └── command_center.py
+├── live_connectors/
+│   ├── amazon_creators.py
+│   ├── ebay.py
+│   ├── google_ads.py
+│   ├── public_fetch.py
+│   ├── health.py
+│   ├── README.md
+│   ├── CONNECT_STATUS.md
+│   └── DATA_SOURCE_MATRIX.md
+├── .env.example
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -843,5 +878,6 @@ intelligence/
     ├── Buzzard_Intelligence_v67_Landed_Cost_Calculator.zip
     ├── Buzzard_Intelligence_v68_Advanced_Profitability_Optimizer.zip
     ├── Buzzard_Intelligence_v69_Portfolio_and_Category_Portfolio_Manager.zip
-    └── Buzzard_Intelligence_v70_Real-Time_Intelligence_Command_Center.zip
+    ├── Buzzard_Intelligence_v70_Real-Time_Intelligence_Command_Center.zip
+    └── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
 ```

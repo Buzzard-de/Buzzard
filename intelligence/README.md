@@ -62,6 +62,30 @@ python main.py voice
 
 Browser: http://127.0.0.1:8787
 
+## Live Data Connector Pack
+
+Echte API-Adapter für autorisierte Live-Datenquellen (`live_connectors/`).
+
+| Connector | Modul | CLI | Auth |
+|-----------|-------|-----|------|
+| eBay Browse API | `ebay.py` | `live-ebay --query` | `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET` |
+| Amazon Creators API | `amazon_creators.py` | `live-amazon --query` | OAuth + Partner Tag |
+| Google Ads API | `google_ads.py` | `live-google-ads` | Developer Token + OAuth |
+| Authorized URL Fetcher | `public_fetch.py` | `live-fetch --url` | keine (nur freigegebene URLs) |
+
+```bash
+cp .env.example .env   # Credentials eintragen
+python main.py live-health
+python main.py live-ebay --query "5W-30 Motoröl"
+python main.py live-fetch --url "https://example.com"
+```
+
+Ohne Credentials: `NOT_CONFIGURED` (keine erfundenen Daten). Siehe `live_connectors/README.md`.
+
+**Abgrenzung:** v23 `connector-*` · v42 `pubconn-*` · `live-*` = echte API-Adapter
+
+Archive: `archive/Buzzard_Intelligence_Live_Data_Connector_Pack.zip`
+
 ## v34–v40 JSON Intelligence Bundle
 
 Modulare JSON-Foundation (`json_store.py`) für Alerts, Taxonomie, Geografie, Compliance, Szenarien, Dashboard und Master Core.

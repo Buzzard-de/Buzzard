@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import argparse
+import json
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 from buzzard_intelligence import (
     APILayer,
@@ -74,11 +77,24 @@ from buzzard_intelligence import (
     PortfolioManager,
     CommandCenter,
 )
+from live_connectors import (
+    AmazonCreatorsClient,
+    EbayClient,
+    GoogleAdsClient,
+    PublicFetcher,
+    live_health_report,
+)
+
+INTELLIGENCE_DIR = Path(__file__).resolve().parent
+
+
+def load_live_env():
+    load_dotenv(INTELLIGENCE_DIR / ".env")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v70 (Memory … Command Center)"
+        description="Buzzard Intelligence v1–v70 + Live Data Connectors"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -698,6 +714,16 @@ def main():
     sub.add_parser("port-report", help="v69 report")
     sub.add_parser("cmdctr-demo", help="v70 add demo data")
     sub.add_parser("cmdctr-report", help="v70 report")
+
+    sub.add_parser("live-health", help="Live connector credential health check")
+    live_ebay = sub.add_parser("live-ebay", help="Live eBay Browse API search")
+    live_ebay.add_argument("--query", required=True)
+    live_ebay.add_argument("--limit", type=int, default=20)
+    live_amazon = sub.add_parser("live-amazon", help="Live Amazon Creators API search")
+    live_amazon.add_argument("--query", required=True)
+    sub.add_parser("live-google-ads", help="Live Google Ads campaign query (last 7 days)")
+    live_fetch = sub.add_parser("live-fetch", help="Fetch an authorized public URL")
+    live_fetch.add_argument("--url", required=True)
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -2071,6 +2097,40 @@ def main():
     elif args.cmd == "cmdctr-report":
         v70.init()
         print(v70.report())
+    elif args.cmd == "live-health":
+        load_live_env()
+        print(live_health_report())
+    elif args.cmd == "live-ebay":
+        load_live_env()
+        try:
+            result = EbayClient().search(args.query, args.limit)
+            print(json.dumps(result, ensure_ascii=False, indent=2)[:30000])
+        except RuntimeError as exc:
+            print(str(exc))
+    elif args.cmd == "live-amazon":
+        load_live_env()
+        try:
+            result = AmazonCreatorsClient().search(args.query)
+            print(json.dumps(result, ensure_ascii=False, indent=2)[:30000])
+        except RuntimeError as exc:
+            print(str(exc))
+    elif args.cmd == "live-google-ads":
+        load_live_env()
+        gaql = """SELECT customer.id, campaign.id, campaign.name, metrics.impressions,
+metrics.clicks, metrics.cost_micros
+FROM campaign
+WHERE segments.date DURING LAST_7_DAYS"""
+        try:
+            result = GoogleAdsClient().query(gaql)
+            print(json.dumps(result, ensure_ascii=False, indent=2)[:30000])
+        except RuntimeError as exc:
+            print(str(exc))
+    elif args.cmd == "live-fetch":
+        load_live_env()
+        result = PublicFetcher().fetch(args.url)
+        preview = dict(result)
+        preview["text"] = preview["text"][:500]
+        print(json.dumps(preview, ensure_ascii=False, indent=2))
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

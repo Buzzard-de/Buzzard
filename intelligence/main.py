@@ -21,12 +21,13 @@ from buzzard_intelligence import (
     ProfitEngine,
     MarketEngine,
     SupplierIntel,
+    RiskEngine,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v18 (Memory … Market Opportunity, Supplier Intel)"
+        description="Buzzard Intelligence v1–v19 (Memory … Supplier Intel, Risk & Compliance)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -45,6 +46,7 @@ def main():
     sub.add_parser("init-v16", help="Create v16 profitability schema only")
     sub.add_parser("init-v17", help="Create v17 market opportunity schema only")
     sub.add_parser("init-v18", help="Create v18 supplier intelligence schema only")
+    sub.add_parser("init-v19", help="Create v19 risk/compliance schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -233,6 +235,27 @@ def main():
     sub.add_parser("supplier-demo", help="v18 add demo supplier intelligence data")
     sub.add_parser("supplier-report", help="v18 supplier intelligence report")
 
+    risk_add = sub.add_parser("risk-add", help="v19 register a risk/compliance signal")
+    risk_add.add_argument("--entity", required=True)
+    risk_add.add_argument("--type", required=True, help="AUTHENTICITY, SUPPLIER, PRODUCT_SAFETY, …")
+    risk_add.add_argument("--severity", required=True, help="LOW, MEDIUM, HIGH, CRITICAL")
+    risk_add.add_argument("--details", default="")
+    risk_add.add_argument("--source", default="")
+    risk_add.add_argument("--country", default="")
+
+    risk_verify = sub.add_parser("risk-verify", help="v19 update risk review status")
+    risk_verify.add_argument("--risk-id", type=int, required=True)
+    risk_verify.add_argument(
+        "--status",
+        required=True,
+        help="OPEN, UNDER_REVIEW, VERIFIED, RESOLVED, REJECTED",
+    )
+    risk_verify.add_argument("--note", default="")
+    risk_verify.add_argument("--reviewer", default="Council Manager")
+
+    sub.add_parser("risk-demo", help="v19 add demo risk/compliance records")
+    sub.add_parser("risk-report", help="v19 risk and compliance report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -309,6 +332,7 @@ def main():
     v16 = ProfitEngine()
     v17 = MarketEngine()
     v18 = SupplierIntel()
+    v19 = RiskEngine()
 
     if args.cmd == "init":
         v1.init()
@@ -325,6 +349,7 @@ def main():
         v16.init()
         v17.init()
         v18.init()
+        v19.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -339,6 +364,7 @@ def main():
         print(f"v16 profit engine ready at {Path(v16.path).resolve()}")
         print(f"v17 market engine ready at {Path(v17.path).resolve()}")
         print(f"v18 supplier intel ready at {Path(v18.path).resolve()}")
+        print(f"v19 risk engine ready at {Path(v19.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -381,6 +407,9 @@ def main():
     elif args.cmd == "init-v18":
         v18.init()
         print(f"v18 supplier intel ready at {Path(v18.path).resolve()}")
+    elif args.cmd == "init-v19":
+        v19.init()
+        print(f"v19 risk engine ready at {Path(v19.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -687,6 +716,28 @@ def main():
     elif args.cmd == "supplier-report":
         v18.init()
         print(v18.report())
+    elif args.cmd == "risk-add":
+        v19.init()
+        print(
+            v19.add_risk(
+                args.entity,
+                args.type,
+                args.severity,
+                args.details,
+                args.source,
+                args.country,
+            )
+        )
+    elif args.cmd == "risk-verify":
+        v19.init()
+        print(v19.verify(args.risk_id, args.status, args.note, args.reviewer))
+    elif args.cmd == "risk-demo":
+        v19.init()
+        v19.demo()
+        print("Demo-Risikodaten gespeichert.")
+    elif args.cmd == "risk-report":
+        v19.init()
+        print(v19.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

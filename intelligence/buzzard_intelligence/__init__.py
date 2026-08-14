@@ -10,6 +10,7 @@ from .market import MarketEngine
 from .multilingual import MultilingualMemory
 from .profit import ProfitEngine
 from .reporting import Reporter
+from .risk import RiskEngine
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
 from .shared_memory import SharedMemory
@@ -30,6 +31,7 @@ __all__ = [
     "MultilingualMemory",
     "ProfitEngine",
     "Reporter",
+    "RiskEngine",
     "Scheduler",
     "SEED_CATEGORIES",
     "SharedMemory",

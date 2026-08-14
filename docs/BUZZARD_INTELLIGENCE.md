@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v18
+# Buzzard Intelligence v1–v19
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -15,10 +15,33 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v16 | `profit.py` | `buzzard_profit_v16.db` |
 | v17 | `market.py` | `buzzard_market_v17.db` |
 | v18 | `supplier.py` | `buzzard_supplier_v18.db` |
+| v19 | `risk.py` | `buzzard_risk_v19.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v18 Supplier Intelligence — neu
+## v19 Risk & Compliance — neu
+
+Zentralisierte Risiko- und Compliance-Signale für Produkte, Lieferanten und Märkte — **keine Rechtsberatung**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Risikotypen | AUTHENTICITY, SUPPLIER, PRODUCT_SAFETY, CUSTOMS, TAX, IP_TRADEMARK, … |
+| Schweregrad | LOW, MEDIUM, HIGH, CRITICAL |
+| Status | OPEN → UNDER_REVIEW → VERIFIED / RESOLVED / REJECTED |
+| Priorität | Score 0–100; fehlende Quelle erhöht Priorität |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v19
+python main.py risk-demo
+python main.py risk-report
+python main.py risk-add --entity "Beispiel Produkt" --type PRODUCT_SAFETY --severity HIGH --source official-source --country DE
+python main.py risk-verify --risk-id 1 --status UNDER_REVIEW --note "Prüfung gestartet"
+```
+
+## v18 Supplier Intelligence
 
 Systematische Lieferantenrecherche und Integrationsbewertung — **keine automatische „vertrauenswürdig“-Markierung**.
 
@@ -228,7 +251,8 @@ intelligence/
 │   ├── trust.py
 │   ├── profit.py
 │   ├── market.py
-│   └── supplier.py
+│   ├── supplier.py
+│   └── risk.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -240,5 +264,6 @@ intelligence/
     ├── Buzzard_Intelligence_v15_Authenticity_Trust.zip
     ├── Buzzard_Intelligence_v16_Profitability.zip
     ├── Buzzard_Intelligence_v17_Market_Opportunity.zip
-    └── Buzzard_Intelligence_v18_Supplier_Intelligence.zip
+    ├── Buzzard_Intelligence_v18_Supplier_Intelligence.zip
+    └── Buzzard_Intelligence_v19_Risk_Compliance.zip
 ```

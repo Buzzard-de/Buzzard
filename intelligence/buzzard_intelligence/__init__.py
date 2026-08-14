@@ -12,6 +12,7 @@ from .market import MarketEngine
 from .matcher import ProductMatcher
 from .multilingual import MultilingualMemory
 from .orchestrator import CouncilOrchestrator
+from .price import PriceIntel
 from .profit import ProfitEngine
 from .reporting import Reporter
 from .research import WebResearch
@@ -38,6 +39,7 @@ __all__ = [
     "MarketEngine",
     "ProductMatcher",
     "MultilingualMemory",
+    "PriceIntel",
     "ProfitEngine",
     "Reporter",
     "RiskEngine",

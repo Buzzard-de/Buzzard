@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v24
+# Buzzard Intelligence v1–v25
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -21,6 +21,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v22 | `research.py` | Web Research (Aufgaben, Quellen, Erkenntnisse) |
 | v23 | `connectors.py` | Connector Hub (API/Feed-Verbindungen, Capabilities, Health) |
 | v24 | `matcher.py` | Product Matching (kanonische Produkte, Listings, Score) |
+| v25 | `price.py` | Price Intelligence (Preisbeobachtungen, Signale, Statistik) |
 
 ## Setup
 
@@ -32,6 +33,24 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v25 Price Intelligence
+
+- Preisbeobachtungen mit Verkäufer, Quelle und Zeitstempel
+- Preisänderungs-Signale (PRICE_UP / PRICE_DOWN) ab ≥1 % Änderung
+- Min/Max/Durchschnitt je Produkt
+- Versand, MwSt., Gutscheine und Varianten bei Vergleichen berücksichtigen
+- Keine Verkaufs- oder Gewinngarantie
+
+```bash
+python main.py init-v25
+python main.py price-demo
+python main.py price-report
+python main.py price-add --product-id "EAN-123" --seller "Example Store" --price 49.90 --currency EUR --source "https://example.com/product"
+python main.py price-changes --product-id "EAN-123"
+```
+
+Archive: `archive/Buzzard_Intelligence_v25_Price_Intelligence.zip`
 
 ## v24 Product Matching
 

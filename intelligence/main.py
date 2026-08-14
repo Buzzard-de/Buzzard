@@ -27,12 +27,13 @@ from buzzard_intelligence import (
     WebResearch,
     ConnectorHub,
     ProductMatcher,
+    PriceIntel,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v24 (Memory … Connector Hub, Product Matching)"
+        description="Buzzard Intelligence v1–v25 (Memory … Product Matching, Price Intelligence)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -57,6 +58,7 @@ def main():
     sub.add_parser("init-v22", help="Create v22 web research schema only")
     sub.add_parser("init-v23", help="Create v23 connector hub schema only")
     sub.add_parser("init-v24", help="Create v24 product matching schema only")
+    sub.add_parser("init-v25", help="Create v25 price intelligence schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -362,6 +364,21 @@ def main():
     sub.add_parser("match-demo", help="v24 add demo product matching records")
     sub.add_parser("match-report", help="v24 product matching report")
 
+    price_add = sub.add_parser("price-add", help="v25 record a price observation")
+    price_add.add_argument("--product-id", required=True)
+    price_add.add_argument("--seller", required=True)
+    price_add.add_argument("--price", type=float, required=True)
+    price_add.add_argument("--currency", default="EUR")
+    price_add.add_argument("--source", required=True)
+    price_add.add_argument("--shipping", type=float, default=0)
+    price_add.add_argument("--vat-included", default="unknown")
+
+    price_changes = sub.add_parser("price-changes", help="v25 price change signals for product")
+    price_changes.add_argument("--product-id", required=True)
+
+    sub.add_parser("price-demo", help="v25 add demo price observations")
+    sub.add_parser("price-report", help="v25 price intelligence report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -444,6 +461,7 @@ def main():
     v22 = WebResearch()
     v23 = ConnectorHub()
     v24 = ProductMatcher()
+    v25 = PriceIntel()
 
     if args.cmd == "init":
         v1.init()
@@ -466,6 +484,7 @@ def main():
         v22.init()
         v23.init()
         v24.init()
+        v25.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -486,6 +505,7 @@ def main():
         print(f"v22 web research ready at {Path(v22.path).resolve()}")
         print(f"v23 connector hub ready at {Path(v23.path).resolve()}")
         print(f"v24 product matching ready at {Path(v24.path).resolve()}")
+        print(f"v25 price intelligence ready at {Path(v25.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -546,6 +566,9 @@ def main():
     elif args.cmd == "init-v24":
         v24.init()
         print(f"v24 product matching ready at {Path(v24.path).resolve()}")
+    elif args.cmd == "init-v25":
+        v25.init()
+        print(f"v25 price intelligence ready at {Path(v25.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -991,6 +1014,29 @@ def main():
     elif args.cmd == "match-report":
         v24.init()
         print(v24.report())
+    elif args.cmd == "price-add":
+        v25.init()
+        print(
+            v25.add_price(
+                args.product_id,
+                args.seller,
+                args.price,
+                args.currency,
+                args.source,
+                args.shipping,
+                args.vat_included,
+            )
+        )
+    elif args.cmd == "price-changes":
+        v25.init()
+        print(v25.changes(args.product_id))
+    elif args.cmd == "price-demo":
+        v25.init()
+        v25.demo()
+        print("Demo-Preisbeobachtungen gespeichert.")
+    elif args.cmd == "price-report":
+        v25.init()
+        print(v25.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v24
+# Buzzard Intelligence v1–v25
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -21,8 +21,31 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v22 | `research.py` | `buzzard_web_research_v22.db` |
 | v23 | `connectors.py` | `buzzard_connector_hub_v23.db` |
 | v24 | `matcher.py` | `buzzard_product_matching_v24.db` |
+| v25 | `price.py` | `buzzard_price_v25.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v25 Price Intelligence — neu
+
+Preisbeobachtungen aus offenen Quellen über die Zeit — **keine Verkaufs- oder Gewinngarantie**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Beobachtungen | Produkt-ID, Verkäufer, Preis, Währung, Versand, MwSt., Quelle, Zeitstempel |
+| Signale | PRICE_UP / PRICE_DOWN bei ≥1 % Änderung |
+| Statistik | Min, Max, Durchschnitt je Produkt |
+| Regel | Versand/MwSt./Varianten bei Vergleichen berücksichtigen |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v25
+python main.py price-demo
+python main.py price-report
+python main.py price-add --product-id "EAN-123" --seller "Example Store" --price 49.90 --currency EUR --source "https://example.com/product"
+python main.py price-changes --product-id "EAN-123"
+```
 
 ## v24 Product Matching — neu
 
@@ -392,7 +415,8 @@ intelligence/
 │   ├── gateway.py
 │   ├── research.py
 │   ├── connectors.py
-│   └── matcher.py
+│   ├── matcher.py
+│   └── price.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -410,5 +434,6 @@ intelligence/
     ├── Buzzard_Intelligence_v21_AI_Agent_Gateway.zip
     ├── Buzzard_Intelligence_v22_Web_Research.zip
     ├── Buzzard_Intelligence_v23_Connector_Hub.zip
-    └── Buzzard_Intelligence_v24_Product_Matching.zip
+    ├── Buzzard_Intelligence_v24_Product_Matching.zip
+    └── Buzzard_Intelligence_v25_Price_Intelligence.zip
 ```

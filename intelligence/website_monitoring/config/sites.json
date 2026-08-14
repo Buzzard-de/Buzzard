@@ -1,0 +1,706 @@
+[
+  {
+    "name": "OTTO",
+    "type": "marketplace",
+    "access": "API-first when authorized",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Kaufland Global Marketplace",
+    "type": "marketplace",
+    "access": "official REST API when authorized",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Zalando",
+    "type": "fashion marketplace",
+    "access": "official/partner access where authorized; public pages only where permitted",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "CHECK24",
+    "type": "comparison platform",
+    "access": "authorized/affiliate access; public pages only where permitted",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Kfz24",
+    "type": "automotive marketplace",
+    "access": "public/authorized access subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Amazon.de",
+    "type": "marketplace",
+    "access": "official API where authorized",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "eBay.de",
+    "type": "marketplace",
+    "access": "official Browse API where authorized",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "idealo.de",
+    "type": "price comparison",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "MediaMarkt",
+    "type": "electronics retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Saturn",
+    "type": "electronics retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Conrad",
+    "type": "electronics/industrial",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Galaxus",
+    "type": "retail/marketplace",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Zalando Lounge",
+    "type": "fashion retail",
+    "access": "authorized access only where available",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "ABOUT YOU",
+    "type": "fashion retail",
+    "access": "authorized/partner access",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Decathlon",
+    "type": "sports retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "OBI",
+    "type": "DIY/garden retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "HORNBACH",
+    "type": "DIY/garden retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "BAUHAUS",
+    "type": "DIY/garden retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Lidl.de",
+    "type": "retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "ALDI SÜD",
+    "type": "retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "ALDI Nord",
+    "type": "retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "REWE",
+    "type": "food retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "dm",
+    "type": "drugstore",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Rossmann",
+    "type": "drugstore",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Kaufland.de",
+    "type": "retail/marketplace",
+    "access": "official marketplace/API where authorized",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Otto.de",
+    "type": "retail/marketplace",
+    "access": "official marketplace/API where authorized",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Tchibo",
+    "type": "retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "METRO",
+    "type": "B2B retail",
+    "access": "authorized access where available",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Fressnapf",
+    "type": "pet retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Zooplus",
+    "type": "pet retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Mister Spex",
+    "type": "optics retail",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Autodoc",
+    "type": "automotive",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "kfzteile24",
+    "type": "automotive",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "ATP Autoteile",
+    "type": "automotive",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Daparto",
+    "type": "automotive comparison",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "reifen.com",
+    "type": "tires/automotive",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Tirendo",
+    "type": "tires/automotive",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Agrarshop",
+    "type": "agriculture",
+    "access": "authorized/public pages subject to terms",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Kramp",
+    "type": "agriculture/industrial",
+    "access": "authorized partner/API access",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Würth",
+    "type": "tools/industrial",
+    "access": "authorized B2B access",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "RS",
+    "type": "industrial",
+    "access": "authorized B2B/API access",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "ManoMano",
+    "type": "DIY/marketplace",
+    "access": "official/partner access where authorized",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Temu",
+    "type": "marketplace",
+    "access": "authorized access only",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "AliExpress",
+    "type": "marketplace",
+    "access": "official/authorized API where applicable",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  }
+]

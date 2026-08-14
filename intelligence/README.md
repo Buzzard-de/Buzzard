@@ -100,6 +100,33 @@ Ohne Credentials: `NOT_CONFIGURED` (keine erfundenen Daten). Siehe `live_connect
 
 Archive: `archive/Buzzard_Intelligence_Live_Data_Connector_Pack.zip`
 
+## Marketplace & Website Monitoring Pack
+
+Katalog von 44 E-Commerce-/Marketplace-/Retail-Sites mit Legal Policies, Scheduler und Observation Schema (`website_monitoring/`).
+
+| CLI | Zweck |
+|-----|-------|
+| `wsmon-status` | Katalog- und Verbindungsstatus |
+| `wsmon-sites` | Alle Sites mit Status |
+| `wsmon-catalog` | MANIFEST.json |
+| `wsmon-schedule` | Monitor-Scheduler (hourly/daily/weekly) |
+| `wsmon-fetch --url` | Autorisierten öffentlichen URL-Abruf |
+| `wsmon-legal` | Legal Operation Rules |
+| `wsmon-alerts` | Monitoring Alerts |
+| `wsmon-test` | pytest auf `tests/` |
+
+```bash
+python main.py wsmon-status
+python main.py wsmon-sites
+python main.py wsmon-schedule
+```
+
+Alle Sites starten mit `enabled: false` und `NOT_CONNECTED`. Erst nach Zugangsverifikation aktivieren.
+
+**Abgrenzung:** `live-*` = Live API Adapter · `wsmon-*` = Site-Katalog + Policies · `mplace-*` = v58 JSON Modul
+
+Archive: `archive/Buzzard_Intelligence_Marketplace_Website_Monitoring.zip`
+
 ## Final Production Completion Package
 
 Nach v200: Integrations-, Verifikations-, Deployment- und Betriebsarbeiten — **keine weiteren Versionsnummern**.

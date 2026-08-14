@@ -233,6 +233,33 @@ python main.py live-fetch --url "https://example.com"
 
 **Abgrenzung:** v23 `connector-*` = Hub-Metadaten · v42 `pubconn-*` = JSON-Stub · `live-*` = Live-Adapter
 
+## Marketplace & Website Monitoring Pack — neu
+
+44-Site-Katalog mit Legal Policies, Scheduler und Observation Schema unter `intelligence/website_monitoring/`.
+
+| CLI | Zweck |
+|-----|-------|
+| `wsmon-status` | Katalog- und Verbindungsstatus |
+| `wsmon-sites` | Alle Sites mit Status |
+| `wsmon-catalog` | MANIFEST.json |
+| `wsmon-schedule` | Monitor-Scheduler |
+| `wsmon-fetch --url` | Autorisierten öffentlichen URL-Abruf |
+| `wsmon-legal` | Legal Operation Rules |
+| `wsmon-alerts` | Monitoring Alerts |
+| `wsmon-test` | pytest |
+
+```bash
+cd intelligence
+python main.py wsmon-status
+python main.py wsmon-sites
+```
+
+Sites starten mit `enabled: false` — erst nach Zugangsverifikation aktivieren.
+
+**Abgrenzung:** `live-*` · `wsmon-*` · `mplace-*` (v58)
+
+Archive: `intelligence/archive/Buzzard_Intelligence_Marketplace_Website_Monitoring.zip`
+
 ## Final Production Completion Package — neu
 
 Nach v200: Integrations-, Verifikations-, Deployment- und Betriebsarbeiten (13 Workstreams unter `intelligence/production/`).
@@ -1119,6 +1146,18 @@ intelligence/
 │   ├── README.md
 │   ├── CONNECT_STATUS.md
 │   └── DATA_SOURCE_MATRIX.md
+├── website_monitoring/
+│   ├── MANIFEST.json
+│   ├── README.md
+│   ├── status.py
+│   ├── connectors/monitor.py
+│   ├── config/sites.json
+│   ├── config/policies.json
+│   ├── scheduler/monitor_schedule.json
+│   ├── storage/observation_schema.json
+│   ├── docs/ALERTS.md
+│   ├── docs/LEGAL_OPERATION.md
+│   └── tests/
 ├── .env.example
 ├── production/
 │   ├── FINAL_MASTER_CHECKLIST.md
@@ -1262,6 +1301,8 @@ intelligence/
     ├── Buzzard_Intelligence_v120_Production_Readiness_Error_Center.zip
     ├── Buzzard_Intelligence_v121_v200_ALL_REMAINING_COMPLETE.zip
     ├── Buzzard_Intelligence_v121 … v200 (80 einzelne ZIPs)
+    ├── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
+    ├── Buzzard_Intelligence_Marketplace_Website_Monitoring.zip
     ├── Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip
     ├── Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip
     ├── Buzzard_Intelligence_FINAL_INTEGRATION_TEST_GO_LIVE.zip

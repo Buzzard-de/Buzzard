@@ -1,0 +1,19 @@
+{
+  "allowed_modes": [
+    "OFFICIAL_API",
+    "AUTHORIZED_FEED",
+    "AUTHORIZED_PARTNER",
+    "PUBLIC_PAGE_RESEARCH"
+  ],
+  "blocked_modes": [
+    "LOGIN_BYPASS",
+    "CAPTCHA_BYPASS",
+    "ACCESS_CONTROL_BYPASS",
+    "PRIVATE_DATA"
+  ],
+  "default_status_without_authorized_source": "REVIEW_REQUIRED",
+  "store_source_url": true,
+  "store_observed_at": true,
+  "store_hash": true,
+  "respect_rate_limits": true
+}

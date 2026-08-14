@@ -1,0 +1,16 @@
+{
+  "source": "string",
+  "source_type": "string",
+  "observed_at": "ISO-8601",
+  "entity_type": "product|category|brand|promotion|availability",
+  "entity_id": "string|null",
+  "name": "string|null",
+  "category": "string|null",
+  "price": "number|null",
+  "currency": "string|null",
+  "availability": "string|null",
+  "signal": "string|null",
+  "url": "string|null",
+  "content_hash": "string|null",
+  "confidence": "0..1"
+}

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v33
+# Buzzard Intelligence v1–v40
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -30,8 +30,43 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v31 | `learning_memory.py` | `buzzard_learning_memory_v31.db` |
 | v32 | `categories.py` | `buzzard_category_intelligence_v32.db` |
 | v33 | `competitor_monitor.py` | `buzzard_competitor_v33.db` |
+| v34 | `anomaly.py` | `buzzard_v34.json` |
+| v35 | `taxonomy.py` | `buzzard_v35.json` |
+| v36 | `geography.py` | `buzzard_v36.json` |
+| v37 | `compliance_intel.py` | `buzzard_v37.json` |
+| v38 | `scenario.py` | `buzzard_v38.json` |
+| v39 | `intel_dashboard.py` | `buzzard_v39.json` |
+| v40 | `master_core.py` | `buzzard_v40.json` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v34–v40 Bundle — neu
+
+Modulare JSON-Foundation für Alerts, Taxonomie, Geografie, Compliance, Szenarien, Dashboard und Master Core.
+
+| Version | Modul | CLI-Präfix | Zweck |
+|---------|-------|------------|-------|
+| v34 | `anomaly.py` | `anomaly-*` | Alerts & Anomaly Detection |
+| v35 | `taxonomy.py` | `taxonomy-*` | Deep Category Taxonomy |
+| v36 | `geography.py` | `geo-*` | Market Geography |
+| v37 | `compliance_intel.py` | `compliance-*` | Risk & Compliance Intelligence (v37) |
+| v38 | `scenario.py` | `scenario-*` | Profitability & Scenario |
+| v39 | `intel_dashboard.py` | `idash-*` | Intelligence Dashboard |
+| v40 | `master_core.py` | `master-*` | Master Intelligence Core (v21–v39) |
+
+### CLI (Beispiel)
+
+```bash
+cd intelligence
+python main.py init-v34
+python main.py anomaly-demo
+python main.py anomaly-report
+python main.py init-v40
+python main.py master-demo
+python main.py master-report
+```
+
+**Abgrenzung:** v9 `alerts` · v19 `risk-*` · v16 `profit-*` · v32 `category-*` · v33 `rivals-*`
 
 ## v33 Competitor Intelligence — neu
 
@@ -622,7 +657,15 @@ intelligence/
 │   ├── mission.py
 │   ├── learning_memory.py
 │   ├── categories.py
-│   └── competitor_monitor.py
+│   ├── competitor_monitor.py
+│   ├── json_store.py
+│   ├── anomaly.py
+│   ├── taxonomy.py
+│   ├── geography.py
+│   ├── compliance_intel.py
+│   ├── scenario.py
+│   ├── intel_dashboard.py
+│   └── master_core.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -649,5 +692,13 @@ intelligence/
     ├── Buzzard_Intelligence_v30_Autonomous_Mission.zip
     ├── Buzzard_Intelligence_v31_Learning_Memory.zip
     ├── Buzzard_Intelligence_v32_Category_Intelligence.zip
-    └── Buzzard_Intelligence_v33_Competitor_Intelligence.zip
+    ├── Buzzard_Intelligence_v33_Competitor_Intelligence.zip
+    ├── Buzzard_Intelligence_v33_to_v40_COMPLETE.zip
+    ├── Buzzard_Intelligence_v34_Alerts_Anomaly_Detection.zip
+    ├── Buzzard_Intelligence_v35_Deep_Category_Taxonomy.zip
+    ├── Buzzard_Intelligence_v36_Market_Geography.zip
+    ├── Buzzard_Intelligence_v37_Risk_Compliance.zip
+    ├── Buzzard_Intelligence_v38_Profitability_Scenario.zip
+    ├── Buzzard_Intelligence_v39_Intelligence_Dashboard.zip
+    └── Buzzard_Intelligence_v40_Master_Intelligence_Core.zip
 ```

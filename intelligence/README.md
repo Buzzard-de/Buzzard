@@ -1,6 +1,6 @@
-# Buzzard Intelligence v1–v33
+# Buzzard Intelligence v1–v40
 
-Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
+Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite/JSON), getrennt vom Node-Shop.
 
 ## Module
 
@@ -30,6 +30,13 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v31 | `learning_memory.py` | Learning & Memory (FACT/SIGNAL/LESSON, Recall) |
 | v32 | `categories.py` | Category Intelligence (100+ Kategorien, Signale, Queue) |
 | v33 | `competitor_monitor.py` | Competitor Monitor (Kategorien, Produkte, Änderungen) |
+| v34 | `anomaly.py` | Alerts & Anomaly Detection (JSON) |
+| v35 | `taxonomy.py` | Deep Category Taxonomy (JSON) |
+| v36 | `geography.py` | Market Geography (JSON) |
+| v37 | `compliance_intel.py` | Risk & Compliance Intelligence (JSON) |
+| v38 | `scenario.py` | Profitability & Scenario (JSON) |
+| v39 | `intel_dashboard.py` | Intelligence Dashboard (JSON) |
+| v40 | `master_core.py` | Master Intelligence Core v21–v39 (JSON) |
 
 ## Setup
 
@@ -41,6 +48,34 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v34–v40 JSON Intelligence Bundle
+
+Modulare JSON-Foundation (`json_store.py`) für Alerts, Taxonomie, Geografie, Compliance, Szenarien, Dashboard und Master Core.
+
+| Version | Modul | CLI-Präfix | Store |
+|---------|-------|------------|-------|
+| v34 | `anomaly.py` | `anomaly-*` | `buzzard_v34.json` |
+| v35 | `taxonomy.py` | `taxonomy-*` | `buzzard_v35.json` |
+| v36 | `geography.py` | `geo-*` | `buzzard_v36.json` |
+| v37 | `compliance_intel.py` | `compliance-*` | `buzzard_v37.json` |
+| v38 | `scenario.py` | `scenario-*` | `buzzard_v38.json` |
+| v39 | `intel_dashboard.py` | `idash-*` | `buzzard_v39.json` |
+| v40 | `master_core.py` | `master-*` | `buzzard_v40.json` |
+
+```bash
+python main.py init-v34
+python main.py anomaly-demo
+python main.py anomaly-report
+python main.py init-v40
+python main.py master-demo
+python main.py master-report
+python main.py init   # unified init v1–v40
+```
+
+**Abgrenzung:** v9 `alerts` · v19 `risk-*` · v16 `profit-*` · v32 `category-*` · v33 `rivals-*` · v37 `compliance-*`
+
+Archive: `archive/Buzzard_Intelligence_v33_to_v40_COMPLETE.zip` (+ einzelne v34–v40 ZIPs)
 
 ## v33 Competitor Intelligence
 

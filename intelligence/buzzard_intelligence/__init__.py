@@ -6,6 +6,7 @@ from .council import Council
 from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
 from .memory import MemoryEngine
+from .market import MarketEngine
 from .multilingual import MultilingualMemory
 from .profit import ProfitEngine
 from .reporting import Reporter
@@ -24,6 +25,7 @@ __all__ = [
     "Council",
     "IntelligenceDB",
     "MemoryEngine",
+    "MarketEngine",
     "MultilingualMemory",
     "ProfitEngine",
     "Reporter",

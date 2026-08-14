@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v16
+# Buzzard Intelligence v1–v17
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -13,10 +13,33 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v14 | `competitor.py` | `buzzard_competitor_v14.db` |
 | v15 | `trust.py` | `buzzard_trust_v15.db` |
 | v16 | `profit.py` | `buzzard_profit_v16.db` |
+| v17 | `market.py` | `buzzard_market_v17.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v16 Profitability — neu
+## v17 Market Opportunity — neu
+
+Länder- und Marktvergleich für Produkt-/Kategoriechancen — **keine Verkaufs- oder Gewinngarantie**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Märkte | Nachfrage, Wettbewerb, Logistik, Risiko je Land |
+| Chancen | Produktscores über Länder hinweg |
+| Datenabdeckung | Fehlende Werte werden als Lücken markiert, nicht als 0 |
+| Fokus | DE, EU, TR, Golfregion |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v17
+python main.py market-demo
+python main.py market-report
+python main.py market-add --country DE --market Deutschland --demand 80 --competition 60 --logistics 85 --risk 20
+python main.py opportunity-add --country DE --category Automotive --product "5W-30 Motoröl" --demand 85 --competition 55 --margin 75 --logistics 80 --risk 20
+```
+
+## v16 Profitability
 
 Produktbezogene Rentabilitätsberechnung mit mathematischer Entscheidungshilfe — **kein Ersatz für Steuerberatung**.
 
@@ -180,7 +203,8 @@ intelligence/
 │   ├── multilingual.py
 │   ├── competitor.py
 │   ├── trust.py
-│   └── profit.py
+│   ├── profit.py
+│   └── market.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -190,5 +214,6 @@ intelligence/
     ├── Buzzard_Intelligence_v13_Multilingual.zip
     ├── Buzzard_Intelligence_v14_Competitor_Intelligence.zip
     ├── Buzzard_Intelligence_v15_Authenticity_Trust.zip
-    └── Buzzard_Intelligence_v16_Profitability.zip
+    ├── Buzzard_Intelligence_v16_Profitability.zip
+    └── Buzzard_Intelligence_v17_Market_Opportunity.zip
 ```

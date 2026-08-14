@@ -160,6 +160,31 @@ Config: `master_integration/config/system.json` · Gates-DB: `master_integration
 
 Archive: `archive/Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip`
 
+## Final Integration / Test / Go-Live Pack
+
+Praktischer Arbeitsblock nach v200: Integration → Connectoren → Pipeline → Tests → Security → Monitoring → Backup → Deployment → Go-Live.
+
+| CLI | Zweck |
+|-----|-------|
+| `fint-preflight` | Pflicht-Checklisten und Manifest prüfen |
+| `fint-test` | pytest auf `final_integration/04_tests/` |
+| `fint-go-live` | Go-Live-Check (blockiert ohne echte Verifikation) |
+| `fint-status` | Status-Zusammenfassung |
+| `fint-gate` | Go-Live-Gate-Dokument |
+| `fint-dod` | Final Definition of Done |
+
+```bash
+python main.py fint-preflight
+python main.py fint-test
+python main.py fint-go-live
+```
+
+Checklisten unter `final_integration/` (Connectors, Pipeline, Security, Monitoring, Backup, Deployment, Runbooks).
+
+**Abgrenzung:** `prod-*` = Production Workstreams · `mint-*` = SQLite-Gates · `fint-*` = Integration/Test/Go-Live · `live-*` = Live-Adapter
+
+Archive: `archive/Buzzard_Intelligence_FINAL_INTEGRATION_TEST_GO_LIVE.zip`
+
 ## v34–v40 JSON Intelligence Bundle
 
 Modulare JSON-Foundation (`json_store.py`) für Alerts, Taxonomie, Geografie, Compliance, Szenarien, Dashboard und Master Core.

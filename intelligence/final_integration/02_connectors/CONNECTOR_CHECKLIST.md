@@ -1,0 +1,11 @@
+# Connector Checklist
+- [ ] eBay Browse API credentials + API test
+- [ ] Amazon Creators API credentials + API test
+- [ ] Google Ads API OAuth + developer token + test
+- [ ] Google Trends / permitted research source test
+- [ ] Supplier APIs/XML/CSV authorization
+- [ ] TecDoc valid licensed access
+- [ ] other marketplace/manufacturer APIs authorized
+- [ ] rate limits documented
+- [ ] terms/licensing reviewed
+- [ ] retries/timeouts/errors tested

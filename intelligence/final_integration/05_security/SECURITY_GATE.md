@@ -1,0 +1,12 @@
+# Security Gate
+- [ ] secrets outside source code
+- [ ] least privilege
+- [ ] OAuth/token rotation
+- [ ] encryption in transit
+- [ ] encryption at rest where required
+- [ ] no secrets in logs
+- [ ] audit trail
+- [ ] dependency/vulnerability review
+- [ ] incident response
+- [ ] privacy/DSGVO review
+- [ ] retention/deletion rules

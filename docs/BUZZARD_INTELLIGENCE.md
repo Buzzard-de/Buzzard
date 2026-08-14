@@ -281,6 +281,30 @@ python main.py mint-go-live
 
 Archive: `intelligence/archive/Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip`
 
+## Final Integration / Test / Go-Live Pack — neu
+
+Checklisten, Tests und Go-Live-Gate unter `intelligence/final_integration/` — keine erfundenen Live-Ergebnisse.
+
+| CLI | Zweck |
+|-----|-------|
+| `fint-preflight` | Pflicht-Checklisten und Manifest prüfen |
+| `fint-test` | pytest auf `04_tests/` |
+| `fint-go-live` | Go-Live-Check (blockiert ohne echte Verifikation) |
+| `fint-status` | Status-Zusammenfassung |
+| `fint-gate` | Go-Live-Gate-Dokument |
+| `fint-dod` | Final Definition of Done |
+
+```bash
+cd intelligence
+python main.py fint-preflight
+python main.py fint-test
+python main.py fint-go-live
+```
+
+**Abgrenzung:** `prod-*` · `mint-*` · `fint-*` · `live-*`
+
+Archive: `intelligence/archive/Buzzard_Intelligence_FINAL_INTEGRATION_TEST_GO_LIVE.zip`
+
 ## v71–v100 Bundle — neu
 
 30 JSON-Module für Research-Automatisierung, Qualität, Multi-Agent, Einkauf/Preis, Sortiment, Länder-Märkte und AI Center.
@@ -1110,6 +1134,14 @@ intelligence/
 │   ├── config/system.json
 │   ├── docs/DEFINITION_OF_DONE.md
 │   └── tests/test_master.py
+├── final_integration/
+│   ├── MANIFEST.json
+│   ├── README.md
+│   ├── FINAL_DEFINITION_OF_DONE.md
+│   ├── status.py
+│   ├── 01_integration/system_manifest.json
+│   ├── 02_connectors/ … 10_runbooks/
+│   └── 04_tests/
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -1232,5 +1264,6 @@ intelligence/
     ├── Buzzard_Intelligence_v121 … v200 (80 einzelne ZIPs)
     ├── Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip
     ├── Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip
+    ├── Buzzard_Intelligence_FINAL_INTEGRATION_TEST_GO_LIVE.zip
     └── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
 ```

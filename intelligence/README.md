@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v7
+# Buzzard Intelligence v1–v8
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -6,13 +6,10 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 
 | Version | Modul | Zweck |
 |---------|-------|-------|
-| v1 | `database.py` | Kategorien, Beobachtungen, Reports |
-| v2 | `memory.py` | Speicher + Änderungserkennung |
-| v3 | `collector.py` | robots.txt-konforme HTML-Sammlung |
-| v4 | `scheduler.py` | Aufgaben-Registry |
-| v5 | `api_layer.py` | Offizielle APIs/Feeds |
+| v1–v5 | … | Memory, Collector, Scheduler, API |
 | v6 | `analysis.py` | Markt-/Kategorie-Analyse |
 | v7 | `trends.py` | Trend- & Opportunity-Signale |
+| v8 | `discovery.py` | Kategorie-Entdeckung & Normalisierung |
 
 ## Setup
 
@@ -20,29 +17,33 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 cd intelligence
 pip install -r requirements.txt
 python main.py init
-python main.py demo-trends
-python main.py trends
+python main.py sync-categories
+python main.py demo-discovery
+python main.py discover
 ```
 
-## v7 Trends
+## v8 Category Discovery
 
-Zeitreihen aus v2 Memory — **kein Opportunity-Score ohne genug Datenpunkte**.
+Erweitert den Kategoriebaum mit quellenbasierten Signalen — **keine automatischen Shop-Änderungen**.
 
 ```bash
-python main.py demo-trends
-python main.py trends
-python main.py analyze
+python main.py add-category \
+  --name "Bremsbeläge" \
+  --parent "Bremsystem" \
+  --level 3 \
+  --source "https://example.com/feed" \
+  --confidence 0.85
+
+python main.py discover
 ```
 
-## v6 Analysis
+## Weitere Befehle
 
 ```bash
-python main.py demo
-python main.py analyze
+python main.py demo && python main.py analyze      # v6
+python main.py demo-trends && python main.py trends # v7
 ```
 
-## Archive
-
-`archive/Buzzard_Intelligence_v1.zip` … `v7_Trend_Opportunity.zip`
+Archive: `archive/Buzzard_Intelligence_v1.zip` … `v8_Category_Discovery.zip`
 
 Siehe: `docs/BUZZARD_INTELLIGENCE.md`

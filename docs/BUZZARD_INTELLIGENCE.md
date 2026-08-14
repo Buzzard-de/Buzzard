@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v11
+# Buzzard Intelligence v1–v12
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -8,10 +8,35 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 |---------|-------|----------|
 | v1–v10 | … | siehe vorherige Abschnitte |
 | v11 | `voice/` | kein eigener DB-Speicher (UI-Schicht) |
+| v12 | `shared_memory.py` | `buzzard_shared_memory_v12.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v11 Voice Interface — neu
+## v12 Shared Memory — neu
+
+Langfristige gemeinsame Wissensbasis — unabhängig von v2 Produkt-Memory und v11 Voice.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Typen | DECISION, TASK, PREFERENCE, CONVERSATION, ENTITY, … |
+| Status | ACTIVE, VERIFIED, DISPUTED, ARCHIVED, REJECTED |
+| Tags & Links | Etiketten und Verknüpfungen zwischen Einträgen |
+| Audit | Änderungsverlauf pro Eintrag |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v12
+python main.py remember --type DECISION --text "Buzzard fokussiert zuerst auf Deutschland und EU." --source user
+python main.py recall --query "Deutschland"
+python main.py shared-timeline
+python main.py memory-status --id 1 --status VERIFIED
+```
+
+**Hinweis:** v2 `memory <query>` durchsucht Produkt-/Marktbeobachtungen; v12 `recall` durchsucht Shared Memory.
+
+## v11 Voice Interface
 
 Lokale Sprach-Oberfläche mit Flask + Browser Speech API.
 
@@ -59,9 +84,12 @@ Council, Reporting, Discovery, … — unverändert nutzbar.
 
 ```
 intelligence/
+├── buzzard_intelligence/
+│   └── shared_memory.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
 └── archive/
-    └── Buzzard_Intelligence_v11_Voice_Interface.zip
+    ├── Buzzard_Intelligence_v11_Voice_Interface.zip
+    └── Buzzard_Intelligence_v12_Shared_Memory.zip
 ```

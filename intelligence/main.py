@@ -36,12 +36,19 @@ from buzzard_intelligence import (
     LearningMemory,
     CategoryIntel,
     CompetitorMonitor,
+    AnomalyEngine,
+    TaxonomyEngine,
+    GeographyEngine,
+    ComplianceIntel,
+    ScenarioEngine,
+    IntelligenceDashboard,
+    MasterCore,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v33 (Memory … Category Intelligence, Competitor Monitor)"
+        description="Buzzard Intelligence v1–v40 (Memory … Competitor Monitor, Master Core)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -75,6 +82,13 @@ def main():
     sub.add_parser("init-v31", help="Create v31 learning memory schema only")
     sub.add_parser("init-v32", help="Create v32 category intelligence schema only")
     sub.add_parser("init-v33", help="Create v33 competitor monitor schema only")
+    sub.add_parser("init-v34", help="Create v34 alerts & anomaly detection store")
+    sub.add_parser("init-v35", help="Create v35 deep category taxonomy store")
+    sub.add_parser("init-v36", help="Create v36 market geography store")
+    sub.add_parser("init-v37", help="Create v37 risk & compliance intelligence store")
+    sub.add_parser("init-v38", help="Create v38 profitability scenario store")
+    sub.add_parser("init-v39", help="Create v39 intelligence dashboard store")
+    sub.add_parser("init-v40", help="Create v40 master intelligence core store")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -550,6 +564,21 @@ def main():
     sub.add_parser("rivals-demo", help="v33 add demo competitor monitor data")
     sub.add_parser("rivals-report", help="v33 competitor intelligence report")
 
+    sub.add_parser("anomaly-demo", help="v34 add demo anomaly detection data")
+    sub.add_parser("anomaly-report", help="v34 alerts & anomaly detection report")
+    sub.add_parser("taxonomy-demo", help="v35 add demo category taxonomy data")
+    sub.add_parser("taxonomy-report", help="v35 deep category taxonomy report")
+    sub.add_parser("geo-demo", help="v36 add demo market geography data")
+    sub.add_parser("geo-report", help="v36 market geography report")
+    sub.add_parser("compliance-demo", help="v37 add demo compliance intelligence data")
+    sub.add_parser("compliance-report", help="v37 risk & compliance intelligence report")
+    sub.add_parser("scenario-demo", help="v38 add demo profitability scenario data")
+    sub.add_parser("scenario-report", help="v38 profitability scenario report")
+    sub.add_parser("idash-demo", help="v39 add demo intelligence dashboard data")
+    sub.add_parser("idash-report", help="v39 intelligence dashboard report")
+    sub.add_parser("master-demo", help="v40 add demo master core data")
+    sub.add_parser("master-report", help="v40 master intelligence core report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -641,6 +670,13 @@ def main():
     v31 = LearningMemory()
     v32 = CategoryIntel()
     v33 = CompetitorMonitor()
+    v34 = AnomalyEngine()
+    v35 = TaxonomyEngine()
+    v36 = GeographyEngine()
+    v37 = ComplianceIntel()
+    v38 = ScenarioEngine()
+    v39 = IntelligenceDashboard()
+    v40 = MasterCore()
 
     if args.cmd == "init":
         v1.init()
@@ -672,6 +708,13 @@ def main():
         v31.init()
         v32.init()
         v33.init()
+        v34.init()
+        v35.init()
+        v36.init()
+        v37.init()
+        v38.init()
+        v39.init()
+        v40.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -701,6 +744,13 @@ def main():
         print(f"v31 learning memory ready at {Path(v31.path).resolve()}")
         print(f"v32 category intelligence ready at {Path(v32.path).resolve()}")
         print(f"v33 competitor monitor ready at {Path(v33.path).resolve()}")
+        print(f"v34 anomaly detection ready at {Path(v34.path).resolve()}")
+        print(f"v35 category taxonomy ready at {Path(v35.path).resolve()}")
+        print(f"v36 market geography ready at {Path(v36.path).resolve()}")
+        print(f"v37 compliance intelligence ready at {Path(v37.path).resolve()}")
+        print(f"v38 profitability scenario ready at {Path(v38.path).resolve()}")
+        print(f"v39 intelligence dashboard ready at {Path(v39.path).resolve()}")
+        print(f"v40 master core ready at {Path(v40.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -788,6 +838,27 @@ def main():
     elif args.cmd == "init-v33":
         v33.init()
         print(f"v33 competitor monitor ready at {Path(v33.path).resolve()}")
+    elif args.cmd == "init-v34":
+        v34.init()
+        print(f"v34 anomaly detection ready at {Path(v34.path).resolve()}")
+    elif args.cmd == "init-v35":
+        v35.init()
+        print(f"v35 category taxonomy ready at {Path(v35.path).resolve()}")
+    elif args.cmd == "init-v36":
+        v36.init()
+        print(f"v36 market geography ready at {Path(v36.path).resolve()}")
+    elif args.cmd == "init-v37":
+        v37.init()
+        print(f"v37 compliance intelligence ready at {Path(v37.path).resolve()}")
+    elif args.cmd == "init-v38":
+        v38.init()
+        print(f"v38 profitability scenario ready at {Path(v38.path).resolve()}")
+    elif args.cmd == "init-v39":
+        v39.init()
+        print(f"v39 intelligence dashboard ready at {Path(v39.path).resolve()}")
+    elif args.cmd == "init-v40":
+        v40.init()
+        print(f"v40 master core ready at {Path(v40.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1441,6 +1512,55 @@ def main():
     elif args.cmd == "rivals-report":
         v33.init()
         print(v33.report())
+    elif args.cmd == "anomaly-demo":
+        v34.init()
+        v34.demo()
+        print("Demo-Anomaly-Detection gespeichert.")
+    elif args.cmd == "anomaly-report":
+        v34.init()
+        print(v34.report())
+    elif args.cmd == "taxonomy-demo":
+        v35.init()
+        v35.demo()
+        print("Demo-Kategorie-Taxonomie gespeichert.")
+    elif args.cmd == "taxonomy-report":
+        v35.init()
+        print(v35.report())
+    elif args.cmd == "geo-demo":
+        v36.init()
+        v36.demo()
+        print("Demo-Markt-Geografie gespeichert.")
+    elif args.cmd == "geo-report":
+        v36.init()
+        print(v36.report())
+    elif args.cmd == "compliance-demo":
+        v37.init()
+        v37.demo()
+        print("Demo-Compliance-Intelligence gespeichert.")
+    elif args.cmd == "compliance-report":
+        v37.init()
+        print(v37.report())
+    elif args.cmd == "scenario-demo":
+        v38.init()
+        v38.demo()
+        print("Demo-Profitabilitäts-Szenario gespeichert.")
+    elif args.cmd == "scenario-report":
+        v38.init()
+        print(v38.report())
+    elif args.cmd == "idash-demo":
+        v39.init()
+        v39.demo()
+        print("Demo-Intelligence-Dashboard gespeichert.")
+    elif args.cmd == "idash-report":
+        v39.init()
+        print(v39.report())
+    elif args.cmd == "master-demo":
+        v40.init()
+        v40.demo()
+        print("Demo-Master-Core gespeichert.")
+    elif args.cmd == "master-report":
+        v40.init()
+        print(v40.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

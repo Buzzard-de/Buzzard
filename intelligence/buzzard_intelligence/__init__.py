@@ -3,6 +3,7 @@ from .api_layer import APILayer
 from .categories import CategoryIntel
 from .collector import Collector
 from .competitor import CompetitorIntel
+from .competitor_monitor import CompetitorMonitor
 from .connectors import ConnectorHub
 from .council import Council
 from .database import IntelligenceDB
@@ -39,6 +40,7 @@ __all__ = [
     "DemandForecast",
     "Collector",
     "CompetitorIntel",
+    "CompetitorMonitor",
     "ConnectorHub",
     "Council",
     "CouncilOrchestrator",

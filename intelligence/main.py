@@ -35,12 +35,13 @@ from buzzard_intelligence import (
     MissionEngine,
     LearningMemory,
     CategoryIntel,
+    CompetitorMonitor,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v32 (Memory … Learning Memory, Category Intelligence)"
+        description="Buzzard Intelligence v1–v33 (Memory … Category Intelligence, Competitor Monitor)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -73,6 +74,7 @@ def main():
     sub.add_parser("init-v30", help="Create v30 autonomous mission schema only")
     sub.add_parser("init-v31", help="Create v31 learning memory schema only")
     sub.add_parser("init-v32", help="Create v32 category intelligence schema only")
+    sub.add_parser("init-v33", help="Create v33 competitor monitor schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -522,6 +524,32 @@ def main():
     sub.add_parser("category-report", help="v32 category intelligence report")
     sub.add_parser("category-demo", help="v32 seed catalog and demo signals")
 
+    rivals_add = sub.add_parser("rivals-add", help="v33 register a public competitor/marketplace")
+    rivals_add.add_argument("--name", required=True)
+    rivals_add.add_argument("--url", required=True)
+    rivals_add.add_argument("--market", required=True)
+
+    rivals_category = sub.add_parser("rivals-category", help="v33 record competitor category observation")
+    rivals_category.add_argument("--competitor", required=True)
+    rivals_category.add_argument("--category", required=True)
+    rivals_category.add_argument("--count", type=int, default=0)
+    rivals_category.add_argument("--url", default="")
+
+    rivals_product = sub.add_parser("rivals-product", help="v33 record competitor product observation")
+    rivals_product.add_argument("--competitor", required=True)
+    rivals_product.add_argument("--category", required=True)
+    rivals_product.add_argument("--name", required=True)
+    rivals_product.add_argument("--price", type=float)
+    rivals_product.add_argument("--currency", default="EUR")
+    rivals_product.add_argument("--signal", default="")
+    rivals_product.add_argument("--url", default="")
+
+    rivals_changes = sub.add_parser("rivals-changes", help="v33 competitor change report")
+    rivals_changes.add_argument("--competitor", required=True)
+
+    sub.add_parser("rivals-demo", help="v33 add demo competitor monitor data")
+    sub.add_parser("rivals-report", help="v33 competitor intelligence report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -612,6 +640,7 @@ def main():
     v30 = MissionEngine()
     v31 = LearningMemory()
     v32 = CategoryIntel()
+    v33 = CompetitorMonitor()
 
     if args.cmd == "init":
         v1.init()
@@ -642,6 +671,7 @@ def main():
         v30.init()
         v31.init()
         v32.init()
+        v33.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -670,6 +700,7 @@ def main():
         print(f"v30 autonomous mission ready at {Path(v30.path).resolve()}")
         print(f"v31 learning memory ready at {Path(v31.path).resolve()}")
         print(f"v32 category intelligence ready at {Path(v32.path).resolve()}")
+        print(f"v33 competitor monitor ready at {Path(v33.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -754,6 +785,9 @@ def main():
     elif args.cmd == "init-v32":
         v32.init()
         print(f"v32 category intelligence ready at {Path(v32.path).resolve()}")
+    elif args.cmd == "init-v33":
+        v33.init()
+        print(f"v33 competitor monitor ready at {Path(v33.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1378,6 +1412,35 @@ def main():
         v32.init()
         v32.demo()
         print("Demo-Kategorie-Intelligence gespeichert.")
+    elif args.cmd == "rivals-add":
+        v33.init()
+        print(v33.add_competitor(args.name, args.url, args.market))
+    elif args.cmd == "rivals-category":
+        v33.init()
+        print(v33.add_category(args.competitor, args.category, args.count, args.url))
+    elif args.cmd == "rivals-product":
+        v33.init()
+        print(
+            v33.add_product(
+                args.competitor,
+                args.category,
+                args.name,
+                args.price,
+                args.currency,
+                args.signal,
+                args.url,
+            )
+        )
+    elif args.cmd == "rivals-changes":
+        v33.init()
+        print(v33.changes(args.competitor))
+    elif args.cmd == "rivals-demo":
+        v33.init()
+        v33.demo()
+        print("Demo-Wettbewerber-Intelligence gespeichert.")
+    elif args.cmd == "rivals-report":
+        v33.init()
+        print(v33.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

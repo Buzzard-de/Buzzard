@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v32
+# Buzzard Intelligence v1–v33
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -29,8 +29,36 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v30 | `mission.py` | `buzzard_mission_v30.db` |
 | v31 | `learning_memory.py` | `buzzard_learning_memory_v31.db` |
 | v32 | `categories.py` | `buzzard_category_intelligence_v32.db` |
+| v33 | `competitor_monitor.py` | `buzzard_competitor_v33.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v33 Competitor Intelligence — neu
+
+Strukturiertes Wettbewerber-Tracking aus öffentlichen Quellen — **kein CAPTCHA-/Login-Bypass**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Wettbewerber | Name, URL, Markt, Status |
+| Kategorien | Öffentliche Kategorie-Struktur, Produktanzahl |
+| Produkte | Preis, Sichtbarkeits-Signale (featured/popular) |
+| Änderungen | Kategorie- und Event-Verlauf |
+| Regel | Beobachtung ≠ Schätzung; nur legale Quellen |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v33
+python main.py rivals-demo
+python main.py rivals-report
+python main.py rivals-changes --competitor "Example Marketplace"
+python main.py rivals-add --name "Example Marketplace" --url "https://example.com" --market "Germany"
+python main.py rivals-category --competitor "Example Marketplace" --category "Automotive" --count 120
+python main.py rivals-product --competitor "Example Marketplace" --category "Automotive" --name "Example 5W-30" --price 49.90 --currency EUR --signal featured
+```
+
+v14 `competitor-*` = Basis-Wettbewerbsbeobachtung · v33 `rivals-*` = erweitertes Monitoring.
 
 ## v32 Category Intelligence — neu
 
@@ -593,7 +621,8 @@ intelligence/
 │   ├── verify.py
 │   ├── mission.py
 │   ├── learning_memory.py
-│   └── categories.py
+│   ├── categories.py
+│   └── competitor_monitor.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -619,5 +648,6 @@ intelligence/
     ├── Buzzard_Intelligence_v29_Official_Verification.zip
     ├── Buzzard_Intelligence_v30_Autonomous_Mission.zip
     ├── Buzzard_Intelligence_v31_Learning_Memory.zip
-    └── Buzzard_Intelligence_v32_Category_Intelligence.zip
+    ├── Buzzard_Intelligence_v32_Category_Intelligence.zip
+    └── Buzzard_Intelligence_v33_Competitor_Intelligence.zip
 ```

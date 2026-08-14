@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v32
+# Buzzard Intelligence v1–v33
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -29,6 +29,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v30 | `mission.py` | Autonomous Mission (12 Agenten, Menschen-Freigabe) |
 | v31 | `learning_memory.py` | Learning & Memory (FACT/SIGNAL/LESSON, Recall) |
 | v32 | `categories.py` | Category Intelligence (100+ Kategorien, Signale, Queue) |
+| v33 | `competitor_monitor.py` | Competitor Monitor (Kategorien, Produkte, Änderungen) |
 
 ## Setup
 
@@ -40,6 +41,28 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v33 Competitor Intelligence
+
+- Wettbewerber mit URL, Markt und Status tracken
+- Öffentliche Kategorie-Struktur und Produktanzahl
+- Produkt-Beobachtungen mit Preis und Sichtbarkeits-Signalen
+- Änderungsberichte über Kategorien und Events
+- Nur legale, öffentliche Quellen — kein CAPTCHA-/Login-Bypass
+
+```bash
+python main.py init-v33
+python main.py rivals-demo
+python main.py rivals-report
+python main.py rivals-changes --competitor "Example Marketplace"
+python main.py rivals-add --name "Example Marketplace" --url "https://example.com" --market "Germany"
+python main.py rivals-category --competitor "Example Marketplace" --category "Automotive" --count 120
+python main.py rivals-product --competitor "Example Marketplace" --category "Automotive" --name "Example 5W-30" --price 49.90 --signal featured
+```
+
+v14 `competitor-*` = Basis · v33 `rivals-*` = erweitertes Monitoring.
+
+Archive: `archive/Buzzard_Intelligence_v33_Competitor_Intelligence.zip`
 
 ## v32 Category Intelligence
 

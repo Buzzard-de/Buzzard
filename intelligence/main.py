@@ -224,7 +224,7 @@ def load_live_env():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v200 + Live Data Connectors + Production Completion"
+        description="Buzzard Intelligence v1–v200 + Live Data Connectors + Production Completion + Master Integration"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -1249,6 +1249,13 @@ def main():
     sub.add_parser("prod-gate", help="Show go-live gate checklist")
     sub.add_parser("prod-status", help="Show production completion status summary")
     sub.add_parser("prod-workstreams", help="List final production workstreams")
+
+    sub.add_parser("mint-init", help="Initialize master integration system shell (SQLite gates/events)")
+    sub.add_parser("mint-health", help="Show master integration health (DB, config, gates)")
+    sub.add_parser("mint-test", help="Run master integration preflight gate checks")
+    sub.add_parser("mint-status", help="Show master integration gate status")
+    sub.add_parser("mint-go-live", help="Run go-live gate check (all gates must be PASS/APPROVED)")
+    sub.add_parser("mint-dod", help="Show master integration definition of done")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4338,6 +4345,35 @@ def main():
             print(f"\n## {title}")
             if readme.exists():
                 print(readme.read_text(encoding="utf-8").strip())
+    elif args.cmd == "mint-init":
+        from master_integration.core import event, init
+
+        init()
+        event("SYSTEM_INIT", "Master Integration")
+        print("Buzzard Master Integration initialisiert.")
+    elif args.cmd == "mint-health":
+        from master_integration.status import master_health
+
+        print(master_health())
+    elif args.cmd == "mint-test":
+        from master_integration.status import master_preflight
+
+        print(master_preflight())
+    elif args.cmd == "mint-status":
+        from master_integration.status import master_gate_status
+
+        print(master_gate_status())
+    elif args.cmd == "mint-go-live":
+        from master_integration.status import run_go_live_check
+
+        code, message = run_go_live_check()
+        print(message)
+        if code:
+            raise SystemExit(code)
+    elif args.cmd == "mint-dod":
+        from master_integration.status import read_doc
+
+        print(read_doc("DEFINITION_OF_DONE.md"))
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

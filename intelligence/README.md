@@ -133,6 +133,33 @@ Checkliste: `production/FINAL_MASTER_CHECKLIST.md`
 
 Archive: `archive/Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip`
 
+## Master Integration Complete Package
+
+Gemeinsame Systemhülle nach v200: zentrale Konfiguration, Gate-Status (SQLite), Audit-Event-Log und Go-Live-Prüfung.
+
+| CLI | Zweck |
+|-----|-------|
+| `mint-init` | Master-Integration initialisieren (Gates + Events) |
+| `mint-health` | DB, Config und Gate-Health |
+| `mint-test` | Automatischer Preflight (setzt Gate-Status) |
+| `mint-status` | Gate-Status-Übersicht |
+| `mint-go-live` | Go-Live-Check (alle Gates PASS/APPROVED) |
+| `mint-dod` | Definition of Done |
+
+```bash
+python main.py mint-init
+python main.py mint-health
+python main.py mint-test
+python main.py mint-status
+python main.py mint-go-live
+```
+
+Config: `master_integration/config/system.json` · Gates-DB: `master_integration/buzzard_master.db` (gitignored)
+
+**Abgrenzung:** v40 `master-*` = JSON Master Core · `mint-*` = System-Integrationshülle · `prod-*` = Dokumentations-Checklisten
+
+Archive: `archive/Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip`
+
 ## v34–v40 JSON Intelligence Bundle
 
 Modulare JSON-Foundation (`json_store.py`) für Alerts, Taxonomie, Geografie, Compliance, Szenarien, Dashboard und Master Core.

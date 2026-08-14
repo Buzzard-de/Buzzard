@@ -1,0 +1,26 @@
+{
+  "system": "Buzzard Intelligence",
+  "target_architecture": "v21-v200",
+  "environment": "production-candidate",
+  "human_approval_required": true,
+  "authorized_sources_only": true,
+  "minimum_net_profit_eur": 0.5,
+  "modules": [
+    "Market Intelligence",
+    "Category Intelligence",
+    "Competitor Intelligence",
+    "Supplier Intelligence",
+    "Product Matching",
+    "Price Intelligence",
+    "Demand Forecasting",
+    "Profitability",
+    "Risk & Compliance",
+    "Official Verification",
+    "Memory & Learning",
+    "Agents & Council",
+    "Security",
+    "Observability",
+    "Backup & Recovery",
+    "Global Operations"
+  ]
+}

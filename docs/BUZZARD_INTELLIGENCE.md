@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v17
+# Buzzard Intelligence v1–v18
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -14,10 +14,33 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v15 | `trust.py` | `buzzard_trust_v15.db` |
 | v16 | `profit.py` | `buzzard_profit_v16.db` |
 | v17 | `market.py` | `buzzard_market_v17.db` |
+| v18 | `supplier.py` | `buzzard_supplier_v18.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v17 Market Opportunity — neu
+## v18 Supplier Intelligence — neu
+
+Systematische Lieferantenrecherche und Integrationsbewertung — **keine automatische „vertrauenswürdig“-Markierung**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Lieferanten | Name, Land, B2B-Status, Quelle |
+| Fähigkeiten | API, XML, Dropshipping, TecDoc, White-label, … |
+| Scores | Vertrauens- und Integrationsscore (recherchebasiert) |
+| Regel | Offizielle Dokumentation separat verifizieren |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v18
+python main.py supplier-demo
+python main.py supplier-report
+python main.py supplier-add --name "Example Supplier" --country DE --b2b yes --source "https://example.com"
+python main.py supplier-capability --supplier "Example Supplier" --capability API --status verified --evidence "https://example.com/api-docs"
+```
+
+## v17 Market Opportunity
 
 Länder- und Marktvergleich für Produkt-/Kategoriechancen — **keine Verkaufs- oder Gewinngarantie**.
 
@@ -204,7 +227,8 @@ intelligence/
 │   ├── competitor.py
 │   ├── trust.py
 │   ├── profit.py
-│   └── market.py
+│   ├── market.py
+│   └── supplier.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -215,5 +239,6 @@ intelligence/
     ├── Buzzard_Intelligence_v14_Competitor_Intelligence.zip
     ├── Buzzard_Intelligence_v15_Authenticity_Trust.zip
     ├── Buzzard_Intelligence_v16_Profitability.zip
-    └── Buzzard_Intelligence_v17_Market_Opportunity.zip
+    ├── Buzzard_Intelligence_v17_Market_Opportunity.zip
+    └── Buzzard_Intelligence_v18_Supplier_Intelligence.zip
 ```

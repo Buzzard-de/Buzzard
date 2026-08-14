@@ -20,12 +20,13 @@ from buzzard_intelligence import (
     TrustEngine,
     ProfitEngine,
     MarketEngine,
+    SupplierIntel,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v17 (Memory … Profitability, Market Opportunity)"
+        description="Buzzard Intelligence v1–v18 (Memory … Market Opportunity, Supplier Intel)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -43,6 +44,7 @@ def main():
     sub.add_parser("init-v15", help="Create v15 authenticity/trust schema only")
     sub.add_parser("init-v16", help="Create v16 profitability schema only")
     sub.add_parser("init-v17", help="Create v17 market opportunity schema only")
+    sub.add_parser("init-v18", help="Create v18 supplier intelligence schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -214,6 +216,23 @@ def main():
     sub.add_parser("market-demo", help="v17 add demo market/opportunity data")
     sub.add_parser("market-report", help="v17 market and country opportunity report")
 
+    supplier_add = sub.add_parser("supplier-add", help="v18 register a supplier profile")
+    supplier_add.add_argument("--name", required=True)
+    supplier_add.add_argument("--country", default="")
+    supplier_add.add_argument("--b2b", default="unknown")
+    supplier_add.add_argument("--source", required=True)
+
+    supplier_capability = sub.add_parser(
+        "supplier-capability", help="v18 register a supplier integration capability"
+    )
+    supplier_capability.add_argument("--supplier", required=True)
+    supplier_capability.add_argument("--capability", required=True)
+    supplier_capability.add_argument("--status", required=True)
+    supplier_capability.add_argument("--evidence", default="")
+
+    sub.add_parser("supplier-demo", help="v18 add demo supplier intelligence data")
+    sub.add_parser("supplier-report", help="v18 supplier intelligence report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -289,6 +308,7 @@ def main():
     v15 = TrustEngine()
     v16 = ProfitEngine()
     v17 = MarketEngine()
+    v18 = SupplierIntel()
 
     if args.cmd == "init":
         v1.init()
@@ -304,6 +324,7 @@ def main():
         v15.init()
         v16.init()
         v17.init()
+        v18.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -317,6 +338,7 @@ def main():
         print(f"v15 trust engine ready at {Path(v15.path).resolve()}")
         print(f"v16 profit engine ready at {Path(v16.path).resolve()}")
         print(f"v17 market engine ready at {Path(v17.path).resolve()}")
+        print(f"v18 supplier intel ready at {Path(v18.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -356,6 +378,9 @@ def main():
     elif args.cmd == "init-v17":
         v17.init()
         print(f"v17 market engine ready at {Path(v17.path).resolve()}")
+    elif args.cmd == "init-v18":
+        v18.init()
+        print(f"v18 supplier intel ready at {Path(v18.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -642,6 +667,26 @@ def main():
     elif args.cmd == "market-report":
         v17.init()
         print(v17.report())
+    elif args.cmd == "supplier-add":
+        v18.init()
+        print(v18.add_supplier(args.name, args.country, args.b2b, args.source))
+    elif args.cmd == "supplier-capability":
+        v18.init()
+        print(
+            v18.add_capability(
+                args.supplier,
+                args.capability,
+                args.status,
+                args.evidence,
+            )
+        )
+    elif args.cmd == "supplier-demo":
+        v18.init()
+        v18.demo()
+        print("Demo-Lieferantendaten gespeichert.")
+    elif args.cmd == "supplier-report":
+        v18.init()
+        print(v18.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

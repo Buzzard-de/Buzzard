@@ -13,6 +13,7 @@ from .reporting import Reporter
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
 from .shared_memory import SharedMemory
+from .supplier import SupplierIntel
 from .trust import TrustEngine
 from .trends import TrendEngine
 
@@ -32,6 +33,7 @@ __all__ = [
     "Scheduler",
     "SEED_CATEGORIES",
     "SharedMemory",
+    "SupplierIntel",
     "TrendEngine",
     "TrustEngine",
 ]

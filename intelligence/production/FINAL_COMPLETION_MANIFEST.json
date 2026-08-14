@@ -1,0 +1,21 @@
+{
+  "purpose": "Final completion package after v200",
+  "not_a_claim_of_live_completion": true,
+  "required_workstreams": [
+    "01_architecture_integration",
+    "02_live_connectors",
+    "03_data_pipeline",
+    "04_memory_and_learning",
+    "05_agents_and_council",
+    "06_security_privacy",
+    "07_testing",
+    "08_observability",
+    "09_backup_recovery",
+    "10_deployment",
+    "11_business_rules",
+    "12_documentation",
+    "13_go_live"
+  ],
+  "completion_rule": "No critical gate may remain open before production go-live.",
+  "important": "The architecture packages v21-v200 are foundations; this package describes the remaining integration, verification, deployment and operational work."
+}

@@ -233,6 +233,29 @@ python main.py live-fetch --url "https://example.com"
 
 **Abgrenzung:** v23 `connector-*` = Hub-Metadaten · v42 `pubconn-*` = JSON-Stub · `live-*` = Live-Adapter
 
+## Final Production Completion Package — neu
+
+Nach v200: Integrations-, Verifikations-, Deployment- und Betriebsarbeiten (13 Workstreams unter `intelligence/production/`).
+
+| CLI | Zweck |
+|-----|-------|
+| `prod-checklist` | Final Master Checklist (A–I) |
+| `prod-gate` | Go-Live Gate |
+| `prod-status` | Status-Zusammenfassung (Module, Stores, Live Connectors) |
+| `prod-workstreams` | Alle 13 Workstream-READMEs |
+
+```bash
+cd intelligence
+python main.py prod-checklist
+python main.py prod-gate
+python main.py prod-status
+python main.py prod-workstreams
+```
+
+Definition of Done: integriert, getestet, autorisierte Live-Quellen, sicher, beobachtbar, recoverable, Human-Approval aktiv — **nicht** nur Modul-Dateien vorhanden.
+
+Archive: `intelligence/archive/Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip`
+
 ## v71–v100 Bundle — neu
 
 30 JSON-Module für Research-Automatisierung, Qualität, Multi-Agent, Einkauf/Preis, Sortiment, Länder-Märkte und AI Center.
@@ -1048,6 +1071,12 @@ intelligence/
 │   ├── CONNECT_STATUS.md
 │   └── DATA_SOURCE_MATRIX.md
 ├── .env.example
+├── production/
+│   ├── FINAL_MASTER_CHECKLIST.md
+│   ├── FINAL_COMPLETION_MANIFEST.json
+│   ├── status.py
+│   ├── 01_architecture_integration/ … 13_go_live/
+│   └── README.md
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -1168,5 +1197,6 @@ intelligence/
     ├── Buzzard_Intelligence_v120_Production_Readiness_Error_Center.zip
     ├── Buzzard_Intelligence_v121_v200_ALL_REMAINING_COMPLETE.zip
     ├── Buzzard_Intelligence_v121 … v200 (80 einzelne ZIPs)
+    ├── Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip
     └── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
 ```

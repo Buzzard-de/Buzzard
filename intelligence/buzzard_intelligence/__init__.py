@@ -20,6 +20,7 @@ from .research import WebResearch
 from .risk import RiskEngine
 from .scheduler import Scheduler
 from .seeds import SEED_CATEGORIES
+from .selection import ProductSelector
 from .shared_memory import SharedMemory
 from .supplier import SupplierIntel
 from .supplier_match import SupplierMatcher
@@ -43,6 +44,7 @@ __all__ = [
     "ProductMatcher",
     "MultilingualMemory",
     "PriceIntel",
+    "ProductSelector",
     "ProfitEngine",
     "Reporter",
     "RiskEngine",

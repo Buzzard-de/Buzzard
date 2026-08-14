@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v27
+# Buzzard Intelligence v1–v28
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -24,6 +24,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v25 | `price.py` | Price Intelligence (Preisbeobachtungen, Signale, Statistik) |
 | v26 | `forecast.py` | Demand Forecasting (Nachfrage-Zeitreihen, Prognose, Trend) |
 | v27 | `supplier_match.py` | Supplier Matching (Lieferanten-Ranking, Recherche-Priorität) |
+| v28 | `selection.py` | Product Selection (PRIORITY/REVIEW/HOLD/REJECT) |
 
 ## Setup
 
@@ -35,6 +36,23 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v28 Product Selection
+
+- Intelligence-Signale zu einem Handels-Prioritätssignal kombinieren
+- Signale: Rentabilität, Nachfrage, Preis/Markt, Lieferant, Risiko, Vertrauen
+- Entscheidungen: PRIORITY, REVIEW, HOLD, REJECT
+- Nettogewinn < €0,50 → REJECT (Buzzard-Schwelle)
+- Keine automatische Einkaufs- oder Rechtskonformitätsentscheidung
+
+```bash
+python main.py init-v28
+python main.py selection-demo
+python main.py selection-report
+python main.py selection-add --name "5W-30 Motoröl" --category "Automotive" --profit 2.40 --demand 85 --price 80 --market 82 --supplier 90 --risk 15 --trust 92
+```
+
+Archive: `archive/Buzzard_Intelligence_v28_Product_Selection.zip`
 
 ## v27 Supplier Matching
 

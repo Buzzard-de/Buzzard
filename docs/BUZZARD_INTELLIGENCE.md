@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v27
+# Buzzard Intelligence v1–v28
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -24,8 +24,30 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v25 | `price.py` | `buzzard_price_v25.db` |
 | v26 | `forecast.py` | `buzzard_demand_v26.db` |
 | v27 | `supplier_match.py` | `buzzard_supplier_match_v27.db` |
+| v28 | `selection.py` | `buzzard_product_selection_v28.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v28 Product Selection — neu
+
+Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Signale | Rentabilität, Nachfrage, Preis/Markt, Lieferant, Risiko, Vertrauen |
+| Entscheidungen | PRIORITY, REVIEW, HOLD, REJECT |
+| Schwellwert | Nettogewinn < €0,50 → REJECT |
+| Regel | Fehlende kritische Daten → REVIEW/HOLD |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v28
+python main.py selection-demo
+python main.py selection-report
+python main.py selection-add --name "5W-30 Motoröl" --category "Automotive" --profit 2.40 --demand 85 --price 80 --market 82 --supplier 90 --risk 15 --trust 92
+```
 
 ## v27 Supplier Matching — neu
 
@@ -464,7 +486,8 @@ intelligence/
 │   ├── matcher.py
 │   ├── price.py
 │   ├── forecast.py
-│   └── supplier_match.py
+│   ├── supplier_match.py
+│   └── selection.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -485,5 +508,6 @@ intelligence/
     ├── Buzzard_Intelligence_v24_Product_Matching.zip
     ├── Buzzard_Intelligence_v25_Price_Intelligence.zip
     ├── Buzzard_Intelligence_v26_Demand_Forecasting.zip
-    └── Buzzard_Intelligence_v27_Supplier_Matching.zip
+    ├── Buzzard_Intelligence_v27_Supplier_Matching.zip
+    └── Buzzard_Intelligence_v28_Product_Selection.zip
 ```

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v23
+# Buzzard Intelligence v1–v24
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -20,6 +20,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v21 | `gateway.py` | AI Agent Gateway (Provider, Agent-Profile, API-Adapter) |
 | v22 | `research.py` | Web Research (Aufgaben, Quellen, Erkenntnisse) |
 | v23 | `connectors.py` | Connector Hub (API/Feed-Verbindungen, Capabilities, Health) |
+| v24 | `matcher.py` | Product Matching (kanonische Produkte, Listings, Score) |
 
 ## Setup
 
@@ -31,6 +32,25 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v24 Product Matching
+
+- Kanonische Produkte und Quell-Listings über EAN, GTIN, MPN, OEM, Marke, Name
+- Score 0–100 mit erklärbaren Matching-Signalen
+- Status: HIGH_CONFIDENCE, REVIEW, LOW_CONFIDENCE
+- Widersprüchliche Identifikationsnummern = starkes Negativsignal
+- Kein Beweis für Originalität oder rechtliche Konformität
+
+```bash
+python main.py init-v24
+python main.py match-demo
+python main.py match-report
+python main.py match-canonical --name "5W-30 Motoröl" --brand "Example" --category "Automotive"
+python main.py match-listing --source "Example Store" --name "Example 5W30" --ean "1234567890123" --mpn "ABC-5W30"
+python main.py match-analyze --listing-id 1 --candidate-id 2
+```
+
+Archive: `archive/Buzzard_Intelligence_v24_Product_Matching.zip`
 
 ## v23 Connector Hub
 

@@ -9,6 +9,7 @@ from .discovery import CategoryDiscovery
 from .gateway import AIGateway
 from .memory import MemoryEngine
 from .market import MarketEngine
+from .matcher import ProductMatcher
 from .multilingual import MultilingualMemory
 from .orchestrator import CouncilOrchestrator
 from .profit import ProfitEngine
@@ -35,6 +36,7 @@ __all__ = [
     "IntelligenceDB",
     "MemoryEngine",
     "MarketEngine",
+    "ProductMatcher",
     "MultilingualMemory",
     "ProfitEngine",
     "Reporter",

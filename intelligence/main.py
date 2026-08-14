@@ -26,12 +26,13 @@ from buzzard_intelligence import (
     AIGateway,
     WebResearch,
     ConnectorHub,
+    ProductMatcher,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v23 (Memory … AI Gateway, Web Research, Connector Hub)"
+        description="Buzzard Intelligence v1–v24 (Memory … Connector Hub, Product Matching)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -55,6 +56,7 @@ def main():
     sub.add_parser("init-v21", help="Create v21 AI agent gateway schema only")
     sub.add_parser("init-v22", help="Create v22 web research schema only")
     sub.add_parser("init-v23", help="Create v23 connector hub schema only")
+    sub.add_parser("init-v24", help="Create v24 product matching schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -334,6 +336,32 @@ def main():
     sub.add_parser("connector-demo", help="v23 add demo connector records")
     sub.add_parser("connector-report", help="v23 connector hub report")
 
+    match_canonical = sub.add_parser("match-canonical", help="v24 add a canonical product")
+    match_canonical.add_argument("--name", required=True)
+    match_canonical.add_argument("--brand", default="")
+    match_canonical.add_argument("--category", default="")
+    match_canonical.add_argument("--variant", default="")
+
+    match_listing = sub.add_parser("match-listing", help="v24 add a source listing")
+    match_listing.add_argument("--canonical-id", type=int)
+    match_listing.add_argument("--source", required=True)
+    match_listing.add_argument("--name", required=True)
+    match_listing.add_argument("--brand", default="")
+    match_listing.add_argument("--category", default="")
+    match_listing.add_argument("--variant", default="")
+    match_listing.add_argument("--ean", default="")
+    match_listing.add_argument("--gtin", default="")
+    match_listing.add_argument("--mpn", default="")
+    match_listing.add_argument("--oem", default="")
+    match_listing.add_argument("--url", default="")
+
+    match_analyze = sub.add_parser("match-analyze", help="v24 analyze listing match score")
+    match_analyze.add_argument("--listing-id", type=int, required=True)
+    match_analyze.add_argument("--candidate-id", type=int, required=True)
+
+    sub.add_parser("match-demo", help="v24 add demo product matching records")
+    sub.add_parser("match-report", help="v24 product matching report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -415,6 +443,7 @@ def main():
     v21 = AIGateway()
     v22 = WebResearch()
     v23 = ConnectorHub()
+    v24 = ProductMatcher()
 
     if args.cmd == "init":
         v1.init()
@@ -436,6 +465,7 @@ def main():
         v21.init()
         v22.init()
         v23.init()
+        v24.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -455,6 +485,7 @@ def main():
         print(f"v21 AI gateway ready at {Path(v21.path).resolve()}")
         print(f"v22 web research ready at {Path(v22.path).resolve()}")
         print(f"v23 connector hub ready at {Path(v23.path).resolve()}")
+        print(f"v24 product matching ready at {Path(v24.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -512,6 +543,9 @@ def main():
     elif args.cmd == "init-v23":
         v23.init()
         print(f"v23 connector hub ready at {Path(v23.path).resolve()}")
+    elif args.cmd == "init-v24":
+        v24.init()
+        print(f"v24 product matching ready at {Path(v24.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -927,6 +961,36 @@ def main():
     elif args.cmd == "connector-report":
         v23.init()
         print(v23.report())
+    elif args.cmd == "match-canonical":
+        v24.init()
+        print(v24.add_canonical(args.name, args.brand, args.category, args.variant))
+    elif args.cmd == "match-listing":
+        v24.init()
+        print(
+            v24.add_listing(
+                args.canonical_id,
+                args.source,
+                args.name,
+                args.brand,
+                args.category,
+                args.variant,
+                args.ean,
+                args.gtin,
+                args.mpn,
+                args.oem,
+                args.url,
+            )
+        )
+    elif args.cmd == "match-analyze":
+        v24.init()
+        print(v24.match(args.listing_id, args.candidate_id))
+    elif args.cmd == "match-demo":
+        v24.init()
+        v24.demo()
+        print("Demo-Produkt-Matching-Daten gespeichert.")
+    elif args.cmd == "match-report":
+        v24.init()
+        print(v24.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

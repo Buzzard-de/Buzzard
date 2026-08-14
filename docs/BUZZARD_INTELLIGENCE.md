@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v23
+# Buzzard Intelligence v1–v24
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -20,8 +20,33 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v21 | `gateway.py` | `buzzard_ai_gateway_v21.db` |
 | v22 | `research.py` | `buzzard_web_research_v22.db` |
 | v23 | `connectors.py` | `buzzard_connector_hub_v23.db` |
+| v24 | `matcher.py` | `buzzard_product_matching_v24.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v24 Product Matching — neu
+
+Kernschicht für Produktidentität über Quellen hinweg — **kein automatisches Match nur nach Name**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Kanonische Produkte | Name, Marke, Kategorie, Variante |
+| Listings | Quell-Listings mit EAN, GTIN, MPN, OEM, URL |
+| Matching | Score 0–100 mit erklärbaren Signalen |
+| Status | HIGH_CONFIDENCE, REVIEW, LOW_CONFIDENCE |
+| Regel | Widersprüchliche IDs = Negativsignal; kein Originalitätsbeweis |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v24
+python main.py match-demo
+python main.py match-report
+python main.py match-canonical --name "5W-30 Motoröl" --brand "Example" --category "Automotive"
+python main.py match-listing --canonical-id 1 --source "Example Store" --name "Example 5W30" --ean "1234567890123" --mpn "ABC-5W30" --url "https://example.com/product"
+python main.py match-analyze --listing-id 1 --candidate-id 2
+```
 
 ## v23 Connector Hub — neu
 
@@ -366,7 +391,8 @@ intelligence/
 │   ├── orchestrator.py
 │   ├── gateway.py
 │   ├── research.py
-│   └── connectors.py
+│   ├── connectors.py
+│   └── matcher.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -383,5 +409,6 @@ intelligence/
     ├── Buzzard_Intelligence_v20_Council_Orchestrator.zip
     ├── Buzzard_Intelligence_v21_AI_Agent_Gateway.zip
     ├── Buzzard_Intelligence_v22_Web_Research.zip
-    └── Buzzard_Intelligence_v23_Connector_Hub.zip
+    ├── Buzzard_Intelligence_v23_Connector_Hub.zip
+    └── Buzzard_Intelligence_v24_Product_Matching.zip
 ```

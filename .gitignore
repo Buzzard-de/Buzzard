@@ -23,6 +23,9 @@ website-*.png
 
 # Python
 __pycache__/
+intelligence/.venv/
+intelligence/*.db
+intelligence/buzzard_intelligence.db
 
 # Archives
 buzzard.zip

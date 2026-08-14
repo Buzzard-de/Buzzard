@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v28
+# Buzzard Intelligence v1–v29
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -25,8 +25,32 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v26 | `forecast.py` | `buzzard_demand_v26.db` |
 | v27 | `supplier_match.py` | `buzzard_supplier_match_v27.db` |
 | v28 | `selection.py` | `buzzard_product_selection_v28.db` |
+| v29 | `verify.py` | `buzzard_official_verification_v29.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
+
+## v29 Official Verification — neu
+
+Verknüpfung von Claims mit offiziellen Quellen — **kein Rechtsberatungsersatz**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Claims | Entität, Behauptung, Kategorie, Status, Verifizierungs-Score |
+| Quellen | OFFICIAL_GOVERNMENT, OFFICIAL_MANUFACTURER, OFFICIAL_PLATFORM, … |
+| Status | UNVERIFIED, PENDING, VERIFIED, CONFLICT, OUTDATED, REJECTED |
+| Regel | VERIFIED nur bei Quellenqualität ≥ 90; Widersprüche → CONFLICT |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v29
+python main.py verify-demo
+python main.py verify-report
+python main.py verify-claim --entity "5W-30 Motoröl" --text "Hersteller listet Produkt."
+python main.py verify-source --claim-id 1 --type OFFICIAL_MANUFACTURER --url "https://example.com" --publisher "Example"
+python main.py verify-set --claim-id 1 --status VERIFIED --note "Primäre Herstellerquelle."
+```
 
 ## v28 Product Selection — neu
 
@@ -487,7 +511,8 @@ intelligence/
 │   ├── price.py
 │   ├── forecast.py
 │   ├── supplier_match.py
-│   └── selection.py
+│   ├── selection.py
+│   └── verify.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -509,5 +534,6 @@ intelligence/
     ├── Buzzard_Intelligence_v25_Price_Intelligence.zip
     ├── Buzzard_Intelligence_v26_Demand_Forecasting.zip
     ├── Buzzard_Intelligence_v27_Supplier_Matching.zip
-    └── Buzzard_Intelligence_v28_Product_Selection.zip
+    ├── Buzzard_Intelligence_v28_Product_Selection.zip
+    └── Buzzard_Intelligence_v29_Official_Verification.zip
 ```

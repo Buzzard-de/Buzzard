@@ -31,12 +31,13 @@ from buzzard_intelligence import (
     DemandForecast,
     SupplierMatcher,
     ProductSelector,
+    OfficialVerifier,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v28 (Memory … Supplier Matching, Product Selection)"
+        description="Buzzard Intelligence v1–v29 (Memory … Product Selection, Official Verification)"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -65,6 +66,7 @@ def main():
     sub.add_parser("init-v26", help="Create v26 demand forecasting schema only")
     sub.add_parser("init-v27", help="Create v27 supplier matching schema only")
     sub.add_parser("init-v28", help="Create v28 product selection schema only")
+    sub.add_parser("init-v29", help="Create v29 official verification schema only")
     sub.add_parser("seed", help="Seed legacy TR main categories (v1 + v2)")
     sub.add_parser("seed-de", help="Seed 41 German Buzzard main categories (v1 + v2)")
     sub.add_parser("seed-tasks", help="Create placeholder scan tasks for legacy TR categories (v4)")
@@ -435,6 +437,27 @@ def main():
     sub.add_parser("selection-demo", help="v28 add demo product selection data")
     sub.add_parser("selection-report", help="v28 product selection report")
 
+    verify_claim = sub.add_parser("verify-claim", help="v29 add a verification claim")
+    verify_claim.add_argument("--entity", required=True)
+    verify_claim.add_argument("--text", required=True)
+    verify_claim.add_argument("--category", default="GENERAL")
+
+    verify_source = sub.add_parser("verify-source", help="v29 add an official source to claim")
+    verify_source.add_argument("--claim-id", type=int, required=True)
+    verify_source.add_argument("--type", required=True)
+    verify_source.add_argument("--url", required=True)
+    verify_source.add_argument("--publisher", required=True)
+    verify_source.add_argument("--published", default="")
+    verify_source.add_argument("--note", default="")
+
+    verify_set = sub.add_parser("verify-set", help="v29 set claim verification status")
+    verify_set.add_argument("--claim-id", type=int, required=True)
+    verify_set.add_argument("--status", required=True)
+    verify_set.add_argument("--note", default="")
+
+    sub.add_parser("verify-demo", help="v29 add demo verification records")
+    sub.add_parser("verify-report", help="v29 official verification report")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -521,6 +544,7 @@ def main():
     v26 = DemandForecast()
     v27 = SupplierMatcher()
     v28 = ProductSelector()
+    v29 = OfficialVerifier()
 
     if args.cmd == "init":
         v1.init()
@@ -547,6 +571,7 @@ def main():
         v26.init()
         v27.init()
         v28.init()
+        v29.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
         print(f"v2 memory engine ready at {Path(v2.path).resolve()}")
         print(f"v4 scheduler ready at {Path(v4.path).resolve()}")
@@ -571,6 +596,7 @@ def main():
         print(f"v26 demand forecasting ready at {Path(v26.path).resolve()}")
         print(f"v27 supplier matching ready at {Path(v27.path).resolve()}")
         print(f"v28 product selection ready at {Path(v28.path).resolve()}")
+        print(f"v29 official verification ready at {Path(v29.path).resolve()}")
     elif args.cmd == "init-v1":
         v1.init()
         print(f"v1 database ready at {Path(v1.path).resolve()}")
@@ -643,6 +669,9 @@ def main():
     elif args.cmd == "init-v28":
         v28.init()
         print(f"v28 product selection ready at {Path(v28.path).resolve()}")
+    elif args.cmd == "init-v29":
+        v29.init()
+        print(f"v29 official verification ready at {Path(v29.path).resolve()}")
     elif args.cmd == "seed":
         v1.init()
         v2.init()
@@ -1171,6 +1200,31 @@ def main():
     elif args.cmd == "selection-report":
         v28.init()
         print(v28.report())
+    elif args.cmd == "verify-claim":
+        v29.init()
+        print(v29.add_claim(args.entity, args.text, args.category))
+    elif args.cmd == "verify-source":
+        v29.init()
+        print(
+            v29.add_source(
+                args.claim_id,
+                args.type,
+                args.url,
+                args.publisher,
+                args.published,
+                args.note,
+            )
+        )
+    elif args.cmd == "verify-set":
+        v29.init()
+        print(v29.verify(args.claim_id, args.status, args.note))
+    elif args.cmd == "verify-demo":
+        v29.init()
+        v29.demo()
+        print("Demo-Verifizierungsdaten gespeichert.")
+    elif args.cmd == "verify-report":
+        v29.init()
+        print(v29.report())
     elif args.cmd == "collect":
         v3.init()
         print(v3.collect(args.url, args.category, args.subcategory, args.country, args.platform))

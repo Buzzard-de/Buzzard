@@ -26,6 +26,7 @@ from .supplier import SupplierIntel
 from .supplier_match import SupplierMatcher
 from .trust import TrustEngine
 from .trends import TrendEngine
+from .verify import OfficialVerifier
 
 __all__ = [
     "Analyzer",
@@ -43,6 +44,7 @@ __all__ = [
     "MarketEngine",
     "ProductMatcher",
     "MultilingualMemory",
+    "OfficialVerifier",
     "PriceIntel",
     "ProductSelector",
     "ProfitEngine",

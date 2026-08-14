@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v28
+# Buzzard Intelligence v1–v29
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -25,6 +25,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v26 | `forecast.py` | Demand Forecasting (Nachfrage-Zeitreihen, Prognose, Trend) |
 | v27 | `supplier_match.py` | Supplier Matching (Lieferanten-Ranking, Recherche-Priorität) |
 | v28 | `selection.py` | Product Selection (PRIORITY/REVIEW/HOLD/REJECT) |
+| v29 | `verify.py` | Official Verification (Claims, Quellen, Status) |
 
 ## Setup
 
@@ -36,6 +37,25 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v29 Official Verification
+
+- Claims mit offiziellen Quellen verknüpfen (Regierung, Hersteller, Plattform, Standard)
+- Quellentypen mit Qualitäts-Score; Primär vs. Sekundär
+- Status: UNVERIFIED, PENDING, VERIFIED, CONFLICT, OUTDATED, REJECTED
+- VERIFIED nur bei ausreichender Quellenstärke (≥ 90)
+- Kein Rechtsberatungsersatz; widersprüchliche Quellen → CONFLICT
+
+```bash
+python main.py init-v29
+python main.py verify-demo
+python main.py verify-report
+python main.py verify-claim --entity "5W-30 Motoröl" --text "Hersteller listet Produkt."
+python main.py verify-source --claim-id 1 --type OFFICIAL_MANUFACTURER --url "https://example.com" --publisher "Example"
+python main.py verify-set --claim-id 1 --status VERIFIED --note "Primäre Herstellerquelle."
+```
+
+Archive: `archive/Buzzard_Intelligence_v29_Official_Verification.zip`
 
 ## v28 Product Selection
 

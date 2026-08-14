@@ -1,6 +1,6 @@
 {
   "name": "Buzzard Marketplace Website Monitoring",
-  "site_count": 44,
+  "site_count": 46,
   "primary_sites": [
     "OTTO",
     "Kaufland Global Marketplace",
@@ -9,5 +9,9 @@
     "Kfz24"
   ],
   "purpose": "legal/public/authorized monitoring",
-  "status": "connector-ready; sources must be enabled individually after access verification"
+  "status": "connector-ready; sources must be enabled individually after access verification",
+  "added_sites": [
+    "Kleinanzeigen",
+    "Kleinanzeigen Pro"
+  ]
 }

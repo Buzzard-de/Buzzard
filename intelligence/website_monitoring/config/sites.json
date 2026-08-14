@@ -702,5 +702,37 @@
       "promotions",
       "visible_signals"
     ]
+  },
+  {
+    "name": "Kleinanzeigen",
+    "type": "classifieds/marketplace",
+    "access": "public pages / authorized access only",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
+  },
+  {
+    "name": "Kleinanzeigen Pro",
+    "type": "classifieds/business",
+    "access": "authorized business access only",
+    "enabled": false,
+    "frequency": "daily",
+    "status": "NOT_CONNECTED",
+    "monitor": [
+      "products",
+      "categories",
+      "prices",
+      "availability",
+      "promotions",
+      "visible_signals"
+    ]
   }
 ]

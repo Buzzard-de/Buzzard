@@ -34,6 +34,12 @@ keine privaten Daten und keine Umgehung technischer Zugriffskontrollen.
 Wenn eine Website keinen zulässigen Datenzugang bietet, wird sie als
 `REVIEW_REQUIRED` markiert und nicht gewaltsam ausgelesen.
 
+## Wichtig
+
+Die Liste ist ein Startkatalog. Nicht jede Website bietet eine offene API.
+Der Connector entscheidet deshalb zwischen:
+API → Feed → autorisiertem Partnerzugang → zulässiger öffentlicher Recherche → REVIEW_REQUIRED.
+
 ## Start
 ```bash
 cd intelligence

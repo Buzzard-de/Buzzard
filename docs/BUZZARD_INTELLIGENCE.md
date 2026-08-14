@@ -235,7 +235,7 @@ python main.py live-fetch --url "https://example.com"
 
 ## Marketplace & Website Monitoring Pack — neu
 
-44-Site-Katalog mit Legal Policies, Scheduler und Observation Schema unter `intelligence/website_monitoring/`.
+46-Site-Katalog mit Legal Policies, Scheduler und Observation Schema unter `intelligence/website_monitoring/`.
 
 | CLI | Zweck |
 |-----|-------|
@@ -258,7 +258,7 @@ Sites starten mit `enabled: false` — erst nach Zugangsverifikation aktivieren.
 
 **Abgrenzung:** `live-*` · `wsmon-*` · `mplace-*` (v58)
 
-Archive: `intelligence/archive/Buzzard_Intelligence_Marketplace_Website_Monitoring.zip`
+Archive: `intelligence/archive/Buzzard_Intelligence_Marketplace_Website_Monitoring.zip` (+ `_UPDATED.zip`)
 
 ## Final Production Completion Package — neu
 
@@ -1301,8 +1301,9 @@ intelligence/
     ├── Buzzard_Intelligence_v120_Production_Readiness_Error_Center.zip
     ├── Buzzard_Intelligence_v121_v200_ALL_REMAINING_COMPLETE.zip
     ├── Buzzard_Intelligence_v121 … v200 (80 einzelne ZIPs)
-    ├── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
     ├── Buzzard_Intelligence_Marketplace_Website_Monitoring.zip
+    ├── Buzzard_Intelligence_Marketplace_Website_Monitoring_UPDATED.zip
+    ├── Buzzard_Intelligence_Live_Data_Connector_Pack.zip
     ├── Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip
     ├── Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip
     ├── Buzzard_Intelligence_FINAL_INTEGRATION_TEST_GO_LIVE.zip

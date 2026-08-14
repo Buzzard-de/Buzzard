@@ -5,6 +5,7 @@ from .competitor import CompetitorIntel
 from .council import Council
 from .database import IntelligenceDB
 from .discovery import CategoryDiscovery
+from .gateway import AIGateway
 from .memory import MemoryEngine
 from .market import MarketEngine
 from .multilingual import MultilingualMemory
@@ -27,6 +28,7 @@ __all__ = [
     "CompetitorIntel",
     "Council",
     "CouncilOrchestrator",
+    "AIGateway",
     "IntelligenceDB",
     "MemoryEngine",
     "MarketEngine",

@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v20
+# Buzzard Intelligence v1–v21
 
 Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vom Node-Shop.
 
@@ -17,6 +17,7 @@ Erweiterbares **Markt-/Produkt-Intelligence-MVP** (Python + SQLite), getrennt vo
 | v18 | `supplier.py` | Lieferantenrecherche und Integrationsbewertung |
 | v19 | `risk.py` | Risiko- & Compliance-Signale (Priorität, Review-Workflow) |
 | v20 | `orchestrator.py` | Council-Orchestrierung (Aufgaben, Experten, Meinungen) |
+| v21 | `gateway.py` | AI Agent Gateway (Provider, Agent-Profile, API-Adapter) |
 
 ## Setup
 
@@ -28,6 +29,24 @@ python main.py voice
 ```
 
 Browser: http://127.0.0.1:8787
+
+## v21 AI Agent Gateway
+
+- Provider-unabhängiges Gateway für echte AI-Modelle
+- API-Schlüssel nur über Umgebungsvariablen — nicht im Code
+- Agent-Profile für Market, Supplier, Risk, Council Manager, …
+- AI-Ausgabe als Meinung/Signal — v20 Council bewertet; keine automatische Handelsentscheidung
+
+```bash
+python main.py init-v21
+python main.py ai-demo
+python main.py ai-providers
+python main.py ai-add-provider --name openai --base-url "https://api.openai.com/v1/chat/completions" --model gpt-4o --api-key-env OPENAI_API_KEY
+```
+
+Echte Provider-Integration erfordert einen Adapter gemäß offizieller API-Dokumentation.
+
+Archive: `archive/Buzzard_Intelligence_v21_AI_Agent_Gateway.zip`
 
 ## v20 Council Orchestrator
 

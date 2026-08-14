@@ -1,4 +1,4 @@
-# Buzzard Intelligence v1–v20
+# Buzzard Intelligence v1–v21
 
 Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom Node-Shop und der Render-API.
 
@@ -17,10 +17,41 @@ Python-MVP für quellenbasierte Markt- und Produktbeobachtungen — getrennt vom
 | v18 | `supplier.py` | `buzzard_supplier_v18.db` |
 | v19 | `risk.py` | `buzzard_risk_v19.db` |
 | v20 | `orchestrator.py` | `buzzard_council_v20.db` |
+| v21 | `gateway.py` | `buzzard_ai_gateway_v21.db` |
 
 Archive: `intelligence/archive/Buzzard_Intelligence_v*.zip`
 
-## v20 Council Orchestrator — neu
+## v21 AI Agent Gateway — neu
+
+Provider-unabhängiges Gateway für echte AI-Modelle — **keine automatischen Handelsentscheidungen**.
+
+| Feature | Beschreibung |
+|---------|--------------|
+| Provider | Konfiguration über Env-Variablen (keine Keys im Code) |
+| Agent-Profile | Rollen für Market, Supplier, Risk, Council Manager, … |
+| Aufrufe | `call_provider()` mit Adapter-Schnittstelle |
+| Regel | AI-Ausgabe als Meinung/S Signal — v20 Council bewertet |
+
+### CLI
+
+```bash
+cd intelligence
+python main.py init-v21
+python main.py ai-demo
+python main.py ai-providers
+python main.py ai-add-provider --name openai --base-url "https://api.openai.com/v1/chat/completions" --model gpt-4o --api-key-env OPENAI_API_KEY
+```
+
+### Umgebungsvariablen (Beispiel)
+
+```bash
+export BUZZARD_AI_API_KEY="..."
+export OPENAI_API_KEY="..."
+```
+
+Echte Provider-Integration erfordert einen Adapter gemäß offizieller API-Dokumentation.
+
+## v20 Council Orchestrator
 
 Erweitert v10 Council um Aufgabenverteilung, Expertenmeinungen und Orchestrierung — **keine automatische Endentscheidung**.
 
@@ -279,7 +310,8 @@ intelligence/
 │   ├── market.py
 │   ├── supplier.py
 │   ├── risk.py
-│   └── orchestrator.py
+│   ├── orchestrator.py
+│   └── gateway.py
 ├── voice/
 │   ├── server.py
 │   └── web/index.html
@@ -293,5 +325,6 @@ intelligence/
     ├── Buzzard_Intelligence_v17_Market_Opportunity.zip
     ├── Buzzard_Intelligence_v18_Supplier_Intelligence.zip
     ├── Buzzard_Intelligence_v19_Risk_Compliance.zip
-    └── Buzzard_Intelligence_v20_Council_Orchestrator.zip
+    ├── Buzzard_Intelligence_v20_Council_Orchestrator.zip
+    └── Buzzard_Intelligence_v21_AI_Agent_Gateway.zip
 ```

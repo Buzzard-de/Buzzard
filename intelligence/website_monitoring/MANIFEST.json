@@ -1,0 +1,13 @@
+{
+  "name": "Buzzard Marketplace Website Monitoring",
+  "site_count": 44,
+  "primary_sites": [
+    "OTTO",
+    "Kaufland Global Marketplace",
+    "Zalando",
+    "CHECK24",
+    "Kfz24"
+  ],
+  "purpose": "legal/public/authorized monitoring",
+  "status": "connector-ready; sources must be enabled individually after access verification"
+}

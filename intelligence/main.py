@@ -224,7 +224,7 @@ def load_live_env():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Buzzard Intelligence v1–v200 + Live Connectors + Production + Master Integration + Final Go-Live"
+        description="Buzzard Intelligence v1–v200 + Live Connectors + Production + Master Integration + Final Go-Live + Website Monitoring"
     )
     sub = parser.add_subparsers(dest="cmd")
 
@@ -1263,6 +1263,16 @@ def main():
     sub.add_parser("fint-status", help="Show final integration/test/go-live status")
     sub.add_parser("fint-gate", help="Show final go-live gate document")
     sub.add_parser("fint-dod", help="Show final definition of done")
+
+    sub.add_parser("wsmon-status", help="Show marketplace/website monitoring catalog status")
+    sub.add_parser("wsmon-sites", help="List all monitored sites with connection status")
+    sub.add_parser("wsmon-catalog", help="Show website monitoring manifest")
+    sub.add_parser("wsmon-schedule", help="Show website monitoring scheduler jobs")
+    wsmon_fetch = sub.add_parser("wsmon-fetch", help="Fetch an authorized public URL for monitoring")
+    wsmon_fetch.add_argument("--url", required=True)
+    sub.add_parser("wsmon-legal", help="Show website monitoring legal operation rules")
+    sub.add_parser("wsmon-alerts", help="Show website monitoring alert definitions")
+    sub.add_parser("wsmon-test", help="Run website monitoring pytest suite")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4416,6 +4426,42 @@ def main():
         from final_integration.status import read_doc
 
         print(read_doc("FINAL_DEFINITION_OF_DONE.md"))
+    elif args.cmd == "wsmon-status":
+        from website_monitoring.status import monitoring_status
+
+        print(monitoring_status())
+    elif args.cmd == "wsmon-sites":
+        from website_monitoring.status import list_sites_table
+
+        print(list_sites_table())
+    elif args.cmd == "wsmon-catalog":
+        from website_monitoring.status import show_manifest
+
+        print(show_manifest())
+    elif args.cmd == "wsmon-schedule":
+        from website_monitoring.status import show_schedule
+
+        print(show_schedule())
+    elif args.cmd == "wsmon-fetch":
+        from website_monitoring.status import public_fetch
+        import json
+
+        result = public_fetch(args.url)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.cmd == "wsmon-legal":
+        from website_monitoring.status import read_doc
+
+        print(read_doc("LEGAL_OPERATION.md"))
+    elif args.cmd == "wsmon-alerts":
+        from website_monitoring.status import read_doc
+
+        print(read_doc("ALERTS.md"))
+    elif args.cmd == "wsmon-test":
+        from website_monitoring.status import run_tests
+
+        code = run_tests()
+        if code:
+            raise SystemExit(code)
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

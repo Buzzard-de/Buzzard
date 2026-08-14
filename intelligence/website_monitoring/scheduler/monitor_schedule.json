@@ -1,0 +1,39 @@
+{
+  "jobs": [
+    {
+      "name": "critical_price_monitor",
+      "frequency": "hourly",
+      "scope": [
+        "prices",
+        "availability"
+      ]
+    },
+    {
+      "name": "marketplace_category_scan",
+      "frequency": "daily",
+      "scope": [
+        "categories",
+        "products"
+      ]
+    },
+    {
+      "name": "competitor_signal_scan",
+      "frequency": "daily",
+      "scope": [
+        "visible_signals",
+        "promotions"
+      ]
+    },
+    {
+      "name": "deep_market_scan",
+      "frequency": "weekly",
+      "scope": [
+        "products",
+        "categories",
+        "brands",
+        "promotions"
+      ]
+    }
+  ],
+  "rule": "Only run against enabled sources with an authorized access mode."
+}

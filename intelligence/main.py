@@ -817,6 +817,25 @@ def main():
     sub.add_parser("verify-demo", help="v29 add demo verification records")
     sub.add_parser("verify-report", help="v29 official verification report")
 
+    sub.add_parser("dogubey-init", help="DoguBey v29 init only (standalone tek klasor parity)")
+    sub.add_parser("dogubey-demo", help="DoguBey v29 demo records")
+    sub.add_parser("dogubey-report", help="DoguBey v29 verification report")
+    dogubey_claim = sub.add_parser("dogubey-claim", help="DoguBey v29 add claim")
+    dogubey_claim.add_argument("--entity", required=True)
+    dogubey_claim.add_argument("--text", required=True)
+    dogubey_claim.add_argument("--category", default="GENERAL")
+    dogubey_source = sub.add_parser("dogubey-source", help="DoguBey v29 add source to claim")
+    dogubey_source.add_argument("--claim-id", type=int, required=True)
+    dogubey_source.add_argument("--type", required=True)
+    dogubey_source.add_argument("--url", required=True)
+    dogubey_source.add_argument("--publisher", required=True)
+    dogubey_source.add_argument("--published", default="")
+    dogubey_source.add_argument("--note", default="")
+    dogubey_verify = sub.add_parser("dogubey-verify", help="DoguBey v29 set claim status")
+    dogubey_verify.add_argument("--claim-id", type=int, required=True)
+    dogubey_verify.add_argument("--status", required=True)
+    dogubey_verify.add_argument("--note", default="")
+
     aslan_task = sub.add_parser("aslan-task", help="Aslan Bey v1 create coordination task for DoguBey")
     aslan_task.add_argument("--title", required=True)
     aslan_task.add_argument("--objective", required=True)
@@ -3094,6 +3113,34 @@ def main():
     elif args.cmd == "verify-report":
         v29.init()
         print(v29.report())
+    elif args.cmd == "dogubey-init":
+        v29.init()
+        print(f"Doğu Bey v29 bereit unter {Path(v29.path).resolve()}")
+    elif args.cmd == "dogubey-demo":
+        v29.init()
+        v29.demo()
+        print("Demo-Verifizierungsdaten gespeichert.")
+    elif args.cmd == "dogubey-report":
+        v29.init()
+        print(v29.report())
+    elif args.cmd == "dogubey-claim":
+        v29.init()
+        print(v29.add_claim(args.entity, args.text, args.category))
+    elif args.cmd == "dogubey-source":
+        v29.init()
+        print(
+            v29.add_source(
+                args.claim_id,
+                args.type,
+                args.url,
+                args.publisher,
+                args.published,
+                args.note,
+            )
+        )
+    elif args.cmd == "dogubey-verify":
+        v29.init()
+        print(v29.verify(args.claim_id, args.status, args.note))
     elif args.cmd == "aslan-task":
         aslan.init()
         task_id = aslan.create_task(

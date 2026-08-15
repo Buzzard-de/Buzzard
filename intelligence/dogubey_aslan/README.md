@@ -29,4 +29,4 @@ Bestehende v29-Befehle: `verify-claim`, `verify-source`, `verify-set`, `verify-d
 - `claims`, `sources`, `verification_events` unverändert
 - Neu: `aslan_tasks`, `aslan_task_events`, `aslan_reviews`
 
-Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`
+Siehe auch: `dogubey_aslan/README.md`, `dogubey/README.md` (standalone tek klasör)

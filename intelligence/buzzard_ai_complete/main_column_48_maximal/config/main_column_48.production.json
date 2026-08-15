@@ -1,0 +1,16 @@
+{
+  "name": "BUZZARD_MAIN_COLUMN_48_CATEGORY_ENGINE",
+  "version": "48.0.0",
+  "schema": "buzzard.main-column.v1",
+  "main_categories": 48,
+  "ui_assets": {
+    "demo_html": "ui/index.html",
+    "react_component": "ui/BuzzardCategoryMainColumn.jsx"
+  },
+  "rules": {
+    "data_driven_ui": true,
+    "hardcode_categories": false
+  },
+  "live_activation": false,
+  "BUZZARD_SALES_ENABLED": 0
+}

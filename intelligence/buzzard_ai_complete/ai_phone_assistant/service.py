@@ -3,6 +3,7 @@ import uuid
 from pathlib import Path
 
 from buzzard_ai_complete.ai_phone_assistant.memory_facade import PhoneMemoryCrmService
+from buzzard_ai_complete.ai_phone_assistant.telephony_facade import PhoneTelephonyFacade
 from buzzard_ai_complete.ai_phone_assistant.phone.intent import detect_intent, extract_entities
 from buzzard_ai_complete.ai_phone_assistant.phone.language_router import detect_language, is_rtl
 from buzzard_ai_complete.ai_phone_assistant.phone.session import CallSession
@@ -15,6 +16,7 @@ SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
 class AiPhoneAssistantService:
     def __init__(self):
         self.memory_crm = PhoneMemoryCrmService()
+        self.telephony = PhoneTelephonyFacade()
 
     def load_config(self):
         return json.loads((CONFIG_DIR / "phone_assistant.json").read_text(encoding="utf-8"))
@@ -31,6 +33,7 @@ class AiPhoneAssistantService:
             "recording_default": config.get("recording", {}).get("default", "disabled"),
             "human_handoff_enabled": config.get("human_handoff", {}).get("enabled", True),
             "memory_crm": self.memory_crm.health(),
+            "telephony_v3": self.telephony.health(),
         }
 
     def tool_contract(self):
@@ -70,4 +73,5 @@ class AiPhoneAssistantService:
             },
             "guardrails": self.conversation_state().get("guardrails", {}),
             "memory_crm_demo": self.memory_crm.demo_flow(),
+            "telephony_v3_demo": self.telephony.demo_flow(),
         }

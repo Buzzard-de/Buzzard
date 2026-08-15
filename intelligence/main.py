@@ -1577,6 +1577,11 @@ def main():
     complete_phone_memory_context.add_argument("--verification-level", default="none")
     sub.add_parser("complete-phone-memory-docs", help="Show phone memory & CRM documentation")
 
+    sub.add_parser("complete-phone-telephony-health", help="Show phone telephony V3 health")
+    sub.add_parser("complete-phone-telephony-demo", help="Run phone telephony V3 demo (dry-run)")
+    sub.add_parser("complete-phone-telephony-schema", help="Show phone call + production schemas")
+    sub.add_parser("complete-phone-telephony-docs", help="Show phone telephony V3 documentation")
+
     sub.add_parser("complete-platform-health", help="Show complete commerce platform health")
     sub.add_parser("complete-platform-modules", help="List unified platform modules")
     sub.add_parser("complete-platform-demo", help="Run complete commerce platform demo (dry-run)")
@@ -5269,6 +5274,22 @@ def main():
         from buzzard_ai_complete.commands import complete_phone_memory_docs
 
         print(complete_phone_memory_docs())
+    elif args.cmd == "complete-phone-telephony-health":
+        from buzzard_ai_complete.commands import complete_phone_telephony_health
+
+        print(complete_phone_telephony_health())
+    elif args.cmd == "complete-phone-telephony-demo":
+        from buzzard_ai_complete.commands import complete_phone_telephony_demo
+
+        print(complete_phone_telephony_demo())
+    elif args.cmd == "complete-phone-telephony-schema":
+        from buzzard_ai_complete.commands import complete_phone_telephony_schema
+
+        print(complete_phone_telephony_schema())
+    elif args.cmd == "complete-phone-telephony-docs":
+        from buzzard_ai_complete.commands import complete_phone_telephony_docs
+
+        print(complete_phone_telephony_docs())
     elif args.cmd == "complete-platform-health":
         from buzzard_ai_complete.commands import complete_platform_health
 

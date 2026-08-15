@@ -1,0 +1,4 @@
+{"required":["call_id","provider","state"],
+ "states":["ringing","answered","active","handoff","ended","failed"],
+ "security":{"webhook_signature":"required","unverified_private_context":"forbidden"},
+ "audio":{"input":["PCMU","PCMA","PCM16"],"output":["PCMU","PCMA","PCM16"]}}

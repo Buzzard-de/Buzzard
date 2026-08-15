@@ -277,6 +277,17 @@ python3 main.py complete-phone-analyze --text "Haben Sie das auf Lager?"
 python3 main.py complete-phone-memory-demo
 ```
 
+### V3 Telephony FINAL
+
+- **Signed webhooks** — inbound call gateway, media stream contract, human handoff
+- **Safe defaults** — `enabled: false`, recording off until production config
+- **complete-phone-telephony-health** / **complete-phone-telephony-demo** / **complete-phone-telephony-schema** / **complete-phone-telephony-docs**
+- **API** — `/phone/telephony/health`, `/phone/telephony/inbound`, `/phone/telephony/demo`
+
+```bash
+python3 main.py complete-phone-telephony-demo
+```
+
 ## Complete Commerce Platform MAXIMAL FINAL
 
 - **Unified orchestration** — taxonomy → PIM → multilingual → supplier → commerce → checkout → orders → logistics → marketplaces → phone AI

@@ -1,0 +1,13 @@
+{
+  "call_recording_default": false,
+  "raw_audio_retention": "disabled unless explicitly configured",
+  "customer_memory": "purpose_based",
+  "customer_controls": [
+    "access",
+    "correction",
+    "deletion",
+    "opt_out"
+  ],
+  "phone_storage": "hashed in memory DB unless lawful CRM integration requires otherwise",
+  "note": "Retention and legal basis must be configured for each production jurisdiction."
+}

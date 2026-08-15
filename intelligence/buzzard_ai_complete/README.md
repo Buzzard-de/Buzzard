@@ -266,6 +266,17 @@ python3 main.py complete-phone-demo
 python3 main.py complete-phone-analyze --text "Haben Sie das auf Lager?"
 ```
 
+### V2 Memory & CRM
+
+- **Customer memory** — approved facts, call history, identity verification gate
+- **Privacy** — hashed phone storage, no private context without verification
+- **complete-phone-memory-health** / **complete-phone-memory-demo** / **complete-phone-memory-context** / **complete-phone-memory-docs**
+- **API** — `/phone/memory/health`, `/phone/memory/customer`, `/phone/memory/context/{id}`, `/phone/memory/demo`
+
+```bash
+python3 main.py complete-phone-memory-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

@@ -720,6 +720,40 @@ def complete_phone_docs():
     return _read_doc("AI_PHONE_ASSISTANT_MAXIMAL.md")
 
 
+def complete_phone_memory_health():
+    from buzzard_ai_complete.ai_phone_assistant.memory_facade import PhoneMemoryCrmService
+
+    return json.dumps(
+        PhoneMemoryCrmService().health(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_memory_demo():
+    from buzzard_ai_complete.ai_phone_assistant.memory_facade import PhoneMemoryCrmService
+
+    return json.dumps(
+        PhoneMemoryCrmService().demo_flow(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_memory_context(customer_id, verification_level="none"):
+    from buzzard_ai_complete.ai_phone_assistant.memory_facade import PhoneMemoryCrmService
+
+    return json.dumps(
+        PhoneMemoryCrmService().agent_context(customer_id, verification_level),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_memory_docs():
+    return _read_doc("AI_PHONE_ASSISTANT_V2_MEMORY_CRM.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

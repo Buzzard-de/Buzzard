@@ -55,6 +55,8 @@ def complete_status():
         "     complete-import-engine-schema, complete-import-engine-docs",
         "     complete-phone-health, complete-phone-analyze, complete-phone-demo,",
         "     complete-phone-schema, complete-phone-docs",
+        "     complete-phone-memory-health, complete-phone-memory-demo,",
+        "     complete-phone-memory-context, complete-phone-memory-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

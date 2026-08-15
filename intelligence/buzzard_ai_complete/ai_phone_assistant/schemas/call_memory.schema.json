@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "entities": [
+    "customer",
+    "consent",
+    "call",
+    "memory_fact"
+  ],
+  "privacy": [
+    "data_minimization",
+    "purpose_limitation",
+    "retention",
+    "access",
+    "correction",
+    "deletion"
+  ],
+  "memory_levels": [
+    "session",
+    "customer"
+  ],
+  "forbidden": [
+    "passwords",
+    "payment_credentials",
+    "authentication_codes",
+    "unnecessary_sensitive_inference"
+  ],
+  "identity_resolution": [
+    "verified_phone_number",
+    "customer_id",
+    "authenticated_order_reference"
+  ],
+  "unverified_identity_rule": "Do not expose private customer/order information."
+}

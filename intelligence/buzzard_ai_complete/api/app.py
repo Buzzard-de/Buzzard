@@ -50,6 +50,9 @@ from buzzard_ai_complete.agriculture_maximal.api.routes import (
 from buzzard_ai_complete.renewable_energy_maximal.api.routes import (
     router as renewable_energy_router,
 )
+from buzzard_ai_complete.livestock_maximal.api.routes import (
+    router as livestock_router,
+)
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -108,6 +111,8 @@ if FastAPI:
         app.include_router(agriculture_router)
     if renewable_energy_router is not None:
         app.include_router(renewable_energy_router)
+    if livestock_router is not None:
+        app.include_router(livestock_router)
 
     class TaskRequest(BaseModel):
         task_id: str

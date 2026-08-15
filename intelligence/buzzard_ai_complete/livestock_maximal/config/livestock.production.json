@@ -1,0 +1,47 @@
+{
+  "separate_main_category": true,
+  "name": "Hayvancılık",
+  "principle": "animal_need_first",
+  "animal_groups": [
+    "Büyükbaş",
+    "Koyun & Keçi",
+    "Kanatlı",
+    "Domuz",
+    "At & Binicilik",
+    "Arıcılık",
+    "Balıkçılık & Akuakültür"
+  ],
+  "system_groups": [
+    "Barınak",
+    "Yemleme",
+    "Sulama",
+    "Sağım",
+    "Gübre Yönetimi",
+    "Hayvan Taşıma",
+    "Hayvan Sağlığı Ekipmanları",
+    "Makine/Yedek Parça",
+    "Sarf/Bakım",
+    "Akıllı Çiftlik/Otomasyon"
+  ],
+  "compatibility": [
+    "equipment_type",
+    "make",
+    "model",
+    "year",
+    "capacity",
+    "system",
+    "position"
+  ],
+  "data_sources": [
+    "OEM",
+    "licensed equipment catalogs",
+    "supplier API/XML",
+    "Buzzard verified data"
+  ],
+  "rules": {
+    "source_backed_equipment_fitment": true,
+    "conflicting_fitment_human_review": true,
+    "category_gap_detection": true,
+    "price_monitoring_via_category_intelligence": true
+  }
+}

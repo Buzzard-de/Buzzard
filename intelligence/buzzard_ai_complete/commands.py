@@ -1248,6 +1248,41 @@ def complete_renewable_energy_taxonomy():
     return json.dumps(RenewableEnergyService().load_taxonomy(), ensure_ascii=False, indent=2)
 
 
+def complete_livestock_health():
+    from buzzard_ai_complete.livestock_maximal.service import LivestockService
+
+    return json.dumps(LivestockService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_livestock_branches():
+    from buzzard_ai_complete.livestock_maximal.service import LivestockService
+
+    service = LivestockService()
+    branches = service.list_branches()
+    return json.dumps({"branches": branches, "count": len(branches)}, ensure_ascii=False, indent=2)
+
+
+def complete_livestock_demo():
+    from buzzard_ai_complete.livestock_maximal.service import LivestockService
+
+    return json.dumps(LivestockService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_livestock_schema():
+    from buzzard_ai_complete.livestock_maximal.service import LivestockService
+
+    service = LivestockService()
+    return json.dumps(
+        {"taxonomy": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_livestock_docs():
+    return _read_doc("LIVESTOCK_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

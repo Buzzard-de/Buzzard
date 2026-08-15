@@ -443,6 +443,21 @@ python3 main.py complete-renewable-energy-taxonomy
 python3 main.py complete-renewable-energy-demo
 ```
 
+## Livestock MAXIMAL (Hayvancılık)
+
+- **Animal-Need-First** — Tiergruppe → Bedarf/System → Unterkategorie → Produkt → Equipment-Fitment
+- **Tiergruppen** — Büyükbaş, Koyun/Keçi, Kanatlı, Domuz, At, Arıcılık, Akuakultur
+- **Systemgruppen** — Barınak, Yemleme, Sulama, Sağım, Gübre, Transport, Automation
+- **Equipment Fitment** — Quellengestützte Kompatibilität (keine medizinische Diagnose)
+- **complete-livestock-health** / **complete-livestock-branches** / **complete-livestock-demo** / **complete-livestock-schema** / **complete-livestock-docs**
+- **API** — `/livestock/health`, `/livestock/branches`, `/livestock/schema`, `/livestock/demo`
+- **`live_activation: false`** — Fitment nur mit Evidenz, Konflikte → Human Review
+
+```bash
+python3 main.py complete-livestock-branches
+python3 main.py complete-livestock-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

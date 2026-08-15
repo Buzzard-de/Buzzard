@@ -17,24 +17,6 @@ CREATE TABLE IF NOT EXISTS api_keys(id INTEGER PRIMARY KEY, name TEXT UNIQUE NOT
 '''
 def connect():
     c=sqlite3.connect(DB_PATH); c.row_factory=sqlite3.Row; c.execute('PRAGMA foreign_keys=ON'); return c
-def _legacy_schema(conn):
-    try:
-        info = conn.execute("PRAGMA table_info(agents)").fetchall()
-    except sqlite3.Error:
-        return False
-    if not info:
-        return False
-    columns = {row[1]: row[2] for row in info}
-    return columns.get("id") == "TEXT" or "namespace" not in {
-        row[1] for row in conn.execute("PRAGMA table_info(memory)").fetchall()
-    }
-
-
 def init_db():
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if DB_PATH.exists():
-        with connect() as c:
-            if _legacy_schema(c):
-                DB_PATH.unlink()
-    with connect() as c:
-        c.executescript(SCHEMA)
+    DB_PATH.parent.mkdir(parents=True,exist_ok=True)
+    with connect() as c: c.executescript(SCHEMA)

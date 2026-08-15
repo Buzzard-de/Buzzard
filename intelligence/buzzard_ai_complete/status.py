@@ -7,27 +7,27 @@ PACK_DIR = Path(__file__).resolve().parent
 
 def complete_status():
     scope = PACK_DIR / "docs" / "FINAL_SCOPE.md"
+    ethics = PACK_DIR / "docs" / "RESEARCH_ETHICS.md"
+    checklist = PACK_DIR / "docs" / "PRODUCTION_CHECKLIST.md"
     arch = PACK_DIR / "docs" / "ARCHITECTURE.md"
-    gaps = PACK_DIR / "docs" / "PRODUCTION_GAPS.md"
     lines = [
-        "=== BUZZARD AI COMPLETE FINAL — STATUS ===",
+        "=== BUZZARD AI COMPLETE vNext — STATUS ===",
         "",
         f"Platform: {APP_NAME} v{APP_VERSION}",
         f"Database: {DB_PATH}",
         "",
-        "Final consolidated workspace:",
-        "- Doğu Bey — research_url, research_question, memory, claims",
-        "- Aslan Bey — orchestration, decompose, dispatch, execute, dashboard",
-        "- Esat Bey — inspect security gate, scan_text, audit",
-        "- BuzzardOrchestrator — Esat gate + Aslan execute chain",
-        "- VerificationEngine, KnowledgeStore, ResearchEngine + providers",
+        "vNext Erweiterungen:",
+        "- BuzzardPolicy (defensive action gate)",
+        "- RateLimiter, SecretProvider, Metrics",
+        "- LLM/Search/Notification integration adapters",
+        "- Task scheduler, async runner, model contracts",
+        "- Docker compose + production checklist",
         "",
-        "CLI: complete-init, complete-agents, complete-task, complete-dispatch,",
-        "     complete-orchestrate, complete-dashboard, complete-report,",
-        "     complete-health, complete-ai-status, complete-scan, complete-test",
+        "CLI: complete-init, complete-orchestrate, complete-policy, complete-metrics,",
+        "     complete-health, complete-scan, complete-test, complete-status",
         "",
         "Abgrenzung:",
-        "- COMPLETE FINAL → complete-* + buzzard_complete.db",
+        "- COMPLETE vNext → complete-* + buzzard_complete.db",
         "- GESAMT v2 → gesamt-* + buzzard.db",
         "- v29/v1 → verify-*, dogubey-*, aslan-*",
         "",
@@ -35,9 +35,12 @@ def complete_status():
     if scope.exists():
         lines.append(scope.read_text(encoding="utf-8"))
         lines.append("")
+    if ethics.exists():
+        lines.append(ethics.read_text(encoding="utf-8"))
+        lines.append("")
+    if checklist.exists():
+        lines.append(checklist.read_text(encoding="utf-8"))
+        lines.append("")
     if arch.exists():
         lines.append(arch.read_text(encoding="utf-8"))
-        lines.append("")
-    if gaps.exists():
-        lines.append(gaps.read_text(encoding="utf-8"))
     return "\n".join(lines)

@@ -462,6 +462,22 @@ def complete_analytics_docs():
     return _read_doc("ANALYTICS_BI_MAXIMAL.md")
 
 
+def complete_production_demo():
+    from buzzard_ai_complete.production.service import ProductionMaxService
+
+    return json.dumps(ProductionMaxService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_production_readiness():
+    from buzzard_ai_complete.production.service import ProductionMaxService
+
+    return json.dumps(ProductionMaxService().readiness(), ensure_ascii=False, indent=2)
+
+
+def complete_production_docs():
+    return _read_doc("PRODUCTION_MAX_UPGRADE.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

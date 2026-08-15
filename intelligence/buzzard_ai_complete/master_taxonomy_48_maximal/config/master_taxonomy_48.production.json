@@ -1,0 +1,19 @@
+{
+  "name": "BUZZARD_MASTER_TAXONOMY_48_MAXIMAL",
+  "version": "48.0.0",
+  "schema": "buzzard.master-taxonomy.v2",
+  "main_categories": 48,
+  "levels": [
+    "Hauptkategorie",
+    "Unterkategorie",
+    "Unter-Unterkategorie",
+    "Produkt"
+  ],
+  "rules": {
+    "fitment_requires_evidence": true,
+    "category_gap_detection": true,
+    "human_review_on_conflict": true
+  },
+  "live_activation": false,
+  "BUZZARD_SALES_ENABLED": 0
+}

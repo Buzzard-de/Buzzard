@@ -328,6 +328,21 @@ python3 main.py complete-launch-sequence-demo
 python3 main.py complete-launch-sequence-stages
 ```
 
+## AI Council 18 UNIFIED MAXIMAL
+
+- **18 Spezialisten** — Chief Strategy, Market, Demand, Competition, Profit, Supply, Forecast, TikTok, YouTube, Marketplace, Compliance, Logistics, Customer, Returns, Manufacturer, Season, Quality, Country
+- **Shared Memory & Event Bus** — Findings fließen zwischen Agenten
+- **Evidence & Guardrails** — keine erfundenen Fakten; Human-Approval-Gates
+- **Doğu Bey / Esat Bey** — bestehende Spezialisten per Contract anbindbar
+- **complete-ai-council-18-health** / **complete-ai-council-18-agents** / **complete-ai-council-18-demo** / **complete-ai-council-18-schema** / **complete-ai-council-18-docs**
+- **API** — `/council-18/health`, `/council-18/agents`, `/council-18/case`, `/council-18/schema`, `/council-18/demo`
+- **`live_activation: false`**
+
+```bash
+python3 main.py complete-ai-council-18-demo
+python3 main.py complete-ai-council-18-agents
+```
+
 ## Agenten
 
 | Agent | Rolle |

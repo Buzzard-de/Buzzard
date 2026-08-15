@@ -1185,6 +1185,27 @@ python3 main.py complete-launch-sequence-demo
 
 Archive: `intelligence/archive/BUZZARD_LAUNCH_SEQUENCE_MAXIMAL_ONE_PACKAGE.zip`
 
+## AI Council 18 UNIFIED MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-ai-council-18-health` | Council health (18 agents, shared memory) |
+| `complete-ai-council-18-agents` | Liste aller 18 Spezialisten |
+| `complete-ai-council-18-demo` | Vollständiger Council-Case + Inter-Agent-Kontext |
+| `complete-ai-council-18-schema` | Finding-Schema + Council-Konfiguration |
+| `complete-ai-council-18-docs` | Architektur + Interaction Matrix |
+
+API: `GET /council-18/health`, `GET /council-18/agents`, `GET /council-18/case`, `GET /council-18/schema`, `GET /council-18/demo`
+
+`live_activation: false` — keine autonomen Markt-/Preis-/Publikationsentscheidungen ohne Human Approval.
+
+```bash
+cd intelligence
+python3 main.py complete-ai-council-18-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_AI_COUNCIL_18_UNIFIED_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

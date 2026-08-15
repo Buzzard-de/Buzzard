@@ -1,0 +1,37 @@
+{
+  "shared_memory": true,
+  "evidence_required": true,
+  "inter_agent_context": true,
+  "event_bus": true,
+  "human_approval": {
+    "major_strategy": true,
+    "price_changes": true,
+    "supplier_switch": true,
+    "legal_or_compliance": true,
+    "marketplace_publication": true
+  },
+  "agents": [
+    "chief_strategy_ai",
+    "market_intelligence_ai",
+    "demand_analyst_ai",
+    "competition_ai",
+    "profit_ai",
+    "supply_ai",
+    "forecast_ai",
+    "tiktok_intelligence_ai",
+    "youtube_intelligence_ai",
+    "marketplace_intelligence_ai",
+    "compliance_risk_ai",
+    "logistics_ai",
+    "customer_voice_ai",
+    "returns_ai",
+    "manufacturer_product_ai",
+    "season_ai",
+    "product_quality_ai",
+    "country_opportunity_ai"
+  ],
+  "existing_specialists": [
+    "dogu_bey_intelligence",
+    "esat_bey_defense"
+  ]
+}

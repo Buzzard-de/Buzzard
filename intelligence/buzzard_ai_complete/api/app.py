@@ -33,6 +33,7 @@ from buzzard_ai_complete.production_integration_maximal.api.routes import (
     router as production_router,
 )
 from buzzard_ai_complete.launch_sequence_maximal.api.routes import router as launch_router
+from buzzard_ai_complete.ai_council_18_unified.api.routes import router as council_18_router
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -77,6 +78,8 @@ if FastAPI:
         app.include_router(production_router)
     if launch_router is not None:
         app.include_router(launch_router)
+    if council_18_router is not None:
+        app.include_router(council_18_router)
 
     class TaskRequest(BaseModel):
         task_id: str

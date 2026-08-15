@@ -1,0 +1,81 @@
+{
+  "tools": [
+    {
+      "name": "product_search",
+      "purpose": "Search canonical PIM product data",
+      "input": [
+        "query",
+        "language",
+        "category_id",
+        "brand",
+        "mpn",
+        "gtin"
+      ],
+      "output": [
+        "product_id",
+        "title",
+        "category_id",
+        "availability"
+      ]
+    },
+    {
+      "name": "inventory_price_lookup",
+      "purpose": "Read live commerce/ERP availability and price",
+      "input": [
+        "product_id",
+        "quantity",
+        "destination_country"
+      ],
+      "output": [
+        "stock",
+        "price",
+        "currency",
+        "lead_time"
+      ]
+    },
+    {
+      "name": "compatibility_lookup",
+      "purpose": "Resolve vehicle/machine/product compatibility",
+      "input": [
+        "product_id",
+        "vehicle_or_machine",
+        "model",
+        "year",
+        "engine_code",
+        "oem"
+      ],
+      "output": [
+        "compatible",
+        "confidence",
+        "evidence"
+      ]
+    },
+    {
+      "name": "create_lead",
+      "purpose": "Create a customer inquiry when purchase cannot be completed",
+      "input": [
+        "customer",
+        "products",
+        "language",
+        "notes"
+      ],
+      "output": [
+        "lead_id",
+        "status"
+      ]
+    },
+    {
+      "name": "human_handoff",
+      "purpose": "Transfer conversation to staff",
+      "input": [
+        "reason",
+        "summary",
+        "language"
+      ],
+      "output": [
+        "handoff_id",
+        "status"
+      ]
+    }
+  ]
+}

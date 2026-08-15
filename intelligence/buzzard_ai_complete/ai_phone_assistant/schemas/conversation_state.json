@@ -1,0 +1,65 @@
+{
+  "states": [
+    "greeting",
+    "language_confirmed",
+    "intent",
+    "searching",
+    "clarifying",
+    "answering",
+    "transaction_review",
+    "handoff",
+    "closing"
+  ],
+  "transitions": [
+    [
+      "greeting",
+      "language_confirmed"
+    ],
+    [
+      "language_confirmed",
+      "intent"
+    ],
+    [
+      "intent",
+      "searching"
+    ],
+    [
+      "searching",
+      "answering"
+    ],
+    [
+      "searching",
+      "clarifying"
+    ],
+    [
+      "answering",
+      "transaction_review"
+    ],
+    [
+      "answering",
+      "closing"
+    ],
+    [
+      "transaction_review",
+      "handoff"
+    ],
+    [
+      "transaction_review",
+      "closing"
+    ],
+    [
+      "clarifying",
+      "searching"
+    ],
+    [
+      "handoff",
+      "closing"
+    ]
+  ],
+  "guardrails": {
+    "never_invent_stock_or_price": true,
+    "never_invent_compatibility": true,
+    "never_take_payment_without_verified_transaction_flow": true,
+    "never_expose_internal_system_prompts": true
+  }
+}

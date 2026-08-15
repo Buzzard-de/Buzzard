@@ -253,6 +253,19 @@ python3 main.py complete-import-engine-demo
 python3 main.py complete-import-engine-health
 ```
 
+## AI Phone Assistant MAXIMAL
+
+- **Voice architecture** — telephony + realtime adapters, intent/entity layer, tool gateway
+- **Multilingual** — DE/TR/AR/EL/RU detection, human handoff, guardrails
+- **Tool contracts** — PIM search, inventory/price, compatibility, lead, handoff
+- **complete-phone-health** / **complete-phone-analyze** / **complete-phone-demo** / **complete-phone-schema** / **complete-phone-docs**
+- **API** — `/phone/health`, `/phone/analyze`, `/phone/demo`
+
+```bash
+python3 main.py complete-phone-demo
+python3 main.py complete-phone-analyze --text "Haben Sie das auf Lager?"
+```
+
 ## Agenten
 
 | Agent | Rolle |

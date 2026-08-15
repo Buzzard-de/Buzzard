@@ -1249,6 +1249,27 @@ python3 main.py complete-category-intelligence-43-demo
 
 Archive: `intelligence/archive/BUZZARD_43_CATEGORY_INTELLIGENCE_MAXIMAL.zip`
 
+## Social Intelligence AI MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-social-intelligence-health` | Social intelligence health (9 platforms) |
+| `complete-social-intelligence-platforms` | Liste aller Platform-Adapter |
+| `complete-social-intelligence-demo` | Cross-Platform Signal Demo |
+| `complete-social-intelligence-schema` | Signal-Schema + Konfiguration |
+| `complete-social-intelligence-docs` | Dokumentation + Connector Matrix |
+
+API: `GET /social-intelligence/health`, `GET /social-intelligence/platforms`, `GET /social-intelligence/schema`, `GET /social-intelligence/demo`
+
+`live_activation: false` — nur public/authorized Quellen; kein Auto-Posting/Ad-Spend.
+
+```bash
+cd intelligence
+python3 main.py complete-social-intelligence-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_SOCIAL_INTELLIGENCE_AI_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

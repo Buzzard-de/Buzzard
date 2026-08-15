@@ -1652,6 +1652,15 @@ def main():
         help="Show 43 category intelligence documentation",
     )
 
+    sub.add_parser("complete-social-intelligence-health", help="Show social intelligence AI health")
+    sub.add_parser("complete-social-intelligence-platforms", help="List social platform adapters")
+    sub.add_parser("complete-social-intelligence-demo", help="Run social intelligence demo")
+    sub.add_parser("complete-social-intelligence-schema", help="Show social signal schema and config")
+    sub.add_parser(
+        "complete-social-intelligence-docs",
+        help="Show social intelligence AI documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5478,6 +5487,26 @@ def main():
         from buzzard_ai_complete.commands import complete_category_intelligence_43_docs
 
         print(complete_category_intelligence_43_docs())
+    elif args.cmd == "complete-social-intelligence-health":
+        from buzzard_ai_complete.commands import complete_social_intelligence_health
+
+        print(complete_social_intelligence_health())
+    elif args.cmd == "complete-social-intelligence-platforms":
+        from buzzard_ai_complete.commands import complete_social_intelligence_platforms
+
+        print(complete_social_intelligence_platforms())
+    elif args.cmd == "complete-social-intelligence-demo":
+        from buzzard_ai_complete.commands import complete_social_intelligence_demo
+
+        print(complete_social_intelligence_demo())
+    elif args.cmd == "complete-social-intelligence-schema":
+        from buzzard_ai_complete.commands import complete_social_intelligence_schema
+
+        print(complete_social_intelligence_schema())
+    elif args.cmd == "complete-social-intelligence-docs":
+        from buzzard_ai_complete.commands import complete_social_intelligence_docs
+
+        print(complete_social_intelligence_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

@@ -1,0 +1,1 @@
+from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService

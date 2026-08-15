@@ -597,9 +597,9 @@ python main.py aslan-task --title "..." --objective "..." --priority HIGH
 python main.py aslan-dashboard
 ```
 
-Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`, `Buzzard_AI_ALLES.zip`, `Buzzard_AI_DoguBey_tek_klasor.zip`, `Buzzard_AI_komplett.zip`
+Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`, `Buzzard_AI_ALLES.zip`, `Buzzard_AI_GESAMT.zip`, `Buzzard_AI_DoguBey_tek_klasor.zip`, `Buzzard_AI_komplett.zip`
 
-Standalone: `dogubey/README.md`, `buzzard_ai_alles/README.md`
+Standalone: `dogubey/README.md`, `buzzard_ai_alles/README.md`, `buzzard_ai_gesamt/README.md` (`gesamt-status`)
 
 ## v28 Product Selection — neu
 
@@ -1229,6 +1229,7 @@ intelligence/
     ├── Buzzard_Intelligence_v29_Official_Verification.zip
     ├── Buzzard_DoguBey_AslanBey_v1.zip
     ├── Buzzard_AI_ALLES.zip
+    ├── Buzzard_AI_GESAMT.zip
     ├── Buzzard_AI_DoguBey_tek_klasor.zip
     ├── Buzzard_AI_komplett.zip
     ├── Buzzard_Intelligence_v30_Autonomous_Mission.zip

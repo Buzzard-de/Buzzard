@@ -1317,6 +1317,8 @@ def main():
     sub.add_parser("wsmon-alerts", help="Show website monitoring alert definitions")
     sub.add_parser("wsmon-test", help="Run website monitoring pytest suite")
 
+    sub.add_parser("gesamt-status", help="Show Buzzard AI GESAMT status and roadmap")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4561,6 +4563,10 @@ def main():
         code = run_tests()
         if code:
             raise SystemExit(code)
+    elif args.cmd == "gesamt-status":
+        from buzzard_ai_gesamt.status import gesamt_status
+
+        print(gesamt_status())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

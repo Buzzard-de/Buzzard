@@ -31,4 +31,4 @@ Bestehende v29-Befehle: `verify-claim`, `verify-source`, `verify-set`, `verify-d
 
 Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_ALLES.zip`
 
-Siehe auch: `dogubey/README.md` (standalone tek klasör), `buzzard_ai_alles/README.md` (Gesamt-Bundle)
+Siehe auch: `dogubey/README.md`, `buzzard_ai_alles/README.md`, `buzzard_ai_gesamt/README.md`

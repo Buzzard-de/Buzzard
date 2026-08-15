@@ -746,6 +746,20 @@ python3 main.py complete-commerce-integration-order
 
 Archive: `intelligence/archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip`
 
+## fehler_behebung_2 — Repair (Pytest-Shadowing)
+
+Behebt verschachtelte `tests/commerce/__init__.py`-Marker, die das echte Commerce-Paket überschatten können.
+
+| Fix | Beschreibung |
+|-----|--------------|
+| Package-Marker entfernt | `tests/commerce/__init__.py`, `integrations/`, `end_to_end/` |
+| `complete-verify` | Import-Sweep überspringt `tests/` und `test_*` |
+| `verify_project.py` | Main-Guard + sicherer Import-Sweep |
+
+Dokumentation: `buzzard_ai_complete/docs/REPAIR_AND_FULL_TEST_REPORT.md`
+
+Archive: `intelligence/archive/fehler_behebung_2.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

@@ -255,9 +255,8 @@ tasks/scheduler.py
 tasks/workflows/.gitkeep
 tests/agents/.gitkeep
 tests/api/.gitkeep
-tests/commerce/__init__.py
-tests/commerce/end_to_end/__init__.py
-tests/commerce/integrations/__init__.py
+tests/commerce/end_to_end/.gitkeep
+tests/commerce/integrations/.gitkeep
 tests/commerce/test_commerce.py
 tests/database/.gitkeep
 tests/fixtures/.gitkeep

@@ -1,0 +1,38 @@
+{
+  "inputs": [
+    "CSV",
+    "XML",
+    "JSON",
+    "REST API"
+  ],
+  "pipeline": [
+    "ingest",
+    "snapshot",
+    "normalize",
+    "deduplicate",
+    "map_category",
+    "map_attributes",
+    "quality_check",
+    "review",
+    "publish"
+  ],
+  "required": [
+    "supplier_id",
+    "supplier_sku",
+    "title",
+    "category_hint"
+  ],
+  "optional": [
+    "gtin",
+    "mpn",
+    "brand",
+    "cost",
+    "currency",
+    "stock",
+    "lead_time",
+    "images",
+    "documents",
+    "attributes",
+    "compatibility"
+  ]
+}

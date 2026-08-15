@@ -214,6 +214,19 @@ python3 main.py complete-taxonomy-unify-status
 python3 main.py complete-taxonomy-unify-resolve --legacy-id cat-01 --system shop
 ```
 
+## PIM Product Master MAXIMAL
+
+- **Product Master** — SQLite schema, supplier import, deduplication, quality gate
+- **Canonical categories** — requires `bz.*` category IDs
+- **Multilingual** — de, en, tr, fr, ar
+- **complete-pim-demo** / **complete-pim-health** / **complete-pim-schema** / **complete-pim-docs**
+- **API** — `/pim/health`, `/pim/schema`, `/pim/import/process`, `/pim/validate`, `/pim/demo`
+
+```bash
+python3 main.py complete-pim-demo
+python3 main.py complete-pim-health
+```
+
 ## Agenten
 
 | Agent | Rolle |

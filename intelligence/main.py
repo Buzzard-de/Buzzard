@@ -1506,6 +1506,9 @@ def main():
     sub.add_parser("complete-one-piece-demo", help="Run One-Piece Control Center demo flow")
     sub.add_parser("complete-one-piece-docs", help="Show One-Piece MAXIMAL architecture docs")
 
+    sub.add_parser("complete-analytics-demo", help="Run Analytics & BI demo flow")
+    sub.add_parser("complete-analytics-docs", help="Show Analytics & BI documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5040,6 +5043,14 @@ def main():
         from buzzard_ai_complete.commands import complete_one_piece_docs
 
         print(complete_one_piece_docs())
+    elif args.cmd == "complete-analytics-demo":
+        from buzzard_ai_complete.commands import complete_analytics_demo
+
+        print(complete_analytics_demo())
+    elif args.cmd == "complete-analytics-docs":
+        from buzzard_ai_complete.commands import complete_analytics_docs
+
+        print(complete_analytics_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

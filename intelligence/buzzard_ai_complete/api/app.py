@@ -15,6 +15,7 @@ from buzzard_ai_complete.crm.api.routes import router as crm_router
 from buzzard_ai_complete.marketing.api.routes import router as marketing_router
 from buzzard_ai_complete.vmax.api.routes import router as vmax_router
 from buzzard_ai_complete.control_center.api.routes import router as control_center_router
+from buzzard_ai_complete.analytics_bi.api.routes import router as analytics_router
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -35,6 +36,8 @@ if FastAPI:
         app.include_router(vmax_router)
     if control_center_router is not None:
         app.include_router(control_center_router)
+    if analytics_router is not None:
+        app.include_router(analytics_router)
 
     class TaskRequest(BaseModel):
         task_id: str

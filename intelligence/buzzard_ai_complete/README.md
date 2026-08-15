@@ -150,6 +150,17 @@ python3 main.py complete-one-piece-demo
 python3 main.py complete-one-piece-e2e --order-id O1
 ```
 
+## MAXIMAL Analytics & Business Intelligence
+
+- **AnalyticsBIEngine** — KPIs, Dashboard, Alerts, Decision Intelligence
+- **Profitability, Cohorts, Forecasting, Anomalies** — BI foundation
+- **complete-analytics-demo** / **complete-analytics-docs**
+- **API** — `GET /analytics/demo`, `GET /analytics/dashboard`
+
+```bash
+python3 main.py complete-analytics-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

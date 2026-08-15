@@ -42,6 +42,7 @@ def complete_status():
         "     complete-marketing-demo, complete-marketing-budget, complete-marketing-docs",
         "     complete-max-demo, complete-max-snapshot, complete-max-docs",
         "     complete-one-piece-demo, complete-one-piece-e2e, complete-one-piece-docs",
+        "     complete-analytics-demo, complete-analytics-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

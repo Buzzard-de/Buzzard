@@ -1,0 +1,5 @@
+{
+  "levels": ["main_category", "sub_category", "sub_sub_category", "product_group", "product", "machine_fitment"],
+  "principle": "construction-need-first",
+  "rules": ["source-backed fitment", "human review for conflicts", "supplier/OEM data provenance"]
+}

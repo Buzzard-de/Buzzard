@@ -56,6 +56,9 @@ from buzzard_ai_complete.livestock_maximal.api.routes import (
 from buzzard_ai_complete.master_taxonomy_clean_maximal.api.routes import (
     router as master_taxonomy_clean_router,
 )
+from buzzard_ai_complete.construction_maximal.api.routes import (
+    router as construction_router,
+)
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -118,6 +121,8 @@ if FastAPI:
         app.include_router(livestock_router)
     if master_taxonomy_clean_router is not None:
         app.include_router(master_taxonomy_clean_router)
+    if construction_router is not None:
+        app.include_router(construction_router)
 
     class TaskRequest(BaseModel):
         task_id: str

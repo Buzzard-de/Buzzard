@@ -1313,6 +1313,47 @@ def complete_master_taxonomy_clean_docs():
     return _read_doc("MASTER_TAXONOMY_CLEAN.md")
 
 
+def complete_construction_health():
+    from buzzard_ai_complete.construction_maximal.service import ConstructionService
+
+    return json.dumps(ConstructionService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_construction_branches():
+    from buzzard_ai_complete.construction_maximal.service import ConstructionService
+
+    service = ConstructionService()
+    branches = service.list_branches()
+    return json.dumps({"branches": branches, "count": len(branches)}, ensure_ascii=False, indent=2)
+
+
+def complete_construction_demo():
+    from buzzard_ai_complete.construction_maximal.service import ConstructionService
+
+    return json.dumps(ConstructionService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_construction_schema():
+    from buzzard_ai_complete.construction_maximal.service import ConstructionService
+
+    service = ConstructionService()
+    return json.dumps(
+        {"taxonomy": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_construction_taxonomy():
+    from buzzard_ai_complete.construction_maximal.service import ConstructionService
+
+    return json.dumps(ConstructionService().load_taxonomy(), ensure_ascii=False, indent=2)
+
+
+def complete_construction_docs():
+    return _read_doc("CONSTRUCTION_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

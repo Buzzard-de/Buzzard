@@ -1731,6 +1731,19 @@ def main():
         help="Show master taxonomy clean documentation",
     )
 
+    sub.add_parser("complete-construction-health", help="Show construction taxonomy health")
+    sub.add_parser("complete-construction-branches", help="List construction taxonomy branches")
+    sub.add_parser("complete-construction-demo", help="Run construction taxonomy demo")
+    sub.add_parser("complete-construction-schema", help="Show construction taxonomy schema and config")
+    sub.add_parser(
+        "complete-construction-taxonomy",
+        help="Show canonical construction taxonomy JSON",
+    )
+    sub.add_parser(
+        "complete-construction-docs",
+        help="Show construction taxonomy documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5693,6 +5706,30 @@ def main():
         from buzzard_ai_complete.commands import complete_master_taxonomy_clean_docs
 
         print(complete_master_taxonomy_clean_docs())
+    elif args.cmd == "complete-construction-health":
+        from buzzard_ai_complete.commands import complete_construction_health
+
+        print(complete_construction_health())
+    elif args.cmd == "complete-construction-branches":
+        from buzzard_ai_complete.commands import complete_construction_branches
+
+        print(complete_construction_branches())
+    elif args.cmd == "complete-construction-demo":
+        from buzzard_ai_complete.commands import complete_construction_demo
+
+        print(complete_construction_demo())
+    elif args.cmd == "complete-construction-schema":
+        from buzzard_ai_complete.commands import complete_construction_schema
+
+        print(complete_construction_schema())
+    elif args.cmd == "complete-construction-taxonomy":
+        from buzzard_ai_complete.commands import complete_construction_taxonomy
+
+        print(complete_construction_taxonomy())
+    elif args.cmd == "complete-construction-docs":
+        from buzzard_ai_complete.commands import complete_construction_docs
+
+        print(complete_construction_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

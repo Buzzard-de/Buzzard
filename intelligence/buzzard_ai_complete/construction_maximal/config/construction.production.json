@@ -1,0 +1,50 @@
+{
+  "separate_main_category": true,
+  "name": "İnşaat & İnşaat Makineleri",
+  "display_name": "İnşaat & İnşaat Makineleri",
+  "principle": "construction-need-first",
+  "branches": [
+    "İnşaat Malzemeleri",
+    "Hafriyat & Toprak İşleme",
+    "Beton & Harç",
+    "Yol Yapım",
+    "Vinç & Kaldırma",
+    "Delme & Kırma",
+    "Sıkıştırma",
+    "Elektrikli Aletler",
+    "El Aletleri",
+    "Jeneratör & Kompresör",
+    "İskele & Kalıp",
+    "Şantiye Ekipmanları",
+    "İş Güvenliği",
+    "Yedek Parçalar",
+    "Palet & Yürüyüş",
+    "Ataşmanlar",
+    "Hidrolik",
+    "Elektrik & Elektronik",
+    "Bakım & Sarf",
+    "Ölçüm & Lazer",
+    "Şantiye Geçici Sistemleri",
+    "Yıkım & Geri Dönüşüm"
+  ],
+  "fitment_dimensions": [
+    "machine_type",
+    "make",
+    "model",
+    "year",
+    "system",
+    "position"
+  ],
+  "data_sources": [
+    "OEM",
+    "licensed parts catalogs",
+    "supplier API/XML",
+    "Buzzard verified data"
+  ],
+  "rules": {
+    "fitment_requires_evidence": true,
+    "conflicts_require_human_review": true,
+    "category_gap_detection": true,
+    "price_monitoring_via_category_intelligence": true
+  }
+}

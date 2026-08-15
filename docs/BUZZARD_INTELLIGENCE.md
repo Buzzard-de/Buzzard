@@ -1408,6 +1408,30 @@ python3 main.py complete-master-taxonomy-clean-health
 
 Archive: `intelligence/archive/BUZZARD_MASTER_TAXONOMY_CLEAN.zip`
 
+## Construction MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-construction-health` | Construction taxonomy health |
+| `complete-construction-branches` | 22 Branches + Taxonomie-Knoten |
+| `complete-construction-demo` | Katalog, Fitment, Market Signals, Gap Detection |
+| `complete-construction-schema` | Taxonomy-Schema + Konfiguration |
+| `complete-construction-taxonomy` | Kanonische Taxonomie-JSON |
+| `complete-construction-docs` | Architektur-Dokumentation |
+
+API: `GET /construction/health`, `GET /construction/branches`, `GET /construction/schema`, `GET /construction/taxonomy`, `GET /construction/demo`
+
+Separate Hauptkategorie: **İnşaat & İnşaat Makineleri**. Construction-need-first Architektur mit 22 Branches.
+
+`live_activation: false` — Fitment erfordert Evidenz; Konflikte → Human Review.
+
+```bash
+cd intelligence
+python3 main.py complete-construction-demo
+```
+
+Archive: `intelligence/archive/construction_taxonomy.json`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

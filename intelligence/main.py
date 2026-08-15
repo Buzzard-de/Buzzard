@@ -35,6 +35,7 @@ from buzzard_intelligence import (
     SupplierMatcher,
     ProductSelector,
     OfficialVerifier,
+    AslanSecretary,
     MissionEngine,
     LearningMemory,
     CategoryIntel,
@@ -816,6 +817,29 @@ def main():
     sub.add_parser("verify-demo", help="v29 add demo verification records")
     sub.add_parser("verify-report", help="v29 official verification report")
 
+    aslan_task = sub.add_parser("aslan-task", help="Aslan Bey v1 create coordination task for DoguBey")
+    aslan_task.add_argument("--title", required=True)
+    aslan_task.add_argument("--objective", required=True)
+    aslan_task.add_argument("--priority", default="NORMAL")
+    aslan_task.add_argument("--agent", default="DoguBey")
+    aslan_task.add_argument("--parent-task-id", type=int)
+
+    aslan_status = sub.add_parser("aslan-status", help="Aslan Bey v1 update task status")
+    aslan_status.add_argument("--task-id", type=int, required=True)
+    aslan_status.add_argument("--status", required=True)
+    aslan_status.add_argument("--details", default="")
+
+    aslan_result = sub.add_parser("aslan-result", help="Aslan Bey v1 record task result")
+    aslan_result.add_argument("--task-id", type=int, required=True)
+    aslan_result.add_argument("--summary", required=True)
+
+    aslan_review = sub.add_parser("aslan-review", help="Aslan Bey v1 review DoguBey claim verification")
+    aslan_review.add_argument("--task-id", type=int, required=True)
+    aslan_review.add_argument("--claim-id", type=int, required=True)
+    aslan_review.add_argument("--notes", default="")
+
+    sub.add_parser("aslan-dashboard", help="Aslan Bey v1 secretary control dashboard")
+
     mission_create = sub.add_parser("mission-create", help="v30 create an intelligence mission")
     mission_create.add_argument("--title", required=True)
     mission_create.add_argument("--details", default="")
@@ -1361,6 +1385,7 @@ def main():
     v27 = SupplierMatcher()
     v28 = ProductSelector()
     v29 = OfficialVerifier()
+    aslan = AslanSecretary()
     v30 = MissionEngine()
     v31 = LearningMemory()
     v32 = CategoryIntel()
@@ -1559,6 +1584,7 @@ def main():
         v27.init()
         v28.init()
         v29.init()
+        aslan.init()
         v30.init()
         v31.init()
         v32.init()
@@ -2000,7 +2026,8 @@ def main():
         print(f"v28 product selection ready at {Path(v28.path).resolve()}")
     elif args.cmd == "init-v29":
         v29.init()
-        print(f"v29 official verification ready at {Path(v29.path).resolve()}")
+        aslan.init()
+        print(f"v29 official verification + Aslan Bey v1 ready at {Path(v29.path).resolve()}")
     elif args.cmd == "init-v30":
         v30.init()
         print(f"v30 autonomous mission ready at {Path(v30.path).resolve()}")
@@ -3067,6 +3094,31 @@ def main():
     elif args.cmd == "verify-report":
         v29.init()
         print(v29.report())
+    elif args.cmd == "aslan-task":
+        aslan.init()
+        task_id = aslan.create_task(
+            args.title,
+            args.objective,
+            args.priority,
+            args.agent,
+            args.parent_task_id,
+        )
+        print(f"Aslan Bey Aufgabe #{task_id} erstellt.")
+    elif args.cmd == "aslan-status":
+        aslan.init()
+        aslan.update_status(args.task_id, args.status, args.details)
+        print(f"Aufgabe #{args.task_id} -> {args.status.upper()}")
+    elif args.cmd == "aslan-result":
+        aslan.init()
+        aslan.record_result(args.task_id, args.summary)
+        print(f"Aufgabe #{args.task_id} abgeschlossen und Ergebnis gespeichert.")
+    elif args.cmd == "aslan-review":
+        aslan.init()
+        result = aslan.review_claim(args.task_id, args.claim_id, args.notes)
+        print(result)
+    elif args.cmd == "aslan-dashboard":
+        aslan.init()
+        print(aslan.dashboard())
     elif args.cmd == "mission-create":
         v30.init()
         print(v30.create_mission(args.title, args.details, args.priority))

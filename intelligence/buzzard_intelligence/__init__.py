@@ -198,6 +198,7 @@ from .taxonomy import TaxonomyEngine
 from .trust import TrustEngine
 from .trends import TrendEngine
 from .verify import OfficialVerifier
+from .aslan import AslanSecretary
 
 __all__ = [
     "Analyzer",
@@ -225,6 +226,7 @@ __all__ = [
     "ProductMatcher",
     "MultilingualMemory",
     "OfficialVerifier",
+    "AslanSecretary",
     "PriceIntel",
     "ProductSelector",
     "ProfitEngine",

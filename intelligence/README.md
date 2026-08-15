@@ -508,6 +508,26 @@ python main.py verify-set --claim-id 1 --status VERIFIED --note "Primäre Herste
 
 Archive: `archive/Buzzard_Intelligence_v29_Official_Verification.zip`
 
+## Doğu Bey + Aslan Bey v1
+
+Müsteşar-/Koordinationslayer **Aslan Bey v1** über v29 **Doğu Bey** (Official Verification).
+
+| Rolle | Modul | Aufgabe |
+|-------|-------|---------|
+| Doğu Bey | `verify.py` | Recherche, Quellen, Claim-Verifikation |
+| Aslan Bey | `aslan.py` | Aufgaben, Koordination, Review, Dashboard |
+
+```bash
+python main.py init-v29
+python main.py aslan-task --title "Continental 205/55 R16" --objective "Offizielle Herstellerquellen prüfen" --priority HIGH
+python main.py aslan-dashboard
+python main.py aslan-review --task-id 1 --claim-id 1
+```
+
+`init-v29` initialisiert v29- und Aslan-Tabellen in `buzzard_official_verification_v29.db`.
+
+Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`
+
 ## v28 Product Selection
 
 - Intelligence-Signale zu einem Handels-Prioritätssignal kombinieren

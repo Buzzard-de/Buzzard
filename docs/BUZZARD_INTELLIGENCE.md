@@ -579,6 +579,26 @@ python main.py verify-source --claim-id 1 --type OFFICIAL_MANUFACTURER --url "ht
 python main.py verify-set --claim-id 1 --status VERIFIED --note "Primäre Herstellerquelle."
 ```
 
+## Doğu Bey + Aslan Bey v1 — neu
+
+Müsteşar-Koordination über v29 Official Verification (`aslan.py` + `dogubey_aslan/README.md`).
+
+| CLI | Zweck |
+|-----|-------|
+| `aslan-task` | Aufgabe für Doğu Bey erstellen |
+| `aslan-status` | Aufgabenstatus aktualisieren |
+| `aslan-result` | Ergebnis speichern |
+| `aslan-review` | Claim-Verifikation prüfen |
+| `aslan-dashboard` | Müsteşar-Kontrollpanel |
+
+```bash
+python main.py init-v29
+python main.py aslan-task --title "..." --objective "..." --priority HIGH
+python main.py aslan-dashboard
+```
+
+Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.
@@ -1040,6 +1060,7 @@ intelligence/
 │   ├── supplier_match.py
 │   ├── selection.py
 │   ├── verify.py
+│   ├── aslan.py
 │   ├── mission.py
 │   ├── learning_memory.py
 │   ├── categories.py
@@ -1204,6 +1225,7 @@ intelligence/
     ├── Buzzard_Intelligence_v27_Supplier_Matching.zip
     ├── Buzzard_Intelligence_v28_Product_Selection.zip
     ├── Buzzard_Intelligence_v29_Official_Verification.zip
+    ├── Buzzard_DoguBey_AslanBey_v1.zip
     ├── Buzzard_Intelligence_v30_Autonomous_Mission.zip
     ├── Buzzard_Intelligence_v31_Learning_Memory.zip
     ├── Buzzard_Intelligence_v32_Category_Intelligence.zip

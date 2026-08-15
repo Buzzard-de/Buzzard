@@ -19,7 +19,7 @@ def bootstrap():
 
 def complete_init():
     bootstrap()
-    return "Buzzard AI COMPLETE Final initialized."
+    return "Buzzard AI COMPLETE vNext initialized."
 
 
 def complete_agents():
@@ -88,6 +88,23 @@ def complete_scan(text):
     from buzzard_ai_complete.agents.esat_bey import EsatBey
 
     return json.dumps(EsatBey().scan_text(text), ensure_ascii=False, indent=2)
+
+
+def complete_policy(action):
+    from buzzard_ai_complete.core.policies import BuzzardPolicy
+
+    decision = BuzzardPolicy().decide(action)
+    return json.dumps(
+        {"action": action, "allowed": decision.allowed, "reason": decision.reason},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_metrics():
+    from buzzard_ai_complete.monitoring.metrics import metrics
+
+    return json.dumps(metrics.snapshot(), ensure_ascii=False, indent=2)
 
 
 def complete_orchestrate(task_id, objective, priority="NORMAL"):

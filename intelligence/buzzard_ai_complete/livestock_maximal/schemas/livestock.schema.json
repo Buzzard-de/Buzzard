@@ -1,0 +1,9 @@
+{
+  "levels":["main_category","animal_group","sub_category","sub_sub_category","product_group","product","equipment_fitment"],
+  "principle":"animal_need_first",
+  "rules":[
+    "equipment compatibility must retain source and confidence",
+    "conflicts require human review",
+    "commercial intelligence is separate from medical diagnosis"
+  ]
+}

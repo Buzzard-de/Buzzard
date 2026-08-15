@@ -1365,6 +1365,29 @@ Canonical taxonomy JSON: `renewable_energy_maximal/data/taxonomy.json` (main cat
 
 API: `GET /renewable-energy/taxonomy`
 
+## Livestock MAXIMAL (Hayvancılık)
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-livestock-health` | Livestock taxonomy health |
+| `complete-livestock-branches` | Tiergruppen + Systemgruppen Taxonomie |
+| `complete-livestock-demo` | Katalog, Equipment-Fitment, Opportunity, Gap Detection |
+| `complete-livestock-schema` | Taxonomy-Schema + Konfiguration |
+| `complete-livestock-docs` | Architektur-Dokumentation |
+
+API: `GET /livestock/health`, `GET /livestock/branches`, `GET /livestock/schema`, `GET /livestock/demo`
+
+Separate Hauptkategorie: **Hayvancılık**. Animal-need-first Architektur — keine medizinische Diagnose.
+
+`live_activation: false` — Equipment-Fitment erfordert Evidenz; Konflikte → Human Review.
+
+```bash
+cd intelligence
+python3 main.py complete-livestock-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_LIVESTOCK_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

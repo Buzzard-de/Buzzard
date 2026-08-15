@@ -89,6 +89,8 @@ def complete_status():
         "     complete-renewable-energy-health, complete-renewable-energy-branches,",
         "     complete-renewable-energy-demo, complete-renewable-energy-schema,",
         "     complete-renewable-energy-docs, complete-renewable-energy-taxonomy",
+        "     complete-livestock-health, complete-livestock-branches,",
+        "     complete-livestock-demo, complete-livestock-schema, complete-livestock-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

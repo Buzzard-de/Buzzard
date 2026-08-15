@@ -1711,6 +1711,15 @@ def main():
         help="Show canonical renewable energy taxonomy JSON",
     )
 
+    sub.add_parser("complete-livestock-health", help="Show livestock taxonomy health")
+    sub.add_parser("complete-livestock-branches", help="List livestock taxonomy branches")
+    sub.add_parser("complete-livestock-demo", help="Run livestock taxonomy demo")
+    sub.add_parser("complete-livestock-schema", help="Show livestock taxonomy schema and config")
+    sub.add_parser(
+        "complete-livestock-docs",
+        help="Show livestock taxonomy documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5637,6 +5646,26 @@ def main():
         from buzzard_ai_complete.commands import complete_renewable_energy_taxonomy
 
         print(complete_renewable_energy_taxonomy())
+    elif args.cmd == "complete-livestock-health":
+        from buzzard_ai_complete.commands import complete_livestock_health
+
+        print(complete_livestock_health())
+    elif args.cmd == "complete-livestock-branches":
+        from buzzard_ai_complete.commands import complete_livestock_branches
+
+        print(complete_livestock_branches())
+    elif args.cmd == "complete-livestock-demo":
+        from buzzard_ai_complete.commands import complete_livestock_demo
+
+        print(complete_livestock_demo())
+    elif args.cmd == "complete-livestock-schema":
+        from buzzard_ai_complete.commands import complete_livestock_schema
+
+        print(complete_livestock_schema())
+    elif args.cmd == "complete-livestock-docs":
+        from buzzard_ai_complete.commands import complete_livestock_docs
+
+        print(complete_livestock_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

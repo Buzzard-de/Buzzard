@@ -436,6 +436,22 @@ def complete_max_docs():
     return _read_doc("MAXIMAL_UPGRADE_REPORT.md")
 
 
+def complete_one_piece_demo():
+    from buzzard_ai_complete.control_center.service import OnePieceControlService
+
+    return json.dumps(OnePieceControlService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_one_piece_e2e(order_id):
+    from buzzard_ai_complete.control_center.service import OnePieceControlService
+
+    return json.dumps(OnePieceControlService().e2e_plan(order_id), ensure_ascii=False, indent=2)
+
+
+def complete_one_piece_docs():
+    return _read_doc("ONE_PIECE_MAXIMAL_ARCHITECTURE.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

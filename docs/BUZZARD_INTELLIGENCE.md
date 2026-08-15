@@ -892,6 +892,26 @@ python3 main.py complete-max-snapshot
 
 Archive: `intelligence/archive/Buzzard_AI_MAXIMAL_ALLES_IN_EINEM_ORDNER.zip` (identisch mit `9.zip`)
 
+## Buzzard MAXIMAL One-Piece Control Center — neu
+
+Zentrale Orchestrierungsschicht über alle Engines: Event Bus, Workflows, Access Control, Integration Status, E2E-Plan.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-one-piece-demo` | Demo: Workflow, Events, Integrations, E2E |
+| `complete-one-piece-e2e` | End-to-End Lifecycle-Plan für Order-ID |
+| `complete-one-piece-docs` | Architektur-Dokumentation |
+
+API: `GET /control-center/demo`, `GET /control-center/e2e/{order_id}`
+
+```bash
+cd intelligence
+python3 main.py complete-one-piece-demo
+python3 main.py complete-one-piece-e2e --order-id O1
+```
+
+Archive: `intelligence/archive/BUZZARD_MAXIMAL_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

@@ -138,6 +138,18 @@ python3 main.py complete-max-demo
 python3 main.py complete-max-snapshot
 ```
 
+## MAXIMAL One-Piece Control Center
+
+- **ControlCenter** — Event bus, workflows, access control, integration status
+- **End-to-End Plan** — Customer → Order → … → Audit lifecycle
+- **complete-one-piece-demo** / **complete-one-piece-e2e** / **complete-one-piece-docs**
+- **API** — `GET /control-center/demo`, `GET /control-center/e2e/{order_id}`
+
+```bash
+python3 main.py complete-one-piece-demo
+python3 main.py complete-one-piece-e2e --order-id O1
+```
+
 ## Agenten
 
 | Agent | Rolle |

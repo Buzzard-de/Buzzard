@@ -1470,6 +1470,16 @@ def main():
     sub.add_parser("complete-billing-demo", help="Run Customer Billing & Returns demo flow")
     sub.add_parser("complete-billing-docs", help="Show Customer Billing & Returns Engine v1 docs")
 
+    complete_crm_segment = sub.add_parser(
+        "complete-crm-segment",
+        help="Segment customer via CRM engine",
+    )
+    complete_crm_segment.add_argument("--ltv", type=float, required=True)
+    complete_crm_segment.add_argument("--orders", type=int, required=True)
+    complete_crm_segment.add_argument("--support-tickets", type=int, default=0)
+    sub.add_parser("complete-crm-demo", help="Run CRM & Customer Experience demo flow")
+    sub.add_parser("complete-crm-docs", help="Show CRM & Customer Experience Engine v1 docs")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4948,6 +4958,18 @@ def main():
         from buzzard_ai_complete.commands import complete_billing_docs
 
         print(complete_billing_docs())
+    elif args.cmd == "complete-crm-demo":
+        from buzzard_ai_complete.commands import complete_crm_demo
+
+        print(complete_crm_demo())
+    elif args.cmd == "complete-crm-segment":
+        from buzzard_ai_complete.commands import complete_crm_segment
+
+        print(complete_crm_segment(args.ltv, args.orders, args.support_tickets))
+    elif args.cmd == "complete-crm-docs":
+        from buzzard_ai_complete.commands import complete_crm_docs
+
+        print(complete_crm_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

@@ -386,6 +386,23 @@ def complete_billing_docs():
     return _read_doc("CUSTOMER_BILLING_RETURNS_ENGINE_V1.md")
 
 
+def complete_crm_demo():
+    from buzzard_ai_complete.crm.service import CustomerExperienceService
+
+    return json.dumps(CustomerExperienceService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_crm_segment(lifetime_value, order_count, support_tickets=0):
+    from buzzard_ai_complete.crm.service import CustomerExperienceService
+
+    result = CustomerExperienceService().segment(lifetime_value, order_count, support_tickets)
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+
+def complete_crm_docs():
+    return _read_doc("CRM_CUSTOMER_EXPERIENCE_ENGINE_V1.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

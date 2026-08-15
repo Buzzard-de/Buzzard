@@ -830,6 +830,26 @@ Archive: `intelligence/archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1_ALL
 
 Archive: `intelligence/archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V2.zip`
 
+## Buzzard AI CRM & CUSTOMER EXPERIENCE ENGINE v1 — neu
+
+CRM-Grundlage: Kundensegmentierung, Support-Tickets, Events, Loyalty, Reviews, Abandoned Cart.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-crm-demo` | Demo: Segmentierung, Ticket, Snapshot, CLV |
+| `complete-crm-segment` | Kundensegment aus LTV/Orders/Tickets |
+| `complete-crm-docs` | Engine-Dokumentation |
+
+API: `GET /crm/demo`, `POST /crm/segment`
+
+```bash
+cd intelligence
+python3 main.py complete-crm-demo
+python3 main.py complete-crm-segment --ltv 1200 --orders 6
+```
+
+Archive: `intelligence/archive/Buzzard_AI_CRM_CUSTOMER_EXPERIENCE_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

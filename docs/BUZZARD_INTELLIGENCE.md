@@ -697,6 +697,20 @@ python3 main.py complete-maintain --cleanup
 python3 main.py complete-scheduler --interval 300 --process 1
 ```
 
+## Buzzard AI COMPLETE Commerce f1 — neu
+
+Commerce-Layer für Katalog, Preise, Rentabilität und Produktentscheidungen.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-commerce-demo` | Demo-Produkt + Wettbewerberpreis + Entscheidung |
+| `complete-commerce-evaluate` | SELL/TEST/REJECT für SKU + Verkaufspreis |
+| `complete-commerce-add-product` | Produkt im Katalog anlegen/aktualisieren |
+
+API: `POST /commerce/products`, `POST /commerce/evaluate`
+
+Archive: `intelligence/archive/Buzzard_AI_f1_Commerce.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

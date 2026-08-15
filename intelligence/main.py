@@ -1395,6 +1395,28 @@ def main():
         help="Max tasks to process per cycle (default: 1)",
     )
 
+    sub.add_parser("complete-commerce-demo", help="Run Buzzard Commerce demo evaluation")
+    complete_commerce_eval = sub.add_parser(
+        "complete-commerce-evaluate",
+        help="Evaluate product selling decision via Commerce engine",
+    )
+    complete_commerce_eval.add_argument("--sku", required=True)
+    complete_commerce_eval.add_argument("--price", type=float, required=True)
+    complete_commerce_add = sub.add_parser(
+        "complete-commerce-add-product",
+        help="Add or update a product in the commerce catalog",
+    )
+    complete_commerce_add.add_argument("--sku", required=True)
+    complete_commerce_add.add_argument("--name", required=True)
+    complete_commerce_add.add_argument("--category", required=True)
+    complete_commerce_add.add_argument("--purchase-price", type=float, required=True)
+    complete_commerce_add.add_argument("--shipping-cost", type=float, default=0)
+    complete_commerce_add.add_argument("--marketplace-fee", type=float, default=0)
+    complete_commerce_add.add_argument("--payment-fee", type=float, default=0)
+    complete_commerce_add.add_argument("--tax-rate", type=float, default=0)
+    complete_commerce_add.add_argument("--ad-cost", type=float, default=0)
+    complete_commerce_add.add_argument("--target-margin", type=float, default=0.07)
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4772,6 +4794,31 @@ def main():
 
         print("Starting COMPLETE scheduler (Ctrl+C to stop)...")
         complete_scheduler(interval=args.interval, process_limit=args.process)
+    elif args.cmd == "complete-commerce-demo":
+        from buzzard_ai_complete.commands import complete_commerce_demo
+
+        print(complete_commerce_demo())
+    elif args.cmd == "complete-commerce-evaluate":
+        from buzzard_ai_complete.commands import complete_commerce_evaluate
+
+        print(complete_commerce_evaluate(args.sku, args.price))
+    elif args.cmd == "complete-commerce-add-product":
+        from buzzard_ai_complete.commands import complete_commerce_add_product
+
+        print(
+            complete_commerce_add_product(
+                args.sku,
+                args.name,
+                args.category,
+                args.purchase_price,
+                shipping_cost=args.shipping_cost,
+                marketplace_fee=args.marketplace_fee,
+                payment_fee=args.payment_fee,
+                tax_rate=args.tax_rate,
+                ad_cost=args.ad_cost,
+                target_margin=args.target_margin,
+            )
+        )
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

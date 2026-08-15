@@ -18,6 +18,18 @@ Final **Alles-in-einem-Ordner**-Paket mit Orchestrator, Policy Gate, Metrics und
 - **complete-inventory** — Projekt-Inventar
 - **complete-verify** — pytest + Import-Sweep (fehlerfrei verifiziert)
 
+## f1 Commerce Engine
+
+- **Catalog, Pricing, Profitability** — Produktentscheidungen (SELL / TEST / REJECT)
+- **Suppliers, Competitors, Market** — strukturierte Geschäftsdaten
+- **Orders, Inventory, Logistics** — Bestell- und Lager-Grundlage
+- **API** — `/commerce/products`, `/commerce/evaluate`
+
+```bash
+python3 main.py complete-commerce-demo
+python3 main.py complete-commerce-evaluate --sku SKU-1 --price 79
+```
+
 ## Agenten
 
 | Agent | Rolle |

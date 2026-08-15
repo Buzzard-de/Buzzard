@@ -28,5 +28,18 @@ if APIRouter:
     @router.get("/demo")
     def automotive_taxonomy_demo():
         return service.demo_flow()
+
+    @router.get("/tires/categories")
+    def automotive_taxonomy_tires_categories():
+        categories = service.tires_categories()
+        return {"categories": categories, "count": len(categories)}
+
+    @router.get("/tires/demo")
+    def automotive_taxonomy_tires_demo():
+        return service.tires_demo()
+
+    @router.get("/tires/config")
+    def automotive_taxonomy_tires_config():
+        return service.load_tires_config()
 else:
     router = None

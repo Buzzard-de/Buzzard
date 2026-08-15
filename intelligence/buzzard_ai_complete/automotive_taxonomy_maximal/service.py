@@ -25,6 +25,18 @@ from buzzard_ai_complete.automotive_taxonomy_maximal.automotive_taxonomy.service
 from buzzard_ai_complete.automotive_taxonomy_maximal.automotive_taxonomy.validation.validator import (
     AutomotiveTaxonomyValidator,
 )
+from buzzard_ai_complete.automotive_taxonomy_maximal.automotive_taxonomy.tires.fitment import (
+    TireFitmentEngine,
+)
+from buzzard_ai_complete.automotive_taxonomy_maximal.automotive_taxonomy.tires.models import (
+    TireFitment,
+)
+from buzzard_ai_complete.automotive_taxonomy_maximal.automotive_taxonomy.tires.service import (
+    TireIntelligence,
+)
+from buzzard_ai_complete.automotive_taxonomy_maximal.automotive_taxonomy.tires.taxonomy import (
+    TIRE_TAXONOMY,
+)
 
 CONFIG_DIR = Path(__file__).resolve().parent / "config"
 SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
@@ -38,15 +50,21 @@ class AutomotiveTaxonomyService:
     def load_schema(self):
         return json.loads((SCHEMA_DIR / "automotive_taxonomy.schema.json").read_text(encoding="utf-8"))
 
+    def load_tires_config(self):
+        return json.loads((CONFIG_DIR / "tires.production.json").read_text(encoding="utf-8"))
+
     def health(self):
         config = self.load_config()
         rules = config.get("rules", {})
+        tires_config = self.load_tires_config()
         return {
             "service": "automotive-taxonomy-maximal",
             "status": "maximal_automotive_taxonomy_ready",
             "principle": config.get("principle", "vehicle_need_first"),
             "levels": len(config.get("levels", [])),
             "master_systems": len(MASTER_SYSTEMS),
+            "tires_category": tires_config.get("category", "Lastikler"),
+            "tires_vehicle_types": len(TIRE_TAXONOMY),
             "fitment_requires_evidence": rules.get("fitment_requires_evidence", True),
             "automatic_fitment_publish": rules.get("automatic_fitment_publish", False),
             "live_activation": False,
@@ -63,6 +81,39 @@ class AutomotiveTaxonomyService:
 
     def master_seed(self):
         return [{"id": item[0], "name": item[1]} for item in MASTER_SYSTEMS]
+
+    def tires_categories(self):
+        return TIRE_TAXONOMY
+
+    def tires_demo(self):
+        intelligence = TireIntelligence()
+        fitment = TireFitmentEngine(
+            [
+                TireFitment(
+                    "tire-205-55-16",
+                    "passenger_car",
+                    make="BMW",
+                    model="320d",
+                    year_from=2018,
+                    year_to=2020,
+                    axle="front",
+                    position="front",
+                    evidence_source="verified",
+                    confidence=0.95,
+                )
+            ]
+        )
+        vehicle = {"vehicle_type": "passenger_car", "make": "BMW", "model": "320d", "year": 2019}
+        return {
+            "tires_config": self.load_tires_config(),
+            "vehicle_types": list(TIRE_TAXONOMY.keys()),
+            "passenger_car_tree": TIRE_TAXONOMY["passenger_car"],
+            "size_validation": intelligence.validate_size(205, 55, 16),
+            "search_contract": intelligence.search(
+                vehicle_type="passenger_car", season="summer", width=205, aspect=55, rim=16
+            ),
+            "fitment_matches": [asdict(match) for match in fitment.compatible(vehicle, axle="front")],
+        }
 
     def demo_flow(self):
         taxonomy = self.build_demo_taxonomy()
@@ -86,4 +137,5 @@ class AutomotiveTaxonomyService:
                 {"make": "BMW", "model": "320d", "year": 2019, "engine_code": "B47"},
                 category="fren",
             ),
+            "tires": self.tires_demo(),
         }

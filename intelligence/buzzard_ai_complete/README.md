@@ -399,12 +399,16 @@ python3 main.py complete-social-intelligence-platforms
 - **Fitment-Dimensionen** — Marke, Modell, Generation, Jahr, Motor, Motorcode, etc.
 - **Connector-Contracts** — TecDoc, OEM, Supplier API/XML
 - **complete-automotive-taxonomy-health** / **complete-automotive-taxonomy-seed** / **complete-automotive-taxonomy-demo** / **complete-automotive-taxonomy-schema** / **complete-automotive-taxonomy-docs**
-- **API** — `/automotive-taxonomy/health`, `/automotive-taxonomy/seed`, `/automotive-taxonomy/schema`, `/automotive-taxonomy/demo`
+- **Tires MAXIMAL** — separate `Lastikler` category with 12 vehicle types, size validation, fitment
+- **complete-automotive-taxonomy-tires-categories** / **complete-automotive-taxonomy-tires-demo** / **complete-automotive-taxonomy-tires-schema** / **complete-automotive-taxonomy-tires-docs**
+- **API** — `/automotive-taxonomy/health`, `/automotive-taxonomy/seed`, `/automotive-taxonomy/schema`, `/automotive-taxonomy/demo`, `/automotive-taxonomy/tires/categories`, `/automotive-taxonomy/tires/demo`, `/automotive-taxonomy/tires/config`
 - **`live_activation: false`** — Fitment nur mit Evidenz, kein Auto-Publish
 
 ```bash
 python3 main.py complete-automotive-taxonomy-seed
 python3 main.py complete-automotive-taxonomy-demo
+python3 main.py complete-automotive-taxonomy-tires-categories
+python3 main.py complete-automotive-taxonomy-tires-demo
 ```
 
 ## Agenten

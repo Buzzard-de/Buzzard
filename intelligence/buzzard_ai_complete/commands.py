@@ -1148,6 +1148,30 @@ def complete_automotive_taxonomy_docs():
     return _read_doc("AUTOMOTIVE_TAXONOMY_MAXIMAL.md")
 
 
+def complete_automotive_taxonomy_tires_categories():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    categories = service.tires_categories()
+    return json.dumps({"categories": categories, "count": len(categories)}, ensure_ascii=False, indent=2)
+
+
+def complete_automotive_taxonomy_tires_demo():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    return json.dumps(AutomotiveTaxonomyService().tires_demo(), ensure_ascii=False, indent=2)
+
+
+def complete_automotive_taxonomy_tires_schema():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    return json.dumps(AutomotiveTaxonomyService().load_tires_config(), ensure_ascii=False, indent=2)
+
+
+def complete_automotive_taxonomy_tires_docs():
+    return _read_doc("AUTOMOTIVE_TAXONOMY_TIRES_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

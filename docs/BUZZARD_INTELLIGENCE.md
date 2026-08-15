@@ -1291,6 +1291,26 @@ python3 main.py complete-automotive-taxonomy-demo
 
 Archive: `intelligence/archive/BUZZARD_AUTOMOTIVE_TAXONOMY_MAXIMAL.zip`
 
+## Automotive Taxonomy — Tires MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-automotive-taxonomy-tires-categories` | 12 Fahrzeugtypen + tiefe Reifen-Unterkategorien |
+| `complete-automotive-taxonomy-tires-demo` | Größenvalidierung, Suche, Fitment-Demo |
+| `complete-automotive-taxonomy-tires-schema` | Reifen-Produktionskonfiguration |
+| `complete-automotive-taxonomy-tires-docs` | Reifen-Kategorie-Dokumentation |
+
+API: `GET /automotive-taxonomy/tires/categories`, `GET /automotive-taxonomy/tires/demo`, `GET /automotive-taxonomy/tires/config`
+
+Separate Kategorie: **Otomotiv → Lastikler** (nicht nur Unterprodukt von Rädern). 12 Fahrzeugtypen, 18 vehicle_scope, Größenvalidierung.
+
+```bash
+cd intelligence
+python3 main.py complete-automotive-taxonomy-tires-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_AUTOMOTIVE_TAXONOMY_MAXIMAL_WITH_TIRES.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

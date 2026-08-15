@@ -28,6 +28,22 @@ python3 main.py complete-automotive-taxonomy-docs
 - `GET /automotive-taxonomy/seed`
 - `GET /automotive-taxonomy/schema`
 - `GET /automotive-taxonomy/demo`
+- `GET /automotive-taxonomy/tires/categories`
+- `GET /automotive-taxonomy/tires/demo`
+- `GET /automotive-taxonomy/tires/config`
+
+## Tires MAXIMAL
+
+Separate `Lastikler` category with 12 vehicle types, deep sub-trees, size validation and fitment.
+
+```bash
+python3 main.py complete-automotive-taxonomy-tires-categories
+python3 main.py complete-automotive-taxonomy-tires-demo
+python3 main.py complete-automotive-taxonomy-tires-schema
+python3 main.py complete-automotive-taxonomy-tires-docs
+```
+
+See also: `docs/AUTOMOTIVE_TAXONOMY_TIRES_MAXIMAL.md`
 
 ## Important
 

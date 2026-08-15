@@ -263,6 +263,14 @@ def complete_commerce_inventory():
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
 
+def complete_commerce_production_work():
+    return _read_doc("REMAINING_PRODUCTION_WORK.md")
+
+
+def complete_commerce_integration_order():
+    return _read_doc("INTEGRATION_ORDER.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

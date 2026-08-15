@@ -633,31 +633,30 @@ Optional FastAPI v2: `uvicorn buzzard_ai_gesamt.api.app:app --reload`
 
 Archive: `intelligence/archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`
 
-## Buzzard AI COMPLETE Workspace — neu (ALLES_IN_EINEM_ORDNER)
+## Buzzard AI COMPLETE FINAL — neu (ALLES_IN_EINEM_ORDNER)
 
-Konsolidiertes **Alles-in-einem-Ordner**-Paket mit gemeinsamen Services (Database, Memory, Tasks, Sources, Research).
+Final upgrade des consolidated workspace: Orchestrator, VerificationEngine, KnowledgeStore,
+vollständige Agent-Kette mit Security Gate.
 
 | CLI | Zweck |
 |-----|-------|
-| `complete-init` | Workspace + Agent-Registry initialisieren |
-| `complete-agents` | Agenten anzeigen |
-| `complete-task` | Forschungsaufgabe via Aslan Bey |
-| `complete-tasks` | Aufgabenliste |
-| `complete-health` | Health-Check |
-| `complete-scan` | Esat Bey Text-Scan |
-| `complete-test` | Pytest-Suite |
-| `complete-status` | Status & Architektur |
+| `complete-init` | DB + Agent-Registry |
+| `complete-orchestrate` | Esat gate → Aslan execute chain |
+| `complete-dispatch` | URL-Research via Doğu Bey |
+| `complete-dashboard` | Aslan Kontrollpanel |
+| `complete-report` | Executive Report |
+| `complete-ai-status` | LLM-Provider-Status |
+| `complete-scan` | Esat Text-Scan |
+| `complete-test` | Pytest (4 Tests) |
 
 ```bash
 cd intelligence
 python3 main.py complete-init
-python3 main.py complete-agents
+python3 main.py complete-orchestrate --task-id "T-001" --objective "Research plan"
 python3 main.py complete-test
 ```
 
-DB: `buzzard_complete.db` (getrennt von GESAMT `buzzard.db` und v29)
-
-Archive: `intelligence/archive/Buzzard_AI_COMPLETE_ALLES_IN_EINEM_ORDNER.zip`
+Archive: `intelligence/archive/Buzzard_AI_COMPLETE_FINAL_ALLES_IN_EINEM_ORDNER.zip`
 
 ## v28 Product Selection — neu
 

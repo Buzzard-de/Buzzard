@@ -2,6 +2,9 @@ class ConstructionCatalog:
     def __init__(self, taxonomy):
         self.taxonomy = taxonomy
 
+    def categories(self):
+        return self.taxonomy
+
     def sub_subcategories(self, category_key):
         return self.taxonomy.get(category_key, {}).get("sub_sub", [])
 

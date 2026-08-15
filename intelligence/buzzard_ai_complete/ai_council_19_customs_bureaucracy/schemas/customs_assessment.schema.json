@@ -1,0 +1,6 @@
+{
+  "required":["status","product_id","route","documents","risks","evidence","human_review_required"],
+  "status":["precheck_pass","review_required"],
+  "classification":["HS","CN","TARIC"],
+  "rule":"No customs duty/tax rate is treated as authoritative without current official evidence."
+}

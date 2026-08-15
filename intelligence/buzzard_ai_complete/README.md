@@ -343,6 +343,22 @@ python3 main.py complete-ai-council-18-demo
 python3 main.py complete-ai-council-18-agents
 ```
 
+## AI Council 19 CUSTOMS BUREAUCRACY MAXIMAL
+
+- **19. Council-Mitglied** — Customs & Bureaucracy AI (erweitert Council 18)
+- **Zoll-Gates** — HS/CN/TARIC, Ursprung, Restriktionen, Lizenzen
+- **Dokument-Checkliste** — Invoice, Packing List, Origin Evidence, Customs Declaration
+- **Landed Cost** — nur mit verifizierten Zoll-/Steuersätzen
+- **Risiko-Engine** — Sonderprodukte, fehlende Klassifikation/Ursprung/Evidence
+- **complete-ai-council-19-health** / **complete-ai-council-19-agents** / **complete-ai-council-19-assess** / **complete-ai-council-19-demo** / **complete-ai-council-19-schema** / **complete-ai-council-19-docs**
+- **API** — `/council-19/health`, `/council-19/agents`, `/council-19/assess`, `/council-19/schema`, `/council-19/demo`
+- **`live_activation: false`** — keine bindenden Zoll-/Rechtsauskünfte
+
+```bash
+python3 main.py complete-ai-council-19-assess
+python3 main.py complete-ai-council-19-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

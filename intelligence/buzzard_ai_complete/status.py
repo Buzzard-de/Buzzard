@@ -32,6 +32,7 @@ def complete_status():
         "     complete-health, complete-scan, complete-test, complete-status,",
         "     complete-tree, complete-inventory, complete-verify,",
         "     complete-maintain, complete-scheduler",
+        "     complete-commerce-demo, complete-commerce-evaluate",
         "",
         "Abgrenzung:",
         "- COMPLETE vNext → complete-* + buzzard_complete.db",

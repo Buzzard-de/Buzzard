@@ -166,6 +166,66 @@ def complete_scheduler(interval=300, process_limit=1):
     return "Scheduler stopped."
 
 
+def complete_commerce_demo():
+    bootstrap()
+    from buzzard_ai_complete.commerce.service import CommerceService
+
+    svc = CommerceService()
+    svc.products.upsert(
+        "SKU-DEMO",
+        "Buzzard Demo Product",
+        "Tools",
+        purchase_price=50,
+        shipping_cost=5,
+        marketplace_fee=5,
+        payment_fee=2,
+        tax_rate=0.0,
+        ad_cost=2,
+        target_margin=0.07,
+    )
+    svc.competitors.record_price("SKU-DEMO", "Competitor A", "https://example.com/a", 80)
+    result = svc.evaluate_product("SKU-DEMO", 79)
+    return json.dumps(result, ensure_ascii=False, indent=2, default=str)
+
+
+def complete_commerce_evaluate(sku, selling_price):
+    bootstrap()
+    from buzzard_ai_complete.commerce.service import CommerceService
+
+    result = CommerceService().evaluate_product(sku, selling_price)
+    return json.dumps(result, ensure_ascii=False, indent=2, default=str)
+
+
+def complete_commerce_add_product(
+    sku,
+    name,
+    category,
+    purchase_price,
+    shipping_cost=0,
+    marketplace_fee=0,
+    payment_fee=0,
+    tax_rate=0,
+    ad_cost=0,
+    target_margin=0.07,
+):
+    bootstrap()
+    from buzzard_ai_complete.commerce.service import CommerceService
+
+    pid = CommerceService().products.upsert(
+        sku,
+        name,
+        category,
+        purchase_price=float(purchase_price),
+        shipping_cost=float(shipping_cost),
+        marketplace_fee=float(marketplace_fee),
+        payment_fee=float(payment_fee),
+        tax_rate=float(tax_rate),
+        ad_cost=float(ad_cost),
+        target_margin=float(target_margin),
+    )
+    return json.dumps({"id": pid, "sku": sku}, ensure_ascii=False, indent=2)
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

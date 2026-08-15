@@ -1,6 +1,15 @@
 # Architecture
 
-Management -> Aslan Bey -> Doğu Bey -> Research -> Sources -> Verification -> Shared Memory -> Aslan Bey -> Reports.
-Esat Bey provides defensive security/audit functions across the platform.
+```text
+                    Buzzard AI
+                        |
+                    Aslan Bey
+                  /     |      \
+             Doğu Bey  Memory   Esat Bey
+                |        |         |
+             Research  SQLite   Security
+                \        |         /
+                 ---- Event Bus ----
+```
 
-All agents use shared stable services instead of separate databases.
+The shared SQLite database is the initial coordination boundary. Agents are separate Python modules and communicate through task records, memory and events. This makes later replacement with a message broker or external database possible without changing the agent roles.

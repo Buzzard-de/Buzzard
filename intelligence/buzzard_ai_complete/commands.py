@@ -5,53 +5,104 @@ from pathlib import Path
 
 PACK_DIR = Path(__file__).resolve().parent
 
-_runtime = None
 
+def bootstrap():
+    from buzzard_ai_complete.core.registry import AgentRegistry
+    from buzzard_ai_complete.database.db import init_db
 
-def _get_runtime():
-    global _runtime
-    if _runtime is None:
-        from buzzard_ai_complete.platform import build
-
-        _runtime = build()
-    return _runtime
+    init_db()
+    registry = AgentRegistry()
+    registry.register("dogu_bey", "Uzman İstihbarat ve Araştırma AI")
+    registry.register("aslan_bey", "Müsteşar / AI Operasyon ve İstihbarat Koordinatörü")
+    registry.register("esat_bey", "AI Siber Güvenlik ve Savunma Uzmanı")
 
 
 def complete_init():
-    ctx = _get_runtime()
-    names = [a["name"] for a in ctx["agents"].list()]
-    return f"Buzzard AI COMPLETE initialized: {', '.join(names)}"
+    bootstrap()
+    return "Buzzard AI COMPLETE Final initialized."
 
 
 def complete_agents():
-    ctx = _get_runtime()
+    bootstrap()
+    from buzzard_ai_complete.core.registry import AgentRegistry
+
     lines = []
-    for agent in ctx["agents"].list():
+    for agent in AgentRegistry().all():
         lines.append(f"{agent['name']} | {agent['role']} | {agent['status']}")
     return "\n".join(lines) if lines else "No agents registered."
 
 
 def complete_task(title, description, priority="NORMAL"):
-    ctx = _get_runtime()
-    task_id = ctx["aslan_bey"].delegate_research(title, description, priority)
+    bootstrap()
+    from buzzard_ai_complete.agents.aslan_bey import AslanBey
+
+    task_id = AslanBey().create_research_task(title, description, priority)
     return f"Task created: {task_id}"
 
 
+def complete_dispatch(task_id, url):
+    bootstrap()
+    from buzzard_ai_complete.agents.aslan_bey import AslanBey
+
+    result = AslanBey().dispatch(task_id, url)
+    return json.dumps(result, ensure_ascii=False, indent=2, default=str)
+
+
 def complete_tasks():
-    ctx = _get_runtime()
-    return json.dumps(ctx["tasks"].list(), ensure_ascii=False, indent=2, default=str)
+    bootstrap()
+    from buzzard_ai_complete.tasks.manager import TaskManager
+
+    return json.dumps(TaskManager().list(), ensure_ascii=False, indent=2, default=str)
+
+
+def complete_dashboard():
+    bootstrap()
+    from buzzard_ai_complete.agents.aslan_bey import AslanBey
+
+    return json.dumps(AslanBey().dashboard(), ensure_ascii=False, indent=2, default=str)
+
+
+def complete_report():
+    bootstrap()
+    from buzzard_ai_complete.reports.builder import ReportBuilder
+
+    return ReportBuilder().build_executive()
 
 
 def complete_health():
+    bootstrap()
     from buzzard_ai_complete.monitoring.health import health
 
-    ctx = _get_runtime()
-    return json.dumps(health(ctx["db"]), ensure_ascii=False, indent=2)
+    return json.dumps(health(), ensure_ascii=False, indent=2)
+
+
+def complete_ai_status():
+    bootstrap()
+    from buzzard_ai_complete.ai.provider import AIProvider
+
+    return json.dumps(AIProvider().status(), ensure_ascii=False, indent=2)
 
 
 def complete_scan(text):
-    ctx = _get_runtime()
-    return json.dumps(ctx["esat_bey"].scan_text(text), ensure_ascii=False, indent=2)
+    bootstrap()
+    from buzzard_ai_complete.agents.esat_bey import EsatBey
+
+    return json.dumps(EsatBey().scan_text(text), ensure_ascii=False, indent=2)
+
+
+def complete_orchestrate(task_id, objective, priority="NORMAL"):
+    bootstrap()
+    from buzzard_ai_complete.core.orchestrator import BuzzardOrchestrator
+
+    result = BuzzardOrchestrator().run(task_id, objective, priority)
+    payload = {
+        "task_id": result["task"].task_id,
+        "status": result["task"].status,
+        "subtasks": result["task"].subtasks,
+        "research": result.get("research"),
+        "task_record": result.get("task_record"),
+    }
+    return json.dumps(payload, ensure_ascii=False, indent=2, default=str)
 
 
 def run_tests():

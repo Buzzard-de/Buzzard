@@ -1344,6 +1344,16 @@ def main():
     sub.add_parser("complete-health", help="Show COMPLETE workspace health")
     complete_scan = sub.add_parser("complete-scan", help="Esat Bey defensive text scan")
     complete_scan.add_argument("--text", required=True)
+    complete_dispatch = sub.add_parser("complete-dispatch", help="Dispatch COMPLETE task to DoguBey")
+    complete_dispatch.add_argument("--task-id", type=int, required=True)
+    complete_dispatch.add_argument("--url", required=True)
+    sub.add_parser("complete-dashboard", help="Show COMPLETE Aslan Bey dashboard")
+    sub.add_parser("complete-report", help="Build COMPLETE executive report")
+    sub.add_parser("complete-ai-status", help="Show COMPLETE optional LLM provider status")
+    complete_orchestrate = sub.add_parser("complete-orchestrate", help="Run COMPLETE orchestrator chain")
+    complete_orchestrate.add_argument("--task-id", required=True)
+    complete_orchestrate.add_argument("--objective", required=True)
+    complete_orchestrate.add_argument("--priority", default="NORMAL")
     sub.add_parser("complete-test", help="Run COMPLETE workspace pytest suite")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
@@ -4660,6 +4670,26 @@ def main():
         from buzzard_ai_complete.commands import complete_scan
 
         print(complete_scan(args.text))
+    elif args.cmd == "complete-dispatch":
+        from buzzard_ai_complete.commands import complete_dispatch
+
+        print(complete_dispatch(args.task_id, args.url))
+    elif args.cmd == "complete-dashboard":
+        from buzzard_ai_complete.commands import complete_dashboard
+
+        print(complete_dashboard())
+    elif args.cmd == "complete-report":
+        from buzzard_ai_complete.commands import complete_report
+
+        print(complete_report())
+    elif args.cmd == "complete-ai-status":
+        from buzzard_ai_complete.commands import complete_ai_status
+
+        print(complete_ai_status())
+    elif args.cmd == "complete-orchestrate":
+        from buzzard_ai_complete.commands import complete_orchestrate
+
+        print(complete_orchestrate(args.task_id, args.objective, args.priority))
     elif args.cmd == "complete-test":
         from buzzard_ai_complete.commands import run_tests
 

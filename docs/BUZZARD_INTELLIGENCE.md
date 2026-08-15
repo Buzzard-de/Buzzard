@@ -597,7 +597,7 @@ python main.py aslan-task --title "..." --objective "..." --priority HIGH
 python main.py aslan-dashboard
 ```
 
-Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`, `Buzzard_AI_DoguBey_tek_klasor.zip`
+Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`, `Buzzard_AI_DoguBey_tek_klasor.zip`, `Buzzard_AI_komplett.zip`
 
 Standalone Doğu Bey CLI-Aliase: `dogubey-init`, `dogubey-demo`, `dogubey-report`, `dogubey-claim`, `dogubey-source`, `dogubey-verify` — siehe `intelligence/dogubey/README.md`
 
@@ -1229,6 +1229,7 @@ intelligence/
     ├── Buzzard_Intelligence_v29_Official_Verification.zip
     ├── Buzzard_DoguBey_AslanBey_v1.zip
     ├── Buzzard_AI_DoguBey_tek_klasor.zip
+    ├── Buzzard_AI_komplett.zip
     ├── Buzzard_Intelligence_v30_Autonomous_Mission.zip
     ├── Buzzard_Intelligence_v31_Learning_Memory.zip
     ├── Buzzard_Intelligence_v32_Category_Intelligence.zip

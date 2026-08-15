@@ -950,6 +950,28 @@ python3 main.py complete-production-readiness
 
 Archive: `intelligence/archive/BUZZARD_MAXIMAL_PRODUCTION_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip` (identisch mit `wichtig.zip`)
 
+## Shop Intelligence Commerce Bridge MAXIMAL — neu
+
+Python-Bridge zwischen Production Storefront, Commerce Events und Analytics/Decision Hooks. Verkauf bleibt blockiert bis Catalog, Payment, Shipping, Order Pipeline und Intelligence Bridge READY melden.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-shop-bridge-demo` | Demo: Order Lifecycle + Commerce Events |
+| `complete-shop-bridge-readiness` | Sales Readiness Gate |
+| `complete-shop-bridge-docs` | Bridge-Dokumentation |
+
+API: `GET /shop-bridge/readiness`, `GET /shop-bridge/demo`
+
+Node Shop liest zusätzlich `/shop-bridge/readiness` über `BUZZARD_INTELLIGENCE_API_URL`.
+
+```bash
+cd intelligence
+python3 main.py complete-shop-bridge-demo
+python3 main.py complete-shop-bridge-readiness
+```
+
+Archive: `intelligence/archive/BUZZARD_SHOP_INTELLIGENCE_COMMERCE_BRIDGE_MAXIMAL_ONE_PIECE.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

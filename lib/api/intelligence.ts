@@ -13,6 +13,16 @@ export interface IntelligenceBridgeStatus {
     };
     integrations?: Record<string, { status: string; missing?: string[] }>;
   };
+  shopBridge?: {
+    sales_enabled?: boolean;
+    missing?: string[];
+    catalog?: string;
+    payment?: string;
+    shipping?: string;
+    order_pipeline?: string;
+    intelligence_bridge?: string;
+    error?: string;
+  };
 }
 
 export async function fetchIntelligenceBridgeStatus(): Promise<IntelligenceBridgeStatus | null> {

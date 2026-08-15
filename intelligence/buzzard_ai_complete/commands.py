@@ -478,6 +478,22 @@ def complete_production_docs():
     return _read_doc("PRODUCTION_MAX_UPGRADE.md")
 
 
+def complete_shop_bridge_demo():
+    from buzzard_ai_complete.shop_bridge.service import ShopBridgeService
+
+    return json.dumps(ShopBridgeService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_shop_bridge_readiness():
+    from buzzard_ai_complete.shop_bridge.service import ShopBridgeService
+
+    return json.dumps(ShopBridgeService().readiness(), ensure_ascii=False, indent=2)
+
+
+def complete_shop_bridge_docs():
+    return _read_doc("SHOP_INTELLIGENCE_COMMERCE_BRIDGE_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

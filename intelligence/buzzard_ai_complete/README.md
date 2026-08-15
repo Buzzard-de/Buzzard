@@ -175,6 +175,19 @@ python3 main.py complete-production-demo
 python3 main.py complete-production-readiness
 ```
 
+## Shop Intelligence Commerce Bridge MAXIMAL
+
+- **ShopIntelligenceBridge** — Production catalog/checkout ↔ commerce events ↔ analytics hooks
+- **SalesGate** — blocks sales until catalog, payment, shipping, pipeline and bridge are READY
+- **OrderPipeline** — payment → fulfillment → shipping → delivery lifecycle
+- **complete-shop-bridge-demo** / **complete-shop-bridge-readiness** / **complete-shop-bridge-docs**
+- **API** — `/shop-bridge/readiness`, `/shop-bridge/demo`
+
+```bash
+python3 main.py complete-shop-bridge-demo
+python3 main.py complete-shop-bridge-readiness
+```
+
 ## Agenten
 
 | Agent | Rolle |

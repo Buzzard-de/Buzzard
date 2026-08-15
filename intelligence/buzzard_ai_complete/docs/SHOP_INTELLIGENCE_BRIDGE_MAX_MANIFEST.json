@@ -1,0 +1,13 @@
+{
+  "package": "Buzzard Shop Intelligence Commerce Bridge MAXIMAL",
+  "base": "BUZZARD_MAXIMAL_PRODUCTION_ONE_PIECE",
+  "sales_default": "BLOCKED_UNTIL_PREREQUISITES_READY",
+  "capabilities": [
+    "shop-intelligence bridge",
+    "commerce event store",
+    "sales readiness gate",
+    "order lifecycle",
+    "analytics adapter",
+    "decision hooks"
+  ]
+}

@@ -19,7 +19,7 @@ def bootstrap():
 
 def gesamt_init():
     bootstrap()
-    return "Buzzard AI GESAMT initialized."
+    return "Buzzard AI GESAMT v2 initialized."
 
 
 def gesamt_agents():
@@ -60,6 +60,20 @@ def gesamt_dispatch(task_id, url):
 
     result = AslanBey().dispatch(task_id, url)
     return json.dumps(result, ensure_ascii=False, indent=2, default=str)
+
+
+def gesamt_health():
+    bootstrap()
+    from buzzard_ai_gesamt.monitoring.health import health
+
+    return json.dumps(health(), ensure_ascii=False, indent=2)
+
+
+def gesamt_ai_status():
+    bootstrap()
+    from buzzard_ai_gesamt.ai.provider import AIProvider
+
+    return json.dumps(AIProvider().status(), ensure_ascii=False, indent=2)
 
 
 def run_tests():

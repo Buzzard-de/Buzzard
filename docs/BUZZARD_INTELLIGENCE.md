@@ -601,10 +601,10 @@ Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`, `Buzzard_AI_ALL
 
 Standalone: `dogubey/README.md`, `buzzard_ai_alles/README.md`, `buzzard_ai_gesamt/README.md`
 
-## Buzzard AI GESAMT Platform — neu (ALLES_AUF_EINMAL)
+## Buzzard AI GESAMT Platform v2 — neu (NAECHSTER_GESAMTPAKET)
 
-Unified Agent-Platform mit Doğu Bey, Aslan Bey und Esat Bey auf gemeinsamer SQLite-DB (`buzzard.db`).
-Getrennt von v29 (`buzzard_official_verification_v29.db`) und Aslan v1 (`aslan-*`).
+Upgrade der unified Agent-Platform: versioniertes Memory, Research-Observations/Change Detection,
+Esat Bey Content-Scanning, optionaler LLM-Provider, API-Auth, Health-Monitoring.
 
 | CLI | Zweck |
 |-----|-------|
@@ -614,19 +614,24 @@ Getrennt von v29 (`buzzard_official_verification_v29.db`) und Aslan v1 (`aslan-*
 | `gesamt-dispatch` | Aufgabe an Doğu Bey dispatchen |
 | `gesamt-dashboard` | Aslan Bey Kontrollpanel |
 | `gesamt-report` | Executive Report |
-| `gesamt-test` | Pytest-Suite |
+| `gesamt-health` | Platform Health-Check |
+| `gesamt-ai-status` | Optionaler LLM-Provider-Status |
+| `gesamt-test` | Pytest-Suite (4 Tests) |
 | `gesamt-status` | Status & Roadmap |
 
 ```bash
 cd intelligence
-python main.py gesamt-init
-python main.py gesamt-agents
-python main.py gesamt-task --title "Test" --description "Research" --priority HIGH
-python main.py gesamt-dashboard
-python main.py gesamt-test
+python3 main.py gesamt-init
+python3 main.py gesamt-health
+python3 main.py gesamt-ai-status
+python3 main.py gesamt-test
 ```
 
-Optional FastAPI: `uvicorn buzzard_ai_gesamt.api.app:app --reload`
+Env: siehe `buzzard_ai_gesamt/.env.example` (`BUZZARD_API_TOKEN`, `BUZZARD_LLM_*`)
+
+Optional FastAPI v2: `uvicorn buzzard_ai_gesamt.api.app:app --reload`
+
+Archive: `intelligence/archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`
 
 ## v28 Product Selection — neu
 

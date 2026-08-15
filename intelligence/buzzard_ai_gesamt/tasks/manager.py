@@ -1,6 +1,8 @@
-from buzzard_ai_gesamt.database.db import connect
-from buzzard_ai_gesamt.core.time import now
+import json
+
 from buzzard_ai_gesamt.core.events import EventBus
+from buzzard_ai_gesamt.core.time import now
+from buzzard_ai_gesamt.database.db import connect
 
 PRIORITIES={'CRITICAL':4,'HIGH':3,'NORMAL':2,'LOW':1}
 STATUSES={'PENDING','IN_PROGRESS','COMPLETED','FAILED','ESCALATED','CANCELLED'}
@@ -19,6 +21,8 @@ class TaskManager:
         return task_id
     def update(self,task_id,status=None,assigned_to=None,result=None):
         if status and status not in STATUSES: raise ValueError('invalid status')
+        if result is not None and not isinstance(result, str):
+            result = json.dumps(result, ensure_ascii=False)
         with connect() as c:
             r=c.execute('SELECT * FROM tasks WHERE id=?',(task_id,)).fetchone()
             if not r: raise KeyError('task not found')

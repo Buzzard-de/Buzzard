@@ -24,6 +24,9 @@ from buzzard_ai_complete.pim_product_master.api.routes import router as pim_rout
 from buzzard_ai_complete.multilingual_product_intelligence.api.routes import (
     router as multilingual_router,
 )
+from buzzard_ai_complete.supplier_import_enrichment_engine.api.routes import (
+    router as import_engine_router,
+)
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -58,6 +61,8 @@ if FastAPI:
         app.include_router(pim_router)
     if multilingual_router is not None:
         app.include_router(multilingual_router)
+    if import_engine_router is not None:
+        app.include_router(import_engine_router)
 
     class TaskRequest(BaseModel):
         task_id: str

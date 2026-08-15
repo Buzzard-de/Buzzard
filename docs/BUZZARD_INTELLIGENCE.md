@@ -1053,6 +1053,24 @@ python3 main.py complete-multilingual-demo
 
 Archive: `intelligence/archive/BUZZARD_MULTILINGUAL_PRODUCT_INTELLIGENCE_MAXIMAL.zip`
 
+## Supplier Import & Enrichment Engine MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-import-engine-health` | Import-Engine Health |
+| `complete-import-engine-demo` | Demo-Feed (dry-run) |
+| `complete-import-engine-schema` | Decision + normalized record schemas |
+| `complete-import-engine-docs` | Dokumentation |
+
+API: `GET /import-engine/health`, `POST /import-engine/preview`, `GET /import-engine/demo`
+
+```bash
+cd intelligence
+python3 main.py complete-import-engine-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_SUPPLIER_IMPORT_ENRICHMENT_ENGINE_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

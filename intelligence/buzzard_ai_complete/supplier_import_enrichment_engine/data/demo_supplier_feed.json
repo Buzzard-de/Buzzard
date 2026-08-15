@@ -1,0 +1,29 @@
+[
+  {
+    "supplier_sku": "DEMO-001",
+    "ean": "4000000000017",
+    "brand": "DemoBrand",
+    "mpn": "DB-001",
+    "title": "Bremsbelag Demo",
+    "category": "Bremsbeläge",
+    "price": "19,90",
+    "currency": "EUR",
+    "stock": "24",
+    "attributes": {
+      "Farbe": "Schwarz",
+      "Material": "Steel"
+    }
+  },
+  {
+    "supplier_sku": "DEMO-002",
+    "brand": "DemoBrand",
+    "mpn": "DB-002",
+    "title": "Motoröl 5W-30",
+    "category": "Motoröle",
+    "price": "34.90",
+    "stock": "8",
+    "attributes": {
+      "Viskosität": "5W-30"
+    }
+  }
+]

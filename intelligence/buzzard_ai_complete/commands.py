@@ -628,6 +628,50 @@ def complete_multilingual_docs():
     return _read_doc("MULTILINGUAL_PRODUCT_INTELLIGENCE_MAXIMAL.md")
 
 
+def complete_import_engine_health():
+    from buzzard_ai_complete.supplier_import_enrichment_engine.service import (
+        SupplierImportEnrichmentService,
+    )
+
+    return json.dumps(
+        SupplierImportEnrichmentService().health(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_import_engine_demo():
+    from buzzard_ai_complete.supplier_import_enrichment_engine.service import (
+        SupplierImportEnrichmentService,
+    )
+
+    return json.dumps(
+        SupplierImportEnrichmentService().demo_flow(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_import_engine_schema():
+    from buzzard_ai_complete.supplier_import_enrichment_engine.service import (
+        SupplierImportEnrichmentService,
+    )
+
+    service = SupplierImportEnrichmentService()
+    return json.dumps(
+        {
+            "decision": service.decision_schema(),
+            "normalized_record": service.normalized_record_schema(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_import_engine_docs():
+    return _read_doc("SUPPLIER_IMPORT_ENRICHMENT_ENGINE_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

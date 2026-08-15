@@ -711,6 +711,24 @@ API: `POST /commerce/products`, `POST /commerce/evaluate`
 
 Archive: `intelligence/archive/Buzzard_AI_f1_Commerce.zip`
 
+## Buzzard AI COMPLETE Commerce f2 — neu (COMMERCE_GESAMT)
+
+Vollständiger Commerce-Scaffold mit Extension Points für Marktplätze, Zahlungen, Automotive/TecDoc, Returns, Tax und mehr.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-commerce-scope` | Commerce-Gesamtumfang |
+| `complete-commerce-tree` | Extension-Tree aller Module |
+| `complete-commerce-inventory` | Modul-Inventar (JSON) |
+
+```bash
+cd intelligence
+python3 main.py complete-commerce-scope
+python3 main.py complete-commerce-inventory
+```
+
+Archive: `intelligence/archive/Buzzard_AI_COMMERCE_GESAMT.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

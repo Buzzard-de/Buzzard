@@ -226,6 +226,43 @@ def complete_commerce_add_product(
     return json.dumps({"id": pid, "sku": sku}, ensure_ascii=False, indent=2)
 
 
+def complete_commerce_scope():
+    return _read_doc("commerce/COMPLETE_COMMERCE_SCOPE.md")
+
+
+def complete_commerce_tree():
+    commerce_dir = PACK_DIR / "commerce"
+    lines = ["# Buzzard Commerce — Extension Tree", ""]
+    for path in sorted(commerce_dir.rglob("*")):
+        if path.is_dir() and path.name != "__pycache__":
+            rel = path.relative_to(commerce_dir)
+            depth = len(rel.parts)
+            indent = "  " * (depth - 1)
+            marker = ""
+            if (path / "README.md").exists():
+                marker = "  # " + (path / "README.md").read_text(encoding="utf-8").splitlines()[0].lstrip("# ")
+            lines.append(f"{indent}{rel.name}/{marker}")
+    return "\n".join(lines)
+
+
+def complete_commerce_inventory():
+    commerce_dir = PACK_DIR / "commerce"
+    modules = sorted(
+        p.relative_to(commerce_dir).as_posix()
+        for p in commerce_dir.rglob("*")
+        if p.is_dir() and p.name != "__pycache__" and any(p.iterdir())
+    )
+    services = sorted(str(p.relative_to(commerce_dir)) for p in commerce_dir.rglob("service.py"))
+    engines = sorted(str(p.relative_to(commerce_dir)) for p in commerce_dir.rglob("engine.py"))
+    payload = {
+        "commerce_modules": len(modules),
+        "service_modules": services,
+        "engine_modules": engines,
+        "extension_directories": modules,
+    }
+    return json.dumps(payload, ensure_ascii=False, indent=2)
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

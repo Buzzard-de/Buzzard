@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { fetchIntegrationStatus } from "@/lib/integrations/client";
+import { fetchIntelligenceBridgeStatus } from "@/lib/api/intelligence";
 import type { CommercialIntegrationStatus } from "@/lib/integrations/types";
+import type { IntelligenceBridgeStatus } from "@/lib/api/intelligence";
 
 function StatusBadge({ ready }: { ready: boolean }) {
   return (
@@ -14,12 +16,14 @@ function StatusBadge({ ready }: { ready: boolean }) {
 
 export default function AdminIntegrationsPanel() {
   const [data, setData] = useState<CommercialIntegrationStatus | null>(null);
+  const [intelligence, setIntelligence] = useState<IntelligenceBridgeStatus | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchIntegrationStatus()
       .then(setData)
       .catch((err) => setError(err instanceof Error ? err.message : "integrations.requestFailed"));
+    fetchIntelligenceBridgeStatus().then(setIntelligence);
   }, []);
 
   const groups: Array<[string, Record<string, boolean> | boolean | undefined]> = data
@@ -46,6 +50,30 @@ export default function AdminIntegrationsPanel() {
       </p>
 
       {error && <p className="shop-modal-error">{error}</p>}
+
+      {intelligence && (
+        <section className="admin-panel integration-group">
+          <h2>Intelligence Production Bridge</h2>
+          <p className="admin-note">
+            Verbindung zum Python Intelligence-Stack (Production MAX). Verkauf bleibt im Katalogmodus deaktiviert —
+            Checkout-Routen antworten mit <code>sales_disabled</code>.
+          </p>
+          <div className="integration-row">
+            <span>Bridge</span>
+            <strong>{intelligence.bridge}</strong>
+          </div>
+          <div className="integration-row">
+            <span>Katalogmodus</span>
+            <StatusBadge ready={!intelligence.catalogMode} />
+          </div>
+          {intelligence.production?.readiness?.checks?.map((check) => (
+            <div key={check.name} className="integration-row">
+              <span>{check.name}</span>
+              <strong>{check.status}</strong>
+            </div>
+          ))}
+        </section>
+      )}
 
       {data && (
         <div className="integration-groups">

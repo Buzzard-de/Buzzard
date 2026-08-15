@@ -129,6 +129,22 @@ async function main() {
   }
 
   console.log("");
+  console.log("Intelligence bridge (optional):");
+  try {
+    const res = await fetch(`${API}/api/intelligence/status`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const body = await res.json();
+      console.log(
+        `  [OK] bridge=${body.bridge} catalogMode=${body.catalogMode} salesEnabled=${body.salesEnabled}`
+      );
+    } else {
+      console.log(`  [SKIP] ${res.status} /api/intelligence/status`);
+    }
+  } catch (error) {
+    console.log(`  [SKIP] /api/intelligence/status — ${error.message}`);
+  }
+
+  console.log("");
   if (failed > 0) {
     console.error(`${failed} check(s) failed.`);
     process.exit(1);

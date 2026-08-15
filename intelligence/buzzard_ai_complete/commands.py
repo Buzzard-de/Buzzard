@@ -403,6 +403,23 @@ def complete_crm_docs():
     return _read_doc("CRM_CUSTOMER_EXPERIENCE_ENGINE_V1.md")
 
 
+def complete_marketing_demo():
+    from buzzard_ai_complete.marketing.service import MarketingAdvertisingService
+
+    return json.dumps(MarketingAdvertisingService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_marketing_budget(total, channels, weights=None):
+    from buzzard_ai_complete.marketing.service import MarketingAdvertisingService
+
+    result = MarketingAdvertisingService().allocate_budget(total, channels, weights)
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+
+def complete_marketing_docs():
+    return _read_doc("MARKETING_ADVERTISING_ENGINE_V1.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

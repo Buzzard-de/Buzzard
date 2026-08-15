@@ -112,6 +112,19 @@ python3 main.py complete-crm-demo
 python3 main.py complete-crm-segment --ltv 1200 --orders 6
 ```
 
+## Marketing & Advertising Engine v1
+
+- **MarketingEngine** — Budget, Attribution, Google/Meta Ad Provider Adapters
+- **Performance & Optimization** — ROAS evaluation, campaign recommendations
+- **Compliance** — Consent gates for retargeting and profiling
+- **complete-marketing-demo** / **complete-marketing-budget** / **complete-marketing-docs**
+- **API** — `GET /marketing/demo`, `POST /marketing/budget`, `POST /marketing/campaign`
+
+```bash
+python3 main.py complete-marketing-demo
+python3 main.py complete-marketing-budget --total 1000 --channels google_ads,meta_ads --weights google_ads:2,meta_ads:1
+```
+
 ## Agenten
 
 | Agent | Rolle |

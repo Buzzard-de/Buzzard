@@ -850,6 +850,26 @@ python3 main.py complete-crm-segment --ltv 1200 --orders 6
 
 Archive: `intelligence/archive/Buzzard_AI_CRM_CUSTOMER_EXPERIENCE_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
 
+## Buzzard AI MARKETING & ADVERTISING ENGINE v1 — neu
+
+Marketing-Grundlage: Budget-Allokation, Kampagnenmodelle, Google/Meta-Provider-Adapter, ROAS-Optimierung, Attribution, Compliance.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-marketing-demo` | Demo: Budget, Campaign, Performance, Compliance |
+| `complete-marketing-budget` | Budget auf Kanäle verteilen |
+| `complete-marketing-docs` | Engine-Dokumentation |
+
+API: `GET /marketing/demo`, `POST /marketing/budget`, `POST /marketing/campaign`
+
+```bash
+cd intelligence
+python3 main.py complete-marketing-demo
+python3 main.py complete-marketing-budget --total 1000 --channels google_ads,meta_ads --weights google_ads:2,meta_ads:1
+```
+
+Archive: `intelligence/archive/Buzzard_AI_MARKETING_ADVERTISING_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

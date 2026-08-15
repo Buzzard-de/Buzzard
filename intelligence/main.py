@@ -1480,6 +1480,20 @@ def main():
     sub.add_parser("complete-crm-demo", help="Run CRM & Customer Experience demo flow")
     sub.add_parser("complete-crm-docs", help="Show CRM & Customer Experience Engine v1 docs")
 
+    complete_marketing_budget = sub.add_parser(
+        "complete-marketing-budget",
+        help="Allocate marketing budget across ad channels",
+    )
+    complete_marketing_budget.add_argument("--total", type=float, required=True)
+    complete_marketing_budget.add_argument("--channels", required=True, help="Comma-separated channel names")
+    complete_marketing_budget.add_argument(
+        "--weights",
+        default="",
+        help="Optional channel:weight pairs, e.g. google_ads:2,meta_ads:1",
+    )
+    sub.add_parser("complete-marketing-demo", help="Run Marketing & Advertising Engine demo flow")
+    sub.add_parser("complete-marketing-docs", help="Show Marketing & Advertising Engine v1 docs")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4970,6 +4984,26 @@ def main():
         from buzzard_ai_complete.commands import complete_crm_docs
 
         print(complete_crm_docs())
+    elif args.cmd == "complete-marketing-demo":
+        from buzzard_ai_complete.commands import complete_marketing_demo
+
+        print(complete_marketing_demo())
+    elif args.cmd == "complete-marketing-budget":
+        from buzzard_ai_complete.commands import complete_marketing_budget
+
+        channels = [c.strip() for c in args.channels.split(",") if c.strip()]
+        weights = None
+        if args.weights:
+            weights = {}
+            for pair in args.weights.split(","):
+                if ":" in pair:
+                    key, value = pair.split(":", 1)
+                    weights[key.strip()] = float(value.strip())
+        print(complete_marketing_budget(args.total, channels, weights))
+    elif args.cmd == "complete-marketing-docs":
+        from buzzard_ai_complete.commands import complete_marketing_docs
+
+        print(complete_marketing_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

@@ -524,9 +524,11 @@ python main.py aslan-task --title "Continental 205/55 R16" --objective "Offiziel
 python main.py aslan-dashboard
 ```
 
-Standalone Doğu Bey (tek klasör): `dogubey-init`, `dogubey-claim`, `dogubey-source`, `dogubey-verify` — siehe `dogubey/README.md`
+Standalone Doğu Bey (tek klasör): `dogubey-*` — siehe `dogubey/README.md`
 
-Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_DoguBey_tek_klasor.zip`, `archive/Buzzard_AI_komplett.zip`
+Gesamt-Standalone (Doğu Bey + Aslan Bey): `buzzard_ai_alles/README.md`
+
+Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_ALLES.zip`, `archive/Buzzard_AI_DoguBey_tek_klasor.zip`, `archive/Buzzard_AI_komplett.zip`
 
 ## v28 Product Selection
 

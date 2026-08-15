@@ -617,13 +617,15 @@ Esat Bey Content-Scanning, optionaler LLM-Provider, API-Auth, Health-Monitoring.
 | `gesamt-health` | Platform Health-Check |
 | `gesamt-ai-status` | Optionaler LLM-Provider-Status |
 | `gesamt-test` | Pytest-Suite (4 Tests) |
+| `gesamt-tree` | Vollständiger Architektur-Baum |
+| `gesamt-inventory` | Projekt-Inventar |
 | `gesamt-status` | Status & Roadmap |
 
 ```bash
 cd intelligence
 python3 main.py gesamt-init
-python3 main.py gesamt-health
-python3 main.py gesamt-ai-status
+python3 main.py gesamt-tree
+python3 main.py gesamt-inventory
 python3 main.py gesamt-test
 ```
 
@@ -631,7 +633,7 @@ Env: siehe `buzzard_ai_gesamt/.env.example` (`BUZZARD_API_TOKEN`, `BUZZARD_LLM_*
 
 Optional FastAPI v2: `uvicorn buzzard_ai_gesamt.api.app:app --reload`
 
-Archive: `intelligence/archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`
+Archive: `intelligence/archive/Buzzard_AI_GESAMT_ALLE_FEHLENDEN_ORDNER.zip`, `intelligence/archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`
 
 ## Buzzard AI COMPLETE vNext — neu (VNEXT_ALLES_IN_EINEM_ORDNER)
 

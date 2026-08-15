@@ -1332,6 +1332,8 @@ def main():
     sub.add_parser("gesamt-test", help="Run GESAMT platform pytest suite")
     sub.add_parser("gesamt-health", help="Show GESAMT platform health status")
     sub.add_parser("gesamt-ai-status", help="Show optional GESAMT LLM provider status")
+    sub.add_parser("gesamt-tree", help="Show GESAMT complete architecture tree")
+    sub.add_parser("gesamt-inventory", help="Show GESAMT project inventory")
 
     sub.add_parser("complete-status", help="Show Buzzard AI COMPLETE consolidated workspace status")
     sub.add_parser("complete-init", help="Initialize Buzzard AI COMPLETE workspace")
@@ -4645,6 +4647,14 @@ def main():
         from buzzard_ai_gesamt.commands import gesamt_ai_status
 
         print(gesamt_ai_status())
+    elif args.cmd == "gesamt-tree":
+        from buzzard_ai_gesamt.commands import gesamt_tree
+
+        print(gesamt_tree())
+    elif args.cmd == "gesamt-inventory":
+        from buzzard_ai_gesamt.commands import gesamt_inventory
+
+        print(gesamt_inventory())
     elif args.cmd == "complete-status":
         from buzzard_ai_complete.status import complete_status
 

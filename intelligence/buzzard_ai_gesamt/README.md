@@ -33,12 +33,14 @@ Erweiterte **Gesamt-Architektur** mit Doğu Bey, Aslan Bey und Esat Bey auf geme
 | `dispatch` | `gesamt-dispatch` |
 | `pytest` | `gesamt-test` |
 | — | `gesamt-status` |
+| — | `gesamt-tree` |
+| — | `gesamt-inventory` |
 
 ```bash
 cd intelligence
 python3 main.py gesamt-init
-python3 main.py gesamt-health
-python3 main.py gesamt-ai-status
+python3 main.py gesamt-tree
+python3 main.py gesamt-inventory
 python3 main.py gesamt-test
 ```
 
@@ -60,4 +62,4 @@ Neue Endpoints: `/health`, `/dispatch`, `/security/scan` (Token via `X-Buzzard-T
 - **v29 / Aslan v1** → `verify-*`, `dogubey-*`, `aslan-*` (separate DB)
 - **GESAMT v2** → `gesamt-*` + `buzzard.db`
 
-Archive: `archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`, `archive/Buzzard_AI_ALLES_AUF_EINMAL.zip`
+Archive: `archive/Buzzard_AI_GESAMT_ALLE_FEHLENDEN_ORDNER.zip`, `archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`, `archive/Buzzard_AI_ALLES_AUF_EINMAL.zip`

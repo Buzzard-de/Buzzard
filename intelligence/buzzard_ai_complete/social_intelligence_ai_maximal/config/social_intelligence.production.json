@@ -1,0 +1,77 @@
+{
+  "agent": {
+    "id": "social_intelligence_ai",
+    "enabled": true
+  },
+  "platforms": {
+    "facebook": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "instagram": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "tiktok": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "youtube": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "pinterest": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "reddit": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "x": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "linkedin": {
+      "enabled": true,
+      "connector_mode": "official_or_authorized"
+    },
+    "forums": {
+      "enabled": true,
+      "connector_mode": "public_only"
+    }
+  },
+  "monitoring": {
+    "trend_tracking": true,
+    "product_discovery": true,
+    "category_gap_detection": true,
+    "competitor_public_activity": true,
+    "customer_voice": true,
+    "cross_platform_correlation": true,
+    "history": true,
+    "evidence_required": true,
+    "default_interval_minutes": 360,
+    "high_priority_interval_minutes": 60
+  },
+  "guardrails": {
+    "public_or_authorized_only": true,
+    "no_private_profiles": true,
+    "no_auth_bypass": true,
+    "no_captcha_bypass": true,
+    "no_access_control_bypass": true,
+    "no_sensitive_person_inference": true,
+    "no_auto_posting": true,
+    "no_auto_ad_spend": true
+  },
+  "council_integration": {
+    "shared_memory": true,
+    "event_bus": true,
+    "category_ai_bridge": true,
+    "profit_ai": true,
+    "demand_ai": true,
+    "competition_ai": true,
+    "forecast_ai": true,
+    "customer_voice_ai": true,
+    "chief_strategy_ai": true
+  }
+}

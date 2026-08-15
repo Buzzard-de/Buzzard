@@ -1,0 +1,9 @@
+{
+  "required":["signal_id","platform","signal_type","topic","strength","direction","evidence"],
+  "rules":[
+    "evidence must identify public or authorized source",
+    "person-level sensitive inference is prohibited",
+    "social engagement is a signal, not proof of demand",
+    "commercial decisions require corroboration"
+  ]
+}

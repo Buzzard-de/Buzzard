@@ -1074,6 +1074,45 @@ def complete_category_intelligence_43_docs():
     return _read_doc("43_CATEGORY_INTELLIGENCE_MAXIMAL.md")
 
 
+def complete_social_intelligence_health():
+    from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
+
+    return json.dumps(SocialIntelligenceService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_social_intelligence_platforms():
+    from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
+
+    service = SocialIntelligenceService()
+    platforms = service.list_platforms()
+    return json.dumps(
+        {"platforms": platforms, "count": len(platforms)},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_social_intelligence_demo():
+    from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
+
+    return json.dumps(SocialIntelligenceService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_social_intelligence_schema():
+    from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
+
+    service = SocialIntelligenceService()
+    return json.dumps(
+        {"signal": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_social_intelligence_docs():
+    return _read_doc("SOCIAL_INTELLIGENCE_AI_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

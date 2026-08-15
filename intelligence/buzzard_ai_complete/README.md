@@ -375,6 +375,22 @@ python3 main.py complete-category-intelligence-43-demo
 python3 main.py complete-category-intelligence-43-agents
 ```
 
+## Social Intelligence AI MAXIMAL
+
+- **Zentrales Social-Brain** — Facebook, Instagram, TikTok, YouTube, Pinterest, Reddit, X, LinkedIn, Foren
+- **Cross-Platform-Signale** — Trend, Product Discovery, Category Gaps, Competitor Activity
+- **Customer Voice** — Sentiment aus öffentlichen Quellen
+- **Privacy-Policy** — nur public/authorized, kein Auth/CAPTCHA-Bypass
+- **Council-Bridge** — Demand, Competition, Profit, Forecast, Chief Strategy
+- **complete-social-intelligence-health** / **complete-social-intelligence-platforms** / **complete-social-intelligence-demo** / **complete-social-intelligence-schema** / **complete-social-intelligence-docs**
+- **API** — `/social-intelligence/health`, `/social-intelligence/platforms`, `/social-intelligence/schema`, `/social-intelligence/demo`
+- **`live_activation: false`** — kein Auto-Posting, kein Auto-Ad-Spend
+
+```bash
+python3 main.py complete-social-intelligence-demo
+python3 main.py complete-social-intelligence-platforms
+```
+
 ## Agenten
 
 | Agent | Rolle |

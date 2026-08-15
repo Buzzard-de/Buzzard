@@ -1,0 +1,40 @@
+{
+  "main_categories": 48,
+  "subcategories": 796,
+  "sub_subcategories": 6411,
+  "total_nodes": 7255,
+  "legacy_43": {
+    "main_categories": 43,
+    "subcategories": 516,
+    "sub_subcategories": 5160,
+    "total_nodes": 5719
+  },
+  "new_5": {
+    "main_categories": 5,
+    "subcategories": 280,
+    "sub_subcategories": 1251,
+    "total_nodes": 1536
+  },
+  "new_category_breakdown": {
+    "Lastikler – Tüm Motorlu Araçlar": {
+      "subcategories": 52,
+      "sub_subcategories": 135
+    },
+    "Tarım & Tarım Makineleri": {
+      "subcategories": 79,
+      "sub_subcategories": 331
+    },
+    "Hayvancılık": {
+      "subcategories": 72,
+      "sub_subcategories": 284
+    },
+    "Güneş & Rüzgâr Enerjisi": {
+      "subcategories": 55,
+      "sub_subcategories": 281
+    },
+    "İnşaat & İnşaat Makineleri": {
+      "subcategories": 22,
+      "sub_subcategories": 220
+    }
+  }
+}

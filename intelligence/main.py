@@ -1744,6 +1744,17 @@ def main():
         help="Show construction taxonomy documentation",
     )
 
+    sub.add_parser("complete-master-taxonomy-48-health", help="Show 48-category master taxonomy health")
+    sub.add_parser("complete-master-taxonomy-48-demo", help="Run 48-category master taxonomy demo")
+    sub.add_parser(
+        "complete-master-taxonomy-48-counts",
+        help="Show 48-category master taxonomy counts and legacy/new breakdown",
+    )
+    sub.add_parser(
+        "complete-master-taxonomy-48-docs",
+        help="Show 48-category master taxonomy documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5730,6 +5741,22 @@ def main():
         from buzzard_ai_complete.commands import complete_construction_docs
 
         print(complete_construction_docs())
+    elif args.cmd == "complete-master-taxonomy-48-health":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_48_health
+
+        print(complete_master_taxonomy_48_health())
+    elif args.cmd == "complete-master-taxonomy-48-demo":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_48_demo
+
+        print(complete_master_taxonomy_48_demo())
+    elif args.cmd == "complete-master-taxonomy-48-counts":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_48_counts
+
+        print(complete_master_taxonomy_48_counts())
+    elif args.cmd == "complete-master-taxonomy-48-docs":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_48_docs
+
+        print(complete_master_taxonomy_48_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

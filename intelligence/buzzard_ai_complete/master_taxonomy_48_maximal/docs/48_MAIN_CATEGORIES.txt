@@ -1,0 +1,48 @@
+01. Automotive
+02. Haus & Wohnen
+03. Werkzeuge
+04. Garten
+05. Reinigung
+06. Kosmetik & Pflege
+07. Elektronik
+08. Elektrogeräte
+09. Möbel
+10. Beleuchtung
+11. Mode, Textil & Accessoires
+12. Sport & Outdoor
+13. Fahrräder & E-Bikes
+14. Haustier
+15. Baby & Kind
+16. Gaming & Spielzeug
+17. Büro & Schule
+18. Baumarkt
+19. Lager & Aufbewahrung
+20. Autozubehör
+21. Motorrad & Zubehör
+22. Öle & Flüssigkeiten
+23. Reifen & Felgen
+24. Bremsen
+25. Batterien
+26. Auspuff & Anlage
+27. Motor & Kühlung
+28. Licht & Elektrik
+29. Autopflege
+30. Navi & Zubehör
+31. Lebensmittel & Getränke
+32. Wein & Spirituosen
+33. Kaffee & Tee
+34. Gesundheit & Vitamine
+35. Haushalt & Hygiene
+36. Heizen & Klima
+37. Sicherheit & Überwachung
+38. Reisen & Gepäck
+39. Geschenke & Anlässe
+40. Weitere Kategorien
+41. Industrie & CNC
+42. Baumaschinen & Ersatzteile
+43. Landwirtschaft & Agrartechnik
+44. Lastikler – Tüm Motorlu Araçlar
+45. Tarım & Tarım Makineleri
+46. Hayvancılık
+47. Güneş & Rüzgâr Enerjisi
+48. İnşaat & İnşaat Makineleri

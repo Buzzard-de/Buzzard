@@ -1,0 +1,1 @@
+from buzzard_ai_complete.master_taxonomy_48_maximal.service import MasterTaxonomy48Service

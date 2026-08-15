@@ -6,9 +6,13 @@ Dieses ZIP ist die portable Ein-Ordner-Version. Im Buzzard Intelligence Stack is
 
 ## Standalone (aus Archiv)
 
+Identische Inhalte in:
+- `archive/Buzzard_AI_DoguBey_tek_klasor.zip` (Ordner `Buzzard_AI/`)
+- `archive/Buzzard_AI_komplett.zip` (Ordner `Buzzard_AI_komplett/`)
+
 ```bash
-unzip Buzzard_AI_DoguBey_tek_klasor.zip
-cd Buzzard_AI
+unzip Buzzard_AI_komplett.zip
+cd Buzzard_AI_komplett   # oder: cd Buzzard_AI bei tek_klasor
 python main.py init
 python main.py demo
 python main.py report
@@ -42,6 +46,6 @@ python main.py dogubey-report
 - **Doğu Bey** (`verify.py`, `dogubey-*`, `verify-*`) = v29 Verifikation
 - **Aslan Bey** (`aslan.py`, `aslan-*`) = Müsteşar-Koordination (separates Paket)
 
-Archive: `archive/Buzzard_AI_DoguBey_tek_klasor.zip`
+Archive: `archive/Buzzard_AI_DoguBey_tek_klasor.zip`, `archive/Buzzard_AI_komplett.zip`
 
 Siehe auch: `dogubey_aslan/README.md`

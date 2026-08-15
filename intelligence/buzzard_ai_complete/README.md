@@ -300,6 +300,19 @@ python3 main.py complete-platform-demo
 python3 main.py complete-platform-health
 ```
 
+## Production Integration MAXIMAL ONE PACKAGE
+
+- **Production contracts** — payment, carriers, suppliers, marketplaces, telephony, webhooks
+- **Business engines** — pricing, forecasting, finance, RMA, knowledge graph, customer/supplier intelligence
+- **Deployment** — Docker, K8s, preflight, runbook (`live_activation: false`)
+- **complete-production-integration-health** / **complete-production-integration-readiness** / **complete-production-integration-demo** / **complete-production-integration-schema** / **complete-production-integration-docs**
+- **API** — `/production/health`, `/production/readiness`, `/production/demo`
+
+```bash
+python3 main.py complete-production-integration-demo
+python3 main.py complete-production-integration-readiness
+```
+
 ## Agenten
 
 | Agent | Rolle |

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: buzzard-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels: {app: buzzard-api}
+  template:
+    metadata:
+      labels: {app: buzzard-api}
+    spec:
+      containers:
+      - name: api
+        image: buzzard/api:production
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet: {path: /api/system/health, port: 8000}
+        livenessProbe:
+          httpGet: {path: /api/system/health, port: 8000}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: buzzard-api
+spec:
+  selector: {app: buzzard-api}
+  ports:
+  - port: 80
+    targetPort: 8000

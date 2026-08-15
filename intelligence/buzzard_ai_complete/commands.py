@@ -850,6 +850,64 @@ def complete_platform_docs():
     return _read_doc("COMPLETE_COMMERCE_PLATFORM_MAXIMAL_FINAL.md")
 
 
+def complete_production_health():
+    from buzzard_ai_complete.production_integration_maximal.service import (
+        ProductionIntegrationService,
+    )
+
+    return json.dumps(
+        ProductionIntegrationService().health(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_production_readiness():
+    from buzzard_ai_complete.production_integration_maximal.service import (
+        ProductionIntegrationService,
+    )
+
+    return json.dumps(
+        ProductionIntegrationService().readiness(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_production_demo():
+    from buzzard_ai_complete.production_integration_maximal.service import (
+        ProductionIntegrationService,
+    )
+
+    return json.dumps(
+        ProductionIntegrationService().demo_flow(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_production_schema():
+    from buzzard_ai_complete.production_integration_maximal.service import (
+        ProductionIntegrationService,
+    )
+
+    service = ProductionIntegrationService()
+    return json.dumps(
+        {
+            "integrations": service.load_production_config(),
+            "providers": service.provider_registry(),
+            "advanced_engines": service.advanced_engines_config(),
+            "advanced_systems": service.advanced_systems_schema(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_production_docs():
+    return _read_doc("PRODUCTION_INTEGRATION_MAXIMAL_ONE_PACKAGE.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

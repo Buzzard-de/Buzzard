@@ -1,0 +1,36 @@
+{
+  "environment": "production",
+  "live_activation": false,
+  "payment": {
+    "provider": "not_configured",
+    "webhook_verification": true
+  },
+  "carriers": {
+    "enabled": ["DHL","DPD","GLS","Hermes","UPS"]
+  },
+  "suppliers": {
+    "feed_types": ["API","XML","CSV","JSON"],
+    "max_feed_age_hours": 24,
+    "stale_feed_action": "alert_and_stop_auto_publish"
+  },
+  "marketplaces": {
+    "enabled": ["eBay","Amazon","Google"],
+    "unknown_category_action": "review"
+  },
+  "telephony": {
+    "provider": "not_configured",
+    "signed_webhooks": true,
+    "recording": false
+  },
+  "catalog": {
+    "canonical_source": "Buzzard PIM",
+    "require_ean_or_mpn_when_available": true,
+    "reject_duplicate_canonical_ids": true
+  },
+  "deployment": {
+    "https_required": true,
+    "health_checks_required": true,
+    "backup_required": true,
+    "rollback_required": true
+  }
+}

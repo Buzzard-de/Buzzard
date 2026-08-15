@@ -672,6 +672,54 @@ def complete_import_engine_docs():
     return _read_doc("SUPPLIER_IMPORT_ENRICHMENT_ENGINE_MAXIMAL.md")
 
 
+def complete_phone_health():
+    from buzzard_ai_complete.ai_phone_assistant.service import AiPhoneAssistantService
+
+    return json.dumps(
+        AiPhoneAssistantService().health(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_analyze(text, language=None):
+    from buzzard_ai_complete.ai_phone_assistant.service import AiPhoneAssistantService
+
+    return json.dumps(
+        AiPhoneAssistantService().analyze(text, language),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_demo():
+    from buzzard_ai_complete.ai_phone_assistant.service import AiPhoneAssistantService
+
+    return json.dumps(
+        AiPhoneAssistantService().demo_flow(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_schema():
+    from buzzard_ai_complete.ai_phone_assistant.service import AiPhoneAssistantService
+
+    service = AiPhoneAssistantService()
+    return json.dumps(
+        {
+            "tools": service.tool_contract(),
+            "conversation": service.conversation_state(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_docs():
+    return _read_doc("AI_PHONE_ASSISTANT_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

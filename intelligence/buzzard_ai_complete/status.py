@@ -53,6 +53,8 @@ def complete_status():
         "     complete-multilingual-normalize, complete-multilingual-demo, complete-multilingual-docs",
         "     complete-import-engine-health, complete-import-engine-demo,",
         "     complete-import-engine-schema, complete-import-engine-docs",
+        "     complete-phone-health, complete-phone-analyze, complete-phone-demo,",
+        "     complete-phone-schema, complete-phone-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

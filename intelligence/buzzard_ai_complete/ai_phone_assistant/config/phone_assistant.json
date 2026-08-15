@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "assistant_name": "Buzzard AI Telefonassistent",
+  "mode": "production-ready architecture / integration-ready",
+  "default_language": "de",
+  "supported_language_source": "data/languages.json",
+  "voice_pipeline": [
+    "incoming_call",
+    "language_detection",
+    "speech_to_text",
+    "intent_detection",
+    "entity_extraction",
+    "tool_selection",
+    "PIM_search",
+    "inventory_price_lookup",
+    "compatibility_lookup",
+    "order_or_lead_action",
+    "response_generation",
+    "text_to_speech",
+    "call_summary",
+    "CRM_handoff"
+  ],
+  "human_handoff": {
+    "enabled": true,
+    "reasons": [
+      "customer_requests_human",
+      "low_confidence",
+      "complaint",
+      "payment_issue",
+      "legal_or_sensitive_issue",
+      "complex_technical_case"
+    ]
+  },
+  "recording": {
+    "default": "disabled",
+    "requires_explicit_legal_configuration": true
+  },
+  "secrets": "environment_variables_only"
+}

@@ -1071,6 +1071,25 @@ python3 main.py complete-import-engine-demo
 
 Archive: `intelligence/archive/BUZZARD_SUPPLIER_IMPORT_ENRICHMENT_ENGINE_MAXIMAL.zip`
 
+## AI Phone Assistant MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-phone-health` | Phone Assistant Health |
+| `complete-phone-analyze` | Intent + Entities (`--text`, optional `--language`) |
+| `complete-phone-demo` | Demo-Flow (DE/AR/Human handoff) |
+| `complete-phone-schema` | Tool + Conversation State Schemas |
+| `complete-phone-docs` | Dokumentation |
+
+API: `GET /phone/health`, `POST /phone/analyze`, `GET /phone/demo`
+
+```bash
+cd intelligence
+python3 main.py complete-phone-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

@@ -1558,6 +1558,16 @@ def main():
     sub.add_parser("complete-import-engine-schema", help="Show import engine decision/normalized schemas")
     sub.add_parser("complete-import-engine-docs", help="Show supplier import enrichment documentation")
 
+    sub.add_parser("complete-phone-health", help="Show AI phone assistant health")
+    complete_phone_analyze = sub.add_parser(
+        "complete-phone-analyze", help="Analyze phone utterance (intent + entities)"
+    )
+    complete_phone_analyze.add_argument("--text", required=True)
+    complete_phone_analyze.add_argument("--language", default=None)
+    sub.add_parser("complete-phone-demo", help="Run AI phone assistant demo flow")
+    sub.add_parser("complete-phone-schema", help="Show phone tool + conversation schemas")
+    sub.add_parser("complete-phone-docs", help="Show AI phone assistant documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5208,6 +5218,26 @@ def main():
         from buzzard_ai_complete.commands import complete_import_engine_docs
 
         print(complete_import_engine_docs())
+    elif args.cmd == "complete-phone-health":
+        from buzzard_ai_complete.commands import complete_phone_health
+
+        print(complete_phone_health())
+    elif args.cmd == "complete-phone-analyze":
+        from buzzard_ai_complete.commands import complete_phone_analyze
+
+        print(complete_phone_analyze(args.text, args.language))
+    elif args.cmd == "complete-phone-demo":
+        from buzzard_ai_complete.commands import complete_phone_demo
+
+        print(complete_phone_demo())
+    elif args.cmd == "complete-phone-schema":
+        from buzzard_ai_complete.commands import complete_phone_schema
+
+        print(complete_phone_schema())
+    elif args.cmd == "complete-phone-docs":
+        from buzzard_ai_complete.commands import complete_phone_docs
+
+        print(complete_phone_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

@@ -1686,6 +1686,15 @@ def main():
         help="Show tire taxonomy documentation",
     )
 
+    sub.add_parser("complete-agriculture-health", help="Show agriculture taxonomy health")
+    sub.add_parser("complete-agriculture-branches", help="List agriculture taxonomy branches")
+    sub.add_parser("complete-agriculture-demo", help="Run agriculture taxonomy demo")
+    sub.add_parser("complete-agriculture-schema", help="Show agriculture taxonomy schema and config")
+    sub.add_parser(
+        "complete-agriculture-docs",
+        help="Show agriculture taxonomy documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5568,6 +5577,26 @@ def main():
         from buzzard_ai_complete.commands import complete_automotive_taxonomy_tires_docs
 
         print(complete_automotive_taxonomy_tires_docs())
+    elif args.cmd == "complete-agriculture-health":
+        from buzzard_ai_complete.commands import complete_agriculture_health
+
+        print(complete_agriculture_health())
+    elif args.cmd == "complete-agriculture-branches":
+        from buzzard_ai_complete.commands import complete_agriculture_branches
+
+        print(complete_agriculture_branches())
+    elif args.cmd == "complete-agriculture-demo":
+        from buzzard_ai_complete.commands import complete_agriculture_demo
+
+        print(complete_agriculture_demo())
+    elif args.cmd == "complete-agriculture-schema":
+        from buzzard_ai_complete.commands import complete_agriculture_schema
+
+        print(complete_agriculture_schema())
+    elif args.cmd == "complete-agriculture-docs":
+        from buzzard_ai_complete.commands import complete_agriculture_docs
+
+        print(complete_agriculture_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

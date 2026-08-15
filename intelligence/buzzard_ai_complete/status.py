@@ -84,6 +84,8 @@ def complete_status():
         "     complete-automotive-taxonomy-docs,",
         "     complete-automotive-taxonomy-tires-categories, complete-automotive-taxonomy-tires-demo,",
         "     complete-automotive-taxonomy-tires-schema, complete-automotive-taxonomy-tires-docs",
+        "     complete-agriculture-health, complete-agriculture-branches,",
+        "     complete-agriculture-demo, complete-agriculture-schema, complete-agriculture-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

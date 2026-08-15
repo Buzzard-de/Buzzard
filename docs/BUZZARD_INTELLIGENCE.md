@@ -1311,6 +1311,29 @@ python3 main.py complete-automotive-taxonomy-tires-demo
 
 Archive: `intelligence/archive/BUZZARD_AUTOMOTIVE_TAXONOMY_MAXIMAL_WITH_TIRES.zip`
 
+## Agriculture MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-agriculture-health` | Agriculture taxonomy health |
+| `complete-agriculture-branches` | 9 Branches + Taxonomie-Knoten |
+| `complete-agriculture-demo` | Katalog, Fitment, Market Signals, Gap Detection |
+| `complete-agriculture-schema` | Taxonomy-Schema + Konfiguration |
+| `complete-agriculture-docs` | Architektur-Dokumentation |
+
+API: `GET /agriculture/health`, `GET /agriculture/branches`, `GET /agriculture/schema`, `GET /agriculture/demo`
+
+Separate Hauptkategorie: **Tarım & Tarım Makineleri**. Machine-need-first Architektur mit 9 Branches.
+
+`live_activation: false` — Fitment erfordert Evidenz; Konflikte → Human Review.
+
+```bash
+cd intelligence
+python3 main.py complete-agriculture-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_AGRICULTURE_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

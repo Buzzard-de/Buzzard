@@ -369,6 +369,23 @@ def complete_order_docs():
     return _read_doc("ORDER_FULFILLMENT_ENGINE_V1.md")
 
 
+def complete_billing_demo():
+    from buzzard_ai_complete.customer_billing.service import CustomerBillingService
+
+    return json.dumps(CustomerBillingService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_billing_refund(order_id, reason, amount):
+    from buzzard_ai_complete.customer_billing.service import CustomerBillingService
+
+    result = CustomerBillingService().refund(order_id, reason, amount)
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+
+def complete_billing_docs():
+    return _read_doc("CUSTOMER_BILLING_RETURNS_ENGINE_V1.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

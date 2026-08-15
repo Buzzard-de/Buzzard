@@ -10,6 +10,7 @@ from buzzard_ai_complete.config.settings import API_TOKEN, APP_VERSION
 from buzzard_ai_complete.logistics.api.routes import router as logistics_router
 from buzzard_ai_complete.monitoring.health import health
 from buzzard_ai_complete.order_engine.api.routes import router as orders_router
+from buzzard_ai_complete.customer_billing.api.routes import router as billing_router
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -20,6 +21,8 @@ if FastAPI:
         app.include_router(logistics_router)
     if orders_router is not None:
         app.include_router(orders_router)
+    if billing_router is not None:
+        app.include_router(billing_router)
 
     class TaskRequest(BaseModel):
         task_id: str

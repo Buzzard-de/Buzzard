@@ -1,0 +1,12 @@
+{
+  "required": [
+    "category_id","period","offers_seen","unique_sellers",
+    "price_statistics","missing_categories","missing_products","changes"
+  ],
+  "rules": [
+    "all external observations retain evidence",
+    "taxonomy changes are suggestions until approved",
+    "price observations are historical facts, not automatic pricing commands",
+    "public-source monitoring must respect access controls"
+  ]
+}

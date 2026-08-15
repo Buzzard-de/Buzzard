@@ -1036,6 +1036,44 @@ def complete_ai_council_19_docs():
     return _read_doc("AI_COUNCIL_19_CUSTOMS_BUREAUCRACY_MAXIMAL.md")
 
 
+def complete_category_intelligence_43_health():
+    from buzzard_ai_complete.category_intelligence_43_maximal.service import CategoryIntelligence43Service
+
+    return json.dumps(CategoryIntelligence43Service().health(), ensure_ascii=False, indent=2)
+
+
+def complete_category_intelligence_43_agents():
+    from buzzard_ai_complete.category_intelligence_43_maximal.service import CategoryIntelligence43Service
+
+    service = CategoryIntelligence43Service()
+    return json.dumps(
+        {"agents": service.list_agents(), "count": len(service.list_agents())},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_category_intelligence_43_demo():
+    from buzzard_ai_complete.category_intelligence_43_maximal.service import CategoryIntelligence43Service
+
+    return json.dumps(CategoryIntelligence43Service().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_category_intelligence_43_schema():
+    from buzzard_ai_complete.category_intelligence_43_maximal.service import CategoryIntelligence43Service
+
+    service = CategoryIntelligence43Service()
+    return json.dumps(
+        {"report": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_category_intelligence_43_docs():
+    return _read_doc("43_CATEGORY_INTELLIGENCE_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

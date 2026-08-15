@@ -1228,6 +1228,27 @@ python3 main.py complete-ai-council-19-assess
 
 Archive: `intelligence/archive/BUZZARD_AI_COUNCIL_19_CUSTOMS_BUREAUCRACY_MAXIMAL.zip`
 
+## 43 Category Intelligence MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-category-intelligence-43-health` | 43 category intelligence health |
+| `complete-category-intelligence-43-agents` | Liste aller 43 Category-Agenten |
+| `complete-category-intelligence-43-demo` | Preis-/Taxonomy-Gap Demo |
+| `complete-category-intelligence-43-schema` | Report-Schema + Monitoring-Konfiguration |
+| `complete-category-intelligence-43-docs` | Architektur-Dokumentation |
+
+API: `GET /category-intelligence-43/health`, `GET /category-intelligence-43/agents`, `GET /category-intelligence-43/analyze`, `GET /category-intelligence-43/schema`, `GET /category-intelligence-43/demo`
+
+`live_activation: false` — nur öffentliche Quellen; Taxonomy-/Preisänderungen mit Human Approval.
+
+```bash
+cd intelligence
+python3 main.py complete-category-intelligence-43-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_43_CATEGORY_INTELLIGENCE_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

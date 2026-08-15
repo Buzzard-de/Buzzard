@@ -1498,6 +1498,14 @@ def main():
     sub.add_parser("complete-max-snapshot", help="Show MAXIMAL platform module snapshot")
     sub.add_parser("complete-max-docs", help="Show MAXIMAL upgrade documentation")
 
+    complete_one_piece_e2e = sub.add_parser(
+        "complete-one-piece-e2e",
+        help="Show end-to-end order lifecycle plan",
+    )
+    complete_one_piece_e2e.add_argument("--order-id", required=True)
+    sub.add_parser("complete-one-piece-demo", help="Run One-Piece Control Center demo flow")
+    sub.add_parser("complete-one-piece-docs", help="Show One-Piece MAXIMAL architecture docs")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5020,6 +5028,18 @@ def main():
         from buzzard_ai_complete.commands import complete_max_docs
 
         print(complete_max_docs())
+    elif args.cmd == "complete-one-piece-demo":
+        from buzzard_ai_complete.commands import complete_one_piece_demo
+
+        print(complete_one_piece_demo())
+    elif args.cmd == "complete-one-piece-e2e":
+        from buzzard_ai_complete.commands import complete_one_piece_e2e
+
+        print(complete_one_piece_e2e(args.order_id))
+    elif args.cmd == "complete-one-piece-docs":
+        from buzzard_ai_complete.commands import complete_one_piece_docs
+
+        print(complete_one_piece_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

@@ -633,6 +633,32 @@ Optional FastAPI v2: `uvicorn buzzard_ai_gesamt.api.app:app --reload`
 
 Archive: `intelligence/archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`
 
+## Buzzard AI COMPLETE Workspace — neu (ALLES_IN_EINEM_ORDNER)
+
+Konsolidiertes **Alles-in-einem-Ordner**-Paket mit gemeinsamen Services (Database, Memory, Tasks, Sources, Research).
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-init` | Workspace + Agent-Registry initialisieren |
+| `complete-agents` | Agenten anzeigen |
+| `complete-task` | Forschungsaufgabe via Aslan Bey |
+| `complete-tasks` | Aufgabenliste |
+| `complete-health` | Health-Check |
+| `complete-scan` | Esat Bey Text-Scan |
+| `complete-test` | Pytest-Suite |
+| `complete-status` | Status & Architektur |
+
+```bash
+cd intelligence
+python3 main.py complete-init
+python3 main.py complete-agents
+python3 main.py complete-test
+```
+
+DB: `buzzard_complete.db` (getrennt von GESAMT `buzzard.db` und v29)
+
+Archive: `intelligence/archive/Buzzard_AI_COMPLETE_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

@@ -1,0 +1,49 @@
+{
+  "separate_category": true,
+  "root": "Otomotiv",
+  "category": "Lastikler",
+  "vehicle_scope": [
+    "Binek",
+    "SUV/4x4",
+    "Hafif Ticari",
+    "Kamyon",
+    "Otobüs",
+    "Römork/Treyler",
+    "Karavan",
+    "Motosiklet",
+    "Scooter",
+    "ATV/Quad",
+    "Traktör",
+    "Tarım Makineleri",
+    "İş Makineleri",
+    "Endüstriyel",
+    "Yarış",
+    "Klasik/Oldtimer",
+    "Elektrikli",
+    "Hibrit"
+  ],
+  "dimensions": [
+    "width_mm",
+    "aspect_ratio",
+    "rim_inch",
+    "load_index",
+    "speed_index",
+    "season",
+    "runflat",
+    "xl",
+    "ev_optimized",
+    "m_s",
+    "three_pmsf",
+    "use",
+    "axle",
+    "position",
+    "dot",
+    "oe_marking"
+  ],
+  "rules": {
+    "fitment_requires_evidence": true,
+    "size_validation": true,
+    "vehicle_specific_fitment": true,
+    "human_review_for_conflicts": true
+  }
+}

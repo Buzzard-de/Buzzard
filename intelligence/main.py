@@ -1669,6 +1669,22 @@ def main():
         "complete-automotive-taxonomy-docs",
         help="Show automotive taxonomy documentation",
     )
+    sub.add_parser(
+        "complete-automotive-taxonomy-tires-categories",
+        help="List tire taxonomy vehicle types and subcategories",
+    )
+    sub.add_parser(
+        "complete-automotive-taxonomy-tires-demo",
+        help="Run tire taxonomy size validation and fitment demo",
+    )
+    sub.add_parser(
+        "complete-automotive-taxonomy-tires-schema",
+        help="Show tire taxonomy production config",
+    )
+    sub.add_parser(
+        "complete-automotive-taxonomy-tires-docs",
+        help="Show tire taxonomy documentation",
+    )
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -5536,6 +5552,22 @@ def main():
         from buzzard_ai_complete.commands import complete_automotive_taxonomy_docs
 
         print(complete_automotive_taxonomy_docs())
+    elif args.cmd == "complete-automotive-taxonomy-tires-categories":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_tires_categories
+
+        print(complete_automotive_taxonomy_tires_categories())
+    elif args.cmd == "complete-automotive-taxonomy-tires-demo":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_tires_demo
+
+        print(complete_automotive_taxonomy_tires_demo())
+    elif args.cmd == "complete-automotive-taxonomy-tires-schema":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_tires_schema
+
+        print(complete_automotive_taxonomy_tires_schema())
+    elif args.cmd == "complete-automotive-taxonomy-tires-docs":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_tires_docs
+
+        print(complete_automotive_taxonomy_tires_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

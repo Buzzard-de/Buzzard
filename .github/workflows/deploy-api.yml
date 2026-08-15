@@ -6,6 +6,7 @@ on:
     paths:
       - "server/**"
       - "data/**"
+      - "intelligence/**"
       - "package.json"
       - "render.yaml"
       - "scripts/render-bootstrap.mjs"

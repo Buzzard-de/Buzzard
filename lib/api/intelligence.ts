@@ -1,7 +1,7 @@
 import { apiBaseUrl, isApiConfigured } from "./config";
 
 export interface IntelligenceBridgeStatus {
-  bridge: "NOT_CONFIGURED" | "LIVE" | "DOWN";
+  bridge: "NOT_CONFIGURED" | "LIVE" | "DOWN" | "EMBEDDED";
   intelligenceApiUrl: string | null;
   salesEnabled: boolean;
   catalogMode: boolean;
@@ -22,6 +22,12 @@ export interface IntelligenceBridgeStatus {
     order_pipeline?: string;
     intelligence_bridge?: string;
     error?: string;
+  };
+  embedded?: boolean;
+  taxonomy?: {
+    master_category_count?: number;
+    total_nodes?: number;
+    mode?: string;
   };
 }
 

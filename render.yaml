@@ -101,6 +101,15 @@ services:
         value: "24"
       - key: BUZZARD_SALES_ENABLED
         value: "0"
+      - key: BUZZARD_EMBEDDED_INTELLIGENCE
+        value: "1"
+      - key: BUZZARD_INTELLIGENCE_BRIDGE
+        value: "1"
+      - key: BUZZARD_INTELLIGENCE_API_URL
+        fromService:
+          type: web
+          name: buzzard-intelligence
+          property: host
       - key: DEFAULT_PAYMENT_PROVIDER
         value: stripe
       - key: DEFAULT_CARRIER
@@ -119,3 +128,21 @@ services:
         sync: false
       - key: PAYPAL_CLIENT_SECRET
         sync: false
+
+  - type: web
+    name: buzzard-intelligence
+    runtime: docker
+    plan: free
+    region: frankfurt
+    repo: https://github.com/Buzzard-de/Buzzard
+    branch: main
+    autoDeployTrigger: commit
+    rootDir: intelligence
+    dockerfilePath: buzzard_ai_complete/deploy/docker/Dockerfile
+    dockerContext: intelligence
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONPATH
+        value: /app
+      - key: PORT
+        value: 8000

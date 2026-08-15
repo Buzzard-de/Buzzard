@@ -1,0 +1,13 @@
+{
+  "package": "BUZZARD_MASTER_TAXONOMY_CLEAN",
+  "version": "1.0.1",
+  "modules": [
+    "automotive_tires",
+    "agriculture",
+    "livestock"
+  ],
+  "compileall_pass": true,
+  "pytest_pass": true,
+  "smoke_pass": true,
+  "live_activation": false
+}

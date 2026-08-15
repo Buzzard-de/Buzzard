@@ -1388,6 +1388,26 @@ python3 main.py complete-livestock-demo
 
 Archive: `intelligence/archive/BUZZARD_LIVESTOCK_MAXIMAL.zip`
 
+## Master Taxonomy CLEAN
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-master-taxonomy-clean-health` | Unified health: Automotive/Tires + Agriculture + Livestock |
+| `complete-master-taxonomy-clean-demo` | Unified Demo aller drei Domänen |
+| `complete-master-taxonomy-clean-manifest` | Manifest + Sales-Activation-Defaults |
+| `complete-master-taxonomy-clean-docs` | Architektur-Dokumentation |
+
+API: `GET /master-taxonomy-clean/health`, `GET /master-taxonomy-clean/manifest`, `GET /master-taxonomy-clean/sales-defaults`, `GET /master-taxonomy-clean/demo`
+
+Unified Clean Bundle für Automotive/Tires, Agriculture und Livestock. `BUZZARD_SALES_ENABLED=0`, `live_activation: false`.
+
+```bash
+cd intelligence
+python3 main.py complete-master-taxonomy-clean-health
+```
+
+Archive: `intelligence/archive/BUZZARD_MASTER_TAXONOMY_CLEAN.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

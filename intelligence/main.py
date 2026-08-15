@@ -1720,6 +1720,17 @@ def main():
         help="Show livestock taxonomy documentation",
     )
 
+    sub.add_parser("complete-master-taxonomy-clean-health", help="Show unified taxonomy clean health")
+    sub.add_parser("complete-master-taxonomy-clean-demo", help="Run unified taxonomy clean demo")
+    sub.add_parser(
+        "complete-master-taxonomy-clean-manifest",
+        help="Show master taxonomy clean manifest and sales defaults",
+    )
+    sub.add_parser(
+        "complete-master-taxonomy-clean-docs",
+        help="Show master taxonomy clean documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5666,6 +5677,22 @@ def main():
         from buzzard_ai_complete.commands import complete_livestock_docs
 
         print(complete_livestock_docs())
+    elif args.cmd == "complete-master-taxonomy-clean-health":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_clean_health
+
+        print(complete_master_taxonomy_clean_health())
+    elif args.cmd == "complete-master-taxonomy-clean-demo":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_clean_demo
+
+        print(complete_master_taxonomy_clean_demo())
+    elif args.cmd == "complete-master-taxonomy-clean-manifest":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_clean_manifest
+
+        print(complete_master_taxonomy_clean_manifest())
+    elif args.cmd == "complete-master-taxonomy-clean-docs":
+        from buzzard_ai_complete.commands import complete_master_taxonomy_clean_docs
+
+        print(complete_master_taxonomy_clean_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

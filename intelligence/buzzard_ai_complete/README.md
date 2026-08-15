@@ -458,6 +458,19 @@ python3 main.py complete-livestock-branches
 python3 main.py complete-livestock-demo
 ```
 
+## Master Taxonomy CLEAN
+
+- **Unified Bundle** — Automotive/Tires + Agriculture + Livestock in one clean verification layer
+- **Sales OFF** — `BUZZARD_SALES_ENABLED=0`, `live_activation: false`
+- **Fitment Rules** — source-backed fitment, human review on conflicts
+- **complete-master-taxonomy-clean-health** / **complete-master-taxonomy-clean-demo** / **complete-master-taxonomy-clean-manifest** / **complete-master-taxonomy-clean-docs**
+- **API** — `/master-taxonomy-clean/health`, `/master-taxonomy-clean/manifest`, `/master-taxonomy-clean/sales-defaults`, `/master-taxonomy-clean/demo`
+
+```bash
+python3 main.py complete-master-taxonomy-clean-health
+python3 main.py complete-master-taxonomy-clean-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

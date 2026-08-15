@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "pipeline": [
+    "ingest",
+    "snapshot",
+    "parse",
+    "normalize",
+    "identity_resolution",
+    "duplicate_detection",
+    "category_mapping",
+    "attribute_mapping",
+    "multilingual_enrichment",
+    "media_normalization",
+    "quality_gate",
+    "compliance_gate",
+    "review_queue",
+    "publish_to_pim"
+  ],
+  "sources": [
+    "csv",
+    "xml",
+    "json",
+    "rest_api"
+  ],
+  "canonical_taxonomy": "data/taxonomy.json",
+  "supported_languages": "data/languages.json",
+  "default_currency": "EUR",
+  "never_overwrite_approved": true,
+  "human_approval_required_for_new_categories": true,
+  "audit_every_mutation": true,
+  "dry_run_default": true
+}

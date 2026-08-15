@@ -240,6 +240,19 @@ python3 main.py complete-multilingual-demo
 python3 main.py complete-multilingual-normalize --text "Bremsbelag"
 ```
 
+## Supplier Import & Enrichment Engine MAXIMAL
+
+- **Import pipeline** — normalize, identity, dedupe, category/attribute mapping, quality gate
+- **Dry-run default** — no blind publish to PIM or live store
+- **Feed adapters** — CSV, XML, JSON connectors
+- **complete-import-engine-health** / **complete-import-engine-demo** / **complete-import-engine-schema** / **complete-import-engine-docs**
+- **API** — `/import-engine/health`, `/import-engine/preview`, `/import-engine/demo`
+
+```bash
+python3 main.py complete-import-engine-demo
+python3 main.py complete-import-engine-health
+```
+
 ## Agenten
 
 | Agent | Rolle |

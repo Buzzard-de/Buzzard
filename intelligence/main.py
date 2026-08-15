@@ -1553,6 +1553,11 @@ def main():
     sub.add_parser("complete-multilingual-demo", help="Run multilingual product intelligence demo")
     sub.add_parser("complete-multilingual-docs", help="Show multilingual product intelligence docs")
 
+    sub.add_parser("complete-import-engine-health", help="Show supplier import enrichment engine health")
+    sub.add_parser("complete-import-engine-demo", help="Run supplier import enrichment demo (dry-run)")
+    sub.add_parser("complete-import-engine-schema", help="Show import engine decision/normalized schemas")
+    sub.add_parser("complete-import-engine-docs", help="Show supplier import enrichment documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5187,6 +5192,22 @@ def main():
         from buzzard_ai_complete.commands import complete_multilingual_docs
 
         print(complete_multilingual_docs())
+    elif args.cmd == "complete-import-engine-health":
+        from buzzard_ai_complete.commands import complete_import_engine_health
+
+        print(complete_import_engine_health())
+    elif args.cmd == "complete-import-engine-demo":
+        from buzzard_ai_complete.commands import complete_import_engine_demo
+
+        print(complete_import_engine_demo())
+    elif args.cmd == "complete-import-engine-schema":
+        from buzzard_ai_complete.commands import complete_import_engine_schema
+
+        print(complete_import_engine_schema())
+    elif args.cmd == "complete-import-engine-docs":
+        from buzzard_ai_complete.commands import complete_import_engine_docs
+
+        print(complete_import_engine_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

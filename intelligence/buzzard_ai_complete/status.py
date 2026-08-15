@@ -51,6 +51,8 @@ def complete_status():
         "     complete-pim-demo, complete-pim-health, complete-pim-schema, complete-pim-docs",
         "     complete-multilingual-health, complete-multilingual-languages,",
         "     complete-multilingual-normalize, complete-multilingual-demo, complete-multilingual-docs",
+        "     complete-import-engine-health, complete-import-engine-demo,",
+        "     complete-import-engine-schema, complete-import-engine-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

@@ -1,0 +1,20 @@
+{
+  "decision": [
+    "accept",
+    "review",
+    "reject",
+    "duplicate",
+    "blocked"
+  ],
+  "reasons": [
+    "missing_identity",
+    "duplicate_gtin",
+    "duplicate_mpn_brand",
+    "category_unresolved",
+    "attribute_conflict",
+    "low_quality",
+    "compliance_review",
+    "approved",
+    "manual_override"
+  ]
+}

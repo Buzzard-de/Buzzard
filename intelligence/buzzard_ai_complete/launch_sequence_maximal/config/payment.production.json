@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "provider": "REPLACE_WITH_PROVIDER",
+  "merchant_account": "",
+  "webhook_secret": "",
+  "currency": "EUR",
+  "capture_mode": "automatic",
+  "test_mode": true
+}

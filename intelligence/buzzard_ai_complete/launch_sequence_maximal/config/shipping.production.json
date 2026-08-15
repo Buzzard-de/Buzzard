@@ -1,0 +1,10 @@
+{
+  "enabled": false,
+  "carriers": [
+    {"name": "DHL", "enabled": false, "account_id": "", "api_credential_secret": ""},
+    {"name": "DPD", "enabled": false, "account_id": "", "api_credential_secret": ""},
+    {"name": "GLS", "enabled": false, "account_id": "", "api_credential_secret": ""},
+    {"name": "Hermes", "enabled": false, "account_id": "", "api_credential_secret": ""},
+    {"name": "UPS", "enabled": false, "account_id": "", "api_credential_secret": ""}
+  ]
+}

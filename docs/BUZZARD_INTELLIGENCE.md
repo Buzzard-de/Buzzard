@@ -1164,6 +1164,27 @@ python3 main.py complete-production-integration-demo
 
 Archive: `intelligence/archive/BUZZARD_PRODUCTION_INTEGRATION_MAXIMAL_ONE_PACKAGE.zip`
 
+## Launch Sequence MAXIMAL ONE PACKAGE
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-launch-sequence-health` | Launch sequence health |
+| `complete-launch-sequence-stages` | 9 Launch-Stufen + aktueller State |
+| `complete-launch-sequence-demo` | PIM-Import, Supplier-Sync, E2E-Dry-Run Demo |
+| `complete-launch-sequence-schema` | PIM-Import, Payment, Shipping, Marketplace, Telephony Schemas |
+| `complete-launch-sequence-docs` | Dokumentation + Runbook |
+
+API: `GET /launch/health`, `GET /launch/stages`, `GET /launch/sequence`, `GET /launch/schema/pim-import`, `GET /launch/demo`
+
+`live_activation: false` — Sales bleiben aus; externe Accounts (Payment, Carrier, Marketplace, Telephony) weiterhin manuell.
+
+```bash
+cd intelligence
+python3 main.py complete-launch-sequence-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_LAUNCH_SEQUENCE_MAXIMAL_ONE_PACKAGE.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

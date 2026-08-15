@@ -1,0 +1,11 @@
+{
+  "required": ["sku","title","price","currency","stock"],
+  "optional": ["ean","mpn","brand","category_id"],
+  "rules": [
+    "sku unique within import batch",
+    "price >= 0",
+    "stock >= 0",
+    "currency ISO-like uppercase code",
+    "canonical category must be validated against Buzzard taxonomy before publication"
+  ]
+}

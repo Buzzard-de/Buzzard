@@ -1603,6 +1603,15 @@ def main():
         help="Show production integration maximal documentation",
     )
 
+    sub.add_parser("complete-launch-sequence-health", help="Show launch sequence maximal health")
+    sub.add_parser("complete-launch-sequence-stages", help="List launch sequence stages and state")
+    sub.add_parser("complete-launch-sequence-demo", help="Run launch sequence maximal demo")
+    sub.add_parser("complete-launch-sequence-schema", help="Show launch sequence maximal schemas")
+    sub.add_parser(
+        "complete-launch-sequence-docs",
+        help="Show launch sequence maximal documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5345,6 +5354,26 @@ def main():
         from buzzard_ai_complete.commands import complete_production_docs
 
         print(complete_production_docs())
+    elif args.cmd == "complete-launch-sequence-health":
+        from buzzard_ai_complete.commands import complete_launch_sequence_health
+
+        print(complete_launch_sequence_health())
+    elif args.cmd == "complete-launch-sequence-stages":
+        from buzzard_ai_complete.commands import complete_launch_sequence_stages
+
+        print(complete_launch_sequence_stages())
+    elif args.cmd == "complete-launch-sequence-demo":
+        from buzzard_ai_complete.commands import complete_launch_sequence_demo
+
+        print(complete_launch_sequence_demo())
+    elif args.cmd == "complete-launch-sequence-schema":
+        from buzzard_ai_complete.commands import complete_launch_sequence_schema
+
+        print(complete_launch_sequence_schema())
+    elif args.cmd == "complete-launch-sequence-docs":
+        from buzzard_ai_complete.commands import complete_launch_sequence_docs
+
+        print(complete_launch_sequence_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

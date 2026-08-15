@@ -1,0 +1,11 @@
+{
+  "domain_production_server": {"status": "pending"},
+  "pim_real_product_data": {"status": "pending"},
+  "supplier": {"status": "pending"},
+  "payment": {"status": "pending"},
+  "shipping": {"status": "pending"},
+  "marketplace": {"status": "pending"},
+  "telephony": {"status": "pending"},
+  "security_e2e": {"status": "pending"},
+  "launch": {"status": "blocked_until_all_previous_pass"}
+}

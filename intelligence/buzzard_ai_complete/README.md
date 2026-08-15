@@ -313,6 +313,21 @@ python3 main.py complete-production-integration-demo
 python3 main.py complete-production-integration-readiness
 ```
 
+## Launch Sequence MAXIMAL ONE PACKAGE
+
+- **9 Launch-Stufen** — Domain/Server → PIM → Supplier → Payment → Shipping → Marketplace → Telephony → Security/E2E → Launch
+- **PIM-Import-Pipeline** — CSV/JSON-Import mit Schema-Validierung
+- **Aktivierungs-Gates** — Payment, Shipping, Marketplace, Telephony (Konfiguration, kein Live-Go)
+- **E2E-Dry-Run** — Katalog, Suche, Checkout-Simulation
+- **complete-launch-sequence-health** / **complete-launch-sequence-stages** / **complete-launch-sequence-demo** / **complete-launch-sequence-schema** / **complete-launch-sequence-docs**
+- **API** — `/launch/health`, `/launch/stages`, `/launch/sequence`, `/launch/schema/pim-import`, `/launch/demo`
+- **`live_activation: false`** — externe Accounts und echte Provisionierung weiterhin manuell
+
+```bash
+python3 main.py complete-launch-sequence-demo
+python3 main.py complete-launch-sequence-stages
+```
+
 ## Agenten
 
 | Agent | Rolle |

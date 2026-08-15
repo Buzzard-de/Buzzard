@@ -1,0 +1,10 @@
+{
+  "enabled": false,
+  "provider": "REPLACE_WITH_PROVIDER",
+  "phone_number": "",
+  "credentials_secret": "",
+  "public_webhook": "",
+  "media_stream": "",
+  "human_handoff_destination": "",
+  "recording": false
+}

@@ -1,0 +1,12 @@
+{
+  "channels": [
+    {"channel": "eBay", "enabled": false, "seller_account": "", "api_credentials": ""},
+    {"channel": "Amazon", "enabled": false, "seller_account": "", "api_credentials": ""},
+    {"channel": "Google", "enabled": false, "seller_account": "", "api_credentials": ""}
+  ],
+  "rules": {
+    "canonical_product_source": "Buzzard PIM",
+    "unknown_category_action": "review",
+    "auto_publish": false
+  }
+}

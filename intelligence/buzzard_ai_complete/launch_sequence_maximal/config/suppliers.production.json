@@ -1,0 +1,20 @@
+{
+  "suppliers": [
+    {
+      "name": "REPLACE_WITH_SUPPLIER",
+      "enabled": false,
+      "type": "API",
+      "endpoint": "",
+      "credentials_secret": "",
+      "feed_interval_minutes": 60,
+      "stale_after_hours": 24,
+      "auto_publish": false
+    }
+  ],
+  "global_rules": {
+    "reject_negative_stock": true,
+    "reject_invalid_price": true,
+    "require_mapping_before_publish": true,
+    "keep_raw_source_payload": false
+  }
+}

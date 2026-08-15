@@ -908,6 +908,52 @@ def complete_production_docs():
     return _read_doc("PRODUCTION_INTEGRATION_MAXIMAL_ONE_PACKAGE.md")
 
 
+def complete_launch_sequence_health():
+    from buzzard_ai_complete.launch_sequence_maximal.service import LaunchSequenceService
+
+    return json.dumps(LaunchSequenceService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_launch_sequence_stages():
+    from buzzard_ai_complete.launch_sequence_maximal.service import LaunchSequenceService
+
+    service = LaunchSequenceService()
+    return json.dumps(
+        {"stages": service.health()["stages"], "state": service.load_launch_state()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_launch_sequence_demo():
+    from buzzard_ai_complete.launch_sequence_maximal.service import LaunchSequenceService
+
+    return json.dumps(LaunchSequenceService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_launch_sequence_schema():
+    from buzzard_ai_complete.launch_sequence_maximal.service import LaunchSequenceService
+
+    service = LaunchSequenceService()
+    return json.dumps(
+        {
+            "pim_import": service.pim_schema(),
+            "launch_state": service.load_launch_state(),
+            "payment": service.load_payment_config(),
+            "shipping": service.load_shipping_config(),
+            "marketplaces": service.load_marketplace_config(),
+            "telephony": service.load_telephony_config(),
+            "suppliers": service.load_suppliers_config(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_launch_sequence_docs():
+    return _read_doc("LAUNCH_SEQUENCE_MAXIMAL_ONE_PACKAGE.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

@@ -1360,6 +1360,9 @@ def main():
     complete_policy = sub.add_parser("complete-policy", help="Check BuzzardPolicy for an action")
     complete_policy.add_argument("--action", required=True)
     sub.add_parser("complete-metrics", help="Show COMPLETE in-memory metrics snapshot")
+    sub.add_parser("complete-tree", help="Show COMPLETE architecture tree")
+    sub.add_parser("complete-inventory", help="Show COMPLETE project inventory")
+    sub.add_parser("complete-verify", help="Run COMPLETE error-free verification (pytest + import sweep)")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4717,6 +4720,18 @@ def main():
         from buzzard_ai_complete.commands import complete_metrics
 
         print(complete_metrics())
+    elif args.cmd == "complete-tree":
+        from buzzard_ai_complete.commands import complete_tree
+
+        print(complete_tree())
+    elif args.cmd == "complete-inventory":
+        from buzzard_ai_complete.commands import complete_inventory
+
+        print(complete_inventory())
+    elif args.cmd == "complete-verify":
+        from buzzard_ai_complete.commands import complete_verify
+
+        print(complete_verify())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

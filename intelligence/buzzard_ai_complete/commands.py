@@ -122,6 +122,34 @@ def complete_orchestrate(task_id, objective, priority="NORMAL"):
     return json.dumps(payload, ensure_ascii=False, indent=2, default=str)
 
 
+def _read_doc(name):
+    path = PACK_DIR / "docs" / name
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return f"Dokument nicht gefunden: {name}"
+
+
+def complete_tree():
+    return _read_doc("COMPLETE_ARCHITECTURE_TREE.md")
+
+
+def complete_inventory():
+    return _read_doc("PROJECT_INVENTORY.md")
+
+
+def complete_verify():
+    result = subprocess.run(
+        [sys.executable, str(PACK_DIR / "scripts" / "verify_project.py")],
+        cwd=str(PACK_DIR.parent),
+        capture_output=True,
+        text=True,
+    )
+    output = (result.stdout or "") + (result.stderr or "")
+    if result.returncode != 0:
+        raise RuntimeError(output.strip() or f"verify_project exited with {result.returncode}")
+    return output.strip()
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

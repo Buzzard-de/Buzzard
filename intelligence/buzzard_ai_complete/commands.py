@@ -494,6 +494,37 @@ def complete_shop_bridge_docs():
     return _read_doc("SHOP_INTELLIGENCE_COMMERCE_BRIDGE_MAXIMAL.md")
 
 
+def complete_taxonomy_demo():
+    from buzzard_ai_complete.master_taxonomy.service import MasterTaxonomyService
+
+    return json.dumps(MasterTaxonomyService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_taxonomy_search(term):
+    from buzzard_ai_complete.master_taxonomy.service import MasterTaxonomyService
+
+    results = MasterTaxonomyService().search(term)
+    return json.dumps(results[:25], ensure_ascii=False, indent=2)
+
+
+def complete_taxonomy_path(node_id):
+    from buzzard_ai_complete.master_taxonomy.service import MasterTaxonomyService
+
+    return json.dumps(
+        MasterTaxonomyService().path(node_id), ensure_ascii=False, indent=2
+    )
+
+
+def complete_taxonomy_snapshot():
+    from buzzard_ai_complete.master_taxonomy.service import MasterTaxonomyService
+
+    return json.dumps(MasterTaxonomyService().snapshot(), ensure_ascii=False, indent=2)
+
+
+def complete_taxonomy_docs():
+    return _read_doc("MASTER_TAXONOMY.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

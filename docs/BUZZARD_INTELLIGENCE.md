@@ -972,6 +972,29 @@ python3 main.py complete-shop-bridge-readiness
 
 Archive: `intelligence/archive/BUZZARD_SHOP_INTELLIGENCE_COMMERCE_BRIDGE_MAXIMAL_ONE_PIECE.zip`
 
+## Master Taxonomy MAXIMAL — neu
+
+Produktionsreife Master-Taxonomie mit 43 Hauptkategorien und 1198 Knoten (Hauptkategorie → Unterkategorie → Unter-Unterkategorie → Produkt).
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-taxonomy-demo` | Demo: Snapshot, Pfad, Suche |
+| `complete-taxonomy-search` | Suche nach Name/Slug |
+| `complete-taxonomy-path` | Breadcrumb-Pfad für Node-ID |
+| `complete-taxonomy-snapshot` | Statistik & Dateipfade |
+| `complete-taxonomy-docs` | Vollständiger Kategoriebaum (Markdown) |
+
+API: `GET /taxonomy`, `GET /taxonomy/categories`, `GET /taxonomy/category/{id}`, `GET /taxonomy/search`
+
+```bash
+cd intelligence
+python3 main.py complete-taxonomy-demo
+python3 main.py complete-taxonomy-search --q motor
+python3 main.py complete-taxonomy-path --id 01.01.01
+```
+
+Archive: `intelligence/archive/BUZZARD_MASTER_TAXONOMY_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

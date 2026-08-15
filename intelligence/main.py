@@ -1517,6 +1517,18 @@ def main():
     sub.add_parser("complete-shop-bridge-readiness", help="Show shop bridge sales readiness gate")
     sub.add_parser("complete-shop-bridge-docs", help="Show Shop Intelligence Commerce Bridge docs")
 
+    complete_taxonomy_search = sub.add_parser(
+        "complete-taxonomy-search", help="Search master taxonomy by name or slug"
+    )
+    complete_taxonomy_search.add_argument("--q", required=True)
+    complete_taxonomy_path = sub.add_parser(
+        "complete-taxonomy-path", help="Show breadcrumb path for a taxonomy node"
+    )
+    complete_taxonomy_path.add_argument("--id", required=True)
+    sub.add_parser("complete-taxonomy-demo", help="Run master taxonomy demo flow")
+    sub.add_parser("complete-taxonomy-snapshot", help="Show master taxonomy snapshot")
+    sub.add_parser("complete-taxonomy-docs", help="Show master taxonomy documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5083,6 +5095,26 @@ def main():
         from buzzard_ai_complete.commands import complete_shop_bridge_docs
 
         print(complete_shop_bridge_docs())
+    elif args.cmd == "complete-taxonomy-demo":
+        from buzzard_ai_complete.commands import complete_taxonomy_demo
+
+        print(complete_taxonomy_demo())
+    elif args.cmd == "complete-taxonomy-search":
+        from buzzard_ai_complete.commands import complete_taxonomy_search
+
+        print(complete_taxonomy_search(args.q))
+    elif args.cmd == "complete-taxonomy-path":
+        from buzzard_ai_complete.commands import complete_taxonomy_path
+
+        print(complete_taxonomy_path(args.id))
+    elif args.cmd == "complete-taxonomy-snapshot":
+        from buzzard_ai_complete.commands import complete_taxonomy_snapshot
+
+        print(complete_taxonomy_snapshot())
+    elif args.cmd == "complete-taxonomy-docs":
+        from buzzard_ai_complete.commands import complete_taxonomy_docs
+
+        print(complete_taxonomy_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

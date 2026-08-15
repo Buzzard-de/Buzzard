@@ -1,6 +1,8 @@
 {
   "separate_main_category": true,
   "name": "Yenilenebilir Enerji",
+  "display_name": "Güneş & Rüzgâr Enerjisi",
+  "architecture": "main → sub → sub-sub → product → technical attributes → compatibility",
   "branches": [
     "Güneş Enerjisi",
     "Rüzgâr Enerjisi",

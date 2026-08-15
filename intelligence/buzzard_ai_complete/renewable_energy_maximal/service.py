@@ -23,11 +23,14 @@ from buzzard_ai_complete.renewable_energy_maximal.renewable_energy.service.intel
 )
 from buzzard_ai_complete.renewable_energy_maximal.renewable_energy.taxonomy.master import (
     RENEWABLE_ENERGY_TAXONOMY,
+    TAXONOMY_ARCHITECTURE,
+    TAXONOMY_MAIN_CATEGORY,
 )
 
 CONFIG_DIR = Path(__file__).resolve().parent / "config"
 SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
 DOCS_DIR = Path(__file__).resolve().parent / "docs"
+DATA_DIR = Path(__file__).resolve().parent / "data"
 
 
 class RenewableEnergyService:
@@ -37,13 +40,18 @@ class RenewableEnergyService:
     def load_schema(self):
         return json.loads((SCHEMA_DIR / "renewable_energy.schema.json").read_text(encoding="utf-8"))
 
+    def load_taxonomy(self):
+        return json.loads((DATA_DIR / "taxonomy.json").read_text(encoding="utf-8"))
+
     def health(self):
         config = self.load_config()
         rules = config.get("rules", {})
         return {
             "service": "renewable-energy-maximal",
             "status": "maximal_renewable_energy_ready",
-            "main_category": config.get("name", "Yenilenebilir Enerji"),
+            "main_category": TAXONOMY_MAIN_CATEGORY,
+            "config_name": config.get("name", "Yenilenebilir Enerji"),
+            "architecture": TAXONOMY_ARCHITECTURE,
             "branches": len(config.get("branches", [])),
             "taxonomy_nodes": len(RENEWABLE_ENERGY_TAXONOMY),
             "compatibility_requires_evidence": rules.get("compatibility_requires_evidence", True),

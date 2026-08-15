@@ -202,6 +202,18 @@ python3 main.py complete-taxonomy-search --q motor
 python3 main.py complete-taxonomy-path --id 01.01.01
 ```
 
+## Master Taxonomy Unification MAXIMAL
+
+- **Canonical IDs** — `bz.01` … `bz.43` unify Shop (`cat-*`) and Intelligence (`01`/`intelligence.*`)
+- **Alias mapping** — legacy IDs preserved, backward-compatible resolution
+- **complete-taxonomy-unify-status** / **complete-taxonomy-unify-resolve** / **complete-taxonomy-unify-docs**
+- **API** — `/taxonomy/status`, `/taxonomy/resolve`, `/taxonomy/canonical/*`
+
+```bash
+python3 main.py complete-taxonomy-unify-status
+python3 main.py complete-taxonomy-unify-resolve --legacy-id cat-01 --system shop
+```
+
 ## Agenten
 
 | Agent | Rolle |

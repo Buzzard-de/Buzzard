@@ -1529,6 +1529,15 @@ def main():
     sub.add_parser("complete-taxonomy-snapshot", help="Show master taxonomy snapshot")
     sub.add_parser("complete-taxonomy-docs", help="Show master taxonomy documentation")
 
+    complete_taxonomy_unify_resolve = sub.add_parser(
+        "complete-taxonomy-unify-resolve",
+        help="Resolve legacy category ID to canonical bz.* ID",
+    )
+    complete_taxonomy_unify_resolve.add_argument("--legacy-id", required=True)
+    complete_taxonomy_unify_resolve.add_argument("--system", default="shop")
+    sub.add_parser("complete-taxonomy-unify-status", help="Show taxonomy unification status")
+    sub.add_parser("complete-taxonomy-unify-docs", help="Show taxonomy unification documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5115,6 +5124,18 @@ def main():
         from buzzard_ai_complete.commands import complete_taxonomy_docs
 
         print(complete_taxonomy_docs())
+    elif args.cmd == "complete-taxonomy-unify-status":
+        from buzzard_ai_complete.commands import complete_taxonomy_unify_status
+
+        print(complete_taxonomy_unify_status())
+    elif args.cmd == "complete-taxonomy-unify-resolve":
+        from buzzard_ai_complete.commands import complete_taxonomy_unify_resolve
+
+        print(complete_taxonomy_unify_resolve(args.legacy_id, args.system))
+    elif args.cmd == "complete-taxonomy-unify-docs":
+        from buzzard_ai_complete.commands import complete_taxonomy_unify_docs
+
+        print(complete_taxonomy_unify_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

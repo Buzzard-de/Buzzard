@@ -525,6 +525,27 @@ def complete_taxonomy_docs():
     return _read_doc("MASTER_TAXONOMY.md")
 
 
+def complete_taxonomy_unify_status():
+    from buzzard_ai_complete.master_taxonomy.unification import TaxonomyUnificationService
+
+    return json.dumps(TaxonomyUnificationService().status(), ensure_ascii=False, indent=2)
+
+
+def complete_taxonomy_unify_resolve(legacy_id, system="shop"):
+    from buzzard_ai_complete.master_taxonomy.unification import TaxonomyUnificationService
+
+    return json.dumps(
+        TaxonomyUnificationService().resolve(legacy_id, system),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_taxonomy_unify_docs():
+    return _read_doc("TAXONOMY_UNIFICATION_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

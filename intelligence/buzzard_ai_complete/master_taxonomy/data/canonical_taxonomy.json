@@ -1,0 +1,1954 @@
+{
+  "schema_version": "2.0.0",
+  "canonical_system": "BUZZARD_MASTER_TAXONOMY",
+  "master_root_count": 43,
+  "nodes": [
+    {
+      "id": "bz.01",
+      "parent_id": null,
+      "level": 1,
+      "name": "Automotive",
+      "slug": "automotive",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.001",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Motor & Kühlung",
+      "slug": "automotive/motor-und-kuehlung",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.002",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Bremsanlage",
+      "slug": "automotive/bremsanlage",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.003",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Fahrwerk & Lenkung",
+      "slug": "automotive/fahrwerk-und-lenkung",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.004",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Elektrik & Elektronik",
+      "slug": "automotive/elektrik-und-elektronik",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.005",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Auspuffanlage",
+      "slug": "automotive/auspuffanlage",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.006",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Filter",
+      "slug": "automotive/filter",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.007",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Kraftstoffsystem",
+      "slug": "automotive/kraftstoffsystem",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.008",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Karosserie",
+      "slug": "automotive/karosserie",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.009",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Innenraum",
+      "slug": "automotive/innenraum",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.010",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Klima & Heizung",
+      "slug": "automotive/klima-und-heizung",
+      "canonical": true
+    },
+    {
+      "id": "bz.01.011",
+      "parent_id": "bz.01",
+      "level": 2,
+      "name": "Anhänger & Transport",
+      "slug": "automotive/anhaenger-und-transport",
+      "canonical": true
+    },
+    {
+      "id": "bz.02",
+      "parent_id": null,
+      "level": 1,
+      "name": "Haus & Wohnen",
+      "slug": "haus-und-wohnen",
+      "canonical": true
+    },
+    {
+      "id": "bz.02.001",
+      "parent_id": "bz.02",
+      "level": 2,
+      "name": "Wohnzimmer",
+      "slug": "haus-und-wohnen/wohnzimmer",
+      "canonical": true
+    },
+    {
+      "id": "bz.02.002",
+      "parent_id": "bz.02",
+      "level": 2,
+      "name": "Schlafzimmer",
+      "slug": "haus-und-wohnen/schlafzimmer",
+      "canonical": true
+    },
+    {
+      "id": "bz.02.003",
+      "parent_id": "bz.02",
+      "level": 2,
+      "name": "Küche",
+      "slug": "haus-und-wohnen/kueche",
+      "canonical": true
+    },
+    {
+      "id": "bz.02.004",
+      "parent_id": "bz.02",
+      "level": 2,
+      "name": "Bad",
+      "slug": "haus-und-wohnen/bad",
+      "canonical": true
+    },
+    {
+      "id": "bz.02.005",
+      "parent_id": "bz.02",
+      "level": 2,
+      "name": "Dekoration",
+      "slug": "haus-und-wohnen/dekoration",
+      "canonical": true
+    },
+    {
+      "id": "bz.02.006",
+      "parent_id": "bz.02",
+      "level": 2,
+      "name": "Haushalt",
+      "slug": "haus-und-wohnen/haushalt",
+      "canonical": true
+    },
+    {
+      "id": "bz.03",
+      "parent_id": null,
+      "level": 1,
+      "name": "Werkzeuge",
+      "slug": "werkzeuge",
+      "canonical": true
+    },
+    {
+      "id": "bz.03.001",
+      "parent_id": "bz.03",
+      "level": 2,
+      "name": "Handwerkzeuge",
+      "slug": "werkzeuge/handwerkzeuge",
+      "canonical": true
+    },
+    {
+      "id": "bz.03.002",
+      "parent_id": "bz.03",
+      "level": 2,
+      "name": "Elektrowerkzeuge",
+      "slug": "werkzeuge/elektrowerkzeuge",
+      "canonical": true
+    },
+    {
+      "id": "bz.03.003",
+      "parent_id": "bz.03",
+      "level": 2,
+      "name": "Druckluftwerkzeuge",
+      "slug": "werkzeuge/druckluftwerkzeuge",
+      "canonical": true
+    },
+    {
+      "id": "bz.03.004",
+      "parent_id": "bz.03",
+      "level": 2,
+      "name": "Mess- & Prüftechnik",
+      "slug": "werkzeuge/mess-und-prueftechnik",
+      "canonical": true
+    },
+    {
+      "id": "bz.03.005",
+      "parent_id": "bz.03",
+      "level": 2,
+      "name": "Werkstatt",
+      "slug": "werkzeuge/werkstatt",
+      "canonical": true
+    },
+    {
+      "id": "bz.04",
+      "parent_id": null,
+      "level": 1,
+      "name": "Garten",
+      "slug": "garten",
+      "canonical": true
+    },
+    {
+      "id": "bz.04.001",
+      "parent_id": "bz.04",
+      "level": 2,
+      "name": "Gartenwerkzeuge",
+      "slug": "garten/gartenwerkzeuge",
+      "canonical": true
+    },
+    {
+      "id": "bz.04.002",
+      "parent_id": "bz.04",
+      "level": 2,
+      "name": "Rasenpflege",
+      "slug": "garten/rasenpflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.04.003",
+      "parent_id": "bz.04",
+      "level": 2,
+      "name": "Bewässerung",
+      "slug": "garten/bewaesserung",
+      "canonical": true
+    },
+    {
+      "id": "bz.04.004",
+      "parent_id": "bz.04",
+      "level": 2,
+      "name": "Pflanzen & Anzucht",
+      "slug": "garten/pflanzen-und-anzucht",
+      "canonical": true
+    },
+    {
+      "id": "bz.04.005",
+      "parent_id": "bz.04",
+      "level": 2,
+      "name": "Gartenmöbel",
+      "slug": "garten/gartenmoebel",
+      "canonical": true
+    },
+    {
+      "id": "bz.04.006",
+      "parent_id": "bz.04",
+      "level": 2,
+      "name": "Gartenmaschinen",
+      "slug": "garten/gartenmaschinen",
+      "canonical": true
+    },
+    {
+      "id": "bz.05",
+      "parent_id": null,
+      "level": 1,
+      "name": "Reinigung",
+      "slug": "reinigung",
+      "canonical": true
+    },
+    {
+      "id": "bz.05.001",
+      "parent_id": "bz.05",
+      "level": 2,
+      "name": "Reinigungsmittel",
+      "slug": "reinigung/reinigungsmittel",
+      "canonical": true
+    },
+    {
+      "id": "bz.05.002",
+      "parent_id": "bz.05",
+      "level": 2,
+      "name": "Wäschepflege",
+      "slug": "reinigung/waeschepflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.05.003",
+      "parent_id": "bz.05",
+      "level": 2,
+      "name": "Geschirrspülen",
+      "slug": "reinigung/geschirrspuelen",
+      "canonical": true
+    },
+    {
+      "id": "bz.05.004",
+      "parent_id": "bz.05",
+      "level": 2,
+      "name": "Reinigungsgeräte",
+      "slug": "reinigung/reinigungsgeraete",
+      "canonical": true
+    },
+    {
+      "id": "bz.05.005",
+      "parent_id": "bz.05",
+      "level": 2,
+      "name": "Professionelle Reinigung",
+      "slug": "reinigung/professionelle-reinigung",
+      "canonical": true
+    },
+    {
+      "id": "bz.06",
+      "parent_id": null,
+      "level": 1,
+      "name": "Kosmetik & Pflege",
+      "slug": "kosmetik-und-pflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.06.001",
+      "parent_id": "bz.06",
+      "level": 2,
+      "name": "Gesichtspflege",
+      "slug": "kosmetik-und-pflege/gesichtspflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.06.002",
+      "parent_id": "bz.06",
+      "level": 2,
+      "name": "Körperpflege",
+      "slug": "kosmetik-und-pflege/koerperpflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.06.003",
+      "parent_id": "bz.06",
+      "level": 2,
+      "name": "Haarpflege",
+      "slug": "kosmetik-und-pflege/haarpflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.06.004",
+      "parent_id": "bz.06",
+      "level": 2,
+      "name": "Parfum",
+      "slug": "kosmetik-und-pflege/parfum",
+      "canonical": true
+    },
+    {
+      "id": "bz.06.005",
+      "parent_id": "bz.06",
+      "level": 2,
+      "name": "Kosmetik",
+      "slug": "kosmetik-und-pflege/kosmetik",
+      "canonical": true
+    },
+    {
+      "id": "bz.07",
+      "parent_id": null,
+      "level": 1,
+      "name": "Elektronik",
+      "slug": "elektronik",
+      "canonical": true
+    },
+    {
+      "id": "bz.07.001",
+      "parent_id": "bz.07",
+      "level": 2,
+      "name": "Computer",
+      "slug": "elektronik/computer",
+      "canonical": true
+    },
+    {
+      "id": "bz.07.002",
+      "parent_id": "bz.07",
+      "level": 2,
+      "name": "Netzwerk",
+      "slug": "elektronik/netzwerk",
+      "canonical": true
+    },
+    {
+      "id": "bz.07.003",
+      "parent_id": "bz.07",
+      "level": 2,
+      "name": "Smartphones & Tablets",
+      "slug": "elektronik/smartphones-und-tablets",
+      "canonical": true
+    },
+    {
+      "id": "bz.07.004",
+      "parent_id": "bz.07",
+      "level": 2,
+      "name": "Audio",
+      "slug": "elektronik/audio",
+      "canonical": true
+    },
+    {
+      "id": "bz.07.005",
+      "parent_id": "bz.07",
+      "level": 2,
+      "name": "TV & Video",
+      "slug": "elektronik/tv-und-video",
+      "canonical": true
+    },
+    {
+      "id": "bz.07.006",
+      "parent_id": "bz.07",
+      "level": 2,
+      "name": "Speicher",
+      "slug": "elektronik/speicher",
+      "canonical": true
+    },
+    {
+      "id": "bz.08",
+      "parent_id": null,
+      "level": 1,
+      "name": "Elektrogeräte",
+      "slug": "elektrogeraete",
+      "canonical": true
+    },
+    {
+      "id": "bz.08.001",
+      "parent_id": "bz.08",
+      "level": 2,
+      "name": "Waschen",
+      "slug": "elektrogeraete/waschen",
+      "canonical": true
+    },
+    {
+      "id": "bz.08.002",
+      "parent_id": "bz.08",
+      "level": 2,
+      "name": "Kühlen",
+      "slug": "elektrogeraete/kuehlen",
+      "canonical": true
+    },
+    {
+      "id": "bz.08.003",
+      "parent_id": "bz.08",
+      "level": 2,
+      "name": "Kochen",
+      "slug": "elektrogeraete/kochen",
+      "canonical": true
+    },
+    {
+      "id": "bz.08.004",
+      "parent_id": "bz.08",
+      "level": 2,
+      "name": "Haushaltskleingeräte",
+      "slug": "elektrogeraete/haushaltskleingeraete",
+      "canonical": true
+    },
+    {
+      "id": "bz.09",
+      "parent_id": null,
+      "level": 1,
+      "name": "Möbel",
+      "slug": "moebel",
+      "canonical": true
+    },
+    {
+      "id": "bz.09.001",
+      "parent_id": "bz.09",
+      "level": 2,
+      "name": "Sitzmöbel",
+      "slug": "moebel/sitzmoebel",
+      "canonical": true
+    },
+    {
+      "id": "bz.09.002",
+      "parent_id": "bz.09",
+      "level": 2,
+      "name": "Tische",
+      "slug": "moebel/tische",
+      "canonical": true
+    },
+    {
+      "id": "bz.09.003",
+      "parent_id": "bz.09",
+      "level": 2,
+      "name": "Schränke",
+      "slug": "moebel/schraenke",
+      "canonical": true
+    },
+    {
+      "id": "bz.09.004",
+      "parent_id": "bz.09",
+      "level": 2,
+      "name": "Schlafmöbel",
+      "slug": "moebel/schlafmoebel",
+      "canonical": true
+    },
+    {
+      "id": "bz.10",
+      "parent_id": null,
+      "level": 1,
+      "name": "Beleuchtung",
+      "slug": "beleuchtung",
+      "canonical": true
+    },
+    {
+      "id": "bz.10.001",
+      "parent_id": "bz.10",
+      "level": 2,
+      "name": "Innenbeleuchtung",
+      "slug": "beleuchtung/innenbeleuchtung",
+      "canonical": true
+    },
+    {
+      "id": "bz.10.002",
+      "parent_id": "bz.10",
+      "level": 2,
+      "name": "Außenbeleuchtung",
+      "slug": "beleuchtung/aussenbeleuchtung",
+      "canonical": true
+    },
+    {
+      "id": "bz.10.003",
+      "parent_id": "bz.10",
+      "level": 2,
+      "name": "LED",
+      "slug": "beleuchtung/led",
+      "canonical": true
+    },
+    {
+      "id": "bz.10.004",
+      "parent_id": "bz.10",
+      "level": 2,
+      "name": "Leuchtmittel",
+      "slug": "beleuchtung/leuchtmittel",
+      "canonical": true
+    },
+    {
+      "id": "bz.11",
+      "parent_id": null,
+      "level": 1,
+      "name": "Mode & Accessoires",
+      "slug": "mode-und-accessoires",
+      "canonical": true
+    },
+    {
+      "id": "bz.11.001",
+      "parent_id": "bz.11",
+      "level": 2,
+      "name": "Damenmode",
+      "slug": "mode-und-accessoires/damenmode",
+      "canonical": true
+    },
+    {
+      "id": "bz.11.002",
+      "parent_id": "bz.11",
+      "level": 2,
+      "name": "Herrenmode",
+      "slug": "mode-und-accessoires/herrenmode",
+      "canonical": true
+    },
+    {
+      "id": "bz.11.003",
+      "parent_id": "bz.11",
+      "level": 2,
+      "name": "Schuhe",
+      "slug": "mode-und-accessoires/schuhe",
+      "canonical": true
+    },
+    {
+      "id": "bz.11.004",
+      "parent_id": "bz.11",
+      "level": 2,
+      "name": "Accessoires",
+      "slug": "mode-und-accessoires/accessoires",
+      "canonical": true
+    },
+    {
+      "id": "bz.12",
+      "parent_id": null,
+      "level": 1,
+      "name": "Sport & Outdoor",
+      "slug": "sport-und-outdoor",
+      "canonical": true
+    },
+    {
+      "id": "bz.12.001",
+      "parent_id": "bz.12",
+      "level": 2,
+      "name": "Fitness",
+      "slug": "sport-und-outdoor/fitness",
+      "canonical": true
+    },
+    {
+      "id": "bz.12.002",
+      "parent_id": "bz.12",
+      "level": 2,
+      "name": "Camping",
+      "slug": "sport-und-outdoor/camping",
+      "canonical": true
+    },
+    {
+      "id": "bz.12.003",
+      "parent_id": "bz.12",
+      "level": 2,
+      "name": "Wandern",
+      "slug": "sport-und-outdoor/wandern",
+      "canonical": true
+    },
+    {
+      "id": "bz.12.004",
+      "parent_id": "bz.12",
+      "level": 2,
+      "name": "Wintersport",
+      "slug": "sport-und-outdoor/wintersport",
+      "canonical": true
+    },
+    {
+      "id": "bz.12.005",
+      "parent_id": "bz.12",
+      "level": 2,
+      "name": "Teamsport",
+      "slug": "sport-und-outdoor/teamsport",
+      "canonical": true
+    },
+    {
+      "id": "bz.13",
+      "parent_id": null,
+      "level": 1,
+      "name": "Fahrräder & E-Bikes",
+      "slug": "fahrraeder-und-e-bikes",
+      "canonical": true
+    },
+    {
+      "id": "bz.13.001",
+      "parent_id": "bz.13",
+      "level": 2,
+      "name": "Fahrräder",
+      "slug": "fahrraeder-und-e-bikes/fahrraeder",
+      "canonical": true
+    },
+    {
+      "id": "bz.13.002",
+      "parent_id": "bz.13",
+      "level": 2,
+      "name": "E-Bikes",
+      "slug": "fahrraeder-und-e-bikes/e-bikes",
+      "canonical": true
+    },
+    {
+      "id": "bz.13.003",
+      "parent_id": "bz.13",
+      "level": 2,
+      "name": "Fahrradteile",
+      "slug": "fahrraeder-und-e-bikes/fahrradteile",
+      "canonical": true
+    },
+    {
+      "id": "bz.13.004",
+      "parent_id": "bz.13",
+      "level": 2,
+      "name": "Zubehör",
+      "slug": "fahrraeder-und-e-bikes/zubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.14",
+      "parent_id": null,
+      "level": 1,
+      "name": "Haustier",
+      "slug": "haustier",
+      "canonical": true
+    },
+    {
+      "id": "bz.14.001",
+      "parent_id": "bz.14",
+      "level": 2,
+      "name": "Hundefutter",
+      "slug": "haustier/hundefutter",
+      "canonical": true
+    },
+    {
+      "id": "bz.14.002",
+      "parent_id": "bz.14",
+      "level": 2,
+      "name": "Katzenfutter",
+      "slug": "haustier/katzenfutter",
+      "canonical": true
+    },
+    {
+      "id": "bz.14.003",
+      "parent_id": "bz.14",
+      "level": 2,
+      "name": "Tierbedarf",
+      "slug": "haustier/tierbedarf",
+      "canonical": true
+    },
+    {
+      "id": "bz.14.004",
+      "parent_id": "bz.14",
+      "level": 2,
+      "name": "Aquaristik",
+      "slug": "haustier/aquaristik",
+      "canonical": true
+    },
+    {
+      "id": "bz.15",
+      "parent_id": null,
+      "level": 1,
+      "name": "Baby & Kind",
+      "slug": "baby-und-kind",
+      "canonical": true
+    },
+    {
+      "id": "bz.15.001",
+      "parent_id": "bz.15",
+      "level": 2,
+      "name": "Babybedarf",
+      "slug": "baby-und-kind/babybedarf",
+      "canonical": true
+    },
+    {
+      "id": "bz.15.002",
+      "parent_id": "bz.15",
+      "level": 2,
+      "name": "Babykleidung",
+      "slug": "baby-und-kind/babykleidung",
+      "canonical": true
+    },
+    {
+      "id": "bz.15.003",
+      "parent_id": "bz.15",
+      "level": 2,
+      "name": "Spielzeug",
+      "slug": "baby-und-kind/spielzeug",
+      "canonical": true
+    },
+    {
+      "id": "bz.15.004",
+      "parent_id": "bz.15",
+      "level": 2,
+      "name": "Schule & Einschulung",
+      "slug": "baby-und-kind/schule-und-einschulung",
+      "canonical": true
+    },
+    {
+      "id": "bz.16",
+      "parent_id": null,
+      "level": 1,
+      "name": "Gaming & Spielzeug",
+      "slug": "gaming-und-spielzeug",
+      "canonical": true
+    },
+    {
+      "id": "bz.16.001",
+      "parent_id": "bz.16",
+      "level": 2,
+      "name": "Spielzeug",
+      "slug": "gaming-und-spielzeug/spielzeug",
+      "canonical": true
+    },
+    {
+      "id": "bz.16.002",
+      "parent_id": "bz.16",
+      "level": 2,
+      "name": "Gaming",
+      "slug": "gaming-und-spielzeug/gaming",
+      "canonical": true
+    },
+    {
+      "id": "bz.16.003",
+      "parent_id": "bz.16",
+      "level": 2,
+      "name": "Outdoor-Spielzeug",
+      "slug": "gaming-und-spielzeug/outdoor-spielzeug",
+      "canonical": true
+    },
+    {
+      "id": "bz.16.004",
+      "parent_id": "bz.16",
+      "level": 2,
+      "name": "RC & Modellbau",
+      "slug": "gaming-und-spielzeug/rc-und-modellbau",
+      "canonical": true
+    },
+    {
+      "id": "bz.17",
+      "parent_id": null,
+      "level": 1,
+      "name": "Büro & Schule",
+      "slug": "buero-und-schule",
+      "canonical": true
+    },
+    {
+      "id": "bz.17.001",
+      "parent_id": "bz.17",
+      "level": 2,
+      "name": "Schreibwaren",
+      "slug": "buero-und-schule/schreibwaren",
+      "canonical": true
+    },
+    {
+      "id": "bz.17.002",
+      "parent_id": "bz.17",
+      "level": 2,
+      "name": "Schulbedarf",
+      "slug": "buero-und-schule/schulbedarf",
+      "canonical": true
+    },
+    {
+      "id": "bz.17.003",
+      "parent_id": "bz.17",
+      "level": 2,
+      "name": "Büroausstattung",
+      "slug": "buero-und-schule/bueroausstattung",
+      "canonical": true
+    },
+    {
+      "id": "bz.17.004",
+      "parent_id": "bz.17",
+      "level": 2,
+      "name": "Druck & Präsentation",
+      "slug": "buero-und-schule/druck-und-praesentation",
+      "canonical": true
+    },
+    {
+      "id": "bz.18",
+      "parent_id": null,
+      "level": 1,
+      "name": "Baumarkt",
+      "slug": "baumarkt",
+      "canonical": true
+    },
+    {
+      "id": "bz.18.001",
+      "parent_id": "bz.18",
+      "level": 2,
+      "name": "Baustoffe",
+      "slug": "baumarkt/baustoffe",
+      "canonical": true
+    },
+    {
+      "id": "bz.18.002",
+      "parent_id": "bz.18",
+      "level": 2,
+      "name": "Farben & Lacke",
+      "slug": "baumarkt/farben-und-lacke",
+      "canonical": true
+    },
+    {
+      "id": "bz.18.003",
+      "parent_id": "bz.18",
+      "level": 2,
+      "name": "Sanitär",
+      "slug": "baumarkt/sanitaer",
+      "canonical": true
+    },
+    {
+      "id": "bz.18.004",
+      "parent_id": "bz.18",
+      "level": 2,
+      "name": "Elektroinstallation",
+      "slug": "baumarkt/elektroinstallation",
+      "canonical": true
+    },
+    {
+      "id": "bz.18.005",
+      "parent_id": "bz.18",
+      "level": 2,
+      "name": "Baubedarf",
+      "slug": "baumarkt/baubedarf",
+      "canonical": true
+    },
+    {
+      "id": "bz.19",
+      "parent_id": null,
+      "level": 1,
+      "name": "Lager & Aufbewahrung",
+      "slug": "lager-und-aufbewahrung",
+      "canonical": true
+    },
+    {
+      "id": "bz.19.001",
+      "parent_id": "bz.19",
+      "level": 2,
+      "name": "Regale",
+      "slug": "lager-und-aufbewahrung/regale",
+      "canonical": true
+    },
+    {
+      "id": "bz.19.002",
+      "parent_id": "bz.19",
+      "level": 2,
+      "name": "Boxen & Behälter",
+      "slug": "lager-und-aufbewahrung/boxen-und-behaelter",
+      "canonical": true
+    },
+    {
+      "id": "bz.19.003",
+      "parent_id": "bz.19",
+      "level": 2,
+      "name": "Lagertechnik",
+      "slug": "lager-und-aufbewahrung/lagertechnik",
+      "canonical": true
+    },
+    {
+      "id": "bz.19.004",
+      "parent_id": "bz.19",
+      "level": 2,
+      "name": "Organisation",
+      "slug": "lager-und-aufbewahrung/organisation",
+      "canonical": true
+    },
+    {
+      "id": "bz.20",
+      "parent_id": null,
+      "level": 1,
+      "name": "Autozubehör",
+      "slug": "autozubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.20.001",
+      "parent_id": "bz.20",
+      "level": 2,
+      "name": "Innenraumzubehör",
+      "slug": "autozubehoer/innenraumzubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.20.002",
+      "parent_id": "bz.20",
+      "level": 2,
+      "name": "Außenzubehör",
+      "slug": "autozubehoer/aussenzubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.20.003",
+      "parent_id": "bz.20",
+      "level": 2,
+      "name": "Transport",
+      "slug": "autozubehoer/transport",
+      "canonical": true
+    },
+    {
+      "id": "bz.20.004",
+      "parent_id": "bz.20",
+      "level": 2,
+      "name": "Tuning",
+      "slug": "autozubehoer/tuning",
+      "canonical": true
+    },
+    {
+      "id": "bz.21",
+      "parent_id": null,
+      "level": 1,
+      "name": "Motorrad & Zubehör",
+      "slug": "motorrad-und-zubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.21.001",
+      "parent_id": "bz.21",
+      "level": 2,
+      "name": "Motorradteile",
+      "slug": "motorrad-und-zubehoer/motorradteile",
+      "canonical": true
+    },
+    {
+      "id": "bz.21.002",
+      "parent_id": "bz.21",
+      "level": 2,
+      "name": "Motorradbekleidung",
+      "slug": "motorrad-und-zubehoer/motorradbekleidung",
+      "canonical": true
+    },
+    {
+      "id": "bz.21.003",
+      "parent_id": "bz.21",
+      "level": 2,
+      "name": "Motorradzubehör",
+      "slug": "motorrad-und-zubehoer/motorradzubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.21.004",
+      "parent_id": "bz.21",
+      "level": 2,
+      "name": "Pflege",
+      "slug": "motorrad-und-zubehoer/pflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.22",
+      "parent_id": null,
+      "level": 1,
+      "name": "Öle & Flüssigkeiten",
+      "slug": "oele-und-fluessigkeiten",
+      "canonical": true
+    },
+    {
+      "id": "bz.22.001",
+      "parent_id": "bz.22",
+      "level": 2,
+      "name": "Motoröle",
+      "slug": "oele-und-fluessigkeiten/motoroele",
+      "canonical": true
+    },
+    {
+      "id": "bz.22.002",
+      "parent_id": "bz.22",
+      "level": 2,
+      "name": "Getriebeöle",
+      "slug": "oele-und-fluessigkeiten/getriebeoele",
+      "canonical": true
+    },
+    {
+      "id": "bz.22.003",
+      "parent_id": "bz.22",
+      "level": 2,
+      "name": "Brems- & Hydraulikflüssigkeiten",
+      "slug": "oele-und-fluessigkeiten/brems-und-hydraulikfluessigkeiten",
+      "canonical": true
+    },
+    {
+      "id": "bz.22.004",
+      "parent_id": "bz.22",
+      "level": 2,
+      "name": "Kühlmittel",
+      "slug": "oele-und-fluessigkeiten/kuehlmittel",
+      "canonical": true
+    },
+    {
+      "id": "bz.22.005",
+      "parent_id": "bz.22",
+      "level": 2,
+      "name": "Additive",
+      "slug": "oele-und-fluessigkeiten/additive",
+      "canonical": true
+    },
+    {
+      "id": "bz.23",
+      "parent_id": null,
+      "level": 1,
+      "name": "Reifen & Felgen",
+      "slug": "reifen-und-felgen",
+      "canonical": true
+    },
+    {
+      "id": "bz.23.001",
+      "parent_id": "bz.23",
+      "level": 2,
+      "name": "Sommerreifen",
+      "slug": "reifen-und-felgen/sommerreifen",
+      "canonical": true
+    },
+    {
+      "id": "bz.23.002",
+      "parent_id": "bz.23",
+      "level": 2,
+      "name": "Winterreifen",
+      "slug": "reifen-und-felgen/winterreifen",
+      "canonical": true
+    },
+    {
+      "id": "bz.23.003",
+      "parent_id": "bz.23",
+      "level": 2,
+      "name": "Ganzjahresreifen",
+      "slug": "reifen-und-felgen/ganzjahresreifen",
+      "canonical": true
+    },
+    {
+      "id": "bz.23.004",
+      "parent_id": "bz.23",
+      "level": 2,
+      "name": "Felgen",
+      "slug": "reifen-und-felgen/felgen",
+      "canonical": true
+    },
+    {
+      "id": "bz.23.005",
+      "parent_id": "bz.23",
+      "level": 2,
+      "name": "Reifenzubehör",
+      "slug": "reifen-und-felgen/reifenzubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.24",
+      "parent_id": null,
+      "level": 1,
+      "name": "Bremsen",
+      "slug": "bremsen",
+      "canonical": true
+    },
+    {
+      "id": "bz.24.001",
+      "parent_id": "bz.24",
+      "level": 2,
+      "name": "Bremsbeläge",
+      "slug": "bremsen/bremsbelaege",
+      "canonical": true
+    },
+    {
+      "id": "bz.24.002",
+      "parent_id": "bz.24",
+      "level": 2,
+      "name": "Bremsscheiben",
+      "slug": "bremsen/bremsscheiben",
+      "canonical": true
+    },
+    {
+      "id": "bz.24.003",
+      "parent_id": "bz.24",
+      "level": 2,
+      "name": "Bremszubehör",
+      "slug": "bremsen/bremszubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.24.004",
+      "parent_id": "bz.24",
+      "level": 2,
+      "name": "Bremsanlage-Komponenten",
+      "slug": "bremsen/bremsanlage-komponenten",
+      "canonical": true
+    },
+    {
+      "id": "bz.25",
+      "parent_id": null,
+      "level": 1,
+      "name": "Batterien",
+      "slug": "batterien",
+      "canonical": true
+    },
+    {
+      "id": "bz.25.001",
+      "parent_id": "bz.25",
+      "level": 2,
+      "name": "Starterbatterien",
+      "slug": "batterien/starterbatterien",
+      "canonical": true
+    },
+    {
+      "id": "bz.25.002",
+      "parent_id": "bz.25",
+      "level": 2,
+      "name": "Fahrzeugbatterien",
+      "slug": "batterien/fahrzeugbatterien",
+      "canonical": true
+    },
+    {
+      "id": "bz.25.003",
+      "parent_id": "bz.25",
+      "level": 2,
+      "name": "Batteriezubehör",
+      "slug": "batterien/batteriezubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.25.004",
+      "parent_id": "bz.25",
+      "level": 2,
+      "name": "Industriebatterien",
+      "slug": "batterien/industriebatterien",
+      "canonical": true
+    },
+    {
+      "id": "bz.26",
+      "parent_id": null,
+      "level": 1,
+      "name": "Auspuff & Anlage",
+      "slug": "auspuff-und-anlage",
+      "canonical": true
+    },
+    {
+      "id": "bz.26.001",
+      "parent_id": "bz.26",
+      "level": 2,
+      "name": "Abgaskrümmer",
+      "slug": "auspuff-und-anlage/abgaskruemmer",
+      "canonical": true
+    },
+    {
+      "id": "bz.26.002",
+      "parent_id": "bz.26",
+      "level": 2,
+      "name": "Katalysatoren",
+      "slug": "auspuff-und-anlage/katalysatoren",
+      "canonical": true
+    },
+    {
+      "id": "bz.26.003",
+      "parent_id": "bz.26",
+      "level": 2,
+      "name": "DPF",
+      "slug": "auspuff-und-anlage/dpf",
+      "canonical": true
+    },
+    {
+      "id": "bz.26.004",
+      "parent_id": "bz.26",
+      "level": 2,
+      "name": "Schalldämpfer",
+      "slug": "auspuff-und-anlage/schalldaempfer",
+      "canonical": true
+    },
+    {
+      "id": "bz.26.005",
+      "parent_id": "bz.26",
+      "level": 2,
+      "name": "Abgassensorik",
+      "slug": "auspuff-und-anlage/abgassensorik",
+      "canonical": true
+    },
+    {
+      "id": "bz.27",
+      "parent_id": null,
+      "level": 1,
+      "name": "Motor & Kühlung",
+      "slug": "motor-und-kuehlung",
+      "canonical": true
+    },
+    {
+      "id": "bz.27.001",
+      "parent_id": "bz.27",
+      "level": 2,
+      "name": "Motorkomponenten",
+      "slug": "motor-und-kuehlung/motorkomponenten",
+      "canonical": true
+    },
+    {
+      "id": "bz.27.002",
+      "parent_id": "bz.27",
+      "level": 2,
+      "name": "Kühlung",
+      "slug": "motor-und-kuehlung/kuehlung",
+      "canonical": true
+    },
+    {
+      "id": "bz.27.003",
+      "parent_id": "bz.27",
+      "level": 2,
+      "name": "Turbolader",
+      "slug": "motor-und-kuehlung/turbolader",
+      "canonical": true
+    },
+    {
+      "id": "bz.27.004",
+      "parent_id": "bz.27",
+      "level": 2,
+      "name": "Motorsteuerung",
+      "slug": "motor-und-kuehlung/motorsteuerung",
+      "canonical": true
+    },
+    {
+      "id": "bz.28",
+      "parent_id": null,
+      "level": 1,
+      "name": "Licht & Elektrik",
+      "slug": "licht-und-elektrik",
+      "canonical": true
+    },
+    {
+      "id": "bz.28.001",
+      "parent_id": "bz.28",
+      "level": 2,
+      "name": "Fahrzeugbeleuchtung",
+      "slug": "licht-und-elektrik/fahrzeugbeleuchtung",
+      "canonical": true
+    },
+    {
+      "id": "bz.28.002",
+      "parent_id": "bz.28",
+      "level": 2,
+      "name": "LED & Xenon",
+      "slug": "licht-und-elektrik/led-und-xenon",
+      "canonical": true
+    },
+    {
+      "id": "bz.28.003",
+      "parent_id": "bz.28",
+      "level": 2,
+      "name": "Elektrik",
+      "slug": "licht-und-elektrik/elektrik",
+      "canonical": true
+    },
+    {
+      "id": "bz.28.004",
+      "parent_id": "bz.28",
+      "level": 2,
+      "name": "Sensoren",
+      "slug": "licht-und-elektrik/sensoren",
+      "canonical": true
+    },
+    {
+      "id": "bz.29",
+      "parent_id": null,
+      "level": 1,
+      "name": "Autopflege",
+      "slug": "autopflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.29.001",
+      "parent_id": "bz.29",
+      "level": 2,
+      "name": "Außenpflege",
+      "slug": "autopflege/aussenpflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.29.002",
+      "parent_id": "bz.29",
+      "level": 2,
+      "name": "Innenraumpflege",
+      "slug": "autopflege/innenraumpflege",
+      "canonical": true
+    },
+    {
+      "id": "bz.29.003",
+      "parent_id": "bz.29",
+      "level": 2,
+      "name": "Reinigungszubehör",
+      "slug": "autopflege/reinigungszubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.29.004",
+      "parent_id": "bz.29",
+      "level": 2,
+      "name": "Aufbereitung",
+      "slug": "autopflege/aufbereitung",
+      "canonical": true
+    },
+    {
+      "id": "bz.30",
+      "parent_id": null,
+      "level": 1,
+      "name": "Navi & Zubehör",
+      "slug": "navi-und-zubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.30.001",
+      "parent_id": "bz.30",
+      "level": 2,
+      "name": "Navigation",
+      "slug": "navi-und-zubehoer/navigation",
+      "canonical": true
+    },
+    {
+      "id": "bz.30.002",
+      "parent_id": "bz.30",
+      "level": 2,
+      "name": "Dashcams",
+      "slug": "navi-und-zubehoer/dashcams",
+      "canonical": true
+    },
+    {
+      "id": "bz.30.003",
+      "parent_id": "bz.30",
+      "level": 2,
+      "name": "Multimedia",
+      "slug": "navi-und-zubehoer/multimedia",
+      "canonical": true
+    },
+    {
+      "id": "bz.30.004",
+      "parent_id": "bz.30",
+      "level": 2,
+      "name": "Telematik",
+      "slug": "navi-und-zubehoer/telematik",
+      "canonical": true
+    },
+    {
+      "id": "bz.31",
+      "parent_id": null,
+      "level": 1,
+      "name": "Lebensmittel & Getränke",
+      "slug": "lebensmittel-und-getraenke",
+      "canonical": true
+    },
+    {
+      "id": "bz.31.001",
+      "parent_id": "bz.31",
+      "level": 2,
+      "name": "Lebensmittel",
+      "slug": "lebensmittel-und-getraenke/lebensmittel",
+      "canonical": true
+    },
+    {
+      "id": "bz.31.002",
+      "parent_id": "bz.31",
+      "level": 2,
+      "name": "Getränke",
+      "slug": "lebensmittel-und-getraenke/getraenke",
+      "canonical": true
+    },
+    {
+      "id": "bz.31.003",
+      "parent_id": "bz.31",
+      "level": 2,
+      "name": "Feinkost",
+      "slug": "lebensmittel-und-getraenke/feinkost",
+      "canonical": true
+    },
+    {
+      "id": "bz.31.004",
+      "parent_id": "bz.31",
+      "level": 2,
+      "name": "Großgebinde",
+      "slug": "lebensmittel-und-getraenke/grossgebinde",
+      "canonical": true
+    },
+    {
+      "id": "bz.32",
+      "parent_id": null,
+      "level": 1,
+      "name": "Wein & Spirituosen",
+      "slug": "wein-und-spirituosen",
+      "canonical": true
+    },
+    {
+      "id": "bz.32.001",
+      "parent_id": "bz.32",
+      "level": 2,
+      "name": "Wein",
+      "slug": "wein-und-spirituosen/wein",
+      "canonical": true
+    },
+    {
+      "id": "bz.32.002",
+      "parent_id": "bz.32",
+      "level": 2,
+      "name": "Spirituosen",
+      "slug": "wein-und-spirituosen/spirituosen",
+      "canonical": true
+    },
+    {
+      "id": "bz.32.003",
+      "parent_id": "bz.32",
+      "level": 2,
+      "name": "Bier",
+      "slug": "wein-und-spirituosen/bier",
+      "canonical": true
+    },
+    {
+      "id": "bz.32.004",
+      "parent_id": "bz.32",
+      "level": 2,
+      "name": "Zubehör",
+      "slug": "wein-und-spirituosen/zubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.33",
+      "parent_id": null,
+      "level": 1,
+      "name": "Kaffee & Tee",
+      "slug": "kaffee-und-tee",
+      "canonical": true
+    },
+    {
+      "id": "bz.33.001",
+      "parent_id": "bz.33",
+      "level": 2,
+      "name": "Kaffee",
+      "slug": "kaffee-und-tee/kaffee",
+      "canonical": true
+    },
+    {
+      "id": "bz.33.002",
+      "parent_id": "bz.33",
+      "level": 2,
+      "name": "Tee",
+      "slug": "kaffee-und-tee/tee",
+      "canonical": true
+    },
+    {
+      "id": "bz.33.003",
+      "parent_id": "bz.33",
+      "level": 2,
+      "name": "Barista",
+      "slug": "kaffee-und-tee/barista",
+      "canonical": true
+    },
+    {
+      "id": "bz.33.004",
+      "parent_id": "bz.33",
+      "level": 2,
+      "name": "Zubehör",
+      "slug": "kaffee-und-tee/zubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.34",
+      "parent_id": null,
+      "level": 1,
+      "name": "Gesundheit & Vitamine",
+      "slug": "gesundheit-und-vitamine",
+      "canonical": true
+    },
+    {
+      "id": "bz.34.001",
+      "parent_id": "bz.34",
+      "level": 2,
+      "name": "Vitamine",
+      "slug": "gesundheit-und-vitamine/vitamine",
+      "canonical": true
+    },
+    {
+      "id": "bz.34.002",
+      "parent_id": "bz.34",
+      "level": 2,
+      "name": "Mineralien",
+      "slug": "gesundheit-und-vitamine/mineralien",
+      "canonical": true
+    },
+    {
+      "id": "bz.34.003",
+      "parent_id": "bz.34",
+      "level": 2,
+      "name": "Sporternährung",
+      "slug": "gesundheit-und-vitamine/sporternaehrung",
+      "canonical": true
+    },
+    {
+      "id": "bz.34.004",
+      "parent_id": "bz.34",
+      "level": 2,
+      "name": "Gesundheitsbedarf",
+      "slug": "gesundheit-und-vitamine/gesundheitsbedarf",
+      "canonical": true
+    },
+    {
+      "id": "bz.35",
+      "parent_id": null,
+      "level": 1,
+      "name": "Haushalt & Hygiene",
+      "slug": "haushalt-und-hygiene",
+      "canonical": true
+    },
+    {
+      "id": "bz.35.001",
+      "parent_id": "bz.35",
+      "level": 2,
+      "name": "Papier & Hygiene",
+      "slug": "haushalt-und-hygiene/papier-und-hygiene",
+      "canonical": true
+    },
+    {
+      "id": "bz.35.002",
+      "parent_id": "bz.35",
+      "level": 2,
+      "name": "Waschen",
+      "slug": "haushalt-und-hygiene/waschen",
+      "canonical": true
+    },
+    {
+      "id": "bz.35.003",
+      "parent_id": "bz.35",
+      "level": 2,
+      "name": "Haushaltschemie",
+      "slug": "haushalt-und-hygiene/haushaltschemie",
+      "canonical": true
+    },
+    {
+      "id": "bz.35.004",
+      "parent_id": "bz.35",
+      "level": 2,
+      "name": "Einweg & Verbrauch",
+      "slug": "haushalt-und-hygiene/einweg-und-verbrauch",
+      "canonical": true
+    },
+    {
+      "id": "bz.36",
+      "parent_id": null,
+      "level": 1,
+      "name": "Heizen & Klima",
+      "slug": "heizen-und-klima",
+      "canonical": true
+    },
+    {
+      "id": "bz.36.001",
+      "parent_id": "bz.36",
+      "level": 2,
+      "name": "Heizen",
+      "slug": "heizen-und-klima/heizen",
+      "canonical": true
+    },
+    {
+      "id": "bz.36.002",
+      "parent_id": "bz.36",
+      "level": 2,
+      "name": "Klimatisierung",
+      "slug": "heizen-und-klima/klimatisierung",
+      "canonical": true
+    },
+    {
+      "id": "bz.36.003",
+      "parent_id": "bz.36",
+      "level": 2,
+      "name": "Luftqualität",
+      "slug": "heizen-und-klima/luftqualitaet",
+      "canonical": true
+    },
+    {
+      "id": "bz.36.004",
+      "parent_id": "bz.36",
+      "level": 2,
+      "name": "Thermostate",
+      "slug": "heizen-und-klima/thermostate",
+      "canonical": true
+    },
+    {
+      "id": "bz.37",
+      "parent_id": null,
+      "level": 1,
+      "name": "Sicherheit & Überwachung",
+      "slug": "sicherheit-und-ueberwachung",
+      "canonical": true
+    },
+    {
+      "id": "bz.37.001",
+      "parent_id": "bz.37",
+      "level": 2,
+      "name": "Überwachung",
+      "slug": "sicherheit-und-ueberwachung/ueberwachung",
+      "canonical": true
+    },
+    {
+      "id": "bz.37.002",
+      "parent_id": "bz.37",
+      "level": 2,
+      "name": "Alarmanlagen",
+      "slug": "sicherheit-und-ueberwachung/alarmanlagen",
+      "canonical": true
+    },
+    {
+      "id": "bz.37.003",
+      "parent_id": "bz.37",
+      "level": 2,
+      "name": "Zutritt",
+      "slug": "sicherheit-und-ueberwachung/zutritt",
+      "canonical": true
+    },
+    {
+      "id": "bz.37.004",
+      "parent_id": "bz.37",
+      "level": 2,
+      "name": "Brandschutz",
+      "slug": "sicherheit-und-ueberwachung/brandschutz",
+      "canonical": true
+    },
+    {
+      "id": "bz.38",
+      "parent_id": null,
+      "level": 1,
+      "name": "Reisen & Gepäck",
+      "slug": "reisen-und-gepaeck",
+      "canonical": true
+    },
+    {
+      "id": "bz.38.001",
+      "parent_id": "bz.38",
+      "level": 2,
+      "name": "Koffer",
+      "slug": "reisen-und-gepaeck/koffer",
+      "canonical": true
+    },
+    {
+      "id": "bz.38.002",
+      "parent_id": "bz.38",
+      "level": 2,
+      "name": "Taschen",
+      "slug": "reisen-und-gepaeck/taschen",
+      "canonical": true
+    },
+    {
+      "id": "bz.38.003",
+      "parent_id": "bz.38",
+      "level": 2,
+      "name": "Reisezubehör",
+      "slug": "reisen-und-gepaeck/reisezubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.38.004",
+      "parent_id": "bz.38",
+      "level": 2,
+      "name": "Camping-Reise",
+      "slug": "reisen-und-gepaeck/camping-reise",
+      "canonical": true
+    },
+    {
+      "id": "bz.39",
+      "parent_id": null,
+      "level": 1,
+      "name": "Geschenke & Anlässe",
+      "slug": "geschenke-und-anlaesse",
+      "canonical": true
+    },
+    {
+      "id": "bz.39.001",
+      "parent_id": "bz.39",
+      "level": 2,
+      "name": "Geburtstag",
+      "slug": "geschenke-und-anlaesse/geburtstag",
+      "canonical": true
+    },
+    {
+      "id": "bz.39.002",
+      "parent_id": "bz.39",
+      "level": 2,
+      "name": "Hochzeit",
+      "slug": "geschenke-und-anlaesse/hochzeit",
+      "canonical": true
+    },
+    {
+      "id": "bz.39.003",
+      "parent_id": "bz.39",
+      "level": 2,
+      "name": "Weihnachten",
+      "slug": "geschenke-und-anlaesse/weihnachten",
+      "canonical": true
+    },
+    {
+      "id": "bz.39.004",
+      "parent_id": "bz.39",
+      "level": 2,
+      "name": "Einschulung",
+      "slug": "geschenke-und-anlaesse/einschulung",
+      "canonical": true
+    },
+    {
+      "id": "bz.40",
+      "parent_id": null,
+      "level": 1,
+      "name": "Weitere Kategorien",
+      "slug": "weitere-kategorien",
+      "canonical": true
+    },
+    {
+      "id": "bz.40.001",
+      "parent_id": "bz.40",
+      "level": 2,
+      "name": "Neu & Trends",
+      "slug": "weitere-kategorien/neu-und-trends",
+      "canonical": true
+    },
+    {
+      "id": "bz.40.002",
+      "parent_id": "bz.40",
+      "level": 2,
+      "name": "Restposten",
+      "slug": "weitere-kategorien/restposten",
+      "canonical": true
+    },
+    {
+      "id": "bz.40.003",
+      "parent_id": "bz.40",
+      "level": 2,
+      "name": "Individuelle Kategorien",
+      "slug": "weitere-kategorien/individuelle-kategorien",
+      "canonical": true
+    },
+    {
+      "id": "bz.41",
+      "parent_id": null,
+      "level": 1,
+      "name": "Industrie & CNC",
+      "slug": "industrie-und-cnc",
+      "canonical": true
+    },
+    {
+      "id": "bz.41.001",
+      "parent_id": "bz.41",
+      "level": 2,
+      "name": "CNC-Werkzeuge",
+      "slug": "industrie-und-cnc/cnc-werkzeuge",
+      "canonical": true
+    },
+    {
+      "id": "bz.41.002",
+      "parent_id": "bz.41",
+      "level": 2,
+      "name": "CNC-Zubehör",
+      "slug": "industrie-und-cnc/cnc-zubehoer",
+      "canonical": true
+    },
+    {
+      "id": "bz.41.003",
+      "parent_id": "bz.41",
+      "level": 2,
+      "name": "Zerspanung",
+      "slug": "industrie-und-cnc/zerspanung",
+      "canonical": true
+    },
+    {
+      "id": "bz.41.004",
+      "parent_id": "bz.41",
+      "level": 2,
+      "name": "Industriebedarf",
+      "slug": "industrie-und-cnc/industriebedarf",
+      "canonical": true
+    },
+    {
+      "id": "bz.41.005",
+      "parent_id": "bz.41",
+      "level": 2,
+      "name": "Automation",
+      "slug": "industrie-und-cnc/automation",
+      "canonical": true
+    },
+    {
+      "id": "bz.42",
+      "parent_id": null,
+      "level": 1,
+      "name": "Baumaschinen & Ersatzteile",
+      "slug": "baumaschinen-und-ersatzteile",
+      "canonical": true
+    },
+    {
+      "id": "bz.42.001",
+      "parent_id": "bz.42",
+      "level": 2,
+      "name": "Baumaschinen",
+      "slug": "baumaschinen-und-ersatzteile/baumaschinen",
+      "canonical": true
+    },
+    {
+      "id": "bz.42.002",
+      "parent_id": "bz.42",
+      "level": 2,
+      "name": "Ersatzteile",
+      "slug": "baumaschinen-und-ersatzteile/ersatzteile",
+      "canonical": true
+    },
+    {
+      "id": "bz.42.003",
+      "parent_id": "bz.42",
+      "level": 2,
+      "name": "Anbaugeräte",
+      "slug": "baumaschinen-und-ersatzteile/anbaugeraete",
+      "canonical": true
+    },
+    {
+      "id": "bz.42.004",
+      "parent_id": "bz.42",
+      "level": 2,
+      "name": "Verschleißteile",
+      "slug": "baumaschinen-und-ersatzteile/verschleissteile",
+      "canonical": true
+    },
+    {
+      "id": "bz.42.005",
+      "parent_id": "bz.42",
+      "level": 2,
+      "name": "Baustellenbedarf",
+      "slug": "baumaschinen-und-ersatzteile/baustellenbedarf",
+      "canonical": true
+    },
+    {
+      "id": "bz.43",
+      "parent_id": null,
+      "level": 1,
+      "name": "Landwirtschaft & Agrartechnik",
+      "slug": "landwirtschaft-und-agrartechnik",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.001",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Traktoren",
+      "slug": "landwirtschaft-und-agrartechnik/traktoren",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.002",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Mähdrescher",
+      "slug": "landwirtschaft-und-agrartechnik/maehdrescher",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.003",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Landmaschinen",
+      "slug": "landwirtschaft-und-agrartechnik/landmaschinen",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.004",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Anhänger & Transport",
+      "slug": "landwirtschaft-und-agrartechnik/anhaenger-und-transport",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.005",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Agrar-Ersatzteile",
+      "slug": "landwirtschaft-und-agrartechnik/agrar-ersatzteile",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.006",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Agrarreifen",
+      "slug": "landwirtschaft-und-agrartechnik/agrarreifen",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.007",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Hydraulik",
+      "slug": "landwirtschaft-und-agrartechnik/hydraulik",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.008",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Anbaugeräte",
+      "slug": "landwirtschaft-und-agrartechnik/anbaugeraete",
+      "canonical": true
+    },
+    {
+      "id": "bz.43.009",
+      "parent_id": "bz.43",
+      "level": 2,
+      "name": "Bewässerung & Gewächshaus",
+      "slug": "landwirtschaft-und-agrartechnik/bewaesserung-und-gewaechshaus",
+      "canonical": true
+    }
+  ],
+  "migration": {
+    "legacy_shop_root_count": 41,
+    "legacy_intelligence_root_count": 43,
+    "legacy_data_is_preserved": true,
+    "mapping_file": "data/category_id_mapping.csv"
+  },
+  "rules": {
+    "single_canonical_tree": true,
+    "no_duplicate_root_systems": true,
+    "legacy_ids_never_reused": true
+  }
+}

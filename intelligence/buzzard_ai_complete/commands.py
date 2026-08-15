@@ -992,6 +992,50 @@ def complete_ai_council_18_docs():
     return _read_doc("AI_COUNCIL_18_UNIFIED_MAXIMAL.md")
 
 
+def complete_ai_council_19_health():
+    from buzzard_ai_complete.ai_council_19_customs_bureaucracy.service import AiCouncil19Service
+
+    return json.dumps(AiCouncil19Service().health(), ensure_ascii=False, indent=2)
+
+
+def complete_ai_council_19_agents():
+    from buzzard_ai_complete.ai_council_19_customs_bureaucracy.service import AiCouncil19Service
+
+    service = AiCouncil19Service()
+    return json.dumps(
+        {"agents": service.list_agents(), "count": len(service.list_agents())},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_ai_council_19_assess():
+    from buzzard_ai_complete.ai_council_19_customs_bureaucracy.service import AiCouncil19Service
+
+    return json.dumps(AiCouncil19Service().assess_trade(), ensure_ascii=False, indent=2)
+
+
+def complete_ai_council_19_demo():
+    from buzzard_ai_complete.ai_council_19_customs_bureaucracy.service import AiCouncil19Service
+
+    return json.dumps(AiCouncil19Service().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_ai_council_19_schema():
+    from buzzard_ai_complete.ai_council_19_customs_bureaucracy.service import AiCouncil19Service
+
+    service = AiCouncil19Service()
+    return json.dumps(
+        {"assessment": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_ai_council_19_docs():
+    return _read_doc("AI_COUNCIL_19_CUSTOMS_BUREAUCRACY_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

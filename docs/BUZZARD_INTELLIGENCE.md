@@ -1206,6 +1206,28 @@ python3 main.py complete-ai-council-18-demo
 
 Archive: `intelligence/archive/BUZZARD_AI_COUNCIL_18_UNIFIED_MAXIMAL.zip`
 
+## AI Council 19 CUSTOMS BUREAUCRACY MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-ai-council-19-health` | Customs council health (19 agents) |
+| `complete-ai-council-19-agents` | Liste aller 19 Council-Agenten |
+| `complete-ai-council-19-assess` | Zoll-/Handels-Assessment Demo |
+| `complete-ai-council-19-demo` | Vollständiger Council-19 Demo-Flow |
+| `complete-ai-council-19-schema` | Assessment-Schema + Customs-Konfiguration |
+| `complete-ai-council-19-docs` | Dokumentation + Source Policy |
+
+API: `GET /council-19/health`, `GET /council-19/agents`, `GET /council-19/assess`, `GET /council-19/schema`, `GET /council-19/demo`
+
+`live_activation: false` — keine bindenden Zollentscheidungen; offizielle Quellen erforderlich.
+
+```bash
+cd intelligence
+python3 main.py complete-ai-council-19-assess
+```
+
+Archive: `intelligence/archive/BUZZARD_AI_COUNCIL_19_CUSTOMS_BUREAUCRACY_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

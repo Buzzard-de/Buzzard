@@ -1,0 +1,30 @@
+{
+  "enabled": true,
+  "jurisdictions": ["EU","Germany","Türkiye","GCC"],
+  "official_sources_required": true,
+  "classification": {
+    "systems": ["HS","CN","TARIC"],
+    "auto_publish_classification": false,
+    "human_review_when_uncertain": true
+  },
+  "origin": {
+    "preferential_origin_check": true,
+    "non_preferential_origin_check": true
+  },
+  "restrictions": {
+    "license_check": true,
+    "special_products": true,
+    "sanctions_and_restrictions_check": true
+  },
+  "documents": {
+    "invoice": true,
+    "packing_list": true,
+    "transport_document": true,
+    "origin_evidence": true,
+    "customs_declaration": true
+  },
+  "costing": {
+    "landed_cost": true,
+    "do_not_use_unverified_rates": true
+  }
+}

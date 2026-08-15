@@ -1621,6 +1621,16 @@ def main():
         help="Show AI Council 18 unified documentation",
     )
 
+    sub.add_parser("complete-ai-council-19-health", help="Show AI Council 19 customs bureaucracy health")
+    sub.add_parser("complete-ai-council-19-agents", help="List 19 council agents including customs")
+    sub.add_parser("complete-ai-council-19-assess", help="Run customs trade assessment demo")
+    sub.add_parser("complete-ai-council-19-demo", help="Run AI Council 19 customs demo")
+    sub.add_parser("complete-ai-council-19-schema", help="Show customs assessment schema and config")
+    sub.add_parser(
+        "complete-ai-council-19-docs",
+        help="Show AI Council 19 customs bureaucracy documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5403,6 +5413,30 @@ def main():
         from buzzard_ai_complete.commands import complete_ai_council_18_docs
 
         print(complete_ai_council_18_docs())
+    elif args.cmd == "complete-ai-council-19-health":
+        from buzzard_ai_complete.commands import complete_ai_council_19_health
+
+        print(complete_ai_council_19_health())
+    elif args.cmd == "complete-ai-council-19-agents":
+        from buzzard_ai_complete.commands import complete_ai_council_19_agents
+
+        print(complete_ai_council_19_agents())
+    elif args.cmd == "complete-ai-council-19-assess":
+        from buzzard_ai_complete.commands import complete_ai_council_19_assess
+
+        print(complete_ai_council_19_assess())
+    elif args.cmd == "complete-ai-council-19-demo":
+        from buzzard_ai_complete.commands import complete_ai_council_19_demo
+
+        print(complete_ai_council_19_demo())
+    elif args.cmd == "complete-ai-council-19-schema":
+        from buzzard_ai_complete.commands import complete_ai_council_19_schema
+
+        print(complete_ai_council_19_schema())
+    elif args.cmd == "complete-ai-council-19-docs":
+        from buzzard_ai_complete.commands import complete_ai_council_19_docs
+
+        print(complete_ai_council_19_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

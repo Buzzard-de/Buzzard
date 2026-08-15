@@ -61,6 +61,18 @@ python3 main.py complete-commerce-integration-order
 - **complete-verify** — Import-Sweep überspringt `tests/` und `test_*`-Module
 - **Dokumentation** — `docs/REPAIR_AND_FULL_TEST_REPORT.md`
 
+## Logistics Engine v1 (Smart Shipping)
+
+- **Smart Shipping Engine** — DHL, DPD, GLS, Hermes, UPS Carrier-Adapter
+- **Prioritäten** — cheapest / balanced / fastest
+- **complete-logistics-demo** / **complete-logistics-recommend** / **complete-logistics-docs**
+- **API** — `POST /logistics/recommend`
+
+```bash
+python3 main.py complete-logistics-demo
+python3 main.py complete-logistics-recommend --weight 2 --length 30 --width 20 --height 15 --country DE --postal-code 35075 --priority cheapest
+```
+
 ## Agenten
 
 | Agent | Rolle |
@@ -115,4 +127,4 @@ docker compose -f buzzard_ai_complete/docker-compose.yml up
 | **GESAMT v2** | `gesamt-*` | `buzzard.db` |
 | **v29/v1** | `verify-*`, `aslan-*` | v29 DB |
 
-Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3), `archive/fehler_behebung_2.zip`
+Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3), `archive/fehler_behebung_2.zip`, `archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`

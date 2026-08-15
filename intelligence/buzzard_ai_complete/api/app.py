@@ -7,6 +7,7 @@ except ImportError:
 from buzzard_ai_complete.api.service import BuzzardService
 from buzzard_ai_complete.commerce.api.routes import router as commerce_router
 from buzzard_ai_complete.config.settings import API_TOKEN, APP_VERSION
+from buzzard_ai_complete.logistics.api.routes import router as logistics_router
 from buzzard_ai_complete.monitoring.health import health
 
 if FastAPI:
@@ -14,6 +15,8 @@ if FastAPI:
     service = BuzzardService()
     if commerce_router is not None:
         app.include_router(commerce_router)
+    if logistics_router is not None:
+        app.include_router(logistics_router)
 
     class TaskRequest(BaseModel):
         task_id: str

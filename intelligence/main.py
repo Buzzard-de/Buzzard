@@ -1612,6 +1612,15 @@ def main():
         help="Show launch sequence maximal documentation",
     )
 
+    sub.add_parser("complete-ai-council-18-health", help="Show AI Council 18 unified health")
+    sub.add_parser("complete-ai-council-18-agents", help="List 18 council specialist agents")
+    sub.add_parser("complete-ai-council-18-demo", help="Run AI Council 18 unified demo")
+    sub.add_parser("complete-ai-council-18-schema", help="Show AI Council 18 schemas and config")
+    sub.add_parser(
+        "complete-ai-council-18-docs",
+        help="Show AI Council 18 unified documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5374,6 +5383,26 @@ def main():
         from buzzard_ai_complete.commands import complete_launch_sequence_docs
 
         print(complete_launch_sequence_docs())
+    elif args.cmd == "complete-ai-council-18-health":
+        from buzzard_ai_complete.commands import complete_ai_council_18_health
+
+        print(complete_ai_council_18_health())
+    elif args.cmd == "complete-ai-council-18-agents":
+        from buzzard_ai_complete.commands import complete_ai_council_18_agents
+
+        print(complete_ai_council_18_agents())
+    elif args.cmd == "complete-ai-council-18-demo":
+        from buzzard_ai_complete.commands import complete_ai_council_18_demo
+
+        print(complete_ai_council_18_demo())
+    elif args.cmd == "complete-ai-council-18-schema":
+        from buzzard_ai_complete.commands import complete_ai_council_18_schema
+
+        print(complete_ai_council_18_schema())
+    elif args.cmd == "complete-ai-council-18-docs":
+        from buzzard_ai_complete.commands import complete_ai_council_18_docs
+
+        print(complete_ai_council_18_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

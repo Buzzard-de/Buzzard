@@ -1,0 +1,9 @@
+{
+  "required": ["finding_id","agent_id","topic","finding","confidence","evidence","recommendations","risks"],
+  "rules": [
+    "confidence must be 0..1",
+    "external claims require evidence",
+    "findings become shared context for subsequent agents",
+    "major actions can require human approval"
+  ]
+}

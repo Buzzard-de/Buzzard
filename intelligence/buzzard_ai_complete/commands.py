@@ -954,6 +954,44 @@ def complete_launch_sequence_docs():
     return _read_doc("LAUNCH_SEQUENCE_MAXIMAL_ONE_PACKAGE.md")
 
 
+def complete_ai_council_18_health():
+    from buzzard_ai_complete.ai_council_18_unified.service import AiCouncil18Service
+
+    return json.dumps(AiCouncil18Service().health(), ensure_ascii=False, indent=2)
+
+
+def complete_ai_council_18_agents():
+    from buzzard_ai_complete.ai_council_18_unified.service import AiCouncil18Service
+
+    service = AiCouncil18Service()
+    return json.dumps(
+        {"agents": service.list_agents(), "count": len(service.list_agents())},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_ai_council_18_demo():
+    from buzzard_ai_complete.ai_council_18_unified.service import AiCouncil18Service
+
+    return json.dumps(AiCouncil18Service().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_ai_council_18_schema():
+    from buzzard_ai_complete.ai_council_18_unified.service import AiCouncil18Service
+
+    service = AiCouncil18Service()
+    return json.dumps(
+        {"finding": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_ai_council_18_docs():
+    return _read_doc("AI_COUNCIL_18_UNIFIED_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

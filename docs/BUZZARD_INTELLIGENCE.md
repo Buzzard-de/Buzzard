@@ -824,6 +824,12 @@ python3 main.py complete-billing-refund --order-id O1 --reason defective --amoun
 
 Archive: `intelligence/archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
 
+## Buzzard AI CUSTOMER BILLING v2 — Duplikat (identisch mit v1)
+
+`v2.zip` ist byte-identisch mit `v1.zip` (`Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1`). Keine zusätzliche Integration nötig — alle Inhalte sind bereits in `buzzard_ai_complete/` via PR #142 enthalten.
+
+Archive: `intelligence/archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V2.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

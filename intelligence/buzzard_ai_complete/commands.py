@@ -576,6 +576,58 @@ def complete_pim_docs():
     return _read_doc("PIM_PRODUCT_MASTER_MAXIMAL.md")
 
 
+def complete_multilingual_health():
+    from buzzard_ai_complete.multilingual_product_intelligence.service import (
+        MultilingualProductIntelligenceService,
+    )
+
+    return json.dumps(
+        MultilingualProductIntelligenceService().health(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_multilingual_languages():
+    from buzzard_ai_complete.multilingual_product_intelligence.service import (
+        MultilingualProductIntelligenceService,
+    )
+
+    return json.dumps(
+        MultilingualProductIntelligenceService().languages(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_multilingual_normalize(text, language=None):
+    from buzzard_ai_complete.multilingual_product_intelligence.service import (
+        MultilingualProductIntelligenceService,
+    )
+
+    return json.dumps(
+        MultilingualProductIntelligenceService().normalize(text, language),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_multilingual_demo():
+    from buzzard_ai_complete.multilingual_product_intelligence.service import (
+        MultilingualProductIntelligenceService,
+    )
+
+    return json.dumps(
+        MultilingualProductIntelligenceService().demo_flow(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_multilingual_docs():
+    return _read_doc("MULTILINGUAL_PRODUCT_INTELLIGENCE_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

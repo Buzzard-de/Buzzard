@@ -1,0 +1,119 @@
+{
+  "brake_pad": {
+    "de": [
+      "Bremsbelag"
+    ],
+    "en": [
+      "brake pad"
+    ],
+    "tr": [
+      "fren balatası"
+    ],
+    "fr": [
+      "plaquette de frein"
+    ],
+    "it": [
+      "pastiglia freno"
+    ],
+    "es": [
+      "pastilla de freno"
+    ],
+    "ar": [
+      "فحمات الفرامل",
+      "بطانات الفرامل"
+    ]
+  },
+  "engine_oil": {
+    "de": [
+      "Motoröl"
+    ],
+    "en": [
+      "engine oil"
+    ],
+    "tr": [
+      "motor yağı"
+    ],
+    "fr": [
+      "huile moteur"
+    ],
+    "it": [
+      "olio motore"
+    ],
+    "es": [
+      "aceite de motor"
+    ],
+    "ar": [
+      "زيت المحرك"
+    ]
+  },
+  "tire": {
+    "de": [
+      "Reifen"
+    ],
+    "en": [
+      "tyre",
+      "tire"
+    ],
+    "tr": [
+      "lastik"
+    ],
+    "fr": [
+      "pneu"
+    ],
+    "it": [
+      "pneumatico"
+    ],
+    "es": [
+      "neumático"
+    ],
+    "ar": [
+      "إطار"
+    ]
+  },
+  "tractor": {
+    "de": [
+      "Traktor"
+    ],
+    "en": [
+      "tractor"
+    ],
+    "tr": [
+      "traktör"
+    ],
+    "fr": [
+      "tracteur"
+    ],
+    "it": [
+      "trattore"
+    ],
+    "es": [
+      "tractor"
+    ],
+    "ar": [
+      "جرار"
+    ]
+  },
+  "shirt": {
+    "de": [
+      "Hemd"
+    ],
+    "en": [
+      "shirt"
+    ],
+    "tr": [
+      "gömlek"
+    ],
+    "fr": [
+      "chemise"
+    ],
+    "it": [
+      "camicia"
+    ],
+    "es": [
+      "camisa"
+    ],
+    "ar": [
+      "قميص"
+    ]
+  }
+}

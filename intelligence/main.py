@@ -1543,6 +1543,16 @@ def main():
     sub.add_parser("complete-pim-schema", help="Show PIM product master schemas")
     sub.add_parser("complete-pim-docs", help="Show PIM Product Master documentation")
 
+    sub.add_parser("complete-multilingual-health", help="Show multilingual product intelligence health")
+    sub.add_parser("complete-multilingual-languages", help="List supported product languages")
+    complete_multilingual_normalize = sub.add_parser(
+        "complete-multilingual-normalize", help="Normalize product search text by language"
+    )
+    complete_multilingual_normalize.add_argument("--text", required=True)
+    complete_multilingual_normalize.add_argument("--language", default=None)
+    sub.add_parser("complete-multilingual-demo", help="Run multilingual product intelligence demo")
+    sub.add_parser("complete-multilingual-docs", help="Show multilingual product intelligence docs")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5157,6 +5167,26 @@ def main():
         from buzzard_ai_complete.commands import complete_pim_docs
 
         print(complete_pim_docs())
+    elif args.cmd == "complete-multilingual-health":
+        from buzzard_ai_complete.commands import complete_multilingual_health
+
+        print(complete_multilingual_health())
+    elif args.cmd == "complete-multilingual-languages":
+        from buzzard_ai_complete.commands import complete_multilingual_languages
+
+        print(complete_multilingual_languages())
+    elif args.cmd == "complete-multilingual-normalize":
+        from buzzard_ai_complete.commands import complete_multilingual_normalize
+
+        print(complete_multilingual_normalize(args.text, args.language))
+    elif args.cmd == "complete-multilingual-demo":
+        from buzzard_ai_complete.commands import complete_multilingual_demo
+
+        print(complete_multilingual_demo())
+    elif args.cmd == "complete-multilingual-docs":
+        from buzzard_ai_complete.commands import complete_multilingual_docs
+
+        print(complete_multilingual_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

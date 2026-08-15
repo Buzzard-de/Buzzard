@@ -1,0 +1,8 @@
+{
+  "modules": [
+    "ai_sales","product_search","dynamic_pricing","forecasting","finance",
+    "rma","warehouse","internationalization","marketing",
+    "customer_intelligence","supplier_intelligence","knowledge_graph"
+  ],
+  "rule": "All modules consume canonical Buzzard IDs and emit auditable events."
+}

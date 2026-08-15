@@ -1588,6 +1588,21 @@ def main():
     sub.add_parser("complete-platform-schema", help="Show platform event/order/policy schemas")
     sub.add_parser("complete-platform-docs", help="Show complete commerce platform documentation")
 
+    sub.add_parser("complete-production-integration-health", help="Show production integration maximal health")
+    sub.add_parser(
+        "complete-production-integration-readiness",
+        help="Run production integration maximal readiness checks",
+    )
+    sub.add_parser("complete-production-integration-demo", help="Run production integration maximal demo")
+    sub.add_parser(
+        "complete-production-integration-schema",
+        help="Show production integration maximal schemas",
+    )
+    sub.add_parser(
+        "complete-production-integration-docs",
+        help="Show production integration maximal documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5310,6 +5325,26 @@ def main():
         from buzzard_ai_complete.commands import complete_platform_docs
 
         print(complete_platform_docs())
+    elif args.cmd == "complete-production-integration-health":
+        from buzzard_ai_complete.commands import complete_production_health
+
+        print(complete_production_health())
+    elif args.cmd == "complete-production-integration-readiness":
+        from buzzard_ai_complete.commands import complete_production_readiness
+
+        print(complete_production_readiness())
+    elif args.cmd == "complete-production-integration-demo":
+        from buzzard_ai_complete.commands import complete_production_demo
+
+        print(complete_production_demo())
+    elif args.cmd == "complete-production-integration-schema":
+        from buzzard_ai_complete.commands import complete_production_schema
+
+        print(complete_production_schema())
+    elif args.cmd == "complete-production-integration-docs":
+        from buzzard_ai_complete.commands import complete_production_docs
+
+        print(complete_production_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

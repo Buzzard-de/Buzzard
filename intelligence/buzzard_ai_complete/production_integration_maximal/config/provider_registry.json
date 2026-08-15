@@ -1,0 +1,22 @@
+{
+  "payment": {
+    "selected_provider": "not_configured",
+    "supported_contracts": ["PaymentProvider"]
+  },
+  "carriers": {
+    "selected": [],
+    "supported_contracts": ["CarrierProvider"]
+  },
+  "suppliers": {
+    "selected": [],
+    "supported_feed_types": ["API","XML","CSV","JSON"]
+  },
+  "marketplaces": {
+    "selected": [],
+    "supported_contracts": ["MarketplaceProvider"]
+  },
+  "telephony": {
+    "selected_provider": "not_configured",
+    "supported_contracts": ["TelephonyProvider"]
+  }
+}

@@ -1145,6 +1145,25 @@ python3 main.py complete-platform-demo
 
 Archive: `intelligence/archive/BUZZARD_COMPLETE_COMMERCE_PLATFORM_MAXIMAL_FINAL.zip`
 
+## Production Integration MAXIMAL ONE PACKAGE
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-production-integration-health` | Production integration health |
+| `complete-production-integration-readiness` | Readiness checks (HTTPS, webhooks, config) |
+| `complete-production-integration-demo` | Integration + business engine demo |
+| `complete-production-integration-schema` | Config + provider + engine schemas |
+| `complete-production-integration-docs` | Dokumentation + Runbook |
+
+API: `GET /production/health`, `GET /production/readiness`, `GET /production/demo`
+
+```bash
+cd intelligence
+python3 main.py complete-production-integration-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_PRODUCTION_INTEGRATION_MAXIMAL_ONE_PACKAGE.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

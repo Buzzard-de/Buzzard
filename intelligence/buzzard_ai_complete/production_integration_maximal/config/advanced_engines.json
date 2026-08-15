@@ -1,0 +1,14 @@
+{
+  "ai_sales": {"enabled": true, "max_recommendations": 5, "must_use_live_stock": true},
+  "product_search": {"natural_language": true, "compatibility_required_for_vehicle_claims": true},
+  "pricing": {"approval_required": true, "never_auto_publish_without_policy": true},
+  "forecasting": {"method": "moving_average", "production_models_can_be_plugged_in": true},
+  "finance": {"currency": "EUR", "tax_engine_externalized": true},
+  "rma": {"enabled": true},
+  "warehouse": {"enabled": true},
+  "internationalization": {"country_aware": true, "currency_aware": true, "country_rules_required": true},
+  "marketing": {"approval_required_for_campaign_changes": true},
+  "customer_intelligence": {"sensitive_inference_disabled": true},
+  "supplier_intelligence": {"legal_public_supplier_data_only": true},
+  "knowledge_graph": {"evidence_required_for_external_claims": true}
+}

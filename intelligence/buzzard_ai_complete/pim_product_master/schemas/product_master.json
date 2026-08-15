@@ -1,0 +1,68 @@
+{
+  "entity": "ProductMaster",
+  "version": "1.0.0",
+  "identity": [
+    "product_id",
+    "parent_product_id",
+    "sku",
+    "gtin",
+    "mpn",
+    "brand_id",
+    "manufacturer_id"
+  ],
+  "classification": [
+    "canonical_category_id",
+    "product_type",
+    "attribute_set_id"
+  ],
+  "content": [
+    "titles",
+    "short_descriptions",
+    "long_descriptions",
+    "bullet_points",
+    "seo",
+    "search_terms"
+  ],
+  "technical": [
+    "typed_attributes",
+    "dimensions",
+    "weight",
+    "materials",
+    "compliance"
+  ],
+  "variants": [
+    "variant_group_id",
+    "variant_axes",
+    "parent_child_inheritance"
+  ],
+  "media": [
+    "images",
+    "documents",
+    "videos"
+  ],
+  "relationships": [
+    "supplier_products",
+    "replacement_for",
+    "compatible_with",
+    "accessories",
+    "bundles",
+    "related_products"
+  ],
+  "languages": [
+    "de",
+    "en",
+    "tr",
+    "fr",
+    "ar"
+  ],
+  "workflow": [
+    "draft",
+    "imported",
+    "needs_review",
+    "enriched",
+    "approved",
+    "published",
+    "blocked",
+    "archived"
+  ]
+}

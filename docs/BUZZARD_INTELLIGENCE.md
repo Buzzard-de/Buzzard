@@ -1014,6 +1014,26 @@ python3 main.py complete-taxonomy-unify-resolve --legacy-id cat-01 --system shop
 
 Archive: `intelligence/archive/BUZZARD_MASTER_TAXONOMY_UNIFICATION_MAXIMAL.zip`
 
+## PIM Product Master MAXIMAL — neu
+
+Product Information Management: single product master source, supplier import pipeline, deduplication, quality gate with canonical `bz.*` categories.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-pim-demo` | Demo import + quality gate |
+| `complete-pim-health` | PIM service health |
+| `complete-pim-schema` | Product master + supplier import schemas |
+| `complete-pim-docs` | PIM documentation |
+
+API: `GET /pim/health`, `GET /pim/schema`, `POST /pim/import/process`, `POST /pim/validate`
+
+```bash
+cd intelligence
+python3 main.py complete-pim-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_PIM_PRODUCT_MASTER_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

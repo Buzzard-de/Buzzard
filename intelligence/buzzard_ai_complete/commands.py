@@ -546,6 +546,36 @@ def complete_taxonomy_unify_docs():
     return _read_doc("TAXONOMY_UNIFICATION_MAXIMAL.md")
 
 
+def complete_pim_demo():
+    from buzzard_ai_complete.pim_product_master.service import PimProductMasterService
+
+    return json.dumps(PimProductMasterService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_pim_health():
+    from buzzard_ai_complete.pim_product_master.service import PimProductMasterService
+
+    return json.dumps(PimProductMasterService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_pim_schema():
+    from buzzard_ai_complete.pim_product_master.service import PimProductMasterService
+
+    service = PimProductMasterService()
+    return json.dumps(
+        {
+            "product_master": service.schema(),
+            "supplier_import": service.supplier_import_schema(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_pim_docs():
+    return _read_doc("PIM_PRODUCT_MASTER_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

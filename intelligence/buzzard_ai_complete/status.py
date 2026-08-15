@@ -48,6 +48,7 @@ def complete_status():
         "     complete-taxonomy-demo, complete-taxonomy-search, complete-taxonomy-path,",
         "     complete-taxonomy-snapshot, complete-taxonomy-docs",
         "     complete-taxonomy-unify-status, complete-taxonomy-unify-resolve, complete-taxonomy-unify-docs",
+        "     complete-pim-demo, complete-pim-health, complete-pim-schema, complete-pim-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

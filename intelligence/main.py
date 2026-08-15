@@ -1538,6 +1538,11 @@ def main():
     sub.add_parser("complete-taxonomy-unify-status", help="Show taxonomy unification status")
     sub.add_parser("complete-taxonomy-unify-docs", help="Show taxonomy unification documentation")
 
+    sub.add_parser("complete-pim-demo", help="Run PIM Product Master demo import flow")
+    sub.add_parser("complete-pim-health", help="Show PIM service health")
+    sub.add_parser("complete-pim-schema", help="Show PIM product master schemas")
+    sub.add_parser("complete-pim-docs", help="Show PIM Product Master documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5136,6 +5141,22 @@ def main():
         from buzzard_ai_complete.commands import complete_taxonomy_unify_docs
 
         print(complete_taxonomy_unify_docs())
+    elif args.cmd == "complete-pim-demo":
+        from buzzard_ai_complete.commands import complete_pim_demo
+
+        print(complete_pim_demo())
+    elif args.cmd == "complete-pim-health":
+        from buzzard_ai_complete.commands import complete_pim_health
+
+        print(complete_pim_health())
+    elif args.cmd == "complete-pim-schema":
+        from buzzard_ai_complete.commands import complete_pim_schema
+
+        print(complete_pim_schema())
+    elif args.cmd == "complete-pim-docs":
+        from buzzard_ai_complete.commands import complete_pim_docs
+
+        print(complete_pim_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

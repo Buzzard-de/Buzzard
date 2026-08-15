@@ -76,6 +76,21 @@ def gesamt_ai_status():
     return json.dumps(AIProvider().status(), ensure_ascii=False, indent=2)
 
 
+def _read_doc(name):
+    path = PACK_DIR / "docs" / name
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return f"Dokument nicht gefunden: {name}"
+
+
+def gesamt_tree():
+    return _read_doc("COMPLETE_ARCHITECTURE_TREE.md")
+
+
+def gesamt_inventory():
+    return _read_doc("PROJECT_INVENTORY.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

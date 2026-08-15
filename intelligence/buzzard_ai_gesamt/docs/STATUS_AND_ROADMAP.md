@@ -13,16 +13,24 @@
 - `api/app.py` — FastAPI v2 mit Auth, dispatch, security/scan
 - `tests/test_v2.py` — Memory-Versioning, Security-Scan Tests
 
-## Platzhalter-Module (v2 Scaffold)
+## Scaffold (ALLE_FEHLENDEN_ORDNER / o1)
 
-- `schemas/`, `storage/`, `cli/`, `web/`, `integrations/`, `migrations/`
+Vollständiger Architektur-Baum mit Extension Points:
+- `agents/registry`, `agents/protocols`, `agents/router`
+- `memory/embeddings`, `memory/knowledge_graph`, `memory/retention`
+- `research/crawlers`, `research/parsers`, `research/deduplication`
+- `security/rbac`, `security/incidents`, `security/sandbox`
+- `api/routes`, `api/middleware`, `api/webhooks`
+- `deploy/kubernetes`, `deploy/nginx`, `deploy/observability`
+- `tests/fixtures`, `tests/performance`, `tests/security`
+- Siehe `docs/COMPLETE_ARCHITECTURE_TREE.md`, `docs/PROJECT_INVENTORY.md`
 
 ## Parallel im Buzzard Intelligence Stack
 
 - Doğu Bey v29 → `buzzard_intelligence/verify.py` (`verify-*`, `dogubey-*`)
 - Aslan Bey v1 → `buzzard_intelligence/aslan.py` (`aslan-*`)
 
-## Geplant
+## Geplant / Erweiterung
 
 - Vollständige Schema-Migrationen
 - Web-UI Dashboard

@@ -754,6 +754,44 @@ def complete_phone_memory_docs():
     return _read_doc("AI_PHONE_ASSISTANT_V2_MEMORY_CRM.md")
 
 
+def complete_phone_telephony_health():
+    from buzzard_ai_complete.ai_phone_assistant.telephony_facade import PhoneTelephonyFacade
+
+    return json.dumps(
+        PhoneTelephonyFacade().health(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_telephony_demo():
+    from buzzard_ai_complete.ai_phone_assistant.telephony_facade import PhoneTelephonyFacade
+
+    return json.dumps(
+        PhoneTelephonyFacade().demo_flow(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_telephony_schema():
+    from buzzard_ai_complete.ai_phone_assistant.telephony_facade import PhoneTelephonyFacade
+
+    service = PhoneTelephonyFacade()
+    return json.dumps(
+        {
+            "call": service.call_schema(),
+            "production": service.load_production_config(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_phone_telephony_docs():
+    return _read_doc("AI_PHONE_ASSISTANT_V3_TELEPHONY.md")
+
+
 def complete_platform_health():
     from buzzard_ai_complete.complete_commerce_platform.service import (
         CompleteCommercePlatformService,

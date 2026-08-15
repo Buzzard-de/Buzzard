@@ -57,6 +57,8 @@ def complete_status():
         "     complete-phone-schema, complete-phone-docs",
         "     complete-phone-memory-health, complete-phone-memory-demo,",
         "     complete-phone-memory-context, complete-phone-memory-docs",
+        "     complete-phone-telephony-health, complete-phone-telephony-demo,",
+        "     complete-phone-telephony-schema, complete-phone-telephony-docs",
         "     complete-platform-health, complete-platform-modules, complete-platform-demo,",
         "     complete-platform-schema, complete-platform-docs",
         "",

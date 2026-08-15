@@ -7,10 +7,13 @@ except ImportError:
 from buzzard_ai_complete.ai_phone_assistant.memory_facade import PhoneMemoryCrmService
 from buzzard_ai_complete.ai_phone_assistant.service import AiPhoneAssistantService
 
+from buzzard_ai_complete.ai_phone_assistant.telephony_facade import PhoneTelephonyFacade
+
 if APIRouter:
     router = APIRouter(prefix="/phone", tags=["phone"])
     service = AiPhoneAssistantService()
     memory_service = PhoneMemoryCrmService()
+    telephony_service = PhoneTelephonyFacade()
 
     class AnalyzeRequest(BaseModel):
         text: str
@@ -41,6 +44,12 @@ if APIRouter:
         language: str = "de"
         outcome: str
         summary: str
+
+    class InboundCallRequest(BaseModel):
+        call_id: str | None = None
+        from_number: str | None = None
+        to_number: str | None = None
+        demo: bool = True
 
     @router.get("/health")
     def phone_health():
@@ -108,5 +117,31 @@ if APIRouter:
     @router.get("/memory/demo")
     def phone_memory_demo():
         return memory_service.demo_flow()
+
+    @router.get("/telephony/health")
+    def phone_telephony_health():
+        return telephony_service.health()
+
+    @router.get("/telephony/schema")
+    def phone_telephony_schema():
+        return telephony_service.call_schema()
+
+    @router.post("/telephony/inbound")
+    def phone_telephony_inbound(req: InboundCallRequest):
+        headers = {"X-Buzzard-Demo": "1"} if req.demo else {}
+        body = {
+            "call_id": req.call_id or "inbound-call",
+            "from": req.from_number,
+            "to": req.to_number,
+        }
+        return telephony_service.handle_inbound(headers, body)
+
+    @router.post("/telephony/hangup/{call_id}")
+    def phone_telephony_hangup(call_id: str):
+        return telephony_service.hangup(call_id)
+
+    @router.get("/telephony/demo")
+    def phone_telephony_demo():
+        return telephony_service.demo_flow()
 else:
     router = None

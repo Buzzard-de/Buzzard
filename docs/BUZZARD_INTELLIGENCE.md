@@ -1108,6 +1108,24 @@ python3 main.py complete-phone-memory-demo
 
 Archive: `intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL_V2_MEMORY_CRM.zip`
 
+## AI Phone Assistant V3 — Telephony FINAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-phone-telephony-health` | Telephony V3 health |
+| `complete-phone-telephony-demo` | Inbound call demo (dry-run) |
+| `complete-phone-telephony-schema` | Call + production config schemas |
+| `complete-phone-telephony-docs` | Dokumentation |
+
+API: `GET /phone/telephony/health`, `POST /phone/telephony/inbound`, `GET /phone/telephony/demo`
+
+```bash
+cd intelligence
+python3 main.py complete-phone-telephony-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL_FINAL_V3_TELEPHONY.zip`
+
 ## Complete Commerce Platform MAXIMAL FINAL
 
 | Command | Beschreibung |

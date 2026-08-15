@@ -1,0 +1,10 @@
+{
+  "enabled": false,
+  "provider": "not_configured",
+  "public_webhook_base_url": "",
+  "media_stream_url": "",
+  "human_handoff_destination": "",
+  "recording": {"enabled": false, "retention_days": 0},
+  "security": {"require_signed_webhooks": true, "rate_limit_per_minute": 60, "reject_unknown_provider_call": true},
+  "audio": {"preferred_codec": "PCMU", "telephony_sample_rate": 8000, "internal_sample_rate": 24000, "barge_in": true}
+}

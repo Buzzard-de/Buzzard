@@ -25,6 +25,10 @@ if APIRouter:
             "config": service.load_config(),
         }
 
+    @router.get("/taxonomy")
+    def renewable_energy_taxonomy():
+        return service.load_taxonomy()
+
     @router.get("/demo")
     def renewable_energy_demo():
         return service.demo_flow()

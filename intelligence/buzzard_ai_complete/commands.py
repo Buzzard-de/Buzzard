@@ -1242,6 +1242,12 @@ def complete_renewable_energy_docs():
     return _read_doc("RENEWABLE_ENERGY_MAXIMAL.md")
 
 
+def complete_renewable_energy_taxonomy():
+    from buzzard_ai_complete.renewable_energy_maximal.service import RenewableEnergyService
+
+    return json.dumps(RenewableEnergyService().load_taxonomy(), ensure_ascii=False, indent=2)
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

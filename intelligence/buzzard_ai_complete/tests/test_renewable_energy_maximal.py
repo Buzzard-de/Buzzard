@@ -49,5 +49,13 @@ def test_market_score():
 def test_service_health():
     health = RenewableEnergyService().health()
     assert health["status"] == "maximal_renewable_energy_ready"
+    assert health["main_category"] == "Güneş & Rüzgâr Enerjisi"
     assert health["branches"] == 9
     assert health["live_activation"] is False
+
+
+def test_taxonomy_json():
+    doc = RenewableEnergyService().load_taxonomy()
+    assert doc["main_category"] == "Güneş & Rüzgâr Enerjisi"
+    assert "solar" in doc["taxonomy"]
+    assert doc["taxonomy"] == RENEWABLE_ENERGY_TAXONOMY

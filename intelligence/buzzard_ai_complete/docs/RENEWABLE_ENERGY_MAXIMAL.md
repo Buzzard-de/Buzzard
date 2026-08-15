@@ -20,6 +20,7 @@ python3 main.py complete-renewable-energy-branches
 python3 main.py complete-renewable-energy-demo
 python3 main.py complete-renewable-energy-schema
 python3 main.py complete-renewable-energy-docs
+python3 main.py complete-renewable-energy-taxonomy
 ```
 
 ## API
@@ -27,6 +28,7 @@ python3 main.py complete-renewable-energy-docs
 - `GET /renewable-energy/health`
 - `GET /renewable-energy/branches`
 - `GET /renewable-energy/schema`
+- `GET /renewable-energy/taxonomy`
 - `GET /renewable-energy/demo`
 
 ## Important

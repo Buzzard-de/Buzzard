@@ -1357,6 +1357,14 @@ python3 main.py complete-renewable-energy-demo
 
 Archive: `intelligence/archive/buzzard_renewable_energy_maximal.py`
 
+Canonical taxonomy JSON: `renewable_energy_maximal/data/taxonomy.json` (main category: **Güneş & Rüzgâr Enerjisi**)
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-renewable-energy-taxonomy` | Kanonische Taxonomie-JSON mit Metadaten |
+
+API: `GET /renewable-energy/taxonomy`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

@@ -1706,6 +1706,10 @@ def main():
         "complete-renewable-energy-docs",
         help="Show renewable energy taxonomy documentation",
     )
+    sub.add_parser(
+        "complete-renewable-energy-taxonomy",
+        help="Show canonical renewable energy taxonomy JSON",
+    )
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -5629,6 +5633,10 @@ def main():
         from buzzard_ai_complete.commands import complete_renewable_energy_docs
 
         print(complete_renewable_energy_docs())
+    elif args.cmd == "complete-renewable-energy-taxonomy":
+        from buzzard_ai_complete.commands import complete_renewable_energy_taxonomy
+
+        print(complete_renewable_energy_taxonomy())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

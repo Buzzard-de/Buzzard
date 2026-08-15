@@ -1568,6 +1568,15 @@ def main():
     sub.add_parser("complete-phone-schema", help="Show phone tool + conversation schemas")
     sub.add_parser("complete-phone-docs", help="Show AI phone assistant documentation")
 
+    sub.add_parser("complete-phone-memory-health", help="Show phone memory & CRM health")
+    sub.add_parser("complete-phone-memory-demo", help="Run phone memory & CRM demo")
+    complete_phone_memory_context = sub.add_parser(
+        "complete-phone-memory-context", help="Build agent CRM context for customer"
+    )
+    complete_phone_memory_context.add_argument("--customer-id", required=True)
+    complete_phone_memory_context.add_argument("--verification-level", default="none")
+    sub.add_parser("complete-phone-memory-docs", help="Show phone memory & CRM documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5238,6 +5247,22 @@ def main():
         from buzzard_ai_complete.commands import complete_phone_docs
 
         print(complete_phone_docs())
+    elif args.cmd == "complete-phone-memory-health":
+        from buzzard_ai_complete.commands import complete_phone_memory_health
+
+        print(complete_phone_memory_health())
+    elif args.cmd == "complete-phone-memory-demo":
+        from buzzard_ai_complete.commands import complete_phone_memory_demo
+
+        print(complete_phone_memory_demo())
+    elif args.cmd == "complete-phone-memory-context":
+        from buzzard_ai_complete.commands import complete_phone_memory_context
+
+        print(complete_phone_memory_context(args.customer_id, args.verification_level))
+    elif args.cmd == "complete-phone-memory-docs":
+        from buzzard_ai_complete.commands import complete_phone_memory_docs
+
+        print(complete_phone_memory_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

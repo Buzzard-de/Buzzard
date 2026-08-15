@@ -1090,6 +1090,24 @@ python3 main.py complete-phone-demo
 
 Archive: `intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL.zip`
 
+## AI Phone Assistant V2 — Memory & CRM
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-phone-memory-health` | Memory/CRM service health |
+| `complete-phone-memory-demo` | Demo (customer + verified/unverified context) |
+| `complete-phone-memory-context` | Agent context (`--customer-id`, `--verification-level`) |
+| `complete-phone-memory-docs` | Dokumentation |
+
+API: `GET /phone/memory/health`, `POST /phone/memory/customer`, `GET /phone/memory/context/{id}`, `GET /phone/memory/demo`
+
+```bash
+cd intelligence
+python3 main.py complete-phone-memory-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL_V2_MEMORY_CRM.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

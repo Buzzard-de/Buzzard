@@ -1113,6 +1113,41 @@ def complete_social_intelligence_docs():
     return _read_doc("SOCIAL_INTELLIGENCE_AI_MAXIMAL.md")
 
 
+def complete_automotive_taxonomy_health():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    return json.dumps(AutomotiveTaxonomyService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_automotive_taxonomy_seed():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    seed = service.master_seed()
+    return json.dumps({"systems": seed, "count": len(seed)}, ensure_ascii=False, indent=2)
+
+
+def complete_automotive_taxonomy_demo():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    return json.dumps(AutomotiveTaxonomyService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_automotive_taxonomy_schema():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        {"taxonomy": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_automotive_taxonomy_docs():
+    return _read_doc("AUTOMOTIVE_TAXONOMY_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

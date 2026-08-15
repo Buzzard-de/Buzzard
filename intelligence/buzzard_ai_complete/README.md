@@ -99,6 +99,19 @@ python3 main.py complete-billing-demo
 python3 main.py complete-billing-refund --order-id O1 --reason defective --amount 10
 ```
 
+## CRM & Customer Experience Engine v1
+
+- **CRMEngine** — Events, Tickets, Reviews, Loyalty, Abandoned Cart, Segmentation
+- **Customer 360° Snapshot** — aggregierte Kundensicht
+- **CLV** — Customer Lifetime Value Berechnung
+- **complete-crm-demo** / **complete-crm-segment** / **complete-crm-docs**
+- **API** — `GET /crm/demo`, `POST /crm/segment`
+
+```bash
+python3 main.py complete-crm-demo
+python3 main.py complete-crm-segment --ltv 1200 --orders 6
+```
+
 ## Agenten
 
 | Agent | Rolle |
@@ -153,4 +166,4 @@ docker compose -f buzzard_ai_complete/docker-compose.yml up
 | **GESAMT v2** | `gesamt-*` | `buzzard.db` |
 | **v29/v1** | `verify-*`, `aslan-*` | v29 DB |
 
-Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3), `archive/fehler_behebung_2.zip`, `archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_ORDER_FULFILLMENT_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V2.zip` (v2 = Duplikat von v1)
+Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3), `archive/fehler_behebung_2.zip`, `archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_ORDER_FULFILLMENT_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V2.zip` (v2 = Duplikat von v1), `archive/Buzzard_AI_CRM_CUSTOMER_EXPERIENCE_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`

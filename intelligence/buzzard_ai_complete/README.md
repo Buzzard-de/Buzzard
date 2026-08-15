@@ -277,6 +277,18 @@ python3 main.py complete-phone-analyze --text "Haben Sie das auf Lager?"
 python3 main.py complete-phone-memory-demo
 ```
 
+## Complete Commerce Platform MAXIMAL FINAL
+
+- **Unified orchestration** — taxonomy → PIM → multilingual → supplier → commerce → checkout → orders → logistics → marketplaces → phone AI
+- **Dry-run default** — no live payment side effects until providers configured
+- **complete-platform-health** / **complete-platform-modules** / **complete-platform-demo** / **complete-platform-schema** / **complete-platform-docs**
+- **API** — `/platform/health`, `/platform/modules`, `/platform/demo`
+
+```bash
+python3 main.py complete-platform-demo
+python3 main.py complete-platform-health
+```
+
 ## Agenten
 
 | Agent | Rolle |

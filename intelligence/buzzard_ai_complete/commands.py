@@ -754,6 +754,64 @@ def complete_phone_memory_docs():
     return _read_doc("AI_PHONE_ASSISTANT_V2_MEMORY_CRM.md")
 
 
+def complete_platform_health():
+    from buzzard_ai_complete.complete_commerce_platform.service import (
+        CompleteCommercePlatformService,
+    )
+
+    return json.dumps(
+        CompleteCommercePlatformService().health(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_platform_modules():
+    from buzzard_ai_complete.complete_commerce_platform.service import (
+        CompleteCommercePlatformService,
+    )
+
+    return json.dumps(
+        CompleteCommercePlatformService().modules(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_platform_demo():
+    from buzzard_ai_complete.complete_commerce_platform.service import (
+        CompleteCommercePlatformService,
+    )
+
+    return json.dumps(
+        CompleteCommercePlatformService().demo_flow(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_platform_schema():
+    from buzzard_ai_complete.complete_commerce_platform.service import (
+        CompleteCommercePlatformService,
+    )
+
+    service = CompleteCommercePlatformService()
+    return json.dumps(
+        {
+            "events": service.events_schema(),
+            "order": service.order_schema(),
+            "security": service.security_policy(),
+            "channels": service.channel_mapping_policy(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_platform_docs():
+    return _read_doc("COMPLETE_COMMERCE_PLATFORM_MAXIMAL_FINAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

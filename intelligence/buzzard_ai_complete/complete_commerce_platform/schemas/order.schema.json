@@ -1,0 +1,19 @@
+{
+  "statuses": [
+    "pending_payment",
+    "paid",
+    "processing",
+    "fulfilled",
+    "shipped",
+    "delivered",
+    "cancelled",
+    "refunded",
+    "partially_refunded",
+    "on_hold"
+  ],
+  "rules": [
+    "no fulfillment before paid",
+    "no shipment before fulfilled",
+    "invalid transitions rejected"
+  ]
+}

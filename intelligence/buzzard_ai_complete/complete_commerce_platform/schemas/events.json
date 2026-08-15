@@ -1,0 +1,19 @@
+{
+  "events": [
+    "product.approved",
+    "product.updated",
+    "inventory.changed",
+    "price.changed",
+    "order.created",
+    "order.paid",
+    "order.fulfilled",
+    "shipment.created",
+    "shipment.delivered",
+    "customer.created",
+    "call.completed",
+    "supplier.import.completed",
+    "intelligence.proposal.created",
+    "security.alert"
+  ],
+  "idempotent": true
+}

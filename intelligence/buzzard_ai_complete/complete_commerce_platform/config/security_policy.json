@@ -1,0 +1,13 @@
+{
+  "principles": [
+    "least_privilege",
+    "deny_by_default",
+    "secret_separation",
+    "signed_webhooks",
+    "audit_logging",
+    "rate_limiting",
+    "idempotency"
+  ],
+  "esat_bey": "defensive only",
+  "payment_data": "never in application logs"
+}

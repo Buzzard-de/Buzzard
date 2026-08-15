@@ -1577,6 +1577,12 @@ def main():
     complete_phone_memory_context.add_argument("--verification-level", default="none")
     sub.add_parser("complete-phone-memory-docs", help="Show phone memory & CRM documentation")
 
+    sub.add_parser("complete-platform-health", help="Show complete commerce platform health")
+    sub.add_parser("complete-platform-modules", help="List unified platform modules")
+    sub.add_parser("complete-platform-demo", help="Run complete commerce platform demo (dry-run)")
+    sub.add_parser("complete-platform-schema", help="Show platform event/order/policy schemas")
+    sub.add_parser("complete-platform-docs", help="Show complete commerce platform documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5263,6 +5269,26 @@ def main():
         from buzzard_ai_complete.commands import complete_phone_memory_docs
 
         print(complete_phone_memory_docs())
+    elif args.cmd == "complete-platform-health":
+        from buzzard_ai_complete.commands import complete_platform_health
+
+        print(complete_platform_health())
+    elif args.cmd == "complete-platform-modules":
+        from buzzard_ai_complete.commands import complete_platform_modules
+
+        print(complete_platform_modules())
+    elif args.cmd == "complete-platform-demo":
+        from buzzard_ai_complete.commands import complete_platform_demo
+
+        print(complete_platform_demo())
+    elif args.cmd == "complete-platform-schema":
+        from buzzard_ai_complete.commands import complete_platform_schema
+
+        print(complete_platform_schema())
+    elif args.cmd == "complete-platform-docs":
+        from buzzard_ai_complete.commands import complete_platform_docs
+
+        print(complete_platform_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

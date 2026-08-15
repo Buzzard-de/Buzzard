@@ -655,6 +655,26 @@ python3 main.py complete-test
 
 Archive: `intelligence/archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`
 
+## Buzzard AI COMPLETE o2 — neu (NOCH_FEHLENDE_FEHLERBEREINIGT)
+
+Fehlerbereinigtes Gesamtpaket mit vollständigem Architektur-Scaffold und Verify-CLI.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-tree` | Architekturbaum (97 Extension Points) |
+| `complete-inventory` | Projekt-Inventar |
+| `complete-verify` | pytest + Import-Sweep (fehlerfrei) |
+
+```bash
+cd intelligence
+python3 main.py complete-tree
+python3 main.py complete-inventory
+python3 main.py complete-verify
+python3 main.py complete-test
+```
+
+Archive: `intelligence/archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

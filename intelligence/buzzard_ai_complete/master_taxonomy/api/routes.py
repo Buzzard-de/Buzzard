@@ -36,5 +36,39 @@ if APIRouter:
     @router.get("/search")
     def taxonomy_search(q: str = Query(..., min_length=1)):
         return service.search(q)
+
+    from buzzard_ai_complete.master_taxonomy.unification import TaxonomyUnificationService
+
+    unify = TaxonomyUnificationService()
+
+    @router.get("/status")
+    def taxonomy_unification_status():
+        return unify.status()
+
+    @router.get("/canonical/roots")
+    def taxonomy_canonical_roots():
+        return unify.roots()
+
+    @router.get("/canonical/{node_id}")
+    def taxonomy_canonical_node(node_id: str):
+        node = unify.get_node(node_id)
+        if not node:
+            raise HTTPException(status_code=404, detail="Category not found")
+        return {
+            "node": node,
+            "children": unify.children(node_id),
+            "path": unify.path(node_id),
+        }
+
+    @router.get("/resolve")
+    def taxonomy_resolve(
+        legacy_id: str = Query(..., min_length=1),
+        system: str = Query("shop"),
+    ):
+        return unify.resolve(legacy_id, system)
+
+    @router.get("/aliases")
+    def taxonomy_aliases(system: str | None = Query(default=None)):
+        return unify.aliases(system)
 else:
     router = None

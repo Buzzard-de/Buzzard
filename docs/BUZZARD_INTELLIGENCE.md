@@ -995,6 +995,25 @@ python3 main.py complete-taxonomy-path --id 01.01.01
 
 Archive: `intelligence/archive/BUZZARD_MASTER_TAXONOMY_MAXIMAL.zip`
 
+## Master Taxonomy Unification MAXIMAL — neu
+
+Vereinigt Shop (41-root `cat-*`) und Intelligence (43-root) unter canonical `bz.*` IDs mit Alias-Mapping.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-taxonomy-unify-status` | Unification-Status |
+| `complete-taxonomy-unify-resolve` | Legacy-ID → canonical `bz.*` |
+| `complete-taxonomy-unify-docs` | Dokumentation + Migrations-SQL |
+
+API: `GET /taxonomy/status`, `GET /taxonomy/resolve?legacy_id=cat-01&system=shop`
+
+```bash
+cd intelligence
+python3 main.py complete-taxonomy-unify-resolve --legacy-id cat-01 --system shop
+```
+
+Archive: `intelligence/archive/BUZZARD_MASTER_TAXONOMY_UNIFICATION_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

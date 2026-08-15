@@ -163,6 +163,24 @@ async function main() {
   }
 
   console.log("");
+  console.log("Taxonomy unification:");
+  try {
+    const res = await fetch(`${API}/api/taxonomy/status`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const body = await res.json();
+      console.log(
+        `  [OK] canonical_roots=${body.canonical_roots} aliases=${body.alias_count} status=${body.status}`
+      );
+    } else if (routing === "no-server") {
+      console.log("  [PENDING] API not provisioned on Render yet");
+    } else {
+      console.log(`  [SKIP] ${res.status} /api/taxonomy/status`);
+    }
+  } catch (error) {
+    console.log(`  [SKIP] /api/taxonomy/status — ${error.message}`);
+  }
+
+  console.log("");
   if (failed > 0) {
     console.error(`${failed} check(s) failed.`);
     process.exit(1);

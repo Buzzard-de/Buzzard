@@ -41,6 +41,9 @@ from buzzard_ai_complete.category_intelligence_43_maximal.api.routes import (
 from buzzard_ai_complete.social_intelligence_ai_maximal.api.routes import (
     router as social_intel_router,
 )
+from buzzard_ai_complete.automotive_taxonomy_maximal.api.routes import (
+    router as automotive_taxonomy_router,
+)
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -93,6 +96,8 @@ if FastAPI:
         app.include_router(category_intel_43_router)
     if social_intel_router is not None:
         app.include_router(social_intel_router)
+    if automotive_taxonomy_router is not None:
+        app.include_router(automotive_taxonomy_router)
 
     class TaskRequest(BaseModel):
         task_id: str

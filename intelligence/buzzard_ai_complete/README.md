@@ -391,6 +391,22 @@ python3 main.py complete-social-intelligence-demo
 python3 main.py complete-social-intelligence-platforms
 ```
 
+## Automotive Taxonomy MAXIMAL
+
+- **Vehicle-Need-First** — System → Komponente → Produkt → exakte Fitment
+- **90+ Master-Systeme** — Motor, Bremsen, Flüssigkeiten, EV, Nutzfahrzeuge, etc.
+- **6 Ebenen** — Hauptkategorie bis Fahrzeug-Fitment
+- **Fitment-Dimensionen** — Marke, Modell, Generation, Jahr, Motor, Motorcode, etc.
+- **Connector-Contracts** — TecDoc, OEM, Supplier API/XML
+- **complete-automotive-taxonomy-health** / **complete-automotive-taxonomy-seed** / **complete-automotive-taxonomy-demo** / **complete-automotive-taxonomy-schema** / **complete-automotive-taxonomy-docs**
+- **API** — `/automotive-taxonomy/health`, `/automotive-taxonomy/seed`, `/automotive-taxonomy/schema`, `/automotive-taxonomy/demo`
+- **`live_activation: false`** — Fitment nur mit Evidenz, kein Auto-Publish
+
+```bash
+python3 main.py complete-automotive-taxonomy-seed
+python3 main.py complete-automotive-taxonomy-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

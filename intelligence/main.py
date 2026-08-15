@@ -1661,6 +1661,15 @@ def main():
         help="Show social intelligence AI documentation",
     )
 
+    sub.add_parser("complete-automotive-taxonomy-health", help="Show automotive taxonomy health")
+    sub.add_parser("complete-automotive-taxonomy-seed", help="List master vehicle need systems")
+    sub.add_parser("complete-automotive-taxonomy-demo", help="Run automotive taxonomy demo")
+    sub.add_parser("complete-automotive-taxonomy-schema", help="Show automotive taxonomy schema and config")
+    sub.add_parser(
+        "complete-automotive-taxonomy-docs",
+        help="Show automotive taxonomy documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5507,6 +5516,26 @@ def main():
         from buzzard_ai_complete.commands import complete_social_intelligence_docs
 
         print(complete_social_intelligence_docs())
+    elif args.cmd == "complete-automotive-taxonomy-health":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_health
+
+        print(complete_automotive_taxonomy_health())
+    elif args.cmd == "complete-automotive-taxonomy-seed":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_seed
+
+        print(complete_automotive_taxonomy_seed())
+    elif args.cmd == "complete-automotive-taxonomy-demo":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_demo
+
+        print(complete_automotive_taxonomy_demo())
+    elif args.cmd == "complete-automotive-taxonomy-schema":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_schema
+
+        print(complete_automotive_taxonomy_schema())
+    elif args.cmd == "complete-automotive-taxonomy-docs":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_docs
+
+        print(complete_automotive_taxonomy_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

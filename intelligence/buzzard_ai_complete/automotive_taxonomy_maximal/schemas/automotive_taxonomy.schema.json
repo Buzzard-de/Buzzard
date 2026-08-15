@@ -1,0 +1,19 @@
+{
+  "levels": [
+    "main_category",
+    "sub_category",
+    "sub_sub_category",
+    "product_group",
+    "product",
+    "vehicle_fitment"
+  ],
+  "fitment_required_fields": [
+    "make","model","year","engine","engine_code"
+  ],
+  "rules": [
+    "A product may belong to a system category and have multiple vehicle fitments.",
+    "Fitment claims must retain source and confidence.",
+    "Conflicting fitment data requires human review.",
+    "Category publication should be separated from product publication."
+  ]
+}

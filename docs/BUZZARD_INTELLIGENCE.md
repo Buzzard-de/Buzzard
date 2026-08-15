@@ -1270,6 +1270,27 @@ python3 main.py complete-social-intelligence-demo
 
 Archive: `intelligence/archive/BUZZARD_SOCIAL_INTELLIGENCE_AI_MAXIMAL.zip`
 
+## Automotive Taxonomy MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-automotive-taxonomy-health` | Automotive taxonomy health |
+| `complete-automotive-taxonomy-seed` | 90+ Master Vehicle Need Systems |
+| `complete-automotive-taxonomy-demo` | Taxonomy-Pfad, Selector, Fitment Demo |
+| `complete-automotive-taxonomy-schema` | Taxonomy-Schema + Konfiguration |
+| `complete-automotive-taxonomy-docs` | Architektur-Dokumentation |
+
+API: `GET /automotive-taxonomy/health`, `GET /automotive-taxonomy/seed`, `GET /automotive-taxonomy/schema`, `GET /automotive-taxonomy/demo`
+
+`live_activation: false` — Fitment erfordert Evidenz; kein automatisches Fitment-Publishing.
+
+```bash
+cd intelligence
+python3 main.py complete-automotive-taxonomy-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_AUTOMOTIVE_TAXONOMY_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

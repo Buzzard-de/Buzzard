@@ -1,0 +1,57 @@
+{
+  "root": "automotive",
+  "principle": "vehicle_need_first",
+  "levels": [
+    "main_category",
+    "sub_category",
+    "sub_sub_category",
+    "product_group",
+    "product",
+    "fitment"
+  ],
+  "fitment_dimensions": [
+    "vehicle_type",
+    "make",
+    "model",
+    "generation",
+    "year",
+    "engine",
+    "engine_code",
+    "fuel",
+    "power_kw",
+    "drivetrain",
+    "transmission",
+    "body",
+    "position",
+    "axle"
+  ],
+  "vehicle_types": [
+    "passenger_car",
+    "van",
+    "truck",
+    "bus",
+    "trailer",
+    "motorcycle",
+    "scooter",
+    "atv",
+    "tractor",
+    "agricultural_machine",
+    "classic_car",
+    "ev",
+    "hybrid"
+  ],
+  "data_sources": [
+    "licensed_TecDoc",
+    "OEM_catalogs",
+    "supplier_API_XML",
+    "Buzzard_verified_product_data",
+    "public_product_information"
+  ],
+  "rules": {
+    "fitment_requires_evidence": true,
+    "automatic_fitment_publish": false,
+    "taxonomy_gap_detection": true,
+    "category_ai_monitoring": true,
+    "human_review_for_conflicts": true
+  }
+}

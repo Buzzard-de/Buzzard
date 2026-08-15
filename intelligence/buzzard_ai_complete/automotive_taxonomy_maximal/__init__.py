@@ -1,0 +1,1 @@
+from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService

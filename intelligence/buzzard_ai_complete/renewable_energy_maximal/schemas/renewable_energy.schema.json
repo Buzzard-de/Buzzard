@@ -1,0 +1,5 @@
+{
+  "levels": ["main_category", "sub_category", "sub_sub_category", "product_group", "product", "system_compatibility"],
+  "compatibility": ["system_type", "manufacturer", "model", "voltage", "power_kw", "capacity_kwh"],
+  "rules": ["source-backed compatibility", "human review for conflicts", "supplier/OEM data provenance"]
+}

@@ -1,0 +1,1 @@
+from buzzard_ai_complete.renewable_energy_maximal.service import RenewableEnergyService

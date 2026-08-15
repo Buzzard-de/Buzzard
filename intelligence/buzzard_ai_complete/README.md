@@ -427,6 +427,21 @@ python3 main.py complete-agriculture-branches
 python3 main.py complete-agriculture-demo
 ```
 
+## Renewable Energy MAXIMAL
+
+- **System-Need-First** — Solar, Wind, Storage, Hybrid, Home/Building, Agriculture Energy
+- **9 Branches** — Güneş, Rüzgâr, Depolama, Hibrit, Ev/Bina, Tarım, Koruma, Bakım, Ticari/Endüstriyel
+- **Compatibility Engine** — Konservatives Matching mit Evidenz (fehlende Daten = unknown)
+- **Market Intelligence** — Nachfrage, Marge, Wettbewerb, Lieferstabilität, Saisonalität, Risiko
+- **complete-renewable-energy-health** / **complete-renewable-energy-branches** / **complete-renewable-energy-demo** / **complete-renewable-energy-schema** / **complete-renewable-energy-docs**
+- **API** — `/renewable-energy/health`, `/renewable-energy/branches`, `/renewable-energy/schema`, `/renewable-energy/demo`
+- **`live_activation: false`** — Kompatibilität nur mit Evidenz, Konflikte → Human Review
+
+```bash
+python3 main.py complete-renewable-energy-branches
+python3 main.py complete-renewable-energy-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

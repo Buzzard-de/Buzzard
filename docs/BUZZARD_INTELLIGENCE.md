@@ -597,9 +597,36 @@ python main.py aslan-task --title "..." --objective "..." --priority HIGH
 python main.py aslan-dashboard
 ```
 
-Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`, `Buzzard_AI_ALLES.zip`, `Buzzard_AI_GESAMT.zip`, `Buzzard_AI_DoguBey_tek_klasor.zip`, `Buzzard_AI_komplett.zip`
+Archive: `intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip`, `Buzzard_AI_ALLES.zip`, `Buzzard_AI_GESAMT.zip`, `Buzzard_AI_ALLES_AUF_EINMAL.zip`, `Buzzard_AI_DoguBey_tek_klasor.zip`, `Buzzard_AI_komplett.zip`
 
-Standalone: `dogubey/README.md`, `buzzard_ai_alles/README.md`, `buzzard_ai_gesamt/README.md` (`gesamt-status`)
+Standalone: `dogubey/README.md`, `buzzard_ai_alles/README.md`, `buzzard_ai_gesamt/README.md`
+
+## Buzzard AI GESAMT Platform — neu (ALLES_AUF_EINMAL)
+
+Unified Agent-Platform mit Doğu Bey, Aslan Bey und Esat Bey auf gemeinsamer SQLite-DB (`buzzard.db`).
+Getrennt von v29 (`buzzard_official_verification_v29.db`) und Aslan v1 (`aslan-*`).
+
+| CLI | Zweck |
+|-----|-------|
+| `gesamt-init` | DB + Agent-Registry initialisieren |
+| `gesamt-agents` | Registrierte Agenten anzeigen |
+| `gesamt-task` | Forschungsaufgabe erstellen |
+| `gesamt-dispatch` | Aufgabe an Doğu Bey dispatchen |
+| `gesamt-dashboard` | Aslan Bey Kontrollpanel |
+| `gesamt-report` | Executive Report |
+| `gesamt-test` | Pytest-Suite |
+| `gesamt-status` | Status & Roadmap |
+
+```bash
+cd intelligence
+python main.py gesamt-init
+python main.py gesamt-agents
+python main.py gesamt-task --title "Test" --description "Research" --priority HIGH
+python main.py gesamt-dashboard
+python main.py gesamt-test
+```
+
+Optional FastAPI: `uvicorn buzzard_ai_gesamt.api.app:app --reload`
 
 ## v28 Product Selection — neu
 

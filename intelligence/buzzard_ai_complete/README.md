@@ -37,8 +37,22 @@ python3 main.py complete-orchestrate --task-id "T-001" --objective "Research pla
 python3 main.py complete-tree
 python3 main.py complete-inventory
 python3 main.py complete-verify
+python3 main.py complete-maintain --cleanup
 python3 main.py complete-test
 python3 main.py complete-status
+```
+
+## Dauerbetrieb (empfohlen für Produktion)
+
+```bash
+# Einmalig: Test-Tasks aufräumen
+python3 main.py complete-maintain --cleanup
+
+# API + Scheduler via Docker
+docker compose -f buzzard_ai_complete/docker-compose.yml up -d
+
+# Oder Scheduler lokal (alle 5 Min, 1 Task pro Zyklus)
+python3 main.py complete-scheduler --interval 300 --process 1
 ```
 
 ## Optional: FastAPI + Docker

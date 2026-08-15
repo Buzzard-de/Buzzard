@@ -1363,6 +1363,37 @@ def main():
     sub.add_parser("complete-tree", help="Show COMPLETE architecture tree")
     sub.add_parser("complete-inventory", help="Show COMPLETE project inventory")
     sub.add_parser("complete-verify", help="Run COMPLETE error-free verification (pytest + import sweep)")
+    complete_maintain = sub.add_parser(
+        "complete-maintain",
+        help="Run one-shot maintenance (cleanup test tasks, process queue, security audit)",
+    )
+    complete_maintain.add_argument(
+        "--cleanup",
+        action="store_true",
+        help="Cancel known smoke/demo test tasks",
+    )
+    complete_maintain.add_argument(
+        "--process",
+        type=int,
+        default=0,
+        help="Process up to N pending real tasks via orchestrator",
+    )
+    complete_scheduler = sub.add_parser(
+        "complete-scheduler",
+        help="Run continuous maintenance loop (API companion for production)",
+    )
+    complete_scheduler.add_argument(
+        "--interval",
+        type=int,
+        default=300,
+        help="Seconds between maintenance cycles (default: 300)",
+    )
+    complete_scheduler.add_argument(
+        "--process",
+        type=int,
+        default=1,
+        help="Max tasks to process per cycle (default: 1)",
+    )
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4732,6 +4763,15 @@ def main():
         from buzzard_ai_complete.commands import complete_verify
 
         print(complete_verify())
+    elif args.cmd == "complete-maintain":
+        from buzzard_ai_complete.commands import complete_maintain
+
+        print(complete_maintain(cancel_tests=args.cleanup, process_limit=args.process))
+    elif args.cmd == "complete-scheduler":
+        from buzzard_ai_complete.commands import complete_scheduler
+
+        print("Starting COMPLETE scheduler (Ctrl+C to stop)...")
+        complete_scheduler(interval=args.interval, process_limit=args.process)
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

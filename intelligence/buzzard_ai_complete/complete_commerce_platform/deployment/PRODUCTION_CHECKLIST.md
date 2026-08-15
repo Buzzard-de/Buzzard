@@ -1,0 +1,17 @@
+# Production Gate
+- production DB
+- secret manager
+- payment provider + signed webhooks
+- VAT/tax validation
+- carrier APIs
+- supplier feeds
+- marketplace mappings
+- PIM mappings
+- privacy/retention review
+- SIP/telephony
+- human handoff
+- backups/restore
+- monitoring/alerts
+- security/load testing
+- end-to-end order test
+- rollback test

@@ -1108,6 +1108,25 @@ python3 main.py complete-phone-memory-demo
 
 Archive: `intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL_V2_MEMORY_CRM.zip`
 
+## Complete Commerce Platform MAXIMAL FINAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-platform-health` | Unified platform health |
+| `complete-platform-modules` | Alle Module (taxonomy → phone_ai) |
+| `complete-platform-demo` | Dry-run Checkout/Order/Event/Audit Demo |
+| `complete-platform-schema` | Events, Order, Security, Channel Policies |
+| `complete-platform-docs` | Dokumentation |
+
+API: `GET /platform/health`, `GET /platform/modules`, `GET /platform/demo`
+
+```bash
+cd intelligence
+python3 main.py complete-platform-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_COMPLETE_COMMERCE_PLATFORM_MAXIMAL_FINAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

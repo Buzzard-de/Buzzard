@@ -1,0 +1,11 @@
+{
+  "canonical_source": "Buzzard Master Taxonomy",
+  "channels": [
+    "Amazon",
+    "eBay",
+    "Google",
+    "supplier",
+    "TecDoc"
+  ],
+  "unknown_mapping": "review"
+}

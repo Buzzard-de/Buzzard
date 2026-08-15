@@ -188,6 +188,20 @@ python3 main.py complete-shop-bridge-demo
 python3 main.py complete-shop-bridge-readiness
 ```
 
+## Master Taxonomy MAXIMAL
+
+- **43 Hauptkategorien** — hierarchisch bis Unter-Unterkategorie (1198 Knoten)
+- **JSON + CSV** — PIM/ERP/import-ready unter `master_taxonomy/data/`
+- **complete-taxonomy-demo** / **complete-taxonomy-search** / **complete-taxonomy-path**
+- **complete-taxonomy-snapshot** / **complete-taxonomy-docs**
+- **API** — `/taxonomy`, `/taxonomy/categories`, `/taxonomy/category/{id}`, `/taxonomy/search`
+
+```bash
+python3 main.py complete-taxonomy-demo
+python3 main.py complete-taxonomy-search --q motor
+python3 main.py complete-taxonomy-path --id 01.01.01
+```
+
 ## Agenten
 
 | Agent | Rolle |

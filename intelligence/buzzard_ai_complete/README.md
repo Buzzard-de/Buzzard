@@ -471,6 +471,20 @@ python3 main.py complete-master-taxonomy-clean-health
 python3 main.py complete-master-taxonomy-clean-demo
 ```
 
+## Construction MAXIMAL (İnşaat & İnşaat Makineleri)
+
+- **Construction-Need-First** — Baumaschinen-Typ → System → Teil → exakte Maschinen-Fitment
+- **22 Branches** — Materialien, Erdbewegung, Beton, Straße, Krane, Bohren, Verdichtung, Werkzeuge, Sicherheit, Ersatzteile, Anbaugeräte, Hydraulik, Elektrik, Wartung, Vermessung, Recycling
+- **complete-construction-health** / **complete-construction-branches** / **complete-construction-demo** / **complete-construction-schema** / **complete-construction-taxonomy** / **complete-construction-docs**
+- **API** — `/construction/health`, `/construction/branches`, `/construction/schema`, `/construction/taxonomy`, `/construction/demo`
+- **`live_activation: false`** — Fitment nur mit Evidenz, Konflikte → Human Review
+
+```bash
+python3 main.py complete-construction-branches
+python3 main.py complete-construction-taxonomy
+python3 main.py complete-construction-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

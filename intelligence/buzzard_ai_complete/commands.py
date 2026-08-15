@@ -271,6 +271,65 @@ def complete_commerce_integration_order():
     return _read_doc("INTEGRATION_ORDER.md")
 
 
+def _logistics_decision_payload(decision):
+    def quote(q):
+        if q is None:
+            return None
+        return {
+            "carrier": q.carrier,
+            "service": q.service,
+            "price": q.price,
+            "currency": q.currency,
+            "delivery_days": q.delivery_days,
+            "available": q.available,
+            "reason": q.reason,
+        }
+
+    return {
+        "selected": quote(decision.selected),
+        "alternatives": [quote(q) for q in decision.alternatives],
+        "reason": decision.reason,
+    }
+
+
+def complete_logistics_demo():
+    from buzzard_ai_complete.logistics.service import SmartShippingService
+
+    svc = SmartShippingService()
+    payload = {}
+    for priority in ("cheapest", "balanced", "fastest"):
+        decision = svc.recommend(2, 30, 20, 15, "DE", "35075", priority)
+        payload[priority] = _logistics_decision_payload(decision)
+    return json.dumps(payload, ensure_ascii=False, indent=2)
+
+
+def complete_logistics_recommend(
+    weight_kg,
+    length_cm,
+    width_cm,
+    height_cm,
+    country,
+    postal_code,
+    priority="balanced",
+):
+    from buzzard_ai_complete.logistics.rules import validate_parcel
+    from buzzard_ai_complete.logistics.models import Parcel
+    from buzzard_ai_complete.logistics.service import SmartShippingService
+
+    parcel = Parcel(float(weight_kg), float(length_cm), float(width_cm), float(height_cm))
+    errors = validate_parcel(parcel)
+    if errors:
+        return json.dumps({"errors": errors}, ensure_ascii=False, indent=2)
+    decision = SmartShippingService().recommend(
+        weight_kg, length_cm, width_cm, height_cm, country, postal_code, priority
+    )
+    return json.dumps(_logistics_decision_payload(decision), ensure_ascii=False, indent=2)
+
+
+def complete_logistics_docs():
+    return _read_doc("LOGISTICS_ENGINE_V1.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

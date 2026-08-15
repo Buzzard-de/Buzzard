@@ -760,6 +760,28 @@ Dokumentation: `buzzard_ai_complete/docs/REPAIR_AND_FULL_TEST_REPORT.md`
 
 Archive: `intelligence/archive/fehler_behebung_2.zip`
 
+## Buzzard AI LOGISTICS ENGINE v1 — neu
+
+Smart Shipping Engine mit Carrier-Adaptern (DHL, DPD, GLS, Hermes, UPS), Parcel-Validierung und Prioritätsauswahl.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-logistics-demo` | Demo für cheapest/balanced/fastest |
+| `complete-logistics-recommend` | Carrier-Empfehlung für Paket + Ziel |
+| `complete-logistics-docs` | Engine-Dokumentation |
+
+API: `POST /logistics/recommend`
+
+```bash
+cd intelligence
+python3 main.py complete-logistics-demo
+python3 main.py complete-logistics-recommend --weight 2 --length 30 --width 20 --height 15 --country DE --postal-code 35075 --priority cheapest
+```
+
+Hinweis: `commerce.logistics` = DB-Tarife; `buzzard_ai_complete.logistics` = Smart Shipping Engine.
+
+Archive: `intelligence/archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

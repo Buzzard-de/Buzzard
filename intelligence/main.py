@@ -1428,6 +1428,24 @@ def main():
         help="Show recommended commerce integration order",
     )
 
+    complete_logistics_rec = sub.add_parser(
+        "complete-logistics-recommend",
+        help="Recommend carrier via Smart Shipping Engine",
+    )
+    complete_logistics_rec.add_argument("--weight", type=float, required=True)
+    complete_logistics_rec.add_argument("--length", type=float, required=True)
+    complete_logistics_rec.add_argument("--width", type=float, required=True)
+    complete_logistics_rec.add_argument("--height", type=float, required=True)
+    complete_logistics_rec.add_argument("--country", default="DE")
+    complete_logistics_rec.add_argument("--postal-code", default="")
+    complete_logistics_rec.add_argument(
+        "--priority",
+        choices=["cheapest", "balanced", "fastest"],
+        default="balanced",
+    )
+    sub.add_parser("complete-logistics-demo", help="Run Smart Shipping Engine demo (3 priorities)")
+    sub.add_parser("complete-logistics-docs", help="Show Logistics Engine v1 documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4850,6 +4868,28 @@ def main():
         from buzzard_ai_complete.commands import complete_commerce_integration_order
 
         print(complete_commerce_integration_order())
+    elif args.cmd == "complete-logistics-demo":
+        from buzzard_ai_complete.commands import complete_logistics_demo
+
+        print(complete_logistics_demo())
+    elif args.cmd == "complete-logistics-recommend":
+        from buzzard_ai_complete.commands import complete_logistics_recommend
+
+        print(
+            complete_logistics_recommend(
+                args.weight,
+                args.length,
+                args.width,
+                args.height,
+                args.country,
+                args.postal_code,
+                args.priority,
+            )
+        )
+    elif args.cmd == "complete-logistics-docs":
+        from buzzard_ai_complete.commands import complete_logistics_docs
+
+        print(complete_logistics_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

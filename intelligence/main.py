@@ -1755,6 +1755,13 @@ def main():
         help="Show 48-category master taxonomy documentation",
     )
 
+    sub.add_parser("complete-main-column-48-health", help="Show main column 48-category engine health")
+    sub.add_parser("complete-main-column-48-demo", help="Run main column 48-category engine demo")
+    sub.add_parser(
+        "complete-main-column-48-docs",
+        help="Show main column 48-category engine documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5757,6 +5764,18 @@ def main():
         from buzzard_ai_complete.commands import complete_master_taxonomy_48_docs
 
         print(complete_master_taxonomy_48_docs())
+    elif args.cmd == "complete-main-column-48-health":
+        from buzzard_ai_complete.commands import complete_main_column_48_health
+
+        print(complete_main_column_48_health())
+    elif args.cmd == "complete-main-column-48-demo":
+        from buzzard_ai_complete.commands import complete_main_column_48_demo
+
+        print(complete_main_column_48_demo())
+    elif args.cmd == "complete-main-column-48-docs":
+        from buzzard_ai_complete.commands import complete_main_column_48_docs
+
+        print(complete_main_column_48_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

@@ -1376,6 +1376,22 @@ def complete_master_taxonomy_48_docs():
     return _read_doc("MASTER_TAXONOMY_48_MAXIMAL.md")
 
 
+def complete_main_column_48_health():
+    from buzzard_ai_complete.main_column_48_maximal.service import MainColumn48Service
+
+    return json.dumps(MainColumn48Service().health(), ensure_ascii=False, indent=2)
+
+
+def complete_main_column_48_demo():
+    from buzzard_ai_complete.main_column_48_maximal.service import MainColumn48Service
+
+    return json.dumps(MainColumn48Service().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_main_column_48_docs():
+    return _read_doc("MAIN_COLUMN_48_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

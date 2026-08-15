@@ -519,14 +519,14 @@ Müsteşar-/Koordinationslayer **Aslan Bey v1** über v29 **Doğu Bey** (Officia
 
 ```bash
 python main.py init-v29
+python main.py dogubey-demo
 python main.py aslan-task --title "Continental 205/55 R16" --objective "Offizielle Herstellerquellen prüfen" --priority HIGH
 python main.py aslan-dashboard
-python main.py aslan-review --task-id 1 --claim-id 1
 ```
 
-`init-v29` initialisiert v29- und Aslan-Tabellen in `buzzard_official_verification_v29.db`.
+Standalone Doğu Bey (tek klasör): `dogubey-init`, `dogubey-claim`, `dogubey-source`, `dogubey-verify` — siehe `dogubey/README.md`
 
-Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`
+Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_DoguBey_tek_klasor.zip`
 
 ## v28 Product Selection
 

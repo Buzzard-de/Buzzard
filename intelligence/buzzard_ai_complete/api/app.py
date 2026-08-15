@@ -21,6 +21,9 @@ from buzzard_ai_complete.production.api.storefront_routes import router as store
 from buzzard_ai_complete.shop_bridge.api.routes import router as shop_bridge_router
 from buzzard_ai_complete.master_taxonomy.api.routes import router as taxonomy_router
 from buzzard_ai_complete.pim_product_master.api.routes import router as pim_router
+from buzzard_ai_complete.multilingual_product_intelligence.api.routes import (
+    router as multilingual_router,
+)
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -53,6 +56,8 @@ if FastAPI:
         app.include_router(taxonomy_router)
     if pim_router is not None:
         app.include_router(pim_router)
+    if multilingual_router is not None:
+        app.include_router(multilingual_router)
 
     class TaskRequest(BaseModel):
         task_id: str

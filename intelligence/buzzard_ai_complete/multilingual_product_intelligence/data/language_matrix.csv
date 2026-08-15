@@ -1,0 +1,60 @@
+﻿code,name,region,markets,rtl
+de,Deutsch,Europe,Germany/Austria/Switzerland/Luxembourg,False
+en,English,Europe,Ireland/UK/European business,False
+fr,Français,Europe,France/Belgium/Luxembourg/Switzerland,False
+it,Italiano,Europe,Italy/Switzerland,False
+es,Español,Europe,Spain,False
+pt,Português,Europe,Portugal,False
+nl,Nederlands,Europe,Netherlands/Belgium,False
+pl,Polski,Europe,Poland,False
+cs,Čeština,Europe,Czechia,False
+sk,Slovenčina,Europe,Slovakia,False
+hu,Magyar,Europe,Hungary,False
+ro,Română,Europe,Romania,False
+bg,Български,Balkans,Bulgaria,False
+sl,Slovenščina,Balkans,Slovenia,False
+hr,Hrvatski,Balkans,Croatia,False
+bs,Bosanski,Balkans,Bosnia and Herzegovina,False
+sr,Српски,Balkans,Serbia,False
+me,Crnogorski,Balkans,Montenegro,False
+mk,Македонски,Balkans,North Macedonia,False
+sq,Shqip,Balkans,Albania/Kosovo,False
+el,Ελληνικά,Balkans,Greece/Cyprus,False
+tr,Türkçe,Balkans,Türkiye/Cyprus/European Turkish users,False
+ro-MD,Română (Moldova),Europe,Moldova,False
+uk,Українська,Europe,Ukraine,False
+ru,Русский,Europe,Regional coverage,False
+be,Беларуская,Europe,Belarus,False
+lt,Lietuvių,Europe,Lithuania,False
+lv,Latviešu,Europe,Latvia,False
+et,Eesti,Europe,Estonia,False
+fi,Suomi,Nordic,Finland,False
+sv,Svenska,Nordic,Sweden,False
+no,Norsk,Nordic,Norway,False
+da,Dansk,Nordic,Denmark,False
+is,Íslenska,Nordic,Iceland,False
+fo,Føroyskt,Nordic,Faroe Islands,False
+ga,Gaeilge,Europe,Ireland,False
+cy,Cymraeg,Europe,Wales,False
+mt,Malti,Europe,Malta,False
+ca,Català,Europe,Spain,False
+eu,Euskara,Europe,Spain,False
+gl,Galego,Europe,Spain,False
+ar,العربية,Arab,Pan-Arab,True
+ar-SA,العربية السعودية,Arab,Saudi Arabia,True
+ar-AE,العربية الإماراتية,Arab,United Arab Emirates,True
+ar-QA,العربية القطرية,Arab,Qatar,True
+ar-KW,العربية الكويتية,Arab,Kuwait,True
+ar-BH,العربية البحرينية,Arab,Bahrain,True
+ar-OM,العربية العمانية,Arab,Oman,True
+ar-JO,العربية الأردنية,Arab,Jordan,True
+ar-LB,العربية اللبنانية,Arab,Lebanon,True
+ar-EG,العربية المصرية,Arab,Egypt,True
+ar-MA,العربية المغربية,Arab,Morocco,True
+ar-DZ,العربية الجزائرية,Arab,Algeria,True
+ar-TN,العربية التونسية,Arab,Tunisia,True
+ar-IQ,العربية العراقية,Arab,Iraq,True
+ar-YE,العربية اليمنية,Arab,Yemen,True
+ar-SY,العربية السورية,Arab,Syria,True
+ar-LY,العربية الليبية,Arab,Libya,True
+ar-SD,العربية السودانية,Arab,Sudan,True

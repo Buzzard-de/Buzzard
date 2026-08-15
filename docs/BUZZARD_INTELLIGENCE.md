@@ -1034,6 +1034,25 @@ python3 main.py complete-pim-demo
 
 Archive: `intelligence/archive/BUZZARD_PIM_PRODUCT_MASTER_MAXIMAL.zip`
 
+## Multilingual Product Intelligence MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-multilingual-health` | Multilingual service health |
+| `complete-multilingual-languages` | 59 unterstützte Sprachen |
+| `complete-multilingual-normalize` | Text normalisieren (`--text`, optional `--language`) |
+| `complete-multilingual-demo` | Demo-Flow (DE/TR/AR) |
+| `complete-multilingual-docs` | Dokumentation |
+
+API: `GET /multilingual/health`, `GET /multilingual/languages`, `POST /multilingual/normalize`, `GET /multilingual/glossary`, `GET /multilingual/demo`
+
+```bash
+cd intelligence
+python3 main.py complete-multilingual-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_MULTILINGUAL_PRODUCT_INTELLIGENCE_MAXIMAL.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

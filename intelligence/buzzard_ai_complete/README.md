@@ -227,6 +227,19 @@ python3 main.py complete-pim-demo
 python3 main.py complete-pim-health
 ```
 
+## Multilingual Product Intelligence MAXIMAL
+
+- **59 languages** — Europe, Nordic, Balkans, Arab (+ RTL)
+- **Language detection** — normalize queries for cross-language product search
+- **Glossary + AI pipeline** — synonym expansion, canonical entity linking
+- **complete-multilingual-health** / **complete-multilingual-languages** / **complete-multilingual-normalize** / **complete-multilingual-demo** / **complete-multilingual-docs**
+- **API** — `/multilingual/health`, `/multilingual/languages`, `/multilingual/normalize`, `/multilingual/glossary`, `/multilingual/demo`
+
+```bash
+python3 main.py complete-multilingual-demo
+python3 main.py complete-multilingual-normalize --text "Bremsbelag"
+```
+
 ## Agenten
 
 | Agent | Rolle |

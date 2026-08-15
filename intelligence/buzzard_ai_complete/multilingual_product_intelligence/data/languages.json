@@ -1,0 +1,426 @@
+{
+  "version": "1.0.0",
+  "default": "de",
+  "supported_count": 59,
+  "groups": {
+    "Europe": "European coverage",
+    "Nordic": "Scandinavian/Nordic coverage",
+    "Balkans": "Balkan coverage",
+    "Arab": "Arabic market coverage"
+  },
+  "languages": [
+    {
+      "code": "de",
+      "name": "Deutsch",
+      "region": "Europe",
+      "markets": "Germany/Austria/Switzerland/Luxembourg",
+      "rtl": false
+    },
+    {
+      "code": "en",
+      "name": "English",
+      "region": "Europe",
+      "markets": "Ireland/UK/European business",
+      "rtl": false
+    },
+    {
+      "code": "fr",
+      "name": "Français",
+      "region": "Europe",
+      "markets": "France/Belgium/Luxembourg/Switzerland",
+      "rtl": false
+    },
+    {
+      "code": "it",
+      "name": "Italiano",
+      "region": "Europe",
+      "markets": "Italy/Switzerland",
+      "rtl": false
+    },
+    {
+      "code": "es",
+      "name": "Español",
+      "region": "Europe",
+      "markets": "Spain",
+      "rtl": false
+    },
+    {
+      "code": "pt",
+      "name": "Português",
+      "region": "Europe",
+      "markets": "Portugal",
+      "rtl": false
+    },
+    {
+      "code": "nl",
+      "name": "Nederlands",
+      "region": "Europe",
+      "markets": "Netherlands/Belgium",
+      "rtl": false
+    },
+    {
+      "code": "pl",
+      "name": "Polski",
+      "region": "Europe",
+      "markets": "Poland",
+      "rtl": false
+    },
+    {
+      "code": "cs",
+      "name": "Čeština",
+      "region": "Europe",
+      "markets": "Czechia",
+      "rtl": false
+    },
+    {
+      "code": "sk",
+      "name": "Slovenčina",
+      "region": "Europe",
+      "markets": "Slovakia",
+      "rtl": false
+    },
+    {
+      "code": "hu",
+      "name": "Magyar",
+      "region": "Europe",
+      "markets": "Hungary",
+      "rtl": false
+    },
+    {
+      "code": "ro",
+      "name": "Română",
+      "region": "Europe",
+      "markets": "Romania",
+      "rtl": false
+    },
+    {
+      "code": "bg",
+      "name": "Български",
+      "region": "Balkans",
+      "markets": "Bulgaria",
+      "rtl": false
+    },
+    {
+      "code": "sl",
+      "name": "Slovenščina",
+      "region": "Balkans",
+      "markets": "Slovenia",
+      "rtl": false
+    },
+    {
+      "code": "hr",
+      "name": "Hrvatski",
+      "region": "Balkans",
+      "markets": "Croatia",
+      "rtl": false
+    },
+    {
+      "code": "bs",
+      "name": "Bosanski",
+      "region": "Balkans",
+      "markets": "Bosnia and Herzegovina",
+      "rtl": false
+    },
+    {
+      "code": "sr",
+      "name": "Српски",
+      "region": "Balkans",
+      "markets": "Serbia",
+      "rtl": false
+    },
+    {
+      "code": "me",
+      "name": "Crnogorski",
+      "region": "Balkans",
+      "markets": "Montenegro",
+      "rtl": false
+    },
+    {
+      "code": "mk",
+      "name": "Македонски",
+      "region": "Balkans",
+      "markets": "North Macedonia",
+      "rtl": false
+    },
+    {
+      "code": "sq",
+      "name": "Shqip",
+      "region": "Balkans",
+      "markets": "Albania/Kosovo",
+      "rtl": false
+    },
+    {
+      "code": "el",
+      "name": "Ελληνικά",
+      "region": "Balkans",
+      "markets": "Greece/Cyprus",
+      "rtl": false
+    },
+    {
+      "code": "tr",
+      "name": "Türkçe",
+      "region": "Balkans",
+      "markets": "Türkiye/Cyprus/European Turkish users",
+      "rtl": false
+    },
+    {
+      "code": "ro-MD",
+      "name": "Română (Moldova)",
+      "region": "Europe",
+      "markets": "Moldova",
+      "rtl": false
+    },
+    {
+      "code": "uk",
+      "name": "Українська",
+      "region": "Europe",
+      "markets": "Ukraine",
+      "rtl": false
+    },
+    {
+      "code": "ru",
+      "name": "Русский",
+      "region": "Europe",
+      "markets": "Regional coverage",
+      "rtl": false
+    },
+    {
+      "code": "be",
+      "name": "Беларуская",
+      "region": "Europe",
+      "markets": "Belarus",
+      "rtl": false
+    },
+    {
+      "code": "lt",
+      "name": "Lietuvių",
+      "region": "Europe",
+      "markets": "Lithuania",
+      "rtl": false
+    },
+    {
+      "code": "lv",
+      "name": "Latviešu",
+      "region": "Europe",
+      "markets": "Latvia",
+      "rtl": false
+    },
+    {
+      "code": "et",
+      "name": "Eesti",
+      "region": "Europe",
+      "markets": "Estonia",
+      "rtl": false
+    },
+    {
+      "code": "fi",
+      "name": "Suomi",
+      "region": "Nordic",
+      "markets": "Finland",
+      "rtl": false
+    },
+    {
+      "code": "sv",
+      "name": "Svenska",
+      "region": "Nordic",
+      "markets": "Sweden",
+      "rtl": false
+    },
+    {
+      "code": "no",
+      "name": "Norsk",
+      "region": "Nordic",
+      "markets": "Norway",
+      "rtl": false
+    },
+    {
+      "code": "da",
+      "name": "Dansk",
+      "region": "Nordic",
+      "markets": "Denmark",
+      "rtl": false
+    },
+    {
+      "code": "is",
+      "name": "Íslenska",
+      "region": "Nordic",
+      "markets": "Iceland",
+      "rtl": false
+    },
+    {
+      "code": "fo",
+      "name": "Føroyskt",
+      "region": "Nordic",
+      "markets": "Faroe Islands",
+      "rtl": false
+    },
+    {
+      "code": "ga",
+      "name": "Gaeilge",
+      "region": "Europe",
+      "markets": "Ireland",
+      "rtl": false
+    },
+    {
+      "code": "cy",
+      "name": "Cymraeg",
+      "region": "Europe",
+      "markets": "Wales",
+      "rtl": false
+    },
+    {
+      "code": "mt",
+      "name": "Malti",
+      "region": "Europe",
+      "markets": "Malta",
+      "rtl": false
+    },
+    {
+      "code": "ca",
+      "name": "Català",
+      "region": "Europe",
+      "markets": "Spain",
+      "rtl": false
+    },
+    {
+      "code": "eu",
+      "name": "Euskara",
+      "region": "Europe",
+      "markets": "Spain",
+      "rtl": false
+    },
+    {
+      "code": "gl",
+      "name": "Galego",
+      "region": "Europe",
+      "markets": "Spain",
+      "rtl": false
+    },
+    {
+      "code": "ar",
+      "name": "العربية",
+      "region": "Arab",
+      "markets": "Pan-Arab",
+      "rtl": true
+    },
+    {
+      "code": "ar-SA",
+      "name": "العربية السعودية",
+      "region": "Arab",
+      "markets": "Saudi Arabia",
+      "rtl": true
+    },
+    {
+      "code": "ar-AE",
+      "name": "العربية الإماراتية",
+      "region": "Arab",
+      "markets": "United Arab Emirates",
+      "rtl": true
+    },
+    {
+      "code": "ar-QA",
+      "name": "العربية القطرية",
+      "region": "Arab",
+      "markets": "Qatar",
+      "rtl": true
+    },
+    {
+      "code": "ar-KW",
+      "name": "العربية الكويتية",
+      "region": "Arab",
+      "markets": "Kuwait",
+      "rtl": true
+    },
+    {
+      "code": "ar-BH",
+      "name": "العربية البحرينية",
+      "region": "Arab",
+      "markets": "Bahrain",
+      "rtl": true
+    },
+    {
+      "code": "ar-OM",
+      "name": "العربية العمانية",
+      "region": "Arab",
+      "markets": "Oman",
+      "rtl": true
+    },
+    {
+      "code": "ar-JO",
+      "name": "العربية الأردنية",
+      "region": "Arab",
+      "markets": "Jordan",
+      "rtl": true
+    },
+    {
+      "code": "ar-LB",
+      "name": "العربية اللبنانية",
+      "region": "Arab",
+      "markets": "Lebanon",
+      "rtl": true
+    },
+    {
+      "code": "ar-EG",
+      "name": "العربية المصرية",
+      "region": "Arab",
+      "markets": "Egypt",
+      "rtl": true
+    },
+    {
+      "code": "ar-MA",
+      "name": "العربية المغربية",
+      "region": "Arab",
+      "markets": "Morocco",
+      "rtl": true
+    },
+    {
+      "code": "ar-DZ",
+      "name": "العربية الجزائرية",
+      "region": "Arab",
+      "markets": "Algeria",
+      "rtl": true
+    },
+    {
+      "code": "ar-TN",
+      "name": "العربية التونسية",
+      "region": "Arab",
+      "markets": "Tunisia",
+      "rtl": true
+    },
+    {
+      "code": "ar-IQ",
+      "name": "العربية العراقية",
+      "region": "Arab",
+      "markets": "Iraq",
+      "rtl": true
+    },
+    {
+      "code": "ar-YE",
+      "name": "العربية اليمنية",
+      "region": "Arab",
+      "markets": "Yemen",
+      "rtl": true
+    },
+    {
+      "code": "ar-SY",
+      "name": "العربية السورية",
+      "region": "Arab",
+      "markets": "Syria",
+      "rtl": true
+    },
+    {
+      "code": "ar-LY",
+      "name": "العربية الليبية",
+      "region": "Arab",
+      "markets": "Libya",
+      "rtl": true
+    },
+    {
+      "code": "ar-SD",
+      "name": "العربية السودانية",
+      "region": "Arab",
+      "markets": "Sudan",
+      "rtl": true
+    }
+  ]
+}

@@ -62,6 +62,11 @@ export default function AdminIntegrationsPanel() {
             <span>Bridge</span>
             <strong>{intelligence.bridge}</strong>
           </div>
+          {intelligence.embedded && (
+            <p className="admin-note">
+              Embedded Intelligence aktiv — Master Taxonomy (43 Kategorien) läuft auf der Node API.
+            </p>
+          )}
           <div className="integration-row">
             <span>Katalogmodus</span>
             <StatusBadge ready={!intelligence.catalogMode} />

@@ -15,8 +15,10 @@ module.exports = {
   register(app) {
     if (!isBridgeEnabled()) {
       console.log(
-        "Intelligence production bridge disabled (set BUZZARD_INTELLIGENCE_API_URL or BUZZARD_INTELLIGENCE_BRIDGE=0)"
+        "Intelligence production bridge disabled (set BUZZARD_INTELLIGENCE_BRIDGE=0 and no embedded mode)"
       );
+    } else if (require("../lib/embeddedIntelligence").isEmbeddedIntelligenceEnabled() && !require("../lib/intelligenceBridge").intelligenceBaseUrl()) {
+      console.log("Intelligence production bridge enabled (embedded mode on Node API)");
     } else {
       console.log("Intelligence production bridge enabled");
     }

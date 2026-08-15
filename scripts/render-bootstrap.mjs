@@ -55,6 +55,8 @@ const ENV_VARS = [
   { key: "DEFAULT_SUPPLIER_MODE", value: "manual" },
   { key: "BUZZARD_ABANDONED_CART_DELAY_HOURS", value: "24" },
   { key: "BUZZARD_SALES_ENABLED", value: "0" },
+  { key: "BUZZARD_EMBEDDED_INTELLIGENCE", value: "1" },
+  { key: "BUZZARD_INTELLIGENCE_BRIDGE", value: "1" },
   { key: "DEFAULT_PAYMENT_PROVIDER", value: "stripe" },
   { key: "DEFAULT_CARRIER", value: "dhl" },
   { key: "ADMIN_EMAIL", value: "admin@buzzard.de" },

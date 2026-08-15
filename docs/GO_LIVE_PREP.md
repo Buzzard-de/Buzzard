@@ -16,10 +16,17 @@ Buzzard24 ist im **Katalogmodus** vorbereitet. Alles unten „Erledigt“ läuft
 
 ## Nur du — Phase 1 (Backend live)
 
-1. **Render API verbinden**
-   - [Render Blueprint](https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard)
-   - Oder `RENDER_API_KEY` in GitHub Secrets → Workflow „Setup Render API“
+> **Einmalig:** Render Blueprint verbinden — erstellt `buzzard-api` + `buzzard-intelligence` automatisch.
+> Ohne Blueprint bleibt `buzzard-api.onrender.com` auf `no-server` (404).
+
+1. **Render Blueprint verbinden (empfohlen)**
+   - [Render Blueprint öffnen](https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard)
+   - Erstellt: `buzzard-api` (Node) + `buzzard-intelligence` (Python/FastAPI)
+   - Embedded Intelligence ist standardmäßig aktiv (`BUZZARD_EMBEDDED_INTELLIGENCE=1`)
    - Docs: `docs/RENDER_API_GO_LIVE.md`
+
+2. **Alternativ: GitHub Secret**
+   - `RENDER_API_KEY` in GitHub Secrets → Workflow „Setup Render API“
 
 2. **Nach Deploy prüfen**
    ```bash

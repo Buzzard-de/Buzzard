@@ -145,6 +145,24 @@ async function main() {
   }
 
   console.log("");
+  console.log("Master taxonomy API:");
+  try {
+    const res = await fetch(`${API}/api/taxonomy/snapshot`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const body = await res.json();
+      console.log(
+        `  [OK] ${body.master_category_count || body.snapshot?.master_category_count} categories, ${body.total_nodes || body.snapshot?.total_nodes} nodes`
+      );
+    } else if (routing === "no-server") {
+      console.log("  [PENDING] API not provisioned on Render yet");
+    } else {
+      console.log(`  [SKIP] ${res.status} /api/taxonomy/snapshot`);
+    }
+  } catch (error) {
+    console.log(`  [SKIP] /api/taxonomy/snapshot — ${error.message}`);
+  }
+
+  console.log("");
   if (failed > 0) {
     console.error(`${failed} check(s) failed.`);
     process.exit(1);

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from buzzard_ai_gesamt.config.settings import APP_NAME, APP_VERSION, DB_PATH
+
 GESAMT_DIR = Path(__file__).resolve().parent
 
 
@@ -8,13 +10,22 @@ def gesamt_status():
     lines = [
         "=== BUZZARD AI GESAMT — STATUS ===",
         "",
-        "Implementiert im Stack:",
-        "- Doğu Bey (v29): verify.py → verify-*, dogubey-*",
-        "- Aslan Bey (v1): aslan.py → aslan-*",
-        "- Esat Bey: Platzhalter (noch nicht implementiert)",
+        f"Platform: {APP_NAME} v{APP_VERSION}",
+        f"Unified DB: {DB_PATH}",
         "",
-        "Zielstruktur-Platzhalter: api, config, core, database, memory,",
-        "research, security, sources, tasks, tests, …",
+        "Implementiert (GESAMT Platform):",
+        "- Doğu Bey Agent: research, memory, claims",
+        "- Aslan Bey Agent: task orchestration, dispatch, dashboard",
+        "- Esat Bey Agent: security events",
+        "- Core: EventBus, AgentRegistry, TaskManager, MemoryStore",
+        "- Database: buzzard.db (claims, sources, tasks, memory, events, agents)",
+        "",
+        "Parallel im Stack (v29/v1):",
+        "- verify-*, dogubey-* → buzzard_intelligence/verify.py",
+        "- aslan-* → buzzard_intelligence/aslan.py (v1 secretary)",
+        "",
+        "CLI: gesamt-init, gesamt-agents, gesamt-report, gesamt-dashboard,",
+        "     gesamt-task, gesamt-dispatch, gesamt-test, gesamt-status",
         "",
     ]
     if roadmap.exists():

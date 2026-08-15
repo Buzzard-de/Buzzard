@@ -1,33 +1,36 @@
-# Buzzard AI – Status & Roadmap
+# Buzzard AI GESAMT – Status & Roadmap
 
-## Current implemented files (GESAMT scaffold)
-- main.py
-- requirements.txt
-- agents/dogu_bey/verify.py
-- agents/aslan_bey/aslan.py
-- agents/esat_bey/ (placeholder)
-- README.md
-- PROJECT_CONTENTS.txt
-- PROJECT_STRUCTURE.md
+## Implementiert (ALLES_AUF_EINMAL Platform)
 
-## Implemented in Buzzard Intelligence Stack
-- Doğu Bey → `buzzard_intelligence/verify.py` (`verify-*`, `dogubey-*`)
-- Aslan Bey → `buzzard_intelligence/aslan.py` (`aslan-*`)
-- v1–v200 Intelligence modules, Live Connectors, Production Completion, etc.
+- `database/db.py` — Unified SQLite schema (`buzzard.db`)
+- `agents/dogu_bey/` — Research agent + embedded verify module
+- `agents/aslan_bey/` — Task orchestration, dispatch, audit dashboard
+- `agents/esat_bey/` — Security event recording
+- `core/` — EventBus, AgentRegistry, time helpers
+- `tasks/manager.py` — Task lifecycle (PENDING → IN_PROGRESS → COMPLETED/FAILED)
+- `memory/store.py` — Namespaced key-value memory
+- `research/engine.py` — Public HTTP/HTTPS fetch (no auth bypass)
+- `reports/builder.py` — Executive report generation
+- `security/` — Audit log, role permissions scaffold
+- `sources/manager.py` — Claim source registry
+- `api/app.py` — Optional FastAPI layer
+- `tests/test_system.py` — Agent and security smoke tests
 
-## Planned modules not yet fully implemented
-- shared long-term memory
-- full OSINT/research engine
-- source registry and provenance
-- advanced verification pipeline
-- historical change tracking
-- task/workflow orchestration
-- Doğu Bey ↔ Aslan Bey service/API communication
-- report generation and executive summaries
-- authentication/authorization and audit logging
-- tests and integration tests
-- configuration and deployment tooling
-- **Esat Bey** security/defense agent
+## Parallel im Buzzard Intelligence Stack
 
-## Important
-This package intentionally does not claim the planned modules are already complete. New modules should be added into this same root folder so the architecture stays connected.
+- Doğu Bey v29 → `buzzard_intelligence/verify.py` (`verify-*`, `dogubey-*`)
+- Aslan Bey v1 → `buzzard_intelligence/aslan.py` (`aslan-*`)
+- v1–v200 Intelligence modules, Live Connectors, Website Monitoring, Production
+
+## Geplant / Erweiterung
+
+- Full OSINT pipeline with provenance and change tracking
+- Doğu Bey ↔ Aslan Bey service/API over network boundaries
+- Production auth, rate limiting, secret management
+- Extended Esat Bey threat detection (defensive only)
+- Integration tests across GESAMT + v29 stacks
+
+## Wichtig
+
+Die GESAMT-Platform nutzt `buzzard.db` (eigenes Schema). Die v29-Verifikation nutzt
+`buzzard_official_verification_v29.db`. Beide koexistieren bewusst getrennt.

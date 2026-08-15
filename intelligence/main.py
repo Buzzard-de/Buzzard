@@ -1318,6 +1318,18 @@ def main():
     sub.add_parser("wsmon-test", help="Run website monitoring pytest suite")
 
     sub.add_parser("gesamt-status", help="Show Buzzard AI GESAMT status and roadmap")
+    sub.add_parser("gesamt-init", help="Initialize Buzzard AI GESAMT unified platform DB")
+    sub.add_parser("gesamt-agents", help="List GESAMT platform agents")
+    sub.add_parser("gesamt-report", help="Build GESAMT executive report")
+    sub.add_parser("gesamt-dashboard", help="Show GESAMT Aslan Bey dashboard")
+    gesamt_task = sub.add_parser("gesamt-task", help="Create GESAMT research task")
+    gesamt_task.add_argument("--title", required=True)
+    gesamt_task.add_argument("--description", required=True)
+    gesamt_task.add_argument("--priority", default="NORMAL")
+    gesamt_dispatch = sub.add_parser("gesamt-dispatch", help="Dispatch GESAMT task to DoguBey")
+    gesamt_dispatch.add_argument("--task-id", type=int, required=True)
+    gesamt_dispatch.add_argument("--url", required=True)
+    sub.add_parser("gesamt-test", help="Run GESAMT platform pytest suite")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4567,6 +4579,36 @@ def main():
         from buzzard_ai_gesamt.status import gesamt_status
 
         print(gesamt_status())
+    elif args.cmd == "gesamt-init":
+        from buzzard_ai_gesamt.cli import gesamt_init
+
+        print(gesamt_init())
+    elif args.cmd == "gesamt-agents":
+        from buzzard_ai_gesamt.cli import gesamt_agents
+
+        print(gesamt_agents())
+    elif args.cmd == "gesamt-report":
+        from buzzard_ai_gesamt.cli import gesamt_report
+
+        print(gesamt_report())
+    elif args.cmd == "gesamt-dashboard":
+        from buzzard_ai_gesamt.cli import gesamt_dashboard
+
+        print(gesamt_dashboard())
+    elif args.cmd == "gesamt-task":
+        from buzzard_ai_gesamt.cli import gesamt_task
+
+        print(gesamt_task(args.title, args.description, args.priority))
+    elif args.cmd == "gesamt-dispatch":
+        from buzzard_ai_gesamt.cli import gesamt_dispatch
+
+        print(gesamt_dispatch(args.task_id, args.url))
+    elif args.cmd == "gesamt-test":
+        from buzzard_ai_gesamt.cli import run_tests
+
+        code = run_tests()
+        if code:
+            raise SystemExit(code)
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

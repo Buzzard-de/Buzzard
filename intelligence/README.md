@@ -528,7 +528,9 @@ Standalone Doğu Bey (tek klasör): `dogubey-*` — siehe `dogubey/README.md`
 
 Gesamt-Standalone (Doğu Bey + Aslan Bey): `buzzard_ai_alles/README.md`
 
-Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_ALLES.zip`, `archive/Buzzard_AI_DoguBey_tek_klasor.zip`, `archive/Buzzard_AI_komplett.zip`
+**GESAMT** (Zielstruktur + Roadmap, Esat Bey Platzhalter): `buzzard_ai_gesamt/README.md` — `python main.py gesamt-status`
+
+Archive: `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_ALLES.zip`, `archive/Buzzard_AI_GESAMT.zip`, `archive/Buzzard_AI_DoguBey_tek_klasor.zip`, `archive/Buzzard_AI_komplett.zip`
 
 ## v28 Product Selection
 

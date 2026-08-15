@@ -729,6 +729,23 @@ python3 main.py complete-commerce-inventory
 
 Archive: `intelligence/archive/Buzzard_AI_COMMERCE_GESAMT.zip`
 
+## Buzzard AI COMPLETE Commerce f3 — neu (FINAL REST)
+
+Integration-Scaffolds für Shipping (DHL, DPD, UPS, GLS, Hermes), Marktplätze, Lieferanten, TecDoc, Payments, Tax, Invoicing, Sandbox sowie Operations und Test-Ordner. Neues Commerce-Modul `risk/`.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-commerce-production-work` | Verbleibende Produktionsarbeit |
+| `complete-commerce-integration-order` | Empfohlene Integrationsreihenfolge |
+
+```bash
+cd intelligence
+python3 main.py complete-commerce-production-work
+python3 main.py complete-commerce-integration-order
+```
+
+Archive: `intelligence/archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

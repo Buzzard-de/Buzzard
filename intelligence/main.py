@@ -1419,6 +1419,14 @@ def main():
     sub.add_parser("complete-commerce-scope", help="Show COMPLETE commerce scope document")
     sub.add_parser("complete-commerce-tree", help="Show commerce extension tree")
     sub.add_parser("complete-commerce-inventory", help="Show commerce module inventory")
+    sub.add_parser(
+        "complete-commerce-production-work",
+        help="Show remaining production work for commerce integrations",
+    )
+    sub.add_parser(
+        "complete-commerce-integration-order",
+        help="Show recommended commerce integration order",
+    )
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4834,6 +4842,14 @@ def main():
         from buzzard_ai_complete.commands import complete_commerce_inventory
 
         print(complete_commerce_inventory())
+    elif args.cmd == "complete-commerce-production-work":
+        from buzzard_ai_complete.commands import complete_commerce_production_work
+
+        print(complete_commerce_production_work())
+    elif args.cmd == "complete-commerce-integration-order":
+        from buzzard_ai_complete.commands import complete_commerce_integration_order
+
+        print(complete_commerce_integration_order())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

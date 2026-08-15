@@ -42,6 +42,19 @@ python3 main.py complete-commerce-scope
 python3 main.py complete-commerce-inventory
 ```
 
+## f3 Commerce FINAL REST (Integration Scaffold)
+
+- **Integration-Scaffolds** — shipping (DHL/DPD/UPS/GLS/Hermes), marketplaces, suppliers, TecDoc, payments, tax, invoicing, sandbox
+- **Operations** — backups, disaster recovery, observability, runbooks
+- **commerce/risk/** — Risiko- und Compliance-Modul
+- **complete-commerce-production-work** — verbleibende Produktionsarbeit
+- **complete-commerce-integration-order** — empfohlene Integrationsreihenfolge
+
+```bash
+python3 main.py complete-commerce-production-work
+python3 main.py complete-commerce-integration-order
+```
+
 ## Agenten
 
 | Agent | Rolle |
@@ -96,4 +109,4 @@ docker compose -f buzzard_ai_complete/docker-compose.yml up
 | **GESAMT v2** | `gesamt-*` | `buzzard.db` |
 | **v29/v1** | `verify-*`, `aslan-*` | v29 DB |
 
-Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2)
+Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3)

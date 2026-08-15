@@ -1631,6 +1631,27 @@ def main():
         help="Show AI Council 19 customs bureaucracy documentation",
     )
 
+    sub.add_parser(
+        "complete-category-intelligence-43-health",
+        help="Show 43 category intelligence health",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-43-agents",
+        help="List 43 category intelligence agents",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-43-demo",
+        help="Run 43 category intelligence demo",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-43-schema",
+        help="Show category intelligence schemas and config",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-43-docs",
+        help="Show 43 category intelligence documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5437,6 +5458,26 @@ def main():
         from buzzard_ai_complete.commands import complete_ai_council_19_docs
 
         print(complete_ai_council_19_docs())
+    elif args.cmd == "complete-category-intelligence-43-health":
+        from buzzard_ai_complete.commands import complete_category_intelligence_43_health
+
+        print(complete_category_intelligence_43_health())
+    elif args.cmd == "complete-category-intelligence-43-agents":
+        from buzzard_ai_complete.commands import complete_category_intelligence_43_agents
+
+        print(complete_category_intelligence_43_agents())
+    elif args.cmd == "complete-category-intelligence-43-demo":
+        from buzzard_ai_complete.commands import complete_category_intelligence_43_demo
+
+        print(complete_category_intelligence_43_demo())
+    elif args.cmd == "complete-category-intelligence-43-schema":
+        from buzzard_ai_complete.commands import complete_category_intelligence_43_schema
+
+        print(complete_category_intelligence_43_schema())
+    elif args.cmd == "complete-category-intelligence-43-docs":
+        from buzzard_ai_complete.commands import complete_category_intelligence_43_docs
+
+        print(complete_category_intelligence_43_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

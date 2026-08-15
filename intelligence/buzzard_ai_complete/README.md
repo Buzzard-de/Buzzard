@@ -359,6 +359,22 @@ python3 main.py complete-ai-council-19-assess
 python3 main.py complete-ai-council-19-demo
 ```
 
+## 43 Category Intelligence MAXIMAL
+
+- **43 Spezialisten** — je ein Category Intelligence Agent pro Hauptkategorie
+- **Preis-Intelligence** — Seller-Vergleich, Statistiken, Änderungserkennung
+- **Taxonomy-Gaps** — fehlende Kategorien/Subkategorien erkennen
+- **Public-Web-Policy** — nur legale öffentliche Quellen, robots/access controls
+- **Shared Memory & Event Bus** — Council-Bridge zu 19-Agent-Council
+- **complete-category-intelligence-43-health** / **complete-category-intelligence-43-agents** / **complete-category-intelligence-43-demo** / **complete-category-intelligence-43-schema** / **complete-category-intelligence-43-docs**
+- **API** — `/category-intelligence-43/health`, `/category-intelligence-43/agents`, `/category-intelligence-43/analyze`, `/category-intelligence-43/schema`, `/category-intelligence-43/demo`
+- **`live_activation: false`** — Taxonomy-/Preisänderungen nur nach Human Approval
+
+```bash
+python3 main.py complete-category-intelligence-43-demo
+python3 main.py complete-category-intelligence-43-agents
+```
+
 ## Agenten
 
 | Agent | Rolle |

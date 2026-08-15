@@ -1,0 +1,197 @@
+{
+  "agent_count": 43,
+  "categories": [
+    {
+      "category_id": "CATEGORY_01",
+      "name": "Buzzard Main Category 01"
+    },
+    {
+      "category_id": "CATEGORY_02",
+      "name": "Buzzard Main Category 02"
+    },
+    {
+      "category_id": "CATEGORY_03",
+      "name": "Buzzard Main Category 03"
+    },
+    {
+      "category_id": "CATEGORY_04",
+      "name": "Buzzard Main Category 04"
+    },
+    {
+      "category_id": "CATEGORY_05",
+      "name": "Buzzard Main Category 05"
+    },
+    {
+      "category_id": "CATEGORY_06",
+      "name": "Buzzard Main Category 06"
+    },
+    {
+      "category_id": "CATEGORY_07",
+      "name": "Buzzard Main Category 07"
+    },
+    {
+      "category_id": "CATEGORY_08",
+      "name": "Buzzard Main Category 08"
+    },
+    {
+      "category_id": "CATEGORY_09",
+      "name": "Buzzard Main Category 09"
+    },
+    {
+      "category_id": "CATEGORY_10",
+      "name": "Buzzard Main Category 10"
+    },
+    {
+      "category_id": "CATEGORY_11",
+      "name": "Buzzard Main Category 11"
+    },
+    {
+      "category_id": "CATEGORY_12",
+      "name": "Buzzard Main Category 12"
+    },
+    {
+      "category_id": "CATEGORY_13",
+      "name": "Buzzard Main Category 13"
+    },
+    {
+      "category_id": "CATEGORY_14",
+      "name": "Buzzard Main Category 14"
+    },
+    {
+      "category_id": "CATEGORY_15",
+      "name": "Buzzard Main Category 15"
+    },
+    {
+      "category_id": "CATEGORY_16",
+      "name": "Buzzard Main Category 16"
+    },
+    {
+      "category_id": "CATEGORY_17",
+      "name": "Buzzard Main Category 17"
+    },
+    {
+      "category_id": "CATEGORY_18",
+      "name": "Buzzard Main Category 18"
+    },
+    {
+      "category_id": "CATEGORY_19",
+      "name": "Buzzard Main Category 19"
+    },
+    {
+      "category_id": "CATEGORY_20",
+      "name": "Buzzard Main Category 20"
+    },
+    {
+      "category_id": "CATEGORY_21",
+      "name": "Buzzard Main Category 21"
+    },
+    {
+      "category_id": "CATEGORY_22",
+      "name": "Buzzard Main Category 22"
+    },
+    {
+      "category_id": "CATEGORY_23",
+      "name": "Buzzard Main Category 23"
+    },
+    {
+      "category_id": "CATEGORY_24",
+      "name": "Buzzard Main Category 24"
+    },
+    {
+      "category_id": "CATEGORY_25",
+      "name": "Buzzard Main Category 25"
+    },
+    {
+      "category_id": "CATEGORY_26",
+      "name": "Buzzard Main Category 26"
+    },
+    {
+      "category_id": "CATEGORY_27",
+      "name": "Buzzard Main Category 27"
+    },
+    {
+      "category_id": "CATEGORY_28",
+      "name": "Buzzard Main Category 28"
+    },
+    {
+      "category_id": "CATEGORY_29",
+      "name": "Buzzard Main Category 29"
+    },
+    {
+      "category_id": "CATEGORY_30",
+      "name": "Buzzard Main Category 30"
+    },
+    {
+      "category_id": "CATEGORY_31",
+      "name": "Buzzard Main Category 31"
+    },
+    {
+      "category_id": "CATEGORY_32",
+      "name": "Buzzard Main Category 32"
+    },
+    {
+      "category_id": "CATEGORY_33",
+      "name": "Buzzard Main Category 33"
+    },
+    {
+      "category_id": "CATEGORY_34",
+      "name": "Buzzard Main Category 34"
+    },
+    {
+      "category_id": "CATEGORY_35",
+      "name": "Buzzard Main Category 35"
+    },
+    {
+      "category_id": "CATEGORY_36",
+      "name": "Buzzard Main Category 36"
+    },
+    {
+      "category_id": "CATEGORY_37",
+      "name": "Buzzard Main Category 37"
+    },
+    {
+      "category_id": "CATEGORY_38",
+      "name": "Buzzard Main Category 38"
+    },
+    {
+      "category_id": "CATEGORY_39",
+      "name": "Buzzard Main Category 39"
+    },
+    {
+      "category_id": "CATEGORY_40",
+      "name": "Buzzard Main Category 40"
+    },
+    {
+      "category_id": "CATEGORY_41",
+      "name": "Buzzard Main Category 41"
+    },
+    {
+      "category_id": "CATEGORY_42",
+      "name": "Buzzard Main Category 42"
+    },
+    {
+      "category_id": "CATEGORY_43",
+      "name": "Buzzard Main Category 43"
+    }
+  ],
+  "monitoring": {
+    "price_tracking": true,
+    "seller_tracking": true,
+    "taxonomy_gap_detection": true,
+    "product_gap_detection": true,
+    "change_history": true,
+    "evidence_required": true,
+    "public_sources_only": true,
+    "respect_robots_and_access_controls": true,
+    "default_interval_minutes": 360,
+    "high_priority_interval_minutes": 60,
+    "stale_data_alert_hours": 24
+  },
+  "outputs": {
+    "shared_memory": true,
+    "event_bus": true,
+    "council_bridge": true,
+    "human_review_for_taxonomy_publish": true,
+    "human_review_for_major_price_decisions": true
+  }
+}

@@ -782,6 +782,28 @@ Hinweis: `commerce.logistics` = DB-Tarife; `buzzard_ai_complete.logistics` = Sma
 
 Archive: `intelligence/archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
 
+## Buzzard AI ORDER FULFILLMENT ENGINE v1 — neu
+
+Operativer Bestell-Lifecycle: Validierung, Zahlung, Lagerreservierung, Lieferantenauswahl, Fulfillment, Returns.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-order-demo` | Demo-Szenarien (Fulfillment + Backorder) |
+| `complete-order-process` | Einzelne Bestellung durch die Engine |
+| `complete-order-docs` | Engine-Dokumentation |
+
+API: `POST /orders/process`
+
+```bash
+cd intelligence
+python3 main.py complete-order-demo
+python3 main.py complete-order-process --order-id O1 --customer-id C1 --sku SKU-DEMO --quantity 2 --price 10
+```
+
+Hinweis: `commerce.orders` = DB-Persistenz; `order_engine` = operativer Fulfillment-Lifecycle.
+
+Archive: `intelligence/archive/Buzzard_AI_ORDER_FULFILLMENT_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

@@ -330,6 +330,45 @@ def complete_logistics_docs():
     return _read_doc("LOGISTICS_ENGINE_V1.md")
 
 
+def _fulfillment_result_payload(result):
+    return {
+        "order_id": result.order_id,
+        "status": result.status,
+        "supplier": result.supplier,
+        "carrier": result.carrier,
+        "tracking_number": result.tracking_number,
+        "errors": result.errors,
+    }
+
+
+def complete_order_demo():
+    from buzzard_ai_complete.order_engine.service import OrderFulfillmentService
+
+    svc = OrderFulfillmentService()
+    scenarios = [
+        ("fulfillment", "O-DEMO-1", 2),
+        ("backorder", "O-DEMO-2", 20),
+    ]
+    payload = {}
+    for name, order_id, qty in scenarios:
+        result = svc.process_order(order_id, "C-DEMO", "DE", "35075", "SKU-DEMO", qty, 10.0)
+        payload[name] = _fulfillment_result_payload(result)
+    return json.dumps(payload, ensure_ascii=False, indent=2)
+
+
+def complete_order_process(order_id, customer_id, country, postal_code, sku, quantity, unit_price):
+    from buzzard_ai_complete.order_engine.service import OrderFulfillmentService
+
+    result = OrderFulfillmentService().process_order(
+        order_id, customer_id, country, postal_code, sku, quantity, unit_price
+    )
+    return json.dumps(_fulfillment_result_payload(result), ensure_ascii=False, indent=2)
+
+
+def complete_order_docs():
+    return _read_doc("ORDER_FULFILLMENT_ENGINE_V1.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

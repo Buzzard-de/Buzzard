@@ -1446,6 +1446,20 @@ def main():
     sub.add_parser("complete-logistics-demo", help="Run Smart Shipping Engine demo (3 priorities)")
     sub.add_parser("complete-logistics-docs", help="Show Logistics Engine v1 documentation")
 
+    complete_order_proc = sub.add_parser(
+        "complete-order-process",
+        help="Process order through Order & Fulfillment Engine",
+    )
+    complete_order_proc.add_argument("--order-id", required=True)
+    complete_order_proc.add_argument("--customer-id", required=True)
+    complete_order_proc.add_argument("--country", default="DE")
+    complete_order_proc.add_argument("--postal-code", default="")
+    complete_order_proc.add_argument("--sku", required=True)
+    complete_order_proc.add_argument("--quantity", type=int, required=True)
+    complete_order_proc.add_argument("--price", type=float, required=True)
+    sub.add_parser("complete-order-demo", help="Run Order & Fulfillment Engine demo scenarios")
+    sub.add_parser("complete-order-docs", help="Show Order & Fulfillment Engine v1 documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4890,6 +4904,28 @@ def main():
         from buzzard_ai_complete.commands import complete_logistics_docs
 
         print(complete_logistics_docs())
+    elif args.cmd == "complete-order-demo":
+        from buzzard_ai_complete.commands import complete_order_demo
+
+        print(complete_order_demo())
+    elif args.cmd == "complete-order-process":
+        from buzzard_ai_complete.commands import complete_order_process
+
+        print(
+            complete_order_process(
+                args.order_id,
+                args.customer_id,
+                args.country,
+                args.postal_code,
+                args.sku,
+                args.quantity,
+                args.price,
+            )
+        )
+    elif args.cmd == "complete-order-docs":
+        from buzzard_ai_complete.commands import complete_order_docs
+
+        print(complete_order_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

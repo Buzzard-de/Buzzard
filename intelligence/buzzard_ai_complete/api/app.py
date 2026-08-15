@@ -18,6 +18,7 @@ from buzzard_ai_complete.control_center.api.routes import router as control_cent
 from buzzard_ai_complete.analytics_bi.api.routes import router as analytics_router
 from buzzard_ai_complete.production.api.routes import router as production_router
 from buzzard_ai_complete.production.api.storefront_routes import router as storefront_router
+from buzzard_ai_complete.shop_bridge.api.routes import router as shop_bridge_router
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -44,6 +45,8 @@ if FastAPI:
         app.include_router(production_router)
     if storefront_router is not None:
         app.include_router(storefront_router)
+    if shop_bridge_router is not None:
+        app.include_router(shop_bridge_router)
 
     class TaskRequest(BaseModel):
         task_id: str

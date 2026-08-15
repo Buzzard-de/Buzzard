@@ -44,6 +44,7 @@ def complete_status():
         "     complete-one-piece-demo, complete-one-piece-e2e, complete-one-piece-docs",
         "     complete-analytics-demo, complete-analytics-docs",
         "     complete-production-demo, complete-production-readiness, complete-production-docs",
+        "     complete-shop-bridge-demo, complete-shop-bridge-readiness, complete-shop-bridge-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

@@ -1513,6 +1513,10 @@ def main():
     sub.add_parser("complete-production-readiness", help="Show production go-live readiness gate")
     sub.add_parser("complete-production-docs", help="Show Production MAX upgrade documentation")
 
+    sub.add_parser("complete-shop-bridge-demo", help="Run Shop Intelligence Commerce Bridge demo flow")
+    sub.add_parser("complete-shop-bridge-readiness", help="Show shop bridge sales readiness gate")
+    sub.add_parser("complete-shop-bridge-docs", help="Show Shop Intelligence Commerce Bridge docs")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5067,6 +5071,18 @@ def main():
         from buzzard_ai_complete.commands import complete_production_docs
 
         print(complete_production_docs())
+    elif args.cmd == "complete-shop-bridge-demo":
+        from buzzard_ai_complete.commands import complete_shop_bridge_demo
+
+        print(complete_shop_bridge_demo())
+    elif args.cmd == "complete-shop-bridge-readiness":
+        from buzzard_ai_complete.commands import complete_shop_bridge_readiness
+
+        print(complete_shop_bridge_readiness())
+    elif args.cmd == "complete-shop-bridge-docs":
+        from buzzard_ai_complete.commands import complete_shop_bridge_docs
+
+        print(complete_shop_bridge_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

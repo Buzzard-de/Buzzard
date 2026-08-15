@@ -72,6 +72,20 @@ export default function AdminIntegrationsPanel() {
               <strong>{check.status}</strong>
             </div>
           ))}
+          {intelligence.shopBridge && !("error" in intelligence.shopBridge) && (
+            <>
+              <div className="integration-row">
+                <span>Shop Bridge Sales Gate</span>
+                <strong>{intelligence.shopBridge.sales_enabled ? "READY" : "BLOCKED"}</strong>
+              </div>
+              {intelligence.shopBridge.missing?.map((item) => (
+                <div key={item} className="integration-row">
+                  <span>fehlt: {item}</span>
+                  <strong>BLOCKED</strong>
+                </div>
+              ))}
+            </>
+          )}
         </section>
       )}
 

@@ -53,9 +53,10 @@ async function getBridgeStatus() {
     };
   }
 
-  const [health, readiness, integrations] = await Promise.all([
+  const [health, readiness, shopBridge, integrations] = await Promise.all([
     fetchIntelligence("/health"),
     fetchIntelligence("/production/readiness"),
+    fetchIntelligence("/shop-bridge/readiness"),
     fetchIntelligence("/production/integrations"),
   ]);
 
@@ -69,6 +70,7 @@ async function getBridgeStatus() {
       readiness: readiness.ok ? readiness.data : { error: readiness.error },
       integrations: integrations.ok ? integrations.data : { error: integrations.error },
     },
+    shopBridge: shopBridge.ok ? shopBridge.data : { error: shopBridge.error },
   };
 }
 

@@ -55,6 +55,12 @@ python3 main.py complete-commerce-production-work
 python3 main.py complete-commerce-integration-order
 ```
 
+## fehler_behebung_2 (Repair)
+
+- **Pytest-Shadowing behoben** — `tests/commerce/__init__.py` und Unterpaket-Marker entfernt
+- **complete-verify** — Import-Sweep überspringt `tests/` und `test_*`-Module
+- **Dokumentation** — `docs/REPAIR_AND_FULL_TEST_REPORT.md`
+
 ## Agenten
 
 | Agent | Rolle |
@@ -109,4 +115,4 @@ docker compose -f buzzard_ai_complete/docker-compose.yml up
 | **GESAMT v2** | `gesamt-*` | `buzzard.db` |
 | **v29/v1** | `verify-*`, `aslan-*` | v29 DB |
 
-Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3)
+Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3), `archive/fehler_behebung_2.zip`

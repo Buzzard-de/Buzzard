@@ -125,6 +125,19 @@ python3 main.py complete-marketing-demo
 python3 main.py complete-marketing-budget --total 1000 --channels google_ads,meta_ads --weights google_ads:2,meta_ads:1
 ```
 
+## MAXIMAL Platform Layer (VMAX + V2 add-ons)
+
+- **BuzzardMaxPlatform** — Module registry, policy, audit, health
+- **VMAX helpers** — Security, retries, idempotency, rate limiting, data quality, feature flags, product intelligence, decisions
+- **V2 add-ons** — additive extensions in logistics, orders, billing, CRM, marketing (V1 intact)
+- **complete-max-demo** / **complete-max-snapshot** / **complete-max-docs**
+- **API** — `GET /vmax/demo`, `GET /vmax/snapshot`
+
+```bash
+python3 main.py complete-max-demo
+python3 main.py complete-max-snapshot
+```
+
 ## Agenten
 
 | Agent | Rolle |

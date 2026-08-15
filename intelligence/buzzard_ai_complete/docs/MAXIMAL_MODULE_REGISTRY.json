@@ -1,0 +1,15 @@
+{
+  "AI_Core": "MAXIMAL",
+  "Doğu_Bey": "MAXIMAL",
+  "Aslan_Bey": "MAXIMAL",
+  "Esat_Bey": "MAXIMAL",
+  "Commerce": "MAXIMAL",
+  "Logistics": "MAXIMAL",
+  "Order_Fulfillment": "MAXIMAL",
+  "Customer_Billing_Returns": "MAXIMAL",
+  "CRM": "MAXIMAL",
+  "Marketing_Advertising": "MAXIMAL",
+  "Platform_Governance": "MAXIMAL",
+  "Security": "MAXIMAL",
+  "Observability": "MAXIMAL"
+}

@@ -1334,6 +1334,29 @@ python3 main.py complete-agriculture-demo
 
 Archive: `intelligence/archive/BUZZARD_AGRICULTURE_MAXIMAL.zip`
 
+## Renewable Energy MAXIMAL
+
+| Command | Beschreibung |
+|---------|--------------|
+| `complete-renewable-energy-health` | Renewable energy taxonomy health |
+| `complete-renewable-energy-branches` | 9 Branches + Taxonomie-Knoten |
+| `complete-renewable-energy-demo` | Katalog, Kompatibilität, Market Signals, Gap Detection |
+| `complete-renewable-energy-schema` | Taxonomy-Schema + Konfiguration |
+| `complete-renewable-energy-docs` | Architektur-Dokumentation |
+
+API: `GET /renewable-energy/health`, `GET /renewable-energy/branches`, `GET /renewable-energy/schema`, `GET /renewable-energy/demo`
+
+Separate Hauptkategorie: **Yenilenebilir Enerji**. Solar, Wind, Storage, Hybrid und mehr.
+
+`live_activation: false` — Kompatibilität erfordert Evidenz; Konflikte → Human Review.
+
+```bash
+cd intelligence
+python3 main.py complete-renewable-energy-demo
+```
+
+Archive: `intelligence/archive/buzzard_renewable_energy_maximal.py`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

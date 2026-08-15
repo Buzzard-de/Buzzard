@@ -1,0 +1,35 @@
+{
+  "separate_main_category": true,
+  "name": "Yenilenebilir Enerji",
+  "branches": [
+    "Güneş Enerjisi",
+    "Rüzgâr Enerjisi",
+    "Enerji Depolama",
+    "Hibrit Enerji Sistemleri",
+    "Ev & Bina Enerji Sistemleri",
+    "Tarım & Çiftlik Enerjisi",
+    "Elektrik, Koruma & Montaj",
+    "Bakım, Servis & Yedek Parçalar",
+    "Ticari & Endüstriyel Yenilenebilir Enerji"
+  ],
+  "compatibility_dimensions": [
+    "system_type",
+    "manufacturer",
+    "model",
+    "voltage",
+    "power_kw",
+    "capacity_kwh"
+  ],
+  "data_sources": [
+    "OEM",
+    "licensed catalogs",
+    "supplier API/XML",
+    "Buzzard verified data"
+  ],
+  "rules": {
+    "compatibility_requires_evidence": true,
+    "conflicts_require_human_review": true,
+    "category_gap_detection": true,
+    "price_monitoring_via_category_intelligence": true
+  }
+}

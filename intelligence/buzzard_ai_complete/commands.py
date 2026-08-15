@@ -1207,6 +1207,41 @@ def complete_agriculture_docs():
     return _read_doc("AGRICULTURE_MAXIMAL.md")
 
 
+def complete_renewable_energy_health():
+    from buzzard_ai_complete.renewable_energy_maximal.service import RenewableEnergyService
+
+    return json.dumps(RenewableEnergyService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_renewable_energy_branches():
+    from buzzard_ai_complete.renewable_energy_maximal.service import RenewableEnergyService
+
+    service = RenewableEnergyService()
+    branches = service.list_branches()
+    return json.dumps({"branches": branches, "count": len(branches)}, ensure_ascii=False, indent=2)
+
+
+def complete_renewable_energy_demo():
+    from buzzard_ai_complete.renewable_energy_maximal.service import RenewableEnergyService
+
+    return json.dumps(RenewableEnergyService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_renewable_energy_schema():
+    from buzzard_ai_complete.renewable_energy_maximal.service import RenewableEnergyService
+
+    service = RenewableEnergyService()
+    return json.dumps(
+        {"taxonomy": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_renewable_energy_docs():
+    return _read_doc("RENEWABLE_ENERGY_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

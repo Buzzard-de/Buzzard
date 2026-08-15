@@ -1695,6 +1695,18 @@ def main():
         help="Show agriculture taxonomy documentation",
     )
 
+    sub.add_parser("complete-renewable-energy-health", help="Show renewable energy taxonomy health")
+    sub.add_parser("complete-renewable-energy-branches", help="List renewable energy taxonomy branches")
+    sub.add_parser("complete-renewable-energy-demo", help="Run renewable energy taxonomy demo")
+    sub.add_parser(
+        "complete-renewable-energy-schema",
+        help="Show renewable energy taxonomy schema and config",
+    )
+    sub.add_parser(
+        "complete-renewable-energy-docs",
+        help="Show renewable energy taxonomy documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5597,6 +5609,26 @@ def main():
         from buzzard_ai_complete.commands import complete_agriculture_docs
 
         print(complete_agriculture_docs())
+    elif args.cmd == "complete-renewable-energy-health":
+        from buzzard_ai_complete.commands import complete_renewable_energy_health
+
+        print(complete_renewable_energy_health())
+    elif args.cmd == "complete-renewable-energy-branches":
+        from buzzard_ai_complete.commands import complete_renewable_energy_branches
+
+        print(complete_renewable_energy_branches())
+    elif args.cmd == "complete-renewable-energy-demo":
+        from buzzard_ai_complete.commands import complete_renewable_energy_demo
+
+        print(complete_renewable_energy_demo())
+    elif args.cmd == "complete-renewable-energy-schema":
+        from buzzard_ai_complete.commands import complete_renewable_energy_schema
+
+        print(complete_renewable_energy_schema())
+    elif args.cmd == "complete-renewable-energy-docs":
+        from buzzard_ai_complete.commands import complete_renewable_energy_docs
+
+        print(complete_renewable_energy_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

@@ -675,6 +675,12 @@ python3 main.py complete-test
 
 Archive: `intelligence/archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip`
 
+## Buzzard AI COMPLETE o3 — Duplikat (identisch mit o2)
+
+`o3.zip` ist byte-identisch mit `o2.zip` (`Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT`). Keine zusätzliche Integration nötig — alle Inhalte sind bereits in `buzzard_ai_complete/` via PR #131 enthalten.
+
+Archive: `intelligence/archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

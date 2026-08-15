@@ -58,4 +58,4 @@ docker compose -f buzzard_ai_complete/docker-compose.yml up
 | **GESAMT v2** | `gesamt-*` | `buzzard.db` |
 | **v29/v1** | `verify-*`, `aslan-*` | v29 DB |
 
-Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip`
+Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2)

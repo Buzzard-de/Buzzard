@@ -1,0 +1,5 @@
+{
+  "levels":["main_category","sub_category","sub_sub_category","product_group","product","machine_fitment"],
+  "fitment":["machine_type","make","model","year","engine","engine_code","system","position"],
+  "rules":["source-backed fitment","human review for conflicts","supplier/OEM data provenance"]
+}

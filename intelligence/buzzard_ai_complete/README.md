@@ -411,6 +411,22 @@ python3 main.py complete-automotive-taxonomy-tires-categories
 python3 main.py complete-automotive-taxonomy-tires-demo
 ```
 
+## Agriculture MAXIMAL
+
+- **Machine-Need-First** — Maschinentyp → System → Teil → exakte Maschinen-Fitment
+- **9 Branches** — Maschinen, Ersatzteile, Verbrauchsmaterial, Ausrüstung, Bewässerung, Gewächshaus, Obst-/Weinbau, Werkzeuge
+- **Tiefe Taxonomie** — Hauptkategorie → Unterkategorie → Unter-Unterkategorie → Produktgruppe → Produkt → Fitment
+- **Market Signals** — Nachfrage, Wettbewerb, Preis, Marge, Lieferantenrisiko
+- **Gap Detection** — Vergleich mit öffentlichen Wettbewerber-Taxonomien
+- **complete-agriculture-health** / **complete-agriculture-branches** / **complete-agriculture-demo** / **complete-agriculture-schema** / **complete-agriculture-docs**
+- **API** — `/agriculture/health`, `/agriculture/branches`, `/agriculture/schema`, `/agriculture/demo`
+- **`live_activation: false`** — Fitment nur mit Evidenz, Konflikte → Human Review
+
+```bash
+python3 main.py complete-agriculture-branches
+python3 main.py complete-agriculture-demo
+```
+
 ## Agenten
 
 | Agent | Rolle |

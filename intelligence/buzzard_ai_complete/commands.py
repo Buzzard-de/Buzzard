@@ -1172,6 +1172,41 @@ def complete_automotive_taxonomy_tires_docs():
     return _read_doc("AUTOMOTIVE_TAXONOMY_TIRES_MAXIMAL.md")
 
 
+def complete_agriculture_health():
+    from buzzard_ai_complete.agriculture_maximal.service import AgricultureService
+
+    return json.dumps(AgricultureService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_agriculture_branches():
+    from buzzard_ai_complete.agriculture_maximal.service import AgricultureService
+
+    service = AgricultureService()
+    branches = service.list_branches()
+    return json.dumps({"branches": branches, "count": len(branches)}, ensure_ascii=False, indent=2)
+
+
+def complete_agriculture_demo():
+    from buzzard_ai_complete.agriculture_maximal.service import AgricultureService
+
+    return json.dumps(AgricultureService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_agriculture_schema():
+    from buzzard_ai_complete.agriculture_maximal.service import AgricultureService
+
+    service = AgricultureService()
+    return json.dumps(
+        {"taxonomy": service.load_schema(), "config": service.load_config()},
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_agriculture_docs():
+    return _read_doc("AGRICULTURE_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

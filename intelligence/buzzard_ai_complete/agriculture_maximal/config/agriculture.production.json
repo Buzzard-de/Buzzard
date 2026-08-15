@@ -1,0 +1,39 @@
+{
+  "separate_main_category": true,
+  "name": "Tarım & Tarım Makineleri",
+  "branches": [
+    "Tarım Makineleri",
+    "Tarım Makineleri Yedek Parçaları",
+    "Tarım Malzemeleri",
+    "Tarım Makinesi Sarf & Bakım",
+    "Tarım Ekipmanları",
+    "Sulama",
+    "Sera",
+    "Bağ & Bahçe",
+    "Tarım El Aletleri & Atölye"
+  ],
+  "fitment_dimensions": [
+    "machine_type",
+    "make",
+    "model",
+    "year",
+    "engine",
+    "engine_code",
+    "power_kw",
+    "transmission",
+    "system",
+    "position"
+  ],
+  "data_sources": [
+    "OEM",
+    "licensed parts catalogs",
+    "supplier API/XML",
+    "Buzzard verified data"
+  ],
+  "rules": {
+    "fitment_requires_evidence": true,
+    "conflicts_require_human_review": true,
+    "category_gap_detection": true,
+    "price_monitoring_via_category_intelligence": true
+  }
+}

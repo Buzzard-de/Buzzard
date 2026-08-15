@@ -1494,6 +1494,10 @@ def main():
     sub.add_parser("complete-marketing-demo", help="Run Marketing & Advertising Engine demo flow")
     sub.add_parser("complete-marketing-docs", help="Show Marketing & Advertising Engine v1 docs")
 
+    sub.add_parser("complete-max-demo", help="Run MAXIMAL platform demo flow")
+    sub.add_parser("complete-max-snapshot", help="Show MAXIMAL platform module snapshot")
+    sub.add_parser("complete-max-docs", help="Show MAXIMAL upgrade documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5004,6 +5008,18 @@ def main():
         from buzzard_ai_complete.commands import complete_marketing_docs
 
         print(complete_marketing_docs())
+    elif args.cmd == "complete-max-demo":
+        from buzzard_ai_complete.commands import complete_max_demo
+
+        print(complete_max_demo())
+    elif args.cmd == "complete-max-snapshot":
+        from buzzard_ai_complete.commands import complete_max_snapshot
+
+        print(complete_max_snapshot())
+    elif args.cmd == "complete-max-docs":
+        from buzzard_ai_complete.commands import complete_max_docs
+
+        print(complete_max_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

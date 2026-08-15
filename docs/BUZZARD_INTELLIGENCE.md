@@ -870,6 +870,28 @@ python3 main.py complete-marketing-budget --total 1000 --channels google_ads,met
 
 Archive: `intelligence/archive/Buzzard_AI_MARKETING_ADVERTISING_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
 
+## Buzzard AI MAXIMAL — neu (9.zip / MAXIMAL_ALLES_IN_EINEM_ORDNER)
+
+Plattform-Schicht über alle V1-Engines: Registry, Policy, Audit, Health, Security, Idempotency, V2-Erweiterungen.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-max-demo` | Demo: Registry, Product Intelligence, Decisions |
+| `complete-max-snapshot` | Modul-Snapshot aller MAXIMAL-Engines |
+| `complete-max-docs` | Upgrade-Dokumentation |
+
+API: `GET /vmax/demo`, `GET /vmax/snapshot`
+
+V2 add-ons (additiv): Logistics (`routing_v2`, `contracts_v2`, `webhooks_v2`), Orders (`idempotency`, `orchestration_v2`), Billing (`ledger_v2`, `document_numbering_v2`, `tax_policy_v2`), CRM (`consent_v2`, `journeys_v2`, `service_levels_v2`), Marketing (`experiments_v2`, `pacing_v2`, `rules_v2`)
+
+```bash
+cd intelligence
+python3 main.py complete-max-demo
+python3 main.py complete-max-snapshot
+```
+
+Archive: `intelligence/archive/Buzzard_AI_MAXIMAL_ALLES_IN_EINEM_ORDNER.zip` (identisch mit `9.zip`)
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

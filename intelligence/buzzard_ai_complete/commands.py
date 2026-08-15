@@ -420,6 +420,22 @@ def complete_marketing_docs():
     return _read_doc("MARKETING_ADVERTISING_ENGINE_V1.md")
 
 
+def complete_max_demo():
+    from buzzard_ai_complete.vmax.service import MaxPlatformService
+
+    return json.dumps(MaxPlatformService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_max_snapshot():
+    from buzzard_ai_complete.vmax.service import MaxPlatformService
+
+    return json.dumps(MaxPlatformService().snapshot(), ensure_ascii=False, indent=2)
+
+
+def complete_max_docs():
+    return _read_doc("MAXIMAL_UPGRADE_REPORT.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

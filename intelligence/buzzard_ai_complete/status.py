@@ -37,6 +37,7 @@ def complete_status():
         "     complete-commerce-production-work, complete-commerce-integration-order",
         "     complete-logistics-demo, complete-logistics-recommend, complete-logistics-docs",
         "     complete-order-demo, complete-order-process, complete-order-docs",
+        "     complete-billing-demo, complete-billing-refund, complete-billing-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

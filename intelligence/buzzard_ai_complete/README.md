@@ -86,6 +86,19 @@ python3 main.py complete-order-demo
 python3 main.py complete-order-process --order-id O1 --customer-id C1 --sku SKU-DEMO --quantity 2 --price 10
 ```
 
+## Customer Billing & Returns Engine v1
+
+- **CustomerBillingEngine** — Kunden, Rechnungen, MwSt, Zahlungen, Refunds, Gutschriften
+- **Reconciliation** — Zahlungsabgleich
+- **Privacy** — Redaction-Helfer für sensible Felder
+- **complete-billing-demo** / **complete-billing-refund** / **complete-billing-docs**
+- **API** — `GET /billing/demo`, `POST /billing/refund`, `POST /billing/payment-status`
+
+```bash
+python3 main.py complete-billing-demo
+python3 main.py complete-billing-refund --order-id O1 --reason defective --amount 10
+```
+
 ## Agenten
 
 | Agent | Rolle |
@@ -140,4 +153,4 @@ docker compose -f buzzard_ai_complete/docker-compose.yml up
 | **GESAMT v2** | `gesamt-*` | `buzzard.db` |
 | **v29/v1** | `verify-*`, `aslan-*` | v29 DB |
 
-Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3), `archive/fehler_behebung_2.zip`, `archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_ORDER_FULFILLMENT_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
+Archive: `archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o2), `archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip` (o3 = Duplikat von o2), `archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip` (f3), `archive/fehler_behebung_2.zip`, `archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_ORDER_FULFILLMENT_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`, `archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`

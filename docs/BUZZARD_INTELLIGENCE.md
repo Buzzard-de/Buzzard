@@ -804,6 +804,26 @@ Hinweis: `commerce.orders` = DB-Persistenz; `order_engine` = operativer Fulfillm
 
 Archive: `intelligence/archive/Buzzard_AI_ORDER_FULFILLMENT_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
 
+## Buzzard AI CUSTOMER BILLING & RETURNS ENGINE v1 — neu (v1.zip)
+
+Kunden-, Rechnungs-, Zahlungs- und Rückgabe-Grundlage für den operativen Commerce-Stack.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-billing-demo` | Demo: Rechnung, Zahlung, Refund, Gutschrift |
+| `complete-billing-refund` | Refund-Anfrage stellen |
+| `complete-billing-docs` | Engine-Dokumentation |
+
+API: `GET /billing/demo`, `POST /billing/refund`, `POST /billing/payment-status`
+
+```bash
+cd intelligence
+python3 main.py complete-billing-demo
+python3 main.py complete-billing-refund --order-id O1 --reason defective --amount 10
+```
+
+Archive: `intelligence/archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip`
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

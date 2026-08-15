@@ -1460,6 +1460,16 @@ def main():
     sub.add_parser("complete-order-demo", help="Run Order & Fulfillment Engine demo scenarios")
     sub.add_parser("complete-order-docs", help="Show Order & Fulfillment Engine v1 documentation")
 
+    complete_billing_refund = sub.add_parser(
+        "complete-billing-refund",
+        help="Request refund via Customer Billing Engine",
+    )
+    complete_billing_refund.add_argument("--order-id", required=True)
+    complete_billing_refund.add_argument("--reason", required=True)
+    complete_billing_refund.add_argument("--amount", type=float, required=True)
+    sub.add_parser("complete-billing-demo", help="Run Customer Billing & Returns demo flow")
+    sub.add_parser("complete-billing-docs", help="Show Customer Billing & Returns Engine v1 docs")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4926,6 +4936,18 @@ def main():
         from buzzard_ai_complete.commands import complete_order_docs
 
         print(complete_order_docs())
+    elif args.cmd == "complete-billing-demo":
+        from buzzard_ai_complete.commands import complete_billing_demo
+
+        print(complete_billing_demo())
+    elif args.cmd == "complete-billing-refund":
+        from buzzard_ai_complete.commands import complete_billing_refund
+
+        print(complete_billing_refund(args.order_id, args.reason, args.amount))
+    elif args.cmd == "complete-billing-docs":
+        from buzzard_ai_complete.commands import complete_billing_docs
+
+        print(complete_billing_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

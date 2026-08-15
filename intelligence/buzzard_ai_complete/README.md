@@ -161,6 +161,20 @@ python3 main.py complete-one-piece-e2e --order-id O1
 python3 main.py complete-analytics-demo
 ```
 
+## Production MAX (Storefront Foundation)
+
+- **Catalog, Cart, Checkout** — storefront lifecycle with profitability guard
+- **Importers** — JSON, CSV, XML product ingestion
+- **Provider adapters** — payment, shipping, eBay, Amazon, TecDoc (honest `NOT_CONFIGURED`)
+- **Production readiness gate** — blocks go-live without payment/shipping/catalog
+- **complete-production-demo** / **complete-production-readiness** / **complete-production-docs**
+- **API** — `/production/*`, `/storefront/*`
+
+```bash
+python3 main.py complete-production-demo
+python3 main.py complete-production-readiness
+```
+
 ## Agenten
 
 | Agent | Rolle |

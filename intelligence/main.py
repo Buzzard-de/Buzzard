@@ -1509,6 +1509,10 @@ def main():
     sub.add_parser("complete-analytics-demo", help="Run Analytics & BI demo flow")
     sub.add_parser("complete-analytics-docs", help="Show Analytics & BI documentation")
 
+    sub.add_parser("complete-production-demo", help="Run Production MAX storefront demo flow")
+    sub.add_parser("complete-production-readiness", help="Show production go-live readiness gate")
+    sub.add_parser("complete-production-docs", help="Show Production MAX upgrade documentation")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5051,6 +5055,18 @@ def main():
         from buzzard_ai_complete.commands import complete_analytics_docs
 
         print(complete_analytics_docs())
+    elif args.cmd == "complete-production-demo":
+        from buzzard_ai_complete.commands import complete_production_demo
+
+        print(complete_production_demo())
+    elif args.cmd == "complete-production-readiness":
+        from buzzard_ai_complete.commands import complete_production_readiness
+
+        print(complete_production_readiness())
+    elif args.cmd == "complete-production-docs":
+        from buzzard_ai_complete.commands import complete_production_docs
+
+        print(complete_production_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

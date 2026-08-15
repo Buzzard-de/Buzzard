@@ -930,6 +930,26 @@ python3 main.py complete-analytics-demo
 
 Archive: `intelligence/archive/BUZZARD_MAXIMAL_ANALYTICS_BI_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip` (identisch mit `55.zip`)
 
+## Buzzard Production MAX — neu (wichtig.zip)
+
+Storefront-Foundation: Katalog, Warenkorb, Checkout, Import, Profitability Guard, Provider-Registry, Go-Live-Readiness.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-production-demo` | Demo: Catalog, Cart, Checkout, Integrations |
+| `complete-production-readiness` | Go-Live Readiness Gate |
+| `complete-production-docs` | Production MAX Dokumentation |
+
+API: `GET /production/*`, `GET/POST /storefront/*`
+
+```bash
+cd intelligence
+python3 main.py complete-production-demo
+python3 main.py complete-production-readiness
+```
+
+Archive: `intelligence/archive/BUZZARD_MAXIMAL_PRODUCTION_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip` (identisch mit `wichtig.zip`)
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

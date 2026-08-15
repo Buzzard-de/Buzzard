@@ -150,6 +150,22 @@ def complete_verify():
     return output.strip()
 
 
+def complete_maintain(cancel_tests=False, process_limit=0):
+    from buzzard_ai_complete.runtime.maintenance import maintain_cycle
+
+    bootstrap()
+    result = maintain_cycle(cancel_tests=cancel_tests, process_limit=process_limit)
+    return json.dumps(result, ensure_ascii=False, indent=2, default=str)
+
+
+def complete_scheduler(interval=300, process_limit=1):
+    from buzzard_ai_complete.runtime.maintenance import run_scheduler_loop
+
+    bootstrap()
+    run_scheduler_loop(interval_seconds=interval, process_limit=process_limit)
+    return "Scheduler stopped."
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

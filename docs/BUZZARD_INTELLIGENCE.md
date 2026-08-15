@@ -681,6 +681,22 @@ Archive: `intelligence/archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip`
 
 Archive: `intelligence/archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip`
 
+## Buzzard AI COMPLETE Scheduler — neu
+
+Event-gesteuerte Wartung statt idle Agenten-Loops.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-maintain --cleanup` | Smoke/Demo-Tasks stornieren + Security-Audit |
+| `complete-maintain --process 3` | Bis zu 3 echte Tasks orchestrieren |
+| `complete-scheduler` | Dauerloop (API-Begleiter, Docker `buzzard-scheduler`) |
+
+```bash
+cd intelligence
+python3 main.py complete-maintain --cleanup
+python3 main.py complete-scheduler --interval 300 --process 1
+```
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

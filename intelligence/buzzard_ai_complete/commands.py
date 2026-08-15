@@ -1283,6 +1283,36 @@ def complete_livestock_docs():
     return _read_doc("LIVESTOCK_MAXIMAL.md")
 
 
+def complete_master_taxonomy_clean_health():
+    from buzzard_ai_complete.master_taxonomy_clean_maximal.service import MasterTaxonomyCleanService
+
+    return json.dumps(MasterTaxonomyCleanService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_master_taxonomy_clean_demo():
+    from buzzard_ai_complete.master_taxonomy_clean_maximal.service import MasterTaxonomyCleanService
+
+    return json.dumps(MasterTaxonomyCleanService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_master_taxonomy_clean_manifest():
+    from buzzard_ai_complete.master_taxonomy_clean_maximal.service import MasterTaxonomyCleanService
+
+    service = MasterTaxonomyCleanService()
+    return json.dumps(
+        {
+            "manifest": service.load_manifest(),
+            "sales_defaults": service.load_sales_defaults(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_master_taxonomy_clean_docs():
+    return _read_doc("MASTER_TAXONOMY_CLEAN.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

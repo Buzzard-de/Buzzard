@@ -1,0 +1,7 @@
+{
+  "live_activation": false,
+  "BUZZARD_SALES_ENABLED": 0,
+  "external_credentials_in_package": false,
+  "require_source_for_fitment": true,
+  "human_review_on_conflict": true
+}

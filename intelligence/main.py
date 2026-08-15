@@ -1330,6 +1330,8 @@ def main():
     gesamt_dispatch.add_argument("--task-id", type=int, required=True)
     gesamt_dispatch.add_argument("--url", required=True)
     sub.add_parser("gesamt-test", help="Run GESAMT platform pytest suite")
+    sub.add_parser("gesamt-health", help="Show GESAMT platform health status")
+    sub.add_parser("gesamt-ai-status", help="Show optional GESAMT LLM provider status")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4580,35 +4582,43 @@ def main():
 
         print(gesamt_status())
     elif args.cmd == "gesamt-init":
-        from buzzard_ai_gesamt.cli import gesamt_init
+        from buzzard_ai_gesamt.commands import gesamt_init
 
         print(gesamt_init())
     elif args.cmd == "gesamt-agents":
-        from buzzard_ai_gesamt.cli import gesamt_agents
+        from buzzard_ai_gesamt.commands import gesamt_agents
 
         print(gesamt_agents())
     elif args.cmd == "gesamt-report":
-        from buzzard_ai_gesamt.cli import gesamt_report
+        from buzzard_ai_gesamt.commands import gesamt_report
 
         print(gesamt_report())
     elif args.cmd == "gesamt-dashboard":
-        from buzzard_ai_gesamt.cli import gesamt_dashboard
+        from buzzard_ai_gesamt.commands import gesamt_dashboard
 
         print(gesamt_dashboard())
     elif args.cmd == "gesamt-task":
-        from buzzard_ai_gesamt.cli import gesamt_task
+        from buzzard_ai_gesamt.commands import gesamt_task
 
         print(gesamt_task(args.title, args.description, args.priority))
     elif args.cmd == "gesamt-dispatch":
-        from buzzard_ai_gesamt.cli import gesamt_dispatch
+        from buzzard_ai_gesamt.commands import gesamt_dispatch
 
         print(gesamt_dispatch(args.task_id, args.url))
     elif args.cmd == "gesamt-test":
-        from buzzard_ai_gesamt.cli import run_tests
+        from buzzard_ai_gesamt.commands import run_tests
 
         code = run_tests()
         if code:
             raise SystemExit(code)
+    elif args.cmd == "gesamt-health":
+        from buzzard_ai_gesamt.commands import gesamt_health
+
+        print(gesamt_health())
+    elif args.cmd == "gesamt-ai-status":
+        from buzzard_ai_gesamt.commands import gesamt_ai_status
+
+        print(gesamt_ai_status())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

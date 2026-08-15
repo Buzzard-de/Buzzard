@@ -1,36 +1,34 @@
 # Buzzard AI GESAMT – Status & Roadmap
 
-## Implementiert (ALLES_AUF_EINMAL Platform)
+## Implementiert (NAECHSTER_GESAMTPAKET v2)
 
-- `database/db.py` — Unified SQLite schema (`buzzard.db`)
-- `agents/dogu_bey/` — Research agent + embedded verify module
-- `agents/aslan_bey/` — Task orchestration, dispatch, audit dashboard
-- `agents/esat_bey/` — Security event recording
-- `core/` — EventBus, AgentRegistry, time helpers
-- `tasks/manager.py` — Task lifecycle (PENDING → IN_PROGRESS → COMPLETED/FAILED)
-- `memory/store.py` — Namespaced key-value memory
-- `research/engine.py` — Public HTTP/HTTPS fetch (no auth bypass)
-- `reports/builder.py` — Executive report generation
-- `security/` — Audit log, role permissions scaffold
-- `sources/manager.py` — Claim source registry
-- `api/app.py` — Optional FastAPI layer
-- `tests/test_system.py` — Agent and security smoke tests
+- `database/db.py` — erweitertes Schema: memory_history, research_runs, source_observations, api_keys
+- `memory/store.py` — versioniertes Memory mit History
+- `research/engine.py` — Content-Hash, Change Detection, research_runs
+- `agents/esat_bey/agent.py` — `scan_text()` defensive Content-Prüfung
+- `agents/aslan_bey/agent.py` — `decompose()` für Sub-Tasks
+- `ai/provider.py` — optionaler LLM-Adapter (env-basiert)
+- `security/auth.py` — API-Token-Autorisierung
+- `monitoring/health.py` — DB + Version Health-Check
+- `api/app.py` — FastAPI v2 mit Auth, dispatch, security/scan
+- `tests/test_v2.py` — Memory-Versioning, Security-Scan Tests
+
+## Platzhalter-Module (v2 Scaffold)
+
+- `schemas/`, `storage/`, `cli/`, `web/`, `integrations/`, `migrations/`
 
 ## Parallel im Buzzard Intelligence Stack
 
 - Doğu Bey v29 → `buzzard_intelligence/verify.py` (`verify-*`, `dogubey-*`)
 - Aslan Bey v1 → `buzzard_intelligence/aslan.py` (`aslan-*`)
-- v1–v200 Intelligence modules, Live Connectors, Website Monitoring, Production
 
-## Geplant / Erweiterung
+## Geplant
 
-- Full OSINT pipeline with provenance and change tracking
-- Doğu Bey ↔ Aslan Bey service/API over network boundaries
-- Production auth, rate limiting, secret management
-- Extended Esat Bey threat detection (defensive only)
-- Integration tests across GESAMT + v29 stacks
+- Vollständige Schema-Migrationen
+- Web-UI Dashboard
+- Externe Integrationen (authorized connectors)
+- Production Hardening (Rate Limits, Secrets Rotation)
 
 ## Wichtig
 
-Die GESAMT-Platform nutzt `buzzard.db` (eigenes Schema). Die v29-Verifikation nutzt
-`buzzard_official_verification_v29.db`. Beide koexistieren bewusst getrennt.
+GESAMT v2 nutzt `buzzard.db`. v29 nutzt `buzzard_official_verification_v29.db`. Beide koexistieren getrennt.

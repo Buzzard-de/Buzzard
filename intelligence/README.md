@@ -528,9 +528,9 @@ Standalone Doğu Bey (tek klasör): `dogubey-*` — siehe `dogubey/README.md`
 
 Gesamt-Standalone (Doğu Bey + Aslan Bey): `buzzard_ai_alles/README.md`
 
-**GESAMT Platform** (Doğu/Aslan/Esat Bey unified agents, `buzzard.db`): `buzzard_ai_gesamt/README.md` — `gesamt-init`, `gesamt-agents`, `gesamt-task`, `gesamt-dashboard`, `gesamt-report`, `gesamt-dispatch`, `gesamt-test`, `gesamt-status`
+**GESAMT Platform v2** (versioned memory, research observations, Esat scan, health, optional LLM): `buzzard_ai_gesamt/README.md` — `gesamt-init`, `gesamt-health`, `gesamt-ai-status`, `gesamt-test`, …
 
-Archive: `archive/Buzzard_AI_ALLES_AUF_EINMAL.zip`, `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_ALLES.zip`, `archive/Buzzard_AI_GESAMT.zip`, `archive/Buzzard_AI_DoguBey_tek_klasor.zip`, `archive/Buzzard_AI_komplett.zip`
+Archive: `archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip`, `archive/Buzzard_AI_ALLES_AUF_EINMAL.zip`, `archive/Buzzard_DoguBey_AslanBey_v1.zip`, `archive/Buzzard_AI_ALLES.zip`, `archive/Buzzard_AI_GESAMT.zip`, `archive/Buzzard_AI_DoguBey_tek_klasor.zip`, `archive/Buzzard_AI_komplett.zip`
 
 ## v28 Product Selection
 

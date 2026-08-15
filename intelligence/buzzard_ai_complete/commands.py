@@ -452,6 +452,16 @@ def complete_one_piece_docs():
     return _read_doc("ONE_PIECE_MAXIMAL_ARCHITECTURE.md")
 
 
+def complete_analytics_demo():
+    from buzzard_ai_complete.analytics_bi.service import AnalyticsBIService
+
+    return json.dumps(AnalyticsBIService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_analytics_docs():
+    return _read_doc("ANALYTICS_BI_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

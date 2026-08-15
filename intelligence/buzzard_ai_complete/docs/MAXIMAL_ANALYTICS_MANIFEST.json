@@ -1,0 +1,18 @@
+{
+  "module": "Buzzard MAXIMAL Analytics & Business Intelligence",
+  "version": "MAXIMAL",
+  "integrated_with": "BUZZARD_MAXIMAL_ONE_PIECE",
+  "external_data_fabrication": false,
+  "capabilities": [
+    "KPI",
+    "profitability",
+    "cohorts",
+    "forecasting",
+    "anomaly_detection",
+    "alerts",
+    "executive_dashboard",
+    "decision_intelligence",
+    "data_quality",
+    "export"
+  ]
+}

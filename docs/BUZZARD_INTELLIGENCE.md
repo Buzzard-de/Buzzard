@@ -912,6 +912,24 @@ python3 main.py complete-one-piece-e2e --order-id O1
 
 Archive: `intelligence/archive/BUZZARD_MAXIMAL_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip`
 
+## Buzzard MAXIMAL Analytics & BI — neu (55.zip)
+
+Analytics/BI-Schicht über One-Piece: KPIs, Dashboard, ROAS, Cohorts, Forecasting, Anomalien, Decision Intelligence.
+
+| CLI | Zweck |
+|-----|-------|
+| `complete-analytics-demo` | Demo: KPIs, Dashboard, Cohorts, Forecast |
+| `complete-analytics-docs` | Analytics & BI Dokumentation |
+
+API: `GET /analytics/demo`, `GET /analytics/dashboard`
+
+```bash
+cd intelligence
+python3 main.py complete-analytics-demo
+```
+
+Archive: `intelligence/archive/BUZZARD_MAXIMAL_ANALYTICS_BI_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip` (identisch mit `55.zip`)
+
 ## v28 Product Selection — neu
 
 Automatisierte Produktauswahl aus Intelligence-Signalen — **keine Einkaufs- oder Rechtsentscheidung**.

@@ -30,6 +30,18 @@ python3 main.py complete-commerce-demo
 python3 main.py complete-commerce-evaluate --sku SKU-1 --price 79
 ```
 
+## f2 Commerce GESAMT (Extension Scaffold)
+
+- **30+ Commerce-Module** — marketplaces, payments, automotive/TecDoc, returns, tax, …
+- **complete-commerce-scope** — vollständiger Commerce-Umfang
+- **complete-commerce-tree** — Extension-Tree
+- **complete-commerce-inventory** — Modul-Inventar
+
+```bash
+python3 main.py complete-commerce-scope
+python3 main.py complete-commerce-inventory
+```
+
 ## Agenten
 
 | Agent | Rolle |

@@ -1416,6 +1416,9 @@ def main():
     complete_commerce_add.add_argument("--tax-rate", type=float, default=0)
     complete_commerce_add.add_argument("--ad-cost", type=float, default=0)
     complete_commerce_add.add_argument("--target-margin", type=float, default=0.07)
+    sub.add_parser("complete-commerce-scope", help="Show COMPLETE commerce scope document")
+    sub.add_parser("complete-commerce-tree", help="Show commerce extension tree")
+    sub.add_parser("complete-commerce-inventory", help="Show commerce module inventory")
 
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
@@ -4819,6 +4822,18 @@ def main():
                 target_margin=args.target_margin,
             )
         )
+    elif args.cmd == "complete-commerce-scope":
+        from buzzard_ai_complete.commands import complete_commerce_scope
+
+        print(complete_commerce_scope())
+    elif args.cmd == "complete-commerce-tree":
+        from buzzard_ai_complete.commands import complete_commerce_tree
+
+        print(complete_commerce_tree())
+    elif args.cmd == "complete-commerce-inventory":
+        from buzzard_ai_complete.commands import complete_commerce_inventory
+
+        print(complete_commerce_inventory())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

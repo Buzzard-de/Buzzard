@@ -1333,6 +1333,19 @@ def main():
     sub.add_parser("gesamt-health", help="Show GESAMT platform health status")
     sub.add_parser("gesamt-ai-status", help="Show optional GESAMT LLM provider status")
 
+    sub.add_parser("complete-status", help="Show Buzzard AI COMPLETE consolidated workspace status")
+    sub.add_parser("complete-init", help="Initialize Buzzard AI COMPLETE workspace")
+    sub.add_parser("complete-agents", help="List COMPLETE workspace agents")
+    complete_task = sub.add_parser("complete-task", help="Create COMPLETE research task via Aslan Bey")
+    complete_task.add_argument("--title", required=True)
+    complete_task.add_argument("--description", required=True)
+    complete_task.add_argument("--priority", default="NORMAL")
+    sub.add_parser("complete-tasks", help="List COMPLETE workspace tasks")
+    sub.add_parser("complete-health", help="Show COMPLETE workspace health")
+    complete_scan = sub.add_parser("complete-scan", help="Esat Bey defensive text scan")
+    complete_scan.add_argument("--text", required=True)
+    sub.add_parser("complete-test", help="Run COMPLETE workspace pytest suite")
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -4619,6 +4632,40 @@ def main():
         from buzzard_ai_gesamt.commands import gesamt_ai_status
 
         print(gesamt_ai_status())
+    elif args.cmd == "complete-status":
+        from buzzard_ai_complete.status import complete_status
+
+        print(complete_status())
+    elif args.cmd == "complete-init":
+        from buzzard_ai_complete.commands import complete_init
+
+        print(complete_init())
+    elif args.cmd == "complete-agents":
+        from buzzard_ai_complete.commands import complete_agents
+
+        print(complete_agents())
+    elif args.cmd == "complete-task":
+        from buzzard_ai_complete.commands import complete_task
+
+        print(complete_task(args.title, args.description, args.priority))
+    elif args.cmd == "complete-tasks":
+        from buzzard_ai_complete.commands import complete_tasks
+
+        print(complete_tasks())
+    elif args.cmd == "complete-health":
+        from buzzard_ai_complete.commands import complete_health
+
+        print(complete_health())
+    elif args.cmd == "complete-scan":
+        from buzzard_ai_complete.commands import complete_scan
+
+        print(complete_scan(args.text))
+    elif args.cmd == "complete-test":
+        from buzzard_ai_complete.commands import run_tests
+
+        code = run_tests()
+        if code:
+            raise SystemExit(code)
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

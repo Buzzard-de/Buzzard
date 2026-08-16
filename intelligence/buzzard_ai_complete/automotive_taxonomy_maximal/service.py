@@ -41,9 +41,66 @@ from buzzard_ai_complete.automotive_taxonomy_maximal.automotive_taxonomy.tires.t
 CONFIG_DIR = Path(__file__).resolve().parent / "config"
 SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
 DOCS_DIR = Path(__file__).resolve().parent / "docs"
+REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 class AutomotiveTaxonomyService:
+    def _repo_path(self, relative: str) -> Path:
+        return REPO_ROOT / relative
+
+    def load_kfz_tree(self) -> dict:
+        config = self.load_config()
+        path = self._repo_path(config["kfz_category_tree_path"])
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def load_kfz_shop_bridge(self) -> dict:
+        config = self.load_config()
+        path = self._repo_path(config["kfz_shop_bridge_path"])
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def kfz_summary(self) -> dict:
+        try:
+            tree = self.load_kfz_tree()
+            bridge = self.load_kfz_shop_bridge()
+        except (FileNotFoundError, KeyError, json.JSONDecodeError):
+            return {"status": "NOT_SYNCED"}
+        return {
+            "name": tree.get("name"),
+            "version": tree.get("version"),
+            "language": tree.get("language"),
+            "main_category_count": tree.get("main_category_count", len(tree.get("categories", []))),
+            "subcategory_count": tree.get("subcategory_count"),
+            "shop_automotive_root_id": bridge.get("shop_automotive_root_id"),
+            "url_prefix": bridge.get("url_prefix"),
+            "bridge_version": bridge.get("version"),
+        }
+
+    def kfz_mains(self) -> list[dict]:
+        bridge = self.load_kfz_shop_bridge()
+        return bridge.get("mains", [])
+
+    def kfz_main(self, main_id: str) -> dict | None:
+        normalized = main_id.zfill(2) if main_id.isdigit() else main_id
+        for main in self.kfz_mains():
+            if main.get("kfz_id") == normalized:
+                return main
+        return None
+
+    def shop_bridge_for_kfz(self, main_id: str) -> dict | None:
+        main = self.kfz_main(main_id)
+        if not main:
+            return None
+        return {
+            "kfz_id": main["kfz_id"],
+            "kfz_name": main["kfz_name"],
+            "name_de": main["name_de"],
+            "shop_root_id": main["shop_root_id"],
+            "shop_l2_id": main["shop_l2_id"],
+            "shop_l2_name": main["shop_l2_name"],
+            "shop_l2_slug": main["shop_l2_slug"],
+            "url": f"{main.get('slug', '')}",
+        }
+
     def load_config(self):
         return json.loads((CONFIG_DIR / "automotive_taxonomy.production.json").read_text(encoding="utf-8"))
 
@@ -68,6 +125,7 @@ class AutomotiveTaxonomyService:
             "fitment_requires_evidence": rules.get("fitment_requires_evidence", True),
             "automatic_fitment_publish": rules.get("automatic_fitment_publish", False),
             "live_activation": False,
+            "kfz_tree": self.kfz_summary(),
         }
 
     def build_demo_taxonomy(self):

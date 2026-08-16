@@ -550,6 +550,34 @@ body:has(.home-fullscreen) #maincontent {
   background: rgba(201, 160, 102, 0.08);
 }
 
+.kfz-parts-browse { margin-top: 24px; }
+.kfz-parts-header { margin-bottom: 20px; }
+.kfz-parts-header h2 { margin: 0 0 8px; color: var(--gold); }
+.kfz-parts-header p { color: var(--muted); margin: 0 0 12px; }
+.kfz-parts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.kfz-parts-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+}
+.kfz-parts-card-title {
+  display: block;
+  color: #ddd;
+  font-weight: 700;
+  text-decoration: none;
+}
+.kfz-parts-card-title:hover { color: var(--gold); }
+.kfz-parts-id { color: var(--gold); margin-right: 8px; font-weight: 800; }
+.kfz-parts-meta { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+.kfz-parts-meta a { color: var(--gold); }
+@media (max-width: 900px) { .kfz-parts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .kfz-parts-grid { grid-template-columns: 1fr; } }
+
 .subcategory-list,
 .subsubcategory-list {
   list-style: none;

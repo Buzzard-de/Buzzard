@@ -1712,6 +1712,14 @@ def main():
         "complete-automotive-taxonomy-tires-docs",
         help="Show tire taxonomy documentation",
     )
+    sub.add_parser(
+        "complete-automotive-taxonomy-kfz-tree",
+        help="Show KFZ master tree + shop bridge (43 mains)",
+    )
+    sub.add_parser(
+        "complete-sync-kfz-category-tree",
+        help="Sync KFZ tree with shop cat-05 bridge JSON",
+    )
 
     sub.add_parser("complete-agriculture-health", help="Show agriculture taxonomy health")
     sub.add_parser("complete-agriculture-branches", help="List agriculture taxonomy branches")
@@ -5726,6 +5734,14 @@ def main():
         from buzzard_ai_complete.commands import complete_automotive_taxonomy_tires_docs
 
         print(complete_automotive_taxonomy_tires_docs())
+    elif args.cmd == "complete-automotive-taxonomy-kfz-tree":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_kfz_tree
+
+        print(complete_automotive_taxonomy_kfz_tree())
+    elif args.cmd == "complete-sync-kfz-category-tree":
+        from buzzard_ai_complete.commands import complete_sync_kfz_category_tree
+
+        print(complete_sync_kfz_category_tree())
     elif args.cmd == "complete-agriculture-health":
         from buzzard_ai_complete.commands import complete_agriculture_health
 

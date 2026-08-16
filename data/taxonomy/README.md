@@ -17,3 +17,18 @@ Vehicle make/model/year, HSN/TSN, OEM numbers, TecDoc ID, manufacturer part numb
 
 - General shop navigation: `data/buzzard_categories.json` (41 mains, `cat-05` = Automotive)
 - Deep KFZ parts tree: this folder (43 KFZ-specific mains)
+- Shop bridge: `kfz_shop_bridge.json` (KFZ id → `cat-05` L2 mapping)
+
+## Sync bridge
+
+```bash
+cd intelligence
+python3 main.py complete-sync-kfz-category-tree
+```
+
+## URLs
+
+- Shop Automotive: `/kategorie/automotive/`
+- KFZ tree index: `/kategorie/automotive/kfz/`
+- API: `/api/kfz-tree`
+- Intelligence API: `/automotive-taxonomy/kfz-tree`

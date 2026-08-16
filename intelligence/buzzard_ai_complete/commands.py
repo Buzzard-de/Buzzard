@@ -1209,6 +1209,27 @@ def complete_automotive_taxonomy_tires_docs():
     return _read_doc("AUTOMOTIVE_TAXONOMY_TIRES_MAXIMAL.md")
 
 
+def complete_automotive_taxonomy_kfz_tree():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        {"summary": service.kfz_summary(), "mains": service.kfz_mains()},
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_sync_kfz_category_tree():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "sync_kfz_category_tree.py"
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
 def complete_agriculture_health():
     from buzzard_ai_complete.agriculture_maximal.service import AgricultureService
 

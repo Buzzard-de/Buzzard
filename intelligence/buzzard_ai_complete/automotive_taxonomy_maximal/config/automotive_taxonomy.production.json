@@ -53,5 +53,8 @@
     "taxonomy_gap_detection": true,
     "category_ai_monitoring": true,
     "human_review_for_conflicts": true
-  }
+  },
+  "kfz_category_tree_path": "data/taxonomy/buzzard_master_kfz_category_tree_v1.json",
+  "kfz_shop_bridge_path": "data/taxonomy/kfz_shop_bridge.json",
+  "shop_automotive_root_id": "cat-05"
 }

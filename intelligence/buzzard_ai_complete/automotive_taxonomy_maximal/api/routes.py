@@ -41,5 +41,26 @@ if APIRouter:
     @router.get("/tires/config")
     def automotive_taxonomy_tires_config():
         return service.load_tires_config()
+
+    @router.get("/kfz-tree")
+    def automotive_taxonomy_kfz_tree():
+        return {
+            "summary": service.kfz_summary(),
+            "mains": service.kfz_mains(),
+        }
+
+    @router.get("/kfz-tree/{main_id}")
+    def automotive_taxonomy_kfz_main(main_id: str):
+        main = service.kfz_main(main_id)
+        if not main:
+            return {"error": "not_found", "main_id": main_id}
+        return main
+
+    @router.get("/kfz-shop-bridge/{main_id}")
+    def automotive_taxonomy_kfz_shop_bridge(main_id: str):
+        bridge = service.shop_bridge_for_kfz(main_id)
+        if not bridge:
+            return {"error": "not_found", "main_id": main_id}
+        return bridge
 else:
     router = None

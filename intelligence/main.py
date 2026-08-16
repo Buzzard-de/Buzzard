@@ -1655,6 +1655,10 @@ def main():
         "complete-de-ecom-intel-scan",
         help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
     )
+    sub.add_parser(
+        "complete-all-connectors-health",
+        help="Status aller Live-Connectors (eBay, Amazon, Google Ads, Public Fetch)",
+    )
 
     sub.add_parser("complete-social-intelligence-health", help="Show social intelligence AI health")
     sub.add_parser("complete-social-intelligence-platforms", help="List social platform adapters")
@@ -5630,6 +5634,10 @@ def main():
         from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
 
         print(complete_de_ecom_intel_scan())
+    elif args.cmd == "complete-all-connectors-health":
+        from buzzard_ai_complete.commands import complete_all_connectors_health
+
+        print(complete_all_connectors_health())
     elif args.cmd == "complete-social-intelligence-health":
         from buzzard_ai_complete.commands import complete_social_intelligence_health
 

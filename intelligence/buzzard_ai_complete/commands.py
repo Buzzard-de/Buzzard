@@ -1080,6 +1080,12 @@ def complete_de_ecom_intel_scan():
     return json.dumps(run_de_ecom_intel_scan(), ensure_ascii=False, indent=2, default=str)
 
 
+def complete_all_connectors_health():
+    from live_connectors.registry import connector_health
+
+    return json.dumps(connector_health(), ensure_ascii=False, indent=2)
+
+
 def complete_social_intelligence_health():
     from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
 

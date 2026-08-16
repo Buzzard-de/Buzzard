@@ -528,7 +528,9 @@ python3 main.py complete-scheduler --interval 300 --process 1
 cd intelligence
 python app.py
 # or hidden entry:
-cd intelligence/gizli && python app.py
+cd intelligence/gizli && python app.py          # API http://127.0.0.1:8000
+cd intelligence/gizli && python voice_ui.py    # Voice http://127.0.0.1:8787
+cd intelligence/gizli && python start.py          # both at once
 # or uvicorn directly:
 uvicorn buzzard_ai_complete.api.app:app --reload
 # or

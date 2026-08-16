@@ -578,6 +578,19 @@ body:has(.home-fullscreen) #maincontent {
 @media (max-width: 900px) { .kfz-parts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .kfz-parts-grid { grid-template-columns: 1fr; } }
 
+.kfz-l3-section { display: grid; gap: 20px; }
+.kfz-l3-group h3 { margin: 0 0 12px; color: var(--gold); font-size: 1rem; }
+.kfz-competitor-strip { margin-top: 10px; }
+.kfz-competitor-badge {
+  display: inline-block;
+  margin: 4px 6px 0 0;
+  padding: 4px 8px;
+  border: 1px solid rgba(201, 160, 102, 0.35);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--gold);
+}
+
 .subcategory-list,
 .subsubcategory-list {
   list-style: none;

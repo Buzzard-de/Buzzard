@@ -62,5 +62,27 @@ if APIRouter:
         if not bridge:
             return {"error": "not_found", "main_id": main_id}
         return bridge
+
+    @router.get("/kfz-intelligence-os")
+    def automotive_taxonomy_kfz_intelligence_os():
+        return {
+            "summary": service.kfz_intelligence_summary(),
+            "competitors": service.kfz_competitors(),
+        }
+
+    @router.get("/kfz-intelligence-os/{main_id}")
+    def automotive_taxonomy_kfz_intelligence_main(main_id: str):
+        main = service.kfz_taxonomy_main(main_id)
+        if not main:
+            return {"error": "not_found", "main_id": main_id}
+        return main
+
+    @router.get("/kfz-intelligence-os/{main_id}/coverage")
+    def automotive_taxonomy_kfz_coverage(main_id: str):
+        return {
+            "main_id": main_id,
+            "coverage": service.kfz_coverage(main_id),
+            "competitors": service.kfz_competitors(),
+        }
 else:
     router = None

@@ -1221,6 +1221,21 @@ def complete_automotive_taxonomy_kfz_tree():
     )
 
 
+def complete_automotive_taxonomy_kfz_intelligence_os():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        {
+            "summary": service.kfz_intelligence_summary(),
+            "competitors": service.kfz_competitors(),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
 def complete_sync_kfz_category_tree():
     from pathlib import Path
     import subprocess

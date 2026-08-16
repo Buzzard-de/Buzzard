@@ -18,6 +18,8 @@ import {
   isKfzSlugPath,
   parseKfzSlugPath,
   getShopL2Href,
+  getKfzCompetitors,
+  getCompetitorLabel,
 } from "@/lib/categories/kfzTree";
 import { buildCategoryMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, categoryBreadcrumbItems, categoryCollectionSchema } from "@/lib/seo/structured-data";
@@ -62,6 +64,7 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
 
   if (main) {
     const shopHref = getShopL2Href(main);
+    const activeCompetitors = main.active_competitors ?? [];
     return (
       <section className="page-hero">
         <div className="page-hero-inner">
@@ -74,18 +77,40 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
           <h1>
             <span className="kfz-parts-id">{main.kfz_id}</span> {main.name_de}
           </h1>
-          <p>{main.subcategory_count} Unterkategorien · {main.kfz_name}</p>
+          <p>
+            {main.subcategory_count} Unterkategorien
+            {main.l3_count ? ` · ${main.l3_count} Produktgruppen (L3)` : ""} · {main.kfz_name}
+          </p>
           {shopHref && (
             <p>
               Shop-Bereich: <Link href={shopHref}>{main.shop_l2_name}</Link>
             </p>
           )}
+          {activeCompetitors.length > 0 && (
+            <p className="kfz-competitor-strip">
+              Wettbewerber-Abdeckung:{" "}
+              {activeCompetitors.map((id) => (
+                <span key={id} className="kfz-competitor-badge">{getCompetitorLabel(id)}</span>
+              ))}
+            </p>
+          )}
         </div>
-        <section className="subpage-content category-children-grid">
+        <section className="subpage-content kfz-l3-section">
           {main.subcategories.map((sub) => (
-            <div key={sub.kfz_id} className="category-child-card">
-              <strong>{sub.kfz_id}</strong> {sub.kfz_name}
-            </div>
+            <article key={sub.kfz_id} className="kfz-l3-group">
+              <h3><span className="kfz-parts-id">{sub.kfz_id}</span> {sub.kfz_name}</h3>
+              {sub.children && sub.children.length > 0 ? (
+                <div className="category-children-grid">
+                  {sub.children.map((child) => (
+                    <div key={child.kfz_id} className="category-child-card">
+                      <strong>{child.kfz_id}</strong> {child.kfz_name}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="kfz-parts-meta">Keine L3-Produktgruppen definiert</p>
+              )}
+            </article>
           ))}
         </section>
         {shopHref && (
@@ -109,7 +134,10 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             <span><span>/</span><span>KFZ-Teilebaum</span></span>
           </nav>
           <h1>KFZ-Teilebaum</h1>
-          <p>{getKfzMains().length} Hauptsysteme — Buzzard Master Kfz Category Intelligence V1</p>
+          <p>
+            {getKfzMains().length} Hauptsysteme · Buzzard Master Kfz Intelligence OS
+            {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
+          </p>
         </div>
       </section>
       <KfzPartsBrowse />

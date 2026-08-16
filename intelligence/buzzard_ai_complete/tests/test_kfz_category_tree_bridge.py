@@ -9,6 +9,29 @@ def test_kfz_tree_loaded():
     assert summary["shop_automotive_root_id"] == "cat-05"
 
 
+def test_kfz_intelligence_os_loaded():
+    service = AutomotiveTaxonomyService()
+    summary = service.kfz_intelligence_summary()
+    assert summary["main_category_count"] == 43
+    assert summary["l3_count"] == 412
+    assert summary["competitor_count"] == 8
+
+
+def test_kfz_taxonomy_main_with_l3():
+    service = AutomotiveTaxonomyService()
+    main = service.kfz_taxonomy_main("01")
+    assert main is not None
+    assert main["name"] == "Motor"
+    assert any(sub.get("children") for sub in main.get("subcategories", []))
+
+
+def test_kfz_coverage():
+    service = AutomotiveTaxonomyService()
+    coverage = service.kfz_coverage("09")
+    assert coverage.get("autodoc") == 1
+    assert coverage.get("kfzteile24") == 1
+
+
 def test_kfz_main_lookup():
     service = AutomotiveTaxonomyService()
     main = service.kfz_main("09")

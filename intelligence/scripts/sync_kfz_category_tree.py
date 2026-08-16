@@ -8,6 +8,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 KFZ_TREE_PATH = REPO_ROOT / "data" / "taxonomy" / "buzzard_master_kfz_category_tree_v1.json"
+KFZ_OS_PATH = REPO_ROOT / "data" / "taxonomy" / "buzzard_master_kfz_intelligence_os.json"
 SHOP_CATALOG_PATH = REPO_ROOT / "data" / "buzzard_categories.json"
 BRIDGE_PATH = REPO_ROOT / "data" / "taxonomy" / "kfz_shop_bridge.json"
 AUTOMOTIVE_CONFIG_PATH = (
@@ -139,18 +140,59 @@ def _find_shop_node(catalog: dict, node_id: str) -> dict | None:
     return walk(catalog.get("categories", []))
 
 
-def build_bridge() -> dict:
+def _load_taxonomy_source() -> tuple[dict, str]:
+    if KFZ_OS_PATH.exists():
+        os_data = json.loads(KFZ_OS_PATH.read_text(encoding="utf-8"))
+        return os_data, "buzzard_master_kfz_intelligence_os.json"
     kfz = json.loads(KFZ_TREE_PATH.read_text(encoding="utf-8"))
+    return kfz, "buzzard_master_kfz_category_tree_v1.json"
+
+
+def _taxonomy_mains(source: dict) -> list[dict]:
+    if "taxonomy" in source:
+        return source["taxonomy"]
+    return source.get("categories", [])
+
+
+def build_bridge() -> dict:
+    source, source_file = _load_taxonomy_source()
     catalog = json.loads(SHOP_CATALOG_PATH.read_text(encoding="utf-8"))
     automotive = _find_shop_node(catalog, "cat-05")
     if not automotive:
         raise SystemExit("cat-05 Automotive not found in buzzard_categories.json")
 
+    coverage = source.get("coverage", {})
+    competitors = source.get("competitors", [])
     mains = []
-    for main in kfz["categories"]:
+    total_l3 = 0
+
+    for main in _taxonomy_mains(source):
         main_id = main["id"]
         shop_l2_id = KFZ_TO_SHOP_L2.get(main_id, "cat-05-11")
         shop_l2 = _find_shop_node(catalog, shop_l2_id)
+        subcategories = []
+        l3_count = 0
+        for sub in main.get("subcategories", []):
+            children = [
+                {
+                    "kfz_id": child["id"],
+                    "kfz_name": child["name"],
+                    "slug": _slugify(child["name"]),
+                }
+                for child in sub.get("children", [])
+            ]
+            l3_count += len(children)
+            subcategories.append(
+                {
+                    "kfz_id": sub["id"],
+                    "kfz_name": sub["name"],
+                    "slug": _slugify(sub["name"]),
+                    "children": children,
+                }
+            )
+        total_l3 += l3_count
+        main_coverage = coverage.get(main_id, {})
+        active_competitors = [key for key, value in main_coverage.items() if value]
         mains.append(
             {
                 "kfz_id": main_id,
@@ -161,24 +203,23 @@ def build_bridge() -> dict:
                 "shop_l2_id": shop_l2_id,
                 "shop_l2_name": shop_l2["name"] if shop_l2 else None,
                 "shop_l2_slug": shop_l2["slug"] if shop_l2 else None,
-                "subcategory_count": len(main.get("subcategories", [])),
-                "subcategories": [
-                    {
-                        "kfz_id": sub["id"],
-                        "kfz_name": sub["name"],
-                        "slug": _slugify(sub["name"]),
-                    }
-                    for sub in main.get("subcategories", [])
-                ],
+                "subcategory_count": len(subcategories),
+                "l3_count": l3_count,
+                "competitor_coverage": main_coverage,
+                "active_competitors": active_competitors,
+                "subcategories": subcategories,
             }
         )
 
     return {
-        "version": "1.0",
+        "version": "1.1",
         "shop_automotive_root_id": "cat-05",
-        "kfz_tree_path": "data/taxonomy/buzzard_master_kfz_category_tree_v1.json",
+        "kfz_tree_path": f"data/taxonomy/{source_file}",
+        "kfz_intelligence_os_path": "data/taxonomy/buzzard_master_kfz_intelligence_os.json",
         "main_category_count": len(mains),
         "subcategory_count": sum(item["subcategory_count"] for item in mains),
+        "l3_count": total_l3,
+        "competitors": competitors,
         "url_prefix": "/kategorie/automotive/kfz",
         "mains": mains,
     }
@@ -187,6 +228,7 @@ def build_bridge() -> dict:
 def update_automotive_config() -> None:
     config = json.loads(AUTOMOTIVE_CONFIG_PATH.read_text(encoding="utf-8"))
     config["kfz_category_tree_path"] = "data/taxonomy/buzzard_master_kfz_category_tree_v1.json"
+    config["kfz_intelligence_os_path"] = "data/taxonomy/buzzard_master_kfz_intelligence_os.json"
     config["kfz_shop_bridge_path"] = "data/taxonomy/kfz_shop_bridge.json"
     config["shop_automotive_root_id"] = "cat-05"
     AUTOMOTIVE_CONFIG_PATH.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -198,7 +240,8 @@ def main() -> None:
     update_automotive_config()
     print(
         f"OK: {bridge['main_category_count']} KFZ-Hauptkategorien, "
-        f"{bridge['subcategory_count']} Unterkategorien → {BRIDGE_PATH}"
+        f"{bridge['subcategory_count']} Unterkategorien, "
+        f"{bridge.get('l3_count', 0)} L3-Knoten → {BRIDGE_PATH}"
     )
 
 

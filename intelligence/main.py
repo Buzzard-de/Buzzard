@@ -1717,6 +1717,10 @@ def main():
         help="Show KFZ master tree + shop bridge (43 mains)",
     )
     sub.add_parser(
+        "complete-automotive-taxonomy-kfz-intelligence-os",
+        help="Show KFZ Intelligence OS summary + competitors",
+    )
+    sub.add_parser(
         "complete-sync-kfz-category-tree",
         help="Sync KFZ tree with shop cat-05 bridge JSON",
     )
@@ -5738,6 +5742,10 @@ def main():
         from buzzard_ai_complete.commands import complete_automotive_taxonomy_kfz_tree
 
         print(complete_automotive_taxonomy_kfz_tree())
+    elif args.cmd == "complete-automotive-taxonomy-kfz-intelligence-os":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_kfz_intelligence_os
+
+        print(complete_automotive_taxonomy_kfz_intelligence_os())
     elif args.cmd == "complete-sync-kfz-category-tree":
         from buzzard_ai_complete.commands import complete_sync_kfz_category_tree
 

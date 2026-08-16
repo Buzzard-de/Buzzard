@@ -18,8 +18,12 @@ export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps)
       <div className="kfz-parts-header">
         <h2>KFZ-Teilebaum</h2>
         <p>
-          {mains.length} technische Hauptsysteme mit {mains.reduce((sum, m) => sum + m.subcategory_count, 0)}{" "}
-          Unterkategorien — verknüpft mit dem Shop unter Automotive.
+          {mains.length} technische Hauptsysteme mit{" "}
+          {mains.reduce((sum, m) => sum + m.subcategory_count, 0)} Unterkategorien
+          {mains[0]?.l3_count !== undefined && (
+            <> und {mains.reduce((sum, m) => sum + (m.l3_count ?? 0), 0)} L3-Produktgruppen</>
+          )}{" "}
+          — Kfz Intelligence OS, verknüpft mit dem Shop unter Automotive.
         </p>
         {!compact && (
           <Link href="/kategorie/automotive/kfz/" className="shop-btn-secondary">
@@ -47,6 +51,10 @@ function KfzMainCard({ main }: { main: KfzMainCategory }) {
       </Link>
       <p className="kfz-parts-meta">
         {main.subcategory_count} Unterkategorien
+        {main.l3_count ? ` · ${main.l3_count} L3` : ""}
+        {main.active_competitors && main.active_competitors.length > 0 && (
+          <> · {main.active_competitors.length} Wettbewerber</>
+        )}
         {shopHref && (
           <>
             {" · "}

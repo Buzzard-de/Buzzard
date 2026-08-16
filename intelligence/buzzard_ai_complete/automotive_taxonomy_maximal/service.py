@@ -58,21 +58,77 @@ class AutomotiveTaxonomyService:
         path = self._repo_path(config["kfz_shop_bridge_path"])
         return json.loads(path.read_text(encoding="utf-8"))
 
+    def load_kfz_intelligence_os(self) -> dict:
+        config = self.load_config()
+        path = self._repo_path(config["kfz_intelligence_os_path"])
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def kfz_intelligence_summary(self) -> dict:
+        try:
+            os_data = self.load_kfz_intelligence_os()
+        except (FileNotFoundError, KeyError, json.JSONDecodeError):
+            return {"status": "NOT_LOADED"}
+        taxonomy = os_data.get("taxonomy", [])
+        l3_count = sum(
+            len(sub.get("children", []))
+            for main in taxonomy
+            for sub in main.get("subcategories", [])
+        )
+        return {
+            "name": os_data.get("name"),
+            "version": os_data.get("version"),
+            "main_category_count": len(taxonomy),
+            "subcategory_count": sum(len(main.get("subcategories", [])) for main in taxonomy),
+            "l3_count": l3_count,
+            "competitor_count": len(os_data.get("competitors", [])),
+            "coverage_categories": len(os_data.get("coverage", {})),
+            "note": os_data.get("note"),
+        }
+
+    def kfz_competitors(self) -> list[dict]:
+        return self.load_kfz_intelligence_os().get("competitors", [])
+
+    def kfz_coverage(self, main_id: str | None = None) -> dict:
+        os_data = self.load_kfz_intelligence_os()
+        coverage = os_data.get("coverage", {})
+        if main_id is None:
+            return coverage
+        normalized = main_id.zfill(2) if main_id.isdigit() else main_id
+        return coverage.get(normalized, {})
+
+    def kfz_taxonomy_main(self, main_id: str) -> dict | None:
+        normalized = main_id.zfill(2) if main_id.isdigit() else main_id
+        for main in self.load_kfz_intelligence_os().get("taxonomy", []):
+            if main.get("id") == normalized:
+                bridge = self.kfz_main(normalized) or {}
+                return {
+                    **main,
+                    "name_de": bridge.get("name_de"),
+                    "shop_l2_id": bridge.get("shop_l2_id"),
+                    "shop_l2_name": bridge.get("shop_l2_name"),
+                    "shop_l2_slug": bridge.get("shop_l2_slug"),
+                    "competitor_coverage": self.kfz_coverage(normalized),
+                    "active_competitors": bridge.get("active_competitors", []),
+                }
+        return None
+
     def kfz_summary(self) -> dict:
         try:
-            tree = self.load_kfz_tree()
             bridge = self.load_kfz_shop_bridge()
+            intel = self.kfz_intelligence_summary()
         except (FileNotFoundError, KeyError, json.JSONDecodeError):
             return {"status": "NOT_SYNCED"}
         return {
-            "name": tree.get("name"),
-            "version": tree.get("version"),
-            "language": tree.get("language"),
-            "main_category_count": tree.get("main_category_count", len(tree.get("categories", []))),
-            "subcategory_count": tree.get("subcategory_count"),
+            "name": intel.get("name", "Buzzard Master Kfz"),
+            "version": intel.get("version"),
+            "main_category_count": bridge.get("main_category_count"),
+            "subcategory_count": bridge.get("subcategory_count"),
+            "l3_count": bridge.get("l3_count", intel.get("l3_count")),
+            "competitor_count": intel.get("competitor_count", len(bridge.get("competitors", []))),
             "shop_automotive_root_id": bridge.get("shop_automotive_root_id"),
             "url_prefix": bridge.get("url_prefix"),
             "bridge_version": bridge.get("version"),
+            "intelligence_os": intel.get("version"),
         }
 
     def kfz_mains(self) -> list[dict]:

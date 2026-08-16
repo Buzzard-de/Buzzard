@@ -12,4 +12,6 @@ def test_de_ecom_intel_scan_structure():
     assert result["category_intelligence_43"]["prioritaets_kategorien_gescannt"] == 6
     assert len(result["preisbenchmark"]["products"]) == len(PUBLIC_PRICE_BENCHMARKS)
     assert "live_connectors" in result
-    assert any("eBay" in h or "öffentlichen" in h for h in result["hinweise"])
+    assert "preis_quelle" in result
+    assert result["preis_quelle"]["modus"] in {"ebay_live", "oeffentliche_benchmarks"}
+    assert len(result["hinweise"]) >= 2

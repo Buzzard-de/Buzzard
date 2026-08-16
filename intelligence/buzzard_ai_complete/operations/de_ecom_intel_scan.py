@@ -105,12 +105,13 @@ PRIORITY_CATEGORIES = [
     },
 ]
 
-# Öffentliche Preis-Benchmarks (nur öffentlich zitierte Marktbeispiele, keine Login-Daten)
+# Öffentliche Preis-Benchmarks mit optionaler eBay-Live-Suche
 PUBLIC_PRICE_BENCHMARKS = [
     {
         "product_key": "motoroel-5w30-5l",
         "title": "Motoröl 5W-30 5L (Marktbenchmark)",
         "category": "cat-05",
+        "ebay_query": "Motoröl 5W-30 5 Liter",
         "offers": [
             ("amazon_de", "Amazon.de", 34.99, 0.0),
             ("autodoc", "AutoDoc", 29.95, 4.99),
@@ -123,6 +124,7 @@ PUBLIC_PRICE_BENCHMARKS = [
         "product_key": "allzweckreiniger-1l",
         "title": "Allzweckreiniger 1L",
         "category": "cat-03",
+        "ebay_query": "Allzweckreiniger 1 Liter",
         "offers": [
             ("dm", "dm.de", 1.25, 4.95),
             ("rossmann", "rossmann.de", 1.19, 4.95),
@@ -135,6 +137,7 @@ PUBLIC_PRICE_BENCHMARKS = [
         "product_key": "gartenschlauch-20m",
         "title": "Gartenschlauch 20m",
         "category": "cat-07",
+        "ebay_query": "Gartenschlauch 20m",
         "offers": [
             ("obi", "OBI", 24.99, 5.99),
             ("hornbach", "Hornbach", 22.99, 4.99),
@@ -148,6 +151,7 @@ PUBLIC_PRICE_BENCHMARKS = [
         "product_key": "akku-bohrmaschine-set",
         "title": "Akku-Bohrmaschinen-Set 18V",
         "category": "cat-09",
+        "ebay_query": "Akku Bohrmaschine Set 18V",
         "offers": [
             ("hornbach", "Hornbach", 89.99, 4.99),
             ("bauhaus", "Bauhaus", 94.99, 5.99),
@@ -160,6 +164,7 @@ PUBLIC_PRICE_BENCHMARKS = [
         "product_key": "usb-c-kabel-2m",
         "title": "USB-C Ladekabel 2m",
         "category": "cat-12",
+        "ebay_query": "USB C Ladekabel 2m",
         "offers": [
             ("mediamarkt", "MediaMarkt", 14.99, 4.99),
             ("amazon_de", "Amazon.de", 8.99, 0.0),
@@ -172,6 +177,7 @@ PUBLIC_PRICE_BENCHMARKS = [
         "product_key": "luftreiniger-hepa",
         "title": "Luftreiniger HEPA (Einstiegsmodell)",
         "category": "cat-13",
+        "ebay_query": "Luftreiniger HEPA",
         "offers": [
             ("mediamarkt", "MediaMarkt", 129.00, 0.0),
             ("amazon_de", "Amazon.de", 99.00, 0.0),
@@ -229,7 +235,107 @@ def _fetch_public_sources() -> list[dict[str, Any]]:
     return rows
 
 
-def _run_category_scans() -> list[dict[str, Any]]:
+def _static_offers_for_benchmark(bench: dict[str, Any], observed_at: str) -> list[SellerOffer]:
+    rows = []
+    for seller_id, seller_name, price, shipping in bench["offers"]:
+        rows.append(
+            SellerOffer(
+                seller_id=seller_id,
+                seller_name=seller_name,
+                product_key=bench["product_key"],
+                title=bench["title"],
+                price=price,
+                shipping_price=shipping,
+                observed_at=observed_at,
+                evidence=[
+                    SourceEvidence(
+                        source_id=bench["product_key"],
+                        url=bench.get("source", ""),
+                        observed_at=observed_at,
+                        claim=bench["title"],
+                        confidence=0.7,
+                    )
+                ],
+            )
+        )
+    return rows
+
+
+def _fetch_ebay_live_offers(observed_at: str) -> tuple[list[SellerOffer], list[dict[str, Any]]]:
+    from live_connectors.ebay import EbayClient
+    from live_connectors.ebay_parser import search_to_seller_offers
+
+    client = EbayClient()
+    if not client.configured():
+        return [], []
+
+    live_rows: list[SellerOffer] = []
+    meta: list[dict[str, Any]] = []
+    for bench in PUBLIC_PRICE_BENCHMARKS:
+        query = bench.get("ebay_query")
+        if not query:
+            continue
+        try:
+            offers, raw = search_to_seller_offers(
+                client,
+                query,
+                bench["product_key"],
+                bench["title"],
+                observed_at,
+                limit=5,
+            )
+            live_rows.extend(offers)
+            meta.append(
+                {
+                    "product_key": bench["product_key"],
+                    "query": query,
+                    "angebote": len(offers),
+                    "total": (raw.get("total") or len(offers)),
+                    "quelle": "eBay Browse API (EBAY_DE)",
+                    "vertrauen": "Hoch",
+                }
+            )
+        except Exception as exc:  # noqa: BLE001
+            meta.append(
+                {
+                    "product_key": bench["product_key"],
+                    "query": query,
+                    "status": "FEHLER",
+                    "fehler": str(exc),
+                    "quelle": "eBay Browse API (EBAY_DE)",
+                }
+            )
+    return live_rows, meta
+
+
+def _collect_all_offers(observed_at: str) -> tuple[list[SellerOffer], dict[str, Any]]:
+    static_offers: list[SellerOffer] = []
+    for bench in PUBLIC_PRICE_BENCHMARKS:
+        static_offers.extend(_static_offers_for_benchmark(bench, observed_at))
+
+    ebay_offers, ebay_meta = _fetch_ebay_live_offers(observed_at)
+    if ebay_offers:
+        return ebay_offers, {
+            "modus": "ebay_live",
+            "angebote": len(ebay_offers),
+            "produkte": ebay_meta,
+            "fallback_benchmarks": False,
+        }
+
+    return static_offers, {
+        "modus": "oeffentliche_benchmarks",
+        "angebote": len(static_offers),
+        "produkte": len(PUBLIC_PRICE_BENCHMARKS),
+        "fallback_benchmarks": True,
+    }
+
+
+def _offers_for_category(all_offers: list[SellerOffer], buzzard_id: str) -> list[SellerOffer]:
+    keys = {b["product_key"] for b in PUBLIC_PRICE_BENCHMARKS if b["category"] == buzzard_id}
+    return [offer for offer in all_offers if offer.product_key in keys]
+
+
+def _run_category_scans(all_offers: list[SellerOffer]) -> list[dict[str, Any]]:
     agents = build_43_agents(CategoryIntelligence43Service().category_definitions())
     reports = []
     observed_at = _now()
@@ -246,31 +352,11 @@ def _run_category_scans() -> list[dict[str, Any]]:
                 CategoryNode(node_id, name, 2, cat["buzzard_id"], source="wettbewerber")
             )
 
-        category_offers = []
-        for bench in PUBLIC_PRICE_BENCHMARKS:
-            if bench["category"] != cat["buzzard_id"]:
-                continue
-            for seller_id, seller_name, price, shipping in bench["offers"]:
-                category_offers.append(
-                    SellerOffer(
-                        seller_id=seller_id,
-                        seller_name=seller_name,
-                        product_key=bench["product_key"],
-                        title=bench["title"],
-                        price=price,
-                        shipping_price=shipping,
-                        observed_at=observed_at,
-                        evidence=[
-                            SourceEvidence(
-                                source_id=bench["product_key"],
-                                url=bench.get("source", ""),
-                                observed_at=observed_at,
-                                claim=bench["title"],
-                                confidence=0.7,
-                            )
-                        ],
-                    )
-                )
+        category_offers = _offers_for_category(all_offers, cat["buzzard_id"])
+        if not category_offers:
+            for bench in PUBLIC_PRICE_BENCHMARKS:
+                if bench["category"] == cat["buzzard_id"]:
+                    category_offers.extend(_static_offers_for_benchmark(bench, observed_at))
 
         report = agent.analyze(category_offers, buzzard_taxonomy, observed_taxonomy)
         pricing = PriceIntelligenceEngine().seller_comparison(category_offers)
@@ -313,32 +399,26 @@ def run_de_ecom_intel_scan() -> dict[str, Any]:
 
     live = _live_health()
     sources = _fetch_public_sources()
-    category_reports = _run_category_scans()
+    observed_at = _now()
+    all_offers, preis_quelle = _collect_all_offers(observed_at)
+    category_reports = _run_category_scans(all_offers)
 
     price_engine = PriceIntelligenceEngine()
-    all_offers = []
-    observed_at = _now()
-    for bench in PUBLIC_PRICE_BENCHMARKS:
-        for seller_id, seller_name, price, shipping in bench["offers"]:
-            all_offers.append(
-                SellerOffer(
-                    seller_id=seller_id,
-                    seller_name=seller_name,
-                    product_key=bench["product_key"],
-                    title=bench["title"],
-                    price=price,
-                    shipping_price=shipping,
-                    observed_at=observed_at,
-                )
-            )
-
     price_comparison = price_engine.seller_comparison(all_offers)
 
     hinweise = []
     if live.get("eBay") == "NOT_CONFIGURED":
         hinweise.append(
-            "eBay Live-API nicht konfiguriert (EBAY_CLIENT_ID/SECRET fehlen). "
-            "SKU-Preise basieren auf öffentlichen Marktbenchmarks und live-fetch."
+            "eBay Live-API nicht konfiguriert. Trage EBAY_CLIENT_ID und EBAY_CLIENT_SECRET "
+            "in intelligence/.env ein, dann: python main.py live-ebay --query \"5W-30 Motoröl\""
+        )
+    elif preis_quelle.get("modus") == "ebay_live":
+        hinweise.append(
+            f"eBay Live-Preise aktiv: {preis_quelle.get('angebote', 0)} Angebote aus EBAY_DE."
+        )
+    else:
+        hinweise.append(
+            "eBay konfiguriert, aber Live-Suche lieferte keine Angebote — Fallback auf öffentliche Benchmarks."
         )
     hinweise.append(
         "Nur öffentliche Quellen verwendet. Keine Login-, CAPTCHA- oder Bypass-Versuche."
@@ -359,6 +439,7 @@ def run_de_ecom_intel_scan() -> dict[str, Any]:
             "prioritaets_kategorien_gescannt": len(category_reports),
             "berichte": category_reports,
         },
+        "preis_quelle": preis_quelle,
         "preisbenchmark": price_comparison,
         "hinweise": hinweise,
     }

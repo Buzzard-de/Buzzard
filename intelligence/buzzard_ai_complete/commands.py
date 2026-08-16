@@ -1074,6 +1074,51 @@ def complete_category_intelligence_43_docs():
     return _read_doc("43_CATEGORY_INTELLIGENCE_MAXIMAL.md")
 
 
+def complete_category_intelligence_47_health():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    return json.dumps(CategoryIntelligence47Service().health(), ensure_ascii=False, indent=2)
+
+
+def complete_category_intelligence_47_summary():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    service = CategoryIntelligence47Service()
+    return json.dumps(
+        {
+            "health": service.health(),
+            "summary": service.summary(),
+            "intelligence_os": service.intelligence_os_summary(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_category_intelligence_47_demo():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    return json.dumps(CategoryIntelligence47Service().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_category_intelligence_47_docs():
+    return _read_doc("47_CATEGORY_INTELLIGENCE_OS.md")
+
+
+def complete_sync_category_intelligence_47():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "sync_category_intelligence_47.py"
+    )
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_de_ecom_intel_scan():
     from buzzard_ai_complete.operations.de_ecom_intel_scan import run_de_ecom_intel_scan
 

@@ -62,6 +62,27 @@
         "shop_bridge": "data/taxonomy/kfz_shop_bridge.json",
         "shop_root": "cat-05"
       }
+    },
+    "non_kfz_47": {
+      "label": "47 Non-Kfz Categories",
+      "public_sources": [
+        {
+          "id": "category_intelligence_47_manifest",
+          "type": "category_intelligence_os",
+          "path": "data/taxonomy/buzzard_47_category_intelligence_os.json"
+        },
+        {
+          "id": "category_intelligence_47_console",
+          "type": "category_intelligence_console",
+          "path": "data/taxonomy/buzzard_47_category_intelligence_os.html"
+        }
+      ],
+      "competitor_sources": [],
+      "taxonomy_sink": {
+        "manifest": "data/taxonomy/buzzard_47_category_intelligence_os.json",
+        "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
+        "sync_command": "complete-sync-category-intelligence-47"
+      }
     }
   },
   "rules": {

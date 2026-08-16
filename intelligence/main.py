@@ -1652,6 +1652,26 @@ def main():
         help="Show 43 category intelligence documentation",
     )
     sub.add_parser(
+        "complete-category-intelligence-47-health",
+        help="Show 47 category intelligence OS health",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-47-summary",
+        help="Show 47 category intelligence OS summary",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-47-demo",
+        help="Run 47 category intelligence OS demo",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-47-docs",
+        help="Show 47 category intelligence OS documentation",
+    )
+    sub.add_parser(
+        "complete-sync-category-intelligence-47",
+        help="Sync Category Intelligence 47 from Master Taxonomy 48 (excl. Automotive)",
+    )
+    sub.add_parser(
         "complete-de-ecom-intel-scan",
         help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
     )
@@ -5687,6 +5707,26 @@ def main():
         from buzzard_ai_complete.commands import complete_category_intelligence_43_docs
 
         print(complete_category_intelligence_43_docs())
+    elif args.cmd == "complete-category-intelligence-47-health":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_health
+
+        print(complete_category_intelligence_47_health())
+    elif args.cmd == "complete-category-intelligence-47-summary":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_summary
+
+        print(complete_category_intelligence_47_summary())
+    elif args.cmd == "complete-category-intelligence-47-demo":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_demo
+
+        print(complete_category_intelligence_47_demo())
+    elif args.cmd == "complete-category-intelligence-47-docs":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_docs
+
+        print(complete_category_intelligence_47_docs())
+    elif args.cmd == "complete-sync-category-intelligence-47":
+        from buzzard_ai_complete.commands import complete_sync_category_intelligence_47
+
+        print(complete_sync_category_intelligence_47())
     elif args.cmd == "complete-de-ecom-intel-scan":
         from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
 

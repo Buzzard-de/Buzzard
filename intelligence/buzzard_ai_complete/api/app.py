@@ -44,6 +44,9 @@ from buzzard_ai_complete.ai_council_19_customs_bureaucracy.api.routes import rou
 from buzzard_ai_complete.category_intelligence_43_maximal.api.routes import (
     router as category_intel_43_router,
 )
+from buzzard_ai_complete.category_intelligence_47_maximal.api.routes import (
+    router as category_intel_47_router,
+)
 from buzzard_ai_complete.social_intelligence_ai_maximal.api.routes import (
     router as social_intel_router,
 )
@@ -145,6 +148,8 @@ if FastAPI:
         app.include_router(council_19_router)
     if category_intel_43_router is not None:
         app.include_router(category_intel_43_router)
+    if category_intel_47_router is not None:
+        app.include_router(category_intel_47_router)
     if social_intel_router is not None:
         app.include_router(social_intel_router)
     if automotive_taxonomy_router is not None:

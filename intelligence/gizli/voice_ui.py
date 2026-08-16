@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Buzzard Intelligence API (gizli) — start with: python app.py"""
+"""Buzzard Intelligence Voice UI (gizli) — http://127.0.0.1:8787
+
+Run: python voice_ui.py
+"""
 
 from __future__ import annotations
 
@@ -13,18 +16,11 @@ if str(INTELLIGENCE_ROOT) not in sys.path:
 
 
 def main() -> None:
-    import uvicorn
+    from voice.server import main as voice_main
 
     host = os.environ.get("HOST", "127.0.0.1")
-    port = int(os.environ.get("PORT", "8000"))
-    reload = os.environ.get("RELOAD", "0") == "1"
-
-    uvicorn.run(
-        "buzzard_ai_complete.api.app:app",
-        host=host,
-        port=port,
-        reload=reload,
-    )
+    port = int(os.environ.get("PORT", "8787"))
+    voice_main(host=host, port=port)
 
 
 if __name__ == "__main__":

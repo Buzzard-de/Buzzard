@@ -1,31 +1,9 @@
 #!/usr/bin/env python3
-"""Buzzard Intelligence API (gizli) — start with: python app.py"""
+"""Buzzard gizli (intelligence alias) — delegates to project root gizli/app.py"""
 
 from __future__ import annotations
 
-import os
-import sys
+import runpy
 from pathlib import Path
 
-INTELLIGENCE_ROOT = Path(__file__).resolve().parents[1]
-if str(INTELLIGENCE_ROOT) not in sys.path:
-    sys.path.insert(0, str(INTELLIGENCE_ROOT))
-
-
-def main() -> None:
-    import uvicorn
-
-    host = os.environ.get("HOST", "127.0.0.1")
-    port = int(os.environ.get("PORT", "8000"))
-    reload = os.environ.get("RELOAD", "0") == "1"
-
-    uvicorn.run(
-        "buzzard_ai_complete.api.app:app",
-        host=host,
-        port=port,
-        reload=reload,
-    )
-
-
-if __name__ == "__main__":
-    main()
+runpy.run_path(str(Path(__file__).resolve().parents[2] / "gizli" / "app.py"), run_name="__main__")

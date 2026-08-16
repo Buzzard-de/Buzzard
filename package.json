@@ -23,7 +23,10 @@
     "db:backup": "node scripts/db-backup.mjs",
     "search:sync": "node scripts/sync-search-index.mjs",
     "render:preflight": "node scripts/render-preflight.mjs",
-    "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001"
+    "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
+    "gizli": "python gizli/app.py",
+    "gizli:voice": "python gizli/voice_ui.py",
+    "gizli:start": "python gizli/start.py"
   },
   "dependencies": {
     "next": "^15.1.0",

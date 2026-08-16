@@ -1,0 +1,1 @@
+from buzzard_ai_complete.smart_menu_48_maximal.service import SmartMenu48Service

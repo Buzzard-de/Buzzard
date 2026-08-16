@@ -1,0 +1,17 @@
+{
+  "name": "BUZZARD_SMART_MEGA_MENU_48",
+  "version": "48.0.0",
+  "schema": "buzzard.smart-menu.v1",
+  "main_categories": 48,
+  "ui_assets": {
+    "demo_html": "ui/index.html",
+    "react_component": "ui/BuzzardCategoryMainColumn.jsx"
+  },
+  "rules": {
+    "data_driven_ui": true,
+    "merchandising_signals": "demo",
+    "live_product_feed_required": true
+  },
+  "live_activation": false,
+  "BUZZARD_SALES_ENABLED": 0
+}

@@ -1762,6 +1762,13 @@ def main():
         help="Show main column 48-category engine documentation",
     )
 
+    sub.add_parser("complete-smart-menu-48-health", help="Show smart mega menu 48-category health")
+    sub.add_parser("complete-smart-menu-48-demo", help="Run smart mega menu 48-category demo")
+    sub.add_parser(
+        "complete-smart-menu-48-docs",
+        help="Show smart mega menu 48-category documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5776,6 +5783,18 @@ def main():
         from buzzard_ai_complete.commands import complete_main_column_48_docs
 
         print(complete_main_column_48_docs())
+    elif args.cmd == "complete-smart-menu-48-health":
+        from buzzard_ai_complete.commands import complete_smart_menu_48_health
+
+        print(complete_smart_menu_48_health())
+    elif args.cmd == "complete-smart-menu-48-demo":
+        from buzzard_ai_complete.commands import complete_smart_menu_48_demo
+
+        print(complete_smart_menu_48_demo())
+    elif args.cmd == "complete-smart-menu-48-docs":
+        from buzzard_ai_complete.commands import complete_smart_menu_48_docs
+
+        print(complete_smart_menu_48_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

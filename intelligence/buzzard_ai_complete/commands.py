@@ -1207,6 +1207,16 @@ def complete_build_category_intelligence_47_final_max():
     return result.stdout.strip()
 
 
+def complete_sync_turkish_48_main_categories():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "sync_turkish_48_main_categories.py"
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_category_intelligence_47_final_manifest():
     from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
 

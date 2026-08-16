@@ -213,6 +213,16 @@ def test_service_final_max_single_file():
     assert "orchestration" in summary or summary.get("html_exists") is not None
 
 
+def test_turkish_48_main_categories_config():
+    service = CategoryIntelligence47Service()
+    categories = service.category_definitions()
+    assert len(categories) == 47
+    assert categories[0]["code"] == "bz.02"
+    assert categories[0]["name"] == "Bahçe & Bahçecilik"
+    assert categories[-1]["code"] == "bz.48"
+    assert categories[-1]["name"] == "Genel Ürünler & Marketplace"
+
+
 def test_final_manifest():
     service = CategoryIntelligence47Service()
     manifest = service.load_final_manifest()

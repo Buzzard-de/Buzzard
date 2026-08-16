@@ -1,29 +1,14 @@
 import { NextResponse } from "next/server";
 import {
   getKfzCompetitors,
-  getKfzMainById,
   getKfzMains,
   kfzIntelligence,
   kfzShopBridge,
 } from "@/lib/categories/kfzTree";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const mainId = searchParams.get("main_id");
+export const dynamic = "force-static";
 
-  if (mainId) {
-    const main = getKfzMainById(mainId);
-    if (!main) {
-      return NextResponse.json({ error: "not_found", main_id: mainId }, { status: 404 });
-    }
-    const coverage = kfzIntelligence.coverage[main.kfz_id] ?? main.competitor_coverage ?? {};
-    return NextResponse.json({
-      ...main,
-      coverage,
-      competitors: getKfzCompetitors(),
-    });
-  }
-
+export async function GET() {
   return NextResponse.json({
     name: kfzIntelligence.name,
     version: kfzIntelligence.version,
@@ -34,6 +19,7 @@ export async function GET(request: Request) {
     subcategory_count: kfzShopBridge.subcategory_count,
     l3_count: kfzShopBridge.l3_count,
     competitors: getKfzCompetitors(),
+    coverage: kfzIntelligence.coverage,
     mains: getKfzMains(),
   });
 }

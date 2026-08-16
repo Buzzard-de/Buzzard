@@ -1,18 +1,9 @@
 import { NextResponse } from "next/server";
 import { getKfzMains, kfzShopBridge } from "@/lib/categories/kfzTree";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const mainId = searchParams.get("main_id");
+export const dynamic = "force-static";
 
-  if (mainId) {
-    const main = getKfzMains().find((item) => item.kfz_id === mainId.padStart(2, "0"));
-    if (!main) {
-      return NextResponse.json({ error: "not_found", main_id: mainId }, { status: 404 });
-    }
-    return NextResponse.json(main);
-  }
-
+export async function GET() {
   return NextResponse.json({
     version: kfzShopBridge.version,
     shop_automotive_root_id: kfzShopBridge.shop_automotive_root_id,

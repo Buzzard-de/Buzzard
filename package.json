@@ -24,7 +24,8 @@
     "search:sync": "node scripts/sync-search-index.mjs",
     "render:preflight": "node scripts/render-preflight.mjs",
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
-    "gizli": "python gizli/app.py",
+    "gizli": "python gizli/app.py all",
+    "gizli:api": "python gizli/app.py api",
     "gizli:voice": "python gizli/app.py voice",
     "gizli:start": "python gizli/app.py all"
   },

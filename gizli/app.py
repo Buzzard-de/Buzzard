@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import os
 import sys
 import threading
@@ -19,22 +18,14 @@ for path in (INTELLIGENCE_ROOT, GIZLI_DIR):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-
-def _load_main(script_name: str):
-    path = GIZLI_DIR / script_name
-    spec = importlib.util.spec_from_file_location(f"buzzard_gizli_{script_name}", path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"Cannot load {path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.main
+from urls import GIZLI_API_PORT, GIZLI_API_URL, GIZLI_HOST, GIZLI_VOICE_PORT, GIZLI_VOICE_URL
 
 
 def run_api() -> None:
     import uvicorn
 
-    host = os.environ.get("HOST", "127.0.0.1")
-    port = int(os.environ.get("PORT", "8000"))
+    host = os.environ.get("HOST", GIZLI_HOST)
+    port = int(os.environ.get("PORT", str(GIZLI_API_PORT)))
     reload = os.environ.get("RELOAD", "0") == "1"
     print(f"Buzzard gizli API — http://{host}:{port}")
     uvicorn.run(
@@ -46,9 +37,9 @@ def run_api() -> None:
 
 
 def run_voice() -> None:
-    host = os.environ.get("HOST", "127.0.0.1")
-    port = int(os.environ.get("VOICE_PORT", os.environ.get("PORT", "8787")))
-    print(f"Buzzard gizli Voice — http://{host}:{port}")
+    host = os.environ.get("HOST", GIZLI_HOST)
+    port = int(os.environ.get("VOICE_PORT", os.environ.get("PORT", str(GIZLI_VOICE_PORT))))
+    print(f"Buzzard gizli Voice — {GIZLI_VOICE_URL}")
     from voice_server import main as voice_main
 
     voice_main(host=host, port=port)
@@ -56,16 +47,16 @@ def run_voice() -> None:
 
 def run_all() -> None:
     print("Buzzard gizli")
-    print("  API   → http://127.0.0.1:8000")
-    print("  Voice → http://127.0.0.1:8787")
+    print(f"  API   → {GIZLI_API_URL}")
+    print(f"  Voice → {GIZLI_VOICE_URL}")
 
     api_env = os.environ.copy()
-    api_env.setdefault("HOST", "127.0.0.1")
-    api_env["PORT"] = "8000"
+    api_env.setdefault("HOST", GIZLI_HOST)
+    api_env["PORT"] = str(GIZLI_API_PORT)
 
     voice_env = os.environ.copy()
-    voice_env.setdefault("HOST", "127.0.0.1")
-    voice_env["PORT"] = "8787"
+    voice_env.setdefault("HOST", GIZLI_HOST)
+    voice_env["PORT"] = str(GIZLI_VOICE_PORT)
 
     def _api_thread() -> None:
         os.environ.update(api_env)
@@ -94,9 +85,9 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument(
         "mode",
         nargs="?",
-        default="api",
+        default="all",
         choices=("api", "voice", "all"),
-        help="api → :8000, voice → :8787, all → both",
+        help=f"api → :{GIZLI_API_PORT}, voice → :{GIZLI_VOICE_PORT}, all → both (default)",
     )
     args = parser.parse_args(argv)
 

@@ -1,9 +1,13 @@
 try:
+    from contextlib import asynccontextmanager
+
     from fastapi import FastAPI, Header, HTTPException
     from pydantic import BaseModel
 except ImportError:
     FastAPI = None
+    asynccontextmanager = None
 
+from buzzard_ai_complete.api.bey_routes import router as bey_router
 from buzzard_ai_complete.api.service import BuzzardService
 from buzzard_ai_complete.commerce.api.routes import router as commerce_router
 from buzzard_ai_complete.config.settings import API_TOKEN, APP_VERSION
@@ -76,7 +80,15 @@ from buzzard_ai_complete.supplier_intelligence_ai_maximal.api.routes import (
 )
 
 if FastAPI:
-    app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
+
+    @asynccontextmanager
+    async def lifespan(_app):
+        from buzzard_ai_complete.runtime.bey_runtime import start_bey_agents
+
+        start_bey_agents()
+        yield
+
+    app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION, lifespan=lifespan)
     service = BuzzardService()
     if commerce_router is not None:
         app.include_router(commerce_router)
@@ -148,6 +160,8 @@ if FastAPI:
         app.include_router(category_audit_router)
     if supplier_intelligence_router is not None:
         app.include_router(supplier_intelligence_router)
+    if bey_router is not None:
+        app.include_router(bey_router)
 
     class TaskRequest(BaseModel):
         task_id: str

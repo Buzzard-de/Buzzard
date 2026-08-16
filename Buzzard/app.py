@@ -21,13 +21,23 @@ for path in (INTELLIGENCE_ROOT, BUZZARD_DIR):
 from urls import BUZZARD_API_PORT, BUZZARD_API_URL, BUZZARD_HOST, BUZZARD_VOICE_PORT, BUZZARD_VOICE_URL
 
 
+def _start_bey_agents() -> None:
+    from buzzard_ai_complete.runtime.bey_runtime import start_bey_agents
+
+    status = start_bey_agents()
+    names = ", ".join(agent["name"] for agent in status["agents"])
+    print(f"Bey agents started — {names}")
+
+
 def run_api() -> None:
     import uvicorn
 
     host = os.environ.get("HOST", BUZZARD_HOST)
     port = int(os.environ.get("PORT", str(BUZZARD_API_PORT)))
     reload = os.environ.get("RELOAD", "0") == "1"
+    _start_bey_agents()
     print(f"Buzzard API — http://{host}:{port}")
+    print(f"  Bey status → http://{host}:{port}/bey/status")
     uvicorn.run(
         "buzzard_ai_complete.api.app:app",
         host=host,
@@ -49,6 +59,8 @@ def run_all() -> None:
     print("Buzzard")
     print(f"  API   → {BUZZARD_API_URL}")
     print(f"  Voice → {BUZZARD_VOICE_URL}")
+    _start_bey_agents()
+    print(f"  Bey   → {BUZZARD_API_URL}/bey/status")
 
     api_env = os.environ.copy()
     api_env.setdefault("HOST", BUZZARD_HOST)

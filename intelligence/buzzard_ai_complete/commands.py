@@ -1392,6 +1392,22 @@ def complete_main_column_48_docs():
     return _read_doc("MAIN_COLUMN_48_MAXIMAL.md")
 
 
+def complete_smart_menu_48_health():
+    from buzzard_ai_complete.smart_menu_48_maximal.service import SmartMenu48Service
+
+    return json.dumps(SmartMenu48Service().health(), ensure_ascii=False, indent=2)
+
+
+def complete_smart_menu_48_demo():
+    from buzzard_ai_complete.smart_menu_48_maximal.service import SmartMenu48Service
+
+    return json.dumps(SmartMenu48Service().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_smart_menu_48_docs():
+    return _read_doc("SMART_MENU_48_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

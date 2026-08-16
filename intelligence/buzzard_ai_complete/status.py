@@ -100,6 +100,8 @@ def complete_status():
         "     complete-master-taxonomy-48-counts, complete-master-taxonomy-48-docs",
         "     complete-main-column-48-health, complete-main-column-48-demo,",
         "     complete-main-column-48-docs",
+        "     complete-smart-menu-48-health, complete-smart-menu-48-demo,",
+        "     complete-smart-menu-48-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

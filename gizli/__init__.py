@@ -1,4 +1,4 @@
-"""Buzzard gizli — `python app.py` starts API (:8000) + Voice (:8787)."""
+"""Buzzard gizli — `python app.py` + Voice http://127.0.0.1:8787 (`python voice.py`)."""
 
 from gizli.urls import GIZLI_API_URL, GIZLI_VOICE_URL
 

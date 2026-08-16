@@ -1307,6 +1307,18 @@ def complete_master_business_os_maximum_manifest():
     )
 
 
+def complete_master_business_os_maximum_single_file():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        service.master_business_os_maximum_single_file_summary(),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
 def complete_sync_kfz_category_tree():
     from pathlib import Path
     import subprocess

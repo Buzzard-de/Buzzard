@@ -187,10 +187,30 @@ class AutomotiveTaxonomyService:
             "demo_finding_count": len(manifest.get("demo_findings", [])),
             "governance": manifest.get("governance", {}),
             "runtime_defaults": manifest.get("runtime_defaults", {}),
-            "console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+            "console_html": "/taxonomy/buzzard_master_business_os_maximum_single_file.html",
+            "intelligence_console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
             "manifest_path": "/taxonomy/buzzard_master_business_os_maximum_manifest.json",
             "intelligence_manifest_path": "/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
         }
+
+    def master_business_os_maximum_single_file_summary(self) -> dict:
+        try:
+            config = self.load_config()
+            path = self._repo_path(config["master_business_os_maximum_single_file_html_path"])
+            if not path.exists():
+                return {"status": "NOT_LOADED"}
+            manifest_summary = self.master_business_os_maximum_manifest_summary()
+            if manifest_summary.get("status") == "NOT_LOADED":
+                return {"status": "NOT_LOADED"}
+            return {
+                **manifest_summary,
+                "console": "business_maximum_single_file",
+                "console_html": "/taxonomy/buzzard_master_business_os_maximum_single_file.html",
+                "intelligence_console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+                "console_all_in_one_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+            }
+        except (FileNotFoundError, KeyError):
+            return {"status": "NOT_LOADED"}
 
     def kfz_intelligence_summary(self) -> dict:
         try:
@@ -259,6 +279,7 @@ class AutomotiveTaxonomyService:
             "bridge_version": bridge.get("version"),
             "intelligence_os": intel.get("version"),
             "console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+            "business_console_html": "/taxonomy/buzzard_master_business_os_maximum_single_file.html",
             "console_all_in_one_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
             "console_kfz_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
             "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",

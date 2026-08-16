@@ -139,6 +139,10 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
           </p>
           <p>
+            <a href="/taxonomy/buzzard_master_business_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
+              Master Business OS öffnen (PIM, Commerce, Finance)
+            </a>
+            {" · "}
             <a href="/taxonomy/buzzard_intelligence_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
               Intelligence OS Maximum öffnen (43 Agents, Ops, Kurmay)
             </a>

@@ -26,6 +26,11 @@
           "path": "data/taxonomy/buzzard_master_business_os_maximum_manifest.json"
         },
         {
+          "id": "master_business_os_maximum_single_file_html",
+          "type": "business_os_console",
+          "path": "data/taxonomy/buzzard_master_business_os_maximum_single_file.html"
+        },
+        {
           "id": "kfz_shop_bridge",
           "type": "shop_bridge",
           "path": "data/taxonomy/kfz_shop_bridge.json"
@@ -46,6 +51,7 @@
         "intelligence_os_all_in_one": "data/taxonomy/buzzard_intelligence_os_all_in_one.json",
         "intelligence_os_maximum_manifest": "data/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
         "master_business_os_maximum_manifest": "data/taxonomy/buzzard_master_business_os_maximum_manifest.json",
+        "master_business_os_maximum_single_file_html": "data/taxonomy/buzzard_master_business_os_maximum_single_file.html",
         "intelligence_os_maximum_single_file_html": "data/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
         "shop_bridge": "data/taxonomy/kfz_shop_bridge.json",
         "shop_root": "cat-05"

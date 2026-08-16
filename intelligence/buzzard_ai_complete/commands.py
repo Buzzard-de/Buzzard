@@ -1074,6 +1074,12 @@ def complete_category_intelligence_43_docs():
     return _read_doc("43_CATEGORY_INTELLIGENCE_MAXIMAL.md")
 
 
+def complete_de_ecom_intel_scan():
+    from buzzard_ai_complete.operations.de_ecom_intel_scan import run_de_ecom_intel_scan
+
+    return json.dumps(run_de_ecom_intel_scan(), ensure_ascii=False, indent=2, default=str)
+
+
 def complete_social_intelligence_health():
     from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
 

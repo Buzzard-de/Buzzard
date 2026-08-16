@@ -1651,6 +1651,10 @@ def main():
         "complete-category-intelligence-43-docs",
         help="Show 43 category intelligence documentation",
     )
+    sub.add_parser(
+        "complete-de-ecom-intel-scan",
+        help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
+    )
 
     sub.add_parser("complete-social-intelligence-health", help="Show social intelligence AI health")
     sub.add_parser("complete-social-intelligence-platforms", help="List social platform adapters")
@@ -5622,6 +5626,10 @@ def main():
         from buzzard_ai_complete.commands import complete_category_intelligence_43_docs
 
         print(complete_category_intelligence_43_docs())
+    elif args.cmd == "complete-de-ecom-intel-scan":
+        from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
+
+        print(complete_de_ecom_intel_scan())
     elif args.cmd == "complete-social-intelligence-health":
         from buzzard_ai_complete.commands import complete_social_intelligence_health
 

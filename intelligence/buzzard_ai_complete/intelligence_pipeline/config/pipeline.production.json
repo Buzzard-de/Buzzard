@@ -80,6 +80,11 @@
           "id": "category_intelligence_47_final_100_single_file_html",
           "type": "category_intelligence_final_console",
           "path": "data/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html"
+        },
+        {
+          "id": "category_intelligence_47_max_final_single_file_html",
+          "type": "category_intelligence_max_final_console",
+          "path": "data/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html"
         }
       ],
       "competitor_sources": [],
@@ -87,6 +92,7 @@
         "manifest": "data/taxonomy/buzzard_47_category_intelligence_os.json",
         "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
         "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
+        "max_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
         "sync_command": "complete-sync-category-intelligence-47"
       }
     }

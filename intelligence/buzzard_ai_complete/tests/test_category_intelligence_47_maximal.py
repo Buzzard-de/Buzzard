@@ -96,6 +96,15 @@ def test_service_final_100_single_file():
     assert summary["finalization"]["status"] == "FINAL_SOFTWARE_SCOPE_LOCKED"
 
 
+def test_service_max_final_single_file():
+    service = CategoryIntelligence47Service()
+    summary = service.max_final_single_file_summary()
+
+    assert summary["console_html"] == "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html"
+    assert summary["html_exists"] is True
+    assert "modules" in summary["engine"]
+
+
 def test_service_demo_flow(tmp_path, monkeypatch):
     monkeypatch.setenv("BUZZARD_47_DB", str(tmp_path / "demo.db"))
     service = CategoryIntelligence47Service()

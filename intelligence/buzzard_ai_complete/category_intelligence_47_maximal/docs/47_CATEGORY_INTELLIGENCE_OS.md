@@ -25,8 +25,26 @@ Prefix: `/category-intelligence-47`
 
 ## Console
 
-- HTML: `/taxonomy/buzzard_47_category_intelligence_os.html`
+- Primary HTML: `/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html`
+- Legacy HTML: `/taxonomy/buzzard_47_category_intelligence_os.html`
+- Research matrix: `/taxonomy/buzzard_47_research_matrix_max.json`
 - Manifest: `/taxonomy/buzzard_47_category_intelligence_os.json`
+
+## Evidence orchestration (FINAL MAX)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/research-matrix` | GET | Load candidate research matrix JSON |
+| `/research-matrix/import` | POST | Bulk-import CANDIDATE competitors |
+| `/evidence` | POST | Add evidence packet (PENDING review) |
+| `/evidence/review` | POST | Approve or reject evidence |
+| `/evidence/{competitor_id}` | GET | List evidence for competitor |
+| `/competitor/{id}/verify` | POST | Verify competitor (requires APPROVED evidence) |
+| `/verification-dashboard` | GET | Candidate/verified/evidence counts |
+| `/score/{category_id}` | POST | Calculate competitor scores |
+| `/executive-report` | GET | Category rollup report |
+| `/export/competitors` | GET | CSV-ready competitor export |
+| `/export/taxonomy` | GET | CSV-ready taxonomy export |
 
 ## Sync
 

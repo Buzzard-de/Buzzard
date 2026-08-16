@@ -1,7 +1,17 @@
 import json
 from pathlib import Path
 
-from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.models import Category
+from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.evidence import (
+    CategoryIntelligence47EvidenceLayer,
+)
+from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.models import (
+    Category,
+    EvidenceIn,
+    ReviewIn,
+)
+from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.research import (
+    CategoryIntelligence47ResearchLayer,
+)
 from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.store import (
     CategoryIntelligence47Store,
 )
@@ -18,6 +28,11 @@ class CategoryIntelligence47Service:
         if db_path and not Path(db_path).is_absolute():
             db_path = REPO_ROOT / db_path
         self.store = CategoryIntelligence47Store(db_path)
+        matrix_path = config.get("research_matrix_json_path", "data/taxonomy/buzzard_47_research_matrix_max.json")
+        if matrix_path and not Path(matrix_path).is_absolute():
+            matrix_path = REPO_ROOT / matrix_path
+        self.research = CategoryIntelligence47ResearchLayer(self.store, Path(matrix_path))
+        self.evidence = CategoryIntelligence47EvidenceLayer(self.store)
 
     def _repo_path(self, relative: str) -> Path:
         return REPO_ROOT / relative
@@ -39,8 +54,9 @@ class CategoryIntelligence47Service:
             "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
             "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
             "max_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
-            "primary_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+            "primary_console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
             "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+            "final_max_console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
             "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
             "live_activation": False,
         }
@@ -131,6 +147,31 @@ class CategoryIntelligence47Service:
             "html_bytes": html_path.stat().st_size if html_path.is_file() else 0,
         }
 
+    def final_max_single_file_summary(self) -> dict:
+        config = self.load_config()
+        manifest = self.load_manifest()
+        html_path = self._repo_path(config["intelligence_os_final_max_single_file_html_path"])
+        primary = manifest.get(
+            "primary_console_html",
+            "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
+        )
+        return {
+            "name": manifest.get("engine", {}).get(
+                "name", "Buzzard 47 Category Intelligence OS — FINAL MAX"
+            ),
+            "version": manifest.get("version", "1.0-final-max"),
+            "category_count": config.get("category_count", 47),
+            "target_competitors": config.get("target_competitors", 940),
+            "console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
+            "primary_console_html": primary,
+            "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
+            "engine": manifest.get("engine", {}),
+            "finalization": manifest.get("finalization", {}),
+            "orchestration": manifest.get("orchestration", {}),
+            "html_exists": html_path.is_file(),
+            "html_bytes": html_path.stat().st_size if html_path.is_file() else 0,
+        }
+
     def max_single_final_single_file_summary(self) -> dict:
         config = self.load_config()
         manifest = self.load_manifest()
@@ -151,6 +192,39 @@ class CategoryIntelligence47Service:
             "html_exists": html_path.is_file(),
             "html_bytes": html_path.stat().st_size if html_path.is_file() else 0,
         }
+
+    def research_matrix(self) -> dict:
+        return self.research.load_matrix()
+
+    def import_research_matrix(self) -> dict:
+        return self.research.import_candidate_matrix()
+
+    def add_evidence(self, payload: EvidenceIn) -> dict:
+        return self.evidence.add_evidence(payload)
+
+    def review_evidence(self, payload: ReviewIn) -> dict:
+        return self.evidence.review_evidence(payload)
+
+    def verify_competitor(self, competitor_id: int, reviewer: str = "authorized-reviewer") -> dict:
+        return self.evidence.verify_competitor(competitor_id, reviewer)
+
+    def list_competitor_evidence(self, competitor_id: int) -> list[dict]:
+        return self.evidence.list_competitor_evidence(competitor_id)
+
+    def verification_dashboard(self) -> dict:
+        return self.evidence.verification_dashboard()
+
+    def score_category(self, category_id: int) -> dict:
+        return self.evidence.score_category(category_id)
+
+    def executive_report(self) -> dict:
+        return self.evidence.executive_report()
+
+    def export_competitors(self) -> dict:
+        return self.evidence.export_competitors()
+
+    def export_taxonomy(self) -> dict:
+        return self.evidence.export_taxonomy()
 
     def demo_flow(self) -> dict:
         seeded = self.seed_categories()

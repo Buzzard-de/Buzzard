@@ -137,7 +137,16 @@ class CategoryIntelligence47Store:
         connection.executescript(SCHEMA)
         self._migrate_legacy_features(connection)
         self._seed_settings(connection)
+        self._ensure_final_schema(connection)
         return connection
+
+    def _ensure_final_schema(self, connection: sqlite3.Connection) -> None:
+        from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.evidence import (
+            EVIDENCE_SCHEMA,
+        )
+
+        connection.executescript(EVIDENCE_SCHEMA)
+        connection.commit()
 
     def _migrate_legacy_features(self, connection: sqlite3.Connection) -> None:
         legacy = connection.execute(

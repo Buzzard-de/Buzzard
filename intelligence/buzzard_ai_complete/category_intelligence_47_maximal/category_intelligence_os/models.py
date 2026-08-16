@@ -57,3 +57,23 @@ class Finding(BaseModel):
     score: float = 0
     confidence: float = 0
     rationale: str = ""
+
+
+class EvidenceIn(BaseModel):
+    competitor_id: int
+    category_id: int
+    evidence_type: str
+    url: str
+    title: str = ""
+    source_name: str = ""
+    source_date: str = ""
+    claim: str = ""
+    locator: str = ""
+    confidence: float = 0
+
+
+class ReviewIn(BaseModel):
+    evidence_id: int
+    reviewer: str
+    approved: bool
+    note: str = ""

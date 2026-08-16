@@ -1,6 +1,6 @@
 {
   "name": "Buzzard 47 Category Intelligence OS",
-  "version": "1.0-max-single-final",
+  "version": "1.0-final-max",
   "scope": "47 non-Kfz categories",
   "target_categories": 47,
   "target_competitors": 940,
@@ -342,27 +342,33 @@
   "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
   "finalization": {
     "software_scope_percent": 100,
-    "status": "FINAL_SOFTWARE_SCOPE_LOCKED",
+    "status": "FINAL_MAX_ORCHESTRATION_LOCKED",
     "new_major_software_planned": false,
-    "future_work": "production deployment, live competitor ingestion, evidence verification at scale, monitoring",
+    "future_work": "live competitor ingestion, evidence verification at scale, monitoring, production credentials",
     "core_domains": [
       "category_registry",
       "competitor_matrix",
+      "research_matrix",
+      "evidence_registry",
+      "verification_dashboard",
+      "competitor_scoring",
+      "executive_report",
       "taxonomy_nodes",
-      "feature_intelligence",
       "gap_analysis",
-      "research_queue",
-      "audit",
-      "evidence"
+      "audit"
     ]
   },
   "max_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
   "engine": {
-    "name": "Buzzard 47 Category Intelligence OS — MAX SINGLE FINAL",
+    "name": "Buzzard 47 Category Intelligence OS — FINAL MAX",
     "modules": [
       "category_master_taxonomy",
       "competitor_registry",
       "evidence_tracking",
+      "research_matrix_ingestion",
+      "evidence_gated_verification",
+      "competitor_scoring",
+      "executive_reporting",
       "taxonomy_nodes",
       "gap_analysis",
       "feature_matrix",
@@ -375,6 +381,13 @@
     ],
     "verification_policy": "evidence_required"
   },
-  "primary_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
-  "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html"
+  "primary_console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
+  "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+  "final_max_console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
+  "research_matrix_json": "/taxonomy/buzzard_47_research_matrix_max.json",
+  "orchestration": {
+    "workflow": "discovery → evidence → normalization → scoring → gap findings → review → approval → audit",
+    "verification_rule": "candidate + no evidence = CANDIDATE; candidate + evidence = review; approval = VERIFIED",
+    "research_matrix_target": 940
+  }
 }

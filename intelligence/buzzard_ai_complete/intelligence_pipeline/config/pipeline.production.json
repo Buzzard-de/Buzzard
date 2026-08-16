@@ -40,6 +40,7 @@
         "kfz_intelligence_os": "data/taxonomy/buzzard_master_kfz_intelligence_os.json",
         "intelligence_os_all_in_one": "data/taxonomy/buzzard_intelligence_os_all_in_one.json",
         "intelligence_os_maximum_manifest": "data/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
+        "intelligence_os_maximum_single_file_html": "data/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
         "shop_bridge": "data/taxonomy/kfz_shop_bridge.json",
         "shop_root": "cat-05"
       }

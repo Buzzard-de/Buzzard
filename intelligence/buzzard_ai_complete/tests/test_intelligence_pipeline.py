@@ -37,7 +37,7 @@ def test_pipeline_run_kfz_automotive(mock_fetch):
     assert result["results"]["human_approval"]["required"] is True
     assert result["results"]["buzzard_master_taxonomy"]["shop_root_id"] == "cat-05"
     assert result["results"]["buzzard_master_taxonomy"]["console_html"] == (
-        "/taxonomy/buzzard_intelligence_os_all_in_one.html"
+        "/taxonomy/buzzard_intelligence_os_maximum_single_file.html"
     )
     assert result["results"]["buzzard_master_taxonomy"]["manifest_path"] == (
         "/taxonomy/buzzard_intelligence_os_maximum_manifest.json"

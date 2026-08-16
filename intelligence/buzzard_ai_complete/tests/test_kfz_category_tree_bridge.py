@@ -71,7 +71,18 @@ def test_intelligence_os_maximum_manifest_loaded():
     assert summary["agents_ready"] == 43
     assert summary["service_count"] == 24
     assert summary["schema_count"] == 3
+    assert summary["console_html"] == "/taxonomy/buzzard_intelligence_os_maximum_single_file.html"
     manifest = service.load_intelligence_os_maximum_manifest()
     assert manifest["agents"][0]["id"] == "CAT-01"
     assert "Source Registry" in manifest["services"]
     assert manifest["runtime_defaults"]["public_sources_only"] is True
+
+
+def test_intelligence_os_maximum_single_file_loaded():
+    service = AutomotiveTaxonomyService()
+    summary = service.intelligence_os_maximum_single_file_summary()
+    assert summary["console"] == "maximum_single_file"
+    assert summary["agent_count"] == 43
+    assert summary["service_count"] == 24
+    assert summary["console_html"] == "/taxonomy/buzzard_intelligence_os_maximum_single_file.html"
+    assert summary["console_all_in_one_html"] == "/taxonomy/buzzard_intelligence_os_all_in_one.html"

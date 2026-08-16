@@ -139,8 +139,12 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
           </p>
           <p>
+            <a href="/taxonomy/buzzard_intelligence_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
+              Intelligence OS Maximum öffnen (43 Agents, Ops, Kurmay)
+            </a>
+            {" · "}
             <a href="/taxonomy/buzzard_intelligence_os_all_in_one.html" target="_blank" rel="noopener noreferrer">
-              Intelligence OS All-in-One öffnen (12 Module, Kurmay, Pipeline)
+              All-in-One (12 Module)
             </a>
             {" · "}
             <a href="/taxonomy/buzzard_master_kfz_intelligence_os.html" target="_blank" rel="noopener noreferrer">

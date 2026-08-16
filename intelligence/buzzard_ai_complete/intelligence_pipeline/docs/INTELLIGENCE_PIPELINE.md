@@ -56,5 +56,6 @@ Uses `buzzard_master_kfz_intelligence_os.json` as taxonomy seed and
 `kfz_shop_bridge.json` as shop resolver for `cat-05` Automotive.
 
 **All-in-One Console:** `/taxonomy/buzzard_intelligence_os_all_in_one.html`  
+**Maximum Single-File Console:** `/taxonomy/buzzard_intelligence_os_maximum_single_file.html`  
 **All-in-One JSON:** `/taxonomy/buzzard_intelligence_os_all_in_one.json`  
 **Maximum Manifest:** `/taxonomy/buzzard_intelligence_os_maximum_manifest.json`

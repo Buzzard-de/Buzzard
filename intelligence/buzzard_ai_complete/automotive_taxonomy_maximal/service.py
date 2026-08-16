@@ -89,7 +89,8 @@ class AutomotiveTaxonomyService:
             "module_count": len(os_data.get("modules", [])),
             "demo_finding_count": len(os_data.get("demo_findings", [])),
             "governance": os_data.get("governance", {}),
-            "console_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+            "console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+            "console_all_in_one_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
             "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",
             "manifest_path": "/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
         }
@@ -126,10 +127,29 @@ class AutomotiveTaxonomyService:
             "demo_finding_count": len(manifest.get("demo_findings", [])),
             "governance": manifest.get("governance", {}),
             "runtime_defaults": manifest.get("runtime_defaults", {}),
-            "console_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+            "console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+            "console_all_in_one_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
             "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",
             "manifest_path": "/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
         }
+
+    def intelligence_os_maximum_single_file_summary(self) -> dict:
+        try:
+            config = self.load_config()
+            path = self._repo_path(config["intelligence_os_maximum_single_file_html_path"])
+            if not path.exists():
+                return {"status": "NOT_LOADED"}
+            manifest_summary = self.intelligence_os_maximum_manifest_summary()
+            if manifest_summary.get("status") == "NOT_LOADED":
+                return {"status": "NOT_LOADED"}
+            return {
+                **manifest_summary,
+                "console": "maximum_single_file",
+                "console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+                "console_all_in_one_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+            }
+        except (FileNotFoundError, KeyError):
+            return {"status": "NOT_LOADED"}
 
     def kfz_intelligence_summary(self) -> dict:
         try:
@@ -197,7 +217,8 @@ class AutomotiveTaxonomyService:
             "url_prefix": bridge.get("url_prefix"),
             "bridge_version": bridge.get("version"),
             "intelligence_os": intel.get("version"),
-            "console_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+            "console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+            "console_all_in_one_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
             "console_kfz_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
             "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",
             "manifest_path": "/taxonomy/buzzard_intelligence_os_maximum_manifest.json",

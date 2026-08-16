@@ -114,5 +114,9 @@ if APIRouter:
     @router.get("/intelligence-os-maximum-manifest/full")
     def automotive_taxonomy_intelligence_os_maximum_manifest_full():
         return service.load_intelligence_os_maximum_manifest()
+
+    @router.get("/intelligence-os-maximum-single-file")
+    def automotive_taxonomy_intelligence_os_maximum_single_file():
+        return service.intelligence_os_maximum_single_file_summary()
 else:
     router = None

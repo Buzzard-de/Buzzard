@@ -14,7 +14,10 @@ WEB_DIR = GIZLI_DIR / "web"
 
 if str(INTELLIGENCE_ROOT) not in sys.path:
     sys.path.insert(0, str(INTELLIGENCE_ROOT))
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
+from gizli.urls import GIZLI_HOST, GIZLI_VOICE_PORT, GIZLI_VOICE_URL
 from buzzard_intelligence import CategoryDiscovery, Council, MemoryEngine, Reporter
 
 app = Flask(__name__, static_folder=str(WEB_DIR), static_url_path="")
@@ -82,7 +85,7 @@ def health():
             "status": "ok",
             "service": "Buzzard gizli Voice",
             "project": "Buzzard",
-            "url": "http://127.0.0.1:8787",
+            "url": GIZLI_VOICE_URL,
             "stack": "v1-v10",
         }
     )
@@ -100,5 +103,5 @@ def message():
     return jsonify({"ok": True, "language": language, "text": text, "reply": reply})
 
 
-def main(host: str = "127.0.0.1", port: int = 8787) -> None:
+def main(host: str = GIZLI_HOST, port: int = GIZLI_VOICE_PORT) -> None:
     app.run(host=host, port=port, debug=False)

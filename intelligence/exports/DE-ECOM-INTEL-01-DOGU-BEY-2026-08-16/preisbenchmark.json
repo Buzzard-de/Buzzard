@@ -1,0 +1,156 @@
+{
+  "summary": {
+    "count": 19,
+    "unique_sellers": 11,
+    "min": 2.49,
+    "max": 129.0,
+    "mean": 47.61,
+    "median": 30.98
+  },
+  "products": [
+    {
+      "product_key": "motoroel-5w30-5l",
+      "lowest": {
+        "seller_id": "autodoc",
+        "seller_name": "AutoDoc",
+        "product_key": "motoroel-5w30-5l",
+        "price": 29.95,
+        "shipping": 4.99,
+        "landed_public_price": 34.94,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "highest": {
+        "seller_id": "kfzteile24",
+        "seller_name": "kfzteile24",
+        "product_key": "motoroel-5w30-5l",
+        "price": 31.5,
+        "shipping": 5.99,
+        "landed_public_price": 37.49,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "seller_count": 3
+    },
+    {
+      "product_key": "allzweckreiniger-1l",
+      "lowest": {
+        "seller_id": "amazon_de",
+        "seller_name": "Amazon.de",
+        "product_key": "allzweckreiniger-1l",
+        "price": 2.49,
+        "shipping": 0.0,
+        "landed_public_price": 2.49,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "highest": {
+        "seller_id": "dm",
+        "seller_name": "dm.de",
+        "product_key": "allzweckreiniger-1l",
+        "price": 1.25,
+        "shipping": 4.95,
+        "landed_public_price": 6.2,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "seller_count": 3
+    },
+    {
+      "product_key": "gartenschlauch-20m",
+      "lowest": {
+        "seller_id": "amazon_de",
+        "seller_name": "Amazon.de",
+        "product_key": "gartenschlauch-20m",
+        "price": 19.99,
+        "shipping": 0.0,
+        "landed_public_price": 19.99,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "highest": {
+        "seller_id": "obi",
+        "seller_name": "OBI",
+        "product_key": "gartenschlauch-20m",
+        "price": 24.99,
+        "shipping": 5.99,
+        "landed_public_price": 30.979999999999997,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "seller_count": 4
+    },
+    {
+      "product_key": "akku-bohrmaschine-set",
+      "lowest": {
+        "seller_id": "amazon_de",
+        "seller_name": "Amazon.de",
+        "product_key": "akku-bohrmaschine-set",
+        "price": 79.99,
+        "shipping": 0.0,
+        "landed_public_price": 79.99,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "highest": {
+        "seller_id": "bauhaus",
+        "seller_name": "Bauhaus",
+        "product_key": "akku-bohrmaschine-set",
+        "price": 94.99,
+        "shipping": 5.99,
+        "landed_public_price": 100.97999999999999,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "seller_count": 3
+    },
+    {
+      "product_key": "usb-c-kabel-2m",
+      "lowest": {
+        "seller_id": "amazon_de",
+        "seller_name": "Amazon.de",
+        "product_key": "usb-c-kabel-2m",
+        "price": 8.99,
+        "shipping": 0.0,
+        "landed_public_price": 8.99,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "highest": {
+        "seller_id": "mediamarkt",
+        "seller_name": "MediaMarkt",
+        "product_key": "usb-c-kabel-2m",
+        "price": 14.99,
+        "shipping": 4.99,
+        "landed_public_price": 19.98,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "seller_count": 3
+    },
+    {
+      "product_key": "luftreiniger-hepa",
+      "lowest": {
+        "seller_id": "amazon_de",
+        "seller_name": "Amazon.de",
+        "product_key": "luftreiniger-hepa",
+        "price": 99.0,
+        "shipping": 0.0,
+        "landed_public_price": 99.0,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "highest": {
+        "seller_id": "mediamarkt",
+        "seller_name": "MediaMarkt",
+        "product_key": "luftreiniger-hepa",
+        "price": 129.0,
+        "shipping": 0.0,
+        "landed_public_price": 129.0,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "seller_count": 3
+    }
+  ]
+}

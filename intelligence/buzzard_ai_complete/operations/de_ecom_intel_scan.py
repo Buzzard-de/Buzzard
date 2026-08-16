@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import json
 import re
+import zipfile
 from dataclasses import asdict
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from buzzard_ai_complete.agents.dogu_bey import DoguBey
@@ -531,3 +533,195 @@ def run_de_ecom_intel_scan() -> dict[str, Any]:
 
     _save_to_memory(dogu, memory, payload)
     return payload
+
+
+def _slugify(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", value.lower())
+    return slug.strip("-") or "kategorie"
+
+
+def _build_german_report(payload: dict[str, Any]) -> str:
+    lines = [
+        "# Deutschland E-Commerce Intelligence — Doğu Bey",
+        "",
+        f"**Operation:** {payload['operation']}",
+        f"**Datum:** {payload['datum']}",
+        f"**Agent:** {payload['agent']}",
+        "",
+        "## Zusammenfassung",
+        "",
+        f"- Prioritätskategorien gescannt: {payload['category_intelligence_43']['prioritaets_kategorien_gescannt']}",
+        f"- Category Intelligence Agenten aktiv: {payload['category_intelligence_43']['agenten_aktiv']}",
+        f"- Council Findings: {payload['category_intelligence_43']['council_findings']}",
+        f"- Preisbenchmark-Produkte: {len(payload['preisbenchmark'].get('products', []))}",
+        f"- Preisquelle: {payload['preis_quelle'].get('modus', 'unbekannt')}",
+        "",
+        "## Live Connectors",
+        "",
+    ]
+    for connector in payload.get("live_connectors", {}).get("connectors", []):
+        lines.append(
+            f"- **{connector['name']}**: {connector['status']}"
+            + (f" ({', '.join(connector.get('env_vars', []))})" if connector.get("env_vars") else "")
+        )
+
+    lines.extend(["", "## Öffentliche Quellen", ""])
+    for src in payload.get("oeffentliche_quellen", []):
+        status = src.get("status", "OK")
+        lines.append(f"- [{src.get('title', src.get('source_id'))}]({src.get('url')}) — {status}")
+        if src.get("snippet"):
+            lines.append(f"  > {src['snippet'][:200]}...")
+
+    lines.extend(["", "## Kategorie-Berichte", ""])
+    for report in payload.get("category_intelligence_43", {}).get("berichte", []):
+        stats = report.get("preisstatistik", {})
+        lines.extend(
+            [
+                f"### {report.get('buzzard_kategorie')} ({report.get('buzzard_id')})",
+                "",
+                f"- Agent: {report.get('agent_id')}",
+                f"- Wettbewerber: {', '.join(report.get('wettbewerber', []))}",
+                f"- Angebote analysiert: {report.get('angebote_analysiert', 0)}",
+                f"- Verkäufer: {report.get('verkaeufer', 0)}",
+            ]
+        )
+        if stats:
+            lines.append(
+                f"- Preis (min/median/max): {stats.get('min', '—')} / "
+                f"{stats.get('median', '—')} / {stats.get('max', '—')} EUR"
+            )
+        gaps = report.get("kategorie_luecken", [])
+        if gaps:
+            lines.append(f"- Kategorielücken: {len(gaps)}")
+        lines.append("")
+
+    lines.extend(["", "## Preisbenchmark", ""])
+    for product in payload.get("preisbenchmark", {}).get("products", []):
+        lines.append(f"### {product.get('title', product.get('product_key'))}")
+        for seller in product.get("sellers", []):
+            landed = seller.get("landed_price", seller.get("price"))
+            lines.append(
+                f"- {seller.get('seller_name')}: {seller.get('price')} EUR "
+                f"(+ {seller.get('shipping_price', 0)} Versand) → {landed} EUR gelandet"
+            )
+        lines.append("")
+
+    google_ads = payload.get("google_ads", {})
+    if google_ads:
+        lines.extend(["", "## Google Ads Signale", ""])
+        lines.append(f"- Status: {google_ads.get('status', 'unbekannt')}")
+        summe = google_ads.get("summe", {})
+        if summe:
+            lines.append(
+                f"- 7 Tage: {summe.get('clicks', 0)} Klicks / "
+                f"{summe.get('cost_eur', 0)} EUR Kosten"
+            )
+
+    lines.extend(["", "## Hinweise", ""])
+    for note in payload.get("hinweise", []):
+        lines.append(f"- {note}")
+
+    lines.extend(
+        [
+            "",
+            "---",
+            "",
+            "*Erstellt von Doğu Bey — Buzzard Intelligence. Nur öffentliche Quellen.*",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _write_json(path: Path, data: Any) -> None:
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+
+
+def export_de_ecom_intel_scan(
+    *,
+    output_dir: Path | str | None = None,
+    run_scan: bool = True,
+    create_zip: bool = True,
+) -> dict[str, Any]:
+    """Exportiert den Doğu-Bey-Scan als Ordner (optional ZIP) mit allen Ergebnissen."""
+    if run_scan:
+        payload = run_de_ecom_intel_scan()
+    else:
+        memory = MemoryStore()
+        stored = memory.get("de_ecom_intel", "live_scan_bericht")
+        if stored and stored.get("value"):
+            payload = json.loads(stored["value"])
+        else:
+            payload = run_de_ecom_intel_scan()
+
+    base = Path(__file__).resolve().parents[2] / "exports"
+    folder_name = f"DE-ECOM-INTEL-01-DOGU-BEY-{payload.get('datum', 'scan')}"
+    export_root = Path(output_dir) if output_dir else base / folder_name
+    export_root.mkdir(parents=True, exist_ok=True)
+
+    cat_dir = export_root / "category_intelligence_43"
+    cat_dir.mkdir(exist_ok=True)
+
+    _write_json(export_root / "scan.json", payload)
+    _write_json(export_root / "live_connectors.json", payload.get("live_connectors", {}))
+    _write_json(export_root / "oeffentliche_quellen.json", payload.get("oeffentliche_quellen", []))
+    _write_json(export_root / "google_ads.json", payload.get("google_ads", {}))
+    _write_json(export_root / "preisbenchmark.json", payload.get("preisbenchmark", {}))
+    _write_json(export_root / "preis_quelle.json", payload.get("preis_quelle", {}))
+    _write_json(
+        cat_dir / "zusammenfassung.json",
+        payload.get("category_intelligence_43", {}),
+    )
+
+    for report in payload.get("category_intelligence_43", {}).get("berichte", []):
+        filename = f"{report.get('buzzard_id', 'cat')}-{_slugify(report.get('buzzard_kategorie', 'kategorie'))}.json"
+        _write_json(cat_dir / filename, report)
+
+    (export_root / "hinweise.txt").write_text("\n".join(payload.get("hinweise", [])), encoding="utf-8")
+    (export_root / "bericht.md").write_text(_build_german_report(payload), encoding="utf-8")
+
+    readme = f"""# DE-ECOM-INTEL-01 — Doğu Bey Scan Export
+
+Operation: `{payload.get('operation')}`
+Datum: {payload.get('datum')}
+Agent: {payload.get('agent')}
+
+## Inhalt
+
+| Datei | Beschreibung |
+|-------|--------------|
+| `bericht.md` | Vollständiger deutscher Intelligence-Bericht |
+| `scan.json` | Kompletter Scan als JSON |
+| `live_connectors.json` | Status eBay, Amazon, Google Ads, Public Fetch |
+| `oeffentliche_quellen.json` | Live-abgerufene öffentliche Quellen |
+| `google_ads.json` | Google Ads Signale (falls konfiguriert) |
+| `preisbenchmark.json` | Preisvergleich aller Benchmark-Produkte |
+| `preis_quelle.json` | Modus der Preisdaten (live vs. Benchmark) |
+| `hinweise.txt` | Betriebs- und Compliance-Hinweise |
+| `category_intelligence_43/` | Einzelberichte pro Buzzard-Kategorie |
+
+## Neu generieren
+
+```bash
+cd intelligence
+python main.py complete-de-ecom-intel-export
+```
+
+Verkäufe bei Buzzard bleiben deaktiviert (Katalogmodus).
+"""
+    (export_root / "README.md").write_text(readme, encoding="utf-8")
+
+    zip_path = None
+    if create_zip:
+        zip_path = export_root.with_suffix(".zip")
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+            for file_path in sorted(export_root.rglob("*")):
+                if file_path.is_file():
+                    zf.write(file_path, file_path.relative_to(export_root.parent))
+
+    return {
+        "operation": payload.get("operation"),
+        "export_dir": str(export_root),
+        "zip": str(zip_path) if zip_path else None,
+        "files": [str(p.relative_to(export_root)) for p in sorted(export_root.rglob("*")) if p.is_file()],
+        "datum": payload.get("datum"),
+    }

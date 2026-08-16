@@ -1,0 +1,80 @@
+{
+  "buzzard_kategorie": "Elektronik",
+  "buzzard_id": "cat-12",
+  "agent_id": "CATEGORY_12",
+  "wettbewerber": [
+    "Amazon.de",
+    "MediaMarkt",
+    "Saturn"
+  ],
+  "angebote_analysiert": 3,
+  "verkaeufer": 3,
+  "preisstatistik": {
+    "count": 3,
+    "unique_sellers": 3,
+    "min": 8.99,
+    "max": 19.98,
+    "mean": 15.65,
+    "median": 17.98
+  },
+  "preisvergleich": [
+    {
+      "product_key": "usb-c-kabel-2m",
+      "lowest": {
+        "seller_id": "amazon_de",
+        "seller_name": "Amazon.de",
+        "product_key": "usb-c-kabel-2m",
+        "price": 8.99,
+        "shipping": 0.0,
+        "landed_public_price": 8.99,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "highest": {
+        "seller_id": "mediamarkt",
+        "seller_name": "MediaMarkt",
+        "product_key": "usb-c-kabel-2m",
+        "price": 14.99,
+        "shipping": 4.99,
+        "landed_public_price": 19.98,
+        "currency": "EUR",
+        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+      },
+      "seller_count": 3
+    }
+  ],
+  "kategorie_luecken": [
+    {
+      "opportunity_id": "CATEGORY_12:2:Kabel & Ladezubehör",
+      "category_id": "CATEGORY_12",
+      "opportunity_type": "missing_taxonomy_node",
+      "name": "Kabel & Ladezubehör",
+      "evidence_count": 1,
+      "confidence": 0.386,
+      "reasons": [
+        "observed in public-source competitor taxonomy"
+      ],
+      "competitor_examples": [
+        "wettbewerber"
+      ],
+      "estimated_price_range": null,
+      "requires_human_review": true
+    },
+    {
+      "opportunity_id": "CATEGORY_12:2:Smart-Home-Sensoren",
+      "category_id": "CATEGORY_12",
+      "opportunity_type": "missing_taxonomy_node",
+      "name": "Smart-Home-Sensoren",
+      "evidence_count": 1,
+      "confidence": 0.386,
+      "reasons": [
+        "observed in public-source competitor taxonomy"
+      ],
+      "competitor_examples": [
+        "wettbewerber"
+      ],
+      "estimated_price_range": null,
+      "requires_human_review": true
+    }
+  ]
+}

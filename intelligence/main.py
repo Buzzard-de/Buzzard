@@ -1656,6 +1656,10 @@ def main():
         help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
     )
     sub.add_parser(
+        "complete-de-ecom-intel-export",
+        help="Doğu Bey: Scan als Ordner + ZIP exportieren (intelligence/exports/)",
+    )
+    sub.add_parser(
         "complete-all-connectors-health",
         help="Status aller Live-Connectors (eBay, Amazon, Google Ads, Public Fetch)",
     )
@@ -5638,6 +5642,10 @@ def main():
         from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
 
         print(complete_de_ecom_intel_scan())
+    elif args.cmd == "complete-de-ecom-intel-export":
+        from buzzard_ai_complete.commands import complete_de_ecom_intel_export
+
+        print(complete_de_ecom_intel_export())
     elif args.cmd == "complete-all-connectors-health":
         from buzzard_ai_complete.commands import complete_all_connectors_health
 

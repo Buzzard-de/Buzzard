@@ -1,0 +1,507 @@
+{
+  "agenten_aktiv": 43,
+  "prioritaets_kategorien_gescannt": 6,
+  "council_findings": 6,
+  "berichte": [
+    {
+      "buzzard_kategorie": "Automotive",
+      "buzzard_id": "cat-05",
+      "agent_id": "CATEGORY_05",
+      "wettbewerber": [
+        "Amazon.de",
+        "AutoDoc",
+        "kfzteile24",
+        "eBay"
+      ],
+      "angebote_analysiert": 3,
+      "verkaeufer": 3,
+      "preisstatistik": {
+        "count": 3,
+        "unique_sellers": 3,
+        "min": 34.94,
+        "max": 37.49,
+        "mean": 35.81,
+        "median": 34.99
+      },
+      "preisvergleich": [
+        {
+          "product_key": "motoroel-5w30-5l",
+          "lowest": {
+            "seller_id": "autodoc",
+            "seller_name": "AutoDoc",
+            "product_key": "motoroel-5w30-5l",
+            "price": 29.95,
+            "shipping": 4.99,
+            "landed_public_price": 34.94,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "highest": {
+            "seller_id": "kfzteile24",
+            "seller_name": "kfzteile24",
+            "product_key": "motoroel-5w30-5l",
+            "price": 31.5,
+            "shipping": 5.99,
+            "landed_public_price": 37.49,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "seller_count": 3
+        }
+      ],
+      "kategorie_luecken": [
+        {
+          "opportunity_id": "CATEGORY_05:2:Motoröl & Schmierstoffe",
+          "category_id": "CATEGORY_05",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Motoröl & Schmierstoffe",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        },
+        {
+          "opportunity_id": "CATEGORY_05:2:Bremsen & Bremsscheiben",
+          "category_id": "CATEGORY_05",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Bremsen & Bremsscheiben",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        },
+        {
+          "opportunity_id": "CATEGORY_05:2:Filter & Wartungssets",
+          "category_id": "CATEGORY_05",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Filter & Wartungssets",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        }
+      ]
+    },
+    {
+      "buzzard_kategorie": "Reinigungsprodukte",
+      "buzzard_id": "cat-03",
+      "agent_id": "CATEGORY_03",
+      "wettbewerber": [
+        "dm.de",
+        "rossmann.de",
+        "Amazon.de"
+      ],
+      "angebote_analysiert": 3,
+      "verkaeufer": 3,
+      "preisstatistik": {
+        "count": 3,
+        "unique_sellers": 3,
+        "min": 2.49,
+        "max": 6.2,
+        "mean": 4.94,
+        "median": 6.14
+      },
+      "preisvergleich": [
+        {
+          "product_key": "allzweckreiniger-1l",
+          "lowest": {
+            "seller_id": "amazon_de",
+            "seller_name": "Amazon.de",
+            "product_key": "allzweckreiniger-1l",
+            "price": 2.49,
+            "shipping": 0.0,
+            "landed_public_price": 2.49,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "highest": {
+            "seller_id": "dm",
+            "seller_name": "dm.de",
+            "product_key": "allzweckreiniger-1l",
+            "price": 1.25,
+            "shipping": 4.95,
+            "landed_public_price": 6.2,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "seller_count": 3
+        }
+      ],
+      "kategorie_luecken": [
+        {
+          "opportunity_id": "CATEGORY_03:2:Nachfüll- & Öko-Reinigung",
+          "category_id": "CATEGORY_03",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Nachfüll- & Öko-Reinigung",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        },
+        {
+          "opportunity_id": "CATEGORY_03:2:Profireinigung",
+          "category_id": "CATEGORY_03",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Profireinigung",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        }
+      ]
+    },
+    {
+      "buzzard_kategorie": "Garten",
+      "buzzard_id": "cat-07",
+      "agent_id": "CATEGORY_07",
+      "wettbewerber": [
+        "OBI",
+        "Bauhaus",
+        "Hornbach",
+        "ManoMano",
+        "Amazon.de"
+      ],
+      "angebote_analysiert": 4,
+      "verkaeufer": 4,
+      "preisstatistik": {
+        "count": 4,
+        "unique_sellers": 4,
+        "min": 19.99,
+        "max": 30.979999999999997,
+        "mean": 26.86,
+        "median": 28.23
+      },
+      "preisvergleich": [
+        {
+          "product_key": "gartenschlauch-20m",
+          "lowest": {
+            "seller_id": "amazon_de",
+            "seller_name": "Amazon.de",
+            "product_key": "gartenschlauch-20m",
+            "price": 19.99,
+            "shipping": 0.0,
+            "landed_public_price": 19.99,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "highest": {
+            "seller_id": "obi",
+            "seller_name": "OBI",
+            "product_key": "gartenschlauch-20m",
+            "price": 24.99,
+            "shipping": 5.99,
+            "landed_public_price": 30.979999999999997,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "seller_count": 4
+        }
+      ],
+      "kategorie_luecken": [
+        {
+          "opportunity_id": "CATEGORY_07:2:Bewässerung & Schlauch",
+          "category_id": "CATEGORY_07",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Bewässerung & Schlauch",
+          "evidence_count": 1,
+          "confidence": 0.388,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        },
+        {
+          "opportunity_id": "CATEGORY_07:2:Elektrische Gartengeräte",
+          "category_id": "CATEGORY_07",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Elektrische Gartengeräte",
+          "evidence_count": 1,
+          "confidence": 0.388,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        }
+      ]
+    },
+    {
+      "buzzard_kategorie": "Werkzeuge & Eisenwaren",
+      "buzzard_id": "cat-09",
+      "agent_id": "CATEGORY_09",
+      "wettbewerber": [
+        "Hornbach",
+        "Bauhaus",
+        "Amazon.de",
+        "ManoMano"
+      ],
+      "angebote_analysiert": 3,
+      "verkaeufer": 3,
+      "preisstatistik": {
+        "count": 3,
+        "unique_sellers": 3,
+        "min": 79.99,
+        "max": 100.97999999999999,
+        "mean": 91.98,
+        "median": 94.98
+      },
+      "preisvergleich": [
+        {
+          "product_key": "akku-bohrmaschine-set",
+          "lowest": {
+            "seller_id": "amazon_de",
+            "seller_name": "Amazon.de",
+            "product_key": "akku-bohrmaschine-set",
+            "price": 79.99,
+            "shipping": 0.0,
+            "landed_public_price": 79.99,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "highest": {
+            "seller_id": "bauhaus",
+            "seller_name": "Bauhaus",
+            "product_key": "akku-bohrmaschine-set",
+            "price": 94.99,
+            "shipping": 5.99,
+            "landed_public_price": 100.97999999999999,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "seller_count": 3
+        }
+      ],
+      "kategorie_luecken": [
+        {
+          "opportunity_id": "CATEGORY_09:2:Akku-Werkzeug-Sets",
+          "category_id": "CATEGORY_09",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Akku-Werkzeug-Sets",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        },
+        {
+          "opportunity_id": "CATEGORY_09:2:Mess- & Prüfwerkzeug",
+          "category_id": "CATEGORY_09",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Mess- & Prüfwerkzeug",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        }
+      ]
+    },
+    {
+      "buzzard_kategorie": "Elektronik",
+      "buzzard_id": "cat-12",
+      "agent_id": "CATEGORY_12",
+      "wettbewerber": [
+        "Amazon.de",
+        "MediaMarkt",
+        "Saturn"
+      ],
+      "angebote_analysiert": 3,
+      "verkaeufer": 3,
+      "preisstatistik": {
+        "count": 3,
+        "unique_sellers": 3,
+        "min": 8.99,
+        "max": 19.98,
+        "mean": 15.65,
+        "median": 17.98
+      },
+      "preisvergleich": [
+        {
+          "product_key": "usb-c-kabel-2m",
+          "lowest": {
+            "seller_id": "amazon_de",
+            "seller_name": "Amazon.de",
+            "product_key": "usb-c-kabel-2m",
+            "price": 8.99,
+            "shipping": 0.0,
+            "landed_public_price": 8.99,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "highest": {
+            "seller_id": "mediamarkt",
+            "seller_name": "MediaMarkt",
+            "product_key": "usb-c-kabel-2m",
+            "price": 14.99,
+            "shipping": 4.99,
+            "landed_public_price": 19.98,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "seller_count": 3
+        }
+      ],
+      "kategorie_luecken": [
+        {
+          "opportunity_id": "CATEGORY_12:2:Kabel & Ladezubehör",
+          "category_id": "CATEGORY_12",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Kabel & Ladezubehör",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        },
+        {
+          "opportunity_id": "CATEGORY_12:2:Smart-Home-Sensoren",
+          "category_id": "CATEGORY_12",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Smart-Home-Sensoren",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        }
+      ]
+    },
+    {
+      "buzzard_kategorie": "Haushaltsgeräte",
+      "buzzard_id": "cat-13",
+      "agent_id": "CATEGORY_13",
+      "wettbewerber": [
+        "MediaMarkt",
+        "Saturn",
+        "Amazon.de"
+      ],
+      "angebote_analysiert": 3,
+      "verkaeufer": 3,
+      "preisstatistik": {
+        "count": 3,
+        "unique_sellers": 3,
+        "min": 99.0,
+        "max": 129.0,
+        "mean": 117.33,
+        "median": 123.99
+      },
+      "preisvergleich": [
+        {
+          "product_key": "luftreiniger-hepa",
+          "lowest": {
+            "seller_id": "amazon_de",
+            "seller_name": "Amazon.de",
+            "product_key": "luftreiniger-hepa",
+            "price": 99.0,
+            "shipping": 0.0,
+            "landed_public_price": 99.0,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "highest": {
+            "seller_id": "mediamarkt",
+            "seller_name": "MediaMarkt",
+            "product_key": "luftreiniger-hepa",
+            "price": 129.0,
+            "shipping": 0.0,
+            "landed_public_price": 129.0,
+            "currency": "EUR",
+            "observed_at": "2026-08-16T11:50:14.092715+00:00"
+          },
+          "seller_count": 3
+        }
+      ],
+      "kategorie_luecken": [
+        {
+          "opportunity_id": "CATEGORY_13:2:Kleine Küchengeräte",
+          "category_id": "CATEGORY_13",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Kleine Küchengeräte",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        },
+        {
+          "opportunity_id": "CATEGORY_13:2:Luftreiniger & Klimageräte",
+          "category_id": "CATEGORY_13",
+          "opportunity_type": "missing_taxonomy_node",
+          "name": "Luftreiniger & Klimageräte",
+          "evidence_count": 1,
+          "confidence": 0.386,
+          "reasons": [
+            "observed in public-source competitor taxonomy"
+          ],
+          "competitor_examples": [
+            "wettbewerber"
+          ],
+          "estimated_price_range": null,
+          "requires_human_review": true
+        }
+      ]
+    }
+  ]
+}

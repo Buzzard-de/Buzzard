@@ -72,11 +72,12 @@ cd intelligence
 pip install -r requirements.txt
 python main.py init
 python main.py voice
-# or Buzzard project gizli:
-python gizli/voice_ui.py
+# Buzzard gizli (recommended):
+cd gizli && python app.py
+cd gizli && python app.py voice
 ```
 
-Browser: http://127.0.0.1:8787 (UI in `gizli/web/`)
+Browser Voice: http://127.0.0.1:8787 (UI in `gizli/web/`)
 
 ## Live Data Connector Pack
 

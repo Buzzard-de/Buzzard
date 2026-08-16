@@ -105,6 +105,16 @@ def test_service_max_final_single_file():
     assert "modules" in summary["engine"]
 
 
+def test_service_max_single_final_single_file():
+    service = CategoryIntelligence47Service()
+    summary = service.max_single_final_single_file_summary()
+
+    assert summary["console_html"] == "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html"
+    assert summary["primary_console_html"] == summary["console_html"]
+    assert summary["html_exists"] is True
+    assert summary["finalization"]["software_scope_percent"] == 100
+
+
 def test_service_demo_flow(tmp_path, monkeypatch):
     monkeypatch.setenv("BUZZARD_47_DB", str(tmp_path / "demo.db"))
     service = CategoryIntelligence47Service()

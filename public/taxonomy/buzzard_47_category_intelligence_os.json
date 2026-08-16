@@ -1,6 +1,6 @@
 {
   "name": "Buzzard 47 Category Intelligence OS",
-  "version": "1.0-max-final",
+  "version": "1.0-max-single-final",
   "scope": "47 non-Kfz categories",
   "target_categories": 47,
   "target_competitors": 940,
@@ -358,7 +358,7 @@
   },
   "max_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
   "engine": {
-    "name": "Buzzard 47 Category Intelligence OS — MAX FINAL CORE",
+    "name": "Buzzard 47 Category Intelligence OS — MAX SINGLE FINAL",
     "modules": [
       "category_master_taxonomy",
       "competitor_registry",
@@ -371,8 +371,10 @@
       "audit_trail",
       "settings_store",
       "rest_api",
-      "dashboard_console"
+      "single_file_console"
     ],
     "verification_policy": "evidence_required"
-  }
+  },
+  "primary_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+  "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html"
 }

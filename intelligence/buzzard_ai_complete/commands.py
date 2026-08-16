@@ -1159,6 +1159,30 @@ def complete_build_category_intelligence_47_max_final():
     return result.stdout.strip()
 
 
+def complete_category_intelligence_47_max_single_final_single_file():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    return json.dumps(
+        CategoryIntelligence47Service().max_single_final_single_file_summary(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_build_category_intelligence_47_max_single_final():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "build_category_intelligence_47_max_single_final.py"
+    )
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_de_ecom_intel_scan():
     from buzzard_ai_complete.operations.de_ecom_intel_scan import run_de_ecom_intel_scan
 

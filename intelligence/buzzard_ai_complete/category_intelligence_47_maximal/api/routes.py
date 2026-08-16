@@ -97,6 +97,10 @@ if APIRouter:
     def category_intel_47_max_final_single_file():
         return service.max_final_single_file_summary()
 
+    @router.get("/intelligence-os-max-single-final-single-file")
+    def category_intel_47_max_single_final_single_file():
+        return service.max_single_final_single_file_summary()
+
     @router.get("/demo")
     def category_intel_47_demo():
         return service.demo_flow()

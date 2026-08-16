@@ -39,6 +39,8 @@ class CategoryIntelligence47Service:
             "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
             "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
             "max_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
+            "primary_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+            "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
             "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
             "live_activation": False,
         }
@@ -83,6 +85,8 @@ class CategoryIntelligence47Service:
             "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
             "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
             "max_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
+            "primary_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+            "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
             "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
             "html_exists": html_path.is_file(),
             "html_bytes": html_path.stat().st_size if html_path.is_file() else 0,
@@ -120,6 +124,27 @@ class CategoryIntelligence47Service:
             "category_count": config.get("category_count", 47),
             "target_competitors": config.get("target_competitors", 940),
             "console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
+            "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
+            "engine": manifest.get("engine", {}),
+            "finalization": manifest.get("finalization", {}),
+            "html_exists": html_path.is_file(),
+            "html_bytes": html_path.stat().st_size if html_path.is_file() else 0,
+        }
+
+    def max_single_final_single_file_summary(self) -> dict:
+        config = self.load_config()
+        manifest = self.load_manifest()
+        html_path = self._repo_path(config["intelligence_os_max_single_final_single_file_html_path"])
+        return {
+            "name": manifest.get("engine", {}).get("name", "Buzzard 47 Category Intelligence OS — MAX SINGLE FINAL"),
+            "version": manifest.get("version", "1.0-max-single-final"),
+            "category_count": config.get("category_count", 47),
+            "target_competitors": config.get("target_competitors", 940),
+            "console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+            "primary_console_html": manifest.get(
+                "primary_console_html",
+                "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
+            ),
             "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
             "engine": manifest.get("engine", {}),
             "finalization": manifest.get("finalization", {}),

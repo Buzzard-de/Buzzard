@@ -1255,6 +1255,25 @@ def complete_intelligence_os_all_in_one():
     )
 
 
+def complete_intelligence_os_maximum_manifest():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    manifest = service.load_intelligence_os_maximum_manifest()
+    return json.dumps(
+        {
+            "summary": service.intelligence_os_maximum_manifest_summary(),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+            "schemas": manifest.get("schemas", {}),
+            "runtime_defaults": manifest.get("runtime_defaults", {}),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
 def complete_sync_kfz_category_tree():
     from pathlib import Path
     import subprocess

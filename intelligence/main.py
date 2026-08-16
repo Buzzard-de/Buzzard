@@ -1725,6 +1725,10 @@ def main():
         help="Show Buzzard Intelligence OS All-in-One summary + modules",
     )
     sub.add_parser(
+        "complete-intelligence-os-maximum-manifest",
+        help="Show Intelligence OS maximum manifest (agents, services, runtime)",
+    )
+    sub.add_parser(
         "complete-sync-kfz-category-tree",
         help="Sync KFZ tree with shop cat-05 bridge JSON",
     )
@@ -5767,6 +5771,10 @@ def main():
         from buzzard_ai_complete.commands import complete_intelligence_os_all_in_one
 
         print(complete_intelligence_os_all_in_one())
+    elif args.cmd == "complete-intelligence-os-maximum-manifest":
+        from buzzard_ai_complete.commands import complete_intelligence_os_maximum_manifest
+
+        print(complete_intelligence_os_maximum_manifest())
     elif args.cmd == "complete-sync-kfz-category-tree":
         from buzzard_ai_complete.commands import complete_sync_kfz_category_tree
 

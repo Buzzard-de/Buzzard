@@ -99,5 +99,20 @@ if APIRouter:
     @router.get("/intelligence-os-all-in-one/full")
     def automotive_taxonomy_intelligence_os_all_in_one_full():
         return service.load_intelligence_os_all_in_one()
+
+    @router.get("/intelligence-os-maximum-manifest")
+    def automotive_taxonomy_intelligence_os_maximum_manifest():
+        manifest = service.load_intelligence_os_maximum_manifest()
+        return {
+            "summary": service.intelligence_os_maximum_manifest_summary(),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+            "schemas": manifest.get("schemas", {}),
+            "runtime_defaults": manifest.get("runtime_defaults", {}),
+        }
+
+    @router.get("/intelligence-os-maximum-manifest/full")
+    def automotive_taxonomy_intelligence_os_maximum_manifest_full():
+        return service.load_intelligence_os_maximum_manifest()
 else:
     router = None

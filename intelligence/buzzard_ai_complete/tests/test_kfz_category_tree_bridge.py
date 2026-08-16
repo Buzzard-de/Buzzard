@@ -60,3 +60,18 @@ def test_intelligence_os_all_in_one_loaded():
     data = service.load_intelligence_os_all_in_one()
     assert data["scoring_weights"]["demand"] == 0.2
     assert len(data["demo_findings"]) == 5
+
+
+def test_intelligence_os_maximum_manifest_loaded():
+    service = AutomotiveTaxonomyService()
+    summary = service.intelligence_os_maximum_manifest_summary()
+    assert summary["manifest"] == "maximum"
+    assert summary["main_category_count"] == 43
+    assert summary["agent_count"] == 43
+    assert summary["agents_ready"] == 43
+    assert summary["service_count"] == 24
+    assert summary["schema_count"] == 3
+    manifest = service.load_intelligence_os_maximum_manifest()
+    assert manifest["agents"][0]["id"] == "CAT-01"
+    assert "Source Registry" in manifest["services"]
+    assert manifest["runtime_defaults"]["public_sources_only"] is True

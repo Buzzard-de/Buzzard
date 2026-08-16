@@ -1673,7 +1673,11 @@ def main():
     )
     sub.add_parser(
         "complete-sync-turkish-48-main-categories",
-        help="Sync Turkish 48 main categories across taxonomy and intelligence OS",
+        help="(Alias) Sync German 48 main categories across taxonomy and intelligence OS",
+    )
+    sub.add_parser(
+        "complete-sync-german-48-main-categories",
+        help="Sync German 48 main categories across taxonomy and intelligence OS",
     )
     sub.add_parser(
         "complete-category-intelligence-47-final-100-single-file",
@@ -5775,6 +5779,10 @@ def main():
         from buzzard_ai_complete.commands import complete_sync_turkish_48_main_categories
 
         print(complete_sync_turkish_48_main_categories())
+    elif args.cmd == "complete-sync-german-48-main-categories":
+        from buzzard_ai_complete.commands import complete_sync_german_48_main_categories
+
+        print(complete_sync_german_48_main_categories())
     elif args.cmd == "complete-category-intelligence-47-final-100-single-file":
         from buzzard_ai_complete.commands import complete_category_intelligence_47_final_100_single_file
 

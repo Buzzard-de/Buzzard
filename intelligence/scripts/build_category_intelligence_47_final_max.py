@@ -6,9 +6,12 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "intelligence/scripts"))
+from category_intelligence_47_locale_de import germanize_console_html
 MANIFEST = REPO / "data/taxonomy/buzzard_47_category_intelligence_os.json"
 FINAL_MANIFEST = REPO / "data/taxonomy/buzzard_final_47_category_intelligence_manifest.json"
 CONFIG = (
@@ -22,23 +25,23 @@ ARCHIVE = REPO / "intelligence/archive/buzzard_final_47_category_intelligence_os
 SOURCE_HTML = REPO / "data/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html"
 
 FINAL_MAX_NAV = (
-    "<button data-v='v'>Doğrulama</button><button data-v='x'>Araştırma</button>"
+    "<button data-v='v'>Verifizierung</button><button data-v='x'>Recherche</button>"
     "<button data-v='e'>FINAL MAX</button>"
 )
 
 FINAL_MAX_SECTION = """
 <section id='v' class='view'>
-<h1>Evidence Doğrulama Paneli</h1>
-<p class='lead'>Aday rakipler yalnızca onaylı kanıt ile VERIFIED olur. candidate + evidence = review; onay = verified.</p>
+<h1>Evidence-Verifizierungs-Panel</h1>
+<p class='lead'>Kandidaten werden nur mit genehmigtem Nachweis VERIFIED. Kandidat + Nachweis = Review; Freigabe = VERIFIED.</p>
 <div id='vd' class='grid'></div>
-<div class='panel'><h2>Executive özet</h2><pre id='ex' style='white-space:pre-wrap;font-size:12px;color:#ccc'></pre></div>
+<div class='panel'><h2>Executive-Zusammenfassung</h2><pre id='ex' style='white-space:pre-wrap;font-size:12px;color:#ccc'></pre></div>
 </section>
 <section id='x' class='view'>
-<h1>Araştırma Matrisi</h1>
-<p class='lead'>940 aday rakip hedefi — toplu içe aktarma CANDIDATE statüsünde tutar.</p>
+<h1>Recherche-Matrix</h1>
+<p class='lead'>940 Kandidaten-Ziel — Massenimport bleibt im Status CANDIDATE.</p>
 <div class='toolbar'>
-<button class='action' onclick='loadMatrix()'>Matrisi göster</button>
-<button class='action' onclick='importMatrix()'>İçe aktar</button>
+<button class='action' onclick='loadMatrix()'>Matrix anzeigen</button>
+<button class='action' onclick='importMatrix()'>Importieren</button>
 </div>
 <div class='panel'><pre id='mx' style='white-space:pre-wrap;font-size:12px;color:#ccc;max-height:420px;overflow:auto'></pre></div>
 </section>
@@ -71,8 +74,8 @@ FINAL_MAX_SECTION = """
 EXTRA_SCRIPT = """
 async function loadVerify(){
 let d=await api("/verification-dashboard");
-$("vd").innerHTML=[["Aday rakip",d.candidate_competitors],["Doğrulanmış",d.verified_competitors],
-["Bekleyen kanıt",d.evidence_pending],["Onaylı kanıt",d.evidence_approved],["Reddedilen",d.evidence_rejected]]
+$("vd").innerHTML=[["Kandidaten",d.candidate_competitors],["Verifiziert",d.verified_competitors],
+["Offene Nachweise",d.evidence_pending],["Freigegebene Nachweise",d.evidence_approved],["Abgelehnte Nachweise",d.evidence_rejected]]
 .map(x=>'<div class="card"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join("");
 let r=await api("/executive-report");
 $("ex").textContent=JSON.stringify(r,null,2);
@@ -89,7 +92,7 @@ render();
 const _api=api;
 api=async function(u,o){
 if(o&&o.method==="POST"){let r=await fetch(API_BASE+u,{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
-let j=await r.json();if(!r.ok)throw Error(j.detail||"Hata");return j}
+let j=await r.json();if(!r.ok)throw Error(j.detail||"Fehler");return j}
 return _api(u);
 };
 """
@@ -113,7 +116,7 @@ def ensure_research_matrix() -> dict:
                     "evidence_url": "",
                     "revenue_eur": None,
                     "gmv_eur": None,
-                    "notes": "Research matrix candidate — requires approved evidence before VERIFIED",
+                    "notes": "Recherche-Kandidat — erfordert genehmigten Nachweis vor VERIFIED",
                 }
             )
     payload = {
@@ -174,7 +177,7 @@ def patch_html(ui: str, manifest: dict) -> str:
     ui = ui.replace("</script></body>", f"{EXTRA_SCRIPT}</script></body>")
     boot = json.dumps(manifest, ensure_ascii=False)
     ui = ui.replace("</body>", f"<script>const BOOT={boot};</script></body>")
-    return ui
+    return germanize_console_html(ui)
 
 
 def build_from_max_single_final(manifest: dict) -> str:
@@ -196,7 +199,7 @@ def build_from_max_single_final(manifest: dict) -> str:
     html = re.sub(r"const BOOT = \{.*?\};", f"const BOOT = {json.dumps(manifest, ensure_ascii=False)};", html, count=1, flags=re.DOTALL)
     html = html.replace("render();", "render();loadVerify();")
     html = html.replace("</script></body>", f"{EXTRA_SCRIPT}</script></body>")
-    return html
+    return germanize_console_html(html)
 
 
 def ensure_manifest(manifest: dict) -> dict:

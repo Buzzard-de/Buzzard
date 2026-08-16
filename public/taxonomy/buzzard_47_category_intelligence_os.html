@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="utf-8">
+<html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BUZZARD 47 Category Intelligence OS — MAX FINAL</title>
 <style>
@@ -27,17 +27,17 @@ th{color:var(--g);background:#151515}select,button.action{background:#0d0d0d;col
 <div class="logo"><b>BUZZARD</b> 47 CATEGORY INTELLIGENCE OS</div>
 <div class="tag">MAX FINAL • Competitive Intelligence • Taxonomy • Gap Detection • Evidence</div>
 </div><nav>
-<button class="on" data-v="d">Merkez</button><button data-v="c">Kategoriler</button>
-<button data-v="r">Rakipler</button><button data-v="a">Analiz</button><button data-v="l">Audit</button><button data-v='f'>MAX Final</button>
+<button class="on" data-v="d">Zentrale</button><button data-v="c">Kategorien</button>
+<button data-v="r">Wettbewerber</button><button data-v="a">Analyse</button><button data-v="l">Audit</button><button data-v='f'>MAX Final</button>
 </nav></header><main>
-<section id="d" class="view on"><h1>47 Kategori Kurmay Merkezi</h1>
-<p class="lead">47 kategori × 20 rakip = 940 doğrulama hedefi. Sistem kaynak olmadan piyasa bilgisini VERIFIED kabul etmez.</p>
+<section id="d" class="view on"><h1>47 Kategori Kurmay Zentralei</h1>
+<p class="lead">47 Kategorien × 20 Wettbewerber = 940 Verifizierungsziel. Das System akzeptiert keine Marktdaten als VERIFIED ohne Quelle.</p>
 <div id="k" class="grid"></div></section>
-<section id="c" class="view"><h1>Kategori Kayıtları</h1><div class="wrap"><table id="ct"></table></div></section>
-<section id="r" class="view"><h1>Rakipler</h1><div class="toolbar"><select id="cs"></select>
-<button class="action" onclick="loadR()">Göster</button></div><div class="wrap"><table id="rt"></table></div></section>
-<section id="a" class="view"><h1>Taxonomy Karşılaştırma</h1><div class="toolbar"><select id="as"></select>
-<button class="action" onclick="loadA()">Analiz</button></div><div id="res" class="panel"></div></section>
+<section id="c" class="view"><h1>Kategorie-Register</h1><div class="wrap"><table id="ct"></table></div></section>
+<section id="r" class="view"><h1>Wettbewerber</h1><div class="toolbar"><select id="cs"></select>
+<button class="action" onclick="loadR()">Anzeigen</button></div><div class="wrap"><table id="rt"></table></div></section>
+<section id="a" class="view"><h1>Taxonomie-Vergleich</h1><div class="toolbar"><select id="as"></select>
+<button class="action" onclick="loadA()">Analyse</button></div><div id="res" class="panel"></div></section>
 <section id="l" class="view"><h1>Audit</h1><div class="wrap"><table id="lt"></table></div></section>
 
 <section id='f' class='view'>
@@ -71,37 +71,37 @@ th{color:var(--g);background:#151515}select,button.action{background:#0d0d0d;col
 </main><script>
 const $=x=>document.getElementById(x);
 const E=x=>String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-const API_BASE=(window.BUZZARD_CAT47_API_BASE||'https://buzzard-api.onrender.com/category-intelligence-47');async function api(u){let r=await fetch(API_BASE+u),j=await r.json();if(!r.ok)throw Error(j.detail||"Hata");return j}
+const API_BASE=(window.BUZZARD_CAT47_API_BASE||'https://buzzard-api.onrender.com/category-intelligence-47');async function api(u){let r=await fetch(API_BASE+u),j=await r.json();if(!r.ok)throw Error(j.detail||"Fehler");return j}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
 document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
 document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));$(b.dataset.v).classList.add("on");render()});
 async function render(){
 let s=await api("/summary");
-$("k").innerHTML=[["Kategori",s.categories+"/47"],["Rakip",s.competitors+"/940"],
-["Doğrulanmış rakip",s.verified_competitors],["Doğrulanmış düğüm",s.verified_nodes],
-["Buzzard düğümü",s.buzzard_nodes],["Bulgu",s.findings],["Açık görev",s.open_tasks]]
+$("k").innerHTML=[["Kategorie",s.categories+"/47"],["Wettbewerber",s.competitors+"/940"],
+["Verifizierte Wettbewerber",s.verified_competitors],["Verifizierte Knoten",s.verified_nodes],
+["Buzzard-Knoten",s.buzzard_nodes],["Erkenntnisse",s.findings],["Offene Aufgaben",s.open_tasks]]
 .map(x=>'<div class="card"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join("");
 let c=await api("/categories");
-$("ct").innerHTML="<tr><th>ID</th><th>Kod</th><th>Kategori</th><th>Seviye</th><th>Kaynak</th></tr>"+
+$("ct").innerHTML="<tr><th>ID</th><th>Code</th><th>Kategorie</th><th>Ebene</th><th>Quelle</th></tr>"+
 c.map(x=>"<tr><td>"+x.id+"</td><td>"+E(x.code)+"</td><td>"+E(x.name)+"</td><td>"+x.level+"</td><td>"+E(x.source)+"</td></tr>").join("");
 let o=c.map(x=>'<option value="'+x.id+'">'+E(x.code+" — "+x.name)+"</option>").join("");
 $("cs").innerHTML=o;$("as").innerHTML=o;
 let l=await api("/audit");
-$("lt").innerHTML="<tr><th>Zaman</th><th>Actor</th><th>Aksiyon</th><th>Entity</th><th>Detay</th></tr>"+
+$("lt").innerHTML="<tr><th>Zeit</th><th>Akteur</th><th>Aktion</th><th>Entität</th><th>Detail</th></tr>"+
 l.map(x=>"<tr><td>"+x.created_at+"</td><td>"+E(x.actor)+"</td><td>"+E(x.action)+"</td><td>"+E(x.entity)+"</td><td>"+E(x.details)+"</td></tr>").join("");
 }
 async function loadR(){
 let r=await api("/categories/"+$("cs").value+"/competitors");
-$("rt").innerHTML="<tr><th>#</th><th>Rakip</th><th>Domain</th><th>Tip</th><th>Gelir</th><th>GMV</th><th>Durum</th></tr>"+
+$("rt").innerHTML="<tr><th>#</th><th>Wettbewerber</th><th>Domain</th><th>Typ</th><th>Umsatz</th><th>GMV</th><th>Status</th></tr>"+
 r.map(x=>"<tr><td>"+x.rank+"</td><td>"+E(x.name)+"</td><td>"+E(x.domain)+"</td><td>"+E(x.type)+"</td><td>"+(x.revenue_eur??"—")+"</td><td>"+(x.gmv_eur??"—")+"</td><td>"+(x.verified?"VERIFIED":"UNVERIFIED")+"</td></tr>").join("");
 }
 async function loadA(){
 let r=await api("/analysis/"+$("as").value);
 $("res").innerHTML="<h2>"+E(r.category.name)+"</h2><p>Rakip kapsamı: <b>"+r.coverage_pct+"%</b></p>"+
-"<h3>Ortak kategori yapıları</h3><p>"+r.common_nodes.slice(0,80).map(x=>E(x.path)+" — "+x.share_pct+"%").join(" • ")+"</p>"+
-"<h3>Buzzard eksik adayları</h3><p>"+r.buzzard_missing_candidates.slice(0,80).map(x=>E(x.path)+" — "+x.competitors+" rakip").join(" • ")+"</p>"+
-"<h3>Nadir / benzersiz yapılar</h3><p>"+r.rare_or_unique_nodes.slice(0,80).map(x=>E(x.path)+" — "+x.competitors+" rakip").join(" • ")+"</p>"+
-"<h3>Ortak özellikler</h3><p>"+r.common_features.map(x=>E(x.feature)+" — "+x.cnt).join(" • ")+"</p>";
+"<h3>Gemeinsame Kategoriestrukturen</h3><p>"+r.common_nodes.slice(0,80).map(x=>E(x.path)+" — "+x.share_pct+"%").join(" • ")+"</p>"+
+"<h3>Buzzard-Lücken-Kandidaten</h3><p>"+r.buzzard_missing_candidates.slice(0,80).map(x=>E(x.path)+" — "+x.competitors+" Wettbewerber").join(" • ")+"</p>"+
+"<h3>Seltene / einzigartige Strukturen</h3><p>"+r.rare_or_unique_nodes.slice(0,80).map(x=>E(x.path)+" — "+x.competitors+" Wettbewerber").join(" • ")+"</p>"+
+"<h3>Gemeinsame Merkmale</h3><p>"+r.common_features.map(x=>E(x.feature)+" — "+x.cnt).join(" • ")+"</p>";
 }
 render();
 </script></body></html>

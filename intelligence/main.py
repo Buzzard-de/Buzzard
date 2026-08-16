@@ -1511,6 +1511,8 @@ def main():
 
     sub.add_parser("complete-production-demo", help="Run Production MAX storefront demo flow")
     sub.add_parser("complete-production-readiness", help="Show production go-live readiness gate")
+    sub.add_parser("complete-production-bridge-manifest", help="Buzzard Production Bridge Manifest anzeigen")
+    sub.add_parser("complete-production-bridge-summary", help="Production Bridge Gates und Go-Live-Status")
     sub.add_parser("complete-production-docs", help="Show Production MAX upgrade documentation")
 
     sub.add_parser("complete-shop-bridge-demo", help="Run Shop Intelligence Commerce Bridge demo flow")
@@ -5479,6 +5481,14 @@ def main():
         from buzzard_ai_complete.commands import complete_production_readiness
 
         print(complete_production_readiness())
+    elif args.cmd == "complete-production-bridge-manifest":
+        from buzzard_ai_complete.commands import complete_production_bridge_manifest
+
+        print(complete_production_bridge_manifest())
+    elif args.cmd == "complete-production-bridge-summary":
+        from buzzard_ai_complete.commands import complete_production_bridge_summary
+
+        print(complete_production_bridge_summary())
     elif args.cmd == "complete-production-docs":
         from buzzard_ai_complete.commands import complete_production_docs
 

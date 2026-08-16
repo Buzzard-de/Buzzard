@@ -77,6 +77,29 @@ function taxonomySnapshot() {
   };
 }
 
+function productionBridgeSummary() {
+  return {
+    name: "Buzzard Production Bridge",
+    locale: "de",
+    purpose: "Vollständige Software-Architektur in kontrollierte Produktionsreife überführen.",
+    go_live_rule: "Jedes Gate muss bestehen.",
+    important:
+      "Credentials, API-Keys und rechtliche Freigaben müssen konfiguriert werden; die Bridge erfindet sie nicht.",
+    ready_for_go_live: false,
+    mode: "embedded",
+    gates_passed: 0,
+    gates_blocked: 14,
+    gates: [
+      { gate: "domain", label: "Domain", status: "BLOCKED", blocking: true },
+      { gate: "TLS", label: "TLS/HTTPS", status: "BLOCKED", blocking: true },
+      { gate: "payment", label: "Zahlung", status: "BLOCKED", blocking: true },
+      { gate: "shipping", label: "Versand", status: "BLOCKED", blocking: true },
+      { gate: "end-to-end order", label: "End-to-End-Bestellung", status: "BLOCKED", blocking: true },
+    ],
+    manifest_json: "/taxonomy/buzzard_production_bridge_manifest.json",
+  };
+}
+
 function productionReadiness() {
   return {
     ready: false,
@@ -154,6 +177,7 @@ module.exports = {
   search,
   nodePath,
   productionReadiness,
+  productionBridgeSummary,
   productionIntegrations,
   shopBridgeReadiness,
   health,

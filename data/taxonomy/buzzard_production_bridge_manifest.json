@@ -1,0 +1,26 @@
+{
+  "name": "Buzzard Production Bridge",
+  "version": "1.0",
+  "locale": "de",
+  "purpose": "Vollständige Software-Architektur in kontrollierte Produktionsreife überführen.",
+  "gates": [
+    "domain",
+    "TLS",
+    "database",
+    "payment",
+    "shipping",
+    "supplier/API",
+    "email",
+    "security",
+    "backup",
+    "monitoring",
+    "legal",
+    "end-to-end order",
+    "return/Widerruf",
+    "GDPR/consent"
+  ],
+  "important": "Credentials, API-Keys und rechtliche Freigaben müssen konfiguriert werden; die Bridge erfindet sie nicht.",
+  "go_live_rule": "Jedes Gate muss bestehen.",
+  "manifest_json": "/taxonomy/buzzard_production_bridge_manifest.json",
+  "api_prefix": "/production/bridge"
+}

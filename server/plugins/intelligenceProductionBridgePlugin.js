@@ -42,6 +42,20 @@ module.exports = {
       return res.json({ success: true, catalogMode: true, ...result.data });
     });
 
+    app.get("/api/intelligence/production/bridge", async (_req, res) => {
+      if (!isBridgeEnabled()) {
+        return res.status(503).json({
+          success: false,
+          error: "intelligence_bridge_not_configured",
+        });
+      }
+      const result = await fetchIntelligence("/production/bridge/summary");
+      if (!result.ok) {
+        return res.status(503).json({ success: false, error: result.error });
+      }
+      return res.json({ success: true, catalogMode: true, ...result.data });
+    });
+
     app.get("/api/intelligence/production/integrations", async (_req, res) => {
       if (!isBridgeEnabled()) {
         return res.status(503).json({

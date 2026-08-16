@@ -474,6 +474,18 @@ def complete_production_readiness():
     return json.dumps(ProductionMaxService().readiness(), ensure_ascii=False, indent=2)
 
 
+def complete_production_bridge_manifest():
+    from buzzard_ai_complete.production.bridge import ProductionBridgeService
+
+    return json.dumps(ProductionBridgeService().load_manifest(), ensure_ascii=False, indent=2)
+
+
+def complete_production_bridge_summary():
+    from buzzard_ai_complete.production.bridge import ProductionBridgeService
+
+    return json.dumps(ProductionBridgeService().summary(), ensure_ascii=False, indent=2)
+
+
 def complete_production_docs():
     return _read_doc("PRODUCTION_MAX_UPGRADE.md")
 

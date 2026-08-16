@@ -1661,6 +1661,17 @@ def main():
         help="Show social intelligence AI documentation",
     )
 
+    sub.add_parser("complete-supplier-intelligence-health", help="Show supplier intelligence AI health")
+    sub.add_parser("complete-supplier-intelligence-demo", help="Run supplier intelligence AI demo")
+    sub.add_parser(
+        "complete-supplier-intelligence-schema",
+        help="Show supplier intelligence schema, config and risk policy",
+    )
+    sub.add_parser(
+        "complete-supplier-intelligence-docs",
+        help="Show supplier intelligence AI documentation",
+    )
+
     sub.add_parser("complete-automotive-taxonomy-health", help="Show automotive taxonomy health")
     sub.add_parser("complete-automotive-taxonomy-seed", help="List master vehicle need systems")
     sub.add_parser("complete-automotive-taxonomy-demo", help="Run automotive taxonomy demo")
@@ -5630,6 +5641,22 @@ def main():
         from buzzard_ai_complete.commands import complete_social_intelligence_docs
 
         print(complete_social_intelligence_docs())
+    elif args.cmd == "complete-supplier-intelligence-health":
+        from buzzard_ai_complete.commands import complete_supplier_intelligence_health
+
+        print(complete_supplier_intelligence_health())
+    elif args.cmd == "complete-supplier-intelligence-demo":
+        from buzzard_ai_complete.commands import complete_supplier_intelligence_demo
+
+        print(complete_supplier_intelligence_demo())
+    elif args.cmd == "complete-supplier-intelligence-schema":
+        from buzzard_ai_complete.commands import complete_supplier_intelligence_schema
+
+        print(complete_supplier_intelligence_schema())
+    elif args.cmd == "complete-supplier-intelligence-docs":
+        from buzzard_ai_complete.commands import complete_supplier_intelligence_docs
+
+        print(complete_supplier_intelligence_docs())
     elif args.cmd == "complete-automotive-taxonomy-health":
         from buzzard_ai_complete.commands import complete_automotive_taxonomy_health
 

@@ -71,6 +71,9 @@ from buzzard_ai_complete.smart_menu_48_maximal.api.routes import (
 from buzzard_ai_complete.category_audit_maximal.api.routes import (
     router as category_audit_router,
 )
+from buzzard_ai_complete.supplier_intelligence_ai_maximal.api.routes import (
+    router as supplier_intelligence_router,
+)
 
 if FastAPI:
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
@@ -143,6 +146,8 @@ if FastAPI:
         app.include_router(smart_menu_48_router)
     if category_audit_router is not None:
         app.include_router(category_audit_router)
+    if supplier_intelligence_router is not None:
+        app.include_router(supplier_intelligence_router)
 
     class TaskRequest(BaseModel):
         task_id: str

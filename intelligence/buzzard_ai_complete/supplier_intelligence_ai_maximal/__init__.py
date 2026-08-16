@@ -1,0 +1,1 @@
+from buzzard_ai_complete.supplier_intelligence_ai_maximal.service import SupplierIntelligenceService

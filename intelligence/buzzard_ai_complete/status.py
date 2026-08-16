@@ -105,6 +105,8 @@ def complete_status():
         "     complete-category-audit-health, complete-category-audit-demo,",
         "     complete-category-audit-report, complete-category-audit-sync,",
         "     complete-category-audit-docs",
+        "     complete-supplier-intelligence-health, complete-supplier-intelligence-demo,",
+        "     complete-supplier-intelligence-schema, complete-supplier-intelligence-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

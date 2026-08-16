@@ -1,0 +1,26 @@
+{
+  "required": [
+    "supplier_id",
+    "legal_name",
+    "country",
+    "website",
+    "evidence"
+  ],
+  "optional": [
+    "vat_id",
+    "registry_id",
+    "address",
+    "categories",
+    "brands",
+    "capabilities",
+    "commercial_terms"
+  ],
+  "evidence_required": [
+    "source_type",
+    "source",
+    "claim",
+    "observed_at",
+    "reliability"
+  ],
+  "source_policy": "data/risk_policy.json"
+}

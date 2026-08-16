@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import ProductList from "@/components/ProductList";
+import KfzPartsBrowse from "@/components/KfzPartsBrowse";
 import JsonLd from "@/components/seo/JsonLd";
 import {
   categoryHref,
@@ -11,6 +12,15 @@ import {
   getCategoryLabel,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
+import {
+  getKfzMains,
+  getKfzStaticParams,
+  isKfzSlugPath,
+  parseKfzSlugPath,
+  getShopL2Href,
+  getKfzCompetitors,
+  getCompetitorLabel,
+} from "@/lib/categories/kfzTree";
 import { buildCategoryMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, categoryBreadcrumbItems, categoryCollectionSchema } from "@/lib/seo/structured-data";
 
@@ -19,11 +29,18 @@ interface CategoryPageProps {
 }
 
 export async function generateStaticParams() {
-  return getAllCategoryStaticParams();
+  return [...getAllCategoryStaticParams(), ...getKfzStaticParams()];
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
+  if (isKfzSlugPath(slug)) {
+    const { main } = parseKfzSlugPath(slug);
+    if (main) {
+      return { title: `${main.name_de} — KFZ-Teilebaum | Buzzard` };
+    }
+    return { title: "KFZ-Teilebaum — Buzzard" };
+  }
   const category = findCategoryBySlugPath(slug.join("/"));
   if (!category) {
     return { title: "Kategorie – Buzzard" };
@@ -31,8 +48,131 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   return buildCategoryMetadata(category, DEFAULT_LOCALE);
 }
 
+function KfzBrowsePage({ slug }: { slug: string[] }) {
+  const { main } = parseKfzSlugPath(slug);
+
+  if (!main && slug.length > 2) {
+    return (
+      <section className="shop-page">
+        <div className="shop-empty">
+          <h1>KFZ-Kategorie nicht gefunden</h1>
+          <Link href="/kategorie/automotive/kfz/" className="shop-btn-primary">Zum KFZ-Teilebaum</Link>
+        </div>
+      </section>
+    );
+  }
+
+  if (main) {
+    const shopHref = getShopL2Href(main);
+    const activeCompetitors = main.active_competitors ?? [];
+    return (
+      <section className="page-hero">
+        <div className="page-hero-inner">
+          <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
+            <Link href="/">Startseite</Link>
+            <span><span>/</span><Link href="/kategorie/automotive/">Automotive</Link></span>
+            <span><span>/</span><Link href="/kategorie/automotive/kfz/">KFZ-Teilebaum</Link></span>
+            <span><span>/</span><span>{main.name_de}</span></span>
+          </nav>
+          <h1>
+            <span className="kfz-parts-id">{main.kfz_id}</span> {main.name_de}
+          </h1>
+          <p>
+            {main.subcategory_count} Unterkategorien
+            {main.l3_count ? ` · ${main.l3_count} Produktgruppen (L3)` : ""} · {main.kfz_name}
+          </p>
+          {shopHref && (
+            <p>
+              Shop-Bereich: <Link href={shopHref}>{main.shop_l2_name}</Link>
+            </p>
+          )}
+          {activeCompetitors.length > 0 && (
+            <p className="kfz-competitor-strip">
+              Wettbewerber-Abdeckung:{" "}
+              {activeCompetitors.map((id) => (
+                <span key={id} className="kfz-competitor-badge">{getCompetitorLabel(id)}</span>
+              ))}
+            </p>
+          )}
+        </div>
+        <section className="subpage-content kfz-l3-section">
+          {main.subcategories.map((sub) => (
+            <article key={sub.kfz_id} className="kfz-l3-group">
+              <h3><span className="kfz-parts-id">{sub.kfz_id}</span> {sub.kfz_name}</h3>
+              {sub.children && sub.children.length > 0 ? (
+                <div className="category-children-grid">
+                  {sub.children.map((child) => (
+                    <div key={child.kfz_id} className="category-child-card">
+                      <strong>{child.kfz_id}</strong> {child.kfz_name}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="kfz-parts-meta">Keine L3-Produktgruppen definiert</p>
+              )}
+            </article>
+          ))}
+        </section>
+        {shopHref && (
+          <section className="subpage-content products-page-layout">
+            <Suspense fallback={<div className="products-grid" />}>
+              <ProductList categorySlug={`automotive/${main.shop_l2_slug}`} />
+            </Suspense>
+          </section>
+        )}
+      </section>
+    );
+  }
+
+  return (
+    <>
+      <section className="page-hero">
+        <div className="page-hero-inner">
+          <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
+            <Link href="/">Startseite</Link>
+            <span><span>/</span><Link href="/kategorie/automotive/">Automotive</Link></span>
+            <span><span>/</span><span>KFZ-Teilebaum</span></span>
+          </nav>
+          <h1>KFZ-Teilebaum</h1>
+          <p>
+            {getKfzMains().length} Hauptsysteme · Buzzard Master Kfz Intelligence OS
+            {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
+          </p>
+          <p>
+            <a href="/taxonomy/buzzard_master_business_os_final_100_single_file.html" target="_blank" rel="noopener noreferrer">
+              Master Business OS Final 100% öffnen
+            </a>
+            {" · "}
+            <a href="/taxonomy/buzzard_master_business_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
+              Master Business OS Maximum
+            </a>
+            {" · "}
+            <a href="/taxonomy/buzzard_intelligence_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
+              Intelligence OS Maximum öffnen (43 Agents, Ops, Kurmay)
+            </a>
+            {" · "}
+            <a href="/taxonomy/buzzard_intelligence_os_all_in_one.html" target="_blank" rel="noopener noreferrer">
+              All-in-One (12 Module)
+            </a>
+            {" · "}
+            <a href="/taxonomy/buzzard_master_kfz_intelligence_os.html" target="_blank" rel="noopener noreferrer">
+              KFZ Console (Matrix, Gaps)
+            </a>
+          </p>
+        </div>
+      </section>
+      <KfzPartsBrowse />
+    </>
+  );
+}
+
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
+
+  if (isKfzSlugPath(slug)) {
+    return <KfzBrowsePage slug={slug} />;
+  }
+
   const category = findCategoryBySlugPath(slug.join("/"));
 
   if (!category) {
@@ -86,6 +226,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           ))}
         </section>
       )}
+
+      {category.id === "cat-05" && <KfzPartsBrowse compact />}
 
       <section className="subpage-content products-page-layout">
         <Suspense fallback={<div className="products-grid" />}>

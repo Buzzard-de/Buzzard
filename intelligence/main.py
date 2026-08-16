@@ -1651,6 +1651,42 @@ def main():
         "complete-category-intelligence-43-docs",
         help="Show 43 category intelligence documentation",
     )
+    sub.add_parser(
+        "complete-category-intelligence-47-health",
+        help="Show 47 category intelligence OS health",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-47-summary",
+        help="Show 47 category intelligence OS summary",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-47-demo",
+        help="Run 47 category intelligence OS demo",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-47-docs",
+        help="Show 47 category intelligence OS documentation",
+    )
+    sub.add_parser(
+        "complete-sync-category-intelligence-47",
+        help="Sync Category Intelligence 47 from Master Taxonomy 48 (excl. Automotive)",
+    )
+    sub.add_parser(
+        "complete-de-ecom-intel-scan",
+        help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
+    )
+    sub.add_parser(
+        "complete-de-ecom-intel-export",
+        help="Letzten Scan aus Memory in dogu-bey-de-ecom-intel/ exportieren (+ ZIP)",
+    )
+    sub.add_parser(
+        "complete-all-connectors-health",
+        help="Status aller Live-Connectors (eBay, Amazon, Google Ads, Public Fetch)",
+    )
+    sub.add_parser(
+        "complete-sync-category-intelligence-43",
+        help="Sync Category Intelligence 43 config from data/buzzard_categories.json",
+    )
 
     sub.add_parser("complete-social-intelligence-health", help="Show social intelligence AI health")
     sub.add_parser("complete-social-intelligence-platforms", help="List social platform adapters")
@@ -1695,6 +1731,55 @@ def main():
     sub.add_parser(
         "complete-automotive-taxonomy-tires-docs",
         help="Show tire taxonomy documentation",
+    )
+    sub.add_parser(
+        "complete-automotive-taxonomy-kfz-tree",
+        help="Show KFZ master tree + shop bridge (43 mains)",
+    )
+    sub.add_parser(
+        "complete-automotive-taxonomy-kfz-intelligence-os",
+        help="Show KFZ Intelligence OS summary + competitors",
+    )
+    sub.add_parser(
+        "complete-intelligence-os-all-in-one",
+        help="Show Buzzard Intelligence OS All-in-One summary + modules",
+    )
+    sub.add_parser(
+        "complete-intelligence-os-maximum-manifest",
+        help="Show Intelligence OS maximum manifest (agents, services, runtime)",
+    )
+    sub.add_parser(
+        "complete-intelligence-os-maximum-single-file",
+        help="Show Intelligence OS maximum single-file console summary",
+    )
+    sub.add_parser(
+        "complete-master-business-os-maximum-manifest",
+        help="Show Master Business OS maximum manifest (enterprise modules, integrations)",
+    )
+    sub.add_parser(
+        "complete-master-business-os-maximum-single-file",
+        help="Show Master Business OS maximum single-file console summary",
+    )
+    sub.add_parser(
+        "complete-master-business-os-final-100-single-file",
+        help="Show Master Business OS Final 100% single-file console summary",
+    )
+    sub.add_parser(
+        "complete-sync-kfz-category-tree",
+        help="Sync KFZ tree with shop cat-05 bridge JSON",
+    )
+    sub.add_parser(
+        "complete-intelligence-pipeline-health",
+        help="Show intelligence pipeline health and configured domains",
+    )
+    pipeline_run = sub.add_parser(
+        "complete-intelligence-pipeline-run",
+        help="Run intelligence pipeline (public sources → master taxonomy)",
+    )
+    pipeline_run.add_argument(
+        "--domain",
+        default="kfz_automotive",
+        help="Pipeline domain (default: kfz_automotive)",
     )
 
     sub.add_parser("complete-agriculture-health", help="Show agriculture taxonomy health")
@@ -5622,6 +5707,42 @@ def main():
         from buzzard_ai_complete.commands import complete_category_intelligence_43_docs
 
         print(complete_category_intelligence_43_docs())
+    elif args.cmd == "complete-category-intelligence-47-health":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_health
+
+        print(complete_category_intelligence_47_health())
+    elif args.cmd == "complete-category-intelligence-47-summary":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_summary
+
+        print(complete_category_intelligence_47_summary())
+    elif args.cmd == "complete-category-intelligence-47-demo":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_demo
+
+        print(complete_category_intelligence_47_demo())
+    elif args.cmd == "complete-category-intelligence-47-docs":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_docs
+
+        print(complete_category_intelligence_47_docs())
+    elif args.cmd == "complete-sync-category-intelligence-47":
+        from buzzard_ai_complete.commands import complete_sync_category_intelligence_47
+
+        print(complete_sync_category_intelligence_47())
+    elif args.cmd == "complete-de-ecom-intel-scan":
+        from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
+
+        print(complete_de_ecom_intel_scan())
+    elif args.cmd == "complete-de-ecom-intel-export":
+        from buzzard_ai_complete.commands import complete_de_ecom_intel_export
+
+        print(complete_de_ecom_intel_export())
+    elif args.cmd == "complete-all-connectors-health":
+        from buzzard_ai_complete.commands import complete_all_connectors_health
+
+        print(complete_all_connectors_health())
+    elif args.cmd == "complete-sync-category-intelligence-43":
+        from buzzard_ai_complete.commands import complete_sync_category_intelligence_43
+
+        print(complete_sync_category_intelligence_43())
     elif args.cmd == "complete-social-intelligence-health":
         from buzzard_ai_complete.commands import complete_social_intelligence_health
 
@@ -5694,6 +5815,50 @@ def main():
         from buzzard_ai_complete.commands import complete_automotive_taxonomy_tires_docs
 
         print(complete_automotive_taxonomy_tires_docs())
+    elif args.cmd == "complete-automotive-taxonomy-kfz-tree":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_kfz_tree
+
+        print(complete_automotive_taxonomy_kfz_tree())
+    elif args.cmd == "complete-automotive-taxonomy-kfz-intelligence-os":
+        from buzzard_ai_complete.commands import complete_automotive_taxonomy_kfz_intelligence_os
+
+        print(complete_automotive_taxonomy_kfz_intelligence_os())
+    elif args.cmd == "complete-intelligence-os-all-in-one":
+        from buzzard_ai_complete.commands import complete_intelligence_os_all_in_one
+
+        print(complete_intelligence_os_all_in_one())
+    elif args.cmd == "complete-intelligence-os-maximum-manifest":
+        from buzzard_ai_complete.commands import complete_intelligence_os_maximum_manifest
+
+        print(complete_intelligence_os_maximum_manifest())
+    elif args.cmd == "complete-intelligence-os-maximum-single-file":
+        from buzzard_ai_complete.commands import complete_intelligence_os_maximum_single_file
+
+        print(complete_intelligence_os_maximum_single_file())
+    elif args.cmd == "complete-master-business-os-maximum-manifest":
+        from buzzard_ai_complete.commands import complete_master_business_os_maximum_manifest
+
+        print(complete_master_business_os_maximum_manifest())
+    elif args.cmd == "complete-master-business-os-maximum-single-file":
+        from buzzard_ai_complete.commands import complete_master_business_os_maximum_single_file
+
+        print(complete_master_business_os_maximum_single_file())
+    elif args.cmd == "complete-master-business-os-final-100-single-file":
+        from buzzard_ai_complete.commands import complete_master_business_os_final_100_single_file
+
+        print(complete_master_business_os_final_100_single_file())
+    elif args.cmd == "complete-sync-kfz-category-tree":
+        from buzzard_ai_complete.commands import complete_sync_kfz_category_tree
+
+        print(complete_sync_kfz_category_tree())
+    elif args.cmd == "complete-intelligence-pipeline-health":
+        from buzzard_ai_complete.commands import complete_intelligence_pipeline_health
+
+        print(complete_intelligence_pipeline_health())
+    elif args.cmd == "complete-intelligence-pipeline-run":
+        from buzzard_ai_complete.commands import complete_intelligence_pipeline_run
+
+        print(complete_intelligence_pipeline_run(domain=args.domain))
     elif args.cmd == "complete-agriculture-health":
         from buzzard_ai_complete.commands import complete_agriculture_health
 

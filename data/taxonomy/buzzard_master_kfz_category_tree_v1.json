@@ -1,0 +1,2543 @@
+{
+  "name": "Buzzard Master Kfz Category Tree V1",
+  "version": "1.0",
+  "language": "tr",
+  "main_category_count": 43,
+  "subcategory_count": 454,
+  "architecture_rule": "Vehicle make/model/year, HSN/TSN, OEM, TecDoc ID, manufacturer part no, viscosity, dimensions belong in Product Attribute / Compatibility layer — not in category tree.",
+  "compatibility_layers": [
+    "vehicle",
+    "oem",
+    "tecdoc"
+  ],
+  "categories": [
+    {
+      "id": "01",
+      "name": "Motor",
+      "subcategories": [
+        {
+          "id": "01.01",
+          "name": "Motor komple",
+          "children": []
+        },
+        {
+          "id": "01.02",
+          "name": "Motor blokları",
+          "children": []
+        },
+        {
+          "id": "01.03",
+          "name": "Silindir kapağı",
+          "children": []
+        },
+        {
+          "id": "01.04",
+          "name": "Krank mekanizması",
+          "children": []
+        },
+        {
+          "id": "01.05",
+          "name": "Piston & segman",
+          "children": []
+        },
+        {
+          "id": "01.06",
+          "name": "Krank mili",
+          "children": []
+        },
+        {
+          "id": "01.07",
+          "name": "Eksantrik mili",
+          "children": []
+        },
+        {
+          "id": "01.08",
+          "name": "Subap sistemi",
+          "children": []
+        },
+        {
+          "id": "01.09",
+          "name": "Motor yatakları",
+          "children": []
+        },
+        {
+          "id": "01.10",
+          "name": "Motor takozları",
+          "children": []
+        },
+        {
+          "id": "01.11",
+          "name": "Yağlama sistemi",
+          "children": []
+        },
+        {
+          "id": "01.12",
+          "name": "Yağ pompası",
+          "children": []
+        },
+        {
+          "id": "01.13",
+          "name": "Motor contaları",
+          "children": []
+        },
+        {
+          "id": "01.14",
+          "name": "Silindir kapak contası",
+          "children": []
+        },
+        {
+          "id": "01.15",
+          "name": "Karter",
+          "children": []
+        },
+        {
+          "id": "01.16",
+          "name": "Karter parçaları",
+          "children": []
+        },
+        {
+          "id": "01.17",
+          "name": "Motor bağlantı parçaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "name": "Motor Yönetimi & Sensörler",
+      "subcategories": [
+        {
+          "id": "02.01",
+          "name": "ECU / motor kontrol ünitesi",
+          "children": []
+        },
+        {
+          "id": "02.02",
+          "name": "Motor sensörleri",
+          "children": []
+        },
+        {
+          "id": "02.03",
+          "name": "Krank sensörü",
+          "children": []
+        },
+        {
+          "id": "02.04",
+          "name": "Eksantrik sensörü",
+          "children": []
+        },
+        {
+          "id": "02.05",
+          "name": "MAP / MAF sensörleri",
+          "children": []
+        },
+        {
+          "id": "02.06",
+          "name": "Lambda sensörleri",
+          "children": []
+        },
+        {
+          "id": "02.07",
+          "name": "Gaz kelebeği",
+          "children": []
+        },
+        {
+          "id": "02.08",
+          "name": "Rölanti kontrolü",
+          "children": []
+        },
+        {
+          "id": "02.09",
+          "name": "EGR sistemi",
+          "children": []
+        },
+        {
+          "id": "02.10",
+          "name": "Motor röleleri",
+          "children": []
+        },
+        {
+          "id": "02.11",
+          "name": "Motor kontrol modülleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "name": "Yakıt Sistemi",
+      "subcategories": [
+        {
+          "id": "03.01",
+          "name": "Yakıt pompası",
+          "children": []
+        },
+        {
+          "id": "03.02",
+          "name": "Yakıt deposu",
+          "children": []
+        },
+        {
+          "id": "03.03",
+          "name": "Yakıt enjektörleri",
+          "children": []
+        },
+        {
+          "id": "03.04",
+          "name": "Enjektör parçaları",
+          "children": []
+        },
+        {
+          "id": "03.05",
+          "name": "Yakıt basınç regülatörü",
+          "children": []
+        },
+        {
+          "id": "03.06",
+          "name": "Yakıt rayı",
+          "children": []
+        },
+        {
+          "id": "03.07",
+          "name": "Yakıt hortumları",
+          "children": []
+        },
+        {
+          "id": "03.08",
+          "name": "Yakıt filtreleri",
+          "children": []
+        },
+        {
+          "id": "03.09",
+          "name": "Dizel yakıt sistemi",
+          "children": []
+        },
+        {
+          "id": "03.10",
+          "name": "Benzinli yakıt sistemi",
+          "children": []
+        },
+        {
+          "id": "03.11",
+          "name": "Common Rail",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "name": "Turbo & Şarj Sistemi",
+      "subcategories": [
+        {
+          "id": "04.01",
+          "name": "Turboşarj",
+          "children": []
+        },
+        {
+          "id": "04.02",
+          "name": "Turbo kartuşu",
+          "children": []
+        },
+        {
+          "id": "04.03",
+          "name": "Turbo aktüatörü",
+          "children": []
+        },
+        {
+          "id": "04.04",
+          "name": "Turbo hortumları",
+          "children": []
+        },
+        {
+          "id": "04.05",
+          "name": "Intercooler",
+          "children": []
+        },
+        {
+          "id": "04.06",
+          "name": "Şarj havası sistemi",
+          "children": []
+        },
+        {
+          "id": "04.07",
+          "name": "Basınç valfleri",
+          "children": []
+        },
+        {
+          "id": "04.08",
+          "name": "Turbo contaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "name": "Soğutma Sistemi",
+      "subcategories": [
+        {
+          "id": "05.01",
+          "name": "Radyatör",
+          "children": []
+        },
+        {
+          "id": "05.02",
+          "name": "Su pompası",
+          "children": []
+        },
+        {
+          "id": "05.03",
+          "name": "Termostat",
+          "children": []
+        },
+        {
+          "id": "05.04",
+          "name": "Fan",
+          "children": []
+        },
+        {
+          "id": "05.05",
+          "name": "Fan motoru",
+          "children": []
+        },
+        {
+          "id": "05.06",
+          "name": "Fan müşürü",
+          "children": []
+        },
+        {
+          "id": "05.07",
+          "name": "Genleşme tankı",
+          "children": []
+        },
+        {
+          "id": "05.08",
+          "name": "Soğutma hortumları",
+          "children": []
+        },
+        {
+          "id": "05.09",
+          "name": "Radyatör kapağı",
+          "children": []
+        },
+        {
+          "id": "05.10",
+          "name": "Soğutma suyu bağlantıları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "name": "Motor Kayışları & Triger",
+      "subcategories": [
+        {
+          "id": "06.01",
+          "name": "Triger kayışı",
+          "children": []
+        },
+        {
+          "id": "06.02",
+          "name": "Triger seti",
+          "children": []
+        },
+        {
+          "id": "06.03",
+          "name": "Triger zinciri",
+          "children": []
+        },
+        {
+          "id": "06.04",
+          "name": "Zincir seti",
+          "children": []
+        },
+        {
+          "id": "06.05",
+          "name": "V kayışı",
+          "children": []
+        },
+        {
+          "id": "06.06",
+          "name": "Poly-V kayışı",
+          "children": []
+        },
+        {
+          "id": "06.07",
+          "name": "Gergi ruloları",
+          "children": []
+        },
+        {
+          "id": "06.08",
+          "name": "Kılavuz rulolar",
+          "children": []
+        },
+        {
+          "id": "06.09",
+          "name": "Kayış gergileri",
+          "children": []
+        },
+        {
+          "id": "06.10",
+          "name": "Zincir gergileri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "name": "Filtreler",
+      "subcategories": [
+        {
+          "id": "07.01",
+          "name": "Motor hava filtresi",
+          "children": []
+        },
+        {
+          "id": "07.02",
+          "name": "Yağ filtresi",
+          "children": []
+        },
+        {
+          "id": "07.03",
+          "name": "Yakıt filtresi",
+          "children": []
+        },
+        {
+          "id": "07.04",
+          "name": "Polen / kabin filtresi",
+          "children": []
+        },
+        {
+          "id": "07.05",
+          "name": "Dizel yakıt filtresi",
+          "children": []
+        },
+        {
+          "id": "07.06",
+          "name": "Hidrolik filtre",
+          "children": []
+        },
+        {
+          "id": "07.07",
+          "name": "Şanzıman filtresi",
+          "children": []
+        },
+        {
+          "id": "07.08",
+          "name": "Hava kurutucu filtreleri",
+          "children": []
+        },
+        {
+          "id": "07.09",
+          "name": "Performans filtreleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "name": "Yağlar & Teknik Sıvılar",
+      "subcategories": [
+        {
+          "id": "08.01",
+          "name": "Motor yağları",
+          "children": []
+        },
+        {
+          "id": "08.02",
+          "name": "Şanzıman yağları",
+          "children": []
+        },
+        {
+          "id": "08.03",
+          "name": "Diferansiyel yağları",
+          "children": []
+        },
+        {
+          "id": "08.04",
+          "name": "ATF",
+          "children": []
+        },
+        {
+          "id": "08.05",
+          "name": "Hidrolik yağlar",
+          "children": []
+        },
+        {
+          "id": "08.06",
+          "name": "Fren hidroliği",
+          "children": []
+        },
+        {
+          "id": "08.07",
+          "name": "Antifriz",
+          "children": []
+        },
+        {
+          "id": "08.08",
+          "name": "Soğutma sıvıları",
+          "children": []
+        },
+        {
+          "id": "08.09",
+          "name": "AdBlue",
+          "children": []
+        },
+        {
+          "id": "08.10",
+          "name": "Cam suyu",
+          "children": []
+        },
+        {
+          "id": "08.11",
+          "name": "Kompresör yağları",
+          "children": []
+        },
+        {
+          "id": "08.12",
+          "name": "Gresler",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "09",
+      "name": "Fren Sistemi",
+      "subcategories": [
+        {
+          "id": "09.01",
+          "name": "Fren diskleri",
+          "children": []
+        },
+        {
+          "id": "09.02",
+          "name": "Fren balataları",
+          "children": []
+        },
+        {
+          "id": "09.03",
+          "name": "Fren kaliperleri",
+          "children": []
+        },
+        {
+          "id": "09.04",
+          "name": "Fren kaliper parçaları",
+          "children": []
+        },
+        {
+          "id": "09.05",
+          "name": "Fren kampanaları",
+          "children": []
+        },
+        {
+          "id": "09.06",
+          "name": "Fren pabuçları",
+          "children": []
+        },
+        {
+          "id": "09.07",
+          "name": "Fren silindiri",
+          "children": []
+        },
+        {
+          "id": "09.08",
+          "name": "Fren ana merkezi",
+          "children": []
+        },
+        {
+          "id": "09.09",
+          "name": "Fren hortumları",
+          "children": []
+        },
+        {
+          "id": "09.10",
+          "name": "Fren boruları",
+          "children": []
+        },
+        {
+          "id": "09.11",
+          "name": "ABS parçaları",
+          "children": []
+        },
+        {
+          "id": "09.12",
+          "name": "Fren sensörleri",
+          "children": []
+        },
+        {
+          "id": "09.13",
+          "name": "El freni sistemi",
+          "children": []
+        },
+        {
+          "id": "09.14",
+          "name": "Elektrikli park freni",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "name": "Debriyaj",
+      "subcategories": [
+        {
+          "id": "10.01",
+          "name": "Debriyaj seti",
+          "children": []
+        },
+        {
+          "id": "10.02",
+          "name": "Debriyaj diski",
+          "children": []
+        },
+        {
+          "id": "10.03",
+          "name": "Baskı plakası",
+          "children": []
+        },
+        {
+          "id": "10.04",
+          "name": "Debriyaj rulmanı",
+          "children": []
+        },
+        {
+          "id": "10.05",
+          "name": "Hidrolik debriyaj",
+          "children": []
+        },
+        {
+          "id": "10.06",
+          "name": "Debriyaj merkezi",
+          "children": []
+        },
+        {
+          "id": "10.07",
+          "name": "Volan",
+          "children": []
+        },
+        {
+          "id": "10.08",
+          "name": "Çift kütleli volan",
+          "children": []
+        },
+        {
+          "id": "10.09",
+          "name": "Debriyaj kablosu",
+          "children": []
+        },
+        {
+          "id": "10.10",
+          "name": "Debriyaj parçaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "name": "Şanzıman",
+      "subcategories": [
+        {
+          "id": "11.01",
+          "name": "Manuel şanzıman",
+          "children": []
+        },
+        {
+          "id": "11.02",
+          "name": "Otomatik şanzıman",
+          "children": []
+        },
+        {
+          "id": "11.03",
+          "name": "DSG",
+          "children": []
+        },
+        {
+          "id": "11.04",
+          "name": "CVT",
+          "children": []
+        },
+        {
+          "id": "11.05",
+          "name": "Şanzıman parçaları",
+          "children": []
+        },
+        {
+          "id": "11.06",
+          "name": "Dişliler",
+          "children": []
+        },
+        {
+          "id": "11.07",
+          "name": "Şanzıman rulmanları",
+          "children": []
+        },
+        {
+          "id": "11.08",
+          "name": "Şanzıman contaları",
+          "children": []
+        },
+        {
+          "id": "11.09",
+          "name": "Şanzıman filtreleri",
+          "children": []
+        },
+        {
+          "id": "11.10",
+          "name": "Şanzıman soğutması",
+          "children": []
+        },
+        {
+          "id": "11.11",
+          "name": "Vites mekanizması",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "name": "Akslar & Aktarma",
+      "subcategories": [
+        {
+          "id": "12.01",
+          "name": "Aks milleri",
+          "children": []
+        },
+        {
+          "id": "12.02",
+          "name": "Aks kafaları",
+          "children": []
+        },
+        {
+          "id": "12.03",
+          "name": "CV mafsalları",
+          "children": []
+        },
+        {
+          "id": "12.04",
+          "name": "Aks körükleri",
+          "children": []
+        },
+        {
+          "id": "12.05",
+          "name": "Aks bağlantıları",
+          "children": []
+        },
+        {
+          "id": "12.06",
+          "name": "Tahrik milleri",
+          "children": []
+        },
+        {
+          "id": "12.07",
+          "name": "Kardan milleri",
+          "children": []
+        },
+        {
+          "id": "12.08",
+          "name": "Diferansiyel",
+          "children": []
+        },
+        {
+          "id": "12.09",
+          "name": "Diferansiyel parçaları",
+          "children": []
+        },
+        {
+          "id": "12.10",
+          "name": "Aks dişlileri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "name": "Direksiyon",
+      "subcategories": [
+        {
+          "id": "13.01",
+          "name": "Direksiyon kutusu",
+          "children": []
+        },
+        {
+          "id": "13.02",
+          "name": "Direksiyon kremayeri",
+          "children": []
+        },
+        {
+          "id": "13.03",
+          "name": "Rot kolu",
+          "children": []
+        },
+        {
+          "id": "13.04",
+          "name": "Rot başı",
+          "children": []
+        },
+        {
+          "id": "13.05",
+          "name": "Direksiyon pompası",
+          "children": []
+        },
+        {
+          "id": "13.06",
+          "name": "Servo sistemi",
+          "children": []
+        },
+        {
+          "id": "13.07",
+          "name": "Direksiyon mili",
+          "children": []
+        },
+        {
+          "id": "13.08",
+          "name": "Direksiyon mafsalları",
+          "children": []
+        },
+        {
+          "id": "13.09",
+          "name": "Elektrikli direksiyon parçaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "14",
+      "name": "Süspansiyon & Şasi",
+      "subcategories": [
+        {
+          "id": "14.01",
+          "name": "Amortisör",
+          "children": []
+        },
+        {
+          "id": "14.02",
+          "name": "Yay",
+          "children": []
+        },
+        {
+          "id": "14.03",
+          "name": "Coilover",
+          "children": []
+        },
+        {
+          "id": "14.04",
+          "name": "Havalı süspansiyon",
+          "children": []
+        },
+        {
+          "id": "14.05",
+          "name": "Yay takozu",
+          "children": []
+        },
+        {
+          "id": "14.06",
+          "name": "Amortisör takozu",
+          "children": []
+        },
+        {
+          "id": "14.07",
+          "name": "Salıncak",
+          "children": []
+        },
+        {
+          "id": "14.08",
+          "name": "Salıncak burcu",
+          "children": []
+        },
+        {
+          "id": "14.09",
+          "name": "Stabilizatör",
+          "children": []
+        },
+        {
+          "id": "14.10",
+          "name": "Stabilizatör bağlantısı",
+          "children": []
+        },
+        {
+          "id": "14.11",
+          "name": "Şasi bağlantıları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "15",
+      "name": "Tekerlek Süspansiyonu & Porya",
+      "subcategories": [
+        {
+          "id": "15.01",
+          "name": "Tekerlek rulmanı",
+          "children": []
+        },
+        {
+          "id": "15.02",
+          "name": "Porya",
+          "children": []
+        },
+        {
+          "id": "15.03",
+          "name": "Porya rulmanı",
+          "children": []
+        },
+        {
+          "id": "15.04",
+          "name": "Aks mafsalı",
+          "children": []
+        },
+        {
+          "id": "15.05",
+          "name": "Tekerlek göbeği",
+          "children": []
+        },
+        {
+          "id": "15.06",
+          "name": "Rotiller",
+          "children": []
+        },
+        {
+          "id": "15.07",
+          "name": "Tekerlek bağlantı parçaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "16",
+      "name": "Lastikler",
+      "subcategories": [
+        {
+          "id": "16.01",
+          "name": "Yaz lastikleri",
+          "children": []
+        },
+        {
+          "id": "16.02",
+          "name": "Kış lastikleri",
+          "children": []
+        },
+        {
+          "id": "16.03",
+          "name": "Dört mevsim lastikleri",
+          "children": []
+        },
+        {
+          "id": "16.04",
+          "name": "Ticari araç lastikleri",
+          "children": []
+        },
+        {
+          "id": "16.05",
+          "name": "SUV lastikleri",
+          "children": []
+        },
+        {
+          "id": "16.06",
+          "name": "Run-flat",
+          "children": []
+        },
+        {
+          "id": "16.07",
+          "name": "EV lastikleri",
+          "children": []
+        },
+        {
+          "id": "16.08",
+          "name": "Performans lastikleri",
+          "children": []
+        },
+        {
+          "id": "16.09",
+          "name": "Hafif ticari lastikleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "17",
+      "name": "Jantlar",
+      "subcategories": [
+        {
+          "id": "17.01",
+          "name": "Alüminyum jant",
+          "children": []
+        },
+        {
+          "id": "17.02",
+          "name": "Çelik jant",
+          "children": []
+        },
+        {
+          "id": "17.03",
+          "name": "Hafif alaşım jant",
+          "children": []
+        },
+        {
+          "id": "17.04",
+          "name": "SUV jantları",
+          "children": []
+        },
+        {
+          "id": "17.05",
+          "name": "Ticari araç jantları",
+          "children": []
+        },
+        {
+          "id": "17.06",
+          "name": "Jant aksesuarları",
+          "children": []
+        },
+        {
+          "id": "17.07",
+          "name": "Jant bijonları",
+          "children": []
+        },
+        {
+          "id": "17.08",
+          "name": "Somunlar",
+          "children": []
+        },
+        {
+          "id": "17.09",
+          "name": "Merkezleme halkaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "18",
+      "name": "Egzoz & Emisyon",
+      "subcategories": [
+        {
+          "id": "18.01",
+          "name": "Egzoz manifoldu",
+          "children": []
+        },
+        {
+          "id": "18.02",
+          "name": "Egzoz boruları",
+          "children": []
+        },
+        {
+          "id": "18.03",
+          "name": "Susturucular",
+          "children": []
+        },
+        {
+          "id": "18.04",
+          "name": "Orta susturucu",
+          "children": []
+        },
+        {
+          "id": "18.05",
+          "name": "Arka susturucu",
+          "children": []
+        },
+        {
+          "id": "18.06",
+          "name": "Katalitik konvertör",
+          "children": []
+        },
+        {
+          "id": "18.07",
+          "name": "DPF",
+          "children": []
+        },
+        {
+          "id": "18.08",
+          "name": "GPF",
+          "children": []
+        },
+        {
+          "id": "18.09",
+          "name": "EGR",
+          "children": []
+        },
+        {
+          "id": "18.10",
+          "name": "Lambda sensörü",
+          "children": []
+        },
+        {
+          "id": "18.11",
+          "name": "NOx sensörü",
+          "children": []
+        },
+        {
+          "id": "18.12",
+          "name": "AdBlue sistemi",
+          "children": []
+        },
+        {
+          "id": "18.13",
+          "name": "Egzoz contaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "19",
+      "name": "Elektrik & Şarj Sistemi",
+      "subcategories": [
+        {
+          "id": "19.01",
+          "name": "Alternatör",
+          "children": []
+        },
+        {
+          "id": "19.02",
+          "name": "Marş motoru",
+          "children": []
+        },
+        {
+          "id": "19.03",
+          "name": "Akü",
+          "children": []
+        },
+        {
+          "id": "19.04",
+          "name": "Akü bağlantıları",
+          "children": []
+        },
+        {
+          "id": "19.05",
+          "name": "Akü sensörleri",
+          "children": []
+        },
+        {
+          "id": "19.06",
+          "name": "Şarj regülatörü",
+          "children": []
+        },
+        {
+          "id": "19.07",
+          "name": "Marş parçaları",
+          "children": []
+        },
+        {
+          "id": "19.08",
+          "name": "Sigortalar",
+          "children": []
+        },
+        {
+          "id": "19.09",
+          "name": "Röleler",
+          "children": []
+        },
+        {
+          "id": "19.10",
+          "name": "Kablo sistemleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "20",
+      "name": "Ateşleme & Kızdırma",
+      "subcategories": [
+        {
+          "id": "20.01",
+          "name": "Buji",
+          "children": []
+        },
+        {
+          "id": "20.02",
+          "name": "Kızdırma bujisi",
+          "children": []
+        },
+        {
+          "id": "20.03",
+          "name": "Ateşleme bobini",
+          "children": []
+        },
+        {
+          "id": "20.04",
+          "name": "Buji kablosu",
+          "children": []
+        },
+        {
+          "id": "20.05",
+          "name": "Ateşleme modülü",
+          "children": []
+        },
+        {
+          "id": "20.06",
+          "name": "Kızdırma kontrol ünitesi",
+          "children": []
+        },
+        {
+          "id": "20.07",
+          "name": "Distribütör parçaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "21",
+      "name": "Aydınlatma",
+      "subcategories": [
+        {
+          "id": "21.01",
+          "name": "Far",
+          "children": []
+        },
+        {
+          "id": "21.02",
+          "name": "LED far",
+          "children": []
+        },
+        {
+          "id": "21.03",
+          "name": "Xenon",
+          "children": []
+        },
+        {
+          "id": "21.04",
+          "name": "Far modülleri",
+          "children": []
+        },
+        {
+          "id": "21.05",
+          "name": "Stop lambaları",
+          "children": []
+        },
+        {
+          "id": "21.06",
+          "name": "Sinyal lambaları",
+          "children": []
+        },
+        {
+          "id": "21.07",
+          "name": "Sis farları",
+          "children": []
+        },
+        {
+          "id": "21.08",
+          "name": "Gündüz farları",
+          "children": []
+        },
+        {
+          "id": "21.09",
+          "name": "Plaka lambaları",
+          "children": []
+        },
+        {
+          "id": "21.10",
+          "name": "İç aydınlatma",
+          "children": []
+        },
+        {
+          "id": "21.11",
+          "name": "Ampuller",
+          "children": []
+        },
+        {
+          "id": "21.12",
+          "name": "LED ampuller",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "22",
+      "name": "Cam & Silecek Sistemi",
+      "subcategories": [
+        {
+          "id": "22.01",
+          "name": "Silecekler",
+          "children": []
+        },
+        {
+          "id": "22.02",
+          "name": "Silecek kolları",
+          "children": []
+        },
+        {
+          "id": "22.03",
+          "name": "Silecek motorları",
+          "children": []
+        },
+        {
+          "id": "22.04",
+          "name": "Silecek mekanizmaları",
+          "children": []
+        },
+        {
+          "id": "22.05",
+          "name": "Cam yıkama pompaları",
+          "children": []
+        },
+        {
+          "id": "22.06",
+          "name": "Cam yıkama memeleri",
+          "children": []
+        },
+        {
+          "id": "22.07",
+          "name": "Cam suyu depoları",
+          "children": []
+        },
+        {
+          "id": "22.08",
+          "name": "Far yıkama sistemi",
+          "children": []
+        },
+        {
+          "id": "22.09",
+          "name": "Silecek sıvıları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "23",
+      "name": "Klima",
+      "subcategories": [
+        {
+          "id": "23.01",
+          "name": "Klima kompresörü",
+          "children": []
+        },
+        {
+          "id": "23.02",
+          "name": "Klima kondenseri",
+          "children": []
+        },
+        {
+          "id": "23.03",
+          "name": "Evaporatör",
+          "children": []
+        },
+        {
+          "id": "23.04",
+          "name": "Klima kurutucusu",
+          "children": []
+        },
+        {
+          "id": "23.05",
+          "name": "Klima filtresi",
+          "children": []
+        },
+        {
+          "id": "23.06",
+          "name": "Klima valfleri",
+          "children": []
+        },
+        {
+          "id": "23.07",
+          "name": "Klima hortumları",
+          "children": []
+        },
+        {
+          "id": "23.08",
+          "name": "Klima sensörleri",
+          "children": []
+        },
+        {
+          "id": "23.09",
+          "name": "Klima fanları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "24",
+      "name": "Isıtma & Havalandırma",
+      "subcategories": [
+        {
+          "id": "24.01",
+          "name": "Kalorifer radyatörü",
+          "children": []
+        },
+        {
+          "id": "24.02",
+          "name": "Kalorifer fanı",
+          "children": []
+        },
+        {
+          "id": "24.03",
+          "name": "Fan motoru",
+          "children": []
+        },
+        {
+          "id": "24.04",
+          "name": "Fan direnci",
+          "children": []
+        },
+        {
+          "id": "24.05",
+          "name": "Isıtma valfi",
+          "children": []
+        },
+        {
+          "id": "24.06",
+          "name": "Havalandırma kanalları",
+          "children": []
+        },
+        {
+          "id": "24.07",
+          "name": "Klima/ısıtma kumandaları",
+          "children": []
+        },
+        {
+          "id": "24.08",
+          "name": "Ek ısıtıcılar",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "25",
+      "name": "Karoser",
+      "subcategories": [
+        {
+          "id": "25.01",
+          "name": "Kaput",
+          "children": []
+        },
+        {
+          "id": "25.02",
+          "name": "Çamurluk",
+          "children": []
+        },
+        {
+          "id": "25.03",
+          "name": "Tampon",
+          "children": []
+        },
+        {
+          "id": "25.04",
+          "name": "Kapılar",
+          "children": []
+        },
+        {
+          "id": "25.05",
+          "name": "Bagaj kapağı",
+          "children": []
+        },
+        {
+          "id": "25.06",
+          "name": "Tavan parçaları",
+          "children": []
+        },
+        {
+          "id": "25.07",
+          "name": "Kapı parçaları",
+          "children": []
+        },
+        {
+          "id": "25.08",
+          "name": "Paneller",
+          "children": []
+        },
+        {
+          "id": "25.09",
+          "name": "Izgaralar",
+          "children": []
+        },
+        {
+          "id": "25.10",
+          "name": "Spoiler",
+          "children": []
+        },
+        {
+          "id": "25.11",
+          "name": "Karoser bağlantıları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "26",
+      "name": "Aynalar & Görüş Sistemleri",
+      "subcategories": [
+        {
+          "id": "26.01",
+          "name": "Yan aynalar",
+          "children": []
+        },
+        {
+          "id": "26.02",
+          "name": "Elektrikli aynalar",
+          "children": []
+        },
+        {
+          "id": "26.03",
+          "name": "Isıtmalı aynalar",
+          "children": []
+        },
+        {
+          "id": "26.04",
+          "name": "Ayna camları",
+          "children": []
+        },
+        {
+          "id": "26.05",
+          "name": "Ayna motorları",
+          "children": []
+        },
+        {
+          "id": "26.06",
+          "name": "İç dikiz aynaları",
+          "children": []
+        },
+        {
+          "id": "26.07",
+          "name": "Kamera aynaları",
+          "children": []
+        },
+        {
+          "id": "26.08",
+          "name": "Ayna kapakları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "27",
+      "name": "Camlar & Cam Mekanizmaları",
+      "subcategories": [
+        {
+          "id": "27.01",
+          "name": "Ön cam",
+          "children": []
+        },
+        {
+          "id": "27.02",
+          "name": "Yan cam",
+          "children": []
+        },
+        {
+          "id": "27.03",
+          "name": "Arka cam",
+          "children": []
+        },
+        {
+          "id": "27.04",
+          "name": "Cam kaldırıcı",
+          "children": []
+        },
+        {
+          "id": "27.05",
+          "name": "Cam motoru",
+          "children": []
+        },
+        {
+          "id": "27.06",
+          "name": "Cam düğmeleri",
+          "children": []
+        },
+        {
+          "id": "27.07",
+          "name": "Cam contaları",
+          "children": []
+        },
+        {
+          "id": "27.08",
+          "name": "Cam mekanizmaları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "28",
+      "name": "İç Mekân",
+      "subcategories": [
+        {
+          "id": "28.01",
+          "name": "Gösterge paneli",
+          "children": []
+        },
+        {
+          "id": "28.02",
+          "name": "Direksiyon",
+          "children": []
+        },
+        {
+          "id": "28.03",
+          "name": "Koltuklar",
+          "children": []
+        },
+        {
+          "id": "28.04",
+          "name": "Koltuk aksesuarları",
+          "children": []
+        },
+        {
+          "id": "28.05",
+          "name": "Paspaslar",
+          "children": []
+        },
+        {
+          "id": "28.06",
+          "name": "Bagaj düzenleme",
+          "children": []
+        },
+        {
+          "id": "28.07",
+          "name": "Bagaj havuzları",
+          "children": []
+        },
+        {
+          "id": "28.08",
+          "name": "Pedallar",
+          "children": []
+        },
+        {
+          "id": "28.09",
+          "name": "Vites topuzu",
+          "children": []
+        },
+        {
+          "id": "28.10",
+          "name": "El freni parçaları",
+          "children": []
+        },
+        {
+          "id": "28.11",
+          "name": "Güneşlikler",
+          "children": []
+        },
+        {
+          "id": "28.12",
+          "name": "İç trim",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "29",
+      "name": "Kilit & Merkezi Kilit",
+      "subcategories": [
+        {
+          "id": "29.01",
+          "name": "Kapı kilitleri",
+          "children": []
+        },
+        {
+          "id": "29.02",
+          "name": "Bagaj kilitleri",
+          "children": []
+        },
+        {
+          "id": "29.03",
+          "name": "Kontak kilidi",
+          "children": []
+        },
+        {
+          "id": "29.04",
+          "name": "Merkezi kilit",
+          "children": []
+        },
+        {
+          "id": "29.05",
+          "name": "Kilit motorları",
+          "children": []
+        },
+        {
+          "id": "29.06",
+          "name": "Kilit silindirleri",
+          "children": []
+        },
+        {
+          "id": "29.07",
+          "name": "Uzaktan kumandalar",
+          "children": []
+        },
+        {
+          "id": "29.08",
+          "name": "Kapı kolları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "30",
+      "name": "Güvenlik Sistemleri",
+      "subcategories": [
+        {
+          "id": "30.01",
+          "name": "Airbag",
+          "children": []
+        },
+        {
+          "id": "30.02",
+          "name": "Airbag kontrol ünitesi",
+          "children": []
+        },
+        {
+          "id": "30.03",
+          "name": "Emniyet kemeri",
+          "children": []
+        },
+        {
+          "id": "30.04",
+          "name": "Kemer gergisi",
+          "children": []
+        },
+        {
+          "id": "30.05",
+          "name": "ABS",
+          "children": []
+        },
+        {
+          "id": "30.06",
+          "name": "ESP",
+          "children": []
+        },
+        {
+          "id": "30.07",
+          "name": "Çarpışma sensörleri",
+          "children": []
+        },
+        {
+          "id": "30.08",
+          "name": "Park sensörleri",
+          "children": []
+        },
+        {
+          "id": "30.09",
+          "name": "Kamera sistemleri",
+          "children": []
+        },
+        {
+          "id": "30.10",
+          "name": "ADAS bileşenleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "31",
+      "name": "Elektronik & Konfor Sistemleri",
+      "subcategories": [
+        {
+          "id": "31.01",
+          "name": "Park sensörleri",
+          "children": []
+        },
+        {
+          "id": "31.02",
+          "name": "Park kontrol üniteleri",
+          "children": []
+        },
+        {
+          "id": "31.03",
+          "name": "Cam modülleri",
+          "children": []
+        },
+        {
+          "id": "31.04",
+          "name": "Merkezi kilit modülleri",
+          "children": []
+        },
+        {
+          "id": "31.05",
+          "name": "Yağmur sensörü",
+          "children": []
+        },
+        {
+          "id": "31.06",
+          "name": "Işık sensörü",
+          "children": []
+        },
+        {
+          "id": "31.07",
+          "name": "Gövde kontrol modülleri",
+          "children": []
+        },
+        {
+          "id": "31.08",
+          "name": "Konfor kontrol üniteleri",
+          "children": []
+        },
+        {
+          "id": "31.09",
+          "name": "Alarm sistemleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "32",
+      "name": "Multimedya & Navigasyon",
+      "subcategories": [
+        {
+          "id": "32.01",
+          "name": "Oto radyolar",
+          "children": []
+        },
+        {
+          "id": "32.02",
+          "name": "Navigasyon",
+          "children": []
+        },
+        {
+          "id": "32.03",
+          "name": "Ekranlar",
+          "children": []
+        },
+        {
+          "id": "32.04",
+          "name": "Multimedya sistemleri",
+          "children": []
+        },
+        {
+          "id": "32.05",
+          "name": "Hoparlörler",
+          "children": []
+        },
+        {
+          "id": "32.06",
+          "name": "Amplifikatörler",
+          "children": []
+        },
+        {
+          "id": "32.07",
+          "name": "Antenler",
+          "children": []
+        },
+        {
+          "id": "32.08",
+          "name": "DAB",
+          "children": []
+        },
+        {
+          "id": "32.09",
+          "name": "Bluetooth",
+          "children": []
+        },
+        {
+          "id": "32.10",
+          "name": "Araç içi kamera / dashcam",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "33",
+      "name": "Çeki & Römork Sistemleri",
+      "subcategories": [
+        {
+          "id": "33.01",
+          "name": "Çeki demirleri",
+          "children": []
+        },
+        {
+          "id": "33.02",
+          "name": "Elektrik kitleri",
+          "children": []
+        },
+        {
+          "id": "33.03",
+          "name": "Römork bağlantıları",
+          "children": []
+        },
+        {
+          "id": "33.04",
+          "name": "Römork prizleri",
+          "children": []
+        },
+        {
+          "id": "33.05",
+          "name": "Bisiklet taşıyıcıları",
+          "children": []
+        },
+        {
+          "id": "33.06",
+          "name": "Römork parçaları",
+          "children": []
+        },
+        {
+          "id": "33.07",
+          "name": "Karavan bağlantıları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "34",
+      "name": "Oto Aksesuarları",
+      "subcategories": [
+        {
+          "id": "34.01",
+          "name": "Paspas",
+          "children": []
+        },
+        {
+          "id": "34.02",
+          "name": "Koltuk kılıfları",
+          "children": []
+        },
+        {
+          "id": "34.03",
+          "name": "Bagaj aksesuarları",
+          "children": []
+        },
+        {
+          "id": "34.04",
+          "name": "Güneşlik",
+          "children": []
+        },
+        {
+          "id": "34.05",
+          "name": "Araç içi düzenleyiciler",
+          "children": []
+        },
+        {
+          "id": "34.06",
+          "name": "Telefon tutucular",
+          "children": []
+        },
+        {
+          "id": "34.07",
+          "name": "Şarj cihazları",
+          "children": []
+        },
+        {
+          "id": "34.08",
+          "name": "Takviye kabloları",
+          "children": []
+        },
+        {
+          "id": "34.09",
+          "name": "Akü şarj cihazları",
+          "children": []
+        },
+        {
+          "id": "34.10",
+          "name": "Kar zincirleri",
+          "children": []
+        },
+        {
+          "id": "34.11",
+          "name": "Araç örtüleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "35",
+      "name": "Oto Bakım & Temizlik",
+      "subcategories": [
+        {
+          "id": "35.01",
+          "name": "Şampuan",
+          "children": []
+        },
+        {
+          "id": "35.02",
+          "name": "Jant temizleyici",
+          "children": []
+        },
+        {
+          "id": "35.03",
+          "name": "Cam temizleyici",
+          "children": []
+        },
+        {
+          "id": "35.04",
+          "name": "İç mekân temizleyici",
+          "children": []
+        },
+        {
+          "id": "35.05",
+          "name": "Plastik bakım",
+          "children": []
+        },
+        {
+          "id": "35.06",
+          "name": "Deri bakım",
+          "children": []
+        },
+        {
+          "id": "35.07",
+          "name": "Pasta",
+          "children": []
+        },
+        {
+          "id": "35.08",
+          "name": "Cila",
+          "children": []
+        },
+        {
+          "id": "35.09",
+          "name": "Çizik giderici",
+          "children": []
+        },
+        {
+          "id": "35.10",
+          "name": "Motor temizleyici",
+          "children": []
+        },
+        {
+          "id": "35.11",
+          "name": "Fren temizleyici",
+          "children": []
+        },
+        {
+          "id": "35.12",
+          "name": "Pas sökücü",
+          "children": []
+        },
+        {
+          "id": "35.13",
+          "name": "Yağ katkıları",
+          "children": []
+        },
+        {
+          "id": "35.14",
+          "name": "Yakıt katkıları",
+          "children": []
+        },
+        {
+          "id": "35.15",
+          "name": "DPF temizleyiciler",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "36",
+      "name": "Aletler & Atölye Ekipmanları",
+      "subcategories": [
+        {
+          "id": "36.01",
+          "name": "El aletleri",
+          "children": []
+        },
+        {
+          "id": "36.02",
+          "name": "Lokma takımları",
+          "children": []
+        },
+        {
+          "id": "36.03",
+          "name": "Tork anahtarları",
+          "children": []
+        },
+        {
+          "id": "36.04",
+          "name": "Krikolar",
+          "children": []
+        },
+        {
+          "id": "36.05",
+          "name": "Sehpa",
+          "children": []
+        },
+        {
+          "id": "36.06",
+          "name": "Kompresör",
+          "children": []
+        },
+        {
+          "id": "36.07",
+          "name": "Akü test cihazları",
+          "children": []
+        },
+        {
+          "id": "36.08",
+          "name": "OBD cihazları",
+          "children": []
+        },
+        {
+          "id": "36.09",
+          "name": "Fren servis aletleri",
+          "children": []
+        },
+        {
+          "id": "36.10",
+          "name": "Motor aletleri",
+          "children": []
+        },
+        {
+          "id": "36.11",
+          "name": "Triger aletleri",
+          "children": []
+        },
+        {
+          "id": "36.12",
+          "name": "Şanzıman aletleri",
+          "children": []
+        },
+        {
+          "id": "36.13",
+          "name": "Elektrikli aletler",
+          "children": []
+        },
+        {
+          "id": "36.14",
+          "name": "Havalı aletler",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "37",
+      "name": "Tamir Setleri & Montaj Parçaları",
+      "subcategories": [
+        {
+          "id": "37.01",
+          "name": "Fren tamir setleri",
+          "children": []
+        },
+        {
+          "id": "37.02",
+          "name": "Debriyaj tamir setleri",
+          "children": []
+        },
+        {
+          "id": "37.03",
+          "name": "Motor tamir setleri",
+          "children": []
+        },
+        {
+          "id": "37.04",
+          "name": "Şanzıman tamir setleri",
+          "children": []
+        },
+        {
+          "id": "37.05",
+          "name": "Kaliper tamir setleri",
+          "children": []
+        },
+        {
+          "id": "37.06",
+          "name": "Rulman setleri",
+          "children": []
+        },
+        {
+          "id": "37.07",
+          "name": "Montaj kitleri",
+          "children": []
+        },
+        {
+          "id": "37.08",
+          "name": "Conta setleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "38",
+      "name": "Bağlantı, Sabitleme & Küçük Parçalar",
+      "subcategories": [
+        {
+          "id": "38.01",
+          "name": "Vida",
+          "children": []
+        },
+        {
+          "id": "38.02",
+          "name": "Somun",
+          "children": []
+        },
+        {
+          "id": "38.03",
+          "name": "Pul",
+          "children": []
+        },
+        {
+          "id": "38.04",
+          "name": "Klips",
+          "children": []
+        },
+        {
+          "id": "38.05",
+          "name": "Perçin",
+          "children": []
+        },
+        {
+          "id": "38.06",
+          "name": "Braket",
+          "children": []
+        },
+        {
+          "id": "38.07",
+          "name": "Kelepçe",
+          "children": []
+        },
+        {
+          "id": "38.08",
+          "name": "Tutucular",
+          "children": []
+        },
+        {
+          "id": "38.09",
+          "name": "Karoser klipsleri",
+          "children": []
+        },
+        {
+          "id": "38.10",
+          "name": "Plastik bağlantılar",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "39",
+      "name": "Tuning & Performance",
+      "subcategories": [
+        {
+          "id": "39.01",
+          "name": "Spor hava filtreleri",
+          "children": []
+        },
+        {
+          "id": "39.02",
+          "name": "Performans egzoz",
+          "children": []
+        },
+        {
+          "id": "39.03",
+          "name": "Coilover",
+          "children": []
+        },
+        {
+          "id": "39.04",
+          "name": "Spor yay",
+          "children": []
+        },
+        {
+          "id": "39.05",
+          "name": "Spacer",
+          "children": []
+        },
+        {
+          "id": "39.06",
+          "name": "Performans frenleri",
+          "children": []
+        },
+        {
+          "id": "39.07",
+          "name": "Chip tuning donanımı",
+          "children": []
+        },
+        {
+          "id": "39.08",
+          "name": "Intercooler",
+          "children": []
+        },
+        {
+          "id": "39.09",
+          "name": "Turbo performance",
+          "children": []
+        },
+        {
+          "id": "39.10",
+          "name": "Gövde tuning",
+          "children": []
+        },
+        {
+          "id": "39.11",
+          "name": "Spoiler",
+          "children": []
+        },
+        {
+          "id": "39.12",
+          "name": "Jant / tuning aksesuarları",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "40",
+      "name": "Ticari Araç & Özel Kfz",
+      "subcategories": [
+        {
+          "id": "40.01",
+          "name": "Hafif ticari araç parçaları",
+          "children": []
+        },
+        {
+          "id": "40.02",
+          "name": "Kamyon parçaları",
+          "children": []
+        },
+        {
+          "id": "40.03",
+          "name": "Otobüs parçaları",
+          "children": []
+        },
+        {
+          "id": "40.04",
+          "name": "Van parçaları",
+          "children": []
+        },
+        {
+          "id": "40.05",
+          "name": "Karavan parçaları",
+          "children": []
+        },
+        {
+          "id": "40.06",
+          "name": "Römork parçaları",
+          "children": []
+        },
+        {
+          "id": "40.07",
+          "name": "Özel araç parçaları",
+          "children": []
+        },
+        {
+          "id": "40.08",
+          "name": "4x4 / Off-road",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "41",
+      "name": "Industrie & CNC",
+      "subcategories": [
+        {
+          "id": "41.01",
+          "name": "CNC makineleri",
+          "children": []
+        },
+        {
+          "id": "41.02",
+          "name": "CNC yedek parçaları",
+          "children": []
+        },
+        {
+          "id": "41.03",
+          "name": "Kesici takımlar",
+          "children": []
+        },
+        {
+          "id": "41.04",
+          "name": "Frezeler",
+          "children": []
+        },
+        {
+          "id": "41.05",
+          "name": "Torna takımları",
+          "children": []
+        },
+        {
+          "id": "41.06",
+          "name": "Ölçüm ekipmanları",
+          "children": []
+        },
+        {
+          "id": "41.07",
+          "name": "Endüstriyel otomasyon",
+          "children": []
+        },
+        {
+          "id": "41.08",
+          "name": "Elektrik / elektronik",
+          "children": []
+        },
+        {
+          "id": "41.09",
+          "name": "Pnömatik",
+          "children": []
+        },
+        {
+          "id": "41.10",
+          "name": "Hidrolik",
+          "children": []
+        },
+        {
+          "id": "41.11",
+          "name": "Rulmanlar",
+          "children": []
+        },
+        {
+          "id": "41.12",
+          "name": "Endüstriyel yağlar",
+          "children": []
+        },
+        {
+          "id": "41.13",
+          "name": "Bakım ürünleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "42",
+      "name": "Baumaschinen & Ersatzteile",
+      "subcategories": [
+        {
+          "id": "42.01",
+          "name": "Mini ekskavatör parçaları",
+          "children": []
+        },
+        {
+          "id": "42.02",
+          "name": "Ekskavatör parçaları",
+          "children": []
+        },
+        {
+          "id": "42.03",
+          "name": "Yükleyici parçaları",
+          "children": []
+        },
+        {
+          "id": "42.04",
+          "name": "Kazıcı-yükleyici parçaları",
+          "children": []
+        },
+        {
+          "id": "42.05",
+          "name": "Silindir parçaları",
+          "children": []
+        },
+        {
+          "id": "42.06",
+          "name": "Hidrolik parçalar",
+          "children": []
+        },
+        {
+          "id": "42.07",
+          "name": "Hidrolik pompalar",
+          "children": []
+        },
+        {
+          "id": "42.08",
+          "name": "Hidrolik motorlar",
+          "children": []
+        },
+        {
+          "id": "42.09",
+          "name": "Paletler",
+          "children": []
+        },
+        {
+          "id": "42.10",
+          "name": "Yürüyüş takımları",
+          "children": []
+        },
+        {
+          "id": "42.11",
+          "name": "Filtreler",
+          "children": []
+        },
+        {
+          "id": "42.12",
+          "name": "Motor parçaları",
+          "children": []
+        },
+        {
+          "id": "42.13",
+          "name": "Elektrik parçaları",
+          "children": []
+        },
+        {
+          "id": "42.14",
+          "name": "Aydınlatma",
+          "children": []
+        },
+        {
+          "id": "42.15",
+          "name": "Ataşmanlar",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "43",
+      "name": "Landwirtschaft & Agrartechnik",
+      "subcategories": [
+        {
+          "id": "43.01",
+          "name": "Traktör yedek parçaları",
+          "children": []
+        },
+        {
+          "id": "43.02",
+          "name": "Biçerdöver parçaları",
+          "children": []
+        },
+        {
+          "id": "43.03",
+          "name": "Römork parçaları",
+          "children": []
+        },
+        {
+          "id": "43.04",
+          "name": "Tarım makineleri parçaları",
+          "children": []
+        },
+        {
+          "id": "43.05",
+          "name": "Hidrolik",
+          "children": []
+        },
+        {
+          "id": "43.06",
+          "name": "PTO",
+          "children": []
+        },
+        {
+          "id": "43.07",
+          "name": "Şaftlar",
+          "children": []
+        },
+        {
+          "id": "43.08",
+          "name": "Pulluk parçaları",
+          "children": []
+        },
+        {
+          "id": "43.09",
+          "name": "Ekim makineleri",
+          "children": []
+        },
+        {
+          "id": "43.10",
+          "name": "Hasat makineleri",
+          "children": []
+        },
+        {
+          "id": "43.11",
+          "name": "Lastikler",
+          "children": []
+        },
+        {
+          "id": "43.12",
+          "name": "Jantlar",
+          "children": []
+        },
+        {
+          "id": "43.13",
+          "name": "Filtreler",
+          "children": []
+        },
+        {
+          "id": "43.14",
+          "name": "Yağlar",
+          "children": []
+        },
+        {
+          "id": "43.15",
+          "name": "Gresler",
+          "children": []
+        },
+        {
+          "id": "43.16",
+          "name": "Elektrik parçaları",
+          "children": []
+        },
+        {
+          "id": "43.17",
+          "name": "Aydınlatma",
+          "children": []
+        },
+        {
+          "id": "43.18",
+          "name": "Aşınma parçaları",
+          "children": []
+        },
+        {
+          "id": "43.19",
+          "name": "Tarım ekipmanları",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

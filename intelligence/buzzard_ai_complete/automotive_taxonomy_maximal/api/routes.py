@@ -41,5 +41,107 @@ if APIRouter:
     @router.get("/tires/config")
     def automotive_taxonomy_tires_config():
         return service.load_tires_config()
+
+    @router.get("/kfz-tree")
+    def automotive_taxonomy_kfz_tree():
+        return {
+            "summary": service.kfz_summary(),
+            "mains": service.kfz_mains(),
+        }
+
+    @router.get("/kfz-tree/{main_id}")
+    def automotive_taxonomy_kfz_main(main_id: str):
+        main = service.kfz_main(main_id)
+        if not main:
+            return {"error": "not_found", "main_id": main_id}
+        return main
+
+    @router.get("/kfz-shop-bridge/{main_id}")
+    def automotive_taxonomy_kfz_shop_bridge(main_id: str):
+        bridge = service.shop_bridge_for_kfz(main_id)
+        if not bridge:
+            return {"error": "not_found", "main_id": main_id}
+        return bridge
+
+    @router.get("/kfz-intelligence-os")
+    def automotive_taxonomy_kfz_intelligence_os():
+        return {
+            "summary": service.kfz_intelligence_summary(),
+            "competitors": service.kfz_competitors(),
+        }
+
+    @router.get("/kfz-intelligence-os/{main_id}")
+    def automotive_taxonomy_kfz_intelligence_main(main_id: str):
+        main = service.kfz_taxonomy_main(main_id)
+        if not main:
+            return {"error": "not_found", "main_id": main_id}
+        return main
+
+    @router.get("/kfz-intelligence-os/{main_id}/coverage")
+    def automotive_taxonomy_kfz_coverage(main_id: str):
+        return {
+            "main_id": main_id,
+            "coverage": service.kfz_coverage(main_id),
+            "competitors": service.kfz_competitors(),
+        }
+
+    @router.get("/intelligence-os-all-in-one")
+    def automotive_taxonomy_intelligence_os_all_in_one():
+        return {
+            "summary": service.intelligence_os_all_in_one_summary(),
+            "modules": service.load_intelligence_os_all_in_one().get("modules", []),
+            "competitors": service.load_intelligence_os_all_in_one().get("competitors", []),
+            "demo_findings": service.load_intelligence_os_all_in_one().get("demo_findings", []),
+            "scoring_weights": service.load_intelligence_os_all_in_one().get("scoring_weights", {}),
+            "governance": service.load_intelligence_os_all_in_one().get("governance", {}),
+        }
+
+    @router.get("/intelligence-os-all-in-one/full")
+    def automotive_taxonomy_intelligence_os_all_in_one_full():
+        return service.load_intelligence_os_all_in_one()
+
+    @router.get("/intelligence-os-maximum-manifest")
+    def automotive_taxonomy_intelligence_os_maximum_manifest():
+        manifest = service.load_intelligence_os_maximum_manifest()
+        return {
+            "summary": service.intelligence_os_maximum_manifest_summary(),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+            "schemas": manifest.get("schemas", {}),
+            "runtime_defaults": manifest.get("runtime_defaults", {}),
+        }
+
+    @router.get("/intelligence-os-maximum-manifest/full")
+    def automotive_taxonomy_intelligence_os_maximum_manifest_full():
+        return service.load_intelligence_os_maximum_manifest()
+
+    @router.get("/intelligence-os-maximum-single-file")
+    def automotive_taxonomy_intelligence_os_maximum_single_file():
+        return service.intelligence_os_maximum_single_file_summary()
+
+    @router.get("/master-business-os-maximum-manifest")
+    def automotive_taxonomy_master_business_os_maximum_manifest():
+        manifest = service.load_master_business_os_maximum_manifest()
+        return {
+            "summary": service.master_business_os_maximum_manifest_summary(),
+            "enterprise_modules": manifest.get("enterprise_modules", []),
+            "business_categories": manifest.get("business_categories", []),
+            "company_layers": manifest.get("company_layers", []),
+            "integration_targets": manifest.get("integration_targets", []),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+        }
+
+    @router.get("/master-business-os-maximum-manifest/full")
+    def automotive_taxonomy_master_business_os_maximum_manifest_full():
+        return service.load_master_business_os_maximum_manifest()
+
+    @router.get("/master-business-os-maximum-single-file")
+    def automotive_taxonomy_master_business_os_maximum_single_file():
+        return service.master_business_os_maximum_single_file_summary()
+
+    @router.get("/master-business-os-final-100-single-file")
+    def automotive_taxonomy_master_business_os_final_100_single_file():
+        return service.master_business_os_final_100_single_file_summary()
 else:
     router = None

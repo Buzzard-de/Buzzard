@@ -1074,6 +1074,88 @@ def complete_category_intelligence_43_docs():
     return _read_doc("43_CATEGORY_INTELLIGENCE_MAXIMAL.md")
 
 
+def complete_category_intelligence_47_health():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    return json.dumps(CategoryIntelligence47Service().health(), ensure_ascii=False, indent=2)
+
+
+def complete_category_intelligence_47_summary():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    service = CategoryIntelligence47Service()
+    return json.dumps(
+        {
+            "health": service.health(),
+            "summary": service.summary(),
+            "intelligence_os": service.intelligence_os_summary(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_category_intelligence_47_demo():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    return json.dumps(CategoryIntelligence47Service().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_category_intelligence_47_docs():
+    return _read_doc("47_CATEGORY_INTELLIGENCE_OS.md")
+
+
+def complete_sync_category_intelligence_47():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "sync_category_intelligence_47.py"
+    )
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
+def complete_de_ecom_intel_scan():
+    from buzzard_ai_complete.operations.de_ecom_intel_scan import run_de_ecom_intel_scan
+
+    return json.dumps(run_de_ecom_intel_scan(), ensure_ascii=False, indent=2, default=str)
+
+
+def complete_de_ecom_intel_export():
+    from buzzard_ai_complete.operations.de_ecom_intel_scan import export_de_ecom_intel_scan
+
+    return json.dumps(
+        export_de_ecom_intel_scan(run_scan=False, create_zip=True),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_all_connectors_health():
+    from live_connectors.registry import connector_health
+
+    return json.dumps(connector_health(), ensure_ascii=False, indent=2)
+
+
+def complete_sync_category_intelligence_43():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "sync_category_intelligence_43.py"
+    )
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_social_intelligence_health():
     from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
 
@@ -1170,6 +1252,155 @@ def complete_automotive_taxonomy_tires_schema():
 
 def complete_automotive_taxonomy_tires_docs():
     return _read_doc("AUTOMOTIVE_TAXONOMY_TIRES_MAXIMAL.md")
+
+
+def complete_automotive_taxonomy_kfz_tree():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        {"summary": service.kfz_summary(), "mains": service.kfz_mains()},
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_automotive_taxonomy_kfz_intelligence_os():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        {
+            "summary": service.kfz_intelligence_summary(),
+            "competitors": service.kfz_competitors(),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_intelligence_os_all_in_one():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        {
+            "summary": service.intelligence_os_all_in_one_summary(),
+            "modules": service.load_intelligence_os_all_in_one().get("modules", []),
+            "competitors": service.load_intelligence_os_all_in_one().get("competitors", []),
+            "demo_findings": service.load_intelligence_os_all_in_one().get("demo_findings", []),
+            "scoring_weights": service.load_intelligence_os_all_in_one().get("scoring_weights", {}),
+            "governance": service.load_intelligence_os_all_in_one().get("governance", {}),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_intelligence_os_maximum_manifest():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    manifest = service.load_intelligence_os_maximum_manifest()
+    return json.dumps(
+        {
+            "summary": service.intelligence_os_maximum_manifest_summary(),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+            "schemas": manifest.get("schemas", {}),
+            "runtime_defaults": manifest.get("runtime_defaults", {}),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_intelligence_os_maximum_single_file():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        service.intelligence_os_maximum_single_file_summary(),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_master_business_os_maximum_manifest():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    manifest = service.load_master_business_os_maximum_manifest()
+    return json.dumps(
+        {
+            "summary": service.master_business_os_maximum_manifest_summary(),
+            "enterprise_modules": manifest.get("enterprise_modules", []),
+            "business_categories": manifest.get("business_categories", []),
+            "company_layers": manifest.get("company_layers", []),
+            "integration_targets": manifest.get("integration_targets", []),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_master_business_os_maximum_single_file():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        service.master_business_os_maximum_single_file_summary(),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_master_business_os_final_100_single_file():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        service.master_business_os_final_100_single_file_summary(),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
+def complete_sync_kfz_category_tree():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "sync_kfz_category_tree.py"
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
+def complete_intelligence_pipeline_health():
+    from buzzard_ai_complete.intelligence_pipeline.orchestrator import IntelligencePipelineOrchestrator
+
+    return json.dumps(IntelligencePipelineOrchestrator().health(), ensure_ascii=False, indent=2)
+
+
+def complete_intelligence_pipeline_run(domain: str = "kfz_automotive"):
+    from buzzard_ai_complete.intelligence_pipeline.orchestrator import IntelligencePipelineOrchestrator
+
+    return json.dumps(
+        IntelligencePipelineOrchestrator().run(domain=domain),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
 
 
 def complete_agriculture_health():

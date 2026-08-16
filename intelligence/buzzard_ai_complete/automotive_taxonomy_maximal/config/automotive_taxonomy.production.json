@@ -53,5 +53,17 @@
     "taxonomy_gap_detection": true,
     "category_ai_monitoring": true,
     "human_review_for_conflicts": true
-  }
+  },
+  "kfz_category_tree_path": "data/taxonomy/buzzard_master_kfz_category_tree_v1.json",
+  "kfz_intelligence_os_path": "data/taxonomy/buzzard_master_kfz_intelligence_os.json",
+  "kfz_intelligence_os_html_path": "data/taxonomy/buzzard_master_kfz_intelligence_os.html",
+  "intelligence_os_all_in_one_html_path": "data/taxonomy/buzzard_intelligence_os_all_in_one.html",
+  "intelligence_os_all_in_one_json_path": "data/taxonomy/buzzard_intelligence_os_all_in_one.json",
+  "intelligence_os_maximum_manifest_path": "data/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
+  "intelligence_os_maximum_single_file_html_path": "data/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+  "master_business_os_maximum_manifest_path": "data/taxonomy/buzzard_master_business_os_maximum_manifest.json",
+  "master_business_os_maximum_single_file_html_path": "data/taxonomy/buzzard_master_business_os_maximum_single_file.html",
+  "master_business_os_final_100_single_file_html_path": "data/taxonomy/buzzard_master_business_os_final_100_single_file.html",
+  "kfz_shop_bridge_path": "data/taxonomy/kfz_shop_bridge.json",
+  "shop_automotive_root_id": "cat-05"
 }

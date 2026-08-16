@@ -9,8 +9,30 @@ class SharedIntelligenceMemory:
         self.case_links = {}
 
     def add_finding(self, finding):
+        finding = self._normalize_finding(finding)
         self.findings.append(finding)
         return finding.finding_id
+
+    def _normalize_finding(self, finding):
+        from buzzard_ai_complete.ai_council_18_unified.council.contracts import AgentFinding
+
+        if isinstance(finding, AgentFinding):
+            return finding
+        if isinstance(finding, dict):
+            payload = finding.get("finding", finding)
+            text = payload if isinstance(payload, str) else str(payload)
+            return AgentFinding(
+                agent_id=str(finding.get("agent_id", "unknown")),
+                topic=str(finding.get("topic", "")),
+                finding=text,
+                confidence=float(finding.get("confidence", 0.5)),
+            )
+        return AgentFinding(
+            agent_id="unknown",
+            topic="finding",
+            finding=str(finding),
+            confidence=0.5,
+        )
 
     def add_fact(self, key, value, evidence=None):
         self.facts[key] = {"value": value, "evidence": evidence or []}

@@ -17,12 +17,17 @@ class MarketplaceAdapter:
 
 class EbayAdapter(MarketplaceAdapter):
     def __init__(self):
-        super().__init__("ebay", ("EBAY_CLIENT_ID", "EBAY_CLIENT_SECRET", "EBAY_REFRESH_TOKEN"))
+        super().__init__("ebay", ("EBAY_CLIENT_ID", "EBAY_CLIENT_SECRET"))
 
 
 class AmazonAdapter(MarketplaceAdapter):
     def __init__(self):
         super().__init__(
             "amazon",
-            ("AMAZON_CLIENT_ID", "AMAZON_CLIENT_SECRET", "AMAZON_REFRESH_TOKEN", "AMAZON_SELLER_ID"),
+            (
+                "AMAZON_CLIENT_ID",
+                "AMAZON_CLIENT_SECRET",
+                "AMAZON_REFRESH_TOKEN",
+                "AMAZON_PARTNER_TAG",
+            ),
         )

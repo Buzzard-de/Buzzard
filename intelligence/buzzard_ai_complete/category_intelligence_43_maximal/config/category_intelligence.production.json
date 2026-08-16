@@ -3,175 +3,218 @@
   "categories": [
     {
       "category_id": "CATEGORY_01",
-      "name": "Buzzard Main Category 01"
+      "buzzard_id": "cat-01",
+      "name": "Textil"
     },
     {
       "category_id": "CATEGORY_02",
-      "name": "Buzzard Main Category 02"
+      "buzzard_id": "cat-02",
+      "name": "Kosmetik & Körperpflege"
     },
     {
       "category_id": "CATEGORY_03",
-      "name": "Buzzard Main Category 03"
+      "buzzard_id": "cat-03",
+      "name": "Reinigungsprodukte"
     },
     {
       "category_id": "CATEGORY_04",
-      "name": "Buzzard Main Category 04"
+      "buzzard_id": "cat-04",
+      "name": "Schule & Bürobedarf"
     },
     {
       "category_id": "CATEGORY_05",
-      "name": "Buzzard Main Category 05"
+      "buzzard_id": "cat-05",
+      "name": "Automotive"
     },
     {
       "category_id": "CATEGORY_06",
-      "name": "Buzzard Main Category 06"
+      "buzzard_id": "cat-06",
+      "name": "Haustierbedarf"
     },
     {
       "category_id": "CATEGORY_07",
-      "name": "Buzzard Main Category 07"
+      "buzzard_id": "cat-07",
+      "name": "Garten"
     },
     {
       "category_id": "CATEGORY_08",
-      "name": "Buzzard Main Category 08"
+      "buzzard_id": "cat-08",
+      "name": "Arbeitsschutz & Berufskleidung"
     },
     {
       "category_id": "CATEGORY_09",
-      "name": "Buzzard Main Category 09"
+      "buzzard_id": "cat-09",
+      "name": "Werkzeuge & Eisenwaren"
     },
     {
       "category_id": "CATEGORY_10",
-      "name": "Buzzard Main Category 10"
+      "buzzard_id": "cat-10",
+      "name": "Haus & Wohnen"
     },
     {
       "category_id": "CATEGORY_11",
-      "name": "Buzzard Main Category 11"
+      "buzzard_id": "cat-11",
+      "name": "Möbel"
     },
     {
       "category_id": "CATEGORY_12",
-      "name": "Buzzard Main Category 12"
+      "buzzard_id": "cat-12",
+      "name": "Elektronik"
     },
     {
       "category_id": "CATEGORY_13",
-      "name": "Buzzard Main Category 13"
+      "buzzard_id": "cat-13",
+      "name": "Haushaltsgeräte"
     },
     {
       "category_id": "CATEGORY_14",
-      "name": "Buzzard Main Category 14"
+      "buzzard_id": "cat-14",
+      "name": "Sport & Outdoor"
     },
     {
       "category_id": "CATEGORY_15",
-      "name": "Buzzard Main Category 15"
+      "buzzard_id": "cat-15",
+      "name": "Schuhe"
     },
     {
       "category_id": "CATEGORY_16",
-      "name": "Buzzard Main Category 16"
+      "buzzard_id": "cat-16",
+      "name": "Taschen & Accessoires"
     },
     {
       "category_id": "CATEGORY_17",
-      "name": "Buzzard Main Category 17"
+      "buzzard_id": "cat-17",
+      "name": "Mutter & Baby"
     },
     {
       "category_id": "CATEGORY_18",
-      "name": "Buzzard Main Category 18"
+      "buzzard_id": "cat-18",
+      "name": "Spielzeug & Kinder"
     },
     {
       "category_id": "CATEGORY_19",
-      "name": "Buzzard Main Category 19"
+      "buzzard_id": "cat-19",
+      "name": "Hobby & Freizeit"
     },
     {
       "category_id": "CATEGORY_20",
-      "name": "Buzzard Main Category 20"
+      "buzzard_id": "cat-20",
+      "name": "Tier- & Landwirtschaftsausrüstung"
     },
     {
       "category_id": "CATEGORY_21",
-      "name": "Buzzard Main Category 21"
+      "buzzard_id": "cat-21",
+      "name": "Bau & Konstruktion"
     },
     {
       "category_id": "CATEGORY_22",
-      "name": "Buzzard Main Category 22"
+      "buzzard_id": "cat-22",
+      "name": "Elektro & Beleuchtung"
     },
     {
       "category_id": "CATEGORY_23",
-      "name": "Buzzard Main Category 23"
+      "buzzard_id": "cat-23",
+      "name": "Wasser, Heizung & Sanitär"
     },
     {
       "category_id": "CATEGORY_24",
-      "name": "Buzzard Main Category 24"
+      "buzzard_id": "cat-24",
+      "name": "Küche & Essen"
     },
     {
       "category_id": "CATEGORY_25",
-      "name": "Buzzard Main Category 25"
+      "buzzard_id": "cat-25",
+      "name": "Lebensmittel & Getränke"
     },
     {
       "category_id": "CATEGORY_26",
-      "name": "Buzzard Main Category 26"
+      "buzzard_id": "cat-26",
+      "name": "Tierfutter"
     },
     {
       "category_id": "CATEGORY_27",
-      "name": "Buzzard Main Category 27"
+      "buzzard_id": "cat-27",
+      "name": "Gesundheit & Wellness"
     },
     {
       "category_id": "CATEGORY_28",
-      "name": "Buzzard Main Category 28"
+      "buzzard_id": "cat-28",
+      "name": "Büro & Gewerbe"
     },
     {
       "category_id": "CATEGORY_29",
-      "name": "Buzzard Main Category 29"
+      "buzzard_id": "cat-29",
+      "name": "Verpackung & Versand"
     },
     {
       "category_id": "CATEGORY_30",
-      "name": "Buzzard Main Category 30"
+      "buzzard_id": "cat-30",
+      "name": "Industrie- & Gewerbeausrüstung"
     },
     {
       "category_id": "CATEGORY_31",
-      "name": "Buzzard Main Category 31"
+      "buzzard_id": "cat-31",
+      "name": "Sicherheit & Überwachung"
     },
     {
       "category_id": "CATEGORY_32",
-      "name": "Buzzard Main Category 32"
+      "buzzard_id": "cat-32",
+      "name": "Reise & Koffer"
     },
     {
       "category_id": "CATEGORY_33",
-      "name": "Buzzard Main Category 33"
+      "buzzard_id": "cat-33",
+      "name": "Gartenhobby & Camping"
     },
     {
       "category_id": "CATEGORY_34",
-      "name": "Buzzard Main Category 34"
+      "buzzard_id": "cat-34",
+      "name": "Saisonales & Feiern"
     },
     {
       "category_id": "CATEGORY_35",
-      "name": "Buzzard Main Category 35"
+      "buzzard_id": "cat-35",
+      "name": "Dekoration"
     },
     {
       "category_id": "CATEGORY_36",
-      "name": "Buzzard Main Category 36"
+      "buzzard_id": "cat-36",
+      "name": "Persönliche Elektronik & Mobil"
     },
     {
       "category_id": "CATEGORY_37",
-      "name": "Buzzard Main Category 37"
+      "buzzard_id": "cat-37",
+      "name": "Foto & Video"
     },
     {
       "category_id": "CATEGORY_38",
-      "name": "Buzzard Main Category 38"
+      "buzzard_id": "cat-38",
+      "name": "Computer & Gaming"
     },
     {
       "category_id": "CATEGORY_39",
-      "name": "Buzzard Main Category 39"
+      "buzzard_id": "cat-39",
+      "name": "Fahrzeug & Mobilität"
     },
     {
       "category_id": "CATEGORY_40",
-      "name": "Buzzard Main Category 40"
+      "buzzard_id": "cat-40",
+      "name": "Energie & Solar"
     },
     {
       "category_id": "CATEGORY_41",
-      "name": "Buzzard Main Category 41"
+      "buzzard_id": "cat-41",
+      "name": "Angebote & Sonderkollektionen"
     },
     {
       "category_id": "CATEGORY_42",
-      "name": "Buzzard Main Category 42"
+      "buzzard_id": "meta-42",
+      "name": "Marktplatz-Integration"
     },
     {
       "category_id": "CATEGORY_43",
-      "name": "Buzzard Main Category 43"
+      "buzzard_id": "meta-43",
+      "name": "Lieferanten-Intelligence"
     }
   ],
   "monitoring": {

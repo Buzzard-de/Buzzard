@@ -1,9 +1,13 @@
 try:
+    from contextlib import asynccontextmanager
+
     from fastapi import FastAPI, Header, HTTPException
     from pydantic import BaseModel
 except ImportError:
     FastAPI = None
+    asynccontextmanager = None
 
+from buzzard_ai_complete.api.bey_routes import router as bey_router
 from buzzard_ai_complete.api.service import BuzzardService
 from buzzard_ai_complete.commerce.api.routes import router as commerce_router
 from buzzard_ai_complete.config.settings import API_TOKEN, APP_VERSION
@@ -30,13 +34,18 @@ from buzzard_ai_complete.supplier_import_enrichment_engine.api.routes import (
 from buzzard_ai_complete.ai_phone_assistant.api.routes import router as phone_router
 from buzzard_ai_complete.complete_commerce_platform.api.routes import router as platform_router
 from buzzard_ai_complete.production_integration_maximal.api.routes import (
-    router as production_router,
+    router as production_integration_router,
 )
+from buzzard_ai_complete.api.connector_routes import router as connector_router
+from buzzard_ai_complete.api.operations_routes import router as operations_router
 from buzzard_ai_complete.launch_sequence_maximal.api.routes import router as launch_router
 from buzzard_ai_complete.ai_council_18_unified.api.routes import router as council_18_router
 from buzzard_ai_complete.ai_council_19_customs_bureaucracy.api.routes import router as council_19_router
 from buzzard_ai_complete.category_intelligence_43_maximal.api.routes import (
     router as category_intel_43_router,
+)
+from buzzard_ai_complete.category_intelligence_47_maximal.api.routes import (
+    router as category_intel_47_router,
 )
 from buzzard_ai_complete.social_intelligence_ai_maximal.api.routes import (
     router as social_intel_router,
@@ -74,9 +83,20 @@ from buzzard_ai_complete.category_audit_maximal.api.routes import (
 from buzzard_ai_complete.supplier_intelligence_ai_maximal.api.routes import (
     router as supplier_intelligence_router,
 )
+from buzzard_ai_complete.intelligence_pipeline.api.routes import (
+    router as intelligence_pipeline_router,
+)
 
 if FastAPI:
-    app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION)
+
+    @asynccontextmanager
+    async def lifespan(_app):
+        from buzzard_ai_complete.runtime.bey_runtime import start_bey_agents
+
+        start_bey_agents()
+        yield
+
+    app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION, lifespan=lifespan)
     service = BuzzardService()
     if commerce_router is not None:
         app.include_router(commerce_router)
@@ -114,8 +134,12 @@ if FastAPI:
         app.include_router(phone_router)
     if platform_router is not None:
         app.include_router(platform_router)
-    if production_router is not None:
-        app.include_router(production_router)
+    if production_integration_router is not None:
+        app.include_router(production_integration_router)
+    if connector_router is not None:
+        app.include_router(connector_router)
+    if operations_router is not None:
+        app.include_router(operations_router)
     if launch_router is not None:
         app.include_router(launch_router)
     if council_18_router is not None:
@@ -124,6 +148,8 @@ if FastAPI:
         app.include_router(council_19_router)
     if category_intel_43_router is not None:
         app.include_router(category_intel_43_router)
+    if category_intel_47_router is not None:
+        app.include_router(category_intel_47_router)
     if social_intel_router is not None:
         app.include_router(social_intel_router)
     if automotive_taxonomy_router is not None:
@@ -148,6 +174,10 @@ if FastAPI:
         app.include_router(category_audit_router)
     if supplier_intelligence_router is not None:
         app.include_router(supplier_intelligence_router)
+    if intelligence_pipeline_router is not None:
+        app.include_router(intelligence_pipeline_router)
+    if bey_router is not None:
+        app.include_router(bey_router)
 
     class TaskRequest(BaseModel):
         task_id: str

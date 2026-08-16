@@ -1,0 +1,345 @@
+{
+  "name": "Buzzard 47 Category Intelligence OS",
+  "version": "1.0",
+  "category_count": 47,
+  "target_competitors": 940,
+  "competitors_per_category": 20,
+  "db_path": "intelligence/buzzard_ai_complete/category_intelligence_47_maximal/data/buzzard_47_category_intelligence.db",
+  "intelligence_os_json_path": "data/taxonomy/buzzard_47_category_intelligence_os.json",
+  "intelligence_os_html_path": "data/taxonomy/buzzard_47_category_intelligence_os.html",
+  "monitoring": {
+    "public_sources_only": true,
+    "evidence_required": true
+  },
+  "categories": [
+    {
+      "code": "bz.02",
+      "name": "Haus & Wohnen",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.03",
+      "name": "Werkzeuge",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.04",
+      "name": "Garten",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.05",
+      "name": "Reinigung",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.06",
+      "name": "Kosmetik & Pflege",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.07",
+      "name": "Elektronik",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.08",
+      "name": "Elektrogeräte",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.09",
+      "name": "Möbel",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.10",
+      "name": "Beleuchtung",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.11",
+      "name": "Mode, Textil & Accessoires",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.12",
+      "name": "Sport & Outdoor",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.13",
+      "name": "Fahrräder & E-Bikes",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.14",
+      "name": "Haustier",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.15",
+      "name": "Baby & Kind",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.16",
+      "name": "Gaming & Spielzeug",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.17",
+      "name": "Büro & Schule",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.18",
+      "name": "Baumarkt",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.19",
+      "name": "Lager & Aufbewahrung",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.20",
+      "name": "Autozubehör",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.21",
+      "name": "Motorrad & Zubehör",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.22",
+      "name": "Öle & Flüssigkeiten",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.23",
+      "name": "Reifen & Felgen",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.24",
+      "name": "Bremsen",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.25",
+      "name": "Batterien",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.26",
+      "name": "Auspuff & Anlage",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.27",
+      "name": "Motor & Kühlung",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.28",
+      "name": "Licht & Elektrik",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.29",
+      "name": "Autopflege",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.30",
+      "name": "Navi & Zubehör",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.31",
+      "name": "Lebensmittel & Getränke",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.32",
+      "name": "Wein & Spirituosen",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.33",
+      "name": "Kaffee & Tee",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.34",
+      "name": "Gesundheit & Vitamine",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.35",
+      "name": "Haushalt & Hygiene",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.36",
+      "name": "Heizen & Klima",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.37",
+      "name": "Sicherheit & Überwachung",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.38",
+      "name": "Reisen & Gepäck",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.39",
+      "name": "Geschenke & Anlässe",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.40",
+      "name": "Weitere Kategorien",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.41",
+      "name": "Industrie & CNC",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.42",
+      "name": "Baumaschinen & Ersatzteile",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.43",
+      "name": "Landwirtschaft & Agrartechnik",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.44",
+      "name": "Lastikler – Tüm Motorlu Araçlar",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.45",
+      "name": "Tarım & Tarım Makineleri",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.46",
+      "name": "Hayvancılık",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.47",
+      "name": "Güneş & Rüzgâr Enerjisi",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    },
+    {
+      "code": "bz.48",
+      "name": "İnşaat & İnşaat Makineleri",
+      "parent_id": null,
+      "level": 1,
+      "source": "master_taxonomy_48"
+    }
+  ]
+}

@@ -53,6 +53,7 @@ intelligence/buzzard_official_verification_v29.db
 intelligence/buzzard_mission_v30.db
 intelligence/buzzard_learning_memory_v31.db
 intelligence/buzzard_category_intelligence_v32.db
+intelligence/buzzard_ai_complete/category_intelligence_47_maximal/data/*.db
 intelligence/buzzard_competitor_v33.db
 intelligence/master_integration/buzzard_master.db
 intelligence/buzzard_v34.json

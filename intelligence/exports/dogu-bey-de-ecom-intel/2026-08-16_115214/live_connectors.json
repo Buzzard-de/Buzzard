@@ -1,0 +1,66 @@
+{
+  "service": "buzzard-live-connectors",
+  "connectors": [
+    {
+      "key": "ebay",
+      "name": "eBay Browse API",
+      "beschreibung": "Marketplace-Preise und Listings (EBAY_DE)",
+      "status": "NOT_CONFIGURED",
+      "env_vars": [
+        "EBAY_CLIENT_ID",
+        "EBAY_CLIENT_SECRET"
+      ],
+      "detail": {
+        "configured": false,
+        "marketplace": "EBAY_DE"
+      }
+    },
+    {
+      "key": "amazon",
+      "name": "Amazon Creators API",
+      "beschreibung": "Produkt- und Angebotsrecherche auf amazon.de",
+      "status": "NOT_CONFIGURED",
+      "env_vars": [
+        "AMAZON_CLIENT_ID",
+        "AMAZON_CLIENT_SECRET",
+        "AMAZON_REFRESH_TOKEN",
+        "AMAZON_PARTNER_TAG"
+      ],
+      "detail": {
+        "configured": false,
+        "marketplace": "www.amazon.de",
+        "partner_tag": false
+      }
+    },
+    {
+      "key": "google_ads",
+      "name": "Google Ads API",
+      "beschreibung": "Eigene Werbe- und Suchperformance",
+      "status": "NOT_CONFIGURED",
+      "env_vars": [
+        "GOOGLE_ADS_DEVELOPER_TOKEN",
+        "GOOGLE_ADS_CLIENT_ID",
+        "GOOGLE_ADS_CLIENT_SECRET",
+        "GOOGLE_ADS_REFRESH_TOKEN",
+        "GOOGLE_ADS_CUSTOMER_ID"
+      ],
+      "detail": {
+        "configured": false,
+        "customer_id": null
+      }
+    },
+    {
+      "key": "public_fetch",
+      "name": "Public URL Fetcher",
+      "beschreibung": "Autorisierte öffentliche Webseiten abrufen",
+      "status": "READY",
+      "env_vars": [],
+      "detail": {
+        "configured": true
+      }
+    }
+  ],
+  "connector_count": 4,
+  "ready_count": 1,
+  "not_configured_count": 3
+}

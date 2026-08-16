@@ -86,3 +86,20 @@ def test_intelligence_os_maximum_single_file_loaded():
     assert summary["service_count"] == 24
     assert summary["console_html"] == "/taxonomy/buzzard_intelligence_os_maximum_single_file.html"
     assert summary["console_all_in_one_html"] == "/taxonomy/buzzard_intelligence_os_all_in_one.html"
+
+
+def test_master_business_os_maximum_manifest_loaded():
+    service = AutomotiveTaxonomyService()
+    summary = service.master_business_os_maximum_manifest_summary()
+    assert summary["manifest"] == "business_maximum"
+    assert summary["enterprise_module_count"] == 18
+    assert summary["business_category_count"] == 20
+    assert summary["company_layer_count"] == 12
+    assert summary["integration_target_count"] == 18
+    assert summary["agent_count"] == 43
+    assert summary["manifest_path"] == "/taxonomy/buzzard_master_business_os_maximum_manifest.json"
+    manifest = service.load_master_business_os_maximum_manifest()
+    assert manifest["enterprise_modules"][0][0] == "Intelligence OS"
+    assert "Automotive / Kfz" in manifest["business_categories"]
+    assert "Executive" in manifest["company_layers"]
+    assert "TecDoc" in manifest["integration_targets"]

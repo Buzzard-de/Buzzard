@@ -1286,6 +1286,27 @@ def complete_intelligence_os_maximum_single_file():
     )
 
 
+def complete_master_business_os_maximum_manifest():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    manifest = service.load_master_business_os_maximum_manifest()
+    return json.dumps(
+        {
+            "summary": service.master_business_os_maximum_manifest_summary(),
+            "enterprise_modules": manifest.get("enterprise_modules", []),
+            "business_categories": manifest.get("business_categories", []),
+            "company_layers": manifest.get("company_layers", []),
+            "integration_targets": manifest.get("integration_targets", []),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
 def complete_sync_kfz_category_tree():
     from pathlib import Path
     import subprocess

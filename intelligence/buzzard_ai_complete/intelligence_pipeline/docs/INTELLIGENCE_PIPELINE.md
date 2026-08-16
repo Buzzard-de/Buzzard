@@ -58,4 +58,5 @@ Uses `buzzard_master_kfz_intelligence_os.json` as taxonomy seed and
 **All-in-One Console:** `/taxonomy/buzzard_intelligence_os_all_in_one.html`  
 **Maximum Single-File Console:** `/taxonomy/buzzard_intelligence_os_maximum_single_file.html`  
 **All-in-One JSON:** `/taxonomy/buzzard_intelligence_os_all_in_one.json`  
-**Maximum Manifest:** `/taxonomy/buzzard_intelligence_os_maximum_manifest.json`
+**Maximum Manifest:** `/taxonomy/buzzard_intelligence_os_maximum_manifest.json`  
+**Master Business OS Manifest:** `/taxonomy/buzzard_master_business_os_maximum_manifest.json`

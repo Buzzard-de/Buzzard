@@ -118,5 +118,22 @@ if APIRouter:
     @router.get("/intelligence-os-maximum-single-file")
     def automotive_taxonomy_intelligence_os_maximum_single_file():
         return service.intelligence_os_maximum_single_file_summary()
+
+    @router.get("/master-business-os-maximum-manifest")
+    def automotive_taxonomy_master_business_os_maximum_manifest():
+        manifest = service.load_master_business_os_maximum_manifest()
+        return {
+            "summary": service.master_business_os_maximum_manifest_summary(),
+            "enterprise_modules": manifest.get("enterprise_modules", []),
+            "business_categories": manifest.get("business_categories", []),
+            "company_layers": manifest.get("company_layers", []),
+            "integration_targets": manifest.get("integration_targets", []),
+            "agents": manifest.get("agents", []),
+            "services": manifest.get("services", []),
+        }
+
+    @router.get("/master-business-os-maximum-manifest/full")
+    def automotive_taxonomy_master_business_os_maximum_manifest_full():
+        return service.load_master_business_os_maximum_manifest()
 else:
     router = None

@@ -1733,6 +1733,10 @@ def main():
         help="Show Intelligence OS maximum single-file console summary",
     )
     sub.add_parser(
+        "complete-master-business-os-maximum-manifest",
+        help="Show Master Business OS maximum manifest (enterprise modules, integrations)",
+    )
+    sub.add_parser(
         "complete-sync-kfz-category-tree",
         help="Sync KFZ tree with shop cat-05 bridge JSON",
     )
@@ -5783,6 +5787,10 @@ def main():
         from buzzard_ai_complete.commands import complete_intelligence_os_maximum_single_file
 
         print(complete_intelligence_os_maximum_single_file())
+    elif args.cmd == "complete-master-business-os-maximum-manifest":
+        from buzzard_ai_complete.commands import complete_master_business_os_maximum_manifest
+
+        print(complete_master_business_os_maximum_manifest())
     elif args.cmd == "complete-sync-kfz-category-tree":
         from buzzard_ai_complete.commands import complete_sync_kfz_category_tree
 

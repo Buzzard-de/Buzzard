@@ -10,6 +10,7 @@ Canonical automotive parts taxonomy for Buzzard.
 | `buzzard_master_kfz_category_tree_v1.json` | Machine-readable taxonomy V1 |
 | `buzzard_master_kfz_intelligence_os.json` | **Intelligence OS** — 43 mains, 454 subs, 412 L3, 8 competitors, coverage matrix |
 | `buzzard_intelligence_os_maximum_manifest.json` | **Maximum Manifest** — All-in-One + 43 Category Agents, 24 Services, Schemas, Runtime |
+| `buzzard_master_business_os_maximum_manifest.json` | **Master Business OS Manifest** — Intelligence OS + 18 Enterprise Modules, 20 Business Categories, 12 Company Layers, 18 Integrations |
 | `buzzard_intelligence_os_all_in_one.json` | **Intelligence OS All-in-One (JSON)** — Taxonomie, Module, Demo-Findings, Governance |
 | `buzzard_intelligence_os_all_in_one.html` | **Intelligence OS All-in-One** — 12 Module, Kurmay, Memory, Alerts, Pipeline-Architektur |
 | `buzzard_intelligence_os_maximum_single_file.html` | **Maximum Single-File Console** — All-in-One + 43 Agents + Operations Center (embedded manifest) |
@@ -46,7 +47,8 @@ python3 main.py complete-sync-kfz-category-tree
 - **Intelligence OS All-in-One (HTML):** `/taxonomy/buzzard_intelligence_os_all_in_one.html`
 - **Maximum Single-File Console (HTML):** `/taxonomy/buzzard_intelligence_os_maximum_single_file.html`
 - **Maximum Manifest (JSON):** `/taxonomy/buzzard_intelligence_os_maximum_manifest.json`
+- **Master Business OS Manifest (JSON):** `/taxonomy/buzzard_master_business_os_maximum_manifest.json`
 - **Intelligence OS All-in-One (JSON):** `/taxonomy/buzzard_intelligence_os_all_in_one.json`
 - **KFZ Intelligence OS Console (HTML):** `/taxonomy/buzzard_master_kfz_intelligence_os.html`
 - API: `/api/kfz-tree`, `/api/kfz-intelligence`
-- Intelligence API: `/automotive-taxonomy/kfz-intelligence-os`, `/automotive-taxonomy/intelligence-os-all-in-one`, `/automotive-taxonomy/intelligence-os-maximum-manifest`, `/automotive-taxonomy/intelligence-os-maximum-single-file`
+- Intelligence API: `/automotive-taxonomy/kfz-intelligence-os`, `/automotive-taxonomy/intelligence-os-all-in-one`, `/automotive-taxonomy/intelligence-os-maximum-manifest`, `/automotive-taxonomy/intelligence-os-maximum-single-file`, `/automotive-taxonomy/master-business-os-maximum-manifest`

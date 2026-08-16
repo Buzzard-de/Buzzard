@@ -30,7 +30,7 @@ def test_pipeline_run_kfz_automotive(mock_fetch):
 
     assert result["domain"] == "kfz_automotive"
     assert len(result["stages"]) == 12
-    assert result["results"]["public_sources"]["count"] == 4
+    assert result["results"]["public_sources"]["count"] == 5
     assert result["results"]["parser_normalizer"]["l3_count"] == 412
     assert result["results"]["canonical_category_resolver"]["resolved_count"] == 43
     assert result["results"]["opportunity_engine"]["count"] == 43
@@ -41,6 +41,9 @@ def test_pipeline_run_kfz_automotive(mock_fetch):
     )
     assert result["results"]["buzzard_master_taxonomy"]["manifest_path"] == (
         "/taxonomy/buzzard_intelligence_os_maximum_manifest.json"
+    )
+    assert result["results"]["buzzard_master_taxonomy"]["business_manifest_path"] == (
+        "/taxonomy/buzzard_master_business_os_maximum_manifest.json"
     )
 
 

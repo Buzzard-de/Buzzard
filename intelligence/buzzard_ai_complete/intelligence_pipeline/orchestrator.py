@@ -345,6 +345,7 @@ class IntelligencePipelineOrchestrator:
           "console_kfz_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
           "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",
           "manifest_path": "/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
+          "business_manifest_path": "/taxonomy/buzzard_master_business_os_maximum_manifest.json",
           "sync_command": "complete-sync-kfz-category-tree",
           "write_mode": "approval_required",
       }

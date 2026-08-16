@@ -151,6 +151,47 @@ class AutomotiveTaxonomyService:
         except (FileNotFoundError, KeyError):
             return {"status": "NOT_LOADED"}
 
+    def load_master_business_os_maximum_manifest(self) -> dict:
+        config = self.load_config()
+        path = self._repo_path(config["master_business_os_maximum_manifest_path"])
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def master_business_os_maximum_manifest_summary(self) -> dict:
+        try:
+            manifest = self.load_master_business_os_maximum_manifest()
+        except (FileNotFoundError, KeyError, json.JSONDecodeError):
+            return {"status": "NOT_LOADED"}
+        taxonomy = manifest.get("taxonomy", [])
+        l3_count = sum(
+            len(sub.get("children", []))
+            for main in taxonomy
+            for sub in main.get("subcategories", [])
+        )
+        agents = manifest.get("agents", [])
+        return {
+            "manifest": "business_maximum",
+            "version": manifest.get("version"),
+            "main_category_count": len(taxonomy),
+            "subcategory_count": sum(len(main.get("subcategories", [])) for main in taxonomy),
+            "l3_count": l3_count,
+            "competitor_count": len(manifest.get("competitors", [])),
+            "module_count": len(manifest.get("modules", [])),
+            "enterprise_module_count": len(manifest.get("enterprise_modules", [])),
+            "business_category_count": len(manifest.get("business_categories", [])),
+            "company_layer_count": len(manifest.get("company_layers", [])),
+            "integration_target_count": len(manifest.get("integration_targets", [])),
+            "agent_count": len(agents),
+            "agents_ready": sum(1 for agent in agents if agent.get("status") == "READY"),
+            "service_count": len(manifest.get("services", [])),
+            "schema_count": len(manifest.get("schemas", {})),
+            "demo_finding_count": len(manifest.get("demo_findings", [])),
+            "governance": manifest.get("governance", {}),
+            "runtime_defaults": manifest.get("runtime_defaults", {}),
+            "console_html": "/taxonomy/buzzard_intelligence_os_maximum_single_file.html",
+            "manifest_path": "/taxonomy/buzzard_master_business_os_maximum_manifest.json",
+            "intelligence_manifest_path": "/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
+        }
+
     def kfz_intelligence_summary(self) -> dict:
         try:
             os_data = self.load_kfz_intelligence_os()
@@ -222,6 +263,7 @@ class AutomotiveTaxonomyService:
             "console_kfz_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
             "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",
             "manifest_path": "/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
+            "business_manifest_path": "/taxonomy/buzzard_master_business_os_maximum_manifest.json",
         }
 
     def kfz_mains(self) -> list[dict]:

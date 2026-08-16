@@ -63,6 +63,36 @@ class AutomotiveTaxonomyService:
         path = self._repo_path(config["kfz_intelligence_os_path"])
         return json.loads(path.read_text(encoding="utf-8"))
 
+    def load_intelligence_os_all_in_one(self) -> dict:
+        config = self.load_config()
+        path = self._repo_path(config["intelligence_os_all_in_one_json_path"])
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def intelligence_os_all_in_one_summary(self) -> dict:
+        try:
+            os_data = self.load_intelligence_os_all_in_one()
+        except (FileNotFoundError, KeyError, json.JSONDecodeError):
+            return {"status": "NOT_LOADED"}
+        taxonomy = os_data.get("taxonomy", [])
+        l3_count = sum(
+            len(sub.get("children", []))
+            for main in taxonomy
+            for sub in main.get("subcategories", [])
+        )
+        return {
+            "version": os_data.get("version"),
+            "main_category_count": len(taxonomy),
+            "subcategory_count": sum(len(main.get("subcategories", [])) for main in taxonomy),
+            "l3_count": l3_count,
+            "competitor_count": len(os_data.get("competitors", [])),
+            "coverage_categories": len(os_data.get("coverage", {})),
+            "module_count": len(os_data.get("modules", [])),
+            "demo_finding_count": len(os_data.get("demo_findings", [])),
+            "governance": os_data.get("governance", {}),
+            "console_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+            "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",
+        }
+
     def kfz_intelligence_summary(self) -> dict:
         try:
             os_data = self.load_kfz_intelligence_os()
@@ -131,6 +161,7 @@ class AutomotiveTaxonomyService:
             "intelligence_os": intel.get("version"),
             "console_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
             "console_kfz_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
+            "json_path": "/taxonomy/buzzard_intelligence_os_all_in_one.json",
         }
 
     def kfz_mains(self) -> list[dict]:

@@ -1236,6 +1236,25 @@ def complete_automotive_taxonomy_kfz_intelligence_os():
     )
 
 
+def complete_intelligence_os_all_in_one():
+    from buzzard_ai_complete.automotive_taxonomy_maximal.service import AutomotiveTaxonomyService
+
+    service = AutomotiveTaxonomyService()
+    return json.dumps(
+        {
+            "summary": service.intelligence_os_all_in_one_summary(),
+            "modules": service.load_intelligence_os_all_in_one().get("modules", []),
+            "competitors": service.load_intelligence_os_all_in_one().get("competitors", []),
+            "demo_findings": service.load_intelligence_os_all_in_one().get("demo_findings", []),
+            "scoring_weights": service.load_intelligence_os_all_in_one().get("scoring_weights", {}),
+            "governance": service.load_intelligence_os_all_in_one().get("governance", {}),
+        },
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
 def complete_sync_kfz_category_tree():
     from pathlib import Path
     import subprocess

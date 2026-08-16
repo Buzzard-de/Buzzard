@@ -58,6 +58,7 @@
   "kfz_intelligence_os_path": "data/taxonomy/buzzard_master_kfz_intelligence_os.json",
   "kfz_intelligence_os_html_path": "data/taxonomy/buzzard_master_kfz_intelligence_os.html",
   "intelligence_os_all_in_one_html_path": "data/taxonomy/buzzard_intelligence_os_all_in_one.html",
+  "intelligence_os_all_in_one_json_path": "data/taxonomy/buzzard_intelligence_os_all_in_one.json",
   "kfz_shop_bridge_path": "data/taxonomy/kfz_shop_bridge.json",
   "shop_automotive_root_id": "cat-05"
 }

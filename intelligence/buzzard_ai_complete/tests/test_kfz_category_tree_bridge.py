@@ -45,3 +45,18 @@ def test_kfz_shop_bridge():
     bridge = service.shop_bridge_for_kfz("16")
     assert bridge is not None
     assert bridge["shop_l2_slug"] == "reifen-und-felgen"
+
+
+def test_intelligence_os_all_in_one_loaded():
+    service = AutomotiveTaxonomyService()
+    summary = service.intelligence_os_all_in_one_summary()
+    assert summary["version"] == "2.0-all-in-one"
+    assert summary["main_category_count"] == 43
+    assert summary["l3_count"] == 412
+    assert summary["competitor_count"] == 8
+    assert summary["module_count"] == 12
+    assert summary["demo_finding_count"] == 5
+    assert summary["governance"]["human_approval_required"] is True
+    data = service.load_intelligence_os_all_in_one()
+    assert data["scoring_weights"]["demand"] == 0.2
+    assert len(data["demo_findings"]) == 5

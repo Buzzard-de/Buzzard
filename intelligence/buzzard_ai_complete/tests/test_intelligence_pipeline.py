@@ -30,7 +30,7 @@ def test_pipeline_run_kfz_automotive(mock_fetch):
 
     assert result["domain"] == "kfz_automotive"
     assert len(result["stages"]) == 12
-    assert result["results"]["public_sources"]["count"] == 2
+    assert result["results"]["public_sources"]["count"] == 3
     assert result["results"]["parser_normalizer"]["l3_count"] == 412
     assert result["results"]["canonical_category_resolver"]["resolved_count"] == 43
     assert result["results"]["opportunity_engine"]["count"] == 43

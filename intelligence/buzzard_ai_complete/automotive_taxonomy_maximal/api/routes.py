@@ -84,5 +84,20 @@ if APIRouter:
             "coverage": service.kfz_coverage(main_id),
             "competitors": service.kfz_competitors(),
         }
+
+    @router.get("/intelligence-os-all-in-one")
+    def automotive_taxonomy_intelligence_os_all_in_one():
+        return {
+            "summary": service.intelligence_os_all_in_one_summary(),
+            "modules": service.load_intelligence_os_all_in_one().get("modules", []),
+            "competitors": service.load_intelligence_os_all_in_one().get("competitors", []),
+            "demo_findings": service.load_intelligence_os_all_in_one().get("demo_findings", []),
+            "scoring_weights": service.load_intelligence_os_all_in_one().get("scoring_weights", {}),
+            "governance": service.load_intelligence_os_all_in_one().get("governance", {}),
+        }
+
+    @router.get("/intelligence-os-all-in-one/full")
+    def automotive_taxonomy_intelligence_os_all_in_one_full():
+        return service.load_intelligence_os_all_in_one()
 else:
     router = None

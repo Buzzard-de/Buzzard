@@ -1721,6 +1721,10 @@ def main():
         help="Show KFZ Intelligence OS summary + competitors",
     )
     sub.add_parser(
+        "complete-intelligence-os-all-in-one",
+        help="Show Buzzard Intelligence OS All-in-One summary + modules",
+    )
+    sub.add_parser(
         "complete-sync-kfz-category-tree",
         help="Sync KFZ tree with shop cat-05 bridge JSON",
     )
@@ -5759,6 +5763,10 @@ def main():
         from buzzard_ai_complete.commands import complete_automotive_taxonomy_kfz_intelligence_os
 
         print(complete_automotive_taxonomy_kfz_intelligence_os())
+    elif args.cmd == "complete-intelligence-os-all-in-one":
+        from buzzard_ai_complete.commands import complete_intelligence_os_all_in_one
+
+        print(complete_intelligence_os_all_in_one())
     elif args.cmd == "complete-sync-kfz-category-tree":
         from buzzard_ai_complete.commands import complete_sync_kfz_category_tree
 

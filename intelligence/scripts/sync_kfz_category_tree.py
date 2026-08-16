@@ -231,6 +231,7 @@ def update_automotive_config() -> None:
     config["kfz_intelligence_os_path"] = "data/taxonomy/buzzard_master_kfz_intelligence_os.json"
     config["kfz_intelligence_os_html_path"] = "data/taxonomy/buzzard_master_kfz_intelligence_os.html"
     config["intelligence_os_all_in_one_html_path"] = "data/taxonomy/buzzard_intelligence_os_all_in_one.html"
+    config["intelligence_os_all_in_one_json_path"] = "data/taxonomy/buzzard_intelligence_os_all_in_one.json"
     config["kfz_shop_bridge_path"] = "data/taxonomy/kfz_shop_bridge.json"
     config["shop_automotive_root_id"] = "cat-05"
     AUTOMOTIVE_CONFIG_PATH.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

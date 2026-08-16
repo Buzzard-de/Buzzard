@@ -40,6 +40,7 @@ async function fetchIntelligence(path) {
     const routes = {
       "/health": embedded.health(),
       "/production/readiness": embedded.productionReadiness(),
+      "/production/bridge/summary": embedded.productionBridgeSummary(),
       "/production/integrations": embedded.productionIntegrations(),
       "/shop-bridge/readiness": embedded.shopBridgeReadiness(),
       "/taxonomy/snapshot": embedded.taxonomySnapshot(),

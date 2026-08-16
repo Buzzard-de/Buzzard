@@ -22,6 +22,8 @@ current API permissions, sandbox verification, tax/legal configuration and deplo
 cd intelligence
 python3 main.py complete-production-demo
 python3 main.py complete-production-readiness
+python3 main.py complete-production-bridge-manifest
+python3 main.py complete-production-bridge-summary
 python3 main.py complete-production-docs
 ```
 
@@ -31,6 +33,9 @@ python3 main.py complete-production-docs
 - `GET /production/integrations` — provider status registry
 - `GET /production/agents` — agent runtime status
 - `GET /production/readiness` — go-live readiness gate
+- `GET /production/bridge/manifest` — Production Bridge Manifest (JSON)
+- `GET /production/bridge/gates` — Gate-Evaluierung
+- `GET /production/bridge/summary` — Manifest + Gate-Status
 - `GET /storefront/products` — catalog search/list
 - `POST /storefront/cart` — create cart
 - `POST /storefront/cart/{id}/checkout` — checkout lifecycle

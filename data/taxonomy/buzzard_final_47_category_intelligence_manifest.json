@@ -1,0 +1,43 @@
+{
+  "name": "BUZZARD FINAL 47 CATEGORY INTELLIGENCE OS",
+  "version": "MAX-FINAL-1.0",
+  "scope": {
+    "master_categories": 48,
+    "research_categories": 47,
+    "kfz_benchmark": true,
+    "competitor_target": 940
+  },
+  "pipeline": [
+    "discovery",
+    "evidence_capture",
+    "evidence_review",
+    "verification",
+    "taxonomy_normalization",
+    "coverage_scoring",
+    "gap_detection",
+    "opportunity_findings",
+    "audit",
+    "executive_reporting",
+    "export"
+  ],
+  "verification_policy": "No market fact becomes VERIFIED without approved evidence.",
+  "evidence_fields": [
+    "url",
+    "source_name",
+    "source_date",
+    "claim",
+    "locator",
+    "content_hash"
+  ],
+  "taxonomy": "unlimited depth",
+  "outputs": [
+    "competitor matrix",
+    "taxonomy matrix",
+    "gap candidates",
+    "feature matrix",
+    "verification dashboard",
+    "executive report",
+    "audit log"
+  ],
+  "research_basis": "EHI/ECDB Germany 2025 study, 2024 business-year data"
+}

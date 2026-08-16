@@ -10,6 +10,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 MANIFEST = REPO / "data/taxonomy/buzzard_47_category_intelligence_os.json"
+FINAL_MANIFEST = REPO / "data/taxonomy/buzzard_final_47_category_intelligence_manifest.json"
 CONFIG = (
     REPO
     / "intelligence/buzzard_ai_complete/category_intelligence_47_maximal/config/category_intelligence_47.production.json"
@@ -199,7 +200,18 @@ def build_from_max_single_final(manifest: dict) -> str:
 
 
 def ensure_manifest(manifest: dict) -> dict:
+    final_manifest = json.loads(FINAL_MANIFEST.read_text(encoding="utf-8")) if FINAL_MANIFEST.is_file() else {}
     manifest = dict(manifest)
+    manifest["name"] = final_manifest.get("name", manifest.get("name"))
+    manifest["version"] = final_manifest.get("version", manifest.get("version", "1.0-final-max"))
+    manifest["scope_detail"] = final_manifest.get("scope", {})
+    manifest["pipeline"] = final_manifest.get("pipeline", [])
+    manifest["verification_policy_text"] = final_manifest.get("verification_policy")
+    manifest["evidence_fields"] = final_manifest.get("evidence_fields", [])
+    manifest["taxonomy_depth"] = final_manifest.get("taxonomy")
+    manifest["outputs"] = final_manifest.get("outputs", [])
+    manifest["research_basis"] = final_manifest.get("research_basis")
+    manifest["final_manifest_json"] = "/taxonomy/buzzard_final_47_category_intelligence_manifest.json"
     manifest["version"] = "1.0-final-max"
     primary = "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html"
     manifest["primary_console_html"] = primary
@@ -259,6 +271,10 @@ def main() -> None:
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     public_manifest = REPO / "public/taxonomy/buzzard_47_category_intelligence_os.json"
     public_manifest.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    public_final_manifest = REPO / "public/taxonomy/buzzard_final_47_category_intelligence_manifest.json"
+    if FINAL_MANIFEST.is_file():
+        public_final_manifest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(FINAL_MANIFEST, public_final_manifest)
 
     if SOURCE_HTML.is_file():
         html = build_from_max_single_final(manifest)
@@ -270,6 +286,8 @@ def main() -> None:
     shutil.copy2(OUT_DATA, OUT_PUBLIC)
 
     print(f"OK: research matrix → {MATRIX}")
+    if FINAL_MANIFEST.is_file():
+        print(f"OK: final manifest → {FINAL_MANIFEST}")
     print(f"OK: manifest final-max → {MANIFEST}")
     print(f"OK: final max console → {OUT_DATA} ({len(html)} bytes)")
 

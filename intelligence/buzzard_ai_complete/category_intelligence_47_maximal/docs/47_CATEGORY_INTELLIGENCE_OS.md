@@ -20,12 +20,15 @@ Prefix: `/category-intelligence-47`
 | `/categories/seed` | POST | Seed from production config |
 | `/categories/{id}/competitors` | GET | Competitors per category |
 | `/analysis/{id}` | GET | Taxonomy comparison |
-| `/intelligence-os` | GET | Console + manifest summary |
+| `/intelligence-os/full` | GET | Runtime manifest (categories + consoles) |
+| `/final-manifest` | GET | FINAL MAX authoritative manifest |
+| `/final-manifest/summary` | GET | FINAL manifest + runtime bindings |
 | `/demo` | GET | Seed + sample analysis |
 
 ## Console
 
 - Primary HTML: `/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html`
+- **FINAL manifest (JSON):** `/taxonomy/buzzard_final_47_category_intelligence_manifest.json`
 - Legacy HTML: `/taxonomy/buzzard_47_category_intelligence_os.html`
 - Research matrix: `/taxonomy/buzzard_47_research_matrix_max.json`
 - Manifest: `/taxonomy/buzzard_47_category_intelligence_os.json`

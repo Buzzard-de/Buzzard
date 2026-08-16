@@ -1,5 +1,5 @@
 {
-  "name": "Buzzard 47 Category Intelligence OS",
+  "name": "BUZZARD FINAL 47 CATEGORY INTELLIGENCE OS",
   "version": "1.0-final-max",
   "scope": "47 non-Kfz categories",
   "target_categories": 47,
@@ -389,5 +389,45 @@
     "workflow": "discovery → evidence → normalization → scoring → gap findings → review → approval → audit",
     "verification_rule": "candidate + no evidence = CANDIDATE; candidate + evidence = review; approval = VERIFIED",
     "research_matrix_target": 940
-  }
+  },
+  "scope_detail": {
+    "master_categories": 48,
+    "research_categories": 47,
+    "kfz_benchmark": true,
+    "competitor_target": 940
+  },
+  "pipeline": [
+    "discovery",
+    "evidence_capture",
+    "evidence_review",
+    "verification",
+    "taxonomy_normalization",
+    "coverage_scoring",
+    "gap_detection",
+    "opportunity_findings",
+    "audit",
+    "executive_reporting",
+    "export"
+  ],
+  "verification_policy_text": "No market fact becomes VERIFIED without approved evidence.",
+  "evidence_fields": [
+    "url",
+    "source_name",
+    "source_date",
+    "claim",
+    "locator",
+    "content_hash"
+  ],
+  "taxonomy_depth": "unlimited depth",
+  "outputs": [
+    "competitor matrix",
+    "taxonomy matrix",
+    "gap candidates",
+    "feature matrix",
+    "verification dashboard",
+    "executive report",
+    "audit log"
+  ],
+  "research_basis": "EHI/ECDB Germany 2025 study, 2024 business-year data",
+  "final_manifest_json": "/taxonomy/buzzard_final_47_category_intelligence_manifest.json"
 }

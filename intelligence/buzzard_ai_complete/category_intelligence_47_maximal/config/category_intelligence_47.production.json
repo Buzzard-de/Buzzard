@@ -12,6 +12,7 @@
   "intelligence_os_max_single_final_single_file_html_path": "data/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
   "intelligence_os_final_max_single_file_html_path": "data/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
   "research_matrix_json_path": "data/taxonomy/buzzard_47_research_matrix_max.json",
+  "final_manifest_json_path": "data/taxonomy/buzzard_final_47_category_intelligence_manifest.json",
   "monitoring": {
     "public_sources_only": true,
     "evidence_required": true

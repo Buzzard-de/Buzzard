@@ -1,1 +1,1 @@
-"""Buzzard gizli — local Intelligence API and Voice UI launchers."""
+"""Buzzard gizli — local Intelligence API (app.py) and Voice UI (voice_ui.py → :8787)."""

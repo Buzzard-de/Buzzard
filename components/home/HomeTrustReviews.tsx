@@ -1,7 +1,7 @@
 import Link from "next/link";
 import CategoryIcon from "@/components/CategoryIcon";
 import BrandsStrip from "@/components/BrandsStrip";
-import { getFeaturedSubcategories } from "@/lib/categories";
+import { getDiversePopularCategories } from "@/lib/categories";
 import { isSalesEnabled } from "@/lib/shop/mode";
 
 const catalogTrust = [
@@ -12,7 +12,7 @@ const catalogTrust = [
 ] as const;
 
 export default function HomeTrustReviews() {
-  const highlights = getFeaturedSubcategories("cat-01", 6);
+  const highlights = getDiversePopularCategories(8);
   const salesOn = isSalesEnabled();
 
   return (
@@ -21,13 +21,18 @@ export default function HomeTrustReviews() {
         <div className="home-section-head">
           <h2 id="home-highlights-title">Beliebte Kategorien</h2>
         </div>
-        <div className="popular-categories-grid">
+        <ul className="popular-categories-grid">
           {highlights.map((cat) => (
-            <Link key={cat.id} href={cat.href} className="popular-category-card">
-              <span className="popular-category-label">{cat.label}</span>
-            </Link>
+            <li key={cat.id}>
+              <Link href={cat.href} className="popular-category-card">
+                <span className="popular-category-icon">
+                  <CategoryIcon name={cat.icon} size={28} />
+                </span>
+                <span className="popular-category-label">{cat.label}</span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="home-section home-trust" aria-labelledby="home-trust-title">

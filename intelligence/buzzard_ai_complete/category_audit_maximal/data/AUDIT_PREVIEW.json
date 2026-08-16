@@ -83,8 +83,8 @@
     "menu_order": 8,
     "url": "/kategorie/arbeitsschutz-und-berufskleidung",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
+    "action": "RESTRUCTURE",
+    "target": "Mode, Textil & Accessoires",
     "reason": "Explicitly approved category-audit rule."
   },
   {
@@ -204,8 +204,8 @@
     "menu_order": 19,
     "url": "/kategorie/hobby-und-freizeit",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
+    "action": "RESTRUCTURE",
+    "target": "Gaming & Spielzeug",
     "reason": "Explicitly approved category-audit rule."
   },
   {
@@ -215,8 +215,8 @@
     "menu_order": 20,
     "url": "/kategorie/tier-und-landwirtschaftsausruestung",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
+    "action": "RESTRUCTURE",
+    "target": "Tarım & Tarım Makineleri",
     "reason": "Explicitly approved category-audit rule."
   },
   {
@@ -259,8 +259,8 @@
     "menu_order": 24,
     "url": "/kategorie/kueche-und-essen",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
+    "action": "RESTRUCTURE",
+    "target": "Haushalt & Hygiene",
     "reason": "Explicitly approved category-audit rule."
   },
   {
@@ -447,7 +447,7 @@
     "url": "/kategorie/angebote-und-sonderkollektionen",
     "level": 1,
     "action": "REVIEW",
-    "target": null,
+    "target": "Weitere Kategorien",
     "reason": "Explicitly approved category-audit rule."
   },
   {

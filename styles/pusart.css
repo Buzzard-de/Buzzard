@@ -1060,7 +1060,8 @@ body:has(.home-fullscreen) #maincontent {
 }
 
 .brands-strip--promo {
-  display: none;
+  display: block;
+  margin-top: 28px;
 }
 
 .brands-strip-list {

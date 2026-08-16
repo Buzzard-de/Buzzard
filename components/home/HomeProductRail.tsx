@@ -25,7 +25,7 @@ function selectProducts(variant: HomeProductRailProps["variant"], items: PublicP
     case "bestsellers":
       return list.sort((a, b) => a.price - b.price);
     case "new":
-      return list.filter((p) => p.id.startsWith("prod-"));
+      return [...list].reverse();
     default:
       return list;
   }

@@ -116,6 +116,35 @@ export function getFeaturedSubcategories(mainId: string, limit = 6): CategoryCar
   return getChildren(mainId).slice(0, limit).map(homeCard);
 }
 
+/** Cross-category highlights for homepage (one subcategory per main branch). */
+export function getDiversePopularCategories(limit = 8): Array<CategoryCard & { icon: string }> {
+  const featuredMainIds = [
+    "cat-05",
+    "cat-01",
+    "cat-12",
+    "cat-07",
+    "cat-10",
+    "cat-14",
+    "cat-25",
+    "cat-39",
+    "cat-02",
+    "cat-18",
+  ];
+  const cards: Array<CategoryCard & { icon: string }> = [];
+
+  for (const mainId of featuredMainIds) {
+    const child = getChildren(mainId)[0];
+    if (!child) continue;
+    cards.push({
+      ...homeCard(child),
+      icon: getMainCategoryIcon(mainId),
+    });
+    if (cards.length >= limit) break;
+  }
+
+  return cards;
+}
+
 /** @deprecated Use getFeaturedSubcategories(mainCategoryId) */
 export const homeCategories: CategoryCard[] = getFeaturedSubcategories("cat-01", 6);
 

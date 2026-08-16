@@ -40,7 +40,7 @@ Full export from `data/buzzard_categories.json` (41 main categories + 1 migratio
 | RESTRUCTURE | 20 |
 | MOVE_CONTENT | 7 (+1 migration) |
 | SEPARATE | 1 |
-| REVIEW | 5 |
+| REVIEW | 1 |
 
 ## Safety
 

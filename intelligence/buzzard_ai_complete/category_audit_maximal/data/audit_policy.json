@@ -144,23 +144,23 @@
     "target": "Güneş & Rüzgâr Enerjisi"
   },
   "Tier- & Landwirtschaftsausrüstung": {
-    "action": "REVIEW",
-    "target": null
+    "action": "RESTRUCTURE",
+    "target": "Tarım & Tarım Makineleri"
   },
   "Arbeitsschutz & Berufskleidung": {
-    "action": "REVIEW",
-    "target": null
+    "action": "RESTRUCTURE",
+    "target": "Mode, Textil & Accessoires"
   },
   "Hobby & Freizeit": {
-    "action": "REVIEW",
-    "target": null
+    "action": "RESTRUCTURE",
+    "target": "Gaming & Spielzeug"
   },
   "Küche & Essen": {
-    "action": "REVIEW",
-    "target": null
+    "action": "RESTRUCTURE",
+    "target": "Haushalt & Hygiene"
   },
   "Angebote & Sonderkollektionen": {
     "action": "REVIEW",
-    "target": null
+    "target": "Weitere Kategorien"
   }
 }

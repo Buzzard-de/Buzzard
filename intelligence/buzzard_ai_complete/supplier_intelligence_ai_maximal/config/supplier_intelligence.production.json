@@ -1,0 +1,29 @@
+{
+  "name": "BUZZARD_SUPPLIER_INTELLIGENCE_AI_MAXIMAL",
+  "version": "1.0.0",
+  "agent": {
+    "id": "supplier_intelligence_ai",
+    "role": "supplier_discovery_risk_commercial_fit"
+  },
+  "guardrails": {
+    "public_open_sources_only": true,
+    "no_credential_theft": true,
+    "no_auth_bypass": true,
+    "human_approval_required": true,
+    "minimum_evidence": 2
+  },
+  "pipeline": [
+    "discovery",
+    "identity_verification",
+    "evidence_collection",
+    "risk_scoring",
+    "commercial_fit",
+    "integration_fit",
+    "comparison",
+    "human_approval",
+    "memory",
+    "continuous_re_evaluation"
+  ],
+  "live_activation": false,
+  "BUZZARD_SALES_ENABLED": 0
+}

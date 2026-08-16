@@ -1440,6 +1440,43 @@ def complete_category_audit_docs():
     return _read_doc("CATEGORY_AUDIT_MAXIMAL.md")
 
 
+def complete_supplier_intelligence_health():
+    from buzzard_ai_complete.supplier_intelligence_ai_maximal.service import (
+        SupplierIntelligenceService,
+    )
+
+    return json.dumps(SupplierIntelligenceService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_supplier_intelligence_demo():
+    from buzzard_ai_complete.supplier_intelligence_ai_maximal.service import (
+        SupplierIntelligenceService,
+    )
+
+    return json.dumps(SupplierIntelligenceService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_supplier_intelligence_schema():
+    from buzzard_ai_complete.supplier_intelligence_ai_maximal.service import (
+        SupplierIntelligenceService,
+    )
+
+    service = SupplierIntelligenceService()
+    return json.dumps(
+        {
+            "supplier": service.load_schema(),
+            "config": service.load_config(),
+            "risk_policy": service.load_risk_policy(),
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_supplier_intelligence_docs():
+    return _read_doc("SUPPLIER_INTELLIGENCE_AI_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

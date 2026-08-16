@@ -1,0 +1,21 @@
+{
+  "name": "Buzzard Supplier Intelligence Risk Policy v1",
+  "decision_bands": {
+    "85-100": "APPROVE",
+    "65-84.99": "CONDITIONAL",
+    "45-64.99": "REVIEW",
+    "0-44.99": "REVIEW_OR_REJECT"
+  },
+  "hard_red_flags": [
+    "suspected_fraud",
+    "identity_unverified"
+  ],
+  "principles": [
+    "Public/open sources only",
+    "Evidence-backed claims",
+    "No private/authenticated data access",
+    "No bypass of robots, paywalls or access controls",
+    "Missing evidence is not positive evidence",
+    "Human approval required before commercial onboarding"
+  ]
+}

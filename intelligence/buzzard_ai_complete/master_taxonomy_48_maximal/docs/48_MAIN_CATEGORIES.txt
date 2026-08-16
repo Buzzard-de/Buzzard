@@ -1,48 +1,48 @@
-01. Automotive
-02. Haus & Wohnen
-03. Werkzeuge
-04. Garten
-05. Reinigung
-06. Kosmetik & Pflege
-07. Elektronik
-08. Elektrogeräte
-09. Möbel
-10. Beleuchtung
-11. Mode, Textil & Accessoires
-12. Sport & Outdoor
-13. Fahrräder & E-Bikes
-14. Haustier
-15. Baby & Kind
-16. Gaming & Spielzeug
-17. Büro & Schule
-18. Baumarkt
-19. Lager & Aufbewahrung
-20. Autozubehör
-21. Motorrad & Zubehör
-22. Öle & Flüssigkeiten
-23. Reifen & Felgen
-24. Bremsen
-25. Batterien
-26. Auspuff & Anlage
-27. Motor & Kühlung
-28. Licht & Elektrik
-29. Autopflege
-30. Navi & Zubehör
-31. Lebensmittel & Getränke
-32. Wein & Spirituosen
-33. Kaffee & Tee
-34. Gesundheit & Vitamine
-35. Haushalt & Hygiene
-36. Heizen & Klima
-37. Sicherheit & Überwachung
-38. Reisen & Gepäck
-39. Geschenke & Anlässe
-40. Weitere Kategorien
-41. Industrie & CNC
-42. Baumaschinen & Ersatzteile
-43. Landwirtschaft & Agrartechnik
-44. Lastikler – Tüm Motorlu Araçlar
-45. Tarım & Tarım Makineleri
-46. Hayvancılık
-47. Güneş & Rüzgâr Enerjisi
-48. İnşaat & İnşaat Makineleri
+01. Otomotiv & Kfz
+02. Bahçe & Bahçecilik
+03. Aletler & Atölye
+04. Kendin Yap, İnşaat & Yapı
+05. Ev & Ev İhtiyaçları
+06. Mobilya & Yaşam
+07. Ev Dekorasyonu
+08. Ev Tekstili
+09. Mutfak & Pişirme
+10. Banyo & Sıhhi Tesisat
+11. Temizlik & Ev Bakımı
+12. Elektronik & Tüketici Elektroniği
+13. Bilgisayar & BT
+14. Mobil & Telekomünikasyon
+15. Akıllı Ev & Güvenlik
+16. Elektrikli Ev Aletleri
+17. Moda & Giyim
+18. Ayakkabı & Ayak Giyim
+19. Çanta, Valiz & Aksesuar
+20. Mücevher & Saat
+21. Güzellik & Kozmetik
+22. Kişisel Bakım
+23. Sağlık & Wellness
+24. Eczane & Medikal Ürünler
+25. Gıda & Market Ürünleri
+26. İçecekler
+27. Bebek & Bebek Odası
+28. Çocuk & Okul
+29. Oyuncak & Oyun
+30. Spor & Fitness
+31. Outdoor, Kamp & Macera
+32. Hobi & Boş Zaman
+33. Müzik & Müzik Aletleri
+34. Kitap, Medya & Eğlence
+35. Ofis, Okul & Kırtasiye
+36. Evcil Hayvan & Hayvan Bakımı
+37. Tarım & Çiftçilik
+38. Sanayi & Ticari İhtiyaçlar
+39. İş Kıyafetleri & İş Güvenliği
+40. Seyahat & Mobilite
+41. Hediyeler, Çiçek & Özel Günler
+42. Hobi El Sanatları, Dikiş & El Yapımı
+43. Aydınlatma & Lambalar
+44. Isıtma, İklimlendirme & Enerji
+45. Havuz, Spa & Wellness Ekipmanları
+46. Sezonluk & Kutlama Ürünleri
+47. Lüks, Koleksiyon & Değerli Ürünler
+48. Genel Ürünler & Marketplace

@@ -24,7 +24,8 @@ CONFIG_PATH = (
     / "category_intelligence_47.production.json"
 )
 MANIFEST_PATH = REPO_ROOT / "data" / "taxonomy" / "buzzard_47_category_intelligence_os.json"
-EXCLUDED_SLUGS = {"automotive", "kfz"}
+EXCLUDED_CODES = {"bz.01", "01"}
+EXCLUDED_SLUGS = {"automotive", "kfz", "otomotiv-kfz"}
 
 
 def build_categories() -> list[dict]:
@@ -35,7 +36,8 @@ def build_categories() -> list[dict]:
             continue
         slug = (node.get("slug") or "").split("/")[0].lower()
         name = node.get("name", "")
-        if slug in EXCLUDED_SLUGS or name.lower() in {"automotive", "kfz"}:
+        code = node.get("id", "")
+        if code in EXCLUDED_CODES or slug in EXCLUDED_SLUGS or name.lower() in {"automotive", "kfz", "otomotiv & kfz"}:
             continue
         rows.append(
             {

@@ -212,7 +212,13 @@ class CategoryIntelligence47Store:
         connection = self.connect()
         added = 0
         for row in rows:
-            if norm(row.name) in ("automotive", "automotive kfz", "kfz"):
+            if row.code in ("bz.01", "01") or norm(row.name) in (
+                "automotive",
+                "automotive kfz",
+                "kfz",
+                "otomotiv kfz",
+                "otomotiv",
+            ):
                 continue
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO categories(code, name, parent_id, level, source) VALUES(?,?,?,?,?)",

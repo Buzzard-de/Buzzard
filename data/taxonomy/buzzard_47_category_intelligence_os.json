@@ -1,7 +1,7 @@
 {
   "name": "BUZZARD FINAL 47 CATEGORY INTELLIGENCE OS",
   "version": "1.0-final-max",
-  "scope": "47 non-Kfz categories",
+  "scope": "47 non-Kfz categories (Turkish master taxonomy 48)",
   "target_categories": 47,
   "target_competitors": 940,
   "competitors_per_category": 20,
@@ -11,332 +11,332 @@
   "categories": [
     {
       "code": "bz.02",
-      "name": "Haus & Wohnen",
+      "name": "Bahçe & Bahçecilik",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.03",
-      "name": "Werkzeuge",
+      "name": "Aletler & Atölye",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.04",
-      "name": "Garten",
+      "name": "Kendin Yap, İnşaat & Yapı",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.05",
-      "name": "Reinigung",
+      "name": "Ev & Ev İhtiyaçları",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.06",
-      "name": "Kosmetik & Pflege",
+      "name": "Mobilya & Yaşam",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.07",
-      "name": "Elektronik",
+      "name": "Ev Dekorasyonu",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.08",
-      "name": "Elektrogeräte",
+      "name": "Ev Tekstili",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.09",
-      "name": "Möbel",
+      "name": "Mutfak & Pişirme",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.10",
-      "name": "Beleuchtung",
+      "name": "Banyo & Sıhhi Tesisat",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.11",
-      "name": "Mode, Textil & Accessoires",
+      "name": "Temizlik & Ev Bakımı",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.12",
-      "name": "Sport & Outdoor",
+      "name": "Elektronik & Tüketici Elektroniği",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.13",
-      "name": "Fahrräder & E-Bikes",
+      "name": "Bilgisayar & BT",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.14",
-      "name": "Haustier",
+      "name": "Mobil & Telekomünikasyon",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.15",
-      "name": "Baby & Kind",
+      "name": "Akıllı Ev & Güvenlik",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.16",
-      "name": "Gaming & Spielzeug",
+      "name": "Elektrikli Ev Aletleri",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.17",
-      "name": "Büro & Schule",
+      "name": "Moda & Giyim",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.18",
-      "name": "Baumarkt",
+      "name": "Ayakkabı & Ayak Giyim",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.19",
-      "name": "Lager & Aufbewahrung",
+      "name": "Çanta, Valiz & Aksesuar",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.20",
-      "name": "Autozubehör",
+      "name": "Mücevher & Saat",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.21",
-      "name": "Motorrad & Zubehör",
+      "name": "Güzellik & Kozmetik",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.22",
-      "name": "Öle & Flüssigkeiten",
+      "name": "Kişisel Bakım",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.23",
-      "name": "Reifen & Felgen",
+      "name": "Sağlık & Wellness",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.24",
-      "name": "Bremsen",
+      "name": "Eczane & Medikal Ürünler",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.25",
-      "name": "Batterien",
+      "name": "Gıda & Market Ürünleri",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.26",
-      "name": "Auspuff & Anlage",
+      "name": "İçecekler",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.27",
-      "name": "Motor & Kühlung",
+      "name": "Bebek & Bebek Odası",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.28",
-      "name": "Licht & Elektrik",
+      "name": "Çocuk & Okul",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.29",
-      "name": "Autopflege",
+      "name": "Oyuncak & Oyun",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.30",
-      "name": "Navi & Zubehör",
+      "name": "Spor & Fitness",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.31",
-      "name": "Lebensmittel & Getränke",
+      "name": "Outdoor, Kamp & Macera",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.32",
-      "name": "Wein & Spirituosen",
+      "name": "Hobi & Boş Zaman",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.33",
-      "name": "Kaffee & Tee",
+      "name": "Müzik & Müzik Aletleri",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.34",
-      "name": "Gesundheit & Vitamine",
+      "name": "Kitap, Medya & Eğlence",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.35",
-      "name": "Haushalt & Hygiene",
+      "name": "Ofis, Okul & Kırtasiye",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.36",
-      "name": "Heizen & Klima",
+      "name": "Evcil Hayvan & Hayvan Bakımı",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.37",
-      "name": "Sicherheit & Überwachung",
+      "name": "Tarım & Çiftçilik",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.38",
-      "name": "Reisen & Gepäck",
+      "name": "Sanayi & Ticari İhtiyaçlar",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.39",
-      "name": "Geschenke & Anlässe",
+      "name": "İş Kıyafetleri & İş Güvenliği",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.40",
-      "name": "Weitere Kategorien",
+      "name": "Seyahat & Mobilite",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.41",
-      "name": "Industrie & CNC",
+      "name": "Hediyeler, Çiçek & Özel Günler",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.42",
-      "name": "Baumaschinen & Ersatzteile",
+      "name": "Hobi El Sanatları, Dikiş & El Yapımı",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.43",
-      "name": "Landwirtschaft & Agrartechnik",
+      "name": "Aydınlatma & Lambalar",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.44",
-      "name": "Lastikler – Tüm Motorlu Araçlar",
+      "name": "Isıtma, İklimlendirme & Enerji",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.45",
-      "name": "Tarım & Tarım Makineleri",
+      "name": "Havuz, Spa & Wellness Ekipmanları",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.46",
-      "name": "Hayvancılık",
+      "name": "Sezonluk & Kutlama Ürünleri",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.47",
-      "name": "Güneş & Rüzgâr Enerjisi",
+      "name": "Lüks, Koleksiyon & Değerli Ürünler",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     },
     {
       "code": "bz.48",
-      "name": "İnşaat & İnşaat Makineleri",
+      "name": "Genel Ürünler & Marketplace",
       "parent_id": null,
       "level": 1,
-      "source": "master_taxonomy_48"
+      "source": "master_taxonomy_48_tr"
     }
   ],
   "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
@@ -429,5 +429,7 @@
     "audit log"
   ],
   "research_basis": "EHI/ECDB Germany 2025 study, 2024 business-year data",
-  "final_manifest_json": "/taxonomy/buzzard_final_47_category_intelligence_manifest.json"
+  "final_manifest_json": "/taxonomy/buzzard_final_47_category_intelligence_manifest.json",
+  "main_categories_locale": "tr",
+  "main_categories_json": "/taxonomy/buzzard_master_48_main_categories_tr.json"
 }

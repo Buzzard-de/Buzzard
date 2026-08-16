@@ -30,5 +30,137 @@
   "İnşaat & İnşaat Makineleri": {
     "action": "SEPARATE",
     "target": "İnşaat & İnşaat Makineleri"
+  },
+  "Textil": {
+    "action": "RESTRUCTURE",
+    "target": "Mode, Textil & Accessoires"
+  },
+  "Kosmetik & Körperpflege": {
+    "action": "RESTRUCTURE",
+    "target": "Kosmetik & Pflege"
+  },
+  "Reinigungsprodukte": {
+    "action": "RESTRUCTURE",
+    "target": "Reinigung"
+  },
+  "Schule & Bürobedarf": {
+    "action": "RESTRUCTURE",
+    "target": "Büro & Schule"
+  },
+  "Haustierbedarf": {
+    "action": "RESTRUCTURE",
+    "target": "Haustier"
+  },
+  "Werkzeuge & Eisenwaren": {
+    "action": "RESTRUCTURE",
+    "target": "Werkzeuge"
+  },
+  "Haushaltsgeräte": {
+    "action": "RESTRUCTURE",
+    "target": "Elektrogeräte"
+  },
+  "Schuhe": {
+    "action": "MOVE_CONTENT",
+    "target": "Mode, Textil & Accessoires"
+  },
+  "Taschen & Accessoires": {
+    "action": "MOVE_CONTENT",
+    "target": "Mode, Textil & Accessoires"
+  },
+  "Mutter & Baby": {
+    "action": "RESTRUCTURE",
+    "target": "Baby & Kind"
+  },
+  "Spielzeug & Kinder": {
+    "action": "RESTRUCTURE",
+    "target": "Gaming & Spielzeug"
+  },
+  "Bau & Konstruktion": {
+    "action": "RESTRUCTURE",
+    "target": "Baumarkt"
+  },
+  "Elektro & Beleuchtung": {
+    "action": "RESTRUCTURE",
+    "target": "Beleuchtung"
+  },
+  "Wasser, Heizung & Sanitär": {
+    "action": "RESTRUCTURE",
+    "target": "Heizen & Klima"
+  },
+  "Tierfutter": {
+    "action": "MOVE_CONTENT",
+    "target": "Haustier"
+  },
+  "Gesundheit & Wellness": {
+    "action": "RESTRUCTURE",
+    "target": "Gesundheit & Vitamine"
+  },
+  "Büro & Gewerbe": {
+    "action": "RESTRUCTURE",
+    "target": "Büro & Schule"
+  },
+  "Verpackung & Versand": {
+    "action": "RESTRUCTURE",
+    "target": "Lager & Aufbewahrung"
+  },
+  "Industrie- & Gewerbeausrüstung": {
+    "action": "RESTRUCTURE",
+    "target": "Industrie & CNC"
+  },
+  "Reise & Koffer": {
+    "action": "RESTRUCTURE",
+    "target": "Reisen & Gepäck"
+  },
+  "Gartenhobby & Camping": {
+    "action": "MOVE_CONTENT",
+    "target": "Garten"
+  },
+  "Saisonales & Feiern": {
+    "action": "RESTRUCTURE",
+    "target": "Geschenke & Anlässe"
+  },
+  "Dekoration": {
+    "action": "MOVE_CONTENT",
+    "target": "Haus & Wohnen"
+  },
+  "Persönliche Elektronik & Mobil": {
+    "action": "MOVE_CONTENT",
+    "target": "Elektronik"
+  },
+  "Foto & Video": {
+    "action": "MOVE_CONTENT",
+    "target": "Elektronik"
+  },
+  "Computer & Gaming": {
+    "action": "RESTRUCTURE",
+    "target": "Gaming & Spielzeug"
+  },
+  "Fahrzeug & Mobilität": {
+    "action": "RESTRUCTURE",
+    "target": "Fahrräder & E-Bikes"
+  },
+  "Energie & Solar": {
+    "action": "SEPARATE",
+    "target": "Güneş & Rüzgâr Enerjisi"
+  },
+  "Tier- & Landwirtschaftsausrüstung": {
+    "action": "REVIEW",
+    "target": null
+  },
+  "Arbeitsschutz & Berufskleidung": {
+    "action": "REVIEW",
+    "target": null
+  },
+  "Hobby & Freizeit": {
+    "action": "REVIEW",
+    "target": null
+  },
+  "Küche & Essen": {
+    "action": "REVIEW",
+    "target": null
+  },
+  "Angebote & Sonderkollektionen": {
+    "action": "REVIEW",
+    "target": null
   }
 }

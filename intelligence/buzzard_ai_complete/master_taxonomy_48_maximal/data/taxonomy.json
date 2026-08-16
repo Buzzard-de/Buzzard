@@ -12,8 +12,8 @@
       "id": "bz.01",
       "parent_id": null,
       "level": 1,
-      "name": "Otomotiv & Kfz",
-      "slug": "otomotiv-kfz"
+      "name": "Automotive & Kfz",
+      "slug": "automotive-kfz"
     },
     {
       "id": "bz.01.01",
@@ -943,8 +943,8 @@
       "id": "bz.02",
       "parent_id": null,
       "level": 1,
-      "name": "Bahçe & Bahçecilik",
-      "slug": "bahce-bahcecilik"
+      "name": "Garten & Gartenbau",
+      "slug": "garten-gartenbau"
     },
     {
       "id": "bz.02.01",
@@ -1874,8 +1874,8 @@
       "id": "bz.03",
       "parent_id": null,
       "level": 1,
-      "name": "Aletler & Atölye",
-      "slug": "aletler-atolye"
+      "name": "Werkzeuge & Werkstatt",
+      "slug": "werkzeuge-werkstatt"
     },
     {
       "id": "bz.03.01",
@@ -2805,8 +2805,8 @@
       "id": "bz.04",
       "parent_id": null,
       "level": 1,
-      "name": "Kendin Yap, İnşaat & Yapı",
-      "slug": "kendin-yap-insaat-yapi"
+      "name": "Heimwerken, Bau & Konstruktion",
+      "slug": "heimwerken-bau-konstruktion"
     },
     {
       "id": "bz.04.01",
@@ -3736,8 +3736,8 @@
       "id": "bz.05",
       "parent_id": null,
       "level": 1,
-      "name": "Ev & Ev İhtiyaçları",
-      "slug": "ev-ev-ihtiyaclari"
+      "name": "Haus & Haushalt",
+      "slug": "haus-haushalt"
     },
     {
       "id": "bz.05.01",
@@ -4667,8 +4667,8 @@
       "id": "bz.06",
       "parent_id": null,
       "level": 1,
-      "name": "Mobilya & Yaşam",
-      "slug": "mobilya-yasam"
+      "name": "Möbel & Wohnen",
+      "slug": "moebel-wohnen"
     },
     {
       "id": "bz.06.01",
@@ -5598,8 +5598,8 @@
       "id": "bz.07",
       "parent_id": null,
       "level": 1,
-      "name": "Ev Dekorasyonu",
-      "slug": "ev-dekorasyonu"
+      "name": "Wohndekoration",
+      "slug": "wohndekoration"
     },
     {
       "id": "bz.07.01",
@@ -6529,8 +6529,8 @@
       "id": "bz.08",
       "parent_id": null,
       "level": 1,
-      "name": "Ev Tekstili",
-      "slug": "ev-tekstili"
+      "name": "Heimtextilien",
+      "slug": "heimtextilien"
     },
     {
       "id": "bz.08.01",
@@ -7460,8 +7460,8 @@
       "id": "bz.09",
       "parent_id": null,
       "level": 1,
-      "name": "Mutfak & Pişirme",
-      "slug": "mutfak-pisirme"
+      "name": "Küche & Kochen",
+      "slug": "kueche-kochen"
     },
     {
       "id": "bz.09.01",
@@ -8391,8 +8391,8 @@
       "id": "bz.10",
       "parent_id": null,
       "level": 1,
-      "name": "Banyo & Sıhhi Tesisat",
-      "slug": "banyo-sihhi-tesisat"
+      "name": "Bad & Sanitär",
+      "slug": "bad-sanitaer"
     },
     {
       "id": "bz.10.01",
@@ -9322,8 +9322,8 @@
       "id": "bz.11",
       "parent_id": null,
       "level": 1,
-      "name": "Temizlik & Ev Bakımı",
-      "slug": "temizlik-ev-bakimi"
+      "name": "Reinigung & Hauspflege",
+      "slug": "reinigung-hauspflege"
     },
     {
       "id": "bz.11.01",
@@ -10253,8 +10253,8 @@
       "id": "bz.12",
       "parent_id": null,
       "level": 1,
-      "name": "Elektronik & Tüketici Elektroniği",
-      "slug": "elektronik-tuketici-elektronigi"
+      "name": "Elektronik & Unterhaltungselektronik",
+      "slug": "elektronik-unterhaltungselektronik"
     },
     {
       "id": "bz.12.01",
@@ -11184,8 +11184,8 @@
       "id": "bz.13",
       "parent_id": null,
       "level": 1,
-      "name": "Bilgisayar & BT",
-      "slug": "bilgisayar-bt"
+      "name": "Computer & IT",
+      "slug": "computer-it"
     },
     {
       "id": "bz.13.01",
@@ -12115,8 +12115,8 @@
       "id": "bz.14",
       "parent_id": null,
       "level": 1,
-      "name": "Mobil & Telekomünikasyon",
-      "slug": "mobil-telekomunikasyon"
+      "name": "Mobil & Telekommunikation",
+      "slug": "mobil-telekommunikation"
     },
     {
       "id": "bz.14.01",
@@ -13046,8 +13046,8 @@
       "id": "bz.15",
       "parent_id": null,
       "level": 1,
-      "name": "Akıllı Ev & Güvenlik",
-      "slug": "akilli-ev-guvenlik"
+      "name": "Smart Home & Sicherheit",
+      "slug": "smart-home-sicherheit"
     },
     {
       "id": "bz.15.01",
@@ -13977,8 +13977,8 @@
       "id": "bz.16",
       "parent_id": null,
       "level": 1,
-      "name": "Elektrikli Ev Aletleri",
-      "slug": "elektrikli-ev-aletleri"
+      "name": "Haushaltsgeräte",
+      "slug": "haushaltsgeraete"
     },
     {
       "id": "bz.16.01",
@@ -14908,8 +14908,8 @@
       "id": "bz.17",
       "parent_id": null,
       "level": 1,
-      "name": "Moda & Giyim",
-      "slug": "moda-giyim"
+      "name": "Mode & Bekleidung",
+      "slug": "mode-bekleidung"
     },
     {
       "id": "bz.17.01",
@@ -15839,8 +15839,8 @@
       "id": "bz.18",
       "parent_id": null,
       "level": 1,
-      "name": "Ayakkabı & Ayak Giyim",
-      "slug": "ayakkabi-ayak-giyim"
+      "name": "Schuhe",
+      "slug": "schuhe"
     },
     {
       "id": "bz.18.01",
@@ -16770,8 +16770,8 @@
       "id": "bz.19",
       "parent_id": null,
       "level": 1,
-      "name": "Çanta, Valiz & Aksesuar",
-      "slug": "canta-valiz-aksesuar"
+      "name": "Taschen, Koffer & Accessoires",
+      "slug": "taschen-koffer-accessoires"
     },
     {
       "id": "bz.19.01",
@@ -17701,8 +17701,8 @@
       "id": "bz.20",
       "parent_id": null,
       "level": 1,
-      "name": "Mücevher & Saat",
-      "slug": "mucevher-saat"
+      "name": "Schmuck & Uhren",
+      "slug": "schmuck-uhren"
     },
     {
       "id": "bz.20.01",
@@ -18632,8 +18632,8 @@
       "id": "bz.21",
       "parent_id": null,
       "level": 1,
-      "name": "Güzellik & Kozmetik",
-      "slug": "guzellik-kozmetik"
+      "name": "Beauty & Kosmetik",
+      "slug": "beauty-kosmetik"
     },
     {
       "id": "bz.21.01",
@@ -19563,8 +19563,8 @@
       "id": "bz.22",
       "parent_id": null,
       "level": 1,
-      "name": "Kişisel Bakım",
-      "slug": "kisisel-bakim"
+      "name": "Körperpflege",
+      "slug": "koerperpflege"
     },
     {
       "id": "bz.22.01",
@@ -20494,8 +20494,8 @@
       "id": "bz.23",
       "parent_id": null,
       "level": 1,
-      "name": "Sağlık & Wellness",
-      "slug": "saglik-wellness"
+      "name": "Gesundheit & Wellness",
+      "slug": "gesundheit-wellness"
     },
     {
       "id": "bz.23.01",
@@ -21425,8 +21425,8 @@
       "id": "bz.24",
       "parent_id": null,
       "level": 1,
-      "name": "Eczane & Medikal Ürünler",
-      "slug": "eczane-medikal-urunler"
+      "name": "Apotheke & Medizinprodukte",
+      "slug": "apotheke-medizinprodukte"
     },
     {
       "id": "bz.24.01",
@@ -22356,8 +22356,8 @@
       "id": "bz.25",
       "parent_id": null,
       "level": 1,
-      "name": "Gıda & Market Ürünleri",
-      "slug": "gida-market-urunleri"
+      "name": "Lebensmittel & Supermarkt",
+      "slug": "lebensmittel-supermarkt"
     },
     {
       "id": "bz.25.01",
@@ -23287,8 +23287,8 @@
       "id": "bz.26",
       "parent_id": null,
       "level": 1,
-      "name": "İçecekler",
-      "slug": "icecekler"
+      "name": "Getränke",
+      "slug": "getraenke"
     },
     {
       "id": "bz.26.01",
@@ -24218,8 +24218,8 @@
       "id": "bz.27",
       "parent_id": null,
       "level": 1,
-      "name": "Bebek & Bebek Odası",
-      "slug": "bebek-bebek-odasi"
+      "name": "Baby & Kinderzimmer",
+      "slug": "baby-kinderzimmer"
     },
     {
       "id": "bz.27.01",
@@ -25149,8 +25149,8 @@
       "id": "bz.28",
       "parent_id": null,
       "level": 1,
-      "name": "Çocuk & Okul",
-      "slug": "cocuk-okul"
+      "name": "Kinder & Schule",
+      "slug": "kinder-schule"
     },
     {
       "id": "bz.28.01",
@@ -26080,8 +26080,8 @@
       "id": "bz.29",
       "parent_id": null,
       "level": 1,
-      "name": "Oyuncak & Oyun",
-      "slug": "oyuncak-oyun"
+      "name": "Spielzeug & Spiele",
+      "slug": "spielzeug-spiele"
     },
     {
       "id": "bz.29.01",
@@ -27011,8 +27011,8 @@
       "id": "bz.30",
       "parent_id": null,
       "level": 1,
-      "name": "Spor & Fitness",
-      "slug": "spor-fitness"
+      "name": "Sport & Fitness",
+      "slug": "sport-fitness"
     },
     {
       "id": "bz.30.01",
@@ -27942,8 +27942,8 @@
       "id": "bz.31",
       "parent_id": null,
       "level": 1,
-      "name": "Outdoor, Kamp & Macera",
-      "slug": "outdoor-kamp-macera"
+      "name": "Outdoor, Camping & Abenteuer",
+      "slug": "outdoor-camping-abenteuer"
     },
     {
       "id": "bz.31.01",
@@ -28873,8 +28873,8 @@
       "id": "bz.32",
       "parent_id": null,
       "level": 1,
-      "name": "Hobi & Boş Zaman",
-      "slug": "hobi-bos-zaman"
+      "name": "Hobby & Freizeit",
+      "slug": "hobby-freizeit"
     },
     {
       "id": "bz.32.01",
@@ -29804,8 +29804,8 @@
       "id": "bz.33",
       "parent_id": null,
       "level": 1,
-      "name": "Müzik & Müzik Aletleri",
-      "slug": "muzik-muzik-aletleri"
+      "name": "Musik & Musikinstrumente",
+      "slug": "musik-musikinstrumente"
     },
     {
       "id": "bz.33.01",
@@ -30735,8 +30735,8 @@
       "id": "bz.34",
       "parent_id": null,
       "level": 1,
-      "name": "Kitap, Medya & Eğlence",
-      "slug": "kitap-medya-eglence"
+      "name": "Bücher, Medien & Unterhaltung",
+      "slug": "buecher-medien-unterhaltung"
     },
     {
       "id": "bz.34.01",
@@ -31666,8 +31666,8 @@
       "id": "bz.35",
       "parent_id": null,
       "level": 1,
-      "name": "Ofis, Okul & Kırtasiye",
-      "slug": "ofis-okul-kirtasiye"
+      "name": "Büro, Schule & Schreibwaren",
+      "slug": "buero-schule-schreibwaren"
     },
     {
       "id": "bz.35.01",
@@ -32597,8 +32597,8 @@
       "id": "bz.36",
       "parent_id": null,
       "level": 1,
-      "name": "Evcil Hayvan & Hayvan Bakımı",
-      "slug": "evcil-hayvan-hayvan-bakimi"
+      "name": "Haustier & Tierpflege",
+      "slug": "haustier-tierpflege"
     },
     {
       "id": "bz.36.01",
@@ -33528,8 +33528,8 @@
       "id": "bz.37",
       "parent_id": null,
       "level": 1,
-      "name": "Tarım & Çiftçilik",
-      "slug": "tarim-ciftcilik"
+      "name": "Landwirtschaft & Agrar",
+      "slug": "landwirtschaft-agrar"
     },
     {
       "id": "bz.37.01",
@@ -34459,8 +34459,8 @@
       "id": "bz.38",
       "parent_id": null,
       "level": 1,
-      "name": "Sanayi & Ticari İhtiyaçlar",
-      "slug": "sanayi-ticari-ihtiyaclar"
+      "name": "Industrie & Gewerbebedarf",
+      "slug": "industrie-gewerbebedarf"
     },
     {
       "id": "bz.38.01",
@@ -35390,8 +35390,8 @@
       "id": "bz.39",
       "parent_id": null,
       "level": 1,
-      "name": "İş Kıyafetleri & İş Güvenliği",
-      "slug": "is-kiyafetleri-is-guvenligi"
+      "name": "Arbeitskleidung & Arbeitsschutz",
+      "slug": "arbeitskleidung-arbeitsschutz"
     },
     {
       "id": "bz.39.01",
@@ -36321,8 +36321,8 @@
       "id": "bz.40",
       "parent_id": null,
       "level": 1,
-      "name": "Seyahat & Mobilite",
-      "slug": "seyahat-mobilite"
+      "name": "Reisen & Mobilität",
+      "slug": "reisen-mobilitaet"
     },
     {
       "id": "bz.40.01",
@@ -37252,8 +37252,8 @@
       "id": "bz.41",
       "parent_id": null,
       "level": 1,
-      "name": "Hediyeler, Çiçek & Özel Günler",
-      "slug": "hediyeler-cicek-ozel-gunler"
+      "name": "Geschenke, Blumen & Anlässe",
+      "slug": "geschenke-blumen-anlaesse"
     },
     {
       "id": "bz.41.01",
@@ -38183,8 +38183,8 @@
       "id": "bz.42",
       "parent_id": null,
       "level": 1,
-      "name": "Hobi El Sanatları, Dikiş & El Yapımı",
-      "slug": "hobi-el-sanatlari-dikis-el-yapimi"
+      "name": "Kunsthandwerk, Nähen & DIY",
+      "slug": "kunsthandwerk-naehen-diy"
     },
     {
       "id": "bz.42.01",
@@ -39114,8 +39114,8 @@
       "id": "bz.43",
       "parent_id": null,
       "level": 1,
-      "name": "Aydınlatma & Lambalar",
-      "slug": "aydinlatma-lambalar"
+      "name": "Beleuchtung & Lampen",
+      "slug": "beleuchtung-lampen"
     },
     {
       "id": "bz.43.01",
@@ -40045,8 +40045,8 @@
       "id": "bz.44",
       "parent_id": null,
       "level": 1,
-      "name": "Isıtma, İklimlendirme & Enerji",
-      "slug": "isitma-iklimlendirme-enerji"
+      "name": "Heizung, Klima & Energie",
+      "slug": "heizung-klima-energie"
     },
     {
       "id": "bz.44.01",
@@ -41361,8 +41361,8 @@
       "id": "bz.45",
       "parent_id": null,
       "level": 1,
-      "name": "Havuz, Spa & Wellness Ekipmanları",
-      "slug": "havuz-spa-wellness-ekipmanlari"
+      "name": "Pool, Spa & Wellness-Ausstattung",
+      "slug": "pool-spa-wellness-ausstattung"
     },
     {
       "id": "bz.45.01",
@@ -44238,8 +44238,8 @@
       "id": "bz.46",
       "parent_id": null,
       "level": 1,
-      "name": "Sezonluk & Kutlama Ürünleri",
-      "slug": "sezonluk-kutlama-urunleri"
+      "name": "Saisonale & Festtagsartikel",
+      "slug": "saisonale-festtagsartikel"
     },
     {
       "id": "bz.46.01",
@@ -46737,8 +46737,8 @@
       "id": "bz.47",
       "parent_id": null,
       "level": 1,
-      "name": "Lüks, Koleksiyon & Değerli Ürünler",
-      "slug": "luks-koleksiyon-degerli-urunler"
+      "name": "Luxus, Sammlerstücke & Wertvolles",
+      "slug": "luxus-sammlerstuecke-wertvolles"
     },
     {
       "id": "bz.47.01",
@@ -49096,8 +49096,8 @@
       "id": "bz.48",
       "parent_id": null,
       "level": 1,
-      "name": "Genel Ürünler & Marketplace",
-      "slug": "genel-urunler-marketplace"
+      "name": "Allgemeine Produkte & Marktplatz",
+      "slug": "allgemeine-produkte-marktplatz"
     },
     {
       "id": "bz.48.01",

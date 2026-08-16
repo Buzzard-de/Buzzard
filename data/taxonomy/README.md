@@ -22,7 +22,8 @@ Canonical automotive parts taxonomy for Buzzard.
 | `buzzard_47_category_intelligence_os.html` | **47 Category Intelligence OS Console** — Kurmay dashboard, taxonomy gap analysis |
 | `buzzard_47_category_intelligence_os_final_100_single_file.html` | **47 Category Intelligence OS Final 100% Console** — scope lock + 12-layer completion |
 | `buzzard_47_category_intelligence_os_max_final_single_file.html` | **47 Category Intelligence OS MAX FINAL Console** — maximum core engine + evidence model |
-| `buzzard_master_48_main_categories_tr.json` | **48 Main Categories (TR)** — canonical Turkish L1 taxonomy (48 master, 47 research) |
+| `buzzard_master_48_main_categories_de.json` | **48 Hauptkategorien (DE)** — kanonische deutsche L1-Taxonomie (48 Master, 47 Recherche) |
+| `buzzard_master_48_main_categories_tr.json` | *(Archiv)* Türkische Variante — nicht mehr produktiv |
 | `buzzard_final_47_category_intelligence_manifest.json` | **47 Category Intelligence FINAL Manifest** — pipeline, evidence policy, outputs, research basis |
 | `buzzard_final_47_category_intelligence_os_max_single_file.html` | **47 Category Intelligence OS FINAL MAX Console (primary)** — evidence orchestration + verification |
 | `buzzard_47_category_intelligence_os_max_single_final_single_file.html` | **47 Category Intelligence OS MAX SINGLE FINAL Console** — unified primary console (MAX + 100% Final) |

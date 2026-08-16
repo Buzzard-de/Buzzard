@@ -6,9 +6,12 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "intelligence/scripts"))
+from category_intelligence_47_locale_de import germanize_console_html
 MANIFEST = REPO / "data/taxonomy/buzzard_47_category_intelligence_os.json"
 OUT_DATA = REPO / "data/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html"
 OUT_PUBLIC = REPO / "public/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html"
@@ -93,7 +96,7 @@ def patch_html(ui: str) -> str:
     }
     for old, new in replacements.items():
         ui = ui.replace(old, new)
-    return ui
+    return germanize_console_html(ui)
 
 
 def ensure_manifest(manifest: dict) -> dict:

@@ -6,9 +6,12 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "intelligence/scripts"))
+from category_intelligence_47_locale_de import germanize_console_html
 MANIFEST = REPO / "data/taxonomy/buzzard_47_category_intelligence_os.json"
 SOURCE_HTML = REPO / "data/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html"
 OUT_DATA = REPO / "data/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html"
@@ -51,7 +54,7 @@ def build_html(manifest: dict) -> str:
     html = html.replace("</section>\n</main><script>", f"</section>\n{FINAL_100_SECTION}\n</main><script>")
     boot = json.dumps(manifest, ensure_ascii=False)
     html = re.sub(r"const BOOT = \{.*?\};", f"const BOOT = {boot};", html, count=1, flags=re.DOTALL)
-    return html
+    return germanize_console_html(html)
 
 
 def ensure_manifest(manifest: dict) -> dict:

@@ -1,48 +1,48 @@
-01. Otomotiv & Kfz
-02. Bahçe & Bahçecilik
-03. Aletler & Atölye
-04. Kendin Yap, İnşaat & Yapı
-05. Ev & Ev İhtiyaçları
-06. Mobilya & Yaşam
-07. Ev Dekorasyonu
-08. Ev Tekstili
-09. Mutfak & Pişirme
-10. Banyo & Sıhhi Tesisat
-11. Temizlik & Ev Bakımı
-12. Elektronik & Tüketici Elektroniği
-13. Bilgisayar & BT
-14. Mobil & Telekomünikasyon
-15. Akıllı Ev & Güvenlik
-16. Elektrikli Ev Aletleri
-17. Moda & Giyim
-18. Ayakkabı & Ayak Giyim
-19. Çanta, Valiz & Aksesuar
-20. Mücevher & Saat
-21. Güzellik & Kozmetik
-22. Kişisel Bakım
-23. Sağlık & Wellness
-24. Eczane & Medikal Ürünler
-25. Gıda & Market Ürünleri
-26. İçecekler
-27. Bebek & Bebek Odası
-28. Çocuk & Okul
-29. Oyuncak & Oyun
-30. Spor & Fitness
-31. Outdoor, Kamp & Macera
-32. Hobi & Boş Zaman
-33. Müzik & Müzik Aletleri
-34. Kitap, Medya & Eğlence
-35. Ofis, Okul & Kırtasiye
-36. Evcil Hayvan & Hayvan Bakımı
-37. Tarım & Çiftçilik
-38. Sanayi & Ticari İhtiyaçlar
-39. İş Kıyafetleri & İş Güvenliği
-40. Seyahat & Mobilite
-41. Hediyeler, Çiçek & Özel Günler
-42. Hobi El Sanatları, Dikiş & El Yapımı
-43. Aydınlatma & Lambalar
-44. Isıtma, İklimlendirme & Enerji
-45. Havuz, Spa & Wellness Ekipmanları
-46. Sezonluk & Kutlama Ürünleri
-47. Lüks, Koleksiyon & Değerli Ürünler
-48. Genel Ürünler & Marketplace
+01. Automotive & Kfz
+02. Garten & Gartenbau
+03. Werkzeuge & Werkstatt
+04. Heimwerken, Bau & Konstruktion
+05. Haus & Haushalt
+06. Möbel & Wohnen
+07. Wohndekoration
+08. Heimtextilien
+09. Küche & Kochen
+10. Bad & Sanitär
+11. Reinigung & Hauspflege
+12. Elektronik & Unterhaltungselektronik
+13. Computer & IT
+14. Mobil & Telekommunikation
+15. Smart Home & Sicherheit
+16. Haushaltsgeräte
+17. Mode & Bekleidung
+18. Schuhe
+19. Taschen, Koffer & Accessoires
+20. Schmuck & Uhren
+21. Beauty & Kosmetik
+22. Körperpflege
+23. Gesundheit & Wellness
+24. Apotheke & Medizinprodukte
+25. Lebensmittel & Supermarkt
+26. Getränke
+27. Baby & Kinderzimmer
+28. Kinder & Schule
+29. Spielzeug & Spiele
+30. Sport & Fitness
+31. Outdoor, Camping & Abenteuer
+32. Hobby & Freizeit
+33. Musik & Musikinstrumente
+34. Bücher, Medien & Unterhaltung
+35. Büro, Schule & Schreibwaren
+36. Haustier & Tierpflege
+37. Landwirtschaft & Agrar
+38. Industrie & Gewerbebedarf
+39. Arbeitskleidung & Arbeitsschutz
+40. Reisen & Mobilität
+41. Geschenke, Blumen & Anlässe
+42. Kunsthandwerk, Nähen & DIY
+43. Beleuchtung & Lampen
+44. Heizung, Klima & Energie
+45. Pool, Spa & Wellness-Ausstattung
+46. Saisonale & Festtagsartikel
+47. Luxus, Sammlerstücke & Wertvolles
+48. Allgemeine Produkte & Marktplatz

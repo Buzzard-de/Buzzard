@@ -26,7 +26,8 @@
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
     "gizli": "python gizli/app.py all",
     "gizli:api": "python gizli/app.py api",
-    "gizli:voice": "python gizli/app.py voice",
+    "gizli:voice": "python gizli/voice.py",
+    "gizli:8787": "python gizli/voice.py",
     "gizli:start": "python gizli/app.py all"
   },
   "dependencies": {

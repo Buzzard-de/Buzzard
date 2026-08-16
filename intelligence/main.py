@@ -1696,6 +1696,14 @@ def main():
         help="Build 47 category intelligence MAX SINGLE FINAL unified console",
     )
     sub.add_parser(
+        "complete-category-intelligence-47-final-max-single-file",
+        help="Show 47 category intelligence FINAL MAX console summary",
+    )
+    sub.add_parser(
+        "complete-build-category-intelligence-47-final-max",
+        help="Build 47 category intelligence FINAL MAX console with evidence orchestration",
+    )
+    sub.add_parser(
         "complete-de-ecom-intel-scan",
         help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
     )
@@ -5775,6 +5783,14 @@ def main():
         from buzzard_ai_complete.commands import complete_build_category_intelligence_47_max_single_final
 
         print(complete_build_category_intelligence_47_max_single_final())
+    elif args.cmd == "complete-category-intelligence-47-final-max-single-file":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_final_max_single_file
+
+        print(complete_category_intelligence_47_final_max_single_file())
+    elif args.cmd == "complete-build-category-intelligence-47-final-max":
+        from buzzard_ai_complete.commands import complete_build_category_intelligence_47_final_max
+
+        print(complete_build_category_intelligence_47_final_max())
     elif args.cmd == "complete-de-ecom-intel-scan":
         from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
 

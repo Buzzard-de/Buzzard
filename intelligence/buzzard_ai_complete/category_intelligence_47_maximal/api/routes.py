@@ -7,9 +7,11 @@ from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_
     BuzzNode,
     Category,
     Competitor,
+    EvidenceIn,
     Feature,
     Finding,
     Node,
+    ReviewIn,
 )
 from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
 
@@ -100,6 +102,71 @@ if APIRouter:
     @router.get("/intelligence-os-max-single-final-single-file")
     def category_intel_47_max_single_final_single_file():
         return service.max_single_final_single_file_summary()
+
+    @router.get("/intelligence-os-final-max-single-file")
+    def category_intel_47_final_max_single_file():
+        return service.final_max_single_file_summary()
+
+    @router.get("/research-matrix")
+    def category_intel_47_research_matrix():
+        try:
+            return service.research_matrix()
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @router.post("/research-matrix/import")
+    def category_intel_47_research_matrix_import():
+        return service.import_research_matrix()
+
+    @router.post("/evidence")
+    def category_intel_47_add_evidence(payload: EvidenceIn):
+        try:
+            return service.add_evidence(payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @router.post("/evidence/review")
+    def category_intel_47_review_evidence(payload: ReviewIn):
+        try:
+            return service.review_evidence(payload)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @router.get("/evidence/{competitor_id}")
+    def category_intel_47_competitor_evidence(competitor_id: int):
+        return service.list_competitor_evidence(competitor_id)
+
+    @router.post("/competitor/{competitor_id}/verify")
+    def category_intel_47_verify_competitor(competitor_id: int, reviewer: str = "authorized-reviewer"):
+        try:
+            return service.verify_competitor(competitor_id, reviewer)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except PermissionError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    @router.get("/verification-dashboard")
+    def category_intel_47_verification_dashboard():
+        return service.verification_dashboard()
+
+    @router.post("/score/{category_id}")
+    def category_intel_47_score_category(category_id: int):
+        try:
+            return service.score_category(category_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @router.get("/executive-report")
+    def category_intel_47_executive_report():
+        return service.executive_report()
+
+    @router.get("/export/competitors")
+    def category_intel_47_export_competitors():
+        return service.export_competitors()
+
+    @router.get("/export/taxonomy")
+    def category_intel_47_export_taxonomy():
+        return service.export_taxonomy()
 
     @router.get("/demo")
     def category_intel_47_demo():

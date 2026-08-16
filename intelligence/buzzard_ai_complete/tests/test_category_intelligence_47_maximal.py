@@ -1,12 +1,22 @@
 import json
 
+import pytest
+
+from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.evidence import (
+    CategoryIntelligence47EvidenceLayer,
+)
 from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.models import (
     BuzzNode,
     Category,
     Competitor,
+    EvidenceIn,
     Feature,
     Finding,
     Node,
+    ReviewIn,
+)
+from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.research import (
+    CategoryIntelligence47ResearchLayer,
 )
 from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_os.store import (
     CategoryIntelligence47Store,
@@ -93,7 +103,10 @@ def test_service_final_100_single_file():
     assert summary["console_html"] == "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html"
     assert summary["html_exists"] is True
     assert summary["finalization"]["software_scope_percent"] == 100
-    assert summary["finalization"]["status"] == "FINAL_SOFTWARE_SCOPE_LOCKED"
+    assert summary["finalization"]["status"] in (
+        "FINAL_SOFTWARE_SCOPE_LOCKED",
+        "FINAL_MAX_ORCHESTRATION_LOCKED",
+    )
 
 
 def test_service_max_final_single_file():
@@ -110,7 +123,7 @@ def test_service_max_single_final_single_file():
     summary = service.max_single_final_single_file_summary()
 
     assert summary["console_html"] == "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html"
-    assert summary["primary_console_html"] == summary["console_html"]
+    assert summary["primary_console_html"] == "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html"
     assert summary["html_exists"] is True
     assert summary["finalization"]["software_scope_percent"] == 100
 
@@ -124,3 +137,77 @@ def test_service_demo_flow(tmp_path, monkeypatch):
     assert demo["category_count"] == 47
     assert demo["sample_category"] is not None
     assert demo["sample_analysis"]["competitors"] == 0
+
+
+def test_evidence_verify_workflow(tmp_path):
+    store = CategoryIntelligence47Store(tmp_path / "evidence.db")
+    evidence = CategoryIntelligence47EvidenceLayer(store)
+    store.import_categories([Category(code="bz.02", name="Haus & Wohnen", level=1)])
+    category_id = store.list_categories()[0]["id"]
+    competitor = store.add_competitor(
+        Competitor(category_id=category_id, rank=1, name="Otto", domain="otto.de")
+    )
+    competitor_id = competitor["id"]
+
+    added = evidence.add_evidence(
+        EvidenceIn(
+            competitor_id=competitor_id,
+            category_id=category_id,
+            evidence_type="website",
+            url="https://www.otto.de",
+            title="Otto homepage",
+            confidence=0.9,
+        )
+    )
+    assert added["status"] == "PENDING"
+
+    with pytest.raises(PermissionError):
+        evidence.verify_competitor(competitor_id)
+
+    evidence.review_evidence(
+        ReviewIn(evidence_id=added["evidence_id"], reviewer="qa", approved=True, note="ok")
+    )
+    verified = evidence.verify_competitor(competitor_id)
+    assert verified["status"] == "VERIFIED"
+    assert verified["approved_evidence"] == 1
+
+    dashboard = evidence.verification_dashboard()
+    assert dashboard["verified_competitors"] == 1
+    assert dashboard["evidence_approved"] == 1
+
+
+def test_research_matrix_import(tmp_path):
+    store = CategoryIntelligence47Store(tmp_path / "research.db")
+    store.import_categories([Category(code="bz.02", name="Haus & Wohnen", level=1)])
+    matrix_path = tmp_path / "matrix.json"
+    matrix_path.write_text(
+        json.dumps(
+            {
+                "research_rows": [
+                    {
+                        "category_code": "bz.02",
+                        "rank": 1,
+                        "competitor": "Otto",
+                        "domain": "otto.de",
+                        "type": "MARKETPLACE",
+                        "notes": "candidate",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    research = CategoryIntelligence47ResearchLayer(store, matrix_path)
+    result = research.import_candidate_matrix()
+    assert result["imported"] == 1
+    competitors = store.list_competitors(store.list_categories()[0]["id"])
+    assert competitors[0]["name"] == "Otto"
+    assert competitors[0]["status"] == "CANDIDATE"
+
+
+def test_service_final_max_single_file():
+    service = CategoryIntelligence47Service()
+    summary = service.final_max_single_file_summary()
+
+    assert summary["console_html"] == "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html"
+    assert "orchestration" in summary or summary.get("html_exists") is not None

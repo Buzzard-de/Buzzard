@@ -1,4 +1,4 @@
-"""Buzzard gizli — Voice UI server on http://127.0.0.1:8787"""
+"""Buzzard project — Voice UI server on http://127.0.0.1:8787"""
 
 from __future__ import annotations
 
@@ -7,17 +7,17 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 
-GIZLI_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = GIZLI_DIR.parent
+BUZZARD_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BUZZARD_DIR.parent
 INTELLIGENCE_ROOT = PROJECT_ROOT / "intelligence"
-WEB_DIR = GIZLI_DIR / "web"
+WEB_DIR = BUZZARD_DIR / "web"
 
 if str(INTELLIGENCE_ROOT) not in sys.path:
     sys.path.insert(0, str(INTELLIGENCE_ROOT))
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from gizli.urls import GIZLI_HOST, GIZLI_VOICE_PORT, GIZLI_VOICE_URL
+from urls import BUZZARD_HOST, BUZZARD_VOICE_PORT, BUZZARD_VOICE_URL
 from buzzard_intelligence import CategoryDiscovery, Council, MemoryEngine, Reporter
 
 app = Flask(__name__, static_folder=str(WEB_DIR), static_url_path="")
@@ -83,9 +83,9 @@ def health():
     return jsonify(
         {
             "status": "ok",
-            "service": "Buzzard gizli Voice",
+            "service": "Buzzard Voice",
             "project": "Buzzard",
-            "url": GIZLI_VOICE_URL,
+            "url": BUZZARD_VOICE_URL,
             "stack": "v1-v10",
         }
     )
@@ -103,5 +103,5 @@ def message():
     return jsonify({"ok": True, "language": language, "text": text, "reply": reply})
 
 
-def main(host: str = GIZLI_HOST, port: int = GIZLI_VOICE_PORT) -> None:
+def main(host: str = BUZZARD_HOST, port: int = BUZZARD_VOICE_PORT) -> None:
     app.run(host=host, port=port, debug=False)

@@ -3183,8 +3183,8 @@ def main():
     elif args.cmd == "voice":
         from voice.server import main as voice_main
 
-        print(f"Buzzard gizli Voice: http://{args.host}:{args.port}")
-        print("Tip: cd gizli && python app.py")
+        print(f"Buzzard Voice: http://{args.host}:{args.port}")
+        print("Tip: cd Buzzard && python app.py")
         voice_main(host=args.host, port=args.port)
     elif args.cmd == "remember":
         v12.init()

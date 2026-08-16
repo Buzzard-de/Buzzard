@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Buzzard gizli Voice — http://127.0.0.1:8787
-
-Start:
-  cd gizli
-  python voice.py
-"""
+"""Legacy alias — use Buzzard/voice.py"""
 
 from __future__ import annotations
 
-from app import run_voice
+import runpy
+import sys
+from pathlib import Path
 
-if __name__ == "__main__":
-    run_voice()
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+BUZZARD_VOICE = PROJECT_ROOT / "Buzzard" / "voice.py"
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+runpy.run_path(str(BUZZARD_VOICE), run_name="__main__")

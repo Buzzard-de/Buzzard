@@ -72,9 +72,9 @@ cd intelligence
 pip install -r requirements.txt
 python main.py init
 python main.py voice
-# Buzzard gizli (recommended):
-cd gizli && python app.py
-cd gizli && python app.py voice
+# Buzzard project folder:
+cd Buzzard && python app.py
+cd Buzzard && python voice.py
 ```
 
 Browser Voice: http://127.0.0.1:8787 (UI in `gizli/web/`)

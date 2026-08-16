@@ -1657,7 +1657,7 @@ def main():
     )
     sub.add_parser(
         "complete-de-ecom-intel-export",
-        help="Doğu Bey: Scan als Ordner + ZIP exportieren (intelligence/exports/)",
+        help="Letzten Scan aus Memory in dogu-bey-de-ecom-intel/ exportieren (+ ZIP)",
     )
     sub.add_parser(
         "complete-all-connectors-health",

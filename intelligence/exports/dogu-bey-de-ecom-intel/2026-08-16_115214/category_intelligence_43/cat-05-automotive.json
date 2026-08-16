@@ -29,7 +29,7 @@
         "shipping": 4.99,
         "landed_public_price": 34.94,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "kfzteile24",
@@ -39,7 +39,7 @@
         "shipping": 5.99,
         "landed_public_price": 37.49,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 3
     }

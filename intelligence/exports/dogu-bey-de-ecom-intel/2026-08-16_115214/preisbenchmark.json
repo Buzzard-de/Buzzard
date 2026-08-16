@@ -18,7 +18,7 @@
         "shipping": 4.99,
         "landed_public_price": 34.94,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "kfzteile24",
@@ -28,7 +28,7 @@
         "shipping": 5.99,
         "landed_public_price": 37.49,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 3
     },
@@ -42,7 +42,7 @@
         "shipping": 0.0,
         "landed_public_price": 2.49,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "dm",
@@ -52,7 +52,7 @@
         "shipping": 4.95,
         "landed_public_price": 6.2,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 3
     },
@@ -66,7 +66,7 @@
         "shipping": 0.0,
         "landed_public_price": 19.99,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "obi",
@@ -76,7 +76,7 @@
         "shipping": 5.99,
         "landed_public_price": 30.979999999999997,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 4
     },
@@ -90,7 +90,7 @@
         "shipping": 0.0,
         "landed_public_price": 79.99,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "bauhaus",
@@ -100,7 +100,7 @@
         "shipping": 5.99,
         "landed_public_price": 100.97999999999999,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 3
     },
@@ -114,7 +114,7 @@
         "shipping": 0.0,
         "landed_public_price": 8.99,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "mediamarkt",
@@ -124,7 +124,7 @@
         "shipping": 4.99,
         "landed_public_price": 19.98,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 3
     },
@@ -138,7 +138,7 @@
         "shipping": 0.0,
         "landed_public_price": 99.0,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "mediamarkt",
@@ -148,7 +148,7 @@
         "shipping": 0.0,
         "landed_public_price": 129.0,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 3
     }

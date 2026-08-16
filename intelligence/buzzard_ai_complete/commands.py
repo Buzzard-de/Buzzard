@@ -1083,7 +1083,12 @@ def complete_de_ecom_intel_scan():
 def complete_de_ecom_intel_export():
     from buzzard_ai_complete.operations.de_ecom_intel_scan import export_de_ecom_intel_scan
 
-    return json.dumps(export_de_ecom_intel_scan(), ensure_ascii=False, indent=2, default=str)
+    return json.dumps(
+        export_de_ecom_intel_scan(run_scan=False, create_zip=True),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
 
 
 def complete_all_connectors_health():

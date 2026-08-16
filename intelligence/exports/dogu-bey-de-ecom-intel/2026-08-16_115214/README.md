@@ -1,7 +1,8 @@
-# DE-ECOM-INTEL-01 — Doğu Bey Scan Export
+# DE-ECOM-INTEL-01 — Doğu Bey Scan
 
 Operation: `DE-ECOM-INTEL-01-LIVE`
 Datum: 2026-08-16
+Gescannt um: 2026-08-16T11:52:14.218557+00:00
 Agent: dogu_bey
 
 ## Inhalt
@@ -18,11 +19,5 @@ Agent: dogu_bey
 | `hinweise.txt` | Betriebs- und Compliance-Hinweise |
 | `category_intelligence_43/` | Einzelberichte pro Buzzard-Kategorie |
 
-## Neu generieren
-
-```bash
-cd intelligence
-python main.py complete-de-ecom-intel-export
-```
-
-Verkäufe bei Buzzard bleiben deaktiviert (Katalogmodus).
+Jeder Scan landet automatisch in `dogu-bey-de-ecom-intel/<zeitstempel>/`.
+Der Ordner `latest/` enthält immer den letzten Scan.

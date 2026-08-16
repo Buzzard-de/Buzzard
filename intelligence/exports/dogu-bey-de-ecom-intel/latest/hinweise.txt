@@ -1,0 +1,6 @@
+eBay Browse API: NOT_CONFIGURED — EBAY_CLIENT_ID, EBAY_CLIENT_SECRET in intelligence/.env eintragen.
+Amazon Creators API: NOT_CONFIGURED — AMAZON_CLIENT_ID, AMAZON_CLIENT_SECRET, AMAZON_REFRESH_TOKEN, AMAZON_PARTNER_TAG in intelligence/.env eintragen.
+Google Ads API: NOT_CONFIGURED — GOOGLE_ADS_DEVELOPER_TOKEN, GOOGLE_ADS_CLIENT_ID, GOOGLE_ADS_CLIENT_SECRET, GOOGLE_ADS_REFRESH_TOKEN, GOOGLE_ADS_CUSTOMER_ID in intelligence/.env eintragen.
+Keine Marketplace-Live-Preise — Fallback auf öffentliche Benchmarks + live-fetch.
+Nur öffentliche Quellen verwendet. Keine Login-, CAPTCHA- oder Bypass-Versuche.
+Verkäufe bei Buzzard bleiben deaktiviert (Katalogmodus). Scan dient der Entscheidungsvorbereitung.

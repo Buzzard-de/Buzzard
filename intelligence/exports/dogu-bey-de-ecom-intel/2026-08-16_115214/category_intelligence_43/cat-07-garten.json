@@ -30,7 +30,7 @@
         "shipping": 0.0,
         "landed_public_price": 19.99,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "obi",
@@ -40,7 +40,7 @@
         "shipping": 5.99,
         "landed_public_price": 30.979999999999997,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 4
     }

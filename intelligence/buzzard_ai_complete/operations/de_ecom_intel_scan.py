@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import zipfile
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -28,6 +29,7 @@ from buzzard_ai_complete.category_intelligence_43_maximal.service import (
 from buzzard_ai_complete.memory.store import MemoryStore
 
 OPERATION_CODE = "DE-ECOM-INTEL-01-LIVE"
+SCAN_EXPORT_BASE = Path(__file__).resolve().parents[2] / "exports" / "dogu-bey-de-ecom-intel"
 
 PUBLIC_SOURCES = [
     {
@@ -467,7 +469,11 @@ def _save_to_memory(dogu: DoguBey, memory: MemoryStore, payload: dict[str, Any])
     )
 
 
-def run_de_ecom_intel_scan() -> dict[str, Any]:
+def run_de_ecom_intel_scan(
+    *,
+    auto_export: bool = True,
+    export_base: Path | str | None = None,
+) -> dict[str, Any]:
     """Führt Live-Scan aus: Connectors, öffentliche Quellen, Category Intelligence 43, Preisbenchmark."""
     dogu = DoguBey()
     memory = MemoryStore()
@@ -515,6 +521,7 @@ def run_de_ecom_intel_scan() -> dict[str, Any]:
     payload = {
         "operation": OPERATION_CODE,
         "datum": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "scanned_at": observed_at,
         "agent": "dogu_bey",
         "sprache": "de",
         "live_connectors": live,
@@ -532,6 +539,15 @@ def run_de_ecom_intel_scan() -> dict[str, Any]:
     }
 
     _save_to_memory(dogu, memory, payload)
+
+    if auto_export:
+        export_info = export_de_ecom_intel_scan(
+            payload=payload,
+            export_base=export_base,
+            create_zip=False,
+        )
+        payload["export"] = export_info
+
     return payload
 
 
@@ -636,28 +652,15 @@ def _write_json(path: Path, data: Any) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
 
 
-def export_de_ecom_intel_scan(
-    *,
-    output_dir: Path | str | None = None,
-    run_scan: bool = True,
-    create_zip: bool = True,
-) -> dict[str, Any]:
-    """Exportiert den Doğu-Bey-Scan als Ordner (optional ZIP) mit allen Ergebnissen."""
-    if run_scan:
-        payload = run_de_ecom_intel_scan()
-    else:
-        memory = MemoryStore()
-        stored = memory.get("de_ecom_intel", "live_scan_bericht")
-        if stored and stored.get("value"):
-            payload = json.loads(stored["value"])
-        else:
-            payload = run_de_ecom_intel_scan()
+def _scan_stamp(payload: dict[str, Any]) -> str:
+    scanned_at = payload.get("scanned_at")
+    if scanned_at:
+        return datetime.fromisoformat(scanned_at.replace("Z", "+00:00")).strftime("%Y-%m-%d_%H%M%S")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
 
-    base = Path(__file__).resolve().parents[2] / "exports"
-    folder_name = f"DE-ECOM-INTEL-01-DOGU-BEY-{payload.get('datum', 'scan')}"
-    export_root = Path(output_dir) if output_dir else base / folder_name
+
+def _write_scan_files(payload: dict[str, Any], export_root: Path) -> list[str]:
     export_root.mkdir(parents=True, exist_ok=True)
-
     cat_dir = export_root / "category_intelligence_43"
     cat_dir.mkdir(exist_ok=True)
 
@@ -667,22 +670,23 @@ def export_de_ecom_intel_scan(
     _write_json(export_root / "google_ads.json", payload.get("google_ads", {}))
     _write_json(export_root / "preisbenchmark.json", payload.get("preisbenchmark", {}))
     _write_json(export_root / "preis_quelle.json", payload.get("preis_quelle", {}))
-    _write_json(
-        cat_dir / "zusammenfassung.json",
-        payload.get("category_intelligence_43", {}),
-    )
+    _write_json(cat_dir / "zusammenfassung.json", payload.get("category_intelligence_43", {}))
 
     for report in payload.get("category_intelligence_43", {}).get("berichte", []):
-        filename = f"{report.get('buzzard_id', 'cat')}-{_slugify(report.get('buzzard_kategorie', 'kategorie'))}.json"
+        filename = (
+            f"{report.get('buzzard_id', 'cat')}-"
+            f"{_slugify(report.get('buzzard_kategorie', 'kategorie'))}.json"
+        )
         _write_json(cat_dir / filename, report)
 
     (export_root / "hinweise.txt").write_text("\n".join(payload.get("hinweise", [])), encoding="utf-8")
     (export_root / "bericht.md").write_text(_build_german_report(payload), encoding="utf-8")
 
-    readme = f"""# DE-ECOM-INTEL-01 — Doğu Bey Scan Export
+    readme = f"""# DE-ECOM-INTEL-01 — Doğu Bey Scan
 
 Operation: `{payload.get('operation')}`
 Datum: {payload.get('datum')}
+Gescannt um: {payload.get('scanned_at', 'unbekannt')}
 Agent: {payload.get('agent')}
 
 ## Inhalt
@@ -699,29 +703,107 @@ Agent: {payload.get('agent')}
 | `hinweise.txt` | Betriebs- und Compliance-Hinweise |
 | `category_intelligence_43/` | Einzelberichte pro Buzzard-Kategorie |
 
-## Neu generieren
-
-```bash
-cd intelligence
-python main.py complete-de-ecom-intel-export
-```
-
-Verkäufe bei Buzzard bleiben deaktiviert (Katalogmodus).
+Jeder Scan landet automatisch in `dogu-bey-de-ecom-intel/<zeitstempel>/`.
+Der Ordner `latest/` enthält immer den letzten Scan.
 """
     (export_root / "README.md").write_text(readme, encoding="utf-8")
+    return [str(p.relative_to(export_root)) for p in sorted(export_root.rglob("*")) if p.is_file()]
+
+
+def _ensure_export_base_readme(export_base: Path) -> None:
+    export_base.mkdir(parents=True, exist_ok=True)
+    readme = export_base / "README.md"
+    if readme.exists():
+        return
+    readme.write_text(
+        """# Doğu Bey — DE E-Commerce Intelligence Scans
+
+Nach **jedem Scan** werden die Ergebnisse automatisch hier gespeichert:
+
+- `latest/` — immer der letzte Scan
+- `YYYY-MM-DD_HHMMSS/` — Archiv pro Scan-Lauf
+
+Auslösen:
+```bash
+cd intelligence
+python3 main.py complete-de-ecom-intel-scan
+```
+
+Oder per API: `POST /operations/de-ecom-intel-scan` bzw. `POST /bey/de-ecom-intel-scan`
+""",
+        encoding="utf-8",
+    )
+
+
+def _sync_latest(export_base: Path, run_dir: Path) -> Path:
+    latest_dir = export_base / "latest"
+    if latest_dir.exists():
+        shutil.rmtree(latest_dir)
+    shutil.copytree(run_dir, latest_dir)
+    return latest_dir
+
+
+def export_de_ecom_intel_scan(
+    *,
+    payload: dict[str, Any] | None = None,
+    export_base: Path | str | None = None,
+    output_dir: Path | str | None = None,
+    run_scan: bool = False,
+    create_zip: bool = False,
+) -> dict[str, Any]:
+    """Schreibt Scan-Ergebnisse in den festen Export-Ordner (zeitgestempelt + latest/)."""
+    if payload is None:
+        if run_scan:
+            payload = run_de_ecom_intel_scan(auto_export=False)
+        else:
+            memory = MemoryStore()
+            stored = memory.get("de_ecom_intel", "live_scan_bericht")
+            if stored and stored.get("value"):
+                payload = json.loads(stored["value"])
+            else:
+                payload = run_de_ecom_intel_scan(auto_export=False)
+
+    base = Path(export_base) if export_base else SCAN_EXPORT_BASE
+    _ensure_export_base_readme(base)
+
+    if output_dir:
+        export_root = Path(output_dir)
+        files = _write_scan_files(payload, export_root)
+        zip_path = None
+        if create_zip:
+            zip_path = export_root.with_suffix(".zip")
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                for file_path in sorted(export_root.rglob("*")):
+                    if file_path.is_file():
+                        zf.write(file_path, file_path.relative_to(export_root.parent))
+        return {
+            "operation": payload.get("operation"),
+            "export_dir": str(export_root),
+            "zip": str(zip_path) if zip_path else None,
+            "files": files,
+            "datum": payload.get("datum"),
+        }
+
+    stamp = _scan_stamp(payload)
+    run_dir = base / stamp
+    files = _write_scan_files(payload, run_dir)
+    latest_dir = _sync_latest(base, run_dir)
 
     zip_path = None
     if create_zip:
-        zip_path = export_root.with_suffix(".zip")
+        zip_path = run_dir.with_suffix(".zip")
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
-            for file_path in sorted(export_root.rglob("*")):
+            for file_path in sorted(run_dir.rglob("*")):
                 if file_path.is_file():
-                    zf.write(file_path, file_path.relative_to(export_root.parent))
+                    zf.write(file_path, file_path.relative_to(base))
 
     return {
         "operation": payload.get("operation"),
-        "export_dir": str(export_root),
+        "export_base": str(base),
+        "export_dir": str(run_dir),
+        "latest_dir": str(latest_dir),
         "zip": str(zip_path) if zip_path else None,
-        "files": [str(p.relative_to(export_root)) for p in sorted(export_root.rglob("*")) if p.is_file()],
+        "files": files,
         "datum": payload.get("datum"),
+        "scan_stamp": stamp,
     }

@@ -1,0 +1,5 @@
+{
+  "status": "NOT_CONFIGURED",
+  "quelle": "Google Ads API",
+  "hinweis": "GOOGLE_ADS_* Variablen in intelligence/.env eintragen."
+}

@@ -1,54 +1,54 @@
 {
-  "buzzard_kategorie": "Haushaltsgeräte",
-  "buzzard_id": "cat-13",
-  "agent_id": "CATEGORY_13",
+  "buzzard_kategorie": "Elektronik",
+  "buzzard_id": "cat-12",
+  "agent_id": "CATEGORY_12",
   "wettbewerber": [
+    "Amazon.de",
     "MediaMarkt",
-    "Saturn",
-    "Amazon.de"
+    "Saturn"
   ],
   "angebote_analysiert": 3,
   "verkaeufer": 3,
   "preisstatistik": {
     "count": 3,
     "unique_sellers": 3,
-    "min": 99.0,
-    "max": 129.0,
-    "mean": 117.33,
-    "median": 123.99
+    "min": 8.99,
+    "max": 19.98,
+    "mean": 15.65,
+    "median": 17.98
   },
   "preisvergleich": [
     {
-      "product_key": "luftreiniger-hepa",
+      "product_key": "usb-c-kabel-2m",
       "lowest": {
         "seller_id": "amazon_de",
         "seller_name": "Amazon.de",
-        "product_key": "luftreiniger-hepa",
-        "price": 99.0,
+        "product_key": "usb-c-kabel-2m",
+        "price": 8.99,
         "shipping": 0.0,
-        "landed_public_price": 99.0,
+        "landed_public_price": 8.99,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "highest": {
         "seller_id": "mediamarkt",
         "seller_name": "MediaMarkt",
-        "product_key": "luftreiniger-hepa",
-        "price": 129.0,
-        "shipping": 0.0,
-        "landed_public_price": 129.0,
+        "product_key": "usb-c-kabel-2m",
+        "price": 14.99,
+        "shipping": 4.99,
+        "landed_public_price": 19.98,
         "currency": "EUR",
-        "observed_at": "2026-08-16T11:50:14.092715+00:00"
+        "observed_at": "2026-08-16T11:52:14.218557+00:00"
       },
       "seller_count": 3
     }
   ],
   "kategorie_luecken": [
     {
-      "opportunity_id": "CATEGORY_13:2:Kleine Küchengeräte",
-      "category_id": "CATEGORY_13",
+      "opportunity_id": "CATEGORY_12:2:Kabel & Ladezubehör",
+      "category_id": "CATEGORY_12",
       "opportunity_type": "missing_taxonomy_node",
-      "name": "Kleine Küchengeräte",
+      "name": "Kabel & Ladezubehör",
       "evidence_count": 1,
       "confidence": 0.386,
       "reasons": [
@@ -61,10 +61,10 @@
       "requires_human_review": true
     },
     {
-      "opportunity_id": "CATEGORY_13:2:Luftreiniger & Klimageräte",
-      "category_id": "CATEGORY_13",
+      "opportunity_id": "CATEGORY_12:2:Smart-Home-Sensoren",
+      "category_id": "CATEGORY_12",
       "opportunity_type": "missing_taxonomy_node",
-      "name": "Luftreiniger & Klimageräte",
+      "name": "Smart-Home-Sensoren",
       "evidence_count": 1,
       "confidence": 0.386,
       "reasons": [

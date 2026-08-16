@@ -30,6 +30,9 @@ export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps)
             Gesamten KFZ-Baum öffnen
           </Link>
         )}
+        <Link href="/taxonomy/buzzard_master_kfz_intelligence_os.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
+          Intelligence OS Console
+        </Link>
       </div>
       <div className="kfz-parts-grid">
         {mains.slice(0, compact ? 12 : mains.length).map((main) => (

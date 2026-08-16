@@ -138,6 +138,11 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             {getKfzMains().length} Hauptsysteme · Buzzard Master Kfz Intelligence OS
             {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
           </p>
+          <p>
+            <a href="/taxonomy/buzzard_master_kfz_intelligence_os.html" target="_blank" rel="noopener noreferrer">
+              Intelligence OS Console öffnen (Dashboard, Matrix, Gaps)
+            </a>
+          </p>
         </div>
       </section>
       <KfzPartsBrowse />

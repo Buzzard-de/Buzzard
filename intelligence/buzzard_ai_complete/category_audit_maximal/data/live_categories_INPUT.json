@@ -1,0 +1,67 @@
+{
+  "status": "PARTIAL_INPUT",
+  "note": "Replace with the exact 41-category live export before production merge.",
+  "categories": [
+    {
+      "id": "live-01",
+      "name": "Textil"
+    },
+    {
+      "id": "live-02",
+      "name": "Kosmetik & Körperpflege"
+    },
+    {
+      "id": "live-03",
+      "name": "Reinigungsprodukte"
+    },
+    {
+      "id": "live-04",
+      "name": "Schule & Bürobedarf"
+    },
+    {
+      "id": "live-05",
+      "name": "Automotive"
+    },
+    {
+      "id": "live-06",
+      "name": "Haustierbedarf"
+    },
+    {
+      "id": "live-07",
+      "name": "Garten"
+    },
+    {
+      "id": "live-08",
+      "name": "Arbeitsschutz & Berufskleidung"
+    },
+    {
+      "id": "live-09",
+      "name": "Werkzeuge & Eisenwaren"
+    },
+    {
+      "id": "live-10",
+      "name": "Haus & Wohnen"
+    },
+    {
+      "id": "live-11",
+      "name": "Möbel"
+    },
+    {
+      "id": "live-12",
+      "name": "Elektronik"
+    },
+    {
+      "id": "live-13",
+      "name": "Reifen & Felgen",
+      "parent": "Automotive"
+    },
+    {
+      "id": "live-14",
+      "name": "Landwirtschaft & Agrartechnik"
+    },
+    {
+      "id": "live-15",
+      "name": "Baumaschinen & Ersatzteile"
+    }
+  ]
+}

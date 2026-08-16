@@ -102,6 +102,8 @@ def complete_status():
         "     complete-main-column-48-docs",
         "     complete-smart-menu-48-health, complete-smart-menu-48-demo,",
         "     complete-smart-menu-48-docs",
+        "     complete-category-audit-health, complete-category-audit-demo,",
+        "     complete-category-audit-report, complete-category-audit-docs",
         "",
         "fehler_behebung_2:",
         "- Removed tests/commerce package markers (pytest shadowing fix)",

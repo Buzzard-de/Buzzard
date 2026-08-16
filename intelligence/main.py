@@ -1769,6 +1769,17 @@ def main():
         help="Show smart mega menu 48-category documentation",
     )
 
+    sub.add_parser("complete-category-audit-health", help="Show category audit engine health")
+    sub.add_parser("complete-category-audit-demo", help="Run category audit engine demo")
+    sub.add_parser(
+        "complete-category-audit-report",
+        help="Show live-vs-master category audit report",
+    )
+    sub.add_parser(
+        "complete-category-audit-docs",
+        help="Show category audit documentation",
+    )
+
     add_category = sub.add_parser("add-category", help="v8 register a sourced category candidate")
     add_category.add_argument("--name", required=True)
     add_category.add_argument("--parent", default="")
@@ -5795,6 +5806,22 @@ def main():
         from buzzard_ai_complete.commands import complete_smart_menu_48_docs
 
         print(complete_smart_menu_48_docs())
+    elif args.cmd == "complete-category-audit-health":
+        from buzzard_ai_complete.commands import complete_category_audit_health
+
+        print(complete_category_audit_health())
+    elif args.cmd == "complete-category-audit-demo":
+        from buzzard_ai_complete.commands import complete_category_audit_demo
+
+        print(complete_category_audit_demo())
+    elif args.cmd == "complete-category-audit-report":
+        from buzzard_ai_complete.commands import complete_category_audit_report
+
+        print(complete_category_audit_report())
+    elif args.cmd == "complete-category-audit-docs":
+        from buzzard_ai_complete.commands import complete_category_audit_docs
+
+        print(complete_category_audit_docs())
     elif args.cmd == "live-ebay":
         load_live_env()
         try:

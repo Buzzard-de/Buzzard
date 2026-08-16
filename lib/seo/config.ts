@@ -4,9 +4,9 @@ export const SEO_DEFAULTS = {
   siteName: "Buzzard24",
   legalName: "Buzzard Kfz-Teile",
   alternateNames: ["Buzzard", "Buzzard24.de", "Buzzard Online-Shop", "Buzzard Autoteile"],
-  defaultTitle: "Buzzard24 – Online-Katalog mit 41 Kategorien",
+  defaultTitle: "Buzzard24 – Online-Katalog mit 48 Kategorien",
   defaultDescription:
-    "Buzzard24 (buzzard24.de) – Demo-Katalog mit 41 Kategorien: Automotive, Textil, Elektronik, Garten, Haushalt und mehr. Produkte entdecken — Online-Verkauf startet demnächst.",
+    "Buzzard24 (buzzard24.de) – Demo-Katalog mit 48 Kategorien und Smart-Mega-Menü: Automotive, Textil, Elektronik, Garten, Haushalt und mehr. Produkte entdecken — Online-Verkauf startet demnächst.",
   locale: "de_DE",
   twitterCard: "summary_large_image" as const,
 };

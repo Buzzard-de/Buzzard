@@ -160,7 +160,8 @@
     "target": "Haushalt & Hygiene"
   },
   "Angebote & Sonderkollektionen": {
-    "action": "REVIEW",
-    "target": "Weitere Kategorien"
+    "action": "KEEP",
+    "target": "Weitere Kategorien",
+    "note": "Promotional specials category — retained for campaigns and outlet navigation."
   }
 }

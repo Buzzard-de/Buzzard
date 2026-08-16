@@ -446,7 +446,7 @@
     "menu_order": 41,
     "url": "/kategorie/angebote-und-sonderkollektionen",
     "level": 1,
-    "action": "REVIEW",
+    "action": "KEEP",
     "target": "Weitere Kategorien",
     "reason": "Explicitly approved category-audit rule."
   },

@@ -19,6 +19,7 @@ import { getProductById, getProductsForCategory } from "@/lib/products";
 import { isCheckoutEnabled } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
 import type { BuzzardCategory } from "@/lib/categories/types";
+import { useSmartMenuSignals } from "@/lib/smartMenu/useSmartMenuSignals";
 
 interface FeaturedBannerProps {
   mainCategory?: BuzzardCategory;
@@ -30,6 +31,9 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
   const [addedId, setAddedId] = useState<string | null>(null);
   const activeSub = activeSubId ? getCategoryById(activeSubId) : undefined;
   const level3 = activeSub ? getChildren(activeSub.id) : [];
+  const signals = useSmartMenuSignals(activeSubId);
+  const signalPopular = signals?.popular ?? [];
+  const signalBrands = signals?.brands ?? [];
   const promoSubs = mainCategory ? getChildren(mainCategory.id).slice(0, 2) : [];
   const categoryProducts = mainCategory ? getProductsForCategory(mainCategory, 3) : [];
 
@@ -70,6 +74,34 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {signalPopular.length > 0 && (
+        <div className="promo-section promo-section--signals">
+          <h2 className="promo-title">BELIEBT IN DIESER KATEGORIE</h2>
+          <ul className="subsubcategory-list">
+            {signalPopular.map((item) => (
+              <li key={item.id}>
+                <Link href={`/kategorie/${item.slug.split("/").pop()}/`} className="subsubcategory-link">
+                  <span>{item.name}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {signalBrands.length > 0 && (
+        <div className="promo-section promo-section--brands">
+          <h2 className="promo-title">TOP MARKEN</h2>
+          <div className="promo-brand-chips">
+            {signalBrands.slice(0, 6).map((brand) => (
+              <span key={brand.name} className="promo-brand-chip">
+                {brand.name}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 

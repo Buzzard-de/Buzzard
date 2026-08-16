@@ -18,9 +18,9 @@ from buzzard_ai_complete.runtime.maintenance import maintain_cycle
 BEY_AGENT_ORDER = ("dogu_bey", "aslan_bey", "esat_bey")
 
 BEY_ROLES = {
-    "dogu_bey": "Uzman İstihbarat ve Araştırma AI",
-    "aslan_bey": "Müsteşar / AI Operasyon ve İstihbarat Koordinatörü",
-    "esat_bey": "AI Siber Güvenlik ve Savunma Uzmanı",
+    "dogu_bey": "Forschung & Verifikation (Intelligence)",
+    "aslan_bey": "Koordination & Operationen (Müsteşar)",
+    "esat_bey": "Defensive Sicherheit (Cyber Defense)",
 }
 
 

@@ -10,6 +10,7 @@ def test_de_ecom_intel_scan_structure():
     assert result["operation"] == OPERATION_CODE
     assert result["sprache"] == "de"
     assert result["category_intelligence_43"]["prioritaets_kategorien_gescannt"] == 6
+    assert result["category_intelligence_43"]["council_findings"] == 6
     assert len(result["preisbenchmark"]["products"]) == len(PUBLIC_PRICE_BENCHMARKS)
     assert result["live_connectors"]["connector_count"] == 4
     assert "google_ads" in result

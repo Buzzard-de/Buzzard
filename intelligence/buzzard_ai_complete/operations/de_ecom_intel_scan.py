@@ -199,13 +199,6 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _live_health() -> dict[str, str]:
-    from live_connectors.health import live_health_report
-
-    lines = live_health_report().splitlines()
-    return {line.split(":")[0].strip(): line.split(":", 1)[1].strip() for line in lines}
-
-
 def _fetch_public_sources() -> list[dict[str, Any]]:
     from live_connectors.public_fetch import PublicFetcher
 
@@ -405,8 +398,17 @@ def _offers_for_category(all_offers: list[SellerOffer], buzzard_id: str) -> list
     return [offer for offer in all_offers if offer.product_key in keys]
 
 
-def _run_category_scans(all_offers: list[SellerOffer]) -> list[dict[str, Any]]:
+def _run_category_scans(all_offers: list[SellerOffer]) -> tuple[list[dict[str, Any]], int]:
+    from buzzard_ai_complete.ai_council_18_unified.council.memory.shared_memory import (
+        SharedIntelligenceMemory,
+    )
+    from buzzard_ai_complete.category_intelligence_43_maximal.category_intelligence.orchestration.council_bridge import (
+        CategoryCouncilBridge,
+    )
+
     agents = build_43_agents(CategoryIntelligence43Service().category_definitions())
+    council_memory = SharedIntelligenceMemory()
+    council_bridge = CategoryCouncilBridge(council_memory)
     reports = []
     observed_at = _now()
 
@@ -429,6 +431,7 @@ def _run_category_scans(all_offers: list[SellerOffer]) -> list[dict[str, Any]]:
                     category_offers.extend(_static_offers_for_benchmark(bench, observed_at))
 
         report = agent.analyze(category_offers, buzzard_taxonomy, observed_taxonomy)
+        council_bridge.publish(report)
         pricing = PriceIntelligenceEngine().seller_comparison(category_offers)
         reports.append(
             {
@@ -443,7 +446,7 @@ def _run_category_scans(all_offers: list[SellerOffer]) -> list[dict[str, Any]]:
                 "kategorie_luecken": [asdict(x) for x in report.missing_categories],
             }
         )
-    return reports
+    return reports, len(council_memory.findings)
 
 
 def _save_to_memory(dogu: DoguBey, memory: MemoryStore, payload: dict[str, Any]) -> None:
@@ -471,7 +474,7 @@ def run_de_ecom_intel_scan() -> dict[str, Any]:
     sources = _fetch_public_sources()
     observed_at = _now()
     all_offers, preis_quelle = _collect_all_offers(observed_at)
-    category_reports = _run_category_scans(all_offers)
+    category_reports, council_findings = _run_category_scans(all_offers)
 
     from live_connectors.google_ads_signals import fetch_google_ads_signals
 
@@ -518,6 +521,7 @@ def run_de_ecom_intel_scan() -> dict[str, Any]:
         "category_intelligence_43": {
             "agenten_aktiv": 43,
             "prioritaets_kategorien_gescannt": len(category_reports),
+            "council_findings": council_findings,
             "berichte": category_reports,
         },
         "preis_quelle": preis_quelle,

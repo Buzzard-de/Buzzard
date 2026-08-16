@@ -34,8 +34,10 @@ from buzzard_ai_complete.supplier_import_enrichment_engine.api.routes import (
 from buzzard_ai_complete.ai_phone_assistant.api.routes import router as phone_router
 from buzzard_ai_complete.complete_commerce_platform.api.routes import router as platform_router
 from buzzard_ai_complete.production_integration_maximal.api.routes import (
-    router as production_router,
+    router as production_integration_router,
 )
+from buzzard_ai_complete.api.connector_routes import router as connector_router
+from buzzard_ai_complete.api.operations_routes import router as operations_router
 from buzzard_ai_complete.launch_sequence_maximal.api.routes import router as launch_router
 from buzzard_ai_complete.ai_council_18_unified.api.routes import router as council_18_router
 from buzzard_ai_complete.ai_council_19_customs_bureaucracy.api.routes import router as council_19_router
@@ -126,8 +128,12 @@ if FastAPI:
         app.include_router(phone_router)
     if platform_router is not None:
         app.include_router(platform_router)
-    if production_router is not None:
-        app.include_router(production_router)
+    if production_integration_router is not None:
+        app.include_router(production_integration_router)
+    if connector_router is not None:
+        app.include_router(connector_router)
+    if operations_router is not None:
+        app.include_router(operations_router)
     if launch_router is not None:
         app.include_router(launch_router)
     if council_18_router is not None:

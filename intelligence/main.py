@@ -1659,6 +1659,10 @@ def main():
         "complete-all-connectors-health",
         help="Status aller Live-Connectors (eBay, Amazon, Google Ads, Public Fetch)",
     )
+    sub.add_parser(
+        "complete-sync-category-intelligence-43",
+        help="Sync Category Intelligence 43 config from data/buzzard_categories.json",
+    )
 
     sub.add_parser("complete-social-intelligence-health", help="Show social intelligence AI health")
     sub.add_parser("complete-social-intelligence-platforms", help="List social platform adapters")
@@ -5638,6 +5642,10 @@ def main():
         from buzzard_ai_complete.commands import complete_all_connectors_health
 
         print(complete_all_connectors_health())
+    elif args.cmd == "complete-sync-category-intelligence-43":
+        from buzzard_ai_complete.commands import complete_sync_category_intelligence_43
+
+        print(complete_sync_category_intelligence_43())
     elif args.cmd == "complete-social-intelligence-health":
         from buzzard_ai_complete.commands import complete_social_intelligence_health
 

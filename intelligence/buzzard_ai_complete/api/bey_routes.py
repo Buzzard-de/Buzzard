@@ -46,5 +46,11 @@ if APIRouter:
     @router.post("/scan")
     def bey_scan(req: BeyScanRequest):
         return runtime.esat.scan_text(req.text)
+
+    @router.get("/de-ecom-intel-scan")
+    def bey_de_ecom_intel_scan():
+        from buzzard_ai_complete.operations.de_ecom_intel_scan import run_de_ecom_intel_scan
+
+        return run_de_ecom_intel_scan()
 else:
     router = None

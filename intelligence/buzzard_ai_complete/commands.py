@@ -1086,6 +1086,20 @@ def complete_all_connectors_health():
     return json.dumps(connector_health(), ensure_ascii=False, indent=2)
 
 
+def complete_sync_category_intelligence_43():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "sync_category_intelligence_43.py"
+    )
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_social_intelligence_health():
     from buzzard_ai_complete.social_intelligence_ai_maximal.service import SocialIntelligenceService
 

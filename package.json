@@ -28,6 +28,7 @@
     "buzzard:api": "python Buzzard/app.py api",
     "buzzard:voice": "python Buzzard/voice.py",
     "buzzard:8787": "python Buzzard/voice.py",
+    "buzzard:ai": "python Buzzard/buzzard_ai.py",
     "gizli": "python Buzzard/app.py all",
     "gizli:api": "python Buzzard/app.py api",
     "gizli:voice": "python Buzzard/voice.py",

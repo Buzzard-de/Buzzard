@@ -1776,6 +1776,10 @@ def main():
         help="Show live-vs-master category audit report",
     )
     sub.add_parser(
+        "complete-category-audit-sync",
+        help="Sync live category input from storefront buzzard_categories.json",
+    )
+    sub.add_parser(
         "complete-category-audit-docs",
         help="Show category audit documentation",
     )
@@ -5818,6 +5822,10 @@ def main():
         from buzzard_ai_complete.commands import complete_category_audit_report
 
         print(complete_category_audit_report())
+    elif args.cmd == "complete-category-audit-sync":
+        from buzzard_ai_complete.commands import complete_category_audit_sync
+
+        print(complete_category_audit_sync())
     elif args.cmd == "complete-category-audit-docs":
         from buzzard_ai_complete.commands import complete_category_audit_docs
 

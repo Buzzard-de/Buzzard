@@ -5,7 +5,7 @@
   "actions": ["KEEP", "MOVE_CONTENT", "RESTRUCTURE", "SEPARATE", "REVIEW"],
   "delete_enabled": false,
   "master_taxonomy_ref": "master_taxonomy_48_maximal",
-  "live_input_status": "PARTIAL_INPUT",
+  "live_input_status": "FULL_INPUT",
   "rules": {
     "require_full_live_export_before_merge": true,
     "human_review_on_conflict": true

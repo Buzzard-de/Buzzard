@@ -1426,6 +1426,16 @@ def complete_category_audit_report():
     return json.dumps(CategoryAuditService().audit_report(), ensure_ascii=False, indent=2)
 
 
+def complete_category_audit_sync():
+    from buzzard_ai_complete.category_audit_maximal.service import CategoryAuditService
+
+    return json.dumps(
+        CategoryAuditService().sync_live_from_storefront(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
 def complete_category_audit_docs():
     return _read_doc("CATEGORY_AUDIT_MAXIMAL.md")
 

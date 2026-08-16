@@ -13,7 +13,10 @@ class CategoryAuditEngine:
 
     def __init__(self, master_path, live_path, policy_path):
         self.master = json.loads(Path(master_path).read_text(encoding="utf-8"))
-        self.live = json.loads(Path(live_path).read_text(encoding="utf-8"))["categories"]
+        live_doc = json.loads(Path(live_path).read_text(encoding="utf-8"))
+        self.live = live_doc.get("categories", [])
+        self.migration_items = live_doc.get("migration_items", [])
+        self.live_status = live_doc.get("status", "UNKNOWN")
         self.policy = json.loads(Path(policy_path).read_text(encoding="utf-8"))
 
     def mains(self):
@@ -65,14 +68,24 @@ class CategoryAuditEngine:
         }
 
     def audit(self):
-        return [{**item, **self.recommendation(item)} for item in self.live]
+        rows = [{**item, **self.recommendation(item)} for item in self.live]
+        migration = [
+            {**item, "kind": "migration_item", **self.recommendation(item)}
+            for item in self.migration_items
+        ]
+        return rows + migration
 
     def summary(self):
         rows = self.audit()
+        main_rows = [row for row in rows if row.get("kind") != "migration_item"]
+        migration_rows = [row for row in rows if row.get("kind") == "migration_item"]
         counts = {action: 0 for action in sorted(self.ACTIONS)}
         for row in rows:
             counts[row["action"]] += 1
         return {
+            "live_input_status": self.live_status,
+            "live_main_categories": len(main_rows),
+            "migration_items": len(migration_rows),
             "live_categories": len(rows),
             "master_main_categories": len(self.mains()),
             "actions": counts,
@@ -81,6 +94,10 @@ class CategoryAuditEngine:
 
     def validate(self):
         assert len(self.mains()) == 48
-        assert all(row["action"] in self.ACTIONS for row in self.audit())
-        assert all(row["action"] != "DELETE" for row in self.audit())
+        summary = self.summary()
+        if self.live_status == "FULL_INPUT":
+            assert summary["live_main_categories"] == 41
+        rows = self.audit()
+        assert all(row["action"] in self.ACTIONS for row in rows)
+        assert all(row["action"] != "DELETE" for row in rows)
         return True

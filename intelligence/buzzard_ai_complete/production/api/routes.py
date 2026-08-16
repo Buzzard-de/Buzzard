@@ -12,6 +12,18 @@ if APIRouter:
     service = ProductionMaxService()
     bridge = ProductionBridgeService()
 
+    @router.get("/bridge/preflight")
+    def production_bridge_preflight():
+        return bridge.preflight()
+
+    @router.post("/bridge/preflight/save")
+    def production_bridge_preflight_save():
+        return bridge.save_preflight_report()
+
+    @router.get("/bridge/max-single")
+    def production_bridge_max_single():
+        return bridge.max_single_summary()
+
     @router.get("/bridge/manifest")
     def production_bridge_manifest():
         return bridge.load_manifest()

@@ -1513,6 +1513,9 @@ def main():
     sub.add_parser("complete-production-readiness", help="Show production go-live readiness gate")
     sub.add_parser("complete-production-bridge-manifest", help="Buzzard Production Bridge Manifest anzeigen")
     sub.add_parser("complete-production-bridge-summary", help="Production Bridge Gates und Go-Live-Status")
+    sub.add_parser("complete-production-bridge-preflight", help="Production Bridge MAX SINGLE Preflight-Report")
+    sub.add_parser("complete-production-bridge-max-single", help="Production Bridge MAX SINGLE Zusammenfassung")
+    sub.add_parser("complete-build-production-bridge-max-single", help="Production Bridge MAX SINGLE HTML-Konsole bauen")
     sub.add_parser("complete-production-docs", help="Show Production MAX upgrade documentation")
 
     sub.add_parser("complete-shop-bridge-demo", help="Run Shop Intelligence Commerce Bridge demo flow")
@@ -5489,6 +5492,18 @@ def main():
         from buzzard_ai_complete.commands import complete_production_bridge_summary
 
         print(complete_production_bridge_summary())
+    elif args.cmd == "complete-production-bridge-preflight":
+        from buzzard_ai_complete.commands import complete_production_bridge_preflight
+
+        print(complete_production_bridge_preflight())
+    elif args.cmd == "complete-production-bridge-max-single":
+        from buzzard_ai_complete.commands import complete_production_bridge_max_single
+
+        print(complete_production_bridge_max_single())
+    elif args.cmd == "complete-build-production-bridge-max-single":
+        from buzzard_ai_complete.commands import complete_build_production_bridge_max_single
+
+        print(complete_build_production_bridge_max_single())
     elif args.cmd == "complete-production-docs":
         from buzzard_ai_complete.commands import complete_production_docs
 

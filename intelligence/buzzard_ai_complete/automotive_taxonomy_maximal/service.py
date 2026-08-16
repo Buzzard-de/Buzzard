@@ -129,7 +129,8 @@ class AutomotiveTaxonomyService:
             "url_prefix": bridge.get("url_prefix"),
             "bridge_version": bridge.get("version"),
             "intelligence_os": intel.get("version"),
-            "console_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
+            "console_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+            "console_kfz_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
         }
 
     def kfz_mains(self) -> list[dict]:

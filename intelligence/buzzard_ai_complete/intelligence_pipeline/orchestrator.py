@@ -340,7 +340,8 @@ class IntelligencePipelineOrchestrator:
           "shop_root_id": sink.get("shop_root"),
           "kfz_intelligence_os": sink.get("kfz_intelligence_os"),
           "shop_bridge": sink.get("shop_bridge"),
-          "console_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
+          "console_html": "/taxonomy/buzzard_intelligence_os_all_in_one.html",
+          "console_kfz_html": "/taxonomy/buzzard_master_kfz_intelligence_os.html",
           "sync_command": "complete-sync-kfz-category-tree",
           "write_mode": "approval_required",
       }

@@ -9,7 +9,8 @@ Canonical automotive parts taxonomy for Buzzard.
 | `buzzard_master_kfz_category_tree_v1.html` | Interactive browser UI (2 levels) |
 | `buzzard_master_kfz_category_tree_v1.json` | Machine-readable taxonomy V1 |
 | `buzzard_master_kfz_intelligence_os.json` | **Intelligence OS** — 43 mains, 454 subs, 412 L3, 8 competitors, coverage matrix |
-| `buzzard_master_kfz_intelligence_os.html` | **Intelligence OS Console** — Dashboard, Taxonomie, Wettbewerber-Matrix, Gap-Analyse |
+| `buzzard_intelligence_os_all_in_one.html` | **Intelligence OS All-in-One** — 12 Module, Kurmay, Memory, Alerts, Pipeline-Architektur |
+| `buzzard_master_kfz_intelligence_os.html` | **KFZ Intelligence OS Console** — Dashboard, Taxonomie, Wettbewerber-Matrix, Gap-Analyse |
 | `kfz_shop_bridge.json` | KFZ id → `cat-05` L2 mapping + L3 + competitor coverage |
 
 ## Intelligence OS
@@ -39,6 +40,7 @@ python3 main.py complete-sync-kfz-category-tree
 
 - Shop Automotive: `/kategorie/automotive/`
 - KFZ tree index: `/kategorie/automotive/kfz/`
-- **Intelligence OS Console (HTML):** `/taxonomy/buzzard_master_kfz_intelligence_os.html`
+- **Intelligence OS All-in-One (HTML):** `/taxonomy/buzzard_intelligence_os_all_in_one.html`
+- **KFZ Intelligence OS Console (HTML):** `/taxonomy/buzzard_master_kfz_intelligence_os.html`
 - API: `/api/kfz-tree`, `/api/kfz-intelligence`
 - Intelligence API: `/automotive-taxonomy/kfz-intelligence-os`

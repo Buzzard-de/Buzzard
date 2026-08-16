@@ -139,8 +139,12 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
           </p>
           <p>
+            <a href="/taxonomy/buzzard_intelligence_os_all_in_one.html" target="_blank" rel="noopener noreferrer">
+              Intelligence OS All-in-One öffnen (12 Module, Kurmay, Pipeline)
+            </a>
+            {" · "}
             <a href="/taxonomy/buzzard_master_kfz_intelligence_os.html" target="_blank" rel="noopener noreferrer">
-              Intelligence OS Console öffnen (Dashboard, Matrix, Gaps)
+              KFZ Console (Matrix, Gaps)
             </a>
           </p>
         </div>

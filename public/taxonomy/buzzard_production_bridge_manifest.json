@@ -1,6 +1,6 @@
 {
   "name": "Buzzard Production Bridge",
-  "version": "1.0",
+  "version": "1.0-max-single",
   "locale": "de",
   "purpose": "Vollständige Software-Architektur in kontrollierte Produktionsreife überführen.",
   "gates": [

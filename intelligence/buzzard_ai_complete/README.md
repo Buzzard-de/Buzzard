@@ -526,6 +526,10 @@ python3 main.py complete-scheduler --interval 300 --process 1
 
 ```bash
 cd intelligence
+python app.py
+# or hidden entry:
+cd intelligence/gizli && python app.py
+# or uvicorn directly:
 uvicorn buzzard_ai_complete.api.app:app --reload
 # or
 docker compose -f buzzard_ai_complete/docker-compose.yml up

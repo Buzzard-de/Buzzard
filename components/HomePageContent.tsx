@@ -16,8 +16,8 @@ export default function HomePageContent() {
     <div className="home-page">
       <HomeHeroCampaign />
       <HomeCategoryDiscovery />
-      <HomeProductRail variant="featured" title={t("home.featured")} limit={4} />
-      <HomeProductRail variant="bestsellers" title={t("home.bestsellers")} limit={4} />
+      <HomeProductRail variant="featured" title={t("home.featured")} limit={6} />
+      <HomeProductRail variant="bestsellers" title={t("home.bestsellers")} limit={6} />
       <HomeCampaigns />
       <HomeProductRail variant="new" title={t("homeRails.new")} limit={4} />
       <HomeTrustReviews />

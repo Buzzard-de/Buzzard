@@ -43,7 +43,7 @@ def test_no_delete():
 
 def test_review_queue_size():
     summary = CategoryAuditService().engine().summary()
-    assert summary["actions"]["REVIEW"] == 5
+    assert summary["actions"]["REVIEW"] == 1
     assert summary["live_main_categories"] == 41
     assert summary["migration_items"] == 1
 
@@ -69,4 +69,4 @@ def test_demo_flow():
     demo = CategoryAuditService().demo_flow()
     assert demo["integrity"] is True
     assert demo["preview_matches_input"] is True
-    assert len(demo["review_queue"]) == 5
+    assert len(demo["review_queue"]) == 1

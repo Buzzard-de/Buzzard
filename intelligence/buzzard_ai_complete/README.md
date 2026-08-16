@@ -529,7 +529,7 @@ cd intelligence
 python app.py
 # Buzzard project gizli (recommended):
 python gizli/app.py                             # API http://127.0.0.1:8000
-python gizli/voice_ui.py                        # Voice http://127.0.0.1:8787
+python gizli/voice_ui.py                        # Voice http://127.0.0.1:8787 (web in gizli/web/)
 python gizli/start.py                           # both
 # npm: npm run gizli | gizli:voice | gizli:start
 # legacy path (alias):

@@ -68,6 +68,26 @@ def main() -> None:
         "api_prefix": "/category-intelligence-47",
         "categories": categories,
     }
+    if MANIFEST_PATH.is_file():
+        existing = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+        for key in (
+            "primary_console_html",
+            "final_max_console_html",
+            "final_manifest_json",
+            "research_matrix_json",
+            "engine",
+            "orchestration",
+            "finalization",
+            "pipeline",
+            "scope_detail",
+            "verification_policy_text",
+            "evidence_fields",
+            "taxonomy_depth",
+            "outputs",
+            "research_basis",
+        ):
+            if key in existing:
+                manifest[key] = existing[key]
     MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     public_manifest = REPO_ROOT / "public" / "taxonomy" / "buzzard_47_category_intelligence_os.json"
     public_manifest.parent.mkdir(parents=True, exist_ok=True)

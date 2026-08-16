@@ -22,6 +22,8 @@ Canonical automotive parts taxonomy for Buzzard.
 | `buzzard_47_category_intelligence_os.html` | **47 Category Intelligence OS Console** — Kurmay dashboard, taxonomy gap analysis |
 | `buzzard_47_category_intelligence_os_final_100_single_file.html` | **47 Category Intelligence OS Final 100% Console** — scope lock + 12-layer completion |
 | `buzzard_47_category_intelligence_os_max_final_single_file.html` | **47 Category Intelligence OS MAX FINAL Console** — maximum core engine + evidence model |
+| `buzzard_final_47_category_intelligence_manifest.json` | **47 Category Intelligence FINAL Manifest** — pipeline, evidence policy, outputs, research basis |
+| `buzzard_final_47_category_intelligence_os_max_single_file.html` | **47 Category Intelligence OS FINAL MAX Console (primary)** — evidence orchestration + verification |
 | `buzzard_47_category_intelligence_os_max_single_final_single_file.html` | **47 Category Intelligence OS MAX SINGLE FINAL Console** — unified primary console (MAX + 100% Final) |
 
 ## Intelligence OS
@@ -62,7 +64,9 @@ python3 main.py complete-sync-kfz-category-tree
 - **47 Category Intelligence OS Console (HTML):** `/taxonomy/buzzard_47_category_intelligence_os.html`
 - **47 Category Intelligence OS Final 100% Console (HTML):** `/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html`
 - **47 Category Intelligence OS MAX FINAL Console (HTML):** `/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html`
-- **47 Category Intelligence OS MAX SINGLE FINAL Console (HTML, primary):** `/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html`
+- **47 Category Intelligence OS MAX SINGLE FINAL Console (HTML):** `/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html`
+- **47 Category Intelligence OS FINAL MAX Console (HTML, primary):** `/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html`
+- **47 Category Intelligence FINAL Manifest (JSON):** `/taxonomy/buzzard_final_47_category_intelligence_manifest.json`
 - **47 Category Intelligence OS Manifest (JSON):** `/taxonomy/buzzard_47_category_intelligence_os.json`
 - API: `/api/kfz-tree`, `/api/kfz-intelligence`
 - Intelligence API: `/automotive-taxonomy/kfz-intelligence-os`, `/automotive-taxonomy/intelligence-os-all-in-one`, `/automotive-taxonomy/intelligence-os-maximum-manifest`, `/automotive-taxonomy/intelligence-os-maximum-single-file`, `/automotive-taxonomy/master-business-os-maximum-manifest`, `/automotive-taxonomy/master-business-os-maximum-single-file`, `/automotive-taxonomy/master-business-os-final-100-single-file`, `/category-intelligence-47`

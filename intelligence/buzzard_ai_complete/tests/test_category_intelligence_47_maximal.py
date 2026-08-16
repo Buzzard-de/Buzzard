@@ -211,3 +211,18 @@ def test_service_final_max_single_file():
 
     assert summary["console_html"] == "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html"
     assert "orchestration" in summary or summary.get("html_exists") is not None
+
+
+def test_final_manifest():
+    service = CategoryIntelligence47Service()
+    manifest = service.load_final_manifest()
+    summary = service.final_manifest_summary()
+
+    assert manifest["name"] == "BUZZARD FINAL 47 CATEGORY INTELLIGENCE OS"
+    assert manifest["version"] == "MAX-FINAL-1.0"
+    assert manifest["scope"]["research_categories"] == 47
+    assert manifest["scope"]["competitor_target"] == 940
+    assert len(manifest["pipeline"]) == 11
+    assert "content_hash" in manifest["evidence_fields"]
+    assert summary["api_prefix"] == "/category-intelligence-47"
+    assert summary["primary_console_html"] == "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html"

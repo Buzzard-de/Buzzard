@@ -57,6 +57,7 @@ class CategoryIntelligence47Service:
             "primary_console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
             "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
             "final_max_console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
+            "final_manifest_json": "/taxonomy/buzzard_final_47_category_intelligence_manifest.json",
             "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
             "live_activation": False,
         }
@@ -113,6 +114,28 @@ class CategoryIntelligence47Service:
         config = self.load_config()
         path = self._repo_path(config["intelligence_os_json_path"])
         return json.loads(path.read_text(encoding="utf-8"))
+
+    def load_final_manifest(self) -> dict:
+        config = self.load_config()
+        path = self._repo_path(config["final_manifest_json_path"])
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def final_manifest_summary(self) -> dict:
+        final_manifest = self.load_final_manifest()
+        manifest = self.load_manifest()
+        return {
+            **final_manifest,
+            "primary_console_html": manifest.get(
+                "primary_console_html",
+                "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
+            ),
+            "research_matrix_json": manifest.get(
+                "research_matrix_json",
+                "/taxonomy/buzzard_47_research_matrix_max.json",
+            ),
+            "api_prefix": manifest.get("api_prefix", "/category-intelligence-47"),
+            "runtime_manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
+        }
 
     def final_100_single_file_summary(self) -> dict:
         config = self.load_config()

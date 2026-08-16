@@ -91,6 +91,14 @@ if APIRouter:
     def category_intel_47_intelligence_os_full():
         return service.load_manifest()
 
+    @router.get("/final-manifest")
+    def category_intel_47_final_manifest():
+        return service.load_final_manifest()
+
+    @router.get("/final-manifest/summary")
+    def category_intel_47_final_manifest_summary():
+        return service.final_manifest_summary()
+
     @router.get("/intelligence-os-final-100-single-file")
     def category_intel_47_final_100_single_file():
         return service.final_100_single_file_summary()

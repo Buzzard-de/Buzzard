@@ -1207,6 +1207,26 @@ def complete_build_category_intelligence_47_final_max():
     return result.stdout.strip()
 
 
+def complete_category_intelligence_47_final_manifest():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    return json.dumps(
+        CategoryIntelligence47Service().load_final_manifest(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+def complete_category_intelligence_47_final_manifest_summary():
+    from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
+
+    return json.dumps(
+        CategoryIntelligence47Service().final_manifest_summary(),
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
 def complete_de_ecom_intel_scan():
     from buzzard_ai_complete.operations.de_ecom_intel_scan import run_de_ecom_intel_scan
 

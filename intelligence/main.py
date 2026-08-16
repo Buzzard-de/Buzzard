@@ -1704,6 +1704,14 @@ def main():
         help="Build 47 category intelligence FINAL MAX console with evidence orchestration",
     )
     sub.add_parser(
+        "complete-category-intelligence-47-final-manifest",
+        help="Show BUZZARD FINAL 47 Category Intelligence manifest",
+    )
+    sub.add_parser(
+        "complete-category-intelligence-47-final-manifest-summary",
+        help="Show FINAL manifest with runtime console and API bindings",
+    )
+    sub.add_parser(
         "complete-de-ecom-intel-scan",
         help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
     )
@@ -5791,6 +5799,14 @@ def main():
         from buzzard_ai_complete.commands import complete_build_category_intelligence_47_final_max
 
         print(complete_build_category_intelligence_47_final_max())
+    elif args.cmd == "complete-category-intelligence-47-final-manifest":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_final_manifest
+
+        print(complete_category_intelligence_47_final_manifest())
+    elif args.cmd == "complete-category-intelligence-47-final-manifest-summary":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_final_manifest_summary
+
+        print(complete_category_intelligence_47_final_manifest_summary())
     elif args.cmd == "complete-de-ecom-intel-scan":
         from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
 

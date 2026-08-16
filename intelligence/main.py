@@ -1672,6 +1672,14 @@ def main():
         help="Sync Category Intelligence 47 from Master Taxonomy 48 (excl. Automotive)",
     )
     sub.add_parser(
+        "complete-category-intelligence-47-final-100-single-file",
+        help="Show 47 category intelligence Final 100% single-file console summary",
+    )
+    sub.add_parser(
+        "complete-build-category-intelligence-47-final-100",
+        help="Build 47 category intelligence Final 100% single-file HTML console",
+    )
+    sub.add_parser(
         "complete-de-ecom-intel-scan",
         help="Doğu Bey: Deutschland E-Commerce Live-Scan (fetch + Cat43 + Preisbenchmark)",
     )
@@ -5727,6 +5735,14 @@ def main():
         from buzzard_ai_complete.commands import complete_sync_category_intelligence_47
 
         print(complete_sync_category_intelligence_47())
+    elif args.cmd == "complete-category-intelligence-47-final-100-single-file":
+        from buzzard_ai_complete.commands import complete_category_intelligence_47_final_100_single_file
+
+        print(complete_category_intelligence_47_final_100_single_file())
+    elif args.cmd == "complete-build-category-intelligence-47-final-100":
+        from buzzard_ai_complete.commands import complete_build_category_intelligence_47_final_100
+
+        print(complete_build_category_intelligence_47_final_100())
     elif args.cmd == "complete-de-ecom-intel-scan":
         from buzzard_ai_complete.commands import complete_de_ecom_intel_scan
 

@@ -37,6 +37,7 @@ class CategoryIntelligence47Service:
             "evidence_required": monitoring.get("evidence_required", True),
             "public_sources_only": monitoring.get("public_sources_only", True),
             "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
+            "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
             "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
             "live_activation": False,
         }
@@ -79,6 +80,7 @@ class CategoryIntelligence47Service:
             "category_count": config.get("category_count", 47),
             "target_competitors": config.get("target_competitors", 940),
             "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
+            "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
             "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
             "html_exists": html_path.is_file(),
             "html_bytes": html_path.stat().st_size if html_path.is_file() else 0,
@@ -89,6 +91,22 @@ class CategoryIntelligence47Service:
         config = self.load_config()
         path = self._repo_path(config["intelligence_os_json_path"])
         return json.loads(path.read_text(encoding="utf-8"))
+
+    def final_100_single_file_summary(self) -> dict:
+        config = self.load_config()
+        manifest = self.load_manifest()
+        html_path = self._repo_path(config["intelligence_os_final_100_single_file_html_path"])
+        return {
+            "name": manifest.get("name", "Buzzard 47 Category Intelligence OS"),
+            "version": manifest.get("version", "1.0-final-100"),
+            "category_count": config.get("category_count", 47),
+            "target_competitors": config.get("target_competitors", 940),
+            "console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
+            "manifest_json": "/taxonomy/buzzard_47_category_intelligence_os.json",
+            "finalization": manifest.get("finalization", {}),
+            "html_exists": html_path.is_file(),
+            "html_bytes": html_path.stat().st_size if html_path.is_file() else 0,
+        }
 
     def demo_flow(self) -> dict:
         seeded = self.seed_categories()

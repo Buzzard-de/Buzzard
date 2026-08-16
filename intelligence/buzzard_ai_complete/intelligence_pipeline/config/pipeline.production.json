@@ -75,12 +75,18 @@
           "id": "category_intelligence_47_console",
           "type": "category_intelligence_console",
           "path": "data/taxonomy/buzzard_47_category_intelligence_os.html"
+        },
+        {
+          "id": "category_intelligence_47_final_100_single_file_html",
+          "type": "category_intelligence_final_console",
+          "path": "data/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html"
         }
       ],
       "competitor_sources": [],
       "taxonomy_sink": {
         "manifest": "data/taxonomy/buzzard_47_category_intelligence_os.json",
         "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html",
+        "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
         "sync_command": "complete-sync-category-intelligence-47"
       }
     }

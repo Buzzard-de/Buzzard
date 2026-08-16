@@ -75,6 +75,13 @@ def main() -> None:
     print(f"OK: {len(categories)} Kategorien → {CONFIG_PATH}")
     print(f"OK: manifest → {MANIFEST_PATH}")
 
+    build_script = REPO_ROOT / "intelligence" / "scripts" / "build_category_intelligence_47_final_100.py"
+    if build_script.is_file():
+        import subprocess
+        import sys
+
+        subprocess.run([sys.executable, str(build_script)], check=True)
+
 
 if __name__ == "__main__":
     main()

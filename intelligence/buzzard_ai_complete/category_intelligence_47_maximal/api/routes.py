@@ -83,6 +83,10 @@ if APIRouter:
     def category_intel_47_intelligence_os_full():
         return service.load_manifest()
 
+    @router.get("/intelligence-os-final-100-single-file")
+    def category_intel_47_final_100_single_file():
+        return service.final_100_single_file_summary()
+
     @router.get("/demo")
     def category_intel_47_demo():
         return service.demo_flow()

@@ -1,1 +1,1 @@
-"""Buzzard gizli — local Intelligence API (app.py) and Voice UI (voice_ui.py → :8787)."""
+"""Buzzard gizli — `python app.py` [api|voice|all] from this folder."""

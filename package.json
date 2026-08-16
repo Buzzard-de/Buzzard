@@ -25,8 +25,8 @@
     "render:preflight": "node scripts/render-preflight.mjs",
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
     "gizli": "python gizli/app.py",
-    "gizli:voice": "python gizli/voice_ui.py",
-    "gizli:start": "python gizli/start.py"
+    "gizli:voice": "python gizli/app.py voice",
+    "gizli:start": "python gizli/app.py all"
   },
   "dependencies": {
     "next": "^15.1.0",

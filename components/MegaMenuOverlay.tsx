@@ -13,6 +13,7 @@ import {
   getChildren,
 } from "@/lib/categories";
 import { useIsMobileNav, useIsTabletNav } from "@/lib/use-media-query";
+import MegaMenuSearch from "./MegaMenuSearch";
 
 export default function MegaMenuOverlay() {
   const homeUI = useHomeUI();
@@ -49,6 +50,7 @@ export default function MegaMenuOverlay() {
             ×
           </button>
         </div>
+        <MegaMenuSearch onNavigate={homeUI?.closeMegaMenu} />
 
         {isMobile ? (
           <CategorySidebar activeId={activeMainId} onSelect={setActiveMainId} embedded />

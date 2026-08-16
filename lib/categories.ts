@@ -53,7 +53,7 @@ export {
   getMainCategoryIcon,
 };
 
-/** Linke Spalte: alle 41 Hauptkategorien aus JSON */
+/** Linke Spalte: Hauptkategorien aus JSON (Smart-Menü: 48 Kategorien via API) */
 export const mainCategories = getMainCategories().map((cat) => ({
   id: cat.id,
   slug: cat.slug,

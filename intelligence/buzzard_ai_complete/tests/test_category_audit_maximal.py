@@ -43,9 +43,16 @@ def test_no_delete():
 
 def test_review_queue_size():
     summary = CategoryAuditService().engine().summary()
-    assert summary["actions"]["REVIEW"] == 1
+    assert summary["actions"]["REVIEW"] == 0
+    assert summary["actions"]["KEEP"] >= 9
     assert summary["live_main_categories"] == 41
     assert summary["migration_items"] == 1
+
+
+def test_angebote_keep():
+    report = CategoryAuditService().audit_report()["categories"]
+    row = next(x for x in report if x["name"] == "Angebote & Sonderkollektionen")
+    assert row["action"] == "KEEP"
 
 
 def test_service_health_full_input():
@@ -69,4 +76,4 @@ def test_demo_flow():
     demo = CategoryAuditService().demo_flow()
     assert demo["integrity"] is True
     assert demo["preview_matches_input"] is True
-    assert len(demo["review_queue"]) == 1
+    assert len(demo["review_queue"]) == 0

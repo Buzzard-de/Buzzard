@@ -139,8 +139,12 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
           </p>
           <p>
+            <a href="/taxonomy/buzzard_master_business_os_final_100_single_file.html" target="_blank" rel="noopener noreferrer">
+              Master Business OS Final 100% öffnen
+            </a>
+            {" · "}
             <a href="/taxonomy/buzzard_master_business_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
-              Master Business OS öffnen (PIM, Commerce, Finance)
+              Master Business OS Maximum
             </a>
             {" · "}
             <a href="/taxonomy/buzzard_intelligence_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">

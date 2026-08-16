@@ -30,6 +30,9 @@ export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps)
             Gesamten KFZ-Baum öffnen
           </Link>
         )}
+        <Link href="/taxonomy/buzzard_master_business_os_final_100_single_file.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
+          Master Business OS Final 100%
+        </Link>
         <Link href="/taxonomy/buzzard_master_business_os_maximum_single_file.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
           Master Business OS
         </Link>

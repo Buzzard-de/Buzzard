@@ -98,7 +98,8 @@ def test_master_business_os_maximum_manifest_loaded():
     assert summary["integration_target_count"] == 18
     assert summary["agent_count"] == 43
     assert summary["manifest_path"] == "/taxonomy/buzzard_master_business_os_maximum_manifest.json"
-    assert summary["console_html"] == "/taxonomy/buzzard_master_business_os_maximum_single_file.html"
+    assert summary["console_html"] == "/taxonomy/buzzard_master_business_os_final_100_single_file.html"
+    assert summary["software_scope_percent"] == 100
     manifest = service.load_master_business_os_maximum_manifest()
     assert manifest["enterprise_modules"][0][0] == "Intelligence OS"
     assert "Automotive / Kfz" in manifest["business_categories"]
@@ -115,3 +116,15 @@ def test_master_business_os_maximum_single_file_loaded():
     assert summary["agent_count"] == 43
     assert summary["console_html"] == "/taxonomy/buzzard_master_business_os_maximum_single_file.html"
     assert summary["intelligence_console_html"] == "/taxonomy/buzzard_intelligence_os_maximum_single_file.html"
+
+
+def test_master_business_os_final_100_single_file_loaded():
+    service = AutomotiveTaxonomyService()
+    summary = service.master_business_os_final_100_single_file_summary()
+    assert summary["console"] == "business_final_100_single_file"
+    assert summary["software_scope_percent"] == 100
+    assert summary["finalization"]["status"] == "FINAL_SOFTWARE_SCOPE_LOCKED"
+    assert summary["enterprise_module_count"] == 18
+    assert summary["agent_count"] == 43
+    assert summary["console_html"] == "/taxonomy/buzzard_master_business_os_final_100_single_file.html"
+    assert summary["business_console_maximum_html"] == "/taxonomy/buzzard_master_business_os_maximum_single_file.html"

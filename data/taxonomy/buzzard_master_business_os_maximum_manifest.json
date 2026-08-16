@@ -5587,5 +5587,25 @@
     "Phone/Voice",
     "CRM",
     "Accounting"
-  ]
+  ],
+  "finalization": {
+    "software_scope_percent": 100,
+    "status": "FINAL_SOFTWARE_SCOPE_LOCKED",
+    "new_major_software_planned": false,
+    "future_work": "production deployment, credentials, external integrations, real data, testing, monitoring",
+    "core_domains": [
+      "customer",
+      "commerce",
+      "catalog",
+      "intelligence",
+      "supply",
+      "operations",
+      "logistics",
+      "growth",
+      "finance",
+      "security",
+      "ai",
+      "executive"
+    ]
+  }
 }

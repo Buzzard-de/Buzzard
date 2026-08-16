@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
-"""Build buzzard_master_business_os_maximum_single_file.html from manifest + intelligence base."""
+"""Build Master Business OS single-file HTML consoles from manifest + intelligence base."""
 
 from __future__ import annotations
 
 import json
 import re
+import shutil
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 INTEL_HTML = REPO / "data/taxonomy/buzzard_intelligence_os_maximum_single_file.html"
 MANIFEST = REPO / "data/taxonomy/buzzard_master_business_os_maximum_manifest.json"
-OUT_DATA = REPO / "data/taxonomy/buzzard_master_business_os_maximum_single_file.html"
-OUT_PUBLIC = REPO / "public/taxonomy/buzzard_master_business_os_maximum_single_file.html"
+OUT_MAX_DATA = REPO / "data/taxonomy/buzzard_master_business_os_maximum_single_file.html"
+OUT_MAX_PUBLIC = REPO / "public/taxonomy/buzzard_master_business_os_maximum_single_file.html"
+OUT_FINAL_DATA = REPO / "data/taxonomy/buzzard_master_business_os_final_100_single_file.html"
+OUT_FINAL_PUBLIC = REPO / "public/taxonomy/buzzard_master_business_os_final_100_single_file.html"
+OUT_MANIFEST_PUBLIC = REPO / "public/taxonomy/buzzard_master_business_os_maximum_manifest.json"
 
 BUSINESS_NAV = (
     '<button data-v="business">Business OS</button>'
@@ -21,6 +25,7 @@ BUSINESS_NAV = (
     '<button data-v="growth">Growth</button>'
     '<button data-v="finance">Finance</button>'
     '<button data-v="security">Security</button>'
+    '<button data-v="final">100% Final</button>'
 )
 
 BUSINESS_SECTIONS = """
@@ -112,6 +117,33 @@ BUSINESS_SECTIONS = """
 </div>
 <div class="panel"><h2>Defense loop</h2><div class="pipeline" id="securityPipeline"></div></div>
 </section>
+
+<section id="final" class="view">
+<h1>🦅 BUZZARD MASTER BUSINESS OS — FINAL 100%</h1>
+<p class="lead">Bu sürüm Buzzard'ın yazılım kapsamını tek çekirdekte kilitler. Yeni bir ana yazılım modülü planlanmamıştır. Bundan sonraki işler canlı servis hesapları, API anahtarları, gerçek veri kaynakları ve deployment bağlantılarıdır.</p>
+<div class="grid">
+<div class="kpi"><b>100%</b><span>Yazılım kapsamı</span></div>
+<div class="kpi"><b>18</b><span>Ana sistem modülü</span></div>
+<div class="kpi"><b>43+</b><span>Kategori Intelligence mimarisi</span></div>
+<div class="kpi"><b>1</b><span>Merkezi Kurmay</span></div>
+</div>
+<div class="panel"><h2>Final sistem sınırı</h2><div class="tablewrap"><table><thead><tr><th>Katman</th><th>Durum</th><th>Kapsam</th></tr></thead><tbody>
+<tr><td>Customer Experience</td><td>100%</td><td>Web storefront, multilingual UX, AI chat/sales</td></tr>
+<tr><td>Commerce</td><td>100%</td><td>Catalog, cart, checkout, order lifecycle</td></tr>
+<tr><td>Master Data</td><td>100%</td><td>PIM, canonical product, category, EAN/OEM/MPN</td></tr>
+<tr><td>Intelligence</td><td>100%</td><td>Category, competitor, price, product, supplier, demand, trend</td></tr>
+<tr><td>Supply</td><td>100%</td><td>Supplier hub, API/XML/TecDoc adapters, dropship model</td></tr>
+<tr><td>Operations</td><td>100%</td><td>OMS, warehouse, inventory, returns, warranty</td></tr>
+<tr><td>Logistics</td><td>100%</td><td>Carrier abstraction and smart shipping engine</td></tr>
+<tr><td>Growth</td><td>100%</td><td>Ads, CRM, customer intelligence, AI sales</td></tr>
+<tr><td>Finance</td><td>100%</td><td>Revenue, COGS, fees, ads, contribution, net profit</td></tr>
+<tr><td>Security</td><td>100%</td><td>Identity, least privilege, monitoring, audit, isolation model</td></tr>
+<tr><td>AI Organization</td><td>100%</td><td>Specialists, Doğu Bey, Aslan Bey, Esat Bey, Central Kurmay</td></tr>
+<tr><td>Governance</td><td>100%</td><td>Evidence, approval, versioning, audit, public-source boundary</td></tr>
+</tbody></table></div></div>
+<div class="panel"><h2>Yeni yazılım üretme kriteri</h2><p class="lead">Bu çekirdek tamamlandıktan sonra yeni ihtiyaçlar mevcut modüllerin içine feature/adapter olarak eklenecek. Ancak yeni bir ana sistem ancak iş modelinde gerçekten yeni bir domain ortaya çıkarsa açılacak.</p></div>
+<div class="alert"><b>Canlıya geçiş notu:</b> Yazılım kapsamının tamamlanması, üçüncü taraf servis hesaplarının otomatik olarak açıldığı anlamına gelmez. eBay/Amazon/TecDoc/kargo/ödeme/tedarikçi API'leri için gerçek hesap ve yetkiler gerektiğinde ilgili adapter'lar etkinleştirilir.</div>
+</section>
 """
 
 RENDER_ENTERPRISE = """
@@ -128,45 +160,52 @@ function renderEnterprise(){
 """
 
 
-def build() -> str:
+def build(*, final_100: bool = True) -> str:
     html = INTEL_HTML.read_text(encoding="utf-8")
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     boot_json = json.dumps(manifest, ensure_ascii=False, separators=(",", ":"))
 
-    html = html.replace(
-        "<title>BUZZARD Intelligence OS — Maximum Single File</title>",
-        "<title>BUZZARD Master Business OS — Maximum Single File</title>",
-    )
+    if final_100:
+        title = "<title>BUZZARD Master Business OS — Final 100%</title>"
+        header = (
+            '<div class="logo"><span>BUZZARD</span> MASTER BUSINESS OS</div>'
+            '<div class="subtitle">Final 100% • Intelligence • Business OS • PIM • Commerce • Logistics • Growth • Finance • Security • Kurmay</div>'
+        )
+        footer = (
+            '<div class="footer">BUZZARD Master Business OS • Final 100% single-file prototype • '
+            "Demo seed data açıkça işaretlenmiştir; canlı veri iddiası değildir.</div>"
+        )
+        download_name = 'a.download="buzzard-master-business-os-final-100-full.json"'
+    else:
+        title = "<title>BUZZARD Master Business OS — Maximum Single File</title>"
+        header = (
+            '<div class="logo"><span>BUZZARD</span> MASTER BUSINESS OS</div>'
+            '<div class="subtitle">Maximum • Intelligence • Business OS • PIM • Commerce • Logistics • Growth • Finance • Security • Kurmay</div>'
+        )
+        footer = (
+            '<div class="footer">BUZZARD Master Business OS • Maximum single-file prototype • '
+            "Demo seed data açıkça işaretlenmiştir; canlı veri iddiası değildir.</div>"
+        )
+        download_name = 'a.download="buzzard-master-business-os-full.json"'
+
+    html = html.replace("<title>BUZZARD Intelligence OS — Maximum Single File</title>", title)
     html = html.replace(
         '<div class="logo"><span>BUZZARD</span> INTELLIGENCE OS</div><div class="subtitle">Maximum • All-in-One • Category • Competitor • Price • Product • Supplier • Demand • Trend • Opportunity • Memory • Alerts • Kurmay</div>',
-        '<div class="logo"><span>BUZZARD</span> MASTER BUSINESS OS</div><div class="subtitle">Maximum • Intelligence • Business OS • PIM • Commerce • Logistics • Growth • Finance • Security • Kurmay</div>',
+        header,
     )
-    html = html.replace(
-        '<button data-v="architecture">Mimari</button>',
-        BUSINESS_NAV + '<button data-v="architecture">Mimari</button>',
-    )
-    html = html.replace(
-        '<section id="architecture" class="view">',
-        BUSINESS_SECTIONS + "\n<section id=\"architecture\" class=\"view\">",
-    )
+    nav = BUSINESS_NAV if final_100 else BUSINESS_NAV.replace('<button data-v="final">100% Final</button>', "")
+    sections = BUSINESS_SECTIONS if final_100 else BUSINESS_SECTIONS.split('<section id="final"')[0]
+    html = html.replace('<button data-v="architecture">Mimari</button>', nav + '<button data-v="architecture">Mimari</button>')
+    html = html.replace('<section id="architecture" class="view">', sections + '\n<section id="architecture" class="view">')
     html = html.replace(
         '<div class="footer">BUZZARD Intelligence OS • Maximum single-file prototype • Demo seed data açıkça işaretlenmiştir; canlı veri iddiası değildir.</div>',
-        '<div class="footer">BUZZARD Master Business OS • Maximum single-file prototype • Demo seed data açıkça işaretlenmiştir; canlı veri iddiası değildir.</div>',
+        footer,
     )
-    html = re.sub(
-        r"const BOOT = \{.*?\};",
-        f"const BOOT = {boot_json};",
-        html,
-        count=1,
-        flags=re.DOTALL,
-    )
+    html = re.sub(r"const BOOT = \{.*?\};", f"const BOOT = {boot_json};", html, count=1, flags=re.DOTALL)
     html = html.replace('localStorage.getItem("buzzardOS2")', 'localStorage.getItem("buzzardBusinessOS2")')
     html = html.replace('localStorage.setItem("buzzardOS2"', 'localStorage.setItem("buzzardBusinessOS2"')
     html = html.replace('localStorage.removeItem("buzzardOS2")', 'localStorage.removeItem("buzzardBusinessOS2")')
-    html = html.replace(
-        'a.download="buzzard-intelligence-os-full.json"',
-        'a.download="buzzard-master-business-os-full.json"',
-    )
+    html = html.replace('a.download="buzzard-intelligence-os-full.json"', download_name)
     html = html.replace(
         "renderCategory();renderCompetitor();renderOpportunity();renderMemory();renderAlerts();renderKurmay();renderAgents();renderOps();",
         "renderCategory();renderCompetitor();renderOpportunity();renderMemory();renderAlerts();renderKurmay();renderAgents();renderOps();renderEnterprise();",
@@ -175,13 +214,20 @@ def build() -> str:
     return html
 
 
+def write_outputs(path_data: Path, path_public: Path, content: str) -> None:
+    path_data.write_text(content, encoding="utf-8")
+    path_public.parent.mkdir(parents=True, exist_ok=True)
+    path_public.write_text(content, encoding="utf-8")
+    print(f"Wrote {path_data} ({len(content)} bytes)")
+    print(f"Wrote {path_public} ({len(content)} bytes)")
+
+
 def main() -> None:
-    output = build()
-    OUT_DATA.write_text(output, encoding="utf-8")
-    OUT_PUBLIC.parent.mkdir(parents=True, exist_ok=True)
-    OUT_PUBLIC.write_text(output, encoding="utf-8")
-    print(f"Wrote {OUT_DATA} ({len(output)} bytes)")
-    print(f"Wrote {OUT_PUBLIC} ({len(output)} bytes)")
+    final_html = build(final_100=True)
+    write_outputs(OUT_FINAL_DATA, OUT_FINAL_PUBLIC, final_html)
+    write_outputs(OUT_MAX_DATA, OUT_MAX_PUBLIC, build(final_100=False))
+    shutil.copy2(MANIFEST, OUT_MANIFEST_PUBLIC)
+    print(f"Synced {OUT_MANIFEST_PUBLIC}")
 
 
 if __name__ == "__main__":

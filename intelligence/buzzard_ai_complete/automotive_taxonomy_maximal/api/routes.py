@@ -139,5 +139,9 @@ if APIRouter:
     @router.get("/master-business-os-maximum-single-file")
     def automotive_taxonomy_master_business_os_maximum_single_file():
         return service.master_business_os_maximum_single_file_summary()
+
+    @router.get("/master-business-os-final-100-single-file")
+    def automotive_taxonomy_master_business_os_final_100_single_file():
+        return service.master_business_os_final_100_single_file_summary()
 else:
     router = None

@@ -19,17 +19,18 @@ from buzzard_ai_complete.category_intelligence_47_maximal.category_intelligence_
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS categories(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  code TEXT UNIQUE,
-  name TEXT,
+  code TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
   parent_id INTEGER,
   level INTEGER NOT NULL,
-  source TEXT DEFAULT 'master_taxonomy'
+  source TEXT DEFAULT 'master_taxonomy',
+  status TEXT DEFAULT 'ACTIVE'
 );
 CREATE TABLE IF NOT EXISTS competitors(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  category_id INTEGER,
-  rank INTEGER,
-  name TEXT,
+  category_id INTEGER NOT NULL,
+  rank INTEGER NOT NULL,
+  name TEXT NOT NULL,
   domain TEXT DEFAULT '',
   type TEXT DEFAULT 'SPECIALIST',
   country TEXT DEFAULT 'DE',
@@ -43,12 +44,12 @@ CREATE TABLE IF NOT EXISTS competitors(
 );
 CREATE TABLE IF NOT EXISTS competitor_nodes(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  competitor_id INTEGER,
-  raw_path TEXT,
-  normalized_path TEXT,
-  level INTEGER,
-  node_name TEXT,
-  parent_path TEXT,
+  competitor_id INTEGER NOT NULL,
+  raw_path TEXT NOT NULL,
+  normalized_path TEXT NOT NULL,
+  level INTEGER NOT NULL,
+  node_name TEXT NOT NULL,
+  parent_path TEXT DEFAULT '',
   evidence_url TEXT DEFAULT '',
   confidence REAL DEFAULT 0,
   verified INTEGER DEFAULT 0,
@@ -56,51 +57,58 @@ CREATE TABLE IF NOT EXISTS competitor_nodes(
 );
 CREATE TABLE IF NOT EXISTS buzzard_nodes(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  category_id INTEGER,
-  path TEXT,
-  level INTEGER,
-  node_name TEXT,
-  parent_path TEXT,
+  category_id INTEGER NOT NULL,
+  path TEXT NOT NULL,
+  level INTEGER NOT NULL,
+  node_name TEXT NOT NULL,
+  parent_path TEXT DEFAULT '',
   status TEXT DEFAULT 'ACTIVE',
   UNIQUE(category_id, path)
 );
-CREATE TABLE IF NOT EXISTS features(
+CREATE TABLE IF NOT EXISTS competitor_features(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  competitor_id INTEGER,
-  feature TEXT,
-  present INTEGER,
+  competitor_id INTEGER NOT NULL,
+  feature TEXT NOT NULL,
+  present INTEGER NOT NULL,
   evidence_url TEXT DEFAULT '',
-  confidence REAL DEFAULT 0
+  confidence REAL DEFAULT 0,
+  notes TEXT DEFAULT ''
 );
 CREATE TABLE IF NOT EXISTS findings(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  category_id INTEGER,
-  kind TEXT,
-  path TEXT,
-  title TEXT,
+  category_id INTEGER NOT NULL,
+  kind TEXT NOT NULL,
+  path TEXT DEFAULT '',
+  title TEXT NOT NULL,
   score REAL DEFAULT 0,
   confidence REAL DEFAULT 0,
+  evidence_count INTEGER DEFAULT 0,
   status TEXT DEFAULT 'PROPOSED',
   rationale TEXT DEFAULT '',
-  created_at TEXT
+  created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS research_queue(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  category_id INTEGER,
+  category_id INTEGER NOT NULL,
   competitor_id INTEGER,
-  task_type TEXT,
-  target TEXT,
+  task_type TEXT NOT NULL,
+  target TEXT NOT NULL,
   priority INTEGER DEFAULT 50,
-  status TEXT DEFAULT 'OPEN'
+  status TEXT DEFAULT 'OPEN',
+  assigned_agent TEXT DEFAULT ''
 );
 CREATE TABLE IF NOT EXISTS audit(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  actor TEXT,
-  action TEXT,
-  entity TEXT,
-  entity_id TEXT,
-  details TEXT,
-  created_at TEXT
+  actor TEXT NOT NULL,
+  action TEXT NOT NULL,
+  entity TEXT NOT NULL,
+  entity_id TEXT DEFAULT '',
+  details TEXT DEFAULT '',
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS settings(
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
 );
 """
 
@@ -108,6 +116,9 @@ CREATE TABLE IF NOT EXISTS audit(
 def norm(value: str) -> str:
     text = unicodedata.normalize("NFKD", (value or "").lower()).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", " ", text).strip()
+
+
+normalize = norm
 
 
 def now() -> str:
@@ -124,7 +135,46 @@ class CategoryIntelligence47Store:
         connection = sqlite3.connect(self.db_path)
         connection.row_factory = sqlite3.Row
         connection.executescript(SCHEMA)
+        self._migrate_legacy_features(connection)
+        self._seed_settings(connection)
         return connection
+
+    def _migrate_legacy_features(self, connection: sqlite3.Connection) -> None:
+        legacy = connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='features'"
+        ).fetchone()
+        if not legacy:
+            return
+        connection.execute(
+            """
+            INSERT OR IGNORE INTO competitor_features(competitor_id, feature, present, evidence_url, confidence, notes)
+            SELECT competitor_id, feature, present, evidence_url, confidence, ''
+            FROM features
+            """
+        )
+        connection.commit()
+
+    def _seed_settings(self, connection: sqlite3.Connection) -> None:
+        defaults = {
+            "scope": "47 non-Kfz categories",
+            "competitor_target": "940",
+            "verification": "evidence required",
+        }
+        for key, value in defaults.items():
+            connection.execute(
+                "INSERT OR IGNORE INTO settings(key, value) VALUES(?, ?)",
+                (key, value),
+            )
+        connection.commit()
+
+    def audit(self, actor: str, action: str, entity: str, entity_id: str = "", details: str = "") -> None:
+        connection = self.connect()
+        connection.execute(
+            "INSERT INTO audit(actor, action, entity, entity_id, details, created_at) VALUES(?,?,?,?,?,?)",
+            (actor, action, entity, str(entity_id), details, now()),
+        )
+        connection.commit()
+        connection.close()
 
     def summary(self) -> dict:
         connection = self.connect()
@@ -137,6 +187,8 @@ class CategoryIntelligence47Store:
             "buzzard_nodes": count("SELECT COUNT(*) FROM buzzard_nodes"),
             "findings": count("SELECT COUNT(*) FROM findings"),
             "open_tasks": count("SELECT COUNT(*) FROM research_queue WHERE status='OPEN'"),
+            "target_categories": 47,
+            "target_competitors": 940,
         }
         connection.close()
         return payload
@@ -160,7 +212,8 @@ class CategoryIntelligence47Store:
             added += cursor.rowcount
         connection.commit()
         connection.close()
-        return {"added": added}
+        self.audit("system", "import", "categories", "", f"added={added}")
+        return {"ok": True, "added": added}
 
     def add_competitor(self, payload: Competitor) -> dict:
         connection = self.connect()
@@ -195,7 +248,8 @@ class CategoryIntelligence47Store:
             (payload.category_id, payload.rank),
         ).fetchone()["id"]
         connection.close()
-        return {"id": competitor_id}
+        self.audit("user", "upsert", "competitor", competitor_id, payload.name)
+        return {"ok": True, "id": competitor_id}
 
     def list_competitors(self, category_id: int) -> list[dict]:
         connection = self.connect()
@@ -211,6 +265,9 @@ class CategoryIntelligence47Store:
 
     def add_node(self, payload: Node) -> dict:
         parts = [part.strip() for part in payload.path.split(">") if part.strip()]
+        if not parts:
+            raise ValueError("Empty taxonomy path")
+        path = " > ".join(parts)
         connection = self.connect()
         connection.execute(
             """
@@ -222,7 +279,7 @@ class CategoryIntelligence47Store:
             (
                 payload.competitor_id,
                 payload.path,
-                norm(" > ".join(parts)),
+                norm(path),
                 len(parts),
                 parts[-1],
                 " > ".join(parts[:-1]),
@@ -237,6 +294,8 @@ class CategoryIntelligence47Store:
 
     def add_buzzard_node(self, payload: BuzzNode) -> dict:
         parts = [part.strip() for part in payload.path.split(">") if part.strip()]
+        if not parts:
+            raise ValueError("Empty taxonomy path")
         connection = self.connect()
         connection.execute(
             """
@@ -248,13 +307,23 @@ class CategoryIntelligence47Store:
         )
         connection.commit()
         connection.close()
-        return {"ok": True}
+        return {"ok": True, "level": len(parts)}
 
     def add_feature(self, payload: Feature) -> dict:
         connection = self.connect()
         connection.execute(
-            "INSERT INTO features(competitor_id, feature, present, evidence_url, confidence) VALUES(?,?,?,?,?)",
-            (payload.competitor_id, payload.feature, int(payload.present), payload.evidence_url, payload.confidence),
+            """
+            INSERT INTO competitor_features(competitor_id, feature, present, evidence_url, confidence, notes)
+            VALUES(?,?,?,?,?,?)
+            """,
+            (
+                payload.competitor_id,
+                payload.feature,
+                int(payload.present),
+                payload.evidence_url,
+                payload.confidence,
+                payload.notes,
+            ),
         )
         connection.commit()
         connection.close()
@@ -262,7 +331,7 @@ class CategoryIntelligence47Store:
 
     def add_finding(self, payload: Finding) -> dict:
         connection = self.connect()
-        connection.execute(
+        cursor = connection.execute(
             """
             INSERT INTO findings(
               category_id, kind, path, title, score, confidence, status, rationale, created_at
@@ -280,9 +349,11 @@ class CategoryIntelligence47Store:
                 now(),
             ),
         )
+        finding_id = cursor.lastrowid
         connection.commit()
         connection.close()
-        return {"ok": True}
+        self.audit("ai", "create", "finding", finding_id, payload.title)
+        return {"ok": True, "id": finding_id}
 
     def analyze(self, category_id: int) -> dict:
         connection = self.connect()
@@ -297,7 +368,7 @@ class CategoryIntelligence47Store:
         ).fetchone()[0]
         nodes = connection.execute(
             """
-            SELECT cn.normalized_path, cn.level, cn.node_name, COUNT(DISTINCT cn.competitor_id) cnt
+            SELECT cn.normalized_path, cn.level, cn.node_name, COUNT(DISTINCT cn.competitor_id) AS cnt
             FROM competitor_nodes cn
             JOIN competitors cp ON cp.id = cn.competitor_id
             WHERE cp.category_id=? AND cn.verified=1
@@ -312,20 +383,18 @@ class CategoryIntelligence47Store:
         }
         features = connection.execute(
             """
-            SELECT f.feature, COUNT(DISTINCT f.competitor_id) cnt
-            FROM features f
-            JOIN competitors cp ON cp.id = f.competitor_id
-            WHERE cp.category_id=? AND f.present=1
-            GROUP BY f.feature
+            SELECT cf.feature, COUNT(DISTINCT cf.competitor_id) AS cnt
+            FROM competitor_features cf
+            JOIN competitors cp ON cp.id = cf.competitor_id
+            WHERE cp.category_id=? AND cf.present=1
+            GROUP BY cf.feature
             ORDER BY cnt DESC
             """,
             (category_id,),
         ).fetchall()
         connection.close()
 
-        common = []
-        unique = []
-        missing = []
+        common, rare, missing = [], [], []
         for node in nodes:
             share = 100 * node["cnt"] / competitor_count if competitor_count else 0
             item = {
@@ -337,17 +406,21 @@ class CategoryIntelligence47Store:
             if share >= 70:
                 common.append(item)
             if share <= 10:
-                unique.append(item)
+                rare.append(item)
             if node["normalized_path"] not in buzzard_paths and node["cnt"] >= 2:
                 missing.append(item)
 
+        coverage_pct = round(competitor_count / 20 * 100, 1)
         return {
             "category": dict(category),
+            "competitor_count": competitor_count,
             "competitors": competitor_count,
             "target": 20,
-            "coverage_pct": round(competitor_count / 20 * 100, 1),
+            "coverage_pct": coverage_pct,
+            "common_nodes": common,
+            "rare_or_unique_nodes": rare,
             "common": common,
-            "unique": unique,
+            "unique": rare,
             "buzzard_missing_candidates": missing,
             "common_features": [dict(item) for item in features],
         }

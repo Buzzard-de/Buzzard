@@ -21,6 +21,7 @@ Canonical automotive parts taxonomy for Buzzard.
 | `buzzard_47_category_intelligence_os.json` | **47 Category Intelligence OS** — 47 non-Kfz mains, 940 competitor target, evidence model |
 | `buzzard_47_category_intelligence_os.html` | **47 Category Intelligence OS Console** — Kurmay dashboard, taxonomy gap analysis |
 | `buzzard_47_category_intelligence_os_final_100_single_file.html` | **47 Category Intelligence OS Final 100% Console** — scope lock + 12-layer completion |
+| `buzzard_47_category_intelligence_os_max_final_single_file.html` | **47 Category Intelligence OS MAX FINAL Console** — maximum core engine + evidence model |
 
 ## Intelligence OS
 
@@ -59,6 +60,7 @@ python3 main.py complete-sync-kfz-category-tree
 - **KFZ Intelligence OS Console (HTML):** `/taxonomy/buzzard_master_kfz_intelligence_os.html`
 - **47 Category Intelligence OS Console (HTML):** `/taxonomy/buzzard_47_category_intelligence_os.html`
 - **47 Category Intelligence OS Final 100% Console (HTML):** `/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html`
+- **47 Category Intelligence OS MAX FINAL Console (HTML):** `/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html`
 - **47 Category Intelligence OS Manifest (JSON):** `/taxonomy/buzzard_47_category_intelligence_os.json`
 - API: `/api/kfz-tree`, `/api/kfz-intelligence`
 - Intelligence API: `/automotive-taxonomy/kfz-intelligence-os`, `/automotive-taxonomy/intelligence-os-all-in-one`, `/automotive-taxonomy/intelligence-os-maximum-manifest`, `/automotive-taxonomy/intelligence-os-maximum-single-file`, `/automotive-taxonomy/master-business-os-maximum-manifest`, `/automotive-taxonomy/master-business-os-maximum-single-file`, `/automotive-taxonomy/master-business-os-final-100-single-file`, `/category-intelligence-47`

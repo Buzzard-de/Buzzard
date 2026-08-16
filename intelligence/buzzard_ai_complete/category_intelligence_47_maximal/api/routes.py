@@ -50,11 +50,17 @@ if APIRouter:
 
     @router.post("/nodes")
     def category_intel_47_add_node(payload: Node):
-        return service.store.add_node(payload)
+        try:
+            return service.store.add_node(payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/buzzard-nodes")
     def category_intel_47_add_buzzard_node(payload: BuzzNode):
-        return service.store.add_buzzard_node(payload)
+        try:
+            return service.store.add_buzzard_node(payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/features")
     def category_intel_47_add_feature(payload: Feature):
@@ -86,6 +92,10 @@ if APIRouter:
     @router.get("/intelligence-os-final-100-single-file")
     def category_intel_47_final_100_single_file():
         return service.final_100_single_file_summary()
+
+    @router.get("/intelligence-os-max-final-single-file")
+    def category_intel_47_max_final_single_file():
+        return service.max_final_single_file_summary()
 
     @router.get("/demo")
     def category_intel_47_demo():

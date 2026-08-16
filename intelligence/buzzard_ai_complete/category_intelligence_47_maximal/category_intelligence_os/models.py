@@ -37,12 +37,16 @@ class BuzzNode(BaseModel):
     status: str = "ACTIVE"
 
 
+BuzzardNode = BuzzNode
+
+
 class Feature(BaseModel):
     competitor_id: int
     feature: str
     present: bool
     evidence_url: str = ""
     confidence: float = 0
+    notes: str = ""
 
 
 class Finding(BaseModel):

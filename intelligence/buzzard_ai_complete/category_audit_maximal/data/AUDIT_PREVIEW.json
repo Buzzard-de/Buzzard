@@ -50,9 +50,9 @@
     "menu_order": 5,
     "url": "/kategorie/automotive",
     "level": 1,
-    "action": "KEEP",
-    "target": "Automotive",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-06",
@@ -72,9 +72,9 @@
     "menu_order": 7,
     "url": "/kategorie/garten",
     "level": 1,
-    "action": "KEEP",
-    "target": "Garten",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-08",
@@ -105,9 +105,9 @@
     "menu_order": 10,
     "url": "/kategorie/haus-und-wohnen",
     "level": 1,
-    "action": "KEEP",
-    "target": "Haus & Wohnen",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-11",
@@ -116,9 +116,9 @@
     "menu_order": 11,
     "url": "/kategorie/moebel",
     "level": 1,
-    "action": "KEEP",
-    "target": "Möbel",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-12",
@@ -127,9 +127,9 @@
     "menu_order": 12,
     "url": "/kategorie/elektronik",
     "level": 1,
-    "action": "KEEP",
-    "target": "Elektronik",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-13",
@@ -149,9 +149,9 @@
     "menu_order": 14,
     "url": "/kategorie/sport-und-outdoor",
     "level": 1,
-    "action": "KEEP",
-    "target": "Sport & Outdoor",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-15",
@@ -270,9 +270,9 @@
     "menu_order": 25,
     "url": "/kategorie/lebensmittel-und-getraenke",
     "level": 1,
-    "action": "KEEP",
-    "target": "Lebensmittel & Getränke",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-26",
@@ -336,9 +336,9 @@
     "menu_order": 31,
     "url": "/kategorie/sicherheit-und-ueberwachung",
     "level": 1,
-    "action": "KEEP",
-    "target": "Sicherheit & Überwachung",
-    "reason": "Exact canonical Master match."
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
   },
   {
     "id": "cat-32",

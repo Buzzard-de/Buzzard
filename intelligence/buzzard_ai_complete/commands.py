@@ -486,6 +486,28 @@ def complete_production_bridge_summary():
     return json.dumps(ProductionBridgeService().summary(), ensure_ascii=False, indent=2)
 
 
+def complete_production_bridge_preflight():
+    from buzzard_ai_complete.production.bridge import ProductionBridgeService
+
+    return json.dumps(ProductionBridgeService().preflight(), ensure_ascii=False, indent=2)
+
+
+def complete_production_bridge_max_single():
+    from buzzard_ai_complete.production.bridge import ProductionBridgeService
+
+    return json.dumps(ProductionBridgeService().max_single_summary(), ensure_ascii=False, indent=2)
+
+
+def complete_build_production_bridge_max_single():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "build_production_bridge_max_single.py"
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_production_docs():
     return _read_doc("PRODUCTION_MAX_UPGRADE.md")
 

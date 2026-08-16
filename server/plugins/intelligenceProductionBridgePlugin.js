@@ -49,7 +49,25 @@ module.exports = {
           error: "intelligence_bridge_not_configured",
         });
       }
-      const result = await fetchIntelligence("/production/bridge/summary");
+      const result = await fetchIntelligence("/production/bridge/max-single");
+      if (!result.ok) {
+        const fallback = await fetchIntelligence("/production/bridge/summary");
+        if (!fallback.ok) {
+          return res.status(503).json({ success: false, error: result.error });
+        }
+        return res.json({ success: true, catalogMode: true, ...fallback.data });
+      }
+      return res.json({ success: true, catalogMode: true, ...result.data });
+    });
+
+    app.get("/api/intelligence/production/preflight", async (_req, res) => {
+      if (!isBridgeEnabled()) {
+        return res.status(503).json({
+          success: false,
+          error: "intelligence_bridge_not_configured",
+        });
+      }
+      const result = await fetchIntelligence("/production/bridge/preflight");
       if (!result.ok) {
         return res.status(503).json({ success: false, error: result.error });
       }

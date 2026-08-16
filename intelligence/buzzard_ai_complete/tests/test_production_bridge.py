@@ -35,3 +35,32 @@ def test_production_bridge_gate_passes_with_env(monkeypatch):
     summary = ProductionBridgeService().summary()
     assert summary["gates_passed"] >= 10
     assert summary["ready_for_go_live"] is True
+
+
+def test_production_bridge_preflight(monkeypatch):
+    monkeypatch.setenv("PUBLIC_BASE_URL", "https://buzzard24.de")
+    monkeypatch.setenv("DATABASE_URL", "postgres://example")
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test")
+    monkeypatch.setenv("STRIPE_PUBLISHABLE_KEY", "pk_test")
+    monkeypatch.setenv("DEFAULT_PAYMENT_PROVIDER", "stripe")
+    monkeypatch.setenv("DEFAULT_CARRIER", "dhl")
+    monkeypatch.setenv("DHL_API_KEY", "dhl")
+    monkeypatch.setenv("TECDOC_API_KEY", "tec")
+    monkeypatch.setenv("SUPPLIER_HUB_URL", "https://supplier.example")
+    monkeypatch.setenv("SMTP_HOST", "smtp.example")
+    monkeypatch.setenv("SENDGRID_API_KEY", "sg")
+    monkeypatch.setenv("JWT_SECRET", "secret")
+    monkeypatch.setenv("BACKUP_BUCKET", "backup")
+    monkeypatch.setenv("SENTRY_DSN", "https://sentry.example/1")
+    monkeypatch.setenv("BUZZARD_LEGAL_READY", "1")
+    report = ProductionBridgeService().preflight()
+    assert report["total"] == 14
+    assert report["gates"]["DOMAIN"] is True
+    assert report["gates"]["TLS"] is True
+    assert report["go_live_allowed"] is False
+
+
+def test_production_bridge_max_single_summary():
+    summary = ProductionBridgeService().max_single_summary()
+    assert summary["primary_console_html"] == "/taxonomy/buzzard_production_bridge_max_single_file.html"
+    assert "preflight" in summary

@@ -6,6 +6,8 @@ import json
 import os
 from pathlib import Path
 
+from buzzard_ai_complete.production.preflight import ProductionBridgePreflight
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 MANIFEST_PATH = REPO_ROOT / "data/taxonomy/buzzard_production_bridge_manifest.json"
 
@@ -40,6 +42,9 @@ def _configured(*names: str) -> bool:
 
 
 class ProductionBridgeService:
+    def __init__(self):
+        self._preflight = ProductionBridgePreflight()
+
     def manifest_path(self) -> Path:
         return MANIFEST_PATH
 
@@ -205,6 +210,27 @@ class ProductionBridgeService:
             self._gate_return(),
             self._gate_gdpr(),
         ]
+
+    def preflight(self, check_legal_urls: bool = False) -> dict:
+        return self._preflight.run_preflight(check_legal_urls=check_legal_urls)
+
+    def save_preflight_report(self, path: str | Path | None = None) -> dict:
+        return self._preflight.save_report(path)
+
+    def max_single_summary(self) -> dict:
+        manifest = self.load_manifest()
+        preflight = self.preflight(check_legal_urls=False)
+        return {
+            **manifest,
+            "version": "1.0-max-single",
+            "primary_console_html": "/taxonomy/buzzard_production_bridge_max_single_file.html",
+            "preflight_json": "/taxonomy/buzzard_production_preflight.json",
+            "preflight": preflight,
+            "gates_passed": preflight["passed"],
+            "gates_total": preflight["total"],
+            "readiness_pct": preflight["readiness_pct"],
+            "go_live_allowed": preflight["go_live_allowed"],
+        }
 
     def summary(self) -> dict:
         manifest = self.load_manifest()

@@ -24,6 +24,9 @@ python3 main.py complete-production-demo
 python3 main.py complete-production-readiness
 python3 main.py complete-production-bridge-manifest
 python3 main.py complete-production-bridge-summary
+python3 main.py complete-production-bridge-preflight
+python3 main.py complete-production-bridge-max-single
+python3 main.py complete-build-production-bridge-max-single
 python3 main.py complete-production-docs
 ```
 
@@ -35,7 +38,9 @@ python3 main.py complete-production-docs
 - `GET /production/readiness` — go-live readiness gate
 - `GET /production/bridge/manifest` — Production Bridge Manifest (JSON)
 - `GET /production/bridge/gates` — Gate-Evaluierung
-- `GET /production/bridge/summary` — Manifest + Gate-Status
+- `GET /production/bridge/preflight` — MAX SINGLE Preflight-Report
+- `POST /production/bridge/preflight/save` — Preflight-Report speichern
+- `GET /production/bridge/max-single` — Manifest + Preflight + Konsole
 - `GET /storefront/products` — catalog search/list
 - `POST /storefront/cart` — create cart
 - `POST /storefront/cart/{id}/checkout` — checkout lifecycle

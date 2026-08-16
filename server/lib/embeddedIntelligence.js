@@ -77,6 +77,55 @@ function taxonomySnapshot() {
   };
 }
 
+function productionBridgePreflight() {
+  return {
+    generated_at: new Date().toISOString(),
+    mode: "embedded",
+    passed: 0,
+    total: 14,
+    readiness_pct: 0,
+    go_live_allowed: false,
+    rule: "Kein Produktions-Go-Live, bis jedes Gate explizit bestanden ist.",
+    gates: {
+      DOMAIN: false,
+      TLS: false,
+      DATABASE: false,
+      PAYMENT: false,
+      SHIPPING: false,
+      SUPPLIER: false,
+      EMAIL: false,
+      SECURITY: false,
+      BACKUP: false,
+      MONITORING: false,
+      LEGAL: false,
+      ORDER_TEST: false,
+      RETURN_TEST: false,
+      GDPR: false,
+    },
+    legal_routes: [
+      "/impressum",
+      "/datenschutz",
+      "/agb",
+      "/widerruf",
+      "/versand",
+      "/zahlung",
+      "/kontakt",
+    ].map((route) => ({ route, ok: false, detail: "Embedded-Modus — manuelle Freigabe erforderlich" })),
+  };
+}
+
+function productionBridgeMaxSingle() {
+  return {
+    ...productionBridgeSummary(),
+    version: "1.0-max-single",
+    primary_console_html: "/taxonomy/buzzard_production_bridge_max_single_file.html",
+    preflight_json: "/taxonomy/buzzard_production_preflight.json",
+    preflight: productionBridgePreflight(),
+    readiness_pct: 0,
+    go_live_allowed: false,
+  };
+}
+
 function productionBridgeSummary() {
   return {
     name: "Buzzard Production Bridge",
@@ -178,6 +227,8 @@ module.exports = {
   nodePath,
   productionReadiness,
   productionBridgeSummary,
+  productionBridgeMaxSingle,
+  productionBridgePreflight,
   productionIntegrations,
   shopBridgeReadiness,
   health,

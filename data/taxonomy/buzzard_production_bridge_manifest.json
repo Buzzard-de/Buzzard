@@ -22,5 +22,17 @@
   "important": "Credentials, API-Keys und rechtliche Freigaben müssen konfiguriert werden; die Bridge erfindet sie nicht.",
   "go_live_rule": "Jedes Gate muss bestehen.",
   "manifest_json": "/taxonomy/buzzard_production_bridge_manifest.json",
-  "api_prefix": "/production/bridge"
+  "api_prefix": "/production/bridge",
+  "primary_console_html": "/taxonomy/buzzard_production_bridge_max_single_file.html",
+  "preflight_json": "/taxonomy/buzzard_production_preflight.json",
+  "max_single_console_html": "/taxonomy/buzzard_production_bridge_max_single_file.html",
+  "required_legal_routes": [
+    "/impressum",
+    "/datenschutz",
+    "/agb",
+    "/widerruf",
+    "/versand",
+    "/zahlung",
+    "/kontakt"
+  ]
 }

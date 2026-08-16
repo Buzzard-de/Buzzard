@@ -41,6 +41,8 @@ async function fetchIntelligence(path) {
       "/health": embedded.health(),
       "/production/readiness": embedded.productionReadiness(),
       "/production/bridge/summary": embedded.productionBridgeSummary(),
+      "/production/bridge/max-single": embedded.productionBridgeMaxSingle(),
+      "/production/bridge/preflight": embedded.productionBridgePreflight(),
       "/production/integrations": embedded.productionIntegrations(),
       "/shop-bridge/readiness": embedded.shopBridgeReadiness(),
       "/taxonomy/snapshot": embedded.taxonomySnapshot(),

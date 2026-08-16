@@ -1,0 +1,108 @@
+[
+  {
+    "id": "live-01",
+    "name": "Textil",
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
+  },
+  {
+    "id": "live-02",
+    "name": "Kosmetik & Körperpflege",
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
+  },
+  {
+    "id": "live-03",
+    "name": "Reinigungsprodukte",
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
+  },
+  {
+    "id": "live-04",
+    "name": "Schule & Bürobedarf",
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
+  },
+  {
+    "id": "live-05",
+    "name": "Automotive",
+    "action": "KEEP",
+    "target": "Automotive",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "live-06",
+    "name": "Haustierbedarf",
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
+  },
+  {
+    "id": "live-07",
+    "name": "Garten",
+    "action": "KEEP",
+    "target": "Garten",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "live-08",
+    "name": "Arbeitsschutz & Berufskleidung",
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
+  },
+  {
+    "id": "live-09",
+    "name": "Werkzeuge & Eisenwaren",
+    "action": "REVIEW",
+    "target": null,
+    "reason": "No safe deterministic mapping; human/category-AI review required."
+  },
+  {
+    "id": "live-10",
+    "name": "Haus & Wohnen",
+    "action": "KEEP",
+    "target": "Haus & Wohnen",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "live-11",
+    "name": "Möbel",
+    "action": "KEEP",
+    "target": "Möbel",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "live-12",
+    "name": "Elektronik",
+    "action": "KEEP",
+    "target": "Elektronik",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "live-13",
+    "name": "Reifen & Felgen",
+    "parent": "Automotive",
+    "action": "MOVE_CONTENT",
+    "target": "Lastikler – Tüm Motorlu Araçlar",
+    "reason": "Explicitly approved category-audit rule."
+  },
+  {
+    "id": "live-14",
+    "name": "Landwirtschaft & Agrartechnik",
+    "action": "RESTRUCTURE",
+    "target": "Tarım & Tarım Makineleri",
+    "reason": "Explicitly approved category-audit rule."
+  },
+  {
+    "id": "live-15",
+    "name": "Baumaschinen & Ersatzteile",
+    "action": "RESTRUCTURE",
+    "target": "İnşaat & İnşaat Makineleri",
+    "reason": "Explicitly approved category-audit rule."
+  }
+]

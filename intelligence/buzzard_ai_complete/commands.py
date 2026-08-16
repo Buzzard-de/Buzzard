@@ -1408,6 +1408,28 @@ def complete_smart_menu_48_docs():
     return _read_doc("SMART_MENU_48_MAXIMAL.md")
 
 
+def complete_category_audit_health():
+    from buzzard_ai_complete.category_audit_maximal.service import CategoryAuditService
+
+    return json.dumps(CategoryAuditService().health(), ensure_ascii=False, indent=2)
+
+
+def complete_category_audit_demo():
+    from buzzard_ai_complete.category_audit_maximal.service import CategoryAuditService
+
+    return json.dumps(CategoryAuditService().demo_flow(), ensure_ascii=False, indent=2)
+
+
+def complete_category_audit_report():
+    from buzzard_ai_complete.category_audit_maximal.service import CategoryAuditService
+
+    return json.dumps(CategoryAuditService().audit_report(), ensure_ascii=False, indent=2)
+
+
+def complete_category_audit_docs():
+    return _read_doc("CATEGORY_AUDIT_MAXIMAL.md")
+
+
 def run_tests():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", str(PACK_DIR / "tests"), "-q"],

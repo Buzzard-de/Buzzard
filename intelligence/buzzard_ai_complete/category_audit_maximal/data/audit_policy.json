@@ -1,0 +1,34 @@
+{
+  "Reifen & Felgen": {
+    "action": "MOVE_CONTENT",
+    "target": "Lastikler – Tüm Motorlu Araçlar"
+  },
+  "Landwirtschaft & Agrartechnik": {
+    "action": "RESTRUCTURE",
+    "target": "Tarım & Tarım Makineleri"
+  },
+  "Baumaschinen & Ersatzteile": {
+    "action": "RESTRUCTURE",
+    "target": "İnşaat & İnşaat Makineleri"
+  },
+  "Hayvancılık": {
+    "action": "SEPARATE",
+    "target": "Hayvancılık"
+  },
+  "Güneş & Rüzgâr Enerjisi": {
+    "action": "SEPARATE",
+    "target": "Güneş & Rüzgâr Enerjisi"
+  },
+  "Lastikler – Tüm Motorlu Araçlar": {
+    "action": "SEPARATE",
+    "target": "Lastikler – Tüm Motorlu Araçlar"
+  },
+  "Tarım & Tarım Makineleri": {
+    "action": "SEPARATE",
+    "target": "Tarım & Tarım Makineleri"
+  },
+  "İnşaat & İnşaat Makineleri": {
+    "action": "SEPARATE",
+    "target": "İnşaat & İnşaat Makineleri"
+  }
+}

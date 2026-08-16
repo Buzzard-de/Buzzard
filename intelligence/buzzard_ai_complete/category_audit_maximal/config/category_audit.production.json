@@ -1,0 +1,15 @@
+{
+  "name": "BUZZARD_CATEGORY_AUDIT_MAXIMAL",
+  "version": "1.0.0",
+  "schema": "buzzard.category-audit.v1",
+  "actions": ["KEEP", "MOVE_CONTENT", "RESTRUCTURE", "SEPARATE", "REVIEW"],
+  "delete_enabled": false,
+  "master_taxonomy_ref": "master_taxonomy_48_maximal",
+  "live_input_status": "PARTIAL_INPUT",
+  "rules": {
+    "require_full_live_export_before_merge": true,
+    "human_review_on_conflict": true
+  },
+  "live_activation": false,
+  "BUZZARD_SALES_ENABLED": 0
+}

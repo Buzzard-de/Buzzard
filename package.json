@@ -24,11 +24,15 @@
     "search:sync": "node scripts/sync-search-index.mjs",
     "render:preflight": "node scripts/render-preflight.mjs",
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
-    "gizli": "python gizli/app.py all",
-    "gizli:api": "python gizli/app.py api",
-    "gizli:voice": "python gizli/voice.py",
-    "gizli:8787": "python gizli/voice.py",
-    "gizli:start": "python gizli/app.py all"
+    "buzzard": "python Buzzard/app.py all",
+    "buzzard:api": "python Buzzard/app.py api",
+    "buzzard:voice": "python Buzzard/voice.py",
+    "buzzard:8787": "python Buzzard/voice.py",
+    "gizli": "python Buzzard/app.py all",
+    "gizli:api": "python Buzzard/app.py api",
+    "gizli:voice": "python Buzzard/voice.py",
+    "gizli:8787": "python Buzzard/voice.py",
+    "gizli:start": "python Buzzard/app.py all"
   },
   "dependencies": {
     "next": "^15.1.0",

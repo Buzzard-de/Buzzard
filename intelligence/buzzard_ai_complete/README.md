@@ -527,10 +527,10 @@ python3 main.py complete-scheduler --interval 300 --process 1
 ```bash
 cd intelligence
 python app.py
-# Buzzard project gizli:
-cd gizli && python app.py                    # API :8000 + Voice :8787
-cd gizli && python voice.py                  # only http://127.0.0.1:8787
-cd gizli && python 8787.py                   # alias → voice.py
+# Buzzard project folder:
+cd Buzzard && python app.py                    # API :8000 + Voice :8787
+cd Buzzard && python voice.py                  # only http://127.0.0.1:8787
+# legacy alias: cd gizli && python app.py
 # npm: npm run gizli | gizli:voice | gizli:start
 # or uvicorn directly:
 uvicorn buzzard_ai_complete.api.app:app --reload

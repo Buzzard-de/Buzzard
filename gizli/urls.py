@@ -1,7 +1,0 @@
-"""Buzzard gizli — local URLs and ports."""
-
-GIZLI_HOST = "127.0.0.1"
-GIZLI_API_PORT = 8000
-GIZLI_VOICE_PORT = 8787
-GIZLI_API_URL = f"http://{GIZLI_HOST}:{GIZLI_API_PORT}"
-GIZLI_VOICE_URL = f"http://{GIZLI_HOST}:{GIZLI_VOICE_PORT}"

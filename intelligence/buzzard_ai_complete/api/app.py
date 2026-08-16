@@ -80,6 +80,9 @@ from buzzard_ai_complete.category_audit_maximal.api.routes import (
 from buzzard_ai_complete.supplier_intelligence_ai_maximal.api.routes import (
     router as supplier_intelligence_router,
 )
+from buzzard_ai_complete.intelligence_pipeline.api.routes import (
+    router as intelligence_pipeline_router,
+)
 
 if FastAPI:
 
@@ -166,6 +169,8 @@ if FastAPI:
         app.include_router(category_audit_router)
     if supplier_intelligence_router is not None:
         app.include_router(supplier_intelligence_router)
+    if intelligence_pipeline_router is not None:
+        app.include_router(intelligence_pipeline_router)
     if bey_router is not None:
         app.include_router(bey_router)
 

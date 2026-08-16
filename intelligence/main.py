@@ -1724,6 +1724,19 @@ def main():
         "complete-sync-kfz-category-tree",
         help="Sync KFZ tree with shop cat-05 bridge JSON",
     )
+    sub.add_parser(
+        "complete-intelligence-pipeline-health",
+        help="Show intelligence pipeline health and configured domains",
+    )
+    pipeline_run = sub.add_parser(
+        "complete-intelligence-pipeline-run",
+        help="Run intelligence pipeline (public sources → master taxonomy)",
+    )
+    pipeline_run.add_argument(
+        "--domain",
+        default="kfz_automotive",
+        help="Pipeline domain (default: kfz_automotive)",
+    )
 
     sub.add_parser("complete-agriculture-health", help="Show agriculture taxonomy health")
     sub.add_parser("complete-agriculture-branches", help="List agriculture taxonomy branches")
@@ -5750,6 +5763,14 @@ def main():
         from buzzard_ai_complete.commands import complete_sync_kfz_category_tree
 
         print(complete_sync_kfz_category_tree())
+    elif args.cmd == "complete-intelligence-pipeline-health":
+        from buzzard_ai_complete.commands import complete_intelligence_pipeline_health
+
+        print(complete_intelligence_pipeline_health())
+    elif args.cmd == "complete-intelligence-pipeline-run":
+        from buzzard_ai_complete.commands import complete_intelligence_pipeline_run
+
+        print(complete_intelligence_pipeline_run(domain=args.domain))
     elif args.cmd == "complete-agriculture-health":
         from buzzard_ai_complete.commands import complete_agriculture_health
 

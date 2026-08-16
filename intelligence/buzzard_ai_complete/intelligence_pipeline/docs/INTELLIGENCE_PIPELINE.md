@@ -1,0 +1,56 @@
+# Buzzard Intelligence Pipeline
+
+Canonical flow from public sources to master taxonomy.
+
+```
+PUBLIC SOURCES
+      ↓
+SOURCE DISCOVERY
+      ↓
+PUBLIC COLLECTOR
+      ↓
+PARSER / NORMALIZER
+      ↓
+CANONICAL CATEGORY RESOLVER
+      ↓
+┌─────────────────────────────┐
+│  CATEGORY INTELLIGENCE       │
+│  COMPETITOR INTELLIGENCE     │
+│  PRICE INTELLIGENCE          │
+│  PRODUCT INTELLIGENCE        │
+│  SUPPLIER INTELLIGENCE       │
+│  DEMAND INTELLIGENCE         │
+│  TREND INTELLIGENCE          │
+└─────────────────────────────┘
+      ↓
+OPPORTUNITY ENGINE
+      ↓
+SHARED MEMORY
+      ↓
+ALERT ENGINE
+      ↓
+CENTRAL KURMAY AI (Aslan Bey)
+      ↓
+HUMAN APPROVAL
+      ↓
+BUZZARD MASTER TAXONOMY
+```
+
+## CLI
+
+```bash
+cd intelligence
+python3 main.py complete-intelligence-pipeline-run
+python3 main.py complete-intelligence-pipeline-health
+```
+
+## API
+
+- `GET /intelligence-pipeline/health`
+- `GET /intelligence-pipeline/stages`
+- `POST /intelligence-pipeline/run?domain=kfz_automotive`
+
+## KFZ domain
+
+Uses `buzzard_master_kfz_intelligence_os.json` as taxonomy seed and
+`kfz_shop_bridge.json` as shop resolver for `cat-05` Automotive.

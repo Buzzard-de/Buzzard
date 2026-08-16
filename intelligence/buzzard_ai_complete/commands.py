@@ -1245,6 +1245,24 @@ def complete_sync_kfz_category_tree():
     result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
     return result.stdout.strip()
 
+
+def complete_intelligence_pipeline_health():
+    from buzzard_ai_complete.intelligence_pipeline.orchestrator import IntelligencePipelineOrchestrator
+
+    return json.dumps(IntelligencePipelineOrchestrator().health(), ensure_ascii=False, indent=2)
+
+
+def complete_intelligence_pipeline_run(domain: str = "kfz_automotive"):
+    from buzzard_ai_complete.intelligence_pipeline.orchestrator import IntelligencePipelineOrchestrator
+
+    return json.dumps(
+        IntelligencePipelineOrchestrator().run(domain=domain),
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+
+
 def complete_agriculture_health():
     from buzzard_ai_complete.agriculture_maximal.service import AgricultureService
 

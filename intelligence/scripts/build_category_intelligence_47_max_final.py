@@ -128,9 +128,6 @@ def ensure_manifest(manifest: dict) -> dict:
 
 
 def main() -> None:
-    ARCHIVE.write_bytes(
-        Path("/home/ubuntu/.cursor/projects/workspace/uploads/BUZZARD_47_CATEGORY_INTELLIGENCE_OS_MAX_FINAL_4177.py").read_bytes()
-    )
     manifest = ensure_manifest(json.loads(MANIFEST.read_text(encoding="utf-8")))
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     public_manifest = REPO / "public/taxonomy/buzzard_47_category_intelligence_os.json"

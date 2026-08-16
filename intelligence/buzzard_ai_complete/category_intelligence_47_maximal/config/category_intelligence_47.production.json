@@ -9,6 +9,7 @@
   "intelligence_os_html_path": "data/taxonomy/buzzard_47_category_intelligence_os.html",
   "intelligence_os_final_100_single_file_html_path": "data/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html",
   "intelligence_os_max_final_single_file_html_path": "data/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html",
+  "intelligence_os_max_single_final_single_file_html_path": "data/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html",
   "monitoring": {
     "public_sources_only": true,
     "evidence_required": true

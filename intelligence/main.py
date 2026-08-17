@@ -1516,6 +1516,10 @@ def main():
     sub.add_parser("complete-production-bridge-preflight", help="Production Bridge MAX SINGLE Preflight-Report")
     sub.add_parser("complete-production-bridge-max-single", help="Production Bridge MAX SINGLE Zusammenfassung")
     sub.add_parser("complete-build-production-bridge-max-single", help="Production Bridge MAX SINGLE HTML-Konsole bauen")
+    sub.add_parser(
+        "complete-build-category-intelligence-maximum",
+        help="Category Intelligence MAXIMUM HTML-Konsole bauen",
+    )
     sub.add_parser("complete-production-docs", help="Show Production MAX upgrade documentation")
 
     sub.add_parser("complete-shop-bridge-demo", help="Run Shop Intelligence Commerce Bridge demo flow")
@@ -5504,6 +5508,10 @@ def main():
         from buzzard_ai_complete.commands import complete_build_production_bridge_max_single
 
         print(complete_build_production_bridge_max_single())
+    elif args.cmd == "complete-build-category-intelligence-maximum":
+        from buzzard_ai_complete.commands import complete_build_category_intelligence_maximum
+
+        print(complete_build_category_intelligence_maximum())
     elif args.cmd == "complete-production-docs":
         from buzzard_ai_complete.commands import complete_production_docs
 

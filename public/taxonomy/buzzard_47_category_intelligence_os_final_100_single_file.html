@@ -1,35 +1,141 @@
-"<!doctype html><html lang='tr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>BUZZARD 47 Category Intelligence OS — Final 100%</title><style>body{margin:0;background:#070707;color:#f4f4f4;font:14px system-ui}header{position:sticky;top:0;background:#090909;border-bottom:1px solid #292929}.top{max-width:1400px;margin:auto;padding:16px 20px}.logo{font-size:23px;font-weight:900}.logo b{color:#d7af48}.tag{color:#999;font-size:11px}nav{max-width:1400px;margin:auto;display:flex;overflow:auto;padding:0 20px}nav button{background:none;color:#999;border:0;padding:11px;border-bottom:2px solid transparent}nav button.on{color:#d7af48;border-color:#d7af48}main{max-width:1400px;margin:auto;padding:20px}.view{display:none}.view.on{display:block}h1{font-size:30px}.lead{color:#999;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card,.panel{background:#111;border:1px solid #292929;border-radius:12px;padding:14px}.panel{margin-top:12px}.card b{display:block;color:#d7af48;font-size:25px}.card span{color:#999;font-size:11px}.wrap{overflow:auto;border:1px solid #292929;border-radius:9px}table{width:100%;min-width:850px;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #292929;text-align:left;font-size:12px}th{color:#d7af48;background:#151515}select{background:#0d0d0d;color:white;border:1px solid #333;border-radius:8px;padding:9px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}</style></head><body><header><div class='top'><div class='logo'><b>BUZZARD</b> 47 CATEGORY INTELLIGENCE OS</div><div class='tag'>Final 100% • Competitive Intelligence • Taxonomy • Gap Detection • Evidence</div></div><nav><button class='on' data-v='d'>Merkez</button><button data-v='c'>Kategoriler</button><button data-v='r'>Rakipler</button><button data-v='a'>Analiz</button><button data-v='l'>Audit</button><button data-v='f'>100% Final</button></nav></header><main><section id='d' class='view on'><h1>47 Kategori Kurmay Merkezi</h1><p class='lead'>47 kategori × 20 rakip = 940 rakip hedefi. Kategori ağaçları kanıtla doğrulanır; ortak, benzersiz ve Buzzard'da olmayan yapılar ayrıştırılır.</p><div id='k' class='grid'></div></section><section id='c' class='view'><h1>Kategori Kayıtları</h1><div class='wrap'><table id='ct'></table></div></section><section id='r' class='view'><h1>Rakipler</h1><div class='toolbar'><select id='cs'></select><button onclick='loadR()'>Göster</button></div><div class='wrap'><table id='rt'></table></div></section><section id='a' class='view'><h1>Taxonomy Karşılaştırma</h1><div class='toolbar'><select id='as'></select><button onclick='loadA()'>Analiz</button></div><div id='res' class='panel'></div></section><section id='l' class='view'><h1>Audit</h1><div class='wrap'><table id='lt'></table></div></section>
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUZZARD 47 Category Intelligence OS — MAX FINAL</title>
+<style>
+:root{--b:#070707;--p:#111;--g:#d7af48;--m:#999;--l:#292929}
+*{box-sizing:border-box}body{margin:0;background:var(--b);color:#f4f4f4;font:14px system-ui,Arial}
+header{position:sticky;top:0;background:#080808f5;border-bottom:1px solid var(--l);z-index:3}
+.top{max-width:1450px;margin:auto;padding:16px 20px}.logo{font-size:23px;font-weight:900}
+.logo b{color:var(--g)}.tag{color:var(--m);font-size:11px}
+nav{max-width:1450px;margin:auto;display:flex;overflow:auto;padding:0 20px}
+nav button{background:none;color:var(--m);border:0;border-bottom:2px solid transparent;padding:11px;white-space:nowrap}
+nav button.on{color:var(--g);border-color:var(--g)}
+main{max-width:1450px;margin:auto;padding:20px}.view{display:none}.view.on{display:block}
+h1{font-size:30px}.lead{color:var(--m);line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card,.panel{background:var(--p);border:1px solid var(--l);border-radius:12px;padding:14px}
+.panel{margin-top:12px}.card b{display:block;color:var(--g);font-size:25px}
+.card span{color:var(--m);font-size:11px}.wrap{overflow:auto;border:1px solid var(--l);border-radius:9px}
+table{width:100%;min-width:850px;border-collapse:collapse}
+th,td{padding:9px;border-bottom:1px solid var(--l);text-align:left;font-size:12px}
+th{color:var(--g);background:#151515}select,button.action{background:#0d0d0d;color:#fff;border:1px solid #333;border-radius:8px;padding:9px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style></head>
+<body><header><div class="top">
+<div class="logo"><b>BUZZARD</b> 47 CATEGORY INTELLIGENCE OS</div>
+<div class="tag">MAX FINAL • Competitive Intelligence • Taxonomy • Gap Detection • Evidence</div>
+</div><nav>
+<button class="on" data-v="d">Zentrale</button><button data-v="c">Kategorien</button>
+<button data-v="r">Wettbewerber</button><button data-v="a">Analyse</button><button data-v="l">Audit</button><button data-v='f'>MAX Final</button>
+</nav></header><main>
+<section id="d" class="view on"><h1>47-Kategorien-Kommandozentrale</h1>
+<p class="lead">47 Kategorien × 20 Wettbewerber = 940 Verifizierungsziel. Das System akzeptiert keine Marktdaten als VERIFIED ohne Quelle.</p>
+<div id="k" class="grid"></div></section>
+<section id="c" class="view"><h1>Kategorie-Register</h1><div class="wrap"><table id="ct"></table></div></section>
+<section id="r" class="view"><h1>Wettbewerber</h1><div class="toolbar"><select id="cs"></select>
+<button class="action" onclick="loadR()">Anzeigen</button></div><div class="wrap"><table id="rt"></table></div></section>
+<section id="a" class="view"><h1>Taxonomie-Vergleich</h1><div class="toolbar"><select id="as"></select>
+<button class="action" onclick="loadA()">Analyse</button></div><div id="res" class="panel"></div></section>
+<section id="l" class="view"><h1>Audit</h1><div class="wrap"><table id="lt"></table></div></section>
+
+<section id='f' class='view'>
+<h1>BUZZARD 47 CATEGORY INTELLIGENCE OS — MAX FINAL</h1>
+<p class='lead'>Maximum core engine: evidence-backed competitor registry, taxonomy nodes, feature matrix, gap analysis, research queue, audit trail, and Kurmay dashboard. Software scope complete.</p>
+<div class='grid'>
+<div class='card'><b>MAX</b><span>Maximum core engine</span></div>
+<div class='card'><b>47</b><span>Non-Kfz categories</span></div>
+<div class='card'><b>940</b><span>Competitor target</span></div>
+<div class='card'><b>EVIDENCE</b><span>No VERIFIED without source</span></div>
+</div>
+<div class='panel'>
+<h2>Engine modules</h2>
+<div class='wrap'><table>
+<tr><th>Module</th><th>Status</th><th>Description</th></tr>
+<tr><td>Category Master Taxonomy</td><td>MAX</td><td>47 mains synced from Master Taxonomy 48</td></tr>
+<tr><td>Competitor Registry</td><td>MAX</td><td>20 slots per category, rank + verification</td></tr>
+<tr><td>Evidence / Source Tracking</td><td>MAX</td><td>URL, confidence, verified flags</td></tr>
+<tr><td>Taxonomy Nodes</td><td>MAX</td><td>Main / sub / sub-sub paths with normalization</td></tr>
+<tr><td>Gap Analysis</td><td>MAX</td><td>Common, rare, Buzzard-missing candidates</td></tr>
+<tr><td>Feature Matrix</td><td>MAX</td><td>competitor_features with notes</td></tr>
+<tr><td>Opportunity Findings</td><td>MAX</td><td>Scored proposals with audit trail</td></tr>
+<tr><td>Research Queue</td><td>MAX</td><td>Priority tasks + assigned_agent</td></tr>
+<tr><td>Audit Trail</td><td>MAX</td><td>Actor / action / entity logging</td></tr>
+<tr><td>Settings Store</td><td>MAX</td><td>Scope, target, verification policy</td></tr>
+<tr><td>REST API</td><td>MAX</td><td>/category-intelligence-47</td></tr>
+<tr><td>Dashboard Console</td><td>MAX</td><td>Single-file HTML + manifest BOOT</td></tr>
+</table></div>
+</div>
+</section>
+
 <section id='f' class='view'>
 <h1>BUZZARD 47 CATEGORY INTELLIGENCE OS — FINAL 100%</h1>
-<p class='lead'>47 kategori × 20 rakip = 940 rakip hedefi. Yazılım kapsamı kilitlendi; bundan sonra yeni büyük modül eklenmez — sadece canlı veri, kanıt ve operasyon.</p>
+<p class='lead'>47 Kategorien × 20 Wettbewerber = 940 Wettbewerber-Ziel. Der Software-Umfang ist gesperrt; künftig nur noch Live-Daten, Nachweise und Betrieb.</p>
 <div class='grid'>
-<div class='card'><b>100%</b><span>Yazılım kapsamı</span></div>
-<div class='card'><b>47</b><span>Kategori (KFZ hariç)</span></div>
-<div class='card'><b>940</b><span>Rakip hedefi</span></div>
+<div class='card'><b>100%</b><span>Software-Umfang</span></div>
+<div class='card'><b>47</b><span>Kategorien (ohne KFZ)</span></div>
+<div class='card'><b>940</b><span>Wettbewerber-Ziel</span></div>
 <div class='card'><b>LOCKED</b><span>FINAL_SOFTWARE_SCOPE_LOCKED</span></div>
 </div>
 <div class='panel'>
-<h2>12 katman — tamamlandı</h2>
+<h2>12 Ebenen — abgeschlossen</h2>
 <div class='wrap'><table>
-<tr><th>Katman</th><th>Durum</th><th>Kapsam</th></tr>
-<tr><td>Category Registry</td><td>100%</td><td>47 ana kategori, master taxonomy sync</td></tr>
-<tr><td>Competitor Matrix</td><td>100%</td><td>20 rakip / kategori, rank + doğrulama</td></tr>
-<tr><td>Taxonomy Nodes</td><td>100%</td><td>Rakip + Buzzard düğüm karşılaştırması</td></tr>
-<tr><td>Evidence Model</td><td>100%</td><td>URL, confidence, verified flag</td></tr>
-<tr><td>Feature Intelligence</td><td>100%</td><td>Ortak özellik tespiti</td></tr>
-<tr><td>Gap Analysis</td><td>100%</td><td>Ortak, benzersiz, Buzzard eksik adayları</td></tr>
-<tr><td>Research Queue</td><td>100%</td><td>Öncelikli araştırma görevleri</td></tr>
-<tr><td>Audit Trail</td><td>100%</td><td>Aktör, aksiyon, entity log</td></tr>
-<tr><td>Kurmay Dashboard</td><td>100%</td><td>Merkez KPI + kategori / rakip / analiz</td></tr>
+<tr><th>Ebene</th><th>Status</th><th>Umfang</th></tr>
+<tr><td>Category Registry</td><td>100%</td><td>47 Hauptkategorien, Master-Taxonomie-Sync</td></tr>
+<tr><td>Competitor Matrix</td><td>100%</td><td>20 Wettbewerber / Kategorie, Ranking + Verifizierung</td></tr>
+<tr><td>Taxonomy Nodes</td><td>100%</td><td>Wettbewerber- + Buzzard-Knotenvergleich</td></tr>
+<tr><td>Evidence Model</td><td>100%</td><td>URL, Confidence, Verified-Flag</td></tr>
+<tr><td>Feature Intelligence</td><td>100%</td><td>Gemeinsame Merkmalserkennung</td></tr>
+<tr><td>Gap Analysis</td><td>100%</td><td>Gemeinsam, einzigartig, Buzzard-Lücken</td></tr>
+<tr><td>Research Queue</td><td>100%</td><td>Priorisierte Recherche-Aufgaben</td></tr>
+<tr><td>Audit Trail</td><td>100%</td><td>Akteur, Aktion, Entity-Log</td></tr>
+<tr><td>Kurmay Dashboard</td><td>100%</td><td>Zentrale KPIs + Kategorie / Wettbewerber / Analyse</td></tr>
 <tr><td>API Layer</td><td>100%</td><td>/category-intelligence-47 REST</td></tr>
-<tr><td>Static Console</td><td>100%</td><td>Single-file HTML + manifest</td></tr>
-<tr><td>Governance</td><td>100%</td><td>Public sources only, evidence required</td></tr>
+<tr><td>Static Console</td><td>100%</td><td>Single-File HTML + Manifest</td></tr>
+<tr><td>Governance</td><td>100%</td><td>Nur öffentliche Quellen, Nachweis erforderlich</td></tr>
 </table></div>
 </div>
-<p class='lead' style='margin-top:14px'>Gelecek iş: canlı rakip ingestion, kanıt doğrulama ölçeği, monitoring, production credentials.</p>
+<p class='lead' style='margin-top:14px'>Nächste Schritte: Live-Wettbewerber-Ingestion, Nachweis-Verifizierung im Maßstab, Monitoring, Production-Credentials.</p>
 </section>
-</main><script>const $=x=>document.getElementById(x),E=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const API_BASE=(window.BUZZARD_CAT47_API_BASE||'https://buzzard-api.onrender.com/category-intelligence-47');async function api(u){let r=await fetch(API_BASE+u),j=await r.json();if(!r.ok)throw Error(j.detail||'Hata');return j}document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$(b.dataset.v).classList.add('on');render()});async function render(){let s=await api('/summary');$('k').innerHTML=[['Kategori',s.categories+'/47'],['Rakip',s.competitors+'/940'],['Doğrulanmış rakip',s.verified_competitors],['Doğrulanmış düğüm',s.verified_nodes],['Buzzard düğümü',s.buzzard_nodes],['Bulgu',s.findings],['Açık görev',s.open_tasks]].map(x=>'<div class="card"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');let c=await api('/categories');$('ct').innerHTML='<tr><th>ID</th><th>Kod</th><th>Kategori</th><th>Seviye</th><th>Kaynak</th></tr>'+c.map(x=>'<tr><td>'+x.id+'</td><td>'+E(x.code)+'</td><td>'+E(x.name)+'</td><td>'+x.level+'</td><td>'+E(x.source)+'</td></tr>').join('');let o=c.map(x=>'<option value="'+x.id+'">'+E(x.code+' — '+x.name)+'</option>').join('');$('cs').innerHTML=o;$('as').innerHTML=o;let l=await api('/audit');$('lt').innerHTML='<tr><th>Zaman</th><th>Actor</th><th>Aksiyon</th><th>Entity</th><th>Detay</th></tr>'+l.map(x=>'<tr><td>'+x.created_at+'</td><td>'+E(x.actor)+'</td><td>'+E(x.action)+'</td><td>'+E(x.entity)+'</td><td>'+E(x.details)+'</td></tr>').join('')}async function loadR(){let r=await api('/categories/'+$('cs').value+'/competitors');$('rt').innerHTML='<tr><th>#</th><th>Rakip</th><th>Domain</th><th>Tip</th><th>Gelir</th><th>GMV</th><th>Durum</th></tr>'+r.map(x=>'<tr><td>'+x.rank+'</td><td>'+E(x.name)+'</td><td>'+E(x.domain)+'</td><td>'+E(x.type)+'</td><td>'+(x.revenue_eur??'—')+'</td><td>'+(x.gmv_eur??'—')+'</td><td>'+(x.verified?'VERIFIED':'UNVERIFIED')+'</td></tr>').join('')}async function loadA(){let r=await api('/analysis/'+$('as').value);$('res').innerHTML='<h2>'+E(r.category.name)+'</h2><p>Rakip kapsamı: <b>'+r.coverage_pct+'%</b></p><h3>Ortak</h3><p>'+r.common.slice(0,80).map(x=>E(x.path)+' — '+x.share_pct+'%').join(' • ')+'</p><h3>Buzzard eksik adayları</h3><p>'+r.buzzard_missing_candidates.slice(0,80).map(x=>E(x.path)+' — '+x.competitors+' rakip').join(' • ')+'</p><h3>Nadir/benzersiz</h3><p>'+r.unique.slice(0,80).map(x=>E(x.path)+' — '+x.competitors+' rakip').join(' • ')+'</p><h3>Ortak özellikler</h3><p>'+r.common_features.map(x=>E(x.feature)+' — '+x.cnt).join(' • ')+'</p>}render()</script>
+</main><script>
+const $=x=>document.getElementById(x);
+const E=x=>String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const API_BASE=(window.BUZZARD_CAT47_API_BASE||'https://buzzard-api.onrender.com/category-intelligence-47');async function api(u){let r=await fetch(API_BASE+u),j=await r.json();if(!r.ok)throw Error(j.detail||"Fehler");return j}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));$(b.dataset.v).classList.add("on");render()});
+async function render(){
+let s=await api("/summary");
+$("k").innerHTML=[["Kategorie",s.categories+"/47"],["Wettbewerber",s.competitors+"/940"],
+["Verifizierte Wettbewerber",s.verified_competitors],["Verifizierte Knoten",s.verified_nodes],
+["Buzzard-Knoten",s.buzzard_nodes],["Erkenntnisse",s.findings],["Offene Aufgaben",s.open_tasks]]
+.map(x=>'<div class="card"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join("");
+let c=await api("/categories");
+$("ct").innerHTML="<tr><th>ID</th><th>Code</th><th>Kategorie</th><th>Ebene</th><th>Quelle</th></tr>"+
+c.map(x=>"<tr><td>"+x.id+"</td><td>"+E(x.code)+"</td><td>"+E(x.name)+"</td><td>"+x.level+"</td><td>"+E(x.source)+"</td></tr>").join("");
+let o=c.map(x=>'<option value="'+x.id+'">'+E(x.code+" — "+x.name)+"</option>").join("");
+$("cs").innerHTML=o;$("as").innerHTML=o;
+let l=await api("/audit");
+$("lt").innerHTML="<tr><th>Zeit</th><th>Akteur</th><th>Aktion</th><th>Entität</th><th>Detail</th></tr>"+
+l.map(x=>"<tr><td>"+x.created_at+"</td><td>"+E(x.actor)+"</td><td>"+E(x.action)+"</td><td>"+E(x.entity)+"</td><td>"+E(x.details)+"</td></tr>").join("");
+}
+async function loadR(){
+let r=await api("/categories/"+$("cs").value+"/competitors");
+$("rt").innerHTML="<tr><th>#</th><th>Wettbewerber</th><th>Domain</th><th>Typ</th><th>Umsatz</th><th>GMV</th><th>Status</th></tr>"+
+r.map(x=>"<tr><td>"+x.rank+"</td><td>"+E(x.name)+"</td><td>"+E(x.domain)+"</td><td>"+E(x.type)+"</td><td>"+(x.revenue_eur??"—")+"</td><td>"+(x.gmv_eur??"—")+"</td><td>"+(x.verified?"VERIFIED":"UNVERIFIED")+"</td></tr>").join("");
+}
+async function loadA(){
+let r=await api("/analysis/"+$("as").value);
+$("res").innerHTML="<h2>"+E(r.category.name)+"</h2><p>Rakip kapsamı: <b>"+r.coverage_pct+"%</b></p>"+
+"<h3>Gemeinsame Kategoriestrukturen</h3><p>"+r.common_nodes.slice(0,80).map(x=>E(x.path)+" — "+x.share_pct+"%").join(" • ")+"</p>"+
+"<h3>Buzzard-Lücken-Kandidaten</h3><p>"+r.buzzard_missing_candidates.slice(0,80).map(x=>E(x.path)+" — "+x.competitors+" Wettbewerber").join(" • ")+"</p>"+
+"<h3>Seltene / einzigartige Strukturen</h3><p>"+r.rare_or_unique_nodes.slice(0,80).map(x=>E(x.path)+" — "+x.competitors+" Wettbewerber").join(" • ")+"</p>"+
+"<h3>Gemeinsame Merkmale</h3><p>"+r.common_features.map(x=>E(x.feature)+" — "+x.cnt).join(" • ")+"</p>";
+}
+render();
+</script>
 <script>
-const BOOT = {"name": "Buzzard 47 Category Intelligence OS", "version": "1.0-final-100", "scope": "47 non-Kfz categories", "target_categories": 47, "target_competitors": 940, "competitors_per_category": 20, "evidence_required": true, "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html", "api_prefix": "/category-intelligence-47", "categories": [{"code": "bz.02", "name": "Haus & Wohnen", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.03", "name": "Werkzeuge", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.04", "name": "Garten", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.05", "name": "Reinigung", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.06", "name": "Kosmetik & Pflege", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.07", "name": "Elektronik", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.08", "name": "Elektrogeräte", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.09", "name": "Möbel", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.10", "name": "Beleuchtung", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.11", "name": "Mode, Textil & Accessoires", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.12", "name": "Sport & Outdoor", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.13", "name": "Fahrräder & E-Bikes", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.14", "name": "Haustier", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.15", "name": "Baby & Kind", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.16", "name": "Gaming & Spielzeug", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.17", "name": "Büro & Schule", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.18", "name": "Baumarkt", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.19", "name": "Lager & Aufbewahrung", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.20", "name": "Autozubehör", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.21", "name": "Motorrad & Zubehör", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.22", "name": "Öle & Flüssigkeiten", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.23", "name": "Reifen & Felgen", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.24", "name": "Bremsen", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.25", "name": "Batterien", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.26", "name": "Auspuff & Anlage", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.27", "name": "Motor & Kühlung", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.28", "name": "Licht & Elektrik", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.29", "name": "Autopflege", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.30", "name": "Navi & Zubehör", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.31", "name": "Lebensmittel & Getränke", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.32", "name": "Wein & Spirituosen", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.33", "name": "Kaffee & Tee", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.34", "name": "Gesundheit & Vitamine", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.35", "name": "Haushalt & Hygiene", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.36", "name": "Heizen & Klima", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.37", "name": "Sicherheit & Überwachung", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.38", "name": "Reisen & Gepäck", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.39", "name": "Geschenke & Anlässe", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.40", "name": "Weitere Kategorien", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.41", "name": "Industrie & CNC", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.42", "name": "Baumaschinen & Ersatzteile", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.43", "name": "Landwirtschaft & Agrartechnik", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.44", "name": "Lastikler – Tüm Motorlu Araçlar", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.45", "name": "Tarım & Tarım Makineleri", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.46", "name": "Hayvancılık", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.47", "name": "Güneş & Rüzgâr Enerjisi", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}, {"code": "bz.48", "name": "İnşaat & İnşaat Makineleri", "parent_id": null, "level": 1, "source": "master_taxonomy_48"}], "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html", "finalization": {"software_scope_percent": 100, "status": "FINAL_SOFTWARE_SCOPE_LOCKED", "new_major_software_planned": false, "future_work": "production deployment, live competitor ingestion, evidence verification at scale, monitoring", "core_domains": ["category_registry", "competitor_matrix", "taxonomy_nodes", "feature_intelligence", "gap_analysis", "research_queue", "audit", "evidence"]}};
+const BOOT = {"name": "BUZZARD FINAL 47 CATEGORY INTELLIGENCE OS", "version": "1.0-final-100", "scope": "47 Nicht-Kfz-Kategorien (Deutsche Master-Taxonomie 48)", "target_categories": 47, "target_competitors": 940, "competitors_per_category": 20, "evidence_required": true, "console_html": "/taxonomy/buzzard_47_category_intelligence_os.html", "api_prefix": "/category-intelligence-47", "categories": [{"code": "bz.02", "name": "Garten & Gartenbau", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.03", "name": "Werkzeuge & Werkstatt", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.04", "name": "Heimwerken, Bau & Konstruktion", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.05", "name": "Haus & Haushalt", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.06", "name": "Möbel & Wohnen", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.07", "name": "Wohndekoration", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.08", "name": "Heimtextilien", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.09", "name": "Küche & Kochen", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.10", "name": "Bad & Sanitär", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.11", "name": "Reinigung & Hauspflege", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.12", "name": "Elektronik & Unterhaltungselektronik", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.13", "name": "Computer & IT", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.14", "name": "Mobil & Telekommunikation", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.15", "name": "Smart Home & Sicherheit", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.16", "name": "Haushaltsgeräte", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.17", "name": "Mode & Bekleidung", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.18", "name": "Schuhe", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.19", "name": "Taschen, Koffer & Accessoires", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.20", "name": "Schmuck & Uhren", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.21", "name": "Beauty & Kosmetik", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.22", "name": "Körperpflege", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.23", "name": "Gesundheit & Wellness", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.24", "name": "Apotheke & Medizinprodukte", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.25", "name": "Lebensmittel & Supermarkt", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.26", "name": "Getränke", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.27", "name": "Baby & Kinderzimmer", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.28", "name": "Kinder & Schule", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.29", "name": "Spielzeug & Spiele", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.30", "name": "Sport & Fitness", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.31", "name": "Outdoor, Camping & Abenteuer", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.32", "name": "Hobby & Freizeit", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.33", "name": "Musik & Musikinstrumente", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.34", "name": "Bücher, Medien & Unterhaltung", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.35", "name": "Büro, Schule & Schreibwaren", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.36", "name": "Haustier & Tierpflege", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.37", "name": "Landwirtschaft & Agrar", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.38", "name": "Industrie & Gewerbebedarf", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.39", "name": "Arbeitskleidung & Arbeitsschutz", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.40", "name": "Reisen & Mobilität", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.41", "name": "Geschenke, Blumen & Anlässe", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.42", "name": "Kunsthandwerk, Nähen & DIY", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.43", "name": "Beleuchtung & Lampen", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.44", "name": "Heizung, Klima & Energie", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.45", "name": "Pool, Spa & Wellness-Ausstattung", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.46", "name": "Saisonale & Festtagsartikel", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.47", "name": "Luxus, Sammlerstücke & Wertvolles", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}, {"code": "bz.48", "name": "Allgemeine Produkte & Marktplatz", "parent_id": null, "level": 1, "source": "master_taxonomy_48_de"}], "final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html", "finalization": {"software_scope_percent": 100, "status": "FINAL_SOFTWARE_SCOPE_LOCKED", "new_major_software_planned": false, "future_work": "production deployment, live competitor ingestion, evidence verification at scale, monitoring", "core_domains": ["category_registry", "competitor_matrix", "taxonomy_nodes", "feature_intelligence", "gap_analysis", "research_queue", "audit", "evidence"]}, "max_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_final_single_file.html", "engine": {"name": "Buzzard 47 Category Intelligence OS — MAX SINGLE FINAL", "modules": ["category_master_taxonomy", "competitor_registry", "evidence_tracking", "taxonomy_nodes", "gap_analysis", "feature_matrix", "opportunity_findings", "research_queue", "audit_trail", "settings_store", "rest_api", "single_file_console"], "verification_policy": "evidence_required"}, "primary_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html", "max_single_final_console_html": "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html", "final_max_console_html": "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html", "research_matrix_json": "/taxonomy/buzzard_47_research_matrix_max.json", "orchestration": {"workflow": "discovery → evidence → normalization → scoring → gap findings → review → approval → audit", "verification_rule": "candidate + no evidence = CANDIDATE; candidate + evidence = review; approval = VERIFIED", "research_matrix_target": 940}, "scope_detail": {"master_categories": 48, "research_categories": 47, "kfz_benchmark": true, "competitor_target": 940}, "pipeline": ["discovery", "evidence_capture", "evidence_review", "verification", "taxonomy_normalization", "coverage_scoring", "gap_detection", "opportunity_findings", "audit", "executive_reporting", "export"], "verification_policy_text": "No market fact becomes VERIFIED without approved evidence.", "evidence_fields": ["url", "source_name", "source_date", "claim", "locator", "content_hash"], "taxonomy_depth": "unlimited depth", "outputs": ["competitor matrix", "taxonomy matrix", "gap candidates", "feature matrix", "verification dashboard", "executive report", "audit log"], "research_basis": "EHI/ECDB Germany 2025 study, 2024 business-year data", "final_manifest_json": "/taxonomy/buzzard_final_47_category_intelligence_manifest.json", "main_categories_locale": "de", "main_categories_json": "/taxonomy/buzzard_master_48_main_categories_de.json"};
 </script>
 </body></html>

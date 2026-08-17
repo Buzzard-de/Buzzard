@@ -13,7 +13,8 @@ GERMAN_UI_REPLACEMENTS: tuple[tuple[str, str], ...] = (
     ("Göster", "Anzeigen"),
     ("İçe aktar", "Importieren"),
     ("Matrisi göster", "Matrix anzeigen"),
-    ("47 Kategori Kurmay Merkezi", "47-Kategorien-Kurmay-Zentrale"),
+    ("47 Kategori Kurmay Merkezi", "47-Kategorien-Kommandozentrale"),
+    ("47 Kategori Kurmay Zentralei", "47-Kategorien-Kommandozentrale"),
     (
         "47 kategori × 20 rakip = 940 doğrulama hedefi. Sistem kaynak olmadan piyasa bilgisini VERIFIED kabul etmez.",
         "47 Kategorien × 20 Wettbewerber = 940 Verifizierungsziel. "

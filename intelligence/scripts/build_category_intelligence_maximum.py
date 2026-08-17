@@ -44,6 +44,15 @@ def build() -> str:
         "[20,23,24,25,26,47].includes(i+1)?'review':'draft'",
         "REVIEW.includes(i+1)?'review':'draft'",
     )
+    html = html.replace("◈ Command Dashboard", "◈ Kommandozentrale")
+    html = html.replace("⌘ Master Category Tree", "⌘ Master-Kategoriebaum")
+    html = html.replace("▦ Category Registry", "▦ Kategorie-Register")
+    html = html.replace("⌕ Research Control", "⌕ Recherche-Steuerung")
+    html = html.replace("✓ Governance & Quality", "✓ Governance & Qualität")
+    html = html.replace("⚙ System", "⚙ System")
+    html = html.replace("<h2>Category Universe</h2>", "<h2>Kategorie-Universum</h2>")
+    html = html.replace("Tree öffnen", "Baum öffnen")
+    html = html.replace("JSON Export", "JSON-Export")
     OUT_DATA.parent.mkdir(parents=True, exist_ok=True)
     OUT_PUBLIC.parent.mkdir(parents=True, exist_ok=True)
     OUT_DATA.write_text(html, encoding="utf-8")

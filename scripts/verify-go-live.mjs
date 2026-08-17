@@ -50,6 +50,14 @@ const STOREFRONT_ROUTES = [
   "/robots.txt",
 ];
 
+const TAXONOMY_ROUTES = [
+  "/taxonomy/buzzard_category_intelligence_maximum_single_file.html",
+  "/taxonomy/buzzard_final_47_category_intelligence_os_max_single_file.html",
+  "/taxonomy/buzzard_production_bridge_max_single_file.html",
+  "/taxonomy/buzzard_master_kfz_category_tree_v1.html",
+  "/taxonomy/buzzard_master_kfz_intelligence_os.html",
+];
+
 const ADMIN_ROUTES = ADMIN_ROUTE_SLUGS;
 
 function sleep(ms) {
@@ -101,6 +109,15 @@ async function main() {
     const result = await checkUrl(`${SITE}${path}`);
     const mark = result.ok ? "OK" : "FAIL";
     console.log(`  [${mark}] ${result.status} ${path}`);
+    if (!result.ok) failed += 1;
+  }
+
+  console.log("");
+  console.log("Taxonomy consoles (GitHub Pages):");
+  for (const route of TAXONOMY_ROUTES) {
+    const result = await checkUrl(`${SITE}${route}`);
+    const mark = result.ok ? "OK" : "FAIL";
+    console.log(`  [${mark}] ${result.status} ${route}`);
     if (!result.ok) failed += 1;
   }
 

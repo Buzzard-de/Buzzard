@@ -508,6 +508,16 @@ def complete_build_production_bridge_max_single():
     return result.stdout.strip()
 
 
+def complete_build_category_intelligence_maximum():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "build_category_intelligence_maximum.py"
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_production_docs():
     return _read_doc("PRODUCTION_MAX_UPGRADE.md")
 

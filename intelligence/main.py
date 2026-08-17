@@ -1520,6 +1520,10 @@ def main():
         "complete-build-category-intelligence-maximum",
         help="Category Intelligence MAXIMUM HTML-Konsole bauen",
     )
+    sub.add_parser(
+        "complete-build-kfz-taxonomy-de",
+        help="KFZ-Taxonomie-Konsolen auf Deutsch bauen",
+    )
     sub.add_parser("complete-production-docs", help="Show Production MAX upgrade documentation")
 
     sub.add_parser("complete-shop-bridge-demo", help="Run Shop Intelligence Commerce Bridge demo flow")
@@ -5512,6 +5516,10 @@ def main():
         from buzzard_ai_complete.commands import complete_build_category_intelligence_maximum
 
         print(complete_build_category_intelligence_maximum())
+    elif args.cmd == "complete-build-kfz-taxonomy-de":
+        from buzzard_ai_complete.commands import complete_build_kfz_taxonomy_de
+
+        print(complete_build_kfz_taxonomy_de())
     elif args.cmd == "complete-production-docs":
         from buzzard_ai_complete.commands import complete_production_docs
 

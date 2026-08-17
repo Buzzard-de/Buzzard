@@ -5,9 +5,12 @@ from __future__ import annotations
 
 import json
 import shutil
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "intelligence/scripts"))
+from category_intelligence_47_locale_de import germanize_console_html
 MANIFEST = REPO / "data/taxonomy/buzzard_47_category_intelligence_os.json"
 BASE_HTML = REPO / "data/taxonomy/buzzard_47_category_intelligence_os.html"
 OUT_DATA = REPO / "data/taxonomy/buzzard_47_category_intelligence_os_final_100_single_file.html"
@@ -18,32 +21,32 @@ FINAL_NAV = "<button data-v='f'>100% Final</button>"
 FINAL_SECTION = """
 <section id='f' class='view'>
 <h1>BUZZARD 47 CATEGORY INTELLIGENCE OS — FINAL 100%</h1>
-<p class='lead'>47 kategori × 20 rakip = 940 rakip hedefi. Yazılım kapsamı kilitlendi; bundan sonra yeni büyük modül eklenmez — sadece canlı veri, kanıt ve operasyon.</p>
+<p class='lead'>47 Kategorien × 20 Wettbewerber = 940 Wettbewerber-Ziel. Der Software-Umfang ist gesperrt; künftig nur noch Live-Daten, Nachweise und Betrieb.</p>
 <div class='grid'>
-<div class='card'><b>100%</b><span>Yazılım kapsamı</span></div>
-<div class='card'><b>47</b><span>Kategori (KFZ hariç)</span></div>
-<div class='card'><b>940</b><span>Rakip hedefi</span></div>
+<div class='card'><b>100%</b><span>Software-Umfang</span></div>
+<div class='card'><b>47</b><span>Kategorien (ohne KFZ)</span></div>
+<div class='card'><b>940</b><span>Wettbewerber-Ziel</span></div>
 <div class='card'><b>LOCKED</b><span>FINAL_SOFTWARE_SCOPE_LOCKED</span></div>
 </div>
 <div class='panel'>
-<h2>12 katman — tamamlandı</h2>
+<h2>12 Ebenen — abgeschlossen</h2>
 <div class='wrap'><table>
-<tr><th>Katman</th><th>Durum</th><th>Kapsam</th></tr>
-<tr><td>Category Registry</td><td>100%</td><td>47 ana kategori, master taxonomy sync</td></tr>
-<tr><td>Competitor Matrix</td><td>100%</td><td>20 rakip / kategori, rank + doğrulama</td></tr>
-<tr><td>Taxonomy Nodes</td><td>100%</td><td>Rakip + Buzzard düğüm karşılaştırması</td></tr>
-<tr><td>Evidence Model</td><td>100%</td><td>URL, confidence, verified flag</td></tr>
-<tr><td>Feature Intelligence</td><td>100%</td><td>Ortak özellik tespiti</td></tr>
-<tr><td>Gap Analysis</td><td>100%</td><td>Ortak, benzersiz, Buzzard eksik adayları</td></tr>
-<tr><td>Research Queue</td><td>100%</td><td>Öncelikli araştırma görevleri</td></tr>
-<tr><td>Audit Trail</td><td>100%</td><td>Aktör, aksiyon, entity log</td></tr>
-<tr><td>Kurmay Dashboard</td><td>100%</td><td>Merkez KPI + kategori / rakip / analiz</td></tr>
+<tr><th>Ebene</th><th>Status</th><th>Umfang</th></tr>
+<tr><td>Category Registry</td><td>100%</td><td>47 Hauptkategorien, Master-Taxonomie-Sync</td></tr>
+<tr><td>Competitor Matrix</td><td>100%</td><td>20 Wettbewerber / Kategorie, Ranking + Verifizierung</td></tr>
+<tr><td>Taxonomy Nodes</td><td>100%</td><td>Wettbewerber- + Buzzard-Knotenvergleich</td></tr>
+<tr><td>Evidence Model</td><td>100%</td><td>URL, Confidence, Verified-Flag</td></tr>
+<tr><td>Feature Intelligence</td><td>100%</td><td>Gemeinsame Merkmalserkennung</td></tr>
+<tr><td>Gap Analysis</td><td>100%</td><td>Gemeinsam, einzigartig, Buzzard-Lücken</td></tr>
+<tr><td>Research Queue</td><td>100%</td><td>Priorisierte Recherche-Aufgaben</td></tr>
+<tr><td>Audit Trail</td><td>100%</td><td>Akteur, Aktion, Entity-Log</td></tr>
+<tr><td>Kurmay Dashboard</td><td>100%</td><td>Zentrale KPIs + Kategorie / Wettbewerber / Analyse</td></tr>
 <tr><td>API Layer</td><td>100%</td><td>/category-intelligence-47 REST</td></tr>
-<tr><td>Static Console</td><td>100%</td><td>Single-file HTML + manifest</td></tr>
-<tr><td>Governance</td><td>100%</td><td>Public sources only, evidence required</td></tr>
+<tr><td>Static Console</td><td>100%</td><td>Single-File HTML + Manifest</td></tr>
+<tr><td>Governance</td><td>100%</td><td>Nur öffentliche Quellen, Nachweis erforderlich</td></tr>
 </table></div>
 </div>
-<p class='lead' style='margin-top:14px'>Gelecek iş: canlı rakip ingestion, kanıt doğrulama ölçeği, monitoring, production credentials.</p>
+<p class='lead' style='margin-top:14px'>Nächste Schritte: Live-Wettbewerber-Ingestion, Nachweis-Verifizierung im Maßstab, Monitoring, Production-Credentials.</p>
 </section>
 """
 
@@ -80,7 +83,7 @@ def build_html(manifest: dict) -> str:
     html = html.replace("</main>", f"{FINAL_SECTION}</main>")
     boot = BOOT_SCRIPT.replace("__BOOT_JSON__", json.dumps(manifest, ensure_ascii=False))
     html = html.replace("</body>", f"{boot}</body>")
-    return html
+    return germanize_console_html(html)
 
 
 def ensure_manifest_finalization(manifest: dict) -> dict:

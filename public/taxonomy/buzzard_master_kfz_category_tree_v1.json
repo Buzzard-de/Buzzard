@@ -1,7 +1,7 @@
 {
   "name": "Buzzard Master Kfz Category Tree V1",
   "version": "1.0",
-  "language": "tr",
+  "language": "de",
   "main_category_count": 43,
   "subcategory_count": 454,
   "architecture_rule": "Vehicle make/model/year, HSN/TSN, OEM, TecDoc ID, manufacturer part no, viscosity, dimensions belong in Product Attribute / Compatibility layer — not in category tree.",
@@ -104,7 +104,7 @@
     },
     {
       "id": "02",
-      "name": "Motor Yönetimi & Sensörler",
+      "name": "Motorsteuerung & Sensoren",
       "subcategories": [
         {
           "id": "02.01",
@@ -165,7 +165,7 @@
     },
     {
       "id": "03",
-      "name": "Yakıt Sistemi",
+      "name": "Kraftstoffsystem",
       "subcategories": [
         {
           "id": "03.01",
@@ -226,7 +226,7 @@
     },
     {
       "id": "04",
-      "name": "Turbo & Şarj Sistemi",
+      "name": "Turbo & Ladeluft",
       "subcategories": [
         {
           "id": "04.01",
@@ -272,7 +272,7 @@
     },
     {
       "id": "05",
-      "name": "Soğutma Sistemi",
+      "name": "Kühlsystem",
       "subcategories": [
         {
           "id": "05.01",
@@ -328,7 +328,7 @@
     },
     {
       "id": "06",
-      "name": "Motor Kayışları & Triger",
+      "name": "Motorriemen & Steuerkette",
       "subcategories": [
         {
           "id": "06.01",
@@ -384,7 +384,7 @@
     },
     {
       "id": "07",
-      "name": "Filtreler",
+      "name": "Filter",
       "subcategories": [
         {
           "id": "07.01",
@@ -435,7 +435,7 @@
     },
     {
       "id": "08",
-      "name": "Yağlar & Teknik Sıvılar",
+      "name": "Öle & technische Flüssigkeiten",
       "subcategories": [
         {
           "id": "08.01",
@@ -501,7 +501,7 @@
     },
     {
       "id": "09",
-      "name": "Fren Sistemi",
+      "name": "Bremsanlage",
       "subcategories": [
         {
           "id": "09.01",
@@ -577,7 +577,7 @@
     },
     {
       "id": "10",
-      "name": "Debriyaj",
+      "name": "Kupplung",
       "subcategories": [
         {
           "id": "10.01",
@@ -633,7 +633,7 @@
     },
     {
       "id": "11",
-      "name": "Şanzıman",
+      "name": "Getriebe",
       "subcategories": [
         {
           "id": "11.01",
@@ -694,7 +694,7 @@
     },
     {
       "id": "12",
-      "name": "Akslar & Aktarma",
+      "name": "Antriebswellen & Antrieb",
       "subcategories": [
         {
           "id": "12.01",
@@ -750,7 +750,7 @@
     },
     {
       "id": "13",
-      "name": "Direksiyon",
+      "name": "Lenkung",
       "subcategories": [
         {
           "id": "13.01",
@@ -801,7 +801,7 @@
     },
     {
       "id": "14",
-      "name": "Süspansiyon & Şasi",
+      "name": "Fahrwerk & Chassis",
       "subcategories": [
         {
           "id": "14.01",
@@ -862,7 +862,7 @@
     },
     {
       "id": "15",
-      "name": "Tekerlek Süspansiyonu & Porya",
+      "name": "Radaufhängung & Radnaben",
       "subcategories": [
         {
           "id": "15.01",
@@ -903,7 +903,7 @@
     },
     {
       "id": "16",
-      "name": "Lastikler",
+      "name": "Reifen",
       "subcategories": [
         {
           "id": "16.01",
@@ -954,7 +954,7 @@
     },
     {
       "id": "17",
-      "name": "Jantlar",
+      "name": "Felgen",
       "subcategories": [
         {
           "id": "17.01",
@@ -1005,7 +1005,7 @@
     },
     {
       "id": "18",
-      "name": "Egzoz & Emisyon",
+      "name": "Auspuff & Abgas",
       "subcategories": [
         {
           "id": "18.01",
@@ -1076,7 +1076,7 @@
     },
     {
       "id": "19",
-      "name": "Elektrik & Şarj Sistemi",
+      "name": "Elektrik & Ladesystem",
       "subcategories": [
         {
           "id": "19.01",
@@ -1132,7 +1132,7 @@
     },
     {
       "id": "20",
-      "name": "Ateşleme & Kızdırma",
+      "name": "Zündung & Glühkerzen",
       "subcategories": [
         {
           "id": "20.01",
@@ -1173,7 +1173,7 @@
     },
     {
       "id": "21",
-      "name": "Aydınlatma",
+      "name": "Beleuchtung",
       "subcategories": [
         {
           "id": "21.01",
@@ -1239,7 +1239,7 @@
     },
     {
       "id": "22",
-      "name": "Cam & Silecek Sistemi",
+      "name": "Scheiben & Wischer",
       "subcategories": [
         {
           "id": "22.01",
@@ -1290,7 +1290,7 @@
     },
     {
       "id": "23",
-      "name": "Klima",
+      "name": "Klimaanlage",
       "subcategories": [
         {
           "id": "23.01",
@@ -1341,7 +1341,7 @@
     },
     {
       "id": "24",
-      "name": "Isıtma & Havalandırma",
+      "name": "Heizung & Belüftung",
       "subcategories": [
         {
           "id": "24.01",
@@ -1387,7 +1387,7 @@
     },
     {
       "id": "25",
-      "name": "Karoser",
+      "name": "Karosserie",
       "subcategories": [
         {
           "id": "25.01",
@@ -1448,7 +1448,7 @@
     },
     {
       "id": "26",
-      "name": "Aynalar & Görüş Sistemleri",
+      "name": "Spiegel & Sichtsysteme",
       "subcategories": [
         {
           "id": "26.01",
@@ -1494,7 +1494,7 @@
     },
     {
       "id": "27",
-      "name": "Camlar & Cam Mekanizmaları",
+      "name": "Scheiben & Fenstermechanik",
       "subcategories": [
         {
           "id": "27.01",
@@ -1540,7 +1540,7 @@
     },
     {
       "id": "28",
-      "name": "İç Mekân",
+      "name": "Innenraum",
       "subcategories": [
         {
           "id": "28.01",
@@ -1606,7 +1606,7 @@
     },
     {
       "id": "29",
-      "name": "Kilit & Merkezi Kilit",
+      "name": "Schloss & Zentralverriegelung",
       "subcategories": [
         {
           "id": "29.01",
@@ -1652,7 +1652,7 @@
     },
     {
       "id": "30",
-      "name": "Güvenlik Sistemleri",
+      "name": "Sicherheitssysteme",
       "subcategories": [
         {
           "id": "30.01",
@@ -1708,7 +1708,7 @@
     },
     {
       "id": "31",
-      "name": "Elektronik & Konfor Sistemleri",
+      "name": "Elektronik & Komfort",
       "subcategories": [
         {
           "id": "31.01",
@@ -1759,7 +1759,7 @@
     },
     {
       "id": "32",
-      "name": "Multimedya & Navigasyon",
+      "name": "Multimedia & Navigation",
       "subcategories": [
         {
           "id": "32.01",
@@ -1815,7 +1815,7 @@
     },
     {
       "id": "33",
-      "name": "Çeki & Römork Sistemleri",
+      "name": "Anhänger & Kupplungssysteme",
       "subcategories": [
         {
           "id": "33.01",
@@ -1856,7 +1856,7 @@
     },
     {
       "id": "34",
-      "name": "Oto Aksesuarları",
+      "name": "Auto-Zubehör",
       "subcategories": [
         {
           "id": "34.01",
@@ -1917,7 +1917,7 @@
     },
     {
       "id": "35",
-      "name": "Oto Bakım & Temizlik",
+      "name": "Autopflege & Reinigung",
       "subcategories": [
         {
           "id": "35.01",
@@ -1998,7 +1998,7 @@
     },
     {
       "id": "36",
-      "name": "Aletler & Atölye Ekipmanları",
+      "name": "Werkzeuge & Werkstattausrüstung",
       "subcategories": [
         {
           "id": "36.01",
@@ -2074,7 +2074,7 @@
     },
     {
       "id": "37",
-      "name": "Tamir Setleri & Montaj Parçaları",
+      "name": "Reparatursets & Montageteile",
       "subcategories": [
         {
           "id": "37.01",
@@ -2120,7 +2120,7 @@
     },
     {
       "id": "38",
-      "name": "Bağlantı, Sabitleme & Küçük Parçalar",
+      "name": "Befestigung & Kleinteile",
       "subcategories": [
         {
           "id": "38.01",
@@ -2242,7 +2242,7 @@
     },
     {
       "id": "40",
-      "name": "Ticari Araç & Özel Kfz",
+      "name": "Nutzfahrzeuge & Spezial-KFZ",
       "subcategories": [
         {
           "id": "40.01",

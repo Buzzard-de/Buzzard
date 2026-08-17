@@ -518,6 +518,16 @@ def complete_build_category_intelligence_maximum():
     return result.stdout.strip()
 
 
+def complete_build_kfz_taxonomy_de():
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "build_kfz_taxonomy_de.py"
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_production_docs():
     return _read_doc("PRODUCTION_MAX_UPGRADE.md")
 

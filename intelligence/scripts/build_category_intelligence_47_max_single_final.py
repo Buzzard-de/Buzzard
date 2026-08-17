@@ -61,7 +61,6 @@ def ensure_manifest(manifest: dict) -> dict:
     manifest = dict(manifest)
     manifest["version"] = "1.0-max-single-final"
     primary = "/taxonomy/buzzard_47_category_intelligence_os_max_single_final_single_file.html"
-    manifest["primary_console_html"] = primary
     manifest["max_single_final_console_html"] = primary
     manifest["engine"] = {
         "name": "Buzzard 47 Category Intelligence OS — MAX SINGLE FINAL",

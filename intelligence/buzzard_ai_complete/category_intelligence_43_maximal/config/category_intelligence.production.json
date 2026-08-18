@@ -208,6 +208,41 @@
     },
     {
       "category_id": "CATEGORY_42",
+      "buzzard_id": "cat-42",
+      "name": "Heimtextilien"
+    },
+    {
+      "category_id": "CATEGORY_43",
+      "buzzard_id": "cat-43",
+      "name": "Schmuck & Uhren"
+    },
+    {
+      "category_id": "CATEGORY_44",
+      "buzzard_id": "cat-44",
+      "name": "Körperpflege"
+    },
+    {
+      "category_id": "CATEGORY_45",
+      "buzzard_id": "cat-45",
+      "name": "Apotheke & Medizinprodukte"
+    },
+    {
+      "category_id": "CATEGORY_46",
+      "buzzard_id": "cat-46",
+      "name": "Getränke"
+    },
+    {
+      "category_id": "CATEGORY_47",
+      "buzzard_id": "cat-47",
+      "name": "Kinder & Schule"
+    },
+    {
+      "category_id": "CATEGORY_48",
+      "buzzard_id": "cat-48",
+      "name": "Musik & Musikinstrumente"
+    },
+    {
+      "category_id": "CATEGORY_42",
       "buzzard_id": "meta-42",
       "name": "Marktplatz-Integration"
     },

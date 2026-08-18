@@ -40,6 +40,7 @@ def main() -> None:
     steps: list[dict] = []
 
     if not args.dry_run:
+        steps.append(run_step("expand_shop_to_48", "expand_shop_to_48_master_categories.py"))
         steps.append(run_step("german_48_main_categories", "sync_german_48_main_categories.py"))
     steps.append(
         run_step(

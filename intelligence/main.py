@@ -1697,6 +1697,11 @@ def main():
         help="Sync storefront L1 metadata from buzzard_master_48_main_categories_de.json",
     )
     shop_sync.add_argument("--dry-run", action="store_true", help="Report only, do not write shop catalog")
+    expand_shop = sub.add_parser(
+        "complete-expand-shop-to-48-master-categories",
+        help="Add 7 missing master L1 categories to shop catalog (41 → 48)",
+    )
+    expand_shop.add_argument("--dry-run", action="store_true", help="Report only, do not write shop catalog")
     auto_sync = sub.add_parser(
         "complete-run-taxonomy-auto-sync",
         help="Run full taxonomy auto-sync pipeline (master → shop → intelligence consoles)",
@@ -5845,6 +5850,10 @@ def main():
         from buzzard_ai_complete.commands import complete_sync_shop_categories_from_master
 
         print(complete_sync_shop_categories_from_master(dry_run=getattr(args, "dry_run", False)))
+    elif args.cmd == "complete-expand-shop-to-48-master-categories":
+        from buzzard_ai_complete.commands import complete_expand_shop_to_48_master_categories
+
+        print(complete_expand_shop_to_48_master_categories(dry_run=getattr(args, "dry_run", False)))
     elif args.cmd == "complete-run-taxonomy-auto-sync":
         from buzzard_ai_complete.commands import complete_run_taxonomy_auto_sync
 

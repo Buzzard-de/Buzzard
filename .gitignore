@@ -242,3 +242,8 @@ intelligence/buzzard_v197.json
 intelligence/buzzard_v198.json
 intelligence/buzzard_v199.json
 intelligence/buzzard_v200.json
+
+# KI Gesamt local snapshots (regenerate with npm run backup:ki)
+intelligence/buzzard_ki_gesamt/snapshots/latest/
+intelligence/buzzard_ki_gesamt/snapshots/20*/
+intelligence/buzzard_ki_gesamt/snapshots/*.zip

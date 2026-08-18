@@ -1,0 +1,16 @@
+{
+  "package": "Buzzard Production MAX One-Piece",
+  "base": "BUZZARD_MAXIMAL_ANALYTICS_BI_ONE_PIECE",
+  "focus": [
+    "real storefront foundation",
+    "cart and checkout lifecycle",
+    "catalog import CSV JSON XML",
+    "profitability guard",
+    "payment/shipping/marketplace/TecDoc adapters",
+    "AI agent runtime boundary",
+    "production readiness",
+    "security headers",
+    "regression tests"
+  ],
+  "live_external_credentials_included": false
+}

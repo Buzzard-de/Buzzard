@@ -1,0 +1,20 @@
+{
+  "package": "Buzzard MAXIMAL One-Piece",
+  "architecture": "integrated",
+  "external_credentials_included": false,
+  "providers_claimed_live": false,
+  "core_modules": [
+    "AI Core",
+    "Doğu Bey",
+    "Aslan Bey",
+    "Esat Bey",
+    "Commerce",
+    "Logistics",
+    "Order Fulfillment",
+    "Customer Billing Returns",
+    "CRM Customer Experience",
+    "Marketing Advertising",
+    "MAXIMAL Platform",
+    "Control Center"
+  ]
+}

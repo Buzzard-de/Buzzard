@@ -24,6 +24,8 @@
     "search:sync": "node scripts/sync-search-index.mjs",
     "sync:taxonomy": "cd intelligence && python3 main.py complete-run-taxonomy-auto-sync",
     "sync:taxonomy:dry": "cd intelligence && python3 main.py complete-run-taxonomy-auto-sync --dry-run",
+    "backup:ki": "cd intelligence && python3 main.py complete-build-ki-gesamt-backup --full-snapshot",
+    "backup:ki:quick": "cd intelligence && python3 main.py complete-build-ki-gesamt-backup --skip-snapshot",
     "render:preflight": "node scripts/render-preflight.mjs",
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
     "buzzard": "python Buzzard/app.py all",

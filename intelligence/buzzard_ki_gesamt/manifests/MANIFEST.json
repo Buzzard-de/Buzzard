@@ -1,0 +1,6 @@
+{
+  "name": "Buzzard Intelligence Final Integration Test Go-Live",
+  "phase": "post-v200",
+  "status": "ready_for_real_integration",
+  "rule": "never fabricate live connector or test results"
+}

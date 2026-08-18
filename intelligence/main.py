@@ -1703,6 +1703,12 @@ def main():
     )
     auto_sync.add_argument("--dry-run", action="store_true", help="Dry-run shop step only")
     auto_sync.add_argument("--skip-builds", action="store_true", help="Skip HTML console rebuilds")
+    ki_backup = sub.add_parser(
+        "complete-build-ki-gesamt-backup",
+        help="Collect all Buzzard AI/KI into intelligence/buzzard_ki_gesamt/ (safety backup)",
+    )
+    ki_backup.add_argument("--full-snapshot", action="store_true", help="Create dated snapshot directory and zip")
+    ki_backup.add_argument("--skip-snapshot", action="store_true", help="Refresh index/symlinks only")
     sub.add_parser(
         "complete-category-intelligence-47-final-100-single-file",
         help="Show 47 category intelligence Final 100% single-file console summary",
@@ -5846,6 +5852,15 @@ def main():
             complete_run_taxonomy_auto_sync(
                 dry_run=getattr(args, "dry_run", False),
                 skip_builds=getattr(args, "skip_builds", False),
+            )
+        )
+    elif args.cmd == "complete-build-ki-gesamt-backup":
+        from buzzard_ai_complete.commands import complete_build_ki_gesamt_backup
+
+        print(
+            complete_build_ki_gesamt_backup(
+                full_snapshot=getattr(args, "full_snapshot", False),
+                skip_snapshot=getattr(args, "skip_snapshot", False),
             )
         )
     elif args.cmd == "complete-category-intelligence-47-final-100-single-file":

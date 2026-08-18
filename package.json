@@ -22,6 +22,8 @@
     "test:smoke": "node scripts/smoke-core.mjs",
     "db:backup": "node scripts/db-backup.mjs",
     "search:sync": "node scripts/sync-search-index.mjs",
+    "sync:taxonomy": "cd intelligence && python3 main.py complete-run-taxonomy-auto-sync",
+    "sync:taxonomy:dry": "cd intelligence && python3 main.py complete-run-taxonomy-auto-sync --dry-run",
     "render:preflight": "node scripts/render-preflight.mjs",
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
     "buzzard": "python Buzzard/app.py all",

@@ -1692,6 +1692,17 @@ def main():
         "complete-sync-german-48-main-categories",
         help="Sync German 48 main categories across taxonomy and intelligence OS",
     )
+    shop_sync = sub.add_parser(
+        "complete-sync-shop-categories-from-master",
+        help="Sync storefront L1 metadata from buzzard_master_48_main_categories_de.json",
+    )
+    shop_sync.add_argument("--dry-run", action="store_true", help="Report only, do not write shop catalog")
+    auto_sync = sub.add_parser(
+        "complete-run-taxonomy-auto-sync",
+        help="Run full taxonomy auto-sync pipeline (master → shop → intelligence consoles)",
+    )
+    auto_sync.add_argument("--dry-run", action="store_true", help="Dry-run shop step only")
+    auto_sync.add_argument("--skip-builds", action="store_true", help="Skip HTML console rebuilds")
     sub.add_parser(
         "complete-category-intelligence-47-final-100-single-file",
         help="Show 47 category intelligence Final 100% single-file console summary",
@@ -5824,6 +5835,19 @@ def main():
         from buzzard_ai_complete.commands import complete_sync_german_48_main_categories
 
         print(complete_sync_german_48_main_categories())
+    elif args.cmd == "complete-sync-shop-categories-from-master":
+        from buzzard_ai_complete.commands import complete_sync_shop_categories_from_master
+
+        print(complete_sync_shop_categories_from_master(dry_run=getattr(args, "dry_run", False)))
+    elif args.cmd == "complete-run-taxonomy-auto-sync":
+        from buzzard_ai_complete.commands import complete_run_taxonomy_auto_sync
+
+        print(
+            complete_run_taxonomy_auto_sync(
+                dry_run=getattr(args, "dry_run", False),
+                skip_builds=getattr(args, "skip_builds", False),
+            )
+        )
     elif args.cmd == "complete-category-intelligence-47-final-100-single-file":
         from buzzard_ai_complete.commands import complete_category_intelligence_47_final_100_single_file
 

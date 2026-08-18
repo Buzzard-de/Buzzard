@@ -1,0 +1,626 @@
+{
+  "schema": "buzzard.taxonomy-auto-sync.shop.v1",
+  "synced_at": "2026-08-18T21:02:01+00:00",
+  "dry_run": false,
+  "source": "data/taxonomy/buzzard_master_48_main_categories_de.json",
+  "mapping": "data/taxonomy/master_shop_l1_mapping.json",
+  "shop_catalog": "data/buzzard_categories.json",
+  "updated_count": 41,
+  "skipped_count": 0,
+  "unmapped_master_count": 12,
+  "updated": [
+    {
+      "shop_id": "cat-01",
+      "master_code": "bz.17",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Textil",
+      "name_after": "Textil",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-02",
+      "master_code": "bz.21",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Kosmetik & Körperpflege",
+      "name_after": "Kosmetik & Körperpflege",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-03",
+      "master_code": "bz.11",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Reinigungsprodukte",
+      "name_after": "Reinigung & Hauspflege",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-04",
+      "master_code": "bz.35",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Schule & Bürobedarf",
+      "name_after": "Büro, Schule & Schreibwaren",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-05",
+      "master_code": "bz.01",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Automotive",
+      "name_after": "Automotive & Kfz",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-06",
+      "master_code": "bz.36",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Haustierbedarf",
+      "name_after": "Haustier & Tierpflege",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-07",
+      "master_code": "bz.02",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Garten",
+      "name_after": "Garten & Gartenbau",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-08",
+      "master_code": "bz.39",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Arbeitsschutz & Berufskleidung",
+      "name_after": "Arbeitskleidung & Arbeitsschutz",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-09",
+      "master_code": "bz.03",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Werkzeuge & Eisenwaren",
+      "name_after": "Werkzeuge & Werkstatt",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-10",
+      "master_code": "bz.05",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Haus & Wohnen",
+      "name_after": "Haus & Haushalt",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-11",
+      "master_code": "bz.06",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Möbel",
+      "name_after": "Möbel & Wohnen",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-12",
+      "master_code": "bz.12",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Elektronik",
+      "name_after": "Elektronik & Unterhaltungselektronik",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-13",
+      "master_code": "bz.16",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Haushaltsgeräte",
+      "name_after": "Haushaltsgeräte",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-14",
+      "master_code": "bz.30",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Sport & Outdoor",
+      "name_after": "Sport & Outdoor",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-15",
+      "master_code": "bz.18",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Schuhe",
+      "name_after": "Schuhe",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-16",
+      "master_code": "bz.19",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Taschen & Accessoires",
+      "name_after": "Taschen, Koffer & Accessoires",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-17",
+      "master_code": "bz.27",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Mutter & Baby",
+      "name_after": "Baby & Kinderzimmer",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-18",
+      "master_code": "bz.29",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Spielzeug & Kinder",
+      "name_after": "Spielzeug & Spiele",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-19",
+      "master_code": "bz.32",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Hobby & Freizeit",
+      "name_after": "Hobby & Freizeit",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-20",
+      "master_code": "bz.37",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Tier- & Landwirtschaftsausrüstung",
+      "name_after": "Landwirtschaft & Agrar",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-21",
+      "master_code": "bz.04",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Bau & Konstruktion",
+      "name_after": "Heimwerken, Bau & Konstruktion",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-22",
+      "master_code": "bz.43",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Elektro & Beleuchtung",
+      "name_after": "Beleuchtung & Lampen",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-23",
+      "master_code": "bz.10",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Wasser, Heizung & Sanitär",
+      "name_after": "Wasser, Heizung & Sanitär",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-24",
+      "master_code": "bz.09",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Küche & Essen",
+      "name_after": "Küche & Kochen",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-25",
+      "master_code": "bz.25",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Lebensmittel & Getränke",
+      "name_after": "Lebensmittel & Supermarkt",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-26",
+      "master_code": "bz.36",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Tierfutter",
+      "name_after": "Tierfutter",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-27",
+      "master_code": "bz.23",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Gesundheit & Wellness",
+      "name_after": "Gesundheit & Wellness",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-28",
+      "master_code": "bz.38",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Büro & Gewerbe",
+      "name_after": "Industrie & Gewerbebedarf",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-29",
+      "master_code": "bz.38",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Verpackung & Versand",
+      "name_after": "Verpackung & Versand",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-30",
+      "master_code": "bz.38",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Industrie- & Gewerbeausrüstung",
+      "name_after": "Industrie & Gewerbebedarf",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-31",
+      "master_code": "bz.15",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Sicherheit & Überwachung",
+      "name_after": "Smart Home & Sicherheit",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-32",
+      "master_code": "bz.40",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Reise & Koffer",
+      "name_after": "Reisen & Mobilität",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-33",
+      "master_code": "bz.31",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Gartenhobby & Camping",
+      "name_after": "Outdoor, Camping & Abenteuer",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-34",
+      "master_code": "bz.46",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Saisonales & Feiern",
+      "name_after": "Saisonale & Festtagsartikel",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-35",
+      "master_code": "bz.07",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Dekoration",
+      "name_after": "Wohndekoration",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-36",
+      "master_code": "bz.14",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Persönliche Elektronik & Mobil",
+      "name_after": "Mobil & Telekommunikation",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-37",
+      "master_code": "bz.12",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Foto & Video",
+      "name_after": "Foto & Video",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-38",
+      "master_code": "bz.13",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Computer & Gaming",
+      "name_after": "Computer & IT",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-39",
+      "master_code": "bz.40",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at"
+      ],
+      "name_before": "Fahrzeug & Mobilität",
+      "name_after": "Fahrzeug & Mobilität",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-40",
+      "master_code": "bz.44",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Energie & Solar",
+      "name_after": "Heizung, Klima & Energie",
+      "master_code_before": null
+    },
+    {
+      "shop_id": "cat-41",
+      "master_code": "bz.48",
+      "changes": [
+        "master_code",
+        "master_slug",
+        "master_name",
+        "master_synced_at",
+        "name"
+      ],
+      "name_before": "Angebote & Sonderkollektionen",
+      "name_after": "Allgemeine Produkte & Marktplatz",
+      "master_code_before": null
+    }
+  ],
+  "skipped": [],
+  "unmapped_master": [
+    {
+      "code": "bz.08",
+      "name": "Heimtextilien"
+    },
+    {
+      "code": "bz.20",
+      "name": "Schmuck & Uhren"
+    },
+    {
+      "code": "bz.22",
+      "name": "Körperpflege"
+    },
+    {
+      "code": "bz.24",
+      "name": "Apotheke & Medizinprodukte"
+    },
+    {
+      "code": "bz.26",
+      "name": "Getränke"
+    },
+    {
+      "code": "bz.28",
+      "name": "Kinder & Schule"
+    },
+    {
+      "code": "bz.33",
+      "name": "Musik & Musikinstrumente"
+    },
+    {
+      "code": "bz.34",
+      "name": "Bücher, Medien & Unterhaltung"
+    },
+    {
+      "code": "bz.41",
+      "name": "Geschenke, Blumen & Anlässe"
+    },
+    {
+      "code": "bz.42",
+      "name": "Kunsthandwerk, Nähen & DIY"
+    },
+    {
+      "code": "bz.45",
+      "name": "Pool, Spa & Wellness-Ausstattung"
+    },
+    {
+      "code": "bz.47",
+      "name": "Luxus, Sammlerstücke & Wertvolles"
+    }
+  ]
+}

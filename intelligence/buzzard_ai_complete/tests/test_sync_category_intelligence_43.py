@@ -13,5 +13,5 @@ def test_sync_category_intelligence_43_builds_43_categories():
     assert rows[0]["buzzard_id"] == "cat-01"
     assert rows[0]["name"] == "Textil"
     assert rows[4]["buzzard_id"] == "cat-05"
-    assert rows[4]["name"] == "Automotive"
+    assert rows[4]["name"] == "Automotive & Kfz"
     assert rows[-1]["name"] == "Lieferanten-Intelligence"

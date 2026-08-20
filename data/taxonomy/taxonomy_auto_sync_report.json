@@ -1,13 +1,13 @@
 {
   "schema": "buzzard.taxonomy-auto-sync.shop.v1",
-  "synced_at": "2026-08-18T21:24:11+00:00",
+  "synced_at": "2026-08-20T16:57:25+00:00",
   "dry_run": false,
   "source": "data/taxonomy/buzzard_master_48_main_categories_de.json",
   "mapping": "data/taxonomy/master_shop_l1_mapping.json",
   "shop_catalog": "data/buzzard_categories.json",
-  "updated_count": 48,
+  "updated_count": 53,
   "skipped_count": 0,
-  "unmapped_master_count": 5,
+  "unmapped_master_count": 0,
   "updated": [
     {
       "shop_id": "cat-01",
@@ -488,29 +488,58 @@
       "name_before": "Musik & Musikinstrumente",
       "name_after": "Musik & Musikinstrumente",
       "master_code_before": "bz.33"
+    },
+    {
+      "shop_id": "cat-49",
+      "master_code": "bz.34",
+      "changes": [
+        "master_synced_at"
+      ],
+      "name_before": "Bücher, Medien & Unterhaltung",
+      "name_after": "Bücher, Medien & Unterhaltung",
+      "master_code_before": "bz.34"
+    },
+    {
+      "shop_id": "cat-50",
+      "master_code": "bz.41",
+      "changes": [
+        "master_synced_at"
+      ],
+      "name_before": "Geschenke, Blumen & Anlässe",
+      "name_after": "Geschenke, Blumen & Anlässe",
+      "master_code_before": "bz.41"
+    },
+    {
+      "shop_id": "cat-51",
+      "master_code": "bz.42",
+      "changes": [
+        "master_synced_at"
+      ],
+      "name_before": "Kunsthandwerk, Nähen & DIY",
+      "name_after": "Kunsthandwerk, Nähen & DIY",
+      "master_code_before": "bz.42"
+    },
+    {
+      "shop_id": "cat-52",
+      "master_code": "bz.45",
+      "changes": [
+        "master_synced_at"
+      ],
+      "name_before": "Pool, Spa & Wellness-Ausstattung",
+      "name_after": "Pool, Spa & Wellness-Ausstattung",
+      "master_code_before": "bz.45"
+    },
+    {
+      "shop_id": "cat-53",
+      "master_code": "bz.47",
+      "changes": [
+        "master_synced_at"
+      ],
+      "name_before": "Luxus, Sammlerstücke & Wertvolles",
+      "name_after": "Luxus, Sammlerstücke & Wertvolles",
+      "master_code_before": "bz.47"
     }
   ],
   "skipped": [],
-  "unmapped_master": [
-    {
-      "code": "bz.34",
-      "name": "Bücher, Medien & Unterhaltung"
-    },
-    {
-      "code": "bz.41",
-      "name": "Geschenke, Blumen & Anlässe"
-    },
-    {
-      "code": "bz.42",
-      "name": "Kunsthandwerk, Nähen & DIY"
-    },
-    {
-      "code": "bz.45",
-      "name": "Pool, Spa & Wellness-Ausstattung"
-    },
-    {
-      "code": "bz.47",
-      "name": "Luxus, Sammlerstücke & Wertvolles"
-    }
-  ]
+  "unmapped_master": []
 }

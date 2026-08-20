@@ -261,6 +261,36 @@
       "master_code": "bz.33",
       "sync_name": true,
       "note": "Auto-expanded from master taxonomy 48"
+    },
+    {
+      "shop_id": "cat-49",
+      "master_code": "bz.34",
+      "sync_name": true,
+      "note": "Auto-expanded from master taxonomy 48"
+    },
+    {
+      "shop_id": "cat-50",
+      "master_code": "bz.41",
+      "sync_name": true,
+      "note": "Auto-expanded from master taxonomy 48"
+    },
+    {
+      "shop_id": "cat-51",
+      "master_code": "bz.42",
+      "sync_name": true,
+      "note": "Auto-expanded from master taxonomy 48"
+    },
+    {
+      "shop_id": "cat-52",
+      "master_code": "bz.45",
+      "sync_name": true,
+      "note": "Auto-expanded from master taxonomy 48"
+    },
+    {
+      "shop_id": "cat-53",
+      "master_code": "bz.47",
+      "sync_name": true,
+      "note": "Auto-expanded from master taxonomy 48"
     }
   ]
 }

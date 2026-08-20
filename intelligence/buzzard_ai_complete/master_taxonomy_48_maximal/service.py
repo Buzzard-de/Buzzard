@@ -9,6 +9,14 @@ CONFIG_DIR = Path(__file__).resolve().parent / "config"
 DATA_DIR = Path(__file__).resolve().parent / "data"
 DOCS_DIR = Path(__file__).resolve().parent / "docs"
 
+CANONICAL_NEW_FIVE = [
+    "Heizung, Klima & Energie",
+    "Pool, Spa & Wellness-Ausstattung",
+    "Saisonale & Festtagsartikel",
+    "Luxus, Sammlerstücke & Wertvolles",
+    "Allgemeine Produkte & Marktplatz",
+]
+
 
 class MasterTaxonomy48Service:
     def __init__(self):
@@ -60,17 +68,7 @@ class MasterTaxonomy48Service:
         taxonomy = self.taxonomy()
         counts = self.load_counts()
         tire_children = taxonomy.children("bz.44")
-        search_hits = {
-            "Lastikler – Tüm Motorlu Araçlar": len(
-                taxonomy.search("Lastikler – Tüm Motorlu Araçlar")
-            ),
-            "Tarım & Tarım Makineleri": len(taxonomy.search("Tarım & Tarım Makineleri")),
-            "Hayvancılık": len(taxonomy.search("Hayvancılık")),
-            "Güneş & Rüzgâr Enerjisi": len(taxonomy.search("Güneş & Rüzgâr Enerjisi")),
-            "İnşaat & İnşaat Makineleri": len(
-                taxonomy.search("İnşaat & İnşaat Makineleri")
-            ),
-        }
+        search_hits = {name: len(taxonomy.search(name)) for name in CANONICAL_NEW_FIVE}
         return {
             "health": self.health(),
             "counts": counts,

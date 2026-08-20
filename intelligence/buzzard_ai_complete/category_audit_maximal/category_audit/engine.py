@@ -96,7 +96,7 @@ class CategoryAuditEngine:
         assert len(self.mains()) == 48
         summary = self.summary()
         if self.live_status == "FULL_INPUT":
-            assert summary["live_main_categories"] == 41
+            assert summary["live_main_categories"] >= 48
         rows = self.audit()
         assert all(row["action"] in self.ACTIONS for row in rows)
         assert all(row["action"] != "DELETE" for row in rows)

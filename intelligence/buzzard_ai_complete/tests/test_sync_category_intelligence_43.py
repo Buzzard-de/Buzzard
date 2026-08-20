@@ -9,7 +9,7 @@ from scripts.sync_category_intelligence_43 import build_categories
 
 def test_sync_category_intelligence_43_builds_43_categories():
     rows = build_categories()
-    assert len(rows) == 50
+    assert len(rows) == 55
     assert rows[0]["buzzard_id"] == "cat-01"
     assert rows[0]["name"] == "Textil"
     assert rows[4]["buzzard_id"] == "cat-05"

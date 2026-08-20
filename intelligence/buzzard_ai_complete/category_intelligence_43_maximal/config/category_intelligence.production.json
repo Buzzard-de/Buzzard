@@ -1,5 +1,5 @@
 {
-  "agent_count": 43,
+  "agent_count": 55,
   "categories": [
     {
       "category_id": "CATEGORY_01",
@@ -240,6 +240,31 @@
       "category_id": "CATEGORY_48",
       "buzzard_id": "cat-48",
       "name": "Musik & Musikinstrumente"
+    },
+    {
+      "category_id": "CATEGORY_49",
+      "buzzard_id": "cat-49",
+      "name": "Bücher, Medien & Unterhaltung"
+    },
+    {
+      "category_id": "CATEGORY_50",
+      "buzzard_id": "cat-50",
+      "name": "Geschenke, Blumen & Anlässe"
+    },
+    {
+      "category_id": "CATEGORY_51",
+      "buzzard_id": "cat-51",
+      "name": "Kunsthandwerk, Nähen & DIY"
+    },
+    {
+      "category_id": "CATEGORY_52",
+      "buzzard_id": "cat-52",
+      "name": "Pool, Spa & Wellness-Ausstattung"
+    },
+    {
+      "category_id": "CATEGORY_53",
+      "buzzard_id": "cat-53",
+      "name": "Luxus, Sammlerstücke & Wertvolles"
     },
     {
       "category_id": "CATEGORY_42",

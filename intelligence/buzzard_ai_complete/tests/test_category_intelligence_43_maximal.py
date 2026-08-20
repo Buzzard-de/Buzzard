@@ -68,5 +68,5 @@ def test_opportunity_score():
 def test_service_health():
     health = CategoryIntelligence43Service().health()
     assert health["status"] == "category_intelligence_ready"
-    assert health["agents"] == 43
+    assert health["agents"] == 55
     assert health["live_activation"] is False

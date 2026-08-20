@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Erweitert den Shop-Katalog um fehlende Master-L1-Kategorien (41 → 48)."""
+"""Erweitert den Shop-Katalog um alle fehlenden Master-L1-Kategorien."""
 
 from __future__ import annotations
 
@@ -11,17 +11,7 @@ REPO = Path(__file__).resolve().parents[2]
 CANONICAL = REPO / "data/taxonomy/buzzard_master_48_main_categories_de.json"
 MAPPING_PATH = REPO / "data/taxonomy/master_shop_l1_mapping.json"
 SHOP_CATALOG_PATH = REPO / "data/buzzard_categories.json"
-
-# 7 fehlende Master-L1 (48 Master − 41 Shop) — priorisiert nach Master-Nummer
-EXPAND_MASTER_CODES = [
-    "bz.08",  # Heimtextilien
-    "bz.20",  # Schmuck & Uhren
-    "bz.22",  # Körperpflege
-    "bz.24",  # Apotheke & Medizinprodukte
-    "bz.26",  # Getränke
-    "bz.28",  # Kinder & Schule
-    "bz.33",  # Musik & Musikinstrumente
-]
+MASTER_L1_TARGET = 48
 
 L3_NAMES = ["Standard", "Premium", "Sets & Sparpakete"]
 
@@ -68,6 +58,36 @@ SCAFFOLD_L2: dict[str, list[str]] = {
         "Schlagzeug & Percussion",
         "Musikzubehör",
     ],
+    "bz.34": [
+        "Bücher",
+        "Filme & Serien",
+        "Musik & Games",
+        "Zeitschriften & Medien",
+    ],
+    "bz.41": [
+        "Geschenke",
+        "Blumen & Pflanzen",
+        "Anlässe & Feiern",
+        "Gutscheine & Sets",
+    ],
+    "bz.42": [
+        "Nähen & Stricken",
+        "Basteln & Hobby",
+        "DIY-Werkzeug",
+        "Kreativ-Sets",
+    ],
+    "bz.45": [
+        "Pool & Schwimmbad",
+        "Spa & Sauna",
+        "Wellness-Geräte",
+        "Poolpflege",
+    ],
+    "bz.47": [
+        "Luxusmode",
+        "Sammlerstücke",
+        "Sondereditionen",
+        "Antikes & Wertvolles",
+    ],
 }
 
 
@@ -95,6 +115,15 @@ def slugify(value: str) -> str:
 
 def mapped_master_codes(mapping_payload: dict) -> set[str]:
     return {entry["master_code"] for entry in mapping_payload.get("mappings", [])}
+
+
+def pending_master_codes(master_payload: dict, mapped: set[str]) -> list[str]:
+    pending: list[str] = []
+    for item in master_payload["categories"]:
+        code = item["code"]
+        if code not in mapped:
+            pending.append(code)
+    return pending
 
 
 def next_shop_numbers(catalog: dict, count: int) -> list[int]:
@@ -170,7 +199,7 @@ def expand_shop_to_48(*, dry_run: bool = False) -> dict:
     master_map = {item["code"]: item for item in master_payload["categories"]}
 
     mapped = mapped_master_codes(mapping_payload)
-    pending_codes = [code for code in EXPAND_MASTER_CODES if code not in mapped]
+    pending_codes = pending_master_codes(master_payload, mapped)
     missing_in_master = [code for code in pending_codes if code not in master_map]
 
     if missing_in_master:
@@ -211,7 +240,8 @@ def expand_shop_to_48(*, dry_run: bool = False) -> dict:
         f"show all {catalog['main_category_count']} main categories in menu order; "
         "never replace with demo categories"
     )
-    catalog["rules"]["master_taxonomy_l1"] = 48
+    catalog["rules"]["master_taxonomy_l1"] = MASTER_L1_TARGET
+    catalog["rules"]["master_taxonomy_shop_l1"] = catalog["main_category_count"]
 
     still_unmapped = [
         {"code": item["code"], "name": item["name"]}
@@ -220,13 +250,16 @@ def expand_shop_to_48(*, dry_run: bool = False) -> dict:
     ]
 
     report = {
-        "schema": "buzzard.taxonomy-expand-shop-48.v1",
+        "schema": "buzzard.taxonomy-expand-shop-missing-masters.v1",
         "dry_run": dry_run,
         "added_count": len(added),
         "added": added,
         "shop_main_categories": catalog["main_category_count"],
+        "master_l1_target": MASTER_L1_TARGET,
+        "mapped_master_count": len(mapped_master_codes(mapping_payload)),
         "still_unmapped_count": len(still_unmapped),
         "still_unmapped": still_unmapped,
+        "complete": len(still_unmapped) == 0,
     }
 
     if not dry_run and added:
@@ -245,7 +278,7 @@ def expand_shop_to_48(*, dry_run: bool = False) -> dict:
 def main() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(description="Expand shop catalog with 7 missing master L1 categories")
+    parser = argparse.ArgumentParser(description="Expand shop catalog with missing master L1 categories")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     report = expand_shop_to_48(dry_run=args.dry_run)

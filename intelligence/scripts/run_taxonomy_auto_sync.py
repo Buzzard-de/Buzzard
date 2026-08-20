@@ -40,7 +40,15 @@ def main() -> None:
     steps: list[dict] = []
 
     if not args.dry_run:
-        steps.append(run_step("expand_shop_to_48", "expand_shop_to_48_master_categories.py"))
+        expand_step = run_step("expand_shop_missing_masters", "expand_shop_to_48_master_categories.py")
+        steps.append(expand_step)
+        json_part = expand_step["output"].rsplit("\nOK:", 1)[0].strip()
+        expand_report = json.loads(json_part)
+        if expand_report.get("still_unmapped_count", 0) > 0:
+            raise SystemExit(
+                "Taxonomy incomplete: "
+                f"{expand_report['still_unmapped_count']} master categories still unmapped"
+            )
         steps.append(run_step("german_48_main_categories", "sync_german_48_main_categories.py"))
     steps.append(
         run_step(

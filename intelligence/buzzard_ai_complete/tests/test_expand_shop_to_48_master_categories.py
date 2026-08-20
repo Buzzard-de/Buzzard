@@ -6,8 +6,8 @@ SCRIPTS = Path(__file__).resolve().parents[2] / "scripts"
 sys.path.insert(0, str(SCRIPTS.parent))
 
 from scripts.expand_shop_to_48_master_categories import (  # noqa: E402
-    EXPAND_MASTER_CODES,
     expand_shop_to_48,
+    pending_master_codes,
     slugify,
 )
 
@@ -17,7 +17,19 @@ def test_slugify_german():
     assert slugify("Sets & Sparpakete") == "sets-sparpakete"
 
 
-def test_expand_adds_seven_categories(tmp_path, monkeypatch):
+def test_pending_master_codes_lists_unmapped_only():
+    master = {
+        "categories": [
+            {"code": "bz.01", "name": "A", "slug": "a"},
+            {"code": "bz.02", "name": "B", "slug": "b"},
+            {"code": "bz.03", "name": "C", "slug": "c"},
+        ]
+    }
+    pending = pending_master_codes(master, {"bz.01", "bz.03"})
+    assert pending == ["bz.02"]
+
+
+def test_expand_adds_all_pending_categories(tmp_path, monkeypatch):
     repo = tmp_path
     master = {
         "main_categories": 48,
@@ -26,24 +38,15 @@ def test_expand_adds_seven_categories(tmp_path, monkeypatch):
             for i in range(1, 49)
         ],
     }
-    expand_nums = {int(code.split(".")[1]) for code in EXPAND_MASTER_CODES}
-    available_master_codes = [
-        f"bz.{i:02d}" for i in range(1, 49) if i not in expand_nums
-    ]
     mapping = {
         "schema": "buzzard.master-shop-l1-mapping.v1",
         "mappings": [
-            {
-                "shop_id": f"cat-{i:02d}",
-                "master_code": available_master_codes[i - 1],
-                "sync_name": True,
-            }
-            for i in range(1, 42)
+            {"shop_id": f"cat-{i:02d}", "master_code": f"bz.{i:02d}", "sync_name": True}
+            for i in range(1, 46)
         ],
     }
-
     catalog = {
-        "main_category_count": 41,
+        "main_category_count": 45,
         "categories": [
             {
                 "id": f"cat-{i:02d}",
@@ -54,7 +57,7 @@ def test_expand_adds_seven_categories(tmp_path, monkeypatch):
                 "level": 1,
                 "children": [],
             }
-            for i in range(1, 42)
+            for i in range(1, 46)
         ],
     }
 
@@ -78,9 +81,7 @@ def test_expand_adds_seven_categories(tmp_path, monkeypatch):
     updated_catalog = json.loads(shop_path.read_text(encoding="utf-8"))
     updated_mapping = json.loads(mapping_path.read_text(encoding="utf-8"))
 
-    assert report["added_count"] == 7
+    assert report["added_count"] == 3
+    assert report["complete"] is True
     assert updated_catalog["main_category_count"] == 48
-    assert len(updated_catalog["categories"]) == 48
-    assert updated_catalog["categories"][-1]["id"] == "cat-48"
     assert len(updated_mapping["mappings"]) == 48
-    assert updated_catalog["categories"][-7]["master_code"] == "bz.08"

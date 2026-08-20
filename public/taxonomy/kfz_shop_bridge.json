@@ -1,0 +1,6405 @@
+{
+  "version": "1.1",
+  "shop_automotive_root_id": "cat-05",
+  "kfz_tree_path": "data/taxonomy/buzzard_master_kfz_intelligence_os.json",
+  "kfz_intelligence_os_path": "data/taxonomy/buzzard_master_kfz_intelligence_os.json",
+  "main_category_count": 43,
+  "subcategory_count": 454,
+  "l3_count": 412,
+  "competitors": [
+    {
+      "id": "autodoc",
+      "name": "AUTODOC",
+      "type": "Direct",
+      "strength": 10
+    },
+    {
+      "id": "kfzteile24",
+      "name": "kfzteile24",
+      "type": "Direct",
+      "strength": 9
+    },
+    {
+      "id": "atu",
+      "name": "ATU",
+      "type": "Direct + Service",
+      "strength": 9
+    },
+    {
+      "id": "atp",
+      "name": "ATP Autoteile",
+      "type": "Direct",
+      "strength": 8.5
+    },
+    {
+      "id": "bandel",
+      "name": "Bandel Online",
+      "type": "Direct",
+      "strength": 8
+    },
+    {
+      "id": "motointegrator",
+      "name": "Motointegrator",
+      "type": "Direct",
+      "strength": 9
+    },
+    {
+      "id": "pkwteile",
+      "name": "pkwteile.de",
+      "type": "Direct",
+      "strength": 9
+    },
+    {
+      "id": "daparto",
+      "name": "Daparto",
+      "type": "Marketplace / Comparison",
+      "strength": 8
+    }
+  ],
+  "url_prefix": "/kategorie/automotive/kfz",
+  "mains": [
+    {
+      "kfz_id": "01",
+      "kfz_name": "Motor",
+      "name_de": "Motor",
+      "slug": "01-motor",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 17,
+      "l3_count": 12,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "01.01",
+          "kfz_name": "Motor komple",
+          "slug": "motor-komple",
+          "children": []
+        },
+        {
+          "kfz_id": "01.02",
+          "kfz_name": "Motor blokları",
+          "slug": "motor-bloklari",
+          "children": []
+        },
+        {
+          "kfz_id": "01.03",
+          "kfz_name": "Silindir kapağı",
+          "slug": "silindir-kapagi",
+          "children": [
+            {
+              "kfz_id": "01.03.01",
+              "kfz_name": "Silindir kapağı komple",
+              "slug": "silindir-kapagi-komple"
+            },
+            {
+              "kfz_id": "01.03.02",
+              "kfz_name": "Silindir kapağı kapağı",
+              "slug": "silindir-kapagi-kapagi"
+            },
+            {
+              "kfz_id": "01.03.03",
+              "kfz_name": "Subap kılavuzları",
+              "slug": "subap-kilavuzlari"
+            },
+            {
+              "kfz_id": "01.03.04",
+              "kfz_name": "Subap yuvaları",
+              "slug": "subap-yuvalari"
+            }
+          ]
+        },
+        {
+          "kfz_id": "01.04",
+          "kfz_name": "Krank mekanizması",
+          "slug": "krank-mekanizmasi",
+          "children": []
+        },
+        {
+          "kfz_id": "01.05",
+          "kfz_name": "Piston & segman",
+          "slug": "piston-segman",
+          "children": [
+            {
+              "kfz_id": "01.05.01",
+              "kfz_name": "Piston",
+              "slug": "piston"
+            },
+            {
+              "kfz_id": "01.05.02",
+              "kfz_name": "Piston segmanı",
+              "slug": "piston-segmani"
+            },
+            {
+              "kfz_id": "01.05.03",
+              "kfz_name": "Piston pimi",
+              "slug": "piston-pimi"
+            },
+            {
+              "kfz_id": "01.05.04",
+              "kfz_name": "Piston seti",
+              "slug": "piston-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "01.06",
+          "kfz_name": "Krank mili",
+          "slug": "krank-mili",
+          "children": []
+        },
+        {
+          "kfz_id": "01.07",
+          "kfz_name": "Eksantrik mili",
+          "slug": "eksantrik-mili",
+          "children": []
+        },
+        {
+          "kfz_id": "01.08",
+          "kfz_name": "Subap sistemi",
+          "slug": "subap-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "01.09",
+          "kfz_name": "Motor yatakları",
+          "slug": "motor-yataklari",
+          "children": []
+        },
+        {
+          "kfz_id": "01.10",
+          "kfz_name": "Motor takozları",
+          "slug": "motor-takozlari",
+          "children": []
+        },
+        {
+          "kfz_id": "01.11",
+          "kfz_name": "Yağlama sistemi",
+          "slug": "yaglama-sistemi",
+          "children": [
+            {
+              "kfz_id": "01.11.01",
+              "kfz_name": "Yağ pompası",
+              "slug": "yag-pompasi"
+            },
+            {
+              "kfz_id": "01.11.02",
+              "kfz_name": "Yağ soğutucu",
+              "slug": "yag-sogutucu"
+            },
+            {
+              "kfz_id": "01.11.03",
+              "kfz_name": "Yağ karteri",
+              "slug": "yag-karteri"
+            },
+            {
+              "kfz_id": "01.11.04",
+              "kfz_name": "Yağ seviye sensörü",
+              "slug": "yag-seviye-sensoru"
+            }
+          ]
+        },
+        {
+          "kfz_id": "01.12",
+          "kfz_name": "Yağ pompası",
+          "slug": "yag-pompasi",
+          "children": []
+        },
+        {
+          "kfz_id": "01.13",
+          "kfz_name": "Motor contaları",
+          "slug": "motor-contalari",
+          "children": []
+        },
+        {
+          "kfz_id": "01.14",
+          "kfz_name": "Silindir kapak contası",
+          "slug": "silindir-kapak-contasi",
+          "children": []
+        },
+        {
+          "kfz_id": "01.15",
+          "kfz_name": "Karter",
+          "slug": "karter",
+          "children": []
+        },
+        {
+          "kfz_id": "01.16",
+          "kfz_name": "Karter parçaları",
+          "slug": "karter-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "01.17",
+          "kfz_name": "Motor bağlantı parçaları",
+          "slug": "motor-baglanti-parcalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "02",
+      "kfz_name": "Motor Yönetimi & Sensörler",
+      "name_de": "Motorsteuerung & Sensoren",
+      "slug": "02-motorsteuerung-sensoren",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 11,
+      "l3_count": 11,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "02.01",
+          "kfz_name": "ECU / motor kontrol ünitesi",
+          "slug": "ecu-motor-kontrol-unitesi",
+          "children": [
+            {
+              "kfz_id": "02.01.01",
+              "kfz_name": "Motor ECU",
+              "slug": "motor-ecu"
+            },
+            {
+              "kfz_id": "02.01.02",
+              "kfz_name": "ECU modülü",
+              "slug": "ecu-modulu"
+            },
+            {
+              "kfz_id": "02.01.03",
+              "kfz_name": "ECU soketi",
+              "slug": "ecu-soketi"
+            },
+            {
+              "kfz_id": "02.01.04",
+              "kfz_name": "ECU tamir parçaları",
+              "slug": "ecu-tamir-parcalari"
+            }
+          ]
+        },
+        {
+          "kfz_id": "02.02",
+          "kfz_name": "Motor sensörleri",
+          "slug": "motor-sensorleri",
+          "children": [
+            {
+              "kfz_id": "02.02.01",
+              "kfz_name": "Krank sensörü",
+              "slug": "krank-sensoru"
+            },
+            {
+              "kfz_id": "02.02.02",
+              "kfz_name": "Eksantrik sensörü",
+              "slug": "eksantrik-sensoru"
+            },
+            {
+              "kfz_id": "02.02.03",
+              "kfz_name": "Yağ basınç sensörü",
+              "slug": "yag-basinc-sensoru"
+            },
+            {
+              "kfz_id": "02.02.04",
+              "kfz_name": "Soğutma suyu sensörü",
+              "slug": "sogutma-suyu-sensoru"
+            }
+          ]
+        },
+        {
+          "kfz_id": "02.03",
+          "kfz_name": "Krank sensörü",
+          "slug": "krank-sensoru",
+          "children": []
+        },
+        {
+          "kfz_id": "02.04",
+          "kfz_name": "Eksantrik sensörü",
+          "slug": "eksantrik-sensoru",
+          "children": []
+        },
+        {
+          "kfz_id": "02.05",
+          "kfz_name": "MAP / MAF sensörleri",
+          "slug": "map-maf-sensorleri",
+          "children": []
+        },
+        {
+          "kfz_id": "02.06",
+          "kfz_name": "Lambda sensörleri",
+          "slug": "lambda-sensorleri",
+          "children": []
+        },
+        {
+          "kfz_id": "02.07",
+          "kfz_name": "Gaz kelebeği",
+          "slug": "gaz-kelebegi",
+          "children": [
+            {
+              "kfz_id": "02.07.01",
+              "kfz_name": "Gaz kelebeği gövdesi",
+              "slug": "gaz-kelebegi-govdesi"
+            },
+            {
+              "kfz_id": "02.07.02",
+              "kfz_name": "Gaz kelebeği aktüatörü",
+              "slug": "gaz-kelebegi-aktuatoru"
+            },
+            {
+              "kfz_id": "02.07.03",
+              "kfz_name": "Gaz kelebeği sensörü",
+              "slug": "gaz-kelebegi-sensoru"
+            }
+          ]
+        },
+        {
+          "kfz_id": "02.08",
+          "kfz_name": "Rölanti kontrolü",
+          "slug": "rolanti-kontrolu",
+          "children": []
+        },
+        {
+          "kfz_id": "02.09",
+          "kfz_name": "EGR sistemi",
+          "slug": "egr-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "02.10",
+          "kfz_name": "Motor röleleri",
+          "slug": "motor-roleleri",
+          "children": []
+        },
+        {
+          "kfz_id": "02.11",
+          "kfz_name": "Motor kontrol modülleri",
+          "slug": "motor-kontrol-modulleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "03",
+      "kfz_name": "Yakıt Sistemi",
+      "name_de": "Kraftstoffsystem",
+      "slug": "03-kraftstoffsystem",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 11,
+      "l3_count": 7,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "03.01",
+          "kfz_name": "Yakıt pompası",
+          "slug": "yakit-pompasi",
+          "children": [
+            {
+              "kfz_id": "03.01.01",
+              "kfz_name": "Depo içi yakıt pompası",
+              "slug": "depo-ici-yakit-pompasi"
+            },
+            {
+              "kfz_id": "03.01.02",
+              "kfz_name": "Yüksek basınç pompası",
+              "slug": "yuksek-basinc-pompasi"
+            },
+            {
+              "kfz_id": "03.01.03",
+              "kfz_name": "Yakıt pompası modülü",
+              "slug": "yakit-pompasi-modulu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "03.02",
+          "kfz_name": "Yakıt deposu",
+          "slug": "yakit-deposu",
+          "children": []
+        },
+        {
+          "kfz_id": "03.03",
+          "kfz_name": "Yakıt enjektörleri",
+          "slug": "yakit-enjektorleri",
+          "children": [
+            {
+              "kfz_id": "03.03.01",
+              "kfz_name": "Benzin enjektörü",
+              "slug": "benzin-enjektoru"
+            },
+            {
+              "kfz_id": "03.03.02",
+              "kfz_name": "Dizel enjektörü",
+              "slug": "dizel-enjektoru"
+            },
+            {
+              "kfz_id": "03.03.03",
+              "kfz_name": "Common Rail enjektörü",
+              "slug": "common-rail-enjektoru"
+            },
+            {
+              "kfz_id": "03.03.04",
+              "kfz_name": "Enjektör memesi",
+              "slug": "enjektor-memesi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "03.04",
+          "kfz_name": "Enjektör parçaları",
+          "slug": "enjektor-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "03.05",
+          "kfz_name": "Yakıt basınç regülatörü",
+          "slug": "yakit-basinc-regulatoru",
+          "children": []
+        },
+        {
+          "kfz_id": "03.06",
+          "kfz_name": "Yakıt rayı",
+          "slug": "yakit-rayi",
+          "children": []
+        },
+        {
+          "kfz_id": "03.07",
+          "kfz_name": "Yakıt hortumları",
+          "slug": "yakit-hortumlari",
+          "children": []
+        },
+        {
+          "kfz_id": "03.08",
+          "kfz_name": "Yakıt filtreleri",
+          "slug": "yakit-filtreleri",
+          "children": []
+        },
+        {
+          "kfz_id": "03.09",
+          "kfz_name": "Dizel yakıt sistemi",
+          "slug": "dizel-yakit-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "03.10",
+          "kfz_name": "Benzinli yakıt sistemi",
+          "slug": "benzinli-yakit-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "03.11",
+          "kfz_name": "Common Rail",
+          "slug": "common-rail",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "04",
+      "kfz_name": "Turbo & Şarj Sistemi",
+      "name_de": "Turbo & Ladeluft",
+      "slug": "04-turbo-ladeluft",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 8,
+      "l3_count": 7,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "04.01",
+          "kfz_name": "Turboşarj",
+          "slug": "turbosarj",
+          "children": [
+            {
+              "kfz_id": "04.01.01",
+              "kfz_name": "Turbo komple",
+              "slug": "turbo-komple"
+            },
+            {
+              "kfz_id": "04.01.02",
+              "kfz_name": "Turbo kartuşu",
+              "slug": "turbo-kartusu"
+            },
+            {
+              "kfz_id": "04.01.03",
+              "kfz_name": "Turbo gövdesi",
+              "slug": "turbo-govdesi"
+            },
+            {
+              "kfz_id": "04.01.04",
+              "kfz_name": "Değişken geometrili turbo",
+              "slug": "degisken-geometrili-turbo"
+            }
+          ]
+        },
+        {
+          "kfz_id": "04.02",
+          "kfz_name": "Turbo kartuşu",
+          "slug": "turbo-kartusu",
+          "children": []
+        },
+        {
+          "kfz_id": "04.03",
+          "kfz_name": "Turbo aktüatörü",
+          "slug": "turbo-aktuatoru",
+          "children": []
+        },
+        {
+          "kfz_id": "04.04",
+          "kfz_name": "Turbo hortumları",
+          "slug": "turbo-hortumlari",
+          "children": []
+        },
+        {
+          "kfz_id": "04.05",
+          "kfz_name": "Intercooler",
+          "slug": "intercooler",
+          "children": [
+            {
+              "kfz_id": "04.05.01",
+              "kfz_name": "Intercooler",
+              "slug": "intercooler"
+            },
+            {
+              "kfz_id": "04.05.02",
+              "kfz_name": "Şarj havası radyatörü",
+              "slug": "sarj-havasi-radyatoru"
+            },
+            {
+              "kfz_id": "04.05.03",
+              "kfz_name": "Intercooler hortumu",
+              "slug": "intercooler-hortumu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "04.06",
+          "kfz_name": "Şarj havası sistemi",
+          "slug": "sarj-havasi-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "04.07",
+          "kfz_name": "Basınç valfleri",
+          "slug": "basinc-valfleri",
+          "children": []
+        },
+        {
+          "kfz_id": "04.08",
+          "kfz_name": "Turbo contaları",
+          "slug": "turbo-contalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "05",
+      "kfz_name": "Soğutma Sistemi",
+      "name_de": "Kühlsystem",
+      "slug": "05-kuhlsystem",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 10,
+      "l3_count": 9,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "05.01",
+          "kfz_name": "Radyatör",
+          "slug": "radyator",
+          "children": [
+            {
+              "kfz_id": "05.01.01",
+              "kfz_name": "Motor radyatörü",
+              "slug": "motor-radyatoru"
+            },
+            {
+              "kfz_id": "05.01.02",
+              "kfz_name": "Klima radyatörü",
+              "slug": "klima-radyatoru"
+            },
+            {
+              "kfz_id": "05.01.03",
+              "kfz_name": "Şanzıman yağ radyatörü",
+              "slug": "sanziman-yag-radyatoru"
+            }
+          ]
+        },
+        {
+          "kfz_id": "05.02",
+          "kfz_name": "Su pompası",
+          "slug": "su-pompasi",
+          "children": [
+            {
+              "kfz_id": "05.02.01",
+              "kfz_name": "Mekanik su pompası",
+              "slug": "mekanik-su-pompasi"
+            },
+            {
+              "kfz_id": "05.02.02",
+              "kfz_name": "Elektrikli su pompası",
+              "slug": "elektrikli-su-pompasi"
+            },
+            {
+              "kfz_id": "05.02.03",
+              "kfz_name": "Su pompası seti",
+              "slug": "su-pompasi-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "05.03",
+          "kfz_name": "Termostat",
+          "slug": "termostat",
+          "children": [
+            {
+              "kfz_id": "05.03.01",
+              "kfz_name": "Termostat",
+              "slug": "termostat"
+            },
+            {
+              "kfz_id": "05.03.02",
+              "kfz_name": "Termostat gövdesi",
+              "slug": "termostat-govdesi"
+            },
+            {
+              "kfz_id": "05.03.03",
+              "kfz_name": "Elektronik termostat",
+              "slug": "elektronik-termostat"
+            }
+          ]
+        },
+        {
+          "kfz_id": "05.04",
+          "kfz_name": "Fan",
+          "slug": "fan",
+          "children": []
+        },
+        {
+          "kfz_id": "05.05",
+          "kfz_name": "Fan motoru",
+          "slug": "fan-motoru",
+          "children": []
+        },
+        {
+          "kfz_id": "05.06",
+          "kfz_name": "Fan müşürü",
+          "slug": "fan-musuru",
+          "children": []
+        },
+        {
+          "kfz_id": "05.07",
+          "kfz_name": "Genleşme tankı",
+          "slug": "genlesme-tanki",
+          "children": []
+        },
+        {
+          "kfz_id": "05.08",
+          "kfz_name": "Soğutma hortumları",
+          "slug": "sogutma-hortumlari",
+          "children": []
+        },
+        {
+          "kfz_id": "05.09",
+          "kfz_name": "Radyatör kapağı",
+          "slug": "radyator-kapagi",
+          "children": []
+        },
+        {
+          "kfz_id": "05.10",
+          "kfz_name": "Soğutma suyu bağlantıları",
+          "slug": "sogutma-suyu-baglantilari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "06",
+      "kfz_name": "Motor Kayışları & Triger",
+      "name_de": "Motorriemen & Steuerkette",
+      "slug": "06-motorriemen-steuerkette",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 10,
+      "l3_count": 10,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "06.01",
+          "kfz_name": "Triger kayışı",
+          "slug": "triger-kayisi",
+          "children": [
+            {
+              "kfz_id": "06.01.01",
+              "kfz_name": "Triger kayışı",
+              "slug": "triger-kayisi"
+            },
+            {
+              "kfz_id": "06.01.02",
+              "kfz_name": "Triger seti",
+              "slug": "triger-seti"
+            },
+            {
+              "kfz_id": "06.01.03",
+              "kfz_name": "Triger gergisi",
+              "slug": "triger-gergisi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "06.02",
+          "kfz_name": "Triger seti",
+          "slug": "triger-seti",
+          "children": []
+        },
+        {
+          "kfz_id": "06.03",
+          "kfz_name": "Triger zinciri",
+          "slug": "triger-zinciri",
+          "children": [
+            {
+              "kfz_id": "06.03.01",
+              "kfz_name": "Zincir",
+              "slug": "zincir"
+            },
+            {
+              "kfz_id": "06.03.02",
+              "kfz_name": "Zincir seti",
+              "slug": "zincir-seti"
+            },
+            {
+              "kfz_id": "06.03.03",
+              "kfz_name": "Zincir gergisi",
+              "slug": "zincir-gergisi"
+            },
+            {
+              "kfz_id": "06.03.04",
+              "kfz_name": "Zincir kılavuzu",
+              "slug": "zincir-kilavuzu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "06.04",
+          "kfz_name": "Zincir seti",
+          "slug": "zincir-seti",
+          "children": []
+        },
+        {
+          "kfz_id": "06.05",
+          "kfz_name": "V kayışı",
+          "slug": "v-kayisi",
+          "children": [
+            {
+              "kfz_id": "06.05.01",
+              "kfz_name": "V kayışı",
+              "slug": "v-kayisi"
+            },
+            {
+              "kfz_id": "06.05.02",
+              "kfz_name": "Poly-V kayışı",
+              "slug": "poly-v-kayisi"
+            },
+            {
+              "kfz_id": "06.05.03",
+              "kfz_name": "Kayış seti",
+              "slug": "kayis-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "06.06",
+          "kfz_name": "Poly-V kayışı",
+          "slug": "poly-v-kayisi",
+          "children": []
+        },
+        {
+          "kfz_id": "06.07",
+          "kfz_name": "Gergi ruloları",
+          "slug": "gergi-rulolari",
+          "children": []
+        },
+        {
+          "kfz_id": "06.08",
+          "kfz_name": "Kılavuz rulolar",
+          "slug": "kilavuz-rulolar",
+          "children": []
+        },
+        {
+          "kfz_id": "06.09",
+          "kfz_name": "Kayış gergileri",
+          "slug": "kayis-gergileri",
+          "children": []
+        },
+        {
+          "kfz_id": "06.10",
+          "kfz_name": "Zincir gergileri",
+          "slug": "zincir-gergileri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "07",
+      "kfz_name": "Filtreler",
+      "name_de": "Filter",
+      "slug": "07-filter",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-02",
+      "shop_l2_name": "Filter",
+      "shop_l2_slug": "filter",
+      "subcategory_count": 9,
+      "l3_count": 9,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "07.01",
+          "kfz_name": "Motor hava filtresi",
+          "slug": "motor-hava-filtresi",
+          "children": [
+            {
+              "kfz_id": "07.01.01",
+              "kfz_name": "Panel filtre",
+              "slug": "panel-filtre"
+            },
+            {
+              "kfz_id": "07.01.02",
+              "kfz_name": "Yuvarlak filtre",
+              "slug": "yuvarlak-filtre"
+            },
+            {
+              "kfz_id": "07.01.03",
+              "kfz_name": "Performans hava filtresi",
+              "slug": "performans-hava-filtresi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "07.02",
+          "kfz_name": "Yağ filtresi",
+          "slug": "yag-filtresi",
+          "children": [
+            {
+              "kfz_id": "07.02.01",
+              "kfz_name": "Spin-on yağ filtresi",
+              "slug": "spin-on-yag-filtresi"
+            },
+            {
+              "kfz_id": "07.02.02",
+              "kfz_name": "Kartuş yağ filtresi",
+              "slug": "kartus-yag-filtresi"
+            },
+            {
+              "kfz_id": "07.02.03",
+              "kfz_name": "Yağ filtre gövdesi",
+              "slug": "yag-filtre-govdesi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "07.03",
+          "kfz_name": "Yakıt filtresi",
+          "slug": "yakit-filtresi",
+          "children": []
+        },
+        {
+          "kfz_id": "07.04",
+          "kfz_name": "Polen / kabin filtresi",
+          "slug": "polen-kabin-filtresi",
+          "children": [
+            {
+              "kfz_id": "07.04.01",
+              "kfz_name": "Standart kabin filtresi",
+              "slug": "standart-kabin-filtresi"
+            },
+            {
+              "kfz_id": "07.04.02",
+              "kfz_name": "Aktif karbonlu filtre",
+              "slug": "aktif-karbonlu-filtre"
+            },
+            {
+              "kfz_id": "07.04.03",
+              "kfz_name": "HEPA kabin filtresi",
+              "slug": "hepa-kabin-filtresi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "07.05",
+          "kfz_name": "Dizel yakıt filtresi",
+          "slug": "dizel-yakit-filtresi",
+          "children": []
+        },
+        {
+          "kfz_id": "07.06",
+          "kfz_name": "Hidrolik filtre",
+          "slug": "hidrolik-filtre",
+          "children": []
+        },
+        {
+          "kfz_id": "07.07",
+          "kfz_name": "Şanzıman filtresi",
+          "slug": "sanziman-filtresi",
+          "children": []
+        },
+        {
+          "kfz_id": "07.08",
+          "kfz_name": "Hava kurutucu filtreleri",
+          "slug": "hava-kurutucu-filtreleri",
+          "children": []
+        },
+        {
+          "kfz_id": "07.09",
+          "kfz_name": "Performans filtreleri",
+          "slug": "performans-filtreleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "08",
+      "kfz_name": "Yağlar & Teknik Sıvılar",
+      "name_de": "Öle & technische Flüssigkeiten",
+      "slug": "08-ole-technische-flussigkeiten",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-01",
+      "shop_l2_name": "Motoröle & Flüssigkeiten",
+      "shop_l2_slug": "motoroele-und-fluessigkeiten",
+      "subcategory_count": 12,
+      "l3_count": 19,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "08.01",
+          "kfz_name": "Motor yağları",
+          "slug": "motor-yaglari",
+          "children": [
+            {
+              "kfz_id": "08.01.01",
+              "kfz_name": "0W-20",
+              "slug": "0w-20"
+            },
+            {
+              "kfz_id": "08.01.02",
+              "kfz_name": "0W-30",
+              "slug": "0w-30"
+            },
+            {
+              "kfz_id": "08.01.03",
+              "kfz_name": "5W-20",
+              "slug": "5w-20"
+            },
+            {
+              "kfz_id": "08.01.04",
+              "kfz_name": "5W-30",
+              "slug": "5w-30"
+            },
+            {
+              "kfz_id": "08.01.05",
+              "kfz_name": "5W-40",
+              "slug": "5w-40"
+            },
+            {
+              "kfz_id": "08.01.06",
+              "kfz_name": "10W-40",
+              "slug": "10w-40"
+            },
+            {
+              "kfz_id": "08.01.07",
+              "kfz_name": "15W-40",
+              "slug": "15w-40"
+            }
+          ]
+        },
+        {
+          "kfz_id": "08.02",
+          "kfz_name": "Şanzıman yağları",
+          "slug": "sanziman-yaglari",
+          "children": [
+            {
+              "kfz_id": "08.02.01",
+              "kfz_name": "Manuel şanzıman yağı",
+              "slug": "manuel-sanziman-yagi"
+            },
+            {
+              "kfz_id": "08.02.02",
+              "kfz_name": "ATF",
+              "slug": "atf"
+            },
+            {
+              "kfz_id": "08.02.03",
+              "kfz_name": "DSG yağı",
+              "slug": "dsg-yagi"
+            },
+            {
+              "kfz_id": "08.02.04",
+              "kfz_name": "CVT yağı",
+              "slug": "cvt-yagi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "08.03",
+          "kfz_name": "Diferansiyel yağları",
+          "slug": "diferansiyel-yaglari",
+          "children": []
+        },
+        {
+          "kfz_id": "08.04",
+          "kfz_name": "ATF",
+          "slug": "atf",
+          "children": []
+        },
+        {
+          "kfz_id": "08.05",
+          "kfz_name": "Hidrolik yağlar",
+          "slug": "hidrolik-yaglar",
+          "children": []
+        },
+        {
+          "kfz_id": "08.06",
+          "kfz_name": "Fren hidroliği",
+          "slug": "fren-hidroligi",
+          "children": [
+            {
+              "kfz_id": "08.06.01",
+              "kfz_name": "DOT 3",
+              "slug": "dot-3"
+            },
+            {
+              "kfz_id": "08.06.02",
+              "kfz_name": "DOT 4",
+              "slug": "dot-4"
+            },
+            {
+              "kfz_id": "08.06.03",
+              "kfz_name": "DOT 5.1",
+              "slug": "dot-5-1"
+            }
+          ]
+        },
+        {
+          "kfz_id": "08.07",
+          "kfz_name": "Antifriz",
+          "slug": "antifriz",
+          "children": [
+            {
+              "kfz_id": "08.07.01",
+              "kfz_name": "G11",
+              "slug": "g11"
+            },
+            {
+              "kfz_id": "08.07.02",
+              "kfz_name": "G12",
+              "slug": "g12"
+            },
+            {
+              "kfz_id": "08.07.03",
+              "kfz_name": "G12+",
+              "slug": "g12"
+            },
+            {
+              "kfz_id": "08.07.04",
+              "kfz_name": "G13",
+              "slug": "g13"
+            },
+            {
+              "kfz_id": "08.07.05",
+              "kfz_name": "G12evo",
+              "slug": "g12evo"
+            }
+          ]
+        },
+        {
+          "kfz_id": "08.08",
+          "kfz_name": "Soğutma sıvıları",
+          "slug": "sogutma-sivilari",
+          "children": []
+        },
+        {
+          "kfz_id": "08.09",
+          "kfz_name": "AdBlue",
+          "slug": "adblue",
+          "children": []
+        },
+        {
+          "kfz_id": "08.10",
+          "kfz_name": "Cam suyu",
+          "slug": "cam-suyu",
+          "children": []
+        },
+        {
+          "kfz_id": "08.11",
+          "kfz_name": "Kompresör yağları",
+          "slug": "kompresor-yaglari",
+          "children": []
+        },
+        {
+          "kfz_id": "08.12",
+          "kfz_name": "Gresler",
+          "slug": "gresler",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "09",
+      "kfz_name": "Fren Sistemi",
+      "name_de": "Bremsanlage",
+      "slug": "09-bremsanlage",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-03",
+      "shop_l2_name": "Bremssystem",
+      "shop_l2_slug": "bremssystem",
+      "subcategory_count": 14,
+      "l3_count": 13,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "09.01",
+          "kfz_name": "Fren diskleri",
+          "slug": "fren-diskleri",
+          "children": [
+            {
+              "kfz_id": "09.01.01",
+              "kfz_name": "Ön fren diski",
+              "slug": "on-fren-diski"
+            },
+            {
+              "kfz_id": "09.01.02",
+              "kfz_name": "Arka fren diski",
+              "slug": "arka-fren-diski"
+            },
+            {
+              "kfz_id": "09.01.03",
+              "kfz_name": "Havalandırmalı disk",
+              "slug": "havalandirmali-disk"
+            },
+            {
+              "kfz_id": "09.01.04",
+              "kfz_name": "Delikli disk",
+              "slug": "delikli-disk"
+            }
+          ]
+        },
+        {
+          "kfz_id": "09.02",
+          "kfz_name": "Fren balataları",
+          "slug": "fren-balatalari",
+          "children": [
+            {
+              "kfz_id": "09.02.01",
+              "kfz_name": "Ön balata",
+              "slug": "on-balata"
+            },
+            {
+              "kfz_id": "09.02.02",
+              "kfz_name": "Arka balata",
+              "slug": "arka-balata"
+            },
+            {
+              "kfz_id": "09.02.03",
+              "kfz_name": "Elektrikli park freni balatası",
+              "slug": "elektrikli-park-freni-balatasi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "09.03",
+          "kfz_name": "Fren kaliperleri",
+          "slug": "fren-kaliperleri",
+          "children": [
+            {
+              "kfz_id": "09.03.01",
+              "kfz_name": "Ön kaliper",
+              "slug": "on-kaliper"
+            },
+            {
+              "kfz_id": "09.03.02",
+              "kfz_name": "Arka kaliper",
+              "slug": "arka-kaliper"
+            },
+            {
+              "kfz_id": "09.03.03",
+              "kfz_name": "Kaliper tamir seti",
+              "slug": "kaliper-tamir-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "09.04",
+          "kfz_name": "Fren kaliper parçaları",
+          "slug": "fren-kaliper-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "09.05",
+          "kfz_name": "Fren kampanaları",
+          "slug": "fren-kampanalari",
+          "children": []
+        },
+        {
+          "kfz_id": "09.06",
+          "kfz_name": "Fren pabuçları",
+          "slug": "fren-pabuclari",
+          "children": []
+        },
+        {
+          "kfz_id": "09.07",
+          "kfz_name": "Fren silindiri",
+          "slug": "fren-silindiri",
+          "children": []
+        },
+        {
+          "kfz_id": "09.08",
+          "kfz_name": "Fren ana merkezi",
+          "slug": "fren-ana-merkezi",
+          "children": []
+        },
+        {
+          "kfz_id": "09.09",
+          "kfz_name": "Fren hortumları",
+          "slug": "fren-hortumlari",
+          "children": []
+        },
+        {
+          "kfz_id": "09.10",
+          "kfz_name": "Fren boruları",
+          "slug": "fren-borulari",
+          "children": []
+        },
+        {
+          "kfz_id": "09.11",
+          "kfz_name": "ABS parçaları",
+          "slug": "abs-parcalari",
+          "children": [
+            {
+              "kfz_id": "09.11.01",
+              "kfz_name": "ABS sensörü",
+              "slug": "abs-sensoru"
+            },
+            {
+              "kfz_id": "09.11.02",
+              "kfz_name": "ABS halkası",
+              "slug": "abs-halkasi"
+            },
+            {
+              "kfz_id": "09.11.03",
+              "kfz_name": "ABS hidrolik ünitesi",
+              "slug": "abs-hidrolik-unitesi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "09.12",
+          "kfz_name": "Fren sensörleri",
+          "slug": "fren-sensorleri",
+          "children": []
+        },
+        {
+          "kfz_id": "09.13",
+          "kfz_name": "El freni sistemi",
+          "slug": "el-freni-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "09.14",
+          "kfz_name": "Elektrikli park freni",
+          "slug": "elektrikli-park-freni",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "10",
+      "kfz_name": "Debriyaj",
+      "name_de": "Kupplung",
+      "slug": "10-kupplung",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 10,
+      "l3_count": 6,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "10.01",
+          "kfz_name": "Debriyaj seti",
+          "slug": "debriyaj-seti",
+          "children": [
+            {
+              "kfz_id": "10.01.01",
+              "kfz_name": "Debriyaj seti komple",
+              "slug": "debriyaj-seti-komple"
+            },
+            {
+              "kfz_id": "10.01.02",
+              "kfz_name": "Baskı + disk seti",
+              "slug": "baski-disk-seti"
+            },
+            {
+              "kfz_id": "10.01.03",
+              "kfz_name": "Debriyaj hidrolik seti",
+              "slug": "debriyaj-hidrolik-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "10.02",
+          "kfz_name": "Debriyaj diski",
+          "slug": "debriyaj-diski",
+          "children": []
+        },
+        {
+          "kfz_id": "10.03",
+          "kfz_name": "Baskı plakası",
+          "slug": "baski-plakasi",
+          "children": []
+        },
+        {
+          "kfz_id": "10.04",
+          "kfz_name": "Debriyaj rulmanı",
+          "slug": "debriyaj-rulmani",
+          "children": []
+        },
+        {
+          "kfz_id": "10.05",
+          "kfz_name": "Hidrolik debriyaj",
+          "slug": "hidrolik-debriyaj",
+          "children": []
+        },
+        {
+          "kfz_id": "10.06",
+          "kfz_name": "Debriyaj merkezi",
+          "slug": "debriyaj-merkezi",
+          "children": []
+        },
+        {
+          "kfz_id": "10.07",
+          "kfz_name": "Volan",
+          "slug": "volan",
+          "children": [
+            {
+              "kfz_id": "10.07.01",
+              "kfz_name": "Tek kütleli volan",
+              "slug": "tek-kutleli-volan"
+            },
+            {
+              "kfz_id": "10.07.02",
+              "kfz_name": "Çift kütleli volan",
+              "slug": "cift-kutleli-volan"
+            },
+            {
+              "kfz_id": "10.07.03",
+              "kfz_name": "Volan cıvata seti",
+              "slug": "volan-civata-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "10.08",
+          "kfz_name": "Çift kütleli volan",
+          "slug": "cift-kutleli-volan",
+          "children": []
+        },
+        {
+          "kfz_id": "10.09",
+          "kfz_name": "Debriyaj kablosu",
+          "slug": "debriyaj-kablosu",
+          "children": []
+        },
+        {
+          "kfz_id": "10.10",
+          "kfz_name": "Debriyaj parçaları",
+          "slug": "debriyaj-parcalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "11",
+      "kfz_name": "Şanzıman",
+      "name_de": "Getriebe",
+      "slug": "11-getriebe",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 11,
+      "l3_count": 11,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "11.01",
+          "kfz_name": "Manuel şanzıman",
+          "slug": "manuel-sanziman",
+          "children": [
+            {
+              "kfz_id": "11.01.01",
+              "kfz_name": "Şanzıman komple",
+              "slug": "sanziman-komple"
+            },
+            {
+              "kfz_id": "11.01.02",
+              "kfz_name": "Dişli seti",
+              "slug": "disli-seti"
+            },
+            {
+              "kfz_id": "11.01.03",
+              "kfz_name": "Senkromeç",
+              "slug": "senkromec"
+            },
+            {
+              "kfz_id": "11.01.04",
+              "kfz_name": "Şanzıman rulmanı",
+              "slug": "sanziman-rulmani"
+            }
+          ]
+        },
+        {
+          "kfz_id": "11.02",
+          "kfz_name": "Otomatik şanzıman",
+          "slug": "otomatik-sanziman",
+          "children": [
+            {
+              "kfz_id": "11.02.01",
+              "kfz_name": "Şanzıman komple",
+              "slug": "sanziman-komple"
+            },
+            {
+              "kfz_id": "11.02.02",
+              "kfz_name": "Valf gövdesi",
+              "slug": "valf-govdesi"
+            },
+            {
+              "kfz_id": "11.02.03",
+              "kfz_name": "Tork konvertörü",
+              "slug": "tork-konvertoru"
+            },
+            {
+              "kfz_id": "11.02.04",
+              "kfz_name": "Şanzıman filtresi",
+              "slug": "sanziman-filtresi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "11.03",
+          "kfz_name": "DSG",
+          "slug": "dsg",
+          "children": []
+        },
+        {
+          "kfz_id": "11.04",
+          "kfz_name": "CVT",
+          "slug": "cvt",
+          "children": []
+        },
+        {
+          "kfz_id": "11.05",
+          "kfz_name": "Şanzıman parçaları",
+          "slug": "sanziman-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "11.06",
+          "kfz_name": "Dişliler",
+          "slug": "disliler",
+          "children": []
+        },
+        {
+          "kfz_id": "11.07",
+          "kfz_name": "Şanzıman rulmanları",
+          "slug": "sanziman-rulmanlari",
+          "children": []
+        },
+        {
+          "kfz_id": "11.08",
+          "kfz_name": "Şanzıman contaları",
+          "slug": "sanziman-contalari",
+          "children": []
+        },
+        {
+          "kfz_id": "11.09",
+          "kfz_name": "Şanzıman filtreleri",
+          "slug": "sanziman-filtreleri",
+          "children": []
+        },
+        {
+          "kfz_id": "11.10",
+          "kfz_name": "Şanzıman soğutması",
+          "slug": "sanziman-sogutmasi",
+          "children": []
+        },
+        {
+          "kfz_id": "11.11",
+          "kfz_name": "Vites mekanizması",
+          "slug": "vites-mekanizmasi",
+          "children": [
+            {
+              "kfz_id": "11.11.01",
+              "kfz_name": "Vites halatı",
+              "slug": "vites-halati"
+            },
+            {
+              "kfz_id": "11.11.02",
+              "kfz_name": "Vites kolu",
+              "slug": "vites-kolu"
+            },
+            {
+              "kfz_id": "11.11.03",
+              "kfz_name": "Vites mafsalı",
+              "slug": "vites-mafsali"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kfz_id": "12",
+      "kfz_name": "Akslar & Aktarma",
+      "name_de": "Antriebswellen & Antrieb",
+      "slug": "12-antriebswellen-antrieb",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 10,
+      "l3_count": 10,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "12.01",
+          "kfz_name": "Aks milleri",
+          "slug": "aks-milleri",
+          "children": [
+            {
+              "kfz_id": "12.01.01",
+              "kfz_name": "Ön aks",
+              "slug": "on-aks"
+            },
+            {
+              "kfz_id": "12.01.02",
+              "kfz_name": "Arka aks",
+              "slug": "arka-aks"
+            },
+            {
+              "kfz_id": "12.01.03",
+              "kfz_name": "Aks komple",
+              "slug": "aks-komple"
+            },
+            {
+              "kfz_id": "12.01.04",
+              "kfz_name": "Aks mili",
+              "slug": "aks-mili"
+            }
+          ]
+        },
+        {
+          "kfz_id": "12.02",
+          "kfz_name": "Aks kafaları",
+          "slug": "aks-kafalari",
+          "children": []
+        },
+        {
+          "kfz_id": "12.03",
+          "kfz_name": "CV mafsalları",
+          "slug": "cv-mafsallari",
+          "children": [
+            {
+              "kfz_id": "12.03.01",
+              "kfz_name": "İç CV mafsal",
+              "slug": "ic-cv-mafsal"
+            },
+            {
+              "kfz_id": "12.03.02",
+              "kfz_name": "Dış CV mafsal",
+              "slug": "dis-cv-mafsal"
+            },
+            {
+              "kfz_id": "12.03.03",
+              "kfz_name": "CV mafsal seti",
+              "slug": "cv-mafsal-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "12.04",
+          "kfz_name": "Aks körükleri",
+          "slug": "aks-korukleri",
+          "children": []
+        },
+        {
+          "kfz_id": "12.05",
+          "kfz_name": "Aks bağlantıları",
+          "slug": "aks-baglantilari",
+          "children": []
+        },
+        {
+          "kfz_id": "12.06",
+          "kfz_name": "Tahrik milleri",
+          "slug": "tahrik-milleri",
+          "children": []
+        },
+        {
+          "kfz_id": "12.07",
+          "kfz_name": "Kardan milleri",
+          "slug": "kardan-milleri",
+          "children": []
+        },
+        {
+          "kfz_id": "12.08",
+          "kfz_name": "Diferansiyel",
+          "slug": "diferansiyel",
+          "children": [
+            {
+              "kfz_id": "12.08.01",
+              "kfz_name": "Ön diferansiyel",
+              "slug": "on-diferansiyel"
+            },
+            {
+              "kfz_id": "12.08.02",
+              "kfz_name": "Arka diferansiyel",
+              "slug": "arka-diferansiyel"
+            },
+            {
+              "kfz_id": "12.08.03",
+              "kfz_name": "Diferansiyel dişlisi",
+              "slug": "diferansiyel-dislisi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "12.09",
+          "kfz_name": "Diferansiyel parçaları",
+          "slug": "diferansiyel-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "12.10",
+          "kfz_name": "Aks dişlileri",
+          "slug": "aks-dislileri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "13",
+      "kfz_name": "Direksiyon",
+      "name_de": "Lenkung",
+      "slug": "13-lenkung",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 9,
+      "l3_count": 6,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "13.01",
+          "kfz_name": "Direksiyon kutusu",
+          "slug": "direksiyon-kutusu",
+          "children": [
+            {
+              "kfz_id": "13.01.01",
+              "kfz_name": "Mekanik direksiyon kutusu",
+              "slug": "mekanik-direksiyon-kutusu"
+            },
+            {
+              "kfz_id": "13.01.02",
+              "kfz_name": "Hidrolik direksiyon kutusu",
+              "slug": "hidrolik-direksiyon-kutusu"
+            },
+            {
+              "kfz_id": "13.01.03",
+              "kfz_name": "Elektrikli direksiyon kutusu",
+              "slug": "elektrikli-direksiyon-kutusu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "13.02",
+          "kfz_name": "Direksiyon kremayeri",
+          "slug": "direksiyon-kremayeri",
+          "children": []
+        },
+        {
+          "kfz_id": "13.03",
+          "kfz_name": "Rot kolu",
+          "slug": "rot-kolu",
+          "children": []
+        },
+        {
+          "kfz_id": "13.04",
+          "kfz_name": "Rot başı",
+          "slug": "rot-basi",
+          "children": [
+            {
+              "kfz_id": "13.04.01",
+              "kfz_name": "İç rot başı",
+              "slug": "ic-rot-basi"
+            },
+            {
+              "kfz_id": "13.04.02",
+              "kfz_name": "Dış rot başı",
+              "slug": "dis-rot-basi"
+            },
+            {
+              "kfz_id": "13.04.03",
+              "kfz_name": "Rot başı seti",
+              "slug": "rot-basi-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "13.05",
+          "kfz_name": "Direksiyon pompası",
+          "slug": "direksiyon-pompasi",
+          "children": []
+        },
+        {
+          "kfz_id": "13.06",
+          "kfz_name": "Servo sistemi",
+          "slug": "servo-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "13.07",
+          "kfz_name": "Direksiyon mili",
+          "slug": "direksiyon-mili",
+          "children": []
+        },
+        {
+          "kfz_id": "13.08",
+          "kfz_name": "Direksiyon mafsalları",
+          "slug": "direksiyon-mafsallari",
+          "children": []
+        },
+        {
+          "kfz_id": "13.09",
+          "kfz_name": "Elektrikli direksiyon parçaları",
+          "slug": "elektrikli-direksiyon-parcalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "14",
+      "kfz_name": "Süspansiyon & Şasi",
+      "name_de": "Fahrwerk & Chassis",
+      "slug": "14-fahrwerk-chassis",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 11,
+      "l3_count": 10,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "14.01",
+          "kfz_name": "Amortisör",
+          "slug": "amortisor",
+          "children": [
+            {
+              "kfz_id": "14.01.01",
+              "kfz_name": "Ön amortisör",
+              "slug": "on-amortisor"
+            },
+            {
+              "kfz_id": "14.01.02",
+              "kfz_name": "Arka amortisör",
+              "slug": "arka-amortisor"
+            },
+            {
+              "kfz_id": "14.01.03",
+              "kfz_name": "Amortisör komple",
+              "slug": "amortisor-komple"
+            }
+          ]
+        },
+        {
+          "kfz_id": "14.02",
+          "kfz_name": "Yay",
+          "slug": "yay",
+          "children": [
+            {
+              "kfz_id": "14.02.01",
+              "kfz_name": "Ön yay",
+              "slug": "on-yay"
+            },
+            {
+              "kfz_id": "14.02.02",
+              "kfz_name": "Arka yay",
+              "slug": "arka-yay"
+            },
+            {
+              "kfz_id": "14.02.03",
+              "kfz_name": "Yay seti",
+              "slug": "yay-seti"
+            },
+            {
+              "kfz_id": "14.02.04",
+              "kfz_name": "Spor yay",
+              "slug": "spor-yay"
+            }
+          ]
+        },
+        {
+          "kfz_id": "14.03",
+          "kfz_name": "Coilover",
+          "slug": "coilover",
+          "children": []
+        },
+        {
+          "kfz_id": "14.04",
+          "kfz_name": "Havalı süspansiyon",
+          "slug": "havali-suspansiyon",
+          "children": []
+        },
+        {
+          "kfz_id": "14.05",
+          "kfz_name": "Yay takozu",
+          "slug": "yay-takozu",
+          "children": []
+        },
+        {
+          "kfz_id": "14.06",
+          "kfz_name": "Amortisör takozu",
+          "slug": "amortisor-takozu",
+          "children": []
+        },
+        {
+          "kfz_id": "14.07",
+          "kfz_name": "Salıncak",
+          "slug": "salincak",
+          "children": [
+            {
+              "kfz_id": "14.07.01",
+              "kfz_name": "Üst salıncak",
+              "slug": "ust-salincak"
+            },
+            {
+              "kfz_id": "14.07.02",
+              "kfz_name": "Alt salıncak",
+              "slug": "alt-salincak"
+            },
+            {
+              "kfz_id": "14.07.03",
+              "kfz_name": "Salıncak seti",
+              "slug": "salincak-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "14.08",
+          "kfz_name": "Salıncak burcu",
+          "slug": "salincak-burcu",
+          "children": []
+        },
+        {
+          "kfz_id": "14.09",
+          "kfz_name": "Stabilizatör",
+          "slug": "stabilizator",
+          "children": []
+        },
+        {
+          "kfz_id": "14.10",
+          "kfz_name": "Stabilizatör bağlantısı",
+          "slug": "stabilizator-baglantisi",
+          "children": []
+        },
+        {
+          "kfz_id": "14.11",
+          "kfz_name": "Şasi bağlantıları",
+          "slug": "sasi-baglantilari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "15",
+      "kfz_name": "Tekerlek Süspansiyonu & Porya",
+      "name_de": "Radaufhängung & Radnaben",
+      "slug": "15-radaufhängung-radnaben",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 7,
+      "l3_count": 6,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "15.01",
+          "kfz_name": "Tekerlek rulmanı",
+          "slug": "tekerlek-rulmani",
+          "children": [
+            {
+              "kfz_id": "15.01.01",
+              "kfz_name": "Ön rulman",
+              "slug": "on-rulman"
+            },
+            {
+              "kfz_id": "15.01.02",
+              "kfz_name": "Arka rulman",
+              "slug": "arka-rulman"
+            },
+            {
+              "kfz_id": "15.01.03",
+              "kfz_name": "Rulman + porya seti",
+              "slug": "rulman-porya-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "15.02",
+          "kfz_name": "Porya",
+          "slug": "porya",
+          "children": [
+            {
+              "kfz_id": "15.02.01",
+              "kfz_name": "Ön porya",
+              "slug": "on-porya"
+            },
+            {
+              "kfz_id": "15.02.02",
+              "kfz_name": "Arka porya",
+              "slug": "arka-porya"
+            },
+            {
+              "kfz_id": "15.02.03",
+              "kfz_name": "Porya komple",
+              "slug": "porya-komple"
+            }
+          ]
+        },
+        {
+          "kfz_id": "15.03",
+          "kfz_name": "Porya rulmanı",
+          "slug": "porya-rulmani",
+          "children": []
+        },
+        {
+          "kfz_id": "15.04",
+          "kfz_name": "Aks mafsalı",
+          "slug": "aks-mafsali",
+          "children": []
+        },
+        {
+          "kfz_id": "15.05",
+          "kfz_name": "Tekerlek göbeği",
+          "slug": "tekerlek-gobegi",
+          "children": []
+        },
+        {
+          "kfz_id": "15.06",
+          "kfz_name": "Rotiller",
+          "slug": "rotiller",
+          "children": []
+        },
+        {
+          "kfz_id": "15.07",
+          "kfz_name": "Tekerlek bağlantı parçaları",
+          "slug": "tekerlek-baglanti-parcalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "16",
+      "kfz_name": "Lastikler",
+      "name_de": "Reifen",
+      "slug": "16-reifen",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-05",
+      "shop_l2_name": "Reifen & Felgen",
+      "shop_l2_slug": "reifen-und-felgen",
+      "subcategory_count": 9,
+      "l3_count": 11,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "16.01",
+          "kfz_name": "Yaz lastikleri",
+          "slug": "yaz-lastikleri",
+          "children": [
+            {
+              "kfz_id": "16.01.01",
+              "kfz_name": "Binek",
+              "slug": "binek"
+            },
+            {
+              "kfz_id": "16.01.02",
+              "kfz_name": "SUV",
+              "slug": "suv"
+            },
+            {
+              "kfz_id": "16.01.03",
+              "kfz_name": "Hafif ticari",
+              "slug": "hafif-ticari"
+            },
+            {
+              "kfz_id": "16.01.04",
+              "kfz_name": "Performans",
+              "slug": "performans"
+            }
+          ]
+        },
+        {
+          "kfz_id": "16.02",
+          "kfz_name": "Kış lastikleri",
+          "slug": "kis-lastikleri",
+          "children": [
+            {
+              "kfz_id": "16.02.01",
+              "kfz_name": "Binek",
+              "slug": "binek"
+            },
+            {
+              "kfz_id": "16.02.02",
+              "kfz_name": "SUV",
+              "slug": "suv"
+            },
+            {
+              "kfz_id": "16.02.03",
+              "kfz_name": "Hafif ticari",
+              "slug": "hafif-ticari"
+            },
+            {
+              "kfz_id": "16.02.04",
+              "kfz_name": "Run-flat",
+              "slug": "run-flat"
+            }
+          ]
+        },
+        {
+          "kfz_id": "16.03",
+          "kfz_name": "Dört mevsim lastikleri",
+          "slug": "dort-mevsim-lastikleri",
+          "children": [
+            {
+              "kfz_id": "16.03.01",
+              "kfz_name": "Binek",
+              "slug": "binek"
+            },
+            {
+              "kfz_id": "16.03.02",
+              "kfz_name": "SUV",
+              "slug": "suv"
+            },
+            {
+              "kfz_id": "16.03.03",
+              "kfz_name": "Hafif ticari",
+              "slug": "hafif-ticari"
+            }
+          ]
+        },
+        {
+          "kfz_id": "16.04",
+          "kfz_name": "Ticari araç lastikleri",
+          "slug": "ticari-arac-lastikleri",
+          "children": []
+        },
+        {
+          "kfz_id": "16.05",
+          "kfz_name": "SUV lastikleri",
+          "slug": "suv-lastikleri",
+          "children": []
+        },
+        {
+          "kfz_id": "16.06",
+          "kfz_name": "Run-flat",
+          "slug": "run-flat",
+          "children": []
+        },
+        {
+          "kfz_id": "16.07",
+          "kfz_name": "EV lastikleri",
+          "slug": "ev-lastikleri",
+          "children": []
+        },
+        {
+          "kfz_id": "16.08",
+          "kfz_name": "Performans lastikleri",
+          "slug": "performans-lastikleri",
+          "children": []
+        },
+        {
+          "kfz_id": "16.09",
+          "kfz_name": "Hafif ticari lastikleri",
+          "slug": "hafif-ticari-lastikleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "17",
+      "kfz_name": "Jantlar",
+      "name_de": "Felgen",
+      "slug": "17-felgen",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-05",
+      "shop_l2_name": "Reifen & Felgen",
+      "shop_l2_slug": "reifen-und-felgen",
+      "subcategory_count": 9,
+      "l3_count": 10,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "17.01",
+          "kfz_name": "Alüminyum jant",
+          "slug": "aluminyum-jant",
+          "children": [
+            {
+              "kfz_id": "17.01.01",
+              "kfz_name": "15 inç",
+              "slug": "15-inc"
+            },
+            {
+              "kfz_id": "17.01.02",
+              "kfz_name": "16 inç",
+              "slug": "16-inc"
+            },
+            {
+              "kfz_id": "17.01.03",
+              "kfz_name": "17 inç",
+              "slug": "17-inc"
+            },
+            {
+              "kfz_id": "17.01.04",
+              "kfz_name": "18 inç",
+              "slug": "18-inc"
+            },
+            {
+              "kfz_id": "17.01.05",
+              "kfz_name": "19 inç",
+              "slug": "19-inc"
+            },
+            {
+              "kfz_id": "17.01.06",
+              "kfz_name": "20+ inç",
+              "slug": "20-inc"
+            }
+          ]
+        },
+        {
+          "kfz_id": "17.02",
+          "kfz_name": "Çelik jant",
+          "slug": "celik-jant",
+          "children": [
+            {
+              "kfz_id": "17.02.01",
+              "kfz_name": "13–15 inç",
+              "slug": "13-15-inc"
+            },
+            {
+              "kfz_id": "17.02.02",
+              "kfz_name": "16 inç",
+              "slug": "16-inc"
+            },
+            {
+              "kfz_id": "17.02.03",
+              "kfz_name": "17 inç",
+              "slug": "17-inc"
+            },
+            {
+              "kfz_id": "17.02.04",
+              "kfz_name": "Ticari araç",
+              "slug": "ticari-arac"
+            }
+          ]
+        },
+        {
+          "kfz_id": "17.03",
+          "kfz_name": "Hafif alaşım jant",
+          "slug": "hafif-alasim-jant",
+          "children": []
+        },
+        {
+          "kfz_id": "17.04",
+          "kfz_name": "SUV jantları",
+          "slug": "suv-jantlari",
+          "children": []
+        },
+        {
+          "kfz_id": "17.05",
+          "kfz_name": "Ticari araç jantları",
+          "slug": "ticari-arac-jantlari",
+          "children": []
+        },
+        {
+          "kfz_id": "17.06",
+          "kfz_name": "Jant aksesuarları",
+          "slug": "jant-aksesuarlari",
+          "children": []
+        },
+        {
+          "kfz_id": "17.07",
+          "kfz_name": "Jant bijonları",
+          "slug": "jant-bijonlari",
+          "children": []
+        },
+        {
+          "kfz_id": "17.08",
+          "kfz_name": "Somunlar",
+          "slug": "somunlar",
+          "children": []
+        },
+        {
+          "kfz_id": "17.09",
+          "kfz_name": "Merkezleme halkaları",
+          "slug": "merkezleme-halkalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "18",
+      "kfz_name": "Egzoz & Emisyon",
+      "name_de": "Auspuff & Abgas",
+      "slug": "18-auspuff-abgas",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 13,
+      "l3_count": 9,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "18.01",
+          "kfz_name": "Egzoz manifoldu",
+          "slug": "egzoz-manifoldu",
+          "children": []
+        },
+        {
+          "kfz_id": "18.02",
+          "kfz_name": "Egzoz boruları",
+          "slug": "egzoz-borulari",
+          "children": []
+        },
+        {
+          "kfz_id": "18.03",
+          "kfz_name": "Susturucular",
+          "slug": "susturucular",
+          "children": []
+        },
+        {
+          "kfz_id": "18.04",
+          "kfz_name": "Orta susturucu",
+          "slug": "orta-susturucu",
+          "children": []
+        },
+        {
+          "kfz_id": "18.05",
+          "kfz_name": "Arka susturucu",
+          "slug": "arka-susturucu",
+          "children": []
+        },
+        {
+          "kfz_id": "18.06",
+          "kfz_name": "Katalitik konvertör",
+          "slug": "katalitik-konvertor",
+          "children": [
+            {
+              "kfz_id": "18.06.01",
+              "kfz_name": "Benzin katalizörü",
+              "slug": "benzin-katalizoru"
+            },
+            {
+              "kfz_id": "18.06.02",
+              "kfz_name": "Dizel katalizörü",
+              "slug": "dizel-katalizoru"
+            },
+            {
+              "kfz_id": "18.06.03",
+              "kfz_name": "Üç yollu katalizör",
+              "slug": "uc-yollu-katalizor"
+            }
+          ]
+        },
+        {
+          "kfz_id": "18.07",
+          "kfz_name": "DPF",
+          "slug": "dpf",
+          "children": [
+            {
+              "kfz_id": "18.07.01",
+              "kfz_name": "DPF filtre",
+              "slug": "dpf-filtre"
+            },
+            {
+              "kfz_id": "18.07.02",
+              "kfz_name": "DPF sensörü",
+              "slug": "dpf-sensoru"
+            },
+            {
+              "kfz_id": "18.07.03",
+              "kfz_name": "DPF basınç hortumu",
+              "slug": "dpf-basinc-hortumu"
+            },
+            {
+              "kfz_id": "18.07.04",
+              "kfz_name": "DPF temizleme ürünü",
+              "slug": "dpf-temizleme-urunu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "18.08",
+          "kfz_name": "GPF",
+          "slug": "gpf",
+          "children": []
+        },
+        {
+          "kfz_id": "18.09",
+          "kfz_name": "EGR",
+          "slug": "egr",
+          "children": []
+        },
+        {
+          "kfz_id": "18.10",
+          "kfz_name": "Lambda sensörü",
+          "slug": "lambda-sensoru",
+          "children": [
+            {
+              "kfz_id": "18.10.01",
+              "kfz_name": "Dar bant lambda",
+              "slug": "dar-bant-lambda"
+            },
+            {
+              "kfz_id": "18.10.02",
+              "kfz_name": "Geniş bant lambda",
+              "slug": "genis-bant-lambda"
+            }
+          ]
+        },
+        {
+          "kfz_id": "18.11",
+          "kfz_name": "NOx sensörü",
+          "slug": "nox-sensoru",
+          "children": []
+        },
+        {
+          "kfz_id": "18.12",
+          "kfz_name": "AdBlue sistemi",
+          "slug": "adblue-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "18.13",
+          "kfz_name": "Egzoz contaları",
+          "slug": "egzoz-contalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "19",
+      "kfz_name": "Elektrik & Şarj Sistemi",
+      "name_de": "Elektrik & Ladesystem",
+      "slug": "19-elektrik-ladesystem",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-04",
+      "shop_l2_name": "Batterie & Elektrik",
+      "shop_l2_slug": "batterie-und-elektrik",
+      "subcategory_count": 10,
+      "l3_count": 9,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "19.01",
+          "kfz_name": "Alternatör",
+          "slug": "alternator",
+          "children": [
+            {
+              "kfz_id": "19.01.01",
+              "kfz_name": "Alternatör komple",
+              "slug": "alternator-komple"
+            },
+            {
+              "kfz_id": "19.01.02",
+              "kfz_name": "Alternatör kasnağı",
+              "slug": "alternator-kasnagi"
+            },
+            {
+              "kfz_id": "19.01.03",
+              "kfz_name": "Voltaj regülatörü",
+              "slug": "voltaj-regulatoru"
+            }
+          ]
+        },
+        {
+          "kfz_id": "19.02",
+          "kfz_name": "Marş motoru",
+          "slug": "mars-motoru",
+          "children": [
+            {
+              "kfz_id": "19.02.01",
+              "kfz_name": "Marş motoru komple",
+              "slug": "mars-motoru-komple"
+            },
+            {
+              "kfz_id": "19.02.02",
+              "kfz_name": "Marş solenoidi",
+              "slug": "mars-solenoidi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "19.03",
+          "kfz_name": "Akü",
+          "slug": "aku",
+          "children": [
+            {
+              "kfz_id": "19.03.01",
+              "kfz_name": "Start-stop AGM",
+              "slug": "start-stop-agm"
+            },
+            {
+              "kfz_id": "19.03.02",
+              "kfz_name": "Start-stop EFB",
+              "slug": "start-stop-efb"
+            },
+            {
+              "kfz_id": "19.03.03",
+              "kfz_name": "Kurşun-asit",
+              "slug": "kursun-asit"
+            },
+            {
+              "kfz_id": "19.03.04",
+              "kfz_name": "Ticari araç aküsü",
+              "slug": "ticari-arac-akusu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "19.04",
+          "kfz_name": "Akü bağlantıları",
+          "slug": "aku-baglantilari",
+          "children": []
+        },
+        {
+          "kfz_id": "19.05",
+          "kfz_name": "Akü sensörleri",
+          "slug": "aku-sensorleri",
+          "children": []
+        },
+        {
+          "kfz_id": "19.06",
+          "kfz_name": "Şarj regülatörü",
+          "slug": "sarj-regulatoru",
+          "children": []
+        },
+        {
+          "kfz_id": "19.07",
+          "kfz_name": "Marş parçaları",
+          "slug": "mars-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "19.08",
+          "kfz_name": "Sigortalar",
+          "slug": "sigortalar",
+          "children": []
+        },
+        {
+          "kfz_id": "19.09",
+          "kfz_name": "Röleler",
+          "slug": "roleler",
+          "children": []
+        },
+        {
+          "kfz_id": "19.10",
+          "kfz_name": "Kablo sistemleri",
+          "slug": "kablo-sistemleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "20",
+      "kfz_name": "Ateşleme & Kızdırma",
+      "name_de": "Zündung & Glühkerzen",
+      "slug": "20-zundung-gluhkerzen",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-04",
+      "shop_l2_name": "Batterie & Elektrik",
+      "shop_l2_slug": "batterie-und-elektrik",
+      "subcategory_count": 7,
+      "l3_count": 9,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "20.01",
+          "kfz_name": "Buji",
+          "slug": "buji",
+          "children": [
+            {
+              "kfz_id": "20.01.01",
+              "kfz_name": "Benzin bujisi",
+              "slug": "benzin-bujisi"
+            },
+            {
+              "kfz_id": "20.01.02",
+              "kfz_name": "İridyum buji",
+              "slug": "iridyum-buji"
+            },
+            {
+              "kfz_id": "20.01.03",
+              "kfz_name": "Platin buji",
+              "slug": "platin-buji"
+            }
+          ]
+        },
+        {
+          "kfz_id": "20.02",
+          "kfz_name": "Kızdırma bujisi",
+          "slug": "kizdirma-bujisi",
+          "children": [
+            {
+              "kfz_id": "20.02.01",
+              "kfz_name": "Standart",
+              "slug": "standart"
+            },
+            {
+              "kfz_id": "20.02.02",
+              "kfz_name": "Seramik",
+              "slug": "seramik"
+            },
+            {
+              "kfz_id": "20.02.03",
+              "kfz_name": "Basınç sensörlü",
+              "slug": "basinc-sensorlu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "20.03",
+          "kfz_name": "Ateşleme bobini",
+          "slug": "atesleme-bobini",
+          "children": [
+            {
+              "kfz_id": "20.03.01",
+              "kfz_name": "Tekli bobin",
+              "slug": "tekli-bobin"
+            },
+            {
+              "kfz_id": "20.03.02",
+              "kfz_name": "Bobin rayı",
+              "slug": "bobin-rayi"
+            },
+            {
+              "kfz_id": "20.03.03",
+              "kfz_name": "Bobin seti",
+              "slug": "bobin-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "20.04",
+          "kfz_name": "Buji kablosu",
+          "slug": "buji-kablosu",
+          "children": []
+        },
+        {
+          "kfz_id": "20.05",
+          "kfz_name": "Ateşleme modülü",
+          "slug": "atesleme-modulu",
+          "children": []
+        },
+        {
+          "kfz_id": "20.06",
+          "kfz_name": "Kızdırma kontrol ünitesi",
+          "slug": "kizdirma-kontrol-unitesi",
+          "children": []
+        },
+        {
+          "kfz_id": "20.07",
+          "kfz_name": "Distribütör parçaları",
+          "slug": "distributor-parcalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "21",
+      "kfz_name": "Aydınlatma",
+      "name_de": "Beleuchtung",
+      "slug": "21-beleuchtung",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-06",
+      "shop_l2_name": "Beleuchtung",
+      "shop_l2_slug": "beleuchtung",
+      "subcategory_count": 12,
+      "l3_count": 13,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "21.01",
+          "kfz_name": "Far",
+          "slug": "far",
+          "children": [
+            {
+              "kfz_id": "21.01.01",
+              "kfz_name": "Halojen far",
+              "slug": "halojen-far"
+            },
+            {
+              "kfz_id": "21.01.02",
+              "kfz_name": "LED far",
+              "slug": "led-far"
+            },
+            {
+              "kfz_id": "21.01.03",
+              "kfz_name": "Xenon far",
+              "slug": "xenon-far"
+            },
+            {
+              "kfz_id": "21.01.04",
+              "kfz_name": "Matrix LED",
+              "slug": "matrix-led"
+            }
+          ]
+        },
+        {
+          "kfz_id": "21.02",
+          "kfz_name": "LED far",
+          "slug": "led-far",
+          "children": []
+        },
+        {
+          "kfz_id": "21.03",
+          "kfz_name": "Xenon",
+          "slug": "xenon",
+          "children": []
+        },
+        {
+          "kfz_id": "21.04",
+          "kfz_name": "Far modülleri",
+          "slug": "far-modulleri",
+          "children": []
+        },
+        {
+          "kfz_id": "21.05",
+          "kfz_name": "Stop lambaları",
+          "slug": "stop-lambalari",
+          "children": [
+            {
+              "kfz_id": "21.05.01",
+              "kfz_name": "LED stop",
+              "slug": "led-stop"
+            },
+            {
+              "kfz_id": "21.05.02",
+              "kfz_name": "Halojen stop",
+              "slug": "halojen-stop"
+            },
+            {
+              "kfz_id": "21.05.03",
+              "kfz_name": "Stop modülü",
+              "slug": "stop-modulu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "21.06",
+          "kfz_name": "Sinyal lambaları",
+          "slug": "sinyal-lambalari",
+          "children": []
+        },
+        {
+          "kfz_id": "21.07",
+          "kfz_name": "Sis farları",
+          "slug": "sis-farlari",
+          "children": []
+        },
+        {
+          "kfz_id": "21.08",
+          "kfz_name": "Gündüz farları",
+          "slug": "gunduz-farlari",
+          "children": []
+        },
+        {
+          "kfz_id": "21.09",
+          "kfz_name": "Plaka lambaları",
+          "slug": "plaka-lambalari",
+          "children": []
+        },
+        {
+          "kfz_id": "21.10",
+          "kfz_name": "İç aydınlatma",
+          "slug": "ic-aydinlatma",
+          "children": []
+        },
+        {
+          "kfz_id": "21.11",
+          "kfz_name": "Ampuller",
+          "slug": "ampuller",
+          "children": [
+            {
+              "kfz_id": "21.11.01",
+              "kfz_name": "H7",
+              "slug": "h7"
+            },
+            {
+              "kfz_id": "21.11.02",
+              "kfz_name": "H4",
+              "slug": "h4"
+            },
+            {
+              "kfz_id": "21.11.03",
+              "kfz_name": "H1",
+              "slug": "h1"
+            },
+            {
+              "kfz_id": "21.11.04",
+              "kfz_name": "H11",
+              "slug": "h11"
+            },
+            {
+              "kfz_id": "21.11.05",
+              "kfz_name": "W5W",
+              "slug": "w5w"
+            },
+            {
+              "kfz_id": "21.11.06",
+              "kfz_name": "LED retrofit",
+              "slug": "led-retrofit"
+            }
+          ]
+        },
+        {
+          "kfz_id": "21.12",
+          "kfz_name": "LED ampuller",
+          "slug": "led-ampuller",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "22",
+      "kfz_name": "Cam & Silecek Sistemi",
+      "name_de": "Scheiben & Wischer",
+      "slug": "22-scheiben-wischer",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-07",
+      "shop_l2_name": "Scheibenwischer & Glasprodukte",
+      "shop_l2_slug": "scheibenwischer-und-glasprodukte",
+      "subcategory_count": 9,
+      "l3_count": 7,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "22.01",
+          "kfz_name": "Silecekler",
+          "slug": "silecekler",
+          "children": [
+            {
+              "kfz_id": "22.01.01",
+              "kfz_name": "Flat blade",
+              "slug": "flat-blade"
+            },
+            {
+              "kfz_id": "22.01.02",
+              "kfz_name": "Hibrit silecek",
+              "slug": "hibrit-silecek"
+            },
+            {
+              "kfz_id": "22.01.03",
+              "kfz_name": "Klasik silecek",
+              "slug": "klasik-silecek"
+            },
+            {
+              "kfz_id": "22.01.04",
+              "kfz_name": "Arka silecek",
+              "slug": "arka-silecek"
+            }
+          ]
+        },
+        {
+          "kfz_id": "22.02",
+          "kfz_name": "Silecek kolları",
+          "slug": "silecek-kollari",
+          "children": []
+        },
+        {
+          "kfz_id": "22.03",
+          "kfz_name": "Silecek motorları",
+          "slug": "silecek-motorlari",
+          "children": []
+        },
+        {
+          "kfz_id": "22.04",
+          "kfz_name": "Silecek mekanizmaları",
+          "slug": "silecek-mekanizmalari",
+          "children": []
+        },
+        {
+          "kfz_id": "22.05",
+          "kfz_name": "Cam yıkama pompaları",
+          "slug": "cam-yikama-pompalari",
+          "children": [
+            {
+              "kfz_id": "22.05.01",
+              "kfz_name": "Ön cam pompası",
+              "slug": "on-cam-pompasi"
+            },
+            {
+              "kfz_id": "22.05.02",
+              "kfz_name": "Far yıkama pompası",
+              "slug": "far-yikama-pompasi"
+            },
+            {
+              "kfz_id": "22.05.03",
+              "kfz_name": "Çift çıkışlı pompa",
+              "slug": "cift-cikisli-pompa"
+            }
+          ]
+        },
+        {
+          "kfz_id": "22.06",
+          "kfz_name": "Cam yıkama memeleri",
+          "slug": "cam-yikama-memeleri",
+          "children": []
+        },
+        {
+          "kfz_id": "22.07",
+          "kfz_name": "Cam suyu depoları",
+          "slug": "cam-suyu-depolari",
+          "children": []
+        },
+        {
+          "kfz_id": "22.08",
+          "kfz_name": "Far yıkama sistemi",
+          "slug": "far-yikama-sistemi",
+          "children": []
+        },
+        {
+          "kfz_id": "22.09",
+          "kfz_name": "Silecek sıvıları",
+          "slug": "silecek-sivilari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "23",
+      "kfz_name": "Klima",
+      "name_de": "Klimaanlage",
+      "slug": "23-klimaanlage",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 9,
+      "l3_count": 6,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "23.01",
+          "kfz_name": "Klima kompresörü",
+          "slug": "klima-kompresoru",
+          "children": [
+            {
+              "kfz_id": "23.01.01",
+              "kfz_name": "Elektrikli kompresör",
+              "slug": "elektrikli-kompresor"
+            },
+            {
+              "kfz_id": "23.01.02",
+              "kfz_name": "Kayış tahrikli kompresör",
+              "slug": "kayis-tahrikli-kompresor"
+            },
+            {
+              "kfz_id": "23.01.03",
+              "kfz_name": "Kompresör kavraması",
+              "slug": "kompresor-kavramasi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "23.02",
+          "kfz_name": "Klima kondenseri",
+          "slug": "klima-kondenseri",
+          "children": [
+            {
+              "kfz_id": "23.02.01",
+              "kfz_name": "Kondenser",
+              "slug": "kondenser"
+            },
+            {
+              "kfz_id": "23.02.02",
+              "kfz_name": "Kondenser kurutucu",
+              "slug": "kondenser-kurutucu"
+            },
+            {
+              "kfz_id": "23.02.03",
+              "kfz_name": "Kondenser fanı",
+              "slug": "kondenser-fani"
+            }
+          ]
+        },
+        {
+          "kfz_id": "23.03",
+          "kfz_name": "Evaporatör",
+          "slug": "evaporator",
+          "children": []
+        },
+        {
+          "kfz_id": "23.04",
+          "kfz_name": "Klima kurutucusu",
+          "slug": "klima-kurutucusu",
+          "children": []
+        },
+        {
+          "kfz_id": "23.05",
+          "kfz_name": "Klima filtresi",
+          "slug": "klima-filtresi",
+          "children": []
+        },
+        {
+          "kfz_id": "23.06",
+          "kfz_name": "Klima valfleri",
+          "slug": "klima-valfleri",
+          "children": []
+        },
+        {
+          "kfz_id": "23.07",
+          "kfz_name": "Klima hortumları",
+          "slug": "klima-hortumlari",
+          "children": []
+        },
+        {
+          "kfz_id": "23.08",
+          "kfz_name": "Klima sensörleri",
+          "slug": "klima-sensorleri",
+          "children": []
+        },
+        {
+          "kfz_id": "23.09",
+          "kfz_name": "Klima fanları",
+          "slug": "klima-fanlari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "24",
+      "kfz_name": "Isıtma & Havalandırma",
+      "name_de": "Heizung & Belüftung",
+      "slug": "24-heizung-beluftung",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 8,
+      "l3_count": 5,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "24.01",
+          "kfz_name": "Kalorifer radyatörü",
+          "slug": "kalorifer-radyatoru",
+          "children": [
+            {
+              "kfz_id": "24.01.01",
+              "kfz_name": "Ön kalorifer radyatörü",
+              "slug": "on-kalorifer-radyatoru"
+            },
+            {
+              "kfz_id": "24.01.02",
+              "kfz_name": "Arka kalorifer radyatörü",
+              "slug": "arka-kalorifer-radyatoru"
+            }
+          ]
+        },
+        {
+          "kfz_id": "24.02",
+          "kfz_name": "Kalorifer fanı",
+          "slug": "kalorifer-fani",
+          "children": [
+            {
+              "kfz_id": "24.02.01",
+              "kfz_name": "Fan motoru",
+              "slug": "fan-motoru"
+            },
+            {
+              "kfz_id": "24.02.02",
+              "kfz_name": "Fan direnci",
+              "slug": "fan-direnci"
+            },
+            {
+              "kfz_id": "24.02.03",
+              "kfz_name": "Fan kontrol modülü",
+              "slug": "fan-kontrol-modulu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "24.03",
+          "kfz_name": "Fan motoru",
+          "slug": "fan-motoru",
+          "children": []
+        },
+        {
+          "kfz_id": "24.04",
+          "kfz_name": "Fan direnci",
+          "slug": "fan-direnci",
+          "children": []
+        },
+        {
+          "kfz_id": "24.05",
+          "kfz_name": "Isıtma valfi",
+          "slug": "isitma-valfi",
+          "children": []
+        },
+        {
+          "kfz_id": "24.06",
+          "kfz_name": "Havalandırma kanalları",
+          "slug": "havalandirma-kanallari",
+          "children": []
+        },
+        {
+          "kfz_id": "24.07",
+          "kfz_name": "Klima/ısıtma kumandaları",
+          "slug": "klima-isitma-kumandalari",
+          "children": []
+        },
+        {
+          "kfz_id": "24.08",
+          "kfz_name": "Ek ısıtıcılar",
+          "slug": "ek-isiticilar",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "25",
+      "kfz_name": "Karoser",
+      "name_de": "Karosserie",
+      "slug": "25-karosserie",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-10",
+      "shop_l2_name": "Außenzubehör",
+      "shop_l2_slug": "aussenzubehoer",
+      "subcategory_count": 11,
+      "l3_count": 11,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "25.01",
+          "kfz_name": "Kaput",
+          "slug": "kaput",
+          "children": [
+            {
+              "kfz_id": "25.01.01",
+              "kfz_name": "Kaput komple",
+              "slug": "kaput-komple"
+            },
+            {
+              "kfz_id": "25.01.02",
+              "kfz_name": "Kaput kilidi",
+              "slug": "kaput-kilidi"
+            },
+            {
+              "kfz_id": "25.01.03",
+              "kfz_name": "Kaput amortisörü",
+              "slug": "kaput-amortisoru"
+            }
+          ]
+        },
+        {
+          "kfz_id": "25.02",
+          "kfz_name": "Çamurluk",
+          "slug": "camurluk",
+          "children": []
+        },
+        {
+          "kfz_id": "25.03",
+          "kfz_name": "Tampon",
+          "slug": "tampon",
+          "children": [
+            {
+              "kfz_id": "25.03.01",
+              "kfz_name": "Ön tampon",
+              "slug": "on-tampon"
+            },
+            {
+              "kfz_id": "25.03.02",
+              "kfz_name": "Arka tampon",
+              "slug": "arka-tampon"
+            },
+            {
+              "kfz_id": "25.03.03",
+              "kfz_name": "Tampon ızgarası",
+              "slug": "tampon-izgarasi"
+            },
+            {
+              "kfz_id": "25.03.04",
+              "kfz_name": "Tampon traversi",
+              "slug": "tampon-traversi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "25.04",
+          "kfz_name": "Kapılar",
+          "slug": "kapilar",
+          "children": [
+            {
+              "kfz_id": "25.04.01",
+              "kfz_name": "Ön kapı",
+              "slug": "on-kapi"
+            },
+            {
+              "kfz_id": "25.04.02",
+              "kfz_name": "Arka kapı",
+              "slug": "arka-kapi"
+            },
+            {
+              "kfz_id": "25.04.03",
+              "kfz_name": "Kapı dış sacı",
+              "slug": "kapi-dis-saci"
+            },
+            {
+              "kfz_id": "25.04.04",
+              "kfz_name": "Kapı iç paneli",
+              "slug": "kapi-ic-paneli"
+            }
+          ]
+        },
+        {
+          "kfz_id": "25.05",
+          "kfz_name": "Bagaj kapağı",
+          "slug": "bagaj-kapagi",
+          "children": []
+        },
+        {
+          "kfz_id": "25.06",
+          "kfz_name": "Tavan parçaları",
+          "slug": "tavan-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "25.07",
+          "kfz_name": "Kapı parçaları",
+          "slug": "kapi-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "25.08",
+          "kfz_name": "Paneller",
+          "slug": "paneller",
+          "children": []
+        },
+        {
+          "kfz_id": "25.09",
+          "kfz_name": "Izgaralar",
+          "slug": "izgaralar",
+          "children": []
+        },
+        {
+          "kfz_id": "25.10",
+          "kfz_name": "Spoiler",
+          "slug": "spoiler",
+          "children": []
+        },
+        {
+          "kfz_id": "25.11",
+          "kfz_name": "Karoser bağlantıları",
+          "slug": "karoser-baglantilari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "26",
+      "kfz_name": "Aynalar & Görüş Sistemleri",
+      "name_de": "Spiegel & Sichtsysteme",
+      "slug": "26-spiegel-sichtsysteme",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-10",
+      "shop_l2_name": "Außenzubehör",
+      "shop_l2_slug": "aussenzubehoer",
+      "subcategory_count": 8,
+      "l3_count": 7,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "26.01",
+          "kfz_name": "Yan aynalar",
+          "slug": "yan-aynalar",
+          "children": [
+            {
+              "kfz_id": "26.01.01",
+              "kfz_name": "Sol ayna",
+              "slug": "sol-ayna"
+            },
+            {
+              "kfz_id": "26.01.02",
+              "kfz_name": "Sağ ayna",
+              "slug": "sag-ayna"
+            },
+            {
+              "kfz_id": "26.01.03",
+              "kfz_name": "Elektrikli ayna",
+              "slug": "elektrikli-ayna"
+            },
+            {
+              "kfz_id": "26.01.04",
+              "kfz_name": "Isıtmalı ayna",
+              "slug": "isitmali-ayna"
+            }
+          ]
+        },
+        {
+          "kfz_id": "26.02",
+          "kfz_name": "Elektrikli aynalar",
+          "slug": "elektrikli-aynalar",
+          "children": []
+        },
+        {
+          "kfz_id": "26.03",
+          "kfz_name": "Isıtmalı aynalar",
+          "slug": "isitmali-aynalar",
+          "children": []
+        },
+        {
+          "kfz_id": "26.04",
+          "kfz_name": "Ayna camları",
+          "slug": "ayna-camlari",
+          "children": [
+            {
+              "kfz_id": "26.04.01",
+              "kfz_name": "Düz cam",
+              "slug": "duz-cam"
+            },
+            {
+              "kfz_id": "26.04.02",
+              "kfz_name": "Asferik cam",
+              "slug": "asferik-cam"
+            },
+            {
+              "kfz_id": "26.04.03",
+              "kfz_name": "Isıtmalı cam",
+              "slug": "isitmali-cam"
+            }
+          ]
+        },
+        {
+          "kfz_id": "26.05",
+          "kfz_name": "Ayna motorları",
+          "slug": "ayna-motorlari",
+          "children": []
+        },
+        {
+          "kfz_id": "26.06",
+          "kfz_name": "İç dikiz aynaları",
+          "slug": "ic-dikiz-aynalari",
+          "children": []
+        },
+        {
+          "kfz_id": "26.07",
+          "kfz_name": "Kamera aynaları",
+          "slug": "kamera-aynalari",
+          "children": []
+        },
+        {
+          "kfz_id": "26.08",
+          "kfz_name": "Ayna kapakları",
+          "slug": "ayna-kapaklari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "27",
+      "kfz_name": "Camlar & Cam Mekanizmaları",
+      "name_de": "Scheiben & Fenstermechanik",
+      "slug": "27-scheiben-fenstermechanik",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-07",
+      "shop_l2_name": "Scheibenwischer & Glasprodukte",
+      "shop_l2_slug": "scheibenwischer-und-glasprodukte",
+      "subcategory_count": 8,
+      "l3_count": 7,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "27.01",
+          "kfz_name": "Ön cam",
+          "slug": "on-cam",
+          "children": [
+            {
+              "kfz_id": "27.01.01",
+              "kfz_name": "Lamine ön cam",
+              "slug": "lamine-on-cam"
+            },
+            {
+              "kfz_id": "27.01.02",
+              "kfz_name": "Yağmur sensörlü cam",
+              "slug": "yagmur-sensorlu-cam"
+            },
+            {
+              "kfz_id": "27.01.03",
+              "kfz_name": "HUD uyumlu cam",
+              "slug": "hud-uyumlu-cam"
+            }
+          ]
+        },
+        {
+          "kfz_id": "27.02",
+          "kfz_name": "Yan cam",
+          "slug": "yan-cam",
+          "children": []
+        },
+        {
+          "kfz_id": "27.03",
+          "kfz_name": "Arka cam",
+          "slug": "arka-cam",
+          "children": []
+        },
+        {
+          "kfz_id": "27.04",
+          "kfz_name": "Cam kaldırıcı",
+          "slug": "cam-kaldirici",
+          "children": [
+            {
+              "kfz_id": "27.04.01",
+              "kfz_name": "Ön sol",
+              "slug": "on-sol"
+            },
+            {
+              "kfz_id": "27.04.02",
+              "kfz_name": "Ön sağ",
+              "slug": "on-sag"
+            },
+            {
+              "kfz_id": "27.04.03",
+              "kfz_name": "Arka sol",
+              "slug": "arka-sol"
+            },
+            {
+              "kfz_id": "27.04.04",
+              "kfz_name": "Arka sağ",
+              "slug": "arka-sag"
+            }
+          ]
+        },
+        {
+          "kfz_id": "27.05",
+          "kfz_name": "Cam motoru",
+          "slug": "cam-motoru",
+          "children": []
+        },
+        {
+          "kfz_id": "27.06",
+          "kfz_name": "Cam düğmeleri",
+          "slug": "cam-dugmeleri",
+          "children": []
+        },
+        {
+          "kfz_id": "27.07",
+          "kfz_name": "Cam contaları",
+          "slug": "cam-contalari",
+          "children": []
+        },
+        {
+          "kfz_id": "27.08",
+          "kfz_name": "Cam mekanizmaları",
+          "slug": "cam-mekanizmalari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "28",
+      "kfz_name": "İç Mekân",
+      "name_de": "Innenraum",
+      "slug": "28-innenraum",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-09",
+      "shop_l2_name": "Innenraum-Zubehör",
+      "shop_l2_slug": "innenraum-zubehoer",
+      "subcategory_count": 12,
+      "l3_count": 10,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "28.01",
+          "kfz_name": "Gösterge paneli",
+          "slug": "gosterge-paneli",
+          "children": []
+        },
+        {
+          "kfz_id": "28.02",
+          "kfz_name": "Direksiyon",
+          "slug": "direksiyon",
+          "children": []
+        },
+        {
+          "kfz_id": "28.03",
+          "kfz_name": "Koltuklar",
+          "slug": "koltuklar",
+          "children": [
+            {
+              "kfz_id": "28.03.01",
+              "kfz_name": "Koltuk kılıfı",
+              "slug": "koltuk-kilifi"
+            },
+            {
+              "kfz_id": "28.03.02",
+              "kfz_name": "Isıtmalı koltuk parçası",
+              "slug": "isitmali-koltuk-parcasi"
+            },
+            {
+              "kfz_id": "28.03.03",
+              "kfz_name": "Koltuk mekanizması",
+              "slug": "koltuk-mekanizmasi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "28.04",
+          "kfz_name": "Koltuk aksesuarları",
+          "slug": "koltuk-aksesuarlari",
+          "children": []
+        },
+        {
+          "kfz_id": "28.05",
+          "kfz_name": "Paspaslar",
+          "slug": "paspaslar",
+          "children": [
+            {
+              "kfz_id": "28.05.01",
+              "kfz_name": "Kauçuk paspas",
+              "slug": "kaucuk-paspas"
+            },
+            {
+              "kfz_id": "28.05.02",
+              "kfz_name": "Tekstil paspas",
+              "slug": "tekstil-paspas"
+            },
+            {
+              "kfz_id": "28.05.03",
+              "kfz_name": "3D paspas",
+              "slug": "3d-paspas"
+            },
+            {
+              "kfz_id": "28.05.04",
+              "kfz_name": "Bagaj paspası",
+              "slug": "bagaj-paspasi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "28.06",
+          "kfz_name": "Bagaj düzenleme",
+          "slug": "bagaj-duzenleme",
+          "children": []
+        },
+        {
+          "kfz_id": "28.07",
+          "kfz_name": "Bagaj havuzları",
+          "slug": "bagaj-havuzlari",
+          "children": []
+        },
+        {
+          "kfz_id": "28.08",
+          "kfz_name": "Pedallar",
+          "slug": "pedallar",
+          "children": []
+        },
+        {
+          "kfz_id": "28.09",
+          "kfz_name": "Vites topuzu",
+          "slug": "vites-topuzu",
+          "children": []
+        },
+        {
+          "kfz_id": "28.10",
+          "kfz_name": "El freni parçaları",
+          "slug": "el-freni-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "28.11",
+          "kfz_name": "Güneşlikler",
+          "slug": "guneslikler",
+          "children": []
+        },
+        {
+          "kfz_id": "28.12",
+          "kfz_name": "İç trim",
+          "slug": "ic-trim",
+          "children": [
+            {
+              "kfz_id": "28.12.01",
+              "kfz_name": "Kapı trim",
+              "slug": "kapi-trim"
+            },
+            {
+              "kfz_id": "28.12.02",
+              "kfz_name": "Konsol trim",
+              "slug": "konsol-trim"
+            },
+            {
+              "kfz_id": "28.12.03",
+              "kfz_name": "Tavan trim",
+              "slug": "tavan-trim"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kfz_id": "29",
+      "kfz_name": "Kilit & Merkezi Kilit",
+      "name_de": "Schloss & Zentralverriegelung",
+      "slug": "29-schloss-zentralverriegelung",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 8,
+      "l3_count": 6,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "29.01",
+          "kfz_name": "Kapı kilitleri",
+          "slug": "kapi-kilitleri",
+          "children": [
+            {
+              "kfz_id": "29.01.01",
+              "kfz_name": "Ön kapı kilidi",
+              "slug": "on-kapi-kilidi"
+            },
+            {
+              "kfz_id": "29.01.02",
+              "kfz_name": "Arka kapı kilidi",
+              "slug": "arka-kapi-kilidi"
+            },
+            {
+              "kfz_id": "29.01.03",
+              "kfz_name": "Bagaj kilidi",
+              "slug": "bagaj-kilidi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "29.02",
+          "kfz_name": "Bagaj kilitleri",
+          "slug": "bagaj-kilitleri",
+          "children": []
+        },
+        {
+          "kfz_id": "29.03",
+          "kfz_name": "Kontak kilidi",
+          "slug": "kontak-kilidi",
+          "children": []
+        },
+        {
+          "kfz_id": "29.04",
+          "kfz_name": "Merkezi kilit",
+          "slug": "merkezi-kilit",
+          "children": [
+            {
+              "kfz_id": "29.04.01",
+              "kfz_name": "Merkezi kilit motoru",
+              "slug": "merkezi-kilit-motoru"
+            },
+            {
+              "kfz_id": "29.04.02",
+              "kfz_name": "Kontrol modülü",
+              "slug": "kontrol-modulu"
+            },
+            {
+              "kfz_id": "29.04.03",
+              "kfz_name": "Aktüatör",
+              "slug": "aktuator"
+            }
+          ]
+        },
+        {
+          "kfz_id": "29.05",
+          "kfz_name": "Kilit motorları",
+          "slug": "kilit-motorlari",
+          "children": []
+        },
+        {
+          "kfz_id": "29.06",
+          "kfz_name": "Kilit silindirleri",
+          "slug": "kilit-silindirleri",
+          "children": []
+        },
+        {
+          "kfz_id": "29.07",
+          "kfz_name": "Uzaktan kumandalar",
+          "slug": "uzaktan-kumandalar",
+          "children": []
+        },
+        {
+          "kfz_id": "29.08",
+          "kfz_name": "Kapı kolları",
+          "slug": "kapi-kollari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "30",
+      "kfz_name": "Güvenlik Sistemleri",
+      "name_de": "Sicherheitssysteme",
+      "slug": "30-sicherheitssysteme",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 10,
+      "l3_count": 11,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "30.01",
+          "kfz_name": "Airbag",
+          "slug": "airbag",
+          "children": [
+            {
+              "kfz_id": "30.01.01",
+              "kfz_name": "Sürücü airbag",
+              "slug": "surucu-airbag"
+            },
+            {
+              "kfz_id": "30.01.02",
+              "kfz_name": "Yolcu airbag",
+              "slug": "yolcu-airbag"
+            },
+            {
+              "kfz_id": "30.01.03",
+              "kfz_name": "Yan airbag",
+              "slug": "yan-airbag"
+            },
+            {
+              "kfz_id": "30.01.04",
+              "kfz_name": "Perde airbag",
+              "slug": "perde-airbag"
+            }
+          ]
+        },
+        {
+          "kfz_id": "30.02",
+          "kfz_name": "Airbag kontrol ünitesi",
+          "slug": "airbag-kontrol-unitesi",
+          "children": []
+        },
+        {
+          "kfz_id": "30.03",
+          "kfz_name": "Emniyet kemeri",
+          "slug": "emniyet-kemeri",
+          "children": [
+            {
+              "kfz_id": "30.03.01",
+              "kfz_name": "Ön kemer",
+              "slug": "on-kemer"
+            },
+            {
+              "kfz_id": "30.03.02",
+              "kfz_name": "Arka kemer",
+              "slug": "arka-kemer"
+            },
+            {
+              "kfz_id": "30.03.03",
+              "kfz_name": "Kemer gergisi",
+              "slug": "kemer-gergisi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "30.04",
+          "kfz_name": "Kemer gergisi",
+          "slug": "kemer-gergisi",
+          "children": []
+        },
+        {
+          "kfz_id": "30.05",
+          "kfz_name": "ABS",
+          "slug": "abs",
+          "children": []
+        },
+        {
+          "kfz_id": "30.06",
+          "kfz_name": "ESP",
+          "slug": "esp",
+          "children": []
+        },
+        {
+          "kfz_id": "30.07",
+          "kfz_name": "Çarpışma sensörleri",
+          "slug": "carpisma-sensorleri",
+          "children": []
+        },
+        {
+          "kfz_id": "30.08",
+          "kfz_name": "Park sensörleri",
+          "slug": "park-sensorleri",
+          "children": []
+        },
+        {
+          "kfz_id": "30.09",
+          "kfz_name": "Kamera sistemleri",
+          "slug": "kamera-sistemleri",
+          "children": []
+        },
+        {
+          "kfz_id": "30.10",
+          "kfz_name": "ADAS bileşenleri",
+          "slug": "adas-bilesenleri",
+          "children": [
+            {
+              "kfz_id": "30.10.01",
+              "kfz_name": "Radar",
+              "slug": "radar"
+            },
+            {
+              "kfz_id": "30.10.02",
+              "kfz_name": "Ön kamera",
+              "slug": "on-kamera"
+            },
+            {
+              "kfz_id": "30.10.03",
+              "kfz_name": "Park kamerası",
+              "slug": "park-kamerasi"
+            },
+            {
+              "kfz_id": "30.10.04",
+              "kfz_name": "Şerit takip sensörü",
+              "slug": "serit-takip-sensoru"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kfz_id": "31",
+      "kfz_name": "Elektronik & Konfor Sistemleri",
+      "name_de": "Elektronik & Komfort",
+      "slug": "31-elektronik-komfort",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 9,
+      "l3_count": 6,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "31.01",
+          "kfz_name": "Park sensörleri",
+          "slug": "park-sensorleri",
+          "children": [
+            {
+              "kfz_id": "31.01.01",
+              "kfz_name": "Ultrasonik sensör",
+              "slug": "ultrasonik-sensor"
+            },
+            {
+              "kfz_id": "31.01.02",
+              "kfz_name": "Park kontrol ünitesi",
+              "slug": "park-kontrol-unitesi"
+            },
+            {
+              "kfz_id": "31.01.03",
+              "kfz_name": "Sensör kablosu",
+              "slug": "sensor-kablosu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "31.02",
+          "kfz_name": "Park kontrol üniteleri",
+          "slug": "park-kontrol-uniteleri",
+          "children": []
+        },
+        {
+          "kfz_id": "31.03",
+          "kfz_name": "Cam modülleri",
+          "slug": "cam-modulleri",
+          "children": []
+        },
+        {
+          "kfz_id": "31.04",
+          "kfz_name": "Merkezi kilit modülleri",
+          "slug": "merkezi-kilit-modulleri",
+          "children": []
+        },
+        {
+          "kfz_id": "31.05",
+          "kfz_name": "Yağmur sensörü",
+          "slug": "yagmur-sensoru",
+          "children": [
+            {
+              "kfz_id": "31.05.01",
+              "kfz_name": "Yağmur sensörü",
+              "slug": "yagmur-sensoru"
+            },
+            {
+              "kfz_id": "31.05.02",
+              "kfz_name": "Işık/yağmur sensörü",
+              "slug": "isik-yagmur-sensoru"
+            },
+            {
+              "kfz_id": "31.05.03",
+              "kfz_name": "Sensör cam pedi",
+              "slug": "sensor-cam-pedi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "31.06",
+          "kfz_name": "Işık sensörü",
+          "slug": "isik-sensoru",
+          "children": []
+        },
+        {
+          "kfz_id": "31.07",
+          "kfz_name": "Gövde kontrol modülleri",
+          "slug": "govde-kontrol-modulleri",
+          "children": []
+        },
+        {
+          "kfz_id": "31.08",
+          "kfz_name": "Konfor kontrol üniteleri",
+          "slug": "konfor-kontrol-uniteleri",
+          "children": []
+        },
+        {
+          "kfz_id": "31.09",
+          "kfz_name": "Alarm sistemleri",
+          "slug": "alarm-sistemleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "32",
+      "kfz_name": "Multimedya & Navigasyon",
+      "name_de": "Multimedia & Navigation",
+      "slug": "32-multimedia-navigation",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-09",
+      "shop_l2_name": "Innenraum-Zubehör",
+      "shop_l2_slug": "innenraum-zubehoer",
+      "subcategory_count": 10,
+      "l3_count": 7,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 0,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 0
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "bandel",
+        "motointegrator",
+        "pkwteile"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "32.01",
+          "kfz_name": "Oto radyolar",
+          "slug": "oto-radyolar",
+          "children": [
+            {
+              "kfz_id": "32.01.01",
+              "kfz_name": "1-DIN",
+              "slug": "1-din"
+            },
+            {
+              "kfz_id": "32.01.02",
+              "kfz_name": "2-DIN",
+              "slug": "2-din"
+            },
+            {
+              "kfz_id": "32.01.03",
+              "kfz_name": "OEM replacement",
+              "slug": "oem-replacement"
+            }
+          ]
+        },
+        {
+          "kfz_id": "32.02",
+          "kfz_name": "Navigasyon",
+          "slug": "navigasyon",
+          "children": []
+        },
+        {
+          "kfz_id": "32.03",
+          "kfz_name": "Ekranlar",
+          "slug": "ekranlar",
+          "children": []
+        },
+        {
+          "kfz_id": "32.04",
+          "kfz_name": "Multimedya sistemleri",
+          "slug": "multimedya-sistemleri",
+          "children": []
+        },
+        {
+          "kfz_id": "32.05",
+          "kfz_name": "Hoparlörler",
+          "slug": "hoparlorler",
+          "children": [
+            {
+              "kfz_id": "32.05.01",
+              "kfz_name": "Kapı hoparlörü",
+              "slug": "kapi-hoparloru"
+            },
+            {
+              "kfz_id": "32.05.02",
+              "kfz_name": "Tweeter",
+              "slug": "tweeter"
+            },
+            {
+              "kfz_id": "32.05.03",
+              "kfz_name": "Subwoofer",
+              "slug": "subwoofer"
+            },
+            {
+              "kfz_id": "32.05.04",
+              "kfz_name": "Koaksiyel hoparlör",
+              "slug": "koaksiyel-hoparlor"
+            }
+          ]
+        },
+        {
+          "kfz_id": "32.06",
+          "kfz_name": "Amplifikatörler",
+          "slug": "amplifikatorler",
+          "children": []
+        },
+        {
+          "kfz_id": "32.07",
+          "kfz_name": "Antenler",
+          "slug": "antenler",
+          "children": []
+        },
+        {
+          "kfz_id": "32.08",
+          "kfz_name": "DAB",
+          "slug": "dab",
+          "children": []
+        },
+        {
+          "kfz_id": "32.09",
+          "kfz_name": "Bluetooth",
+          "slug": "bluetooth",
+          "children": []
+        },
+        {
+          "kfz_id": "32.10",
+          "kfz_name": "Araç içi kamera / dashcam",
+          "slug": "arac-ici-kamera-dashcam",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "33",
+      "kfz_name": "Çeki & Römork Sistemleri",
+      "name_de": "Anhänger & Kupplungssysteme",
+      "slug": "33-anhänger-kupplungssysteme",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-10",
+      "shop_l2_name": "Außenzubehör",
+      "shop_l2_slug": "aussenzubehoer",
+      "subcategory_count": 7,
+      "l3_count": 9,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "33.01",
+          "kfz_name": "Çeki demirleri",
+          "slug": "ceki-demirleri",
+          "children": [
+            {
+              "kfz_id": "33.01.01",
+              "kfz_name": "Sabit çeki demiri",
+              "slug": "sabit-ceki-demiri"
+            },
+            {
+              "kfz_id": "33.01.02",
+              "kfz_name": "Sökülebilir çeki demiri",
+              "slug": "sokulebilir-ceki-demiri"
+            },
+            {
+              "kfz_id": "33.01.03",
+              "kfz_name": "Flanşlı çeki demiri",
+              "slug": "flansli-ceki-demiri"
+            }
+          ]
+        },
+        {
+          "kfz_id": "33.02",
+          "kfz_name": "Elektrik kitleri",
+          "slug": "elektrik-kitleri",
+          "children": [
+            {
+              "kfz_id": "33.02.01",
+              "kfz_name": "7-pin",
+              "slug": "7-pin"
+            },
+            {
+              "kfz_id": "33.02.02",
+              "kfz_name": "13-pin",
+              "slug": "13-pin"
+            },
+            {
+              "kfz_id": "33.02.03",
+              "kfz_name": "CAN-Bus elektrik seti",
+              "slug": "can-bus-elektrik-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "33.03",
+          "kfz_name": "Römork bağlantıları",
+          "slug": "romork-baglantilari",
+          "children": []
+        },
+        {
+          "kfz_id": "33.04",
+          "kfz_name": "Römork prizleri",
+          "slug": "romork-prizleri",
+          "children": []
+        },
+        {
+          "kfz_id": "33.05",
+          "kfz_name": "Bisiklet taşıyıcıları",
+          "slug": "bisiklet-tasiyicilari",
+          "children": [
+            {
+              "kfz_id": "33.05.01",
+              "kfz_name": "Çeki demiri taşıyıcı",
+              "slug": "ceki-demiri-tasiyici"
+            },
+            {
+              "kfz_id": "33.05.02",
+              "kfz_name": "Tavan taşıyıcı",
+              "slug": "tavan-tasiyici"
+            },
+            {
+              "kfz_id": "33.05.03",
+              "kfz_name": "Arka kapı taşıyıcı",
+              "slug": "arka-kapi-tasiyici"
+            }
+          ]
+        },
+        {
+          "kfz_id": "33.06",
+          "kfz_name": "Römork parçaları",
+          "slug": "romork-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "33.07",
+          "kfz_name": "Karavan bağlantıları",
+          "slug": "karavan-baglantilari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "34",
+      "kfz_name": "Oto Aksesuarları",
+      "name_de": "Auto-Zubehör",
+      "slug": "34-auto-zubehor",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-09",
+      "shop_l2_name": "Innenraum-Zubehör",
+      "shop_l2_slug": "innenraum-zubehoer",
+      "subcategory_count": 11,
+      "l3_count": 12,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "34.01",
+          "kfz_name": "Paspas",
+          "slug": "paspas",
+          "children": [
+            {
+              "kfz_id": "34.01.01",
+              "kfz_name": "Kauçuk",
+              "slug": "kaucuk"
+            },
+            {
+              "kfz_id": "34.01.02",
+              "kfz_name": "Tekstil",
+              "slug": "tekstil"
+            },
+            {
+              "kfz_id": "34.01.03",
+              "kfz_name": "3D",
+              "slug": "3d"
+            },
+            {
+              "kfz_id": "34.01.04",
+              "kfz_name": "Özel ölçü",
+              "slug": "ozel-olcu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "34.02",
+          "kfz_name": "Koltuk kılıfları",
+          "slug": "koltuk-kiliflari",
+          "children": []
+        },
+        {
+          "kfz_id": "34.03",
+          "kfz_name": "Bagaj aksesuarları",
+          "slug": "bagaj-aksesuarlari",
+          "children": []
+        },
+        {
+          "kfz_id": "34.04",
+          "kfz_name": "Güneşlik",
+          "slug": "guneslik",
+          "children": []
+        },
+        {
+          "kfz_id": "34.05",
+          "kfz_name": "Araç içi düzenleyiciler",
+          "slug": "arac-ici-duzenleyiciler",
+          "children": []
+        },
+        {
+          "kfz_id": "34.06",
+          "kfz_name": "Telefon tutucular",
+          "slug": "telefon-tutucular",
+          "children": [
+            {
+              "kfz_id": "34.06.01",
+              "kfz_name": "Havalandırma tipi",
+              "slug": "havalandirma-tipi"
+            },
+            {
+              "kfz_id": "34.06.02",
+              "kfz_name": "Vakumlu",
+              "slug": "vakumlu"
+            },
+            {
+              "kfz_id": "34.06.03",
+              "kfz_name": "Mıknatıslı",
+              "slug": "miknatisli"
+            },
+            {
+              "kfz_id": "34.06.04",
+              "kfz_name": "MagSafe uyumlu",
+              "slug": "magsafe-uyumlu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "34.07",
+          "kfz_name": "Şarj cihazları",
+          "slug": "sarj-cihazlari",
+          "children": []
+        },
+        {
+          "kfz_id": "34.08",
+          "kfz_name": "Takviye kabloları",
+          "slug": "takviye-kablolari",
+          "children": []
+        },
+        {
+          "kfz_id": "34.09",
+          "kfz_name": "Akü şarj cihazları",
+          "slug": "aku-sarj-cihazlari",
+          "children": [
+            {
+              "kfz_id": "34.09.01",
+              "kfz_name": "Akıllı şarj",
+              "slug": "akilli-sarj"
+            },
+            {
+              "kfz_id": "34.09.02",
+              "kfz_name": "AGM/EFB",
+              "slug": "agm-efb"
+            },
+            {
+              "kfz_id": "34.09.03",
+              "kfz_name": "12V",
+              "slug": "12v"
+            },
+            {
+              "kfz_id": "34.09.04",
+              "kfz_name": "24V",
+              "slug": "24v"
+            }
+          ]
+        },
+        {
+          "kfz_id": "34.10",
+          "kfz_name": "Kar zincirleri",
+          "slug": "kar-zincirleri",
+          "children": []
+        },
+        {
+          "kfz_id": "34.11",
+          "kfz_name": "Araç örtüleri",
+          "slug": "arac-ortuleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "35",
+      "kfz_name": "Oto Bakım & Temizlik",
+      "name_de": "Autopflege & Reinigung",
+      "slug": "35-autopflege-reinigung",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-08",
+      "shop_l2_name": "Fahrzeugpflege & Reinigung",
+      "shop_l2_slug": "fahrzeugpflege-und-reinigung",
+      "subcategory_count": 15,
+      "l3_count": 12,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "35.01",
+          "kfz_name": "Şampuan",
+          "slug": "sampuan",
+          "children": [
+            {
+              "kfz_id": "35.01.01",
+              "kfz_name": "PH nötr",
+              "slug": "ph-notr"
+            },
+            {
+              "kfz_id": "35.01.02",
+              "kfz_name": "Seramik şampuan",
+              "slug": "seramik-sampuan"
+            },
+            {
+              "kfz_id": "35.01.03",
+              "kfz_name": "Konsantre",
+              "slug": "konsantre"
+            }
+          ]
+        },
+        {
+          "kfz_id": "35.02",
+          "kfz_name": "Jant temizleyici",
+          "slug": "jant-temizleyici",
+          "children": [
+            {
+              "kfz_id": "35.02.01",
+              "kfz_name": "Asitsiz",
+              "slug": "asitsiz"
+            },
+            {
+              "kfz_id": "35.02.02",
+              "kfz_name": "Demir tozu çözücü",
+              "slug": "demir-tozu-cozucu"
+            },
+            {
+              "kfz_id": "35.02.03",
+              "kfz_name": "Konsantre",
+              "slug": "konsantre"
+            }
+          ]
+        },
+        {
+          "kfz_id": "35.03",
+          "kfz_name": "Cam temizleyici",
+          "slug": "cam-temizleyici",
+          "children": []
+        },
+        {
+          "kfz_id": "35.04",
+          "kfz_name": "İç mekân temizleyici",
+          "slug": "ic-mekân-temizleyici",
+          "children": []
+        },
+        {
+          "kfz_id": "35.05",
+          "kfz_name": "Plastik bakım",
+          "slug": "plastik-bakim",
+          "children": []
+        },
+        {
+          "kfz_id": "35.06",
+          "kfz_name": "Deri bakım",
+          "slug": "deri-bakim",
+          "children": []
+        },
+        {
+          "kfz_id": "35.07",
+          "kfz_name": "Pasta",
+          "slug": "pasta",
+          "children": [
+            {
+              "kfz_id": "35.07.01",
+              "kfz_name": "Cutting compound",
+              "slug": "cutting-compound"
+            },
+            {
+              "kfz_id": "35.07.02",
+              "kfz_name": "Medium polish",
+              "slug": "medium-polish"
+            },
+            {
+              "kfz_id": "35.07.03",
+              "kfz_name": "Finish polish",
+              "slug": "finish-polish"
+            }
+          ]
+        },
+        {
+          "kfz_id": "35.08",
+          "kfz_name": "Cila",
+          "slug": "cila",
+          "children": [
+            {
+              "kfz_id": "35.08.01",
+              "kfz_name": "Wax",
+              "slug": "wax"
+            },
+            {
+              "kfz_id": "35.08.02",
+              "kfz_name": "Sealant",
+              "slug": "sealant"
+            },
+            {
+              "kfz_id": "35.08.03",
+              "kfz_name": "Ceramic coating",
+              "slug": "ceramic-coating"
+            }
+          ]
+        },
+        {
+          "kfz_id": "35.09",
+          "kfz_name": "Çizik giderici",
+          "slug": "cizik-giderici",
+          "children": []
+        },
+        {
+          "kfz_id": "35.10",
+          "kfz_name": "Motor temizleyici",
+          "slug": "motor-temizleyici",
+          "children": []
+        },
+        {
+          "kfz_id": "35.11",
+          "kfz_name": "Fren temizleyici",
+          "slug": "fren-temizleyici",
+          "children": []
+        },
+        {
+          "kfz_id": "35.12",
+          "kfz_name": "Pas sökücü",
+          "slug": "pas-sokucu",
+          "children": []
+        },
+        {
+          "kfz_id": "35.13",
+          "kfz_name": "Yağ katkıları",
+          "slug": "yag-katkilari",
+          "children": []
+        },
+        {
+          "kfz_id": "35.14",
+          "kfz_name": "Yakıt katkıları",
+          "slug": "yakit-katkilari",
+          "children": []
+        },
+        {
+          "kfz_id": "35.15",
+          "kfz_name": "DPF temizleyiciler",
+          "slug": "dpf-temizleyiciler",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "36",
+      "kfz_name": "Aletler & Atölye Ekipmanları",
+      "name_de": "Werkzeuge & Werkstattausrüstung",
+      "slug": "36-werkzeuge-werkstattausrustung",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-12",
+      "shop_l2_name": "Garagen- & Serviceausrüstung",
+      "shop_l2_slug": "garagen-und-serviceausruestung",
+      "subcategory_count": 14,
+      "l3_count": 15,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "36.01",
+          "kfz_name": "El aletleri",
+          "slug": "el-aletleri",
+          "children": [
+            {
+              "kfz_id": "36.01.01",
+              "kfz_name": "Lokma seti",
+              "slug": "lokma-seti"
+            },
+            {
+              "kfz_id": "36.01.02",
+              "kfz_name": "Anahtar seti",
+              "slug": "anahtar-seti"
+            },
+            {
+              "kfz_id": "36.01.03",
+              "kfz_name": "Tornavida seti",
+              "slug": "tornavida-seti"
+            },
+            {
+              "kfz_id": "36.01.04",
+              "kfz_name": "Pense seti",
+              "slug": "pense-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "36.02",
+          "kfz_name": "Lokma takımları",
+          "slug": "lokma-takimlari",
+          "children": []
+        },
+        {
+          "kfz_id": "36.03",
+          "kfz_name": "Tork anahtarları",
+          "slug": "tork-anahtarlari",
+          "children": [
+            {
+              "kfz_id": "36.03.01",
+              "kfz_name": "1/4\"",
+              "slug": "1-4"
+            },
+            {
+              "kfz_id": "36.03.02",
+              "kfz_name": "3/8\"",
+              "slug": "3-8"
+            },
+            {
+              "kfz_id": "36.03.03",
+              "kfz_name": "1/2\"",
+              "slug": "1-2"
+            },
+            {
+              "kfz_id": "36.03.04",
+              "kfz_name": "3/4\"",
+              "slug": "3-4"
+            }
+          ]
+        },
+        {
+          "kfz_id": "36.04",
+          "kfz_name": "Krikolar",
+          "slug": "krikolar",
+          "children": [
+            {
+              "kfz_id": "36.04.01",
+              "kfz_name": "Hidrolik kriko",
+              "slug": "hidrolik-kriko"
+            },
+            {
+              "kfz_id": "36.04.02",
+              "kfz_name": "Şişe kriko",
+              "slug": "sise-kriko"
+            },
+            {
+              "kfz_id": "36.04.03",
+              "kfz_name": "Makas kriko",
+              "slug": "makas-kriko"
+            },
+            {
+              "kfz_id": "36.04.04",
+              "kfz_name": "Atölye krikosu",
+              "slug": "atolye-krikosu"
+            }
+          ]
+        },
+        {
+          "kfz_id": "36.05",
+          "kfz_name": "Sehpa",
+          "slug": "sehpa",
+          "children": []
+        },
+        {
+          "kfz_id": "36.06",
+          "kfz_name": "Kompresör",
+          "slug": "kompresor",
+          "children": []
+        },
+        {
+          "kfz_id": "36.07",
+          "kfz_name": "Akü test cihazları",
+          "slug": "aku-test-cihazlari",
+          "children": []
+        },
+        {
+          "kfz_id": "36.08",
+          "kfz_name": "OBD cihazları",
+          "slug": "obd-cihazlari",
+          "children": [
+            {
+              "kfz_id": "36.08.01",
+              "kfz_name": "OBD2 okuyucu",
+              "slug": "obd2-okuyucu"
+            },
+            {
+              "kfz_id": "36.08.02",
+              "kfz_name": "Profesyonel diagnostik",
+              "slug": "profesyonel-diagnostik"
+            },
+            {
+              "kfz_id": "36.08.03",
+              "kfz_name": "Akü diagnostik",
+              "slug": "aku-diagnostik"
+            }
+          ]
+        },
+        {
+          "kfz_id": "36.09",
+          "kfz_name": "Fren servis aletleri",
+          "slug": "fren-servis-aletleri",
+          "children": []
+        },
+        {
+          "kfz_id": "36.10",
+          "kfz_name": "Motor aletleri",
+          "slug": "motor-aletleri",
+          "children": []
+        },
+        {
+          "kfz_id": "36.11",
+          "kfz_name": "Triger aletleri",
+          "slug": "triger-aletleri",
+          "children": []
+        },
+        {
+          "kfz_id": "36.12",
+          "kfz_name": "Şanzıman aletleri",
+          "slug": "sanziman-aletleri",
+          "children": []
+        },
+        {
+          "kfz_id": "36.13",
+          "kfz_name": "Elektrikli aletler",
+          "slug": "elektrikli-aletler",
+          "children": []
+        },
+        {
+          "kfz_id": "36.14",
+          "kfz_name": "Havalı aletler",
+          "slug": "havali-aletler",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "37",
+      "kfz_name": "Tamir Setleri & Montaj Parçaları",
+      "name_de": "Reparatursets & Montageteile",
+      "slug": "37-reparatursets-montageteile",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 8,
+      "l3_count": 6,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "37.01",
+          "kfz_name": "Fren tamir setleri",
+          "slug": "fren-tamir-setleri",
+          "children": [
+            {
+              "kfz_id": "37.01.01",
+              "kfz_name": "Kaliper seti",
+              "slug": "kaliper-seti"
+            },
+            {
+              "kfz_id": "37.01.02",
+              "kfz_name": "Fren silindiri seti",
+              "slug": "fren-silindiri-seti"
+            },
+            {
+              "kfz_id": "37.01.03",
+              "kfz_name": "Fren servis seti",
+              "slug": "fren-servis-seti"
+            }
+          ]
+        },
+        {
+          "kfz_id": "37.02",
+          "kfz_name": "Debriyaj tamir setleri",
+          "slug": "debriyaj-tamir-setleri",
+          "children": []
+        },
+        {
+          "kfz_id": "37.03",
+          "kfz_name": "Motor tamir setleri",
+          "slug": "motor-tamir-setleri",
+          "children": []
+        },
+        {
+          "kfz_id": "37.04",
+          "kfz_name": "Şanzıman tamir setleri",
+          "slug": "sanziman-tamir-setleri",
+          "children": []
+        },
+        {
+          "kfz_id": "37.05",
+          "kfz_name": "Kaliper tamir setleri",
+          "slug": "kaliper-tamir-setleri",
+          "children": []
+        },
+        {
+          "kfz_id": "37.06",
+          "kfz_name": "Rulman setleri",
+          "slug": "rulman-setleri",
+          "children": []
+        },
+        {
+          "kfz_id": "37.07",
+          "kfz_name": "Montaj kitleri",
+          "slug": "montaj-kitleri",
+          "children": []
+        },
+        {
+          "kfz_id": "37.08",
+          "kfz_name": "Conta setleri",
+          "slug": "conta-setleri",
+          "children": [
+            {
+              "kfz_id": "37.08.01",
+              "kfz_name": "Motor conta seti",
+              "slug": "motor-conta-seti"
+            },
+            {
+              "kfz_id": "37.08.02",
+              "kfz_name": "Üst motor conta seti",
+              "slug": "ust-motor-conta-seti"
+            },
+            {
+              "kfz_id": "37.08.03",
+              "kfz_name": "Alt motor conta seti",
+              "slug": "alt-motor-conta-seti"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kfz_id": "38",
+      "kfz_name": "Bağlantı, Sabitleme & Küçük Parçalar",
+      "name_de": "Befestigung & Kleinteile",
+      "slug": "38-befestigung-kleinteile",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 10,
+      "l3_count": 10,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "38.01",
+          "kfz_name": "Vida",
+          "slug": "vida",
+          "children": [
+            {
+              "kfz_id": "38.01.01",
+              "kfz_name": "Karoser vidası",
+              "slug": "karoser-vidasi"
+            },
+            {
+              "kfz_id": "38.01.02",
+              "kfz_name": "Motor vidası",
+              "slug": "motor-vidasi"
+            },
+            {
+              "kfz_id": "38.01.03",
+              "kfz_name": "İç trim vidası",
+              "slug": "ic-trim-vidasi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "38.02",
+          "kfz_name": "Somun",
+          "slug": "somun",
+          "children": []
+        },
+        {
+          "kfz_id": "38.03",
+          "kfz_name": "Pul",
+          "slug": "pul",
+          "children": []
+        },
+        {
+          "kfz_id": "38.04",
+          "kfz_name": "Klips",
+          "slug": "klips",
+          "children": [
+            {
+              "kfz_id": "38.04.01",
+              "kfz_name": "Tampon klipsi",
+              "slug": "tampon-klipsi"
+            },
+            {
+              "kfz_id": "38.04.02",
+              "kfz_name": "Kapı klipsi",
+              "slug": "kapi-klipsi"
+            },
+            {
+              "kfz_id": "38.04.03",
+              "kfz_name": "Motor klipsi",
+              "slug": "motor-klipsi"
+            },
+            {
+              "kfz_id": "38.04.04",
+              "kfz_name": "Universal klips",
+              "slug": "universal-klips"
+            }
+          ]
+        },
+        {
+          "kfz_id": "38.05",
+          "kfz_name": "Perçin",
+          "slug": "percin",
+          "children": []
+        },
+        {
+          "kfz_id": "38.06",
+          "kfz_name": "Braket",
+          "slug": "braket",
+          "children": []
+        },
+        {
+          "kfz_id": "38.07",
+          "kfz_name": "Kelepçe",
+          "slug": "kelepce",
+          "children": [
+            {
+              "kfz_id": "38.07.01",
+              "kfz_name": "Hortum kelepçesi",
+              "slug": "hortum-kelepcesi"
+            },
+            {
+              "kfz_id": "38.07.02",
+              "kfz_name": "Egzoz kelepçesi",
+              "slug": "egzoz-kelepcesi"
+            },
+            {
+              "kfz_id": "38.07.03",
+              "kfz_name": "Yakıt kelepçesi",
+              "slug": "yakit-kelepcesi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "38.08",
+          "kfz_name": "Tutucular",
+          "slug": "tutucular",
+          "children": []
+        },
+        {
+          "kfz_id": "38.09",
+          "kfz_name": "Karoser klipsleri",
+          "slug": "karoser-klipsleri",
+          "children": []
+        },
+        {
+          "kfz_id": "38.10",
+          "kfz_name": "Plastik bağlantılar",
+          "slug": "plastik-baglantilar",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "39",
+      "kfz_name": "Tuning & Performance",
+      "name_de": "Tuning & Performance",
+      "slug": "39-tuning-performance",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 12,
+      "l3_count": 9,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 0
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "39.01",
+          "kfz_name": "Spor hava filtreleri",
+          "slug": "spor-hava-filtreleri",
+          "children": [
+            {
+              "kfz_id": "39.01.01",
+              "kfz_name": "Panel filtre",
+              "slug": "panel-filtre"
+            },
+            {
+              "kfz_id": "39.01.02",
+              "kfz_name": "Açık hava filtresi",
+              "slug": "acik-hava-filtresi"
+            },
+            {
+              "kfz_id": "39.01.03",
+              "kfz_name": "Ram-Air",
+              "slug": "ram-air"
+            }
+          ]
+        },
+        {
+          "kfz_id": "39.02",
+          "kfz_name": "Performans egzoz",
+          "slug": "performans-egzoz",
+          "children": [
+            {
+              "kfz_id": "39.02.01",
+              "kfz_name": "Cat-back",
+              "slug": "cat-back"
+            },
+            {
+              "kfz_id": "39.02.02",
+              "kfz_name": "Downpipe",
+              "slug": "downpipe"
+            },
+            {
+              "kfz_id": "39.02.03",
+              "kfz_name": "Sport muffler",
+              "slug": "sport-muffler"
+            }
+          ]
+        },
+        {
+          "kfz_id": "39.03",
+          "kfz_name": "Coilover",
+          "slug": "coilover",
+          "children": [
+            {
+              "kfz_id": "39.03.01",
+              "kfz_name": "Street",
+              "slug": "street"
+            },
+            {
+              "kfz_id": "39.03.02",
+              "kfz_name": "Sport",
+              "slug": "sport"
+            },
+            {
+              "kfz_id": "39.03.03",
+              "kfz_name": "Competition",
+              "slug": "competition"
+            }
+          ]
+        },
+        {
+          "kfz_id": "39.04",
+          "kfz_name": "Spor yay",
+          "slug": "spor-yay",
+          "children": []
+        },
+        {
+          "kfz_id": "39.05",
+          "kfz_name": "Spacer",
+          "slug": "spacer",
+          "children": []
+        },
+        {
+          "kfz_id": "39.06",
+          "kfz_name": "Performans frenleri",
+          "slug": "performans-frenleri",
+          "children": []
+        },
+        {
+          "kfz_id": "39.07",
+          "kfz_name": "Chip tuning donanımı",
+          "slug": "chip-tuning-donanimi",
+          "children": []
+        },
+        {
+          "kfz_id": "39.08",
+          "kfz_name": "Intercooler",
+          "slug": "intercooler",
+          "children": []
+        },
+        {
+          "kfz_id": "39.09",
+          "kfz_name": "Turbo performance",
+          "slug": "turbo-performance",
+          "children": []
+        },
+        {
+          "kfz_id": "39.10",
+          "kfz_name": "Gövde tuning",
+          "slug": "govde-tuning",
+          "children": []
+        },
+        {
+          "kfz_id": "39.11",
+          "kfz_name": "Spoiler",
+          "slug": "spoiler",
+          "children": []
+        },
+        {
+          "kfz_id": "39.12",
+          "kfz_name": "Jant / tuning aksesuarları",
+          "slug": "jant-tuning-aksesuarlari",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "40",
+      "kfz_name": "Ticari Araç & Özel Kfz",
+      "name_de": "Nutzfahrzeuge & Spezial-KFZ",
+      "slug": "40-nutzfahrzeuge-spezial-kfz",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-11",
+      "shop_l2_name": "Ersatzteile",
+      "shop_l2_slug": "ersatzteile",
+      "subcategory_count": 8,
+      "l3_count": 12,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 1,
+        "atp": 1,
+        "bandel": 1,
+        "motointegrator": 1,
+        "pkwteile": 1,
+        "daparto": 1
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24",
+        "atu",
+        "atp",
+        "bandel",
+        "motointegrator",
+        "pkwteile",
+        "daparto"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "40.01",
+          "kfz_name": "Hafif ticari araç parçaları",
+          "slug": "hafif-ticari-arac-parcalari",
+          "children": [
+            {
+              "kfz_id": "40.01.01",
+              "kfz_name": "Fren",
+              "slug": "fren"
+            },
+            {
+              "kfz_id": "40.01.02",
+              "kfz_name": "Motor",
+              "slug": "motor"
+            },
+            {
+              "kfz_id": "40.01.03",
+              "kfz_name": "Debriyaj",
+              "slug": "debriyaj"
+            },
+            {
+              "kfz_id": "40.01.04",
+              "kfz_name": "Süspansiyon",
+              "slug": "suspansiyon"
+            }
+          ]
+        },
+        {
+          "kfz_id": "40.02",
+          "kfz_name": "Kamyon parçaları",
+          "slug": "kamyon-parcalari",
+          "children": [
+            {
+              "kfz_id": "40.02.01",
+              "kfz_name": "Fren",
+              "slug": "fren"
+            },
+            {
+              "kfz_id": "40.02.02",
+              "kfz_name": "Motor",
+              "slug": "motor"
+            },
+            {
+              "kfz_id": "40.02.03",
+              "kfz_name": "Elektrik",
+              "slug": "elektrik"
+            },
+            {
+              "kfz_id": "40.02.04",
+              "kfz_name": "Hava sistemi",
+              "slug": "hava-sistemi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "40.03",
+          "kfz_name": "Otobüs parçaları",
+          "slug": "otobus-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "40.04",
+          "kfz_name": "Van parçaları",
+          "slug": "van-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "40.05",
+          "kfz_name": "Karavan parçaları",
+          "slug": "karavan-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "40.06",
+          "kfz_name": "Römork parçaları",
+          "slug": "romork-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "40.07",
+          "kfz_name": "Özel araç parçaları",
+          "slug": "ozel-arac-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "40.08",
+          "kfz_name": "4x4 / Off-road",
+          "slug": "4x4-off-road",
+          "children": [
+            {
+              "kfz_id": "40.08.01",
+              "kfz_name": "Süspansiyon",
+              "slug": "suspansiyon"
+            },
+            {
+              "kfz_id": "40.08.02",
+              "kfz_name": "Vinç",
+              "slug": "vinc"
+            },
+            {
+              "kfz_id": "40.08.03",
+              "kfz_name": "Aydınlatma",
+              "slug": "aydinlatma"
+            },
+            {
+              "kfz_id": "40.08.04",
+              "kfz_name": "Koruma ekipmanı",
+              "slug": "koruma-ekipmani"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kfz_id": "41",
+      "kfz_name": "Industrie & CNC",
+      "name_de": "Industrie & CNC",
+      "slug": "41-industrie-cnc",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-12",
+      "shop_l2_name": "Garagen- & Serviceausrüstung",
+      "shop_l2_slug": "garagen-und-serviceausruestung",
+      "subcategory_count": 13,
+      "l3_count": 11,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 0,
+        "atp": 0,
+        "bandel": 0,
+        "motointegrator": 0,
+        "pkwteile": 0,
+        "daparto": 0
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "41.01",
+          "kfz_name": "CNC makineleri",
+          "slug": "cnc-makineleri",
+          "children": [
+            {
+              "kfz_id": "41.01.01",
+              "kfz_name": "CNC torna",
+              "slug": "cnc-torna"
+            },
+            {
+              "kfz_id": "41.01.02",
+              "kfz_name": "CNC freze",
+              "slug": "cnc-freze"
+            },
+            {
+              "kfz_id": "41.01.03",
+              "kfz_name": "CNC router",
+              "slug": "cnc-router"
+            }
+          ]
+        },
+        {
+          "kfz_id": "41.02",
+          "kfz_name": "CNC yedek parçaları",
+          "slug": "cnc-yedek-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "41.03",
+          "kfz_name": "Kesici takımlar",
+          "slug": "kesici-takimlar",
+          "children": [
+            {
+              "kfz_id": "41.03.01",
+              "kfz_name": "Freze",
+              "slug": "freze"
+            },
+            {
+              "kfz_id": "41.03.02",
+              "kfz_name": "Matkap",
+              "slug": "matkap"
+            },
+            {
+              "kfz_id": "41.03.03",
+              "kfz_name": "Insert",
+              "slug": "insert"
+            },
+            {
+              "kfz_id": "41.03.04",
+              "kfz_name": "Rayba",
+              "slug": "rayba"
+            }
+          ]
+        },
+        {
+          "kfz_id": "41.04",
+          "kfz_name": "Frezeler",
+          "slug": "frezeler",
+          "children": []
+        },
+        {
+          "kfz_id": "41.05",
+          "kfz_name": "Torna takımları",
+          "slug": "torna-takimlari",
+          "children": []
+        },
+        {
+          "kfz_id": "41.06",
+          "kfz_name": "Ölçüm ekipmanları",
+          "slug": "olcum-ekipmanlari",
+          "children": []
+        },
+        {
+          "kfz_id": "41.07",
+          "kfz_name": "Endüstriyel otomasyon",
+          "slug": "endustriyel-otomasyon",
+          "children": []
+        },
+        {
+          "kfz_id": "41.08",
+          "kfz_name": "Elektrik / elektronik",
+          "slug": "elektrik-elektronik",
+          "children": []
+        },
+        {
+          "kfz_id": "41.09",
+          "kfz_name": "Pnömatik",
+          "slug": "pnomatik",
+          "children": [
+            {
+              "kfz_id": "41.09.01",
+              "kfz_name": "Valf",
+              "slug": "valf"
+            },
+            {
+              "kfz_id": "41.09.02",
+              "kfz_name": "Silindir",
+              "slug": "silindir"
+            },
+            {
+              "kfz_id": "41.09.03",
+              "kfz_name": "Hortum",
+              "slug": "hortum"
+            },
+            {
+              "kfz_id": "41.09.04",
+              "kfz_name": "Bağlantı elemanı",
+              "slug": "baglanti-elemani"
+            }
+          ]
+        },
+        {
+          "kfz_id": "41.10",
+          "kfz_name": "Hidrolik",
+          "slug": "hidrolik",
+          "children": []
+        },
+        {
+          "kfz_id": "41.11",
+          "kfz_name": "Rulmanlar",
+          "slug": "rulmanlar",
+          "children": []
+        },
+        {
+          "kfz_id": "41.12",
+          "kfz_name": "Endüstriyel yağlar",
+          "slug": "endustriyel-yaglar",
+          "children": []
+        },
+        {
+          "kfz_id": "41.13",
+          "kfz_name": "Bakım ürünleri",
+          "slug": "bakim-urunleri",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kfz_id": "42",
+      "kfz_name": "Baumaschinen & Ersatzteile",
+      "name_de": "Baumaschinen & Ersatzteile",
+      "slug": "42-baumaschinen-ersatzteile",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-12",
+      "shop_l2_name": "Garagen- & Serviceausrüstung",
+      "shop_l2_slug": "garagen-und-serviceausruestung",
+      "subcategory_count": 15,
+      "l3_count": 12,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 0,
+        "atp": 0,
+        "bandel": 0,
+        "motointegrator": 0,
+        "pkwteile": 0,
+        "daparto": 0
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "42.01",
+          "kfz_name": "Mini ekskavatör parçaları",
+          "slug": "mini-ekskavator-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "42.02",
+          "kfz_name": "Ekskavatör parçaları",
+          "slug": "ekskavator-parcalari",
+          "children": [
+            {
+              "kfz_id": "42.02.01",
+              "kfz_name": "Hidrolik",
+              "slug": "hidrolik"
+            },
+            {
+              "kfz_id": "42.02.02",
+              "kfz_name": "Motor",
+              "slug": "motor"
+            },
+            {
+              "kfz_id": "42.02.03",
+              "kfz_name": "Elektrik",
+              "slug": "elektrik"
+            },
+            {
+              "kfz_id": "42.02.04",
+              "kfz_name": "Yürüyüş takımı",
+              "slug": "yuruyus-takimi"
+            }
+          ]
+        },
+        {
+          "kfz_id": "42.03",
+          "kfz_name": "Yükleyici parçaları",
+          "slug": "yukleyici-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "42.04",
+          "kfz_name": "Kazıcı-yükleyici parçaları",
+          "slug": "kazici-yukleyici-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "42.05",
+          "kfz_name": "Silindir parçaları",
+          "slug": "silindir-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "42.06",
+          "kfz_name": "Hidrolik parçalar",
+          "slug": "hidrolik-parcalar",
+          "children": [
+            {
+              "kfz_id": "42.06.01",
+              "kfz_name": "Pompa",
+              "slug": "pompa"
+            },
+            {
+              "kfz_id": "42.06.02",
+              "kfz_name": "Motor",
+              "slug": "motor"
+            },
+            {
+              "kfz_id": "42.06.03",
+              "kfz_name": "Valf",
+              "slug": "valf"
+            },
+            {
+              "kfz_id": "42.06.04",
+              "kfz_name": "Silindir",
+              "slug": "silindir"
+            }
+          ]
+        },
+        {
+          "kfz_id": "42.07",
+          "kfz_name": "Hidrolik pompalar",
+          "slug": "hidrolik-pompalar",
+          "children": []
+        },
+        {
+          "kfz_id": "42.08",
+          "kfz_name": "Hidrolik motorlar",
+          "slug": "hidrolik-motorlar",
+          "children": []
+        },
+        {
+          "kfz_id": "42.09",
+          "kfz_name": "Paletler",
+          "slug": "paletler",
+          "children": []
+        },
+        {
+          "kfz_id": "42.10",
+          "kfz_name": "Yürüyüş takımları",
+          "slug": "yuruyus-takimlari",
+          "children": []
+        },
+        {
+          "kfz_id": "42.11",
+          "kfz_name": "Filtreler",
+          "slug": "filtreler",
+          "children": []
+        },
+        {
+          "kfz_id": "42.12",
+          "kfz_name": "Motor parçaları",
+          "slug": "motor-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "42.13",
+          "kfz_name": "Elektrik parçaları",
+          "slug": "elektrik-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "42.14",
+          "kfz_name": "Aydınlatma",
+          "slug": "aydinlatma",
+          "children": []
+        },
+        {
+          "kfz_id": "42.15",
+          "kfz_name": "Ataşmanlar",
+          "slug": "atasmanlar",
+          "children": [
+            {
+              "kfz_id": "42.15.01",
+              "kfz_name": "Kova",
+              "slug": "kova"
+            },
+            {
+              "kfz_id": "42.15.02",
+              "kfz_name": "Hidrolik kırıcı",
+              "slug": "hidrolik-kirici"
+            },
+            {
+              "kfz_id": "42.15.03",
+              "kfz_name": "Çatal",
+              "slug": "catal"
+            },
+            {
+              "kfz_id": "42.15.04",
+              "kfz_name": "Burgu",
+              "slug": "burgu"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kfz_id": "43",
+      "kfz_name": "Landwirtschaft & Agrartechnik",
+      "name_de": "Landwirtschaft & Agrartechnik",
+      "slug": "43-landwirtschaft-agrartechnik",
+      "shop_root_id": "cat-05",
+      "shop_l2_id": "cat-05-12",
+      "shop_l2_name": "Garagen- & Serviceausrüstung",
+      "shop_l2_slug": "garagen-und-serviceausruestung",
+      "subcategory_count": 19,
+      "l3_count": 14,
+      "competitor_coverage": {
+        "autodoc": 1,
+        "kfzteile24": 1,
+        "atu": 0,
+        "atp": 0,
+        "bandel": 0,
+        "motointegrator": 0,
+        "pkwteile": 0,
+        "daparto": 0
+      },
+      "active_competitors": [
+        "autodoc",
+        "kfzteile24"
+      ],
+      "subcategories": [
+        {
+          "kfz_id": "43.01",
+          "kfz_name": "Traktör yedek parçaları",
+          "slug": "traktor-yedek-parcalari",
+          "children": [
+            {
+              "kfz_id": "43.01.01",
+              "kfz_name": "Motor",
+              "slug": "motor"
+            },
+            {
+              "kfz_id": "43.01.02",
+              "kfz_name": "Hidrolik",
+              "slug": "hidrolik"
+            },
+            {
+              "kfz_id": "43.01.03",
+              "kfz_name": "Elektrik",
+              "slug": "elektrik"
+            },
+            {
+              "kfz_id": "43.01.04",
+              "kfz_name": "Fren",
+              "slug": "fren"
+            },
+            {
+              "kfz_id": "43.01.05",
+              "kfz_name": "Debriyaj",
+              "slug": "debriyaj"
+            }
+          ]
+        },
+        {
+          "kfz_id": "43.02",
+          "kfz_name": "Biçerdöver parçaları",
+          "slug": "bicerdover-parcalari",
+          "children": [
+            {
+              "kfz_id": "43.02.01",
+              "kfz_name": "Hasat",
+              "slug": "hasat"
+            },
+            {
+              "kfz_id": "43.02.02",
+              "kfz_name": "Motor",
+              "slug": "motor"
+            },
+            {
+              "kfz_id": "43.02.03",
+              "kfz_name": "Kayış",
+              "slug": "kayis"
+            },
+            {
+              "kfz_id": "43.02.04",
+              "kfz_name": "Rulman",
+              "slug": "rulman"
+            },
+            {
+              "kfz_id": "43.02.05",
+              "kfz_name": "Filtre",
+              "slug": "filtre"
+            }
+          ]
+        },
+        {
+          "kfz_id": "43.03",
+          "kfz_name": "Römork parçaları",
+          "slug": "romork-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "43.04",
+          "kfz_name": "Tarım makineleri parçaları",
+          "slug": "tarim-makineleri-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "43.05",
+          "kfz_name": "Hidrolik",
+          "slug": "hidrolik",
+          "children": [
+            {
+              "kfz_id": "43.05.01",
+              "kfz_name": "Pompa",
+              "slug": "pompa"
+            },
+            {
+              "kfz_id": "43.05.02",
+              "kfz_name": "Valf",
+              "slug": "valf"
+            },
+            {
+              "kfz_id": "43.05.03",
+              "kfz_name": "Silindir",
+              "slug": "silindir"
+            },
+            {
+              "kfz_id": "43.05.04",
+              "kfz_name": "Hortum",
+              "slug": "hortum"
+            }
+          ]
+        },
+        {
+          "kfz_id": "43.06",
+          "kfz_name": "PTO",
+          "slug": "pto",
+          "children": []
+        },
+        {
+          "kfz_id": "43.07",
+          "kfz_name": "Şaftlar",
+          "slug": "saftlar",
+          "children": []
+        },
+        {
+          "kfz_id": "43.08",
+          "kfz_name": "Pulluk parçaları",
+          "slug": "pulluk-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "43.09",
+          "kfz_name": "Ekim makineleri",
+          "slug": "ekim-makineleri",
+          "children": []
+        },
+        {
+          "kfz_id": "43.10",
+          "kfz_name": "Hasat makineleri",
+          "slug": "hasat-makineleri",
+          "children": []
+        },
+        {
+          "kfz_id": "43.11",
+          "kfz_name": "Lastikler",
+          "slug": "lastikler",
+          "children": []
+        },
+        {
+          "kfz_id": "43.12",
+          "kfz_name": "Jantlar",
+          "slug": "jantlar",
+          "children": []
+        },
+        {
+          "kfz_id": "43.13",
+          "kfz_name": "Filtreler",
+          "slug": "filtreler",
+          "children": []
+        },
+        {
+          "kfz_id": "43.14",
+          "kfz_name": "Yağlar",
+          "slug": "yaglar",
+          "children": []
+        },
+        {
+          "kfz_id": "43.15",
+          "kfz_name": "Gresler",
+          "slug": "gresler",
+          "children": []
+        },
+        {
+          "kfz_id": "43.16",
+          "kfz_name": "Elektrik parçaları",
+          "slug": "elektrik-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "43.17",
+          "kfz_name": "Aydınlatma",
+          "slug": "aydinlatma",
+          "children": []
+        },
+        {
+          "kfz_id": "43.18",
+          "kfz_name": "Aşınma parçaları",
+          "slug": "asinma-parcalari",
+          "children": []
+        },
+        {
+          "kfz_id": "43.19",
+          "kfz_name": "Tarım ekipmanları",
+          "slug": "tarim-ekipmanlari",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

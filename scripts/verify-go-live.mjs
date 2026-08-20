@@ -36,6 +36,8 @@ const STOREFRONT_ROUTES = [
   "/konto/loyalty/",
   "/kategorie/textil/",
   "/kategorie/automotive/",
+  "/kategorie/heimtextilien/",
+  "/kategorie/getraenke/",
   "/en/",
   "/tr/",
   "/ar/",
@@ -56,6 +58,11 @@ const TAXONOMY_ROUTES = [
   "/taxonomy/buzzard_production_bridge_max_single_file.html",
   "/taxonomy/buzzard_master_kfz_category_tree_v1.html",
   "/taxonomy/buzzard_master_kfz_intelligence_os.html",
+  "/taxonomy/buzzard_master_48_main_categories_de.json",
+  "/taxonomy/master_shop_l1_mapping.json",
+  "/taxonomy/taxonomy_auto_sync_report.json",
+  "/taxonomy/kfz_shop_bridge.json",
+  "/taxonomy/buzzard_production_preflight.json",
 ];
 
 const ADMIN_ROUTES = ADMIN_ROUTE_SLUGS;

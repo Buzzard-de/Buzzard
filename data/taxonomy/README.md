@@ -44,7 +44,7 @@ Vehicle make/model/year, HSN/TSN, OEM numbers, TecDoc ID, manufacturer part numb
 
 ## Relation to Buzzard catalog
 
-- General shop navigation: `data/buzzard_categories.json` (41 mains, `cat-05` = Automotive)
+- General shop navigation: `data/buzzard_categories.json` (53 L1 mains on branch, 48 master codes mapped; live `main` still 41 until PR #210 deploy)
 - Deep KFZ parts tree: this folder
 - Shop bridge: `kfz_shop_bridge.json`
 

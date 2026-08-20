@@ -1,0 +1,164 @@
+{
+  "generated_at": "2026-08-20T17:08:20.873981+00:00",
+  "site": {
+    "ok": false,
+    "detail": "APP_BASE_URL fehlt",
+    "url": null
+  },
+  "gates": {
+    "DOMAIN": false,
+    "TLS": false,
+    "DATABASE": false,
+    "PAYMENT": false,
+    "SHIPPING": false,
+    "SUPPLIER": false,
+    "EMAIL": false,
+    "SECURITY": false,
+    "BACKUP": false,
+    "MONITORING": false,
+    "LEGAL": false,
+    "ORDER_TEST": false,
+    "RETURN_TEST": false,
+    "GDPR": false
+  },
+  "gate_labels": {
+    "DOMAIN": "Produktions-Domain konfiguriert",
+    "TLS": "HTTPS/TLS aktiviert",
+    "DATABASE": "Produktions-Datenbank konfiguriert",
+    "PAYMENT": "Zahlungsanbieter konfiguriert",
+    "SHIPPING": "Versand-/Carrier-Anbieter konfiguriert",
+    "SUPPLIER": "Lieferanten-/API-Integration konfiguriert",
+    "EMAIL": "Transaktions-E-Mail konfiguriert",
+    "SECURITY": "Session-/Verschlüsselungs-Secrets konfiguriert",
+    "BACKUP": "Produktions-Backup-Ziel konfiguriert",
+    "MONITORING": "Monitoring/Logging konfiguriert",
+    "LEGAL": "Erforderliche Rechtsseiten erreichbar",
+    "ORDER_TEST": "Test-Bestellablauf bestanden",
+    "RETURN_TEST": "Retoure/Widerruf-Ablauf bestanden",
+    "GDPR": "Consent/Datenschutz-Konfiguration bestanden"
+  },
+  "passed": 0,
+  "total": 14,
+  "readiness_pct": 0.0,
+  "legal_routes": [
+    {
+      "route": "/impressum",
+      "ok": false,
+      "detail": "APP_BASE_URL fehlt"
+    },
+    {
+      "route": "/datenschutz",
+      "ok": false,
+      "detail": "APP_BASE_URL fehlt"
+    },
+    {
+      "route": "/agb",
+      "ok": false,
+      "detail": "APP_BASE_URL fehlt"
+    },
+    {
+      "route": "/widerruf",
+      "ok": false,
+      "detail": "APP_BASE_URL fehlt"
+    },
+    {
+      "route": "/versand",
+      "ok": false,
+      "detail": "APP_BASE_URL fehlt"
+    },
+    {
+      "route": "/zahlung",
+      "ok": false,
+      "detail": "APP_BASE_URL fehlt"
+    },
+    {
+      "route": "/kontakt",
+      "ok": false,
+      "detail": "APP_BASE_URL fehlt"
+    }
+  ],
+  "environment": [
+    {
+      "gate": "APP_ENV",
+      "ok": false,
+      "detail": "development"
+    },
+    {
+      "gate": "APP_BASE_URL",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "DATABASE_URL",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "PAYMENT_PROVIDER",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "PAYMENT_PUBLIC_KEY",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "PAYMENT_SECRET_KEY",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "SHIPPING_PROVIDER",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "SHIPPING_API_KEY",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "SUPPLIER_API_BASE_URL",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "SUPPLIER_API_KEY",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "EMAIL_PROVIDER",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "EMAIL_API_KEY",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "SESSION_SECRET",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "ENCRYPTION_KEY",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "BACKUP_TARGET",
+      "ok": false,
+      "detail": "fehlt"
+    },
+    {
+      "gate": "ANALYTICS_ID",
+      "ok": false,
+      "detail": "fehlt"
+    }
+  ],
+  "go_live_allowed": false,
+  "rule": "Kein Produktions-Go-Live, bis jedes Gate explizit bestanden ist."
+}

@@ -31,10 +31,15 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Python dependencies
+        run: pip install -r intelligence/requirements.txt
+
       - name: Run taxonomy auto-sync
         run: |
           cd intelligence
-          python3 main.py complete-run-taxonomy-auto-sync
+          python3 scripts/run_taxonomy_auto_sync.py --skip-builds
+          cd ..
+          node scripts/publish-taxonomy-artifacts.mjs
 
       - name: Fail PR when sync outputs are missing
         if: github.event_name == 'pull_request'

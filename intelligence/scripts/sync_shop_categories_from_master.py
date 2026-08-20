@@ -96,13 +96,15 @@ def sync_shop(*, dry_run: bool = False) -> dict:
         if shop_node.get("master_name") != master_item["name"]:
             shop_node["master_name"] = master_item["name"]
             changes.append("master_name")
-        if shop_node.get("master_synced_at") != synced_at:
-            shop_node["master_synced_at"] = synced_at
-            changes.append("master_synced_at")
 
         if sync_name and previous_name != master_item["name"]:
             shop_node["name"] = master_item["name"]
             changes.append("name")
+
+        if changes or shop_node.get("master_synced_at") is None:
+            if changes:
+                shop_node["master_synced_at"] = synced_at
+                changes.append("master_synced_at")
 
         if changes:
             updated.append(
@@ -129,7 +131,7 @@ def sync_shop(*, dry_run: bool = False) -> dict:
         "source": str(CANONICAL.relative_to(REPO)),
         "master_main_categories": master_payload.get("main_categories"),
         "shop_main_categories": len(catalog.get("categories", [])),
-        "synced_at": synced_at,
+        "synced_at": synced_at if updated else catalog.get("taxonomy_sync", {}).get("synced_at", synced_at),
         "mapped_master_codes": sorted(mapped_master_codes),
         "unmapped_master_codes": [row["code"] for row in unmapped_master],
     }
@@ -141,7 +143,7 @@ def sync_shop(*, dry_run: bool = False) -> dict:
         dry_run=dry_run,
     )
 
-    if not dry_run:
+    if not dry_run and updated:
         SHOP_CATALOG_PATH.write_text(
             json.dumps(catalog, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",

@@ -41,13 +41,22 @@ function writePreflight() {
     { cwd: rootDir, encoding: "utf8" }
   ).trim();
 
-  JSON.parse(output);
+  const payload = JSON.parse(output);
+  const stable = JSON.stringify({ ...payload, generated_at: null });
   const dataPath = path.join(sourceDir, "buzzard_production_preflight.json");
   const publicPath = path.join(targetDir, "buzzard_production_preflight.json");
   ensureDir(targetDir);
-  fs.writeFileSync(dataPath, `${output}\n`, "utf8");
-  fs.writeFileSync(publicPath, `${output}\n`, "utf8");
-  console.log("publish-taxonomy-artifacts: wrote buzzard_production_preflight.json");
+
+  for (const target of [dataPath, publicPath]) {
+    if (fs.existsSync(target)) {
+      const existing = JSON.parse(fs.readFileSync(target, "utf8"));
+      if (JSON.stringify({ ...existing, generated_at: null }) === stable) {
+        continue;
+      }
+    }
+    fs.writeFileSync(target, `${output}\n`, "utf8");
+    console.log(`publish-taxonomy-artifacts: wrote ${path.basename(target)}`);
+  }
 }
 
 ensureDir(targetDir);

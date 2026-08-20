@@ -1057,7 +1057,7 @@
       "master_code": "bz.17",
       "master_slug": "mode-bekleidung",
       "master_name": "Mode & Bekleidung",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-02",
@@ -1720,7 +1720,7 @@
       "master_code": "bz.21",
       "master_slug": "beauty-kosmetik",
       "master_name": "Beauty & Kosmetik",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-03",
@@ -2266,7 +2266,7 @@
       "master_code": "bz.11",
       "master_slug": "reinigung-hauspflege",
       "master_name": "Reinigung & Hauspflege",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-04",
@@ -2680,7 +2680,7 @@
       "master_code": "bz.35",
       "master_slug": "buero-schule-schreibwaren",
       "master_name": "Büro, Schule & Schreibwaren",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-05",
@@ -3633,7 +3633,7 @@
       "master_code": "bz.01",
       "master_slug": "automotive-kfz",
       "master_name": "Automotive & Kfz",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-06",
@@ -4441,7 +4441,7 @@
       "master_code": "bz.36",
       "master_slug": "haustier-tierpflege",
       "master_name": "Haustier & Tierpflege",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-07",
@@ -5236,7 +5236,7 @@
       "master_code": "bz.02",
       "master_slug": "garten-gartenbau",
       "master_name": "Garten & Gartenbau",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-08",
@@ -5940,7 +5940,7 @@
       "master_code": "bz.39",
       "master_slug": "arbeitskleidung-arbeitsschutz",
       "master_name": "Arbeitskleidung & Arbeitsschutz",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-09",
@@ -6590,7 +6590,7 @@
       "master_code": "bz.03",
       "master_slug": "werkzeuge-werkstatt",
       "master_name": "Werkzeuge & Werkstatt",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-10",
@@ -7240,7 +7240,7 @@
       "master_code": "bz.05",
       "master_slug": "haus-haushalt",
       "master_name": "Haus & Haushalt",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-11",
@@ -7720,7 +7720,7 @@
       "master_code": "bz.06",
       "master_slug": "moebel-wohnen",
       "master_name": "Möbel & Wohnen",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-12",
@@ -8305,7 +8305,7 @@
       "master_code": "bz.12",
       "master_slug": "elektronik-unterhaltungselektronik",
       "master_name": "Elektronik & Unterhaltungselektronik",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-13",
@@ -8797,7 +8797,7 @@
       "master_code": "bz.16",
       "master_slug": "haushaltsgeraete",
       "master_name": "Haushaltsgeräte",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-14",
@@ -9631,7 +9631,7 @@
       "master_code": "bz.30",
       "master_slug": "sport-fitness",
       "master_name": "Sport & Fitness",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-15",
@@ -10203,7 +10203,7 @@
       "master_code": "bz.18",
       "master_slug": "schuhe",
       "master_name": "Schuhe",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-16",
@@ -10749,7 +10749,7 @@
       "master_code": "bz.19",
       "master_slug": "taschen-koffer-accessoires",
       "master_name": "Taschen, Koffer & Accessoires",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-17",
@@ -11347,7 +11347,7 @@
       "master_code": "bz.27",
       "master_slug": "baby-kinderzimmer",
       "master_name": "Baby & Kinderzimmer",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-18",
@@ -11827,7 +11827,7 @@
       "master_code": "bz.29",
       "master_slug": "spielzeug-spiele",
       "master_name": "Spielzeug & Spiele",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-19",
@@ -12307,7 +12307,7 @@
       "master_code": "bz.32",
       "master_slug": "hobby-freizeit",
       "master_name": "Hobby & Freizeit",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-20",
@@ -12799,7 +12799,7 @@
       "master_code": "bz.37",
       "master_slug": "landwirtschaft-agrar",
       "master_name": "Landwirtschaft & Agrar",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-21",
@@ -13279,7 +13279,7 @@
       "master_code": "bz.04",
       "master_slug": "heimwerken-bau-konstruktion",
       "master_name": "Heimwerken, Bau & Konstruktion",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-22",
@@ -13811,7 +13811,7 @@
       "master_code": "bz.43",
       "master_slug": "beleuchtung-lampen",
       "master_name": "Beleuchtung & Lampen",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-23",
@@ -14304,7 +14304,7 @@
       "master_code": "bz.10",
       "master_slug": "bad-sanitaer",
       "master_name": "Bad & Sanitär",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-24",
@@ -14810,7 +14810,7 @@
       "master_code": "bz.09",
       "master_slug": "kueche-kochen",
       "master_name": "Küche & Kochen",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-25",
@@ -15290,7 +15290,7 @@
       "master_code": "bz.25",
       "master_slug": "lebensmittel-supermarkt",
       "master_name": "Lebensmittel & Supermarkt",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-26",
@@ -15782,7 +15782,7 @@
       "master_code": "bz.36",
       "master_slug": "haustier-tierpflege",
       "master_name": "Haustier & Tierpflege",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-27",
@@ -16130,7 +16130,7 @@
       "master_code": "bz.23",
       "master_slug": "gesundheit-wellness",
       "master_name": "Gesundheit & Wellness",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-28",
@@ -16610,7 +16610,7 @@
       "master_code": "bz.38",
       "master_slug": "industrie-gewerbebedarf",
       "master_name": "Industrie & Gewerbebedarf",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-29",
@@ -17090,7 +17090,7 @@
       "master_code": "bz.38",
       "master_slug": "industrie-gewerbebedarf",
       "master_name": "Industrie & Gewerbebedarf",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-30",
@@ -17504,7 +17504,7 @@
       "master_code": "bz.38",
       "master_slug": "industrie-gewerbebedarf",
       "master_name": "Industrie & Gewerbebedarf",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-31",
@@ -17931,7 +17931,7 @@
       "master_code": "bz.15",
       "master_slug": "smart-home-sicherheit",
       "master_name": "Smart Home & Sicherheit",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-32",
@@ -18345,7 +18345,7 @@
       "master_code": "bz.40",
       "master_slug": "reisen-mobilitaet",
       "master_name": "Reisen & Mobilität",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-33",
@@ -18759,7 +18759,7 @@
       "master_code": "bz.31",
       "master_slug": "outdoor-camping-abenteuer",
       "master_name": "Outdoor, Camping & Abenteuer",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-34",
@@ -19173,7 +19173,7 @@
       "master_code": "bz.46",
       "master_slug": "saisonale-festtagsartikel",
       "master_name": "Saisonale & Festtagsartikel",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-35",
@@ -19587,7 +19587,7 @@
       "master_code": "bz.07",
       "master_slug": "wohndekoration",
       "master_name": "Wohndekoration",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-36",
@@ -20001,7 +20001,7 @@
       "master_code": "bz.14",
       "master_slug": "mobil-telekommunikation",
       "master_name": "Mobil & Telekommunikation",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-37",
@@ -20415,7 +20415,7 @@
       "master_code": "bz.12",
       "master_slug": "elektronik-unterhaltungselektronik",
       "master_name": "Elektronik & Unterhaltungselektronik",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-38",
@@ -20829,7 +20829,7 @@
       "master_code": "bz.13",
       "master_slug": "computer-it",
       "master_name": "Computer & IT",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-39",
@@ -21177,7 +21177,7 @@
       "master_code": "bz.40",
       "master_slug": "reisen-mobilitaet",
       "master_name": "Reisen & Mobilität",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-40",
@@ -21657,7 +21657,7 @@
       "master_code": "bz.44",
       "master_slug": "heizung-klima-energie",
       "master_name": "Heizung, Klima & Energie",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-41",
@@ -22137,7 +22137,7 @@
       "master_code": "bz.48",
       "master_slug": "allgemeine-produkte-marktplatz",
       "master_name": "Allgemeine Produkte & Marktplatz",
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-42",
@@ -22299,7 +22299,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-43",
@@ -22461,7 +22461,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-44",
@@ -22623,7 +22623,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-45",
@@ -22785,7 +22785,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-46",
@@ -22947,7 +22947,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-47",
@@ -23109,7 +23109,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-48",
@@ -23271,7 +23271,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-49",
@@ -23433,7 +23433,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-50",
@@ -23595,7 +23595,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-51",
@@ -23757,7 +23757,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-52",
@@ -23919,7 +23919,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-53",
@@ -24081,7 +24081,7 @@
           ]
         }
       ],
-      "master_synced_at": "2026-08-20T16:57:25+00:00"
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     }
   ],
   "taxonomy_sync": {
@@ -24089,7 +24089,7 @@
     "source": "data/taxonomy/buzzard_master_48_main_categories_de.json",
     "master_main_categories": 48,
     "shop_main_categories": 53,
-    "synced_at": "2026-08-20T16:57:25+00:00",
+    "synced_at": "2026-08-20T17:14:29+00:00",
     "mapped_master_codes": [
       "bz.01",
       "bz.02",

@@ -1,5 +1,5 @@
 {
-  "agent_count": 43,
+  "agent_count": 55,
   "categories": [
     {
       "category_id": "CATEGORY_01",
@@ -14,52 +14,52 @@
     {
       "category_id": "CATEGORY_03",
       "buzzard_id": "cat-03",
-      "name": "Reinigungsprodukte"
+      "name": "Reinigung & Hauspflege"
     },
     {
       "category_id": "CATEGORY_04",
       "buzzard_id": "cat-04",
-      "name": "Schule & Bürobedarf"
+      "name": "Büro, Schule & Schreibwaren"
     },
     {
       "category_id": "CATEGORY_05",
       "buzzard_id": "cat-05",
-      "name": "Automotive"
+      "name": "Automotive & Kfz"
     },
     {
       "category_id": "CATEGORY_06",
       "buzzard_id": "cat-06",
-      "name": "Haustierbedarf"
+      "name": "Haustier & Tierpflege"
     },
     {
       "category_id": "CATEGORY_07",
       "buzzard_id": "cat-07",
-      "name": "Garten"
+      "name": "Garten & Gartenbau"
     },
     {
       "category_id": "CATEGORY_08",
       "buzzard_id": "cat-08",
-      "name": "Arbeitsschutz & Berufskleidung"
+      "name": "Arbeitskleidung & Arbeitsschutz"
     },
     {
       "category_id": "CATEGORY_09",
       "buzzard_id": "cat-09",
-      "name": "Werkzeuge & Eisenwaren"
+      "name": "Werkzeuge & Werkstatt"
     },
     {
       "category_id": "CATEGORY_10",
       "buzzard_id": "cat-10",
-      "name": "Haus & Wohnen"
+      "name": "Haus & Haushalt"
     },
     {
       "category_id": "CATEGORY_11",
       "buzzard_id": "cat-11",
-      "name": "Möbel"
+      "name": "Möbel & Wohnen"
     },
     {
       "category_id": "CATEGORY_12",
       "buzzard_id": "cat-12",
-      "name": "Elektronik"
+      "name": "Elektronik & Unterhaltungselektronik"
     },
     {
       "category_id": "CATEGORY_13",
@@ -79,17 +79,17 @@
     {
       "category_id": "CATEGORY_16",
       "buzzard_id": "cat-16",
-      "name": "Taschen & Accessoires"
+      "name": "Taschen, Koffer & Accessoires"
     },
     {
       "category_id": "CATEGORY_17",
       "buzzard_id": "cat-17",
-      "name": "Mutter & Baby"
+      "name": "Baby & Kinderzimmer"
     },
     {
       "category_id": "CATEGORY_18",
       "buzzard_id": "cat-18",
-      "name": "Spielzeug & Kinder"
+      "name": "Spielzeug & Spiele"
     },
     {
       "category_id": "CATEGORY_19",
@@ -99,17 +99,17 @@
     {
       "category_id": "CATEGORY_20",
       "buzzard_id": "cat-20",
-      "name": "Tier- & Landwirtschaftsausrüstung"
+      "name": "Landwirtschaft & Agrar"
     },
     {
       "category_id": "CATEGORY_21",
       "buzzard_id": "cat-21",
-      "name": "Bau & Konstruktion"
+      "name": "Heimwerken, Bau & Konstruktion"
     },
     {
       "category_id": "CATEGORY_22",
       "buzzard_id": "cat-22",
-      "name": "Elektro & Beleuchtung"
+      "name": "Beleuchtung & Lampen"
     },
     {
       "category_id": "CATEGORY_23",
@@ -119,12 +119,12 @@
     {
       "category_id": "CATEGORY_24",
       "buzzard_id": "cat-24",
-      "name": "Küche & Essen"
+      "name": "Küche & Kochen"
     },
     {
       "category_id": "CATEGORY_25",
       "buzzard_id": "cat-25",
-      "name": "Lebensmittel & Getränke"
+      "name": "Lebensmittel & Supermarkt"
     },
     {
       "category_id": "CATEGORY_26",
@@ -139,7 +139,7 @@
     {
       "category_id": "CATEGORY_28",
       "buzzard_id": "cat-28",
-      "name": "Büro & Gewerbe"
+      "name": "Industrie & Gewerbebedarf"
     },
     {
       "category_id": "CATEGORY_29",
@@ -149,37 +149,37 @@
     {
       "category_id": "CATEGORY_30",
       "buzzard_id": "cat-30",
-      "name": "Industrie- & Gewerbeausrüstung"
+      "name": "Industrie & Gewerbebedarf"
     },
     {
       "category_id": "CATEGORY_31",
       "buzzard_id": "cat-31",
-      "name": "Sicherheit & Überwachung"
+      "name": "Smart Home & Sicherheit"
     },
     {
       "category_id": "CATEGORY_32",
       "buzzard_id": "cat-32",
-      "name": "Reise & Koffer"
+      "name": "Reisen & Mobilität"
     },
     {
       "category_id": "CATEGORY_33",
       "buzzard_id": "cat-33",
-      "name": "Gartenhobby & Camping"
+      "name": "Outdoor, Camping & Abenteuer"
     },
     {
       "category_id": "CATEGORY_34",
       "buzzard_id": "cat-34",
-      "name": "Saisonales & Feiern"
+      "name": "Saisonale & Festtagsartikel"
     },
     {
       "category_id": "CATEGORY_35",
       "buzzard_id": "cat-35",
-      "name": "Dekoration"
+      "name": "Wohndekoration"
     },
     {
       "category_id": "CATEGORY_36",
       "buzzard_id": "cat-36",
-      "name": "Persönliche Elektronik & Mobil"
+      "name": "Mobil & Telekommunikation"
     },
     {
       "category_id": "CATEGORY_37",
@@ -189,7 +189,7 @@
     {
       "category_id": "CATEGORY_38",
       "buzzard_id": "cat-38",
-      "name": "Computer & Gaming"
+      "name": "Computer & IT"
     },
     {
       "category_id": "CATEGORY_39",
@@ -199,12 +199,72 @@
     {
       "category_id": "CATEGORY_40",
       "buzzard_id": "cat-40",
-      "name": "Energie & Solar"
+      "name": "Heizung, Klima & Energie"
     },
     {
       "category_id": "CATEGORY_41",
       "buzzard_id": "cat-41",
-      "name": "Angebote & Sonderkollektionen"
+      "name": "Allgemeine Produkte & Marktplatz"
+    },
+    {
+      "category_id": "CATEGORY_42",
+      "buzzard_id": "cat-42",
+      "name": "Heimtextilien"
+    },
+    {
+      "category_id": "CATEGORY_43",
+      "buzzard_id": "cat-43",
+      "name": "Schmuck & Uhren"
+    },
+    {
+      "category_id": "CATEGORY_44",
+      "buzzard_id": "cat-44",
+      "name": "Körperpflege"
+    },
+    {
+      "category_id": "CATEGORY_45",
+      "buzzard_id": "cat-45",
+      "name": "Apotheke & Medizinprodukte"
+    },
+    {
+      "category_id": "CATEGORY_46",
+      "buzzard_id": "cat-46",
+      "name": "Getränke"
+    },
+    {
+      "category_id": "CATEGORY_47",
+      "buzzard_id": "cat-47",
+      "name": "Kinder & Schule"
+    },
+    {
+      "category_id": "CATEGORY_48",
+      "buzzard_id": "cat-48",
+      "name": "Musik & Musikinstrumente"
+    },
+    {
+      "category_id": "CATEGORY_49",
+      "buzzard_id": "cat-49",
+      "name": "Bücher, Medien & Unterhaltung"
+    },
+    {
+      "category_id": "CATEGORY_50",
+      "buzzard_id": "cat-50",
+      "name": "Geschenke, Blumen & Anlässe"
+    },
+    {
+      "category_id": "CATEGORY_51",
+      "buzzard_id": "cat-51",
+      "name": "Kunsthandwerk, Nähen & DIY"
+    },
+    {
+      "category_id": "CATEGORY_52",
+      "buzzard_id": "cat-52",
+      "name": "Pool, Spa & Wellness-Ausstattung"
+    },
+    {
+      "category_id": "CATEGORY_53",
+      "buzzard_id": "cat-53",
+      "name": "Luxus, Sammlerstücke & Wertvolles"
     },
     {
       "category_id": "CATEGORY_42",

@@ -27,7 +27,7 @@ def test_search():
 def test_tire_main_category():
     tire = MainColumnCategoryEngine().get_main("bz.44")
     assert tire is not None
-    assert tire["name"] == "Lastikler – Tüm Motorlu Araçlar"
+    assert tire["name"] == "Heizung, Klima & Energie"
     assert len(tire["children"]) == 52
 
 

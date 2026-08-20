@@ -23,113 +23,113 @@
   },
   {
     "id": "cat-03",
-    "name": "Reinigungsprodukte",
+    "name": "Reinigung & Hauspflege",
     "slug": "reinigungsprodukte",
     "menu_order": 3,
     "url": "/kategorie/reinigungsprodukte",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Reinigung",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Reinigung & Hauspflege",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-04",
-    "name": "Schule & Bürobedarf",
+    "name": "Büro, Schule & Schreibwaren",
     "slug": "schule-und-buerobedarf",
     "menu_order": 4,
     "url": "/kategorie/schule-und-buerobedarf",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Büro & Schule",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Büro, Schule & Schreibwaren",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-05",
-    "name": "Automotive",
+    "name": "Automotive & Kfz",
     "slug": "automotive",
     "menu_order": 5,
     "url": "/kategorie/automotive",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
-    "reason": "No safe deterministic mapping; human/category-AI review required."
+    "action": "KEEP",
+    "target": "Automotive & Kfz",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-06",
-    "name": "Haustierbedarf",
+    "name": "Haustier & Tierpflege",
     "slug": "haustierbedarf",
     "menu_order": 6,
     "url": "/kategorie/haustierbedarf",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Haustier",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Haustier & Tierpflege",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-07",
-    "name": "Garten",
+    "name": "Garten & Gartenbau",
     "slug": "garten",
     "menu_order": 7,
     "url": "/kategorie/garten",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
-    "reason": "No safe deterministic mapping; human/category-AI review required."
+    "action": "KEEP",
+    "target": "Garten & Gartenbau",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-08",
-    "name": "Arbeitsschutz & Berufskleidung",
+    "name": "Arbeitskleidung & Arbeitsschutz",
     "slug": "arbeitsschutz-und-berufskleidung",
     "menu_order": 8,
     "url": "/kategorie/arbeitsschutz-und-berufskleidung",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Mode, Textil & Accessoires",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Arbeitskleidung & Arbeitsschutz",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-09",
-    "name": "Werkzeuge & Eisenwaren",
+    "name": "Werkzeuge & Werkstatt",
     "slug": "werkzeuge-und-eisenwaren",
     "menu_order": 9,
     "url": "/kategorie/werkzeuge-und-eisenwaren",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Werkzeuge",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Werkzeuge & Werkstatt",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-10",
-    "name": "Haus & Wohnen",
+    "name": "Haus & Haushalt",
     "slug": "haus-und-wohnen",
     "menu_order": 10,
     "url": "/kategorie/haus-und-wohnen",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
-    "reason": "No safe deterministic mapping; human/category-AI review required."
+    "action": "KEEP",
+    "target": "Haus & Haushalt",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-11",
-    "name": "Möbel",
+    "name": "Möbel & Wohnen",
     "slug": "moebel",
     "menu_order": 11,
     "url": "/kategorie/moebel",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
-    "reason": "No safe deterministic mapping; human/category-AI review required."
+    "action": "KEEP",
+    "target": "Möbel & Wohnen",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-12",
-    "name": "Elektronik",
+    "name": "Elektronik & Unterhaltungselektronik",
     "slug": "elektronik",
     "menu_order": 12,
     "url": "/kategorie/elektronik",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
-    "reason": "No safe deterministic mapping; human/category-AI review required."
+    "action": "KEEP",
+    "target": "Elektronik & Unterhaltungselektronik",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-13",
@@ -166,36 +166,36 @@
   },
   {
     "id": "cat-16",
-    "name": "Taschen & Accessoires",
+    "name": "Taschen, Koffer & Accessoires",
     "slug": "taschen-und-accessoires",
     "menu_order": 16,
     "url": "/kategorie/taschen-und-accessoires",
     "level": 1,
-    "action": "MOVE_CONTENT",
-    "target": "Mode, Textil & Accessoires",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Taschen, Koffer & Accessoires",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-17",
-    "name": "Mutter & Baby",
+    "name": "Baby & Kinderzimmer",
     "slug": "mutter-und-baby",
     "menu_order": 17,
     "url": "/kategorie/mutter-und-baby",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Baby & Kind",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Baby & Kinderzimmer",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-18",
-    "name": "Spielzeug & Kinder",
+    "name": "Spielzeug & Spiele",
     "slug": "spielzeug-und-kinder",
     "menu_order": 18,
     "url": "/kategorie/spielzeug-und-kinder",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Gaming & Spielzeug",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Spielzeug & Spiele",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-19",
@@ -210,36 +210,36 @@
   },
   {
     "id": "cat-20",
-    "name": "Tier- & Landwirtschaftsausrüstung",
+    "name": "Landwirtschaft & Agrar",
     "slug": "tier-und-landwirtschaftsausruestung",
     "menu_order": 20,
     "url": "/kategorie/tier-und-landwirtschaftsausruestung",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Tarım & Tarım Makineleri",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Landwirtschaft & Agrar",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-21",
-    "name": "Bau & Konstruktion",
+    "name": "Heimwerken, Bau & Konstruktion",
     "slug": "bau-und-konstruktion",
     "menu_order": 21,
     "url": "/kategorie/bau-und-konstruktion",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Baumarkt",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Heimwerken, Bau & Konstruktion",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-22",
-    "name": "Elektro & Beleuchtung",
+    "name": "Beleuchtung & Lampen",
     "slug": "elektro-und-beleuchtung",
     "menu_order": 22,
     "url": "/kategorie/elektro-und-beleuchtung",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Beleuchtung",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Beleuchtung & Lampen",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-23",
@@ -254,25 +254,25 @@
   },
   {
     "id": "cat-24",
-    "name": "Küche & Essen",
+    "name": "Küche & Kochen",
     "slug": "kueche-und-essen",
     "menu_order": 24,
     "url": "/kategorie/kueche-und-essen",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Haushalt & Hygiene",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Küche & Kochen",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-25",
-    "name": "Lebensmittel & Getränke",
+    "name": "Lebensmittel & Supermarkt",
     "slug": "lebensmittel-und-getraenke",
     "menu_order": 25,
     "url": "/kategorie/lebensmittel-und-getraenke",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
-    "reason": "No safe deterministic mapping; human/category-AI review required."
+    "action": "KEEP",
+    "target": "Lebensmittel & Supermarkt",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-26",
@@ -298,14 +298,14 @@
   },
   {
     "id": "cat-28",
-    "name": "Büro & Gewerbe",
+    "name": "Industrie & Gewerbebedarf",
     "slug": "buero-und-gewerbe",
     "menu_order": 28,
     "url": "/kategorie/buero-und-gewerbe",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Büro & Schule",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Industrie & Gewerbebedarf",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-29",
@@ -320,80 +320,80 @@
   },
   {
     "id": "cat-30",
-    "name": "Industrie- & Gewerbeausrüstung",
+    "name": "Industrie & Gewerbebedarf",
     "slug": "industrie-und-gewerbeausruestung",
     "menu_order": 30,
     "url": "/kategorie/industrie-und-gewerbeausruestung",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Industrie & CNC",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Industrie & Gewerbebedarf",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-31",
-    "name": "Sicherheit & Überwachung",
+    "name": "Smart Home & Sicherheit",
     "slug": "sicherheit-und-ueberwachung",
     "menu_order": 31,
     "url": "/kategorie/sicherheit-und-ueberwachung",
     "level": 1,
-    "action": "REVIEW",
-    "target": null,
-    "reason": "No safe deterministic mapping; human/category-AI review required."
+    "action": "KEEP",
+    "target": "Smart Home & Sicherheit",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-32",
-    "name": "Reise & Koffer",
+    "name": "Reisen & Mobilität",
     "slug": "reise-und-koffer",
     "menu_order": 32,
     "url": "/kategorie/reise-und-koffer",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Reisen & Gepäck",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Reisen & Mobilität",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-33",
-    "name": "Gartenhobby & Camping",
+    "name": "Outdoor, Camping & Abenteuer",
     "slug": "gartenhobby-und-camping",
     "menu_order": 33,
     "url": "/kategorie/gartenhobby-und-camping",
     "level": 1,
-    "action": "MOVE_CONTENT",
-    "target": "Garten",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Outdoor, Camping & Abenteuer",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-34",
-    "name": "Saisonales & Feiern",
+    "name": "Saisonale & Festtagsartikel",
     "slug": "saisonales-und-feiern",
     "menu_order": 34,
     "url": "/kategorie/saisonales-und-feiern",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Geschenke & Anlässe",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Saisonale & Festtagsartikel",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-35",
-    "name": "Dekoration",
+    "name": "Wohndekoration",
     "slug": "dekoration",
     "menu_order": 35,
     "url": "/kategorie/dekoration",
     "level": 1,
-    "action": "MOVE_CONTENT",
-    "target": "Haus & Wohnen",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Wohndekoration",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-36",
-    "name": "Persönliche Elektronik & Mobil",
+    "name": "Mobil & Telekommunikation",
     "slug": "persoenliche-elektronik-und-mobil",
     "menu_order": 36,
     "url": "/kategorie/persoenliche-elektronik-und-mobil",
     "level": 1,
-    "action": "MOVE_CONTENT",
-    "target": "Elektronik",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Mobil & Telekommunikation",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-37",
@@ -408,14 +408,14 @@
   },
   {
     "id": "cat-38",
-    "name": "Computer & Gaming",
+    "name": "Computer & IT",
     "slug": "computer-und-gaming",
     "menu_order": 38,
     "url": "/kategorie/computer-und-gaming",
     "level": 1,
-    "action": "RESTRUCTURE",
-    "target": "Gaming & Spielzeug",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Computer & IT",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-39",
@@ -430,31 +430,163 @@
   },
   {
     "id": "cat-40",
-    "name": "Energie & Solar",
+    "name": "Heizung, Klima & Energie",
     "slug": "energie-und-solar",
     "menu_order": 40,
     "url": "/kategorie/energie-und-solar",
     "level": 1,
-    "action": "SEPARATE",
-    "target": "Güneş & Rüzgâr Enerjisi",
-    "reason": "Explicitly approved category-audit rule."
+    "action": "KEEP",
+    "target": "Heizung, Klima & Energie",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-41",
-    "name": "Angebote & Sonderkollektionen",
+    "name": "Allgemeine Produkte & Marktplatz",
     "slug": "angebote-und-sonderkollektionen",
     "menu_order": 41,
     "url": "/kategorie/angebote-und-sonderkollektionen",
     "level": 1,
     "action": "KEEP",
-    "target": "Weitere Kategorien",
-    "reason": "Explicitly approved category-audit rule."
+    "target": "Allgemeine Produkte & Marktplatz",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-42",
+    "name": "Heimtextilien",
+    "slug": "heimtextilien",
+    "menu_order": 42,
+    "url": "/kategorie/heimtextilien",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Heimtextilien",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-43",
+    "name": "Schmuck & Uhren",
+    "slug": "schmuck-uhren",
+    "menu_order": 43,
+    "url": "/kategorie/schmuck-uhren",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Schmuck & Uhren",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-44",
+    "name": "Körperpflege",
+    "slug": "koerperpflege",
+    "menu_order": 44,
+    "url": "/kategorie/koerperpflege",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Körperpflege",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-45",
+    "name": "Apotheke & Medizinprodukte",
+    "slug": "apotheke-medizinprodukte",
+    "menu_order": 45,
+    "url": "/kategorie/apotheke-medizinprodukte",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Apotheke & Medizinprodukte",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-46",
+    "name": "Getränke",
+    "slug": "getraenke",
+    "menu_order": 46,
+    "url": "/kategorie/getraenke",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Getränke",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-47",
+    "name": "Kinder & Schule",
+    "slug": "kinder-schule",
+    "menu_order": 47,
+    "url": "/kategorie/kinder-schule",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Kinder & Schule",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-48",
+    "name": "Musik & Musikinstrumente",
+    "slug": "musik-musikinstrumente",
+    "menu_order": 48,
+    "url": "/kategorie/musik-musikinstrumente",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Musik & Musikinstrumente",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-49",
+    "name": "Bücher, Medien & Unterhaltung",
+    "slug": "buecher-medien-unterhaltung",
+    "menu_order": 49,
+    "url": "/kategorie/buecher-medien-unterhaltung",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Bücher, Medien & Unterhaltung",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-50",
+    "name": "Geschenke, Blumen & Anlässe",
+    "slug": "geschenke-blumen-anlaesse",
+    "menu_order": 50,
+    "url": "/kategorie/geschenke-blumen-anlaesse",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Geschenke, Blumen & Anlässe",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-51",
+    "name": "Kunsthandwerk, Nähen & DIY",
+    "slug": "kunsthandwerk-naehen-diy",
+    "menu_order": 51,
+    "url": "/kategorie/kunsthandwerk-naehen-diy",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Kunsthandwerk, Nähen & DIY",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-52",
+    "name": "Pool, Spa & Wellness-Ausstattung",
+    "slug": "pool-spa-wellness-ausstattung",
+    "menu_order": 52,
+    "url": "/kategorie/pool-spa-wellness-ausstattung",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Pool, Spa & Wellness-Ausstattung",
+    "reason": "Exact canonical Master match."
+  },
+  {
+    "id": "cat-53",
+    "name": "Luxus, Sammlerstücke & Wertvolles",
+    "slug": "luxus-sammlerstuecke-wertvolles",
+    "menu_order": 53,
+    "url": "/kategorie/luxus-sammlerstuecke-wertvolles",
+    "level": 1,
+    "action": "KEEP",
+    "target": "Luxus, Sammlerstücke & Wertvolles",
+    "reason": "Exact canonical Master match."
   },
   {
     "id": "cat-05-05",
     "name": "Reifen & Felgen",
     "slug": "reifen-und-felgen",
-    "parent": "Automotive",
+    "parent": "Automotive & Kfz",
     "parent_id": "cat-05",
     "level": 2,
     "url": "/kategorie/automotive/reifen-und-felgen",

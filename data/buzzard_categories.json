@@ -3,9 +3,9 @@
   "document": "Buzzard Category Master — Level 3",
   "version": "2.0.0",
   "language": "de",
-  "main_category_count": 41,
+  "main_category_count": 53,
   "rules": {
-    "desktop_left_column": "show all 41 main categories in menu order; never replace with demo categories",
+    "desktop_left_column": "show all 53 main categories in menu order; never replace with demo categories",
     "category_source": "single JSON data source",
     "clickable": "all level 1 and level 2 items are clickable; architecture supports level 3 and level 4",
     "responsive": true,
@@ -13,7 +13,9 @@
     "seo_urls": true,
     "level_3": "Level 3 is mandatory for navigation and product-type landing pages.",
     "example": "Textil → Herrenbekleidung → Hose / Pullover & Strick / Hemd / T-Shirt",
-    "category_path": "/kategorie/"
+    "category_path": "/kategorie/",
+    "master_taxonomy_l1": 48,
+    "master_taxonomy_shop_l1": 53
   },
   "categories": [
     {
@@ -1051,7 +1053,11 @@
       "legacy_name": "Tekstil",
       "legacy_slug": "tekstil",
       "legacy_slug_path": "tekstil",
-      "legacy_url": "/kategori/tekstil"
+      "legacy_url": "/kategori/tekstil",
+      "master_code": "bz.17",
+      "master_slug": "mode-bekleidung",
+      "master_name": "Mode & Bekleidung",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-02",
@@ -1710,12 +1716,16 @@
       "legacy_name": "Kozmetik & Kişisel Bakım",
       "legacy_slug": "kozmetik-and-kisisel-bakim",
       "legacy_slug_path": "kozmetik-and-kisisel-bakim",
-      "legacy_url": "/kategori/kozmetik-and-kisisel-bakim"
+      "legacy_url": "/kategori/kozmetik-and-kisisel-bakim",
+      "master_code": "bz.21",
+      "master_slug": "beauty-kosmetik",
+      "master_name": "Beauty & Kosmetik",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-03",
       "menu_order": 3,
-      "name": "Reinigungsprodukte",
+      "name": "Reinigung & Hauspflege",
       "slug": "reinigungsprodukte",
       "url": "/kategorie/reinigungsprodukte",
       "level": 1,
@@ -2252,12 +2262,16 @@
       "legacy_name": "Temizlik Ürünleri",
       "legacy_slug": "temizlik-urunleri",
       "legacy_slug_path": "temizlik-urunleri",
-      "legacy_url": "/kategori/temizlik-urunleri"
+      "legacy_url": "/kategori/temizlik-urunleri",
+      "master_code": "bz.11",
+      "master_slug": "reinigung-hauspflege",
+      "master_name": "Reinigung & Hauspflege",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-04",
       "menu_order": 4,
-      "name": "Schule & Bürobedarf",
+      "name": "Büro, Schule & Schreibwaren",
       "slug": "schule-und-buerobedarf",
       "url": "/kategorie/schule-und-buerobedarf",
       "level": 1,
@@ -2662,12 +2676,16 @@
       "legacy_name": "Okul & Kırtasiye",
       "legacy_slug": "okul-and-kirtasiye",
       "legacy_slug_path": "okul-and-kirtasiye",
-      "legacy_url": "/kategori/okul-and-kirtasiye"
+      "legacy_url": "/kategori/okul-and-kirtasiye",
+      "master_code": "bz.35",
+      "master_slug": "buero-schule-schreibwaren",
+      "master_name": "Büro, Schule & Schreibwaren",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-05",
       "menu_order": 5,
-      "name": "Automotive",
+      "name": "Automotive & Kfz",
       "slug": "automotive",
       "url": "/kategorie/automotive",
       "level": 1,
@@ -3611,12 +3629,16 @@
       "legacy_name": "Otomotiv",
       "legacy_slug": "otomotiv",
       "legacy_slug_path": "otomotiv",
-      "legacy_url": "/kategori/otomotiv"
+      "legacy_url": "/kategori/otomotiv",
+      "master_code": "bz.01",
+      "master_slug": "automotive-kfz",
+      "master_name": "Automotive & Kfz",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-06",
       "menu_order": 6,
-      "name": "Haustierbedarf",
+      "name": "Haustier & Tierpflege",
       "slug": "haustierbedarf",
       "url": "/kategorie/haustierbedarf",
       "level": 1,
@@ -4415,12 +4437,16 @@
       "legacy_name": "Pet",
       "legacy_slug": "pet",
       "legacy_slug_path": "pet",
-      "legacy_url": "/kategori/pet"
+      "legacy_url": "/kategori/pet",
+      "master_code": "bz.36",
+      "master_slug": "haustier-tierpflege",
+      "master_name": "Haustier & Tierpflege",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-07",
       "menu_order": 7,
-      "name": "Garten",
+      "name": "Garten & Gartenbau",
       "slug": "garten",
       "url": "/kategorie/garten",
       "level": 1,
@@ -5206,12 +5232,16 @@
       "legacy_name": "Bahçe",
       "legacy_slug": "bahce",
       "legacy_slug_path": "bahce",
-      "legacy_url": "/kategori/bahce"
+      "legacy_url": "/kategori/bahce",
+      "master_code": "bz.02",
+      "master_slug": "garten-gartenbau",
+      "master_name": "Garten & Gartenbau",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-08",
       "menu_order": 8,
-      "name": "Arbeitsschutz & Berufskleidung",
+      "name": "Arbeitskleidung & Arbeitsschutz",
       "slug": "arbeitsschutz-und-berufskleidung",
       "url": "/kategorie/arbeitsschutz-und-berufskleidung",
       "level": 1,
@@ -5906,12 +5936,16 @@
       "legacy_name": "İş Güvenliği & İş Kıyafetleri",
       "legacy_slug": "is-guvenligi-and-is-kiyafetleri",
       "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri",
-      "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri"
+      "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri",
+      "master_code": "bz.39",
+      "master_slug": "arbeitskleidung-arbeitsschutz",
+      "master_name": "Arbeitskleidung & Arbeitsschutz",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-09",
       "menu_order": 9,
-      "name": "Werkzeuge & Eisenwaren",
+      "name": "Werkzeuge & Werkstatt",
       "slug": "werkzeuge-und-eisenwaren",
       "url": "/kategorie/werkzeuge-und-eisenwaren",
       "level": 1,
@@ -6552,12 +6586,16 @@
       "legacy_name": "Aletler & Hırdavat",
       "legacy_slug": "aletler-and-hirdavat",
       "legacy_slug_path": "aletler-and-hirdavat",
-      "legacy_url": "/kategori/aletler-and-hirdavat"
+      "legacy_url": "/kategori/aletler-and-hirdavat",
+      "master_code": "bz.03",
+      "master_slug": "werkzeuge-werkstatt",
+      "master_name": "Werkzeuge & Werkstatt",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-10",
       "menu_order": 10,
-      "name": "Haus & Wohnen",
+      "name": "Haus & Haushalt",
       "slug": "haus-und-wohnen",
       "url": "/kategorie/haus-und-wohnen",
       "level": 1,
@@ -7198,12 +7236,16 @@
       "legacy_name": "Ev & Yaşam",
       "legacy_slug": "ev-and-yasam",
       "legacy_slug_path": "ev-and-yasam",
-      "legacy_url": "/kategori/ev-and-yasam"
+      "legacy_url": "/kategori/ev-and-yasam",
+      "master_code": "bz.05",
+      "master_slug": "haus-haushalt",
+      "master_name": "Haus & Haushalt",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-11",
       "menu_order": 11,
-      "name": "Möbel",
+      "name": "Möbel & Wohnen",
       "slug": "moebel",
       "url": "/kategorie/moebel",
       "level": 1,
@@ -7674,12 +7716,16 @@
       "legacy_name": "Mobilya",
       "legacy_slug": "mobilya",
       "legacy_slug_path": "mobilya",
-      "legacy_url": "/kategori/mobilya"
+      "legacy_url": "/kategori/mobilya",
+      "master_code": "bz.06",
+      "master_slug": "moebel-wohnen",
+      "master_name": "Möbel & Wohnen",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-12",
       "menu_order": 12,
-      "name": "Elektronik",
+      "name": "Elektronik & Unterhaltungselektronik",
       "slug": "elektronik",
       "url": "/kategorie/elektronik",
       "level": 1,
@@ -8255,7 +8301,11 @@
       "legacy_name": "Elektronik",
       "legacy_slug": "elektronik",
       "legacy_slug_path": "elektronik",
-      "legacy_url": "/kategori/elektronik"
+      "legacy_url": "/kategori/elektronik",
+      "master_code": "bz.12",
+      "master_slug": "elektronik-unterhaltungselektronik",
+      "master_name": "Elektronik & Unterhaltungselektronik",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-13",
@@ -8743,7 +8793,11 @@
       "legacy_name": "Elektrikli Ev Aletleri",
       "legacy_slug": "elektrikli-ev-aletleri",
       "legacy_slug_path": "elektrikli-ev-aletleri",
-      "legacy_url": "/kategori/elektrikli-ev-aletleri"
+      "legacy_url": "/kategori/elektrikli-ev-aletleri",
+      "master_code": "bz.16",
+      "master_slug": "haushaltsgeraete",
+      "master_name": "Haushaltsgeräte",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-14",
@@ -9573,7 +9627,11 @@
       "legacy_name": "Spor & Outdoor",
       "legacy_slug": "spor-and-outdoor",
       "legacy_slug_path": "spor-and-outdoor",
-      "legacy_url": "/kategori/spor-and-outdoor"
+      "legacy_url": "/kategori/spor-and-outdoor",
+      "master_code": "bz.30",
+      "master_slug": "sport-fitness",
+      "master_name": "Sport & Fitness",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-15",
@@ -10141,12 +10199,16 @@
       "legacy_name": "Ayakkabı",
       "legacy_slug": "ayakkabi",
       "legacy_slug_path": "ayakkabi",
-      "legacy_url": "/kategori/ayakkabi"
+      "legacy_url": "/kategori/ayakkabi",
+      "master_code": "bz.18",
+      "master_slug": "schuhe",
+      "master_name": "Schuhe",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-16",
       "menu_order": 16,
-      "name": "Taschen & Accessoires",
+      "name": "Taschen, Koffer & Accessoires",
       "slug": "taschen-und-accessoires",
       "url": "/kategorie/taschen-und-accessoires",
       "level": 1,
@@ -10683,12 +10745,16 @@
       "legacy_name": "Çanta & Aksesuar",
       "legacy_slug": "canta-and-aksesuar",
       "legacy_slug_path": "canta-and-aksesuar",
-      "legacy_url": "/kategori/canta-and-aksesuar"
+      "legacy_url": "/kategori/canta-and-aksesuar",
+      "master_code": "bz.19",
+      "master_slug": "taschen-koffer-accessoires",
+      "master_name": "Taschen, Koffer & Accessoires",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-17",
       "menu_order": 17,
-      "name": "Mutter & Baby",
+      "name": "Baby & Kinderzimmer",
       "slug": "mutter-und-baby",
       "url": "/kategorie/mutter-und-baby",
       "level": 1,
@@ -11277,12 +11343,16 @@
       "legacy_name": "Anne & Bebek",
       "legacy_slug": "anne-and-bebek",
       "legacy_slug_path": "anne-and-bebek",
-      "legacy_url": "/kategori/anne-and-bebek"
+      "legacy_url": "/kategori/anne-and-bebek",
+      "master_code": "bz.27",
+      "master_slug": "baby-kinderzimmer",
+      "master_name": "Baby & Kinderzimmer",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-18",
       "menu_order": 18,
-      "name": "Spielzeug & Kinder",
+      "name": "Spielzeug & Spiele",
       "slug": "spielzeug-und-kinder",
       "url": "/kategorie/spielzeug-und-kinder",
       "level": 1,
@@ -11753,7 +11823,11 @@
       "legacy_name": "Oyuncak & Çocuk",
       "legacy_slug": "oyuncak-and-cocuk",
       "legacy_slug_path": "oyuncak-and-cocuk",
-      "legacy_url": "/kategori/oyuncak-and-cocuk"
+      "legacy_url": "/kategori/oyuncak-and-cocuk",
+      "master_code": "bz.29",
+      "master_slug": "spielzeug-spiele",
+      "master_name": "Spielzeug & Spiele",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-19",
@@ -12229,12 +12303,16 @@
       "legacy_name": "Hobi & Eğlence",
       "legacy_slug": "hobi-and-eglence",
       "legacy_slug_path": "hobi-and-eglence",
-      "legacy_url": "/kategori/hobi-and-eglence"
+      "legacy_url": "/kategori/hobi-and-eglence",
+      "master_code": "bz.32",
+      "master_slug": "hobby-freizeit",
+      "master_name": "Hobby & Freizeit",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-20",
       "menu_order": 20,
-      "name": "Tier- & Landwirtschaftsausrüstung",
+      "name": "Landwirtschaft & Agrar",
       "slug": "tier-und-landwirtschaftsausruestung",
       "url": "/kategorie/tier-und-landwirtschaftsausruestung",
       "level": 1,
@@ -12717,12 +12795,16 @@
       "legacy_name": "Evcil Hayvan & Hayvancılık Ekipmanları",
       "legacy_slug": "evcil-hayvan-and-hayvancilik-ekipmanlari",
       "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari",
-      "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari"
+      "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari",
+      "master_code": "bz.37",
+      "master_slug": "landwirtschaft-agrar",
+      "master_name": "Landwirtschaft & Agrar",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-21",
       "menu_order": 21,
-      "name": "Bau & Konstruktion",
+      "name": "Heimwerken, Bau & Konstruktion",
       "slug": "bau-und-konstruktion",
       "url": "/kategorie/bau-und-konstruktion",
       "level": 1,
@@ -13193,12 +13275,16 @@
       "legacy_name": "Yapı & İnşaat",
       "legacy_slug": "yapi-and-insaat",
       "legacy_slug_path": "yapi-and-insaat",
-      "legacy_url": "/kategori/yapi-and-insaat"
+      "legacy_url": "/kategori/yapi-and-insaat",
+      "master_code": "bz.04",
+      "master_slug": "heimwerken-bau-konstruktion",
+      "master_name": "Heimwerken, Bau & Konstruktion",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-22",
       "menu_order": 22,
-      "name": "Elektro & Beleuchtung",
+      "name": "Beleuchtung & Lampen",
       "slug": "elektro-und-beleuchtung",
       "url": "/kategorie/elektro-und-beleuchtung",
       "level": 1,
@@ -13721,7 +13807,11 @@
       "legacy_name": "Elektrik & Aydınlatma",
       "legacy_slug": "elektrik-and-aydinlatma",
       "legacy_slug_path": "elektrik-and-aydinlatma",
-      "legacy_url": "/kategori/elektrik-and-aydinlatma"
+      "legacy_url": "/kategori/elektrik-and-aydinlatma",
+      "master_code": "bz.43",
+      "master_slug": "beleuchtung-lampen",
+      "master_name": "Beleuchtung & Lampen",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-23",
@@ -14210,12 +14300,16 @@
       "legacy_name": "Su, Isıtma & Tesisat",
       "legacy_slug": "su-isitma-and-tesisat",
       "legacy_slug_path": "su-isitma-and-tesisat",
-      "legacy_url": "/kategori/su-isitma-and-tesisat"
+      "legacy_url": "/kategori/su-isitma-and-tesisat",
+      "master_code": "bz.10",
+      "master_slug": "bad-sanitaer",
+      "master_name": "Bad & Sanitär",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-24",
       "menu_order": 24,
-      "name": "Küche & Essen",
+      "name": "Küche & Kochen",
       "slug": "kueche-und-essen",
       "url": "/kategorie/kueche-und-essen",
       "level": 1,
@@ -14712,12 +14806,16 @@
       "legacy_name": "Mutfak & Yemek",
       "legacy_slug": "mutfak-and-yemek",
       "legacy_slug_path": "mutfak-and-yemek",
-      "legacy_url": "/kategori/mutfak-and-yemek"
+      "legacy_url": "/kategori/mutfak-and-yemek",
+      "master_code": "bz.09",
+      "master_slug": "kueche-kochen",
+      "master_name": "Küche & Kochen",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-25",
       "menu_order": 25,
-      "name": "Lebensmittel & Getränke",
+      "name": "Lebensmittel & Supermarkt",
       "slug": "lebensmittel-und-getraenke",
       "url": "/kategorie/lebensmittel-und-getraenke",
       "level": 1,
@@ -15188,7 +15286,11 @@
       "legacy_name": "Gıda & İçecek",
       "legacy_slug": "gida-and-icecek",
       "legacy_slug_path": "gida-and-icecek",
-      "legacy_url": "/kategori/gida-and-icecek"
+      "legacy_url": "/kategori/gida-and-icecek",
+      "master_code": "bz.25",
+      "master_slug": "lebensmittel-supermarkt",
+      "master_name": "Lebensmittel & Supermarkt",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-26",
@@ -15676,7 +15778,11 @@
       "legacy_name": "Evcil Hayvan Maması",
       "legacy_slug": "evcil-hayvan-mamasi",
       "legacy_slug_path": "evcil-hayvan-mamasi",
-      "legacy_url": "/kategori/evcil-hayvan-mamasi"
+      "legacy_url": "/kategori/evcil-hayvan-mamasi",
+      "master_code": "bz.36",
+      "master_slug": "haustier-tierpflege",
+      "master_name": "Haustier & Tierpflege",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-27",
@@ -16020,12 +16126,16 @@
       "legacy_name": "Sağlık & Wellness",
       "legacy_slug": "saglik-and-wellness",
       "legacy_slug_path": "saglik-and-wellness",
-      "legacy_url": "/kategori/saglik-and-wellness"
+      "legacy_url": "/kategori/saglik-and-wellness",
+      "master_code": "bz.23",
+      "master_slug": "gesundheit-wellness",
+      "master_name": "Gesundheit & Wellness",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-28",
       "menu_order": 28,
-      "name": "Büro & Gewerbe",
+      "name": "Industrie & Gewerbebedarf",
       "slug": "buero-und-gewerbe",
       "url": "/kategorie/buero-und-gewerbe",
       "level": 1,
@@ -16496,7 +16606,11 @@
       "legacy_name": "Ofis & İşletme",
       "legacy_slug": "ofis-and-isletme",
       "legacy_slug_path": "ofis-and-isletme",
-      "legacy_url": "/kategori/ofis-and-isletme"
+      "legacy_url": "/kategori/ofis-and-isletme",
+      "master_code": "bz.38",
+      "master_slug": "industrie-gewerbebedarf",
+      "master_name": "Industrie & Gewerbebedarf",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-29",
@@ -16972,12 +17086,16 @@
       "legacy_name": "Paketleme & Kargo",
       "legacy_slug": "paketleme-and-kargo",
       "legacy_slug_path": "paketleme-and-kargo",
-      "legacy_url": "/kategori/paketleme-and-kargo"
+      "legacy_url": "/kategori/paketleme-and-kargo",
+      "master_code": "bz.38",
+      "master_slug": "industrie-gewerbebedarf",
+      "master_name": "Industrie & Gewerbebedarf",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-30",
       "menu_order": 30,
-      "name": "Industrie- & Gewerbeausrüstung",
+      "name": "Industrie & Gewerbebedarf",
       "slug": "industrie-und-gewerbeausruestung",
       "url": "/kategorie/industrie-und-gewerbeausruestung",
       "level": 1,
@@ -17382,12 +17500,16 @@
       "legacy_name": "Sanayi & Ticari Ekipman",
       "legacy_slug": "sanayi-and-ticari-ekipman",
       "legacy_slug_path": "sanayi-and-ticari-ekipman",
-      "legacy_url": "/kategori/sanayi-and-ticari-ekipman"
+      "legacy_url": "/kategori/sanayi-and-ticari-ekipman",
+      "master_code": "bz.38",
+      "master_slug": "industrie-gewerbebedarf",
+      "master_name": "Industrie & Gewerbebedarf",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-31",
       "menu_order": 31,
-      "name": "Sicherheit & Überwachung",
+      "name": "Smart Home & Sicherheit",
       "slug": "sicherheit-und-ueberwachung",
       "url": "/kategorie/sicherheit-und-ueberwachung",
       "level": 1,
@@ -17805,12 +17927,16 @@
       "legacy_name": "Güvenlik & Gözetim",
       "legacy_slug": "guvenlik-and-gozetim",
       "legacy_slug_path": "guvenlik-and-gozetim",
-      "legacy_url": "/kategori/guvenlik-and-gozetim"
+      "legacy_url": "/kategori/guvenlik-and-gozetim",
+      "master_code": "bz.15",
+      "master_slug": "smart-home-sicherheit",
+      "master_name": "Smart Home & Sicherheit",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-32",
       "menu_order": 32,
-      "name": "Reise & Koffer",
+      "name": "Reisen & Mobilität",
       "slug": "reise-und-koffer",
       "url": "/kategorie/reise-und-koffer",
       "level": 1,
@@ -18215,12 +18341,16 @@
       "legacy_name": "Seyahat & Valiz",
       "legacy_slug": "seyahat-and-valiz",
       "legacy_slug_path": "seyahat-and-valiz",
-      "legacy_url": "/kategori/seyahat-and-valiz"
+      "legacy_url": "/kategori/seyahat-and-valiz",
+      "master_code": "bz.40",
+      "master_slug": "reisen-mobilitaet",
+      "master_name": "Reisen & Mobilität",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-33",
       "menu_order": 33,
-      "name": "Gartenhobby & Camping",
+      "name": "Outdoor, Camping & Abenteuer",
       "slug": "gartenhobby-und-camping",
       "url": "/kategorie/gartenhobby-und-camping",
       "level": 1,
@@ -18625,12 +18755,16 @@
       "legacy_name": "Hobi Bahçe & Kamp",
       "legacy_slug": "hobi-bahce-and-kamp",
       "legacy_slug_path": "hobi-bahce-and-kamp",
-      "legacy_url": "/kategori/hobi-bahce-and-kamp"
+      "legacy_url": "/kategori/hobi-bahce-and-kamp",
+      "master_code": "bz.31",
+      "master_slug": "outdoor-camping-abenteuer",
+      "master_name": "Outdoor, Camping & Abenteuer",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-34",
       "menu_order": 34,
-      "name": "Saisonales & Feiern",
+      "name": "Saisonale & Festtagsartikel",
       "slug": "saisonales-und-feiern",
       "url": "/kategorie/saisonales-und-feiern",
       "level": 1,
@@ -19035,12 +19169,16 @@
       "legacy_name": "Mevsimlik & Kutlama",
       "legacy_slug": "mevsimlik-and-kutlama",
       "legacy_slug_path": "mevsimlik-and-kutlama",
-      "legacy_url": "/kategori/mevsimlik-and-kutlama"
+      "legacy_url": "/kategori/mevsimlik-and-kutlama",
+      "master_code": "bz.46",
+      "master_slug": "saisonale-festtagsartikel",
+      "master_name": "Saisonale & Festtagsartikel",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-35",
       "menu_order": 35,
-      "name": "Dekoration",
+      "name": "Wohndekoration",
       "slug": "dekoration",
       "url": "/kategorie/dekoration",
       "level": 1,
@@ -19445,12 +19583,16 @@
       "legacy_name": "Dekorasyon",
       "legacy_slug": "dekorasyon",
       "legacy_slug_path": "dekorasyon",
-      "legacy_url": "/kategori/dekorasyon"
+      "legacy_url": "/kategori/dekorasyon",
+      "master_code": "bz.07",
+      "master_slug": "wohndekoration",
+      "master_name": "Wohndekoration",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-36",
       "menu_order": 36,
-      "name": "Persönliche Elektronik & Mobil",
+      "name": "Mobil & Telekommunikation",
       "slug": "persoenliche-elektronik-und-mobil",
       "url": "/kategorie/persoenliche-elektronik-und-mobil",
       "level": 1,
@@ -19855,7 +19997,11 @@
       "legacy_name": "Kişisel Elektronik & Mobil",
       "legacy_slug": "kisisel-elektronik-and-mobil",
       "legacy_slug_path": "kisisel-elektronik-and-mobil",
-      "legacy_url": "/kategori/kisisel-elektronik-and-mobil"
+      "legacy_url": "/kategori/kisisel-elektronik-and-mobil",
+      "master_code": "bz.14",
+      "master_slug": "mobil-telekommunikation",
+      "master_name": "Mobil & Telekommunikation",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-37",
@@ -20265,12 +20411,16 @@
       "legacy_name": "Fotoğraf & Video",
       "legacy_slug": "fotograf-and-video",
       "legacy_slug_path": "fotograf-and-video",
-      "legacy_url": "/kategori/fotograf-and-video"
+      "legacy_url": "/kategori/fotograf-and-video",
+      "master_code": "bz.12",
+      "master_slug": "elektronik-unterhaltungselektronik",
+      "master_name": "Elektronik & Unterhaltungselektronik",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-38",
       "menu_order": 38,
-      "name": "Computer & Gaming",
+      "name": "Computer & IT",
       "slug": "computer-und-gaming",
       "url": "/kategorie/computer-und-gaming",
       "level": 1,
@@ -20675,7 +20825,11 @@
       "legacy_name": "Bilgisayar & Gaming",
       "legacy_slug": "bilgisayar-and-gaming",
       "legacy_slug_path": "bilgisayar-and-gaming",
-      "legacy_url": "/kategori/bilgisayar-and-gaming"
+      "legacy_url": "/kategori/bilgisayar-and-gaming",
+      "master_code": "bz.13",
+      "master_slug": "computer-it",
+      "master_name": "Computer & IT",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-39",
@@ -21019,12 +21173,16 @@
       "legacy_name": "Araç & Mobilite",
       "legacy_slug": "arac-and-mobilite",
       "legacy_slug_path": "arac-and-mobilite",
-      "legacy_url": "/kategori/arac-and-mobilite"
+      "legacy_url": "/kategori/arac-and-mobilite",
+      "master_code": "bz.40",
+      "master_slug": "reisen-mobilitaet",
+      "master_name": "Reisen & Mobilität",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-40",
       "menu_order": 40,
-      "name": "Energie & Solar",
+      "name": "Heizung, Klima & Energie",
       "slug": "energie-und-solar",
       "url": "/kategorie/energie-und-solar",
       "level": 1,
@@ -21495,12 +21653,16 @@
       "legacy_name": "Enerji & Solar",
       "legacy_slug": "enerji-and-solar",
       "legacy_slug_path": "enerji-and-solar",
-      "legacy_url": "/kategori/enerji-and-solar"
+      "legacy_url": "/kategori/enerji-and-solar",
+      "master_code": "bz.44",
+      "master_slug": "heizung-klima-energie",
+      "master_name": "Heizung, Klima & Energie",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     },
     {
       "id": "cat-41",
       "menu_order": 41,
-      "name": "Angebote & Sonderkollektionen",
+      "name": "Allgemeine Produkte & Marktplatz",
       "slug": "angebote-und-sonderkollektionen",
       "url": "/kategorie/angebote-und-sonderkollektionen",
       "level": 1,
@@ -21971,7 +22133,2013 @@
       "legacy_name": "Fırsatlar & Özel Koleksiyonlar",
       "legacy_slug": "firsatlar-and-ozel-koleksiyonlar",
       "legacy_slug_path": "firsatlar-and-ozel-koleksiyonlar",
-      "legacy_url": "/kategori/firsatlar-and-ozel-koleksiyonlar"
+      "legacy_url": "/kategori/firsatlar-and-ozel-koleksiyonlar",
+      "master_code": "bz.48",
+      "master_slug": "allgemeine-produkte-marktplatz",
+      "master_name": "Allgemeine Produkte & Marktplatz",
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-42",
+      "menu_order": 42,
+      "name": "Heimtextilien",
+      "slug": "heimtextilien",
+      "url": "/kategorie/heimtextilien",
+      "level": 1,
+      "master_code": "bz.08",
+      "master_slug": "heimtextilien",
+      "master_name": "Heimtextilien",
+      "children": [
+        {
+          "id": "cat-42-01",
+          "menu_order": 1,
+          "name": "Bettwäsche",
+          "slug": "bettwaesche",
+          "url": "/kategorie/heimtextilien/bettwaesche",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/heimtextilien/bettwaesche/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/heimtextilien/bettwaesche/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/heimtextilien/bettwaesche/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-02",
+          "menu_order": 2,
+          "name": "Handtücher & Badtextilien",
+          "slug": "handtuecher-badtextilien",
+          "url": "/kategorie/heimtextilien/handtuecher-badtextilien",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-03",
+          "menu_order": 3,
+          "name": "Gardinen & Vorhänge",
+          "slug": "gardinen-vorhaenge",
+          "url": "/kategorie/heimtextilien/gardinen-vorhaenge",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-04",
+          "menu_order": 4,
+          "name": "Teppiche & Läufer",
+          "slug": "teppiche-laeufer",
+          "url": "/kategorie/heimtextilien/teppiche-laeufer",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-43",
+      "menu_order": 43,
+      "name": "Schmuck & Uhren",
+      "slug": "schmuck-uhren",
+      "url": "/kategorie/schmuck-uhren",
+      "level": 1,
+      "master_code": "bz.20",
+      "master_slug": "schmuck-uhren",
+      "master_name": "Schmuck & Uhren",
+      "children": [
+        {
+          "id": "cat-43-01",
+          "menu_order": 1,
+          "name": "Uhren",
+          "slug": "uhren",
+          "url": "/kategorie/schmuck-uhren/uhren",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-43-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/schmuck-uhren/uhren/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/schmuck-uhren/uhren/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/schmuck-uhren/uhren/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-43-02",
+          "menu_order": 2,
+          "name": "Ringe",
+          "slug": "ringe",
+          "url": "/kategorie/schmuck-uhren/ringe",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-43-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/schmuck-uhren/ringe/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/schmuck-uhren/ringe/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/schmuck-uhren/ringe/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-43-03",
+          "menu_order": 3,
+          "name": "Ketten & Anhänger",
+          "slug": "ketten-anhaenger",
+          "url": "/kategorie/schmuck-uhren/ketten-anhaenger",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-43-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/schmuck-uhren/ketten-anhaenger/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/schmuck-uhren/ketten-anhaenger/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/schmuck-uhren/ketten-anhaenger/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-43-04",
+          "menu_order": 4,
+          "name": "Ohrschmuck",
+          "slug": "ohrschmuck",
+          "url": "/kategorie/schmuck-uhren/ohrschmuck",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-43-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/schmuck-uhren/ohrschmuck/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/schmuck-uhren/ohrschmuck/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-43-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/schmuck-uhren/ohrschmuck/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-44",
+      "menu_order": 44,
+      "name": "Körperpflege",
+      "slug": "koerperpflege",
+      "url": "/kategorie/koerperpflege",
+      "level": 1,
+      "master_code": "bz.22",
+      "master_slug": "koerperpflege",
+      "master_name": "Körperpflege",
+      "children": [
+        {
+          "id": "cat-44-01",
+          "menu_order": 1,
+          "name": "Haarpflege",
+          "slug": "haarpflege",
+          "url": "/kategorie/koerperpflege/haarpflege",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-44-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/koerperpflege/haarpflege/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/koerperpflege/haarpflege/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/koerperpflege/haarpflege/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-44-02",
+          "menu_order": 2,
+          "name": "Zahnpflege",
+          "slug": "zahnpflege",
+          "url": "/kategorie/koerperpflege/zahnpflege",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-44-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/koerperpflege/zahnpflege/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/koerperpflege/zahnpflege/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/koerperpflege/zahnpflege/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-44-03",
+          "menu_order": 3,
+          "name": "Rasur & Enthaarung",
+          "slug": "rasur-enthaarung",
+          "url": "/kategorie/koerperpflege/rasur-enthaarung",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-44-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/koerperpflege/rasur-enthaarung/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/koerperpflege/rasur-enthaarung/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/koerperpflege/rasur-enthaarung/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-44-04",
+          "menu_order": 4,
+          "name": "Deodorants & Körperhygiene",
+          "slug": "deodorants-koerperhygiene",
+          "url": "/kategorie/koerperpflege/deodorants-koerperhygiene",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-44-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/koerperpflege/deodorants-koerperhygiene/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/koerperpflege/deodorants-koerperhygiene/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-44-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/koerperpflege/deodorants-koerperhygiene/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-45",
+      "menu_order": 45,
+      "name": "Apotheke & Medizinprodukte",
+      "slug": "apotheke-medizinprodukte",
+      "url": "/kategorie/apotheke-medizinprodukte",
+      "level": 1,
+      "master_code": "bz.24",
+      "master_slug": "apotheke-medizinprodukte",
+      "master_name": "Apotheke & Medizinprodukte",
+      "children": [
+        {
+          "id": "cat-45-01",
+          "menu_order": 1,
+          "name": "Medizinprodukte",
+          "slug": "medizinprodukte",
+          "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-45-02",
+          "menu_order": 2,
+          "name": "Erste Hilfe",
+          "slug": "erste-hilfe",
+          "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-45-03",
+          "menu_order": 3,
+          "name": "Nahrungsergänzung",
+          "slug": "nahrungsergaenzung",
+          "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-45-04",
+          "menu_order": 4,
+          "name": "Pflegehilfsmittel",
+          "slug": "pflegehilfsmittel",
+          "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-46",
+      "menu_order": 46,
+      "name": "Getränke",
+      "slug": "getraenke",
+      "url": "/kategorie/getraenke",
+      "level": 1,
+      "master_code": "bz.26",
+      "master_slug": "getraenke",
+      "master_name": "Getränke",
+      "children": [
+        {
+          "id": "cat-46-01",
+          "menu_order": 1,
+          "name": "Wasser",
+          "slug": "wasser",
+          "url": "/kategorie/getraenke/wasser",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/getraenke/wasser/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/getraenke/wasser/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/getraenke/wasser/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-46-02",
+          "menu_order": 2,
+          "name": "Säfte & Softdrinks",
+          "slug": "saefte-softdrinks",
+          "url": "/kategorie/getraenke/saefte-softdrinks",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/getraenke/saefte-softdrinks/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/getraenke/saefte-softdrinks/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/getraenke/saefte-softdrinks/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-46-03",
+          "menu_order": 3,
+          "name": "Kaffee & Tee",
+          "slug": "kaffee-tee",
+          "url": "/kategorie/getraenke/kaffee-tee",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/getraenke/kaffee-tee/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/getraenke/kaffee-tee/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/getraenke/kaffee-tee/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-46-04",
+          "menu_order": 4,
+          "name": "Wein & Spirituosen",
+          "slug": "wein-spirituosen",
+          "url": "/kategorie/getraenke/wein-spirituosen",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/getraenke/wein-spirituosen/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/getraenke/wein-spirituosen/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/getraenke/wein-spirituosen/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-47",
+      "menu_order": 47,
+      "name": "Kinder & Schule",
+      "slug": "kinder-schule",
+      "url": "/kategorie/kinder-schule",
+      "level": 1,
+      "master_code": "bz.28",
+      "master_slug": "kinder-schule",
+      "master_name": "Kinder & Schule",
+      "children": [
+        {
+          "id": "cat-47-01",
+          "menu_order": 1,
+          "name": "Schulbedarf",
+          "slug": "schulbedarf",
+          "url": "/kategorie/kinder-schule/schulbedarf",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kinder-schule/schulbedarf/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kinder-schule/schulbedarf/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kinder-schule/schulbedarf/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-47-02",
+          "menu_order": 2,
+          "name": "Lernspiele",
+          "slug": "lernspiele",
+          "url": "/kategorie/kinder-schule/lernspiele",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kinder-schule/lernspiele/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kinder-schule/lernspiele/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kinder-schule/lernspiele/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-47-03",
+          "menu_order": 3,
+          "name": "Schulrucksäcke",
+          "slug": "schulrucksaecke",
+          "url": "/kategorie/kinder-schule/schulrucksaecke",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kinder-schule/schulrucksaecke/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kinder-schule/schulrucksaecke/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kinder-schule/schulrucksaecke/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-47-04",
+          "menu_order": 4,
+          "name": "Kinderaccessoires",
+          "slug": "kinderaccessoires",
+          "url": "/kategorie/kinder-schule/kinderaccessoires",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kinder-schule/kinderaccessoires/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kinder-schule/kinderaccessoires/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kinder-schule/kinderaccessoires/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-48",
+      "menu_order": 48,
+      "name": "Musik & Musikinstrumente",
+      "slug": "musik-musikinstrumente",
+      "url": "/kategorie/musik-musikinstrumente",
+      "level": 1,
+      "master_code": "bz.33",
+      "master_slug": "musik-musikinstrumente",
+      "master_name": "Musik & Musikinstrumente",
+      "children": [
+        {
+          "id": "cat-48-01",
+          "menu_order": 1,
+          "name": "Gitarren & Bässe",
+          "slug": "gitarren-baesse",
+          "url": "/kategorie/musik-musikinstrumente/gitarren-baesse",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-48-02",
+          "menu_order": 2,
+          "name": "Tasteninstrumente",
+          "slug": "tasteninstrumente",
+          "url": "/kategorie/musik-musikinstrumente/tasteninstrumente",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-48-03",
+          "menu_order": 3,
+          "name": "Schlagzeug & Percussion",
+          "slug": "schlagzeug-percussion",
+          "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-48-04",
+          "menu_order": 4,
+          "name": "Musikzubehör",
+          "slug": "musikzubehoer",
+          "url": "/kategorie/musik-musikinstrumente/musikzubehoer",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-49",
+      "menu_order": 49,
+      "name": "Bücher, Medien & Unterhaltung",
+      "slug": "buecher-medien-unterhaltung",
+      "url": "/kategorie/buecher-medien-unterhaltung",
+      "level": 1,
+      "master_code": "bz.34",
+      "master_slug": "buecher-medien-unterhaltung",
+      "master_name": "Bücher, Medien & Unterhaltung",
+      "children": [
+        {
+          "id": "cat-49-01",
+          "menu_order": 1,
+          "name": "Bücher",
+          "slug": "buecher",
+          "url": "/kategorie/buecher-medien-unterhaltung/buecher",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/buecher-medien-unterhaltung/buecher/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/buecher-medien-unterhaltung/buecher/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/buecher-medien-unterhaltung/buecher/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-49-02",
+          "menu_order": 2,
+          "name": "Filme & Serien",
+          "slug": "filme-serien",
+          "url": "/kategorie/buecher-medien-unterhaltung/filme-serien",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-49-03",
+          "menu_order": 3,
+          "name": "Musik & Games",
+          "slug": "musik-games",
+          "url": "/kategorie/buecher-medien-unterhaltung/musik-games",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-49-04",
+          "menu_order": 4,
+          "name": "Zeitschriften & Medien",
+          "slug": "zeitschriften-medien",
+          "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-50",
+      "menu_order": 50,
+      "name": "Geschenke, Blumen & Anlässe",
+      "slug": "geschenke-blumen-anlaesse",
+      "url": "/kategorie/geschenke-blumen-anlaesse",
+      "level": 1,
+      "master_code": "bz.41",
+      "master_slug": "geschenke-blumen-anlaesse",
+      "master_name": "Geschenke, Blumen & Anlässe",
+      "children": [
+        {
+          "id": "cat-50-01",
+          "menu_order": 1,
+          "name": "Geschenke",
+          "slug": "geschenke",
+          "url": "/kategorie/geschenke-blumen-anlaesse/geschenke",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-50-02",
+          "menu_order": 2,
+          "name": "Blumen & Pflanzen",
+          "slug": "blumen-pflanzen",
+          "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-50-03",
+          "menu_order": 3,
+          "name": "Anlässe & Feiern",
+          "slug": "anlaesse-feiern",
+          "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-50-04",
+          "menu_order": 4,
+          "name": "Gutscheine & Sets",
+          "slug": "gutscheine-sets",
+          "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-51",
+      "menu_order": 51,
+      "name": "Kunsthandwerk, Nähen & DIY",
+      "slug": "kunsthandwerk-naehen-diy",
+      "url": "/kategorie/kunsthandwerk-naehen-diy",
+      "level": 1,
+      "master_code": "bz.42",
+      "master_slug": "kunsthandwerk-naehen-diy",
+      "master_name": "Kunsthandwerk, Nähen & DIY",
+      "children": [
+        {
+          "id": "cat-51-01",
+          "menu_order": 1,
+          "name": "Nähen & Stricken",
+          "slug": "naehen-stricken",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-51-02",
+          "menu_order": 2,
+          "name": "Basteln & Hobby",
+          "slug": "basteln-hobby",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-51-03",
+          "menu_order": 3,
+          "name": "DIY-Werkzeug",
+          "slug": "diy-werkzeug",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-51-04",
+          "menu_order": 4,
+          "name": "Kreativ-Sets",
+          "slug": "kreativ-sets",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-52",
+      "menu_order": 52,
+      "name": "Pool, Spa & Wellness-Ausstattung",
+      "slug": "pool-spa-wellness-ausstattung",
+      "url": "/kategorie/pool-spa-wellness-ausstattung",
+      "level": 1,
+      "master_code": "bz.45",
+      "master_slug": "pool-spa-wellness-ausstattung",
+      "master_name": "Pool, Spa & Wellness-Ausstattung",
+      "children": [
+        {
+          "id": "cat-52-01",
+          "menu_order": 1,
+          "name": "Pool & Schwimmbad",
+          "slug": "pool-schwimmbad",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-52-02",
+          "menu_order": 2,
+          "name": "Spa & Sauna",
+          "slug": "spa-sauna",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-52-03",
+          "menu_order": 3,
+          "name": "Wellness-Geräte",
+          "slug": "wellness-geraete",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-52-04",
+          "menu_order": 4,
+          "name": "Poolpflege",
+          "slug": "poolpflege",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
+    },
+    {
+      "id": "cat-53",
+      "menu_order": 53,
+      "name": "Luxus, Sammlerstücke & Wertvolles",
+      "slug": "luxus-sammlerstuecke-wertvolles",
+      "url": "/kategorie/luxus-sammlerstuecke-wertvolles",
+      "level": 1,
+      "master_code": "bz.47",
+      "master_slug": "luxus-sammlerstuecke-wertvolles",
+      "master_name": "Luxus, Sammlerstücke & Wertvolles",
+      "children": [
+        {
+          "id": "cat-53-01",
+          "menu_order": 1,
+          "name": "Luxusmode",
+          "slug": "luxusmode",
+          "url": "/kategorie/luxus-sammlerstuecke-wertvolles/luxusmode",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-53-01-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/luxusmode/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-01-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/luxusmode/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-01-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/luxusmode/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-53-02",
+          "menu_order": 2,
+          "name": "Sammlerstücke",
+          "slug": "sammlerstuecke",
+          "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sammlerstuecke",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-53-02-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sammlerstuecke/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-02-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sammlerstuecke/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-02-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sammlerstuecke/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-53-03",
+          "menu_order": 3,
+          "name": "Sondereditionen",
+          "slug": "sondereditionen",
+          "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sondereditionen",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-53-03-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sondereditionen/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-03-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sondereditionen/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-03-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/sondereditionen/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-53-04",
+          "menu_order": 4,
+          "name": "Antikes & Wertvolles",
+          "slug": "antikes-wertvolles",
+          "url": "/kategorie/luxus-sammlerstuecke-wertvolles/antikes-wertvolles",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-53-04-01",
+              "menu_order": 1,
+              "name": "Standard",
+              "slug": "standard",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/antikes-wertvolles/standard",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-04-02",
+              "menu_order": 2,
+              "name": "Premium",
+              "slug": "premium",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/antikes-wertvolles/premium",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-53-04-03",
+              "menu_order": 3,
+              "name": "Sets & Sparpakete",
+              "slug": "sets-sparpakete",
+              "url": "/kategorie/luxus-sammlerstuecke-wertvolles/antikes-wertvolles/sets-sparpakete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "master_synced_at": "2026-08-20T17:14:29+00:00"
     }
-  ]
+  ],
+  "taxonomy_sync": {
+    "schema": "buzzard.master-shop-l1-mapping.v1",
+    "source": "data/taxonomy/buzzard_master_48_main_categories_de.json",
+    "master_main_categories": 48,
+    "shop_main_categories": 53,
+    "synced_at": "2026-08-20T17:14:29+00:00",
+    "mapped_master_codes": [
+      "bz.01",
+      "bz.02",
+      "bz.03",
+      "bz.04",
+      "bz.05",
+      "bz.06",
+      "bz.07",
+      "bz.08",
+      "bz.09",
+      "bz.10",
+      "bz.11",
+      "bz.12",
+      "bz.13",
+      "bz.14",
+      "bz.15",
+      "bz.16",
+      "bz.17",
+      "bz.18",
+      "bz.19",
+      "bz.20",
+      "bz.21",
+      "bz.22",
+      "bz.23",
+      "bz.24",
+      "bz.25",
+      "bz.26",
+      "bz.27",
+      "bz.28",
+      "bz.29",
+      "bz.30",
+      "bz.31",
+      "bz.32",
+      "bz.33",
+      "bz.34",
+      "bz.35",
+      "bz.36",
+      "bz.37",
+      "bz.38",
+      "bz.39",
+      "bz.40",
+      "bz.41",
+      "bz.42",
+      "bz.43",
+      "bz.44",
+      "bz.45",
+      "bz.46",
+      "bz.47",
+      "bz.48"
+    ],
+    "unmapped_master_codes": []
+  }
 }

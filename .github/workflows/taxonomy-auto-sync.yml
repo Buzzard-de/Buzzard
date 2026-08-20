@@ -1,0 +1,65 @@
+name: Taxonomy Auto Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - data/taxonomy/buzzard_master_48_main_categories_de.json
+      - data/taxonomy/master_shop_l1_mapping.json
+      - intelligence/scripts/sync_shop_categories_from_master.py
+      - intelligence/scripts/sync_german_48_main_categories.py
+      - intelligence/scripts/run_taxonomy_auto_sync.py
+  pull_request:
+    paths:
+      - data/taxonomy/buzzard_master_48_main_categories_de.json
+      - data/taxonomy/master_shop_l1_mapping.json
+      - intelligence/scripts/sync_shop_categories_from_master.py
+      - intelligence/scripts/sync_german_48_main_categories.py
+      - intelligence/scripts/run_taxonomy_auto_sync.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: pip install -r intelligence/requirements.txt
+
+      - name: Run taxonomy auto-sync
+        run: |
+          cd intelligence
+          python3 scripts/run_taxonomy_auto_sync.py --skip-builds
+          cd ..
+          node scripts/publish-taxonomy-artifacts.mjs
+
+      - name: Verify taxonomy sync is committed
+        if: github.event_name == 'pull_request'
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Taxonomy auto-sync produced uncommitted changes. Run: npm run sync:taxonomy && npm run publish:taxonomy"
+            git diff --stat
+            exit 1
+          fi
+          echo "Taxonomy sync outputs are up to date."
+
+      - name: Commit sync artifacts on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          if git diff --quiet; then
+            echo "No taxonomy sync changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data public/taxonomy intelligence/buzzard_ai_complete
+          git commit -m "chore(taxonomy): auto-sync from master categories"
+          git push

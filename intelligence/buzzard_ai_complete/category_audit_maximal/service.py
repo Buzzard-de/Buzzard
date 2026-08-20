@@ -82,10 +82,38 @@ class CategoryAuditService:
             [category for category in catalog["categories"] if category.get("level") == 1],
             key=lambda row: row["menu_order"],
         )
-        automotive = next(category for category in mains if category["name"] == "Automotive")
-        reifen = next(
-            child for child in automotive["children"] if child["name"] == "Reifen & Felgen"
+        automotive = next(
+            (
+                category
+                for category in mains
+                if category["id"] == "cat-05"
+                or category["name"] in {"Automotive", "Automotive & Kfz"}
+            ),
+            None,
         )
+        if automotive is None:
+            raise ValueError("AUTOMOTIVE_CATEGORY_NOT_FOUND")
+        reifen = next(
+            (
+                child
+                for child in automotive.get("children", [])
+                if child["name"] == "Reifen & Felgen"
+            ),
+            None,
+        )
+        migration_items = []
+        if reifen is not None:
+            migration_items.append(
+                {
+                    "id": reifen["id"],
+                    "name": reifen["name"],
+                    "slug": reifen["slug"],
+                    "parent": automotive["name"],
+                    "parent_id": automotive["id"],
+                    "level": 2,
+                    "url": reifen["url"],
+                }
+            )
         payload = {
             "status": "FULL_INPUT",
             "source": "data/buzzard_categories.json",
@@ -101,17 +129,7 @@ class CategoryAuditService:
                 }
                 for category in mains
             ],
-            "migration_items": [
-                {
-                    "id": reifen["id"],
-                    "name": reifen["name"],
-                    "slug": reifen["slug"],
-                    "parent": automotive["name"],
-                    "parent_id": automotive["id"],
-                    "level": 2,
-                    "url": reifen["url"],
-                }
-            ],
+            "migration_items": migration_items,
         }
         live_path = DATA_DIR / "live_categories_INPUT.json"
         live_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -141,8 +159,10 @@ class CategoryAuditService:
                 "reifen_felgen": next(
                     row for row in report["migration_items"] if row["name"] == "Reifen & Felgen"
                 ),
-                "energie_solar": next(
-                    row for row in report["categories"] if row["name"] == "Energie & Solar"
+                "heizung_klima": next(
+                    row
+                    for row in report["categories"]
+                    if row["name"] == "Heizung, Klima & Energie"
                 ),
                 "textil": next(row for row in report["categories"] if row["name"] == "Textil"),
             },

@@ -48,8 +48,9 @@ def build_categories() -> list[dict[str, str]]:
 
 def main() -> None:
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    config["agent_count"] = 43
-    config["categories"] = build_categories()
+    categories = build_categories()
+    config["agent_count"] = len(categories)
+    config["categories"] = categories
     CONFIG_PATH.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"OK: {len(config['categories'])} Kategorien → {CONFIG_PATH}")
 

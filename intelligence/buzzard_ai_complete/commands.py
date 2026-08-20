@@ -1275,6 +1275,62 @@ def complete_sync_german_48_main_categories():
     return result.stdout.strip()
 
 
+def complete_sync_shop_categories_from_master(dry_run: bool = False):
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "sync_shop_categories_from_master.py"
+    cmd = [sys.executable, str(script)]
+    if dry_run:
+        cmd.append("--dry-run")
+    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
+def complete_expand_shop_to_48_master_categories(dry_run: bool = False):
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "expand_shop_to_48_master_categories.py"
+    cmd = [sys.executable, str(script)]
+    if dry_run:
+        cmd.append("--dry-run")
+    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
+def complete_run_taxonomy_auto_sync(dry_run: bool = False, skip_builds: bool = False):
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "run_taxonomy_auto_sync.py"
+    cmd = [sys.executable, str(script)]
+    if dry_run:
+        cmd.append("--dry-run")
+    if skip_builds:
+        cmd.append("--skip-builds")
+    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
+def complete_build_ki_gesamt_backup(full_snapshot: bool = False, skip_snapshot: bool = False):
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "build_ki_gesamt_backup.py"
+    cmd = [sys.executable, str(script)]
+    if full_snapshot:
+        cmd.append("--full-snapshot")
+    if skip_snapshot:
+        cmd.append("--skip-snapshot")
+    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
+
 def complete_category_intelligence_47_final_manifest():
     from buzzard_ai_complete.category_intelligence_47_maximal.service import CategoryIntelligence47Service
 

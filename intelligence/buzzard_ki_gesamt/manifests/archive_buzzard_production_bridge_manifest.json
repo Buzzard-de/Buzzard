@@ -1,0 +1,22 @@
+{
+  "name": "Buzzard Production Bridge",
+  "purpose": "Move the completed software architecture into controlled production readiness.",
+  "gates": [
+    "domain",
+    "TLS",
+    "database",
+    "payment",
+    "shipping",
+    "supplier/API",
+    "email",
+    "security",
+    "backup",
+    "monitoring",
+    "legal",
+    "end-to-end order",
+    "return/Widerruf",
+    "GDPR/consent"
+  ],
+  "important": "Credentials, API keys and legal approvals must be supplied/configured; the bridge never invents them.",
+  "go_live_rule": "Every gate must pass."
+}

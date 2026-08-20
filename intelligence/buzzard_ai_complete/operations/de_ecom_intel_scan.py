@@ -483,6 +483,7 @@ def run_de_ecom_intel_scan(
     observed_at = _now()
     all_offers, preis_quelle = _collect_all_offers(observed_at)
     category_reports, council_findings = _run_category_scans(all_offers)
+    agent_count = CategoryIntelligence43Service().load_config().get("agent_count", 43)
 
     from live_connectors.google_ads_signals import fetch_google_ads_signals
 
@@ -528,7 +529,7 @@ def run_de_ecom_intel_scan(
         "oeffentliche_quellen": sources,
         "google_ads": google_ads,
         "category_intelligence_43": {
-            "agenten_aktiv": 43,
+            "agenten_aktiv": agent_count,
             "prioritaets_kategorien_gescannt": len(category_reports),
             "council_findings": council_findings,
             "berichte": category_reports,

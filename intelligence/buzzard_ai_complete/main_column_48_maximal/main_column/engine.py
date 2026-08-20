@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from buzzard_ai_complete.shared.master_l1_names import overlay_main_category
+
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 
@@ -24,14 +26,18 @@ class MainColumnCategoryEngine:
 
     def main_categories(self):
         return [
-            {"id": node["id"], "name": node["name"], "slug": node["slug"]}
+            {
+                "id": node["id"],
+                "name": overlay_main_category(node)["name"],
+                "slug": overlay_main_category(node)["slug"],
+            }
             for node in self.nodes
         ]
 
     def get_main(self, main_id):
         for node in self.nodes:
             if node["id"] == main_id:
-                return node
+                return overlay_main_category(node)
         return None
 
     def search(self, term, limit=250):

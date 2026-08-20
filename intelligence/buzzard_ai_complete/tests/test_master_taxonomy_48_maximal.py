@@ -20,11 +20,11 @@ def test_integrity():
 def test_new_categories():
     taxonomy = BuzzardMasterTaxonomy()
     for name in [
-        "Lastikler – Tüm Motorlu Araçlar",
-        "Tarım & Tarım Makineleri",
-        "Hayvancılık",
-        "Güneş & Rüzgâr Enerjisi",
-        "İnşaat & İnşaat Makineleri",
+        "Heizung, Klima & Energie",
+        "Pool, Spa & Wellness-Ausstattung",
+        "Saisonale & Festtagsartikel",
+        "Luxus, Sammlerstücke & Wertvolles",
+        "Allgemeine Produkte & Marktplatz",
     ]:
         assert taxonomy.search(name)
 

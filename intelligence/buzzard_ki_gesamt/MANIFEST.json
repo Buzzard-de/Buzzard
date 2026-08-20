@@ -1,0 +1,196 @@
+{
+  "schema": "buzzard.ki-gesamt.inventory.v1",
+  "generated_at": "2026-08-18T21:19:48+00:00",
+  "ki_root": "intelligence/buzzard_ki_gesamt",
+  "areas": {
+    "python_complete": 1072,
+    "python_v1_v200": 205,
+    "python_gesamt": 159,
+    "python_archive": 277,
+    "python_connectors": 16,
+    "python_scripts": 19,
+    "launcher_buzzard": 10,
+    "launcher_gizli": 4,
+    "taxonomy_data": 28,
+    "frontend_ai": 1,
+    "frontend_lib_ai": 3,
+    "frontend_lib_ai_center": 2,
+    "server_ai": 12
+  },
+  "total_files_estimated": 1808,
+  "agents": {
+    "category_specialists": 43,
+    "ai_council_18": 18,
+    "council_orchestrator_v20": 8,
+    "bey_agents": 3,
+    "customs_council_19": 1,
+    "named_agents_total": 73
+  },
+  "intelligence_modules_v1_v200": 205,
+  "symlinks": [
+    {
+      "name": "buzzard_ai_complete",
+      "target": "intelligence/buzzard_ai_complete"
+    },
+    {
+      "name": "buzzard_intelligence",
+      "target": "intelligence/buzzard_intelligence"
+    },
+    {
+      "name": "buzzard_ai_gesamt",
+      "target": "intelligence/buzzard_ai_gesamt"
+    },
+    {
+      "name": "archive",
+      "target": "intelligence/archive"
+    },
+    {
+      "name": "live_connectors",
+      "target": "intelligence/live_connectors"
+    },
+    {
+      "name": "scripts",
+      "target": "intelligence/scripts"
+    },
+    {
+      "name": "main_py",
+      "target": "intelligence/main.py"
+    },
+    {
+      "name": "Buzzard",
+      "target": "Buzzard"
+    },
+    {
+      "name": "gizli",
+      "target": "gizli"
+    },
+    {
+      "name": "taxonomy",
+      "target": "data/taxonomy"
+    },
+    {
+      "name": "public_taxonomy",
+      "target": "public/taxonomy"
+    }
+  ],
+  "manifests": [
+    {
+      "file": "data/taxonomy/buzzard_master_business_os_maximum_manifest.json",
+      "backup": "manifests/buzzard_master_business_os_maximum_manifest.json",
+      "bytes": 123997
+    },
+    {
+      "file": "data/taxonomy/buzzard_production_bridge_manifest.json",
+      "backup": "manifests/buzzard_production_bridge_manifest.json",
+      "bytes": 1112
+    },
+    {
+      "file": "data/taxonomy/buzzard_final_47_category_intelligence_manifest.json",
+      "backup": "manifests/buzzard_final_47_category_intelligence_manifest.json",
+      "bytes": 985
+    },
+    {
+      "file": "data/taxonomy/buzzard_intelligence_os_maximum_manifest.json",
+      "backup": "manifests/buzzard_intelligence_os_maximum_manifest.json",
+      "bytes": 119890
+    },
+    {
+      "file": "intelligence/buzzard_ai_complete/docs/SHOP_INTELLIGENCE_BRIDGE_MAX_MANIFEST.json",
+      "backup": "manifests/SHOP_INTELLIGENCE_BRIDGE_MAX_MANIFEST.json",
+      "bytes": 357
+    },
+    {
+      "file": "intelligence/buzzard_ai_complete/docs/PRODUCTION_MAX_MANIFEST.json",
+      "backup": "manifests/PRODUCTION_MAX_MANIFEST.json",
+      "bytes": 460
+    },
+    {
+      "file": "intelligence/buzzard_ai_complete/docs/MAXIMAL_ANALYTICS_MANIFEST.json",
+      "backup": "manifests/MAXIMAL_ANALYTICS_MANIFEST.json",
+      "bytes": 399
+    },
+    {
+      "file": "intelligence/buzzard_ai_complete/docs/ONE_PIECE_MANIFEST.json",
+      "backup": "manifests/ONE_PIECE_MANIFEST.json",
+      "bytes": 439
+    },
+    {
+      "file": "intelligence/archive/buzzard_production_bridge_manifest.json",
+      "backup": "manifests/archive_buzzard_production_bridge_manifest.json",
+      "bytes": 549
+    },
+    {
+      "file": "intelligence/archive/buzzard_final_47_category_intelligence_manifest.json",
+      "backup": "manifests/archive_buzzard_final_47_category_intelligence_manifest.json",
+      "bytes": 984
+    },
+    {
+      "file": "intelligence/final_integration/01_integration/system_manifest.json",
+      "backup": "manifests/system_manifest.json",
+      "bytes": 367
+    },
+    {
+      "file": "intelligence/final_integration/MANIFEST.json",
+      "backup": "manifests/MANIFEST.json",
+      "bytes": 193
+    },
+    {
+      "file": "intelligence/master_integration/MANIFEST.json",
+      "backup": "manifests/master_integration_MANIFEST.json",
+      "bytes": 261
+    },
+    {
+      "file": "intelligence/production/FINAL_COMPLETION_MANIFEST.json",
+      "backup": "manifests/FINAL_COMPLETION_MANIFEST.json",
+      "bytes": 706
+    },
+    {
+      "file": "intelligence/website_monitoring/MANIFEST.json",
+      "backup": "manifests/website_monitoring_MANIFEST.json",
+      "bytes": 404
+    }
+  ],
+  "copied_layers": {
+    "frontend/components/ai": 1,
+    "frontend/lib/ai": 3,
+    "frontend/lib/aiCenter": 2,
+    "frontend/lib/api/intelligence.ts": 1,
+    "frontend/lib/categories/kfzTree.ts": 1,
+    "server/lib/aiCenter.js": 1,
+    "server/lib/aiChatService.js": 1,
+    "server/lib/intelligenceBridge.js": 1,
+    "server/lib/embeddedIntelligence.js": 1,
+    "server/lib/embeddedSmartMenu48.js": 1,
+    "server/lib/phoneAssistantService.js": 1,
+    "server/lib/recommendationService.js": 1,
+    "server/plugins/aiCenterPlugin.js": 1,
+    "server/plugins/aiAutomationPlugin.js": 1,
+    "server/plugins/intelligenceProductionBridgePlugin.js": 1,
+    "server/plugins/masterTaxonomyPlugin.js": 1,
+    "server/plugins/smartMenu48Plugin.js": 1,
+    "launchers/Buzzard": 10,
+    "launchers/gizli": 4,
+    "launchers/gizli_intelligence": 4
+  },
+  "snapshot": {
+    "snapshot_dir": "intelligence/buzzard_ki_gesamt/snapshots/2026-08-18",
+    "latest_link": "intelligence/buzzard_ki_gesamt/snapshots/latest",
+    "zip": "intelligence/buzzard_ki_gesamt/snapshots/buzzard_ki_gesamt_2026-08-18.zip",
+    "zip_bytes": 9209803,
+    "zip_files": 1973,
+    "copied": {
+      "buzzard_ai_complete": 1072,
+      "buzzard_intelligence": 205,
+      "buzzard_ai_gesamt": 159,
+      "archive": 277,
+      "live_connectors": 16,
+      "Buzzard": 10,
+      "gizli": 4,
+      "taxonomy": 28,
+      "frontend": 8,
+      "server": 12,
+      "manifests": 15,
+      "version_json": 167
+    }
+  }
+}

@@ -24,6 +24,10 @@
 - `PHASE2_PERMISSION_MATRIX.md` — Berechtigungen & Freigaben
 - `PHASE2_IMPLEMENTATION_PLAN.md` — 15-Schritte Plan
 
+### Phase 2 — Final Verification
+- `PHASE2_FINAL_VERIFICATION.md` — Code + Test Verifikation
+- **Ergebnis:** `PHASE2_BLOCKED` (18/100)
+
 ### Phase 2 — Status Reports (Implementation NOT STARTED)
 - `PHASE2_IMPLEMENTATION_REPORT.md` — Steps 0–14 status, blocking dependencies
 - `PHASE2_TEST_RESULTS.md` — Phase 1 baseline (342 passed); Phase 2 tests not created

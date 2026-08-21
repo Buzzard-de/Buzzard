@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from buzzard_ai_complete.ai_core.api.deps import (
   authorize,
   get_actor,
+  get_actor_role,
   get_audit_service,
   get_exception_service,
   get_idempotency_key,
@@ -14,6 +15,12 @@ from buzzard_ai_complete.ai_core.api.deps import (
   get_orchestrator,
   get_request_id,
 )
+from buzzard_ai_complete.ai_core.api.v1.agents import router as agents_router
+from buzzard_ai_complete.ai_core.api.v1.categories import router as categories_router
+from buzzard_ai_complete.ai_core.api.v1.integrations import router as integrations_router
+from buzzard_ai_complete.ai_core.api.v1.reports import router as reports_router
+from buzzard_ai_complete.ai_core.integrations.registry import IntegrationStatusRegistry
+from buzzard_ai_complete.ai_core.workers.registry import get_registry
 from buzzard_ai_complete.ai_core.enums import TaskStatus
 from buzzard_ai_complete.ai_core.schemas.api import (
   AuditResponse,
@@ -104,13 +111,14 @@ def transition_task(
   body: TaskTransitionRequest,
   orchestrator: UnifiedOrchestrator = Depends(get_orchestrator),
   actor: str = Depends(get_actor),
+  actor_role: str = Depends(get_actor_role),
   request_id: str = Depends(get_request_id),
 ):
   try:
     if body.action == "approve":
-      return orchestrator.approve(task_id, actor=actor, note=body.note)
+      return orchestrator.approve(task_id, actor=actor, actor_role=actor_role, note=body.note)
     if body.action == "reject":
-      return orchestrator.reject(task_id, actor=actor, note=body.note)
+      return orchestrator.reject(task_id, actor=actor, actor_role=actor_role, note=body.note)
     if body.action == "cancel":
       return orchestrator.cancel(task_id, actor=actor, note=body.note)
     if body.action == "advance":
@@ -287,3 +295,30 @@ def ai_core_health():
     "database": "connected",
     "database_url_scheme": settings.DATABASE_URL.split(":", 1)[0],
   }
+
+
+@router.get("/health/ready")
+def ai_core_ready():
+  from buzzard_ai_complete.ai_core.database.base import get_engine
+  from buzzard_ai_complete.config import settings
+
+  engine = get_engine()
+  with engine.connect() as conn:
+    conn.exec_driver_sql("SELECT 1")
+  registry = get_registry()
+  integrations = IntegrationStatusRegistry()
+  worker_count = len(registry.list_workers())
+  return {
+    "status": "ready",
+    "version": settings.APP_VERSION,
+    "ai_core_v2": settings.BUZZARD_AI_CORE_V2,
+    "database": "connected",
+    "workers_registered": worker_count,
+    "integrations": integrations.list_status(),
+  }
+
+
+router.include_router(agents_router)
+router.include_router(categories_router)
+router.include_router(integrations_router)
+router.include_router(reports_router)

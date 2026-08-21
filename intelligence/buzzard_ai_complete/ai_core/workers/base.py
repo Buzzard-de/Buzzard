@@ -22,9 +22,13 @@ class WorkerResult:
     metadata: dict[str, Any] = field(default_factory=dict)
     error: str | None = None
     retryable: bool = True
+    confidence: float | None = None
+    risk_level: str | None = None
+    memory_entries: list[dict[str, Any]] = field(default_factory=list)
+    exceptions: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload: dict[str, Any] = {
             "success": self.success,
             "output": self.output,
             "metadata": self.metadata,
@@ -34,6 +38,15 @@ class WorkerResult:
             "duration_ms": self.metadata.get("duration_ms"),
             "ai_provider_status": self.metadata.get("ai_provider_status"),
         }
+        if self.confidence is not None:
+            payload["confidence"] = self.confidence
+        if self.risk_level is not None:
+            payload["risk_level"] = self.risk_level
+        if self.memory_entries:
+            payload["memory_entries"] = self.memory_entries
+        if self.exceptions:
+            payload["exceptions"] = self.exceptions
+        return payload
 
 
 class WorkerExecutionError(Exception):

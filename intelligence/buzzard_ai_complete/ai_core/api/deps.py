@@ -72,6 +72,15 @@ def authorize(
   return "api-user"
 
 
+def get_actor_role(
+  auth_actor: Annotated[str, Depends(authorize)],
+  x_actor_role: Annotated[str | None, Header(alias="X-Actor-Role")] = None,
+) -> str:
+  if x_actor_role and x_actor_role.strip():
+    return x_actor_role.strip().lower()
+  return auth_actor.strip().lower()
+
+
 def get_idempotency_key(
   body: TaskCreateRequest,
   idempotency_key_header: Annotated[str | None, Header(alias="Idempotency-Key")] = None,

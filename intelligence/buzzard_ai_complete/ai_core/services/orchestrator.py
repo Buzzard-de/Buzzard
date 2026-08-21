@@ -7,23 +7,30 @@ from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from buzzard_ai_complete.agents.esat_bey.agent import EsatBey, SecurityEvent
 from buzzard_ai_complete.ai_core.enums import (
     TASK_TRANSITIONS,
     AuditResult,
     ExceptionSeverity,
     ExceptionStatus,
+    MemoryImpact,
     MemoryType,
     RiskLevel,
     TaskPriority,
     TaskStatus,
 )
+from buzzard_ai_complete.ai_core.kurmay.service import KurmayService
+from buzzard_ai_complete.ai_core.models.approval_record import ApprovalRecord
 from buzzard_ai_complete.ai_core.models.task import Task, TaskDependency, TaskTransition
+from buzzard_ai_complete.ai_core.security.policies import PolicyEngine
+from buzzard_ai_complete.ai_core.security.service import SecurityService
 from buzzard_ai_complete.ai_core.services.audit_service import AuditService
 from buzzard_ai_complete.ai_core.services.exception_service import ExceptionService
 from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
+from buzzard_ai_complete.ai_core.taxonomy.legacy_bridge import resolve_legacy_category_id
+from buzzard_ai_complete.ai_core.taxonomy.registry import TaxonomyRegistry
 from buzzard_ai_complete.ai_core.workers.base import WorkerExecutionError, WorkerTimeoutError
 from buzzard_ai_complete.ai_core.workers.executor import WorkerExecutor
+from buzzard_ai_complete.ai_core.workers.registry import get_registry
 
 WORKER_ROUTING: dict[str, str] = {
     "category_scan": "category-worker",
@@ -35,7 +42,28 @@ WORKER_ROUTING: dict[str, str] = {
     "customer_service": "customer-service-ai",
     "customs_classify": "customs-classifier",
     "system_health": "aslan-bey-orchestrator",
+    "kurmay_synthesis": "kurmay",
+    "security_scan": "security-ai",
+    "security_inspect": "security-ai",
+    "exception_route": "exception-coordinator",
 }
+
+
+def resolve_worker_id(task_type: str, payload: dict[str, Any] | None, worker_id: str | None = None) -> str:
+    if worker_id:
+        return worker_id
+    if task_type == "category_scan":
+        category_id = (payload or {}).get("category_id")
+        if category_id:
+            resolved = str(category_id)
+            if not resolved.startswith("bz."):
+                legacy = resolve_legacy_category_id(resolved)
+                if legacy:
+                    resolved = legacy
+            registry = TaxonomyRegistry()
+            if registry.get_node(resolved):
+                return f"category-{resolved}"
+    return WORKER_ROUTING.get(task_type, "central-orchestrator")
 
 
 class UnifiedOrchestrator:
@@ -46,13 +74,19 @@ class UnifiedOrchestrator:
     memory: CentralMemoryService,
     exceptions: ExceptionService,
     request_id: str = "system",
+    security: SecurityService | None = None,
+    policy: PolicyEngine | None = None,
+    taxonomy: TaxonomyRegistry | None = None,
   ):
     self.session = session
     self.audit = audit
     self.memory = memory
     self.exceptions = exceptions
     self.request_id = request_id
-    self.security = EsatBey()
+    self.security = security or SecurityService()
+    self.policy = policy or PolicyEngine()
+    self.taxonomy = taxonomy or TaxonomyRegistry()
+    self.kurmay = KurmayService(session)
 
   def create_task(
     self,
@@ -89,12 +123,13 @@ class UnifiedOrchestrator:
         if dep.status != TaskStatus.SUCCESS.value:
           raise ValueError(f"dependency task not successful: {dep_id}")
 
+    resolved_worker = resolve_worker_id(type, payload, worker_id)
     task = Task(
       type=type,
       payload=payload or {},
       priority=priority_val,
       status=TaskStatus.QUEUED.value,
-      worker_id=worker_id or WORKER_ROUTING.get(type, "central-orchestrator"),
+      worker_id=resolved_worker,
       requires_approval=requires_approval,
       idempotency_key=idempotency_key,
       parent_id=parent_id,
@@ -184,23 +219,52 @@ class UnifiedOrchestrator:
       task.result = result
     return self._transition(task, TaskStatus(target), actor, note)
 
-  def approve(self, task_id: str, *, actor: str, note: str | None = None) -> Task:
+  def approve(
+    self,
+    task_id: str,
+    *,
+    actor: str,
+    actor_role: str | None = None,
+    note: str | None = None,
+  ) -> Task:
+    role = (actor_role or actor).strip().lower()
+    if not self.policy.can_approve(role):
+      raise ValueError(f"actor role {role!r} is not authorized to approve tasks")
     task = self.session.get(Task, task_id)
     if not task:
       raise KeyError(f"task not found: {task_id}")
     if task.status != TaskStatus.REVIEW.value:
       raise ValueError("only REVIEW tasks can be approved")
+    self.session.add(
+      ApprovalRecord(
+        task_id=task.id,
+        actor=actor,
+        actor_role=role,
+        decision="APPROVED",
+        note=note,
+      )
+    )
     task.approved_by = actor
     task.approved_at = datetime.now(timezone.utc)
     self._transition(task, TaskStatus.APPROVED, actor, note or "human approval")
     return self.advance(task.id, actor=actor)
 
-  def reject(self, task_id: str, *, actor: str, note: str | None = None) -> Task:
+  def reject(self, task_id: str, *, actor: str, actor_role: str | None = None, note: str | None = None) -> Task:
+    role = (actor_role or actor).strip().lower()
     task = self.session.get(Task, task_id)
     if not task:
       raise KeyError(f"task not found: {task_id}")
     if task.status != TaskStatus.REVIEW.value:
       raise ValueError("only REVIEW tasks can be rejected")
+    self.session.add(
+      ApprovalRecord(
+        task_id=task.id,
+        actor=actor,
+        actor_role=role,
+        decision="REJECTED",
+        note=note,
+      )
+    )
     return self._fail_task(task, actor, note or "rejected in review")
 
   def cancel(self, task_id: str, *, actor: str, note: str | None = None) -> Task:
@@ -270,9 +334,7 @@ class UnifiedOrchestrator:
       )
       return self._transition(task, TaskStatus.BLOCKED, actor, "worker halted")
 
-    security = self.security.inspect(
-      SecurityEvent("task_execution", "LOW", {"task_id": task.id, "type": task.type})
-    )
+    security = self.security.inspect_task(task.id, task.type, worker_id)
     if not security.get("allowed"):
       self.exceptions.create(
         severity=ExceptionSeverity.HIGH,
@@ -301,7 +363,7 @@ class UnifiedOrchestrator:
 
   def _complete_running(self, task: Task, actor: str) -> Task:
     task.started_at = task.started_at or datetime.now(timezone.utc)
-    executor = WorkerExecutor(self.session, self.audit, self.request_id)
+    executor = WorkerExecutor(self.session, self.audit, self.request_id, registry=get_registry())
     try:
       worker_result = executor.execute(task)
     except WorkerTimeoutError as exc:
@@ -328,13 +390,76 @@ class UnifiedOrchestrator:
       created_by=actor,
       namespace="tasks",
       key=task.id,
-      confidence=0.95,
+      confidence=worker_result.confidence or 0.95,
       related_task=task.id,
     )
+
+    kurmay_memory_batch: list[dict[str, Any]] = []
+    for entry in worker_result.memory_entries:
+      mem = self.memory.write(
+        source=task.worker_id or "orchestrator",
+        entity=entry.get("entity", task.id),
+        category=entry.get("category", "worker"),
+        type=entry.get("type", MemoryType.SIGNAL.value),
+        content=entry.get("content", {}),
+        created_by=actor,
+        namespace=entry.get("namespace", "workers"),
+        key=entry.get("key", f"{task.id}/{len(kurmay_memory_batch)}"),
+        confidence=float(entry.get("confidence", 0.5)),
+        impact=entry.get("impact", MemoryImpact.LOW.value),
+        related_task=task.id,
+      )
+      kurmay_memory_batch.append(
+        {
+          "namespace": mem.namespace,
+          "key": mem.key,
+          "type": mem.type,
+          "impact": mem.impact,
+          "confidence": mem.confidence,
+          "content": mem.content,
+        }
+      )
+
+    for exc_payload in worker_result.exceptions:
+      severity = exc_payload.get("severity", ExceptionSeverity.MEDIUM.value)
+      self.exceptions.create(
+        severity=severity,
+        type=str(exc_payload.get("type", "WORKER_EXCEPTION")),
+        message=str(exc_payload.get("message", "worker reported exception")),
+        worker_id=task.worker_id,
+        task_id=task.id,
+        actor=actor,
+        extra_metadata=exc_payload.get("metadata"),
+      )
+
+    risk = worker_result.risk_level or RiskLevel.LOW.value
+    if self.policy.requires_review_for_risk(risk):
+      return self._transition(task, TaskStatus.REVIEW, actor, f"risk level {risk} requires review")
+
+    if self._should_trigger_kurmay(kurmay_memory_batch):
+      self.create_task(
+        type="kurmay_synthesis",
+        payload={
+          "memory_entries": kurmay_memory_batch,
+          "parent_task_id": task.id,
+        },
+        parent_id=task.id,
+        created_by="kurmay-trigger",
+        auto_start=True,
+      )
+
     if task.requires_approval or task.priority == TaskPriority.CRITICAL.value:
       return self._transition(task, TaskStatus.REVIEW, actor, "approval required")
     self._transition(task, TaskStatus.EXECUTED, actor, "worker executed")
     return task
+
+  def _should_trigger_kurmay(self, memory_entries: list[dict[str, Any]]) -> bool:
+    thresholds = {
+      MemoryImpact.MEDIUM.value,
+      MemoryImpact.HIGH.value,
+      MemoryImpact.CRITICAL.value,
+    }
+    return any(entry.get("impact") in thresholds for entry in memory_entries)
 
   def _handle_worker_failure(
     self,

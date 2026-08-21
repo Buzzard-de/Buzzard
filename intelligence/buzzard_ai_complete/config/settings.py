@@ -21,3 +21,17 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 LLM_MODEL = os.getenv("LLM_MODEL", "")
 SEARCH_ENDPOINT = os.getenv("SEARCH_ENDPOINT", "")
 SEARCH_API_KEY = os.getenv("SEARCH_API_KEY", "")
+
+# Phase 2 AI Core
+BUZZARD_AI_CORE_V2 = os.getenv("BUZZARD_AI_CORE_V2", "false").lower() in {"1", "true", "yes", "on"}
+_DEFAULT_TAXONOMY = ROOT / "master_taxonomy_48_maximal" / "data" / "taxonomy.json"
+BUZZARD_MASTER_TAXONOMY_PATH = Path(
+    os.getenv("BUZZARD_MASTER_TAXONOMY_PATH", str(_DEFAULT_TAXONOMY))
+)
+APPROVER_ROLES = frozenset(
+    r.strip().lower()
+    for r in os.getenv("BUZZARD_APPROVER_ROLES", "admin,operator,approver").split(",")
+    if r.strip()
+)
+RATE_LIMIT_PER_MINUTE = int(os.getenv("BUZZARD_RATE_LIMIT_PER_MINUTE", "60"))
+BUZZARD_WORKER_POLL_INTERVAL_SECONDS = int(os.getenv("BUZZARD_WORKER_POLL_INTERVAL_SECONDS", "30"))

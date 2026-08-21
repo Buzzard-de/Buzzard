@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
 
 from buzzard_ai_complete.ai_core.enums import MemoryImpact, MemoryType
@@ -137,16 +137,14 @@ class CentralMemoryService:
       .one_or_none()
     )
 
-  def search(
+  def _search_query(
     self,
     *,
     q: str | None = None,
     type: str | None = None,
     category: str | None = None,
     impact: str | None = None,
-    limit: int = 50,
-    offset: int = 0,
-  ) -> list[MemoryEntry]:
+  ):
     query = self.session.query(MemoryEntry).filter(MemoryEntry.valid_to.is_(None))
     if type:
       query = query.filter(MemoryEntry.type == type)
@@ -164,7 +162,40 @@ class CentralMemoryService:
           MemoryEntry.source.ilike(like),
         )
       )
-    return query.order_by(MemoryEntry.updated_at.desc()).offset(offset).limit(limit).all()
+    return query
+
+  def search(
+    self,
+    *,
+    q: str | None = None,
+    type: str | None = None,
+    category: str | None = None,
+    impact: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+  ) -> list[MemoryEntry]:
+    return (
+      self._search_query(q=q, type=type, category=category, impact=impact)
+      .order_by(MemoryEntry.updated_at.desc())
+      .offset(offset)
+      .limit(limit)
+      .all()
+    )
+
+  def count_search(
+    self,
+    *,
+    q: str | None = None,
+    type: str | None = None,
+    category: str | None = None,
+    impact: str | None = None,
+  ) -> int:
+    return int(
+      self._search_query(q=q, type=type, category=category, impact=impact)
+      .with_entities(func.count(MemoryEntry.id))
+      .scalar()
+      or 0
+    )
 
   def history(self, memory_id: str) -> list[MemoryHistory]:
     return (

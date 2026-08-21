@@ -7,6 +7,7 @@ from fastapi import Depends, Header, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from buzzard_ai_complete.ai_core.database.base import get_session_factory, init_ai_core_db
+from buzzard_ai_complete.ai_core.schemas.api import TaskCreateRequest
 from buzzard_ai_complete.ai_core.services.audit_service import AuditService
 from buzzard_ai_complete.ai_core.services.exception_service import ExceptionService
 from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
@@ -69,6 +70,23 @@ def authorize(
   if not token or token != settings.API_TOKEN:
     raise HTTPException(status_code=401, detail={"code": "UNAUTHORIZED", "message": "Unauthorized"})
   return "api-user"
+
+
+def get_idempotency_key(
+  body: TaskCreateRequest,
+  idempotency_key_header: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+) -> str | None:
+  header_key = idempotency_key_header.strip() if idempotency_key_header else None
+  body_key = body.idempotency_key.strip() if body.idempotency_key else None
+  if header_key and body_key and header_key != body_key:
+    raise HTTPException(
+      status_code=400,
+      detail={
+        "code": "VALIDATION_ERROR",
+        "message": "Idempotency-Key header conflicts with body idempotency_key",
+      },
+    )
+  return header_key or body_key
 
 
 def get_actor(auth_actor: Annotated[str, Depends(authorize)]) -> str:

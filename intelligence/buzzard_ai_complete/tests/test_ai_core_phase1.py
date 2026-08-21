@@ -1,33 +1,10 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from buzzard_ai_complete.ai_core.database.base import get_session_factory, init_ai_core_db
 from buzzard_ai_complete.ai_core.enums import ExceptionSeverity, ExceptionStatus, MemoryType, TaskStatus
-from buzzard_ai_complete.ai_core.services.audit_service import AuditService
-from buzzard_ai_complete.ai_core.services.exception_service import ExceptionService
-from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
-from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrator
 from buzzard_ai_complete.api.app import app
 
 AUTH = {"Authorization": "Bearer test-token-phase1"}
-
-
-@pytest.fixture
-def session():
-    init_ai_core_db()
-    db = get_session_factory()()
-    yield db
-    db.rollback()
-    db.close()
-
-
-@pytest.fixture
-def services(session):
-    audit = AuditService(session)
-    memory = CentralMemoryService(session, audit, "test-req")
-    exceptions = ExceptionService(session, audit, "test-req")
-    orchestrator = UnifiedOrchestrator(session, audit, memory, exceptions, "test-req")
-    return {"audit": audit, "memory": memory, "exceptions": exceptions, "orchestrator": orchestrator}
 
 
 def test_task_lifecycle_success(services):

@@ -59,10 +59,12 @@ def test_alembic_upgrade_head_postgres(postgres_database_url, monkeypatch):
         assert expected.issubset(tables)
 
         task_indexes = {idx["name"] for idx in inspector.get_indexes("ai_core_tasks")}
+        memory_indexes = {idx["name"] for idx in inspector.get_indexes("ai_core_memory")}
         assert "ix_ai_core_tasks_status" in task_indexes
         assert "ix_ai_core_worker_state_status" in {
             idx["name"] for idx in inspector.get_indexes("ai_core_worker_state")
         }
+        assert "uq_ai_core_memory_active_ns_key" in memory_indexes
     finally:
         engine.dispose()
         dispose_engine()

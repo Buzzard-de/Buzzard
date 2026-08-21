@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from typing import TypeVar
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from buzzard_ai_complete.ai_core.api.deps import (
   authorize,
   get_actor,
   get_audit_service,
   get_exception_service,
+  get_idempotency_key,
   get_memory_service,
   get_orchestrator,
   get_request_id,
@@ -31,18 +34,17 @@ from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrato
 
 router = APIRouter(prefix="/api/v1", tags=["ai-core-v1"])
 
+T = TypeVar("T")
 
-def _paginate(items: list, page: int, page_size: int) -> PaginatedResponse:
-  total = len(items)
-  start = (page - 1) * page_size
-  end = start + page_size
-  chunk = items[start:end]
+
+def _build_paginated(items: list[T], total: int, page: int, page_size: int) -> PaginatedResponse[T]:
+  offset = (page - 1) * page_size
   return PaginatedResponse(
-    items=chunk,
+    items=items,
     total=total,
     page=page,
     page_size=page_size,
-    has_more=end < total,
+    has_more=offset + len(items) < total,
   )
 
 
@@ -52,7 +54,7 @@ def create_task(
   orchestrator: UnifiedOrchestrator = Depends(get_orchestrator),
   actor: str = Depends(get_actor),
   request_id: str = Depends(get_request_id),
-  response: Response = None,
+  idempotency_key: str | None = Depends(get_idempotency_key),
 ):
   try:
     task = orchestrator.create_task(
@@ -62,7 +64,7 @@ def create_task(
       created_by=actor,
       requires_approval=body.requires_approval,
       worker_id=body.worker_id,
-      idempotency_key=body.idempotency_key,
+      idempotency_key=idempotency_key,
       parent_id=body.parent_id,
       dependency_ids=body.dependency_ids,
       max_attempts=body.max_attempts,
@@ -71,8 +73,6 @@ def create_task(
     )
   except ValueError as exc:
     raise HTTPException(status_code=400, detail={"code": "VALIDATION_ERROR", "message": str(exc), "request_id": request_id})
-  if response is not None:
-    response.headers["X-Request-Id"] = request_id
   return task
 
 
@@ -84,14 +84,10 @@ def list_tasks(
   page_size: int = Query(default=50, ge=1, le=200),
   orchestrator: UnifiedOrchestrator = Depends(get_orchestrator),
 ):
-  items = orchestrator.list_tasks(status=status, type=type, limit=page_size, offset=(page - 1) * page_size)
-  return PaginatedResponse(
-    items=items,
-    total=len(items),
-    page=page,
-    page_size=page_size,
-    has_more=len(items) == page_size,
-  )
+  offset = (page - 1) * page_size
+  items = orchestrator.list_tasks(status=status, type=type, limit=page_size, offset=offset)
+  total = orchestrator.count_tasks(status=status, type=type)
+  return _build_paginated(items, total, page, page_size)
 
 
 @router.get("/tasks/{task_id}", response_model=TaskResponse, dependencies=[Depends(authorize)])
@@ -168,8 +164,10 @@ def search_memory(
   page_size: int = Query(default=50, ge=1, le=200),
   memory: CentralMemoryService = Depends(get_memory_service),
 ):
-  items = memory.search(q=q, type=type, category=category, impact=impact, limit=page_size, offset=(page - 1) * page_size)
-  return PaginatedResponse(items=items, total=len(items), page=page, page_size=page_size, has_more=len(items) == page_size)
+  offset = (page - 1) * page_size
+  items = memory.search(q=q, type=type, category=category, impact=impact, limit=page_size, offset=offset)
+  total = memory.count_search(q=q, type=type, category=category, impact=impact)
+  return _build_paginated(items, total, page, page_size)
 
 
 @router.get("/memory/{memory_id}", response_model=MemoryResponse, dependencies=[Depends(authorize)])
@@ -207,8 +205,10 @@ def list_exceptions(
   page_size: int = Query(default=50, ge=1, le=200),
   exceptions: ExceptionService = Depends(get_exception_service),
 ):
-  items = exceptions.list_records(status=status, severity=severity, limit=page_size, offset=(page - 1) * page_size)
-  return PaginatedResponse(items=items, total=len(items), page=page, page_size=page_size, has_more=len(items) == page_size)
+  offset = (page - 1) * page_size
+  items = exceptions.list_records(status=status, severity=severity, limit=page_size, offset=offset)
+  total = exceptions.count_records(status=status, severity=severity)
+  return _build_paginated(items, total, page, page_size)
 
 
 @router.get("/exceptions/{exception_id}", response_model=ExceptionResponse, dependencies=[Depends(authorize)])
@@ -259,8 +259,10 @@ def list_audit(
   page_size: int = Query(default=100, ge=1, le=500),
   audit: AuditService = Depends(get_audit_service),
 ):
-  items = audit.list_entries(actor=actor, action=action, entity_type=entity_type, limit=page_size, offset=(page - 1) * page_size)
-  return PaginatedResponse(items=items, total=len(items), page=page, page_size=page_size, has_more=len(items) == page_size)
+  offset = (page - 1) * page_size
+  items = audit.list_entries(actor=actor, action=action, entity_type=entity_type, limit=page_size, offset=offset)
+  total = audit.count_entries(actor=actor, action=action, entity_type=entity_type)
+  return _build_paginated(items, total, page, page_size)
 
 
 @router.get("/audit/{audit_id}", response_model=AuditResponse, dependencies=[Depends(authorize)])
@@ -274,14 +276,14 @@ def get_audit(audit_id: str, audit: AuditService = Depends(get_audit_service), r
 @router.get("/health")
 def ai_core_health():
   from buzzard_ai_complete.ai_core.database.base import get_engine
-  from buzzard_ai_complete.config.settings import APP_VERSION, DATABASE_URL
+  from buzzard_ai_complete.config import settings
 
   engine = get_engine()
   with engine.connect() as conn:
     conn.exec_driver_sql("SELECT 1")
   return {
     "status": "ok",
-    "version": APP_VERSION,
+    "version": settings.APP_VERSION,
     "database": "connected",
-    "database_url_scheme": DATABASE_URL.split(":", 1)[0],
+    "database_url_scheme": settings.DATABASE_URL.split(":", 1)[0],
   }

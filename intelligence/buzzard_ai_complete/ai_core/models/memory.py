@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import DateTime, Float, ForeignKey, Index, Integer, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 
@@ -22,6 +22,16 @@ def new_uuid() -> str:
 
 class MemoryEntry(Base):
     __tablename__ = "ai_core_memory"
+    __table_args__ = (
+        Index(
+            "uq_ai_core_memory_active_ns_key",
+            "namespace",
+            "key",
+            unique=True,
+            sqlite_where=text("valid_to IS NULL"),
+            postgresql_where=text("valid_to IS NULL"),
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
     source: Mapped[str] = mapped_column(String(255), nullable=False, index=True)

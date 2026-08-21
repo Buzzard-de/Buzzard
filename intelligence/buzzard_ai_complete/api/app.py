@@ -98,6 +98,9 @@ if FastAPI:
         yield
 
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION, lifespan=lifespan)
+    from buzzard_ai_complete.ai_core.api.middleware import RequestIdMiddleware
+
+    app.add_middleware(RequestIdMiddleware)
     service = BuzzardService()
     if commerce_router is not None:
         app.include_router(commerce_router)

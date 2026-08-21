@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from buzzard_ai_complete.ai_core.enums import AuditResult, RiskLevel
@@ -64,6 +65,25 @@ class AuditService:
     if task_id:
       query = query.filter(AuditLog.task_id == task_id)
     return query.offset(offset).limit(limit).all()
+
+  def count_entries(
+    self,
+    *,
+    actor: str | None = None,
+    action: str | None = None,
+    entity_type: str | None = None,
+    task_id: str | None = None,
+  ) -> int:
+    query = self.session.query(func.count(AuditLog.id))
+    if actor:
+      query = query.filter(AuditLog.actor == actor)
+    if action:
+      query = query.filter(AuditLog.action == action)
+    if entity_type:
+      query = query.filter(AuditLog.entity_type == entity_type)
+    if task_id:
+      query = query.filter(AuditLog.task_id == task_id)
+    return int(query.scalar() or 0)
 
   def get(self, audit_id: str) -> AuditLog | None:
     return self.session.get(AuditLog, audit_id)

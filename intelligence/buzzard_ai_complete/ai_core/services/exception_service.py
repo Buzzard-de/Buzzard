@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from buzzard_ai_complete.ai_core.enums import (
@@ -141,6 +142,22 @@ class ExceptionService:
     if task_id:
       query = query.filter(ExceptionRecord.task_id == task_id)
     return query.offset(offset).limit(limit).all()
+
+  def count_records(
+    self,
+    *,
+    status: str | None = None,
+    severity: str | None = None,
+    task_id: str | None = None,
+  ) -> int:
+    query = self.session.query(func.count(ExceptionRecord.id))
+    if status:
+      query = query.filter(ExceptionRecord.status == status)
+    if severity:
+      query = query.filter(ExceptionRecord.severity == severity)
+    if task_id:
+      query = query.filter(ExceptionRecord.task_id == task_id)
+    return int(query.scalar() or 0)
 
   def is_worker_halted(self, worker_id: str) -> bool:
     return self.worker_state.is_halted(worker_id)

@@ -56,8 +56,8 @@ Phase 1 delivers a **functional foundation** for the Buzzard AI Core platform: S
 | 12 | Error handling | Router + deps exception handlers | **PARTIAL** |
 | 13 | Transactions | `database/base.py` (`session_scope`), `api/deps.py` (`get_db`) | **READY** |
 | 14 | Idempotency | Task `idempotency_key` field + unique DB constraint | **PARTIAL** |
-| 15 | Retry handling | `RETRY` state in enum + `advance()` branch | **PARTIAL** |
-| 16 | Tests | `tests/test_ai_core_phase1.py` (13 tests), `tests/conftest.py` | **PARTIAL** |
+| 15 | Retry handling | worker failure → RETRY → SUCCESS/FAILED | **READY** |
+| 16 | Tests | 335 total; PostgreSQL + E2E + Phase 1 | **READY** |
 | 17 | Existing-system compatibility | `api/app.py` mount, 322 legacy tests pass | **READY** |
 | 18 | Security | Esat Bey gate in orchestrator, token auth | **PARTIAL** |
 | 19 | Git diff | 33 files, +5,530 lines vs `main` | **READY** (documented) |

@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from buzzard_ai_complete.agents.esat_bey.agent import EsatBey, SecurityEvent
@@ -101,7 +103,17 @@ class UnifiedOrchestrator:
       created_by=created_by,
     )
     self.session.add(task)
-    self.session.flush()
+    try:
+      self.session.flush()
+    except IntegrityError:
+      self.session.rollback()
+      if idempotency_key:
+        existing = (
+          self.session.query(Task).filter(Task.idempotency_key == idempotency_key).one_or_none()
+        )
+        if existing:
+          return existing
+      raise
     self._record_transition(task, None, TaskStatus.QUEUED, created_by, "task created")
 
     if dependency_ids:
@@ -216,6 +228,14 @@ class UnifiedOrchestrator:
     if type:
       query = query.filter(Task.type == type)
     return query.offset(offset).limit(limit).all()
+
+  def count_tasks(self, *, status: str | None = None, type: str | None = None) -> int:
+    query = self.session.query(func.count(Task.id))
+    if status:
+      query = query.filter(Task.status == status)
+    if type:
+      query = query.filter(Task.type == type)
+    return int(query.scalar() or 0)
 
   def run_cycle(self, *, actor: str = "orchestrator") -> Task | None:
     task = (

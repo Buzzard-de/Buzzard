@@ -144,19 +144,24 @@ Kurmay itself requires no approval. Each `KurmayRecommendation` with `requires_a
 
 ## 3. Category Intelligence AI Workers
 
-**Worker IDs:** `category-bz.01` … `category-bz.48`, `category-kfz`  
+**Worker IDs:** `category-{taxonomy_node_id}` — one per main category node from `TaxonomyRegistry` (dynamic count)  
 **Category:** `category_intelligence`  
-**Task Types:** `category_scan`, `category_analyze`, `taxonomy_gap_report`
+**Task Types:** `category_scan`, `category_analyze`, `taxonomy_gap_report`  
+**Full architecture:** `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md`
+
+> **Do not hard-code category counts.** Worker count = `TaxonomyRegistry.list_main_categories().length` at runtime.  
+> **Authoritative tree:** `master_taxonomy_48_maximal/data/taxonomy.json` (schema `buzzard.master-taxonomy.v2`).  
+> **KFZ/TecDoc:** capability extension on `bz.01` (Automotive & Kfz), not a separate main-category worker.
 
 ### Responsibility
 
-Per-category market intelligence: assortment analysis, competitor price signals, taxonomy gap detection, opportunity scoring, and evidence collection. One worker per L1 taxonomy node from `master_taxonomy_48_maximal`. KFZ specialist adds automotive compatibility analysis via TecDoc adapter interface.
+Per-category market intelligence: assortment analysis, competitor price signals, taxonomy gap detection, opportunity scoring, and evidence collection. One worker per main category node returned by `TaxonomyRegistry.list_main_categories()`. Capability extensions (e.g. TecDoc on `bz.01`) are configured per `taxonomy_node_id`, not as separate workers.
 
 ### Input Schema
 
 ```python
 class CategoryScanInput(BaseModel):
-    category_id: str                                # bz.01 – bz.48 or "kfz"
+    category_id: str                                # authoritative taxonomy node id, e.g. "bz.01"
     analysis_types: list[Literal[
         "assortment_scan", "competitor_price", "competitor_product",
         "trend_analysis", "supplier_opportunity", "stock_price_signal",
@@ -200,7 +205,9 @@ class CategoryScanOutput(BaseModel):
 
 `assortment_scan`, `competitor_price`, `competitor_product`, `trend_analysis`, `supplier_opportunity`, `stock_price_signal`, `subcategory_gap`, `quality_issue_detection`, `taxonomy_map`
 
-**KFZ specialist additional:** `vehicle_compatibility_check`, `tecdoc_lookup` (interface only)
+**Capability extensions** (per `taxonomy_node_id` via `capability_extensions.json`):
+
+`vehicle_compatibility_check`, `tecdoc_lookup` — enabled on nodes that declare them (e.g. `bz.01`); `EXTERNAL_INTEGRATION_PENDING` until `TECDOC_API_KEY` set
 
 ### Permissions
 
@@ -1153,8 +1160,7 @@ Resolution of CRITICAL exceptions requires operator with `exceptions:resolve` + 
 | Worker ID | Task Types | Risk | Auto-execute |
 |-----------|-----------|------|--------------|
 | `kurmay-synthesis` | `kurmay_synthesis`, `kurmay_digest` | LOW | Yes |
-| `category-bz.{nn}` | `category_scan`, `category_analyze` | LOW | Yes |
-| `category-kfz` | `category_scan`, `category_analyze` | LOW | Yes |
+| `category-{taxonomy_node_id}` | `category_scan`, `category_analyze` | LOW | Yes |
 | `supplier-hub` | `supplier_sync`, `supplier_validate` | MEDIUM | Yes (bulk → REVIEW) |
 | `product-intelligence` | `product_enrich`, `product_classify` | MEDIUM | Yes (L1 change → REVIEW) |
 | `price-engine` | `price_recheck`, `price_calculate` | MEDIUM | Yes (publish → REVIEW) |

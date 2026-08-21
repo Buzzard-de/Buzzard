@@ -74,7 +74,7 @@ Phase 2 connects the **real Buzzard AI worker ecosystem** to the Phase 1 foundat
 | # | Family | Worker ID(s) | Count | Phase 1 State |
 |---|--------|--------------|-------|---------------|
 | 1 | **Kurmay AI** | `kurmay-synthesis` | 1 | Not built |
-| 2 | **Category Intelligence** | `category-{bz-id}` | 48 L1 + 1 KFZ specialist | Stub + legacy agents exist |
+| 2 | **Category Intelligence** | `category-{taxonomy_node_id}` | **Dynamic** — one per master L1 node | Stub + legacy agents exist |
 | 3 | **Supplier Intelligence** | `supplier-hub` | 1 | Routed, not implemented |
 | 4 | **Product AI** | `product-intelligence` | 1 | Routed, not implemented |
 | 5 | **Pricing AI** | `price-engine` | 1 | Deterministic stub |
@@ -85,22 +85,28 @@ Phase 2 connects the **real Buzzard AI worker ecosystem** to the Phase 1 foundat
 | 10 | **Security AI** | `esat-bey-security` | 1 (gate, not task worker) | Partial — legacy SQLite |
 | 11 | **Exception Coordination** | `exception-coordinator` | 1 | Phase 1 service exists |
 
-**Total registered workers at Phase 2 launch:** ~58 (49 category + 9 domain/system)
+**Total registered workers at Phase 2 launch:** `TaxonomyRegistry.list_main_categories().length` + domain/system workers (count computed at runtime — never hard-coded). See `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md`.
 
 ---
 
 ## 5. Canonical Taxonomy Decision
 
-Phase 2 adopts a single canonical taxonomy source:
+Phase 2 uses a **dynamic, taxonomy-driven** Category Intelligence model. The worker count is never hard-coded.
 
-| Source | Path | Role |
-|--------|------|------|
-| **Canonical tree** | `master_taxonomy_48_maximal/data/taxonomy.json` | 48 L1 roots, 7,255 nodes (L1–L4) |
-| **Node IDs** | `bz.{nn}` format (e.g. `bz.01` = Automotive & Kfz) | Worker routing key |
-| **KFZ specialist** | `category-kfz` on `bz.01` subtree | TecDoc-ready deep analysis |
-| **Legacy bridge** | `category_intelligence_43_maximal/` | Wrapped, not replaced in Phase 2 |
+**Authoritative source:** `intelligence/buzzard_ai_complete/master_taxonomy_48_maximal/data/taxonomy.json` (schema `buzzard.master-taxonomy.v2`)
 
-Category workers map 1:1 to L1 taxonomy nodes. The KFZ specialist is an additional worker scoped to `bz.01` automotive subtree with extended capabilities (compatibility, TecDoc adapter interface).
+**Full specification:** `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md`
+
+| Aspect | Rule |
+|--------|------|
+| Worker count | `TaxonomyRegistry.list_main_categories().length` at runtime |
+| Worker ID | `category-{taxonomy_node_id}` (e.g. `category-bz.01`) |
+| Node IDs | `bz.{nn}` from authoritative tree |
+| KFZ / TecDoc | Capability extension on `bz.01` (Automotive & Kfz) — not a separate main-category worker |
+| Legacy bridge | `category_intelligence_43_maximal/` wrapped via `CategoryIntelligenceBridge` |
+| Discrepancies | 43/47/48/53/55 counts documented in category architecture — do not guess |
+
+Category workers map 1:1 to every L1 node in the authoritative master tree. New L1 categories require no architectural changes — only a taxonomy file update and worker re-provisioning.
 
 ---
 
@@ -214,7 +220,8 @@ Phase 1 workers remain compatible. Phase 2 workers add schema validation and met
 | Kurmay service | `ai_core/kurmay/service.py` | Synthesis engine |
 | Kurmay schemas | `ai_core/kurmay/schemas.py` | KurmayReport, Situation, Recommendation |
 | Kurmay worker | `ai_core/workers/kurmay/synthesis_worker.py` | Task worker wrapper |
-| Category workers | `ai_core/workers/category/` | 49 CategoryExpertWorker instances |
+| TaxonomyRegistry | `ai_core/taxonomy/registry.py` | Dynamic L1 discovery from master tree |
+| Category workers | `ai_core/workers/category/` | CategoryExpertWorker per L1 node (factory-generated) |
 | Category bridge | `ai_core/workers/category/bridge.py` | Wraps CategoryIntelligenceAgent |
 | Supplier worker | `ai_core/workers/supplier/hub_worker.py` | Feed ingest pipeline |
 | Supplier adapters | `ai_core/workers/supplier/adapters/` | Connector interfaces (no fake data) |
@@ -368,7 +375,7 @@ Structured JSON logging deferred to Phase 2b.
 Phase 2 is complete when:
 
 1. All 11 worker families registered in `WorkerRegistry`
-2. Category workers cover 48 L1 + KFZ specialist with real taxonomy bridge
+2. Category workers cover every authoritative master L1 node with real taxonomy bridge
 3. Kurmay synthesizes reports from memory without executing commercial actions
 4. EsatBey gate blocks unauthorized/high-risk actions
 5. Exception coordinator routes cross-domain exceptions
@@ -388,6 +395,7 @@ Phase 2 is complete when:
 | `PHASE2_DATA_FLOW.md` | End-to-end flows per domain |
 | `PHASE2_PERMISSION_MATRIX.md` | Permissions, autonomy, approval gates |
 | `PHASE2_IMPLEMENTATION_PLAN.md` | Ordered implementation steps |
+| `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md` | Dynamic category worker model, taxonomy authority, discrepancies |
 
 ---
 

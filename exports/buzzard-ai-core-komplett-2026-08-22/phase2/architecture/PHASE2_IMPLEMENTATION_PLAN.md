@@ -102,26 +102,29 @@
 
 ---
 
-### Step 4 — Category Intelligence Workers (Week 3–4)
+### Step 4 — Category Intelligence Workers (Dynamic)
 
-**Goal:** 48 L1 + KFZ specialist workers bridged to existing intelligence agents.
+**Goal:** One `CategoryExpertWorker` per authoritative master L1 node — count determined by `TaxonomyRegistry`, never hard-coded.
 
 | # | Task | Module | Type |
 |---|------|--------|------|
+| 4.0 | Create `TaxonomyRegistry` + `TaxonomyLoader` | `ai_core/taxonomy/` | NEW |
 | 4.1 | Create `CategoryExpertWorker` (BuzzardWorker) | `ai_core/workers/category/expert_worker.py` | NEW |
 | 4.2 | Create `CategoryIntelligenceBridge` | `ai_core/workers/category/bridge.py` | NEW |
-| 4.3 | Create `TaxonomyLoader` from `master_taxonomy_48_maximal` | `ai_core/workers/category/taxonomy_loader.py` | NEW |
+| 4.3 | Load tree from `BUZZARD_MASTER_TAXONOMY_PATH` | `ai_core/taxonomy/loader.py` | NEW |
 | 4.4 | Define input/output schemas | `ai_core/schemas/workers/category.py` | NEW |
-| 4.5 | Factory: generate 48 + KFZ worker instances | `ai_core/workers/category/factory.py` | NEW |
-| 4.6 | Register all category workers in registry | `ai_core/workers/registry.py` | EXTEND |
-| 4.7 | Update `WORKER_ROUTING` for `category_*` tasks | `ai_core/services/orchestrator.py` | EXTEND |
-| 4.8 | `POST /api/v1/categories/{bz_id}/scan` endpoint | `ai_core/api/v1/categories.py` | NEW |
-| 4.9 | Create `TecDocAdapter` interface (KFZ only) | `ai_core/integrations/tecdoc.py` | NEW |
-| 4.10 | Replace Phase 1 `CategoryScanWorker` stub | `ai_core/workers/deterministic.py` | EXTEND |
-| 4.11 | Tests: per-worker schema, bridge, taxonomy load, no fake data | `tests/test_ai_core_phase2_category.py` | NEW |
-| 4.12 | Tests: 48 workers registered, KFZ specialist, scan E2E | `tests/test_ai_core_phase2_category_e2e.py` | NEW |
+| 4.5 | `CategoryWorkerFactory` — generate workers from `list_main_categories()` | `ai_core/workers/category/factory.py` | NEW |
+| 4.6 | Register all category workers dynamically in registry | `ai_core/workers/registry.py` | EXTEND |
+| 4.7 | Dynamic `WORKER_ROUTING` for `category_*` tasks by `payload.category_id` | `ai_core/services/orchestrator.py` | EXTEND |
+| 4.8 | `GET/POST /api/v1/categories/*` endpoints | `ai_core/api/v1/categories.py` | NEW |
+| 4.9 | `capability_extensions.json` for per-node tools (e.g. TecDoc on bz.01) | `ai_core/workers/category/` | NEW |
+| 4.10 | Deprecate Phase 1 `category-worker` stub (alias during migration) | `ai_core/workers/deterministic.py` | EXTEND |
+| 4.11 | Tests: dynamic count, schema, bridge, namespace isolation, no hard-coded counts | `tests/test_ai_core_phase2_category.py` | NEW |
+| 4.12 | Tests: worker count == taxonomy L1 count E2E | `tests/test_ai_core_phase2_category_e2e.py` | NEW |
 
-**Exit criteria:** 49 category workers registered, real taxonomy bridge, scan produces findings or `NO_DATA_AVAILABLE`.
+**Exit criteria:** `len(workers) == len(TaxonomyRegistry.list_main_categories())`; scan produces findings or `NO_DATA_AVAILABLE`; no hard-coded category counts in source.
+
+**See:** `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md` for taxonomy authority and discrepancy report.
 
 ---
 
@@ -368,7 +371,7 @@
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Taxonomy 43 vs 48 mismatch | Category worker misrouting | Canonical decision: 48 L1 + KFZ; map 43 agents via ID bridge |
+| Taxonomy 43/48/53/55 mismatch | Category worker misrouting | Canonical: `master_taxonomy_48_maximal`; dynamic `TaxonomyRegistry`; see `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md` |
 | Legacy module API drift | Bridge breakage | Contract tests on bridge interfaces |
 | Commerce bridge unavailable | Workers can't read products/orders | `EXTERNAL_INTEGRATION_PENDING` — honest status |
 | LLM not configured | No AI-generated content | Deterministic fallback in every worker |
@@ -411,7 +414,7 @@
 | # | Criterion |
 |---|-----------|
 | 1 | All 11 worker families registered and testable |
-| 2 | 49 category workers with real taxonomy bridge |
+| 2 | Category workers cover every authoritative master L1 node with real taxonomy bridge |
 | 3 | Kurmay synthesizes and spawns recommendation tasks |
 | 4 | EsatBey gate enforces full policy matrix |
 | 5 | Exception coordinator routes all severity levels |
@@ -446,7 +449,7 @@ Step 0:  Foundation (BuzzardWorker, schemas, migrations, bridge scaffold)
 Step 1:  Security AI hardening (EsatBey → SecurityService)
 Step 2:  Exception coordination
 Step 3:  Agents API + background scheduler
-Step 4:  Category Intelligence (49 workers) ← largest step
+Step 4:  Category Intelligence (dynamic, taxonomy-driven) → Kurmay
 Step 5:  Kurmay AI (synthesis engine)
 Step 6:  Supplier Intelligence AI
 Step 7:  Product AI

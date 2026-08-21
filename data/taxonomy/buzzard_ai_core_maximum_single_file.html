@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUZZARD AI CORE — Maximum Single File</title>
+<style>
+:root{--bg:#070707;--panel:#101010;--panel2:#151515;--panel3:#1b1b1b;--gold:#d5ad45;--gold2:#f2cf75;--text:#f5f5f5;--muted:#929292;--line:#2a2a2a;--ok:#59d18b;--warn:#ffb35c;--bad:#ff6f6f;--blue:#75a9ff}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:50;background:rgba(7,7,7,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.top{max-width:1700px;margin:auto;padding:15px 18px 10px;display:flex;gap:18px;align-items:center}.brand{font-size:24px;font-weight:950;letter-spacing:.8px}.brand span{color:var(--gold)}.sub{font-size:11px;color:var(--muted);margin-top:3px}
+.actions{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap}.btn{background:#121212;color:#fff;border:1px solid #373737;border-radius:8px;padding:8px 11px}.btn:hover{border-color:var(--gold);color:var(--gold2)}
+nav{max-width:1700px;margin:auto;padding:0 18px;display:flex;overflow:auto;gap:1px}nav button{background:transparent;color:var(--muted);border:0;border-bottom:2px solid transparent;padding:10px 10px;white-space:nowrap}nav button.active,nav button:hover{color:var(--gold2);border-color:var(--gold)}
+main{max-width:1700px;margin:auto;padding:18px}.view{display:none}.view.active{display:block}
+h1{font-size:28px;margin:6px 0 5px}.lead{color:var(--muted);max-width:1200px;line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.kpi,.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:12px}.kpi{padding:14px}.kpi b{display:block;color:var(--gold2);font-size:24px}.kpi span{font-size:11px;color:var(--muted)}
+.panel{padding:14px;margin-top:11px}.panel h2{font-size:16px;margin:0 0 10px}.card{padding:13px}.card h3{margin:0 0 6px;font-size:14px}.card p{margin:0;color:var(--muted);font-size:11px;line-height:1.45}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.search{flex:1;min-width:220px}
+input,select,textarea{background:#0d0d0d;color:#fff;border:1px solid #333;border-radius:8px;padding:9px 10px;outline:0}input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:9px}table{border-collapse:collapse;width:100%;min-width:850px}th,td{padding:8px 9px;border-bottom:1px solid var(--line);font-size:11px;text-align:left}th{background:#161616;color:var(--gold2);position:sticky;top:0}tr:hover td{background:#151515}
+.badge{display:inline-block;padding:3px 7px;border:1px solid #333;border-radius:999px;font-size:9px}.ok{color:var(--ok);border-color:#285d40;background:#0d1b13}.warn{color:var(--warn);border-color:#684c29;background:#1c1309}.bad{color:var(--bad);border-color:#633333;background:#1b0e0e}.blue{color:var(--blue);border-color:#29476f;background:#0d1520}.gold{color:var(--gold2);border-color:#5b4920;background:#1a1509}
+.flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.muted{color:var(--muted)}.right{margin-left:auto}.bar{height:7px;background:#222;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold)}
+.pipeline{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.step{background:var(--panel2);border:1px solid var(--line);padding:10px;border-radius:9px;text-align:center;font-size:10px}.step b{display:block;color:var(--gold);font-size:15px;margin-bottom:4px}
+.tree .cat{background:var(--panel);border:1px solid var(--line);border-radius:9px;margin:6px 0;overflow:hidden}.cathead{display:flex;gap:8px;align-items:center;padding:11px;cursor:pointer}.catnum{width:28px;color:var(--gold);font-weight:900}.catname{flex:1;font-weight:800}.catbody{display:none;border-top:1px solid var(--line);padding:8px}.cat.open .catbody{display:block}.subcat{background:var(--panel2);border:1px solid #292929;border-radius:7px;margin:5px 0;padding:8px}
+.log{background:#050505;border:1px solid var(--line);border-radius:8px;padding:10px;font:11px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;max-height:300px;overflow:auto}.log .t{color:var(--gold2)}.log .e{color:var(--bad)}
+.toast{position:fixed;right:18px;bottom:18px;background:#171717;border:1px solid var(--gold);border-radius:9px;padding:10px 13px;display:none;z-index:100}
+.footer{text-align:center;color:#666;font-size:10px;padding:35px 0}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}.pipeline{grid-template-columns:repeat(3,1fr)}.top{align-items:flex-start;flex-direction:column}.actions{margin-left:0}}
+@media(max-width:650px){.grid,.grid2,.grid3{grid-template-columns:1fr}.pipeline{grid-template-columns:1fr 1fr}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div><div class="brand"><span>BUZZARD</span> AI CORE</div><div class="sub">Maximum Single File • Zentrale KI • 55 Kategorie-KI • Commerce • Supply • Memory • Security • Exception</div></div>
+    <div class="actions">
+      <button class="btn" onclick="runCycle()">▶ AI Cycle</button>
+      <button class="btn" onclick="exportJSON()">JSON</button>
+      <button class="btn" onclick="exportBackup()">Backup</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+    </div>
+  </div>
+  <nav id="nav"></nav>
+</header>
+
+<main>
+<section id="dashboard" class="view active">
+<h1>Zentrales Buzzard AI Kontrollzentrum</h1>
+<p class="lead">Einheitliche Betriebsschicht. KI-Agenten führen Aufgaben über den zentralen Orchestrator aus; Erkenntnisse landen im Shared Memory; Security- und Exception-Layer kontrollieren Aktionen.</p>
+<div class="grid">
+  <div class="kpi"><b id="kAgents">0</b><span>KI-Agenten</span></div>
+  <div class="kpi"><b id="kJobs">0</b><span>Aufgaben</span></div>
+  <div class="kpi"><b id="kMem">0</b><span>Memory-Einträge</span></div>
+  <div class="kpi"><b id="kExc">0</b><span>Exception</span></div>
+</div>
+<div class="grid" style="margin-top:10px">
+  <div class="kpi"><b id="kProducts">0</b><span>Canonical-Produkte</span></div>
+  <div class="kpi"><b id="kSuppliers">0</b><span>Lieferanten</span></div>
+  <div class="kpi"><b id="kOrders">0</b><span>Bestellungen</span></div>
+  <div class="kpi"><b id="kAlerts">0</b><span>Alarme</span></div>
+</div>
+<div class="panel"><h2>End-to-End Core Flow</h2><div class="pipeline">
+<div class="step"><b>01</b>DISCOVER<br>Kaynaklar</div><div class="step"><b>02</b>INGEST<br>API / XML</div><div class="step"><b>03</b>RESOLVE<br>Kimlik</div><div class="step"><b>04</b>INTELLIGENCE<br>AI karar desteği</div><div class="step"><b>05</b>GUARD<br>Güvenlik / Exception</div><div class="step"><b>06</b>ACT<br>Onaylı aksiyon</div>
+</div></div>
+<div class="panel"><h2>Letzte Ereignisse</h2><div id="eventLog" class="log"></div></div>
+</section>
+
+<section id="orchestrator" class="view">
+<h1>1. Central AI Orchestrator</h1>
+<p class="lead">Bütün AI çalışanlarının görev aldığı merkezi görev motoru. Öncelik, izin, bağımlılık, retry, insan onayı ve sonuç kaydı aynı merkezden yönetilir.</p>
+<div class="grid3">
+<div class="card"><h3>Task Router</h3><p>Kategori, ürün, fiyat, stok, tedarik, sipariş ve müşteri görevlerini doğru çalışana yönlendirir.</p></div>
+<div class="card"><h3>Policy Gate</h3><p>Riskli ticari değişiklikleri otomatik aksiyondan önce güvenlik ve onay katmanına gönderir.</p></div>
+<div class="card"><h3>Worker Lifecycle</h3><p>queued → running → success/failed/retry/cancelled durumlarını izler.</p></div>
+</div>
+<div class="panel">
+<div class="toolbar"><select id="taskType"><option>category_scan</option><option>supplier_sync</option><option>price_recheck</option><option>stock_sync</option><option>product_enrich</option><option>order_check</option><option>customer_service</option><option>custom</option></select><input id="taskPayload" class="search" placeholder="Görev açıklaması"><button class="btn" onclick="createTask()">Görev oluştur</button></div>
+<div class="tablewrap"><table id="taskTable"></table></div></div>
+</section>
+
+<section id="categories" class="view">
+<h1>2. Category Intelligence AI — 43+ Uzman</h1>
+<p class="lead">Her ana kategori ayrı uzman worker olarak çalışır; merkezi Kurmay bulguları birleştirir. Liste genişletilebilir ve her uzman aynı görev/hafıza sözleşmesini kullanır.</p>
+<div class="toolbar"><input id="catSearch" class="search" placeholder="Kategori ara..." oninput="renderCategories()"></div>
+<div id="categoryTree" class="tree"></div>
+</section>
+
+<section id="customs" class="view">
+<h1>3. Customs AI</h1>
+<p class="lead">Gümrük karar desteği: ürün kimliği, menşe, HS/CN kodu, belge gereksinimi ve risk bayraklarını kayıt altına alır. Resmî beyan yerine karar destek katmanıdır.</p>
+<div class="grid3">
+<div class="card"><h3>Classification</h3><p>Ürün özelliklerinden HS/CN adayları üretir ve insan onayı kuyruğuna alır.</p></div>
+<div class="card"><h3>Origin</h3><p>Menşe kanıtı, tedarikçi verisi ve belge durumunu izler.</p></div>
+<div class="card"><h3>Compliance</h3><p>Ülke, ürün tipi ve belge risklerini exception motoruna aktarır.</p></div>
+</div>
+<div class="panel"><div class="toolbar"><input id="customsSku" placeholder="Product ID / SKU"><input id="customsHs" placeholder="HS/CN aday kodu"><button class="btn" onclick="addCustoms()">Kontrole gönder</button></div><div class="tablewrap"><table id="customsTable"></table></div></div>
+</section>
+
+<section id="suppliers" class="view">
+<h1>4. Supplier / API / XML Hub</h1>
+<p class="lead">Tedarikçi adaptörleri tek standart veri sözleşmesine normalize edilir. Gerçek API anahtarları ve endpoint'ler kullanıcı tarafından bağlandığında canlı çalışır; bu dosya kimlik bilgisi uydurmaz.</p>
+<div class="grid">
+<div class="kpi"><b>API</b><span>REST/JSON adapter</span></div><div class="kpi"><b>XML</b><span>Feed/parser adapter</span></div><div class="kpi"><b>CSV</b><span>Batch import</span></div><div class="kpi"><b>Webhook</b><span>Event adapter</span></div>
+</div>
+<div class="panel"><div class="toolbar"><input id="supName" placeholder="Tedarikçi adı"><select id="supType"><option>API</option><option>XML</option><option>CSV</option><option>MANUAL</option></select><input id="supEndpoint" class="search" placeholder="Endpoint / feed URL"><button class="btn" onclick="addSupplier()">Tedarikçi ekle</button></div><div class="tablewrap"><table id="supplierTable"></table></div></div>
+</section>
+
+<section id="pricing" class="view">
+<h1>5. Price + Stock Automation</h1>
+<p class="lead">Maliyet, kargo, marketplace ücretleri, hedef marj, rekabet fiyatı ve stok durumunu tek karar motorunda toplar. Otomatik fiyat değişikliği policy gate üzerinden geçer.</p>
+<div class="grid3">
+<div class="card"><h3>Price Engine</h3><p>Cost + variable cost + target contribution + competitive position.</p></div>
+<div class="card"><h3>Stock Engine</h3><p>Available/reserved/inbound, supplier stock ve feed freshness.</p></div>
+<div class="card"><h3>Guardrails</h3><p>Minimum margin, maximum price change ve stale-feed kontrolleri.</p></div>
+</div>
+<div class="panel"><div class="toolbar"><input id="pSku" placeholder="SKU"><input id="pCost" type="number" step=".01" placeholder="Alış €"><input id="pShip" type="number" step=".01" placeholder="Kargo €"><input id="pTarget" type="number" step=".01" placeholder="Hedef katkı %"><button class="btn" onclick="calculatePrice()">Hesapla</button></div><div id="priceResult" class="alert">Henüz hesaplama yok.</div></div>
+</section>
+
+<section id="orders" class="view">
+<h1>6. Order Automation</h1>
+<p class="lead">Sipariş → ödeme kontrolü → stok → fulfillment → tedarikçi → kargo → tracking → teslimat → iade akışının merkezi orkestrasyonu.</p>
+<div class="panel"><div class="pipeline">
+<div class="step"><b>01</b>ORDER</div><div class="step"><b>02</b>PAYMENT</div><div class="step"><b>03</b>FRAUD / POLICY</div><div class="step"><b>04</b>FULFILL</div><div class="step"><b>05</b>SHIP</div><div class="step"><b>06</b>DELIVER / RETURN</div>
+</div></div>
+<div class="panel"><div class="toolbar"><input id="orderId" placeholder="Sipariş ID"><input id="orderSku" placeholder="SKU"><input id="orderQty" type="number" value="1"><button class="btn" onclick="addOrder()">Sipariş simüle et</button></div><div class="tablewrap"><table id="orderTable"></table></div></div>
+</section>
+
+<section id="products" class="view">
+<h1>7. Product Creation / Categorization AI</h1>
+<p class="lead">Canonical product, EAN/GTIN/MPN/OEM, kategori, özellik, medya, açıklama, SEO ve kanal mapping katmanlarını tek ürün kaydında birleştirir.</p>
+<div class="panel"><div class="toolbar"><input id="prodName" class="search" placeholder="Ürün adı"><input id="prodEan" placeholder="EAN/GTIN"><input id="prodMpn" placeholder="MPN/OEM"><button class="btn" onclick="addProduct()">Ürün oluştur</button></div><div class="tablewrap"><table id="productTable"></table></div></div>
+</section>
+
+<section id="customer" class="view">
+<h1>8. Customer Service AI</h1>
+<p class="lead">Çok dilli müşteri hizmetleri için intent → identity → order context → policy → response → escalation zinciri. İnsan müdahalesi gerektiren konular exception kuyruğuna gider.</p>
+<div class="grid3"><div class="card"><h3>Chat</h3><p>Ürün, sipariş, kargo, iade ve genel bilgi intent'leri.</p></div><div class="card"><h3>Email</h3><p>Şablon + context + policy tabanlı cevap taslağı.</p></div><div class="card"><h3>Escalation</h3><p>Riskli, hukuki veya finansal konular insan onayına gider.</p></div></div>
+<div class="panel"><div class="toolbar"><input id="csText" class="search" placeholder="Müşteri mesajı"><button class="btn" onclick="handleCustomer()">AI analiz et</button></div><div id="csResult" class="alert">Mesaj bekleniyor.</div></div>
+</section>
+
+<section id="memory" class="view">
+<h1>9. Central Memory + Reporting</h1>
+<p class="lead">Bulgular, kararlar, görevler ve olaylar source/time/confidence/impact/audit alanlarıyla merkezi kayda dönüşür. Demo modunda tarayıcı localStorage kullanılır; gerçek üretimde güvenli backend database gerekir.</p>
+<div class="panel"><div class="toolbar"><input id="memTitle" class="search" placeholder="Hafıza başlığı"><select id="memImpact"><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select><button class="btn" onclick="addMemory()">Kaydet</button></div><div class="tablewrap"><table id="memoryTable"></table></div></div>
+</section>
+
+<section id="security" class="view">
+<h1>10. Esat Bey Security Layer</h1>
+<p class="lead">Savunma katmanı: kimlik, rol, least privilege, audit trail, anomaly, rate limits, isolation ve yüksek riskli aksiyonlarda approval. Saldırı yapmaz; korur ve durdurur.</p>
+<div class="grid">
+<div class="kpi"><b>RBAC</b><span>Rol tabanlı erişim</span></div><div class="kpi"><b>MFA</b><span>Kimlik doğrulama kapısı</span></div><div class="kpi"><b>AUDIT</b><span>Değişmez olay izi</span></div><div class="kpi"><b>ISOLATE</b><span>Riskli worker izolasyonu</span></div>
+</div>
+<div class="panel"><div class="tablewrap"><table id="securityTable"></table></div></div>
+</section>
+
+<section id="exceptions" class="view">
+<h1>11. Exception Engine</h1>
+<p class="lead">Sistem normal akıştan çıktığında sessizce devam etmek yerine olay oluşturur, risk puanlar, worker'ı durdurabilir ve insan onayı ister.</p>
+<div class="grid3">
+<div class="card"><h3>Detect</h3><p>Stale feed, düşük marj, uyumsuz kimlik, ödeme riski, API failure.</p></div>
+<div class="card"><h3>Contain</h3><p>Riskli aksiyonu durdur, ilgili worker'ı izole et.</p></div>
+<div class="card"><h3>Resolve</h3><p>Retry, alternate adapter veya insan onayı ile çöz.</p></div>
+</div>
+<div class="panel"><div class="toolbar"><input id="excMsg" class="search" placeholder="Exception açıklaması"><select id="excLevel"><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select><button class="btn" onclick="addException()">Exception oluştur</button></div><div class="tablewrap"><table id="exceptionTable"></table></div></div>
+</section>
+
+<section id="kurmay" class="view">
+<h1>Central Kurmay AI</h1>
+<p class="lead">Tüm uzmanların bulgularını yönetim seviyesinde birleştirir. Kurmay önerir; policy'ye göre insan onayı gerektiren ticari kararlar otomatik uygulanmaz.</p>
+<div class="grid3"><div class="card"><h3>Situation</h3><p>Ne değişti?</p></div><div class="card"><h3>Interpretation</h3><p>Neden önemli?</p></div><div class="card"><h3>Action</h3><p>Ne yapılmalı?</p></div></div>
+<div class="panel"><h2>Yönetim özeti</h2><div id="brief" class="alert"></div></div>
+</section>
+
+<section id="integrations" class="view">
+<h1>Integration Control</h1>
+<p class="lead">Gerçek sistemde eklenecek dış servisler için güvenli adapter sınırı. Credential'lar kod içine gömülmez.</p>
+<div class="grid">
+<div class="card"><h3>Commerce</h3><p>Storefront, marketplace, checkout.</p></div><div class="card"><h3>Automotive</h3><p>TecDoc / vehicle compatibility.</p></div><div class="card"><h3>Payments</h3><p>Payment provider adapter.</p></div><div class="card"><h3>Carriers</h3><p>DHL / DPD / GLS / Hermes / UPS adapter.</p></div>
+</div>
+<div class="panel"><h2>Production gates</h2><div id="gates"></div></div>
+</section>
+
+<section id="audit" class="view">
+<h1>Audit / Events / Reports</h1>
+<div class="panel"><div id="auditLog" class="log"></div></div>
+<div class="panel"><button class="btn" onclick="downloadReport()">Raporu indir</button></div>
+</section>
+</main>
+<div id="toast" class="toast"></div>
+<div class="footer">BUZZARD AI CORE • Single-file control layer • Credentials and external production services are intentionally not invented or embedded.</div>
+
+<script>
+const CATEGORIES=["Automotive & Kfz", "Garten & Gartenbau", "Werkzeuge & Werkstatt", "Heimwerken, Bau & Konstruktion", "Haus & Haushalt", "Möbel & Wohnen", "Wohndekoration", "Heimtextilien", "Küche & Kochen", "Bad & Sanitär", "Reinigung & Hauspflege", "Elektronik & Unterhaltungselektronik", "Computer & IT", "Mobil & Telekommunikation", "Smart Home & Sicherheit", "Haushaltsgeräte", "Mode & Bekleidung", "Schuhe", "Taschen, Koffer & Accessoires", "Schmuck & Uhren", "Beauty & Kosmetik", "Körperpflege", "Gesundheit & Wellness", "Apotheke & Medizinprodukte", "Lebensmittel & Supermarkt", "Getränke", "Baby & Kinderzimmer", "Kinder & Schule", "Spielzeug & Spiele", "Sport & Fitness", "Outdoor, Camping & Abenteuer", "Hobby & Freizeit", "Musik & Musikinstrumente", "Bücher, Medien & Unterhaltung", "Büro, Schule & Schreibwaren", "Haustier & Tierpflege", "Landwirtschaft & Agrar", "Industrie & Gewerbebedarf", "Arbeitskleidung & Arbeitsschutz", "Reisen & Mobilität", "Geschenke, Blumen & Anlässe", "Kunsthandwerk, Nähen & DIY", "Beleuchtung & Lampen", "Heizung, Klima & Energie", "Pool, Spa & Wellness-Ausstattung", "Saisonale & Festtagsartikel", "Luxus, Sammlerstücke & Wertvolles", "Allgemeine Produkte & Marktplatz"];
+
+const NAV=[
+["dashboard","Zentrale"],["orchestrator","1 KI-Orchestrator"],["categories","2 Kategorie-KI"],["customs","3 Zoll-KI"],["suppliers","4 Lieferanten"],["pricing","5 Preis/Bestand"],
+["orders","6 Bestellung"],["products","7 Produkt-KI"],["customer","8 Kunden-KI"],["memory","9 Memory"],["security","10 Security"],["exceptions","11 Exception"],
+["kurmay","Kurmay"],["integrations","Integration"],["audit","Audit"]
+];
+
+const defaultState={
+tasks:[],memory:[],exceptions:[],products:[],suppliers:[],orders:[],customs:[],events:[],security:[],alerts:[],
+gates:[
+["Domain","PENDING"],["TLS","PENDING"],["Database","PENDING"],["Payment","PENDING"],["Shipping","PENDING"],["Supplier/API","PENDING"],
+["Email","PENDING"],["Security","PENDING"],["Backup","PENDING"],["Monitoring","PENDING"],["Legal","PENDING"],["End-to-End Order","PENDING"],["Return/Widerruf","PENDING"],["GDPR/Consent","PENDING"]
+]
+};
+let state=load();
+
+function load(){try{return Object.assign(structuredClone(defaultState),JSON.parse(localStorage.getItem("buzzard_ai_core_max")||"{}"))}catch(e){return structuredClone(defaultState)}}
+function save(){localStorage.setItem("buzzard_ai_core_max",JSON.stringify(state));renderAll()}
+function now(){return new Date().toISOString()}
+function id(p){return p+"-"+Math.random().toString(36).slice(2,9).toUpperCase()}
+function log(msg,type="info"){state.events.unshift({time:now(),msg,type});state.events=state.events.slice(0,250);save()}
+function toast(msg){const x=document.getElementById("toast");x.textContent=msg;x.style.display="block";setTimeout(()=>x.style.display="none",2200)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function badge(v){let c=["SUCCESS","ACTIVE","READY","OK","OPEN"].includes(v)?"ok":["CRITICAL","FAILED","BLOCKED"].includes(v)?"bad":["HIGH","PENDING","REVIEW","RETRY"].includes(v)?"warn":"blue";return `<span class="badge ${c}">${esc(v)}</span>`}
+function table(id,headers,rows){document.getElementById(id).innerHTML=`<thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="${headers.length}" class="muted">Kayıt yok.</td></tr>`}</tbody>`}
+
+function initNav(){
+document.getElementById("nav").innerHTML=NAV.map((n,i)=>`<button class="${i===0?"active":""}" data-v="${n[0]}">${n[1]}</button>`).join("");
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.v,b));
+}
+function show(view,btn){
+document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById(view).classList.add("active");
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");renderAll();
+}
+function renderDashboard(){
+document.getElementById("kAgents").textContent=CATEGORIES.length+8;
+document.getElementById("kJobs").textContent=state.tasks.length;
+document.getElementById("kMem").textContent=state.memory.length;
+document.getElementById("kExc").textContent=state.exceptions.filter(x=>x.status!=="RESOLVED").length;
+document.getElementById("kProducts").textContent=state.products.length;
+document.getElementById("kSuppliers").textContent=state.suppliers.length;
+document.getElementById("kOrders").textContent=state.orders.length;
+document.getElementById("kAlerts").textContent=state.alerts.length;
+document.getElementById("eventLog").innerHTML=state.events.slice(0,30).map(e=>`<div><span class="t">${esc(e.time)}</span> ${e.type==="error"?'<span class="e">ERROR</span>':""} ${esc(e.msg)}</div>`).join("")||"Henüz olay yok.";
+}
+function renderTasks(){table("taskTable",["ID","Type","Payload","Status","Worker","Created"],state.tasks.map(x=>[esc(x.id),esc(x.type),esc(x.payload),badge(x.status),esc(x.worker),esc(x.created)]))}
+function renderCategories(){
+let q=(document.getElementById("catSearch")?.value||"").toLowerCase();let arr=CATEGORIES.filter(x=>x.toLowerCase().includes(q));
+document.getElementById("categoryTree").innerHTML=arr.map((x,i)=>`<div class="cat"><div class="cathead" onclick="this.parentElement.classList.toggle('open')"><span class="catnum">${String(CATEGORIES.indexOf(x)+1).padStart(2,"0")}</span><span class="catname">${esc(x)}</span>${badge("ACTIVE")}</div><div class="catbody"><div class="subcat">Category Intelligence Worker: <b>${esc("CAT_AI_"+String(CATEGORIES.indexOf(x)+1).padStart(2,"0"))}</b> • schedule: adaptive • memory: shared • approval: policy-gated</div><div class="subcat">Görevler: assortment scan · competitor signal · price signal · supplier opportunity · trend · taxonomy gap</div></div></div>`).join("");
+}
+function renderCustoms(){table("customsTable",["ID","Product","HS/CN Candidate","Status","Created"],state.customs.map(x=>[esc(x.id),esc(x.product),esc(x.hs),badge(x.status),esc(x.created)]))}
+function renderSuppliers(){table("supplierTable",["ID","Supplier","Adapter","Endpoint","Status"],state.suppliers.map(x=>[esc(x.id),esc(x.name),esc(x.type),esc(x.endpoint||"-"),badge(x.status)]))}
+function renderProducts(){table("productTable",["ID","Name","EAN/GTIN","MPN/OEM","Category","Status"],state.products.map(x=>[esc(x.id),esc(x.name),esc(x.ean||"-"),esc(x.mpn||"-"),esc(x.category),badge(x.status)]))}
+function renderOrders(){table("orderTable",["Order","SKU","Qty","Stage","Status","Created"],state.orders.map(x=>[esc(x.id),esc(x.sku),esc(x.qty),esc(x.stage),badge(x.status),esc(x.created)]))}
+function renderMemory(){table("memoryTable",["ID","Title","Impact","Confidence","Source","Created"],state.memory.map(x=>[esc(x.id),esc(x.title),badge(x.impact),esc(x.confidence),esc(x.source),esc(x.created)]))}
+function renderSecurity(){table("securityTable",["Event","Actor","Action","Risk","Result","Time"],state.security.map(x=>[esc(x.event),esc(x.actor),esc(x.action),badge(x.risk),badge(x.result),esc(x.time)]))}
+function renderExceptions(){table("exceptionTable",["ID","Level","Message","Status","Owner","Created"],state.exceptions.map(x=>[esc(x.id),badge(x.level),esc(x.message),badge(x.status),esc(x.owner),esc(x.created)]))}
+function renderKurmay(){
+let active=state.exceptions.filter(x=>x.status!=="RESOLVED").length, pending=state.tasks.filter(x=>x.status==="PENDING"||x.status==="REVIEW").length;
+document.getElementById("brief").innerHTML=`<b>Durum:</b> ${CATEGORIES.length} kategori AI aktif. ${state.suppliers.length} supplier adapter kaydı, ${state.products.length} ürün, ${state.orders.length} sipariş, ${pending} bekleyen görev ve ${active} açık exception var. <br><br><b>Kurmay önerisi:</b> Önce güvenlik/policy kontrolleri ve veri kalitesi; sonra otomasyon aksiyonları. Canlı credential yoksa dış servis aksiyonu uygulanmaz.`;
+}
+function renderGates(){document.getElementById("gates").innerHTML=state.gates.map(g=>`<div class="flex" style="padding:7px 0;border-bottom:1px solid var(--line)"><b style="width:170px">${esc(g[0])}</b>${badge(g[1])}<span class="muted">Gerçek üretim bağlantısı ve doğrulama gerekir.</span></div>`).join("")}
+function renderAudit(){document.getElementById("auditLog").innerHTML=state.events.map(e=>`<div><span class="t">${esc(e.time)}</span> ${esc(e.type)} — ${esc(e.msg)}</div>`).join("")||"Audit kaydı yok."}
+function renderAll(){renderDashboard();renderTasks();renderCategories();renderCustoms();renderSuppliers();renderProducts();renderOrders();renderMemory();renderSecurity();renderExceptions();renderKurmay();renderGates();renderAudit()}
+
+function createTask(){
+let type=document.getElementById("taskType").value,payload=document.getElementById("taskPayload").value||"Automated task";
+let worker=type==="category_scan"?"Central Category Router":type==="supplier_sync"?"Supplier Hub":type==="price_recheck"?"Price Worker":type==="stock_sync"?"Stock Worker":type==="product_enrich"?"Product AI":type==="order_check"?"Order AI":type==="customer_service"?"Customer Service AI":"Central Orchestrator";
+state.tasks.unshift({id:id("JOB"),type,payload,status:"PENDING",worker,created:now(),attempts:0});state.memory.unshift({id:id("MEM"),title:"Task created: "+type,impact:"LOW",confidence:.98,source:"Orchestrator",created:now()});log(`Yeni görev oluşturuldu: ${type} → ${worker}`);toast("Görev oluşturuldu.");
+}
+function runCycle(){
+let t=state.tasks.find(x=>x.status==="PENDING");
+if(!t){state.tasks.unshift({id:id("JOB"),type:"system_health",payload:"Scheduled core health cycle",status:"RUNNING",worker:"Central Orchestrator",created:now(),attempts:1});t=state.tasks[0]}
+t.status="RUNNING";t.attempts=(t.attempts||0)+1;save();
+setTimeout(()=>{t.status="SUCCESS";state.memory.unshift({id:id("MEM"),title:"Completed: "+t.type,impact:"LOW",confidence:.94,source:t.worker,created:now()});state.security.unshift({event:"WORKER_EXECUTION",actor:t.worker,action:t.type,risk:"LOW",result:"OK",time:now()});log(`Görev tamamlandı: ${t.id} (${t.type})`);toast("AI cycle tamamlandı.");},350);
+}
+function addCustoms(){let p=document.getElementById("customsSku").value||"UNKNOWN",h=document.getElementById("customsHs").value||"PENDING";state.customs.unshift({id:id("CUS"),product:p,hs:h,status:"REVIEW",created:now()});state.exceptions.unshift({id:id("EXC"),level:"MEDIUM",message:"Gümrük sınıflandırması insan onayı bekliyor: "+p,status:"OPEN",owner:"Customs AI",created:now()});log(`Customs AI review oluşturdu: ${p}`);toast("Gümrük kontrolü kuyruğa alındı.")}
+function addSupplier(){let n=document.getElementById("supName").value||"Unnamed Supplier",type=document.getElementById("supType").value,e=document.getElementById("supEndpoint").value||"NOT_CONFIGURED";state.suppliers.unshift({id:id("SUP"),name:n,type,endpoint:e,status:e==="NOT_CONFIGURED"?"PENDING":"READY"});log(`Supplier adapter kaydı: ${n} (${type})`);toast("Tedarikçi eklendi.")}
+function calculatePrice(){let c=+document.getElementById("pCost").value||0,s=+document.getElementById("pShip").value||0,m=(+document.getElementById("pTarget").value||0)/100;let base=c+s;let price=base/(1-m||1);document.getElementById("priceResult").innerHTML=`<b>Önerilen minimum fiyat:</b> €${price.toFixed(2)}<br><span class="muted">Bu yalnızca temel maliyet + hedef katkı hesabıdır; ödeme, marketplace, reklam, vergi, iade ve gerçek kargo maliyetleri ayrıca eklenmelidir.</span>`;state.memory.unshift({id:id("MEM"),title:"Price calculation",impact:"LOW",confidence:.9,source:"Price Engine",created:now()});log(`Price Engine hesapladı: €${price.toFixed(2)}`)}
+function addOrder(){let oid=document.getElementById("orderId").value||id("ORD"),sku=document.getElementById("orderSku").value||"SKU-DEMO",qty=+document.getElementById("orderQty").value||1;state.orders.unshift({id:oid,sku,qty,stage:"PAYMENT_CHECK",status:"REVIEW",created:now()});state.exceptions.unshift({id:id("EXC"),level:"LOW",message:"Yeni sipariş policy/ödeme kontrolünde: "+oid,status:"OPEN",owner:"Order AI",created:now()});log(`Sipariş oluşturuldu: ${oid}`);toast("Sipariş kuyruğa alındı.")}
+function addProduct(){let n=document.getElementById("prodName").value||"Unnamed Product",ean=document.getElementById("prodEan").value,mpn=document.getElementById("prodMpn").value;state.products.unshift({id:id("PRD"),name:n,ean,mpn,category:"AUTO-CLASSIFY",status:"REVIEW"});state.tasks.unshift({id:id("JOB"),type:"product_enrich",payload:n,status:"PENDING",worker:"Product AI",created:now(),attempts:0});log(`Ürün canonical kayıt oluşturdu: ${n}`);toast("Ürün oluşturuldu, AI sınıflandırmasına gönderildi.")}
+function handleCustomer(){let t=document.getElementById("csText").value||"",l=t.toLowerCase();let intent=l.includes("iade")?"RETURN":l.includes("kargo")||l.includes("teslim")?"SHIPPING":l.includes("sipariş")?"ORDER":l.includes("fiyat")?"PRODUCT_PRICE":"GENERAL";let risk=["RETURN","ORDER"].includes(intent)?"MEDIUM":"LOW";document.getElementById("csResult").innerHTML=`<b>Intent:</b> ${intent}<br><b>Risk:</b> ${badge(risk)}<br><b>Öneri:</b> Müşteri bağlamını doğrula, sipariş/ürün verisini getir, policy kontrolünden geçir ve gerekirse insan onayına yükselt.`;state.memory.unshift({id:id("MEM"),title:"Customer intent: "+intent,impact:risk,confidence:.82,source:"Customer Service AI",created:now()});log(`Customer Service AI intent: ${intent}`)}
+function addMemory(){let t=document.getElementById("memTitle").value||"Manual memory";let impact=document.getElementById("memImpact").value;state.memory.unshift({id:id("MEM"),title:t,impact,confidence:1,source:"Manual / Kurmay",created:now()});log(`Hafıza kaydı eklendi: ${t}`);toast("Hafızaya kaydedildi.")}
+function addException(){let m=document.getElementById("excMsg").value||"Unspecified exception",level=document.getElementById("excLevel").value;state.exceptions.unshift({id:id("EXC"),level,message:m,status:"OPEN",owner:"Exception Engine",created:now()});state.alerts.unshift({id:id("ALT"),level,message:m,created:now()});log(`Exception: ${level} — ${m}`,"error");toast("Exception oluşturuldu.")}
+function exportJSON(){let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="buzzard-ai-core-state.json";a.click();URL.revokeObjectURL(a.href)}
+function exportBackup(){exportJSON();toast("Backup JSON hazırlandı.")}
+function downloadReport(){let text=`BUZZARD AI CORE REPORT\nGenerated: ${now()}\nAgents: ${CATEGORIES.length+8}\nTasks: ${state.tasks.length}\nMemory: ${state.memory.length}\nExceptions: ${state.exceptions.length}\nProducts: ${state.products.length}\nSuppliers: ${state.suppliers.length}\nOrders: ${state.orders.length}\n`;let blob=new Blob([text],{type:"text/plain"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="buzzard-ai-core-report.txt";a.click();URL.revokeObjectURL(a.href)}
+function resetDemo(){if(confirm("Demo verileri silinsin mi?")){localStorage.removeItem("buzzard_ai_core_max");state=load();log("State reset");toast("Sistem demo state sıfırlandı.")}}
+initNav();renderAll();log("Buzzard AI Core initialized.");
+</script>
+</body>
+</html>

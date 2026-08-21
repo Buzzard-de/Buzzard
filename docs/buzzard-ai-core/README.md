@@ -1,9 +1,39 @@
 # BUZZARD AI CORE — Documentation Index
 
-**Status:** Analysis phase complete — implementation not started  
+**Status:** Phase 1 implemented (core platform backend)  
 **Date:** 2026-08-21
 
-## Documents
+## Implementation Status
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 0 — Analysis | ✅ Complete | This folder |
+| Phase 1 — Core Platform | ✅ Implemented | `intelligence/buzzard_ai_complete/ai_core/` |
+| Phase 2 — Domain Workers | ⏳ Pending | Category/Product/Supplier/Price/Stock |
+| Phase 3 — Commerce Bridge | ⏳ Pending | Admin UI, Node bridge |
+| Phase 4 — Production Hardening | ⏳ Pending | Postgres prod, observability |
+
+### Phase 1 — Implemented Components
+
+- **PostgreSQL-ready** SQLAlchemy models + Alembic migration `001_ai_core_initial`
+- **Unified Orchestrator** — full task lifecycle with Esat Bey security gate
+- **Central Memory** — DB persistence, versioning, 9 memory types
+- **Exception Engine** — lifecycle + CRITICAL worker halt
+- **Audit System** — append-only audit log
+- **API** — `/api/v1/tasks`, `/memory`, `/exceptions`, `/audit`, `/health`
+- **Tests** — `tests/test_ai_core_phase1.py` (13 tests), full suite 322 passed
+
+### Run Locally
+
+```bash
+cd intelligence/buzzard_ai_complete
+pip install -r ../requirements.txt
+export DATABASE_URL=sqlite:///./database/ai_core.db   # or postgresql://...
+export BUZZARD_API_TOKEN=your-token
+alembic upgrade head
+uvicorn buzzard_ai_complete.api.app:app --reload
+```
+
 
 | Document | Purpose |
 |----------|---------|

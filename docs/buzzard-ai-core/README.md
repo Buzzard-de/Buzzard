@@ -1,16 +1,16 @@
 # BUZZARD AI CORE — Documentation Index
 
-**Status:** Phase 1 implemented (core platform backend)  
-**Date:** 2026-08-21
+**Status:** Phase 1 complete (88/100) · Phase 2 architecture designed  
+**Date:** 2026-08-22
 
 ## Implementation Status
 
 | Phase | Status | Notes |
 |-------|--------|-------|
 | Phase 0 — Analysis | ✅ Complete | This folder |
-| Phase 1 — Core Platform | ✅ Implemented | `intelligence/buzzard_ai_complete/ai_core/` |
-| Phase 2 — Domain Workers | ⏳ Pending | Category/Product/Supplier/Price/Stock |
-| Phase 3 — Commerce Bridge | ⏳ Pending | Admin UI, Node bridge |
+| Phase 1 — Core Platform | ✅ Complete | 342 passed, P0+P1 READY |
+| Phase 2 — Domain Workers | 📐 Designed | Architecture docs below — **not started** |
+| Phase 3 — Commerce Bridge | ⏳ Pending | Admin UI, Node bridge writes |
 | Phase 4 — Production Hardening | ⏳ Pending | Postgres prod, observability |
 
 ### Phase 1 — Implemented Components
@@ -21,7 +21,8 @@
 - **Exception Engine** — lifecycle + CRITICAL worker halt
 - **Audit System** — append-only audit log
 - **API** — `/api/v1/tasks`, `/memory`, `/exceptions`, `/audit`, `/health`
-- **Tests** — `tests/test_ai_core_phase1.py` (13 tests), full suite 322 passed
+- **Tests** — 342 passed, 33 AI-Core specific, PostgreSQL + auth verified
+- **P1 Hardening** — pagination, idempotency, memory unique index, X-Request-Id
 
 ### Run Locally
 
@@ -44,6 +45,13 @@ uvicorn buzzard_ai_complete.api.app:app --reload
 | [API_SPEC.md](./API_SPEC.md) | `/api/v1/*` endpoint specification |
 | [AI_WORKER_SPEC.md](./AI_WORKER_SPEC.md) | Standard worker interface contract |
 | [SECURITY_MODEL.md](./SECURITY_MODEL.md) | Esat Bey security layer |
+| [PHASE1_VERIFICATION.md](./PHASE1_VERIFICATION.md) | Phase 1 verification report |
+| [PHASE1_P0_REMEDIATION.md](./PHASE1_P0_REMEDIATION.md) | P0 blocker remediation |
+| [PHASE2_ARCHITECTURE.md](./PHASE2_ARCHITECTURE.md) | Phase 2 system architecture |
+| [PHASE2_WORKER_SPEC.md](./PHASE2_WORKER_SPEC.md) | Per-worker responsibility, schemas, policies |
+| [PHASE2_DATA_FLOW.md](./PHASE2_DATA_FLOW.md) | End-to-end data flows per domain |
+| [PHASE2_PERMISSION_MATRIX.md](./PHASE2_PERMISSION_MATRIX.md) | Permissions, autonomy, approval gates |
+| [PHASE2_IMPLEMENTATION_PLAN.md](./PHASE2_IMPLEMENTATION_PLAN.md) | Ordered implementation steps |
 
 ## Key Decisions
 
@@ -55,4 +63,10 @@ uvicorn buzzard_ai_complete.api.app:app --reload
 
 ## Next Step
 
-Begin **Phase 1** (see MIGRATION_PLAN.md): PostgreSQL + unified orchestrator + central memory + exception engine + audit.
+Begin **Phase 2 implementation** (see `PHASE2_IMPLEMENTATION_PLAN.md`):
+
+1. Foundation — BuzzardWorker contract, schemas, migrations
+2. Security AI hardening
+3. Exception coordination
+4. Agents API + scheduler
+5. Category Intelligence (49 workers) → Kurmay → domain workers

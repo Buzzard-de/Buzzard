@@ -30,7 +30,7 @@ Canonical automotive parts taxonomy for Buzzard.
 | `buzzard_final_47_category_intelligence_manifest.json` | **47 Category Intelligence FINAL Manifest** — pipeline, evidence policy, outputs, research basis |
 | `buzzard_final_47_category_intelligence_os_max_single_file.html` | **47 Category Intelligence OS FINAL MAX Console (primary)** — evidence orchestration + verification |
 | `buzzard_category_intelligence_maximum_single_file.html` | **Category Intelligence MAXIMUM Command Center** — Master Tree, Registry, Research, Governance (DE, 48 L1) |
-| `buzzard_ai_core_maximum_single_file.html` | **AI CORE Maximum Single File** — Zentrale KI-Orchestrierung, 55 Kategorie-KI, Memory, Security, Exception (DE) |
+| `buzzard_ai_core_maximum_single_file.html` | **AI CORE Maximum Single File** — Zentrale KI-Orchestrierung, 55 Kategorie-KI, Memory, Security, Exception (vollständig DE) |
 | `buzzard_47_category_intelligence_os_max_single_final_single_file.html` | **47 Category Intelligence OS MAX SINGLE FINAL Console** — unified primary console (MAX + 100% Final) |
 
 ## Intelligence OS

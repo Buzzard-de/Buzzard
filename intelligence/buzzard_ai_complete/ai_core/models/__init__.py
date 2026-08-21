@@ -9,6 +9,7 @@ from buzzard_ai_complete.ai_core.models.task import (
     TaskDependency,
     TaskTransition,
 )
+from buzzard_ai_complete.ai_core.models.worker_state import WorkerState
 
 __all__ = [
     "AuditLog",
@@ -19,4 +20,5 @@ __all__ = [
     "Task",
     "TaskDependency",
     "TaskTransition",
+    "WorkerState",
 ]

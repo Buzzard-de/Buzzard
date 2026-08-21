@@ -35,6 +35,9 @@ def test_task_lifecycle_success(services):
     task = orch.create_task(type="category_scan", payload={"scope": "test"}, created_by="tester")
     assert task.status == TaskStatus.SUCCESS.value
     assert task.result is not None
+    assert task.result["success"] is True
+    assert task.result["execution_mode"] == "deterministic"
+    assert "output" in task.result
     mem = services["memory"].get_by_key("tasks", task.id)
     assert mem is not None
     assert mem.type == MemoryType.TASK_RESULT.value
@@ -196,6 +199,17 @@ def test_api_tasks_memory_exceptions_audit():
     audit = client.get("/api/v1/audit", headers=AUTH)
     assert audit.status_code == 200
     assert audit.json()["total"] >= 1
+
+
+def test_auth_not_configured_returns_503(monkeypatch):
+    import buzzard_ai_complete.config.settings as settings
+
+    monkeypatch.setenv("BUZZARD_API_TOKEN", "")
+    settings.API_TOKEN = ""
+    client = TestClient(app)
+    response = client.post("/api/v1/tasks", json={"type": "custom", "auto_start": False})
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "AUTH_NOT_CONFIGURED"
 
 
 def test_alembic_migration_upgrade_downgrade(tmp_path, monkeypatch):

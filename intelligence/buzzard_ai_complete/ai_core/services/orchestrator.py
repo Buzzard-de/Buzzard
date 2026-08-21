@@ -20,6 +20,8 @@ from buzzard_ai_complete.ai_core.models.task import Task, TaskDependency, TaskTr
 from buzzard_ai_complete.ai_core.services.audit_service import AuditService
 from buzzard_ai_complete.ai_core.services.exception_service import ExceptionService
 from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
+from buzzard_ai_complete.ai_core.workers.base import WorkerExecutionError, WorkerTimeoutError
+from buzzard_ai_complete.ai_core.workers.executor import WorkerExecutor
 
 WORKER_ROUTING: dict[str, str] = {
     "category_scan": "category-worker",
@@ -145,7 +147,8 @@ class UnifiedOrchestrator:
       task.attempts += 1
       if task.attempts > task.max_attempts:
         return self._fail_task(task, actor, "max attempts exceeded")
-      return self._transition(task, TaskStatus.QUEUED, actor, note or "retry queued")
+      self._transition(task, TaskStatus.QUEUED, actor, note or "retry queued")
+      return self.advance(task.id, actor=actor, note=note)
     raise ValueError(f"task cannot auto-advance from status {status.value}")
 
   def transition(
@@ -278,12 +281,23 @@ class UnifiedOrchestrator:
 
   def _complete_running(self, task: Task, actor: str) -> Task:
     task.started_at = task.started_at or datetime.now(timezone.utc)
-    result = {
-      "worker_id": task.worker_id,
-      "type": task.type,
-      "payload": task.payload,
-      "status": "completed",
-    }
+    executor = WorkerExecutor(self.session, self.audit, self.request_id)
+    try:
+      worker_result = executor.execute(task)
+    except WorkerTimeoutError as exc:
+      return self._handle_worker_failure(task, actor, str(exc), retryable=True)
+    except WorkerExecutionError as exc:
+      return self._handle_worker_failure(task, actor, str(exc), retryable=exc.retryable)
+
+    if not worker_result.success:
+      return self._handle_worker_failure(
+        task,
+        actor,
+        worker_result.error or "worker execution failed",
+        retryable=worker_result.retryable,
+      )
+
+    result = worker_result.to_dict()
     task.result = result
     self.memory.write(
       source=task.worker_id or "orchestrator",
@@ -299,8 +313,31 @@ class UnifiedOrchestrator:
     )
     if task.requires_approval or task.priority == TaskPriority.CRITICAL.value:
       return self._transition(task, TaskStatus.REVIEW, actor, "approval required")
-    self._transition(task, TaskStatus.EXECUTED, actor, "auto executed")
+    self._transition(task, TaskStatus.EXECUTED, actor, "worker executed")
     return task
+
+  def _handle_worker_failure(
+    self,
+    task: Task,
+    actor: str,
+    message: str,
+    *,
+    retryable: bool,
+  ) -> Task:
+    task.error = message
+    exc = self.exceptions.create(
+      severity=ExceptionSeverity.MEDIUM,
+      type="WORKER_EXECUTION_FAILED",
+      message=message,
+      worker_id=task.worker_id,
+      task_id=task.id,
+      actor=actor,
+    )
+    self.exceptions.transition(exc.id, ExceptionStatus.CLASSIFIED, actor=actor, note=message)
+    if retryable and task.attempts < task.max_attempts:
+      self._transition(task, TaskStatus.RETRY, actor, message)
+      return self.advance(task.id, actor=actor, note="retry after failure")
+    return self._transition(task, TaskStatus.FAILED, actor, message)
 
   def _fail_task(self, task: Task, actor: str, message: str) -> Task:
     task.error = message

@@ -8,10 +8,11 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-from buzzard_ai_complete.config.settings import DATABASE_URL
+from buzzard_ai_complete.config import settings
 
 _engine: Engine | None = None
 _SessionLocal: sessionmaker[Session] | None = None
+_engine_url: str | None = None
 
 
 class Base(DeclarativeBase):
@@ -19,26 +20,29 @@ class Base(DeclarativeBase):
 
 
 def _sqlite_on_connect(dbapi_connection, _connection_record):
-  if DATABASE_URL.startswith("sqlite"):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+  cursor = dbapi_connection.cursor()
+  cursor.execute("PRAGMA foreign_keys=ON")
+  cursor.close()
 
 
 def get_engine() -> Engine:
-    global _engine
-    if _engine is None:
+    global _engine, _engine_url
+    database_url = settings.DATABASE_URL
+    if _engine is None or _engine_url != database_url:
+        if _engine is not None:
+            _engine.dispose()
         connect_args = {}
-        if DATABASE_URL.startswith("sqlite"):
+        if database_url.startswith("sqlite"):
             connect_args["check_same_thread"] = False
         _engine = create_engine(
-            DATABASE_URL,
+            database_url,
             connect_args=connect_args,
-            pool_pre_ping=not DATABASE_URL.startswith("sqlite"),
+            pool_pre_ping=not database_url.startswith("sqlite"),
             future=True,
         )
-        if DATABASE_URL.startswith("sqlite"):
+        if database_url.startswith("sqlite"):
             event.listen(_engine, "connect", _sqlite_on_connect)
+        _engine_url = database_url
     return _engine
 
 
@@ -75,16 +79,18 @@ def init_ai_core_db() -> None:
 
 
 def dispose_engine() -> None:
-    global _engine, _SessionLocal
+    global _engine, _SessionLocal, _engine_url
     if _engine is not None:
         _engine.dispose()
     _engine = None
     _SessionLocal = None
+    _engine_url = None
 
 
 def reset_engine_for_tests(database_url: str | None = None) -> None:
     """Test helper: point engine at isolated database."""
-    global _engine, _SessionLocal
+    global _engine, _SessionLocal, _engine_url
     dispose_engine()
     if database_url is not None:
         os.environ["DATABASE_URL"] = database_url
+        settings.DATABASE_URL = database_url

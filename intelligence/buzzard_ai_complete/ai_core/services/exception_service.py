@@ -12,15 +12,15 @@ from buzzard_ai_complete.ai_core.enums import (
 )
 from buzzard_ai_complete.ai_core.models.exception_record import ExceptionRecord, ExceptionTransition
 from buzzard_ai_complete.ai_core.services.audit_service import AuditService
+from buzzard_ai_complete.ai_core.services.worker_state_service import WorkerStateService
 
 
 class ExceptionService:
-  HALTED_WORKERS: set[str] = set()
-
   def __init__(self, session: Session, audit: AuditService, request_id: str = "system"):
     self.session = session
     self.audit = audit
     self.request_id = request_id
+    self.worker_state = WorkerStateService(session)
 
   def create(
     self,
@@ -53,7 +53,13 @@ class ExceptionService:
     if sev == ExceptionSeverity.CRITICAL.value and worker_id:
       record.contained = True
       record.worker_halted = True
-      self.HALTED_WORKERS.add(worker_id)
+      self.worker_state.halt_worker(
+        worker_id,
+        reason=message,
+        halted_by=actor,
+        exception_id=record.id,
+        metadata={"severity": sev, "type": type},
+      )
       self.transition(
         record.id,
         ExceptionStatus.CONTAINED,
@@ -99,8 +105,8 @@ class ExceptionService:
     if target == ExceptionStatus.RESOLVED.value:
       record.resolved_at = datetime.now(timezone.utc)
       if record.worker_id and record.worker_halted:
-        self.HALTED_WORKERS.discard(record.worker_id)
         record.worker_halted = False
+        self.worker_state.resume_worker(record.worker_id)
     self._add_transition(record, before, ExceptionStatus(target), actor, note)
     self.audit.log(
       actor=actor,
@@ -137,7 +143,7 @@ class ExceptionService:
     return query.offset(offset).limit(limit).all()
 
   def is_worker_halted(self, worker_id: str) -> bool:
-    return worker_id in self.HALTED_WORKERS
+    return self.worker_state.is_halted(worker_id)
 
   def _add_transition(
     self,

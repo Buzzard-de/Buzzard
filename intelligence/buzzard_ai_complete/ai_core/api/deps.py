@@ -11,7 +11,7 @@ from buzzard_ai_complete.ai_core.services.audit_service import AuditService
 from buzzard_ai_complete.ai_core.services.exception_service import ExceptionService
 from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
 from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrator
-from buzzard_ai_complete.config.settings import API_TOKEN
+from buzzard_ai_complete.config import settings
 
 _db_initialized = False
 
@@ -51,8 +51,14 @@ def authorize(
   authorization: Annotated[str | None, Header()] = None,
   x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
 ) -> str:
-  if not API_TOKEN:
-    return "anonymous"
+  if not settings.API_TOKEN:
+    raise HTTPException(
+      status_code=503,
+      detail={
+        "code": "AUTH_NOT_CONFIGURED",
+        "message": "BUZZARD_API_TOKEN is not configured; protected endpoints are unavailable",
+      },
+    )
   token = None
   if authorization and authorization.lower().startswith("bearer "):
     token = authorization[7:].strip()
@@ -60,7 +66,7 @@ def authorize(
     token = authorization.strip()
   elif x_api_key:
     token = x_api_key.strip()
-  if token != API_TOKEN:
+  if not token or token != settings.API_TOKEN:
     raise HTTPException(status_code=401, detail={"code": "UNAUTHORIZED", "message": "Unauthorized"})
   return "api-user"
 

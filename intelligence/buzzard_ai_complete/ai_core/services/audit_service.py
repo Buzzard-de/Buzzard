@@ -50,6 +50,7 @@ class AuditService:
     actor: str | None = None,
     action: str | None = None,
     entity_type: str | None = None,
+    task_id: str | None = None,
     limit: int = 100,
     offset: int = 0,
   ) -> list[AuditLog]:
@@ -60,6 +61,8 @@ class AuditService:
       query = query.filter(AuditLog.action == action)
     if entity_type:
       query = query.filter(AuditLog.entity_type == entity_type)
+    if task_id:
+      query = query.filter(AuditLog.task_id == task_id)
     return query.offset(offset).limit(limit).all()
 
   def get(self, audit_id: str) -> AuditLog | None:

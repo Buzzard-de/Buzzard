@@ -436,7 +436,7 @@ class UnifiedOrchestrator:
     if self.policy.requires_review_for_risk(risk):
       return self._transition(task, TaskStatus.REVIEW, actor, f"risk level {risk} requires review")
 
-    if self._should_trigger_kurmay(kurmay_memory_batch):
+    if self._should_trigger_kurmay(task, kurmay_memory_batch):
       self.create_task(
         type="kurmay_synthesis",
         payload={
@@ -453,13 +453,19 @@ class UnifiedOrchestrator:
     self._transition(task, TaskStatus.EXECUTED, actor, "worker executed")
     return task
 
-  def _should_trigger_kurmay(self, memory_entries: list[dict[str, Any]]) -> bool:
+  def _should_trigger_kurmay(self, task: Task, memory_entries: list[dict[str, Any]]) -> bool:
+    if task.type == "kurmay_synthesis":
+      return False
     thresholds = {
       MemoryImpact.MEDIUM.value,
       MemoryImpact.HIGH.value,
       MemoryImpact.CRITICAL.value,
     }
-    return any(entry.get("impact") in thresholds for entry in memory_entries)
+    return any(
+      entry.get("impact") in thresholds
+      and not str(entry.get("namespace", "")).startswith("insights/kurmay")
+      for entry in memory_entries
+    )
 
   def _handle_worker_failure(
     self,

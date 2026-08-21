@@ -24,11 +24,12 @@ def api_client():
 
 def test_pagination_total_reflects_full_count(services, session):
     orch = services["orchestrator"]
+    before = orch.count_tasks()
     for i in range(3):
         orch.create_task(type="custom", auto_start=False, created_by="tester", idempotency_key=f"page-{i}")
     session.commit()
 
-    assert orch.count_tasks() == 3
+    assert orch.count_tasks() == before + 3
     page = orch.list_tasks(limit=2, offset=0)
     assert len(page) == 2
 

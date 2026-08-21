@@ -35,6 +35,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index("ix_ai_core_workers_status", table_name="ai_core_workers")
-    op.drop_index("ix_ai_core_workers_family", table_name="ai_core_workers")
+    op.drop_index("ix_ai_core_workers_status", table_name="ai_core_workers", if_exists=True)
+    op.drop_index("ix_ai_core_workers_family", table_name="ai_core_workers", if_exists=True)
     op.drop_table("ai_core_workers")

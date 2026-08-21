@@ -33,6 +33,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index("ix_ai_core_approvals_created_at", table_name="ai_core_approvals")
-    op.drop_index("ix_ai_core_approvals_task_id", table_name="ai_core_approvals")
+    op.drop_index("ix_ai_core_approvals_created_at", table_name="ai_core_approvals", if_exists=True)
+    op.drop_index("ix_ai_core_approvals_task_id", table_name="ai_core_approvals", if_exists=True)
     op.drop_table("ai_core_approvals")

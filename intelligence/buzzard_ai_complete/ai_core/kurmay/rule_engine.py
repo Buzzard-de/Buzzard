@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from typing import Any
 
 from buzzard_ai_complete.ai_core.enums import MemoryImpact, RiskLevel
 from buzzard_ai_complete.ai_core.kurmay.schemas import KurmayRecommendation, KurmayReport
@@ -28,7 +29,7 @@ class KurmayRuleEngine:
 
         sources: list[str] = []
         recommendations: list[KurmayRecommendation] = []
-        max_impact = MemoryImpact.LOW.value
+        max_impact = self.IMPACT_ORDER[MemoryImpact.LOW.value]
         confidence_values: list[float] = []
 
         for entry in memory_entries:

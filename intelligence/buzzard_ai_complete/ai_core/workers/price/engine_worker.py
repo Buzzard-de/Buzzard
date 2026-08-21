@@ -34,7 +34,9 @@ class PriceEngineWorker(BuzzardWorker):
             )
 
         sku = str(payload.get("sku", "UNKNOWN"))
-        if "base_price" in payload:
+        if payload.get("use_commerce_bridge"):
+            product = self._bridge.read_products(sku=sku)
+        else:
             base_price = float(payload.get("base_price", 10.0))
             margin = float(payload.get("margin", 0.2))
             recommended = round(base_price * (1 + margin), 2)
@@ -51,7 +53,7 @@ class PriceEngineWorker(BuzzardWorker):
                 },
                 metadata=self._meta(started, context),
                 confidence=0.9,
-                risk_level=RiskLevel.HIGH.value if below else RiskLevel.MEDIUM.value,
+                risk_level=RiskLevel.HIGH.value if below else RiskLevel.LOW.value,
             )
 
         product = self._bridge.read_products(sku=sku)

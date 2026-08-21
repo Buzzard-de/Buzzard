@@ -31,6 +31,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index("ix_ai_core_kurmay_reports_risk_level", table_name="ai_core_kurmay_reports")
-    op.drop_index("ix_ai_core_kurmay_reports_created_at", table_name="ai_core_kurmay_reports")
+    op.drop_index("ix_ai_core_kurmay_reports_risk_level", table_name="ai_core_kurmay_reports", if_exists=True)
+    op.drop_index("ix_ai_core_kurmay_reports_created_at", table_name="ai_core_kurmay_reports", if_exists=True)
     op.drop_table("ai_core_kurmay_reports")

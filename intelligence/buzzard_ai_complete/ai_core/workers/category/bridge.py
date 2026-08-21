@@ -8,6 +8,36 @@ from buzzard_ai_complete.ai_core.taxonomy.registry import TaxonomyRegistry
 from buzzard_ai_complete.category_intelligence_43_maximal.category_intelligence.agent import (
     CategoryIntelligenceAgent,
 )
+from buzzard_ai_complete.category_intelligence_43_maximal.category_intelligence.models import (
+    SellerOffer,
+)
+
+
+def _normalize_offers(offers: list[Any]) -> list[SellerOffer]:
+    """Adapt API/orchestrator dict payloads to SellerOffer objects."""
+    normalized: list[SellerOffer] = []
+    for idx, offer in enumerate(offers):
+        if isinstance(offer, SellerOffer):
+            normalized.append(offer)
+            continue
+        if not isinstance(offer, dict):
+            continue
+        price = offer.get("price")
+        if price is None:
+            continue
+        normalized.append(
+            SellerOffer(
+                seller_id=str(offer.get("seller_id", f"seller-{idx}")),
+                seller_name=str(offer.get("seller_name", offer.get("seller", f"Seller {idx}"))),
+                product_key=str(offer.get("product_key", offer.get("sku", offer.get("title", f"item-{idx}")))),
+                title=str(offer.get("title", offer.get("name", f"Item {idx}"))),
+                price=float(price),
+                currency=str(offer.get("currency", "EUR")),
+                shipping_price=offer.get("shipping_price"),
+                observed_at=offer.get("observed_at"),
+            )
+        )
+    return normalized
 
 
 def map_taxonomy_to_legacy_category_id(taxonomy_node_id: str) -> str:
@@ -48,7 +78,7 @@ def analyze_category(
             "message": "taxonomy node not found in master taxonomy",
         }
 
-    offers = payload.get("offers") or []
+    offers = _normalize_offers(list(payload.get("offers") or []))
     buzzard_taxonomy = payload.get("buzzard_taxonomy") or []
     observed_taxonomy = payload.get("observed_taxonomy") or []
 

@@ -52,6 +52,9 @@ uvicorn buzzard_ai_complete.api.app:app --reload
 | [PHASE2_DATA_FLOW.md](./PHASE2_DATA_FLOW.md) | End-to-end data flows per domain |
 | [PHASE2_PERMISSION_MATRIX.md](./PHASE2_PERMISSION_MATRIX.md) | Permissions, autonomy, approval gates |
 | [PHASE2_IMPLEMENTATION_PLAN.md](./PHASE2_IMPLEMENTATION_PLAN.md) | Ordered implementation steps |
+| [PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md](./PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md) | Dynamic taxonomy-driven category workers |
+| [PHASE2_ARCHITECTURE_REVIEW.md](./PHASE2_ARCHITECTURE_REVIEW.md) | Initial Phase 2 review (superseded) |
+| [PHASE2_ARCHITECTURE_FINAL_REVIEW.md](./PHASE2_ARCHITECTURE_FINAL_REVIEW.md) | Final Phase 2 architecture review |
 
 ## Key Decisions
 
@@ -63,10 +66,10 @@ uvicorn buzzard_ai_complete.api.app:app --reload
 
 ## Next Step
 
-Begin **Phase 2 implementation** (see `PHASE2_IMPLEMENTATION_PLAN.md`):
+Complete **Step 0.0 — Documentation reconciliation** per `PHASE2_ARCHITECTURE_FINAL_REVIEW.md` §18, then begin Phase 2 implementation (see `PHASE2_IMPLEMENTATION_PLAN.md`):
 
-1. Foundation — BuzzardWorker contract, schemas, migrations
+1. Foundation — BuzzardWorker contract, TaxonomyRegistry, CommerceBridge scaffold
 2. Security AI hardening
 3. Exception coordination
 4. Agents API + scheduler
-5. Category Intelligence (49 workers) → Kurmay → domain workers
+5. Category Intelligence (dynamic, taxonomy-driven) → Kurmay → domain workers

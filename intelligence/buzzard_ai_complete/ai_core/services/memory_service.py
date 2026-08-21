@@ -8,14 +8,22 @@ from sqlalchemy.orm import Session
 
 from buzzard_ai_complete.ai_core.enums import MemoryImpact, MemoryType
 from buzzard_ai_complete.ai_core.models.memory import MemoryEntry, MemoryHistory
+from buzzard_ai_complete.ai_core.security.policies import PolicyEngine
 from buzzard_ai_complete.ai_core.services.audit_service import AuditService
 
 
 class CentralMemoryService:
-  def __init__(self, session: Session, audit: AuditService, request_id: str = "system"):
+  def __init__(
+    self,
+    session: Session,
+    audit: AuditService,
+    request_id: str = "system",
+    policy: PolicyEngine | None = None,
+  ):
     self.session = session
     self.audit = audit
     self.request_id = request_id
+    self.policy = policy or PolicyEngine()
 
   def write(
     self,
@@ -33,7 +41,13 @@ class CentralMemoryService:
     expires_at: datetime | None = None,
     related_task: str | None = None,
     audit_id: str | None = None,
+    actor_role: str | None = None,
   ) -> MemoryEntry:
+    role = (actor_role or created_by).strip().lower()
+    if role.startswith("api:"):
+      role = role.split(":", 1)[1]
+    if not self.policy.can_write_namespace(role, namespace):
+      raise ValueError(f"actor role {role!r} cannot write to namespace {namespace!r}")
     if not 0.0 <= confidence <= 1.0:
       raise ValueError("confidence must be between 0 and 1")
     mem_type = type.value if isinstance(type, MemoryType) else type

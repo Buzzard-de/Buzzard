@@ -14,6 +14,8 @@ from buzzard_ai_complete.ai_core.workers.base import (
     WorkerResult,
     WorkerTimeoutError,
 )
+from buzzard_ai_complete.ai_core.schemas.workers.validation import validate_worker_output
+from buzzard_ai_complete.ai_core.security.task_permissions import required_permission_for_task
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.registry import WorkerRegistry, get_registry
 
@@ -41,10 +43,11 @@ class WorkerExecutor:
                 retryable=False,
             )
 
-        if isinstance(worker, BuzzardWorker) and self.required_permission:
-            if not worker.check_permission(self.required_permission):
+        required = self.required_permission or required_permission_for_task(task.type)
+        if isinstance(worker, BuzzardWorker) and required:
+            if not worker.check_permission(required):
                 raise WorkerExecutionError(
-                    f"worker {worker.worker_id} lacks permission {self.required_permission!r}",
+                    f"worker {worker.worker_id} lacks permission {required!r}",
                     retryable=False,
                 )
 
@@ -66,6 +69,8 @@ class WorkerExecutor:
             after_state={"task_type": task.type, "attempt": task.attempts},
         )
         result = self._run_with_timeout(worker, task.type, task.payload or {}, context)
+        if result.success:
+            validate_worker_output(task.type, result.output)
         if isinstance(worker, BuzzardWorker):
             result.metadata.setdefault("worker_id", worker.worker_id)
             result.metadata.setdefault("family", worker.family)

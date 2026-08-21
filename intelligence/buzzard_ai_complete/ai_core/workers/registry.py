@@ -65,7 +65,7 @@ def build_default_registry() -> WorkerRegistry:
     return registry
 
 
-def build_phase2_registry() -> WorkerRegistry:
+def build_phase2_registry(coordinator=None) -> WorkerRegistry:
     registry = WorkerRegistry()
     taxonomy = TaxonomyRegistry()
     factory = CategoryWorkerFactory(taxonomy)
@@ -83,7 +83,7 @@ def build_phase2_registry() -> WorkerRegistry:
         CustomerServiceAIWorker(),
         SecurityAIWorker(),
         KurmaySynthesisWorker(),
-        ExceptionCoordinatorWorker(),
+        ExceptionCoordinatorWorker(coordinator=coordinator),
     ):
         registry.register(worker)
 

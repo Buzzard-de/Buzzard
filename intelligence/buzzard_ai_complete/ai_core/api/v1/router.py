@@ -142,6 +142,7 @@ def write_memory(
   body: MemoryWriteRequest,
   memory: CentralMemoryService = Depends(get_memory_service),
   actor: str = Depends(get_actor),
+  actor_role: str = Depends(get_actor_role),
   request_id: str = Depends(get_request_id),
 ):
   try:
@@ -157,6 +158,7 @@ def write_memory(
       confidence=body.confidence,
       impact=body.impact,
       related_task=body.related_task,
+      actor_role=actor_role,
     )
   except ValueError as exc:
     raise HTTPException(status_code=400, detail={"code": "VALIDATION_ERROR", "message": str(exc), "request_id": request_id})

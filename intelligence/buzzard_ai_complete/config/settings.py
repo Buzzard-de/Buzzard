@@ -33,5 +33,24 @@ APPROVER_ROLES = frozenset(
     for r in os.getenv("BUZZARD_APPROVER_ROLES", "admin,operator,approver").split(",")
     if r.strip()
 )
+DEFAULT_API_ROLE = os.getenv("BUZZARD_DEFAULT_API_ROLE", "api-user").strip().lower()
+ALLOW_ROLE_HEADER = os.getenv("BUZZARD_ALLOW_ROLE_HEADER", "false").lower() in {"1", "true", "yes", "on"}
+
+
+def _parse_token_roles(raw: str) -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    for part in raw.split(","):
+        piece = part.strip()
+        if not piece or ":" not in piece:
+            continue
+        token, role = piece.split(":", 1)
+        token = token.strip()
+        role = role.strip().lower()
+        if token and role:
+            mapping[token] = role
+    return mapping
+
+
+API_TOKEN_ROLES = _parse_token_roles(os.getenv("BUZZARD_API_TOKEN_ROLES", ""))
 RATE_LIMIT_PER_MINUTE = int(os.getenv("BUZZARD_RATE_LIMIT_PER_MINUTE", "60"))
 BUZZARD_WORKER_POLL_INTERVAL_SECONDS = int(os.getenv("BUZZARD_WORKER_POLL_INTERVAL_SECONDS", "30"))

@@ -36,6 +36,7 @@ class CategoryScanWorker(Worker):
         return WorkerResult(
             success=True,
             output={
+                "status": "ok",
                 "scope": scope,
                 "categories_found": len(categories),
                 "categories": categories,

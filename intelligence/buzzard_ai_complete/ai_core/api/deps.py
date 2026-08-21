@@ -12,6 +12,7 @@ from buzzard_ai_complete.ai_core.services.audit_service import AuditService
 from buzzard_ai_complete.ai_core.services.exception_service import ExceptionService
 from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
 from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrator
+from buzzard_ai_complete.ai_core.security.token_roles import resolve_actor_role
 from buzzard_ai_complete.config import settings
 
 _db_initialized = False
@@ -67,18 +68,20 @@ def authorize(
     token = authorization.strip()
   elif x_api_key:
     token = x_api_key.strip()
-  if not token or token != settings.API_TOKEN:
+  if not token:
     raise HTTPException(status_code=401, detail={"code": "UNAUTHORIZED", "message": "Unauthorized"})
-  return "api-user"
+  valid_tokens = {settings.API_TOKEN, *settings.API_TOKEN_ROLES.keys()}
+  valid_tokens.discard("")
+  if token not in valid_tokens:
+    raise HTTPException(status_code=401, detail={"code": "UNAUTHORIZED", "message": "Unauthorized"})
+  return token
 
 
 def get_actor_role(
-  auth_actor: Annotated[str, Depends(authorize)],
+  token: Annotated[str, Depends(authorize)],
   x_actor_role: Annotated[str | None, Header(alias="X-Actor-Role")] = None,
 ) -> str:
-  if x_actor_role and x_actor_role.strip():
-    return x_actor_role.strip().lower()
-  return auth_actor.strip().lower()
+  return resolve_actor_role(token, x_actor_role)
 
 
 def get_idempotency_key(
@@ -98,8 +101,11 @@ def get_idempotency_key(
   return header_key or body_key
 
 
-def get_actor(auth_actor: Annotated[str, Depends(authorize)]) -> str:
-  return auth_actor
+def get_actor(
+  token: Annotated[str, Depends(authorize)],
+  actor_role: Annotated[str, Depends(get_actor_role)],
+) -> str:
+  return f"api:{actor_role}"
 
 
 def get_audit_service(

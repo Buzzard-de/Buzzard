@@ -66,6 +66,7 @@ def test_memory_write_and_version(services):
         namespace="ns",
         key="k1",
         confidence=0.9,
+        actor_role="operator",
     )
     e2 = mem.write(
         source="test",
@@ -77,6 +78,7 @@ def test_memory_write_and_version(services):
         namespace="ns",
         key="k1",
         confidence=0.95,
+        actor_role="operator",
     )
     assert e1.id == e2.id
     assert e2.version == 2

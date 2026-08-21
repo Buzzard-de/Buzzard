@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
-from buzzard_ai_complete.ai_core.api.deps import authorize
+from buzzard_ai_complete.ai_core.api.deps import authorize, get_db
+from buzzard_ai_complete.ai_core.services.worker_registry_service import WorkerRegistryService
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.registry import get_registry
+from buzzard_ai_complete.config import settings
 
 router = APIRouter(prefix="/agents", tags=["ai-core-agents"])
 
@@ -28,8 +31,11 @@ def _serialize_worker(worker) -> dict:
 
 
 @router.get("", dependencies=[Depends(authorize)])
-def list_agents():
+def list_agents(db: Session = Depends(get_db)):
     registry = get_registry()
+    if settings.BUZZARD_AI_CORE_V2:
+        WorkerRegistryService(db).sync_registry(registry)
+        db.commit()
     workers = registry.list_workers()
     return {
         "total": len(workers),

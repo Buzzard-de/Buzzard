@@ -42,6 +42,7 @@ def test_kurmay_synthesis_task(services, session):
         namespace="pricing",
         key="k1",
         impact=MemoryImpact.HIGH,
+        actor_role="operator",
     )
     session.flush()
     task = orch.create_task(

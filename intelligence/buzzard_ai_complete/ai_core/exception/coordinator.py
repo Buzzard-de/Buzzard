@@ -25,6 +25,13 @@ class ExceptionCoordinator:
             raise KeyError(f"exception not found: {exception_id}")
         assignment = self.router.assign(record.type, record.severity, record.worker_id)
         if assignment.get("owner"):
+            if record.status == "DETECTED":
+                self.exceptions.transition(
+                    exception_id,
+                    "CLASSIFIED",
+                    actor=actor,
+                    note="classified for routing",
+                )
             self.exceptions.transition(
                 exception_id,
                 "ASSIGNED",

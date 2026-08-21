@@ -24,7 +24,12 @@
 - `PHASE2_PERMISSION_MATRIX.md` — Berechtigungen & Freigaben
 - `PHASE2_IMPLEMENTATION_PLAN.md` — 15-Schritte Plan
 
-### Phase 2 — Architecture Review
+### Phase 2 — Status Reports (Implementation NOT STARTED)
+- `PHASE2_IMPLEMENTATION_REPORT.md` — Steps 0–14 status, blocking dependencies
+- `PHASE2_TEST_RESULTS.md` — Phase 1 baseline (342 passed); Phase 2 tests not created
+- `PHASE2_SECURITY_REPORT.md` — Phase 1 implemented; Phase 2 designed
+- `PHASE2_DATABASE_REPORT.md` — Migrations 001–003 live; 004–007 planned
+- `PHASE2_WORKER_REPORT.md` — 5 Phase 1 stubs; 11 Phase 2 families designed
 - `PHASE2_ARCHITECTURE_REVIEW.md` — Initial review (superseded)
 - `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md` — Dynamic taxonomy-driven category workers
 - `PHASE2_ARCHITECTURE_FINAL_REVIEW.md` — Final architecture review (all 25 systems)
@@ -34,6 +39,7 @@
 
 ```
 buzzard-ai-core-komplett-2026-08-22/
+├── SESSION_BERICHT.md                     ← Kompletter Session-Bericht (START HIER)
 ├── README.md                              ← Diese Datei
 │
 ├── phase1/

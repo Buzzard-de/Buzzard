@@ -25,8 +25,10 @@
 - `PHASE2_IMPLEMENTATION_PLAN.md` — 15-Schritte Plan
 
 ### Phase 2 — Architecture Review
-- `PHASE2_ARCHITECTURE_REVIEW.md` — Konsistenzprüfung Phase 1 ↔ Phase 2
-- **Ergebnis:** `NOT_READY_FOR_IMPLEMENTATION` (6 Blocking Corrections)
+- `PHASE2_ARCHITECTURE_REVIEW.md` — Initial review (superseded)
+- `PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md` — Dynamic taxonomy-driven category workers
+- `PHASE2_ARCHITECTURE_FINAL_REVIEW.md` — Final architecture review (all 25 systems)
+- **Ergebnis:** `NOT_READY_FOR_IMPLEMENTATION` (5 blocking doc fixes before Step 0)
 
 ## Ordnerstruktur
 
@@ -49,7 +51,9 @@ buzzard-ai-core-komplett-2026-08-22/
 │       ├── PHASE2_DATA_FLOW.md
 │       ├── PHASE2_PERMISSION_MATRIX.md
 │       ├── PHASE2_IMPLEMENTATION_PLAN.md
-│       ├── PHASE2_ARCHITECTURE_REVIEW.md  ← Review (NOT_READY)
+│       ├── PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md
+│       ├── PHASE2_ARCHITECTURE_REVIEW.md  ← Initial review (superseded)
+│       ├── PHASE2_ARCHITECTURE_FINAL_REVIEW.md  ← Final review (NOT_READY)
 │       └── README.md
 │
 └── docs/                                  ← Alle Kern-Dokumente
@@ -82,4 +86,4 @@ https://github.com/Buzzard-de/Buzzard/tree/cursor/phase2-architecture-c293/expor
 | Phase 1 | ✅ READY (88/100) |
 | Phase 2 Planning | ✅ READY |
 | Phase 2 Implementation | ❌ NOT STARTED |
-| Phase 2 Architecture Review | `NOT_READY_FOR_IMPLEMENTATION` |
+| Phase 2 Architecture Final Review | `NOT_READY_FOR_IMPLEMENTATION` |

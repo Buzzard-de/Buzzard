@@ -3,4 +3,7 @@ docs/buzzard-ai-core/PHASE2_WORKER_SPEC.md
 docs/buzzard-ai-core/PHASE2_DATA_FLOW.md
 docs/buzzard-ai-core/PHASE2_PERMISSION_MATRIX.md
 docs/buzzard-ai-core/PHASE2_IMPLEMENTATION_PLAN.md
+docs/buzzard-ai-core/PHASE2_CATEGORY_INTELLIGENCE_ARCHITECTURE.md
+docs/buzzard-ai-core/PHASE2_ARCHITECTURE_REVIEW.md
+docs/buzzard-ai-core/PHASE2_ARCHITECTURE_FINAL_REVIEW.md
 docs/buzzard-ai-core/README.md

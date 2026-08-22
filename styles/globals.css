@@ -1026,7 +1026,14 @@ select, input, button { font-family: inherit; }
     width: 100%;
 }
 .contact-form-btn:hover { background: var(--gold-light); }
+.contact-form-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .contact-form-msg { margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+.contact-form-alt {
+    margin-top: 14px;
+    font-size: 0.82rem;
+    color: var(--muted);
+}
+.contact-form-alt a { color: var(--gold); }
 .contact-info h3 {
     font-family: "Barlow Condensed", sans-serif;
     font-size: 1.1rem;

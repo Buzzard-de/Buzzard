@@ -63,11 +63,12 @@ Worker count: `13 + TaxonomyRegistry.main_category_count()` — currently 61, dy
 | **Approval** | Not required (read-only intelligence) |
 | **Memory Namespace** | `market/{source}/`, `competitors/{id}/` |
 
-### 3.2 `procurement-intelligence`
+### 3.2 `procurement-intelligence` (Wave 5 worker)
 
 | Field | Value |
 |-------|-------|
 | **Worker ID** | `procurement-intelligence` |
+| **Registration Wave** | **5** (worker); routing logic in `ProcurementRoutingService` Wave 3 |
 | **Family** | `procurement` |
 | **Task Types** | `supplier_selection`, `purchase_order_draft` |
 | **Risk Level** | MEDIUM |

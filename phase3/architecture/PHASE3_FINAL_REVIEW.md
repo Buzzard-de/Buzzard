@@ -150,7 +150,7 @@ All 20 evaluated systems classified. See `PHASE3_ARCHITECTURE.md` §4.
 
 Score cap: -1 for unresolved external Commerce API provisioning (not an architecture gap).
 
-**Architecture Score: 98/100**
+**Architecture Score: 97/100** (post-P1 remediation; see `PHASE3_ARCHITECTURE_VERIFICATION_V2.md`)
 
 ---
 

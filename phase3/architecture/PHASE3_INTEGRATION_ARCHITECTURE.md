@@ -294,7 +294,7 @@ class CarrierAdapter(ABC):
 
 Volume-based shipping economics: rate selection considers package weight, dimensions, destination country, and contracted volume tiers. Logic in logistics intelligence module, not hard-coded per carrier.
 
-**Wave 3–4.** Not in initial commerce integration wave.
+**Wave 4.** Carrier abstraction not in initial commerce integration wave.
 
 ---
 

@@ -56,6 +56,8 @@ See `DOC_INDEX.md` for the full document map.
 
 ## Final Architecture Decision
 
-See `PHASE3_ARCHITECTURE_FINAL_REVIEW.md` § Final Decision.
+See `PHASE3_ARCHITECTURE_VERIFICATION_V2.md` § Final Decision.
+
+**Status:** `PHASE3_ARCHITECTURE_READY` (post-P1 remediation, 97/100)
 
 **STOP — Phase 3 implementation not started.**

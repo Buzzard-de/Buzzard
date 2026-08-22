@@ -64,7 +64,7 @@ LAYER 0   Foundation / Infrastructure
 
 | Component | Phase 2 State | Phase 3 Extension |
 |-----------|---------------|-------------------|
-| `UnifiedOrchestrator` | ✅ 14-state lifecycle | Hook extensions for decision engine events |
+| `UnifiedOrchestrator` | ✅ 13-state lifecycle | Hook extensions for decision engine events (Wave 5) |
 | `CentralMemoryService` | ✅ Versioned namespaces | New namespaces: `decisions/`, `suppliers/`, `market/` |
 | `ExceptionService` | ✅ 6-state lifecycle | SLA fields, postmortem links |
 | `AuditService` | ✅ Dual-write | Correlation IDs, integration audit events |
@@ -288,20 +288,20 @@ Phase 3 logically extends Buzzard AI Core toward a **real autonomous commerce in
 | 10 | Promotion Intelligence | **PHASE 3** | Pricing engine extension; policy-gated |
 | 11 | Margin Intelligence | **PHASE 3** | Derived from pricing + cost; Kurmay input |
 | 12 | Demand Forecasting | **FUTURE** | Requires historical sales data volume; architected, Wave 5+ |
-| 13 | Procurement Intelligence | **PHASE 3** | Supplier selection + PO routing; Wave 3 |
+| 13 | Procurement Intelligence | **PHASE 3** | `ProcurementRoutingService` Wave 3; `procurement-intelligence` worker Wave 5 |
 | 14 | Logistics Intelligence | **PHASE 3** | Carrier abstraction; Wave 3–4 |
 | 15 | Returns Intelligence | **PHASE 3** | Return lifecycle; Wave 4 |
 | 16 | Customer Service Intelligence | **PHASE 2 + PHASE 3** | Worker exists; full escalation + CRM (P3) |
 | 17 | Marketing Intelligence | **FUTURE** | Campaign optimization beyond Phase 3 scope |
 | 18 | Analytics | **PHASE 2 + PHASE 3** | Kurmay reports (P2); metrics + dashboards (P3) |
-| 19 | Business Decision Engine | **PHASE 3** | New central decision layer |
+| 19 | Business Decision Engine | **PHASE 3** | New central decision layer; **Wave 5** |
 | 20 | Autonomous Action Engine | **PHASE 3** | Governed autonomy levels 0–3 initial; 4–5 future |
 
 ### Already Implemented (carry forward unchanged)
 
 | Component | Phase |
 |-----------|-------|
-| UnifiedOrchestrator, 14-state task lifecycle | P1/P2 |
+| UnifiedOrchestrator, 13-state task lifecycle | P1/P2 |
 | CentralMemoryService with versioning | P1/P2 |
 | ExceptionService with worker halt | P1/P2 |
 | AuditService dual-write | P1/P2 |

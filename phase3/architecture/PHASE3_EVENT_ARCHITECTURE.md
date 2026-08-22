@@ -155,8 +155,8 @@ Events that fail after max retries:
 
 1. Status → `DEAD_LETTER`
 2. Alert to operations
-3. Manual review via `GET /api/v1/events/dead-letter`
-4. Replay via `POST /api/v1/events/{id}/replay` (admin only)
+3. Manual review via `GET /api/v1/events/dead-letter` (see `PHASE3_API_ARCHITECTURE.md` §3.10)
+4. Replay via `POST /api/v1/events/{id}/replay` (admin only; `Idempotency-Key` required)
 
 ---
 

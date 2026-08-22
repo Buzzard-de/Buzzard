@@ -106,6 +106,48 @@
 | `GET` | `/analytics/kpis` | `analytics:read` | Platform KPIs |
 | `GET` | `/analytics/workers` | `analytics:read` | Worker performance metrics |
 
+### 3.10 Events Admin (Wave 1)
+
+Cross-reference: `PHASE3_EVENT_ARCHITECTURE.md` §7
+
+| Method | Path | Permission | Description |
+|--------|------|------------|-------------|
+| `GET` | `/events` | `events:read` | List events (paginated; filter by status, type) |
+| `GET` | `/events/{id}` | `events:read` | Event detail |
+| `GET` | `/events/dead-letter` | `events:admin` | List dead-letter events |
+| `POST` | `/events/{id}/replay` | `events:admin` | Replay dead-letter event (admin only) |
+
+**Replay contract:**
+
+| Field | Requirement |
+|-------|-------------|
+| Authentication | JWT with `admin` role or service identity |
+| Idempotency | `Idempotency-Key` required on replay POST |
+| Audit | Every replay logged with original `event_id`, `correlation_id`, actor |
+| Side effect | Creates new event with `causation_id` = original `event_id` |
+| Rate limit | 10 replays/min per actor |
+
+**Dead-letter list response:**
+
+```json
+{
+  "items": [
+    {
+      "event_id": "evt-uuid",
+      "event_type": "commerce.order.created",
+      "status": "DEAD_LETTER",
+      "retry_count": 5,
+      "correlation_id": "req-abc-123",
+      "created_at": "2026-08-22T10:00:00Z",
+      "last_error": "Consumer timeout"
+    }
+  ],
+  "total": 3,
+  "page": 1,
+  "page_size": 50
+}
+```
+
 ---
 
 ## 4. Request/Response Standards

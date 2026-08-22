@@ -1,9 +1,10 @@
 # BUZZARD AI CORE — PHASE 3 ARCHITECTURE FINAL REVIEW
 
-**Version:** 1.0  
+**Version:** 1.1 (post-P1 remediation)  
 **Date:** 2026-08-22  
 **Classification:** AUTHORITATIVE — Phase 3 architecture decision document  
-**Baseline:** Phase 2 FROZEN — 96/100 (`PHASE2_PARTIAL`)
+**Baseline:** Phase 2 FROZEN — 96/100 (`PHASE2_PARTIAL`)  
+**Current verification:** `PHASE3_ARCHITECTURE_VERIFICATION_V2.md`
 
 ---
 
@@ -13,24 +14,21 @@
 PHASE3_ARCHITECTURE_READY
 ```
 
+*Updated after P1 remediation (2026-08-22). Prior status was PARTIAL at 92/100 before remediation.*
+
 ---
 
 ## 1. Decision Rationale
 
-The Phase 3 architecture package is **complete enough to begin implementation** subject to external dependency gates documented below. The architecture:
+The Phase 3 architecture package is **complete enough to begin implementation** subject to external dependency gates. After P1 remediation (7/7 FIXED):
 
-- Builds on the frozen Phase 2 foundation without modification
-- Addresses all 3 P1 external commerce dependencies with honest adapter design
-- Classifies all 20 evaluated intelligence modules
-- Defines 13 architecture layers with no circular dependencies
-- Provides production-grade security, audit, idempotency, and approval controls
-- Includes 5 implementation waves with clear acceptance criteria
-- Documents 30 risks with mitigations
-- Preserves dynamic taxonomy (no hard-coded category count)
-- Supports multilingual EU operation
-- Prohibits fake integrations and unauthorized autonomous actions
+- Wave placement contradictions resolved via `PHASE3_WAVE_AUTHORITY.md`
+- Events admin API contract defined in `PHASE3_API_ARCHITECTURE.md` §3.10
+- 13-state task lifecycle corrected to match frozen Phase 2 code
+- Procurement split: `ProcurementRoutingService` (Wave 3) + worker (Wave 5)
+- Architecture score recalibrated per `PHASE3_ARCHITECTURE_VERIFICATION_V2.md`
 
-Two P1 architecture findings (AR-P0-001, AR-P0-002) are **external provisioning gates**, not design gaps. They gate Wave 1 start but do not block architecture approval.
+External provisioning gates (Commerce API staging, JWT IdP) gate Wave 1 execution but do not block architecture approval.
 
 ---
 
@@ -38,13 +36,12 @@ Two P1 architecture findings (AR-P0-001, AR-P0-002) are **external provisioning 
 
 | Metric | Value |
 |--------|-------|
-| **Architecture Score** | **98 / 100** |
+| **Pre-remediation score** | 92 / 100 (`PHASE3_ARCHITECTURE_VERIFICATION.md`) |
+| **Post-remediation score** | **97 / 100** (`PHASE3_ARCHITECTURE_VERIFICATION_V2.md`) |
+| P1 findings remediated | 7 / 7 |
 | Layer completeness | 13/13 layers defined |
 | Module classification | 20/20 systems classified |
-| Document completeness | 17/17 documents created |
-| Review checklist | 15/15 checks passed |
-| Circular dependencies | 0 |
-| P0 architecture findings | 2 (external gates only) |
+| Wave authority document | `PHASE3_WAVE_AUTHORITY.md` |
 
 ---
 

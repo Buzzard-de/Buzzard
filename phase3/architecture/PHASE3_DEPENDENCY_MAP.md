@@ -82,7 +82,7 @@ graph TD
 |-----------------|--------|----------------|------|
 | Buzzard Commerce API | GAP-A-003, GAP-I-001, GAP-M-002 | Commerce Integration Layer | Wave 1 |
 | Supplier feed endpoints | Supplier intelligence | Supplier Integration Layer | Wave 2 |
-| WMS system | Stock sync | Stock Intelligence | Wave 2 |
+| WMS system | Stock sync | Stock Intelligence | **Wave 3** |
 | CRM system | Customer context | Customer Intelligence | Wave 3 |
 | EU customs API | HS classification | customs-classifier | Wave 3 |
 | LLM provider (production) | Customer service drafts | LlmProviderAdapter | Wave 1 |
@@ -139,16 +139,20 @@ No worker may write to commerce systems without passing through:
 
 ## 7. Critical Path
 
+**Authoritative source:** `PHASE3_WAVE_AUTHORITY.md`
+
 ```
 Wave 1: JWT/RBAC + CommerceIntegrationAdapter + CommerceBridge live wiring
     ↓
 Wave 2: Supplier Adapter Layer + Product Pipeline + Storefront bridge
     ↓
-Wave 3: Pricing/Stock/Order intelligence + Business Decision Engine
+Wave 3: Pricing + Stock + Order intelligence + ProcurementRoutingService
     ↓
 Wave 4: Logistics + Returns + Market Intelligence + Observability
     ↓
-Wave 5: Autonomous Action Engine L3 + Demand Forecasting (future)
+Wave 5: Business Decision Engine + Autonomous Action Engine L4 + procurement-intelligence worker
 ```
+
+Decision Engine is **Wave 5 only**. Waves 1–4 produce intelligence signals and memory entries consumed by the Decision Engine in Wave 5.
 
 No wave may start until its dependencies are defined and prior wave acceptance criteria met.

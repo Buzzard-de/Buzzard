@@ -157,16 +157,19 @@ Multi-format supplier ingestion. Product intelligence pipeline. Storefront taxon
 
 ---
 
-## 4. Wave 3 — Pricing, Stock, Order Intelligence
+## 4. Wave 3 — Pricing, Stock, Order + Procurement Routing Intelligence
 
 ### Objective
 
-Production pricing engine with policy gates. Multi-source stock reconciliation. Order lifecycle with idempotency.
+Production pricing engine with policy gates. Multi-source stock reconciliation. Order lifecycle with idempotency. **Procurement routing** via `ProcurementRoutingService` (domain service — not a new worker).
+
+**Authoritative wave placement:** `PHASE3_WAVE_AUTHORITY.md`
 
 ### Dependencies
 
 - Wave 2 complete
 - WMS staging environment (external)
+- CRM staging environment (external)
 
 ### Modules
 
@@ -175,6 +178,7 @@ Production pricing engine with policy gates. Multi-source stock reconciliation. 
 | `PricingPolicyEngine` | `ai_core/intelligence/pricing/policy.py` | New |
 | `StockReconciler` | `ai_core/intelligence/stock/reconciler.py` | New |
 | `OrderIngestionService` | `ai_core/intelligence/orders/ingestion.py` | New |
+| `ProcurementRoutingService` | `ai_core/intelligence/procurement/routing.py` | New (Wave 3 domain service) |
 | `WmsAdapter` | `ai_core/integrations/wms_adapter.py` | New |
 | `CrmAdapter` | `ai_core/integrations/crm_adapter.py` | New |
 
@@ -192,7 +196,7 @@ Production pricing engine with policy gates. Multi-source stock reconciliation. 
 
 - Wire `price-engine` to `PricingPolicyEngine`
 - Wire `stock-engine` to `StockReconciler` + WMS
-- Wire `order-engine` to `OrderIngestionService`
+- Wire `order-engine` to `OrderIngestionService` + `ProcurementRoutingService`
 - Wire `customer-service-ai` to CRM adapter
 
 ### Tests
@@ -216,7 +220,8 @@ Production pricing engine with policy gates. Multi-source stock reconciliation. 
 
 - [ ] Price candidate evaluated against policy; approval required outside bounds
 - [ ] Stock reconciled from 3 sources with conflict resolution
-- [ ] Order ingested idempotently; no duplicate POs
+- [ ] Order ingested idempotently; no duplicate POs via `ProcurementRoutingService`
+- [ ] Procurement routing selects supplier by priority policy; PO above threshold requires approval
 - [ ] Customer service uses CRM context when configured
 - [ ] 0 regressions
 
@@ -288,11 +293,15 @@ Carrier abstraction. Returns lifecycle. Compliant market intelligence. Productio
 
 ---
 
-## 6. Wave 5 — Decision Engine + Autonomous L4
+## 6. Wave 5 — Decision Engine + Autonomous L4 + Procurement Worker
 
 ### Objective
 
-Central Business Decision Engine. Governed conditional autonomy. Demand forecasting foundation.
+Central Business Decision Engine. Governed conditional autonomy. Register `procurement-intelligence` and `decision-engine` workers. Optional distributed queue.
+
+**Authoritative wave placement:** `PHASE3_WAVE_AUTHORITY.md`
+
+Note: `ProcurementRoutingService` (order-flow PO routing) is delivered in **Wave 3**. This wave registers the dedicated `procurement-intelligence` worker for `supplier_selection` and `purchase_order_draft` tasks.
 
 ### Dependencies
 

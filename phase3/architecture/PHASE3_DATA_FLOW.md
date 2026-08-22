@@ -201,9 +201,9 @@ Order Event (webhook or poll)
     → Validation: customer, items, payment state
     → Fraud/risk signals (PolicyEngine)
     → Stock reservation (stock-engine coordination)
-    → Supplier routing (procurement intelligence)
+    → Supplier routing (ProcurementRoutingService — Wave 3 domain service)
     → [if approved] Purchase order to supplier
-    → Fulfillment task → Carrier adapter (Wave 3+)
+    → Fulfillment task → Carrier adapter (Wave 4)
     → Tracking update → Memory: orders/{id}/
     → [if exception] Exception lifecycle
     → Audit (every state transition)

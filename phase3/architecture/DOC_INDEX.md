@@ -26,7 +26,11 @@
 | 14 | `PHASE3_IMPLEMENTATION_PLAN.md` | Implementation waves (no code) |
 | 15 | `PHASE3_RISK_REGISTER.md` | Risk matrix |
 | 16 | `PHASE3_FINAL_REVIEW.md` | Formal review summary |
-| 17 | `PHASE3_ARCHITECTURE_FINAL_REVIEW.md` | **Authoritative** final review and decision |
+| 16 | `PHASE3_WAVE_AUTHORITY.md` | **Authoritative wave placement** (post-P1) |
+| 17 | `PHASE3_P1_FINDINGS.md` | P1 findings register |
+| 18 | `PHASE3_P1_FINAL_VERIFICATION.md` | P1 remediation verification |
+| 19 | `PHASE3_ARCHITECTURE_VERIFICATION.md` | Independent verification v1 |
+| 20 | `PHASE3_ARCHITECTURE_VERIFICATION_V2.md` | Independent verification v2 (post-P1) |
 
 ---
 

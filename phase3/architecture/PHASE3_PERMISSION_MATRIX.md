@@ -70,6 +70,10 @@ Phase 3 Wave 1: JWT claims map to roles. `BUZZARD_API_TOKEN_ROLES` preserved for
 | `/api/v1/pricing/publish` | POST | `pricing:publish` | admin, pricing-manager, approver |
 | `/api/v1/suppliers` | GET/POST | `suppliers:read/write` | admin, operator |
 | `/api/v1/returns/evaluate` | POST | `returns:evaluate` | admin, operator, customer-service |
+| `/api/v1/events` | GET | `events:read` | admin, operator, system |
+| `/api/v1/events/{id}` | GET | `events:read` | admin, operator, system |
+| `/api/v1/events/dead-letter` | GET | `events:admin` | admin |
+| `/api/v1/events/{id}/replay` | POST | `events:admin` | admin |
 
 Phase 3 Wave 1: enforce at API middleware layer (currently only worker-level).
 

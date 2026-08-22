@@ -18,6 +18,25 @@ from buzzard_ai_complete.config import settings
 router = APIRouter(prefix="/integrations", tags=["ai-core-integrations"])
 
 
+def _webhook_secret_configured(secret: str | None) -> bool:
+    return bool((secret or "").strip())
+
+
+def _require_webhook_secret(secret: str | None, integration: str, request_id: str) -> None:
+    if _webhook_secret_configured(secret):
+        return
+    if settings.BUZZARD_ALLOW_UNSIGNED_WEBHOOKS:
+        return
+    raise HTTPException(
+        status_code=503,
+        detail={
+            "code": "WEBHOOK_NOT_CONFIGURED",
+            "message": f"{integration} webhook secret is not configured; set secret or BUZZARD_ALLOW_UNSIGNED_WEBHOOKS for development",
+            "request_id": request_id,
+        },
+    )
+
+
 def _verify_commerce_hmac(body: bytes, signature: str | None) -> bool:
     secret = settings.COMMERCE_WEBHOOK_SECRET
     if not secret:
@@ -61,7 +80,10 @@ async def commerce_webhook(
     x_signature: Annotated[str | None, Header(alias="X-Commerce-Signature")] = None,
 ):
     body = await request.body()
-    if settings.COMMERCE_WEBHOOK_SECRET and not _verify_commerce_hmac(body, x_signature):
+    _require_webhook_secret(settings.COMMERCE_WEBHOOK_SECRET, "Commerce", request_id)
+    if _webhook_secret_configured(settings.COMMERCE_WEBHOOK_SECRET) and not _verify_commerce_hmac(
+        body, x_signature
+    ):
         raise HTTPException(
             status_code=401,
             detail={"code": "UNAUTHORIZED", "message": "Invalid webhook signature", "request_id": request_id},
@@ -104,7 +126,10 @@ async def carrier_webhook(
     x_signature: Annotated[str | None, Header(alias="X-Carrier-Signature")] = None,
 ):
     body = await request.body()
-    if settings.CARRIER_WEBHOOK_SECRET and not _verify_carrier_hmac(body, x_signature):
+    _require_webhook_secret(settings.CARRIER_WEBHOOK_SECRET, "Carrier", request_id)
+    if _webhook_secret_configured(settings.CARRIER_WEBHOOK_SECRET) and not _verify_carrier_hmac(
+        body, x_signature
+    ):
         raise HTTPException(
             status_code=401,
             detail={"code": "UNAUTHORIZED", "message": "Invalid carrier webhook signature", "request_id": request_id},

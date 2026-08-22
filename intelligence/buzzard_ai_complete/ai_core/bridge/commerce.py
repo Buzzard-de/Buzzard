@@ -8,6 +8,7 @@ from buzzard_ai_complete.config import settings
 EXTERNAL_INTEGRATION_PENDING = "EXTERNAL_INTEGRATION_PENDING"
 NO_DATA_AVAILABLE = "NO_DATA_AVAILABLE"
 APPROVAL_REQUIRED = "APPROVAL_REQUIRED"
+WRITES_DISABLED = "WRITES_DISABLED"
 
 
 class CommerceBridge:
@@ -75,6 +76,14 @@ class CommerceBridge:
                 "integration": "commerce",
                 "action": action,
                 "message": "commerce write requires explicit human approval",
+                "payload_keys": sorted(payload.keys()),
+            }
+        if settings.BUZZARD_COMMERCE_WRITES_DISABLED:
+            return {
+                "status": WRITES_DISABLED,
+                "integration": "commerce",
+                "action": action,
+                "message": "commerce writes disabled via BUZZARD_COMMERCE_WRITES_DISABLED",
                 "payload_keys": sorted(payload.keys()),
             }
         if not self.is_configured():

@@ -11,7 +11,7 @@ from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 
 class ExceptionCoordinatorWorker(BuzzardWorker):
     worker_id = "exception-coordinator"
-    supported_task_types = frozenset({"exception_route", "exception_coordinate"})
+    supported_task_types = frozenset({"exception_route", "exception_coordinate", "exception_triage"})
     family = "exception"
     permissions = frozenset({"exception:read", "exception:assign"})
     capabilities = frozenset({"routing", "assignment"})

@@ -108,6 +108,10 @@ def test_api_permission_matrix_operator():
 
 def test_commerce_webhook_emits_event(api_client, monkeypatch):
     monkeypatch.setenv("COMMERCE_WEBHOOK_SECRET", "")
+    monkeypatch.setenv("BUZZARD_ALLOW_UNSIGNED_WEBHOOKS", "1")
+    import buzzard_ai_complete.config.settings as settings
+
+    settings.BUZZARD_ALLOW_UNSIGNED_WEBHOOKS = True
     payload = {"event_type": "commerce.order.created", "order_id": "ORD-1"}
     response = api_client.post("/api/v1/integrations/webhooks/commerce", json=payload)
     assert response.status_code == 200

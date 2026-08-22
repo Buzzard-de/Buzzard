@@ -23,7 +23,7 @@ def analytics_workers(db: Session = Depends(get_db)):
     return svc.worker_kpis()
 
 
-@router.get("/metrics")
+@router.get("/metrics", dependencies=[Depends(enforce_api_permission)])
 def prometheus_metrics():
     if not settings.BUZZARD_OBSERVABILITY_ENABLED:
         return {"status": "disabled"}

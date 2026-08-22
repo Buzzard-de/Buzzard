@@ -1,6 +1,6 @@
 """AI Core idempotency keys and event outbox (Phase 3 Wave 1).
 
-Revision ID: 008_ai_core_idempotency_and_events
+Revision ID: 008_ai_core_idem_events
 Revises: 007_ai_core_approvals
 Create Date: 2026-08-22
 """
@@ -9,7 +9,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-revision: str = "008_ai_core_idempotency_and_events"
+revision: str = "008_ai_core_idem_events"
 down_revision: Union[str, None] = "007_ai_core_approvals"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

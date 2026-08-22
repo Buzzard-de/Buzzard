@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
+from sqlalchemy import create_engine, text
 
 from buzzard_ai_complete.ai_core.database.base import dispose_engine, get_engine, get_session_factory
 
@@ -22,6 +23,16 @@ def _alembic_config(database_url: str) -> Config:
     cfg = Config(str(root / "alembic.ini"))
     cfg.set_main_option("sqlalchemy.url", database_url)
     return cfg
+
+
+def _reset_postgres_schema(database_url: str) -> None:
+    """Drop and recreate public schema so alembic migrations start from a clean state."""
+    engine = create_engine(database_url)
+    with engine.begin() as conn:
+        conn.execute(text("DROP SCHEMA IF EXISTS public CASCADE"))
+        conn.execute(text("CREATE SCHEMA public"))
+        conn.execute(text("GRANT ALL ON SCHEMA public TO public"))
+    engine.dispose()
 
 
 def _postgres_available() -> bool:
@@ -64,8 +75,8 @@ def postgres_session(postgres_database_url, monkeypatch):
     settings.BUZZARD_AI_CORE_V2 = False
     dispose_engine()
 
+    _reset_postgres_schema(postgres_database_url)
     cfg = _alembic_config(postgres_database_url)
-    command.downgrade(cfg, "base")
     command.upgrade(cfg, "head")
 
     session = get_session_factory()()

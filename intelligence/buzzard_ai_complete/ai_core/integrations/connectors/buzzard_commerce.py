@@ -7,6 +7,7 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from buzzard_ai_complete.ai_core.integrations.commerce_config import validate_commerce_configuration
 from buzzard_ai_complete.config import settings
 
 
@@ -40,14 +41,16 @@ class BuzzardCommerceConnector(CommerceConnector):
         self._consecutive_failures = 0
 
     def is_configured(self) -> bool:
-        return bool(self._base_url and self._token)
+        return validate_commerce_configuration().valid
 
     def health_check(self) -> dict[str, Any]:
-        if not self.is_configured():
+        config = validate_commerce_configuration()
+        if not config.valid:
             return {
                 "status": "DISCONNECTED",
                 "integration": "commerce",
                 "message": "commerce API not configured",
+                "config_errors": list(config.errors),
             }
         result = self.request("GET", "/health")
         if result.get("status") in {"ok", "healthy", "CONNECTED"}:
@@ -73,7 +76,8 @@ class BuzzardCommerceConnector(CommerceConnector):
         *,
         idempotency_key: str | None = None,
     ) -> dict[str, Any]:
-        if not self.is_configured():
+        config = validate_commerce_configuration()
+        if not config.valid:
             return {
                 "status": "NO_DATA_AVAILABLE",
                 "integration": "commerce",

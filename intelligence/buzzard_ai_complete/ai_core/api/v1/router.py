@@ -305,6 +305,7 @@ def ai_core_health():
 @router.get("/health/ready")
 def ai_core_ready():
   from buzzard_ai_complete.ai_core.database.base import get_engine
+  from buzzard_ai_complete.ai_core.integrations.commerce_config import validate_commerce_configuration
   from buzzard_ai_complete.config import settings
 
   engine = get_engine()
@@ -313,6 +314,7 @@ def ai_core_ready():
   worker_registry = get_registry()
   integrations = get_integration_registry()
   worker_count = len(worker_registry.list_workers())
+  commerce_config = validate_commerce_configuration()
   return {
     "status": "ready",
     "version": settings.APP_VERSION,
@@ -321,6 +323,7 @@ def ai_core_ready():
     "database": "connected",
     "workers_registered": worker_count,
     "integrations": integrations.list_status(),
+    "commerce_config": commerce_config.to_dict(),
   }
 
 

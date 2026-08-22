@@ -9,7 +9,7 @@ from alembic import command
 from sqlalchemy import inspect, text
 
 from buzzard_ai_complete.ai_core.database.base import dispose_engine, get_engine
-from tests.conftest_postgres import _alembic_config, postgres_required
+from tests.conftest_postgres import _alembic_config, _reset_postgres_schema, postgres_required
 
 pytestmark = postgres_required
 
@@ -35,7 +35,7 @@ def test_alembic_upgrade_head_postgres(postgres_database_url, monkeypatch):
     dispose_engine()
 
     cfg = _alembic_config(postgres_database_url)
-    command.downgrade(cfg, "base")
+    _reset_postgres_schema(postgres_database_url)
     command.upgrade(cfg, "head")
 
     from sqlalchemy import create_engine
@@ -58,6 +58,8 @@ def test_alembic_upgrade_head_postgres(postgres_database_url, monkeypatch):
             "ai_core_integration_status",
             "ai_core_kurmay_reports",
             "ai_core_approvals",
+            "ai_core_idempotency_keys",
+            "ai_core_events",
             "alembic_version",
         }
         assert expected.issubset(tables)
@@ -82,6 +84,7 @@ def test_alembic_downgrade_to_base_postgres(postgres_database_url, monkeypatch):
     dispose_engine()
 
     cfg = _alembic_config(postgres_database_url)
+    _reset_postgres_schema(postgres_database_url)
     command.upgrade(cfg, "head")
     command.downgrade(cfg, "base")
 

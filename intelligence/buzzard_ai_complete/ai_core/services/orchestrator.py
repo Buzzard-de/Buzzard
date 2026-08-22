@@ -28,7 +28,7 @@ from buzzard_ai_complete.ai_core.services.exception_service import ExceptionServ
 from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
 from buzzard_ai_complete.ai_core.taxonomy.legacy_bridge import resolve_legacy_category_id
 from buzzard_ai_complete.ai_core.taxonomy.registry import TaxonomyRegistry
-from buzzard_ai_complete.ai_core.workers.base import WorkerExecutionError, WorkerTimeoutError
+from buzzard_ai_complete.ai_core.workers.base import WorkerExecutionError, WorkerResult, WorkerTimeoutError
 from buzzard_ai_complete.ai_core.workers.executor import WorkerExecutor
 from buzzard_ai_complete.ai_core.security.task_permissions import required_permission_for_task
 from buzzard_ai_complete.ai_core.services.integration_status_service import IntegrationStatusService
@@ -410,6 +410,7 @@ class UnifiedOrchestrator:
         actor,
         worker_result.error or "worker execution failed",
         retryable=worker_result.retryable,
+        worker_result=worker_result,
       )
 
     result = worker_result.to_dict()
@@ -550,6 +551,23 @@ class UnifiedOrchestrator:
       for entry in memory_entries
     )
 
+  def _failure_exception_severity(
+    self,
+    worker_result: WorkerResult | None = None,
+    *,
+    failure_severity: ExceptionSeverity | str | None = None,
+  ) -> str:
+    if failure_severity is not None:
+      return failure_severity.value if isinstance(failure_severity, ExceptionSeverity) else failure_severity
+    if worker_result and worker_result.risk_level in {RiskLevel.HIGH.value, RiskLevel.CRITICAL.value}:
+      return worker_result.risk_level
+    if worker_result:
+      for exc_payload in worker_result.exceptions:
+        sev = str(exc_payload.get("severity", ""))
+        if sev in {ExceptionSeverity.HIGH.value, ExceptionSeverity.CRITICAL.value}:
+          return sev
+    return ExceptionSeverity.MEDIUM.value
+
   def _handle_worker_failure(
     self,
     task: Task,
@@ -557,10 +575,13 @@ class UnifiedOrchestrator:
     message: str,
     *,
     retryable: bool,
+    worker_result: WorkerResult | None = None,
+    failure_severity: ExceptionSeverity | str | None = None,
   ) -> Task:
     task.error = message
+    severity = self._failure_exception_severity(worker_result, failure_severity=failure_severity)
     exc = self.exceptions.create(
-      severity=ExceptionSeverity.MEDIUM,
+      severity=severity,
       type="WORKER_EXECUTION_FAILED",
       message=message,
       worker_id=task.worker_id,
@@ -568,6 +589,16 @@ class UnifiedOrchestrator:
       actor=actor,
     )
     self.exceptions.transition(exc.id, ExceptionStatus.CLASSIFIED, actor=actor, note=message)
+    exception_batch = [
+      {
+        "id": exc.id,
+        "type": exc.type,
+        "severity": exc.severity,
+        "message": exc.message,
+      }
+    ]
+    if self._should_trigger_kurmay(task, [], exception_batch):
+      self._trigger_kurmay(task, [], exception_batch)
     if retryable and task.attempts < task.max_attempts:
       self._transition(task, TaskStatus.RETRY, actor, message)
       return self.advance(task.id, actor=actor, note="retry after failure")

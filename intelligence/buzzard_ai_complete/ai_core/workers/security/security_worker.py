@@ -13,7 +13,7 @@ class SecurityAIWorker(BuzzardWorker):
     worker_id = "security-ai"
     supported_task_types = frozenset({"security_scan", "security_inspect"})
     family = "security"
-    permissions = frozenset({"security:read", "security:write", "audit:read"})
+    permissions = frozenset({"security:read", "security:write", "security:inspect", "audit:read"})
     capabilities = frozenset({"policy_inspect", "text_scan", "threat_detection"})
     risk_default = RiskLevel.CRITICAL
 

@@ -66,7 +66,23 @@ def test_executor_validates_output_schema(services, session):
 
 
 # GAP-A-002: permission enforcement at execution
-def test_executor_enforces_task_permission(services, session):
+def test_executor_denies_when_worker_lacks_permission(services, session):
+    registry = services["orchestrator"]._execution_registry()
+    worker = registry.get("price-engine")
+    original_permissions = worker.permissions
+    worker.permissions = frozenset()
+    task = Task(type="price_recheck", payload={"sku": "X"}, created_by="tester", worker_id="price-engine")
+    session.add(task)
+    session.flush()
+    executor = WorkerExecutor(session, services["audit"], "test-req", registry=registry)
+    try:
+        with pytest.raises(WorkerExecutionError, match="lacks permission"):
+            executor.execute(task)
+    finally:
+        worker.permissions = original_permissions
+
+
+def test_supplier_sync_honest_external_pending_when_not_connected(services, session):
     task = Task(type="supplier_sync", payload={}, created_by="tester", worker_id="supplier-hub")
     session.add(task)
     session.flush()

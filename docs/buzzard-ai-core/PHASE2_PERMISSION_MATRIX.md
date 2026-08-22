@@ -308,7 +308,7 @@ All audit entries are append-only. No UPDATE or DELETE permitted.
 |-------------|----------------|------------------|
 | Commerce bridge (read) | All domain workers | Read-only internal token |
 | Commerce bridge (write) | Action tasks only | Write-scoped internal token |
-| TecDoc API | `category-kfz` only | `TECDOC_API_KEY` |
+| TecDoc API | `category-bz.01` capability extension | `TECDOC_API_KEY` |
 | Supplier feeds | `supplier-hub` only | Per-supplier credentials |
 | LLM provider | Product, CS, Kurmay, Customs | `LLM_API_KEY` |
 | HS code database | `customs-classifier` | Local (no credentials) |

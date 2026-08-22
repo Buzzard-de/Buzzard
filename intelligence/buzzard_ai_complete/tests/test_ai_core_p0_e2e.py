@@ -36,8 +36,10 @@ def _new_services(postgres_database_url, monkeypatch):
 
     monkeypatch.setenv("DATABASE_URL", postgres_database_url)
     monkeypatch.setenv("BUZZARD_API_TOKEN", "test-token-phase1")
+    monkeypatch.setenv("BUZZARD_AI_CORE_V2", "0")
     settings.DATABASE_URL = postgres_database_url
     settings.API_TOKEN = "test-token-phase1"
+    settings.BUZZARD_AI_CORE_V2 = False
     dispose_engine()
     session = get_session_factory()()
     audit = AuditService(session)

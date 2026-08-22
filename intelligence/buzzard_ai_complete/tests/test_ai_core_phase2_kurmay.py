@@ -25,7 +25,8 @@ def test_kurmay_rule_engine_synthesizes_conflicts():
             {"namespace": "categories/bz.01", "type": "SIGNAL", "content": {"price": 20}, "impact": "MEDIUM", "key": "b"},
         ],
     )
-    assert report.recommendations is not None
+    titles = [rec.title for rec in report.recommendations]
+    assert any("Price conflict" in title for title in titles)
     assert report.situation_summary
 
 

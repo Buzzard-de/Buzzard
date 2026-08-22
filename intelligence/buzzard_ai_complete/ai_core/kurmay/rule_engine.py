@@ -51,6 +51,8 @@ class KurmayRuleEngine:
                     )
                 )
 
+        recommendations.extend(self._detect_conflicts(memory_entries))
+
         for exc in exceptions:
             severity = str(exc.get("severity", "MEDIUM"))
             recommendations.append(
@@ -90,3 +92,48 @@ class KurmayRuleEngine:
             confidence=round(confidence, 3),
             metadata={"entry_count": len(memory_entries), "exception_count": len(exceptions)},
         )
+
+    def _detect_conflicts(self, memory_entries: list[dict[str, Any]]) -> list[KurmayRecommendation]:
+        """Detect numeric divergence and namespace collisions across specialist outputs."""
+        conflicts: list[KurmayRecommendation] = []
+        by_namespace: dict[str, list[dict[str, Any]]] = {}
+        for entry in memory_entries:
+            namespace = str(entry.get("namespace", "unknown"))
+            by_namespace.setdefault(namespace, []).append(entry)
+
+        for namespace, entries in by_namespace.items():
+            if len(entries) < 2:
+                continue
+            prices: list[float] = []
+            for entry in entries:
+                content = entry.get("content") or {}
+                if isinstance(content, dict):
+                    for field in ("price", "recommended_price", "base_price"):
+                        value = content.get(field)
+                        if isinstance(value, (int, float)):
+                            prices.append(float(value))
+            if len(prices) >= 2:
+                low, high = min(prices), max(prices)
+                if high > 0 and (high - low) / high >= 0.05:
+                    conflicts.append(
+                        KurmayRecommendation(
+                            title=f"Price conflict in {namespace}",
+                            rationale=f"specialist values diverge from {low} to {high}",
+                            priority="HIGH",
+                            action_type="conflict_resolution",
+                            metadata={"namespace": namespace, "min": low, "max": high},
+                        )
+                    )
+
+            keys = {str(entry.get("key", "")) for entry in entries}
+            if len(keys) != len(entries):
+                conflicts.append(
+                    KurmayRecommendation(
+                        title=f"Namespace collision in {namespace}",
+                        rationale="duplicate keys detected across specialist memory entries",
+                        priority="MEDIUM",
+                        action_type="conflict_resolution",
+                        metadata={"namespace": namespace},
+                    )
+                )
+        return conflicts

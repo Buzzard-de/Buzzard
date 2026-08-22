@@ -3,8 +3,15 @@ from fastapi.testclient import TestClient
 
 from buzzard_ai_complete.ai_core.enums import ExceptionSeverity, ExceptionStatus, MemoryType, TaskStatus
 from buzzard_ai_complete.api.app import app
+from buzzard_ai_complete.config import settings
 
 AUTH = {"Authorization": "Bearer test-token-phase1"}
+
+
+@pytest.fixture(autouse=True)
+def force_phase1_registry(monkeypatch):
+    monkeypatch.setenv("BUZZARD_AI_CORE_V2", "0")
+    settings.BUZZARD_AI_CORE_V2 = False
 
 
 def test_task_lifecycle_success(services):

@@ -7,6 +7,7 @@ from buzzard_ai_complete.ai_core.bridge.commerce import CommerceBridge, NO_DATA_
 from buzzard_ai_complete.ai_core.enums import RiskLevel
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
+from buzzard_ai_complete.ai_core.workers.domain_memory import domain_memory_entry
 
 
 class ProductIntelligenceWorker(BuzzardWorker):
@@ -23,7 +24,7 @@ class ProductIntelligenceWorker(BuzzardWorker):
 
     def execute(self, task_type: str, payload: dict[str, Any], context: WorkerContext) -> WorkerResult:
         started = time.monotonic()
-        sku = str(payload.get("sku", ""))
+        sku = str(payload.get("sku", "unknown"))
         product = self._bridge.read_products(sku=sku or None)
         if product.get("status") == NO_DATA_AVAILABLE:
             return WorkerResult(
@@ -33,8 +34,26 @@ class ProductIntelligenceWorker(BuzzardWorker):
                 error=NO_DATA_AVAILABLE,
                 retryable=False,
                 risk_level=self.risk_default.value,
+                memory_entries=[
+                    domain_memory_entry(
+                        f"products/{sku}",
+                        f"enrich/{context.task_id}",
+                        product,
+                    )
+                ],
             )
-        return WorkerResult(success=True, output=product, metadata=self._meta(started))
+        return WorkerResult(
+            success=True,
+            output=product,
+            metadata=self._meta(started),
+            memory_entries=[
+                domain_memory_entry(
+                    f"products/{sku}",
+                    f"enrich/{context.task_id}",
+                    product,
+                )
+            ],
+        )
 
     def _meta(self, started: float) -> dict[str, Any]:
         return {

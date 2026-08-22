@@ -103,7 +103,7 @@ API Request (POST /api/v1/tasks)
 └──────────────────────────┬──────────────────────────────────────┘
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ WORKER: category-bz.{nn} or category-kfz                        │
+│ WORKER: category-bz.{nn} (taxonomy-driven, one worker per L1)     │
 │  • CategoryIntelligenceBridge → CategoryIntelligenceAgent       │
 │  • TaxonomyIntelligence.hierarchy_gaps()                        │
 │  • PriceIntelligenceEngine.summarize()                          │

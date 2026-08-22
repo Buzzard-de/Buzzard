@@ -8,6 +8,7 @@ from buzzard_ai_complete.ai_core.enums import RiskLevel
 from buzzard_ai_complete.ai_core.integrations.registry import IntegrationStatusRegistry
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
+from buzzard_ai_complete.ai_core.workers.domain_memory import domain_memory_entry
 
 
 class StockEngineWorker(BuzzardWorker):
@@ -26,23 +27,43 @@ class StockEngineWorker(BuzzardWorker):
     def execute(self, task_type: str, payload: dict[str, Any], context: WorkerContext) -> WorkerResult:
         started = time.monotonic()
         wms_status = self._integrations.status("wms")
-        sku = str(payload.get("sku", ""))
+        sku = str(payload.get("sku", "unknown"))
         stock = self._bridge.read_stock(sku=sku or None)
         if wms_status != "CONNECTED" or stock.get("status") == NO_DATA_AVAILABLE:
+            output = {
+                "status": NO_DATA_AVAILABLE,
+                "wms_integration": wms_status,
+                "sku": sku or None,
+                "bridge": stock,
+            }
             return WorkerResult(
                 success=False,
-                output={
-                    "status": NO_DATA_AVAILABLE,
-                    "wms_integration": wms_status,
-                    "sku": sku or None,
-                    "bridge": stock,
-                },
+                output=output,
                 metadata=self._meta(started),
                 error=NO_DATA_AVAILABLE,
                 retryable=False,
                 risk_level=self.risk_default.value,
+                memory_entries=[
+                    domain_memory_entry(
+                        f"stock/{sku}",
+                        f"sync/{context.task_id}",
+                        output,
+                        impact=self.risk_default.value,
+                    )
+                ],
             )
-        return WorkerResult(success=True, output=stock, metadata=self._meta(started))
+        return WorkerResult(
+            success=True,
+            output=stock,
+            metadata=self._meta(started),
+            memory_entries=[
+                domain_memory_entry(
+                    f"stock/{sku}",
+                    f"sync/{context.task_id}",
+                    stock,
+                )
+            ],
+        )
 
     def _meta(self, started: float) -> dict[str, Any]:
         return {

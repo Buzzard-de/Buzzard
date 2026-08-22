@@ -210,7 +210,7 @@ Memory namespace map in `PHASE2_DATA_FLOW.md` §4 is clear. Enforcement depends 
 | 43+ support | Bridge to `category_intelligence_43_maximal` | ✅ Addressed via bridge, not rewrite |
 | Canonical taxonomy | `master_taxonomy_48_maximal` (48 L1) | ⚠️ 43 vs 48 divergence acknowledged in risk register but mapping not specified |
 | Worker count | 48 L1 + 1 KFZ = 49 | ✅ Consistent across docs (README says 48+KFZ, count 49) |
-| KFZ specialist | `category-kfz` on `bz.01` subtree | ✅ Defined |
+| KFZ specialist | `category-bz.01` capability extension (TecDoc-ready) | ✅ Defined |
 | TecDoc | Interface only, `EXTERNAL_INTEGRATION_PENDING` | ✅ Correct; not assumed connected |
 
 **Issues:**

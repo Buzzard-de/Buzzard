@@ -7,6 +7,7 @@ from buzzard_ai_complete.ai_core.bridge.commerce import CommerceBridge, NO_DATA_
 from buzzard_ai_complete.ai_core.enums import RiskLevel
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
+from buzzard_ai_complete.ai_core.workers.domain_memory import domain_memory_entry
 
 
 class PriceEngineWorker(BuzzardWorker):
@@ -54,23 +55,56 @@ class PriceEngineWorker(BuzzardWorker):
                 metadata=self._meta(started, context),
                 confidence=0.9,
                 risk_level=RiskLevel.HIGH.value if below else RiskLevel.LOW.value,
+                memory_entries=[
+                    domain_memory_entry(
+                        f"pricing/{sku}",
+                        f"recheck/{context.task_id}",
+                        {
+                            "sku": sku,
+                            "recommended_price": recommended,
+                            "below_threshold": below,
+                            "data_source": "payload",
+                        },
+                        impact=RiskLevel.HIGH.value if below else RiskLevel.LOW.value,
+                    )
+                ],
             )
 
         product = self._bridge.read_products(sku=sku)
         if product.get("status") == NO_DATA_AVAILABLE:
+            output = {
+                "sku": sku,
+                "status": NO_DATA_AVAILABLE,
+                "message": "no commerce price data; supply base_price in payload for deterministic check",
+            }
             return WorkerResult(
                 success=False,
-                output={
-                    "sku": sku,
-                    "status": NO_DATA_AVAILABLE,
-                    "message": "no commerce price data; supply base_price in payload for deterministic check",
-                },
+                output=output,
                 metadata=self._meta(started, context),
                 error=NO_DATA_AVAILABLE,
                 retryable=False,
                 risk_level=self.risk_default.value,
+                memory_entries=[
+                    domain_memory_entry(
+                        f"pricing/{sku}",
+                        f"recheck/{context.task_id}",
+                        output,
+                        impact=self.risk_default.value,
+                    )
+                ],
             )
-        return WorkerResult(success=True, output=product, metadata=self._meta(started, context))
+        return WorkerResult(
+            success=True,
+            output=product,
+            metadata=self._meta(started, context),
+            memory_entries=[
+                domain_memory_entry(
+                    f"pricing/{sku}",
+                    f"recheck/{context.task_id}",
+                    product,
+                )
+            ],
+        )
 
     def _meta(self, started: float, context: WorkerContext) -> dict[str, Any]:
         return {

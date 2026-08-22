@@ -153,3 +153,16 @@ class AuditResponse(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class ApprovalResponse(BaseModel):
+    id: str
+    task_id: str
+    actor: str
+    actor_role: str
+    decision: str
+    note: str | None
+    extra_metadata: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime
+
+    model_config = {"from_attributes": True}

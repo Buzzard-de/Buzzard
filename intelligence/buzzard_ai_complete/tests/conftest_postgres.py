@@ -59,7 +59,9 @@ def postgres_session(postgres_database_url, monkeypatch):
     import buzzard_ai_complete.config.settings as settings
 
     monkeypatch.setenv("DATABASE_URL", postgres_database_url)
+    monkeypatch.setenv("BUZZARD_AI_CORE_V2", "0")
     settings.DATABASE_URL = postgres_database_url
+    settings.BUZZARD_AI_CORE_V2 = False
     dispose_engine()
 
     cfg = _alembic_config(postgres_database_url)

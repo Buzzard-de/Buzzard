@@ -71,7 +71,6 @@ def build_phase2_registry(coordinator=None) -> WorkerRegistry:
     factory = CategoryWorkerFactory(taxonomy)
 
     for worker in (
-        CategoryScanWorker(),
         SystemHealthWorker(),
         CustomTaskWorker(),
         SupplierHubWorker(),

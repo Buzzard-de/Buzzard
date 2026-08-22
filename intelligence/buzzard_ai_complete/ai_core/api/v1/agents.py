@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from buzzard_ai_complete.ai_core.api.deps import authorize, get_db
 from buzzard_ai_complete.ai_core.services.worker_registry_service import WorkerRegistryService
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
+from buzzard_ai_complete.ai_core.workers.health import default_execution_policy, probe_worker_health
 from buzzard_ai_complete.ai_core.workers.registry import get_registry
 from buzzard_ai_complete.config import settings
 
@@ -27,6 +28,7 @@ def _serialize_worker(worker) -> dict:
                 "metadata": worker.metadata,
             }
         )
+        data["execution_policy"] = default_execution_policy(worker).__dict__
     return data
 
 
@@ -58,7 +60,11 @@ def health_check_agent(worker_id: str):
     worker = registry.get(worker_id)
     if not worker:
         raise HTTPException(status_code=404, detail={"code": "NOT_FOUND", "message": "Worker not found"})
-    healthy = True
-    if isinstance(worker, BuzzardWorker):
-        healthy = bool(worker.capabilities)
-    return {"worker_id": worker_id, "healthy": healthy, "status": "HEALTHY" if healthy else "DEGRADED"}
+    health = probe_worker_health(worker)
+    return {
+        "worker_id": worker_id,
+        "healthy": health.healthy,
+        "status": health.status,
+        "checks": health.checks,
+        "message": health.message,
+    }

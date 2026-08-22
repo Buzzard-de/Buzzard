@@ -40,7 +40,6 @@ from buzzard_ai_complete.ai_core.workers.registry import build_phase2_registry, 
 from buzzard_ai_complete.config import settings
 
 WORKER_ROUTING: dict[str, str] = {
-    "category_scan": "category-worker",
     "supplier_sync": "supplier-hub",
     "price_recheck": "price-engine",
     "stock_sync": "stock-engine",
@@ -53,6 +52,7 @@ WORKER_ROUTING: dict[str, str] = {
     "security_scan": "security-ai",
     "security_inspect": "security-ai",
     "exception_route": "exception-coordinator",
+    "exception_triage": "exception-coordinator",
 }
 
 
@@ -70,6 +70,9 @@ def resolve_worker_id(task_type: str, payload: dict[str, Any] | None, worker_id:
             registry = TaxonomyRegistry()
             if registry.get_node(resolved):
                 return f"category-{resolved}"
+        if settings.BUZZARD_AI_CORE_V2:
+            return "central-orchestrator"
+        return "category-worker"
     return WORKER_ROUTING.get(task_type, "central-orchestrator")
 
 
@@ -90,7 +93,7 @@ class UnifiedOrchestrator:
     self.memory = memory
     self.exceptions = exceptions
     self.request_id = request_id
-    self.security = security or SecurityService()
+    self.security = security or SecurityService(audit=audit, request_id=request_id)
     self.policy = policy or PolicyEngine()
     self.taxonomy = taxonomy or TaxonomyRegistry()
     self.kurmay = KurmayService(session)
@@ -432,31 +435,7 @@ class UnifiedOrchestrator:
 
     kurmay_memory_batch: list[dict[str, Any]] = []
     kurmay_exception_batch: list[dict[str, Any]] = []
-    for entry in worker_result.memory_entries:
-      mem = self.memory.write(
-        source=task.worker_id or "orchestrator",
-        entity=entry.get("entity", task.id),
-        category=entry.get("category", "worker"),
-        type=entry.get("type", MemoryType.SIGNAL.value),
-        content=entry.get("content", {}),
-        created_by=actor,
-        namespace=entry.get("namespace", "workers"),
-        key=entry.get("key", f"{task.id}/{len(kurmay_memory_batch)}"),
-        confidence=float(entry.get("confidence", 0.5)),
-        impact=entry.get("impact", MemoryImpact.LOW.value),
-        related_task=task.id,
-        actor_role=actor_role,
-      )
-      kurmay_memory_batch.append(
-        {
-          "namespace": mem.namespace,
-          "key": mem.key,
-          "type": mem.type,
-          "impact": mem.impact,
-          "confidence": mem.confidence,
-          "content": mem.content,
-        }
-      )
+    kurmay_memory_batch.extend(self._persist_worker_memory_entries(task, actor, worker_result))
 
     for exc_payload in worker_result.exceptions:
       severity = exc_payload.get("severity", ExceptionSeverity.MEDIUM.value)
@@ -489,6 +468,41 @@ class UnifiedOrchestrator:
       return self._transition(task, TaskStatus.REVIEW, actor, "approval required")
     self._transition(task, TaskStatus.EXECUTED, actor, "worker executed")
     return task
+
+  def _persist_worker_memory_entries(
+    self,
+    task: Task,
+    actor: str,
+    worker_result: WorkerResult,
+  ) -> list[dict[str, Any]]:
+    actor_role = self._actor_role(actor)
+    kurmay_batch: list[dict[str, Any]] = []
+    for entry in worker_result.memory_entries:
+      mem = self.memory.write(
+        source=task.worker_id or "orchestrator",
+        entity=entry.get("entity", task.id),
+        category=entry.get("category", "worker"),
+        type=entry.get("type", MemoryType.SIGNAL.value),
+        content=entry.get("content", {}),
+        created_by=actor,
+        namespace=entry.get("namespace", "workers"),
+        key=entry.get("key", f"{task.id}/{len(kurmay_batch)}"),
+        confidence=float(entry.get("confidence", 0.5)),
+        impact=entry.get("impact", MemoryImpact.LOW.value),
+        related_task=task.id,
+        actor_role=actor_role,
+      )
+      kurmay_batch.append(
+        {
+          "namespace": mem.namespace,
+          "key": mem.key,
+          "type": mem.type,
+          "impact": mem.impact,
+          "confidence": mem.confidence,
+          "content": mem.content,
+        }
+      )
+    return kurmay_batch
 
   def _actor_role(self, actor: str) -> str:
     if actor.startswith("api:"):
@@ -597,6 +611,8 @@ class UnifiedOrchestrator:
         "message": exc.message,
       }
     ]
+    if worker_result and worker_result.memory_entries:
+      self._persist_worker_memory_entries(task, actor, worker_result)
     if self._should_trigger_kurmay(task, [], exception_batch):
       self._trigger_kurmay(task, [], exception_batch)
     if retryable and task.attempts < task.max_attempts:

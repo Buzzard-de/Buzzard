@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPageShell, legalStubNotice } from "@/components/LegalPageShell";
+import { CONTACT_EMAIL } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
   title: "Widerrufsrecht",
@@ -27,7 +28,7 @@ export default function WiderrufPage() {
       <section>
         <h2>Kontakt bei Fragen</h2>
         <p>
-          Bei Fragen zum Widerruf erreichen Sie uns unter info@buzzard.com oder über das{" "}
+          Bei Fragen zum Widerruf erreichen Sie uns unter {CONTACT_EMAIL} oder über das{" "}
           <a href="/impressum/">Kontaktformular</a>.
         </p>
       </section>

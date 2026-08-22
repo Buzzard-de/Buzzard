@@ -1,5 +1,6 @@
 import CategoryIcon from "./CategoryIcon";
 import { isSalesEnabled } from "@/lib/shop/mode";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/site/contact";
 
 const catalogBadges = [
   { label: "GROSSE KATEGORIEAUSWAHL", icon: "star" },
@@ -33,14 +34,14 @@ export default function ServiceBar() {
           <CategoryIcon name="phone" size={28} />
           <div>
             <strong>KUNDENSERVICE</strong>
-            <span>+49 30 0000000</span>
+            <span>{CONTACT_PHONE_DISPLAY}</span>
           </div>
         </div>
         <div className="service-item">
           <CategoryIcon name="mail" size={28} />
           <div>
             <strong>E-MAIL</strong>
-            <span>info@buzzard.com</span>
+            <span>{CONTACT_EMAIL}</span>
           </div>
         </div>
         <div className="service-item">

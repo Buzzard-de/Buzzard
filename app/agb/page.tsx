@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPageShell, legalStubNotice } from "@/components/LegalPageShell";
+import { CONTACT_EMAIL } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
   title: "AGB",
@@ -27,7 +28,7 @@ export default function AgbPage() {
       <section>
         <h2>§ 2 Vertragspartner</h2>
         <p>
-          Buzzard Kfz-Teile, Dautphetal, Deutschland. Kontakt: info@buzzard.com
+          Buzzard Kfz-Teile, Dautphetal, Deutschland. Kontakt: {CONTACT_EMAIL}
         </p>
       </section>
 

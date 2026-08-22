@@ -3,6 +3,7 @@ import { getCategoryLabel } from "@/lib/categories/i18n";
 import type { BuzzardLocale } from "@/lib/i18n/types";
 import type { PublicProduct } from "@/lib/products/types";
 import { absoluteUrl, SEO_DEFAULTS, SITE_URL } from "./config";
+import { CONTACT_EMAIL } from "@/lib/site/contact";
 import { showPrices } from "@/lib/shop/mode";
 
 export function organizationSchema() {
@@ -17,6 +18,7 @@ export function organizationSchema() {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
+      email: CONTACT_EMAIL,
       availableLanguage: ["de", "en", "tr", "ar"],
     },
   };

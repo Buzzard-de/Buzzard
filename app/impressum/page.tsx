@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ContactForm from "@/components/ContactForm";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
   title: "Impressum",
@@ -31,9 +32,9 @@ export default function ImpressumPage() {
             Deutschland
           </p>
           <p>
-            Telefon: <a href="tel:+4930000000">+49 30 0000000</a>
+            Telefon: <a href={`tel:${CONTACT_PHONE_TEL}`}>{CONTACT_PHONE_DISPLAY}</a>
             <br />
-            E-Mail: <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+            E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
         </section>
 
@@ -44,7 +45,7 @@ export default function ImpressumPage() {
             <br />
             Dautphetal, Deutschland
             <br />
-            E-Mail: <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+            E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
           <p>Verantwortlich für den Inhalt gemäß § 18 Abs. 2 MStV ist die oben genannte Person.</p>
         </section>

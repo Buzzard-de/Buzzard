@@ -1,0 +1,3 @@
+b799227 fix(phase2): remediate 27 blockers — foundation, tests, verification
+ebce3db Implement Phase 2 AI Core foundation and workers
+4bf7562 docs: update export with blocker analysis in docs mirror

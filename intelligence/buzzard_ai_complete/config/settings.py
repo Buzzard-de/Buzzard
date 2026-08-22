@@ -75,6 +75,24 @@ PRICING_AUTO_APPROVE_MARGIN_BUFFER = float(os.getenv("PRICING_AUTO_APPROVE_MARGI
 PROCUREMENT_PO_APPROVAL_THRESHOLD = float(os.getenv("PROCUREMENT_PO_APPROVAL_THRESHOLD", "5000"))
 ORDER_WEBHOOK_SECRET = os.getenv("ORDER_WEBHOOK_SECRET", "")
 
+# Phase 3 AI Core Wave 4 — Logistics, Returns, Market, Observability
+DHL_API_URL = os.getenv("DHL_API_URL", "").rstrip("/")
+DHL_API_KEY = os.getenv("DHL_API_KEY", "")
+DHL_API_SECRET = os.getenv("DHL_API_SECRET", "")
+DHL_USE_MOCK = os.getenv("DHL_USE_MOCK", "true").lower() in {"1", "true", "yes", "on"}
+CARRIER_WEBHOOK_SECRET = os.getenv("CARRIER_WEBHOOK_SECRET", "")
+LOGISTICS_LABEL_APPROVAL_THRESHOLD = float(os.getenv("LOGISTICS_LABEL_APPROVAL_THRESHOLD", "100"))
+MARKET_DATA_ALLOWED_SOURCES = frozenset(
+    s.strip().lower()
+    for s in os.getenv(
+        "MARKET_DATA_ALLOWED_SOURCES",
+        "internal_commerce,google_trends,licensed_feed,official_statistics",
+    ).split(",")
+    if s.strip()
+)
+BUZZARD_OBSERVABILITY_ENABLED = os.getenv("BUZZARD_OBSERVABILITY_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
+BUZZARD_AUTONOMY_DISABLED = os.getenv("BUZZARD_AUTONOMY_DISABLED", "false").lower() in {"1", "true", "yes", "on"}
+
 
 def _parse_token_roles(raw: str) -> dict[str, str]:
     mapping: dict[str, str] = {}

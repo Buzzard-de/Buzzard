@@ -17,6 +17,15 @@ REQUIRED_OUTPUT_KEYS: dict[str, tuple[str, ...]] = {
     "customer_service": ("resolution",),
     "exception_route": (),
     "exception_coordinate": (),
+    "market_scan": ("status",),
+    "competitor_analysis": ("status",),
+    "trend_detection": ("status",),
+    "shipment_rate": ("status",),
+    "label_create": ("status",),
+    "tracking_update": ("status",),
+    "return_evaluate": ("eligibility", "requires_approval"),
+    "return_process": ("eligibility", "requires_approval"),
+    "refund_recommend": ("eligibility", "requires_approval"),
     "system_health": (),
 }
 

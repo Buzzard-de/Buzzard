@@ -15,6 +15,7 @@ from buzzard_ai_complete.ai_core.api.deps import (
   get_orchestrator,
   get_request_id,
 )
+from buzzard_ai_complete.ai_core.api.v1.analytics import router as analytics_router
 from buzzard_ai_complete.ai_core.api.v1.agents import router as agents_router
 from buzzard_ai_complete.ai_core.api.v1.approvals import router as approvals_router
 from buzzard_ai_complete.ai_core.api.v1.categories import router as categories_router
@@ -24,6 +25,7 @@ from buzzard_ai_complete.ai_core.api.v1.integrations import router as integratio
 from buzzard_ai_complete.ai_core.api.v1.orders import router as orders_router
 from buzzard_ai_complete.ai_core.api.v1.pricing import router as pricing_router
 from buzzard_ai_complete.ai_core.api.v1.products import router as products_router
+from buzzard_ai_complete.ai_core.api.v1.returns import router as returns_router
 from buzzard_ai_complete.ai_core.api.v1.reports import router as reports_router
 from buzzard_ai_complete.ai_core.api.v1.stock import router as stock_router
 from buzzard_ai_complete.ai_core.api.v1.suppliers import router as suppliers_router
@@ -312,6 +314,7 @@ def ai_core_ready():
   from buzzard_ai_complete.ai_core.database.base import get_engine
   from buzzard_ai_complete.ai_core.integrations.commerce_config import validate_commerce_configuration
   from buzzard_ai_complete.ai_core.integrations.integration_config import (
+    validate_carrier_configuration,
     validate_crm_configuration,
     validate_wms_configuration,
   )
@@ -326,6 +329,7 @@ def ai_core_ready():
   commerce_config = validate_commerce_configuration()
   wms_config = validate_wms_configuration()
   crm_config = validate_crm_configuration()
+  carrier_config = validate_carrier_configuration()
   return {
     "status": "ready",
     "version": settings.APP_VERSION,
@@ -337,10 +341,12 @@ def ai_core_ready():
     "commerce_config": commerce_config.to_dict(),
     "wms_config": wms_config.to_dict(),
     "crm_config": crm_config.to_dict(),
+    "carrier_config": carrier_config.to_dict(),
   }
 
 
 router.include_router(agents_router)
+router.include_router(analytics_router)
 router.include_router(approvals_router)
 router.include_router(categories_router)
 router.include_router(commerce_router)
@@ -350,5 +356,6 @@ router.include_router(pricing_router)
 router.include_router(events_router)
 router.include_router(products_router)
 router.include_router(reports_router)
+router.include_router(returns_router)
 router.include_router(stock_router)
 router.include_router(suppliers_router)

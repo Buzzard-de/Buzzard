@@ -82,3 +82,46 @@ async def commerce_webhook(
         correlation_id=request_id,
     )
     return {"accepted": True, "event_id": record.id, "status": record.status}
+
+
+def _verify_carrier_hmac(body: bytes, signature: str | None) -> bool:
+    secret = settings.CARRIER_WEBHOOK_SECRET
+    if not secret:
+        return False
+    if not signature:
+        return False
+    digest = hmac.new(secret.encode("utf-8"), body, hashlib.sha256).hexdigest()
+    provided = signature.removeprefix("sha256=").strip()
+    return hmac.compare_digest(digest, provided)
+
+
+@router.post("/webhooks/carrier/{carrier_id}")
+async def carrier_webhook(
+    carrier_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    request_id: str = Depends(get_request_id),
+    x_signature: Annotated[str | None, Header(alias="X-Carrier-Signature")] = None,
+):
+    body = await request.body()
+    if settings.CARRIER_WEBHOOK_SECRET and not _verify_carrier_hmac(body, x_signature):
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "UNAUTHORIZED", "message": "Invalid carrier webhook signature", "request_id": request_id},
+        )
+    try:
+        payload = json.loads(body.decode("utf-8") or "{}")
+    except json.JSONDecodeError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "VALIDATION_ERROR", "message": "Invalid JSON payload", "request_id": request_id},
+        ) from exc
+    event_type = str(payload.get("event_type") or payload.get("type") or "carrier.webhook.received")
+    events = EventService(db)
+    record = events.emit(
+        event_type,
+        {**payload, "carrier_id": carrier_id},
+        source=f"carrier-webhook:{carrier_id}",
+        correlation_id=request_id,
+    )
+    return {"accepted": True, "event_id": record.id, "status": record.status, "carrier_id": carrier_id}

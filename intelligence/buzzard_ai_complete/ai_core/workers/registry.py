@@ -20,6 +20,9 @@ from buzzard_ai_complete.ai_core.workers.product.intelligence_worker import Prod
 from buzzard_ai_complete.ai_core.workers.security.security_worker import SecurityAIWorker
 from buzzard_ai_complete.ai_core.workers.stock.engine_worker import StockEngineWorker
 from buzzard_ai_complete.ai_core.workers.supplier.hub_worker import SupplierHubWorker
+from buzzard_ai_complete.ai_core.workers.market.intelligence_worker import MarketIntelligenceWorker
+from buzzard_ai_complete.ai_core.workers.logistics.intelligence_worker import LogisticsIntelligenceWorker
+from buzzard_ai_complete.ai_core.workers.returns.intelligence_worker import ReturnsIntelligenceWorker
 from buzzard_ai_complete.config import settings
 
 
@@ -94,7 +97,17 @@ def build_phase2_registry(coordinator=None) -> WorkerRegistry:
     return registry
 
 
+def build_phase3_registry(coordinator=None) -> WorkerRegistry:
+    registry = build_phase2_registry(coordinator=coordinator)
+    registry.register(MarketIntelligenceWorker())
+    registry.register(LogisticsIntelligenceWorker())
+    registry.register(ReturnsIntelligenceWorker())
+    return registry
+
+
 def get_registry() -> WorkerRegistry:
+    if settings.BUZZARD_AI_CORE_V3:
+        return build_phase3_registry()
     if settings.BUZZARD_AI_CORE_V2:
         return build_phase2_registry()
     return build_default_registry()

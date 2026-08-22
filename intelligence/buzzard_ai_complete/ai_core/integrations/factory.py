@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from buzzard_ai_complete.ai_core.integrations.carrier_adapter import CarrierIntegrationAdapter
 from buzzard_ai_complete.ai_core.integrations.commerce_adapter import CommerceIntegrationAdapter
 from buzzard_ai_complete.ai_core.integrations.crm_adapter import CrmAdapter
 from buzzard_ai_complete.ai_core.integrations.llm_adapter import LlmProviderAdapter
@@ -21,6 +22,7 @@ def get_integration_registry() -> IntegrationStatusRegistry:
             _registry.register(SupplierFeedsAdapter())
             _registry.register(WmsAdapter())
             _registry.register(CrmAdapter())
+            _registry.register(CarrierIntegrationAdapter())
     return _registry
 
 

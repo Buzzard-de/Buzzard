@@ -48,9 +48,28 @@ def validate_crm_configuration() -> IntegrationConfigStatus:
     return IntegrationConfigStatus(configured=bool(url and token), valid=valid, errors=tuple(errors))
 
 
+def validate_carrier_configuration() -> IntegrationConfigStatus:
+    if settings.DHL_USE_MOCK:
+        return IntegrationConfigStatus(configured=True, valid=True, errors=())
+    url = (settings.DHL_API_URL or "").strip()
+    key = (settings.DHL_API_KEY or "").strip()
+    errors: list[str] = []
+    if not url:
+        errors.append("DHL_API_URL is not set")
+    if not key:
+        errors.append("DHL_API_KEY is not set")
+    configured = bool(url and key) or settings.DHL_USE_MOCK
+    valid = configured and not errors
+    return IntegrationConfigStatus(configured=configured, valid=valid, errors=tuple(errors))
+
+
 def wms_staging_ready() -> bool:
     return validate_wms_configuration().valid
 
 
 def crm_staging_ready() -> bool:
     return validate_crm_configuration().valid
+
+
+def carrier_staging_ready() -> bool:
+    return validate_carrier_configuration().valid

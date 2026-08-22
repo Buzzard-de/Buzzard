@@ -5,7 +5,7 @@ from typing import Any
 
 from buzzard_ai_complete.ai_core.bridge.commerce import NO_DATA_AVAILABLE
 from buzzard_ai_complete.ai_core.enums import RiskLevel
-from buzzard_ai_complete.ai_core.integrations.factory import get_integration_registry
+from buzzard_ai_complete.ai_core.observability.autonomy import can_auto_execute_l3, record_autonomy_action
 from buzzard_ai_complete.ai_core.services.stock_service import StockService
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
@@ -21,13 +21,10 @@ class StockEngineWorker(BuzzardWorker):
     risk_default = RiskLevel.MEDIUM
 
     def __init__(self) -> None:
-        self._integrations = get_integration_registry()
         super().__init__()
 
     def execute(self, task_type: str, payload: dict[str, Any], context: WorkerContext) -> WorkerResult:
         started = time.monotonic()
-        commerce_status = self._integrations.status("commerce")
-        wms_status = self._integrations.status("wms")
         sku = str(payload.get("sku", "unknown"))
 
         session = context.session
@@ -35,10 +32,16 @@ class StockEngineWorker(BuzzardWorker):
             svc = StockService(session)
             result = svc.sync_stock(sku, safety_stock=int(payload.get("safety_stock", 0)))
             success = result.get("status") == "ok"
+            autonomy = record_autonomy_action(
+                operation="stock_sync",
+                autonomy_level="L3",
+                worker_id=self.worker_id,
+                auto_executed=can_auto_execute_l3("stock_sync") and success,
+            )
             return WorkerResult(
                 success=success,
-                output=result,
-                metadata=self._meta(started),
+                output={**result, "autonomy": autonomy},
+                metadata={**self._meta(started), "autonomy_level": "L3"},
                 error=None if success else result.get("status"),
                 retryable=result.get("status") == NO_DATA_AVAILABLE,
                 risk_level=self.risk_default.value,
@@ -54,8 +57,6 @@ class StockEngineWorker(BuzzardWorker):
 
         output = {
             "status": NO_DATA_AVAILABLE,
-            "commerce_integration": commerce_status,
-            "wms_integration": wms_status,
             "sku": sku or None,
             "message": "stock sync requires sku and configured sources",
         }

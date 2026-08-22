@@ -65,6 +65,10 @@ def test_alembic_upgrade_head_postgres(postgres_database_url, monkeypatch):
             "ai_core_pricing_candidates",
             "ai_core_stock_snapshots",
             "ai_core_orders",
+            "ai_core_decisions",
+            "ai_core_policies",
+            "ai_core_shipments",
+            "ai_core_returns",
             "alembic_version",
         }
         assert expected.issubset(tables)

@@ -19,6 +19,15 @@ TASK_REQUIRED_PERMISSIONS: dict[str, str] = {
     "exception_coordinate": "exception:read",
     "commerce_write": "commerce:write",
     "system_health": "system:read",
+    "market_scan": "market:read",
+    "competitor_analysis": "market:read",
+    "trend_detection": "market:read",
+    "shipment_rate": "logistics:read",
+    "label_create": "logistics:execute",
+    "tracking_update": "logistics:read",
+    "return_evaluate": "returns:evaluate",
+    "return_process": "returns:evaluate",
+    "refund_recommend": "returns:evaluate",
 }
 
 

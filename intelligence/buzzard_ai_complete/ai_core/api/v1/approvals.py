@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from buzzard_ai_complete.ai_core.api.deps import authorize, get_db
+from buzzard_ai_complete.ai_core.api.deps import enforce_api_permission, get_db
 from buzzard_ai_complete.ai_core.models.approval_record import ApprovalRecord
 from buzzard_ai_complete.ai_core.schemas.api import ApprovalResponse, PaginatedResponse
 
@@ -14,7 +14,7 @@ def _serialize_approval(record: ApprovalRecord) -> ApprovalResponse:
     return ApprovalResponse.model_validate(record)
 
 
-@router.get("", response_model=PaginatedResponse[ApprovalResponse], dependencies=[Depends(authorize)])
+@router.get("", response_model=PaginatedResponse[ApprovalResponse], dependencies=[Depends(enforce_api_permission)])
 def list_approvals(
     task_id: str | None = None,
     decision: str | None = None,
@@ -39,7 +39,7 @@ def list_approvals(
     )
 
 
-@router.get("/{approval_id}", response_model=ApprovalResponse, dependencies=[Depends(authorize)])
+@router.get("/{approval_id}", response_model=ApprovalResponse, dependencies=[Depends(enforce_api_permission)])
 def get_approval(approval_id: str, db: Session = Depends(get_db)):
     record = db.get(ApprovalRecord, approval_id)
     if not record:

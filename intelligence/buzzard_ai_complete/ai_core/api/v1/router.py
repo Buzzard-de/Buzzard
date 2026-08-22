@@ -5,7 +5,7 @@ from typing import TypeVar
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from buzzard_ai_complete.ai_core.api.deps import (
-  authorize,
+  enforce_api_permission,
   get_actor,
   get_actor_role,
   get_audit_service,
@@ -19,9 +19,10 @@ from buzzard_ai_complete.ai_core.api.v1.agents import router as agents_router
 from buzzard_ai_complete.ai_core.api.v1.approvals import router as approvals_router
 from buzzard_ai_complete.ai_core.api.v1.categories import router as categories_router
 from buzzard_ai_complete.ai_core.api.v1.commerce import router as commerce_router
+from buzzard_ai_complete.ai_core.api.v1.events import router as events_router
 from buzzard_ai_complete.ai_core.api.v1.integrations import router as integrations_router
 from buzzard_ai_complete.ai_core.api.v1.reports import router as reports_router
-from buzzard_ai_complete.ai_core.integrations.registry import IntegrationStatusRegistry
+from buzzard_ai_complete.ai_core.integrations.factory import get_integration_registry
 from buzzard_ai_complete.ai_core.workers.registry import get_registry
 from buzzard_ai_complete.ai_core.enums import TaskStatus
 from buzzard_ai_complete.ai_core.schemas.api import (
@@ -57,7 +58,7 @@ def _build_paginated(items: list[T], total: int, page: int, page_size: int) -> P
   )
 
 
-@router.post("/tasks", response_model=TaskResponse, status_code=201, dependencies=[Depends(authorize)])
+@router.post("/tasks", response_model=TaskResponse, status_code=201, dependencies=[Depends(enforce_api_permission)])
 def create_task(
   body: TaskCreateRequest,
   orchestrator: UnifiedOrchestrator = Depends(get_orchestrator),
@@ -85,7 +86,7 @@ def create_task(
   return task
 
 
-@router.get("/tasks", response_model=PaginatedResponse[TaskResponse], dependencies=[Depends(authorize)])
+@router.get("/tasks", response_model=PaginatedResponse[TaskResponse], dependencies=[Depends(enforce_api_permission)])
 def list_tasks(
   status: str | None = None,
   type: str | None = None,
@@ -99,7 +100,7 @@ def list_tasks(
   return _build_paginated(items, total, page, page_size)
 
 
-@router.get("/tasks/{task_id}", response_model=TaskResponse, dependencies=[Depends(authorize)])
+@router.get("/tasks/{task_id}", response_model=TaskResponse, dependencies=[Depends(enforce_api_permission)])
 def get_task(task_id: str, orchestrator: UnifiedOrchestrator = Depends(get_orchestrator), request_id: str = Depends(get_request_id)):
   task = orchestrator.get(task_id)
   if not task:
@@ -107,7 +108,7 @@ def get_task(task_id: str, orchestrator: UnifiedOrchestrator = Depends(get_orche
   return task
 
 
-@router.post("/tasks/{task_id}/transition", response_model=TaskResponse, dependencies=[Depends(authorize)])
+@router.post("/tasks/{task_id}/transition", response_model=TaskResponse, dependencies=[Depends(enforce_api_permission)])
 def transition_task(
   task_id: str,
   body: TaskTransitionRequest,
@@ -134,12 +135,12 @@ def transition_task(
     raise HTTPException(status_code=422, detail={"code": "POLICY_VIOLATION", "message": str(exc), "request_id": request_id})
 
 
-@router.post("/tasks/run-cycle", response_model=TaskResponse | None, dependencies=[Depends(authorize)])
+@router.post("/tasks/run-cycle", response_model=TaskResponse | None, dependencies=[Depends(enforce_api_permission)])
 def run_task_cycle(orchestrator: UnifiedOrchestrator = Depends(get_orchestrator), actor: str = Depends(get_actor)):
   return orchestrator.run_cycle(actor=actor)
 
 
-@router.post("/memory", response_model=MemoryResponse, status_code=201, dependencies=[Depends(authorize)])
+@router.post("/memory", response_model=MemoryResponse, status_code=201, dependencies=[Depends(enforce_api_permission)])
 def write_memory(
   body: MemoryWriteRequest,
   memory: CentralMemoryService = Depends(get_memory_service),
@@ -166,7 +167,7 @@ def write_memory(
     raise HTTPException(status_code=400, detail={"code": "VALIDATION_ERROR", "message": str(exc), "request_id": request_id})
 
 
-@router.get("/memory", response_model=PaginatedResponse[MemoryResponse], dependencies=[Depends(authorize)])
+@router.get("/memory", response_model=PaginatedResponse[MemoryResponse], dependencies=[Depends(enforce_api_permission)])
 def search_memory(
   q: str | None = None,
   type: str | None = None,
@@ -182,7 +183,7 @@ def search_memory(
   return _build_paginated(items, total, page, page_size)
 
 
-@router.get("/memory/{memory_id}", response_model=MemoryResponse, dependencies=[Depends(authorize)])
+@router.get("/memory/{memory_id}", response_model=MemoryResponse, dependencies=[Depends(enforce_api_permission)])
 def get_memory(memory_id: str, memory: CentralMemoryService = Depends(get_memory_service), request_id: str = Depends(get_request_id)):
   entry = memory.get(memory_id)
   if not entry:
@@ -190,7 +191,7 @@ def get_memory(memory_id: str, memory: CentralMemoryService = Depends(get_memory
   return entry
 
 
-@router.post("/exceptions", response_model=ExceptionResponse, status_code=201, dependencies=[Depends(authorize)])
+@router.post("/exceptions", response_model=ExceptionResponse, status_code=201, dependencies=[Depends(enforce_api_permission)])
 def create_exception(
   body: ExceptionCreateRequest,
   exceptions: ExceptionService = Depends(get_exception_service),
@@ -209,7 +210,7 @@ def create_exception(
   )
 
 
-@router.get("/exceptions", response_model=PaginatedResponse[ExceptionResponse], dependencies=[Depends(authorize)])
+@router.get("/exceptions", response_model=PaginatedResponse[ExceptionResponse], dependencies=[Depends(enforce_api_permission)])
 def list_exceptions(
   status: str | None = None,
   severity: str | None = None,
@@ -223,7 +224,7 @@ def list_exceptions(
   return _build_paginated(items, total, page, page_size)
 
 
-@router.get("/exceptions/{exception_id}", response_model=ExceptionResponse, dependencies=[Depends(authorize)])
+@router.get("/exceptions/{exception_id}", response_model=ExceptionResponse, dependencies=[Depends(enforce_api_permission)])
 def get_exception(
   exception_id: str,
   exceptions: ExceptionService = Depends(get_exception_service),
@@ -238,7 +239,7 @@ def get_exception(
 @router.post(
   "/exceptions/{exception_id}/transition",
   response_model=ExceptionResponse,
-  dependencies=[Depends(authorize)],
+  dependencies=[Depends(enforce_api_permission)],
 )
 def transition_exception(
   exception_id: str,
@@ -262,7 +263,7 @@ def transition_exception(
     raise HTTPException(status_code=422, detail={"code": "POLICY_VIOLATION", "message": str(exc), "request_id": request_id})
 
 
-@router.get("/audit", response_model=PaginatedResponse[AuditResponse], dependencies=[Depends(authorize)])
+@router.get("/audit", response_model=PaginatedResponse[AuditResponse], dependencies=[Depends(enforce_api_permission)])
 def list_audit(
   actor: str | None = None,
   action: str | None = None,
@@ -277,7 +278,7 @@ def list_audit(
   return _build_paginated(items, total, page, page_size)
 
 
-@router.get("/audit/{audit_id}", response_model=AuditResponse, dependencies=[Depends(authorize)])
+@router.get("/audit/{audit_id}", response_model=AuditResponse, dependencies=[Depends(enforce_api_permission)])
 def get_audit(audit_id: str, audit: AuditService = Depends(get_audit_service), request_id: str = Depends(get_request_id)):
   entry = audit.get(audit_id)
   if not entry:
@@ -309,13 +310,14 @@ def ai_core_ready():
   engine = get_engine()
   with engine.connect() as conn:
     conn.exec_driver_sql("SELECT 1")
-  registry = get_registry()
-  integrations = IntegrationStatusRegistry()
-  worker_count = len(registry.list_workers())
+  worker_registry = get_registry()
+  integrations = get_integration_registry()
+  worker_count = len(worker_registry.list_workers())
   return {
     "status": "ready",
     "version": settings.APP_VERSION,
     "ai_core_v2": settings.BUZZARD_AI_CORE_V2,
+    "ai_core_v3": settings.BUZZARD_AI_CORE_V3,
     "database": "connected",
     "workers_registered": worker_count,
     "integrations": integrations.list_status(),
@@ -327,4 +329,5 @@ router.include_router(approvals_router)
 router.include_router(categories_router)
 router.include_router(commerce_router)
 router.include_router(integrations_router)
+router.include_router(events_router)
 router.include_router(reports_router)

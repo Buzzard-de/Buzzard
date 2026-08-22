@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from buzzard_ai_complete.ai_core.api.deps import authorize, get_db
+from buzzard_ai_complete.ai_core.api.deps import enforce_api_permission, get_db
 from buzzard_ai_complete.ai_core.services.worker_registry_service import WorkerRegistryService
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.health import default_execution_policy, probe_worker_health
@@ -32,7 +32,7 @@ def _serialize_worker(worker) -> dict:
     return data
 
 
-@router.get("", dependencies=[Depends(authorize)])
+@router.get("", dependencies=[Depends(enforce_api_permission)])
 def list_agents(db: Session = Depends(get_db)):
     registry = get_registry()
     if settings.BUZZARD_AI_CORE_V2:
@@ -45,7 +45,7 @@ def list_agents(db: Session = Depends(get_db)):
     }
 
 
-@router.get("/{worker_id}", dependencies=[Depends(authorize)])
+@router.get("/{worker_id}", dependencies=[Depends(enforce_api_permission)])
 def get_agent(worker_id: str):
     registry = get_registry()
     worker = registry.get(worker_id)
@@ -54,7 +54,7 @@ def get_agent(worker_id: str):
     return _serialize_worker(worker)
 
 
-@router.post("/{worker_id}/health-check", dependencies=[Depends(authorize)])
+@router.post("/{worker_id}/health-check", dependencies=[Depends(enforce_api_permission)])
 def health_check_agent(worker_id: str):
     registry = get_registry()
     worker = registry.get(worker_id)

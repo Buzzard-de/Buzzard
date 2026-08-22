@@ -4,14 +4,14 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from buzzard_ai_complete.ai_core.api.deps import authorize, get_orchestrator, get_request_id
+from buzzard_ai_complete.ai_core.api.deps import enforce_api_permission, get_orchestrator, get_request_id
 from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrator
 from buzzard_ai_complete.ai_core.taxonomy.registry import TaxonomyRegistry
 
 router = APIRouter(prefix="/categories", tags=["ai-core-categories"])
 
 
-@router.get("", dependencies=[Depends(authorize)])
+@router.get("", dependencies=[Depends(enforce_api_permission)])
 def list_categories():
     registry = TaxonomyRegistry()
     categories = registry.list_main_categories()
@@ -26,7 +26,7 @@ def list_categories():
     }
 
 
-@router.get("/{taxonomy_id}", dependencies=[Depends(authorize)])
+@router.get("/{taxonomy_id}", dependencies=[Depends(enforce_api_permission)])
 def get_category(taxonomy_id: str, request_id: str = Depends(get_request_id)):
     registry = TaxonomyRegistry()
     node = registry.get_node(taxonomy_id)
@@ -38,7 +38,7 @@ def get_category(taxonomy_id: str, request_id: str = Depends(get_request_id)):
     return {"id": node.id, "name": node.name, "slug": node.slug, "level": node.level, "parent_id": node.parent_id}
 
 
-@router.post("/{taxonomy_id}/scan", dependencies=[Depends(authorize)])
+@router.post("/{taxonomy_id}/scan", dependencies=[Depends(enforce_api_permission)])
 def scan_category(
     taxonomy_id: str,
     payload: dict[str, Any] | None = None,

@@ -1,18 +1,23 @@
 from __future__ import annotations
 
-import uuid
 from typing import Annotated, Generator
 
+import uuid
 from fastapi import Depends, Header, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from buzzard_ai_complete.ai_core.database.base import get_session_factory, init_ai_core_db
 from buzzard_ai_complete.ai_core.schemas.api import TaskCreateRequest
+from buzzard_ai_complete.ai_core.security.api_permissions import (
+    any_role_has_permission,
+    required_permission,
+)
+from buzzard_ai_complete.ai_core.security.jwt_auth import JwtAuthError, decode_jwt, roles_from_claims
+from buzzard_ai_complete.ai_core.security.token_roles import resolve_actor_role
 from buzzard_ai_complete.ai_core.services.audit_service import AuditService
 from buzzard_ai_complete.ai_core.services.exception_service import ExceptionService
 from buzzard_ai_complete.ai_core.services.memory_service import CentralMemoryService
 from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrator
-from buzzard_ai_complete.ai_core.security.token_roles import resolve_actor_role
 from buzzard_ai_complete.config import settings
 
 _db_initialized = False
@@ -49,11 +54,39 @@ def get_request_id(
   return rid
 
 
+def _authenticate_bearer_token(token: str) -> tuple[str, list[str]]:
+  valid_tokens = {settings.API_TOKEN, *settings.API_TOKEN_ROLES.keys()}
+  valid_tokens.discard("")
+  if token not in valid_tokens:
+    raise HTTPException(status_code=401, detail={"code": "UNAUTHORIZED", "message": "Unauthorized"})
+  role = resolve_actor_role(token, None)
+  return token, [role]
+
+
+def _authenticate_jwt(token: str) -> tuple[str, list[str]]:
+  try:
+    claims = decode_jwt(token)
+  except JwtAuthError as exc:
+    raise HTTPException(
+      status_code=503,
+      detail={"code": "JWT_NOT_CONFIGURED", "message": str(exc)},
+    ) from exc
+  except Exception as exc:
+    raise HTTPException(
+      status_code=401,
+      detail={"code": "UNAUTHORIZED", "message": "Invalid JWT"},
+    ) from exc
+  roles = roles_from_claims(claims)
+  subject = str(claims.get("sub", "jwt-user"))
+  return subject, roles or [settings.DEFAULT_API_ROLE]
+
+
 def authorize(
+  request: Request,
   authorization: Annotated[str | None, Header()] = None,
   x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
 ) -> str:
-  if not settings.API_TOKEN:
+  if not settings.BUZZARD_JWT_ENABLED and not settings.API_TOKEN:
     raise HTTPException(
       status_code=503,
       detail={
@@ -70,18 +103,46 @@ def authorize(
     token = x_api_key.strip()
   if not token:
     raise HTTPException(status_code=401, detail={"code": "UNAUTHORIZED", "message": "Unauthorized"})
-  valid_tokens = {settings.API_TOKEN, *settings.API_TOKEN_ROLES.keys()}
-  valid_tokens.discard("")
-  if token not in valid_tokens:
-    raise HTTPException(status_code=401, detail={"code": "UNAUTHORIZED", "message": "Unauthorized"})
+
+  if settings.BUZZARD_JWT_ENABLED and token.count(".") == 2:
+    subject, roles = _authenticate_jwt(token)
+    request.state.auth_subject = subject
+    request.state.auth_roles = roles
+    request.state.auth_mode = "jwt"
+    return token
+
+  subject, roles = _authenticate_bearer_token(token)
+  request.state.auth_subject = subject
+  request.state.auth_roles = roles
+  request.state.auth_mode = "bearer"
   return token
 
 
-def get_actor_role(
-  token: Annotated[str, Depends(authorize)],
-  x_actor_role: Annotated[str | None, Header(alias="X-Actor-Role")] = None,
-) -> str:
-  return resolve_actor_role(token, x_actor_role)
+def enforce_api_permission(request: Request, token: Annotated[str, Depends(authorize)]) -> str:
+  if not settings.BUZZARD_API_PERMISSIONS_ENABLED:
+    return token
+  permission = required_permission(request.method, request.url.path)
+  if permission is None:
+    return token
+  roles = getattr(request.state, "auth_roles", [])
+  if not any_role_has_permission(roles, permission):
+    raise HTTPException(
+      status_code=403,
+      detail={
+        "code": "PERMISSION_DENIED",
+        "message": f"Role(s) {roles} lack permission {permission}",
+        "request_id": getattr(request.state, "request_id", None),
+      },
+    )
+  return token
+
+
+def get_actor_roles(request: Request, token: Annotated[str, Depends(enforce_api_permission)]) -> list[str]:
+  return list(getattr(request.state, "auth_roles", [settings.DEFAULT_API_ROLE]))
+
+
+def get_actor_role(roles: Annotated[list[str], Depends(get_actor_roles)]) -> str:
+  return roles[0] if roles else settings.DEFAULT_API_ROLE
 
 
 def get_idempotency_key(
@@ -102,9 +163,14 @@ def get_idempotency_key(
 
 
 def get_actor(
-  token: Annotated[str, Depends(authorize)],
+  request: Request,
+  token: Annotated[str, Depends(enforce_api_permission)],
   actor_role: Annotated[str, Depends(get_actor_role)],
 ) -> str:
+  mode = getattr(request.state, "auth_mode", "bearer")
+  subject = getattr(request.state, "auth_subject", actor_role)
+  if mode == "jwt":
+    return f"jwt:{subject}:{actor_role}"
   return f"api:{actor_role}"
 
 

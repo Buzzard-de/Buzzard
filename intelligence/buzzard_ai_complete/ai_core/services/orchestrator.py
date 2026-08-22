@@ -547,6 +547,13 @@ class UnifiedOrchestrator:
         "exceptions": exception_entries,
         "parent_task_id": task.id,
         "report_id": report.report_id,
+        "attribution": {
+          "service_identity": "kurmay-trigger",
+          "source_worker_id": task.worker_id,
+          "source_task_id": task.id,
+          "source_task_type": task.type,
+          "trigger_reason": "impact_or_exception_threshold",
+        },
       },
       parent_id=task.id,
       created_by="kurmay-trigger",

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from buzzard_ai_complete.ai_core.api.deps import authorize, get_actor, get_actor_role, get_orchestrator, get_request_id
+from buzzard_ai_complete.ai_core.api.deps import enforce_api_permission, get_actor, get_actor_role, get_orchestrator, get_request_id
 from buzzard_ai_complete.ai_core.schemas.api import CommerceWriteRequest, TaskResponse
 from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrator
 
 router = APIRouter(prefix="/commerce", tags=["ai-core-commerce"])
 
 
-@router.post("/write", response_model=TaskResponse, status_code=201, dependencies=[Depends(authorize)])
+@router.post("/write", response_model=TaskResponse, status_code=201, dependencies=[Depends(enforce_api_permission)])
 def create_commerce_write_task(
     body: CommerceWriteRequest,
     orchestrator: UnifiedOrchestrator = Depends(get_orchestrator),

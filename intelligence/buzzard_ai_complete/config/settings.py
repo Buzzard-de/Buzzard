@@ -39,6 +39,23 @@ APPROVER_ROLES = frozenset(
 DEFAULT_API_ROLE = os.getenv("BUZZARD_DEFAULT_API_ROLE", "api-user").strip().lower()
 ALLOW_ROLE_HEADER = os.getenv("BUZZARD_ALLOW_ROLE_HEADER", "false").lower() in {"1", "true", "yes", "on"}
 
+# Phase 3 AI Core Wave 1
+BUZZARD_AI_CORE_V3 = os.getenv("BUZZARD_AI_CORE_V3", "false").lower() in {"1", "true", "yes", "on"}
+BUZZARD_JWT_ENABLED = os.getenv("BUZZARD_JWT_ENABLED", "false").lower() in {"1", "true", "yes", "on"}
+BUZZARD_API_PERMISSIONS_ENABLED = os.getenv(
+    "BUZZARD_API_PERMISSIONS_ENABLED",
+    "true" if BUZZARD_AI_CORE_V3 else "false",
+).lower() in {"1", "true", "yes", "on"}
+BUZZARD_JWT_ISSUER = os.getenv("BUZZARD_JWT_ISSUER", "buzzard-ai-core")
+BUZZARD_JWT_AUDIENCE = os.getenv("BUZZARD_JWT_AUDIENCE", "buzzard-api")
+BUZZARD_JWT_ALGORITHM = os.getenv("BUZZARD_JWT_ALGORITHM", "RS256")
+BUZZARD_JWT_PUBLIC_KEY = os.getenv("BUZZARD_JWT_PUBLIC_KEY", "")
+BUZZARD_JWT_PRIVATE_KEY = os.getenv("BUZZARD_JWT_PRIVATE_KEY", "")
+BUZZARD_JWT_HS_SECRET = os.getenv("BUZZARD_JWT_HS_SECRET", "")
+COMMERCE_WEBHOOK_SECRET = os.getenv("COMMERCE_WEBHOOK_SECRET", "")
+IDEMPOTENCY_TTL_SECONDS = int(os.getenv("BUZZARD_IDEMPOTENCY_TTL_SECONDS", "86400"))
+EVENT_MAX_RETRIES = int(os.getenv("BUZZARD_EVENT_MAX_RETRIES", "5"))
+
 
 def _parse_token_roles(raw: str) -> dict[str, str]:
     mapping: dict[str, str] = {}

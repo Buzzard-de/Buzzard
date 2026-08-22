@@ -3,14 +3,14 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from buzzard_ai_complete.ai_core.api.deps import authorize, get_db, get_orchestrator, get_request_id
+from buzzard_ai_complete.ai_core.api.deps import enforce_api_permission, get_db, get_orchestrator, get_request_id
 from buzzard_ai_complete.ai_core.kurmay.service import KurmayService
 from buzzard_ai_complete.ai_core.services.orchestrator import UnifiedOrchestrator
 
 router = APIRouter(prefix="/reports", tags=["ai-core-reports"])
 
 
-@router.get("/kurmay", dependencies=[Depends(authorize)])
+@router.get("/kurmay", dependencies=[Depends(enforce_api_permission)])
 def list_kurmay_reports(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=50, ge=1, le=200),
@@ -36,7 +36,7 @@ def list_kurmay_reports(
     }
 
 
-@router.get("/kurmay/{report_id}", dependencies=[Depends(authorize)])
+@router.get("/kurmay/{report_id}", dependencies=[Depends(enforce_api_permission)])
 def get_kurmay_report(report_id: str, db: Session = Depends(get_db), request_id: str = Depends(get_request_id)):
     service = KurmayService(db)
     record = service.get(report_id)
@@ -55,7 +55,7 @@ def get_kurmay_report(report_id: str, db: Session = Depends(get_db), request_id:
     }
 
 
-@router.post("/kurmay", dependencies=[Depends(authorize)])
+@router.post("/kurmay", dependencies=[Depends(enforce_api_permission)])
 def trigger_kurmay(
     orchestrator: UnifiedOrchestrator = Depends(get_orchestrator),
     request_id: str = Depends(get_request_id),

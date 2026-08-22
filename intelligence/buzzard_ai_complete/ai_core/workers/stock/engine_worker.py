@@ -5,7 +5,7 @@ from typing import Any
 
 from buzzard_ai_complete.ai_core.bridge.commerce import CommerceBridge, NO_DATA_AVAILABLE
 from buzzard_ai_complete.ai_core.enums import RiskLevel
-from buzzard_ai_complete.ai_core.integrations.registry import IntegrationStatusRegistry
+from buzzard_ai_complete.ai_core.integrations.factory import get_integration_registry
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.domain_memory import domain_memory_entry
@@ -21,17 +21,19 @@ class StockEngineWorker(BuzzardWorker):
 
     def __init__(self) -> None:
         self._bridge = CommerceBridge()
-        self._integrations = IntegrationStatusRegistry()
+        self._integrations = get_integration_registry()
         super().__init__()
 
     def execute(self, task_type: str, payload: dict[str, Any], context: WorkerContext) -> WorkerResult:
         started = time.monotonic()
+        commerce_status = self._integrations.status("commerce")
         wms_status = self._integrations.status("wms")
         sku = str(payload.get("sku", "unknown"))
         stock = self._bridge.read_stock(sku=sku or None)
-        if wms_status != "CONNECTED" or stock.get("status") == NO_DATA_AVAILABLE:
+        if commerce_status != "CONNECTED" or stock.get("status") == NO_DATA_AVAILABLE:
             output = {
                 "status": NO_DATA_AVAILABLE,
+                "commerce_integration": commerce_status,
                 "wms_integration": wms_status,
                 "sku": sku or None,
                 "bridge": stock,

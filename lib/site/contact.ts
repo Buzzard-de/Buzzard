@@ -7,5 +7,3 @@ export const CONTACT_PHONE_TEL =
 
 export const CONTACT_PHONE_DISPLAY =
   process.env.NEXT_PUBLIC_CONTACT_PHONE_DISPLAY || "+49 151 26219394";
-
-export const CONTACT_FORM_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`;

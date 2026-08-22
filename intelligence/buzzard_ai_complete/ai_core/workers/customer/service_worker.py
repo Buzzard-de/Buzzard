@@ -4,7 +4,8 @@ import time
 from typing import Any
 
 from buzzard_ai_complete.ai_core.enums import RiskLevel
-from buzzard_ai_complete.ai_core.integrations.registry import IntegrationStatusRegistry
+from buzzard_ai_complete.ai_core.integrations.crm_adapter import CrmAdapter
+from buzzard_ai_complete.ai_core.integrations.factory import get_integration_registry
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.provider import EXTERNAL_AI_PROVIDER_PENDING, get_ai_provider
@@ -19,7 +20,8 @@ class CustomerServiceAIWorker(BuzzardWorker):
     risk_default = RiskLevel.MEDIUM
 
     def __init__(self) -> None:
-        self._integrations = IntegrationStatusRegistry()
+        self._integrations = get_integration_registry()
+        self._crm = CrmAdapter()
         super().__init__()
 
     def execute(self, task_type: str, payload: dict[str, Any], context: WorkerContext) -> WorkerResult:
@@ -27,6 +29,14 @@ class CustomerServiceAIWorker(BuzzardWorker):
         crm_status = self._integrations.status("crm")
         provider = get_ai_provider()
         llm_status = self._integrations.status("llm_provider")
+        ticket_id = str(payload.get("ticket_id", context.task_id))
+        customer_ref = payload.get("customer_ref")
+
+        crm_context: dict[str, Any] | None = None
+        if crm_status == "CONNECTED" and customer_ref:
+            crm_context = self._crm.get_customer_context(customer_ref=str(customer_ref))
+            if crm_context.get("status") in {"NO_DATA_AVAILABLE", "ERROR"}:
+                crm_context = None
 
         if crm_status != "CONNECTED":
             return WorkerResult(
@@ -34,7 +44,7 @@ class CustomerServiceAIWorker(BuzzardWorker):
                 output={
                     "status": "EXTERNAL_INTEGRATION_PENDING",
                     "integration": "crm",
-                    "ticket_id": payload.get("ticket_id", context.task_id),
+                    "ticket_id": ticket_id,
                     "resolution": "queued_for_human_review",
                     "message": payload.get("question", ""),
                 },
@@ -45,15 +55,19 @@ class CustomerServiceAIWorker(BuzzardWorker):
 
         if provider.is_configured():
             try:
-                draft = provider.generate(str(payload.get("question", "")))
+                question = str(payload.get("question", ""))
+                if crm_context:
+                    question = f"{question}\n[CRM context available]"
+                draft = provider.generate(question)
                 return WorkerResult(
                     success=True,
                     output={
-                        "ticket_id": payload.get("ticket_id", context.task_id),
+                        "ticket_id": ticket_id,
                         "resolution": "draft_response",
                         "message": payload.get("question", ""),
                         "draft_response": draft,
                         "llm_status": llm_status,
+                        "crm_context_used": crm_context is not None,
                     },
                     metadata=self._meta(started, "CONNECTED"),
                     confidence=0.8,
@@ -72,10 +86,11 @@ class CustomerServiceAIWorker(BuzzardWorker):
         return WorkerResult(
             success=True,
             output={
-                "ticket_id": payload.get("ticket_id", context.task_id),
+                "ticket_id": ticket_id,
                 "resolution": "queued_for_human_review",
                 "message": payload.get("question", ""),
                 "llm_status": llm_status,
+                "crm_context_used": crm_context is not None,
             },
             metadata=self._meta(started, EXTERNAL_AI_PROVIDER_PENDING),
             confidence=0.5,
@@ -85,7 +100,7 @@ class CustomerServiceAIWorker(BuzzardWorker):
     def _meta(self, started: float, ai_status: str) -> dict[str, Any]:
         return {
             "worker_id": self.worker_id,
-            "execution_mode": "deterministic",
+            "execution_mode": "crm_assisted",
             "duration_ms": int((time.monotonic() - started) * 1000),
             "ai_provider_status": ai_status,
         }

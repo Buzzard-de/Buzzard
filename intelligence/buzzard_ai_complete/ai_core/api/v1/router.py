@@ -21,8 +21,11 @@ from buzzard_ai_complete.ai_core.api.v1.categories import router as categories_r
 from buzzard_ai_complete.ai_core.api.v1.commerce import router as commerce_router
 from buzzard_ai_complete.ai_core.api.v1.events import router as events_router
 from buzzard_ai_complete.ai_core.api.v1.integrations import router as integrations_router
+from buzzard_ai_complete.ai_core.api.v1.orders import router as orders_router
+from buzzard_ai_complete.ai_core.api.v1.pricing import router as pricing_router
 from buzzard_ai_complete.ai_core.api.v1.products import router as products_router
 from buzzard_ai_complete.ai_core.api.v1.reports import router as reports_router
+from buzzard_ai_complete.ai_core.api.v1.stock import router as stock_router
 from buzzard_ai_complete.ai_core.api.v1.suppliers import router as suppliers_router
 from buzzard_ai_complete.ai_core.integrations.factory import get_integration_registry
 from buzzard_ai_complete.ai_core.workers.registry import get_registry
@@ -308,6 +311,10 @@ def ai_core_health():
 def ai_core_ready():
   from buzzard_ai_complete.ai_core.database.base import get_engine
   from buzzard_ai_complete.ai_core.integrations.commerce_config import validate_commerce_configuration
+  from buzzard_ai_complete.ai_core.integrations.integration_config import (
+    validate_crm_configuration,
+    validate_wms_configuration,
+  )
   from buzzard_ai_complete.config import settings
 
   engine = get_engine()
@@ -317,6 +324,8 @@ def ai_core_ready():
   integrations = get_integration_registry()
   worker_count = len(worker_registry.list_workers())
   commerce_config = validate_commerce_configuration()
+  wms_config = validate_wms_configuration()
+  crm_config = validate_crm_configuration()
   return {
     "status": "ready",
     "version": settings.APP_VERSION,
@@ -326,6 +335,8 @@ def ai_core_ready():
     "workers_registered": worker_count,
     "integrations": integrations.list_status(),
     "commerce_config": commerce_config.to_dict(),
+    "wms_config": wms_config.to_dict(),
+    "crm_config": crm_config.to_dict(),
   }
 
 
@@ -334,7 +345,10 @@ router.include_router(approvals_router)
 router.include_router(categories_router)
 router.include_router(commerce_router)
 router.include_router(integrations_router)
+router.include_router(orders_router)
+router.include_router(pricing_router)
 router.include_router(events_router)
 router.include_router(products_router)
 router.include_router(reports_router)
+router.include_router(stock_router)
 router.include_router(suppliers_router)

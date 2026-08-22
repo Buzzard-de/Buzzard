@@ -64,6 +64,17 @@ SUPPLIER_FEED_PATH = os.getenv("SUPPLIER_FEED_PATH", "")
 SUPPLIER_IMPORT_MAX_BYTES = int(os.getenv("SUPPLIER_IMPORT_MAX_BYTES", "5242880"))
 SUPPLIER_CREDENTIALS_KEY = os.getenv("SUPPLIER_CREDENTIALS_KEY", "")
 
+# Phase 3 AI Core Wave 3 — Pricing, Stock, Order Intelligence
+WMS_API_URL = os.getenv("WMS_API_URL", "").rstrip("/")
+WMS_API_TOKEN = os.getenv("WMS_API_TOKEN", "")
+CRM_API_URL = os.getenv("CRM_API_URL", "").rstrip("/")
+CRM_API_TOKEN = os.getenv("CRM_API_TOKEN", "")
+PRICING_MIN_MARGIN = float(os.getenv("PRICING_MIN_MARGIN", "0.15"))
+PRICING_MAX_DISCOUNT = float(os.getenv("PRICING_MAX_DISCOUNT", "0.25"))
+PRICING_AUTO_APPROVE_MARGIN_BUFFER = float(os.getenv("PRICING_AUTO_APPROVE_MARGIN_BUFFER", "0.05"))
+PROCUREMENT_PO_APPROVAL_THRESHOLD = float(os.getenv("PROCUREMENT_PO_APPROVAL_THRESHOLD", "5000"))
+ORDER_WEBHOOK_SECRET = os.getenv("ORDER_WEBHOOK_SECRET", "")
+
 
 def _parse_token_roles(raw: str) -> dict[str, str]:
     mapping: dict[str, str] = {}

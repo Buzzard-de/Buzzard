@@ -28,6 +28,13 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "suppliers:sync",
             "products:read",
             "products:enrich",
+            "pricing:read",
+            "pricing:evaluate",
+            "pricing:publish",
+            "stock:read",
+            "stock:sync",
+            "orders:read",
+            "orders:ingest",
         }
     ),
     "operator": frozenset(
@@ -54,6 +61,13 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "suppliers:sync",
             "products:read",
             "products:enrich",
+            "pricing:read",
+            "pricing:evaluate",
+            "pricing:publish",
+            "stock:read",
+            "stock:sync",
+            "orders:read",
+            "orders:ingest",
         }
     ),
     "approver": frozenset(
@@ -141,6 +155,14 @@ ENDPOINT_PERMISSIONS: dict[tuple[str, str], str] = {
     ("GET", "/api/v1/products"): "products:read",
     ("GET", "/api/v1/products/{id}"): "products:read",
     ("POST", "/api/v1/products/{id}/enrich"): "products:enrich",
+    ("POST", "/api/v1/pricing/evaluate"): "pricing:evaluate",
+    ("POST", "/api/v1/pricing/publish"): "pricing:publish",
+    ("GET", "/api/v1/pricing/candidates"): "pricing:read",
+    ("GET", "/api/v1/stock"): "stock:read",
+    ("POST", "/api/v1/stock/sync"): "stock:sync",
+    ("GET", "/api/v1/orders"): "orders:read",
+    ("GET", "/api/v1/orders/{id}"): "orders:read",
+    ("POST", "/api/v1/orders/ingest"): "orders:ingest",
 }
 
 

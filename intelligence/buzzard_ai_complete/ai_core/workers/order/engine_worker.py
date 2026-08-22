@@ -5,6 +5,7 @@ from typing import Any
 
 from buzzard_ai_complete.ai_core.bridge.commerce import CommerceBridge, NO_DATA_AVAILABLE
 from buzzard_ai_complete.ai_core.enums import RiskLevel
+from buzzard_ai_complete.ai_core.services.order_service import OrderService
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.domain_memory import domain_memory_entry
@@ -14,7 +15,7 @@ class OrderEngineWorker(BuzzardWorker):
     worker_id = "order-engine"
     supported_task_types = frozenset({"order_check"})
     family = "order"
-    permissions = frozenset({"order:read", "memory:write"})
+    permissions = frozenset({"order:read", "orders:ingest", "memory:write"})
     capabilities = frozenset({"lifecycle_check", "anomaly_detection"})
     risk_default = RiskLevel.MEDIUM
 
@@ -25,6 +26,29 @@ class OrderEngineWorker(BuzzardWorker):
     def execute(self, task_type: str, payload: dict[str, Any], context: WorkerContext) -> WorkerResult:
         started = time.monotonic()
         order_id = str(payload.get("order_id", "unknown"))
+        session = context.session
+
+        if session and payload.get("source") and order_id != "unknown":
+            svc = OrderService(session)
+            result = svc.ingest(payload, idempotency_key=payload.get("idempotency_key"))
+            success = result.get("status") == "ok"
+            return WorkerResult(
+                success=success,
+                output=result,
+                metadata=self._meta(started),
+                error=None if success else result.get("status"),
+                retryable=False,
+                risk_level=self.risk_default.value,
+                memory_entries=[
+                    domain_memory_entry(
+                        f"orders/{order_id}",
+                        f"check/{context.task_id}",
+                        result,
+                        impact=self.risk_default.value,
+                    )
+                ],
+            )
+
         orders = self._bridge.read_orders(order_id=order_id or None)
         if orders.get("status") == NO_DATA_AVAILABLE:
             return WorkerResult(
@@ -59,6 +83,6 @@ class OrderEngineWorker(BuzzardWorker):
     def _meta(self, started: float) -> dict[str, Any]:
         return {
             "worker_id": self.worker_id,
-            "execution_mode": "deterministic",
+            "execution_mode": "ingestion",
             "duration_ms": int((time.monotonic() - started) * 1000),
         }

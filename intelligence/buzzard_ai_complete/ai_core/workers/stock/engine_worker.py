@@ -3,9 +3,10 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from buzzard_ai_complete.ai_core.bridge.commerce import CommerceBridge, NO_DATA_AVAILABLE
+from buzzard_ai_complete.ai_core.bridge.commerce import NO_DATA_AVAILABLE
 from buzzard_ai_complete.ai_core.enums import RiskLevel
 from buzzard_ai_complete.ai_core.integrations.factory import get_integration_registry
+from buzzard_ai_complete.ai_core.services.stock_service import StockService
 from buzzard_ai_complete.ai_core.workers.base import WorkerContext, WorkerResult
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.domain_memory import domain_memory_entry
@@ -15,12 +16,11 @@ class StockEngineWorker(BuzzardWorker):
     worker_id = "stock-engine"
     supported_task_types = frozenset({"stock_sync"})
     family = "stock"
-    permissions = frozenset({"stock:read", "memory:write"})
+    permissions = frozenset({"stock:read", "stock:sync", "memory:write"})
     capabilities = frozenset({"level_check", "freshness_check"})
     risk_default = RiskLevel.MEDIUM
 
     def __init__(self) -> None:
-        self._bridge = CommerceBridge()
         self._integrations = get_integration_registry()
         super().__init__()
 
@@ -29,40 +29,49 @@ class StockEngineWorker(BuzzardWorker):
         commerce_status = self._integrations.status("commerce")
         wms_status = self._integrations.status("wms")
         sku = str(payload.get("sku", "unknown"))
-        stock = self._bridge.read_stock(sku=sku or None)
-        if commerce_status != "CONNECTED" or stock.get("status") == NO_DATA_AVAILABLE:
-            output = {
-                "status": NO_DATA_AVAILABLE,
-                "commerce_integration": commerce_status,
-                "wms_integration": wms_status,
-                "sku": sku or None,
-                "bridge": stock,
-            }
+
+        session = context.session
+        if session and sku != "unknown":
+            svc = StockService(session)
+            result = svc.sync_stock(sku, safety_stock=int(payload.get("safety_stock", 0)))
+            success = result.get("status") == "ok"
             return WorkerResult(
-                success=False,
-                output=output,
+                success=success,
+                output=result,
                 metadata=self._meta(started),
-                error=NO_DATA_AVAILABLE,
-                retryable=False,
+                error=None if success else result.get("status"),
+                retryable=result.get("status") == NO_DATA_AVAILABLE,
                 risk_level=self.risk_default.value,
                 memory_entries=[
                     domain_memory_entry(
                         f"stock/{sku}",
                         f"sync/{context.task_id}",
-                        output,
+                        result,
                         impact=self.risk_default.value,
                     )
                 ],
             )
+
+        output = {
+            "status": NO_DATA_AVAILABLE,
+            "commerce_integration": commerce_status,
+            "wms_integration": wms_status,
+            "sku": sku or None,
+            "message": "stock sync requires sku and configured sources",
+        }
         return WorkerResult(
-            success=True,
-            output=stock,
+            success=False,
+            output=output,
             metadata=self._meta(started),
+            error=NO_DATA_AVAILABLE,
+            retryable=False,
+            risk_level=self.risk_default.value,
             memory_entries=[
                 domain_memory_entry(
                     f"stock/{sku}",
                     f"sync/{context.task_id}",
-                    stock,
+                    output,
+                    impact=self.risk_default.value,
                 )
             ],
         )
@@ -70,6 +79,6 @@ class StockEngineWorker(BuzzardWorker):
     def _meta(self, started: float) -> dict[str, Any]:
         return {
             "worker_id": self.worker_id,
-            "execution_mode": "deterministic",
+            "execution_mode": "reconciler",
             "duration_ms": int((time.monotonic() - started) * 1000),
         }

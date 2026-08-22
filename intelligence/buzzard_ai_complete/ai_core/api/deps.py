@@ -145,6 +145,12 @@ def get_actor_role(roles: Annotated[list[str], Depends(get_actor_roles)]) -> str
   return roles[0] if roles else settings.DEFAULT_API_ROLE
 
 
+def get_idempotency_key_header(
+  idempotency_key_header: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+) -> str | None:
+  return idempotency_key_header.strip() if idempotency_key_header else None
+
+
 def get_idempotency_key(
   body: TaskCreateRequest,
   idempotency_key_header: Annotated[str | None, Header(alias="Idempotency-Key")] = None,

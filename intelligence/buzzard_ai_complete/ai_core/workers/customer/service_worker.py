@@ -25,8 +25,8 @@ class CustomerServiceAIWorker(BuzzardWorker):
     def execute(self, task_type: str, payload: dict[str, Any], context: WorkerContext) -> WorkerResult:
         started = time.monotonic()
         crm_status = self._integrations.status("crm")
-        llm_status = self._integrations.status("llm_provider")
         provider = get_ai_provider()
+        llm_status = self._integrations.status("llm_provider")
 
         if crm_status != "CONNECTED":
             return WorkerResult(
@@ -43,9 +43,22 @@ class CustomerServiceAIWorker(BuzzardWorker):
                 risk_level=self.risk_default.value,
             )
 
-        if provider.is_configured() and llm_status == "CONNECTED":
+        if provider.is_configured():
             try:
-                provider.generate(str(payload.get("question", "")))
+                draft = provider.generate(str(payload.get("question", "")))
+                return WorkerResult(
+                    success=True,
+                    output={
+                        "ticket_id": payload.get("ticket_id", context.task_id),
+                        "resolution": "draft_response",
+                        "message": payload.get("question", ""),
+                        "draft_response": draft,
+                        "llm_status": llm_status,
+                    },
+                    metadata=self._meta(started, "CONNECTED"),
+                    confidence=0.8,
+                    risk_level=RiskLevel.LOW.value,
+                )
             except Exception as exc:
                 return WorkerResult(
                     success=False,

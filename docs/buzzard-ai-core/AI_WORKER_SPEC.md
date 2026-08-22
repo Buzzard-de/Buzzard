@@ -129,7 +129,7 @@ Registration validates:
 
 | Category | Workers | Count |
 |----------|---------|-------|
-| `category_intelligence` | Category expert workers | 49 (48 L1 + KFZ) |
+| `category_intelligence` | Category expert workers | dynamic per `TaxonomyRegistry.main_category_count()` |
 | `customs` | Customs classification | 1 |
 | `supplier` | Supplier sync, scoring | 1 |
 | `product` | Enrichment, classification, dedup | 1 |
@@ -147,7 +147,9 @@ Registration validates:
 
 ---
 
-## 5. Category Intelligence Workers (49)
+## 5. Category Intelligence Workers (taxonomy-driven)
+
+Worker count is resolved at runtime from the authoritative master taxonomy (`TaxonomyRegistry`), not hard-coded.
 
 ### 5.1 Base Class
 
@@ -189,15 +191,7 @@ class CategoryWorker(BuzzardWorker):
 
 ### 5.2 Worker List (from taxonomy)
 
-Generated from `data/taxonomy/buzzard_master_48_main_categories_de.json`:
-
-| ID | Name | Namespace |
-|----|------|-----------|
-| `category-01` | Automotive & Kfz | `category:01` |
-| `category-02` | Garten & Gartenbau | `category:02` |
-| ... | ... | ... |
-| `category-48` | Allgemeine Produkte & Marktplatz | `category:48` |
-| `category-kfz` | KFZ Specialist (TecDoc-ready) | `category:kfz` |
+Workers are provisioned dynamically as `category-{taxonomy_node_id}` (e.g. `category-bz.01`) from the authoritative master taxonomy JSON. KFZ/TecDoc capabilities extend `category-bz.01` — there is no separate legacy KFZ worker.
 
 ### 5.3 Output Flow
 

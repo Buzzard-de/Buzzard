@@ -43,6 +43,12 @@ class TaskTransitionRequest(BaseModel):
     to_status: str | None = None
 
 
+class CommerceWriteRequest(BaseModel):
+    action: str = Field(min_length=1, max_length=100)
+    payload: dict[str, Any] = Field(default_factory=dict)
+    priority: str = "NORMAL"
+
+
 class TaskResponse(BaseModel):
     id: str
     type: str

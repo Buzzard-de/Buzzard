@@ -1,5 +1,7 @@
 # BUZZARD AI CORE — PHASE 2 ARCHITECTURE FINAL REVIEW
 
+> **Update 2026-08-22:** Documentation conflicts C-12 through C-15 (category-kfz, 49 workers) are **resolved** in active architecture docs. This review remains as historical audit context.
+
 **Date:** 2026-08-22  
 **Reviewer:** Final architecture consistency review  
 **Export reviewed:** `exports/buzzard-ai-core-komplett-2026-08-22/`  

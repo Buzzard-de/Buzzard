@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import json
-from typing import Any
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from typing import Any, Callable
 
 from buzzard_ai_complete.config.settings import LLM_API_BASE, LLM_API_KEY, LLM_MODEL
 
 EXTERNAL_AI_PROVIDER_PENDING = "EXTERNAL AI PROVIDER PENDING"
+
+UrlOpenFn = Callable[..., Any]
 
 
 class AIProviderNotConfiguredError(RuntimeError):
@@ -27,8 +27,18 @@ class AIProvider:
 class EnvironmentAIProvider(AIProvider):
     """Uses LLM_API_KEY + LLM_MODEL with a real HTTP client when configured."""
 
+    def __init__(self, urlopen_fn: UrlOpenFn | None = None) -> None:
+        self._urlopen = urlopen_fn
+
     def is_configured(self) -> bool:
         return bool(LLM_API_KEY and LLM_MODEL)
+
+    def _open(self, request):
+        if self._urlopen is not None:
+            return self._urlopen(request)
+        from urllib.request import urlopen
+
+        return urlopen(request)
 
     def generate(self, prompt: str, **kwargs: object) -> str:
         if not self.is_configured():
@@ -38,6 +48,8 @@ class EnvironmentAIProvider(AIProvider):
             "messages": [{"role": "user", "content": prompt}],
             "temperature": float(kwargs.get("temperature", 0.2)),
         }
+        from urllib.request import Request
+
         request = Request(
             f"{LLM_API_BASE}/chat/completions",
             data=json.dumps(payload).encode("utf-8"),
@@ -49,13 +61,15 @@ class EnvironmentAIProvider(AIProvider):
             method="POST",
         )
         try:
-            with urlopen(request, timeout=30) as response:
+            with self._open(request) as response:
                 body = json.loads(response.read().decode("utf-8"))
-        except HTTPError as exc:
-            raise AIProviderNotConfiguredError(
-                f"{EXTERNAL_AI_PROVIDER_PENDING}: provider HTTP error {exc.code}"
-            ) from exc
-        except (URLError, TimeoutError, json.JSONDecodeError) as exc:
+        except Exception as exc:
+            from urllib.error import HTTPError
+
+            if isinstance(exc, HTTPError):
+                raise AIProviderNotConfiguredError(
+                    f"{EXTERNAL_AI_PROVIDER_PENDING}: provider HTTP error {exc.code}"
+                ) from exc
             raise AIProviderNotConfiguredError(
                 f"{EXTERNAL_AI_PROVIDER_PENDING}: provider request failed ({exc})"
             ) from exc

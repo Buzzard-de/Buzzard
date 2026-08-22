@@ -1,6 +1,6 @@
 # BUZZARD AI CORE — Documentation Index
 
-**Status:** Phase 1 complete (88/100) · Phase 2 architecture designed  
+**Status:** Phase 2 partial (93/100) — P2 gaps closed; 3 P1 commerce dependencies remain external  
 **Date:** 2026-08-22
 
 ## Implementation Status
@@ -9,7 +9,7 @@
 |-------|--------|-------|
 | Phase 0 — Analysis | ✅ Complete | This folder |
 | Phase 1 — Core Platform | ✅ Complete | 342 passed, P0+P1 READY |
-| Phase 2 — Domain Workers | 📐 Designed | Architecture docs below — **not started** |
+| Phase 2 — Domain Workers | 🟡 Partial | Implemented with taxonomy-driven category workers (`TaxonomyRegistry`) |
 | Phase 3 — Commerce Bridge | ⏳ Pending | Admin UI, Node bridge writes |
 | Phase 4 — Production Hardening | ⏳ Pending | Postgres prod, observability |
 

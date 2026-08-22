@@ -53,6 +53,7 @@ WORKER_ROUTING: dict[str, str] = {
     "security_inspect": "security-ai",
     "exception_route": "exception-coordinator",
     "exception_triage": "exception-coordinator",
+    "commerce_write": "commerce-write",
 }
 
 
@@ -152,6 +153,8 @@ class UnifiedOrchestrator:
           raise ValueError(f"dependency task not successful: {dep_id}")
 
     resolved_worker = resolve_worker_id(type, payload, worker_id)
+    if type == "commerce_write":
+      requires_approval = True
     task = Task(
       type=type,
       payload=payload or {},
@@ -275,6 +278,12 @@ class UnifiedOrchestrator:
     task.approved_by = actor
     task.approved_at = datetime.now(timezone.utc)
     self._transition(task, TaskStatus.APPROVED, actor, note or "human approval")
+    if task.type == "commerce_write":
+      payload = dict(task.payload or {})
+      payload["approval_granted"] = True
+      task.payload = payload
+      self._transition(task, TaskStatus.RUNNING, actor, "executing approved commerce write")
+      return self._complete_running(task, actor)
     return self.advance(task.id, actor=actor)
 
   def reject(self, task_id: str, *, actor: str, actor_role: str | None = None, note: str | None = None) -> Task:
@@ -392,6 +401,8 @@ class UnifiedOrchestrator:
     return self._transition(task, TaskStatus.ASSIGNED, actor, "worker assigned")
 
   def _complete_running(self, task: Task, actor: str) -> Task:
+    if task.type == "commerce_write" and not task.approved_by:
+      return self._transition(task, TaskStatus.REVIEW, actor, "commerce write requires human approval")
     task.started_at = task.started_at or datetime.now(timezone.utc)
     executor = WorkerExecutor(
       self.session,

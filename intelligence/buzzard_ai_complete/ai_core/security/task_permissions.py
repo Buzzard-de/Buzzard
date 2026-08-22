@@ -15,7 +15,9 @@ TASK_REQUIRED_PERMISSIONS: dict[str, str] = {
     "security_scan": "security:inspect",
     "security_inspect": "security:inspect",
     "exception_route": "exception:read",
+    "exception_triage": "exception:read",
     "exception_coordinate": "exception:read",
+    "commerce_write": "commerce:write",
     "system_health": "system:read",
 }
 

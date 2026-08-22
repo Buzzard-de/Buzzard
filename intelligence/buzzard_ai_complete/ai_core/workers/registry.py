@@ -4,6 +4,7 @@ from buzzard_ai_complete.ai_core.taxonomy.registry import TaxonomyRegistry
 from buzzard_ai_complete.ai_core.workers.base import Worker
 from buzzard_ai_complete.ai_core.workers.buzzard_worker import BuzzardWorker
 from buzzard_ai_complete.ai_core.workers.category.factory import CategoryWorkerFactory
+from buzzard_ai_complete.ai_core.workers.commerce.write_worker import CommerceWriteWorker
 from buzzard_ai_complete.ai_core.workers.customer.service_worker import CustomerServiceAIWorker
 from buzzard_ai_complete.ai_core.workers.customs.classifier_worker import CustomsClassifierWorker
 from buzzard_ai_complete.ai_core.workers.deterministic import (
@@ -80,6 +81,7 @@ def build_phase2_registry(coordinator=None) -> WorkerRegistry:
         CustomsClassifierWorker(),
         OrderEngineWorker(),
         CustomerServiceAIWorker(),
+        CommerceWriteWorker(),
         SecurityAIWorker(),
         KurmaySynthesisWorker(),
         ExceptionCoordinatorWorker(coordinator=coordinator),

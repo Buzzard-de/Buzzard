@@ -18,6 +18,7 @@ from buzzard_ai_complete.ai_core.api.deps import (
 from buzzard_ai_complete.ai_core.api.v1.agents import router as agents_router
 from buzzard_ai_complete.ai_core.api.v1.approvals import router as approvals_router
 from buzzard_ai_complete.ai_core.api.v1.categories import router as categories_router
+from buzzard_ai_complete.ai_core.api.v1.commerce import router as commerce_router
 from buzzard_ai_complete.ai_core.api.v1.integrations import router as integrations_router
 from buzzard_ai_complete.ai_core.api.v1.reports import router as reports_router
 from buzzard_ai_complete.ai_core.integrations.registry import IntegrationStatusRegistry
@@ -324,5 +325,6 @@ def ai_core_ready():
 router.include_router(agents_router)
 router.include_router(approvals_router)
 router.include_router(categories_router)
+router.include_router(commerce_router)
 router.include_router(integrations_router)
 router.include_router(reports_router)

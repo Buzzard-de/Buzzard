@@ -101,7 +101,7 @@ TASK_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
         {TaskStatus.APPROVED, TaskStatus.FAILED, TaskStatus.ESCALATED, TaskStatus.CANCELLED}
     ),
     TaskStatus.APPROVED: frozenset(
-        {TaskStatus.EXECUTED, TaskStatus.FAILED, TaskStatus.CANCELLED}
+        {TaskStatus.EXECUTED, TaskStatus.FAILED, TaskStatus.CANCELLED, TaskStatus.RUNNING}
     ),
     TaskStatus.EXECUTED: frozenset({TaskStatus.SUCCESS, TaskStatus.FAILED}),
     TaskStatus.RETRY: frozenset({TaskStatus.QUEUED, TaskStatus.CANCELLED}),

@@ -3,13 +3,16 @@ from __future__ import annotations
 from typing import Any
 
 from buzzard_ai_complete.ai_core.integrations.base import IntegrationAdapter
+from buzzard_ai_complete.ai_core.integrations.llm_adapter import LlmProviderAdapter
 
 
 class IntegrationStatusRegistry:
     """Tracks integration adapter status without fabricating connectivity."""
 
     def __init__(self) -> None:
-        self._adapters: dict[str, IntegrationAdapter] = {}
+        self._adapters: dict[str, IntegrationAdapter] = {
+            "llm_provider": LlmProviderAdapter(),
+        }
         self._static: dict[str, str] = {
             "commerce": "EXTERNAL_INTEGRATION_PENDING",
             "supplier_feeds": "EXTERNAL_INTEGRATION_PENDING",

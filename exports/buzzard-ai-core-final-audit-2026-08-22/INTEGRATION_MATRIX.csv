@@ -1,0 +1,9 @@
+integration,code_ready,configured,connected,e2e_verified,env_vars_required,adapter_path,test_coverage,status,blocker_class
+Commerce API,yes,no,no,no,"COMMERCE_API_URL,COMMERCE_API_TOKEN,COMMERCE_WEBHOOK_SECRET",ai_core/integrations/commerce_adapter.py,test_phase3_commerce_adapter.py;6 staging E2E skipped,NOT_CONNECTED,P1
+WMS,yes,no,no,no,"WMS_API_URL,WMS_API_TOKEN",ai_core/integrations/wms_adapter.py,test_phase3_wms_crm_adapters.py (staging skip),NOT_CONNECTED,P2
+CRM,yes,no,no,no,"CRM_API_URL,CRM_API_TOKEN",ai_core/integrations/crm_adapter.py,test_phase3_wms_crm_adapters.py (staging skip),NOT_CONNECTED,P2
+DHL Carrier,yes,yes (mock),no,no,"DHL_API_URL,DHL_API_KEY,DHL_API_SECRET,DHL_USE_MOCK",ai_core/integrations/carrier/dhl.py,test_phase4_carrier_adapter.py,NOT_CONNECTED (mock only),P2
+Supplier Feeds,yes,optional,optional,partial,"SUPPLIER_FEEDS_URL,SUPPLIER_FEEDS_TOKEN,SUPPLIER_FEED_TYPE",ai_core/integrations/suppliers/,test_phase3_supplier_adapters.py,OPTIONAL,P3
+Market Data,yes,yes (whitelist),no,no,MARKET_DATA_ALLOWED_SOURCES,ai_core/intelligence/market/,test_phase4_market_compliance.py,PARTIAL,P3
+LLM Provider,yes,optional,optional,partial,"LLM_API_KEY,LLM_MODEL,LLM_API_BASE",ai_core/integrations/llm_adapter.py,customer-service-ai worker tests,OPTIONAL,P3
+Customs Authority,yes,no,no,no,N/A (pending),ai_core/workers/customs/,customs-classifier worker,PENDING,P3

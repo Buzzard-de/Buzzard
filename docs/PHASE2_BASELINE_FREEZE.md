@@ -1,29 +1,35 @@
-# BUZZARD AI CORE — PHASE 2 BASELINE FREEZE
+# BUZZARD AI CORE — PHASE 2 OFFICIAL BASELINE
+
+```
+BASELINE FROZEN — 96/100
+```
 
 **Freeze date:** 2026-08-22  
 **Baseline branch:** `cursor/phase2-final-p2-c293`  
+**Code root:** `intelligence/buzzard_ai_complete/`  
 **Verification source:** `docs/PHASE2_FINAL_VERIFICATION_V4.md`  
-**Method:** Read-only review of verification docs + source inspection + full test suite re-run (no code or test modifications)
+**Method:** Read-only verification — no Phase 2 code changes, no test modifications, no P3 remediation
 
 ---
 
-## 1. Final Phase 2 Baseline
-
-Phase 2 AI Core foundation is **frozen** at this verified state. All code-fixable P0, P1 (except external commerce), and P2 gaps are closed. The platform operates honestly without faked commerce data.
+## Official Phase 2 Baseline
 
 | Field | Value |
 |-------|-------|
-| **Status** | `PHASE2_PARTIAL` |
-| **Score** | **96 / 100** |
-| **Code root** | `intelligence/buzzard_ai_complete/` |
-| **Taxonomy source** | `master_taxonomy_48_maximal/data/taxonomy.json` (via `TaxonomyRegistry`) |
-| **V2 flag** | `BUZZARD_AI_CORE_V2=1` required for Phase 2 workers |
+| **P0** | **0** |
+| **P1** | **3** — EXTERNAL Commerce API dependency |
+| **P2** | **0** |
+| **P3** | **4** |
+| **SCORE** | **96 / 100** |
+| **STATUS** | **PHASE2_PARTIAL** |
 | **Phase 3 started** | **NO** |
 | **P3 remediation started** | **NO** |
 
+Phase 2 AI Core implementation is **frozen** at this verified state. All code-fixable P0, P1 (except external commerce), and P2 gaps are closed. No fake or synthetic Commerce API integration exists.
+
 ---
 
-## 2. Score: 96/100
+## Score: 96/100
 
 | Component | Weight | Score | Classification |
 |-----------|--------|-------|----------------|
@@ -42,25 +48,25 @@ Score cap: 3 unresolved P1 external commerce dependencies prevent `PHASE2_READY`
 
 ---
 
-## 3. P0 Status
+## P0 Status
 
 | Count | Status |
 |-------|--------|
 | **0** | **No open P0 blockers** |
 
-All P0 foundation blockers from the Phase 2 gap analysis are resolved. No hidden P0 issues identified in source review.
+All P0 foundation blockers from `docs/PHASE2_V2_GAP_ANALYSIS.md` are resolved.
 
 ---
 
-## 4. P1 External Dependencies (3)
+## P1 Status — 3 External Commerce API Dependencies
 
-All three remaining P1 items depend on an **unavailable external Buzzard Commerce API / platform**. They are **not** code-fixable without live external systems. No fake or synthetic commerce integration is present.
+All three remaining P1 items require a **live Buzzard Commerce API / platform**. They are not code-fixable without external provisioning. Workers and bridges fail honestly — never with synthetic commerce data.
 
 | ID | Requirement | Local state | Classification | Blocks READY? |
 |----|-------------|-------------|----------------|---------------|
-| **GAP-A-003** | Domain workers produce live commerce intelligence (product, price, stock, order, supplier) | Workers implemented; return `NO_DATA_AVAILABLE` / `EXTERNAL_INTEGRATION_PENDING` honestly | **EXTERNAL_DEPENDENCY** | Yes |
-| **GAP-I-001** | `CommerceBridge` read path connected to live commerce system | HTTP adapter scaffold in `ai_core/bridge/commerce.py`; `is_configured()` false when `COMMERCE_API_URL` / `COMMERCE_API_TOKEN` unset | **EXTERNAL_DEPENDENCY** | Yes |
-| **GAP-M-002** | Commerce platform integrations provisioned (supplier feeds, WMS, commerce DB/API) | `IntegrationStatusRegistry` reports `EXTERNAL_INTEGRATION_PENDING` for `commerce`, `supplier_feeds`, `wms` | **EXTERNAL_DEPENDENCY** (platform **BLOCKED** on provisioning) | Yes |
+| **GAP-A-003** | Domain workers produce live commerce intelligence (product, price, stock, order, supplier) | Workers implemented; return `NO_DATA_AVAILABLE` / `EXTERNAL_INTEGRATION_PENDING` | **EXTERNAL_DEPENDENCY** | Yes |
+| **GAP-I-001** | `CommerceBridge` read path connected to live commerce system | HTTP adapter in `ai_core/bridge/commerce.py`; `is_configured()` false when `COMMERCE_API_URL` / `COMMERCE_API_TOKEN` unset | **EXTERNAL_DEPENDENCY** | Yes |
+| **GAP-M-002** | Commerce platform integrations provisioned (supplier feeds, WMS, commerce DB/API) | `IntegrationStatusRegistry` reports `EXTERNAL_INTEGRATION_PENDING` for `commerce`, `supplier_feeds`, `wms` | **EXTERNAL_DEPENDENCY** | Yes |
 
 ### Evidence (source inspection, 2026-08-22)
 
@@ -71,46 +77,38 @@ integrations/registry  → commerce, supplier_feeds, wms = EXTERNAL_INTEGRATION_
 domain workers         → fail honestly; never return synthetic commerce records
 ```
 
-### Required to close P1
-
-| Item | Requirement |
-|------|-------------|
-| Credentials | `COMMERCE_API_URL`, `COMMERCE_API_TOKEN`, supplier feed + WMS credentials |
-| Platform | Live Buzzard Commerce deployment with REST endpoints |
-| Verification | End-to-end domain worker tests against real data (no mocks in production path) |
-
 Detail: `docs/PHASE2_COMMERCE_API_EXTERNAL_DEPENDENCIES.md`
 
 ---
 
-## 5. P2 Status
+## P2 Status
 
 | Count | Status |
 |-------|--------|
 | **0** | **All P2 gaps closed** |
 
-Original 14 P2 gaps from `PHASE2_V2_GAP_ANALYSIS.md` remediated across PRs #219 and #220. No hidden P2 blockers identified in independent source review.
+Original 14 P2 gaps from `docs/PHASE2_V2_GAP_ANALYSIS.md` remediated across PRs #219 and #220.
 
 ---
 
-## 6. P3 Remaining Items (4 — not in scope)
+## P3 Status — 4 Technical-Debt Items (not remediated)
 
-P3 items are **documented technical debt / polish**. They do **not** block this baseline freeze and are **not** remediated in Phase 2.
+P3 items are documented technical debt. They do **not** block this baseline freeze and are **not** remediated in Phase 2.
 
 | ID | Description | Classification |
 |----|-------------|----------------|
-| **GAP-C-003** | Per-category execution test coverage depth (parameterized L1 tests exist; full plan coverage may exceed current suite) | **TECHNICAL_DEBT** |
+| **GAP-C-003** | Per-category execution test coverage depth — parameterized L1 tests exist; full 48-worker individual coverage not implemented | **TECHNICAL_DEBT** |
 | **GAP-G-003** | `init_ai_core_db()` still called in dev bootstrap; not disabled when `APP_ENV=production` | **TECHNICAL_DEBT** |
 | **GAP-K-002** | Kurmay auto-trigger tasks use `created_by="kurmay-trigger"` — limited actor attribution | **TECHNICAL_DEBT** |
-| **GAP-M-003** | Storefront taxonomy misalignment (`test_category_audit_maximal` skipped — shop catalog vs master taxonomy) | **EXTERNAL_DEPENDENCY** (storefront team) |
+| **GAP-M-003** | Storefront taxonomy misalignment — `test_category_audit_maximal` skipped (shop catalog vs master taxonomy) | **TECHNICAL_DEBT** (storefront alignment external) |
 
 ---
 
-## 7. Complete Test Results
+## Complete Test Status
 
 **Run date:** 2026-08-22 (baseline freeze verification)  
-**Command:** `cd intelligence/buzzard_ai_complete && python3 -m pytest tests/ -q`  
-**Modifications:** None (tests not altered)
+**Command:** `cd intelligence/buzzard_ai_complete && BUZZARD_AI_CORE_V2=1 python3 -m pytest tests/ -q`  
+**Modifications:** None — tests not altered, weakened, or removed
 
 ### Summary
 
@@ -133,7 +131,7 @@ P3 items are **documented technical debt / polish**. They do **not** block this 
 | Category | Tests | Passed | Classification |
 |----------|-------|--------|----------------|
 | Phase 1 | 13 | 13 | VERIFIED |
-| Phase 2 (all `test_ai_core_phase2_*.py`) | 137 | 137 | VERIFIED |
+| Phase 2 (`test_ai_core_phase2_*.py`) | 137 | 137 | VERIFIED |
 | P0 E2E (Postgres) | 6 | 6 | VERIFIED |
 | Postgres / Alembic | 6 | 6 | VERIFIED |
 | Other workspace tests | 318 | 317 | VERIFIED (1 skipped) |
@@ -156,37 +154,30 @@ P3 items are **documented technical debt / polish**. They do **not** block this 
 
 ---
 
-## 8. Known External Dependencies
+## Known Limitations
 
-| Dependency | Affects | Status | Classification |
-|------------|---------|--------|----------------|
-| Buzzard Commerce API | GAP-A-003, GAP-I-001, GAP-M-002 | Not provisioned | **EXTERNAL_DEPENDENCY** |
-| Supplier feed endpoints | GAP-A-003, GAP-M-002 | Not connected | **EXTERNAL_DEPENDENCY** |
-| WMS integration | GAP-A-003, GAP-M-002 | Not connected | **EXTERNAL_DEPENDENCY** |
-| CRM integration | Customer service worker full path | Not connected | **EXTERNAL_DEPENDENCY** |
-| Storefront catalog alignment | GAP-M-003 | Shop vs taxonomy mismatch | **EXTERNAL_DEPENDENCY** |
-| LLM provider (production) | Customer service live inference | Client implemented; production credentials environment-specific | **EXTERNAL_DEPENDENCY** (runtime config) |
-
----
-
-## 9. Known Technical Debt (P3 + non-blocking)
-
-| Item | Impact | Classification |
-|------|--------|----------------|
-| GAP-G-003 — dev DB bootstrap in production path | Operational risk if misconfigured | **TECHNICAL_DEBT** |
-| GAP-K-002 — Kurmay trigger actor attribution | Audit forensics only | **TECHNICAL_DEBT** |
-| GAP-C-003 — test plan vs implemented coverage gap | Confidence, not functionality | **TECHNICAL_DEBT** |
-| GAP-M-003 — storefront taxonomy skip | 1 skipped test; outside ai_core | **EXTERNAL_DEPENDENCY** |
-| `BUZZARD_AI_CORE_V2=0` misconfiguration | Phase 2 workers not loaded | **TECHNICAL_DEBT** (ops documentation) |
+| Limitation | Impact | Classification |
+|------------|--------|----------------|
+| No live Commerce API | Domain workers cannot return real product/price/stock/order data | **EXTERNAL_DEPENDENCY** |
+| CommerceBridge unconfigured | Read path returns `NO_DATA_AVAILABLE` | **EXTERNAL_DEPENDENCY** |
+| Platform integrations pending | `commerce`, `supplier_feeds`, `wms` not connected | **EXTERNAL_DEPENDENCY** |
+| CRM not connected | Customer service worker full live path unavailable | **EXTERNAL_DEPENDENCY** |
+| Storefront taxonomy gap | 1 test skipped; shop catalog misaligned with master taxonomy | **TECHNICAL_DEBT** (GAP-M-003) |
+| Dev DB bootstrap in production path | `init_ai_core_db()` not gated on `APP_ENV=production` | **TECHNICAL_DEBT** (GAP-G-003) |
+| Kurmay trigger attribution | Auto-trigger tasks lack full actor attribution | **TECHNICAL_DEBT** (GAP-K-002) |
+| Per-category test depth | Not all 48 category workers tested individually | **TECHNICAL_DEBT** (GAP-C-003) |
+| `BUZZARD_AI_CORE_V2=0` misconfiguration | Phase 2 workers not loaded if V2 flag unset | **TECHNICAL_DEBT** (ops) |
+| LLM production credentials | Client implemented; runtime credentials environment-specific | **EXTERNAL_DEPENDENCY** (runtime config) |
+| Taxonomy source | `master_taxonomy_48_maximal/data/taxonomy.json` via `TaxonomyRegistry` — never hard-code category counts | **ARCHITECTURE** |
 
 ---
 
-## 10. Conditions Required to Declare `PHASE2_READY`
+## Conditions Required for `PHASE2_READY`
 
 All must be true:
 
-1. **P0 = 0** — ✅ currently met  
-2. **P1 = 0** or all remaining P1 are accepted non-blockers — ❌ 3 commerce P1 remain  
+1. **P0 = 0** — currently met
+2. **P1 = 0** — currently **not met** (3 external commerce P1 remain)
 3. **Live commerce integration verified:**
    - `COMMERCE_API_URL` + `COMMERCE_API_TOKEN` configured in target environment
    - `IntegrationStatusRegistry` reports `CONNECTED` for `commerce`, `supplier_feeds`, `wms` after real health checks
@@ -194,20 +185,9 @@ All must be true:
 4. **CommerceBridge read path** returns live product/order/stock data (GAP-I-001 closed)
 5. **Commerce platform provisioned** (GAP-M-002 closed)
 6. **Independent verification** re-run with updated `PHASE2_FINAL_VERIFICATION` report
-7. **Full test suite green** with commerce E2E tests against live (or dedicated staging) API
+7. **Full test suite green** with commerce E2E tests against live or dedicated staging API
 
-**Current verdict:** `PHASE2_PARTIAL` — foundation complete, external commerce dependency blocks READY.
-
----
-
-## Classification Legend
-
-| Label | Meaning |
-|-------|---------|
-| **IMPLEMENTED** | Code exists in `intelligence/buzzard_ai_complete/` |
-| **VERIFIED** | Confirmed by automated tests or independent verification report |
-| **EXTERNAL_DEPENDENCY** | Requires systems outside this repository; cannot close without external provisioning |
-| **TECHNICAL_DEBT** | Known gap; does not block baseline freeze; P3 or ops scope |
+**Current verdict:** `PHASE2_PARTIAL` — foundation complete; external commerce dependency blocks READY.
 
 ---
 
@@ -215,25 +195,27 @@ All must be true:
 
 | Document | Purpose |
 |----------|---------|
+| `docs/PHASE2_BASELINE_FREEZE.md` | **This document** — official Phase 2 baseline freeze |
 | `docs/PHASE2_FINAL_VERIFICATION_V4.md` | Latest score and gap counts |
 | `docs/PHASE2_FINAL_P2_REMEDIATION.md` | Final P2 closure evidence |
 | `docs/PHASE2_COMMERCE_API_EXTERNAL_DEPENDENCIES.md` | P1 commerce dependency analysis |
 | `docs/PHASE2_V2_GAP_ANALYSIS.md` | Original gap catalog |
-| `docs/PHASE2_BASELINE_FREEZE.md` | **This document** — official freeze |
 
 ---
 
 ## Freeze Declaration
 
 ```
+BASELINE FROZEN — 96/100
+
 P0: 0
-P1: 3
+P1: 3 — EXTERNAL Commerce API dependency
 P2: 0
 P3: 4
-SCORE: 96
+SCORE: 96/100
 STATUS: PHASE2_PARTIAL
 ```
 
-Phase 2 baseline is **frozen** at 96/100 with all P2 gaps closed and 3 external commerce P1 dependencies honestly documented. No implementation changes were made to produce this freeze.
+Phase 2 implementation is frozen. No Phase 2 code was modified to produce this document. No P3 remediation was performed. No Commerce API integration was faked. Architecture unchanged. Tests unchanged.
 
-**STOP — Phase 3 not started. P3 not remediated.**
+**STOP — Phase 3 not started.**

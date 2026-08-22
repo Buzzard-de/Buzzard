@@ -3,9 +3,9 @@ export const CONTACT_EMAIL =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL || "info@buzzard24.de";
 
 export const CONTACT_PHONE_TEL =
-  process.env.NEXT_PUBLIC_CONTACT_PHONE || "+4930000000";
+  process.env.NEXT_PUBLIC_CONTACT_PHONE || "+4915126219394";
 
 export const CONTACT_PHONE_DISPLAY =
-  process.env.NEXT_PUBLIC_CONTACT_PHONE_DISPLAY || "+49 30 0000000";
+  process.env.NEXT_PUBLIC_CONTACT_PHONE_DISPLAY || "+49 151 26219394";
 
 export const CONTACT_FORM_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`;

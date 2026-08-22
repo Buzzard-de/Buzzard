@@ -1,0 +1,3 @@
+sku,name,description,brand,price,currency,stock_qty,category_id,ean
+SKU-W2-001,Wave2 Test Product,Sanitized description,TestBrand,19.99,EUR,42,cat-01,4012345678901
+SKU-W2-002,Second Product,Another item,TestBrand,9.50,EUR,10,cat-15,4012345678902

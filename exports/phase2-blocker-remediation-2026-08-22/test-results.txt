@@ -1,0 +1,22 @@
+=== BUZZARD AI CORE — Phase 2 Blocker Remediation Test Results ===
+Date: 2026-08-22T23:13:00Z
+Branch: cursor/phase2-blocker-remediation-c293
+
+--- BUZZARD_AI_CORE_V2=0 (Phase 1 Regression) ---
+366 passed, 1 skipped, 20 warnings in 6.88s
+
+--- BUZZARD_AI_CORE_V2=1 (Phase 2 Enabled) ---
+366 passed, 1 skipped, 20 warnings in 6.90s
+
+--- Phase 2 Tests Only (test_ai_core_phase2_*.py) ---
+24 passed, 1 warning in 1.25s
+
+--- Postgres / Alembic Tests ---
+6 passed, 10 warnings in 0.68s
+
+--- Summary ---
+Total full suite: 367 (366 passed, 1 skipped, 0 failed, 0 errors)
+Phase 2 new tests: 24/24 passed
+Postgres migrations 001-007: verified
+
+Skipped test: test_category_audit_maximal.py (storefront catalog gap — not ai_core)

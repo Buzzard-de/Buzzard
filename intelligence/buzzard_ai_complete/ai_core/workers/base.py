@@ -13,6 +13,7 @@ class WorkerContext:
     request_id: str
     attempt: int
     timeout_seconds: int
+    session: Any | None = None
 
 
 @dataclass

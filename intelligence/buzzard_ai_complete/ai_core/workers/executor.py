@@ -57,6 +57,7 @@ class WorkerExecutor:
             request_id=self.request_id,
             attempt=task.attempts,
             timeout_seconds=task.timeout_seconds,
+            session=self.session,
         )
         self.audit.log(
             actor=worker.worker_id,

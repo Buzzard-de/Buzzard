@@ -8,6 +8,8 @@ from buzzard_ai_complete.ai_core.models.exception_record import (
 from buzzard_ai_complete.ai_core.models.idempotency_key import IdempotencyKeyRecord
 from buzzard_ai_complete.ai_core.models.integration_status import IntegrationStatusRecord
 from buzzard_ai_complete.ai_core.models.kurmay_report import KurmayReportRecord
+from buzzard_ai_complete.ai_core.models.product import ProductRecord
+from buzzard_ai_complete.ai_core.models.supplier import SupplierRecord
 from buzzard_ai_complete.ai_core.models.memory import MemoryEntry, MemoryHistory
 from buzzard_ai_complete.ai_core.models.task import (
     Task,
@@ -26,6 +28,8 @@ __all__ = [
     "IdempotencyKeyRecord",
     "IntegrationStatusRecord",
     "KurmayReportRecord",
+    "ProductRecord",
+    "SupplierRecord",
     "MemoryEntry",
     "MemoryHistory",
     "Task",

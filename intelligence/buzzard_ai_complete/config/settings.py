@@ -56,6 +56,14 @@ COMMERCE_WEBHOOK_SECRET = os.getenv("COMMERCE_WEBHOOK_SECRET", "")
 IDEMPOTENCY_TTL_SECONDS = int(os.getenv("BUZZARD_IDEMPOTENCY_TTL_SECONDS", "86400"))
 EVENT_MAX_RETRIES = int(os.getenv("BUZZARD_EVENT_MAX_RETRIES", "5"))
 
+# Phase 3 AI Core Wave 2 — Supplier + Product Pipeline
+SUPPLIER_FEEDS_URL = os.getenv("SUPPLIER_FEEDS_URL", "").rstrip("/")
+SUPPLIER_FEEDS_TOKEN = os.getenv("SUPPLIER_FEEDS_TOKEN", "")
+SUPPLIER_FEED_TYPE = os.getenv("SUPPLIER_FEED_TYPE", "rest")
+SUPPLIER_FEED_PATH = os.getenv("SUPPLIER_FEED_PATH", "")
+SUPPLIER_IMPORT_MAX_BYTES = int(os.getenv("SUPPLIER_IMPORT_MAX_BYTES", "5242880"))
+SUPPLIER_CREDENTIALS_KEY = os.getenv("SUPPLIER_CREDENTIALS_KEY", "")
+
 
 def _parse_token_roles(raw: str) -> dict[str, str]:
     mapping: dict[str, str] = {}

@@ -21,7 +21,9 @@ from buzzard_ai_complete.ai_core.api.v1.categories import router as categories_r
 from buzzard_ai_complete.ai_core.api.v1.commerce import router as commerce_router
 from buzzard_ai_complete.ai_core.api.v1.events import router as events_router
 from buzzard_ai_complete.ai_core.api.v1.integrations import router as integrations_router
+from buzzard_ai_complete.ai_core.api.v1.products import router as products_router
 from buzzard_ai_complete.ai_core.api.v1.reports import router as reports_router
+from buzzard_ai_complete.ai_core.api.v1.suppliers import router as suppliers_router
 from buzzard_ai_complete.ai_core.integrations.factory import get_integration_registry
 from buzzard_ai_complete.ai_core.workers.registry import get_registry
 from buzzard_ai_complete.ai_core.enums import TaskStatus
@@ -333,4 +335,6 @@ router.include_router(categories_router)
 router.include_router(commerce_router)
 router.include_router(integrations_router)
 router.include_router(events_router)
+router.include_router(products_router)
 router.include_router(reports_router)
+router.include_router(suppliers_router)

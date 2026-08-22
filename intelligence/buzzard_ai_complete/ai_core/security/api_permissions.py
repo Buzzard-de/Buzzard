@@ -23,6 +23,11 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "reports:create",
             "events:read",
             "events:admin",
+            "suppliers:read",
+            "suppliers:write",
+            "suppliers:sync",
+            "products:read",
+            "products:enrich",
         }
     ),
     "operator": frozenset(
@@ -44,6 +49,11 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "reports:read",
             "reports:create",
             "events:read",
+            "suppliers:read",
+            "suppliers:write",
+            "suppliers:sync",
+            "products:read",
+            "products:enrich",
         }
     ),
     "approver": frozenset(
@@ -64,6 +74,8 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "integrations:read",
             "reports:read",
             "events:read",
+            "suppliers:read",
+            "products:read",
         }
     ),
     "security": frozenset(
@@ -122,6 +134,13 @@ ENDPOINT_PERMISSIONS: dict[tuple[str, str], str] = {
     ("GET", "/api/v1/events/dead-letter"): "events:admin",
     ("GET", "/api/v1/events/{event_id}"): "events:read",
     ("POST", "/api/v1/events/{event_id}/replay"): "events:admin",
+    ("GET", "/api/v1/suppliers"): "suppliers:read",
+    ("POST", "/api/v1/suppliers"): "suppliers:write",
+    ("GET", "/api/v1/suppliers/{id}"): "suppliers:read",
+    ("POST", "/api/v1/suppliers/{id}/sync"): "suppliers:sync",
+    ("GET", "/api/v1/products"): "products:read",
+    ("GET", "/api/v1/products/{id}"): "products:read",
+    ("POST", "/api/v1/products/{id}/enrich"): "products:enrich",
 }
 
 

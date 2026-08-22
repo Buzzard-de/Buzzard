@@ -16,5 +16,35 @@
     "to": "/hilfe/",
     "permanent": false,
     "note": "FAQ redirect to help page"
+  },
+  {
+    "from": "/impressum.html",
+    "to": "/impressum/",
+    "permanent": true,
+    "note": "Legacy .html legal URL"
+  },
+  {
+    "from": "/datenschutz.html",
+    "to": "/datenschutz/",
+    "permanent": true,
+    "note": "Legacy .html legal URL"
+  },
+  {
+    "from": "/agb.html",
+    "to": "/agb/",
+    "permanent": true,
+    "note": "Legacy .html legal URL"
+  },
+  {
+    "from": "/hilfe.html",
+    "to": "/hilfe/",
+    "permanent": true,
+    "note": "Legacy .html legal URL"
+  },
+  {
+    "from": "/kontakt.html",
+    "to": "/impressum/",
+    "permanent": true,
+    "note": "Legacy contact .html URL"
   }
 ]

@@ -93,6 +93,11 @@ MARKET_DATA_ALLOWED_SOURCES = frozenset(
 BUZZARD_OBSERVABILITY_ENABLED = os.getenv("BUZZARD_OBSERVABILITY_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
 BUZZARD_AUTONOMY_DISABLED = os.getenv("BUZZARD_AUTONOMY_DISABLED", "false").lower() in {"1", "true", "yes", "on"}
 
+# Phase 3 AI Core Wave 5 — Decision Engine + Autonomous L4 + Procurement Worker
+BUZZARD_AUTONOMY_L4_ENABLED = os.getenv("BUZZARD_AUTONOMY_L4_ENABLED", "false").lower() in {"1", "true", "yes", "on"}
+BUZZARD_PO_AUTO_THRESHOLD_EUR = float(os.getenv("BUZZARD_PO_AUTO_THRESHOLD_EUR", "500"))
+BUZZARD_COMMERCE_WRITES_DISABLED = os.getenv("BUZZARD_COMMERCE_WRITES_DISABLED", "false").lower() in {"1", "true", "yes", "on"}
+
 
 def _parse_token_roles(raw: str) -> dict[str, str]:
     mapping: dict[str, str] = {}

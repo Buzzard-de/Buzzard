@@ -41,6 +41,10 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "logistics:execute",
             "market:read",
             "analytics:read",
+            "decisions:read",
+            "decisions:execute",
+            "decisions:write",
+            "procurement:draft",
         }
     ),
     "operator": frozenset(
@@ -80,6 +84,9 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "logistics:execute",
             "market:read",
             "analytics:read",
+            "decisions:read",
+            "decisions:execute",
+            "procurement:draft",
         }
     ),
     "approver": frozenset(
@@ -104,6 +111,7 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             "products:read",
             "returns:read",
             "analytics:read",
+            "decisions:read",
         }
     ),
     "security": frozenset(
@@ -182,6 +190,9 @@ ENDPOINT_PERMISSIONS: dict[tuple[str, str], str] = {
     ("GET", "/api/v1/returns/{id}"): "returns:read",
     ("GET", "/api/v1/analytics/kpis"): "analytics:read",
     ("GET", "/api/v1/analytics/workers"): "analytics:read",
+    ("POST", "/api/v1/decisions/evaluate"): "decisions:execute",
+    ("GET", "/api/v1/decisions"): "decisions:read",
+    ("GET", "/api/v1/decisions/{id}"): "decisions:read",
 }
 
 

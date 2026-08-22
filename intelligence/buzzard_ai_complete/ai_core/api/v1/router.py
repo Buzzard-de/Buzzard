@@ -15,6 +15,7 @@ from buzzard_ai_complete.ai_core.api.deps import (
   get_orchestrator,
   get_request_id,
 )
+from buzzard_ai_complete.ai_core.api.v1.decisions import router as decisions_router
 from buzzard_ai_complete.ai_core.api.v1.analytics import router as analytics_router
 from buzzard_ai_complete.ai_core.api.v1.agents import router as agents_router
 from buzzard_ai_complete.ai_core.api.v1.approvals import router as approvals_router
@@ -356,6 +357,7 @@ router.include_router(pricing_router)
 router.include_router(events_router)
 router.include_router(products_router)
 router.include_router(reports_router)
+router.include_router(decisions_router)
 router.include_router(returns_router)
 router.include_router(stock_router)
 router.include_router(suppliers_router)

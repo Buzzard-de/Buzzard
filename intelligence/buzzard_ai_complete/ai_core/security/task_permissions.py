@@ -28,6 +28,10 @@ TASK_REQUIRED_PERMISSIONS: dict[str, str] = {
     "return_evaluate": "returns:evaluate",
     "return_process": "returns:evaluate",
     "refund_recommend": "returns:evaluate",
+    "decision_evaluate": "decisions:write",
+    "decision_synthesize": "decisions:write",
+    "supplier_selection": "procurement:draft",
+    "purchase_order_draft": "procurement:draft",
 }
 
 

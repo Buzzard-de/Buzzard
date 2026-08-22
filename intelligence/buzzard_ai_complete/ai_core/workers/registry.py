@@ -20,6 +20,8 @@ from buzzard_ai_complete.ai_core.workers.product.intelligence_worker import Prod
 from buzzard_ai_complete.ai_core.workers.security.security_worker import SecurityAIWorker
 from buzzard_ai_complete.ai_core.workers.stock.engine_worker import StockEngineWorker
 from buzzard_ai_complete.ai_core.workers.supplier.hub_worker import SupplierHubWorker
+from buzzard_ai_complete.ai_core.workers.decision.engine_worker import DecisionEngineWorker
+from buzzard_ai_complete.ai_core.workers.procurement.intelligence_worker import ProcurementIntelligenceWorker
 from buzzard_ai_complete.ai_core.workers.market.intelligence_worker import MarketIntelligenceWorker
 from buzzard_ai_complete.ai_core.workers.logistics.intelligence_worker import LogisticsIntelligenceWorker
 from buzzard_ai_complete.ai_core.workers.returns.intelligence_worker import ReturnsIntelligenceWorker
@@ -102,6 +104,8 @@ def build_phase3_registry(coordinator=None) -> WorkerRegistry:
     registry.register(MarketIntelligenceWorker())
     registry.register(LogisticsIntelligenceWorker())
     registry.register(ReturnsIntelligenceWorker())
+    registry.register(DecisionEngineWorker())
+    registry.register(ProcurementIntelligenceWorker())
     return registry
 
 

@@ -26,6 +26,10 @@ REQUIRED_OUTPUT_KEYS: dict[str, tuple[str, ...]] = {
     "return_evaluate": ("eligibility", "requires_approval"),
     "return_process": ("eligibility", "requires_approval"),
     "refund_recommend": ("eligibility", "requires_approval"),
+    "decision_evaluate": ("output_type",),
+    "decision_synthesize": ("output_type",),
+    "supplier_selection": ("status",),
+    "purchase_order_draft": ("status",),
     "system_health": (),
 }
 

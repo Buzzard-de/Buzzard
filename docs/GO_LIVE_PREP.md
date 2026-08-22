@@ -13,7 +13,7 @@ Buzzard24 ist im **Katalogmodus** vorbereitet. Alles unten „Erledigt“ läuft
 - [x] SEO, Sitemap, Redirects
 - [x] Security-Checks, CI (Lint, Build, Preflight)
 - [x] Kontaktformular, Impressum, Datenschutz
-- [ ] E-Mail `info@buzzard24.de` einrichten (siehe `docs/EMAIL_SETUP.md`)
+- [ ] E-Mail `info@buzzard24.de` bei IONOS einrichten (siehe `docs/EMAIL_SETUP_IONOS.md`)
 
 ## Nur du — Phase 1 (Backend live)
 

@@ -2,6 +2,10 @@
 
 Die Website nutzt **`info@buzzard24.de`** als öffentliche Kontaktadresse (Footer, Impressum, Kontaktformular).
 
+## Domain bei IONOS → siehe dedizierte Anleitung
+
+**→ [docs/EMAIL_SETUP_IONOS.md](./EMAIL_SETUP_IONOS.md)** (Schritt-für-Schritt für IONOS)
+
 ## Empfohlene Adressen
 
 | Adresse | Zweck |
@@ -9,7 +13,7 @@ Die Website nutzt **`info@buzzard24.de`** als öffentliche Kontaktadresse (Foote
 | `info@buzzard24.de` | Öffentlicher Kontakt, Impressum, Kontaktformular |
 | `admin@buzzard24.de` | Intern: Render-API Admin-Login (optional) |
 
-## Option A — Cloudflare Email Routing (kostenlos, empfohlen)
+## Option A — Cloudflare Email Routing (kostenlos)
 
 Wenn die Domain **buzzard24.de** bei Cloudflare liegt (siehe `docs/SECURITY.md`):
 

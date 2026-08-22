@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
   title: "Datenschutz",
@@ -28,9 +29,9 @@ export default function DatenschutzPage() {
             <br />
             Dautphetal, Deutschland
             <br />
-            E-Mail: <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+            E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
             <br />
-            Telefon: <a href="tel:+4930000000">+49 30 0000000</a>
+            Telefon: <a href={`tel:${CONTACT_PHONE_TEL}`}>{CONTACT_PHONE_DISPLAY}</a>
           </p>
         </section>
 
@@ -74,7 +75,7 @@ export default function DatenschutzPage() {
           <p>
             Wir setzen technische Schutzmaßnahmen ein (Content Security Policy, Eingabevalidierung,
             Honeypot-Schutz im Kontaktformular). Meldungen zu Sicherheitslücken nehmen wir unter{" "}
-            <a href="mailto:info@buzzard.com">info@buzzard.com</a> entgegen.
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> entgegen.
           </p>
         </section>
 
@@ -93,7 +94,7 @@ export default function DatenschutzPage() {
             <br />
             Dautphetal, Deutschland
             <br />
-            E-Mail: <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+            E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
           <p>
             <small>Stand: August 2026</small>

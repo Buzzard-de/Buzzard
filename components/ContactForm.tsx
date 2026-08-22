@@ -8,6 +8,7 @@ import {
   isValidEmail,
   markFormSubmitted,
 } from "@/lib/security";
+import { CONTACT_FORM_ENDPOINT } from "@/lib/site/contact";
 
 const RATE_LIMIT_KEY = "buzzard_contact_last";
 const MIN_SUBMIT_MS = 3000;
@@ -58,7 +59,7 @@ export default function ContactForm() {
     setSending(true);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/info@buzzard.com", {
+      const res = await fetch(CONTACT_FORM_ENDPOINT, {
         method: "POST",
         headers: {
           Accept: "application/json",

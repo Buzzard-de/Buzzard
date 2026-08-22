@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/context";
+import { CONTACT_EMAIL } from "@/lib/site/contact";
 
 export default function Footer() {
   const { t } = useLocale();
@@ -21,7 +22,7 @@ export default function Footer() {
           <Link href="/impressum/">{t("footer.imprint")}</Link>
           <Link href="/datenschutz/">{t("footer.privacy")}</Link>
           <Link href="/impressum/">{t("footer.contact")}</Link>
-          <a href="mailto:info@buzzard.com">info@buzzard.com</a>
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </div>
         <p className="footer-copy">{t("footer.copyright")}</p>
       </div>

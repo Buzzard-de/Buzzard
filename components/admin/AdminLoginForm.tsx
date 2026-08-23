@@ -7,7 +7,7 @@ import { isProductionBuild } from "@/lib/api/config";
 
 export default function AdminLoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@buzzard.de");
+  const [email, setEmail] = useState("admin@buzzard24.de");
   const [password, setPassword] = useState("");
   const [totpCode, setTotpCode] = useState("");
   const [challengeToken, setChallengeToken] = useState<string | null>(null);
@@ -101,7 +101,7 @@ export default function AdminLoginForm() {
           {loading ? "Anmelden…" : challengeToken ? "Code bestätigen" : "Anmelden"}
         </button>
         {!isProductionBuild() && !challengeToken ? (
-          <p className="admin-login-hint">Demo: admin@buzzard.de / BuzzardAdmin2026!</p>
+          <p className="admin-login-hint">Demo: admin@buzzard24.de / BuzzardAdmin2026!</p>
         ) : null}
       </form>
     </div>

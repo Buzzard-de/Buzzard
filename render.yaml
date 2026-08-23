@@ -119,7 +119,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: ADMIN_EMAIL
-        value: admin@buzzard.de
+        value: admin@buzzard24.de
       - key: ADMIN_PASSWORD
         generateValue: true
       - key: STRIPE_SECRET_KEY

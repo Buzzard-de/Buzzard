@@ -31,6 +31,9 @@ jobs:
       - name: Install and build
         env:
           NEXT_PUBLIC_SITE_URL: https://buzzard24.de
+          NEXT_PUBLIC_CONTACT_EMAIL: info@buzzard24.de
+          NEXT_PUBLIC_CONTACT_PHONE: "+4915126219394"
+          NEXT_PUBLIC_CONTACT_PHONE_DISPLAY: "+49 151 26219394"
           NEXT_PUBLIC_SALES_ENABLED: "0"
           NEXT_PUBLIC_SQLITE_STORE: "1"
           NEXT_PUBLIC_BUZZARD_API_URL: ${{ vars.BUZZARD_API_URL || secrets.BUZZARD_API_URL || 'https://buzzard-api.onrender.com' }}

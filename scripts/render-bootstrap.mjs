@@ -60,7 +60,7 @@ const ENV_VARS = [
   { key: "BUZZARD_INTELLIGENCE_BRIDGE", value: "1" },
   { key: "DEFAULT_PAYMENT_PROVIDER", value: "stripe" },
   { key: "DEFAULT_CARRIER", value: "dhl" },
-  { key: "ADMIN_EMAIL", value: "admin@buzzard.de" },
+  { key: "ADMIN_EMAIL", value: "admin@buzzard24.de" },
   { key: "JWT_SECRET", generateValue: true },
   { key: "ADMIN_PASSWORD", generateValue: true },
 ];

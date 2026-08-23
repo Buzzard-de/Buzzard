@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+  <product>
+    <sku>SKU-W2-XML-001</sku>
+    <name>XML Test Product</name>
+    <description>XML feed item</description>
+    <brand>XmlBrand</brand>
+    <price>29.99</price>
+    <currency>EUR</currency>
+    <stock_qty>5</stock_qty>
+    <category_id>cat-03</category_id>
+    <ean>4012345678903</ean>
+  </product>
+</catalog>

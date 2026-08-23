@@ -1,0 +1,6 @@
+flow_id,flow_name,steps,status,blocker,notes
+FLOW1,Supplier→Product→Category→Price→Stock→Commerce→Order,"supplier_sync→product_enrich→category_analyze→price_recheck→stock_sync→commerce_write→order_ingest",PARTIAL,Commerce NOT_CONNECTED,Unit/integration tests pass per stage; no live commerce E2E
+FLOW2,Customer Order→Procurement→WMS,"order_ingest→order_check→supplier_selection→purchase_order_draft→stock_sync(WMS)",PARTIAL,WMS NOT_CONNECTED,Procurement routing tested; WMS staging skipped
+FLOW3,Order→Carrier→Shipment→Tracking,"order_check→shipment_rate→label_create→tracking_update→customer notify",PARTIAL,DHL live NOT_CONNECTED,Mock carrier path tested; live DHL stub only
+FLOW4,Return→Refund,"return_evaluate→return_process→refund_recommend→approval",PASS,none,ReturnsIntelligenceWorker + eligibility engine fully tested
+FLOW5,Market→Decision→Autonomous Action,"market_scan→decision_evaluate→autonomy plan→approval/auto-exec→audit",PASS,none,Kill switch + L4 gating tested; no live market feed

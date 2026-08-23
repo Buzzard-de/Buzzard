@@ -1,0 +1,80 @@
+71fb5ba fix(security): P1 remediation — commerce write flag, metrics auth, webhooks
+c205aa3 docs(audit): full AI Core final audit and go-live readiness report
+616ceb1 feat(phase3): implement Wave 5 decision engine, L4 autonomy, and procurement worker
+606cdc9 feat(phase3): implement Wave 4 logistics, returns, market, and observability
+9d4b339 feat(phase3): implement Wave 3 pricing, stock, order, and procurement intelligence
+049e2f7 feat(phase3): Wave 2 — Supplier + Product Pipeline implementation
+20d1122 fix(phase3): GAP-I-001 remediation — commerce config validation and postgres test fixes
+12b9552 Implement Phase 3 Wave 1: commerce adapter, JWT/RBAC, idempotency, events
+fd5a5e6 Restructure P1 final verification export to required standard layout
+cf49cb2 Add independent Phase 3 P1 remediation final verification (97/100 READY)
+6f476cd Export Phase 3 P1 remediation + architecture packages as folders and ZIPs
+96bac7b docs: Phase 3 P1 architecture remediation (7/7 FIXED, P1: 0)
+3e78f07 Add Phase 3 architecture complete export package (folder + ZIP)
+c1777ff docs: Phase 3 architecture independent verification (92/100, PARTIAL)
+4bd6959 docs: Phase 3 master architecture package (17 documents)
+7a4c762 docs: official Phase 2 baseline freeze at 96/100 (PHASE2_PARTIAL)
+cd75b4c Add Phase 2 baseline freeze export package (folder + ZIP)
+4f9ce35 docs: Phase 2 baseline freeze at 96/100 (P2:0, P1:3 external)
+867e5e4 Close final 3 P2 gaps: commerce write orchestration, LLM client, doc sync
+fab2c18 Phase 2 P2 remediation: 11 gaps fixed, commerce external deps documented
+8664193 Add Phase 2 P1 complete export package (all docs, code, tests, ZIP)
+81e8178 fix(phase2): close 5 remaining fixable P1 gaps — Kurmay failure path, tests, permissions
+84abc0e docs: export P1 result-check package (verification, reports, code, ZIP)
+fc131b2 docs: independent P1 remediation result check (verification only)
+5e53884 docs: session checkpoint 2026-08-21 — Phase 2 P1 remediation saved
+dd16be5 docs: export Phase 2 P1 remediation package (code, tests, reports, ZIP)
+60d4fe6 fix(phase2): remediate 11 of 15 P1 gaps — enforcement, RBAC, persistence
+06d6eef docs: export Phase 2 blocker remediation package (code, tests, reports, ZIP)
+b799227 fix(phase2): remediate 27 blockers — foundation, tests, verification
+ebce3db Implement Phase 2 AI Core foundation and workers
+4bf7562 docs: update export with blocker analysis in docs mirror
+f6f74f9 docs: Phase 2 blocker analysis — why 18/100, 27 blockers, remediation order
+6c27c75 docs: update export ZIP with Phase 2 final verification
+1b26cfd docs: Phase 2 final verification — PHASE2_BLOCKED (18/100)
+b70549c docs: add complete session report (SESSION_BERICHT.md) to export
+a98452c docs: add Phase 2 implementation status reports (NOT STARTED)
+5ce7335 docs: add Phase 2 architecture final review (NOT_READY_FOR_IMPLEMENTATION)
+532b809 docs: dynamic Category Intelligence architecture — taxonomy-driven, no hard-coded counts
+54f8938 docs: update complete session export with architecture review in docs/
+333241f docs: update complete export ZIP with architecture review
+d295357 docs: Phase 2 architecture consistency review — NOT_READY_FOR_IMPLEMENTATION
+ad08a11 docs: add complete Buzzard AI Core export folder (Phase 1 + Phase 2)
+2b1c3f2 docs: add Phase 2 architecture ZIP download
+06c7419 docs: add Phase 2 architecture export folder
+96bfa53 docs: Phase 2 architecture design for Buzzard AI worker ecosystem
+9ac118d docs: add Phase 1 final verification export (P1 hardening, 88/100)
+ae0bb85 fix(ai-core): Phase 1 P1 hardening — pagination, idempotency, memory index, request-id
+f69aee4 chore(exports): Phase 1 P0 remediation package (zip + folder)
+03c0de8 fix(ai-core): P0 blocker remediation — PostgreSQL, workers, auth, halt
+36907b4 chore(exports): Phase 1 verification package (zip + folder)
+3b13b95 docs(ai-core): Phase 1 full verification report
+cdd4ae2 feat(ai-core): Phase 1 — unified orchestrator, memory, exceptions, audit
+00b6dcc docs(ai-core): repository analysis and architecture plan
+9f947aa Merge pull request #212 from Buzzard-de/cursor/ai-core-de-full-c293
+aad6b30 feat(ai-core): vollständige deutsche Lokalisierung der AI Core Konsole
+03d851e Merge pull request #211 from Buzzard-de/cursor/ai-core-maximum-c293
+df511cc feat(taxonomy): add Buzzard AI CORE maximum single-file console
+6bdcd5c docs: session checkpoint 2026-08-20 (PR #210 merged, live status)
+81224d6 Merge pull request #210 from Buzzard-de/cursor/ki-gesamt-sicherung-c293
+88002a8 fix(taxonomy): make auto-sync idempotent for CI checks
+87e663e chore(deploy): publish missing taxonomy artifacts for GitHub Pages
+bb2e0bb feat(taxonomy): complete 48/48 master mapping and sync hardening
+d632c85 feat(taxonomy): add 7 missing master L1 shop categories (41 → 48)
+4ff4888 feat(ki): consolidate all AI into buzzard_ki_gesamt safety folder
+dba04fc feat(taxonomy): add auto-sync from master categories to shop
+516b275 Merge pull request #208 from Buzzard-de/cursor/website-de-fixes-c293
+dad13e7 Website-Fixes: Taxonomy-Konsolen vollständig auf Deutsch
+2ca6c7c Merge pull request #207 from Buzzard-de/cursor/website-taxonomy-fixes-c293
+edd969a Website-Fix: Kfz-Kategoriebaum live + Taxonomy-Checks in verify-go-live
+372c611 Merge pull request #206 from Buzzard-de/cursor/category-intelligence-maximum-c293
+df901b2 Category Intelligence MAXIMUM Konsole integrieren (DE, 48 L1)
+5221798 Merge pull request #205 from Buzzard-de/cursor/session-checkpoint-live-c293
+e3fe040 Production Bridge MAX SINGLE Artefakte aktualisieren (Manifest v1.0-max-single)
+b0cc721 Merge pull request #204 from Buzzard-de/cursor/production-bridge-max-single-c293
+42e7ea5 Production Bridge MAX SINGLE mit Preflight-Gate und deutscher Konsole
+daa4a7b Merge pull request #203 from Buzzard-de/cursor/production-bridge-manifest-c293
+0faaca1 Production Bridge Manifest mit 14 Go-Live-Gates integrieren
+2e1fca3 Merge pull request #202 from Buzzard-de/cursor/german-48-category-taxonomy-c293
+14d2876 Stelle Category Intelligence OS und Taxonomie vollständig auf Deutsch um
+5f447b3 Merge pull request #201 from Buzzard-de/cursor/turkish-48-category-taxonomy-c293

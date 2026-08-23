@@ -1,0 +1,67 @@
+worker_id,class,purpose,autonomy_level,permissions,dependencies,retry,timeout,failure_handling,health,audit,status
+aslan-bey-orchestrator,SystemHealthWorker,Legacy health alias,L0,none,deterministic,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.01,CategoryExpertWorker,Category intelligence for category-bz.01,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.02,CategoryExpertWorker,Category intelligence for category-bz.02,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.03,CategoryExpertWorker,Category intelligence for category-bz.03,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.04,CategoryExpertWorker,Category intelligence for category-bz.04,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.05,CategoryExpertWorker,Category intelligence for category-bz.05,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.06,CategoryExpertWorker,Category intelligence for category-bz.06,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.07,CategoryExpertWorker,Category intelligence for category-bz.07,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.08,CategoryExpertWorker,Category intelligence for category-bz.08,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.09,CategoryExpertWorker,Category intelligence for category-bz.09,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.10,CategoryExpertWorker,Category intelligence for category-bz.10,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.11,CategoryExpertWorker,Category intelligence for category-bz.11,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.12,CategoryExpertWorker,Category intelligence for category-bz.12,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.13,CategoryExpertWorker,Category intelligence for category-bz.13,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.14,CategoryExpertWorker,Category intelligence for category-bz.14,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.15,CategoryExpertWorker,Category intelligence for category-bz.15,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.16,CategoryExpertWorker,Category intelligence for category-bz.16,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.17,CategoryExpertWorker,Category intelligence for category-bz.17,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.18,CategoryExpertWorker,Category intelligence for category-bz.18,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.19,CategoryExpertWorker,Category intelligence for category-bz.19,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.20,CategoryExpertWorker,Category intelligence for category-bz.20,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.21,CategoryExpertWorker,Category intelligence for category-bz.21,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.22,CategoryExpertWorker,Category intelligence for category-bz.22,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.23,CategoryExpertWorker,Category intelligence for category-bz.23,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.24,CategoryExpertWorker,Category intelligence for category-bz.24,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.25,CategoryExpertWorker,Category intelligence for category-bz.25,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.26,CategoryExpertWorker,Category intelligence for category-bz.26,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.27,CategoryExpertWorker,Category intelligence for category-bz.27,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.28,CategoryExpertWorker,Category intelligence for category-bz.28,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.29,CategoryExpertWorker,Category intelligence for category-bz.29,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.30,CategoryExpertWorker,Category intelligence for category-bz.30,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.31,CategoryExpertWorker,Category intelligence for category-bz.31,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.32,CategoryExpertWorker,Category intelligence for category-bz.32,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.33,CategoryExpertWorker,Category intelligence for category-bz.33,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.34,CategoryExpertWorker,Category intelligence for category-bz.34,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.35,CategoryExpertWorker,Category intelligence for category-bz.35,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.36,CategoryExpertWorker,Category intelligence for category-bz.36,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.37,CategoryExpertWorker,Category intelligence for category-bz.37,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.38,CategoryExpertWorker,Category intelligence for category-bz.38,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.39,CategoryExpertWorker,Category intelligence for category-bz.39,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.40,CategoryExpertWorker,Category intelligence for category-bz.40,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.41,CategoryExpertWorker,Category intelligence for category-bz.41,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.42,CategoryExpertWorker,Category intelligence for category-bz.42,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.43,CategoryExpertWorker,Category intelligence for category-bz.43,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.44,CategoryExpertWorker,Category intelligence for category-bz.44,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.45,CategoryExpertWorker,Category intelligence for category-bz.45,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.46,CategoryExpertWorker,Category intelligence for category-bz.46,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.47,CategoryExpertWorker,Category intelligence for category-bz.47,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+category-bz.48,CategoryExpertWorker,Category intelligence for category-bz.48,L1-L2,"memory:read,memory:write,taxonomy:read",TaxonomyRegistry,yes,configurable,exception+audit,health-check,yes,PASS
+central-orchestrator,CustomTaskWorker,Custom task handler,L0,none,deterministic,yes,configurable,exception+audit,health-check,yes,PASS
+commerce-write,CommerceWriteWorker,Approved commerce writes,L5,"commerce:write,audit:read",CommerceBridge,yes,configurable,exception+audit,health-check,yes,PASS
+customer-service-ai,CustomerServiceAIWorker,CRM CS triage,L2,"crm:read,memory:write","CrmAdapter,LLM",yes,configurable,exception+audit,health-check,yes,PASS
+customs-classifier,CustomsClassifierWorker,HS classification,L1,"customs:read,memory:write",IntegrationStatusRegistry,yes,configurable,exception+audit,health-check,yes,PARTIAL
+decision-engine,DecisionEngineWorker,Central decision engine,L0-L5,"decisions:write,tasks:create","DecisionService,ActionEngine",yes,configurable,exception+audit,health-check,yes,PASS
+exception-coordinator,ExceptionCoordinatorWorker,Exception routing,L0,"exception:read,exception:assign",ExceptionCoordinator,yes,configurable,exception+audit,health-check,yes,PASS
+kurmay,KurmaySynthesisWorker,Executive synthesis,L2,"memory:read,report:write",KurmayRuleEngine,yes,configurable,exception+audit,health-check,yes,PASS
+logistics-intelligence,LogisticsIntelligenceWorker,Rates/labels/tracking,L5 labels,"logistics:read,logistics:execute",CarrierAdapter,yes,configurable,exception+audit,health-check,yes,PASS
+market-intelligence,MarketIntelligenceWorker,Market signal ingestion,L3,"market:read,memory:write",MarketIntelligenceService,yes,configurable,exception+audit,health-check,yes,PASS
+order-engine,OrderEngineWorker,Order lifecycle,L2,"order:read,orders:ingest,memory:write","CommerceBridge,OrderService",yes,configurable,exception+audit,health-check,yes,PASS
+price-engine,PriceEngineWorker,Price recheck,L5 default,"price:read,pricing:evaluate,memory:write",PricingPolicyEngine,yes,configurable,exception+audit,health-check,yes,PASS
+procurement-intelligence,ProcurementIntelligenceWorker,PO draft/selection,L4 gated,"procurement:draft,suppliers:read",ProcurementService,yes,configurable,exception+audit,health-check,yes,PASS
+product-intelligence,ProductIntelligenceWorker,PIM enrichment,L1-L2,"product:read,products:enrich,memory:write","CommerceBridge,ProductPipeline",yes,configurable,exception+audit,health-check,yes,PASS
+returns-intelligence,ReturnsIntelligenceWorker,Return eligibility,L5,"returns:read,returns:evaluate",ReturnsService,yes,configurable,exception+audit,health-check,yes,PASS
+security-ai,SecurityAIWorker,Security inspection,L0,"security:read,security:inspect",SecurityService,yes,configurable,exception+audit,health-check,yes,PASS
+stock-engine,StockEngineWorker,Stock reconciliation,L3,"stock:read,stock:sync,memory:write","WmsAdapter,StockService",yes,configurable,exception+audit,health-check,yes,PASS
+supplier-hub,SupplierHubWorker,Supplier feed sync,L3,"supplier:read,suppliers:sync,memory:write",SupplierFeedsAdapter,yes,configurable,exception+audit,health-check,yes,PASS

@@ -52,6 +52,7 @@ const ENV_VARS = [
   { key: "BUZZARD_ANALYTICS_V39", value: "1" },
   { key: "BUZZARD_MASTER_ADMIN_V40", value: "1" },
   { key: "PUBLIC_BASE_URL", value: "https://buzzard24.de" },
+  { key: "CONTACT_EMAIL", value: "info@buzzard24.de" },
   { key: "DEFAULT_SUPPLIER_MODE", value: "manual" },
   { key: "BUZZARD_ABANDONED_CART_DELAY_HOURS", value: "24" },
   { key: "BUZZARD_SALES_ENABLED", value: "0" },
@@ -59,7 +60,7 @@ const ENV_VARS = [
   { key: "BUZZARD_INTELLIGENCE_BRIDGE", value: "1" },
   { key: "DEFAULT_PAYMENT_PROVIDER", value: "stripe" },
   { key: "DEFAULT_CARRIER", value: "dhl" },
-  { key: "ADMIN_EMAIL", value: "admin@buzzard.de" },
+  { key: "ADMIN_EMAIL", value: "admin@buzzard24.de" },
   { key: "JWT_SECRET", generateValue: true },
   { key: "ADMIN_PASSWORD", generateValue: true },
 ];

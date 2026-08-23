@@ -13,12 +13,13 @@ Buzzard24 ist im **Katalogmodus** vorbereitet. Alles unten „Erledigt“ läuft
 - [x] SEO, Sitemap, Redirects
 - [x] Security-Checks, CI (Lint, Build, Preflight)
 - [x] Kontaktformular, Impressum, Datenschutz
-- [ ] E-Mail `info@buzzard24.de` bei IONOS einrichten (siehe `docs/EMAIL_SETUP_IONOS.md`)
+- [x] E-Mail `info@buzzard24.de` bei IONOS (siehe `docs/EMAIL_SETUP_IONOS.md`)
 
 ## Nur du — Phase 1 (Backend live)
 
 > **Einmalig:** Render Blueprint verbinden — erstellt `buzzard-api` + `buzzard-intelligence` automatisch.
 > Ohne Blueprint bleibt `buzzard-api.onrender.com` auf `no-server` (404).
+> **Deutsche Anleitung:** `docs/RENDER_API_SETUP_DE.md`
 
 1. **Render Blueprint verbinden (empfohlen)**
    - [Render Blueprint öffnen](https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard)

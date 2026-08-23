@@ -1,0 +1,29 @@
+component,implemented,connected,permissioned,audited,tested,failure_handled,idempotent,secure,status,notes
+Central AI Worker Architecture,yes,yes,yes,yes,yes,yes,yes,yes,PASS,66 workers via build_phase3_registry
+Category Intelligence AI,yes,yes,yes,yes,yes,yes,yes,yes,PASS,48 dynamic category-bz.* from taxonomy JSON
+Central Kurmay / orchestration,yes,yes,yes,yes,yes,yes,yes,yes,PASS,KurmaySynthesisWorker + CustomTaskWorker
+Customs AI,yes,partial,yes,yes,yes,yes,yes,yes,PARTIAL,Authority integration pending (EXTERNAL_INTEGRATION_PENDING)
+Supplier/API/XML infrastructure,yes,optional,yes,yes,yes,yes,yes,yes,PASS,REST/CSV/XML adapters; staging optional
+Price automation,yes,yes,yes,yes,yes,yes,yes,yes,PASS,PricingPolicyEngine + PriceEngineWorker
+Stock automation,yes,partial,yes,yes,yes,yes,yes,yes,PARTIAL,WMS adapter CODE_READY; live WMS NOT_CONNECTED
+Order automation,yes,partial,yes,yes,yes,yes,yes,yes,PARTIAL,Order ingest works; commerce read NOT_CONNECTED
+Product creation/category AI,yes,yes,yes,yes,yes,yes,yes,yes,PASS,ProductIntelligenceWorker + category workers
+Customer service AI,yes,partial,yes,yes,yes,yes,yes,yes,PARTIAL,CRM adapter CODE_READY; live CRM NOT_CONNECTED
+Central memory,yes,yes,yes,yes,yes,yes,yes,yes,PASS,Memory API + namespace isolation
+Reporting,yes,yes,yes,yes,yes,yes,yes,yes,PASS,Kurmay reports + analytics KPIs
+Security layer,yes,yes,partial,yes,yes,yes,yes,partial,PARTIAL,Some routes lack permission mapping; metrics unauthenticated
+Exception system,yes,yes,yes,yes,yes,yes,yes,yes,PASS,State machine + coordinator + worker halt
+Decision Engine,yes,yes,yes,yes,yes,yes,yes,yes,PASS,Wave 5 DecisionEngineWorker + AutonomousActionEngine
+Procurement Worker,yes,yes,yes,yes,yes,yes,yes,yes,PASS,L4 gated; kill switch enforced
+Logistics Intelligence,yes,partial,yes,yes,yes,yes,yes,yes,PARTIAL,DHL mock default; live carrier NOT_CONNECTED
+Returns Intelligence,yes,yes,yes,yes,yes,yes,yes,yes,PASS,ReturnEligibilityEngine + ReturnsIntelligenceWorker
+Market Intelligence,yes,partial,yes,yes,yes,yes,yes,yes,PARTIAL,Whitelist validation only; no live market feed
+Observability,yes,yes,partial,yes,yes,yes,yes,partial,PARTIAL,Metrics endpoint unauthenticated
+Autonomy system,yes,yes,yes,yes,yes,yes,yes,yes,PASS,Kill switches tested; L4 default off
+Commerce integration,yes,no,yes,yes,yes,yes,yes,yes,BLOCKED,COMMERCE_API_URL+TOKEN not provisioned in audit env
+WMS integration,yes,no,yes,yes,yes,yes,yes,yes,BLOCKED,WMS_API_URL+TOKEN not provisioned
+CRM integration,yes,no,yes,yes,yes,yes,yes,yes,BLOCKED,CRM_API_URL+TOKEN not provisioned
+Carrier integration,yes,partial,yes,yes,yes,yes,yes,yes,PARTIAL,DHL_USE_MOCK=true default; live API stub
+Event architecture,yes,yes,yes,yes,yes,yes,yes,yes,PASS,Outbox + idempotency + dead-letter + replay
+Database architecture,yes,yes,yes,yes,yes,yes,yes,yes,PASS,Linear migrations 001-013; audit tables present
+API architecture,yes,yes,partial,yes,yes,yes,yes,partial,PARTIAL,Some GET routes missing ENDPOINT_PERMISSIONS entry

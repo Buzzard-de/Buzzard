@@ -1,34 +1,31 @@
-# Buzzard Session Checkpoint — 23. Aug 2026
+# Session Checkpoint — 23. Aug 2026
 
-**Stand:** Kontakt komplett. Render API = einziger großer offener Schritt (braucht Render-Login).
+## Status: Katalogmodus live
 
-## Erledigt ✅
+| Komponente | Status |
+|------------|--------|
+| Website buzzard24.de | ✅ Live |
+| E-Mail info@buzzard24.de (IONOS) | ✅ Funktioniert |
+| Kontaktformular (FormSubmit) | ✅ Aktiv |
+| Render API buzzard-api | ✅ Live, salesEnabled: false |
+| Render Blueprint | ✅ Deployt |
+| Admin-Login | ⏳ Passwort in Render setzen (ADMIN_PASSWORD) |
 
-| Bereich | Status |
-|--------|--------|
-| buzzard24.de | Live |
-| info@buzzard24.de | IONOS, Mails + Formular |
-| +49 151 26219394 | Auf Website |
-| Kontaktformular | FormSubmit aktiv |
-| PRs #232–#234 | Gemergt |
+## Offene Punkte (User)
 
-## Offen — nur mit eurem Login
+Siehe **`docs/WAS_NOCH_ZU_TUN.md`** — priorisierte Checkliste.
 
-| Aufgabe | Wer |
-|---------|-----|
-| **Render Blueprint** deployen | Ihr (15 Min.) |
-| GitHub-E-Mail auf info@ | Optional, ihr |
+Kurz:
+1. `ADMIN_PASSWORD` in Render setzen → Admin-Login testen
+2. Optional: Google Search Console, Impressum vervollständigen, Cloudflare
+3. Commerce/AI-Core-Secrets nur für Phase 3 — nicht für Katalog nötig
 
-## Render starten (morgen/heute)
+## Wichtige Env (Render buzzard-api)
 
-👉 https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard
+- `BUZZARD_SALES_ENABLED=0` — **nicht ändern**
+- `ADMIN_PASSWORD` — vom User gesetzt
+- `BUZZARD_EMBEDDED_INTELLIGENCE=1`
 
-Danach testen: `https://buzzard-api.onrender.com/api/health`
+## PRs merged (diese Session)
 
-Admin: `/admin/login/` — Passwort aus Render → `ADMIN_PASSWORD`
-
-## Agent-Änderungen heute (Branch `cursor/catalog-polish-c293`)
-
-- Kontakt-Env in GitHub Pages Build
-- Admin-E-Mail → `admin@buzzard24.de`
-- Render-Bootstrap + `render.yaml` angeglichen
+- #232–#236: Kontakt, Formular, Redirects, Render-Docs, Catalog-Polish

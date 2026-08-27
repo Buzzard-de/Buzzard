@@ -2,6 +2,8 @@ const productStore = require("./productStore");
 const supplierStore = require("./supplierStore");
 const pricing = require("./pricing");
 const syncLog = require("./syncLog");
+const productValidator = require("./productValidator");
+const customsAi = require("./customsAi");
 
 function slugify(value) {
   return String(value || "product")
@@ -17,6 +19,7 @@ function normalizeIncomingRecord(raw, supplierId) {
     supplier_sku: String(raw.supplier_sku || raw.sku || "").trim(),
     ean_gtin: String(raw.ean_gtin || raw.ean || raw.gtin || "").trim(),
     brand: String(raw.brand || "").trim(),
+    manufacturer: String(raw.manufacturer || raw.brand || "").trim(),
     name: String(raw.name || "").trim(),
     short_description: String(raw.short_description || raw.description || "").slice(0, 240),
     description: String(raw.description || raw.short_description || "").trim(),
@@ -65,6 +68,7 @@ function buildBuzzardProduct(record, supplier, options = {}) {
     ...base,
     ean_gtin: record.ean_gtin || base.ean_gtin || "",
     brand: protectedFields.includes("brand") ? base.brand : record.brand || base.brand,
+    manufacturer: record.manufacturer || record.brand || base.manufacturer || base.brand,
     name: protectedFields.includes("name") ? base.name : record.name,
     short_description: protectedFields.includes("description")
       ? base.short_description
@@ -81,6 +85,7 @@ function buildBuzzardProduct(record, supplier, options = {}) {
       ...(protectedFields.includes("attributes") ? {} : record.attributes),
       vehicle_fitment: record.vehicle_fitment,
     },
+    vehicle_compatibility: record.vehicle_fitment || base.vehicle_compatibility || [],
     variants: protectedFields.includes("variants") ? base.variants : record.variants,
     price: salePrice,
     compare_at_price: base.compare_at_price || null,
@@ -105,8 +110,24 @@ function buildBuzzardProduct(record, supplier, options = {}) {
           description: record.short_description || record.description || record.name,
         },
     status: base.status || "draft",
-    buy_now_enabled: base.buy_now_enabled ?? true,
+    buy_now_enabled: base.buy_now_enabled ?? false,
   };
+
+  if (record.ean_gtin) {
+    const eanCheck = productValidator.validateEan(record.ean_gtin);
+    if (!eanCheck.ok) {
+      next.ean_gtin = record.ean_gtin;
+      next.ai_source = "import_ean_warning";
+      next.ai_confidence = 0.2;
+    } else {
+      next.ean_gtin = eanCheck.value;
+    }
+  }
+
+  const customsAssessment = customsAi.assessCustoms(next);
+  if (customsAssessment.customs) {
+    next.customs = customsAssessment.customs;
+  }
 
   return { product: next, action: existing ? "updated" : "created" };
 }

@@ -22,4 +22,33 @@ function applySafetyStock(stock, safetyStock = 0) {
   return { stock: available, stock_status: stockStatus };
 }
 
-module.exports = { calculateSalePrice, applySafetyStock };
+function validatePrice(price, options = {}) {
+  const amount = Number(price?.amount ?? price);
+  if (Number.isNaN(amount) || amount < 0) return { ok: false, error: "invalid_price" };
+  const minAmount = Number(options.minAmount ?? 0);
+  if (amount < minAmount) return { ok: false, error: "price_below_minimum" };
+  if (amount > 999999) return { ok: false, error: "price_too_high" };
+  return {
+    ok: true,
+    value: { amount: Math.round(amount * 100) / 100, currency: price?.currency || "EUR" },
+  };
+}
+
+function marginPercent(salePrice, purchasePrice) {
+  const sale = Number(salePrice) || 0;
+  const purchase = Number(purchasePrice) || 0;
+  if (sale <= 0 || purchase <= 0) return 0;
+  return Math.round(((sale - purchase) / sale) * 10000) / 100;
+}
+
+function meetsMinimumMargin({ salePrice, purchasePrice, minimumMarginPercent = 12 }) {
+  return marginPercent(salePrice, purchasePrice) >= minimumMarginPercent;
+}
+
+module.exports = {
+  calculateSalePrice,
+  applySafetyStock,
+  validatePrice,
+  marginPercent,
+  meetsMinimumMargin,
+};

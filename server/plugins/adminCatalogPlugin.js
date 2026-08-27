@@ -8,6 +8,7 @@ const supplierStore = require("../lib/supplierStore");
 const importPipeline = require("../lib/importPipeline");
 const syncLog = require("../lib/syncLog");
 const pricing = require("../lib/pricing");
+const productValidator = require("../lib/productValidator");
 const { validateImportPayload } = require("../lib/security");
 const { logSecurityEvent } = require("../lib/securityLog");
 
@@ -71,41 +72,26 @@ module.exports = {
         return res.status(409).json({ success: false, errorKey: "admin.product.duplicate", productId: duplicate.id });
       }
 
+      const validated = productValidator.validateProduct(body);
+      if (!validated.ok) {
+        return res.status(400).json({ success: false, errorKey: "admin.product.validation", errors: validated.errors });
+      }
+
       const supplierPrice = body.supplier_price || { amount: 0, currency: "EUR" };
-      const salePrice =
-        body.price ||
-        pricing.calculateSalePrice({
-          supplierPrice: supplierPrice.amount,
-          markupPercent: supplier.default_markup_percent,
-          minimumMarginPercent: supplier.minimum_margin_percent,
-        });
 
       const product = productStore.upsertProduct({
+        ...validated.product,
         id: productStore.nextProductId(),
-        sku: body.sku || `BUZ-NEW-${Date.now()}`,
-        ean_gtin: body.ean_gtin || "",
-        brand: body.brand || "",
-        name: body.name,
-        short_description: body.short_description || "",
-        description: body.description || "",
-        category_id: body.category_id || "cat-05",
-        category_ids: body.category_ids || [body.category_id || "cat-05"],
-        images: body.images || [],
-        documents: body.documents || [],
-        attributes: body.attributes || {},
-        variants: body.variants || [],
-        price: salePrice,
-        compare_at_price: body.compare_at_price || null,
-        vat_rate: body.vat_rate || 19,
-        stock: body.stock || 0,
-        stock_status: body.stock_status || "in_stock",
-        supplier_id: body.supplier_id,
-        supplier_sku: body.supplier_sku,
+        sku: body.sku || validated.product.sku || `BUZ-NEW-${Date.now()}`,
+        price:
+          body.price ||
+          pricing.calculateSalePrice({
+            supplierPrice: supplierPrice.amount,
+            markupPercent: supplier.default_markup_percent,
+            minimumMarginPercent: supplier.minimum_margin_percent,
+          }),
         supplier_price: supplierPrice,
-        shipping: body.shipping || { weight_kg: 1, length_cm: 20, width_cm: 20, height_cm: 10, class: "standard" },
-        seo: body.seo || { slug: body.name?.toLowerCase().replace(/\s+/g, "-"), title: body.name, description: body.short_description },
-        status: body.status || "draft",
-        buy_now_enabled: body.buy_now_enabled ?? true,
+        buy_now_enabled: body.buy_now_enabled ?? false,
         created_at: new Date().toISOString(),
       });
 
@@ -120,6 +106,12 @@ module.exports = {
       if (!existing) return res.status(404).json({ success: false, errorKey: "admin.product.notFound" });
 
       const body = req.body || {};
+      const merged = { ...existing, ...body, id: existing.id };
+      const validated = productValidator.validateProduct(merged, { partial: false });
+      if (!validated.ok) {
+        return res.status(400).json({ success: false, errorKey: "admin.product.validation", errors: validated.errors });
+      }
+
       const duplicate = productStore.findDuplicate({
         supplierId: body.supplier_id || existing.supplier_id,
         supplierSku: body.supplier_sku || existing.supplier_sku,
@@ -130,7 +122,7 @@ module.exports = {
         return res.status(409).json({ success: false, errorKey: "admin.product.duplicate", productId: duplicate.id });
       }
 
-      const updated = productStore.upsertProduct({ ...existing, ...body, id: existing.id });
+      const updated = productStore.upsertProduct({ ...validated.product, id: existing.id });
       Object.keys(body).forEach((field) => {
         audit(req, {
           action: "update",

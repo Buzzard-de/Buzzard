@@ -1,6 +1,6 @@
 # Buzzard24 Cursor Aufgaben — Status
 
-**Stand:** 27. August 2026  
+**Stand:** 27. August 2026 (P1-Implementierung)  
 **Quelle:** `Buzzard24_Cursor_Aufgaben.zip` (ChatGPT-Arbeitspaket)  
 **Grenzen:** Kein Verkauf · Keine echten Produktbilder · Keine Commerce-Secrets
 
@@ -10,10 +10,10 @@
 
 | # | Aufgabe | Status | Hinweis |
 |---|---------|--------|---------|
-| 01 | Merge & Deploy (PR #238) | ✅ **Erledigt** | Gemergt auf `main`, GitHub Pages deployt |
+| 01 | Merge & Deploy (PR #238) | ✅ **Erledigt** | Gemergt auf `main` |
 | 02 | Admin-Passwort | ⏳ **Nur du** | Render → `ADMIN_PASSWORD` → `docs/ADMIN_SETUP_DE.md` |
-| 03 | AI Orchestrator | 🟡 **Code OK, Deploy offen** | In Repo; Render Blueprint Sync nötig (`buzzard-orchestrator`) |
-| 04 | Security | 🟡 **Basis OK** | Auth, CSP, Rate-Limit da; RBAC/Esat Bey P1 |
+| 03 | AI Orchestrator | 🟡 **Code OK, Deploy offen** | Render Blueprint Sync nötig |
+| 04 | Security | 🟡 **Basis OK** | Auth, CSP, Rate-Limit; RBAC Feinschliff P1 |
 
 ---
 
@@ -21,17 +21,17 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 05 | Katalog/PIM Schema | ⏳ Offen |
-| 06 | Supplier/XML/TecDoc Adapter | ⏳ Offen (Mock) |
-| 07 | Preis/Stok | ⏳ Offen |
-| 08 | Product AI | ⏳ Offen |
-| 09 | Category AI | ⏳ Offen |
-| 10 | Customs AI | 🟡 Orchestrator-Agent da, Adapter offen |
-| 11 | Order Prep (ohne Verkauf) | ⏳ Offen |
-| 12 | SEO / Google | 🟡 Basis OK, Search Console offen |
-| 13 | i18n/UX | 🟡 DE/EN/TR/AR live, Feinschliff offen |
-| 14 | QA / Tests | 🟡 verify-go-live da, Orchestrator-Tests offen |
-| 15 | Production Readiness | 🟡 Docs teilweise (`MONITORING.md`, …) |
+| 05 | Katalog/PIM Schema | ✅ Validator + erweiterte Types |
+| 06 | Supplier/XML/TecDoc Adapter | ✅ Mock-Adapter + TecDoc-Stubs |
+| 07 | Preis/Stok | ✅ Queue, Audit, Margin-Guard |
+| 08 | Product AI | ✅ Demo-Anreicherung + Review-Queue |
+| 09 | Category AI | ✅ Report-only + Orchestrator-Bridge |
+| 10 | Customs AI | ✅ GTIP/TARIC-Hinweise + Review |
+| 11 | Order Prep (ohne Verkauf) | ✅ Mock-Order-Seed + OMS-Anbindung |
+| 12 | SEO / Google | 🟡 Feed-Route live, Search Console manuell |
+| 13 | i18n/UX | 🟡 DE/EN/TR/AR + Produkt-i18n-Felder |
+| 14 | QA / Tests | ✅ `scripts/p1-smoke.mjs` |
+| 15 | Production Readiness | ✅ `docs/P1_CATALOG_PLATFORM_DE.md` |
 
 ---
 
@@ -40,26 +40,27 @@
 | Priorität | Erledigt | Offen |
 |-----------|----------|-------|
 | **P0** | ~60 % | Admin-Passwort, Orchestrator-Deploy |
-| **P1** | ~15 % | Großteil noch offen |
-| **Paket gesamt** | **~35 %** | P1-Infrastruktur steht aus |
+| **P1** | ~85 % | SEO Search Console, i18n-Feinschliff |
+| **Paket gesamt** | **~75 %** | User-Aktionen + Live-Integrationen |
 
 ---
 
-## Nächste Schritte (Reihenfolge)
+## Nächste Schritte
 
 1. **Du:** `ADMIN_PASSWORD` in Render
-2. **Du:** Render Blueprint Sync → `buzzard-orchestrator` live
-3. **Cursor:** P1 nacheinander (05 → 06 → …) — auf Anfrage
+2. **Du:** Render Blueprint Sync → `buzzard-orchestrator`
+3. **PR mergen:** `cursor/p1-catalog-platform-c293`
+4. **Optional:** Google Search Console, Cloudflare
 
 ---
 
-## Dateien in diesem Ordner
+## Neue Dateien (P1)
 
-| Datei | Inhalt |
-|-------|--------|
-| `README_CURSOR.md` | Regeln & Grenzen |
-| `01`–`15` | Einzelaufgaben P0/P1 |
-| `16_DO_NOT_DO.md` | Verboten (Verkauf, Bilder, …) |
-| `17_CURSOR_MASTER_PROMPT.md` | Master-Prompt für Cursor |
-
-ZIP: `exports/Buzzard24_Cursor_Aufgaben.zip`
+- `server/lib/productValidator.js`
+- `server/lib/adapters/*`
+- `server/lib/priceStockQueue.js`
+- `server/lib/productAi.js`, `customsAi.js`, `categoryIntelligence.js`
+- `server/lib/p1CatalogPlatform.js`
+- `server/plugins/p1CatalogPlatformPlugin.js`
+- `scripts/p1-smoke.mjs`
+- `docs/P1_CATALOG_PLATFORM_DE.md`

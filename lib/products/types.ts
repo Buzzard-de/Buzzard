@@ -37,12 +37,42 @@ export interface ProductSeo {
   description: string;
 }
 
+export interface ProductI18nEntry {
+  name?: string;
+  short_description?: string;
+  description?: string;
+  seo_title?: string;
+  seo_description?: string;
+}
+
+export interface VehicleCompatibility {
+  brand: string;
+  model: string;
+  type?: string;
+  year_from?: number;
+  year_to?: number;
+  engine?: string;
+  part_reference?: string;
+}
+
+export interface ProductCustoms {
+  gtip?: string;
+  taric?: string;
+  origin_country?: string;
+  duty_rate?: number;
+  import_restricted?: boolean;
+  source?: string;
+  confidence?: number;
+  review_required?: boolean;
+}
+
 /** Full catalog record including private supplier fields. */
 export interface BuzzardProduct {
   id: string;
   sku: string;
   ean_gtin: string;
   brand: string;
+  manufacturer?: string;
   name: string;
   short_description: string;
   description: string;
@@ -64,6 +94,11 @@ export interface BuzzardProduct {
   seo: ProductSeo;
   status: ProductStatus;
   buy_now_enabled?: boolean;
+  i18n?: Partial<Record<"de" | "en" | "tr" | "ar", ProductI18nEntry>>;
+  vehicle_compatibility?: VehicleCompatibility[];
+  customs?: ProductCustoms;
+  ai_source?: string;
+  ai_confidence?: number;
   created_at: string;
   updated_at: string;
 }

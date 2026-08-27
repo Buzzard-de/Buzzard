@@ -28,10 +28,10 @@
 | 09 | Category AI | ✅ Report-only + Orchestrator-Bridge |
 | 10 | Customs AI | ✅ GTIP/TARIC-Hinweise + Review |
 | 11 | Order Prep (ohne Verkauf) | ✅ Mock-Order-Seed + OMS-Anbindung |
-| 12 | SEO / Google | 🟡 Feed-Route live, Search Console manuell |
-| 13 | i18n/UX | 🟡 DE/EN/TR/AR + Produkt-i18n-Felder |
-| 14 | QA / Tests | ✅ `scripts/p1-smoke.mjs` |
-| 15 | Production Readiness | ✅ `docs/P1_CATALOG_PLATFORM_DE.md` |
+| 12 | SEO / Google | ✅ Status-API + Search-Console-Doku |
+| 13 | i18n/UX | ✅ Kontaktformular 4 Sprachen + Gap-Report |
+| 14 | QA / Tests | ✅ `p1-smoke.mjs` + `p1-seo-i18n-smoke.mjs` |
+| 15 | Production Readiness | ✅ + `SECURITY_BACKUP_DE.md` |
 
 ---
 
@@ -40,8 +40,8 @@
 | Priorität | Erledigt | Offen |
 |-----------|----------|-------|
 | **P0** | ~60 % | Admin-Passwort, Orchestrator-Deploy |
-| **P1** | ~85 % | SEO Search Console, i18n-Feinschliff |
-| **Paket gesamt** | **~75 %** | User-Aktionen + Live-Integrationen |
+| **P1** | ~95 % | Search Console manuell (User) |
+| **Paket gesamt** | **~85 %** | User-Aktionen + Live-Integrationen |
 
 ---
 

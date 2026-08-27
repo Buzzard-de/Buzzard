@@ -120,3 +120,7 @@ BUZZARD_API_URL=https://buzzard-api.onrender.com node scripts/p1-smoke.mjs
 ## ZIP
 
 Gepackte Version: `exports/buzzard24-p1-catalog-platform-2026-08-27.zip`
+
+## Wave 2 (Ergänzungen — kein Neuaufbau)
+
+Siehe [`CHANGELOG-WAVE2.md`](./CHANGELOG-WAVE2.md) und Ordner [`wave2/`](./wave2/)

@@ -1,11 +1,13 @@
 "use client";
 
 import { useLocale } from "@/lib/i18n/context";
+import { getCategoryCountLabelDe } from "@/lib/site/catalog-stats";
 import { isSalesEnabled } from "@/lib/shop/mode";
 
 export default function TopUtilityBar() {
   const { t } = useLocale();
   const salesOn = isSalesEnabled();
+  const categoryLabel = `${getCategoryCountLabelDe()} · Online-Katalog`;
 
   return (
     <div className="top-bar" role="region" aria-label="Shop-Informationen">
@@ -33,7 +35,7 @@ export default function TopUtilityBar() {
         ) : (
           <>
             <span>{t("topBar.catalogPreview")}</span>
-            <span>{t("topBar.catalogCategories")}</span>
+            <span>{categoryLabel}</span>
             <span>{t("topBar.catalogSupport")}</span>
           </>
         )}

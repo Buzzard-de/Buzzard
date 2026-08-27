@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-08-27T20:41:14Z",
+  "website": {
+    "url": "https://buzzard24.de",
+    "impressum_status": 200,
+    "live_text_samples": [
+      "Demo-Katalog",
+      "Online-Katalog",
+      "VERKAUF FOLGT",
+      "info@buzzard24"
+    ],
+    "note": "Demo-Texte verschwinden nach Merge von PR #238"
+  },
+  "api": {
+    "url": "https://buzzard-api.onrender.com",
+    "health": {
+      "success": true,
+      "status": "ok",
+      "app": "Buzzard API",
+      "database": {
+        "enabled": true,
+        "users": 1,
+        "products": 26,
+        "orders": 0
+      },
+      "commercial": {
+        "salesEnabled": false
+      }
+    }
+  },
+  "catalog": {
+    "main_categories": 53,
+    "sales_enabled": false,
+    "mode": "catalog"
+  },
+  "contact": {
+    "email": "info@buzzard24.de",
+    "phone": "+49 151 26219394",
+    "email_provider": "IONOS",
+    "form_provider": "FormSubmit"
+  },
+  "git": {
+    "main_head": "ec4a21a",
+    "main_description": "Merge PR #236 catalog-polish",
+    "pending_pr": 238,
+    "pending_branch": "cursor/website-catalog-complete-c293"
+  },
+  "render_services": {
+    "configured_in_blueprint": [
+      "buzzard-api",
+      "buzzard-intelligence",
+      "buzzard-orchestrator"
+    ],
+    "note": "buzzard-orchestrator erst nach PR #238 + Blueprint-Sync"
+  }
+}

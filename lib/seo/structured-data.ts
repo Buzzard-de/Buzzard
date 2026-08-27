@@ -3,7 +3,7 @@ import { getCategoryLabel } from "@/lib/categories/i18n";
 import type { BuzzardLocale } from "@/lib/i18n/types";
 import type { PublicProduct } from "@/lib/products/types";
 import { absoluteUrl, SEO_DEFAULTS, SITE_URL } from "./config";
-import { CONTACT_EMAIL } from "@/lib/site/contact";
+import { CONTACT_EMAIL, CONTACT_PHONE_TEL } from "@/lib/site/contact";
 import { showPrices } from "@/lib/shop/mode";
 
 export function organizationSchema() {
@@ -15,11 +15,20 @@ export function organizationSchema() {
     alternateName: SEO_DEFAULTS.alternateNames,
     url: SITE_URL,
     logo: `${SITE_URL}/logo/logo.png`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: process.env.NEXT_PUBLIC_COMPANY_STREET || undefined,
+      postalCode: process.env.NEXT_PUBLIC_COMPANY_POSTAL_CODE || "35232",
+      addressLocality: process.env.NEXT_PUBLIC_COMPANY_CITY || "Dautphetal",
+      addressCountry: "DE",
+    },
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
       email: CONTACT_EMAIL,
+      telephone: CONTACT_PHONE_TEL,
       availableLanguage: ["de", "en", "tr", "ar"],
+      areaServed: "DE",
     },
   };
 }

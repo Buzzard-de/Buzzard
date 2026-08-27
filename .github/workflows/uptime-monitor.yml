@@ -1,0 +1,24 @@
+name: Uptime Monitor
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify site and API health
+        run: node scripts/verify-go-live.mjs
+        env:
+          BUZZARD_SITE_URL: https://buzzard24.de
+          BUZZARD_API_URL: https://buzzard-api.onrender.com
+          BUZZARD_VERIFY_RETRIES: "4"
+          BUZZARD_VERIFY_RETRY_MS: "8000"

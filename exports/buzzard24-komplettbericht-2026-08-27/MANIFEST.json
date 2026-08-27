@@ -1,0 +1,42 @@
+{
+  "report_id": "buzzard24-komplettbericht-2026-08-27",
+  "title": "Buzzard24 Komplettbericht — Website und Plattform",
+  "language": "de",
+  "created_at": "2026-08-27T20:33:00Z",
+  "author": "Cursor Cloud Agent",
+  "version": "1.0.0",
+  "scope": [
+    "website",
+    "api",
+    "email",
+    "legal",
+    "orchestrator",
+    "intelligence",
+    "monitoring",
+    "operations"
+  ],
+  "excludes": [
+    "sales_activation",
+    "real_product_images",
+    "payment_providers_production"
+  ],
+  "repository": "https://github.com/Buzzard-de/Buzzard",
+  "live_site": "https://buzzard24.de",
+  "pending_pr": "https://github.com/Buzzard-de/Buzzard/pull/238",
+  "files": [
+    "README.md",
+    "00-ZUSAMMENFASSUNG.md",
+    "01-WEBSITE.md",
+    "02-API-BACKEND.md",
+    "03-EMAIL-KONTAKT.md",
+    "04-RECHTLICHES.md",
+    "05-AI-ORCHESTRATOR.md",
+    "06-INTELLIGENCE-STACK.md",
+    "07-MONITORING-OPS.md",
+    "08-ARCHITEKTUR.md",
+    "09-OFFENE-PUNKTE.md",
+    "10-BEFEHLE-LINKS.md",
+    "LIVE-SNAPSHOT.json",
+    "MANIFEST.json"
+  ]
+}

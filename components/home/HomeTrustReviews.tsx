@@ -8,7 +8,7 @@ const catalogTrust = [
   { label: "Große Kategorieauswahl", icon: "star" },
   { label: "Transparente Infos", icon: "box" },
   { label: "Support erreichbar", icon: "phone" },
-  { label: "Verkauf folgt demnächst", icon: "shield" },
+  { label: "Persönliche Beratung", icon: "shield" },
 ] as const;
 
 export default function HomeTrustReviews() {
@@ -54,7 +54,8 @@ export default function HomeTrustReviews() {
           <div className="home-review-card">
             <p>
               Buzzard24 befindet sich im <strong>Katalogmodus</strong>. Sie können Produkte und Kategorien
-              erkunden. Preise und Bestellungen werden mit dem Verkaufsstart freigeschaltet.
+              erkunden. Unser Backend ist online — Preise und Bestellungen werden mit dem Verkaufsstart
+              freigeschaltet.
             </p>
             <footer>
               <Link href="/hilfe/">Mehr erfahren → Hilfe & FAQ</Link>

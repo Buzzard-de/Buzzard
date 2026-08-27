@@ -1,0 +1,36 @@
+ docs/P1_CATALOG_PLATFORM_DE.md                     | 100 ++++++++++
+ .../01_P0_MERGE_DEPLOY.md                          |   0
+ .../{Buzzard24_Cursor_Aufgaben => }/02_P0_ADMIN.md |   0
+ .../03_P0_ORCHESTRATOR.md                          |   0
+ .../04_P0_P1_SECURITY.md                           |   0
+ .../05_P1_CATALOG_PIM.md                           |   0
+ .../06_P1_SUPPLIER_API_XML_TECDOC.md               |   0
+ .../07_P1_PRICE_STOCK.md                           |   0
+ .../08_P1_PRODUCT_AI.md                            |   0
+ .../09_P1_CATEGORY_AI.md                           |   0
+ .../10_P1_CUSTOMS_AI.md                            |   0
+ .../11_P1_ORDER_PREP_ONLY.md                       |   0
+ .../12_P1_SEO_GOOGLE.md                            |   0
+ .../13_P1_I18N_UX.md                               |   0
+ .../{Buzzard24_Cursor_Aufgaben => }/14_P0_P1_QA.md |   0
+ .../15_P1_PRODUCTION_READINESS.md                  |   0
+ .../16_DO_NOT_DO.md                                |   0
+ .../17_CURSOR_MASTER_PROMPT.md                     |   0
+ .../README_CURSOR.md                               |   0
+ exports/Buzzard24_Cursor_Aufgaben/STATUS.md        |  59 +++---
+ lib/products/types.ts                              |  35 ++++
+ scripts/p1-smoke.mjs                               | 114 +++++++++++
+ server/lib/adapters/mockSupplierAdapter.js         | 109 +++++++++++
+ server/lib/adapters/supplierAdapter.js             |  58 ++++++
+ server/lib/adapters/tecdocAdapter.js               |  63 +++++++
+ server/lib/categoryIntelligence.js                 |  80 ++++++++
+ server/lib/customsAi.js                            |  62 ++++++
+ server/lib/importPipeline.js                       |  23 ++-
+ server/lib/p1CatalogPlatform.js                    |  75 ++++++++
+ server/lib/priceStockQueue.js                      | 189 +++++++++++++++++++
+ server/lib/pricing.js                              |  31 ++-
+ server/lib/productAi.js                            | 145 ++++++++++++++
+ server/lib/productValidator.js                     | 210 +++++++++++++++++++++
+ server/plugins/adminCatalogPlugin.js               |  54 +++---
+ server/plugins/p1CatalogPlatformPlugin.js          | 182 ++++++++++++++++++
+ 35 files changed, 1527 insertions(+), 62 deletions(-)

@@ -6,7 +6,7 @@ const catalogBadges = [
   { label: "GROSSE KATEGORIEAUSWAHL", icon: "star" },
   { label: "PRODUKTINFORMATIONEN", icon: "box" },
   { label: "SUPPORT ERREICHBAR", icon: "phone" },
-  { label: "VERKAUF FOLGT DEMNÄCHST", icon: "shield" },
+  { label: "KONTAKT & BERATUNG", icon: "shield" },
 ] as const;
 
 const salesBadges = [

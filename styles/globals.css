@@ -946,6 +946,15 @@ select, input, button { font-family: inherit; }
 .subpage-content a { color: var(--gold); }
 .subpage-content a:hover { text-decoration: underline; }
 .subpage-content strong { color: var(--text); }
+.legal-catalog-notice {
+    padding: 14px 16px;
+    margin-bottom: 28px;
+    border-left: 3px solid var(--gold);
+    background: rgba(201, 168, 64, 0.08);
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
 
 /* ===========================
    CONTACT SECTION

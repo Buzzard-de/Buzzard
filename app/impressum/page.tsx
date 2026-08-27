@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import CompanyAddress from "@/components/CompanyAddress";
 import ContactForm from "@/components/ContactForm";
+import {
+  COMPANY_CONTENT_OWNER,
+  COMPANY_LEGAL_NAME,
+  COMPANY_VAT_ID,
+} from "@/lib/site/company";
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
@@ -25,29 +31,46 @@ export default function ImpressumPage() {
         <section>
           <h2>Angaben zum Unternehmen</h2>
           <p>
-            <strong>Buzzard Kfz-Teile</strong>
+            <strong>{COMPANY_LEGAL_NAME}</strong>
             <br />
-            Dautphetal
-            <br />
-            Deutschland
+            <CompanyAddress />
           </p>
           <p>
             Telefon: <a href={`tel:${CONTACT_PHONE_TEL}`}>{CONTACT_PHONE_DISPLAY}</a>
             <br />
             E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
+          {COMPANY_VAT_ID ? (
+            <p>
+              Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG:
+              <br />
+              <strong>{COMPANY_VAT_ID}</strong>
+            </p>
+          ) : null}
         </section>
 
         <section>
           <h2>Verantwortlich für den Inhalt</h2>
           <p>
-            Buzzard Kfz-Teile
+            {COMPANY_CONTENT_OWNER}
             <br />
-            Dautphetal, Deutschland
+            <CompanyAddress />
             <br />
             E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
-          <p>Verantwortlich für den Inhalt gemäß § 18 Abs. 2 MStV ist die oben genannte Person.</p>
+          <p>Verantwortlich für den Inhalt gemäß § 18 Abs. 2 MStV ist die oben genannte Person bzw. das Unternehmen.</p>
+        </section>
+
+        <section>
+          <h2>Online-Streitbeilegung</h2>
+          <p>
+            Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{" "}
+            <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">
+              https://ec.europa.eu/consumers/odr/
+            </a>
+            . Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer
+            Verbraucherschlichtungsstelle teilzunehmen.
+          </p>
         </section>
 
         <section>

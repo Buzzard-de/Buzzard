@@ -68,7 +68,7 @@ export function buildCategoryMetadata(
   const title = override?.title || `${name} – Buzzard24`;
   const description =
     override?.description ||
-    `${name} bei Buzzard24 entdecken — Kategorie im Demo-Katalog. Produkte informieren, Online-Bestellung folgt mit Verkaufsstart.`;
+    `${name} bei Buzzard24 entdecken — Produkte und Unterkategorien im Online-Katalog. Beratung und Anfragen jederzeit möglich.`;
   const path = category.url.endsWith("/") ? category.url : `${category.url}/`;
   const canonical = absoluteUrl(override?.canonical || localizePath(path, locale));
   const alternates = hreflangAlternates(path).reduce<Record<string, string>>((acc, alt) => {

@@ -1,57 +1,81 @@
 import type { Metadata } from "next";
-import { LegalPageShell, legalStubNotice } from "@/components/LegalPageShell";
-import { CONTACT_EMAIL } from "@/lib/site/contact";
+import Link from "next/link";
+import { LegalPageShell, catalogModeNotice } from "@/components/LegalPageShell";
+import CompanyAddress from "@/components/CompanyAddress";
+import { COMPANY_LEGAL_NAME } from "@/lib/site/company";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
   title: "AGB",
-  description: "Allgemeine Geschäftsbedingungen von Buzzard24 — Vorbereitung für den Verkaufsstart.",
+  description: "Allgemeine Geschäftsbedingungen von Buzzard24 — Katalogmodus und Vorbereitung für den Verkauf.",
 };
 
 export default function AgbPage() {
   return (
     <LegalPageShell
       title="Allgemeine Geschäftsbedingungen (AGB)"
-      description="Vorbereitet für den Online-Verkauf"
+      description="Gültig für buzzard24.de im Katalogmodus"
       breadcrumb="AGB"
     >
-      {legalStubNotice()}
+      {catalogModeNotice()}
 
       <section>
         <h2>§ 1 Geltungsbereich</h2>
         <p>
-          Diese Allgemeinen Geschäftsbedingungen gelten für Bestellungen über den Online-Shop Buzzard24
-          (buzzard24.de), sobald der Verkaufsmodus aktiviert ist. Bis dahin dient die Website als Katalog zur
-          Produktinformation.
+          Diese Allgemeinen Geschäftsbedingungen gelten für die Nutzung der Website Buzzard24
+          (buzzard24.de) durch Verbraucher und Unternehmer. Im aktuellen <strong>Katalogmodus</strong> dient
+          die Website der Produktinformation und Kontaktaufnahme — ein Online-Kaufvertrag kommt noch nicht
+          zustande.
         </p>
       </section>
 
       <section>
         <h2>§ 2 Vertragspartner</h2>
         <p>
-          Buzzard Kfz-Teile, Dautphetal, Deutschland. Kontakt: {CONTACT_EMAIL}
+          <strong>{COMPANY_LEGAL_NAME}</strong>
+          <br />
+          <CompanyAddress />
+          <br />
+          E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          <br />
+          Telefon: {CONTACT_PHONE_DISPLAY}
         </p>
       </section>
 
       <section>
-        <h2>§ 3 Vertragsschluss</h2>
+        <h2>§ 3 Katalogmodus</h2>
         <p>
-          Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot dar. Ein Vertrag
-          kommt erst mit Bestellbestätigung zustande — sobald der Verkauf freigeschaltet ist.
+          Die Darstellung von Produkten und Kategorien stellt kein verbindliches Angebot dar. Preise,
+          Verfügbarkeit und Bestellmöglichkeiten werden mit Aktivierung des Verkaufsmodus gesondert
+          bekannt gegeben. Anfragen über das Kontaktformular sind unverbindlich.
         </p>
       </section>
 
       <section>
-        <h2>§ 4 Preise & Zahlung</h2>
+        <h2>§ 4 Vertragsschluss (bei Verkaufsstart)</h2>
         <p>
-          Preise und Zahlungsbedingungen werden vor dem Verkaufsstart veröffentlicht. Es gelten die zum
-          Bestellzeitpunkt angezeigten Preise inklusive gesetzlicher Mehrwertsteuer.
+          Sobald der Online-Verkauf freigeschaltet ist, kommt ein Kaufvertrag erst mit unserer
+          Bestellbestätigung zustande. Bis dahin gelten die Regelungen zum Katalogmodus (§ 3).
         </p>
       </section>
 
       <section>
-        <h2>§ 5 Schlussbestimmungen</h2>
+        <h2>§ 5 Preise & Zahlung (bei Verkaufsstart)</h2>
         <p>
-          Es gilt deutsches Recht. Diese AGB werden vor dem Verkaufsstart finalisiert und hier veröffentlicht.
+          Preise und Zahlungsbedingungen werden vor Aktivierung des Verkaufs veröffentlicht. Es gelten
+          die zum Bestellzeitpunkt angezeigten Preise inklusive gesetzlicher Mehrwertsteuer.
+        </p>
+      </section>
+
+      <section>
+        <h2>§ 6 Schlussbestimmungen</h2>
+        <p>
+          Es gilt deutsches Recht. Bei Aktivierung des Verkaufs werden diese AGB um Versand-, Widerrufs-
+          und Zahlungsbestimmungen ergänzt und hier veröffentlicht.
+        </p>
+        <p>
+          Weitere Informationen: <Link href="/versand/">Versand</Link>,{" "}
+          <Link href="/widerruf/">Widerruf</Link>, <Link href="/hilfe/">Hilfe & FAQ</Link>.
         </p>
       </section>
     </LegalPageShell>

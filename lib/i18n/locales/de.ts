@@ -5,9 +5,9 @@ export const catalog: TranslationTree = {
     shipping: "Kostenloser Versand ab 79 €",
     returns: "30 Tage Rückgaberecht",
     trust: "Trusted Shops · 4,8/5",
-    catalogPreview: "Katalogvorschau — Online-Bestellung folgt in Kürze",
-    catalogCategories: "41 Kategorien · Demo-Katalog zum Durchstöbern",
-    catalogSupport: "Beratung & Kontakt jederzeit möglich",
+    catalogPreview: "Katalogmodus — Beratung & Kontakt jederzeit möglich",
+    catalogCategories: "{count} Kategorien · Online-Katalog",
+    catalogSupport: "Telefon & E-Mail erreichbar",
   },
   header: {
     searchPlaceholder: "Suche nach Produkten, Marken, SKU, Kategorien…",
@@ -33,7 +33,7 @@ export const catalog: TranslationTree = {
   hero: {
     kicker: "KATALOG. ENTDECKEN. INFORMIEREN.",
     title: "Entdecken Sie unser Sortiment",
-    text: "Stöbern Sie in unserem Demo-Katalog mit Kategorien aus Textil, Automotive, Elektronik und mehr — der Online-Verkauf startet demnächst.",
+    text: "Stöbern Sie in unserem Online-Katalog mit Kategorien aus Automotive, Textil, Elektronik und mehr — Beratung per Telefon und E-Mail.",
     cta: "Katalog ansehen",
     secondary: "Alle Kategorien",
   },
@@ -49,7 +49,7 @@ export const catalog: TranslationTree = {
     catalogNotice:
       "Buzzard24 befindet sich im Katalogmodus. Sie können Produkte und Kategorien erkunden. Preise und Bestellungen folgen mit dem Verkaufsstart.",
     newsletter: "Newsletter",
-    newsletterText: "Informiert bleiben, wenn der Online-Verkauf startet.",
+    newsletterText: "Informiert bleiben, wenn der Online-Verkauf startet. Wir senden nur relevante Updates.",
     newsletterPlaceholder: "Ihre E-Mail-Adresse",
     newsletterBtn: "Benachrichtigen",
     addToCart: "In den Warenkorb",
@@ -254,7 +254,7 @@ export const catalog: TranslationTree = {
     save: "Speichern",
     saved: "Gespeichert.",
     saveError: "Speichern fehlgeschlagen.",
-    featureUnavailable: "Diese Funktion ist im Demo-Modus noch nicht verfügbar.",
+    featureUnavailable: "Diese Funktion ist im Katalogmodus noch nicht verfügbar.",
     ordersTitle: "Meine Bestellungen",
     orderNumber: "Bestellnummer",
     statusLabel: "Status",
@@ -372,10 +372,10 @@ export const catalog: TranslationTree = {
   seo: {
     siteTitle: "Buzzard24 – Katalog & Kfz-Teile",
     siteDescription:
-      "Buzzard24 – Demo-Katalog mit Kategorien für Automotive, Textil, Elektronik und mehr. Online-Shop in Vorbereitung.",
-    ogTitle: "Buzzard24 – Katalogvorschau",
+      "Buzzard24 – Online-Katalog mit Kategorien für Automotive, Textil, Elektronik und mehr. Beratung per Telefon und E-Mail.",
+    ogTitle: "Buzzard24 – Online-Katalog",
     ogDescription:
-      "Katalogvorschau auf buzzard24.de — Produkte entdecken, Kategorien durchstöbern. Online-Verkauf folgt.",
+      "buzzard24.de — Produkte entdecken, Kategorien durchstöbern, Beratung anfragen.",
   },
   product: {
     products: "Produkte",
@@ -410,7 +410,7 @@ export const catalog: TranslationTree = {
     trustBrowse: "Große Kategorieauswahl",
     trustInfo: "Transparente Produktinfos",
     trustContact: "Support erreichbar",
-    trustSoon: "Verkauf startet demnächst",
+    trustSoon: "Persönliche Beratung",
     productInfo: "Katalogmodus — Preis und Bestellung folgen mit Verkaufsstart.",
   },
   ai: {

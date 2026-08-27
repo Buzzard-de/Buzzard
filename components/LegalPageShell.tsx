@@ -24,11 +24,15 @@ export function LegalPageShell({ title, description, breadcrumb, children }: Leg
   );
 }
 
-export function legalStubNotice() {
+export function catalogModeNotice() {
   return (
-    <p className="legal-stub-notice">
-      <strong>Hinweis:</strong> Diese Seite ist für den Katalogmodus vorbereitet. Inhalte zu Versand, Widerruf und
-      Verkauf werden vor dem Go-Live final ergänzt.
+    <p className="legal-catalog-notice">
+      <strong>Katalogmodus:</strong> Buzzard24 ist ein reiner Produktkatalog. Online-Bestellungen und Versand sind
+      derzeit nicht aktiv. Für Anfragen nutzen Sie bitte unser{" "}
+      <Link href="/impressum/">Kontaktformular</Link> oder rufen Sie uns an.
     </p>
   );
 }
+
+/** @deprecated Use catalogModeNotice */
+export const legalStubNotice = catalogModeNotice;

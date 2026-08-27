@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ContactForm from "@/components/ContactForm";
-import { LegalPageShell, legalStubNotice } from "@/components/LegalPageShell";
+import { LegalPageShell, catalogModeNotice } from "@/components/LegalPageShell";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
   title: "Hilfe & FAQ",
@@ -15,29 +16,45 @@ export default function HilfePage() {
       description="Antworten auf häufige Fragen — Buzzard24 Katalogmodus"
       breadcrumb="Hilfe"
     >
-      {legalStubNotice()}
+      {catalogModeNotice()}
 
       <section id="faq">
         <h2>Häufige Fragen</h2>
+
         <h3>Kann ich bereits bestellen?</h3>
         <p>
           Nein. Buzzard24 befindet sich im <strong>Katalogmodus</strong>. Sie können Produkte und Kategorien
-          ansehen. Online-Bestellungen und Preise werden mit dem Verkaufsstart freigeschaltet.
+          ansehen und uns kontaktieren. Online-Bestellungen und Checkout werden mit dem Verkaufsstart
+          freigeschaltet.
         </p>
+
         <h3>Warum steht „Preis auf Anfrage“?</h3>
         <p>
           Im Katalogmodus werden keine Verkaufspreise angezeigt. So können Sie sich unverbindlich über das
-          Sortiment informieren.
+          Sortiment informieren. Für Preisanfragen nutzen Sie das Kontaktformular oder rufen Sie uns an.
         </p>
-        <h3>Funktionieren Konto und Bewertungen?</h3>
+
+        <h3>Funktionieren Konto und Backend?</h3>
         <p>
-          Sobald unser Backend live ist, werden Konto-Sync, Bewertungen und erweiterte Suche verfügbar. Bis dahin
-          funktionieren Navigation, Kategorien und Produktseiten vollständig.
+          Ja. Unser Backend ist online. Kundenkonto, Admin-Bereich und API sind erreichbar. Produktbewertungen
+          und der vollständige Checkout werden mit Aktivierung des Verkaufs freigeschaltet.
         </p>
+
         <h3>Wie erreiche ich den Support?</h3>
         <p>
-          Per Telefon, E-Mail oder über das Kontaktformular unten. Wir antworten in der Regel innerhalb von 1–2
-          Werktagen.
+          Telefon: <a href={`tel:${CONTACT_PHONE_TEL}`}>{CONTACT_PHONE_DISPLAY}</a>
+          <br />
+          E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          <br />
+          Kontaktformular unten auf dieser Seite oder unter <Link href="/impressum/">Impressum</Link>.
+          <br />
+          Wir antworten in der Regel innerhalb von 1–2 Werktagen.
+        </p>
+
+        <h3>Wann startet der Online-Verkauf?</h3>
+        <p>
+          Sobald Sortiment, Zahlungsanbieter und Versandprozesse abgeschlossen sind. Bis dahin informieren wir
+          Sie auf der Website und per Newsletter.
         </p>
       </section>
 

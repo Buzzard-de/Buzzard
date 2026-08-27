@@ -32,7 +32,7 @@ export const homeCampaigns = [
   {
     id: "camp-3",
     tag: "KATALOG",
-    title: "Demo-Sortiment ansehen",
+    title: "Gesamtkatalog ansehen",
     href: "/products/",
     imageKey: "batterie",
   },

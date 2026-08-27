@@ -19,23 +19,24 @@ Buzzard24 ist im **Katalogmodus** vorbereitet. Alles unten „Erledigt“ läuft
 - [x] Rechtliche Seiten für Katalogmodus (AGB, Hilfe, Versand, Widerruf)
 - [x] Newsletter an FormSubmit angebunden
 - [x] Zentrale Firmendaten (`lib/site/company.ts`)
+- [x] AI Orchestrator (`intelligence/buzzard_orchestrator.py`, Render-Service)
+- [x] Monitoring-Workflow (uptime alle 6h)
 
 ## Nur du — Phase 1 (nach Deploy)
 
-> **Blueprint ist deployt.** API läuft unter `https://buzzard-api.onrender.com`.
-> **Restliste:** `docs/WAS_NOCH_ZU_TUN.md`
+> **Restliste:** `docs/WAS_NOCH_ZU_TUN.md` · **Admin:** `docs/ADMIN_SETUP_DE.md`
 
-1. **Admin-Passwort setzen / zurücksetzen**
-   - Render → **buzzard-api** → **Environment** → `ADMIN_PASSWORD` → Save → Restart
-   - Login: [buzzard24.de/admin/login/](https://buzzard24.de/admin/login/) (`admin@buzzard24.de`)
+1. **PR mergen** → GitHub Pages deployen · Render Blueprint sync (`buzzard-orchestrator`)
 
-2. **Optional: Impressum vervollständigen**
-   - GitHub Secrets: `NEXT_PUBLIC_COMPANY_STREET`, `NEXT_PUBLIC_COMPANY_VAT_ID`
-   - GitHub Pages neu deployen
+2. **Admin-Passwort** — `docs/ADMIN_SETUP_DE.md`
 
-3. **Optional: Google Search Console** — `docs/GOOGLE_SEARCH_CONSOLE.md`
+3. **Optional: Impressum** — GitHub Secrets `NEXT_PUBLIC_COMPANY_STREET`, `NEXT_PUBLIC_COMPANY_VAT_ID`
 
-4. **Optional: Cloudflare** vor buzzard24.de (siehe `docs/SECURITY.md`)
+4. **Optional: Google Search Console** — `docs/GOOGLE_SEARCH_CONSOLE.md`
+
+5. **Optional: Cloudflare** — `docs/CLOUDFLARE_SETUP_DE.md`
+
+6. **Monitoring** — `docs/MONITORING.md` · `npm run verify:go-live`
 
 ## Nur du — Phase 2 (Verkauf — später)
 
@@ -50,6 +51,7 @@ Buzzard24 ist im **Katalogmodus** vorbereitet. Alles unten „Erledigt“ läuft
 
 ```bash
 npm run verify:go-live      # Live-Routen prüfen
+npm run orchestrator:dev    # AI Orchestrator lokal :8010
 npm run test:smoke          # API lokal (Port 3001)
 npm run render:preflight    # Render-Config prüfen
 npm run security:check      # Security-Audit

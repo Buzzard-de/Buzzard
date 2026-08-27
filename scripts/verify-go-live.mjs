@@ -206,6 +206,26 @@ async function main() {
   }
 
   console.log("");
+  console.log("AI orchestrator (optional):");
+  try {
+    const res = await fetch(`${API}/api/orchestrator/status`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const body = await res.json();
+      if (body.configured && body.reachable) {
+        console.log(`  [OK] orchestrator reachable (${body.health?.agents ?? "?"} agents)`);
+      } else if (body.configured) {
+        console.log(`  [WARN] orchestrator configured but unreachable`);
+      } else {
+        console.log(`  [SKIP] orchestrator not configured yet`);
+      }
+    } else {
+      console.log(`  [SKIP] ${res.status} /api/orchestrator/status`);
+    }
+  } catch (error) {
+    console.log(`  [SKIP] /api/orchestrator/status — ${error.message}`);
+  }
+
+  console.log("");
   if (failed > 0) {
     console.error(`${failed} check(s) failed.`);
     process.exit(1);

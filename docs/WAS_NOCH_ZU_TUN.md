@@ -4,63 +4,88 @@
 
 ---
 
-## ✅ Bereits erledigt (Code + Live)
+## ✅ Im Code vorbereitet (nach Merge + Deploy)
 
 | Bereich | Status |
 |---------|--------|
-| Website [buzzard24.de](https://buzzard24.de) | Live |
-| E-Mail `info@buzzard24.de` (IONOS) | Funktioniert |
-| Telefon `+49 151 26219394` | Auf Website |
-| Kontaktformular (FormSubmit) | Aktiv |
-| Newsletter (FormSubmit) | Aktiv nach Deploy |
-| Render API `buzzard-api` | Live — `salesEnabled: false` |
-| Rechtliche Seiten | Katalog-Texte (AGB, Hilfe, Versand, Widerruf) |
-| SEO & Structured Data | Organization mit Adresse + Telefon |
-| Katalog-Copy | Kein „Demo-Katalog“ mehr |
+| Website Katalog-Polish | PR — Demo-Texte weg, Rechtliches, Newsletter |
+| AI Orchestrator | `intelligence/buzzard_orchestrator.py` + Render-Service |
+| API-Bridge | `/api/orchestrator/status` |
+| Monitoring | Uptime-Workflow alle 6h + verify-go-live |
+| Docs | Admin, Cloudflare, Monitoring, Orchestrator |
+| Verkauf | **Aus** (`SALES_ENABLED=0`) |
+| Produktbilder | **Bewusst offen** |
 
 ---
 
-## 🔴 Nur du — nach Deploy
+## 🔴 Nur du — einmalig nach Merge
 
-### 1. Admin-Passwort in Render
+### 1. PR mergen & warten auf Deploy
 
-1. [Render Dashboard](https://dashboard.render.com) → **buzzard-api** → **Environment**
-2. **`ADMIN_PASSWORD`** setzen → Save → Restart
-3. Login: [buzzard24.de/admin/login/](https://buzzard24.de/admin/login/) (`admin@buzzard24.de`)
+- GitHub Pages (Website) — ca. 2–5 Min. nach Push auf `main`
+- Render Blueprint — ggf. **Sync Blueprint** für neuen Service `buzzard-orchestrator`
 
-### 2. Impressum vervollständigen (optional, empfohlen)
+### 2. Admin-Passwort
 
-In GitHub → Settings → Secrets/Variables → Actions:
+→ **`docs/ADMIN_SETUP_DE.md`**
 
-| Variable | Beispiel |
-|----------|----------|
-| `NEXT_PUBLIC_COMPANY_STREET` | Musterstraße 1 |
-| `NEXT_PUBLIC_COMPANY_VAT_ID` | DE123456789 |
+Render → `buzzard-api` → `ADMIN_PASSWORD` → Login testen
 
-Dann GitHub Pages neu deployen (Push auf `main` oder Workflow manuell starten).
+### 3. Impressum (empfohlen)
 
-Ohne diese Werte: PLZ 35232 Dautphetal wird angezeigt.
+GitHub Secrets für GitHub Pages:
 
-### 3. Google Search Console (optional)
+| Secret | Beispiel |
+|--------|----------|
+| `NEXT_PUBLIC_COMPANY_STREET` | Ihre Straße + Hausnummer |
+| `NEXT_PUBLIC_COMPANY_VAT_ID` | DE… (falls vorhanden) |
 
-Siehe `docs/GOOGLE_SEARCH_CONSOLE.md` — Secret `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`.
+Ohne Secrets: PLZ 35232 Dautphetal.
+
+### 4. Google Search Console (optional)
+
+`docs/GOOGLE_SEARCH_CONSOLE.md` — Secret `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`
+
+### 5. Cloudflare (optional)
+
+`docs/CLOUDFLARE_SETUP_DE.md`
 
 ---
 
-## ⛔ Bewusst später (Verkauf)
+## ⛔ Bewusst nicht jetzt
 
-- Echte Produktbilder & PIM-Import
-- `BUZZARD_SALES_ENABLED=1`
-- Stripe / PayPal / SMTP
-- Commerce-Secrets für AI Core Phase 3
+- Echte Produktbilder
+- Verkauf / Stripe / PayPal / SMTP
+- Commerce-Secrets AI Core Phase 3
 
 ---
 
 ## Schnell-Checkliste
 
 ```
-[ ] Admin-Passwort in Render
-[ ] PR #238 gemergt + GitHub Pages deployed
-[ ] Optional: Straße + USt-ID in GitHub Secrets
-[ ] Optional: Google Search Console
+[ ] PR gemergt
+[ ] GitHub Pages deployed (kein „Demo-Katalog“ mehr auf Startseite)
+[ ] Render: buzzard-api + buzzard-orchestrator Live
+[ ] ADMIN_PASSWORD gesetzt + Admin-Login OK
+[ ] npm run verify:go-live → grün
+[ ] Optional: Straße/USt-ID, Search Console, Cloudflare
 ```
+
+## Nützliche Befehle
+
+```bash
+npm run verify:go-live
+npm run render:preflight
+npm run orchestrator:dev    # Orchestrator lokal :8010
+curl https://buzzard-api.onrender.com/api/orchestrator/status
+```
+
+## Docs
+
+| Thema | Datei |
+|-------|--------|
+| Admin | `docs/ADMIN_SETUP_DE.md` |
+| Orchestrator | `docs/ORCHESTRATOR_DE.md` |
+| Cloudflare | `docs/CLOUDFLARE_SETUP_DE.md` |
+| Monitoring | `docs/MONITORING.md` |
+| Go-Live | `docs/GO_LIVE_PREP.md` |

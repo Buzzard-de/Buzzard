@@ -112,6 +112,11 @@ services:
           type: web
           name: buzzard-intelligence
           property: host
+      - key: BUZZARD_ORCHESTRATOR_URL
+        fromService:
+          type: web
+          name: buzzard-orchestrator
+          property: host
       - key: DEFAULT_PAYMENT_PROVIDER
         value: stripe
       - key: DEFAULT_CARRIER
@@ -146,5 +151,29 @@ services:
     envVars:
       - key: PYTHONPATH
         value: /app
+      - key: PORT
+        value: 8000
+
+  - type: web
+    name: buzzard-orchestrator
+    runtime: docker
+    plan: free
+    region: frankfurt
+    repo: https://github.com/Buzzard-de/Buzzard
+    branch: main
+    autoDeployTrigger: commit
+    rootDir: intelligence
+    dockerfilePath: deploy/Dockerfile.orchestrator
+    dockerContext: intelligence
+    healthCheckPath: /health
+    envVars:
+      - key: BUZZARD_DB
+        value: /tmp/buzzard_orchestrator.db
+      - key: BUZZARD_MAX_RETRIES
+        value: "3"
+      - key: BUZZARD_TASK_TIMEOUT
+        value: "120"
+      - key: BUZZARD_APPROVAL_THRESHOLD_EUR
+        value: "500"
       - key: PORT
         value: 8000

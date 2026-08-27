@@ -66,6 +66,8 @@ async function main() {
     else fail("Build command missing or unexpected");
     if (yaml.includes('BUZZARD_SALES_ENABLED') && yaml.includes('"0"')) pass("BUZZARD_SALES_ENABLED=0 in Blueprint");
     else warn("BUZZARD_SALES_ENABLED not explicitly 0 in render.yaml");
+    if (yaml.includes("buzzard-orchestrator")) pass("buzzard-orchestrator service in Blueprint");
+    else warn("buzzard-orchestrator missing from render.yaml");
   } else {
     fail("render.yaml missing");
   }

@@ -8,6 +8,12 @@ Gespeicherte Berichte und Snapshots des Buzzard-Projekts.
 
 **ZIP:** [`buzzard24-komplettbericht-2026-08-27.zip`](./buzzard24-komplettbericht-2026-08-27.zip)
 
-Start mit `buzzard24-komplettbericht-2026-08-27/README.md` oder `00-ZUSAMMENFASSUNG.md`.
+## Cursor Aufgabenpaket (ChatGPT)
 
-Enthält: Website, API, E-Mail, Rechtliches, Orchestrator, Intelligence, Monitoring, Architektur, offene Punkte.
+**Ordner:** [`Buzzard24_Cursor_Aufgaben/`](./Buzzard24_Cursor_Aufgaben/) — inkl. [`STATUS.md`](./Buzzard24_Cursor_Aufgaben/STATUS.md)
+
+**ZIP:** [`Buzzard24_Cursor_Aufgaben.zip`](./Buzzard24_Cursor_Aufgaben.zip)
+
+## ChatGPT-Paket (Bericht + Alles-in-einer-Datei)
+
+[`buzzard24-komplettbericht-CHATGPT.zip`](./buzzard24-komplettbericht-CHATGPT.zip)

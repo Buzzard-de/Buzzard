@@ -1,19 +1,19 @@
 {
   "app": "buzzard-final-production-guard-max",
-  "generated_at": "2026-08-28T21:25:12.778370+00:00",
+  "generated_at": "2026-08-28T22:31:52.436870+00:00",
   "api_url": "https://buzzard-api.onrender.com",
   "site_url": "https://buzzard24.de",
   "catalog_mode_required": {
     "BUZZARD_P1_CATALOG": "1",
     "BUZZARD_SALES_ENABLED": "0"
   },
-  "overall": "BLOCKED",
-  "recommendation": "Code is catalog-ready; complete user deploy steps (PR merge, Render Blueprint Sync). Catalog mode constraints satisfied where testable.",
+  "overall": "PASS",
+  "recommendation": "Production-ready for catalog mode. Sales remain disabled.",
   "summary": {
-    "PASS": 10,
-    "WARN": 1,
+    "PASS": 13,
+    "WARN": 0,
     "FAIL": 0,
-    "BLOCKED": 2
+    "BLOCKED": 0
   },
   "checks": [
     {
@@ -66,10 +66,10 @@
       "status": "PASS",
       "detail": "passed=true, sales_enabled=false",
       "data": {
-        "approval_id": "approval_93e450974e7a45758ff17aad56c02996",
+        "approval_id": "approval_35e2cdde4bf848a1900ead731ceb80ec",
         "backup_verified": true,
-        "incident_id": "inc_b8c6f5e4a36447188cf2c9e4da101f91",
-        "memory_id": "mem_78b696d6d5764feb96c8cea7fce88a77",
+        "incident_id": "inc_17e5a47467b24d33a0a20655a2f029f1",
+        "memory_id": "mem_bf43294244b64968960cbd085de97e6c",
         "passed": true,
         "sales_enabled": false
       }
@@ -86,33 +86,166 @@
     {
       "id": "api.p1_status",
       "name": "GET /api/p1/status",
-      "status": "BLOCKED",
-      "detail": "P1 endpoint not deployed (merge PR + Render deploy required)",
+      "status": "PASS",
+      "detail": "catalog_mode=true, products=15",
       "data": {
-        "success": false,
-        "errorKey": "security.notFound"
+        "success": true,
+        "enabled": true,
+        "catalog_mode": true,
+        "sales_enabled": false,
+        "product_count": 15,
+        "active_products": 15,
+        "price_stock_queue": 0,
+        "ai_review_pending": 0,
+        "adapters": [
+          {
+            "id": "mock",
+            "name": "Mock Supplier Adapter",
+            "capabilities": [
+              "catalog",
+              "stock",
+              "price",
+              "order_prep",
+              "xml"
+            ],
+            "mock": true
+          },
+          {
+            "id": "mock-xml",
+            "name": "Mock Supplier Adapter",
+            "capabilities": [
+              "catalog",
+              "stock",
+              "price",
+              "order_prep",
+              "xml"
+            ],
+            "mock": true
+          },
+          {
+            "id": "tecdoc",
+            "name": "TecDoc Mock Adapter",
+            "capabilities": [
+              "vehicle_lookup",
+              "compatibility",
+              "catalog"
+            ],
+            "mock": true
+          }
+        ],
+        "order_management": true,
+        "message": "Catalog mode active — checkout and real supplier dispatch remain disabled."
       }
     },
     {
       "id": "api.guardian_status",
       "name": "GET /api/guardian/status",
-      "status": "BLOCKED",
-      "detail": "Guardian bridge not deployed (merge PR + Blueprint Sync)",
+      "status": "PASS",
+      "detail": "Guardian configured and reachable",
       "data": {
-        "success": false,
-        "errorKey": "security.notFound"
+        "configured": true,
+        "reachable": true,
+        "guardianUrl": "https://buzzard-guardian.onrender.com",
+        "health": {
+          "ok": true,
+          "service": "buzzard-ai-guardian-max",
+          "app": "buzzard-ai-guardian-max",
+          "time": "2026-08-28T22:31:51.819668+00:00",
+          "sales_enabled": false,
+          "real_payment_enabled": false,
+          "real_supplier_order_enabled": false,
+          "real_product_images_enabled": false,
+          "database": "/tmp/buzzard_guardian.sqlite3",
+          "open_incidents": 0,
+          "pending_approvals": 0,
+          "costs": {
+            "agents": [
+              {
+                "agent_id": "category_ai",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 2,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 50
+              },
+              {
+                "agent_id": "customs_ai",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 2,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 50
+              },
+              {
+                "agent_id": "esat_security",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 3,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 75
+              },
+              {
+                "agent_id": "nesrin",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 5,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 100
+              },
+              {
+                "agent_id": "order_ai",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 2,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 50
+              },
+              {
+                "agent_id": "price_ai",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 2,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 50
+              },
+              {
+                "agent_id": "product_ai",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 3,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 60
+              },
+              {
+                "agent_id": "supplier_ai",
+                "enabled": true,
+                "daily_spend_eur": 0,
+                "daily_budget_eur": 3,
+                "monthly_spend_eur": 0,
+                "monthly_budget_eur": 75
+              }
+            ]
+          }
+        },
+        "error": null
       }
     },
     {
       "id": "api.orchestrator_status",
       "name": "GET /api/orchestrator/status",
-      "status": "WARN",
-      "detail": "Orchestrator not configured",
+      "status": "PASS",
+      "detail": "Orchestrator configured and reachable",
       "data": {
-        "configured": false,
-        "reachable": false,
-        "orchestratorUrl": null,
-        "message": "Set BUZZARD_ORCHESTRATOR_URL to connect the AI task orchestrator."
+        "configured": true,
+        "reachable": true,
+        "orchestratorUrl": "https://buzzard-orchestrator.onrender.com",
+        "health": {
+          "status": "healthy",
+          "agents": 7,
+          "database": "/tmp/buzzard_orchestrator.db",
+          "time": "2026-08-28T22:31:51.994186+00:00"
+        },
+        "error": null
       }
     },
     {

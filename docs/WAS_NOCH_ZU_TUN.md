@@ -1,30 +1,34 @@
 # Buzzard24 — Was noch zu tun ist
 
-**Stand:** 28. Aug 2026 · Katalogmodus · Verkauf & Produktbilder bewusst aus
+**Stand:** 28. Aug 2026 (Abend) · Katalogmodus **live** · Live Verification **PASS**
 
 ---
 
-## ✅ Im Code erledigt (PR #239 + #240)
+## ✅ Erledigt (Code + Deploy)
 
 | Bereich | Status |
 |---------|--------|
-| P1 Katalog-Plattform (05–15) | Validator, Adapter, AI, Queue, Smoke |
-| Wave 2 SEO/i18n/Security | Search-Console-Doku, Kontakt 4 Sprachen |
-| AI Guardian MAX | Kostenkontrolle, Approvals, Incidents, Backup |
-| Produkt-Übersetzungen | Script `npm run catalog:i18n-fill` |
-| Render Blueprint | orchestrator + guardian + API-Verkettung vorbereitet |
-| Monitoring | verify-go-live + Uptime alle 6h |
+| P1 Katalog-Plattform (05–15) | ✅ Live |
+| Wave 2 SEO/i18n/Security | ✅ |
+| AI Guardian MAX | ✅ Live (`buzzard-guardian`) |
+| AI Orchestrator | ✅ Live (`buzzard-orchestrator`) |
+| Production Guard | ✅ `npm run production:verify:live` → PASS |
+| PR #240, #241, #242 | ✅ Gemerged auf `main` |
+| Render Blueprint | ✅ Sync, API + Orchestrator + Guardian deployed |
+| Produkt-Übersetzungen | ✅ 15 Produkte EN/TR/AR |
+| Monitoring | ✅ verify-go-live + Uptime |
+
+**Checkpoint:** `docs/SESSION_CHECKPOINT_2026-08-28.md`
 
 ---
 
-## 🔴 Nur du — nach PR-Merge
+## 🟡 Optional (nicht blockierend)
 
-1. **PRs mergen:** [#239](https://github.com/Buzzard-de/Buzzard/pull/239) + [#240](https://github.com/Buzzard-de/Buzzard/pull/240)
-2. **Render Blueprint Sync** → Services `buzzard-orchestrator`, `buzzard-guardian`
-3. **Admin-Passwort notieren** — Render generiert `ADMIN_PASSWORD` automatisch (Service `buzzard-api` → Environment → Reveal)
-4. **Optional:** GitHub Secrets `NEXT_PUBLIC_COMPANY_STREET`, `NEXT_PUBLIC_COMPANY_VAT_ID`
-5. **Optional:** Google Search Console → `docs/GOOGLE_SEARCH_CONSOLE.md`
-6. **Optional:** Cloudflare → `docs/CLOUDFLARE_SETUP_DE.md`
+1. **`buzzard-intelligence`** Docker-Deploy fixen (aktuell failure — P1/Guardian unabhängig)
+2. **Admin-Passwort notieren** — Render → `buzzard-api` → Environment → `ADMIN_PASSWORD` → Reveal
+3. **Google Search Console** → `docs/SEO_SEARCH_CONSOLE_DE.md`
+4. **GitHub Secrets** `NEXT_PUBLIC_COMPANY_STREET`, `NEXT_PUBLIC_COMPANY_VAT_ID`
+5. **Cloudflare** → `docs/CLOUDFLARE_SETUP_DE.md`
 
 ---
 
@@ -32,29 +36,18 @@
 
 - Echte Produktbilder
 - Verkauf / Stripe / PayPal aktivieren
-- Commerce-Secrets
+- Commerce-Secrets ins Repo
+- Echte Lieferantenbestellungen
 
 ---
 
-## Schnell-Check nach Merge
+## Schnell-Check (Live)
 
 ```bash
-npm run verify:go-live
-npm run verify:p1
-npm run verify:p1:seo
-npm run guardian:self-test
-curl https://buzzard-api.onrender.com/api/p1/status
-curl https://buzzard-api.onrender.com/api/guardian/status
+npm run production:verify:live
+curl -s https://buzzard-api.onrender.com/api/p1/status
+curl -s https://buzzard-api.onrender.com/api/guardian/status
+curl -s https://buzzard-api.onrender.com/api/orchestrator/status
 ```
 
----
-
-## Docs
-
-| Thema | Datei |
-|-------|--------|
-| P1 Plattform | `docs/P1_CATALOG_PLATFORM_DE.md` |
-| Guardian | `docs/GUARDIAN_DE.md` |
-| Admin | `docs/ADMIN_SETUP_DE.md` |
-| Orchestrator | `docs/ORCHESTRATOR_DE.md` |
-| Search Console | `docs/GOOGLE_SEARCH_CONSOLE.md` |
+Erwartung: **overall PASS**, alle drei Status-Endpunkte erreichbar.

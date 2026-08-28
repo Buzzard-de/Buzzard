@@ -177,3 +177,25 @@ services:
         value: "500"
       - key: PORT
         value: 8000
+
+  - type: web
+    name: buzzard-guardian
+    runtime: docker
+    plan: free
+    region: frankfurt
+    repo: https://github.com/Buzzard-de/Buzzard
+    branch: main
+    autoDeployTrigger: commit
+    rootDir: intelligence
+    dockerfilePath: deploy/Dockerfile.guardian
+    dockerContext: intelligence
+    healthCheckPath: /health
+    envVars:
+      - key: BUZZARD_GUARDIAN_DB
+        value: /tmp/buzzard_guardian.sqlite3
+      - key: BUZZARD_BACKUP_DIR
+        value: /tmp/guardian_backups
+      - key: BUZZARD_SALES_ENABLED
+        value: "0"
+      - key: PORT
+        value: 8001

@@ -116,12 +116,12 @@ services:
         fromService:
           type: web
           name: buzzard-orchestrator
-          property: host
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
       - key: BUZZARD_GUARDIAN_URL
         fromService:
           type: web
           name: buzzard-guardian
-          property: host
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
       - key: BUZZARD_P1_CATALOG
         value: "1"
       - key: DEFAULT_PAYMENT_PROVIDER

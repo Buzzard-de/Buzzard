@@ -1,0 +1,133 @@
+{
+  "app": "buzzard-final-production-guard-max",
+  "generated_at": "2026-08-28T21:25:12.778370+00:00",
+  "api_url": "https://buzzard-api.onrender.com",
+  "site_url": "https://buzzard24.de",
+  "catalog_mode_required": {
+    "BUZZARD_P1_CATALOG": "1",
+    "BUZZARD_SALES_ENABLED": "0"
+  },
+  "overall": "BLOCKED",
+  "recommendation": "Code is catalog-ready; complete user deploy steps (PR merge, Render Blueprint Sync). Catalog mode constraints satisfied where testable.",
+  "summary": {
+    "PASS": 10,
+    "WARN": 1,
+    "FAIL": 0,
+    "BLOCKED": 2
+  },
+  "checks": [
+    {
+      "id": "env.sales_disabled",
+      "name": "BUZZARD_SALES_ENABLED=0",
+      "status": "PASS",
+      "detail": "Sales disabled in environment",
+      "data": {}
+    },
+    {
+      "id": "env.p1_catalog",
+      "name": "BUZZARD_P1_CATALOG=1",
+      "status": "PASS",
+      "detail": "P1 catalog enabled (or default on)",
+      "data": {
+        "BUZZARD_P1_CATALOG": "1"
+      }
+    },
+    {
+      "id": "env.commerce_flags",
+      "name": "No real payment/supplier flags",
+      "status": "PASS",
+      "detail": "Real payment and supplier dispatch disabled",
+      "data": {}
+    },
+    {
+      "id": "render.yaml",
+      "name": "Render blueprint catalog config",
+      "status": "PASS",
+      "detail": "Sales=0, P1, orchestrator, guardian wired in render.yaml",
+      "data": {}
+    },
+    {
+      "id": "render.stripe",
+      "name": "Stripe not synced (no secret in blueprint)",
+      "status": "PASS",
+      "detail": "STRIPE_SECRET_KEY sync:false — no commerce secret in repo",
+      "data": {}
+    },
+    {
+      "id": "modules",
+      "name": "Core production modules present",
+      "status": "PASS",
+      "detail": "8 modules found",
+      "data": {}
+    },
+    {
+      "id": "guardian.self_test",
+      "name": "Guardian self-test",
+      "status": "PASS",
+      "detail": "passed=true, sales_enabled=false",
+      "data": {
+        "approval_id": "approval_93e450974e7a45758ff17aad56c02996",
+        "backup_verified": true,
+        "incident_id": "inc_b8c6f5e4a36447188cf2c9e4da101f91",
+        "memory_id": "mem_78b696d6d5764feb96c8cea7fce88a77",
+        "passed": true,
+        "sales_enabled": false
+      }
+    },
+    {
+      "id": "api.health",
+      "name": "API health",
+      "status": "PASS",
+      "detail": "API health OK",
+      "data": {
+        "status": "ok"
+      }
+    },
+    {
+      "id": "api.p1_status",
+      "name": "GET /api/p1/status",
+      "status": "BLOCKED",
+      "detail": "P1 endpoint not deployed (merge PR + Render deploy required)",
+      "data": {
+        "success": false,
+        "errorKey": "security.notFound"
+      }
+    },
+    {
+      "id": "api.guardian_status",
+      "name": "GET /api/guardian/status",
+      "status": "BLOCKED",
+      "detail": "Guardian bridge not deployed (merge PR + Blueprint Sync)",
+      "data": {
+        "success": false,
+        "errorKey": "security.notFound"
+      }
+    },
+    {
+      "id": "api.orchestrator_status",
+      "name": "GET /api/orchestrator/status",
+      "status": "WARN",
+      "detail": "Orchestrator not configured",
+      "data": {
+        "configured": false,
+        "reachable": false,
+        "orchestratorUrl": null,
+        "message": "Set BUZZARD_ORCHESTRATOR_URL to connect the AI task orchestrator."
+      }
+    },
+    {
+      "id": "fail_safe.checkout",
+      "name": "Checkout/orders blocked (catalog mode)",
+      "status": "PASS",
+      "detail": "HTTP 403 — no real sale created",
+      "data": {}
+    },
+    {
+      "id": "site.reachable",
+      "name": "Storefront https://buzzard24.de",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "data": {}
+    }
+  ]
+}

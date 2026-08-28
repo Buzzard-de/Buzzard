@@ -1,0 +1,121 @@
+ .github/workflows/uptime-monitor.yml               |    9 +
+ .gitignore                                         |    2 +
+ app/sitemap.ts                                     |    2 +-
+ components/ContactForm.tsx                         |   30 +-
+ data/buzzard_product_translations.json             |  426 +++++
+ docs/GUARDIAN_DE.md                                |   81 +
+ docs/I18N_UX_CHECKLIST_DE.md                       |   46 +
+ docs/P1_CATALOG_PLATFORM_DE.md                     |  100 ++
+ docs/SECURITY_BACKUP_DE.md                         |   51 +
+ docs/SEO_SEARCH_CONSOLE_DE.md                      |   48 +
+ docs/WAS_NOCH_ZU_TUN.md                            |   89 +-
+ .../01_P0_MERGE_DEPLOY.md                          |    0
+ .../{Buzzard24_Cursor_Aufgaben => }/02_P0_ADMIN.md |    0
+ .../03_P0_ORCHESTRATOR.md                          |    0
+ .../04_P0_P1_SECURITY.md                           |    0
+ .../05_P1_CATALOG_PIM.md                           |    0
+ .../06_P1_SUPPLIER_API_XML_TECDOC.md               |    0
+ .../07_P1_PRICE_STOCK.md                           |    0
+ .../08_P1_PRODUCT_AI.md                            |    0
+ .../09_P1_CATEGORY_AI.md                           |    0
+ .../10_P1_CUSTOMS_AI.md                            |    0
+ .../11_P1_ORDER_PREP_ONLY.md                       |    0
+ .../12_P1_SEO_GOOGLE.md                            |    0
+ .../13_P1_I18N_UX.md                               |    0
+ .../{Buzzard24_Cursor_Aufgaben => }/14_P0_P1_QA.md |    0
+ .../15_P1_PRODUCTION_READINESS.md                  |    0
+ .../16_DO_NOT_DO.md                                |    0
+ .../17_CURSOR_MASTER_PROMPT.md                     |    0
+ .../README_CURSOR.md                               |    0
+ exports/Buzzard24_Cursor_Aufgaben/STATUS.md        |   73 +-
+ exports/README.md                                  |   14 +
+ .../buzzard24-p1-catalog-platform-2026-08-27.zip   |  Bin 0 -> 81757 bytes
+ .../CHANGELOG-WAVE2.md                             |   51 +
+ .../DIFF-STAT.txt                                  |   36 +
+ .../GIT-COMMIT.txt                                 |    3 +
+ .../MANIFEST.json                                  |   57 +
+ .../README.md                                      |  126 ++
+ .../aufgaben/01_P0_MERGE_DEPLOY.md                 |   10 +
+ .../aufgaben/02_P0_ADMIN.md                        |    6 +
+ .../aufgaben/03_P0_ORCHESTRATOR.md                 |   14 +
+ .../aufgaben/04_P0_P1_SECURITY.md                  |   13 +
+ .../aufgaben/05_P1_CATALOG_PIM.md                  |    8 +
+ .../aufgaben/06_P1_SUPPLIER_API_XML_TECDOC.md      |   10 +
+ .../aufgaben/07_P1_PRICE_STOCK.md                  |   11 +
+ .../aufgaben/08_P1_PRODUCT_AI.md                   |   11 +
+ .../aufgaben/09_P1_CATEGORY_AI.md                  |    8 +
+ .../aufgaben/10_P1_CUSTOMS_AI.md                   |    9 +
+ .../aufgaben/11_P1_ORDER_PREP_ONLY.md              |   11 +
+ .../aufgaben/12_P1_SEO_GOOGLE.md                   |   11 +
+ .../aufgaben/13_P1_I18N_UX.md                      |   12 +
+ .../aufgaben/14_P0_P1_QA.md                        |   21 +
+ .../aufgaben/15_P1_PRODUCTION_READINESS.md         |   11 +
+ .../aufgaben/16_DO_NOT_DO.md                       |   12 +
+ .../aufgaben/17_CURSOR_MASTER_PROMPT.md            |   30 +
+ .../aufgaben/README_CURSOR.md                      |   22 +
+ .../aufgaben/STATUS.md                             |   66 +
+ .../docs/P1_CATALOG_PLATFORM_DE.md                 |  100 ++
+ .../guardian/Dockerfile.guardian                   |   10 +
+ .../guardian/GUARDIAN_DE.md                        |   81 +
+ .../guardian/buzzard_ai_guardian_max.py            | 1648 ++++++++++++++++++++
+ .../guardian/buzzard_guardian_api.py               |  163 ++
+ .../lib/products/types.ts                          |  146 ++
+ .../scripts/p1-smoke.mjs                           |  114 ++
+ .../server/lib/adapters/mockSupplierAdapter.js     |  109 ++
+ .../server/lib/adapters/supplierAdapter.js         |   58 +
+ .../server/lib/adapters/tecdocAdapter.js           |   63 +
+ .../server/lib/categoryIntelligence.js             |   80 +
+ .../server/lib/customsAi.js                        |   62 +
+ .../server/lib/importPipeline.js                   |  262 ++++
+ .../server/lib/p1CatalogPlatform.js                |   75 +
+ .../server/lib/priceStockQueue.js                  |  189 +++
+ .../server/lib/pricing.js                          |   54 +
+ .../server/lib/productAi.js                        |  145 ++
+ .../server/lib/productValidator.js                 |  210 +++
+ .../server/plugins/adminCatalogPlugin.js           |  257 +++
+ .../server/plugins/p1CatalogPlatformPlugin.js      |  182 +++
+ .../wave2/components/ContactForm.tsx               |  117 ++
+ .../wave2/docs/I18N_UX_CHECKLIST_DE.md             |   46 +
+ .../wave2/docs/SECURITY_BACKUP_DE.md               |   51 +
+ .../wave2/docs/SEO_SEARCH_CONSOLE_DE.md            |   48 +
+ .../wave2/lib/i18n/locales/ar.ts                   |  428 +++++
+ .../wave2/lib/i18n/locales/de.ts                   |  445 ++++++
+ .../wave2/lib/i18n/locales/en.ts                   |  435 ++++++
+ .../wave2/lib/i18n/locales/tr.ts                   |  428 +++++
+ .../wave2/scripts/p1-seo-i18n-smoke.mjs            |   77 +
+ .../wave2/server/lib/i18nCatalog.js                |   70 +
+ .../wave2/server/lib/seoGooglePrep.js              |   60 +
+ .../server/plugins/p1CatalogPlatformPlugin.js      |  216 +++
+ exports/buzzard24-session-checkpoint-2026-08-27.md |   70 +
+ intelligence/buzzard_ai_guardian_max.py            | 1648 ++++++++++++++++++++
+ intelligence/buzzard_guardian_api.py               |  189 +++
+ intelligence/deploy/Dockerfile.guardian            |   10 +
+ lib/i18n/locales/ar.ts                             |   15 +
+ lib/i18n/locales/de.ts                             |   15 +
+ lib/i18n/locales/en.ts                             |   15 +
+ lib/i18n/locales/tr.ts                             |   15 +
+ lib/products/types.ts                              |   35 +
+ package.json                                       |    4 +
+ render.yaml                                        |   29 +
+ scripts/fill-product-i18n-gaps.mjs                 |  285 ++++
+ scripts/p1-seo-i18n-smoke.mjs                      |   77 +
+ scripts/p1-smoke.mjs                               |  114 ++
+ scripts/verify-go-live.mjs                         |   36 +
+ server/lib/adapters/mockSupplierAdapter.js         |  109 ++
+ server/lib/adapters/supplierAdapter.js             |   58 +
+ server/lib/adapters/tecdocAdapter.js               |   63 +
+ server/lib/categoryIntelligence.js                 |   80 +
+ server/lib/customsAi.js                            |   62 +
+ server/lib/guardianBridge.js                       |   79 +
+ server/lib/i18nCatalog.js                          |   70 +
+ server/lib/importPipeline.js                       |   23 +-
+ server/lib/p1CatalogPlatform.js                    |   75 +
+ server/lib/priceStockQueue.js                      |  231 +++
+ server/lib/pricing.js                              |   31 +-
+ server/lib/productAi.js                            |  145 ++
+ server/lib/productValidator.js                     |  210 +++
+ server/lib/seoGooglePrep.js                        |   60 +
+ server/plugins/adminCatalogPlugin.js               |   54 +-
+ server/plugins/guardianBridgePlugin.js             |   67 +
+ server/plugins/p1CatalogPlatformPlugin.js          |  216 +++
+ 120 files changed, 12007 insertions(+), 152 deletions(-)

@@ -31,3 +31,9 @@ Gespeicherte Berichte und Snapshots des Buzzard-Projekts.
 ## Session-Checkpoint
 
 [`buzzard24-session-checkpoint-2026-08-27.md`](./buzzard24-session-checkpoint-2026-08-27.md)
+
+## Tagesbericht 28.08.2026 (komplett)
+
+**Ordner:** [`buzzard24-tagesbericht-2026-08-28/`](./buzzard24-tagesbericht-2026-08-28/)
+
+**ZIP:** [`buzzard24-tagesbericht-2026-08-28.zip`](./buzzard24-tagesbericht-2026-08-28.zip)

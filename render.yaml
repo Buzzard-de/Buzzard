@@ -163,15 +163,15 @@ services:
 
   - type: web
     name: buzzard-orchestrator
-    runtime: docker
+    runtime: python
     plan: free
     region: frankfurt
     repo: https://github.com/Buzzard-de/Buzzard
     branch: main
     autoDeployTrigger: commit
     rootDir: intelligence
-    dockerfilePath: deploy/Dockerfile.orchestrator
-    dockerContext: intelligence
+    buildCommand: pip install fastapi uvicorn pydantic
+    startCommand: uvicorn buzzard_orchestrator:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
       - key: BUZZARD_DB
@@ -182,20 +182,18 @@ services:
         value: "120"
       - key: BUZZARD_APPROVAL_THRESHOLD_EUR
         value: "500"
-      - key: PORT
-        value: 8000
 
   - type: web
     name: buzzard-guardian
-    runtime: docker
+    runtime: python
     plan: free
     region: frankfurt
     repo: https://github.com/Buzzard-de/Buzzard
     branch: main
     autoDeployTrigger: commit
     rootDir: intelligence
-    dockerfilePath: deploy/Dockerfile.guardian
-    dockerContext: intelligence
+    buildCommand: pip install fastapi uvicorn pydantic
+    startCommand: uvicorn buzzard_guardian_api:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
       - key: BUZZARD_GUARDIAN_DB
@@ -204,5 +202,3 @@ services:
         value: /tmp/guardian_backups
       - key: BUZZARD_SALES_ENABLED
         value: "0"
-      - key: PORT
-        value: 8001

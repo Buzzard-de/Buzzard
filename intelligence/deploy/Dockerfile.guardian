@@ -7,4 +7,4 @@ ENV BUZZARD_GUARDIAN_DB=/tmp/buzzard_guardian.sqlite3
 ENV BUZZARD_BACKUP_DIR=/tmp/guardian_backups
 ENV BUZZARD_SALES_ENABLED=0
 EXPOSE 8001
-CMD ["uvicorn", "buzzard_guardian_api:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["sh", "-c", "uvicorn buzzard_guardian_api:app --host 0.0.0.0 --port ${PORT:-8001}"]

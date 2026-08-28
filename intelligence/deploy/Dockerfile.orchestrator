@@ -4,4 +4,4 @@ RUN pip install --no-cache-dir fastapi uvicorn pydantic
 COPY buzzard_orchestrator.py ./buzzard_orchestrator.py
 ENV BUZZARD_DB=/tmp/buzzard_orchestrator.db
 EXPOSE 8000
-CMD ["uvicorn", "buzzard_orchestrator:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn buzzard_orchestrator:app --host 0.0.0.0 --port ${PORT:-8000}"]

@@ -30,6 +30,432 @@
       "name": "قرص فرامل أمامي 280 مم",
       "short_description": "قرص فرامل عالي الجودة للمحور الأمامي.",
       "description": "قرص فرامل موثوق مع ملاءمة دقيقة وطلاء متين."
+    },
+    "tr": {
+      "name": "Ön Aks Fren Diski 280mm",
+      "short_description": "Ön aks için yüksek kaliteli fren diski. Çap 280 mm.",
+      "description": "Hassas uyum ve dayanıklı kaplama ile güvenilir fren diski.",
+      "seo": {
+        "title": "Ön Aks Fren Diski 280mm | Buzzard",
+        "description": "Ön aks için yüksek kaliteli fren diski. Çap 280 mm."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "bremsbelaege-vorder": {
+    "en": {
+      "name": "Front Brake Pad Set",
+      "short_description": "Brake pad set for the front axle with wear indicator.",
+      "description": "High-quality brake pads for reliable braking performance on the front axle.",
+      "seo": {
+        "title": "Front Brake Pad Set | Buzzard",
+        "description": "Brake pad set for the front axle with wear indicator."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Ön Fren Balata Takımı",
+      "short_description": "Aşınma göstergeli ön aks fren balata seti.",
+      "description": "Ön aks için güvenilir fren performansı sunan kaliteli balatalar.",
+      "seo": {
+        "title": "Ön Fren Balata Takımı | Buzzard",
+        "description": "Aşınma göstergeli ön aks fren balata seti."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "طقم فرامل أمامي",
+      "short_description": "طقم فرامل للمحور الأمامي مع مؤشر التآكل.",
+      "description": "فرامل عالية الجودة لأداء كبح موثوق على المحور الأمامي.",
+      "seo": {
+        "title": "طقم فرامل أمامي | Buzzard",
+        "description": "طقم فرامل للمحور الأمامي مع مؤشر التآكل."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "motoroel-5w30": {
+    "en": {
+      "name": "Engine Oil 5W-30 Full Synthetic 5L",
+      "short_description": "Full synthetic 5W-30 engine oil for petrol and diesel engines.",
+      "description": "Premium full synthetic motor oil for year-round engine protection.",
+      "seo": {
+        "title": "Engine Oil 5W-30 Full Synthetic 5L | Buzzard",
+        "description": "Full synthetic 5W-30 engine oil for petrol and diesel engines."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Motor Yağı 5W-30 Tam Sentetik 5L",
+      "short_description": "Benzin ve dizel motorlar için tam sentetik 5W-30 motor yağı.",
+      "description": "Yıl boyu motor koruması için premium tam sentetik yağ.",
+      "seo": {
+        "title": "Motor Yağı 5W-30 Tam Sentetik 5L | Buzzard",
+        "description": "Benzin ve dizel motorlar için tam sentetik 5W-30 motor yağı."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "زيت محرك 5W-30 ت fully synthetic 5L",
+      "short_description": "زيت محرك ت fully synthetic 5W-30 لمحركات البنزين والدiesel.",
+      "description": "زيت محرك synthetic premium لحماية المحرك على مدار العام.",
+      "seo": {
+        "title": "زيت محرك 5W-30 ت fully synthetic 5L | Buzzard",
+        "description": "زيت محرك ت fully synthetic 5W-30 لمحركات البنزين والدiesel."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "oelfilter": {
+    "en": {
+      "name": "Oil Filter Universal OEM Compatible",
+      "short_description": "Universal oil filter with high filtration performance.",
+      "description": "Reliable oil filter compatible with many OEM applications.",
+      "seo": {
+        "title": "Oil Filter Universal OEM Compatible | Buzzard",
+        "description": "Universal oil filter with high filtration performance."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Yağ Filtresi Evrensel OEM Uyumlu",
+      "short_description": "Yüksek filtrasyon performanslı evrensel yağ filtresi.",
+      "description": "Birçok OEM uygulamasıyla uyumlu güvenilir yağ filtresi.",
+      "seo": {
+        "title": "Yağ Filtresi Evrensel OEM Uyumlu | Buzzard",
+        "description": "Yüksek filtrasyon performanslı evrensel yağ filtresi."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "فلتر زيت universal متوافق OEM",
+      "short_description": "فلتر زيت universal بأداء ترشيح عالٍ.",
+      "description": "فلتر زيت موثوق متوافق مع العديد من تطبيقات OEM.",
+      "seo": {
+        "title": "فلتر زيت universal متوافق OEM | Buzzard",
+        "description": "فلتر زيت universal بأداء ترشيح عالٍ."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "innenraumfilter": {
+    "en": {
+      "name": "Cabin Air Filter Premium Pollen Filter",
+      "short_description": "Activated carbon cabin filter for clean air inside the vehicle.",
+      "description": "Premium pollen/cabin filter for improved air quality in the passenger compartment.",
+      "seo": {
+        "title": "Cabin Air Filter Premium Pollen Filter | Buzzard",
+        "description": "Activated carbon cabin filter for clean air inside the vehicle."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Kabin Filtresi Polen Filtresi Premium",
+      "short_description": "Araç içinde temiz hava için aktif karbon kabin filtresi.",
+      "description": "Yolcu bölmesinde hava kalitesi için premium polen/kabin filtresi.",
+      "seo": {
+        "title": "Kabin Filtresi Polen Filtresi Premium | Buzzard",
+        "description": "Araç içinde temiz hava için aktif karbon kabin filtresi."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "فلتر مقصورة premium فلتر حبوب اللقاح",
+      "short_description": "فلتر مقصورة بالفحم النشط لهواء نظيف داخل المركبة.",
+      "description": "فلتر حبوب اللقاح/المقصورة premium لجودة هواء أفضل.",
+      "seo": {
+        "title": "فلتر مقصورة premium فلتر حبوب اللقاح | Buzzard",
+        "description": "فلتر مقصورة بالفحم النشط لهواء نظيف داخل المركبة."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "zuendkerze-ngk": {
+    "en": {
+      "name": "Spark Plug Iridium IX NGK",
+      "short_description": "Iridium spark plug for optimal ignition and long service life.",
+      "description": "NGK Iridium IX spark plug for efficient combustion and durability.",
+      "seo": {
+        "title": "Spark Plug Iridium IX NGK | Buzzard",
+        "description": "Iridium spark plug for optimal ignition and long service life."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Buji Iridium IX NGK",
+      "short_description": "Optimum ateşleme ve uzun ömür için iridyum buji.",
+      "description": "Verimli yanma ve dayanıklılık için NGK Iridium IX buji.",
+      "seo": {
+        "title": "Buji Iridium IX NGK | Buzzard",
+        "description": "Optimum ateşleme ve uzun ömür için iridyum buji."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "شمعة إشعال Iridium IX NGK",
+      "short_description": "شمعة iridium لاشتعال مثالي وعمر خدمة طويل.",
+      "description": "شمعة NGK Iridium IX لاحتراق فعال ومتانة.",
+      "seo": {
+        "title": "شمعة إشعال Iridium IX NGK | Buzzard",
+        "description": "شمعة iridium لاشتعال مثالي وعمر خدمة طويل."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "batterie-72ah": {
+    "en": {
+      "name": "Starter Battery 12V 72Ah 680A",
+      "short_description": "72Ah starter battery with 680A cold cranking amps.",
+      "description": "Reliable 12V starter battery for passenger vehicles.",
+      "seo": {
+        "title": "Starter Battery 12V 72Ah 680A | Buzzard",
+        "description": "72Ah starter battery with 680A cold cranking amps."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Marş Aküsü 12V 72Ah 680A",
+      "short_description": "680A soğuk çalıştırma akımına sahip 72Ah marş aküsü.",
+      "description": "Binek araçlar için güvenilir 12V marş aküsü.",
+      "seo": {
+        "title": "Marş Aküsü 12V 72Ah 680A | Buzzard",
+        "description": "680A soğuk çalıştırma akımına sahip 72Ah marş aküsü."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "بطارية تشغيل 12V 72Ah 680A",
+      "short_description": "بطارية 72Ah مع 680A تيار تشغيل بارد.",
+      "description": "بطارية 12V موثوقة للمركبات الخفيفة.",
+      "seo": {
+        "title": "بطارية تشغيل 12V 72Ah 680A | Buzzard",
+        "description": "بطارية 72Ah مع 680A تيار تشغيل بارد."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "stossdaempfer": {
+    "en": {
+      "name": "Front Shock Absorber Gas",
+      "short_description": "Gas-pressure shock absorber for the front axle.",
+      "description": "Gas shock absorber for improved ride comfort and stability.",
+      "seo": {
+        "title": "Front Shock Absorber Gas | Buzzard",
+        "description": "Gas-pressure shock absorber for the front axle."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Ön Amortisör Gazlı",
+      "short_description": "Ön aks için gaz basınçlı amortisör.",
+      "description": "Konfor ve stabilite için gazlı amortisör.",
+      "seo": {
+        "title": "Ön Amortisör Gazlı | Buzzard",
+        "description": "Ön aks için gaz basınçlı amortisör."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "ممتص صدمات أمامي غاز",
+      "short_description": "ممتص صدمات بضغط غاز للمحور الأمامي.",
+      "description": "ممتص صدمات غازي لراحة واستقرار أفضل.",
+      "seo": {
+        "title": "ممتص صدمات أمامي غاز | Buzzard",
+        "description": "ممتص صدمات بضغط غاز للمحور الأمامي."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "getriebeoel-75w90": {
+    "en": {
+      "name": "Gear Oil 75W-90 Full Synthetic 1L",
+      "short_description": "Full synthetic 75W-90 gear oil for manual transmissions.",
+      "description": "Premium gear oil for smooth shifting and transmission protection.",
+      "seo": {
+        "title": "Gear Oil 75W-90 Full Synthetic 1L | Buzzard",
+        "description": "Full synthetic 75W-90 gear oil for manual transmissions."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Şanzıman Yağı 75W-90 Tam Sentetik 1L",
+      "short_description": "Manuel şanzımanlar için tam sentetik 75W-90 yağ.",
+      "description": "Yumuşak vites geçişi ve koruma için premium şanzıman yağı.",
+      "seo": {
+        "title": "Şanzıman Yağı 75W-90 Tam Sentetik 1L | Buzzard",
+        "description": "Manuel şanzımanlar için tam sentetik 75W-90 yağ."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "زيت ناقل حركة 75W-90 ت fully synthetic 1L",
+      "short_description": "زيت 75W-90 ت fully synthetic لناقل حركة يدوي.",
+      "description": "زيت ناقل حركة premium لتبديل سلس وحماية.",
+      "seo": {
+        "title": "زيت ناقل حركة 75W-90 ت fully synthetic 1L | Buzzard",
+        "description": "زيت 75W-90 ت fully synthetic لناقل حركة يدوي."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "bremsfluessigkeit-dot4": {
+    "en": {
+      "name": "Brake Fluid DOT 4 500ml",
+      "short_description": "DOT 4 brake fluid, 500 ml bottle.",
+      "description": "High-performance brake fluid meeting DOT 4 specifications.",
+      "seo": {
+        "title": "Brake Fluid DOT 4 500ml | Buzzard",
+        "description": "DOT 4 brake fluid, 500 ml bottle."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Fren Hidroliği DOT 4 500ml",
+      "short_description": "DOT 4 fren hidroliği, 500 ml şişe.",
+      "description": "DOT 4 spesifikasyonlarına uygun yüksek performanslı fren hidroliği.",
+      "seo": {
+        "title": "Fren Hidroliği DOT 4 500ml | Buzzard",
+        "description": "DOT 4 fren hidroliği, 500 ml şişe."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "سائل فرامل DOT 4 500ml",
+      "short_description": "سائل فرامل DOT 4، زجاجة 500 ml.",
+      "description": "سائل فرامل عالي الأداء مطابق لمواصفات DOT 4.",
+      "seo": {
+        "title": "سائل فرامل DOT 4 500ml | Buzzard",
+        "description": "سائل فرامل DOT 4، زجاجة 500 ml."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "keilrippenriemen": {
+    "en": {
+      "name": "Serpentine Belt 6PK1548",
+      "short_description": "Serpentine belt 6PK1548 for auxiliary drives.",
+      "description": "Durable drive belt for alternator, A/C and power steering applications.",
+      "seo": {
+        "title": "Serpentine Belt 6PK1548 | Buzzard",
+        "description": "Serpentine belt 6PK1548 for auxiliary drives."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "V Kayışı 6PK1548",
+      "short_description": "Yardımcı tahrikler için 6PK1548 V kayışı.",
+      "description": "Alternatör, klima ve hidrolik direksiyon için dayanıklı kayış.",
+      "seo": {
+        "title": "V Kayışı 6PK1548 | Buzzard",
+        "description": "Yardımcı tahrikler için 6PK1548 V kayışı."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "حزام مسنن 6PK1548",
+      "short_description": "حزام 6PK1548 للمحركات الم auxiliar.",
+      "description": "حزام متين للدينamo والتكييف وتوجيه power.",
+      "seo": {
+        "title": "حزام مسنن 6PK1548 | Buzzard",
+        "description": "حزام 6PK1548 للمحركات الم auxiliar."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "frostschutz-g12": {
+    "en": {
+      "name": "Coolant Antifreeze G12+ 5L",
+      "short_description": "G12+ antifreeze for cooling system, 5 litres.",
+      "description": "Long-life coolant/antifreeze for modern engines.",
+      "seo": {
+        "title": "Coolant Antifreeze G12+ 5L | Buzzard",
+        "description": "G12+ antifreeze for cooling system, 5 litres."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Soğutma Sıvısı Antifriz G12+ 5L",
+      "short_description": "Soğutma sistemi için G12+ antifriz, 5 litre.",
+      "description": "Modern motorlar için uzun ömürlü soğutma sıvısı/antifriz.",
+      "seo": {
+        "title": "Soğutma Sıvısı Antifriz G12+ 5L | Buzzard",
+        "description": "Soğutma sistemi için G12+ antifriz, 5 litre."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "سائل تبريد مضاد للتجمد G12+ 5L",
+      "short_description": "مضاد تجمد G12+ لنظام التبريد، 5 لتر.",
+      "description": "سائل تبريد/مضاد تجمد long-life للمحركات الحديثة.",
+      "seo": {
+        "title": "سائل تبريد مضاد للتجمد G12+ 5L | Buzzard",
+        "description": "مضاد تجمد G12+ لنظام التبريد، 5 لتر."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "scheibenwischer-set": {
+    "en": {
+      "name": "Bosch Aerotwin Wiper Blade Set",
+      "short_description": "Aerotwin wiper blade set for clear vision in rain.",
+      "description": "Premium Bosch Aerotwin wiper set for front windshield.",
+      "seo": {
+        "title": "Bosch Aerotwin Wiper Blade Set | Buzzard",
+        "description": "Aerotwin wiper blade set for clear vision in rain."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Bosch Aerotwin Silecek Seti",
+      "short_description": "Yağmurda net görüş için Aerotwin silecek seti.",
+      "description": "Ön cam için premium Bosch Aerotwin silecek seti.",
+      "seo": {
+        "title": "Bosch Aerotwin Silecek Seti | Buzzard",
+        "description": "Yağmurda net görüş için Aerotwin silecek seti."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "طقم مساحات Bosch Aerotwin",
+      "short_description": "طقم مساحات Aerotwin لرؤية واضحة في المطر.",
+      "description": "طقم مساحات Bosch Aerotwin premium للزجاج الأمامي.",
+      "seo": {
+        "title": "طقم مساحات Bosch Aerotwin | Buzzard",
+        "description": "طقم مساحات Aerotwin لرؤية واضحة في المطر."
+      },
+      "source": "catalog_i18n_fill"
+    }
+  },
+  "reifen-pilot-sport": {
+    "en": {
+      "name": "Michelin Pilot Sport 4 Tyre 225/45 R17",
+      "short_description": "Michelin Pilot Sport 4 summer tyre, 225/45 R17.",
+      "description": "High-performance summer tyre for sporty driving dynamics.",
+      "seo": {
+        "title": "Michelin Pilot Sport 4 Tyre 225/45 R17 | Buzzard",
+        "description": "Michelin Pilot Sport 4 summer tyre, 225/45 R17."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "tr": {
+      "name": "Michelin Pilot Sport 4 Lastik 225/45 R17",
+      "short_description": "Michelin Pilot Sport 4 yaz lastiği, 225/45 R17.",
+      "description": "Sportif sürüş dinamikleri için yüksek performanslı yaz lastiği.",
+      "seo": {
+        "title": "Michelin Pilot Sport 4 Lastik 225/45 R17 | Buzzard",
+        "description": "Michelin Pilot Sport 4 yaz lastiği, 225/45 R17."
+      },
+      "source": "catalog_i18n_fill"
+    },
+    "ar": {
+      "name": "إطار Michelin Pilot Sport 4 225/45 R17",
+      "short_description": "إطار صيفي Michelin Pilot Sport 4، 225/45 R17.",
+      "description": "إطار صيفي عالي الأداء للقيادة الرياضية.",
+      "seo": {
+        "title": "إطار Michelin Pilot Sport 4 225/45 R17 | Buzzard",
+        "description": "إطار صيفي Michelin Pilot Sport 4، 225/45 R17."
+      },
+      "source": "catalog_i18n_fill"
     }
   }
 }

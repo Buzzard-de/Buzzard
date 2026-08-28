@@ -10,6 +10,41 @@ const auditFile = path.join(__dirname, "..", "data", "price-stock-audit.json");
 
 const LARGE_CHANGE_PERCENT = Number(process.env.BUZZARD_PRICE_ALERT_PERCENT || 25);
 
+let guardianBridge;
+function getGuardianBridge() {
+  if (!guardianBridge) {
+    try {
+      guardianBridge = require("./guardianBridge");
+    } catch {
+      guardianBridge = null;
+    }
+  }
+  return guardianBridge;
+}
+
+async function notifyGuardianPriceAnomaly(productId, oldPrice, newPrice) {
+  const bridge = getGuardianBridge();
+  if (!bridge?.isGuardianConfigured?.()) return;
+  const qs = new URLSearchParams({
+    product_id: String(productId),
+    old_price: String(Number(oldPrice) || 0),
+    new_price: String(Number(newPrice) || 0),
+    threshold_pct: String(LARGE_CHANGE_PERCENT),
+  });
+  await bridge.fetchGuardian(`/anomalies/price?${qs}`, { method: "POST" });
+}
+
+async function notifyGuardianStockAnomaly(productId, oldStock, newStock) {
+  const bridge = getGuardianBridge();
+  if (!bridge?.isGuardianConfigured?.()) return;
+  const qs = new URLSearchParams({
+    product_id: String(productId),
+    old_stock: String(Number(oldStock) || 0),
+    new_stock: String(Number(newStock) || 0),
+  });
+  await bridge.fetchGuardian(`/anomalies/stock?${qs}`, { method: "POST" });
+}
+
 function ensureDataFile(filePath, fallback) {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -161,7 +196,14 @@ function applyPriceStockUpdate({ productId, supplierPrice, stock, supplier, prev
       change_percent: anomaly.changePercent,
       job_id: job.id,
     });
+    notifyGuardianPriceAnomaly(productId, previous.supplier_price?.amount, priceCheck.value.amount).catch(
+      () => {}
+    );
     return { ok: true, update, requiresApproval: true, job, anomaly };
+  }
+
+  if (previous.stock != null && stockInfo.stock !== previous.stock) {
+    notifyGuardianStockAnomaly(productId, previous.stock, stockInfo.stock).catch(() => {});
   }
 
   recordAudit({

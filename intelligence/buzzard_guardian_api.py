@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from buzzard_ai_guardian_max import (
@@ -156,6 +156,32 @@ def memory_search(q: str, namespace: Optional[str] = None, limit: int = 20):
 @app.post("/backup")
 def backup(label: str = "manual"):
     return guardian().dr.backup(label)
+
+
+@app.post("/anomalies/price")
+def price_anomaly(
+    product_id: str = Query(...),
+    old_price: float = Query(...),
+    new_price: float = Query(...),
+    threshold_pct: float = Query(25.0),
+):
+    incident_id = guardian().anomalies.check_price_change(
+        product_id, old_price, new_price, threshold_pct
+    )
+    return {"incident_id": incident_id}
+
+
+@app.post("/anomalies/stock")
+def stock_anomaly(
+    product_id: str = Query(...),
+    old_stock: int = Query(...),
+    new_stock: int = Query(...),
+    max_jump: int = Query(10000),
+):
+    incident_id = guardian().anomalies.check_stock(
+        product_id, old_stock, new_stock, max_jump
+    )
+    return {"incident_id": incident_id}
 
 
 @app.get("/self-test")

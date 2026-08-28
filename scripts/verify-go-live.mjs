@@ -226,6 +226,42 @@ async function main() {
   }
 
   console.log("");
+  console.log("AI Guardian (optional):");
+  try {
+    const res = await fetch(`${API}/api/guardian/status`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const body = await res.json();
+      if (body.configured && body.reachable) {
+        console.log(`  [OK] guardian reachable (sales=${body.health?.sales_enabled})`);
+      } else if (body.configured) {
+        console.log(`  [WARN] guardian configured but unreachable`);
+      } else {
+        console.log(`  [SKIP] guardian not configured yet`);
+      }
+    } else {
+      console.log(`  [SKIP] ${res.status} /api/guardian/status`);
+    }
+  } catch (error) {
+    console.log(`  [SKIP] /api/guardian/status — ${error.message}`);
+  }
+
+  console.log("");
+  console.log("P1 catalog platform (optional):");
+  try {
+    const res = await fetch(`${API}/api/p1/status`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const body = await res.json();
+      console.log(
+        `  [OK] catalog_mode=${body.catalog_mode} products=${body.product_count} sales=${body.sales_enabled}`
+      );
+    } else {
+      console.log(`  [SKIP] ${res.status} /api/p1/status`);
+    }
+  } catch (error) {
+    console.log(`  [SKIP] /api/p1/status — ${error.message}`);
+  }
+
+  console.log("");
   if (failed > 0) {
     console.error(`${failed} check(s) failed.`);
     process.exit(1);

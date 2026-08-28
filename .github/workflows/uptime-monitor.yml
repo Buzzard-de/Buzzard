@@ -22,3 +22,12 @@ jobs:
           BUZZARD_API_URL: https://buzzard-api.onrender.com
           BUZZARD_VERIFY_RETRIES: "4"
           BUZZARD_VERIFY_RETRY_MS: "8000"
+
+      - name: P1 catalog smoke (non-blocking)
+        continue-on-error: true
+        run: |
+          node scripts/p1-smoke.mjs || true
+          node scripts/p1-seo-i18n-smoke.mjs || true
+        env:
+          BUZZARD_SITE_URL: https://buzzard24.de
+          BUZZARD_API_URL: https://buzzard-api.onrender.com

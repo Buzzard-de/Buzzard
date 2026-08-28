@@ -17,3 +17,23 @@ Gespeicherte Berichte und Snapshots des Buzzard-Projekts.
 ## ChatGPT-Paket (Bericht + Alles-in-einer-Datei)
 
 [`buzzard24-komplettbericht-CHATGPT.zip`](./buzzard24-komplettbericht-CHATGPT.zip)
+
+## P1 Katalog-Plattform (27.08.2026)
+
+**Implementierung:** Aufgaben 05–15 (Katalogmodus, kein Verkauf)
+
+**Ordner:** [`buzzard24-p1-catalog-platform-2026-08-27/`](./buzzard24-p1-catalog-platform-2026-08-27/)
+
+**ZIP:** [`buzzard24-p1-catalog-platform-2026-08-27.zip`](./buzzard24-p1-catalog-platform-2026-08-27.zip)
+
+**PR:** [#239](https://github.com/Buzzard-de/Buzzard/pull/239)
+
+## Session-Checkpoint
+
+[`buzzard24-session-checkpoint-2026-08-27.md`](./buzzard24-session-checkpoint-2026-08-27.md)
+
+## Tagesbericht 28.08.2026 (komplett)
+
+**Ordner:** [`buzzard24-tagesbericht-2026-08-28/`](./buzzard24-tagesbericht-2026-08-28/)
+
+**ZIP:** [`buzzard24-tagesbericht-2026-08-28.zip`](./buzzard24-tagesbericht-2026-08-28.zip)

@@ -32,6 +32,8 @@ intelligence/buzzard_intelligence_v5.db
 intelligence/buzzard_intelligence_v8.db
 intelligence/buzzard_intelligence_v9.db
 intelligence/buzzard_council_v10.db
+intelligence/buzzard_guardian.sqlite3
+intelligence/backups/
 intelligence/buzzard_shared_memory_v12.db
 intelligence/buzzard_multilingual_v13.db
 intelligence/buzzard_competitor_v14.db

@@ -1,0 +1,57 @@
+{
+  "export": "buzzard24-p1-catalog-platform-2026-08-27",
+  "created_at": "2026-08-27T21:15:00Z",
+  "branch": "cursor/p1-catalog-platform-c293",
+  "pull_request": "https://github.com/Buzzard-de/Buzzard/pull/239",
+  "catalog_mode": true,
+  "sales_enabled": false,
+  "tasks_completed": ["05", "06", "07", "08", "09", "10", "11", "14", "15"],
+  "tasks_partial": ["12", "13"],
+  "files": {
+    "docs": ["docs/P1_CATALOG_PLATFORM_DE.md"],
+    "lib": ["lib/products/types.ts"],
+    "scripts": ["scripts/p1-smoke.mjs"],
+    "server_lib_new": [
+      "server/lib/productValidator.js",
+      "server/lib/priceStockQueue.js",
+      "server/lib/productAi.js",
+      "server/lib/customsAi.js",
+      "server/lib/categoryIntelligence.js",
+      "server/lib/p1CatalogPlatform.js",
+      "server/lib/adapters/supplierAdapter.js",
+      "server/lib/adapters/mockSupplierAdapter.js",
+      "server/lib/adapters/tecdocAdapter.js"
+    ],
+    "server_lib_modified": [
+      "server/lib/pricing.js",
+      "server/lib/importPipeline.js"
+    ],
+    "server_plugins_new": ["server/plugins/p1CatalogPlatformPlugin.js"],
+    "server_plugins_modified": ["server/plugins/adminCatalogPlugin.js"],
+    "aufgaben": [
+      "aufgaben/STATUS.md",
+      "aufgaben/01_P0_MERGE_DEPLOY.md",
+      "aufgaben/02_P0_ADMIN.md",
+      "aufgaben/03_P0_ORCHESTRATOR.md",
+      "aufgaben/04_P0_P1_SECURITY.md",
+      "aufgaben/05_P1_CATALOG_PIM.md",
+      "aufgaben/06_P1_SUPPLIER_API_XML_TECDOC.md",
+      "aufgaben/07_P1_PRICE_STOCK.md",
+      "aufgaben/08_P1_PRODUCT_AI.md",
+      "aufgaben/09_P1_CATEGORY_AI.md",
+      "aufgaben/10_P1_CUSTOMS_AI.md",
+      "aufgaben/11_P1_ORDER_PREP_ONLY.md",
+      "aufgaben/12_P1_SEO_GOOGLE.md",
+      "aufgaben/13_P1_I18N_UX.md",
+      "aufgaben/14_P0_P1_QA.md",
+      "aufgaben/15_P1_PRODUCTION_READINESS.md",
+      "aufgaben/16_DO_NOT_DO.md",
+      "aufgaben/17_CURSOR_MASTER_PROMPT.md",
+      "aufgaben/README_CURSOR.md"
+    ]
+  },
+  "smoke_test": {
+    "script": "scripts/p1-smoke.mjs",
+    "local_result": "8/8 passed"
+  }
+}

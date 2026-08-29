@@ -9,6 +9,10 @@ const stockSync = require("./sync/stockSync");
 const categoryReadiness = require("./categoryReadiness");
 const integrationHealth = require("./integrationHealth");
 const { runAiJobSafely } = require("./aiJobBridge");
+const importPipeline = require("./pim/importPipeline");
+const productValidation = require("./pim/productValidation");
+const productCore = require("./pim/productCore");
+const supplierMapping = require("./pim/supplierMapping");
 
 async function handleProductSync(job) {
   return productSync.runPipeline(job.payload || {});
@@ -61,6 +65,80 @@ async function handleSystemHealth(job) {
   return { integrations: health.length, checkedAt: new Date().toISOString() };
 }
 
+async function handleProductImport(job) {
+  const payload = job.payload || {};
+  return importPipeline.runPipeline(payload.raw || payload, {
+    dryRun: payload.dryRun !== false,
+    supplierId: payload.supplierId || "mock",
+    importJobId: payload.importJobId,
+    actorId: job.createdBy,
+  });
+}
+
+async function handleProductValidate(job) {
+  const payload = job.payload || {};
+  const product = payload.productId
+    ? productCore.getProduct(payload.productId)
+    : payload.product || payload.raw;
+  if (!product) {
+    const err = new Error("Product or productId required for PRODUCT_VALIDATE");
+    err.failureKind = FAILURE_KIND.VALIDATION;
+    throw err;
+  }
+  return productValidation.validateProduct(product);
+}
+
+async function handleProductNormalize(job) {
+  const raw = job.payload?.raw || job.payload || {};
+  return {
+    normalized: {
+      sku: raw.sku || raw.supplierSku,
+      supplierSku: raw.supplierSku || raw.sku,
+      ean: raw.ean,
+      gtin: raw.gtin || raw.ean,
+      mpn: raw.mpn,
+      title: raw.title || raw.name,
+      description: raw.description,
+      shortDescription: raw.shortDescription,
+      category: raw.category,
+      brand: raw.brand,
+      price: raw.price,
+      stock: raw.stock,
+      attributes: raw.attributes || {},
+      images: raw.images || [],
+    },
+    dryRun: job.payload?.dryRun !== false,
+  };
+}
+
+async function handleProductMapping(job) {
+  const payload = job.payload || {};
+  if (payload.dryRun !== false) {
+    return {
+      dryRun: true,
+      wouldMap: {
+        supplierId: payload.supplierId || "mock",
+        supplierSku: payload.supplierSku,
+        internalSku: payload.internalSku,
+        ean: payload.ean,
+      },
+    };
+  }
+  const mapping = supplierMapping.createMapping({
+    supplierId: payload.supplierId || "mock",
+    supplierSku: payload.supplierSku,
+    supplierProductId: payload.supplierProductId,
+    internalProductId: payload.internalProductId,
+    internalSku: payload.internalSku,
+    ean: payload.ean,
+    gtin: payload.gtin,
+    mpn: payload.mpn,
+    brand: payload.brand,
+    confidence: payload.confidence ?? 0.5,
+  });
+  return { mapping };
+}
+
 const HANDLERS = Object.freeze({
   [JOB_TYPES.PRODUCT_SYNC]: handleProductSync,
   [JOB_TYPES.PRICE_SYNC]: handlePriceSync,
@@ -70,6 +148,10 @@ const HANDLERS = Object.freeze({
   [JOB_TYPES.AI_TASK]: handleAiTask,
   [JOB_TYPES.NOTIFICATION]: handleNotification,
   [JOB_TYPES.SYSTEM_HEALTH]: handleSystemHealth,
+  [JOB_TYPES.PRODUCT_IMPORT]: handleProductImport,
+  [JOB_TYPES.PRODUCT_VALIDATE]: handleProductValidate,
+  [JOB_TYPES.PRODUCT_NORMALIZE]: handleProductNormalize,
+  [JOB_TYPES.PRODUCT_MAPPING]: handleProductMapping,
   manual: async (payload) => ({ ok: true, payload }),
   part4_smoke_test: async () => ({ ok: true }),
 });

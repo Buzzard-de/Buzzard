@@ -29,6 +29,7 @@
     "test:part3": "node scripts/part3-security.mjs",
     "test:part4": "node scripts/part4-smoke.mjs",
     "test:part5": "node scripts/part5-smoke.mjs",
+    "test:part6": "node scripts/part6-smoke.mjs",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test",

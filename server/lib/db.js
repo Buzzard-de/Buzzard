@@ -3465,8 +3465,204 @@ function migrateCoreFoundationPart5() {
   `).run();
 }
 
+function migrateCoreFoundationPart6() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS pim_core_brands (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      manufacturer TEXT,
+      country TEXT,
+      logo_url TEXT,
+      website TEXT,
+      status TEXT DEFAULT 'ACTIVE',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_products (
+      id TEXT PRIMARY KEY,
+      sku TEXT UNIQUE NOT NULL,
+      supplier_sku TEXT,
+      ean TEXT,
+      gtin TEXT,
+      mpn TEXT,
+      brand_id INTEGER,
+      manufacturer TEXT,
+      title TEXT NOT NULL,
+      description TEXT,
+      short_description TEXT,
+      taxonomy_category_id TEXT,
+      pim_category_id INTEGER,
+      subcategory_id TEXT,
+      attributes_json TEXT DEFAULT '{}',
+      price REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      stock INTEGER DEFAULT 0,
+      supplier_id TEXT,
+      status TEXT DEFAULT 'DRAFT',
+      visibility TEXT DEFAULT 'HIDDEN',
+      seo_json TEXT DEFAULT '{}',
+      metadata_json TEXT DEFAULT '{}',
+      quality_score INTEGER DEFAULT 0,
+      parent_product_id TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(brand_id) REFERENCES pim_core_brands(id),
+      FOREIGN KEY(parent_product_id) REFERENCES pim_core_products(id)
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_variants (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      sku TEXT UNIQUE,
+      axis TEXT NOT NULL,
+      value TEXT NOT NULL,
+      ean TEXT,
+      price_delta REAL DEFAULT 0,
+      stock INTEGER DEFAULT 0,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(product_id) REFERENCES pim_core_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_media (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      media_type TEXT NOT NULL,
+      url TEXT NOT NULL,
+      alt_text TEXT,
+      is_primary INTEGER DEFAULT 0,
+      sort_order INTEGER DEFAULT 0,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(product_id) REFERENCES pim_core_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_supplier_mappings (
+      id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      supplier_product_id TEXT,
+      supplier_sku TEXT,
+      internal_product_id TEXT,
+      internal_sku TEXT,
+      ean TEXT,
+      gtin TEXT,
+      mpn TEXT,
+      brand TEXT,
+      confidence REAL DEFAULT 0.5,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(internal_product_id) REFERENCES pim_core_products(id)
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_category_mappings (
+      taxonomy_category_id TEXT PRIMARY KEY,
+      pim_category_id INTEGER,
+      main_category_id TEXT,
+      subcategory_id TEXT,
+      sub_subcategory_id TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_attribute_schemas (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category_id TEXT NOT NULL,
+      schema_json TEXT NOT NULL,
+      version INTEGER DEFAULT 1,
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(category_id, version)
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_product_audit (
+      id TEXT PRIMARY KEY,
+      product_id TEXT,
+      action TEXT NOT NULL,
+      source TEXT NOT NULL,
+      actor_id TEXT,
+      field_name TEXT,
+      before_json TEXT,
+      after_json TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_import_stages (
+      id TEXT PRIMARY KEY,
+      import_job_id TEXT,
+      product_id TEXT,
+      stage TEXT NOT NULL,
+      status TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_ean ON pim_core_products(ean) WHERE ean IS NOT NULL AND ean != '';
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_gtin ON pim_core_products(gtin) WHERE gtin IS NOT NULL AND gtin != '';
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_mpn ON pim_core_products(mpn) WHERE mpn IS NOT NULL AND mpn != '';
+    CREATE INDEX IF NOT EXISTS idx_pim_core_products_status ON pim_core_products(status);
+    CREATE INDEX IF NOT EXISTS idx_pim_core_products_taxonomy ON pim_core_products(taxonomy_category_id);
+    CREATE INDEX IF NOT EXISTS idx_pim_core_supplier_map ON pim_core_supplier_mappings(supplier_id, supplier_sku);
+  `);
+
+  const brandCount = db.prepare("SELECT COUNT(*) n FROM pim_core_brands").get().n;
+  if (brandCount === 0) {
+    db.prepare(`
+      INSERT INTO pim_core_brands(name, slug, manufacturer, country, status)
+      VALUES ('Buzzard Demo', 'buzzard-demo', 'Buzzard GmbH', 'DE', 'ACTIVE')
+    `).run();
+    const brandId = db.prepare("SELECT id FROM pim_core_brands LIMIT 1").get().id;
+    db.prepare(`
+      INSERT INTO pim_core_products(
+        id, sku, ean, gtin, brand_id, title, short_description, description,
+        taxonomy_category_id, price, stock, status, visibility, quality_score
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      "pim_prod_demo001",
+      "BZ-CORE-DEMO-001",
+      "4006381333931",
+      "4006381333931",
+      brandId,
+      "Universal Demo Product",
+      "Category-agnostic PIM demo",
+      "Part 6 Product Core foundation item.",
+      "cat-05",
+      29.99,
+      50,
+      "READY",
+      "HIDDEN",
+      72
+    );
+    db.prepare(`
+      INSERT INTO pim_core_attribute_schemas(category_id, schema_json) VALUES (?, ?)
+    `).run(
+      "cat-05",
+      JSON.stringify({
+        attributes: [
+          { key: "oem", label: "OEM Number", type: "string" },
+          { key: "engine", label: "Engine", type: "string" },
+          { key: "year", label: "Year", type: "string" },
+          { key: "vehicle_compatibility", label: "Vehicle Compatibility", type: "text" },
+        ],
+      })
+    );
+    db.prepare(`
+      INSERT INTO pim_core_attribute_schemas(category_id, schema_json) VALUES (?, ?)
+    `).run(
+      "cat-02",
+      JSON.stringify({
+        attributes: [
+          { key: "skin_type", label: "Skin Type", type: "string" },
+          { key: "volume", label: "Volume", type: "string" },
+          { key: "ingredients", label: "Ingredients", type: "text" },
+        ],
+      })
+    );
+  }
+
+  db.prepare(`UPDATE pim_core_products SET taxonomy_category_id = 'cat-05' WHERE taxonomy_category_id = 'automotive'`).run();
+  db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-05' WHERE category_id = 'automotive'`).run();
+  db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-02' WHERE category_id = 'cosmetics'`).run();
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
+migrateCoreFoundationPart6();
 
 
 function seed() {

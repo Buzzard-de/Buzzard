@@ -35,7 +35,13 @@ Browser → buzzard24.de (static)
 | Control Center | `server/lib/controlCenter.js` | AI, Status, Approvals |
 | Job Queue | `server/lib/jobQueue.js` | Background job foundation |
 | Rate Limit Store | `server/lib/rateLimitStore.js` | memory/file/redis backends |
-| Category Readiness | `server/lib/categoryVisibility.js` | Visibility + readiness checks |
+| Job Worker | `server/lib/jobWorker.js` | Background job execution |
+| Job Scheduler | `server/lib/jobScheduler.js` | One-time / recurring / delayed |
+| Supplier Adapters | `server/lib/supplier/` | REST/XML/CSV/JSON foundation |
+| Sync Pipelines | `server/lib/sync/` | Product / price / stock |
+| Category Readiness | `server/lib/categoryReadiness.js` | Real PASS/FAIL/WARNING checks |
+| Redis Client | `server/lib/redisClient.js` | Upstash REST |
+| **Product Core (PIM)** | `server/lib/pim/` | Category-agnostic PIM (Part 6) |
 | RBAC | `server/lib/rbac.js` | Rollen + Permissions |
 
 ## Auth Realms
@@ -65,7 +71,9 @@ Legacy-Systeme bleiben aktiv; die Facade abstrahiert sie.
 | `npm run test:part3` | Security / RBAC smoke |
 | `npm run test:part4` | Governance / jobs / nav smoke |
 | `npm run test:unit` | Vitest unit tests (36) |
-| `npm run test:rbac-audit` | Plugin auth helper scan |
+| `npm run test:part5` | Automation / worker smoke |
+| `npm run test:part6` | Product Core / PIM smoke |
+| `npm run test:e2e` | Playwright admin E2E |
 
 ## Deployment
 

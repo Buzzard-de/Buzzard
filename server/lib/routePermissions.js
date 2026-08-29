@@ -71,6 +71,7 @@ const PREFIX = [
   { prefix: "/api/admin/products", read: "products.read", write: "products.write" },
   { prefix: "/api/admin/catalog", read: "products.read", write: "products.write" },
   { prefix: "/api/admin/pim", read: "products.read", write: "products.write" },
+  { prefix: "/api/admin/pim-core", read: "products.read", write: "products.write" },
   { prefix: "/api/admin/orders", read: "orders.read", write: "orders.write" },
   { prefix: "/api/admin/order", read: "orders.read", write: "orders.write" },
   { prefix: "/api/admin/suppliers", read: "suppliers.read", write: "suppliers.write" },

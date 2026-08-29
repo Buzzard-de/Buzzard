@@ -51,7 +51,7 @@ function assertCanProcessPayment({ req } = {}) {
 function assertCanSubmitSupplierOrder({ req } = {}) {
   const check = assertFeatureAllowed("supplier_order");
   if (!check.allowed) {
-    logCommerceBlock("order_creation_blocked", { type: "supplier_order", reason: check.code }, req);
+    logCommerceBlock("supplier_order_blocked", { type: "supplier_order", reason: check.code }, req);
     return { blocked: true, code: check.code, message: "Supplier orders are disabled", status: 403 };
   }
   return null;

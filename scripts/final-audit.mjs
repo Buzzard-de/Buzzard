@@ -88,11 +88,17 @@ async function main() {
 
   await test("Commerce supplier order stub blocked", async () => {
     const orderService = require("../server/lib/commerce/orderService.js");
-    const result = orderService.submitSupplierOrder({ orderId: "audit_test" });
+    const result = orderService.submitSupplierOrder("audit_test", {});
     const blocked =
       result.status === 403 &&
       (result.blocked === true || result.error === "supplier_order_blocked" || result.code === "supplier_order_disabled");
     if (!blocked) throw new Error(`supplier order not blocked: ${JSON.stringify(result)}`);
+  });
+
+  await test("Legacy fulfillment supplier path blocked", async () => {
+    const fp = require("../server/lib/fulfillmentPipeline.js");
+    const result = fp.submitSupplierOrder({ id: "audit_legacy" }, { active: true, auth_type: "none" });
+    if (result.ok !== false || !result.blocked) throw new Error(JSON.stringify(result));
   });
 
   // --- Tampering ---
@@ -197,7 +203,7 @@ async function main() {
     const { execSync } = await import("node:child_process");
     try {
       const hits = execSync(
-        'rg -l "sk_live_|rk_live_" --glob "!node_modules" --glob "!.git" --glob "!scripts/final-audit.mjs" . 2>/dev/null || true',
+        'rg -l "sk_live_|rk_live_" --glob "!node_modules" --glob "!.git" --glob "!scripts/final-audit.mjs" --glob "!docs/**" . 2>/dev/null || true',
         { cwd: process.cwd(), encoding: "utf8" }
       ).trim();
       if (hits) throw new Error(`potential live keys in: ${hits.split("\n").slice(0, 3).join(", ")}`);

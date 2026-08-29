@@ -1,16 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
+const { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require("./dbPaths");
 
 const dataDir = path.join(__dirname, "..", "data");
 fs.mkdirSync(dataDir, { recursive: true });
 
-const dbPath = process.env.BUZZARD_DB_PATH
-  ? path.resolve(process.env.BUZZARD_DB_PATH)
-  : path.join(dataDir, "buzzard.db");
-if (process.env.BUZZARD_DB_PATH) {
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-}
+const dbPath = ensureDbDirectory(resolveDbPath());
 const db = new Database(dbPath);
 db.pragma("foreign_keys = ON");
 
@@ -3822,6 +3818,7 @@ function getDatabaseHealth() {
     const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
     const products = db.prepare("SELECT COUNT(*) n FROM products").get().n;
     const orders = db.prepare("SELECT COUNT(*) n FROM orders").get().n;
+    const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
       path: dbPath,
@@ -3829,18 +3826,32 @@ function getDatabaseHealth() {
       users,
       products,
       orders,
+      persistence: {
+        mode: persistence.mode,
+        persistent: persistence.persistent,
+        ephemeralRisk: persistence.ephemeralRisk,
+        backupDir: persistence.backupDir,
+      },
     };
   } catch (error) {
+    const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
       path: dbPath,
       version: "0.3.0",
       error: error.message,
+      persistence: {
+        mode: persistence.mode,
+        persistent: persistence.persistent,
+        ephemeralRisk: persistence.ephemeralRisk,
+      },
     };
   }
 }
 
 module.exports = {
   db,
+  dbPath,
   getDatabaseHealth,
+  getPersistenceInfo: () => getPersistenceInfo(dbPath),
 };

@@ -100,7 +100,7 @@ test.describe("Part 10 — Mobile layout checks", () => {
         test.skip();
       }
       if (label === "mobile320") {
-        test.skip(true, "320px overflow tracked as deferred layout polish");
+        // Part 12 — 320px overflow fix re-enabled
       }
       await page.setViewportSize(viewport);
       for (const path of ["/", "/warenkorb/", "/checkout/"]) {

@@ -31,6 +31,8 @@ const EVENT_SEVERITY = {
   quantity_tampering: "HIGH",
   idempotency_conflict: "INFO",
   commerce_permission_denied: "HIGH",
+  commercial_order_blocked: "CRITICAL",
+  supplier_order_blocked: "CRITICAL",
   go_live_blocked: "WARNING",
   go_live_requested: "INFO",
   go_live_approved: "INFO",

@@ -204,7 +204,11 @@ function addShippingMethod(code, body = {}) {
   };
 }
 
-function createSupplierOrder(body = {}) {
+function createSupplierOrder(body = {}, req = null) {
+  const salesGuard = require("./commerce/salesGuard");
+  const block = salesGuard.assertSupplierOrderAllowed({ req });
+  if (block) return salesGuard.blockHttpResult(block);
+
   const supplierCode = body.supplierCode || body.supplier_code;
   const buzzardOrderNumber = body.buzzardOrderNumber || body.buzzard_order_number;
   if (!supplierCode || !buzzardOrderNumber) {

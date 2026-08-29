@@ -1,6 +1,13 @@
 # Buzzard API — Render Blueprint (https://render.com/docs/blueprint-spec)
-# Persistent SQLite: upgrade to paid plan, add disk mount /var/data, set BUZZARD_DB_PATH=/var/data/buzzard.db
-# After deploy: node scripts/sync-search-index.mjs (syncs existing catalog to search index)
+#
+# PERSISTENT SQLite (Part 12 — required for production data):
+#   1. Upgrade buzzard-api to a paid plan with persistent disk
+#   2. Mount disk at /var/data
+#   3. Set BUZZARD_DB_PATH=/var/data/buzzard.db
+#   4. Set BUZZARD_BACKUP_DIR=/var/data/backups (optional)
+#   5. After deploy: npm run backup:db && node scripts/sync-search-index.mjs
+#
+# Ephemeral free-tier filesystem LOSES all SQLite data on redeploy.
 services:
   - type: web
     name: buzzard-api

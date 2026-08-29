@@ -1,44 +1,36 @@
-# Legacy Commerce Migration
+# Legacy Commerce Migration (Part 12)
 
-Storefront default path (when `NEXT_PUBLIC_COMMERCE_CORE=1`):
+## Status by endpoint group
 
-```
-/api/commerce/cart/*
-/api/commerce/checkout/*
-/api/commerce/orders/*
-```
+| Route prefix | Status | Replacement | Server guard |
+|--------------|--------|-------------|--------------|
+| `/api/cart/*` | **LEGACY** | `/api/commerce/cart` | Catalog mode; deprecation headers |
+| `/api/cart-checkout/*` | **LEGACY** | `/api/commerce/checkout` | `assertSalesEnabled` on complete |
+| `/api/orders`, `/api/db/orders` | **LEGACY** | `/api/commerce/orders` | `requireSalesEnabled` on POST |
+| `/api/products` | **LEGACY** | `/api/catalog/products` | Public read |
+| `/api/commerce/*` | **ACTIVE** | — | Commerce guards + salesGuard |
 
-## Route classification
+## Deprecation headers
 
-| Route | Status | Storefront usage (COMMERCE_CORE=1) | Replacement |
-|-------|--------|-----------------------------------|-------------|
-| `/api/commerce/*` | **ACTIVE** | Primary | — |
-| `/api/cart/*` | **LEGACY** | Bypassed (`lib/store/client.ts`) | `/api/commerce/cart/*` |
-| `/api/orders` | **LEGACY** | Bypassed (`lib/orders/client.ts` when commerce on) | `/api/commerce/checkout/*` |
-| `/api/cart-checkout/*` | **LEGACY** | Unused by storefront bridge | `/api/commerce/*` |
-| `/api/customer/checkout/*` | **DEPRECATED** | Bypassed in commerce mode | `/api/commerce/checkout/*` |
-| `/api/customer/coupons/validate` | **DEPRECATED** | Bypassed | `/api/commerce/coupons/validate` |
+All legacy commerce responses include:
 
-## Deprecation markers
-
-Legacy responses include:
-
+- `x-buzzard-legacy-commerce: true`
 - `Deprecation: true`
-- `X-Buzzard-Legacy-Commerce: true`
 - `Link: </api/commerce/...>; rel="successor-version"`
 
-## Removal policy
+## Part 12 hardening
 
-Legacy routes are **not deleted** in Part 10. Removal requires:
+- `legacyCommerce.requireLegacyCommerceAllowed()` — blocks commercial actions when SALES=0
+- Legacy fulfillment pipeline gated via `salesGuard.assertSupplierOrderAllowed()`
+- Supplier hub + integration hub require admin auth + supplier guard
 
-1. Zero production component references
-2. Migration period documented
-3. Admin tooling updated
+## Migration guidance
 
-## Remaining references
+1. Set `NEXT_PUBLIC_COMMERCE_CORE=1` on storefront
+2. Route cart/checkout through `lib/commerce/*`
+3. Remove direct calls to `/api/cart`, `/api/orders` from new code
+4. Do not remove legacy plugins until all clients migrated
 
-| File | Path | Action |
-|------|------|--------|
-| `lib/store/client.ts` | `/api/cart/*` | Used when `NEXT_PUBLIC_SQLITE_STORE=1` |
-| `lib/orders/client.ts` | `/api/orders` | Used when commerce core off |
-| `scripts/smoke-core.mjs` | `/api/cart/*` | Legacy smoke — keep for SQLite store |
+## Do not delete
+
+Legacy plugins remain registered for compatibility. Removal requires dependency audit.

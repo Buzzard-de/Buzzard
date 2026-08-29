@@ -81,7 +81,8 @@ module.exports = {
     });
 
     app.post("/api/supplier-integration-hub/orders", (req, res) => {
-      const result = supplierIntegrationHub.createSupplierOrder(req.body || {});
+      if (!requireAnyAdmin(req, res)) return;
+      const result = supplierIntegrationHub.createSupplierOrder(req.body || {}, req);
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(202).json(result);
     });

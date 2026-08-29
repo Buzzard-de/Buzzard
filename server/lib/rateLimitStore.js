@@ -16,6 +16,10 @@ function resolveBackend() {
   return "memory";
 }
 
+function isRateLimitDisabled() {
+  return process.env.BUZZARD_RATE_LIMIT_DISABLED === "1" || process.env.BUZZARD_TEST_MODE === "1";
+}
+
 function createMemoryBackend() {
   const buckets = new Map();
   return {
@@ -200,6 +204,12 @@ if (backend.name === "file") {
 }
 
 function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
+  if (isRateLimitDisabled()) {
+    return function isRateLimited() {
+      return false;
+    };
+  }
+
   return function isRateLimited(req, options = {}) {
     const { getClientIp } = require("./security");
     const key = `${keyPrefix}${options.key || getClientIp(req)}`;
@@ -220,6 +230,7 @@ function getStoreInfo() {
   const info = {
     backend: backend.name,
     configured: resolveBackend(),
+    disabled: isRateLimitDisabled(),
     bucketCount: backend.size(),
     persistFile: backend.name === "file" ? persistFile : null,
     fallbackFrom: backend.fallbackFrom || null,
@@ -248,4 +259,5 @@ module.exports = {
   getStoreInfo,
   resetBackendForTests,
   resolveBackend,
+  isRateLimitDisabled,
 };

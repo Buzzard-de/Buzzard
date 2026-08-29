@@ -1,61 +1,40 @@
-# Buzzard Authentication
+# Authentication (Part 12)
 
-**Stand:** Part 4 — Unified Auth Facade + Session UI
+## Authoritative system
 
-## Facade API
+**Unified Auth Facade** — `server/core/auth/index.js`
 
-Pfad: `server/core/auth/index.js`
+| Realm | Provider | Paths | Status |
+|-------|----------|-------|--------|
+| admin | `adminProvider.js` | `/api/admin/*` | **AUTHORITATIVE** |
+| customer | `customerProvider.js` | `/api/account/*`, `/api/customer/*` | **AUTHORITATIVE** |
+| service | `serviceProvider.js` | `/api/auth/*`, `/api/db/*` | **AUTHORITATIVE** |
+| ai | `aiProvider.js` | `/api/ai/internal/*` | **AUTHORITATIVE** |
 
-| Funktion | Beschreibung |
-|----------|--------------|
-| `authenticate(req, { realm })` | Identität ermitteln + an req hängen |
-| `getCurrentUser(req)` | Aktuelle Identität (alle Realms) |
-| `requireAuth(req, res, { realm })` | 401 wenn nicht authentifiziert |
-| `requireRole(req, res, roles)` | Rollen-Check |
-| `requirePermission(req, res, permission)` | RBAC-Check + Event bei Deny |
-| `logout(req, realm)` | Session beenden |
-| `verifyMFA(req, res, { code, challengeToken })` | Admin 2FA |
-| `getSession(req, realm)` | Session-Objekt |
+Global RBAC: `server/lib/globalAuthMiddleware.js` wraps routes via `wrapRouteHandler`.
 
-## Realms
+## Legacy (compatibility — wrapped by providers)
 
-### admin
-- Legacy: `server/lib/auth.js`
-- Bearer Token → JSON Session oder JWT-Admin-Fallback
-- `/api/admin/*`
+| System | File | Role |
+|--------|------|------|
+| Admin file sessions | `server/lib/auth.js` | Used by `adminProvider` |
+| Customer sessions | `server/lib/customerAuth.js` | Used by `customerProvider` |
+| JWT (dbAuth) | `server/lib/dbAuth.js` | Used by `serviceProvider` |
 
-### customer
-- Legacy: `server/lib/customerAuth.js`
-- `/api/account/*`
+**Do not remove** legacy modules — they are internal implementations behind the facade.
 
-### service
-- Legacy: `server/lib/dbAuth.js`
-- JWT für SQLite-User
-- `/api/auth/*`
+## Part 12 changes
 
-### ai
-- `x-buzzard-ai-employee-id` Header
-- Nur aktive AI Employees
-- Keine Admin-Permissions
+- Supplier integration hub `POST /orders` now requires admin auth (was unauthenticated)
+- All supplier order paths use `salesGuard` regardless of auth realm
+- AI employees cannot inherit admin supplier permissions
 
-## Migration
+## CSRF
 
-Bestehende `requireAuth()` in `auth.js` bleibt kompatibel.  
-Neue Code sollte die Facade nutzen:
+Cookie-based admin mutations require CSRF when `BUZZARD_CSRF_ENFORCE=1`. Bearer flows exempt on login paths.
 
-```javascript
-const auth = require("../core/auth");
-auth.requireAuth(req, res, { realm: "admin" });
-auth.requirePermission(req, res, "products.read");
-```
+## Session security
 
-## Session Security
-
-- 8h TTL, sessionId pro Session
-- IP + User-Agent gespeichert
-- Revocation via Admin API
-- Logout invalidiert Token sofort
-
-## Nicht implementiert
-
-- Unified Refresh für JSON-Admin-Sessions (JWT Refresh über Identity Security v2.0)
+- TTL enforced
+- Revocation via `DELETE /api/admin/sessions/:id`
+- Invalid sessions → 401

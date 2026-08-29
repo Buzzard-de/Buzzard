@@ -134,7 +134,7 @@ module.exports = {
 
     app.post("/api/admin/supplier-hub/supplier-orders", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = supplierHub.createSupplierOrder(req.body || {});
+      const result = supplierHub.createSupplierOrder(req.body || {}, req);
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(result.status || 201).json(result.order);
     });

@@ -5,13 +5,17 @@ const require = createRequire(import.meta.url);
 
 describe("rateLimitStore", () => {
   const prevStore = process.env.BUZZARD_RATE_LIMIT_STORE;
+  const prevTestMode = process.env.BUZZARD_TEST_MODE;
 
   afterEach(() => {
     process.env.BUZZARD_RATE_LIMIT_STORE = prevStore;
+    if (prevTestMode === undefined) delete process.env.BUZZARD_TEST_MODE;
+    else process.env.BUZZARD_TEST_MODE = prevTestMode;
     delete require.cache[require.resolve("../lib/rateLimitStore")];
   });
 
   it("memory backend rate limits after max requests", () => {
+    delete process.env.BUZZARD_TEST_MODE;
     process.env.BUZZARD_RATE_LIMIT_STORE = "memory";
     delete require.cache[require.resolve("../lib/rateLimitStore")];
     const { createRateLimiter, getStoreInfo } = require("../lib/rateLimitStore");
@@ -26,6 +30,7 @@ describe("rateLimitStore", () => {
   });
 
   it("resolveBackend respects env", () => {
+    delete process.env.BUZZARD_TEST_MODE;
     process.env.BUZZARD_RATE_LIMIT_STORE = "file";
     delete require.cache[require.resolve("../lib/rateLimitStore")];
     const { getStoreInfo } = require("../lib/rateLimitStore");

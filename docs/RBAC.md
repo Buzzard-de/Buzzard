@@ -1,6 +1,12 @@
 # Buzzard RBAC
 
-**Stand:** Part 4 — Global Authorization + Nav Filtering
+**Stand:** Part 12 — Global Authorization + Nav Filtering
+
+## Part 12 additions
+
+- Supplier integration hub `POST /orders` requires admin auth (was public)
+- Supplier orders require `supplier_order` feature flag — not granted via admin role alone when SALES=0
+- AI employees cannot inherit supplier submission permissions from admin realm
 
 ## Rollen
 

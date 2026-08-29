@@ -1,6 +1,13 @@
 # Buzzard Security
 
-**Stand:** Part 4
+**Stand:** Part 12
+
+## Part 12 additions
+
+- **Supplier order blocked** event (`supplier_order_blocked`, CRITICAL) on all paths when SALES=0
+- **Legacy fulfillment** gated — no demo auto-submit without sales + supplier flags
+- **Test rate limits:** `BUZZARD_TEST_MODE=1` disables rate limiting in smoke/E2E only
+- **Production restore guard:** `BUZZARD_ALLOW_PRODUCTION_RESTORE=1` required for `/var/data` targets
 
 ## Schutzmaßnahmen (implementiert)
 

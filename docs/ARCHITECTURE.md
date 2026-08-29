@@ -1,7 +1,14 @@
 # Buzzard Architecture
 
-**Stand:** Part 5 (August 2026)  
+**Stand:** Part 12 (August 2026)  
 **Modus:** Katalogmodus (`BUZZARD_SALES_ENABLED=0`)
+
+## Part 12 additions
+
+- **DB paths:** `server/lib/dbPaths.js` — central `BUZZARD_DB_PATH`, persistence metadata in `/api/health/db`
+- **Sales guard:** `server/lib/commerce/salesGuard.js` — commercial/supplier/go-live gate for all order paths
+- **Taxonomy:** `data/buzzard_categories.json` (53 L1) authoritative via `server/lib/taxonomyCanonical.js`
+- **Backup:** `npm run backup:db`, `npm run restore:db`
 
 ## Stack
 

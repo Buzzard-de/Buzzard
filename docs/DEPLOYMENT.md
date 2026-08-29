@@ -1,6 +1,6 @@
-# Deployment Guide (Part 13)
+# Deployment Guide (Part 13–14)
 
-See also: `docs/PART12_DEPLOY_CHECKLIST.md`, `docs/PRODUCTION_RUNBOOK.md`
+See also: `docs/PART12_DEPLOY_CHECKLIST.md`, `docs/PRODUCTION_RUNBOOK.md`, `docs/PART14_FINAL_REPORT.md`
 
 ## Deployment identity
 
@@ -64,7 +64,25 @@ Startup validates environment and database in production — fatal on misconfigu
 Run after each deploy:
 
 ```bash
-npm run test:production-smoke
+BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:production-smoke
+BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part14
 ```
 
-If endpoints return 404 → **DEPLOYMENT_DRIFT / STALE DEPLOY**
+If endpoints return 404 → **DEPLOYMENT_DRIFT / STALE DEPLOY** — do not report PASS.
+
+### Manual Render deploy (when agent blocked)
+
+1. Merge PR to `main`
+2. Render Dashboard → `buzzard-api` → **Manual Deploy** → Deploy latest commit
+3. Watch build logs; confirm health check passes
+4. Re-run smoke tests above
+
+### Resolving deployment drift
+
+| Signal | Action |
+|--------|--------|
+| `/api/health/version` → 404 | Redeploy — Part 13+ not live |
+| `deployment.drift=true` | Redeploy expected commit; set `RENDER_GIT_COMMIT` via Render |
+| `main` behind feature branch | Merge PR first |
+
+**Part 14 baseline (2026-08-29):** `DEPLOYMENT_DRIFT=true`, production on pre-Part-13 code.

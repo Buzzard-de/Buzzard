@@ -79,10 +79,12 @@ Production smoke → https://buzzard-api.onrender.com
 
 ## Next steps
 
-1. Merge PR #254 (draft)
-2. Render redeploy from `main`
+1. Merge PR #254 (draft) → then Part 14 PR
+2. Render redeploy from `main` (manual if no `RENDER_API_KEY`)
 3. Configure `/var/data` + `BUZZARD_DB_PATH`
-4. Run `npm run test:production-smoke`
+4. Run `npm run test:production-smoke` and `npm run test:part14`
 5. Verify Control Center → Deployment tab
+
+See `docs/PART14_FINAL_REPORT.md` for Part 14 sync results.
 
 **Sales remain disabled.**

@@ -9,6 +9,15 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const serverRequire = createRequire(path.join(root, "server", "package.json"));
+
+function loadSqlite() {
+  try {
+    return serverRequire("better-sqlite3");
+  } catch {
+    return require("better-sqlite3");
+  }
+}
 const dbPath = process.env.BUZZARD_DB_PATH
   ? path.resolve(process.env.BUZZARD_DB_PATH)
   : path.join(root, "server", "data", "buzzard.db");
@@ -31,7 +40,7 @@ const stat = fs.statSync(target);
 
 let integrityCheck = "skipped";
 try {
-  const Database = require("better-sqlite3");
+  const Database = loadSqlite();
   const backupDb = new Database(target, { readonly: true });
   const row = backupDb.prepare("PRAGMA integrity_check").get();
   integrityCheck = row?.integrity_check || "unknown";

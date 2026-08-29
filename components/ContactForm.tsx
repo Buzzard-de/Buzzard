@@ -95,6 +95,7 @@ export default function ContactForm() {
         <input type="hidden" name="_next" value={nextUrl} />
         <input type="text" name="_honey" tabIndex={-1} autoComplete="off" style={{ display: "none" }} aria-hidden="true" />
         <input type="text" name="_website" tabIndex={-1} autoComplete="off" style={{ position: "absolute", left: "-9999px" }} aria-hidden="true" />
+        <input type="hidden" name="_formStarted" value={String(formStartedAt)} />
         <label htmlFor="name">{t("contactForm.nameLabel")}</label>
         <input id="name" name="name" type="text" placeholder={t("contactForm.namePlaceholder")} autoComplete="name" required maxLength={LIMITS.name} />
         <label htmlFor="email">{t("contactForm.emailLabel")}</label>

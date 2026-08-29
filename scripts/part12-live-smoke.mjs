@@ -6,9 +6,6 @@
  * Usage:
  *   BUZZARD_API_URL=https://buzzard-api.onrender.com node scripts/part12-live-smoke.mjs
  */
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
 const API = (process.env.BUZZARD_API_URL || "").replace(/\/$/, "");
 
 if (!API) {
@@ -19,6 +16,7 @@ if (!API) {
 let passed = 0;
 let failed = 0;
 let skipped = 0;
+let blocked = 0;
 
 async function test(name, fn) {
   try {
@@ -29,6 +27,9 @@ async function test(name, fn) {
     if (err.skip) {
       console.log(`○ ${name} — ${err.message}`);
       skipped += 1;
+    } else if (err.blocked) {
+      console.log(`⊘ ${name} — ${err.message}`);
+      blocked += 1;
     } else {
       console.log(`✗ ${name} — ${err.message}`);
       failed += 1;
@@ -39,6 +40,12 @@ async function test(name, fn) {
 function skip(msg) {
   const e = new Error(msg);
   e.skip = true;
+  throw e;
+}
+
+function markBlocked(msg) {
+  const e = new Error(msg);
+  e.blocked = true;
   throw e;
 }
 
@@ -62,6 +69,7 @@ async function main() {
 
   await test("DB health + persistence info", async () => {
     const { res, body } = await fetchJson("/api/health/db");
+    if (res.status === 404) markBlocked("endpoint not deployed (404)");
     if (!res.ok) throw new Error(`status ${res.status}`);
     const persistence = body.database?.persistence || body.persistence;
     if (!persistence?.mode) skip("persistence metadata not deployed yet");
@@ -70,16 +78,18 @@ async function main() {
   await test("Security health", async () => {
     const { res, body } = await fetchJson("/api/security/health");
     if (!res.ok) throw new Error(`status ${res.status}`);
-    if (!body.globalRbac) throw new Error("globalRbac missing");
+    if (!body.protections?.globalRbac) throw new Error("globalRbac missing");
   });
 
   await test("Catalog health", async () => {
     const { res } = await fetchJson("/api/catalog/health");
+    if (res.status === 404) markBlocked("endpoint not deployed (404)");
     if (!res.ok) throw new Error(`status ${res.status}`);
   });
 
   await test("Commerce status SALES=0", async () => {
-    const { body } = await fetchJson("/api/commerce/status");
+    const { res, body } = await fetchJson("/api/commerce/status");
+    if (res.status === 404) markBlocked("endpoint not deployed (404)");
     if (body.flags?.salesEnabled !== false) throw new Error("sales enabled on live");
   });
 
@@ -88,12 +98,14 @@ async function main() {
       method: "POST",
       body: JSON.stringify({ orderType: "COMMERCIAL", idempotencyKey: `live-${Date.now()}` }),
     });
+    if (res.status === 404) markBlocked("endpoint not deployed (404)");
     if (res.status === 429) skip("rate limited");
     if (body.commercialOrders !== 0) throw new Error("commercial orders on live");
   });
 
   await test("Admin route requires auth", async () => {
     const { res } = await fetchJson("/api/admin/control-center/status");
+    if (res.status === 404) markBlocked("endpoint not deployed (404)");
     if (res.status !== 401 && res.status !== 403) throw new Error(`expected 401/403 got ${res.status}`);
   });
 
@@ -102,7 +114,11 @@ async function main() {
     if (!res.ok) throw new Error(`status ${res.status}`);
   });
 
-  console.log(`\nLive smoke: ${passed} passed, ${failed} failed, ${skipped} skipped`);
+  console.log(`\nLive smoke: ${passed} passed, ${failed} failed, ${skipped} skipped, ${blocked} blocked`);
+  if (blocked > 0) {
+    console.log("\nLIVE VERIFICATION: BLOCKED — stale or incomplete deployment");
+    process.exit(2);
+  }
   if (failed > 0) process.exit(1);
   if (passed === 0 && skipped > 0) {
     console.log("\nLIVE VERIFICATION PENDING — API unreachable or not fully deployed");

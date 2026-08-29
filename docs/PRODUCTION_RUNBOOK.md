@@ -1,6 +1,24 @@
-# Production Runbook (Part 13)
+# Production Runbook (Part 13–14)
 
 **Safety:** `BUZZARD_SALES_ENABLED=0` until explicit human approval.
+
+## 0. Production sync checklist (Part 14)
+
+Target: `LOCAL CODE = GIT MAIN = RENDER PRODUCTION` and `DEPLOYMENT_DRIFT=false`.
+
+1. Merge Part 13 PR (#254) and Part 14 PR to `main`
+2. Confirm Render `buzzard-api` auto-deploy from `main` (or trigger Manual Deploy)
+3. Mount persistent disk at `/var/data`; set `BUZZARD_DB_PATH=/var/data/buzzard.db`
+4. Verify:
+   ```bash
+   curl https://buzzard-api.onrender.com/api/health/version
+   curl https://buzzard-api.onrender.com/api/health/production
+   BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:production-smoke
+   BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part14
+   ```
+5. Admin → Control Center → **Deployment** tab: `SYNCED`, Sales `DISABLED`, Go-live lock `ACTIVE`
+
+If `RENDER_API_KEY` is unavailable to CI/agents, deploy must be triggered manually in Render Dashboard — report as **BLOCKED**, not PASS.
 
 ## 1. Deploy
 

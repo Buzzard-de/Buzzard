@@ -22,6 +22,7 @@ export interface CommerceCart {
   country: string;
   currency: string;
   status: string;
+  couponCode?: string | null;
 }
 
 export interface CommerceCartResponse {
@@ -30,6 +31,8 @@ export interface CommerceCartResponse {
   items: CommerceCartItem[];
   subtotal: number;
   itemCount: number;
+  discount?: number;
+  couponCode?: string | null;
   errorKey?: string;
   message?: string;
 }

@@ -51,7 +51,9 @@ function getCheckout(checkoutId, ctx = {}) {
     resourceType: "checkout",
     req: ctx.req,
   });
-  if (access?.blocked && row.customer_id) return access;
+  if (access?.blocked && row.customer_id) {
+    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  }
 
   return {
     id: row.id,
@@ -118,6 +120,12 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
     return { error: clientTotalsReject.code, status: 400 };
   }
 
+  if (body.discount !== undefined || body.clientDiscount !== undefined || body.couponDiscount !== undefined) {
+    logSecurityEvent({ type: "coupon_tampering", success: false, detail: { checkoutId, reason: "client_discount_field" } });
+    transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
+    return { error: "coupon_tampering", status: 400 };
+  }
+
   const stock = cartService.validateStockForCheckout(checkout.cartId);
   if (!stock.ok) {
     transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
@@ -136,13 +144,13 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
   const shipping = shippingProvider.calculateShipping({
     methodId: body.shippingMethod || "standard",
     country: shippingAddr.country || "DE",
-    subtotal: stock.cart.subtotal,
+    subtotal: stock.cart.discountedSubtotal ?? stock.cart.subtotal,
     itemCount: stock.cart.itemCount,
   });
 
   const tax = taxProvider.calculateTax({
     country: shippingAddr.country || "DE",
-    subtotal: stock.cart.subtotal,
+    subtotal: stock.cart.discountedSubtotal ?? stock.cart.subtotal,
   });
   if (!tax.ok) {
     transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
@@ -153,6 +161,7 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
     items: stock.cart.items,
     shipping: shipping.price,
     taxRate: tax.rate,
+    discount: stock.cart.discount || 0,
     currency: stock.cart.cart.currency,
   });
 
@@ -185,10 +194,13 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
   return {
     checkoutId,
     state: CHECKOUT_STATE.READY,
-    totals: { ...totals, shipping: shipping.price, tax: tax.tax },
+    totals: { ...totals, shipping: shipping.price, tax: tax.tax, couponCode: stock.cart.cart.couponCode },
     shipping,
     tax,
     risk,
+    coupon: stock.cart.cart.couponCode
+      ? { code: stock.cart.cart.couponCode, discount: stock.cart.discount }
+      : null,
     dryRun: getEffectiveFlags().checkoutDryRunOnly,
     salesEnabled: getEffectiveFlags().salesEnabled,
   };

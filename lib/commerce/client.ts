@@ -185,9 +185,48 @@ export async function validateCart(cartId: string, customerId?: string): Promise
   ok: boolean;
   issues?: unknown[];
   dryRun?: boolean;
+  discount?: number;
+  couponCode?: string | null;
 }> {
   return request(`/api/commerce/cart/${encodeURIComponent(cartId)}/validate`, {
     method: "POST",
+    body: JSON.stringify({ customerId }),
+  });
+}
+
+export async function validateCommerceCoupon(input: {
+  cartId?: string;
+  couponCode: string;
+  subtotal?: number;
+  customerId?: string;
+  clientDiscount?: number;
+}): Promise<{
+  success: boolean;
+  ok: boolean;
+  discount?: number;
+  couponCode?: string;
+  errorKey?: string;
+}> {
+  return request("/api/commerce/coupons/validate", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function applyCartCoupon(
+  cartId: string,
+  couponCode: string,
+  customerId?: string
+): Promise<CommerceCartResponse> {
+  return request<CommerceCartResponse>(`/api/commerce/cart/${encodeURIComponent(cartId)}/coupon`, {
+    method: "POST",
+    body: JSON.stringify({ couponCode, customerId }),
+  });
+}
+
+export async function removeCartCoupon(cartId: string, customerId?: string): Promise<CommerceCartResponse> {
+  return request<CommerceCartResponse>(`/api/commerce/cart/${encodeURIComponent(cartId)}/coupon`, {
+    method: "DELETE",
     body: JSON.stringify({ customerId }),
   });
 }

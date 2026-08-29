@@ -34,7 +34,10 @@ module.exports = {
       return;
     }
 
+    const { markLegacyCommerce } = require("../lib/legacyCommerce");
+
     app.post("/api/cart-checkout/carts", (req, res) => {
+      markLegacyCommerce(res, req.originalUrl || req.url, "/api/commerce/cart");
       return res.status(201).json(cartCheckout.createCart(req.body || {}));
     });
 

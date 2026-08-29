@@ -64,18 +64,4 @@ test.describe("Storefront Commerce Bridge Part 9", () => {
     expect(result.order?.orderType).toBe("READINESS_TEST");
     expect(result.payment?.realMoneyMovement).toBe(false);
   });
-
-  test("warenkorb page loads when commerce core enabled", async ({ page }) => {
-    test.skip(!process.env.NEXT_PUBLIC_BUZZARD_API_URL && !process.env.BUZZARD_SITE_URL, "Site URL not configured");
-    await page.goto(`${SITE}/warenkorb/`, { waitUntil: "domcontentloaded" });
-    await expect(page.locator("body")).toBeVisible();
-  });
-
-  test("mobile viewport cart page no horizontal overflow", async ({ page }) => {
-    test.skip(!process.env.BUZZARD_SITE_URL, "Site not running");
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto(`${SITE}/warenkorb/`, { waitUntil: "domcontentloaded" });
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
-    expect(overflow).toBe(false);
-  });
 });

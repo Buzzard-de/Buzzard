@@ -3765,10 +3765,18 @@ function migrateCoreFoundationPart8() {
   `);
 }
 
+function migrateCoreFoundationPart10() {
+  const cols = db.prepare("PRAGMA table_info(commerce_carts)").all().map((c) => c.name);
+  if (!cols.includes("coupon_code")) {
+    db.exec(`ALTER TABLE commerce_carts ADD COLUMN coupon_code TEXT`);
+  }
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
 migrateCoreFoundationPart8();
+migrateCoreFoundationPart10();
 
 
 function seed() {

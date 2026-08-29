@@ -44,7 +44,9 @@ import {
 } from "@/lib/store/cartSync";
 import {
   commerceAddItem,
+  commerceApplyCoupon,
   commerceClearCart,
+  commerceClearCoupon,
   commerceRemoveItem,
   commerceUpdateQty,
   hydrateCommerceCart,
@@ -119,6 +121,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [syncing, setSyncing] = useState(false);
   const [lastErrorKey, setLastErrorKey] = useState<string | null>(null);
   const [serverSubtotal, setServerSubtotal] = useState<number | null>(null);
+  const [serverDiscount, setServerDiscount] = useState<number>(0);
   const addingRef = useRef(false);
 
   const persistLocal = useCallback((next: CartLineItem[]) => {
@@ -135,6 +138,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const data = await hydrateCommerceCart(customerId);
       setItems(data.items);
       setServerSubtotal(data.subtotal);
+      setServerDiscount(data.discount);
+      if (data.couponCode) {
+        setCouponCode(data.couponCode);
+        writeCoupon(data.couponCode);
+      }
     } catch {
       setLastErrorKey("commerce.syncFailed");
     } finally {
@@ -178,7 +186,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totals = useMemo(() => {
     const subtotal = commerceMode && serverSubtotal !== null ? serverSubtotal : cartSubtotal(items);
-    const coupon = validateCoupon(couponCode, subtotal);
+    const coupon =
+      commerceMode && serverSubtotal !== null
+        ? { valid: serverDiscount > 0 || Boolean(couponCode), discount: serverDiscount, normalizedCode: couponCode }
+        : validateCoupon(couponCode, subtotal);
     const discount = coupon.valid ? coupon.discount : 0;
     const discounted = Math.max(0, subtotal - discount);
     const lineInputs = items.map((item) => ({
@@ -201,7 +212,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       total: quote?.total ?? discounted + shipping,
       freeShippingRemaining: freeShippingRemaining(discounted, countryCode),
     };
-  }, [items, couponCode, countryCode, commerceMode, serverSubtotal]);
+  }, [items, couponCode, countryCode, commerceMode, serverSubtotal, serverDiscount]);
 
   useEffect(() => {
     if (!ready || !shouldUseCrmLoyaltyApi() || !getAccountToken()) return;
@@ -343,32 +354,59 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [commerceMode, customerId, persistLocal, remove]
   );
 
-  const applyCoupon = useCallback((code: string) => {
-    const normalized = code.trim().toUpperCase();
-    const result = validateCoupon(normalized, cartSubtotal(commerceMode ? items : readCart()));
-    if (!result.valid) {
-      setCouponErrorKey(result.errorKey ?? "checkout.couponInvalid");
-      return false;
-    }
-    writeCoupon(result.normalizedCode || normalized);
-    setCouponCode(result.normalizedCode || normalized);
-    setCouponErrorKey(null);
-    dispatchCartUpdated();
-    return true;
-  }, [commerceMode, items]);
+  const applyCoupon = useCallback(
+    (code: string) => {
+      const normalized = code.trim().toUpperCase();
+      if (commerceMode) {
+        void (async () => {
+          setSyncing(true);
+          setCouponErrorKey(null);
+          const result = await commerceApplyCoupon(normalized, customerId);
+          setSyncing(false);
+          if (!result.ok) {
+            setCouponErrorKey(result.errorKey ?? "checkout.couponInvalid");
+            return;
+          }
+          setServerDiscount(result.discount);
+          setCouponCode(result.couponCode || normalized);
+          writeCoupon(result.couponCode || normalized);
+          dispatchCartUpdated();
+        })();
+        return true;
+      }
+
+      const result = validateCoupon(normalized, cartSubtotal(readCart()));
+      if (!result.valid) {
+        setCouponErrorKey(result.errorKey ?? "checkout.couponInvalid");
+        return false;
+      }
+      writeCoupon(result.normalizedCode || normalized);
+      setCouponCode(result.normalizedCode || normalized);
+      setCouponErrorKey(null);
+      dispatchCartUpdated();
+      return true;
+    },
+    [commerceMode, customerId]
+  );
 
   const clearCoupon = useCallback(() => {
+    if (commerceMode) {
+      void commerceClearCoupon(customerId).then(() => {
+        setServerDiscount(0);
+      });
+    }
     writeCoupon("");
     setCouponCode("");
     setCouponErrorKey(null);
     dispatchCartUpdated();
-  }, []);
+  }, [commerceMode, customerId]);
 
   const clear = useCallback(async () => {
     if (commerceMode) {
       await commerceClearCart(customerId);
       setItems([]);
       setServerSubtotal(0);
+      setServerDiscount(0);
     } else {
       persistLocal([]);
       clearServerCart().catch(() => {});

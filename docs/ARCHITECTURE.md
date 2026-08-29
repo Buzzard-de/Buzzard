@@ -77,7 +77,9 @@ Legacy-Systeme bleiben aktiv; die Facade abstrahiert sie.
 | `npm run test:part7` | Storefront bridge smoke |
 | `npm run test:part8` | Commerce readiness smoke |
 | `npm run test:part9` | Storefront commerce bridge smoke |
-| `npm run test:e2e` | Playwright admin E2E |
+| `npm run test:part10` | Production hardening smoke |
+| `npm run test:production-safety` | Sales-off safety guard |
+| `npm run test:e2e` | Playwright E2E (starts API + storefront) |
 
 ## Deployment
 

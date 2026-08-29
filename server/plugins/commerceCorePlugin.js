@@ -126,7 +126,47 @@ module.exports = {
         dryRun: stock.dryRun,
         itemCount: cart.itemCount,
         subtotal: cart.subtotal,
+        discount: cart.discount,
+        couponCode: cart.cart?.couponCode,
       });
+    });
+
+    app.post("/api/commerce/coupons/validate", (req, res) => {
+      if (!rateLimit(req, res, cartRateLimit)) return;
+      const body = parseBody(req);
+      const cartId = body.cartId;
+      if (cartId) {
+        const result = commerce.cartService.validateCouponForCart(cartId, body, {
+          customerId: body.customerId,
+          req,
+        });
+        if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error });
+        return res.json({ success: true, ...result });
+      }
+      const subtotal = Number(body.subtotal) || 0;
+      const commerceCouponService = require("../lib/commerce/commerceCouponService");
+      const validated = commerceCouponService.validateCouponRequest(body, subtotal, { req });
+      if (!validated.ok) return res.status(validated.status || 400).json({ success: false, errorKey: validated.error });
+      res.json({ success: true, ok: true, ...validated });
+    });
+
+    app.post("/api/commerce/cart/:id/coupon", (req, res) => {
+      if (!rateLimit(req, res, cartRateLimit)) return;
+      const body = parseBody(req);
+      const result = commerce.cartService.applyCoupon(req.params.id, { ...body, req });
+      if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
+      res.json({ success: true, ...result });
+    });
+
+    app.delete("/api/commerce/cart/:id/coupon", (req, res) => {
+      if (!rateLimit(req, res, cartRateLimit)) return;
+      const body = parseBody(req);
+      const result = commerce.cartService.removeCoupon(req.params.id, {
+        customerId: body.customerId || req.query?.customerId,
+        req,
+      });
+      if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
+      res.json({ success: true, ...result });
     });
 
     app.get("/api/commerce/shipping/methods", (_req, res) => {
@@ -273,6 +313,7 @@ module.exports = {
         "payment_attempt_blocked",
         "order_creation_blocked",
         "price_tampering",
+        "coupon_tampering",
         "quantity_tampering",
         "idempotency_conflict",
         "commerce_permission_denied",

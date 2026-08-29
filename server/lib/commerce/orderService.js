@@ -126,7 +126,9 @@ function getOrder(orderId, ctx = {}) {
     resourceType: "order",
     req: ctx.req,
   });
-  if (access?.blocked && row.customer_id) return access;
+  if (access?.blocked && row.customer_id) {
+    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  }
 
   return mapOrder(row);
 }

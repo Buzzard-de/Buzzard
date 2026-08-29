@@ -3387,7 +3387,86 @@ function migrateCoreFoundationPart2() {
   `);
 }
 
+function migrateCoreFoundationPart5() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS core_scheduled_jobs(
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      job_type TEXT NOT NULL,
+      schedule_type TEXT NOT NULL,
+      cron_expr TEXT,
+      interval_ms INTEGER,
+      payload_json TEXT DEFAULT '{}',
+      priority TEXT DEFAULT 'NORMAL',
+      enabled INTEGER DEFAULT 1,
+      next_run_at TEXT,
+      last_run_at TEXT,
+      run_count INTEGER DEFAULT 0,
+      max_retries INTEGER DEFAULT 3,
+      created_by TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_job_logs(
+      id TEXT PRIMARY KEY,
+      job_id TEXT NOT NULL,
+      level TEXT DEFAULT 'INFO',
+      message TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_worker_state(
+      id TEXT PRIMARY KEY DEFAULT 'default',
+      status TEXT DEFAULT 'STOPPED',
+      worker_id TEXT,
+      jobs_processed INTEGER DEFAULT 0,
+      last_tick_at TEXT,
+      paused_at TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      started_at TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_integration_health(
+      integration_code TEXT PRIMARY KEY,
+      status TEXT DEFAULT 'DISCONNECTED',
+      response_time_ms INTEGER,
+      last_success_at TEXT,
+      last_failure_at TEXT,
+      error_count INTEGER DEFAULT 0,
+      last_error TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_core_jobs_status ON core_background_jobs(status);
+    CREATE INDEX IF NOT EXISTS idx_core_jobs_next_run ON core_background_jobs(next_run_at);
+    CREATE INDEX IF NOT EXISTS idx_core_schedules_next ON core_scheduled_jobs(next_run_at);
+    CREATE INDEX IF NOT EXISTS idx_core_job_logs_job ON core_job_logs(job_id);
+  `);
+
+  const jobCols = db.prepare("PRAGMA table_info(core_background_jobs)").all().map((c) => c.name);
+  const addCol = (sql) => {
+    try {
+      db.exec(sql);
+    } catch {
+      /* column exists */
+    }
+  };
+  if (!jobCols.includes("lock_owner")) addCol("ALTER TABLE core_background_jobs ADD COLUMN lock_owner TEXT");
+  if (!jobCols.includes("lock_expires_at")) addCol("ALTER TABLE core_background_jobs ADD COLUMN lock_expires_at TEXT");
+  if (!jobCols.includes("worker_id")) addCol("ALTER TABLE core_background_jobs ADD COLUMN worker_id TEXT");
+  if (!jobCols.includes("schedule_id")) addCol("ALTER TABLE core_background_jobs ADD COLUMN schedule_id TEXT");
+  if (!jobCols.includes("priority")) addCol("ALTER TABLE core_background_jobs ADD COLUMN priority TEXT DEFAULT 'NORMAL'");
+  if (!jobCols.includes("execution_ms")) addCol("ALTER TABLE core_background_jobs ADD COLUMN execution_ms INTEGER");
+  if (!jobCols.includes("failure_kind")) addCol("ALTER TABLE core_background_jobs ADD COLUMN failure_kind TEXT");
+  if (!jobCols.includes("updated_at")) addCol("ALTER TABLE core_background_jobs ADD COLUMN updated_at TEXT");
+
+  db.prepare(`
+    INSERT OR IGNORE INTO core_worker_state(id, status) VALUES ('default', 'STOPPED')
+  `).run();
+}
+
 migrateCoreFoundationPart2();
+migrateCoreFoundationPart5();
 
 
 function seed() {

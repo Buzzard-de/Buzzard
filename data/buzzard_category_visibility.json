@@ -7,13 +7,17 @@
         "products": "NOT_READY",
         "pricing": "NOT_READY",
         "stock": "NOT_READY",
+        "supplier": "NOT_READY",
+        "shipping": "NOT_READY",
         "payment": "BLOCKED",
         "logistics": "NOT_READY",
         "frontend": "READY",
+        "legal": "NOT_READY",
+        "content": "NOT_READY",
         "overall": "NOT_READY"
       },
       "updatedBy": "admin@buzzard.de",
-      "updatedAt": "2026-08-29T12:28:02.492Z"
+      "updatedAt": "2026-08-29T12:40:06.076Z"
     }
   }
 }

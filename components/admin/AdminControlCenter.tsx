@@ -16,6 +16,17 @@ import {
   globalAdminSearch,
   updateCategoryVisibility,
 } from "@/lib/admin/controlCenter";
+import {
+  cancelJob,
+  enqueueSync,
+  fetchAutomationJobs,
+  fetchAutomationOverview,
+  fetchIntegrationHealth,
+  fetchSchedules,
+  retryJob,
+  workerAction,
+} from "@/lib/admin/automation";
+import type { BackgroundJob, Schedule, WorkerState } from "@/lib/admin/automationTypes";
 import type {
   ActivityEvent,
   AiEmployee,
@@ -27,7 +38,18 @@ import type {
 } from "@/lib/admin/controlCenterTypes";
 import { getMainCategories } from "@/lib/categories";
 
-type Tab = "overview" | "ai" | "tasks" | "approvals" | "categories" | "integrations" | "activity";
+type Tab =
+  | "overview"
+  | "ai"
+  | "tasks"
+  | "approvals"
+  | "categories"
+  | "integrations"
+  | "activity"
+  | "automation"
+  | "workers"
+  | "schedules"
+  | "sync";
 
 const STATUS_CLASS: Record<string, string> = {
   ONLINE: "cc-status-online",
@@ -52,12 +74,17 @@ export default function AdminControlCenter() {
   const [newTaskEmployee, setNewTaskEmployee] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [worker, setWorker] = useState<WorkerState | null>(null);
+  const [jobs, setJobs] = useState<BackgroundJob[]>([]);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [jobCounts, setJobCounts] = useState<Record<string, number>>({});
+  const [integrationHealth, setIntegrationHealth] = useState<Array<{ integrationCode: string; status: string; responseTimeMs: number | null }>>([]);
 
   const reload = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [st, sum, emps, tsk, appr, integ, act, vis] = await Promise.all([
+      const [st, sum, emps, tsk, appr, integ, act, vis, auto] = await Promise.all([
         fetchControlCenterStatus(),
         fetchDashboardSummary(),
         fetchAiEmployees(),
@@ -66,6 +93,7 @@ export default function AdminControlCenter() {
         fetchIntegrations(true),
         fetchActivity(25),
         fetchCategoryVisibility(),
+        fetchAutomationOverview().catch(() => null),
       ]);
       setStatus(st);
       setSummary(sum);
@@ -75,6 +103,19 @@ export default function AdminControlCenter() {
       setIntegrations(integ);
       setActivity(act);
       setVisibility(vis);
+      if (auto) {
+        setWorker(auto.worker);
+        setJobCounts(auto.jobCounts);
+        setIntegrationHealth(auto.integrations);
+      }
+      const [jobList, schedList, health] = await Promise.all([
+        fetchAutomationJobs().catch(() => []),
+        fetchSchedules().catch(() => []),
+        fetchIntegrationHealth(true).catch(() => []),
+      ]);
+      setJobs(jobList);
+      setSchedules(schedList);
+      if (health.length) setIntegrationHealth(health);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Load failed");
     } finally {
@@ -150,6 +191,10 @@ export default function AdminControlCenter() {
             ["categories", "Kategoriler"],
             ["integrations", "Entegrasyonlar"],
             ["activity", "Aktivite"],
+            ["automation", "Automation"],
+            ["workers", "Workers"],
+            ["schedules", "Schedules"],
+            ["sync", "Sync"],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -356,6 +401,103 @@ export default function AdminControlCenter() {
               <li key={ev.id}>
                 <strong>{ev.eventType}</strong> — {ev.summary}
                 <span className="cc-muted"> {new Date(ev.createdAt).toLocaleString()}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {!loading && tab === "automation" && (
+        <section className="admin-panel">
+          <h2>Automation Overview</h2>
+          {worker && (
+            <div className="admin-stat-grid">
+              <article className="admin-stat"><strong>{worker.status}</strong><span>Worker</span></article>
+              <article className="admin-stat"><strong>{worker.jobsProcessed}</strong><span>Processed</span></article>
+              <article className="admin-stat"><strong>{jobCounts.QUEUED ?? 0}</strong><span>Queued</span></article>
+              <article className="admin-stat"><strong>{jobCounts.FAILED ?? 0}</strong><span>Failed</span></article>
+            </div>
+          )}
+        </section>
+      )}
+
+      {!loading && tab === "workers" && (
+        <section className="admin-panel">
+          <h2>Workers</h2>
+          {worker && <p>Status: <strong>{worker.status}</strong> — ID: {worker.workerId || "—"}</p>}
+          <div className="cc-actions">
+            {(["start", "pause", "resume", "stop"] as const).map((a) => (
+              <button key={a} type="button" className="shop-btn-secondary" onClick={() => workerAction(a).then(reload)}>
+                {a}
+              </button>
+            ))}
+          </div>
+          <div className="cc-table-wrap">
+            <table className="admin-table">
+              <thead><tr><th>ID</th><th>Type</th><th>Status</th><th>Priority</th><th>ms</th><th>Aktion</th></tr></thead>
+              <tbody>
+                {jobs.slice(0, 20).map((j) => (
+                  <tr key={j.id}>
+                    <td><code>{j.id.slice(0, 12)}…</code></td>
+                    <td>{j.jobType}</td>
+                    <td>{j.status}</td>
+                    <td>{j.priority}</td>
+                    <td>{j.executionMs ?? "—"}</td>
+                    <td>
+                      {(j.status === "FAILED" || j.status === "DEAD_LETTER") && (
+                        <button type="button" className="shop-btn-secondary" onClick={() => retryJob(j.id).then(reload)}>Retry</button>
+                      )}
+                      {["QUEUED", "RETRYING", "RUNNING"].includes(j.status) && (
+                        <button type="button" className="shop-btn-secondary" onClick={() => cancelJob(j.id).then(reload)}>Cancel</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {!loading && tab === "schedules" && (
+        <section className="admin-panel">
+          <h2>Schedules</h2>
+          {schedules.length === 0 && <p className="admin-note">Keine Schedules.</p>}
+          <table className="admin-table">
+            <thead><tr><th>Name</th><th>Type</th><th>Schedule</th><th>Next</th><th>Runs</th></tr></thead>
+            <tbody>
+              {schedules.map((s) => (
+                <tr key={s.id}>
+                  <td>{s.name}</td>
+                  <td>{s.jobType}</td>
+                  <td>{s.scheduleType}</td>
+                  <td>{s.nextRunAt ? new Date(s.nextRunAt).toLocaleString() : "—"}</td>
+                  <td>{s.runCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
+
+      {!loading && tab === "sync" && (
+        <section className="admin-panel">
+          <h2>Sync (Dry Run)</h2>
+          <p className="admin-note">Foundation — no live supplier orders. Sales disabled.</p>
+          <div className="cc-actions">
+            {(["product", "price", "stock", "supplier"] as const).map((k) => (
+              <button key={k} type="button" className="shop-btn-primary" onClick={() => enqueueSync(k).then(reload)}>
+                {k} sync
+              </button>
+            ))}
+          </div>
+          <h3>Integration Health</h3>
+          <ul className="cc-status-list">
+            {integrationHealth.map((h) => (
+              <li key={h.integrationCode}>
+                <span className={h.status === "CONNECTED" ? "cc-status-online" : "cc-status-offline"}>{h.status}</span>
+                <strong>{h.integrationCode}</strong>
+                <span>{h.responseTimeMs != null ? `${h.responseTimeMs}ms` : "—"}</span>
               </li>
             ))}
           </ul>

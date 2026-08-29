@@ -53,6 +53,8 @@ module.exports = {
           rateLimiting: true,
           rateLimitPersist: process.env.BUZZARD_RATE_LIMIT_STORE === "file" || process.env.BUZZARD_RATE_LIMIT_PERSIST === "1",
           rateLimitBackend: require("../lib/rateLimitStore").getStoreInfo().backend,
+          rateLimitInfo: require("../lib/rateLimitStore").getStoreInfo(),
+          redisConfigured: require("../lib/redisClient").isConfigured(),
           passwordHashing: "scrypt",
           accountLockout: true,
           adminTwoFactor: true,

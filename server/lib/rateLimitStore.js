@@ -121,31 +121,74 @@ function createFileBackendSimple() {
 }
 
 function createRedisBackend() {
-  return {
+  const redisClient = require("./redisClient");
+  const prefix = process.env.BUZZARD_REDIS_PREFIX || "buzzard:rl:";
+  let connectionFailed = false;
+  let lastError = null;
+
+  const backend = {
     name: "redis",
-    get() {
+    connectionFailed: false,
+    lastError: null,
+    async getAsync(key) {
+      try {
+        const raw = await redisClient.get(`${prefix}${key}`);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (err) {
+        connectionFailed = true;
+        lastError = err.message;
+        backend.connectionFailed = true;
+        backend.lastError = err.message;
+        return null;
+      }
+    },
+    get(key) {
+      if (backend._cache.has(key)) return backend._cache.get(key);
       return [];
     },
-    set() {},
+    set(key, records) {
+      backend._cache.set(key, records);
+      redisClient.set(`${prefix}${key}`, JSON.stringify(records), 3600).catch((err) => {
+        connectionFailed = true;
+        lastError = err.message;
+        backend.connectionFailed = true;
+        backend.lastError = err.message;
+      });
+    },
     size() {
-      return 0;
+      return backend._cache.size;
     },
     load() {},
     persist() {},
-    unavailable: true,
+    _cache: new Map(),
+    getHealth() {
+      return { connectionFailed, lastError };
+    },
   };
+
+  return backend;
+}
+
+async function hydrateRedisCache(backend, key) {
+  const records = await backend.getAsync(key);
+  if (records) backend._cache.set(key, records);
+  return records || [];
 }
 
 function createBackend() {
   const kind = resolveBackend();
   if (kind === "file") return createFileBackendSimple();
   if (kind === "redis") {
-    const redis = createRedisBackend();
-    if (redis.unavailable) {
-      console.warn("[rate-limit] Redis store not configured — falling back to file backend");
-      return createFileBackendSimple();
+    const redisClient = require("./redisClient");
+    if (!redisClient.isConfigured()) {
+      console.warn("[rate-limit] Redis selected but UPSTASH_REDIS_REST_URL/TOKEN not set — falling back to file");
+      const fb = createFileBackendSimple();
+      fb.fallbackFrom = "redis";
+      return fb;
     }
-    return redis;
+    return createRedisBackend();
   }
   return createMemoryBackend();
 }
@@ -174,18 +217,26 @@ function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
 }
 
 function getStoreInfo() {
-  return {
+  const info = {
     backend: backend.name,
     configured: resolveBackend(),
     bucketCount: backend.size(),
     persistFile: backend.name === "file" ? persistFile : null,
+    fallbackFrom: backend.fallbackFrom || null,
     note:
       backend.name === "redis"
-        ? "Configure UPSTASH_REDIS_REST_URL for production Redis."
+        ? "Upstash Redis REST backend"
         : backend.name === "file"
           ? "Buckets persist across restarts via rate-limit-buckets.json"
           : "In-memory only — resets on restart. Set BUZZARD_RATE_LIMIT_STORE=file",
   };
+  if (backend.name === "redis" && backend.getHealth) {
+    info.redisHealth = backend.getHealth();
+  }
+  if (backend.fallbackFrom === "redis") {
+    info.note = "Redis configured but unavailable — using file fallback";
+  }
+  return info;
 }
 
 function resetBackendForTests() {

@@ -1,6 +1,6 @@
 # Buzzard Architecture
 
-**Stand:** Part 4 (August 2026)  
+**Stand:** Part 5 (August 2026)  
 **Modus:** Katalogmodus (`BUZZARD_SALES_ENABLED=0`)
 
 ## Stack

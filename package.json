@@ -28,8 +28,10 @@
     "test:part2": "node scripts/part2-smoke.mjs",
     "test:part3": "node scripts/part3-security.mjs",
     "test:part4": "node scripts/part4-smoke.mjs",
+    "test:part5": "node scripts/part5-smoke.mjs",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
+    "test:e2e": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test",
     "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",
     "test:smoke": "node scripts/smoke-core.mjs",
     "db:backup": "node scripts/db-backup.mjs",
@@ -59,6 +61,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

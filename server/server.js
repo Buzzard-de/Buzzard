@@ -237,6 +237,20 @@ app.get('/api/status', (req, res) => {
 
 loadPlugins();
 
+if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
+  const jobWorker = require("./lib/jobWorker");
+  const jobScheduler = require("./lib/jobScheduler");
+  jobWorker.setupGracefulShutdown();
+  jobWorker.startWorker({ pollIntervalMs: Number(process.env.BUZZARD_WORKER_POLL_MS) || 3000 });
+  setInterval(() => {
+    try {
+      jobScheduler.tickScheduler();
+    } catch (err) {
+      console.error("[scheduler] tick error:", err.message);
+    }
+  }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
+}
+
 const server = http.createServer(async (req, res) => {
   attachResponseHelpers(res);
   setCommonHeaders(res);

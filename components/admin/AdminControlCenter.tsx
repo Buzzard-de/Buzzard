@@ -45,7 +45,7 @@ export default function AdminControlCenter() {
   const [approvals, setApprovals] = useState<Approval[]>([]);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
-  const [visibility, setVisibility] = useState<Record<string, { status: string }>>({});
+  const [visibility, setVisibility] = useState<Record<string, { status: string; readiness?: Record<string, string> }>>({});
   const [searchQ, setSearchQ] = useState("");
   const [searchResults, setSearchResults] = useState<Record<string, unknown> | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -284,19 +284,33 @@ export default function AdminControlCenter() {
       {!loading && tab === "categories" && (
         <section className="admin-panel">
           <h2>Category Management</h2>
-          <p className="admin-note">Admin tüm kategorileri görür. Müşteri yalnızca ACTIVE ve COMING_SOON görür.</p>
+          <p className="admin-note">
+            Admin tüm kategorileri görür. READY olmayan kategori satışa açılmaz (BUZZARD_SALES_ENABLED=0).
+          </p>
           <div className="cc-table-wrap">
             <table className="admin-table">
               <thead>
-                <tr><th>Kategori</th><th>Durum</th><th>İşlem</th></tr>
+                <tr><th>Kategori</th><th>Durum</th><th>Readiness</th><th>Blocker</th><th>İşlem</th></tr>
               </thead>
               <tbody>
                 {mainCategories.slice(0, 30).map((cat) => {
-                  const st = visibility[cat.id]?.status || "ACTIVE";
+                  const entry = visibility[cat.id];
+                  const st = entry?.status || "ACTIVE";
+                  const overall = entry?.readiness?.overall || "NOT_READY";
+                  const blockers = entry?.readiness
+                    ? Object.entries(entry.readiness)
+                        .filter(([k, v]) => k !== "overall" && v !== "READY")
+                        .map(([k, v]) => `${k}:${v}`)
+                        .join(", ")
+                    : "products, pricing, stock…";
                   return (
                     <tr key={cat.id}>
                       <td>{cat.name}</td>
                       <td>{st}</td>
+                      <td className={overall === "READY" ? "cc-status-online" : overall === "BLOCKED" ? "cc-event-critical" : ""}>
+                        {overall}
+                      </td>
+                      <td className="cc-muted">{overall === "READY" ? "—" : blockers || "—"}</td>
                       <td>
                         <select
                           value={st}

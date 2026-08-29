@@ -1,6 +1,6 @@
 # Buzzard Authentication
 
-**Stand:** Part 3 — Unified Auth Facade
+**Stand:** Part 4 — Unified Auth Facade + Session UI
 
 ## Facade API
 

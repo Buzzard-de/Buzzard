@@ -2,13 +2,24 @@ export interface SecurityEvent {
   id: string;
   timestamp: string;
   type: string;
+  severity?: string;
+  source?: string;
   success: boolean;
   ip: string | null;
   path: string | null;
   userId: string | null;
   email: string | null;
   role: string | null;
+  resource?: string | null;
+  status?: string;
   detail: Record<string, unknown> | null;
+}
+
+export interface SecurityPagination {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
 }
 
 export interface SecurityOverview {

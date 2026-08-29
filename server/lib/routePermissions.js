@@ -33,6 +33,8 @@ const EXACT = {
   "GET /api/admin/control-center/integrations": "integrations.read",
   "GET /api/admin/control-center/escalations": "security.read",
   "GET /api/admin/control-center/background-jobs": "system.read",
+  "GET /api/admin/control-center/jobs": "system.read",
+  "POST /api/admin/control-center/jobs": "system.configure",
   "GET /api/admin/control-center/notifications": "system.read",
   "GET /api/admin/ai/employees": "ai.read",
   "PATCH /api/admin/ai/employees/:id/status": "ai.assign",

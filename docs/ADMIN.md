@@ -1,6 +1,6 @@
 # Buzzard Admin Panel
 
-**Stand:** Part 3
+**Stand:** Part 4
 
 ## Zugang
 
@@ -31,7 +31,24 @@ Jede `/api/admin/*` Route wird serverseitig geschützt:
 
 Nav-Sichtbarkeit allein ist **kein** Schutz — Backend prüft immer.
 
-## Session Management
+## Role-Based Navigation (Part 4)
+
+Frontend nav is filtered by role via `lib/admin/navPermissions.mjs`:
+
+- `catalog_manager` → Catalog / Products / Categories
+- `order_manager` → Orders / Commerce / Logistics
+- `read_only` → read-permitted screens only
+- `administrator` / `super_admin` → all permitted areas
+
+**Important:** Nav hiding is UX only — backend RBAC always enforces permissions.
+
+## Session Management UI
+
+- Page: `/admin/sessions/`
+- List active sessions (ID, user, IP, user-agent, created, expiry)
+- Revoke via UI → audit logged
+
+## Session Management API
 
 - TTL: 8 Stunden
 - API: `GET /api/admin/sessions` (security.read)

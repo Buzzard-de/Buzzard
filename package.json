@@ -27,6 +27,10 @@
     "production:verify:live": "BUZZARD_API_URL=https://buzzard-api.onrender.com node scripts/run-production-guard.mjs",
     "test:part2": "node scripts/part2-smoke.mjs",
     "test:part3": "node scripts/part3-security.mjs",
+    "test:part4": "node scripts/part4-smoke.mjs",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",
     "test:smoke": "node scripts/smoke-core.mjs",
     "db:backup": "node scripts/db-backup.mjs",
     "search:sync": "node scripts/sync-search-index.mjs",
@@ -60,6 +64,7 @@
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.23",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^3.2.7"
   }
 }

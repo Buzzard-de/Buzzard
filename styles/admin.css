@@ -595,6 +595,17 @@
   font-size: 0.78rem;
 }
 
+.cc-event-critical td {
+  background: rgba(220, 53, 69, 0.12);
+  color: #b02a37;
+  font-weight: 600;
+}
+
+.cc-event-severity-critical {
+  color: #b02a37;
+  font-weight: 700;
+}
+
 @media (max-width: 767px) {
   .admin-app {
     grid-template-columns: 1fr;

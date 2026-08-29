@@ -1,6 +1,6 @@
 const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
-const { listSecurityEvents } = require("../lib/securityLog");
+const { querySecurityEvents, listSecurityEvents } = require("../lib/securityLog");
 const { listLockouts } = require("../lib/accountLockout");
 
 function buildOverview(events) {
@@ -51,7 +51,8 @@ module.exports = {
           globalRbac: true,
           unifiedAuthFacade: true,
           rateLimiting: true,
-          rateLimitPersist: process.env.BUZZARD_RATE_LIMIT_PERSIST === "1",
+          rateLimitPersist: process.env.BUZZARD_RATE_LIMIT_STORE === "file" || process.env.BUZZARD_RATE_LIMIT_PERSIST === "1",
+          rateLimitBackend: require("../lib/rateLimitStore").getStoreInfo().backend,
           passwordHashing: "scrypt",
           accountLockout: true,
           adminTwoFactor: true,
@@ -64,11 +65,14 @@ module.exports = {
     app.get("/api/admin/security/events", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "security.read")) return;
-      const events = listSecurityEvents(200);
+      const { severity, type, user, source, from, to, q, page, limit } = req.query || {};
+      const result = querySecurityEvents({ severity, type, user, source, from, to, q, page, limit });
+      const allForOverview = listSecurityEvents(500);
       return res.json({
         success: true,
-        events,
-        overview: buildOverview(events),
+        events: result.events,
+        pagination: result.pagination,
+        overview: buildOverview(allForOverview),
         lockouts: listLockouts(50),
       });
     });

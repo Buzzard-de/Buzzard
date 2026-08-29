@@ -4,7 +4,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin/context";
 import { ADMIN_NAV_GROUPS, adminHref } from "@/lib/admin/nav.config.mjs";
+import { filterNavGroupsForRole } from "@/lib/admin/navPermissions.mjs";
 import AdminApiStatusBanner from "./AdminApiStatusBanner";
+
+type NavItem = { slug: string; label: string };
+type NavGroup = { id: string; label: string; items: NavItem[] };
 
 function isNavActive(pathname: string, href: string): boolean {
   if (href === "/admin/") {
@@ -17,6 +21,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAdminAuth();
+  const visibleNavGroups = filterNavGroupsForRole(ADMIN_NAV_GROUPS, user?.role || "");
 
   async function handleLogout() {
     await logout();
@@ -31,10 +36,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <span>Admin</span>
         </div>
         <nav className="admin-nav">
-          {ADMIN_NAV_GROUPS.map((group) => (
+          {visibleNavGroups.map((group: NavGroup) => (
             <div key={group.id} className="admin-nav-group">
               <p className="admin-nav-group-label">{group.label}</p>
-              {group.items.map((item) => {
+              {group.items.map((item: NavItem) => {
                 const href = adminHref(item.slug);
                 return (
                   <Link

@@ -226,6 +226,47 @@ module.exports = {
       res.json({ success: true, jobs: controlCenter.listBackgroundJobs(Number(req.query.limit) || 50) });
     });
 
+    app.get("/api/admin/control-center/jobs", async (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePerm(req, res, "system.read")) return;
+      try {
+        const { listJobs } = require("../lib/jobQueue");
+        res.json({
+          success: true,
+          jobs: listJobs({
+            status: req.query.status,
+            limit: Number(req.query.limit) || 50,
+            offset: Number(req.query.offset) || 0,
+          }),
+        });
+      } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+      }
+    });
+
+    app.post("/api/admin/control-center/jobs", async (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePerm(req, res, "system.configure")) return;
+      try {
+        const { enqueueJob } = require("../lib/jobQueue");
+        const job = enqueueJob({
+          jobType: req.body?.jobType || "manual",
+          payload: req.body?.payload || {},
+          priority: req.body?.priority || "NORMAL",
+          maxRetries: req.body?.maxRetries,
+        });
+        logAuditFromRequest(req, {
+          action: "background_job.enqueue",
+          entityType: "background_job",
+          entityId: job.id,
+          newValue: job.jobType,
+        });
+        res.status(201).json({ success: true, job });
+      } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+      }
+    });
+
     app.get("/api/admin/control-center/notifications", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "system.read")) return;

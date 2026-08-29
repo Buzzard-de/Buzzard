@@ -87,8 +87,8 @@ async function getSystemStatus() {
   const orchestrator = await getOrchestratorStatus();
   const guardian = await getGuardianStatus();
 
-  const runningJobs = db.prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('queued','running')").get().n;
-  const failedJobs = db.prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status = 'failed'").get().n;
+  const runningJobs = db.prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('QUEUED','RUNNING','RETRYING','queued','running')").get().n;
+  const failedJobs = db.prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('FAILED','failed')").get().n;
 
   return {
     generatedAt: new Date().toISOString(),

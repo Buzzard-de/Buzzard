@@ -39,6 +39,7 @@ const CATEGORY_VISIBILITY = Object.freeze({
 });
 
 const READINESS_STATUS = Object.freeze({
+  DRAFT: "DRAFT",
   READY: "READY",
   NOT_READY: "NOT_READY",
   BLOCKED: "BLOCKED",

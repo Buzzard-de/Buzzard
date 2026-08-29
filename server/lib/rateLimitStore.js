@@ -1,49 +1,159 @@
 /**
- * Rate limit store abstraction — memory default, file persistence optional.
- * Future: Redis/Upstash via BUZZARD_RATE_LIMIT_STORE=redis
+ * Rate limit store — memory | file | redis (stub) backends.
+ * BUZZARD_RATE_LIMIT_STORE=memory|file|redis
  */
 const fs = require("fs");
 const path = require("path");
 
 const dataDir = path.join(__dirname, "..", "data");
 const persistFile = path.join(dataDir, "rate-limit-buckets.json");
-const PERSIST_INTERVAL_MS = 30_000;
+const PERSIST_INTERVAL_MS = 15_000;
 
-function createMemoryStore() {
-  return new Map();
+function resolveBackend() {
+  const store = (process.env.BUZZARD_RATE_LIMIT_STORE || "memory").toLowerCase();
+  if (store === "file") return "file";
+  if (store === "redis") return "redis";
+  return "memory";
 }
 
-function loadPersistedStore() {
-  const store = createMemoryStore();
-  if (process.env.BUZZARD_RATE_LIMIT_PERSIST !== "1") return store;
-  try {
-    if (!fs.existsSync(persistFile)) return store;
-    const raw = JSON.parse(fs.readFileSync(persistFile, "utf8"));
-    const now = Date.now();
-    for (const [key, records] of Object.entries(raw)) {
-      store.set(key, records.filter((ts) => now - ts < 3600000));
+function createMemoryBackend() {
+  const buckets = new Map();
+  return {
+    name: "memory",
+    get(key) {
+      return buckets.get(key) || [];
+    },
+    set(key, records) {
+      buckets.set(key, records);
+    },
+    size() {
+      return buckets.size;
+    },
+    persist() {},
+    load() {},
+  };
+}
+
+function createFileBackend() {
+  const memory = createMemoryBackend();
+  memory.name = "file";
+  memory.load = function load() {
+    try {
+      if (!fs.existsSync(persistFile)) return;
+      const raw = JSON.parse(fs.readFileSync(persistFile, "utf8"));
+      const now = Date.now();
+      for (const [key, records] of Object.entries(raw)) {
+        memory.set(key, records.filter((ts) => now - ts < 3600000));
+      }
+    } catch {
+      /* ignore */
     }
-  } catch {
-    /* ignore corrupt file */
-  }
-  return store;
+  };
+  memory.persist = function persist() {
+    try {
+      if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+      const obj = {};
+      for (const [key] of [...Array(memory.size()).keys()]) {
+        /* rebuilt via get/set below */
+      }
+      const entries = {};
+      const store = memory;
+      const internal = store.get("__dump__");
+      void internal;
+      const dump = JSON.parse(fs.existsSync(persistFile) ? fs.readFileSync(persistFile, "utf8") : "{}");
+      const fresh = {};
+      const now = Date.now();
+      for (const [key, records] of Object.entries(dump)) {
+        const filtered = (records || []).filter((ts) => now - ts < 3600000);
+        if (filtered.length) fresh[key] = filtered;
+      }
+      for (const key of Object.keys(fresh)) memory.set(key, fresh[key]);
+      const out = {};
+      for (const key of [...new Set([...Object.keys(fresh)])]) {
+        out[key] = memory.get(key);
+      }
+      fs.writeFileSync(persistFile, JSON.stringify(out), "utf8");
+    } catch {
+      /* non-fatal */
+    }
+  };
+  return memory;
 }
 
-let sharedStore = loadPersistedStore();
-
-function persistStore(store) {
-  if (process.env.BUZZARD_RATE_LIMIT_PERSIST !== "1") return;
-  try {
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    const obj = Object.fromEntries([...store.entries()].slice(0, 5000));
-    fs.writeFileSync(persistFile, JSON.stringify(obj), "utf8");
-  } catch {
-    /* non-fatal */
-  }
+// Simpler file backend implementation
+function createFileBackendSimple() {
+  const buckets = new Map();
+  const backend = {
+    name: "file",
+    get(key) {
+      return buckets.get(key) || [];
+    },
+    set(key, records) {
+      buckets.set(key, records);
+    },
+    size() {
+      return buckets.size;
+    },
+    load() {
+      try {
+        if (!fs.existsSync(persistFile)) return;
+        const raw = JSON.parse(fs.readFileSync(persistFile, "utf8"));
+        const now = Date.now();
+        for (const [key, records] of Object.entries(raw)) {
+          buckets.set(key, records.filter((ts) => now - ts < 3600000));
+        }
+      } catch {
+        /* ignore */
+      }
+    },
+    persist() {
+      try {
+        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+        const obj = Object.fromEntries([...buckets.entries()].slice(0, 5000));
+        fs.writeFileSync(persistFile, JSON.stringify(obj), "utf8");
+      } catch {
+        /* non-fatal */
+      }
+    },
+  };
+  backend.load();
+  return backend;
 }
 
-if (process.env.BUZZARD_RATE_LIMIT_PERSIST === "1") {
-  setInterval(() => persistStore(sharedStore), PERSIST_INTERVAL_MS).unref();
+function createRedisBackend() {
+  return {
+    name: "redis",
+    get() {
+      return [];
+    },
+    set() {},
+    size() {
+      return 0;
+    },
+    load() {},
+    persist() {},
+    unavailable: true,
+  };
+}
+
+function createBackend() {
+  const kind = resolveBackend();
+  if (kind === "file") return createFileBackendSimple();
+  if (kind === "redis") {
+    const redis = createRedisBackend();
+    if (redis.unavailable) {
+      console.warn("[rate-limit] Redis store not configured — falling back to file backend");
+      return createFileBackendSimple();
+    }
+    return redis;
+  }
+  return createMemoryBackend();
+}
+
+let backend = createBackend();
+
+if (backend.name === "file") {
+  setInterval(() => backend.persist(), PERSIST_INTERVAL_MS).unref();
 }
 
 function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
@@ -51,28 +161,40 @@ function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
     const { getClientIp } = require("./security");
     const key = `${keyPrefix}${options.key || getClientIp(req)}`;
     const now = Date.now();
-    const records = (sharedStore.get(key) || []).filter((ts) => now - ts < windowMs);
+    const records = backend.get(key).filter((ts) => now - ts < windowMs);
     if (records.length >= max) {
-      sharedStore.set(key, records);
+      backend.set(key, records);
       return true;
     }
     records.push(now);
-    sharedStore.set(key, records);
+    backend.set(key, records);
+    if (backend.name === "file") backend.persist();
     return false;
   };
 }
 
 function getStoreInfo() {
   return {
-    backend: process.env.BUZZARD_RATE_LIMIT_STORE || "memory",
-    persist: process.env.BUZZARD_RATE_LIMIT_PERSIST === "1",
-    bucketCount: sharedStore.size,
-    note: "In-memory buckets reset on restart unless BUZZARD_RATE_LIMIT_PERSIST=1. Use Redis/Upstash for multi-instance production.",
+    backend: backend.name,
+    configured: resolveBackend(),
+    bucketCount: backend.size(),
+    persistFile: backend.name === "file" ? persistFile : null,
+    note:
+      backend.name === "redis"
+        ? "Configure UPSTASH_REDIS_REST_URL for production Redis."
+        : backend.name === "file"
+          ? "Buckets persist across restarts via rate-limit-buckets.json"
+          : "In-memory only — resets on restart. Set BUZZARD_RATE_LIMIT_STORE=file",
   };
+}
+
+function resetBackendForTests() {
+  backend = createBackend();
 }
 
 module.exports = {
   createRateLimiter,
   getStoreInfo,
-  persistStore,
+  resetBackendForTests,
+  resolveBackend,
 };

@@ -1,6 +1,6 @@
 # Buzzard RBAC
 
-**Stand:** Part 3 — Global Authorization
+**Stand:** Part 4 — Global Authorization + Nav Filtering
 
 ## Rollen
 
@@ -51,5 +51,7 @@ can("read_only", "system.configure"); // false
 
 ## Nav vs Backend
 
-Admin-Nav filtert **noch nicht** nach Rolle (Part 4 Empfehlung).  
-Backend blockiert unauthorized Requests mit 403.
+Admin-Nav wird clientseitig nach Rolle gefiltert (`lib/admin/navPermissions.mjs`).  
+Backend blockiert unauthorized Requests weiterhin mit 403 — Nav allein ist kein Schutz.
+
+Audit: `npm run test:rbac-audit`

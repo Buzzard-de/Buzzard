@@ -36,11 +36,44 @@ function defaultReadiness() {
     products: READINESS_STATUS.NOT_READY,
     pricing: READINESS_STATUS.NOT_READY,
     stock: READINESS_STATUS.NOT_READY,
+    supplier: READINESS_STATUS.NOT_READY,
+    shipping: READINESS_STATUS.NOT_READY,
     payment: READINESS_STATUS.BLOCKED,
     logistics: READINESS_STATUS.NOT_READY,
     frontend: READINESS_STATUS.READY,
+    legal: READINESS_STATUS.NOT_READY,
+    content: READINESS_STATUS.NOT_READY,
     overall: READINESS_STATUS.NOT_READY,
   };
+}
+
+function computeOverallReadiness(readiness, visibilityStatus) {
+  if (visibilityStatus === CATEGORY_VISIBILITY.DRAFT) return READINESS_STATUS.DRAFT;
+  const r = { ...defaultReadiness(), ...readiness };
+  const checks = ["products", "pricing", "stock", "supplier", "shipping", "frontend", "legal", "content"];
+  if (checks.some((k) => r[k] === READINESS_STATUS.BLOCKED)) return READINESS_STATUS.BLOCKED;
+  if (process.env.BUZZARD_SALES_ENABLED !== "1") {
+    if (r.payment !== READINESS_STATUS.BLOCKED) r.payment = READINESS_STATUS.BLOCKED;
+  }
+  if (checks.every((k) => r[k] === READINESS_STATUS.READY)) return READINESS_STATUS.READY;
+  return READINESS_STATUS.NOT_READY;
+}
+
+function getReadinessBlockers(readiness, visibilityStatus) {
+  const r = { ...defaultReadiness(), ...readiness };
+  const overall = computeOverallReadiness(r, visibilityStatus);
+  const blockers = Object.entries(r)
+    .filter(([key, val]) => key !== "overall" && val !== READINESS_STATUS.READY)
+    .map(([key, val]) => ({ check: key, status: val }));
+  return { overall, blockers };
+}
+
+function canActivateForSale(readiness, visibilityStatus) {
+  const { overall } = getReadinessBlockers(readiness, visibilityStatus);
+  if (process.env.BUZZARD_SALES_ENABLED === "1") {
+    return overall === READINESS_STATUS.READY;
+  }
+  return overall === READINESS_STATUS.READY && visibilityStatus === CATEGORY_VISIBILITY.ACTIVE;
 }
 
 function getCategoryStatus(categoryId) {
@@ -69,7 +102,14 @@ function setCategoryStatus(categoryId, status, { updatedBy, readiness } = {}) {
   const prev = store.categories[categoryId] || {};
   store.categories[categoryId] = {
     status,
-    readiness: readiness || prev.readiness || defaultReadiness(),
+    readiness: {
+      ...defaultReadiness(),
+      ...(readiness || prev.readiness || {}),
+      overall: computeOverallReadiness(
+        { ...defaultReadiness(), ...(readiness || prev.readiness || {}) },
+        status
+      ),
+    },
     updatedBy: updatedBy || null,
     updatedAt: new Date().toISOString(),
   };
@@ -131,6 +171,9 @@ module.exports = {
   listAllStatuses,
   isVisibleToCustomer,
   defaultReadiness,
+  computeOverallReadiness,
+  getReadinessBlockers,
+  canActivateForSale,
   syncFromDb,
   persistToDb,
   readStore,

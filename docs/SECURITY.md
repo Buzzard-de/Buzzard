@@ -1,6 +1,6 @@
 # Buzzard Security
 
-**Stand:** Part 3
+**Stand:** Part 4
 
 ## Schutzmaßnahmen (implementiert)
 
@@ -8,7 +8,8 @@
 |----------|--------|---------|
 | Global RBAC | ✅ | Alle `/api/admin/*` Routes |
 | Unified Auth Facade | ✅ | `server/core/auth/` |
-| Rate Limiting | ✅ | 180/min API; Login-Limits |
+| Rate Limiting | ✅ | memory / file / redis abstraction |
+| Persistent Rate Limit | ✅ | `BUZZARD_RATE_LIMIT_STORE=file` |
 | Account Lockout | ✅ | 5 Fehlversuche → 30 Min |
 | Admin 2FA | ✅ | TOTP |
 | Security Headers | ✅ | HSTS, X-Frame-Options, CSP, COOP, CORP |
@@ -32,11 +33,24 @@ Wenn `BUZZARD_CSRF_ENFORCE=1` und kein Bearer-Header:
 
 **Öffentliche Auth-Endpoints** (login) sind von CSRF-Enforcement ausgenommen.
 
-## Rate Limiting
+## Rate Limiting (Part 4)
 
-- **Aktuell:** In-Memory (+ optional File-Persist via `BUZZARD_RATE_LIMIT_PERSIST=1`)
-- **Problem:** Restart setzt Buckets zurück (Dokumentiert)
-- **Zukunft:** `BUZZARD_RATE_LIMIT_STORE=redis` (Abstraction in `rateLimitStore.js`)
+```
+BUZZARD_RATE_LIMIT_STORE=memory|file|redis
+```
+
+- **memory:** default — resets on restart
+- **file:** persists buckets to `server/data/rate-limit-buckets.json`
+- **redis:** stub — falls back to file until Upstash configured
+
+Health: `GET /api/security/health` → `protections.rateLimitBackend`
+
+## Security Dashboard (Part 4)
+
+- Filters: severity, event type, user, date range, search
+- Pagination: server-side (max 200 per page)
+- CRITICAL events highlighted in admin UI
+- API: `GET /api/admin/security/events?severity=CRITICAL&page=1&limit=50`
 
 ## Security Events
 

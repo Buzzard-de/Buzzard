@@ -28,7 +28,12 @@ function eventLabel(type: string): string {
     admin_logout: "Admin Logout",
     auth_login_failed: "Kunden-Login fehlgeschlagen",
     auth_account_locked: "Kundenkonto gesperrt",
-    api_rate_limited: "API Rate Limit",
+    permission_denied: "Permission denied",
+    privilege_escalation_attempt: "Privilege Escalation",
+    csrf_failure: "CSRF Failure",
+    idor_attempt: "IDOR Attempt",
+    ai_permission_violation: "AI Permission Violation",
+    session_revoked: "Session Revoked",
   };
   return labels[type] || type;
 }
@@ -45,16 +50,30 @@ export default function AdminSecurityDashboardPanel() {
   const [disableCode, setDisableCode] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [filterSeverity, setFilterSeverity] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [searchQ, setSearchQ] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState<{ page: number; pages: number; total: number } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const reload = useCallback(async () => {
     setError("");
-    const [dashboard, twoFactor] = await Promise.all([fetchSecurityDashboard(), fetchAdminTwoFactorStatus()]);
+    const [dashboard, twoFactor] = await Promise.all([
+      fetchSecurityDashboard({
+        severity: filterSeverity || undefined,
+        type: filterType || undefined,
+        q: searchQ || undefined,
+        page,
+      }),
+      fetchAdminTwoFactorStatus(),
+    ]);
     setOverview(dashboard.overview);
     setEvents(dashboard.events);
     setLockouts(dashboard.lockouts);
+    setPagination(dashboard.pagination || null);
     setTwoFactorEnabled(twoFactor.enabled);
-  }, []);
+  }, [filterSeverity, filterType, searchQ, page]);
 
   useEffect(() => {
     if (!getAdminToken()) {
@@ -224,29 +243,68 @@ export default function AdminSecurityDashboardPanel() {
       </section>
 
       <section className="admin-card">
-        <h2>Letzte Security-Events</h2>
+        <h2>Security Events</h2>
+        <div className="cc-form-row">
+          <select value={filterSeverity} onChange={(e) => { setFilterSeverity(e.target.value); setPage(1); }} aria-label="Severity">
+            <option value="">Alle Severity</option>
+            <option value="CRITICAL">CRITICAL</option>
+            <option value="HIGH">HIGH</option>
+            <option value="WARNING">WARNING</option>
+            <option value="INFO">INFO</option>
+          </select>
+          <select value={filterType} onChange={(e) => { setFilterType(e.target.value); setPage(1); }} aria-label="Event type">
+            <option value="">Alle Typen</option>
+            <option value="permission_denied">permission_denied</option>
+            <option value="privilege_escalation_attempt">privilege_escalation_attempt</option>
+            <option value="csrf_failure">csrf_failure</option>
+            <option value="idor_attempt">idor_attempt</option>
+            <option value="ai_permission_violation">ai_permission_violation</option>
+            <option value="session_revoked">session_revoked</option>
+          </select>
+          <input
+            type="search"
+            placeholder="Suche…"
+            value={searchQ}
+            onChange={(e) => setSearchQ(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && reload()}
+          />
+          <button type="button" className="shop-btn-primary" onClick={() => reload()}>Filtern</button>
+        </div>
+        {pagination && (
+          <p className="admin-note">
+            Seite {pagination.page} / {pagination.pages} — {pagination.total} Events
+          </p>
+        )}
         <table className="admin-table">
           <thead>
             <tr>
               <th>Zeit</th>
+              <th>Severity</th>
               <th>Typ</th>
               <th>IP</th>
-              <th>E-Mail</th>
-              <th>OK</th>
+              <th>User</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {events.slice(0, 50).map((event) => (
-              <tr key={event.id}>
+            {events.map((event) => (
+              <tr key={event.id} className={event.severity === "CRITICAL" ? "cc-event-critical" : ""}>
                 <td>{formatTime(event.timestamp)}</td>
+                <td>{event.severity || "—"}</td>
                 <td>{eventLabel(event.type)}</td>
                 <td>{event.ip || "—"}</td>
-                <td>{event.email || "—"}</td>
-                <td>{event.success ? "Ja" : "Nein"}</td>
+                <td>{event.email || event.userId || "—"}</td>
+                <td>{event.status || (event.success ? "ok" : "denied")}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        {pagination && pagination.pages > 1 && (
+          <div className="cc-actions">
+            <button type="button" className="shop-btn-secondary" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Zurück</button>
+            <button type="button" className="shop-btn-secondary" disabled={page >= pagination.pages} onClick={() => setPage((p) => p + 1)}>Weiter</button>
+          </div>
+        )}
       </section>
     </div>
   );

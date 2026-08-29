@@ -256,18 +256,70 @@ export async function fetchAuditLog(): Promise<AuditEntry[]> {
   return data.entries;
 }
 
-export async function fetchSecurityDashboard(): Promise<{
+export async function fetchSecurityDashboard(params?: {
+  severity?: string;
+  type?: string;
+  user?: string;
+  q?: string;
+  page?: number;
+}): Promise<{
   events: SecurityEvent[];
   overview: SecurityOverview;
   lockouts: LockoutEntry[];
+  pagination?: import("./securityTypes").SecurityPagination;
 }> {
+  const qs = new URLSearchParams();
+  if (params?.severity) qs.set("severity", params.severity);
+  if (params?.type) qs.set("type", params.type);
+  if (params?.user) qs.set("user", params.user);
+  if (params?.q) qs.set("q", params.q);
+  if (params?.page) qs.set("page", String(params.page));
+  qs.set("limit", "50");
+  const suffix = qs.toString() ? `?${qs.toString()}` : "";
   const data = await request<{
     success: boolean;
     events: SecurityEvent[];
     overview: SecurityOverview;
     lockouts: LockoutEntry[];
-  }>("/api/admin/security/events");
-  return { events: data.events, overview: data.overview, lockouts: data.lockouts };
+    pagination?: import("./securityTypes").SecurityPagination;
+  }>(`/api/admin/security/events${suffix}`);
+  return {
+    events: data.events,
+    overview: data.overview,
+    lockouts: data.lockouts,
+    pagination: data.pagination,
+  };
+}
+
+export async function fetchAdminSessions(): Promise<
+  Array<{
+    sessionId: string;
+    userId: string;
+    email: string;
+    role: string;
+    createdAt: string;
+    expiresAt: string;
+    ip: string | null;
+    userAgent: string | null;
+  }>
+> {
+  const data = await request<{ success: boolean; sessions: Array<Record<string, string>> }>(
+    "/api/admin/sessions"
+  );
+  return data.sessions as Array<{
+    sessionId: string;
+    userId: string;
+    email: string;
+    role: string;
+    createdAt: string;
+    expiresAt: string;
+    ip: string | null;
+    userAgent: string | null;
+  }>;
+}
+
+export async function revokeAdminSession(sessionId: string): Promise<void> {
+  await request(`/api/admin/sessions/${encodeURIComponent(sessionId)}`, { method: "DELETE" });
 }
 
 export async function fetchAdminTwoFactorStatus(): Promise<AdminTwoFactorStatus> {

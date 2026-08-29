@@ -35,6 +35,7 @@
     "test:part9": "node scripts/part9-smoke.mjs",
     "test:part10": "node scripts/part10-smoke.mjs",
     "test:production-safety": "node scripts/production-safety.mjs",
+    "test:final-audit": "node scripts/final-audit.mjs",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",

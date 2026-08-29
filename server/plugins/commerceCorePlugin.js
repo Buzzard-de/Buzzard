@@ -11,6 +11,7 @@ const { logAuditFromRequest } = require("../lib/coreAudit");
 const cartRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: "commerce-cart:" });
 const checkoutRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "commerce-checkout:" });
 const orderRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 10, keyPrefix: "commerce-order:" });
+const readinessRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 60, keyPrefix: "commerce-readiness:" });
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -216,7 +217,7 @@ module.exports = {
     });
 
     app.post("/api/commerce/checkout/attempt", (req, res) => {
-      if (!rateLimit(req, res, orderRateLimit)) return;
+      if (!rateLimit(req, res, readinessRateLimit)) return;
       const body = parseBody(req);
       const demo = commerce.cartService.getDemoProductForCart();
       if (!demo) return res.status(503).json({ success: false, errorKey: "demo_product_unavailable" });

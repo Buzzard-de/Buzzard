@@ -27,6 +27,7 @@ const EVENT_SEVERITY = {
   payment_attempt_blocked: "HIGH",
   order_creation_blocked: "HIGH",
   price_tampering: "CRITICAL",
+  coupon_tampering: "CRITICAL",
   quantity_tampering: "HIGH",
   idempotency_conflict: "INFO",
   commerce_permission_denied: "HIGH",

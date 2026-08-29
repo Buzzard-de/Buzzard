@@ -12,6 +12,7 @@ import {
   fetchCategoryVisibility,
   fetchControlCenterStatus,
   fetchDashboardSummary,
+  fetchDeploymentReadiness,
   fetchIntegrations,
   globalAdminSearch,
   updateCategoryVisibility,
@@ -57,7 +58,8 @@ type Tab =
   | "workers"
   | "schedules"
   | "sync"
-  | "commerce";
+  | "commerce"
+  | "deployment";
 
 const STATUS_CLASS: Record<string, string> = {
   ONLINE: "cc-status-online",
@@ -93,6 +95,7 @@ export default function AdminControlCenter() {
   const [commerceOrders, setCommerceOrders] = useState<Record<string, number>>({});
   const [goLiveRequests, setGoLiveRequests] = useState<GoLiveRequest[]>([]);
   const [commerceEvents, setCommerceEvents] = useState<Array<{ type: string; timestamp: string; severity: string }>>([]);
+  const [deployment, setDeployment] = useState<Awaited<ReturnType<typeof fetchDeploymentReadiness>> | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -141,6 +144,11 @@ export default function AdminControlCenter() {
         setCommerceEvents(events);
       } catch {
         /* commerce module optional during load */
+      }
+      try {
+        setDeployment(await fetchDeploymentReadiness());
+      } catch {
+        setDeployment(null);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Load failed");
@@ -222,6 +230,7 @@ export default function AdminControlCenter() {
             ["schedules", "Schedules"],
             ["sync", "Sync"],
             ["commerce", "Commerce"],
+            ["deployment", "Deployment"],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -634,6 +643,49 @@ export default function AdminControlCenter() {
               <li key={`${ev.type}-${i}`}>
                 <strong>{ev.type}</strong>
                 <span className="cc-muted"> {ev.severity} — {new Date(ev.timestamp).toLocaleString()}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {!loading && tab === "deployment" && deployment && (
+        <section className="admin-panel">
+          <h2>Production Readiness</h2>
+          <p className="admin-note">
+            Deployment identity, drift detection, and infrastructure status. Sales remain disabled (Part 13).
+          </p>
+          <div className="admin-stat-grid">
+            <article className="admin-stat">
+              <strong>{deployment.deployment.status}</strong>
+              <span>Deployment</span>
+            </article>
+            <article className="admin-stat">
+              <strong>{deployment.readiness.overall}</strong>
+              <span>Readiness</span>
+            </article>
+            <article className="admin-stat">
+              <strong>
+                {deployment.deployment.runningCommit ||
+                  (typeof deployment.deployment.identity?.commit === "string"
+                    ? deployment.deployment.identity.commit
+                    : "—")}
+              </strong>
+              <span>Running commit</span>
+            </article>
+            <article className="admin-stat">
+              <strong>{deployment.deployment.expectedCommit || "—"}</strong>
+              <span>Expected commit</span>
+            </article>
+          </div>
+          <ul className="cc-status-list">
+            {deployment.readiness.checks.map((c) => (
+              <li key={c.name}>
+                <span className={c.status === "PASS" ? "cc-status-online" : c.status === "BLOCKED" ? "cc-status-offline" : "cc-status-warning"}>
+                  {c.status}
+                </span>
+                <strong>{c.name}</strong>
+                <span>{c.detail}</span>
               </li>
             ))}
           </ul>

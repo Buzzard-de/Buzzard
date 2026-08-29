@@ -38,6 +38,8 @@
     "test:final-audit": "node scripts/final-audit.mjs",
     "test:part12": "node scripts/part12-smoke.mjs",
     "test:part12:live": "node scripts/part12-live-smoke.mjs",
+    "test:part13": "node scripts/part13-smoke.mjs",
+    "test:production-smoke": "node scripts/production-smoke.mjs",
     "test:backup-restore": "node scripts/restore-db.mjs --dry-run --from server/data/buzzard.db",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",

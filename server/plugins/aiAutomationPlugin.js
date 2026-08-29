@@ -463,6 +463,23 @@ function collectHealth() {
     status: "ok",
     app: "Buzzard API",
     timestamp: new Date().toISOString(),
+    version: (() => {
+      try {
+        return require("../lib/productionHealth").getVersionPayload();
+      } catch {
+        return null;
+      }
+    })(),
+    commercial: {
+      salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
+      goLiveLock: (() => {
+        try {
+          return require("../lib/commerce/goLiveApproval").PRODUCTION_SAFETY_LOCK;
+        } catch {
+          return true;
+        }
+      })(),
+    },
     database,
     commercial,
     orderAutomation,
@@ -517,6 +534,23 @@ function collectHealth() {
       structuredLogs: true,
       errorTrackingHook: Boolean(process.env.ERROR_TRACKING_DSN),
     },
+    production: (() => {
+      try {
+        const ph = require("../lib/productionHealth");
+        const { runIntegrityCheck } = require("../lib/dbIntegrity");
+        const { validateEnvironment } = require("../lib/environmentValidation");
+        return {
+          integrity: runIntegrityCheck(),
+          environment: validateEnvironment(),
+          worker: ph.getWorkerHealth(),
+          scheduler: ph.getSchedulerHealth(),
+          catalog: ph.getCatalogHealthSummary(),
+          commerce: ph.getCommerceHealthSummary(),
+        };
+      } catch (err) {
+        return { error: err.message };
+      }
+    })(),
   };
 }
 

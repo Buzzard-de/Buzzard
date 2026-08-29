@@ -211,7 +211,7 @@ function parseBody(req) {
 
 function loadPlugins() {
   const pluginFiles = fs.readdirSync(pluginsDir).filter(file => file.endsWith('.js'));
-  const priority = ['storefrontBridgePlugin.js', 'orderAutomationPlugin.js'];
+  const priority = ['productionHealthPlugin.js', 'storefrontBridgePlugin.js', 'orderAutomationPlugin.js'];
   const sorted = [
     ...priority.filter(file => pluginFiles.includes(file)),
     ...pluginFiles.filter(file => !priority.includes(file)).sort(),
@@ -236,6 +236,22 @@ app.get('/api/status', (req, res) => {
 });
 
 loadPlugins();
+
+try {
+  const { assertProductionSafeStartup } = require("./lib/environmentValidation");
+  assertProductionSafeStartup();
+} catch (err) {
+  console.error(err.message);
+  if (process.env.NODE_ENV === "production") process.exit(1);
+}
+
+try {
+  const { validateDatabaseStartup } = require("./lib/dbStartup");
+  validateDatabaseStartup();
+} catch (err) {
+  console.error(err.message);
+  if (process.env.NODE_ENV === "production") process.exit(1);
+}
 
 if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
   const jobWorker = require("./lib/jobWorker");

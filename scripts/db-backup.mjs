@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 /**
- * Backup Buzzard SQLite database to a timestamped file.
- *
- * Usage:
- *   node scripts/db-backup.mjs
- *   BUZZARD_DB_PATH=/var/data/buzzard.db node scripts/db-backup.mjs
+ * Part 13 — Production-safe SQLite backup with metadata sidecar
  */
-
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
+const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dbPath = process.env.BUZZARD_DB_PATH
   ? path.resolve(process.env.BUZZARD_DB_PATH)
@@ -27,7 +24,32 @@ if (!fs.existsSync(dbPath)) {
 fs.mkdirSync(backupDir, { recursive: true });
 const stamp = new Date().toISOString().replace(/[:.]/g, "-");
 const target = path.join(backupDir, `buzzard-${stamp}.db`);
-fs.copyFileSync(dbPath, target);
+const metaPath = `${target}.meta.json`;
 
+fs.copyFileSync(dbPath, target);
 const stat = fs.statSync(target);
-console.log(`Backup created: ${target} (${stat.size} bytes)`);
+
+let integrityCheck = "skipped";
+try {
+  const Database = require("better-sqlite3");
+  const backupDb = new Database(target, { readonly: true });
+  const row = backupDb.prepare("PRAGMA integrity_check").get();
+  integrityCheck = row?.integrity_check || "unknown";
+  backupDb.close();
+} catch (err) {
+  integrityCheck = `error:${err.message}`;
+}
+
+const meta = {
+  timestamp: new Date().toISOString(),
+  sourcePath: dbPath,
+  backupPath: target,
+  sizeBytes: stat.size,
+  integrityCheck,
+  success: integrityCheck === "ok",
+  environment: process.env.NODE_ENV || "development",
+};
+
+fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2));
+console.log(JSON.stringify({ ok: meta.success, backup: target, meta }, null, 2));
+process.exit(meta.success ? 0 : 1);

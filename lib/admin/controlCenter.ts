@@ -37,6 +37,35 @@ export async function fetchControlCenterStatus(): Promise<ControlCenterStatus> {
   return { generatedAt: data.generatedAt, services: data.services };
 }
 
+export interface DeploymentReadiness {
+  overall: string;
+  checks: Array<{ name: string; status: string; detail?: string }>;
+}
+
+export interface DeploymentPanel {
+  generatedAt: string;
+  deployment: {
+    status: string;
+    match?: boolean | null;
+    drift?: boolean | null;
+    expectedCommit?: string;
+    runningCommit?: string;
+    identity?: Record<string, unknown>;
+  };
+  readiness: DeploymentReadiness;
+  summary?: Record<string, unknown>;
+}
+
+export async function fetchDeploymentReadiness(): Promise<DeploymentPanel> {
+  const data = await request<{ success: boolean } & DeploymentPanel>("/api/admin/control-center/deployment");
+  return {
+    generatedAt: data.generatedAt,
+    deployment: data.deployment,
+    readiness: data.readiness,
+    summary: data.summary,
+  };
+}
+
 export async function fetchDashboardSummary(): Promise<DashboardSummary> {
   const data = await request<{ success: boolean; summary: DashboardSummary }>("/api/admin/control-center/summary");
   return data.summary;

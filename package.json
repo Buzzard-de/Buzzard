@@ -60,6 +60,7 @@
     "backup:ki": "cd intelligence && python3 main.py complete-build-ki-gesamt-backup --full-snapshot",
     "backup:ki:quick": "cd intelligence && python3 main.py complete-build-ki-gesamt-backup --skip-snapshot",
     "render:preflight": "node scripts/render-preflight.mjs",
+    "setup:production-remaining": "node scripts/setup-production-remaining.mjs",
     "orchestrator:dev": "cd intelligence && uvicorn buzzard_orchestrator:app --reload --port 8010",
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",
     "buzzard": "python Buzzard/app.py all",

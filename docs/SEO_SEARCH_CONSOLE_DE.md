@@ -22,6 +22,10 @@
 
 ## Search Console einrichten (manuell)
 
+> **Bereits deployed:** Verifizierungsdatei liegt live unter  
+> https://buzzard24.de/google1206d6d713142108.html  
+> (Methode „HTML-Datei“ in Search Console wählen — kein neuer Upload nötig.)
+
 1. https://search.google.com/search-console öffnen
 2. Property hinzufügen: **Domain** `buzzard24.de` (empfohlen) oder URL-Präfix `https://buzzard24.de`
 3. Verifizierung wählen:

@@ -1,6 +1,8 @@
 # Buzzard24 — Was noch zu tun ist
 
-**Stand:** 29. Aug 2026 · **Part 14 LIVE** · Deploy Hook aktiv · Katalogmodus ohne Verkauf
+**Stand:** 29. Aug 2026 · **Part 14 LIVE** · Intelligence LIVE · Katalogmodus ohne Verkauf
+
+**Einrichtungs-Guide:** `docs/SETUP_REMAINING_DE.md`
 
 ---
 
@@ -9,25 +11,38 @@
 | Bereich | Status |
 |---------|--------|
 | GitHub Pages (`buzzard24.de`) | ✅ Live |
-| Render API (`buzzard-api`) | ✅ Live — Commit synced, `DEPLOYMENT_DRIFT=false` |
-| Deploy Hook (`RENDER_DEPLOY_HOOK_URL`) | ✅ GitHub Actions → Render deploy |
+| Render API (`buzzard-api`) | ✅ Live — Commit synced |
+| Intelligence Python-Stack | ✅ Live — Bridge **LIVE** |
+| Orchestrator + Guardian | ✅ Erreichbar |
+| Deploy Hook | ✅ GitHub Actions → Render |
 | production-smoke | ✅ 15/15 |
-| part12:live | ✅ 8/8 |
-| Verify Go-Live / Deploy Buzzard API CI | ✅ SUCCESS |
+| Google-Verifizierungsdatei | ✅ Live unter `/google1206d6d713142108.html` |
 | Verkauf | ✅ **AUS** (`BUZZARD_SALES_ENABLED=0`) |
-
-**Closeout:** `docs/PART14_LIVE_CLOSEOUT_REPORT.md`
 
 ---
 
-## 🟡 Optional (nicht blockierend)
+## 🔧 Noch einrichten (Blueprint + Dashboard)
 
-1. **Persistent Disk** — Render Starter + `/var/data` + `BUZZARD_DB_PATH` (SQLite über Redeploys behalten)
-2. **Upstash Redis** — verteiltes Rate-Limiting (aktuell: Memory)
-3. ~~**`buzzard-intelligence`** Docker-Deploy~~ ✅ Live (`/health` 200, Bey-Agents aktiv)
-4. **Admin-Passwort** — Render → `buzzard-api` → Environment → `ADMIN_PASSWORD`
-5. **Google Search Console** → `docs/SEO_SEARCH_CONSOLE_DE.md`
-6. **Cloudflare** → `docs/CLOUDFLARE_SETUP_DE.md`
+Repo ist vorbereitet (`render.yaml` Starter + Disk). **Einmal im Render Dashboard:**
+
+1. **Blueprint sync** → Starter + Persistent Disk `/var/data`  
+   → `BUZZARD_DB_PATH=/var/data/buzzard.db`  
+   → Prüfen: `GET /api/health/db` → `persistent: true`
+
+2. **Upstash Redis** (Free) → Render Env `UPSTASH_REDIS_REST_URL` + `TOKEN`
+
+3. **Admin-Passwort** notieren → Render → `ADMIN_PASSWORD` → Login testen
+
+4. **Google Search Console** → Property anlegen + Sitemap (Datei schon live)
+
+5. **Cloudflare** (optional) → `docs/CLOUDFLARE_SETUP_DE.md`
+
+```bash
+node scripts/setup-production-remaining.mjs          # Audit
+RENDER_API_KEY=... node scripts/setup-production-remaining.mjs --apply
+```
+
+GitHub Actions → **Setup Production Remaining**
 
 ---
 
@@ -41,13 +56,12 @@
 
 ---
 
-## Schnell-Check (Live)
+## Schnell-Check
 
 ```bash
 BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:production-smoke
-BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part14
-curl -s https://buzzard-api.onrender.com/api/health/version
-curl -s https://buzzard-api.onrender.com/api/health/production
+curl -s https://buzzard-api.onrender.com/api/health/db | jq .database.persistence
+curl -s https://buzzard-api.onrender.com/api/intelligence/status | jq .bridge
 ```
 
-Erwartung: **version 200**, **drift false**, **sales false**.
+Erwartung nach Disk-Setup: **persistent true**, **bridge LIVE**, **sales false**.

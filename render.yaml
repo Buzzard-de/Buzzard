@@ -8,11 +8,12 @@
 #   5. After deploy: npm run backup:db && node scripts/sync-search-index.mjs
 #
 # Ephemeral free-tier filesystem LOSES all SQLite data on redeploy.
+# buzzard-api uses starter + persistent disk (see disk: below).
 services:
   - type: web
     name: buzzard-api
     runtime: node
-    plan: free
+    plan: starter
     region: frankfurt
     repo: https://github.com/Buzzard-de/Buzzard
     branch: main
@@ -22,6 +23,10 @@ services:
     # Do NOT use npm start here — Next.js export is static; API only on Render.
     startCommand: node server/server.js
     healthCheckPath: /api/health
+    disk:
+      name: buzzard-data
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
@@ -111,6 +116,10 @@ services:
         value: "24"
       - key: BUZZARD_SALES_ENABLED
         value: "0"
+      - key: BUZZARD_DB_PATH
+        value: /var/data/buzzard.db
+      - key: BUZZARD_BACKUP_DIR
+        value: /var/data/backups
       - key: BUZZARD_CSRF_ENFORCE
         value: "1"
       - key: BUZZARD_EMBEDDED_INTELLIGENCE
@@ -152,6 +161,12 @@ services:
         sync: false
       - key: PAYPAL_CLIENT_SECRET
         sync: false
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
+      - key: BUZZARD_RATE_LIMIT_STORE
+        value: redis
 
   - type: web
     name: buzzard-intelligence

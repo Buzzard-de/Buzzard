@@ -26,6 +26,7 @@
     "production:verify": "node scripts/run-production-guard.mjs",
     "production:verify:live": "BUZZARD_API_URL=https://buzzard-api.onrender.com node scripts/run-production-guard.mjs",
     "test:part2": "node scripts/part2-smoke.mjs",
+    "test:part3": "node scripts/part3-security.mjs",
     "test:smoke": "node scripts/smoke-core.mjs",
     "db:backup": "node scripts/db-backup.mjs",
     "search:sync": "node scripts/sync-search-index.mjs",

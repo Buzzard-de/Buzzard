@@ -1,0 +1,143 @@
+/**
+ * Central route → permission map for global RBAC (Part 3).
+ * Unlisted /api/admin/* routes use derivePermission() heuristics.
+ */
+
+const PUBLIC_ROUTES = new Set([
+  "POST /api/admin/login",
+  "POST /api/admin/login/2fa",
+  "POST /api/admin/logout",
+  "GET /api/health",
+  "GET /api/health/db",
+  "GET /api/health/ai",
+  "GET /api/status",
+  "GET /api/categories/visibility",
+  "GET /api/security/health",
+  "GET /api/p1/status",
+  "GET /api/orchestrator/status",
+  "GET /api/guardian/status",
+]);
+
+const EXACT = {
+  "GET /api/admin/me": null,
+  "GET /api/admin/sessions": "security.read",
+  "DELETE /api/admin/sessions/:sessionId": "security.manage",
+  "GET /api/admin/audit": "audit.read",
+  "GET /api/admin/control-center/status": "system.read",
+  "GET /api/admin/control-center/summary": "system.read",
+  "GET /api/admin/control-center/activity": "audit.read",
+  "GET /api/admin/control-center/search": "system.read",
+  "GET /api/admin/control-center/security": "security.read",
+  "GET /api/admin/control-center/config": "system.read",
+  "PUT /api/admin/control-center/config/:key": "system.configure",
+  "GET /api/admin/control-center/integrations": "integrations.read",
+  "GET /api/admin/control-center/escalations": "security.read",
+  "GET /api/admin/control-center/background-jobs": "system.read",
+  "GET /api/admin/control-center/notifications": "system.read",
+  "GET /api/admin/ai/employees": "ai.read",
+  "PATCH /api/admin/ai/employees/:id/status": "ai.assign",
+  "GET /api/admin/ai/tasks": "ai.read",
+  "POST /api/admin/ai/tasks": "ai.assign",
+  "PATCH /api/admin/ai/tasks/:id/status": "ai.execute",
+  "GET /api/admin/approvals": "ai.read",
+  "POST /api/admin/approvals": "ai.assign",
+  "POST /api/admin/approvals/:id/decide": "ai.execute",
+  "GET /api/admin/categories/visibility": "categories.read",
+  "PATCH /api/admin/categories/:categoryId/visibility": "categories.write",
+  "GET /api/admin/security/events": "security.read",
+  "GET /api/admin/identity-security/overview": "security.read",
+  "GET /api/admin/identity-security/audit": "audit.read",
+  "GET /api/admin/identity-security/sessions": "security.read",
+};
+
+const PREFIX = [
+  { prefix: "/api/admin/products", read: "products.read", write: "products.write" },
+  { prefix: "/api/admin/catalog", read: "products.read", write: "products.write" },
+  { prefix: "/api/admin/pim", read: "products.read", write: "products.write" },
+  { prefix: "/api/admin/orders", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/admin/order", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/admin/suppliers", read: "suppliers.read", write: "suppliers.write" },
+  { prefix: "/api/admin/supplier", read: "suppliers.read", write: "suppliers.write" },
+  { prefix: "/api/admin/sync", read: "sync.read", write: "sync.run" },
+  { prefix: "/api/admin/import", read: "imports.run", write: "imports.run" },
+  { prefix: "/api/admin/seo", read: "seo.read", write: "seo.write" },
+  { prefix: "/api/admin/analytics", read: "analytics.read", write: "analytics.export" },
+  { prefix: "/api/admin/logistics", read: "logistics.read", write: "logistics.write" },
+  { prefix: "/api/admin/integrations", read: "integrations.read", write: "integrations.manage" },
+  { prefix: "/api/admin/payments", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/admin/crm", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/admin/marketing", read: "analytics.read", write: "analytics.export" },
+  { prefix: "/api/admin/wms", read: "logistics.read", write: "logistics.write" },
+  { prefix: "/api/admin/ai-center", read: "ai.read", write: "ai.assign" },
+  { prefix: "/api/admin/automation", read: "automation.read", write: "automation.run" },
+  { prefix: "/api/admin/guardian", read: "security.read", write: "security.manage" },
+  { prefix: "/api/admin/p1", read: "system.read", write: "system.configure" },
+  { prefix: "/api/admin/submissions", read: "audit.read", write: "audit.read" },
+  { prefix: "/api/security/admin", read: "security.read", write: "security.manage" },
+];
+
+const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+function routeKey(method, pathname) {
+  return `${method.toUpperCase()} ${pathname}`;
+}
+
+function normalizePattern(pathname) {
+  return pathname
+    .split("/")
+    .map((seg) => (seg && !seg.startsWith(":") && /^[a-z0-9_-]{1,64}$/i.test(seg) ? seg : ":param"))
+    .join("/");
+}
+
+function resolveRoutePermission(method, pathname) {
+  const upper = method.toUpperCase();
+  const key = routeKey(upper, pathname);
+  if (PUBLIC_ROUTES.has(key)) return { public: true };
+
+  for (const [pattern, permission] of Object.entries(EXACT)) {
+    const [patMethod, ...patParts] = pattern.split(" ");
+    const patPath = patParts.join(" ");
+    if (patMethod !== upper) continue;
+    const patSegs = patPath.split("/").filter(Boolean);
+    const reqSegs = pathname.split("/").filter(Boolean);
+    if (patSegs.length !== reqSegs.length) continue;
+    let match = true;
+    for (let i = 0; i < patSegs.length; i++) {
+      if (patSegs[i].startsWith(":")) continue;
+      if (patSegs[i] !== reqSegs[i]) {
+        match = false;
+        break;
+      }
+    }
+    if (match) {
+      if (permission === null) return { authenticated: true };
+      return { permission };
+    }
+  }
+
+  if (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/security/admin")) {
+    for (const entry of PREFIX) {
+      if (pathname.startsWith(entry.prefix)) {
+        const permission = WRITE_METHODS.has(upper) ? entry.write : entry.read;
+        return { permission };
+      }
+    }
+    if (WRITE_METHODS.has(upper)) {
+      return { permission: "system.configure", derived: true };
+    }
+    return {
+      authenticated: true,
+      derived: true,
+    };
+  }
+
+  return null;
+}
+
+module.exports = {
+  PUBLIC_ROUTES,
+  EXACT,
+  PREFIX,
+  resolveRoutePermission,
+  routeKey,
+};

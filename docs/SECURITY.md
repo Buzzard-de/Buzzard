@@ -1,60 +1,56 @@
 # Buzzard Security
 
-Protection layers for **buzzard24.de** and the Node API.
+**Stand:** Part 3
 
-## Built-in (code)
+## Schutzmaßnahmen (implementiert)
 
-| Layer | Protection |
-|-------|------------|
-| **HTTPS / HSTS** | GitHub Pages + Render TLS; HSTS in production |
-| **CSP** | Content-Security-Policy on static frontend |
-| **Security headers** | X-Frame-Options, nosniff, Permissions-Policy, COOP/CORP |
-| **Auth** | scrypt password hashes, JWT, rate-limited login/register |
-| **Account lockout** | 5 failed attempts → 30 min lock (admin + customer) |
-| **Admin 2FA** | TOTP (Google Authenticator) — setup at `/admin/security-dashboard/` |
-| **API** | Rate limit (180 req/min), max body 256 KB |
-| **Input** | Sanitized search, validated email/password length |
-| **Contact form** | Honeypot + time-trap + client rate limit |
-| **SQL** | Prepared statements only (SQLite) |
-| **Logging** | Security events in `server/data/security-log.json` |
-| **Dashboard** | Admin Security Log at `/admin/security-dashboard/` |
-| **Dependencies** | `npm run security:check` |
+| Maßnahme | Status | Details |
+|----------|--------|---------|
+| Global RBAC | ✅ | Alle `/api/admin/*` Routes |
+| Unified Auth Facade | ✅ | `server/core/auth/` |
+| Rate Limiting | ✅ | 180/min API; Login-Limits |
+| Account Lockout | ✅ | 5 Fehlversuche → 30 Min |
+| Admin 2FA | ✅ | TOTP |
+| Security Headers | ✅ | HSTS, X-Frame-Options, CSP, COOP, CORP |
+| Audit Log | ✅ | JSON + coreAudit |
+| Security Events | ✅ | `security-log.json` |
+| AI Permission Gate | ✅ | Blockierte Admin-Permissions |
+| IDOR Guards | ✅ | `server/lib/idorGuard.js` |
+| Session Revocation | ✅ | Admin API |
 
-## Admin 2FA setup
+## CSRF-Strategie
 
-1. Sign in at `/admin/login/` as **administrator**
-2. Open **Plattform → Security Log**
-3. Click **2FA einrichten**, scan secret in Authenticator app
-4. Enter 6-digit code and activate
+**Bearer-Token APIs (Admin-Panel):** Kein CSRF-Token nötig.  
+Der Browser sendet `Authorization: Bearer …` per JavaScript — Cookies werden nicht für Auth verwendet. CSRF-Angriffe auf Bearer-Header sind nicht möglich.
 
-After activation, admin login requires password + TOTP code.
+**Cookie-basierte Flows (falls aktiviert):**  
+Wenn `BUZZARD_CSRF_ENFORCE=1` und kein Bearer-Header:
 
-## Recommended (you, when going live)
+- State-changing Requests (POST/PUT/PATCH/DELETE) erfordern
+- Header `X-Buzzard-Csrf-Token` = Cookie `buzzard_csrf`
+- Fehler → Event `csrf_failure`, HTTP 403
 
-### 1. Cloudflare (free) — strongest public shield
+**Öffentliche Auth-Endpoints** (login) sind von CSRF-Enforcement ausgenommen.
 
-Place Cloudflare in front of **buzzard24.de**:
+## Rate Limiting
 
-- DDoS protection
-- Bot filtering
-- Optional WAF rules
-- DNS → Cloudflare → GitHub Pages
+- **Aktuell:** In-Memory (+ optional File-Persist via `BUZZARD_RATE_LIMIT_PERSIST=1`)
+- **Problem:** Restart setzt Buckets zurück (Dokumentiert)
+- **Zukunft:** `BUZZARD_RATE_LIMIT_STORE=redis` (Abstraction in `rateLimitStore.js`)
 
-No code change required; DNS at your domain registrar.
+## Security Events
 
-### 2. Render API
+Typen u.a.: `admin_login`, `admin_login_failed`, `permission_denied`, `privilege_escalation_attempt`, `csrf_failure`, `idor_attempt`, `ai_permission_violation`, `session_revoked`, `api_rate_limited`
 
-- Set strong `JWT_SECRET` and `ADMIN_PASSWORD` in Render secrets
-- Keep `BUZZARD_SALES_ENABLED=0` until payment is ready
+API: `GET /api/admin/security/events` (security.read)
 
-### 3. Google Search Console
+## Secret Management
 
-See `docs/GOOGLE_SEARCH_CONSOLE.md` — not security, but monitors indexing.
+- Keine echten Secrets im Repo
+- `.env.example` listet alle Variablen
+- Config-API blockiert Keys mit secret/password/token
+- Frontend erhält keine JWT_SECRET / API Keys
 
-## What we do not store in Git
+## Katalogmodus
 
-- JWT secrets, admin passwords, API keys, payment keys, TOTP secrets (`server/data/admin-2fa.json`)
-
-## Report vulnerabilities
-
-See `public/.well-known/security.txt`
+`BUZZARD_SALES_ENABLED=0` — keine echten Zahlungen oder Lieferanten-Orders.

@@ -16,22 +16,7 @@ function getClientIp(req) {
   return String(raw).split(",")[0].trim();
 }
 
-function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
-  const buckets = new Map();
-
-  return function isRateLimited(req, options = {}) {
-    const key = `${keyPrefix}${options.key || getClientIp(req)}`;
-    const now = Date.now();
-    const records = (buckets.get(key) || []).filter((ts) => now - ts < windowMs);
-    if (records.length >= max) {
-      buckets.set(key, records);
-      return true;
-    }
-    records.push(now);
-    buckets.set(key, records);
-    return false;
-  };
-}
+const { createRateLimiter, getStoreInfo } = require("./rateLimitStore");
 
 function setSecurityHeaders(res) {
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -42,6 +27,12 @@ function setSecurityHeaders(res) {
   res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
   if (process.env.NODE_ENV === "production" || process.env.BUZZARD_HSTS === "1") {
     res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  }
+  if (process.env.BUZZARD_CSP !== "0") {
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+    );
   }
 }
 
@@ -144,4 +135,5 @@ module.exports = {
   sanitizeFilename,
   validateImportPayload,
   createDuplicateGuard,
+  getStoreInfo,
 };

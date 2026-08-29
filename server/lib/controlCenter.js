@@ -177,6 +177,29 @@ function mapTaskRow(row) {
   };
 }
 
+const AI_BLOCKED_PERMISSIONS = new Set([
+  "*",
+  "system.configure",
+  "security.manage",
+  "users.write",
+  "integrations.manage",
+  "categories.publish",
+]);
+
+function assertAiPermissionsAllowed(permissionsRequired) {
+  for (const perm of permissionsRequired || []) {
+    if (AI_BLOCKED_PERMISSIONS.has(perm)) {
+      const { logSecurityEvent } = require("./securityLog");
+      logSecurityEvent({
+        type: "ai_permission_violation",
+        success: false,
+        detail: { permission: perm, reason: "blocked_for_ai" },
+      });
+      throw new Error(`AI cannot request permission: ${perm}`);
+    }
+  }
+}
+
 function assertEmployeeCan(taskPermissions, employee) {
   if (!employee) throw new Error("Employee not found");
   if (employee.status !== AI_EMPLOYEE_STATUS.ACTIVE) throw new Error("Employee not active");
@@ -189,6 +212,7 @@ function assertEmployeeCan(taskPermissions, employee) {
 
 function createAiTask({ title, description, employeeId, priority, permissionsRequired, payload, createdBy, dependsOnTaskId }) {
   seedDefaults();
+  assertAiPermissionsAllowed(permissionsRequired);
   const id = newId("task");
   let status = TASK_STATUS.PENDING;
   let assignedAt = null;
@@ -247,7 +271,25 @@ function listAiTasks(filters = {}) {
   return db.prepare(sql).all(...params).map(mapTaskRow);
 }
 
-function updateTaskStatus(id, status, { error, result } = {}) {
+function updateTaskStatus(id, status, { error, result, actorType } = {}) {
+  const existing = db.prepare("SELECT * FROM core_ai_tasks WHERE id = ?").get(id);
+  if (!existing) return null;
+
+  if (
+    actorType === "ai" &&
+    existing.status === TASK_STATUS.WAITING_APPROVAL &&
+    status !== TASK_STATUS.CANCELLED
+  ) {
+    throw new Error("Approval required before execution");
+  }
+
+  if (
+    status === TASK_STATUS.COMPLETED &&
+    existing.status === TASK_STATUS.WAITING_APPROVAL
+  ) {
+    const pending = db.prepare("SELECT status FROM core_approvals WHERE task_id = ? AND status = 'PENDING'").get(id);
+    if (pending) throw new Error("Cannot complete task while approval is pending");
+  }
   const fields = ["status = ?", "updated_at = CURRENT_TIMESTAMP"];
   const params = [status];
   if (status === TASK_STATUS.RUNNING) {

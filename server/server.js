@@ -5,6 +5,7 @@ const { URL, URLSearchParams } = require('url');
 const { isDefaultJwtSecret } = require('./lib/dbAuth');
 const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
+const { wrapRouteHandler } = require('./lib/globalAuthMiddleware');
 
 const port = process.env.PORT || 3001;
 const rootDir = path.join(__dirname, '..');
@@ -50,7 +51,7 @@ function addRoute(method, routePath, handler) {
     }
     return { name: segment, dynamic: false };
   });
-  routes.push({ method, routePath, handler, segments });
+  routes.push({ method, routePath, handler: wrapRouteHandler(method, routePath, handler), segments });
 }
 
 const app = {

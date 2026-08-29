@@ -38,6 +38,79 @@ const copies = [
   ["docs/SETUP_REMAINING_DE.md", "15-SETUP-REMAINING-DE.md"],
 ];
 
+const chatgptOrder = [
+  "00-INDEX.md",
+  "00-GESAMTZUSAMMENFASSUNG-PART1-2.md",
+  "01-PART1-CORE-FOUNDATION-BERICHT.md",
+  "02-PART2-FINAL-REPORT.md",
+  "02-PART2-CONTROL-CENTER.md",
+  "02-PART2-CONTROL-CENTER-BERICHT-DE.md",
+  "03-PART3-FINAL-REPORT.md",
+  "04-PART4-FINAL-REPORT.md",
+  "04-PART4-DEPLOY-CHECKLIST.md",
+  "05-PART5-FINAL-REPORT.md",
+  "06-PART6-FINAL-REPORT.md",
+  "07-PART7-FINAL-REPORT.md",
+  "08-PART8-FINAL-REPORT.md",
+  "09-PART9-FINAL-REPORT.md",
+  "10-PART10-FINAL-REPORT.md",
+  "11-PART11-FINAL-REPORT.md",
+  "12-PART12-FINAL-REPORT.md",
+  "12-PART12-DEPLOY-CHECKLIST.md",
+  "13-PART13-FINAL-REPORT.md",
+  "14-PART14-FINAL-REPORT.md",
+  "14-PART14-LIVE-CLOSEOUT-REPORT.md",
+  "15-WAS-NOCH-ZU-TUN.md",
+  "15-SETUP-REMAINING-DE.md",
+];
+
+function buildChatGptSingleFile(exportDir, dirName) {
+  const outName = "BUZZARD-PART1-14-ALLE-BERICHTE-CHATGPT.md";
+  const lines = [
+    "# Buzzard24 — Alle Berichte Part 1 bis Part 14",
+    "",
+    "> **Für ChatGPT:** Diese eine Datei enthält alle Projektberichte. Hochladen via 📎 Anhängen.",
+    "",
+    `- **Export:** ${date}`,
+    `- **Repo:** Buzzard-de/Buzzard`,
+    `- **Part 14 Status:** LIVE (Katalogmodus, kein Verkauf)`,
+    "",
+    "## Inhaltsverzeichnis",
+    "",
+  ];
+
+  for (const file of chatgptOrder) {
+    if (!fs.existsSync(path.join(exportDir, file))) continue;
+    const title = file.replace(/^\d+-/, "").replace(/\.md$/, "").replace(/-/g, " ");
+    lines.push(`- ${title} (\`${file}\`)`);
+  }
+
+  lines.push("", "---", "");
+
+  for (const file of chatgptOrder) {
+    const full = path.join(exportDir, file);
+    if (!fs.existsSync(full)) continue;
+    const body = fs.readFileSync(full, "utf8").trim();
+    lines.push(
+      "",
+      "---",
+      "",
+      `<!-- BEGIN ${file} -->`,
+      "",
+      `# 📄 ${file}`,
+      "",
+      body,
+      "",
+      `<!-- END ${file} -->`,
+      ""
+    );
+  }
+
+  const outPath = path.join(exportDir, outName);
+  fs.writeFileSync(outPath, lines.join("\n"));
+  return outName;
+}
+
 function copyFile(relSrc, destName) {
   const src = path.join(root, relSrc);
   if (!fs.existsSync(src)) {
@@ -58,23 +131,42 @@ for (const [src, dest] of copies) {
   }
 }
 
-const indexSrc = path.join(root, "exports", "buzzard-part1-part14-berichte-2026-08-29", "00-INDEX.md");
-if (fs.existsSync(indexSrc) && date !== "2026-08-29") {
-  fs.copyFileSync(indexSrc, path.join(exportDir, "00-INDEX.md"));
-} else if (fs.existsSync(path.join(exportDir, "..", "buzzard-part1-part14-berichte-2026-08-29", "00-INDEX.md"))) {
-  let index = fs.readFileSync(
-    path.join(exportDir, "..", "buzzard-part1-part14-berichte-2026-08-29", "00-INDEX.md"),
-    "utf8"
-  );
-  index = index.replace(/2026-08-29/g, date).replace(/buzzard-part1-part14-berichte-2026-08-29/g, dirName);
-  fs.writeFileSync(path.join(exportDir, "00-INDEX.md"), index);
+const indexTemplate = `# Buzzard — Alle Berichte Part 1 bis Part 14
+
+**Export:** ${date}  
+**Repo:** Buzzard-de/Buzzard  
+**ChatGPT:** \`BUZZARD-PART1-14-ALLE-BERICHTE-CHATGPT.md\` (eine Datei zum Hochladen)
+
+Siehe \`00-INDEX.md\` im Ordner oder lade die ChatGPT-Datei direkt hoch.
+`;
+
+function writeIndex(exportDir) {
+  const indexPath = path.join(exportDir, "00-INDEX.md");
+  const prev = path.join(root, "exports", "buzzard-part1-part14-berichte-2026-08-29", "00-INDEX.md");
+  if (fs.existsSync(prev)) {
+    let index = fs.readFileSync(prev, "utf8");
+    index = index.replace(/2026-08-29/g, date).replace(/buzzard-part1-part14-berichte-2026-08-29/g, dirName);
+    if (!index.includes("ChatGPT")) {
+      index = index.replace("## Download", "## Download\n\n- **ChatGPT (eine Datei):** `BUZZARD-PART1-14-ALLE-BERICHTE-CHATGPT.md`");
+    }
+    fs.writeFileSync(indexPath, index);
+  } else {
+    fs.writeFileSync(indexPath, indexTemplate);
+  }
 }
 
+writeIndex(exportDir);
+
 manifest.files.unshift("00-INDEX.md");
+fs.writeFileSync(path.join(exportDir, "MANIFEST.json"), JSON.stringify(manifest, null, 2));
+
+const chatgptFile = buildChatGptSingleFile(exportDir, dirName);
+manifest.files.push(chatgptFile);
 fs.writeFileSync(path.join(exportDir, "MANIFEST.json"), JSON.stringify(manifest, null, 2));
 
 if (fs.existsSync(zipPath)) fs.unlinkSync(zipPath);
 execSync(`cd "${path.join(root, "exports")}" && zip -r "${dirName}.zip" "${dirName}"`, { stdio: "inherit" });
 
 console.log(`Exported ${manifest.files.length} files → exports/${dirName}/`);
+console.log(`ChatGPT file → exports/${dirName}/${chatgptFile}`);
 console.log(`ZIP → exports/${dirName}.zip`);

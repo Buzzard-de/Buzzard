@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-22T22:19:01.363985+00:00",
+  "generated_at": "2026-08-29T12:02:25.367133+00:00",
   "site": {
     "ok": false,
     "detail": "APP_BASE_URL fehlt",
@@ -8,7 +8,7 @@
   "gates": {
     "DOMAIN": false,
     "TLS": false,
-    "DATABASE": true,
+    "DATABASE": false,
     "PAYMENT": false,
     "SHIPPING": false,
     "SUPPLIER": false,
@@ -37,9 +37,9 @@
     "RETURN_TEST": "Retoure/Widerruf-Ablauf bestanden",
     "GDPR": "Consent/Datenschutz-Konfiguration bestanden"
   },
-  "passed": 1,
+  "passed": 0,
   "total": 14,
-  "readiness_pct": 7.1,
+  "readiness_pct": 0.0,
   "legal_routes": [
     {
       "route": "/impressum",
@@ -90,8 +90,8 @@
     },
     {
       "gate": "DATABASE_URL",
-      "ok": true,
-      "detail": "konfiguriert"
+      "ok": false,
+      "detail": "fehlt"
     },
     {
       "gate": "PAYMENT_PROVIDER",

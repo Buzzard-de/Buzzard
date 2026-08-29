@@ -9,11 +9,13 @@ import {
   getCategoryAncestors,
   getCategoryLabel,
   getChildren,
-  getMainCategories,
+  getVisibleMainCategories,
+  isCategoryVisibleToCustomer,
   getMainCategoryIcon,
   mainCategories,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
+import { useCategoryVisibilityMap } from "@/lib/categories/visibility-client";
 import { useHomeUI } from "@/lib/home-ui";
 import { useIsMobileNav } from "@/lib/use-media-query";
 import type { BuzzardCategory } from "@/lib/categories/types";
@@ -41,8 +43,11 @@ function AccordionNode({
   expandedIds,
   onToggle,
   onNavigate,
-}: AccordionNodeProps) {
-  const children = getChildren(category.id);
+  visibilityMap,
+}: AccordionNodeProps & { visibilityMap: Record<string, { status?: string }> }) {
+  const children = getChildren(category.id).filter((c) =>
+    isCategoryVisibleToCustomer(c.id, visibilityMap)
+  );
   const hasChildren = children.length > 0;
   const expanded = expandedIds.has(category.id);
   const isMain = depth === 0;
@@ -85,6 +90,7 @@ function AccordionNode({
               expandedIds={expandedIds}
               onToggle={onToggle}
               onNavigate={onNavigate}
+              visibilityMap={visibilityMap}
             />
           ))}
         </ul>
@@ -96,8 +102,9 @@ function AccordionNode({
 export default function CategorySidebar({ activeId, onSelect, embedded = false }: CategorySidebarProps) {
   const homeUI = useHomeUI();
   const isMobile = useIsMobileNav();
+  const visibilityMap = useCategoryVisibilityMap();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set([activeId]));
-  const mainCategoryNodes = getMainCategories();
+  const mainCategoryNodes = getVisibleMainCategories(visibilityMap);
 
   useEffect(() => {
     const pathIds = [...getCategoryAncestors(activeId).map((c) => c.id), activeId];
@@ -175,12 +182,15 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
                 expandedIds={expandedIds}
                 onToggle={handleToggle}
                 onNavigate={handleNavigate}
+                visibilityMap={visibilityMap}
               />
             ))}
           </ul>
         ) : (
           <ul className="home-sidebar-list">
-            {mainCategories.map((cat) => (
+            {mainCategories
+              .filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap))
+              .map((cat) => (
               <li key={cat.id}>
                 <Link
                   href={cat.href}

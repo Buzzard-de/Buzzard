@@ -3,6 +3,9 @@ import type { BuzzardCategory, BuzzardLocale } from "@/lib/categories/types";
 import { categoryCatalog } from "@/lib/categories/source";
 import {
   getMainCategories,
+  getVisibleMainCategories,
+  isCategoryVisibleToCustomer,
+  filterVisibleTree,
   getCategoryById,
   getChildren,
   getDefaultMainCategoryId,
@@ -31,6 +34,9 @@ export const DEFAULT_LOCALE: BuzzardLocale = "de";
 
 export {
   getMainCategories,
+  getVisibleMainCategories,
+  isCategoryVisibleToCustomer,
+  filterVisibleTree,
   getCategoryById,
   getChildren,
   getDefaultMainCategoryId,

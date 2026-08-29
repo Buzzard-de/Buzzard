@@ -3252,6 +3252,143 @@ function migrateMasterAdminV40() {
 
 migrateMasterAdminV40();
 
+function migrateCoreFoundationPart2() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS core_ai_employees(
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      department TEXT,
+      description TEXT,
+      responsibility TEXT,
+      permissions_json TEXT DEFAULT '[]',
+      status TEXT DEFAULT 'ACTIVE',
+      priority INTEGER DEFAULT 50,
+      capabilities_json TEXT DEFAULT '[]',
+      last_activity_at TEXT,
+      error_message TEXT,
+      performance_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_ai_tasks(
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      employee_id TEXT,
+      priority TEXT DEFAULT 'NORMAL',
+      status TEXT DEFAULT 'PENDING',
+      permissions_required_json TEXT DEFAULT '[]',
+      payload_json TEXT DEFAULT '{}',
+      result_json TEXT,
+      error_message TEXT,
+      retry_count INTEGER DEFAULT 0,
+      max_retries INTEGER DEFAULT 3,
+      depends_on_task_id TEXT,
+      created_by TEXT,
+      assigned_at TEXT,
+      started_at TEXT,
+      completed_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_approvals(
+      id TEXT PRIMARY KEY,
+      task_id TEXT,
+      resource_type TEXT,
+      resource_id TEXT,
+      ai_recommendation TEXT,
+      reason TEXT,
+      risk_level TEXT DEFAULT 'MEDIUM',
+      status TEXT DEFAULT 'PENDING',
+      decided_by TEXT,
+      decided_at TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_escalations(
+      id TEXT PRIMARY KEY,
+      source_type TEXT,
+      source_id TEXT,
+      title TEXT NOT NULL,
+      message TEXT,
+      risk_level TEXT DEFAULT 'MEDIUM',
+      status TEXT DEFAULT 'OPEN',
+      assigned_to TEXT,
+      resolved_at TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_notifications(
+      id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      priority TEXT DEFAULT 'NORMAL',
+      recipient TEXT,
+      channel TEXT DEFAULT 'internal',
+      status TEXT DEFAULT 'PENDING',
+      payload_json TEXT DEFAULT '{}',
+      delivery_result TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      sent_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS core_integrations(
+      id TEXT PRIMARY KEY,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'DISCONNECTED',
+      health_url TEXT,
+      last_check_at TEXT,
+      last_error TEXT,
+      config_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_system_events(
+      id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      actor_type TEXT,
+      actor_id TEXT,
+      resource_type TEXT,
+      resource_id TEXT,
+      summary TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_background_jobs(
+      id TEXT PRIMARY KEY,
+      job_type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      result_json TEXT,
+      error_message TEXT,
+      retry_count INTEGER DEFAULT 0,
+      next_run_at TEXT,
+      started_at TEXT,
+      completed_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_category_visibility(
+      category_id TEXT PRIMARY KEY,
+      status TEXT DEFAULT 'ACTIVE',
+      readiness_json TEXT DEFAULT '{}',
+      updated_by TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_config(
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_by TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_core_tasks_status ON core_ai_tasks(status);
+    CREATE INDEX IF NOT EXISTS idx_core_tasks_employee ON core_ai_tasks(employee_id);
+    CREATE INDEX IF NOT EXISTS idx_core_events_created ON core_system_events(created_at);
+    CREATE INDEX IF NOT EXISTS idx_core_approvals_status ON core_approvals(status);
+  `);
+}
+
+migrateCoreFoundationPart2();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

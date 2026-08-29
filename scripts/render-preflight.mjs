@@ -72,6 +72,11 @@ async function main() {
     else warn("BUZZARD_SALES_ENABLED not explicitly 0 in render.yaml");
     if (yaml.includes("buzzard-orchestrator")) pass("buzzard-orchestrator service in Blueprint");
     else warn("buzzard-orchestrator missing from render.yaml");
+    if (yaml.includes("mountPath: /var/data") && yaml.includes("BUZZARD_DB_PATH")) {
+      pass("Persistent disk + BUZZARD_DB_PATH configured in Blueprint");
+    } else {
+      warn("Persistent disk not in render.yaml — SQLite ephemeral on redeploy");
+    }
   } else {
     fail("render.yaml missing");
   }

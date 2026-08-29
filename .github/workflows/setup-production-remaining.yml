@@ -1,0 +1,58 @@
+name: Setup Production Remaining
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply_render:
+        description: Apply Render API changes (disk, starter plan, env)
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Audit live production
+        env:
+          BUZZARD_API_URL: https://buzzard-api.onrender.com
+          BUZZARD_SITE_URL: https://buzzard24.de
+        run: node scripts/setup-production-remaining.mjs
+
+      - name: Apply Render setup (optional)
+        if: inputs.apply_render == 'true'
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID || '' }}
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          BUZZARD_API_URL: https://buzzard-api.onrender.com
+          BUZZARD_SITE_URL: https://buzzard24.de
+        run: |
+          if [ -z "$RENDER_API_KEY" ]; then
+            echo "::error::RENDER_API_KEY fehlt — nur Audit ausgeführt."
+            exit 1
+          fi
+          node scripts/setup-production-remaining.mjs --apply
+
+      - name: Post-setup smoke
+        if: inputs.apply_render == 'true'
+        env:
+          BUZZARD_API_URL: https://buzzard-api.onrender.com
+        run: |
+          npm run test:production-smoke
+          curl -sf "$BUZZARD_API_URL/api/health/db" | node -e "
+            const d=JSON.parse(require('fs').readFileSync(0,'utf8'));
+            const p=d?.database?.persistence?.persistent;
+            console.log('persistent:', p);
+            if(!p) process.exit(1);
+          "

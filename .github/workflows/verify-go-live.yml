@@ -1,13 +1,16 @@
 name: Verify Go-Live
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
 jobs:
   verify:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -20,3 +23,5 @@ jobs:
         env:
           BUZZARD_SITE_URL: https://buzzard24.de
           BUZZARD_API_URL: https://buzzard-api.onrender.com
+          BUZZARD_VERIFY_RETRIES: "5"
+          BUZZARD_VERIFY_RETRY_MS: "8000"

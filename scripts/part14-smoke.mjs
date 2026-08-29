@@ -98,11 +98,19 @@ async function main() {
     }
   });
 
-  await test("2. PR #254 branch ahead of main", async () => {
-    if (!report.mainCommit || !report.expectedCommit) markCondition("cannot compare git refs");
-    if (report.mainCommit === report.expectedCommit) markCondition("main already at Part 13 HEAD — merge may be done");
-    if (report.expectedCommit.startsWith(report.mainCommit.slice(0, 7))) return;
-    console.log(`   main=${report.mainCommit.slice(0, 12)} expected=${report.expectedCommit.slice(0, 12)}`);
+  await test("2. Main includes Part 13/14 merge", async () => {
+    const required = [
+      "server/plugins/productionHealthPlugin.js",
+      "scripts/part14-smoke.mjs",
+      "docs/PART14_LIVE_CLOSEOUT_REPORT.md",
+    ];
+    for (const rel of required) {
+      if (!fs.existsSync(path.join(root, rel))) throw new Error(`missing ${rel}`);
+    }
+    if (!report.mainCommit) markCondition("cannot read origin/main");
+    if (report.mainCommit && report.expectedCommit && report.mainCommit !== report.expectedCommit) {
+      markCondition(`branch=${report.expectedCommit.slice(0, 12)} main=${report.mainCommit.slice(0, 12)}`);
+    }
   });
 
   await test("3. Render deploy API credentials", async () => {

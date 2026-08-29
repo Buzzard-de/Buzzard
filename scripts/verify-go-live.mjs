@@ -154,6 +154,29 @@ async function main() {
   }
 
   console.log("");
+  console.log("Deployment identity (Part 13+):");
+  try {
+    const res = await fetch(`${API}/api/health/version`, { headers: { Accept: "application/json" } });
+    if (res.ok) {
+      const body = await res.json();
+      console.log(
+        `  [OK] ${res.status} /api/health/version commit=${body.commit || "?"} sales=${body.salesEnabled}`
+      );
+    } else if (routing === "no-server") {
+      console.log("  [PENDING] API not provisioned on Render yet");
+    } else if (res.status === 404) {
+      console.log(`  [FAIL] ${res.status} /api/health/version — stale Render (redeploy main required)`);
+      failed += 1;
+    } else {
+      console.log(`  [FAIL] ${res.status} /api/health/version`);
+      failed += 1;
+    }
+  } catch (error) {
+    console.log(`  [FAIL] /api/health/version — ${error.message}`);
+    failed += 1;
+  }
+
+  console.log("");
   console.log("Intelligence bridge (optional):");
   try {
     const res = await fetch(`${API}/api/intelligence/status`, { headers: { Accept: "application/json" } });

@@ -1,6 +1,6 @@
 /**
- * Part 13 — Deployment identity (commit/branch/version) for drift detection
- * No secrets in responses.
+ * Part 13 — Deployment identity (commit/branch/version) for drift detection.
+ * Render redeploy from main required when this file changes without live version endpoint.
  */
 const path = require("path");
 const fs = require("fs");

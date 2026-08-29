@@ -1,6 +1,7 @@
 /**
  * Part 13 — Deployment identity (commit/branch/version) for drift detection.
  * Render redeploy from main required when this file changes without live version endpoint.
+ * Deploy trigger: RENDER_DEPLOY_HOOK_URL configured 2026-08-29.
  */
 const path = require("path");
 const fs = require("fs");

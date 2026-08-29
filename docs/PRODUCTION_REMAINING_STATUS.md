@@ -1,7 +1,7 @@
 # Production Remaining Status — Post Part 14 Live
 
-**Generated:** 2026-08-29T22:23:00Z (re-verified)  
-**Previous audit:** 2026-08-29T22:15:00Z  
+**Generated:** 2026-08-29T23:09:00Z (full system audit)  
+**Previous audit:** 2026-08-29T22:23:00Z  
 **Scope:** Continue after Part 14 LIVE — **Part 15 NOT started**  
 **Sales:** **DISABLED** (`BUZZARD_SALES_ENABLED=0`)
 
@@ -17,11 +17,14 @@
 | Safety (sales/lock/payments) | **PASS** |
 | Persistent DB (live) | **FAIL** — ephemeral |
 | Redis (live) | **CONDITION** — not configured |
+| Intelligence bridge | **LIVE** |
+| All Render services | **HTTP 200** |
+| Website buzzard24.de | **HTTP 200** |
 | **Part 15 readiness** | **PART 15 STILL BLOCKED** |
 
 Part 14 catalog go-live is **complete and verified**. Part 15 remains **blocked** until persistent SQLite is live on Render (`/var/data` + `BUZZARD_DB_PATH`) and backup runs against `/var/data/backups`.
 
-**Re-verification (2026-08-29T22:23Z):** Live commit updated to `90dc974`; all safety gates pass; DB still ephemeral; `RENDER_API_KEY` not available → **MANUAL RENDER ACTION REQUIRED**.
+**Full audit (2026-08-29T23:09Z):** Live commit `e5c43da7229f`; production-smoke **15/15**, part12:live **8/8**, part14 **LIVE WITH CONDITIONS**, production-safety **7/7**, verify:go-live **ALL PASS**; DB still ephemeral; `RENDER_API_KEY` not available → **MANUAL RENDER ACTION REQUIRED**.
 
 ---
 
@@ -29,18 +32,27 @@ Part 14 catalog go-live is **complete and verified**. Part 15 remains **blocked*
 
 | Item | Value |
 |------|-------|
-| **origin/main HEAD** | `90dc974d7bd04dfece861b80b101ae44b1503958` |
-| **Live running commit** | `90dc974d7bd0` |
+| **origin/main HEAD** | `e5c43da7229f21bc50e0a20c3d8735e3bfa2c3ea` |
+| **Live running commit** | `e5c43da7229f` |
 | **Branch** | `main` |
-| **PR #260 merged** | **YES** (`f9fd474` — `dbStartup.js` allows ephemeral when `BUZZARD_SALES_ENABLED=0`; server binds `0.0.0.0:$PORT`) |
-| **Part 14 artifacts on main** | **YES** — production health, deployment identity, part14-smoke, closeout docs |
-| **render.yaml persistence prep** | **YES** — `plan: starter`, disk `/var/data`, `BUZZARD_DB_PATH=/var/data/buzzard.db` (PR #267) |
+| **Deployment drift** | **false** |
+| **Part 14 artifacts on main** | **YES** |
+| **render.yaml persistence prep** | **YES** — `plan: starter`, disk `/var/data`, `BUZZARD_DB_PATH=/var/data/buzzard.db` |
 
 **Note:** Repo blueprint is **ahead** of live Render disk configuration. Blueprint sync not yet applied on Render dashboard.
 
 ---
 
-## Render configuration audit
+## Render services (live — 2026-08-29T23:09Z)
+
+| Service | URL | HTTP |
+|---------|-----|------|
+| buzzard-api | https://buzzard-api.onrender.com | **200** |
+| buzzard-intelligence | https://buzzard-intelligence.onrender.com/health | **200** |
+| buzzard-orchestrator | https://buzzard-orchestrator.onrender.com/health | **200** |
+| buzzard-guardian | https://buzzard-guardian.onrender.com/health | **200** |
+| buzzard24.de | https://buzzard24.de | **200** |
+| Admin login | https://buzzard24.de/admin/login/ | **200/301** |
 
 ### render.yaml (repository — source of truth for next sync)
 
@@ -54,7 +66,7 @@ Part 14 catalog go-live is **complete and verified**. Part 15 remains **blocked*
 | `BUZZARD_RATE_LIMIT_STORE` | `redis` (needs Upstash env) |
 | Upstash vars | `sync: false` (manual) |
 
-### Live Render (observed via API — 2026-08-29)
+### Live Render (observed via API)
 
 | Setting | Live value |
 |---------|------------|
@@ -79,15 +91,17 @@ Part 14 catalog go-live is **complete and verified**. Part 15 remains **blocked*
 Script (when API key available):  
 `RENDER_API_KEY=... node scripts/setup-production-remaining.mjs --apply`
 
+Guide: `docs/DB_PERSISTENCE_RENDER_DE.md`
+
 ---
 
-## Live health endpoints (2026-08-29)
+## Live health endpoints (2026-08-29T23:09Z)
 
 ### `GET /api/health/version`
 
 ```json
 {
-  "commit": "90dc974d7bd0",
+  "commit": "e5c43da7229f",
   "branch": "main",
   "salesEnabled": false,
   "environment": "production"
@@ -110,6 +124,8 @@ Script (when API key available):
 | `commerce.stripeEnabled` | **false** |
 | `commerce.paypalEnabled` | **false** |
 | `commerce.supplierOrdersEnabled` | **false** |
+| `ai.orchestrator.status` | **ONLINE** |
+| `ai.guardian.status` | **ONLINE** |
 
 ### `GET /api/health/worker`
 
@@ -131,6 +147,15 @@ Script (when API key available):
 
 **Required for Part 15 gate:** `path=/var/data/buzzard.db`, `persistent=true` — **NOT MET**
 
+### `GET /api/intelligence/status`
+
+| Field | Value |
+|-------|-------|
+| `bridge` | **LIVE** |
+| `intelligenceApiUrl` | `https://buzzard-intelligence.onrender.com` |
+| `embedded` | **false** |
+| `catalogMode` | **true** |
+
 ---
 
 ## Safety verification
@@ -149,73 +174,25 @@ Script (when API key available):
 
 ---
 
-## Control Center gates (API-equivalent)
-
-| Tab / gate | Status |
-|------------|--------|
-| Deployment | **SYNCED** (`deployment.drift=false`) |
-| Sales | **DISABLED** |
-| Go-Live Lock | **ACTIVE** |
-| Security | **PASS** (RBAC, rate limit, 2FA, audit) |
-| Catalog | **PASS** (53 L1 categories, public catalog OK) |
-| Commerce | **BLOCKED/SAFE** (sales off, checkout blocked in smoke) |
-| Worker | **PASS** (RUNNING) |
-| DB persistence | **FAIL** (ephemeral) |
-| Backup readiness | **CONDITION** (backup scripts exist; live backup dir on ephemeral FS) |
-
----
-
-## Redis
-
-| Item | Status |
-|------|--------|
-| `UPSTASH_REDIS_REST_URL` | **Not configured** on live |
-| `UPSTASH_REDIS_REST_TOKEN` | **Not configured** on live |
-| Live backend | **memory** |
-| `/api/security/health` | `rateLimitBackend: memory`, `redisConfigured: false` |
-
-**Remaining infrastructure condition** — not blocking Part 14 catalog; recommended before multi-instance or Part 15 commerce hardening.
-
----
-
-## Intelligence stack (informational)
-
-| Service | Status |
-|---------|--------|
-| Python intelligence bridge | **LIVE** |
-| Orchestrator | **ONLINE** |
-| Guardian | **ONLINE** |
-
----
-
-## Test results (live — 2026-08-29)
+## Test results (live — 2026-08-29T23:09Z)
 
 Run against `https://buzzard-api.onrender.com`:
 
 | Suite | Result |
 |-------|--------|
-| `test:production-smoke` | **15/15 PASS** (with `BUZZARD_EXPECTED_GIT_COMMIT=90dc974d7bd0`) |
+| `test:production-smoke` | **15/15 PASS** |
+| `test:production-safety` | **7/7 PASS** |
 | `test:part14` | **10 pass, 0 fail, 3 conditions** — `LIVE WITH CONDITIONS` |
 | `test:part12:live` | **8/8 PASS** |
+| `verify:go-live` | **ALL PASS** |
+| `verify:db-persistence` | **FAIL** (ephemeral) |
+| GitHub CI (Verify Go-Live) | **SUCCESS** |
 
 ### Part 14 conditions (non-fatal for catalog)
 
 1. Persistent SQLite — ephemeral on live Render
 2. Redis — memory backend; Upstash not in production env
-3. Local git vs live — resolved when expected commit matches `f40dafa`
-4. Render deploy path — hook configured; disk sync pending manual action
-
----
-
-## Backup
-
-| Item | Status |
-|------|--------|
-| `npm run backup:db` | **Available in repo** |
-| Live `BUZZARD_BACKUP_DIR` | Ephemeral path (`server/data/backups`) |
-| Persistent backup dir | **NOT live** until `/var/data/backups` mounted |
-
-**Backup readiness:** **CONDITION** (tooling OK; production target path not on persistent disk)
+3. Render deploy path — hook configured; disk sync pending manual action
 
 ---
 
@@ -230,7 +207,7 @@ Run against `https://buzzard-api.onrender.com`:
 | **P2** | Google Search Console property + sitemap | Manual |
 | **P2** | Cloudflare DNS (optional) | IONOS |
 
-Docs: `docs/SETUP_REMAINING_DE.md`, `scripts/setup-production-remaining.mjs`
+Docs: `docs/SETUP_REMAINING_DE.md`, `docs/DB_PERSISTENCE_RENDER_DE.md`, `scripts/setup-production-remaining.mjs`
 
 ---
 
@@ -241,9 +218,12 @@ PART 14 CODE          = COMPLETE
 PART 14 LIVE          = YES
 DEPLOYMENT_DRIFT      = false
 PRODUCTION_SMOKE      = 15/15 PASS
+PRODUCTION_SAFETY     = 7/7 PASS
 PART12 LIVE           = 8/8 PASS
+VERIFY GO-LIVE        = ALL PASS
 SALES                 = DISABLED
 GO-LIVE LOCK          = ACTIVE
+INTELLIGENCE BRIDGE   = LIVE
 PERSISTENT DB (live)  = FAIL  ← blocks Part 15
 REDIS (live)          = CONDITION
 BACKUP ON PERSISTENT  = CONDITION
@@ -262,11 +242,11 @@ curl -s https://buzzard-api.onrender.com/api/health/version
 curl -s https://buzzard-api.onrender.com/api/health/production
 curl -s https://buzzard-api.onrender.com/api/health/worker
 curl -s https://buzzard-api.onrender.com/api/health/db
+npm run verify:db-persistence
 
-BUZZARD_API_URL=https://buzzard-api.onrender.com \
-BUZZARD_EXPECTED_GIT_COMMIT=90dc974d7bd0 \
-npm run test:production-smoke
-
+BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:production-smoke
+BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:production-safety
 BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part14
 BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part12:live
+npm run setup:production-remaining
 ```

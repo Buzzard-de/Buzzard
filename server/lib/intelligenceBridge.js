@@ -1,4 +1,5 @@
 const DEFAULT_TIMEOUT_MS = Number(process.env.BUZZARD_INTELLIGENCE_TIMEOUT_MS || 5000);
+const COLD_START_RETRY_MS = Number(process.env.BUZZARD_INTELLIGENCE_COLD_RETRY_MS || 20000);
 const embedded = require("./embeddedIntelligence");
 
 function intelligenceBaseUrl() {
@@ -68,36 +69,48 @@ async function fetchIntelligence(path) {
     return { ok: false, status: "EMBEDDED", error: `embedded_route_missing:${path}` };
   }
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(`${base}${path}`, {
-      headers: { Accept: "application/json" },
-      signal: controller.signal,
-    });
-    if (!response.ok) {
-      if (embedded.isEmbeddedIntelligenceEnabled()) {
-        const fallback = await fetchIntelligenceEmbedded(path);
-        if (fallback.ok) return fallback;
+  async function attempt(timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(`${base}${path}`, {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        return { ok: false, status: "DOWN", error: `http_${response.status}` };
       }
-      return { ok: false, status: "DOWN", error: `http_${response.status}` };
+      const data = await response.json();
+      return { ok: true, status: "LIVE", data };
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "fetch_failed";
+      return { ok: false, status: "DOWN", error: msg };
+    } finally {
+      clearTimeout(timer);
     }
-    const data = await response.json();
-    return { ok: true, status: "LIVE", data };
-  } catch (error) {
-    if (embedded.isEmbeddedIntelligenceEnabled()) {
-      const fallback = await fetchIntelligenceEmbedded(path);
-      if (fallback.ok) return fallback;
-    }
-    return {
-      ok: false,
-      status: "DOWN",
-      error: error instanceof Error ? error.message : "fetch_failed",
-    };
-  } finally {
-    clearTimeout(timer);
   }
+
+  let result = await attempt(DEFAULT_TIMEOUT_MS);
+  const coldStart =
+    !result.ok &&
+    (result.error === "fetch_failed" ||
+      result.error === "The operation was aborted" ||
+      String(result.error).includes("abort"));
+
+  if (coldStart) {
+    result = await attempt(COLD_START_RETRY_MS);
+  }
+
+  if (result.ok) {
+    return result;
+  }
+
+  if (embedded.isEmbeddedIntelligenceEnabled()) {
+    const fallback = await fetchIntelligenceEmbedded(path);
+    if (fallback.ok) return fallback;
+  }
+
+  return result;
 }
 
 async function fetchIntelligenceEmbedded(path) {

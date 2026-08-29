@@ -1,5 +1,7 @@
 # Part 14 — Production Synchronization + Live Go-Live Readiness
 
+> **Live status (2026-08-29):** **LIVE YES** — see `docs/PART14_LIVE_CLOSEOUT_REPORT.md`. Deploy hook active; `DEPLOYMENT_DRIFT=false`. Sections below are historical pre-live notes.
+
 **Branch:** `cursor/production-sync-part14-c293`  
 **Date:** 2026-08-29  
 **Safety:** `BUZZARD_SALES_ENABLED=0` (unchanged — **NO-GO for commercial sales**)

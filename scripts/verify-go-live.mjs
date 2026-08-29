@@ -289,7 +289,7 @@ async function main() {
     console.error(`${failed} check(s) failed.`);
     process.exit(1);
   }
-  console.log("All automated checks passed (API pending Render is OK).");
+  console.log("All automated checks passed.");
 }
 
 main().catch((error) => {

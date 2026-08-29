@@ -2,13 +2,15 @@
 
 **Safety:** `BUZZARD_SALES_ENABLED=0` until explicit human approval.
 
+**Live status (2026-08-29):** Deploy hook configured; see `docs/PART14_LIVE_CLOSEOUT_REPORT.md`.
+
 ## 0. Production sync checklist (Part 14)
 
 Target: `LOCAL CODE = GIT MAIN = RENDER PRODUCTION` and `DEPLOYMENT_DRIFT=false`.
 
-1. Merge Part 13 PR (#254) and Part 14 PR to `main`
-2. Confirm Render `buzzard-api` auto-deploy from `main` (or trigger Manual Deploy)
-3. Mount persistent disk at `/var/data`; set `BUZZARD_DB_PATH=/var/data/buzzard.db`
+1. Push to `main` (server/render paths) → GitHub Action **Deploy Buzzard API** triggers `RENDER_DEPLOY_HOOK_URL`
+2. Or: Render Dashboard → `buzzard-api` → **Manual Deploy** (branch `main`)
+3. Optional: mount persistent disk at `/var/data`; set `BUZZARD_DB_PATH=/var/data/buzzard.db`
 4. Verify:
    ```bash
    curl https://buzzard-api.onrender.com/api/health/version
@@ -18,21 +20,21 @@ Target: `LOCAL CODE = GIT MAIN = RENDER PRODUCTION` and `DEPLOYMENT_DRIFT=false`
    ```
 5. Admin → Control Center → **Deployment** tab: `SYNCED`, Sales `DISABLED`, Go-live lock `ACTIVE`
 
-If `RENDER_API_KEY` is unavailable to CI/agents, deploy must be triggered manually in Render Dashboard — report as **BLOCKED**, not PASS.
+Fallback if no deploy hook: set `RENDER_API_KEY` in GitHub Secrets and run workflow **Setup Render API**.
 
 ## 1. Deploy
 
 1. Merge PR to `main`
-2. Render auto-deploys `buzzard-api` from `render.yaml`
+2. Deploy hook or Render auto-deploy from `render.yaml` (`startCommand: node server/server.js`)
 3. Set environment variables (see `docs/PART12_DEPLOY_CHECKLIST.md`)
-4. Mount persistent disk at `/var/data`
-5. Set `BUZZARD_DB_PATH=/var/data/buzzard.db`
+4. Optional: mount persistent disk at `/var/data`
+5. Optional: set `BUZZARD_DB_PATH=/var/data/buzzard.db`
 
 ## 2. DB persistence
 
-- Verify: `GET /api/health/db` → `database.persistence.mode` = `render_persistent_disk`
-- Verify: `GET /api/health/production` → `database.persistence.persistent` = `true`
-- Never run production without persistent disk
+- Catalog mode (sales off): ephemeral SQLite on Render free tier is **allowed** (warning only)
+- Commerce / sales: require persistent disk
+- Verify: `GET /api/health/db` → `database.persistence.persistent` = `true` when disk mounted
 
 ## 3. Redis (optional, multi-instance)
 

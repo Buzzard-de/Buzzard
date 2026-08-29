@@ -62,8 +62,12 @@ async function main() {
     else fail("Health check path missing in render.yaml");
     if (yaml.includes('startCommand: node server/server.js')) pass("Start command configured");
     else fail("Start command missing or unexpected");
-    if (yaml.includes("buildCommand: cd server && npm ci")) pass("Build command configured");
-    else fail("Build command missing or unexpected");
+    if (
+      yaml.includes("buildCommand: cd server && npm ci") ||
+      yaml.includes("buildCommand: node scripts/write-build-info.mjs && cd server && npm ci")
+    ) {
+      pass("Build command configured");
+    } else fail("Build command missing or unexpected");
     if (yaml.includes('BUZZARD_SALES_ENABLED') && yaml.includes('"0"')) pass("BUZZARD_SALES_ENABLED=0 in Blueprint");
     else warn("BUZZARD_SALES_ENABLED not explicitly 0 in render.yaml");
     if (yaml.includes("buzzard-orchestrator")) pass("buzzard-orchestrator service in Blueprint");

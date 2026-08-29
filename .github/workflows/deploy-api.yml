@@ -64,6 +64,8 @@ jobs:
             DEPLOYED=1
           else
             echo "No Render deploy hook or API key configured."
+            echo "Add GitHub secret RENDER_DEPLOY_HOOK_URL (Render → buzzard-api → Settings → Deploy Hook)"
+            echo "or RENDER_API_KEY (Render → Account → API Keys)."
             echo "If render.yaml Blueprint is connected, Render auto-deploys from git pushes."
             echo "One-time setup:"
             echo "https://dashboard.render.com/blueprint/new?repo=https://github.com/Buzzard-de/Buzzard"

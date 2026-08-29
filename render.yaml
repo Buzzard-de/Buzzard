@@ -18,7 +18,7 @@ services:
     branch: main
     autoDeployTrigger: commit
     rootDir: .
-    buildCommand: cd server && npm ci
+    buildCommand: node scripts/write-build-info.mjs && cd server && npm ci
     startCommand: node server/server.js
     healthCheckPath: /api/health
     envVars:

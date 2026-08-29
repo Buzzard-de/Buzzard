@@ -2,13 +2,43 @@
  * Part 13 — Database startup validation (production-safe persistence)
  */
 const fs = require("fs");
-const { resolveDbPath, getPersistenceInfo, ensureDbDirectory } = require("./dbPaths");
+const path = require("path");
+const { resolveDbPath, getPersistenceInfo, ensureDbDirectory, defaultDbPath } = require("./dbPaths");
 const { runIntegrityCheck } = require("./dbIntegrity");
 
 let startupResult = null;
 
+/** One-time copy when persistent disk is first mounted (Render /var/data). */
+function migrateEphemeralToPersistentIfNeeded(targetPath) {
+  if (!targetPath.startsWith("/var/data")) return null;
+  if (fs.existsSync(targetPath)) return null;
+
+  const legacyPath = path.resolve(defaultDbPath);
+  if (legacyPath === path.resolve(targetPath)) return null;
+  if (!fs.existsSync(legacyPath)) return null;
+
+  try {
+    const stat = fs.statSync(legacyPath);
+    if (!stat.isFile() || stat.size === 0) return null;
+    fs.copyFileSync(legacyPath, targetPath);
+    console.log(`[db-startup] Migrated SQLite ${legacyPath} → ${targetPath}`);
+    return { from: legacyPath, to: targetPath, bytes: stat.size };
+  } catch (err) {
+    console.warn("[db-startup] Ephemeral→persistent migration skipped:", err.message);
+    return null;
+  }
+}
+
 function validateDatabaseStartup() {
   const dbPath = resolveDbPath();
+
+  try {
+    ensureDbDirectory(dbPath);
+  } catch (err) {
+    // continue — errors collected below
+  }
+
+  const migration = migrateEphemeralToPersistentIfNeeded(dbPath);
   const persistence = getPersistenceInfo(dbPath);
   const errors = [];
   const warnings = [];
@@ -56,6 +86,7 @@ function validateDatabaseStartup() {
     ok: errors.length === 0,
     dbPath,
     persistence,
+    migration,
     integrity,
     errors,
     warnings,

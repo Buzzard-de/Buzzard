@@ -76,7 +76,25 @@ jobs:
         env:
           HEALTH_TIMEOUT_MS: "900000"
           FAST_FAIL_NO_SERVER: "0"
+          REQUIRE_VERSION_ENDPOINT: ${{ env.deploy_triggered == '1' && '1' || '0' }}
         run: node scripts/wait-for-api-health.mjs
+
+      - name: Verify Part 13+ deployment identity on production
+        if: ${{ steps.probe.outputs.live == 'true' && (github.event_name != 'workflow_dispatch' || inputs.skip_health_check != 'true') }}
+        run: |
+          set -euo pipefail
+          VERSION_CODE=$(curl -sS -o /tmp/version.json -w "%{http_code}" "https://buzzard-api.onrender.com/api/health/version" || echo "000")
+          echo "GET /api/health/version → HTTP ${VERSION_CODE}"
+          if [ "$VERSION_CODE" = "200" ]; then
+            echo "Production API includes Part 13+ deployment identity."
+            exit 0
+          fi
+          echo "::error::Production API is stale — /api/health/version returned ${VERSION_CODE} (expected 200)."
+          if [ "${{ env.deploy_triggered }}" != "1" ]; then
+            echo "Configure GitHub secret RENDER_DEPLOY_HOOK_URL or RENDER_API_KEY, then re-run 'Deploy Buzzard API'."
+            echo "Or manual deploy: Render Dashboard → buzzard-api → Manual Deploy (branch: main)."
+          fi
+          exit 1
 
       - name: Warn when API not provisioned
         if: ${{ env.deploy_triggered != '1' && steps.probe.outputs.live != 'true' && (github.event_name != 'workflow_dispatch' || inputs.skip_health_check != 'true') }}

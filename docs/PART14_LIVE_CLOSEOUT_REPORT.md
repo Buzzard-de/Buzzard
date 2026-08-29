@@ -1,7 +1,7 @@
 # Part 14 — Live Closeout Report
 
-**Last verified:** 2026-08-29 (Live Verification Gate)  
-**Verdict:** **DEPLOYMENT STALE — human gate NOT completed on production**
+**Last verified:** 2026-08-29 (post-merge closeout)  
+**Verdict:** **CODE COMPLETE — RENDER DEPLOY STALE (manual gate pending)**
 
 ---
 
@@ -15,9 +15,25 @@
 | **COMMERCIAL SALES** | **NO-GO** |
 | **PART 15** | **STOP** |
 
-**STOP condition triggered:** `GET /api/health/version` → **HTTP 404** — production is running **stale pre–Part 13 code**.
+**STOP condition:** `GET /api/health/version` → **HTTP 404** — production Render is running **pre–Part 13 code**.
 
-**MANUAL RENDER ACTION REQUIRED** — PRs #254 and #255 are **not merged**; `origin/main` remains `bbaf073`; `RENDER_API_KEY` unavailable in agent environment.
+**GitHub Pages:** **OK** — storefront + admin routes (including control-center, pim-core, sessions) return **200**.
+
+**Render API:** **STALE** — no `RENDER_API_KEY` / `RENDER_DEPLOY_HOOK_URL` in GitHub Actions; Blueprint auto-deploy did not update production after merge.
+
+---
+
+## Git / PR state (merged)
+
+| Item | Status |
+|------|--------|
+| PR #254 Part 13 | **MERGED** |
+| PR #255 Part 14 | **MERGED** |
+| `origin/main` | **`3b5c45b`** — Merge Part 14 |
+| CI on main | **SUCCESS** |
+| GitHub Pages deploy | **SUCCESS** |
+| Verify Go-Live | **FAIL** (race: ran before Pages finished; fixed in follow-up) |
+| Deploy Buzzard API | **SUCCESS** (no deploy triggered; stale check added in follow-up) |
 
 ---
 
@@ -30,8 +46,7 @@
 | `GET /api/health/worker` | **404** |
 | `GET /api/health/db` | **404** |
 | **RUNNING_COMMIT** | **unknown** (version endpoint absent) |
-| **EXPECTED_COMMIT** | `8f9ed27` (Part 14 branch; post-merge target) |
-| **MAIN_COMMIT** | `bbaf073` — Part 13/14 **not on main** |
+| **EXPECTED_COMMIT** | `3b5c45b` (main) |
 | **DEPLOYMENT_DRIFT** | **true** |
 | **Persistent DB path** | `/opt/render/project/src/server/data/buzzard.db` — **BLOCKED** (not `/var/data/buzzard.db`) |
 
@@ -49,18 +64,7 @@ Legacy `/api/health`: `salesEnabled: false`, no `version` block (pre–Part 13 s
 | Supplier Orders | **OFF** |
 | Real Payments | **0** |
 | Go-Live Lock | **ACTIVE** in code — **not verifiable live** (endpoints 404) |
-| `BUZZARD_TEST_MODE` | **Not verifiable live** — Part 13 env validation not deployed |
-
----
-
-## Git / PR state
-
-| PR | Merged | CI | Mergeable |
-|----|--------|-----|-----------|
-| #254 Part 13 | **NO** | SUCCESS | MERGEABLE |
-| #255 Part 14 | **NO** | SUCCESS | MERGEABLE |
-
-Human deployment gate **has not been completed** — merges and Render deploy not observed.
+| `BUZZARD_TEST_MODE` | **Not verifiable live** |
 
 ---
 
@@ -76,41 +80,18 @@ Human deployment gate **has not been completed** — merges and Render deploy no
 | **Backup readiness** | **BLOCKED** | Persistent disk not configured |
 | **Admin Deployment tab** | **FAIL** | `/api/admin/control-center/deployment` **404** |
 | **Redis** | **NOT VERIFIED** | No Upstash credentials in agent env |
-
-No component marked PASS when endpoint returns **404**.
+| **GitHub Pages** | **PASS** | verify-go-live passes when Pages deploy complete |
 
 ---
 
-## Live test results (actual)
+## Live test results (2026-08-29)
 
 | Suite | Result | Exit |
 |-------|--------|------|
 | **PRODUCTION SMOKE** | 4 pass · 3 fail · 2 skip · **6 blocked** | 2 |
 | **PART14 LIVE** | 5 pass · **7 blocked** · 1 condition | 2 |
-| **PART12 LIVE** | **2/8** pass · 6 fail | 1 |
-
-### Failed / blocked checks (production-smoke)
-
-| # | Check | Result |
-|---|-------|--------|
-| 2 | Version / deployment identity | **BLOCKED** — stale Render |
-| 4 | DB health + persistence | **BLOCKED** — 404 |
-| 5 | Security health | **FAIL** — globalRbac missing |
-| 6 | Production health aggregate | **BLOCKED** — 404 |
-| 8 | Catalog health | **BLOCKED** — 404 |
-| 11 | Commerce readiness SALES=0 | **BLOCKED** — 404 |
-| 12 | Commercial checkout blocked | **BLOCKED** — 404 |
-| 13 | Admin auth required | **FAIL** — 404 (not 401/403) |
-| 15 | Legacy cart deprecation header | **FAIL** |
-
-### Failed / blocked checks (part12:live)
-
-- DB health + persistence — **404**
-- Security globalRbac — **missing**
-- Catalog health — **404**
-- Commerce status — **404** (reported as fail; not sales activation)
-- Commercial checkout — **404**
-- Admin auth — **404**
+| **PART12 LIVE** | 2 pass · 6 fail/blocked | 1 |
+| **verify-go-live** (local, post-Pages) | **ALL PASS** | 0 |
 
 ---
 
@@ -122,13 +103,13 @@ PART 14 LIVE = NO
 PART 14 LIVE COMPLETE = NO
 DEPLOYMENT DRIFT = true
 PERSISTENT DB = BLOCKED
-SECURITY = FAIL
-CATALOG = FAIL
-COMMERCE = BLOCKED
-WORKER = FAIL
+SECURITY = FAIL (live)
+CATALOG = FAIL (live)
+COMMERCE = BLOCKED (live)
+WORKER = FAIL (live)
+GITHUB PAGES = PASS
 PRODUCTION SMOKE = 4/15 (6 blocked, 3 fail, 2 skip)
-PART12 LIVE = 2/8 FAIL
-PART14 LIVE = 5 pass, 7 blocked, 1 condition
+PART14 LIVE = blocked on Render
 SALES = DISABLED (legacy health only)
 COMMERCIAL SALES = NO-GO
 PART 15 = STOP
@@ -138,12 +119,19 @@ PART 15 = STOP
 
 ## Required before LIVE COMPLETE = YES
 
-1. Merge PR #254 and PR #255 to `main`
-2. Deploy latest `main` to Render `buzzard-api`
-3. Mount persistent disk `/var/data`; set `BUZZARD_DB_PATH=/var/data/buzzard.db`
-4. Keep `BUZZARD_SALES_ENABLED=0`; no `BUZZARD_TEST_MODE`
-5. Confirm `/api/health/version` → **200** and `DEPLOYMENT_DRIFT=false`
-6. Re-run all three live smoke suites — **all must PASS**
-7. Verify Admin Control Center → Deployment: SYNCED, Sales DISABLED, Go-Live Lock ACTIVE
+1. **Render deploy** — one of:
+   - Add GitHub secret `RENDER_DEPLOY_HOOK_URL` (Render → buzzard-api → Settings → Deploy Hook), **or**
+   - Add GitHub secret `RENDER_API_KEY` and run workflow **Setup Render API**, **or**
+   - Manual deploy: Render Dashboard → buzzard-api → **Manual Deploy** (branch `main`)
+2. Mount persistent disk `/var/data`; set `BUZZARD_DB_PATH=/var/data/buzzard.db`
+3. Keep `BUZZARD_SALES_ENABLED=0`; no `BUZZARD_TEST_MODE`
+4. Confirm `/api/health/version` → **200** and `DEPLOYMENT_DRIFT=false`
+5. Re-run live suites:
+   ```bash
+   BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:production-smoke
+   BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part14
+   BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part12:live
+   ```
+6. Verify Admin Control Center → Deployment: SYNCED, Sales DISABLED, Go-Live Lock ACTIVE
 
 Do **not** start Part 15 until this document shows **PART 14 LIVE COMPLETE = YES**.

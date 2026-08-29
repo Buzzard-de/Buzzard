@@ -11,6 +11,8 @@
 
 const DEFAULT_URL = "https://buzzard-api.onrender.com";
 const HEALTH_PATH = "/api/health";
+const VERSION_PATH = "/api/health/version";
+const requireVersion = process.env.REQUIRE_VERSION_ENDPOINT === "1";
 const timeoutMs = Number(process.env.HEALTH_TIMEOUT_MS || 15 * 60 * 1000);
 const fastFailNoServer = process.env.FAST_FAIL_NO_SERVER === "1";
 const allowUnprovisioned = process.env.ALLOW_UNPROVISIONED === "1";
@@ -41,7 +43,17 @@ async function main() {
       if (response.ok) {
         const body = await response.text();
         console.log(`Health OK (${response.status}) attempt ${attempt}: ${body.slice(0, 240)}`);
-        return;
+        if (requireVersion) {
+          const versionUrl = `${baseUrl}${VERSION_PATH}`;
+          const versionRes = await fetch(versionUrl, { headers: { Accept: "application/json" } });
+          if (versionRes.ok) {
+            console.log(`Version endpoint OK (${versionRes.status}) at ${VERSION_PATH}`);
+            return;
+          }
+          console.log(`Version endpoint pending (${versionRes.status}) — waiting for Part 13+ deploy…`);
+        } else {
+          return;
+        }
       }
 
       const routing = response.headers.get("x-render-routing");

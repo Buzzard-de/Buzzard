@@ -73,6 +73,7 @@ Nach dem ersten API-Deploy einmal prüfen:
 | Problem | Lösung |
 |---------|--------|
 | `no-server` / 404 | Blueprint noch nicht angewendet oder Deploy läuft noch |
+| `invalid local: resolve : lstat .../intelligence/intelligence` | `render.yaml`: bei `rootDir: intelligence` muss `dockerContext: .` sein (nicht `intelligence`) |
 | Deploy schlägt fehl | Render → Logs lesen; oft: Docker-Build `buzzard-intelligence` — `buzzard-api` kann trotzdem separat laufen |
 | API langsam (30s+) | Free-Tier „Cold Start“ — normal nach Inaktivität |
 | Admin-Login geht nicht | `ADMIN_PASSWORD` in Render Environment prüfen |

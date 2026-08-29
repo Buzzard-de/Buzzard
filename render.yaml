@@ -163,7 +163,8 @@ services:
     autoDeployTrigger: commit
     rootDir: intelligence
     dockerfilePath: buzzard_ai_complete/deploy/docker/Dockerfile
-    dockerContext: intelligence
+    # Relative to rootDir — "intelligence" would resolve to intelligence/intelligence (deploy failure).
+    dockerContext: .
     healthCheckPath: /health
     envVars:
       - key: PYTHONPATH

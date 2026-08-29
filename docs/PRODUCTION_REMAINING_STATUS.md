@@ -1,6 +1,7 @@
 # Production Remaining Status — Post Part 14 Live
 
-**Generated:** 2026-08-29T22:15:00Z  
+**Generated:** 2026-08-29T22:23:00Z (re-verified)  
+**Previous audit:** 2026-08-29T22:15:00Z  
 **Scope:** Continue after Part 14 LIVE — **Part 15 NOT started**  
 **Sales:** **DISABLED** (`BUZZARD_SALES_ENABLED=0`)
 
@@ -18,7 +19,9 @@
 | Redis (live) | **CONDITION** — not configured |
 | **Part 15 readiness** | **PART 15 STILL BLOCKED** |
 
-Part 14 catalog go-live is **complete and verified**. Part 15 remains **blocked** until persistent SQLite is live on Render (`/var/data` + `BUZZARD_DB_PATH`) and optional Redis is configured.
+Part 14 catalog go-live is **complete and verified**. Part 15 remains **blocked** until persistent SQLite is live on Render (`/var/data` + `BUZZARD_DB_PATH`) and backup runs against `/var/data/backups`.
+
+**Re-verification (2026-08-29T22:23Z):** Live commit updated to `90dc974`; all safety gates pass; DB still ephemeral; `RENDER_API_KEY` not available → **MANUAL RENDER ACTION REQUIRED**.
 
 ---
 
@@ -26,8 +29,8 @@ Part 14 catalog go-live is **complete and verified**. Part 15 remains **blocked*
 
 | Item | Value |
 |------|-------|
-| **origin/main HEAD** | `f40dafaae9b1381733ad028c3a7b04c1bbf35ba5` |
-| **Live running commit** | `f40dafaae9b1` |
+| **origin/main HEAD** | `90dc974d7bd04dfece861b80b101ae44b1503958` |
+| **Live running commit** | `90dc974d7bd0` |
 | **Branch** | `main` |
 | **PR #260 merged** | **YES** (`f9fd474` — `dbStartup.js` allows ephemeral when `BUZZARD_SALES_ENABLED=0`; server binds `0.0.0.0:$PORT`) |
 | **Part 14 artifacts on main** | **YES** — production health, deployment identity, part14-smoke, closeout docs |
@@ -84,7 +87,7 @@ Script (when API key available):
 
 ```json
 {
-  "commit": "f40dafaae9b1",
+  "commit": "90dc974d7bd0",
   "branch": "main",
   "salesEnabled": false,
   "environment": "production"
@@ -191,8 +194,8 @@ Run against `https://buzzard-api.onrender.com`:
 
 | Suite | Result |
 |-------|--------|
-| `test:production-smoke` | **15/15 PASS** (with `BUZZARD_EXPECTED_GIT_COMMIT=f40dafaae9b1`) |
-| `test:part14` | **9 pass, 0 fail, 4 conditions** — `LIVE WITH CONDITIONS` |
+| `test:production-smoke` | **15/15 PASS** (with `BUZZARD_EXPECTED_GIT_COMMIT=90dc974d7bd0`) |
+| `test:part14` | **10 pass, 0 fail, 3 conditions** — `LIVE WITH CONDITIONS` |
 | `test:part12:live` | **8/8 PASS** |
 
 ### Part 14 conditions (non-fatal for catalog)
@@ -261,7 +264,7 @@ curl -s https://buzzard-api.onrender.com/api/health/worker
 curl -s https://buzzard-api.onrender.com/api/health/db
 
 BUZZARD_API_URL=https://buzzard-api.onrender.com \
-BUZZARD_EXPECTED_GIT_COMMIT=f40dafaae9b1 \
+BUZZARD_EXPECTED_GIT_COMMIT=90dc974d7bd0 \
 npm run test:production-smoke
 
 BUZZARD_API_URL=https://buzzard-api.onrender.com npm run test:part14

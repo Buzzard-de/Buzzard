@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import ProductSvg from "./ProductSvg";
+import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useShop } from "@/lib/shop";
@@ -28,7 +28,11 @@ import { isVehicleApiEnabled } from "@/lib/api/config";
 import { useMarket } from "@/lib/market/context";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
 import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
-import PriceLabel from "@/components/shop/PriceLabel";
+import {
+  isPimStorefrontEnabled,
+  loadPimStorefrontProducts,
+  mergeStorefrontProducts,
+} from "@/lib/storefront/runtime";
 import type { PublicProduct } from "@/lib/products/types";
 
 const PAGE_SIZE = 12;
@@ -58,10 +62,39 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const [catalogProducts, setCatalogProducts] = useState<PublicProduct[]>([]);
   const [compatibleSkus, setCompatibleSkus] = useState<string[] | null>(null);
   const [catalogLoading, setCatalogLoading] = useState(
-    isLiveLocalizationEnabled() || isLiveCatalogEnabled()
+    isPimStorefrontEnabled() || isLiveLocalizationEnabled() || isLiveCatalogEnabled()
   );
+  const [pimResult, setPimResult] = useState<{
+    items: PublicProduct[];
+    total: number;
+    totalPages: number;
+    catalogMode: boolean;
+  } | null>(null);
 
   useEffect(() => {
+    if (isPimStorefrontEnabled()) {
+      let cancelled = false;
+      setCatalogLoading(true);
+      loadPimStorefrontProducts({
+        q: query || undefined,
+        category: kategorieSlug || undefined,
+        page,
+        sort: sort === "default" ? undefined : sort,
+      })
+        .then((data) => {
+          if (!cancelled) setPimResult(data);
+        })
+        .catch(() => {
+          if (!cancelled) setPimResult(null);
+        })
+        .finally(() => {
+          if (!cancelled) setCatalogLoading(false);
+        });
+      return () => {
+        cancelled = true;
+      };
+    }
+
     if (!isLiveLocalizationEnabled() && !isLiveCatalogEnabled()) {
       setCatalogProducts([]);
       setCatalogLoading(false);
@@ -103,7 +136,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
     return () => {
       cancelled = true;
     };
-  }, [query, kategorieSlug, vehicle?.vehicleId, locale, countryCode, currency]);
+  }, [query, kategorieSlug, vehicle?.vehicleId, locale, countryCode, currency, page, sort]);
 
   useEffect(() => {
     if (!vehicle?.vehicleId || !isVehicleApiEnabled()) {
@@ -127,6 +160,9 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
   const allProducts = useMemo(() => {
     const staticItems = getAllProducts();
+    if (isPimStorefrontEnabled() && pimResult?.items.length) {
+      return mergeStorefrontProducts(staticItems, pimResult.items);
+    }
     if (isLiveLocalizationEnabled()) {
       return mergeLocalizedProducts(staticItems, catalogProducts);
     }
@@ -134,9 +170,18 @@ export default function ProductList({ categorySlug }: ProductListProps) {
       return mergeCatalogProducts(staticItems, catalogProducts);
     }
     return staticItems;
-  }, [catalogProducts]);
+  }, [catalogProducts, pimResult]);
 
   const result = useMemo(() => {
+    if (isPimStorefrontEnabled() && pimResult) {
+      return {
+        items: pimResult.items,
+        total: pimResult.total,
+        page,
+        totalPages: pimResult.totalPages,
+      };
+    }
+
     let filtered = filterProducts(allProducts, filter, query, kategorie);
 
     if (vehicle?.vehicleId && compatibleSkus && compatibleSkus.length > 0) {
@@ -146,7 +191,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
     const sorted = sortProducts(filtered, sort);
     return paginateProducts(sorted, page, PAGE_SIZE);
-  }, [allProducts, filter, sort, query, kategorie, page, vehicle?.vehicleId, compatibleSkus]);
+  }, [allProducts, filter, sort, query, kategorie, page, vehicle?.vehicleId, compatibleSkus, pimResult]);
 
   function pageHref(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -193,7 +238,13 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         </div>
       )}
 
-      {(isLiveLocalizationEnabled() || isLiveCatalogEnabled()) && !catalogLoading && catalogProducts.length > 0 && (
+      {isPimStorefrontEnabled() && pimResult?.catalogMode && !catalogLoading && (
+        <p className="admin-note catalog-mode-banner">
+          Katalogmodus — Bestellung derzeit nicht möglich (BUZZARD_SALES_ENABLED=0).
+        </p>
+      )}
+
+      {(isLiveLocalizationEnabled() || isLiveCatalogEnabled()) && !isPimStorefrontEnabled() && !catalogLoading && catalogProducts.length > 0 && (
         <p className="admin-note">
           {catalogProducts.length} Live-Produkt(e) aus der Buzzard API
           {isLiveLocalizationEnabled() ? ` (${countryCode}, ${currency})` : ""} eingebunden.
@@ -238,56 +289,22 @@ export default function ProductList({ categorySlug }: ProductListProps) {
           <div className="products-grid">
             {result.items.map((product) => {
               const localized = localizePublicProduct(product, locale);
-              const imageKey = localized.imageKey ?? (localized.images[0] ? undefined : "oel");
               return (
-                <article key={product.id} className="product-card">
-                  <Link href={localized.url} className="product-card-img">
-                    {localized.images[0] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={localized.images[0]} alt={localized.name} loading="lazy" decoding="async" />
-                    ) : (
-                      <ProductSvg imageKey={imageKey ?? "oel"} />
-                    )}
-                  </Link>
-                  <div className="product-card-body">
-                    <span className="product-card-category">
-                      {product.attributes?.category || getCategoryLabelForProduct(localized, locale)}
-                    </span>
-                    <Link href={localized.url} className="product-card-name">
-                      {localized.name}
-                    </Link>
-                    <span className="product-card-sku">SKU: {localized.sku}</span>
-                    <PriceLabel amount={localized.price} className="product-card-price" />
-                    <div className="product-card-actions">
-                      {isCheckoutEnabled() ? (
-                        <button
-                          type="button"
-                          className="product-card-btn"
-                          style={
-                            addedId === product.id
-                              ? { background: "rgba(34,197,94,0.15)", borderColor: "#22c55e", color: "#22c55e" }
-                              : undefined
-                          }
-                          onClick={() => handleAdd(product.id)}
-                        >
-                          {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
-                        </button>
-                      ) : (
-                        <Link href={localized.url} className="product-card-btn">
-                          {t("product.viewProduct")}
-                        </Link>
-                      )}
-                      <button
-                        type="button"
-                        className={`product-wishlist-btn${has(product.id) ? " active" : ""}`}
-                        onClick={() => toggle(product.id)}
-                        aria-label="Wunschliste"
-                      >
-                        {has(product.id) ? "♥" : "♡"}
-                      </button>
-                    </div>
-                  </div>
-                </article>
+                <ProductCard
+                  key={product.id}
+                  product={localized}
+                  localeName={localized.name}
+                  categoryLabel={
+                    String(product.attributes?.category || getCategoryLabelForProduct(localized, locale))
+                  }
+                  addedId={addedId}
+                  inWishlist={has(product.id)}
+                  onAdd={isCheckoutEnabled() ? handleAdd : undefined}
+                  onToggleWishlist={toggle}
+                  addLabel={t("product.addToCart")}
+                  addedLabel={t("product.added")}
+                  viewLabel={t("product.viewProduct")}
+                />
               );
             })}
           </div>

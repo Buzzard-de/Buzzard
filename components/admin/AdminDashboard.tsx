@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { fetchDashboardSummary } from "@/lib/admin/controlCenter";
+import type { DashboardSummary } from "@/lib/admin/controlCenterTypes";
+import Link from "next/link";
+import SimpleLineChart from "./charts/SimpleLineChart";
 import { fetchAnalyticsOverview, fetchSalesAnalytics } from "@/lib/analytics/client";
 import type { AnalyticsOverview } from "@/lib/analytics/types";
 import { getDemoOrderStats } from "@/lib/commerce";
 import { formatPrice } from "@/lib/products";
-import Link from "next/link";
-import SimpleLineChart from "./charts/SimpleLineChart";
 
 export default function AdminDashboard() {
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
   const [trend, setTrend] = useState<Array<{ label: string; value: number }>>([]);
   const [demoStats] = useState(getDemoOrderStats);
+  const [ccSummary, setCcSummary] = useState<DashboardSummary | null>(null);
 
   useEffect(() => {
     Promise.all([fetchAnalyticsOverview("last_30_days"), fetchSalesAnalytics("last_30_days")])
@@ -20,6 +23,7 @@ export default function AdminDashboard() {
         setTrend(sales.trend.map((row) => ({ label: row.date, value: row.revenue })));
       })
       .catch(() => {});
+    fetchDashboardSummary().then(setCcSummary).catch(() => {});
   }, []);
 
   const kpis = overview?.kpis;
@@ -29,8 +33,20 @@ export default function AdminDashboard() {
     <div className="admin-page">
       <div className="admin-page-head">
         <h1>Dashboard</h1>
-        <Link href="/admin/analytics/" className="shop-btn-secondary">Analytics öffnen</Link>
+        <Link href="/admin/control-center/" className="shop-btn-primary">Control Center</Link>
       </div>
+
+      {ccSummary && (
+        <section className="admin-panel">
+          <h2>Control Center</h2>
+          <div className="admin-stat-grid">
+            <article className="admin-stat"><strong>{ccSummary.aiEmployees}</strong><span>AI Çalışan</span></article>
+            <article className="admin-stat"><strong>{ccSummary.activeTasks}</strong><span>Aktif Görev</span></article>
+            <article className="admin-stat"><strong>{ccSummary.pendingApprovals}</strong><span>Bekleyen Onay</span></article>
+            <article className="admin-stat"><strong>{ccSummary.openEscalations}</strong><span>Eskalasyon</span></article>
+          </div>
+        </section>
+      )}
 
       {kpis && (
         <div className="admin-stat-grid">

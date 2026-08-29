@@ -1,0 +1,146 @@
+/* Part 7 — Storefront responsive fixes (no horizontal overflow) */
+
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+.products-page-layout,
+.products-main,
+.home-page,
+.mega-menu-shell {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.products-grid {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.product-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.product-card-body {
+  min-width: 0;
+}
+
+.product-card-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.product-card-sku {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.product-card-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.product-card-img img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.catalog-mode-banner {
+  margin-bottom: 12px;
+}
+
+.mega-panel-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--muted, #888);
+}
+
+@media (max-width: 480px) {
+  .products-page-layout,
+  .products-main,
+  .home-page,
+  .cart-page,
+  .checkout-page,
+  .admin-shell,
+  .control-center-shell {
+    max-width: 100vw;
+    overflow-x: clip;
+    box-sizing: border-box;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .product-card,
+  .product-card-body,
+  .product-list-item {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .product-card-body {
+    padding: 10px;
+  }
+
+  .cart-table,
+  .checkout-form,
+  .checkout-summary {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-nav ul {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .main-nav ul::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1025px) {
+  .products-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

@@ -77,16 +77,20 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
   function handleAdd() {
     const variantIds = Object.values(selectedVariants);
-    const ok = add({ productId: localizedProduct.id, variantIds, qty });
-    if (!ok) return;
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    void (async () => {
+      const ok = await add({ productId: localizedProduct.id, variantIds, qty });
+      if (!ok) return;
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    })();
   }
 
   function handleBuyNow() {
     const variantIds = Object.values(selectedVariants);
-    add({ productId: localizedProduct.id, variantIds, qty });
-    router.push("/checkout/");
+    void (async () => {
+      const ok = await add({ productId: localizedProduct.id, variantIds, qty });
+      if (ok) router.push("/checkout/");
+    })();
   }
 
   return (

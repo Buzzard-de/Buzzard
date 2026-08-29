@@ -249,3 +249,4 @@ intelligence/buzzard_v200.json
 intelligence/buzzard_ki_gesamt/snapshots/latest/
 intelligence/buzzard_ki_gesamt/snapshots/20*/
 intelligence/buzzard_ki_gesamt/snapshots/*.zip
+test-results/

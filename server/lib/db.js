@@ -1,16 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
+const { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require("./dbPaths");
 
 const dataDir = path.join(__dirname, "..", "data");
 fs.mkdirSync(dataDir, { recursive: true });
 
-const dbPath = process.env.BUZZARD_DB_PATH
-  ? path.resolve(process.env.BUZZARD_DB_PATH)
-  : path.join(dataDir, "buzzard.db");
-if (process.env.BUZZARD_DB_PATH) {
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-}
+const dbPath = ensureDbDirectory(resolveDbPath());
 const db = new Database(dbPath);
 db.pragma("foreign_keys = ON");
 
@@ -3252,6 +3248,532 @@ function migrateMasterAdminV40() {
 
 migrateMasterAdminV40();
 
+function migrateCoreFoundationPart2() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS core_ai_employees(
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      department TEXT,
+      description TEXT,
+      responsibility TEXT,
+      permissions_json TEXT DEFAULT '[]',
+      status TEXT DEFAULT 'ACTIVE',
+      priority INTEGER DEFAULT 50,
+      capabilities_json TEXT DEFAULT '[]',
+      last_activity_at TEXT,
+      error_message TEXT,
+      performance_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_ai_tasks(
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      employee_id TEXT,
+      priority TEXT DEFAULT 'NORMAL',
+      status TEXT DEFAULT 'PENDING',
+      permissions_required_json TEXT DEFAULT '[]',
+      payload_json TEXT DEFAULT '{}',
+      result_json TEXT,
+      error_message TEXT,
+      retry_count INTEGER DEFAULT 0,
+      max_retries INTEGER DEFAULT 3,
+      depends_on_task_id TEXT,
+      created_by TEXT,
+      assigned_at TEXT,
+      started_at TEXT,
+      completed_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_approvals(
+      id TEXT PRIMARY KEY,
+      task_id TEXT,
+      resource_type TEXT,
+      resource_id TEXT,
+      ai_recommendation TEXT,
+      reason TEXT,
+      risk_level TEXT DEFAULT 'MEDIUM',
+      status TEXT DEFAULT 'PENDING',
+      decided_by TEXT,
+      decided_at TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_escalations(
+      id TEXT PRIMARY KEY,
+      source_type TEXT,
+      source_id TEXT,
+      title TEXT NOT NULL,
+      message TEXT,
+      risk_level TEXT DEFAULT 'MEDIUM',
+      status TEXT DEFAULT 'OPEN',
+      assigned_to TEXT,
+      resolved_at TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_notifications(
+      id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      priority TEXT DEFAULT 'NORMAL',
+      recipient TEXT,
+      channel TEXT DEFAULT 'internal',
+      status TEXT DEFAULT 'PENDING',
+      payload_json TEXT DEFAULT '{}',
+      delivery_result TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      sent_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS core_integrations(
+      id TEXT PRIMARY KEY,
+      code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL,
+      status TEXT DEFAULT 'DISCONNECTED',
+      health_url TEXT,
+      last_check_at TEXT,
+      last_error TEXT,
+      config_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_system_events(
+      id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      actor_type TEXT,
+      actor_id TEXT,
+      resource_type TEXT,
+      resource_id TEXT,
+      summary TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_background_jobs(
+      id TEXT PRIMARY KEY,
+      job_type TEXT NOT NULL,
+      status TEXT DEFAULT 'queued',
+      payload_json TEXT DEFAULT '{}',
+      result_json TEXT,
+      error_message TEXT,
+      retry_count INTEGER DEFAULT 0,
+      next_run_at TEXT,
+      started_at TEXT,
+      completed_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_category_visibility(
+      category_id TEXT PRIMARY KEY,
+      status TEXT DEFAULT 'ACTIVE',
+      readiness_json TEXT DEFAULT '{}',
+      updated_by TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_config(
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_by TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_core_tasks_status ON core_ai_tasks(status);
+    CREATE INDEX IF NOT EXISTS idx_core_tasks_employee ON core_ai_tasks(employee_id);
+    CREATE INDEX IF NOT EXISTS idx_core_events_created ON core_system_events(created_at);
+    CREATE INDEX IF NOT EXISTS idx_core_approvals_status ON core_approvals(status);
+  `);
+}
+
+function migrateCoreFoundationPart5() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS core_scheduled_jobs(
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      job_type TEXT NOT NULL,
+      schedule_type TEXT NOT NULL,
+      cron_expr TEXT,
+      interval_ms INTEGER,
+      payload_json TEXT DEFAULT '{}',
+      priority TEXT DEFAULT 'NORMAL',
+      enabled INTEGER DEFAULT 1,
+      next_run_at TEXT,
+      last_run_at TEXT,
+      run_count INTEGER DEFAULT 0,
+      max_retries INTEGER DEFAULT 3,
+      created_by TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_job_logs(
+      id TEXT PRIMARY KEY,
+      job_id TEXT NOT NULL,
+      level TEXT DEFAULT 'INFO',
+      message TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_worker_state(
+      id TEXT PRIMARY KEY DEFAULT 'default',
+      status TEXT DEFAULT 'STOPPED',
+      worker_id TEXT,
+      jobs_processed INTEGER DEFAULT 0,
+      last_tick_at TEXT,
+      paused_at TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      started_at TEXT,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS core_integration_health(
+      integration_code TEXT PRIMARY KEY,
+      status TEXT DEFAULT 'DISCONNECTED',
+      response_time_ms INTEGER,
+      last_success_at TEXT,
+      last_failure_at TEXT,
+      error_count INTEGER DEFAULT 0,
+      last_error TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_core_jobs_status ON core_background_jobs(status);
+    CREATE INDEX IF NOT EXISTS idx_core_jobs_next_run ON core_background_jobs(next_run_at);
+    CREATE INDEX IF NOT EXISTS idx_core_schedules_next ON core_scheduled_jobs(next_run_at);
+    CREATE INDEX IF NOT EXISTS idx_core_job_logs_job ON core_job_logs(job_id);
+  `);
+
+  const jobCols = db.prepare("PRAGMA table_info(core_background_jobs)").all().map((c) => c.name);
+  const addCol = (sql) => {
+    try {
+      db.exec(sql);
+    } catch {
+      /* column exists */
+    }
+  };
+  if (!jobCols.includes("lock_owner")) addCol("ALTER TABLE core_background_jobs ADD COLUMN lock_owner TEXT");
+  if (!jobCols.includes("lock_expires_at")) addCol("ALTER TABLE core_background_jobs ADD COLUMN lock_expires_at TEXT");
+  if (!jobCols.includes("worker_id")) addCol("ALTER TABLE core_background_jobs ADD COLUMN worker_id TEXT");
+  if (!jobCols.includes("schedule_id")) addCol("ALTER TABLE core_background_jobs ADD COLUMN schedule_id TEXT");
+  if (!jobCols.includes("priority")) addCol("ALTER TABLE core_background_jobs ADD COLUMN priority TEXT DEFAULT 'NORMAL'");
+  if (!jobCols.includes("execution_ms")) addCol("ALTER TABLE core_background_jobs ADD COLUMN execution_ms INTEGER");
+  if (!jobCols.includes("failure_kind")) addCol("ALTER TABLE core_background_jobs ADD COLUMN failure_kind TEXT");
+  if (!jobCols.includes("updated_at")) addCol("ALTER TABLE core_background_jobs ADD COLUMN updated_at TEXT");
+
+  db.prepare(`
+    INSERT OR IGNORE INTO core_worker_state(id, status) VALUES ('default', 'STOPPED')
+  `).run();
+}
+
+function migrateCoreFoundationPart6() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS pim_core_brands (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      manufacturer TEXT,
+      country TEXT,
+      logo_url TEXT,
+      website TEXT,
+      status TEXT DEFAULT 'ACTIVE',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_products (
+      id TEXT PRIMARY KEY,
+      sku TEXT UNIQUE NOT NULL,
+      supplier_sku TEXT,
+      ean TEXT,
+      gtin TEXT,
+      mpn TEXT,
+      brand_id INTEGER,
+      manufacturer TEXT,
+      title TEXT NOT NULL,
+      description TEXT,
+      short_description TEXT,
+      taxonomy_category_id TEXT,
+      pim_category_id INTEGER,
+      subcategory_id TEXT,
+      attributes_json TEXT DEFAULT '{}',
+      price REAL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      stock INTEGER DEFAULT 0,
+      supplier_id TEXT,
+      status TEXT DEFAULT 'DRAFT',
+      visibility TEXT DEFAULT 'HIDDEN',
+      seo_json TEXT DEFAULT '{}',
+      metadata_json TEXT DEFAULT '{}',
+      quality_score INTEGER DEFAULT 0,
+      parent_product_id TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(brand_id) REFERENCES pim_core_brands(id),
+      FOREIGN KEY(parent_product_id) REFERENCES pim_core_products(id)
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_variants (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      sku TEXT UNIQUE,
+      axis TEXT NOT NULL,
+      value TEXT NOT NULL,
+      ean TEXT,
+      price_delta REAL DEFAULT 0,
+      stock INTEGER DEFAULT 0,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(product_id) REFERENCES pim_core_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_media (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      media_type TEXT NOT NULL,
+      url TEXT NOT NULL,
+      alt_text TEXT,
+      is_primary INTEGER DEFAULT 0,
+      sort_order INTEGER DEFAULT 0,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(product_id) REFERENCES pim_core_products(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_supplier_mappings (
+      id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      supplier_product_id TEXT,
+      supplier_sku TEXT,
+      internal_product_id TEXT,
+      internal_sku TEXT,
+      ean TEXT,
+      gtin TEXT,
+      mpn TEXT,
+      brand TEXT,
+      confidence REAL DEFAULT 0.5,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(internal_product_id) REFERENCES pim_core_products(id)
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_category_mappings (
+      taxonomy_category_id TEXT PRIMARY KEY,
+      pim_category_id INTEGER,
+      main_category_id TEXT,
+      subcategory_id TEXT,
+      sub_subcategory_id TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_attribute_schemas (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category_id TEXT NOT NULL,
+      schema_json TEXT NOT NULL,
+      version INTEGER DEFAULT 1,
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(category_id, version)
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_product_audit (
+      id TEXT PRIMARY KEY,
+      product_id TEXT,
+      action TEXT NOT NULL,
+      source TEXT NOT NULL,
+      actor_id TEXT,
+      field_name TEXT,
+      before_json TEXT,
+      after_json TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS pim_core_import_stages (
+      id TEXT PRIMARY KEY,
+      import_job_id TEXT,
+      product_id TEXT,
+      stage TEXT NOT NULL,
+      status TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_ean ON pim_core_products(ean) WHERE ean IS NOT NULL AND ean != '';
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_gtin ON pim_core_products(gtin) WHERE gtin IS NOT NULL AND gtin != '';
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_mpn ON pim_core_products(mpn) WHERE mpn IS NOT NULL AND mpn != '';
+    CREATE INDEX IF NOT EXISTS idx_pim_core_products_status ON pim_core_products(status);
+    CREATE INDEX IF NOT EXISTS idx_pim_core_products_taxonomy ON pim_core_products(taxonomy_category_id);
+    CREATE INDEX IF NOT EXISTS idx_pim_core_supplier_map ON pim_core_supplier_mappings(supplier_id, supplier_sku);
+  `);
+
+  const brandCount = db.prepare("SELECT COUNT(*) n FROM pim_core_brands").get().n;
+  if (brandCount === 0) {
+    db.prepare(`
+      INSERT INTO pim_core_brands(name, slug, manufacturer, country, status)
+      VALUES ('Buzzard Demo', 'buzzard-demo', 'Buzzard GmbH', 'DE', 'ACTIVE')
+    `).run();
+    const brandId = db.prepare("SELECT id FROM pim_core_brands LIMIT 1").get().id;
+    db.prepare(`
+      INSERT INTO pim_core_products(
+        id, sku, ean, gtin, brand_id, title, short_description, description,
+        taxonomy_category_id, price, stock, status, visibility, quality_score
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      "pim_prod_demo001",
+      "BZ-CORE-DEMO-001",
+      "5901234123457",
+      "5901234123457",
+      brandId,
+      "Universal Demo Product",
+      "Category-agnostic PIM demo",
+      "Part 6 Product Core foundation item.",
+      "cat-05",
+      29.99,
+      50,
+      "READY",
+      "PUBLIC",
+      72
+    );
+    db.prepare(`
+      INSERT INTO pim_core_attribute_schemas(category_id, schema_json) VALUES (?, ?)
+    `).run(
+      "cat-05",
+      JSON.stringify({
+        attributes: [
+          { key: "oem", label: "OEM Number", type: "string" },
+          { key: "engine", label: "Engine", type: "string" },
+          { key: "year", label: "Year", type: "string" },
+          { key: "vehicle_compatibility", label: "Vehicle Compatibility", type: "text" },
+        ],
+      })
+    );
+    db.prepare(`
+      INSERT INTO pim_core_attribute_schemas(category_id, schema_json) VALUES (?, ?)
+    `).run(
+      "cat-02",
+      JSON.stringify({
+        attributes: [
+          { key: "skin_type", label: "Skin Type", type: "string" },
+          { key: "volume", label: "Volume", type: "string" },
+          { key: "ingredients", label: "Ingredients", type: "text" },
+        ],
+      })
+    );
+  }
+
+  db.prepare(`UPDATE pim_core_products SET taxonomy_category_id = 'cat-05' WHERE taxonomy_category_id = 'automotive'`).run();
+  db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-05' WHERE category_id = 'automotive'`).run();
+  db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-02' WHERE category_id = 'cosmetics'`).run();
+  db.prepare(`UPDATE pim_core_products SET ean = '5901234123457', gtin = '5901234123457' WHERE sku = 'BZ-CORE-DEMO-001'`).run();
+  db.prepare(`UPDATE pim_core_products SET visibility = 'PUBLIC' WHERE id = 'pim_prod_demo001' AND visibility = 'HIDDEN'`).run();
+  db.prepare(`
+    UPDATE pim_core_products SET seo_json = ?
+    WHERE id = 'pim_prod_demo001'
+  `).run(JSON.stringify({
+    slug: "universal-demo-product",
+    metaTitle: "Universal Demo Product | Buzzard",
+    metaDescription: "Category-agnostic PIM demo product",
+    canonical: "/produkt/universal-demo-product/",
+  }));
+}
+
+function migrateCoreFoundationPart8() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS commerce_carts (
+      id TEXT PRIMARY KEY,
+      customer_id TEXT,
+      session_id TEXT,
+      country TEXT DEFAULT 'DE',
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'active',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      expires_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS commerce_cart_items (
+      id TEXT PRIMARY KEY,
+      cart_id TEXT NOT NULL,
+      product_id TEXT NOT NULL,
+      variant_id TEXT,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      price_snapshot REAL NOT NULL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(cart_id) REFERENCES commerce_carts(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS commerce_checkouts (
+      id TEXT PRIMARY KEY,
+      cart_id TEXT,
+      customer_id TEXT,
+      state TEXT DEFAULT 'DRAFT',
+      billing_json TEXT DEFAULT '{}',
+      shipping_json TEXT DEFAULT '{}',
+      totals_json TEXT DEFAULT '{}',
+      idempotency_key TEXT,
+      order_type TEXT DEFAULT 'DRY_RUN',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS commerce_orders (
+      id TEXT PRIMARY KEY,
+      checkout_id TEXT,
+      customer_id TEXT,
+      order_type TEXT NOT NULL DEFAULT 'DRY_RUN',
+      status TEXT DEFAULT 'PENDING',
+      payment_status TEXT DEFAULT 'NONE',
+      fulfillment_status TEXT DEFAULT 'NONE',
+      currency TEXT DEFAULT 'EUR',
+      subtotal REAL DEFAULT 0,
+      shipping REAL DEFAULT 0,
+      tax REAL DEFAULT 0,
+      discount REAL DEFAULT 0,
+      total REAL DEFAULT 0,
+      items_json TEXT DEFAULT '[]',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS commerce_idempotency (
+      key_hash TEXT PRIMARY KEY,
+      scope TEXT NOT NULL,
+      resource_id TEXT,
+      response_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      expires_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS commerce_go_live (
+      id TEXT PRIMARY KEY,
+      requested_by TEXT,
+      status TEXT DEFAULT 'PENDING',
+      readiness_snapshot_json TEXT DEFAULT '{}',
+      admin_approval INTEGER DEFAULT 0,
+      production_lock INTEGER DEFAULT 1,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      decided_at TEXT,
+      decided_by TEXT
+    );
+    CREATE TABLE IF NOT EXISTS commerce_webhook_events (
+      id TEXT PRIMARY KEY,
+      provider TEXT NOT NULL,
+      event_id TEXT UNIQUE NOT NULL,
+      event_type TEXT,
+      payload_json TEXT DEFAULT '{}',
+      verified INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_commerce_carts_customer ON commerce_carts(customer_id);
+    CREATE INDEX IF NOT EXISTS idx_commerce_orders_type ON commerce_orders(order_type);
+    CREATE INDEX IF NOT EXISTS idx_commerce_checkouts_state ON commerce_checkouts(state);
+  `);
+}
+
+function migrateCoreFoundationPart10() {
+  const cols = db.prepare("PRAGMA table_info(commerce_carts)").all().map((c) => c.name);
+  if (!cols.includes("coupon_code")) {
+    db.exec(`ALTER TABLE commerce_carts ADD COLUMN coupon_code TEXT`);
+  }
+}
+
+migrateCoreFoundationPart2();
+migrateCoreFoundationPart5();
+migrateCoreFoundationPart6();
+migrateCoreFoundationPart8();
+migrateCoreFoundationPart10();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
@@ -3296,6 +3818,7 @@ function getDatabaseHealth() {
     const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
     const products = db.prepare("SELECT COUNT(*) n FROM products").get().n;
     const orders = db.prepare("SELECT COUNT(*) n FROM orders").get().n;
+    const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
       path: dbPath,
@@ -3303,18 +3826,32 @@ function getDatabaseHealth() {
       users,
       products,
       orders,
+      persistence: {
+        mode: persistence.mode,
+        persistent: persistence.persistent,
+        ephemeralRisk: persistence.ephemeralRisk,
+        backupDir: persistence.backupDir,
+      },
     };
   } catch (error) {
+    const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
       path: dbPath,
       version: "0.3.0",
       error: error.message,
+      persistence: {
+        mode: persistence.mode,
+        persistent: persistence.persistent,
+        ephemeralRisk: persistence.ephemeralRisk,
+      },
     };
   }
 }
 
 module.exports = {
   db,
+  dbPath,
   getDatabaseHealth,
+  getPersistenceInfo: () => getPersistenceInfo(dbPath),
 };

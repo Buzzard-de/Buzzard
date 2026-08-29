@@ -1,5 +1,6 @@
 const { requireAuth } = require("../lib/auth");
-const { listSecurityEvents } = require("../lib/securityLog");
+const { requirePermission } = require("../lib/rbac");
+const { querySecurityEvents, listSecurityEvents } = require("../lib/securityLog");
 const { listLockouts } = require("../lib/accountLockout");
 
 function buildOverview(events) {
@@ -17,6 +18,12 @@ function buildOverview(events) {
     "admin_login_locked",
     "admin_account_locked",
     "auth_account_locked",
+    "permission_denied",
+    "privilege_escalation_attempt",
+    "csrf_failure",
+    "idor_attempt",
+    "ai_permission_violation",
+    "session_revoked",
   ]);
 
   return {
@@ -41,11 +48,17 @@ module.exports = {
         status: "ok",
         protections: {
           serverSideAuthorization: true,
+          globalRbac: true,
+          unifiedAuthFacade: true,
           rateLimiting: true,
+          rateLimitPersist: process.env.BUZZARD_RATE_LIMIT_STORE === "file" || process.env.BUZZARD_RATE_LIMIT_PERSIST === "1",
+          rateLimitBackend: require("../lib/rateLimitStore").getStoreInfo().backend,
+          rateLimitInfo: require("../lib/rateLimitStore").getStoreInfo(),
+          redisConfigured: require("../lib/redisClient").isConfigured(),
           passwordHashing: "scrypt",
           accountLockout: true,
           adminTwoFactor: true,
-          paymentServerVerification: true,
+          csrfBearerExempt: true,
           auditLogging: true,
         },
       });
@@ -53,14 +66,15 @@ module.exports = {
 
     app.get("/api/admin/security/events", (req, res) => {
       if (!requireAuth(req, res)) return;
-      if (req.adminUser.role !== "administrator") {
-        return res.status(403).json({ success: false, errorKey: "admin.auth.forbidden" });
-      }
-      const events = listSecurityEvents(200);
+      if (!requirePermission(req, res, "security.read")) return;
+      const { severity, type, user, source, from, to, q, page, limit } = req.query || {};
+      const result = querySecurityEvents({ severity, type, user, source, from, to, q, page, limit });
+      const allForOverview = listSecurityEvents(500);
       return res.json({
         success: true,
-        events,
-        overview: buildOverview(events),
+        events: result.events,
+        pagination: result.pagination,
+        overview: buildOverview(allForOverview),
         lockouts: listLockouts(50),
       });
     });

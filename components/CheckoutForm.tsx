@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { fetchAccountAddresses } from "@/lib/account/client";
 import { useAccount } from "@/lib/account/context";
 import {
@@ -26,8 +26,9 @@ import { ensureServerCartSynced } from "@/lib/store/cartSync";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
 import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import CommerceDryRunBanner from "@/components/shop/CommerceDryRunBanner";
 import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
-import { isCheckoutEnabled } from "@/lib/shop/mode";
+import { isCheckoutEnabled, shouldUseCommerceCore } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 import { useMarket } from "@/lib/market/context";
@@ -39,6 +40,8 @@ import {
 } from "@/lib/customerCheckout/client";
 import type { CustomerShippingMethod } from "@/lib/customerCheckout/types";
 import { getAccountToken } from "@/lib/account/client";
+import { runCommerceCheckout, previewCommerceCheckoutTotals } from "@/lib/commerce/checkoutBridge";
+import { getStoredCommerceCartId, generateIdempotencyKey } from "@/lib/commerce/runtime";
 
 const STEPS: CheckoutStep[] = [
   "customer",
@@ -59,6 +62,8 @@ export default function CheckoutForm() {
   const { countryCode, deliveryDays } = useMarket();
   const { user: accountUser, ready: accountReady } = useAccount();
   const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
+  const idempotencyRef = useRef<string | null>(null);
+  const submittingRef = useRef(false);
   const [step, setStep] = useState<CheckoutStep>("customer");
   const [loading, setLoading] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
@@ -85,6 +90,50 @@ export default function CheckoutForm() {
     setShippingAddress((prev) => ({ ...prev, country: countryCode }));
     setBillingAddress((prev) => ({ ...prev, country: countryCode }));
   }, [countryCode]);
+
+  useEffect(() => {
+    if (!shouldUseCommerceCore() || items.length === 0) return;
+    let cancelled = false;
+
+    async function loadCommerceQuote() {
+      const cartId = getStoredCommerceCartId();
+      if (!cartId) return;
+      const totals = await previewCommerceCheckoutTotals({
+        cartId,
+        customerId: accountUser?.id,
+        customer,
+        shippingAddress,
+        billingAddress: billingSameAsShipping ? shippingAddress : billingAddress,
+        shippingMethodId,
+      });
+      if (!cancelled && totals) {
+        setServerQuote({
+          subtotal: totals.subtotal,
+          shipping: totals.shipping,
+          discount: 0,
+          vatAmount: totals.tax,
+          total: totals.total,
+        });
+      }
+    }
+
+    if (step === "review" || step === "shipping_method") {
+      loadCommerceQuote();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    items.length,
+    step,
+    shippingMethodId,
+    shippingAddress,
+    billingAddress,
+    billingSameAsShipping,
+    accountUser?.id,
+    customer,
+  ]);
 
   useEffect(() => {
     if (items.length === 0) {
@@ -320,6 +369,7 @@ export default function CheckoutForm() {
 
   async function handlePlaceOrder(e: FormEvent) {
     e.preventDefault();
+    if (submittingRef.current) return;
     setErrorKey(null);
     const payload = buildPayload();
     const validationError = validateCheckoutPayload(payload);
@@ -328,7 +378,48 @@ export default function CheckoutForm() {
       return;
     }
 
+    submittingRef.current = true;
     setLoading(true);
+
+    if (shouldUseCommerceCore()) {
+      const cartId = getStoredCommerceCartId();
+      if (!cartId) {
+        setLoading(false);
+        submittingRef.current = false;
+        setErrorKey("checkout.cartEmpty");
+        return;
+      }
+      if (!idempotencyRef.current) {
+        idempotencyRef.current = generateIdempotencyKey("storefront");
+      }
+      const result = await runCommerceCheckout({
+        cartId,
+        customerId: accountUser?.id,
+        customer: payload.customer,
+        shippingAddress: payload.shippingAddress,
+        billingAddress: payload.billingAddress,
+        shippingMethodId: payload.shippingMethodId,
+        orderType: "READINESS_TEST",
+        idempotencyKey: idempotencyRef.current,
+      });
+      setLoading(false);
+      submittingRef.current = false;
+      if (!result.success || !result.order) {
+        setErrorKey(result.errorKey || "checkout.orderFailed");
+        return;
+      }
+      trackMarketingEvent("purchase", {
+        transaction_id: result.order.id,
+        value: result.order.total,
+        currency: result.order.currency,
+      });
+      clear();
+      router.push(
+        `/checkout/erfolg/?order=${encodeURIComponent(result.order.id)}&source=commerce&type=${encodeURIComponent(result.order.orderType)}`
+      );
+      return;
+    }
+
     const cartSynced = await ensureServerCartSynced(items);
     if (!cartSynced) {
       setLoading(false);
@@ -346,6 +437,7 @@ export default function CheckoutForm() {
     });
 
     setLoading(false);
+    submittingRef.current = false;
 
     if (!response.success || !response.order) {
       setErrorKey(response.errorKey || "checkout.orderFailed");
@@ -370,6 +462,7 @@ export default function CheckoutForm() {
 
   return (
     <div className="checkout-page">
+      <CommerceDryRunBanner />
       <div className="checkout-head">
         <h1 className="shop-page-title">{t("checkout.title")}</h1>
         <Link href="/warenkorb/" className="checkout-back-link">

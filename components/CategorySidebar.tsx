@@ -6,14 +6,15 @@ import CategoryIcon from "./CategoryIcon";
 import {
   categoryHref,
   formatMenuLabel,
-  getCategoryAncestors,
   getCategoryLabel,
   getChildren,
-  getMainCategories,
   getMainCategoryIcon,
+  getVisibleMainCategories,
+  isCategoryVisibleToCustomer,
   mainCategories,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
+import { useCategoryVisibilityMap } from "@/lib/categories/visibility-client";
 import { useHomeUI } from "@/lib/home-ui";
 import { useIsMobileNav } from "@/lib/use-media-query";
 import type { BuzzardCategory } from "@/lib/categories/types";
@@ -41,8 +42,11 @@ function AccordionNode({
   expandedIds,
   onToggle,
   onNavigate,
-}: AccordionNodeProps) {
-  const children = getChildren(category.id);
+  visibilityMap,
+}: AccordionNodeProps & { visibilityMap: Record<string, { status?: string }> }) {
+  const children = getChildren(category.id).filter((c) =>
+    isCategoryVisibleToCustomer(c.id, visibilityMap)
+  );
   const hasChildren = children.length > 0;
   const expanded = expandedIds.has(category.id);
   const isMain = depth === 0;
@@ -85,6 +89,7 @@ function AccordionNode({
               expandedIds={expandedIds}
               onToggle={onToggle}
               onNavigate={onNavigate}
+              visibilityMap={visibilityMap}
             />
           ))}
         </ul>
@@ -96,17 +101,9 @@ function AccordionNode({
 export default function CategorySidebar({ activeId, onSelect, embedded = false }: CategorySidebarProps) {
   const homeUI = useHomeUI();
   const isMobile = useIsMobileNav();
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set([activeId]));
-  const mainCategoryNodes = getMainCategories();
-
-  useEffect(() => {
-    const pathIds = [...getCategoryAncestors(activeId).map((c) => c.id), activeId];
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      pathIds.forEach((id) => next.add(id));
-      return next;
-    });
-  }, [activeId]);
+  const visibilityMap = useCategoryVisibilityMap();
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+  const mainCategoryNodes = getVisibleMainCategories(visibilityMap);
 
   useEffect(() => {
     if (!homeUI?.sidebarOpen) return;
@@ -119,9 +116,8 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
 
   const handleToggle = useCallback((id: string) => {
     setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      const next = new Set<string>();
+      if (!prev.has(id)) next.add(id);
       return next;
     });
     onSelect(id);
@@ -175,12 +171,15 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
                 expandedIds={expandedIds}
                 onToggle={handleToggle}
                 onNavigate={handleNavigate}
+                visibilityMap={visibilityMap}
               />
             ))}
           </ul>
         ) : (
           <ul className="home-sidebar-list">
-            {mainCategories.map((cat) => (
+            {mainCategories
+              .filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap))
+              .map((cat) => (
               <li key={cat.id}>
                 <Link
                   href={cat.href}
@@ -188,6 +187,7 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
                   aria-current={activeId === cat.id ? "page" : undefined}
                   onMouseEnter={() => handleDesktopSelect(cat.id)}
                   onFocus={() => handleDesktopSelect(cat.id)}
+                  onClick={() => handleDesktopSelect(cat.id)}
                 >
                   <CategoryIcon name={cat.icon} size={16} />
                   <span>{cat.label}</span>

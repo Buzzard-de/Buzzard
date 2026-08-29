@@ -274,7 +274,12 @@ async function checkTecDocCompatibility({ vehicle, productSku }) {
   };
 }
 
-async function forwardDropshipOrder({ supplier, order }) {
+async function forwardDropshipOrder({ supplier, order, req } = {}) {
+  const salesGuard = require("./commerce/salesGuard");
+  const block = salesGuard.assertSupplierOrderAllowed({ req });
+  if (block) {
+    return { error: block.message, code: block.code, status: block.status, blocked: true };
+  }
   return {
     supplier,
     orderNumber: order?.orderNumber,

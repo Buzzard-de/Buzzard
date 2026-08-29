@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { lineSubtotal } from "@/lib/cart/types";
 import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import CommerceDryRunBanner from "@/components/shop/CommerceDryRunBanner";
 import PriceLabel from "@/components/shop/PriceLabel";
 import ProductSvg from "./ProductSvg";
 import { formatPrice } from "@/lib/products";
@@ -29,6 +30,8 @@ export default function CartView() {
     updateQty,
     applyCoupon,
     clearCoupon,
+    syncing,
+    lastErrorKey,
   } = useCart();
   const { t } = useLocale();
   const { countryCode } = useMarket();
@@ -62,7 +65,10 @@ export default function CartView() {
 
   return (
     <div className="cart-page">
+      <CommerceDryRunBanner />
       <h1 className="shop-page-title">{t("cart.title")}</h1>
+      {syncing && <p className="cart-loading" aria-live="polite">{t("cart.loading") || "Warenkorb wird aktualisiert…"}</p>}
+      {lastErrorKey && <p className="shop-modal-error" role="alert">{t(lastErrorKey) || lastErrorKey}</p>}
 
       {freeShippingRemaining > 0 && (
         <p className="cart-shipping-hint">

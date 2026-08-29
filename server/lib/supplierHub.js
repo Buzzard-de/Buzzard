@@ -453,7 +453,11 @@ function searchSourcing(filters = {}) {
   }));
 }
 
-function createSupplierOrder(body = {}) {
+function createSupplierOrder(body = {}, req = null) {
+  const salesGuard = require("./commerce/salesGuard");
+  const block = salesGuard.assertSupplierOrderAllowed({ req });
+  if (block) return salesGuard.blockHttpResult(block);
+
   const supplier = db.prepare("SELECT * FROM suppliers WHERE id = ?").get(body.supplierId);
   if (!supplier) return { error: "Supplier not found", status: 404 };
   if (!supplier.dropship) return { error: "Supplier does not support dropshipping", status: 400 };

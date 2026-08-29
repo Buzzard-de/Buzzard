@@ -1,60 +1,77 @@
 # Buzzard Security
 
-Protection layers for **buzzard24.de** and the Node API.
+**Stand:** Part 12
 
-## Built-in (code)
+## Part 12 additions
 
-| Layer | Protection |
-|-------|------------|
-| **HTTPS / HSTS** | GitHub Pages + Render TLS; HSTS in production |
-| **CSP** | Content-Security-Policy on static frontend |
-| **Security headers** | X-Frame-Options, nosniff, Permissions-Policy, COOP/CORP |
-| **Auth** | scrypt password hashes, JWT, rate-limited login/register |
-| **Account lockout** | 5 failed attempts → 30 min lock (admin + customer) |
-| **Admin 2FA** | TOTP (Google Authenticator) — setup at `/admin/security-dashboard/` |
-| **API** | Rate limit (180 req/min), max body 256 KB |
-| **Input** | Sanitized search, validated email/password length |
-| **Contact form** | Honeypot + time-trap + client rate limit |
-| **SQL** | Prepared statements only (SQLite) |
-| **Logging** | Security events in `server/data/security-log.json` |
-| **Dashboard** | Admin Security Log at `/admin/security-dashboard/` |
-| **Dependencies** | `npm run security:check` |
+- **Supplier order blocked** event (`supplier_order_blocked`, CRITICAL) on all paths when SALES=0
+- **Legacy fulfillment** gated — no demo auto-submit without sales + supplier flags
+- **Test rate limits:** `BUZZARD_TEST_MODE=1` disables rate limiting in smoke/E2E only
+- **Production restore guard:** `BUZZARD_ALLOW_PRODUCTION_RESTORE=1` required for `/var/data` targets
 
-## Admin 2FA setup
+## Schutzmaßnahmen (implementiert)
 
-1. Sign in at `/admin/login/` as **administrator**
-2. Open **Plattform → Security Log**
-3. Click **2FA einrichten**, scan secret in Authenticator app
-4. Enter 6-digit code and activate
+| Maßnahme | Status | Details |
+|----------|--------|---------|
+| Global RBAC | ✅ | Alle `/api/admin/*` Routes |
+| Unified Auth Facade | ✅ | `server/core/auth/` |
+| Rate Limiting | ✅ | memory / file / redis abstraction |
+| Persistent Rate Limit | ✅ | `BUZZARD_RATE_LIMIT_STORE=file` |
+| Account Lockout | ✅ | 5 Fehlversuche → 30 Min |
+| Admin 2FA | ✅ | TOTP |
+| Security Headers | ✅ | HSTS, X-Frame-Options, CSP, COOP, CORP |
+| Audit Log | ✅ | JSON + coreAudit |
+| Security Events | ✅ | `security-log.json` |
+| AI Permission Gate | ✅ | Blockierte Admin-Permissions |
+| IDOR Guards | ✅ | `server/lib/idorGuard.js` |
+| Session Revocation | ✅ | Admin API |
 
-After activation, admin login requires password + TOTP code.
+## CSRF-Strategie
 
-## Recommended (you, when going live)
+**Bearer-Token APIs (Admin-Panel):** Kein CSRF-Token nötig.  
+Der Browser sendet `Authorization: Bearer …` per JavaScript — Cookies werden nicht für Auth verwendet. CSRF-Angriffe auf Bearer-Header sind nicht möglich.
 
-### 1. Cloudflare (free) — strongest public shield
+**Cookie-basierte Flows (falls aktiviert):**  
+Wenn `BUZZARD_CSRF_ENFORCE=1` und kein Bearer-Header:
 
-Place Cloudflare in front of **buzzard24.de**:
+- State-changing Requests (POST/PUT/PATCH/DELETE) erfordern
+- Header `X-Buzzard-Csrf-Token` = Cookie `buzzard_csrf`
+- Fehler → Event `csrf_failure`, HTTP 403
 
-- DDoS protection
-- Bot filtering
-- Optional WAF rules
-- DNS → Cloudflare → GitHub Pages
+**Öffentliche Auth-Endpoints** (login) sind von CSRF-Enforcement ausgenommen.
 
-No code change required; DNS at your domain registrar.
+## Rate Limiting (Part 4)
 
-### 2. Render API
+```
+BUZZARD_RATE_LIMIT_STORE=memory|file|redis
+```
 
-- Set strong `JWT_SECRET` and `ADMIN_PASSWORD` in Render secrets
-- Keep `BUZZARD_SALES_ENABLED=0` until payment is ready
+- **memory:** default — resets on restart
+- **file:** persists buckets to `server/data/rate-limit-buckets.json`
+- **redis:** stub — falls back to file until Upstash configured
 
-### 3. Google Search Console
+Health: `GET /api/security/health` → `protections.rateLimitBackend`
 
-See `docs/GOOGLE_SEARCH_CONSOLE.md` — not security, but monitors indexing.
+## Security Dashboard (Part 4)
 
-## What we do not store in Git
+- Filters: severity, event type, user, date range, search
+- Pagination: server-side (max 200 per page)
+- CRITICAL events highlighted in admin UI
+- API: `GET /api/admin/security/events?severity=CRITICAL&page=1&limit=50`
 
-- JWT secrets, admin passwords, API keys, payment keys, TOTP secrets (`server/data/admin-2fa.json`)
+## Security Events
 
-## Report vulnerabilities
+Typen u.a.: `admin_login`, `admin_login_failed`, `permission_denied`, `privilege_escalation_attempt`, `csrf_failure`, `idor_attempt`, `ai_permission_violation`, `session_revoked`, `api_rate_limited`
 
-See `public/.well-known/security.txt`
+API: `GET /api/admin/security/events` (security.read)
+
+## Secret Management
+
+- Keine echten Secrets im Repo
+- `.env.example` listet alle Variablen
+- Config-API blockiert Keys mit secret/password/token
+- Frontend erhält keine JWT_SECRET / API Keys
+
+## Katalogmodus
+
+`BUZZARD_SALES_ENABLED=0` — keine echten Zahlungen oder Lieferanten-Orders.

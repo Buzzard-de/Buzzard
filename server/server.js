@@ -5,6 +5,7 @@ const { URL, URLSearchParams } = require('url');
 const { isDefaultJwtSecret } = require('./lib/dbAuth');
 const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
+const { wrapRouteHandler } = require('./lib/globalAuthMiddleware');
 
 const port = process.env.PORT || 3001;
 const rootDir = path.join(__dirname, '..');
@@ -50,7 +51,7 @@ function addRoute(method, routePath, handler) {
     }
     return { name: segment, dynamic: false };
   });
-  routes.push({ method, routePath, handler, segments });
+  routes.push({ method, routePath, handler: wrapRouteHandler(method, routePath, handler), segments });
 }
 
 const app = {
@@ -210,7 +211,7 @@ function parseBody(req) {
 
 function loadPlugins() {
   const pluginFiles = fs.readdirSync(pluginsDir).filter(file => file.endsWith('.js'));
-  const priority = ['orderAutomationPlugin.js'];
+  const priority = ['productionHealthPlugin.js', 'storefrontBridgePlugin.js', 'orderAutomationPlugin.js'];
   const sorted = [
     ...priority.filter(file => pluginFiles.includes(file)),
     ...pluginFiles.filter(file => !priority.includes(file)).sort(),
@@ -235,6 +236,36 @@ app.get('/api/status', (req, res) => {
 });
 
 loadPlugins();
+
+try {
+  const { assertProductionSafeStartup } = require("./lib/environmentValidation");
+  assertProductionSafeStartup();
+} catch (err) {
+  console.error(err.message);
+  if (process.env.NODE_ENV === "production") process.exit(1);
+}
+
+try {
+  const { validateDatabaseStartup } = require("./lib/dbStartup");
+  validateDatabaseStartup();
+} catch (err) {
+  console.error(err.message);
+  if (process.env.NODE_ENV === "production") process.exit(1);
+}
+
+if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
+  const jobWorker = require("./lib/jobWorker");
+  const jobScheduler = require("./lib/jobScheduler");
+  jobWorker.setupGracefulShutdown();
+  jobWorker.startWorker({ pollIntervalMs: Number(process.env.BUZZARD_WORKER_POLL_MS) || 3000 });
+  setInterval(() => {
+    try {
+      jobScheduler.tickScheduler();
+    } catch (err) {
+      console.error("[scheduler] tick error:", err.message);
+    }
+  }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
+}
 
 const server = http.createServer(async (req, res) => {
   attachResponseHelpers(res);

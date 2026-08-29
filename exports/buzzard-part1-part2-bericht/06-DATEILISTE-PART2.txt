@@ -1,0 +1,40 @@
+Part 2 — Geänderte und neue Dateien (Branch cursor/core-foundation-part2-c293)
+
+A	app/admin/control-center/page.tsx
+M	components/CategorySidebar.tsx
+M	components/ContactForm.tsx
+A	components/admin/AdminControlCenter.tsx
+M	components/admin/AdminDashboard.tsx
+A	data/buzzard_category_visibility.json
+M	data/taxonomy/buzzard_production_preflight.json
+A	docs/PART2_CONTROL_CENTER.md
+A	docs/PART2_FINAL_REPORT.md
+A	lib/admin/controlCenter.ts
+A	lib/admin/controlCenterTypes.ts
+M	lib/admin/nav.config.mjs
+M	lib/categories.ts
+M	lib/categories/service.ts
+M	lib/categories/types.ts
+A	lib/categories/visibility-client.ts
+M	package.json
+M	public/taxonomy/buzzard_production_preflight.json
+A	scripts/part2-smoke.mjs
+A	server/core/constants.js
+A	server/core/errors.js
+A	server/core/health.js
+A	server/core/index.js
+A	server/lib/aiOrchestrator.js
+A	server/lib/aiProviders.js
+A	server/lib/categoryVisibility.js
+A	server/lib/controlCenter.js
+A	server/lib/coreAudit.js
+M	server/lib/db.js
+A	server/lib/notificationHub.js
+M	server/lib/rbac.js
+A	server/plugins/controlCenterPlugin.js
+M	styles/admin.css
+M	tsconfig.json
+
+Legende:
+A = neu hinzugefügt
+M = geändert

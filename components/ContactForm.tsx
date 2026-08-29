@@ -11,14 +11,14 @@ import {
 } from "@/lib/security";
 import { CONTACT_EMAIL } from "@/lib/site/contact";
 import { SITE_URL } from "@/lib/seo/config";
-import { useI18n } from "@/lib/i18n/context";
+import { useLocale } from "@/lib/i18n/context";
 
 const RATE_LIMIT_KEY = "buzzard_contact_last";
 const MIN_SUBMIT_MS = 1500;
 
 export default function ContactForm() {
   const pathname = usePathname();
-  const { t } = useI18n();
+  const { t } = useLocale();
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
   const [formStartedAt] = useState(() => Date.now());

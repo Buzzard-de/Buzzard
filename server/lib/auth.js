@@ -79,14 +79,19 @@ function loadUsers() {
   return readJson(usersFile, []);
 }
 
-function createSession(user) {
+function createSession(user, meta = {}) {
   const token = createToken();
+  const sessionId = `sess-${crypto.randomBytes(8).toString("hex")}`;
   const session = {
+    sessionId,
     userId: user.id,
     email: user.email,
     name: user.name,
     role: user.role,
     expiresAt: Date.now() + SESSION_TTL_MS,
+    createdAt: new Date().toISOString(),
+    ip: meta.ip || null,
+    userAgent: meta.userAgent || null,
   };
   sessions.set(token, session);
   persistSessions();
@@ -173,7 +178,10 @@ function login(email, password, req) {
     };
   }
 
-  const { token } = createSession(user);
+  const { token } = createSession(user, {
+    ip: req ? getClientIp(req) : null,
+    userAgent: req?.headers?.["user-agent"] || null,
+  });
 
   logSecurityEvent({
     type: "admin_login",
@@ -223,7 +231,10 @@ function verifyTwoFactor(challengeToken, code, req) {
     name: challenge.name,
     role: challenge.role,
   };
-  const { token } = createSession(user);
+  const { token } = createSession(user, {
+    ip: req ? getClientIp(req) : null,
+    userAgent: req?.headers?.["user-agent"] || null,
+  });
 
   logSecurityEvent({
     type: "admin_login",
@@ -287,12 +298,12 @@ function requireAuth(req, res) {
     try {
       const { verifyToken } = require("./dbAuth");
       const user = verifyToken(token);
-      if (user.role === "admin") {
+      if (user.role === "admin" || user.role === "administrator") {
         req.adminUser = {
           userId: user.sub,
           email: user.email,
           name: user.name || user.email,
-          role: user.role,
+          role: user.role === "admin" ? "administrator" : user.role,
         };
         req.user = user;
         req.adminToken = token;
@@ -313,6 +324,45 @@ function requireAuth(req, res) {
   return null;
 }
 
+function listActiveSessions(userId) {
+  const now = Date.now();
+  const rows = [];
+  for (const [token, session] of sessions.entries()) {
+    if (session.expiresAt <= now) continue;
+    if (userId && session.userId !== userId) continue;
+    rows.push({
+      sessionId: session.sessionId || token.slice(0, 16),
+      tokenPreview: `${token.slice(0, 8)}…`,
+      userId: session.userId,
+      email: session.email,
+      role: session.role,
+      createdAt: session.createdAt,
+      expiresAt: new Date(session.expiresAt).toISOString(),
+      ip: session.ip,
+      userAgent: session.userAgent,
+    });
+  }
+  return rows.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+}
+
+function revokeSession(sessionId, { revokedBy } = {}) {
+  for (const [token, session] of sessions.entries()) {
+    if (session.sessionId === sessionId || token === sessionId) {
+      sessions.delete(token);
+      persistSessions();
+      logSecurityEvent({
+        type: "session_revoked",
+        success: true,
+        userId: session.userId,
+        email: session.email,
+        detail: { sessionId, revokedBy },
+      });
+      return true;
+    }
+  }
+  return false;
+}
+
 module.exports = {
   login,
   verifyTwoFactor,
@@ -321,4 +371,6 @@ module.exports = {
   extractToken,
   requireAuth,
   loadUsers,
+  listActiveSessions,
+  revokeSession,
 };

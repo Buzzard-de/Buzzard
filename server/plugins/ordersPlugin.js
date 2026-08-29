@@ -354,7 +354,7 @@ module.exports = {
       orders.push(order);
       writeOrders(orders);
 
-      fulfillmentPipeline.createFulfillmentsForOrder(order, loadProducts());
+      fulfillmentPipeline.createFulfillmentsForOrder(order, loadProducts(), req);
       const shipments = fulfillmentStore.listShipmentsForOrder(orderNumber);
       const tracked = shipments.find((s) => s.trackingNumber);
       const orderIdx = orders.length - 1;

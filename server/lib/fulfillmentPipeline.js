@@ -3,6 +3,7 @@ const supplierStore = require("./supplierStore");
 const fulfillmentStore = require("./fulfillmentStore");
 const { getTrackingUrl } = require("./carriers");
 const { logAudit } = require("./audit");
+const salesGuard = require("./commerce/salesGuard");
 
 function groupLinesBySupplier(lines, productsById) {
   const groups = new Map();
@@ -22,7 +23,12 @@ function supplierModel(supplierId) {
   return supplier.dropshipping ? "dropshipping" : "warehouse";
 }
 
-function submitSupplierOrder(supplierOrder, supplier) {
+function submitSupplierOrder(supplierOrder, supplier, req = null) {
+  const block = salesGuard.assertSupplierOrderAllowed({ req });
+  if (block) {
+    return salesGuard.blockSupplierOrderResult(block);
+  }
+
   if (!supplier?.active) {
     return { ok: false, error: "Supplier inactive" };
   }
@@ -58,7 +64,12 @@ function submitSupplierOrder(supplierOrder, supplier) {
   };
 }
 
-function createFulfillmentsForOrder(order, productsById) {
+function createFulfillmentsForOrder(order, productsById, req = null) {
+  const block = salesGuard.assertSupplierOrderAllowed({ req });
+  if (block) {
+    return [{ error: block.code, blocked: true, status: block.status || 403 }];
+  }
+
   const groups = groupLinesBySupplier(order.lines, productsById);
   const results = [];
 
@@ -90,7 +101,7 @@ function createFulfillmentsForOrder(order, productsById) {
     }
 
     const supplier = supplierStore.getSupplier(supplierId);
-    const submission = submitSupplierOrder(supplierOrder, supplier);
+    const submission = submitSupplierOrder(supplierOrder, supplier, req);
 
     if (!submission.ok) {
       fulfillmentStore.updateSupplierOrder(supplierOrder.id, {
@@ -177,7 +188,12 @@ function createFulfillmentsForOrder(order, productsById) {
   return results;
 }
 
-function retryFulfillment(fulfillmentId, actor) {
+function retryFulfillment(fulfillmentId, actor, req = null) {
+  const block = salesGuard.assertSupplierOrderAllowed({ req });
+  if (block) {
+    return { ok: false, errorKey: block.code || "supplier_order_blocked", blocked: true };
+  }
+
   const fulfillment = fulfillmentStore.readFulfillments().find((f) => f.id === fulfillmentId);
   if (!fulfillment) return null;
 
@@ -189,7 +205,7 @@ function retryFulfillment(fulfillmentId, actor) {
   }
 
   const supplier = supplierStore.getSupplier(fulfillment.supplierId);
-  const submission = submitSupplierOrder(supplierOrder, supplier);
+  const submission = submitSupplierOrder(supplierOrder, supplier, req);
   if (!submission.ok) {
     fulfillmentStore.updateSupplierOrder(supplierOrder.id, {
       status: "failed",

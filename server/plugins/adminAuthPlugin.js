@@ -1,4 +1,4 @@
-const { login, logout, verifyTwoFactor, requireAuth, extractToken } = require("../lib/auth");
+const { login, logout, verifyTwoFactor, requireAuth, extractToken, listActiveSessions, revokeSession } = require("../lib/auth");
 const { listAudit } = require("../lib/audit");
 const { requirePermission } = require("../lib/rbac");
 const adminTwoFactor = require("../lib/adminTwoFactor");
@@ -95,6 +95,31 @@ module.exports = {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "audit.read")) return;
       return res.json({ success: true, entries: listAudit(200) });
+    });
+
+    app.get("/api/admin/sessions", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "security.read")) return;
+      const scopeAll = req.adminUser.role === "administrator" || req.adminUser.role === "super_admin";
+      const sessions = listActiveSessions(scopeAll ? null : req.adminUser.userId);
+      return res.json({ success: true, sessions });
+    });
+
+    app.delete("/api/admin/sessions/:sessionId", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "security.manage")) return;
+      const { assertSafeId } = require("../lib/idorGuard");
+      if (!assertSafeId(req, res, req.params.sessionId, "sessionId")) return;
+      const targetSessions = listActiveSessions();
+      const target = targetSessions.find((s) => s.sessionId === req.params.sessionId);
+      if (target && target.userId !== req.adminUser.userId) {
+        if (req.adminUser.role !== "administrator" && req.adminUser.role !== "super_admin") {
+          return res.status(403).json({ success: false, errorKey: "security.accessDenied" });
+        }
+      }
+      const ok = revokeSession(req.params.sessionId, { revokedBy: req.adminUser.email });
+      if (!ok) return res.status(404).json({ success: false, errorKey: "security.sessionNotFound" });
+      return res.json({ success: true });
     });
   },
 };

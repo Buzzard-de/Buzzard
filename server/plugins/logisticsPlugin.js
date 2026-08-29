@@ -58,7 +58,7 @@ module.exports = {
       const result = fulfillmentPipeline.retryFulfillment(req.params.id, {
         userId: req.adminUser.id,
         email: req.adminUser.email,
-      });
+      }, req);
       if (!result) return res.status(404).json({ success: false, errorKey: "logistics.fulfillment.notFound" });
       if (!result.ok) return res.status(400).json({ success: false, errorKey: result.errorKey });
       audit(req, {

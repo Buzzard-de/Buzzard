@@ -67,6 +67,9 @@ module.exports = {
     }
 
     ensureAdmin();
+    const { markLegacyCommerce } = require("../lib/legacyCommerce");
+    const legacyCart = (res, req) => markLegacyCommerce(res, req.originalUrl || req.url, "/api/commerce/cart");
+    const legacyOrders = (res, req) => markLegacyCommerce(res, req.originalUrl || req.url, "/api/commerce/orders");
     const catalogSync = syncCatalogProducts();
     if (catalogSync.synced) {
       console.log(`SQLite catalog sync: ${catalogSync.synced} SKU rows upserted`);
@@ -209,6 +212,7 @@ module.exports = {
     });
 
     app.post("/api/cart/items", (req, res) => {
+      legacyCart(res, req);
       if (!requireAuth(req, res)) return;
       const { productId, sku, quantity = 1 } = req.body || {};
       let product = null;
@@ -229,6 +233,7 @@ module.exports = {
     });
 
     app.get("/api/cart", (req, res) => {
+      legacyCart(res, req);
       if (!requireAuth(req, res)) return;
       const cart = db.prepare("SELECT * FROM carts WHERE user_id = ?").get(req.user.sub);
       if (!cart) return res.json({ items: [], subtotal: 0, weight: 0 });
@@ -236,6 +241,7 @@ module.exports = {
     });
 
     app.patch("/api/cart/items/:productId", (req, res) => {
+      legacyCart(res, req);
       if (!requireAuth(req, res)) return;
       const productId = Number(req.params.productId);
       const { quantity } = req.body || {};
@@ -260,6 +266,7 @@ module.exports = {
     });
 
     app.put("/api/cart/sync", (req, res) => {
+      legacyCart(res, req);
       if (!requireAuth(req, res)) return;
       const { items = [] } = req.body || {};
       if (!Array.isArray(items)) {
@@ -305,6 +312,7 @@ module.exports = {
     });
 
     app.delete("/api/cart/items/:productId", (req, res) => {
+      legacyCart(res, req);
       if (!requireAuth(req, res)) return;
       const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(req.user.sub);
       if (cart) {
@@ -350,6 +358,7 @@ module.exports = {
     app.post("/api/db/orders", handleCreateOrder);
 
     function handleListOrders(req, res) {
+      legacyOrders(res, req);
       if (!requireAuth(req, res)) return;
       return res.json(listUserOrders(req.user.sub));
     }

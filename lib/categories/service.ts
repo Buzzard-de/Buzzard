@@ -37,6 +37,34 @@ export function getMainCategories(): BuzzardCategory[] {
   return [...categories].sort((a, b) => a.menu_order - b.menu_order);
 }
 
+const CUSTOMER_VISIBLE: Set<string> = new Set(["ACTIVE", "COMING_SOON"]);
+
+export function isCategoryVisibleToCustomer(
+  categoryId: string,
+  visibilityMap?: Record<string, { status?: string }>
+): boolean {
+  const status = visibilityMap?.[categoryId]?.status || "ACTIVE";
+  return CUSTOMER_VISIBLE.has(status);
+}
+
+export function getVisibleMainCategories(
+  visibilityMap?: Record<string, { status?: string }>
+): BuzzardCategory[] {
+  return getMainCategories().filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap));
+}
+
+export function filterVisibleTree(
+  nodes: BuzzardCategory[],
+  visibilityMap?: Record<string, { status?: string }>
+): BuzzardCategory[] {
+  return nodes
+    .filter((node) => isCategoryVisibleToCustomer(node.id, visibilityMap))
+    .map((node) => ({
+      ...node,
+      children: node.children?.length ? filterVisibleTree(node.children, visibilityMap) : [],
+    }));
+}
+
 export function getCategoryById(id: string): BuzzardCategory | undefined {
   return byId.get(id);
 }

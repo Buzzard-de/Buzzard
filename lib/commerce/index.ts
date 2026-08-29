@@ -1,18 +1,10 @@
-import demoOrders from "@/data/buzzard_demo_orders.json";
-import type { DemoOrderRecord } from "./orderService";
+import * as commerceClient from "./client";
+import * as cartBridge from "./cartBridge";
 
-export { createClientOrder } from "./orderService";
-export type { ClientOrderRecord, CreateClientOrderInput, DemoOrderRecord } from "./orderService";
-export { createPaymentSession } from "@/lib/payments/session";
-
-export function getDemoOrders(): DemoOrderRecord[] {
-  return demoOrders as DemoOrderRecord[];
-}
-
-export function getDemoOrderStats() {
-  const orders = getDemoOrders();
-  return {
-    orders: orders.length,
-    revenue: orders.reduce((sum, order) => sum + order.totalEUR, 0),
-  };
-}
+export { commerceClient, cartBridge };
+export * from "./client";
+export * from "./cartBridge";
+export * from "./map";
+export * from "./runtime";
+export * from "./types";
+export { getDemoOrderStats } from "./demoStats";

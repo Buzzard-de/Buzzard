@@ -49,7 +49,8 @@ PART 15          = STOP
 
 ## Download
 
-- **Ordner:** `exports/buzzard-part1-part14-berichte-2026-08-29/`
+- **ChatGPT (eine Datei):** `BUZZARD-PART1-14-ALLE-BERICHTE-CHATGPT.md` — in ChatGPT 📎 hochladen
+- **Ordner:** `exports/buzzard-part1-part14-berichte-2026-08-29/` (23 Dateien)  
 - **ZIP:** `exports/buzzard-part1-part14-berichte-2026-08-29.zip`
 
 Neu erzeugen: `npm run export:part-reports`

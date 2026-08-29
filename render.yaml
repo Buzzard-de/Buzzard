@@ -19,6 +19,7 @@ services:
     autoDeployTrigger: commit
     rootDir: .
     buildCommand: node scripts/write-build-info.mjs && cd server && npm ci
+    # Do NOT use npm start here — Next.js export is static; API only on Render.
     startCommand: node server/server.js
     healthCheckPath: /api/health
     envVars:

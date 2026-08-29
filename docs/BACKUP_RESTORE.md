@@ -19,7 +19,9 @@ npm run backup:db
 BUZZARD_DB_PATH=/var/data/buzzard.db BUZZARD_BACKUP_DIR=/var/data/backups npm run backup:db
 ```
 
-Backups are written to `server/data/backups/` (or `BUZZARD_BACKUP_DIR`) as timestamped files.
+Backups are written to `server/data/backups/` (or `BUZZARD_BACKUP_DIR`) as timestamped files with a `.meta.json` sidecar (integrity check, size, timestamp).
+
+`better-sqlite3` is resolved from `server/node_modules` for integrity checks.
 
 ## Restore (safe test environment)
 

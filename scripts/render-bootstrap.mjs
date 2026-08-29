@@ -9,6 +9,7 @@ const SERVICE_NAME = "buzzard-api";
 const REPO = "https://github.com/Buzzard-de/Buzzard";
 const BRANCH = "main";
 const HEALTH_PATH = "/api/health";
+const VERSION_PATH = "/api/health/version";
 const TARGET_URL = "https://buzzard-api.onrender.com";
 
 const ENV_VARS = [
@@ -191,9 +192,16 @@ async function waitForHealth(baseUrl, timeoutMs = 15 * 60 * 1000) {
       if (response.ok) {
         const body = await response.text();
         console.log(`Health check OK (${response.status}) on attempt ${attempt}: ${body.slice(0, 240)}`);
-        return true;
+        const versionUrl = `${baseUrl.replace(/\/$/, "")}${VERSION_PATH}`;
+        const versionRes = await fetch(versionUrl, { headers: { Accept: "application/json" } });
+        if (versionRes.ok) {
+          console.log(`Version endpoint OK (${versionRes.status}) at ${VERSION_PATH}`);
+          return true;
+        }
+        console.log(`Version endpoint pending (${versionRes.status}) — waiting for Part 13+ deploy…`);
+      } else {
+        console.log(`Health check pending (${response.status}) attempt ${attempt}…`);
       }
-      console.log(`Health check pending (${response.status}) attempt ${attempt}…`);
     } catch (error) {
       console.log(`Health check pending attempt ${attempt}: ${error.message}`);
     }

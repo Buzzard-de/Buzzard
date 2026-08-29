@@ -8,8 +8,6 @@ import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
 import {
   getCategoryById,
-  getDefaultMainCategoryId,
-  getDefaultSubCategoryId,
   getChildren,
 } from "@/lib/categories";
 import { useIsMobileNav, useIsTabletNav } from "@/lib/use-media-query";
@@ -20,17 +18,19 @@ export default function MegaMenuOverlay() {
   const { t } = useLocale();
   const isMobile = useIsMobileNav();
   const isTablet = useIsTabletNav();
-  const [activeMainId, setActiveMainId] = useState(getDefaultMainCategoryId());
-  const [activeSubId, setActiveSubId] = useState(() =>
-    getDefaultSubCategoryId(getDefaultMainCategoryId())
-  );
+  const [activeMainId, setActiveMainId] = useState("");
+  const [activeSubId, setActiveSubId] = useState("");
 
   const open = homeUI?.megaMenuOpen ?? false;
-  const mainCategory = getCategoryById(activeMainId);
-  const subCategories = getChildren(activeMainId);
+  const mainCategory = activeMainId ? getCategoryById(activeMainId) : undefined;
+  const subCategories = activeMainId ? getChildren(activeMainId) : [];
 
   useEffect(() => {
-    setActiveSubId(getDefaultSubCategoryId(activeMainId));
+    if (!activeMainId) {
+      setActiveSubId("");
+      return;
+    }
+    setActiveSubId("");
   }, [activeMainId]);
 
   if (!open) return null;
@@ -56,14 +56,22 @@ export default function MegaMenuOverlay() {
           <CategorySidebar activeId={activeMainId} onSelect={setActiveMainId} embedded />
         ) : (
           <div className="mega-menu-panels">
-            <CategorySidebar activeId={activeMainId} onSelect={setActiveMainId} embedded />
-            <MegaMenu
-              mainCategory={mainCategory}
-              subCategories={subCategories}
-              activeSubId={activeSubId}
-              onSubSelect={setActiveSubId}
-            />
-            <FeaturedBanner mainCategory={mainCategory} activeSubId={activeSubId} />
+            <CategorySidebar activeId={activeMainId || "none"} onSelect={setActiveMainId} embedded />
+            {activeMainId ? (
+              <>
+                <MegaMenu
+                  mainCategory={mainCategory}
+                  subCategories={subCategories}
+                  activeSubId={activeSubId}
+                  onSubSelect={setActiveSubId}
+                />
+                <FeaturedBanner mainCategory={mainCategory} activeSubId={activeSubId} />
+              </>
+            ) : (
+              <section className="mega-panel mega-panel-placeholder">
+                <p>Wählen Sie eine Hauptkategorie, um Unterkategorien anzuzeigen.</p>
+              </section>
+            )}
           </div>
         )}
       </div>

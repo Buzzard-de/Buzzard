@@ -13,6 +13,7 @@ import "@/styles/globals.css";
 import "@/styles/pusart.css";
 import "@/styles/shop.css";
 import "@/styles/rtl.css";
+import "@/styles/storefront-responsive.css";
 
 const inter = Inter({
   subsets: ["latin"],

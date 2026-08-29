@@ -6,12 +6,11 @@ import CategoryIcon from "./CategoryIcon";
 import {
   categoryHref,
   formatMenuLabel,
-  getCategoryAncestors,
   getCategoryLabel,
   getChildren,
+  getMainCategoryIcon,
   getVisibleMainCategories,
   isCategoryVisibleToCustomer,
-  getMainCategoryIcon,
   mainCategories,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
@@ -103,17 +102,8 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
   const homeUI = useHomeUI();
   const isMobile = useIsMobileNav();
   const visibilityMap = useCategoryVisibilityMap();
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set([activeId]));
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
   const mainCategoryNodes = getVisibleMainCategories(visibilityMap);
-
-  useEffect(() => {
-    const pathIds = [...getCategoryAncestors(activeId).map((c) => c.id), activeId];
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      pathIds.forEach((id) => next.add(id));
-      return next;
-    });
-  }, [activeId]);
 
   useEffect(() => {
     if (!homeUI?.sidebarOpen) return;
@@ -126,9 +116,8 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
 
   const handleToggle = useCallback((id: string) => {
     setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      const next = new Set<string>();
+      if (!prev.has(id)) next.add(id);
       return next;
     });
     onSelect(id);
@@ -198,6 +187,7 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
                   aria-current={activeId === cat.id ? "page" : undefined}
                   onMouseEnter={() => handleDesktopSelect(cat.id)}
                   onFocus={() => handleDesktopSelect(cat.id)}
+                  onClick={() => handleDesktopSelect(cat.id)}
                 >
                   <CategoryIcon name={cat.icon} size={16} />
                   <span>{cat.label}</span>

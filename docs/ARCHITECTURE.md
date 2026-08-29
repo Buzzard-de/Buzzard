@@ -42,6 +42,7 @@ Browser → buzzard24.de (static)
 | Category Readiness | `server/lib/categoryReadiness.js` | Real PASS/FAIL/WARNING checks |
 | Redis Client | `server/lib/redisClient.js` | Upstash REST |
 | **Product Core (PIM)** | `server/lib/pim/` | Category-agnostic PIM (Part 6) |
+| **Storefront Bridge** | `server/lib/storefront/` | PIM → public catalog API (Part 7) |
 | RBAC | `server/lib/rbac.js` | Rollen + Permissions |
 
 ## Auth Realms

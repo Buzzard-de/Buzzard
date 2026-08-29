@@ -139,6 +139,15 @@ async function handleProductMapping(job) {
   return { mapping };
 }
 
+async function handleCatalogSync(job) {
+  const syncStatus = require("./storefront/syncStatus");
+  const catalogCache = require("./storefront/catalogCache");
+  const dryRun = job.payload?.dryRun !== false;
+  const result = syncStatus.runSync({ dryRun });
+  if (!dryRun) catalogCache.invalidate("catalog|");
+  return result;
+}
+
 const HANDLERS = Object.freeze({
   [JOB_TYPES.PRODUCT_SYNC]: handleProductSync,
   [JOB_TYPES.PRICE_SYNC]: handlePriceSync,
@@ -152,6 +161,7 @@ const HANDLERS = Object.freeze({
   [JOB_TYPES.PRODUCT_VALIDATE]: handleProductValidate,
   [JOB_TYPES.PRODUCT_NORMALIZE]: handleProductNormalize,
   [JOB_TYPES.PRODUCT_MAPPING]: handleProductMapping,
+  [JOB_TYPES.CATALOG_SYNC]: handleCatalogSync,
   manual: async (payload) => ({ ok: true, payload }),
   part4_smoke_test: async () => ({ ok: true }),
 });

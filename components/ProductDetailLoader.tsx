@@ -6,6 +6,7 @@ import ProductDetailView from "@/components/ProductDetailView";
 import JsonLd from "@/components/seo/JsonLd";
 import { fetchProductJsonLd } from "@/lib/catalogSeo/client";
 import { isLiveCatalogEnabled, loadLiveCatalogProductBySlug } from "@/lib/catalogSeo/runtime";
+import { isPimStorefrontEnabled, loadPimStorefrontProductBySlug } from "@/lib/storefront/runtime";
 import { useLocale } from "@/lib/i18n/context";
 import { useMarket } from "@/lib/market/context";
 import { isLiveLocalizationEnabled, loadLocalizedProductBySlug } from "@/lib/localizationFeeds/runtime";
@@ -22,7 +23,7 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
   const [product, setProduct] = useState<PublicProduct | null>(staticProduct ?? null);
   const [apiJsonLd, setApiJsonLd] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(
-    !staticProduct && (isLiveLocalizationEnabled() || isLiveCatalogEnabled())
+    !staticProduct && (isPimStorefrontEnabled() || isLiveLocalizationEnabled() || isLiveCatalogEnabled())
   );
   const [missing, setMissing] = useState(false);
 
@@ -33,7 +34,7 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
       return;
     }
 
-    const canLoad = isLiveLocalizationEnabled() || isLiveCatalogEnabled();
+    const canLoad = isPimStorefrontEnabled() || isLiveLocalizationEnabled() || isLiveCatalogEnabled();
     if (!canLoad) {
       setMissing(true);
       setLoading(false);
@@ -47,6 +48,9 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
 
       if (isLiveLocalizationEnabled()) {
         live = await loadLocalizedProductBySlug(slug, locale, countryCode);
+      }
+      if (!live && isPimStorefrontEnabled()) {
+        live = await loadPimStorefrontProductBySlug(slug);
       }
       if (!live && isLiveCatalogEnabled()) {
         live = await loadLiveCatalogProductBySlug(slug);

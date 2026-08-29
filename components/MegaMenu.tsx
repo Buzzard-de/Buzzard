@@ -33,7 +33,7 @@ function SubcategoryGroup({
   activeSubId: string;
   onSubSelect: (subId: string) => void;
 }) {
-  const level3 = getChildren(sub.id);
+  const level3 = activeSubId === sub.id ? getChildren(sub.id) : [];
 
   return (
     <li role="listitem" className="subcategory-group">

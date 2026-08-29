@@ -211,7 +211,7 @@ function parseBody(req) {
 
 function loadPlugins() {
   const pluginFiles = fs.readdirSync(pluginsDir).filter(file => file.endsWith('.js'));
-  const priority = ['orderAutomationPlugin.js'];
+  const priority = ['storefrontBridgePlugin.js', 'orderAutomationPlugin.js'];
   const sorted = [
     ...priority.filter(file => pluginFiles.includes(file)),
     ...pluginFiles.filter(file => !priority.includes(file)).sort(),

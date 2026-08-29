@@ -3615,8 +3615,8 @@ function migrateCoreFoundationPart6() {
     `).run(
       "pim_prod_demo001",
       "BZ-CORE-DEMO-001",
-      "4006381333931",
-      "4006381333931",
+      "5901234123457",
+      "5901234123457",
       brandId,
       "Universal Demo Product",
       "Category-agnostic PIM demo",
@@ -3625,7 +3625,7 @@ function migrateCoreFoundationPart6() {
       29.99,
       50,
       "READY",
-      "HIDDEN",
+      "PUBLIC",
       72
     );
     db.prepare(`
@@ -3658,6 +3658,17 @@ function migrateCoreFoundationPart6() {
   db.prepare(`UPDATE pim_core_products SET taxonomy_category_id = 'cat-05' WHERE taxonomy_category_id = 'automotive'`).run();
   db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-05' WHERE category_id = 'automotive'`).run();
   db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-02' WHERE category_id = 'cosmetics'`).run();
+  db.prepare(`UPDATE pim_core_products SET ean = '5901234123457', gtin = '5901234123457' WHERE sku = 'BZ-CORE-DEMO-001'`).run();
+  db.prepare(`UPDATE pim_core_products SET visibility = 'PUBLIC' WHERE id = 'pim_prod_demo001' AND visibility = 'HIDDEN'`).run();
+  db.prepare(`
+    UPDATE pim_core_products SET seo_json = ?
+    WHERE id = 'pim_prod_demo001'
+  `).run(JSON.stringify({
+    slug: "universal-demo-product",
+    metaTitle: "Universal Demo Product | Buzzard",
+    metaDescription: "Category-agnostic PIM demo product",
+    canonical: "/produkt/universal-demo-product/",
+  }));
 }
 
 migrateCoreFoundationPart2();

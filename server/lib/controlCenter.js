@@ -87,6 +87,20 @@ async function getSystemStatus() {
   const orchestrator = await getOrchestratorStatus();
   const guardian = await getGuardianStatus();
 
+  let storefrontDetail = "not configured";
+  let storefrontStatus = SERVICE_STATUS.UNKNOWN;
+  try {
+    const { isStorefrontBridgeEnabled } = require("../core/storefrontConstants");
+    if (isStorefrontBridgeEnabled()) {
+      const catalogReadService = require("./storefront/catalogReadService");
+      const health = catalogReadService.getHealth();
+      storefrontStatus = health.productCount > 0 ? SERVICE_STATUS.ONLINE : SERVICE_STATUS.WARNING;
+      storefrontDetail = `${health.productCount} public products, cache ${health.cache.entries} entries`;
+    }
+  } catch {
+    storefrontDetail = "module unavailable";
+  }
+
   const runningJobs = db.prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('QUEUED','RUNNING','RETRYING','queued','running')").get().n;
   const failedJobs = db.prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('FAILED','failed')").get().n;
 
@@ -112,6 +126,10 @@ async function getSystemStatus() {
       AI_GUARDIAN: {
         status: guardian.reachable ? SERVICE_STATUS.ONLINE : guardian.configured ? SERVICE_STATUS.WARNING : SERVICE_STATUS.UNKNOWN,
         detail: guardian.guardianUrl || "not configured",
+      },
+      STOREFRONT_CATALOG: {
+        status: storefrontStatus,
+        detail: storefrontDetail,
       },
     },
   };

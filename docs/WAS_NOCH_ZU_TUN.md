@@ -24,7 +24,7 @@
 
 1. **Persistent Disk** — Render Starter + `/var/data` + `BUZZARD_DB_PATH` (SQLite über Redeploys behalten)
 2. **Upstash Redis** — verteiltes Rate-Limiting (aktuell: Memory)
-3. **`buzzard-intelligence`** Docker-Deploy fixen (P1/Katalog unabhängig)
+3. ~~**`buzzard-intelligence`** Docker-Deploy~~ ✅ Live (`/health` 200, Bey-Agents aktiv)
 4. **Admin-Passwort** — Render → `buzzard-api` → Environment → `ADMIN_PASSWORD`
 5. **Google Search Console** → `docs/SEO_SEARCH_CONSOLE_DE.md`
 6. **Cloudflare** → `docs/CLOUDFLARE_SETUP_DE.md`

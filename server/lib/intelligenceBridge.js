@@ -2,7 +2,11 @@ const DEFAULT_TIMEOUT_MS = Number(process.env.BUZZARD_INTELLIGENCE_TIMEOUT_MS ||
 const embedded = require("./embeddedIntelligence");
 
 function intelligenceBaseUrl() {
-  return (process.env.BUZZARD_INTELLIGENCE_API_URL || "").replace(/\/$/, "");
+  let url = (process.env.BUZZARD_INTELLIGENCE_API_URL || "").replace(/\/$/, "");
+  if (url && !/^https?:\/\//i.test(url)) {
+    url = `https://${url}`;
+  }
+  return url;
 }
 
 function isBridgeEnabled() {

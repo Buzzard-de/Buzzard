@@ -121,7 +121,7 @@ services:
         fromService:
           type: web
           name: buzzard-intelligence
-          property: host
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
       - key: BUZZARD_ORCHESTRATOR_URL
         fromService:
           type: web

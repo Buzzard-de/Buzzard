@@ -27,9 +27,13 @@ function validateDatabaseStartup() {
   }
 
   if (process.env.NODE_ENV === "production" && !persistence.persistent) {
-    errors.push(
-      "Production requires persistent storage — set BUZZARD_DB_PATH=/var/data/buzzard.db with mounted disk"
-    );
+    const msg =
+      "Production without persistent disk — set BUZZARD_DB_PATH=/var/data/buzzard.db (catalog mode allows ephemeral on Render free tier)";
+    if (process.env.REQUIRE_PERSISTENT_DB === "1" || process.env.BUZZARD_SALES_ENABLED === "1") {
+      errors.push(msg);
+    } else {
+      warnings.push(msg);
+    }
   }
 
   if (persistence.ephemeralRisk) {

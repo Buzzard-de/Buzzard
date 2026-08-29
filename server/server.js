@@ -339,8 +339,8 @@ const server = http.createServer(async (req, res) => {
   sendFile(res, filePath);
 });
 
-server.listen(port, () => {
-  console.log(`Buzzard API server running on http://localhost:${port}`);
+server.listen(port, "0.0.0.0", () => {
+  console.log(`Buzzard API server running on http://0.0.0.0:${port}`);
   if (process.env.NODE_ENV === "production" && isDefaultJwtSecret()) {
     console.warn(
       "SECURITY WARNING: JWT_SECRET is unset — set JWT_SECRET in production (Render env / .env.local)."

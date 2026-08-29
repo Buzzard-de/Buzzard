@@ -27,6 +27,28 @@ function ensureDbDirectory(dbPath = resolveDbPath()) {
   return dbPath;
 }
 
+function getRenderDiskDiagnostics() {
+  const mountPath = "/var/data";
+  let exists = false;
+  let writable = false;
+  try {
+    exists = fs.existsSync(mountPath);
+    if (exists) {
+      fs.accessSync(mountPath, fs.constants.W_OK);
+      writable = true;
+    }
+  } catch {
+    writable = false;
+  }
+  return {
+    mountPath,
+    exists,
+    writable,
+    envBuzzardDbPath: process.env.BUZZARD_DB_PATH || null,
+    envBuzzardBackupDir: process.env.BUZZARD_BACKUP_DIR || null,
+  };
+}
+
 function getPersistenceInfo(dbPath = resolveDbPath()) {
   const isProduction = process.env.NODE_ENV === "production";
   const onRenderDisk = dbPath.startsWith("/var/data");
@@ -42,6 +64,20 @@ function getPersistenceInfo(dbPath = resolveDbPath()) {
   else if (customPath) mode = "custom_path";
   else if (isProduction) mode = "production_ephemeral";
 
+  const disk = getRenderDiskDiagnostics();
+  let syncHint = null;
+  if (isProduction && !persistent) {
+    if (disk.exists && !disk.envBuzzardDbPath) {
+      syncHint =
+        "Disk /var/data is mounted but BUZZARD_DB_PATH is missing — set env and redeploy buzzard-api";
+    } else if (!disk.exists && !disk.envBuzzardDbPath) {
+      syncHint =
+        "No /var/data mount and no BUZZARD_DB_PATH — Blueprint sync may be pending or not applied to buzzard-api";
+    } else if (disk.envBuzzardDbPath && !onRenderDisk) {
+      syncHint = "BUZZARD_DB_PATH is set but DB still on default path — redeploy buzzard-api";
+    }
+  }
+
   return {
     path: dbPath,
     mode,
@@ -49,6 +85,8 @@ function getPersistenceInfo(dbPath = resolveDbPath()) {
     ephemeralRisk,
     backupDir: resolveBackupDir(),
     env: process.env.NODE_ENV || "development",
+    renderDisk: disk,
+    syncHint,
   };
 }
 
@@ -59,5 +97,6 @@ module.exports = {
   resolveDbPath,
   resolveBackupDir,
   ensureDbDirectory,
+  getRenderDiskDiagnostics,
   getPersistenceInfo,
 };

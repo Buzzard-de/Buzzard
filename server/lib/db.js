@@ -3831,6 +3831,8 @@ function getDatabaseHealth() {
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
         backupDir: persistence.backupDir,
+        renderDisk: persistence.renderDisk,
+        syncHint: persistence.syncHint,
       },
     };
   } catch (error) {
@@ -3844,6 +3846,8 @@ function getDatabaseHealth() {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
+        renderDisk: persistence.renderDisk,
+        syncHint: persistence.syncHint,
       },
     };
   }

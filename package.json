@@ -41,6 +41,7 @@
     "test:part13": "node scripts/part13-smoke.mjs",
     "test:part14": "node scripts/part14-smoke.mjs",
     "test:production-smoke": "node scripts/production-smoke.mjs",
+    "poll:render-live": "node scripts/poll-render-until-live.mjs",
     "test:backup-restore": "node scripts/restore-db.mjs --dry-run --from server/data/buzzard.db",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",

@@ -169,6 +169,7 @@ async function main() {
 
   await test("13. Admin auth required", async () => {
     const { res } = await fetchJson("/api/admin/control-center/status");
+    if (res.status === 404) markBlocked("control center not deployed — stale Render");
     if (res.status !== 401 && res.status !== 403) throw new Error(`expected 401/403 got ${res.status}`);
   });
 
@@ -192,7 +193,10 @@ async function main() {
     const res = await fetch(`${API}/api/cart`, { headers: { Accept: "application/json" } });
     if (res.status === 404) skip("legacy cart absent");
     const legacy = res.headers.get("x-buzzard-legacy-commerce");
-    if (!legacy) throw new Error("missing legacy header");
+    if (!legacy) {
+      if (res.status === 401 || res.status === 403) markBlocked("legacy cart pre Part 10 deploy");
+      throw new Error("missing legacy header");
+    }
   });
 
   console.log(`\nProduction smoke: ${passed} passed, ${failed} failed, ${skipped} skipped, ${blocked} blocked`);

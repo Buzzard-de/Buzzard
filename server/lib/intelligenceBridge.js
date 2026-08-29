@@ -3,8 +3,18 @@ const embedded = require("./embeddedIntelligence");
 
 function intelligenceBaseUrl() {
   let url = (process.env.BUZZARD_INTELLIGENCE_API_URL || "").replace(/\/$/, "");
-  if (url && !/^https?:\/\//i.test(url)) {
+  if (!url) return "";
+  if (!/^https?:\/\//i.test(url)) {
     url = `https://${url}`;
+  }
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.includes(".")) {
+      parsed.hostname = `${parsed.hostname}.onrender.com`;
+      url = parsed.toString().replace(/\/$/, "");
+    }
+  } catch {
+    return "";
   }
   return url;
 }

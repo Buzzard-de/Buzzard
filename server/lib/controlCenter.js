@@ -131,6 +131,29 @@ async function getSystemStatus() {
         status: storefrontStatus,
         detail: storefrontDetail,
       },
+      COMMERCE: (() => {
+        try {
+          const { isCommerceCoreEnabled } = require("../core/commerceConstants");
+          if (!isCommerceCoreEnabled()) {
+            return { status: SERVICE_STATUS.OFFLINE, detail: "Commerce Core disabled" };
+          }
+          const commerceReadiness = require("./commerce/commerceReadiness");
+          const health = commerceReadiness.getCommerceHealth();
+          const readiness = commerceReadiness.runReadinessGate();
+          const status =
+            readiness.overall === "BLOCKED"
+              ? SERVICE_STATUS.WARNING
+              : health.sales?.salesEnabled
+                ? SERVICE_STATUS.WARNING
+                : SERVICE_STATUS.ONLINE;
+          return {
+            status,
+            detail: `Readiness ${readiness.overall}, sales blocked=${health.sales?.salesEnabled === false}`,
+          };
+        } catch (err) {
+          return { status: SERVICE_STATUS.UNKNOWN, detail: err.message };
+        }
+      })(),
     },
   };
 }

@@ -23,6 +23,16 @@ const EVENT_SEVERITY = {
   privilege_escalation_attempt: "CRITICAL",
   admin_login_locked: "CRITICAL",
   admin_account_locked: "CRITICAL",
+  checkout_blocked: "WARNING",
+  payment_attempt_blocked: "HIGH",
+  order_creation_blocked: "HIGH",
+  price_tampering: "CRITICAL",
+  quantity_tampering: "HIGH",
+  idempotency_conflict: "INFO",
+  commerce_permission_denied: "HIGH",
+  go_live_blocked: "WARNING",
+  go_live_requested: "INFO",
+  go_live_approved: "INFO",
 };
 
 function ensureDataDir() {

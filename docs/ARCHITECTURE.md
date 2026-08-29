@@ -74,6 +74,8 @@ Legacy-Systeme bleiben aktiv; die Facade abstrahiert sie.
 | `npm run test:unit` | Vitest unit tests (36) |
 | `npm run test:part5` | Automation / worker smoke |
 | `npm run test:part6` | Product Core / PIM smoke |
+| `npm run test:part7` | Storefront bridge smoke |
+| `npm run test:part8` | Commerce readiness smoke |
 | `npm run test:e2e` | Playwright admin E2E |
 
 ## Deployment

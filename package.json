@@ -31,6 +31,7 @@
     "test:part5": "node scripts/part5-smoke.mjs",
     "test:part6": "node scripts/part6-smoke.mjs",
     "test:part7": "node scripts/part7-smoke.mjs",
+    "test:part8": "node scripts/part8-smoke.mjs",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test",

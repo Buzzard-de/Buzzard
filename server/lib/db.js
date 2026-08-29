@@ -3671,9 +3671,104 @@ function migrateCoreFoundationPart6() {
   }));
 }
 
+function migrateCoreFoundationPart8() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS commerce_carts (
+      id TEXT PRIMARY KEY,
+      customer_id TEXT,
+      session_id TEXT,
+      country TEXT DEFAULT 'DE',
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'active',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      expires_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS commerce_cart_items (
+      id TEXT PRIMARY KEY,
+      cart_id TEXT NOT NULL,
+      product_id TEXT NOT NULL,
+      variant_id TEXT,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      price_snapshot REAL NOT NULL DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(cart_id) REFERENCES commerce_carts(id) ON DELETE CASCADE
+    );
+    CREATE TABLE IF NOT EXISTS commerce_checkouts (
+      id TEXT PRIMARY KEY,
+      cart_id TEXT,
+      customer_id TEXT,
+      state TEXT DEFAULT 'DRAFT',
+      billing_json TEXT DEFAULT '{}',
+      shipping_json TEXT DEFAULT '{}',
+      totals_json TEXT DEFAULT '{}',
+      idempotency_key TEXT,
+      order_type TEXT DEFAULT 'DRY_RUN',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS commerce_orders (
+      id TEXT PRIMARY KEY,
+      checkout_id TEXT,
+      customer_id TEXT,
+      order_type TEXT NOT NULL DEFAULT 'DRY_RUN',
+      status TEXT DEFAULT 'PENDING',
+      payment_status TEXT DEFAULT 'NONE',
+      fulfillment_status TEXT DEFAULT 'NONE',
+      currency TEXT DEFAULT 'EUR',
+      subtotal REAL DEFAULT 0,
+      shipping REAL DEFAULT 0,
+      tax REAL DEFAULT 0,
+      discount REAL DEFAULT 0,
+      total REAL DEFAULT 0,
+      items_json TEXT DEFAULT '[]',
+      metadata_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS commerce_idempotency (
+      key_hash TEXT PRIMARY KEY,
+      scope TEXT NOT NULL,
+      resource_id TEXT,
+      response_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      expires_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS commerce_go_live (
+      id TEXT PRIMARY KEY,
+      requested_by TEXT,
+      status TEXT DEFAULT 'PENDING',
+      readiness_snapshot_json TEXT DEFAULT '{}',
+      admin_approval INTEGER DEFAULT 0,
+      production_lock INTEGER DEFAULT 1,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      decided_at TEXT,
+      decided_by TEXT
+    );
+    CREATE TABLE IF NOT EXISTS commerce_webhook_events (
+      id TEXT PRIMARY KEY,
+      provider TEXT NOT NULL,
+      event_id TEXT UNIQUE NOT NULL,
+      event_type TEXT,
+      payload_json TEXT DEFAULT '{}',
+      verified INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_commerce_carts_customer ON commerce_carts(customer_id);
+    CREATE INDEX IF NOT EXISTS idx_commerce_orders_type ON commerce_orders(order_type);
+    CREATE INDEX IF NOT EXISTS idx_commerce_checkouts_state ON commerce_checkouts(state);
+  `);
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
+migrateCoreFoundationPart8();
 
 
 function seed() {

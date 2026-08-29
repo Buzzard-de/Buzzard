@@ -36,6 +36,13 @@ import type {
   DashboardSummary,
   Integration,
 } from "@/lib/admin/controlCenterTypes";
+import {
+  approveGoLive,
+  fetchCommerceOverview,
+  fetchCommerceSecurityEvents,
+  requestGoLive,
+} from "@/lib/admin/commerce";
+import type { CommerceFeatureFlags, CommerceHealth, CommerceReadiness, GoLiveRequest } from "@/lib/admin/commerceTypes";
 import { getMainCategories } from "@/lib/categories";
 
 type Tab =
@@ -49,7 +56,8 @@ type Tab =
   | "automation"
   | "workers"
   | "schedules"
-  | "sync";
+  | "sync"
+  | "commerce";
 
 const STATUS_CLASS: Record<string, string> = {
   ONLINE: "cc-status-online",
@@ -79,6 +87,12 @@ export default function AdminControlCenter() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [jobCounts, setJobCounts] = useState<Record<string, number>>({});
   const [integrationHealth, setIntegrationHealth] = useState<Array<{ integrationCode: string; status: string; responseTimeMs: number | null }>>([]);
+  const [commerceHealth, setCommerceHealth] = useState<CommerceHealth | null>(null);
+  const [commerceReadiness, setCommerceReadiness] = useState<CommerceReadiness | null>(null);
+  const [commerceFlags, setCommerceFlags] = useState<CommerceFeatureFlags | null>(null);
+  const [commerceOrders, setCommerceOrders] = useState<Record<string, number>>({});
+  const [goLiveRequests, setGoLiveRequests] = useState<GoLiveRequest[]>([]);
+  const [commerceEvents, setCommerceEvents] = useState<Array<{ type: string; timestamp: string; severity: string }>>([]);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -116,6 +130,18 @@ export default function AdminControlCenter() {
       setJobs(jobList);
       setSchedules(schedList);
       if (health.length) setIntegrationHealth(health);
+      try {
+        const commerce = await fetchCommerceOverview();
+        setCommerceHealth(commerce.health);
+        setCommerceReadiness(commerce.readiness);
+        setCommerceFlags(commerce.flags);
+        setCommerceOrders(commerce.ordersByType);
+        setGoLiveRequests(commerce.goLiveRequests);
+        const events = await fetchCommerceSecurityEvents().catch(() => []);
+        setCommerceEvents(events);
+      } catch {
+        /* commerce module optional during load */
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Load failed");
     } finally {
@@ -195,6 +221,7 @@ export default function AdminControlCenter() {
             ["workers", "Workers"],
             ["schedules", "Schedules"],
             ["sync", "Sync"],
+            ["commerce", "Commerce"],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -498,6 +525,107 @@ export default function AdminControlCenter() {
                 <span className={h.status === "CONNECTED" ? "cc-status-online" : "cc-status-offline"}>{h.status}</span>
                 <strong>{h.integrationCode}</strong>
                 <span>{h.responseTimeMs != null ? `${h.responseTimeMs}ms` : "—"}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {!loading && tab === "commerce" && (
+        <section className="admin-panel">
+          <h2>Commerce Readiness</h2>
+          <p className="admin-note">
+            Katalogmodus — BUZZARD_SALES_ENABLED=0. Checkout dry-run only; no real payments or supplier orders.
+          </p>
+          {commerceReadiness && (
+            <div className="admin-stat-grid">
+              <article className="admin-stat">
+                <strong>{commerceReadiness.overall}</strong>
+                <span>Overall</span>
+              </article>
+              <article className="admin-stat">
+                <strong>{commerceReadiness.score}%</strong>
+                <span>Score</span>
+              </article>
+              <article className="admin-stat">
+                <strong>{commerceReadiness.failCount}</strong>
+                <span>Blockers</span>
+              </article>
+              <article className="admin-stat">
+                <strong>{commerceReadiness.warnCount}</strong>
+                <span>Warnings</span>
+              </article>
+            </div>
+          )}
+          {commerceFlags && (
+            <>
+              <h3>Feature Flags</h3>
+              <ul className="cc-status-list">
+                <li>Sales: {commerceFlags.salesEnabled ? "ON" : "OFF"}</li>
+                <li>Checkout: {commerceFlags.checkoutEnabled ? "ON" : "OFF"} (dry-run: {commerceFlags.checkoutDryRunOnly ? "yes" : "no"})</li>
+                <li>Payment: {commerceFlags.paymentEnabled ? "ON" : "OFF"} (mock: {commerceFlags.mockPaymentOnly ? "yes" : "no"})</li>
+                <li>Supplier orders: {commerceFlags.supplierOrdersEnabled ? "ON" : "OFF"}</li>
+                <li>Stripe: {commerceFlags.stripeEnabled ? "ON" : "OFF"}</li>
+                <li>PayPal: {commerceFlags.paypalEnabled ? "ON" : "OFF"}</li>
+              </ul>
+            </>
+          )}
+          {commerceHealth && (
+            <>
+              <h3>Orders by Type</h3>
+              <pre className="cc-search-results">{JSON.stringify(commerceOrders, null, 2)}</pre>
+            </>
+          )}
+          <h3>Go-Live</h3>
+          <div className="cc-actions">
+            <button
+              type="button"
+              className="shop-btn-secondary"
+              onClick={() => requestGoLive("Control Center request").then(reload)}
+            >
+              Request Go-Live
+            </button>
+            {goLiveRequests[0]?.status === "PENDING" && (
+              <button
+                type="button"
+                className="shop-btn-primary"
+                onClick={() => approveGoLive(goLiveRequests[0].id).then(reload)}
+              >
+                Approve (does not enable sales)
+              </button>
+            )}
+          </div>
+          {goLiveRequests.length > 0 && (
+            <ul className="cc-status-list">
+              {goLiveRequests.map((r) => (
+                <li key={r.id}>
+                  <strong>{r.status}</strong> — {r.id.slice(0, 16)}…
+                  <span className="cc-muted"> {new Date(r.created_at).toLocaleString()}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <h3>Readiness Checks</h3>
+          {commerceReadiness?.checks && (
+            <ul className="cc-status-list">
+              {commerceReadiness.checks.map((c) => (
+                <li key={c.name}>
+                  <span className={c.status === "PASS" ? "cc-status-online" : c.status === "FAIL" ? "cc-status-offline" : "cc-status-warning"}>
+                    {c.status}
+                  </span>
+                  <strong>{c.name}</strong>
+                  <span>{c.detail}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <h3>Recent Commerce Security Events</h3>
+          {commerceEvents.length === 0 && <p className="admin-note">No commerce security events yet.</p>}
+          <ul className="cc-status-list">
+            {commerceEvents.slice(0, 15).map((ev, i) => (
+              <li key={`${ev.type}-${i}`}>
+                <strong>{ev.type}</strong>
+                <span className="cc-muted"> {ev.severity} — {new Date(ev.timestamp).toLocaleString()}</span>
               </li>
             ))}
           </ul>

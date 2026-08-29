@@ -1,0 +1,40 @@
+Buzzard Part 1 + Part 2 — Test-Ergebnisse
+Datum: 2026-08-29
+Branch: cursor/core-foundation-part2-c293
+
+=== Part 2 Smoke Tests (npm run test:part2) ===
+Ergebnis: 14/14 bestanden
+
+✓ GET /api/health/db
+✓ GET /api/health/ai
+✓ GET /api/categories/visibility (public)
+✓ Admin control center requires auth
+✓ Admin login (seed user)
+✓ GET /api/admin/control-center/status
+✓ GET /api/admin/ai/employees
+✓ POST /api/admin/ai/tasks
+✓ GET /api/admin/approvals
+✓ GET /api/admin/control-center/integrations
+✓ POST approval + decide flow
+✓ GET /api/admin/control-center/escalations
+✓ GET /api/admin/control-center/background-jobs
+✓ PATCH category visibility
+
+=== Build ===
+npm run build → ERFOLG
+
+=== Lint ===
+npm run lint → ERFOLG
+
+=== Typecheck ===
+npm run typecheck → ERFOLG
+
+=== Part 1 Live-Verification (28.08.2026) ===
+Production Guard Live: PASS 13/0/0/0
+P1 catalog_mode: true
+Guardian + Orchestrator: reachable
+Storefront + API: HTTP 200
+
+=== Hinweis ===
+Part 2 PR #243 muss gemergt und auf Render deployed werden,
+bevor Control Center live unter buzzard24.de verfügbar ist.

@@ -5,4 +5,4 @@ RUN pip install --no-cache-dir -r buzzard_ai_complete/requirements.txt
 COPY buzzard_ai_complete ./buzzard_ai_complete
 ENV PYTHONPATH=/app
 EXPOSE 8000
-CMD ["uvicorn", "buzzard_ai_complete.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn buzzard_ai_complete.api.app:app --host 0.0.0.0 --port ${PORT:-8000}"]

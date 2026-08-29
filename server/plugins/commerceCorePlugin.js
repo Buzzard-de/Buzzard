@@ -8,7 +8,8 @@ const { isCommerceCoreEnabled } = require("../core/commerceConstants");
 const commerce = require("../lib/commerce");
 const { logAuditFromRequest } = require("../lib/coreAudit");
 
-const checkoutRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 15, keyPrefix: "commerce-checkout:" });
+const cartRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: "commerce-cart:" });
+const checkoutRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "commerce-checkout:" });
 const orderRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 10, keyPrefix: "commerce-order:" });
 
 function attachAdmin(req, res) {
@@ -55,7 +56,7 @@ module.exports = {
     });
 
     app.post("/api/commerce/cart", (req, res) => {
-      if (!rateLimit(req, res, checkoutRateLimit)) return;
+      if (!rateLimit(req, res, cartRateLimit)) return;
       const body = parseBody(req);
       const cart = commerce.cartService.createCart({
         customerId: body.customerId,
@@ -73,11 +74,72 @@ module.exports = {
     });
 
     app.post("/api/commerce/cart/:id/items", (req, res) => {
-      if (!rateLimit(req, res, checkoutRateLimit)) return;
+      if (!rateLimit(req, res, cartRateLimit)) return;
       const body = parseBody(req);
       const result = commerce.cartService.addItem(req.params.id, { ...body, req });
       if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
       res.json({ success: true, ...result });
+    });
+
+    app.patch("/api/commerce/cart/:id/items/:itemId", (req, res) => {
+      if (!rateLimit(req, res, cartRateLimit)) return;
+      const body = parseBody(req);
+      const result = commerce.cartService.updateItemQuantity(
+        req.params.id,
+        req.params.itemId,
+        body.quantity,
+        { customerId: body.customerId, req }
+      );
+      if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
+      res.json({ success: true, ...result });
+    });
+
+    app.delete("/api/commerce/cart/:id/items/:itemId", (req, res) => {
+      if (!rateLimit(req, res, cartRateLimit)) return;
+      const body = parseBody(req);
+      const result = commerce.cartService.removeItem(req.params.id, req.params.itemId, {
+        customerId: body.customerId || req.query?.customerId,
+        req,
+      });
+      if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
+      res.json({ success: true, ...result });
+    });
+
+    app.post("/api/commerce/cart/:id/clear", (req, res) => {
+      if (!rateLimit(req, res, cartRateLimit)) return;
+      const body = parseBody(req);
+      const result = commerce.cartService.clearCart(req.params.id, { customerId: body.customerId, req });
+      if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
+      res.json({ success: true, ...result });
+    });
+
+    app.post("/api/commerce/cart/:id/validate", (req, res) => {
+      if (!rateLimit(req, res, cartRateLimit)) return;
+      const body = parseBody(req);
+      const cart = commerce.cartService.getCart(req.params.id, { customerId: body.customerId, req });
+      if (cart.error) return res.status(cart.status || 400).json({ success: false, errorKey: cart.error });
+      const stock = commerce.cartService.validateStockForCheckout(req.params.id);
+      res.json({
+        success: true,
+        ok: stock.ok,
+        issues: stock.issues,
+        dryRun: stock.dryRun,
+        itemCount: cart.itemCount,
+        subtotal: cart.subtotal,
+      });
+    });
+
+    app.get("/api/commerce/shipping/methods", (_req, res) => {
+      res.json({ success: true, methods: commerce.shippingProvider.listMethods() });
+    });
+
+    app.get("/api/commerce/checkout/:id", (req, res) => {
+      const checkout = commerce.checkoutService.getCheckout(req.params.id, {
+        customerId: req.query.customerId,
+        req,
+      });
+      if (checkout.error) return res.status(checkout.status || 404).json({ success: false, errorKey: checkout.error });
+      res.json({ success: true, checkout });
     });
 
     app.post("/api/commerce/checkout/start", (req, res) => {

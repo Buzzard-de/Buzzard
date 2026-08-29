@@ -250,12 +250,31 @@ function getDemoProductForCart() {
   return { productId: item.id, sku: item.sku, price: item.price };
 }
 
+function clearCart(cartId, ctx = {}) {
+  const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
+  if (!cartRow) return { error: "cart_not_found", status: 404 };
+
+  const { assertCustomerResourceAccess } = require("./commerceGuards");
+  const access = assertCustomerResourceAccess({
+    resourceCustomerId: cartRow.customer_id,
+    requestCustomerId: ctx.customerId,
+    resourceType: "cart",
+    req: ctx.req,
+  });
+  if (access?.blocked && cartRow.customer_id) return access;
+
+  db.prepare("DELETE FROM commerce_cart_items WHERE cart_id = ?").run(cartId);
+  db.prepare("UPDATE commerce_carts SET updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(cartId);
+  return getCart(cartId, ctx);
+}
+
 module.exports = {
   createCart,
   getCart,
   addItem,
   updateItemQuantity,
   removeItem,
+  clearCart,
   resolveAuthoritativePrice,
   validateStockForCheckout,
   getDemoProductForCart,

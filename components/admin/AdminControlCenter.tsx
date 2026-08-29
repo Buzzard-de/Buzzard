@@ -535,8 +535,16 @@ export default function AdminControlCenter() {
         <section className="admin-panel">
           <h2>Commerce Readiness</h2>
           <p className="admin-note">
-            Katalogmodus — BUZZARD_SALES_ENABLED=0. Checkout dry-run only; no real payments or supplier orders.
+            Storefront → /api/commerce/* bridge (Part 9). Katalogmodus — BUZZARD_SALES_ENABLED=0.
           </p>
+          {commerceHealth && (
+            <ul className="cc-status-list">
+              <li>Cart API: /api/commerce/cart</li>
+              <li>Checkout API: /api/commerce/checkout/*</li>
+              <li>Payment: {commerceFlags?.mockPaymentOnly ? "Mock only" : "—"}</li>
+              <li>Orders by type: {JSON.stringify(commerceOrders)}</li>
+            </ul>
+          )}
           {commerceReadiness && (
             <div className="admin-stat-grid">
               <article className="admin-stat">

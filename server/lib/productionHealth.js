@@ -134,6 +134,36 @@ function getCatalogHealthSummary() {
   }
 }
 
+function getSupplierIntegrationHealth() {
+  try {
+    const { createConnectorFromEnv, isLiveImportEnabled } = require("./supplier/realSupplierConnector");
+    const connector = createConnectorFromEnv();
+    const status = connector.getStatus();
+    return {
+      connected: false,
+      liveImportEnabled: isLiveImportEnabled(),
+      dryRun: status.dryRun !== false,
+      credentialsConfigured: status.credentialsConfigured,
+      testOnlySupplier: status.testOnlySupplier,
+      canConnectLive: status.canConnectLive,
+      blockedReason: status.blockedReason,
+      adapterMode: "MOCK",
+      note: "No real supplier connected — Part 15/16 scaffold only",
+    };
+  } catch (err) {
+    return { connected: false, error: err.message };
+  }
+}
+
+function getBackupHealthSummary() {
+  try {
+    const backupAutomation = require("./backupAutomation");
+    return backupAutomation.getBackupReadiness();
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
 function getCommerceHealthSummary() {
   try {
     const { getEffectiveFlags } = require("./commerce/commerceFeatureFlags");
@@ -166,6 +196,14 @@ async function getProductionSummary() {
   const ai = await getAiHealthSummary();
   const catalog = getCatalogHealthSummary();
   const commerce = getCommerceHealthSummary();
+  const supplierIntegration = getSupplierIntegrationHealth();
+  const backup = getBackupHealthSummary();
+  let jobSafety = {};
+  try {
+    jobSafety = require("./jobSafetyGate").getJobSafetyStatus();
+  } catch (err) {
+    jobSafety = { error: err.message };
+  }
 
   let overall = "OK";
   if (integrity.status === "FAILED" || !envValidation.ok) overall = "FAILED";
@@ -188,6 +226,9 @@ async function getProductionSummary() {
     ai,
     catalog,
     commerce,
+    supplierIntegration,
+    backup,
+    jobSafety,
     salesEnabled: isSalesEnabled(),
     goLiveLock: goLiveApproval.PRODUCTION_SAFETY_LOCK,
     timestamp: new Date().toISOString(),
@@ -216,4 +257,6 @@ module.exports = {
   getAiHealthSummary,
   getCatalogHealthSummary,
   getCommerceHealthSummary,
+  getSupplierIntegrationHealth,
+  getBackupHealthSummary,
 };

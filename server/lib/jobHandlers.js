@@ -27,6 +27,14 @@ async function handleStockSync(job) {
 }
 
 async function handleSupplierSync(job) {
+  const jobSafetyGate = require("./jobSafetyGate");
+  const safety = jobSafetyGate.assertJobSafe(job);
+  if (!safety.ok) {
+    const err = new Error(`Supplier sync blocked: ${safety.issues.map((i) => i.reason).join(", ")}`);
+    err.code = "job_safety_blocked";
+    throw err;
+  }
+
   const { getAdapter } = require("./supplier/adapterRegistry");
   const adapter = getAdapter(job.payload?.supplierId || "mock");
   const health = await adapter.healthCheck();
@@ -40,7 +48,8 @@ async function handleSupplierSync(job) {
     format: adapter.format,
     capabilities: adapter.capabilities,
     synced: false,
-    note: "Foundation only — no live supplier sync in Part 5",
+    dryRun: job.payload?.dryRun !== false,
+    note: "Foundation only — no live supplier sync without REAL_SUPPLIER_LIVE_IMPORT=1 and credentials",
   };
 }
 

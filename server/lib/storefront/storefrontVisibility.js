@@ -5,16 +5,10 @@ const { PRODUCT_STATUS, SALES_BLOCKED_STATUSES } = require("../../core/productCo
 const { STOREFRONT_PRODUCT_STATUS, STOREFRONT_VISIBILITY } = require("../../core/storefrontConstants");
 const categoryVisibility = require("../categoryVisibility");
 const productValidation = require("../pim/productValidation");
+const { isDemoOrTestProduct } = require("../pim/demoProductGuard");
 
 function isDemoStorefrontProduct(product) {
-  const sku = String(product.sku || "").toUpperCase();
-  const id = String(product.id || "").toLowerCase();
-  const title = String(product.title || "").toLowerCase();
-  const brand = String(product.brand?.name || product.brand || "").toLowerCase();
-  if (sku.includes("DEMO") || id.includes("demo")) return true;
-  if (/\bdemo\b/.test(title) || /\btestprodukt\b/.test(title)) return true;
-  if (brand.includes("demo")) return true;
-  return false;
+  return isDemoOrTestProduct(product);
 }
 
 function isCategoryVisibleForStorefront(categoryId) {

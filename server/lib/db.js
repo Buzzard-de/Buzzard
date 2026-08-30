@@ -3768,11 +3768,57 @@ function migrateCoreFoundationPart10() {
   }
 }
 
+function migrateCoreFoundationPart16() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS pim_core_product_staging (
+      id TEXT PRIMARY KEY,
+      import_job_id TEXT,
+      source_supplier_code TEXT NOT NULL,
+      source_product_id TEXT,
+      supplier_sku TEXT,
+      raw_json TEXT NOT NULL,
+      normalized_json TEXT,
+      provenance_json TEXT DEFAULT '{}',
+      validation_json TEXT DEFAULT '{}',
+      quality_json TEXT DEFAULT '{}',
+      lifecycle_status TEXT NOT NULL DEFAULT 'DISCOVERED',
+      blocked_reason TEXT,
+      duplicate_of TEXT,
+      imported_product_id TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      imported_at TEXT,
+      validated_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_pim_staging_supplier ON pim_core_product_staging(source_supplier_code, supplier_sku);
+    CREATE INDEX IF NOT EXISTS idx_pim_staging_lifecycle ON pim_core_product_staging(lifecycle_status);
+    CREATE INDEX IF NOT EXISTS idx_pim_staging_job ON pim_core_product_staging(import_job_id);
+  `);
+
+  const productCols = db.prepare("PRAGMA table_info(pim_core_products)").all().map((c) => c.name);
+  if (!productCols.includes("purchase_price")) {
+    db.exec(`ALTER TABLE pim_core_products ADD COLUMN purchase_price REAL`);
+  }
+  if (!productCols.includes("price_updated_at")) {
+    db.exec(`ALTER TABLE pim_core_products ADD COLUMN price_updated_at TEXT`);
+  }
+  if (!productCols.includes("stock_updated_at")) {
+    db.exec(`ALTER TABLE pim_core_products ADD COLUMN stock_updated_at TEXT`);
+  }
+  if (!productCols.includes("supplier_updated_at")) {
+    db.exec(`ALTER TABLE pim_core_products ADD COLUMN supplier_updated_at TEXT`);
+  }
+  if (!productCols.includes("provenance_json")) {
+    db.exec(`ALTER TABLE pim_core_products ADD COLUMN provenance_json TEXT DEFAULT '{}'`);
+  }
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
 migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
+migrateCoreFoundationPart16();
 
 
 function seed() {

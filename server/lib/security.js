@@ -1,6 +1,6 @@
 const path = require("path");
 
-const SENSITIVE_KEY_PATTERN = /password|secret|token|authorization|credential|api_key/i;
+const SENSITIVE_KEY_PATTERN = /password|secret|token|authorization|credential|api[_-]?key/i;
 const SAFE_ID_REGEX = /^[a-z0-9-]+$/i;
 
 const LIMITS = {

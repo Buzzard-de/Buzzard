@@ -5,8 +5,8 @@ export const catalog: TranslationTree = {
     shipping: "Free shipping from €79",
     returns: "30-day returns",
     trust: "Trusted Shops · 4.8/5",
-    catalogPreview: "Catalog preview — online ordering coming soon",
-    catalogCategories: "41 categories · demo catalog",
+    catalogPreview: "Catalog mode — advice & contact available anytime",
+    catalogCategories: "{count} categories · online catalog",
     catalogSupport: "Advice & contact available",
   },
   header: {
@@ -25,7 +25,7 @@ export const catalog: TranslationTree = {
   hero: {
     kicker: "CATALOG. DISCOVER. LEARN.",
     title: "Discover our range",
-    text: "Browse our demo catalog across textiles, automotive, electronics and more — online sales launching soon.",
+    text: "Browse our online catalog across automotive, textiles, electronics and more — personal advice by phone and email.",
     cta: "Browse catalog",
     secondary: "All categories",
   },

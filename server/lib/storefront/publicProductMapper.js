@@ -69,15 +69,20 @@ function buildStructuredData(product, seo) {
     description: product.shortDescription || product.description || product.title,
     image: (product.media || []).filter((m) => m.type === "image").map((m) => m.url),
     brand: product.brand?.name ? { "@type": "Brand", name: product.brand.name } : undefined,
-    offers: {
-      "@type": "Offer",
-      price: product.price,
-      priceCurrency: product.currency || "EUR",
-      availability: salesEnabled && product.stock > 0
-        ? "https://schema.org/InStock"
-        : "https://schema.org/PreOrder",
-      url: seo.canonical || undefined,
-    },
+    offers: salesEnabled
+      ? {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: product.currency || "EUR",
+          availability:
+            product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/PreOrder",
+          url: seo.canonical || undefined,
+        }
+      : {
+          "@type": "Offer",
+          availability: "https://schema.org/PreOrder",
+          url: seo.canonical || undefined,
+        },
   };
 }
 
@@ -128,8 +133,8 @@ function mapPimToStorefront(product) {
       priceDelta: v.priceDelta,
       stock: v.stock,
     })),
-    media,
-    images: imageUrls.length ? imageUrls : [PLACEHOLDER_IMAGE],
+    media: salesEnabled ? media : [],
+    images: salesEnabled && imageUrls.length ? imageUrls : [],
     price: Number(product.price) || 0,
     currency: product.currency || "EUR",
     stock: Number(product.stock) || 0,

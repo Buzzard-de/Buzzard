@@ -3655,7 +3655,7 @@ function migrateCoreFoundationPart6() {
   db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-05' WHERE category_id = 'automotive'`).run();
   db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-02' WHERE category_id = 'cosmetics'`).run();
   db.prepare(`UPDATE pim_core_products SET ean = '5901234123457', gtin = '5901234123457' WHERE sku = 'BZ-CORE-DEMO-001'`).run();
-  db.prepare(`UPDATE pim_core_products SET visibility = 'PUBLIC' WHERE id = 'pim_prod_demo001' AND visibility = 'HIDDEN'`).run();
+  db.prepare(`UPDATE pim_core_products SET visibility = 'HIDDEN' WHERE id = 'pim_prod_demo001'`).run();
   db.prepare(`
     UPDATE pim_core_products SET seo_json = ?
     WHERE id = 'pim_prod_demo001'
@@ -3831,6 +3831,8 @@ function getDatabaseHealth() {
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
         backupDir: persistence.backupDir,
+        renderDisk: persistence.renderDisk,
+        syncHint: persistence.syncHint,
       },
     };
   } catch (error) {
@@ -3844,6 +3846,8 @@ function getDatabaseHealth() {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
+        renderDisk: persistence.renderDisk,
+        syncHint: persistence.syncHint,
       },
     };
   }

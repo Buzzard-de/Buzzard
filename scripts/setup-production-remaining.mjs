@@ -122,7 +122,9 @@ async function auditLive() {
   const persistent = report.database?.body?.database?.persistence?.persistent === true;
   const drift = report.production?.body?.deployment?.drift;
   const bridge = report.intelligence?.body?.bridge;
-  const rateBackend = report.security?.body?.rateLimit?.backend;
+  const rateBackend =
+    report.security?.body?.protections?.rateLimitBackend ||
+    report.security?.body?.rateLimit?.backend;
 
   log("audit", `persistent DB: ${persistent ? "YES" : "NO (ephemeral)"}`);
   log("audit", `deployment drift: ${drift === false ? "false" : drift ?? "unknown"}`);

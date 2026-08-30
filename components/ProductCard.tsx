@@ -31,12 +31,12 @@ export default function ProductCard({
   addedLabel,
   viewLabel,
 }: ProductCardProps) {
-  const imageKey = product.imageKey ?? (product.images[0] ? undefined : "oel");
+  const imageKey = product.imageKey ?? (product.images[0] && !product.images[0].includes("product-placeholder") ? undefined : "oel");
 
   return (
     <article className="product-card">
       <Link href={product.url} className="product-card-img">
-        {product.images[0] ? (
+        {product.images[0] && !product.images[0].includes("product-placeholder") ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={product.images[0]} alt={localeName} loading="lazy" decoding="async" />
         ) : (

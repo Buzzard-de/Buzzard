@@ -36,13 +36,13 @@ describe("commerce map", () => {
 });
 
 describe("shop mode Part 9", () => {
-  it("enables checkout in commerce dry-run mode", () => {
+  it("keeps storefront browse-only while commerce dry-run is available", () => {
     const prevCommerce = process.env.NEXT_PUBLIC_COMMERCE_CORE;
     const prevSales = process.env.NEXT_PUBLIC_SALES_ENABLED;
     process.env.NEXT_PUBLIC_COMMERCE_CORE = "1";
     process.env.NEXT_PUBLIC_SALES_ENABLED = "0";
-    expect(isCheckoutEnabled()).toBe(true);
-    expect(showPrices()).toBe(true);
+    expect(isCheckoutEnabled()).toBe(false);
+    expect(showPrices()).toBe(false);
     expect(isCommerceDryRun()).toBe(true);
     process.env.NEXT_PUBLIC_COMMERCE_CORE = prevCommerce;
     process.env.NEXT_PUBLIC_SALES_ENABLED = prevSales;

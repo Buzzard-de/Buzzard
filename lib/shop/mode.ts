@@ -7,13 +7,18 @@ export function isSalesEnabled(): boolean {
   return process.env.NEXT_PUBLIC_SALES_ENABLED === "1";
 }
 
+/** Public storefront prices — only when live sales are enabled */
 export function showPrices(): boolean {
-  return isSalesEnabled() || shouldUseCommerceCore();
+  return isSalesEnabled();
 }
 
-/** Cart + checkout UI — commerce dry-run OR live sales */
+/** Cart + checkout UI — live sales only (catalog mode stays browse-only) */
 export function isCheckoutEnabled(): boolean {
-  return isSalesEnabled() || shouldUseCommerceCore();
+  return isSalesEnabled();
+}
+
+export function isCatalogMode(): boolean {
+  return !isSalesEnabled();
 }
 
 export function isCommerceDryRun(): boolean {

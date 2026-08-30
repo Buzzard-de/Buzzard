@@ -31,15 +31,6 @@ function migrateEphemeralToPersistentIfNeeded(targetPath) {
 
 function validateDatabaseStartup() {
   const dbPath = resolveDbPath();
-
-  try {
-    ensureDbDirectory(dbPath);
-  } catch (err) {
-    // continue — errors collected below
-  }
-
-  const migration = migrateEphemeralToPersistentIfNeeded(dbPath);
-  const persistence = getPersistenceInfo(dbPath);
   const errors = [];
   const warnings = [];
 
@@ -48,6 +39,9 @@ function validateDatabaseStartup() {
   } catch (err) {
     errors.push(`Cannot create DB directory: ${err.message}`);
   }
+
+  const migration = migrateEphemeralToPersistentIfNeeded(dbPath);
+  const persistence = getPersistenceInfo(dbPath);
 
   const dir = require("path").dirname(dbPath);
   try {

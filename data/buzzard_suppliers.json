@@ -27,6 +27,7 @@
     },
     {
       "supplier_id": "SUP-DEMO-001",
+      "production_status": "TEST_ONLY",
       "supplier_name": "Demo Automotive Parts GmbH",
       "contact_email": "orders@demo-automotive.example",
       "contact_phone": "+49 89 9876543",
@@ -45,7 +46,7 @@
       "active": true,
       "sync_status": "idle",
       "last_sync_at": null,
-      "notes": "Demo B2B supplier for automotive catalog sync tests."
+      "notes": "TEST ONLY — Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
     }
   ]
 }

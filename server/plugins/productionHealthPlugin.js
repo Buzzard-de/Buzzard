@@ -67,6 +67,11 @@ module.exports = {
       res.json({ success: true, ...snapshot });
     });
 
+    app.get("/api/health/storefront-readiness", (_req, res) => {
+      const storefrontReadiness = require("../lib/storefront/storefrontReadiness");
+      res.json({ success: true, ...storefrontReadiness.evaluateStorefrontReadiness() });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

@@ -44,6 +44,28 @@ function filterProducts(items, filters = {}) {
     result = result.filter((p) => p.stock > 0);
   }
 
+  if (filters.availability) {
+    const avail = String(filters.availability).toLowerCase();
+    result = result.filter((p) => String(p.stockStatus || "").toLowerCase() === avail);
+  }
+
+  if (filters.sku) {
+    const sku = String(filters.sku).toLowerCase();
+    result = result.filter((p) => String(p.sku || "").toLowerCase() === sku);
+  }
+
+  if (filters.gtin) {
+    const gtin = String(filters.gtin).toLowerCase();
+    result = result.filter(
+      (p) => String(p.gtin || p.ean || "").toLowerCase() === gtin
+    );
+  }
+
+  if (filters.mpn) {
+    const mpn = String(filters.mpn).toLowerCase();
+    result = result.filter((p) => String(p.mpn || "").toLowerCase() === mpn);
+  }
+
   if (filters.attributes && typeof filters.attributes === "object") {
     for (const [key, val] of Object.entries(filters.attributes)) {
       result = result.filter((p) => String(p.attributes?.[key] || "") === String(val));

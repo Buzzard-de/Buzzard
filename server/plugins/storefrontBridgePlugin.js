@@ -73,6 +73,29 @@ module.exports = {
       });
     });
 
+    app.get("/api/catalog/categories/tree", (req, res) => {
+      const storefrontCategoryService = require("../lib/storefront/storefrontCategoryService");
+      const depth = Number(req.query?.depth) || 2;
+      res.json({ success: true, categories: storefrontCategoryService.getCategoryTree({ depth }) });
+    });
+
+    app.get("/api/catalog/seo/sitemap-preview", (_req, res) => {
+      const storefrontSeoService = require("../lib/storefront/storefrontSeoService");
+      res.json({ success: true, entries: storefrontSeoService.buildSitemapEntries() });
+    });
+
+    app.get("/api/catalog/feed/google.xml", (req, res) => {
+      const merchantFeedService = require("../lib/storefront/merchantFeedService");
+      const xml = merchantFeedService.buildGoogleMerchantFeedXml(req.query || {});
+      res.set("Content-Type", "application/xml; charset=utf-8");
+      res.send(xml);
+    });
+
+    app.get("/api/catalog/readiness", (_req, res) => {
+      const storefrontReadiness = require("../lib/storefront/storefrontReadiness");
+      res.json({ success: true, ...storefrontReadiness.evaluateStorefrontReadiness() });
+    });
+
     app.get("/api/catalog/health", (_req, res) => {
       res.json({ success: true, health: catalogReadService.getHealth() });
     });

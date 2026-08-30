@@ -153,6 +153,11 @@ function getLocalizedProductBySlug(slug, localeCode = "de-DE") {
 }
 
 function buildGoogleMerchantFeed(filters = {}) {
+  if (process.env.BUZZARD_MERCHANT_FEED_LEGACY !== "1") {
+    const merchantFeedService = require("./storefront/merchantFeedService");
+    return merchantFeedService.buildGoogleMerchantFeedXml(filters);
+  }
+
   const locale = filters.locale || "de-DE";
   const currency = filters.currency || resolveLocaleCurrency(locale);
   const country = (filters.country || "DE").toUpperCase();

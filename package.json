@@ -69,6 +69,7 @@
     "backup:schedule": "node scripts/backup-scheduler.mjs",
     "test:part16": "vitest run part16TechnicalCompletion",
     "test:part17": "vitest run part17OperationsReadiness",
+    "test:part18": "vitest run part18CustomerStorefrontReadiness",
     "finish:production": "node scripts/finish-production.mjs",
     "export:part-reports": "node scripts/export-part-reports.mjs",
     "orchestrator:dev": "cd intelligence && uvicorn buzzard_orchestrator:app --reload --port 8010",

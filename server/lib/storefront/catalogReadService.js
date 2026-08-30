@@ -88,6 +88,10 @@ function listProducts(query = {}) {
     minPrice: query.minPrice,
     maxPrice: query.maxPrice,
     inStock: query.inStock,
+    availability: query.availability,
+    sku: query.sku,
+    gtin: query.gtin,
+    mpn: query.mpn,
   });
   const facets = buildFilterFacets(mapped);
   mapped = sortProducts(mapped, sort);
@@ -122,7 +126,8 @@ function getProductById(idOrSlug, { preview = false } = {}) {
 }
 
 function searchProducts(query = {}) {
-  return listProducts({ ...query, sort: query.sort || SORT_OPTIONS.RELEVANCE });
+  const storefrontSearchService = require("./storefrontSearchService");
+  return storefrontSearchService.searchCatalog({ ...query, sort: query.sort || SORT_OPTIONS.RELEVANCE });
 }
 
 function listBrands() {

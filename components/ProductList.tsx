@@ -239,9 +239,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
       )}
 
       {isPimStorefrontEnabled() && pimResult?.catalogMode && !catalogLoading && (
-        <p className="admin-note catalog-mode-banner">
-          Katalogmodus — Bestellung derzeit nicht möglich (BUZZARD_SALES_ENABLED=0).
-        </p>
+        <p className="admin-note catalog-mode-banner">{t("catalog.browseOnlyText")}</p>
       )}
 
       {(isLiveLocalizationEnabled() || isLiveCatalogEnabled()) && !isPimStorefrontEnabled() && !catalogLoading && catalogProducts.length > 0 && (

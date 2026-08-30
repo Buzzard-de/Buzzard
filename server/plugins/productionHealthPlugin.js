@@ -55,6 +55,18 @@ module.exports = {
       res.json({ success: true, ...summary });
     });
 
+    app.get("/api/health/go-live-readiness", async (_req, res) => {
+      const goLiveReadiness = require("../lib/operations/goLiveReadiness");
+      const readiness = await goLiveReadiness.evaluateGoLiveReadiness();
+      res.json({ success: true, GO_LIVE_READINESS: readiness });
+    });
+
+    app.get("/api/health/operations", async (_req, res) => {
+      const monitoringReadiness = require("../lib/operations/monitoringReadiness");
+      const snapshot = await monitoringReadiness.getMonitoringSnapshot();
+      res.json({ success: true, ...snapshot });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

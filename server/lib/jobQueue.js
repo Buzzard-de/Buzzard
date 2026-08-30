@@ -61,7 +61,28 @@ function enqueueJob({
   nextRunAt,
   scheduleId,
   createdBy,
+  idempotencyKey,
+  correlationId,
 }) {
+  if (idempotencyKey) {
+    const jobIdempotency = require("./operations/jobIdempotency");
+    const begin = jobIdempotency.beginOperation({
+      operation: jobType,
+      scope: createdBy || "system",
+      idempotencyKey,
+      metadata: { correlationId },
+    });
+    if (!begin.ok) {
+      if (begin.code === "already_completed") {
+        return { duplicate: true, idempotent: true, result: begin.result, existingJobId: begin.existingJobId };
+      }
+      const err = new Error(`Idempotency conflict: ${begin.code}`);
+      err.code = begin.code;
+      err.existingJobId = begin.existingJobId;
+      throw err;
+    }
+  }
+
   const id = newId();
   const pri = priority || JOB_PRIORITY.NORMAL;
   const body = {
@@ -72,16 +93,24 @@ function enqueueJob({
   };
   db.prepare(`
     INSERT INTO core_background_jobs(
-      id, job_type, status, payload_json, retry_count, next_run_at, priority, schedule_id, created_at
-    ) VALUES (?, ?, 'QUEUED', ?, 0, ?, ?, ?, CURRENT_TIMESTAMP)
+      id, job_type, status, payload_json, retry_count, next_run_at, priority, schedule_id, idempotency_key, correlation_id, created_at
+    ) VALUES (?, ?, 'QUEUED', ?, 0, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
   `).run(
     id,
     jobType,
     JSON.stringify(body),
     nextRunAt || new Date().toISOString(),
     pri,
-    scheduleId || null
+    scheduleId || null,
+    idempotencyKey ? require("./operations/jobIdempotency").hashKey(jobType, createdBy || "system", idempotencyKey) : null,
+    correlationId || null
   );
+
+  if (idempotencyKey) {
+    const key = require("./operations/jobIdempotency").hashKey(jobType, createdBy || "system", idempotencyKey);
+    db.prepare(`UPDATE core_job_idempotency SET job_id = ? WHERE idempotency_key = ?`).run(id, key);
+  }
+
   return getJob(id);
 }
 

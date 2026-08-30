@@ -240,6 +240,15 @@ loadPlugins();
 try {
   const { assertProductionSafeStartup } = require("./lib/environmentValidation");
   assertProductionSafeStartup();
+  const { validateConfiguration } = require("./lib/operations/configurationValidation");
+  const configResult = validateConfiguration();
+  if (!configResult.ok) {
+    console.error("[config-validation] FAIL CLOSED:", configResult.errors.map((e) => e.message).join("; "));
+    if (process.env.NODE_ENV === "production") process.exit(1);
+  }
+  for (const w of configResult.warnings) {
+    console.warn("[config-validation]", w.message);
+  }
 } catch (err) {
   console.error(err.message);
   if (process.env.NODE_ENV === "production") process.exit(1);
@@ -270,6 +279,17 @@ if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
 const server = http.createServer(async (req, res) => {
   attachResponseHelpers(res);
   setCommonHeaders(res);
+  const correlationContext = require("./lib/operations/correlationContext");
+  const ctx = correlationContext.createContext({
+    requestId: req.headers["x-request-id"],
+    correlationId: req.headers["x-correlation-id"],
+  });
+  req.requestId = ctx.requestId;
+  req.correlationId = ctx.correlationId;
+  req.operationsContext = ctx;
+  res.setHeader("X-Request-Id", ctx.requestId);
+  res.setHeader("X-Correlation-Id", ctx.correlationId);
+
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = requestUrl.pathname;
 

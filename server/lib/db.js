@@ -3813,12 +3813,60 @@ function migrateCoreFoundationPart16() {
   }
 }
 
+function migrateCoreFoundationPart17() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS core_operations_audit (
+      id TEXT PRIMARY KEY,
+      timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+      actor TEXT,
+      action TEXT NOT NULL,
+      resource TEXT,
+      resource_id TEXT,
+      result TEXT NOT NULL,
+      reason TEXT,
+      correlation_id TEXT,
+      request_id TEXT,
+      job_id TEXT,
+      metadata_json TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_ops_audit_action ON core_operations_audit(action);
+    CREATE INDEX IF NOT EXISTS idx_ops_audit_correlation ON core_operations_audit(correlation_id);
+    CREATE INDEX IF NOT EXISTS idx_ops_audit_timestamp ON core_operations_audit(timestamp);
+
+    CREATE TABLE IF NOT EXISTS core_job_idempotency (
+      id TEXT PRIMARY KEY,
+      idempotency_key TEXT UNIQUE NOT NULL,
+      operation TEXT NOT NULL,
+      scope TEXT DEFAULT 'global',
+      job_id TEXT,
+      status TEXT NOT NULL,
+      attempts INTEGER DEFAULT 0,
+      result_json TEXT,
+      error_message TEXT,
+      metadata_json TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      finished_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_job_idempotency_operation ON core_job_idempotency(operation, status);
+  `);
+
+  const jobCols = db.prepare("PRAGMA table_info(core_background_jobs)").all().map((c) => c.name);
+  if (!jobCols.includes("idempotency_key")) {
+    db.exec(`ALTER TABLE core_background_jobs ADD COLUMN idempotency_key TEXT`);
+    db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_core_jobs_idempotency ON core_background_jobs(idempotency_key) WHERE idempotency_key IS NOT NULL`);
+  }
+  if (!jobCols.includes("correlation_id")) {
+    db.exec(`ALTER TABLE core_background_jobs ADD COLUMN correlation_id TEXT`);
+  }
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
 migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
+migrateCoreFoundationPart17();
 
 
 function seed() {

@@ -1,0 +1,84 @@
+/**
+ * Part 17 — Unified operations status constants.
+ * Maps internal job statuses to operator-facing labels.
+ */
+const OPERATIONS_STATUS = Object.freeze({
+  PENDING: "PENDING",
+  RUNNING: "RUNNING",
+  SUCCESS: "SUCCESS",
+  FAILED: "FAILED",
+  BLOCKED: "BLOCKED",
+  CANCELLED: "CANCELLED",
+  RETRYING: "RETRYING",
+  PERMANENTLY_FAILED: "PERMANENTLY_FAILED",
+});
+
+const READINESS_GATE_STATUS = Object.freeze({
+  PASS: "PASS",
+  FAIL: "FAIL",
+  CONDITION: "CONDITION",
+  BLOCKED: "BLOCKED",
+});
+
+const GO_LIVE_GATES = Object.freeze([
+  "DATABASE",
+  "BACKUP",
+  "CATALOG",
+  "PRODUCT_DATA",
+  "SUPPLIER",
+  "REDIS",
+  "SECURITY",
+  "PAYMENTS",
+  "WORKERS",
+  "MONITORING",
+  "SALES",
+  "GO_LIVE_LOCK",
+]);
+
+const AUDIT_ACTIONS = Object.freeze({
+  PRODUCT_IMPORT: "product.import",
+  PRODUCT_VALIDATE: "product.validate",
+  PRODUCT_PUBLISH: "product.publish",
+  SUPPLIER_CONFIG: "supplier.configuration",
+  PAYMENT_CONFIG: "payment.configuration",
+  SALES_ACTIVATION_ATTEMPT: "sales.activation_attempt",
+  SUPPLIER_ORDER_ATTEMPT: "supplier.order_attempt",
+  ADMIN_CHANGE: "admin.change",
+  BACKUP: "backup",
+  RESTORE_ATTEMPT: "restore.attempt",
+  SECURITY_GATE: "security.gate",
+  GO_LIVE: "go_live",
+});
+
+/** Map core_background_jobs.status → OPERATIONS_STATUS */
+const JOB_STATUS_MAP = Object.freeze({
+  QUEUED: OPERATIONS_STATUS.PENDING,
+  queued: OPERATIONS_STATUS.PENDING,
+  RUNNING: OPERATIONS_STATUS.RUNNING,
+  running: OPERATIONS_STATUS.RUNNING,
+  COMPLETED: OPERATIONS_STATUS.SUCCESS,
+  completed: OPERATIONS_STATUS.SUCCESS,
+  FAILED: OPERATIONS_STATUS.FAILED,
+  failed: OPERATIONS_STATUS.FAILED,
+  RETRYING: OPERATIONS_STATUS.RETRYING,
+  retrying: OPERATIONS_STATUS.RETRYING,
+  CANCELLED: OPERATIONS_STATUS.CANCELLED,
+  cancelled: OPERATIONS_STATUS.CANCELLED,
+  DEAD_LETTER: OPERATIONS_STATUS.PERMANENTLY_FAILED,
+  dead_letter: OPERATIONS_STATUS.PERMANENTLY_FAILED,
+  BLOCKED: OPERATIONS_STATUS.BLOCKED,
+  blocked: OPERATIONS_STATUS.BLOCKED,
+});
+
+function mapJobStatus(status) {
+  return JOB_STATUS_MAP[status] || OPERATIONS_STATUS.PENDING;
+}
+
+module.exports = {
+  OPERATIONS_STATUS,
+  READINESS_GATE_STATUS,
+  GO_LIVE_GATES,
+  AUDIT_ACTIONS,
+  JOB_STATUS_MAP,
+  mapJobStatus,
+};

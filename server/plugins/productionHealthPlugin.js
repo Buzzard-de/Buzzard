@@ -72,6 +72,11 @@ module.exports = {
       res.json({ success: true, ...storefrontReadiness.evaluateStorefrontReadiness() });
     });
 
+    app.get("/api/health/customer-experience-readiness", (_req, res) => {
+      const customerExperienceReadiness = require("../lib/customer/customerExperienceReadiness");
+      res.json({ success: true, ...customerExperienceReadiness.evaluateCustomerExperienceReadiness() });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

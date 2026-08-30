@@ -12,32 +12,13 @@ const {
 const customerStore = require("../lib/customerStore");
 const fulfillmentStore = require("../lib/fulfillmentStore");
 const { logAudit } = require("../lib/audit");
+const customerOrderBridge = require("../lib/customer/customerOrderBridge");
+const {
+  recordCustomerAction,
+  CUSTOMER_AUDIT_ACTIONS,
+} = require("../lib/customer/customerExperienceAudit");
 
-const ordersFile = path.join(__dirname, "..", "data", "orders.json");
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function readOrders() {
-  if (!fs.existsSync(ordersFile)) return [];
-  try {
-    return JSON.parse(fs.readFileSync(ordersFile, "utf8") || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function sanitizeOrder(order) {
-  const clone = { ...order };
-  delete clone.paymentTransactionId;
-  clone.shipments = fulfillmentStore
-    .listShipmentsForOrder(order.orderNumber)
-    .map(fulfillmentStore.sanitizeShipment);
-  const tracked = clone.shipments.find((s) => s.trackingNumber);
-  if (tracked) {
-    clone.trackingNumber = tracked.trackingNumber;
-    clone.trackingCarrier = tracked.carrier;
-  }
-  return clone;
-}
 
 function validateRegister(body) {
   if (!body?.email || !EMAIL_REGEX.test(body.email)) return "account.register.invalidEmail";
@@ -77,6 +58,13 @@ module.exports = {
         field: null,
         oldValue: null,
         newValue: result.customer.id,
+      });
+      req.customerSession = { customerId: result.customer.id, email: result.customer.email };
+      recordCustomerAction(req, {
+        action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_REGISTER,
+        resource: "customer",
+        resourceId: result.customer.id,
+        result: "success",
       });
 
       try {
@@ -170,10 +158,25 @@ module.exports = {
       const session = requireCustomer(req, res);
       if (!session) return;
       const customer = customerStore.findById(session.customerId);
-      const orders = readOrders()
-        .filter((o) => o.customerId === session.customerId || o.customer?.email === customer?.email)
-        .map(sanitizeOrder)
-        .reverse();
+      const orders = customerOrderBridge
+        .listCustomerOrders(session.customerId, customer?.email)
+        .map((order) => {
+          if (order.source === "legacy_orders_json") {
+            const clone = { ...order };
+            clone.shipments = fulfillmentStore
+              .listShipmentsForOrder(order.orderNumber)
+              .map(fulfillmentStore.sanitizeShipment);
+            return clone;
+          }
+          return order;
+        });
+      recordCustomerAction(req, {
+        action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_ORDER_VIEW,
+        resource: "order_list",
+        resourceId: session.customerId,
+        result: "success",
+        metadata: { count: orders.length },
+      });
       return res.json({ success: true, orders });
     });
 
@@ -181,12 +184,19 @@ module.exports = {
       const session = requireCustomer(req, res);
       if (!session) return;
       const customer = customerStore.findById(session.customerId);
-      const order = readOrders().find((o) => o.orderNumber === req.params.orderNumber);
+      const order = customerOrderBridge.getCustomerOrder(
+        req.params.orderNumber,
+        session.customerId,
+        customer?.email
+      );
       if (!order) return res.status(404).json({ success: false, errorKey: "account.order.notFound" });
-      const owns =
-        order.customerId === session.customerId || order.customer?.email === customer?.email;
-      if (!owns) return res.status(403).json({ success: false, errorKey: "account.auth.forbidden" });
-      return res.json({ success: true, order: sanitizeOrder(order) });
+      recordCustomerAction(req, {
+        action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_ORDER_VIEW,
+        resource: "order",
+        resourceId: req.params.orderNumber,
+        result: "success",
+      });
+      return res.json({ success: true, order });
     });
 
     app.get("/api/account/wishlist", (req, res) => {
@@ -241,6 +251,12 @@ module.exports = {
         oldValue: null,
         newValue: "data_export",
       });
+      recordCustomerAction(req, {
+        action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_PRIVACY_EXPORT,
+        resource: "customer",
+        resourceId: session.customerId,
+        result: "success",
+      });
       return res.json({ success: true, export: exportData });
     });
 
@@ -289,7 +305,13 @@ module.exports = {
       const session = requireCustomer(req, res);
       if (!session) return;
       const requestedAt = customerStore.requestDeletion(session.customerId);
-      return res.json({ success: true, requestedAt });
+      recordCustomerAction(req, {
+        action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_PRIVACY_DELETE,
+        resource: "customer",
+        resourceId: session.customerId,
+        result: "pending_human_review",
+      });
+      return res.json({ success: true, requestedAt, status: "PENDING_HUMAN_REVIEW" });
     });
   },
 };

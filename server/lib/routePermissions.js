@@ -21,6 +21,7 @@ const PUBLIC_ROUTES = new Set([
   "GET /api/health/go-live-readiness",
   "GET /api/health/operations",
   "GET /api/health/storefront-readiness",
+  "GET /api/health/customer-experience-readiness",
   "GET /api/commerce/status",
   "GET /api/commerce/readiness",
   "GET /api/commerce/shipping/methods",

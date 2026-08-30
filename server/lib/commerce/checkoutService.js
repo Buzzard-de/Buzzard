@@ -259,6 +259,14 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
     }
 
     transitionCheckout(checkoutId, CHECKOUT_STATE.COMPLETED);
+
+    try {
+      const customerNotificationReadiness = require("../customer/customerNotificationReadiness");
+      customerNotificationReadiness.emitCheckoutNotification(order, ctx);
+    } catch {
+      /* non-blocking */
+    }
+
     return {
       checkoutId,
       state: CHECKOUT_STATE.COMPLETED,

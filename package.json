@@ -62,6 +62,8 @@
     "render:preflight": "node scripts/render-preflight.mjs",
     "setup:production-remaining": "node scripts/setup-production-remaining.mjs",
     "verify:db-persistence": "node scripts/verify-db-persistence.mjs",
+    "test:part15": "node scripts/part15-readiness.mjs",
+    "finish:production": "node scripts/finish-production.mjs",
     "export:part-reports": "node scripts/export-part-reports.mjs",
     "orchestrator:dev": "cd intelligence && uvicorn buzzard_orchestrator:app --reload --port 8010",
     "wait:api": "node scripts/wait-for-api-health.mjs http://localhost:3001",

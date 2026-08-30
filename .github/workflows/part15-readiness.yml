@@ -1,0 +1,33 @@
+name: Part 15 Readiness
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * *"
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Part 15 readiness (live, sales stay off)
+        env:
+          BUZZARD_API_URL: https://buzzard-api.onrender.com
+          BUZZARD_SITE_URL: https://buzzard24.de
+        run: npm run test:part15
+        continue-on-error: true
+
+      - name: DB persistence
+        env:
+          BUZZARD_API_URL: https://buzzard-api.onrender.com
+        run: npm run verify:db-persistence
+        continue-on-error: true

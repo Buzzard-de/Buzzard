@@ -52,7 +52,8 @@ GitHub Actions → **Setup Production Remaining**
 - Verkauf / Stripe / PayPal aktivieren
 - Commerce-Secrets ins Repo
 - Echte Lieferantenbestellungen
-- **Part 15**
+
+**Part 15 Readiness:** `docs/PART15_READINESS_DE.md` · `npm run test:part15` · `npm run finish:production`
 
 ---
 

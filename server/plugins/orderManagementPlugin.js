@@ -1,6 +1,7 @@
 const { extractToken, verifyToken } = require("../lib/dbAuth");
 const { extractToken: extractAdminToken, getSession } = require("../lib/auth");
 const orderManagement = require("../lib/orderManagement");
+const { assertCustomerMutationAllowed } = require("../lib/customer/customerMutationGuard");
 
 function requireAnyAdmin(req, res) {
   const bearer = extractToken(req);
@@ -35,6 +36,14 @@ module.exports = {
     }
 
     app.post("/api/order-management/orders", (req, res) => {
+      const block = assertCustomerMutationAllowed({ req, action: "oms_order_create" });
+      if (block?.blocked) {
+        return res.status(block.status || 403).json({
+          error: block.code,
+          message: block.message,
+          failClosed: true,
+        });
+      }
       const result = orderManagement.createOrder(req.body || {});
       if (result.error) {
         return res.status(result.status || 400).json({ error: result.error, detail: result.detail });

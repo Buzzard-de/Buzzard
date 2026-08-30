@@ -1,6 +1,12 @@
 const { extractToken, verifyToken } = require("../lib/dbAuth");
 const { extractToken: extractAdminToken, getSession } = require("../lib/auth");
 const returnsRma = require("../lib/returnsRma");
+const { requireCustomerSession } = require("../lib/customer/customerAuthBridge");
+const { assertReturnRequestAllowed } = require("../lib/customer/customerMutationGuard");
+const {
+  recordCustomerAction,
+  CUSTOMER_AUDIT_ACTIONS,
+} = require("../lib/customer/customerExperienceAudit");
 
 function requireAnyAdmin(req, res) {
   const bearer = extractToken(req);
@@ -35,8 +41,57 @@ module.exports = {
     }
 
     app.post("/api/returns-rma/returns", (req, res) => {
-      const result = returnsRma.createReturn(req.body || {});
+      const session = requireCustomerSession(req, res);
+      if (!session) return;
+
+      const block = assertReturnRequestAllowed({ req });
+      if (block?.blocked) {
+        recordCustomerAction(req, {
+          action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_RETURN_REQUEST,
+          resource: "return",
+          resourceId: req.body?.orderNumber || req.body?.order_number || "unknown",
+          result: "blocked",
+          reason: block.code,
+        });
+        return res.status(block.status || 403).json({
+          success: false,
+          error: block.code,
+          message: block.message,
+          failClosed: true,
+        });
+      }
+
+      const body = {
+        ...(req.body || {}),
+        customerId: session.customerId,
+        customerEmail: session.email,
+      };
+      const result = returnsRma.createReturn(body);
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
+
+      recordCustomerAction(req, {
+        action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_RETURN_REQUEST,
+        resource: "return",
+        resourceId: result.return?.rma_number || result.return?.id,
+        result: "success",
+      });
+
+      try {
+        const automationEngine = require("../lib/automationEngine");
+        automationEngine.emit(
+          "return_request",
+          {
+            rmaNumber: result.return?.rma_number,
+            orderNumber: body.orderNumber || body.order_number,
+            customerId: session.customerId,
+            testOnly: true,
+          },
+          { idempotencyKey: `return_${result.return?.rma_number}` }
+        );
+      } catch {
+        /* non-blocking */
+      }
+
       return res.status(201).json(result.return);
     });
 

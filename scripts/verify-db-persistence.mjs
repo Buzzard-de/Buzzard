@@ -26,6 +26,12 @@ async function main() {
     process.exit(0);
   }
 
+  if (p.syncHint) console.log(`  hint:       ${p.syncHint}`);
+  if (p.renderDisk) {
+    console.log(`  /var/data:  exists=${p.renderDisk.exists} writable=${p.renderDisk.writable}`);
+    console.log(`  env path:   ${p.renderDisk.envBuzzardDbPath || "(not set)"}`);
+  }
+
   console.log("\nFAIL — still ephemeral");
   console.log("Action: docs/DB_PERSISTENCE_RENDER_DE.md (Blueprint sync or RENDER_API_KEY apply)");
   process.exit(1);

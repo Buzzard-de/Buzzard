@@ -330,6 +330,17 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.configure")) return;
       const body = parseBody(req);
+      try {
+        const adminSafetyGate = require("../lib/operations/adminSafetyGate");
+        adminSafetyGate.requireAdminAction("go_live", { req, body });
+      } catch (err) {
+        return res.status(403).json({
+          success: false,
+          errorKey: err.code || "admin_action_blocked",
+          message: err.message,
+          details: err.details,
+        });
+      }
       const result = commerce.goLiveApproval.requestGoLive({
         requestedBy: req.adminUser.email,
         notes: body.notes,
@@ -341,6 +352,17 @@ module.exports = {
     app.post("/api/admin/commerce/go-live/:id/approve", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.configure")) return;
+      try {
+        const adminSafetyGate = require("../lib/operations/adminSafetyGate");
+        adminSafetyGate.requireAdminAction("go_live", { req, body: parseBody(req) });
+      } catch (err) {
+        return res.status(403).json({
+          success: false,
+          errorKey: err.code || "admin_action_blocked",
+          message: err.message,
+          details: err.details,
+        });
+      }
       const result = commerce.goLiveApproval.approveGoLive({
         requestId: req.params.id,
         decidedBy: req.adminUser.email,

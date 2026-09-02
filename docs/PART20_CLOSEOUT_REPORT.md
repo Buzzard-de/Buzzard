@@ -3,7 +3,7 @@
 **Date:** 2026-09-02  
 **Branch:** `cursor/part20-admin-backoffice-readiness-c293`  
 **Base:** `main` @ `7218d3dc75a7fbedc0825ba1ab502c1c31813fdb`  
-**Commit:** `656f48e`  
+**Commit:** `1cf909c` (feature: `656f48e`)  
 **PR:** (draft — see below after push)
 
 ---

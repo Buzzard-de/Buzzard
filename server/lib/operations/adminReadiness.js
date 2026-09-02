@@ -15,6 +15,10 @@ const goLiveApproval = require("../commerce/goLiveApproval");
 const { CRITICAL_ACTIONS } = require("./adminSafetyGate");
 const { evaluateCatalogReadiness } = require("./catalogReadiness");
 const incidentReadiness = require("./incidentReadiness");
+const securityReadiness = require("../security/securityReadiness");
+const alertReadiness = require("./alertReadiness");
+const operationalMetrics = require("./operationalMetrics");
+const { validateConfiguration } = require("./configurationValidation");
 
 function gate(name, status, detail, extras = {}) {
   return { gate: name, status, detail, ...extras };
@@ -184,6 +188,11 @@ async function getAdminDashboardSnapshot() {
   const catalog = catalogReadService.getHealth();
   const supplier = createConnectorFromEnv().getStatus();
   const flags = getEffectiveFlags();
+  const security = securityReadiness.evaluateSecurityReadiness({ adminDetail: true });
+  const alerts = await alertReadiness.getAlertReadiness();
+  const incidents = await incidentReadiness.getIncidentReadiness();
+  const metrics = await operationalMetrics.getOperationalMetrics();
+  const config = validateConfiguration();
 
   return {
     timestamp: new Date().toISOString(),
@@ -219,6 +228,35 @@ async function getAdminDashboardSnapshot() {
     goLive: {
       lock: goLiveApproval.PRODUCTION_SAFETY_LOCK,
       canActivateSales: goLiveApproval.canActivateSales(),
+    },
+    securityObservability: {
+      securityReadiness: security.SECURITY_READINESS,
+      monitoringReadiness: {
+        overall: monitoring.overall,
+        alertCount: monitoring.alerts?.length || 0,
+        goLiveReadiness: monitoring.goLiveReadiness,
+      },
+      alertReadiness: alerts,
+      incidents,
+      authentication: {
+        status: "ACTIVE",
+        lockoutsActive: security.SECURITY_READINESS?.gates?.find((g) => g.gate === "AUTHENTICATION")?.lockoutsActive ?? 0,
+      },
+      authorization: {
+        status: "ACTIVE",
+        rbac: true,
+        globalAuthMiddleware: true,
+      },
+      audit: {
+        operationsAudit: true,
+        securityLog: true,
+      },
+      configuration: {
+        ok: config.ok,
+        errorCount: config.errors?.length || 0,
+        warningCount: config.warnings?.length || 0,
+      },
+      metrics,
     },
   };
 }

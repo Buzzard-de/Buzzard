@@ -77,6 +77,12 @@ module.exports = {
       res.json({ success: true, ...customerExperienceReadiness.evaluateCustomerExperienceReadiness() });
     });
 
+    app.get("/api/health/admin-backoffice-readiness", async (_req, res) => {
+      const adminReadiness = require("../lib/operations/adminReadiness");
+      const report = await adminReadiness.evaluateAdminReadiness();
+      res.json({ success: true, ...report });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

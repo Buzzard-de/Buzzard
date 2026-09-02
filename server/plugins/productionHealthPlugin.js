@@ -89,6 +89,12 @@ module.exports = {
       res.json({ success: true, ...report });
     });
 
+    app.get("/api/health/product-quality-readiness", (_req, res) => {
+      const productQualityReadinessCenter = require("../lib/pim/productQualityReadinessCenter");
+      const report = productQualityReadinessCenter.evaluateProductQualityReadiness();
+      res.json({ success: true, ...report });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

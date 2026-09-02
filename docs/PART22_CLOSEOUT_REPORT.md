@@ -3,7 +3,8 @@
 **Date:** 2026-09-02  
 **Branch:** `cursor/part22-product-quality-hardening-c293`  
 **Base:** `main` @ `e1e0d9ecaa01fa2bdccb577ca242abc08a183e74`  
-**PR:** (draft — not merged)
+**Commit:** `6f2ee8c`  
+**PR:** [#282](https://github.com/Buzzard-de/Buzzard/pull/282) — **DRAFT, not merged**
 
 ---
 

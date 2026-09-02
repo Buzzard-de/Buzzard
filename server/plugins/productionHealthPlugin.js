@@ -83,6 +83,12 @@ module.exports = {
       res.json({ success: true, ...report });
     });
 
+    app.get("/api/health/security-readiness", (_req, res) => {
+      const securityReadiness = require("../lib/security/securityReadiness");
+      const report = securityReadiness.evaluateSecurityReadiness({ adminDetail: false });
+      res.json({ success: true, ...report });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

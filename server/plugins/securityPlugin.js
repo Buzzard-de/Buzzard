@@ -78,5 +78,42 @@ module.exports = {
         lockouts: listLockouts(50),
       });
     });
+
+    app.get("/api/admin/security/readiness", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "security.read")) return;
+      const securityReadiness = require("../lib/security/securityReadiness");
+      const report = securityReadiness.evaluateSecurityReadiness({ adminDetail: true });
+      res.json({ success: true, ...report });
+    });
+
+    app.get("/api/admin/security/audit", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "security.read")) return;
+      const securityAudit = require("../lib/security/securityAudit");
+      const audit = securityAudit.runSecurityAudit();
+      res.json({ success: true, audit });
+    });
+
+    app.get("/api/admin/monitoring/readiness", async (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      const monitoringReadiness = require("../lib/operations/monitoringReadiness");
+      const alertReadiness = require("../lib/operations/alertReadiness");
+      const operationalMetrics = require("../lib/operations/operationalMetrics");
+      const [monitoring, alerts, metrics] = await Promise.all([
+        monitoringReadiness.getMonitoringSnapshot(),
+        alertReadiness.getAlertReadiness(),
+        operationalMetrics.getOperationalMetrics(),
+      ]);
+      res.json({
+        success: true,
+        diagnosticOnly: true,
+        autoActivate: false,
+        monitoring,
+        alerts,
+        metrics,
+      });
+    });
   },
 };

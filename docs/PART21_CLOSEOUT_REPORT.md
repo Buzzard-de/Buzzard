@@ -3,7 +3,8 @@
 **Date:** 2026-09-02  
 **Branch:** `cursor/part21-security-observability-readiness-c293`  
 **Base:** `main` @ `c18803f9adc69e67f408df82b8f61aab119ede31`  
-**PR:** (draft — not merged)
+**Commit:** `08d5380`  
+**PR:** [#281](https://github.com/Buzzard-de/Buzzard/pull/281) — **DRAFT, not merged**
 
 ---
 

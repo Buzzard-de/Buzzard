@@ -138,6 +138,31 @@ module.exports = {
       res.json({ success: true, health: catalogReadService.getHealth() });
     });
 
+    app.get("/api/admin/catalog/product-quality", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "products.read")) return;
+      const productQualityReadinessCenter = require("../lib/pim/productQualityReadinessCenter");
+      const readiness = productQualityReadinessCenter.evaluateProductQualityReadiness();
+      res.json({
+        success: true,
+        diagnosticOnly: true,
+        autoActivate: false,
+        ...readiness,
+      });
+    });
+
+    app.post("/api/admin/catalog/product-quality/evaluate", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "products.read")) return;
+      const productQualityHardening = require("../lib/pim/productQualityHardening");
+      const record = req.body?.record || req.body || {};
+      const result = productQualityHardening.evaluateProductQualityHardening(record, {
+        supplierCode: record.supplierCode || req.body?.supplierCode || "REAL-WHOLESALER-001",
+        ...req.body?.options,
+      });
+      res.json({ success: true, result });
+    });
+
     console.log("Storefront bridge plugin loaded (PIM → /api/catalog/*)");
   },
 };

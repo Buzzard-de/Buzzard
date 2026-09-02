@@ -73,6 +73,7 @@
     "test:part19": "vitest run part19CustomerExperienceReadiness",
     "test:part20": "vitest run part20AdminBackofficeReadiness",
     "test:part21": "vitest run part21SecurityObservabilityReadiness",
+    "test:part22": "vitest run part22ProductQualityHardening",
     "finish:production": "node scripts/finish-production.mjs",
     "export:part-reports": "node scripts/export-part-reports.mjs",
     "orchestrator:dev": "cd intelligence && uvicorn buzzard_orchestrator:app --reload --port 8010",

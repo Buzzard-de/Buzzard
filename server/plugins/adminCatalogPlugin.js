@@ -153,10 +153,12 @@ module.exports = {
     app.get("/api/admin/suppliers", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "suppliers.read")) return;
+      const supplierRegistry = require("../lib/supplier/supplierRegistry");
       return res.json({
         success: true,
         suppliers: supplierStore.listSuppliers().map(supplierStore.toAdminSupplier),
         mappings: supplierStore.readMappings(),
+        integration: supplierRegistry.listSuppliers(),
       });
     });
 

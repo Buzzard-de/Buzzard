@@ -95,6 +95,17 @@ module.exports = {
       res.json({ success: true, ...report });
     });
 
+    app.get("/api/health/supplier-readiness", (_req, res) => {
+      const supplierReadinessCenter = require("../lib/supplier/supplierReadinessCenter");
+      const report = supplierReadinessCenter.evaluateSupplierIntegrationReadiness();
+      res.json({
+        success: true,
+        diagnosticOnly: true,
+        autoActivate: false,
+        ...report,
+      });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

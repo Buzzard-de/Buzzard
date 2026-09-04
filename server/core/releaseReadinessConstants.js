@@ -22,7 +22,7 @@ const RELEASE_GATE = Object.freeze({
   GO_LIVE: "goLive",
 });
 
-const RELEASE_READINESS_VERSION = "part24";
+const RELEASE_READINESS_VERSION = "part25";
 
 const RELEASE_POLICY = Object.freeze({
   diagnosticOnly: true,

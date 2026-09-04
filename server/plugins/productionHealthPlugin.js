@@ -106,6 +106,17 @@ module.exports = {
       });
     });
 
+    app.get("/api/health/release-readiness", async (_req, res) => {
+      const releaseReadinessCenter = require("../lib/release/releaseReadinessCenter");
+      const report = await releaseReadinessCenter.evaluateProductionReleaseReadiness();
+      res.json({
+        success: true,
+        diagnosticOnly: true,
+        autoActivate: false,
+        ...report,
+      });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

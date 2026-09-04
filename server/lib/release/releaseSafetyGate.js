@@ -12,7 +12,8 @@ function evaluateReleaseSafety(env = process.env, runtime = {}) {
     isFalse(env.BUZZARD_SALES_ENABLED) &&
     isFalse(env.NEXT_PUBLIC_SALES_ENABLED);
   const lockActive =
-    String(env.PRODUCTION_SAFETY_LOCK ?? "").toLowerCase() === "true";
+    String(env.PRODUCTION_SAFETY_LOCK ?? "").toLowerCase() === "true" ||
+    runtime.productionSafetyLock === true;
   const liveImportDisabled = isFalse(env.REAL_SUPPLIER_LIVE_IMPORT);
   const dryRunEnabled =
     String(env.REAL_SUPPLIER_DRY_RUN ?? "").trim() === "1" ||

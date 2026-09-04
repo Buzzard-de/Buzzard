@@ -80,6 +80,7 @@
     "test:part26": "vitest run part26FinalProductionHardening",
     "test:part27": "node --test server/__tests__/part27OperationalFinalization.test.mjs",
     "test:part28": "node --test server/__tests__/part28FinalGoLiveReadiness.test.mjs",
+    "test:part29": "node --test server/__tests__/part29FinalPreLaunchAudit.test.mjs",
     "finish:production": "node scripts/finish-production.mjs",
     "export:part-reports": "node scripts/export-part-reports.mjs",
     "orchestrator:dev": "cd intelligence && uvicorn buzzard_orchestrator:app --reload --port 8010",

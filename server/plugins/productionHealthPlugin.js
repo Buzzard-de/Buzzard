@@ -117,6 +117,14 @@ module.exports = {
       });
     });
 
+    app.get("/api/health/final-production-readiness", (_req, res) => {
+      const { evaluatePublicFinalHardeningSummary } = require("../lib/release/finalProductionHardening");
+      res.json({
+        success: true,
+        ...evaluatePublicFinalHardeningSummary(),
+      });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

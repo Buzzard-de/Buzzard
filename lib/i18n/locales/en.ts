@@ -393,7 +393,8 @@ export const catalog: TranslationTree = {
     salesDisabled: "Online ordering is currently unavailable.",
     inquiryTitle: "Product inquiry",
     inquiryText: "Your cart is ready. Send us the items you want — we will reply with availability and pricing.",
-    inquiryNote: "Prices are hidden in catalog mode. Add items to your cart and send us an inquiry.",
+    inquiryNote: "Add items to your cart and send us an inquiry.",
+    inquiryHint: "Send us an inquiry via Help & Contact if you are interested.",
     inquiryCta: "Send inquiry",
   },
   contactForm: {

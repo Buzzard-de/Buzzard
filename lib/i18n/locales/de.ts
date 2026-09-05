@@ -414,7 +414,8 @@ export const catalog: TranslationTree = {
     productInfo: "Katalogmodus — Preis und Bestellung folgen mit Verkaufsstart.",
     inquiryTitle: "Produktanfrage",
     inquiryText: "Ihr Warenkorb ist bereit. Senden Sie uns die gewünschten Artikel — wir melden uns mit Verfügbarkeit und Preis.",
-    inquiryNote: "Preise werden im Katalogmodus nicht angezeigt. Legen Sie Artikel in den Warenkorb und senden Sie uns Ihre Anfrage.",
+    inquiryNote: "Legen Sie Artikel in den Warenkorb und senden Sie uns Ihre Anfrage.",
+    inquiryHint: "Bei Interesse senden Sie uns eine Anfrage über Hilfe & Kontakt.",
     inquiryCta: "Anfrage senden",
   },
   contactForm: {

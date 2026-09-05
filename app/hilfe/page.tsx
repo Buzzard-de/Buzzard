@@ -28,10 +28,10 @@ export default function HilfePage() {
           werden Preise und Checkout freigeschaltet.
         </p>
 
-        <h3>Warum steht „Preis auf Anfrage“?</h3>
+        <h3>Wo sehe ich Preise?</h3>
         <p>
-          Im Katalogmodus werden keine Verkaufspreise angezeigt. So können Sie sich unverbindlich über das
-          Sortiment informieren. Für Preisanfragen nutzen Sie das Kontaktformular oder rufen Sie uns an.
+          Verkaufspreise werden erst mit dem Verkaufsstart auf der Website angezeigt. Bis dahin informieren wir
+          Sie auf Anfrage per Kontaktformular oder Telefon.
         </p>
 
         <h3>Funktionieren Konto und Backend?</h3>

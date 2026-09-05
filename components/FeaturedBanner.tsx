@@ -17,6 +17,7 @@ import {
 import { useCart } from "@/lib/cart";
 import { getProductById, getProductsForCategory } from "@/lib/products";
 import PriceLabel from "@/components/shop/PriceLabel";
+import { showPrices } from "@/lib/shop/mode";
 import type { BuzzardCategory } from "@/lib/categories/types";
 import { smartMenuSignalHref } from "@/lib/smartMenu/bridge";
 import { useSmartMenuSignals } from "@/lib/smartMenu/useSmartMenuSignals";
@@ -153,9 +154,11 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
                   <Link href={product.url} className="popular-product-name">
                     {product.name}
                   </Link>
-                  <div className="popular-product-prices">
-                    <PriceLabel amount={product.price} className="popular-product-price" />
-                  </div>
+                  {showPrices() ? (
+                    <div className="popular-product-prices">
+                      <PriceLabel amount={product.price} className="popular-product-price" />
+                    </div>
+                  ) : null}
                   <button
                     type="button"
                     className="popular-add-btn"

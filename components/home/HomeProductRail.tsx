@@ -67,16 +67,17 @@ export default function HomeProductRail({ title, variant = "all", limit = 8 }: H
                 {localized.name}
               </Link>
               <span className="product-card-sku">{getCategoryLabelForProduct(localized, locale)}</span>
-              <div className="product-card-prices">
-                <PriceLabel amount={localized.price} className="product-card-price" />
-                {showPrices() &&
-                  localized.compareAtPrice &&
-                  localized.compareAtPrice > localized.price && (
-                    <span className="product-card-compare">
-                      <PriceLabel amount={localized.compareAtPrice} />
-                    </span>
-                  )}
-              </div>
+              {showPrices() ? (
+                <div className="product-card-prices">
+                  <PriceLabel amount={localized.price} className="product-card-price" />
+                  {localized.compareAtPrice &&
+                    localized.compareAtPrice > localized.price && (
+                      <span className="product-card-compare">
+                        <PriceLabel amount={localized.compareAtPrice} />
+                      </span>
+                    )}
+                </div>
+              ) : null}
               <button
                 type="button"
                 className="product-card-btn"

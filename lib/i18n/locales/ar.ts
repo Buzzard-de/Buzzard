@@ -386,7 +386,8 @@ export const catalog: TranslationTree = {
     salesDisabled: "الطلب عبر الإنترنت غير متاح حاليًا.",
     inquiryTitle: "استفسار عن منتج",
     inquiryText: "سلتك جاهزة. أرسل لنا المنتجات المطلوبة — سنرد بالتوفر والسعر.",
-    inquiryNote: "الأسعار مخفية في وضع الكatalog. أضف المنتجات إلى السلة وأرسل استفسارك.",
+    inquiryNote: "أضف المنتجات إلى السلة وأرسل استفسارك.",
+    inquiryHint: "أرسل استفسارك عبر المساعدة والاتصال إذا كنت مهتمًا.",
     inquiryCta: "إرسال استفسار",
   },
   contactForm: {

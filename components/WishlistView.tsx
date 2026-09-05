@@ -8,6 +8,7 @@ import { useCart } from "@/lib/cart";
 import { useLocale } from "@/lib/i18n/context";
 import ProductSvg from "./ProductSvg";
 import PriceLabel from "@/components/shop/PriceLabel";
+import { showPrices } from "@/lib/shop/mode";
 
 export default function WishlistView() {
   const { ids, toggle } = useWishlist();
@@ -39,7 +40,7 @@ export default function WishlistView() {
               </Link>
               <div className="wishlist-item-body">
                 <Link href={localized.url}>{localized.name}</Link>
-                <PriceLabel amount={localized.price} />
+                {showPrices() ? <PriceLabel amount={localized.price} /> : null}
               </div>
               <div className="wishlist-item-actions">
                 <button type="button" className="shop-btn-primary" onClick={() => add({ productId: product.id })}>

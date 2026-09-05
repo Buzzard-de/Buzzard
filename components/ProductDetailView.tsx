@@ -123,17 +123,16 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               )}
             </p>
 
-            <div className="product-detail-pricing">
-              <PriceLabel amount={activePrice} className="product-detail-price" />
-              {showPrices() &&
-                localizedProduct.compareAtPrice &&
-                localizedProduct.compareAtPrice > activePrice && (
-                  <p className="product-detail-compare">{formatPrice(localizedProduct.compareAtPrice)}</p>
-                )}
-              {showPrices() ? (
+            {showPrices() ? (
+              <div className="product-detail-pricing">
+                <PriceLabel amount={activePrice} className="product-detail-price" />
+                {localizedProduct.compareAtPrice &&
+                  localizedProduct.compareAtPrice > activePrice && (
+                    <p className="product-detail-compare">{formatPrice(localizedProduct.compareAtPrice)}</p>
+                  )}
                 <p className="product-detail-vat">{formatVatInfo(activePrice, localizedProduct.vatRate, locale)}</p>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
 
             <p className={`product-stock status-${localizedProduct.stockStatus}${activeStock < 10 ? " low" : ""}`}>
               {stockStatusLabel(localizedProduct.stockStatus, locale)} · {activeStock}
@@ -208,7 +207,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                   <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
                 </>
               ) : null}
-              <p>{isCheckoutEnabled() ? "14 Tage Rückgaberecht · Sichere Zahlung" : t("catalog.inquiryNote")}</p>
+              <p>{isCheckoutEnabled() ? "14 Tage Rückgaberecht · Sichere Zahlung" : t("catalog.inquiryHint")}</p>
             </div>
           </div>
         </div>

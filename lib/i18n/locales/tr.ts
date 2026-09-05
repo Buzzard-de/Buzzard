@@ -386,7 +386,8 @@ export const catalog: TranslationTree = {
     salesDisabled: "Online sipariş şu anda mümkün değil.",
     inquiryTitle: "Ürün sorgusu",
     inquiryText: "Sepetiniz hazır. İstediğiniz ürünleri gönderin — stok ve fiyat bilgisiyle dönüş yaparız.",
-    inquiryNote: "Katalog modunda fiyatlar gösterilmez. Ürünleri sepete ekleyip bize sorgu gönderin.",
+    inquiryNote: "Ürünleri sepete ekleyip bize sorgu gönderin.",
+    inquiryHint: "İlgileniyorsanız Yardım & İletişim üzerinden sorgu gönderin.",
     inquiryCta: "Sorgu gönder",
   },
   contactForm: {

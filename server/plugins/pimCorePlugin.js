@@ -9,6 +9,10 @@ const brandService = require("../lib/pim/brandService");
 const supplierMapping = require("../lib/pim/supplierMapping");
 const importPipeline = require("../lib/pim/importPipeline");
 const productValidation = require("../lib/pim/productValidation");
+const { buildStructuredValidationResult } = require("../lib/pim/productValidationReport");
+const { buildPimHealthReport } = require("../lib/pim/pimHealthReport");
+const { resolveProductWorkflowStatus } = require("../core/pimWorkflowConstants");
+const { listStagingRecords } = require("../lib/pim/productStagingService");
 const categoryEngine = require("../lib/pim/categoryEngine");
 const attributeSchema = require("../lib/pim/attributeSchema");
 const variantService = require("../lib/pim/variantService");
@@ -44,15 +48,24 @@ module.exports = {
     app.get("/api/admin/pim-core/products", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "products.read")) return;
-      res.json({
-        success: true,
-        products: productCore.listProducts({
-          status: req.query.status,
-          category: req.query.category,
-          q: req.query.q,
-          limit: Number(req.query.limit) || 50,
-        }),
+      let products = productCore.listProducts({
+        status: req.query.status,
+        category: req.query.category,
+        q: req.query.q,
+        limit: Number(req.query.limit) || 100,
       });
+      products = products.map((product) => {
+        const validation = productValidation.validateProduct(product);
+        return {
+          ...product,
+          workflowStatus: resolveProductWorkflowStatus(product, { validationOverall: validation.overall }),
+          validationOverall: validation.overall,
+        };
+      });
+      if (req.query.workflow && req.query.workflow !== "ALL") {
+        products = products.filter((p) => p.workflowStatus === req.query.workflow);
+      }
+      res.json({ success: true, products });
     });
 
     app.get("/api/admin/pim-core/products/:id", (req, res) => {
@@ -97,7 +110,33 @@ module.exports = {
       if (!requirePerm(req, res, "products.read")) return;
       const product = productCore.getProduct(req.params.id);
       if (!product) return res.status(404).json({ success: false });
-      res.json({ success: true, validation: productValidation.validateProduct(product) });
+      const validation = productValidation.validateProduct(product);
+      const structured = buildStructuredValidationResult(product, { pipeline: false });
+      res.json({
+        success: true,
+        validation,
+        report: structured,
+        workflowStatus: resolveProductWorkflowStatus(product, { validationOverall: validation.overall }),
+      });
+    });
+
+    app.get("/api/admin/pim-core/health", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePerm(req, res, "products.read")) return;
+      res.json({ success: true, report: buildPimHealthReport() });
+    });
+
+    app.get("/api/admin/pim-core/staging", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePerm(req, res, "products.read")) return;
+      res.json({
+        success: true,
+        records: listStagingRecords({
+          status: req.query.status,
+          supplierCode: req.query.supplier,
+          limit: Number(req.query.limit) || 100,
+        }),
+      });
     });
 
     app.get("/api/admin/pim-core/brands", (req, res) => {

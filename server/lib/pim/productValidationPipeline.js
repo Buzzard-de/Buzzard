@@ -49,13 +49,16 @@ function runValidationPipeline(raw, options = {}) {
     importJobId: options.importJobId,
   });
 
-  if (isDemoOrTestProduct(normalized)) {
+  const { applyCategoryToNormalized } = require("./categoryResolver");
+  const normalizedWithCategory = applyCategoryToNormalized(normalized, { supplierCode });
+
+  if (isDemoOrTestProduct(normalizedWithCategory)) {
     return {
       ok: false,
       blocked: true,
       lifecycleStatus: STAGING_LIFECYCLE.REJECTED,
       blockingReasons: [BLOCKING_CODES.DEMO_PRODUCT],
-      normalized,
+      normalized: normalizedWithCategory,
       stages: [{ stage: "demo_guard", status: "FAIL" }],
     };
   }
@@ -70,13 +73,13 @@ function runValidationPipeline(raw, options = {}) {
     verified: false,
   });
 
-  const duplicateCheck = detectDuplicates(normalized, {
+  const duplicateCheck = detectDuplicates(normalizedWithCategory, {
     excludeStagingId: options.excludeStagingId,
     excludeProductId: options.excludeProductId,
   });
 
   const quality = evaluateProductQuality(
-    { ...normalized, provenance, supplierCode },
+    { ...normalizedWithCategory, provenance, supplierCode },
     {
       requireMpn: options.requireMpn !== false,
       requireImage: options.requireImage !== false,
@@ -87,9 +90,13 @@ function runValidationPipeline(raw, options = {}) {
     }
   );
 
-  const fitment = validateFitmentRecord(normalized, { requireFitment: false });
+  const fitment = validateFitmentRecord(normalizedWithCategory, { requireFitment: false });
 
   const blockingReasons = [...quality.blockingReasons];
+  if (normalizedWithCategory.categoryResolution && !normalizedWithCategory.categoryResolution.ok) {
+    const code = normalizedWithCategory.categoryResolution.code;
+    if (code) blockingReasons.push(code);
+  }
   if (!duplicateCheck.ok) {
     for (const dup of duplicateCheck.issues) blockingReasons.push(dup.code);
   }
@@ -102,7 +109,7 @@ function runValidationPipeline(raw, options = {}) {
     blocked,
     lifecycleStatus,
     blockingReasons: [...new Set(blockingReasons)],
-    normalized,
+    normalized: normalizedWithCategory,
     provenance,
     quality,
     fitment,

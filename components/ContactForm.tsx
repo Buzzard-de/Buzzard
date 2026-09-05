@@ -22,12 +22,18 @@ export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
   const [formStartedAt] = useState(() => Date.now());
+  const [prefillMessage, setPrefillMessage] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (new URLSearchParams(window.location.search).get("sent") === "1") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("sent") === "1") {
       setMessageColor("#c9a840");
       setMessage(t("contactForm.success"));
+    }
+    const inquiryMessage = params.get("message");
+    if (inquiryMessage) {
+      setPrefillMessage(decodeURIComponent(inquiryMessage));
     }
   }, [t]);
 
@@ -101,7 +107,15 @@ export default function ContactForm() {
         <label htmlFor="email">{t("contactForm.emailLabel")}</label>
         <input id="email" name="email" type="email" placeholder={t("contactForm.emailPlaceholder")} autoComplete="email" required maxLength={LIMITS.email} />
         <label htmlFor="message">{t("contactForm.messageLabel")}</label>
-        <textarea id="message" name="message" rows={5} placeholder={t("contactForm.messagePlaceholder")} required maxLength={LIMITS.message} />
+        <textarea
+          id="message"
+          name="message"
+          rows={5}
+          placeholder={t("contactForm.messagePlaceholder")}
+          required
+          maxLength={LIMITS.message}
+          defaultValue={prefillMessage}
+        />
         <button type="submit" className="contact-form-btn">
           {t("contactForm.submit")}
         </button>

@@ -23,27 +23,15 @@ export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps)
           {mains[0]?.l3_count !== undefined && (
             <> und {mains.reduce((sum, m) => sum + (m.l3_count ?? 0), 0)} L3-Produktgruppen</>
           )}{" "}
-          — Kfz Intelligence OS, verknüpft mit dem Shop unter Automotive.
+          — direkt mit dem Automotive-Shop verknüpft.
         </p>
         {!compact && (
           <Link href="/kategorie/automotive/kfz/" className="shop-btn-secondary">
             Gesamten KFZ-Baum öffnen
           </Link>
         )}
-        <Link href="/taxonomy/buzzard_master_business_os_final_100_single_file.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
-          Master Business OS Final 100%
-        </Link>
-        <Link href="/taxonomy/buzzard_master_business_os_maximum_single_file.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
-          Master Business OS
-        </Link>
-        <Link href="/taxonomy/buzzard_intelligence_os_maximum_single_file.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
-          Intelligence OS Maximum
-        </Link>
-        <Link href="/taxonomy/buzzard_intelligence_os_all_in_one.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
-          Intelligence OS All-in-One
-        </Link>
-        <Link href="/taxonomy/buzzard_master_kfz_intelligence_os.html" className="shop-btn-secondary" target="_blank" rel="noopener noreferrer">
-          KFZ Console
+        <Link href="/kategorie/automotive/" className="shop-btn-secondary">
+          Zum Automotive-Shop
         </Link>
       </div>
       <div className="kfz-parts-grid">
@@ -67,9 +55,6 @@ function KfzMainCard({ main }: { main: KfzMainCategory }) {
       <p className="kfz-parts-meta">
         {main.subcategory_count} Unterkategorien
         {main.l3_count ? ` · ${main.l3_count} L3` : ""}
-        {main.active_competitors && main.active_competitors.length > 0 && (
-          <> · {main.active_competitors.length} Wettbewerber</>
-        )}
         {shopHref && (
           <>
             {" · "}

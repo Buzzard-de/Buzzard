@@ -170,28 +170,27 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             )}
 
             <div className="product-detail-actions">
-              {isCheckoutEnabled() ? (
-                <>
-                  <div className="qty-control qty-control-lg">
-                    <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Menge reduzieren">
-                      −
-                    </button>
-                    <span aria-live="polite">{qty}</span>
-                    <button type="button" onClick={() => setQty(qty + 1)} aria-label="Menge erhöhen">
-                      +
-                    </button>
-                  </div>
-                  <button type="button" className="shop-btn-primary" onClick={handleAdd} disabled={!canBuy}>
-                    {added ? `✓ ${t("product.addedToCart")}` : t("product.addToCart")}
-                  </button>
-                  {localizedProduct.buyNowEnabled && (
-                    <button type="button" className="shop-btn-secondary" onClick={handleBuyNow} disabled={!canBuy}>
-                      Jetzt kaufen
-                    </button>
-                  )}
-                </>
-              ) : (
-                <p className="checkout-hint">{t("catalog.salesDisabled")}</p>
+              <div className="qty-control qty-control-lg">
+                <button type="button" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Menge reduzieren">
+                  −
+                </button>
+                <span aria-live="polite">{qty}</span>
+                <button type="button" onClick={() => setQty(qty + 1)} aria-label="Menge erhöhen">
+                  +
+                </button>
+              </div>
+              <button type="button" className="shop-btn-primary" onClick={handleAdd} disabled={!canBuy}>
+                {added ? `✓ ${t("product.addedToCart")}` : t("product.addToCart")}
+              </button>
+              {isCheckoutEnabled() && localizedProduct.buyNowEnabled && (
+                <button type="button" className="shop-btn-secondary" onClick={handleBuyNow} disabled={!canBuy}>
+                  Jetzt kaufen
+                </button>
+              )}
+              {!isCheckoutEnabled() && (
+                <Link href="/hilfe/#kontakt" className="shop-btn-secondary">
+                  {t("catalog.inquiryCta")}
+                </Link>
               )}
               <button
                 type="button"
@@ -209,7 +208,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                   <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
                 </>
               ) : null}
-              <p>{showPrices() ? "14 Tage Rückgaberecht · Sichere Zahlung" : t("catalog.productInfo")}</p>
+              <p>{isCheckoutEnabled() ? "14 Tage Rückgaberecht · Sichere Zahlung" : t("catalog.inquiryNote")}</p>
             </div>
           </div>
         </div>

@@ -389,8 +389,12 @@ export const catalog: TranslationTree = {
   },
   catalog: {
     browseOnlyTitle: "Catalog mode only",
-    browseOnlyText: "Online sales are not active yet. You can browse products and find information.",
+    browseOnlyText: "Online checkout is not active yet. You can browse products and prices — send inquiries via Help & Contact.",
     salesDisabled: "Online ordering is currently unavailable.",
+    inquiryTitle: "Product inquiry",
+    inquiryText: "Your cart is ready. Send us the items you want — we will reply with availability and delivery time.",
+    inquiryNote: "Online checkout will open when sales go live. Add items to your cart and send us an inquiry.",
+    inquiryCta: "Send inquiry",
   },
   contactForm: {
     nameLabel: "Your name",

@@ -27,9 +27,10 @@ export function LegalPageShell({ title, description, breadcrumb, children }: Leg
 export function catalogModeNotice() {
   return (
     <p className="legal-catalog-notice">
-      <strong>Katalogmodus:</strong> Buzzard24 ist ein reiner Produktkatalog. Online-Bestellungen und Versand sind
-      derzeit nicht aktiv. Für Anfragen nutzen Sie bitte unser{" "}
-      <Link href="/impressum/">Kontaktformular</Link> oder rufen Sie uns an.
+      <strong>Katalogmodus:</strong> Sie können Produkte, Preise und Kategorien vollständig durchstöbern sowie
+      Artikel in den Warenkorb legen. Der Online-Checkout ist noch nicht aktiv — senden Sie uns Ihre Anfrage über
+      das{" "}
+      <Link href="/hilfe/#kontakt">Kontaktformular</Link> oder rufen Sie uns an.
     </p>
   );
 }

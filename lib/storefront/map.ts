@@ -19,7 +19,7 @@ export function mapStorefrontToPublic(product: StorefrontProduct): PublicProduct
     description: product.description,
     categoryId: product.categoryId || product.categorySlug || "catalog",
     categoryIds: [product.categoryId || product.categorySlug || "catalog"],
-    images: process.env.NEXT_PUBLIC_SALES_ENABLED === "1" ? product.images : [],
+    images: product.images,
     documents: [],
     attributes: {
       ...product.attributes,

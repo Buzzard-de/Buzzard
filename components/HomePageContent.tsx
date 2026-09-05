@@ -8,24 +8,18 @@ import HomeProductRail from "./home/HomeProductRail";
 import HomeTrustReviews from "./home/HomeTrustReviews";
 import ServiceBar from "./ServiceBar";
 import { useLocale } from "@/lib/i18n/context";
-import { isSalesEnabled } from "@/lib/shop/mode";
 
 export default function HomePageContent() {
   const { t } = useLocale();
-  const salesLive = isSalesEnabled();
 
   return (
     <div className="home-page">
       <HomeHeroCampaign />
       <HomeCategoryDiscovery />
-      {salesLive ? (
-        <>
-          <HomeProductRail variant="featured" title={t("home.featured")} limit={6} />
-          <HomeProductRail variant="bestsellers" title={t("home.bestsellers")} limit={6} />
-          <HomeCampaigns />
-          <HomeProductRail variant="new" title={t("homeRails.new")} limit={4} />
-        </>
-      ) : null}
+      <HomeProductRail variant="featured" title={t("home.featured")} limit={6} />
+      <HomeProductRail variant="bestsellers" title={t("home.bestsellers")} limit={6} />
+      <HomeCampaigns />
+      <HomeProductRail variant="new" title={t("homeRails.new")} limit={4} />
       <HomeTrustReviews />
       <HomeNewsletter />
       <ServiceBar />

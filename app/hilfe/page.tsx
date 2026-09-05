@@ -23,15 +23,15 @@ export default function HilfePage() {
 
         <h3>Kann ich bereits bestellen?</h3>
         <p>
-          Nein. Buzzard24 befindet sich im <strong>Katalogmodus</strong>. Sie können Produkte und Kategorien
-          ansehen und uns kontaktieren. Online-Bestellungen und Checkout werden mit dem Verkaufsstart
+          Der <strong>Online-Checkout</strong> ist noch nicht aktiv. Sie können Produkte und Preise vollständig
+          ansehen, Artikel in den Warenkorb legen und uns eine Anfrage senden. Mit Verkaufsstart wird der Checkout
           freigeschaltet.
         </p>
 
-        <h3>Warum steht „Preis auf Anfrage“?</h3>
+        <h3>Warum sehe ich manchmal „Preis auf Anfrage“?</h3>
         <p>
-          Im Katalogmodus werden keine Verkaufspreise angezeigt. So können Sie sich unverbindlich über das
-          Sortiment informieren. Für Preisanfragen nutzen Sie das Kontaktformular oder rufen Sie uns an.
+          Für die meisten Artikel werden Preise angezeigt. Wenn ein Preis noch nicht hinterlegt ist, erscheint
+          „Preis auf Anfrage“. Nutzen Sie in diesem Fall das Kontaktformular oder rufen Sie uns an.
         </p>
 
         <h3>Funktionieren Konto und Backend?</h3>
@@ -79,7 +79,7 @@ export default function HilfePage() {
         </ul>
       </section>
 
-      <section className="contact-form">
+      <section id="kontakt" className="contact-form">
         <h2>Kontakt</h2>
         <p>Schreiben Sie uns — wir melden uns so schnell wie möglich.</p>
         <ContactForm />

@@ -4,14 +4,14 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { lineSubtotal } from "@/lib/cart/types";
-import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import CatalogInquiryPanel from "@/components/shop/CatalogInquiryPanel";
 import CommerceDryRunBanner from "@/components/shop/CommerceDryRunBanner";
 import PriceLabel from "@/components/shop/PriceLabel";
 import ProductSvg from "./ProductSvg";
 import { formatPrice } from "@/lib/products";
 import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { getProductUrl } from "@/lib/products";
-import { isCheckoutEnabled } from "@/lib/shop/mode";
+import { isCartEnabled, isCheckoutEnabled } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { useMarket } from "@/lib/market/context";
 
@@ -38,8 +38,8 @@ export default function CartView() {
   const freeShippingThreshold = getFreeShippingThreshold(countryCode);
   const [couponInput, setCouponInput] = useState(couponCode);
 
-  if (!isCheckoutEnabled()) {
-    return <CatalogOnlyNotice />;
+  if (!isCartEnabled()) {
+    return null;
   }
 
   if (items.length === 0) {
@@ -169,9 +169,13 @@ export default function CartView() {
             <span>{t("cart.total")}</span>
             <span>{formatPrice(total)}</span>
           </div>
-          <Link href="/checkout/" className="shop-btn-primary cart-checkout-btn">
-            {t("cart.checkout")}
-          </Link>
+          {isCheckoutEnabled() ? (
+            <Link href="/checkout/" className="shop-btn-primary cart-checkout-btn">
+              {t("cart.checkout")}
+            </Link>
+          ) : (
+            <CatalogInquiryPanel items={items} total={total} variant="cart" />
+          )}
           <Link href="/products/" className="shop-btn-secondary">
             {t("cart.continue")}
           </Link>

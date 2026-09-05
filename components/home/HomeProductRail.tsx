@@ -7,7 +7,7 @@ import { useCart } from "@/lib/cart";
 import { useLocale } from "@/lib/i18n/context";
 import { getAllProducts, getCategoryLabelForProduct } from "@/lib/products";
 import { localizePublicProduct } from "@/lib/products/i18n";
-import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
+import { showPrices } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
 import type { PublicProduct } from "@/lib/products/types";
 
@@ -77,19 +77,13 @@ export default function HomeProductRail({ title, variant = "all", limit = 8 }: H
                     </span>
                   )}
               </div>
-              {isCheckoutEnabled() ? (
-                <button
-                  type="button"
-                  className="product-card-btn"
-                  onClick={() => handleAdd(product)}
-                >
-                  {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
-                </button>
-              ) : (
-                <Link href={localized.url} className="product-card-btn">
-                  {t("product.viewProduct")}
-                </Link>
-              )}
+              <button
+                type="button"
+                className="product-card-btn"
+                onClick={() => handleAdd(product)}
+              >
+                {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
+              </button>
             </div>
           </article>
         );})}

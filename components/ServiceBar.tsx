@@ -1,3 +1,4 @@
+import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
 import { isSalesEnabled } from "@/lib/shop/mode";
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/site/contact";
@@ -44,20 +45,20 @@ export default function ServiceBar() {
             <span>{CONTACT_EMAIL}</span>
           </div>
         </div>
-        <div className="service-item">
+        <Link href="/hilfe/#faq" className="service-item">
           <CategoryIcon name="return" size={28} />
           <div>
             <strong>HILFE & FAQ</strong>
             <span>/hilfe/</span>
           </div>
-        </div>
-        <div className="service-item">
+        </Link>
+        <Link href="/datenschutz/" className="service-item">
           <CategoryIcon name="lock" size={28} />
           <div>
             <strong>DATENSCHUTZ</strong>
             <span>DSGVO-konform</span>
           </div>
-        </div>
+        </Link>
       </div>
     </section>
   );

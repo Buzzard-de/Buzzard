@@ -20,6 +20,7 @@ import {
   getShopL2Href,
   getKfzCompetitors,
   getCompetitorLabel,
+  getKfzL3Href,
 } from "@/lib/categories/kfzTree";
 import { buildCategoryMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, categoryBreadcrumbItems, categoryCollectionSchema } from "@/lib/seo/structured-data";
@@ -102,9 +103,13 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
               {sub.children && sub.children.length > 0 ? (
                 <div className="category-children-grid">
                   {sub.children.map((child) => (
-                    <div key={child.kfz_id} className="category-child-card">
+                    <Link
+                      key={child.kfz_id}
+                      href={getKfzL3Href(main, child)}
+                      className="category-child-card"
+                    >
                       <strong>{child.kfz_id}</strong> {child.kfz_name}
-                    </div>
+                    </Link>
                   ))}
                 </div>
               ) : (
@@ -135,30 +140,12 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
           </nav>
           <h1>KFZ-Teilebaum</h1>
           <p>
-            {getKfzMains().length} Hauptsysteme · Buzzard Master Kfz Intelligence OS
-            {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Wettbewerber`}
+            {getKfzMains().length} technische Hauptsysteme — verknüpft mit dem Shop unter Automotive.
+            {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Marken im Sortiment`}
           </p>
-          <p>
-            <a href="/taxonomy/buzzard_master_business_os_final_100_single_file.html" target="_blank" rel="noopener noreferrer">
-              Master Business OS Final 100% öffnen
-            </a>
-            {" · "}
-            <a href="/taxonomy/buzzard_master_business_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
-              Master Business OS Maximum
-            </a>
-            {" · "}
-            <a href="/taxonomy/buzzard_intelligence_os_maximum_single_file.html" target="_blank" rel="noopener noreferrer">
-              Intelligence OS Maximum öffnen (43 Agents, Ops, Kurmay)
-            </a>
-            {" · "}
-            <a href="/taxonomy/buzzard_intelligence_os_all_in_one.html" target="_blank" rel="noopener noreferrer">
-              All-in-One (12 Module)
-            </a>
-            {" · "}
-            <a href="/taxonomy/buzzard_master_kfz_intelligence_os.html" target="_blank" rel="noopener noreferrer">
-              KFZ Console (Matrix, Gaps)
-            </a>
-          </p>
+          <Link href="/kategorie/automotive/" className="shop-btn-secondary">
+            Zum Automotive-Shop
+          </Link>
         </div>
       </section>
       <KfzPartsBrowse />

@@ -382,8 +382,12 @@ export const catalog: TranslationTree = {
   },
   catalog: {
     browseOnlyTitle: "Yalnızca katalog modu",
-    browseOnlyText: "Online satış henüz aktif değil. Ürünleri inceleyebilirsiniz.",
+    browseOnlyText: "Online ödeme henüz aktif değil. Ürünleri ve fiyatları inceleyebilirsiniz — Yardım & İletişim üzerinden soru sorun.",
     salesDisabled: "Online sipariş şu anda mümkün değil.",
+    inquiryTitle: "Ürün sorgusu",
+    inquiryText: "Sepetiniz hazır. İstediğiniz ürünleri gönderin — stok ve teslimat süresiyle dönüş yaparız.",
+    inquiryNote: "Online ödeme satış başlangıcında açılacak. Ürünleri sepete ekleyip bize sorgu gönderin.",
+    inquiryCta: "Sorgu gönder",
   },
   contactForm: {
     nameLabel: "Adınız",

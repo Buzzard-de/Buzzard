@@ -16,9 +16,9 @@ import {
 } from "@/lib/categories";
 import { useCart } from "@/lib/cart";
 import { getProductById, getProductsForCategory } from "@/lib/products";
-import { isCheckoutEnabled } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
 import type { BuzzardCategory } from "@/lib/categories/types";
+import { smartMenuSignalHref } from "@/lib/smartMenu/bridge";
 import { useSmartMenuSignals } from "@/lib/smartMenu/useSmartMenuSignals";
 
 interface FeaturedBannerProps {
@@ -83,7 +83,7 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
           <ul className="subsubcategory-list">
             {signalPopular.map((item) => (
               <li key={item.id}>
-                <Link href={`/kategorie/${item.slug.split("/").pop()}/`} className="subsubcategory-link">
+                <Link href={smartMenuSignalHref(item.slug)} className="subsubcategory-link">
                   <span>{item.name}</span>
                 </Link>
               </li>
@@ -97,9 +97,13 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
           <h2 className="promo-title">TOP MARKEN</h2>
           <div className="promo-brand-chips">
             {signalBrands.slice(0, 6).map((brand) => (
-              <span key={brand.name} className="promo-brand-chip">
+              <Link
+                key={brand.name}
+                href={`/products/?q=${encodeURIComponent(brand.name)}`}
+                className="promo-brand-chip"
+              >
                 {brand.name}
-              </span>
+              </Link>
             ))}
           </div>
         </div>
@@ -149,26 +153,16 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
                   <Link href={product.url} className="popular-product-name">
                     {product.name}
                   </Link>
-                  <div className="popular-product-stars">
-                    {"★".repeat(5)}
-                    <span>5.0</span>
-                  </div>
                   <div className="popular-product-prices">
                     <PriceLabel amount={product.price} className="popular-product-price" />
                   </div>
-                  {isCheckoutEnabled() ? (
-                    <button
-                      type="button"
-                      className="popular-add-btn"
-                      onClick={() => handleAdd(product.id)}
-                    >
-                      {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
-                    </button>
-                  ) : (
-                    <Link href={product.url} className="popular-add-btn">
-                      Produkt ansehen
-                    </Link>
-                  )}
+                  <button
+                    type="button"
+                    className="popular-add-btn"
+                    onClick={() => handleAdd(product.id)}
+                  >
+                    {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
+                  </button>
                 </div>
               </li>
             ))}

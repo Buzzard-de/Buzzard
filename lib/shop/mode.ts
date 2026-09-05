@@ -7,12 +7,17 @@ export function isSalesEnabled(): boolean {
   return process.env.NEXT_PUBLIC_SALES_ENABLED === "1";
 }
 
-/** Public storefront prices — only when live sales are enabled */
+/** Public storefront prices — always shown for catalog browsing */
 export function showPrices(): boolean {
-  return isSalesEnabled();
+  return true;
 }
 
-/** Cart + checkout UI — live sales only (catalog mode stays browse-only) */
+/** Warenkorb / Merkliste — always available for inquiry flow */
+export function isCartEnabled(): boolean {
+  return true;
+}
+
+/** Payment checkout — live sales only */
 export function isCheckoutEnabled(): boolean {
   return isSalesEnabled();
 }

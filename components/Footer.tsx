@@ -21,7 +21,7 @@ export default function Footer() {
           <Link href="/widerruf/">{t("footer.withdrawal")}</Link>
           <Link href="/impressum/">{t("footer.imprint")}</Link>
           <Link href="/datenschutz/">{t("footer.privacy")}</Link>
-          <Link href="/impressum/">{t("footer.contact")}</Link>
+          <Link href="/hilfe/#kontakt">{t("footer.contact")}</Link>
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </div>
         <p className="footer-copy">{t("footer.copyright")}</p>

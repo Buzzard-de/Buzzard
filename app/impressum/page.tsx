@@ -5,6 +5,7 @@ import ContactForm from "@/components/ContactForm";
 import {
   COMPANY_CONTENT_OWNER,
   COMPANY_LEGAL_NAME,
+  COMPANY_STREET,
   COMPANY_VAT_ID,
 } from "@/lib/site/company";
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/site/contact";
@@ -35,6 +36,14 @@ export default function ImpressumPage() {
             <br />
             <CompanyAddress />
           </p>
+          {!COMPANY_STREET ? (
+            <p className="legal-catalog-notice">
+              <small>
+                Vollständige postalische Anschrift (Straße/Hausnummer) wird ergänzt. Bis dahin erreichen Sie uns
+                telefonisch oder per E-Mail.
+              </small>
+            </p>
+          ) : null}
           <p>
             Telefon: <a href={`tel:${CONTACT_PHONE_TEL}`}>{CONTACT_PHONE_DISPLAY}</a>
             <br />
@@ -46,7 +55,11 @@ export default function ImpressumPage() {
               <br />
               <strong>{COMPANY_VAT_ID}</strong>
             </p>
-          ) : null}
+          ) : (
+            <p className="legal-catalog-notice">
+              <small>Umsatzsteuer-Identifikationsnummer wird nach Vergabe hier veröffentlicht.</small>
+            </p>
+          )}
         </section>
 
         <section>
@@ -96,7 +109,7 @@ export default function ImpressumPage() {
           </p>
         </section>
 
-        <section className="contact-form">
+        <section id="kontakt" className="contact-form">
           <h2>Kontakt</h2>
           <p>Schreiben Sie uns — wir melden uns so schnell wie möglich.</p>
           <ContactForm />

@@ -23,7 +23,7 @@ export default function ProductsPage() {
             <Link href="/">Startseite</Link> <span>/</span> <span>Produkte</span>
           </nav>
           <h1>Produkte &amp; Sortiment</h1>
-          <p>Hochwertige Artikel in allen Kategorien – schnell geliefert, fair bepreist.</p>
+          <p>Große Auswahl in allen Kategorien — online durchstöbern und unverbindlich anfragen.</p>
         </div>
       </section>
 

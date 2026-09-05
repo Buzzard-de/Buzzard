@@ -28,6 +28,10 @@ export const catalog: TranslationTree = {
     text: "Browse our online catalog across automotive, textiles, electronics and more — personal advice by phone and email.",
     cta: "Browse catalog",
     secondary: "All categories",
+    sidebarText: "Browse our online catalog — advice and inquiries by phone and email anytime.",
+  },
+  commerce: {
+    dryRunBanner: "Internal test mode — no customer sales.",
   },
   home: {
     categoryDiscovery: "Discover categories",
@@ -372,6 +376,14 @@ export const catalog: TranslationTree = {
     allProducts: "All products",
     priceOnRequest: "Price on request",
     viewProduct: "View product",
+    buyNow: "Buy now",
+    description: "Description",
+    technicalData: "Technical data",
+    documents: "Documents",
+    boughtTogether: "Frequently bought together",
+    wishlistAdd: "♡ Wishlist",
+    wishlistIn: "♥ On wishlist",
+    trustCheckout: "14-day returns · Secure payment",
     stock: {
       in_stock: "In stock",
       low_stock: "Only a few left",
@@ -396,6 +408,8 @@ export const catalog: TranslationTree = {
     inquiryNote: "Add items to your cart and send us an inquiry.",
     inquiryHint: "Send us an inquiry via Help & Contact if you are interested.",
     inquiryCta: "Send inquiry",
+    cartNotice:
+      "Catalog mode — no online checkout. Add items to your cart and send us an inquiry.",
   },
   contactForm: {
     nameLabel: "Your name",
@@ -406,10 +420,13 @@ export const catalog: TranslationTree = {
     messagePlaceholder: "Part number, vehicle, question...",
     submit: "Send message",
     success: "Thank you — your message has been sent.",
+    submitting: "Sending…",
     errorRequired: "Please fill in all fields.",
     errorEmail: "Please enter a valid email address.",
     errorRateLimit: "Please wait a minute before sending again.",
     errorTooFast: "Please take a moment to complete the form and try again.",
+    errorApi: "Contact form is temporarily unavailable. Please email us directly.",
+    errorServer: "Sending failed. Please try again or email us directly.",
     altEmail: "Or email us directly:",
   },
   country: {

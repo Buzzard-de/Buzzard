@@ -183,7 +183,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               </button>
               {isCheckoutEnabled() && localizedProduct.buyNowEnabled && (
                 <button type="button" className="shop-btn-secondary" onClick={handleBuyNow} disabled={!canBuy}>
-                  Jetzt kaufen
+                  {t("product.buyNow")}
                 </button>
               )}
               {!isCheckoutEnabled() && (
@@ -196,7 +196,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                 className={`shop-btn-secondary wishlist-btn${inWishlist ? " active" : ""}`}
                 onClick={() => toggle(localizedProduct.id)}
               >
-                {inWishlist ? "♥ Auf Wunschliste" : "♡ Wunschliste"}
+                {inWishlist ? t("product.wishlistIn") : t("product.wishlistAdd")}
               </button>
             </div>
 
@@ -207,19 +207,19 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
                   <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
                 </>
               ) : null}
-              <p>{isCheckoutEnabled() ? "14 Tage Rückgaberecht · Sichere Zahlung" : t("catalog.inquiryHint")}</p>
+              <p>{isCheckoutEnabled() ? t("product.trustCheckout") : t("catalog.inquiryHint")}</p>
             </div>
           </div>
         </div>
 
         <section className="product-detail-section">
-          <h2>Beschreibung</h2>
+          <h2>{t("product.description")}</h2>
           <p>{localizedProduct.description}</p>
         </section>
 
         {Object.keys(localizedProduct.attributes).length > 0 && (
           <section className="product-detail-section">
-            <h2>Technische Daten</h2>
+            <h2>{t("product.technicalData")}</h2>
             <dl className="product-spec-table">
               {Object.entries(localizedProduct.attributes).map(([key, value]) => (
                 <div key={key}>
@@ -233,7 +233,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
         {localizedProduct.documents.length > 0 && (
           <section className="product-detail-section">
-            <h2>Dokumente</h2>
+            <h2>{t("product.documents")}</h2>
             <ul className="product-doc-list">
               {localizedProduct.documents.map((doc) => (
                 <li key={doc.url}>
@@ -269,7 +269,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
 
         {boughtTogether.length > 0 && (
           <section className="product-detail-section">
-            <h2>Häufig zusammen gekauft</h2>
+            <h2>{t("product.boughtTogether")}</h2>
             <div className="products-grid products-grid-compact">
               {boughtTogether.map((item) => (
                 <article key={item.id} className="product-card">

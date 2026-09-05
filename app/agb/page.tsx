@@ -47,7 +47,7 @@ export default function AgbPage() {
         <p>
           Die Darstellung von Produkten und Kategorien stellt kein verbindliches Angebot dar. Preise,
           Verfügbarkeit und Bestellmöglichkeiten werden mit Aktivierung des Verkaufsmodus gesondert
-          bekannt gegeben. Anfragen über das Kontaktformular sind unverbindlich.
+          bekannt gegeben. Anfragen über das <Link href="/hilfe/#kontakt">Kontaktformular</Link> sind unverbindlich.
         </p>
       </section>
 

@@ -1,16 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n/context";
 
 export default function HomeHero() {
+  const { t } = useLocale();
+
   return (
     <section className="home-hero" aria-label="Empfehlung">
       <div className="home-hero-content">
-        <p className="home-hero-kicker">QUALITÄT. LEISTUNG. VERTRAUEN.</p>
-        <h2 className="home-hero-title">Entdecken Sie unser Sortiment</h2>
-        <p className="home-hero-text">
-          Über 1.000.000 Produkte – schnell geliefert, fair bepreist, sicher bestellt.
-        </p>
+        <p className="home-hero-kicker">{t("hero.kicker")}</p>
+        <h2 className="home-hero-title">{t("hero.title")}</h2>
+        <p className="home-hero-text">{t("hero.sidebarText")}</p>
         <Link href="/products/" className="home-hero-btn">
-          Jetzt entdecken
+          {t("hero.cta")}
         </Link>
       </div>
     </section>

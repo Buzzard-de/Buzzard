@@ -16,11 +16,15 @@ export const catalog: TranslationTree = {
   nav: { allCategories: "TÜM KATEGORİLER", vehicleSelect: "ARAÇ SEÇİMİ", vehiclePlaceholder: "Araç seçin" },
   megaMenu: { close: "Menüyü kapat", mainCategories: "Ana kategoriler", categories: "Kategoriler" },
   hero: {
-    kicker: "KALİTE. PERFORMANS. GÜVEN.",
+    kicker: "KATALOG. KEŞFET. BİLGİ AL.",
     title: "Ürün yelpazemizi keşfedin",
-    text: "1.000.000+ ürün – hızlı teslimat, adil fiyatlar, güvenli alışveriş.",
-    cta: "Keşfet",
+    text: "Otomotiv, tekstil, elektronik ve daha fazlasında kategoriler — telefon ve e-posta ile danışmanlık.",
+    cta: "Kataloğu gör",
     secondary: "Tüm kategoriler",
+    sidebarText: "Online kataloğumuzda gezinin — telefon ve e-posta ile her zaman ulaşılabilir.",
+  },
+  commerce: {
+    dryRunBanner: "Dahili test modu — müşteri satışı yok.",
   },
   home: {
     categoryDiscovery: "Kategorileri keşfet",
@@ -389,6 +393,7 @@ export const catalog: TranslationTree = {
     inquiryNote: "Ürünleri sepete ekleyip bize sorgu gönderin.",
     inquiryHint: "İlgileniyorsanız Yardım & İletişim üzerinden sorgu gönderin.",
     inquiryCta: "Sorgu gönder",
+    cartNotice: "Katalog modu — online ödeme yok. Ürünleri sepete ekleyip bize sorgu gönderin.",
   },
   contactForm: {
     nameLabel: "Adınız",
@@ -399,6 +404,9 @@ export const catalog: TranslationTree = {
     messagePlaceholder: "Parça numarası, araç, soru...",
     submit: "Mesaj gönder",
     success: "Teşekkürler — mesajınız gönderildi.",
+    submitting: "Gönderiliyor…",
+    errorApi: "Form geçici olarak kullanılamıyor. Lütfen doğrudan e-posta gönderin.",
+    errorServer: "Gönderim başarısız. Lütfen tekrar deneyin veya e-posta gönderin.",
     errorRequired: "Lütfen tüm alanları doldurun.",
     errorEmail: "Lütfen geçerli bir e-posta adresi girin.",
     errorRateLimit: "Lütfen tekrar göndermeden önce bir dakika bekleyin.",

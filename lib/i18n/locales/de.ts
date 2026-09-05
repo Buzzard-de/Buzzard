@@ -36,6 +36,11 @@ export const catalog: TranslationTree = {
     text: "Stöbern Sie in unserem Online-Katalog mit Kategorien aus Automotive, Textil, Elektronik und mehr — Beratung per Telefon und E-Mail.",
     cta: "Katalog ansehen",
     secondary: "Alle Kategorien",
+    sidebarText:
+      "Stöbern Sie in unserem Online-Katalog — Beratung und Anfragen jederzeit per Telefon und E-Mail.",
+  },
+  commerce: {
+    dryRunBanner: "Interner Testmodus — kein Kundenverkauf.",
   },
   home: {
     categoryDiscovery: "Kategorien entdecken",
@@ -47,7 +52,7 @@ export const catalog: TranslationTree = {
     trust: "Ihr Vorteil",
     reviews: "Shop-Status",
     catalogNotice:
-      "Buzzard24 befindet sich im Katalogmodus. Sie können Produkte und Kategorien erkunden. Preise und Bestellungen folgen mit dem Verkaufsstart.",
+      "Buzzard24 befindet sich im Katalogmodus. Produkte und Kategorien können Sie erkunden — Verkauf und Checkout folgen mit Verkaufsstart.",
     newsletter: "Newsletter",
     newsletterText: "Informiert bleiben, wenn der Online-Verkauf startet. Wir senden nur relevante Updates.",
     newsletterPlaceholder: "Ihre E-Mail-Adresse",
@@ -388,6 +393,14 @@ export const catalog: TranslationTree = {
     allProducts: "Alle Produkte",
     priceOnRequest: "Preis auf Anfrage",
     viewProduct: "Produkt ansehen",
+    buyNow: "Jetzt kaufen",
+    description: "Beschreibung",
+    technicalData: "Technische Daten",
+    documents: "Dokumente",
+    boughtTogether: "Häufig zusammen gekauft",
+    wishlistAdd: "♡ Wunschliste",
+    wishlistIn: "♥ Auf Wunschliste",
+    trustCheckout: "14 Tage Rückgaberecht · Sichere Zahlung",
     stock: {
       in_stock: "Auf Lager",
       low_stock: "Nur noch wenige verfügbar",
@@ -417,6 +430,8 @@ export const catalog: TranslationTree = {
     inquiryNote: "Legen Sie Artikel in den Warenkorb und senden Sie uns Ihre Anfrage.",
     inquiryHint: "Bei Interesse senden Sie uns eine Anfrage über Hilfe & Kontakt.",
     inquiryCta: "Anfrage senden",
+    cartNotice:
+      "Katalogmodus — kein Online-Checkout. Legen Sie Artikel in den Warenkorb und senden Sie uns Ihre Anfrage.",
   },
   contactForm: {
     nameLabel: "Ihr Name",
@@ -427,10 +442,13 @@ export const catalog: TranslationTree = {
     messagePlaceholder: "Teilenummer, Fahrzeug, Frage...",
     submit: "Nachricht senden",
     success: "Vielen Dank — Ihre Nachricht wurde gesendet.",
+    submitting: "Wird gesendet…",
     errorRequired: "Bitte alle Felder ausfüllen.",
     errorEmail: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
     errorRateLimit: "Bitte warten Sie eine Minute, bevor Sie erneut senden.",
     errorTooFast: "Bitte Formular kurz ausfüllen und erneut senden.",
+    errorApi: "Kontaktformular ist vorübergehend nicht erreichbar. Bitte schreiben Sie uns direkt per E-Mail.",
+    errorServer: "Senden fehlgeschlagen. Bitte versuchen Sie es erneut oder schreiben Sie uns per E-Mail.",
     altEmail: "Alternativ direkt per E-Mail:",
   },
   ai: {

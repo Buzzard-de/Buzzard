@@ -16,11 +16,15 @@ export const catalog: TranslationTree = {
   nav: { allCategories: "جميع الفئات", vehicleSelect: "اختيار المركبة", vehiclePlaceholder: "اختر المركبة" },
   megaMenu: { close: "إغلاق القائمة", mainCategories: "الفئات الرئيسية", categories: "الفئات" },
   hero: {
-    kicker: "الجودة. الأداء. الثقة.",
+    kicker: "كتalog. اكتشف. استفسر.",
     title: "اكتشف مجموعتنا",
-    text: "أكثر من 1,000,000 منتج – توصيل سريع وأسعار عادلة.",
-    cta: "تسوق الآن",
+    text: "تصفح الكatalog عبر السيارات والمنسوجات والإلكترونيات — استشارة عبر الهاتف والبريد.",
+    cta: "تصفح الكatalog",
     secondary: "جميع الفئات",
+    sidebarText: "تصفح الكatalog عبر الإنترنت — استفسارات عبر الهاتف والبريد في أي وقت.",
+  },
+  commerce: {
+    dryRunBanner: "وضع اختبار داخلي — لا مبيعات للعملاء.",
   },
   home: {
     categoryDiscovery: "اكتشف الفئات",
@@ -389,6 +393,7 @@ export const catalog: TranslationTree = {
     inquiryNote: "أضف المنتجات إلى السلة وأرسل استفسارك.",
     inquiryHint: "أرسل استفسارك عبر المساعدة والاتصال إذا كنت مهتمًا.",
     inquiryCta: "إرسال استفسار",
+    cartNotice: "وضع الكatalog — لا دفع عبر الإنترنت. أضف المنتجات إلى السلة وأرسل استفسارك.",
   },
   contactForm: {
     nameLabel: "اسمك",
@@ -399,6 +404,9 @@ export const catalog: TranslationTree = {
     messagePlaceholder: "رقم القطعة، المركبة، السؤال...",
     submit: "إرسال الرسالة",
     success: "شكرًا — تم إرسال رسالتك.",
+    submitting: "جارٍ الإرسال…",
+    errorApi: "النموذج غير متاح مؤقتًا. يرجى مراسلتنا بالبريد مباشرة.",
+    errorServer: "فشل الإرسال. يرجى المحاولة مرة أخرى أو مراسلتنا بالبريد.",
     errorRequired: "يرجى ملء جميع الحقول.",
     errorEmail: "يرجى إدخال بريد إلكتروني صالح.",
     errorRateLimit: "يرجى الانتظار دقيقة قبل الإرسال مرة أخرى.",

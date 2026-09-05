@@ -14,7 +14,7 @@ import { useShop } from "@/lib/shop";
 import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
 import { formatPrice } from "@/lib/products";
-import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
+import { showPrices } from "@/lib/shop/mode";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 
 export default function Header() {
@@ -120,24 +120,22 @@ export default function Header() {
               </small>
             </span>
           </Link>
-          {isCheckoutEnabled() ? (
-            <Link href="/warenkorb/" className="hdr-action cart-action">
-              <span className="cart-icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="24" height="24">
-                  <circle cx="9" cy="21" r="1" />
-                  <circle cx="20" cy="21" r="1" />
-                  <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6" />
-                </svg>
-                {ready && count > 0 && <span className="cart-badge">{count}</span>}
-              </span>
-              <span>
-                {t("header.cart")}
-                <small className="cart-price" suppressHydrationWarning>
-                  {showPrices() && ready ? formatPrice(subtotal) : ready && count > 0 ? `${count}` : ""}
-                </small>
-              </span>
-            </Link>
-          ) : null}
+          <Link href="/warenkorb/" className="hdr-action cart-action">
+            <span className="cart-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="24" height="24">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6" />
+              </svg>
+              {ready && count > 0 && <span className="cart-badge">{count}</span>}
+            </span>
+            <span>
+              {t("header.cart")}
+              <small className="cart-price" suppressHydrationWarning>
+                {showPrices() && ready ? formatPrice(subtotal) : ready && count > 0 ? `${count}` : ""}
+              </small>
+            </span>
+          </Link>
         </div>
       </div>
     </header>

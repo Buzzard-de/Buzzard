@@ -4,14 +4,14 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { lineSubtotal } from "@/lib/cart/types";
-import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import CatalogInquiryPanel from "@/components/shop/CatalogInquiryPanel";
 import CommerceDryRunBanner from "@/components/shop/CommerceDryRunBanner";
 import PriceLabel from "@/components/shop/PriceLabel";
 import ProductSvg from "./ProductSvg";
 import { formatPrice } from "@/lib/products";
 import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { getProductUrl } from "@/lib/products";
-import { isCheckoutEnabled } from "@/lib/shop/mode";
+import { isCartEnabled, isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { useMarket } from "@/lib/market/context";
 
@@ -38,8 +38,8 @@ export default function CartView() {
   const freeShippingThreshold = getFreeShippingThreshold(countryCode);
   const [couponInput, setCouponInput] = useState(couponCode);
 
-  if (!isCheckoutEnabled()) {
-    return <CatalogOnlyNotice />;
+  if (!isCartEnabled()) {
+    return null;
   }
 
   if (items.length === 0) {
@@ -70,7 +70,7 @@ export default function CartView() {
       {syncing && <p className="cart-loading" aria-live="polite">{t("cart.loading") || "Warenkorb wird aktualisiert…"}</p>}
       {lastErrorKey && <p className="shop-modal-error" role="alert">{t(lastErrorKey) || lastErrorKey}</p>}
 
-      {freeShippingRemaining > 0 && (
+      {showPrices() && freeShippingRemaining > 0 && (
         <p className="cart-shipping-hint">
           {t("cart.freeShippingHint")
             .replace("{amount}", formatPrice(freeShippingRemaining))
@@ -93,9 +93,11 @@ export default function CartView() {
                   <span className="cart-item-variant">{item.variantLabel}</span>
                 )}
                 {item.sku && <span className="cart-item-sku">SKU: {item.sku}</span>}
-                <span className="cart-item-price">
-                  <PriceLabel amount={item.unitPrice} />
-                </span>
+                {showPrices() ? (
+                  <span className="cart-item-price">
+                    <PriceLabel amount={item.unitPrice} />
+                  </span>
+                ) : null}
                 <div className="cart-item-actions">
                   <div className="qty-control">
                     <button
@@ -119,59 +121,69 @@ export default function CartView() {
                   </button>
                 </div>
               </div>
-              <strong className="cart-item-total">{formatPrice(lineSubtotal(item))}</strong>
+              {showPrices() ? (
+                <strong className="cart-item-total">{formatPrice(lineSubtotal(item))}</strong>
+              ) : null}
             </li>
           ))}
         </ul>
 
         <aside className="cart-summary">
           <h2>{t("cart.summary")}</h2>
-          <form className="cart-coupon" onSubmit={handleCoupon}>
-            <label htmlFor="coupon">{t("cart.couponLabel")}</label>
-            <div className="cart-coupon-row">
-              <input
-                id="coupon"
-                value={couponInput}
-                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                placeholder={t("cart.couponPlaceholder")}
-                maxLength={32}
-              />
-              <button type="submit" className="shop-btn-secondary">
-                {t("cart.couponApply")}
-              </button>
-            </div>
-            {couponCode && (
-              <button type="button" className="cart-coupon-clear" onClick={clearCoupon}>
-                {t("cart.couponRemove")}: {couponCode}
-              </button>
-            )}
-            {couponErrorKey && <p className="shop-modal-error">{t(couponErrorKey)}</p>}
-          </form>
-          <div className="cart-summary-row">
-            <span>{t("cart.subtotal")}</span>
-            <span>{formatPrice(subtotal)}</span>
-          </div>
-          {discount > 0 && (
-            <div className="cart-summary-row cart-summary-discount">
-              <span>{t("cart.discount")}</span>
-              <span>−{formatPrice(discount)}</span>
-            </div>
+          {showPrices() ? (
+            <>
+              <form className="cart-coupon" onSubmit={handleCoupon}>
+                <label htmlFor="coupon">{t("cart.couponLabel")}</label>
+                <div className="cart-coupon-row">
+                  <input
+                    id="coupon"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                    placeholder={t("cart.couponPlaceholder")}
+                    maxLength={32}
+                  />
+                  <button type="submit" className="shop-btn-secondary">
+                    {t("cart.couponApply")}
+                  </button>
+                </div>
+                {couponCode && (
+                  <button type="button" className="cart-coupon-clear" onClick={clearCoupon}>
+                    {t("cart.couponRemove")}: {couponCode}
+                  </button>
+                )}
+                {couponErrorKey && <p className="shop-modal-error">{t(couponErrorKey)}</p>}
+              </form>
+              <div className="cart-summary-row">
+                <span>{t("cart.subtotal")}</span>
+                <span>{formatPrice(subtotal)}</span>
+              </div>
+              {discount > 0 && (
+                <div className="cart-summary-row cart-summary-discount">
+                  <span>{t("cart.discount")}</span>
+                  <span>−{formatPrice(discount)}</span>
+                </div>
+              )}
+              <div className="cart-summary-row">
+                <span>{t("cart.shipping")}</span>
+                <span>{shipping === 0 ? t("cart.shippingFree") : formatPrice(shipping)}</span>
+              </div>
+              <div className="cart-summary-row">
+                <span>{t("cart.vat")}</span>
+                <span>{formatPrice(vatAmount)}</span>
+              </div>
+              <div className="cart-summary-row cart-summary-total">
+                <span>{t("cart.total")}</span>
+                <span>{formatPrice(total)}</span>
+              </div>
+            </>
+          ) : null}
+          {isCheckoutEnabled() ? (
+            <Link href="/checkout/" className="shop-btn-primary cart-checkout-btn">
+              {t("cart.checkout")}
+            </Link>
+          ) : (
+            <CatalogInquiryPanel items={items} variant="cart" />
           )}
-          <div className="cart-summary-row">
-            <span>{t("cart.shipping")}</span>
-            <span>{shipping === 0 ? t("cart.shippingFree") : formatPrice(shipping)}</span>
-          </div>
-          <div className="cart-summary-row">
-            <span>{t("cart.vat")}</span>
-            <span>{formatPrice(vatAmount)}</span>
-          </div>
-          <div className="cart-summary-row cart-summary-total">
-            <span>{t("cart.total")}</span>
-            <span>{formatPrice(total)}</span>
-          </div>
-          <Link href="/checkout/" className="shop-btn-primary cart-checkout-btn">
-            {t("cart.checkout")}
-          </Link>
           <Link href="/products/" className="shop-btn-secondary">
             {t("cart.continue")}
           </Link>

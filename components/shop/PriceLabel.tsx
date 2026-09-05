@@ -9,9 +9,9 @@ interface PriceLabelProps {
 }
 
 export default function PriceLabel({ amount, className }: PriceLabelProps) {
-  const { t, formatPrice } = useLocale();
+  const { formatPrice } = useLocale();
   if (!showPrices()) {
-    return <span className={className}>{t("product.priceOnRequest")}</span>;
+    return null;
   }
   return <span className={className}>{formatPrice(amount)}</span>;
 }

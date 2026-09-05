@@ -124,7 +124,6 @@ export function buildContentSecurityPolicy(): string {
   const apiOrigin = (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
   const connectSrc = unique([
     "'self'",
-    "https://formsubmit.co",
     apiOrigin,
     "https://buzzard-api.onrender.com",
     "http://localhost:3000",
@@ -160,7 +159,7 @@ export function buildContentSecurityPolicy(): string {
   return [
     "default-src 'self'",
     "base-uri 'self'",
-    "form-action 'self' https://formsubmit.co",
+    "form-action 'self'",
     "frame-ancestors 'none'",
     "object-src 'none'",
     `script-src ${scriptSrc.join(" ")}`,

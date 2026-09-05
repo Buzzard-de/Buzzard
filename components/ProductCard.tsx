@@ -3,7 +3,7 @@
 import Link from "next/link";
 import ProductSvg from "./ProductSvg";
 import PriceLabel from "@/components/shop/PriceLabel";
-import { isCheckoutEnabled } from "@/lib/shop/mode";
+import { showPrices } from "@/lib/shop/mode";
 import type { PublicProduct } from "@/lib/products/types";
 
 interface ProductCardProps {
@@ -49,9 +49,9 @@ export default function ProductCard({
           {localeName}
         </Link>
         <span className="product-card-sku">SKU: {product.sku}</span>
-        <PriceLabel amount={product.price} className="product-card-price" />
+        {showPrices() ? <PriceLabel amount={product.price} className="product-card-price" /> : null}
         <div className="product-card-actions">
-          {isCheckoutEnabled() && onAdd ? (
+          {onAdd ? (
             <button
               type="button"
               className="product-card-btn"

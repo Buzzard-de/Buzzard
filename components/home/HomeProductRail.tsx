@@ -7,7 +7,7 @@ import { useCart } from "@/lib/cart";
 import { useLocale } from "@/lib/i18n/context";
 import { getAllProducts, getCategoryLabelForProduct } from "@/lib/products";
 import { localizePublicProduct } from "@/lib/products/i18n";
-import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
+import { showPrices } from "@/lib/shop/mode";
 import PriceLabel from "@/components/shop/PriceLabel";
 import type { PublicProduct } from "@/lib/products/types";
 
@@ -67,29 +67,24 @@ export default function HomeProductRail({ title, variant = "all", limit = 8 }: H
                 {localized.name}
               </Link>
               <span className="product-card-sku">{getCategoryLabelForProduct(localized, locale)}</span>
-              <div className="product-card-prices">
-                <PriceLabel amount={localized.price} className="product-card-price" />
-                {showPrices() &&
-                  localized.compareAtPrice &&
-                  localized.compareAtPrice > localized.price && (
-                    <span className="product-card-compare">
-                      <PriceLabel amount={localized.compareAtPrice} />
-                    </span>
-                  )}
-              </div>
-              {isCheckoutEnabled() ? (
-                <button
-                  type="button"
-                  className="product-card-btn"
-                  onClick={() => handleAdd(product)}
-                >
-                  {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
-                </button>
-              ) : (
-                <Link href={localized.url} className="product-card-btn">
-                  {t("product.viewProduct")}
-                </Link>
-              )}
+              {showPrices() ? (
+                <div className="product-card-prices">
+                  <PriceLabel amount={localized.price} className="product-card-price" />
+                  {localized.compareAtPrice &&
+                    localized.compareAtPrice > localized.price && (
+                      <span className="product-card-compare">
+                        <PriceLabel amount={localized.compareAtPrice} />
+                      </span>
+                    )}
+                </div>
+              ) : null}
+              <button
+                type="button"
+                className="product-card-btn"
+                onClick={() => handleAdd(product)}
+              >
+                {addedId === product.id ? `✓ ${t("product.added")}` : t("product.addToCart")}
+              </button>
             </div>
           </article>
         );})}

@@ -51,7 +51,7 @@ export default function AdminContactSubmissionsPanel() {
     <div className="admin-panel">
       <header className="admin-panel-head">
         <h1>Kontaktanfragen</h1>
-        <p>Formular-Eingänge von der Website (JSON-Store auf der API)</p>
+        <p>Formular-Eingänge von der Website (gespeichert über POST /api/contact)</p>
       </header>
 
       {error && <p className="shop-modal-error">{error}</p>}

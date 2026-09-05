@@ -42,8 +42,9 @@ export default function DatenschutzPage() {
           <h3>Kontaktformular & Newsletter</h3>
           <p>
             Wenn Sie unser Kontaktformular oder die Newsletter-Anmeldung nutzen, erheben wir die von Ihnen
-            eingegebenen Daten (z. B. Name, E-Mail-Adresse, Nachricht). Die Übermittlung erfolgt über den
-            Dienst <strong>FormSubmit</strong> (formsubmit.co) an unsere E-Mail-Adresse {CONTACT_EMAIL}.
+            eingegebenen Daten (z. B. Name, E-Mail-Adresse, Nachricht). Die Übermittlung erfolgt über unsere
+            API (gehostet bei Render) und wird in unserem Backend gespeichert, damit wir Ihre Anfrage
+            bearbeiten können. Alternativ können Sie uns jederzeit direkt unter {CONTACT_EMAIL} erreichen.
           </p>
           <h3>Kundenkonto & Backend</h3>
           <p>

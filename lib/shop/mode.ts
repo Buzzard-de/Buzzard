@@ -12,7 +12,12 @@ export function showPrices(): boolean {
   return isSalesEnabled();
 }
 
-/** Cart + checkout UI — live sales only (catalog mode stays browse-only) */
+/** Warenkorb / Merkliste — always available for inquiry flow */
+export function isCartEnabled(): boolean {
+  return true;
+}
+
+/** Payment checkout — live sales only */
 export function isCheckoutEnabled(): boolean {
   return isSalesEnabled();
 }

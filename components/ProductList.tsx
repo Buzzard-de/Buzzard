@@ -27,7 +27,7 @@ import { fetchCompatibleSkusForVehicle } from "@/lib/supplierHub/client";
 import { isVehicleApiEnabled } from "@/lib/api/config";
 import { useMarket } from "@/lib/market/context";
 import { normalizeVin, sanitizeSearchQuery } from "@/lib/security";
-import { isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
+import { showPrices } from "@/lib/shop/mode";
 import {
   isPimStorefrontEnabled,
   loadPimStorefrontProducts,
@@ -297,7 +297,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                   }
                   addedId={addedId}
                   inWishlist={has(product.id)}
-                  onAdd={isCheckoutEnabled() ? handleAdd : undefined}
+                  onAdd={handleAdd}
                   onToggleWishlist={toggle}
                   addLabel={t("product.addToCart")}
                   addedLabel={t("product.added")}

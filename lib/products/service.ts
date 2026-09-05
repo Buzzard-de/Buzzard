@@ -71,7 +71,6 @@ function indexProducts() {
 indexProducts();
 
 export function getAllProducts(): PublicProduct[] {
-  if (process.env.NEXT_PUBLIC_SALES_ENABLED !== "1") return [];
   return activePublicProducts;
 }
 
@@ -81,7 +80,6 @@ export function getProductById(id: string): PublicProduct | undefined {
 }
 
 export function getProductBySlug(slug: string): PublicProduct | undefined {
-  if (process.env.NEXT_PUBLIC_SALES_ENABLED !== "1") return undefined;
   const normalized = slug.replace(/^\/+|\/+$/g, "");
   const product = bySlug.get(normalized);
   return product?.status === "active" ? toPublicProduct(product) : undefined;
@@ -110,12 +108,7 @@ export function getRawProductById(id: string): BuzzardProduct | undefined {
   return byId.get(id);
 }
 
-const CATALOG_PLACEHOLDER_SLUG = "catalog-mode";
-
 export function getProductStaticParams(): { slug: string }[] {
-  if (process.env.NEXT_PUBLIC_SALES_ENABLED !== "1") {
-    return [{ slug: CATALOG_PLACEHOLDER_SLUG }];
-  }
   return activePublicProducts.map((p) => ({ slug: p.seo.slug }));
 }
 

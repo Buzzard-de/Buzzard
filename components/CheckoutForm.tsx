@@ -25,7 +25,7 @@ import { saveConfirmedOrder, submitOrder, fetchOrderQuote } from "@/lib/orders";
 import { ensureServerCartSynced } from "@/lib/store/cartSync";
 import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
-import CatalogOnlyNotice from "@/components/shop/CatalogOnlyNotice";
+import CatalogInquiryPanel from "@/components/shop/CatalogInquiryPanel";
 import CommerceDryRunBanner from "@/components/shop/CommerceDryRunBanner";
 import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { isCheckoutEnabled, shouldUseCommerceCore } from "@/lib/shop/mode";
@@ -313,7 +313,22 @@ export default function CheckoutForm() {
   }, [step, total, paymentProvider]);
 
   if (!isCheckoutEnabled()) {
-    return <CatalogOnlyNotice />;
+    return (
+      <div className="checkout-page">
+        <h1 className="shop-page-title">{t("catalog.inquiryTitle")}</h1>
+        <p>{t("catalog.inquiryText")}</p>
+        {items.length === 0 ? (
+          <div className="shop-empty">
+            <p>{t("checkout.emptyText")}</p>
+            <Link href="/products/" className="shop-btn-primary">
+              {t("cart.shopCta")}
+            </Link>
+          </div>
+        ) : (
+          <CatalogInquiryPanel items={items} variant="checkout" />
+        )}
+      </div>
+    );
   }
 
   if (items.length === 0) {

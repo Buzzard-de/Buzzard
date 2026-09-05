@@ -119,6 +119,13 @@ export function getShopL2Href(main: KfzMainCategory): string | null {
   return `/kategorie/automotive/${main.shop_l2_slug}/`;
 }
 
+export function getKfzL3Href(main: KfzMainCategory, child: KfzL3Node): string {
+  const shopHref = getShopL2Href(main);
+  const query = encodeURIComponent(child.kfz_name);
+  if (shopHref) return `${shopHref}?q=${query}`;
+  return `/products/?q=${query}`;
+}
+
 export function getCompetitorLabel(id: string): string {
   return getKfzCompetitors().find((item) => item.id === id)?.name ?? id;
 }

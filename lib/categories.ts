@@ -73,9 +73,9 @@ export const defaultMegaMenuId = getDefaultMainCategoryId();
 
 export const mainNavLinks: MainNavLink[] = [
   { label: "STARTSEITE", href: "/" },
-  { label: "ANGEBOTE", href: "/products/" },
-  { label: "NEUHEITEN", href: "/products/" },
-  { label: "MARKEN", href: "/products/" },
+  { label: "ANGEBOTE", href: "/products/?sort=price-asc" },
+  { label: "NEUHEITEN", href: "/products/?sort=bestseller" },
+  { label: "MARKEN", href: "/products/?q=marken" },
   { label: "HILFE & KONTAKT", href: "/hilfe/" },
 ];
 
@@ -98,7 +98,7 @@ export function getPopularProducts(): PopularProduct[] {
     discount: product.compareAtPrice
       ? Math.round((1 - product.price / product.compareAtPrice) * 100)
       : 20,
-    rating: 5,
+    rating: 0,
     imageKey: product.imageKey ?? "oel",
     href: product.url,
   }));

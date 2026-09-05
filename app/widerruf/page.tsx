@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPageShell, catalogModeNotice } from "@/components/LegalPageShell";
+import WiderrufFormTemplate from "@/components/legal/WiderrufFormTemplate";
 import { CONTACT_EMAIL } from "@/lib/site/contact";
 
 export const metadata: Metadata = {
@@ -31,16 +32,17 @@ export default function WiderrufPage() {
         <p>
           Sobald der Online-Verkauf aktiv ist, informieren wir Verbraucher über das gesetzliche
           Widerrufsrecht, die Widerrufsfrist von 14 Tagen sowie über Ausnahmen (z. B. versiegelte
-          Waren nach Öffnung). Die vollständige Widerrufsbelehrung und das Muster-Widerrufsformular
-          werden vor dem Verkaufsstart auf dieser Seite veröffentlicht.
+          Waren nach Öffnung). Die vollständige Widerrufsbelehrung wird vor dem Verkaufsstart ergänzt.
         </p>
       </section>
+
+      <WiderrufFormTemplate />
 
       <section>
         <h2>Kontakt bei Fragen</h2>
         <p>
           Bei Fragen erreichen Sie uns unter <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> oder
-          über das <Link href="/impressum/">Kontaktformular</Link>.
+          über das <Link href="/hilfe/#kontakt">Kontaktformular</Link>.
         </p>
       </section>
     </LegalPageShell>

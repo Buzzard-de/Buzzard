@@ -65,6 +65,11 @@ export interface SmartMenuSignals {
   products?: Array<{ label: string; name: string }>;
 }
 
+export function smartMenuSignalHref(slug: string): string {
+  const normalized = slug.replace(/^\/+|\/+$/g, "");
+  return `/kategorie/${normalized}/`;
+}
+
 export async function fetchSmartMenuSignals(subId: string): Promise<SmartMenuSignals | null> {
   const bzSubId = shopSubIdToBzSubId(subId);
   if (!bzSubId) return null;

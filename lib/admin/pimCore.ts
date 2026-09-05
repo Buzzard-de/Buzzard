@@ -1,12 +1,15 @@
 import type {
   PimAttributeSchema,
   PimBrand,
+  PimHealthReport,
   PimImportResult,
   PimProduct,
   PimQualityScore,
+  PimStructuredValidationReport,
   PimSupplierMapping,
   PimValidationResult,
   PimAuditEntry,
+  PimWorkflowStatus,
 } from "./pimCoreTypes";
 
 const TOKEN_KEY = "buzzard_admin_token";
@@ -37,11 +40,13 @@ export async function fetchPimProducts(params?: {
   status?: string;
   category?: string;
   q?: string;
+  workflow?: PimWorkflowStatus | "ALL";
 }): Promise<PimProduct[]> {
   const qs = new URLSearchParams();
   if (params?.status) qs.set("status", params.status);
   if (params?.category) qs.set("category", params.category);
   if (params?.q) qs.set("q", params.q);
+  if (params?.workflow) qs.set("workflow", params.workflow);
   const suffix = qs.toString() ? `?${qs.toString()}` : "";
   const data = await request<{ success: boolean; products: PimProduct[] }>(`/api/admin/pim-core/products${suffix}`);
   return data.products;
@@ -54,12 +59,30 @@ export async function fetchPimProduct(id: string): Promise<{ product: PimProduct
   return { product: data.product, audit: data.audit || [] };
 }
 
-export async function validatePimProduct(id: string): Promise<PimValidationResult> {
-  const data = await request<{ success: boolean; validation: PimValidationResult }>(
-    `/api/admin/pim-core/products/${encodeURIComponent(id)}/validate`,
-    { method: "POST", body: "{}" }
-  );
-  return data.validation;
+export async function validatePimProduct(id: string): Promise<{
+  validation: PimValidationResult;
+  report: PimStructuredValidationReport;
+  workflowStatus: PimWorkflowStatus;
+}> {
+  const data = await request<{
+    success: boolean;
+    validation: PimValidationResult;
+    report: PimStructuredValidationReport;
+    workflowStatus: PimWorkflowStatus;
+  }>(`/api/admin/pim-core/products/${encodeURIComponent(id)}/validate`, {
+    method: "POST",
+    body: "{}",
+  });
+  return {
+    validation: data.validation,
+    report: data.report,
+    workflowStatus: data.workflowStatus,
+  };
+}
+
+export async function fetchPimHealth(): Promise<PimHealthReport> {
+  const data = await request<{ success: boolean; report: PimHealthReport }>("/api/admin/pim-core/health");
+  return data.report;
 }
 
 export async function fetchPimBrands(): Promise<PimBrand[]> {

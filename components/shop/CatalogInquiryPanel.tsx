@@ -2,18 +2,15 @@
 
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/context";
-import { formatPrice } from "@/lib/products";
 import type { CartLineItem } from "@/lib/cart/types";
 
 interface CatalogInquiryPanelProps {
   items?: CartLineItem[];
-  total?: number;
   variant?: "cart" | "checkout";
 }
 
 export default function CatalogInquiryPanel({
   items = [],
-  total = 0,
   variant = "cart",
 }: CatalogInquiryPanelProps) {
   const { t } = useLocale();
@@ -26,9 +23,7 @@ export default function CatalogInquiryPanel({
       : "";
 
   const contactHref = inquiryLines
-    ? `/hilfe/?anfrage=1#kontakt&message=${encodeURIComponent(
-        `Produktanfrage:\n${inquiryLines}${total > 0 ? `\n\nSumme (Referenz): ${formatPrice(total)}` : ""}`
-      )}`
+    ? `/hilfe/?anfrage=1#kontakt&message=${encodeURIComponent(`Produktanfrage:\n${inquiryLines}`)}`
     : "/hilfe/#kontakt";
 
   return (

@@ -53,9 +53,9 @@ export default function HomeTrustReviews() {
           <h2 id="home-status-title">Shop-Status</h2>
           <div className="home-review-card">
             <p>
-              Buzzard24 befindet sich im <strong>Katalogmodus</strong>. Produkte, Preise und Kategorien sind
-              vollständig verfügbar. Der Online-Checkout wird mit dem Verkaufsstart freigeschaltet — bis dahin
-              senden Sie uns Ihre Anfrage über Hilfe & Kontakt.
+              Buzzard24 befindet sich im <strong>Katalogmodus</strong>. Produkte und Kategorien sind
+              vollständig verfügbar — Preise folgen mit Verkaufsstart. Bis dahin senden Sie uns Ihre
+              Anfrage über Hilfe & Kontakt.
             </p>
             <footer>
               <Link href="/hilfe/">Mehr erfahren → Hilfe & FAQ</Link>

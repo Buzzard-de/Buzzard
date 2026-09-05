@@ -27,9 +27,9 @@ export function LegalPageShell({ title, description, breadcrumb, children }: Leg
 export function catalogModeNotice() {
   return (
     <p className="legal-catalog-notice">
-      <strong>Katalogmodus:</strong> Sie können Produkte, Preise und Kategorien vollständig durchstöbern sowie
-      Artikel in den Warenkorb legen. Der Online-Checkout ist noch nicht aktiv — senden Sie uns Ihre Anfrage über
-      das{" "}
+      <strong>Katalogmodus:</strong> Sie können Produkte und Kategorien vollständig durchstöbern sowie
+      Artikel in den Warenkorb legen. Verkaufspreise werden erst mit Verkaufsstart angezeigt. Der
+      Online-Checkout ist noch nicht aktiv — senden Sie uns Ihre Anfrage über das{" "}
       <Link href="/hilfe/#kontakt">Kontaktformular</Link> oder rufen Sie uns an.
     </p>
   );

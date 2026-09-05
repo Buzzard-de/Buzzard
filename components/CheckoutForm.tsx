@@ -325,7 +325,7 @@ export default function CheckoutForm() {
             </Link>
           </div>
         ) : (
-          <CatalogInquiryPanel items={items} total={total} variant="checkout" />
+          <CatalogInquiryPanel items={items} variant="checkout" />
         )}
       </div>
     );

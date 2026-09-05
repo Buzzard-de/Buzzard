@@ -42,7 +42,7 @@ describe("shop mode Part 9", () => {
     process.env.NEXT_PUBLIC_COMMERCE_CORE = "1";
     process.env.NEXT_PUBLIC_SALES_ENABLED = "0";
     expect(isCheckoutEnabled()).toBe(false);
-    expect(showPrices()).toBe(true);
+    expect(showPrices()).toBe(false);
     expect(isCommerceDryRun()).toBe(true);
     process.env.NEXT_PUBLIC_COMMERCE_CORE = prevCommerce;
     process.env.NEXT_PUBLIC_SALES_ENABLED = prevSales;

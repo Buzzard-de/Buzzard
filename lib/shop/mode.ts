@@ -7,9 +7,9 @@ export function isSalesEnabled(): boolean {
   return process.env.NEXT_PUBLIC_SALES_ENABLED === "1";
 }
 
-/** Public storefront prices — always shown for catalog browsing */
+/** Public storefront prices — only when live sales are enabled */
 export function showPrices(): boolean {
-  return true;
+  return isSalesEnabled();
 }
 
 /** Warenkorb / Merkliste — always available for inquiry flow */

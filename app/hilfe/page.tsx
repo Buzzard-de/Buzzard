@@ -23,15 +23,15 @@ export default function HilfePage() {
 
         <h3>Kann ich bereits bestellen?</h3>
         <p>
-          Der <strong>Online-Checkout</strong> ist noch nicht aktiv. Sie können Produkte und Preise vollständig
-          ansehen, Artikel in den Warenkorb legen und uns eine Anfrage senden. Mit Verkaufsstart wird der Checkout
-          freigeschaltet.
+          Der <strong>Online-Checkout</strong> ist noch nicht aktiv. Sie können Produkte und Kategorien
+          vollständig ansehen, Artikel in den Warenkorb legen und uns eine Anfrage senden. Mit Verkaufsstart
+          werden Preise und Checkout freigeschaltet.
         </p>
 
-        <h3>Warum sehe ich manchmal „Preis auf Anfrage“?</h3>
+        <h3>Warum steht „Preis auf Anfrage“?</h3>
         <p>
-          Für die meisten Artikel werden Preise angezeigt. Wenn ein Preis noch nicht hinterlegt ist, erscheint
-          „Preis auf Anfrage“. Nutzen Sie in diesem Fall das Kontaktformular oder rufen Sie uns an.
+          Im Katalogmodus werden keine Verkaufspreise angezeigt. So können Sie sich unverbindlich über das
+          Sortiment informieren. Für Preisanfragen nutzen Sie das Kontaktformular oder rufen Sie uns an.
         </p>
 
         <h3>Funktionieren Konto und Backend?</h3>

@@ -86,6 +86,7 @@
     "test:part32": "node --test server/__tests__/part32FinalControlRecovery.test.mjs",
     "test:part33": "node --test server/__tests__/part33FinalPreLaunchControl.test.mjs",
     "test:part34": "node --test server/__tests__/part34FinalLaunchControl.test.mjs",
+    "test:part35": "node --test server/__tests__/part35FinalProductionGovernance.test.mjs",
     "finish:production": "node scripts/finish-production.mjs",
     "export:part-reports": "node scripts/export-part-reports.mjs",
     "orchestrator:dev": "cd intelligence && uvicorn buzzard_orchestrator:app --reload --port 8010",

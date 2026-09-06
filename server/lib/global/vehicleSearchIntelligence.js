@@ -1,7 +1,8 @@
 /**
- * Automotive vehicle query parsing — no invented compatibility.
+ * Automotive vehicle + tire query parsing — extends search intelligence.
  */
 const { normalizeSearchQuery, tokenizeQuery } = require("./searchNormalization");
+const { extractTireFromQuery } = require("../../core/automotiveCore/tireEngine");
 
 const VEHICLE_MAKES = Object.freeze([
   "bmw", "mercedes", "mercedes-benz", "vw", "volkswagen", "audi", "ford", "opel", "toyota",
@@ -16,10 +17,27 @@ const MODEL_ALIASES = Object.freeze({
   sprinter: "sprinter",
 });
 
+function detectCategoryHintLocal(query) {
+  const q = String(query || "").toLowerCase();
+  const hints = [
+    { id: "tires_wheels", patterns: ["reifen", "tire", "lastik", "205/", "r16", "r17", "felgen", "jant"] },
+    { id: "brakes", patterns: ["bremse", "brake", "fren", "bremsbelag", "brake pad"] },
+    { id: "oils_fluids", patterns: ["öl", "oil", "yağ", "5w-", "0w-", "motoröl"] },
+  ];
+  for (const hint of hints) {
+    if (hint.patterns.some((p) => q.includes(p))) return hint.id;
+  }
+  return null;
+}
+
 function parseVehicleSearchIntent(query) {
   const normalized = normalizeSearchQuery(query);
-  const tokens = tokenizeQuery(normalized);
-  const yearMatch = normalized.match(/\b(19|20)\d{2}\b/);
+  const tire = extractTireFromQuery(normalized);
+  let working = normalized;
+  if (tire?.raw) working = working.replace(tire.raw, " ").trim();
+
+  const tokens = tokenizeQuery(working);
+  const yearMatch = working.match(/\b(19|20)\d{2}\b/);
   const year = yearMatch ? Number(yearMatch[0]) : null;
 
   let make = tokens.find((t) => VEHICLE_MAKES.includes(t)) || null;
@@ -40,13 +58,18 @@ function parseVehicleSearchIntent(query) {
   const engineTokens = tokens.filter((t) => /^\d{2,3}d$/.test(t) || /^\d\.\d/.test(t));
   const engine = engineTokens[0] || null;
 
+  const categoryHint = detectCategoryHintLocal(normalized);
+
   return {
     make,
     model,
     year,
     engine,
+    tire,
+    categoryHint,
     tokens,
-    hasVehicleIntent: Boolean(make || model || year || engine),
+    hasVehicleIntent: Boolean(make || model || year || engine || tire),
+    hasTireIntent: Boolean(tire),
   };
 }
 

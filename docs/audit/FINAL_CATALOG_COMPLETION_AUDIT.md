@@ -8,7 +8,7 @@ Base: PR #302 integration (`cursor/pim-automotive-global-integration-c293`)
 
 | Field | Value |
 |-------|-------|
-| Git SHA (pre-commit base) | `ff2b9d1` |
+| Git SHA | `913d9b9` (latest) — base integration `2d2f453` / PR #302 `ff2b9d1` |
 | Branch | `cursor/final-catalog-completion-c293` |
 | Scope | Final wiring — no Part 36, no new governance layer |
 
@@ -118,12 +118,12 @@ This completion task connects existing PIM, Automotive, and Global Localization 
 
 | Suite | Result |
 |-------|--------|
-| `test:final-catalog-completion` | 15/15 PASS |
+| `test:final-catalog-completion` | 20/20 PASS |
 | `test:global-localization` | 160/160 PASS |
 | `test:pim-catalog` | 14/14 PASS |
 | `test:automotive` | 35/35 PASS |
 | `test:part28` … `test:part35` | 193/193 PASS |
-| **Total** | **417/417 PASS** |
+| **Total** | **422/422 PASS** |
 
 ## Typecheck / Lint / Build
 

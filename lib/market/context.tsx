@@ -22,7 +22,6 @@ import { isLocalizationFeedsEnabled } from "@/lib/api/config";
 import type { LocalizationCountryConfig } from "@/lib/localizationFeeds/types";
 import type { MarketCountry } from "./types";
 import {
-  hasManualCountryOverride,
   persistCountryCode,
   readStoredCountryCode,
 } from "./storage";
@@ -69,13 +68,6 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     },
     [setLocale]
   );
-
-  useEffect(() => {
-    if (!ready || hasManualCountryOverride()) return;
-    const detected = detectMarketCountryCode();
-    const country = getDeliverableMarketCountry(detected);
-    if (country) setCountryCodeState(country.code);
-  }, [ready]);
 
   useEffect(() => {
     if (!ready || !isLocalizationFeedsEnabled()) {

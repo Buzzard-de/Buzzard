@@ -35,15 +35,19 @@ function resolveLanguage(options = {}) {
     return { language: country.defaultLanguage, source: "country_default" };
   }
 
+  if (countryCode && country?.fallbackLanguage) {
+    return { language: country.fallbackLanguage, source: "country_fallback" };
+  }
+
+  if (getLanguage(defaultLanguage)) {
+    return { language: defaultLanguage, source: "global_default" };
+  }
+
   for (const tag of browserLanguages) {
     const code = String(tag).slice(0, 2).toLowerCase();
     if (getLanguage(code)) {
       return { language: code, source: "browser_accept_language" };
     }
-  }
-
-  if (countryCode && country?.fallbackLanguage) {
-    return { language: country.fallbackLanguage, source: "country_fallback" };
   }
 
   return { language: defaultLanguage, source: "global_default" };

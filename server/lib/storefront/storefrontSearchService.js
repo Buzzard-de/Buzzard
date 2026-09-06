@@ -9,6 +9,8 @@ const { sortProducts, filterProducts, buildFilterFacets } = require("./filterSor
 const { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, SORT_OPTIONS } = require("../../core/storefrontConstants");
 const productCore = require("../pim/productCore");
 const categoryEngine = require("../pim/categoryEngine");
+const { loadSearchCatalog } = require("../global/globalCatalogSearch");
+const { searchProducts } = require("../global/searchIntelligence");
 
 const SEARCH_FIELDS = Object.freeze([
   "sku",
@@ -93,7 +95,17 @@ function searchCatalog(query = {}) {
   let mapped = pimRows.map(mapPimToStorefront).filter(Boolean);
 
   if (query.q) {
-    mapped = mapped.filter((p) => productMatchesQuery(p, query.q));
+    const searchRows = loadSearchCatalog();
+    const ranked = searchProducts(searchRows, query.q, {
+      country: query.country || "DE",
+      language: query.language || "de",
+      categoryId: query.category,
+    });
+    const rankOrder = ranked.results.map((entry) => entry.product.sku).filter(Boolean);
+    const rankIndex = new Map(rankOrder.map((sku, idx) => [sku, idx]));
+    mapped = mapped
+      .filter((p) => rankIndex.has(p.sku))
+      .sort((a, b) => (rankIndex.get(a.sku) ?? 999) - (rankIndex.get(b.sku) ?? 999));
   }
 
   mapped = filterProducts(mapped, {

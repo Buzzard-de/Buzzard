@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "mappings": [
+    {
+      "supplier": "mock",
+      "supplierCategory": "automotive/tires",
+      "supplierSubcategory": "passenger",
+      "supplierProductType": "summer",
+      "buzzardCategoryId": "automotive",
+      "buzzardSubcategoryId": "auto-sub-01",
+      "buzzardSubSubcategoryId": "auto-sub-01--car-tires"
+    },
+    {
+      "supplier": "mock",
+      "supplierCategory": "automotive/brakes",
+      "supplierSubcategory": "pads",
+      "buzzardCategoryId": "automotive",
+      "buzzardSubcategoryId": "auto-sub-04",
+      "buzzardSubSubcategoryId": "auto-sub-04--brake-pads"
+    }
+  ]
+}

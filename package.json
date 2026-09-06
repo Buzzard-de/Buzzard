@@ -93,6 +93,8 @@
     "test:automotive": "node --test server/__tests__/automotiveTaxonomy.test.mjs server/__tests__/automotiveCompatibility.test.mjs server/__tests__/automotiveFilters.test.mjs server/__tests__/automotiveCategoryRoutes.test.mjs server/__tests__/automotiveProductPipeline.test.mjs",
     "test:automotive-core": "node --test server/__tests__/automotiveCore.test.mjs",
     "test:automotive-core-integration": "node scripts/automotive-core-integration-test.mjs",
+    "test:automotive-production": "node --test server/__tests__/automotiveProduction.test.mjs",
+    "test:automotive-production-integration": "node scripts/automotive-production-integration-test.mjs",
     "automotive:generate-core-categories": "node scripts/generate-automotive-core-categories.mjs",
     "test:global-localization": "node --test server/__tests__/globalLocalization.test.mjs",
     "test:final-catalog-completion": "node --test server/__tests__/finalCatalogCompletion.test.mjs",

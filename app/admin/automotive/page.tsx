@@ -12,6 +12,7 @@ export default function AdminAutomotivePage() {
         <h1>Automotive Core Engine</h1>
         <p>Diagnostic admin — 12 Kategorien, Validierung, Fitment, Supplier (dry-run).</p>
         <ul>
+          <li><Link href="/admin/automotive/integrations">Production Integrations</Link></li>
           <li><Link href="/admin/automotive/categories">Kategorien</Link></li>
           <li><Link href="/admin/automotive/products">Produkte</Link></li>
           <li><Link href="/admin/automotive/suppliers">Lieferanten</Link></li>

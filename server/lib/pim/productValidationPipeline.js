@@ -95,7 +95,7 @@ function runValidationPipeline(raw, options = {}) {
   if (normalized.automotiveCategoryId || normalized.categoryId === "automotive" || normalized.supplierCategory?.startsWith?.("automotive")) {
     try {
       const automotivePimBridge = require("../catalog/automotivePimBridge");
-      automotiveCatalog = automotivePimBridge.validatePimProduct(normalized);
+      automotiveCatalog = automotivePimBridge.validatePimProduct(normalized, options);
       if (!automotiveCatalog.valid) {
         for (const err of automotiveCatalog.errors) blockingReasons.push(`AUTOMOTIVE_${err}`);
       }

@@ -4,6 +4,7 @@
 const taxonomyResolver = require("./taxonomyResolver");
 const productCategoryValidator = require("./productCategoryValidator");
 const categoryMapping = require("./categoryMapping");
+const { runAutomotiveProductPipeline, isAutomotiveProduct } = require("./automotiveProductPipeline");
 const { AUTOMOTIVE_SAFETY_POLICY } = require("../../core/automotive/automotiveTaxonomy");
 
 function resolveProductTaxonomy(product) {
@@ -34,18 +35,24 @@ function resolveProductTaxonomy(product) {
   };
 }
 
-function validatePimProduct(product) {
+function validatePimProduct(product, options = {}) {
   const taxonomy = resolveProductTaxonomy(product);
-  const validation = productCategoryValidator.validateCatalogReadiness({
-    ...product,
-    categoryId: taxonomy.categoryId,
-    subcategoryId: taxonomy.subcategoryId,
-    subSubcategoryId: taxonomy.subSubcategoryId,
-  });
+  const pipeline = runAutomotiveProductPipeline(
+    {
+      ...product,
+      categoryId: taxonomy.categoryId,
+      subcategoryId: taxonomy.subcategoryId,
+      subSubcategoryId: taxonomy.subSubcategoryId,
+    },
+    options
+  );
 
   return {
-    ...validation,
+    valid: pipeline.ok,
+    errors: pipeline.errors,
     taxonomy,
+    pipeline,
+    catalogReadiness: pipeline.status,
     publishAllowed: false,
     safety: AUTOMOTIVE_SAFETY_POLICY,
   };
@@ -56,6 +63,19 @@ function getAutomotivePimStatus() {
     connected: true,
     publishEnabled: false,
     supplierLive: false,
+    pipeline: [
+      "automotive_taxonomy",
+      "pim",
+      "supplier_category_mapping",
+      "product_validation",
+      "gtin_ean_mpn",
+      "vehicle_compatibility",
+      "image_control",
+      "language_seo",
+      "admin_review",
+      "approved",
+      "manual_publish",
+    ],
     safety: AUTOMOTIVE_SAFETY_POLICY,
   };
 }
@@ -64,4 +84,6 @@ module.exports = {
   resolveProductTaxonomy,
   validatePimProduct,
   getAutomotivePimStatus,
+  isAutomotiveProduct,
+  runAutomotiveProductPipeline,
 };

@@ -68,6 +68,38 @@ DE / EN / TR / AR labels on every category node. UI strings under `automotive.*`
 
 `automotivePimBridge.js` resolves supplier → Buzzard category mapping and validates products through `productCategoryValidator`. Publish remains blocked.
 
+### Product pipeline (11 stages)
+
+```
+Automotive Taxonomy
+    ↓
+PIM
+    ↓
+Supplier Category Mapping
+    ↓
+Product Validation
+    ↓
+GTIN / EAN / MPN
+    ↓
+Vehicle Compatibility
+    ↓
+Image Control
+    ↓
+Language / SEO
+    ↓
+Admin Review
+    ↓
+APPROVED
+    ↓
+MANUAL PUBLISH (never automatic)
+```
+
+Orchestrator: `server/lib/catalog/automotiveProductPipeline.js`
+
+Admin endpoint: `POST /api/admin/automotive/products/pipeline`
+
+Workflow states: `DRAFT` → `REVIEW` → `APPROVED` → `PUBLISHED` (manual only)
+
 ## Admin (RBAC)
 
 - `GET /api/admin/automotive/categories`

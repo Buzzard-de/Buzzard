@@ -97,6 +97,36 @@ module.exports = {
       res.json({ success: true, validation: productCategoryValidator.validateCatalogReadiness(req.body || {}) });
     });
 
+    app.post("/api/admin/automotive/products/pipeline", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "products.read")) return;
+      const pipeline = pimBridge.runAutomotiveProductPipeline(req.body || {}, {
+        manualPublish: req.body?.manualPublish === true,
+        requireGtin: req.body?.requireGtin !== false,
+        requireMpn: req.body?.requireMpn !== false,
+        requireImage: req.body?.requireImage !== false,
+      });
+      res.json({ success: true, ...pipeline });
+    });
+
+    app.post("/api/admin/automotive/products/:sku/approve", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "products.write")) return;
+      const pipeline = pimBridge.runAutomotiveProductPipeline(
+        { ...(req.body || {}), sku: req.params.sku, state: "APPROVED" },
+        { requireImage: false }
+      );
+      if (!pipeline.ok) {
+        return res.status(400).json({ success: false, errors: pipeline.errors, pipeline });
+      }
+      res.json({
+        success: true,
+        message: "Product marked APPROVED — manual publish still required",
+        pipeline,
+        publishAllowed: false,
+      });
+    });
+
     app.get("/api/admin/automotive/integrity", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;

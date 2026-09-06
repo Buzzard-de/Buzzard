@@ -83,7 +83,7 @@ function scoreProductMatch(product, query, context = {}) {
 
 function searchProducts(products = [], query, context = {}) {
   const normalizedQuery = mapQuerySynonyms(normalizeSearchQuery(query));
-  const countryFiltered = filterProductsByCountry(products, context.country || "DE");
+  const countryFiltered = filterProductsByCountry(products, context.country || "DE", { searchMode: true });
 
   const ranked = countryFiltered
     .map((product) => scoreProductMatch(product, normalizedQuery, context))

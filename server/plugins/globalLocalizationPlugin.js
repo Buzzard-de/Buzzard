@@ -10,6 +10,9 @@ const { buildZeroResultResponse } = require("../lib/global/zeroResultIntelligenc
 const { buildGlobalCatalogHealth } = require("../lib/global/globalCatalogHealth");
 const { buildCountryCatalogMatrix } = require("../lib/global/countryCatalogMatrix");
 const { runGlobalProductPipeline } = require("../lib/global/globalProductPipeline");
+const { loadSearchCatalog } = require("../lib/global/globalCatalogSearch");
+const { buildProductValidationReport } = require("../lib/global/productValidationReport");
+const { collectProductStats } = require("../lib/global/globalCatalogStats");
 const { GLOBAL_SAFETY_POLICY } = require("../core/globalSafetyPolicy");
 const fs = require("fs");
 const path = require("path");
@@ -46,6 +49,7 @@ module.exports = {
         success: true,
         languages: languageRegistry.listLanguages(),
         uiLocales: languageRegistry.UI_LOCALES,
+        readiness: languageRegistry.READINESS,
         safety: GLOBAL_SAFETY_POLICY,
       });
     });
@@ -94,29 +98,32 @@ module.exports = {
         categoryId: req.query.category,
         vehicleId: req.query.vehicleId,
       };
-      const products = [];
+      const products = loadSearchCatalog();
       if (!query) {
-        return res.json({ success: true, resultCount: 0, results: [], safety: GLOBAL_SAFETY_POLICY });
+        return res.json({ success: true, resultCount: 0, results: [], catalogSize: products.length, safety: GLOBAL_SAFETY_POLICY });
       }
       const result = searchProducts(products, query, context);
       if (result.resultCount === 0) {
         return res.json({
           success: true,
           ...result,
+          catalogSize: products.length,
           zeroResult: buildZeroResultResponse(query, context),
           automotiveIntent: detectAutomotiveSearchIntent(query),
           safety: GLOBAL_SAFETY_POLICY,
         });
       }
-      return res.json({ success: true, ...result, safety: GLOBAL_SAFETY_POLICY });
+      return res.json({ success: true, ...result, catalogSize: products.length, safety: GLOBAL_SAFETY_POLICY });
     });
 
     app.get("/api/admin/pim-core/global-catalog-health", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
+      const stats = collectProductStats();
       res.json({
         success: true,
         health: buildGlobalCatalogHealth({
+          stats,
           hasPimFoundation: hasModule("lib/pim/categoryResolver.js"),
           hasAutomotive: hasModule("lib/catalog/automotivePimBridge.js"),
           hasReconciliation: hasModule("lib/pim/productValidationPipeline.js"),
@@ -127,9 +134,10 @@ module.exports = {
     app.get("/api/admin/pim-core/country-matrix", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
+      const stats = collectProductStats();
       res.json({
         success: true,
-        matrix: buildCountryCatalogMatrix(),
+        matrix: buildCountryCatalogMatrix(stats.byCountry || {}),
         safety: GLOBAL_SAFETY_POLICY,
       });
     });
@@ -137,8 +145,39 @@ module.exports = {
     app.post("/api/admin/global/products/validate", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
-      const result = runGlobalProductPipeline(req.body?.product || req.body || {}, req.body?.context || {});
-      res.json({ success: true, validation: result });
+      const product = req.body?.product || req.body || {};
+      const context = req.body?.context || {};
+      const pipeline = runGlobalProductPipeline(product, context);
+      const report = buildProductValidationReport(product, context);
+      res.json({ success: true, validation: pipeline, report, safety: GLOBAL_SAFETY_POLICY });
+    });
+
+    app.post("/api/admin/automotive/products/pipeline", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "products.read")) return;
+      try {
+        const { runAutomotiveProductPipeline } = require("../lib/catalog/automotiveProductPipeline");
+        const result = runAutomotiveProductPipeline(req.body?.product || req.body || {}, req.body?.context || {});
+        res.json({ success: true, pipeline: result, safety: GLOBAL_SAFETY_POLICY });
+      } catch (err) {
+        res.status(500).json({ success: false, error: err.message, safety: GLOBAL_SAFETY_POLICY });
+      }
+    });
+
+    app.post("/api/admin/automotive/products/:sku/approve", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "products.write")) return;
+      const sku = req.params.sku;
+      const manualPublish = Boolean(req.body?.manualPublish);
+      res.json({
+        success: true,
+        sku,
+        approved: true,
+        published: false,
+        manualPublish,
+        note: "APPROVED != PUBLISHED. Publish remains blocked by safety policy.",
+        safety: GLOBAL_SAFETY_POLICY,
+      });
     });
 
     console.log("Global localization plugin registered (35-country foundation, diagnostic only)");

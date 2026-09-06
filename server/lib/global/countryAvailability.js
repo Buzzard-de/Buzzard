@@ -33,10 +33,12 @@ function isProductAvailableInCountry(product = {}, countryCode) {
   return { available: true, status: "AVAILABLE", reason: null };
 }
 
-function filterProductsByCountry(products = [], countryCode) {
+function filterProductsByCountry(products = [], countryCode, options = {}) {
   return products.filter((product) => {
     const result = isProductAvailableInCountry(product, countryCode);
-    return result.available;
+    if (result.available) return true;
+    if (options.searchMode && result.reason === "UNKNOWN_COUNTRY_AVAILABILITY") return true;
+    return false;
   });
 }
 

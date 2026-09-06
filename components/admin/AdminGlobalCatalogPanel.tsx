@@ -33,9 +33,20 @@ export default function AdminGlobalCatalogPanel() {
         <div>Countries: {health.countries.configured}/{health.countries.expected}</div>
         <div>Languages: {health.languages.configured} configured ({health.languages.uiReady.join(", ")} UI-ready)</div>
         <div>Currencies: {health.currencies.configured}</div>
-        <div>Products: {health.products.total || 0}</div>
-        <div>Review required: {health.products.reviewRequired || 0}</div>
+        <div>Products total: {health.products.total || 0}</div>
+        <div>Draft: {health.products.draft || 0}</div>
+        <div>Review: {health.products.review || health.products.reviewRequired || 0}</div>
+        <div>Approved: {health.products.approved || 0}</div>
         <div>Published: {health.products.published || 0}</div>
+        <div>Blocked: {health.products.blocked || 0}</div>
+        <div>Missing images: {health.products.missingImages || 0}</div>
+        <div>Missing GTIN: {health.products.missingGtin || 0}</div>
+        <div>Invalid GTIN: {health.products.invalidGtin || 0}</div>
+        <div>Missing MPN: {health.products.missingMpn || 0}</div>
+        <div>Invalid categories: {health.products.invalidCategories || 0}</div>
+        <div>Missing translations: {health.products.missingTranslations || 0}</div>
+        <div>Fitment errors: {health.products.fitmentErrors || 0}</div>
+        <div>SEO errors: {health.products.seoErrors || 0}</div>
       </section>
 
       <section>

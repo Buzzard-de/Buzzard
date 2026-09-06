@@ -9,19 +9,27 @@ const { validateImageUrl, validateLocalizedAltText } = require("./imageLocalizat
 const { buildLocalizedProductSeo } = require("./seoLocalization");
 const { extractProductIdentity } = require("./productIdentity");
 
+const { validateProductIdentity } = require("../pim/productIdentityValidator");
+
 function validateGtinEanMpn(product = {}) {
-  const errors = [];
-  const identity = extractProductIdentity(product);
-  if (identity.gtin && !/^\d{8,14}$/.test(identity.gtin)) {
-    errors.push({ code: "INVALID_GTIN", field: "gtin" });
-  }
-  if (identity.ean && !/^\d{13}$/.test(identity.ean)) {
-    errors.push({ code: "INVALID_EAN", field: "ean" });
-  }
-  if (!identity.mpn && !identity.gtin && !identity.ean) {
+  const result = validateProductIdentity(product, { requireGtin: false, requireMpn: false });
+  const errors = (result.findings || []).map((f) => ({
+    code: f.code || "IDENTITY_INVALID",
+    field: f.field,
+    status: f.severity === "BLOCKED" ? "BLOCKED" : "REVIEW_REQUIRED",
+  }));
+
+  const identity = result.normalized || {};
+  if (!identity.gtin && !identity.mpn && !product.ean) {
     errors.push({ code: "MISSING_PRODUCT_IDENTITY", field: "mpn", status: "REVIEW_REQUIRED" });
   }
-  return { valid: errors.length === 0, errors };
+
+  return {
+    valid: result.ok && errors.filter((e) => e.status === "BLOCKED").length === 0,
+    status: result.status,
+    errors,
+    normalized: identity,
+  };
 }
 
 function runGlobalProductPipeline(product = {}, context = {}) {

@@ -12,6 +12,9 @@ export type ReturnRecoveryRow = {
   supplierLiability: string;
   lastAction?: string;
   warnings?: string[];
+  inspectionSummary?: string;
+  supplierClaimStatus?: string;
+  creditNoteSummary?: string;
   inspection?: {
     condition?: string;
     resellable?: boolean;

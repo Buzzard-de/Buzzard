@@ -1,5 +1,5 @@
 const { roundMoney } = require("./customerRefundEngine");
-const { sumConfirmedRecovery } = require("./supplierRecoveryEngine");
+const { sumConfirmedRecovery, calculateSupplierRecovery } = require("./supplierRecoveryEngine");
 const { SUPPLIER_RECOVERY_STATUS } = require("./constants");
 
 /**
@@ -14,10 +14,9 @@ function reconcileReturn(returnCase) {
   );
 
   const events = returnCase.supplierRecoveryEvents || [];
+  const recoveryCalc = calculateSupplierRecovery(returnCase);
   const supplierRecoveryExpected = roundMoney(
-    returnCase.supplierRecoveryExpected ??
-      returnCase.supplierRecovery?.totalExpectedRecovery ??
-      0
+    returnCase.supplierRecoveryExpected ?? recoveryCalc.totalExpectedRecovery ?? 0
   );
   const supplierRecoveryConfirmed = sumConfirmedRecovery(events);
 

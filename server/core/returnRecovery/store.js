@@ -122,6 +122,22 @@ function listCases(filter = {}) {
         (c.supplierRecoveryExpected || 0) > (c.supplierRecoveryConfirmed || 0)
     );
   }
+  if (filter.customerRefundPending) {
+    rows = rows.filter((c) => c.status === "REFUND_PENDING");
+  }
+  if (filter.supplierDisputed) {
+    rows = rows.filter(
+      (c) =>
+        c.supplierRecoveryStatus === "DISPUTED" ||
+        (c.creditNotes || []).some((n) => n.creditNoteStatus === "DISPUTED")
+    );
+  }
+  if (filter.partiallyRecovered) {
+    rows = rows.filter((c) => c.supplierRecoveryStatus === "PARTIALLY_CONFIRMED");
+  }
+  if (filter.closed) {
+    rows = rows.filter((c) => c.status === "CLOSED");
+  }
   if (filter.unrecovered) {
     rows = rows.filter((c) => (c.unrecoveredAmount || 0) > 0);
   }

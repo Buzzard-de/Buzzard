@@ -61,14 +61,14 @@ function calculateSupplierRecovery(returnCase) {
 
   if (supplierRefundRequested) {
     supplierRefundAmount = roundMoney(
-      returnCase.supplierRefundAmount != null
+      Number(returnCase.supplierRefundAmount) > 0
         ? returnCase.supplierRefundAmount
         : baseProduct
     );
   }
   if (supplierCreditRequested) {
     supplierCreditAmount = roundMoney(
-      returnCase.supplierCreditAmount != null
+      Number(returnCase.supplierCreditAmount) > 0
         ? returnCase.supplierCreditAmount
         : baseProduct
     );

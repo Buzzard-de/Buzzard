@@ -9,8 +9,12 @@ import { formatPrice } from "@/lib/products";
 const FILTERS = [
   { id: "", label: "All" },
   { id: "pending", label: "Pending" },
+  { id: "customer_refund_pending", label: "Customer refund pending" },
   { id: "supplier_recovery_pending", label: "Supplier recovery pending" },
+  { id: "supplier_disputed", label: "Supplier disputed" },
+  { id: "partially_recovered", label: "Partially recovered" },
   { id: "unrecovered", label: "Unrecovered" },
+  { id: "closed", label: "Closed" },
 ];
 
 export default function AdminReturnsPanel() {
@@ -104,6 +108,9 @@ export default function AdminReturnsPanel() {
                 <th>Unrecovered</th>
                 <th>Liability</th>
                 <th>Status</th>
+                <th>Inspection</th>
+                <th>Supplier claim</th>
+                <th>Credit note</th>
                 <th>Warnings</th>
               </tr>
             </thead>
@@ -127,6 +134,9 @@ export default function AdminReturnsPanel() {
                   <td>{formatPrice(row.unrecoveredAmount || 0)}</td>
                   <td>{row.supplierLiability}</td>
                   <td>{row.status}</td>
+                  <td>{row.inspectionSummary || "—"}</td>
+                  <td>{row.supplierClaimStatus || "—"}</td>
+                  <td>{row.creditNoteSummary || "—"}</td>
                   <td>
                     {(row.warnings || []).map((w) => (
                       <span key={w} className="admin-badge admin-badge-warn">

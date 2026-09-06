@@ -37,8 +37,12 @@ module.exports = {
       const filter = {
         status: req.query.status,
         pending: req.query.filter === "pending",
+        customerRefundPending: req.query.filter === "customer_refund_pending",
         supplierRecoveryPending: req.query.filter === "supplier_recovery_pending",
+        supplierDisputed: req.query.filter === "supplier_disputed",
+        partiallyRecovered: req.query.filter === "partially_recovered",
         unrecovered: req.query.filter === "unrecovered",
+        closed: req.query.filter === "closed",
         liability: req.query.liability,
       };
       const cases = returnRecovery.listReturnCases(filter).map(returnRecovery.enrichForDashboard);

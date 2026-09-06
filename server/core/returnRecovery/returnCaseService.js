@@ -31,17 +31,31 @@ function transitionCase(returnCase, nextStatus) {
 }
 
 function withReconciliation(returnCase) {
-  const reconciliation = reconcileReturn(returnCase);
+  const customerRefund = calculateCustomerRefund(returnCase);
+  const supplierRecovery = calculateSupplierRecovery(returnCase);
+  const reconciliation = reconcileReturn({
+    ...returnCase,
+    customerRefundAmount: returnCase.customerRefundAmount || customerRefund.totalRefundAmount,
+    supplierRecoveryExpected:
+      returnCase.supplierRecoveryExpected ?? supplierRecovery.totalExpectedRecovery,
+  });
   return {
     ...returnCase,
     reconciliation,
+    customerRefundAmount: returnCase.customerRefundAmount || customerRefund.totalRefundAmount,
+    ...(supplierRecovery.supplierRefundAmount > 0 && {
+      supplierRefundAmount: supplierRecovery.supplierRefundAmount,
+    }),
+    ...(supplierRecovery.supplierCreditAmount > 0 && {
+      supplierCreditAmount: supplierRecovery.supplierCreditAmount,
+    }),
     supplierRecoveryConfirmed: reconciliation.supplierRecoveryConfirmed,
     supplierRecoveryExpected:
       returnCase.supplierRecoveryExpected ?? reconciliation.supplierRecoveryExpected,
     unrecoveredAmount: reconciliation.unrecoveredAmount,
     buzzardNetImpact: reconciliation.buzzardNetImpact,
     supplierRecoveryStatus:
-      returnCase.supplierRecoveryStatus ?? reconciliation.supplierRecoveryStatus,
+      returnCase.supplierRecoveryStatus ?? supplierRecovery.status,
   };
 }
 
@@ -120,6 +134,14 @@ function createReturnCase(body = {}, { idempotencyKey, actor = "system" } = {}) 
       restockingCost: Number(body.restockingCost || 0),
       paymentFee: Number(body.paymentFee || 0),
       evidence: body.evidence || [],
+      items: (body.items || []).map((item) => ({
+        orderLineId: item.orderLineId || item.order_line_id || orderLineId,
+        productId: item.productId || item.product_id || body.productId || null,
+        sku: item.sku || null,
+        quantity: Number(item.quantity || 1),
+        unitPrice: Number(item.unitPrice || item.unit_price || body.unitPrice || 0),
+        currency: item.currency || body.currency || "EUR",
+      })),
       supplierRecoveryEvents: [],
       creditNotes: [],
       customerRefundAmount: 0,
@@ -569,12 +591,20 @@ function getDashboardWarnings(returnCase) {
 }
 
 function enrichForDashboard(returnCase) {
+  const latestCredit = (returnCase.creditNotes || []).slice(-1)[0];
   return {
     ...returnCase,
     warnings: getDashboardWarnings(returnCase),
     customerRefund: returnCase.customerRefundAmount || 0,
     supplierRecoveryExpected: returnCase.supplierRecoveryExpected || 0,
     supplierRecoveryConfirmed: returnCase.supplierRecoveryConfirmed || 0,
+    inspectionSummary: returnCase.inspection
+      ? `${returnCase.inspection.condition}${returnCase.inspection.resellable ? " / resellable" : ""}`
+      : "—",
+    supplierClaimStatus: returnCase.supplierClaim?.status || "—",
+    creditNoteSummary: latestCredit
+      ? `${latestCredit.creditNoteNumber || "—"} (${latestCredit.creditNoteStatus})`
+      : "—",
   };
 }
 

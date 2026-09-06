@@ -72,6 +72,63 @@ function normalizeCanonicalProduct(raw = {}) {
   };
 }
 
+function getLanguageReadiness(product = {}, languageCode = "de") {
+  const canonical = normalizeCanonicalProduct(product);
+  const tr = canonical.localization.translations[languageCode] || {};
+  const title = tr.title || (languageCode === "de" ? canonical.content.title : "");
+  const description = tr.description || (languageCode === "de" ? canonical.content.description : "");
+  const seo = tr.seo || canonical.localization.localizedSeo[languageCode] || {};
+  const fields = [title, description, seo.title, seo.description, seo.slug].filter(Boolean);
+  return {
+    language: languageCode,
+    title: title || null,
+    description: description || null,
+    shortDescription: tr.shortDescription || null,
+    seoTitle: seo.title || null,
+    seoDescription: seo.description || null,
+    slug: seo.slug || null,
+    completeness: fields.length >= 3 ? "PARTIAL" : fields.length > 0 ? "MINIMAL" : "MISSING",
+    translated: Boolean(tr.title || tr.description),
+  };
+}
+
+/** Flat canonical product contract for storefront/admin APIs. */
+function toFlatCanonicalProduct(raw = {}) {
+  const c = normalizeCanonicalProduct(raw);
+  const attrs = raw.attributes || {};
+  const metadata = raw.metadata || {};
+  return {
+    id: raw.id || raw.productId,
+    sku: c.identity.sku,
+    brand: c.identity.brand,
+    manufacturer: raw.manufacturer || c.identity.brand,
+    mpn: c.identity.mpn,
+    gtin: c.identity.gtin,
+    ean: c.identity.ean,
+    title: c.content.title,
+    description: c.content.description,
+    shortDescription: raw.shortDescription || raw.short_description,
+    categoryId: c.taxonomy.mainCategory,
+    subcategoryId: c.taxonomy.subCategory,
+    subSubcategoryId: c.taxonomy.subSubCategory,
+    automotiveCategoryId: metadata.automotiveCategoryId || attrs.automotiveCategoryId,
+    images: c.media.images,
+    documents: raw.documents || [],
+    vehicleCompatibility: c.automotive.vehicleCompatibility,
+    translations: c.localization.translations,
+    seo: c.localization.localizedSeo,
+    supplier: c.commercial.supplier,
+    countryAvailability: metadata.countryAvailability || attrs.countryAvailability || {},
+    pricing: { state: c.commercial.priceState, amount: raw.price, currency: raw.currency },
+    stock: raw.stock,
+    status: c.workflow.status,
+    validation: raw.validation || null,
+    workflow: c.workflow,
+  };
+}
+
 module.exports = {
   normalizeCanonicalProduct,
+  toFlatCanonicalProduct,
+  getLanguageReadiness,
 };

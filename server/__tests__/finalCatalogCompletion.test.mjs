@@ -202,6 +202,36 @@ test("legacy merchant feed adapter omits price when sales off", () => {
   }
 });
 
+test("country market profiles have structured fields", () => {
+  const profiles = countryRegistry.listCountryMarketProfiles();
+  assert.equal(profiles.length, 35);
+  const de = profiles.find((p) => p.countryCode === "DE");
+  assert.ok(de.currency);
+  assert.ok(de.taxRegion);
+  assert.ok(de.availability);
+});
+
+test("flat canonical product model", () => {
+  const { toFlatCanonicalProduct } = require("../lib/global/productCanonicalModel.js");
+  const flat = toFlatCanonicalProduct({ id: "x1", sku: "FLAT-1", title: "T", brand: "Bosch" });
+  assert.equal(flat.sku, "FLAT-1");
+  assert.equal(flat.workflow.publishAllowed, false);
+});
+
+test("supplier mapping diagnostics include status and reason", () => {
+  const categoryMapping = require("../lib/catalog/categoryMapping.js");
+  const r = categoryMapping.resolveSupplierCategory("test", "unknown");
+  assert.equal(r.status, "REVIEW_REQUIRED");
+  assert.ok(r.reason);
+});
+
+test("system diagnostics safety contract", () => {
+  const { getSafetyContract } = require("../lib/global/systemDiagnostics.js");
+  const c = getSafetyContract();
+  assert.equal(c.status, "BLOCKED");
+  assert.equal(c.publishEnabled, false);
+});
+
 test("integration flow: country registry → search catalog → ranked results", () => {
   assert.equal(countryRegistry.getCountryCount(), 35);
   const ctx = countryRegistry.getCatalogContext("DE");

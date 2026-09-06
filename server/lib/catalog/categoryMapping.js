@@ -51,13 +51,33 @@ function resolveSupplierCategory(supplier, supplierCategory, supplierSubcategory
       (m.supplierProductType == null || m.supplierProductType === supplierProductType)
   );
   if (!match) {
-    return { mapped: false, supplier, supplierCategory, supplierSubcategory, supplierProductType };
+    return {
+      mapped: false,
+      status: "REVIEW_REQUIRED",
+      supplier,
+      sourceCategory: supplierCategory,
+      supplierSubcategory,
+      supplierProductType,
+      targetCategory: null,
+      confidence: 0,
+      reason: "NO_MAPPING_RULE",
+      mappingRule: null,
+      timestamp: new Date().toISOString(),
+    };
   }
   return {
     mapped: true,
+    status: "PASS",
+    supplier,
+    sourceCategory: supplierCategory,
+    targetCategory: match.buzzardCategoryId,
     buzzardCategoryId: match.buzzardCategoryId,
     buzzardSubcategoryId: match.buzzardSubcategoryId || null,
     buzzardSubSubcategoryId: match.buzzardSubSubcategoryId || null,
+    confidence: 1,
+    reason: "DETERMINISTIC_RULE",
+    mappingRule: match.ruleId || "supplier_category_mappings.json",
+    timestamp: new Date().toISOString(),
   };
 }
 

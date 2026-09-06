@@ -153,11 +153,39 @@ module.exports = {
         success: true,
         redis: {
           status: redis?.ok === false ? "NOT_CONFIGURED" : redis?.status || (redis?.ok ? "HEALTHY" : "NOT_CONFIGURED"),
+          configured: Boolean(redis?.url || redis?.connected),
+          connected: Boolean(redis?.ok),
+          provider: redis?.provider || "upstash",
           ...redis,
         },
         catalogCache: cache,
         diagnosticOnly: true,
       });
+    });
+
+    app.get("/api/health/monitoring", (_req, res) => {
+      const { getMonitoringDiagnostics } = require("../lib/global/systemDiagnostics");
+      res.json({ success: true, ...getMonitoringDiagnostics(), diagnosticOnly: true });
+    });
+
+    app.get("/api/health/smtp", (_req, res) => {
+      const { getSmtpDiagnostics } = require("../lib/global/systemDiagnostics");
+      res.json({ success: true, ...getSmtpDiagnostics(), diagnosticOnly: true });
+    });
+
+    app.get("/api/health/legal", (_req, res) => {
+      const { getLegalDiagnostics } = require("../lib/global/systemDiagnostics");
+      res.json({ success: true, ...getLegalDiagnostics(), diagnosticOnly: true });
+    });
+
+    app.get("/api/health/analytics", (_req, res) => {
+      const { getAnalyticsDiagnostics } = require("../lib/global/systemDiagnostics");
+      res.json({ success: true, ...getAnalyticsDiagnostics(), diagnosticOnly: true });
+    });
+
+    app.get("/api/health/system-diagnostics", (_req, res) => {
+      const { getFullSystemDiagnostics } = require("../lib/global/systemDiagnostics");
+      res.json({ success: true, ...getFullSystemDiagnostics() });
     });
 
     app.get("/api/admin/control-center/deployment", async (req, res) => {

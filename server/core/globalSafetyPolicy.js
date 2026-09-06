@@ -10,6 +10,8 @@ const GLOBAL_SAFETY_POLICY = Object.freeze({
   activationAllowed: false,
   supplierLive: false,
   salesEnabled: false,
+  paymentsEnabled: false,
+  publishEnabled: false,
   humanApprovalRequired: true,
   publishBlocked: true,
   liveImport: false,

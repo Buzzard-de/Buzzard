@@ -97,6 +97,24 @@ function runValidationPipeline(raw, options = {}) {
     const code = normalizedWithCategory.categoryResolution.code;
     if (code) blockingReasons.push(code);
   }
+
+  let automotiveCatalog = null;
+  if (
+    normalizedWithCategory.automotiveCategoryId ||
+    normalizedWithCategory.categoryId === "automotive" ||
+    normalizedWithCategory.buzzardCategory === "automotive" ||
+    normalizedWithCategory.supplierCategory?.startsWith?.("automotive")
+  ) {
+    try {
+      const automotivePimBridge = require("../catalog/automotivePimBridge");
+      automotiveCatalog = automotivePimBridge.validatePimProduct(normalizedWithCategory, options);
+      if (!automotiveCatalog.valid) {
+        for (const err of automotiveCatalog.errors) blockingReasons.push(`AUTOMOTIVE_${err}`);
+      }
+    } catch {
+      /* automotive module optional during partial deploy */
+    }
+  }
   if (!duplicateCheck.ok) {
     for (const dup of duplicateCheck.issues) blockingReasons.push(dup.code);
   }
@@ -114,6 +132,7 @@ function runValidationPipeline(raw, options = {}) {
     quality,
     fitment,
     duplicates: duplicateCheck,
+    automotiveCatalog,
     stages: [
       { stage: "normalization", status: "PASS" },
       { stage: "provenance", status: provenance.sourceSupplierCode ? "PASS" : "FAIL" },

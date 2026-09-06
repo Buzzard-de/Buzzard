@@ -153,3 +153,66 @@ test("manualPublish false keeps publish BLOCKED", () => {
   });
   assert.notEqual(report.publish.status, "PASS");
 });
+
+test("vehicle search detects BMW intent and matches fitment", () => {
+  const { parseVehicleSearchIntent } = require("../lib/global/vehicleSearchIntelligence.js");
+  const intent = parseVehicleSearchIntent("BMW 320d 2015");
+  assert.equal(intent.make, "bmw");
+  assert.ok(intent.hasVehicleIntent);
+
+  const sample = mapPimProductForSearch({
+    id: "veh_1",
+    sku: "BRAKE-BMW-1",
+    title: "Brake Pad BMW 3er",
+    brand: { name: "Bosch" },
+    metadata: {
+      fitments: [{ make: "BMW", model: "3 series", yearFrom: 2012, yearTo: 2018, engine: "320d" }],
+    },
+  });
+  const result = searchProducts([sample], "BMW 320d", { country: "DE", language: "de" });
+  assert.ok(result.resultCount >= 1);
+});
+
+test("unified validation report exposes stage array", () => {
+  const { buildUnifiedValidationReport } = require("../lib/global/unifiedValidationReport.js");
+  const unified = buildUnifiedValidationReport({ sku: "U1", title: "Unified", brand: "Bosch" }, { language: "de" });
+  assert.ok(Array.isArray(unified.stages));
+  assert.ok(unified.stages.length >= 10);
+  assert.equal(unified.publishAllowed, false);
+});
+
+test("storefront search reuses search intelligence", () => {
+  const storefrontSearch = require("../lib/storefront/storefrontSearchService.js");
+  const readiness = storefrontSearch.getSearchReadiness();
+  assert.equal(readiness.enabled, true);
+  assert.ok(readiness.supportedFields.includes("sku"));
+});
+
+test("legacy merchant feed adapter omits price when sales off", () => {
+  const prev = process.env.BUZZARD_SALES_ENABLED;
+  process.env.BUZZARD_SALES_ENABLED = "0";
+  try {
+    const feedAdapters = require("../lib/feedAdapters/index.js");
+    const rows = feedAdapters.googleMerchantRows();
+    if (rows.length > 0) {
+      assert.equal(rows[0].price, undefined);
+    }
+  } finally {
+    process.env.BUZZARD_SALES_ENABLED = prev;
+  }
+});
+
+test("integration flow: country registry → search catalog → ranked results", () => {
+  assert.equal(countryRegistry.getCountryCount(), 35);
+  const ctx = countryRegistry.getCatalogContext("DE");
+  assert.ok(ctx.country);
+  const products = loadSearchCatalog();
+  const sample =
+    products[0] ||
+    mapPimProductForSearch({ id: "int_1", sku: "INT-SKU-1", title: "Integration Product", brand: { name: "Bosch" } });
+  const catalog = products.length ? products : [sample];
+  const result = searchProducts(catalog, sample.sku, { country: "DE", language: "de" });
+  assert.ok(result.resultCount >= 1);
+  const report = buildProductValidationReport(sample, { language: "de", country: "DE" });
+  assert.ok(report.publish.details.publishAllowed === false);
+});

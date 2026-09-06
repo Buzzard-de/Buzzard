@@ -5,6 +5,7 @@ const { normalizeSearchQuery, tokenizeQuery, normalizeIdentifierToken } = requir
 const { mapQuerySynonyms, resolveCanonicalFromQuery, resolveCanonicalTerm } = require("./synonymEngine");
 const { extractProductIdentity, compareIdentity } = require("./productIdentity");
 const { filterProductsByCountry } = require("./countryAvailability");
+const { parseVehicleSearchIntent, vehicleFitmentMatches } = require("./vehicleSearchIntelligence");
 
 const SCORE_WEIGHTS = Object.freeze({
   productId: 1000,
@@ -12,6 +13,7 @@ const SCORE_WEIGHTS = Object.freeze({
   gtin: 900,
   ean: 900,
   mpn: 850,
+  oem: 840,
   brandMpn: 820,
   supplierSku: 800,
   vehicleCompatibility: 780,
@@ -51,6 +53,30 @@ function scoreProductMatch(product, query, context = {}) {
     reasons.push("exact_mpn");
   }
 
+  const oemRefs = product.oemReferences || [];
+  if (oemRefs.length && normalizeIdentifierToken(normalizedQuery)) {
+    const oemHit = oemRefs.some((ref) => normalizeIdentifierToken(ref) === normalizeIdentifierToken(normalizedQuery));
+    if (oemHit) {
+      score += SCORE_WEIGHTS.oem;
+      reasons.push("exact_oem");
+    }
+  }
+
+  const vehicleIntent = context.vehicleIntent || parseVehicleSearchIntent(normalizedQuery);
+  if (vehicleIntent.hasVehicleIntent) {
+    const fit = vehicleFitmentMatches(product, vehicleIntent);
+    if (fit.match) {
+      score += SCORE_WEIGHTS.vehicleCompatibility;
+      reasons.push("vehicle_compatibility");
+    }
+  } else if (context.vehicleId && Array.isArray(product.compatibleVehicles)) {
+    const fit = product.compatibleVehicles.some((v) => v.vehicleId === context.vehicleId);
+    if (fit) {
+      score += SCORE_WEIGHTS.vehicleCompatibility;
+      reasons.push("vehicle_compatibility");
+    }
+  }
+
   if (!isIdentifierQuery) {
     const lang = context.language || "de";
     const localizedTitle = product.translations?.[lang]?.title || product.title || "";
@@ -63,13 +89,13 @@ function scoreProductMatch(product, query, context = {}) {
       if (localizedTitle.toLowerCase().includes(token)) score += SCORE_WEIGHTS.localizedTitle;
       if (resolveCanonicalTerm(token)) score += SCORE_WEIGHTS.synonym;
     }
-  }
 
-  if (context.vehicleId && Array.isArray(product.compatibleVehicles)) {
-    const fit = product.compatibleVehicles.some((v) => v.vehicleId === context.vehicleId);
-    if (fit) {
-      score += SCORE_WEIGHTS.vehicleCompatibility;
-      reasons.push("vehicle_compatibility");
+    if (vehicleIntent.hasVehicleIntent && vehicleIntent.make) {
+      const brandHay = String(product.brand || "").toLowerCase();
+      if (brandHay.includes(vehicleIntent.make)) {
+        score += SCORE_WEIGHTS.canonicalTitle;
+        reasons.push("vehicle_make_match");
+      }
     }
   }
 
@@ -100,15 +126,16 @@ function searchProducts(products = [], query, context = {}) {
 }
 
 function detectAutomotiveSearchIntent(query) {
-  const normalized = normalizeSearchQuery(query);
-  const tokens = tokenizeQuery(normalized);
-  const vehicleMakes = ["bmw", "mercedes", "vw", "audi", "ford", "opel", "toyota"];
-  const detectedMake = tokens.find((t) => vehicleMakes.includes(t));
-  const detectedCategory = resolveCanonicalFromQuery(normalized);
+  const vehicleIntent = parseVehicleSearchIntent(query);
+  const detectedCategory = resolveCanonicalFromQuery(normalizeSearchQuery(query));
   return {
-    detectedMake: detectedMake || null,
+    detectedMake: vehicleIntent.make,
+    detectedModel: vehicleIntent.model,
+    detectedYear: vehicleIntent.year,
+    detectedEngine: vehicleIntent.engine,
     detectedCategory,
-    tokens,
+    tokens: vehicleIntent.tokens,
+    hasVehicleIntent: vehicleIntent.hasVehicleIntent,
   };
 }
 

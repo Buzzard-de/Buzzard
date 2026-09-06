@@ -22,6 +22,9 @@ function printHuman(report) {
   console.log(`Diagnostic only:     ${report.diagnosticOnly}`);
   console.log(`Publish blocked:     ${report.publishBlocked}`);
   console.log(`Live supplier used:  ${report.liveSupplierContacted}`);
+  console.log(`Auto activate:       ${report.autoActivate}`);
+  console.log(`Activation allowed:  ${report.activationAllowed}`);
+  console.log(`Human approval req:  ${report.humanApprovalRequired}`);
   console.log("");
   console.log("--- Safety ---");
   console.log(`Sales enabled:       ${report.salesEnabled ? "YES (UNSAFE)" : "OFF"}`);
@@ -35,13 +38,22 @@ function printHuman(report) {
   console.log(`Valid (approx):      ${report.summary.validProducts}`);
   console.log(`Invalid/blocked:     ${report.summary.invalidProducts}`);
   console.log(`Review required:     ${report.summary.reviewRequired}`);
+  console.log(`Blocked:             ${report.summary.blocked ?? report.summary.publishBlocked}`);
+  console.log(`Demo products:       ${report.summary.demo ?? report.summary.demoProducts}`);
+  console.log(`Public catalog:      ${report.summary.public ?? report.summary.publicCatalogProducts}`);
   console.log(`Missing images:      ${report.summary.missingImages}`);
+  console.log(`Missing GTIN/EAN:    ${report.summary.missingGtin ?? 0}`);
+  console.log(`Missing MPN:         ${report.summary.missingMpn ?? 0}`);
   console.log(`Missing categories:  ${report.summary.missingCategories}`);
   console.log(`Duplicate SKUs:      ${report.summary.duplicateSkus}`);
   console.log(`Duplicate EAN/GTIN:  ${report.summary.duplicateEans}`);
-  console.log(`Demo products:       ${report.summary.demoProducts}`);
-  console.log(`Public catalog:      ${report.summary.publicCatalogProducts}`);
   console.log(`Staging records:     ${report.summary.stagingRecords}`);
+  if (report.globalCatalog) {
+    console.log("");
+    console.log("--- Global catalog ---");
+    console.log(`Countries:           ${report.globalCatalog.countriesConfigured ?? "?"}/${report.globalCatalog.countriesExpected ?? 35}`);
+    console.log(`Search catalog size: ${report.globalCatalog.searchCatalogSize ?? 0}`);
+  }
   console.log("");
   console.log("--- Workflow ---");
   for (const [key, value] of Object.entries(report.workflow)) {

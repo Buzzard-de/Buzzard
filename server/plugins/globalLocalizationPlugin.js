@@ -12,6 +12,7 @@ const { buildCountryCatalogMatrix } = require("../lib/global/countryCatalogMatri
 const { runGlobalProductPipeline } = require("../lib/global/globalProductPipeline");
 const { loadSearchCatalog } = require("../lib/global/globalCatalogSearch");
 const { buildProductValidationReport } = require("../lib/global/productValidationReport");
+const { buildUnifiedValidationReport } = require("../lib/global/unifiedValidationReport");
 const { collectProductStats } = require("../lib/global/globalCatalogStats");
 const { GLOBAL_SAFETY_POLICY } = require("../core/globalSafetyPolicy");
 const fs = require("fs");
@@ -149,7 +150,8 @@ module.exports = {
       const context = req.body?.context || {};
       const pipeline = runGlobalProductPipeline(product, context);
       const report = buildProductValidationReport(product, context);
-      res.json({ success: true, validation: pipeline, report, safety: GLOBAL_SAFETY_POLICY });
+      const unified = buildUnifiedValidationReport(product, context);
+      res.json({ success: true, validation: pipeline, report, unified, safety: GLOBAL_SAFETY_POLICY });
     });
 
     app.post("/api/admin/automotive/products/pipeline", (req, res) => {

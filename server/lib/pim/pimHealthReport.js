@@ -86,6 +86,31 @@ function countDemoProducts() {
   return { count, samples, knownDemoSkus: [...KNOWN_DEMO_SKUS] };
 }
 
+function countMissingIdentifiers() {
+  const rows = db.prepare("SELECT gtin, ean, mpn FROM pim_core_products").all();
+  let missingGtin = 0;
+  let missingMpn = 0;
+  for (const row of rows) {
+    if (!row.gtin && !row.ean) missingGtin += 1;
+    if (!row.mpn) missingMpn += 1;
+  }
+  return { missingGtin, missingMpn };
+}
+
+function getGlobalCatalogCrossCheck() {
+  try {
+    const countryRegistry = require("../../core/globalCountryRegistry");
+    const { loadSearchCatalog } = require("../global/globalCatalogSearch");
+    return {
+      countriesConfigured: countryRegistry.getCountryCount(),
+      countriesExpected: 35,
+      searchCatalogSize: loadSearchCatalog().length,
+    };
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
 function countWorkflowBuckets() {
   const rows = db.prepare("SELECT * FROM pim_core_products").all();
   const buckets = Object.fromEntries(Object.values(PIM_WORKFLOW_STATUS).map((s) => [s, 0]));
@@ -137,6 +162,8 @@ function buildPimHealthReport() {
   const demo = countDemoProducts();
   const duplicateSkus = findDuplicateSkus();
   const duplicateEans = findDuplicateEans();
+  const identifiers = countMissingIdentifiers();
+  const globalCatalog = getGlobalCatalogCrossCheck();
 
   const validProducts = workflow[PIM_WORKFLOW_STATUS.VALIDATED] + workflow[PIM_WORKFLOW_STATUS.READY_FOR_REVIEW] + workflow[PIM_WORKFLOW_STATUS.APPROVED];
   const invalidProducts = workflow[PIM_WORKFLOW_STATUS.INVALID] + workflow[PIM_WORKFLOW_STATUS.PUBLISH_BLOCKED];
@@ -163,7 +190,12 @@ function buildPimHealthReport() {
       validProducts,
       invalidProducts,
       reviewRequired,
+      blocked: workflow[PIM_WORKFLOW_STATUS.PUBLISH_BLOCKED] + workflow[PIM_WORKFLOW_STATUS.INVALID],
+      demo: demo.count,
+      public: publicCatalog.productCount,
       missingImages: countMissingImages(),
+      missingGtin: identifiers.missingGtin,
+      missingMpn: identifiers.missingMpn,
       missingCategories: countMissingCategories(),
       duplicateSkus: duplicateSkus.length,
       duplicateEans: duplicateEans.length,
@@ -189,6 +221,7 @@ function buildPimHealthReport() {
     },
     qualityReadiness: qualityReadiness.PRODUCT_QUALITY_READINESS,
     publicCatalog,
+    globalCatalog,
   };
 }
 

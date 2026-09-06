@@ -3,8 +3,21 @@
 import { useEffect, useState } from "react";
 import { fetchCountryMatrix, fetchGlobalCatalogHealth, type GlobalCatalogHealth } from "@/lib/admin/globalCatalog";
 
+interface ExtendedHealth extends GlobalCatalogHealth {
+  integration?: {
+    pimCatalogFoundation?: boolean;
+    automotiveCategorySystem?: boolean;
+    reconciliationPr300?: boolean;
+  };
+  products: GlobalCatalogHealth["products"] & {
+    countryMappingFailures?: number;
+    categoryMappingFailures?: number;
+    invalidCategories?: number;
+  };
+}
+
 export default function AdminGlobalCatalogPanel() {
-  const [health, setHealth] = useState<GlobalCatalogHealth | null>(null);
+  const [health, setHealth] = useState<ExtendedHealth | null>(null);
   const [matrix, setMatrix] = useState<Array<Record<string, unknown>>>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,6 +88,15 @@ export default function AdminGlobalCatalogPanel() {
             ))}
           </tbody>
         </table>
+      </section>
+
+      <section>
+        <h2>Integration</h2>
+        <div>PIM foundation: {String(health.integration?.pimCatalogFoundation ?? "—")}</div>
+        <div>Automotive system: {String(health.integration?.automotiveCategorySystem ?? "—")}</div>
+        <div>Reconciliation (PR #300): {String(health.integration?.reconciliationPr300 ?? "—")}</div>
+        <div>Country mapping failures: {health.products.countryMappingFailures ?? 0}</div>
+        <div>Category mapping failures: {health.products.categoryMappingFailures ?? health.products.invalidCategories ?? 0}</div>
       </section>
 
       <section>

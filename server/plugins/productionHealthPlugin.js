@@ -125,6 +125,41 @@ module.exports = {
       });
     });
 
+    app.get("/api/health/backup", (_req, res) => {
+      const backup = productionHealth.getBackupHealthSummary();
+      const configured = Boolean(backup?.configured || backup?.provider || backup?.lastBackup);
+      res.json({
+        success: true,
+        status: configured ? backup.status || "CONFIGURED" : "NOT_CONFIGURED",
+        configured,
+        lastBackup: backup?.lastBackup || null,
+        backupStatus: backup?.status || "NOT_CONFIGURED",
+        provider: backup?.provider || null,
+        diagnosticOnly: true,
+        ...backup,
+      });
+    });
+
+    app.get("/api/health/redis", async (_req, res) => {
+      const redis = await productionHealth.getRedisHealth();
+      let cache = { status: "NOT_CONFIGURED" };
+      try {
+        const catalogCache = require("../lib/storefront/catalogCache");
+        cache = { ...catalogCache.stats(), status: "IN_MEMORY_FALLBACK" };
+      } catch {
+        /* optional */
+      }
+      res.json({
+        success: true,
+        redis: {
+          status: redis?.ok === false ? "NOT_CONFIGURED" : redis?.status || (redis?.ok ? "HEALTHY" : "NOT_CONFIGURED"),
+          ...redis,
+        },
+        catalogCache: cache,
+        diagnosticOnly: true,
+      });
+    });
+
     app.get("/api/admin/control-center/deployment", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

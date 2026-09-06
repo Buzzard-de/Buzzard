@@ -9,7 +9,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { BuzzardLocale } from "@/lib/i18n/types";
 import { hasManualLocaleOverride } from "@/lib/i18n/detect";
 import { useLocale } from "@/lib/i18n/context";
 import {
@@ -26,6 +25,7 @@ import {
   persistCountryCode,
   readStoredCountryCode,
 } from "./storage";
+import { resolveUiLocaleForCountry } from "./localeForCountry";
 
 interface MarketContextValue {
   countryCode: string;
@@ -60,15 +60,17 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       setCountryCodeState(country.code);
       persistCountryCode(country.code, manual);
 
-      if (manual && !hasManualLocaleOverride()) {
-        const locale = country.language as BuzzardLocale;
-        if (["de", "en", "tr", "ar"].includes(locale)) {
-          setLocale(locale, false);
-        }
+      if (manual) {
+        setLocale(resolveUiLocaleForCountry(country.code), false);
       }
     },
     [setLocale]
   );
+
+  useEffect(() => {
+    if (!ready || hasManualLocaleOverride()) return;
+    setLocale(resolveUiLocaleForCountry(countryCode), false);
+  }, [ready, countryCode, setLocale]);
 
   useEffect(() => {
     if (!ready || hasManualCountryOverride()) return;

@@ -22,17 +22,7 @@ export function defaultMarketCountryCode(): string {
   return "DE";
 }
 
+/** Hauptwebsite: Deutschland als Standardmarkt — keine Browser-Geo-Autodetection. */
 export function detectMarketCountryCode(): string {
-  if (typeof navigator === "undefined") return defaultMarketCountryCode();
-
-  const lang = (navigator.language || "de-DE").toLowerCase();
-  const region = lang.split("-")[1]?.toUpperCase();
-  if (region) {
-    const match = getDeliverableMarketCountry(region);
-    if (match) return match.code;
-  }
-
-  const language = lang.split("-")[0];
-  const byLanguage = getDeliverableMarketCountries().find((c) => c.language === language);
-  return byLanguage?.code ?? defaultMarketCountryCode();
+  return defaultMarketCountryCode();
 }

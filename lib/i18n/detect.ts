@@ -37,11 +37,12 @@ export function hasManualLocaleOverride(): boolean {
   }
 }
 
+/** Hauptwebsite: Deutsch — Browser-Sprache wird nicht automatisch übernommen. */
 export function detectLocale(): BuzzardLocale {
   if (hasManualLocaleOverride()) {
     return readStoredLocale() ?? "de";
   }
-  return readStoredLocale() ?? detectBrowserLocale();
+  return readStoredLocale() ?? "de";
 }
 
 export function persistLocale(locale: BuzzardLocale, manual = false): void {

@@ -6,7 +6,7 @@ const { BLOCKING_CODES } = require("../../core/productLifecycleConstants");
 
 function normalizeFitmentEntry(entry) {
   if (!entry || typeof entry !== "object") return null;
-  const brand = String(entry.brand || entry.manufacturer || "").trim();
+  const brand = String(entry.brand || entry.make || entry.manufacturer || "").trim();
   const model = String(entry.model || "").trim();
   if (!brand || !model) return null;
 

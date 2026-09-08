@@ -79,10 +79,10 @@ test("Arabic remains RTL", () => {
 });
 
 for (const code of ["fr", "it", "es", "nl", "pl", "cs", "sk", "hu", "ro", "bg", "hr", "sl", "da", "sv", "fi", "et", "lv", "lt", "pt", "el", "ca", "eu", "gl", "ga", "lb", "mt"]) {
-  test(`prepared language ${code} exists`, () => {
+  test(`UI-ready language ${code} exists`, () => {
     const lang = languageRegistry.getLanguage(code);
     assert.ok(lang);
-    assert.equal(lang.uiReady, false);
+    assert.equal(lang.uiReady, true);
   });
 }
 

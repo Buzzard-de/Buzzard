@@ -1,0 +1,463 @@
+[
+  {
+    "language": "ar",
+    "file": "lib/i18n/locales/ar.ts",
+    "keys": 394,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "checkout.payStripeDesc"
+    ]
+  },
+  {
+    "language": "bg",
+    "file": "lib/i18n/locales/bg.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "checkout.payStripeDesc"
+    ]
+  },
+  {
+    "language": "ca",
+    "file": "lib/i18n/locales/ca.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "header.account",
+      "header.wishlist",
+      "header.wishlistEmpty",
+      "nav.allCategories",
+      "nav.vehiclePlaceholder"
+    ]
+  },
+  {
+    "language": "cs",
+    "file": "lib/i18n/locales/cs.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "nav.vehiclePlaceholder",
+      "hero.kicker",
+      "hero.cta",
+      "home.categoryDiscovery"
+    ]
+  },
+  {
+    "language": "da",
+    "file": "lib/i18n/locales/da.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "header.wishlistEmpty",
+      "nav.allCategories",
+      "megaMenu.mainCategories",
+      "hero.kicker"
+    ]
+  },
+  {
+    "language": "de",
+    "file": "lib/i18n/locales/de.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.catalogSupport",
+      "header.wishlistEmpty",
+      "nav.allCategories",
+      "megaMenu.mainCategories"
+    ]
+  },
+  {
+    "language": "el",
+    "file": "lib/i18n/locales/el.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "checkout.payStripeDesc"
+    ]
+  },
+  {
+    "language": "en",
+    "file": "lib/i18n/locales/en.ts",
+    "keys": 394,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": []
+  },
+  {
+    "language": "es",
+    "file": "lib/i18n/locales/es.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "header.wishlist",
+      "header.wishlistEmpty",
+      "hero.title",
+      "commerce.dryRunBanner",
+      "home.featured"
+    ]
+  },
+  {
+    "language": "et",
+    "file": "lib/i18n/locales/et.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.catalogSupport",
+      "header.wishlist",
+      "header.wishlistEmpty",
+      "megaMenu.mainCategories"
+    ]
+  },
+  {
+    "language": "eu",
+    "file": "lib/i18n/locales/eu.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.catalogPreview",
+      "topBar.catalogSupport",
+      "header.wishlist",
+      "header.wishlistEmpty"
+    ]
+  },
+  {
+    "language": "fi",
+    "file": "lib/i18n/locales/fi.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.catalogPreview",
+      "nav.allCategories",
+      "nav.vehicleSelect",
+      "nav.vehiclePlaceholder"
+    ]
+  },
+  {
+    "language": "fr",
+    "file": "lib/i18n/locales/fr.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.returns",
+      "header.wishlist",
+      "header.menuOpen",
+      "header.searchOpen",
+      "megaMenu.close"
+    ]
+  },
+  {
+    "language": "ga",
+    "file": "lib/i18n/locales/ga.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "header.wishlist",
+      "header.searchOpen",
+      "nav.vehiclePlaceholder",
+      "search.sortPriceAsc",
+      "cart.shipping"
+    ]
+  },
+  {
+    "language": "gl",
+    "file": "lib/i18n/locales/gl.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "header.wishlist",
+      "header.wishlistEmpty",
+      "hero.title",
+      "commerce.dryRunBanner",
+      "home.featured"
+    ]
+  },
+  {
+    "language": "hr",
+    "file": "lib/i18n/locales/hr.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "header.wishlistEmpty",
+      "header.menuOpen",
+      "nav.allCategories",
+      "nav.vehicleSelect"
+    ]
+  },
+  {
+    "language": "hu",
+    "file": "lib/i18n/locales/hu.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "checkout.acceptPrivacy",
+      "checkout.payStripeDesc",
+      "account.register.passwordMismatch",
+      "ai.chat.open"
+    ]
+  },
+  {
+    "language": "it",
+    "file": "lib/i18n/locales/it.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.returns",
+      "topBar.catalogSupport",
+      "header.account",
+      "header.wishlist"
+    ]
+  },
+  {
+    "language": "lb",
+    "file": "lib/i18n/locales/lb.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.catalogSupport",
+      "header.wishlistEmpty",
+      "header.searchOpen",
+      "nav.allCategories"
+    ]
+  },
+  {
+    "language": "lt",
+    "file": "lib/i18n/locales/lt.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "header.menuOpen",
+      "nav.allCategories",
+      "hero.secondary",
+      "home.categoryDiscovery"
+    ]
+  },
+  {
+    "language": "lv",
+    "file": "lib/i18n/locales/lv.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "header.cart",
+      "nav.allCategories",
+      "hero.secondary",
+      "home.featured",
+      "home.reviews"
+    ]
+  },
+  {
+    "language": "mt",
+    "file": "lib/i18n/locales/mt.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.catalogSupport",
+      "header.wishlist",
+      "nav.allCategories",
+      "hero.kicker"
+    ]
+  },
+  {
+    "language": "nl",
+    "file": "lib/i18n/locales/nl.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "topBar.catalogPreview",
+      "topBar.catalogSupport",
+      "header.wishlistEmpty",
+      "header.searchOpen"
+    ]
+  },
+  {
+    "language": "pl",
+    "file": "lib/i18n/locales/pl.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "header.wishlistEmpty",
+      "nav.allCategories",
+      "nav.vehiclePlaceholder",
+      "hero.title"
+    ]
+  },
+  {
+    "language": "pt",
+    "file": "lib/i18n/locales/pt.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "header.account",
+      "header.wishlist",
+      "header.wishlistEmpty",
+      "header.searchOpen"
+    ]
+  },
+  {
+    "language": "ro",
+    "file": "lib/i18n/locales/ro.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.returns",
+      "header.login",
+      "header.wishlistEmpty",
+      "header.menuOpen",
+      "nav.allCategories"
+    ]
+  },
+  {
+    "language": "sk",
+    "file": "lib/i18n/locales/sk.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "topBar.shipping",
+      "search.sortPriceAsc",
+      "search.sortPriceDesc",
+      "checkout.progress",
+      "checkout.payStripeDesc"
+    ]
+  },
+  {
+    "language": "sl",
+    "file": "lib/i18n/locales/sl.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "header.wishlistEmpty",
+      "header.searchOpen",
+      "nav.allCategories",
+      "nav.vehicleSelect",
+      "nav.vehiclePlaceholder"
+    ]
+  },
+  {
+    "language": "sv",
+    "file": "lib/i18n/locales/sv.ts",
+    "keys": 385,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "header.wishlistEmpty",
+      "nav.allCategories",
+      "megaMenu.mainCategories",
+      "hero.secondary",
+      "home.categoryDiscovery"
+    ]
+  },
+  {
+    "language": "tr",
+    "file": "lib/i18n/locales/tr.ts",
+    "keys": 394,
+    "missingKeys": 0,
+    "emptyKeys": 0,
+    "status": "PASS",
+    "missing": [],
+    "englishSuspectSample": [
+      "megaMenu.mainCategories",
+      "home.newsletterPlaceholder",
+      "checkout.acceptTerms",
+      "checkout.shippingStandard",
+      "checkout.shippingExpress"
+    ]
+  }
+]

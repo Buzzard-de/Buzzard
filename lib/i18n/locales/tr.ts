@@ -1,7 +1,14 @@
 import type { TranslationTree } from "../types-catalog";
 
 export const catalog: TranslationTree = {
-  topBar: { shipping: "79 € üzeri ücretsiz kargo", returns: "30 gün iade", trust: "Trusted Shops · 4,8/5" },
+  topBar: {
+    shipping: "79 € üzeri ücretsiz kargo",
+    returns: "30 gün iade",
+    trust: "Trusted Shops · 4,8/5",
+    catalogPreview: "Katalog modu — danışmanlık ve iletişim her zaman mümkün",
+    catalogCategories: "{count} kategori · online katalog",
+    catalogSupport: "Telefon ve e-posta ile ulaşılabilir",
+  },
   header: {
     searchPlaceholder: "Ürün, marka, SKU, kategori ara…",
     account: "Hesabım",
@@ -45,6 +52,8 @@ export const catalog: TranslationTree = {
     newsletterUnavailable: "Bülten şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
     newsletterError: "Abonelik başarısız. Lütfen daha sonra tekrar deneyin.",
     newsletterSubmitting: "Gönderiliyor…",
+    catalogNotice:
+      "Buzzard24 katalog modunda. Ürünleri ve kategorileri keşfedebilirsiniz — satış ve ödeme satış başlangıcıyla birlikte gelecektir.",
     addToCart: "Sepete ekle",
     added: "Eklendi",
   },
@@ -347,6 +356,11 @@ export const catalog: TranslationTree = {
     imprint: "Künye",
     privacy: "Gizlilik",
     contact: "İletişim",
+    help: "Yardım",
+    faq: "SSS",
+    terms: "Şartlar",
+    shipping: "Kargo",
+    withdrawal: "İade",
     copyright: "© 2026 Buzzard. Tüm hakları saklıdır.",
   },
   language: {
@@ -375,6 +389,14 @@ export const catalog: TranslationTree = {
     allProducts: "Tüm ürünler",
     priceOnRequest: "Fiyat için sorun",
     viewProduct: "Ürünü gör",
+    buyNow: "Hemen satın al",
+    description: "Açıklama",
+    technicalData: "Teknik veriler",
+    documents: "Belgeler",
+    boughtTogether: "Birlikte sık satın alınanlar",
+    wishlistAdd: "♡ Favoriler",
+    wishlistIn: "♥ Favorilerde",
+    trustCheckout: "14 gün iade hakkı · Güvenli ödeme",
     stock: {
       in_stock: "Stokta",
       low_stock: "Az kaldı",
@@ -394,6 +416,11 @@ export const catalog: TranslationTree = {
     browseOnlyTitle: "Yalnızca katalog modu",
     browseOnlyText: "Online ödeme henüz aktif değil. Ürünleri ve fiyatları inceleyebilirsiniz — Yardım & İletişim üzerinden soru sorun.",
     salesDisabled: "Online sipariş şu anda mümkün değil.",
+    trustBrowse: "Geniş kategori seçimi",
+    trustInfo: "Şeffaf ürün bilgileri",
+    trustContact: "Destek ulaşılabilir",
+    trustSoon: "Kişisel danışmanlık",
+    productInfo: "Katalog modu — fiyat ve sipariş satış başlangıcıyla gelecektir.",
     inquiryTitle: "Ürün sorgusu",
     inquiryText: "Sepetiniz hazır. İstediğiniz ürünleri gönderin — stok ve fiyat bilgisiyle dönüş yaparız.",
     inquiryNote: "Ürünleri sepete ekleyip bize sorgu gönderin.",

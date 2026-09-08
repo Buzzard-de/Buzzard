@@ -2,6 +2,8 @@ import {
   hasManualLocaleOverride,
   readStoredLocale,
 } from "@/lib/i18n/detect";
+import type { BuzzardLanguageCode } from "@/lib/i18n/types";
+import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
 import { getCountryConfig, getLocaleVariants } from "./config";
 import type { ResolvedLocale } from "./types";
 import { detectCountry, type DetectCountryOptions } from "./detectCountry";
@@ -22,7 +24,6 @@ export interface ResolveLanguageOptions extends DetectCountryOptions {
   browserLanguages?: string[];
 }
 
-const UI_READY = new Set(["de", "en", "tr", "ar"]);
 
 function languageDirection(code: string): "ltr" | "rtl" {
   return code === "ar" ? "rtl" : "ltr";
@@ -131,8 +132,9 @@ export function resolveLanguage(options: ResolveLanguageOptions = {}): ResolvedL
   };
 }
 
-export function toBuzzardUiLocale(languageCode: string): "de" | "en" | "tr" | "ar" {
-  if (UI_READY.has(languageCode)) return languageCode as "de" | "en" | "tr" | "ar";
+export function toBuzzardUiLocale(languageCode: string): BuzzardLanguageCode {
+  const code = languageCode.toLowerCase() as BuzzardLanguageCode;
+  if (SUPPORTED_LOCALES.includes(code)) return code;
   return "en";
 }
 

@@ -1,6 +1,6 @@
 import { absoluteUrl } from "@/lib/seo/config";
-import { localizePath, DEFAULT_LOCALE } from "@/lib/i18n/routing";
-import type { BuzzardLocale } from "@/lib/i18n/types";
+import { buildLanguageUrl, localizePath, DEFAULT_LOCALE } from "@/lib/i18n/routing";
+import type { BuzzardLanguageCode } from "@/lib/i18n/types";
 import { getAllLocalePairs } from "./config";
 import { toBuzzardUiLocale } from "./resolveLanguage";
 
@@ -23,8 +23,8 @@ export function buildBuzzardHreflangAlternates(path = "/"): HreflangAlternate[] 
     if (seen.has(hreflang)) continue;
     seen.add(hreflang);
 
-    const uiLocale = toBuzzardUiLocale(pair.languageCode) as BuzzardLocale;
-    const localized = localizePath(normalized, uiLocale);
+    const uiLocale = toBuzzardUiLocale(pair.languageCode) as BuzzardLanguageCode;
+    const localized = buildLanguageUrl(normalized, uiLocale, pair.countryCode);
     alternates.push({
       hreflang,
       href: absoluteUrl(localized),

@@ -155,9 +155,10 @@ describe("Buzzard international i18n — 35 markets", () => {
   });
 
   it("maps prepared languages to English UI catalog", () => {
-    expect(toBuzzardUiLocale("fr")).toBe("en");
+    expect(toBuzzardUiLocale("fr")).toBe("fr");
     expect(toBuzzardUiLocale("de")).toBe("de");
     expect(toBuzzardUiLocale("ar")).toBe("ar");
+    expect(toBuzzardUiLocale("pl")).toBe("pl");
   });
 
   it("Arabic resolved locale has RTL direction", () => {

@@ -25,7 +25,7 @@ export function GlobalLocaleProvider({ children }: { children: ReactNode }) {
       dateFormat: "DD.MM.YYYY",
       numberFormat: globalCountry?.locale || locale,
       fallbackLanguage: globalCountry?.fallbackLanguage || "de",
-      uiReady: ["de", "en", "tr", "ar"].includes(locale),
+      uiReady: true,
       setCountry: (code, manual = true) => setCountryCode(code, manual),
       setLanguage: (code, manual = true) => setLocale(code as BuzzardLocale, manual),
     }),

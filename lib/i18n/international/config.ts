@@ -46,7 +46,7 @@ export function getLanguageOptionsForCountry(countryCode: string): LanguageOptio
       countryCode: code,
       countryName: country.nativeCountryName || country.countryName,
       direction: v.languageCode === "ar" ? "rtl" : "ltr",
-      uiReady: ["de", "en", "tr", "ar"].includes(v.languageCode),
+      uiReady: true,
     }));
 }
 

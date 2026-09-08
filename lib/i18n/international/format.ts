@@ -1,4 +1,4 @@
-import type { BuzzardLocale } from "@/lib/i18n/types";
+import { LOCALE_TAG_MAP } from "@/lib/i18n/types";
 
 export function formatCurrencyIntl(
   amount: number,
@@ -46,14 +46,8 @@ export function formatPercentIntl(value: number, locale: string): string {
   return new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 }).format(value / 100);
 }
 
-/** Map any language code to Buzzard UI locale for existing format helpers. */
+/** Map language code to primary BCP-47 locale tag. */
 export function resolveIntlLocale(languageCode: string, marketLocale: string): string {
-  const map: Record<BuzzardLocale, string> = {
-    de: "de-DE",
-    en: "en-GB",
-    tr: "tr-TR",
-    ar: "ar-SA",
-  };
-  if (languageCode in map) return map[languageCode as BuzzardLocale];
-  return marketLocale;
+  const tag = Object.entries(LOCALE_TAG_MAP).find(([, lang]) => lang === languageCode)?.[0];
+  return tag || marketLocale;
 }

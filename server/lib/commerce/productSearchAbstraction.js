@@ -1,53 +1,56 @@
 /**
- * Part 8 — Product search abstraction (current SQL → future OpenSearch)
+ * Part 8 — Product search abstraction → PRIMARY: searchIntelligence.js
+ * @deprecated Direct SQL/advanced search — routes through ONE search engine.
  */
-const pimProductSearch = require("../pim/productSearch");
+const searchIntelligence = require("../global/searchIntelligence");
+const { loadSearchCatalog } = require("../global/globalCatalogSearch");
 const catalogReadService = require("../storefront/catalogReadService");
+const { mapPimToStorefront } = require("../storefront/publicProductMapper");
 
 function getBackend() {
-  if (process.env.BUZZARD_OPENSEARCH_URL && process.env.BUZZARD_OPENSEARCH_ENABLED === "1") {
-    return "opensearch";
-  }
-  return "sql";
+  return "searchIntelligence";
 }
 
 function searchProducts(query = {}) {
-  const backend = getBackend();
-
-  if (backend === "opensearch") {
-    return searchOpenSearchStub(query);
-  }
+  const q = query.q || query.query || "";
+  const catalog = loadSearchCatalog({ limit: query.limit || 1000 });
+  const ranked = searchIntelligence.searchProducts(catalog, q, {
+    country: query.country || "DE",
+    language: query.language || "de",
+    categoryId: query.category,
+    vehicleId: query.vehicleId,
+  });
 
   if (query.publicOnly) {
-    return catalogReadService.searchProducts(query);
+    const visible = catalogReadService.loadVisiblePimProducts();
+    const visibleSkus = new Set(visible.map((p) => p.sku));
+    ranked.results = ranked.results.filter((entry) => visibleSkus.has(entry.product.sku));
+    ranked.resultCount = ranked.results.length;
   }
 
-  const rows = pimProductSearch.search(query);
-  return {
-    backend: "sql",
-    items: rows,
-    total: rows.length,
-  };
-}
+  const items = ranked.results.map((entry) => {
+    const mapped = mapPimToStorefront(entry.product);
+    return mapped ? { ...mapped, _searchScore: entry.score, _searchReasons: entry.reasons } : null;
+  }).filter(Boolean);
 
-function searchOpenSearchStub(query) {
-  const fallback = catalogReadService.searchProducts(query);
   return {
-    backend: "opensearch_stub",
-    opensearchConfigured: true,
-    fallbackUsed: true,
-    note: "OpenSearch adapter not deployed — using SQL/catalog fallback",
-    ...fallback,
+    backend: "searchIntelligence",
+    items,
+    total: items.length,
+    query: ranked.query,
+    country: ranked.country,
+    language: ranked.language,
   };
 }
 
 function getSearchHealth() {
-  const backend = getBackend();
   return {
-    activeBackend: backend,
+    activeBackend: "searchIntelligence",
+    primaryEngine: "server/lib/global/searchIntelligence.js",
     opensearchUrl: process.env.BUZZARD_OPENSEARCH_URL ? "configured" : "not_configured",
-    opensearchEnabled: process.env.BUZZARD_OPENSEARCH_ENABLED === "1",
+    opensearchEnabled: false,
     fallbackAvailable: true,
+    deprecatedBackends: ["sql", "advancedSearch"],
   };
 }
 

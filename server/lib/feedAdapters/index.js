@@ -16,21 +16,31 @@ function availability(product) {
   return "in stock";
 }
 
+function isSalesEnabled() {
+  return process.env.BUZZARD_SALES_ENABLED === "1";
+}
+
 function googleMerchantRows() {
-  return loadProducts().map((product) => ({
-    id: product.id,
-    title: product.seo?.title || product.name,
-    description: product.short_description || product.description,
-    link: `${SITE_URL}/produkt/${product.seo.slug.replace(/^\/+|\/+$/g, "")}/`,
-    image_link: product.images?.[0] || `${SITE_URL}/logo/logo.png`,
-    price: `${product.price.amount.toFixed(2)} EUR`,
-    availability: availability(product),
-    brand: product.brand,
-    gtin: product.ean_gtin || "",
-    condition: "new",
-    google_product_category: product.category_id,
-    mpn: product.sku,
-  }));
+  const includePrice = isSalesEnabled();
+  return loadProducts().map((product) => {
+    const row = {
+      id: product.id,
+      title: product.seo?.title || product.name,
+      description: product.short_description || product.description,
+      link: `${SITE_URL}/produkt/${product.seo.slug.replace(/^\/+|\/+$/g, "")}/`,
+      image_link: product.images?.[0] || `${SITE_URL}/logo/logo.png`,
+      availability: availability(product),
+      brand: product.brand,
+      gtin: product.ean_gtin || "",
+      condition: "new",
+      google_product_category: product.category_id,
+      mpn: product.sku,
+    };
+    if (includePrice) {
+      row.price = `${product.price.amount.toFixed(2)} EUR`;
+    }
+    return row;
+  });
 }
 
 function ebayRows() {

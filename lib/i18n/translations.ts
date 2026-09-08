@@ -8,7 +8,7 @@ import { catalog as ar } from "./locales/ar";
 export type { TranslationTree };
 
 const catalogs: Record<BuzzardLocale, TranslationTree> = { de, en, tr, ar };
-const FALLBACK_LOCALE: BuzzardLocale = "de";
+const FALLBACK_CHAIN: BuzzardLocale[] = ["en", "de"];
 const missingKeys = new Set<string>();
 
 function resolve(tree: TranslationTree, key: string): string | undefined {
@@ -21,14 +21,27 @@ function resolve(tree: TranslationTree, key: string): string | undefined {
   return typeof node === "string" ? node : undefined;
 }
 
-export function translate(locale: BuzzardLocale, key: string): string {
-  const value = resolve(catalogs[locale], key) ?? resolve(catalogs[FALLBACK_LOCALE], key);
-  if (value) return value;
+function logMissingTranslation(localeLabel: string, key: string): void {
+  if (process.env.NODE_ENV !== "development" || missingKeys.has(`${localeLabel}:${key}`)) return;
+  missingKeys.add(`${localeLabel}:${key}`);
+  console.warn(`[BUZZARD i18n] Missing translation:\n${localeLabel}.${key}`);
+}
 
-  if (process.env.NODE_ENV === "development" && !missingKeys.has(key)) {
-    missingKeys.add(key);
-    console.warn(`[i18n] missing translation key: ${key} (${locale})`);
+export function translate(locale: BuzzardLocale, key: string, localeLabel?: string): string {
+  const label = localeLabel ?? locale;
+  const primary = resolve(catalogs[locale], key);
+  if (primary) return primary;
+
+  for (const fallback of FALLBACK_CHAIN) {
+    if (fallback === locale) continue;
+    const value = resolve(catalogs[fallback], key);
+    if (value) {
+      logMissingTranslation(label, key);
+      return value;
+    }
   }
+
+  logMissingTranslation(label, key);
   return key;
 }
 
@@ -36,4 +49,4 @@ export function getCatalog(locale: BuzzardLocale): TranslationTree {
   return catalogs[locale];
 }
 
-export { catalogs, FALLBACK_LOCALE };
+export { catalogs, FALLBACK_CHAIN as FALLBACK_LOCALE };

@@ -21,6 +21,11 @@ const CURRENCIES = Object.freeze({
   AED: { code: "AED", symbol: "د.إ", decimalDigits: 2, locale: "ar-AE", position: "suffix", formatRule: "standard" },
   SAR: { code: "SAR", symbol: "ر.س", decimalDigits: 2, locale: "ar-SA", position: "suffix", formatRule: "standard" },
   TRY: { code: "TRY", symbol: "₺", decimalDigits: 2, locale: "tr-TR", position: "suffix", formatRule: "standard" },
+  QAR: { code: "QAR", symbol: "ر.ق", decimalDigits: 2, locale: "ar-QA", position: "suffix", formatRule: "standard" },
+  KWD: { code: "KWD", symbol: "د.ك", decimalDigits: 3, locale: "ar-KW", position: "suffix", formatRule: "standard" },
+  BHD: { code: "BHD", symbol: "د.ب", decimalDigits: 3, locale: "ar-BH", position: "suffix", formatRule: "standard" },
+  OMR: { code: "OMR", symbol: "ر.ع.", decimalDigits: 3, locale: "ar-OM", position: "suffix", formatRule: "standard" },
+  EGP: { code: "EGP", symbol: "ج.م", decimalDigits: 2, locale: "ar-EG", position: "suffix", formatRule: "standard" },
 });
 
 function listCurrencies() {

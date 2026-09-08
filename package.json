@@ -70,6 +70,7 @@
     "pim:dry-run": "node scripts/pim-dry-run.mjs",
     "test:pim-catalog": "vitest run pimCatalogFoundation",
     "test:global-localization": "node --test server/__tests__/globalLocalization.test.mjs",
+    "test:buzzard-i18n": "vitest run lib/i18n/international/international.test.ts",
     "test:final-catalog-completion": "node --test server/__tests__/finalCatalogCompletion.test.mjs",
     "test:final-system": "node scripts/final-system-test.mjs",
     "test:automotive": "node --test server/__tests__/automotiveTaxonomy.test.mjs server/__tests__/automotiveCompatibility.test.mjs server/__tests__/automotiveFilters.test.mjs server/__tests__/automotiveCategoryRoutes.test.mjs server/__tests__/automotiveProductPipeline.test.mjs",

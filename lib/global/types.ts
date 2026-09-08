@@ -59,6 +59,12 @@ export const PREPARED_LANGUAGE_LABELS: Record<string, string> = {
   lt: "Lietuvių",
   pt: "Português",
   el: "Ελληνικά",
+  ca: "Català",
+  eu: "Euskara",
+  gl: "Galego",
+  ga: "Gaeilge",
+  lb: "Lëtzebuergesch",
+  mt: "Malti",
 };
 
 export function getGlobalCountry(code: string): GlobalCountry | undefined {

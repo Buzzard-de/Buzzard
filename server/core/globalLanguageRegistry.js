@@ -43,6 +43,12 @@ const LANGUAGE_DEFINITIONS = Object.freeze({
   lt: { languageCode: "lt", locale: "lt-LT", direction: "ltr", fallbackLanguage: "lt", nativeName: "Lietuvių", seoLocale: "lt-LT", uiReady: false, readinessStatus: READINESS.PREPARED },
   pt: { languageCode: "pt", locale: "pt-PT", direction: "ltr", fallbackLanguage: "pt", nativeName: "Português", seoLocale: "pt-PT", uiReady: false, readinessStatus: READINESS.PREPARED },
   el: { languageCode: "el", locale: "el-GR", direction: "ltr", fallbackLanguage: "el", nativeName: "Ελληνικά", seoLocale: "el-GR", uiReady: false, readinessStatus: READINESS.PREPARED },
+  ca: { languageCode: "ca", locale: "ca-ES", direction: "ltr", fallbackLanguage: "ca", nativeName: "Català", seoLocale: "ca-ES", uiReady: false, readinessStatus: READINESS.PREPARED },
+  eu: { languageCode: "eu", locale: "eu-ES", direction: "ltr", fallbackLanguage: "eu", nativeName: "Euskara", seoLocale: "eu-ES", uiReady: false, readinessStatus: READINESS.PREPARED },
+  gl: { languageCode: "gl", locale: "gl-ES", direction: "ltr", fallbackLanguage: "gl", nativeName: "Galego", seoLocale: "gl-ES", uiReady: false, readinessStatus: READINESS.PREPARED },
+  ga: { languageCode: "ga", locale: "ga-IE", direction: "ltr", fallbackLanguage: "ga", nativeName: "Gaeilge", seoLocale: "ga-IE", uiReady: false, readinessStatus: READINESS.PREPARED },
+  lb: { languageCode: "lb", locale: "lb-LU", direction: "ltr", fallbackLanguage: "lb", nativeName: "Lëtzebuergesch", seoLocale: "lb-LU", uiReady: false, readinessStatus: READINESS.PREPARED },
+  mt: { languageCode: "mt", locale: "mt-MT", direction: "ltr", fallbackLanguage: "mt", nativeName: "Malti", seoLocale: "mt-MT", uiReady: false, readinessStatus: READINESS.PREPARED },
 });
 
 function listLanguages() {

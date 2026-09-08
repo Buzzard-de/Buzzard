@@ -30,8 +30,12 @@ const countryReadiness = require("../lib/global/countryReadinessReport.js");
 const countryMatrix = require("../lib/global/countryCatalogMatrix.js");
 const globalHealth = require("../lib/global/globalCatalogHealth.js");
 
+const buzzardI18nHealth = require("../lib/global/buzzardI18nHealth.js");
+
 const EXPECTED_COUNTRIES = [
-  "DE","FR","IT","ES","NL","BE","AT","CH","LU","PL","CZ","SK","HU","RO","BG","HR","SI","DK","SE","NO","FI","EE","LV","LT","PT","GR","IE","GB","TR","US","CA","AU","NZ","AE","SA",
+  "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
+  "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE",
+  "TR","SA","AE","QA","KW","BH","OM","EG",
 ];
 
 test("country registry exposes exactly 35 countries", () => {
@@ -74,7 +78,7 @@ test("Arabic remains RTL", () => {
   assert.equal(languageRegistry.getLanguage("ar").direction, "rtl");
 });
 
-for (const code of ["fr", "it", "es", "nl", "pl", "cs", "sk", "hu", "ro", "bg", "hr", "sl", "da", "sv", "no", "fi", "et", "lv", "lt", "pt", "el"]) {
+for (const code of ["fr", "it", "es", "nl", "pl", "cs", "sk", "hu", "ro", "bg", "hr", "sl", "da", "sv", "fi", "et", "lv", "lt", "pt", "el", "ca", "eu", "gl", "ga", "lb", "mt"]) {
   test(`prepared language ${code} exists`, () => {
     const lang = languageRegistry.getLanguage(code);
     assert.ok(lang);
@@ -83,9 +87,15 @@ for (const code of ["fr", "it", "es", "nl", "pl", "cs", "sk", "hu", "ro", "bg", 
 }
 
 test("currency registry includes required currencies", () => {
-  for (const code of ["EUR","GBP","CHF","PLN","CZK","HUF","RON","BGN","DKK","SEK","NOK","USD","CAD","AUD","NZD","AED","SAR","TRY"]) {
+  for (const code of ["EUR","PLN","CZK","HUF","RON","DKK","SEK","AED","SAR","TRY","QAR","KWD","BHD","OMR","EGP"]) {
     assert.ok(currencyRegistry.getCurrency(code));
   }
+});
+
+test("validateBuzzardI18n passes for 35 markets", () => {
+  const result = buzzardI18nHealth.validateBuzzardI18n();
+  assert.equal(result.valid, true, result.errors.join("; "));
+  assert.equal(result.stats.countries, 35);
 });
 
 test("currency formatting does not throw", () => {
@@ -141,13 +151,13 @@ test("language does not flip when manual override saved", () => {
 
 test("locale context separates country and language", () => {
   const ctx = localeResolution.buildLocaleContext({
-    countryCode: "CH",
+    countryCode: "BE",
     explicitLanguage: "fr",
     manualOverride: true,
   });
-  assert.equal(ctx.country, "CH");
+  assert.equal(ctx.country, "BE");
   assert.equal(ctx.language, "fr");
-  assert.equal(ctx.currency, "CHF");
+  assert.equal(ctx.currency, "EUR");
 });
 
 test("product identity prioritizes productId", () => {
@@ -359,8 +369,9 @@ test("category localization resolves synonym query", () => {
 // Additional coverage: language/country combinations
 const COMBOS = [
   ["DE", "de"], ["DE", "en"], ["DE", "tr"], ["DE", "ar"],
-  ["FR", "fr"], ["FR", "en"], ["TR", "tr"], ["TR", "en"], ["TR", "de"], ["TR", "ar"],
+  ["FR", "fr"], ["TR", "tr"],
   ["AE", "ar"], ["AE", "en"], ["SA", "ar"], ["SA", "en"],
+  ["BE", "nl"], ["BE", "fr"], ["ES", "es"], ["ES", "ca"],
 ];
 
 for (const [country, language] of COMBOS) {
@@ -380,7 +391,7 @@ for (const code of EXPECTED_COUNTRIES) {
 }
 
 // Currency per country sanity
-for (const code of ["US", "GB", "TR", "AE", "PL"]) {
+for (const code of ["DE", "TR", "AE", "PL", "EG"]) {
   test(`${code} currency mapping`, () => {
     const country = countryRegistry.getCountry(code);
     assert.ok(currencyRegistry.getCurrency(country.currency));

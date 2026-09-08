@@ -1,282 +1,37 @@
 {
-  "DE": {
-    "flag": "🇩🇪",
-    "taxRate": 0.19,
-    "deliveryDays": "2–3 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Deutsch"
-  },
-  "FR": {
-    "flag": "🇫🇷",
-    "taxRate": 0.2,
-    "deliveryDays": "2–5 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Français"
-  },
-  "IT": {
-    "flag": "🇮🇹",
-    "taxRate": 0.22,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Italiano"
-  },
-  "ES": {
-    "flag": "🇪🇸",
-    "taxRate": 0.21,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Español"
-  },
-  "NL": {
-    "flag": "🇳🇱",
-    "taxRate": 0.21,
-    "deliveryDays": "2–4 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Nederlands"
-  },
-  "BE": {
-    "flag": "🇧🇪",
-    "taxRate": 0.21,
-    "deliveryDays": "2–5 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Nederlands"
-  },
-  "AT": {
-    "flag": "🇦🇹",
-    "taxRate": 0.2,
-    "deliveryDays": "2–4 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Deutsch"
-  },
-  "CH": {
-    "flag": "🇨🇭",
-    "taxRate": 0.081,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "Swiss VAT",
-    "languageName": "Deutsch"
-  },
-  "LU": {
-    "flag": "🇱🇺",
-    "taxRate": 0.17,
-    "deliveryDays": "2–4 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Français"
-  },
-  "PL": {
-    "flag": "🇵🇱",
-    "taxRate": 0.23,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Polski"
-  },
-  "CZ": {
-    "flag": "🇨🇿",
-    "taxRate": 0.21,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Čeština"
-  },
-  "SK": {
-    "flag": "🇸🇰",
-    "taxRate": 0.2,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Slovenčina"
-  },
-  "HU": {
-    "flag": "🇭🇺",
-    "taxRate": 0.27,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Magyar"
-  },
-  "RO": {
-    "flag": "🇷🇴",
-    "taxRate": 0.19,
-    "deliveryDays": "3–7 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Română"
-  },
-  "BG": {
-    "flag": "🇧🇬",
-    "taxRate": 0.2,
-    "deliveryDays": "4–7 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Български"
-  },
-  "HR": {
-    "flag": "🇭🇷",
-    "taxRate": 0.25,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Hrvatski"
-  },
-  "SI": {
-    "flag": "🇸🇮",
-    "taxRate": 0.22,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Slovenščina"
-  },
-  "DK": {
-    "flag": "🇩🇰",
-    "taxRate": 0.25,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Dansk"
-  },
-  "SE": {
-    "flag": "🇸🇪",
-    "taxRate": 0.25,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Svenska"
-  },
-  "NO": {
-    "flag": "🇳🇴",
-    "taxRate": 0.25,
-    "deliveryDays": "4–8 Werktage",
-    "rtl": false,
-    "taxModel": "VAT / import rules",
-    "languageName": "Norsk"
-  },
-  "FI": {
-    "flag": "🇫🇮",
-    "taxRate": 0.255,
-    "deliveryDays": "4–8 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Suomi"
-  },
-  "EE": {
-    "flag": "🇪🇪",
-    "taxRate": 0.22,
-    "deliveryDays": "4–8 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Eesti"
-  },
-  "LV": {
-    "flag": "🇱🇻",
-    "taxRate": 0.21,
-    "deliveryDays": "4–8 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Latviešu"
-  },
-  "LT": {
-    "flag": "🇱🇹",
-    "taxRate": 0.21,
-    "deliveryDays": "4–8 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Lietuvių"
-  },
-  "PT": {
-    "flag": "🇵🇹",
-    "taxRate": 0.23,
-    "deliveryDays": "4–7 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Português"
-  },
-  "GR": {
-    "flag": "🇬🇷",
-    "taxRate": 0.24,
-    "deliveryDays": "4–8 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Ελληνικά"
-  },
-  "IE": {
-    "flag": "🇮🇪",
-    "taxRate": 0.23,
-    "deliveryDays": "3–6 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "English"
-  },
-  "GB": {
-    "flag": "🇬🇧",
-    "taxRate": 0.2,
-    "deliveryDays": "4–8 Werktage",
-    "rtl": false,
-    "taxModel": "VAT / import rules",
-    "languageName": "English"
-  },
-  "TR": {
-    "flag": "🇹🇷",
-    "taxRate": 0.2,
-    "deliveryDays": "4–9 Werktage",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "Türkçe"
-  },
-  "US": {
-    "flag": "🇺🇸",
-    "taxRate": 0.2,
-    "deliveryDays": "5–10 business days",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "en"
-  },
-  "CA": {
-    "flag": "🇨🇦",
-    "taxRate": 0.2,
-    "deliveryDays": "5–10 business days",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "en"
-  },
-  "AU": {
-    "flag": "🇦🇺",
-    "taxRate": 0.2,
-    "deliveryDays": "5–10 business days",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "en"
-  },
-  "NZ": {
-    "flag": "🇳🇿",
-    "taxRate": 0.2,
-    "deliveryDays": "5–10 business days",
-    "rtl": false,
-    "taxModel": "VAT",
-    "languageName": "en"
-  },
-  "AE": {
-    "flag": "🇦🇪",
-    "taxRate": 0.2,
-    "deliveryDays": "5–10 business days",
-    "rtl": true,
-    "taxModel": "VAT",
-    "languageName": "ar"
-  },
-  "SA": {
-    "flag": "🇸🇦",
-    "taxRate": 0.2,
-    "deliveryDays": "5–10 business days",
-    "rtl": true,
-    "taxModel": "VAT",
-    "languageName": "ar"
-  }
+  "DE": {"flag":"🇩🇪","taxRate":0.19,"deliveryDays":"2–3 Werktage","rtl":false,"taxModel":"VAT","languageName":"Deutsch"},
+  "AT": {"flag":"🇦🇹","taxRate":0.2,"deliveryDays":"2–4 Werktage","rtl":false,"taxModel":"VAT","languageName":"Deutsch"},
+  "BE": {"flag":"🇧🇪","taxRate":0.21,"deliveryDays":"2–5 Werktage","rtl":false,"taxModel":"VAT","languageName":"Nederlands"},
+  "BG": {"flag":"🇧🇬","taxRate":0.2,"deliveryDays":"4–7 Werktage","rtl":false,"taxModel":"VAT","languageName":"Български"},
+  "HR": {"flag":"🇭🇷","taxRate":0.25,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Hrvatski"},
+  "CY": {"flag":"🇨🇾","taxRate":0.19,"deliveryDays":"4–8 Werktage","rtl":false,"taxModel":"VAT","languageName":"Ελληνικά"},
+  "CZ": {"flag":"🇨🇿","taxRate":0.21,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Čeština"},
+  "DK": {"flag":"🇩🇰","taxRate":0.25,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Dansk"},
+  "EE": {"flag":"🇪🇪","taxRate":0.22,"deliveryDays":"4–8 Werktage","rtl":false,"taxModel":"VAT","languageName":"Eesti"},
+  "FI": {"flag":"🇫🇮","taxRate":0.255,"deliveryDays":"4–8 Werktage","rtl":false,"taxModel":"VAT","languageName":"Suomi"},
+  "FR": {"flag":"🇫🇷","taxRate":0.2,"deliveryDays":"2–5 Werktage","rtl":false,"taxModel":"VAT","languageName":"Français"},
+  "GR": {"flag":"🇬🇷","taxRate":0.24,"deliveryDays":"4–8 Werktage","rtl":false,"taxModel":"VAT","languageName":"Ελληνικά"},
+  "HU": {"flag":"🇭🇺","taxRate":0.27,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Magyar"},
+  "IE": {"flag":"🇮🇪","taxRate":0.23,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"English"},
+  "IT": {"flag":"🇮🇹","taxRate":0.22,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Italiano"},
+  "LV": {"flag":"🇱🇻","taxRate":0.21,"deliveryDays":"4–8 Werktage","rtl":false,"taxModel":"VAT","languageName":"Latviešu"},
+  "LT": {"flag":"🇱🇹","taxRate":0.21,"deliveryDays":"4–8 Werktage","rtl":false,"taxModel":"VAT","languageName":"Lietuvių"},
+  "LU": {"flag":"🇱🇺","taxRate":0.17,"deliveryDays":"2–4 Werktage","rtl":false,"taxModel":"VAT","languageName":"Lëtzebuergesch"},
+  "MT": {"flag":"🇲🇹","taxRate":0.18,"deliveryDays":"4–8 Werktage","rtl":false,"taxModel":"VAT","languageName":"Malti"},
+  "NL": {"flag":"🇳🇱","taxRate":0.21,"deliveryDays":"2–4 Werktage","rtl":false,"taxModel":"VAT","languageName":"Nederlands"},
+  "PL": {"flag":"🇵🇱","taxRate":0.23,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Polski"},
+  "PT": {"flag":"🇵🇹","taxRate":0.23,"deliveryDays":"4–7 Werktage","rtl":false,"taxModel":"VAT","languageName":"Português"},
+  "RO": {"flag":"🇷🇴","taxRate":0.19,"deliveryDays":"3–7 Werktage","rtl":false,"taxModel":"VAT","languageName":"Română"},
+  "SK": {"flag":"🇸🇰","taxRate":0.2,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Slovenčina"},
+  "SI": {"flag":"🇸🇮","taxRate":0.22,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Slovenščina"},
+  "ES": {"flag":"🇪🇸","taxRate":0.21,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Español"},
+  "SE": {"flag":"🇸🇪","taxRate":0.25,"deliveryDays":"3–6 Werktage","rtl":false,"taxModel":"VAT","languageName":"Svenska"},
+  "TR": {"flag":"🇹🇷","taxRate":0.2,"deliveryDays":"4–9 Werktage","rtl":false,"taxModel":"VAT","languageName":"Türkçe"},
+  "SA": {"flag":"🇸🇦","taxRate":0.15,"deliveryDays":"5–10 business days","rtl":true,"taxModel":"VAT","languageName":"العربية"},
+  "AE": {"flag":"🇦🇪","taxRate":0.05,"deliveryDays":"5–10 business days","rtl":true,"taxModel":"VAT","languageName":"العربية"},
+  "QA": {"flag":"🇶🇦","taxRate":0.0,"deliveryDays":"5–10 business days","rtl":true,"taxModel":"VAT","languageName":"العربية"},
+  "KW": {"flag":"🇰🇼","taxRate":0.0,"deliveryDays":"5–10 business days","rtl":true,"taxModel":"VAT","languageName":"العربية"},
+  "BH": {"flag":"🇧🇭","taxRate":0.1,"deliveryDays":"5–10 business days","rtl":true,"taxModel":"VAT","languageName":"العربية"},
+  "OM": {"flag":"🇴🇲","taxRate":0.05,"deliveryDays":"5–10 business days","rtl":true,"taxModel":"VAT","languageName":"العربية"},
+  "EG": {"flag":"🇪🇬","taxRate":0.14,"deliveryDays":"5–10 business days","rtl":true,"taxModel":"VAT","languageName":"العربية"}
 }

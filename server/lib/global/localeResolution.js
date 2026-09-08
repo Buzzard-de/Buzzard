@@ -30,16 +30,16 @@ function resolveLanguage(options = {}) {
     return { language: savedLanguage, source: "saved_preference" };
   }
 
-  const country = getCountry(countryCode);
-  if (country?.defaultLanguage && getLanguage(country.defaultLanguage)) {
-    return { language: country.defaultLanguage, source: "country_default" };
-  }
-
   for (const tag of browserLanguages) {
     const code = String(tag).slice(0, 2).toLowerCase();
     if (getLanguage(code)) {
       return { language: code, source: "browser_accept_language" };
     }
+  }
+
+  const country = getCountry(countryCode);
+  if (country?.defaultLanguage && getLanguage(country.defaultLanguage)) {
+    return { language: country.defaultLanguage, source: "country_default" };
   }
 
   if (countryCode && country?.fallbackLanguage) {

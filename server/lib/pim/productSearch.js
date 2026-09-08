@@ -1,3 +1,7 @@
+/**
+ * @deprecated LEGACY admin SQL search — PRIMARY search: server/lib/global/searchIntelligence.js
+ * Retained for admin ID lookups; new callers should use commerce/productSearchAbstraction.js
+ */
 const { db } = require("../db");
 
 function searchProducts({ q, category, brandId, limit = 50, offset = 0 }) {

@@ -11,6 +11,7 @@ export default defineConfig({
       "lib/product-engine/**/*.test.ts",
       "lib/supplier-engine/**/*.test.ts",
       "lib/pricing-engine/**/*.test.ts",
+      "lib/inventory-engine/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

@@ -1,0 +1,52 @@
+{
+  "defaultStaleAfterMs": 14400000,
+  "defaultStalePolicy": "BLOCK_SALE",
+  "lowStockThreshold": 5,
+  "missingStockPolicy": "UNKNOWN",
+  "defaultStockBuffer": {
+    "type": "absolute",
+    "value": 5
+  },
+  "stockBuffers": {
+    "bySupplier": {
+      "TEST_SUPPLIER_A": { "type": "absolute", "value": 5 }
+    },
+    "byCategory": {
+      "automotive-tires": { "type": "percentage", "value": 0.1 },
+      "automotive-oils": { "type": "absolute", "value": 3 },
+      "automotive-brakes": { "type": "absolute", "value": 2 }
+    },
+    "byMarket": {},
+    "byChannel": {}
+  },
+  "stalePolicies": {
+    "default": "BLOCK_SALE",
+    "bySupplier": {
+      "TEST_SUPPLIER_A": "BLOCK_SALE"
+    },
+    "byChannel": {
+      "direct": "BLOCK_SALE",
+      "amazon": "BLOCK_SALE"
+    }
+  },
+  "reservationDefaults": {
+    "ttlMs": 900000,
+    "maxQuantityPerReservation": 99
+  },
+  "supportedChannels": [
+    "direct",
+    "amazon",
+    "ebay",
+    "kaufland",
+    "allegro",
+    "bol",
+    "cdiscount",
+    "otto"
+  ],
+  "fixtureProductMapping": {
+    "TSA-TIRE-225-45-17": "reifen-pilot-sport",
+    "TSA-OIL-5W30-5L": "motoroel-5w30",
+    "TSA-DISC-280": "bremsscheibe-280",
+    "TSA-PADS-FRONT": "bremsbelaege-vorder"
+  }
+}

@@ -15,6 +15,7 @@ import {
   recalculatePricingFromBestOffer,
   listRegistryProducts,
 } from "@/lib/product-engine";
+import { processSupplierStockUpdate, resolveFixtureProductId } from "@/lib/inventory-engine";
 
 export interface SyncOptions {
   integrationType?: IntegrationType;
@@ -178,16 +179,27 @@ async function syncStockOnly(
   result.productsFetched = stockResult.records.length;
 
   for (const record of stockResult.records) {
-    const sku = String(record.supplier_sku || "");
-    const stock = Number(record.stock ?? 0);
+    const sku = String(record.supplier_sku || record.supplierSku || "");
     const product = findProductBySupplierSku(sku);
-    if (!product) continue;
+    const productId = product?.productId ?? resolveFixtureProductId(sku);
+    if (!productId) continue;
 
-    const updated = updateProductSupplierOffer(product.productId, supplier.supplierId, { stock });
-    if (updated && updated.status !== "DISCONTINUED") {
-      upsertRegistryProduct(updated);
+    const invResult = processSupplierStockUpdate({
+      productId,
+      supplierId: supplier.supplierId,
+      supplierOfferId: sku,
+      supplierSku: sku,
+      rawQuantity: record.stock ?? record.stock_qty,
+      ean: record.ean_code ? String(record.ean_code) : undefined,
+      source: supplier.supplierId,
+      syncType: "INCREMENTAL_STOCK_SYNC",
+    });
+
+    if (invResult.ok) {
       result.stockUpdates++;
       result.productsUpdated++;
+    } else {
+      result.productsFailed++;
     }
   }
 }

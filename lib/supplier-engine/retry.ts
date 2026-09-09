@@ -1,0 +1,50 @@
+export interface RetryOptions {
+  maxAttempts?: number;
+  baseDelayMs?: number;
+  maxDelayMs?: number;
+  retryableCodes?: Set<string>;
+}
+
+const DEFAULT_RETRYABLE = new Set([
+  "TIMEOUT",
+  "RATE_LIMITED",
+  "SUPPLIER_UNAVAILABLE",
+  "NETWORK_ERROR",
+  "rateLimited",
+  "timeout",
+  "supplierUnavailable",
+]);
+
+export function isRetryableError(error: { code?: string; retryable?: boolean }): boolean {
+  if (error.retryable) return true;
+  if (error.code && DEFAULT_RETRYABLE.has(error.code)) return true;
+  return false;
+}
+
+export function computeBackoffDelay(attempt: number, baseDelayMs = 500, maxDelayMs = 30000): number {
+  const delay = Math.min(baseDelayMs * 2 ** (attempt - 1), maxDelayMs);
+  return delay + Math.floor(Math.random() * 100);
+}
+
+export async function withRetry<T>(
+  fn: (attempt: number) => Promise<T>,
+  options: RetryOptions = {}
+): Promise<T> {
+  const maxAttempts = options.maxAttempts ?? 3;
+  const baseDelayMs = options.baseDelayMs ?? 500;
+  const maxDelayMs = options.maxDelayMs ?? 30000;
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn(attempt);
+    } catch (err) {
+      lastError = err;
+      const retryable = isRetryableError(err as { code?: string; retryable?: boolean });
+      if (!retryable || attempt >= maxAttempts) break;
+      await new Promise((r) => setTimeout(r, computeBackoffDelay(attempt, baseDelayMs, maxDelayMs)));
+    }
+  }
+
+  throw lastError;
+}

@@ -1,0 +1,77 @@
+{
+  "TEST_SUPPLIER_A": {
+    "supplierId": "TEST_SUPPLIER_A",
+    "name": "Test Supplier A (Mock)",
+    "country": "DE",
+    "region": "EU",
+    "currency": "EUR",
+    "integrationTypes": ["api", "xml", "csv", "manual"],
+    "supportedMarkets": ["DE", "FR", "PL"],
+    "capabilities": {
+      "productFeed": true,
+      "stockFeed": true,
+      "priceFeed": true,
+      "orderAPI": false,
+      "shippingAPI": false,
+      "trackingAPI": false,
+      "returnsAPI": false,
+      "webhook": false,
+      "dropshipping": true,
+      "whiteLabel": true,
+      "blindShipping": true,
+      "api": true,
+      "xml": true,
+      "csv": true
+    },
+    "rateLimit": { "requestsPerMinute": 60 },
+    "fieldMapping": {
+      "article_number": "supplierSku",
+      "sku": "supplierSku",
+      "ean_code": "ean",
+      "price_net": "supplierPrice",
+      "stock_qty": "stock",
+      "title": "name",
+      "brand_name": "brand"
+    },
+    "apiProducts": [
+      {
+        "article_number": "TSA-TIRE-225-45-17",
+        "ean_code": "4006633001247",
+        "brand_name": "Michelin",
+        "title": "Michelin Pilot Sport 4 225/45 R17",
+        "price_net": 55.79,
+        "stock_qty": 8,
+        "currency": "EUR"
+      },
+      {
+        "article_number": "TSA-OIL-5W30-5L",
+        "ean_code": "4006633001236",
+        "brand_name": "Castrol",
+        "title": "Motoröl 5W-30 Fullsynthetic 5L",
+        "price_net": 26.6,
+        "stock_qty": 50,
+        "currency": "EUR"
+      },
+      {
+        "article_number": "TSA-DISC-280",
+        "ean_code": "4006633001234",
+        "brand_name": "ATE",
+        "title": "Bremsscheibe Vorderachse 280mm",
+        "price_net": 21.64,
+        "stock_qty": 24,
+        "currency": "EUR"
+      },
+      {
+        "article_number": "TSA-PADS-FRONT",
+        "ean_code": "4006633001235",
+        "brand_name": "Bosch",
+        "title": "Bremsbeläge Satz Vorderachse",
+        "price_net": 17.67,
+        "stock_qty": 31,
+        "currency": "EUR"
+      }
+    ],
+    "xmlFeed": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motoröl 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbeläge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>",
+    "csvFeed": "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motoröl 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbeläge Satz Vorderachse,17.67,31"
+  }
+}

@@ -1,6 +1,7 @@
+/** Market source — authoritative 35-country registry (legacy 41-country JSON deprecated). */
 import type { MarketCountry, ShippingRulesMap } from "./types";
-import countries from "@/data/buzzard_europe_countries.json";
+import { marketCountries as globalMarketCountries } from "./marketCountryAdapter";
 import shipping from "@/data/buzzard_europe_shipping.json";
 
-export const marketCountries = countries as MarketCountry[];
+export const marketCountries: MarketCountry[] = globalMarketCountries;
 export const marketShippingRules = shipping as ShippingRulesMap;

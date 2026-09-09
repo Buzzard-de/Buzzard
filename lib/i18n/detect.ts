@@ -2,6 +2,7 @@ import { SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
 
 export const STORAGE_KEY = "buzzard_locale";
 export const MANUAL_OVERRIDE_KEY = "buzzard_locale_manual";
+export const MARKET_LOCALE_KEY = "buzzard_market_locale";
 
 export function detectBrowserLocale(): BuzzardLocale {
   if (typeof navigator === "undefined") return "de";
@@ -57,4 +58,23 @@ export function persistLocale(locale: BuzzardLocale, manual = false): void {
 export function localeFromPrefix(prefix: string | undefined): BuzzardLocale | null {
   if (!prefix) return null;
   return SUPPORTED_LOCALES.includes(prefix as BuzzardLocale) ? (prefix as BuzzardLocale) : null;
+}
+
+export function readStoredMarketLocale(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(MARKET_LOCALE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function persistMarketLocale(locale: string, manual = false): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(MARKET_LOCALE_KEY, locale);
+    if (manual) localStorage.setItem(MANUAL_OVERRIDE_KEY, "1");
+  } catch {
+    /* ignore */
+  }
 }

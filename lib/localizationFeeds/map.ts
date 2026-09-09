@@ -1,39 +1,46 @@
-import type { BuzzardLocale } from "@/lib/i18n/types";
+import type { BuzzardLanguageCode } from "@/lib/i18n/types";
+import { LOCALE_TAG_MAP } from "@/lib/i18n/types";
 import type { LocalizedCatalogProduct } from "./types";
 import type { PublicProduct, StockStatus } from "@/lib/products/types";
 
-const LOCALE_BY_COUNTRY: Record<string, string> = {
-  DE: "de-DE",
-  GB: "en-GB",
-  FR: "fr-FR",
-  NL: "nl-NL",
-  PL: "pl-PL",
-  TR: "tr-TR",
-  RS: "sr-RS",
-  BA: "bs-BA",
-  AL: "sq-AL",
-  MK: "mk-MK",
-  BG: "bg-BG",
-  RO: "ro-RO",
-  GR: "el-GR",
-  HR: "hr-HR",
-  HU: "hu-HU",
-  CZ: "cs-CZ",
-  SK: "sk-SK",
-  SI: "sl-SI",
-  IT: "it-IT",
-  ES: "es-ES",
-};
-
-const LOCALE_BY_UI: Record<BuzzardLocale, string> = {
+const LOCALE_BY_UI: Record<BuzzardLanguageCode, string> = {
   de: "de-DE",
   en: "en-GB",
   tr: "tr-TR",
-  ar: "en-GB",
+  ar: "ar-SA",
+  fr: "fr-FR",
+  nl: "nl-NL",
+  bg: "bg-BG",
+  hr: "hr-HR",
+  el: "el-GR",
+  cs: "cs-CZ",
+  da: "da-DK",
+  et: "et-EE",
+  fi: "fi-FI",
+  hu: "hu-HU",
+  it: "it-IT",
+  lv: "lv-LV",
+  lt: "lt-LT",
+  lb: "lb-LU",
+  mt: "mt-MT",
+  pl: "pl-PL",
+  pt: "pt-PT",
+  ro: "ro-RO",
+  sk: "sk-SK",
+  sl: "sl-SI",
+  es: "es-ES",
+  ca: "ca-ES",
+  eu: "eu-ES",
+  gl: "gl-ES",
+  sv: "sv-SE",
+  ga: "ga-IE",
 };
 
-export function resolveApiLocale(uiLocale: BuzzardLocale, countryCode: string): string {
-  return LOCALE_BY_COUNTRY[countryCode.toUpperCase()] || LOCALE_BY_UI[uiLocale] || "de-DE";
+export function resolveApiLocale(uiLocale: BuzzardLanguageCode, countryCode: string): string {
+  const country = countryCode.toUpperCase();
+  const byCountry = Object.entries(LOCALE_TAG_MAP).find(([tag, lang]) => tag.endsWith(`-${country}`) && lang === uiLocale)?.[0];
+  if (byCountry) return byCountry;
+  return LOCALE_BY_UI[uiLocale] || "de-DE";
 }
 
 function stockStatus(stock: number): StockStatus {

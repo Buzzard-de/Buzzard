@@ -145,6 +145,19 @@ const EXACT = {
   "GET /api/admin/identity-security/overview": "security.read",
   "GET /api/admin/identity-security/audit": "audit.read",
   "GET /api/admin/identity-security/sessions": "security.read",
+  "GET /api/admin/returns": "returns.read",
+  "GET /api/admin/returns-health": "returns.read",
+  "GET /api/admin/returns/:id": "returns.read",
+  "POST /api/admin/returns": "returns.write",
+  "POST /api/admin/returns/:id/approve": "returns.approve",
+  "POST /api/admin/returns/:id/receive": "returns.write",
+  "POST /api/admin/returns/:id/inspect": "returns.inspect",
+  "POST /api/admin/returns/:id/refund/calculate": "returns.refund",
+  "POST /api/admin/returns/:id/refund/request": "returns.refund",
+  "POST /api/admin/returns/:id/supplier-recovery": "returns.supplier_recovery",
+  "POST /api/admin/returns/:id/supplier-recovery/confirm": "returns.supplier_recovery",
+  "POST /api/admin/returns/:id/reconcile": "returns.read",
+  "POST /api/admin/returns/:id/close": "returns.close",
 };
 
 const PREFIX = [
@@ -172,6 +185,9 @@ const PREFIX = [
   { prefix: "/api/admin/guardian", read: "security.read", write: "security.manage" },
   { prefix: "/api/admin/p1", read: "system.read", write: "system.configure" },
   { prefix: "/api/admin/submissions", read: "audit.read", write: "audit.read" },
+  { prefix: "/api/admin/returns", read: "returns.read", write: "returns.write" },
+  { prefix: "/api/admin/automotive", read: "products.read", write: "products.write" },
+  { prefix: "/api/admin/global", read: "products.read", write: "products.write" },
   { prefix: "/api/security/admin", read: "security.read", write: "security.manage" },
 ];
 

@@ -10,7 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import type { BuzzardLocale } from "@/lib/i18n/types";
-import { hasManualLocaleOverride } from "@/lib/i18n/detect";
+import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
+import { hasManualLocaleOverride, persistMarketLocale } from "@/lib/i18n/detect";
 import { useLocale } from "@/lib/i18n/context";
 import {
   defaultMarketCountryCode,
@@ -61,9 +62,10 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       persistCountryCode(country.code, manual);
 
       if (manual && !hasManualLocaleOverride()) {
-        const locale = country.language as BuzzardLocale;
-        if (["de", "en", "tr", "ar"].includes(locale)) {
-          setLocale(locale, false);
+        const nextLocale = country.language as BuzzardLocale;
+        if (SUPPORTED_LOCALES.includes(nextLocale)) {
+          setLocale(nextLocale, false);
+          persistMarketLocale(country.locale, false);
         }
       }
     },

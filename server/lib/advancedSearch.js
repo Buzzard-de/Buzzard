@@ -1,3 +1,7 @@
+/**
+ * @deprecated LEGACY advanced search DB — PRIMARY: server/lib/global/searchIntelligence.js
+ * Retained for BUZZARD_ADVANCED_SEARCH opt-in; do not use for new integrations.
+ */
 const { db } = require("./db");
 const fs = require("fs");
 const path = require("path");

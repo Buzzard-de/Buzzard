@@ -1,4 +1,4 @@
-import type { BuzzardLocale } from "@/lib/i18n/types";
+import type { BuzzardEmailLocale } from "@/lib/i18n/types";
 
 export const EMAIL_TEMPLATE_KEYS = [
   "account_verification",
@@ -17,7 +17,7 @@ type EmailTemplate = {
   body: string;
 };
 
-const templates: Record<BuzzardLocale, Record<EmailTemplateKey, EmailTemplate>> = {
+const templates: Record<BuzzardEmailLocale, Record<EmailTemplateKey, EmailTemplate>> = {
   de: {
     account_verification: { subject: "Bitte bestätigen Sie Ihr Buzzard-Konto", body: "Hallo {firstName},\n\nbitte bestätigen Sie Ihre E-Mail-Adresse." },
     password_reset: { subject: "Passwort zurücksetzen", body: "Hallo {firstName},\n\nsetzen Sie Ihr Passwort über den Link zurück." },
@@ -56,13 +56,13 @@ const templates: Record<BuzzardLocale, Record<EmailTemplateKey, EmailTemplate>> 
   },
 };
 
-export function getEmailTemplate(key: EmailTemplateKey, locale: BuzzardLocale): EmailTemplate {
+export function getEmailTemplate(key: EmailTemplateKey, locale: BuzzardEmailLocale): EmailTemplate {
   return templates[locale]?.[key] ?? templates.de[key];
 }
 
 export function renderEmailTemplate(
   key: EmailTemplateKey,
-  locale: BuzzardLocale,
+  locale: BuzzardEmailLocale,
   vars: Record<string, string>
 ): EmailTemplate {
   const template = getEmailTemplate(key, locale);

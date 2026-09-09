@@ -1,0 +1,316 @@
+{
+  "timestamp": "2026-09-08T19:52:04.230Z",
+  "git": {
+    "branch": "cursor/pim-catalog-foundation-c293",
+    "commit": "d413d13a6b1259ccdd07ee01e60bd00c87424a80",
+    "clean": false,
+    "diffCheck": "PASS"
+  },
+  "architecture": {
+    "engines": {
+      "product": {
+        "primary": "server/lib/pim/productCore.js",
+        "legacy": [
+          "server/lib/pimCatalog.js",
+          "server/lib/productCatalogPim.js",
+          "server/lib/productStore.js",
+          "server/lib/p1CatalogPlatform.js"
+        ],
+        "automotive": "server/core/automotiveCore/productEngine.js"
+      },
+      "search": {
+        "primary": "server/lib/global/searchIntelligence.js",
+        "legacy": [
+          "server/lib/pim/productSearch.js",
+          "server/lib/advancedSearch.js"
+        ],
+        "bridge": "server/core/automotiveCore/searchBridge.js",
+        "facade": "server/lib/commerce/productSearchAbstraction.js"
+      },
+      "supplier": {
+        "primary": "server/lib/supplier/supplierImportPipeline.js",
+        "legacy": [
+          "server/lib/supplierHub.js",
+          "server/lib/supplierIntegrationHub.js"
+        ],
+        "automotive": "server/core/automotiveCore/supplierEngine.js",
+        "production": "server/core/automotiveProduction/supplierConnectorManager.js"
+      },
+      "order": {
+        "primary": "server/lib/commerce/orderService.js",
+        "legacy": [
+          "server/lib/orderManagement.js",
+          "server/lib/orderManagementV32.js",
+          "server/lib/dbOrders.js"
+        ],
+        "automotive": "server/core/automotiveCore/orderEngine.js",
+        "production": "server/core/automotiveProduction/orderIntegrationManager.js"
+      },
+      "category": {
+        "primary": "server/lib/pim/categoryEngine.js",
+        "resolver": "server/lib/pim/categoryResolver.js",
+        "legacy": [
+          "server/lib/embeddedSmartMenu48.js",
+          "server/lib/taxonomyUnification.js"
+        ],
+        "automotive": "server/core/automotiveCore/categoryEngine.js"
+      },
+      "fitment": {
+        "primary": "server/core/automotiveCore/fitmentEngine.js",
+        "pim": "server/lib/pim/fitmentSchema.js"
+      },
+      "price": {
+        "primary": "server/lib/operations/priceEngine.js",
+        "legacy": [
+          "server/lib/pricing.js"
+        ],
+        "automotive": "server/core/automotiveCore/priceEngine.js"
+      },
+      "stock": {
+        "primary": "server/lib/operations/stockEngine.js",
+        "automotive": "server/core/automotiveCore/stockEngine.js"
+      },
+      "return": {
+        "primary": "server/core/returnRecovery/index.js",
+        "legacy": [
+          "server/lib/returnsRma.js"
+        ]
+      },
+      "country": {
+        "primary": "server/core/globalCountryRegistry.js",
+        "legacy": [
+          "data/buzzard_europe_countries.json"
+        ]
+      },
+      "safety": {
+        "primary": "server/core/globalSafetyPolicy.js",
+        "domain": [
+          "server/lib/pim/productionSafetyGate.js",
+          "server/lib/supplier/supplierSafetyGate.js",
+          "server/lib/operations/adminSafetyGate.js",
+          "server/core/automotiveCore/safetyPolicy.js",
+          "server/core/automotiveProduction/productionSafety.js",
+          "server/core/returnRecovery/safetyGates.js"
+        ]
+      },
+      "tecdoc": {
+        "primary": "server/core/automotiveCore/tecdocAdapter.js",
+        "legacy": [
+          "server/lib/adapters/tecdocAdapter.js"
+        ],
+        "production": "server/core/automotiveProduction/tecdocConnectorManager.js"
+      }
+    }
+  },
+  "duplicates": {
+    "duplicateSearchEngines": [
+      "server/lib/pim/productSearch.js",
+      "server/lib/advancedSearch.js"
+    ],
+    "duplicateProductEngines": [
+      "server/lib/pimCatalog.js",
+      "server/lib/productCatalogPim.js",
+      "server/lib/productStore.js",
+      "server/lib/p1CatalogPlatform.js"
+    ],
+    "duplicateSupplierEngines": [
+      "server/lib/supplierHub.js",
+      "server/lib/supplierIntegrationHub.js"
+    ],
+    "duplicateOrderEngines": [
+      "server/lib/orderManagement.js",
+      "server/lib/orderManagementV32.js",
+      "server/lib/dbOrders.js"
+    ],
+    "duplicateCountryRegistries": [
+      "data/buzzard_europe_countries.json"
+    ],
+    "duplicateSafetyPolicies": [
+      "server/lib/pim/productionSafetyGate.js",
+      "server/lib/supplier/supplierSafetyGate.js",
+      "server/lib/operations/adminSafetyGate.js",
+      "server/core/automotiveCore/safetyPolicy.js",
+      "server/core/automotiveProduction/productionSafety.js",
+      "server/core/returnRecovery/safetyGates.js"
+    ]
+  },
+  "safety": {
+    "policy": {
+      "ready": false,
+      "status": "BLOCKED",
+      "diagnosticOnly": true,
+      "autoActivate": false,
+      "activationAllowed": false,
+      "supplierLive": false,
+      "salesEnabled": false,
+      "paymentsEnabled": false,
+      "publishEnabled": false,
+      "tecdocLive": false,
+      "orderLive": false,
+      "humanApprovalRequired": true,
+      "publishBlocked": true,
+      "liveImport": false,
+      "dryRun": true
+    },
+    "check": {
+      "ready": false,
+      "status": "BLOCKED",
+      "diagnosticOnly": true,
+      "autoActivate": false,
+      "activationAllowed": false,
+      "supplierLive": false,
+      "salesEnabled": false,
+      "paymentsEnabled": false,
+      "publishEnabled": false,
+      "tecdocLive": false,
+      "orderLive": false,
+      "humanApprovalRequired": true,
+      "publishBlocked": true,
+      "liveImport": false,
+      "dryRun": true,
+      "salesOff": true,
+      "supplierDry": true,
+      "tecdocOff": true,
+      "orderOff": true,
+      "compliant": true
+    }
+  },
+  "infrastructure": {
+    "BACKUP": "CONFIGURED",
+    "REDIS": "NOT_CONFIGURED",
+    "SMTP": "NOT_CONFIGURED",
+    "MONITORING": "NOT_CONFIGURED",
+    "ANALYTICS": "NOT_CONFIGURED",
+    "LEGAL": "INCOMPLETE"
+  },
+  "sections": {
+    "GIT": {
+      "status": "PARTIAL",
+      "branch": "cursor/pim-catalog-foundation-c293",
+      "commit": "d413d13a6b1259ccdd07ee01e60bd00c87424a80",
+      "clean": false,
+      "diffCheck": "PASS"
+    },
+    "ARCHITECTURE": {
+      "status": "PARTIAL",
+      "note": "Legacy engines marked DEPRECATED; PRIMARY engines wired"
+    },
+    "35 COUNTRIES": {
+      "status": "PASS",
+      "count": 35,
+      "expected": 35
+    },
+    "LANGUAGES": {
+      "status": "PASS"
+    },
+    "PRODUCT": {
+      "status": "PASS"
+    },
+    "PIM": {
+      "status": "PASS"
+    },
+    "SEARCH": {
+      "status": "PASS"
+    },
+    "AUTOMOTIVE": {
+      "status": "PASS"
+    },
+    "SUPPLIER": {
+      "status": "PASS"
+    },
+    "TECDOC": {
+      "status": "PASS"
+    },
+    "PRICE": {
+      "status": "PASS"
+    },
+    "STOCK": {
+      "status": "PASS"
+    },
+    "ORDER": {
+      "status": "PASS"
+    },
+    "RETURN": {
+      "status": "PASS"
+    },
+    "SAFETY": {
+      "status": "PASS",
+      "policy": {
+        "ready": false,
+        "status": "BLOCKED",
+        "diagnosticOnly": true,
+        "autoActivate": false,
+        "activationAllowed": false,
+        "supplierLive": false,
+        "salesEnabled": false,
+        "paymentsEnabled": false,
+        "publishEnabled": false,
+        "tecdocLive": false,
+        "orderLive": false,
+        "humanApprovalRequired": true,
+        "publishBlocked": true,
+        "liveImport": false,
+        "dryRun": true
+      },
+      "check": {
+        "ready": false,
+        "status": "BLOCKED",
+        "diagnosticOnly": true,
+        "autoActivate": false,
+        "activationAllowed": false,
+        "supplierLive": false,
+        "salesEnabled": false,
+        "paymentsEnabled": false,
+        "publishEnabled": false,
+        "tecdocLive": false,
+        "orderLive": false,
+        "humanApprovalRequired": true,
+        "publishBlocked": true,
+        "liveImport": false,
+        "dryRun": true,
+        "salesOff": true,
+        "supplierDry": true,
+        "tecdocOff": true,
+        "orderOff": true,
+        "compliant": true
+      }
+    },
+    "BACKUP": {
+      "status": "CONFIGURED"
+    },
+    "REDIS": {
+      "status": "NOT_CONFIGURED"
+    },
+    "SMTP": {
+      "status": "NOT_CONFIGURED"
+    },
+    "MONITORING": {
+      "status": "NOT_CONFIGURED"
+    },
+    "ANALYTICS": {
+      "status": "NOT_CONFIGURED"
+    },
+    "LEGAL": {
+      "status": "INCOMPLETE"
+    },
+    "SECRETS": {
+      "status": "PASS"
+    },
+    "SECURITY": {
+      "status": "PARTIAL"
+    },
+    "SEO": {
+      "status": "PARTIAL"
+    },
+    "IMAGES": {
+      "status": "PARTIAL"
+    },
+    "ADMIN/RBAC": {
+      "status": "PASS"
+    }
+  },
+  "critical": [],
+  "warnings": [
+    "9 legacy engine paths remain (deprecated, not removed)"
+  ]
+}

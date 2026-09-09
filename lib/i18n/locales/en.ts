@@ -52,6 +52,8 @@ export const catalog: TranslationTree = {
     newsletterUnavailable: "Newsletter is currently unavailable. Please try again later.",
     newsletterError: "Subscription failed. Please try again later.",
     newsletterSubmitting: "Sending…",
+    catalogNotice:
+      "Buzzard24 is in catalog mode. You can explore products and categories — sales and checkout will follow when sales go live.",
     addToCart: "Add to cart",
     added: "Added",
   },
@@ -354,6 +356,11 @@ export const catalog: TranslationTree = {
     imprint: "Legal notice",
     privacy: "Privacy",
     contact: "Contact",
+    help: "Help",
+    faq: "FAQ",
+    terms: "Terms",
+    shipping: "Shipping",
+    withdrawal: "Withdrawal",
     copyright: "© 2026 Buzzard. All rights reserved.",
   },
   language: {
@@ -409,6 +416,11 @@ export const catalog: TranslationTree = {
     browseOnlyTitle: "Catalog mode only",
     browseOnlyText: "Online checkout is not active yet. You can browse products and categories — prices will appear when sales go live.",
     salesDisabled: "Online ordering is currently unavailable.",
+    trustBrowse: "Wide category selection",
+    trustInfo: "Transparent product information",
+    trustContact: "Support available",
+    trustSoon: "Personal advice",
+    productInfo: "Catalog mode — price and ordering will follow when sales go live.",
     inquiryTitle: "Product inquiry",
     inquiryText: "Your cart is ready. Send us the items you want — we will reply with availability and pricing.",
     inquiryNote: "Add items to your cart and send us an inquiry.",
@@ -445,6 +457,12 @@ export const catalog: TranslationTree = {
     IT: "Italy",
     PL: "Poland",
     TR: "Turkey",
+  },
+  errors: {
+    pageTitle: "Page not found",
+    pageText: "The requested page does not exist or has been moved.",
+    backHome: "Back to home",
+    viewProducts: "View products",
   },
   ai: {
     chat: {

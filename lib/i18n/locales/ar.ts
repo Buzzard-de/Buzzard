@@ -1,7 +1,14 @@
 import type { TranslationTree } from "../types-catalog";
 
 export const catalog: TranslationTree = {
-  topBar: { shipping: "شحن مجاني من 79 €", returns: "إرجاع خلال 30 يومًا", trust: "Trusted Shops · 4.8/5" },
+  topBar: {
+    shipping: "شحن مجاني من 79 €",
+    returns: "إرجاع خلال 30 يومًا",
+    trust: "Trusted Shops · 4.8/5",
+    catalogPreview: "وضع الكatalog — الاستشارة والتواصل متاحان في أي وقت",
+    catalogCategories: "{count} فئة · كatalog عبر الإنترنت",
+    catalogSupport: "متاح عبر الهاتف والبريد الإلكتروني",
+  },
   header: {
     searchPlaceholder: "ابحث عن المنتجات والعلامات والرمز والفئات…",
     account: "حسابي",
@@ -45,6 +52,8 @@ export const catalog: TranslationTree = {
     newsletterUnavailable: "النشرة غير متاحة حاليًا. يرجى المحاولة لاحقًا.",
     newsletterError: "فشل الاشتراك. يرجى المحاولة لاحقًا.",
     newsletterSubmitting: "جارٍ الإرسال…",
+    catalogNotice:
+      "Buzzard24 في وضع الكatalog. يمكنك استكشاف المنتجات والفئات — البيع والدفع سيتبعان عند بدء المبيعات.",
     addToCart: "أضف إلى السلة",
     added: "تمت الإضافة",
   },
@@ -347,6 +356,11 @@ export const catalog: TranslationTree = {
     imprint: "البيانات القانونية",
     privacy: "الخصوصية",
     contact: "اتصل بنا",
+    help: "المساعدة",
+    faq: "الأسئلة الشائعة",
+    terms: "الشروط",
+    shipping: "الشحن",
+    withdrawal: "الإرجاع",
     copyright: "© 2026 Buzzard. جميع الحقوق محفوظة.",
   },
   language: {
@@ -375,6 +389,14 @@ export const catalog: TranslationTree = {
     allProducts: "جميع المنتجات",
     priceOnRequest: "السعر عند الطلب",
     viewProduct: "عرض المنتج",
+    buyNow: "اشترِ الآن",
+    description: "الوصف",
+    technicalData: "البيانات التقنية",
+    documents: "المستندات",
+    boughtTogether: "يُشترى معًا غالبًا",
+    wishlistAdd: "♡ المفضلة",
+    wishlistIn: "♥ في المفضلة",
+    trustCheckout: "14 يومًا للإرجاع · دفع آمن",
     stock: {
       in_stock: "متوفر",
       low_stock: "كمية محدودة",
@@ -394,6 +416,11 @@ export const catalog: TranslationTree = {
     browseOnlyTitle: "وضع الكatalog فقط",
     browseOnlyText: "الدفع عبر الإنترنت غير نشط بعد. يمكنك تصفح المنتجات والأسعار — أرسل استفسارك عبر المساعدة والاتصال.",
     salesDisabled: "الطلب عبر الإنترنت غير متاح حاليًا.",
+    trustBrowse: "تشكيلة واسعة من الفئات",
+    trustInfo: "معلومات منتج شفافة",
+    trustContact: "الدعم متاح",
+    trustSoon: "استشارة شخصية",
+    productInfo: "وضع الكatalog — السعر والطلب سيتبعان عند بدء المبيعات.",
     inquiryTitle: "استفسار عن منتج",
     inquiryText: "سلتك جاهزة. أرسل لنا المنتجات المطلوبة — سنرد بالتوفر والسعر.",
     inquiryNote: "أضف المنتجات إلى السلة وأرسل استفسارك.",
@@ -429,6 +456,12 @@ export const catalog: TranslationTree = {
     IT: "إيطاليا",
     PL: "بولندا",
     TR: "تركيا",
+  },
+  errors: {
+    pageTitle: "الصفحة غير موجودة",
+    pageText: "الصفحة المطلوبة غير موجودة أو تم نقلها.",
+    backHome: "العودة إلى الرئيسية",
+    viewProducts: "عرض المنتجات",
   },
   ai: {
     chat: {

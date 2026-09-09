@@ -1,0 +1,26 @@
+{
+  "orderNumberPrefix": "BZ",
+  "orderNumberYear": 2026,
+  "defaultPaymentProvider": "mock",
+  "defaultPaymentMethod": "card",
+  "paymentAuthorizationMode": "dry_run",
+  "reservationFailurePolicy": "RELEASE_ALL",
+  "paymentFailurePolicy": "RELEASE_RESERVATIONS",
+  "idempotencyTtlMs": 86400000,
+  "customerVisibleStatuses": [
+    "PENDING_PAYMENT",
+    "PAID",
+    "CONFIRMED",
+    "PROCESSING",
+    "SUPPLIER_PENDING",
+    "SUPPLIER_CONFIRMED",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+    "RETURN_REQUESTED",
+    "RETURNED",
+    "REFUNDED",
+    "PARTIALLY_REFUNDED",
+    "FAILED"
+  ]
+}

@@ -21,8 +21,9 @@ export async function createSupplierOrder(request: SupplierOrderRequest): Promis
 
 export async function getSupplierOrder(
   supplierId: string,
-  _supplierOrderId: string
+  supplierOrderId: string
 ): Promise<{ ok: boolean; status: string; dryRun: boolean }> {
+  void supplierOrderId;
   const supplier = getSupplier(supplierId);
   if (!supplier || !hasCapability(supplier.capabilities, "orderAPI")) {
     return { ok: false, status: "CAPABILITY_MISSING", dryRun: true };
@@ -32,8 +33,9 @@ export async function getSupplierOrder(
 
 export async function cancelSupplierOrder(
   supplierId: string,
-  _supplierOrderId: string
+  supplierOrderId: string
 ): Promise<{ ok: boolean; dryRun: boolean }> {
+  void supplierOrderId;
   const supplier = getSupplier(supplierId);
   if (!supplier || !hasCapability(supplier.capabilities, "orderAPI")) {
     return { ok: false, dryRun: true };
@@ -43,8 +45,9 @@ export async function cancelSupplierOrder(
 
 export async function getSupplierTracking(
   supplierId: string,
-  _supplierOrderId: string
+  supplierOrderId: string
 ): Promise<{ ok: boolean; trackingNumber?: string; dryRun: boolean }> {
+  void supplierOrderId;
   const supplier = getSupplier(supplierId);
   if (!supplier || !hasCapability(supplier.capabilities, "trackingAPI")) {
     return { ok: false, dryRun: true };

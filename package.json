@@ -73,6 +73,7 @@
     "test:market-engine": "vitest run lib/market-engine/marketEngine.test.ts && node --test server/__tests__/marketEngine.test.mjs",
     "test:product-engine": "vitest run lib/product-engine/productEngine.test.ts && node --test server/__tests__/productEngine.test.mjs",
     "test:supplier-engine": "vitest run lib/supplier-engine/supplierEngine.test.ts && node --test server/__tests__/supplierEngine.test.mjs",
+    "test:pricing-engine": "vitest run lib/pricing-engine/pricingEngine.test.ts && node --test server/__tests__/pricingEngine.test.mjs",
     "test:buzzard-i18n": "vitest run lib/i18n/international/international.test.ts lib/i18n/localeCatalog.test.ts",
     "test:locale-parity": "node --experimental-strip-types scripts/validate-locale-parity.mjs",
     "test:final-catalog-completion": "node --test server/__tests__/finalCatalogCompletion.test.mjs",

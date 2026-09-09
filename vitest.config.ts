@@ -10,6 +10,7 @@ export default defineConfig({
       "lib/market-engine/**/*.test.ts",
       "lib/product-engine/**/*.test.ts",
       "lib/supplier-engine/**/*.test.ts",
+      "lib/pricing-engine/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

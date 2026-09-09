@@ -9,6 +9,7 @@ export default defineConfig({
       "lib/i18n/**/*.test.ts",
       "lib/market-engine/**/*.test.ts",
       "lib/product-engine/**/*.test.ts",
+      "lib/supplier-engine/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

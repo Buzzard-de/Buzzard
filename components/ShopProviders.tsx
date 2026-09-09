@@ -5,6 +5,7 @@ import { CartProvider } from "@/lib/cart";
 import { HomeUIProvider } from "@/lib/home-ui";
 import { LocaleProvider } from "@/lib/i18n/context";
 import { MarketProvider } from "@/lib/market/context";
+import { BuzzardMarketProvider } from "@/lib/market-engine/context";
 import { GlobalLocaleProvider } from "@/lib/global/context";
 import { ShopProvider } from "@/lib/shop";
 import { WishlistProvider } from "@/lib/wishlist";
@@ -22,6 +23,7 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
   return (
     <LocaleProvider>
       <MarketProvider>
+      <BuzzardMarketProvider>
       <GlobalLocaleProvider>
       <AccountProvider>
         <CartProvider>
@@ -44,6 +46,7 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
         </CartProvider>
       </AccountProvider>
       </GlobalLocaleProvider>
+      </BuzzardMarketProvider>
       </MarketProvider>
     </LocaleProvider>
   );

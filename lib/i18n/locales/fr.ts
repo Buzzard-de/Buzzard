@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Envoi échoué. Veuillez réessayer ou nous écrire par e-mail.",
       altEmail: "Alternativement, directement par e-mail :",
     },
-    ai: {
+  errors: {
+    pageTitle: "Page introuvable",
+    pageText: "La page demandée n'existe pas ou a été déplacée.",
+    backHome: "Retour à l'accueil",
+    viewProducts: "Voir les produits",
+  },
+  ai: {
       chat: {
         open: "Assistant IA",
         close: "Fermer le chat",

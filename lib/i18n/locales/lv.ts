@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Sūtīšana neizdevās. Mēģiniet vēlreiz vai rakstiet mums pa e-pastu.",
       altEmail: "Alternatīvi tieši pa e-pastu:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Lapa nav atrasta",
+    pageText: "Pieprasītā lapa neeksistē vai ir pārvietota.",
+    backHome: "Uz sākumu",
+    viewProducts: "Skatīt produktus",
+  },
+  ai: {
       chat: {
         open: "AI asistents",
         close: "Aizvērt tērzēšanu",

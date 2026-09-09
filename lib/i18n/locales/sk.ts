@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Odoslanie sa nepodarilo. Skúste to znova alebo nám napíšte e-mailom.",
       altEmail: "Alternatívne priamo e-mailom:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Stránka sa nenašla",
+    pageText: "Požadovaná stránka neexistuje alebo bola presunutá.",
+    backHome: "Na úvod",
+    viewProducts: "Zobraziť produkty",
+  },
+  ai: {
       chat: {
         open: "AI asistent",
         close: "Zavrieť chat",

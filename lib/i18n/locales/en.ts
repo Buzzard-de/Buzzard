@@ -458,6 +458,12 @@ export const catalog: TranslationTree = {
     PL: "Poland",
     TR: "Turkey",
   },
+  errors: {
+    pageTitle: "Page not found",
+    pageText: "The requested page does not exist or has been moved.",
+    backHome: "Back to home",
+    viewProducts: "View products",
+  },
   ai: {
     chat: {
       open: "AI assistant",

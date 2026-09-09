@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Trimiterea a eșuat. Încercați din nou sau scrieți-ne prin e-mail.",
       altEmail: "Alternativ direct prin e-mail:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Pagina nu a fost găsită",
+    pageText: "Pagina solicitată nu există sau a fost mutată.",
+    backHome: "Înapoi acasă",
+    viewProducts: "Vezi produse",
+  },
+  ai: {
       chat: {
         open: "Asistent AI",
         close: "Închide chat",

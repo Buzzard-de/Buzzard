@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "O envío fallou. Téntao de novo ou escríbenos por correo electrónico.",
       altEmail: "Alternativamente, directamente por correo electrónico:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Páxina non atopada",
+    pageText: "A páxina solicitada non existe ou foi movida.",
+    backHome: "Volver ao inicio",
+    viewProducts: "Ver produtos",
+  },
+  ai: {
       chat: {
         open: "Asistente IA",
         close: "Pechar chat",

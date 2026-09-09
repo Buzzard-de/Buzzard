@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Lähetys epäonnistui. Yritä uudelleen tai kirjoita meille sähköpostitse.",
       altEmail: "Vaihtoehtoisesti suoraan sähköpostitse:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Sivua ei löytynyt",
+    pageText: "Pyydettyä sivua ei ole olemassa tai se on siirretty.",
+    backHome: "Etusivulle",
+    viewProducts: "Näytä tuotteet",
+  },
+  ai: {
       chat: {
         open: "AI-avustaja",
         close: "Sulje chat",

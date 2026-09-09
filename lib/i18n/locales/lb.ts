@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Schécken feelgeschloen. Probéiert et nach eng Kéier oder schreift eis per E-Mail.",
       altEmail: "Alternativ direkt per E-Mail:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Säit net fonnt",
+    pageText: "D'gefrot Säit existéiert net oder gouf verschoven.",
+    backHome: "Zréck op d'Start",
+    viewProducts: "Produkter kucken",
+  },
+  ai: {
       chat: {
         open: "KI-Assistent",
         close: "Chat zoumaachen",

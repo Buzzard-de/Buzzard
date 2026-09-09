@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Sändning misslyckades. Försök igen eller skriv till oss via e-post.",
       altEmail: "Alternativt direkt via e-post:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Sidan hittades inte",
+    pageText: "Den begärda sidan finns inte eller har flyttats.",
+    backHome: "Till startsidan",
+    viewProducts: "Visa produkter",
+  },
+  ai: {
       chat: {
         open: "AI-assistent",
         close: "Stäng chatt",

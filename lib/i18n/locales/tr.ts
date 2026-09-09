@@ -457,6 +457,12 @@ export const catalog: TranslationTree = {
     PL: "Polonya",
     TR: "Türkiye",
   },
+  errors: {
+    pageTitle: "Sayfa bulunamadı",
+    pageText: "İstenen sayfa mevcut değil veya taşınmış.",
+    backHome: "Ana sayfaya dön",
+    viewProducts: "Ürünleri görüntüle",
+  },
   ai: {
     chat: {
       open: "Yapay zeka asistanı",

@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Verzenden mislukt. Probeer het opnieuw of schrijf ons per e-mail.",
       altEmail: "Alternatief direct per e-mail:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Pagina niet gevonden",
+    pageText: "De gevraagde pagina bestaat niet of is verplaatst.",
+    backHome: "Naar startpagina",
+    viewProducts: "Producten bekijken",
+  },
+  ai: {
       chat: {
         open: "AI-assistent",
         close: "Chat sluiten",

@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Pošiljanje ni uspelo. Poskusite znova ali nam pišite po e-pošti.",
       altEmail: "Alternativno neposredno po e-pošti:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Strani ni mogoče najti",
+    pageText: "Zahtevana stran ne obstaja ali je bila premaknjena.",
+    backHome: "Na domačo stran",
+    viewProducts: "Prikaži izdelke",
+  },
+  ai: {
       chat: {
         open: "AI asistent",
         close: "Zapri klepet",

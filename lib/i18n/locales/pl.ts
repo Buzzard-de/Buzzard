@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Wysyłanie nie powiodło się. Spróbuj ponownie lub napisz e-mailem.",
       altEmail: "Alternatywnie bezpośrednio e-mailem:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Nie znaleziono strony",
+    pageText: "Żądana strona nie istnieje lub została przeniesiona.",
+    backHome: "Strona główna",
+    viewProducts: "Zobacz produkty",
+  },
+  ai: {
       chat: {
         open: "Asystent AI",
         close: "Zamknij czat",

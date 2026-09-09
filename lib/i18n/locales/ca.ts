@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "L'enviament ha fallat. Torna-ho a provar o escriu-nos per correu electrònic.",
       altEmail: "Alternativament, directament per correu electrònic:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Pàgina no trobada",
+    pageText: "La pàgina sol·licitada no existeix o s'ha mogut.",
+    backHome: "Torna a l'inici",
+    viewProducts: "Veure productes",
+  },
+  ai: {
       chat: {
         open: "Assistent IA",
         close: "Tancar xat",

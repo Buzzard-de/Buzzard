@@ -383,5 +383,9 @@
   "ai.chat.escalate": "Menschlichen Support kontaktieren",
   "ai.chat.thinking": "Antwort wird erstellt…",
   "ai.chat.error": "Der Assistent ist gerade nicht erreichbar.",
-  "ai.chat.disclaimer": "Ich bin ein KI-Assistent und gebe nur verifizierte Shop-Daten weiter."
+  "ai.chat.disclaimer": "Ich bin ein KI-Assistent und gebe nur verifizierte Shop-Daten weiter.",
+  "errors.pageTitle": "Seite nicht gefunden",
+  "errors.pageText": "Die angeforderte Seite existiert nicht oder wurde verschoben.",
+  "errors.backHome": "Zur Startseite",
+  "errors.viewProducts": "Produkte ansehen"
 }

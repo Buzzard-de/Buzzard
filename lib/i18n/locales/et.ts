@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Saatmine ebaõnnestus. Proovige uuesti või kirjutage meile e-posti teel.",
       altEmail: "Alternatiivselt otse e-posti teel:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Lehte ei leitud",
+    pageText: "Soovitud lehte ei eksisteeri või see on teisaldatud.",
+    backHome: "Avalehele",
+    viewProducts: "Vaata tooteid",
+  },
+  ai: {
       chat: {
         open: "AI-assistent",
         close: "Sulge vestlus",

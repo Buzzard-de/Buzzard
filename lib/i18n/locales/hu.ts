@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Küldés sikertelen. Próbálja újra vagy írjon e-mailben.",
       altEmail: "Alternatívaként közvetlenül e-mailben:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Az oldal nem található",
+    pageText: "A kért oldal nem létezik vagy áthelyezték.",
+    backHome: "Főoldal",
+    viewProducts: "Termékek megtekintése",
+  },
+  ai: {
       chat: {
         open: "MI asszisztens",
         close: "Csevegés bezárása",

@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "L-inviżjoni falliet. Erġa' pprova jew ikteb lilna bl-email.",
       altEmail: "Alternattivament, direttament bl-email:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Paġna mhux misjuba",
+    pageText: "Il-paġna mitluba ma tezistix jew ġiet imżumla.",
+    backHome: "Lura għall-home",
+    viewProducts: "Ara prodotti",
+  },
+  ai: {
       chat: {
         open: "Assistent AI",
         close: "Agħlaq iċ-chat",

@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Siuntimas nepavyko. Bandykite dar kartą arba rašykite el. paštu.",
       altEmail: "Alternatyviai tiesiogiai el. paštu:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Puslapis nerastas",
+    pageText: "Pageidaujamas puslapis neegzistuoja arba buvo perkeltas.",
+    backHome: "Į pradžią",
+    viewProducts: "Peržiūrėti produktus",
+  },
+  ai: {
       chat: {
         open: "DI asistentas",
         close: "Uždaryti pokalbį",

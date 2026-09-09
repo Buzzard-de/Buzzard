@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Η αποστολή απέτυχε. Δοκιμάστε ξανά ή γράψτε μας μέσω e-mail.",
       altEmail: "Εναλλακτικά απευθείας μέσω e-mail:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Η σελίδα δεν βρέθηκε",
+    pageText: "Η ζητούμενη σελίδα δεν υπάρχει ή έχει μετακινηθεί.",
+    backHome: "Αρχική σελίδα",
+    viewProducts: "Δείτε προϊόντα",
+  },
+  ai: {
       chat: {
         open: "Βοηθός AI",
         close: "Κλείσιμο συνομιλίας",

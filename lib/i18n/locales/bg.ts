@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Изпращането не успя. Опитайте отново или пишете ни по имейл.",
       altEmail: "Алтернативно директно по имейл:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Страницата не е намерена",
+    pageText: "Заявената страница не съществува или е преместена.",
+    backHome: "Към началото",
+    viewProducts: "Виж продуктите",
+  },
+  ai: {
       chat: {
         open: "AI асистент",
         close: "Затвори чат",

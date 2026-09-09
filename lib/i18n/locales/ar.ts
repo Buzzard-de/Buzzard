@@ -457,6 +457,12 @@ export const catalog: TranslationTree = {
     PL: "بولندا",
     TR: "تركيا",
   },
+  errors: {
+    pageTitle: "الصفحة غير موجودة",
+    pageText: "الصفحة المطلوبة غير موجودة أو تم نقلها.",
+    backHome: "العودة إلى الرئيسية",
+    viewProducts: "عرض المنتجات",
+  },
   ai: {
     chat: {
       open: "المساعد الذكي",

@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Bidalketak huts egin du. Saiatu berriro edo idatzi guri posta elektronikoz.",
       altEmail: "Bestela, zuzenean posta elektronikoz:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Orria ez da aurkitu",
+    pageText: "Eskatutako orria ez da existitzen edo lekuz aldatu da.",
+    backHome: "Hasierara",
+    viewProducts: "Ikusi produktuak",
+  },
+  ai: {
       chat: {
         open: "IA laguntzailea",
         close: "Txata itxi",

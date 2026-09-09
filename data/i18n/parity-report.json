@@ -2,7 +2,7 @@
   {
     "language": "ar",
     "file": "lib/i18n/locales/ar.ts",
-    "keys": 394,
+    "keys": 398,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -14,7 +14,7 @@
   {
     "language": "bg",
     "file": "lib/i18n/locales/bg.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -26,7 +26,7 @@
   {
     "language": "ca",
     "file": "lib/i18n/locales/ca.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -42,7 +42,7 @@
   {
     "language": "cs",
     "file": "lib/i18n/locales/cs.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -58,7 +58,7 @@
   {
     "language": "da",
     "file": "lib/i18n/locales/da.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -74,7 +74,7 @@
   {
     "language": "de",
     "file": "lib/i18n/locales/de.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -90,7 +90,7 @@
   {
     "language": "el",
     "file": "lib/i18n/locales/el.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -102,7 +102,7 @@
   {
     "language": "en",
     "file": "lib/i18n/locales/en.ts",
-    "keys": 394,
+    "keys": 398,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -112,7 +112,7 @@
   {
     "language": "es",
     "file": "lib/i18n/locales/es.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -128,7 +128,7 @@
   {
     "language": "et",
     "file": "lib/i18n/locales/et.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -144,7 +144,7 @@
   {
     "language": "eu",
     "file": "lib/i18n/locales/eu.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -160,7 +160,7 @@
   {
     "language": "fi",
     "file": "lib/i18n/locales/fi.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -176,7 +176,7 @@
   {
     "language": "fr",
     "file": "lib/i18n/locales/fr.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -192,7 +192,7 @@
   {
     "language": "ga",
     "file": "lib/i18n/locales/ga.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -208,7 +208,7 @@
   {
     "language": "gl",
     "file": "lib/i18n/locales/gl.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -224,7 +224,7 @@
   {
     "language": "hr",
     "file": "lib/i18n/locales/hr.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -240,7 +240,7 @@
   {
     "language": "hu",
     "file": "lib/i18n/locales/hu.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -255,7 +255,7 @@
   {
     "language": "it",
     "file": "lib/i18n/locales/it.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -271,7 +271,7 @@
   {
     "language": "lb",
     "file": "lib/i18n/locales/lb.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -287,7 +287,7 @@
   {
     "language": "lt",
     "file": "lib/i18n/locales/lt.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -303,7 +303,7 @@
   {
     "language": "lv",
     "file": "lib/i18n/locales/lv.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -319,7 +319,7 @@
   {
     "language": "mt",
     "file": "lib/i18n/locales/mt.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -335,7 +335,7 @@
   {
     "language": "nl",
     "file": "lib/i18n/locales/nl.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -351,7 +351,7 @@
   {
     "language": "pl",
     "file": "lib/i18n/locales/pl.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -367,7 +367,7 @@
   {
     "language": "pt",
     "file": "lib/i18n/locales/pt.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -383,7 +383,7 @@
   {
     "language": "ro",
     "file": "lib/i18n/locales/ro.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -399,7 +399,7 @@
   {
     "language": "sk",
     "file": "lib/i18n/locales/sk.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -415,7 +415,7 @@
   {
     "language": "sl",
     "file": "lib/i18n/locales/sl.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -431,7 +431,7 @@
   {
     "language": "sv",
     "file": "lib/i18n/locales/sv.ts",
-    "keys": 385,
+    "keys": 389,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",
@@ -447,7 +447,7 @@
   {
     "language": "tr",
     "file": "lib/i18n/locales/tr.ts",
-    "keys": 394,
+    "keys": 398,
     "missingKeys": 0,
     "emptyKeys": 0,
     "status": "PASS",

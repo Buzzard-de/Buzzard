@@ -457,6 +457,12 @@ export const catalog: TranslationTree = {
     errorServer: "Senden fehlgeschlagen. Bitte versuchen Sie es erneut oder schreiben Sie uns per E-Mail.",
     altEmail: "Alternativ direkt per E-Mail:",
   },
+  errors: {
+    pageTitle: "Seite nicht gefunden",
+    pageText: "Die angeforderte Seite existiert nicht oder wurde verschoben.",
+    backHome: "Zur Startseite",
+    viewProducts: "Produkte ansehen",
+  },
   ai: {
     chat: {
       open: "KI-Assistent",

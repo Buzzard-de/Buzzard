@@ -452,7 +452,13 @@ export const catalog: TranslationTree = {
       errorServer: "Theip ar an seoladh. Bain triail eile as nó scríobh chugainn ar ríomhphost.",
       altEmail: "Mar mhalairt, go díreach ar ríomhphost:",
     },
-    ai: {
+  errors: {
+    pageTitle: "Níor aimsíodh an leathanach",
+    pageText: "Níl an leathanach iarrtha ann nó bogadh é.",
+    backHome: "Ar ais go dtí an baile",
+    viewProducts: "Féach ar tháirgí",
+  },
+  ai: {
       chat: {
         open: "Cúntóir AI",
         close: "Dún an comhrá",

@@ -41,9 +41,9 @@ test("language readiness status: de/en/tr/ar are READY", () => {
   }
 });
 
-test("prepared languages are PREPARED not READY", () => {
-  for (const code of ["fr", "it", "es"]) {
-    assert.equal(languageRegistry.getReadinessStatus(code), languageRegistry.READINESS.PREPARED);
+test("extended UI languages are READY with full translation catalogs", () => {
+  for (const code of ["fr", "it", "es", "nl", "pl", "cs", "sk", "hu", "ro", "bg", "hr", "sl", "da", "sv", "fi", "et", "lv", "lt", "pt", "el", "ca", "eu", "gl", "ga", "lb", "mt"]) {
+    assert.equal(languageRegistry.getReadinessStatus(code), languageRegistry.READINESS.READY);
   }
 });
 

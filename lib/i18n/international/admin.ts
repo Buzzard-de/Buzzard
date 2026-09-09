@@ -1,11 +1,13 @@
 import { listCountryConfigs } from "./config";
 import type { AdminMarketRow } from "./types";
+import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
 
 export function getAdminMarketOverview(): AdminMarketRow[] {
   return listCountryConfigs().map((country) => {
     const variants = (country as { localeVariants?: Array<{ nativeName: string; languageCode: string; locale: string; isDefault?: boolean }> }).localeVariants ?? [];
     const primary = variants.find((v) => v.isDefault) ?? variants[0];
-    const uiReady = ["de", "en", "tr", "ar"].includes(primary?.languageCode ?? country.defaultLanguage);
+    const langCode = primary?.languageCode ?? country.defaultLanguage;
+    const uiReady = SUPPORTED_LOCALES.includes(langCode as (typeof SUPPORTED_LOCALES)[number]);
 
     return {
       country: country.countryCode,

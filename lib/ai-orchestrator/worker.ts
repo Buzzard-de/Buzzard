@@ -6,8 +6,9 @@ import type {
   WorkerExecuteResult,
   WorkerId,
 } from "./types";
+import { executeWorker, toOrchestratorRecommendation } from "@/lib/ai-workers";
 import { getWorker } from "./workerRegistry";
-import { buildWorkerContext, sanitizeAiOutput } from "./context";
+import { sanitizeAiOutput } from "./context";
 
 type MockWorkerHandler = (input: WorkerExecuteInput) => WorkerExecuteResult;
 
@@ -173,22 +174,19 @@ export function executeMockWorker(task: AiTask): WorkerExecuteResult {
     return { ok: false, errorCode: "TRANSIENT_ERROR", errorMessage: "Worker unhealthy" };
   }
 
-  const handler = mockHandlers[task.workerId];
-  if (!handler) {
-    return { ok: false, errorCode: "NO_MOCK_HANDLER", errorMessage: "No mock handler for worker" };
+  const result = executeWorker({ task, workerId: task.workerId });
+  if (!result.ok || !result.recommendation) {
+    return {
+      ok: false,
+      errorCode: result.errorCode ?? "WORKER_FAILED",
+      errorMessage: result.errorMessage,
+    };
   }
 
-  const context = buildWorkerContext(task);
-
-  if (task.context.metadata?.simulateTimeout) {
-    return { ok: false, errorCode: "WORKER_TIMEOUT", errorMessage: "Simulated worker timeout" };
-  }
-
-  if (task.context.metadata?.simulateTransientError) {
-    return { ok: false, errorCode: "TRANSIENT_ERROR", errorMessage: "Simulated transient failure" };
-  }
-
-  return handler({ task, context });
+  return {
+    ok: true,
+    recommendation: toOrchestratorRecommendation(result.recommendation),
+  };
 }
 
 export function registerMockWorkerHandler(workerId: WorkerId, handler: MockWorkerHandler): void {

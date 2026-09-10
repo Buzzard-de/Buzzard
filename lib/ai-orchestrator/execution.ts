@@ -4,7 +4,7 @@ import { areDependenciesSatisfied } from "./dependency";
 import { buildWorkerContext, validateContextSafety } from "./context";
 import { validateCustomerServiceTask } from "./customerSafety";
 import { createApprovalRequest, getTaskApprovalStatus, requiresApproval } from "./approval";
-import { executeMockWorker } from "./worker";
+import { executeWorker, toOrchestratorRecommendation } from "@/lib/ai-workers";
 import { failTask } from "./retry";
 import { escalateTask } from "./escalation";
 import { completeQueuedTask, failQueuedTask } from "./taskQueue";
@@ -82,19 +82,56 @@ export function executeTask(taskId: string): ExecuteTaskResult {
     correlationId: task.correlationId,
   });
 
-  const workerResult = executeMockWorker(task);
+  const workerResult = executeWorker({ task, workerId: task.workerId });
+
+  if (workerResult.errorCode === "APPROVAL_REQUIRED" && workerResult.ok && workerResult.recommendation) {
+    const recommendation = toOrchestratorRecommendation(workerResult.recommendation);
+    task.recommendation = recommendation;
+    task.result = recommendation;
+    createApprovalRequest({
+      taskId,
+      requestedAction: recommendation.proposedAction ?? task.taskType,
+      reason: recommendation.reasoningSummary,
+      riskLevel: (task.context.metadata?.riskLevel as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL") ?? "MEDIUM",
+      financialImpact: task.context.metadata?.financialImpact as number | undefined,
+      requestedBy: task.workerId,
+    });
+    task.status = "BLOCKED";
+    saveTask(task);
+    return { ok: true, task, errorCode: "APPROVAL_REQUIRED" } as ExecuteTaskResult;
+  }
+
   if (!workerResult.ok || !workerResult.recommendation) {
+    if (workerResult.execution?.escalationRequired || workerResult.execution?.status === "ESCALATED") {
+      escalateTask({
+        taskId,
+        reason: workerResult.errorMessage ?? "Worker execution escalated",
+        severity: "HIGH",
+      });
+    }
     const failResult = failTask(taskId, workerResult.errorCode ?? "WORKER_FAILED", workerResult.errorMessage);
     failQueuedTask(taskId);
     incrementFailedTasks();
     return { ok: false, errorCode: workerResult.errorCode, errorMessage: workerResult.errorMessage, task: failResult.task };
   }
 
-  const recommendation = workerResult.recommendation;
+  const recommendation = toOrchestratorRecommendation(workerResult.recommendation);
   task.recommendation = recommendation;
   task.result = recommendation;
 
-  const validation = validateDeterministicRule(task, recommendation);
+  const validation = workerResult.execution?.deterministicValidation
+    ? {
+        validationStatus: workerResult.execution.deterministicValidation.validationStatus,
+        validationErrors: workerResult.execution.deterministicValidation.validationErrors,
+        finalDecision: workerResult.execution.deterministicValidation.finalDecision === "APPROVAL"
+          ? "PENDING" as const
+          : workerResult.execution.deterministicValidation.finalDecision === "ALLOW"
+            ? "ALLOW" as const
+            : workerResult.execution.deterministicValidation.finalDecision === "ESCALATE"
+              ? "ESCALATE" as const
+              : "REJECT" as const,
+      }
+    : validateDeterministicRule(task, recommendation);
   task.deterministicValidation = {
     aiRecommendation: recommendation.recommendation,
     validationStatus: validation.validationStatus,

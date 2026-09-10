@@ -215,19 +215,8 @@ describe("AI Task Orchestrator Foundation", () => {
       const task = createTask(buildTaskInput({
         taskType: "PRICE_RECOMMENDATION",
         workerId: "PRICING_AI",
+        context: { productId: FIXTURE_PRODUCT_TIRE, metadata: { forceBadPrice: true } },
       })).task!;
-
-      registerMockWorkerHandler("PRICING_AI", ({ task: t }) => ({
-        ok: true,
-        recommendation: {
-          recommendation: { price: -10 },
-          confidence: 0.9,
-          reasoningSummary: "Bad price",
-          requiredApproval: false,
-          authorityRequired: "RECOMMEND",
-          deterministicValidationRequired: true,
-        },
-      }));
 
       const result = executeTask(task.taskId);
       expect(result.ok).toBe(false);
@@ -235,18 +224,12 @@ describe("AI Task Orchestrator Foundation", () => {
     });
 
     it("rejects overwrite of historical financial data", () => {
-      const task = createTask(buildFinanceAnalysisInput()).task!;
-      registerMockWorkerHandler("FINANCE_AI", ({ task: t }) => ({
-        ok: true,
-        recommendation: {
-          recommendation: { overwriteHistorical: true },
-          confidence: 0.9,
-          reasoningSummary: "Attempt overwrite",
-          requiredApproval: false,
-          authorityRequired: "ANALYZE",
-          deterministicValidationRequired: true,
+      const task = createTask(buildFinanceAnalysisInput({
+        context: {
+          returnId: "ret_1",
+          metadata: { forceOverwriteHistorical: true },
         },
-      }));
+      })).task!;
 
       const result = executeTask(task.taskId);
       expect(result.ok).toBe(false);

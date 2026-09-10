@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "defaultStockPolicies": {},
+  "syncJobDefaults": {
+    "maxRetries": 3,
+    "baseDelayMs": 500
+  },
+  "webhook": {
+    "deduplicationEnabled": true
+  },
+  "note": "Foundation configuration — no live marketplace credentials"
+}

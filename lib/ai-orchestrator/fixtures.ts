@@ -9,6 +9,7 @@ import { clearOrchestratorRegistry } from "./taskRegistry";
 import { clearWorkerRegistry, registerDefaultWorkers } from "./workerRegistry";
 import { seedDefaultWorkflows } from "./workflow";
 import { resetMockWorkerHandlers } from "./worker";
+import { seedAiWorkersFixtures } from "@/lib/ai-workers/fixtures";
 import type { CreateTaskInput } from "./types";
 
 export const FIXTURE_PRODUCT_TIRE = "prod_tire_225_45_r17";
@@ -36,6 +37,7 @@ export function seedOrchestratorFixtures(): void {
   registerDefaultWorkers();
   seedDefaultWorkflows();
   resetMockWorkerHandlers();
+  seedAiWorkersFixtures();
 }
 
 export function buildTaskInput(overrides: Partial<CreateTaskInput> = {}): CreateTaskInput {
@@ -90,7 +92,7 @@ export function buildCustomerServiceInput(customerId = FIXTURE_CUSTOMER_A): Crea
   });
 }
 
-export function buildFinanceAnalysisInput(): CreateTaskInput {
+export function buildFinanceAnalysisInput(overrides: Partial<CreateTaskInput> = {}): CreateTaskInput {
   return buildTaskInput({
     taskType: "FINANCIAL_RECONCILIATION",
     workerId: "FINANCE_AI",
@@ -101,5 +103,6 @@ export function buildFinanceAnalysisInput(): CreateTaskInput {
       orderId: FIXTURE_ORDER_A,
       market: FIXTURE_MARKET,
     },
+    ...overrides,
   });
 }

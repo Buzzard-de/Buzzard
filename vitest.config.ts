@@ -16,6 +16,7 @@ export default defineConfig({
       "lib/marketplace-engine/**/*.test.ts",
       "lib/returns-engine/**/*.test.ts",
       "lib/ai-orchestrator/**/*.test.ts",
+      "lib/ai-workers/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

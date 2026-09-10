@@ -14,6 +14,7 @@ export default defineConfig({
       "lib/inventory-engine/**/*.test.ts",
       "lib/order-engine/**/*.test.ts",
       "lib/marketplace-engine/**/*.test.ts",
+      "lib/returns-engine/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

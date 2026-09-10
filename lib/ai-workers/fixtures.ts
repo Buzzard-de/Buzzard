@@ -6,7 +6,7 @@ import { clearWorkerAuditLog } from "./audit";
 import { resetTelemetry } from "./telemetry";
 import { resetMockWorkers } from "./mockWorkers";
 
-export const FIXTURE_PRODUCT = "prod_tire_225_45_r17";
+export const FIXTURE_PRODUCT = "reifen-pilot-sport";
 export const FIXTURE_SUPPLIER = "TEST_SUPPLIER_A";
 export const FIXTURE_ORDER = "ord_fixture_a";
 export const FIXTURE_RETURN = "ret_fixture_a";

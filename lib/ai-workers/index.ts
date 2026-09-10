@@ -106,3 +106,14 @@ export {
   FIXTURE_CUSTOMER,
   FIXTURE_MARKET,
 } from "./fixtures";
+
+export {
+  runProductAiAnalysis,
+  executeProductAiWorker,
+  buildProductAiInput,
+  validateProductAiPolicy,
+  validateProductAiResultSchema,
+  toCustomerSafeProductAiResult,
+  PRODUCT_AI_FIXTURE_SCENARIOS,
+} from "./product";
+export type { ProductAiInput, ProductAiResult } from "./product";

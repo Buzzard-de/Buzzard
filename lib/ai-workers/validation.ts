@@ -48,6 +48,11 @@ export function runDeterministicValidation(input: EngineValidationInput): Determ
     }
     case "PRODUCT_AI": {
       if (rec?.overwriteCanonicalProduct === true) errors.push("PRODUCT_ENGINE:CANNOT_OVERWRITE_CANONICAL");
+      if (rec?.inventCompatibility === true) errors.push("PRODUCT_ENGINE:CANNOT_INVENT_COMPATIBILITY");
+      if (rec?.modifyIdentifiers === true) errors.push("PRODUCT_ENGINE:CANNOT_MODIFY_IDENTIFIERS");
+      if (rec?.fabricateComplianceClaim === true) errors.push("PRODUCT_ENGINE:CANNOT_FABRICATE_COMPLIANCE");
+      if (rec?.setCanonicalCategory === true) errors.push("PRODUCT_ENGINE:CANNOT_SET_CANONICAL_CATEGORY");
+      if (rec?.mergeDuplicate === true) errors.push("PRODUCT_ENGINE:CANNOT_MERGE_DUPLICATE");
       break;
     }
     case "CUSTOMER_SERVICE_AI":

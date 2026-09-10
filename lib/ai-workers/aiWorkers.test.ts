@@ -398,7 +398,11 @@ describe("AI Worker Execution Layer Foundation", () => {
     });
 
     it("cancels execution", () => {
-      const task = buildFixtureTask({ workerId: "PRODUCT_AI", taskType: "PRODUCT_ANALYSIS" });
+      const task = buildFixtureTask({
+        workerId: "PRODUCT_AI",
+        taskType: "PRODUCT_ANALYSIS",
+        context: { productId: FIXTURE_PRODUCT },
+      });
       const created = executeWorker({ task, workerId: "PRODUCT_AI" });
       const cancelled = cancelExecution(created.execution!.executionId);
       expect(cancelled.ok).toBe(false);
@@ -436,7 +440,11 @@ describe("AI Worker Execution Layer Foundation", () => {
 
   describe("Telemetry & Audit", () => {
     it("records telemetry metrics", () => {
-      const task = buildFixtureTask({ workerId: "PRODUCT_AI", taskType: "PRODUCT_ANALYSIS" });
+      const task = buildFixtureTask({
+        workerId: "PRODUCT_AI",
+        taskType: "PRODUCT_ANALYSIS",
+        context: { productId: FIXTURE_PRODUCT },
+      });
       executeWorker({ task, workerId: "PRODUCT_AI" });
       const metrics = getTelemetryMetrics();
       expect(metrics.executionCount).toBeGreaterThan(0);
@@ -444,7 +452,11 @@ describe("AI Worker Execution Layer Foundation", () => {
     });
 
     it("records append-only audit trail", () => {
-      const task = buildFixtureTask({ workerId: "PRODUCT_AI", taskType: "PRODUCT_ANALYSIS" });
+      const task = buildFixtureTask({
+        workerId: "PRODUCT_AI",
+        taskType: "PRODUCT_ANALYSIS",
+        context: { productId: FIXTURE_PRODUCT },
+      });
       const result = executeWorker({ task, workerId: "PRODUCT_AI" });
       const audit = getWorkerAuditLog(result.execution?.executionId);
       expect(audit.some((e) => e.action === "EXECUTION_CREATED")).toBe(true);
@@ -541,7 +553,11 @@ describe("AI Worker Execution Layer Foundation", () => {
 
   describe("Orchestrator Integration", () => {
     it("converts worker output to orchestrator recommendation", () => {
-      const task = buildFixtureTask({ workerId: "PRODUCT_AI", taskType: "PRODUCT_ANALYSIS" });
+      const task = buildFixtureTask({
+        workerId: "PRODUCT_AI",
+        taskType: "PRODUCT_ANALYSIS",
+        context: { productId: FIXTURE_PRODUCT },
+      });
       const result = executeWorker({ task, workerId: "PRODUCT_AI" });
       const orch = toOrchestratorRecommendation(result.recommendation!);
       expect(orch.confidence).toBeGreaterThan(0);

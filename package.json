@@ -80,6 +80,7 @@
     "test:returns-engine": "vitest run lib/returns-engine/returnsEngine.test.ts && node --test server/__tests__/returnsEngine.test.mjs",
     "test:ai-orchestrator": "vitest run lib/ai-orchestrator/aiOrchestrator.test.ts && node --test server/__tests__/aiOrchestrator.test.mjs",
     "test:ai-workers": "vitest run lib/ai-workers/aiWorkers.test.ts && node --test server/__tests__/aiWorkers.test.mjs",
+    "test:product-ai": "vitest run lib/ai-workers/product/productAi.test.ts",
     "test:buzzard-i18n": "vitest run lib/i18n/international/international.test.ts lib/i18n/localeCatalog.test.ts",
     "test:locale-parity": "node --experimental-strip-types scripts/validate-locale-parity.mjs",
     "test:final-catalog-completion": "node --test server/__tests__/finalCatalogCompletion.test.mjs",

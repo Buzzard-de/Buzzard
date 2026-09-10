@@ -11,6 +11,7 @@ import { WORKER_SUPPORTED_TASKS } from "./constants";
 import { getWorkerCapabilityProfile } from "./capabilities";
 import { buildProposedAction } from "./action";
 import { validateWorkerOutput } from "./workerOutput";
+import { executeProductAiWorker } from "./product/productAiWorker";
 
 function baseOutput(
   task: AiTask,
@@ -63,20 +64,7 @@ const workers = new Map<WorkerId, WorkerContract>();
 
 function registerAllWorkers(): void {
   workers.set("PRODUCT_AI", createWorker("PRODUCT_AI", (context, task) =>
-    baseOutput(task, {
-      productId: context.productId,
-      analysis: "Product data quality acceptable",
-      suggestedImprovements: ["Add missing translation"],
-      overwriteCanonicalProduct: false,
-    }, {
-      reasoningSummary: "Product catalog entry reviewed — canonical data controlled by PIM",
-      action: buildProposedAction({
-        actionType: "RECOMMEND_ATTRIBUTE",
-        entityType: "PRODUCT",
-        entityId: context.productId ?? "",
-        category: "RECOMMENDATION",
-      }),
-    })
+    executeProductAiWorker(context, task)
   ));
 
   workers.set("SUPPLIER_AI", createWorker("SUPPLIER_AI", (context, task) =>

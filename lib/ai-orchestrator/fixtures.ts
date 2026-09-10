@@ -12,10 +12,10 @@ import { resetMockWorkerHandlers } from "./worker";
 import { seedAiWorkersFixtures } from "@/lib/ai-workers/fixtures";
 import type { CreateTaskInput } from "./types";
 
-export const FIXTURE_PRODUCT_TIRE = "prod_tire_225_45_r17";
-export const FIXTURE_PRODUCT_OIL = "prod_oil_5w30";
-export const FIXTURE_PRODUCT_BRAKE_DISC = "prod_brake_disc_280";
-export const FIXTURE_PRODUCT_BRAKE_PADS = "prod_brake_pads";
+export const FIXTURE_PRODUCT_TIRE = "reifen-pilot-sport";
+export const FIXTURE_PRODUCT_OIL = "motoroel-5w30";
+export const FIXTURE_PRODUCT_BRAKE_DISC = "bremsscheibe-280";
+export const FIXTURE_PRODUCT_BRAKE_PADS = "bremsbelaege-vorder";
 export const FIXTURE_SUPPLIER_A = "TEST_SUPPLIER_A";
 export const FIXTURE_CUSTOMER_A = "cust_fixture_a";
 export const FIXTURE_CUSTOMER_B = "cust_fixture_b";

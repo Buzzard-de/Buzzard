@@ -13,6 +13,7 @@ export default defineConfig({
       "lib/pricing-engine/**/*.test.ts",
       "lib/inventory-engine/**/*.test.ts",
       "lib/order-engine/**/*.test.ts",
+      "lib/marketplace-engine/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

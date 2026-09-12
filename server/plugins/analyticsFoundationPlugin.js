@@ -130,5 +130,30 @@ module.exports = {
       if (!result.ok) return res.status(401).json(result);
       return res.json({ success: true, data: result.data, source: "analytics-foundation" });
     });
+
+    app.get("/api/admin/analytics-foundation/kpis", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      const mod = loadFoundation();
+      if (!mod?.getBusinessKpiDashboard) {
+        return res.status(503).json({ ok: false, errorCode: "FOUNDATION_UNAVAILABLE" });
+      }
+      const ctx = { adminAuthorized: true, actorId: "admin_api" };
+      const section = String(req.query?.section || "").trim();
+      const query = {
+        range: req.query?.range ? String(req.query.range) : undefined,
+        from: req.query?.from ? String(req.query.from) : undefined,
+        to: req.query?.to ? String(req.query.to) : undefined,
+        comparePrevious: req.query?.comparePrevious ? String(req.query.comparePrevious) : undefined,
+        limit: req.query?.limit ? String(req.query.limit) : undefined,
+      };
+      const result = section && mod.getBusinessKpiSection
+        ? mod.getBusinessKpiSection(ctx, section, query)
+        : mod.getBusinessKpiDashboard(ctx, query);
+      if (!result.ok) {
+        const status = result.errorCode === "ADMIN_UNAUTHORIZED" ? 401 : 400;
+        return res.status(status).json(result);
+      }
+      return res.json({ success: true, data: result.data, source: "analytics-foundation-kpi" });
+    });
   },
 };

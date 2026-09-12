@@ -18,4 +18,6 @@ export {
   getProducts,
   getMarkets,
   getChannels,
+  getBusinessKpiDashboard,
+  getBusinessKpiSection,
 } from "../dashboard";

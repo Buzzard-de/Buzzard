@@ -32,6 +32,10 @@ export function createMemoryAnalyticsStore(): AnalyticsStore {
       return [...events];
     },
 
+    listEventsInRange(fromIso, toIso) {
+      return events.filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
+    },
+
     getEvent(eventId) {
       return events.find((e) => e.eventId === eventId);
     },

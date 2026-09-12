@@ -95,8 +95,11 @@ export {
   FIXTURE_VISITOR_A,
   FIXTURE_SESSION_A,
 } from "./fixtures";
-export { clearAnalyticsRegistry, listEvents, listSessions, listVisitors } from "./registry";
-export { fetchFoundationAnalyticsOverview } from "./foundationAdminClient";
+export { clearAnalyticsRegistry, listEvents, listEventsInRange, listSessions, listVisitors, storeEvent } from "./registry";
+export { fetchFoundationAnalyticsOverview, fetchFoundationKpis } from "./foundationAdminClient";
+export { computeBusinessKpis } from "./kpi/compute";
+export type { BusinessKpiDashboard, KpiDateRangePreset } from "./kpi/types";
+export { getBusinessKpiDashboard, getBusinessKpiSection } from "./kpi/dashboard";
 export * from "./storefront";
 
 export type { AnalyticsOverview, AnalyticsRangePreset } from "./adminTypes";

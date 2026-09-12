@@ -233,6 +233,15 @@ function createPersistentAnalyticsStore() {
       return rows.map(rowToEvent);
     },
 
+    listEventsInRange(fromIso, toIso) {
+      const rows = db.prepare(
+        `SELECT * FROM analytics_foundation_events
+         WHERE event_timestamp >= ? AND event_timestamp <= ?
+         ORDER BY event_timestamp ASC`
+      ).all(fromIso, toIso);
+      return rows.map(rowToEvent);
+    },
+
     getEvent(eventId) {
       const row = db.prepare(
         "SELECT * FROM analytics_foundation_events WHERE event_id = ?"

@@ -73,6 +73,14 @@ export { computeRetentionMetrics } from "./retention";
 export { detectAnalyticsAnomalies } from "./anomaly";
 export { validateAdminAccess, rejectEventInjection } from "./security";
 export { recordAnalyticsAudit, getAnalyticsAuditLog, clearAnalyticsAuditLog } from "./audit";
+export {
+  configureAnalyticsStore,
+  getAnalyticsStore,
+  getAnalyticsPersistenceMode,
+  resetAnalyticsStoreToMemory,
+} from "./store/configure";
+export { bootstrapAnalyticsPersistence } from "./store/bootstrap";
+export type { AnalyticsStore, AnalyticsPersistenceMode } from "./store/types";
 export { MockAnalyticsProvider, mapToGa4Event, getMockProviderTrackedEvents, clearMockProviderEvents } from "./provider";
 export { SearchConsoleAdapterFoundation } from "./searchConsoleAdapter";
 export { attributeOrderToChannel, buildAttributionTouches } from "./attribution";

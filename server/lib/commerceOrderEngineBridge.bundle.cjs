@@ -27872,53 +27872,176 @@ var SOCIAL_HOSTS = {
 };
 var DEFAULT_CONSENT_VERSION = "1.0.0-foundation";
 
+// lib/analytics/store/memoryStore.ts
+function createMemoryAnalyticsStore() {
+  const events = [];
+  const sessions = /* @__PURE__ */ new Map();
+  const visitors = /* @__PURE__ */ new Map();
+  const consentByVisitor = /* @__PURE__ */ new Map();
+  const idempotencyIndex = /* @__PURE__ */ new Map();
+  const deletedVisitorIds = /* @__PURE__ */ new Set();
+  const auditLog3 = [];
+  let eventCounter = 0;
+  let auditCounter = 0;
+  return {
+    generateEventId() {
+      eventCounter += 1;
+      return `evt_${Date.now()}_${eventCounter}`;
+    },
+    storeEvent(event) {
+      events.push(event);
+    },
+    listEvents() {
+      return [...events];
+    },
+    getEvent(eventId) {
+      return events.find((e) => e.eventId === eventId);
+    },
+    getSession(sessionId) {
+      return sessions.get(sessionId);
+    },
+    upsertSession(session) {
+      sessions.set(session.sessionId, session);
+    },
+    listSessions() {
+      return [...sessions.values()];
+    },
+    getVisitor(anonymousVisitorId) {
+      return visitors.get(anonymousVisitorId);
+    },
+    upsertVisitor(visitor) {
+      visitors.set(visitor.anonymousVisitorId, visitor);
+    },
+    listVisitors() {
+      return [...visitors.values()];
+    },
+    getConsent(anonymousVisitorId) {
+      return consentByVisitor.get(anonymousVisitorId);
+    },
+    setConsent(anonymousVisitorId, consent) {
+      consentByVisitor.set(anonymousVisitorId, consent);
+    },
+    isIdempotencyKeyUsed(key) {
+      return idempotencyIndex.has(key);
+    },
+    markIdempotencyKey(key, eventId) {
+      idempotencyIndex.set(key, eventId);
+    },
+    getIdempotencyEventId(key) {
+      return idempotencyIndex.get(key);
+    },
+    markVisitorDeleted(anonymousVisitorId) {
+      deletedVisitorIds.add(anonymousVisitorId);
+      visitors.delete(anonymousVisitorId);
+      consentByVisitor.delete(anonymousVisitorId);
+    },
+    isVisitorDeleted(anonymousVisitorId) {
+      return deletedVisitorIds.has(anonymousVisitorId);
+    },
+    clear() {
+      events.length = 0;
+      sessions.clear();
+      visitors.clear();
+      consentByVisitor.clear();
+      idempotencyIndex.clear();
+      deletedVisitorIds.clear();
+      auditLog3.length = 0;
+      eventCounter = 0;
+      auditCounter = 0;
+    },
+    removeEventsForVisitor(anonymousVisitorId) {
+      let removed = 0;
+      for (let i = events.length - 1; i >= 0; i--) {
+        if (events[i].anonymousVisitorId === anonymousVisitorId) {
+          events.splice(i, 1);
+          removed += 1;
+        }
+      }
+      for (const [id, session] of sessions) {
+        if (session.anonymousVisitorId === anonymousVisitorId) sessions.delete(id);
+      }
+      return removed;
+    },
+    anonymizeEventsForVisitor(anonymousVisitorId) {
+      let count = 0;
+      for (const event of events) {
+        if (event.anonymousVisitorId === anonymousVisitorId) {
+          event.anonymousVisitorId = "anon_deleted";
+          event.customerIdReference = void 0;
+          event.metadata = {};
+          count += 1;
+        }
+      }
+      return count;
+    },
+    recordAudit(entry) {
+      auditCounter += 1;
+      const record = {
+        auditId: `aud_${Date.now()}_${auditCounter}`,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+        action: entry.action,
+        actor: entry.actor,
+        metadata: entry.metadata
+      };
+      auditLog3.push(record);
+      return record;
+    },
+    getAuditLog(filter) {
+      if (!filter?.action) return [...auditLog3];
+      return auditLog3.filter((e) => e.action === filter.action);
+    },
+    clearAudit() {
+      auditLog3.length = 0;
+      auditCounter = 0;
+    }
+  };
+}
+
+// lib/analytics/store/configure.ts
+var activeStore = createMemoryAnalyticsStore();
+function getAnalyticsStore() {
+  return activeStore;
+}
+
 // lib/analytics/registry.ts
-var events = [];
-var sessions = /* @__PURE__ */ new Map();
-var visitors = /* @__PURE__ */ new Map();
-var consentByVisitor = /* @__PURE__ */ new Map();
-var idempotencyIndex = /* @__PURE__ */ new Map();
-var deletedVisitorIds = /* @__PURE__ */ new Set();
-var eventCounter = 0;
 function generateEventId() {
-  eventCounter += 1;
-  return `evt_${Date.now()}_${eventCounter}`;
+  return getAnalyticsStore().generateEventId();
 }
 function storeEvent(event) {
-  events.push(event);
+  getAnalyticsStore().storeEvent(event);
 }
 function getEvent(eventId) {
-  return events.find((e) => e.eventId === eventId);
+  return getAnalyticsStore().getEvent(eventId);
 }
 function getSession(sessionId) {
-  return sessions.get(sessionId);
+  return getAnalyticsStore().getSession(sessionId);
 }
 function upsertSession(session) {
-  sessions.set(session.sessionId, session);
+  getAnalyticsStore().upsertSession(session);
 }
 function getVisitor(anonymousVisitorId) {
-  return visitors.get(anonymousVisitorId);
+  return getAnalyticsStore().getVisitor(anonymousVisitorId);
 }
 function upsertVisitor(visitor) {
-  visitors.set(visitor.anonymousVisitorId, visitor);
+  getAnalyticsStore().upsertVisitor(visitor);
 }
 function getConsent(anonymousVisitorId) {
-  return consentByVisitor.get(anonymousVisitorId);
+  return getAnalyticsStore().getConsent(anonymousVisitorId);
 }
 function setConsent(anonymousVisitorId, consent) {
-  consentByVisitor.set(anonymousVisitorId, consent);
+  getAnalyticsStore().setConsent(anonymousVisitorId, consent);
 }
 function isIdempotencyKeyUsed(key) {
-  return idempotencyIndex.has(key);
+  return getAnalyticsStore().isIdempotencyKeyUsed(key);
 }
 function markIdempotencyKey(key, eventId) {
-  idempotencyIndex.set(key, eventId);
+  getAnalyticsStore().markIdempotencyKey(key, eventId);
 }
 function getIdempotencyEventId(key) {
-  return idempotencyIndex.get(key);
+  return getAnalyticsStore().getIdempotencyEventId(key);
 }
 function isVisitorDeleted(anonymousVisitorId) {
-  return deletedVisitorIds.has(anonymousVisitorId);
+  return getAnalyticsStore().isVisitorDeleted(anonymousVisitorId);
 }
 
 // lib/analytics/eventSchema.ts

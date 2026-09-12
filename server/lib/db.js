@@ -3860,6 +3860,101 @@ function migrateCoreFoundationPart17() {
   }
 }
 
+function migrateAnalyticsFoundation() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS analytics_foundation_events (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      event_timestamp TEXT NOT NULL,
+      session_id TEXT NOT NULL,
+      anonymous_visitor_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      country TEXT NOT NULL,
+      language TEXT NOT NULL,
+      currency TEXT NOT NULL,
+      device_type TEXT NOT NULL,
+      traffic_source TEXT NOT NULL,
+      traffic_medium TEXT,
+      traffic_campaign TEXT,
+      landing_page TEXT,
+      page_path TEXT,
+      product_id TEXT,
+      category_id TEXT,
+      order_id_reference TEXT,
+      cart_id_reference TEXT,
+      value REAL,
+      quantity INTEGER,
+      revenue_authority TEXT NOT NULL,
+      correlation_id TEXT,
+      sanitized INTEGER NOT NULL DEFAULT 1,
+      metadata_json TEXT DEFAULT '{}',
+      payload_json TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_af_events_type ON analytics_foundation_events(event_type);
+    CREATE INDEX IF NOT EXISTS idx_af_events_timestamp ON analytics_foundation_events(event_timestamp);
+    CREATE INDEX IF NOT EXISTS idx_af_events_order ON analytics_foundation_events(order_id_reference);
+    CREATE INDEX IF NOT EXISTS idx_af_events_visitor ON analytics_foundation_events(anonymous_visitor_id);
+    CREATE INDEX IF NOT EXISTS idx_af_events_session ON analytics_foundation_events(session_id);
+    CREATE INDEX IF NOT EXISTS idx_af_events_correlation ON analytics_foundation_events(correlation_id);
+
+    CREATE TABLE IF NOT EXISTS analytics_foundation_idempotency (
+      idempotency_key TEXT PRIMARY KEY,
+      event_id TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_af_idempotency_event ON analytics_foundation_idempotency(event_id);
+
+    CREATE TABLE IF NOT EXISTS analytics_foundation_sessions (
+      session_id TEXT PRIMARY KEY,
+      anonymous_visitor_id TEXT NOT NULL,
+      started_at TEXT NOT NULL,
+      last_activity_at TEXT NOT NULL,
+      ended_at TEXT,
+      landing_page TEXT,
+      exit_page TEXT,
+      page_views INTEGER DEFAULT 0,
+      product_views INTEGER DEFAULT 0,
+      cart_events INTEGER DEFAULT 0,
+      checkout_started INTEGER DEFAULT 0,
+      purchase_completed INTEGER DEFAULT 0,
+      traffic_source TEXT NOT NULL,
+      market TEXT NOT NULL,
+      language TEXT NOT NULL,
+      device_type TEXT NOT NULL,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_af_sessions_visitor ON analytics_foundation_sessions(anonymous_visitor_id);
+
+    CREATE TABLE IF NOT EXISTS analytics_foundation_visitors (
+      anonymous_visitor_id TEXT PRIMARY KEY,
+      first_seen_at TEXT NOT NULL,
+      last_seen_at TEXT NOT NULL,
+      session_count INTEGER DEFAULT 0,
+      is_returning INTEGER DEFAULT 0,
+      deleted INTEGER DEFAULT 0,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS analytics_foundation_consent (
+      anonymous_visitor_id TEXT PRIMARY KEY,
+      consent_json TEXT NOT NULL,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS analytics_foundation_audit (
+      audit_id TEXT PRIMARY KEY,
+      audit_timestamp TEXT NOT NULL,
+      action TEXT NOT NULL,
+      actor_id TEXT,
+      detail_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_af_audit_action ON analytics_foundation_audit(action);
+    CREATE INDEX IF NOT EXISTS idx_af_audit_timestamp ON analytics_foundation_audit(audit_timestamp);
+  `);
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
@@ -3867,6 +3962,7 @@ migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
+migrateAnalyticsFoundation();
 
 
 function seed() {

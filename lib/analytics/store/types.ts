@@ -10,6 +10,7 @@ export interface AnalyticsStore {
   generateEventId(): string;
   storeEvent(event: AnalyticsEvent): void;
   listEvents(): AnalyticsEvent[];
+  listEventsInRange?(fromIso: string, toIso: string): AnalyticsEvent[];
   getEvent(eventId: string): AnalyticsEvent | undefined;
   getSession(sessionId: string): AnalyticsSession | undefined;
   upsertSession(session: AnalyticsSession): void;

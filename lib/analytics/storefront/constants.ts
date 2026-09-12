@@ -8,6 +8,7 @@ export const LAST_MARKET_KEY = "buzzard_analytics_last_market";
 export const ANALYTICS_EVENTS_PATH = "/api/analytics/foundation/events";
 export const ANALYTICS_PURCHASE_PATH = "/api/analytics/foundation/purchase";
 export const ANALYTICS_FOUNDATION_OVERVIEW_PATH = "/api/admin/analytics-foundation/overview";
+export const ANALYTICS_FOUNDATION_KPIS_PATH = "/api/admin/analytics-foundation/kpis";
 
 export const MAX_PAYLOAD_BYTES = 16_384;
 export const MAX_METADATA_KEYS = 32;

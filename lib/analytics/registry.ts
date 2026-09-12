@@ -13,6 +13,14 @@ export function listEvents(): AnalyticsEvent[] {
   return getAnalyticsStore().listEvents();
 }
 
+export function listEventsInRange(fromIso: string, toIso: string): AnalyticsEvent[] {
+  const store = getAnalyticsStore();
+  if (typeof store.listEventsInRange === "function") {
+    return store.listEventsInRange(fromIso, toIso);
+  }
+  return listEvents().filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
+}
+
 export function getEvent(eventId: string): AnalyticsEvent | undefined {
   return getAnalyticsStore().getEvent(eventId);
 }

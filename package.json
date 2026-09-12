@@ -84,6 +84,7 @@
     "test:analytics": "vitest run lib/analytics/analytics.test.ts",
     "test:analytics-persistence": "vitest run lib/analytics/analyticsPersistence.test.ts",
     "test:analytics-storefront": "vitest run lib/analytics/storefront/storefrontAnalytics.test.ts",
+    "test:analytics-kpi": "vitest run lib/analytics/kpi/kpiAnalytics.test.ts",
     "build:analytics-foundation-bridge": "node scripts/build-analytics-foundation-bridge.mjs",
     "build:commerce-order-engine-bridge": "node scripts/build-commerce-order-engine-bridge.mjs",
     "test:commerce-order-engine-analytics": "vitest run lib/commerce/commerceOrderEngineAnalytics.test.ts",

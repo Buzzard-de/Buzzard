@@ -4188,6 +4188,14 @@ var require_persistentStore = __commonJS({
           ).all();
           return rows.map(rowToEvent);
         },
+        listEventsInRange(fromIso, toIso) {
+          const rows = db.prepare(
+            `SELECT * FROM analytics_foundation_events
+         WHERE event_timestamp >= ? AND event_timestamp <= ?
+         ORDER BY event_timestamp ASC`
+          ).all(fromIso, toIso);
+          return rows.map(rowToEvent);
+        },
         getEvent(eventId) {
           const row = db.prepare(
             "SELECT * FROM analytics_foundation_events WHERE event_id = ?"
@@ -4359,6 +4367,8 @@ var require_persistentStore = __commonJS({
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
   getAnalyticsPersistenceMode: () => getAnalyticsPersistenceMode,
+  getBusinessKpiDashboard: () => getBusinessKpiDashboard,
+  getBusinessKpiSection: () => getBusinessKpiSection,
   getChannels: () => getChannels,
   getFunnel: () => getFunnel,
   getMarkets: () => getMarkets,
@@ -4378,7 +4388,7 @@ function createMemoryAnalyticsStore() {
   const sessions = /* @__PURE__ */ new Map();
   const visitors = /* @__PURE__ */ new Map();
   const consentByVisitor = /* @__PURE__ */ new Map();
-  const idempotencyIndex = /* @__PURE__ */ new Map();
+  const idempotencyIndex2 = /* @__PURE__ */ new Map();
   const deletedVisitorIds = /* @__PURE__ */ new Set();
   const auditLog = [];
   let eventCounter = 0;
@@ -4393,6 +4403,9 @@ function createMemoryAnalyticsStore() {
     },
     listEvents() {
       return [...events];
+    },
+    listEventsInRange(fromIso, toIso) {
+      return events.filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
     },
     getEvent(eventId) {
       return events.find((e) => e.eventId === eventId);
@@ -4422,13 +4435,13 @@ function createMemoryAnalyticsStore() {
       consentByVisitor.set(anonymousVisitorId, consent);
     },
     isIdempotencyKeyUsed(key) {
-      return idempotencyIndex.has(key);
+      return idempotencyIndex2.has(key);
     },
     markIdempotencyKey(key, eventId) {
-      idempotencyIndex.set(key, eventId);
+      idempotencyIndex2.set(key, eventId);
     },
     getIdempotencyEventId(key) {
-      return idempotencyIndex.get(key);
+      return idempotencyIndex2.get(key);
     },
     markVisitorDeleted(anonymousVisitorId) {
       deletedVisitorIds.add(anonymousVisitorId);
@@ -4443,7 +4456,7 @@ function createMemoryAnalyticsStore() {
       sessions.clear();
       visitors.clear();
       consentByVisitor.clear();
-      idempotencyIndex.clear();
+      idempotencyIndex2.clear();
       deletedVisitorIds.clear();
       auditLog.length = 0;
       eventCounter = 0;
@@ -30269,6 +30282,167 @@ function getRegistryProduct(productId) {
   return products.get(productId);
 }
 
+// lib/product-engine/translations.ts
+function getTranslationForLocale(translations, locale) {
+  const normalized = locale.toLowerCase();
+  return translations.find((t) => t.locale.toLowerCase() === normalized) || translations.find((t) => t.locale.split("-")[0].toLowerCase() === normalized.split("-")[0]);
+}
+
+// lib/market-engine/money.ts
+function toMinorUnits(amount, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return Math.round((Number(amount) || 0) * factor);
+}
+function fromMinorUnits(minor, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return minor / factor;
+}
+function roundMoney(amount, decimalDigits = 2) {
+  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
+}
+
+// data/global/pricing_engine_extensions.json
+var pricing_engine_extensions_default = {
+  defaultSellerCountry: "DE",
+  defaultTargetMarginPercent: 0.11,
+  defaultMinimumMarginPercent: 0.05,
+  exchangeRates: {
+    EUR: 1,
+    USD: 0.92,
+    GBP: 1.17,
+    CZK: 0.041,
+    PLN: 0.23,
+    TRY: 0.027,
+    SAR: 0.24,
+    AED: 0.25,
+    EGP: 0.019,
+    HUF: 26e-4,
+    RON: 0.2,
+    BGN: 0.51,
+    CHF: 1.05,
+    SEK: 0.087,
+    DKK: 0.134,
+    NOK: 0.085
+  },
+  shippingCosts: {
+    defaultSupplierDirect: 10,
+    currency: "EUR",
+    byProductFixture: {
+      "reifen-pilot-sport": 10,
+      "motoroel-5w30": 7,
+      "bremsscheibe-280": 8,
+      "bremsbelaege-vorder": 6
+    },
+    byShippingRegion: {
+      EU_CENTRAL: 10,
+      EU_WEST: 12,
+      EU_NORTH: 14,
+      EU_SOUTH: 11,
+      EU_EAST: 9,
+      TR: 15,
+      GCC: 18,
+      MENA: 16
+    }
+  },
+  marketplaceFees: {
+    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
+    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
+    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
+    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
+    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
+    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
+  },
+  paymentFees: {
+    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
+    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
+    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
+    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
+    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
+  },
+  returnReserves: {
+    default: {
+      returnRate: 0.05,
+      refundRate: 0.03,
+      averageReturnShippingCost: 8,
+      averageRefundLoss: 5,
+      supplierReturnAcceptanceRate: 0.7,
+      damagedReturnRate: 0.01
+    },
+    byCategory: {
+      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
+      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
+      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
+    }
+  },
+  marginRules: {
+    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
+    byMarket: {},
+    byCategory: {},
+    byChannel: {},
+    byMarketplace: {},
+    bySupplier: {}
+  },
+  roundingRules: {
+    default: { mode: "psychological_99", step: 0.01 },
+    byMarket: {
+      DE: { mode: "psychological_99" },
+      FR: { mode: "psychological_99" },
+      PL: { mode: "nearest_49" }
+    },
+    byChannel: {
+      amazon: { mode: "psychological_99" },
+      direct: { mode: "psychological_99" }
+    }
+  },
+  priceBounds: {
+    default: { minimumPrice: 1, maximumPrice: 99999 }
+  },
+  competitivePricingExtension: {
+    enabled: false,
+    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
+  }
+};
+
+// lib/pricing-engine/registry.ts
+var config = pricing_engine_extensions_default;
+function getReturnReserveConfig(categoryId) {
+  const reserves = config.returnReserves;
+  const byCategory = reserves.byCategory;
+  const base = reserves.default;
+  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
+  return { ...base, ...categoryOverride };
+}
+
+// lib/pricing-engine/returns.ts
+function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
+  const config2 = getReturnReserveConfig(categoryId);
+  const supplierCreditFactor = 1 - config2.supplierReturnAcceptanceRate;
+  const expectedReturnLoss = roundMoney(
+    config2.returnRate * (config2.averageReturnShippingCost + supplierCostInMarketCurrency * supplierCreditFactor)
+  );
+  const expectedRefundLoss = roundMoney(
+    config2.refundRate * (config2.averageRefundLoss + supplierCostInMarketCurrency * supplierCreditFactor)
+  );
+  const damagedLoss = roundMoney(
+    (config2.damagedReturnRate ?? 0) * supplierCostInMarketCurrency * 0.5
+  );
+  const returnCostReserve = roundMoney(expectedReturnLoss + damagedLoss);
+  const refundCostReserve = roundMoney(expectedRefundLoss);
+  return {
+    returnCostReserve,
+    refundCostReserve,
+    totalReserve: roundMoney(returnCostReserve + refundCostReserve),
+    config: config2,
+    breakdown: {
+      expectedReturnLoss,
+      expectedRefundLoss,
+      supplierCreditFactor
+    }
+  };
+}
+
 // lib/market-engine/supplier.ts
 var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 
@@ -30356,6 +30530,13 @@ function storeEvent(event) {
 function listEvents() {
   return getAnalyticsStore().listEvents();
 }
+function listEventsInRange(fromIso, toIso) {
+  const store = getAnalyticsStore();
+  if (typeof store.listEventsInRange === "function") {
+    return store.listEventsInRange(fromIso, toIso);
+  }
+  return listEvents().filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
+}
 function getEvent(eventId) {
   return getAnalyticsStore().getEvent(eventId);
 }
@@ -30432,9 +30613,9 @@ function validateEventSchema(input) {
 function resolveConsentRequired(market) {
   const code = market.toUpperCase();
   if (isEuCountry(code)) return true;
-  const config = getMarket(code);
-  if (!config) return true;
-  return config.status === "ACTIVE";
+  const config2 = getMarket(code);
+  if (!config2) return true;
+  return config2.status === "ACTIVE";
 }
 function buildDefaultConsentState(market) {
   const consentRequired = resolveConsentRequired(market);
@@ -30751,9 +30932,52 @@ function countActiveSessions(nowIso) {
 }
 
 // lib/returns-engine/registry.ts
+var returns = /* @__PURE__ */ new Map();
+var returnsByNumber = /* @__PURE__ */ new Map();
+var returnsByOrder = /* @__PURE__ */ new Map();
+var returnsByCustomer = /* @__PURE__ */ new Map();
+var idempotencyIndex = /* @__PURE__ */ new Map();
+var shipments = /* @__PURE__ */ new Map();
+var recoveries = /* @__PURE__ */ new Map();
 var customerRefunds = /* @__PURE__ */ new Map();
+var marketplaceRefunds = /* @__PURE__ */ new Map();
+var reconciliations = /* @__PURE__ */ new Map();
+function saveReturnRequest(record) {
+  returns.set(record.returnId, record);
+  returnsByNumber.set(record.returnNumber, record.returnId);
+  returnsByOrder.set(record.orderId, record.returnId);
+  if (!returnsByCustomer.has(record.customerId)) {
+    returnsByCustomer.set(record.customerId, /* @__PURE__ */ new Set());
+  }
+  returnsByCustomer.get(record.customerId).add(record.returnId);
+  if (record.idempotencyKey) {
+    idempotencyIndex.set(record.idempotencyKey, record.returnId);
+  }
+}
+function getReturnRequest(returnId) {
+  return returns.get(returnId);
+}
+function getReturnByOrder(orderId) {
+  const id = returnsByOrder.get(orderId);
+  return id ? returns.get(id) : void 0;
+}
+function getShipmentsForReturn(returnId) {
+  return [...shipments.values()].filter((s) => s.returnId === returnId);
+}
+function getRecoveriesForReturn(returnId) {
+  return [...recoveries.values()].filter((r) => r.returnId === returnId);
+}
 function getCustomerRefundForReturn(returnId) {
   return [...customerRefunds.values()].find((r) => r.returnId === returnId);
+}
+function getMarketplaceRefundForReturn(returnId) {
+  return [...marketplaceRefunds.values()].find((r) => r.returnId === returnId);
+}
+function saveReconciliation(rec) {
+  reconciliations.set(rec.reconciliationId, rec);
+}
+function getReconciliation(returnId) {
+  return [...reconciliations.values()].find((r) => r.returnId === returnId);
 }
 
 // lib/analytics/revenue.ts
@@ -31284,7 +31508,7 @@ function computeMarketAnalytics(events = listEvents()) {
     const visitors = new Set(marketEvents.map((e) => e.anonymousVisitorId)).size;
     const sessions = new Set(marketEvents.map((e) => e.sessionId)).size;
     const revenue = computeRevenueMetrics(marketEvents);
-    const returns = marketEvents.filter((e) => e.eventType === "RETURN").length;
+    const returns2 = marketEvents.filter((e) => e.eventType === "RETURN").length;
     const purchases = marketEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").length;
     rows.push({
       market,
@@ -31297,7 +31521,7 @@ function computeMarketAnalytics(events = listEvents()) {
       revenueCents: revenue.netRevenueCents,
       conversionRate: sessions ? Number((purchases / sessions * 100).toFixed(2)) : 0,
       averageOrderValueCents: revenue.averageOrderValueCents,
-      returnRate: purchases ? Number((returns / purchases * 100).toFixed(2)) : 0
+      returnRate: purchases ? Number((returns2 / purchases * 100).toFixed(2)) : 0
     });
   }
   return rows.sort((a, b) => b.revenueCents - a.revenueCents);
@@ -31355,8 +31579,940 @@ function computeChannelAnalytics(events = listEvents()) {
   }).filter((row) => row.visitors > 0 || row.orders > 0);
 }
 
-// lib/analytics/dashboard.ts
+// lib/analytics/kpi/query.ts
+var MAX_LIMIT = 100;
+var DEFAULT_LIMIT = 25;
+function clampLimit(limit) {
+  if (!limit || limit < 1) return DEFAULT_LIMIT;
+  return Math.min(Math.floor(limit), MAX_LIMIT);
+}
+function safeRate(numerator, denominator) {
+  if (denominator <= 0) return 0;
+  return Number((numerator / denominator * 100).toFixed(2));
+}
+function safeDelta(current, previous) {
+  const absolute = Number((current - previous).toFixed(2));
+  const percent = previous !== 0 ? Number((absolute / previous * 100).toFixed(1)) : null;
+  return { absolute, percent, points: absolute };
+}
+function dayKey2(iso) {
+  return iso.slice(0, 10);
+}
+function monthKey(iso) {
+  return iso.slice(0, 7);
+}
+function resolveDateRange(input = {}) {
+  const now = input.now ?? /* @__PURE__ */ new Date();
+  const today = dayKey2(now.toISOString());
+  const preset = input.range ?? "last_30_days";
+  if (preset === "custom" && input.from && input.to) {
+    const from = dayKey2(input.from);
+    const to = dayKey2(input.to);
+    const spanMs = Date.parse(`${to}T23:59:59Z`) - Date.parse(`${from}T00:00:00Z`);
+    const prevTo = dayKey2(new Date(Date.parse(`${from}T00:00:00Z`) - 864e5).toISOString());
+    const prevFrom = dayKey2(new Date(Date.parse(`${from}T00:00:00Z`) - spanMs).toISOString());
+    return { preset, from, to, previousFrom: prevFrom, previousTo: prevTo };
+  }
+  const yesterday = dayKey2(new Date(now.getTime() - 864e5).toISOString());
+  const last7 = dayKey2(new Date(now.getTime() - 6 * 864e5).toISOString());
+  const last30 = dayKey2(new Date(now.getTime() - 29 * 864e5).toISOString());
+  const currentMonth = monthKey(now.toISOString());
+  const prevMonthDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
+  const previousMonth = monthKey(prevMonthDate.toISOString());
+  switch (preset) {
+    case "today":
+      return {
+        preset,
+        from: today,
+        to: today,
+        previousFrom: yesterday,
+        previousTo: yesterday
+      };
+    case "yesterday":
+      return {
+        preset,
+        from: yesterday,
+        to: yesterday,
+        previousFrom: dayKey2(new Date(now.getTime() - 2 * 864e5).toISOString()),
+        previousTo: dayKey2(new Date(now.getTime() - 2 * 864e5).toISOString())
+      };
+    case "last_7_days":
+      return {
+        preset,
+        from: last7,
+        to: today,
+        previousFrom: dayKey2(new Date(now.getTime() - 13 * 864e5).toISOString()),
+        previousTo: dayKey2(new Date(now.getTime() - 7 * 864e5).toISOString())
+      };
+    case "current_month":
+      return {
+        preset,
+        from: `${currentMonth}-01`,
+        to: today,
+        previousFrom: `${previousMonth}-01`,
+        previousTo: dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() + 1, 0)).toISOString())
+      };
+    case "previous_month": {
+      const prevEnd = dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() + 1, 0)).toISOString());
+      return {
+        preset,
+        from: `${previousMonth}-01`,
+        to: prevEnd,
+        previousFrom: monthKey(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() - 1, 1)).toISOString()) + "-01",
+        previousTo: dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth(), 0)).toISOString())
+      };
+    }
+    case "last_30_days":
+    default:
+      return {
+        preset: preset === "custom" ? "last_30_days" : preset,
+        from: last30,
+        to: today,
+        previousFrom: dayKey2(new Date(now.getTime() - 59 * 864e5).toISOString()),
+        previousTo: dayKey2(new Date(now.getTime() - 30 * 864e5).toISOString())
+      };
+  }
+}
+function loadEventsForRange(range) {
+  const fromIso = `${range.from}T00:00:00.000Z`;
+  const toIso = `${range.to}T23:59:59.999Z`;
+  return listEventsInRange(fromIso, toIso);
+}
+function parseKpiQueryInput(query = {}) {
+  const range = query.range;
+  const limit = query.limit ? Number.parseInt(query.limit, 10) : void 0;
+  return {
+    range,
+    from: query.from,
+    to: query.to,
+    comparePrevious: query.comparePrevious === "1" || query.comparePrevious === "true",
+    limit: Number.isFinite(limit) ? limit : void 0
+  };
+}
+function validateKpiQuery(input) {
+  if (input.limit !== void 0 && (input.limit < 1 || input.limit > MAX_LIMIT)) {
+    return { ok: false, errorCode: "INVALID_LIMIT" };
+  }
+  if (input.range === "custom") {
+    if (!input.from || !input.to) return { ok: false, errorCode: "INVALID_DATE_RANGE" };
+    const fromTs = Date.parse(input.from);
+    const toTs = Date.parse(input.to);
+    if (Number.isNaN(fromTs) || Number.isNaN(toTs) || fromTs > toTs) {
+      return { ok: false, errorCode: "INVALID_DATE_RANGE" };
+    }
+  }
+  return { ok: true };
+}
+function isAuthoritativePurchase(event) {
+  return event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE";
+}
+function isAuthoritativeRefund(event) {
+  return event.eventType === "REFUND" && event.revenueAuthority === "AUTHORITATIVE";
+}
+function uniqueOrderPurchases(events) {
+  const seen = /* @__PURE__ */ new Set();
+  const result = [];
+  for (const event of events) {
+    if (!isAuthoritativePurchase(event)) continue;
+    const key = event.orderIdReference ?? event.eventId;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(event);
+  }
+  return result;
+}
+
+// lib/analytics/kpi/executive.ts
+function computeExecutiveKpis(events) {
+  const purchases = uniqueOrderPurchases(events);
+  const refunds = events.filter(isAuthoritativeRefund);
+  const sessions = new Set(events.map((e) => e.sessionId)).size;
+  const visitors = new Set(events.map((e) => e.anonymousVisitorId)).size;
+  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
+  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
+  const checkoutStarts = events.filter((e) => e.eventType === "CHECKOUT_START").length;
+  const checkoutCompletions = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
+  const returnRequests = events.filter((e) => e.eventType === "RETURN").length;
+  const grossRevenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+  const refundAmountCents = refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+  const unitsSold = purchases.reduce((sum, e) => sum + (e.quantity ?? 1), 0);
+  const orders = purchases.length;
+  return {
+    orders,
+    grossRevenueCents,
+    authoritativeRevenueCents: grossRevenueCents,
+    averageOrderValueCents: orders ? Math.round(grossRevenueCents / orders) : 0,
+    unitsSold,
+    revenuePerSessionCents: sessions ? Math.round(grossRevenueCents / sessions) : 0,
+    visitors,
+    sessions,
+    productViews,
+    addToCart,
+    checkoutStarts,
+    checkoutCompletions,
+    purchases: orders,
+    conversionRate: safeRate(orders, sessions),
+    addToCartRate: safeRate(addToCart, productViews),
+    checkoutCompletionRate: safeRate(checkoutCompletions, checkoutStarts),
+    returnRequests,
+    returnedOrders: returnRequests,
+    refundAmountCents,
+    returnRate: safeRate(returnRequests, orders),
+    refundRate: safeRate(refunds.length, orders),
+    netRevenueCents: grossRevenueCents - refundAmountCents
+  };
+}
+
+// lib/analytics/kpi/funnelKpi.ts
+function computeFunnelKpis(events) {
+  const visitors = new Set(events.map((e) => e.anonymousVisitorId)).size;
+  const sessions = new Set(events.map((e) => e.sessionId)).size;
+  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
+  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
+  const checkoutStarts = events.filter((e) => e.eventType === "CHECKOUT_START").length;
+  const checkoutCompletions = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
+  const purchases = events.filter(isAuthoritativePurchase).length;
+  const stages = [
+    { stage: "Visitor", count: visitors },
+    { stage: "Session", count: sessions },
+    { stage: "Product View", count: productViews },
+    { stage: "Add To Cart", count: addToCart },
+    { stage: "Checkout Start", count: checkoutStarts },
+    { stage: "Checkout Completed", count: checkoutCompletions },
+    { stage: "Purchase", count: purchases }
+  ];
+  const steps = stages.map((current, index) => {
+    const previous = index > 0 ? stages[index - 1].count : current.count;
+    const conversionFromPrevious = index === 0 ? 100 : safeRate(current.count, previous);
+    const dropOffFromPrevious = index === 0 ? 0 : safeRate(previous - current.count, previous);
+    return {
+      stage: current.stage,
+      count: current.count,
+      conversionFromPrevious,
+      dropOffFromPrevious
+    };
+  });
+  return {
+    steps,
+    visitorToPurchase: safeRate(purchases, visitors),
+    sessionToPurchase: safeRate(purchases, sessions)
+  };
+}
+
+// lib/returns-engine/shipment.ts
+function getReturnShippingFinancials(returnId) {
+  const shipments2 = getShipmentsForReturn(returnId);
+  let customerPaid = 0;
+  let buzzardCost = 0;
+  let supplierRecovery = 0;
+  let marketplaceRecovery = 0;
+  for (const s of shipments2) {
+    switch (s.payer) {
+      case "CUSTOMER":
+        customerPaid += s.cost;
+        break;
+      case "BUZZARD":
+        buzzardCost += s.cost;
+        break;
+      case "SUPPLIER":
+        supplierRecovery += s.cost;
+        break;
+      case "MARKETPLACE":
+        marketplaceRecovery += s.cost;
+        break;
+      default:
+        buzzardCost += s.cost;
+    }
+  }
+  return {
+    customerPaidReturnShipping: customerPaid,
+    buzzardReturnShippingCost: buzzardCost,
+    supplierReturnShippingRecovery: supplierRecovery,
+    marketplaceReturnShippingRecovery: marketplaceRecovery
+  };
+}
+
+// lib/returns-engine/reconciliation.ts
+function reconcileReturnFinancials(returnId, options) {
+  const ret = getReturnRequest(returnId);
+  if (!ret) return void 0;
+  const order = getOrder(ret.orderId);
+  const customerRefundRecord = getCustomerRefundForReturn(returnId);
+  const marketplaceRefundRecord = getMarketplaceRefundForReturn(returnId);
+  const recoveries2 = getRecoveriesForReturn(returnId);
+  const shipping = getReturnShippingFinancials(returnId);
+  const customerRefund = customerRefundRecord?.refundedAmount ?? ret.customerRefundAmount;
+  const supplierRefund = recoveries2.filter((r) => r.type === "SUPPLIER_REFUND").reduce((s, r) => s + r.receivedAmount, 0);
+  const supplierCredit = recoveries2.filter((r) => r.type === "SUPPLIER_CREDIT" || r.type === "PARTIAL_CREDIT").reduce((s, r) => s + r.receivedAmount, 0);
+  const shippingRecovery = shipping.supplierReturnShippingRecovery + shipping.marketplaceReturnShippingRecovery;
+  const returnShippingCost = shipping.buzzardReturnShippingCost;
+  const marketplaceRefundCost = (marketplaceRefundRecord?.fees ?? 0) + Math.max(0, (marketplaceRefundRecord?.requestedAmount ?? 0) - (marketplaceRefundRecord?.refundedAmount ?? 0));
+  const supplierRecoveryTotal = supplierRefund + supplierCredit + shippingRecovery;
+  const totalCosts = customerRefund + returnShippingCost + marketplaceRefundCost;
+  const totalRecoveries = supplierRecoveryTotal;
+  const buzzardFinalReturnImpact = totalCosts - totalRecoveries;
+  const supplierCost = order?.items[0]?.supplierCostSnapshot ?? 0;
+  const estimated = calculateReturnReserves(supplierCost, order?.items[0]?.productId);
+  const originalOrderMargin = order?.items.reduce((s, i) => s + i.marginSnapshot, 0) ?? 0;
+  const estimatedReturnCost = estimated.totalReserve;
+  const actualReturnCost = totalCosts;
+  const estimatedSupplierRecovery = supplierCost * estimated.config.supplierReturnAcceptanceRate;
+  const actualSupplierRecovery = supplierRecoveryTotal;
+  const estimatedBuzzardImpact = estimatedReturnCost;
+  const actualBuzzardImpact = buzzardFinalReturnImpact;
+  const rec = {
+    reconciliationId: `rec_fin_${returnId}`,
+    returnId,
+    orderId: ret.orderId,
+    currency: ret.currency,
+    customerRefund,
+    returnShippingCost,
+    marketplaceRefundCost,
+    otherCosts: 0,
+    supplierRefund,
+    supplierCredit,
+    shippingRecovery,
+    otherRecoveries: 0,
+    buzzardFinalReturnImpact,
+    estimatedReturnCost,
+    actualReturnCost,
+    estimatedSupplierRecovery,
+    actualSupplierRecovery,
+    estimatedBuzzardImpact,
+    actualBuzzardImpact,
+    originalOrderMargin,
+    returnImpact: actualBuzzardImpact,
+    finalOrderContribution: originalOrderMargin - actualBuzzardImpact,
+    isFinal: options?.finalize ?? false,
+    calculatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  saveReconciliation(rec);
+  saveReturnRequest({
+    ...ret,
+    buzzardLoss: buzzardFinalReturnImpact,
+    buzzardRecovery: supplierRecoveryTotal,
+    updatedAt: rec.calculatedAt
+  });
+  return rec;
+}
+
+// lib/returns-engine/financialImpact.ts
+function getFinalOrderContribution(returnId) {
+  let rec = getReconciliation(returnId);
+  if (!rec) rec = reconcileReturnFinancials(returnId);
+  if (!rec) return void 0;
+  return {
+    originalOrderMargin: rec.originalOrderMargin,
+    returnImpact: rec.returnImpact,
+    finalOrderContribution: rec.finalOrderContribution
+  };
+}
+
+// lib/analytics/kpi/profitability.ts
+function computeOrderFinancialBreakdown(orderId) {
+  const order = getOrder(orderId);
+  if (!order) return void 0;
+  let productCostCents = 0;
+  let shippingCostCents = 0;
+  let marketplaceFeesCents = 0;
+  let paymentFeesCents = 0;
+  let contributionCents = 0;
+  for (const item of order.items) {
+    const qty = item.quantity;
+    productCostCents += toCents(item.supplierCostSnapshot * qty);
+    shippingCostCents += toCents(item.shippingCostSnapshot * qty);
+    marketplaceFeesCents += toCents(item.marketplaceFeeSnapshot * qty);
+    paymentFeesCents += toCents(item.paymentFeeSnapshot * qty);
+    contributionCents += toCents(item.lineNet * item.marginSnapshot);
+  }
+  let returnImpactCents = toCents(order.returnRefund.buzzardRefundLoss) + toCents(order.returnRefund.returnShippingCost);
+  const linkedReturn = getReturnByOrder(order.orderId);
+  if (linkedReturn) {
+    const finalized = getFinalOrderContribution(linkedReturn.returnId);
+    if (finalized) {
+      returnImpactCents = toCents(finalized.returnImpact);
+      contributionCents = toCents(finalized.finalOrderContribution);
+    }
+  }
+  return {
+    grossRevenueCents: toCents(order.totalGross),
+    productCostCents,
+    shippingCostCents,
+    marketplaceFeesCents,
+    paymentFeesCents,
+    contributionCents,
+    returnImpactCents
+  };
+}
+function computeProfitabilityKpis(events) {
+  const purchases = uniqueOrderPurchases(events);
+  const refunds = events.filter(isAuthoritativeRefund);
+  let grossRevenueCents = 0;
+  let productCostCents = 0;
+  let shippingCostCents = 0;
+  let marketplaceFeesCents = 0;
+  let paymentFeesCents = 0;
+  let returnRefundImpactCents = 0;
+  let contributionCents = 0;
+  for (const purchase of purchases) {
+    const orderId = purchase.orderIdReference;
+    if (!orderId) {
+      grossRevenueCents += toCents(purchase.value ?? 0);
+      continue;
+    }
+    const breakdown = computeOrderFinancialBreakdown(orderId);
+    if (breakdown) {
+      grossRevenueCents += breakdown.grossRevenueCents;
+      productCostCents += breakdown.productCostCents;
+      shippingCostCents += breakdown.shippingCostCents;
+      marketplaceFeesCents += breakdown.marketplaceFeesCents;
+      paymentFeesCents += breakdown.paymentFeesCents;
+      returnRefundImpactCents += breakdown.returnImpactCents;
+      contributionCents += breakdown.contributionCents;
+    } else {
+      grossRevenueCents += toCents(purchase.value ?? 0);
+    }
+  }
+  returnRefundImpactCents += refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+  if (contributionCents === 0 && grossRevenueCents > 0) {
+    contributionCents = grossRevenueCents - productCostCents - shippingCostCents - marketplaceFeesCents - paymentFeesCents - returnRefundImpactCents;
+  }
+  return {
+    grossRevenueCents,
+    productCostCents,
+    shippingCostCents,
+    marketplaceFeesCents,
+    paymentFeesCents,
+    returnRefundImpactCents,
+    contributionCents,
+    contributionMarginPercent: safeMarginPercent(contributionCents, grossRevenueCents),
+    authoritativeOnly: true
+  };
+}
+function safeMarginPercent(contributionCents, revenueCents) {
+  if (revenueCents <= 0) return 0;
+  return Number((contributionCents / revenueCents * 100).toFixed(2));
+}
+function computeContributionForOrder(orderId) {
+  const breakdown = computeOrderFinancialBreakdown(orderId);
+  if (!breakdown) return { contributionCents: 0, contributionMarginPercent: 0 };
+  return {
+    contributionCents: breakdown.contributionCents,
+    contributionMarginPercent: safeMarginPercent(breakdown.contributionCents, breakdown.grossRevenueCents)
+  };
+}
+
+// lib/analytics/kpi/intelligence.ts
+var COMMERCE_CHANNELS = [
+  "direct",
+  "amazon",
+  "ebay",
+  "kaufland",
+  "allegro",
+  "bol",
+  "cdiscount",
+  "otto"
+];
+var TRAFFIC_SOURCES = [
+  "DIRECT",
+  "ORGANIC_SEARCH",
+  "PAID_SEARCH",
+  "SOCIAL",
+  "EMAIL",
+  "REFERRAL",
+  "MARKETPLACE",
+  "OTHER"
+];
+var DEVICES = ["DESKTOP", "MOBILE", "TABLET", "OTHER"];
+var CORE_LANGUAGES = ["de", "en", "tr", "ar"];
+function productName(productId) {
+  const product = getRegistryProduct(productId);
+  if (!product) return productId;
+  const tr = getTranslationForLocale(product.translations, "de");
+  return tr?.name ?? productId;
+}
+function productCategoryId(productId) {
+  return getRegistryProduct(productId)?.categoryId;
+}
+function computeProductKpis(events, limit = 25) {
+  const byProduct = /* @__PURE__ */ new Map();
+  for (const event of events) {
+    const productId = event.productId ?? (event.eventType === "PURCHASE" && event.orderIdReference ? getOrder(event.orderIdReference)?.items[0]?.productId : void 0);
+    if (!productId) continue;
+    const row = byProduct.get(productId) ?? {
+      productId,
+      productName: productName(productId),
+      categoryId: productCategoryId(productId),
+      views: 0,
+      addToCart: 0,
+      cartConversion: 0,
+      checkoutCount: 0,
+      purchases: 0,
+      unitsSold: 0,
+      revenueCents: 0,
+      refunds: 0,
+      returnRate: 0,
+      netRevenueCents: 0,
+      contributionCents: 0,
+      contributionMarginPercent: 0,
+      viewers: /* @__PURE__ */ new Set(),
+      checkoutSessions: /* @__PURE__ */ new Set()
+    };
+    if (event.eventType === "PRODUCT_VIEW") {
+      row.views += 1;
+      row.viewers.add(event.anonymousVisitorId);
+    }
+    if (event.eventType === "ADD_TO_CART") row.addToCart += 1;
+    if (event.eventType === "CHECKOUT_START" && event.sessionId) row.checkoutSessions.add(event.sessionId);
+    if (event.eventType === "RETURN") row.refunds += 1;
+    if (isAuthoritativePurchase(event)) {
+      row.purchases += 1;
+      row.revenueCents += toCents(event.value ?? 0);
+      row.unitsSold += event.quantity ?? 1;
+      if (event.orderIdReference) {
+        const contrib = computeContributionForOrder(event.orderIdReference);
+        row.contributionCents += contrib.contributionCents;
+      }
+    }
+    if (isAuthoritativeRefund(event)) {
+      row.revenueCents -= toCents(event.value ?? 0);
+    }
+    byProduct.set(productId, row);
+  }
+  return [...byProduct.values()].map(({ viewers, checkoutSessions, ...row }) => ({
+    ...row,
+    checkoutCount: checkoutSessions.size,
+    cartConversion: safeRate(row.addToCart, row.views),
+    netRevenueCents: row.revenueCents,
+    returnRate: safeRate(row.refunds, row.purchases),
+    contributionMarginPercent: row.revenueCents > 0 ? Number((row.contributionCents / row.revenueCents * 100).toFixed(2)) : 0
+  })).sort((a, b) => b.revenueCents - a.revenueCents).slice(0, limit);
+}
+function computeCategoryKpis(events, limit = 25) {
+  const products2 = computeProductKpis(events, 500);
+  const byCategory = /* @__PURE__ */ new Map();
+  for (const p of products2) {
+    const categoryId = p.categoryId ?? "uncategorized";
+    const row = byCategory.get(categoryId) ?? {
+      categoryId,
+      views: 0,
+      addToCart: 0,
+      purchases: 0,
+      unitsSold: 0,
+      revenueCents: 0,
+      conversionRate: 0,
+      returnRate: 0,
+      netRevenueCents: 0,
+      refunds: 0
+    };
+    row.views += p.views;
+    row.addToCart += p.addToCart;
+    row.purchases += p.purchases;
+    row.unitsSold += p.unitsSold;
+    row.revenueCents += p.revenueCents;
+    row.refunds += p.refunds;
+    byCategory.set(categoryId, row);
+  }
+  return [...byCategory.values()].map(({ refunds, ...row }) => ({
+    ...row,
+    conversionRate: safeRate(row.purchases, row.views),
+    returnRate: safeRate(refunds, row.purchases),
+    netRevenueCents: row.revenueCents
+  })).sort((a, b) => b.revenueCents - a.revenueCents).slice(0, limit);
+}
+function computeMarketKpis(events) {
+  const markets = listMarkets();
+  const purchases = uniqueOrderPurchases(events);
+  return markets.map((market) => {
+    const marketEvents = events.filter((e) => e.market === market.countryCode);
+    const marketPurchases = purchases.filter((e) => e.market === market.countryCode);
+    const sessions = new Set(marketEvents.map((e) => e.sessionId)).size;
+    const returns2 = marketEvents.filter((e) => e.eventType === "RETURN").length;
+    const revenueCents = marketPurchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+    let contributionCents = 0;
+    for (const p of marketPurchases) {
+      if (p.orderIdReference) {
+        contributionCents += computeContributionForOrder(p.orderIdReference).contributionCents;
+      }
+    }
+    const refunds = marketEvents.filter(isAuthoritativeRefund).reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+    return {
+      market: market.countryCode,
+      country: market.countryCode,
+      currency: market.currency,
+      orders: marketPurchases.length,
+      revenueCents,
+      netRevenueCents: revenueCents - refunds,
+      conversionRate: safeRate(marketPurchases.length, sessions),
+      averageOrderValueCents: marketPurchases.length ? Math.round(revenueCents / marketPurchases.length) : 0,
+      returns: returns2,
+      returnRate: safeRate(returns2, marketPurchases.length),
+      contributionCents,
+      contributionMarginPercent: revenueCents > 0 ? Number((contributionCents / revenueCents * 100).toFixed(2)) : 0
+    };
+  }).sort((a, b) => b.revenueCents - a.revenueCents);
+}
+function computeLanguageKpis(events) {
+  const languages = /* @__PURE__ */ new Set([
+    ...CORE_LANGUAGES,
+    ...events.map((e) => e.language.split("-")[0].toLowerCase())
+  ]);
+  return [...languages].map((language) => {
+    const langEvents = events.filter((e) => e.language.split("-")[0].toLowerCase() === language);
+    const sessions = new Set(langEvents.map((e) => e.sessionId)).size;
+    const visitors = new Set(langEvents.map((e) => e.anonymousVisitorId)).size;
+    const purchases = langEvents.filter(isAuthoritativePurchase);
+    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+    return {
+      language,
+      visitors,
+      sessions,
+      productViews: langEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
+      addToCart: langEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
+      purchases: purchases.length,
+      revenueCents,
+      conversionRate: safeRate(purchases.length, sessions)
+    };
+  }).filter((r) => r.sessions > 0 || r.purchases > 0).sort((a, b) => b.revenueCents - a.revenueCents);
+}
+function computeCommerceChannelKpis(events) {
+  const purchases = uniqueOrderPurchases(events);
+  return COMMERCE_CHANNELS.map((channel) => {
+    const channelPurchases = purchases.filter((p) => {
+      if (!p.orderIdReference) return channel === "direct";
+      const order = getOrder(p.orderIdReference);
+      return (order?.channel ?? "direct") === channel;
+    });
+    const revenueCents = channelPurchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+    let contributionCents = 0;
+    for (const p of channelPurchases) {
+      if (p.orderIdReference) {
+        contributionCents += computeContributionForOrder(p.orderIdReference).contributionCents;
+      }
+    }
+    const returns2 = events.filter(
+      (e) => e.eventType === "RETURN" && e.metadata?.channel === channel
+    ).length;
+    return {
+      channel,
+      orders: channelPurchases.length,
+      revenueCents,
+      averageOrderValueCents: channelPurchases.length ? Math.round(revenueCents / channelPurchases.length) : 0,
+      returns: returns2,
+      netRevenueCents: revenueCents,
+      contributionCents,
+      contributionMarginPercent: revenueCents > 0 ? Number((contributionCents / revenueCents * 100).toFixed(2)) : 0
+    };
+  });
+}
+function computeTrafficSourceKpis(events) {
+  return TRAFFIC_SOURCES.map((source) => {
+    const sourceEvents = events.filter((e) => e.trafficSource === source);
+    const sessions = new Set(sourceEvents.map((e) => e.sessionId)).size;
+    const purchases = sourceEvents.filter(isAuthoritativePurchase);
+    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+    return {
+      source,
+      sessions,
+      productViews: sourceEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
+      addToCart: sourceEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
+      checkoutStarts: sourceEvents.filter((e) => e.eventType === "CHECKOUT_START").length,
+      purchases: purchases.length,
+      revenueCents,
+      conversionRate: safeRate(purchases.length, sessions)
+    };
+  }).filter((r) => r.sessions > 0 || r.purchases > 0);
+}
+function computeDeviceKpis(events) {
+  return DEVICES.map((device) => {
+    const deviceEvents = events.filter((e) => e.deviceType === device);
+    const sessions = new Set(deviceEvents.map((e) => e.sessionId)).size;
+    const purchases = deviceEvents.filter(isAuthoritativePurchase);
+    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+    return {
+      device,
+      sessions,
+      productViews: deviceEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
+      addToCart: deviceEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
+      checkoutStarts: deviceEvents.filter((e) => e.eventType === "CHECKOUT_START").length,
+      purchases: purchases.length,
+      revenueCents,
+      conversionRate: safeRate(purchases.length, sessions)
+    };
+  }).filter((r) => r.sessions > 0 || r.purchases > 0);
+}
+
+// lib/analytics/kpi/customerCohort.ts
+function computeCustomerKpis(events) {
+  const visitorsInRange = new Set(events.map((e) => e.anonymousVisitorId));
+  const allVisitors = listVisitors().filter((v) => visitorsInRange.has(v.anonymousVisitorId));
+  const newVisitors = allVisitors.filter((v) => !v.isReturning).length;
+  const returningVisitors = allVisitors.filter((v) => v.isReturning).length;
+  const purchases = events.filter(isAuthoritativePurchase);
+  const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+  const visitorCount = visitorsInRange.size || 1;
+  return {
+    newVisitors,
+    returningVisitors,
+    sessionsPerVisitor: Number((new Set(events.map((e) => e.sessionId)).size / visitorCount).toFixed(2)),
+    purchasesPerVisitor: Number((purchases.length / visitorCount).toFixed(2)),
+    revenuePerVisitorCents: Math.round(revenueCents / visitorCount)
+  };
+}
+function computeCohortKpis(events) {
+  const byPeriod = /* @__PURE__ */ new Map();
+  for (const event of events) {
+    const period = event.timestamp.slice(0, 7);
+    const row = byPeriod.get(period) ?? {
+      cohortPeriod: period,
+      firstTimeVisitors: 0,
+      returningSessions: 0,
+      repeatPurchases: 0,
+      revenueCents: 0,
+      purchaseVisitors: /* @__PURE__ */ new Set()
+    };
+    if (event.eventType === "SESSION_START") {
+      const visitor = listVisitors().find((v) => v.anonymousVisitorId === event.anonymousVisitorId);
+      if (visitor?.isReturning) row.returningSessions += 1;
+      else row.firstTimeVisitors += 1;
+    }
+    if (isAuthoritativePurchase(event)) {
+      row.revenueCents += toCents(event.value ?? 0);
+      if (row.purchaseVisitors.has(event.anonymousVisitorId)) {
+        row.repeatPurchases += 1;
+      }
+      row.purchaseVisitors.add(event.anonymousVisitorId);
+    }
+    byPeriod.set(period, row);
+  }
+  return [...byPeriod.values()].map(({ purchaseVisitors: _pv, ...row }) => row).sort((a, b) => a.cohortPeriod.localeCompare(b.cohortPeriod));
+}
+
+// lib/analytics/kpi/returnsKpi.ts
+function computeReturnKpis(events) {
+  const purchases = events.filter(isAuthoritativePurchase);
+  const uniqueOrders = new Set(purchases.map((p) => p.orderIdReference).filter(Boolean)).size;
+  const returnRequests = events.filter((e) => e.eventType === "RETURN").length;
+  const refunds = events.filter(isAuthoritativeRefund);
+  const refundAmountCents = refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+  const grossRevenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+  const products2 = computeProductKpis(events, 50);
+  const categories2 = computeCategoryKpis(events, 50);
+  const markets = computeMarketKpis(events);
+  const channels = computeCommerceChannelKpis(events);
+  return {
+    returnRequests,
+    returnedOrders: returnRequests,
+    refundAmountCents,
+    returnRate: safeRate(returnRequests, uniqueOrders),
+    refundRate: safeRate(refunds.length, uniqueOrders),
+    netRevenueAfterReturnsCents: grossRevenueCents - refundAmountCents,
+    byProduct: products2.filter((p) => p.purchases > 0).map((p) => ({
+      productId: p.productId,
+      returnRate: p.returnRate,
+      refundImpactCents: Math.max(0, p.revenueCents - p.netRevenueCents)
+    })),
+    byCategory: categories2.map((c) => ({
+      categoryId: c.categoryId,
+      returnRate: c.returnRate
+    })),
+    byMarket: markets.filter((m) => m.orders > 0).map((m) => ({ market: m.market, returnRate: m.returnRate })),
+    byChannel: channels.filter((c) => c.orders > 0).map((c) => ({ channel: c.channel, refundRate: safeRate(c.returns, c.orders) }))
+  };
+}
+
+// lib/analytics/kpi/rankings.ts
+function buildRankings(products2, categories2, markets, channels, limit) {
+  const top = clampLimit(limit);
+  const productsByRevenue = toRanking(products2, (p) => p.productId, (p) => p.productName, (p) => p.revenueCents, top);
+  const productsByUnits = toRanking(products2, (p) => p.productId, (p) => p.productName, (p) => p.unitsSold, top);
+  const productsByConversion = toRanking(
+    products2.filter((p) => p.views > 0),
+    (p) => p.productId,
+    (p) => p.productName,
+    (p) => p.cartConversion,
+    top
+  );
+  const productsByMargin = toRanking(
+    products2.filter((p) => p.contributionCents > 0),
+    (p) => p.productId,
+    (p) => p.productName,
+    (p) => p.contributionCents,
+    top
+  );
+  const categoriesByRevenue = toRanking(categories2, (c) => c.categoryId, (c) => c.categoryId, (c) => c.revenueCents, top);
+  const marketsByRevenue = toRanking(markets, (m) => m.market, (m) => m.market, (m) => m.revenueCents, top);
+  const channelsByRevenue = toRanking(channels, (c) => c.channel, (c) => c.channel, (c) => c.revenueCents, top);
+  return {
+    productsByRevenue,
+    productsByUnits,
+    productsByConversion,
+    productsByMargin,
+    categoriesByRevenue,
+    marketsByRevenue,
+    channelsByRevenue
+  };
+}
+function toRanking(rows, key, label, value, limit) {
+  return [...rows].sort((a, b) => value(b) - value(a)).slice(0, limit).map((row) => ({ key: key(row), label: label(row), value: value(row) }));
+}
+
+// lib/analytics/kpi/compute.ts
+function computeBusinessKpis(input = {}) {
+  const range = resolveDateRange(input);
+  const events = loadEventsForRange(range);
+  const limit = clampLimit(input.limit);
+  const executive = computeExecutiveKpis(events);
+  const funnel = computeFunnelKpis(events);
+  const products2 = computeProductKpis(events, limit);
+  const categories2 = computeCategoryKpis(events, limit);
+  const markets = computeMarketKpis(events);
+  const languages = computeLanguageKpis(events);
+  const channels = computeCommerceChannelKpis(events);
+  const traffic = computeTrafficSourceKpis(events);
+  const devices = computeDeviceKpis(events);
+  const customers = computeCustomerKpis(events);
+  const cohorts = computeCohortKpis(events);
+  const returns2 = computeReturnKpis(events);
+  const profitability = computeProfitabilityKpis(events);
+  const rankings = buildRankings(products2, categories2, markets, channels, limit);
+  let previousExecutive;
+  let deltas;
+  if (input.comparePrevious && range.previousFrom && range.previousTo) {
+    const prevEvents = loadEventsForRange({
+      preset: range.preset,
+      from: range.previousFrom,
+      to: range.previousTo
+    });
+    previousExecutive = computeExecutiveKpis(prevEvents);
+    deltas = {
+      orders: safeDelta(executive.orders, previousExecutive.orders ?? 0),
+      grossRevenueCents: safeDelta(executive.grossRevenueCents, previousExecutive.grossRevenueCents ?? 0),
+      authoritativeRevenueCents: safeDelta(
+        executive.authoritativeRevenueCents,
+        previousExecutive.authoritativeRevenueCents ?? 0
+      ),
+      netRevenueCents: safeDelta(executive.netRevenueCents, previousExecutive.netRevenueCents ?? 0),
+      conversionRate: safeDelta(executive.conversionRate, previousExecutive.conversionRate ?? 0),
+      averageOrderValueCents: safeDelta(
+        executive.averageOrderValueCents,
+        previousExecutive.averageOrderValueCents ?? 0
+      )
+    };
+  }
+  return {
+    range,
+    executive,
+    previousExecutive,
+    deltas,
+    funnel,
+    products: products2,
+    categories: categories2,
+    markets,
+    languages,
+    channels,
+    traffic,
+    devices,
+    customers,
+    cohorts,
+    returns: returns2,
+    profitability,
+    rankings
+  };
+}
+
+// lib/analytics/kpi/dashboard.ts
 function requireAdmin(context) {
+  const check = validateAdminAccess(context);
+  if (!check.ok) return { ok: false, errorCode: check.errorCode ?? "ADMIN_UNAUTHORIZED" };
+  recordAnalyticsAudit({
+    action: "KPI_DASHBOARD_ACCESS",
+    actor: context.actorId ?? "ADMIN"
+  });
+  return { ok: true };
+}
+function parseInput(query = {}) {
+  return parseKpiQueryInput(query);
+}
+function getBusinessKpiDashboard(context, query = {}) {
+  const auth = requireAdmin(context);
+  if (!auth.ok) return auth;
+  const input = parseInput(query);
+  const validation = validateKpiQuery(input);
+  if (!validation.ok) return { ok: false, errorCode: validation.errorCode ?? "INVALID_QUERY" };
+  return { ok: true, data: computeBusinessKpis(input) };
+}
+function getBusinessKpiSection(context, section, query = {}) {
+  const result = getBusinessKpiDashboard(context, query);
+  if (!result.ok) return result;
+  const dashboard = result.data;
+  switch (section) {
+    case "executive":
+      return {
+        ok: true,
+        data: {
+          range: dashboard.range,
+          executive: dashboard.executive,
+          previousExecutive: dashboard.previousExecutive,
+          deltas: dashboard.deltas
+        }
+      };
+    case "funnel":
+      return { ok: true, data: { range: dashboard.range, funnel: dashboard.funnel } };
+    case "products":
+      return {
+        ok: true,
+        data: {
+          range: dashboard.range,
+          products: dashboard.products,
+          rankings: {
+            productsByRevenue: dashboard.rankings.productsByRevenue,
+            productsByUnits: dashboard.rankings.productsByUnits,
+            productsByConversion: dashboard.rankings.productsByConversion,
+            productsByMargin: dashboard.rankings.productsByMargin
+          }
+        }
+      };
+    case "categories":
+      return {
+        ok: true,
+        data: {
+          range: dashboard.range,
+          categories: dashboard.categories,
+          rankings: { categoriesByRevenue: dashboard.rankings.categoriesByRevenue }
+        }
+      };
+    case "markets":
+      return {
+        ok: true,
+        data: {
+          range: dashboard.range,
+          markets: dashboard.markets,
+          rankings: { marketsByRevenue: dashboard.rankings.marketsByRevenue }
+        }
+      };
+    case "channels":
+      return {
+        ok: true,
+        data: {
+          range: dashboard.range,
+          channels: dashboard.channels,
+          rankings: { channelsByRevenue: dashboard.rankings.channelsByRevenue }
+        }
+      };
+    case "traffic":
+      return { ok: true, data: { range: dashboard.range, traffic: dashboard.traffic } };
+    case "returns":
+      return { ok: true, data: { range: dashboard.range, returns: dashboard.returns } };
+    case "profitability":
+      return { ok: true, data: { range: dashboard.range, profitability: dashboard.profitability } };
+    default:
+      return { ok: true, data: dashboard };
+  }
+}
+
+// lib/analytics/dashboard.ts
+function requireAdmin2(context) {
   const check = validateAdminAccess(context);
   if (!check.ok) return { ok: false, errorCode: check.errorCode ?? "ADMIN_UNAUTHORIZED" };
   recordAnalyticsAudit({
@@ -31366,12 +32522,12 @@ function requireAdmin(context) {
   return { ok: true };
 }
 function getOverview(context) {
-  const auth = requireAdmin(context);
+  const auth = requireAdmin2(context);
   if (!auth.ok) return auth;
   return { ok: true, data: computeDashboardOverview() };
 }
 function getTraffic(context) {
-  const auth = requireAdmin(context);
+  const auth = requireAdmin2(context);
   if (!auth.ok) return auth;
   const events = listEvents();
   return {
@@ -31384,27 +32540,27 @@ function getTraffic(context) {
   };
 }
 function getFunnel(context) {
-  const auth = requireAdmin(context);
+  const auth = requireAdmin2(context);
   if (!auth.ok) return auth;
   return { ok: true, data: computeFunnelMetrics() };
 }
 function getProducts(context) {
-  const auth = requireAdmin(context);
+  const auth = requireAdmin2(context);
   if (!auth.ok) return auth;
   return { ok: true, data: computeProductAnalytics() };
 }
 function getMarkets(context) {
-  const auth = requireAdmin(context);
+  const auth = requireAdmin2(context);
   if (!auth.ok) return auth;
   return { ok: true, data: computeMarketAnalytics() };
 }
 function getChannels(context) {
-  const auth = requireAdmin(context);
+  const auth = requireAdmin2(context);
   if (!auth.ok) return auth;
   return { ok: true, data: computeChannelAnalytics() };
 }
 function getRevenue(context) {
-  const auth = requireAdmin(context);
+  const auth = requireAdmin2(context);
   if (!auth.ok) return auth;
   return { ok: true, data: computeRevenueMetrics() };
 }
@@ -31414,6 +32570,8 @@ bootstrapAnalyticsPersistence();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   getAnalyticsPersistenceMode,
+  getBusinessKpiDashboard,
+  getBusinessKpiSection,
   getChannels,
   getFunnel,
   getMarkets,

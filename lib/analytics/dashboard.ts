@@ -106,3 +106,5 @@ export function getMarketplace(context: AdminAnalyticsContext) {
   const events = listEvents().filter((e) => e.eventType === "MARKETPLACE_ORDER" || e.eventType === "MARKETPLACE_RETURN");
   return { ok: true as const, data: events };
 }
+
+export { getBusinessKpiDashboard, getBusinessKpiSection } from "./kpi/dashboard";

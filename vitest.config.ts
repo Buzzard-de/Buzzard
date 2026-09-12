@@ -17,6 +17,7 @@ export default defineConfig({
       "lib/returns-engine/**/*.test.ts",
       "lib/ai-orchestrator/**/*.test.ts",
       "lib/ai-workers/**/*.test.ts",
+      "lib/analytics/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

@@ -14,8 +14,8 @@ import {
   fetchProductAnalytics,
   fetchSalesAnalytics,
   fetchSupplierAnalytics,
-} from "@/lib/analytics/client";
-import type { AnalyticsOverview, AnalyticsRangePreset } from "@/lib/analytics/types";
+} from "@/lib/analytics/adminClient";
+import type { AnalyticsOverview, AnalyticsRangePreset } from "@/lib/analytics/adminTypes";
 import { formatPrice } from "@/lib/products";
 import SimpleBarChart from "./charts/SimpleBarChart";
 import SimpleLineChart from "./charts/SimpleLineChart";

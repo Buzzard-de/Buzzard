@@ -85,7 +85,13 @@ export function maybeTrackStorefrontAnalytics(
     });
 
     if (name === "purchase" && mapped.orderIdReference) {
-      void signalAuthoritativePurchase(mapped.orderIdReference, mapped.orderIdReference);
+      const customerId =
+        typeof payload.customer_id === "string"
+          ? payload.customer_id
+          : typeof payload.customerId === "string"
+            ? payload.customerId
+            : undefined;
+      void signalAuthoritativePurchase(mapped.orderIdReference, mapped.orderIdReference, customerId);
     }
   } catch {
     /* analytics must never break storefront */

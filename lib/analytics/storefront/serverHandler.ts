@@ -84,9 +84,40 @@ function syncConsentFromEvent(visitorId: string, market: string, eventType: stri
   updateConsent(visitorId, market, { ANALYTICS: status });
 }
 
-export function handleStorefrontPurchaseSignal(orderId: string, correlationId?: string) {
-  if (!orderId?.trim()) return { ok: false, errorCode: "MISSING_ORDER_ID" };
-  return ingestStorefrontPurchaseSignal(orderId.trim(), correlationId);
+export interface StorefrontPurchaseSignalBody {
+  orderId?: string;
+  correlationId?: string;
+  customerId?: string;
+  revenue?: number;
+  total?: number;
+  subtotal?: number;
+  tax?: number;
+  discount?: number;
+  shipping?: number;
+  currency?: string;
+}
+
+export function handleStorefrontPurchaseSignal(body: StorefrontPurchaseSignalBody | string, correlationId?: string) {
+  const payload: StorefrontPurchaseSignalBody =
+    typeof body === "string" ? { orderId: body, correlationId } : body;
+
+  if (!payload.orderId?.trim()) return { ok: false, errorCode: "MISSING_ORDER_ID" };
+
+  if (
+    payload.revenue !== undefined
+    || payload.total !== undefined
+    || payload.subtotal !== undefined
+    || payload.tax !== undefined
+    || payload.discount !== undefined
+    || payload.shipping !== undefined
+    || payload.currency !== undefined
+  ) {
+    /* client financial fields are ignored — never authoritative */
+  }
+
+  return ingestStorefrontPurchaseSignal(payload.orderId.trim(), payload.correlationId, {
+    customerIdContext: payload.customerId,
+  });
 }
 
 export function parseStorefrontEventBody(raw: string): StorefrontEventRequestBody | null {

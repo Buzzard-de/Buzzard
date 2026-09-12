@@ -202,10 +202,10 @@ module.exports = {
       res.json({ success: true, ...result });
     });
 
-    app.post("/api/commerce/checkout/:id/complete", (req, res) => {
+    app.post("/api/commerce/checkout/:id/complete", async (req, res) => {
       if (!rateLimit(req, res, orderRateLimit)) return;
       const body = parseBody(req);
-      const result = commerce.checkoutService.completeCheckout(req.params.id, body, {
+      const result = await commerce.checkoutService.completeCheckout(req.params.id, body, {
         customerId: body.customerId,
         idempotencyKey: body.idempotencyKey || req.headers["idempotency-key"],
         req,
@@ -216,7 +216,7 @@ module.exports = {
       res.json({ success: true, ...result });
     });
 
-    app.post("/api/commerce/checkout/attempt", (req, res) => {
+    app.post("/api/commerce/checkout/attempt", async (req, res) => {
       if (!rateLimit(req, res, readinessRateLimit)) return;
       const body = parseBody(req);
       const demo = commerce.cartService.getDemoProductForCart();
@@ -244,7 +244,7 @@ module.exports = {
 
       const completed = checkout.error
         ? { error: checkout.error, code: checkout.error }
-        : commerce.checkoutService.completeCheckout(checkout.id, {
+        : await commerce.checkoutService.completeCheckout(checkout.id, {
             orderType: "COMMERCIAL",
             idempotencyKey: body.idempotencyKey || `attempt-${Date.now()}`,
           }, { req });

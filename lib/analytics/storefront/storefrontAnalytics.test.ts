@@ -135,11 +135,10 @@ describe("Buzzard Analytics Storefront Integration", () => {
       expect(computeRevenueMetrics().orderCount).toBe(1);
     });
 
-    it("records CHECKOUT_COMPLETED when order engine order missing", () => {
+    it("rejects purchase when order engine order missing", () => {
       const result = ingestStorefrontPurchaseSignal("commerce_ord_unknown");
-      expect(result.ok).toBe(true);
-      expect(result.event?.eventType).toBe("CHECKOUT_COMPLETED");
-      expect(result.event?.revenueAuthority).not.toBe("AUTHORITATIVE");
+      expect(result.ok).toBe(false);
+      expect(result.errorCode).toBe("ORDER_NOT_FOUND");
     });
   });
 

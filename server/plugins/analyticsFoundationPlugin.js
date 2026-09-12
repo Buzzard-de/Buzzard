@@ -64,7 +64,32 @@ module.exports = {
       const mod = loadFoundation();
       if (!mod) return res.status(503).json({ ok: false, errorCode: "FOUNDATION_UNAVAILABLE" });
       const body = req.body || {};
-      const result = mod.handleStorefrontPurchaseSignal(body.orderId || "", body.correlationId);
+      const commerceOrderId = String(body.orderId || "").trim();
+      if (!commerceOrderId) return res.status(400).json({ ok: false, errorCode: "MISSING_ORDER_ID" });
+
+      let orderEngineSync = null;
+      try {
+        orderEngineSync = require("../lib/commerce/orderEngineSync.js");
+      } catch {
+        /* optional */
+      }
+
+      const resolvedEngineOrderId = orderEngineSync?.resolveOrderIdForAnalytics?.(commerceOrderId);
+      const commerceContext = orderEngineSync?.getCommerceOrderContext?.(commerceOrderId);
+      const customerId = body.customerId || commerceContext?.customerId;
+
+      const result = mod.handleStorefrontPurchaseSignal({
+        orderId: resolvedEngineOrderId || commerceOrderId,
+        correlationId: body.correlationId || commerceOrderId,
+        customerId,
+        revenue: body.revenue,
+        total: body.total,
+        subtotal: body.subtotal,
+        tax: body.tax,
+        discount: body.discount,
+        shipping: body.shipping,
+        currency: body.currency,
+      });
       if (!result.ok) return res.status(400).json(result);
       return res.status(202).json({
         ok: true,

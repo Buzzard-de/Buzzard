@@ -28,21 +28,23 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// lib/analytics/storefront/serverEntry.ts
-var serverEntry_exports = {};
-__export(serverEntry_exports, {
-  getChannels: () => getChannels,
-  getFunnel: () => getFunnel,
-  getMarkets: () => getMarkets,
-  getOverview: () => getOverview,
-  getProducts: () => getProducts,
-  getRevenue: () => getRevenue,
-  getTraffic: () => getTraffic,
-  handleStorefrontAnalyticsEvent: () => handleStorefrontAnalyticsEvent,
-  handleStorefrontPurchaseSignal: () => handleStorefrontPurchaseSignal,
-  parseStorefrontEventBody: () => parseStorefrontEventBody
+// lib/commerce/commerceServerEntry.ts
+var commerceServerEntry_exports = {};
+__export(commerceServerEntry_exports, {
+  clearCommerceOrderMappings: () => clearCommerceOrderMappings,
+  getCommerceOrderMapping: () => getCommerceOrderMapping,
+  getOrder: () => getOrder,
+  ingestAuthoritativePurchaseForOrder: () => ingestAuthoritativePurchaseForOrder,
+  ingestStorefrontPurchaseSignalResolved: () => ingestStorefrontPurchaseSignalResolved,
+  listCommerceOrderMappings: () => listCommerceOrderMappings,
+  mapCommerceAddressToSnapshot: () => mapCommerceAddressToSnapshot,
+  resolveOrderEngineOrderId: () => resolveOrderEngineOrderId,
+  saveCommerceOrderMapping: () => saveCommerceOrderMapping,
+  syncCommerceOrderToEngine: () => syncCommerceOrderToEngine,
+  validateOrderIdForAuthoritativePurchase: () => validateOrderIdForAuthoritativePurchase,
+  validatePurchaseSignalAccess: () => validatePurchaseSignalAccess
 });
-module.exports = __toCommonJS(serverEntry_exports);
+module.exports = __toCommonJS(commerceServerEntry_exports);
 
 // data/global/global_countries_35.json
 var global_countries_35_default = [
@@ -487,11 +489,89 @@ function getMarketCurrency(countryCode) {
     symbol: market?.currencySymbol ?? "\u20AC"
   };
 }
+function getMarketVat(countryCode) {
+  return getMarket(countryCode)?.vat ?? { standardRate: 0.2, pricesIncludeVat: true, taxModel: "VAT" };
+}
+function getMarketShippingRegion(countryCode) {
+  return getMarket(countryCode)?.shippingRegion ?? "EU_CENTRAL";
+}
+
+// data/global/order_engine_extensions.json
+var order_engine_extensions_default = {
+  orderNumberPrefix: "BZ",
+  orderNumberYear: 2026,
+  defaultPaymentProvider: "mock",
+  defaultPaymentMethod: "card",
+  paymentAuthorizationMode: "dry_run",
+  reservationFailurePolicy: "RELEASE_ALL",
+  paymentFailurePolicy: "RELEASE_RESERVATIONS",
+  idempotencyTtlMs: 864e5,
+  customerVisibleStatuses: [
+    "PENDING_PAYMENT",
+    "PAID",
+    "CONFIRMED",
+    "PROCESSING",
+    "SUPPLIER_PENDING",
+    "SUPPLIER_CONFIRMED",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+    "RETURN_REQUESTED",
+    "RETURNED",
+    "REFUNDED",
+    "PARTIALLY_REFUNDED",
+    "FAILED"
+  ]
+};
 
 // lib/order-engine/registry.ts
+var config = order_engine_extensions_default;
 var orderRegistry = /* @__PURE__ */ new Map();
+var orderByNumber = /* @__PURE__ */ new Map();
+var ordersByCustomer = /* @__PURE__ */ new Map();
+var idempotencyRegistry = /* @__PURE__ */ new Map();
+var priceSnapshotRegistry = /* @__PURE__ */ new Map();
+var orderCounter = 0;
+function generateOrderId() {
+  return `ord_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+function generateOrderNumber() {
+  orderCounter += 1;
+  const year = config.orderNumberYear;
+  const seq = String(orderCounter).padStart(6, "0");
+  return `${config.orderNumberPrefix}-${year}-${seq}`;
+}
+function saveOrder(order) {
+  orderRegistry.set(order.orderId, order);
+  orderByNumber.set(order.orderNumber, order.orderId);
+  if (!ordersByCustomer.has(order.customerId)) {
+    ordersByCustomer.set(order.customerId, /* @__PURE__ */ new Set());
+  }
+  ordersByCustomer.get(order.customerId).add(order.orderId);
+  if (order.idempotencyKey) {
+    idempotencyRegistry.set(order.idempotencyKey, {
+      orderId: order.orderId,
+      createdAt: order.createdAt
+    });
+  }
+  return order;
+}
 function getOrder(orderId) {
   return orderRegistry.get(orderId);
+}
+function getIdempotentOrder(idempotencyKey) {
+  const entry = idempotencyRegistry.get(idempotencyKey);
+  return entry ? orderRegistry.get(entry.orderId) : void 0;
+}
+function savePriceSnapshot(snapshot) {
+  priceSnapshotRegistry.set(snapshot.snapshotId, snapshot);
+  return snapshot;
+}
+function getDefaultPaymentProvider() {
+  return config.defaultPaymentProvider;
+}
+function getDefaultPaymentMethod() {
+  return config.defaultPaymentMethod;
 }
 
 // lib/product-engine/status.ts
@@ -25780,12 +25860,1947 @@ function getRegistryProduct(productId) {
   return products.get(productId);
 }
 
+// lib/product-engine/translations.ts
+function getTranslationForLocale(translations, locale) {
+  const normalized = locale.toLowerCase();
+  return translations.find((t) => t.locale.toLowerCase() === normalized) || translations.find((t) => t.locale.split("-")[0].toLowerCase() === normalized.split("-")[0]);
+}
+
+// lib/product-engine/supplier.ts
+function selectBestSupplier(product, market, criteria = {}) {
+  const offers = product.supplierOffers.filter((o) => o.stock > 0);
+  if (!offers.length) return null;
+  const weights = {
+    stock: criteria.stockWeight ?? 0.25,
+    price: criteria.priceWeight ?? 0.3,
+    leadTime: criteria.leadTimeWeight ?? 0.15,
+    reliability: criteria.reliabilityWeight ?? 0.2,
+    margin: criteria.marginWeight ?? 0.1
+  };
+  const maxStock = Math.max(...offers.map((o) => o.stock), 1);
+  const minPrice = Math.min(...offers.map((o) => o.supplierPrice).filter((p) => p > 0), Infinity);
+  const preferredRegions = market?.supplierRegions ?? [];
+  let best = null;
+  for (const offer of offers) {
+    const reasons = [];
+    let score = 0;
+    const stockScore = offer.stock / maxStock;
+    score += stockScore * weights.stock;
+    reasons.push(`stock:${stockScore.toFixed(2)}`);
+    const priceScore = offer.supplierPrice > 0 && minPrice < Infinity ? minPrice / offer.supplierPrice : 0.5;
+    score += priceScore * weights.price;
+    reasons.push(`price:${priceScore.toFixed(2)}`);
+    const leadDays = offer.leadTimeDays ?? 7;
+    const leadScore = Math.max(0, 1 - leadDays / 30);
+    score += leadScore * weights.leadTime;
+    reasons.push(`leadTime:${leadScore.toFixed(2)}`);
+    const reliabilityScore = offer.reliabilityScore ?? 0.5;
+    score += reliabilityScore * weights.reliability;
+    reasons.push(`reliability:${reliabilityScore.toFixed(2)}`);
+    const margin = product.pricing.customerPrice > 0 ? (product.pricing.customerPrice - offer.supplierPrice) / product.pricing.customerPrice : 0;
+    const marginScore = Math.max(0, Math.min(1, margin));
+    score += marginScore * weights.margin;
+    reasons.push(`margin:${marginScore.toFixed(2)}`);
+    if (preferredRegions.length && offer.shippingRegions?.some((r) => preferredRegions.includes(r))) {
+      score += 0.1;
+      reasons.push("region:preferred");
+    }
+    if (!best || score > best.score) {
+      best = { offer, score, reasons };
+    }
+  }
+  return best;
+}
+
+// lib/market-engine/money.ts
+function toMinorUnits(amount, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return Math.round((Number(amount) || 0) * factor);
+}
+function fromMinorUnits(minor, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return minor / factor;
+}
+function roundMoney(amount, decimalDigits = 2) {
+  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
+}
+function netFromGross(gross, vatRate, decimalDigits = 2) {
+  const grossMinor = toMinorUnits(gross, decimalDigits);
+  const netMinor = Math.round(grossMinor / (1 + vatRate));
+  const vatMinor = grossMinor - netMinor;
+  return { net: fromMinorUnits(netMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
+}
+function grossFromNet(net, vatRate, decimalDigits = 2) {
+  const netMinor = toMinorUnits(net, decimalDigits);
+  const vatMinor = Math.round(netMinor * vatRate);
+  const grossMinor = netMinor + vatMinor;
+  return { gross: fromMinorUnits(grossMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
+}
+var CURRENCY_DECIMALS = {
+  HUF: 0,
+  ISK: 0,
+  KWD: 3,
+  BHD: 3,
+  OMR: 3
+};
+function getCurrencyDecimalDigits(currencyCode) {
+  return CURRENCY_DECIMALS[String(currencyCode).toUpperCase()] ?? 2;
+}
+
+// lib/market-engine/vat.ts
+function normalizeCode(code) {
+  return String(code || "").toUpperCase();
+}
+function isValidVatIdFormat(vatId) {
+  if (!vatId) return false;
+  const trimmed = vatId.trim();
+  return trimmed.length >= 4 && /^[A-Z]{2}[A-Z0-9]+$/i.test(trimmed);
+}
+function getVatContext(input) {
+  const seller = normalizeCode(input.sellerCountry);
+  const buyer = normalizeCode(input.buyerCountry);
+  const customerType = input.customerType;
+  const buyerVat = getMarketVat(buyer);
+  const sellerVat = getMarketVat(seller);
+  const sellerEu = isEuCountry(seller);
+  const buyerEu = isEuCountry(buyer);
+  const domestic = seller === buyer;
+  const intraEu = sellerEu && buyerEu && !domestic;
+  const exportSale = sellerEu && !buyerEu;
+  const importToEu = !sellerEu && buyerEu;
+  if (customerType === "B2B") {
+    if (intraEu && isValidVatIdFormat(input.vatId)) {
+      return {
+        rate: 0,
+        included: false,
+        reverseCharge: true,
+        reason: "B2B_INTRA_EU_REVERSE_CHARGE"
+      };
+    }
+    if (exportSale) {
+      return {
+        rate: 0,
+        included: false,
+        reverseCharge: false,
+        reason: "B2B_EXPORT_ZERO_RATED"
+      };
+    }
+    if (importToEu && isValidVatIdFormat(input.vatId)) {
+      return {
+        rate: buyerVat.standardRate,
+        included: false,
+        reverseCharge: true,
+        reason: "B2B_IMPORT_REVERSE_CHARGE"
+      };
+    }
+    if (domestic) {
+      return {
+        rate: sellerVat.standardRate,
+        included: false,
+        reverseCharge: false,
+        reason: "B2B_DOMESTIC_NET"
+      };
+    }
+    return {
+      rate: buyerVat.standardRate,
+      included: buyerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: "B2B_CROSS_BORDER_DEFAULT"
+    };
+  }
+  if (domestic) {
+    return {
+      rate: sellerVat.standardRate,
+      included: sellerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: "B2C_DOMESTIC"
+    };
+  }
+  if (intraEu) {
+    return {
+      rate: buyerVat.standardRate,
+      included: buyerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: "B2C_INTRA_EU_DESTINATION"
+    };
+  }
+  if (exportSale || importToEu || !sellerEu || !buyerEu) {
+    return {
+      rate: buyerVat.standardRate,
+      included: buyerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: exportSale ? "B2C_EXPORT" : "B2C_CROSS_BORDER"
+    };
+  }
+  return {
+    rate: buyerVat.standardRate,
+    included: buyerVat.pricesIncludeVat,
+    reverseCharge: false,
+    reason: "B2C_DEFAULT"
+  };
+}
+
+// data/global/pricing_engine_extensions.json
+var pricing_engine_extensions_default = {
+  defaultSellerCountry: "DE",
+  defaultTargetMarginPercent: 0.11,
+  defaultMinimumMarginPercent: 0.05,
+  exchangeRates: {
+    EUR: 1,
+    USD: 0.92,
+    GBP: 1.17,
+    CZK: 0.041,
+    PLN: 0.23,
+    TRY: 0.027,
+    SAR: 0.24,
+    AED: 0.25,
+    EGP: 0.019,
+    HUF: 26e-4,
+    RON: 0.2,
+    BGN: 0.51,
+    CHF: 1.05,
+    SEK: 0.087,
+    DKK: 0.134,
+    NOK: 0.085
+  },
+  shippingCosts: {
+    defaultSupplierDirect: 10,
+    currency: "EUR",
+    byProductFixture: {
+      "reifen-pilot-sport": 10,
+      "motoroel-5w30": 7,
+      "bremsscheibe-280": 8,
+      "bremsbelaege-vorder": 6
+    },
+    byShippingRegion: {
+      EU_CENTRAL: 10,
+      EU_WEST: 12,
+      EU_NORTH: 14,
+      EU_SOUTH: 11,
+      EU_EAST: 9,
+      TR: 15,
+      GCC: 18,
+      MENA: 16
+    }
+  },
+  marketplaceFees: {
+    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
+    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
+    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
+    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
+    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
+    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
+  },
+  paymentFees: {
+    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
+    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
+    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
+    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
+    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
+  },
+  returnReserves: {
+    default: {
+      returnRate: 0.05,
+      refundRate: 0.03,
+      averageReturnShippingCost: 8,
+      averageRefundLoss: 5,
+      supplierReturnAcceptanceRate: 0.7,
+      damagedReturnRate: 0.01
+    },
+    byCategory: {
+      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
+      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
+      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
+    }
+  },
+  marginRules: {
+    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
+    byMarket: {},
+    byCategory: {},
+    byChannel: {},
+    byMarketplace: {},
+    bySupplier: {}
+  },
+  roundingRules: {
+    default: { mode: "psychological_99", step: 0.01 },
+    byMarket: {
+      DE: { mode: "psychological_99" },
+      FR: { mode: "psychological_99" },
+      PL: { mode: "nearest_49" }
+    },
+    byChannel: {
+      amazon: { mode: "psychological_99" },
+      direct: { mode: "psychological_99" }
+    }
+  },
+  priceBounds: {
+    default: { minimumPrice: 1, maximumPrice: 99999 }
+  },
+  competitivePricingExtension: {
+    enabled: false,
+    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
+  }
+};
+
+// lib/pricing-engine/registry.ts
+var config2 = pricing_engine_extensions_default;
+function getDefaultSellerCountry() {
+  return config2.defaultSellerCountry;
+}
+function getExchangeRate(fromCurrency, toCurrency) {
+  const from = String(fromCurrency).toUpperCase();
+  const to = String(toCurrency).toUpperCase();
+  if (from === to) return 1;
+  const rates = config2.exchangeRates;
+  const fromRate = rates[from];
+  const toRate = rates[to];
+  if (fromRate == null || toRate == null) return null;
+  return fromRate / toRate;
+}
+function getMarketplaceFeeSchedule(marketplaceId) {
+  const fees = config2.marketplaceFees;
+  return fees[marketplaceId] ?? fees.direct;
+}
+function getPaymentFeeSchedule(method = "default") {
+  const fees = config2.paymentFees;
+  return fees[method] ?? fees.default;
+}
+function getReturnReserveConfig(categoryId) {
+  const reserves = config2.returnReserves;
+  const byCategory = reserves.byCategory;
+  const base = reserves.default;
+  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
+  return { ...base, ...categoryOverride };
+}
+function getMarginRule(options) {
+  const rules = config2.marginRules;
+  const defaults = rules.default;
+  const byMarket = rules.byMarket;
+  const byCategory = rules.byCategory;
+  const byChannel = rules.byChannel;
+  const byMarketplace = rules.byMarketplace;
+  const bySupplier = rules.bySupplier;
+  const targetMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.targetMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.targetMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.targetMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.targetMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.targetMarginPercent : void 0) ?? defaults.targetMarginPercent ?? config2.defaultTargetMarginPercent;
+  const minimumMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.minimumMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.minimumMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.minimumMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.minimumMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.minimumMarginPercent : void 0) ?? defaults.minimumMarginPercent ?? config2.defaultMinimumMarginPercent;
+  return { targetMarginPercent, minimumMarginPercent };
+}
+function getRoundingRule(marketId, channel) {
+  const rules = config2.roundingRules;
+  const defaults = rules.default;
+  const byMarket = rules.byMarket;
+  const byChannel = rules.byChannel;
+  if (channel && byChannel[channel]) return { ...defaults, ...byChannel[channel] };
+  if (marketId && byMarket[marketId]) return { ...defaults, ...byMarket[marketId] };
+  return defaults;
+}
+function getPriceBounds() {
+  return config2.priceBounds.default;
+}
+function getFixtureShippingCost(productId) {
+  const byProduct = config2.shippingCosts.byProductFixture;
+  return byProduct[productId];
+}
+function getShippingCostByRegion(region) {
+  const byRegion = config2.shippingCosts.byShippingRegion;
+  return byRegion[region];
+}
+function getDefaultShippingCost() {
+  return config2.shippingCosts.defaultSupplierDirect;
+}
+function getDefaultShippingCurrency() {
+  return config2.shippingCosts.currency;
+}
+
+// lib/pricing-engine/currency.ts
+function convertCurrency(amount, fromCurrency, toCurrency) {
+  const from = String(fromCurrency).toUpperCase();
+  const to = String(toCurrency).toUpperCase();
+  if (from === to) return roundMoney(amount, getCurrencyDecimalDigits(to));
+  const rate = getExchangeRate(from, to);
+  if (rate == null) return null;
+  const decimalDigits = getCurrencyDecimalDigits(to);
+  const minor = toMinorUnits(amount, getCurrencyDecimalDigits(from));
+  const convertedMinor = Math.round(minor * rate);
+  return fromMinorUnits(convertedMinor, decimalDigits);
+}
+
+// lib/pricing-engine/cost.ts
+function resolveSupplierCost(input, marketCurrency) {
+  const offer = input.supplierOffer;
+  if (!offer || offer.supplierPrice == null || offer.supplierPrice <= 0) {
+    return {
+      supplierNetPrice: 0,
+      supplierGrossPrice: 0,
+      supplierCurrency: offer?.currency ?? "",
+      marketCurrency,
+      convertedNetPrice: 0,
+      lastUpdated: offer?.lastUpdated ?? "",
+      stock: offer?.stock ?? 0,
+      valid: false,
+      reason: "MISSING_COST"
+    };
+  }
+  if (!offer.currency) {
+    return {
+      supplierNetPrice: offer.supplierPrice,
+      supplierGrossPrice: offer.supplierPrice,
+      supplierCurrency: "",
+      marketCurrency,
+      convertedNetPrice: 0,
+      lastUpdated: offer.lastUpdated,
+      stock: offer.stock,
+      valid: false,
+      reason: "MISSING_CURRENCY"
+    };
+  }
+  const supplierNetPrice = roundMoney(offer.supplierPrice);
+  const converted = convertCurrency(supplierNetPrice, offer.currency, marketCurrency);
+  if (converted == null) {
+    return {
+      supplierNetPrice,
+      supplierGrossPrice: supplierNetPrice,
+      supplierCurrency: offer.currency,
+      marketCurrency,
+      convertedNetPrice: 0,
+      lastUpdated: offer.lastUpdated,
+      stock: offer.stock,
+      valid: false,
+      reason: "MISSING_CURRENCY"
+    };
+  }
+  return {
+    supplierNetPrice,
+    supplierGrossPrice: supplierNetPrice,
+    supplierCurrency: offer.currency,
+    marketCurrency,
+    convertedNetPrice: converted,
+    lastUpdated: offer.lastUpdated,
+    stock: offer.stock,
+    valid: true
+  };
+}
+
+// lib/market-engine/shipping.ts
+function getShippingRegion(countryCode) {
+  return getMarketShippingRegion(countryCode);
+}
+
+// data/global/test_supplier_feeds.json
+var test_supplier_feeds_default = {
+  TEST_SUPPLIER_A: {
+    supplierId: "TEST_SUPPLIER_A",
+    name: "Test Supplier A (Mock)",
+    country: "DE",
+    region: "EU",
+    currency: "EUR",
+    integrationTypes: ["api", "xml", "csv", "manual"],
+    supportedMarkets: ["DE", "FR", "PL"],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: false,
+      shippingAPI: false,
+      trackingAPI: false,
+      returnsAPI: false,
+      webhook: false,
+      dropshipping: true,
+      whiteLabel: true,
+      blindShipping: true,
+      api: true,
+      xml: true,
+      csv: true
+    },
+    rateLimit: { requestsPerMinute: 60 },
+    fieldMapping: {
+      article_number: "supplierSku",
+      sku: "supplierSku",
+      ean_code: "ean",
+      price_net: "supplierPrice",
+      stock_qty: "stock",
+      title: "name",
+      brand_name: "brand"
+    },
+    apiProducts: [
+      {
+        article_number: "TSA-TIRE-225-45-17",
+        ean_code: "4006633001247",
+        brand_name: "Michelin",
+        title: "Michelin Pilot Sport 4 225/45 R17",
+        price_net: 55.79,
+        stock_qty: 8,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-OIL-5W30-5L",
+        ean_code: "4006633001236",
+        brand_name: "Castrol",
+        title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
+        price_net: 26.6,
+        stock_qty: 50,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-DISC-280",
+        ean_code: "4006633001234",
+        brand_name: "ATE",
+        title: "Bremsscheibe Vorderachse 280mm",
+        price_net: 21.64,
+        stock_qty: 24,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-PADS-FRONT",
+        ean_code: "4006633001235",
+        brand_name: "Bosch",
+        title: "Bremsbel\xE4ge Satz Vorderachse",
+        price_net: 17.67,
+        stock_qty: 31,
+        currency: "EUR"
+      }
+    ],
+    xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
+    csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
+  }
+};
+
+// data/buzzard_suppliers.json
+var buzzard_suppliers_default = {
+  project: "Buzzard",
+  document: "Supplier Master",
+  version: "1.0.0",
+  suppliers: [
+    {
+      supplier_id: "SUP-INTERNAL-001",
+      supplier_name: "Buzzard Internal Warehouse",
+      contact_email: "warehouse@buzzard.de",
+      contact_phone: "+49 30 1234567",
+      website: "https://buzzard24.de",
+      feed_type: "manual",
+      api_endpoint: null,
+      auth_type: "none",
+      currency: "EUR",
+      vat_handling: "gross",
+      dropshipping: false,
+      white_label: true,
+      blind_shipping: false,
+      default_markup_percent: 45,
+      minimum_margin_percent: 15,
+      safety_stock: 2,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "Internal stock for test and flagship products."
+    },
+    {
+      supplier_id: "SUP-DEMO-001",
+      production_status: "TEST_ONLY",
+      supplier_name: "Demo Automotive Parts GmbH",
+      contact_email: "orders@demo-automotive.example",
+      contact_phone: "+49 89 9876543",
+      website: "https://demo-automotive.example",
+      feed_type: "json",
+      api_endpoint: "https://demo-automotive.example/api/products.json",
+      auth_type: "api_key",
+      currency: "EUR",
+      vat_handling: "net",
+      dropshipping: true,
+      white_label: true,
+      blind_shipping: true,
+      default_markup_percent: 38,
+      minimum_margin_percent: 12,
+      safety_stock: 1,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
+    }
+  ]
+};
+
+// lib/supplier-engine/fixtures.ts
+var TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
+
+// lib/supplier-engine/registry.ts
+var supplierById = /* @__PURE__ */ new Map();
+function mapMasterToConfig(raw) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const feedType = String(raw.feed_type || "manual");
+  const integrationTypes = feedType === "json" ? ["api"] : feedType === "manual" ? ["manual"] : [feedType];
+  return {
+    supplierId: String(raw.supplier_id),
+    name: String(raw.supplier_name),
+    country: "DE",
+    region: "EU",
+    status: raw.active === false ? "DISABLED" : raw.production_status === "TEST_ONLY" ? "TESTING" : "CONNECTED",
+    integrationTypes,
+    currency: String(raw.currency || "EUR"),
+    supportedMarkets: ["DE"],
+    supportedCategories: [],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      dropshipping: raw.dropshipping === true,
+      whiteLabel: raw.white_label === true,
+      blindShipping: raw.blind_shipping === true,
+      api: feedType === "json",
+      csv: false,
+      xml: false
+    },
+    fieldMapping: {},
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function buildTestSupplierA() {
+  const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    supplierId: TEST_SUPPLIER_ID,
+    name: String(feed.name || "Test Supplier A"),
+    country: String(feed.country || "DE"),
+    region: String(feed.region || "EU"),
+    status: "TESTING",
+    integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
+    currency: String(feed.currency || "EUR"),
+    supportedMarkets: feed.supportedMarkets || ["DE", "FR", "PL"],
+    supportedCategories: [],
+    capabilities: feed.capabilities || {},
+    fieldMapping: feed.fieldMapping || {},
+    rateLimit: feed.rateLimit,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function ensureRegistry() {
+  if (supplierById.size > 0) return;
+  for (const raw of buzzard_suppliers_default.suppliers) {
+    const config4 = mapMasterToConfig(raw);
+    supplierById.set(config4.supplierId, config4);
+  }
+  supplierById.set(TEST_SUPPLIER_ID, buildTestSupplierA());
+}
+function getSupplier(supplierId) {
+  ensureRegistry();
+  return supplierById.get(supplierId);
+}
+
+// lib/pricing-engine/shipping.ts
+function resolveShippingCost(options) {
+  const shippingCurrency = getDefaultShippingCurrency();
+  const region = getShippingRegion(options.marketId);
+  if (options.override != null) {
+    const converted2 = convertCurrency(options.override, shippingCurrency, options.targetCurrency) ?? options.override;
+    return {
+      shippingCost: roundMoney(converted2),
+      shippingCurrency: options.targetCurrency,
+      region,
+      source: "fixture"
+    };
+  }
+  const fixtureCost = getFixtureShippingCost(options.productId);
+  if (fixtureCost != null) {
+    const converted2 = convertCurrency(fixtureCost, shippingCurrency, options.targetCurrency) ?? fixtureCost;
+    return {
+      shippingCost: roundMoney(converted2),
+      shippingCurrency: options.targetCurrency,
+      region,
+      source: "fixture"
+    };
+  }
+  const supplier = getSupplier(options.supplierId);
+  const supplierRegion = supplier?.region;
+  let regionCost = getDefaultShippingCost();
+  if (supplierRegion) {
+    const supplierRegionCost = getShippingCostByRegion(supplierRegion);
+    if (supplierRegionCost != null) regionCost = supplierRegionCost;
+  } else {
+    const marketRegionCost = getShippingCostByRegion(region);
+    if (marketRegionCost != null) regionCost = marketRegionCost;
+  }
+  const converted = convertCurrency(regionCost, shippingCurrency, options.targetCurrency) ?? regionCost;
+  return {
+    shippingCost: roundMoney(converted),
+    shippingCurrency: options.targetCurrency,
+    region,
+    source: regionCost === getDefaultShippingCost() ? "default" : "region"
+  };
+}
+
+// lib/pricing-engine/fees.ts
+function applyFeeSchedule(baseAmount, schedule, currency) {
+  if (schedule.status === "DISABLED") return 0;
+  const percentFee = roundMoney(baseAmount * (schedule.feePercent ?? 0));
+  let total = roundMoney(percentFee + (schedule.fixedFee ?? 0));
+  if (schedule.minimumFee != null) total = Math.max(total, schedule.minimumFee);
+  if (schedule.maximumFee != null) total = Math.min(total, schedule.maximumFee);
+  void currency;
+  return total;
+}
+function resolveFees(options) {
+  const marketplaceSchedule = getMarketplaceFeeSchedule(options.channel);
+  const paymentSchedule = getPaymentFeeSchedule(options.paymentMethod ?? "default");
+  const marketplaceFixedFee = marketplaceSchedule.fixedFee ?? 0;
+  const marketplaceFee = applyFeeSchedule(options.feeBaseAmount, marketplaceSchedule, options.currency);
+  const paymentFee = applyFeeSchedule(options.feeBaseAmount, paymentSchedule, options.currency);
+  return {
+    marketplaceFee,
+    marketplaceFixedFee,
+    paymentFee,
+    totalFees: roundMoney(marketplaceFee + paymentFee)
+  };
+}
+
+// lib/pricing-engine/returns.ts
+function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
+  const config4 = getReturnReserveConfig(categoryId);
+  const supplierCreditFactor = 1 - config4.supplierReturnAcceptanceRate;
+  const expectedReturnLoss = roundMoney(
+    config4.returnRate * (config4.averageReturnShippingCost + supplierCostInMarketCurrency * supplierCreditFactor)
+  );
+  const expectedRefundLoss = roundMoney(
+    config4.refundRate * (config4.averageRefundLoss + supplierCostInMarketCurrency * supplierCreditFactor)
+  );
+  const damagedLoss = roundMoney(
+    (config4.damagedReturnRate ?? 0) * supplierCostInMarketCurrency * 0.5
+  );
+  const returnCostReserve = roundMoney(expectedReturnLoss + damagedLoss);
+  const refundCostReserve = roundMoney(expectedRefundLoss);
+  return {
+    returnCostReserve,
+    refundCostReserve,
+    totalReserve: roundMoney(returnCostReserve + refundCostReserve),
+    config: config4,
+    breakdown: {
+      expectedReturnLoss,
+      expectedRefundLoss,
+      supplierCreditFactor
+    }
+  };
+}
+
+// lib/pricing-engine/margin.ts
+function calculateContributionMargin(totalVariableCost, options) {
+  const rule = getMarginRule({
+    marketId: options?.marketId,
+    categoryId: options?.categoryId,
+    channel: options?.channel,
+    marketplaceId: options?.marketplaceId,
+    supplierId: options?.supplierId
+  });
+  const targetMarginPercent = options?.targetMarginPercent ?? rule.targetMarginPercent;
+  const minimumMarginPercent = options?.minimumMarginPercent ?? rule.minimumMarginPercent;
+  if (totalVariableCost <= 0) {
+    return {
+      totalVariableCost,
+      targetMarginPercent,
+      minimumMarginPercent,
+      customerNetPrice: 0,
+      buzzardContributionMargin: 0,
+      marginValid: false,
+      pricingStatus: "MISSING_COST"
+    };
+  }
+  if (targetMarginPercent >= 1 || targetMarginPercent < 0) {
+    return {
+      totalVariableCost,
+      targetMarginPercent,
+      minimumMarginPercent,
+      customerNetPrice: 0,
+      buzzardContributionMargin: 0,
+      marginValid: false,
+      pricingStatus: "INVALID_RULE"
+    };
+  }
+  const customerNetPrice = roundMoney(totalVariableCost / (1 - targetMarginPercent));
+  const buzzardContributionMargin = customerNetPrice > 0 ? roundMoney((customerNetPrice - totalVariableCost) / customerNetPrice) : 0;
+  let pricingStatus = "VALID";
+  let marginValid = true;
+  if (buzzardContributionMargin < minimumMarginPercent) {
+    pricingStatus = "BELOW_MINIMUM_MARGIN";
+    marginValid = false;
+  }
+  if (options?.maximumPrice != null && customerNetPrice > options.maximumPrice) {
+    pricingStatus = "PRICE_TOO_HIGH";
+    marginValid = false;
+  }
+  if (options?.minimumPrice != null && customerNetPrice < options.minimumPrice) {
+    pricingStatus = "REVIEW_REQUIRED";
+    marginValid = false;
+  }
+  return {
+    totalVariableCost,
+    targetMarginPercent,
+    minimumMarginPercent,
+    customerNetPrice,
+    buzzardContributionMargin,
+    marginValid,
+    pricingStatus
+  };
+}
+function recalculateMarginAfterRounding(customerNetPrice, totalVariableCost) {
+  if (customerNetPrice <= 0) return 0;
+  return roundMoney((customerNetPrice - totalVariableCost) / customerNetPrice);
+}
+
+// lib/pricing-engine/vat.ts
+function applyVatToNetPrice(netPrice, options) {
+  const sellerCountry = options.sellerCountry ?? getDefaultSellerCountry();
+  const taxContext = getVatContext({
+    sellerCountry,
+    buyerCountry: options.marketId,
+    customerType: options.customerType ?? "B2C",
+    vatId: options.vatId
+  });
+  if (taxContext.reverseCharge || taxContext.rate === 0) {
+    return {
+      taxContext,
+      customerNetPrice: roundMoney(netPrice),
+      customerVat: 0,
+      customerGrossPrice: roundMoney(netPrice)
+    };
+  }
+  const { gross, vat } = grossFromNet(netPrice, taxContext.rate);
+  return {
+    taxContext,
+    customerNetPrice: roundMoney(netPrice),
+    customerVat: vat,
+    customerGrossPrice: gross
+  };
+}
+
+// lib/pricing-engine/rules.ts
+function applyRoundingRule(grossPrice, options) {
+  const rule = getRoundingRule(options.marketId, options.channel);
+  const decimalDigits = getCurrencyDecimalDigits(options.currency);
+  const mode = rule.mode ?? "none";
+  if (mode === "none") return roundMoney(grossPrice, decimalDigits);
+  const whole = Math.floor(grossPrice);
+  const cents = grossPrice - whole;
+  switch (mode) {
+    case "psychological_99": {
+      if (cents <= 0.99) return roundMoney(whole + 0.99, decimalDigits);
+      return roundMoney(whole + 1 + 0.99, decimalDigits);
+    }
+    case "nearest_49": {
+      const base = cents <= 0.49 ? whole + 0.49 : whole + 0.99;
+      return roundMoney(base, decimalDigits);
+    }
+    case "nearest_19": {
+      const base = cents <= 0.19 ? whole + 0.19 : cents <= 0.49 ? whole + 0.49 : whole + 0.99;
+      return roundMoney(base, decimalDigits);
+    }
+    case "nearest": {
+      const step = rule.step ?? 0.01;
+      return roundMoney(Math.round(grossPrice / step) * step, decimalDigits);
+    }
+    default:
+      return roundMoney(grossPrice, decimalDigits);
+  }
+}
+function validatePriceBounds(customerNetPrice) {
+  const bounds = getPriceBounds();
+  if (customerNetPrice > bounds.maximumPrice) return "PRICE_TOO_HIGH";
+  if (customerNetPrice < bounds.minimumPrice) return "REVIEW_REQUIRED";
+  return "VALID";
+}
+function applyRoundingAndValidate(vatBreakdown, totalVariableCost, minimumMarginPercent, options) {
+  const roundedGross = applyRoundingRule(vatBreakdown.customerGrossPrice, options);
+  let customerNetPrice = vatBreakdown.customerNetPrice;
+  let customerVat = vatBreakdown.customerVat;
+  if (vatBreakdown.taxContext.rate > 0 && !vatBreakdown.taxContext.reverseCharge) {
+    const { net, vat } = netFromGross(roundedGross, vatBreakdown.taxContext.rate);
+    customerNetPrice = net;
+    customerVat = vat;
+  } else {
+    customerNetPrice = roundedGross;
+    customerVat = 0;
+  }
+  const buzzardContributionMargin = recalculateMarginAfterRounding(customerNetPrice, totalVariableCost);
+  let pricingStatus = "VALID";
+  if (buzzardContributionMargin < minimumMarginPercent) {
+    pricingStatus = "BELOW_MINIMUM_MARGIN";
+  }
+  const boundsStatus = validatePriceBounds(customerNetPrice);
+  if (boundsStatus !== "VALID") pricingStatus = boundsStatus;
+  return {
+    customerGrossPrice: roundedGross,
+    customerNetPrice,
+    customerVat,
+    buzzardContributionMargin,
+    pricingStatus
+  };
+}
+
+// lib/pricing-engine/observability.ts
+var auditLog = [];
+var MAX_AUDIT_ENTRIES = 500;
+function recordPricingAudit(input, result, durationMs) {
+  const entry = {
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: result.supplierOfferId,
+    marketId: input.marketId,
+    channel: input.channel,
+    durationMs,
+    pricingStatus: result.pricingStatus,
+    calculatedPrice: result.customerGrossPrice,
+    margin: result.buzzardContributionMargin,
+    timestamp: result.calculatedAt
+  };
+  auditLog.push(entry);
+  if (auditLog.length > MAX_AUDIT_ENTRIES) auditLog.shift();
+  return entry;
+}
+
+// lib/pricing-engine/price.ts
+function calculatePrice(input) {
+  const started = Date.now();
+  const calculatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  const market = getMarket(input.marketId);
+  if (!market) {
+    const result2 = buildFailedResult(input, "MISSING_MARKET", calculatedAt);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
+  }
+  const marketCurrency = input.currency ?? market.currency;
+  const bounds = getPriceBounds();
+  if (!input.supplierOffer) {
+    const result2 = buildFailedResult(input, "NO_SUPPLIER_OFFER", calculatedAt, marketCurrency);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
+  }
+  if (input.supplierOffer.stock <= 0) {
+    const result2 = buildFailedResult(input, "OUT_OF_STOCK", calculatedAt, marketCurrency);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
+  }
+  const supplierCost = resolveSupplierCost(input, marketCurrency);
+  if (!supplierCost.valid) {
+    const status = supplierCost.reason === "MISSING_CURRENCY" ? "MISSING_CURRENCY" : "MISSING_COST";
+    const result2 = buildFailedResult(input, status, calculatedAt, marketCurrency);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
+  }
+  const shipping = resolveShippingCost({
+    productId: input.productId,
+    marketId: input.marketId,
+    supplierId: input.supplierId,
+    targetCurrency: marketCurrency,
+    override: input._testOverrides?.shippingCost
+  });
+  const feeBase = roundMoney(supplierCost.convertedNetPrice + shipping.shippingCost);
+  const fees = resolveFees({
+    channel: input.channel,
+    marketId: input.marketId,
+    categoryId: input.categoryId,
+    paymentMethod: input.paymentMethod,
+    feeBaseAmount: feeBase,
+    currency: marketCurrency
+  });
+  const reserves = calculateReturnReserves(supplierCost.convertedNetPrice, input.categoryId);
+  const totalVariableCost = roundMoney(
+    feeBase + fees.totalFees + reserves.returnCostReserve + reserves.refundCostReserve
+  );
+  const marginCalc = calculateContributionMargin(totalVariableCost, {
+    marketId: input.marketId,
+    categoryId: input.categoryId,
+    channel: input.channel,
+    marketplaceId: input.channel,
+    supplierId: input.supplierId,
+    targetMarginPercent: input._testOverrides?.targetMarginPercent,
+    minimumMarginPercent: input._testOverrides?.minimumMarginPercent,
+    minimumPrice: bounds.minimumPrice,
+    maximumPrice: bounds.maximumPrice
+  });
+  const vatBreakdown = applyVatToNetPrice(marginCalc.customerNetPrice, {
+    marketId: input.marketId,
+    sellerCountry: input.sellerCountry,
+    customerType: input.customerType
+  });
+  const postRound = applyRoundingAndValidate(
+    vatBreakdown,
+    totalVariableCost,
+    marginCalc.minimumMarginPercent,
+    { marketId: input.marketId, channel: input.channel, currency: marketCurrency }
+  );
+  let pricingStatus = marginCalc.pricingStatus;
+  if (pricingStatus === "VALID" && postRound.pricingStatus !== "VALID") {
+    pricingStatus = postRound.pricingStatus;
+  } else if (postRound.pricingStatus !== "VALID") {
+    pricingStatus = postRound.pricingStatus;
+  }
+  const result = {
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId ?? input.supplierOffer.supplierSku,
+    marketId: input.marketId,
+    channel: input.channel,
+    currency: marketCurrency,
+    supplierNetPrice: supplierCost.supplierNetPrice,
+    supplierGrossPrice: supplierCost.supplierGrossPrice,
+    supplierCurrency: supplierCost.supplierCurrency,
+    shippingCost: shipping.shippingCost,
+    shippingCurrency: shipping.shippingCurrency,
+    paymentFee: fees.paymentFee,
+    marketplaceFee: fees.marketplaceFee,
+    marketplaceFixedFee: fees.marketplaceFixedFee,
+    returnCostReserve: reserves.returnCostReserve,
+    refundCostReserve: reserves.refundCostReserve,
+    otherVariableCosts: 0,
+    taxContext: vatBreakdown.taxContext,
+    targetMarginPercent: marginCalc.targetMarginPercent,
+    minimumMarginPercent: marginCalc.minimumMarginPercent,
+    maximumPrice: bounds.maximumPrice,
+    minimumPrice: bounds.minimumPrice,
+    customerNetPrice: postRound.customerNetPrice,
+    customerVat: postRound.customerVat,
+    customerGrossPrice: postRound.customerGrossPrice,
+    buzzardContributionMargin: postRound.buzzardContributionMargin,
+    pricingStatus,
+    calculatedAt,
+    totalVariableCost
+  };
+  recordPricingAudit(input, result, Date.now() - started);
+  return result;
+}
+function buildFailedResult(input, status, calculatedAt, currency = "EUR") {
+  return {
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId,
+    marketId: input.marketId,
+    channel: input.channel,
+    currency,
+    supplierNetPrice: 0,
+    supplierGrossPrice: 0,
+    supplierCurrency: input.supplierOffer?.currency ?? "",
+    shippingCost: 0,
+    shippingCurrency: currency,
+    paymentFee: 0,
+    marketplaceFee: 0,
+    marketplaceFixedFee: 0,
+    returnCostReserve: 0,
+    refundCostReserve: 0,
+    otherVariableCosts: 0,
+    taxContext: { rate: 0, included: false, reverseCharge: false, reason: "FAILED" },
+    targetMarginPercent: 0,
+    minimumMarginPercent: 0,
+    maximumPrice: 0,
+    minimumPrice: 0,
+    customerNetPrice: 0,
+    customerVat: 0,
+    customerGrossPrice: 0,
+    buzzardContributionMargin: 0,
+    pricingStatus: status,
+    calculatedAt,
+    totalVariableCost: 0
+  };
+}
+
 // lib/market-engine/supplier.ts
 var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 
 // lib/product-engine/normalization.ts
 var import_module2 = require("module");
 var require3 = (0, import_module2.createRequire)(__import_meta_url__);
+
+// lib/product-engine/service.ts
+function getProduct(productId) {
+  return getRegistryProduct(productId);
+}
+
+// lib/order-engine/validation.ts
+function validateCreateOrderInput(input) {
+  const errors = [];
+  if (!input.customerId?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "CUSTOMER_ID_MISSING" });
+  }
+  if (!input.customerEmail?.trim() || !input.customerEmail.includes("@")) {
+    errors.push({ code: "VALIDATION_FAILED", message: "CUSTOMER_EMAIL_INVALID" });
+  }
+  if (!input.marketId?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "MARKET_ID_MISSING" });
+  } else if (!getMarket(input.marketId)) {
+    errors.push({ code: "VALIDATION_FAILED", message: "UNKNOWN_MARKET" });
+  }
+  if (!input.channel?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "CHANNEL_MISSING" });
+  }
+  if (!input.idempotencyKey?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "IDEMPOTENCY_KEY_MISSING" });
+  }
+  if (!Array.isArray(input.items) || input.items.length === 0) {
+    errors.push({ code: "VALIDATION_FAILED", message: "ITEMS_MISSING" });
+  }
+  for (const item of input.items ?? []) {
+    if (!item.productId?.trim()) {
+      errors.push({ code: "VALIDATION_FAILED", message: "PRODUCT_ID_MISSING" });
+    } else if (!getProduct(item.productId)) {
+      errors.push({ code: "VALIDATION_FAILED", message: `UNKNOWN_PRODUCT:${item.productId}` });
+    }
+    if (!Number.isFinite(item.quantity) || item.quantity <= 0) {
+      errors.push({ code: "VALIDATION_FAILED", message: "INVALID_QUANTITY" });
+    }
+  }
+  if (!input.shippingAddress?.recipientName?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "SHIPPING_ADDRESS_MISSING" });
+  }
+  if (!input.shippingAddress?.country?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "SHIPPING_COUNTRY_MISSING" });
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+// lib/order-engine/pricing.ts
+function buildItemPriceSnapshot(options) {
+  const result = calculatePrice({
+    productId: options.productId,
+    supplierId: options.supplierId,
+    supplierOfferId: options.supplierOfferId,
+    marketId: options.marketId,
+    channel: options.channel,
+    currency: options.currency,
+    categoryId: options.categoryId,
+    supplierOffer: {
+      supplierPrice: options.supplierPrice,
+      currency: options.supplierCurrency,
+      stock: options.stock,
+      lastUpdated: (/* @__PURE__ */ new Date()).toISOString(),
+      supplierSku: options.supplierSku
+    }
+  });
+  if (result.pricingStatus !== "VALID") {
+    return { snapshot: null, pricingFailed: true };
+  }
+  const snapshot = {
+    snapshotId: `ordprice_${options.productId}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+    productId: options.productId,
+    supplierId: options.supplierId,
+    supplierOfferId: options.supplierOfferId,
+    marketId: options.marketId,
+    channel: options.channel,
+    currency: result.currency,
+    supplierCost: result.supplierNetPrice,
+    shippingCost: result.shippingCost,
+    marketplaceFee: result.marketplaceFee,
+    paymentFee: result.paymentFee,
+    returnCostReserve: result.returnCostReserve,
+    refundCostReserve: result.refundCostReserve,
+    targetMarginPercent: result.targetMarginPercent,
+    customerNetPrice: result.customerNetPrice,
+    customerVat: result.customerVat,
+    customerGrossPrice: result.customerGrossPrice,
+    actualMargin: result.buzzardContributionMargin,
+    taxContext: result.taxContext,
+    calculatedAt: result.calculatedAt,
+    capturedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  savePriceSnapshot(snapshot);
+  return { snapshot, pricingFailed: false };
+}
+function buildOrderItemFromSnapshot(snapshot, options) {
+  const qty = options.quantity;
+  const unitNet = snapshot.customerNetPrice;
+  const unitVat = snapshot.customerVat;
+  const unitGross = snapshot.customerGrossPrice;
+  return {
+    orderItemId: options.orderItemId,
+    productId: snapshot.productId,
+    supplierOfferId: snapshot.supplierOfferId,
+    supplierId: snapshot.supplierId,
+    sku: options.sku,
+    ean: options.ean,
+    mpn: options.mpn,
+    productName: options.productName,
+    quantity: qty,
+    unitNetPrice: unitNet,
+    unitVat,
+    unitGrossPrice: unitGross,
+    lineNet: roundMoney(unitNet * qty),
+    lineVat: roundMoney(unitVat * qty),
+    lineGross: roundMoney(unitGross * qty),
+    priceSnapshotId: snapshot.snapshotId,
+    inventoryReservationId: options.reservationId,
+    supplierCostSnapshot: snapshot.supplierCost,
+    shippingCostSnapshot: snapshot.shippingCost,
+    marketplaceFeeSnapshot: snapshot.marketplaceFee,
+    paymentFeeSnapshot: snapshot.paymentFee,
+    returnReserveSnapshot: roundMoney(snapshot.returnCostReserve + snapshot.refundCostReserve),
+    marginSnapshot: snapshot.actualMargin,
+    fulfillmentStatus: "NOT_STARTED"
+  };
+}
+function calculateOrderTotals(items, shippingAmount = 0) {
+  const subtotalNet = roundMoney(items.reduce((sum, i) => sum + i.lineNet, 0));
+  const vatAmount = roundMoney(items.reduce((sum, i) => sum + i.lineVat, 0));
+  const itemsGross = roundMoney(items.reduce((sum, i) => sum + i.lineGross, 0));
+  const totalGross = roundMoney(itemsGross + shippingAmount);
+  return { subtotalNet, vatAmount, shippingAmount, totalGross };
+}
+
+// data/global/inventory_engine_extensions.json
+var inventory_engine_extensions_default = {
+  defaultStaleAfterMs: 144e5,
+  defaultStalePolicy: "BLOCK_SALE",
+  lowStockThreshold: 5,
+  missingStockPolicy: "UNKNOWN",
+  defaultStockBuffer: {
+    type: "absolute",
+    value: 5
+  },
+  stockBuffers: {
+    bySupplier: {
+      TEST_SUPPLIER_A: { type: "absolute", value: 5 }
+    },
+    byCategory: {
+      "automotive-tires": { type: "percentage", value: 0.1 },
+      "automotive-oils": { type: "absolute", value: 3 },
+      "automotive-brakes": { type: "absolute", value: 2 }
+    },
+    byMarket: {},
+    byChannel: {}
+  },
+  stalePolicies: {
+    default: "BLOCK_SALE",
+    bySupplier: {
+      TEST_SUPPLIER_A: "BLOCK_SALE"
+    },
+    byChannel: {
+      direct: "BLOCK_SALE",
+      amazon: "BLOCK_SALE"
+    }
+  },
+  reservationDefaults: {
+    ttlMs: 9e5,
+    maxQuantityPerReservation: 99
+  },
+  supportedChannels: [
+    "direct",
+    "amazon",
+    "ebay",
+    "kaufland",
+    "allegro",
+    "bol",
+    "cdiscount",
+    "otto"
+  ],
+  fixtureProductMapping: {
+    "TSA-TIRE-225-45-17": "reifen-pilot-sport",
+    "TSA-OIL-5W30-5L": "motoroel-5w30",
+    "TSA-DISC-280": "bremsscheibe-280",
+    "TSA-PADS-FRONT": "bremsbelaege-vorder"
+  }
+};
+
+// lib/inventory-engine/registry.ts
+var config3 = inventory_engine_extensions_default;
+var stockRegistry = /* @__PURE__ */ new Map();
+function stockRecordKey(productId, supplierId, supplierOfferId) {
+  return `${productId}:${supplierId}:${supplierOfferId}`;
+}
+function getStockRecord(productId, supplierId, supplierOfferId) {
+  return stockRegistry.get(stockRecordKey(productId, supplierId, supplierOfferId));
+}
+function upsertStockRecord(record) {
+  stockRegistry.set(stockRecordKey(record.productId, record.supplierId, record.supplierOfferId), record);
+  return record;
+}
+function getDefaultStaleAfterMs() {
+  return config3.defaultStaleAfterMs;
+}
+function getDefaultStalePolicy() {
+  return config3.defaultStalePolicy;
+}
+function getStalePolicy(supplierId, channel) {
+  const bySupplier = config3.stalePolicies.bySupplier;
+  const byChannel = config3.stalePolicies.byChannel;
+  if (channel && byChannel[channel]) return byChannel[channel];
+  if (supplierId && bySupplier[supplierId]) return bySupplier[supplierId];
+  return config3.stalePolicies.default ?? getDefaultStalePolicy();
+}
+function getLowStockThreshold() {
+  return config3.lowStockThreshold;
+}
+function getStockBufferConfig(options) {
+  const defaults = config3.defaultStockBuffer;
+  const bySupplier = config3.stockBuffers.bySupplier;
+  const byCategory = config3.stockBuffers.byCategory;
+  const byMarket = config3.stockBuffers.byMarket;
+  const byChannel = config3.stockBuffers.byChannel;
+  return (options?.channel ? byChannel[options.channel] : void 0) ?? (options?.marketId ? byMarket[options.marketId] : void 0) ?? (options?.categoryId ? byCategory[options.categoryId] : void 0) ?? (options?.supplierId ? bySupplier[options.supplierId] : void 0) ?? defaults;
+}
+function getReservationTtlMs() {
+  return config3.reservationDefaults.ttlMs;
+}
+function getMaxReservationQuantity() {
+  return config3.reservationDefaults.maxQuantityPerReservation;
+}
+
+// lib/inventory-engine/buffer.ts
+function applyStockBuffer(availableQuantity, buffer) {
+  const qty = Math.max(0, availableQuantity);
+  if (buffer.type === "percentage") {
+    const bufferAmount = Math.floor(qty * buffer.value);
+    return Math.max(0, qty - bufferAmount);
+  }
+  return Math.max(0, qty - Math.floor(buffer.value));
+}
+
+// lib/inventory-engine/stock.ts
+function deriveStockStatus2(quantity, options) {
+  if (options.manuallyDiscontinued) return "DISCONTINUED";
+  if (options.isStale) return "STALE";
+  if (options.isPreorder) return "PREORDER";
+  if (quantity <= 0) return "OUT_OF_STOCK";
+  if (quantity <= getLowStockThreshold()) return "LOW_STOCK";
+  return "IN_STOCK";
+}
+function isStockStale(lastSuccessfulSyncAt, staleAfterMs) {
+  const threshold = staleAfterMs ?? getDefaultStaleAfterMs();
+  const lastSync = new Date(lastSuccessfulSyncAt).getTime();
+  if (Number.isNaN(lastSync)) return true;
+  return Date.now() - lastSync > threshold;
+}
+function calculateSaleableQuantity(options) {
+  if (options.manuallyDiscontinued || options.stockStatus === "DISCONTINUED") return 0;
+  if (options.stockStatus === "OUT_OF_STOCK") return 0;
+  if (options.isStale) {
+    const policy = options.stalePolicy ?? getDefaultStalePolicy();
+    if (policy === "BLOCK_SALE") return 0;
+    if (policy === "ALLOW_WITH_WARNING") {
+      const afterBuffer2 = applyStockBuffer(options.availableQuantity, options.stockBuffer);
+      return Math.max(0, afterBuffer2 - options.reservedQuantity);
+    }
+  }
+  const afterBuffer = applyStockBuffer(options.availableQuantity, options.stockBuffer);
+  return Math.max(0, afterBuffer - options.reservedQuantity);
+}
+function recomputeStockRecord(record, options) {
+  const now = options?.now ?? (/* @__PURE__ */ new Date()).toISOString();
+  const isStale = isStockStale(record.lastSuccessfulSyncAt, record.staleAfterMs);
+  const stalePolicy = getStalePolicy(record.supplierId);
+  let availableQuantity = record.quantity;
+  if (record.manuallyDiscontinued) {
+    availableQuantity = 0;
+  } else if (isStale && stalePolicy === "BLOCK_SALE") {
+    availableQuantity = 0;
+  } else if (record.stockStatus === "UNKNOWN" || !record.lastSuccessfulSyncAt) {
+    availableQuantity = 0;
+  }
+  const stockBuffer = record.stockBuffer ?? getStockBufferConfig({ supplierId: record.supplierId, categoryId: options?.categoryId });
+  const stockStatus = deriveStockStatus2(record.quantity, {
+    manuallyDiscontinued: record.manuallyDiscontinued,
+    isStale,
+    manuallyPaused: record.manuallyPaused
+  });
+  const saleableQuantity = calculateSaleableQuantity({
+    availableQuantity,
+    stockBuffer,
+    reservedQuantity: record.reservedQuantity,
+    isStale,
+    stalePolicy,
+    manuallyDiscontinued: record.manuallyDiscontinued,
+    stockStatus
+  });
+  return {
+    ...record,
+    availableQuantity,
+    stockBuffer,
+    stockStatus,
+    isStale,
+    stalePolicy,
+    saleableQuantity,
+    updatedAt: now
+  };
+}
+
+// lib/inventory-engine/events.ts
+var eventLog = [];
+var MAX_EVENTS = 1e3;
+function emitStockEvent(event) {
+  const full = {
+    ...event,
+    eventId: `evt_${event.productId}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  eventLog.push(full);
+  if (eventLog.length > MAX_EVENTS) eventLog.shift();
+  return full;
+}
+
+// lib/inventory-engine/reservation.ts
+var reservations = /* @__PURE__ */ new Map();
+function getActiveReservations(productId, supplierId, supplierOfferId) {
+  expireReservations();
+  return [...reservations.values()].filter(
+    (r) => r.status === "ACTIVE" && r.productId === productId && r.supplierId === supplierId && r.supplierOfferId === supplierOfferId
+  );
+}
+function getTotalReservedQuantity(productId, supplierId, supplierOfferId) {
+  return getActiveReservations(productId, supplierId, supplierOfferId).reduce(
+    (sum, r) => sum + r.quantity,
+    0
+  );
+}
+function expireReservations() {
+  const now = Date.now();
+  for (const [id, reservation] of reservations) {
+    if (reservation.status === "ACTIVE" && new Date(reservation.expiresAt).getTime() <= now) {
+      reservations.set(id, { ...reservation, status: "EXPIRED" });
+      refreshRecordReservations(reservation.productId, reservation.supplierId, reservation.supplierOfferId);
+    }
+  }
+}
+function refreshRecordReservations(productId, supplierId, supplierOfferId) {
+  const record = getStockRecord(productId, supplierId, supplierOfferId);
+  if (!record) return;
+  const reservedQuantity = getTotalReservedQuantity(productId, supplierId, supplierOfferId);
+  const updated = recomputeStockRecord({ ...record, reservedQuantity });
+  upsertStockRecord(updated);
+}
+function createStockReservation(input) {
+  expireReservations();
+  if (input.quantity <= 0) return { ok: false, reason: "INVALID_QUANTITY" };
+  if (input.quantity > getMaxReservationQuantity()) return { ok: false, reason: "QUANTITY_TOO_HIGH" };
+  const record = getStockRecord(input.productId, input.supplierId, input.supplierOfferId);
+  if (!record) return { ok: false, reason: "STOCK_RECORD_NOT_FOUND" };
+  const currentReserved = getTotalReservedQuantity(
+    input.productId,
+    input.supplierId,
+    input.supplierOfferId
+  );
+  const saleable = calculateSaleableQuantity({
+    availableQuantity: record.availableQuantity,
+    stockBuffer: record.stockBuffer,
+    reservedQuantity: currentReserved,
+    isStale: record.isStale,
+    stalePolicy: record.stalePolicy,
+    manuallyDiscontinued: record.manuallyDiscontinued,
+    stockStatus: record.stockStatus
+  });
+  if (input.quantity > saleable) {
+    return { ok: false, reason: "INSUFFICIENT_SALEABLE_STOCK" };
+  }
+  const now = /* @__PURE__ */ new Date();
+  const reservation = {
+    reservationId: `res_${input.productId}_${now.getTime()}`,
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId,
+    quantity: input.quantity,
+    orderId: input.orderId,
+    status: "ACTIVE",
+    isSupplierConfirmed: false,
+    createdAt: now.toISOString(),
+    expiresAt: new Date(now.getTime() + getReservationTtlMs()).toISOString()
+  };
+  reservations.set(reservation.reservationId, reservation);
+  refreshRecordReservations(input.productId, input.supplierId, input.supplierOfferId);
+  emitStockEvent({
+    type: "STOCK_CHANGED",
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId,
+    source: "reservation",
+    metadata: { action: "RESERVE", quantity: input.quantity, orderId: input.orderId }
+  });
+  return { ok: true, reservation };
+}
+function releaseReservation(reservationId) {
+  const reservation = reservations.get(reservationId);
+  if (!reservation) return { ok: false, reason: "RESERVATION_NOT_FOUND" };
+  if (reservation.status !== "ACTIVE") return { ok: false, reason: "RESERVATION_NOT_ACTIVE" };
+  reservations.set(reservationId, { ...reservation, status: "RELEASED" });
+  refreshRecordReservations(reservation.productId, reservation.supplierId, reservation.supplierOfferId);
+  return { ok: true, reservation: { ...reservation, status: "RELEASED" } };
+}
+
+// lib/inventory-engine/sync.ts
+function getSupplierSelectionStockInfo(productId, supplierId, supplierOfferId) {
+  const record = getStockRecord(productId, supplierId, supplierOfferId);
+  if (!record) return null;
+  return {
+    productId,
+    supplierId,
+    supplierOfferId,
+    availableQuantity: record.availableQuantity,
+    saleableQuantity: record.saleableQuantity,
+    stockStatus: record.stockStatus,
+    isStale: record.isStale,
+    lastSuccessfulSyncAt: record.lastSuccessfulSyncAt,
+    reservedQuantity: getTotalReservedQuantity(productId, supplierId, supplierOfferId),
+    marketAvailability: record.marketAvailability
+  };
+}
+
+// lib/order-engine/reservation.ts
+async function reserveInventoryForOrder(attempts) {
+  const reservationIds = [];
+  for (const attempt of attempts) {
+    const result = createStockReservation({
+      productId: attempt.productId,
+      supplierId: attempt.supplierId,
+      supplierOfferId: attempt.supplierOfferId,
+      quantity: attempt.quantity,
+      orderId: attempt.orderId
+    });
+    if (!result.ok || !result.reservation) {
+      rollbackReservations(reservationIds);
+      const reason = result.reason ?? "RESERVATION_FAILED";
+      return {
+        ok: false,
+        reservationIds: [],
+        errorCode: reason === "INSUFFICIENT_SALEABLE_STOCK" ? "OUT_OF_STOCK" : "RESERVATION_FAILED",
+        errorMessage: reason
+      };
+    }
+    reservationIds.push(result.reservation.reservationId);
+  }
+  return { ok: true, reservationIds };
+}
+function rollbackReservations(reservationIds) {
+  for (const id of reservationIds) {
+    releaseReservation(id);
+  }
+}
+
+// lib/order-engine/supplier.ts
+function selectSupplierForOrderItem(productId, marketId, forceUnavailable = false) {
+  if (forceUnavailable) {
+    return { ok: false, reason: "SUPPLIER_UNAVAILABLE" };
+  }
+  const product = getProduct(productId);
+  if (!product) return { ok: false, reason: "PRODUCT_NOT_FOUND" };
+  const selection = selectBestSupplier(product, { countryCode: marketId });
+  if (!selection) {
+    const allZeroStock = product.supplierOffers.every((o) => o.stock <= 0);
+    return { ok: false, reason: allZeroStock ? "OUT_OF_STOCK" : "SUPPLIER_UNAVAILABLE" };
+  }
+  const offer = selection.offer;
+  const stockInfo = getSupplierSelectionStockInfo(
+    productId,
+    offer.supplierId,
+    offer.supplierSku
+  );
+  if (stockInfo && stockInfo.saleableQuantity <= 0) {
+    return { ok: false, reason: "OUT_OF_STOCK" };
+  }
+  const de = getTranslationForLocale(product.translations, "de");
+  const assignment = {
+    supplierId: offer.supplierId,
+    supplierOfferId: offer.supplierSku,
+    supplierSku: offer.supplierSku,
+    supplierCost: offer.supplierPrice,
+    supplierCurrency: offer.currency,
+    selectionScore: selection.score,
+    selectionReasons: selection.reasons,
+    shippingRoute: offer.shippingRegions?.[0],
+    expectedDeliveryDays: offer.leadTimeDays,
+    selectedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  return {
+    ok: true,
+    assignment,
+    offer: {
+      supplierId: offer.supplierId,
+      supplierOfferId: offer.supplierSku,
+      supplierSku: offer.supplierSku,
+      supplierPrice: offer.supplierPrice,
+      currency: offer.currency,
+      stock: offer.stock
+    },
+    productName: de?.name ?? product.productId,
+    sku: product.sku,
+    ean: product.ean ?? product.gtin,
+    mpn: product.mpn,
+    categoryId: product.categoryId
+  };
+}
+
+// lib/order-engine/payment.ts
+function createPendingPayment(input) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    paymentId: `pay_${input.orderId}_${Date.now()}`,
+    orderId: input.orderId,
+    provider: input.provider ?? getDefaultPaymentProvider(),
+    method: input.method ?? getDefaultPaymentMethod(),
+    amount: input.amount,
+    currency: input.currency,
+    status: "PENDING",
+    dryRun: true,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function authorizePayment(payment, shouldFail = false) {
+  if (shouldFail) {
+    return {
+      ok: false,
+      payment: { ...payment, status: "FAILED", updatedAt: (/* @__PURE__ */ new Date()).toISOString() },
+      errorMessage: "PAYMENT_FAILED"
+    };
+  }
+  const authorized = {
+    ...payment,
+    status: "AUTHORIZED",
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  return { ok: true, payment: authorized };
+}
+function capturePayment(payment) {
+  return {
+    ...payment,
+    status: "CAPTURED",
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+
+// lib/order-engine/fulfillment.ts
+function prepareSupplierOrders(order) {
+  const bySupplier = /* @__PURE__ */ new Map();
+  for (const item of order.items) {
+    const list = bySupplier.get(item.supplierId) ?? [];
+    list.push(item);
+    bySupplier.set(item.supplierId, list);
+  }
+  const supplierOrders = [];
+  for (const [supplierId, items] of bySupplier) {
+    supplierOrders.push({
+      supplierOrderId: `DRY-SUP-${supplierId}-${order.orderId}`,
+      orderId: order.orderId,
+      supplierId,
+      status: "PREPARED",
+      dryRun: true,
+      items: items.map((i) => ({
+        productId: i.productId,
+        supplierSku: i.sku,
+        quantity: i.quantity,
+        supplierCost: i.supplierCostSnapshot
+      })),
+      shippingAddress: sanitizeAddressForSupplier(order.shippingAddress),
+      preparedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      message: "Dry-run supplier order \u2014 not dispatched to real supplier"
+    });
+  }
+  return { ok: true, supplierOrders };
+}
+function sanitizeAddressForSupplier(address) {
+  return { ...address };
+}
+
+// lib/order-engine/status.ts
+var VALID_ORDER_TRANSITIONS = {
+  DRAFT: ["PENDING_PAYMENT", "CANCELLED", "FAILED"],
+  PENDING_PAYMENT: ["PAID", "FAILED", "CANCELLED"],
+  PAID: ["CONFIRMED", "FAILED", "CANCELLED"],
+  CONFIRMED: ["PROCESSING", "CANCELLED", "FAILED"],
+  PROCESSING: ["SUPPLIER_PENDING", "FAILED", "CANCELLED"],
+  SUPPLIER_PENDING: ["SUPPLIER_CONFIRMED", "FAILED", "CANCELLED"],
+  SUPPLIER_CONFIRMED: ["SHIPPED", "FAILED", "CANCELLED"],
+  SHIPPED: ["DELIVERED", "RETURN_REQUESTED"],
+  DELIVERED: ["RETURN_REQUESTED"],
+  CANCELLED: [],
+  RETURN_REQUESTED: ["RETURNED", "REFUNDED", "PARTIALLY_REFUNDED"],
+  RETURNED: ["REFUNDED", "PARTIALLY_REFUNDED"],
+  REFUNDED: [],
+  PARTIALLY_REFUNDED: ["REFUNDED"],
+  FAILED: []
+};
+function canTransitionOrderStatus(from, to) {
+  return VALID_ORDER_TRANSITIONS[from]?.includes(to) ?? false;
+}
+function assertOrderTransition(from, to) {
+  if (!canTransitionOrderStatus(from, to)) {
+    throw new Error(`INVALID_ORDER_TRANSITION:${from}->${to}`);
+  }
+}
+
+// lib/order-engine/returns.ts
+function createReturnRefundFoundation() {
+  return {
+    returnStatus: "NONE",
+    refundStatus: "NONE",
+    refundAmount: 0,
+    supplierRefundAmount: 0,
+    supplierCreditAmount: 0,
+    returnShippingCost: 0,
+    buzzardRefundLoss: 0
+  };
+}
+
+// lib/order-engine/events.ts
+var eventLog2 = [];
+var MAX_EVENTS2 = 2e3;
+function emitOrderEvent(event) {
+  const full = {
+    ...event,
+    eventId: `oevt_${event.orderId}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  eventLog2.push(full);
+  if (eventLog2.length > MAX_EVENTS2) eventLog2.shift();
+  return full;
+}
+
+// lib/order-engine/audit.ts
+var auditLog2 = [];
+var MAX_AUDIT = 2e3;
+var SECRET_PATTERN = /api[_-]?key|secret|password|token|authorization|bearer|credential|card/i;
+function recordOrderAudit(entry) {
+  const sanitized = sanitizeAuditMetadata(entry.metadata);
+  const full = {
+    ...entry,
+    metadata: sanitized,
+    auditId: `oaud_${entry.orderId}_${Date.now()}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  auditLog2.push(full);
+  if (auditLog2.length > MAX_AUDIT) auditLog2.shift();
+  return full;
+}
+function sanitizeAuditMetadata(metadata) {
+  if (!metadata) return metadata;
+  const result = {};
+  for (const [key, value] of Object.entries(metadata)) {
+    if (SECRET_PATTERN.test(key)) {
+      result[key] = "[REDACTED]";
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+function recordStatusTransition(orderId, actor, fromStatus, toStatus, metadata) {
+  return recordOrderAudit({
+    orderId,
+    actor,
+    action: "STATUS_TRANSITION",
+    fromStatus,
+    toStatus,
+    metadata
+  });
+}
+
+// lib/order-engine/createOrder.ts
+async function createOrder(input) {
+  const validation = validateCreateOrderInput(input);
+  if (!validation.valid) {
+    return {
+      ok: false,
+      errorCode: "VALIDATION_FAILED",
+      errorMessage: validation.errors.map((e) => e.message).join(", ")
+    };
+  }
+  const existing = getIdempotentOrder(input.idempotencyKey);
+  if (existing) {
+    return { ok: true, order: existing, idempotentReplay: true };
+  }
+  const market = getMarket(input.marketId);
+  const currency = input.currency ?? market.currency;
+  const orderId = generateOrderId();
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const reservationAttempts = [];
+  const orderItems = [];
+  const supplierAssignments = [];
+  const itemSnapshots = [];
+  for (const cartItem of input.items) {
+    const selection = selectSupplierForOrderItem(
+      cartItem.productId,
+      input.marketId,
+      input._testForceSupplierUnavailable
+    );
+    if (!selection.ok || !selection.assignment || !selection.offer) {
+      return {
+        ok: false,
+        errorCode: selection.reason === "OUT_OF_STOCK" ? "OUT_OF_STOCK" : "SUPPLIER_UNAVAILABLE",
+        errorMessage: selection.reason
+      };
+    }
+    const { snapshot, pricingFailed } = buildItemPriceSnapshot({
+      productId: cartItem.productId,
+      supplierId: selection.offer.supplierId,
+      supplierOfferId: selection.offer.supplierOfferId,
+      supplierSku: selection.offer.supplierSku,
+      marketId: input.marketId,
+      channel: input.channel,
+      currency,
+      supplierPrice: selection.offer.supplierPrice,
+      supplierCurrency: selection.offer.currency,
+      stock: selection.offer.stock,
+      categoryId: selection.categoryId
+    });
+    if (pricingFailed) {
+      return { ok: false, errorCode: "PRICING_FAILED", errorMessage: "PRICING_FAILED" };
+    }
+    itemSnapshots.push(snapshot.snapshotId);
+    supplierAssignments.push(selection.assignment);
+    reservationAttempts.push({
+      productId: cartItem.productId,
+      supplierId: selection.offer.supplierId,
+      supplierOfferId: selection.offer.supplierOfferId,
+      quantity: cartItem.quantity,
+      orderId
+    });
+    orderItems.push(
+      buildOrderItemFromSnapshot(snapshot, {
+        orderItemId: `oi_${orderId}_${cartItem.productId}`,
+        productName: selection.productName ?? cartItem.productId,
+        sku: selection.sku ?? selection.offer.supplierSku,
+        ean: selection.ean,
+        mpn: selection.mpn,
+        quantity: cartItem.quantity
+      })
+    );
+  }
+  const reservationResult = await reserveInventoryForOrder(reservationAttempts);
+  if (!reservationResult.ok) {
+    return {
+      ok: false,
+      errorCode: reservationResult.errorCode,
+      errorMessage: reservationResult.errorMessage
+    };
+  }
+  for (let i = 0; i < orderItems.length; i++) {
+    orderItems[i] = {
+      ...orderItems[i],
+      inventoryReservationId: reservationResult.reservationIds[i],
+      fulfillmentStatus: "RESERVED"
+    };
+  }
+  const totals = calculateOrderTotals(orderItems, 0);
+  const marketChannelSnapshot = {
+    marketId: input.marketId,
+    country: input.marketId,
+    currency,
+    channel: input.channel,
+    capturedAt: now
+  };
+  let order = {
+    orderId,
+    orderNumber: generateOrderNumber(),
+    customerId: input.customerId,
+    customerEmail: input.customerEmail,
+    marketId: input.marketId,
+    channel: input.channel,
+    currency,
+    status: "PENDING_PAYMENT",
+    paymentStatus: "PENDING",
+    fulfillmentStatus: "RESERVED",
+    items: orderItems,
+    subtotalNet: totals.subtotalNet,
+    vatAmount: totals.vatAmount,
+    shippingAmount: totals.shippingAmount,
+    totalGross: totals.totalGross,
+    priceSnapshotId: itemSnapshots[0] ?? "",
+    reservationIds: reservationResult.reservationIds,
+    supplierAssignments,
+    supplierOrders: [],
+    shippingAddress: input.shippingAddress,
+    billingAddress: input.billingAddress ?? input.shippingAddress,
+    marketChannelSnapshot,
+    returnRefund: createReturnRefundFoundation(),
+    idempotencyKey: input.idempotencyKey,
+    createdAt: now,
+    updatedAt: now
+  };
+  emitOrderEvent({ orderId, type: "ORDER_CREATED", source: "order-engine" });
+  emitOrderEvent({
+    orderId,
+    type: "RESERVATION_CREATED",
+    source: "inventory-engine",
+    metadata: { reservationIds: reservationResult.reservationIds }
+  });
+  for (const assignment of supplierAssignments) {
+    emitOrderEvent({
+      orderId,
+      type: "SUPPLIER_SELECTED",
+      source: "supplier-engine",
+      metadata: { supplierId: assignment.supplierId, score: assignment.selectionScore }
+    });
+  }
+  recordOrderAudit({ orderId, actor: "order-engine", action: "ORDER_CREATED" });
+  const pendingPayment = createPendingPayment({
+    orderId,
+    amount: order.totalGross,
+    currency,
+    method: input.paymentMethod
+  });
+  order.payment = pendingPayment;
+  emitOrderEvent({ orderId, type: "PAYMENT_PENDING", source: "payment-mock" });
+  const authResult = authorizePayment(pendingPayment, input._testPaymentShouldFail);
+  if (!authResult.ok || !authResult.payment) {
+    rollbackReservations(reservationResult.reservationIds);
+    order = {
+      ...order,
+      status: "FAILED",
+      paymentStatus: "FAILED",
+      fulfillmentStatus: "FAILED",
+      payment: authResult.payment,
+      reservationIds: [],
+      errorCode: "PAYMENT_FAILED",
+      errorMessage: authResult.errorMessage,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    emitOrderEvent({ orderId, type: "PAYMENT_FAILED", source: "payment-mock" });
+    emitOrderEvent({
+      orderId,
+      type: "RESERVATION_RELEASED",
+      source: "order-engine",
+      metadata: { reason: "PAYMENT_FAILED" }
+    });
+    recordStatusTransition(orderId, "order-engine", "PENDING_PAYMENT", "FAILED");
+    saveOrder(order);
+    return { ok: false, order, errorCode: "PAYMENT_FAILED", errorMessage: authResult.errorMessage };
+  }
+  order.payment = authResult.payment;
+  order.paymentStatus = "AUTHORIZED";
+  emitOrderEvent({ orderId, type: "PAYMENT_AUTHORIZED", source: "payment-mock" });
+  order.payment = capturePayment(authResult.payment);
+  order.paymentStatus = "CAPTURED";
+  assertOrderTransition(order.status, "PAID");
+  order.status = "PAID";
+  emitOrderEvent({ orderId, type: "PAYMENT_CAPTURED", source: "payment-mock" });
+  assertOrderTransition(order.status, "CONFIRMED");
+  order.status = "CONFIRMED";
+  emitOrderEvent({ orderId, type: "ORDER_CONFIRMED", source: "order-engine" });
+  recordStatusTransition(orderId, "order-engine", "PAID", "CONFIRMED");
+  assertOrderTransition(order.status, "PROCESSING");
+  order.status = "PROCESSING";
+  const fulfillment = prepareSupplierOrders(order);
+  if (!fulfillment.ok) {
+    rollbackReservations(reservationResult.reservationIds);
+    order = {
+      ...order,
+      status: "FAILED",
+      fulfillmentStatus: "FAILED",
+      errorCode: "FULFILLMENT_PREPARATION_FAILED",
+      errorMessage: fulfillment.errorMessage,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    saveOrder(order);
+    return { ok: false, order, errorCode: "FULFILLMENT_PREPARATION_FAILED" };
+  }
+  order.supplierOrders = fulfillment.supplierOrders;
+  for (const so of fulfillment.supplierOrders) {
+    emitOrderEvent({
+      orderId,
+      type: "SUPPLIER_ORDER_PREPARED",
+      source: "order-engine",
+      metadata: { supplierOrderId: so.supplierOrderId, dryRun: true }
+    });
+  }
+  assertOrderTransition(order.status, "SUPPLIER_PENDING");
+  order.status = "SUPPLIER_PENDING";
+  order.fulfillmentStatus = "SUPPLIER_PREPARED";
+  order.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  saveOrder(order);
+  return { ok: true, order };
+}
 
 // lib/analytics/constants.ts
 var SESSION_TIMEOUT_MS = 30 * 60 * 1e3;
@@ -25872,9 +27887,6 @@ function generateEventId() {
 function storeEvent(event) {
   events.push(event);
 }
-function listEvents() {
-  return [...events];
-}
 function getEvent(eventId) {
   return events.find((e) => e.eventId === eventId);
 }
@@ -25884,17 +27896,11 @@ function getSession(sessionId) {
 function upsertSession(session) {
   sessions.set(session.sessionId, session);
 }
-function listSessions() {
-  return [...sessions.values()];
-}
 function getVisitor(anonymousVisitorId) {
   return visitors.get(anonymousVisitorId);
 }
 function upsertVisitor(visitor) {
   visitors.set(visitor.anonymousVisitorId, visitor);
-}
-function listVisitors() {
-  return [...visitors.values()];
 }
 function getConsent(anonymousVisitorId) {
   return consentByVisitor.get(anonymousVisitorId);
@@ -25951,9 +27957,9 @@ function validateEventSchema(input) {
 function resolveConsentRequired(market) {
   const code = market.toUpperCase();
   if (isEuCountry(code)) return true;
-  const config = getMarket(code);
-  if (!config) return true;
-  return config.status === "ACTIVE";
+  const config4 = getMarket(code);
+  if (!config4) return true;
+  return config4.status === "ACTIVE";
 }
 function buildDefaultConsentState(market) {
   const consentRequired = resolveConsentRequired(market);
@@ -25990,20 +27996,6 @@ function isTrackingAllowed(eventType, consent) {
   return consent.analytics === "GRANTED" || consent.consentStatus === "GRANTED";
 }
 
-// lib/analytics/audit.ts
-var auditLog = [];
-var auditCounter = 0;
-function recordAnalyticsAudit(entry) {
-  auditCounter += 1;
-  const record = {
-    auditId: `aud_${Date.now()}_${auditCounter}`,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    ...entry
-  };
-  auditLog.push(record);
-  return record;
-}
-
 // lib/analytics/privacy.ts
 var PII_PATTERNS = [
   /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/,
@@ -26038,10 +28030,6 @@ function stripPiiFromEventInput(input) {
 }
 
 // lib/analytics/security.ts
-function validateAdminAccess(context) {
-  if (!context.adminAuthorized) return { ok: false, errorCode: "ADMIN_UNAUTHORIZED" };
-  return { ok: true };
-}
 function validateCrossCustomerAccess(requestedCustomerId, contextCustomerId) {
   if (!requestedCustomerId) return { ok: true };
   if (!contextCustomerId) return { ok: false, errorCode: "UNAUTHORIZED_CUSTOMER_ACCESS" };
@@ -26269,14 +28257,6 @@ function updateSessionFromEvent(session, event) {
   upsertSession(updated);
   return updated;
 }
-function countActiveSessions(nowIso) {
-  const nowMs = Date.parse(nowIso);
-  let count = 0;
-  for (const session of listSessions()) {
-    if (!session.endedAt && !isSessionExpired(session, nowMs)) count += 1;
-  }
-  return count;
-}
 
 // lib/returns-engine/registry.ts
 var customerRefunds = /* @__PURE__ */ new Map();
@@ -26317,33 +28297,6 @@ function resolveAuthoritativeRefundAmount(returnId) {
   const refund = getCustomerRefundForReturn(returnId);
   if (!refund) return { ok: false, errorCode: "REFUND_NOT_FOUND" };
   return { ok: true, refundCents: toCents(refund.refundedAmount) };
-}
-function computeRevenueMetrics(events2 = listEvents()) {
-  let grossRevenueCents = 0;
-  let refundAmountCents = 0;
-  let orderCount = 0;
-  const seenOrders = /* @__PURE__ */ new Set();
-  for (const event of events2) {
-    if (event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE") {
-      const key = event.orderIdReference ?? event.eventId;
-      if (seenOrders.has(key)) continue;
-      seenOrders.add(key);
-      grossRevenueCents += toCents(event.value ?? 0);
-      orderCount += 1;
-    }
-    if (event.eventType === "REFUND" && event.revenueAuthority === "AUTHORITATIVE") {
-      refundAmountCents += toCents(event.value ?? 0);
-    }
-  }
-  const netRevenueCents = grossRevenueCents - refundAmountCents;
-  return {
-    grossRevenueCents,
-    refundAmountCents,
-    netRevenueCents,
-    orderCount,
-    averageOrderValueCents: orderCount ? Math.round(grossRevenueCents / orderCount) : 0,
-    authoritativeOnly: true
-  };
 }
 function validateClientRevenueClaim(input) {
   if (input.eventType !== "PURCHASE" && input.eventType !== "REFUND") return "PROVISIONAL";
@@ -26488,10 +28441,6 @@ function ingestAuthoritativeOrderPurchase(orderId, correlationId) {
   });
 }
 
-// lib/analytics/storefront/constants.ts
-var MAX_PAYLOAD_BYTES = 16384;
-var MAX_METADATA_KEYS = 32;
-
 // lib/commerce/orderEngineRegistry.ts
 var mappingsByCommerceId = /* @__PURE__ */ new Map();
 var mappingsByEngineId = /* @__PURE__ */ new Map();
@@ -26500,6 +28449,17 @@ function getCommerceOrderMapping(commerceOrderId) {
 }
 function getCommerceMappingByEngineOrderId(orderEngineOrderId) {
   return mappingsByEngineId.get(orderEngineOrderId);
+}
+function saveCommerceOrderMapping(mapping) {
+  mappingsByCommerceId.set(mapping.commerceOrderId, mapping);
+  mappingsByEngineId.set(mapping.orderEngineOrderId, mapping);
+}
+function clearCommerceOrderMappings() {
+  mappingsByCommerceId.clear();
+  mappingsByEngineId.clear();
+}
+function listCommerceOrderMappings() {
+  return [...mappingsByCommerceId.values()];
 }
 
 // lib/commerce/purchaseValidation.ts
@@ -26543,6 +28503,18 @@ function validateOrderIdForAuthoritativePurchase(orderId) {
 }
 
 // lib/commerce/orderEngineBridge.ts
+function mapCommerceAddressToSnapshot(address) {
+  const line1 = String(address.line1 ?? address.street ?? "");
+  const recipientName = [address.firstName, address.lastName].filter(Boolean).join(" ").trim();
+  return {
+    recipientName: recipientName || "Commerce Customer",
+    street: line1,
+    houseNumber: address.houseNumber ? String(address.houseNumber) : void 0,
+    postalCode: String(address.postalCode ?? ""),
+    city: String(address.city ?? ""),
+    country: String(address.country ?? "DE").toUpperCase()
+  };
+}
 function resolveOrderEngineOrderId(orderIdOrCommerceId) {
   const direct = getOrder(orderIdOrCommerceId);
   if (direct) return direct.orderId;
@@ -26564,6 +28536,63 @@ function validatePurchaseSignalAccess(orderIdOrCommerceId, customerIdContext) {
   }
   return { ok: true, orderEngineOrderId };
 }
+async function syncCommerceOrderToEngine(input) {
+  const existing = getCommerceOrderMapping(input.commerceOrderId);
+  if (existing) {
+    const analytics2 = ingestAuthoritativePurchaseForOrder(existing.orderEngineOrderId, input.commerceOrderId);
+    return {
+      ok: true,
+      orderEngineOrderId: existing.orderEngineOrderId,
+      idempotentReplay: true,
+      analytics: analytics2
+    };
+  }
+  if (!input.items.length) {
+    return { ok: false, errorCode: "ORDER_HAS_NO_LINES" };
+  }
+  const createInput = {
+    customerId: input.customerId || `commerce_guest_${input.commerceOrderId}`,
+    customerEmail: input.customerEmail || `${input.customerId || input.commerceOrderId}@commerce.buzzard.local`,
+    marketId: input.marketId.toUpperCase(),
+    channel: input.channel || "direct",
+    items: input.items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+    shippingAddress: input.shippingAddress,
+    idempotencyKey: `commerce:${input.commerceOrderId}:${input.idempotencyKey}`
+  };
+  const created = await createOrder(createInput);
+  if (!created.ok || !created.order) {
+    return {
+      ok: false,
+      errorCode: created.errorCode ?? "ORDER_ENGINE_SYNC_FAILED",
+      errorMessage: created.errorMessage
+    };
+  }
+  const mapping = {
+    commerceOrderId: input.commerceOrderId,
+    orderEngineOrderId: created.order.orderId,
+    customerId: input.customerId ?? void 0,
+    marketId: input.marketId.toUpperCase(),
+    currency: input.currency,
+    syncedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  saveCommerceOrderMapping(mapping);
+  collectAnalyticsEvent({
+    eventType: "CHECKOUT_COMPLETED",
+    orderIdReference: input.commerceOrderId,
+    correlationId: input.commerceOrderId,
+    market: mapping.marketId,
+    country: mapping.marketId,
+    language: input.language ?? "de",
+    currency: input.currency,
+    metadata: { source: "STOREFRONT_CHECKOUT", orderEngineOrderId: created.order.orderId }
+  });
+  const analytics = ingestAuthoritativePurchaseForOrder(created.order.orderId, input.commerceOrderId);
+  return {
+    ok: true,
+    orderEngineOrderId: created.order.orderId,
+    analytics
+  };
+}
 function ingestAuthoritativePurchaseForOrder(orderEngineOrderId, correlationCommerceOrderId) {
   const validation = validateOrderIdForAuthoritativePurchase(orderEngineOrderId);
   if (!validation.ok || !validation.order) {
@@ -26582,370 +28611,18 @@ function ingestStorefrontPurchaseSignalResolved(orderIdOrCommerceId, correlation
     orderIdOrCommerceId.startsWith("ord_") ? orderIdOrCommerceId : correlationId ?? orderIdOrCommerceId
   );
 }
-
-// lib/analytics/storefront/purchaseIngest.ts
-function ingestStorefrontPurchaseSignal(orderId, correlationId, options) {
-  const trimmed = orderId.trim();
-  if (!trimmed) return { ok: false, errorCode: "MISSING_ORDER_ID" };
-  const resolvedId = resolveOrderEngineOrderId(trimmed);
-  if (!resolvedId) {
-    return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  }
-  return ingestStorefrontPurchaseSignalResolved(
-    trimmed,
-    correlationId ?? trimmed,
-    options?.customerIdContext
-  );
-}
-
-// lib/analytics/storefront/serverHandler.ts
-function stripClientFinancialAuthority(input) {
-  const {
-    authoritative: _authoritative,
-    value: _value,
-    signalPurchase: _signalPurchase,
-    ...rest
-  } = input;
-  return {
-    ...rest,
-    authoritative: false,
-    value: void 0
-  };
-}
-function validatePayloadSize(raw) {
-  return raw.length <= MAX_PAYLOAD_BYTES;
-}
-function validateMetadataSize(metadata) {
-  if (!metadata) return true;
-  return Object.keys(metadata).length <= MAX_METADATA_KEYS;
-}
-function handleStorefrontAnalyticsEvent(body) {
-  if (!body?.eventType) return { ok: false, errorCode: "MISSING_EVENT_TYPE" };
-  if (!validateMetadataSize(body.metadata)) return { ok: false, errorCode: "PAYLOAD_TOO_LARGE" };
-  const safe = stripClientFinancialAuthority(body);
-  if (safe.eventType === "PURCHASE" || safe.eventType === "REFUND") {
-    return { ok: false, errorCode: "CLIENT_FINANCIAL_EVENT_REJECTED" };
-  }
-  const injection = rejectEventInjection(safe);
-  if (!injection.ok) return { ok: false, errorCode: "EVENT_INJECTION" };
-  const schema = validateEventSchema(safe);
-  if (!schema.ok) return { ok: false, errorCode: "SCHEMA_VALIDATION" };
-  const marketCtx = resolveMarketContext({
-    market: safe.market,
-    country: safe.country,
-    language: safe.language
-  });
-  const result = collectAnalyticsEvent({
-    ...safe,
-    market: marketCtx.market,
-    country: marketCtx.country,
-    language: marketCtx.language,
-    currency: safe.currency ?? marketCtx.currency
-  });
-  if (result.ok && safe.eventType.startsWith("CONSENT_") && safe.anonymousVisitorId) {
-    syncConsentFromEvent(safe.anonymousVisitorId, marketCtx.market, safe.eventType);
-  }
-  return result;
-}
-function syncConsentFromEvent(visitorId, market, eventType) {
-  const status = eventType === "CONSENT_GRANTED" ? "GRANTED" : eventType === "CONSENT_DENIED" ? "DENIED" : "WITHDRAWN";
-  updateConsent(visitorId, market, { ANALYTICS: status });
-}
-function handleStorefrontPurchaseSignal(body, correlationId) {
-  const payload = typeof body === "string" ? { orderId: body, correlationId } : body;
-  if (!payload.orderId?.trim()) return { ok: false, errorCode: "MISSING_ORDER_ID" };
-  if (payload.revenue !== void 0 || payload.total !== void 0 || payload.subtotal !== void 0 || payload.tax !== void 0 || payload.discount !== void 0 || payload.shipping !== void 0 || payload.currency !== void 0) {
-  }
-  return ingestStorefrontPurchaseSignal(payload.orderId.trim(), payload.correlationId, {
-    customerIdContext: payload.customerId
-  });
-}
-function parseStorefrontEventBody(raw) {
-  if (!validatePayloadSize(raw)) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-// lib/analytics/funnel.ts
-function computeFunnelMetrics(events2 = listEvents()) {
-  const visitors2 = listVisitors().length;
-  const sessions2 = listSessions().length;
-  const productViews = events2.filter((e) => e.eventType === "PRODUCT_VIEW").length;
-  const addToCart = events2.filter((e) => e.eventType === "ADD_TO_CART").length;
-  const checkoutStart = events2.filter((e) => e.eventType === "CHECKOUT_START").length;
-  const checkoutCompleted = events2.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
-  const purchases = events2.filter(
-    (e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE"
-  ).length;
-  const rate = (num, den) => den > 0 ? Number((num / den * 100).toFixed(2)) : 0;
-  return {
-    visitors: visitors2,
-    sessions: sessions2,
-    productViews,
-    addToCart,
-    checkoutStart,
-    checkoutCompleted,
-    purchases,
-    productViewRate: rate(productViews, sessions2),
-    addToCartRate: rate(addToCart, productViews),
-    checkoutStartRate: rate(checkoutStart, addToCart),
-    checkoutCompletionRate: rate(checkoutCompleted, checkoutStart),
-    purchaseConversionRate: rate(purchases, checkoutStart),
-    overallConversionRate: rate(purchases, sessions2)
-  };
-}
-
-// lib/analytics/conversion.ts
-function computeConversionMetrics() {
-  const eligibleSessions = listSessions().filter((s) => s.pageViews > 0).length;
-  const events2 = listEvents();
-  const sessionsWithCart = new Set(
-    events2.filter((e) => e.eventType === "ADD_TO_CART").map((e) => e.sessionId)
-  ).size;
-  const sessionsWithCheckout = new Set(
-    events2.filter((e) => e.eventType === "CHECKOUT_START").map((e) => e.sessionId)
-  ).size;
-  const sessionsWithPurchase = new Set(
-    events2.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").map((e) => e.sessionId)
-  ).size;
-  const pct = (num, den) => den > 0 ? Number((num / den * 100).toFixed(2)) : 0;
-  return {
-    eligibleSessions,
-    addToCartConversion: pct(sessionsWithCart, eligibleSessions),
-    checkoutConversion: pct(sessionsWithCheckout, sessionsWithCart),
-    purchaseConversion: pct(sessionsWithPurchase, eligibleSessions)
-  };
-}
-
-// lib/analytics/metrics.ts
-function dayKey(iso) {
-  return iso.slice(0, 10);
-}
-function countUniqueVisitorsBetween(events2, start, end) {
-  const ids = /* @__PURE__ */ new Set();
-  for (const e of events2) {
-    const d = dayKey(e.timestamp);
-    if (d >= start && d <= end) ids.add(e.anonymousVisitorId);
-  }
-  return ids.size;
-}
-function computeDashboardOverview(now = /* @__PURE__ */ new Date()) {
-  const events2 = listEvents();
-  const today = dayKey(now.toISOString());
-  const yesterday = dayKey(new Date(now.getTime() - 864e5).toISOString());
-  const last7 = dayKey(new Date(now.getTime() - 6 * 864e5).toISOString());
-  const last30 = dayKey(new Date(now.getTime() - 29 * 864e5).toISOString());
-  const funnel = computeFunnelMetrics(events2);
-  const conversion = computeConversionMetrics();
-  const revenue = computeRevenueMetrics(events2);
-  const visitors2 = listVisitors();
-  const newVisitors = visitors2.filter((v) => !v.isReturning).length;
-  const returningVisitors = visitors2.filter((v) => v.isReturning).length;
-  const recentMinute = events2.filter((e) => now.getTime() - Date.parse(e.timestamp) <= 6e4).length;
-  const todayEvents = events2.filter((e) => dayKey(e.timestamp) === today);
-  const todayPurchases = todayEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE");
-  const todayRevenueCents = todayPurchases.reduce((sum, e) => sum + Math.round((e.value ?? 0) * 100), 0);
-  return {
-    freshness: "NEAR_REAL_TIME",
-    visitorsToday: countUniqueVisitorsBetween(events2, today, today),
-    visitorsYesterday: countUniqueVisitorsBetween(events2, yesterday, yesterday),
-    visitorsLast7Days: countUniqueVisitorsBetween(events2, last7, today),
-    visitorsLast30Days: countUniqueVisitorsBetween(events2, last30, today),
-    uniqueVisitors: funnel.visitors,
-    sessions: funnel.sessions,
-    newVisitors,
-    returningVisitors,
-    pageViews: events2.filter((e) => e.eventType === "PAGE_VIEW").length,
-    productViews: funnel.productViews,
-    addToCart: funnel.addToCart,
-    checkoutStarted: funnel.checkoutStart,
-    purchases: funnel.purchases,
-    conversionRate: conversion.purchaseConversion,
-    averageOrderValueCents: revenue.averageOrderValueCents,
-    grossRevenueCents: revenue.grossRevenueCents,
-    refundsCents: revenue.refundAmountCents,
-    netRevenueCents: revenue.netRevenueCents,
-    activeSessions: countActiveSessions(now.toISOString()),
-    activeVisitors: countActiveSessions(now.toISOString()),
-    eventsPerMinute: recentMinute,
-    ordersToday: todayPurchases.length,
-    revenueTodayCents: todayRevenueCents
-  };
-}
-
-// lib/analytics/productAnalytics.ts
-function computeProductAnalytics(events2 = listEvents()) {
-  const byProduct = /* @__PURE__ */ new Map();
-  for (const event of events2) {
-    if (!event.productId) continue;
-    const row = byProduct.get(event.productId) ?? {
-      productId: event.productId,
-      views: 0,
-      uniqueViewers: 0,
-      addToCart: 0,
-      purchases: 0,
-      returns: 0,
-      viewers: /* @__PURE__ */ new Set()
-    };
-    if (event.eventType === "PRODUCT_VIEW") {
-      row.views += 1;
-      row.viewers.add(event.anonymousVisitorId);
-    }
-    if (event.eventType === "ADD_TO_CART") row.addToCart += 1;
-    if (event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE") row.purchases += 1;
-    if (event.eventType === "RETURN") row.returns += 1;
-    byProduct.set(event.productId, row);
-  }
-  return [...byProduct.values()].map(({ viewers, ...row }) => ({ ...row, uniqueViewers: viewers.size })).sort((a, b) => b.views - a.views);
-}
-
-// lib/analytics/marketAnalytics.ts
-function computeMarketAnalytics(events2 = listEvents()) {
-  const markets = listMarkets().map((m) => m.countryCode);
-  const rows = [];
-  for (const market of markets) {
-    const marketEvents = events2.filter((e) => e.market === market);
-    if (!marketEvents.length) continue;
-    const visitors2 = new Set(marketEvents.map((e) => e.anonymousVisitorId)).size;
-    const sessions2 = new Set(marketEvents.map((e) => e.sessionId)).size;
-    const revenue = computeRevenueMetrics(marketEvents);
-    const returns = marketEvents.filter((e) => e.eventType === "RETURN").length;
-    const purchases = marketEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").length;
-    rows.push({
-      market,
-      country: market,
-      language: marketEvents[0]?.language ?? "de",
-      currency: marketEvents[0]?.currency ?? "EUR",
-      visitors: visitors2,
-      sessions: sessions2,
-      orders: revenue.orderCount,
-      revenueCents: revenue.netRevenueCents,
-      conversionRate: sessions2 ? Number((purchases / sessions2 * 100).toFixed(2)) : 0,
-      averageOrderValueCents: revenue.averageOrderValueCents,
-      returnRate: purchases ? Number((returns / purchases * 100).toFixed(2)) : 0
-    });
-  }
-  return rows.sort((a, b) => b.revenueCents - a.revenueCents);
-}
-
-// lib/analytics/attribution.ts
-function buildAttributionTouches(anonymousVisitorId, model = "lastTouch") {
-  const events2 = listEvents().filter((e) => e.anonymousVisitorId === anonymousVisitorId).sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
-  if (!events2.length) return [];
-  const pick = model === "firstTouch" ? events2[0] : events2[events2.length - 1];
-  return [{
-    anonymousVisitorId,
-    source: pick.trafficSource,
-    timestamp: pick.timestamp,
-    model
-  }];
-}
-function attributeOrderToChannel(orderEvent, model = "sessionTouch") {
-  const touches = buildAttributionTouches(orderEvent.anonymousVisitorId, model);
-  return touches[0]?.source ?? orderEvent.trafficSource ?? "DIRECT";
-}
-
-// lib/analytics/channelAnalytics.ts
-var CHANNELS = [
-  "DIRECT",
-  "ORGANIC_SEARCH",
-  "PAID_SEARCH",
-  "SOCIAL",
-  "EMAIL",
-  "REFERRAL",
-  "MARKETPLACE",
-  "OTHER"
-];
-function computeChannelAnalytics(events2 = listEvents()) {
-  return CHANNELS.map((channel) => {
-    const channelEvents = events2.filter((e) => {
-      if (e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE") {
-        return attributeOrderToChannel(e, "sessionTouch") === channel;
-      }
-      return e.trafficSource === channel;
-    });
-    const visitors2 = new Set(channelEvents.map((e) => e.anonymousVisitorId)).size;
-    const sessions2 = new Set(channelEvents.map((e) => e.sessionId)).size;
-    const revenue = computeRevenueMetrics(channelEvents.filter((e) => e.trafficSource === channel || e.eventType === "PURCHASE"));
-    const purchases = channelEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").length;
-    return {
-      channel,
-      visitors: visitors2,
-      sessions: sessions2,
-      orders: revenue.orderCount,
-      revenueCents: revenue.netRevenueCents,
-      conversionRate: sessions2 ? Number((purchases / sessions2 * 100).toFixed(2)) : 0,
-      averageOrderValueCents: revenue.averageOrderValueCents
-    };
-  }).filter((row) => row.visitors > 0 || row.orders > 0);
-}
-
-// lib/analytics/dashboard.ts
-function requireAdmin(context) {
-  const check = validateAdminAccess(context);
-  if (!check.ok) return { ok: false, errorCode: check.errorCode ?? "ADMIN_UNAUTHORIZED" };
-  recordAnalyticsAudit({
-    action: "DASHBOARD_ACCESS",
-    actor: context.actorId ?? "ADMIN"
-  });
-  return { ok: true };
-}
-function getOverview(context) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeDashboardOverview() };
-}
-function getTraffic(context) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  const events2 = listEvents();
-  return {
-    ok: true,
-    data: {
-      pageViews: events2.filter((e) => e.eventType === "PAGE_VIEW").length,
-      sessions: new Set(events2.map((e) => e.sessionId)).size,
-      visitors: new Set(events2.map((e) => e.anonymousVisitorId)).size
-    }
-  };
-}
-function getFunnel(context) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeFunnelMetrics() };
-}
-function getProducts(context) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeProductAnalytics() };
-}
-function getMarkets(context) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeMarketAnalytics() };
-}
-function getChannels(context) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeChannelAnalytics() };
-}
-function getRevenue(context) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeRevenueMetrics() };
-}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  getChannels,
-  getFunnel,
-  getMarkets,
-  getOverview,
-  getProducts,
-  getRevenue,
-  getTraffic,
-  handleStorefrontAnalyticsEvent,
-  handleStorefrontPurchaseSignal,
-  parseStorefrontEventBody
+  clearCommerceOrderMappings,
+  getCommerceOrderMapping,
+  getOrder,
+  ingestAuthoritativePurchaseForOrder,
+  ingestStorefrontPurchaseSignalResolved,
+  listCommerceOrderMappings,
+  mapCommerceAddressToSnapshot,
+  resolveOrderEngineOrderId,
+  saveCommerceOrderMapping,
+  syncCommerceOrderToEngine,
+  validateOrderIdForAuthoritativePurchase,
+  validatePurchaseSignalAccess
 });

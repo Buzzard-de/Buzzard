@@ -4,6 +4,7 @@ import { IDEMPOTENT_EVENT_TYPES } from "./constants";
 import {
   generateEventId,
   getConsent,
+  getEvent,
   getIdempotencyEventId,
   isIdempotencyKeyUsed,
   isVisitorDeleted,
@@ -84,6 +85,8 @@ export function collectAnalyticsEvent(
   const idempotencyKey = buildIdempotencyKey(safeInput);
   if (idempotencyKey && isIdempotencyKeyUsed(idempotencyKey)) {
     const existingId = getIdempotencyEventId(idempotencyKey)!;
+    const existingEvent = getEvent(existingId);
+    if (existingEvent) return { ok: true, event: existingEvent };
     return { ok: true, event: { ...normalizeEvent(safeInput, "PROVISIONAL"), eventId: existingId } };
   }
 

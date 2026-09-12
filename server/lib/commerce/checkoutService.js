@@ -19,7 +19,7 @@ const {
   logCommerceBlock,
   resolveOrderType,
 } = require("./commerceGuards");
-const { withIdempotency } = require("./idempotency");
+const { withIdempotencyAsync } = require("./idempotency");
 const { logSecurityEvent } = require("../securityLog");
 const {
   CHECKOUT_STATE,
@@ -206,8 +206,8 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
   };
 }
 
-function completeCheckout(checkoutId, body = {}, ctx = {}) {
-  const run = () => {
+async function completeCheckout(checkoutId, body = {}, ctx = {}) {
+  const run = async () => {
     const checkout = getCheckout(checkoutId, ctx);
     if (checkout.error) return checkout;
     if (checkout.state !== CHECKOUT_STATE.READY) {
@@ -260,6 +260,21 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
 
     transitionCheckout(checkoutId, CHECKOUT_STATE.COMPLETED);
 
+    let orderEngineOrderId = null;
+    try {
+      const orderEngineSync = require("./orderEngineSync");
+      const syncResult = await orderEngineSync.syncCommerceOrderAfterCheckout(order, checkout, {
+        idempotencyKey: body.idempotencyKey || checkout.idempotencyKey,
+      });
+      if (syncResult?.ok && syncResult.orderEngineOrderId) {
+        orderEngineOrderId = syncResult.orderEngineOrderId;
+        orderEngineSync.persistOrderEngineLink(order.id, orderEngineOrderId);
+        order.orderEngineOrderId = orderEngineOrderId;
+      }
+    } catch {
+      /* analytics/order-engine sync must not break checkout */
+    }
+
     try {
       const customerNotificationReadiness = require("../customer/customerNotificationReadiness");
       customerNotificationReadiness.emitCheckoutNotification(order, ctx);
@@ -271,6 +286,7 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       checkoutId,
       state: CHECKOUT_STATE.COMPLETED,
       order,
+      orderEngineOrderId,
       payment: { ...payment, realMoneyMovement: false },
       commercial: checkout.orderType === ORDER_TYPE.COMMERCIAL,
       salesEnabled: getEffectiveFlags().salesEnabled,
@@ -279,7 +295,7 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
 
   const key = body.idempotencyKey || ctx.idempotencyKey;
   if (key) {
-    return withIdempotency({ key, scope: "checkout_complete", handler: run, req: ctx.req });
+    return withIdempotencyAsync({ key, scope: "checkout_complete", handler: run, req: ctx.req });
   }
   return run();
 }

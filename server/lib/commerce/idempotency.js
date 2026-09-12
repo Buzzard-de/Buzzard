@@ -57,6 +57,26 @@ function withIdempotency({ key, scope, handler, req }) {
   return result;
 }
 
+async function withIdempotencyAsync({ key, scope, handler, req }) {
+  if (!key) return handler({ replay: false });
+
+  const existing = getIdempotency({ key, scope });
+  if (existing) {
+    const { logSecurityEvent } = require("../securityLog");
+    logSecurityEvent({
+      type: "idempotency_conflict",
+      success: true,
+      path: req?.url,
+      detail: { scope, replay: true },
+    });
+    return { ...existing.response, idempotencyReplay: true };
+  }
+
+  const result = await handler({ replay: false });
+  storeIdempotency({ key, scope, resourceId: result?.id || result?.checkoutId || result?.orderId, response: result });
+  return result;
+}
+
 function purgeExpired() {
   return db.prepare("DELETE FROM commerce_idempotency WHERE expires_at <= datetime('now')").run().changes;
 }
@@ -66,5 +86,6 @@ module.exports = {
   storeIdempotency,
   getIdempotency,
   withIdempotency,
+  withIdempotencyAsync,
   purgeExpired,
 };

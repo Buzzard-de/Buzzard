@@ -61,7 +61,11 @@ export function trackStorefrontEventSafe(
   void trackStorefrontEvent(input, options).catch(() => undefined);
 }
 
-export async function signalAuthoritativePurchase(orderId: string, correlationId?: string): Promise<void> {
+export async function signalAuthoritativePurchase(
+  orderId: string,
+  correlationId?: string,
+  customerId?: string
+): Promise<void> {
   if (typeof window === "undefined" || !orderId) return;
   const url = resolvePurchaseUrl();
   if (!url) return;
@@ -70,7 +74,11 @@ export async function signalAuthoritativePurchase(orderId: string, correlationId
     await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ orderId, correlationId: correlationId ?? orderId }),
+      body: JSON.stringify({
+        orderId,
+        correlationId: correlationId ?? orderId,
+        customerId,
+      }),
       keepalive: true,
     });
   } catch {

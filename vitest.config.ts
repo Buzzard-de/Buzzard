@@ -18,6 +18,7 @@ export default defineConfig({
       "lib/ai-orchestrator/**/*.test.ts",
       "lib/ai-workers/**/*.test.ts",
       "lib/analytics/**/*.test.ts",
+      "lib/commerce/**/*.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

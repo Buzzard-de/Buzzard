@@ -58,7 +58,7 @@ function stepIndex(step: CheckoutStep): number {
 
 export default function CheckoutForm() {
   const router = useRouter();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { countryCode, deliveryDays } = useMarket();
   const { user: accountUser, ready: accountReady } = useAccount();
   const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
@@ -305,12 +305,12 @@ export default function CheckoutForm() {
 
   useEffect(() => {
     if (step === "review") {
-      trackMarketingEvent("begin_checkout", { value: total, currency: "EUR" });
+      trackMarketingEvent("begin_checkout", { currency: "EUR", country: countryCode, locale });
     }
     if (step === "payment") {
-      trackMarketingEvent("add_payment_info", { payment_provider: paymentProvider });
+      trackMarketingEvent("add_payment_info", { payment_provider: paymentProvider, country: countryCode });
     }
-  }, [step, total, paymentProvider]);
+  }, [step, paymentProvider, countryCode, locale]);
 
   if (!isCheckoutEnabled()) {
     return (
@@ -425,8 +425,8 @@ export default function CheckoutForm() {
       }
       trackMarketingEvent("purchase", {
         transaction_id: result.order.id,
-        value: result.order.total,
         currency: result.order.currency,
+        country: countryCode,
       });
       clear();
       router.push(
@@ -462,8 +462,8 @@ export default function CheckoutForm() {
     saveConfirmedOrder(response.order);
     trackMarketingEvent("purchase", {
       transaction_id: response.order.orderNumber,
-      value: response.order.total,
       currency: response.order.currency,
+      country: countryCode,
     });
     clear();
     router.push(`/checkout/erfolg/?order=${encodeURIComponent(response.order.orderNumber)}`);

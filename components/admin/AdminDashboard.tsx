@@ -7,11 +7,14 @@ import Link from "next/link";
 import SimpleLineChart from "./charts/SimpleLineChart";
 import { fetchAnalyticsOverview, fetchSalesAnalytics } from "@/lib/analytics/adminClient";
 import type { AnalyticsOverview } from "@/lib/analytics/adminTypes";
+import { fetchFoundationAnalyticsOverview } from "@/lib/analytics/foundationAdminClient";
+import type { DashboardOverview } from "@/lib/analytics/types";
 import { getDemoOrderStats } from "@/lib/commerce";
 import { formatPrice } from "@/lib/products";
 
 export default function AdminDashboard() {
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [foundation, setFoundation] = useState<DashboardOverview | null>(null);
   const [trend, setTrend] = useState<Array<{ label: string; value: number }>>([]);
   const [demoStats] = useState(getDemoOrderStats);
   const [ccSummary, setCcSummary] = useState<DashboardSummary | null>(null);
@@ -23,6 +26,7 @@ export default function AdminDashboard() {
         setTrend(sales.trend.map((row) => ({ label: row.date, value: row.revenue })));
       })
       .catch(() => {});
+    fetchFoundationAnalyticsOverview().then(setFoundation).catch(() => {});
     fetchDashboardSummary().then(setCcSummary).catch(() => {});
   }, []);
 
@@ -44,6 +48,23 @@ export default function AdminDashboard() {
             <article className="admin-stat"><strong>{ccSummary.activeTasks}</strong><span>Aktif Görev</span></article>
             <article className="admin-stat"><strong>{ccSummary.pendingApprovals}</strong><span>Bekleyen Onay</span></article>
             <article className="admin-stat"><strong>{ccSummary.openEscalations}</strong><span>Eskalasyon</span></article>
+          </div>
+        </section>
+      )}
+
+      {foundation && (
+        <section className="admin-panel">
+          <h2>First-Party Analytics (Foundation)</h2>
+          <p className="admin-note">Live collected storefront events — revenue from authoritative Order Engine only.</p>
+          <div className="admin-stat-grid">
+            <article className="admin-stat"><strong>{foundation.sessions}</strong><span>Sessions</span></article>
+            <article className="admin-stat"><strong>{foundation.uniqueVisitors}</strong><span>Unique Visitors</span></article>
+            <article className="admin-stat"><strong>{foundation.pageViews}</strong><span>Page Views</span></article>
+            <article className="admin-stat"><strong>{foundation.productViews}</strong><span>Product Views</span></article>
+            <article className="admin-stat"><strong>{foundation.addToCart}</strong><span>Add to Cart</span></article>
+            <article className="admin-stat"><strong>{foundation.purchases}</strong><span>Purchases</span></article>
+            <article className="admin-stat"><strong>{formatPrice(foundation.grossRevenueCents / 100)}</strong><span>Gross Revenue</span></article>
+            <article className="admin-stat"><strong>{foundation.conversionRate.toFixed(2)}%</strong><span>Conversion</span></article>
           </div>
         </section>
       )}

@@ -24,7 +24,12 @@ import {
 } from "./revenue";
 import { recordAnalyticsAudit } from "./audit";
 
-const AUTHORITATIVE_EVENT_SOURCES = new Set(["ORDER_ENGINE", "RETURNS_ENGINE", "MARKETPLACE_ENGINE"]);
+const AUTHORITATIVE_EVENT_SOURCES = new Set([
+  "ORDER_ENGINE",
+  "RETURNS_ENGINE",
+  "MARKETPLACE_ENGINE",
+  "STOREFRONT_CHECKOUT",
+]);
 
 function isAuthoritativeBusinessEvent(input: AnalyticsEventInput): boolean {
   const source = input.metadata?.source;

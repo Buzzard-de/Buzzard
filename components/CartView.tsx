@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { trackMarketingEvent } from "@/lib/marketing/events";
 import { useCart } from "@/lib/cart";
 import { lineSubtotal } from "@/lib/cart/types";
 import CatalogInquiryPanel from "@/components/shop/CatalogInquiryPanel";
@@ -33,9 +34,17 @@ export default function CartView() {
     syncing,
     lastErrorKey,
   } = useCart();
-  const { t } = useLocale();
-  const { countryCode } = useMarket();
+  const { t, locale } = useLocale();
+  const { countryCode, currency } = useMarket();
   const freeShippingThreshold = getFreeShippingThreshold(countryCode);
+
+  useEffect(() => {
+    trackMarketingEvent("view_cart", {
+      country: countryCode,
+      locale,
+      currency,
+    });
+  }, [countryCode, locale, currency]);
   const [couponInput, setCouponInput] = useState(couponCode);
 
   if (!isCartEnabled()) {

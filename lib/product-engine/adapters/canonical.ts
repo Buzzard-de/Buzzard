@@ -1,8 +1,10 @@
 import { createRequire } from "module";
+import path from "path";
 import type { ProductEngineProduct } from "../types";
 
 const require = createRequire(import.meta.url);
-const { normalizeCanonicalProduct, toFlatCanonicalProduct } = require("../../../server/lib/global/productCanonicalModel.js");
+const canonicalModelPath = path.join(process.cwd(), "server/lib/global/productCanonicalModel.js");
+const { normalizeCanonicalProduct, toFlatCanonicalProduct } = require(canonicalModelPath);
 
 export { normalizeCanonicalProduct, toFlatCanonicalProduct };
 

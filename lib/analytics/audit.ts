@@ -1,25 +1,14 @@
 import type { AnalyticsAuditEntry } from "./types";
-
-const auditLog: AnalyticsAuditEntry[] = [];
-let auditCounter = 0;
+import { getAnalyticsStore } from "./store/configure";
 
 export function recordAnalyticsAudit(entry: Omit<AnalyticsAuditEntry, "auditId" | "timestamp">): AnalyticsAuditEntry {
-  auditCounter += 1;
-  const record: AnalyticsAuditEntry = {
-    auditId: `aud_${Date.now()}_${auditCounter}`,
-    timestamp: new Date().toISOString(),
-    ...entry,
-  };
-  auditLog.push(record);
-  return record;
+  return getAnalyticsStore().recordAudit(entry);
 }
 
 export function getAnalyticsAuditLog(filter?: { action?: string }): AnalyticsAuditEntry[] {
-  if (!filter?.action) return [...auditLog];
-  return auditLog.filter((e) => e.action === filter.action);
+  return getAnalyticsStore().getAuditLog(filter);
 }
 
 export function clearAnalyticsAuditLog(): void {
-  auditLog.length = 0;
-  auditCounter = 0;
+  getAnalyticsStore().clearAudit();
 }

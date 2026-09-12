@@ -82,6 +82,7 @@
     "test:ai-workers": "vitest run lib/ai-workers/aiWorkers.test.ts && node --test server/__tests__/aiWorkers.test.mjs",
     "test:product-ai": "vitest run lib/ai-workers/product/productAi.test.ts",
     "test:analytics": "vitest run lib/analytics/analytics.test.ts",
+    "test:analytics-persistence": "vitest run lib/analytics/analyticsPersistence.test.ts",
     "test:analytics-storefront": "vitest run lib/analytics/storefront/storefrontAnalytics.test.ts",
     "build:analytics-foundation-bridge": "node scripts/build-analytics-foundation-bridge.mjs",
     "build:commerce-order-engine-bridge": "node scripts/build-commerce-order-engine-bridge.mjs",

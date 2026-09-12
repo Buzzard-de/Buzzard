@@ -50,6 +50,11 @@ module.exports = {
       return;
     }
 
+    const mod = loadFoundation();
+    if (mod?.getAnalyticsPersistenceMode) {
+      console.log(`Analytics foundation persistence: ${mod.getAnalyticsPersistenceMode()}`);
+    }
+
     app.post("/api/analytics/foundation/events", (req, res) => {
       const mod = loadFoundation();
       if (!mod) return res.status(503).json({ ok: false, errorCode: "FOUNDATION_UNAVAILABLE" });

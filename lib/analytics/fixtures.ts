@@ -8,6 +8,7 @@ import {
   requestCustomerRefund,
   processCustomerRefund,
 } from "@/lib/returns-engine";
+import { resetAnalyticsStoreToMemory } from "./store/configure";
 import { clearAnalyticsRegistry } from "./registry";
 import { clearAnalyticsAuditLog } from "./audit";
 import { clearMockProviderEvents } from "./provider";
@@ -20,6 +21,7 @@ export const FIXTURE_VISITOR_B = "bv_fixture_visitor_b";
 export const FIXTURE_SESSION_A = "ses_fixture_a";
 
 export function seedAnalyticsFixtures(): void {
+  resetAnalyticsStoreToMemory();
   clearAnalyticsRegistry();
   clearAnalyticsAuditLog();
   clearMockProviderEvents();

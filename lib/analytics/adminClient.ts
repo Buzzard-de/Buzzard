@@ -8,7 +8,7 @@ import type {
   ProductAnalytics,
   SalesAnalytics,
   SupplierAnalyticsRow,
-} from "./types";
+} from "./adminTypes";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");

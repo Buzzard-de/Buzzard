@@ -5,8 +5,8 @@ import { fetchDashboardSummary } from "@/lib/admin/controlCenter";
 import type { DashboardSummary } from "@/lib/admin/controlCenterTypes";
 import Link from "next/link";
 import SimpleLineChart from "./charts/SimpleLineChart";
-import { fetchAnalyticsOverview, fetchSalesAnalytics } from "@/lib/analytics/client";
-import type { AnalyticsOverview } from "@/lib/analytics/types";
+import { fetchAnalyticsOverview, fetchSalesAnalytics } from "@/lib/analytics/adminClient";
+import type { AnalyticsOverview } from "@/lib/analytics/adminTypes";
 import { getDemoOrderStats } from "@/lib/commerce";
 import { formatPrice } from "@/lib/products";
 

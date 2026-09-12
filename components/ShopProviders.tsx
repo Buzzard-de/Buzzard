@@ -16,6 +16,7 @@ import GlobalStructuredData from "./seo/GlobalStructuredData";
 import ConsentBanner from "./marketing/ConsentBanner";
 import MarketingScripts from "./marketing/MarketingScripts";
 import PageViewTracker from "./marketing/PageViewTracker";
+import StorefrontAnalyticsProvider from "./analytics/StorefrontAnalyticsProvider";
 import AiChatWidget from "./ai/AiChatWidget";
 import StorefrontApiBanner from "./StorefrontApiBanner";
 
@@ -34,7 +35,9 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
               <StorefrontApiBanner />
               {children}
               <LocaleHead />
+              <StorefrontAnalyticsProvider>
               <PageViewTracker />
+              </StorefrontAnalyticsProvider>
               <ConsentBanner />
               <AiChatWidget />
               <MarketingScripts />

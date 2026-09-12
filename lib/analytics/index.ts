@@ -88,6 +88,8 @@ export {
   FIXTURE_SESSION_A,
 } from "./fixtures";
 export { clearAnalyticsRegistry, listEvents, listSessions, listVisitors } from "./registry";
+export { fetchFoundationAnalyticsOverview } from "./foundationAdminClient";
+export * from "./storefront";
 
 export type { AnalyticsOverview, AnalyticsRangePreset } from "./adminTypes";
 export {

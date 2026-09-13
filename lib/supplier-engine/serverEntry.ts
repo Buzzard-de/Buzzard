@@ -46,6 +46,10 @@ export {
   runSupplierLiveOnboarding,
   buildInterCarsProfileSummary,
   resolvePredefinedLiveProfile,
+  describeLiveCredentialReadiness,
+  computeLiveValidationVerdict,
+  simulateSupplierEngineRestart,
+  probeCursorPersistence,
   summarizeIdentifierValidation,
   isInterCarsProfile,
 } from "./service";

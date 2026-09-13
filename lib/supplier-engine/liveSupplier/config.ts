@@ -116,6 +116,31 @@ export function isLiveReadEnabled(): boolean {
   return envFlag("SUPPLIER_LIVE_READ_ENABLED");
 }
 
+/** True when OAuth/token is present — never logs credential values. */
 export function hasLiveSupplierCredentials(profile: LiveSupplierProfile): boolean {
-  return Boolean(resolveCredentials(profile.secretsRef));
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds || Object.keys(creds).length === 0) return false;
+  const token = creds.accessToken || creds.token || creds.bearer;
+  return Boolean(String(token || "").trim());
+}
+
+export function describeLiveCredentialReadiness(profile: LiveSupplierProfile): {
+  configured: boolean;
+  authType: string;
+  secretFieldsPresent: string[];
+} {
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds) {
+    return { configured: false, authType: profile.authentication, secretFieldsPresent: [] };
+  }
+  const present: string[] = [];
+  if (creds.accessToken) present.push("accessToken");
+  if (creds.token) present.push("token");
+  if (creds.bearer) present.push("bearer");
+  if (creds.apiKey || creds.key) present.push("apiKey");
+  return {
+    configured: hasLiveSupplierCredentials(profile),
+    authType: profile.authentication,
+    secretFieldsPresent: present,
+  };
 }

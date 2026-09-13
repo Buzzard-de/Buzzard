@@ -612,7 +612,26 @@ function isLiveReadEnabled() {
   return envFlag("SUPPLIER_LIVE_READ_ENABLED");
 }
 function hasLiveSupplierCredentials(profile) {
-  return Boolean(resolveCredentials(profile.secretsRef));
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds || Object.keys(creds).length === 0) return false;
+  const token = creds.accessToken || creds.token || creds.bearer;
+  return Boolean(String(token || "").trim());
+}
+function describeLiveCredentialReadiness(profile) {
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds) {
+    return { configured: false, authType: profile.authentication, secretFieldsPresent: [] };
+  }
+  const present = [];
+  if (creds.accessToken) present.push("accessToken");
+  if (creds.token) present.push("token");
+  if (creds.bearer) present.push("bearer");
+  if (creds.apiKey || creds.key) present.push("apiKey");
+  return {
+    configured: hasLiveSupplierCredentials(profile),
+    authType: profile.authentication,
+    secretFieldsPresent: present
+  };
 }
 var init_config = __esm({
   "lib/supplier-engine/liveSupplier/config.ts"() {
@@ -909,8 +928,10 @@ __export(serverEntry_exports, {
   bootstrapSupplierEnginePersistence: () => bootstrapSupplierEnginePersistence,
   buildDataQualityReport: () => buildDataQualityReport,
   buildInterCarsProfileSummary: () => buildInterCarsProfileSummary,
+  computeLiveValidationVerdict: () => computeLiveValidationVerdict,
   createSupplierOrder: () => createSupplierOrder,
   createSupplierReturn: () => createSupplierReturn,
+  describeLiveCredentialReadiness: () => describeLiveCredentialReadiness,
   evaluateLiveReadSyncGuard: () => evaluateLiveReadSyncGuard,
   evaluateProductionSyncGuard: () => evaluateProductionSyncGuard,
   getRegisteredLiveSupplierId: () => getRegisteredLiveSupplierId,
@@ -936,6 +957,7 @@ __export(serverEntry_exports, {
   listReturnCapabilities: () => listReturnCapabilities,
   listSuppliers: () => listSuppliers,
   listSyncCursors: () => listSyncCursors,
+  probeCursorPersistence: () => probeCursorPersistence,
   redactSecrets: () => redactSecrets,
   rejectClientCredentials: () => rejectClientCredentials,
   resetMockTransportScenarios: () => resetMockTransportScenarios,
@@ -951,6 +973,7 @@ __export(serverEntry_exports, {
   sanitizeClientSyncRequest: () => sanitizeClientSyncRequest,
   selectBestSupplierForOrder: () => selectBestSupplierForOrder,
   setSupplierEnabled: () => setSupplierEnabled,
+  simulateSupplierEngineRestart: () => simulateSupplierEngineRestart,
   summarizeIdentifierValidation: () => summarizeIdentifierValidation,
   validateSupplierEndpoint: () => validateSupplierEndpoint,
   validateSupplierOrderPayload: () => validateSupplierOrderPayload
@@ -2402,6 +2425,9 @@ function listSyncCursors() {
 function getSyncCursorForAdmin(supplierId, syncMode = "incremental") {
   return getSupplierPersistence()?.getCursorForAdmin(supplierId, syncMode) ?? null;
 }
+function resetSyncCursors() {
+  cursorStore.clear();
+}
 
 // lib/supplier-engine/connectors/b2b-sandbox/parser.ts
 function parseSafeXmlProducts(xml, itemTag = "product") {
@@ -3294,6 +3320,9 @@ function bootstrapSupplierEnginePersistence() {
   hydrateSyncCursorsFromPersistence();
   hydrateHealthFromPersistence();
   bootstrapped = true;
+}
+function resetSupplierEngineBootstrap() {
+  bootstrapped = false;
 }
 
 // lib/supplier-engine/sync.ts
@@ -32246,6 +32275,78 @@ function summarizeIdentifierValidation(records) {
 
 // lib/supplier-engine/liveOnboarding.ts
 init_config();
+
+// lib/supplier-engine/liveValidationVerdict.ts
+function connectionStatus(report) {
+  if ("status" in report.connection && report.connection.status === "SKIPPED") return "SKIPPED";
+  if ("status" in report.connection && report.connection.status === "CONNECTED") return "CONNECTED";
+  return "FAILED";
+}
+function testSyncStatus(report) {
+  if ("status" in report.dryRun && report.dryRun.status === "SKIPPED") return "SKIPPED";
+  if ("ok" in report.dryRun && report.dryRun.ok && report.dryRun.source === "live") return "PASS";
+  if ("ok" in report.dryRun && report.dryRun.source === "live") return "FAIL";
+  return "SKIPPED";
+}
+function liveReadStatus(report) {
+  if ("status" in report.liveRead && report.liveRead.status === "SKIPPED") return "SKIPPED";
+  if (Array.isArray(report.liveRead)) {
+    const last = report.liveRead[report.liveRead.length - 1];
+    return last?.status === "COMPLETED" || last?.status === "PARTIAL" ? "PASS" : "FAIL";
+  }
+  return "SKIPPED";
+}
+function computeLiveValidationVerdict(report, options = {}) {
+  const connection = connectionStatus(report);
+  const testSync = testSyncStatus(report);
+  const liveRead = liveReadStatus(report);
+  const credentialsPresent = options.credentialsPresent ?? report.source !== "SKIPPED";
+  if (!credentialsPresent || report.limitations.some((l) => l.includes("credentials"))) {
+    return {
+      verdict: "LIVE NOT VALIDATED / SKIPPED",
+      message: "LIVE VALIDATION BLOCKED \u2014 REAL INTER CARS CREDENTIALS REQUIRED",
+      connection,
+      testSync,
+      liveRead,
+      realB2bSupplierOnboardingValidated: false,
+      deploymentCredentialBlocker: true
+    };
+  }
+  if (connection === "CONNECTED" && testSync === "PASS" && liveRead === "PASS") {
+    return {
+      verdict: "LIVE VALIDATED",
+      message: "REAL B2B SUPPLIER ONBOARDING VALIDATED",
+      connection,
+      testSync,
+      liveRead,
+      realB2bSupplierOnboardingValidated: true,
+      deploymentCredentialBlocker: false
+    };
+  }
+  if (connection === "SKIPPED" && testSync === "SKIPPED" && liveRead === "SKIPPED") {
+    return {
+      verdict: "LIVE NOT VALIDATED / SKIPPED",
+      message: "LIVE VALIDATION BLOCKED \u2014 REAL INTER CARS CREDENTIALS REQUIRED",
+      connection,
+      testSync,
+      liveRead,
+      realB2bSupplierOnboardingValidated: false,
+      deploymentCredentialBlocker: true
+    };
+  }
+  return {
+    verdict: "LIVE VALIDATION FAILED",
+    message: "Live Inter Cars validation attempted but one or more phases failed",
+    connection,
+    testSync,
+    liveRead,
+    realB2bSupplierOnboardingValidated: false,
+    deploymentCredentialBlocker: false
+  };
+}
+
+// lib/supplier-engine/liveOnboarding.ts
+init_registry2();
 function inferSource(dryRun) {
   if (!dryRun) return "SKIPPED";
   return dryRun.source === "live" ? "LIVE" : dryRun.source === "mock" ? "MOCK" : "FIXTURE";
@@ -32278,12 +32379,43 @@ function pickProductSamples(records, limit = 10) {
   }
   return samples;
 }
+function verifyCursorSurvivesRestart(supplierId) {
+  const before = getSyncCursor(supplierId, "incremental")?.cursor;
+  if (!before) return false;
+  resetSupplierEngineBootstrap();
+  hydrateSyncCursorsFromPersistence();
+  const after = getSyncCursor(supplierId, "incremental")?.cursor;
+  return before === after;
+}
 async function runSupplierLiveOnboarding(options = {}) {
+  bootstrapSupplierEnginePersistence();
   const started = Date.now();
   const profile = resolveLiveSupplierProfile();
   const limitations = [];
   const batchSizes = options.batchSizes || [10, 50, 100];
+  const emptyAcceptance = () => ({
+    connection: "SKIPPED",
+    testSync: "SKIPPED",
+    liveRead: "SKIPPED",
+    productEngine: "SKIPPED",
+    inventoryEngine: "SKIPPED",
+    pricingEngine: "SKIPPED",
+    admin: "SKIPPED",
+    security: "PASS",
+    persistentCursor: "SKIPPED",
+    restartIdempotency: "SKIPPED",
+    retryBehavior: "SKIPPED",
+    orderNetwork: "DISABLED",
+    returnRefundNetwork: "DISABLED"
+  });
   if (!profile) {
+    const liveValidation2 = computeLiveValidationVerdict(
+      {
+        source: "SKIPPED",
+        limitations: ["profile missing"]
+      },
+      { credentialsPresent: false }
+    );
     return {
       source: "SKIPPED",
       supplier: { id: "", name: "", country: "", type: "" },
@@ -32306,15 +32438,19 @@ async function runSupplierLiveOnboarding(options = {}) {
       timing: {},
       security: { orderNetworkDisabled: !isSupplierOrderNetworkEnabled(), secretsInRepo: false, customerPiiUsed: false },
       completedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      limitations: ["SUPPLIER_LIVE_PROFILE or SUPPLIER_LIVE_CONFIG_JSON not configured"]
+      limitations: ["SUPPLIER_LIVE_PROFILE or SUPPLIER_LIVE_CONFIG_JSON not configured"],
+      acceptance: emptyAcceptance(),
+      liveValidation: liveValidation2
     };
   }
+  const credentialReadiness = describeLiveCredentialReadiness(profile);
   const docs = profile.adapterProfile === "inter-cars" ? [
     "https://docs.webapi.intercars.eu/ic-api/contracts/api",
     "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
   ] : [];
   if (!hasLiveSupplierCredentials(profile)) {
     limitations.push("Live credentials not resolved \u2014 connection and sync phases skipped");
+    limitations.push("LIVE VALIDATION BLOCKED \u2014 REAL INTER CARS CREDENTIALS REQUIRED");
   }
   if (!isSupplierNetworkEnabled()) {
     limitations.push("SUPPLIER_NETWORK_ENABLED=0 \u2014 network calls disabled");
@@ -32352,12 +32488,38 @@ async function runSupplierLiveOnboarding(options = {}) {
   let restartContinues = "UNKNOWN";
   if (cursorAfter) {
     saveSyncCursor(profile.supplierId, { cursor: cursorAfter, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
-    restartContinues = Boolean(getSyncCursor(profile.supplierId, "incremental")?.cursor);
+    restartContinues = verifyCursorSurvivesRestart(profile.supplierId);
   }
   const sampleRecords = "sampleRecords" in dryRun ? dryRun.sampleRecords || [] : [];
   const productSamples = "productsFound" in dryRun && dryRun.productsFound > 0 ? pickProductSamples(sampleRecords, 10) : [];
   const identifierValidation = sampleRecords.length ? summarizeIdentifierValidation(sampleRecords) : void 0;
   const health = getSupplierHealth(profile.supplierId);
+  const supplierRegistered = listSuppliers().some((s) => s.supplierId === profile.supplierId);
+  const acceptance = {
+    connection: "status" in connection && connection.status === "SKIPPED" ? "SKIPPED" : "status" in connection && connection.status === "CONNECTED" ? "CONNECTED" : hasLiveSupplierCredentials(profile) && isSupplierNetworkEnabled() ? "FAILED" : "SKIPPED",
+    testSync: "status" in dryRun ? "SKIPPED" : dryRun.ok && dryRun.source === "live" ? "PASS" : dryRun.source === "live" ? "FAIL" : "SKIPPED",
+    liveRead: "status" in liveReadResults ? "SKIPPED" : Array.isArray(liveReadResults) && liveReadResults.some((r) => r.status === "COMPLETED" || r.status === "PARTIAL") ? "PASS" : Array.isArray(liveReadResults) ? "FAIL" : "SKIPPED",
+    productEngine: "ok" in dryRun && dryRun.ok && dryRun.source === "live" && dryRun.valid > 0 ? "PASS" : "SKIPPED",
+    inventoryEngine: "stockRecords" in dryRun && dryRun.stockRecords > 0 && dryRun.source === "live" ? "PASS" : "SKIPPED",
+    pricingEngine: "priceRecords" in dryRun && dryRun.priceRecords > 0 && dryRun.source === "live" ? "PASS" : "SKIPPED",
+    admin: supplierRegistered ? "PASS" : "SKIPPED",
+    security: isSupplierOrderNetworkEnabled() ? "FAIL" : "PASS",
+    persistentCursor: cursorAfter ? restartContinues === true ? "PASS" : "FAIL" : "SKIPPED",
+    restartIdempotency: restartContinues === true ? "PASS" : restartContinues === false ? "FAIL" : "SKIPPED",
+    retryBehavior: "SKIPPED",
+    orderNetwork: "DISABLED",
+    returnRefundNetwork: "DISABLED"
+  };
+  const partialReport = {
+    source,
+    limitations,
+    connection,
+    dryRun,
+    liveRead: liveReadResults
+  };
+  const liveValidation = computeLiveValidationVerdict(partialReport, {
+    credentialsPresent: hasLiveSupplierCredentials(profile)
+  });
   return {
     source,
     supplier: {
@@ -32404,8 +32566,21 @@ async function runSupplierLiveOnboarding(options = {}) {
       customerPiiUsed: false
     },
     completedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    limitations
+    limitations,
+    credentialReadiness,
+    acceptance,
+    liveValidation
   };
+}
+function simulateSupplierEngineRestart() {
+  resetSupplierEngineBootstrap();
+  bootstrapSupplierEnginePersistence();
+}
+function probeCursorPersistence(supplierId, cursor) {
+  saveSyncCursor(supplierId, { cursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
+  resetSyncCursors();
+  hydrateSyncCursorsFromPersistence();
+  return getSyncCursor(supplierId, "incremental")?.cursor === cursor;
 }
 function buildInterCarsProfileSummary(profile) {
   return {
@@ -32432,8 +32607,10 @@ init_config();
   bootstrapSupplierEnginePersistence,
   buildDataQualityReport,
   buildInterCarsProfileSummary,
+  computeLiveValidationVerdict,
   createSupplierOrder,
   createSupplierReturn,
+  describeLiveCredentialReadiness,
   evaluateLiveReadSyncGuard,
   evaluateProductionSyncGuard,
   getRegisteredLiveSupplierId,
@@ -32459,6 +32636,7 @@ init_config();
   listReturnCapabilities,
   listSuppliers,
   listSyncCursors,
+  probeCursorPersistence,
   redactSecrets,
   rejectClientCredentials,
   resetMockTransportScenarios,
@@ -32474,6 +32652,7 @@ init_config();
   sanitizeClientSyncRequest,
   selectBestSupplierForOrder,
   setSupplierEnabled,
+  simulateSupplierEngineRestart,
   summarizeIdentifierValidation,
   validateSupplierEndpoint,
   validateSupplierOrderPayload

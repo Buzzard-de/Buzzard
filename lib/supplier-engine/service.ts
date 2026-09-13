@@ -126,7 +126,18 @@ export {
 export {
   runSupplierLiveOnboarding,
   buildInterCarsProfileSummary,
+  simulateSupplierEngineRestart,
+  probeCursorPersistence,
   type LiveOnboardingReport,
+  type LiveValidationAcceptance,
   type OnboardingSource,
 } from "./liveOnboarding";
-export { resolvePredefinedLiveProfile } from "./liveSupplier/config";
+export {
+  resolvePredefinedLiveProfile,
+  describeLiveCredentialReadiness,
+} from "./liveSupplier/config";
+export {
+  computeLiveValidationVerdict,
+  type LiveValidationVerdict,
+  type LiveValidationSummary,
+} from "./liveValidationVerdict";

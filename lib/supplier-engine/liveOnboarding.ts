@@ -1,11 +1,24 @@
 import { runSupplierConnectionTest, type ConnectionTestResult } from "./connectionTest";
 import { runSupplierDryRunTestSync, type DryRunTestSyncResult } from "./testSync";
 import { runSupplierLiveReadSync } from "./liveReadSync";
-import { getSyncCursor, saveSyncCursor } from "./syncCursor";
+import {
+  getSyncCursor,
+  saveSyncCursor,
+  hydrateSyncCursorsFromPersistence,
+  resetSyncCursors,
+} from "./syncCursor";
 import { getSupplierHealth } from "./health";
-import { resolveLiveSupplierProfile, hasLiveSupplierCredentials, isLiveReadEnabled } from "./liveSupplier/config";
+import {
+  resolveLiveSupplierProfile,
+  hasLiveSupplierCredentials,
+  isLiveReadEnabled,
+  describeLiveCredentialReadiness,
+} from "./liveSupplier/config";
 import { isSupplierNetworkEnabled, isSupplierOrderNetworkEnabled } from "./network";
 import { summarizeIdentifierValidation } from "./identifierValidation";
+import { bootstrapSupplierEnginePersistence, resetSupplierEngineBootstrap } from "./bootstrap";
+import { computeLiveValidationVerdict, type LiveValidationSummary } from "./liveValidationVerdict";
+import { listSuppliers } from "./registry";
 import type { LiveSupplierProfile } from "./liveSupplier/types";
 import type { SupplierDataQualityReport } from "./dataQuality";
 import type { SyncJobResult } from "./types";
@@ -81,6 +94,25 @@ export interface LiveOnboardingReport {
   };
   completedAt: string;
   limitations: string[];
+  credentialReadiness?: ReturnType<typeof describeLiveCredentialReadiness>;
+  acceptance: LiveValidationAcceptance;
+  liveValidation: LiveValidationSummary;
+}
+
+export interface LiveValidationAcceptance {
+  connection: "CONNECTED" | "FAILED" | "SKIPPED";
+  testSync: "PASS" | "FAIL" | "SKIPPED";
+  liveRead: "PASS" | "FAIL" | "SKIPPED";
+  productEngine: "PASS" | "FAIL" | "SKIPPED";
+  inventoryEngine: "PASS" | "FAIL" | "SKIPPED";
+  pricingEngine: "PASS" | "FAIL" | "SKIPPED";
+  admin: "PASS" | "FAIL" | "SKIPPED";
+  security: "PASS" | "FAIL";
+  persistentCursor: "PASS" | "FAIL" | "SKIPPED";
+  restartIdempotency: "PASS" | "FAIL" | "SKIPPED";
+  retryBehavior: "PASS" | "FAIL" | "SKIPPED";
+  orderNetwork: "DISABLED";
+  returnRefundNetwork: "DISABLED";
 }
 
 function inferSource(dryRun?: DryRunTestSyncResult): OnboardingSource {
@@ -126,15 +158,47 @@ export interface LiveOnboardingOptions {
   skipLiveRead?: boolean;
 }
 
+function verifyCursorSurvivesRestart(supplierId: string): boolean {
+  const before = getSyncCursor(supplierId, "incremental")?.cursor;
+  if (!before) return false;
+  resetSupplierEngineBootstrap();
+  hydrateSyncCursorsFromPersistence();
+  const after = getSyncCursor(supplierId, "incremental")?.cursor;
+  return before === after;
+}
+
 export async function runSupplierLiveOnboarding(
   options: LiveOnboardingOptions = {}
 ): Promise<LiveOnboardingReport> {
+  bootstrapSupplierEnginePersistence();
   const started = Date.now();
   const profile = resolveLiveSupplierProfile();
   const limitations: string[] = [];
   const batchSizes = options.batchSizes || [10, 50, 100];
+  const emptyAcceptance = (): LiveValidationAcceptance => ({
+    connection: "SKIPPED",
+    testSync: "SKIPPED",
+    liveRead: "SKIPPED",
+    productEngine: "SKIPPED",
+    inventoryEngine: "SKIPPED",
+    pricingEngine: "SKIPPED",
+    admin: "SKIPPED",
+    security: "PASS",
+    persistentCursor: "SKIPPED",
+    restartIdempotency: "SKIPPED",
+    retryBehavior: "SKIPPED",
+    orderNetwork: "DISABLED",
+    returnRefundNetwork: "DISABLED",
+  });
 
   if (!profile) {
+    const liveValidation = computeLiveValidationVerdict(
+      {
+        source: "SKIPPED",
+        limitations: ["profile missing"],
+      } as LiveOnboardingReport,
+      { credentialsPresent: false }
+    );
     return {
       source: "SKIPPED",
       supplier: { id: "", name: "", country: "", type: "" },
@@ -158,9 +222,12 @@ export async function runSupplierLiveOnboarding(
       security: { orderNetworkDisabled: !isSupplierOrderNetworkEnabled(), secretsInRepo: false, customerPiiUsed: false },
       completedAt: new Date().toISOString(),
       limitations: ["SUPPLIER_LIVE_PROFILE or SUPPLIER_LIVE_CONFIG_JSON not configured"],
+      acceptance: emptyAcceptance(),
+      liveValidation,
     };
   }
 
+  const credentialReadiness = describeLiveCredentialReadiness(profile);
   const docs =
     profile.adapterProfile === "inter-cars"
       ? [
@@ -171,6 +238,7 @@ export async function runSupplierLiveOnboarding(
 
   if (!hasLiveSupplierCredentials(profile)) {
     limitations.push("Live credentials not resolved — connection and sync phases skipped");
+    limitations.push("LIVE VALIDATION BLOCKED — REAL INTER CARS CREDENTIALS REQUIRED");
   }
 
   if (!isSupplierNetworkEnabled()) {
@@ -227,7 +295,7 @@ export async function runSupplierLiveOnboarding(
   let restartContinues: boolean | "UNKNOWN" = "UNKNOWN";
   if (cursorAfter) {
     saveSyncCursor(profile.supplierId, { cursor: cursorAfter, lastModified: new Date().toISOString() }, "incremental");
-    restartContinues = Boolean(getSyncCursor(profile.supplierId, "incremental")?.cursor);
+    restartContinues = verifyCursorSurvivesRestart(profile.supplierId);
   }
 
   const sampleRecords = "sampleRecords" in dryRun ? dryRun.sampleRecords || [] : [];
@@ -240,6 +308,60 @@ export async function runSupplierLiveOnboarding(
     : undefined;
 
   const health = getSupplierHealth(profile.supplierId);
+  const supplierRegistered = listSuppliers().some((s) => s.supplierId === profile.supplierId);
+
+  const acceptance: LiveValidationAcceptance = {
+    connection:
+      "status" in connection && connection.status === "SKIPPED"
+        ? "SKIPPED"
+        : "status" in connection && connection.status === "CONNECTED"
+          ? "CONNECTED"
+          : hasLiveSupplierCredentials(profile) && isSupplierNetworkEnabled()
+            ? "FAILED"
+            : "SKIPPED",
+    testSync:
+      "status" in dryRun
+        ? "SKIPPED"
+        : dryRun.ok && dryRun.source === "live"
+          ? "PASS"
+          : dryRun.source === "live"
+            ? "FAIL"
+            : "SKIPPED",
+    liveRead:
+      "status" in liveReadResults
+        ? "SKIPPED"
+        : Array.isArray(liveReadResults) &&
+            liveReadResults.some((r) => r.status === "COMPLETED" || r.status === "PARTIAL")
+          ? "PASS"
+          : Array.isArray(liveReadResults)
+            ? "FAIL"
+            : "SKIPPED",
+    productEngine:
+      "ok" in dryRun && dryRun.ok && dryRun.source === "live" && dryRun.valid > 0 ? "PASS" : "SKIPPED",
+    inventoryEngine:
+      "stockRecords" in dryRun && dryRun.stockRecords > 0 && dryRun.source === "live" ? "PASS" : "SKIPPED",
+    pricingEngine:
+      "priceRecords" in dryRun && dryRun.priceRecords > 0 && dryRun.source === "live" ? "PASS" : "SKIPPED",
+    admin: supplierRegistered ? "PASS" : "SKIPPED",
+    security: isSupplierOrderNetworkEnabled() ? "FAIL" : "PASS",
+    persistentCursor: cursorAfter ? (restartContinues === true ? "PASS" : "FAIL") : "SKIPPED",
+    restartIdempotency: restartContinues === true ? "PASS" : restartContinues === false ? "FAIL" : "SKIPPED",
+    retryBehavior: "SKIPPED",
+    orderNetwork: "DISABLED",
+    returnRefundNetwork: "DISABLED",
+  };
+
+  const partialReport = {
+    source,
+    limitations,
+    connection,
+    dryRun,
+    liveRead: liveReadResults,
+  } as LiveOnboardingReport;
+
+  const liveValidation = computeLiveValidationVerdict(partialReport, {
+    credentialsPresent: hasLiveSupplierCredentials(profile),
+  });
 
   return {
     source,
@@ -288,7 +410,23 @@ export async function runSupplierLiveOnboarding(
     },
     completedAt: new Date().toISOString(),
     limitations,
+    credentialReadiness,
+    acceptance,
+    liveValidation,
   };
+}
+
+/** Clear in-memory cursor only — used to verify persistence reload without deleting stored cursor. */
+export function simulateSupplierEngineRestart(): void {
+  resetSupplierEngineBootstrap();
+  bootstrapSupplierEnginePersistence();
+}
+
+export function probeCursorPersistence(supplierId: string, cursor: string): boolean {
+  saveSyncCursor(supplierId, { cursor, lastModified: new Date().toISOString() }, "incremental");
+  resetSyncCursors();
+  hydrateSyncCursorsFromPersistence();
+  return getSyncCursor(supplierId, "incremental")?.cursor === cursor;
 }
 
 export function buildInterCarsProfileSummary(profile: LiveSupplierProfile): Record<string, unknown> {

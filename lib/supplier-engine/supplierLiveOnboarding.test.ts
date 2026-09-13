@@ -114,6 +114,8 @@ describe("Live onboarding — skipped without credentials", () => {
     expect(report.connection.status).toBe("SKIPPED");
     expect(report.security.orderNetworkDisabled).toBe(true);
     expect(report.supplier.name).toBe("Inter Cars");
+    expect(report.liveValidation.verdict).toBe("LIVE NOT VALIDATED / SKIPPED");
+    expect(report.liveValidation.realB2bSupplierOnboardingValidated).toBe(false);
   });
 });
 

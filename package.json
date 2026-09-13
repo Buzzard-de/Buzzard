@@ -72,7 +72,7 @@
     "test:global-localization": "node --test server/__tests__/globalLocalization.test.mjs",
     "test:market-engine": "vitest run lib/market-engine/marketEngine.test.ts && node --test server/__tests__/marketEngine.test.mjs",
     "test:product-engine": "vitest run lib/product-engine/productEngine.test.ts && node --test server/__tests__/productEngine.test.mjs",
-    "test:supplier-engine": "vitest run lib/supplier-engine/supplierEngine.test.ts lib/supplier-engine/supplierProductionReadiness.test.ts lib/supplier-engine/supplierOperationsPersistence.test.ts lib/supplier-engine/supplierConnectorFramework.test.ts lib/supplier-engine/supplierLiveRead.test.ts && node --test server/__tests__/supplierEngine.test.mjs",
+    "test:supplier-engine": "vitest run lib/supplier-engine/supplierEngine.test.ts lib/supplier-engine/supplierProductionReadiness.test.ts lib/supplier-engine/supplierOperationsPersistence.test.ts lib/supplier-engine/supplierConnectorFramework.test.ts lib/supplier-engine/supplierLiveRead.test.ts lib/supplier-engine/supplierLiveOnboarding.test.ts lib/supplier-engine/supplierLiveValidationVerdict.test.ts && node --test server/__tests__/supplierEngine.test.mjs",
     "test:supplier-production-readiness": "vitest run lib/supplier-engine/supplierProductionReadiness.test.ts",
     "gate:supplier-production": "node scripts/supplier-production-gate.mjs",
     "gate:supplier-operations": "node scripts/supplier-operations-gate.mjs",

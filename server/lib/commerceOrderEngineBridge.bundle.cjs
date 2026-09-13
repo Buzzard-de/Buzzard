@@ -742,9 +742,29 @@ function fromBuzzardProduct(product) {
 
 // lib/product-engine/adapters/canonical.ts
 var import_module = require("module");
+
+// lib/product-engine/adapters/resolveRepoPath.ts
+var import_fs = __toESM(require("fs"));
 var import_path = __toESM(require("path"));
+var import_url = require("url");
+function resolveRepoFile(...segments) {
+  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
+  const roots = [
+    process.cwd(),
+    import_path.default.join(process.cwd(), ".."),
+    import_path.default.resolve(moduleDir, "../.."),
+    import_path.default.resolve(moduleDir, "../../..")
+  ];
+  for (const root of roots) {
+    const candidate = import_path.default.join(root, ...segments);
+    if (import_fs.default.existsSync(candidate)) return candidate;
+  }
+  return import_path.default.join(process.cwd(), ...segments);
+}
+
+// lib/product-engine/adapters/canonical.ts
 var require2 = (0, import_module.createRequire)(__import_meta_url__);
-var canonicalModelPath = import_path.default.join(process.cwd(), "server/lib/global/productCanonicalModel.js");
+var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
 var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
 
 // data/buzzard_categories.json
@@ -27893,6 +27913,9 @@ function createMemoryAnalyticsStore() {
     },
     listEvents() {
       return [...events];
+    },
+    listEventsInRange(fromIso, toIso) {
+      return events.filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
     },
     getEvent(eventId) {
       return events.find((e) => e.eventId === eventId);

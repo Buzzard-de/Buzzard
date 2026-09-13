@@ -39,7 +39,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var require_dbPaths = __commonJS({
   "server/lib/dbPaths.js"(exports2, module2) {
     "use strict";
-    var fs = require("fs");
+    var fs2 = require("fs");
     var path2 = require("path");
     var serverDataDir = path2.join(__dirname, "..", "data");
     var defaultDbPath = path2.join(serverDataDir, "buzzard.db");
@@ -57,7 +57,7 @@ var require_dbPaths = __commonJS({
       return defaultBackupDir;
     }
     function ensureDbDirectory(dbPath = resolveDbPath()) {
-      fs.mkdirSync(path2.dirname(dbPath), { recursive: true });
+      fs2.mkdirSync(path2.dirname(dbPath), { recursive: true });
       return dbPath;
     }
     function getRenderDiskDiagnostics() {
@@ -65,9 +65,9 @@ var require_dbPaths = __commonJS({
       let exists = false;
       let writable = false;
       try {
-        exists = fs.existsSync(mountPath);
+        exists = fs2.existsSync(mountPath);
         if (exists) {
-          fs.accessSync(mountPath, fs.constants.W_OK);
+          fs2.accessSync(mountPath, fs2.constants.W_OK);
           writable = true;
         }
       } catch {
@@ -130,12 +130,12 @@ var require_dbPaths = __commonJS({
 var require_db = __commonJS({
   "server/lib/db.js"(exports2, module2) {
     "use strict";
-    var fs = require("fs");
+    var fs2 = require("fs");
     var path2 = require("path");
     var Database = require("better-sqlite3");
     var { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require_dbPaths();
     var dataDir = path2.join(__dirname, "..", "data");
-    fs.mkdirSync(dataDir, { recursive: true });
+    fs2.mkdirSync(dataDir, { recursive: true });
     var dbPath = ensureDbDirectory(resolveDbPath());
     var db = new Database(dbPath);
     db.pragma("foreign_keys = ON");
@@ -5164,9 +5164,29 @@ function fromBuzzardProduct(product) {
 
 // lib/product-engine/adapters/canonical.ts
 var import_module = require("module");
+
+// lib/product-engine/adapters/resolveRepoPath.ts
+var import_fs = __toESM(require("fs"));
 var import_path = __toESM(require("path"));
+var import_url = require("url");
+function resolveRepoFile(...segments) {
+  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
+  const roots = [
+    process.cwd(),
+    import_path.default.join(process.cwd(), ".."),
+    import_path.default.resolve(moduleDir, "../.."),
+    import_path.default.resolve(moduleDir, "../../..")
+  ];
+  for (const root of roots) {
+    const candidate = import_path.default.join(root, ...segments);
+    if (import_fs.default.existsSync(candidate)) return candidate;
+  }
+  return import_path.default.join(process.cwd(), ...segments);
+}
+
+// lib/product-engine/adapters/canonical.ts
 var require2 = (0, import_module.createRequire)(__import_meta_url__);
-var canonicalModelPath = import_path.default.join(process.cwd(), "server/lib/global/productCanonicalModel.js");
+var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
 var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
 
 // data/buzzard_categories.json

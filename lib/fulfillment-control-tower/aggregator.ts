@@ -2,14 +2,13 @@ import { getOrder, getPriceSnapshot, listAllOrders } from "@/lib/order-engine/re
 import type { BuzzardOrder, OrderItem } from "@/lib/order-engine/types";
 import { getReservation } from "@/lib/inventory-engine/reservation";
 import { getProduct } from "@/lib/product-engine";
-import { getSupplier, isSupplierSelectable } from "@/lib/supplier-engine/registry";
+import { isSupplierSelectable } from "@/lib/supplier-engine/registry";
 import { getSupplierHealth } from "@/lib/supplier-engine/health";
 import { getSupplierOrderSandboxByReference } from "@/lib/supplier-engine/orderSandbox/persistence";
 import { listOrderMappings } from "@/lib/marketplace-engine/registry";
 import { getReturnByOrder } from "@/lib/returns-engine/registry";
 import type {
   FulfillmentControlTowerFilter,
-  FulfillmentOperationalStatus,
   FulfillmentOperationalView,
   FulfillmentStateView,
   SupplierOrderClassification,
@@ -97,7 +96,6 @@ function buildStateView(
   trackingStatus: string,
   returnStatus: string
 ): FulfillmentStateView {
-  const supplier = getSupplier(item.supplierId);
   let supplierState = "UNKNOWN";
   if (!isSupplierSelectable(item.supplierId)) supplierState = "DISABLED";
   else if (supplierHealth === "HEALTHY") supplierState = "HEALTHY";

@@ -310,6 +310,7 @@ describe("#336 Fulfillment Control Tower & Operational Reconciliation", () => {
 
 function hasPersistentStore() {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { createFulfillmentControlTowerStore } = require("../../server/lib/fulfillment/persistentStore.js");
     return Boolean(createFulfillmentControlTowerStore());
   } catch {

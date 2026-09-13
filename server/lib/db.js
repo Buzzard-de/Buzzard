@@ -4076,6 +4076,68 @@ function migrateSupplierEngineOperations() {
 
 migrateSupplierEngineOperations();
 
+function migrateFulfillmentControlTower() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS fulfillment_control_tower_snapshots (
+      fulfillment_id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      operational_status TEXT NOT NULL DEFAULT 'UNKNOWN',
+      view_json TEXT NOT NULL DEFAULT '{}',
+      last_reconciled_at TEXT,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_fct_snapshots_order
+      ON fulfillment_control_tower_snapshots(order_id);
+    CREATE INDEX IF NOT EXISTS idx_fct_snapshots_supplier
+      ON fulfillment_control_tower_snapshots(supplier_id);
+
+    CREATE TABLE IF NOT EXISTS fulfillment_control_tower_incidents (
+      incident_id TEXT PRIMARY KEY,
+      fingerprint TEXT NOT NULL UNIQUE,
+      fulfillment_id TEXT NOT NULL,
+      order_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      severity TEXT NOT NULL,
+      category TEXT NOT NULL,
+      code TEXT NOT NULL,
+      message TEXT NOT NULL,
+      detected_at TEXT NOT NULL,
+      resolved_at TEXT,
+      status TEXT NOT NULL DEFAULT 'OPEN',
+      correlation_id TEXT,
+      resolution_note TEXT,
+      resolution_actor TEXT,
+      acknowledged_at TEXT,
+      acknowledged_by TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_fct_incidents_fulfillment
+      ON fulfillment_control_tower_incidents(fulfillment_id);
+    CREATE INDEX IF NOT EXISTS idx_fct_incidents_status
+      ON fulfillment_control_tower_incidents(status);
+
+    CREATE TABLE IF NOT EXISTS fulfillment_control_tower_reconciliation_runs (
+      run_id TEXT PRIMARY KEY,
+      correlation_id TEXT NOT NULL,
+      started_at TEXT NOT NULL,
+      completed_at TEXT NOT NULL,
+      checked_fulfillments INTEGER DEFAULT 0,
+      passed INTEGER DEFAULT 0,
+      warnings INTEGER DEFAULT 0,
+      mismatches INTEGER DEFAULT 0,
+      critical INTEGER DEFAULT 0,
+      incidents_created INTEGER DEFAULT 0,
+      incidents_resolved INTEGER DEFAULT 0,
+      duration_ms REAL DEFAULT 0,
+      errors_json TEXT DEFAULT '[]'
+    );
+    CREATE INDEX IF NOT EXISTS idx_fct_runs_started
+      ON fulfillment_control_tower_reconciliation_runs(started_at);
+  `);
+}
+
+migrateFulfillmentControlTower();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

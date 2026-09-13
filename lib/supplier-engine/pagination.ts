@@ -1,4 +1,4 @@
-export type PaginationMode = "page" | "offset" | "cursor" | "nextPageToken" | "linkHeader";
+export type PaginationMode = "page" | "offset" | "cursor" | "nextPageToken" | "linkHeader" | "pageNumber";
 
 export interface PaginationState {
   mode: PaginationMode;
@@ -7,6 +7,8 @@ export interface PaginationState {
   cursor?: string;
   nextPageToken?: string;
   pageSize: number;
+  pageParam?: string;
+  pageSizeParam?: string;
 }
 
 export interface PaginationResult {
@@ -29,10 +31,16 @@ export function parseLinkHeader(linkHeader?: string): string | undefined {
 
 export function buildPaginationQuery(state: PaginationState): Record<string, string> {
   const query: Record<string, string> = {};
+  const pageKey = state.pageParam || "page";
+  const pageSizeKey = state.pageSizeParam || "pageSize";
   switch (state.mode) {
+    case "pageNumber":
+      query[pageKey] = String(state.page ?? 0);
+      query[pageSizeKey] = String(state.pageSize);
+      break;
     case "page":
-      query.page = String(state.page ?? 1);
-      query.pageSize = String(state.pageSize);
+      query[pageKey] = String(state.page ?? 1);
+      query[pageSizeKey] = String(state.pageSize);
       break;
     case "offset":
       query.offset = String(state.offset ?? 0);
@@ -55,12 +63,23 @@ export function buildPaginationQuery(state: PaginationState): Record<string, str
 
 export function advancePagination(
   state: PaginationState,
-  response: { records: unknown[]; cursor?: string; nextPageToken?: string; linkHeader?: string }
+  response: {
+    records: unknown[];
+    cursor?: string;
+    nextPageToken?: string;
+    linkHeader?: string;
+    hasNextPage?: boolean;
+  }
 ): PaginationResult {
-  const hasMore = response.records.length >= state.pageSize;
+  const hasMore = response.hasNextPage ?? response.records.length >= state.pageSize;
   const nextLink = parseLinkHeader(response.linkHeader);
 
   switch (state.mode) {
+    case "pageNumber":
+      return {
+        hasMore,
+        next: hasMore ? { ...state, page: (state.page ?? 0) + 1 } : undefined,
+      };
     case "page":
       return {
         hasMore,

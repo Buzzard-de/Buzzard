@@ -1,6 +1,7 @@
 import type { LiveSupplierProfile } from "../../liveSupplier/types";
 import { applyFieldMapping } from "../../fieldMapping";
 import { normalizeSupplierImages } from "./images";
+import { isInterCarsProfile, preprocessInterCarsProduct } from "./interCarsAdapter";
 
 const UNKNOWN = "UNKNOWN";
 const REVIEW_REQUIRED = "REVIEW_REQUIRED";
@@ -18,7 +19,8 @@ export function normalizeB2bSandboxRecord(
   raw: Record<string, unknown>,
   profile: LiveSupplierProfile
 ): Record<string, unknown> {
-  const mapped = applyFieldMapping(raw, profile.fieldMapping);
+  const source = isInterCarsProfile(profile) ? preprocessInterCarsProduct(raw) : raw;
+  const mapped = applyFieldMapping(source, profile.fieldMapping);
 
   const supplierSku = String(mapped.supplierSku || mapped.supplier_sku || UNKNOWN);
   const ean = mapped.ean || mapped.gtin ? String(mapped.ean || mapped.gtin) : UNKNOWN;
@@ -39,6 +41,10 @@ export function normalizeB2bSandboxRecord(
     ? (mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment)
     : [];
 
+  const tecDocId = mapped.tecdocId || mapped.tecDoc;
+  const fitmentUnknown =
+    isInterCarsProfile(profile) && (!Array.isArray(vehicleFitment) || vehicleFitment.length === 0);
+
   return {
     ...mapped,
     supplierSku,
@@ -57,7 +63,9 @@ export function normalizeB2bSandboxRecord(
     priceIncludesVat: profile.priceIncludesVat === true,
     buzzardCategory: mapBuzzardCategory(mapped.supplierCategory || mapped.category, profile.categoryMapping),
     images,
-    vehicleFitment,
+    vehicleFitment: Array.isArray(vehicleFitment) && vehicleFitment.length ? vehicleFitment : undefined,
+    fitment: fitmentUnknown ? "UNKNOWN" : undefined,
+    tecdocId: tecDocId ? String(tecDocId) : undefined,
     oemNumbers: mapped.oemNumbers || mapped.oem_numbers || mapped.oem || undefined,
     liveSource: true,
   };

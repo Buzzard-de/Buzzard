@@ -1,0 +1,88 @@
+{
+  "$comment": "Inter Cars B2B profile template — copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  "$documentation": {
+    "supplier": "Inter Cars S.A.",
+    "country": "PL/EU (DE market supported)",
+    "type": "Automotive B2B wholesaler",
+    "officialDocs": [
+      "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+      "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+    ],
+    "authentication": "OAuth2 Bearer token (B2B account via sales representative)",
+    "rateLimits": "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+    "stockSemantics": "availability field = units available for purchase at location",
+    "priceSemantics": "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+    "currency": "Per-response currencyCode (EUR for DE customers when configured)",
+    "updateFrequency": "Real-time for API; CSV feeds daily",
+    "dropshipping": "Contact sales representative — not assumed enabled",
+    "whiteLabel": "Contact sales representative — not assumed enabled"
+  },
+  "supplierId": "SUP-INTER-CARS-001",
+  "name": "Inter Cars",
+  "displayName": "Inter Cars B2B",
+  "country": "DE",
+  "region": "EU",
+  "currency": "EUR",
+  "connectorType": "b2b-sandbox",
+  "adapterProfile": "inter-cars",
+  "environment": "SANDBOX",
+  "baseUrl": "https://dev.gw.intercars.eu",
+  "secretsRef": "env:SUPPLIER_LIVE_CREDENTIALS",
+  "authentication": "oauth2",
+  "authType": "OAUTH2",
+  "endpoints": {
+    "health": "/ic/catalog/category",
+    "products": "/ic/catalog/products",
+    "stock": "/ic/inventory/stock",
+    "prices": "/ic/inventory/1.0.0/pricing/quote"
+  },
+  "fieldMapping": {
+    "sku": "supplierSku",
+    "index": "mpn",
+    "articleNumber": "mpn",
+    "tecDoc": "tecdocId",
+    "brand": "brand",
+    "shortDescription": "name",
+    "description": "description",
+    "eans": "ean",
+    "availability": "stock",
+    "customerPriceNet": "supplierPrice",
+    "listPriceNet": "listPriceNet",
+    "genericArticleReferences": "supplierCategory"
+  },
+  "categoryMapping": {},
+  "categoryMappingRef": "data/supplier-engine/inter_cars_category_mappings.json",
+  "supportedMarkets": ["DE"],
+  "feedFormat": "json",
+  "priceIncludesVat": false,
+  "priceModel": "net",
+  "priceField": "customerPriceNet",
+  "capabilities": {
+    "productFeed": true,
+    "stockFeed": true,
+    "priceFeed": true,
+    "orderAPI": false,
+    "createOrder": false,
+    "cancelOrder": false,
+    "orderStatus": false,
+    "trackingAPI": false,
+    "returnsAPI": false,
+    "refund": false,
+    "credit": false,
+    "replacement": false,
+    "dropshipping": false,
+    "whiteLabel": false,
+    "blindShipping": false
+  },
+  "pagination": {
+    "mode": "pageNumber",
+    "pageParam": "pageNumber",
+    "pageSizeParam": "pageSize",
+    "pageSize": 25,
+    "hasNextPageField": "hasNextPage"
+  },
+  "requestHeaders": {
+    "Accept-Language": "de"
+  },
+  "allowedEndpoints": ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+}

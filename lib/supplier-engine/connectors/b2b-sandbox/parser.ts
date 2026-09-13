@@ -27,10 +27,16 @@ export function parseSafeXmlProducts(xml: string, itemTag = "product"): Record<s
   return records;
 }
 
+export interface ParsedSupplierFeed {
+  records: Record<string, unknown>[];
+  hasNextPage?: boolean;
+  totalResults?: number;
+}
+
 export function parseSupplierFeedBody(
   body: string,
   format: "json" | "xml"
-): { ok: true; records: Record<string, unknown>[] } | { ok: false; reason: string } {
+): { ok: true; records: Record<string, unknown>[]; hasNextPage?: boolean; totalResults?: number } | { ok: false; reason: string } {
   if (format === "xml") {
     try {
       return { ok: true, records: parseSafeXmlProducts(body) };
@@ -48,9 +54,15 @@ export function parseSupplierFeedBody(
     const records =
       (obj.products as Record<string, unknown>[]) ||
       (obj.items as Record<string, unknown>[]) ||
+      (obj.lines as Record<string, unknown>[]) ||
       (obj.data as Record<string, unknown>[]) ||
       [];
-    return { ok: true, records };
+    return {
+      ok: true,
+      records,
+      hasNextPage: obj.hasNextPage === true,
+      totalResults: typeof obj.totalResults === "number" ? obj.totalResults : undefined,
+    };
   }
   return { ok: false, reason: "MALFORMED_JSON" };
 }

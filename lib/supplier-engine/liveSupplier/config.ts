@@ -1,4 +1,6 @@
 import template from "@/data/supplier-engine/live_supplier.config.template.json";
+import interCarsTemplate from "@/data/supplier-engine/inter_cars.profile.template.json";
+import interCarsCategoryMappings from "@/data/supplier-engine/inter_cars_category_mappings.json";
 import { resolveCredentials } from "../credentials";
 import type { LiveSupplierProfile } from "./types";
 
@@ -42,18 +44,44 @@ function normalizeProfile(profile: LiveSupplierProfile): LiveSupplierProfile {
   };
 }
 
+function loadCategoryMappings(profile: LiveSupplierProfile): LiveSupplierProfile {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = (interCarsCategoryMappings as { mappings?: Record<string, string> }).mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+
+export function resolvePredefinedLiveProfile(): LiveSupplierProfile | null {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = interCarsTemplate as LiveSupplierProfile & {
+      $comment?: string;
+      $documentation?: unknown;
+    };
+    return loadCategoryMappings(normalizeProfile(base as LiveSupplierProfile));
+  }
+  return null;
+}
+
 export function resolveLiveSupplierProfile(): LiveSupplierProfile | null {
   const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
   if (jsonConfig) {
     const parsed = parseJsonConfig(jsonConfig);
-    if (parsed) return parsed;
+    if (parsed) return loadCategoryMappings(parsed);
   }
+
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
 
   const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
   const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
   if (!supplierId || !baseUrl) return null;
 
-  return normalizeProfile({
+  return loadCategoryMappings(normalizeProfile({
     supplierId,
     name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
     displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
@@ -81,13 +109,38 @@ export function resolveLiveSupplierProfile(): LiveSupplierProfile | null {
     dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
     whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
     blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1",
-  });
+  }));
 }
 
 export function isLiveReadEnabled(): boolean {
   return envFlag("SUPPLIER_LIVE_READ_ENABLED");
 }
 
+/** True when OAuth/token is present — never logs credential values. */
 export function hasLiveSupplierCredentials(profile: LiveSupplierProfile): boolean {
-  return Boolean(resolveCredentials(profile.secretsRef));
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds || Object.keys(creds).length === 0) return false;
+  const token = creds.accessToken || creds.token || creds.bearer;
+  return Boolean(String(token || "").trim());
+}
+
+export function describeLiveCredentialReadiness(profile: LiveSupplierProfile): {
+  configured: boolean;
+  authType: string;
+  secretFieldsPresent: string[];
+} {
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds) {
+    return { configured: false, authType: profile.authentication, secretFieldsPresent: [] };
+  }
+  const present: string[] = [];
+  if (creds.accessToken) present.push("accessToken");
+  if (creds.token) present.push("token");
+  if (creds.bearer) present.push("bearer");
+  if (creds.apiKey || creds.key) present.push("apiKey");
+  return {
+    configured: hasLiveSupplierCredentials(profile),
+    authType: profile.authentication,
+    secretFieldsPresent: present,
+  };
 }

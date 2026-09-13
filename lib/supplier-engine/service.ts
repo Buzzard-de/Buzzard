@@ -111,3 +111,33 @@ export { evaluateLiveReadSyncGuard, hasLiveSupplierCredentialsConfigured } from 
 export { buildDataQualityReport, type SupplierDataQualityReport } from "./dataQuality";
 export { parseSafeXmlProducts, parseSupplierFeedBody } from "./connectors/b2b-sandbox/parser";
 export { normalizeB2bSandboxRecord } from "./connectors/b2b-sandbox/mapping";
+export {
+  preprocessInterCarsProduct,
+  preprocessInterCarsStock,
+  preprocessInterCarsPrice,
+  isInterCarsProfile,
+} from "./connectors/b2b-sandbox/interCarsAdapter";
+export {
+  validateEan,
+  validateMpn,
+  validateSupplierSku,
+  summarizeIdentifierValidation,
+} from "./identifierValidation";
+export {
+  runSupplierLiveOnboarding,
+  buildInterCarsProfileSummary,
+  simulateSupplierEngineRestart,
+  probeCursorPersistence,
+  type LiveOnboardingReport,
+  type LiveValidationAcceptance,
+  type OnboardingSource,
+} from "./liveOnboarding";
+export {
+  resolvePredefinedLiveProfile,
+  describeLiveCredentialReadiness,
+} from "./liveSupplier/config";
+export {
+  computeLiveValidationVerdict,
+  type LiveValidationVerdict,
+  type LiveValidationSummary,
+} from "./liveValidationVerdict";

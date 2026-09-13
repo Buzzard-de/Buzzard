@@ -1,0 +1,21 @@
+{
+  "$comment": "Inter Cars genericArticleId / label → Buzzard canonical category IDs. Unmapped → REVIEW_REQUIRED.",
+  "mappings": {
+    "GenericArticle_1280": "auto-sub-05--oil-filters",
+    "Filtr oleju": "auto-sub-05--oil-filters",
+    "Oil filter": "auto-sub-05--oil-filters",
+    "Ölfilter": "auto-sub-05--oil-filters",
+    "Brake pad": "auto-sub-04--brake-pads",
+    "Bremsbelag": "auto-sub-04--brake-pads",
+    "Brake disc": "auto-sub-04--brake-discs",
+    "Bremsscheibe": "auto-sub-04--brake-discs",
+    "Tyre": "auto-sub-01--car-tires",
+    "Tire": "auto-sub-01--car-tires",
+    "Reifen": "auto-sub-01--car-tires",
+    "Battery": "auto-sub-06--car-batteries",
+    "Batterie": "auto-sub-06--car-batteries",
+    "Car battery": "auto-sub-06--car-batteries",
+    "Cleaning": "auto-sub-12--interior-cleaner",
+    "Reinigung": "auto-sub-12--interior-cleaner"
+  }
+}

@@ -2,6 +2,9 @@
  * Optional sandbox smoke — runs only when live credentials and SUPPLIER_LIVE_READ_ENABLED=1.
  * Does not assert fake success; exits non-zero on connection failure.
  */
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
 const foundation = require("../server/lib/supplierFoundation.bundle.cjs");
 
 async function main() {

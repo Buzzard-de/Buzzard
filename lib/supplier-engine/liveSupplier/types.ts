@@ -16,6 +16,7 @@ export interface LiveSupplierProfile {
   region: string;
   currency: string;
   connectorType: IntegrationType;
+  adapterProfile?: "generic" | "inter-cars";
   environment: SupplierConnectorEnvironment;
   baseUrl: string;
   secretsRef: string;
@@ -24,17 +25,24 @@ export interface LiveSupplierProfile {
   endpoints: LiveSupplierEndpoints;
   fieldMapping: SupplierFieldMapping;
   categoryMapping?: Record<string, string>;
+  categoryMappingRef?: string;
   supportedMarkets: string[];
   capabilities: SupplierCapabilities;
   pagination?: {
-    mode?: "page" | "offset" | "cursor" | "nextPageToken" | "linkHeader";
+    mode?: "page" | "offset" | "cursor" | "nextPageToken" | "linkHeader" | "pageNumber";
     pageSize?: number;
+    pageParam?: string;
+    pageSizeParam?: string;
+    hasNextPageField?: string;
     cursorField?: string;
   };
   feedFormat?: "json" | "xml";
   priceIncludesVat?: boolean;
+  priceModel?: "net" | "gross";
+  priceField?: string;
   dropshipping?: boolean;
   whiteLabel?: boolean;
   blindShipping?: boolean;
   allowedEndpoints?: string[];
+  requestHeaders?: Record<string, string>;
 }

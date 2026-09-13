@@ -6,14 +6,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __esm = (fn, res, err) => function __init() {
-  if (err) throw err[0];
-  try {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  } catch (e) {
-    throw err = [e], e;
-  }
-};
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -4149,1101 +4141,126 @@ CREATE TABLE IF NOT EXISTS tax_rates (
   }
 });
 
-// server/lib/analytics/persistentStore.js
+// server/lib/fulfillment/persistentStore.js
 var require_persistentStore = __commonJS({
-  "server/lib/analytics/persistentStore.js"(exports2, module2) {
+  "server/lib/fulfillment/persistentStore.js"(exports2, module2) {
     var { db } = require_db();
-    var eventCounter = 0;
-    function parseJson(raw, fallback = {}) {
-      try {
-        return JSON.parse(raw || "{}");
-      } catch {
-        return fallback;
-      }
-    }
-    function rowToEvent(row) {
-      if (!row) return void 0;
-      const payload = parseJson(row.payload_json, {});
-      return {
-        ...payload,
-        eventId: row.event_id,
-        eventType: row.event_type,
-        timestamp: row.event_timestamp,
-        sessionId: row.session_id,
-        anonymousVisitorId: row.anonymous_visitor_id,
-        market: row.market,
-        country: row.country,
-        language: row.language,
-        currency: row.currency,
-        deviceType: row.device_type,
-        trafficSource: row.traffic_source,
-        trafficMedium: row.traffic_medium ?? void 0,
-        trafficCampaign: row.traffic_campaign ?? void 0,
-        landingPage: row.landing_page ?? void 0,
-        pagePath: row.page_path ?? void 0,
-        productId: row.product_id ?? void 0,
-        categoryId: row.category_id ?? void 0,
-        orderIdReference: row.order_id_reference ?? void 0,
-        cartIdReference: row.cart_id_reference ?? void 0,
-        value: row.value ?? void 0,
-        quantity: row.quantity ?? void 0,
-        revenueAuthority: row.revenue_authority,
-        correlationId: row.correlation_id ?? void 0,
-        sanitized: row.sanitized === 1,
-        metadata: parseJson(row.metadata_json, {})
-      };
-    }
-    function eventToRow(event) {
-      const payload = { ...event };
-      delete payload.eventId;
-      delete payload.eventType;
-      delete payload.timestamp;
-      delete payload.sessionId;
-      delete payload.anonymousVisitorId;
-      delete payload.market;
-      delete payload.country;
-      delete payload.language;
-      delete payload.currency;
-      delete payload.deviceType;
-      delete payload.trafficSource;
-      delete payload.trafficMedium;
-      delete payload.trafficCampaign;
-      delete payload.landingPage;
-      delete payload.pagePath;
-      delete payload.productId;
-      delete payload.categoryId;
-      delete payload.orderIdReference;
-      delete payload.cartIdReference;
-      delete payload.value;
-      delete payload.quantity;
-      delete payload.revenueAuthority;
-      delete payload.correlationId;
-      delete payload.sanitized;
-      delete payload.metadata;
-      return {
-        event_id: event.eventId,
-        event_type: event.eventType,
-        event_timestamp: event.timestamp,
-        session_id: event.sessionId,
-        anonymous_visitor_id: event.anonymousVisitorId,
-        market: event.market,
-        country: event.country,
-        language: event.language,
-        currency: event.currency,
-        device_type: event.deviceType,
-        traffic_source: event.trafficSource,
-        traffic_medium: event.trafficMedium ?? null,
-        traffic_campaign: event.trafficCampaign ?? null,
-        landing_page: event.landingPage ?? null,
-        page_path: event.pagePath ?? null,
-        product_id: event.productId ?? null,
-        category_id: event.categoryId ?? null,
-        order_id_reference: event.orderIdReference ?? null,
-        cart_id_reference: event.cartIdReference ?? null,
-        value: event.value ?? null,
-        quantity: event.quantity ?? null,
-        revenue_authority: event.revenueAuthority,
-        correlation_id: event.correlationId ?? null,
-        sanitized: event.sanitized ? 1 : 0,
-        metadata_json: JSON.stringify(event.metadata ?? {}),
-        payload_json: JSON.stringify(payload)
-      };
-    }
-    function rowToSession(row) {
-      if (!row) return void 0;
-      return {
-        sessionId: row.session_id,
-        anonymousVisitorId: row.anonymous_visitor_id,
-        startedAt: row.started_at,
-        lastActivityAt: row.last_activity_at,
-        endedAt: row.ended_at ?? void 0,
-        landingPage: row.landing_page ?? void 0,
-        exitPage: row.exit_page ?? void 0,
-        pageViews: row.page_views,
-        productViews: row.product_views,
-        cartEvents: row.cart_events,
-        checkoutStarted: row.checkout_started === 1,
-        purchaseCompleted: row.purchase_completed === 1,
-        trafficSource: row.traffic_source,
-        market: row.market,
-        language: row.language,
-        deviceType: row.device_type
-      };
-    }
-    function rowToVisitor(row) {
-      if (!row || row.deleted === 1) return void 0;
-      return {
-        anonymousVisitorId: row.anonymous_visitor_id,
-        firstSeenAt: row.first_seen_at,
-        lastSeenAt: row.last_seen_at,
-        sessionCount: row.session_count,
-        isReturning: row.is_returning === 1
-      };
-    }
-    function createPersistentAnalyticsStore() {
-      const insertEventStmt = db.prepare(`
-    INSERT INTO analytics_foundation_events (
-      event_id, event_type, event_timestamp, session_id, anonymous_visitor_id,
-      market, country, language, currency, device_type, traffic_source,
-      traffic_medium, traffic_campaign, landing_page, page_path,
-      product_id, category_id, order_id_reference, cart_id_reference,
-      value, quantity, revenue_authority, correlation_id, sanitized,
-      metadata_json, payload_json
+    function createFulfillmentControlTowerStore() {
+      const upsertSnapshot = db.prepare(`
+    INSERT INTO fulfillment_control_tower_snapshots (
+      fulfillment_id, order_id, supplier_id, operational_status, view_json, last_reconciled_at, updated_at
     ) VALUES (
-      @event_id, @event_type, @event_timestamp, @session_id, @anonymous_visitor_id,
-      @market, @country, @language, @currency, @device_type, @traffic_source,
-      @traffic_medium, @traffic_campaign, @landing_page, @page_path,
-      @product_id, @category_id, @order_id_reference, @cart_id_reference,
-      @value, @quantity, @revenue_authority, @correlation_id, @sanitized,
-      @metadata_json, @payload_json
+      @fulfillment_id, @order_id, @supplier_id, @operational_status, @view_json, @last_reconciled_at, @updated_at
+    )
+    ON CONFLICT(fulfillment_id) DO UPDATE SET
+      operational_status = excluded.operational_status,
+      view_json = excluded.view_json,
+      last_reconciled_at = excluded.last_reconciled_at,
+      updated_at = excluded.updated_at
+  `);
+      const upsertIncident = db.prepare(`
+    INSERT INTO fulfillment_control_tower_incidents (
+      incident_id, fingerprint, fulfillment_id, order_id, supplier_id,
+      severity, category, code, message, detected_at, resolved_at, status,
+      correlation_id, resolution_note, resolution_actor, acknowledged_at, acknowledged_by
+    ) VALUES (
+      @incident_id, @fingerprint, @fulfillment_id, @order_id, @supplier_id,
+      @severity, @category, @code, @message, @detected_at, @resolved_at, @status,
+      @correlation_id, @resolution_note, @resolution_actor, @acknowledged_at, @acknowledged_by
+    )
+    ON CONFLICT(fingerprint) DO UPDATE SET
+      severity = excluded.severity,
+      message = excluded.message,
+      resolved_at = excluded.resolved_at,
+      status = excluded.status,
+      resolution_note = excluded.resolution_note,
+      resolution_actor = excluded.resolution_actor,
+      acknowledged_at = excluded.acknowledged_at,
+      acknowledged_by = excluded.acknowledged_by
+  `);
+      const insertRun = db.prepare(`
+    INSERT OR REPLACE INTO fulfillment_control_tower_reconciliation_runs (
+      run_id, correlation_id, started_at, completed_at,
+      checked_fulfillments, passed, warnings, mismatches, critical,
+      incidents_created, incidents_resolved, duration_ms, errors_json
+    ) VALUES (
+      @run_id, @correlation_id, @started_at, @completed_at,
+      @checked_fulfillments, @passed, @warnings, @mismatches, @critical,
+      @incidents_created, @incidents_resolved, @duration_ms, @errors_json
     )
   `);
-      const upsertSessionStmt = db.prepare(`
-    INSERT INTO analytics_foundation_sessions (
-      session_id, anonymous_visitor_id, started_at, last_activity_at, ended_at,
-      landing_page, exit_page, page_views, product_views, cart_events,
-      checkout_started, purchase_completed, traffic_source, market, language, device_type
-    ) VALUES (
-      @session_id, @anonymous_visitor_id, @started_at, @last_activity_at, @ended_at,
-      @landing_page, @exit_page, @page_views, @product_views, @cart_events,
-      @checkout_started, @purchase_completed, @traffic_source, @market, @language, @device_type
-    )
-    ON CONFLICT(session_id) DO UPDATE SET
-      anonymous_visitor_id = excluded.anonymous_visitor_id,
-      last_activity_at = excluded.last_activity_at,
-      ended_at = excluded.ended_at,
-      landing_page = excluded.landing_page,
-      exit_page = excluded.exit_page,
-      page_views = excluded.page_views,
-      product_views = excluded.product_views,
-      cart_events = excluded.cart_events,
-      checkout_started = excluded.checkout_started,
-      purchase_completed = excluded.purchase_completed,
-      traffic_source = excluded.traffic_source,
-      market = excluded.market,
-      language = excluded.language,
-      device_type = excluded.device_type,
-      updated_at = CURRENT_TIMESTAMP
-  `);
-      const upsertVisitorStmt = db.prepare(`
-    INSERT INTO analytics_foundation_visitors (
-      anonymous_visitor_id, first_seen_at, last_seen_at, session_count, is_returning, deleted
-    ) VALUES (
-      @anonymous_visitor_id, @first_seen_at, @last_seen_at, @session_count, @is_returning, 0
-    )
-    ON CONFLICT(anonymous_visitor_id) DO UPDATE SET
-      last_seen_at = excluded.last_seen_at,
-      session_count = excluded.session_count,
-      is_returning = excluded.is_returning,
-      updated_at = CURRENT_TIMESTAMP
-  `);
-      const upsertConsentStmt = db.prepare(`
-    INSERT INTO analytics_foundation_consent (anonymous_visitor_id, consent_json)
-    VALUES (?, ?)
-    ON CONFLICT(anonymous_visitor_id) DO UPDATE SET
-      consent_json = excluded.consent_json,
-      updated_at = CURRENT_TIMESTAMP
-  `);
-      const insertIdempotencyStmt = db.prepare(`
-    INSERT OR IGNORE INTO analytics_foundation_idempotency (idempotency_key, event_id)
-    VALUES (?, ?)
-  `);
-      const insertAuditStmt = db.prepare(`
-    INSERT INTO analytics_foundation_audit (audit_id, audit_timestamp, action, actor_id, detail_json)
-    VALUES (@audit_id, @audit_timestamp, @action, @actor_id, @detail_json)
-  `);
       return {
-        generateEventId() {
-          eventCounter += 1;
-          return `evt_${Date.now()}_${eventCounter}`;
+        saveSnapshot(row) {
+          upsertSnapshot.run(row);
         },
-        storeEvent(event) {
-          insertEventStmt.run(eventToRow(event));
+        getSnapshot(fulfillmentId) {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots WHERE fulfillment_id = ?").get(fulfillmentId);
         },
-        listEvents() {
-          const rows = db.prepare(
-            "SELECT * FROM analytics_foundation_events ORDER BY event_timestamp ASC"
-          ).all();
-          return rows.map(rowToEvent);
+        listSnapshots() {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots ORDER BY updated_at DESC").all();
         },
-        listEventsInRange(fromIso, toIso) {
-          const rows = db.prepare(
-            `SELECT * FROM analytics_foundation_events
-         WHERE event_timestamp >= ? AND event_timestamp <= ?
-         ORDER BY event_timestamp ASC`
-          ).all(fromIso, toIso);
-          return rows.map(rowToEvent);
+        saveIncident(row) {
+          upsertIncident.run(row);
         },
-        getEvent(eventId) {
-          const row = db.prepare(
-            "SELECT * FROM analytics_foundation_events WHERE event_id = ?"
-          ).get(eventId);
-          return rowToEvent(row);
+        getIncidentByFingerprint(fingerprint) {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents WHERE fingerprint = ?").get(fingerprint);
         },
-        getSession(sessionId) {
-          const row = db.prepare(
-            "SELECT * FROM analytics_foundation_sessions WHERE session_id = ?"
-          ).get(sessionId);
-          return rowToSession(row);
+        listIncidents() {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents ORDER BY detected_at DESC").all();
         },
-        upsertSession(session) {
-          upsertSessionStmt.run({
-            session_id: session.sessionId,
-            anonymous_visitor_id: session.anonymousVisitorId,
-            started_at: session.startedAt,
-            last_activity_at: session.lastActivityAt,
-            ended_at: session.endedAt ?? null,
-            landing_page: session.landingPage ?? null,
-            exit_page: session.exitPage ?? null,
-            page_views: session.pageViews,
-            product_views: session.productViews,
-            cart_events: session.cartEvents,
-            checkout_started: session.checkoutStarted ? 1 : 0,
-            purchase_completed: session.purchaseCompleted ? 1 : 0,
-            traffic_source: session.trafficSource,
-            market: session.market,
-            language: session.language,
-            device_type: session.deviceType
-          });
+        saveReconciliationRun(row) {
+          insertRun.run(row);
         },
-        listSessions() {
-          return db.prepare("SELECT * FROM analytics_foundation_sessions").all().map(rowToSession);
+        listReconciliationRuns(limit = 20) {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_reconciliation_runs ORDER BY started_at DESC LIMIT ?").all(limit);
         },
-        getVisitor(anonymousVisitorId) {
-          const row = db.prepare(
-            "SELECT * FROM analytics_foundation_visitors WHERE anonymous_visitor_id = ? AND deleted = 0"
-          ).get(anonymousVisitorId);
-          return rowToVisitor(row);
-        },
-        upsertVisitor(visitor) {
-          upsertVisitorStmt.run({
-            anonymous_visitor_id: visitor.anonymousVisitorId,
-            first_seen_at: visitor.firstSeenAt,
-            last_seen_at: visitor.lastSeenAt,
-            session_count: visitor.sessionCount,
-            is_returning: visitor.isReturning ? 1 : 0
-          });
-        },
-        listVisitors() {
-          return db.prepare("SELECT * FROM analytics_foundation_visitors WHERE deleted = 0").all().map(rowToVisitor).filter(Boolean);
-        },
-        getConsent(anonymousVisitorId) {
-          const row = db.prepare(
-            "SELECT consent_json FROM analytics_foundation_consent WHERE anonymous_visitor_id = ?"
-          ).get(anonymousVisitorId);
-          return row ? parseJson(row.consent_json) : void 0;
-        },
-        setConsent(anonymousVisitorId, consent) {
-          upsertConsentStmt.run(anonymousVisitorId, JSON.stringify(consent));
-        },
-        isIdempotencyKeyUsed(key) {
-          return Boolean(
-            db.prepare("SELECT 1 FROM analytics_foundation_idempotency WHERE idempotency_key = ?").get(key)
-          );
-        },
-        markIdempotencyKey(key, eventId) {
-          insertIdempotencyStmt.run(key, eventId);
-        },
-        getIdempotencyEventId(key) {
-          const row = db.prepare(
-            "SELECT event_id FROM analytics_foundation_idempotency WHERE idempotency_key = ?"
-          ).get(key);
-          return row?.event_id;
-        },
-        markVisitorDeleted(anonymousVisitorId) {
-          db.prepare(`
-        UPDATE analytics_foundation_visitors SET deleted = 1, updated_at = CURRENT_TIMESTAMP
-        WHERE anonymous_visitor_id = ?
-      `).run(anonymousVisitorId);
-          db.prepare(
-            "DELETE FROM analytics_foundation_consent WHERE anonymous_visitor_id = ?"
-          ).run(anonymousVisitorId);
-        },
-        isVisitorDeleted(anonymousVisitorId) {
-          const row = db.prepare(
-            "SELECT deleted FROM analytics_foundation_visitors WHERE anonymous_visitor_id = ?"
-          ).get(anonymousVisitorId);
-          return row?.deleted === 1;
-        },
-        clear() {
-          db.exec(`
-        DELETE FROM analytics_foundation_idempotency;
-        DELETE FROM analytics_foundation_events;
-        DELETE FROM analytics_foundation_sessions;
-        DELETE FROM analytics_foundation_visitors;
-        DELETE FROM analytics_foundation_consent;
-        DELETE FROM analytics_foundation_audit;
-      `);
-          eventCounter = 0;
-        },
-        removeEventsForVisitor(anonymousVisitorId) {
-          const result = db.prepare(
-            "DELETE FROM analytics_foundation_events WHERE anonymous_visitor_id = ?"
-          ).run(anonymousVisitorId);
-          db.prepare(
-            "DELETE FROM analytics_foundation_sessions WHERE anonymous_visitor_id = ?"
-          ).run(anonymousVisitorId);
-          return result.changes;
-        },
-        anonymizeEventsForVisitor(anonymousVisitorId) {
-          const rows = db.prepare(
-            "SELECT event_id FROM analytics_foundation_events WHERE anonymous_visitor_id = ?"
-          ).all(anonymousVisitorId);
-          const update = db.prepare(`
-        UPDATE analytics_foundation_events SET
-          anonymous_visitor_id = 'anon_deleted',
-          metadata_json = '{}'
-        WHERE event_id = ?
-      `);
-          for (const row of rows) {
-            update.run(row.event_id);
-          }
-          return rows.length;
-        },
-        recordAudit(entry) {
-          const auditId = `aud_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-          const auditTimestamp = (/* @__PURE__ */ new Date()).toISOString();
-          insertAuditStmt.run({
-            audit_id: auditId,
-            audit_timestamp: auditTimestamp,
-            action: entry.action,
-            actor_id: entry.actor ?? null,
-            detail_json: JSON.stringify(entry.metadata ?? {})
-          });
-          return {
-            auditId,
-            timestamp: auditTimestamp,
-            action: entry.action,
-            actor: entry.actor,
-            metadata: entry.metadata
-          };
-        },
-        getAuditLog(filter) {
-          const rows = filter?.action ? db.prepare(
-            "SELECT * FROM analytics_foundation_audit WHERE action = ? ORDER BY audit_timestamp ASC"
-          ).all(filter.action) : db.prepare(
-            "SELECT * FROM analytics_foundation_audit ORDER BY audit_timestamp ASC"
-          ).all();
-          return rows.map((row) => ({
-            auditId: row.audit_id,
-            timestamp: row.audit_timestamp,
-            action: row.action,
-            actor: row.actor_id ?? "SYSTEM",
-            metadata: parseJson(row.detail_json)
-          }));
-        },
-        clearAudit() {
-          db.prepare("DELETE FROM analytics_foundation_audit").run();
+        resetAll() {
+          db.prepare("DELETE FROM fulfillment_control_tower_snapshots").run();
+          db.prepare("DELETE FROM fulfillment_control_tower_incidents").run();
+          db.prepare("DELETE FROM fulfillment_control_tower_reconciliation_runs").run();
         }
       };
     }
-    module2.exports = { createPersistentAnalyticsStore };
+    module2.exports = { createFulfillmentControlTowerStore };
   }
 });
 
-// lib/supplier-engine/fixtures.ts
-var init_fixtures = __esm({
-  "lib/supplier-engine/fixtures.ts"() {
-    "use strict";
-  }
-});
-
-// lib/supplier-engine/persistence.ts
-var init_persistence = __esm({
-  "lib/supplier-engine/persistence.ts"() {
-    "use strict";
-  }
-});
-
-// lib/supplier-engine/security.ts
-var init_security = __esm({
-  "lib/supplier-engine/security.ts"() {
-    "use strict";
-  }
-});
-
-// lib/supplier-engine/credentials.ts
-var init_credentials = __esm({
-  "lib/supplier-engine/credentials.ts"() {
-    "use strict";
-    init_security();
-  }
-});
-
-// lib/supplier-engine/liveSupplier/config.ts
-var init_config = __esm({
-  "lib/supplier-engine/liveSupplier/config.ts"() {
-    "use strict";
-    init_credentials();
-  }
-});
-
-// lib/supplier-engine/liveSupplier/registry.ts
-var init_registry = __esm({
-  "lib/supplier-engine/liveSupplier/registry.ts"() {
-    "use strict";
-    init_config();
-    init_credentials();
-  }
-});
-
-// lib/supplier-engine/registry.ts
-var init_registry2 = __esm({
-  "lib/supplier-engine/registry.ts"() {
-    "use strict";
-    init_fixtures();
-    init_persistence();
-    init_credentials();
-    init_registry();
-  }
-});
-
-// lib/supplier-engine/capabilities.ts
-var init_capabilities = __esm({
-  "lib/supplier-engine/capabilities.ts"() {
-    "use strict";
-  }
-});
-
-// lib/supplier-engine/orderSandbox/persistence.ts
-var init_persistence2 = __esm({
-  "lib/supplier-engine/orderSandbox/persistence.ts"() {
-    "use strict";
-    init_persistence();
-  }
-});
-
-// lib/analytics/storefront/serverEntry.ts
+// lib/fulfillment-control-tower/serverEntry.ts
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
-  getAnalyticsPersistenceMode: () => getAnalyticsPersistenceMode,
-  getBusinessKpiDashboard: () => getBusinessKpiDashboard,
-  getBusinessKpiSection: () => getBusinessKpiSection,
-  getChannels: () => getChannels,
-  getFunnel: () => getFunnel,
-  getMarkets: () => getMarkets,
-  getOverview: () => getOverview,
-  getProducts: () => getProducts,
-  getRevenue: () => getRevenue,
-  getTraffic: () => getTraffic,
-  handleStorefrontAnalyticsEvent: () => handleStorefrontAnalyticsEvent,
-  handleStorefrontPurchaseSignal: () => handleStorefrontPurchaseSignal,
-  parseStorefrontEventBody: () => parseStorefrontEventBody
+  acknowledgeIncident: () => acknowledgeIncident,
+  filterIncidents: () => filterIncidents,
+  getFulfillmentControlTowerAnalyticsSummary: () => getFulfillmentControlTowerAnalyticsSummary,
+  getFulfillmentControlTowerDashboard: () => getFulfillmentControlTowerDashboard,
+  getFulfillmentControlTowerDetail: () => getFulfillmentControlTowerDetail,
+  hydrateControlTowerFromPersistence: () => hydrateControlTowerFromPersistence,
+  isSupplierOrderNetworkEnabled: () => isSupplierOrderNetworkEnabled,
+  listFulfillmentControlTowerRows: () => listFulfillmentControlTowerRows,
+  listIncidents: () => listIncidents,
+  reconcileSingleFulfillment: () => reconcileSingleFulfillment,
+  resetControlTowerForTests: () => resetControlTowerForTests,
+  resolveIncident: () => resolveIncident,
+  runFulfillmentReconciliation: () => runFulfillmentReconciliation
 });
 module.exports = __toCommonJS(serverEntry_exports);
 
-// lib/analytics/store/memoryStore.ts
-function createMemoryAnalyticsStore() {
-  const events = [];
-  const sessions = /* @__PURE__ */ new Map();
-  const visitors = /* @__PURE__ */ new Map();
-  const consentByVisitor = /* @__PURE__ */ new Map();
-  const idempotencyIndex2 = /* @__PURE__ */ new Map();
-  const deletedVisitorIds = /* @__PURE__ */ new Set();
-  const auditLog = [];
-  let eventCounter = 0;
-  let auditCounter = 0;
-  return {
-    generateEventId() {
-      eventCounter += 1;
-      return `evt_${Date.now()}_${eventCounter}`;
-    },
-    storeEvent(event) {
-      events.push(event);
-    },
-    listEvents() {
-      return [...events];
-    },
-    listEventsInRange(fromIso, toIso) {
-      return events.filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
-    },
-    getEvent(eventId) {
-      return events.find((e) => e.eventId === eventId);
-    },
-    getSession(sessionId) {
-      return sessions.get(sessionId);
-    },
-    upsertSession(session) {
-      sessions.set(session.sessionId, session);
-    },
-    listSessions() {
-      return [...sessions.values()];
-    },
-    getVisitor(anonymousVisitorId) {
-      return visitors.get(anonymousVisitorId);
-    },
-    upsertVisitor(visitor) {
-      visitors.set(visitor.anonymousVisitorId, visitor);
-    },
-    listVisitors() {
-      return [...visitors.values()];
-    },
-    getConsent(anonymousVisitorId) {
-      return consentByVisitor.get(anonymousVisitorId);
-    },
-    setConsent(anonymousVisitorId, consent) {
-      consentByVisitor.set(anonymousVisitorId, consent);
-    },
-    isIdempotencyKeyUsed(key) {
-      return idempotencyIndex2.has(key);
-    },
-    markIdempotencyKey(key, eventId) {
-      idempotencyIndex2.set(key, eventId);
-    },
-    getIdempotencyEventId(key) {
-      return idempotencyIndex2.get(key);
-    },
-    markVisitorDeleted(anonymousVisitorId) {
-      deletedVisitorIds.add(anonymousVisitorId);
-      visitors.delete(anonymousVisitorId);
-      consentByVisitor.delete(anonymousVisitorId);
-    },
-    isVisitorDeleted(anonymousVisitorId) {
-      return deletedVisitorIds.has(anonymousVisitorId);
-    },
-    clear() {
-      events.length = 0;
-      sessions.clear();
-      visitors.clear();
-      consentByVisitor.clear();
-      idempotencyIndex2.clear();
-      deletedVisitorIds.clear();
-      auditLog.length = 0;
-      eventCounter = 0;
-      auditCounter = 0;
-    },
-    removeEventsForVisitor(anonymousVisitorId) {
-      let removed = 0;
-      for (let i = events.length - 1; i >= 0; i--) {
-        if (events[i].anonymousVisitorId === anonymousVisitorId) {
-          events.splice(i, 1);
-          removed += 1;
-        }
-      }
-      for (const [id, session] of sessions) {
-        if (session.anonymousVisitorId === anonymousVisitorId) sessions.delete(id);
-      }
-      return removed;
-    },
-    anonymizeEventsForVisitor(anonymousVisitorId) {
-      let count = 0;
-      for (const event of events) {
-        if (event.anonymousVisitorId === anonymousVisitorId) {
-          event.anonymousVisitorId = "anon_deleted";
-          event.customerIdReference = void 0;
-          event.metadata = {};
-          count += 1;
-        }
-      }
-      return count;
-    },
-    recordAudit(entry) {
-      auditCounter += 1;
-      const record = {
-        auditId: `aud_${Date.now()}_${auditCounter}`,
-        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-        action: entry.action,
-        actor: entry.actor,
-        metadata: entry.metadata
-      };
-      auditLog.push(record);
-      return record;
-    },
-    getAuditLog(filter) {
-      if (!filter?.action) return [...auditLog];
-      return auditLog.filter((e) => e.action === filter.action);
-    },
-    clearAudit() {
-      auditLog.length = 0;
-      auditCounter = 0;
-    }
-  };
-}
-
-// lib/analytics/store/configure.ts
-var activeStore = createMemoryAnalyticsStore();
-var persistenceMode = "memory";
-function configureAnalyticsStore(store, mode = "memory") {
-  activeStore = store;
-  persistenceMode = mode;
-}
-function getAnalyticsStore() {
-  return activeStore;
-}
-function getAnalyticsPersistenceMode() {
-  return persistenceMode;
-}
-
-// lib/analytics/store/bootstrap.ts
-var bootstrapped = false;
-function bootstrapAnalyticsPersistence() {
-  if (bootstrapped) return;
-  bootstrapped = true;
-  const explicitMode = process.env.BUZZARD_ANALYTICS_PERSISTENCE?.trim().toLowerCase();
-  if (explicitMode === "memory") {
-    configureAnalyticsStore(createMemoryAnalyticsStore(), "memory");
-    return;
-  }
-  if (process.env.BUZZARD_DB_ENABLED === "0") {
-    configureAnalyticsStore(createMemoryAnalyticsStore(), "memory");
-    return;
-  }
-  try {
-    const { createPersistentAnalyticsStore } = require_persistentStore();
-    configureAnalyticsStore(createPersistentAnalyticsStore(), "sqlite");
-  } catch {
-    configureAnalyticsStore(createMemoryAnalyticsStore(), "memory");
-  }
-}
-
-// data/global/global_countries_35.json
-var global_countries_35_default = [
-  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
-  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
-  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
-  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
-  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
-  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
-  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
-  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
-  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
-  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
-  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
-  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
-  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
-  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
-  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
-  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
-  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
-  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
-  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
-  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
-  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
-  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
-  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
-  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
-  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
-  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
-  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
-  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
-  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
-  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
-  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
-  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
-  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
-  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
-  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
-];
-
-// data/global/market_country_overlay.json
-var market_country_overlay_default = {
-  DE: { flag: "\u{1F1E9}\u{1F1EA}", taxRate: 0.19, deliveryDays: "2\u20133 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  AT: { flag: "\u{1F1E6}\u{1F1F9}", taxRate: 0.2, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  BE: { flag: "\u{1F1E7}\u{1F1EA}", taxRate: 0.21, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  BG: { flag: "\u{1F1E7}\u{1F1EC}", taxRate: 0.2, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" },
-  HR: { flag: "\u{1F1ED}\u{1F1F7}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Hrvatski" },
-  CY: { flag: "\u{1F1E8}\u{1F1FE}", taxRate: 0.19, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  CZ: { flag: "\u{1F1E8}\u{1F1FF}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "\u010Ce\u0161tina" },
-  DK: { flag: "\u{1F1E9}\u{1F1F0}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Dansk" },
-  EE: { flag: "\u{1F1EA}\u{1F1EA}", taxRate: 0.22, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Eesti" },
-  FI: { flag: "\u{1F1EB}\u{1F1EE}", taxRate: 0.255, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Suomi" },
-  FR: { flag: "\u{1F1EB}\u{1F1F7}", taxRate: 0.2, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Fran\xE7ais" },
-  GR: { flag: "\u{1F1EC}\u{1F1F7}", taxRate: 0.24, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  HU: { flag: "\u{1F1ED}\u{1F1FA}", taxRate: 0.27, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Magyar" },
-  IE: { flag: "\u{1F1EE}\u{1F1EA}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "English" },
-  IT: { flag: "\u{1F1EE}\u{1F1F9}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Italiano" },
-  LV: { flag: "\u{1F1F1}\u{1F1FB}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Latvie\u0161u" },
-  LT: { flag: "\u{1F1F1}\u{1F1F9}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Lietuvi\u0173" },
-  LU: { flag: "\u{1F1F1}\u{1F1FA}", taxRate: 0.17, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "L\xEBtzebuergesch" },
-  MT: { flag: "\u{1F1F2}\u{1F1F9}", taxRate: 0.18, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Malti" },
-  NL: { flag: "\u{1F1F3}\u{1F1F1}", taxRate: 0.21, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  PL: { flag: "\u{1F1F5}\u{1F1F1}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Polski" },
-  PT: { flag: "\u{1F1F5}\u{1F1F9}", taxRate: 0.23, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Portugu\xEAs" },
-  RO: { flag: "\u{1F1F7}\u{1F1F4}", taxRate: 0.19, deliveryDays: "3\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Rom\xE2n\u0103" },
-  SK: { flag: "\u{1F1F8}\u{1F1F0}", taxRate: 0.2, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u010Dina" },
-  SI: { flag: "\u{1F1F8}\u{1F1EE}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u0161\u010Dina" },
-  ES: { flag: "\u{1F1EA}\u{1F1F8}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Espa\xF1ol" },
-  SE: { flag: "\u{1F1F8}\u{1F1EA}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Svenska" },
-  TR: { flag: "\u{1F1F9}\u{1F1F7}", taxRate: 0.2, deliveryDays: "4\u20139 Werktage", rtl: false, taxModel: "VAT", languageName: "T\xFCrk\xE7e" },
-  SA: { flag: "\u{1F1F8}\u{1F1E6}", taxRate: 0.15, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  AE: { flag: "\u{1F1E6}\u{1F1EA}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  QA: { flag: "\u{1F1F6}\u{1F1E6}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  KW: { flag: "\u{1F1F0}\u{1F1FC}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  BH: { flag: "\u{1F1E7}\u{1F1ED}", taxRate: 0.1, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  OM: { flag: "\u{1F1F4}\u{1F1F2}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  EG: { flag: "\u{1F1EA}\u{1F1EC}", taxRate: 0.14, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" }
-};
-
-// data/global/market_engine_extensions.json
-var market_engine_extensions_default = {
-  shippingRegions: {
-    AT: "EU_CENTRAL",
-    BE: "EU_WEST",
-    BG: "EU_EAST",
-    HR: "EU_EAST",
-    CY: "EU_SOUTH",
-    CZ: "EU_CENTRAL",
-    DK: "EU_NORTH",
-    EE: "EU_EAST",
-    FI: "EU_NORTH",
-    FR: "EU_WEST",
-    DE: "EU_CENTRAL",
-    GR: "EU_SOUTH",
-    HU: "EU_CENTRAL",
-    IE: "EU_WEST",
-    IT: "EU_SOUTH",
-    LV: "EU_EAST",
-    LT: "EU_EAST",
-    LU: "EU_WEST",
-    MT: "EU_SOUTH",
-    NL: "EU_WEST",
-    PL: "EU_EAST",
-    PT: "EU_SOUTH",
-    RO: "EU_EAST",
-    SK: "EU_CENTRAL",
-    SI: "EU_EAST",
-    ES: "EU_SOUTH",
-    SE: "EU_NORTH",
-    TR: "NON_EU",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  paymentRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  legalRegions: {
-    AT: "EU_AT",
-    BE: "EU_BE",
-    BG: "EU_BG",
-    HR: "EU_HR",
-    CY: "EU_CY",
-    CZ: "EU_CZ",
-    DK: "EU_DK",
-    EE: "EU_EE",
-    FI: "EU_FI",
-    FR: "EU_FR",
-    DE: "EU_DE",
-    GR: "EU_GR",
-    HU: "EU_HU",
-    IE: "EU_IE",
-    IT: "EU_IT",
-    LV: "EU_LV",
-    LT: "EU_LT",
-    LU: "EU_LU",
-    MT: "EU_MT",
-    NL: "EU_NL",
-    PL: "EU_PL",
-    PT: "EU_PT",
-    RO: "EU_RO",
-    SK: "EU_SK",
-    SI: "EU_SI",
-    ES: "EU_ES",
-    SE: "EU_SE",
-    TR: "TR",
-    SA: "GCC_SA",
-    AE: "GCC_AE",
-    QA: "GCC_QA",
-    KW: "GCC_KW",
-    BH: "GCC_BH",
-    OM: "GCC_OM",
-    EG: "MENA_EG"
-  },
-  supplierRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  returnRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  marketStatus: {
-    DE: "ACTIVE",
-    FR: "ACTIVE",
-    IT: "ACTIVE",
-    ES: "ACTIVE",
-    PL: "ACTIVE",
-    NL: "ACTIVE",
-    TR: "TESTING",
-    SA: "TESTING",
-    AE: "TESTING",
-    EG: "TESTING"
-  },
-  defaultMarketStatus: "PLANNED",
-  featureFlags: {
-    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
-    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
-  },
-  defaultFeatureFlags: {
-    marketEnabled: true,
-    categoryEnabled: true,
-    marketplaceEnabled: false,
-    supplierEnabled: false,
-    paymentEnabled: false,
-    shippingEnabled: false
-  },
-  marketplaces: {
-    DE: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "kaufland", name: "Kaufland", status: "supported" },
-      { id: "otto", name: "OTTO", status: "supported" }
-    ],
-    FR: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "cdiscount", name: "Cdiscount", status: "supported" }
-    ],
-    PL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "allegro", name: "Allegro", status: "supported" }
-    ],
-    NL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "bol", name: "bol.com", status: "supported" }
-    ]
-  },
-  paymentCapabilities: {
-    EU: ["card", "sepa", "paypal", "klarna"],
-    TR: ["card"],
-    GCC: ["card"],
-    MENA: ["card"]
-  },
-  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
-  supplierFallbacks: {
-    EU: ["EU"],
-    GCC: ["GCC", "EU"],
-    MENA: ["MENA", "EU"],
-    TR: ["TR", "EU"],
-    NON_EU: ["EU"]
-  }
-};
-
-// lib/i18n/international/config.ts
-var GLOBAL_COUNTRIES = global_countries_35_default;
-var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
-
-// lib/market-engine/registry.ts
-var extensions = market_engine_extensions_default;
-var overlayByCode = market_country_overlay_default;
-var EU_COUNTRY_CODES = /* @__PURE__ */ new Set([
-  "AT",
-  "BE",
-  "BG",
-  "HR",
-  "CY",
-  "CZ",
-  "DK",
-  "EE",
-  "FI",
-  "FR",
-  "DE",
-  "GR",
-  "HU",
-  "IE",
-  "IT",
-  "LV",
-  "LT",
-  "LU",
-  "MT",
-  "NL",
-  "PL",
-  "PT",
-  "RO",
-  "SK",
-  "SI",
-  "ES",
-  "SE"
-]);
-var marketByCode = /* @__PURE__ */ new Map();
-function resolveFeatureFlags(countryCode) {
-  const defaults = extensions.defaultFeatureFlags;
-  const overrides = extensions.featureFlags[countryCode] ?? {};
-  return { ...defaults, ...overrides };
-}
-function resolveMarketStatus(country) {
-  if (country.enabled === false) return "DISABLED";
-  return extensions.marketStatus[country.countryCode] ?? extensions.defaultMarketStatus;
-}
-function buildVatRules(countryCode) {
-  const overlay = overlayByCode[countryCode];
-  return {
-    standardRate: overlay?.taxRate ?? 0.2,
-    pricesIncludeVat: true,
-    taxModel: overlay?.taxModel ?? "VAT"
-  };
-}
-function buildMarketConfig(country) {
-  const code = country.countryCode;
-  const variants = country.localeVariants ?? [];
-  const locales = variants.map((v) => v.locale);
-  if (!locales.length) locales.push(country.locale);
-  const paymentRegion = extensions.paymentRegions[code] ?? "EU";
-  return {
-    countryCode: code,
-    countryName: country.countryName,
-    nativeCountryName: country.nativeCountryName || country.countryName,
-    defaultLanguage: country.defaultLanguage,
-    supportedLanguages: [...country.supportedLanguages],
-    locales,
-    currency: country.currency,
-    currencySymbol: country.currencySymbol,
-    timezone: country.timezone,
-    textDirection: country.textDirection === "rtl" ? "rtl" : "ltr",
-    vat: buildVatRules(code),
-    shippingRegion: extensions.shippingRegions[code] ?? "EU_CENTRAL",
-    paymentRegion,
-    legalRegion: extensions.legalRegions[code] ?? `EU_${code}`,
-    returnRegion: extensions.returnRegions[code] ?? paymentRegion,
-    supplierRegion: extensions.supplierRegions[code] ?? paymentRegion,
-    status: resolveMarketStatus(country),
-    featureFlags: resolveFeatureFlags(code),
-    marketplaces: extensions.marketplaces[code] ?? [],
-    paymentCapabilities: extensions.paymentCapabilities[paymentRegion] ?? ["card"],
-    shippingCapabilities: [...extensions.shippingCapabilities],
-    source: country
-  };
-}
-function ensureRegistryBuilt() {
-  if (marketByCode.size > 0) return;
-  for (const country of global_countries_35_default) {
-    marketByCode.set(country.countryCode, buildMarketConfig(country));
-  }
-}
-function listMarkets() {
-  ensureRegistryBuilt();
-  return [...marketByCode.values()];
-}
-function getMarket(countryCode) {
-  ensureRegistryBuilt();
-  const code = String(countryCode || "").toUpperCase();
-  return marketByCode.get(code);
-}
-function isEuCountry(countryCode) {
-  return EU_COUNTRY_CODES.has(String(countryCode).toUpperCase());
-}
-function getMarketLanguages(countryCode) {
-  const market = getMarket(countryCode);
-  return market?.supportedLanguages ?? [];
-}
-function getMarketCurrency(countryCode) {
-  const market = getMarket(countryCode);
-  return {
-    code: market?.currency ?? "EUR",
-    symbol: market?.currencySymbol ?? "\u20AC"
-  };
-}
-
 // lib/order-engine/registry.ts
 var orderRegistry = /* @__PURE__ */ new Map();
+var priceSnapshotRegistry = /* @__PURE__ */ new Map();
 function getOrder(orderId) {
   return orderRegistry.get(orderId);
+}
+function listAllOrders() {
+  return [...orderRegistry.values()];
+}
+function getPriceSnapshot(snapshotId) {
+  return priceSnapshotRegistry.get(snapshotId);
+}
+
+// lib/inventory-engine/reservation.ts
+var reservations = /* @__PURE__ */ new Map();
+function getReservation(reservationId) {
+  return reservations.get(reservationId);
 }
 
 // lib/product-engine/status.ts
@@ -30552,168 +29569,888 @@ function getRegistryProduct(productId) {
   return products.get(productId);
 }
 
-// lib/product-engine/translations.ts
-function getTranslationForLocale(translations, locale) {
-  const normalized = locale.toLowerCase();
-  return translations.find((t) => t.locale.toLowerCase() === normalized) || translations.find((t) => t.locale.split("-")[0].toLowerCase() === normalized.split("-")[0]);
-}
+// data/global/global_countries_35.json
+var global_countries_35_default = [
+  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
+  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
+  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
+  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
+  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
+  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
+  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
+  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
+  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
+  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
+  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
+  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
+  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
+  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
+  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
+  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
+  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
+  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
+  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
+  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
+  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
+  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
+  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
+  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
+  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
+  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
+  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
+  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
+  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
+  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
+  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
+  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
+  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
+  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
+  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
+];
 
-// lib/market-engine/money.ts
-function toMinorUnits(amount, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return Math.round((Number(amount) || 0) * factor);
-}
-function fromMinorUnits(minor, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return minor / factor;
-}
-function roundMoney(amount, decimalDigits = 2) {
-  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
-}
-
-// data/global/pricing_engine_extensions.json
-var pricing_engine_extensions_default = {
-  defaultSellerCountry: "DE",
-  defaultTargetMarginPercent: 0.11,
-  defaultMinimumMarginPercent: 0.05,
-  exchangeRates: {
-    EUR: 1,
-    USD: 0.92,
-    GBP: 1.17,
-    CZK: 0.041,
-    PLN: 0.23,
-    TRY: 0.027,
-    SAR: 0.24,
-    AED: 0.25,
-    EGP: 0.019,
-    HUF: 26e-4,
-    RON: 0.2,
-    BGN: 0.51,
-    CHF: 1.05,
-    SEK: 0.087,
-    DKK: 0.134,
-    NOK: 0.085
+// data/global/market_engine_extensions.json
+var market_engine_extensions_default = {
+  shippingRegions: {
+    AT: "EU_CENTRAL",
+    BE: "EU_WEST",
+    BG: "EU_EAST",
+    HR: "EU_EAST",
+    CY: "EU_SOUTH",
+    CZ: "EU_CENTRAL",
+    DK: "EU_NORTH",
+    EE: "EU_EAST",
+    FI: "EU_NORTH",
+    FR: "EU_WEST",
+    DE: "EU_CENTRAL",
+    GR: "EU_SOUTH",
+    HU: "EU_CENTRAL",
+    IE: "EU_WEST",
+    IT: "EU_SOUTH",
+    LV: "EU_EAST",
+    LT: "EU_EAST",
+    LU: "EU_WEST",
+    MT: "EU_SOUTH",
+    NL: "EU_WEST",
+    PL: "EU_EAST",
+    PT: "EU_SOUTH",
+    RO: "EU_EAST",
+    SK: "EU_CENTRAL",
+    SI: "EU_EAST",
+    ES: "EU_SOUTH",
+    SE: "EU_NORTH",
+    TR: "NON_EU",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
   },
-  shippingCosts: {
-    defaultSupplierDirect: 10,
-    currency: "EUR",
-    byProductFixture: {
-      "reifen-pilot-sport": 10,
-      "motoroel-5w30": 7,
-      "bremsscheibe-280": 8,
-      "bremsbelaege-vorder": 6
-    },
-    byShippingRegion: {
-      EU_CENTRAL: 10,
-      EU_WEST: 12,
-      EU_NORTH: 14,
-      EU_SOUTH: 11,
-      EU_EAST: 9,
-      TR: 15,
-      GCC: 18,
-      MENA: 16
-    }
+  paymentRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
   },
-  marketplaceFees: {
-    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
-    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
-    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
-    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
-    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
-    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
+  legalRegions: {
+    AT: "EU_AT",
+    BE: "EU_BE",
+    BG: "EU_BG",
+    HR: "EU_HR",
+    CY: "EU_CY",
+    CZ: "EU_CZ",
+    DK: "EU_DK",
+    EE: "EU_EE",
+    FI: "EU_FI",
+    FR: "EU_FR",
+    DE: "EU_DE",
+    GR: "EU_GR",
+    HU: "EU_HU",
+    IE: "EU_IE",
+    IT: "EU_IT",
+    LV: "EU_LV",
+    LT: "EU_LT",
+    LU: "EU_LU",
+    MT: "EU_MT",
+    NL: "EU_NL",
+    PL: "EU_PL",
+    PT: "EU_PT",
+    RO: "EU_RO",
+    SK: "EU_SK",
+    SI: "EU_SI",
+    ES: "EU_ES",
+    SE: "EU_SE",
+    TR: "TR",
+    SA: "GCC_SA",
+    AE: "GCC_AE",
+    QA: "GCC_QA",
+    KW: "GCC_KW",
+    BH: "GCC_BH",
+    OM: "GCC_OM",
+    EG: "MENA_EG"
   },
-  paymentFees: {
-    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
-    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
-    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
-    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
-    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
+  supplierRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
   },
-  returnReserves: {
-    default: {
-      returnRate: 0.05,
-      refundRate: 0.03,
-      averageReturnShippingCost: 8,
-      averageRefundLoss: 5,
-      supplierReturnAcceptanceRate: 0.7,
-      damagedReturnRate: 0.01
-    },
-    byCategory: {
-      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
-      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
-      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
-    }
+  returnRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
   },
-  marginRules: {
-    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
-    byMarket: {},
-    byCategory: {},
-    byChannel: {},
-    byMarketplace: {},
-    bySupplier: {}
+  marketStatus: {
+    DE: "ACTIVE",
+    FR: "ACTIVE",
+    IT: "ACTIVE",
+    ES: "ACTIVE",
+    PL: "ACTIVE",
+    NL: "ACTIVE",
+    TR: "TESTING",
+    SA: "TESTING",
+    AE: "TESTING",
+    EG: "TESTING"
   },
-  roundingRules: {
-    default: { mode: "psychological_99", step: 0.01 },
-    byMarket: {
-      DE: { mode: "psychological_99" },
-      FR: { mode: "psychological_99" },
-      PL: { mode: "nearest_49" }
-    },
-    byChannel: {
-      amazon: { mode: "psychological_99" },
-      direct: { mode: "psychological_99" }
-    }
+  defaultMarketStatus: "PLANNED",
+  featureFlags: {
+    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
+    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
   },
-  priceBounds: {
-    default: { minimumPrice: 1, maximumPrice: 99999 }
+  defaultFeatureFlags: {
+    marketEnabled: true,
+    categoryEnabled: true,
+    marketplaceEnabled: false,
+    supplierEnabled: false,
+    paymentEnabled: false,
+    shippingEnabled: false
   },
-  competitivePricingExtension: {
-    enabled: false,
-    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
+  marketplaces: {
+    DE: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "kaufland", name: "Kaufland", status: "supported" },
+      { id: "otto", name: "OTTO", status: "supported" }
+    ],
+    FR: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "cdiscount", name: "Cdiscount", status: "supported" }
+    ],
+    PL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "allegro", name: "Allegro", status: "supported" }
+    ],
+    NL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "bol", name: "bol.com", status: "supported" }
+    ]
+  },
+  paymentCapabilities: {
+    EU: ["card", "sepa", "paypal", "klarna"],
+    TR: ["card"],
+    GCC: ["card"],
+    MENA: ["card"]
+  },
+  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
+  supplierFallbacks: {
+    EU: ["EU"],
+    GCC: ["GCC", "EU"],
+    MENA: ["MENA", "EU"],
+    TR: ["TR", "EU"],
+    NON_EU: ["EU"]
   }
 };
 
-// lib/pricing-engine/registry.ts
-var config = pricing_engine_extensions_default;
-function getReturnReserveConfig(categoryId) {
-  const reserves = config.returnReserves;
-  const byCategory = reserves.byCategory;
-  const base = reserves.default;
-  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
-  return { ...base, ...categoryOverride };
+// lib/i18n/international/config.ts
+var GLOBAL_COUNTRIES = global_countries_35_default;
+var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
+
+// data/global/test_supplier_feeds.json
+var test_supplier_feeds_default = {
+  TEST_SUPPLIER_A: {
+    supplierId: "TEST_SUPPLIER_A",
+    name: "Test Supplier A (Mock)",
+    country: "DE",
+    region: "EU",
+    currency: "EUR",
+    integrationTypes: ["api", "xml", "csv", "manual"],
+    supportedMarkets: ["DE", "FR", "PL"],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: true,
+      createOrder: true,
+      cancelOrder: true,
+      orderStatus: true,
+      shippingAPI: false,
+      trackingAPI: true,
+      tracking: true,
+      returnsAPI: true,
+      returnAuthorization: true,
+      refund: true,
+      credit: true,
+      replacement: true,
+      webhook: false,
+      dropshipping: true,
+      whiteLabel: true,
+      blindShipping: true,
+      api: true,
+      xml: true,
+      csv: true
+    },
+    rateLimit: { requestsPerMinute: 60 },
+    fieldMapping: {
+      article_number: "supplierSku",
+      sku: "supplierSku",
+      ean_code: "ean",
+      price_net: "supplierPrice",
+      stock_qty: "stock",
+      title: "name",
+      brand_name: "brand"
+    },
+    apiProducts: [
+      {
+        article_number: "TSA-TIRE-225-45-17",
+        ean_code: "4006633001247",
+        brand_name: "Michelin",
+        title: "Michelin Pilot Sport 4 225/45 R17",
+        price_net: 55.79,
+        stock_qty: 8,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-OIL-5W30-5L",
+        ean_code: "4006633001236",
+        brand_name: "Castrol",
+        title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
+        price_net: 26.6,
+        stock_qty: 50,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-DISC-280",
+        ean_code: "4006633001234",
+        brand_name: "ATE",
+        title: "Bremsscheibe Vorderachse 280mm",
+        price_net: 21.64,
+        stock_qty: 24,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-PADS-FRONT",
+        ean_code: "4006633001235",
+        brand_name: "Bosch",
+        title: "Bremsbel\xE4ge Satz Vorderachse",
+        price_net: 17.67,
+        stock_qty: 31,
+        currency: "EUR"
+      }
+    ],
+    xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
+    csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
+  }
+};
+
+// data/buzzard_suppliers.json
+var buzzard_suppliers_default = {
+  project: "Buzzard",
+  document: "Supplier Master",
+  version: "1.0.0",
+  suppliers: [
+    {
+      supplier_id: "SUP-INTERNAL-001",
+      supplier_name: "Buzzard Internal Warehouse",
+      contact_email: "warehouse@buzzard.de",
+      contact_phone: "+49 30 1234567",
+      website: "https://buzzard24.de",
+      feed_type: "manual",
+      api_endpoint: null,
+      auth_type: "none",
+      currency: "EUR",
+      vat_handling: "gross",
+      dropshipping: false,
+      white_label: true,
+      blind_shipping: false,
+      default_markup_percent: 45,
+      minimum_margin_percent: 15,
+      safety_stock: 2,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "Internal stock for test and flagship products."
+    },
+    {
+      supplier_id: "SUP-DEMO-001",
+      production_status: "TEST_ONLY",
+      supplier_name: "Demo Automotive Parts GmbH",
+      contact_email: "orders@demo-automotive.example",
+      contact_phone: "+49 89 9876543",
+      website: "https://demo-automotive.example",
+      feed_type: "json",
+      api_endpoint: "https://demo-automotive.example/api/products.json",
+      auth_type: "api_key",
+      currency: "EUR",
+      vat_handling: "net",
+      dropshipping: true,
+      white_label: true,
+      blind_shipping: true,
+      default_markup_percent: 38,
+      minimum_margin_percent: 12,
+      safety_stock: 1,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
+    }
+  ]
+};
+
+// lib/supplier-engine/fixtures.ts
+var TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
+
+// lib/supplier-engine/persistence.ts
+var store;
+function getSupplierPersistence() {
+  if (store !== void 0) return store;
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
+    store = null;
+    return store;
+  }
+  const candidates = [
+    "server/lib/supplier/persistentStore.js",
+    "../../server/lib/supplier/persistentStore.js"
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      store = mod.createPersistentSupplierStore();
+      return store;
+    } catch {
+    }
+  }
+  store = null;
+  return store;
 }
 
-// lib/pricing-engine/shipping.ts
-init_registry2();
-
-// lib/pricing-engine/returns.ts
-function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
-  const config2 = getReturnReserveConfig(categoryId);
-  const supplierCreditFactor = 1 - config2.supplierReturnAcceptanceRate;
-  const expectedReturnLoss = roundMoney(
-    config2.returnRate * (config2.averageReturnShippingCost + supplierCostInMarketCurrency * supplierCreditFactor)
-  );
-  const expectedRefundLoss = roundMoney(
-    config2.refundRate * (config2.averageRefundLoss + supplierCostInMarketCurrency * supplierCreditFactor)
-  );
-  const damagedLoss = roundMoney(
-    (config2.damagedReturnRate ?? 0) * supplierCostInMarketCurrency * 0.5
-  );
-  const returnCostReserve = roundMoney(expectedReturnLoss + damagedLoss);
-  const refundCostReserve = roundMoney(expectedRefundLoss);
-  return {
-    returnCostReserve,
-    refundCostReserve,
-    totalReserve: roundMoney(returnCostReserve + refundCostReserve),
-    config: config2,
-    breakdown: {
-      expectedReturnLoss,
-      expectedRefundLoss,
-      supplierCreditFactor
-    }
+// lib/supplier-engine/credentials.ts
+var credentialRefs = /* @__PURE__ */ new Map();
+function registerCredentialRef(supplierId, secretsRef) {
+  const entry = {
+    supplierId,
+    secretsRef,
+    configured: Boolean(secretsRef),
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
+  credentialRefs.set(supplierId, entry);
+  return entry;
+}
+
+// data/supplier-engine/live_supplier.config.template.json
+var live_supplier_config_template_default = {
+  $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  supplierId: "",
+  name: "",
+  displayName: "",
+  country: "DE",
+  region: "EU",
+  currency: "EUR",
+  connectorType: "b2b-sandbox",
+  environment: "SANDBOX",
+  baseUrl: "",
+  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+  authentication: "api_key",
+  authType: "API_KEY",
+  endpoints: {
+    health: "/health",
+    products: "/products",
+    stock: "/stock",
+    prices: "/prices"
+  },
+  fieldMapping: {
+    article_number: "supplierSku",
+    sku: "supplierSku",
+    ean_code: "ean",
+    gtin: "gtin",
+    mpn: "mpn",
+    brand_name: "brand",
+    title: "name",
+    price_net: "supplierPrice",
+    stock_qty: "stock"
+  },
+  categoryMapping: {},
+  supportedMarkets: ["DE"],
+  feedFormat: "json",
+  priceIncludesVat: false,
+  capabilities: {
+    productFeed: true,
+    stockFeed: true,
+    priceFeed: true,
+    orderAPI: false,
+    createOrder: false,
+    cancelOrder: false,
+    orderStatus: false,
+    trackingAPI: false,
+    returnsAPI: false,
+    refund: false,
+    credit: false,
+    replacement: false,
+    dropshipping: false,
+    whiteLabel: false,
+    blindShipping: false
+  },
+  pagination: {
+    mode: "cursor",
+    pageSize: 100
+  }
+};
+
+// data/supplier-engine/inter_cars.profile.template.json
+var inter_cars_profile_template_default = {
+  $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  $documentation: {
+    supplier: "Inter Cars S.A.",
+    country: "PL/EU (DE market supported)",
+    type: "Automotive B2B wholesaler",
+    officialDocs: [
+      "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+      "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+    ],
+    authentication: "OAuth2 Bearer token (B2B account via sales representative)",
+    rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+    stockSemantics: "availability field = units available for purchase at location",
+    priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+    currency: "Per-response currencyCode (EUR for DE customers when configured)",
+    updateFrequency: "Real-time for API; CSV feeds daily",
+    dropshipping: "Contact sales representative \u2014 not assumed enabled",
+    whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+  },
+  supplierId: "SUP-INTER-CARS-001",
+  name: "Inter Cars",
+  displayName: "Inter Cars B2B",
+  country: "DE",
+  region: "EU",
+  currency: "EUR",
+  connectorType: "b2b-sandbox",
+  adapterProfile: "inter-cars",
+  environment: "SANDBOX",
+  baseUrl: "https://dev.gw.intercars.eu",
+  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+  authentication: "oauth2",
+  authType: "OAUTH2",
+  endpoints: {
+    health: "/ic/catalog/category",
+    products: "/ic/catalog/products",
+    stock: "/ic/inventory/stock",
+    prices: "/ic/inventory/1.0.0/pricing/quote"
+  },
+  fieldMapping: {
+    sku: "supplierSku",
+    index: "mpn",
+    articleNumber: "mpn",
+    tecDoc: "tecdocId",
+    brand: "brand",
+    shortDescription: "name",
+    description: "description",
+    eans: "ean",
+    availability: "stock",
+    customerPriceNet: "supplierPrice",
+    listPriceNet: "listPriceNet",
+    genericArticleReferences: "supplierCategory"
+  },
+  categoryMapping: {},
+  categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
+  supportedMarkets: ["DE"],
+  feedFormat: "json",
+  priceIncludesVat: false,
+  priceModel: "net",
+  priceField: "customerPriceNet",
+  capabilities: {
+    productFeed: true,
+    stockFeed: true,
+    priceFeed: true,
+    orderAPI: false,
+    createOrder: false,
+    cancelOrder: false,
+    orderStatus: false,
+    trackingAPI: false,
+    returnsAPI: false,
+    refund: false,
+    credit: false,
+    replacement: false,
+    dropshipping: false,
+    whiteLabel: false,
+    blindShipping: false
+  },
+  pagination: {
+    mode: "pageNumber",
+    pageParam: "pageNumber",
+    pageSizeParam: "pageSize",
+    pageSize: 25,
+    hasNextPageField: "hasNextPage"
+  },
+  requestHeaders: {
+    "Accept-Language": "de"
+  },
+  allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+};
+
+// data/supplier-engine/inter_cars_category_mappings.json
+var inter_cars_category_mappings_default = {
+  $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
+  mappings: {
+    GenericArticle_1280: "auto-sub-05--oil-filters",
+    "Filtr oleju": "auto-sub-05--oil-filters",
+    "Oil filter": "auto-sub-05--oil-filters",
+    \u00D6lfilter: "auto-sub-05--oil-filters",
+    "Brake pad": "auto-sub-04--brake-pads",
+    Bremsbelag: "auto-sub-04--brake-pads",
+    "Brake disc": "auto-sub-04--brake-discs",
+    Bremsscheibe: "auto-sub-04--brake-discs",
+    Tyre: "auto-sub-01--car-tires",
+    Tire: "auto-sub-01--car-tires",
+    Reifen: "auto-sub-01--car-tires",
+    Battery: "auto-sub-06--car-batteries",
+    Batterie: "auto-sub-06--car-batteries",
+    "Car battery": "auto-sub-06--car-batteries",
+    Cleaning: "auto-sub-12--interior-cleaner",
+    Reinigung: "auto-sub-12--interior-cleaner"
+  }
+};
+
+// lib/supplier-engine/liveSupplier/config.ts
+function parseJsonConfig(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed.supplierId || !parsed.baseUrl) return null;
+    return normalizeProfile(parsed);
+  } catch {
+    return null;
+  }
+}
+function normalizeProfile(profile) {
+  const { $comment: _comment, ...templateBase } = live_supplier_config_template_default;
+  return {
+    ...templateBase,
+    ...profile,
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: false,
+      createOrder: false,
+      cancelOrder: false,
+      orderStatus: false,
+      trackingAPI: false,
+      returnsAPI: false,
+      refund: false,
+      credit: false,
+      replacement: false,
+      ...profile.capabilities
+    },
+    endpoints: { ...live_supplier_config_template_default.endpoints, ...profile.endpoints },
+    fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
+  };
+}
+function loadCategoryMappings(profile) {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = inter_cars_category_mappings_default.mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+function resolvePredefinedLiveProfile() {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
+    return loadCategoryMappings(normalizeProfile(base));
+  }
+  return null;
+}
+function resolveLiveSupplierProfile() {
+  const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
+  if (jsonConfig) {
+    const parsed = parseJsonConfig(jsonConfig);
+    if (parsed) return loadCategoryMappings(parsed);
+  }
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
+  const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
+  const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
+  if (!supplierId || !baseUrl) return null;
+  return loadCategoryMappings(normalizeProfile({
+    supplierId,
+    name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
+    displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
+    country: process.env.SUPPLIER_LIVE_COUNTRY?.trim() || "DE",
+    region: process.env.SUPPLIER_LIVE_REGION?.trim() || "EU",
+    currency: process.env.SUPPLIER_LIVE_CURRENCY?.trim() || "EUR",
+    connectorType: "b2b-sandbox",
+    environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
+    baseUrl,
+    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
+    endpoints: {
+      health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
+      products: process.env.SUPPLIER_LIVE_PRODUCTS_PATH?.trim() || "/products",
+      stock: process.env.SUPPLIER_LIVE_STOCK_PATH?.trim() || "/stock",
+      prices: process.env.SUPPLIER_LIVE_PRICES_PATH?.trim() || "/prices"
+    },
+    fieldMapping: live_supplier_config_template_default.fieldMapping,
+    categoryMapping: {},
+    supportedMarkets: (process.env.SUPPLIER_LIVE_MARKETS?.split(",") || ["DE"]).map((m) => m.trim()).filter(Boolean),
+    feedFormat: process.env.SUPPLIER_LIVE_FEED_FORMAT?.trim() || "json",
+    priceIncludesVat: process.env.SUPPLIER_LIVE_PRICE_INCLUDES_VAT === "1",
+    capabilities: live_supplier_config_template_default.capabilities,
+    pagination: { mode: "cursor", pageSize: 100 },
+    dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
+    whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
+    blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
+  }));
+}
+
+// lib/supplier-engine/liveSupplier/registry.ts
+var registeredLiveSupplierId = null;
+function liveProfileToSupplierConfig(profile) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    supplierId: profile.supplierId,
+    name: profile.name,
+    displayName: profile.displayName || profile.name,
+    country: profile.country,
+    region: profile.region,
+    status: "TESTING",
+    integrationTypes: ["b2b-sandbox"],
+    currency: profile.currency,
+    supportedMarkets: profile.supportedMarkets,
+    supportedCategories: [],
+    capabilities: profile.capabilities,
+    fieldMapping: profile.fieldMapping,
+    secretsRef: profile.secretsRef,
+    rateLimit: { requestsPerMinute: 60 },
+    connectorProfile: profile,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function registerLiveSupplierIfConfigured(register2) {
+  const profile = resolveLiveSupplierProfile();
+  if (!profile) return null;
+  register2(liveProfileToSupplierConfig(profile));
+  registerCredentialRef(profile.supplierId, profile.secretsRef);
+  registeredLiveSupplierId = profile.supplierId;
+  return profile;
+}
+
+// lib/supplier-engine/registry.ts
+var supplierById = /* @__PURE__ */ new Map();
+var persistedOverlay = /* @__PURE__ */ new Map();
+function mapMasterToConfig(raw) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const feedType = String(raw.feed_type || "manual");
+  const integrationTypes = feedType === "json" ? ["api"] : feedType === "manual" ? ["manual"] : [feedType];
+  return {
+    supplierId: String(raw.supplier_id),
+    name: String(raw.supplier_name),
+    country: "DE",
+    region: "EU",
+    status: raw.active === false ? "DISABLED" : raw.production_status === "TEST_ONLY" ? "TESTING" : "CONNECTED",
+    integrationTypes,
+    currency: String(raw.currency || "EUR"),
+    supportedMarkets: ["DE"],
+    supportedCategories: [],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      dropshipping: raw.dropshipping === true,
+      whiteLabel: raw.white_label === true,
+      blindShipping: raw.blind_shipping === true,
+      api: feedType === "json",
+      csv: false,
+      xml: false
+    },
+    fieldMapping: {},
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function buildTestSupplierA() {
+  const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    supplierId: TEST_SUPPLIER_ID,
+    name: String(feed.name || "Test Supplier A"),
+    country: String(feed.country || "DE"),
+    region: String(feed.region || "EU"),
+    status: "TESTING",
+    integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
+    currency: String(feed.currency || "EUR"),
+    supportedMarkets: feed.supportedMarkets || ["DE", "FR", "PL"],
+    supportedCategories: [],
+    capabilities: feed.capabilities || {},
+    fieldMapping: feed.fieldMapping || {},
+    rateLimit: feed.rateLimit,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function mergePersistedOverlay(config) {
+  const overlay = persistedOverlay.get(config.supplierId);
+  if (!overlay) return config;
+  return {
+    ...config,
+    ...overlay,
+    capabilities: { ...config.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config.supportedMarkets,
+    status: overlay.status ?? config.status,
+    updatedAt: overlay.updatedAt ?? config.updatedAt
+  };
+}
+function persistRegistryEntry(config) {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  persistence.saveRegistryRow({
+    supplierId: config.supplierId,
+    name: config.name,
+    displayName: config.displayName || config.name,
+    country: config.country,
+    connectorType: config.integrationTypes[0] || "manual",
+    supportedMarkets: config.supportedMarkets,
+    capabilities: config.capabilities,
+    active: config.status !== "DISABLED" && config.status !== "PAUSED",
+    status: config.status,
+    secretsRef: config.secretsRef,
+    createdAt: config.createdAt
+  });
+  if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
+}
+function ensureRegistry() {
+  if (supplierById.size > 0) return;
+  for (const raw of buzzard_suppliers_default.suppliers) {
+    const config = mergePersistedOverlay(mapMasterToConfig(raw));
+    supplierById.set(config.supplierId, config);
+    persistRegistryEntry(config);
+  }
+  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
+  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
+  persistRegistryEntry(testSupplier);
+  registerLiveSupplierIfConfigured((config) => {
+    const merged = mergePersistedOverlay(config);
+    supplierById.set(config.supplierId, merged);
+    persistRegistryEntry(merged);
+  });
+}
+function getSupplier(supplierId) {
+  ensureRegistry();
+  const config = supplierById.get(supplierId);
+  return config ? mergePersistedOverlay(config) : void 0;
+}
+function isSupplierSelectable(supplierId) {
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return false;
+  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
 }
 
 // lib/market-engine/supplier.ts
@@ -30723,23 +30460,468 @@ var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 var import_module2 = require("module");
 var require3 = (0, import_module2.createRequire)(__import_meta_url__);
 
-// lib/inventory-engine/market.ts
-init_registry2();
-
-// lib/inventory-engine/sync.ts
-init_registry2();
-
-// lib/inventory-engine/test-fixtures.ts
-init_fixtures();
-
-// lib/supplier-engine/observability.ts
-init_security();
+// lib/product-engine/service.ts
+function getProduct(productId) {
+  return getRegistryProduct(productId);
+}
 
 // lib/supplier-engine/health.ts
-init_persistence();
+var healthCache = /* @__PURE__ */ new Map();
+function defaultHealth(supplierId) {
+  return {
+    supplierId,
+    healthStatus: "UNKNOWN",
+    responseTimeMs: 0,
+    errorCount: 0,
+    successCount: 0,
+    rateLimitCount: 0,
+    consecutiveFailures: 0,
+    reliabilityScore: 0.5,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function fromPersisted(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    responseTimeMs: Number(row.responseTimeMs || 0),
+    errorCount: Number(row.errorCount || 0),
+    successCount: Number(row.successCount || 0),
+    rateLimitCount: Number(row.rateLimitCount || 0),
+    consecutiveFailures: Number(row.consecutiveFailures || 0),
+    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
+    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function getSupplierHealth(supplierId) {
+  const cached = healthCache.get(supplierId);
+  if (cached) return cached;
+  const persistence = getSupplierPersistence();
+  const row = persistence?.getHealth(supplierId);
+  if (row) {
+    const record = fromPersisted(row);
+    healthCache.set(supplierId, record);
+    return record;
+  }
+  return defaultHealth(supplierId);
+}
 
-// lib/supplier-engine/connectors/base.ts
-init_capabilities();
+// lib/supplier-engine/orderSandbox/persistence.ts
+var memoryStore = /* @__PURE__ */ new Map();
+function rowToRecord(row) {
+  return {
+    supplierOrderId: String(row.supplier_order_id),
+    buzzardOrderId: String(row.buzzard_order_id),
+    supplierId: String(row.supplier_id),
+    status: row.status,
+    idempotencyKey: String(row.idempotency_key),
+    correlationId: String(row.correlation_id || ""),
+    payload: JSON.parse(String(row.payload_json || "{}")),
+    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
+    failureClass: row.failure_class,
+    failureCode: row.failure_code ? String(row.failure_code) : void 0,
+    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
+    latencyMs: Number(row.latency_ms || 0),
+    sandbox: true,
+    networkDispatched: false,
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at)
+  };
+}
+function getOrderSandboxPersistence() {
+  return getSupplierPersistence();
+}
+function getSupplierOrderSandboxByReference(supplierOrderId) {
+  const cached = memoryStore.get(supplierOrderId);
+  if (cached) return cached;
+  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
+  if (!row) return void 0;
+  const record = rowToRecord(row);
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  return record;
+}
+
+// lib/marketplace-engine/registry.ts
+var orderMappings = /* @__PURE__ */ new Map();
+function listOrderMappings(marketplaceId) {
+  const all = [...orderMappings.values()];
+  return marketplaceId ? all.filter((m) => m.marketplaceId === marketplaceId) : all;
+}
+
+// lib/returns-engine/registry.ts
+var returns = /* @__PURE__ */ new Map();
+var returnsByOrder = /* @__PURE__ */ new Map();
+function getReturnByOrder(orderId) {
+  const id = returnsByOrder.get(orderId);
+  return id ? returns.get(id) : void 0;
+}
+
+// lib/fulfillment-control-tower/aggregator.ts
+function buildFulfillmentId(orderId, orderItemId) {
+  return `ff_${orderId}_${orderItemId}`;
+}
+function classifySupplierOrderReference(ref) {
+  if (!ref) return "UNKNOWN";
+  if (ref.startsWith("SANDBOX-ORDER-")) return "SANDBOX";
+  if (ref.startsWith("DRY-SUP-") || ref.startsWith("DRY-")) return "SANDBOX";
+  return "LIVE";
+}
+function mapInventoryStatus(reservationId) {
+  if (!reservationId) return "MISSING";
+  const reservation = getReservation(reservationId);
+  if (!reservation) return "MISSING";
+  return reservation.status;
+}
+function mapSupplierHealthState(supplierId) {
+  if (!isSupplierSelectable(supplierId)) return "DISABLED";
+  const health = getSupplierHealth(supplierId);
+  return health.healthStatus || "UNKNOWN";
+}
+function mapShipmentStatus(order) {
+  if (["SHIPPED", "DELIVERED"].includes(order.status)) return "SHIPPED";
+  if (order.fulfillmentStatus === "SUPPLIER_PREPARED" || order.fulfillmentStatus === "SUPPLIER_SUBMITTED") {
+    return "PREPARED";
+  }
+  return "NOT_SHIPPED";
+}
+function mapTrackingStatus(supplierOrderId, orderStatus) {
+  if (!supplierOrderId) {
+    return { status: orderStatus === "SHIPPED" || orderStatus === "DELIVERED" ? "MISSING" : "NOT_AVAILABLE" };
+  }
+  const sandbox = getSupplierOrderSandboxByReference(supplierOrderId);
+  if (sandbox?.tracking) {
+    return {
+      status: sandbox.tracking.shipmentStatus,
+      trackingNumber: sandbox.tracking.trackingNumber,
+      carrier: sandbox.tracking.carrier,
+      trackingUrl: sandbox.tracking.trackingUrl
+    };
+  }
+  return { status: "NOT_AVAILABLE" };
+}
+function resolveSupplierOrderForItem(order, item) {
+  const supplierOrder = order.supplierOrders.find((so) => so.supplierId === item.supplierId);
+  const sandbox = supplierOrder?.supplierOrderId ? getSupplierOrderSandboxByReference(supplierOrder.supplierOrderId) : void 0;
+  return {
+    supplierOrderId: supplierOrder?.supplierOrderId,
+    supplierOrderStatus: sandbox?.status || supplierOrder?.status || "NOT_CREATED",
+    classification: classifySupplierOrderReference(supplierOrder?.supplierOrderId),
+    lastKnownSupplierState: sandbox?.status,
+    idempotencyKey: sandbox?.idempotencyKey,
+    correlationId: sandbox?.correlationId
+  };
+}
+function resolveMarketplaceMapping(orderId) {
+  const mapping = listOrderMappings().find((m) => m.orderId === orderId);
+  return mapping ? { marketplaceId: mapping.marketplaceId, marketplaceOrderId: mapping.marketplaceOrderId } : {};
+}
+function buildStateView(order, item, supplierOrderStatus, supplierHealth, inventoryStatus, trackingStatus, returnStatus) {
+  const supplier = getSupplier(item.supplierId);
+  let supplierState = "UNKNOWN";
+  if (!isSupplierSelectable(item.supplierId)) supplierState = "DISABLED";
+  else if (supplierHealth === "HEALTHY") supplierState = "HEALTHY";
+  else if (supplierHealth === "DEGRADED") supplierState = "DEGRADED";
+  else if (supplierHealth === "UNHEALTHY") supplierState = "UNHEALTHY";
+  else supplierState = "ELIGIBLE";
+  return {
+    order: order.status,
+    inventory: inventoryStatus,
+    supplier: supplierState,
+    supplierOrder: supplierOrderStatus,
+    shipment: mapShipmentStatus(order),
+    tracking: trackingStatus,
+    returns: returnStatus
+  };
+}
+function buildFulfillmentOperationalView(order, item) {
+  const supplierOrder = resolveSupplierOrderForItem(order, item);
+  const inventoryStatus = mapInventoryStatus(item.inventoryReservationId);
+  const supplierHealth = mapSupplierHealthState(item.supplierId);
+  const tracking = mapTrackingStatus(supplierOrder.supplierOrderId, order.status);
+  const marketplace = resolveMarketplaceMapping(order.orderId);
+  const returnRecord = getReturnByOrder(order.orderId);
+  const returnStatus = returnRecord?.status || order.returnRefund.returnStatus;
+  const refundStatus = order.returnRefund.refundStatus;
+  const stateView = buildStateView(
+    order,
+    item,
+    supplierOrder.supplierOrderStatus,
+    supplierHealth,
+    inventoryStatus,
+    tracking.status,
+    returnStatus
+  );
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    fulfillmentId: buildFulfillmentId(order.orderId, item.orderItemId),
+    orderItemId: item.orderItemId,
+    orderId: order.orderId,
+    orderNumber: order.orderNumber,
+    customerId: order.customerId,
+    marketId: order.marketId,
+    channel: order.channel,
+    supplierId: item.supplierId,
+    supplierSku: item.sku,
+    productId: item.productId,
+    quantity: item.quantity,
+    inventoryReservationId: item.inventoryReservationId,
+    supplierOrderId: supplierOrder.supplierOrderId,
+    supplierOrderStatus: supplierOrder.supplierOrderStatus,
+    supplierOrderClassification: supplierOrder.classification,
+    orderStatus: order.status,
+    fulfillmentStatus: order.fulfillmentStatus,
+    inventoryStatus,
+    priceSnapshotId: item.priceSnapshotId,
+    trackingStatus: tracking.status,
+    trackingNumber: tracking.trackingNumber,
+    carrier: tracking.carrier,
+    trackingUrl: tracking.trackingUrl,
+    lastKnownSupplierState: supplierOrder.lastKnownSupplierState,
+    supplierHealth,
+    marketplaceId: marketplace.marketplaceId,
+    marketplaceOrderId: marketplace.marketplaceOrderId,
+    returnStatus,
+    refundStatus,
+    correlationId: supplierOrder.correlationId || order.orderId,
+    idempotencyKey: supplierOrder.idempotencyKey || order.idempotencyKey,
+    operationalStatus: "UNKNOWN",
+    stateView,
+    createdAt: order.createdAt,
+    updatedAt: now
+  };
+}
+function listFulfillmentOperationalViews(filter) {
+  const views = [];
+  for (const order of listAllOrders()) {
+    for (const item of order.items) {
+      const view = buildFulfillmentOperationalView(order, item);
+      views.push(view);
+    }
+  }
+  return views.filter((view) => {
+    if (filter?.supplierId && view.supplierId !== filter.supplierId) return false;
+    if (filter?.orderId && view.orderId !== filter.orderId) return false;
+    if (filter?.status && view.operationalStatus !== filter.status) return false;
+    if (filter?.marketplaceId && view.marketplaceId !== filter.marketplaceId) return false;
+    if (filter?.dateFrom && view.createdAt < filter.dateFrom) return false;
+    if (filter?.dateTo && view.createdAt > filter.dateTo) return false;
+    return true;
+  });
+}
+function getFulfillmentOperationalView(fulfillmentId) {
+  for (const order of listAllOrders()) {
+    for (const item of order.items) {
+      if (buildFulfillmentId(order.orderId, item.orderItemId) === fulfillmentId) {
+        return buildFulfillmentOperationalView(order, item);
+      }
+    }
+  }
+  return void 0;
+}
+function readPriceSnapshotConsistency(item) {
+  const snapshot = item.priceSnapshotId ? getPriceSnapshot(item.priceSnapshotId) : void 0;
+  const product = getProduct(item.productId);
+  const offer = product?.supplierOffers.find(
+    (o) => o.supplierId === item.supplierId && o.supplierSku === item.sku
+  );
+  return { snapshot, offer, productExists: Boolean(product), offerExists: Boolean(offer) };
+}
+
+// lib/fulfillment-control-tower/matrix.ts
+function finding(checkId, category, level, code, message) {
+  return { checkId, category, level, code, message };
+}
+function evaluateStateCompatibilityMatrix(view) {
+  const out = [];
+  const paidLike = ["PAID", "CONFIRMED", "PROCESSING", "SUPPLIER_PENDING", "SUPPLIER_CONFIRMED", "SHIPPED", "DELIVERED"].includes(
+    view.orderStatus
+  );
+  if (paidLike && view.inventoryStatus === "MISSING") {
+    out.push(finding("MATRIX-A", "INVENTORY", "CRITICAL", "PAID_NO_RESERVATION", "Paid order without inventory reservation"));
+  } else if (paidLike && view.inventoryStatus === "ACTIVE") {
+    out.push(finding("MATRIX-A", "INVENTORY", "PASS", "PAID_WITH_RESERVATION", "Paid order has active reservation"));
+  }
+  if (view.orderStatus === "SUPPLIER_PENDING" && !view.supplierOrderId) {
+    out.push(
+      finding("MATRIX-B", "SUPPLIER_ORDER", "CRITICAL", "SUPPLIER_PENDING_NO_ORDER", "Central order pending supplier without supplier order reference")
+    );
+  }
+  if (view.supplierOrderClassification === "SANDBOX" && view.supplierOrderStatus === "SANDBOX_ACCEPTED") {
+    out.push(finding("MATRIX-C", "SUPPLIER_ORDER", "PASS", "SANDBOX_ACCEPTED_OK", "Sandbox supplier order accepted with sandbox reference"));
+  }
+  if (view.supplierOrderClassification === "LIVE" && view.supplierOrderId?.startsWith("SANDBOX-ORDER-")) {
+    out.push(
+      finding("MATRIX-D", "SUPPLIER_ORDER", "CRITICAL", "SANDBOX_REF_MARKED_LIVE", "Sandbox supplier reference incorrectly classified as live")
+    );
+  }
+  if (view.orderStatus === "SHIPPED" && view.trackingStatus === "NOT_AVAILABLE") {
+    out.push(finding("MATRIX-E", "TRACKING", "WARNING", "SHIPPED_NO_TRACKING", "Order shipped without tracking information"));
+  }
+  if (view.orderStatus === "DELIVERED" && view.stateView.shipment === "NOT_SHIPPED") {
+    out.push(finding("MATRIX-F", "TRACKING", "CRITICAL", "DELIVERED_NO_SHIPMENT", "Delivered order without shipment history"));
+  }
+  if (view.orderStatus === "CANCELLED" && view.inventoryStatus === "ACTIVE") {
+    out.push(finding("MATRIX-G", "INVENTORY", "MISMATCH", "CANCELLED_ACTIVE_RESERVATION", "Cancelled order still has active reservation"));
+  }
+  if (view.orderStatus === "PROCESSING" && view.supplierOrderStatus === "FAILED") {
+    out.push(finding("MATRIX-H", "SUPPLIER_ORDER", "CRITICAL", "PROCESSING_SUPPLIER_FAILED", "Central order processing while supplier order failed"));
+  }
+  if (view.orderStatus === "SHIPPED" && view.supplierOrderStatus === "SANDBOX_ACCEPTED") {
+    out.push(
+      finding("MATRIX-I", "SUPPLIER_ORDER", "MISMATCH", "SHIPPED_SANDBOX_ONLY", "Central order shipped but supplier order still sandbox-accepted")
+    );
+  }
+  if (view.supplierHealth === "DISABLED" && paidLike) {
+    out.push(finding("MATRIX-J", "SUPPLIER", "CRITICAL", "DISABLED_SUPPLIER_ACTIVE_FULFILLMENT", "Disabled supplier on active fulfillment"));
+  } else if (view.supplierHealth === "UNHEALTHY" && paidLike) {
+    out.push(finding("MATRIX-J", "SUPPLIER", "WARNING", "UNHEALTHY_SUPPLIER", "Unhealthy supplier on active fulfillment"));
+  } else if (view.supplierHealth === "DEGRADED" && paidLike) {
+    out.push(finding("MATRIX-J", "SUPPLIER", "WARNING", "DEGRADED_SUPPLIER", "Degraded supplier on active fulfillment"));
+  } else if (view.supplierHealth === "HEALTHY" && paidLike) {
+    out.push(finding("MATRIX-J", "SUPPLIER", "PASS", "SUPPLIER_HEALTHY", "Supplier health acceptable"));
+  }
+  return out;
+}
+function aggregateOverallLevel(findings) {
+  if (findings.some((f2) => f2.level === "CRITICAL")) return "CRITICAL";
+  if (findings.some((f2) => f2.level === "MISMATCH")) return "MISMATCH";
+  if (findings.some((f2) => f2.level === "WARNING")) return "WARNING";
+  return "PASS";
+}
+
+// lib/fulfillment-control-tower/checks.ts
+function f(checkId, category, level, code, message) {
+  return { checkId, category, level, code, message };
+}
+function runFulfillmentChecks(view) {
+  const findings = [];
+  const order = getOrder(view.orderId);
+  if (!order) {
+    findings.push(f("A", "ORDER", "CRITICAL", "ORDER_MISSING", "Central order not found"));
+    return findings;
+  }
+  findings.push(f("A", "ORDER", "PASS", "ORDER_EXISTS", "Central order exists"));
+  const assignment = order.supplierAssignments.find((a) => a.supplierId === view.supplierId);
+  if (!assignment) {
+    findings.push(f("B", "SUPPLIER", "CRITICAL", "ASSIGNMENT_MISSING", "Supplier assignment missing"));
+  } else {
+    findings.push(f("B", "SUPPLIER", "PASS", "ASSIGNMENT_EXISTS", "Supplier assignment exists"));
+  }
+  const product = getProduct(view.productId);
+  const offer = product?.supplierOffers.find((o) => o.supplierId === view.supplierId);
+  if (!offer) {
+    findings.push(f("C", "SUPPLIER", "WARNING", "OFFER_MISSING", "Supplier offer no longer exists"));
+  } else {
+    findings.push(f("C", "SUPPLIER", "PASS", "OFFER_EXISTS", "Supplier offer exists"));
+  }
+  if (!view.inventoryReservationId) {
+    findings.push(f("D", "INVENTORY", "CRITICAL", "RESERVATION_MISSING", "Inventory reservation missing"));
+  } else {
+    const reservation = getReservation(view.inventoryReservationId);
+    if (!reservation) {
+      findings.push(f("D", "INVENTORY", "CRITICAL", "RESERVATION_NOT_FOUND", "Inventory reservation record missing"));
+    } else {
+      findings.push(f("D", "INVENTORY", "PASS", "RESERVATION_EXISTS", "Inventory reservation exists"));
+      if (reservation.quantity !== view.quantity) {
+        findings.push(
+          f("E", "INVENTORY", "CRITICAL", "RESERVATION_QTY_MISMATCH", "Reservation quantity differs from order quantity")
+        );
+      } else {
+        findings.push(f("E", "INVENTORY", "PASS", "RESERVATION_QTY_OK", "Reservation quantity matches order"));
+      }
+    }
+  }
+  const item = order.items.find((i) => i.orderItemId === view.orderItemId) || order.items[0];
+  const { snapshot, offerExists } = readPriceSnapshotConsistency(item);
+  if (!view.priceSnapshotId || !snapshot) {
+    findings.push(f("F", "PRICE", "CRITICAL", "PRICE_SNAPSHOT_MISSING", "Price snapshot missing"));
+  } else {
+    findings.push(f("F", "PRICE", "PASS", "PRICE_SNAPSHOT_EXISTS", "Price snapshot exists"));
+    if (snapshot.currency !== order.currency) {
+      findings.push(f("F-PRICE", "PRICE", "MISMATCH", "CURRENCY_MISMATCH", "Price snapshot currency mismatch"));
+    }
+    if (snapshot.supplierCost !== view.quantity * (order.items.find((i) => i.productId === view.productId)?.supplierCostSnapshot || 0) / Math.max(view.quantity, 1)) {
+    }
+    if (item && snapshot.supplierCost !== item.supplierCostSnapshot) {
+      findings.push(f("F-PRICE", "PRICE", "MISMATCH", "SUPPLIER_COST_DRIFT", "Live pricing differs from order snapshot"));
+    } else {
+      findings.push(f("F-PRICE", "PRICE", "PASS", "SUPPLIER_COST_IMMUTABLE", "Supplier cost snapshot immutable"));
+    }
+  }
+  if (!view.supplierOrderId) {
+    findings.push(f("G", "SUPPLIER_ORDER", "WARNING", "SUPPLIER_ORDER_MISSING", "Supplier order reference missing"));
+  } else {
+    findings.push(f("G", "SUPPLIER_ORDER", "PASS", "SUPPLIER_ORDER_EXISTS", "Supplier order reference exists"));
+    const sandbox = getSupplierOrderSandboxByReference(view.supplierOrderId);
+    if (view.supplierOrderClassification === "SANDBOX" && !sandbox && !view.supplierOrderId.startsWith("SANDBOX-ORDER-")) {
+      findings.push(f("J", "SUPPLIER_ORDER", "MISMATCH", "SANDBOX_CLASS_INCONSISTENT", "Sandbox/live classification inconsistent"));
+    } else {
+      findings.push(f("J", "SUPPLIER_ORDER", "PASS", "SANDBOX_CLASS_OK", "Sandbox/live classification consistent"));
+    }
+  }
+  if (view.idempotencyKey && view.supplierOrderId) {
+    const sandbox = getSupplierOrderSandboxByReference(view.supplierOrderId);
+    if (sandbox && sandbox.idempotencyKey !== view.idempotencyKey) {
+      findings.push(f("K", "SUPPLIER_ORDER", "MISMATCH", "IDEMPOTENCY_MISMATCH", "Idempotency key mismatch"));
+    } else {
+      findings.push(f("K", "SUPPLIER_ORDER", "PASS", "IDEMPOTENCY_OK", "Idempotency key consistent"));
+    }
+  }
+  const supplier = getSupplier(view.supplierId);
+  if (!supplier) {
+    findings.push(f("L", "SUPPLIER", "CRITICAL", "UNKNOWN_SUPPLIER", "Unknown supplier"));
+  } else if (!isSupplierSelectable(view.supplierId)) {
+    findings.push(f("L", "SUPPLIER", "CRITICAL", "SUPPLIER_DISABLED", "Supplier disabled"));
+  } else {
+    const health = getSupplierHealth(view.supplierId);
+    if (health.healthStatus === "UNHEALTHY") {
+      findings.push(f("L", "SUPPLIER", "WARNING", "SUPPLIER_UNHEALTHY", "Supplier connector unhealthy"));
+    } else {
+      findings.push(f("L", "SUPPLIER", "PASS", "SUPPLIER_OK", "Supplier selectable"));
+    }
+  }
+  if (view.marketplaceId) {
+    const mapping = listOrderMappings().find((m) => m.orderId === view.orderId);
+    if (!mapping) {
+      findings.push(f("MP", "MARKETPLACE", "MISMATCH", "MAPPING_MISSING", "Marketplace mapping missing"));
+    } else {
+      findings.push(f("MP", "MARKETPLACE", "PASS", "MAPPING_OK", "Marketplace mapping exists"));
+    }
+  }
+  const returnRecord = getReturnByOrder(view.orderId);
+  if (returnRecord && order.status === "DELIVERED" && returnRecord.status === "REQUESTED") {
+    findings.push(f("RET", "RETURN", "WARNING", "RETURN_ORDER_STATE", "Return requested on delivered order \u2014 review"));
+  }
+  if (view.trackingNumber) {
+    const dupes = listAllTrackingNumbers(view.trackingNumber, view.fulfillmentId);
+    if (dupes > 0) {
+      findings.push(f("TRK", "TRACKING", "WARNING", "DUPLICATE_TRACKING", "Duplicate tracking number detected"));
+    }
+  }
+  if (!offerExists && product) {
+    findings.push(f("INV-OFFER", "INVENTORY", "WARNING", "OFFER_DISCONTINUED", "Supplier offer discontinued"));
+  }
+  findings.push(...evaluateStateCompatibilityMatrix(view));
+  return findings;
+}
+var trackingIndex = /* @__PURE__ */ new Map();
+function listAllTrackingNumbers(trackingNumber, excludeFulfillmentId) {
+  let count = 0;
+  for (const [num, ids] of trackingIndex) {
+    if (num === trackingNumber) {
+      for (const id of ids) {
+        if (id !== excludeFulfillmentId) count++;
+      }
+    }
+  }
+  return count;
+}
+
+// lib/fulfillment-control-tower/reconcile.ts
+var import_crypto2 = require("crypto");
 
 // lib/supplier-engine/network/config.ts
 function envFlag(name, defaultValue = false) {
@@ -30764,2188 +30946,525 @@ var SUPPLIER_NETWORK_CONFIG = {
   maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
   maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
 };
-
-// lib/supplier-engine/connectors/api.ts
-init_fixtures();
-
-// lib/supplier-engine/auth/resolver.ts
-init_credentials();
-
-// lib/supplier-engine/connectors/xml.ts
-init_fixtures();
-
-// lib/supplier-engine/connectors/csv.ts
-init_fixtures();
-
-// lib/supplier-engine/syncCursor.ts
-init_persistence();
-
-// lib/supplier-engine/selection.ts
-init_registry2();
-
-// lib/supplier-engine/state.ts
-init_persistence();
-
-// lib/supplier-engine/order.ts
-init_registry2();
-init_capabilities();
-
-// lib/supplier-engine/bootstrap.ts
-init_registry2();
-init_persistence2();
-
-// lib/supplier-engine/orderIdempotency.ts
-init_persistence();
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-init_registry2();
-
-// lib/supplier-engine/audit.ts
-init_persistence();
-init_security();
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-init_security();
-
-// lib/supplier-engine/orderSandbox/networkSafety.ts
-init_config();
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-init_persistence2();
-
-// lib/order-engine/fulfillment.ts
-init_registry2();
-
-// lib/analytics/constants.ts
-var SESSION_TIMEOUT_MS = 30 * 60 * 1e3;
-var FOUNDATION_EVENT_TYPES = [
-  "PAGE_VIEW",
-  "SESSION_START",
-  "SESSION_END",
-  "PRODUCT_VIEW",
-  "PRODUCT_SEARCH",
-  "CATEGORY_VIEW",
-  "ADD_TO_CART",
-  "REMOVE_FROM_CART",
-  "VIEW_CART",
-  "CHECKOUT_START",
-  "CHECKOUT_STEP",
-  "CHECKOUT_COMPLETED",
-  "CHECKOUT_ABANDONED",
-  "PURCHASE",
-  "REFUND",
-  "RETURN",
-  "MARKETPLACE_ORDER",
-  "MARKETPLACE_RETURN",
-  "SEARCH",
-  "FILTER_USED",
-  "LANGUAGE_CHANGED",
-  "MARKET_CHANGED",
-  "CONSENT_GRANTED",
-  "CONSENT_DENIED",
-  "CONSENT_WITHDRAWN"
-];
-var IDEMPOTENT_EVENT_TYPES = /* @__PURE__ */ new Set([
-  "PURCHASE",
-  "REFUND",
-  "RETURN",
-  "CHECKOUT_COMPLETED",
-  "MARKETPLACE_ORDER"
-]);
-var ESSENTIAL_EVENT_TYPES = /* @__PURE__ */ new Set([
-  "CONSENT_GRANTED",
-  "CONSENT_DENIED",
-  "CONSENT_WITHDRAWN"
-]);
-var SENSITIVE_METADATA_KEYS = [
-  "email",
-  "phone",
-  "password",
-  "token",
-  "apiKey",
-  "cardNumber",
-  "cvv",
-  "paymentCredential",
-  "name",
-  "fullName",
-  "address",
-  "ip",
-  "ipAddress"
-];
-var SEARCH_ENGINE_HOSTS = {
-  "google.": "Google",
-  "bing.": "Bing",
-  "duckduckgo.": "DuckDuckGo",
-  "yahoo.": "Yahoo"
-};
-var SOCIAL_HOSTS = {
-  "facebook.": "Facebook",
-  "instagram.": "Instagram",
-  "tiktok.": "TikTok",
-  "youtube.": "YouTube"
-};
-var DEFAULT_CONSENT_VERSION = "1.0.0-foundation";
-
-// lib/analytics/registry.ts
-function generateEventId() {
-  return getAnalyticsStore().generateEventId();
-}
-function storeEvent(event) {
-  getAnalyticsStore().storeEvent(event);
-}
-function listEvents() {
-  return getAnalyticsStore().listEvents();
-}
-function listEventsInRange(fromIso, toIso) {
-  const store = getAnalyticsStore();
-  if (typeof store.listEventsInRange === "function") {
-    return store.listEventsInRange(fromIso, toIso);
-  }
-  return listEvents().filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
-}
-function getEvent(eventId) {
-  return getAnalyticsStore().getEvent(eventId);
-}
-function getSession(sessionId) {
-  return getAnalyticsStore().getSession(sessionId);
-}
-function upsertSession(session) {
-  getAnalyticsStore().upsertSession(session);
-}
-function listSessions() {
-  return getAnalyticsStore().listSessions();
-}
-function getVisitor(anonymousVisitorId) {
-  return getAnalyticsStore().getVisitor(anonymousVisitorId);
-}
-function upsertVisitor(visitor) {
-  getAnalyticsStore().upsertVisitor(visitor);
-}
-function listVisitors() {
-  return getAnalyticsStore().listVisitors();
-}
-function getConsent(anonymousVisitorId) {
-  return getAnalyticsStore().getConsent(anonymousVisitorId);
-}
-function setConsent(anonymousVisitorId, consent) {
-  getAnalyticsStore().setConsent(anonymousVisitorId, consent);
-}
-function isIdempotencyKeyUsed(key) {
-  return getAnalyticsStore().isIdempotencyKeyUsed(key);
-}
-function markIdempotencyKey(key, eventId) {
-  getAnalyticsStore().markIdempotencyKey(key, eventId);
-}
-function getIdempotencyEventId(key) {
-  return getAnalyticsStore().getIdempotencyEventId(key);
-}
-function isVisitorDeleted(anonymousVisitorId) {
-  return getAnalyticsStore().isVisitorDeleted(anonymousVisitorId);
+function isSupplierOrderNetworkEnabled() {
+  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
-// lib/analytics/eventSchema.ts
-function validateEventSchema(input) {
-  const errors = [];
-  if (!input.eventType) errors.push("MISSING_EVENT_TYPE");
-  else if (!FOUNDATION_EVENT_TYPES.includes(input.eventType)) errors.push("INVALID_EVENT_TYPE");
-  if (input.timestamp) {
-    const ts = Date.parse(input.timestamp);
-    if (Number.isNaN(ts)) errors.push("INVALID_TIMESTAMP");
-  }
-  if (input.market) {
-    const market = getMarket(input.market.toUpperCase());
-    if (!market) errors.push("INVALID_MARKET");
-  }
-  if (input.language && input.market) {
-    const langs = getMarketLanguages(input.market.toUpperCase());
-    const base = input.language.split("-")[0];
-    if (!langs.includes(base) && !langs.includes(input.language)) {
-      errors.push("INVALID_LANGUAGE");
-    }
-  }
-  if (input.productId && !getRegistryProduct(input.productId)) {
-    errors.push("INVALID_PRODUCT_ID");
-  }
-  if (input.value !== void 0 && (typeof input.value !== "number" || input.value < 0)) {
-    errors.push("INVALID_VALUE");
-  }
-  if (input.quantity !== void 0 && (!Number.isInteger(input.quantity) || input.quantity < 0)) {
-    errors.push("INVALID_QUANTITY");
-  }
-  return { ok: errors.length === 0, errors };
-}
+// lib/fulfillment-control-tower/incidents.ts
+var import_crypto = require("crypto");
 
-// lib/analytics/consent.ts
-function resolveConsentRequired(market) {
-  const code = market.toUpperCase();
-  if (isEuCountry(code)) return true;
-  const config2 = getMarket(code);
-  if (!config2) return true;
-  return config2.status === "ACTIVE";
-}
-function buildDefaultConsentState(market) {
-  const consentRequired = resolveConsentRequired(market);
-  return {
-    consentRequired,
-    consentStatus: consentRequired ? "UNKNOWN" : "GRANTED",
-    consentVersion: DEFAULT_CONSENT_VERSION,
-    analytics: consentRequired ? "UNKNOWN" : "GRANTED",
-    marketing: "UNKNOWN",
-    personalization: "UNKNOWN"
-  };
-}
-function updateConsent(anonymousVisitorId, market, updates) {
-  const existing = getConsent(anonymousVisitorId) ?? buildDefaultConsentState(market);
-  const next = {
-    ...existing,
-    consentTimestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    consentVersion: DEFAULT_CONSENT_VERSION
-  };
-  if (updates.ANALYTICS) {
-    next.analytics = updates.ANALYTICS;
-    next.consentStatus = updates.ANALYTICS;
+// lib/fulfillment-control-tower/persistence.ts
+var snapshotStore = /* @__PURE__ */ new Map();
+var incidentStore = /* @__PURE__ */ new Map();
+var incidentByFingerprint = /* @__PURE__ */ new Map();
+var reconciliationRuns = [];
+function getPersistentStore() {
+  if (typeof process === "undefined" || process.env.BUZZARD_FULFILLMENT_TOWER_PERSISTENCE === "0") {
+    return null;
   }
-  if (updates.MARKETING) next.marketing = updates.MARKETING;
-  if (updates.PERSONALIZATION) next.personalization = updates.PERSONALIZATION;
-  setConsent(anonymousVisitorId, next);
-  return next;
-}
-function isTrackingAllowed(eventType, consent) {
-  if (ESSENTIAL_EVENT_TYPES.has(eventType)) return true;
-  if (!consent.consentRequired) return true;
-  if (consent.consentStatus === "WITHDRAWN" || consent.analytics === "WITHDRAWN") return false;
-  if (consent.analytics === "DENIED" || consent.consentStatus === "DENIED") return false;
-  return consent.analytics === "GRANTED" || consent.consentStatus === "GRANTED";
-}
-
-// lib/analytics/audit.ts
-function recordAnalyticsAudit(entry) {
-  return getAnalyticsStore().recordAudit(entry);
-}
-
-// lib/analytics/privacy.ts
-var PII_PATTERNS = [
-  /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/,
-  /\b\+?\d{10,15}\b/,
-  /\b\d{16}\b/
-];
-function sanitizeMetadata(metadata = {}) {
-  const clean = {};
-  for (const [key, value] of Object.entries(metadata)) {
-    const lower = key.toLowerCase();
-    if (SENSITIVE_METADATA_KEYS.some((s) => lower.includes(s.toLowerCase()))) continue;
-    if (typeof value === "string" && PII_PATTERNS.some((p) => p.test(value))) continue;
-    clean[key] = value;
-  }
-  return clean;
-}
-function sanitizeSearchTerm(term) {
-  const trimmed = term.trim();
-  if (!trimmed) return null;
-  if (PII_PATTERNS.some((p) => p.test(trimmed))) return null;
-  const lower = trimmed.toLowerCase();
-  if (["password", "credit card", "ssn", "passport"].some((s) => lower.includes(s))) return null;
-  return trimmed.slice(0, 200);
-}
-function stripPiiFromEventInput(input) {
-  const { metadata, ...rest } = input;
-  return {
-    ...rest,
-    customerIdReference: void 0,
-    metadata: metadata ? sanitizeMetadata(metadata) : void 0
-  };
-}
-
-// lib/analytics/security.ts
-function validateAdminAccess(context) {
-  if (!context.adminAuthorized) return { ok: false, errorCode: "ADMIN_UNAUTHORIZED" };
-  return { ok: true };
-}
-function validateCrossCustomerAccess(requestedCustomerId, contextCustomerId) {
-  if (!requestedCustomerId) return { ok: true };
-  if (!contextCustomerId) return { ok: false, errorCode: "UNAUTHORIZED_CUSTOMER_ACCESS" };
-  if (requestedCustomerId !== contextCustomerId) return { ok: false, errorCode: "CROSS_CUSTOMER_ACCESS" };
-  return { ok: true };
-}
-function detectSensitiveMetadata(metadata = {}) {
-  const hits = [];
-  for (const key of Object.keys(metadata)) {
-    if (SENSITIVE_METADATA_KEYS.some((s) => key.toLowerCase().includes(s.toLowerCase()))) {
-      hits.push(key);
-    }
-  }
-  return hits;
-}
-function rejectEventInjection(input) {
-  const errors = [];
-  const sensitive = detectSensitiveMetadata(input.metadata);
-  if (sensitive.length) errors.push(`SENSITIVE_METADATA:${sensitive.join(",")}`);
-  if (input.metadata?.overwriteAuthoritativeRevenue === true) {
-    errors.push("AUTHORITY_BYPASS");
-  }
-  return { ok: errors.length === 0, errors };
-}
-
-// lib/analytics/geo.ts
-function resolveMarketContext(input) {
-  const marketCode = (input.market ?? input.country ?? "DE").toUpperCase();
-  const market = getMarket(marketCode);
-  const fallback = listMarkets()[0];
-  return {
-    market: marketCode,
-    country: marketCode,
-    language: input.language ?? market?.defaultLanguage ?? fallback?.defaultLanguage ?? "de",
-    currency: getMarketCurrency(marketCode).code
-  };
-}
-
-// lib/analytics/trafficSource.ts
-function classifyTrafficSource(source, medium, referrerHost) {
-  const src = (source ?? "").toLowerCase();
-  const med = (medium ?? "").toLowerCase();
-  const host = (referrerHost ?? "").toLowerCase();
-  if (med.includes("cpc") || med.includes("ppc") || src.includes("ads")) return "PAID_SEARCH";
-  if (med.includes("email") || src.includes("email")) return "EMAIL";
-  if (med.includes("social") || Object.keys(SOCIAL_HOSTS).some((h) => host.includes(h))) return "SOCIAL";
-  if (med.includes("marketplace") || src.includes("amazon") || src.includes("ebay")) return "MARKETPLACE";
-  if (Object.keys(SEARCH_ENGINE_HOSTS).some((h) => host.includes(h))) return "ORGANIC_SEARCH";
-  if (host && !host.includes("buzzard")) return "REFERRAL";
-  if (src === "direct" || !src) return "DIRECT";
-  return "OTHER";
-}
-function resolveTrafficSource(input) {
-  const source = input.trafficSource ?? classifyTrafficSource(input.utmSource, input.trafficMedium, input.referrerHost);
-  return {
-    source,
-    medium: input.trafficMedium,
-    campaign: input.trafficCampaign,
-    referrerHost: input.referrerHost
-  };
-}
-
-// lib/analytics/device.ts
-function classifyDevice(userAgent, screenClass) {
-  if (screenClass === "mobile") return "MOBILE";
-  if (screenClass === "tablet") return "TABLET";
-  if (screenClass === "desktop") return "DESKTOP";
-  const ua = (userAgent ?? "").toLowerCase();
-  if (/ipad|tablet|kindle/.test(ua)) return "TABLET";
-  if (/mobile|iphone|android/.test(ua)) return "MOBILE";
-  if (/windows|macintosh|linux|cros/.test(ua)) return "DESKTOP";
-  return "OTHER";
-}
-
-// lib/analytics/eventNormalizer.ts
-function normalizeEvent(input, revenueAuthority) {
-  const timestamp = input.timestamp ?? (/* @__PURE__ */ new Date()).toISOString();
-  const geo = resolveMarketContext(input);
-  const traffic = resolveTrafficSource({
-    trafficSource: input.trafficSource,
-    trafficMedium: input.trafficMedium,
-    trafficCampaign: input.trafficCampaign,
-    referrerHost: input.metadata?.referrerHost,
-    utmSource: input.metadata?.utm_source
-  });
-  let metadata = sanitizeMetadata(input.metadata ?? {});
-  if (input.eventType === "SEARCH" || input.eventType === "PRODUCT_SEARCH") {
-    const term = sanitizeSearchTerm(String(metadata.searchTerm ?? metadata.query ?? ""));
-    if (term) metadata = { ...metadata, searchTerm: term };
-    else metadata = { ...metadata, searchTerm: "[redacted]" };
-  }
-  return {
-    ...input,
-    eventId: input.eventId ?? generateEventId(),
-    timestamp,
-    sessionId: input.sessionId ?? "",
-    anonymousVisitorId: input.anonymousVisitorId ?? "",
-    market: geo.market,
-    country: geo.country,
-    language: geo.language,
-    currency: input.currency ?? geo.currency,
-    deviceType: input.deviceType ?? classifyDevice(metadata.userAgent),
-    trafficSource: traffic.source,
-    trafficMedium: traffic.medium,
-    trafficCampaign: traffic.campaign,
-    landingPage: input.landingPage,
-    pagePath: input.pagePath,
-    value: revenueAuthority === "REJECTED" ? void 0 : input.value,
-    metadata,
-    revenueAuthority,
-    sanitized: true
-  };
-}
-
-// lib/analytics/visitor.ts
-function generateAnonymousVisitorId() {
-  const bytes = new Uint8Array(16);
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    crypto.getRandomValues(bytes);
-  } else {
-    for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
-  }
-  return `bv_${Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")}`;
-}
-function touchVisitor(anonymousVisitorId, timestamp) {
-  if (isVisitorDeleted(anonymousVisitorId)) {
-    throw new Error("VISITOR_DELETED");
-  }
-  const existing = getVisitor(anonymousVisitorId);
-  if (existing) {
-    const updated = {
-      ...existing,
-      lastSeenAt: timestamp,
-      isReturning: existing.sessionCount > 0
-    };
-    upsertVisitor(updated);
-    return updated;
-  }
-  const created = {
-    anonymousVisitorId,
-    firstSeenAt: timestamp,
-    lastSeenAt: timestamp,
-    sessionCount: 0,
-    isReturning: false
-  };
-  upsertVisitor(created);
-  return created;
-}
-function incrementVisitorSession(anonymousVisitorId) {
-  const visitor = getVisitor(anonymousVisitorId);
-  if (!visitor) return;
-  upsertVisitor({
-    ...visitor,
-    sessionCount: visitor.sessionCount + 1,
-    isReturning: visitor.sessionCount > 0
-  });
-}
-
-// lib/analytics/session.ts
-function generateSessionId() {
-  return `ses_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-}
-function isSessionExpired(session, nowMs) {
-  const last = Date.parse(session.lastActivityAt);
-  return nowMs - last > SESSION_TIMEOUT_MS;
-}
-function getOrCreateSession(params) {
-  const nowMs = Date.parse(params.timestamp);
-  if (params.sessionId) {
-    const existing = getSession(params.sessionId);
-    if (existing && !isSessionExpired(existing, nowMs)) {
-      return existing;
-    }
-  }
-  incrementVisitorSession(params.anonymousVisitorId);
-  const session = {
-    sessionId: params.sessionId && getSession(params.sessionId) ? generateSessionId() : params.sessionId ?? generateSessionId(),
-    anonymousVisitorId: params.anonymousVisitorId,
-    startedAt: params.timestamp,
-    lastActivityAt: params.timestamp,
-    landingPage: params.landingPage,
-    pageViews: 0,
-    productViews: 0,
-    cartEvents: 0,
-    checkoutStarted: false,
-    purchaseCompleted: false,
-    trafficSource: params.trafficSource,
-    market: params.market,
-    language: params.language,
-    deviceType: params.deviceType
-  };
-  upsertSession(session);
-  return session;
-}
-function updateSessionFromEvent(session, event) {
-  const updated = {
-    ...session,
-    lastActivityAt: event.timestamp,
-    exitPage: event.pagePath ?? session.exitPage
-  };
-  switch (event.eventType) {
-    case "PAGE_VIEW":
-      updated.pageViews += 1;
-      break;
-    case "PRODUCT_VIEW":
-      updated.productViews += 1;
-      break;
-    case "ADD_TO_CART":
-    case "REMOVE_FROM_CART":
-      updated.cartEvents += 1;
-      break;
-    case "CHECKOUT_START":
-      updated.checkoutStarted = true;
-      break;
-    case "PURCHASE":
-    case "CHECKOUT_COMPLETED":
-      if (event.revenueAuthority === "AUTHORITATIVE") {
-        updated.purchaseCompleted = true;
-      }
-      break;
-    case "SESSION_END":
-      updated.endedAt = event.timestamp;
-      break;
-  }
-  upsertSession(updated);
-  return updated;
-}
-function countActiveSessions(nowIso) {
-  const nowMs = Date.parse(nowIso);
-  let count = 0;
-  for (const session of listSessions()) {
-    if (!session.endedAt && !isSessionExpired(session, nowMs)) count += 1;
-  }
-  return count;
-}
-
-// lib/returns-engine/registry.ts
-var returns = /* @__PURE__ */ new Map();
-var returnsByNumber = /* @__PURE__ */ new Map();
-var returnsByOrder = /* @__PURE__ */ new Map();
-var returnsByCustomer = /* @__PURE__ */ new Map();
-var idempotencyIndex = /* @__PURE__ */ new Map();
-var shipments = /* @__PURE__ */ new Map();
-var recoveries = /* @__PURE__ */ new Map();
-var customerRefunds = /* @__PURE__ */ new Map();
-var marketplaceRefunds = /* @__PURE__ */ new Map();
-var reconciliations = /* @__PURE__ */ new Map();
-function saveReturnRequest(record) {
-  returns.set(record.returnId, record);
-  returnsByNumber.set(record.returnNumber, record.returnId);
-  returnsByOrder.set(record.orderId, record.returnId);
-  if (!returnsByCustomer.has(record.customerId)) {
-    returnsByCustomer.set(record.customerId, /* @__PURE__ */ new Set());
-  }
-  returnsByCustomer.get(record.customerId).add(record.returnId);
-  if (record.idempotencyKey) {
-    idempotencyIndex.set(record.idempotencyKey, record.returnId);
-  }
-}
-function getReturnRequest(returnId) {
-  return returns.get(returnId);
-}
-function getReturnByOrder(orderId) {
-  const id = returnsByOrder.get(orderId);
-  return id ? returns.get(id) : void 0;
-}
-function getShipmentsForReturn(returnId) {
-  return [...shipments.values()].filter((s) => s.returnId === returnId);
-}
-function getRecoveriesForReturn(returnId) {
-  return [...recoveries.values()].filter((r) => r.returnId === returnId);
-}
-function getCustomerRefundForReturn(returnId) {
-  return [...customerRefunds.values()].find((r) => r.returnId === returnId);
-}
-function getMarketplaceRefundForReturn(returnId) {
-  return [...marketplaceRefunds.values()].find((r) => r.returnId === returnId);
-}
-function saveReconciliation(rec) {
-  reconciliations.set(rec.reconciliationId, rec);
-}
-function getReconciliation(returnId) {
-  return [...reconciliations.values()].find((r) => r.returnId === returnId);
-}
-
-// lib/analytics/revenue.ts
-var REVENUE_ELIGIBLE_ORDER_STATUSES = /* @__PURE__ */ new Set([
-  "PAID",
-  "CONFIRMED",
-  "PROCESSING",
-  "SUPPLIER_PENDING",
-  "SUPPLIER_CONFIRMED",
-  "SHIPPED",
-  "DELIVERED",
-  "RETURN_REQUESTED",
-  "RETURNED",
-  "REFUNDED",
-  "PARTIALLY_REFUNDED"
-]);
-function isRevenueEligibleOrder(order) {
-  if (order.paymentStatus === "CAPTURED" || order.paymentStatus === "AUTHORIZED") return true;
-  return REVENUE_ELIGIBLE_ORDER_STATUSES.has(order.status);
-}
-function toCents(amount) {
-  return Math.round(amount * 100);
-}
-function resolveAuthoritativeOrderRevenue(orderId) {
-  const order = getOrder(orderId);
-  if (!order) return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  if (!isRevenueEligibleOrder(order)) {
-    return { ok: false, errorCode: "ORDER_NOT_ELIGIBLE" };
-  }
-  return { ok: true, grossCents: toCents(order.totalGross), currency: order.currency };
-}
-function resolveAuthoritativeRefundAmount(returnId) {
-  const refund = getCustomerRefundForReturn(returnId);
-  if (!refund) return { ok: false, errorCode: "REFUND_NOT_FOUND" };
-  return { ok: true, refundCents: toCents(refund.refundedAmount) };
-}
-function computeRevenueMetrics(events = listEvents()) {
-  let grossRevenueCents = 0;
-  let refundAmountCents = 0;
-  let orderCount = 0;
-  const seenOrders = /* @__PURE__ */ new Set();
-  for (const event of events) {
-    if (event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE") {
-      const key = event.orderIdReference ?? event.eventId;
-      if (seenOrders.has(key)) continue;
-      seenOrders.add(key);
-      grossRevenueCents += toCents(event.value ?? 0);
-      orderCount += 1;
-    }
-    if (event.eventType === "REFUND" && event.revenueAuthority === "AUTHORITATIVE") {
-      refundAmountCents += toCents(event.value ?? 0);
-    }
-  }
-  const netRevenueCents = grossRevenueCents - refundAmountCents;
-  return {
-    grossRevenueCents,
-    refundAmountCents,
-    netRevenueCents,
-    orderCount,
-    averageOrderValueCents: orderCount ? Math.round(grossRevenueCents / orderCount) : 0,
-    authoritativeOnly: true
-  };
-}
-function validateClientRevenueClaim(input) {
-  if (input.eventType !== "PURCHASE" && input.eventType !== "REFUND") return "PROVISIONAL";
-  if (input.authoritative === true && !input.orderIdReference && !input.returnId) return "REJECTED";
-  if (input.value !== void 0 && input.value > 0 && !input.orderIdReference && !input.returnId) {
-    return "REJECTED";
-  }
-  if (input.eventType === "REFUND" && input.returnId) {
-    const resolved = resolveAuthoritativeRefundAmount(input.returnId);
-    if (resolved.ok) return "AUTHORITATIVE";
-    return "PROVISIONAL";
-  }
-  if (input.orderIdReference) {
-    const resolved = resolveAuthoritativeOrderRevenue(input.orderIdReference);
-    if (resolved.ok) return "AUTHORITATIVE";
-    return "PROVISIONAL";
-  }
-  return "PROVISIONAL";
-}
-
-// lib/analytics/eventCollector.ts
-var AUTHORITATIVE_EVENT_SOURCES = /* @__PURE__ */ new Set([
-  "ORDER_ENGINE",
-  "RETURNS_ENGINE",
-  "MARKETPLACE_ENGINE",
-  "STOREFRONT_CHECKOUT"
-]);
-function isAuthoritativeBusinessEvent(input) {
-  const source = input.metadata?.source;
-  return typeof source === "string" && AUTHORITATIVE_EVENT_SOURCES.has(source);
-}
-function buildIdempotencyKey(input) {
-  if (input.eventId) return input.eventId;
-  if (input.orderIdReference && IDEMPOTENT_EVENT_TYPES.has(input.eventType)) {
-    return `${input.eventType}:${input.orderIdReference}`;
-  }
-  if (input.correlationId && IDEMPOTENT_EVENT_TYPES.has(input.eventType)) {
-    return `${input.eventType}:${input.correlationId}`;
-  }
-  return void 0;
-}
-function collectAnalyticsEvent(input, options) {
-  const injection = rejectEventInjection(input);
-  if (!injection.ok) {
-    return { ok: false, errorCode: "EVENT_INJECTION", errorMessage: injection.errors.join(",") };
-  }
-  const schema = validateEventSchema(input);
-  if (!schema.ok) {
-    return { ok: false, errorCode: "SCHEMA_VALIDATION", errorMessage: schema.errors.join(",") };
-  }
-  if (input.customerIdReference) {
-    const access = validateCrossCustomerAccess(input.customerIdReference, options?.customerIdContext);
-    if (!access.ok) return { ok: false, errorCode: access.errorCode };
-  }
-  const safeInput = stripPiiFromEventInput(input);
-  const anonymousVisitorId = safeInput.anonymousVisitorId ?? generateAnonymousVisitorId();
-  if (isVisitorDeleted(anonymousVisitorId)) {
-    return { ok: false, errorCode: "VISITOR_DELETED", blockedByConsent: true };
-  }
-  const consent = getConsent(anonymousVisitorId) ?? safeInput.consentState ?? buildDefaultConsentState(safeInput.market ?? "DE");
-  if (!isTrackingAllowed(safeInput.eventType, consent) && !isAuthoritativeBusinessEvent(safeInput)) {
-    return { ok: false, errorCode: "CONSENT_DENIED", blockedByConsent: true };
-  }
-  const idempotencyKey = buildIdempotencyKey(safeInput);
-  if (idempotencyKey && isIdempotencyKeyUsed(idempotencyKey)) {
-    const existingId = getIdempotencyEventId(idempotencyKey);
-    const existingEvent = getEvent(existingId);
-    if (existingEvent) return { ok: true, event: existingEvent };
-    return { ok: true, event: { ...normalizeEvent(safeInput, "PROVISIONAL"), eventId: existingId } };
-  }
-  let revenueAuthority = validateClientRevenueClaim({
-    eventType: safeInput.eventType,
-    value: safeInput.value,
-    authoritative: safeInput.authoritative,
-    orderIdReference: safeInput.orderIdReference,
-    returnId: safeInput.metadata?.returnId ? String(safeInput.metadata.returnId) : void 0
-  });
-  if (safeInput.orderIdReference && safeInput.eventType === "PURCHASE") {
-    const resolved = resolveAuthoritativeOrderRevenue(safeInput.orderIdReference);
-    if (resolved.ok) {
-      revenueAuthority = "AUTHORITATIVE";
-      safeInput.value = (resolved.grossCents ?? 0) / 100;
-      safeInput.currency = resolved.currency;
-    }
-  }
-  if (safeInput.eventType === "REFUND" && safeInput.metadata?.returnId) {
-    const resolved = resolveAuthoritativeRefundAmount(String(safeInput.metadata.returnId));
-    if (resolved.ok) {
-      revenueAuthority = "AUTHORITATIVE";
-      safeInput.value = (resolved.refundCents ?? 0) / 100;
-    }
-  }
-  if (safeInput.authoritative === true && revenueAuthority === "REJECTED") {
-    return { ok: false, errorCode: "FAKE_REVENUE_REJECTED", errorMessage: "Client revenue claim rejected" };
-  }
-  const timestamp = safeInput.timestamp ?? (/* @__PURE__ */ new Date()).toISOString();
-  touchVisitor(anonymousVisitorId, timestamp);
-  const session = getOrCreateSession({
-    sessionId: safeInput.sessionId,
-    anonymousVisitorId,
-    timestamp,
-    landingPage: safeInput.landingPage ?? safeInput.pagePath,
-    trafficSource: safeInput.trafficSource ?? "DIRECT",
-    market: safeInput.market ?? "DE",
-    language: safeInput.language ?? "de",
-    deviceType: safeInput.deviceType ?? "OTHER"
-  });
-  const event = normalizeEvent(
-    {
-      ...safeInput,
-      sessionId: session.sessionId,
-      anonymousVisitorId,
-      eventId: safeInput.eventId ?? generateEventId()
-    },
-    revenueAuthority
-  );
-  storeEvent(event);
-  updateSessionFromEvent(session, event);
-  if (idempotencyKey) markIdempotencyKey(idempotencyKey, event.eventId);
-  if (["CONSENT_GRANTED", "CONSENT_DENIED", "CONSENT_WITHDRAWN"].includes(event.eventType)) {
-    const status = event.eventType === "CONSENT_GRANTED" ? "GRANTED" : event.eventType === "CONSENT_DENIED" ? "DENIED" : "WITHDRAWN";
-    updateConsent(anonymousVisitorId, event.market, { ANALYTICS: status });
-  }
-  return { ok: true, event };
-}
-function ingestAuthoritativeOrderPurchase(orderId, correlationId) {
-  const order = getOrder(orderId);
-  if (!order) return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  return collectAnalyticsEvent({
-    eventType: "PURCHASE",
-    orderIdReference: orderId,
-    productId: order.items[0]?.productId,
-    market: order.marketId,
-    country: order.marketId,
-    language: "de",
-    currency: order.currency,
-    value: order.totalGross,
-    quantity: order.items.reduce((sum, i) => sum + i.quantity, 0),
-    authoritative: true,
-    correlationId: correlationId ?? orderId,
-    metadata: { source: "ORDER_ENGINE" }
-  });
-}
-
-// lib/analytics/storefront/constants.ts
-var MAX_PAYLOAD_BYTES = 16384;
-var MAX_METADATA_KEYS = 32;
-
-// lib/commerce/orderEngineRegistry.ts
-var mappingsByCommerceId = /* @__PURE__ */ new Map();
-var mappingsByEngineId = /* @__PURE__ */ new Map();
-function getCommerceOrderMapping(commerceOrderId) {
-  return mappingsByCommerceId.get(commerceOrderId);
-}
-function getCommerceMappingByEngineOrderId(orderEngineOrderId) {
-  return mappingsByEngineId.get(orderEngineOrderId);
-}
-
-// lib/commerce/purchaseValidation.ts
-var PURCHASE_ELIGIBLE_STATUSES = /* @__PURE__ */ new Set([
-  "PAID",
-  "CONFIRMED",
-  "PROCESSING",
-  "SUPPLIER_PENDING",
-  "SUPPLIER_CONFIRMED",
-  "SHIPPED",
-  "DELIVERED"
-]);
-var BLOCKED_STATUSES = /* @__PURE__ */ new Set([
-  "CANCELLED",
-  "FAILED",
-  "DRAFT",
-  "PENDING_PAYMENT"
-]);
-function validateOrderForAuthoritativePurchase(order) {
-  if (!order.orderId) return { ok: false, errorCode: "INVALID_ORDER_ID" };
-  if (BLOCKED_STATUSES.has(order.status)) return { ok: false, errorCode: "ORDER_NOT_ELIGIBLE" };
-  if (!order.items?.length) return { ok: false, errorCode: "ORDER_HAS_NO_LINES" };
-  if (!order.currency) return { ok: false, errorCode: "INVALID_CURRENCY" };
-  if (!order.marketId) return { ok: false, errorCode: "INVALID_MARKET" };
-  if (!(order.totalGross > 0)) return { ok: false, errorCode: "MISSING_FINANCIAL_SNAPSHOT" };
-  const paid = order.paymentStatus === "CAPTURED" || order.paymentStatus === "AUTHORIZED" || PURCHASE_ELIGIBLE_STATUSES.has(order.status);
-  if (!paid) return { ok: false, errorCode: "ORDER_NOT_PURCHASE_ELIGIBLE" };
-  for (const item of order.items) {
-    if (!item.productId || item.quantity < 1) {
-      return { ok: false, errorCode: "INVALID_ORDER_LINE" };
-    }
-  }
-  return { ok: true };
-}
-function validateOrderIdForAuthoritativePurchase(orderId) {
-  const order = getOrder(orderId);
-  if (!order) return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  const validation = validateOrderForAuthoritativePurchase(order);
-  if (!validation.ok) return { ok: false, errorCode: validation.errorCode };
-  return { ok: true, order };
-}
-
-// lib/commerce/orderEngineBridge.ts
-function resolveOrderEngineOrderId(orderIdOrCommerceId) {
-  const direct = getOrder(orderIdOrCommerceId);
-  if (direct) return direct.orderId;
-  const mapped = getCommerceOrderMapping(orderIdOrCommerceId);
-  return mapped?.orderEngineOrderId;
-}
-function validatePurchaseSignalAccess(orderIdOrCommerceId, customerIdContext) {
-  const orderEngineOrderId = resolveOrderEngineOrderId(orderIdOrCommerceId);
-  if (!orderEngineOrderId) {
-    return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  }
-  const mapping = getCommerceOrderMapping(orderIdOrCommerceId) ?? getCommerceMappingByEngineOrderId(orderIdOrCommerceId);
-  if (customerIdContext && mapping?.customerId && mapping.customerId !== customerIdContext) {
-    return { ok: false, errorCode: "CROSS_CUSTOMER_ACCESS" };
-  }
-  const order = getOrder(orderEngineOrderId);
-  if (customerIdContext && order?.customerId && order.customerId !== customerIdContext) {
-    return { ok: false, errorCode: "CROSS_CUSTOMER_ACCESS" };
-  }
-  return { ok: true, orderEngineOrderId };
-}
-function ingestAuthoritativePurchaseForOrder(orderEngineOrderId, correlationCommerceOrderId) {
-  const validation = validateOrderIdForAuthoritativePurchase(orderEngineOrderId);
-  if (!validation.ok || !validation.order) {
-    return { ok: false, errorCode: validation.errorCode ?? "ORDER_NOT_ELIGIBLE" };
-  }
-  const correlationId = correlationCommerceOrderId ? `commerce:${correlationCommerceOrderId}` : orderEngineOrderId;
-  return ingestAuthoritativeOrderPurchase(orderEngineOrderId, correlationId);
-}
-function ingestStorefrontPurchaseSignalResolved(orderIdOrCommerceId, correlationId, customerIdContext) {
-  const access = validatePurchaseSignalAccess(orderIdOrCommerceId, customerIdContext);
-  if (!access.ok || !access.orderEngineOrderId) {
-    return { ok: false, errorCode: access.errorCode ?? "ORDER_NOT_FOUND" };
-  }
-  return ingestAuthoritativePurchaseForOrder(
-    access.orderEngineOrderId,
-    orderIdOrCommerceId.startsWith("ord_") ? orderIdOrCommerceId : correlationId ?? orderIdOrCommerceId
-  );
-}
-
-// lib/analytics/storefront/purchaseIngest.ts
-function ingestStorefrontPurchaseSignal(orderId, correlationId, options) {
-  const trimmed = orderId.trim();
-  if (!trimmed) return { ok: false, errorCode: "MISSING_ORDER_ID" };
-  const resolvedId = resolveOrderEngineOrderId(trimmed);
-  if (!resolvedId) {
-    return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  }
-  return ingestStorefrontPurchaseSignalResolved(
-    trimmed,
-    correlationId ?? trimmed,
-    options?.customerIdContext
-  );
-}
-
-// lib/analytics/storefront/serverHandler.ts
-function stripClientFinancialAuthority(input) {
-  const {
-    authoritative: _authoritative,
-    value: _value,
-    signalPurchase: _signalPurchase,
-    ...rest
-  } = input;
-  return {
-    ...rest,
-    authoritative: false,
-    value: void 0
-  };
-}
-function validatePayloadSize(raw) {
-  return raw.length <= MAX_PAYLOAD_BYTES;
-}
-function validateMetadataSize(metadata) {
-  if (!metadata) return true;
-  return Object.keys(metadata).length <= MAX_METADATA_KEYS;
-}
-function handleStorefrontAnalyticsEvent(body) {
-  if (!body?.eventType) return { ok: false, errorCode: "MISSING_EVENT_TYPE" };
-  if (!validateMetadataSize(body.metadata)) return { ok: false, errorCode: "PAYLOAD_TOO_LARGE" };
-  const safe = stripClientFinancialAuthority(body);
-  if (safe.eventType === "PURCHASE" || safe.eventType === "REFUND") {
-    return { ok: false, errorCode: "CLIENT_FINANCIAL_EVENT_REJECTED" };
-  }
-  const injection = rejectEventInjection(safe);
-  if (!injection.ok) return { ok: false, errorCode: "EVENT_INJECTION" };
-  const schema = validateEventSchema(safe);
-  if (!schema.ok) return { ok: false, errorCode: "SCHEMA_VALIDATION" };
-  const marketCtx = resolveMarketContext({
-    market: safe.market,
-    country: safe.country,
-    language: safe.language
-  });
-  const result = collectAnalyticsEvent({
-    ...safe,
-    market: marketCtx.market,
-    country: marketCtx.country,
-    language: marketCtx.language,
-    currency: safe.currency ?? marketCtx.currency
-  });
-  if (result.ok && safe.eventType.startsWith("CONSENT_") && safe.anonymousVisitorId) {
-    syncConsentFromEvent(safe.anonymousVisitorId, marketCtx.market, safe.eventType);
-  }
-  return result;
-}
-function syncConsentFromEvent(visitorId, market, eventType) {
-  const status = eventType === "CONSENT_GRANTED" ? "GRANTED" : eventType === "CONSENT_DENIED" ? "DENIED" : "WITHDRAWN";
-  updateConsent(visitorId, market, { ANALYTICS: status });
-}
-function handleStorefrontPurchaseSignal(body, correlationId) {
-  const payload = typeof body === "string" ? { orderId: body, correlationId } : body;
-  if (!payload.orderId?.trim()) return { ok: false, errorCode: "MISSING_ORDER_ID" };
-  if (payload.revenue !== void 0 || payload.total !== void 0 || payload.subtotal !== void 0 || payload.tax !== void 0 || payload.discount !== void 0 || payload.shipping !== void 0 || payload.currency !== void 0) {
-  }
-  return ingestStorefrontPurchaseSignal(payload.orderId.trim(), payload.correlationId, {
-    customerIdContext: payload.customerId
-  });
-}
-function parseStorefrontEventBody(raw) {
-  if (!validatePayloadSize(raw)) return null;
   try {
-    return JSON.parse(raw);
+    const mod = require_persistentStore();
+    return mod.createFulfillmentControlTowerStore();
   } catch {
     return null;
   }
 }
-
-// lib/analytics/funnel.ts
-function computeFunnelMetrics(events = listEvents()) {
-  const visitors = listVisitors().length;
-  const sessions = listSessions().length;
-  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
-  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
-  const checkoutStart = events.filter((e) => e.eventType === "CHECKOUT_START").length;
-  const checkoutCompleted = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
-  const purchases = events.filter(
-    (e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE"
-  ).length;
-  const rate = (num, den) => den > 0 ? Number((num / den * 100).toFixed(2)) : 0;
+function rowToSnapshot(row) {
+  return JSON.parse(String(row.view_json || "{}"));
+}
+function rowToIncident(row) {
   return {
-    visitors,
-    sessions,
-    productViews,
-    addToCart,
-    checkoutStart,
-    checkoutCompleted,
-    purchases,
-    productViewRate: rate(productViews, sessions),
-    addToCartRate: rate(addToCart, productViews),
-    checkoutStartRate: rate(checkoutStart, addToCart),
-    checkoutCompletionRate: rate(checkoutCompleted, checkoutStart),
-    purchaseConversionRate: rate(purchases, checkoutStart),
-    overallConversionRate: rate(purchases, sessions)
+    incidentId: String(row.incident_id),
+    fingerprint: String(row.fingerprint),
+    fulfillmentId: String(row.fulfillment_id),
+    orderId: String(row.order_id),
+    supplierId: String(row.supplier_id),
+    severity: row.severity,
+    category: row.category,
+    code: String(row.code),
+    message: String(row.message),
+    detectedAt: String(row.detected_at),
+    resolvedAt: row.resolved_at ? String(row.resolved_at) : void 0,
+    status: row.status,
+    correlationId: row.correlation_id ? String(row.correlation_id) : void 0,
+    resolutionNote: row.resolution_note ? String(row.resolution_note) : void 0,
+    resolutionActor: row.resolution_actor ? String(row.resolution_actor) : void 0,
+    acknowledgedAt: row.acknowledged_at ? String(row.acknowledged_at) : void 0,
+    acknowledgedBy: row.acknowledged_by ? String(row.acknowledged_by) : void 0
   };
 }
-
-// lib/analytics/conversion.ts
-function computeConversionMetrics() {
-  const eligibleSessions = listSessions().filter((s) => s.pageViews > 0).length;
-  const events = listEvents();
-  const sessionsWithCart = new Set(
-    events.filter((e) => e.eventType === "ADD_TO_CART").map((e) => e.sessionId)
-  ).size;
-  const sessionsWithCheckout = new Set(
-    events.filter((e) => e.eventType === "CHECKOUT_START").map((e) => e.sessionId)
-  ).size;
-  const sessionsWithPurchase = new Set(
-    events.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").map((e) => e.sessionId)
-  ).size;
-  const pct = (num, den) => den > 0 ? Number((num / den * 100).toFixed(2)) : 0;
+function rowToRun(row) {
   return {
-    eligibleSessions,
-    addToCartConversion: pct(sessionsWithCart, eligibleSessions),
-    checkoutConversion: pct(sessionsWithCheckout, sessionsWithCart),
-    purchaseConversion: pct(sessionsWithPurchase, eligibleSessions)
+    runId: String(row.run_id),
+    correlationId: String(row.correlation_id),
+    startedAt: String(row.started_at),
+    completedAt: String(row.completed_at),
+    checkedFulfillments: Number(row.checked_fulfillments || 0),
+    passed: Number(row.passed || 0),
+    warnings: Number(row.warnings || 0),
+    mismatches: Number(row.mismatches || 0),
+    critical: Number(row.critical || 0),
+    incidentsCreated: Number(row.incidents_created || 0),
+    incidentsResolved: Number(row.incidents_resolved || 0),
+    durationMs: Number(row.duration_ms || 0),
+    errors: JSON.parse(String(row.errors_json || "[]"))
   };
 }
-
-// lib/analytics/metrics.ts
-function dayKey(iso) {
-  return iso.slice(0, 10);
-}
-function countUniqueVisitorsBetween(events, start, end) {
-  const ids = /* @__PURE__ */ new Set();
-  for (const e of events) {
-    const d = dayKey(e.timestamp);
-    if (d >= start && d <= end) ids.add(e.anonymousVisitorId);
-  }
-  return ids.size;
-}
-function computeDashboardOverview(now = /* @__PURE__ */ new Date()) {
-  const events = listEvents();
-  const today = dayKey(now.toISOString());
-  const yesterday = dayKey(new Date(now.getTime() - 864e5).toISOString());
-  const last7 = dayKey(new Date(now.getTime() - 6 * 864e5).toISOString());
-  const last30 = dayKey(new Date(now.getTime() - 29 * 864e5).toISOString());
-  const funnel = computeFunnelMetrics(events);
-  const conversion = computeConversionMetrics();
-  const revenue = computeRevenueMetrics(events);
-  const visitors = listVisitors();
-  const newVisitors = visitors.filter((v) => !v.isReturning).length;
-  const returningVisitors = visitors.filter((v) => v.isReturning).length;
-  const recentMinute = events.filter((e) => now.getTime() - Date.parse(e.timestamp) <= 6e4).length;
-  const todayEvents = events.filter((e) => dayKey(e.timestamp) === today);
-  const todayPurchases = todayEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE");
-  const todayRevenueCents = todayPurchases.reduce((sum, e) => sum + Math.round((e.value ?? 0) * 100), 0);
-  return {
-    freshness: "NEAR_REAL_TIME",
-    visitorsToday: countUniqueVisitorsBetween(events, today, today),
-    visitorsYesterday: countUniqueVisitorsBetween(events, yesterday, yesterday),
-    visitorsLast7Days: countUniqueVisitorsBetween(events, last7, today),
-    visitorsLast30Days: countUniqueVisitorsBetween(events, last30, today),
-    uniqueVisitors: funnel.visitors,
-    sessions: funnel.sessions,
-    newVisitors,
-    returningVisitors,
-    pageViews: events.filter((e) => e.eventType === "PAGE_VIEW").length,
-    productViews: funnel.productViews,
-    addToCart: funnel.addToCart,
-    checkoutStarted: funnel.checkoutStart,
-    purchases: funnel.purchases,
-    conversionRate: conversion.purchaseConversion,
-    averageOrderValueCents: revenue.averageOrderValueCents,
-    grossRevenueCents: revenue.grossRevenueCents,
-    refundsCents: revenue.refundAmountCents,
-    netRevenueCents: revenue.netRevenueCents,
-    activeSessions: countActiveSessions(now.toISOString()),
-    activeVisitors: countActiveSessions(now.toISOString()),
-    eventsPerMinute: recentMinute,
-    ordersToday: todayPurchases.length,
-    revenueTodayCents: todayRevenueCents
-  };
-}
-
-// lib/analytics/productAnalytics.ts
-function computeProductAnalytics(events = listEvents()) {
-  const byProduct = /* @__PURE__ */ new Map();
-  for (const event of events) {
-    if (!event.productId) continue;
-    const row = byProduct.get(event.productId) ?? {
-      productId: event.productId,
-      views: 0,
-      uniqueViewers: 0,
-      addToCart: 0,
-      purchases: 0,
-      returns: 0,
-      viewers: /* @__PURE__ */ new Set()
-    };
-    if (event.eventType === "PRODUCT_VIEW") {
-      row.views += 1;
-      row.viewers.add(event.anonymousVisitorId);
-    }
-    if (event.eventType === "ADD_TO_CART") row.addToCart += 1;
-    if (event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE") row.purchases += 1;
-    if (event.eventType === "RETURN") row.returns += 1;
-    byProduct.set(event.productId, row);
-  }
-  return [...byProduct.values()].map(({ viewers, ...row }) => ({ ...row, uniqueViewers: viewers.size })).sort((a, b) => b.views - a.views);
-}
-
-// lib/analytics/marketAnalytics.ts
-function computeMarketAnalytics(events = listEvents()) {
-  const markets = listMarkets().map((m) => m.countryCode);
-  const rows = [];
-  for (const market of markets) {
-    const marketEvents = events.filter((e) => e.market === market);
-    if (!marketEvents.length) continue;
-    const visitors = new Set(marketEvents.map((e) => e.anonymousVisitorId)).size;
-    const sessions = new Set(marketEvents.map((e) => e.sessionId)).size;
-    const revenue = computeRevenueMetrics(marketEvents);
-    const returns2 = marketEvents.filter((e) => e.eventType === "RETURN").length;
-    const purchases = marketEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").length;
-    rows.push({
-      market,
-      country: market,
-      language: marketEvents[0]?.language ?? "de",
-      currency: marketEvents[0]?.currency ?? "EUR",
-      visitors,
-      sessions,
-      orders: revenue.orderCount,
-      revenueCents: revenue.netRevenueCents,
-      conversionRate: sessions ? Number((purchases / sessions * 100).toFixed(2)) : 0,
-      averageOrderValueCents: revenue.averageOrderValueCents,
-      returnRate: purchases ? Number((returns2 / purchases * 100).toFixed(2)) : 0
-    });
-  }
-  return rows.sort((a, b) => b.revenueCents - a.revenueCents);
-}
-
-// lib/analytics/attribution.ts
-function buildAttributionTouches(anonymousVisitorId, model = "lastTouch") {
-  const events = listEvents().filter((e) => e.anonymousVisitorId === anonymousVisitorId).sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
-  if (!events.length) return [];
-  const pick = model === "firstTouch" ? events[0] : events[events.length - 1];
-  return [{
-    anonymousVisitorId,
-    source: pick.trafficSource,
-    timestamp: pick.timestamp,
-    model
-  }];
-}
-function attributeOrderToChannel(orderEvent, model = "sessionTouch") {
-  const touches = buildAttributionTouches(orderEvent.anonymousVisitorId, model);
-  return touches[0]?.source ?? orderEvent.trafficSource ?? "DIRECT";
-}
-
-// lib/analytics/channelAnalytics.ts
-var CHANNELS = [
-  "DIRECT",
-  "ORGANIC_SEARCH",
-  "PAID_SEARCH",
-  "SOCIAL",
-  "EMAIL",
-  "REFERRAL",
-  "MARKETPLACE",
-  "OTHER"
-];
-function computeChannelAnalytics(events = listEvents()) {
-  return CHANNELS.map((channel) => {
-    const channelEvents = events.filter((e) => {
-      if (e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE") {
-        return attributeOrderToChannel(e, "sessionTouch") === channel;
-      }
-      return e.trafficSource === channel;
-    });
-    const visitors = new Set(channelEvents.map((e) => e.anonymousVisitorId)).size;
-    const sessions = new Set(channelEvents.map((e) => e.sessionId)).size;
-    const revenue = computeRevenueMetrics(channelEvents.filter((e) => e.trafficSource === channel || e.eventType === "PURCHASE"));
-    const purchases = channelEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").length;
-    return {
-      channel,
-      visitors,
-      sessions,
-      orders: revenue.orderCount,
-      revenueCents: revenue.netRevenueCents,
-      conversionRate: sessions ? Number((purchases / sessions * 100).toFixed(2)) : 0,
-      averageOrderValueCents: revenue.averageOrderValueCents
-    };
-  }).filter((row) => row.visitors > 0 || row.orders > 0);
-}
-
-// lib/analytics/kpi/query.ts
-var MAX_LIMIT = 100;
-var DEFAULT_LIMIT = 25;
-function clampLimit(limit) {
-  if (!limit || limit < 1) return DEFAULT_LIMIT;
-  return Math.min(Math.floor(limit), MAX_LIMIT);
-}
-function safeRate(numerator, denominator) {
-  if (denominator <= 0) return 0;
-  return Number((numerator / denominator * 100).toFixed(2));
-}
-function safeDelta(current, previous) {
-  const absolute = Number((current - previous).toFixed(2));
-  const percent = previous !== 0 ? Number((absolute / previous * 100).toFixed(1)) : null;
-  return { absolute, percent, points: absolute };
-}
-function dayKey2(iso) {
-  return iso.slice(0, 10);
-}
-function monthKey(iso) {
-  return iso.slice(0, 7);
-}
-function resolveDateRange(input = {}) {
-  const now = input.now ?? /* @__PURE__ */ new Date();
-  const today = dayKey2(now.toISOString());
-  const preset = input.range ?? "last_30_days";
-  if (preset === "custom" && input.from && input.to) {
-    const from = dayKey2(input.from);
-    const to = dayKey2(input.to);
-    const spanMs = Date.parse(`${to}T23:59:59Z`) - Date.parse(`${from}T00:00:00Z`);
-    const prevTo = dayKey2(new Date(Date.parse(`${from}T00:00:00Z`) - 864e5).toISOString());
-    const prevFrom = dayKey2(new Date(Date.parse(`${from}T00:00:00Z`) - spanMs).toISOString());
-    return { preset, from, to, previousFrom: prevFrom, previousTo: prevTo };
-  }
-  const yesterday = dayKey2(new Date(now.getTime() - 864e5).toISOString());
-  const last7 = dayKey2(new Date(now.getTime() - 6 * 864e5).toISOString());
-  const last30 = dayKey2(new Date(now.getTime() - 29 * 864e5).toISOString());
-  const currentMonth = monthKey(now.toISOString());
-  const prevMonthDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
-  const previousMonth = monthKey(prevMonthDate.toISOString());
-  switch (preset) {
-    case "today":
-      return {
-        preset,
-        from: today,
-        to: today,
-        previousFrom: yesterday,
-        previousTo: yesterday
-      };
-    case "yesterday":
-      return {
-        preset,
-        from: yesterday,
-        to: yesterday,
-        previousFrom: dayKey2(new Date(now.getTime() - 2 * 864e5).toISOString()),
-        previousTo: dayKey2(new Date(now.getTime() - 2 * 864e5).toISOString())
-      };
-    case "last_7_days":
-      return {
-        preset,
-        from: last7,
-        to: today,
-        previousFrom: dayKey2(new Date(now.getTime() - 13 * 864e5).toISOString()),
-        previousTo: dayKey2(new Date(now.getTime() - 7 * 864e5).toISOString())
-      };
-    case "current_month":
-      return {
-        preset,
-        from: `${currentMonth}-01`,
-        to: today,
-        previousFrom: `${previousMonth}-01`,
-        previousTo: dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() + 1, 0)).toISOString())
-      };
-    case "previous_month": {
-      const prevEnd = dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() + 1, 0)).toISOString());
-      return {
-        preset,
-        from: `${previousMonth}-01`,
-        to: prevEnd,
-        previousFrom: monthKey(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() - 1, 1)).toISOString()) + "-01",
-        previousTo: dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth(), 0)).toISOString())
-      };
-    }
-    case "last_30_days":
-    default:
-      return {
-        preset: preset === "custom" ? "last_30_days" : preset,
-        from: last30,
-        to: today,
-        previousFrom: dayKey2(new Date(now.getTime() - 59 * 864e5).toISOString()),
-        previousTo: dayKey2(new Date(now.getTime() - 30 * 864e5).toISOString())
-      };
-  }
-}
-function loadEventsForRange(range) {
-  const fromIso = `${range.from}T00:00:00.000Z`;
-  const toIso = `${range.to}T23:59:59.999Z`;
-  return listEventsInRange(fromIso, toIso);
-}
-function parseKpiQueryInput(query = {}) {
-  const range = query.range;
-  const limit = query.limit ? Number.parseInt(query.limit, 10) : void 0;
-  return {
-    range,
-    from: query.from,
-    to: query.to,
-    comparePrevious: query.comparePrevious === "1" || query.comparePrevious === "true",
-    limit: Number.isFinite(limit) ? limit : void 0
-  };
-}
-function validateKpiQuery(input) {
-  if (input.limit !== void 0 && (input.limit < 1 || input.limit > MAX_LIMIT)) {
-    return { ok: false, errorCode: "INVALID_LIMIT" };
-  }
-  if (input.range === "custom") {
-    if (!input.from || !input.to) return { ok: false, errorCode: "INVALID_DATE_RANGE" };
-    const fromTs = Date.parse(input.from);
-    const toTs = Date.parse(input.to);
-    if (Number.isNaN(fromTs) || Number.isNaN(toTs) || fromTs > toTs) {
-      return { ok: false, errorCode: "INVALID_DATE_RANGE" };
-    }
-  }
-  return { ok: true };
-}
-function isAuthoritativePurchase(event) {
-  return event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE";
-}
-function isAuthoritativeRefund(event) {
-  return event.eventType === "REFUND" && event.revenueAuthority === "AUTHORITATIVE";
-}
-function uniqueOrderPurchases(events) {
-  const seen = /* @__PURE__ */ new Set();
-  const result = [];
-  for (const event of events) {
-    if (!isAuthoritativePurchase(event)) continue;
-    const key = event.orderIdReference ?? event.eventId;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    result.push(event);
-  }
-  return result;
-}
-
-// lib/analytics/kpi/executive.ts
-function computeExecutiveKpis(events) {
-  const purchases = uniqueOrderPurchases(events);
-  const refunds = events.filter(isAuthoritativeRefund);
-  const sessions = new Set(events.map((e) => e.sessionId)).size;
-  const visitors = new Set(events.map((e) => e.anonymousVisitorId)).size;
-  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
-  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
-  const checkoutStarts = events.filter((e) => e.eventType === "CHECKOUT_START").length;
-  const checkoutCompletions = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
-  const returnRequests = events.filter((e) => e.eventType === "RETURN").length;
-  const grossRevenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const refundAmountCents = refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const unitsSold = purchases.reduce((sum, e) => sum + (e.quantity ?? 1), 0);
-  const orders = purchases.length;
-  return {
-    orders,
-    grossRevenueCents,
-    authoritativeRevenueCents: grossRevenueCents,
-    averageOrderValueCents: orders ? Math.round(grossRevenueCents / orders) : 0,
-    unitsSold,
-    revenuePerSessionCents: sessions ? Math.round(grossRevenueCents / sessions) : 0,
-    visitors,
-    sessions,
-    productViews,
-    addToCart,
-    checkoutStarts,
-    checkoutCompletions,
-    purchases: orders,
-    conversionRate: safeRate(orders, sessions),
-    addToCartRate: safeRate(addToCart, productViews),
-    checkoutCompletionRate: safeRate(checkoutCompletions, checkoutStarts),
-    returnRequests,
-    returnedOrders: returnRequests,
-    refundAmountCents,
-    returnRate: safeRate(returnRequests, orders),
-    refundRate: safeRate(refunds.length, orders),
-    netRevenueCents: grossRevenueCents - refundAmountCents
-  };
-}
-
-// lib/analytics/kpi/funnelKpi.ts
-function computeFunnelKpis(events) {
-  const visitors = new Set(events.map((e) => e.anonymousVisitorId)).size;
-  const sessions = new Set(events.map((e) => e.sessionId)).size;
-  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
-  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
-  const checkoutStarts = events.filter((e) => e.eventType === "CHECKOUT_START").length;
-  const checkoutCompletions = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
-  const purchases = events.filter(isAuthoritativePurchase).length;
-  const stages = [
-    { stage: "Visitor", count: visitors },
-    { stage: "Session", count: sessions },
-    { stage: "Product View", count: productViews },
-    { stage: "Add To Cart", count: addToCart },
-    { stage: "Checkout Start", count: checkoutStarts },
-    { stage: "Checkout Completed", count: checkoutCompletions },
-    { stage: "Purchase", count: purchases }
-  ];
-  const steps = stages.map((current, index) => {
-    const previous = index > 0 ? stages[index - 1].count : current.count;
-    const conversionFromPrevious = index === 0 ? 100 : safeRate(current.count, previous);
-    const dropOffFromPrevious = index === 0 ? 0 : safeRate(previous - current.count, previous);
-    return {
-      stage: current.stage,
-      count: current.count,
-      conversionFromPrevious,
-      dropOffFromPrevious
-    };
-  });
-  return {
-    steps,
-    visitorToPurchase: safeRate(purchases, visitors),
-    sessionToPurchase: safeRate(purchases, sessions)
-  };
-}
-
-// lib/returns-engine/shipment.ts
-function getReturnShippingFinancials(returnId) {
-  const shipments2 = getShipmentsForReturn(returnId);
-  let customerPaid = 0;
-  let buzzardCost = 0;
-  let supplierRecovery = 0;
-  let marketplaceRecovery = 0;
-  for (const s of shipments2) {
-    switch (s.payer) {
-      case "CUSTOMER":
-        customerPaid += s.cost;
-        break;
-      case "BUZZARD":
-        buzzardCost += s.cost;
-        break;
-      case "SUPPLIER":
-        supplierRecovery += s.cost;
-        break;
-      case "MARKETPLACE":
-        marketplaceRecovery += s.cost;
-        break;
-      default:
-        buzzardCost += s.cost;
-    }
-  }
-  return {
-    customerPaidReturnShipping: customerPaid,
-    buzzardReturnShippingCost: buzzardCost,
-    supplierReturnShippingRecovery: supplierRecovery,
-    marketplaceReturnShippingRecovery: marketplaceRecovery
-  };
-}
-
-// lib/returns-engine/reconciliation.ts
-function reconcileReturnFinancials(returnId, options) {
-  const ret = getReturnRequest(returnId);
-  if (!ret) return void 0;
-  const order = getOrder(ret.orderId);
-  const customerRefundRecord = getCustomerRefundForReturn(returnId);
-  const marketplaceRefundRecord = getMarketplaceRefundForReturn(returnId);
-  const recoveries2 = getRecoveriesForReturn(returnId);
-  const shipping = getReturnShippingFinancials(returnId);
-  const customerRefund = customerRefundRecord?.refundedAmount ?? ret.customerRefundAmount;
-  const supplierRefund = recoveries2.filter((r) => r.type === "SUPPLIER_REFUND").reduce((s, r) => s + r.receivedAmount, 0);
-  const supplierCredit = recoveries2.filter((r) => r.type === "SUPPLIER_CREDIT" || r.type === "PARTIAL_CREDIT").reduce((s, r) => s + r.receivedAmount, 0);
-  const shippingRecovery = shipping.supplierReturnShippingRecovery + shipping.marketplaceReturnShippingRecovery;
-  const returnShippingCost = shipping.buzzardReturnShippingCost;
-  const marketplaceRefundCost = (marketplaceRefundRecord?.fees ?? 0) + Math.max(0, (marketplaceRefundRecord?.requestedAmount ?? 0) - (marketplaceRefundRecord?.refundedAmount ?? 0));
-  const supplierRecoveryTotal = supplierRefund + supplierCredit + shippingRecovery;
-  const totalCosts = customerRefund + returnShippingCost + marketplaceRefundCost;
-  const totalRecoveries = supplierRecoveryTotal;
-  const buzzardFinalReturnImpact = totalCosts - totalRecoveries;
-  const supplierCost = order?.items[0]?.supplierCostSnapshot ?? 0;
-  const estimated = calculateReturnReserves(supplierCost, order?.items[0]?.productId);
-  const originalOrderMargin = order?.items.reduce((s, i) => s + i.marginSnapshot, 0) ?? 0;
-  const estimatedReturnCost = estimated.totalReserve;
-  const actualReturnCost = totalCosts;
-  const estimatedSupplierRecovery = supplierCost * estimated.config.supplierReturnAcceptanceRate;
-  const actualSupplierRecovery = supplierRecoveryTotal;
-  const estimatedBuzzardImpact = estimatedReturnCost;
-  const actualBuzzardImpact = buzzardFinalReturnImpact;
-  const rec = {
-    reconciliationId: `rec_fin_${returnId}`,
-    returnId,
-    orderId: ret.orderId,
-    currency: ret.currency,
-    customerRefund,
-    returnShippingCost,
-    marketplaceRefundCost,
-    otherCosts: 0,
-    supplierRefund,
-    supplierCredit,
-    shippingRecovery,
-    otherRecoveries: 0,
-    buzzardFinalReturnImpact,
-    estimatedReturnCost,
-    actualReturnCost,
-    estimatedSupplierRecovery,
-    actualSupplierRecovery,
-    estimatedBuzzardImpact,
-    actualBuzzardImpact,
-    originalOrderMargin,
-    returnImpact: actualBuzzardImpact,
-    finalOrderContribution: originalOrderMargin - actualBuzzardImpact,
-    isFinal: options?.finalize ?? false,
-    calculatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  saveReconciliation(rec);
-  saveReturnRequest({
-    ...ret,
-    buzzardLoss: buzzardFinalReturnImpact,
-    buzzardRecovery: supplierRecoveryTotal,
-    updatedAt: rec.calculatedAt
-  });
-  return rec;
-}
-
-// lib/returns-engine/financialImpact.ts
-function getFinalOrderContribution(returnId) {
-  let rec = getReconciliation(returnId);
-  if (!rec) rec = reconcileReturnFinancials(returnId);
-  if (!rec) return void 0;
-  return {
-    originalOrderMargin: rec.originalOrderMargin,
-    returnImpact: rec.returnImpact,
-    finalOrderContribution: rec.finalOrderContribution
-  };
-}
-
-// lib/analytics/kpi/profitability.ts
-function computeOrderFinancialBreakdown(orderId) {
-  const order = getOrder(orderId);
-  if (!order) return void 0;
-  let productCostCents = 0;
-  let shippingCostCents = 0;
-  let marketplaceFeesCents = 0;
-  let paymentFeesCents = 0;
-  let contributionCents = 0;
-  for (const item of order.items) {
-    const qty = item.quantity;
-    productCostCents += toCents(item.supplierCostSnapshot * qty);
-    shippingCostCents += toCents(item.shippingCostSnapshot * qty);
-    marketplaceFeesCents += toCents(item.marketplaceFeeSnapshot * qty);
-    paymentFeesCents += toCents(item.paymentFeeSnapshot * qty);
-    contributionCents += toCents(item.lineNet * item.marginSnapshot);
-  }
-  let returnImpactCents = toCents(order.returnRefund.buzzardRefundLoss) + toCents(order.returnRefund.returnShippingCost);
-  const linkedReturn = getReturnByOrder(order.orderId);
-  if (linkedReturn) {
-    const finalized = getFinalOrderContribution(linkedReturn.returnId);
-    if (finalized) {
-      returnImpactCents = toCents(finalized.returnImpact);
-      contributionCents = toCents(finalized.finalOrderContribution);
-    }
-  }
-  return {
-    grossRevenueCents: toCents(order.totalGross),
-    productCostCents,
-    shippingCostCents,
-    marketplaceFeesCents,
-    paymentFeesCents,
-    contributionCents,
-    returnImpactCents
-  };
-}
-function computeProfitabilityKpis(events) {
-  const purchases = uniqueOrderPurchases(events);
-  const refunds = events.filter(isAuthoritativeRefund);
-  let grossRevenueCents = 0;
-  let productCostCents = 0;
-  let shippingCostCents = 0;
-  let marketplaceFeesCents = 0;
-  let paymentFeesCents = 0;
-  let returnRefundImpactCents = 0;
-  let contributionCents = 0;
-  for (const purchase of purchases) {
-    const orderId = purchase.orderIdReference;
-    if (!orderId) {
-      grossRevenueCents += toCents(purchase.value ?? 0);
-      continue;
-    }
-    const breakdown = computeOrderFinancialBreakdown(orderId);
-    if (breakdown) {
-      grossRevenueCents += breakdown.grossRevenueCents;
-      productCostCents += breakdown.productCostCents;
-      shippingCostCents += breakdown.shippingCostCents;
-      marketplaceFeesCents += breakdown.marketplaceFeesCents;
-      paymentFeesCents += breakdown.paymentFeesCents;
-      returnRefundImpactCents += breakdown.returnImpactCents;
-      contributionCents += breakdown.contributionCents;
-    } else {
-      grossRevenueCents += toCents(purchase.value ?? 0);
-    }
-  }
-  returnRefundImpactCents += refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  if (contributionCents === 0 && grossRevenueCents > 0) {
-    contributionCents = grossRevenueCents - productCostCents - shippingCostCents - marketplaceFeesCents - paymentFeesCents - returnRefundImpactCents;
-  }
-  return {
-    grossRevenueCents,
-    productCostCents,
-    shippingCostCents,
-    marketplaceFeesCents,
-    paymentFeesCents,
-    returnRefundImpactCents,
-    contributionCents,
-    contributionMarginPercent: safeMarginPercent(contributionCents, grossRevenueCents),
-    authoritativeOnly: true
-  };
-}
-function safeMarginPercent(contributionCents, revenueCents) {
-  if (revenueCents <= 0) return 0;
-  return Number((contributionCents / revenueCents * 100).toFixed(2));
-}
-function computeContributionForOrder(orderId) {
-  const breakdown = computeOrderFinancialBreakdown(orderId);
-  if (!breakdown) return { contributionCents: 0, contributionMarginPercent: 0 };
-  return {
-    contributionCents: breakdown.contributionCents,
-    contributionMarginPercent: safeMarginPercent(breakdown.contributionCents, breakdown.grossRevenueCents)
-  };
-}
-
-// lib/analytics/kpi/intelligence.ts
-var COMMERCE_CHANNELS = [
-  "direct",
-  "amazon",
-  "ebay",
-  "kaufland",
-  "allegro",
-  "bol",
-  "cdiscount",
-  "otto"
-];
-var TRAFFIC_SOURCES = [
-  "DIRECT",
-  "ORGANIC_SEARCH",
-  "PAID_SEARCH",
-  "SOCIAL",
-  "EMAIL",
-  "REFERRAL",
-  "MARKETPLACE",
-  "OTHER"
-];
-var DEVICES = ["DESKTOP", "MOBILE", "TABLET", "OTHER"];
-var CORE_LANGUAGES = ["de", "en", "tr", "ar"];
-function productName(productId) {
-  const product = getRegistryProduct(productId);
-  if (!product) return productId;
-  const tr = getTranslationForLocale(product.translations, "de");
-  return tr?.name ?? productId;
-}
-function productCategoryId(productId) {
-  return getRegistryProduct(productId)?.categoryId;
-}
-function computeProductKpis(events, limit = 25) {
-  const byProduct = /* @__PURE__ */ new Map();
-  for (const event of events) {
-    const productId = event.productId ?? (event.eventType === "PURCHASE" && event.orderIdReference ? getOrder(event.orderIdReference)?.items[0]?.productId : void 0);
-    if (!productId) continue;
-    const row = byProduct.get(productId) ?? {
-      productId,
-      productName: productName(productId),
-      categoryId: productCategoryId(productId),
-      views: 0,
-      addToCart: 0,
-      cartConversion: 0,
-      checkoutCount: 0,
-      purchases: 0,
-      unitsSold: 0,
-      revenueCents: 0,
-      refunds: 0,
-      returnRate: 0,
-      netRevenueCents: 0,
-      contributionCents: 0,
-      contributionMarginPercent: 0,
-      viewers: /* @__PURE__ */ new Set(),
-      checkoutSessions: /* @__PURE__ */ new Set()
-    };
-    if (event.eventType === "PRODUCT_VIEW") {
-      row.views += 1;
-      row.viewers.add(event.anonymousVisitorId);
-    }
-    if (event.eventType === "ADD_TO_CART") row.addToCart += 1;
-    if (event.eventType === "CHECKOUT_START" && event.sessionId) row.checkoutSessions.add(event.sessionId);
-    if (event.eventType === "RETURN") row.refunds += 1;
-    if (isAuthoritativePurchase(event)) {
-      row.purchases += 1;
-      row.revenueCents += toCents(event.value ?? 0);
-      row.unitsSold += event.quantity ?? 1;
-      if (event.orderIdReference) {
-        const contrib = computeContributionForOrder(event.orderIdReference);
-        row.contributionCents += contrib.contributionCents;
-      }
-    }
-    if (isAuthoritativeRefund(event)) {
-      row.revenueCents -= toCents(event.value ?? 0);
-    }
-    byProduct.set(productId, row);
-  }
-  return [...byProduct.values()].map(({ viewers, checkoutSessions, ...row }) => ({
-    ...row,
-    checkoutCount: checkoutSessions.size,
-    cartConversion: safeRate(row.addToCart, row.views),
-    netRevenueCents: row.revenueCents,
-    returnRate: safeRate(row.refunds, row.purchases),
-    contributionMarginPercent: row.revenueCents > 0 ? Number((row.contributionCents / row.revenueCents * 100).toFixed(2)) : 0
-  })).sort((a, b) => b.revenueCents - a.revenueCents).slice(0, limit);
-}
-function computeCategoryKpis(events, limit = 25) {
-  const products2 = computeProductKpis(events, 500);
-  const byCategory = /* @__PURE__ */ new Map();
-  for (const p of products2) {
-    const categoryId = p.categoryId ?? "uncategorized";
-    const row = byCategory.get(categoryId) ?? {
-      categoryId,
-      views: 0,
-      addToCart: 0,
-      purchases: 0,
-      unitsSold: 0,
-      revenueCents: 0,
-      conversionRate: 0,
-      returnRate: 0,
-      netRevenueCents: 0,
-      refunds: 0
-    };
-    row.views += p.views;
-    row.addToCart += p.addToCart;
-    row.purchases += p.purchases;
-    row.unitsSold += p.unitsSold;
-    row.revenueCents += p.revenueCents;
-    row.refunds += p.refunds;
-    byCategory.set(categoryId, row);
-  }
-  return [...byCategory.values()].map(({ refunds, ...row }) => ({
-    ...row,
-    conversionRate: safeRate(row.purchases, row.views),
-    returnRate: safeRate(refunds, row.purchases),
-    netRevenueCents: row.revenueCents
-  })).sort((a, b) => b.revenueCents - a.revenueCents).slice(0, limit);
-}
-function computeMarketKpis(events) {
-  const markets = listMarkets();
-  const purchases = uniqueOrderPurchases(events);
-  return markets.map((market) => {
-    const marketEvents = events.filter((e) => e.market === market.countryCode);
-    const marketPurchases = purchases.filter((e) => e.market === market.countryCode);
-    const sessions = new Set(marketEvents.map((e) => e.sessionId)).size;
-    const returns2 = marketEvents.filter((e) => e.eventType === "RETURN").length;
-    const revenueCents = marketPurchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    let contributionCents = 0;
-    for (const p of marketPurchases) {
-      if (p.orderIdReference) {
-        contributionCents += computeContributionForOrder(p.orderIdReference).contributionCents;
-      }
-    }
-    const refunds = marketEvents.filter(isAuthoritativeRefund).reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    return {
-      market: market.countryCode,
-      country: market.countryCode,
-      currency: market.currency,
-      orders: marketPurchases.length,
-      revenueCents,
-      netRevenueCents: revenueCents - refunds,
-      conversionRate: safeRate(marketPurchases.length, sessions),
-      averageOrderValueCents: marketPurchases.length ? Math.round(revenueCents / marketPurchases.length) : 0,
-      returns: returns2,
-      returnRate: safeRate(returns2, marketPurchases.length),
-      contributionCents,
-      contributionMarginPercent: revenueCents > 0 ? Number((contributionCents / revenueCents * 100).toFixed(2)) : 0
-    };
-  }).sort((a, b) => b.revenueCents - a.revenueCents);
-}
-function computeLanguageKpis(events) {
-  const languages = /* @__PURE__ */ new Set([
-    ...CORE_LANGUAGES,
-    ...events.map((e) => e.language.split("-")[0].toLowerCase())
-  ]);
-  return [...languages].map((language) => {
-    const langEvents = events.filter((e) => e.language.split("-")[0].toLowerCase() === language);
-    const sessions = new Set(langEvents.map((e) => e.sessionId)).size;
-    const visitors = new Set(langEvents.map((e) => e.anonymousVisitorId)).size;
-    const purchases = langEvents.filter(isAuthoritativePurchase);
-    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    return {
-      language,
-      visitors,
-      sessions,
-      productViews: langEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
-      addToCart: langEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
-      purchases: purchases.length,
-      revenueCents,
-      conversionRate: safeRate(purchases.length, sessions)
-    };
-  }).filter((r) => r.sessions > 0 || r.purchases > 0).sort((a, b) => b.revenueCents - a.revenueCents);
-}
-function computeCommerceChannelKpis(events) {
-  const purchases = uniqueOrderPurchases(events);
-  return COMMERCE_CHANNELS.map((channel) => {
-    const channelPurchases = purchases.filter((p) => {
-      if (!p.orderIdReference) return channel === "direct";
-      const order = getOrder(p.orderIdReference);
-      return (order?.channel ?? "direct") === channel;
-    });
-    const revenueCents = channelPurchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    let contributionCents = 0;
-    for (const p of channelPurchases) {
-      if (p.orderIdReference) {
-        contributionCents += computeContributionForOrder(p.orderIdReference).contributionCents;
-      }
-    }
-    const returns2 = events.filter(
-      (e) => e.eventType === "RETURN" && e.metadata?.channel === channel
-    ).length;
-    return {
-      channel,
-      orders: channelPurchases.length,
-      revenueCents,
-      averageOrderValueCents: channelPurchases.length ? Math.round(revenueCents / channelPurchases.length) : 0,
-      returns: returns2,
-      netRevenueCents: revenueCents,
-      contributionCents,
-      contributionMarginPercent: revenueCents > 0 ? Number((contributionCents / revenueCents * 100).toFixed(2)) : 0
-    };
+function saveOperationalSnapshot(view) {
+  snapshotStore.set(view.fulfillmentId, view);
+  getPersistentStore()?.saveSnapshot({
+    fulfillment_id: view.fulfillmentId,
+    order_id: view.orderId,
+    supplier_id: view.supplierId,
+    operational_status: view.operationalStatus,
+    view_json: JSON.stringify(view),
+    last_reconciled_at: view.lastReconciledAt || null,
+    updated_at: view.updatedAt
   });
 }
-function computeTrafficSourceKpis(events) {
-  return TRAFFIC_SOURCES.map((source) => {
-    const sourceEvents = events.filter((e) => e.trafficSource === source);
-    const sessions = new Set(sourceEvents.map((e) => e.sessionId)).size;
-    const purchases = sourceEvents.filter(isAuthoritativePurchase);
-    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    return {
-      source,
-      sessions,
-      productViews: sourceEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
-      addToCart: sourceEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
-      checkoutStarts: sourceEvents.filter((e) => e.eventType === "CHECKOUT_START").length,
-      purchases: purchases.length,
-      revenueCents,
-      conversionRate: safeRate(purchases.length, sessions)
-    };
-  }).filter((r) => r.sessions > 0 || r.purchases > 0);
+function getOperationalSnapshot(fulfillmentId) {
+  const cached = snapshotStore.get(fulfillmentId);
+  if (cached) return cached;
+  const row = getPersistentStore()?.getSnapshot(fulfillmentId);
+  if (!row) return void 0;
+  const view = rowToSnapshot(row);
+  snapshotStore.set(view.fulfillmentId, view);
+  return view;
 }
-function computeDeviceKpis(events) {
-  return DEVICES.map((device) => {
-    const deviceEvents = events.filter((e) => e.deviceType === device);
-    const sessions = new Set(deviceEvents.map((e) => e.sessionId)).size;
-    const purchases = deviceEvents.filter(isAuthoritativePurchase);
-    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    return {
-      device,
-      sessions,
-      productViews: deviceEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
-      addToCart: deviceEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
-      checkoutStarts: deviceEvents.filter((e) => e.eventType === "CHECKOUT_START").length,
-      purchases: purchases.length,
-      revenueCents,
-      conversionRate: safeRate(purchases.length, sessions)
-    };
-  }).filter((r) => r.sessions > 0 || r.purchases > 0);
+function saveIncidentRecord(incident) {
+  incidentStore.set(incident.incidentId, incident);
+  incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
+  getPersistentStore()?.saveIncident({
+    incident_id: incident.incidentId,
+    fingerprint: incident.fingerprint,
+    fulfillment_id: incident.fulfillmentId,
+    order_id: incident.orderId,
+    supplier_id: incident.supplierId,
+    severity: incident.severity,
+    category: incident.category,
+    code: incident.code,
+    message: incident.message,
+    detected_at: incident.detectedAt,
+    resolved_at: incident.resolvedAt || null,
+    status: incident.status,
+    correlation_id: incident.correlationId || null,
+    resolution_note: incident.resolutionNote || null,
+    resolution_actor: incident.resolutionActor || null,
+    acknowledged_at: incident.acknowledgedAt || null,
+    acknowledged_by: incident.acknowledgedBy || null
+  });
 }
-
-// lib/analytics/kpi/customerCohort.ts
-function computeCustomerKpis(events) {
-  const visitorsInRange = new Set(events.map((e) => e.anonymousVisitorId));
-  const allVisitors = listVisitors().filter((v) => visitorsInRange.has(v.anonymousVisitorId));
-  const newVisitors = allVisitors.filter((v) => !v.isReturning).length;
-  const returningVisitors = allVisitors.filter((v) => v.isReturning).length;
-  const purchases = events.filter(isAuthoritativePurchase);
-  const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const visitorCount = visitorsInRange.size || 1;
-  return {
-    newVisitors,
-    returningVisitors,
-    sessionsPerVisitor: Number((new Set(events.map((e) => e.sessionId)).size / visitorCount).toFixed(2)),
-    purchasesPerVisitor: Number((purchases.length / visitorCount).toFixed(2)),
-    revenuePerVisitorCents: Math.round(revenueCents / visitorCount)
-  };
+function updateIncidentRecord(incident) {
+  saveIncidentRecord(incident);
 }
-function computeCohortKpis(events) {
-  const byPeriod = /* @__PURE__ */ new Map();
-  for (const event of events) {
-    const period = event.timestamp.slice(0, 7);
-    const row = byPeriod.get(period) ?? {
-      cohortPeriod: period,
-      firstTimeVisitors: 0,
-      returningSessions: 0,
-      repeatPurchases: 0,
-      revenueCents: 0,
-      purchaseVisitors: /* @__PURE__ */ new Set()
-    };
-    if (event.eventType === "SESSION_START") {
-      const visitor = listVisitors().find((v) => v.anonymousVisitorId === event.anonymousVisitorId);
-      if (visitor?.isReturning) row.returningSessions += 1;
-      else row.firstTimeVisitors += 1;
-    }
-    if (isAuthoritativePurchase(event)) {
-      row.revenueCents += toCents(event.value ?? 0);
-      if (row.purchaseVisitors.has(event.anonymousVisitorId)) {
-        row.repeatPurchases += 1;
-      }
-      row.purchaseVisitors.add(event.anonymousVisitorId);
-    }
-    byPeriod.set(period, row);
+function getIncidentByFingerprint(fingerprint) {
+  const id = incidentByFingerprint.get(fingerprint);
+  if (id) return incidentStore.get(id);
+  const row = getPersistentStore()?.getIncidentByFingerprint(fingerprint);
+  if (!row) return void 0;
+  const incident = rowToIncident(row);
+  incidentStore.set(incident.incidentId, incident);
+  incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
+  return incident;
+}
+function listIncidents() {
+  if (incidentStore.size) return [...incidentStore.values()];
+  const rows = getPersistentStore()?.listIncidents() || [];
+  for (const row of rows) {
+    const incident = rowToIncident(row);
+    incidentStore.set(incident.incidentId, incident);
+    incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
   }
-  return [...byPeriod.values()].map(({ purchaseVisitors: _pv, ...row }) => row).sort((a, b) => a.cohortPeriod.localeCompare(b.cohortPeriod));
+  return [...incidentStore.values()];
+}
+function recordReconciliationRun(run) {
+  reconciliationRuns.unshift(run);
+  getPersistentStore()?.saveReconciliationRun({
+    run_id: run.runId,
+    correlation_id: run.correlationId,
+    started_at: run.startedAt,
+    completed_at: run.completedAt,
+    checked_fulfillments: run.checkedFulfillments,
+    passed: run.passed,
+    warnings: run.warnings,
+    mismatches: run.mismatches,
+    critical: run.critical,
+    incidents_created: run.incidentsCreated,
+    incidents_resolved: run.incidentsResolved,
+    duration_ms: run.durationMs,
+    errors_json: JSON.stringify(run.errors)
+  });
+}
+function getLastReconciliationRun() {
+  if (reconciliationRuns.length) return reconciliationRuns[0];
+  const rows = getPersistentStore()?.listReconciliationRuns(1) || [];
+  return rows[0] ? rowToRun(rows[0]) : void 0;
+}
+function hydrateControlTowerFromPersistence() {
+  const store2 = getPersistentStore();
+  if (!store2) return;
+  for (const row of store2.listSnapshots()) {
+    const view = rowToSnapshot(row);
+    snapshotStore.set(view.fulfillmentId, view);
+  }
+  for (const row of store2.listIncidents()) {
+    const incident = rowToIncident(row);
+    incidentStore.set(incident.incidentId, incident);
+    incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
+  }
+  for (const row of store2.listReconciliationRuns(20)) {
+    reconciliationRuns.push(rowToRun(row));
+  }
+}
+function resetControlTowerMemoryForTests() {
+  snapshotStore.clear();
+  incidentStore.clear();
+  incidentByFingerprint.clear();
+  reconciliationRuns.length = 0;
+}
+function resetControlTowerForTests() {
+  resetControlTowerMemoryForTests();
+  getPersistentStore()?.resetAll();
 }
 
-// lib/analytics/kpi/returnsKpi.ts
-function computeReturnKpis(events) {
-  const purchases = events.filter(isAuthoritativePurchase);
-  const uniqueOrders = new Set(purchases.map((p) => p.orderIdReference).filter(Boolean)).size;
-  const returnRequests = events.filter((e) => e.eventType === "RETURN").length;
-  const refunds = events.filter(isAuthoritativeRefund);
-  const refundAmountCents = refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const grossRevenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const products2 = computeProductKpis(events, 50);
-  const categories2 = computeCategoryKpis(events, 50);
-  const markets = computeMarketKpis(events);
-  const channels = computeCommerceChannelKpis(events);
-  return {
-    returnRequests,
-    returnedOrders: returnRequests,
-    refundAmountCents,
-    returnRate: safeRate(returnRequests, uniqueOrders),
-    refundRate: safeRate(refunds.length, uniqueOrders),
-    netRevenueAfterReturnsCents: grossRevenueCents - refundAmountCents,
-    byProduct: products2.filter((p) => p.purchases > 0).map((p) => ({
-      productId: p.productId,
-      returnRate: p.returnRate,
-      refundImpactCents: Math.max(0, p.revenueCents - p.netRevenueCents)
-    })),
-    byCategory: categories2.map((c) => ({
-      categoryId: c.categoryId,
-      returnRate: c.returnRate
-    })),
-    byMarket: markets.filter((m) => m.orders > 0).map((m) => ({ market: m.market, returnRate: m.returnRate })),
-    byChannel: channels.filter((c) => c.orders > 0).map((c) => ({ channel: c.channel, refundRate: safeRate(c.returns, c.orders) }))
-  };
+// lib/fulfillment-control-tower/incidents.ts
+function levelToSeverity(level) {
+  if (level === "CRITICAL") return "CRITICAL";
+  if (level === "MISMATCH") return "MISMATCH";
+  if (level === "WARNING") return "WARNING";
+  return "INFO";
 }
-
-// lib/analytics/kpi/rankings.ts
-function buildRankings(products2, categories2, markets, channels, limit) {
-  const top = clampLimit(limit);
-  const productsByRevenue = toRanking(products2, (p) => p.productId, (p) => p.productName, (p) => p.revenueCents, top);
-  const productsByUnits = toRanking(products2, (p) => p.productId, (p) => p.productName, (p) => p.unitsSold, top);
-  const productsByConversion = toRanking(
-    products2.filter((p) => p.views > 0),
-    (p) => p.productId,
-    (p) => p.productName,
-    (p) => p.cartConversion,
-    top
+function buildIncidentFingerprint(fulfillmentId, category, code) {
+  return `${fulfillmentId}:${category}:${code}`;
+}
+function upsertIncidentFromFinding(input) {
+  if (input.finding.level === "PASS") {
+    return { created: false, incident: null };
+  }
+  const fingerprint = buildIncidentFingerprint(
+    input.fulfillmentId,
+    input.finding.category,
+    input.finding.code
   );
-  const productsByMargin = toRanking(
-    products2.filter((p) => p.contributionCents > 0),
-    (p) => p.productId,
-    (p) => p.productName,
-    (p) => p.contributionCents,
-    top
-  );
-  const categoriesByRevenue = toRanking(categories2, (c) => c.categoryId, (c) => c.categoryId, (c) => c.revenueCents, top);
-  const marketsByRevenue = toRanking(markets, (m) => m.market, (m) => m.market, (m) => m.revenueCents, top);
-  const channelsByRevenue = toRanking(channels, (c) => c.channel, (c) => c.channel, (c) => c.revenueCents, top);
-  return {
-    productsByRevenue,
-    productsByUnits,
-    productsByConversion,
-    productsByMargin,
-    categoriesByRevenue,
-    marketsByRevenue,
-    channelsByRevenue
+  const existing = getIncidentByFingerprint(fingerprint);
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  if (existing && existing.status !== "RESOLVED") {
+    return { created: false, incident: existing };
+  }
+  const incident = {
+    incidentId: existing?.incidentId || `inc_${(0, import_crypto.randomUUID)().slice(0, 12)}`,
+    fingerprint,
+    fulfillmentId: input.fulfillmentId,
+    orderId: input.orderId,
+    supplierId: input.supplierId,
+    severity: levelToSeverity(input.finding.level),
+    category: input.finding.category,
+    code: input.finding.code,
+    message: input.finding.message,
+    detectedAt: existing?.detectedAt || now,
+    status: "OPEN",
+    correlationId: input.correlationId
   };
+  saveIncidentRecord(incident);
+  return { created: !existing, incident };
 }
-function toRanking(rows, key, label, value, limit) {
-  return [...rows].sort((a, b) => value(b) - value(a)).slice(0, limit).map((row) => ({ key: key(row), label: label(row), value: value(row) }));
-}
-
-// lib/analytics/kpi/compute.ts
-function computeBusinessKpis(input = {}) {
-  const range = resolveDateRange(input);
-  const events = loadEventsForRange(range);
-  const limit = clampLimit(input.limit);
-  const executive = computeExecutiveKpis(events);
-  const funnel = computeFunnelKpis(events);
-  const products2 = computeProductKpis(events, limit);
-  const categories2 = computeCategoryKpis(events, limit);
-  const markets = computeMarketKpis(events);
-  const languages = computeLanguageKpis(events);
-  const channels = computeCommerceChannelKpis(events);
-  const traffic = computeTrafficSourceKpis(events);
-  const devices = computeDeviceKpis(events);
-  const customers = computeCustomerKpis(events);
-  const cohorts = computeCohortKpis(events);
-  const returns2 = computeReturnKpis(events);
-  const profitability = computeProfitabilityKpis(events);
-  const rankings = buildRankings(products2, categories2, markets, channels, limit);
-  let previousExecutive;
-  let deltas;
-  if (input.comparePrevious && range.previousFrom && range.previousTo) {
-    const prevEvents = loadEventsForRange({
-      preset: range.preset,
-      from: range.previousFrom,
-      to: range.previousTo
+function resolveOpenIncidentsForFulfillment(fulfillmentId, activeFingerprints) {
+  let resolved = 0;
+  for (const incident of listIncidents()) {
+    if (incident.fulfillmentId !== fulfillmentId) continue;
+    if (incident.status === "RESOLVED") continue;
+    if (activeFingerprints.has(incident.fingerprint)) continue;
+    updateIncidentRecord({
+      ...incident,
+      status: "RESOLVED",
+      resolvedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      resolutionNote: "Auto-resolved \u2014 reconciliation no longer detects issue",
+      resolutionActor: "control-tower"
     });
-    previousExecutive = computeExecutiveKpis(prevEvents);
-    deltas = {
-      orders: safeDelta(executive.orders, previousExecutive.orders ?? 0),
-      grossRevenueCents: safeDelta(executive.grossRevenueCents, previousExecutive.grossRevenueCents ?? 0),
-      authoritativeRevenueCents: safeDelta(
-        executive.authoritativeRevenueCents,
-        previousExecutive.authoritativeRevenueCents ?? 0
-      ),
-      netRevenueCents: safeDelta(executive.netRevenueCents, previousExecutive.netRevenueCents ?? 0),
-      conversionRate: safeDelta(executive.conversionRate, previousExecutive.conversionRate ?? 0),
-      averageOrderValueCents: safeDelta(
-        executive.averageOrderValueCents,
-        previousExecutive.averageOrderValueCents ?? 0
-      )
-    };
+    resolved++;
   }
-  return {
-    range,
-    executive,
-    previousExecutive,
-    deltas,
-    funnel,
-    products: products2,
-    categories: categories2,
-    markets,
-    languages,
-    channels,
-    traffic,
-    devices,
-    customers,
-    cohorts,
-    returns: returns2,
-    profitability,
-    rankings
+  return resolved;
+}
+function acknowledgeIncident(incidentId, actor) {
+  const incident = listIncidents().find((i) => i.incidentId === incidentId);
+  if (!incident) return null;
+  const updated = {
+    ...incident,
+    status: "ACKNOWLEDGED",
+    acknowledgedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    acknowledgedBy: actor
   };
+  updateIncidentRecord(updated);
+  return updated;
+}
+function resolveIncident(incidentId, actor, note) {
+  const incident = listIncidents().find((i) => i.incidentId === incidentId);
+  if (!incident) return null;
+  const updated = {
+    ...incident,
+    status: "RESOLVED",
+    resolvedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    resolutionActor: actor,
+    resolutionNote: note || "Manually resolved \u2014 underlying SSOT unchanged"
+  };
+  updateIncidentRecord(updated);
+  return updated;
+}
+function filterIncidents(filter) {
+  return listIncidents().filter((incident) => {
+    if (filter?.supplierId && incident.supplierId !== filter.supplierId) return false;
+    if (filter?.orderId && incident.orderId !== filter.orderId) return false;
+    if (filter?.severity && incident.severity !== filter.severity) return false;
+    if (filter?.category && incident.category !== filter.category) return false;
+    if (filter?.status && incident.status !== filter.status) return false;
+    return true;
+  });
 }
 
-// lib/analytics/kpi/dashboard.ts
-function requireAdmin(context) {
-  const check = validateAdminAccess(context);
-  if (!check.ok) return { ok: false, errorCode: check.errorCode ?? "ADMIN_UNAUTHORIZED" };
-  recordAnalyticsAudit({
-    action: "KPI_DASHBOARD_ACCESS",
-    actor: context.actorId ?? "ADMIN"
+// lib/fulfillment-control-tower/audit.ts
+var auditLog = [];
+function recordControlTowerAudit(entry) {
+  auditLog.unshift({
+    action: entry.action,
+    actor: entry.actor || "control-tower",
+    correlationId: entry.correlationId,
+    metadata: entry.metadata || {},
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
   });
-  return { ok: true };
+  if (auditLog.length > 500) auditLog.length = 500;
 }
-function parseInput(query = {}) {
-  return parseKpiQueryInput(query);
+function listControlTowerAudit(limit = 50) {
+  return auditLog.slice(0, limit);
 }
-function getBusinessKpiDashboard(context, query = {}) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  const input = parseInput(query);
-  const validation = validateKpiQuery(input);
-  if (!validation.ok) return { ok: false, errorCode: validation.errorCode ?? "INVALID_QUERY" };
-  return { ok: true, data: computeBusinessKpis(input) };
+
+// lib/fulfillment-control-tower/analytics.ts
+var metrics = [];
+function emitControlTowerAnalytics(run) {
+  const fulfillmentSuccessRate = run.checkedFulfillments > 0 ? run.passed / run.checkedFulfillments : 1;
+  const supplierFailureRate = run.checkedFulfillments > 0 ? run.critical / run.checkedFulfillments : 0;
+  metrics.unshift({
+    source: "FULFILLMENT_CONTROL_TOWER",
+    runId: run.runId,
+    correlationId: run.correlationId,
+    fulfillmentSuccessRate,
+    supplierFailureRate,
+    reconciliationMismatchCount: run.mismatches,
+    criticalIncidentCount: run.critical,
+    averageFulfillmentPreparationLatencyMs: run.durationMs / Math.max(run.checkedFulfillments, 1),
+    recordedAt: run.completedAt
+  });
+  if (metrics.length > 200) metrics.length = 200;
 }
-function getBusinessKpiSection(context, section, query = {}) {
-  const result = getBusinessKpiDashboard(context, query);
-  if (!result.ok) return result;
-  const dashboard = result.data;
-  switch (section) {
-    case "executive":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          executive: dashboard.executive,
-          previousExecutive: dashboard.previousExecutive,
-          deltas: dashboard.deltas
-        }
-      };
-    case "funnel":
-      return { ok: true, data: { range: dashboard.range, funnel: dashboard.funnel } };
-    case "products":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          products: dashboard.products,
-          rankings: {
-            productsByRevenue: dashboard.rankings.productsByRevenue,
-            productsByUnits: dashboard.rankings.productsByUnits,
-            productsByConversion: dashboard.rankings.productsByConversion,
-            productsByMargin: dashboard.rankings.productsByMargin
-          }
-        }
-      };
-    case "categories":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          categories: dashboard.categories,
-          rankings: { categoriesByRevenue: dashboard.rankings.categoriesByRevenue }
-        }
-      };
-    case "markets":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          markets: dashboard.markets,
-          rankings: { marketsByRevenue: dashboard.rankings.marketsByRevenue }
-        }
-      };
-    case "channels":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          channels: dashboard.channels,
-          rankings: { channelsByRevenue: dashboard.rankings.channelsByRevenue }
-        }
-      };
-    case "traffic":
-      return { ok: true, data: { range: dashboard.range, traffic: dashboard.traffic } };
-    case "returns":
-      return { ok: true, data: { range: dashboard.range, returns: dashboard.returns } };
-    case "profitability":
-      return { ok: true, data: { range: dashboard.range, profitability: dashboard.profitability } };
-    default:
-      return { ok: true, data: dashboard };
+function getControlTowerAnalyticsMetrics(limit = 20) {
+  return metrics.slice(0, limit);
+}
+
+// lib/fulfillment-control-tower/reconcile.ts
+function runFulfillmentReconciliation(options = {}) {
+  if (isSupplierOrderNetworkEnabled()) {
+    throw new Error("NETWORK_SAFETY_VIOLATION:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED");
   }
-}
-
-// lib/analytics/dashboard.ts
-function requireAdmin2(context) {
-  const check = validateAdminAccess(context);
-  if (!check.ok) return { ok: false, errorCode: check.errorCode ?? "ADMIN_UNAUTHORIZED" };
-  recordAnalyticsAudit({
-    action: "DASHBOARD_ACCESS",
-    actor: context.actorId ?? "ADMIN"
-  });
-  return { ok: true };
-}
-function getOverview(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeDashboardOverview() };
-}
-function getTraffic(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  const events = listEvents();
-  return {
-    ok: true,
-    data: {
-      pageViews: events.filter((e) => e.eventType === "PAGE_VIEW").length,
-      sessions: new Set(events.map((e) => e.sessionId)).size,
-      visitors: new Set(events.map((e) => e.anonymousVisitorId)).size
+  const started = Date.now();
+  const correlationId = options.correlationId || (0, import_crypto2.randomUUID)();
+  const runId = `rec_${Date.now()}_${(0, import_crypto2.randomUUID)().slice(0, 8)}`;
+  let views = listFulfillmentOperationalViews(options.filter);
+  if (options.fulfillmentIds?.length) {
+    views = views.filter((v) => options.fulfillmentIds.includes(v.fulfillmentId));
+  }
+  let passed = 0;
+  let warnings = 0;
+  let mismatches = 0;
+  let critical = 0;
+  let incidentsCreated = 0;
+  let incidentsResolved = 0;
+  const errors = [];
+  for (const view of views) {
+    try {
+      const result = reconcileSingleFulfillment(view.fulfillmentId, correlationId);
+      saveOperationalSnapshot({ ...result.fulfillment, lastReconciledAt: (/* @__PURE__ */ new Date()).toISOString() });
+      switch (result.overallLevel) {
+        case "PASS":
+          passed++;
+          break;
+        case "WARNING":
+          warnings++;
+          break;
+        case "MISMATCH":
+          mismatches++;
+          break;
+        case "CRITICAL":
+          critical++;
+          break;
+      }
+      incidentsCreated += result.incidentsCreated ?? 0;
+      incidentsResolved += resolveOpenIncidentsForFulfillment(
+        view.fulfillmentId,
+        new Set(result.incidentFingerprints)
+      );
+    } catch (err) {
+      errors.push(`${view.fulfillmentId}:${err instanceof Error ? err.message : "UNKNOWN"}`);
     }
+  }
+  const completedAt = (/* @__PURE__ */ new Date()).toISOString();
+  const record = {
+    runId,
+    correlationId,
+    startedAt: new Date(started).toISOString(),
+    completedAt,
+    checkedFulfillments: views.length,
+    passed,
+    warnings,
+    mismatches,
+    critical,
+    incidentsCreated,
+    incidentsResolved,
+    durationMs: Date.now() - started,
+    errors
+  };
+  recordReconciliationRun(record);
+  recordControlTowerAudit({
+    action: "reconciliation.completed",
+    correlationId,
+    metadata: {
+      runId,
+      checkedFulfillments: record.checkedFulfillments,
+      passed,
+      warnings,
+      mismatches,
+      critical,
+      durationMs: record.durationMs
+    }
+  });
+  emitControlTowerAnalytics(record);
+  return record;
+}
+function reconcileSingleFulfillment(fulfillmentId, correlationId) {
+  const view = getFulfillmentOperationalView(fulfillmentId);
+  if (!view) {
+    throw new Error("FULFILLMENT_NOT_FOUND");
+  }
+  const findings = runFulfillmentChecks(view);
+  const overallLevel = aggregateOverallLevel(findings);
+  const operationalStatus = overallLevel === "PASS" ? "HEALTHY" : overallLevel === "WARNING" ? "WARNING" : overallLevel === "MISMATCH" ? "MISMATCH" : "CRITICAL";
+  const incidentFingerprints = [];
+  let incidentsCreated = 0;
+  for (const finding2 of findings) {
+    const { created, incident } = upsertIncidentFromFinding({
+      fulfillmentId,
+      orderId: view.orderId,
+      supplierId: view.supplierId,
+      finding: finding2,
+      correlationId
+    });
+    if (incident && incident.status !== "RESOLVED") incidentFingerprints.push(incident.fingerprint);
+    if (created) incidentsCreated++;
+  }
+  const fulfillment = {
+    ...view,
+    operationalStatus,
+    lastReconciledAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  saveOperationalSnapshot(fulfillment);
+  return {
+    fulfillmentId,
+    orderId: view.orderId,
+    supplierId: view.supplierId,
+    overallLevel,
+    findings,
+    incidentFingerprints,
+    incidentsCreated,
+    fulfillment
   };
 }
-function getFunnel(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeFunnelMetrics() };
-}
-function getProducts(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeProductAnalytics() };
-}
-function getMarkets(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeMarketAnalytics() };
-}
-function getChannels(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeChannelAnalytics() };
-}
-function getRevenue(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeRevenueMetrics() };
-}
 
-// lib/analytics/storefront/serverEntry.ts
-bootstrapAnalyticsPersistence();
+// lib/fulfillment-control-tower/admin.ts
+function applyOperationalStatus(views) {
+  return views.map((view) => {
+    const snapshot = getOperationalSnapshot(view.fulfillmentId);
+    return snapshot?.operationalStatus ? { ...view, operationalStatus: snapshot.operationalStatus } : view;
+  });
+}
+function getFulfillmentControlTowerDashboard(filter) {
+  const views = applyOperationalStatus(listFulfillmentOperationalViews(filter));
+  const incidents = filterIncidents({ status: "OPEN" });
+  const supplierSet = /* @__PURE__ */ new Set();
+  const orderSet = /* @__PURE__ */ new Set();
+  for (const incident of incidents) {
+    supplierSet.add(incident.supplierId);
+    orderSet.add(incident.orderId);
+  }
+  return {
+    totalFulfillments: views.length,
+    healthy: views.filter((v) => v.operationalStatus === "HEALTHY").length,
+    warning: views.filter((v) => v.operationalStatus === "WARNING").length,
+    mismatch: views.filter((v) => v.operationalStatus === "MISMATCH").length,
+    critical: views.filter((v) => v.operationalStatus === "CRITICAL").length,
+    openIncidents: incidents.length,
+    suppliersAffected: supplierSet.size,
+    ordersAffected: orderSet.size,
+    realSupplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
+    lastReconciliationRun: getLastReconciliationRun()
+  };
+}
+function listFulfillmentControlTowerRows(filter) {
+  let views = applyOperationalStatus(listFulfillmentOperationalViews(filter));
+  if (filter?.severity) {
+    const matching = new Set(
+      filterIncidents({ severity: filter.severity, status: "OPEN" }).map((i) => i.fulfillmentId)
+    );
+    views = views.filter((v) => matching.has(v.fulfillmentId));
+  }
+  if (filter?.category) {
+    const matching = new Set(
+      filterIncidents({ category: filter.category, status: "OPEN" }).map((i) => i.fulfillmentId)
+    );
+    views = views.filter((v) => matching.has(v.fulfillmentId));
+  }
+  return views;
+}
+function getFulfillmentControlTowerDetail(fulfillmentId) {
+  const view = getFulfillmentOperationalView(fulfillmentId);
+  if (!view) return null;
+  let reconciliation;
+  try {
+    reconciliation = reconcileSingleFulfillment(fulfillmentId);
+  } catch {
+    reconciliation = void 0;
+  }
+  return {
+    fulfillment: reconciliation?.fulfillment || view,
+    reconciliation: reconciliation ? {
+      fulfillmentId: reconciliation.fulfillmentId,
+      orderId: reconciliation.orderId,
+      supplierId: reconciliation.supplierId,
+      overallLevel: reconciliation.overallLevel,
+      findings: reconciliation.findings,
+      incidentFingerprints: reconciliation.incidentFingerprints
+    } : void 0,
+    incidents: filterIncidents({ orderId: view.orderId }),
+    audit: listControlTowerAudit(20)
+  };
+}
+function getFulfillmentControlTowerAnalyticsSummary() {
+  return {
+    metrics: getControlTowerAnalyticsMetrics(10),
+    openIncidents: filterIncidents({ status: "OPEN" }).length,
+    totalIncidents: listIncidents().length
+  };
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  getAnalyticsPersistenceMode,
-  getBusinessKpiDashboard,
-  getBusinessKpiSection,
-  getChannels,
-  getFunnel,
-  getMarkets,
-  getOverview,
-  getProducts,
-  getRevenue,
-  getTraffic,
-  handleStorefrontAnalyticsEvent,
-  handleStorefrontPurchaseSignal,
-  parseStorefrontEventBody
+  acknowledgeIncident,
+  filterIncidents,
+  getFulfillmentControlTowerAnalyticsSummary,
+  getFulfillmentControlTowerDashboard,
+  getFulfillmentControlTowerDetail,
+  hydrateControlTowerFromPersistence,
+  isSupplierOrderNetworkEnabled,
+  listFulfillmentControlTowerRows,
+  listIncidents,
+  reconcileSingleFulfillment,
+  resetControlTowerForTests,
+  resolveIncident,
+  runFulfillmentReconciliation
 });

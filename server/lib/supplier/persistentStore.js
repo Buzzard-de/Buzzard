@@ -215,6 +215,26 @@ function createPersistentSupplierStore() {
     VALUES (@actor, @supplier_id, @action, @correlation_id, @metadata_json, @audit_timestamp)
   `);
 
+  const upsertOrderSandbox = db.prepare(`
+    INSERT INTO supplier_engine_order_sandbox (
+      supplier_order_id, buzzard_order_id, supplier_id, status, idempotency_key,
+      correlation_id, payload_json, tracking_json, failure_class, failure_code,
+      failure_message, latency_ms, created_at, updated_at
+    ) VALUES (
+      @supplier_order_id, @buzzard_order_id, @supplier_id, @status, @idempotency_key,
+      @correlation_id, @payload_json, @tracking_json, @failure_class, @failure_code,
+      @failure_message, @latency_ms, @created_at, @updated_at
+    )
+    ON CONFLICT(idempotency_key) DO UPDATE SET
+      status = excluded.status,
+      tracking_json = COALESCE(excluded.tracking_json, supplier_engine_order_sandbox.tracking_json),
+      failure_class = excluded.failure_class,
+      failure_code = excluded.failure_code,
+      failure_message = excluded.failure_message,
+      latency_ms = excluded.latency_ms,
+      updated_at = excluded.updated_at
+  `);
+
   return {
     getMode: () => "sqlite",
 
@@ -405,6 +425,52 @@ function createPersistentSupplierStore() {
       db.prepare("DELETE FROM supplier_engine_sync_cursors WHERE supplier_id = ?").run(supplierId);
       db.prepare("DELETE FROM supplier_engine_health WHERE supplier_id = ?").run(supplierId);
       db.prepare("DELETE FROM supplier_engine_sync_idempotency WHERE supplier_id = ?").run(supplierId);
+      db.prepare("DELETE FROM supplier_engine_order_sandbox WHERE supplier_id = ?").run(supplierId);
+    },
+
+    saveOrderSandbox(row) {
+      upsertOrderSandbox.run(row);
+    },
+
+    getOrderSandboxByIdempotency(key) {
+      return db
+        .prepare("SELECT * FROM supplier_engine_order_sandbox WHERE idempotency_key = ?")
+        .get(key);
+    },
+
+    getOrderSandboxByReference(supplierOrderId) {
+      return db
+        .prepare("SELECT * FROM supplier_engine_order_sandbox WHERE supplier_order_id = ?")
+        .get(supplierOrderId);
+    },
+
+    getLastOrderSandboxForSupplier(supplierId) {
+      return db
+        .prepare(
+          "SELECT * FROM supplier_engine_order_sandbox WHERE supplier_id = ? ORDER BY updated_at DESC LIMIT 1"
+        )
+        .get(supplierId);
+    },
+
+    listOrderSandbox(supplierId) {
+      if (supplierId) {
+        return db
+          .prepare(
+            "SELECT * FROM supplier_engine_order_sandbox WHERE supplier_id = ? ORDER BY updated_at DESC"
+          )
+          .all(supplierId);
+      }
+      return db
+        .prepare("SELECT * FROM supplier_engine_order_sandbox ORDER BY updated_at DESC")
+        .all();
+    },
+
+    resetOrderSandbox(supplierId) {
+      if (supplierId) {
+        db.prepare("DELETE FROM supplier_engine_order_sandbox WHERE supplier_id = ?").run(supplierId);
+      } else {
+        db.prepare("DELETE FROM supplier_engine_order_sandbox").run();
+      }
     },
 
     listAllRuntimeStates() {

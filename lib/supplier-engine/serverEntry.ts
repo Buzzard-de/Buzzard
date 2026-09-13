@@ -52,4 +52,9 @@ export {
   probeCursorPersistence,
   summarizeIdentifierValidation,
   isInterCarsProfile,
+  runSupplierOrderSandbox,
+  getSupplierOrderSandboxAdminSummary,
+  evaluateSupplierOrderNetworkSafety,
+  resetSupplierOrderSandboxStore,
+  hydrateSupplierOrderSandboxFromPersistence,
 } from "./service";

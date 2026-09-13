@@ -4050,6 +4050,27 @@ function migrateSupplierEngineOperations() {
       ON supplier_engine_audit(supplier_id);
     CREATE INDEX IF NOT EXISTS idx_supeng_audit_timestamp
       ON supplier_engine_audit(audit_timestamp);
+
+    CREATE TABLE IF NOT EXISTS supplier_engine_order_sandbox (
+      supplier_order_id TEXT PRIMARY KEY,
+      buzzard_order_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      status TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT,
+      payload_json TEXT NOT NULL DEFAULT '{}',
+      tracking_json TEXT,
+      failure_class TEXT,
+      failure_code TEXT,
+      failure_message TEXT,
+      latency_ms REAL DEFAULT 0,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_supeng_order_sandbox_supplier
+      ON supplier_engine_order_sandbox(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_supeng_order_sandbox_buzzard_order
+      ON supplier_engine_order_sandbox(buzzard_order_id);
   `);
 }
 

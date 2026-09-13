@@ -872,6 +872,100 @@ var init_capabilities = __esm({
   }
 });
 
+// lib/supplier-engine/orderSandbox/persistence.ts
+function rowToRecord(row) {
+  return {
+    supplierOrderId: String(row.supplier_order_id),
+    buzzardOrderId: String(row.buzzard_order_id),
+    supplierId: String(row.supplier_id),
+    status: row.status,
+    idempotencyKey: String(row.idempotency_key),
+    correlationId: String(row.correlation_id || ""),
+    payload: JSON.parse(String(row.payload_json || "{}")),
+    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
+    failureClass: row.failure_class,
+    failureCode: row.failure_code ? String(row.failure_code) : void 0,
+    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
+    latencyMs: Number(row.latency_ms || 0),
+    sandbox: true,
+    networkDispatched: false,
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at)
+  };
+}
+function getOrderSandboxPersistence() {
+  return getSupplierPersistence();
+}
+function saveSupplierOrderSandboxRecord(record) {
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  const persistence = getOrderSandboxPersistence();
+  const typed = persistence;
+  typed?.saveOrderSandbox?.({
+    supplier_order_id: record.supplierOrderId,
+    buzzard_order_id: record.buzzardOrderId,
+    supplier_id: record.supplierId,
+    status: record.status,
+    idempotency_key: record.idempotencyKey,
+    correlation_id: record.correlationId,
+    payload_json: JSON.stringify(record.payload),
+    tracking_json: record.tracking ? JSON.stringify(record.tracking) : null,
+    failure_class: record.failureClass || null,
+    failure_code: record.failureCode || null,
+    failure_message: record.failureMessage || null,
+    latency_ms: record.latencyMs,
+    created_at: record.createdAt,
+    updated_at: record.updatedAt
+  });
+}
+function getSupplierOrderSandboxByIdempotency(idempotencyKey) {
+  const cached = memoryStore.get(idempotencyKey);
+  if (cached) return cached;
+  const row = getOrderSandboxPersistence()?.getOrderSandboxByIdempotency?.(idempotencyKey);
+  if (!row) return void 0;
+  const record = rowToRecord(row);
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  return record;
+}
+function getSupplierOrderSandboxByReference(supplierOrderId) {
+  const cached = memoryStore.get(supplierOrderId);
+  if (cached) return cached;
+  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
+  if (!row) return void 0;
+  const record = rowToRecord(row);
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  return record;
+}
+function getLastSupplierOrderSandboxForSupplier(supplierId) {
+  const records = [...memoryStore.values()].filter((r) => r.supplierId === supplierId);
+  if (records.length) {
+    return records.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+  }
+  const row = getOrderSandboxPersistence()?.getLastOrderSandboxForSupplier?.(supplierId);
+  return row ? rowToRecord(row) : void 0;
+}
+function resetSupplierOrderSandboxStore() {
+  memoryStore.clear();
+}
+function hydrateSupplierOrderSandboxFromPersistence() {
+  const rows = getOrderSandboxPersistence()?.listOrderSandbox?.() || [];
+  for (const row of rows) {
+    const record = rowToRecord(row);
+    memoryStore.set(record.idempotencyKey, record);
+    memoryStore.set(record.supplierOrderId, record);
+  }
+}
+var memoryStore;
+var init_persistence2 = __esm({
+  "lib/supplier-engine/orderSandbox/persistence.ts"() {
+    "use strict";
+    init_persistence();
+    memoryStore = /* @__PURE__ */ new Map();
+  }
+});
+
 // lib/supplier-engine/tracking.ts
 var tracking_exports = {};
 __export(tracking_exports, {
@@ -883,6 +977,30 @@ function mapSupplierTrackingStatus(raw) {
   return STATUS_MAP[key] ?? "UNKNOWN";
 }
 async function fetchSupplierTracking(supplierId, supplierOrderId) {
+  if (!supplierOrderId) {
+    return {
+      ok: false,
+      dryRun: true,
+      supplierId,
+      supplierOrderId: supplierOrderId || "UNKNOWN",
+      status: "UNKNOWN"
+    };
+  }
+  const sandboxRecord = getSupplierOrderSandboxByReference(supplierOrderId);
+  if (sandboxRecord?.tracking) {
+    return {
+      ok: true,
+      dryRun: true,
+      sandbox: true,
+      supplierId,
+      supplierOrderId,
+      trackingNumber: sandboxRecord.tracking.trackingNumber,
+      carrier: sandboxRecord.tracking.carrier,
+      trackingUrl: sandboxRecord.tracking.trackingUrl,
+      status: mapSupplierTrackingStatus(sandboxRecord.tracking.shipmentStatus),
+      rawStatus: sandboxRecord.tracking.shipmentStatus
+    };
+  }
   const supplier = getSupplier(supplierId);
   if (!supplier || !hasCapability(supplier.capabilities, "trackingAPI")) {
     return {
@@ -910,6 +1028,7 @@ var init_tracking = __esm({
     "use strict";
     init_registry2();
     init_capabilities();
+    init_persistence2();
     STATUS_MAP = {
       label_created: "LABEL_CREATED",
       picked_up: "PICKED_UP",
@@ -934,6 +1053,7 @@ __export(serverEntry_exports, {
   describeLiveCredentialReadiness: () => describeLiveCredentialReadiness,
   evaluateLiveReadSyncGuard: () => evaluateLiveReadSyncGuard,
   evaluateProductionSyncGuard: () => evaluateProductionSyncGuard,
+  evaluateSupplierOrderNetworkSafety: () => evaluateSupplierOrderNetworkSafety,
   getRegisteredLiveSupplierId: () => getRegisteredLiveSupplierId,
   getSupplier: () => getSupplier,
   getSupplierConnectorMetrics: () => getSupplierConnectorMetrics,
@@ -942,12 +1062,14 @@ __export(serverEntry_exports, {
   getSupplierEngineDetail: () => getSupplierEngineDetail,
   getSupplierHealth: () => getSupplierHealth,
   getSupplierLogs: () => getSupplierLogs,
+  getSupplierOrderSandboxAdminSummary: () => getSupplierOrderSandboxAdminSummary,
   getSupplierPersistenceMode: () => getSupplierPersistenceMode,
   getSupplierRuntimeState: () => getSupplierRuntimeState,
   getSupplierTracking: () => getSupplierTracking,
   getSyncCursor: () => getSyncCursor,
   getSyncCursorForAdmin: () => getSyncCursorForAdmin,
   hasLiveSupplierCredentialsConfigured: () => hasLiveSupplierCredentialsConfigured,
+  hydrateSupplierOrderSandboxFromPersistence: () => hydrateSupplierOrderSandboxFromPersistence,
   ingestSupplierFeed: () => ingestSupplierFeed,
   isBlockedHost: () => isBlockedHost,
   isInterCarsProfile: () => isInterCarsProfile,
@@ -963,12 +1085,14 @@ __export(serverEntry_exports, {
   resetMockTransportScenarios: () => resetMockTransportScenarios,
   resetOrderIdempotencyKeys: () => resetOrderIdempotencyKeys,
   resetSupplierCursorSafe: () => resetSupplierCursorSafe,
+  resetSupplierOrderSandboxStore: () => resetSupplierOrderSandboxStore,
   resolveLiveSupplierProfile: () => resolveLiveSupplierProfile,
   resolvePredefinedLiveProfile: () => resolvePredefinedLiveProfile,
   runSupplierConnectionTest: () => runSupplierConnectionTest,
   runSupplierDryRunTestSync: () => runSupplierDryRunTestSync,
   runSupplierLiveOnboarding: () => runSupplierLiveOnboarding,
   runSupplierLiveReadSync: () => runSupplierLiveReadSync,
+  runSupplierOrderSandbox: () => runSupplierOrderSandbox,
   runSupplierSyncJob: () => runSupplierSyncJob,
   sanitizeClientSyncRequest: () => sanitizeClientSyncRequest,
   selectBestSupplierForOrder: () => selectBestSupplierForOrder,
@@ -3312,6 +3436,7 @@ function releaseSupplierSyncLock(supplierId, jobId) {
 
 // lib/supplier-engine/bootstrap.ts
 init_registry2();
+init_persistence2();
 var bootstrapped = false;
 function bootstrapSupplierEnginePersistence() {
   if (bootstrapped) return;
@@ -3320,6 +3445,7 @@ function bootstrapSupplierEnginePersistence() {
   hydrateSyncCursorsFromPersistence();
   hydrateHealthFromPersistence();
   bootstrapped = true;
+  hydrateSupplierOrderSandboxFromPersistence();
 }
 function resetSupplierEngineBootstrap() {
   bootstrapped = false;
@@ -31448,6 +31574,432 @@ async function ingestSupplierFeed(supplierId, options = {}) {
 init_registry2();
 init_capabilities();
 init_credentials();
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+var import_crypto4 = require("crypto");
+init_registry2();
+init_security();
+
+// lib/supplier-engine/orderSandbox/sandboxAdapter.ts
+var import_crypto3 = require("crypto");
+function buildDeterministicSandboxOrderId(buzzardOrderId, supplierId, idempotencyKey) {
+  const hash = (0, import_crypto3.createHash)("sha256").update(`${buzzardOrderId}:${supplierId}:${idempotencyKey}`).digest("hex").slice(0, 12).toUpperCase();
+  return `SANDBOX-ORDER-${hash}`;
+}
+function buildSupplierOrderIdempotencyKey(buzzardOrderId, supplierId) {
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
+}
+function buildSandboxTracking(supplierOrderId, simulateShipped = true) {
+  const suffix = supplierOrderId.replace(/^SANDBOX-ORDER-/, "").slice(-8);
+  return {
+    supplierOrderReference: supplierOrderId,
+    carrier: "SANDBOX_CARRIER",
+    trackingNumber: `SBX-TRK-${suffix}`,
+    trackingUrl: `https://sandbox.buzzard.local/tracking/${suffix}`,
+    shipmentStatus: simulateShipped ? "IN_TRANSIT" : "LABEL_CREATED",
+    simulated: true
+  };
+}
+function validateSandboxPayload(payload) {
+  const errors = [];
+  if (!payload.buzzardOrderId) errors.push("MISSING_BUZZARD_ORDER_ID");
+  if (!payload.supplierId) errors.push("MISSING_SUPPLIER_ID");
+  if (!payload.lines?.length) errors.push("MISSING_LINES");
+  if (!payload.shippingDestination?.country) errors.push("MISSING_SHIPPING_COUNTRY");
+  for (const line of payload.lines || []) {
+    if (!line.supplierSku) errors.push("MISSING_SUPPLIER_SKU");
+    if (line.quantity <= 0) errors.push("INVALID_QUANTITY");
+    if (line.unitPrice < 0) errors.push("INVALID_UNIT_PRICE");
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+// lib/supplier-engine/orderSandbox/piiFilter.ts
+var BLOCKED_KEYS = /payment|card|cvv|cvc|iban|bic|password|secret|token|oauth|api[_-]?key|authorization|admin|ai[_-]?context|email|phone/i;
+var PII_LOG_KEYS = /email|phone|recipient|address|street|postal|city|name/i;
+function filterSupplierFulfillmentAddress(address) {
+  if (!address) return {};
+  const out = {};
+  for (const [key, value] of Object.entries(address)) {
+    if (BLOCKED_KEYS.test(key)) continue;
+    if (!value?.trim()) continue;
+    out[key] = value.trim();
+  }
+  if (!out.country && address.country) out.country = address.country;
+  return out;
+}
+function sanitizePayloadForInspection(payload) {
+  const out = {};
+  for (const [key, value] of Object.entries(payload)) {
+    if (BLOCKED_KEYS.test(key)) {
+      out[key] = "[REDACTED]";
+      continue;
+    }
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      out[key] = sanitizePayloadForInspection(value);
+    } else if (PII_LOG_KEYS.test(key) && typeof value === "string") {
+      out[key] = maskPiiValue(value);
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+function maskPiiValue(value) {
+  if (value.length <= 4) return "****";
+  return `${value.slice(0, 2)}${"*".repeat(Math.min(6, value.length - 2))}`;
+}
+function assertNoSecretsInPayload(payload) {
+  const violations = [];
+  const walk = (obj, path2 = "") => {
+    for (const [key, value] of Object.entries(obj)) {
+      const full = path2 ? `${path2}.${key}` : key;
+      if (BLOCKED_KEYS.test(key)) violations.push(full);
+      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        walk(value, full);
+      }
+    }
+  };
+  walk(payload);
+  return violations;
+}
+
+// lib/supplier-engine/orderSandbox/lifecycle.ts
+var TRANSITIONS = {
+  PREPARED: ["VALIDATED", "FAILED", "CANCELLED"],
+  VALIDATED: ["SANDBOX_ACCEPTED", "FAILED", "CANCELLED"],
+  SANDBOX_ACCEPTED: ["SUPPLIER_PENDING", "FAILED", "CANCELLED"],
+  SUPPLIER_PENDING: ["SUPPLIER_CONFIRMED", "PROCESSING", "FAILED", "CANCELLED"],
+  SUPPLIER_CONFIRMED: ["PROCESSING", "SHIPPED", "FAILED", "CANCELLED"],
+  PROCESSING: ["SHIPPED", "FAILED", "CANCELLED"],
+  SHIPPED: ["DELIVERED", "FAILED"],
+  DELIVERED: [],
+  FAILED: [],
+  CANCELLED: []
+};
+function canTransitionSupplierOrderStatus(from, to) {
+  return TRANSITIONS[from]?.includes(to) ?? false;
+}
+function assertSupplierOrderTransition(from, to) {
+  if (!canTransitionSupplierOrderStatus(from, to)) {
+    throw new Error(`INVALID_SUPPLIER_ORDER_TRANSITION:${from}->${to}`);
+  }
+}
+
+// lib/supplier-engine/orderSandbox/failures.ts
+var RETRYABLE2 = /* @__PURE__ */ new Set([
+  "TIMEOUT",
+  "RATE_LIMITED",
+  "SERVER_ERROR",
+  "503",
+  "502",
+  "500",
+  "429",
+  "SUPPLIER_TIMEOUT",
+  "RETRYABLE_SUPPLIER_ERROR"
+]);
+var PERMANENT2 = /* @__PURE__ */ new Set([
+  "UNKNOWN_SUPPLIER",
+  "SUPPLIER_DISABLED",
+  "CONNECTOR_UNHEALTHY",
+  "INSUFFICIENT_STOCK",
+  "STALE_STOCK",
+  "PAYLOAD_VALIDATION_FAILED",
+  "PII_VIOLATION",
+  "CAPABILITY_MISSING",
+  "AUTH_FAILED",
+  "403",
+  "401",
+  "INVALID_SUPPLIER",
+  "DUPLICATE_ORDER"
+]);
+function classifySupplierOrderFailure(code) {
+  const normalized = code.toUpperCase();
+  if (PERMANENT2.has(normalized)) return "PERMANENT";
+  if (RETRYABLE2.has(normalized)) return "RETRYABLE";
+  if (/^5\d\d$/.test(normalized) || normalized.includes("TIMEOUT") || normalized.includes("RATE")) {
+    return "RETRYABLE";
+  }
+  return "PERMANENT";
+}
+function failureResult(code, message) {
+  return {
+    ok: false,
+    failureClass: classifySupplierOrderFailure(code),
+    failureCode: code,
+    failureMessage: message
+  };
+}
+
+// lib/supplier-engine/orderSandbox/networkSafety.ts
+init_config();
+function evaluateSupplierOrderNetworkSafety() {
+  const violations = [];
+  if (isSupplierOrderNetworkEnabled()) {
+    violations.push("SUPPLIER_ORDER_NETWORK_ENABLED_MUST_BE_0");
+  }
+  if (isSupplierNetworkEnabled() && isLiveReadEnabled()) {
+    violations.push("LIVE_READ_SHOULD_BE_DISABLED_FOR_ORDER_SANDBOX_TESTS");
+  }
+  return {
+    safe: violations.length === 0,
+    supplierNetworkEnabled: isSupplierNetworkEnabled(),
+    supplierOrderNetworkEnabled: isSupplierOrderNetworkEnabled(),
+    liveReadEnabled: isLiveReadEnabled(),
+    violations
+  };
+}
+function assertOrderSandboxNetworkSafety() {
+  const report = evaluateSupplierOrderNetworkSafety();
+  if (!report.safe) {
+    throw new Error(`NETWORK_SAFETY_VIOLATION:${report.violations.join(",")}`);
+  }
+}
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_persistence2();
+var inflightSandbox = /* @__PURE__ */ new Map();
+function buildPayload(input) {
+  const idempotencyKey = input.idempotencyKey || buildSupplierOrderIdempotencyKey(input.orderId, input.supplierId);
+  return {
+    buzzardOrderId: input.orderId,
+    supplierId: input.supplierId,
+    correlationId: input.correlationId || (0, import_crypto4.randomUUID)(),
+    idempotencyKey,
+    lines: input.lines.map((line) => ({
+      productId: input.productId,
+      supplierSku: line.supplierSku,
+      quantity: line.quantity,
+      unitPrice: line.unitPrice,
+      currency: input.currency || "EUR"
+    })),
+    shippingDestination: filterSupplierFulfillmentAddress(input.shippingAddress),
+    billingContext: input.billingAddress ? filterSupplierFulfillmentAddress(input.billingAddress) : void 0,
+    customerReference: input.customerReference,
+    currency: input.currency || "EUR",
+    priceSnapshotIds: input.priceSnapshotId ? [input.priceSnapshotId] : void 0,
+    dropshipping: input.dropshipping ?? false,
+    whiteLabel: input.whiteLabel ?? false,
+    blindShipping: input.blindShipping ?? false,
+    source: "SANDBOX"
+  };
+}
+function toResult(record, replay = false) {
+  return {
+    ok: record.status !== "FAILED" && record.status !== "CANCELLED",
+    sandbox: true,
+    source: replay ? "IDEMPOTENT_REPLAY" : "SANDBOX",
+    supplierOrderId: record.supplierOrderId,
+    status: record.status,
+    message: replay ? "Idempotent replay \u2014 existing sandbox supplier order returned" : "Sandbox supplier order accepted \u2014 no real supplier network dispatch",
+    idempotentReplay: replay,
+    tracking: record.tracking,
+    payload: record.payload,
+    failureClass: record.failureClass,
+    dryRun: true
+  };
+}
+async function executeSupplierOrderSandbox(input) {
+  bootstrapSupplierEnginePersistence();
+  const started = Date.now();
+  assertOrderSandboxNetworkSafety();
+  if (isSupplierOrderNetworkEnabled()) {
+    const fail = failureResult("ORDER_NETWORK_ENABLED", "Real supplier order network must remain disabled");
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: fail.failureMessage,
+      failureClass: fail.failureClass,
+      dryRun: true
+    };
+  }
+  const payload = buildPayload(input);
+  const piiViolations = assertNoSecretsInPayload(payload);
+  if (piiViolations.length) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "PII/security violation in payload",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  const existing = getSupplierOrderSandboxByIdempotency(payload.idempotencyKey);
+  if (existing) {
+    recordSupplierEngineAudit({
+      supplierId: input.supplierId,
+      action: "supplier.order_sandbox.idempotent_replay",
+      metadata: {
+        orderId: input.orderId,
+        supplierOrderId: existing.supplierOrderId,
+        idempotencyKey: payload.idempotencyKey
+      }
+    });
+    return toResult(existing, true);
+  }
+  const supplier = getSupplier(input.supplierId);
+  if (!supplier) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "UNKNOWN_SUPPLIER",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  if (!isSupplierSelectable(input.supplierId)) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "SUPPLIER_DISABLED",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  const health = getSupplierHealth(input.supplierId);
+  if (health.healthStatus === "UNHEALTHY" && !input._testFailure) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "CONNECTOR_UNHEALTHY",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  const validation = validateSandboxPayload(payload);
+  if (!validation.valid) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: validation.errors[0] || "PAYLOAD_VALIDATION_FAILED",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  if (input._testFailure) {
+    const fail = failureResult(input._testFailure, input._testFailure);
+    const now2 = (/* @__PURE__ */ new Date()).toISOString();
+    const failedRecord = {
+      supplierOrderId: buildDeterministicSandboxOrderId(
+        payload.buzzardOrderId,
+        payload.supplierId,
+        payload.idempotencyKey
+      ),
+      buzzardOrderId: payload.buzzardOrderId,
+      supplierId: payload.supplierId,
+      status: "FAILED",
+      idempotencyKey: payload.idempotencyKey,
+      correlationId: payload.correlationId,
+      payload,
+      failureClass: fail.failureClass,
+      failureCode: fail.failureCode,
+      failureMessage: fail.failureMessage,
+      latencyMs: Date.now() - started,
+      sandbox: true,
+      networkDispatched: false,
+      createdAt: now2,
+      updatedAt: now2
+    };
+    saveSupplierOrderSandboxRecord(failedRecord);
+    return toResult(failedRecord);
+  }
+  if (input._testSimulateTimeout) {
+    const fail = failureResult("TIMEOUT", "Simulated supplier timeout");
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: fail.failureMessage,
+      failureClass: fail.failureClass,
+      dryRun: true
+    };
+  }
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const supplierOrderId = buildDeterministicSandboxOrderId(
+    payload.buzzardOrderId,
+    payload.supplierId,
+    payload.idempotencyKey
+  );
+  let status = "PREPARED";
+  assertSupplierOrderTransition(status, "VALIDATED");
+  status = "VALIDATED";
+  assertSupplierOrderTransition(status, "SANDBOX_ACCEPTED");
+  status = "SANDBOX_ACCEPTED";
+  const tracking = buildSandboxTracking(supplierOrderId);
+  const record = {
+    supplierOrderId,
+    buzzardOrderId: payload.buzzardOrderId,
+    supplierId: payload.supplierId,
+    status,
+    idempotencyKey: payload.idempotencyKey,
+    correlationId: payload.correlationId,
+    payload,
+    tracking,
+    latencyMs: Date.now() - started,
+    sandbox: true,
+    networkDispatched: false,
+    createdAt: now,
+    updatedAt: now
+  };
+  saveSupplierOrderSandboxRecord(record);
+  recordSupplierEngineAudit({
+    supplierId: input.supplierId,
+    action: "supplier.order_sandbox.accepted",
+    correlationId: payload.correlationId,
+    metadata: redactSecrets(
+      sanitizePayloadForInspection({
+        orderId: input.orderId,
+        supplierOrderId,
+        idempotencyKey: payload.idempotencyKey,
+        status,
+        latencyMs: record.latencyMs
+      })
+    )
+  });
+  return toResult(record);
+}
+async function runSupplierOrderSandbox(input) {
+  const idempotencyKey = input.idempotencyKey || buildSupplierOrderIdempotencyKey(input.orderId, input.supplierId);
+  const inflight = inflightSandbox.get(idempotencyKey);
+  if (inflight) return inflight;
+  const promise = executeSupplierOrderSandbox(input);
+  inflightSandbox.set(idempotencyKey, promise);
+  try {
+    return await promise;
+  } finally {
+    inflightSandbox.delete(idempotencyKey);
+  }
+}
+function getSupplierOrderSandboxAdminSummary(supplierId) {
+  const recent = getLastSupplierOrderSandboxForSupplier(supplierId);
+  return {
+    realSupplierOrderNetwork: "DISABLED",
+    lastSandboxOrder: recent ? {
+      supplierOrderId: recent.supplierOrderId,
+      buzzardOrderId: recent.buzzardOrderId,
+      status: recent.status,
+      idempotencyKey: recent.idempotencyKey,
+      latencyMs: recent.latencyMs,
+      error: recent.failureCode,
+      updatedAt: recent.updatedAt
+    } : null
+  };
+}
+
+// lib/supplier-engine/admin.ts
 init_config();
 
 // lib/supplier-engine/connectionTest.ts
@@ -31696,6 +32248,10 @@ async function getSupplierEngineDetail(supplierId) {
       latencyMs: health.responseTimeMs,
       reliability: health.reliabilityScore,
       liveReadEnabled: isLiveReadEnabled()
+    },
+    orderSandbox: {
+      ...getSupplierOrderSandboxAdminSummary(supplierId),
+      supplierOrderNetworkEnabled: isSupplierOrderNetworkEnabled()
     }
   };
 }
@@ -31728,12 +32284,13 @@ init_persistence();
 // lib/supplier-engine/order.ts
 init_registry2();
 init_capabilities();
-init_security();
 
 // lib/supplier-engine/orderIdempotency.ts
+init_persistence();
 var orderIdempotencyKeys = /* @__PURE__ */ new Map();
-function buildSupplierOrderIdempotencyKey(supplierId, buzzardOrderId, idempotencyKey) {
-  return `${supplierId}:${buzzardOrderId}:${idempotencyKey || "default"}`;
+function buildSupplierOrderIdempotencyKey2(supplierId, buzzardOrderId, idempotencyKey) {
+  if (idempotencyKey) return `${supplierId}:${buzzardOrderId}:${idempotencyKey}`;
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
 }
 function getIdempotentSupplierOrder(key) {
   return orderIdempotencyKeys.get(key)?.supplierOrderId;
@@ -31743,7 +32300,10 @@ function recordIdempotentSupplierOrder(key, supplierOrderId) {
   if (existing) {
     return { replay: true, supplierOrderId: existing.supplierOrderId };
   }
-  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt: (/* @__PURE__ */ new Date()).toISOString() });
+  const createdAt = (/* @__PURE__ */ new Date()).toISOString();
+  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt });
+  bootstrapSupplierEnginePersistence();
+  getSupplierPersistence()?.claimIdempotencyKey?.(key, key.split(":")[0] || "unknown");
   return { replay: false, supplierOrderId };
 }
 function resetOrderIdempotencyKeys() {
@@ -31752,16 +32312,11 @@ function resetOrderIdempotencyKeys() {
 
 // lib/supplier-engine/order.ts
 function buildDryRunPayload(request) {
-  const safeAddress = {};
-  for (const [key, value] of Object.entries(request.shippingAddress || {})) {
-    if (/payment|card|cvv|iban/i.test(key)) continue;
-    safeAddress[key] = value;
-  }
   return {
     supplierId: request.supplierId,
     orderId: request.orderId,
     lines: request.lines,
-    shippingAddress: safeAddress,
+    shippingAddress: filterSupplierFulfillmentAddress(request.shippingAddress),
     dropshipping: request.dropshipping ?? false,
     whiteLabel: request.whiteLabel ?? false,
     blindShipping: request.blindShipping ?? false,
@@ -31773,15 +32328,12 @@ async function createSupplierOrder(request) {
   if (!supplier) {
     return { ok: false, dryRun: true, status: "REJECTED", message: "UNKNOWN_SUPPLIER" };
   }
-  if (!hasCapability(supplier.capabilities, "orderAPI") && !supplier.capabilities.createOrder) {
-    return { ok: false, dryRun: true, status: "CAPABILITY_MISSING", message: "orderAPI not configured" };
-  }
-  const idempotencyKey = buildSupplierOrderIdempotencyKey(
+  const legacyKey = buildSupplierOrderIdempotencyKey2(
     request.supplierId,
     request.orderId,
     request.idempotencyKey
   );
-  const existingOrderId = getIdempotentSupplierOrder(idempotencyKey);
+  const existingOrderId = getIdempotentSupplierOrder(legacyKey);
   if (existingOrderId) {
     return {
       ok: true,
@@ -31791,24 +32343,24 @@ async function createSupplierOrder(request) {
       message: "Duplicate order retry \u2014 existing supplier order reference returned"
     };
   }
-  const payload = buildDryRunPayload(request);
-  void redactSecrets(payload);
-  if (!isSupplierOrderNetworkEnabled()) {
-    const supplierOrderId = `DRY-ORD-${Date.now()}`;
-    recordIdempotentSupplierOrder(idempotencyKey, supplierOrderId);
+  if (isSupplierOrderNetworkEnabled()) {
     return {
-      ok: true,
+      ok: false,
       dryRun: true,
-      supplierOrderId,
-      status: "PREPARED_NOT_SENT",
-      message: "Order foundation only \u2014 supplier order network disabled"
+      status: "ORDER_NETWORK_REQUIRED",
+      message: "Real supplier order dispatch requires explicit network enablement \u2014 blocked in #335"
     };
   }
+  const sandboxResult = await runSupplierOrderSandbox(request);
+  if (sandboxResult.supplierOrderId) {
+    recordIdempotentSupplierOrder(legacyKey, sandboxResult.supplierOrderId);
+  }
   return {
-    ok: false,
+    ok: sandboxResult.ok,
     dryRun: true,
-    status: "ORDER_NETWORK_REQUIRED",
-    message: "Real supplier order dispatch requires explicit network enablement"
+    supplierOrderId: sandboxResult.supplierOrderId,
+    status: sandboxResult.idempotentReplay ? "IDEMPOTENT_REPLAY" : sandboxResult.status,
+    message: sandboxResult.message
   };
 }
 function validateSupplierOrderPayload(request) {
@@ -31821,8 +32373,10 @@ function validateSupplierOrderPayload(request) {
     if (line.quantity <= 0) errors.push("INVALID_QUANTITY");
   }
   if (!request.shippingAddress?.country) errors.push("MISSING_SHIPPING_COUNTRY");
-  if (errors.length) return { valid: false, errors };
-  return { valid: true, errors: [], payload: buildDryRunPayload(request) };
+  const payload = buildDryRunPayload(request);
+  const sanitized = sanitizePayloadForInspection(payload);
+  if (errors.length) return { valid: false, errors, sanitized };
+  return { valid: true, errors: [], payload, sanitized };
 }
 async function getSupplierTracking(supplierId, supplierOrderId) {
   const { fetchSupplierTracking: fetchSupplierTracking2 } = await Promise.resolve().then(() => (init_tracking(), tracking_exports));
@@ -32601,6 +33155,9 @@ function buildInterCarsProfileSummary(profile) {
 
 // lib/supplier-engine/service.ts
 init_config();
+
+// lib/supplier-engine/orderSandbox/index.ts
+init_persistence2();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   TEST_SUPPLIER_ID,
@@ -32613,6 +33170,7 @@ init_config();
   describeLiveCredentialReadiness,
   evaluateLiveReadSyncGuard,
   evaluateProductionSyncGuard,
+  evaluateSupplierOrderNetworkSafety,
   getRegisteredLiveSupplierId,
   getSupplier,
   getSupplierConnectorMetrics,
@@ -32621,12 +33179,14 @@ init_config();
   getSupplierEngineDetail,
   getSupplierHealth,
   getSupplierLogs,
+  getSupplierOrderSandboxAdminSummary,
   getSupplierPersistenceMode,
   getSupplierRuntimeState,
   getSupplierTracking,
   getSyncCursor,
   getSyncCursorForAdmin,
   hasLiveSupplierCredentialsConfigured,
+  hydrateSupplierOrderSandboxFromPersistence,
   ingestSupplierFeed,
   isBlockedHost,
   isInterCarsProfile,
@@ -32642,12 +33202,14 @@ init_config();
   resetMockTransportScenarios,
   resetOrderIdempotencyKeys,
   resetSupplierCursorSafe,
+  resetSupplierOrderSandboxStore,
   resolveLiveSupplierProfile,
   resolvePredefinedLiveProfile,
   runSupplierConnectionTest,
   runSupplierDryRunTestSync,
   runSupplierLiveOnboarding,
   runSupplierLiveReadSync,
+  runSupplierOrderSandbox,
   runSupplierSyncJob,
   sanitizeClientSyncRequest,
   selectBestSupplierForOrder,

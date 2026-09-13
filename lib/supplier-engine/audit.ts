@@ -10,6 +10,8 @@ export type SupplierAuditAction =
   | "supplier.cursor.reset"
   | "supplier.configuration.changed"
   | "supplier.order.dry_run"
+  | "supplier.order_sandbox.idempotent_replay"
+  | "supplier.order_sandbox.accepted"
   | "supplier.live_read.blocked"
   | "supplier.live_read.started"
   | "supplier.live_read.completed"

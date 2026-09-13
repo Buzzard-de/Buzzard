@@ -152,8 +152,76 @@ module.exports = {
         supplierId: req.params.supplierId,
         ...req.body,
       });
-      audit(req, req.params.supplierId, AUDIT_ACTIONS.SUPPLIER_ORDER_ATTEMPT, { dryRun: true });
+      audit(req, req.params.supplierId, AUDIT_ACTIONS.SUPPLIER_ORDER_ATTEMPT, { dryRun: true, sandbox: true });
       return res.json({ success: true, data: result, payload: validation.payload, source: "supplier-foundation" });
+    });
+
+    app.get("/api/admin/supplier-foundation/:supplierId/order-sandbox", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "suppliers.read")) return;
+      const foundationMod = loadFoundation();
+      if (!foundationMod) return res.status(503).json({ success: false, errorCode: "FOUNDATION_UNAVAILABLE" });
+      const networkSafety = foundationMod.evaluateSupplierOrderNetworkSafety?.() || {
+        safe: !foundationMod.isSupplierOrderNetworkEnabled?.(),
+      };
+      const summary = foundationMod.getSupplierOrderSandboxAdminSummary?.(req.params.supplierId) || {
+        realSupplierOrderNetwork: "DISABLED",
+        lastSandboxOrder: null,
+      };
+      return res.json({
+        success: true,
+        data: {
+          ...summary,
+          networkSafety,
+          supplierOrderNetworkEnabled: foundationMod.isSupplierOrderNetworkEnabled?.() ?? false,
+        },
+        source: "supplier-foundation",
+      });
+    });
+
+    app.post("/api/admin/supplier-foundation/:supplierId/order-sandbox-test", async (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "suppliers.read")) return;
+      const foundationMod = loadFoundation();
+      if (!foundationMod) return res.status(503).json({ success: false, errorCode: "FOUNDATION_UNAVAILABLE" });
+      if (foundationMod.rejectClientCredentials(req.body || {})) {
+        return res.status(400).json({ success: false, errorCode: "CREDENTIALS_NOT_ALLOWED" });
+      }
+      const orderId = String(req.body?.orderId || `ADMIN-SBX-${Date.now()}`);
+      const validation = foundationMod.validateSupplierOrderPayload({
+        supplierId: req.params.supplierId,
+        orderId,
+        lines: req.body?.lines || [{ supplierSku: "SANDBOX-SKU-1", quantity: 1, unitPrice: 10 }],
+        shippingAddress: req.body?.shippingAddress || { country: "DE", city: "Berlin", postalCode: "10115" },
+      });
+      if (!validation.valid) {
+        return res.status(400).json({ success: false, errors: validation.errors });
+      }
+      const started = Date.now();
+      const result = await foundationMod.runSupplierOrderSandbox({
+        supplierId: req.params.supplierId,
+        orderId,
+        lines: req.body?.lines || [{ supplierSku: "SANDBOX-SKU-1", quantity: 1, unitPrice: 10 }],
+        shippingAddress: req.body?.shippingAddress || { country: "DE", city: "Berlin", postalCode: "10115" },
+        correlationId: req.body?.correlationId,
+      });
+      audit(req, req.params.supplierId, AUDIT_ACTIONS.SUPPLIER_ORDER_ATTEMPT, {
+        sandboxTest: true,
+        orderId,
+        supplierOrderId: result.supplierOrderId,
+        status: result.status,
+        latencyMs: Date.now() - started,
+      });
+      return res.json({
+        success: true,
+        data: {
+          ...result,
+          latencyMs: Date.now() - started,
+          realSupplierOrderNetwork: "DISABLED",
+        },
+        payload: validation.sanitized,
+        source: "supplier-foundation",
+      });
     });
 
     app.get("/api/admin/supplier-foundation/:supplierId/cursor", (req, res) => {

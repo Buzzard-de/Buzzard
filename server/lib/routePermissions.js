@@ -114,6 +114,8 @@ const EXACT = {
   "POST /api/admin/supplier-foundation/:supplierId/enable": "suppliers.write",
   "POST /api/admin/supplier-foundation/:supplierId/disable": "suppliers.write",
   "POST /api/admin/supplier-foundation/:supplierId/order-dry-run": "suppliers.read",
+  "GET /api/admin/supplier-foundation/:supplierId/order-sandbox": "suppliers.read",
+  "POST /api/admin/supplier-foundation/:supplierId/order-sandbox-test": "suppliers.read",
   "GET /api/admin/supplier-foundation/:supplierId/cursor": "suppliers.read",
   "POST /api/admin/supplier-foundation/:supplierId/cursor/reset": "suppliers.write",
   "GET /api/admin/release/readiness": "system.read",

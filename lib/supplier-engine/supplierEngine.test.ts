@@ -267,7 +267,7 @@ describe("Supplier Engine — order foundation", () => {
     });
     expect(result.dryRun).toBe(true);
     expect(result.ok).toBe(true);
-    expect(result.status).toBe("PREPARED_NOT_SENT");
+    expect(result.status).toBe("SANDBOX_ACCEPTED");
   });
 });
 

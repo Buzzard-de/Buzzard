@@ -231,7 +231,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   assertOrderTransition(order.status, "PROCESSING");
   order.status = "PROCESSING";
 
-  const fulfillment = prepareSupplierOrders(order);
+  const fulfillment = await prepareSupplierOrders(order);
   if (!fulfillment.ok) {
     rollbackReservations(reservationResult.reservationIds);
     order = {

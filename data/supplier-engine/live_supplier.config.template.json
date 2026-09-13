@@ -1,0 +1,57 @@
+{
+  "$comment": "Template only — copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  "supplierId": "",
+  "name": "",
+  "displayName": "",
+  "country": "DE",
+  "region": "EU",
+  "currency": "EUR",
+  "connectorType": "b2b-sandbox",
+  "environment": "SANDBOX",
+  "baseUrl": "",
+  "secretsRef": "env:SUPPLIER_LIVE_CREDENTIALS",
+  "authentication": "api_key",
+  "authType": "API_KEY",
+  "endpoints": {
+    "health": "/health",
+    "products": "/products",
+    "stock": "/stock",
+    "prices": "/prices"
+  },
+  "fieldMapping": {
+    "article_number": "supplierSku",
+    "sku": "supplierSku",
+    "ean_code": "ean",
+    "gtin": "gtin",
+    "mpn": "mpn",
+    "brand_name": "brand",
+    "title": "name",
+    "price_net": "supplierPrice",
+    "stock_qty": "stock"
+  },
+  "categoryMapping": {},
+  "supportedMarkets": ["DE"],
+  "feedFormat": "json",
+  "priceIncludesVat": false,
+  "capabilities": {
+    "productFeed": true,
+    "stockFeed": true,
+    "priceFeed": true,
+    "orderAPI": false,
+    "createOrder": false,
+    "cancelOrder": false,
+    "orderStatus": false,
+    "trackingAPI": false,
+    "returnsAPI": false,
+    "refund": false,
+    "credit": false,
+    "replacement": false,
+    "dropshipping": false,
+    "whiteLabel": false,
+    "blindShipping": false
+  },
+  "pagination": {
+    "mode": "cursor",
+    "pageSize": 100
+  }
+}

@@ -22,10 +22,14 @@ export class MockSupplierTransport implements SupplierTransport {
 
   async request(req: SupplierHttpRequest): Promise<SupplierHttpResponse> {
     const key = `${req.method || "GET"} ${req.url}`;
+    const urlWithoutQuery = req.url.split("?")[0];
+    const keyWithoutQuery = `${req.method || "GET"} ${urlWithoutQuery}`;
     const scenario =
       this.scenarios.get(key) ||
+      this.scenarios.get(keyWithoutQuery) ||
       this.scenarios.get(req.url) ||
       globalScenarios.get(key) ||
+      globalScenarios.get(keyWithoutQuery) ||
       globalScenarios.get(req.url) ||
       defaultScenario;
 

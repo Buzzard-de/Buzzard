@@ -37,4 +37,10 @@ export {
   isBlockedHost,
   resetMockTransportScenarios,
   resetOrderIdempotencyKeys,
+  runSupplierLiveReadSync,
+  evaluateLiveReadSyncGuard,
+  hasLiveSupplierCredentialsConfigured,
+  resolveLiveSupplierProfile,
+  getRegisteredLiveSupplierId,
+  buildDataQualityReport,
 } from "./service";

@@ -9,6 +9,7 @@ import {
   resetSupplierFoundationCursor,
   runSupplierFoundationConnectionTest,
   runSupplierFoundationTestSync,
+  runSupplierFoundationLiveReadSync,
   setSupplierFoundationEnabled,
   triggerSupplierFoundationSync,
   type SupplierFoundationDashboard,
@@ -92,6 +93,18 @@ export default function AdminSupplierOperationsPanel() {
     setActionLoading(true);
     try {
       await runSupplierFoundationConnectionTest(supplierId);
+      await reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.error);
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleLiveReadSync(supplierId: string) {
+    setActionLoading(true);
+    try {
+      await runSupplierFoundationLiveReadSync(supplierId, "FULL");
       await reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : t.error);
@@ -270,6 +283,14 @@ export default function AdminSupplierOperationsPanel() {
             >
               {t.testSync}
             </button>
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              disabled={actionLoading}
+              onClick={() => handleLiveReadSync(selectedId)}
+            >
+              {t.liveReadSync}
+            </button>
             {detail.general.active ? (
               <button
                 type="button"
@@ -312,9 +333,18 @@ export default function AdminSupplierOperationsPanel() {
             </>
           ) : null}
 
+          {"metrics" in detail && detail.metrics ? (
+            <div className="admin-kpi-grid">
+              <article className="admin-stat"><strong>{String((detail.metrics as Record<string, unknown>).productCount)}</strong><span>{t.productCount}</span></article>
+              <article className="admin-stat"><strong>{String((detail.metrics as Record<string, unknown>).offerCount)}</strong><span>{t.offerCount}</span></article>
+              <article className="admin-stat"><strong>{String((detail.metrics as Record<string, unknown>).errorCount)}</strong><span>{t.error}</span></article>
+            </div>
+          ) : null}
+
           {testSyncResult ? (
             <>
               <h3>{t.testSync}</h3>
+              {"dataQuality" in testSyncResult ? <h4>{t.dataQuality}</h4> : null}
               <pre className="admin-code-block">{JSON.stringify(testSyncResult, null, 2)}</pre>
             </>
           ) : null}

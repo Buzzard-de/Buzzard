@@ -82,7 +82,20 @@ export interface SupplierDryRunTestSyncResult {
   priceRecords: number;
   warnings: string[];
   errors: Array<{ code: string; message: string; record?: string }>;
+  dataQuality?: Record<string, number>;
+  source?: "mock" | "live" | "fixture";
   completedAt: string;
+}
+
+export interface SupplierLiveReadSyncResult {
+  liveRead: true;
+  status: string;
+  guardReasons?: string[];
+  productsFetched: number;
+  productsCreated: number;
+  productsUpdated: number;
+  stockUpdates: number;
+  priceUpdates: number;
 }
 
 function apiBase(): string {
@@ -162,5 +175,15 @@ export async function runSupplierFoundationTestSync(supplierId: string) {
   return foundationRequest<{ success: boolean; data: SupplierDryRunTestSyncResult }>(
     `/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/test-sync`,
     { method: "POST", body: JSON.stringify({}) }
+  );
+}
+
+export async function runSupplierFoundationLiveReadSync(
+  supplierId: string,
+  jobType: "FULL" | "INCREMENTAL" = "FULL"
+) {
+  return foundationRequest<{ success: boolean; data: SupplierLiveReadSyncResult }>(
+    `/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/live-read-sync`,
+    { method: "POST", body: JSON.stringify({ jobType }) }
   );
 }

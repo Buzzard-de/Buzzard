@@ -33,8 +33,14 @@ export async function runSupplierConnectionTest(
   const started = Date.now();
   const supplier = getSupplierOrThrow(supplierId);
   const integrationType = supplier.integrationTypes[0] ?? "manual";
-  const environment = resolveConnectorEnvironment(connectorConfig.environment);
-  const connector = createConnector(supplier, integrationType, connectorConfig);
+  const mergedConnectorConfig: ConnectorConfig = {
+    ...connectorConfig,
+    environment: connectorConfig.environment ?? supplier.connectorProfile?.environment,
+    baseUrl: connectorConfig.baseUrl ?? supplier.connectorProfile?.baseUrl,
+    secretsRef: connectorConfig.secretsRef ?? supplier.connectorProfile?.secretsRef ?? supplier.secretsRef,
+  };
+  const environment = resolveConnectorEnvironment(mergedConnectorConfig.environment);
+  const connector = createConnector(supplier, integrationType, mergedConnectorConfig);
 
   const credentialsOk =
     hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef || connectorConfig.secretsRef);
@@ -48,10 +54,10 @@ export async function runSupplierConnectionTest(
     });
   }
 
-  if (connectorConfig.baseUrl) {
+  if (mergedConnectorConfig.baseUrl) {
     const endpointCheck = validateSupplierEndpoint(
-      connectorConfig.baseUrl,
-      extractAllowedHosts(connectorConfig.baseUrl)
+      mergedConnectorConfig.baseUrl,
+      extractAllowedHosts(mergedConnectorConfig.baseUrl)
     );
     if (!endpointCheck.allowed) {
       return finish(started, {
@@ -73,8 +79,8 @@ export async function runSupplierConnectionTest(
   }
 
   const auth = resolveSupplierAuth({
-    ...connectorConfig,
-    secretsRef: connectorConfig.secretsRef || supplier.secretsRef,
+    ...mergedConnectorConfig,
+    secretsRef: mergedConnectorConfig.secretsRef || supplier.secretsRef,
   });
 
   if (environment !== "MOCK" && !auth.configured) {

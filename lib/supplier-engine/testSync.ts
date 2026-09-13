@@ -1,7 +1,10 @@
 import { createConnector } from "./connectors/factory";
 import { applyFieldMapping, validateMappedRecord } from "./fieldMapping";
 import { getSupplierOrThrow } from "./registry";
+import { normalizeB2bSandboxRecord } from "./connectors/b2b-sandbox/mapping";
+import { buildDataQualityReport, isAutomotiveSupplier } from "./dataQuality";
 import type { ConnectorConfig, IntegrationType } from "./types";
+import type { SupplierDataQualityReport } from "./dataQuality";
 
 export interface DryRunTestSyncResult {
   ok: boolean;
@@ -15,6 +18,8 @@ export interface DryRunTestSyncResult {
   priceRecords: number;
   warnings: string[];
   errors: Array<{ code: string; message: string; record?: string }>;
+  dataQuality?: SupplierDataQualityReport;
+  source: "mock" | "live" | "fixture";
   completedAt: string;
 }
 
@@ -38,25 +43,39 @@ export async function runSupplierDryRunTestSync(
     priceRecords: 0,
     warnings: [],
     errors: [],
+    source: integrationType === "b2b-sandbox" ? "live" : "fixture",
     completedAt: new Date().toISOString(),
   };
 
   await connector.connect();
 
   const seenSkus = new Set<string>();
+  const normalizedRecords: Record<string, unknown>[] = [];
   const productFetch = await connector.fetchProducts({ limit: 1000 });
+
   if (!productFetch.ok) {
     result.ok = false;
     result.errors.push({
       code: productFetch.error || "FETCH_FAILED",
       message: productFetch.error || "Product fetch failed",
     });
+    if (productFetch.error === "NETWORK_DISABLED") {
+      result.source = "mock";
+      result.warnings.push("Live network disabled — dry-run cannot fetch real supplier feed");
+    }
     return result;
   }
 
+  if (productFetch.dryRun) result.source = "fixture";
+
   result.productsFound = productFetch.records.length;
   for (const raw of productFetch.records) {
-    const mapped = applyFieldMapping(raw, supplier.fieldMapping);
+    const mapped =
+      integrationType === "b2b-sandbox" && supplier.connectorProfile
+        ? normalizeB2bSandboxRecord(raw, supplier.connectorProfile)
+        : applyFieldMapping(raw, supplier.fieldMapping);
+
+    normalizedRecords.push(mapped);
     const sku = String(mapped.supplierSku || mapped.supplier_sku || "");
     const fieldErrors = validateMappedRecord(mapped);
     if (fieldErrors.length) {
@@ -74,6 +93,10 @@ export async function runSupplierDryRunTestSync(
     }
     result.valid++;
   }
+
+  result.dataQuality = buildDataQualityReport(normalizedRecords, {
+    automotive: isAutomotiveSupplier(supplier.connectorProfile),
+  });
 
   if (supplier.capabilities.stockFeed) {
     const stockFetch = await connector.fetchStock();

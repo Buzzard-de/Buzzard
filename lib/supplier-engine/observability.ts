@@ -9,6 +9,9 @@ export interface SupplierLogEntry {
   status: "SUCCESS" | "FAILURE" | "PARTIAL";
   records: number;
   timestamp: string;
+  correlationId?: string;
+  errorCode?: string;
+  result?: string;
   error?: string;
 }
 

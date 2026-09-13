@@ -4,7 +4,10 @@ import { getSupplierOrThrow } from "./registry";
 import { applyFieldMapping, validateMappedRecord } from "./fieldMapping";
 import { processInBatches } from "./batch";
 import { withRetry } from "./retry";
+import { classifySupplierError } from "./errors";
 import { logSupplierOperation, recordSyncMetrics } from "./observability";
+import { getSyncCursor, saveSyncCursor } from "./syncCursor";
+import { markSyncCompleted, markSyncStarted } from "./state";
 import {
   getProduct,
   updateProductSupplierOffer,
@@ -34,6 +37,8 @@ export async function runSupplierSyncJob(
   const jobType = options.jobType ?? "FULL";
   const connector = createConnector(supplier, integrationType);
 
+  markSyncStarted(supplierId, jobId);
+
   const result: SyncJobResult = {
     jobId,
     supplierId,
@@ -51,6 +56,7 @@ export async function runSupplierSyncJob(
   };
 
   const syncStart = Date.now();
+  const seenSkus = new Set<string>();
 
   try {
     await connector.connect();
@@ -59,17 +65,37 @@ export async function runSupplierSyncJob(
       await syncStockOnly(connector, supplier, result);
     } else if (jobType === "PRICE_ONLY") {
       await syncPriceOnly(connector, supplier, result);
+    } else if (jobType === "INCREMENTAL") {
+      await syncIncrementalFeed(connector, supplier, result, options.batchSize ?? 50, seenSkus);
     } else {
-      await syncFullFeed(connector, supplier, result, options.batchSize ?? 50);
+      await syncFullFeed(connector, supplier, result, options.batchSize ?? 50, seenSkus);
     }
 
-    await connector.healthCheck();
+    const health = await connector.healthCheck();
+    markSyncCompleted(supplierId, {
+      status: result.status === "FAILED" ? "FAILED" : result.status === "PARTIAL" ? "PARTIAL" : "COMPLETED",
+      healthStatus: health.status,
+      error: result.errors[0]?.message,
+    });
   } catch (e) {
+    const classified = classifySupplierError({
+      message: e instanceof Error ? e.message : "Unknown sync error",
+      code: (e as { code?: string })?.code,
+    });
     result.status = "FAILED";
     result.errors.push({
-      code: "SYNC_FAILED",
-      message: e instanceof Error ? e.message : "Unknown sync error",
+      code: classified.code,
+      message: classified.message,
     });
+    markSyncCompleted(supplierId, {
+      status: "FAILED",
+      healthStatus: "UNHEALTHY",
+      error: classified.message,
+    });
+  }
+
+  if (jobType === "FULL" && seenSkus.size > 0) {
+    deactivateMissingOffers(supplier.supplierId, seenSkus, result);
   }
 
   result.completedAt = new Date().toISOString();
@@ -92,6 +118,8 @@ export async function runSupplierSyncJob(
     status: result.productsFailed > 0 ? "PARTIAL" : result.status === "FAILED" ? "FAILURE" : "SUCCESS",
     records: result.productsFetched,
     error: result.errors[0]?.message,
+    correlationId: jobId,
+    errorCode: result.errors[0]?.code,
   });
 
   return result;
@@ -101,7 +129,8 @@ async function syncFullFeed(
   connector: ReturnType<typeof createConnector>,
   supplier: ReturnType<typeof getSupplierOrThrow>,
   result: SyncJobResult,
-  batchSize: number
+  batchSize: number,
+  seenSkus: Set<string>
 ): Promise<void> {
   const fetchResult = await withRetry(() => connector.fetchProducts({ limit: 1000 }));
   if (!fetchResult.ok) {
@@ -111,15 +140,74 @@ async function syncFullFeed(
   }
 
   result.productsFetched = fetchResult.records.length;
+  if (fetchResult.cursor) {
+    saveSyncCursor(supplier.supplierId, { cursor: fetchResult.cursor });
+    result.checkpoint = fetchResult.cursor;
+  }
 
-  await processInBatches(fetchResult.records, async (batch) => {
+  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize);
+
+  if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
+    result.status = "PARTIAL";
+  }
+}
+
+async function syncIncrementalFeed(
+  connector: ReturnType<typeof createConnector>,
+  supplier: ReturnType<typeof getSupplierOrThrow>,
+  result: SyncJobResult,
+  batchSize: number,
+  seenSkus: Set<string>
+): Promise<void> {
+  const cursor = getSyncCursor(supplier.supplierId);
+  const fetchResult = await withRetry(() =>
+    connector.fetchProducts({
+      limit: 500,
+      cursor: cursor?.cursor,
+    })
+  );
+
+  if (!fetchResult.ok) {
+    result.status = "FAILED";
+    result.errors.push({ code: "FETCH_FAILED", message: fetchResult.error || "Incremental fetch failed" });
+    return;
+  }
+
+  result.productsFetched = fetchResult.records.length;
+  if (fetchResult.cursor) {
+    const saved = saveSyncCursor(supplier.supplierId, {
+      cursor: fetchResult.cursor,
+      lastModified: new Date().toISOString(),
+    });
+    result.checkpoint = saved.cursor;
+  }
+
+  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize);
+
+  if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
+    result.status = "PARTIAL";
+  }
+}
+
+async function processRecords(
+  _connector: ReturnType<typeof createConnector>,
+  supplier: ReturnType<typeof getSupplierOrThrow>,
+  result: SyncJobResult,
+  records: Record<string, unknown>[],
+  seenSkus: Set<string>,
+  batchSize: number
+): Promise<void> {
+  await processInBatches(records, async (batch) => {
     for (const raw of batch) {
       try {
         const mapped = applyFieldMapping(raw as Record<string, unknown>, supplier.fieldMapping);
+        const sku = String(mapped.supplierSku || mapped.supplier_sku || "");
+        if (sku) seenSkus.add(sku);
+
         const fieldErrors = validateMappedRecord(mapped);
         if (fieldErrors.length) {
           result.productsFailed++;
-          result.errors.push({ record: String(mapped.supplierSku), code: fieldErrors[0], message: fieldErrors[0] });
+          result.errors.push({ record: sku || "unknown", code: fieldErrors[0], message: fieldErrors[0] });
           continue;
         }
 
@@ -136,7 +224,7 @@ async function syncFullFeed(
             if (existing) {
               const offer = createSupplierOffer({
                 supplierId: supplier.supplierId,
-                supplierSku: String(mapped.supplierSku || mapped.supplier_sku),
+                supplierSku: sku,
                 supplierEan: String(mapped.ean || ""),
                 supplierPrice: Number(mapped.supplierPrice || mapped.purchase_price || 0),
                 currency: supplier.currency,
@@ -164,9 +252,25 @@ async function syncFullFeed(
       }
     }
   }, batchSize);
+}
 
-  if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
-    result.status = "PARTIAL";
+function deactivateMissingOffers(
+  supplierId: string,
+  seenSkus: Set<string>,
+  result: SyncJobResult
+): void {
+  for (const product of listRegistryProducts()) {
+    for (const offer of product.supplierOffers) {
+      if (offer.supplierId !== supplierId) continue;
+      if (seenSkus.has(offer.supplierSku)) continue;
+      if (offer.stock <= 0) continue;
+
+      const updated = updateProductSupplierOffer(product.productId, supplierId, { stock: 0 });
+      if (updated) {
+        upsertRegistryProduct(recalculatePricingFromBestOffer(updated));
+        result.productsUpdated++;
+      }
+    }
   }
 }
 

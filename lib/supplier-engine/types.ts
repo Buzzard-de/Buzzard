@@ -24,6 +24,16 @@ export type SupplierCapability =
   | "xml"
   | "csv";
 
+export type OrderCapability =
+  | "CREATE_ORDER"
+  | "CANCEL_ORDER"
+  | "ORDER_STATUS"
+  | "TRACKING"
+  | "RETURN"
+  | "REFUND"
+  | "CREDIT"
+  | "REPLACEMENT";
+
 export type SyncJobType = "FULL" | "INCREMENTAL" | "STOCK_ONLY" | "PRICE_ONLY";
 
 export type ConnectorHealthStatus = "HEALTHY" | "DEGRADED" | "UNHEALTHY" | "UNKNOWN";
@@ -45,6 +55,15 @@ export interface SupplierCapabilities {
   api?: boolean;
   xml?: boolean;
   csv?: boolean;
+  /** Explicit order execution capabilities */
+  createOrder?: boolean;
+  cancelOrder?: boolean;
+  orderStatus?: boolean;
+  tracking?: boolean;
+  returnAuthorization?: boolean;
+  refund?: boolean;
+  credit?: boolean;
+  replacement?: boolean;
 }
 
 export interface SupplierFieldMapping {
@@ -54,6 +73,8 @@ export interface SupplierFieldMapping {
 export interface SupplierConfig {
   supplierId: string;
   name: string;
+  displayName?: string;
+  legalName?: string;
   country: string;
   region: string;
   status: SupplierStatus;
@@ -64,6 +85,8 @@ export interface SupplierConfig {
   capabilities: SupplierCapabilities;
   fieldMapping: SupplierFieldMapping;
   rateLimit?: { requestsPerMinute: number };
+  /** Server-only reference — never sent to client */
+  secretsRef?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -149,10 +172,17 @@ export interface SupplierEngineAdminRow {
   integrationTypes: string;
   status: SupplierStatus;
   capabilities: string;
+  orderCapabilities: string;
+  supportedMarkets: string[];
   lastSync: string;
+  lastSuccessfulSync?: string;
+  lastFailedSync?: string;
+  syncStatus: string;
   health: ConnectorHealthStatus;
+  reliabilityScore: number;
   products: number;
   errors: number;
+  credentialsConfigured: boolean;
 }
 
 export interface SupplierOrderRequest {

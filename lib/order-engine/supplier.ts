@@ -1,5 +1,5 @@
 import { getProduct } from "@/lib/product-engine";
-import { selectBestSupplier } from "@/lib/product-engine/supplier";
+import { selectBestSupplierForOrder } from "@/lib/supplier-engine/selection";
 import { getSupplierSelectionStockInfo } from "@/lib/inventory-engine";
 import { getTranslationForLocale } from "@/lib/product-engine/translations";
 import type { SupplierAssignmentSnapshot } from "./types";
@@ -35,7 +35,7 @@ export function selectSupplierForOrderItem(
   const product = getProduct(productId);
   if (!product) return { ok: false, reason: "PRODUCT_NOT_FOUND" };
 
-  const selection = selectBestSupplier(product, { countryCode: marketId });
+  const selection = selectBestSupplierForOrder(product, { countryCode: marketId });
   if (!selection) {
     const allZeroStock = product.supplierOffers.every((o) => o.stock <= 0);
     return { ok: false, reason: allZeroStock ? "OUT_OF_STOCK" : "SUPPLIER_UNAVAILABLE" };

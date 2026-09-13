@@ -26547,6 +26547,119 @@ var live_supplier_config_template_default = {
   }
 };
 
+// data/supplier-engine/inter_cars.profile.template.json
+var inter_cars_profile_template_default = {
+  $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  $documentation: {
+    supplier: "Inter Cars S.A.",
+    country: "PL/EU (DE market supported)",
+    type: "Automotive B2B wholesaler",
+    officialDocs: [
+      "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+      "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+    ],
+    authentication: "OAuth2 Bearer token (B2B account via sales representative)",
+    rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+    stockSemantics: "availability field = units available for purchase at location",
+    priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+    currency: "Per-response currencyCode (EUR for DE customers when configured)",
+    updateFrequency: "Real-time for API; CSV feeds daily",
+    dropshipping: "Contact sales representative \u2014 not assumed enabled",
+    whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+  },
+  supplierId: "SUP-INTER-CARS-001",
+  name: "Inter Cars",
+  displayName: "Inter Cars B2B",
+  country: "DE",
+  region: "EU",
+  currency: "EUR",
+  connectorType: "b2b-sandbox",
+  adapterProfile: "inter-cars",
+  environment: "SANDBOX",
+  baseUrl: "https://dev.gw.intercars.eu",
+  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+  authentication: "oauth2",
+  authType: "OAUTH2",
+  endpoints: {
+    health: "/ic/catalog/category",
+    products: "/ic/catalog/products",
+    stock: "/ic/inventory/stock",
+    prices: "/ic/inventory/1.0.0/pricing/quote"
+  },
+  fieldMapping: {
+    sku: "supplierSku",
+    index: "mpn",
+    articleNumber: "mpn",
+    tecDoc: "tecdocId",
+    brand: "brand",
+    shortDescription: "name",
+    description: "description",
+    eans: "ean",
+    availability: "stock",
+    customerPriceNet: "supplierPrice",
+    listPriceNet: "listPriceNet",
+    genericArticleReferences: "supplierCategory"
+  },
+  categoryMapping: {},
+  categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
+  supportedMarkets: ["DE"],
+  feedFormat: "json",
+  priceIncludesVat: false,
+  priceModel: "net",
+  priceField: "customerPriceNet",
+  capabilities: {
+    productFeed: true,
+    stockFeed: true,
+    priceFeed: true,
+    orderAPI: false,
+    createOrder: false,
+    cancelOrder: false,
+    orderStatus: false,
+    trackingAPI: false,
+    returnsAPI: false,
+    refund: false,
+    credit: false,
+    replacement: false,
+    dropshipping: false,
+    whiteLabel: false,
+    blindShipping: false
+  },
+  pagination: {
+    mode: "pageNumber",
+    pageParam: "pageNumber",
+    pageSizeParam: "pageSize",
+    pageSize: 25,
+    hasNextPageField: "hasNextPage"
+  },
+  requestHeaders: {
+    "Accept-Language": "de"
+  },
+  allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+};
+
+// data/supplier-engine/inter_cars_category_mappings.json
+var inter_cars_category_mappings_default = {
+  $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
+  mappings: {
+    GenericArticle_1280: "auto-sub-05--oil-filters",
+    "Filtr oleju": "auto-sub-05--oil-filters",
+    "Oil filter": "auto-sub-05--oil-filters",
+    \u00D6lfilter: "auto-sub-05--oil-filters",
+    "Brake pad": "auto-sub-04--brake-pads",
+    Bremsbelag: "auto-sub-04--brake-pads",
+    "Brake disc": "auto-sub-04--brake-discs",
+    Bremsscheibe: "auto-sub-04--brake-discs",
+    Tyre: "auto-sub-01--car-tires",
+    Tire: "auto-sub-01--car-tires",
+    Reifen: "auto-sub-01--car-tires",
+    Battery: "auto-sub-06--car-batteries",
+    Batterie: "auto-sub-06--car-batteries",
+    "Car battery": "auto-sub-06--car-batteries",
+    Cleaning: "auto-sub-12--interior-cleaner",
+    Reinigung: "auto-sub-12--interior-cleaner"
+  }
+};
+
 // lib/supplier-engine/liveSupplier/config.ts
 function parseJsonConfig(raw) {
   try {
@@ -26581,16 +26694,36 @@ function normalizeProfile(profile) {
     fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
   };
 }
+function loadCategoryMappings(profile) {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = inter_cars_category_mappings_default.mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+function resolvePredefinedLiveProfile() {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
+    return loadCategoryMappings(normalizeProfile(base));
+  }
+  return null;
+}
 function resolveLiveSupplierProfile() {
   const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
   if (jsonConfig) {
     const parsed = parseJsonConfig(jsonConfig);
-    if (parsed) return parsed;
+    if (parsed) return loadCategoryMappings(parsed);
   }
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
   const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
   const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
   if (!supplierId || !baseUrl) return null;
-  return normalizeProfile({
+  return loadCategoryMappings(normalizeProfile({
     supplierId,
     name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
     displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
@@ -26618,7 +26751,7 @@ function resolveLiveSupplierProfile() {
     dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
     whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
     blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
-  });
+  }));
 }
 
 // lib/supplier-engine/liveSupplier/registry.ts

@@ -1,4 +1,6 @@
 import template from "@/data/supplier-engine/live_supplier.config.template.json";
+import interCarsTemplate from "@/data/supplier-engine/inter_cars.profile.template.json";
+import interCarsCategoryMappings from "@/data/supplier-engine/inter_cars_category_mappings.json";
 import { resolveCredentials } from "../credentials";
 import type { LiveSupplierProfile } from "./types";
 
@@ -42,18 +44,44 @@ function normalizeProfile(profile: LiveSupplierProfile): LiveSupplierProfile {
   };
 }
 
+function loadCategoryMappings(profile: LiveSupplierProfile): LiveSupplierProfile {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = (interCarsCategoryMappings as { mappings?: Record<string, string> }).mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+
+export function resolvePredefinedLiveProfile(): LiveSupplierProfile | null {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = interCarsTemplate as LiveSupplierProfile & {
+      $comment?: string;
+      $documentation?: unknown;
+    };
+    return loadCategoryMappings(normalizeProfile(base as LiveSupplierProfile));
+  }
+  return null;
+}
+
 export function resolveLiveSupplierProfile(): LiveSupplierProfile | null {
   const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
   if (jsonConfig) {
     const parsed = parseJsonConfig(jsonConfig);
-    if (parsed) return parsed;
+    if (parsed) return loadCategoryMappings(parsed);
   }
+
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
 
   const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
   const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
   if (!supplierId || !baseUrl) return null;
 
-  return normalizeProfile({
+  return loadCategoryMappings(normalizeProfile({
     supplierId,
     name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
     displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
@@ -81,7 +109,7 @@ export function resolveLiveSupplierProfile(): LiveSupplierProfile | null {
     dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
     whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
     blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1",
-  });
+  }));
 }
 
 export function isLiveReadEnabled(): boolean {

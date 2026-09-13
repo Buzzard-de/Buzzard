@@ -388,6 +388,129 @@ var init_live_supplier_config_template = __esm({
   }
 });
 
+// data/supplier-engine/inter_cars.profile.template.json
+var inter_cars_profile_template_default;
+var init_inter_cars_profile_template = __esm({
+  "data/supplier-engine/inter_cars.profile.template.json"() {
+    inter_cars_profile_template_default = {
+      $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+      $documentation: {
+        supplier: "Inter Cars S.A.",
+        country: "PL/EU (DE market supported)",
+        type: "Automotive B2B wholesaler",
+        officialDocs: [
+          "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+          "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+        ],
+        authentication: "OAuth2 Bearer token (B2B account via sales representative)",
+        rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+        stockSemantics: "availability field = units available for purchase at location",
+        priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+        currency: "Per-response currencyCode (EUR for DE customers when configured)",
+        updateFrequency: "Real-time for API; CSV feeds daily",
+        dropshipping: "Contact sales representative \u2014 not assumed enabled",
+        whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+      },
+      supplierId: "SUP-INTER-CARS-001",
+      name: "Inter Cars",
+      displayName: "Inter Cars B2B",
+      country: "DE",
+      region: "EU",
+      currency: "EUR",
+      connectorType: "b2b-sandbox",
+      adapterProfile: "inter-cars",
+      environment: "SANDBOX",
+      baseUrl: "https://dev.gw.intercars.eu",
+      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+      authentication: "oauth2",
+      authType: "OAUTH2",
+      endpoints: {
+        health: "/ic/catalog/category",
+        products: "/ic/catalog/products",
+        stock: "/ic/inventory/stock",
+        prices: "/ic/inventory/1.0.0/pricing/quote"
+      },
+      fieldMapping: {
+        sku: "supplierSku",
+        index: "mpn",
+        articleNumber: "mpn",
+        tecDoc: "tecdocId",
+        brand: "brand",
+        shortDescription: "name",
+        description: "description",
+        eans: "ean",
+        availability: "stock",
+        customerPriceNet: "supplierPrice",
+        listPriceNet: "listPriceNet",
+        genericArticleReferences: "supplierCategory"
+      },
+      categoryMapping: {},
+      categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
+      supportedMarkets: ["DE"],
+      feedFormat: "json",
+      priceIncludesVat: false,
+      priceModel: "net",
+      priceField: "customerPriceNet",
+      capabilities: {
+        productFeed: true,
+        stockFeed: true,
+        priceFeed: true,
+        orderAPI: false,
+        createOrder: false,
+        cancelOrder: false,
+        orderStatus: false,
+        trackingAPI: false,
+        returnsAPI: false,
+        refund: false,
+        credit: false,
+        replacement: false,
+        dropshipping: false,
+        whiteLabel: false,
+        blindShipping: false
+      },
+      pagination: {
+        mode: "pageNumber",
+        pageParam: "pageNumber",
+        pageSizeParam: "pageSize",
+        pageSize: 25,
+        hasNextPageField: "hasNextPage"
+      },
+      requestHeaders: {
+        "Accept-Language": "de"
+      },
+      allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+    };
+  }
+});
+
+// data/supplier-engine/inter_cars_category_mappings.json
+var inter_cars_category_mappings_default;
+var init_inter_cars_category_mappings = __esm({
+  "data/supplier-engine/inter_cars_category_mappings.json"() {
+    inter_cars_category_mappings_default = {
+      $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
+      mappings: {
+        GenericArticle_1280: "auto-sub-05--oil-filters",
+        "Filtr oleju": "auto-sub-05--oil-filters",
+        "Oil filter": "auto-sub-05--oil-filters",
+        \u00D6lfilter: "auto-sub-05--oil-filters",
+        "Brake pad": "auto-sub-04--brake-pads",
+        Bremsbelag: "auto-sub-04--brake-pads",
+        "Brake disc": "auto-sub-04--brake-discs",
+        Bremsscheibe: "auto-sub-04--brake-discs",
+        Tyre: "auto-sub-01--car-tires",
+        Tire: "auto-sub-01--car-tires",
+        Reifen: "auto-sub-01--car-tires",
+        Battery: "auto-sub-06--car-batteries",
+        Batterie: "auto-sub-06--car-batteries",
+        "Car battery": "auto-sub-06--car-batteries",
+        Cleaning: "auto-sub-12--interior-cleaner",
+        Reinigung: "auto-sub-12--interior-cleaner"
+      }
+    };
+  }
+});
+
 // lib/supplier-engine/liveSupplier/config.ts
 function envFlag(name) {
   const raw = process.env[name];
@@ -426,16 +549,36 @@ function normalizeProfile(profile) {
     fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
   };
 }
+function loadCategoryMappings(profile) {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = inter_cars_category_mappings_default.mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+function resolvePredefinedLiveProfile() {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
+    return loadCategoryMappings(normalizeProfile(base));
+  }
+  return null;
+}
 function resolveLiveSupplierProfile() {
   const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
   if (jsonConfig) {
     const parsed = parseJsonConfig(jsonConfig);
-    if (parsed) return parsed;
+    if (parsed) return loadCategoryMappings(parsed);
   }
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
   const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
   const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
   if (!supplierId || !baseUrl) return null;
-  return normalizeProfile({
+  return loadCategoryMappings(normalizeProfile({
     supplierId,
     name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
     displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
@@ -463,7 +606,7 @@ function resolveLiveSupplierProfile() {
     dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
     whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
     blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
-  });
+  }));
 }
 function isLiveReadEnabled() {
   return envFlag("SUPPLIER_LIVE_READ_ENABLED");
@@ -475,6 +618,8 @@ var init_config = __esm({
   "lib/supplier-engine/liveSupplier/config.ts"() {
     "use strict";
     init_live_supplier_config_template();
+    init_inter_cars_profile_template();
+    init_inter_cars_category_mappings();
     init_credentials();
   }
 });
@@ -763,6 +908,7 @@ __export(serverEntry_exports, {
   TEST_SUPPLIER_ID: () => TEST_SUPPLIER_ID,
   bootstrapSupplierEnginePersistence: () => bootstrapSupplierEnginePersistence,
   buildDataQualityReport: () => buildDataQualityReport,
+  buildInterCarsProfileSummary: () => buildInterCarsProfileSummary,
   createSupplierOrder: () => createSupplierOrder,
   createSupplierReturn: () => createSupplierReturn,
   evaluateLiveReadSyncGuard: () => evaluateLiveReadSyncGuard,
@@ -783,6 +929,7 @@ __export(serverEntry_exports, {
   hasLiveSupplierCredentialsConfigured: () => hasLiveSupplierCredentialsConfigured,
   ingestSupplierFeed: () => ingestSupplierFeed,
   isBlockedHost: () => isBlockedHost,
+  isInterCarsProfile: () => isInterCarsProfile,
   isSupplierNetworkEnabled: () => isSupplierNetworkEnabled,
   isSupplierOrderNetworkEnabled: () => isSupplierOrderNetworkEnabled,
   isSupplierSelectable: () => isSupplierSelectable,
@@ -795,13 +942,16 @@ __export(serverEntry_exports, {
   resetOrderIdempotencyKeys: () => resetOrderIdempotencyKeys,
   resetSupplierCursorSafe: () => resetSupplierCursorSafe,
   resolveLiveSupplierProfile: () => resolveLiveSupplierProfile,
+  resolvePredefinedLiveProfile: () => resolvePredefinedLiveProfile,
   runSupplierConnectionTest: () => runSupplierConnectionTest,
   runSupplierDryRunTestSync: () => runSupplierDryRunTestSync,
+  runSupplierLiveOnboarding: () => runSupplierLiveOnboarding,
   runSupplierLiveReadSync: () => runSupplierLiveReadSync,
   runSupplierSyncJob: () => runSupplierSyncJob,
   sanitizeClientSyncRequest: () => sanitizeClientSyncRequest,
   selectBestSupplierForOrder: () => selectBestSupplierForOrder,
   setSupplierEnabled: () => setSupplierEnabled,
+  summarizeIdentifierValidation: () => summarizeIdentifierValidation,
   validateSupplierEndpoint: () => validateSupplierEndpoint,
   validateSupplierOrderPayload: () => validateSupplierOrderPayload
 });
@@ -2118,10 +2268,16 @@ function parseLinkHeader(linkHeader) {
 }
 function buildPaginationQuery(state) {
   const query = {};
+  const pageKey = state.pageParam || "page";
+  const pageSizeKey = state.pageSizeParam || "pageSize";
   switch (state.mode) {
+    case "pageNumber":
+      query[pageKey] = String(state.page ?? 0);
+      query[pageSizeKey] = String(state.pageSize);
+      break;
     case "page":
-      query.page = String(state.page ?? 1);
-      query.pageSize = String(state.pageSize);
+      query[pageKey] = String(state.page ?? 1);
+      query[pageSizeKey] = String(state.pageSize);
       break;
     case "offset":
       query.offset = String(state.offset ?? 0);
@@ -2142,9 +2298,14 @@ function buildPaginationQuery(state) {
   return query;
 }
 function advancePagination(state, response) {
-  const hasMore = response.records.length >= state.pageSize;
+  const hasMore = response.hasNextPage ?? response.records.length >= state.pageSize;
   const nextLink = parseLinkHeader(response.linkHeader);
   switch (state.mode) {
+    case "pageNumber":
+      return {
+        hasMore,
+        next: hasMore ? { ...state, page: (state.page ?? 0) + 1 } : void 0
+      };
     case "page":
       return {
         hasMore,
@@ -2280,8 +2441,13 @@ function parseSupplierFeedBody(body, format) {
   if (Array.isArray(data)) return { ok: true, records: data };
   if (data && typeof data === "object") {
     const obj = data;
-    const records = obj.products || obj.items || obj.data || [];
-    return { ok: true, records };
+    const records = obj.products || obj.items || obj.lines || obj.data || [];
+    return {
+      ok: true,
+      records,
+      hasNextPage: obj.hasNextPage === true,
+      totalResults: typeof obj.totalResults === "number" ? obj.totalResults : void 0
+    };
   }
   return { ok: false, reason: "MALFORMED_JSON" };
 }
@@ -2366,6 +2532,67 @@ function normalizeSupplierImages(raw) {
   return images.slice(0, 20);
 }
 
+// lib/supplier-engine/connectors/b2b-sandbox/interCarsAdapter.ts
+function preprocessInterCarsProduct(raw) {
+  const eans = raw.eans;
+  const primaryEan = Array.isArray(eans) && eans.length ? String(eans[0]) : void 0;
+  const genericRefs = raw.genericArticleReferences;
+  const primaryRef = genericRefs?.find((r) => r.genericArticleId) || genericRefs?.[0];
+  const categoryLabel = primaryRef?.genericArticleId || primaryRef?.name?.de || primaryRef?.name?.en || primaryRef?.name?.pl || void 0;
+  return {
+    ...raw,
+    ean: primaryEan,
+    gtin: primaryEan,
+    supplierCategory: categoryLabel,
+    mpn: raw.index || raw.articleNumber,
+    tecdocId: raw.tecDoc,
+    oem: raw.articleNumber,
+    brand: typeof raw.brand === "string" ? raw.brand : raw.brandReference?.name,
+    stock: raw.availability
+  };
+}
+function preprocessInterCarsStock(raw) {
+  const availability = raw.availability;
+  const qty = availability != null && Number.isFinite(Number(availability)) ? Number(availability) : void 0;
+  return {
+    ...raw,
+    supplierSku: raw.sku,
+    stock: qty,
+    stock_status: qty != null && qty > 0 ? "available" : "unavailable",
+    discontinued: false,
+    backorder: qty === 0 && raw.latestDeliveryDate ? true : void 0,
+    lead_time: raw.latestDeliveryDate
+  };
+}
+function preprocessInterCarsPrice(raw, currency) {
+  const price = raw.price;
+  const net = price?.customerPriceNet ?? price?.listPriceNet;
+  const amount = net != null && Number.isFinite(Number(net)) ? Number(net) : void 0;
+  return {
+    ...raw,
+    supplierSku: raw.sku,
+    supplierPrice: amount,
+    supplier_price: amount != null ? {
+      amount,
+      currency: String(price?.currencyCode || currency),
+      includesVat: false,
+      vatPercentage: price?.vatPercentage,
+      listPriceNet: price?.listPriceNet,
+      customerPriceNet: price?.customerPriceNet
+    } : void 0
+  };
+}
+function isInterCarsProfile(profile) {
+  return profile?.adapterProfile === "inter-cars";
+}
+function chunkSkus(skus, size = 100) {
+  const chunks = [];
+  for (let i = 0; i < skus.length; i += size) {
+    chunks.push(skus.slice(i, i + size));
+  }
+  return chunks;
+}
+
 // lib/supplier-engine/connectors/b2b-sandbox/mapping.ts
 var UNKNOWN = "UNKNOWN";
 var REVIEW_REQUIRED = "REVIEW_REQUIRED";
@@ -2375,7 +2602,8 @@ function mapBuzzardCategory(rawCategory, categoryMapping = {}) {
   return categoryMapping[value] || REVIEW_REQUIRED;
 }
 function normalizeB2bSandboxRecord(raw, profile) {
-  const mapped = applyFieldMapping(raw, profile.fieldMapping);
+  const source = isInterCarsProfile(profile) ? preprocessInterCarsProduct(raw) : raw;
+  const mapped = applyFieldMapping(source, profile.fieldMapping);
   const supplierSku = String(mapped.supplierSku || mapped.supplier_sku || UNKNOWN);
   const ean = mapped.ean || mapped.gtin ? String(mapped.ean || mapped.gtin) : UNKNOWN;
   const gtin = mapped.gtin ? String(mapped.gtin) : ean !== UNKNOWN ? ean : UNKNOWN;
@@ -2387,6 +2615,8 @@ function normalizeB2bSandboxRecord(raw, profile) {
   const stock = stockRaw != null && Number.isFinite(Number(stockRaw)) ? Number(stockRaw) : void 0;
   const images = normalizeSupplierImages(mapped.images || mapped.image_urls || mapped.image);
   const vehicleFitment = Array.isArray(mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment) ? mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment : [];
+  const tecDocId = mapped.tecdocId || mapped.tecDoc;
+  const fitmentUnknown = isInterCarsProfile(profile) && (!Array.isArray(vehicleFitment) || vehicleFitment.length === 0);
   return {
     ...mapped,
     supplierSku,
@@ -2405,7 +2635,9 @@ function normalizeB2bSandboxRecord(raw, profile) {
     priceIncludesVat: profile.priceIncludesVat === true,
     buzzardCategory: mapBuzzardCategory(mapped.supplierCategory || mapped.category, profile.categoryMapping),
     images,
-    vehicleFitment,
+    vehicleFitment: Array.isArray(vehicleFitment) && vehicleFitment.length ? vehicleFitment : void 0,
+    fitment: fitmentUnknown ? "UNKNOWN" : void 0,
+    tecdocId: tecDocId ? String(tecDocId) : void 0,
     oemNumbers: mapped.oemNumbers || mapped.oem_numbers || mapped.oem || void 0,
     liveSource: true
   };
@@ -2476,11 +2708,12 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
   }
   authHeaders() {
     const profile = this.getProfile();
-    return resolveSupplierAuth({
+    const auth = resolveSupplierAuth({
       ...this.connectorConfig,
       secretsRef: profile.secretsRef,
       authentication: profile.authentication
     }).headers;
+    return { ...profile.requestHeaders || {}, ...auth };
   }
   async connect() {
     const profile = this.getProfile();
@@ -2567,6 +2800,9 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
     const pagination = {
       mode: profile.pagination?.mode || "cursor",
       pageSize: options?.limit || profile.pagination?.pageSize || 100,
+      page: profile.pagination?.mode === "pageNumber" ? Number(getSyncCursor(this.supplierId, "incremental")?.cursor || 0) : void 0,
+      pageParam: profile.pagination?.pageParam,
+      pageSizeParam: profile.pagination?.pageSizeParam,
       cursor: options?.cursor || getSyncCursor(this.supplierId, "incremental")?.cursor
     };
     const transport = this.getTransport();
@@ -2585,18 +2821,20 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
     const records = parsed.records.map((raw) => normalizeB2bSandboxRecord(raw, profile));
     const page = advancePagination(pagination, {
       records,
-      cursor: res.headers["x-next-cursor"] || pagination.cursor,
+      hasNextPage: parsed.hasNextPage,
+      cursor: res.headers["x-next-cursor"],
       nextPageToken: res.headers["x-next-page-token"],
       linkHeader: res.headers.link
     });
-    if (page.nextCursor) {
-      saveSyncCursor(this.supplierId, { cursor: page.nextCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
+    const nextCursor = page.nextCursor || (profile.pagination?.mode === "pageNumber" && page.hasMore ? String((pagination.page ?? 0) + 1) : void 0);
+    if (nextCursor) {
+      saveSyncCursor(this.supplierId, { cursor: nextCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
     }
     return {
       ok: res.ok,
       records,
       total: records.length,
-      cursor: page.nextCursor,
+      cursor: nextCursor,
       fetchedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
   }
@@ -2606,9 +2844,38 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
       return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
     }
     const transport = this.getTransport();
-    const url = this.buildUrl(profile.endpoints.stock || "/stock");
+    const targetSkus = options?.skus?.filter(Boolean) || [];
+    const allRecords = [];
+    if (isInterCarsProfile(profile) && targetSkus.length) {
+      for (const batch of chunkSkus(targetSkus, 100)) {
+        const res2 = await transport.request({
+          url: this.buildUrl(profile.endpoints.stock || "/stock", { sku: batch.join(",") }),
+          headers: this.authHeaders(),
+          supplierId: this.supplierId,
+          operation: "fetchStock",
+          timeoutMs: this.connectorConfig.timeoutMs
+        });
+        const parsed2 = parseSupplierFeedBody(res2.body, profile.feedFormat || "json");
+        if (!parsed2.ok) {
+          return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed2.reason };
+        }
+        for (const raw of parsed2.records) {
+          const mapped = preprocessInterCarsStock(raw);
+          allRecords.push({
+            supplier_sku: mapped.supplierSku,
+            stock: mapped.stock,
+            stock_status: mapped.stock_status,
+            discontinued: mapped.discontinued,
+            backorder: mapped.backorder,
+            lead_time: mapped.lead_time,
+            updated_at: (/* @__PURE__ */ new Date()).toISOString()
+          });
+        }
+      }
+      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    }
     const res = await transport.request({
-      url,
+      url: this.buildUrl(profile.endpoints.stock || "/stock"),
       headers: this.authHeaders(),
       supplierId: this.supplierId,
       operation: "fetchStock",
@@ -2619,16 +2886,16 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
       return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
     }
     let records = parsed.records.map((raw) => {
-      const mapped = normalizeB2bSandboxRecord(raw, profile);
+      const mapped = isInterCarsProfile(profile) ? preprocessInterCarsStock(raw) : normalizeB2bSandboxRecord(raw, profile);
       return {
-        supplier_sku: mapped.supplierSku,
+        supplier_sku: mapped.supplierSku || mapped.supplier_sku,
         stock: mapped.stock,
         stock_status: mapped.stock === 0 ? "unavailable" : "available",
         updated_at: (/* @__PURE__ */ new Date()).toISOString()
       };
     });
-    if (options?.skus?.length) {
-      records = records.filter((r) => options.skus.includes(String(r.supplier_sku)));
+    if (targetSkus.length) {
+      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
     }
     return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
   }
@@ -2638,6 +2905,42 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
       return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
     }
     const transport = this.getTransport();
+    const targetSkus = options?.skus?.filter(Boolean) || [];
+    const allRecords = [];
+    if (isInterCarsProfile(profile) && targetSkus.length) {
+      for (const batch of chunkSkus(targetSkus, 100)) {
+        const body = JSON.stringify({
+          lines: batch.map((sku) => ({ sku, quantity: 1 }))
+        });
+        const res2 = await transport.request({
+          url: this.buildUrl(profile.endpoints.prices || "/prices"),
+          method: "POST",
+          body,
+          headers: { ...this.authHeaders(), "Content-Type": "application/json" },
+          supplierId: this.supplierId,
+          operation: "fetchPrices",
+          timeoutMs: this.connectorConfig.timeoutMs
+        });
+        const parsed2 = parseSupplierFeedBody(res2.body, profile.feedFormat || "json");
+        if (!parsed2.ok) {
+          return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed2.reason };
+        }
+        for (const raw of parsed2.records) {
+          const mapped = preprocessInterCarsPrice(raw, profile.currency);
+          const priceObj = mapped.supplier_price;
+          allRecords.push({
+            supplier_sku: mapped.supplierSku,
+            supplier_price: {
+              amount: priceObj?.amount ?? mapped.supplierPrice,
+              currency: priceObj?.currency || profile.currency,
+              includesVat: profile.priceIncludesVat === true
+            },
+            updated_at: (/* @__PURE__ */ new Date()).toISOString()
+          });
+        }
+      }
+      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    }
     const res = await transport.request({
       url: this.buildUrl(profile.endpoints.prices || "/prices"),
       headers: this.authHeaders(),
@@ -2650,7 +2953,7 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
       return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
     }
     let records = parsed.records.map((raw) => {
-      const mapped = normalizeB2bSandboxRecord(raw, profile);
+      const mapped = isInterCarsProfile(profile) ? preprocessInterCarsPrice(raw, profile.currency) : normalizeB2bSandboxRecord(raw, profile);
       const priceObj = mapped.supplier_price;
       return {
         supplier_sku: mapped.supplierSku,
@@ -2662,8 +2965,8 @@ var B2bSandboxSupplierConnector = class extends SupplierConnector {
         updated_at: (/* @__PURE__ */ new Date()).toISOString()
       };
     });
-    if (options?.skus?.length) {
-      records = records.filter((r) => options.skus.includes(String(r.supplier_sku)));
+    if (targetSkus.length) {
+      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
     }
     return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
   }
@@ -31626,7 +31929,9 @@ function buildDataQualityReport(records, options = {}) {
     invalidProducts: 0,
     duplicates: 0,
     missingEan: 0,
+    missingGtin: 0,
     missingMpn: 0,
+    missingSku: 0,
     missingBrand: 0,
     missingCategory: 0,
     missingPrice: 0,
@@ -31634,8 +31939,22 @@ function buildDataQualityReport(records, options = {}) {
     missingImages: 0,
     missingFitment: 0,
     missingOem: 0,
+    missingTecDoc: 0,
     missingDimensions: 0,
     reviewRequiredCategories: 0,
+    eanCoverage: "UNKNOWN",
+    gtinCoverage: "UNKNOWN",
+    mpnCoverage: "UNKNOWN",
+    skuCoverage: "UNKNOWN",
+    brandCoverage: "UNKNOWN",
+    categoryCoverage: "UNKNOWN",
+    imageCoverage: "UNKNOWN",
+    priceCoverage: "UNKNOWN",
+    stockCoverage: "UNKNOWN",
+    fitmentCoverage: "UNKNOWN",
+    oemCoverage: "UNKNOWN",
+    tecDocCoverage: "UNKNOWN",
+    dimensionCoverage: "UNKNOWN",
     warnings: []
   };
   const seenSkus = /* @__PURE__ */ new Set();
@@ -31647,7 +31966,9 @@ function buildDataQualityReport(records, options = {}) {
     }
     if (sku) seenSkus.add(sku);
     let valid = Boolean(sku);
-    if (!record.ean && !record.gtin) report.missingEan++;
+    if (!sku) report.missingSku++;
+    if (!record.ean) report.missingEan++;
+    if (!record.gtin) report.missingGtin++;
     if (!record.mpn) report.missingMpn++;
     if (!record.brand) report.missingBrand++;
     if (!record.buzzardCategory || record.buzzardCategory === "REVIEW_REQUIRED") {
@@ -31663,11 +31984,31 @@ function buildDataQualityReport(records, options = {}) {
       const fitment = record.vehicleFitment || record.vehicle_compatibility;
       if (!fitment || Array.isArray(fitment) && fitment.length === 0) report.missingFitment++;
       if (!record.oemNumbers && !record.oem) report.missingOem++;
-      if (!record.weight && !record.dimensions) report.missingDimensions++;
+      if (!record.tecdocId && !record.tecDoc) report.missingTecDoc++;
+      if (!record.weight && !record.dimensions && !record.packageWeight) report.missingDimensions++;
     }
     if (!sku) valid = false;
     if (valid) report.validProducts++;
     else report.invalidProducts++;
+  }
+  if (records.length > 0) {
+    const total = records.length;
+    const pct = (missing) => Math.round((total - missing) / total * 1e3) / 10;
+    report.eanCoverage = pct(report.missingEan);
+    report.gtinCoverage = pct(report.missingGtin);
+    report.mpnCoverage = pct(report.missingMpn);
+    report.skuCoverage = pct(report.missingSku);
+    report.brandCoverage = pct(report.missingBrand);
+    report.categoryCoverage = pct(report.missingCategory);
+    report.imageCoverage = pct(report.missingImages);
+    report.priceCoverage = pct(report.missingPrice);
+    report.stockCoverage = pct(report.missingStock);
+    if (options.automotive) {
+      report.fitmentCoverage = pct(report.missingFitment);
+      report.oemCoverage = pct(report.missingOem);
+      report.tecDocCoverage = pct(report.missingTecDoc);
+      report.dimensionCoverage = pct(report.missingDimensions);
+    }
   }
   return report;
 }
@@ -31736,13 +32077,15 @@ async function runSupplierDryRunTestSync(supplierId, options = {}) {
   result.dataQuality = buildDataQualityReport(normalizedRecords, {
     automotive: isAutomotiveSupplier(supplier.connectorProfile)
   });
+  result.sampleRecords = normalizedRecords.slice(0, 10);
+  const fetchedSkus = [...seenSkus];
   if (supplier.capabilities.stockFeed) {
-    const stockFetch = await connector.fetchStock();
+    const stockFetch = await connector.fetchStock(fetchedSkus.length ? { skus: fetchedSkus.slice(0, 100) } : void 0);
     if (stockFetch.ok) result.stockRecords = stockFetch.records.length;
     else result.warnings.push(stockFetch.error || "Stock fetch failed");
   }
   if (supplier.capabilities.priceFeed) {
-    const priceFetch = await connector.fetchPrices();
+    const priceFetch = await connector.fetchPrices(fetchedSkus.length ? { skus: fetchedSkus.slice(0, 100) } : void 0);
     if (priceFetch.ok) result.priceRecords = priceFetch.records.length;
     else result.warnings.push(priceFetch.error || "Price fetch failed");
   }
@@ -31843,11 +32186,252 @@ async function runSupplierLiveReadSync(supplierId, options = {}) {
   });
   return { ...result, liveRead: true };
 }
+
+// lib/supplier-engine/identifierValidation.ts
+var EAN_GTIN_PATTERN = /^\d{8,14}$/;
+var MPN_PATTERN = /^[\w\s./\-+]{1,64}$/i;
+var SKU_PATTERN = /^[A-Z0-9][A-Z0-9._\-/]{0,63}$/i;
+function validateEan(value) {
+  if (value == null || value === "" || value === "UNKNOWN") return null;
+  const str = String(value).trim();
+  const valid = EAN_GTIN_PATTERN.test(str);
+  return { field: "ean", value: str, valid, reason: valid ? void 0 : "INVALID_EAN_FORMAT" };
+}
+function validateGtin(value) {
+  if (value == null || value === "" || value === "UNKNOWN") return null;
+  const str = String(value).trim();
+  const valid = EAN_GTIN_PATTERN.test(str);
+  return { field: "gtin", value: str, valid, reason: valid ? void 0 : "INVALID_GTIN_FORMAT" };
+}
+function validateMpn(value) {
+  if (value == null || value === "" || value === "UNKNOWN") return null;
+  const str = String(value).trim();
+  const valid = MPN_PATTERN.test(str);
+  return { field: "mpn", value: str, valid, reason: valid ? void 0 : "INVALID_MPN_FORMAT" };
+}
+function validateSupplierSku(value) {
+  if (value == null || value === "" || value === "UNKNOWN") return null;
+  const str = String(value).trim();
+  const valid = SKU_PATTERN.test(str);
+  return { field: "supplierSku", value: str, valid, reason: valid ? void 0 : "INVALID_SKU_FORMAT" };
+}
+function validateOem(value) {
+  if (value == null || value === "" || value === "UNKNOWN") return null;
+  const str = String(value).trim();
+  const valid = str.length >= 1 && str.length <= 64;
+  return { field: "oem", value: str, valid, reason: valid ? void 0 : "INVALID_OEM_FORMAT" };
+}
+function validateRecordIdentifiers(record) {
+  const results = [];
+  for (const check of [
+    validateSupplierSku(record.supplierSku || record.supplier_sku),
+    validateEan(record.ean),
+    validateGtin(record.gtin),
+    validateMpn(record.mpn),
+    validateOem(record.oemNumbers || record.oem)
+  ]) {
+    if (check) results.push(check);
+  }
+  return results;
+}
+function summarizeIdentifierValidation(records) {
+  const invalid = [];
+  for (const record of records) {
+    for (const result of validateRecordIdentifiers(record)) {
+      if (!result.valid) invalid.push(result);
+    }
+  }
+  return { totalChecked: records.length, invalid, invalidCount: invalid.length };
+}
+
+// lib/supplier-engine/liveOnboarding.ts
+init_config();
+function inferSource(dryRun) {
+  if (!dryRun) return "SKIPPED";
+  return dryRun.source === "live" ? "LIVE" : dryRun.source === "mock" ? "MOCK" : "FIXTURE";
+}
+function pickProductSamples(records, limit = 10) {
+  const samples = [];
+  const seenBrands = /* @__PURE__ */ new Set();
+  const seenCategories = /* @__PURE__ */ new Set();
+  for (const record of records) {
+    const brand = String(record.brand || "");
+    const category = String(record.buzzardCategory || "");
+    const diverse = samples.length < limit && (seenBrands.size < 3 || !seenBrands.has(brand)) && (seenCategories.size < 5 || !seenCategories.has(category));
+    if (diverse || samples.length < Math.min(3, limit)) {
+      samples.push({
+        supplierSku: String(record.supplierSku || record.supplier_sku || ""),
+        name: record.name ? String(record.name) : void 0,
+        brand: brand || void 0,
+        buzzardCategory: category || void 0,
+        stock: record.stock != null ? Number(record.stock) : void 0,
+        supplierPrice: record.supplierPrice != null ? Number(record.supplierPrice) : void 0,
+        ean: record.ean ? String(record.ean) : void 0,
+        mpn: record.mpn ? String(record.mpn) : void 0,
+        tecdocId: record.tecdocId ? String(record.tecdocId) : void 0,
+        fitment: record.fitment ? String(record.fitment) : record.vehicleFitment ? "PRESENT" : "UNKNOWN"
+      });
+      if (brand) seenBrands.add(brand);
+      if (category) seenCategories.add(category);
+    }
+    if (samples.length >= limit) break;
+  }
+  return samples;
+}
+async function runSupplierLiveOnboarding(options = {}) {
+  const started = Date.now();
+  const profile = resolveLiveSupplierProfile();
+  const limitations = [];
+  const batchSizes = options.batchSizes || [10, 50, 100];
+  if (!profile) {
+    return {
+      source: "SKIPPED",
+      supplier: { id: "", name: "", country: "", type: "" },
+      connector: "b2b-sandbox",
+      environment: "UNKNOWN",
+      documentation: [],
+      authentication: "UNKNOWN",
+      endpoints: {},
+      networkGuards: {
+        networkEnabled: isSupplierNetworkEnabled(),
+        liveReadEnabled: isLiveReadEnabled(),
+        orderNetworkEnabled: isSupplierOrderNetworkEnabled()
+      },
+      connection: { status: "SKIPPED", message: "Live supplier profile not configured" },
+      dryRun: { status: "SKIPPED", message: "Live supplier profile not configured" },
+      liveRead: { status: "SKIPPED", message: "Live supplier profile not configured" },
+      products: { total: 0, valid: 0, invalid: 0, duplicates: 0, offers: 0, stockRecords: 0, priceRecords: 0 },
+      productSamples: [],
+      cursor: { restartContinues: "UNKNOWN" },
+      timing: {},
+      security: { orderNetworkDisabled: !isSupplierOrderNetworkEnabled(), secretsInRepo: false, customerPiiUsed: false },
+      completedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      limitations: ["SUPPLIER_LIVE_PROFILE or SUPPLIER_LIVE_CONFIG_JSON not configured"]
+    };
+  }
+  const docs = profile.adapterProfile === "inter-cars" ? [
+    "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+    "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+  ] : [];
+  if (!hasLiveSupplierCredentials(profile)) {
+    limitations.push("Live credentials not resolved \u2014 connection and sync phases skipped");
+  }
+  if (!isSupplierNetworkEnabled()) {
+    limitations.push("SUPPLIER_NETWORK_ENABLED=0 \u2014 network calls disabled");
+  }
+  if (isSupplierOrderNetworkEnabled()) {
+    limitations.push("SUPPLIER_ORDER_NETWORK_ENABLED must remain 0 for read-only onboarding");
+  }
+  let connection = {
+    status: "SKIPPED",
+    message: "Credentials or network not ready"
+  };
+  if (hasLiveSupplierCredentials(profile) && isSupplierNetworkEnabled()) {
+    connection = await runSupplierConnectionTest(profile.supplierId);
+  }
+  let dryRun = {
+    status: "SKIPPED",
+    message: "Connection not successful or credentials missing"
+  };
+  if ("status" in connection && connection.status === "CONNECTED") {
+    dryRun = await runSupplierDryRunTestSync(profile.supplierId, { integrationType: "b2b-sandbox" });
+  }
+  const source = "status" in dryRun ? "SKIPPED" : inferSource(dryRun);
+  const cursorBefore = getSyncCursor(profile.supplierId, "incremental")?.cursor;
+  let liveReadResults = { status: "SKIPPED", message: "Live read disabled or dry-run not successful" };
+  if (!options.skipLiveRead && isLiveReadEnabled() && "ok" in dryRun && dryRun.ok && dryRun.source === "live") {
+    liveReadResults = [];
+    for (const batchSize of batchSizes) {
+      const result = await runSupplierLiveReadSync(profile.supplierId, { jobType: "INCREMENTAL" });
+      liveReadResults.push({ ...result, batchSize, source: "LIVE" });
+      if (result.status === "FAILED") break;
+      if (result.productsFetched >= batchSize) continue;
+    }
+  }
+  const cursorAfter = getSyncCursor(profile.supplierId, "incremental")?.cursor;
+  let restartContinues = "UNKNOWN";
+  if (cursorAfter) {
+    saveSyncCursor(profile.supplierId, { cursor: cursorAfter, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
+    restartContinues = Boolean(getSyncCursor(profile.supplierId, "incremental")?.cursor);
+  }
+  const sampleRecords = "sampleRecords" in dryRun ? dryRun.sampleRecords || [] : [];
+  const productSamples = "productsFound" in dryRun && dryRun.productsFound > 0 ? pickProductSamples(sampleRecords, 10) : [];
+  const identifierValidation = sampleRecords.length ? summarizeIdentifierValidation(sampleRecords) : void 0;
+  const health = getSupplierHealth(profile.supplierId);
+  return {
+    source,
+    supplier: {
+      id: profile.supplierId,
+      name: profile.name,
+      country: profile.country,
+      type: profile.adapterProfile === "inter-cars" ? "Automotive B2B wholesaler" : "B2B",
+      adapterProfile: profile.adapterProfile
+    },
+    connector: profile.connectorType,
+    environment: profile.environment,
+    documentation: docs,
+    authentication: profile.authentication,
+    endpoints: { ...profile.endpoints },
+    networkGuards: {
+      networkEnabled: isSupplierNetworkEnabled(),
+      liveReadEnabled: isLiveReadEnabled(),
+      orderNetworkEnabled: isSupplierOrderNetworkEnabled()
+    },
+    connection,
+    dryRun,
+    liveRead: liveReadResults,
+    products: {
+      total: "productsFound" in dryRun ? dryRun.productsFound : 0,
+      valid: "valid" in dryRun ? dryRun.valid : 0,
+      invalid: "invalid" in dryRun ? dryRun.invalid : 0,
+      duplicates: "duplicates" in dryRun ? dryRun.duplicates : 0,
+      offers: "valid" in dryRun ? dryRun.valid : 0,
+      stockRecords: "stockRecords" in dryRun ? dryRun.stockRecords : 0,
+      priceRecords: "priceRecords" in dryRun ? dryRun.priceRecords : 0
+    },
+    dataQuality: "dataQuality" in dryRun ? dryRun.dataQuality : void 0,
+    identifierValidation,
+    productSamples,
+    cursor: { before: cursorBefore, after: cursorAfter, restartContinues },
+    health,
+    timing: {
+      firstSyncDurationMs: Date.now() - started,
+      averageLatencyMs: "latencyMs" in connection ? connection.latencyMs : void 0
+    },
+    security: {
+      orderNetworkDisabled: !isSupplierOrderNetworkEnabled(),
+      secretsInRepo: false,
+      customerPiiUsed: false
+    },
+    completedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    limitations
+  };
+}
+function buildInterCarsProfileSummary(profile) {
+  return {
+    supplierId: profile.supplierId,
+    name: profile.name,
+    country: profile.country,
+    adapterProfile: profile.adapterProfile,
+    baseUrl: profile.baseUrl,
+    environment: profile.environment,
+    authentication: profile.authentication,
+    endpoints: profile.endpoints,
+    priceModel: profile.priceModel || "net",
+    priceIncludesVat: profile.priceIncludesVat ?? false,
+    supportedMarkets: profile.supportedMarkets,
+    pagination: profile.pagination
+  };
+}
+
+// lib/supplier-engine/service.ts
+init_config();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   TEST_SUPPLIER_ID,
   bootstrapSupplierEnginePersistence,
   buildDataQualityReport,
+  buildInterCarsProfileSummary,
   createSupplierOrder,
   createSupplierReturn,
   evaluateLiveReadSyncGuard,
@@ -31868,6 +32452,7 @@ async function runSupplierLiveReadSync(supplierId, options = {}) {
   hasLiveSupplierCredentialsConfigured,
   ingestSupplierFeed,
   isBlockedHost,
+  isInterCarsProfile,
   isSupplierNetworkEnabled,
   isSupplierOrderNetworkEnabled,
   isSupplierSelectable,
@@ -31880,13 +32465,16 @@ async function runSupplierLiveReadSync(supplierId, options = {}) {
   resetOrderIdempotencyKeys,
   resetSupplierCursorSafe,
   resolveLiveSupplierProfile,
+  resolvePredefinedLiveProfile,
   runSupplierConnectionTest,
   runSupplierDryRunTestSync,
+  runSupplierLiveOnboarding,
   runSupplierLiveReadSync,
   runSupplierSyncJob,
   sanitizeClientSyncRequest,
   selectBestSupplierForOrder,
   setSupplierEnabled,
+  summarizeIdentifierValidation,
   validateSupplierEndpoint,
   validateSupplierOrderPayload
 });

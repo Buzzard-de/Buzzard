@@ -19,6 +19,7 @@ export interface DryRunTestSyncResult {
   warnings: string[];
   errors: Array<{ code: string; message: string; record?: string }>;
   dataQuality?: SupplierDataQualityReport;
+  sampleRecords?: Record<string, unknown>[];
   source: "mock" | "live" | "fixture";
   completedAt: string;
 }
@@ -97,15 +98,18 @@ export async function runSupplierDryRunTestSync(
   result.dataQuality = buildDataQualityReport(normalizedRecords, {
     automotive: isAutomotiveSupplier(supplier.connectorProfile),
   });
+  result.sampleRecords = normalizedRecords.slice(0, 10);
+
+  const fetchedSkus = [...seenSkus];
 
   if (supplier.capabilities.stockFeed) {
-    const stockFetch = await connector.fetchStock();
+    const stockFetch = await connector.fetchStock(fetchedSkus.length ? { skus: fetchedSkus.slice(0, 100) } : undefined);
     if (stockFetch.ok) result.stockRecords = stockFetch.records.length;
     else result.warnings.push(stockFetch.error || "Stock fetch failed");
   }
 
   if (supplier.capabilities.priceFeed) {
-    const priceFetch = await connector.fetchPrices();
+    const priceFetch = await connector.fetchPrices(fetchedSkus.length ? { skus: fetchedSkus.slice(0, 100) } : undefined);
     if (priceFetch.ok) result.priceRecords = priceFetch.records.length;
     else result.warnings.push(priceFetch.error || "Price fetch failed");
   }

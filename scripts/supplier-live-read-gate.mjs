@@ -11,13 +11,18 @@ const steps = [
   ["Supplier live read unit tests", "vitest run lib/supplier-engine/supplierLiveRead.test.ts"],
 ];
 
-if (hasLiveCredentials && process.env.SUPPLIER_LIVE_READ_ENABLED === "1") {
-  steps.push([
-    "Live supplier sandbox smoke (manual credentials present)",
-    "node scripts/supplier-live-read-smoke.mjs",
-  ]);
+steps.push(["Supplier live onboarding unit tests", "vitest run lib/supplier-engine/supplierLiveOnboarding.test.ts"]);
+
+if (hasLiveCredentials) {
+  steps.push(["Live supplier onboarding pipeline", "node scripts/supplier-live-onboarding.mjs"]);
+  if (process.env.SUPPLIER_LIVE_READ_ENABLED === "1") {
+    steps.push([
+      "Live supplier sandbox smoke (live read enabled)",
+      "node scripts/supplier-live-read-smoke.mjs",
+    ]);
+  }
 } else {
-  process.stdout.write("\nSKIPPED — NO LIVE SUPPLIER CREDENTIALS (live sandbox smoke not executed)\n");
+  process.stdout.write("\nSKIPPED — NO LIVE SUPPLIER CREDENTIALS (live onboarding not executed)\n");
 }
 
 let failed = 0;

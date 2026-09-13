@@ -14,6 +14,12 @@ import { getSyncCursor, saveSyncCursor } from "../../syncCursor";
 import { parseSupplierFeedBody } from "./parser";
 import { normalizeB2bSandboxRecord } from "./mapping";
 import { profileToConnectorConfig, resolveB2bProfile } from "./connectorConfig";
+import {
+  chunkSkus,
+  isInterCarsProfile,
+  preprocessInterCarsPrice,
+  preprocessInterCarsStock,
+} from "./interCarsAdapter";
 
 export class B2bSandboxSupplierConnector extends SupplierConnector {
   private profile: LiveSupplierProfile | null;
@@ -72,13 +78,14 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     return url.toString();
   }
 
-  private authHeaders() {
+  private authHeaders(): Record<string, string> {
     const profile = this.getProfile();
-    return resolveSupplierAuth({
+    const auth = resolveSupplierAuth({
       ...this.connectorConfig,
       secretsRef: profile.secretsRef,
       authentication: profile.authentication,
     }).headers;
+    return { ...(profile.requestHeaders || {}), ...auth };
   }
 
   async connect(): Promise<{ ok: boolean; message: string }> {
@@ -171,6 +178,9 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     const pagination: PaginationState = {
       mode: profile.pagination?.mode || "cursor",
       pageSize: options?.limit || profile.pagination?.pageSize || 100,
+      page: profile.pagination?.mode === "pageNumber" ? Number(getSyncCursor(this.supplierId, "incremental")?.cursor || 0) : undefined,
+      pageParam: profile.pagination?.pageParam,
+      pageSizeParam: profile.pagination?.pageSizeParam,
       cursor: options?.cursor || getSyncCursor(this.supplierId, "incremental")?.cursor,
     };
 
@@ -192,20 +202,26 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     const records = parsed.records.map((raw) => normalizeB2bSandboxRecord(raw, profile));
     const page = advancePagination(pagination, {
       records,
-      cursor: res.headers["x-next-cursor"] || pagination.cursor,
+      hasNextPage: parsed.hasNextPage,
+      cursor: res.headers["x-next-cursor"],
       nextPageToken: res.headers["x-next-page-token"],
       linkHeader: res.headers.link,
     });
+    const nextCursor =
+      page.nextCursor ||
+      (profile.pagination?.mode === "pageNumber" && page.hasMore
+        ? String((pagination.page ?? 0) + 1)
+        : undefined);
 
-    if (page.nextCursor) {
-      saveSyncCursor(this.supplierId, { cursor: page.nextCursor, lastModified: new Date().toISOString() }, "incremental");
+    if (nextCursor) {
+      saveSyncCursor(this.supplierId, { cursor: nextCursor, lastModified: new Date().toISOString() }, "incremental");
     }
 
     return {
       ok: res.ok,
       records,
       total: records.length,
-      cursor: page.nextCursor,
+      cursor: nextCursor,
       fetchedAt: new Date().toISOString(),
     };
   }
@@ -217,9 +233,40 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     }
 
     const transport = this.getTransport();
-    const url = this.buildUrl(profile.endpoints.stock || "/stock");
+    const targetSkus = options?.skus?.filter(Boolean) || [];
+    const allRecords: Record<string, unknown>[] = [];
+
+    if (isInterCarsProfile(profile) && targetSkus.length) {
+      for (const batch of chunkSkus(targetSkus, 100)) {
+        const res = await transport.request({
+          url: this.buildUrl(profile.endpoints.stock || "/stock", { sku: batch.join(",") }),
+          headers: this.authHeaders(),
+          supplierId: this.supplierId,
+          operation: "fetchStock",
+          timeoutMs: this.connectorConfig.timeoutMs,
+        });
+        const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+        if (!parsed.ok) {
+          return { ok: false, records: [], total: 0, fetchedAt: new Date().toISOString(), error: parsed.reason };
+        }
+        for (const raw of parsed.records) {
+          const mapped = preprocessInterCarsStock(raw);
+          allRecords.push({
+            supplier_sku: mapped.supplierSku,
+            stock: mapped.stock,
+            stock_status: mapped.stock_status,
+            discontinued: mapped.discontinued,
+            backorder: mapped.backorder,
+            lead_time: mapped.lead_time,
+            updated_at: new Date().toISOString(),
+          });
+        }
+      }
+      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: new Date().toISOString() };
+    }
+
     const res = await transport.request({
-      url,
+      url: this.buildUrl(profile.endpoints.stock || "/stock"),
       headers: this.authHeaders(),
       supplierId: this.supplierId,
       operation: "fetchStock",
@@ -232,17 +279,17 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     }
 
     let records = parsed.records.map((raw) => {
-      const mapped = normalizeB2bSandboxRecord(raw, profile);
+      const mapped = isInterCarsProfile(profile) ? preprocessInterCarsStock(raw) : normalizeB2bSandboxRecord(raw, profile);
       return {
-        supplier_sku: mapped.supplierSku,
+        supplier_sku: mapped.supplierSku || mapped.supplier_sku,
         stock: mapped.stock,
         stock_status: mapped.stock === 0 ? "unavailable" : "available",
         updated_at: new Date().toISOString(),
       };
     });
 
-    if (options?.skus?.length) {
-      records = records.filter((r) => options.skus!.includes(String(r.supplier_sku)));
+    if (targetSkus.length) {
+      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
     }
 
     return { ok: res.ok, records, total: records.length, fetchedAt: new Date().toISOString() };
@@ -255,6 +302,44 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     }
 
     const transport = this.getTransport();
+    const targetSkus = options?.skus?.filter(Boolean) || [];
+    const allRecords: Record<string, unknown>[] = [];
+
+    if (isInterCarsProfile(profile) && targetSkus.length) {
+      for (const batch of chunkSkus(targetSkus, 100)) {
+        const body = JSON.stringify({
+          lines: batch.map((sku) => ({ sku, quantity: 1 })),
+        });
+        const res = await transport.request({
+          url: this.buildUrl(profile.endpoints.prices || "/prices"),
+          method: "POST",
+          body,
+          headers: { ...this.authHeaders(), "Content-Type": "application/json" },
+          supplierId: this.supplierId,
+          operation: "fetchPrices",
+          timeoutMs: this.connectorConfig.timeoutMs,
+        });
+        const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+        if (!parsed.ok) {
+          return { ok: false, records: [], total: 0, fetchedAt: new Date().toISOString(), error: parsed.reason };
+        }
+        for (const raw of parsed.records) {
+          const mapped = preprocessInterCarsPrice(raw, profile.currency);
+          const priceObj = mapped.supplier_price as { amount?: number; currency?: string; includesVat?: boolean } | undefined;
+          allRecords.push({
+            supplier_sku: mapped.supplierSku,
+            supplier_price: {
+              amount: priceObj?.amount ?? mapped.supplierPrice,
+              currency: priceObj?.currency || profile.currency,
+              includesVat: profile.priceIncludesVat === true,
+            },
+            updated_at: new Date().toISOString(),
+          });
+        }
+      }
+      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: new Date().toISOString() };
+    }
+
     const res = await transport.request({
       url: this.buildUrl(profile.endpoints.prices || "/prices"),
       headers: this.authHeaders(),
@@ -269,7 +354,9 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     }
 
     let records = parsed.records.map((raw) => {
-      const mapped = normalizeB2bSandboxRecord(raw, profile);
+      const mapped = isInterCarsProfile(profile)
+        ? preprocessInterCarsPrice(raw, profile.currency)
+        : normalizeB2bSandboxRecord(raw, profile);
       const priceObj = mapped.supplier_price as { amount?: number; currency?: string } | undefined;
       return {
         supplier_sku: mapped.supplierSku,
@@ -282,8 +369,8 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
       };
     });
 
-    if (options?.skus?.length) {
-      records = records.filter((r) => options.skus!.includes(String(r.supplier_sku)));
+    if (targetSkus.length) {
+      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
     }
 
     return { ok: res.ok, records, total: records.length, fetchedAt: new Date().toISOString() };

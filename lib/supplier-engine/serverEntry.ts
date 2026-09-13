@@ -43,4 +43,9 @@ export {
   resolveLiveSupplierProfile,
   getRegisteredLiveSupplierId,
   buildDataQualityReport,
+  runSupplierLiveOnboarding,
+  buildInterCarsProfileSummary,
+  resolvePredefinedLiveProfile,
+  summarizeIdentifierValidation,
+  isInterCarsProfile,
 } from "./service";

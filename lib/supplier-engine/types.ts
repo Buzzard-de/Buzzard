@@ -116,7 +116,13 @@ export interface ConnectorConfig {
   headers?: Record<string, string>;
   timeoutMs?: number;
   rateLimit?: { requestsPerMinute: number; maxConcurrent?: number };
-  pagination?: { pageSize: number; cursorField?: string; mode?: "page" | "offset" | "cursor" | "nextPageToken" | "linkHeader" };
+  pagination?: {
+    pageSize: number;
+    cursorField?: string;
+    pageParam?: string;
+    pageSizeParam?: string;
+    mode?: "page" | "offset" | "cursor" | "nextPageToken" | "linkHeader" | "pageNumber";
+  };
   allowedEndpoints?: string[];
   /** Server-only — never exposed to client */
   secretsRef?: string;

@@ -4,6 +4,7 @@ import { ApiSupplierConnector } from "./api";
 import { XmlSupplierConnector } from "./xml";
 import { CsvSupplierConnector } from "./csv";
 import { ManualSupplierConnector } from "./manual";
+import { TemplateSupplierConnector } from "./template";
 
 export function createConnector(
   supplier: SupplierConfig,
@@ -19,6 +20,8 @@ export function createConnector(
       return new CsvSupplierConnector(supplier, connectorConfig);
     case "manual":
       return new ManualSupplierConnector(supplier, connectorConfig);
+    case "template":
+      return new TemplateSupplierConnector(supplier, connectorConfig);
     default:
       throw new Error(`UNKNOWN_INTEGRATION_TYPE:${integrationType}`);
   }

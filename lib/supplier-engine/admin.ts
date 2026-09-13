@@ -11,6 +11,8 @@ import { getSyncCursorForAdmin } from "./syncCursor";
 import { listSupplierEngineAudit, recordSupplierEngineAudit } from "./audit";
 import { clearSyncCursor } from "./syncCursor";
 import { bootstrapSupplierEnginePersistence } from "./bootstrap";
+import { isSupplierNetworkEnabled, resolveConnectorEnvironment } from "./network";
+import { runSupplierConnectionTest } from "./connectionTest";
 
 function listOrderCapabilities(capabilities: import("./types").SupplierCapabilities): string[] {
   const flags: string[] = [];
@@ -121,6 +123,7 @@ export async function getSupplierEngineDetail(supplierId: string) {
   if (!supplier) return null;
 
   const connector = createConnector(supplier, supplier.integrationTypes[0] ?? "manual");
+  const connectionTest = await runSupplierConnectionTest(supplierId);
   const healthCheck = await connector.healthCheck();
   const runtime = getSupplierRuntimeState(supplierId);
   const health = getSupplierHealth(supplierId);
@@ -134,8 +137,16 @@ export async function getSupplierEngineDetail(supplierId: string) {
       name: supplier.displayName || supplier.name,
       country: supplier.country,
       connector: supplier.integrationTypes.join(", "),
+      environment: resolveConnectorEnvironment(),
       active: supplier.status !== "DISABLED" && supplier.status !== "PAUSED",
       status: supplier.status,
+    },
+    connection: {
+      status: connectionTest.status,
+      latencyMs: connectionTest.latencyMs,
+      message: connectionTest.message,
+      lastChecked: connectionTest.checkedAt,
+      networkEnabled: isSupplierNetworkEnabled(),
     },
     markets: supplier.supportedMarkets,
     capabilities: {

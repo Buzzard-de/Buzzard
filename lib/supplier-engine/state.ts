@@ -173,6 +173,7 @@ export function markSyncCompleted(
   const base = {
     lastSyncCompletedAt: now,
     syncLockJobId: undefined,
+    syncLockAcquiredAt: undefined,
     ...outcome.metrics,
   };
 

@@ -72,3 +72,33 @@ export { createSupplierReturn, listReturnCapabilities } from "./returns";
 
 export { TEST_SUPPLIER_ID, getTestFeedProducts } from "./fixtures";
 export { selectBestSupplierForMarket, selectBestSupplierForOrder } from "./selection";
+
+export {
+  isSupplierNetworkEnabled,
+  isSupplierOrderNetworkEnabled,
+  resolveConnectorEnvironment,
+  validateSupplierEndpoint,
+  isBlockedHost,
+  createSupplierHttpTransport,
+  MockSupplierTransport,
+  buildMockTransportFixtures,
+  resetMockTransportScenarios,
+} from "./network";
+export { resolveSupplierAuth } from "./auth";
+export { runSupplierConnectionTest } from "./connectionTest";
+export { runSupplierDryRunTestSync } from "./testSync";
+export { evaluateProductionSyncGuard } from "./syncGuard";
+export {
+  buildSupplierOrderIdempotencyKey,
+  getIdempotentSupplierOrder,
+  recordIdempotentSupplierOrder,
+  resetOrderIdempotencyKeys,
+} from "./orderIdempotency";
+export {
+  validateSupplierOnboardingDefinition,
+  buildOnboardingState,
+  onboardingDefinitionFromSupplier,
+} from "./onboarding";
+export { getSupplierConnectorMetrics } from "./observability";
+export { TemplateSupplierConnector } from "./connectors/template";
+export { CAPABILITY_NOT_SUPPORTED } from "./connectors/capabilityResult";

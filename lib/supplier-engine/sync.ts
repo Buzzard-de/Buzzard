@@ -17,6 +17,9 @@ import { getSupplierPersistence } from "./persistence";
 import { recordSupplierHealthSuccess, recordSupplierHealthFailure } from "./health";
 import { recordSupplierEngineAudit } from "./audit";
 import { isSupplierSelectable } from "./registry";
+import { evaluateProductionSyncGuard } from "./syncGuard";
+import { recordSupplierSyncOutcomeMetric } from "./observability";
+import { resolveConnectorEnvironment } from "./network";
 import {
   getProduct,
   updateProductSupplierOffer,
@@ -73,6 +76,29 @@ export async function runSupplierSyncJob(
   const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
   const jobType = options.jobType ?? "FULL";
   const connector = createConnector(supplier, integrationType);
+
+  const environment = resolveConnectorEnvironment();
+  if (environment !== "MOCK") {
+    const syncGuard = evaluateProductionSyncGuard(supplierId, jobType);
+    if (!syncGuard.allowed) {
+      recordSupplierSyncOutcomeMetric(false);
+      return {
+        jobId,
+        supplierId,
+        jobType,
+        status: "FAILED",
+        productsFetched: 0,
+        productsCreated: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        stockUpdates: 0,
+        priceUpdates: 0,
+        errors: syncGuard.reasons.map((code) => ({ code, message: code })),
+        startedAt,
+        completedAt: startedAt,
+      };
+    }
+  }
 
   const lock = tryAcquireSupplierSyncLock(supplierId, jobId);
   if (!lock.acquired) {
@@ -235,6 +261,7 @@ export async function runSupplierSyncJob(
     errorCode: result.errors[0]?.code,
   });
 
+  recordSupplierSyncOutcomeMetric(result.status !== "FAILED");
   return result;
 }
 

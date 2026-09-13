@@ -166,6 +166,32 @@ module.exports = {
       return res.json({ success: true, data: cursor, source: "supplier-foundation" });
     });
 
+    app.post("/api/admin/supplier-foundation/:supplierId/connection-test", async (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "suppliers.read")) return;
+      const foundationMod = loadFoundation();
+      if (!foundationMod) return res.status(503).json({ success: false, errorCode: "FOUNDATION_UNAVAILABLE" });
+      const result = await foundationMod.runSupplierConnectionTest(req.params.supplierId, req.body || {});
+      audit(req, req.params.supplierId, AUDIT_ACTIONS.SUPPLIER_CONFIG, { connectionTest: true, status: result.status });
+      return res.json({ success: true, data: result, source: "supplier-foundation" });
+    });
+
+    app.post("/api/admin/supplier-foundation/:supplierId/test-sync", async (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "suppliers.read")) return;
+      const foundationMod = loadFoundation();
+      if (!foundationMod) return res.status(503).json({ success: false, errorCode: "FOUNDATION_UNAVAILABLE" });
+      const sanitized = foundationMod.sanitizeClientSyncRequest(req.body || {});
+      if (!sanitized.allowed) {
+        return res.status(400).json({ success: false, errorCode: sanitized.reason });
+      }
+      const result = await foundationMod.runSupplierDryRunTestSync(req.params.supplierId, {
+        integrationType: req.body?.integrationType,
+      });
+      audit(req, req.params.supplierId, AUDIT_ACTIONS.PRODUCT_IMPORT, { testSync: true, dryRun: true });
+      return res.json({ success: true, data: result, source: "supplier-foundation" });
+    });
+
     app.post("/api/admin/supplier-foundation/:supplierId/cursor/reset", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "suppliers.write")) return;

@@ -3,6 +3,9 @@ export {
   getSupplier,
   getSupplierOrThrow,
   updateSupplierStatus,
+  enableSupplier,
+  disableSupplier,
+  isSupplierSelectable,
   getRegistryCount,
 } from "./registry";
 
@@ -21,7 +24,17 @@ export { redactSecrets, sanitizeClientSyncRequest, rejectClientCredentials } fro
 export { logSupplierOperation, getSupplierLogs, recordSyncMetrics, clearObservability } from "./observability";
 export { computeSupplierReliabilityScore } from "./reliability";
 export { runSupplierSyncJob, ingestSupplierFeed } from "./sync";
-export { getSupplierEngineAdminOverview } from "./admin";
+export {
+  getSupplierEngineAdminOverview,
+  getSupplierEngineDashboard,
+  getSupplierEngineDetail,
+  setSupplierEnabled,
+  resetSupplierCursorSafe,
+} from "./admin";
+export { bootstrapSupplierEnginePersistence, resetSupplierEngineBootstrap } from "./bootstrap";
+export { getSupplierPersistenceMode, resetSupplierPersistenceCache } from "./persistence";
+export { getSupplierHealth, recordSupplierHealthSuccess, recordSupplierHealthFailure } from "./health";
+export { recordSupplierEngineAudit, listSupplierEngineAudit } from "./audit";
 export {
   createSupplierOrder,
   getSupplierOrder,
@@ -36,12 +49,16 @@ export {
   clearSyncCursor,
   listSyncCursors,
   resetSyncCursors,
+  getSyncCursorForAdmin,
 } from "./syncCursor";
 export {
   getSupplierRuntimeState,
   updateSupplierRuntimeState,
   resetSupplierRuntimeState,
+  tryAcquireSupplierSyncLock,
+  releaseSupplierSyncLock,
 } from "./state";
+export { resetSupplierHealthCache } from "./health";
 export {
   registerCredentialRef,
   getCredentialRef,

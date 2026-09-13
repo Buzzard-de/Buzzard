@@ -1,15 +1,17 @@
 import type { SupplierReliabilityScore } from "./types";
 import { getSupplierLogs } from "./observability";
+import { getSupplierHealth } from "./health";
 
-/** Placeholder reliability — no invented historical data. */
+/** Deterministic reliability from persisted health + in-memory logs. */
 export function computeSupplierReliabilityScore(supplierId: string): SupplierReliabilityScore {
+  const health = getSupplierHealth(supplierId);
   const logs = getSupplierLogs(supplierId);
-  const total = logs.length;
-  const successes = logs.filter((l) => l.status === "SUCCESS").length;
-  const syncSuccessRate = total > 0 ? successes / total : 0;
+  const total = health.successCount + health.errorCount + logs.length;
+  const successes = health.successCount + logs.filter((l) => l.status === "SUCCESS").length;
+  const syncSuccessRate = total > 0 ? successes / total : health.reliabilityScore;
 
   return {
-    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : 0.5,
+    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : health.reliabilityScore || 0.5,
     metrics: {
       uptime: total > 0 ? syncSuccessRate : 0,
       syncSuccessRate,

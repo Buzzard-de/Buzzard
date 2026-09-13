@@ -19,6 +19,18 @@ await esbuild.build({
   define: {
     "import.meta.url": "__import_meta_url__",
   },
+  external: ["better-sqlite3"],
+  plugins: [
+    {
+      name: "resolve-server-lib",
+      setup(build) {
+        build.onResolve({ filter: /server\/lib\/.*\.js$/ }, (args) => {
+          const normalized = args.path.replace(/^(\.\.\/)+/, "");
+          return { path: path.join(root, normalized) };
+        });
+      },
+    },
+  ],
 });
 
 console.log("Built server/lib/supplierFoundation.bundle.cjs");

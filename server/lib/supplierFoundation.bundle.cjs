@@ -210,6 +210,108 @@ var init_fixtures = __esm({
   }
 });
 
+// lib/supplier-engine/persistence.ts
+function getSupplierPersistence() {
+  if (store !== void 0) return store;
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
+    store = null;
+    return store;
+  }
+  const candidates = [
+    "server/lib/supplier/persistentStore.js",
+    "../../server/lib/supplier/persistentStore.js"
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      store = mod.createPersistentSupplierStore();
+      return store;
+    } catch {
+    }
+  }
+  store = null;
+  return store;
+}
+function getSupplierPersistenceMode() {
+  return getSupplierPersistence()?.getMode() === "sqlite" ? "sqlite" : "memory";
+}
+var store;
+var init_persistence = __esm({
+  "lib/supplier-engine/persistence.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/security.ts
+function isSecretField(fieldName) {
+  return SECRET_PATTERNS.some((p) => p.test(fieldName));
+}
+function redactSecrets(obj) {
+  if (obj == null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(redactSecrets);
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (isSecretField(key)) {
+      result[key] = "[REDACTED]";
+    } else if (typeof value === "object") {
+      result[key] = redactSecrets(value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+function rejectClientCredentials(payload) {
+  return Object.keys(payload).some(isSecretField);
+}
+function sanitizeClientSyncRequest(body) {
+  if (rejectClientCredentials(body)) {
+    return { allowed: false, reason: "CREDENTIALS_NOT_ALLOWED_ON_CLIENT" };
+  }
+  if (body.supplierPrice != null || body.supplierStock != null) {
+    return { allowed: false, reason: "COMMERCIAL_FIELDS_NOT_CLIENT_WRITABLE" };
+  }
+  return { allowed: true };
+}
+var SECRET_PATTERNS;
+var init_security = __esm({
+  "lib/supplier-engine/security.ts"() {
+    "use strict";
+    SECRET_PATTERNS = [
+      /api[_-]?key/i,
+      /secret/i,
+      /password/i,
+      /token/i,
+      /authorization/i,
+      /bearer/i,
+      /credential/i
+    ];
+  }
+});
+
+// lib/supplier-engine/credentials.ts
+function registerCredentialRef(supplierId, secretsRef) {
+  const entry = {
+    supplierId,
+    secretsRef,
+    configured: Boolean(secretsRef),
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  credentialRefs.set(supplierId, entry);
+  return entry;
+}
+function hasConfiguredCredentials(supplierId) {
+  return credentialRefs.get(supplierId)?.configured === true;
+}
+var credentialRefs;
+var init_credentials = __esm({
+  "lib/supplier-engine/credentials.ts"() {
+    "use strict";
+    init_security();
+    credentialRefs = /* @__PURE__ */ new Map();
+  }
+});
+
 // lib/supplier-engine/registry.ts
 function mapMasterToConfig(raw) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
@@ -261,35 +363,112 @@ function buildTestSupplierA() {
     updatedAt: now
   };
 }
+function mergePersistedOverlay(config3) {
+  const overlay = persistedOverlay.get(config3.supplierId);
+  if (!overlay) return config3;
+  return {
+    ...config3,
+    ...overlay,
+    capabilities: { ...config3.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config3.supportedMarkets,
+    status: overlay.status ?? config3.status,
+    updatedAt: overlay.updatedAt ?? config3.updatedAt
+  };
+}
+function persistRegistryEntry(config3) {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  persistence.saveRegistryRow({
+    supplierId: config3.supplierId,
+    name: config3.name,
+    displayName: config3.displayName || config3.name,
+    country: config3.country,
+    connectorType: config3.integrationTypes[0] || "manual",
+    supportedMarkets: config3.supportedMarkets,
+    capabilities: config3.capabilities,
+    active: config3.status !== "DISABLED" && config3.status !== "PAUSED",
+    status: config3.status,
+    secretsRef: config3.secretsRef,
+    createdAt: config3.createdAt
+  });
+  if (config3.secretsRef) registerCredentialRef(config3.supplierId, config3.secretsRef);
+}
+function hydrateRegistryFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  for (const row of persistence.listRegistryRows()) {
+    persistedOverlay.set(String(row.supplierId), {
+      supplierId: String(row.supplierId),
+      name: String(row.name),
+      displayName: row.displayName ? String(row.displayName) : String(row.name),
+      country: row.country ? String(row.country) : "DE",
+      status: row.status || (row.active === false ? "DISABLED" : "CONNECTED"),
+      supportedMarkets: row.supportedMarkets || [],
+      capabilities: row.capabilities || {},
+      secretsRef: row.secretsRef ? String(row.secretsRef) : void 0,
+      updatedAt: row.updatedAt ? String(row.updatedAt) : void 0
+    });
+  }
+}
 function ensureRegistry() {
   if (supplierById.size > 0) return;
   for (const raw of buzzard_suppliers_default.suppliers) {
-    const config3 = mapMasterToConfig(raw);
+    const config3 = mergePersistedOverlay(mapMasterToConfig(raw));
     supplierById.set(config3.supplierId, config3);
+    persistRegistryEntry(config3);
   }
-  supplierById.set(TEST_SUPPLIER_ID, buildTestSupplierA());
+  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
+  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
+  persistRegistryEntry(testSupplier);
 }
 function listSuppliers() {
   ensureRegistry();
-  return [...supplierById.values()];
+  return [...supplierById.values()].map((s) => mergePersistedOverlay(s));
 }
 function getSupplier(supplierId) {
   ensureRegistry();
-  return supplierById.get(supplierId);
+  const config3 = supplierById.get(supplierId);
+  return config3 ? mergePersistedOverlay(config3) : void 0;
+}
+function isSupplierSelectable(supplierId) {
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return false;
+  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
 }
 function getSupplierOrThrow(supplierId) {
   const s = getSupplier(supplierId);
   if (!s) throw new Error(`UNKNOWN_SUPPLIER:${supplierId}`);
   return s;
 }
-var supplierById;
+function updateSupplierStatus(supplierId, status) {
+  const s = getSupplier(supplierId);
+  if (!s) return void 0;
+  const updated = { ...s, status, updatedAt: (/* @__PURE__ */ new Date()).toISOString() };
+  supplierById.set(supplierId, updated);
+  persistedOverlay.set(supplierId, {
+    status,
+    updatedAt: updated.updatedAt
+  });
+  persistRegistryEntry(updated);
+  return updated;
+}
+function enableSupplier(supplierId) {
+  return updateSupplierStatus(supplierId, "ACTIVE");
+}
+function disableSupplier(supplierId) {
+  return updateSupplierStatus(supplierId, "DISABLED");
+}
+var supplierById, persistedOverlay;
 var init_registry = __esm({
   "lib/supplier-engine/registry.ts"() {
     "use strict";
     init_test_supplier_feeds();
     init_buzzard_suppliers();
     init_fixtures();
+    init_persistence();
+    init_credentials();
     supplierById = /* @__PURE__ */ new Map();
+    persistedOverlay = /* @__PURE__ */ new Map();
   }
 });
 
@@ -365,23 +544,32 @@ var init_tracking = __esm({
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
   TEST_SUPPLIER_ID: () => TEST_SUPPLIER_ID,
+  bootstrapSupplierEnginePersistence: () => bootstrapSupplierEnginePersistence,
   createSupplierOrder: () => createSupplierOrder,
   createSupplierReturn: () => createSupplierReturn,
   getSupplier: () => getSupplier,
   getSupplierEngineAdminOverview: () => getSupplierEngineAdminOverview,
+  getSupplierEngineDashboard: () => getSupplierEngineDashboard,
+  getSupplierEngineDetail: () => getSupplierEngineDetail,
+  getSupplierHealth: () => getSupplierHealth,
   getSupplierLogs: () => getSupplierLogs,
+  getSupplierPersistenceMode: () => getSupplierPersistenceMode,
   getSupplierRuntimeState: () => getSupplierRuntimeState,
   getSupplierTracking: () => getSupplierTracking,
   getSyncCursor: () => getSyncCursor,
+  getSyncCursorForAdmin: () => getSyncCursorForAdmin,
   ingestSupplierFeed: () => ingestSupplierFeed,
+  isSupplierSelectable: () => isSupplierSelectable,
   listReturnCapabilities: () => listReturnCapabilities,
   listSuppliers: () => listSuppliers,
   listSyncCursors: () => listSyncCursors,
   redactSecrets: () => redactSecrets,
   rejectClientCredentials: () => rejectClientCredentials,
+  resetSupplierCursorSafe: () => resetSupplierCursorSafe,
   runSupplierSyncJob: () => runSupplierSyncJob,
   sanitizeClientSyncRequest: () => sanitizeClientSyncRequest,
   selectBestSupplierForOrder: () => selectBestSupplierForOrder,
+  setSupplierEnabled: () => setSupplierEnabled,
   validateSupplierOrderPayload: () => validateSupplierOrderPayload
 });
 module.exports = __toCommonJS(serverEntry_exports);
@@ -1021,48 +1209,11 @@ async function withRetry(fn, options = {}) {
   throw lastError;
 }
 
-// lib/supplier-engine/security.ts
-var SECRET_PATTERNS = [
-  /api[_-]?key/i,
-  /secret/i,
-  /password/i,
-  /token/i,
-  /authorization/i,
-  /bearer/i,
-  /credential/i
-];
-function isSecretField(fieldName) {
-  return SECRET_PATTERNS.some((p) => p.test(fieldName));
-}
-function redactSecrets(obj) {
-  if (obj == null || typeof obj !== "object") return obj;
-  if (Array.isArray(obj)) return obj.map(redactSecrets);
-  const result = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (isSecretField(key)) {
-      result[key] = "[REDACTED]";
-    } else if (typeof value === "object") {
-      result[key] = redactSecrets(value);
-    } else {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-function rejectClientCredentials(payload) {
-  return Object.keys(payload).some(isSecretField);
-}
-function sanitizeClientSyncRequest(body) {
-  if (rejectClientCredentials(body)) {
-    return { allowed: false, reason: "CREDENTIALS_NOT_ALLOWED_ON_CLIENT" };
-  }
-  if (body.supplierPrice != null || body.supplierStock != null) {
-    return { allowed: false, reason: "COMMERCIAL_FIELDS_NOT_CLIENT_WRITABLE" };
-  }
-  return { allowed: true };
-}
+// lib/supplier-engine/service.ts
+init_security();
 
 // lib/supplier-engine/observability.ts
+init_security();
 var logBuffer = [];
 var metricsBuffer = [];
 var MAX_LOG = 2e3;
@@ -1085,14 +1236,114 @@ function getSupplierLogs(supplierId) {
   return logBuffer.filter((l) => l.supplierId === supplierId);
 }
 
+// lib/supplier-engine/health.ts
+init_persistence();
+var healthCache = /* @__PURE__ */ new Map();
+function defaultHealth(supplierId) {
+  return {
+    supplierId,
+    healthStatus: "UNKNOWN",
+    responseTimeMs: 0,
+    errorCount: 0,
+    successCount: 0,
+    rateLimitCount: 0,
+    consecutiveFailures: 0,
+    reliabilityScore: 0.5,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function fromPersisted(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    responseTimeMs: Number(row.responseTimeMs || 0),
+    errorCount: Number(row.errorCount || 0),
+    successCount: Number(row.successCount || 0),
+    rateLimitCount: Number(row.rateLimitCount || 0),
+    consecutiveFailures: Number(row.consecutiveFailures || 0),
+    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
+    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateHealthFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllHealthRecords;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const health of rows) {
+    healthCache.set(String(health.supplierId), fromPersisted(health));
+  }
+}
+function getSupplierHealth(supplierId) {
+  const cached = healthCache.get(supplierId);
+  if (cached) return cached;
+  const persistence = getSupplierPersistence();
+  const row = persistence?.getHealth(supplierId);
+  if (row) {
+    const record = fromPersisted(row);
+    healthCache.set(supplierId, record);
+    return record;
+  }
+  return defaultHealth(supplierId);
+}
+function persistHealth(record) {
+  healthCache.set(record.supplierId, record);
+  getSupplierPersistence()?.saveHealth(record);
+  return record;
+}
+function recordSupplierHealthSuccess(supplierId, options = {}) {
+  const current = getSupplierHealth(supplierId);
+  const successCount = current.successCount + 1;
+  const reliabilityScore = successCount / Math.max(successCount + current.errorCount, 1);
+  let healthStatus = "HEALTHY";
+  if (current.consecutiveFailures > 0) healthStatus = "DEGRADED";
+  return persistHealth({
+    ...current,
+    healthStatus,
+    responseTimeMs: options.responseTimeMs ?? current.responseTimeMs,
+    successCount,
+    consecutiveFailures: 0,
+    lastSuccessfulOperation: options.operation || (/* @__PURE__ */ new Date()).toISOString(),
+    reliabilityScore: Math.round(reliabilityScore * 100) / 100,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+function recordSupplierHealthFailure(supplierId, options = {}) {
+  const current = getSupplierHealth(supplierId);
+  const errorCount = current.errorCount + 1;
+  const consecutiveFailures = current.consecutiveFailures + 1;
+  const rateLimitCount = current.rateLimitCount + (options.rateLimited ? 1 : 0);
+  const reliabilityScore = current.successCount / Math.max(current.successCount + errorCount, 1);
+  let healthStatus = "DEGRADED";
+  if (options.errorCode === "AUTH_FAILED" || options.errorCode === "FORBIDDEN") {
+    healthStatus = "UNHEALTHY";
+  } else if (consecutiveFailures >= 5) {
+    healthStatus = "UNHEALTHY";
+  }
+  return persistHealth({
+    ...current,
+    healthStatus,
+    responseTimeMs: options.responseTimeMs ?? current.responseTimeMs,
+    errorCount,
+    rateLimitCount,
+    consecutiveFailures,
+    lastFailedOperation: (/* @__PURE__ */ new Date()).toISOString(),
+    reliabilityScore: Math.round(reliabilityScore * 100) / 100,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+
 // lib/supplier-engine/reliability.ts
 function computeSupplierReliabilityScore(supplierId) {
+  const health = getSupplierHealth(supplierId);
   const logs = getSupplierLogs(supplierId);
-  const total = logs.length;
-  const successes = logs.filter((l) => l.status === "SUCCESS").length;
-  const syncSuccessRate = total > 0 ? successes / total : 0;
+  const total = health.successCount + health.errorCount + logs.length;
+  const successes = health.successCount + logs.filter((l) => l.status === "SUCCESS").length;
+  const syncSuccessRate = total > 0 ? successes / total : health.reliabilityScore;
   return {
-    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : 0.5,
+    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : health.reliabilityScore || 0.5,
     metrics: {
       uptime: total > 0 ? syncSuccessRate : 0,
       syncSuccessRate,
@@ -1110,28 +1361,72 @@ function computeSupplierReliabilityScore(supplierId) {
 init_registry();
 
 // lib/supplier-engine/syncCursor.ts
+init_persistence();
 var cursorStore = /* @__PURE__ */ new Map();
-function getSyncCursor(supplierId) {
-  return cursorStore.get(supplierId);
+function cursorKey(supplierId, syncMode = "incremental") {
+  return `${supplierId}:${syncMode}`;
 }
-function saveSyncCursor(supplierId, patch) {
-  const existing = cursorStore.get(supplierId);
+function fromPersisted2(row) {
+  return {
+    supplierId: String(row.supplierId),
+    syncMode: row.syncMode || "incremental",
+    cursor: row.cursor ? String(row.cursor) : void 0,
+    page: row.page != null ? Number(row.page) : void 0,
+    offset: row.offset != null ? Number(row.offset) : void 0,
+    lastModified: row.lastModified ? String(row.lastModified) : void 0,
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateSyncCursorsFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllCursors;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const cursor of rows) {
+    const parsed = fromPersisted2(cursor);
+    cursorStore.set(cursorKey(parsed.supplierId, parsed.syncMode || "incremental"), parsed);
+  }
+}
+function getSyncCursor(supplierId, syncMode = "incremental") {
+  const key = cursorKey(supplierId, syncMode);
+  const cached = cursorStore.get(key);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
+  if (row) {
+    const cursor = fromPersisted2(row);
+    cursorStore.set(key, cursor);
+    return cursor;
+  }
+  return void 0;
+}
+function saveSyncCursor(supplierId, patch, syncMode = "incremental") {
+  const existing = getSyncCursor(supplierId, syncMode);
   const next = {
     supplierId,
+    syncMode,
     cursor: patch.cursor ?? existing?.cursor,
     page: patch.page ?? existing?.page,
     offset: patch.offset ?? existing?.offset,
     lastModified: patch.lastModified ?? existing?.lastModified,
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
-  cursorStore.set(supplierId, next);
+  cursorStore.set(cursorKey(supplierId, syncMode), next);
+  getSupplierPersistence()?.saveCursor(next);
   return next;
+}
+function clearSyncCursor(supplierId, syncMode = "incremental") {
+  cursorStore.delete(cursorKey(supplierId, syncMode));
+  getSupplierPersistence()?.clearCursor(supplierId, syncMode);
 }
 function listSyncCursors() {
   return [...cursorStore.values()];
 }
+function getSyncCursorForAdmin(supplierId, syncMode = "incremental") {
+  return getSupplierPersistence()?.getCursorForAdmin(supplierId, syncMode) ?? null;
+}
 
 // lib/supplier-engine/state.ts
+init_persistence();
 var stateBySupplier = /* @__PURE__ */ new Map();
 function defaultState(supplierId) {
   return {
@@ -1142,8 +1437,82 @@ function defaultState(supplierId) {
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
+function fromPersisted3(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    syncStatus: row.syncStatus || "IDLE",
+    lastSyncStartedAt: row.lastSyncStartedAt ? String(row.lastSyncStartedAt) : void 0,
+    lastSyncCompletedAt: row.lastSyncCompletedAt ? String(row.lastSyncCompletedAt) : void 0,
+    lastSuccessfulSync: row.lastSyncSuccessAt ? String(row.lastSyncSuccessAt) : void 0,
+    lastFailedSync: row.lastSyncFailureAt ? String(row.lastSyncFailureAt) : void 0,
+    lastSyncError: row.lastErrorMessageSafe ? String(row.lastErrorMessageSafe) : void 0,
+    lastErrorCode: row.lastErrorCode ? String(row.lastErrorCode) : void 0,
+    lastSyncJobId: row.lastSyncJobId ? String(row.lastSyncJobId) : void 0,
+    syncLockJobId: row.syncLockJobId ? String(row.syncLockJobId) : void 0,
+    syncLockAcquiredAt: row.syncLockAcquiredAt ? String(row.syncLockAcquiredAt) : void 0,
+    productsProcessed: Number(row.productsProcessed || 0),
+    productsAccepted: Number(row.productsAccepted || 0),
+    productsRejected: Number(row.productsRejected || 0),
+    offersUpdated: Number(row.offersUpdated || 0),
+    stockUpdated: Number(row.stockUpdated || 0),
+    priceUpdated: Number(row.priceUpdated || 0),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function toPersisted(state) {
+  return {
+    supplierId: state.supplierId,
+    syncStatus: state.syncStatus,
+    healthStatus: state.healthStatus,
+    lastSyncStartedAt: state.lastSyncStartedAt,
+    lastSyncCompletedAt: state.lastSyncCompletedAt,
+    lastSyncSuccessAt: state.lastSuccessfulSync,
+    lastSyncFailureAt: state.lastFailedSync,
+    lastErrorCode: state.lastErrorCode,
+    lastErrorMessageSafe: state.lastSyncError,
+    lastSyncJobId: state.lastSyncJobId,
+    syncLockJobId: state.syncLockJobId,
+    syncLockAcquiredAt: state.syncLockAcquiredAt,
+    productsProcessed: state.productsProcessed,
+    productsAccepted: state.productsAccepted,
+    productsRejected: state.productsRejected,
+    offersUpdated: state.offersUpdated,
+    stockUpdated: state.stockUpdated,
+    priceUpdated: state.priceUpdated,
+    reliabilityScore: state.reliabilityScore
+  };
+}
+function persistState(state) {
+  stateBySupplier.set(state.supplierId, state);
+  getSupplierPersistence()?.saveRuntimeState(toPersisted(state));
+  return state;
+}
+function hydrateRuntimeStateFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllRuntimeStates;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const runtime of rows) {
+    stateBySupplier.set(String(runtime.supplierId), fromPersisted3(runtime));
+  }
+}
 function getSupplierRuntimeState(supplierId) {
-  return stateBySupplier.get(supplierId) ?? defaultState(supplierId);
+  const cached = stateBySupplier.get(supplierId);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getRuntimeState(supplierId);
+  if (row) {
+    const state = fromPersisted3(row);
+    stateBySupplier.set(supplierId, state);
+    return state;
+  }
+  const health = getSupplierHealth(supplierId);
+  return {
+    ...defaultState(supplierId),
+    healthStatus: health.healthStatus,
+    reliabilityScore: health.reliabilityScore
+  };
 }
 function updateSupplierRuntimeState(supplierId, patch) {
   const current = getSupplierRuntimeState(supplierId);
@@ -1155,32 +1524,103 @@ function updateSupplierRuntimeState(supplierId, patch) {
     reliabilityScore: patch.reliabilityScore ?? reliability.score,
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
-  stateBySupplier.set(supplierId, next);
-  return next;
+  return persistState(next);
 }
 function markSyncStarted(supplierId, jobId) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
   return updateSupplierRuntimeState(supplierId, {
     syncStatus: "SYNCING",
-    lastSyncJobId: jobId
+    lastSyncJobId: jobId,
+    lastSyncStartedAt: now,
+    syncLockJobId: jobId,
+    syncLockAcquiredAt: now
   });
 }
 function markSyncCompleted(supplierId, outcome) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
+  const base = {
+    lastSyncCompletedAt: now,
+    syncLockJobId: void 0,
+    ...outcome.metrics
+  };
   if (outcome.status === "FAILED") {
     return updateSupplierRuntimeState(supplierId, {
+      ...base,
       syncStatus: "FAILED",
       healthStatus: outcome.healthStatus ?? "UNHEALTHY",
       lastFailedSync: now,
-      lastSyncError: outcome.error
+      lastSyncError: outcome.error,
+      lastErrorCode: outcome.errorCode
     });
   }
   return updateSupplierRuntimeState(supplierId, {
+    ...base,
     syncStatus: outcome.status === "PARTIAL" ? "PARTIAL" : "SUCCESS",
     healthStatus: outcome.healthStatus ?? "HEALTHY",
     lastSuccessfulSync: now,
-    lastSyncError: outcome.error
+    lastSyncError: outcome.error,
+    lastErrorCode: outcome.errorCode
   });
 }
+function tryAcquireSupplierSyncLock(supplierId, jobId) {
+  const persistence = getSupplierPersistence();
+  if (persistence) {
+    const result = persistence.tryAcquireSyncLock(supplierId, jobId);
+    if (!result.acquired) {
+      return { acquired: false, reason: `SYNC_IN_PROGRESS:${result.ownerJobId}` };
+    }
+    markSyncStarted(supplierId, jobId);
+    return { acquired: true };
+  }
+  const current = getSupplierRuntimeState(supplierId);
+  if (current.syncStatus === "SYNCING" && current.syncLockJobId && current.syncLockJobId !== jobId) {
+    return { acquired: false, reason: `SYNC_IN_PROGRESS:${current.syncLockJobId}` };
+  }
+  markSyncStarted(supplierId, jobId);
+  return { acquired: true };
+}
+function releaseSupplierSyncLock(supplierId, jobId) {
+  getSupplierPersistence()?.releaseSyncLock(supplierId, jobId);
+  const current = getSupplierRuntimeState(supplierId);
+  if (current.syncLockJobId === jobId) {
+    updateSupplierRuntimeState(supplierId, { syncLockJobId: void 0, syncLockAcquiredAt: void 0 });
+  }
+}
+
+// lib/supplier-engine/bootstrap.ts
+init_registry();
+var bootstrapped = false;
+function bootstrapSupplierEnginePersistence() {
+  if (bootstrapped) return;
+  hydrateRegistryFromPersistence();
+  hydrateRuntimeStateFromPersistence();
+  hydrateSyncCursorsFromPersistence();
+  hydrateHealthFromPersistence();
+  bootstrapped = true;
+}
+
+// lib/supplier-engine/sync.ts
+init_persistence();
+
+// lib/supplier-engine/audit.ts
+init_persistence();
+init_security();
+function recordSupplierEngineAudit(entry) {
+  getSupplierPersistence()?.recordAudit({
+    actor: entry.actor || "system",
+    supplierId: entry.supplierId,
+    action: entry.action,
+    correlationId: entry.correlationId,
+    metadata: redactSecrets(entry.metadata || {}),
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+function listSupplierEngineAudit(supplierId, limit = 50) {
+  return getSupplierPersistence()?.listAudit(supplierId, limit) ?? [];
+}
+
+// lib/supplier-engine/sync.ts
+init_registry();
 
 // lib/product-engine/status.ts
 function mapStorefrontStatus(status, stockStatus) {
@@ -28830,14 +29270,58 @@ function syncToProductEngine(record) {
 init_fixtures();
 
 // lib/supplier-engine/sync.ts
+function buildIdempotencyKey(supplierId, jobType, cursor, batchSize) {
+  return `${supplierId}:${jobType}:${cursor || "start"}:${batchSize || 50}`;
+}
 async function runSupplierSyncJob(supplierId, options = {}) {
+  bootstrapSupplierEnginePersistence();
   const startedAt = (/* @__PURE__ */ new Date()).toISOString();
   const jobId = `sync_${supplierId}_${Date.now()}`;
   const supplier = getSupplierOrThrow(supplierId);
+  if (!isSupplierSelectable(supplierId)) {
+    return {
+      jobId,
+      supplierId,
+      jobType: options.jobType ?? "FULL",
+      status: "FAILED",
+      productsFetched: 0,
+      productsCreated: 0,
+      productsUpdated: 0,
+      productsFailed: 0,
+      stockUpdates: 0,
+      priceUpdates: 0,
+      errors: [{ code: "SUPPLIER_DISABLED", message: "Supplier is disabled" }],
+      startedAt,
+      completedAt: startedAt
+    };
+  }
   const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
   const jobType = options.jobType ?? "FULL";
   const connector = createConnector(supplier, integrationType);
-  markSyncStarted(supplierId, jobId);
+  const lock = tryAcquireSupplierSyncLock(supplierId, jobId);
+  if (!lock.acquired) {
+    return {
+      jobId,
+      supplierId,
+      jobType,
+      status: "FAILED",
+      productsFetched: 0,
+      productsCreated: 0,
+      productsUpdated: 0,
+      productsFailed: 0,
+      stockUpdates: 0,
+      priceUpdates: 0,
+      errors: [{ code: "SYNC_IN_PROGRESS", message: lock.reason || "Sync already running" }],
+      startedAt,
+      completedAt: startedAt
+    };
+  }
+  recordSupplierEngineAudit({
+    supplierId,
+    action: "supplier.sync.started",
+    correlationId: jobId,
+    metadata: { jobType, integrationType }
+  });
   const result = {
     jobId,
     supplierId,
@@ -28867,10 +29351,48 @@ async function runSupplierSyncJob(supplierId, options = {}) {
       await syncFullFeed(connector, supplier, result, options.batchSize ?? 50, seenSkus);
     }
     const health = await connector.healthCheck();
+    const syncDuration = Date.now() - syncStart;
+    if (result.status === "FAILED") {
+      recordSupplierHealthFailure(supplierId, {
+        errorCode: result.errors[0]?.code,
+        responseTimeMs: syncDuration,
+        rateLimited: result.errors[0]?.code === "RATE_LIMITED"
+      });
+      recordSupplierEngineAudit({
+        supplierId,
+        action: "supplier.sync.failed",
+        correlationId: jobId,
+        metadata: { jobType, errorCode: result.errors[0]?.code }
+      });
+    } else {
+      recordSupplierHealthSuccess(supplierId, {
+        responseTimeMs: syncDuration,
+        operation: jobType
+      });
+      recordSupplierEngineAudit({
+        supplierId,
+        action: "supplier.sync.completed",
+        correlationId: jobId,
+        metadata: {
+          jobType,
+          status: result.status,
+          productsFetched: result.productsFetched
+        }
+      });
+    }
     markSyncCompleted(supplierId, {
       status: result.status === "FAILED" ? "FAILED" : result.status === "PARTIAL" ? "PARTIAL" : "COMPLETED",
       healthStatus: health.status,
-      error: result.errors[0]?.message
+      error: result.errors[0]?.message,
+      errorCode: result.errors[0]?.code,
+      metrics: {
+        productsProcessed: result.productsFetched,
+        productsAccepted: result.productsCreated + result.productsUpdated,
+        productsRejected: result.productsFailed,
+        offersUpdated: result.productsUpdated,
+        stockUpdated: result.stockUpdates,
+        priceUpdated: result.priceUpdates
+      }
     });
   } catch (e) {
     const classified = classifySupplierError({
@@ -28882,11 +29404,24 @@ async function runSupplierSyncJob(supplierId, options = {}) {
       code: classified.code,
       message: classified.message
     });
+    recordSupplierHealthFailure(supplierId, {
+      errorCode: classified.code,
+      rateLimited: classified.code === "RATE_LIMITED"
+    });
+    recordSupplierEngineAudit({
+      supplierId,
+      action: "supplier.sync.failed",
+      correlationId: jobId,
+      metadata: { jobType, errorCode: classified.code }
+    });
     markSyncCompleted(supplierId, {
       status: "FAILED",
       healthStatus: "UNHEALTHY",
-      error: classified.message
+      error: classified.message,
+      errorCode: classified.code
     });
+  } finally {
+    releaseSupplierSyncLock(supplierId, jobId);
   }
   if (jobType === "FULL" && seenSkus.size > 0) {
     deactivateMissingOffers(supplier.supplierId, seenSkus, result);
@@ -28923,17 +29458,22 @@ async function syncFullFeed(connector, supplier, result, batchSize, seenSkus) {
     return;
   }
   result.productsFetched = fetchResult.records.length;
-  if (fetchResult.cursor) {
-    saveSyncCursor(supplier.supplierId, { cursor: fetchResult.cursor });
-    result.checkpoint = fetchResult.cursor;
+  const pendingCursor = fetchResult.cursor;
+  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize, {
+    jobType: "FULL",
+    pendingCursor,
+    syncMode: "full"
+  });
+  if (result.status !== "FAILED" && pendingCursor) {
+    const saved = saveSyncCursor(supplier.supplierId, { cursor: pendingCursor }, "full");
+    result.checkpoint = saved.cursor;
   }
-  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize);
   if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
     result.status = "PARTIAL";
   }
 }
 async function syncIncrementalFeed(connector, supplier, result, batchSize, seenSkus) {
-  const cursor = getSyncCursor(supplier.supplierId);
+  const cursor = getSyncCursor(supplier.supplierId, "incremental");
   const fetchResult = await withRetry(
     () => connector.fetchProducts({
       limit: 500,
@@ -28946,19 +29486,53 @@ async function syncIncrementalFeed(connector, supplier, result, batchSize, seenS
     return;
   }
   result.productsFetched = fetchResult.records.length;
-  if (fetchResult.cursor) {
-    const saved = saveSyncCursor(supplier.supplierId, {
-      cursor: fetchResult.cursor,
-      lastModified: (/* @__PURE__ */ new Date()).toISOString()
+  const pendingCursor = fetchResult.cursor;
+  const idempotencyKey = buildIdempotencyKey(
+    supplier.supplierId,
+    "INCREMENTAL",
+    cursor?.cursor || "start",
+    batchSize
+  );
+  const persistence = getSupplierPersistence();
+  if (persistence && !persistence.claimIdempotencyKey(idempotencyKey, supplier.supplierId)) {
+    result.status = "COMPLETED";
+    result.errors.push({
+      code: "IDEMPOTENT_REPLAY",
+      message: "Batch already processed for current cursor"
     });
+    return;
+  }
+  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize, {
+    jobType: "INCREMENTAL",
+    pendingCursor,
+    syncMode: "incremental"
+  });
+  if (result.status === "FAILED") {
+    return;
+  }
+  if (pendingCursor) {
+    const saved = saveSyncCursor(
+      supplier.supplierId,
+      { cursor: pendingCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() },
+      "incremental"
+    );
     result.checkpoint = saved.cursor;
   }
-  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize);
   if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
     result.status = "PARTIAL";
   }
 }
-async function processRecords(_connector, supplier, result, records, seenSkus, batchSize) {
+async function processRecords(_connector, supplier, result, records, seenSkus, batchSize, checkpoint) {
+  if (records.length === 0) {
+    if (checkpoint?.pendingCursor && result.status !== "FAILED") {
+      saveSyncCursor(
+        supplier.supplierId,
+        { cursor: checkpoint.pendingCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() },
+        checkpoint.syncMode
+      );
+    }
+    return;
+  }
   await processInBatches(records, async (batch) => {
     for (const raw of batch) {
       try {
@@ -29085,14 +29659,7 @@ async function ingestSupplierFeed(supplierId, options = {}) {
 // lib/supplier-engine/admin.ts
 init_registry();
 init_capabilities();
-
-// lib/supplier-engine/credentials.ts
-var credentialRefs = /* @__PURE__ */ new Map();
-function hasConfiguredCredentials(supplierId) {
-  return credentialRefs.get(supplierId)?.configured === true;
-}
-
-// lib/supplier-engine/admin.ts
+init_credentials();
 function listOrderCapabilities(capabilities) {
   const flags = [];
   if (capabilities.createOrder || capabilities.orderAPI) flags.push("CREATE_ORDER");
@@ -29105,44 +29672,150 @@ function listOrderCapabilities(capabilities) {
   if (capabilities.replacement) flags.push("REPLACEMENT");
   return flags;
 }
+function buildAdminRow(supplier, healthStatus) {
+  const logs = getSupplierLogs(supplier.supplierId);
+  const lastLog = logs[logs.length - 1];
+  const runtime = getSupplierRuntimeState(supplier.supplierId);
+  const health = getSupplierHealth(supplier.supplierId);
+  const productCount = listRegistryProducts().filter(
+    (p) => p.supplierOffers.some((o) => o.supplierId === supplier.supplierId)
+  ).length;
+  const errorCount = logs.filter((l) => l.status === "FAILURE").length;
+  return {
+    supplierId: supplier.supplierId,
+    name: supplier.displayName || supplier.name,
+    country: supplier.country,
+    integrationTypes: supplier.integrationTypes.join(", "),
+    status: supplier.status,
+    capabilities: listConfiguredCapabilities(supplier.capabilities).join(", "),
+    orderCapabilities: listOrderCapabilities(supplier.capabilities).join(", "),
+    supportedMarkets: supplier.supportedMarkets,
+    lastSync: runtime.lastSuccessfulSync ?? lastLog?.timestamp ?? "\u2014",
+    lastSuccessfulSync: runtime.lastSuccessfulSync,
+    lastFailedSync: runtime.lastFailedSync,
+    syncStatus: runtime.syncStatus,
+    health: healthStatus,
+    reliabilityScore: health.reliabilityScore ?? runtime.reliabilityScore,
+    products: productCount,
+    errors: errorCount,
+    credentialsConfigured: hasConfiguredCredentials(supplier.supplierId) || Boolean(supplier.secretsRef)
+  };
+}
+async function getSupplierEngineDashboard() {
+  bootstrapSupplierEnginePersistence();
+  const rows = await getSupplierEngineAdminOverview();
+  const runtimeStates = rows.map((r) => getSupplierRuntimeState(r.supplierId));
+  return {
+    totalSuppliers: rows.length,
+    activeSuppliers: rows.filter((r) => r.status !== "DISABLED" && r.status !== "PAUSED").length,
+    healthy: rows.filter((r) => r.health === "HEALTHY").length,
+    degraded: rows.filter((r) => r.health === "DEGRADED").length,
+    unhealthy: rows.filter((r) => r.health === "UNHEALTHY").length,
+    disabled: rows.filter((r) => r.status === "DISABLED" || r.status === "PAUSED").length,
+    syncing: rows.filter((r) => r.syncStatus === "SYNCING").length,
+    lastSuccessfulSync: runtimeStates.map((s) => s.lastSuccessfulSync).filter(Boolean).sort().reverse()[0],
+    lastFailedSync: runtimeStates.map((s) => s.lastFailedSync).filter(Boolean).sort().reverse()[0],
+    productsProcessed: runtimeStates.reduce((sum, s) => sum + (s.productsProcessed || 0), 0),
+    offersUpdated: runtimeStates.reduce((sum, s) => sum + (s.offersUpdated || 0), 0),
+    stockUpdated: runtimeStates.reduce((sum, s) => sum + (s.stockUpdated || 0), 0),
+    priceUpdated: runtimeStates.reduce((sum, s) => sum + (s.priceUpdated || 0), 0)
+  };
+}
 async function getSupplierEngineAdminOverview() {
+  bootstrapSupplierEnginePersistence();
   const rows = [];
   for (const supplier of listSuppliers()) {
     const connector = createConnector(supplier, supplier.integrationTypes[0] ?? "manual");
     const health = await connector.healthCheck();
-    const logs = getSupplierLogs(supplier.supplierId);
-    const lastLog = logs[logs.length - 1];
-    const runtime = getSupplierRuntimeState(supplier.supplierId);
-    const productCount = listRegistryProducts().filter(
-      (p) => p.supplierOffers.some((o) => o.supplierId === supplier.supplierId)
-    ).length;
-    const errorCount = logs.filter((l) => l.status === "FAILURE").length;
-    rows.push({
-      supplierId: supplier.supplierId,
-      name: supplier.displayName || supplier.name,
-      country: supplier.country,
-      integrationTypes: supplier.integrationTypes.join(", "),
-      status: supplier.status,
-      capabilities: listConfiguredCapabilities(supplier.capabilities).join(", "),
-      orderCapabilities: listOrderCapabilities(supplier.capabilities).join(", "),
-      supportedMarkets: supplier.supportedMarkets,
-      lastSync: runtime.lastSuccessfulSync ?? lastLog?.timestamp ?? "\u2014",
-      lastSuccessfulSync: runtime.lastSuccessfulSync,
-      lastFailedSync: runtime.lastFailedSync,
-      syncStatus: runtime.syncStatus,
-      health: health.status,
-      reliabilityScore: runtime.reliabilityScore,
-      products: productCount,
-      errors: errorCount,
-      credentialsConfigured: hasConfiguredCredentials(supplier.supplierId) || Boolean(supplier.secretsRef)
-    });
+    rows.push(buildAdminRow(supplier, health.status));
   }
   return rows;
 }
+async function getSupplierEngineDetail(supplierId) {
+  bootstrapSupplierEnginePersistence();
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return null;
+  const connector = createConnector(supplier, supplier.integrationTypes[0] ?? "manual");
+  const healthCheck = await connector.healthCheck();
+  const runtime = getSupplierRuntimeState(supplierId);
+  const health = getSupplierHealth(supplierId);
+  const incrementalCursor = getSyncCursorForAdmin(supplierId, "incremental");
+  const fullCursor = getSyncCursorForAdmin(supplierId, "full");
+  const audit = listSupplierEngineAudit(supplierId, 20);
+  return {
+    general: {
+      supplierId: supplier.supplierId,
+      name: supplier.displayName || supplier.name,
+      country: supplier.country,
+      connector: supplier.integrationTypes.join(", "),
+      active: supplier.status !== "DISABLED" && supplier.status !== "PAUSED",
+      status: supplier.status
+    },
+    markets: supplier.supportedMarkets,
+    capabilities: {
+      productFeed: supplier.capabilities.productFeed,
+      stockFeed: supplier.capabilities.stockFeed,
+      priceFeed: supplier.capabilities.priceFeed,
+      orders: supplier.capabilities.orderAPI || supplier.capabilities.createOrder,
+      tracking: supplier.capabilities.trackingAPI || supplier.capabilities.tracking,
+      returns: supplier.capabilities.returnsAPI,
+      dropshipping: supplier.capabilities.dropshipping,
+      whiteLabel: supplier.capabilities.whiteLabel,
+      blindShipping: supplier.capabilities.blindShipping
+    },
+    sync: {
+      fullCursor,
+      incrementalCursor,
+      lastSuccessfulSync: runtime.lastSuccessfulSync,
+      lastFailedSync: runtime.lastFailedSync,
+      syncStatus: runtime.syncStatus,
+      productsProcessed: runtime.productsProcessed,
+      offersUpdated: runtime.offersUpdated,
+      stockUpdated: runtime.stockUpdated,
+      priceUpdated: runtime.priceUpdated
+    },
+    health: {
+      status: health.healthStatus || healthCheck.status,
+      reliability: health.reliabilityScore,
+      successCount: health.successCount,
+      failureCount: health.errorCount,
+      responseTimeMs: health.responseTimeMs,
+      consecutiveFailures: health.consecutiveFailures
+    },
+    audit,
+    credentialsConfigured: hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef)
+  };
+}
+function setSupplierEnabled(supplierId, enabled, actor = "system") {
+  bootstrapSupplierEnginePersistence();
+  const updated = enabled ? enableSupplier(supplierId) : disableSupplier(supplierId);
+  if (!updated) return null;
+  recordSupplierEngineAudit({
+    actor,
+    supplierId,
+    action: enabled ? "supplier.enabled" : "supplier.disabled"
+  });
+  return updated;
+}
+function resetSupplierCursorSafe(supplierId, syncMode = "incremental", actor = "system") {
+  bootstrapSupplierEnginePersistence();
+  clearSyncCursor(supplierId, syncMode);
+  recordSupplierEngineAudit({
+    actor,
+    supplierId,
+    action: "supplier.cursor.reset",
+    metadata: { syncMode }
+  });
+  return { ok: true, supplierId, syncMode };
+}
+
+// lib/supplier-engine/service.ts
+init_persistence();
 
 // lib/supplier-engine/order.ts
 init_registry();
 init_capabilities();
+init_security();
 function buildDryRunPayload(request) {
   const safeAddress = {};
   for (const [key, value] of Object.entries(request.shippingAddress || {})) {
@@ -29202,6 +29875,7 @@ async function getSupplierTracking(supplierId, supplierOrderId) {
 }
 
 // lib/supplier-engine/service.ts
+init_credentials();
 init_tracking();
 
 // lib/supplier-engine/returns.ts
@@ -29277,6 +29951,7 @@ function selectBestSupplierForOrder(product, options) {
   const marketId = options?.countryCode;
   const offers = product.supplierOffers.filter((o) => {
     if (o.stock <= 0) return false;
+    if (!isSupplierSelectable(o.supplierId)) return false;
     return isMarketEligible(o.supplierId, marketId);
   });
   if (!offers.length) return null;
@@ -29314,22 +29989,31 @@ function selectBestSupplierForOrder(product, options) {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   TEST_SUPPLIER_ID,
+  bootstrapSupplierEnginePersistence,
   createSupplierOrder,
   createSupplierReturn,
   getSupplier,
   getSupplierEngineAdminOverview,
+  getSupplierEngineDashboard,
+  getSupplierEngineDetail,
+  getSupplierHealth,
   getSupplierLogs,
+  getSupplierPersistenceMode,
   getSupplierRuntimeState,
   getSupplierTracking,
   getSyncCursor,
+  getSyncCursorForAdmin,
   ingestSupplierFeed,
+  isSupplierSelectable,
   listReturnCapabilities,
   listSuppliers,
   listSyncCursors,
   redactSecrets,
   rejectClientCredentials,
+  resetSupplierCursorSafe,
   runSupplierSyncJob,
   sanitizeClientSyncRequest,
   selectBestSupplierForOrder,
+  setSupplierEnabled,
   validateSupplierOrderPayload
 });

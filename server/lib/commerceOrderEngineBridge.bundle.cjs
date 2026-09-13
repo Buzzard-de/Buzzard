@@ -26451,8 +26451,46 @@ var buzzard_suppliers_default = {
 // lib/supplier-engine/fixtures.ts
 var TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
 
+// lib/supplier-engine/persistence.ts
+var store;
+function getSupplierPersistence() {
+  if (store !== void 0) return store;
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
+    store = null;
+    return store;
+  }
+  const candidates = [
+    "server/lib/supplier/persistentStore.js",
+    "../../server/lib/supplier/persistentStore.js"
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      store = mod.createPersistentSupplierStore();
+      return store;
+    } catch {
+    }
+  }
+  store = null;
+  return store;
+}
+
+// lib/supplier-engine/credentials.ts
+var credentialRefs = /* @__PURE__ */ new Map();
+function registerCredentialRef(supplierId, secretsRef) {
+  const entry = {
+    supplierId,
+    secretsRef,
+    configured: Boolean(secretsRef),
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  credentialRefs.set(supplierId, entry);
+  return entry;
+}
+
 // lib/supplier-engine/registry.ts
 var supplierById = /* @__PURE__ */ new Map();
+var persistedOverlay = /* @__PURE__ */ new Map();
 function mapMasterToConfig(raw) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
   const feedType = String(raw.feed_type || "manual");
@@ -26503,17 +26541,56 @@ function buildTestSupplierA() {
     updatedAt: now
   };
 }
+function mergePersistedOverlay(config4) {
+  const overlay = persistedOverlay.get(config4.supplierId);
+  if (!overlay) return config4;
+  return {
+    ...config4,
+    ...overlay,
+    capabilities: { ...config4.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config4.supportedMarkets,
+    status: overlay.status ?? config4.status,
+    updatedAt: overlay.updatedAt ?? config4.updatedAt
+  };
+}
+function persistRegistryEntry(config4) {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  persistence.saveRegistryRow({
+    supplierId: config4.supplierId,
+    name: config4.name,
+    displayName: config4.displayName || config4.name,
+    country: config4.country,
+    connectorType: config4.integrationTypes[0] || "manual",
+    supportedMarkets: config4.supportedMarkets,
+    capabilities: config4.capabilities,
+    active: config4.status !== "DISABLED" && config4.status !== "PAUSED",
+    status: config4.status,
+    secretsRef: config4.secretsRef,
+    createdAt: config4.createdAt
+  });
+  if (config4.secretsRef) registerCredentialRef(config4.supplierId, config4.secretsRef);
+}
 function ensureRegistry() {
   if (supplierById.size > 0) return;
   for (const raw of buzzard_suppliers_default.suppliers) {
-    const config4 = mapMasterToConfig(raw);
+    const config4 = mergePersistedOverlay(mapMasterToConfig(raw));
     supplierById.set(config4.supplierId, config4);
+    persistRegistryEntry(config4);
   }
-  supplierById.set(TEST_SUPPLIER_ID, buildTestSupplierA());
+  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
+  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
+  persistRegistryEntry(testSupplier);
 }
 function getSupplier(supplierId) {
   ensureRegistry();
-  return supplierById.get(supplierId);
+  const config4 = supplierById.get(supplierId);
+  return config4 ? mergePersistedOverlay(config4) : void 0;
+}
+function isSupplierSelectable(supplierId) {
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return false;
+  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
 }
 
 // lib/pricing-engine/shipping.ts
@@ -27403,14 +27480,58 @@ function getSupplierLogs(supplierId) {
   return logBuffer.filter((l) => l.supplierId === supplierId);
 }
 
+// lib/supplier-engine/health.ts
+var healthCache = /* @__PURE__ */ new Map();
+function defaultHealth(supplierId) {
+  return {
+    supplierId,
+    healthStatus: "UNKNOWN",
+    responseTimeMs: 0,
+    errorCount: 0,
+    successCount: 0,
+    rateLimitCount: 0,
+    consecutiveFailures: 0,
+    reliabilityScore: 0.5,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function fromPersisted(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    responseTimeMs: Number(row.responseTimeMs || 0),
+    errorCount: Number(row.errorCount || 0),
+    successCount: Number(row.successCount || 0),
+    rateLimitCount: Number(row.rateLimitCount || 0),
+    consecutiveFailures: Number(row.consecutiveFailures || 0),
+    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
+    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function getSupplierHealth(supplierId) {
+  const cached = healthCache.get(supplierId);
+  if (cached) return cached;
+  const persistence = getSupplierPersistence();
+  const row = persistence?.getHealth(supplierId);
+  if (row) {
+    const record = fromPersisted(row);
+    healthCache.set(supplierId, record);
+    return record;
+  }
+  return defaultHealth(supplierId);
+}
+
 // lib/supplier-engine/reliability.ts
 function computeSupplierReliabilityScore(supplierId) {
+  const health = getSupplierHealth(supplierId);
   const logs = getSupplierLogs(supplierId);
-  const total = logs.length;
-  const successes = logs.filter((l) => l.status === "SUCCESS").length;
-  const syncSuccessRate = total > 0 ? successes / total : 0;
+  const total = health.successCount + health.errorCount + logs.length;
+  const successes = health.successCount + logs.filter((l) => l.status === "SUCCESS").length;
+  const syncSuccessRate = total > 0 ? successes / total : health.reliabilityScore;
   return {
-    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : 0.5,
+    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : health.reliabilityScore || 0.5,
     metrics: {
       uptime: total > 0 ? syncSuccessRate : 0,
       syncSuccessRate,
@@ -27435,8 +27556,45 @@ function defaultState(supplierId) {
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
+function fromPersisted2(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    syncStatus: row.syncStatus || "IDLE",
+    lastSyncStartedAt: row.lastSyncStartedAt ? String(row.lastSyncStartedAt) : void 0,
+    lastSyncCompletedAt: row.lastSyncCompletedAt ? String(row.lastSyncCompletedAt) : void 0,
+    lastSuccessfulSync: row.lastSyncSuccessAt ? String(row.lastSyncSuccessAt) : void 0,
+    lastFailedSync: row.lastSyncFailureAt ? String(row.lastSyncFailureAt) : void 0,
+    lastSyncError: row.lastErrorMessageSafe ? String(row.lastErrorMessageSafe) : void 0,
+    lastErrorCode: row.lastErrorCode ? String(row.lastErrorCode) : void 0,
+    lastSyncJobId: row.lastSyncJobId ? String(row.lastSyncJobId) : void 0,
+    syncLockJobId: row.syncLockJobId ? String(row.syncLockJobId) : void 0,
+    syncLockAcquiredAt: row.syncLockAcquiredAt ? String(row.syncLockAcquiredAt) : void 0,
+    productsProcessed: Number(row.productsProcessed || 0),
+    productsAccepted: Number(row.productsAccepted || 0),
+    productsRejected: Number(row.productsRejected || 0),
+    offersUpdated: Number(row.offersUpdated || 0),
+    stockUpdated: Number(row.stockUpdated || 0),
+    priceUpdated: Number(row.priceUpdated || 0),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
 function getSupplierRuntimeState(supplierId) {
-  return stateBySupplier.get(supplierId) ?? defaultState(supplierId);
+  const cached = stateBySupplier.get(supplierId);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getRuntimeState(supplierId);
+  if (row) {
+    const state = fromPersisted2(row);
+    stateBySupplier.set(supplierId, state);
+    return state;
+  }
+  const health = getSupplierHealth(supplierId);
+  return {
+    ...defaultState(supplierId),
+    healthStatus: health.healthStatus,
+    reliabilityScore: health.reliabilityScore
+  };
 }
 
 // lib/supplier-engine/selection.ts
@@ -27463,6 +27621,7 @@ function selectBestSupplierForOrder(product, options) {
   const marketId = options?.countryCode;
   const offers = product.supplierOffers.filter((o) => {
     if (o.stock <= 0) return false;
+    if (!isSupplierSelectable(o.supplierId)) return false;
     return isMarketEligible(o.supplierId, marketId);
   });
   if (!offers.length) return null;

@@ -3888,6 +3888,95 @@ CREATE TABLE IF NOT EXISTS tax_rates (
     migrateCoreFoundationPart16();
     migrateCoreFoundationPart17();
     migrateAnalyticsFoundation();
+    function migrateSupplierEngineOperations() {
+      db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_engine_registry (
+      supplier_id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      display_name TEXT,
+      country TEXT,
+      connector_type TEXT,
+      supported_markets_json TEXT DEFAULT '[]',
+      capabilities_json TEXT DEFAULT '{}',
+      active INTEGER DEFAULT 1,
+      status TEXT DEFAULT 'CONNECTED',
+      secrets_ref TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS supplier_engine_runtime_state (
+      supplier_id TEXT PRIMARY KEY,
+      sync_status TEXT DEFAULT 'IDLE',
+      health_status TEXT DEFAULT 'UNKNOWN',
+      last_sync_started_at TEXT,
+      last_sync_completed_at TEXT,
+      last_sync_success_at TEXT,
+      last_sync_failure_at TEXT,
+      last_error_code TEXT,
+      last_error_message_safe TEXT,
+      last_sync_job_id TEXT,
+      sync_lock_job_id TEXT,
+      sync_lock_acquired_at TEXT,
+      products_processed INTEGER DEFAULT 0,
+      products_accepted INTEGER DEFAULT 0,
+      products_rejected INTEGER DEFAULT 0,
+      offers_updated INTEGER DEFAULT 0,
+      stock_updated INTEGER DEFAULT 0,
+      price_updated INTEGER DEFAULT 0,
+      reliability_score REAL DEFAULT 0.5,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS supplier_engine_sync_cursors (
+      supplier_id TEXT NOT NULL,
+      sync_mode TEXT NOT NULL DEFAULT 'incremental',
+      cursor_value TEXT,
+      page INTEGER,
+      offset_value INTEGER,
+      last_modified TEXT,
+      updated_at TEXT NOT NULL,
+      PRIMARY KEY (supplier_id, sync_mode)
+    );
+
+    CREATE TABLE IF NOT EXISTS supplier_engine_health (
+      supplier_id TEXT PRIMARY KEY,
+      health_status TEXT DEFAULT 'UNKNOWN',
+      response_time_ms REAL DEFAULT 0,
+      error_count INTEGER DEFAULT 0,
+      success_count INTEGER DEFAULT 0,
+      rate_limit_count INTEGER DEFAULT 0,
+      consecutive_failures INTEGER DEFAULT 0,
+      last_successful_operation TEXT,
+      last_failed_operation TEXT,
+      reliability_score REAL DEFAULT 0.5,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS supplier_engine_sync_idempotency (
+      idempotency_key TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_supeng_idempotency_supplier
+      ON supplier_engine_sync_idempotency(supplier_id);
+
+    CREATE TABLE IF NOT EXISTS supplier_engine_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      actor TEXT,
+      supplier_id TEXT,
+      action TEXT NOT NULL,
+      correlation_id TEXT,
+      metadata_json TEXT DEFAULT '{}',
+      audit_timestamp TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_supeng_audit_supplier
+      ON supplier_engine_audit(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_supeng_audit_timestamp
+      ON supplier_engine_audit(audit_timestamp);
+  `);
+    }
+    migrateSupplierEngineOperations();
     function seed() {
       const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
       if (count === 0) {

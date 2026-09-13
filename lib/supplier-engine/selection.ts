@@ -2,7 +2,7 @@ import { selectBestSupplier as productSelectBestSupplier } from "@/lib/product-e
 import type { ProductEngineProduct } from "@/lib/product-engine/types";
 import { computeSupplierReliabilityScore } from "./reliability";
 import { createConnector } from "./connectors/factory";
-import { getSupplier } from "./registry";
+import { getSupplier, isSupplierSelectable } from "./registry";
 import { getSupplierRuntimeState } from "./state";
 import { resolveShippingCost } from "@/lib/pricing-engine/shipping";
 
@@ -39,6 +39,7 @@ export function selectBestSupplierForOrder(
   const marketId = options?.countryCode;
   const offers = product.supplierOffers.filter((o) => {
     if (o.stock <= 0) return false;
+    if (!isSupplierSelectable(o.supplierId)) return false;
     return isMarketEligible(o.supplierId, marketId);
   });
 

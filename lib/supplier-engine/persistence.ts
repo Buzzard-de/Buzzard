@@ -19,6 +19,12 @@ export interface PersistentSupplierStore {
   claimIdempotencyKey(key: string, supplierId: string): boolean;
   recordAudit(entry: Record<string, unknown>): void;
   listAudit(supplierId: string, limit?: number): Array<Record<string, unknown>>;
+  saveOrderSandbox?(row: Record<string, unknown>): void;
+  getOrderSandboxByIdempotency?(key: string): Record<string, unknown> | undefined;
+  getOrderSandboxByReference?(supplierOrderId: string): Record<string, unknown> | undefined;
+  getLastOrderSandboxForSupplier?(supplierId: string): Record<string, unknown> | undefined;
+  listOrderSandbox?(supplierId?: string): Array<Record<string, unknown>>;
+  resetOrderSandbox?(supplierId?: string): void;
 }
 
 let store: PersistentSupplierStore | null | undefined;

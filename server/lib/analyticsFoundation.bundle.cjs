@@ -6,6 +6,14 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res, err) => function __init() {
+  if (err) throw err[0];
+  try {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  } catch (e) {
+    throw err = [e], e;
+  }
+};
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -3974,6 +3982,27 @@ CREATE TABLE IF NOT EXISTS tax_rates (
       ON supplier_engine_audit(supplier_id);
     CREATE INDEX IF NOT EXISTS idx_supeng_audit_timestamp
       ON supplier_engine_audit(audit_timestamp);
+
+    CREATE TABLE IF NOT EXISTS supplier_engine_order_sandbox (
+      supplier_order_id TEXT PRIMARY KEY,
+      buzzard_order_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      status TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT,
+      payload_json TEXT NOT NULL DEFAULT '{}',
+      tracking_json TEXT,
+      failure_class TEXT,
+      failure_code TEXT,
+      failure_message TEXT,
+      latency_ms REAL DEFAULT 0,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_supeng_order_sandbox_supplier
+      ON supplier_engine_order_sandbox(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_supeng_order_sandbox_buzzard_order
+      ON supplier_engine_order_sandbox(buzzard_order_id);
   `);
     }
     migrateSupplierEngineOperations();
@@ -4449,6 +4478,78 @@ var require_persistentStore = __commonJS({
       };
     }
     module2.exports = { createPersistentAnalyticsStore };
+  }
+});
+
+// lib/supplier-engine/fixtures.ts
+var init_fixtures = __esm({
+  "lib/supplier-engine/fixtures.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/persistence.ts
+var init_persistence = __esm({
+  "lib/supplier-engine/persistence.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/security.ts
+var init_security = __esm({
+  "lib/supplier-engine/security.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/credentials.ts
+var init_credentials = __esm({
+  "lib/supplier-engine/credentials.ts"() {
+    "use strict";
+    init_security();
+  }
+});
+
+// lib/supplier-engine/liveSupplier/config.ts
+var init_config = __esm({
+  "lib/supplier-engine/liveSupplier/config.ts"() {
+    "use strict";
+    init_credentials();
+  }
+});
+
+// lib/supplier-engine/liveSupplier/registry.ts
+var init_registry = __esm({
+  "lib/supplier-engine/liveSupplier/registry.ts"() {
+    "use strict";
+    init_config();
+    init_credentials();
+  }
+});
+
+// lib/supplier-engine/registry.ts
+var init_registry2 = __esm({
+  "lib/supplier-engine/registry.ts"() {
+    "use strict";
+    init_fixtures();
+    init_persistence();
+    init_credentials();
+    init_registry();
+  }
+});
+
+// lib/supplier-engine/capabilities.ts
+var init_capabilities = __esm({
+  "lib/supplier-engine/capabilities.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/orderSandbox/persistence.ts
+var init_persistence2 = __esm({
+  "lib/supplier-engine/orderSandbox/persistence.ts"() {
+    "use strict";
+    init_persistence();
   }
 });
 
@@ -30524,6 +30625,9 @@ function getReturnReserveConfig(categoryId) {
   return { ...base, ...categoryOverride };
 }
 
+// lib/pricing-engine/shipping.ts
+init_registry2();
+
 // lib/pricing-engine/returns.ts
 function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
   const config2 = getReturnReserveConfig(categoryId);
@@ -30559,6 +30663,24 @@ var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 var import_module2 = require("module");
 var require3 = (0, import_module2.createRequire)(__import_meta_url__);
 
+// lib/inventory-engine/market.ts
+init_registry2();
+
+// lib/inventory-engine/sync.ts
+init_registry2();
+
+// lib/inventory-engine/test-fixtures.ts
+init_fixtures();
+
+// lib/supplier-engine/observability.ts
+init_security();
+
+// lib/supplier-engine/health.ts
+init_persistence();
+
+// lib/supplier-engine/connectors/base.ts
+init_capabilities();
+
 // lib/supplier-engine/network/config.ts
 function envFlag(name, defaultValue = false) {
   const raw = process.env[name];
@@ -30582,6 +30704,57 @@ var SUPPLIER_NETWORK_CONFIG = {
   maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
   maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
 };
+
+// lib/supplier-engine/connectors/api.ts
+init_fixtures();
+
+// lib/supplier-engine/auth/resolver.ts
+init_credentials();
+
+// lib/supplier-engine/connectors/xml.ts
+init_fixtures();
+
+// lib/supplier-engine/connectors/csv.ts
+init_fixtures();
+
+// lib/supplier-engine/syncCursor.ts
+init_persistence();
+
+// lib/supplier-engine/selection.ts
+init_registry2();
+
+// lib/supplier-engine/state.ts
+init_persistence();
+
+// lib/supplier-engine/order.ts
+init_registry2();
+init_capabilities();
+
+// lib/supplier-engine/bootstrap.ts
+init_registry2();
+init_persistence2();
+
+// lib/supplier-engine/orderIdempotency.ts
+init_persistence();
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_registry2();
+
+// lib/supplier-engine/audit.ts
+init_persistence();
+init_security();
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_security();
+
+// lib/supplier-engine/orderSandbox/networkSafety.ts
+init_config();
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_persistence2();
+
+// lib/order-engine/fulfillment.ts
+init_registry2();
 
 // lib/analytics/constants.ts
 var SESSION_TIMEOUT_MS = 30 * 60 * 1e3;

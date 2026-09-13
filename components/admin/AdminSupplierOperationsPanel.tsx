@@ -10,6 +10,7 @@ import {
   runSupplierFoundationConnectionTest,
   runSupplierFoundationTestSync,
   runSupplierFoundationLiveReadSync,
+  runSupplierOrderSandboxTest,
   setSupplierFoundationEnabled,
   triggerSupplierFoundationSync,
   type SupplierFoundationDashboard,
@@ -34,6 +35,7 @@ export default function AdminSupplierOperationsPanel() {
   const [error, setError] = useState("");
   const [confirmReset, setConfirmReset] = useState(false);
   const [testSyncResult, setTestSyncResult] = useState<object | null>(null);
+  const [sandboxTestResult, setSandboxTestResult] = useState<object | null>(null);
 
   const t = useMemo(() => getSupplierAdminLabels(locale), [locale]);
   const rtl = locale === "ar";
@@ -118,6 +120,19 @@ export default function AdminSupplierOperationsPanel() {
     try {
       const res = await runSupplierFoundationTestSync(supplierId);
       setTestSyncResult(res.data);
+      await reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.error);
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleSandboxTest(supplierId: string) {
+    setActionLoading(true);
+    try {
+      const res = await runSupplierOrderSandboxTest(supplierId);
+      setSandboxTestResult(res.data);
       await reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : t.error);
@@ -347,6 +362,47 @@ export default function AdminSupplierOperationsPanel() {
               {"dataQuality" in testSyncResult ? <h4>{t.dataQuality}</h4> : null}
               <pre className="admin-code-block">{JSON.stringify(testSyncResult, null, 2)}</pre>
             </>
+          ) : null}
+
+          <h3>{t.orderSandbox}</h3>
+          <p className="admin-muted">
+            {t.realSupplierOrderNetwork}:{" "}
+            <strong>{detail.orderSandbox?.realSupplierOrderNetwork || t.networkDisabled}</strong>
+          </p>
+          {detail.orderSandbox?.lastSandboxOrder ? (
+            <div className="admin-kpi-grid">
+              <article className="admin-stat">
+                <strong>{detail.orderSandbox.lastSandboxOrder.supplierOrderId}</strong>
+                <span>{t.sandboxReference}</span>
+              </article>
+              <article className="admin-stat">
+                <strong>{detail.orderSandbox.lastSandboxOrder.status}</strong>
+                <span>{t.lastSandboxOrder}</span>
+              </article>
+              <article className="admin-stat">
+                <strong>{detail.orderSandbox.lastSandboxOrder.idempotencyKey}</strong>
+                <span>{t.idempotencyKey}</span>
+              </article>
+              <article className="admin-stat">
+                <strong>{detail.orderSandbox.lastSandboxOrder.latencyMs}ms</strong>
+                <span>Latency</span>
+              </article>
+            </div>
+          ) : (
+            <p className="admin-muted">—</p>
+          )}
+          <div className="admin-inline-actions">
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              disabled={actionLoading}
+              onClick={() => handleSandboxTest(selectedId)}
+            >
+              {t.sandboxTest}
+            </button>
+          </div>
+          {sandboxTestResult ? (
+            <pre className="admin-code-block">{JSON.stringify(sandboxTestResult, null, 2)}</pre>
           ) : null}
 
           <h3>{t.cursor}</h3>

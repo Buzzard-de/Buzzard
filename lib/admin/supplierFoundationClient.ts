@@ -59,6 +59,19 @@ export interface SupplierFoundationDetail {
   health: Record<string, unknown>;
   audit: Array<Record<string, unknown>>;
   credentialsConfigured: boolean;
+  orderSandbox?: {
+    realSupplierOrderNetwork: string;
+    supplierOrderNetworkEnabled?: boolean;
+    lastSandboxOrder?: {
+      supplierOrderId: string;
+      buzzardOrderId: string;
+      status: string;
+      idempotencyKey: string;
+      latencyMs: number;
+      error?: string;
+      updatedAt: string;
+    } | null;
+  };
 }
 
 export interface SupplierConnectionTestResult {
@@ -185,5 +198,33 @@ export async function runSupplierFoundationLiveReadSync(
   return foundationRequest<{ success: boolean; data: SupplierLiveReadSyncResult }>(
     `/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/live-read-sync`,
     { method: "POST", body: JSON.stringify({ jobType }) }
+  );
+}
+
+export async function fetchSupplierOrderSandboxSummary(supplierId: string) {
+  return foundationRequest<{
+    success: boolean;
+    data: {
+      realSupplierOrderNetwork: string;
+      supplierOrderNetworkEnabled: boolean;
+      lastSandboxOrder: SupplierFoundationDetail["orderSandbox"] extends { lastSandboxOrder?: infer T }
+        ? T
+        : unknown;
+      networkSafety: Record<string, unknown>;
+    };
+  }>(`/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/order-sandbox`);
+}
+
+export async function runSupplierOrderSandboxTest(
+  supplierId: string,
+  body?: {
+    orderId?: string;
+    lines?: Array<{ supplierSku: string; quantity: number; unitPrice: number }>;
+    shippingAddress?: Record<string, string>;
+  }
+) {
+  return foundationRequest<{ success: boolean; data: Record<string, unknown>; payload?: Record<string, unknown> }>(
+    `/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/order-sandbox-test`,
+    { method: "POST", body: JSON.stringify(body || {}) }
   );
 }

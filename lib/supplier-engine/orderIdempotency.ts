@@ -1,3 +1,6 @@
+import { bootstrapSupplierEnginePersistence } from "./bootstrap";
+import { getSupplierPersistence } from "./persistence";
+
 const orderIdempotencyKeys = new Map<string, { supplierOrderId: string; createdAt: string }>();
 
 export function buildSupplierOrderIdempotencyKey(
@@ -5,7 +8,8 @@ export function buildSupplierOrderIdempotencyKey(
   buzzardOrderId: string,
   idempotencyKey?: string
 ): string {
-  return `${supplierId}:${buzzardOrderId}:${idempotencyKey || "default"}`;
+  if (idempotencyKey) return `${supplierId}:${buzzardOrderId}:${idempotencyKey}`;
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
 }
 
 export function getIdempotentSupplierOrder(key: string): string | undefined {
@@ -20,7 +24,10 @@ export function recordIdempotentSupplierOrder(
   if (existing) {
     return { replay: true, supplierOrderId: existing.supplierOrderId };
   }
-  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt: new Date().toISOString() });
+  const createdAt = new Date().toISOString();
+  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt });
+  bootstrapSupplierEnginePersistence();
+  getSupplierPersistence()?.claimIdempotencyKey?.(key, key.split(":")[0] || "unknown");
   return { replay: false, supplierOrderId };
 }
 

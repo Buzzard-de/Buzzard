@@ -1,13 +1,17 @@
 import type { SupplierOrderRequest, SupplierOrderResult } from "./types";
 import { getSupplier } from "./registry";
 import { hasCapability } from "./capabilities";
-import { redactSecrets } from "./security";
 import { isSupplierOrderNetworkEnabled } from "./network";
 import {
   buildSupplierOrderIdempotencyKey,
   getIdempotentSupplierOrder,
   recordIdempotentSupplierOrder,
 } from "./orderIdempotency";
+import { runSupplierOrderSandbox } from "./orderSandbox/orchestrator";
+import { filterSupplierFulfillmentAddress, sanitizePayloadForInspection } from "./orderSandbox/piiFilter";
+import type { SupplierOrderSandboxInput } from "./orderSandbox/types";
+
+export type { SupplierOrderSandboxInput };
 
 export interface SupplierOrderDryRunPayload {
   supplierId: string;
@@ -21,16 +25,11 @@ export interface SupplierOrderDryRunPayload {
 }
 
 function buildDryRunPayload(request: SupplierOrderRequest): SupplierOrderDryRunPayload {
-  const safeAddress: Record<string, string> = {};
-  for (const [key, value] of Object.entries(request.shippingAddress || {})) {
-    if (/payment|card|cvv|iban/i.test(key)) continue;
-    safeAddress[key] = value;
-  }
   return {
     supplierId: request.supplierId,
     orderId: request.orderId,
     lines: request.lines,
-    shippingAddress: safeAddress,
+    shippingAddress: filterSupplierFulfillmentAddress(request.shippingAddress),
     dropshipping: request.dropshipping ?? false,
     whiteLabel: request.whiteLabel ?? false,
     blindShipping: request.blindShipping ?? false,
@@ -39,22 +38,19 @@ function buildDryRunPayload(request: SupplierOrderRequest): SupplierOrderDryRunP
 }
 
 export async function createSupplierOrder(
-  request: SupplierOrderRequest & { idempotencyKey?: string }
+  request: SupplierOrderSandboxInput
 ): Promise<SupplierOrderResult> {
   const supplier = getSupplier(request.supplierId);
   if (!supplier) {
     return { ok: false, dryRun: true, status: "REJECTED", message: "UNKNOWN_SUPPLIER" };
   }
-  if (!hasCapability(supplier.capabilities, "orderAPI") && !supplier.capabilities.createOrder) {
-    return { ok: false, dryRun: true, status: "CAPABILITY_MISSING", message: "orderAPI not configured" };
-  }
 
-  const idempotencyKey = buildSupplierOrderIdempotencyKey(
+  const legacyKey = buildSupplierOrderIdempotencyKey(
     request.supplierId,
     request.orderId,
     request.idempotencyKey
   );
-  const existingOrderId = getIdempotentSupplierOrder(idempotencyKey);
+  const existingOrderId = getIdempotentSupplierOrder(legacyKey);
   if (existingOrderId) {
     return {
       ok: true,
@@ -65,26 +61,26 @@ export async function createSupplierOrder(
     };
   }
 
-  const payload = buildDryRunPayload(request);
-  void redactSecrets(payload);
-
-  if (!isSupplierOrderNetworkEnabled()) {
-    const supplierOrderId = `DRY-ORD-${Date.now()}`;
-    recordIdempotentSupplierOrder(idempotencyKey, supplierOrderId);
+  if (isSupplierOrderNetworkEnabled()) {
     return {
-      ok: true,
+      ok: false,
       dryRun: true,
-      supplierOrderId,
-      status: "PREPARED_NOT_SENT",
-      message: "Order foundation only — supplier order network disabled",
+      status: "ORDER_NETWORK_REQUIRED",
+      message: "Real supplier order dispatch requires explicit network enablement — blocked in #335",
     };
   }
 
+  const sandboxResult = await runSupplierOrderSandbox(request);
+  if (sandboxResult.supplierOrderId) {
+    recordIdempotentSupplierOrder(legacyKey, sandboxResult.supplierOrderId);
+  }
+
   return {
-    ok: false,
+    ok: sandboxResult.ok,
     dryRun: true,
-    status: "ORDER_NETWORK_REQUIRED",
-    message: "Real supplier order dispatch requires explicit network enablement",
+    supplierOrderId: sandboxResult.supplierOrderId,
+    status: sandboxResult.idempotentReplay ? "IDEMPOTENT_REPLAY" : sandboxResult.status,
+    message: sandboxResult.message,
   };
 }
 
@@ -92,6 +88,7 @@ export function validateSupplierOrderPayload(request: SupplierOrderRequest): {
   valid: boolean;
   errors: string[];
   payload?: SupplierOrderDryRunPayload;
+  sanitized?: Record<string, unknown>;
 } {
   const errors: string[] = [];
   if (!request.supplierId) errors.push("MISSING_SUPPLIER_ID");
@@ -102,8 +99,10 @@ export function validateSupplierOrderPayload(request: SupplierOrderRequest): {
     if (line.quantity <= 0) errors.push("INVALID_QUANTITY");
   }
   if (!request.shippingAddress?.country) errors.push("MISSING_SHIPPING_COUNTRY");
-  if (errors.length) return { valid: false, errors };
-  return { valid: true, errors: [], payload: buildDryRunPayload(request) };
+  const payload = buildDryRunPayload(request);
+  const sanitized = sanitizePayloadForInspection(payload as unknown as Record<string, unknown>);
+  if (errors.length) return { valid: false, errors, sanitized };
+  return { valid: true, errors: [], payload, sanitized };
 }
 
 export async function getSupplierOrder(
@@ -115,7 +114,7 @@ export async function getSupplierOrder(
   if (!supplier || (!hasCapability(supplier.capabilities, "orderAPI") && !supplier.capabilities.orderStatus)) {
     return { ok: false, status: "CAPABILITY_MISSING", dryRun: true };
   }
-  return { ok: true, status: "DRY_RUN", dryRun: true };
+  return { ok: true, status: "SANDBOX", dryRun: true };
 }
 
 export async function cancelSupplierOrder(

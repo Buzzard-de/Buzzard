@@ -1,5 +1,6 @@
 import { getSupplier } from "./registry";
 import { hasCapability } from "./capabilities";
+import { getSupplierOrderSandboxByReference } from "./orderSandbox/persistence";
 
 export type CanonicalTrackingStatus =
   | "LABEL_CREATED"
@@ -22,10 +23,12 @@ const STATUS_MAP: Record<string, CanonicalTrackingStatus> = {
 export interface SupplierTrackingSnapshot {
   ok: boolean;
   dryRun: boolean;
+  sandbox?: boolean;
   supplierId: string;
   supplierOrderId: string;
   trackingNumber?: string;
   carrier?: string;
+  trackingUrl?: string;
   status: CanonicalTrackingStatus;
   rawStatus?: string;
 }
@@ -39,6 +42,32 @@ export async function fetchSupplierTracking(
   supplierId: string,
   supplierOrderId: string
 ): Promise<SupplierTrackingSnapshot> {
+  if (!supplierOrderId) {
+    return {
+      ok: false,
+      dryRun: true,
+      supplierId,
+      supplierOrderId: supplierOrderId || "UNKNOWN",
+      status: "UNKNOWN",
+    };
+  }
+
+  const sandboxRecord = getSupplierOrderSandboxByReference(supplierOrderId);
+  if (sandboxRecord?.tracking) {
+    return {
+      ok: true,
+      dryRun: true,
+      sandbox: true,
+      supplierId,
+      supplierOrderId,
+      trackingNumber: sandboxRecord.tracking.trackingNumber,
+      carrier: sandboxRecord.tracking.carrier,
+      trackingUrl: sandboxRecord.tracking.trackingUrl,
+      status: mapSupplierTrackingStatus(sandboxRecord.tracking.shipmentStatus),
+      rawStatus: sandboxRecord.tracking.shipmentStatus,
+    };
+  }
+
   const supplier = getSupplier(supplierId);
   if (!supplier || !hasCapability(supplier.capabilities, "trackingAPI")) {
     return {

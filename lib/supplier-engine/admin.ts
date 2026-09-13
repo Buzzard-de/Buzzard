@@ -11,7 +11,8 @@ import { getSyncCursorForAdmin } from "./syncCursor";
 import { listSupplierEngineAudit, recordSupplierEngineAudit } from "./audit";
 import { clearSyncCursor } from "./syncCursor";
 import { bootstrapSupplierEnginePersistence } from "./bootstrap";
-import { isSupplierNetworkEnabled, resolveConnectorEnvironment } from "./network";
+import { isSupplierNetworkEnabled, isSupplierOrderNetworkEnabled, resolveConnectorEnvironment } from "./network";
+import { getSupplierOrderSandboxAdminSummary } from "./orderSandbox/orchestrator";
 import { isLiveReadEnabled } from "./liveSupplier/config";
 import { runSupplierConnectionTest } from "./connectionTest";
 
@@ -194,6 +195,10 @@ export async function getSupplierEngineDetail(supplierId: string) {
       latencyMs: health.responseTimeMs,
       reliability: health.reliabilityScore,
       liveReadEnabled: isLiveReadEnabled(),
+    },
+    orderSandbox: {
+      ...getSupplierOrderSandboxAdminSummary(supplierId),
+      supplierOrderNetworkEnabled: isSupplierOrderNetworkEnabled(),
     },
   };
 }

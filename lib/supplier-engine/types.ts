@@ -6,7 +6,7 @@ export type SupplierStatus =
   | "PAUSED"
   | "DISABLED";
 
-export type IntegrationType = "api" | "xml" | "csv" | "manual" | "template";
+export type IntegrationType = "api" | "xml" | "csv" | "manual" | "template" | "b2b-sandbox";
 
 export type SupplierConnectorEnvironment = "MOCK" | "SANDBOX" | "PRODUCTION";
 
@@ -101,6 +101,8 @@ export interface SupplierConfig {
   rateLimit?: { requestsPerMinute: number };
   /** Server-only reference — never sent to client */
   secretsRef?: string;
+  /** Config-driven live supplier profile (#333) — server-only */
+  connectorProfile?: import("./liveSupplier/types").LiveSupplierProfile;
   createdAt: string;
   updatedAt: string;
 }

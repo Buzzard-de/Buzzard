@@ -30570,8 +30570,12 @@ function envInt(name, fallback) {
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
 }
 var SUPPLIER_NETWORK_CONFIG = {
-  networkEnabled: envFlag("SUPPLIER_NETWORK_ENABLED", false),
-  orderNetworkEnabled: envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false),
+  get networkEnabled() {
+    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
   defaultEnvironment: "MOCK",
   defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
   maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),

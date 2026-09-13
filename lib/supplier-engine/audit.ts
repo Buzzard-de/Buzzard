@@ -9,7 +9,11 @@ export type SupplierAuditAction =
   | "supplier.sync.failed"
   | "supplier.cursor.reset"
   | "supplier.configuration.changed"
-  | "supplier.order.dry_run";
+  | "supplier.order.dry_run"
+  | "supplier.live_read.blocked"
+  | "supplier.live_read.started"
+  | "supplier.live_read.completed"
+  | "supplier.live_read.failed";
 
 export function recordSupplierEngineAudit(entry: {
   actor?: string;

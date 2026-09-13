@@ -44,6 +44,10 @@ export const SUPPLIER_ADMIN_LABELS: Record<
     testConnection: "Verbindung testen",
     testSync: "Test-Sync",
     lastHealthCheck: "Letzter Health-Check",
+    liveReadSync: "Live-Read-Sync",
+    dataQuality: "Datenqualität",
+    offerCount: "Angebote",
+    productCount: "Produkte",
   },
   en: {
     title: "Supplier Operations",
@@ -85,6 +89,10 @@ export const SUPPLIER_ADMIN_LABELS: Record<
     testConnection: "Test connection",
     testSync: "Test sync",
     lastHealthCheck: "Last health check",
+    liveReadSync: "Live read sync",
+    dataQuality: "Data quality",
+    offerCount: "Offers",
+    productCount: "Products",
   },
   tr: {
     title: "Tedarikçi Operasyonları",
@@ -126,6 +134,10 @@ export const SUPPLIER_ADMIN_LABELS: Record<
     testConnection: "Bağlantıyı test et",
     testSync: "Test sync",
     lastHealthCheck: "Son health check",
+    liveReadSync: "Canlı okuma sync",
+    dataQuality: "Veri kalitesi",
+    offerCount: "Teklifler",
+    productCount: "Ürünler",
   },
   ar: {
     title: "عمليات الموردين",
@@ -167,6 +179,10 @@ export const SUPPLIER_ADMIN_LABELS: Record<
     testConnection: "اختبار الاتصال",
     testSync: "مزامنة تجريبية",
     lastHealthCheck: "آخر فحص صحة",
+    liveReadSync: "مزامنة القراءة المباشرة",
+    dataQuality: "جودة البيانات",
+    offerCount: "العروض",
+    productCount: "المنتجات",
   },
 };
 

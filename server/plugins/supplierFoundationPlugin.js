@@ -176,6 +176,20 @@ module.exports = {
       return res.json({ success: true, data: result, source: "supplier-foundation" });
     });
 
+    app.post("/api/admin/supplier-foundation/:supplierId/live-read-sync", async (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "suppliers.write")) return;
+      const foundationMod = loadFoundation();
+      if (!foundationMod) return res.status(503).json({ success: false, errorCode: "FOUNDATION_UNAVAILABLE" });
+      const jobType = String(req.body?.jobType || "FULL");
+      const result = await foundationMod.runSupplierLiveReadSync(req.params.supplierId, { jobType });
+      audit(req, req.params.supplierId, AUDIT_ACTIONS.PRODUCT_IMPORT, {
+        liveReadSync: true,
+        status: result.status,
+      });
+      return res.json({ success: true, data: result, source: "supplier-foundation" });
+    });
+
     app.post("/api/admin/supplier-foundation/:supplierId/test-sync", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "suppliers.read")) return;

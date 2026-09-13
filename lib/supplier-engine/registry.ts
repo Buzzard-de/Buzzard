@@ -4,6 +4,7 @@ import suppliersMaster from "@/data/buzzard_suppliers.json";
 import { TEST_SUPPLIER_ID } from "./fixtures";
 import { getSupplierPersistence } from "./persistence";
 import { registerCredentialRef } from "./credentials";
+import { registerLiveSupplierIfConfigured } from "./liveSupplier/registry";
 
 const supplierById = new Map<string, SupplierConfig>();
 const persistedOverlay = new Map<string, Partial<SupplierConfig>>();
@@ -124,6 +125,12 @@ function ensureRegistry(): void {
   const testSupplier = mergePersistedOverlay(buildTestSupplierA());
   supplierById.set(TEST_SUPPLIER_ID, testSupplier);
   persistRegistryEntry(testSupplier);
+
+  registerLiveSupplierIfConfigured((config) => {
+    const merged = mergePersistedOverlay(config);
+    supplierById.set(config.supplierId, merged);
+    persistRegistryEntry(merged);
+  });
 }
 
 export function listSuppliers(): SupplierConfig[] {
@@ -173,4 +180,10 @@ export function disableSupplier(supplierId: string): SupplierConfig | undefined 
 export function getRegistryCount(): number {
   ensureRegistry();
   return supplierById.size;
+}
+
+/** Test-only registry reset for deterministic live supplier registration. */
+export function resetSupplierRegistryForTests(): void {
+  supplierById.clear();
+  persistedOverlay.clear();
 }

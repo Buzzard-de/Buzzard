@@ -324,6 +324,205 @@ var init_credentials = __esm({
   }
 });
 
+// data/supplier-engine/live_supplier.config.template.json
+var live_supplier_config_template_default;
+var init_live_supplier_config_template = __esm({
+  "data/supplier-engine/live_supplier.config.template.json"() {
+    live_supplier_config_template_default = {
+      $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+      supplierId: "",
+      name: "",
+      displayName: "",
+      country: "DE",
+      region: "EU",
+      currency: "EUR",
+      connectorType: "b2b-sandbox",
+      environment: "SANDBOX",
+      baseUrl: "",
+      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+      authentication: "api_key",
+      authType: "API_KEY",
+      endpoints: {
+        health: "/health",
+        products: "/products",
+        stock: "/stock",
+        prices: "/prices"
+      },
+      fieldMapping: {
+        article_number: "supplierSku",
+        sku: "supplierSku",
+        ean_code: "ean",
+        gtin: "gtin",
+        mpn: "mpn",
+        brand_name: "brand",
+        title: "name",
+        price_net: "supplierPrice",
+        stock_qty: "stock"
+      },
+      categoryMapping: {},
+      supportedMarkets: ["DE"],
+      feedFormat: "json",
+      priceIncludesVat: false,
+      capabilities: {
+        productFeed: true,
+        stockFeed: true,
+        priceFeed: true,
+        orderAPI: false,
+        createOrder: false,
+        cancelOrder: false,
+        orderStatus: false,
+        trackingAPI: false,
+        returnsAPI: false,
+        refund: false,
+        credit: false,
+        replacement: false,
+        dropshipping: false,
+        whiteLabel: false,
+        blindShipping: false
+      },
+      pagination: {
+        mode: "cursor",
+        pageSize: 100
+      }
+    };
+  }
+});
+
+// lib/supplier-engine/liveSupplier/config.ts
+function envFlag(name) {
+  const raw = process.env[name];
+  return raw === "1" || raw?.toLowerCase() === "true";
+}
+function parseJsonConfig(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed.supplierId || !parsed.baseUrl) return null;
+    return normalizeProfile(parsed);
+  } catch {
+    return null;
+  }
+}
+function normalizeProfile(profile) {
+  const { $comment: _comment, ...templateBase } = live_supplier_config_template_default;
+  return {
+    ...templateBase,
+    ...profile,
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: false,
+      createOrder: false,
+      cancelOrder: false,
+      orderStatus: false,
+      trackingAPI: false,
+      returnsAPI: false,
+      refund: false,
+      credit: false,
+      replacement: false,
+      ...profile.capabilities
+    },
+    endpoints: { ...live_supplier_config_template_default.endpoints, ...profile.endpoints },
+    fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
+  };
+}
+function resolveLiveSupplierProfile() {
+  const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
+  if (jsonConfig) {
+    const parsed = parseJsonConfig(jsonConfig);
+    if (parsed) return parsed;
+  }
+  const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
+  const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
+  if (!supplierId || !baseUrl) return null;
+  return normalizeProfile({
+    supplierId,
+    name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
+    displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
+    country: process.env.SUPPLIER_LIVE_COUNTRY?.trim() || "DE",
+    region: process.env.SUPPLIER_LIVE_REGION?.trim() || "EU",
+    currency: process.env.SUPPLIER_LIVE_CURRENCY?.trim() || "EUR",
+    connectorType: "b2b-sandbox",
+    environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
+    baseUrl,
+    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
+    endpoints: {
+      health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
+      products: process.env.SUPPLIER_LIVE_PRODUCTS_PATH?.trim() || "/products",
+      stock: process.env.SUPPLIER_LIVE_STOCK_PATH?.trim() || "/stock",
+      prices: process.env.SUPPLIER_LIVE_PRICES_PATH?.trim() || "/prices"
+    },
+    fieldMapping: live_supplier_config_template_default.fieldMapping,
+    categoryMapping: {},
+    supportedMarkets: (process.env.SUPPLIER_LIVE_MARKETS?.split(",") || ["DE"]).map((m) => m.trim()).filter(Boolean),
+    feedFormat: process.env.SUPPLIER_LIVE_FEED_FORMAT?.trim() || "json",
+    priceIncludesVat: process.env.SUPPLIER_LIVE_PRICE_INCLUDES_VAT === "1",
+    capabilities: live_supplier_config_template_default.capabilities,
+    pagination: { mode: "cursor", pageSize: 100 },
+    dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
+    whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
+    blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
+  });
+}
+function isLiveReadEnabled() {
+  return envFlag("SUPPLIER_LIVE_READ_ENABLED");
+}
+function hasLiveSupplierCredentials(profile) {
+  return Boolean(resolveCredentials(profile.secretsRef));
+}
+var init_config = __esm({
+  "lib/supplier-engine/liveSupplier/config.ts"() {
+    "use strict";
+    init_live_supplier_config_template();
+    init_credentials();
+  }
+});
+
+// lib/supplier-engine/liveSupplier/registry.ts
+function getRegisteredLiveSupplierId() {
+  return registeredLiveSupplierId;
+}
+function liveProfileToSupplierConfig(profile) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    supplierId: profile.supplierId,
+    name: profile.name,
+    displayName: profile.displayName || profile.name,
+    country: profile.country,
+    region: profile.region,
+    status: "TESTING",
+    integrationTypes: ["b2b-sandbox"],
+    currency: profile.currency,
+    supportedMarkets: profile.supportedMarkets,
+    supportedCategories: [],
+    capabilities: profile.capabilities,
+    fieldMapping: profile.fieldMapping,
+    secretsRef: profile.secretsRef,
+    rateLimit: { requestsPerMinute: 60 },
+    connectorProfile: profile,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function registerLiveSupplierIfConfigured(register2) {
+  const profile = resolveLiveSupplierProfile();
+  if (!profile) return null;
+  register2(liveProfileToSupplierConfig(profile));
+  registerCredentialRef(profile.supplierId, profile.secretsRef);
+  registeredLiveSupplierId = profile.supplierId;
+  return profile;
+}
+var registeredLiveSupplierId;
+var init_registry = __esm({
+  "lib/supplier-engine/liveSupplier/registry.ts"() {
+    "use strict";
+    init_config();
+    init_credentials();
+    registeredLiveSupplierId = null;
+  }
+});
+
 // lib/supplier-engine/registry.ts
 function mapMasterToConfig(raw) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
@@ -432,6 +631,11 @@ function ensureRegistry() {
   const testSupplier = mergePersistedOverlay(buildTestSupplierA());
   supplierById.set(TEST_SUPPLIER_ID, testSupplier);
   persistRegistryEntry(testSupplier);
+  registerLiveSupplierIfConfigured((config3) => {
+    const merged = mergePersistedOverlay(config3);
+    supplierById.set(config3.supplierId, merged);
+    persistRegistryEntry(merged);
+  });
 }
 function listSuppliers() {
   ensureRegistry();
@@ -471,7 +675,7 @@ function disableSupplier(supplierId) {
   return updateSupplierStatus(supplierId, "DISABLED");
 }
 var supplierById, persistedOverlay;
-var init_registry = __esm({
+var init_registry2 = __esm({
   "lib/supplier-engine/registry.ts"() {
     "use strict";
     init_test_supplier_feeds();
@@ -479,6 +683,7 @@ var init_registry = __esm({
     init_fixtures();
     init_persistence();
     init_credentials();
+    init_registry();
     supplierById = /* @__PURE__ */ new Map();
     persistedOverlay = /* @__PURE__ */ new Map();
   }
@@ -539,7 +744,7 @@ var STATUS_MAP;
 var init_tracking = __esm({
   "lib/supplier-engine/tracking.ts"() {
     "use strict";
-    init_registry();
+    init_registry2();
     init_capabilities();
     STATUS_MAP = {
       label_created: "LABEL_CREATED",
@@ -557,9 +762,12 @@ var serverEntry_exports = {};
 __export(serverEntry_exports, {
   TEST_SUPPLIER_ID: () => TEST_SUPPLIER_ID,
   bootstrapSupplierEnginePersistence: () => bootstrapSupplierEnginePersistence,
+  buildDataQualityReport: () => buildDataQualityReport,
   createSupplierOrder: () => createSupplierOrder,
   createSupplierReturn: () => createSupplierReturn,
+  evaluateLiveReadSyncGuard: () => evaluateLiveReadSyncGuard,
   evaluateProductionSyncGuard: () => evaluateProductionSyncGuard,
+  getRegisteredLiveSupplierId: () => getRegisteredLiveSupplierId,
   getSupplier: () => getSupplier,
   getSupplierConnectorMetrics: () => getSupplierConnectorMetrics,
   getSupplierEngineAdminOverview: () => getSupplierEngineAdminOverview,
@@ -572,6 +780,7 @@ __export(serverEntry_exports, {
   getSupplierTracking: () => getSupplierTracking,
   getSyncCursor: () => getSyncCursor,
   getSyncCursorForAdmin: () => getSyncCursorForAdmin,
+  hasLiveSupplierCredentialsConfigured: () => hasLiveSupplierCredentialsConfigured,
   ingestSupplierFeed: () => ingestSupplierFeed,
   isBlockedHost: () => isBlockedHost,
   isSupplierNetworkEnabled: () => isSupplierNetworkEnabled,
@@ -585,8 +794,10 @@ __export(serverEntry_exports, {
   resetMockTransportScenarios: () => resetMockTransportScenarios,
   resetOrderIdempotencyKeys: () => resetOrderIdempotencyKeys,
   resetSupplierCursorSafe: () => resetSupplierCursorSafe,
+  resolveLiveSupplierProfile: () => resolveLiveSupplierProfile,
   runSupplierConnectionTest: () => runSupplierConnectionTest,
   runSupplierDryRunTestSync: () => runSupplierDryRunTestSync,
+  runSupplierLiveReadSync: () => runSupplierLiveReadSync,
   runSupplierSyncJob: () => runSupplierSyncJob,
   sanitizeClientSyncRequest: () => sanitizeClientSyncRequest,
   selectBestSupplierForOrder: () => selectBestSupplierForOrder,
@@ -597,7 +808,7 @@ __export(serverEntry_exports, {
 module.exports = __toCommonJS(serverEntry_exports);
 
 // lib/supplier-engine/service.ts
-init_registry();
+init_registry2();
 
 // lib/supplier-engine/connectors/base.ts
 init_capabilities();
@@ -623,7 +834,7 @@ function capabilityNotSupportedOperation(extra) {
 }
 
 // lib/supplier-engine/network/config.ts
-function envFlag(name, defaultValue = false) {
+function envFlag2(name, defaultValue = false) {
   const raw = process.env[name];
   if (raw === void 0 || raw === "") return defaultValue;
   return raw === "1" || raw.toLowerCase() === "true";
@@ -633,8 +844,12 @@ function envInt(name, fallback) {
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
 }
 var SUPPLIER_NETWORK_CONFIG = {
-  networkEnabled: envFlag("SUPPLIER_NETWORK_ENABLED", false),
-  orderNetworkEnabled: envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false),
+  get networkEnabled() {
+    return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
   defaultEnvironment: "MOCK",
   defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
   maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
@@ -642,10 +857,10 @@ var SUPPLIER_NETWORK_CONFIG = {
   maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
 };
 function isSupplierNetworkEnabled() {
-  return SUPPLIER_NETWORK_CONFIG.networkEnabled;
+  return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
 }
 function isSupplierOrderNetworkEnabled() {
-  return SUPPLIER_NETWORK_CONFIG.orderNetworkEnabled;
+  return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 function resolveConnectorEnvironment(configured) {
   return configured || SUPPLIER_NETWORK_CONFIG.defaultEnvironment;
@@ -1098,7 +1313,9 @@ var MockSupplierTransport = class {
   }
   async request(req) {
     const key = `${req.method || "GET"} ${req.url}`;
-    const scenario = this.scenarios.get(key) || this.scenarios.get(req.url) || globalScenarios.get(key) || globalScenarios.get(req.url) || defaultScenario;
+    const urlWithoutQuery = req.url.split("?")[0];
+    const keyWithoutQuery = `${req.method || "GET"} ${urlWithoutQuery}`;
+    const scenario = this.scenarios.get(key) || this.scenarios.get(keyWithoutQuery) || this.scenarios.get(req.url) || globalScenarios.get(key) || globalScenarios.get(keyWithoutQuery) || globalScenarios.get(req.url) || defaultScenario;
     const correlationId = req.correlationId || (0, import_crypto2.randomUUID)();
     const started = Date.now();
     if (scenario.delayMs) {
@@ -1889,22 +2106,184 @@ var TemplateSupplierConnector = class extends SupplierConnector {
   }
 };
 
-// lib/supplier-engine/connectors/factory.ts
-function createConnector(supplier, integrationType, connectorConfig = {}) {
-  switch (integrationType) {
-    case "api":
-      return new ApiSupplierConnector(supplier, connectorConfig);
-    case "xml":
-      return new XmlSupplierConnector(supplier, connectorConfig);
-    case "csv":
-      return new CsvSupplierConnector(supplier, connectorConfig);
-    case "manual":
-      return new ManualSupplierConnector(supplier, connectorConfig);
-    case "template":
-      return new TemplateSupplierConnector(supplier, connectorConfig);
-    default:
-      throw new Error(`UNKNOWN_INTEGRATION_TYPE:${integrationType}`);
+// lib/supplier-engine/pagination.ts
+function parseLinkHeader(linkHeader) {
+  if (!linkHeader) return void 0;
+  const parts = linkHeader.split(",");
+  for (const part of parts) {
+    const match = part.match(/<([^>]+)>;\s*rel="?next"?/i);
+    if (match) return match[1];
   }
+  return void 0;
+}
+function buildPaginationQuery(state) {
+  const query = {};
+  switch (state.mode) {
+    case "page":
+      query.page = String(state.page ?? 1);
+      query.pageSize = String(state.pageSize);
+      break;
+    case "offset":
+      query.offset = String(state.offset ?? 0);
+      query.limit = String(state.pageSize);
+      break;
+    case "cursor":
+      if (state.cursor) query.cursor = state.cursor;
+      query.limit = String(state.pageSize);
+      break;
+    case "nextPageToken":
+      if (state.nextPageToken) query.pageToken = state.nextPageToken;
+      query.pageSize = String(state.pageSize);
+      break;
+    default:
+      query.limit = String(state.pageSize);
+      break;
+  }
+  return query;
+}
+function advancePagination(state, response) {
+  const hasMore = response.records.length >= state.pageSize;
+  const nextLink = parseLinkHeader(response.linkHeader);
+  switch (state.mode) {
+    case "page":
+      return {
+        hasMore,
+        next: hasMore ? { ...state, page: (state.page ?? 1) + 1 } : void 0
+      };
+    case "offset":
+      return {
+        hasMore,
+        next: hasMore ? { ...state, offset: (state.offset ?? 0) + state.pageSize } : void 0
+      };
+    case "cursor":
+      return {
+        hasMore: Boolean(response.cursor),
+        nextCursor: response.cursor,
+        next: response.cursor ? { ...state, cursor: response.cursor } : void 0
+      };
+    case "nextPageToken":
+      return {
+        hasMore: Boolean(response.nextPageToken),
+        nextPageToken: response.nextPageToken,
+        next: response.nextPageToken ? { ...state, nextPageToken: response.nextPageToken } : void 0
+      };
+    case "linkHeader":
+      return {
+        hasMore: Boolean(nextLink),
+        nextLink
+      };
+    default:
+      return { hasMore: false };
+  }
+}
+
+// lib/supplier-engine/syncCursor.ts
+init_persistence();
+var cursorStore = /* @__PURE__ */ new Map();
+function cursorKey(supplierId, syncMode = "incremental") {
+  return `${supplierId}:${syncMode}`;
+}
+function fromPersisted(row) {
+  return {
+    supplierId: String(row.supplierId),
+    syncMode: row.syncMode || "incremental",
+    cursor: row.cursor ? String(row.cursor) : void 0,
+    page: row.page != null ? Number(row.page) : void 0,
+    offset: row.offset != null ? Number(row.offset) : void 0,
+    lastModified: row.lastModified ? String(row.lastModified) : void 0,
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateSyncCursorsFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllCursors;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const cursor of rows) {
+    const parsed = fromPersisted(cursor);
+    cursorStore.set(cursorKey(parsed.supplierId, parsed.syncMode || "incremental"), parsed);
+  }
+}
+function getSyncCursor(supplierId, syncMode = "incremental") {
+  const key = cursorKey(supplierId, syncMode);
+  const cached = cursorStore.get(key);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
+  if (row) {
+    const cursor = fromPersisted(row);
+    cursorStore.set(key, cursor);
+    return cursor;
+  }
+  return void 0;
+}
+function saveSyncCursor(supplierId, patch, syncMode = "incremental") {
+  const existing = getSyncCursor(supplierId, syncMode);
+  const next = {
+    supplierId,
+    syncMode,
+    cursor: patch.cursor ?? existing?.cursor,
+    page: patch.page ?? existing?.page,
+    offset: patch.offset ?? existing?.offset,
+    lastModified: patch.lastModified ?? existing?.lastModified,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  cursorStore.set(cursorKey(supplierId, syncMode), next);
+  getSupplierPersistence()?.saveCursor(next);
+  return next;
+}
+function clearSyncCursor(supplierId, syncMode = "incremental") {
+  cursorStore.delete(cursorKey(supplierId, syncMode));
+  getSupplierPersistence()?.clearCursor(supplierId, syncMode);
+}
+function listSyncCursors() {
+  return [...cursorStore.values()];
+}
+function getSyncCursorForAdmin(supplierId, syncMode = "incremental") {
+  return getSupplierPersistence()?.getCursorForAdmin(supplierId, syncMode) ?? null;
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/parser.ts
+function parseSafeXmlProducts(xml, itemTag = "product") {
+  const records = [];
+  if (!xml?.trim()) return records;
+  if (/<!ENTITY/i.test(xml) || /SYSTEM\s+["']/i.test(xml)) {
+    throw new Error("XXE_BLOCKED");
+  }
+  const blocks = xml.match(new RegExp(`<${itemTag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${itemTag}>`, "gi")) || [];
+  for (const block of blocks) {
+    const record = {};
+    const tagPattern = /<([\w:-]+)(?:\s[^>]*)?>([^<]*)<\/\1>/g;
+    let match;
+    while ((match = tagPattern.exec(block)) !== null) {
+      const key = match[1].replace(/^.*:/, "");
+      let value = match[2].trim();
+      if (value.startsWith("<![CDATA[") && value.endsWith("]]>")) {
+        value = value.slice(9, -3);
+      }
+      record[key] = /^\d+(\.\d+)?$/.test(value) ? Number(value) : value;
+    }
+    if (Object.keys(record).length) records.push(record);
+  }
+  return records;
+}
+function parseSupplierFeedBody(body, format) {
+  if (format === "xml") {
+    try {
+      return { ok: true, records: parseSafeXmlProducts(body) };
+    } catch (e) {
+      return { ok: false, reason: e instanceof Error ? e.message : "MALFORMED_XML" };
+    }
+  }
+  const parsed = safeParseJson(body);
+  if (!parsed.ok) return { ok: false, reason: parsed.reason };
+  const data = parsed.data;
+  if (Array.isArray(data)) return { ok: true, records: data };
+  if (data && typeof data === "object") {
+    const obj = data;
+    const records = obj.products || obj.items || obj.data || [];
+    return { ok: true, records };
+  }
+  return { ok: false, reason: "MALFORMED_JSON" };
 }
 
 // lib/supplier-engine/fieldMapping.ts
@@ -1957,6 +2336,360 @@ function validateMappedRecord(mapped) {
   return errors;
 }
 
+// lib/supplier-engine/connectors/b2b-sandbox/images.ts
+function validateSupplierImageUrl(url) {
+  const value = String(url || "").trim();
+  if (!value) return { ok: false, reason: "MISSING_IMAGE" };
+  try {
+    const parsed = new URL(value);
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      return { ok: false, reason: "INVALID_IMAGE_PROTOCOL" };
+    }
+    const endpointCheck = validateSupplierEndpoint(value);
+    if (!endpointCheck.allowed) {
+      return { ok: false, reason: endpointCheck.reason || "BLOCKED_IMAGE_HOST" };
+    }
+    return { ok: true, value: parsed.toString() };
+  } catch {
+    return { ok: false, reason: "INVALID_IMAGE_URL" };
+  }
+}
+function normalizeSupplierImages(raw) {
+  if (!raw) return [];
+  const list = Array.isArray(raw) ? raw : [raw];
+  const images = [];
+  for (const entry of list) {
+    const url = typeof entry === "string" ? entry : entry?.url;
+    const validated = validateSupplierImageUrl(url);
+    if (validated.ok && validated.value) images.push(validated.value);
+  }
+  return images.slice(0, 20);
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/mapping.ts
+var UNKNOWN = "UNKNOWN";
+var REVIEW_REQUIRED = "REVIEW_REQUIRED";
+function mapBuzzardCategory(rawCategory, categoryMapping = {}) {
+  const value = String(rawCategory || "").trim();
+  if (!value) return REVIEW_REQUIRED;
+  return categoryMapping[value] || REVIEW_REQUIRED;
+}
+function normalizeB2bSandboxRecord(raw, profile) {
+  const mapped = applyFieldMapping(raw, profile.fieldMapping);
+  const supplierSku = String(mapped.supplierSku || mapped.supplier_sku || UNKNOWN);
+  const ean = mapped.ean || mapped.gtin ? String(mapped.ean || mapped.gtin) : UNKNOWN;
+  const gtin = mapped.gtin ? String(mapped.gtin) : ean !== UNKNOWN ? ean : UNKNOWN;
+  const mpn = mapped.mpn ? String(mapped.mpn) : UNKNOWN;
+  const brand = mapped.brand ? String(mapped.brand) : UNKNOWN;
+  const priceRaw = mapped.supplierPrice ?? mapped.supplier_price?.amount;
+  const purchasePrice = priceRaw != null && Number.isFinite(Number(priceRaw)) ? Number(priceRaw) : void 0;
+  const stockRaw = mapped.stock ?? mapped.stock_qty;
+  const stock = stockRaw != null && Number.isFinite(Number(stockRaw)) ? Number(stockRaw) : void 0;
+  const images = normalizeSupplierImages(mapped.images || mapped.image_urls || mapped.image);
+  const vehicleFitment = Array.isArray(mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment) ? mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment : [];
+  return {
+    ...mapped,
+    supplierSku,
+    supplier_sku: supplierSku,
+    ean: ean === UNKNOWN ? void 0 : ean,
+    gtin: gtin === UNKNOWN ? void 0 : gtin,
+    mpn: mpn === UNKNOWN ? void 0 : mpn,
+    brand: brand === UNKNOWN ? void 0 : brand,
+    name: mapped.name || mapped.title || supplierSku,
+    supplierPrice: purchasePrice,
+    purchase_price: purchasePrice,
+    supplier_price: purchasePrice != null ? { amount: purchasePrice, currency: profile.currency } : void 0,
+    stock,
+    stock_qty: stock,
+    currency: profile.currency,
+    priceIncludesVat: profile.priceIncludesVat === true,
+    buzzardCategory: mapBuzzardCategory(mapped.supplierCategory || mapped.category, profile.categoryMapping),
+    images,
+    vehicleFitment,
+    oemNumbers: mapped.oemNumbers || mapped.oem_numbers || mapped.oem || void 0,
+    liveSource: true
+  };
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/connectorConfig.ts
+function resolveB2bProfile(supplier) {
+  return supplier.connectorProfile || null;
+}
+function profileToConnectorConfig(profile) {
+  return {
+    baseUrl: profile.baseUrl,
+    environment: profile.environment,
+    authentication: profile.authentication,
+    authType: profile.authType,
+    secretsRef: profile.secretsRef,
+    allowedEndpoints: profile.allowedEndpoints || [new URL(profile.baseUrl).hostname],
+    pagination: profile.pagination ? { pageSize: profile.pagination.pageSize || 100, ...profile.pagination } : void 0,
+    timeoutMs: 3e4
+  };
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/index.ts
+var B2bSandboxSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}, options) {
+    const profile = resolveB2bProfile(supplier);
+    super(
+      supplier,
+      profile ? { ...profileToConnectorConfig(profile), ...connectorConfig } : connectorConfig,
+      "b2b-sandbox"
+    );
+    this.transport = null;
+    this.injectedTransport = null;
+    this.profile = profile;
+    this.injectedTransport = options?.transport || null;
+  }
+  setTransport(transport) {
+    this.injectedTransport = transport;
+    this.transport = transport;
+  }
+  getProfile() {
+    if (!this.profile) throw new Error("LIVE_SUPPLIER_PROFILE_MISSING");
+    return this.profile;
+  }
+  usesLiveNetwork() {
+    const profile = this.profile;
+    if (!profile) return false;
+    const environment = resolveConnectorEnvironment(profile.environment);
+    return canUseProductionNetwork(environment);
+  }
+  getTransport() {
+    if (this.injectedTransport) return this.injectedTransport;
+    if (this.transport) return this.transport;
+    const profile = this.getProfile();
+    this.transport = createSupplierHttpTransport(profile.baseUrl, profile.allowedEndpoints);
+    return this.transport;
+  }
+  buildUrl(path2, query) {
+    const profile = this.getProfile();
+    const base = profile.baseUrl.replace(/\/$/, "");
+    const url = new URL(`${base}${path2.startsWith("/") ? path2 : `/${path2}`}`);
+    if (query) {
+      for (const [key, value] of Object.entries(query)) {
+        url.searchParams.set(key, value);
+      }
+    }
+    return url.toString();
+  }
+  authHeaders() {
+    const profile = this.getProfile();
+    return resolveSupplierAuth({
+      ...this.connectorConfig,
+      secretsRef: profile.secretsRef,
+      authentication: profile.authentication
+    }).headers;
+  }
+  async connect() {
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return { ok: true, message: "B2B sandbox connector configured (network disabled \u2014 config only)" };
+    }
+    const transport = this.getTransport();
+    const healthPath = profile.endpoints.health || "/health";
+    await transport.request({
+      url: this.buildUrl(healthPath),
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "connect",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    return { ok: true, message: "B2B sandbox connector connected (read-only)" };
+  }
+  async disconnect() {
+    this.transport = null;
+  }
+  async healthCheck() {
+    const start = Date.now();
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return {
+        status: "DEGRADED",
+        latencyMs: Date.now() - start,
+        productsFetched: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        connector: "b2b-sandbox",
+        supplierId: this.supplierId,
+        lastError: "NETWORK_DISABLED"
+      };
+    }
+    try {
+      const transport = this.getTransport();
+      const res = await transport.request({
+        url: this.buildUrl(profile.endpoints.health || "/health"),
+        headers: this.authHeaders(),
+        supplierId: this.supplierId,
+        operation: "healthCheck",
+        timeoutMs: this.connectorConfig.timeoutMs
+      });
+      return {
+        status: res.ok ? "HEALTHY" : "DEGRADED",
+        latencyMs: Date.now() - start,
+        productsFetched: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        connector: "b2b-sandbox",
+        supplierId: this.supplierId,
+        lastError: res.ok ? void 0 : `HTTP_${res.status}`
+      };
+    } catch (e) {
+      return {
+        status: "UNHEALTHY",
+        latencyMs: Date.now() - start,
+        productsFetched: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        connector: "b2b-sandbox",
+        supplierId: this.supplierId,
+        lastError: e instanceof Error ? e.message : "HEALTH_CHECK_FAILED"
+      };
+    }
+  }
+  async doFetchProducts(options) {
+    const profile = this.getProfile();
+    const rate = checkRateLimit(this.supplierId, this.config.rateLimit);
+    if (!rate.allowed) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "RATE_LIMITED" };
+    }
+    if (!this.usesLiveNetwork()) {
+      return {
+        ok: false,
+        records: [],
+        total: 0,
+        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+        error: "NETWORK_DISABLED",
+        dryRun: true
+      };
+    }
+    const pagination = {
+      mode: profile.pagination?.mode || "cursor",
+      pageSize: options?.limit || profile.pagination?.pageSize || 100,
+      cursor: options?.cursor || getSyncCursor(this.supplierId, "incremental")?.cursor
+    };
+    const transport = this.getTransport();
+    const query = buildPaginationQuery(pagination);
+    const res = await transport.request({
+      url: this.buildUrl(profile.endpoints.products || "/products", query),
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "fetchProducts",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    const records = parsed.records.map((raw) => normalizeB2bSandboxRecord(raw, profile));
+    const page = advancePagination(pagination, {
+      records,
+      cursor: res.headers["x-next-cursor"] || pagination.cursor,
+      nextPageToken: res.headers["x-next-page-token"],
+      linkHeader: res.headers.link
+    });
+    if (page.nextCursor) {
+      saveSyncCursor(this.supplierId, { cursor: page.nextCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
+    }
+    return {
+      ok: res.ok,
+      records,
+      total: records.length,
+      cursor: page.nextCursor,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  async doFetchStock(options) {
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
+    }
+    const transport = this.getTransport();
+    const url = this.buildUrl(profile.endpoints.stock || "/stock");
+    const res = await transport.request({
+      url,
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "fetchStock",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    let records = parsed.records.map((raw) => {
+      const mapped = normalizeB2bSandboxRecord(raw, profile);
+      return {
+        supplier_sku: mapped.supplierSku,
+        stock: mapped.stock,
+        stock_status: mapped.stock === 0 ? "unavailable" : "available",
+        updated_at: (/* @__PURE__ */ new Date()).toISOString()
+      };
+    });
+    if (options?.skus?.length) {
+      records = records.filter((r) => options.skus.includes(String(r.supplier_sku)));
+    }
+    return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+  }
+  async doFetchPrices(options) {
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
+    }
+    const transport = this.getTransport();
+    const res = await transport.request({
+      url: this.buildUrl(profile.endpoints.prices || "/prices"),
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "fetchPrices",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    let records = parsed.records.map((raw) => {
+      const mapped = normalizeB2bSandboxRecord(raw, profile);
+      const priceObj = mapped.supplier_price;
+      return {
+        supplier_sku: mapped.supplierSku,
+        supplier_price: {
+          amount: priceObj?.amount ?? mapped.supplierPrice,
+          currency: priceObj?.currency || profile.currency,
+          includesVat: profile.priceIncludesVat === true
+        },
+        updated_at: (/* @__PURE__ */ new Date()).toISOString()
+      };
+    });
+    if (options?.skus?.length) {
+      records = records.filter((r) => options.skus.includes(String(r.supplier_sku)));
+    }
+    return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+  }
+};
+
+// lib/supplier-engine/connectors/factory.ts
+function createConnector(supplier, integrationType, connectorConfig = {}) {
+  const mergedConfig = integrationType === "b2b-sandbox" && supplier.connectorProfile ? { ...profileToConnectorConfig(supplier.connectorProfile), ...connectorConfig } : connectorConfig;
+  switch (integrationType) {
+    case "api":
+      return new ApiSupplierConnector(supplier, connectorConfig);
+    case "xml":
+      return new XmlSupplierConnector(supplier, connectorConfig);
+    case "csv":
+      return new CsvSupplierConnector(supplier, connectorConfig);
+    case "manual":
+      return new ManualSupplierConnector(supplier, connectorConfig);
+    case "template":
+      return new TemplateSupplierConnector(supplier, mergedConfig);
+    case "b2b-sandbox":
+      return new B2bSandboxSupplierConnector(supplier, mergedConfig);
+    default:
+      throw new Error(`UNKNOWN_INTEGRATION_TYPE:${integrationType}`);
+  }
+}
+
 // lib/supplier-engine/service.ts
 init_capabilities();
 init_security();
@@ -1977,7 +2710,7 @@ function defaultHealth(supplierId) {
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
-function fromPersisted(row) {
+function fromPersisted2(row) {
   return {
     supplierId: String(row.supplierId),
     healthStatus: row.healthStatus || "UNKNOWN",
@@ -1998,7 +2731,7 @@ function hydrateHealthFromPersistence() {
   const listAll = persistence.listAllHealthRecords;
   const rows = listAll ? listAll.call(persistence) : [];
   for (const health of rows) {
-    healthCache.set(String(health.supplierId), fromPersisted(health));
+    healthCache.set(String(health.supplierId), fromPersisted2(health));
   }
 }
 function getSupplierHealth(supplierId) {
@@ -2007,7 +2740,7 @@ function getSupplierHealth(supplierId) {
   const persistence = getSupplierPersistence();
   const row = persistence?.getHealth(supplierId);
   if (row) {
-    const record = fromPersisted(row);
+    const record = fromPersisted2(row);
     healthCache.set(supplierId, record);
     return record;
   }
@@ -2083,72 +2816,7 @@ function computeSupplierReliabilityScore(supplierId) {
 }
 
 // lib/supplier-engine/sync.ts
-init_registry();
-
-// lib/supplier-engine/syncCursor.ts
-init_persistence();
-var cursorStore = /* @__PURE__ */ new Map();
-function cursorKey(supplierId, syncMode = "incremental") {
-  return `${supplierId}:${syncMode}`;
-}
-function fromPersisted2(row) {
-  return {
-    supplierId: String(row.supplierId),
-    syncMode: row.syncMode || "incremental",
-    cursor: row.cursor ? String(row.cursor) : void 0,
-    page: row.page != null ? Number(row.page) : void 0,
-    offset: row.offset != null ? Number(row.offset) : void 0,
-    lastModified: row.lastModified ? String(row.lastModified) : void 0,
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function hydrateSyncCursorsFromPersistence() {
-  const persistence = getSupplierPersistence();
-  if (!persistence) return;
-  const listAll = persistence.listAllCursors;
-  const rows = listAll ? listAll.call(persistence) : [];
-  for (const cursor of rows) {
-    const parsed = fromPersisted2(cursor);
-    cursorStore.set(cursorKey(parsed.supplierId, parsed.syncMode || "incremental"), parsed);
-  }
-}
-function getSyncCursor(supplierId, syncMode = "incremental") {
-  const key = cursorKey(supplierId, syncMode);
-  const cached = cursorStore.get(key);
-  if (cached) return cached;
-  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
-  if (row) {
-    const cursor = fromPersisted2(row);
-    cursorStore.set(key, cursor);
-    return cursor;
-  }
-  return void 0;
-}
-function saveSyncCursor(supplierId, patch, syncMode = "incremental") {
-  const existing = getSyncCursor(supplierId, syncMode);
-  const next = {
-    supplierId,
-    syncMode,
-    cursor: patch.cursor ?? existing?.cursor,
-    page: patch.page ?? existing?.page,
-    offset: patch.offset ?? existing?.offset,
-    lastModified: patch.lastModified ?? existing?.lastModified,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  cursorStore.set(cursorKey(supplierId, syncMode), next);
-  getSupplierPersistence()?.saveCursor(next);
-  return next;
-}
-function clearSyncCursor(supplierId, syncMode = "incremental") {
-  cursorStore.delete(cursorKey(supplierId, syncMode));
-  getSupplierPersistence()?.clearCursor(supplierId, syncMode);
-}
-function listSyncCursors() {
-  return [...cursorStore.values()];
-}
-function getSyncCursorForAdmin(supplierId, syncMode = "incremental") {
-  return getSupplierPersistence()?.getCursorForAdmin(supplierId, syncMode) ?? null;
-}
+init_registry2();
 
 // lib/supplier-engine/state.ts
 init_persistence();
@@ -2314,7 +2982,7 @@ function releaseSupplierSyncLock(supplierId, jobId) {
 }
 
 // lib/supplier-engine/bootstrap.ts
-init_registry();
+init_registry2();
 var bootstrapped = false;
 function bootstrapSupplierEnginePersistence() {
   if (bootstrapped) return;
@@ -2346,11 +3014,11 @@ function listSupplierEngineAudit(supplierId, limit = 50) {
 }
 
 // lib/supplier-engine/sync.ts
-init_registry();
+init_registry2();
 
 // lib/supplier-engine/syncGuard.ts
 init_credentials();
-init_registry();
+init_registry2();
 function hasFeedCapability(capabilities, jobType) {
   if (jobType === "STOCK_ONLY") return Boolean(capabilities.stockFeed);
   if (jobType === "PRICE_ONLY") return Boolean(capabilities.priceFeed);
@@ -28762,7 +29430,7 @@ function getShippingRegion(countryCode) {
 }
 
 // lib/pricing-engine/shipping.ts
-init_registry();
+init_registry2();
 function resolveShippingCost(options) {
   const shippingCurrency = getDefaultShippingCurrency();
   const region = getShippingRegion(options.marketId);
@@ -29718,7 +30386,7 @@ function createInitialStockRecord(input) {
 }
 
 // lib/inventory-engine/market.ts
-init_registry();
+init_registry2();
 function computeMarketAvailability(record, marketId) {
   const market = getMarket(marketId);
   if (!market) {
@@ -29864,7 +30532,7 @@ function attachReservedQuantity(record) {
 }
 
 // lib/inventory-engine/sync.ts
-init_registry();
+init_registry2();
 
 // lib/inventory-engine/audit.ts
 var auditLog2 = [];
@@ -30445,19 +31113,26 @@ async function ingestSupplierFeed(supplierId, options = {}) {
 }
 
 // lib/supplier-engine/admin.ts
-init_registry();
+init_registry2();
 init_capabilities();
 init_credentials();
+init_config();
 
 // lib/supplier-engine/connectionTest.ts
 init_credentials();
-init_registry();
+init_registry2();
 async function runSupplierConnectionTest(supplierId, connectorConfig = {}) {
   const started = Date.now();
   const supplier = getSupplierOrThrow(supplierId);
   const integrationType = supplier.integrationTypes[0] ?? "manual";
-  const environment = resolveConnectorEnvironment(connectorConfig.environment);
-  const connector = createConnector(supplier, integrationType, connectorConfig);
+  const mergedConnectorConfig = {
+    ...connectorConfig,
+    environment: connectorConfig.environment ?? supplier.connectorProfile?.environment,
+    baseUrl: connectorConfig.baseUrl ?? supplier.connectorProfile?.baseUrl,
+    secretsRef: connectorConfig.secretsRef ?? supplier.connectorProfile?.secretsRef ?? supplier.secretsRef
+  };
+  const environment = resolveConnectorEnvironment(mergedConnectorConfig.environment);
+  const connector = createConnector(supplier, integrationType, mergedConnectorConfig);
   const credentialsOk = hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef || connectorConfig.secretsRef);
   if (environment !== "MOCK" && !credentialsOk) {
     return finish(started, {
@@ -30467,10 +31142,10 @@ async function runSupplierConnectionTest(supplierId, connectorConfig = {}) {
       message: "Credential reference not configured"
     });
   }
-  if (connectorConfig.baseUrl) {
+  if (mergedConnectorConfig.baseUrl) {
     const endpointCheck = validateSupplierEndpoint(
-      connectorConfig.baseUrl,
-      extractAllowedHosts(connectorConfig.baseUrl)
+      mergedConnectorConfig.baseUrl,
+      extractAllowedHosts(mergedConnectorConfig.baseUrl)
     );
     if (!endpointCheck.allowed) {
       return finish(started, {
@@ -30490,8 +31165,8 @@ async function runSupplierConnectionTest(supplierId, connectorConfig = {}) {
     });
   }
   const auth = resolveSupplierAuth({
-    ...connectorConfig,
-    secretsRef: connectorConfig.secretsRef || supplier.secretsRef
+    ...mergedConnectorConfig,
+    secretsRef: mergedConnectorConfig.secretsRef || supplier.secretsRef
   });
   if (environment !== "MOCK" && !auth.configured) {
     return finish(started, {
@@ -30633,7 +31308,7 @@ async function getSupplierEngineDetail(supplierId) {
       name: supplier.displayName || supplier.name,
       country: supplier.country,
       connector: supplier.integrationTypes.join(", "),
-      environment: resolveConnectorEnvironment(),
+      environment: supplier.connectorProfile?.environment || resolveConnectorEnvironment(),
       active: supplier.status !== "DISABLED" && supplier.status !== "PAUSED",
       status: supplier.status
     },
@@ -30676,7 +31351,20 @@ async function getSupplierEngineDetail(supplierId) {
       consecutiveFailures: health.consecutiveFailures
     },
     audit,
-    credentialsConfigured: hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef)
+    credentialsConfigured: hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef),
+    metrics: {
+      productCount: listRegistryProducts().filter(
+        (p) => p.supplierOffers.some((o) => o.supplierId === supplierId)
+      ).length,
+      offerCount: listRegistryProducts().reduce(
+        (sum, p) => sum + p.supplierOffers.filter((o) => o.supplierId === supplierId).length,
+        0
+      ),
+      errorCount: getSupplierLogs(supplierId).filter((l) => l.status === "FAILURE").length,
+      latencyMs: health.responseTimeMs,
+      reliability: health.reliabilityScore,
+      liveReadEnabled: isLiveReadEnabled()
+    }
   };
 }
 function setSupplierEnabled(supplierId, enabled, actor = "system") {
@@ -30706,7 +31394,7 @@ function resetSupplierCursorSafe(supplierId, syncMode = "incremental", actor = "
 init_persistence();
 
 // lib/supplier-engine/order.ts
-init_registry();
+init_registry2();
 init_capabilities();
 init_security();
 
@@ -30819,7 +31507,7 @@ init_credentials();
 init_tracking();
 
 // lib/supplier-engine/returns.ts
-init_registry();
+init_registry2();
 init_capabilities();
 function listReturnCapabilities(supplierId) {
   const supplier = getSupplier(supplierId);
@@ -30867,7 +31555,7 @@ async function createSupplierReturn(request) {
 init_fixtures();
 
 // lib/supplier-engine/selection.ts
-init_registry();
+init_registry2();
 function isMarketEligible(supplierId, marketId) {
   if (!marketId) return true;
   const supplier = getSupplier(supplierId);
@@ -30928,7 +31616,66 @@ function selectBestSupplierForOrder(product, options) {
 }
 
 // lib/supplier-engine/testSync.ts
-init_registry();
+init_registry2();
+
+// lib/supplier-engine/dataQuality.ts
+function buildDataQualityReport(records, options = {}) {
+  const report = {
+    totalProducts: records.length,
+    validProducts: 0,
+    invalidProducts: 0,
+    duplicates: 0,
+    missingEan: 0,
+    missingMpn: 0,
+    missingBrand: 0,
+    missingCategory: 0,
+    missingPrice: 0,
+    missingStock: 0,
+    missingImages: 0,
+    missingFitment: 0,
+    missingOem: 0,
+    missingDimensions: 0,
+    reviewRequiredCategories: 0,
+    warnings: []
+  };
+  const seenSkus = /* @__PURE__ */ new Set();
+  for (const record of records) {
+    const sku = String(record.supplierSku || record.supplier_sku || "");
+    if (sku && seenSkus.has(sku)) {
+      report.duplicates++;
+      continue;
+    }
+    if (sku) seenSkus.add(sku);
+    let valid = Boolean(sku);
+    if (!record.ean && !record.gtin) report.missingEan++;
+    if (!record.mpn) report.missingMpn++;
+    if (!record.brand) report.missingBrand++;
+    if (!record.buzzardCategory || record.buzzardCategory === "REVIEW_REQUIRED") {
+      report.missingCategory++;
+      if (record.buzzardCategory === "REVIEW_REQUIRED") report.reviewRequiredCategories++;
+    }
+    const price = record.supplierPrice ?? record.supplier_price?.amount;
+    if (price == null) report.missingPrice++;
+    if (record.stock == null && record.stock_qty == null) report.missingStock++;
+    const images = record.images;
+    if (!images || Array.isArray(images) && images.length === 0) report.missingImages++;
+    if (options.automotive) {
+      const fitment = record.vehicleFitment || record.vehicle_compatibility;
+      if (!fitment || Array.isArray(fitment) && fitment.length === 0) report.missingFitment++;
+      if (!record.oemNumbers && !record.oem) report.missingOem++;
+      if (!record.weight && !record.dimensions) report.missingDimensions++;
+    }
+    if (!sku) valid = false;
+    if (valid) report.validProducts++;
+    else report.invalidProducts++;
+  }
+  return report;
+}
+function isAutomotiveSupplier(profile) {
+  return profile?.supportedMarkets.includes("DE") === true;
+}
+
+// lib/supplier-engine/testSync.ts
 async function runSupplierDryRunTestSync(supplierId, options = {}) {
   const supplier = getSupplierOrThrow(supplierId);
   const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
@@ -30945,10 +31692,12 @@ async function runSupplierDryRunTestSync(supplierId, options = {}) {
     priceRecords: 0,
     warnings: [],
     errors: [],
+    source: integrationType === "b2b-sandbox" ? "live" : "fixture",
     completedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
   await connector.connect();
   const seenSkus = /* @__PURE__ */ new Set();
+  const normalizedRecords = [];
   const productFetch = await connector.fetchProducts({ limit: 1e3 });
   if (!productFetch.ok) {
     result.ok = false;
@@ -30956,11 +31705,17 @@ async function runSupplierDryRunTestSync(supplierId, options = {}) {
       code: productFetch.error || "FETCH_FAILED",
       message: productFetch.error || "Product fetch failed"
     });
+    if (productFetch.error === "NETWORK_DISABLED") {
+      result.source = "mock";
+      result.warnings.push("Live network disabled \u2014 dry-run cannot fetch real supplier feed");
+    }
     return result;
   }
+  if (productFetch.dryRun) result.source = "fixture";
   result.productsFound = productFetch.records.length;
   for (const raw of productFetch.records) {
-    const mapped = applyFieldMapping(raw, supplier.fieldMapping);
+    const mapped = integrationType === "b2b-sandbox" && supplier.connectorProfile ? normalizeB2bSandboxRecord(raw, supplier.connectorProfile) : applyFieldMapping(raw, supplier.fieldMapping);
+    normalizedRecords.push(mapped);
     const sku = String(mapped.supplierSku || mapped.supplier_sku || "");
     const fieldErrors = validateMappedRecord(mapped);
     if (fieldErrors.length) {
@@ -30978,6 +31733,9 @@ async function runSupplierDryRunTestSync(supplierId, options = {}) {
     }
     result.valid++;
   }
+  result.dataQuality = buildDataQualityReport(normalizedRecords, {
+    automotive: isAutomotiveSupplier(supplier.connectorProfile)
+  });
   if (supplier.capabilities.stockFeed) {
     const stockFetch = await connector.fetchStock();
     if (stockFetch.ok) result.stockRecords = stockFetch.records.length;
@@ -30992,13 +31750,109 @@ async function runSupplierDryRunTestSync(supplierId, options = {}) {
   result.completedAt = (/* @__PURE__ */ new Date()).toISOString();
   return result;
 }
+
+// lib/supplier-engine/service.ts
+init_config();
+init_registry();
+
+// lib/supplier-engine/liveReadGuard.ts
+init_credentials();
+init_config();
+init_registry2();
+function evaluateLiveReadSyncGuard(supplierId, jobType = "FULL") {
+  if (!isLiveReadEnabled()) {
+    return { allowed: false, reasons: ["LIVE_READ_DISABLED"] };
+  }
+  if (!isSupplierNetworkEnabled()) {
+    return { allowed: false, reasons: ["NETWORK_DISABLED"] };
+  }
+  const profile = resolveLiveSupplierProfile();
+  if (!profile || profile.supplierId !== supplierId) {
+    return { allowed: false, reasons: ["LIVE_SUPPLIER_NOT_CONFIGURED"] };
+  }
+  const environment = resolveConnectorEnvironment(profile.environment);
+  if (environment === "MOCK") {
+    return { allowed: false, reasons: ["MOCK_ENVIRONMENT"] };
+  }
+  const guard = evaluateProductionSyncGuard(supplierId, jobType, {
+    baseUrl: profile.baseUrl,
+    environment: profile.environment,
+    secretsRef: profile.secretsRef
+  });
+  const supplier = getSupplier(supplierId);
+  if (supplier?.capabilities.orderAPI || supplier?.capabilities.createOrder) {
+    return { allowed: false, reasons: ["WRITE_CAPABILITIES_NOT_ALLOWED"] };
+  }
+  if (!hasConfiguredCredentials(supplierId) && !profile.secretsRef) {
+    guard.reasons.push("CREDENTIALS_MISSING");
+  }
+  return { allowed: guard.allowed, reasons: guard.reasons };
+}
+function hasLiveSupplierCredentialsConfigured() {
+  const profile = resolveLiveSupplierProfile();
+  if (!profile) return false;
+  return hasLiveSupplierCredentials(profile);
+}
+
+// lib/supplier-engine/liveReadSync.ts
+async function runSupplierLiveReadSync(supplierId, options = {}) {
+  const jobType = options.jobType ?? "FULL";
+  const guard = evaluateLiveReadSyncGuard(supplierId, jobType);
+  if (!guard.allowed) {
+    const now = (/* @__PURE__ */ new Date()).toISOString();
+    recordSupplierEngineAudit({
+      supplierId,
+      action: "supplier.live_read.blocked",
+      metadata: { reasons: guard.reasons, jobType }
+    });
+    return {
+      liveRead: true,
+      guardReasons: guard.reasons,
+      jobId: `live_read_${supplierId}_${Date.now()}`,
+      supplierId,
+      jobType,
+      status: "FAILED",
+      productsFetched: 0,
+      productsCreated: 0,
+      productsUpdated: 0,
+      productsFailed: 0,
+      stockUpdates: 0,
+      priceUpdates: 0,
+      errors: guard.reasons.map((code) => ({ code, message: code })),
+      startedAt: now,
+      completedAt: now
+    };
+  }
+  recordSupplierEngineAudit({
+    supplierId,
+    action: "supplier.live_read.started",
+    metadata: { jobType }
+  });
+  const result = await runSupplierSyncJob(supplierId, {
+    jobType,
+    integrationType: "b2b-sandbox"
+  });
+  recordSupplierEngineAudit({
+    supplierId,
+    action: result.status === "FAILED" ? "supplier.live_read.failed" : "supplier.live_read.completed",
+    metadata: {
+      jobType,
+      status: result.status,
+      productsFetched: result.productsFetched
+    }
+  });
+  return { ...result, liveRead: true };
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   TEST_SUPPLIER_ID,
   bootstrapSupplierEnginePersistence,
+  buildDataQualityReport,
   createSupplierOrder,
   createSupplierReturn,
+  evaluateLiveReadSyncGuard,
   evaluateProductionSyncGuard,
+  getRegisteredLiveSupplierId,
   getSupplier,
   getSupplierConnectorMetrics,
   getSupplierEngineAdminOverview,
@@ -31011,6 +31865,7 @@ async function runSupplierDryRunTestSync(supplierId, options = {}) {
   getSupplierTracking,
   getSyncCursor,
   getSyncCursorForAdmin,
+  hasLiveSupplierCredentialsConfigured,
   ingestSupplierFeed,
   isBlockedHost,
   isSupplierNetworkEnabled,
@@ -31024,8 +31879,10 @@ async function runSupplierDryRunTestSync(supplierId, options = {}) {
   resetMockTransportScenarios,
   resetOrderIdempotencyKeys,
   resetSupplierCursorSafe,
+  resolveLiveSupplierProfile,
   runSupplierConnectionTest,
   runSupplierDryRunTestSync,
+  runSupplierLiveReadSync,
   runSupplierSyncJob,
   sanitizeClientSyncRequest,
   selectBestSupplierForOrder,

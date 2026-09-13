@@ -1,4 +1,5 @@
 import { TEST_SUPPLIER_ID } from "./fixtures";
+import { resetSupplierRegistryForTests } from "./registry";
 import { resetSupplierEngineBootstrap } from "./bootstrap";
 import { resetSupplierRuntimeState } from "./state";
 import { resetSyncCursors } from "./syncCursor";
@@ -21,6 +22,7 @@ function resetPersistentOperationalState(supplierId: string): void {
 /** Resets cross-test supplier engine state for deterministic vitest runs. */
 export function resetSupplierEngineForTests(supplierId: string = TEST_SUPPLIER_ID): void {
   resetSupplierEngineBootstrap();
+  resetSupplierRegistryForTests();
   resetSupplierPersistenceCache();
   resetPersistentOperationalState(supplierId);
   resetSupplierRuntimeState();

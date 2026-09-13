@@ -102,3 +102,12 @@ export {
 export { getSupplierConnectorMetrics } from "./observability";
 export { TemplateSupplierConnector } from "./connectors/template";
 export { CAPABILITY_NOT_SUPPORTED } from "./connectors/capabilityResult";
+export { B2bSandboxSupplierConnector } from "./connectors/b2b-sandbox";
+export type { LiveSupplierProfile } from "./liveSupplier/types";
+export { resolveLiveSupplierProfile, isLiveReadEnabled, hasLiveSupplierCredentials } from "./liveSupplier/config";
+export { getRegisteredLiveSupplierId, liveProfileToSupplierConfig } from "./liveSupplier/registry";
+export { runSupplierLiveReadSync } from "./liveReadSync";
+export { evaluateLiveReadSyncGuard, hasLiveSupplierCredentialsConfigured } from "./liveReadGuard";
+export { buildDataQualityReport, type SupplierDataQualityReport } from "./dataQuality";
+export { parseSafeXmlProducts, parseSupplierFeedBody } from "./connectors/b2b-sandbox/parser";
+export { normalizeB2bSandboxRecord } from "./connectors/b2b-sandbox/mapping";

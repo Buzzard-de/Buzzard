@@ -12,8 +12,12 @@ function envInt(name: string, fallback: number): number {
 }
 
 export const SUPPLIER_NETWORK_CONFIG = {
-  networkEnabled: envFlag("SUPPLIER_NETWORK_ENABLED", false),
-  orderNetworkEnabled: envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false),
+  get networkEnabled() {
+    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
   defaultEnvironment: "MOCK" as SupplierConnectorEnvironment,
   defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 30_000),
   maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
@@ -22,11 +26,11 @@ export const SUPPLIER_NETWORK_CONFIG = {
 };
 
 export function isSupplierNetworkEnabled(): boolean {
-  return SUPPLIER_NETWORK_CONFIG.networkEnabled;
+  return envFlag("SUPPLIER_NETWORK_ENABLED", false);
 }
 
 export function isSupplierOrderNetworkEnabled(): boolean {
-  return SUPPLIER_NETWORK_CONFIG.orderNetworkEnabled;
+  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
 export function resolveConnectorEnvironment(

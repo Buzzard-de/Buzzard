@@ -12,6 +12,7 @@ import { listSupplierEngineAudit, recordSupplierEngineAudit } from "./audit";
 import { clearSyncCursor } from "./syncCursor";
 import { bootstrapSupplierEnginePersistence } from "./bootstrap";
 import { isSupplierNetworkEnabled, resolveConnectorEnvironment } from "./network";
+import { isLiveReadEnabled } from "./liveSupplier/config";
 import { runSupplierConnectionTest } from "./connectionTest";
 
 function listOrderCapabilities(capabilities: import("./types").SupplierCapabilities): string[] {
@@ -137,7 +138,7 @@ export async function getSupplierEngineDetail(supplierId: string) {
       name: supplier.displayName || supplier.name,
       country: supplier.country,
       connector: supplier.integrationTypes.join(", "),
-      environment: resolveConnectorEnvironment(),
+      environment: supplier.connectorProfile?.environment || resolveConnectorEnvironment(),
       active: supplier.status !== "DISABLED" && supplier.status !== "PAUSED",
       status: supplier.status,
     },
@@ -181,6 +182,19 @@ export async function getSupplierEngineDetail(supplierId: string) {
     },
     audit,
     credentialsConfigured: hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef),
+    metrics: {
+      productCount: listRegistryProducts().filter((p) =>
+        p.supplierOffers.some((o) => o.supplierId === supplierId)
+      ).length,
+      offerCount: listRegistryProducts().reduce(
+        (sum, p) => sum + p.supplierOffers.filter((o) => o.supplierId === supplierId).length,
+        0
+      ),
+      errorCount: getSupplierLogs(supplierId).filter((l) => l.status === "FAILURE").length,
+      latencyMs: health.responseTimeMs,
+      reliability: health.reliabilityScore,
+      liveReadEnabled: isLiveReadEnabled(),
+    },
   };
 }
 

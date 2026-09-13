@@ -6,7 +6,21 @@ export type SupplierStatus =
   | "PAUSED"
   | "DISABLED";
 
-export type IntegrationType = "api" | "xml" | "csv" | "manual";
+export type IntegrationType = "api" | "xml" | "csv" | "manual" | "template";
+
+export type SupplierConnectorEnvironment = "MOCK" | "SANDBOX" | "PRODUCTION";
+
+export type SupplierAuthType = "API_KEY" | "BASIC_AUTH" | "OAUTH2" | "TOKEN" | "CUSTOM" | "NONE";
+
+export type ConnectionTestStatus =
+  | "CONNECTED"
+  | "AUTH_FAILED"
+  | "TIMEOUT"
+  | "RATE_LIMITED"
+  | "ENDPOINT_INVALID"
+  | "CAPABILITY_NOT_SUPPORTED"
+  | "NETWORK_DISABLED"
+  | "CREDENTIALS_MISSING";
 
 export type SupplierCapability =
   | "productFeed"
@@ -93,13 +107,39 @@ export interface SupplierConfig {
 
 export interface ConnectorConfig {
   baseUrl?: string;
-  authentication?: "none" | "api_key" | "bearer" | "basic";
+  endpointRef?: string;
+  environment?: SupplierConnectorEnvironment;
+  authentication?: "none" | "api_key" | "bearer" | "basic" | "oauth2" | "token" | "custom";
+  authType?: SupplierAuthType;
   headers?: Record<string, string>;
   timeoutMs?: number;
-  rateLimit?: { requestsPerMinute: number };
-  pagination?: { pageSize: number; cursorField?: string };
+  rateLimit?: { requestsPerMinute: number; maxConcurrent?: number };
+  pagination?: { pageSize: number; cursorField?: string; mode?: "page" | "offset" | "cursor" | "nextPageToken" | "linkHeader" };
+  allowedEndpoints?: string[];
   /** Server-only — never exposed to client */
   secretsRef?: string;
+}
+
+export interface ConnectorOperationResult<T = unknown> {
+  ok: boolean;
+  dryRun?: boolean;
+  error?: string;
+  errorCode?: string;
+  data?: T;
+}
+
+export interface SupplierTrackingRecord {
+  carrier: string;
+  trackingNumber: string;
+  status: string;
+  timestamp: string;
+}
+
+export interface SupplierReturnStatusRecord {
+  rmaId: string;
+  status: string;
+  returnType?: string;
+  timestamp: string;
 }
 
 export interface FetchResult<T = Record<string, unknown>> {

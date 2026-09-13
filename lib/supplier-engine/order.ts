@@ -2,6 +2,12 @@ import type { SupplierOrderRequest, SupplierOrderResult } from "./types";
 import { getSupplier } from "./registry";
 import { hasCapability } from "./capabilities";
 import { redactSecrets } from "./security";
+import { isSupplierOrderNetworkEnabled } from "./network";
+import {
+  buildSupplierOrderIdempotencyKey,
+  getIdempotentSupplierOrder,
+  recordIdempotentSupplierOrder,
+} from "./orderIdempotency";
 
 export interface SupplierOrderDryRunPayload {
   supplierId: string;
@@ -32,7 +38,9 @@ function buildDryRunPayload(request: SupplierOrderRequest): SupplierOrderDryRunP
   };
 }
 
-export async function createSupplierOrder(request: SupplierOrderRequest): Promise<SupplierOrderResult> {
+export async function createSupplierOrder(
+  request: SupplierOrderRequest & { idempotencyKey?: string }
+): Promise<SupplierOrderResult> {
   const supplier = getSupplier(request.supplierId);
   if (!supplier) {
     return { ok: false, dryRun: true, status: "REJECTED", message: "UNKNOWN_SUPPLIER" };
@@ -41,15 +49,42 @@ export async function createSupplierOrder(request: SupplierOrderRequest): Promis
     return { ok: false, dryRun: true, status: "CAPABILITY_MISSING", message: "orderAPI not configured" };
   }
 
+  const idempotencyKey = buildSupplierOrderIdempotencyKey(
+    request.supplierId,
+    request.orderId,
+    request.idempotencyKey
+  );
+  const existingOrderId = getIdempotentSupplierOrder(idempotencyKey);
+  if (existingOrderId) {
+    return {
+      ok: true,
+      dryRun: true,
+      supplierOrderId: existingOrderId,
+      status: "IDEMPOTENT_REPLAY",
+      message: "Duplicate order retry — existing supplier order reference returned",
+    };
+  }
+
   const payload = buildDryRunPayload(request);
   void redactSecrets(payload);
 
+  if (!isSupplierOrderNetworkEnabled()) {
+    const supplierOrderId = `DRY-ORD-${Date.now()}`;
+    recordIdempotentSupplierOrder(idempotencyKey, supplierOrderId);
+    return {
+      ok: true,
+      dryRun: true,
+      supplierOrderId,
+      status: "PREPARED_NOT_SENT",
+      message: "Order foundation only — supplier order network disabled",
+    };
+  }
+
   return {
-    ok: true,
+    ok: false,
     dryRun: true,
-    supplierOrderId: `DRY-ORD-${Date.now()}`,
-    status: "PREPARED_NOT_SENT",
-    message: "Order foundation only — no real supplier dispatch",
+    status: "ORDER_NETWORK_REQUIRED",
+    message: "Real supplier order dispatch requires explicit network enablement",
   };
 }
 

@@ -61,7 +61,9 @@ describe("Supplier Production Readiness — sync cursor", () => {
 });
 
 describe("Supplier Production Readiness — runtime state", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    const { resetSupplierEngineForTests } = await import("./testReset");
+    resetSupplierEngineForTests();
     resetSupplierRuntimeState();
     clearObservability();
   });

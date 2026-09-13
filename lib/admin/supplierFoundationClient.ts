@@ -42,8 +42,16 @@ export interface SupplierFoundationDetail {
     name: string;
     country: string;
     connector: string;
+    environment?: string;
     active: boolean;
     status: string;
+  };
+  connection?: {
+    status: string;
+    latencyMs: number;
+    message: string;
+    lastChecked: string;
+    networkEnabled: boolean;
   };
   markets: string[];
   capabilities: Record<string, boolean | undefined>;
@@ -51,6 +59,30 @@ export interface SupplierFoundationDetail {
   health: Record<string, unknown>;
   audit: Array<Record<string, unknown>>;
   credentialsConfigured: boolean;
+}
+
+export interface SupplierConnectionTestResult {
+  status: string;
+  latencyMs: number;
+  connector: string;
+  environment: string;
+  message: string;
+  checkedAt: string;
+}
+
+export interface SupplierDryRunTestSyncResult {
+  ok: boolean;
+  dryRun: true;
+  supplierId: string;
+  productsFound: number;
+  valid: number;
+  invalid: number;
+  duplicates: number;
+  stockRecords: number;
+  priceRecords: number;
+  warnings: string[];
+  errors: Array<{ code: string; message: string; record?: string }>;
+  completedAt: string;
 }
 
 function apiBase(): string {
@@ -116,5 +148,19 @@ export async function resetSupplierFoundationCursor(supplierId: string, syncMode
   return foundationRequest<{ success: boolean; data: Record<string, unknown> }>(
     `/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/cursor/reset`,
     { method: "POST", body: JSON.stringify({ confirm: true, syncMode }) }
+  );
+}
+
+export async function runSupplierFoundationConnectionTest(supplierId: string) {
+  return foundationRequest<{ success: boolean; data: SupplierConnectionTestResult }>(
+    `/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/connection-test`,
+    { method: "POST", body: JSON.stringify({}) }
+  );
+}
+
+export async function runSupplierFoundationTestSync(supplierId: string) {
+  return foundationRequest<{ success: boolean; data: SupplierDryRunTestSyncResult }>(
+    `/api/admin/supplier-foundation/${encodeURIComponent(supplierId)}/test-sync`,
+    { method: "POST", body: JSON.stringify({}) }
   );
 }

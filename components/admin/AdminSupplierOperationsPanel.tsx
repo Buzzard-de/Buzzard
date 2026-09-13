@@ -7,6 +7,8 @@ import {
   fetchSupplierFoundationDetail,
   fetchSupplierFoundationOverview,
   resetSupplierFoundationCursor,
+  runSupplierFoundationConnectionTest,
+  runSupplierFoundationTestSync,
   setSupplierFoundationEnabled,
   triggerSupplierFoundationSync,
   type SupplierFoundationDashboard,
@@ -30,6 +32,7 @@ export default function AdminSupplierOperationsPanel() {
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
   const [confirmReset, setConfirmReset] = useState(false);
+  const [testSyncResult, setTestSyncResult] = useState<object | null>(null);
 
   const t = useMemo(() => getSupplierAdminLabels(locale), [locale]);
   const rtl = locale === "ar";
@@ -77,6 +80,31 @@ export default function AdminSupplierOperationsPanel() {
     setActionLoading(true);
     try {
       await setSupplierFoundationEnabled(supplierId, enable);
+      await reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.error);
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleConnectionTest(supplierId: string) {
+    setActionLoading(true);
+    try {
+      await runSupplierFoundationConnectionTest(supplierId);
+      await reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.error);
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleTestSync(supplierId: string) {
+    setActionLoading(true);
+    try {
+      const res = await runSupplierFoundationTestSync(supplierId);
+      setTestSyncResult(res.data);
       await reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : t.error);
@@ -210,6 +238,8 @@ export default function AdminSupplierOperationsPanel() {
             <article className="admin-stat"><strong>{detail.general.supplierId}</strong><span>ID</span></article>
             <article className="admin-stat"><strong>{detail.general.country}</strong><span>Country</span></article>
             <article className="admin-stat"><strong>{detail.general.connector}</strong><span>{t.connector}</span></article>
+            <article className="admin-stat"><strong>{detail.general.environment || "MOCK"}</strong><span>{t.environment}</span></article>
+            <article className="admin-stat"><strong>{detail.connection?.status || "—"}</strong><span>{t.connectionStatus}</span></article>
             <article className="admin-stat"><strong>{String(detail.health.status)}</strong><span>{t.health}</span></article>
             <article className="admin-stat"><strong>{String(detail.sync.syncStatus)}</strong><span>{t.syncStatus}</span></article>
             <article className="admin-stat"><strong>{Number(detail.health.reliability).toFixed(2)}</strong><span>{t.reliability}</span></article>
@@ -223,6 +253,22 @@ export default function AdminSupplierOperationsPanel() {
               onClick={() => handleSync(selectedId, "INCREMENTAL")}
             >
               {t.manualSync} (Incremental)
+            </button>
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              disabled={actionLoading}
+              onClick={() => handleConnectionTest(selectedId)}
+            >
+              {t.testConnection}
+            </button>
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              disabled={actionLoading}
+              onClick={() => handleTestSync(selectedId)}
+            >
+              {t.testSync}
             </button>
             {detail.general.active ? (
               <button
@@ -255,6 +301,23 @@ export default function AdminSupplierOperationsPanel() {
 
           <h3>{t.markets}</h3>
           <p>{detail.markets.join(", ") || "—"}</p>
+
+          {detail.connection ? (
+            <>
+              <h3>{t.connection}</h3>
+              <p className="admin-muted">
+                {t.connectionStatus}: {detail.connection.status} · {t.lastHealthCheck}:{" "}
+                {detail.connection.lastChecked}
+              </p>
+            </>
+          ) : null}
+
+          {testSyncResult ? (
+            <>
+              <h3>{t.testSync}</h3>
+              <pre className="admin-code-block">{JSON.stringify(testSyncResult, null, 2)}</pre>
+            </>
+          ) : null}
 
           <h3>{t.cursor}</h3>
           <pre className="admin-code-block">

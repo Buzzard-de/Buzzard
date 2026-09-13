@@ -19,6 +19,43 @@ const logBuffer: SupplierLogEntry[] = [];
 const metricsBuffer: SyncMetrics[] = [];
 const MAX_LOG = 2000;
 
+export interface SupplierRequestMetric {
+  supplierId: string;
+  operation: string;
+  success: boolean;
+  latencyMs: number;
+  statusCode?: number;
+  rateLimited?: boolean;
+  authFailure?: boolean;
+}
+
+const requestMetrics = {
+  supplier_requests_total: 0,
+  supplier_request_failures: 0,
+  supplier_request_latency_ms: 0,
+  supplier_rate_limits: 0,
+  supplier_auth_failures: 0,
+  supplier_sync_success: 0,
+  supplier_sync_failure: 0,
+};
+
+export function recordSupplierRequestMetric(metric: SupplierRequestMetric): void {
+  requestMetrics.supplier_requests_total++;
+  requestMetrics.supplier_request_latency_ms += metric.latencyMs;
+  if (!metric.success) requestMetrics.supplier_request_failures++;
+  if (metric.rateLimited) requestMetrics.supplier_rate_limits++;
+  if (metric.authFailure) requestMetrics.supplier_auth_failures++;
+}
+
+export function recordSupplierSyncOutcomeMetric(success: boolean): void {
+  if (success) requestMetrics.supplier_sync_success++;
+  else requestMetrics.supplier_sync_failure++;
+}
+
+export function getSupplierConnectorMetrics(): typeof requestMetrics {
+  return { ...requestMetrics };
+}
+
 export function logSupplierOperation(entry: Omit<SupplierLogEntry, "timestamp">): SupplierLogEntry {
   const record: SupplierLogEntry = {
     ...entry,
@@ -51,4 +88,11 @@ export function getSyncMetrics(supplierId?: string): SyncMetrics[] {
 export function clearObservability(): void {
   logBuffer.length = 0;
   metricsBuffer.length = 0;
+  requestMetrics.supplier_requests_total = 0;
+  requestMetrics.supplier_request_failures = 0;
+  requestMetrics.supplier_request_latency_ms = 0;
+  requestMetrics.supplier_rate_limits = 0;
+  requestMetrics.supplier_auth_failures = 0;
+  requestMetrics.supplier_sync_success = 0;
+  requestMetrics.supplier_sync_failure = 0;
 }

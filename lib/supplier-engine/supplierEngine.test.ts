@@ -146,7 +146,10 @@ describe("Supplier Engine — field mapping", () => {
 });
 
 describe("Supplier Engine — normalization via sync", () => {
-  beforeEach(() => clearObservability());
+  beforeEach(async () => {
+    const { resetSupplierEngineForTests } = await import("./testReset");
+    resetSupplierEngineForTests();
+  });
 
   it("ingestSupplierFeed processes TEST_SUPPLIER_A", async () => {
     const result = await ingestSupplierFeed(TEST_SUPPLIER_ID, { integrationType: "api" });
@@ -279,6 +282,11 @@ describe("Supplier Engine — supplier selection integration", () => {
 });
 
 describe("Supplier Engine — observability", () => {
+  beforeEach(async () => {
+    const { resetSupplierEngineForTests } = await import("./testReset");
+    resetSupplierEngineForTests();
+  });
+
   it("logs operations without secrets", async () => {
     clearObservability();
     await ingestSupplierFeed(TEST_SUPPLIER_ID, { integrationType: "api" });

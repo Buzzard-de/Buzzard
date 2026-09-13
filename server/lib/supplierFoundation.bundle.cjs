@@ -303,6 +303,18 @@ function registerCredentialRef(supplierId, secretsRef) {
 function hasConfiguredCredentials(supplierId) {
   return credentialRefs.get(supplierId)?.configured === true;
 }
+function resolveCredentials(secretsRef) {
+  if (!secretsRef) return null;
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const raw = process.env[envKey];
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return { token: raw };
+  }
+}
 var credentialRefs;
 var init_credentials = __esm({
   "lib/supplier-engine/credentials.ts"() {
@@ -547,7 +559,9 @@ __export(serverEntry_exports, {
   bootstrapSupplierEnginePersistence: () => bootstrapSupplierEnginePersistence,
   createSupplierOrder: () => createSupplierOrder,
   createSupplierReturn: () => createSupplierReturn,
+  evaluateProductionSyncGuard: () => evaluateProductionSyncGuard,
   getSupplier: () => getSupplier,
+  getSupplierConnectorMetrics: () => getSupplierConnectorMetrics,
   getSupplierEngineAdminOverview: () => getSupplierEngineAdminOverview,
   getSupplierEngineDashboard: () => getSupplierEngineDashboard,
   getSupplierEngineDetail: () => getSupplierEngineDetail,
@@ -559,17 +573,25 @@ __export(serverEntry_exports, {
   getSyncCursor: () => getSyncCursor,
   getSyncCursorForAdmin: () => getSyncCursorForAdmin,
   ingestSupplierFeed: () => ingestSupplierFeed,
+  isBlockedHost: () => isBlockedHost,
+  isSupplierNetworkEnabled: () => isSupplierNetworkEnabled,
+  isSupplierOrderNetworkEnabled: () => isSupplierOrderNetworkEnabled,
   isSupplierSelectable: () => isSupplierSelectable,
   listReturnCapabilities: () => listReturnCapabilities,
   listSuppliers: () => listSuppliers,
   listSyncCursors: () => listSyncCursors,
   redactSecrets: () => redactSecrets,
   rejectClientCredentials: () => rejectClientCredentials,
+  resetMockTransportScenarios: () => resetMockTransportScenarios,
+  resetOrderIdempotencyKeys: () => resetOrderIdempotencyKeys,
   resetSupplierCursorSafe: () => resetSupplierCursorSafe,
+  runSupplierConnectionTest: () => runSupplierConnectionTest,
+  runSupplierDryRunTestSync: () => runSupplierDryRunTestSync,
   runSupplierSyncJob: () => runSupplierSyncJob,
   sanitizeClientSyncRequest: () => sanitizeClientSyncRequest,
   selectBestSupplierForOrder: () => selectBestSupplierForOrder,
   setSupplierEnabled: () => setSupplierEnabled,
+  validateSupplierEndpoint: () => validateSupplierEndpoint,
   validateSupplierOrderPayload: () => validateSupplierOrderPayload
 });
 module.exports = __toCommonJS(serverEntry_exports);
@@ -579,6 +601,561 @@ init_registry();
 
 // lib/supplier-engine/connectors/base.ts
 init_capabilities();
+
+// lib/supplier-engine/connectors/capabilityResult.ts
+var CAPABILITY_NOT_SUPPORTED = "CAPABILITY_NOT_SUPPORTED";
+function capabilityNotSupportedFetch() {
+  return {
+    ok: false,
+    records: [],
+    total: 0,
+    fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    error: CAPABILITY_NOT_SUPPORTED
+  };
+}
+function capabilityNotSupportedOperation(extra) {
+  return {
+    ok: false,
+    errorCode: CAPABILITY_NOT_SUPPORTED,
+    dryRun: true,
+    ...extra || {}
+  };
+}
+
+// lib/supplier-engine/network/config.ts
+function envFlag(name, defaultValue = false) {
+  const raw = process.env[name];
+  if (raw === void 0 || raw === "") return defaultValue;
+  return raw === "1" || raw.toLowerCase() === "true";
+}
+function envInt(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+}
+var SUPPLIER_NETWORK_CONFIG = {
+  networkEnabled: envFlag("SUPPLIER_NETWORK_ENABLED", false),
+  orderNetworkEnabled: envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false),
+  defaultEnvironment: "MOCK",
+  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
+  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
+  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
+  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
+};
+function isSupplierNetworkEnabled() {
+  return SUPPLIER_NETWORK_CONFIG.networkEnabled;
+}
+function isSupplierOrderNetworkEnabled() {
+  return SUPPLIER_NETWORK_CONFIG.orderNetworkEnabled;
+}
+function resolveConnectorEnvironment(configured) {
+  return configured || SUPPLIER_NETWORK_CONFIG.defaultEnvironment;
+}
+function canUseProductionNetwork(environment) {
+  if (environment === "MOCK") return false;
+  if (environment === "PRODUCTION" && !isSupplierNetworkEnabled()) return false;
+  if (environment === "SANDBOX" && !isSupplierNetworkEnabled()) return false;
+  return true;
+}
+
+// lib/supplier-engine/network/allowlist.ts
+var BLOCKED_HOSTNAMES = /* @__PURE__ */ new Set([
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "::1",
+  "metadata.google.internal",
+  "metadata"
+]);
+var METADATA_IP = "169.254.169.254";
+function isPrivateIpv4(host) {
+  const parts = host.split(".").map((p) => Number(p));
+  if (parts.length !== 4 || parts.some((p) => !Number.isFinite(p))) return false;
+  const [a, b] = parts;
+  if (a === 10) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 0) return true;
+  return false;
+}
+function normalizeHost(hostname) {
+  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, "");
+}
+function isBlockedHost(hostname) {
+  const host = normalizeHost(hostname);
+  if (!host) return true;
+  if (BLOCKED_HOSTNAMES.has(host)) return true;
+  if (host.endsWith(".local") || host.endsWith(".internal")) return true;
+  if (host === METADATA_IP || host.startsWith("169.254.")) return true;
+  if (isPrivateIpv4(host)) return true;
+  if (host.includes(":") && (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80"))) {
+    return true;
+  }
+  return false;
+}
+function validateSupplierEndpoint(url, allowedHosts = []) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return { allowed: false, reason: "INVALID_URL" };
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    return { allowed: false, reason: "UNSUPPORTED_PROTOCOL", hostname: parsed.hostname };
+  }
+  const hostname = normalizeHost(parsed.hostname);
+  if (isBlockedHost(hostname)) {
+    return { allowed: false, reason: "BLOCKED_HOST", hostname };
+  }
+  if (allowedHosts.length > 0) {
+    const normalizedAllowed = allowedHosts.map(normalizeHost);
+    const hostAllowed = normalizedAllowed.some(
+      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
+    );
+    if (!hostAllowed) {
+      return { allowed: false, reason: "NOT_IN_ALLOWLIST", hostname };
+    }
+  }
+  return { allowed: true, hostname };
+}
+function extractAllowedHosts(baseUrl, extra = []) {
+  const hosts = /* @__PURE__ */ new Set();
+  for (const entry of [baseUrl, ...extra].filter(Boolean)) {
+    try {
+      hosts.add(normalizeHost(new URL(entry).hostname));
+    } catch {
+    }
+  }
+  return [...hosts];
+}
+
+// lib/supplier-engine/network/responseSecurity.ts
+var JSON_CONTENT = /^application\/(json|.*\+json)/i;
+var XML_CONTENT = /^(application|text)\/(xml|.*\+xml)/i;
+var CSV_CONTENT = /^text\/(csv|plain)/i;
+function validateResponseSize(body, maxBytes = SUPPLIER_NETWORK_CONFIG.maxResponseBytes) {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(body);
+  if (bytes.length <= maxBytes) {
+    return { ok: true, truncated: false, body };
+  }
+  const truncated = new TextDecoder().decode(bytes.slice(0, maxBytes));
+  return { ok: false, truncated: true, body: truncated };
+}
+function validateContentType(contentType, expected = "any") {
+  if (!contentType) {
+    return expected === "any" ? { ok: true } : { ok: false, reason: "MISSING_CONTENT_TYPE" };
+  }
+  if (expected === "any") return { ok: true };
+  if (expected === "json" && JSON_CONTENT.test(contentType)) return { ok: true };
+  if (expected === "xml" && XML_CONTENT.test(contentType)) return { ok: true };
+  if (expected === "csv" && CSV_CONTENT.test(contentType)) return { ok: true };
+  return { ok: false, reason: "INVALID_CONTENT_TYPE" };
+}
+function safeParseJson(body) {
+  try {
+    return { ok: true, data: JSON.parse(body) };
+  } catch {
+    return { ok: false, reason: "MALFORMED_JSON" };
+  }
+}
+
+// lib/supplier-engine/network/httpTransport.ts
+var import_crypto = require("crypto");
+
+// lib/supplier-engine/errors.ts
+var RETRYABLE = /* @__PURE__ */ new Set([
+  "TIMEOUT",
+  "RATE_LIMITED",
+  "SERVER_ERROR",
+  "NETWORK_ERROR",
+  "SUPPLIER_UNAVAILABLE"
+]);
+var PERMANENT = /* @__PURE__ */ new Set([
+  "AUTH_FAILED",
+  "FORBIDDEN",
+  "NOT_FOUND",
+  "VALIDATION_FAILED",
+  "MALFORMED_RESPONSE"
+]);
+function classifySupplierError(input) {
+  const message = input.message || input.code || "Unknown supplier error";
+  const status = input.httpStatus;
+  const raw = String(input.code || "").toUpperCase();
+  if (status === 401 || raw.includes("AUTH") || raw === "UNAUTHORIZED") {
+    return { code: "AUTH_FAILED", retryable: false, httpStatus: status, message };
+  }
+  if (status === 403 || raw === "FORBIDDEN") {
+    return { code: "FORBIDDEN", retryable: false, httpStatus: status, message };
+  }
+  if (status === 404 || raw === "NOT_FOUND") {
+    return { code: "NOT_FOUND", retryable: false, httpStatus: status, message };
+  }
+  if (status === 429 || raw === "RATE_LIMITED" || raw === "RATE_LIMITED") {
+    return { code: "RATE_LIMITED", retryable: true, httpStatus: status, message };
+  }
+  if (status === 502 || status === 503 || status === 500 || raw.includes("SERVER")) {
+    return { code: "SERVER_ERROR", retryable: true, httpStatus: status, message };
+  }
+  if (raw === "TIMEOUT" || raw === "ETIMEDOUT") {
+    return { code: "TIMEOUT", retryable: true, httpStatus: status, message };
+  }
+  if (raw === "NETWORK_ERROR" || raw === "ECONNREFUSED" || raw === "ENOTFOUND") {
+    return { code: "NETWORK_ERROR", retryable: true, httpStatus: status, message };
+  }
+  if (raw.includes("MALFORMED") || raw.includes("PARSE")) {
+    return { code: "MALFORMED_RESPONSE", retryable: false, httpStatus: status, message };
+  }
+  if (raw === "VALIDATION_FAILED") {
+    return { code: "VALIDATION_FAILED", retryable: false, httpStatus: status, message };
+  }
+  if (raw === "SUPPLIER_UNAVAILABLE") {
+    return { code: "SUPPLIER_UNAVAILABLE", retryable: true, httpStatus: status, message };
+  }
+  const code = raw || "UNKNOWN";
+  return {
+    code: PERMANENT.has(code) || RETRYABLE.has(code) ? code : "UNKNOWN",
+    retryable: RETRYABLE.has(code),
+    httpStatus: status,
+    message
+  };
+}
+function isClassifiedRetryable(error) {
+  return error.retryable && !PERMANENT.has(error.code);
+}
+
+// lib/supplier-engine/rateLimit.ts
+var buckets = /* @__PURE__ */ new Map();
+function checkRateLimit(supplierId, config3 = { requestsPerMinute: 60 }) {
+  const key = supplierId;
+  const now = Date.now();
+  const rpm = Math.max(1, config3.requestsPerMinute);
+  const refillRate = rpm / 6e4;
+  let bucket = buckets.get(key);
+  if (!bucket) {
+    bucket = { tokens: rpm, lastRefill: now };
+    buckets.set(key, bucket);
+  }
+  const elapsed = now - bucket.lastRefill;
+  bucket.tokens = Math.min(rpm, bucket.tokens + elapsed * refillRate);
+  bucket.lastRefill = now;
+  if (bucket.tokens < 1) {
+    const retryAfterMs = Math.ceil((1 - bucket.tokens) / refillRate);
+    return { allowed: false, retryAfterMs };
+  }
+  bucket.tokens -= 1;
+  return { allowed: true };
+}
+function handleRateLimitResponse(retryAfterHeader) {
+  if (retryAfterHeader) {
+    const seconds = parseInt(retryAfterHeader, 10);
+    if (!Number.isNaN(seconds)) return seconds * 1e3;
+  }
+  return 6e4;
+}
+
+// lib/supplier-engine/retry.ts
+var DEFAULT_RETRYABLE = /* @__PURE__ */ new Set([
+  "TIMEOUT",
+  "RATE_LIMITED",
+  "SUPPLIER_UNAVAILABLE",
+  "NETWORK_ERROR",
+  "SERVER_ERROR",
+  "rateLimited",
+  "timeout",
+  "supplierUnavailable"
+]);
+var PERMANENT_CODES = /* @__PURE__ */ new Set([
+  "AUTH_FAILED",
+  "FORBIDDEN",
+  "NOT_FOUND",
+  "VALIDATION_FAILED",
+  "MALFORMED_RESPONSE"
+]);
+function isRetryableError(error) {
+  if (error.retryable === false) return false;
+  const classified = classifySupplierError(error);
+  if (PERMANENT_CODES.has(classified.code)) return false;
+  if (isClassifiedRetryable(classified)) return true;
+  if (error.retryable) return true;
+  if (error.code && DEFAULT_RETRYABLE.has(error.code)) return true;
+  return false;
+}
+function computeBackoffDelay(attempt, baseDelayMs = 500, maxDelayMs = 3e4) {
+  const delay = Math.min(baseDelayMs * 2 ** (attempt - 1), maxDelayMs);
+  return delay + Math.floor(Math.random() * 100);
+}
+async function withRetry(fn, options = {}) {
+  const maxAttempts = options.maxAttempts ?? 3;
+  const baseDelayMs = options.baseDelayMs ?? 500;
+  const maxDelayMs = options.maxDelayMs ?? 3e4;
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn(attempt);
+    } catch (err) {
+      lastError = err;
+      const retryable = isRetryableError(err);
+      if (!retryable || attempt >= maxAttempts) break;
+      await new Promise((r) => setTimeout(r, computeBackoffDelay(attempt, baseDelayMs, maxDelayMs)));
+    }
+  }
+  throw lastError;
+}
+
+// lib/supplier-engine/observability.ts
+init_security();
+var logBuffer = [];
+var metricsBuffer = [];
+var MAX_LOG = 2e3;
+var requestMetrics = {
+  supplier_requests_total: 0,
+  supplier_request_failures: 0,
+  supplier_request_latency_ms: 0,
+  supplier_rate_limits: 0,
+  supplier_auth_failures: 0,
+  supplier_sync_success: 0,
+  supplier_sync_failure: 0
+};
+function recordSupplierRequestMetric(metric) {
+  requestMetrics.supplier_requests_total++;
+  requestMetrics.supplier_request_latency_ms += metric.latencyMs;
+  if (!metric.success) requestMetrics.supplier_request_failures++;
+  if (metric.rateLimited) requestMetrics.supplier_rate_limits++;
+  if (metric.authFailure) requestMetrics.supplier_auth_failures++;
+}
+function recordSupplierSyncOutcomeMetric(success) {
+  if (success) requestMetrics.supplier_sync_success++;
+  else requestMetrics.supplier_sync_failure++;
+}
+function getSupplierConnectorMetrics() {
+  return { ...requestMetrics };
+}
+function logSupplierOperation(entry) {
+  const record = {
+    ...entry,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    error: entry.error ? String(redactSecrets({ msg: entry.error })) : void 0
+  };
+  logBuffer.push(record);
+  if (logBuffer.length > MAX_LOG) logBuffer.shift();
+  return record;
+}
+function recordSyncMetrics(metrics) {
+  metricsBuffer.push(metrics);
+  if (metricsBuffer.length > 500) metricsBuffer.shift();
+}
+function getSupplierLogs(supplierId) {
+  if (!supplierId) return [...logBuffer];
+  return logBuffer.filter((l) => l.supplierId === supplierId);
+}
+
+// lib/supplier-engine/network/httpTransport.ts
+var SupplierHttpTransport = class {
+  constructor(allowedHosts = []) {
+    this.allowedHosts = allowedHosts;
+  }
+  async request(req) {
+    if (!isSupplierNetworkEnabled()) {
+      throw transportError("NETWORK_DISABLED", "Supplier network is disabled", false);
+    }
+    const endpointCheck = validateSupplierEndpoint(req.url, this.allowedHosts);
+    if (!endpointCheck.allowed) {
+      throw transportError(endpointCheck.reason || "ENDPOINT_INVALID", "Endpoint not allowed", false);
+    }
+    const correlationId = req.correlationId || (0, import_crypto.randomUUID)();
+    const timeoutMs = req.timeoutMs ?? SUPPLIER_NETWORK_CONFIG.defaultTimeoutMs;
+    const started = Date.now();
+    return withRetry(
+      async () => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const response = await fetch(req.url, {
+            method: req.method || "GET",
+            headers: {
+              Accept: "application/json",
+              "X-Correlation-Id": correlationId,
+              ...req.headers
+            },
+            body: req.body,
+            signal: controller.signal,
+            redirect: req.allowRedirects === false ? "manual" : "follow"
+          });
+          const rawBody = await response.text();
+          const sizeCheck = validateResponseSize(rawBody);
+          const contentType = response.headers.get("content-type") || void 0;
+          const contentCheck = validateContentType(contentType, "any");
+          if (!sizeCheck.ok) {
+            throw transportError("RESPONSE_TOO_LARGE", "Supplier response exceeded size limit", false, correlationId);
+          }
+          if (!contentCheck.ok) {
+            throw transportError(contentCheck.reason || "INVALID_CONTENT_TYPE", "Invalid content type", false, correlationId);
+          }
+          if (response.status === 429) {
+            const retryAfter = handleRateLimitResponse(response.headers.get("retry-after") || void 0);
+            throw transportError("RATE_LIMITED", "Rate limited by supplier", true, correlationId, 429, retryAfter);
+          }
+          if (response.status >= 500) {
+            throw transportError("SERVER_ERROR", `Supplier server error ${response.status}`, true, correlationId, response.status);
+          }
+          if (response.status === 401 || response.status === 403) {
+            throw transportError(
+              response.status === 401 ? "AUTH_FAILED" : "FORBIDDEN",
+              `Supplier auth error ${response.status}`,
+              false,
+              correlationId,
+              response.status
+            );
+          }
+          const durationMs = Date.now() - started;
+          const headers = {};
+          response.headers.forEach((value, key) => {
+            headers[key.toLowerCase()] = value;
+          });
+          const result = {
+            ok: response.ok,
+            status: response.status,
+            headers,
+            body: sizeCheck.body,
+            durationMs,
+            correlationId,
+            contentType,
+            truncated: sizeCheck.truncated
+          };
+          recordSupplierRequestMetric({
+            supplierId: req.supplierId,
+            operation: req.operation,
+            success: response.ok,
+            latencyMs: durationMs,
+            statusCode: response.status,
+            rateLimited: response.status === 429,
+            authFailure: response.status === 401 || response.status === 403
+          });
+          logSupplierOperation({
+            supplierId: req.supplierId,
+            connector: "http",
+            operation: req.operation,
+            durationMs,
+            status: response.ok ? "SUCCESS" : "FAILURE",
+            records: 0,
+            correlationId,
+            errorCode: response.ok ? void 0 : String(response.status)
+          });
+          return result;
+        } catch (err) {
+          if (err && typeof err === "object" && "code" in err) throw err;
+          const isAbort = err instanceof Error && err.name === "AbortError";
+          const classified = classifySupplierError({
+            code: isAbort ? "TIMEOUT" : "NETWORK_ERROR",
+            message: err instanceof Error ? err.message : "Network request failed"
+          });
+          recordSupplierRequestMetric({
+            supplierId: req.supplierId,
+            operation: req.operation,
+            success: false,
+            latencyMs: Date.now() - started,
+            rateLimited: classified.code === "RATE_LIMITED",
+            authFailure: classified.code === "AUTH_FAILED"
+          });
+          throw transportError(classified.code, classified.message, classified.retryable, correlationId);
+        } finally {
+          clearTimeout(timer);
+        }
+      },
+      {
+        maxAttempts: SUPPLIER_NETWORK_CONFIG.maxRetries,
+        baseDelayMs: 500,
+        maxDelayMs: 3e4
+      }
+    );
+  }
+};
+function transportError(code, message, retryable = false, correlationId, httpStatus, retryAfterMs) {
+  const err = new Error(message);
+  err.code = code;
+  err.message = message;
+  err.retryable = retryable && isRetryableError({ code, retryable });
+  err.correlationId = correlationId;
+  err.httpStatus = httpStatus;
+  if (retryAfterMs) {
+    void retryAfterMs;
+  }
+  return err;
+}
+function createSupplierHttpTransport(baseUrl, extraAllowed = []) {
+  return new SupplierHttpTransport(extractAllowedHosts(baseUrl, extraAllowed));
+}
+
+// lib/supplier-engine/network/mockTransport.ts
+var import_crypto2 = require("crypto");
+var globalScenarios = /* @__PURE__ */ new Map();
+var defaultScenario = { status: 200, body: '{"ok":true}' };
+var MockSupplierTransport = class {
+  constructor(scenarios = {}) {
+    this.scenarios = new Map(Object.entries(scenarios));
+  }
+  async request(req) {
+    const key = `${req.method || "GET"} ${req.url}`;
+    const scenario = this.scenarios.get(key) || this.scenarios.get(req.url) || globalScenarios.get(key) || globalScenarios.get(req.url) || defaultScenario;
+    const correlationId = req.correlationId || (0, import_crypto2.randomUUID)();
+    const started = Date.now();
+    if (scenario.delayMs) {
+      await new Promise((r) => setTimeout(r, scenario.delayMs));
+    }
+    if (scenario.timeout) {
+      await new Promise((r) => setTimeout(r, (req.timeoutMs ?? 100) + 50));
+      const err = new Error("TIMEOUT");
+      err.code = "TIMEOUT";
+      err.retryable = true;
+      throw err;
+    }
+    if (scenario.redirectUrl) {
+      const err = new Error("REDIRECT");
+      err.code = "REDIRECT";
+      err.redirectUrl = scenario.redirectUrl;
+      throw err;
+    }
+    const body = scenario.body ?? "";
+    const headers = { "content-type": "application/json", ...scenario.headers || {} };
+    return {
+      ok: scenario.status >= 200 && scenario.status < 300,
+      status: scenario.status,
+      headers,
+      body,
+      durationMs: Date.now() - started,
+      correlationId,
+      contentType: headers["content-type"]
+    };
+  }
+};
+function resetMockTransportScenarios() {
+  globalScenarios.clear();
+}
+function buildMockTransportFixtures() {
+  const base = "https://supplier-mock.example/api";
+  return {
+    [`GET ${base}/health`]: { status: 200, body: '{"status":"ok"}' },
+    [`GET ${base}/products`]: {
+      status: 200,
+      body: JSON.stringify({ products: [{ supplierSku: "MOCK-1", name: "Mock Product" }] })
+    },
+    [`GET ${base}/auth-fail`]: { status: 401, body: '{"error":"unauthorized"}' },
+    [`GET ${base}/forbidden`]: { status: 403, body: '{"error":"forbidden"}' },
+    [`GET ${base}/not-found`]: { status: 404, body: '{"error":"not found"}' },
+    [`GET ${base}/rate-limit`]: { status: 429, body: '{"error":"rate limited"}', headers: { "retry-after": "1" } },
+    [`GET ${base}/server-error`]: { status: 500, body: '{"error":"internal"}' },
+    [`GET ${base}/bad-gateway`]: { status: 502, body: '{"error":"bad gateway"}' },
+    [`GET ${base}/unavailable`]: { status: 503, body: '{"error":"unavailable"}' },
+    [`GET ${base}/malformed`]: { status: 200, body: "{not-json" },
+    [`GET ${base}/oversized`]: { status: 200, body: "x".repeat(6 * 1024 * 1024) },
+    [`GET ${base}/timeout`]: { status: 200, timeout: true },
+    [`GET ${base}/redirect`]: { status: 302, redirectUrl: "http://127.0.0.1/admin" }
+  };
+}
+
+// lib/supplier-engine/connectors/base.ts
 var SupplierConnector = class {
   constructor(supplier, connectorConfig = {}, connectorType = "base") {
     this.supplierId = supplier.supplierId;
@@ -589,28 +1166,84 @@ var SupplierConnector = class {
   checkCapability(cap) {
     const result = assertCapability(this.config.capabilities, cap);
     if (!result.allowed) {
-      throw new Error(result.reason || "CAPABILITY_NOT_CONFIGURED");
+      throw new Error(result.reason || CAPABILITY_NOT_SUPPORTED);
     }
   }
+  supports(cap) {
+    return assertCapability(this.config.capabilities, cap).allowed;
+  }
   async fetchProducts(options) {
-    this.checkCapability("productFeed");
+    if (!this.supports("productFeed")) return capabilityNotSupportedFetch();
     return this.doFetchProducts(options);
   }
   async fetchStock(options) {
-    this.checkCapability("stockFeed");
+    if (!this.supports("stockFeed")) return capabilityNotSupportedFetch();
     return this.doFetchStock(options);
   }
   async fetchPrices(options) {
-    this.checkCapability("priceFeed");
+    if (!this.supports("priceFeed")) return capabilityNotSupportedFetch();
     return this.doFetchPrices(options);
   }
-  async fetchOrders() {
-    this.checkCapability("orderAPI");
-    return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NOT_IMPLEMENTED" };
+  async createOrder(request) {
+    if (!this.supports("orderAPI") && !this.supports("createOrder")) {
+      return capabilityNotSupportedOperation();
+    }
+    if (!isSupplierOrderNetworkEnabled()) {
+      return {
+        ok: true,
+        dryRun: true,
+        errorCode: "ORDER_NETWORK_DISABLED",
+        data: { status: "PREPARED_NOT_SENT", orderId: request.orderId }
+      };
+    }
+    return this.doCreateOrder(request);
   }
-  async fetchTracking() {
-    this.checkCapability("trackingAPI");
-    return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NOT_IMPLEMENTED" };
+  async getOrderStatus(supplierOrderId) {
+    if (!this.supports("orderAPI") && !this.supports("orderStatus")) {
+      return capabilityNotSupportedOperation();
+    }
+    return this.doGetOrderStatus(supplierOrderId);
+  }
+  async getTracking(supplierOrderId) {
+    if (!this.supports("trackingAPI") && !this.supports("tracking")) {
+      return capabilityNotSupportedOperation();
+    }
+    return this.doGetTracking(supplierOrderId);
+  }
+  async createReturn(payload) {
+    if (!this.supports("returnsAPI")) {
+      return capabilityNotSupportedOperation();
+    }
+    if (!isSupplierOrderNetworkEnabled()) {
+      return {
+        ok: true,
+        dryRun: true,
+        errorCode: "ORDER_NETWORK_DISABLED",
+        data: { status: "PREPARED_NOT_SENT" }
+      };
+    }
+    return this.doCreateReturn(payload);
+  }
+  async getReturnStatus(rmaId) {
+    if (!this.supports("returnsAPI")) {
+      return capabilityNotSupportedOperation();
+    }
+    return this.doGetReturnStatus(rmaId);
+  }
+  async doCreateOrder(_request) {
+    return capabilityNotSupportedOperation({ data: { status: "NOT_IMPLEMENTED" } });
+  }
+  async doGetOrderStatus(_supplierOrderId) {
+    return capabilityNotSupportedOperation();
+  }
+  async doGetTracking(_supplierOrderId) {
+    return capabilityNotSupportedOperation();
+  }
+  async doCreateReturn(_payload) {
+    return capabilityNotSupportedOperation();
+  }
+  async doGetReturnStatus(_rmaId) {
+    return capabilityNotSupportedOperation();
   }
 };
 
@@ -642,43 +1275,164 @@ function paginateRecords(records, options = {}) {
   };
 }
 
-// lib/supplier-engine/rateLimit.ts
-var buckets = /* @__PURE__ */ new Map();
-function checkRateLimit(supplierId, config3 = { requestsPerMinute: 60 }) {
-  const key = supplierId;
-  const now = Date.now();
-  const rpm = Math.max(1, config3.requestsPerMinute);
-  const refillRate = rpm / 6e4;
-  let bucket = buckets.get(key);
-  if (!bucket) {
-    bucket = { tokens: rpm, lastRefill: now };
-    buckets.set(key, bucket);
+// lib/supplier-engine/connectors/api.ts
+init_fixtures();
+
+// lib/supplier-engine/auth/resolver.ts
+init_credentials();
+function mapConnectorAuthType(config3) {
+  const raw = String(config3?.authentication || "none").toLowerCase();
+  if (raw === "api_key") return "API_KEY";
+  if (raw === "basic") return "BASIC_AUTH";
+  if (raw === "bearer" || raw === "token") return "TOKEN";
+  if (raw === "oauth2") return "OAUTH2";
+  if (raw === "custom") return "CUSTOM";
+  return "NONE";
+}
+function resolveSupplierAuth(config3) {
+  const authType = mapConnectorAuthType(config3);
+  const secretsRef = config3.secretsRef;
+  const creds = secretsRef ? resolveCredentials(secretsRef) : null;
+  if (!creds) {
+    return { headers: { ...config3.headers || {} }, authType, configured: false };
   }
-  const elapsed = now - bucket.lastRefill;
-  bucket.tokens = Math.min(rpm, bucket.tokens + elapsed * refillRate);
-  bucket.lastRefill = now;
-  if (bucket.tokens < 1) {
-    const retryAfterMs = Math.ceil((1 - bucket.tokens) / refillRate);
-    return { allowed: false, retryAfterMs };
+  const headers = { ...config3.headers || {} };
+  switch (authType) {
+    case "API_KEY": {
+      const headerName = creds.header || creds.headerName || "X-API-Key";
+      const value = creds.apiKey || creds.key || creds.token;
+      if (value) headers[headerName] = value;
+      break;
+    }
+    case "TOKEN": {
+      const value = creds.token || creds.accessToken || creds.bearer;
+      if (value) headers.Authorization = value.startsWith("Bearer ") ? value : `Bearer ${value}`;
+      break;
+    }
+    case "BASIC_AUTH": {
+      const user = creds.username || creds.user || "";
+      const pass = creds.password || creds.pass || "";
+      if (user || pass) {
+        headers.Authorization = `Basic ${Buffer.from(`${user}:${pass}`).toString("base64")}`;
+      }
+      break;
+    }
+    case "OAUTH2": {
+      const value = creds.accessToken || creds.token;
+      if (value) headers.Authorization = `Bearer ${value}`;
+      break;
+    }
+    case "CUSTOM": {
+      for (const [key, value] of Object.entries(creds)) {
+        if (!/password|secret|token|key/i.test(key)) continue;
+        if (/header/i.test(key)) {
+          const headerName = key.replace(/header/i, "").trim() || "Authorization";
+          headers[headerName] = value;
+        }
+      }
+      break;
+    }
+    default:
+      break;
   }
-  bucket.tokens -= 1;
-  return { allowed: true };
+  return { headers, authType, configured: Object.keys(creds).length > 0 };
 }
 
 // lib/supplier-engine/connectors/api.ts
-init_fixtures();
 var ApiSupplierConnector = class extends SupplierConnector {
   constructor(supplier, connectorConfig = {}) {
     super(supplier, connectorConfig, "api");
+    this.transport = null;
+  }
+  getTransport() {
+    if (this.transport) return this.transport;
+    const environment = resolveConnectorEnvironment(this.connectorConfig.environment);
+    if (!canUseProductionNetwork(environment)) return null;
+    if (this.connectorConfig.baseUrl?.includes("supplier-mock.example")) {
+      this.transport = new MockSupplierTransport(buildMockTransportFixtures());
+      return this.transport;
+    }
+    this.transport = createSupplierHttpTransport(
+      this.connectorConfig.baseUrl,
+      this.connectorConfig.allowedEndpoints
+    );
+    return this.transport;
+  }
+  useLiveNetwork() {
+    const environment = resolveConnectorEnvironment(this.connectorConfig.environment);
+    return canUseProductionNetwork(environment) && Boolean(this.connectorConfig.baseUrl);
   }
   async connect() {
-    this.checkCapability("api");
-    return { ok: true, message: "API connector ready (dry-run, no live credentials)" };
+    if (!this.supports("api") && !this.supports("productFeed")) {
+      return { ok: false, message: "CAPABILITY_NOT_SUPPORTED" };
+    }
+    if (!this.useLiveNetwork()) {
+      return { ok: true, message: "API connector ready (dry-run, no live credentials)" };
+    }
+    const auth = resolveSupplierAuth({
+      ...this.connectorConfig,
+      secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
+    });
+    if (!auth.configured) {
+      return { ok: false, message: "AUTH_FAILED: credentials not configured" };
+    }
+    const transport = this.getTransport();
+    if (!transport) return { ok: false, message: "NETWORK_DISABLED" };
+    const healthUrl = `${this.connectorConfig.baseUrl?.replace(/\/$/, "")}/health`;
+    await transport.request({
+      url: healthUrl,
+      method: "GET",
+      headers: auth.headers,
+      supplierId: this.supplierId,
+      operation: "connect",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    return { ok: true, message: "API connector connected" };
   }
   async disconnect() {
+    this.transport = null;
   }
   async healthCheck() {
     const start = Date.now();
+    if (this.useLiveNetwork()) {
+      try {
+        const auth = resolveSupplierAuth({
+          ...this.connectorConfig,
+          secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
+        });
+        const transport = this.getTransport();
+        if (transport && this.connectorConfig.baseUrl) {
+          const res = await transport.request({
+            url: `${this.connectorConfig.baseUrl.replace(/\/$/, "")}/health`,
+            headers: auth.headers,
+            supplierId: this.supplierId,
+            operation: "healthCheck",
+            timeoutMs: this.connectorConfig.timeoutMs
+          });
+          return {
+            status: res.ok ? "HEALTHY" : "DEGRADED",
+            latencyMs: Date.now() - start,
+            productsFetched: 0,
+            productsUpdated: 0,
+            productsFailed: 0,
+            connector: "api",
+            supplierId: this.supplierId,
+            lastError: res.ok ? void 0 : `HTTP_${res.status}`
+          };
+        }
+      } catch (e) {
+        return {
+          status: "UNHEALTHY",
+          latencyMs: Date.now() - start,
+          productsFetched: 0,
+          productsUpdated: 0,
+          productsFailed: 0,
+          connector: "api",
+          supplierId: this.supplierId,
+          lastError: e instanceof Error ? e.message : "HEALTH_CHECK_FAILED"
+        };
+      }
+    }
     const products2 = getTestFeedProducts(this.supplierId);
     return {
       status: products2.length > 0 ? "HEALTHY" : "DEGRADED",
@@ -692,7 +1446,6 @@ var ApiSupplierConnector = class extends SupplierConnector {
     };
   }
   async doFetchProducts(options) {
-    this.checkCapability("api");
     const rate = checkRateLimit(this.supplierId, this.config.rateLimit);
     if (!rate.allowed) {
       return {
@@ -702,6 +1455,9 @@ var ApiSupplierConnector = class extends SupplierConnector {
         fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
         error: "RATE_LIMITED"
       };
+    }
+    if (this.useLiveNetwork()) {
+      return this.fetchProductsViaNetwork(options);
     }
     const all = getTestFeedProducts(this.supplierId);
     const page = paginateRecords(all, {
@@ -717,6 +1473,39 @@ var ApiSupplierConnector = class extends SupplierConnector {
       dryRun: true
     };
   }
+  async fetchProductsViaNetwork(options) {
+    const transport = this.getTransport();
+    if (!transport || !this.connectorConfig.baseUrl) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED" };
+    }
+    const auth = resolveSupplierAuth({
+      ...this.connectorConfig,
+      secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
+    });
+    const url = new URL(`${this.connectorConfig.baseUrl.replace(/\/$/, "")}/products`);
+    if (options?.cursor) url.searchParams.set("cursor", options.cursor);
+    if (options?.limit) url.searchParams.set("limit", String(options.limit));
+    const res = await transport.request({
+      url: url.toString(),
+      headers: auth.headers,
+      supplierId: this.supplierId,
+      operation: "fetchProducts",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = safeParseJson(res.body);
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    const data = parsed.data;
+    const records = data.products || [];
+    return {
+      ok: res.ok,
+      records,
+      total: records.length,
+      cursor: options?.cursor,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
   async doFetchStock(options) {
     const all = getTestFeedProducts(this.supplierId);
     const filtered = options?.skus?.length ? all.filter((r) => options.skus.includes(String(r.article_number || r.supplierSku))) : all;
@@ -729,7 +1518,7 @@ var ApiSupplierConnector = class extends SupplierConnector {
       })),
       total: filtered.length,
       fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
+      dryRun: !this.useLiveNetwork()
     };
   }
   async doFetchPrices(options) {
@@ -744,7 +1533,7 @@ var ApiSupplierConnector = class extends SupplierConnector {
       })),
       total: filtered.length,
       fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
+      dryRun: !this.useLiveNetwork()
     };
   }
 };
@@ -1030,6 +1819,76 @@ var ManualSupplierConnector = class extends SupplierConnector {
   }
 };
 
+// lib/supplier-engine/connectors/template/index.ts
+var TemplateSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}) {
+    super(supplier, connectorConfig, "template");
+  }
+  async connect() {
+    return { ok: true, message: "Template connector ready (dry-run contract demo)" };
+  }
+  async disconnect() {
+  }
+  async healthCheck() {
+    return {
+      status: "HEALTHY",
+      latencyMs: 1,
+      productsFetched: 0,
+      productsUpdated: 0,
+      productsFailed: 0,
+      connector: "template",
+      supplierId: this.supplierId
+    };
+  }
+  async doFetchProducts() {
+    return {
+      ok: true,
+      records: [],
+      total: 0,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async doFetchStock() {
+    return { ok: true, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), dryRun: true };
+  }
+  async doFetchPrices() {
+    return { ok: true, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), dryRun: true };
+  }
+  async doCreateOrder(request) {
+    return {
+      ok: true,
+      dryRun: true,
+      data: { supplierOrderId: `TEMPLATE-ORD-${request.orderId}`, status: "PREPARED_NOT_SENT" }
+    };
+  }
+  async doGetOrderStatus(supplierOrderId) {
+    return { ok: true, dryRun: true, data: { supplierOrderId, status: "DRY_RUN" } };
+  }
+  async doGetTracking(supplierOrderId) {
+    return {
+      ok: true,
+      dryRun: true,
+      data: {
+        carrier: "TEMPLATE_CARRIER",
+        trackingNumber: `TRK-${supplierOrderId.slice(-6)}`,
+        status: "IN_TRANSIT",
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      }
+    };
+  }
+  async doCreateReturn() {
+    return { ok: true, dryRun: true, data: { rmaId: `TEMPLATE-RMA-${Date.now()}`, status: "PREPARED_NOT_SENT" } };
+  }
+  async doGetReturnStatus(rmaId) {
+    return {
+      ok: true,
+      dryRun: true,
+      data: { rmaId, status: "DRY_RUN", timestamp: (/* @__PURE__ */ new Date()).toISOString() }
+    };
+  }
+};
+
 // lib/supplier-engine/connectors/factory.ts
 function createConnector(supplier, integrationType, connectorConfig = {}) {
   switch (integrationType) {
@@ -1041,6 +1900,8 @@ function createConnector(supplier, integrationType, connectorConfig = {}) {
       return new CsvSupplierConnector(supplier, connectorConfig);
     case "manual":
       return new ManualSupplierConnector(supplier, connectorConfig);
+    case "template":
+      return new TemplateSupplierConnector(supplier, connectorConfig);
     default:
       throw new Error(`UNKNOWN_INTEGRATION_TYPE:${integrationType}`);
   }
@@ -1098,143 +1959,7 @@ function validateMappedRecord(mapped) {
 
 // lib/supplier-engine/service.ts
 init_capabilities();
-
-// lib/supplier-engine/errors.ts
-var RETRYABLE = /* @__PURE__ */ new Set([
-  "TIMEOUT",
-  "RATE_LIMITED",
-  "SERVER_ERROR",
-  "NETWORK_ERROR",
-  "SUPPLIER_UNAVAILABLE"
-]);
-var PERMANENT = /* @__PURE__ */ new Set([
-  "AUTH_FAILED",
-  "FORBIDDEN",
-  "NOT_FOUND",
-  "VALIDATION_FAILED",
-  "MALFORMED_RESPONSE"
-]);
-function classifySupplierError(input) {
-  const message = input.message || input.code || "Unknown supplier error";
-  const status = input.httpStatus;
-  const raw = String(input.code || "").toUpperCase();
-  if (status === 401 || raw.includes("AUTH") || raw === "UNAUTHORIZED") {
-    return { code: "AUTH_FAILED", retryable: false, httpStatus: status, message };
-  }
-  if (status === 403 || raw === "FORBIDDEN") {
-    return { code: "FORBIDDEN", retryable: false, httpStatus: status, message };
-  }
-  if (status === 404 || raw === "NOT_FOUND") {
-    return { code: "NOT_FOUND", retryable: false, httpStatus: status, message };
-  }
-  if (status === 429 || raw === "RATE_LIMITED" || raw === "RATE_LIMITED") {
-    return { code: "RATE_LIMITED", retryable: true, httpStatus: status, message };
-  }
-  if (status === 502 || status === 503 || status === 500 || raw.includes("SERVER")) {
-    return { code: "SERVER_ERROR", retryable: true, httpStatus: status, message };
-  }
-  if (raw === "TIMEOUT" || raw === "ETIMEDOUT") {
-    return { code: "TIMEOUT", retryable: true, httpStatus: status, message };
-  }
-  if (raw === "NETWORK_ERROR" || raw === "ECONNREFUSED" || raw === "ENOTFOUND") {
-    return { code: "NETWORK_ERROR", retryable: true, httpStatus: status, message };
-  }
-  if (raw.includes("MALFORMED") || raw.includes("PARSE")) {
-    return { code: "MALFORMED_RESPONSE", retryable: false, httpStatus: status, message };
-  }
-  if (raw === "VALIDATION_FAILED") {
-    return { code: "VALIDATION_FAILED", retryable: false, httpStatus: status, message };
-  }
-  if (raw === "SUPPLIER_UNAVAILABLE") {
-    return { code: "SUPPLIER_UNAVAILABLE", retryable: true, httpStatus: status, message };
-  }
-  const code = raw || "UNKNOWN";
-  return {
-    code: PERMANENT.has(code) || RETRYABLE.has(code) ? code : "UNKNOWN",
-    retryable: RETRYABLE.has(code),
-    httpStatus: status,
-    message
-  };
-}
-function isClassifiedRetryable(error) {
-  return error.retryable && !PERMANENT.has(error.code);
-}
-
-// lib/supplier-engine/retry.ts
-var DEFAULT_RETRYABLE = /* @__PURE__ */ new Set([
-  "TIMEOUT",
-  "RATE_LIMITED",
-  "SUPPLIER_UNAVAILABLE",
-  "NETWORK_ERROR",
-  "SERVER_ERROR",
-  "rateLimited",
-  "timeout",
-  "supplierUnavailable"
-]);
-var PERMANENT_CODES = /* @__PURE__ */ new Set([
-  "AUTH_FAILED",
-  "FORBIDDEN",
-  "NOT_FOUND",
-  "VALIDATION_FAILED",
-  "MALFORMED_RESPONSE"
-]);
-function isRetryableError(error) {
-  if (error.retryable === false) return false;
-  const classified = classifySupplierError(error);
-  if (PERMANENT_CODES.has(classified.code)) return false;
-  if (isClassifiedRetryable(classified)) return true;
-  if (error.retryable) return true;
-  if (error.code && DEFAULT_RETRYABLE.has(error.code)) return true;
-  return false;
-}
-function computeBackoffDelay(attempt, baseDelayMs = 500, maxDelayMs = 3e4) {
-  const delay = Math.min(baseDelayMs * 2 ** (attempt - 1), maxDelayMs);
-  return delay + Math.floor(Math.random() * 100);
-}
-async function withRetry(fn, options = {}) {
-  const maxAttempts = options.maxAttempts ?? 3;
-  const baseDelayMs = options.baseDelayMs ?? 500;
-  const maxDelayMs = options.maxDelayMs ?? 3e4;
-  let lastError;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn(attempt);
-    } catch (err) {
-      lastError = err;
-      const retryable = isRetryableError(err);
-      if (!retryable || attempt >= maxAttempts) break;
-      await new Promise((r) => setTimeout(r, computeBackoffDelay(attempt, baseDelayMs, maxDelayMs)));
-    }
-  }
-  throw lastError;
-}
-
-// lib/supplier-engine/service.ts
 init_security();
-
-// lib/supplier-engine/observability.ts
-init_security();
-var logBuffer = [];
-var metricsBuffer = [];
-var MAX_LOG = 2e3;
-function logSupplierOperation(entry) {
-  const record = {
-    ...entry,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    error: entry.error ? String(redactSecrets({ msg: entry.error })) : void 0
-  };
-  logBuffer.push(record);
-  if (logBuffer.length > MAX_LOG) logBuffer.shift();
-  return record;
-}
-function recordSyncMetrics(metrics) {
-  metricsBuffer.push(metrics);
-  if (metricsBuffer.length > 500) metricsBuffer.shift();
-}
-function getSupplierLogs(supplierId) {
-  if (!supplierId) return [...logBuffer];
-  return logBuffer.filter((l) => l.supplierId === supplierId);
-}
 
 // lib/supplier-engine/health.ts
 init_persistence();
@@ -1541,6 +2266,7 @@ function markSyncCompleted(supplierId, outcome) {
   const base = {
     lastSyncCompletedAt: now,
     syncLockJobId: void 0,
+    syncLockAcquiredAt: void 0,
     ...outcome.metrics
   };
   if (outcome.status === "FAILED") {
@@ -1621,6 +2347,45 @@ function listSupplierEngineAudit(supplierId, limit = 50) {
 
 // lib/supplier-engine/sync.ts
 init_registry();
+
+// lib/supplier-engine/syncGuard.ts
+init_credentials();
+init_registry();
+function hasFeedCapability(capabilities, jobType) {
+  if (jobType === "STOCK_ONLY") return Boolean(capabilities.stockFeed);
+  if (jobType === "PRICE_ONLY") return Boolean(capabilities.priceFeed);
+  return Boolean(capabilities.productFeed);
+}
+function evaluateProductionSyncGuard(supplierId, jobType, connectorConfig = {}) {
+  const reasons = [];
+  const supplier = getSupplier(supplierId);
+  if (!supplier) {
+    return { allowed: false, reasons: ["UNKNOWN_SUPPLIER"] };
+  }
+  const active = supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
+  if (!active) reasons.push("SUPPLIER_INACTIVE");
+  const environment = resolveConnectorEnvironment(connectorConfig.environment);
+  if (environment !== "MOCK" && !isSupplierNetworkEnabled()) {
+    reasons.push("NETWORK_DISABLED");
+  }
+  const credentialsOk = hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef || connectorConfig.secretsRef);
+  if (environment !== "MOCK" && !credentialsOk) {
+    reasons.push("CREDENTIALS_MISSING");
+  }
+  if (!hasFeedCapability(supplier.capabilities, jobType)) {
+    reasons.push("CAPABILITY_NOT_SUPPORTED");
+  }
+  const health = getSupplierHealth(supplierId);
+  if (health.consecutiveFailures >= 5 && environment === "PRODUCTION") {
+    reasons.push("HEALTH_CHECK_FAILED");
+  }
+  if (connectorConfig.baseUrl && environment !== "MOCK") {
+    if (!connectorConfig.baseUrl.startsWith("https://") && environment === "PRODUCTION") {
+      reasons.push("ENDPOINT_INVALID");
+    }
+  }
+  return { allowed: reasons.length === 0, reasons };
+}
 
 // lib/product-engine/status.ts
 function mapStorefrontStatus(status, stockStatus) {
@@ -29298,6 +30063,28 @@ async function runSupplierSyncJob(supplierId, options = {}) {
   const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
   const jobType = options.jobType ?? "FULL";
   const connector = createConnector(supplier, integrationType);
+  const environment = resolveConnectorEnvironment();
+  if (environment !== "MOCK") {
+    const syncGuard = evaluateProductionSyncGuard(supplierId, jobType);
+    if (!syncGuard.allowed) {
+      recordSupplierSyncOutcomeMetric(false);
+      return {
+        jobId,
+        supplierId,
+        jobType,
+        status: "FAILED",
+        productsFetched: 0,
+        productsCreated: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        stockUpdates: 0,
+        priceUpdates: 0,
+        errors: syncGuard.reasons.map((code) => ({ code, message: code })),
+        startedAt,
+        completedAt: startedAt
+      };
+    }
+  }
   const lock = tryAcquireSupplierSyncLock(supplierId, jobId);
   if (!lock.acquired) {
     return {
@@ -29448,6 +30235,7 @@ async function runSupplierSyncJob(supplierId, options = {}) {
     correlationId: jobId,
     errorCode: result.errors[0]?.code
   });
+  recordSupplierSyncOutcomeMetric(result.status !== "FAILED");
   return result;
 }
 async function syncFullFeed(connector, supplier, result, batchSize, seenSkus) {
@@ -29660,6 +30448,102 @@ async function ingestSupplierFeed(supplierId, options = {}) {
 init_registry();
 init_capabilities();
 init_credentials();
+
+// lib/supplier-engine/connectionTest.ts
+init_credentials();
+init_registry();
+async function runSupplierConnectionTest(supplierId, connectorConfig = {}) {
+  const started = Date.now();
+  const supplier = getSupplierOrThrow(supplierId);
+  const integrationType = supplier.integrationTypes[0] ?? "manual";
+  const environment = resolveConnectorEnvironment(connectorConfig.environment);
+  const connector = createConnector(supplier, integrationType, connectorConfig);
+  const credentialsOk = hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef || connectorConfig.secretsRef);
+  if (environment !== "MOCK" && !credentialsOk) {
+    return finish(started, {
+      status: "CREDENTIALS_MISSING",
+      connector: integrationType,
+      environment,
+      message: "Credential reference not configured"
+    });
+  }
+  if (connectorConfig.baseUrl) {
+    const endpointCheck = validateSupplierEndpoint(
+      connectorConfig.baseUrl,
+      extractAllowedHosts(connectorConfig.baseUrl)
+    );
+    if (!endpointCheck.allowed) {
+      return finish(started, {
+        status: "ENDPOINT_INVALID",
+        connector: integrationType,
+        environment,
+        message: endpointCheck.reason || "Endpoint blocked"
+      });
+    }
+  }
+  if (environment !== "MOCK" && !canUseProductionNetwork(environment)) {
+    return finish(started, {
+      status: "NETWORK_DISABLED",
+      connector: integrationType,
+      environment,
+      message: "Supplier network is disabled"
+    });
+  }
+  const auth = resolveSupplierAuth({
+    ...connectorConfig,
+    secretsRef: connectorConfig.secretsRef || supplier.secretsRef
+  });
+  if (environment !== "MOCK" && !auth.configured) {
+    return finish(started, {
+      status: "AUTH_FAILED",
+      connector: integrationType,
+      environment,
+      message: "Authentication credentials could not be resolved"
+    });
+  }
+  try {
+    const connectResult = await connector.connect();
+    if (!connectResult.ok) {
+      const status = connectResult.message.includes("CAPABILITY") ? "CAPABILITY_NOT_SUPPORTED" : "ENDPOINT_INVALID";
+      recordSupplierHealthFailure(supplierId, { errorCode: status, responseTimeMs: Date.now() - started });
+      return finish(started, {
+        status,
+        connector: integrationType,
+        environment,
+        message: connectResult.message
+      });
+    }
+    const health = await connector.healthCheck();
+    recordSupplierHealthSuccess(supplierId, {
+      responseTimeMs: health.latencyMs,
+      operation: "connection_test"
+    });
+    return finish(started, {
+      status: health.status === "UNHEALTHY" ? "ENDPOINT_INVALID" : "CONNECTED",
+      connector: integrationType,
+      environment,
+      message: health.lastError || "Connection test successful"
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Connection test failed";
+    const code = err.code;
+    let status = "ENDPOINT_INVALID";
+    if (code === "AUTH_FAILED" || code === "FORBIDDEN") status = "AUTH_FAILED";
+    if (code === "TIMEOUT") status = "TIMEOUT";
+    if (code === "RATE_LIMITED") status = "RATE_LIMITED";
+    recordSupplierHealthFailure(supplierId, { errorCode: status, responseTimeMs: Date.now() - started });
+    return finish(started, { status, connector: integrationType, environment, message });
+  }
+}
+function finish(started, partial) {
+  return {
+    ...partial,
+    latencyMs: Date.now() - started,
+    checkedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+
+// lib/supplier-engine/admin.ts
 function listOrderCapabilities(capabilities) {
   const flags = [];
   if (capabilities.createOrder || capabilities.orderAPI) flags.push("CREATE_ORDER");
@@ -29736,6 +30620,7 @@ async function getSupplierEngineDetail(supplierId) {
   const supplier = getSupplier(supplierId);
   if (!supplier) return null;
   const connector = createConnector(supplier, supplier.integrationTypes[0] ?? "manual");
+  const connectionTest = await runSupplierConnectionTest(supplierId);
   const healthCheck = await connector.healthCheck();
   const runtime = getSupplierRuntimeState(supplierId);
   const health = getSupplierHealth(supplierId);
@@ -29748,8 +30633,16 @@ async function getSupplierEngineDetail(supplierId) {
       name: supplier.displayName || supplier.name,
       country: supplier.country,
       connector: supplier.integrationTypes.join(", "),
+      environment: resolveConnectorEnvironment(),
       active: supplier.status !== "DISABLED" && supplier.status !== "PAUSED",
       status: supplier.status
+    },
+    connection: {
+      status: connectionTest.status,
+      latencyMs: connectionTest.latencyMs,
+      message: connectionTest.message,
+      lastChecked: connectionTest.checkedAt,
+      networkEnabled: isSupplierNetworkEnabled()
     },
     markets: supplier.supportedMarkets,
     capabilities: {
@@ -29816,6 +30709,28 @@ init_persistence();
 init_registry();
 init_capabilities();
 init_security();
+
+// lib/supplier-engine/orderIdempotency.ts
+var orderIdempotencyKeys = /* @__PURE__ */ new Map();
+function buildSupplierOrderIdempotencyKey(supplierId, buzzardOrderId, idempotencyKey) {
+  return `${supplierId}:${buzzardOrderId}:${idempotencyKey || "default"}`;
+}
+function getIdempotentSupplierOrder(key) {
+  return orderIdempotencyKeys.get(key)?.supplierOrderId;
+}
+function recordIdempotentSupplierOrder(key, supplierOrderId) {
+  const existing = orderIdempotencyKeys.get(key);
+  if (existing) {
+    return { replay: true, supplierOrderId: existing.supplierOrderId };
+  }
+  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt: (/* @__PURE__ */ new Date()).toISOString() });
+  return { replay: false, supplierOrderId };
+}
+function resetOrderIdempotencyKeys() {
+  orderIdempotencyKeys.clear();
+}
+
+// lib/supplier-engine/order.ts
 function buildDryRunPayload(request) {
   const safeAddress = {};
   for (const [key, value] of Object.entries(request.shippingAddress || {})) {
@@ -29841,14 +30756,39 @@ async function createSupplierOrder(request) {
   if (!hasCapability(supplier.capabilities, "orderAPI") && !supplier.capabilities.createOrder) {
     return { ok: false, dryRun: true, status: "CAPABILITY_MISSING", message: "orderAPI not configured" };
   }
+  const idempotencyKey = buildSupplierOrderIdempotencyKey(
+    request.supplierId,
+    request.orderId,
+    request.idempotencyKey
+  );
+  const existingOrderId = getIdempotentSupplierOrder(idempotencyKey);
+  if (existingOrderId) {
+    return {
+      ok: true,
+      dryRun: true,
+      supplierOrderId: existingOrderId,
+      status: "IDEMPOTENT_REPLAY",
+      message: "Duplicate order retry \u2014 existing supplier order reference returned"
+    };
+  }
   const payload = buildDryRunPayload(request);
   void redactSecrets(payload);
+  if (!isSupplierOrderNetworkEnabled()) {
+    const supplierOrderId = `DRY-ORD-${Date.now()}`;
+    recordIdempotentSupplierOrder(idempotencyKey, supplierOrderId);
+    return {
+      ok: true,
+      dryRun: true,
+      supplierOrderId,
+      status: "PREPARED_NOT_SENT",
+      message: "Order foundation only \u2014 supplier order network disabled"
+    };
+  }
   return {
-    ok: true,
+    ok: false,
     dryRun: true,
-    supplierOrderId: `DRY-ORD-${Date.now()}`,
-    status: "PREPARED_NOT_SENT",
-    message: "Order foundation only \u2014 no real supplier dispatch"
+    status: "ORDER_NETWORK_REQUIRED",
+    message: "Real supplier order dispatch requires explicit network enablement"
   };
 }
 function validateSupplierOrderPayload(request) {
@@ -29986,13 +30926,81 @@ function selectBestSupplierForOrder(product, options) {
     reasons
   };
 }
+
+// lib/supplier-engine/testSync.ts
+init_registry();
+async function runSupplierDryRunTestSync(supplierId, options = {}) {
+  const supplier = getSupplierOrThrow(supplierId);
+  const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
+  const connector = createConnector(supplier, integrationType, options.connectorConfig || {});
+  const result = {
+    ok: true,
+    dryRun: true,
+    supplierId,
+    productsFound: 0,
+    valid: 0,
+    invalid: 0,
+    duplicates: 0,
+    stockRecords: 0,
+    priceRecords: 0,
+    warnings: [],
+    errors: [],
+    completedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  await connector.connect();
+  const seenSkus = /* @__PURE__ */ new Set();
+  const productFetch = await connector.fetchProducts({ limit: 1e3 });
+  if (!productFetch.ok) {
+    result.ok = false;
+    result.errors.push({
+      code: productFetch.error || "FETCH_FAILED",
+      message: productFetch.error || "Product fetch failed"
+    });
+    return result;
+  }
+  result.productsFound = productFetch.records.length;
+  for (const raw of productFetch.records) {
+    const mapped = applyFieldMapping(raw, supplier.fieldMapping);
+    const sku = String(mapped.supplierSku || mapped.supplier_sku || "");
+    const fieldErrors = validateMappedRecord(mapped);
+    if (fieldErrors.length) {
+      result.invalid++;
+      result.errors.push({ code: fieldErrors[0], message: fieldErrors[0], record: sku || "unknown" });
+      continue;
+    }
+    if (sku) {
+      if (seenSkus.has(sku)) {
+        result.duplicates++;
+        result.warnings.push(`Duplicate SKU in feed: ${sku}`);
+        continue;
+      }
+      seenSkus.add(sku);
+    }
+    result.valid++;
+  }
+  if (supplier.capabilities.stockFeed) {
+    const stockFetch = await connector.fetchStock();
+    if (stockFetch.ok) result.stockRecords = stockFetch.records.length;
+    else result.warnings.push(stockFetch.error || "Stock fetch failed");
+  }
+  if (supplier.capabilities.priceFeed) {
+    const priceFetch = await connector.fetchPrices();
+    if (priceFetch.ok) result.priceRecords = priceFetch.records.length;
+    else result.warnings.push(priceFetch.error || "Price fetch failed");
+  }
+  result.ok = result.errors.length === 0;
+  result.completedAt = (/* @__PURE__ */ new Date()).toISOString();
+  return result;
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   TEST_SUPPLIER_ID,
   bootstrapSupplierEnginePersistence,
   createSupplierOrder,
   createSupplierReturn,
+  evaluateProductionSyncGuard,
   getSupplier,
+  getSupplierConnectorMetrics,
   getSupplierEngineAdminOverview,
   getSupplierEngineDashboard,
   getSupplierEngineDetail,
@@ -30004,16 +31012,24 @@ function selectBestSupplierForOrder(product, options) {
   getSyncCursor,
   getSyncCursorForAdmin,
   ingestSupplierFeed,
+  isBlockedHost,
+  isSupplierNetworkEnabled,
+  isSupplierOrderNetworkEnabled,
   isSupplierSelectable,
   listReturnCapabilities,
   listSuppliers,
   listSyncCursors,
   redactSecrets,
   rejectClientCredentials,
+  resetMockTransportScenarios,
+  resetOrderIdempotencyKeys,
   resetSupplierCursorSafe,
+  runSupplierConnectionTest,
+  runSupplierDryRunTestSync,
   runSupplierSyncJob,
   sanitizeClientSyncRequest,
   selectBestSupplierForOrder,
   setSupplierEnabled,
+  validateSupplierEndpoint,
   validateSupplierOrderPayload
 });

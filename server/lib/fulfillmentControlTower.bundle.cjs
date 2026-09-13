@@ -30619,7 +30619,6 @@ function resolveMarketplaceMapping(orderId) {
   return mapping ? { marketplaceId: mapping.marketplaceId, marketplaceOrderId: mapping.marketplaceOrderId } : {};
 }
 function buildStateView(order, item, supplierOrderStatus, supplierHealth, inventoryStatus, trackingStatus, returnStatus) {
-  const supplier = getSupplier(item.supplierId);
   let supplierState = "UNKNOWN";
   if (!isSupplierSelectable(item.supplierId)) supplierState = "DISABLED";
   else if (supplierHealth === "HEALTHY") supplierState = "HEALTHY";

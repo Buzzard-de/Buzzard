@@ -1,4 +1,4 @@
-import AdminSuppliersPanel from "@/components/admin/AdminSuppliersPanel";
+import AdminSupplierOperationsPanel from "@/components/admin/AdminSupplierOperationsPanel";
 
 export const metadata = {
   title: "Admin Lieferanten – Buzzard",
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function AdminSuppliersPage() {
-  return <AdminSuppliersPanel />;
+  return <AdminSupplierOperationsPanel />;
 }

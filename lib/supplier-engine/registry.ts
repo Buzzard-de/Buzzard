@@ -2,8 +2,11 @@ import type { IntegrationType, SupplierConfig, SupplierStatus } from "./types";
 import testFeeds from "@/data/global/test_supplier_feeds.json";
 import suppliersMaster from "@/data/buzzard_suppliers.json";
 import { TEST_SUPPLIER_ID } from "./fixtures";
+import { getSupplierPersistence } from "./persistence";
+import { registerCredentialRef } from "./credentials";
 
 const supplierById = new Map<string, SupplierConfig>();
+const persistedOverlay = new Map<string, Partial<SupplierConfig>>();
 
 function mapMasterToConfig(raw: Record<string, unknown>): SupplierConfig {
   const now = new Date().toISOString();
@@ -59,25 +62,85 @@ function buildTestSupplierA(): SupplierConfig {
   };
 }
 
+function mergePersistedOverlay(config: SupplierConfig): SupplierConfig {
+  const overlay = persistedOverlay.get(config.supplierId);
+  if (!overlay) return config;
+  return {
+    ...config,
+    ...overlay,
+    capabilities: { ...config.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config.supportedMarkets,
+    status: overlay.status ?? config.status,
+    updatedAt: overlay.updatedAt ?? config.updatedAt,
+  };
+}
+
+function persistRegistryEntry(config: SupplierConfig): void {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  persistence.saveRegistryRow({
+    supplierId: config.supplierId,
+    name: config.name,
+    displayName: config.displayName || config.name,
+    country: config.country,
+    connectorType: config.integrationTypes[0] || "manual",
+    supportedMarkets: config.supportedMarkets,
+    capabilities: config.capabilities,
+    active: config.status !== "DISABLED" && config.status !== "PAUSED",
+    status: config.status,
+    secretsRef: config.secretsRef,
+    createdAt: config.createdAt,
+  });
+  if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
+}
+
+export function hydrateRegistryFromPersistence(): void {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  for (const row of persistence.listRegistryRows()) {
+    persistedOverlay.set(String(row.supplierId), {
+      supplierId: String(row.supplierId),
+      name: String(row.name),
+      displayName: row.displayName ? String(row.displayName) : String(row.name),
+      country: row.country ? String(row.country) : "DE",
+      status: (row.status as SupplierStatus) || (row.active === false ? "DISABLED" : "CONNECTED"),
+      supportedMarkets: (row.supportedMarkets as string[]) || [],
+      capabilities: (row.capabilities as SupplierConfig["capabilities"]) || {},
+      secretsRef: row.secretsRef ? String(row.secretsRef) : undefined,
+      updatedAt: row.updatedAt ? String(row.updatedAt) : undefined,
+    });
+  }
+}
+
 function ensureRegistry(): void {
   if (supplierById.size > 0) return;
 
   for (const raw of suppliersMaster.suppliers) {
-    const config = mapMasterToConfig(raw as unknown as Record<string, unknown>);
+    const config = mergePersistedOverlay(mapMasterToConfig(raw as unknown as Record<string, unknown>));
     supplierById.set(config.supplierId, config);
+    persistRegistryEntry(config);
   }
 
-  supplierById.set(TEST_SUPPLIER_ID, buildTestSupplierA());
+  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
+  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
+  persistRegistryEntry(testSupplier);
 }
 
 export function listSuppliers(): SupplierConfig[] {
   ensureRegistry();
-  return [...supplierById.values()];
+  return [...supplierById.values()].map((s) => mergePersistedOverlay(s));
 }
 
 export function getSupplier(supplierId: string): SupplierConfig | undefined {
   ensureRegistry();
-  return supplierById.get(supplierId);
+  const config = supplierById.get(supplierId);
+  return config ? mergePersistedOverlay(config) : undefined;
+}
+
+export function isSupplierSelectable(supplierId: string): boolean {
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return false;
+  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
 }
 
 export function getSupplierOrThrow(supplierId: string): SupplierConfig {
@@ -91,7 +154,20 @@ export function updateSupplierStatus(supplierId: string, status: SupplierStatus)
   if (!s) return undefined;
   const updated = { ...s, status, updatedAt: new Date().toISOString() };
   supplierById.set(supplierId, updated);
+  persistedOverlay.set(supplierId, {
+    status,
+    updatedAt: updated.updatedAt,
+  });
+  persistRegistryEntry(updated);
   return updated;
+}
+
+export function enableSupplier(supplierId: string): SupplierConfig | undefined {
+  return updateSupplierStatus(supplierId, "ACTIVE");
+}
+
+export function disableSupplier(supplierId: string): SupplierConfig | undefined {
+  return updateSupplierStatus(supplierId, "DISABLED");
 }
 
 export function getRegistryCount(): number {

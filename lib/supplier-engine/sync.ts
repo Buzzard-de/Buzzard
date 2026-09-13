@@ -6,8 +6,17 @@ import { processInBatches } from "./batch";
 import { withRetry } from "./retry";
 import { classifySupplierError } from "./errors";
 import { logSupplierOperation, recordSyncMetrics } from "./observability";
-import { getSyncCursor, saveSyncCursor } from "./syncCursor";
-import { markSyncCompleted, markSyncStarted } from "./state";
+import { getSyncCursor, saveSyncCursor, type SupplierSyncMode } from "./syncCursor";
+import {
+  markSyncCompleted,
+  tryAcquireSupplierSyncLock,
+  releaseSupplierSyncLock,
+} from "./state";
+import { bootstrapSupplierEnginePersistence } from "./bootstrap";
+import { getSupplierPersistence } from "./persistence";
+import { recordSupplierHealthSuccess, recordSupplierHealthFailure } from "./health";
+import { recordSupplierEngineAudit } from "./audit";
+import { isSupplierSelectable } from "./registry";
 import {
   getProduct,
   updateProductSupplierOffer,
@@ -26,18 +35,70 @@ export interface SyncOptions {
   jobType?: SyncJobType;
 }
 
+function buildIdempotencyKey(
+  supplierId: string,
+  jobType: SyncJobType,
+  cursor?: string,
+  batchSize?: number
+): string {
+  return `${supplierId}:${jobType}:${cursor || "start"}:${batchSize || 50}`;
+}
+
 export async function runSupplierSyncJob(
   supplierId: string,
   options: SyncOptions = {}
 ): Promise<SyncJobResult> {
+  bootstrapSupplierEnginePersistence();
   const startedAt = new Date().toISOString();
   const jobId = `sync_${supplierId}_${Date.now()}`;
   const supplier = getSupplierOrThrow(supplierId);
+  if (!isSupplierSelectable(supplierId)) {
+    return {
+      jobId,
+      supplierId,
+      jobType: options.jobType ?? "FULL",
+      status: "FAILED",
+      productsFetched: 0,
+      productsCreated: 0,
+      productsUpdated: 0,
+      productsFailed: 0,
+      stockUpdates: 0,
+      priceUpdates: 0,
+      errors: [{ code: "SUPPLIER_DISABLED", message: "Supplier is disabled" }],
+      startedAt,
+      completedAt: startedAt,
+    };
+  }
+
   const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
   const jobType = options.jobType ?? "FULL";
   const connector = createConnector(supplier, integrationType);
 
-  markSyncStarted(supplierId, jobId);
+  const lock = tryAcquireSupplierSyncLock(supplierId, jobId);
+  if (!lock.acquired) {
+    return {
+      jobId,
+      supplierId,
+      jobType,
+      status: "FAILED",
+      productsFetched: 0,
+      productsCreated: 0,
+      productsUpdated: 0,
+      productsFailed: 0,
+      stockUpdates: 0,
+      priceUpdates: 0,
+      errors: [{ code: "SYNC_IN_PROGRESS", message: lock.reason || "Sync already running" }],
+      startedAt,
+      completedAt: startedAt,
+    };
+  }
+
+  recordSupplierEngineAudit({
+    supplierId,
+    action: "supplier.sync.started",
+    correlationId: jobId,
+    metadata: { jobType, integrationType },
+  });
 
   const result: SyncJobResult = {
     jobId,
@@ -72,10 +133,49 @@ export async function runSupplierSyncJob(
     }
 
     const health = await connector.healthCheck();
+    const syncDuration = Date.now() - syncStart;
+    if (result.status === "FAILED") {
+      recordSupplierHealthFailure(supplierId, {
+        errorCode: result.errors[0]?.code,
+        responseTimeMs: syncDuration,
+        rateLimited: result.errors[0]?.code === "RATE_LIMITED",
+      });
+      recordSupplierEngineAudit({
+        supplierId,
+        action: "supplier.sync.failed",
+        correlationId: jobId,
+        metadata: { jobType, errorCode: result.errors[0]?.code },
+      });
+    } else {
+      recordSupplierHealthSuccess(supplierId, {
+        responseTimeMs: syncDuration,
+        operation: jobType,
+      });
+      recordSupplierEngineAudit({
+        supplierId,
+        action: "supplier.sync.completed",
+        correlationId: jobId,
+        metadata: {
+          jobType,
+          status: result.status,
+          productsFetched: result.productsFetched,
+        },
+      });
+    }
+
     markSyncCompleted(supplierId, {
       status: result.status === "FAILED" ? "FAILED" : result.status === "PARTIAL" ? "PARTIAL" : "COMPLETED",
       healthStatus: health.status,
       error: result.errors[0]?.message,
+      errorCode: result.errors[0]?.code,
+      metrics: {
+        productsProcessed: result.productsFetched,
+        productsAccepted: result.productsCreated + result.productsUpdated,
+        productsRejected: result.productsFailed,
+        offersUpdated: result.productsUpdated,
+        stockUpdated: result.stockUpdates,
+        priceUpdated: result.priceUpdates,
+      },
     });
   } catch (e) {
     const classified = classifySupplierError({
@@ -87,11 +187,24 @@ export async function runSupplierSyncJob(
       code: classified.code,
       message: classified.message,
     });
+    recordSupplierHealthFailure(supplierId, {
+      errorCode: classified.code,
+      rateLimited: classified.code === "RATE_LIMITED",
+    });
+    recordSupplierEngineAudit({
+      supplierId,
+      action: "supplier.sync.failed",
+      correlationId: jobId,
+      metadata: { jobType, errorCode: classified.code },
+    });
     markSyncCompleted(supplierId, {
       status: "FAILED",
       healthStatus: "UNHEALTHY",
       error: classified.message,
+      errorCode: classified.code,
     });
+  } finally {
+    releaseSupplierSyncLock(supplierId, jobId);
   }
 
   if (jobType === "FULL" && seenSkus.size > 0) {
@@ -140,12 +253,18 @@ async function syncFullFeed(
   }
 
   result.productsFetched = fetchResult.records.length;
-  if (fetchResult.cursor) {
-    saveSyncCursor(supplier.supplierId, { cursor: fetchResult.cursor });
-    result.checkpoint = fetchResult.cursor;
-  }
+  const pendingCursor = fetchResult.cursor;
 
-  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize);
+  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize, {
+    jobType: "FULL",
+    pendingCursor,
+    syncMode: "full",
+  });
+
+  if (result.status !== "FAILED" && pendingCursor) {
+    const saved = saveSyncCursor(supplier.supplierId, { cursor: pendingCursor }, "full");
+    result.checkpoint = saved.cursor;
+  }
 
   if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
     result.status = "PARTIAL";
@@ -159,7 +278,7 @@ async function syncIncrementalFeed(
   batchSize: number,
   seenSkus: Set<string>
 ): Promise<void> {
-  const cursor = getSyncCursor(supplier.supplierId);
+  const cursor = getSyncCursor(supplier.supplierId, "incremental");
   const fetchResult = await withRetry(() =>
     connector.fetchProducts({
       limit: 500,
@@ -174,15 +293,42 @@ async function syncIncrementalFeed(
   }
 
   result.productsFetched = fetchResult.records.length;
-  if (fetchResult.cursor) {
-    const saved = saveSyncCursor(supplier.supplierId, {
-      cursor: fetchResult.cursor,
-      lastModified: new Date().toISOString(),
+  const pendingCursor = fetchResult.cursor;
+
+  const idempotencyKey = buildIdempotencyKey(
+    supplier.supplierId,
+    "INCREMENTAL",
+    cursor?.cursor || "start",
+    batchSize
+  );
+  const persistence = getSupplierPersistence();
+  if (persistence && !persistence.claimIdempotencyKey(idempotencyKey, supplier.supplierId)) {
+    result.status = "COMPLETED";
+    result.errors.push({
+      code: "IDEMPOTENT_REPLAY",
+      message: "Batch already processed for current cursor",
     });
-    result.checkpoint = saved.cursor;
+    return;
   }
 
-  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize);
+  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize, {
+    jobType: "INCREMENTAL",
+    pendingCursor,
+    syncMode: "incremental",
+  });
+
+  if (result.status === "FAILED") {
+    return;
+  }
+
+  if (pendingCursor) {
+    const saved = saveSyncCursor(
+      supplier.supplierId,
+      { cursor: pendingCursor, lastModified: new Date().toISOString() },
+      "incremental"
+    );
+    result.checkpoint = saved.cursor;
+  }
 
   if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
     result.status = "PARTIAL";
@@ -195,8 +341,20 @@ async function processRecords(
   result: SyncJobResult,
   records: Record<string, unknown>[],
   seenSkus: Set<string>,
-  batchSize: number
+  batchSize: number,
+  checkpoint?: { jobType: SyncJobType; pendingCursor?: string; syncMode: SupplierSyncMode }
 ): Promise<void> {
+  if (records.length === 0) {
+    if (checkpoint?.pendingCursor && result.status !== "FAILED") {
+      saveSyncCursor(
+        supplier.supplierId,
+        { cursor: checkpoint.pendingCursor, lastModified: new Date().toISOString() },
+        checkpoint.syncMode
+      );
+    }
+    return;
+  }
+
   await processInBatches(records, async (batch) => {
     for (const raw of batch) {
       try {

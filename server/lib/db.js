@@ -4138,6 +4138,70 @@ function migrateFulfillmentControlTower() {
 
 migrateFulfillmentControlTower();
 
+function migrateSupplierOrderReadiness() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_order_readiness (
+      readiness_id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      overall_status TEXT NOT NULL,
+      approval_status TEXT NOT NULL,
+      generated_at TEXT NOT NULL,
+      expires_at TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_sor_supplier
+      ON supplier_order_readiness(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_sor_scope
+      ON supplier_order_readiness(supplier_id, market, channel);
+
+    CREATE TABLE IF NOT EXISTS supplier_order_approvals (
+      approval_id TEXT PRIMARY KEY,
+      readiness_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      status TEXT NOT NULL,
+      requester TEXT NOT NULL,
+      approver TEXT,
+      requested_at TEXT NOT NULL,
+      approved_at TEXT,
+      rejected_at TEXT,
+      rejection_reason TEXT,
+      expires_at TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_soa_scope
+      ON supplier_order_approvals(supplier_id, market, channel);
+
+    CREATE TABLE IF NOT EXISTS supplier_order_readiness_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      supplier_id TEXT,
+      market TEXT,
+      channel TEXT,
+      actor TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_sora_supplier
+      ON supplier_order_readiness_audit(supplier_id);
+
+    CREATE TABLE IF NOT EXISTS supplier_order_kill_switch (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      state_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL,
+      updated_by TEXT
+    );
+  `);
+}
+
+migrateSupplierOrderReadiness();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

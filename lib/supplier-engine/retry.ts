@@ -1,3 +1,5 @@
+import { classifySupplierError, isClassifiedRetryable } from "./errors";
+
 export interface RetryOptions {
   maxAttempts?: number;
   baseDelayMs?: number;
@@ -10,12 +12,25 @@ const DEFAULT_RETRYABLE = new Set([
   "RATE_LIMITED",
   "SUPPLIER_UNAVAILABLE",
   "NETWORK_ERROR",
+  "SERVER_ERROR",
   "rateLimited",
   "timeout",
   "supplierUnavailable",
 ]);
 
-export function isRetryableError(error: { code?: string; retryable?: boolean }): boolean {
+const PERMANENT_CODES = new Set([
+  "AUTH_FAILED",
+  "FORBIDDEN",
+  "NOT_FOUND",
+  "VALIDATION_FAILED",
+  "MALFORMED_RESPONSE",
+]);
+
+export function isRetryableError(error: { code?: string; retryable?: boolean; httpStatus?: number; message?: string }): boolean {
+  if (error.retryable === false) return false;
+  const classified = classifySupplierError(error);
+  if (PERMANENT_CODES.has(classified.code)) return false;
+  if (isClassifiedRetryable(classified)) return true;
   if (error.retryable) return true;
   if (error.code && DEFAULT_RETRYABLE.has(error.code)) return true;
   return false;

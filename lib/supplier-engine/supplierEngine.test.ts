@@ -263,7 +263,8 @@ describe("Supplier Engine — order foundation", () => {
       dropshipping: true,
     });
     expect(result.dryRun).toBe(true);
-    expect(result.ok).toBe(false); // orderAPI not configured for TEST_SUPPLIER_A
+    expect(result.ok).toBe(true);
+    expect(result.status).toBe("PREPARED_NOT_SENT");
   });
 });
 

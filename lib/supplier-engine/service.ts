@@ -27,7 +27,31 @@ export {
   getSupplierOrder,
   cancelSupplierOrder,
   getSupplierTracking,
+  validateSupplierOrderPayload,
 } from "./order";
+export { classifySupplierError, isClassifiedRetryable } from "./errors";
+export {
+  getSyncCursor,
+  saveSyncCursor,
+  clearSyncCursor,
+  listSyncCursors,
+  resetSyncCursors,
+} from "./syncCursor";
+export {
+  getSupplierRuntimeState,
+  updateSupplierRuntimeState,
+  resetSupplierRuntimeState,
+} from "./state";
+export {
+  registerCredentialRef,
+  getCredentialRef,
+  hasConfiguredCredentials,
+  resolveCredentials,
+  sanitizeCredentialPayload,
+  resetCredentialRefs,
+} from "./credentials";
+export { fetchSupplierTracking, mapSupplierTrackingStatus } from "./tracking";
+export { createSupplierReturn, listReturnCapabilities } from "./returns";
 
 export { TEST_SUPPLIER_ID, getTestFeedProducts } from "./fixtures";
-export { selectBestSupplierForMarket } from "./selection";
+export { selectBestSupplierForMarket, selectBestSupplierForOrder } from "./selection";

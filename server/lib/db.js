@@ -4239,6 +4239,42 @@ function migrateSupplierOrderRehearsal() {
 
 migrateSupplierOrderRehearsal();
 
+function migrateSupplierProductionValidation() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_production_capability_validation (
+      validation_id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      environment TEXT NOT NULL,
+      overall_status TEXT NOT NULL,
+      credential_status TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_spv_supplier
+      ON supplier_production_capability_validation(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_spv_status
+      ON supplier_production_capability_validation(overall_status);
+
+    CREATE TABLE IF NOT EXISTS supplier_production_validation_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      validation_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_spva_validation
+      ON supplier_production_validation_audit(validation_id);
+  `);
+}
+
+migrateSupplierProductionValidation();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

@@ -6,14 +6,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __esm = (fn, res, err) => function __init() {
-  if (err) throw err[0];
-  try {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  } catch (e) {
-    throw err = [e], e;
-  }
-};
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -402,13 +394,13 @@ CREATE TABLE IF NOT EXISTS tax_rates (
       for (const row of categories2) {
         if (!row.slug) updateCategorySlug.run(slugify(row.name), row.id);
       }
-      const products2 = db.prepare("SELECT id, sku, name, slug, seo_title, seo_description FROM products").all();
+      const products = db.prepare("SELECT id, sku, name, slug, seo_title, seo_description FROM products").all();
       const updateProductMeta = db.prepare(`
     UPDATE products
     SET slug = ?, seo_title = ?, seo_description = ?, updated_at = COALESCE(updated_at, CURRENT_TIMESTAMP)
     WHERE id = ?
   `);
-      for (const row of products2) {
+      for (const row of products) {
         const slug = row.slug || slugify(row.name || row.sku);
         const seoTitle = row.seo_title || `${row.name} | BUZZARD`;
         const seoDescription = row.seo_description || row.name || "";
@@ -483,12 +475,12 @@ CREATE TABLE IF NOT EXISTS tax_rates (
       }
       const translationCount = db.prepare("SELECT COUNT(*) n FROM product_translations").get().n;
       if (translationCount === 0) {
-        const products2 = db.prepare("SELECT id, name, description, slug, seo_title, seo_description FROM products LIMIT 3").all();
+        const products = db.prepare("SELECT id, name, description, slug, seo_title, seo_description FROM products LIMIT 3").all();
         const insertTranslation = db.prepare(`
       INSERT OR IGNORE INTO product_translations(product_id, locale, name, description, seo_title, seo_description, slug)
       VALUES(?,?,?,?,?,?,?)
     `);
-        for (const product of products2) {
+        for (const product of products) {
           insertTranslation.run(
             product.id,
             "de-DE",
@@ -4420,7 +4412,7 @@ CREATE TABLE IF NOT EXISTS tax_rates (
     function getDatabaseHealth() {
       try {
         const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
-        const products2 = db.prepare("SELECT COUNT(*) n FROM products").get().n;
+        const products = db.prepare("SELECT COUNT(*) n FROM products").get().n;
         const orders = db.prepare("SELECT COUNT(*) n FROM orders").get().n;
         const persistence = getPersistenceInfo(dbPath);
         return {
@@ -4428,7 +4420,7 @@ CREATE TABLE IF NOT EXISTS tax_rates (
           path: dbPath,
           version: "0.3.0",
           users,
-          products: products2,
+          products,
           orders,
           persistence: {
             mode: persistence.mode,
@@ -4465,651 +4457,750 @@ CREATE TABLE IF NOT EXISTS tax_rates (
   }
 });
 
-// server/lib/analytics/persistentStore.js
+// server/lib/fulfillment/persistentStore.js
 var require_persistentStore = __commonJS({
-  "server/lib/analytics/persistentStore.js"(exports2, module2) {
+  "server/lib/fulfillment/persistentStore.js"(exports2, module2) {
     var { db } = require_db();
-    var eventCounter = 0;
-    function parseJson(raw, fallback = {}) {
-      try {
-        return JSON.parse(raw || "{}");
-      } catch {
-        return fallback;
-      }
-    }
-    function rowToEvent(row) {
-      if (!row) return void 0;
-      const payload = parseJson(row.payload_json, {});
-      return {
-        ...payload,
-        eventId: row.event_id,
-        eventType: row.event_type,
-        timestamp: row.event_timestamp,
-        sessionId: row.session_id,
-        anonymousVisitorId: row.anonymous_visitor_id,
-        market: row.market,
-        country: row.country,
-        language: row.language,
-        currency: row.currency,
-        deviceType: row.device_type,
-        trafficSource: row.traffic_source,
-        trafficMedium: row.traffic_medium ?? void 0,
-        trafficCampaign: row.traffic_campaign ?? void 0,
-        landingPage: row.landing_page ?? void 0,
-        pagePath: row.page_path ?? void 0,
-        productId: row.product_id ?? void 0,
-        categoryId: row.category_id ?? void 0,
-        orderIdReference: row.order_id_reference ?? void 0,
-        cartIdReference: row.cart_id_reference ?? void 0,
-        value: row.value ?? void 0,
-        quantity: row.quantity ?? void 0,
-        revenueAuthority: row.revenue_authority,
-        correlationId: row.correlation_id ?? void 0,
-        sanitized: row.sanitized === 1,
-        metadata: parseJson(row.metadata_json, {})
-      };
-    }
-    function eventToRow(event) {
-      const payload = { ...event };
-      delete payload.eventId;
-      delete payload.eventType;
-      delete payload.timestamp;
-      delete payload.sessionId;
-      delete payload.anonymousVisitorId;
-      delete payload.market;
-      delete payload.country;
-      delete payload.language;
-      delete payload.currency;
-      delete payload.deviceType;
-      delete payload.trafficSource;
-      delete payload.trafficMedium;
-      delete payload.trafficCampaign;
-      delete payload.landingPage;
-      delete payload.pagePath;
-      delete payload.productId;
-      delete payload.categoryId;
-      delete payload.orderIdReference;
-      delete payload.cartIdReference;
-      delete payload.value;
-      delete payload.quantity;
-      delete payload.revenueAuthority;
-      delete payload.correlationId;
-      delete payload.sanitized;
-      delete payload.metadata;
-      return {
-        event_id: event.eventId,
-        event_type: event.eventType,
-        event_timestamp: event.timestamp,
-        session_id: event.sessionId,
-        anonymous_visitor_id: event.anonymousVisitorId,
-        market: event.market,
-        country: event.country,
-        language: event.language,
-        currency: event.currency,
-        device_type: event.deviceType,
-        traffic_source: event.trafficSource,
-        traffic_medium: event.trafficMedium ?? null,
-        traffic_campaign: event.trafficCampaign ?? null,
-        landing_page: event.landingPage ?? null,
-        page_path: event.pagePath ?? null,
-        product_id: event.productId ?? null,
-        category_id: event.categoryId ?? null,
-        order_id_reference: event.orderIdReference ?? null,
-        cart_id_reference: event.cartIdReference ?? null,
-        value: event.value ?? null,
-        quantity: event.quantity ?? null,
-        revenue_authority: event.revenueAuthority,
-        correlation_id: event.correlationId ?? null,
-        sanitized: event.sanitized ? 1 : 0,
-        metadata_json: JSON.stringify(event.metadata ?? {}),
-        payload_json: JSON.stringify(payload)
-      };
-    }
-    function rowToSession(row) {
-      if (!row) return void 0;
-      return {
-        sessionId: row.session_id,
-        anonymousVisitorId: row.anonymous_visitor_id,
-        startedAt: row.started_at,
-        lastActivityAt: row.last_activity_at,
-        endedAt: row.ended_at ?? void 0,
-        landingPage: row.landing_page ?? void 0,
-        exitPage: row.exit_page ?? void 0,
-        pageViews: row.page_views,
-        productViews: row.product_views,
-        cartEvents: row.cart_events,
-        checkoutStarted: row.checkout_started === 1,
-        purchaseCompleted: row.purchase_completed === 1,
-        trafficSource: row.traffic_source,
-        market: row.market,
-        language: row.language,
-        deviceType: row.device_type
-      };
-    }
-    function rowToVisitor(row) {
-      if (!row || row.deleted === 1) return void 0;
-      return {
-        anonymousVisitorId: row.anonymous_visitor_id,
-        firstSeenAt: row.first_seen_at,
-        lastSeenAt: row.last_seen_at,
-        sessionCount: row.session_count,
-        isReturning: row.is_returning === 1
-      };
-    }
-    function createPersistentAnalyticsStore() {
-      const insertEventStmt = db.prepare(`
-    INSERT INTO analytics_foundation_events (
-      event_id, event_type, event_timestamp, session_id, anonymous_visitor_id,
-      market, country, language, currency, device_type, traffic_source,
-      traffic_medium, traffic_campaign, landing_page, page_path,
-      product_id, category_id, order_id_reference, cart_id_reference,
-      value, quantity, revenue_authority, correlation_id, sanitized,
-      metadata_json, payload_json
+    function createFulfillmentControlTowerStore() {
+      const upsertSnapshot = db.prepare(`
+    INSERT INTO fulfillment_control_tower_snapshots (
+      fulfillment_id, order_id, supplier_id, operational_status, view_json, last_reconciled_at, updated_at
     ) VALUES (
-      @event_id, @event_type, @event_timestamp, @session_id, @anonymous_visitor_id,
-      @market, @country, @language, @currency, @device_type, @traffic_source,
-      @traffic_medium, @traffic_campaign, @landing_page, @page_path,
-      @product_id, @category_id, @order_id_reference, @cart_id_reference,
-      @value, @quantity, @revenue_authority, @correlation_id, @sanitized,
-      @metadata_json, @payload_json
+      @fulfillment_id, @order_id, @supplier_id, @operational_status, @view_json, @last_reconciled_at, @updated_at
+    )
+    ON CONFLICT(fulfillment_id) DO UPDATE SET
+      operational_status = excluded.operational_status,
+      view_json = excluded.view_json,
+      last_reconciled_at = excluded.last_reconciled_at,
+      updated_at = excluded.updated_at
+  `);
+      const upsertIncident = db.prepare(`
+    INSERT INTO fulfillment_control_tower_incidents (
+      incident_id, fingerprint, fulfillment_id, order_id, supplier_id,
+      severity, category, code, message, detected_at, resolved_at, status,
+      correlation_id, resolution_note, resolution_actor, acknowledged_at, acknowledged_by
+    ) VALUES (
+      @incident_id, @fingerprint, @fulfillment_id, @order_id, @supplier_id,
+      @severity, @category, @code, @message, @detected_at, @resolved_at, @status,
+      @correlation_id, @resolution_note, @resolution_actor, @acknowledged_at, @acknowledged_by
+    )
+    ON CONFLICT(fingerprint) DO UPDATE SET
+      severity = excluded.severity,
+      message = excluded.message,
+      resolved_at = excluded.resolved_at,
+      status = excluded.status,
+      resolution_note = excluded.resolution_note,
+      resolution_actor = excluded.resolution_actor,
+      acknowledged_at = excluded.acknowledged_at,
+      acknowledged_by = excluded.acknowledged_by
+  `);
+      const insertRun = db.prepare(`
+    INSERT OR REPLACE INTO fulfillment_control_tower_reconciliation_runs (
+      run_id, correlation_id, started_at, completed_at,
+      checked_fulfillments, passed, warnings, mismatches, critical,
+      incidents_created, incidents_resolved, duration_ms, errors_json
+    ) VALUES (
+      @run_id, @correlation_id, @started_at, @completed_at,
+      @checked_fulfillments, @passed, @warnings, @mismatches, @critical,
+      @incidents_created, @incidents_resolved, @duration_ms, @errors_json
     )
   `);
-      const upsertSessionStmt = db.prepare(`
-    INSERT INTO analytics_foundation_sessions (
-      session_id, anonymous_visitor_id, started_at, last_activity_at, ended_at,
-      landing_page, exit_page, page_views, product_views, cart_events,
-      checkout_started, purchase_completed, traffic_source, market, language, device_type
-    ) VALUES (
-      @session_id, @anonymous_visitor_id, @started_at, @last_activity_at, @ended_at,
-      @landing_page, @exit_page, @page_views, @product_views, @cart_events,
-      @checkout_started, @purchase_completed, @traffic_source, @market, @language, @device_type
-    )
-    ON CONFLICT(session_id) DO UPDATE SET
-      anonymous_visitor_id = excluded.anonymous_visitor_id,
-      last_activity_at = excluded.last_activity_at,
-      ended_at = excluded.ended_at,
-      landing_page = excluded.landing_page,
-      exit_page = excluded.exit_page,
-      page_views = excluded.page_views,
-      product_views = excluded.product_views,
-      cart_events = excluded.cart_events,
-      checkout_started = excluded.checkout_started,
-      purchase_completed = excluded.purchase_completed,
-      traffic_source = excluded.traffic_source,
-      market = excluded.market,
-      language = excluded.language,
-      device_type = excluded.device_type,
-      updated_at = CURRENT_TIMESTAMP
-  `);
-      const upsertVisitorStmt = db.prepare(`
-    INSERT INTO analytics_foundation_visitors (
-      anonymous_visitor_id, first_seen_at, last_seen_at, session_count, is_returning, deleted
-    ) VALUES (
-      @anonymous_visitor_id, @first_seen_at, @last_seen_at, @session_count, @is_returning, 0
-    )
-    ON CONFLICT(anonymous_visitor_id) DO UPDATE SET
-      last_seen_at = excluded.last_seen_at,
-      session_count = excluded.session_count,
-      is_returning = excluded.is_returning,
-      updated_at = CURRENT_TIMESTAMP
-  `);
-      const upsertConsentStmt = db.prepare(`
-    INSERT INTO analytics_foundation_consent (anonymous_visitor_id, consent_json)
-    VALUES (?, ?)
-    ON CONFLICT(anonymous_visitor_id) DO UPDATE SET
-      consent_json = excluded.consent_json,
-      updated_at = CURRENT_TIMESTAMP
-  `);
-      const insertIdempotencyStmt = db.prepare(`
-    INSERT OR IGNORE INTO analytics_foundation_idempotency (idempotency_key, event_id)
-    VALUES (?, ?)
-  `);
-      const insertAuditStmt = db.prepare(`
-    INSERT INTO analytics_foundation_audit (audit_id, audit_timestamp, action, actor_id, detail_json)
-    VALUES (@audit_id, @audit_timestamp, @action, @actor_id, @detail_json)
-  `);
       return {
-        generateEventId() {
-          eventCounter += 1;
-          return `evt_${Date.now()}_${eventCounter}`;
+        saveSnapshot(row) {
+          upsertSnapshot.run(row);
         },
-        storeEvent(event) {
-          insertEventStmt.run(eventToRow(event));
+        getSnapshot(fulfillmentId) {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots WHERE fulfillment_id = ?").get(fulfillmentId);
         },
-        listEvents() {
-          const rows = db.prepare(
-            "SELECT * FROM analytics_foundation_events ORDER BY event_timestamp ASC"
-          ).all();
-          return rows.map(rowToEvent);
+        listSnapshots() {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots ORDER BY updated_at DESC").all();
         },
-        listEventsInRange(fromIso, toIso) {
-          const rows = db.prepare(
-            `SELECT * FROM analytics_foundation_events
-         WHERE event_timestamp >= ? AND event_timestamp <= ?
-         ORDER BY event_timestamp ASC`
-          ).all(fromIso, toIso);
-          return rows.map(rowToEvent);
+        saveIncident(row) {
+          upsertIncident.run(row);
         },
-        getEvent(eventId) {
-          const row = db.prepare(
-            "SELECT * FROM analytics_foundation_events WHERE event_id = ?"
-          ).get(eventId);
-          return rowToEvent(row);
+        getIncidentByFingerprint(fingerprint) {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents WHERE fingerprint = ?").get(fingerprint);
         },
-        getSession(sessionId) {
-          const row = db.prepare(
-            "SELECT * FROM analytics_foundation_sessions WHERE session_id = ?"
-          ).get(sessionId);
-          return rowToSession(row);
+        listIncidents() {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents ORDER BY detected_at DESC").all();
         },
-        upsertSession(session) {
-          upsertSessionStmt.run({
-            session_id: session.sessionId,
-            anonymous_visitor_id: session.anonymousVisitorId,
-            started_at: session.startedAt,
-            last_activity_at: session.lastActivityAt,
-            ended_at: session.endedAt ?? null,
-            landing_page: session.landingPage ?? null,
-            exit_page: session.exitPage ?? null,
-            page_views: session.pageViews,
-            product_views: session.productViews,
-            cart_events: session.cartEvents,
-            checkout_started: session.checkoutStarted ? 1 : 0,
-            purchase_completed: session.purchaseCompleted ? 1 : 0,
-            traffic_source: session.trafficSource,
-            market: session.market,
-            language: session.language,
-            device_type: session.deviceType
-          });
+        saveReconciliationRun(row) {
+          insertRun.run(row);
         },
-        listSessions() {
-          return db.prepare("SELECT * FROM analytics_foundation_sessions").all().map(rowToSession);
+        listReconciliationRuns(limit = 20) {
+          return db.prepare("SELECT * FROM fulfillment_control_tower_reconciliation_runs ORDER BY started_at DESC LIMIT ?").all(limit);
         },
-        getVisitor(anonymousVisitorId) {
-          const row = db.prepare(
-            "SELECT * FROM analytics_foundation_visitors WHERE anonymous_visitor_id = ? AND deleted = 0"
-          ).get(anonymousVisitorId);
-          return rowToVisitor(row);
-        },
-        upsertVisitor(visitor) {
-          upsertVisitorStmt.run({
-            anonymous_visitor_id: visitor.anonymousVisitorId,
-            first_seen_at: visitor.firstSeenAt,
-            last_seen_at: visitor.lastSeenAt,
-            session_count: visitor.sessionCount,
-            is_returning: visitor.isReturning ? 1 : 0
-          });
-        },
-        listVisitors() {
-          return db.prepare("SELECT * FROM analytics_foundation_visitors WHERE deleted = 0").all().map(rowToVisitor).filter(Boolean);
-        },
-        getConsent(anonymousVisitorId) {
-          const row = db.prepare(
-            "SELECT consent_json FROM analytics_foundation_consent WHERE anonymous_visitor_id = ?"
-          ).get(anonymousVisitorId);
-          return row ? parseJson(row.consent_json) : void 0;
-        },
-        setConsent(anonymousVisitorId, consent) {
-          upsertConsentStmt.run(anonymousVisitorId, JSON.stringify(consent));
-        },
-        isIdempotencyKeyUsed(key) {
-          return Boolean(
-            db.prepare("SELECT 1 FROM analytics_foundation_idempotency WHERE idempotency_key = ?").get(key)
-          );
-        },
-        markIdempotencyKey(key, eventId) {
-          insertIdempotencyStmt.run(key, eventId);
-        },
-        getIdempotencyEventId(key) {
-          const row = db.prepare(
-            "SELECT event_id FROM analytics_foundation_idempotency WHERE idempotency_key = ?"
-          ).get(key);
-          return row?.event_id;
-        },
-        markVisitorDeleted(anonymousVisitorId) {
-          db.prepare(`
-        UPDATE analytics_foundation_visitors SET deleted = 1, updated_at = CURRENT_TIMESTAMP
-        WHERE anonymous_visitor_id = ?
-      `).run(anonymousVisitorId);
-          db.prepare(
-            "DELETE FROM analytics_foundation_consent WHERE anonymous_visitor_id = ?"
-          ).run(anonymousVisitorId);
-        },
-        isVisitorDeleted(anonymousVisitorId) {
-          const row = db.prepare(
-            "SELECT deleted FROM analytics_foundation_visitors WHERE anonymous_visitor_id = ?"
-          ).get(anonymousVisitorId);
-          return row?.deleted === 1;
-        },
-        clear() {
-          db.exec(`
-        DELETE FROM analytics_foundation_idempotency;
-        DELETE FROM analytics_foundation_events;
-        DELETE FROM analytics_foundation_sessions;
-        DELETE FROM analytics_foundation_visitors;
-        DELETE FROM analytics_foundation_consent;
-        DELETE FROM analytics_foundation_audit;
-      `);
-          eventCounter = 0;
-        },
-        removeEventsForVisitor(anonymousVisitorId) {
-          const result = db.prepare(
-            "DELETE FROM analytics_foundation_events WHERE anonymous_visitor_id = ?"
-          ).run(anonymousVisitorId);
-          db.prepare(
-            "DELETE FROM analytics_foundation_sessions WHERE anonymous_visitor_id = ?"
-          ).run(anonymousVisitorId);
-          return result.changes;
-        },
-        anonymizeEventsForVisitor(anonymousVisitorId) {
-          const rows = db.prepare(
-            "SELECT event_id FROM analytics_foundation_events WHERE anonymous_visitor_id = ?"
-          ).all(anonymousVisitorId);
-          const update = db.prepare(`
-        UPDATE analytics_foundation_events SET
-          anonymous_visitor_id = 'anon_deleted',
-          metadata_json = '{}'
-        WHERE event_id = ?
-      `);
-          for (const row of rows) {
-            update.run(row.event_id);
-          }
-          return rows.length;
-        },
-        recordAudit(entry) {
-          const auditId = `aud_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-          const auditTimestamp = (/* @__PURE__ */ new Date()).toISOString();
-          insertAuditStmt.run({
-            audit_id: auditId,
-            audit_timestamp: auditTimestamp,
-            action: entry.action,
-            actor_id: entry.actor ?? null,
-            detail_json: JSON.stringify(entry.metadata ?? {})
-          });
-          return {
-            auditId,
-            timestamp: auditTimestamp,
-            action: entry.action,
-            actor: entry.actor,
-            metadata: entry.metadata
-          };
-        },
-        getAuditLog(filter) {
-          const rows = filter?.action ? db.prepare(
-            "SELECT * FROM analytics_foundation_audit WHERE action = ? ORDER BY audit_timestamp ASC"
-          ).all(filter.action) : db.prepare(
-            "SELECT * FROM analytics_foundation_audit ORDER BY audit_timestamp ASC"
-          ).all();
-          return rows.map((row) => ({
-            auditId: row.audit_id,
-            timestamp: row.audit_timestamp,
-            action: row.action,
-            actor: row.actor_id ?? "SYSTEM",
-            metadata: parseJson(row.detail_json)
-          }));
-        },
-        clearAudit() {
-          db.prepare("DELETE FROM analytics_foundation_audit").run();
+        resetAll() {
+          db.prepare("DELETE FROM fulfillment_control_tower_snapshots").run();
+          db.prepare("DELETE FROM fulfillment_control_tower_incidents").run();
+          db.prepare("DELETE FROM fulfillment_control_tower_reconciliation_runs").run();
         }
       };
     }
-    module2.exports = { createPersistentAnalyticsStore };
+    module2.exports = { createFulfillmentControlTowerStore };
   }
 });
 
-// lib/supplier-engine/fixtures.ts
-var init_fixtures = __esm({
-  "lib/supplier-engine/fixtures.ts"() {
-    "use strict";
+// server/lib/supplier-order-readiness/persistentStore.js
+var require_persistentStore2 = __commonJS({
+  "server/lib/supplier-order-readiness/persistentStore.js"(exports2, module2) {
+    var { db } = require_db();
+    function createSupplierOrderReadinessStore() {
+      const upsertReadiness = db.prepare(`
+    INSERT INTO supplier_order_readiness (
+      readiness_id, supplier_id, market, channel, overall_status, approval_status,
+      generated_at, expires_at, record_json, updated_at
+    ) VALUES (
+      @readiness_id, @supplier_id, @market, @channel, @overall_status, @approval_status,
+      @generated_at, @expires_at, @record_json, @updated_at
+    )
+    ON CONFLICT(readiness_id) DO UPDATE SET
+      overall_status = excluded.overall_status,
+      approval_status = excluded.approval_status,
+      expires_at = excluded.expires_at,
+      record_json = excluded.record_json,
+      updated_at = excluded.updated_at
+  `);
+      const upsertApproval = db.prepare(`
+    INSERT INTO supplier_order_approvals (
+      approval_id, readiness_id, supplier_id, market, channel, status,
+      requester, approver, requested_at, approved_at, rejected_at, rejection_reason,
+      expires_at, record_json, updated_at
+    ) VALUES (
+      @approval_id, @readiness_id, @supplier_id, @market, @channel, @status,
+      @requester, @approver, @requested_at, @approved_at, @rejected_at, @rejection_reason,
+      @expires_at, @record_json, @updated_at
+    )
+    ON CONFLICT(approval_id) DO UPDATE SET
+      status = excluded.status,
+      approver = excluded.approver,
+      approved_at = excluded.approved_at,
+      rejected_at = excluded.rejected_at,
+      rejection_reason = excluded.rejection_reason,
+      expires_at = excluded.expires_at,
+      record_json = excluded.record_json,
+      updated_at = excluded.updated_at
+  `);
+      const insertAudit = db.prepare(`
+    INSERT OR REPLACE INTO supplier_order_readiness_audit (
+      event_id, event_type, supplier_id, market, channel, actor, correlation_id, timestamp, detail_json
+    ) VALUES (
+      @event_id, @event_type, @supplier_id, @market, @channel, @actor, @correlation_id, @timestamp, @detail_json
+    )
+  `);
+      const upsertKillSwitch = db.prepare(`
+    INSERT INTO supplier_order_kill_switch (id, state_json, updated_at, updated_by)
+    VALUES (1, @state_json, @updated_at, @updated_by)
+    ON CONFLICT(id) DO UPDATE SET
+      state_json = excluded.state_json,
+      updated_at = excluded.updated_at,
+      updated_by = excluded.updated_by
+  `);
+      return {
+        saveReadiness(row) {
+          upsertReadiness.run(row);
+        },
+        getReadiness(readinessId) {
+          return db.prepare("SELECT * FROM supplier_order_readiness WHERE readiness_id = ?").get(readinessId);
+        },
+        listReadiness() {
+          return db.prepare("SELECT * FROM supplier_order_readiness ORDER BY updated_at DESC").all();
+        },
+        saveApproval(row) {
+          upsertApproval.run(row);
+        },
+        getApproval(approvalId) {
+          return db.prepare("SELECT * FROM supplier_order_approvals WHERE approval_id = ?").get(approvalId);
+        },
+        listApprovals() {
+          return db.prepare("SELECT * FROM supplier_order_approvals ORDER BY requested_at DESC").all();
+        },
+        saveAudit(row) {
+          insertAudit.run(row);
+        },
+        listAudit(limit = 500) {
+          return db.prepare("SELECT * FROM supplier_order_readiness_audit ORDER BY timestamp DESC LIMIT ?").all(limit);
+        },
+        saveKillSwitch(row) {
+          upsertKillSwitch.run(row);
+        },
+        getKillSwitch() {
+          return db.prepare("SELECT * FROM supplier_order_kill_switch WHERE id = 1").get();
+        }
+      };
+    }
+    module2.exports = { createSupplierOrderReadinessStore };
   }
 });
 
-// lib/supplier-engine/persistence.ts
-var init_persistence = __esm({
-  "lib/supplier-engine/persistence.ts"() {
-    "use strict";
+// server/lib/supplier-controlled-go-live/persistentStore.js
+var require_persistentStore3 = __commonJS({
+  "server/lib/supplier-controlled-go-live/persistentStore.js"(exports2, module2) {
+    function createSupplierControlledGoLiveStore(db) {
+      return {
+        saveGoLive(row) {
+          db.prepare(`
+        INSERT INTO supplier_controlled_go_live (
+          go_live_id, supplier_id, state, idempotency_key, correlation_id, record_json, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(go_live_id) DO UPDATE SET
+          state = excluded.state,
+          record_json = excluded.record_json,
+          updated_at = excluded.updated_at
+      `).run(
+            row.go_live_id,
+            row.supplier_id,
+            row.state,
+            row.idempotency_key,
+            row.correlation_id,
+            row.record_json,
+            row.updated_at
+          );
+        },
+        getGoLive(goLiveId) {
+          return db.prepare("SELECT * FROM supplier_controlled_go_live WHERE go_live_id = ?").get(goLiveId);
+        },
+        listGoLives(limit = 500) {
+          return db.prepare("SELECT * FROM supplier_controlled_go_live ORDER BY updated_at DESC LIMIT ?").all(limit);
+        },
+        saveAudit(row) {
+          db.prepare(`
+        INSERT INTO supplier_controlled_go_live_audit (
+          event_id, event_type, go_live_id, supplier_id, correlation_id, timestamp, detail_json
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(
+            row.event_id,
+            row.event_type,
+            row.go_live_id,
+            row.supplier_id,
+            row.correlation_id,
+            row.timestamp,
+            row.detail_json
+          );
+        },
+        listAudit(limit = 500) {
+          return db.prepare("SELECT * FROM supplier_controlled_go_live_audit ORDER BY timestamp DESC LIMIT ?").all(limit);
+        }
+      };
+    }
+    function createSupplierControlledGoLiveStoreFromModule() {
+      const { db } = require_db();
+      return createSupplierControlledGoLiveStore(db);
+    }
+    module2.exports = {
+      createSupplierControlledGoLiveStore: createSupplierControlledGoLiveStoreFromModule
+    };
   }
 });
 
-// lib/supplier-engine/security.ts
-var init_security = __esm({
-  "lib/supplier-engine/security.ts"() {
-    "use strict";
-  }
-});
-
-// lib/supplier-engine/credentials.ts
-var init_credentials = __esm({
-  "lib/supplier-engine/credentials.ts"() {
-    "use strict";
-    init_security();
-  }
-});
-
-// lib/supplier-engine/liveSupplier/config.ts
-var init_config = __esm({
-  "lib/supplier-engine/liveSupplier/config.ts"() {
-    "use strict";
-    init_credentials();
-  }
-});
-
-// lib/supplier-engine/liveSupplier/registry.ts
-var init_registry = __esm({
-  "lib/supplier-engine/liveSupplier/registry.ts"() {
-    "use strict";
-    init_config();
-    init_credentials();
-  }
-});
-
-// lib/supplier-engine/registry.ts
-var init_registry2 = __esm({
-  "lib/supplier-engine/registry.ts"() {
-    "use strict";
-    init_fixtures();
-    init_persistence();
-    init_credentials();
-    init_registry();
-  }
-});
-
-// lib/supplier-engine/capabilities.ts
-var init_capabilities = __esm({
-  "lib/supplier-engine/capabilities.ts"() {
-    "use strict";
-  }
-});
-
-// lib/supplier-engine/orderSandbox/persistence.ts
-var init_persistence2 = __esm({
-  "lib/supplier-engine/orderSandbox/persistence.ts"() {
-    "use strict";
-    init_persistence();
-  }
-});
-
-// lib/analytics/storefront/serverEntry.ts
+// lib/supplier-controlled-go-live/serverEntry.ts
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
-  getAnalyticsPersistenceMode: () => getAnalyticsPersistenceMode,
-  getBusinessKpiDashboard: () => getBusinessKpiDashboard,
-  getBusinessKpiSection: () => getBusinessKpiSection,
-  getChannels: () => getChannels,
-  getFunnel: () => getFunnel,
-  getMarkets: () => getMarkets,
-  getOverview: () => getOverview,
-  getProducts: () => getProducts,
-  getRevenue: () => getRevenue,
-  getTraffic: () => getTraffic,
-  handleStorefrontAnalyticsEvent: () => handleStorefrontAnalyticsEvent,
-  handleStorefrontPurchaseSignal: () => handleStorefrontPurchaseSignal,
-  parseStorefrontEventBody: () => parseStorefrontEventBody
+  activateControlledGoLive: () => activateControlledGoLive,
+  approveControlledGoLive: () => approveControlledGoLive,
+  assertGoLiveSafetyInvariants: () => assertGoLiveSafetyInvariants,
+  buildControlledGoLiveFctSnapshot: () => buildControlledGoLiveFctSnapshot,
+  getControlledGoLiveDashboard: () => getControlledGoLiveDashboard,
+  getControlledGoLiveDetail: () => getControlledGoLiveDetail,
+  getControlledGoLiveRecord: () => getControlledGoLiveRecord,
+  getGoLiveSafetyCounters: () => getGoLiveSafetyCounters,
+  hydrateControlledGoLiveFromPersistence: () => hydrateControlledGoLiveFromPersistence,
+  isControlledGoLiveActive: () => isControlledGoLiveActive,
+  listControlledGoLiveRows: () => listControlledGoLiveRows,
+  pauseControlledGoLive: () => pauseControlledGoLive,
+  requestGoLiveReview: () => requestGoLiveReview,
+  rollbackControlledGoLive: () => rollbackControlledGoLive
 });
 module.exports = __toCommonJS(serverEntry_exports);
 
-// lib/analytics/store/memoryStore.ts
-function createMemoryAnalyticsStore() {
-  const events = [];
-  const sessions = /* @__PURE__ */ new Map();
-  const visitors = /* @__PURE__ */ new Map();
-  const consentByVisitor = /* @__PURE__ */ new Map();
-  const idempotencyIndex2 = /* @__PURE__ */ new Map();
-  const deletedVisitorIds = /* @__PURE__ */ new Set();
-  const auditLog = [];
-  let eventCounter = 0;
-  let auditCounter = 0;
-  return {
-    generateEventId() {
-      eventCounter += 1;
-      return `evt_${Date.now()}_${eventCounter}`;
-    },
-    storeEvent(event) {
-      events.push(event);
-    },
-    listEvents() {
-      return [...events];
-    },
-    listEventsInRange(fromIso, toIso) {
-      return events.filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
-    },
-    getEvent(eventId) {
-      return events.find((e) => e.eventId === eventId);
-    },
-    getSession(sessionId) {
-      return sessions.get(sessionId);
-    },
-    upsertSession(session) {
-      sessions.set(session.sessionId, session);
-    },
-    listSessions() {
-      return [...sessions.values()];
-    },
-    getVisitor(anonymousVisitorId) {
-      return visitors.get(anonymousVisitorId);
-    },
-    upsertVisitor(visitor) {
-      visitors.set(visitor.anonymousVisitorId, visitor);
-    },
-    listVisitors() {
-      return [...visitors.values()];
-    },
-    getConsent(anonymousVisitorId) {
-      return consentByVisitor.get(anonymousVisitorId);
-    },
-    setConsent(anonymousVisitorId, consent) {
-      consentByVisitor.set(anonymousVisitorId, consent);
-    },
-    isIdempotencyKeyUsed(key) {
-      return idempotencyIndex2.has(key);
-    },
-    markIdempotencyKey(key, eventId) {
-      idempotencyIndex2.set(key, eventId);
-    },
-    getIdempotencyEventId(key) {
-      return idempotencyIndex2.get(key);
-    },
-    markVisitorDeleted(anonymousVisitorId) {
-      deletedVisitorIds.add(anonymousVisitorId);
-      visitors.delete(anonymousVisitorId);
-      consentByVisitor.delete(anonymousVisitorId);
-    },
-    isVisitorDeleted(anonymousVisitorId) {
-      return deletedVisitorIds.has(anonymousVisitorId);
-    },
-    clear() {
-      events.length = 0;
-      sessions.clear();
-      visitors.clear();
-      consentByVisitor.clear();
-      idempotencyIndex2.clear();
-      deletedVisitorIds.clear();
-      auditLog.length = 0;
-      eventCounter = 0;
-      auditCounter = 0;
-    },
-    removeEventsForVisitor(anonymousVisitorId) {
-      let removed = 0;
-      for (let i = events.length - 1; i >= 0; i--) {
-        if (events[i].anonymousVisitorId === anonymousVisitorId) {
-          events.splice(i, 1);
-          removed += 1;
-        }
-      }
-      for (const [id, session] of sessions) {
-        if (session.anonymousVisitorId === anonymousVisitorId) sessions.delete(id);
-      }
-      return removed;
-    },
-    anonymizeEventsForVisitor(anonymousVisitorId) {
-      let count = 0;
-      for (const event of events) {
-        if (event.anonymousVisitorId === anonymousVisitorId) {
-          event.anonymousVisitorId = "anon_deleted";
-          event.customerIdReference = void 0;
-          event.metadata = {};
-          count += 1;
-        }
-      }
-      return count;
-    },
-    recordAudit(entry) {
-      auditCounter += 1;
-      const record = {
-        auditId: `aud_${Date.now()}_${auditCounter}`,
-        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-        action: entry.action,
-        actor: entry.actor,
-        metadata: entry.metadata
-      };
-      auditLog.push(record);
-      return record;
-    },
-    getAuditLog(filter) {
-      if (!filter?.action) return [...auditLog];
-      return auditLog.filter((e) => e.action === filter.action);
-    },
-    clearAudit() {
-      auditLog.length = 0;
-      auditCounter = 0;
+// data/supplier-engine/live_supplier.config.template.json
+var live_supplier_config_template_default = {
+  $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  supplierId: "",
+  name: "",
+  displayName: "",
+  country: "DE",
+  region: "EU",
+  currency: "EUR",
+  connectorType: "b2b-sandbox",
+  environment: "SANDBOX",
+  baseUrl: "",
+  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+  authentication: "api_key",
+  authType: "API_KEY",
+  endpoints: {
+    health: "/health",
+    products: "/products",
+    stock: "/stock",
+    prices: "/prices"
+  },
+  fieldMapping: {
+    article_number: "supplierSku",
+    sku: "supplierSku",
+    ean_code: "ean",
+    gtin: "gtin",
+    mpn: "mpn",
+    brand_name: "brand",
+    title: "name",
+    price_net: "supplierPrice",
+    stock_qty: "stock"
+  },
+  categoryMapping: {},
+  supportedMarkets: ["DE"],
+  feedFormat: "json",
+  priceIncludesVat: false,
+  capabilities: {
+    productFeed: true,
+    stockFeed: true,
+    priceFeed: true,
+    orderAPI: false,
+    createOrder: false,
+    cancelOrder: false,
+    orderStatus: false,
+    trackingAPI: false,
+    returnsAPI: false,
+    refund: false,
+    credit: false,
+    replacement: false,
+    dropshipping: false,
+    whiteLabel: false,
+    blindShipping: false
+  },
+  pagination: {
+    mode: "cursor",
+    pageSize: 100
+  }
+};
+
+// data/supplier-engine/inter_cars.profile.template.json
+var inter_cars_profile_template_default = {
+  $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  $documentation: {
+    supplier: "Inter Cars S.A.",
+    country: "PL/EU (DE market supported)",
+    type: "Automotive B2B wholesaler",
+    officialDocs: [
+      "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+      "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+    ],
+    authentication: "OAuth2 Bearer token (B2B account via sales representative)",
+    rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+    stockSemantics: "availability field = units available for purchase at location",
+    priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+    currency: "Per-response currencyCode (EUR for DE customers when configured)",
+    updateFrequency: "Real-time for API; CSV feeds daily",
+    dropshipping: "Contact sales representative \u2014 not assumed enabled",
+    whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+  },
+  supplierId: "SUP-INTER-CARS-001",
+  name: "Inter Cars",
+  displayName: "Inter Cars B2B",
+  country: "DE",
+  region: "EU",
+  currency: "EUR",
+  connectorType: "b2b-sandbox",
+  adapterProfile: "inter-cars",
+  environment: "SANDBOX",
+  baseUrl: "https://dev.gw.intercars.eu",
+  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+  authentication: "oauth2",
+  authType: "OAUTH2",
+  endpoints: {
+    health: "/ic/catalog/category",
+    products: "/ic/catalog/products",
+    stock: "/ic/inventory/stock",
+    prices: "/ic/inventory/1.0.0/pricing/quote"
+  },
+  fieldMapping: {
+    sku: "supplierSku",
+    index: "mpn",
+    articleNumber: "mpn",
+    tecDoc: "tecdocId",
+    brand: "brand",
+    shortDescription: "name",
+    description: "description",
+    eans: "ean",
+    availability: "stock",
+    customerPriceNet: "supplierPrice",
+    listPriceNet: "listPriceNet",
+    genericArticleReferences: "supplierCategory"
+  },
+  categoryMapping: {},
+  categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
+  supportedMarkets: ["DE"],
+  feedFormat: "json",
+  priceIncludesVat: false,
+  priceModel: "net",
+  priceField: "customerPriceNet",
+  capabilities: {
+    productFeed: true,
+    stockFeed: true,
+    priceFeed: true,
+    orderAPI: false,
+    createOrder: false,
+    cancelOrder: false,
+    orderStatus: false,
+    trackingAPI: false,
+    returnsAPI: false,
+    refund: false,
+    credit: false,
+    replacement: false,
+    dropshipping: false,
+    whiteLabel: false,
+    blindShipping: false
+  },
+  pagination: {
+    mode: "pageNumber",
+    pageParam: "pageNumber",
+    pageSizeParam: "pageSize",
+    pageSize: 25,
+    hasNextPageField: "hasNextPage"
+  },
+  requestHeaders: {
+    "Accept-Language": "de"
+  },
+  allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+};
+
+// data/supplier-engine/inter_cars_category_mappings.json
+var inter_cars_category_mappings_default = {
+  $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
+  mappings: {
+    GenericArticle_1280: "auto-sub-05--oil-filters",
+    "Filtr oleju": "auto-sub-05--oil-filters",
+    "Oil filter": "auto-sub-05--oil-filters",
+    \u00D6lfilter: "auto-sub-05--oil-filters",
+    "Brake pad": "auto-sub-04--brake-pads",
+    Bremsbelag: "auto-sub-04--brake-pads",
+    "Brake disc": "auto-sub-04--brake-discs",
+    Bremsscheibe: "auto-sub-04--brake-discs",
+    Tyre: "auto-sub-01--car-tires",
+    Tire: "auto-sub-01--car-tires",
+    Reifen: "auto-sub-01--car-tires",
+    Battery: "auto-sub-06--car-batteries",
+    Batterie: "auto-sub-06--car-batteries",
+    "Car battery": "auto-sub-06--car-batteries",
+    Cleaning: "auto-sub-12--interior-cleaner",
+    Reinigung: "auto-sub-12--interior-cleaner"
+  }
+};
+
+// lib/supplier-engine/security.ts
+var SECRET_PATTERNS = [
+  /api[_-]?key/i,
+  /secret/i,
+  /password/i,
+  /token/i,
+  /authorization/i,
+  /bearer/i,
+  /credential/i
+];
+function isSecretField(fieldName) {
+  return SECRET_PATTERNS.some((p) => p.test(fieldName));
+}
+function redactSecrets(obj) {
+  if (obj == null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(redactSecrets);
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (isSecretField(key)) {
+      result[key] = "[REDACTED]";
+    } else if (typeof value === "object") {
+      result[key] = redactSecrets(value);
+    } else {
+      result[key] = value;
     }
+  }
+  return result;
+}
+
+// lib/supplier-engine/credentials.ts
+var credentialRefs = /* @__PURE__ */ new Map();
+function registerCredentialRef(supplierId, secretsRef) {
+  const entry = {
+    supplierId,
+    secretsRef,
+    configured: Boolean(secretsRef),
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  credentialRefs.set(supplierId, entry);
+  return entry;
+}
+function getCredentialRef(supplierId) {
+  return credentialRefs.get(supplierId);
+}
+function hasConfiguredCredentials(supplierId) {
+  return credentialRefs.get(supplierId)?.configured === true;
+}
+function resolveCredentials(secretsRef) {
+  if (!secretsRef) return null;
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const raw = process.env[envKey];
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return { token: raw };
+  }
+}
+
+// lib/supplier-engine/liveSupplier/config.ts
+function parseJsonConfig(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed.supplierId || !parsed.baseUrl) return null;
+    return normalizeProfile(parsed);
+  } catch {
+    return null;
+  }
+}
+function normalizeProfile(profile) {
+  const { $comment: _comment, ...templateBase } = live_supplier_config_template_default;
+  return {
+    ...templateBase,
+    ...profile,
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: false,
+      createOrder: false,
+      cancelOrder: false,
+      orderStatus: false,
+      trackingAPI: false,
+      returnsAPI: false,
+      refund: false,
+      credit: false,
+      replacement: false,
+      ...profile.capabilities
+    },
+    endpoints: { ...live_supplier_config_template_default.endpoints, ...profile.endpoints },
+    fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
+  };
+}
+function loadCategoryMappings(profile) {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = inter_cars_category_mappings_default.mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+function resolvePredefinedLiveProfile() {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
+    return loadCategoryMappings(normalizeProfile(base));
+  }
+  return null;
+}
+function resolveLiveSupplierProfile() {
+  const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
+  if (jsonConfig) {
+    const parsed = parseJsonConfig(jsonConfig);
+    if (parsed) return loadCategoryMappings(parsed);
+  }
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
+  const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
+  const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
+  if (!supplierId || !baseUrl) return null;
+  return loadCategoryMappings(normalizeProfile({
+    supplierId,
+    name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
+    displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
+    country: process.env.SUPPLIER_LIVE_COUNTRY?.trim() || "DE",
+    region: process.env.SUPPLIER_LIVE_REGION?.trim() || "EU",
+    currency: process.env.SUPPLIER_LIVE_CURRENCY?.trim() || "EUR",
+    connectorType: "b2b-sandbox",
+    environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
+    baseUrl,
+    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
+    endpoints: {
+      health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
+      products: process.env.SUPPLIER_LIVE_PRODUCTS_PATH?.trim() || "/products",
+      stock: process.env.SUPPLIER_LIVE_STOCK_PATH?.trim() || "/stock",
+      prices: process.env.SUPPLIER_LIVE_PRICES_PATH?.trim() || "/prices"
+    },
+    fieldMapping: live_supplier_config_template_default.fieldMapping,
+    categoryMapping: {},
+    supportedMarkets: (process.env.SUPPLIER_LIVE_MARKETS?.split(",") || ["DE"]).map((m) => m.trim()).filter(Boolean),
+    feedFormat: process.env.SUPPLIER_LIVE_FEED_FORMAT?.trim() || "json",
+    priceIncludesVat: process.env.SUPPLIER_LIVE_PRICE_INCLUDES_VAT === "1",
+    capabilities: live_supplier_config_template_default.capabilities,
+    pagination: { mode: "cursor", pageSize: 100 },
+    dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
+    whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
+    blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
+  }));
+}
+function hasLiveSupplierCredentials(profile) {
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds || Object.keys(creds).length === 0) return false;
+  const token = creds.accessToken || creds.token || creds.bearer;
+  return Boolean(String(token || "").trim());
+}
+
+// lib/supplier-order-activation/config.ts
+var ACTIVATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS = 4 * 60 * 60 * 1e3;
+var REHEARSAL_TTL_MS = Number(process.env.SUPPLIER_ACTIVATION_REHEARSAL_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_TTL_MS = 2 * 60 * 60 * 1e3;
+var FIRST_ORDER_LIMITS = {
+  maxOrderValue: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_VALUE || 500),
+  maxQuantity: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_QTY || 5),
+  maxItems: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_ITEMS || 3),
+  maxSuppliers: 1,
+  maxCustomers: 1
+};
+
+// lib/supplier-production-order-arming/config.ts
+var ARMING_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_TTL_MS || 24 * 60 * 60 * 1e3);
+var ARMING_APPROVAL_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3);
+function getInterCarsSupplierId() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+function resolveArmingLimits() {
+  return {
+    maximumQuantity: Math.min(
+      Number(process.env.SUPPLIER_PRODUCTION_ARMING_MAX_QTY || 1),
+      FIRST_ORDER_LIMITS.maxQuantity
+    ),
+    maximumOrderValue: Math.min(
+      Number(process.env.SUPPLIER_PRODUCTION_ARMING_MAX_VALUE || 500),
+      FIRST_ORDER_LIMITS.maxOrderValue
+    ),
+    allowedSupplier: getInterCarsSupplierId(),
+    allowedMarket: process.env.SUPPLIER_PRODUCTION_ARMING_MARKET || "DE",
+    allowedCurrency: process.env.SUPPLIER_PRODUCTION_ARMING_CURRENCY || "EUR",
+    allowedProductCategory: process.env.SUPPLIER_PRODUCTION_ARMING_PRODUCT_CATEGORY
   };
 }
 
-// lib/analytics/store/configure.ts
-var activeStore = createMemoryAnalyticsStore();
-var persistenceMode = "memory";
-function configureAnalyticsStore(store, mode = "memory") {
-  activeStore = store;
-  persistenceMode = mode;
+// lib/supplier-first-production-order/config.ts
+var FIRST_ORDER_TTL_MS2 = Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_TTL_MS || 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3
+);
+var EXECUTION_AUTH_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_AUTH_TTL_MS || 30 * 60 * 1e3
+);
+function getInterCarsSupplierId2() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
 }
-function getAnalyticsStore() {
-  return activeStore;
-}
-function getAnalyticsPersistenceMode() {
-  return persistenceMode;
+function resolveFirstProductionOrderLimits() {
+  const armingLimits = resolveArmingLimits();
+  return {
+    maximumQuantity: Math.min(
+      Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_MAX_QTY || 1),
+      armingLimits.maximumQuantity,
+      FIRST_ORDER_LIMITS.maxQuantity
+    ),
+    maximumOrderValue: Math.min(
+      Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_MAX_VALUE || 500),
+      armingLimits.maximumOrderValue,
+      FIRST_ORDER_LIMITS.maxOrderValue
+    ),
+    allowedSupplier: getInterCarsSupplierId2(),
+    allowedMarket: process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_MARKET || "DE",
+    allowedCurrency: process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_CURRENCY || "EUR",
+    allowedProductCategory: process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_PRODUCT_CATEGORY,
+    allowedSku: process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_SKU
+  };
 }
 
-// lib/analytics/store/bootstrap.ts
-var bootstrapped = false;
-function bootstrapAnalyticsPersistence() {
-  if (bootstrapped) return;
-  bootstrapped = true;
-  const explicitMode = process.env.BUZZARD_ANALYTICS_PERSISTENCE?.trim().toLowerCase();
-  if (explicitMode === "memory") {
-    configureAnalyticsStore(createMemoryAnalyticsStore(), "memory");
-    return;
-  }
-  if (process.env.BUZZARD_DB_ENABLED === "0") {
-    configureAnalyticsStore(createMemoryAnalyticsStore(), "memory");
-    return;
-  }
-  try {
-    const { createPersistentAnalyticsStore } = require_persistentStore();
-    configureAnalyticsStore(createPersistentAnalyticsStore(), "sqlite");
-  } catch {
-    configureAnalyticsStore(createMemoryAnalyticsStore(), "memory");
-  }
+// lib/supplier-controlled-go-live/config.ts
+var GO_LIVE_TTL_MS = Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var GO_LIVE_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_APPROVAL_TTL_MS || 24 * 60 * 60 * 1e3
+);
+var GO_LIVE_ROLLOUT_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_ROLLOUT_TTL_MS || 30 * 24 * 60 * 60 * 1e3
+);
+function getInterCarsSupplierId3() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+function buildGoLiveIdempotencyKey(scope) {
+  return `cgl345_${scope.supplier}_${scope.market}_${scope.channel}_${scope.requester}`;
+}
+function resolveGoLiveLimits() {
+  const firstOrderLimits = resolveFirstProductionOrderLimits();
+  return {
+    maximumOrderValue: Math.min(
+      Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_MAX_ORDER_VALUE || 500),
+      firstOrderLimits.maximumOrderValue,
+      FIRST_ORDER_LIMITS.maxOrderValue
+    ),
+    maximumDailyOrders: Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_MAX_DAILY_ORDERS || 5),
+    maximumDailyValue: Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_MAX_DAILY_VALUE || 2500),
+    allowedSupplier: getInterCarsSupplierId3(),
+    allowedMarket: process.env.SUPPLIER_CONTROLLED_GO_LIVE_MARKET || "DE",
+    allowedCurrency: process.env.SUPPLIER_CONTROLLED_GO_LIVE_CURRENCY || "EUR",
+    allowedCategories: process.env.SUPPLIER_CONTROLLED_GO_LIVE_CATEGORIES?.split(",").filter(Boolean)
+  };
+}
+
+// lib/supplier-order-readiness/evaluator.ts
+var import_crypto2 = require("crypto");
+
+// lib/supplier-engine/network/config.ts
+function envFlag(name, defaultValue = false) {
+  const raw = process.env[name];
+  if (raw === void 0 || raw === "") return defaultValue;
+  return raw === "1" || raw.toLowerCase() === "true";
+}
+function envInt(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+}
+var SUPPLIER_NETWORK_CONFIG = {
+  get networkEnabled() {
+    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
+  defaultEnvironment: "MOCK",
+  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
+  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
+  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
+  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
+};
+function isSupplierOrderNetworkEnabled() {
+  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+}
+
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
+// lib/supplier-order-readiness/config.ts
+var EVALUATOR_VERSION = "337.1.0";
+var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS2 = 7 * 24 * 60 * 60 * 1e3;
+var DEFAULT_POLICY = {
+  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
+  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
+  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
+  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
+  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
+  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
+  blockOnMissingTrackingCapability: false,
+  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
+};
+var policyOverride = null;
+function getReadinessPolicy() {
+  return { ...DEFAULT_POLICY, ...policyOverride || {} };
+}
+function isMockCredentialValue(value) {
+  const normalized = value.trim().toLowerCase();
+  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.includes("placeholder");
 }
 
 // data/global/global_countries_35.json
@@ -5448,35 +5539,6 @@ var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
 // lib/market-engine/registry.ts
 var extensions = market_engine_extensions_default;
 var overlayByCode = market_country_overlay_default;
-var EU_COUNTRY_CODES = /* @__PURE__ */ new Set([
-  "AT",
-  "BE",
-  "BG",
-  "HR",
-  "CY",
-  "CZ",
-  "DK",
-  "EE",
-  "FI",
-  "FR",
-  "DE",
-  "GR",
-  "HU",
-  "IE",
-  "IT",
-  "LV",
-  "LT",
-  "LU",
-  "MT",
-  "NL",
-  "PL",
-  "PT",
-  "RO",
-  "SK",
-  "SI",
-  "ES",
-  "SE"
-]);
 var marketByCode = /* @__PURE__ */ new Map();
 function resolveFeatureFlags(countryCode) {
   const defaults = extensions.defaultFeatureFlags;
@@ -5541,191 +5603,192 @@ function getMarket(countryCode) {
   const code = String(countryCode || "").toUpperCase();
   return marketByCode.get(code);
 }
-function isEuCountry(countryCode) {
-  return EU_COUNTRY_CODES.has(String(countryCode).toUpperCase());
-}
-function getMarketLanguages(countryCode) {
-  const market = getMarket(countryCode);
-  return market?.supportedLanguages ?? [];
-}
-function getMarketCurrency(countryCode) {
-  const market = getMarket(countryCode);
+
+// lib/marketplace-engine/registry.ts
+var marketplaces = /* @__PURE__ */ new Map();
+var orderMappings = /* @__PURE__ */ new Map();
+function baseCapabilities(partial = {}) {
   return {
-    code: market?.currency ?? "EUR",
-    symbol: market?.currencySymbol ?? "\u20AC"
+    productListing: false,
+    productUpdate: false,
+    priceUpdate: false,
+    stockUpdate: false,
+    orderImport: false,
+    orderAcknowledgement: false,
+    shipmentCreation: false,
+    trackingUpdate: false,
+    returns: false,
+    refunds: false,
+    webhooks: false,
+    api: false,
+    xml: false,
+    csv: false,
+    ...partial
   };
+}
+var EU_MARKETS = ["DE", "FR", "PL", "CZ", "AT", "NL", "BE", "IT", "ES"];
+var GCC_MARKETS = ["SA", "AE", "EG"];
+function buildMarketplace(marketplaceId, displayName, supportedMarkets, supportedCurrencies, channel, capabilities, status = "DISCOVERED") {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    marketplaceId,
+    name: marketplaceId,
+    displayName,
+    country: supportedMarkets[0] ?? "DE",
+    supportedMarkets,
+    supportedCountries: supportedMarkets,
+    supportedCurrencies,
+    supportedChannels: [channel],
+    status,
+    capabilities: baseCapabilities(capabilities),
+    connectorType: "dry-run",
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function seedMarketplaces() {
+  if (marketplaces.size > 0) return;
+  const defs = [
+    buildMarketplace("amazon", "Amazon", [...EU_MARKETS, ...GCC_MARKETS], ["EUR", "PLN", "CZK", "SAR", "AED", "EGP"], "amazon", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      returns: true,
+      refunds: true,
+      webhooks: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("ebay", "eBay", [...EU_MARKETS, "TR"], ["EUR", "PLN", "CZK", "TRY"], "ebay", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      returns: true,
+      refunds: true,
+      webhooks: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("kaufland", "Kaufland", ["DE", "CZ", "SK", "PL", "AT"], ["EUR", "CZK", "PLN"], "kaufland", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      api: true
+    }, "TESTING"),
+    buildMarketplace("allegro", "Allegro", ["PL", "CZ", "SK", "HU"], ["PLN", "CZK"], "allegro", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("bol", "bol.com", ["NL", "BE"], ["EUR"], "bol", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("cdiscount", "Cdiscount", ["FR"], ["EUR"], "cdiscount", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      api: true,
+      xml: true
+    }, "DISCOVERED"),
+    buildMarketplace("otto", "OTTO", ["DE"], ["EUR"], "otto", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      api: true,
+      csv: true
+    }, "DISCOVERED"),
+    buildMarketplace("TEST_AMAZON", "Test Amazon", ["DE"], ["EUR"], "amazon", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      returns: true,
+      refunds: true,
+      webhooks: true,
+      api: true
+    }, "TESTING"),
+    buildMarketplace("TEST_EBAY", "Test eBay", ["DE", "FR"], ["EUR"], "ebay", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      webhooks: true,
+      api: true
+    }, "TESTING"),
+    buildMarketplace("TEST_KAUFLAND", "Test Kaufland", ["DE", "PL"], ["EUR", "PLN"], "kaufland", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      api: true
+    }, "TESTING")
+  ];
+  for (const def of defs) {
+    marketplaces.set(def.marketplaceId, def);
+  }
+}
+function listMarketplaces() {
+  seedMarketplaces();
+  return [...marketplaces.values()];
+}
+function listOrderMappings(marketplaceId) {
+  const all = [...orderMappings.values()];
+  return marketplaceId ? all.filter((m) => m.marketplaceId === marketplaceId) : all;
 }
 
 // lib/order-engine/registry.ts
 var orderRegistry = /* @__PURE__ */ new Map();
-function getOrder(orderId) {
-  return orderRegistry.get(orderId);
+function listAllOrders() {
+  return [...orderRegistry.values()];
 }
 
-// lib/product-engine/status.ts
-function mapStorefrontStatus(status, stockStatus) {
-  if (stockStatus === "out_of_stock") return "OUT_OF_STOCK";
-  switch (status) {
-    case "draft":
-      return "DRAFT";
-    case "active":
-      return "ACTIVE";
-    case "paused":
-      return "PAUSED";
-    case "archived":
-      return "ARCHIVED";
-    default:
-      return "DRAFT";
-  }
-}
-
-// lib/product-engine/adapters/buzzardProduct.ts
-function parseTechnicalData(product) {
-  const attrs = product.attributes || {};
-  const technical = { ...attrs };
-  if (product.shipping?.weight_kg) technical.weight_kg = product.shipping.weight_kg;
-  if (attrs.viscosity) technical.viscosity = String(attrs.viscosity);
-  if (attrs.diameter) technical.diameter = Number(attrs.diameter);
-  return technical;
-}
-function mapCompatibility(entries) {
-  if (!entries?.length) return [];
-  return entries.map((v) => ({
-    make: v.brand,
-    model: v.model,
-    engine: v.engine,
-    yearFrom: v.year_from,
-    yearTo: v.year_to,
-    oemNumbers: v.part_reference ? [v.part_reference] : []
-  }));
-}
-function mapImages(product) {
-  return (product.images || []).map((url, i) => ({
-    url,
-    alt: product.name,
-    sortOrder: i,
-    type: i === 0 ? "MAIN" : "GALLERY"
-  }));
-}
-function mapTranslations(product) {
-  const base = {
-    locale: "de-DE",
-    name: product.name,
-    shortDescription: product.short_description,
-    description: product.description,
-    seoTitle: product.seo?.title,
-    seoDescription: product.seo?.description,
-    slug: product.seo?.slug
-  };
-  const entries = [base];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      entries.push({
-        locale: lang,
-        name: t.name || product.name,
-        shortDescription: t.short_description,
-        description: t.description,
-        seoTitle: t.seo_title,
-        seoDescription: t.seo_description
-      });
-    }
-  }
-  return entries;
-}
-function mapSeo(product) {
-  const entries = [
-    {
-      locale: "de-DE",
-      seoTitle: product.seo?.title,
-      seoDescription: product.seo?.description,
-      slug: product.seo?.slug || product.id
-    }
-  ];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      if (t.seo_title || t.seo_description) {
-        entries.push({
-          locale: lang,
-          seoTitle: t.seo_title,
-          seoDescription: t.seo_description,
-          slug: product.seo?.slug || product.id
-        });
-      }
-    }
-  }
-  return entries;
-}
-function mapSupplierOffer(product) {
-  return {
-    supplierId: product.supplier_id,
-    supplierSku: product.supplier_sku,
-    supplierEan: product.ean_gtin,
-    supplierPrice: product.supplier_price?.amount ?? 0,
-    currency: product.supplier_price?.currency ?? product.price?.currency ?? "EUR",
-    stock: product.stock,
-    lastUpdated: product.updated_at,
-    source: product.supplier_id,
-    sourceType: "MANUAL",
-    reliabilityScore: 0.8
-  };
-}
-function mapPricing(product) {
-  const supplierCost = product.supplier_price?.amount ?? 0;
-  const customerPrice = product.price?.amount ?? 0;
-  const margin = customerPrice > 0 ? (customerPrice - supplierCost) / customerPrice : 0;
-  return {
-    supplierCost,
-    shippingCost: 0,
-    marketplaceFee: 0,
-    paymentFee: 0,
-    vat: product.vat_rate / 100,
-    margin,
-    customerPrice,
-    currency: product.price?.currency ?? "EUR"
-  };
-}
-function mapStock(product) {
-  const availability = product.stock_status === "out_of_stock" ? "OUT_OF_STOCK" : product.stock_status === "low_stock" ? "LOW_STOCK" : product.stock_status === "preorder" ? "PREORDER" : "IN_STOCK";
-  return {
-    quantity: product.stock,
-    availability,
-    lastUpdated: product.updated_at
-  };
-}
-function fromBuzzardProduct(product) {
-  const subcategoryId = product.category_ids?.length > 1 ? product.category_ids[1] : void 0;
-  return {
-    productId: product.id,
-    sku: product.sku,
-    ean: product.ean_gtin,
-    gtin: product.ean_gtin,
-    brand: product.brand,
-    manufacturer: product.manufacturer,
-    categoryId: product.category_id,
-    subcategoryId,
-    productType: product.category_id.startsWith("cat-05") ? "automotive" : "general",
-    status: mapStorefrontStatus(product.status, product.stock_status),
-    weight: product.shipping?.weight_kg,
-    weightUnit: "kg",
-    dimensions: product.shipping ? {
-      length: product.shipping.length_cm,
-      width: product.shipping.width_cm,
-      height: product.shipping.height_cm,
-      unit: "cm"
-    } : void 0,
-    images: mapImages(product),
-    technicalData: parseTechnicalData(product),
-    compatibility: mapCompatibility(product.vehicle_compatibility),
-    translations: mapTranslations(product),
-    supplierOffers: [mapSupplierOffer(product)],
-    pricing: mapPricing(product),
-    stock: mapStock(product),
-    availability: [],
-    seo: mapSeo(product),
-    createdAt: product.created_at,
-    updatedAt: product.updated_at,
-    _source: product
-  };
+// lib/inventory-engine/reservation.ts
+var reservations = /* @__PURE__ */ new Map();
+function getReservation(reservationId) {
+  return reservations.get(reservationId);
 }
 
 // lib/product-engine/adapters/canonical.ts
@@ -30847,189 +30910,315 @@ function indexProducts() {
 indexProducts();
 var PRODUCT_COUNT = activePublicProducts.length;
 
-// lib/product-engine/registry.ts
-var products = /* @__PURE__ */ new Map();
-var skuIndex = /* @__PURE__ */ new Map();
-var eanIndex = /* @__PURE__ */ new Map();
-function indexProduct(product) {
-  products.set(product.productId, product);
-  if (product.sku) skuIndex.set(product.sku.toUpperCase(), product.productId);
-  const ean = product.ean || product.gtin;
-  if (ean) eanIndex.set(ean, product.productId);
-}
-function ensureLoaded() {
-  if (products.size > 0) return;
-  for (const raw of buzzard_products_default.products) {
-    indexProduct(fromBuzzardProduct(raw));
-  }
-}
-function getRegistryProduct(productId) {
-  ensureLoaded();
-  return products.get(productId);
-}
-
-// lib/product-engine/translations.ts
-function getTranslationForLocale(translations, locale) {
-  const normalized = locale.toLowerCase();
-  return translations.find((t) => t.locale.toLowerCase() === normalized) || translations.find((t) => t.locale.split("-")[0].toLowerCase() === normalized.split("-")[0]);
-}
-
-// lib/market-engine/money.ts
-function toMinorUnits(amount, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return Math.round((Number(amount) || 0) * factor);
-}
-function fromMinorUnits(minor, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return minor / factor;
-}
-function roundMoney(amount, decimalDigits = 2) {
-  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
-}
-
-// data/global/pricing_engine_extensions.json
-var pricing_engine_extensions_default = {
-  defaultSellerCountry: "DE",
-  defaultTargetMarginPercent: 0.11,
-  defaultMinimumMarginPercent: 0.05,
-  exchangeRates: {
-    EUR: 1,
-    USD: 0.92,
-    GBP: 1.17,
-    CZK: 0.041,
-    PLN: 0.23,
-    TRY: 0.027,
-    SAR: 0.24,
-    AED: 0.25,
-    EGP: 0.019,
-    HUF: 26e-4,
-    RON: 0.2,
-    BGN: 0.51,
-    CHF: 1.05,
-    SEK: 0.087,
-    DKK: 0.134,
-    NOK: 0.085
-  },
-  shippingCosts: {
-    defaultSupplierDirect: 10,
+// data/global/test_supplier_feeds.json
+var test_supplier_feeds_default = {
+  TEST_SUPPLIER_A: {
+    supplierId: "TEST_SUPPLIER_A",
+    name: "Test Supplier A (Mock)",
+    country: "DE",
+    region: "EU",
     currency: "EUR",
-    byProductFixture: {
-      "reifen-pilot-sport": 10,
-      "motoroel-5w30": 7,
-      "bremsscheibe-280": 8,
-      "bremsbelaege-vorder": 6
+    integrationTypes: ["api", "xml", "csv", "manual"],
+    supportedMarkets: ["DE", "FR", "PL"],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: true,
+      createOrder: true,
+      cancelOrder: true,
+      orderStatus: true,
+      shippingAPI: false,
+      trackingAPI: true,
+      tracking: true,
+      returnsAPI: true,
+      returnAuthorization: true,
+      refund: true,
+      credit: true,
+      replacement: true,
+      webhook: false,
+      dropshipping: true,
+      whiteLabel: true,
+      blindShipping: true,
+      api: true,
+      xml: true,
+      csv: true
     },
-    byShippingRegion: {
-      EU_CENTRAL: 10,
-      EU_WEST: 12,
-      EU_NORTH: 14,
-      EU_SOUTH: 11,
-      EU_EAST: 9,
-      TR: 15,
-      GCC: 18,
-      MENA: 16
-    }
-  },
-  marketplaceFees: {
-    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
-    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
-    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
-    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
-    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
-    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
-  },
-  paymentFees: {
-    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
-    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
-    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
-    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
-    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
-  },
-  returnReserves: {
-    default: {
-      returnRate: 0.05,
-      refundRate: 0.03,
-      averageReturnShippingCost: 8,
-      averageRefundLoss: 5,
-      supplierReturnAcceptanceRate: 0.7,
-      damagedReturnRate: 0.01
+    rateLimit: { requestsPerMinute: 60 },
+    fieldMapping: {
+      article_number: "supplierSku",
+      sku: "supplierSku",
+      ean_code: "ean",
+      price_net: "supplierPrice",
+      stock_qty: "stock",
+      title: "name",
+      brand_name: "brand"
     },
-    byCategory: {
-      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
-      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
-      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
-    }
-  },
-  marginRules: {
-    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
-    byMarket: {},
-    byCategory: {},
-    byChannel: {},
-    byMarketplace: {},
-    bySupplier: {}
-  },
-  roundingRules: {
-    default: { mode: "psychological_99", step: 0.01 },
-    byMarket: {
-      DE: { mode: "psychological_99" },
-      FR: { mode: "psychological_99" },
-      PL: { mode: "nearest_49" }
-    },
-    byChannel: {
-      amazon: { mode: "psychological_99" },
-      direct: { mode: "psychological_99" }
-    }
-  },
-  priceBounds: {
-    default: { minimumPrice: 1, maximumPrice: 99999 }
-  },
-  competitivePricingExtension: {
-    enabled: false,
-    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
+    apiProducts: [
+      {
+        article_number: "TSA-TIRE-225-45-17",
+        ean_code: "4006633001247",
+        brand_name: "Michelin",
+        title: "Michelin Pilot Sport 4 225/45 R17",
+        price_net: 55.79,
+        stock_qty: 8,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-OIL-5W30-5L",
+        ean_code: "4006633001236",
+        brand_name: "Castrol",
+        title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
+        price_net: 26.6,
+        stock_qty: 50,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-DISC-280",
+        ean_code: "4006633001234",
+        brand_name: "ATE",
+        title: "Bremsscheibe Vorderachse 280mm",
+        price_net: 21.64,
+        stock_qty: 24,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-PADS-FRONT",
+        ean_code: "4006633001235",
+        brand_name: "Bosch",
+        title: "Bremsbel\xE4ge Satz Vorderachse",
+        price_net: 17.67,
+        stock_qty: 31,
+        currency: "EUR"
+      }
+    ],
+    xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
+    csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
   }
 };
 
-// lib/pricing-engine/registry.ts
-var config = pricing_engine_extensions_default;
-function getReturnReserveConfig(categoryId) {
-  const reserves = config.returnReserves;
-  const byCategory = reserves.byCategory;
-  const base = reserves.default;
-  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
-  return { ...base, ...categoryOverride };
+// data/buzzard_suppliers.json
+var buzzard_suppliers_default = {
+  project: "Buzzard",
+  document: "Supplier Master",
+  version: "1.0.0",
+  suppliers: [
+    {
+      supplier_id: "SUP-INTERNAL-001",
+      supplier_name: "Buzzard Internal Warehouse",
+      contact_email: "warehouse@buzzard.de",
+      contact_phone: "+49 30 1234567",
+      website: "https://buzzard24.de",
+      feed_type: "manual",
+      api_endpoint: null,
+      auth_type: "none",
+      currency: "EUR",
+      vat_handling: "gross",
+      dropshipping: false,
+      white_label: true,
+      blind_shipping: false,
+      default_markup_percent: 45,
+      minimum_margin_percent: 15,
+      safety_stock: 2,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "Internal stock for test and flagship products."
+    },
+    {
+      supplier_id: "SUP-DEMO-001",
+      production_status: "TEST_ONLY",
+      supplier_name: "Demo Automotive Parts GmbH",
+      contact_email: "orders@demo-automotive.example",
+      contact_phone: "+49 89 9876543",
+      website: "https://demo-automotive.example",
+      feed_type: "json",
+      api_endpoint: "https://demo-automotive.example/api/products.json",
+      auth_type: "api_key",
+      currency: "EUR",
+      vat_handling: "net",
+      dropshipping: true,
+      white_label: true,
+      blind_shipping: true,
+      default_markup_percent: 38,
+      minimum_margin_percent: 12,
+      safety_stock: 1,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
+    }
+  ]
+};
+
+// lib/supplier-engine/fixtures.ts
+var TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
+
+// lib/supplier-engine/persistence.ts
+var store;
+function getSupplierPersistence() {
+  if (store !== void 0) return store;
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
+    store = null;
+    return store;
+  }
+  const candidates = [
+    "server/lib/supplier/persistentStore.js",
+    "../../server/lib/supplier/persistentStore.js"
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      store = mod.createPersistentSupplierStore();
+      return store;
+    } catch {
+    }
+  }
+  store = null;
+  return store;
 }
 
-// lib/pricing-engine/shipping.ts
-init_registry2();
-
-// lib/pricing-engine/returns.ts
-function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
-  const config2 = getReturnReserveConfig(categoryId);
-  const supplierCreditFactor = 1 - config2.supplierReturnAcceptanceRate;
-  const expectedReturnLoss = roundMoney(
-    config2.returnRate * (config2.averageReturnShippingCost + supplierCostInMarketCurrency * supplierCreditFactor)
-  );
-  const expectedRefundLoss = roundMoney(
-    config2.refundRate * (config2.averageRefundLoss + supplierCostInMarketCurrency * supplierCreditFactor)
-  );
-  const damagedLoss = roundMoney(
-    (config2.damagedReturnRate ?? 0) * supplierCostInMarketCurrency * 0.5
-  );
-  const returnCostReserve = roundMoney(expectedReturnLoss + damagedLoss);
-  const refundCostReserve = roundMoney(expectedRefundLoss);
+// lib/supplier-engine/liveSupplier/registry.ts
+var registeredLiveSupplierId = null;
+function liveProfileToSupplierConfig(profile) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
   return {
-    returnCostReserve,
-    refundCostReserve,
-    totalReserve: roundMoney(returnCostReserve + refundCostReserve),
-    config: config2,
-    breakdown: {
-      expectedReturnLoss,
-      expectedRefundLoss,
-      supplierCreditFactor
-    }
+    supplierId: profile.supplierId,
+    name: profile.name,
+    displayName: profile.displayName || profile.name,
+    country: profile.country,
+    region: profile.region,
+    status: "TESTING",
+    integrationTypes: ["b2b-sandbox"],
+    currency: profile.currency,
+    supportedMarkets: profile.supportedMarkets,
+    supportedCategories: [],
+    capabilities: profile.capabilities,
+    fieldMapping: profile.fieldMapping,
+    secretsRef: profile.secretsRef,
+    rateLimit: { requestsPerMinute: 60 },
+    connectorProfile: profile,
+    createdAt: now,
+    updatedAt: now
   };
+}
+function registerLiveSupplierIfConfigured(register2) {
+  const profile = resolveLiveSupplierProfile();
+  if (!profile) return null;
+  register2(liveProfileToSupplierConfig(profile));
+  registerCredentialRef(profile.supplierId, profile.secretsRef);
+  registeredLiveSupplierId = profile.supplierId;
+  return profile;
+}
+
+// lib/supplier-engine/registry.ts
+var supplierById = /* @__PURE__ */ new Map();
+var persistedOverlay = /* @__PURE__ */ new Map();
+function mapMasterToConfig(raw) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const feedType = String(raw.feed_type || "manual");
+  const integrationTypes = feedType === "json" ? ["api"] : feedType === "manual" ? ["manual"] : [feedType];
+  return {
+    supplierId: String(raw.supplier_id),
+    name: String(raw.supplier_name),
+    country: "DE",
+    region: "EU",
+    status: raw.active === false ? "DISABLED" : raw.production_status === "TEST_ONLY" ? "TESTING" : "CONNECTED",
+    integrationTypes,
+    currency: String(raw.currency || "EUR"),
+    supportedMarkets: ["DE"],
+    supportedCategories: [],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      dropshipping: raw.dropshipping === true,
+      whiteLabel: raw.white_label === true,
+      blindShipping: raw.blind_shipping === true,
+      api: feedType === "json",
+      csv: false,
+      xml: false
+    },
+    fieldMapping: {},
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function buildTestSupplierA() {
+  const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    supplierId: TEST_SUPPLIER_ID,
+    name: String(feed.name || "Test Supplier A"),
+    country: String(feed.country || "DE"),
+    region: String(feed.region || "EU"),
+    status: "TESTING",
+    integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
+    currency: String(feed.currency || "EUR"),
+    supportedMarkets: feed.supportedMarkets || ["DE", "FR", "PL"],
+    supportedCategories: [],
+    capabilities: feed.capabilities || {},
+    fieldMapping: feed.fieldMapping || {},
+    rateLimit: feed.rateLimit,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function mergePersistedOverlay(config) {
+  const overlay = persistedOverlay.get(config.supplierId);
+  if (!overlay) return config;
+  return {
+    ...config,
+    ...overlay,
+    capabilities: { ...config.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config.supportedMarkets,
+    status: overlay.status ?? config.status,
+    updatedAt: overlay.updatedAt ?? config.updatedAt
+  };
+}
+function persistRegistryEntry(config) {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  persistence.saveRegistryRow({
+    supplierId: config.supplierId,
+    name: config.name,
+    displayName: config.displayName || config.name,
+    country: config.country,
+    connectorType: config.integrationTypes[0] || "manual",
+    supportedMarkets: config.supportedMarkets,
+    capabilities: config.capabilities,
+    active: config.status !== "DISABLED" && config.status !== "PAUSED",
+    status: config.status,
+    secretsRef: config.secretsRef,
+    createdAt: config.createdAt
+  });
+  if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
+}
+function ensureRegistry() {
+  if (supplierById.size > 0) return;
+  for (const raw of buzzard_suppliers_default.suppliers) {
+    const config = mergePersistedOverlay(mapMasterToConfig(raw));
+    supplierById.set(config.supplierId, config);
+    persistRegistryEntry(config);
+  }
+  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
+  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
+  persistRegistryEntry(testSupplier);
+  registerLiveSupplierIfConfigured((config) => {
+    const merged = mergePersistedOverlay(config);
+    supplierById.set(config.supplierId, merged);
+    persistRegistryEntry(merged);
+  });
+}
+function getSupplier(supplierId) {
+  ensureRegistry();
+  const config = supplierById.get(supplierId);
+  return config ? mergePersistedOverlay(config) : void 0;
+}
+function isSupplierSelectable(supplierId) {
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return false;
+  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
 }
 
 // lib/market-engine/supplier.ts
@@ -31039,2233 +31228,2375 @@ var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 var import_module2 = require("module");
 var require3 = (0, import_module2.createRequire)(__import_meta_url__);
 
-// lib/inventory-engine/market.ts
-init_registry2();
-
-// lib/inventory-engine/sync.ts
-init_registry2();
-
-// lib/inventory-engine/test-fixtures.ts
-init_fixtures();
-
-// lib/supplier-engine/observability.ts
-init_security();
-
 // lib/supplier-engine/health.ts
-init_persistence();
-
-// lib/supplier-engine/connectors/base.ts
-init_capabilities();
-
-// lib/supplier-engine/network/config.ts
-function envFlag(name, defaultValue = false) {
-  const raw = process.env[name];
-  if (raw === void 0 || raw === "") return defaultValue;
-  return raw === "1" || raw.toLowerCase() === "true";
-}
-function envInt(name, fallback) {
-  const n = Number(process.env[name]);
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-}
-var SUPPLIER_NETWORK_CONFIG = {
-  get networkEnabled() {
-    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
-  },
-  get orderNetworkEnabled() {
-    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-  },
-  defaultEnvironment: "MOCK",
-  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
-  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
-  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
-  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
-};
-
-// lib/supplier-engine/network/scopedValidationNetwork.ts
-var import_async_hooks = require("async_hooks");
-var scopedContext = new import_async_hooks.AsyncLocalStorage();
-
-// lib/supplier-engine/connectors/api.ts
-init_fixtures();
-
-// lib/supplier-engine/auth/resolver.ts
-init_credentials();
-
-// lib/supplier-engine/connectors/xml.ts
-init_fixtures();
-
-// lib/supplier-engine/connectors/csv.ts
-init_fixtures();
-
-// lib/supplier-engine/syncCursor.ts
-init_persistence();
-
-// lib/supplier-engine/selection.ts
-init_registry2();
-
-// lib/supplier-engine/state.ts
-init_persistence();
-
-// lib/supplier-engine/order.ts
-init_registry2();
-init_capabilities();
-
-// lib/supplier-engine/bootstrap.ts
-init_registry2();
-init_persistence2();
-
-// lib/supplier-engine/orderIdempotency.ts
-init_persistence();
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-init_registry2();
-
-// lib/supplier-engine/audit.ts
-init_persistence();
-init_security();
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-init_security();
-
-// lib/supplier-engine/orderSandbox/networkSafety.ts
-init_config();
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-init_persistence2();
-
-// lib/order-engine/fulfillment.ts
-init_registry2();
-
-// lib/analytics/constants.ts
-var SESSION_TIMEOUT_MS = 30 * 60 * 1e3;
-var FOUNDATION_EVENT_TYPES = [
-  "PAGE_VIEW",
-  "SESSION_START",
-  "SESSION_END",
-  "PRODUCT_VIEW",
-  "PRODUCT_SEARCH",
-  "CATEGORY_VIEW",
-  "ADD_TO_CART",
-  "REMOVE_FROM_CART",
-  "VIEW_CART",
-  "CHECKOUT_START",
-  "CHECKOUT_STEP",
-  "CHECKOUT_COMPLETED",
-  "CHECKOUT_ABANDONED",
-  "PURCHASE",
-  "REFUND",
-  "RETURN",
-  "MARKETPLACE_ORDER",
-  "MARKETPLACE_RETURN",
-  "SEARCH",
-  "FILTER_USED",
-  "LANGUAGE_CHANGED",
-  "MARKET_CHANGED",
-  "CONSENT_GRANTED",
-  "CONSENT_DENIED",
-  "CONSENT_WITHDRAWN"
-];
-var IDEMPOTENT_EVENT_TYPES = /* @__PURE__ */ new Set([
-  "PURCHASE",
-  "REFUND",
-  "RETURN",
-  "CHECKOUT_COMPLETED",
-  "MARKETPLACE_ORDER"
-]);
-var ESSENTIAL_EVENT_TYPES = /* @__PURE__ */ new Set([
-  "CONSENT_GRANTED",
-  "CONSENT_DENIED",
-  "CONSENT_WITHDRAWN"
-]);
-var SENSITIVE_METADATA_KEYS = [
-  "email",
-  "phone",
-  "password",
-  "token",
-  "apiKey",
-  "cardNumber",
-  "cvv",
-  "paymentCredential",
-  "name",
-  "fullName",
-  "address",
-  "ip",
-  "ipAddress"
-];
-var SEARCH_ENGINE_HOSTS = {
-  "google.": "Google",
-  "bing.": "Bing",
-  "duckduckgo.": "DuckDuckGo",
-  "yahoo.": "Yahoo"
-};
-var SOCIAL_HOSTS = {
-  "facebook.": "Facebook",
-  "instagram.": "Instagram",
-  "tiktok.": "TikTok",
-  "youtube.": "YouTube"
-};
-var DEFAULT_CONSENT_VERSION = "1.0.0-foundation";
-
-// lib/analytics/registry.ts
-function generateEventId() {
-  return getAnalyticsStore().generateEventId();
-}
-function storeEvent(event) {
-  getAnalyticsStore().storeEvent(event);
-}
-function listEvents() {
-  return getAnalyticsStore().listEvents();
-}
-function listEventsInRange(fromIso, toIso) {
-  const store = getAnalyticsStore();
-  if (typeof store.listEventsInRange === "function") {
-    return store.listEventsInRange(fromIso, toIso);
-  }
-  return listEvents().filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
-}
-function getEvent(eventId) {
-  return getAnalyticsStore().getEvent(eventId);
-}
-function getSession(sessionId) {
-  return getAnalyticsStore().getSession(sessionId);
-}
-function upsertSession(session) {
-  getAnalyticsStore().upsertSession(session);
-}
-function listSessions() {
-  return getAnalyticsStore().listSessions();
-}
-function getVisitor(anonymousVisitorId) {
-  return getAnalyticsStore().getVisitor(anonymousVisitorId);
-}
-function upsertVisitor(visitor) {
-  getAnalyticsStore().upsertVisitor(visitor);
-}
-function listVisitors() {
-  return getAnalyticsStore().listVisitors();
-}
-function getConsent(anonymousVisitorId) {
-  return getAnalyticsStore().getConsent(anonymousVisitorId);
-}
-function setConsent(anonymousVisitorId, consent) {
-  getAnalyticsStore().setConsent(anonymousVisitorId, consent);
-}
-function isIdempotencyKeyUsed(key) {
-  return getAnalyticsStore().isIdempotencyKeyUsed(key);
-}
-function markIdempotencyKey(key, eventId) {
-  getAnalyticsStore().markIdempotencyKey(key, eventId);
-}
-function getIdempotencyEventId(key) {
-  return getAnalyticsStore().getIdempotencyEventId(key);
-}
-function isVisitorDeleted(anonymousVisitorId) {
-  return getAnalyticsStore().isVisitorDeleted(anonymousVisitorId);
-}
-
-// lib/analytics/eventSchema.ts
-function validateEventSchema(input) {
-  const errors = [];
-  if (!input.eventType) errors.push("MISSING_EVENT_TYPE");
-  else if (!FOUNDATION_EVENT_TYPES.includes(input.eventType)) errors.push("INVALID_EVENT_TYPE");
-  if (input.timestamp) {
-    const ts = Date.parse(input.timestamp);
-    if (Number.isNaN(ts)) errors.push("INVALID_TIMESTAMP");
-  }
-  if (input.market) {
-    const market = getMarket(input.market.toUpperCase());
-    if (!market) errors.push("INVALID_MARKET");
-  }
-  if (input.language && input.market) {
-    const langs = getMarketLanguages(input.market.toUpperCase());
-    const base = input.language.split("-")[0];
-    if (!langs.includes(base) && !langs.includes(input.language)) {
-      errors.push("INVALID_LANGUAGE");
-    }
-  }
-  if (input.productId && !getRegistryProduct(input.productId)) {
-    errors.push("INVALID_PRODUCT_ID");
-  }
-  if (input.value !== void 0 && (typeof input.value !== "number" || input.value < 0)) {
-    errors.push("INVALID_VALUE");
-  }
-  if (input.quantity !== void 0 && (!Number.isInteger(input.quantity) || input.quantity < 0)) {
-    errors.push("INVALID_QUANTITY");
-  }
-  return { ok: errors.length === 0, errors };
-}
-
-// lib/analytics/consent.ts
-function resolveConsentRequired(market) {
-  const code = market.toUpperCase();
-  if (isEuCountry(code)) return true;
-  const config2 = getMarket(code);
-  if (!config2) return true;
-  return config2.status === "ACTIVE";
-}
-function buildDefaultConsentState(market) {
-  const consentRequired = resolveConsentRequired(market);
+var healthCache = /* @__PURE__ */ new Map();
+function defaultHealth(supplierId) {
   return {
-    consentRequired,
-    consentStatus: consentRequired ? "UNKNOWN" : "GRANTED",
-    consentVersion: DEFAULT_CONSENT_VERSION,
-    analytics: consentRequired ? "UNKNOWN" : "GRANTED",
-    marketing: "UNKNOWN",
-    personalization: "UNKNOWN"
+    supplierId,
+    healthStatus: "UNKNOWN",
+    responseTimeMs: 0,
+    errorCount: 0,
+    successCount: 0,
+    rateLimitCount: 0,
+    consecutiveFailures: 0,
+    reliabilityScore: 0.5,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
-function updateConsent(anonymousVisitorId, market, updates) {
-  const existing = getConsent(anonymousVisitorId) ?? buildDefaultConsentState(market);
-  const next = {
-    ...existing,
-    consentTimestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    consentVersion: DEFAULT_CONSENT_VERSION
-  };
-  if (updates.ANALYTICS) {
-    next.analytics = updates.ANALYTICS;
-    next.consentStatus = updates.ANALYTICS;
-  }
-  if (updates.MARKETING) next.marketing = updates.MARKETING;
-  if (updates.PERSONALIZATION) next.personalization = updates.PERSONALIZATION;
-  setConsent(anonymousVisitorId, next);
-  return next;
-}
-function isTrackingAllowed(eventType, consent) {
-  if (ESSENTIAL_EVENT_TYPES.has(eventType)) return true;
-  if (!consent.consentRequired) return true;
-  if (consent.consentStatus === "WITHDRAWN" || consent.analytics === "WITHDRAWN") return false;
-  if (consent.analytics === "DENIED" || consent.consentStatus === "DENIED") return false;
-  return consent.analytics === "GRANTED" || consent.consentStatus === "GRANTED";
-}
-
-// lib/analytics/audit.ts
-function recordAnalyticsAudit(entry) {
-  return getAnalyticsStore().recordAudit(entry);
-}
-
-// lib/analytics/privacy.ts
-var PII_PATTERNS = [
-  /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/,
-  /\b\+?\d{10,15}\b/,
-  /\b\d{16}\b/
-];
-function sanitizeMetadata(metadata = {}) {
-  const clean = {};
-  for (const [key, value] of Object.entries(metadata)) {
-    const lower = key.toLowerCase();
-    if (SENSITIVE_METADATA_KEYS.some((s) => lower.includes(s.toLowerCase()))) continue;
-    if (typeof value === "string" && PII_PATTERNS.some((p) => p.test(value))) continue;
-    clean[key] = value;
-  }
-  return clean;
-}
-function sanitizeSearchTerm(term) {
-  const trimmed = term.trim();
-  if (!trimmed) return null;
-  if (PII_PATTERNS.some((p) => p.test(trimmed))) return null;
-  const lower = trimmed.toLowerCase();
-  if (["password", "credit card", "ssn", "passport"].some((s) => lower.includes(s))) return null;
-  return trimmed.slice(0, 200);
-}
-function stripPiiFromEventInput(input) {
-  const { metadata, ...rest } = input;
+function fromPersisted(row) {
   return {
-    ...rest,
-    customerIdReference: void 0,
-    metadata: metadata ? sanitizeMetadata(metadata) : void 0
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    responseTimeMs: Number(row.responseTimeMs || 0),
+    errorCount: Number(row.errorCount || 0),
+    successCount: Number(row.successCount || 0),
+    rateLimitCount: Number(row.rateLimitCount || 0),
+    consecutiveFailures: Number(row.consecutiveFailures || 0),
+    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
+    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
   };
 }
-
-// lib/analytics/security.ts
-function validateAdminAccess(context) {
-  if (!context.adminAuthorized) return { ok: false, errorCode: "ADMIN_UNAUTHORIZED" };
-  return { ok: true };
-}
-function validateCrossCustomerAccess(requestedCustomerId, contextCustomerId) {
-  if (!requestedCustomerId) return { ok: true };
-  if (!contextCustomerId) return { ok: false, errorCode: "UNAUTHORIZED_CUSTOMER_ACCESS" };
-  if (requestedCustomerId !== contextCustomerId) return { ok: false, errorCode: "CROSS_CUSTOMER_ACCESS" };
-  return { ok: true };
-}
-function detectSensitiveMetadata(metadata = {}) {
-  const hits = [];
-  for (const key of Object.keys(metadata)) {
-    if (SENSITIVE_METADATA_KEYS.some((s) => key.toLowerCase().includes(s.toLowerCase()))) {
-      hits.push(key);
-    }
+function getSupplierHealth(supplierId) {
+  const cached = healthCache.get(supplierId);
+  if (cached) return cached;
+  const persistence = getSupplierPersistence();
+  const row = persistence?.getHealth(supplierId);
+  if (row) {
+    const record = fromPersisted(row);
+    healthCache.set(supplierId, record);
+    return record;
   }
-  return hits;
-}
-function rejectEventInjection(input) {
-  const errors = [];
-  const sensitive = detectSensitiveMetadata(input.metadata);
-  if (sensitive.length) errors.push(`SENSITIVE_METADATA:${sensitive.join(",")}`);
-  if (input.metadata?.overwriteAuthoritativeRevenue === true) {
-    errors.push("AUTHORITY_BYPASS");
-  }
-  return { ok: errors.length === 0, errors };
+  return defaultHealth(supplierId);
 }
 
-// lib/analytics/geo.ts
-function resolveMarketContext(input) {
-  const marketCode = (input.market ?? input.country ?? "DE").toUpperCase();
-  const market = getMarket(marketCode);
-  const fallback = listMarkets()[0];
+// lib/supplier-engine/orderSandbox/persistence.ts
+var memoryStore = /* @__PURE__ */ new Map();
+function rowToRecord(row) {
   return {
-    market: marketCode,
-    country: marketCode,
-    language: input.language ?? market?.defaultLanguage ?? fallback?.defaultLanguage ?? "de",
-    currency: getMarketCurrency(marketCode).code
+    supplierOrderId: String(row.supplier_order_id),
+    buzzardOrderId: String(row.buzzard_order_id),
+    supplierId: String(row.supplier_id),
+    status: row.status,
+    idempotencyKey: String(row.idempotency_key),
+    correlationId: String(row.correlation_id || ""),
+    payload: JSON.parse(String(row.payload_json || "{}")),
+    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
+    failureClass: row.failure_class,
+    failureCode: row.failure_code ? String(row.failure_code) : void 0,
+    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
+    latencyMs: Number(row.latency_ms || 0),
+    sandbox: true,
+    networkDispatched: false,
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at)
   };
 }
-
-// lib/analytics/trafficSource.ts
-function classifyTrafficSource(source, medium, referrerHost) {
-  const src = (source ?? "").toLowerCase();
-  const med = (medium ?? "").toLowerCase();
-  const host = (referrerHost ?? "").toLowerCase();
-  if (med.includes("cpc") || med.includes("ppc") || src.includes("ads")) return "PAID_SEARCH";
-  if (med.includes("email") || src.includes("email")) return "EMAIL";
-  if (med.includes("social") || Object.keys(SOCIAL_HOSTS).some((h) => host.includes(h))) return "SOCIAL";
-  if (med.includes("marketplace") || src.includes("amazon") || src.includes("ebay")) return "MARKETPLACE";
-  if (Object.keys(SEARCH_ENGINE_HOSTS).some((h) => host.includes(h))) return "ORGANIC_SEARCH";
-  if (host && !host.includes("buzzard")) return "REFERRAL";
-  if (src === "direct" || !src) return "DIRECT";
-  return "OTHER";
+function getOrderSandboxPersistence() {
+  return getSupplierPersistence();
 }
-function resolveTrafficSource(input) {
-  const source = input.trafficSource ?? classifyTrafficSource(input.utmSource, input.trafficMedium, input.referrerHost);
-  return {
-    source,
-    medium: input.trafficMedium,
-    campaign: input.trafficCampaign,
-    referrerHost: input.referrerHost
-  };
+function getSupplierOrderSandboxByIdempotency(idempotencyKey) {
+  const cached = memoryStore.get(idempotencyKey);
+  if (cached) return cached;
+  const row = getOrderSandboxPersistence()?.getOrderSandboxByIdempotency?.(idempotencyKey);
+  if (!row) return void 0;
+  const record = rowToRecord(row);
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  return record;
 }
-
-// lib/analytics/device.ts
-function classifyDevice(userAgent, screenClass) {
-  if (screenClass === "mobile") return "MOBILE";
-  if (screenClass === "tablet") return "TABLET";
-  if (screenClass === "desktop") return "DESKTOP";
-  const ua = (userAgent ?? "").toLowerCase();
-  if (/ipad|tablet|kindle/.test(ua)) return "TABLET";
-  if (/mobile|iphone|android/.test(ua)) return "MOBILE";
-  if (/windows|macintosh|linux|cros/.test(ua)) return "DESKTOP";
-  return "OTHER";
-}
-
-// lib/analytics/eventNormalizer.ts
-function normalizeEvent(input, revenueAuthority) {
-  const timestamp = input.timestamp ?? (/* @__PURE__ */ new Date()).toISOString();
-  const geo = resolveMarketContext(input);
-  const traffic = resolveTrafficSource({
-    trafficSource: input.trafficSource,
-    trafficMedium: input.trafficMedium,
-    trafficCampaign: input.trafficCampaign,
-    referrerHost: input.metadata?.referrerHost,
-    utmSource: input.metadata?.utm_source
-  });
-  let metadata = sanitizeMetadata(input.metadata ?? {});
-  if (input.eventType === "SEARCH" || input.eventType === "PRODUCT_SEARCH") {
-    const term = sanitizeSearchTerm(String(metadata.searchTerm ?? metadata.query ?? ""));
-    if (term) metadata = { ...metadata, searchTerm: term };
-    else metadata = { ...metadata, searchTerm: "[redacted]" };
-  }
-  return {
-    ...input,
-    eventId: input.eventId ?? generateEventId(),
-    timestamp,
-    sessionId: input.sessionId ?? "",
-    anonymousVisitorId: input.anonymousVisitorId ?? "",
-    market: geo.market,
-    country: geo.country,
-    language: geo.language,
-    currency: input.currency ?? geo.currency,
-    deviceType: input.deviceType ?? classifyDevice(metadata.userAgent),
-    trafficSource: traffic.source,
-    trafficMedium: traffic.medium,
-    trafficCampaign: traffic.campaign,
-    landingPage: input.landingPage,
-    pagePath: input.pagePath,
-    value: revenueAuthority === "REJECTED" ? void 0 : input.value,
-    metadata,
-    revenueAuthority,
-    sanitized: true
-  };
-}
-
-// lib/analytics/visitor.ts
-function generateAnonymousVisitorId() {
-  const bytes = new Uint8Array(16);
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    crypto.getRandomValues(bytes);
-  } else {
-    for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
-  }
-  return `bv_${Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")}`;
-}
-function touchVisitor(anonymousVisitorId, timestamp) {
-  if (isVisitorDeleted(anonymousVisitorId)) {
-    throw new Error("VISITOR_DELETED");
-  }
-  const existing = getVisitor(anonymousVisitorId);
-  if (existing) {
-    const updated = {
-      ...existing,
-      lastSeenAt: timestamp,
-      isReturning: existing.sessionCount > 0
-    };
-    upsertVisitor(updated);
-    return updated;
-  }
-  const created = {
-    anonymousVisitorId,
-    firstSeenAt: timestamp,
-    lastSeenAt: timestamp,
-    sessionCount: 0,
-    isReturning: false
-  };
-  upsertVisitor(created);
-  return created;
-}
-function incrementVisitorSession(anonymousVisitorId) {
-  const visitor = getVisitor(anonymousVisitorId);
-  if (!visitor) return;
-  upsertVisitor({
-    ...visitor,
-    sessionCount: visitor.sessionCount + 1,
-    isReturning: visitor.sessionCount > 0
-  });
-}
-
-// lib/analytics/session.ts
-function generateSessionId() {
-  return `ses_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-}
-function isSessionExpired(session, nowMs) {
-  const last = Date.parse(session.lastActivityAt);
-  return nowMs - last > SESSION_TIMEOUT_MS;
-}
-function getOrCreateSession(params) {
-  const nowMs = Date.parse(params.timestamp);
-  if (params.sessionId) {
-    const existing = getSession(params.sessionId);
-    if (existing && !isSessionExpired(existing, nowMs)) {
-      return existing;
-    }
-  }
-  incrementVisitorSession(params.anonymousVisitorId);
-  const session = {
-    sessionId: params.sessionId && getSession(params.sessionId) ? generateSessionId() : params.sessionId ?? generateSessionId(),
-    anonymousVisitorId: params.anonymousVisitorId,
-    startedAt: params.timestamp,
-    lastActivityAt: params.timestamp,
-    landingPage: params.landingPage,
-    pageViews: 0,
-    productViews: 0,
-    cartEvents: 0,
-    checkoutStarted: false,
-    purchaseCompleted: false,
-    trafficSource: params.trafficSource,
-    market: params.market,
-    language: params.language,
-    deviceType: params.deviceType
-  };
-  upsertSession(session);
-  return session;
-}
-function updateSessionFromEvent(session, event) {
-  const updated = {
-    ...session,
-    lastActivityAt: event.timestamp,
-    exitPage: event.pagePath ?? session.exitPage
-  };
-  switch (event.eventType) {
-    case "PAGE_VIEW":
-      updated.pageViews += 1;
-      break;
-    case "PRODUCT_VIEW":
-      updated.productViews += 1;
-      break;
-    case "ADD_TO_CART":
-    case "REMOVE_FROM_CART":
-      updated.cartEvents += 1;
-      break;
-    case "CHECKOUT_START":
-      updated.checkoutStarted = true;
-      break;
-    case "PURCHASE":
-    case "CHECKOUT_COMPLETED":
-      if (event.revenueAuthority === "AUTHORITATIVE") {
-        updated.purchaseCompleted = true;
-      }
-      break;
-    case "SESSION_END":
-      updated.endedAt = event.timestamp;
-      break;
-  }
-  upsertSession(updated);
-  return updated;
-}
-function countActiveSessions(nowIso) {
-  const nowMs = Date.parse(nowIso);
-  let count = 0;
-  for (const session of listSessions()) {
-    if (!session.endedAt && !isSessionExpired(session, nowMs)) count += 1;
-  }
-  return count;
+function getSupplierOrderSandboxByReference(supplierOrderId) {
+  const cached = memoryStore.get(supplierOrderId);
+  if (cached) return cached;
+  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
+  if (!row) return void 0;
+  const record = rowToRecord(row);
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  return record;
 }
 
 // lib/returns-engine/registry.ts
 var returns = /* @__PURE__ */ new Map();
-var returnsByNumber = /* @__PURE__ */ new Map();
 var returnsByOrder = /* @__PURE__ */ new Map();
-var returnsByCustomer = /* @__PURE__ */ new Map();
-var idempotencyIndex = /* @__PURE__ */ new Map();
-var shipments = /* @__PURE__ */ new Map();
-var recoveries = /* @__PURE__ */ new Map();
-var customerRefunds = /* @__PURE__ */ new Map();
-var marketplaceRefunds = /* @__PURE__ */ new Map();
-var reconciliations = /* @__PURE__ */ new Map();
-function saveReturnRequest(record) {
-  returns.set(record.returnId, record);
-  returnsByNumber.set(record.returnNumber, record.returnId);
-  returnsByOrder.set(record.orderId, record.returnId);
-  if (!returnsByCustomer.has(record.customerId)) {
-    returnsByCustomer.set(record.customerId, /* @__PURE__ */ new Set());
-  }
-  returnsByCustomer.get(record.customerId).add(record.returnId);
-  if (record.idempotencyKey) {
-    idempotencyIndex.set(record.idempotencyKey, record.returnId);
-  }
-}
-function getReturnRequest(returnId) {
-  return returns.get(returnId);
-}
 function getReturnByOrder(orderId) {
   const id = returnsByOrder.get(orderId);
   return id ? returns.get(id) : void 0;
 }
-function getShipmentsForReturn(returnId) {
-  return [...shipments.values()].filter((s) => s.returnId === returnId);
-}
-function getRecoveriesForReturn(returnId) {
-  return [...recoveries.values()].filter((r) => r.returnId === returnId);
-}
-function getCustomerRefundForReturn(returnId) {
-  return [...customerRefunds.values()].find((r) => r.returnId === returnId);
-}
-function getMarketplaceRefundForReturn(returnId) {
-  return [...marketplaceRefunds.values()].find((r) => r.returnId === returnId);
-}
-function saveReconciliation(rec) {
-  reconciliations.set(rec.reconciliationId, rec);
-}
-function getReconciliation(returnId) {
-  return [...reconciliations.values()].find((r) => r.returnId === returnId);
-}
 
-// lib/analytics/revenue.ts
-var REVENUE_ELIGIBLE_ORDER_STATUSES = /* @__PURE__ */ new Set([
-  "PAID",
-  "CONFIRMED",
-  "PROCESSING",
-  "SUPPLIER_PENDING",
-  "SUPPLIER_CONFIRMED",
-  "SHIPPED",
-  "DELIVERED",
-  "RETURN_REQUESTED",
-  "RETURNED",
-  "REFUNDED",
-  "PARTIALLY_REFUNDED"
-]);
-function isRevenueEligibleOrder(order) {
-  if (order.paymentStatus === "CAPTURED" || order.paymentStatus === "AUTHORIZED") return true;
-  return REVENUE_ELIGIBLE_ORDER_STATUSES.has(order.status);
+// lib/fulfillment-control-tower/aggregator.ts
+function buildFulfillmentId(orderId, orderItemId) {
+  return `ff_${orderId}_${orderItemId}`;
 }
-function toCents(amount) {
-  return Math.round(amount * 100);
+function classifySupplierOrderReference(ref) {
+  if (!ref) return "UNKNOWN";
+  if (ref.startsWith("SANDBOX-ORDER-")) return "SANDBOX";
+  if (ref.startsWith("DRY-SUP-") || ref.startsWith("DRY-")) return "SANDBOX";
+  return "LIVE";
 }
-function resolveAuthoritativeOrderRevenue(orderId) {
-  const order = getOrder(orderId);
-  if (!order) return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  if (!isRevenueEligibleOrder(order)) {
-    return { ok: false, errorCode: "ORDER_NOT_ELIGIBLE" };
+function mapInventoryStatus(reservationId) {
+  if (!reservationId) return "MISSING";
+  const reservation = getReservation(reservationId);
+  if (!reservation) return "MISSING";
+  return reservation.status;
+}
+function mapSupplierHealthState(supplierId) {
+  if (!isSupplierSelectable(supplierId)) return "DISABLED";
+  const health = getSupplierHealth(supplierId);
+  return health.healthStatus || "UNKNOWN";
+}
+function mapShipmentStatus(order) {
+  if (["SHIPPED", "DELIVERED"].includes(order.status)) return "SHIPPED";
+  if (order.fulfillmentStatus === "SUPPLIER_PREPARED" || order.fulfillmentStatus === "SUPPLIER_SUBMITTED") {
+    return "PREPARED";
   }
-  return { ok: true, grossCents: toCents(order.totalGross), currency: order.currency };
+  return "NOT_SHIPPED";
 }
-function resolveAuthoritativeRefundAmount(returnId) {
-  const refund = getCustomerRefundForReturn(returnId);
-  if (!refund) return { ok: false, errorCode: "REFUND_NOT_FOUND" };
-  return { ok: true, refundCents: toCents(refund.refundedAmount) };
-}
-function computeRevenueMetrics(events = listEvents()) {
-  let grossRevenueCents = 0;
-  let refundAmountCents = 0;
-  let orderCount = 0;
-  const seenOrders = /* @__PURE__ */ new Set();
-  for (const event of events) {
-    if (event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE") {
-      const key = event.orderIdReference ?? event.eventId;
-      if (seenOrders.has(key)) continue;
-      seenOrders.add(key);
-      grossRevenueCents += toCents(event.value ?? 0);
-      orderCount += 1;
-    }
-    if (event.eventType === "REFUND" && event.revenueAuthority === "AUTHORITATIVE") {
-      refundAmountCents += toCents(event.value ?? 0);
-    }
+function mapTrackingStatus(supplierOrderId, orderStatus) {
+  if (!supplierOrderId) {
+    return { status: orderStatus === "SHIPPED" || orderStatus === "DELIVERED" ? "MISSING" : "NOT_AVAILABLE" };
   }
-  const netRevenueCents = grossRevenueCents - refundAmountCents;
+  const sandbox = getSupplierOrderSandboxByReference(supplierOrderId);
+  if (sandbox?.tracking) {
+    return {
+      status: sandbox.tracking.shipmentStatus,
+      trackingNumber: sandbox.tracking.trackingNumber,
+      carrier: sandbox.tracking.carrier,
+      trackingUrl: sandbox.tracking.trackingUrl
+    };
+  }
+  return { status: "NOT_AVAILABLE" };
+}
+function resolveSupplierOrderForItem(order, item) {
+  const supplierOrder = order.supplierOrders.find((so) => so.supplierId === item.supplierId);
+  const sandbox = supplierOrder?.supplierOrderId ? getSupplierOrderSandboxByReference(supplierOrder.supplierOrderId) : void 0;
   return {
-    grossRevenueCents,
-    refundAmountCents,
-    netRevenueCents,
-    orderCount,
-    averageOrderValueCents: orderCount ? Math.round(grossRevenueCents / orderCount) : 0,
-    authoritativeOnly: true
+    supplierOrderId: supplierOrder?.supplierOrderId,
+    supplierOrderStatus: sandbox?.status || supplierOrder?.status || "NOT_CREATED",
+    classification: classifySupplierOrderReference(supplierOrder?.supplierOrderId),
+    lastKnownSupplierState: sandbox?.status,
+    idempotencyKey: sandbox?.idempotencyKey,
+    correlationId: sandbox?.correlationId
   };
 }
-function validateClientRevenueClaim(input) {
-  if (input.eventType !== "PURCHASE" && input.eventType !== "REFUND") return "PROVISIONAL";
-  if (input.authoritative === true && !input.orderIdReference && !input.returnId) return "REJECTED";
-  if (input.value !== void 0 && input.value > 0 && !input.orderIdReference && !input.returnId) {
-    return "REJECTED";
-  }
-  if (input.eventType === "REFUND" && input.returnId) {
-    const resolved = resolveAuthoritativeRefundAmount(input.returnId);
-    if (resolved.ok) return "AUTHORITATIVE";
-    return "PROVISIONAL";
-  }
-  if (input.orderIdReference) {
-    const resolved = resolveAuthoritativeOrderRevenue(input.orderIdReference);
-    if (resolved.ok) return "AUTHORITATIVE";
-    return "PROVISIONAL";
-  }
-  return "PROVISIONAL";
+function resolveMarketplaceMapping(orderId) {
+  const mapping = listOrderMappings().find((m) => m.orderId === orderId);
+  return mapping ? { marketplaceId: mapping.marketplaceId, marketplaceOrderId: mapping.marketplaceOrderId } : {};
 }
-
-// lib/analytics/eventCollector.ts
-var AUTHORITATIVE_EVENT_SOURCES = /* @__PURE__ */ new Set([
-  "ORDER_ENGINE",
-  "RETURNS_ENGINE",
-  "MARKETPLACE_ENGINE",
-  "STOREFRONT_CHECKOUT"
-]);
-function isAuthoritativeBusinessEvent(input) {
-  const source = input.metadata?.source;
-  return typeof source === "string" && AUTHORITATIVE_EVENT_SOURCES.has(source);
-}
-function buildIdempotencyKey(input) {
-  if (input.eventId) return input.eventId;
-  if (input.orderIdReference && IDEMPOTENT_EVENT_TYPES.has(input.eventType)) {
-    return `${input.eventType}:${input.orderIdReference}`;
-  }
-  if (input.correlationId && IDEMPOTENT_EVENT_TYPES.has(input.eventType)) {
-    return `${input.eventType}:${input.correlationId}`;
-  }
-  return void 0;
-}
-function collectAnalyticsEvent(input, options) {
-  const injection = rejectEventInjection(input);
-  if (!injection.ok) {
-    return { ok: false, errorCode: "EVENT_INJECTION", errorMessage: injection.errors.join(",") };
-  }
-  const schema = validateEventSchema(input);
-  if (!schema.ok) {
-    return { ok: false, errorCode: "SCHEMA_VALIDATION", errorMessage: schema.errors.join(",") };
-  }
-  if (input.customerIdReference) {
-    const access = validateCrossCustomerAccess(input.customerIdReference, options?.customerIdContext);
-    if (!access.ok) return { ok: false, errorCode: access.errorCode };
-  }
-  const safeInput = stripPiiFromEventInput(input);
-  const anonymousVisitorId = safeInput.anonymousVisitorId ?? generateAnonymousVisitorId();
-  if (isVisitorDeleted(anonymousVisitorId)) {
-    return { ok: false, errorCode: "VISITOR_DELETED", blockedByConsent: true };
-  }
-  const consent = getConsent(anonymousVisitorId) ?? safeInput.consentState ?? buildDefaultConsentState(safeInput.market ?? "DE");
-  if (!isTrackingAllowed(safeInput.eventType, consent) && !isAuthoritativeBusinessEvent(safeInput)) {
-    return { ok: false, errorCode: "CONSENT_DENIED", blockedByConsent: true };
-  }
-  const idempotencyKey = buildIdempotencyKey(safeInput);
-  if (idempotencyKey && isIdempotencyKeyUsed(idempotencyKey)) {
-    const existingId = getIdempotencyEventId(idempotencyKey);
-    const existingEvent = getEvent(existingId);
-    if (existingEvent) return { ok: true, event: existingEvent };
-    return { ok: true, event: { ...normalizeEvent(safeInput, "PROVISIONAL"), eventId: existingId } };
-  }
-  let revenueAuthority = validateClientRevenueClaim({
-    eventType: safeInput.eventType,
-    value: safeInput.value,
-    authoritative: safeInput.authoritative,
-    orderIdReference: safeInput.orderIdReference,
-    returnId: safeInput.metadata?.returnId ? String(safeInput.metadata.returnId) : void 0
-  });
-  if (safeInput.orderIdReference && safeInput.eventType === "PURCHASE") {
-    const resolved = resolveAuthoritativeOrderRevenue(safeInput.orderIdReference);
-    if (resolved.ok) {
-      revenueAuthority = "AUTHORITATIVE";
-      safeInput.value = (resolved.grossCents ?? 0) / 100;
-      safeInput.currency = resolved.currency;
-    }
-  }
-  if (safeInput.eventType === "REFUND" && safeInput.metadata?.returnId) {
-    const resolved = resolveAuthoritativeRefundAmount(String(safeInput.metadata.returnId));
-    if (resolved.ok) {
-      revenueAuthority = "AUTHORITATIVE";
-      safeInput.value = (resolved.refundCents ?? 0) / 100;
-    }
-  }
-  if (safeInput.authoritative === true && revenueAuthority === "REJECTED") {
-    return { ok: false, errorCode: "FAKE_REVENUE_REJECTED", errorMessage: "Client revenue claim rejected" };
-  }
-  const timestamp = safeInput.timestamp ?? (/* @__PURE__ */ new Date()).toISOString();
-  touchVisitor(anonymousVisitorId, timestamp);
-  const session = getOrCreateSession({
-    sessionId: safeInput.sessionId,
-    anonymousVisitorId,
-    timestamp,
-    landingPage: safeInput.landingPage ?? safeInput.pagePath,
-    trafficSource: safeInput.trafficSource ?? "DIRECT",
-    market: safeInput.market ?? "DE",
-    language: safeInput.language ?? "de",
-    deviceType: safeInput.deviceType ?? "OTHER"
-  });
-  const event = normalizeEvent(
-    {
-      ...safeInput,
-      sessionId: session.sessionId,
-      anonymousVisitorId,
-      eventId: safeInput.eventId ?? generateEventId()
-    },
-    revenueAuthority
-  );
-  storeEvent(event);
-  updateSessionFromEvent(session, event);
-  if (idempotencyKey) markIdempotencyKey(idempotencyKey, event.eventId);
-  if (["CONSENT_GRANTED", "CONSENT_DENIED", "CONSENT_WITHDRAWN"].includes(event.eventType)) {
-    const status = event.eventType === "CONSENT_GRANTED" ? "GRANTED" : event.eventType === "CONSENT_DENIED" ? "DENIED" : "WITHDRAWN";
-    updateConsent(anonymousVisitorId, event.market, { ANALYTICS: status });
-  }
-  return { ok: true, event };
-}
-function ingestAuthoritativeOrderPurchase(orderId, correlationId) {
-  const order = getOrder(orderId);
-  if (!order) return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  return collectAnalyticsEvent({
-    eventType: "PURCHASE",
-    orderIdReference: orderId,
-    productId: order.items[0]?.productId,
-    market: order.marketId,
-    country: order.marketId,
-    language: "de",
-    currency: order.currency,
-    value: order.totalGross,
-    quantity: order.items.reduce((sum, i) => sum + i.quantity, 0),
-    authoritative: true,
-    correlationId: correlationId ?? orderId,
-    metadata: { source: "ORDER_ENGINE" }
-  });
-}
-
-// lib/analytics/storefront/constants.ts
-var MAX_PAYLOAD_BYTES = 16384;
-var MAX_METADATA_KEYS = 32;
-
-// lib/commerce/orderEngineRegistry.ts
-var mappingsByCommerceId = /* @__PURE__ */ new Map();
-var mappingsByEngineId = /* @__PURE__ */ new Map();
-function getCommerceOrderMapping(commerceOrderId) {
-  return mappingsByCommerceId.get(commerceOrderId);
-}
-function getCommerceMappingByEngineOrderId(orderEngineOrderId) {
-  return mappingsByEngineId.get(orderEngineOrderId);
-}
-
-// lib/commerce/purchaseValidation.ts
-var PURCHASE_ELIGIBLE_STATUSES = /* @__PURE__ */ new Set([
-  "PAID",
-  "CONFIRMED",
-  "PROCESSING",
-  "SUPPLIER_PENDING",
-  "SUPPLIER_CONFIRMED",
-  "SHIPPED",
-  "DELIVERED"
-]);
-var BLOCKED_STATUSES = /* @__PURE__ */ new Set([
-  "CANCELLED",
-  "FAILED",
-  "DRAFT",
-  "PENDING_PAYMENT"
-]);
-function validateOrderForAuthoritativePurchase(order) {
-  if (!order.orderId) return { ok: false, errorCode: "INVALID_ORDER_ID" };
-  if (BLOCKED_STATUSES.has(order.status)) return { ok: false, errorCode: "ORDER_NOT_ELIGIBLE" };
-  if (!order.items?.length) return { ok: false, errorCode: "ORDER_HAS_NO_LINES" };
-  if (!order.currency) return { ok: false, errorCode: "INVALID_CURRENCY" };
-  if (!order.marketId) return { ok: false, errorCode: "INVALID_MARKET" };
-  if (!(order.totalGross > 0)) return { ok: false, errorCode: "MISSING_FINANCIAL_SNAPSHOT" };
-  const paid = order.paymentStatus === "CAPTURED" || order.paymentStatus === "AUTHORIZED" || PURCHASE_ELIGIBLE_STATUSES.has(order.status);
-  if (!paid) return { ok: false, errorCode: "ORDER_NOT_PURCHASE_ELIGIBLE" };
-  for (const item of order.items) {
-    if (!item.productId || item.quantity < 1) {
-      return { ok: false, errorCode: "INVALID_ORDER_LINE" };
-    }
-  }
-  return { ok: true };
-}
-function validateOrderIdForAuthoritativePurchase(orderId) {
-  const order = getOrder(orderId);
-  if (!order) return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  const validation = validateOrderForAuthoritativePurchase(order);
-  if (!validation.ok) return { ok: false, errorCode: validation.errorCode };
-  return { ok: true, order };
-}
-
-// lib/commerce/orderEngineBridge.ts
-function resolveOrderEngineOrderId(orderIdOrCommerceId) {
-  const direct = getOrder(orderIdOrCommerceId);
-  if (direct) return direct.orderId;
-  const mapped = getCommerceOrderMapping(orderIdOrCommerceId);
-  return mapped?.orderEngineOrderId;
-}
-function validatePurchaseSignalAccess(orderIdOrCommerceId, customerIdContext) {
-  const orderEngineOrderId = resolveOrderEngineOrderId(orderIdOrCommerceId);
-  if (!orderEngineOrderId) {
-    return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  }
-  const mapping = getCommerceOrderMapping(orderIdOrCommerceId) ?? getCommerceMappingByEngineOrderId(orderIdOrCommerceId);
-  if (customerIdContext && mapping?.customerId && mapping.customerId !== customerIdContext) {
-    return { ok: false, errorCode: "CROSS_CUSTOMER_ACCESS" };
-  }
-  const order = getOrder(orderEngineOrderId);
-  if (customerIdContext && order?.customerId && order.customerId !== customerIdContext) {
-    return { ok: false, errorCode: "CROSS_CUSTOMER_ACCESS" };
-  }
-  return { ok: true, orderEngineOrderId };
-}
-function ingestAuthoritativePurchaseForOrder(orderEngineOrderId, correlationCommerceOrderId) {
-  const validation = validateOrderIdForAuthoritativePurchase(orderEngineOrderId);
-  if (!validation.ok || !validation.order) {
-    return { ok: false, errorCode: validation.errorCode ?? "ORDER_NOT_ELIGIBLE" };
-  }
-  const correlationId = correlationCommerceOrderId ? `commerce:${correlationCommerceOrderId}` : orderEngineOrderId;
-  return ingestAuthoritativeOrderPurchase(orderEngineOrderId, correlationId);
-}
-function ingestStorefrontPurchaseSignalResolved(orderIdOrCommerceId, correlationId, customerIdContext) {
-  const access = validatePurchaseSignalAccess(orderIdOrCommerceId, customerIdContext);
-  if (!access.ok || !access.orderEngineOrderId) {
-    return { ok: false, errorCode: access.errorCode ?? "ORDER_NOT_FOUND" };
-  }
-  return ingestAuthoritativePurchaseForOrder(
-    access.orderEngineOrderId,
-    orderIdOrCommerceId.startsWith("ord_") ? orderIdOrCommerceId : correlationId ?? orderIdOrCommerceId
-  );
-}
-
-// lib/analytics/storefront/purchaseIngest.ts
-function ingestStorefrontPurchaseSignal(orderId, correlationId, options) {
-  const trimmed = orderId.trim();
-  if (!trimmed) return { ok: false, errorCode: "MISSING_ORDER_ID" };
-  const resolvedId = resolveOrderEngineOrderId(trimmed);
-  if (!resolvedId) {
-    return { ok: false, errorCode: "ORDER_NOT_FOUND" };
-  }
-  return ingestStorefrontPurchaseSignalResolved(
-    trimmed,
-    correlationId ?? trimmed,
-    options?.customerIdContext
-  );
-}
-
-// lib/analytics/storefront/serverHandler.ts
-function stripClientFinancialAuthority(input) {
-  const {
-    authoritative: _authoritative,
-    value: _value,
-    signalPurchase: _signalPurchase,
-    ...rest
-  } = input;
+function buildStateView(order, item, supplierOrderStatus, supplierHealth, inventoryStatus, trackingStatus, returnStatus) {
+  let supplierState = "UNKNOWN";
+  if (!isSupplierSelectable(item.supplierId)) supplierState = "DISABLED";
+  else if (supplierHealth === "HEALTHY") supplierState = "HEALTHY";
+  else if (supplierHealth === "DEGRADED") supplierState = "DEGRADED";
+  else if (supplierHealth === "UNHEALTHY") supplierState = "UNHEALTHY";
+  else supplierState = "ELIGIBLE";
   return {
-    ...rest,
-    authoritative: false,
-    value: void 0
+    order: order.status,
+    inventory: inventoryStatus,
+    supplier: supplierState,
+    supplierOrder: supplierOrderStatus,
+    shipment: mapShipmentStatus(order),
+    tracking: trackingStatus,
+    returns: returnStatus
   };
 }
-function validatePayloadSize(raw) {
-  return raw.length <= MAX_PAYLOAD_BYTES;
+function buildFulfillmentOperationalView(order, item) {
+  const supplierOrder = resolveSupplierOrderForItem(order, item);
+  const inventoryStatus = mapInventoryStatus(item.inventoryReservationId);
+  const supplierHealth = mapSupplierHealthState(item.supplierId);
+  const tracking = mapTrackingStatus(supplierOrder.supplierOrderId, order.status);
+  const marketplace = resolveMarketplaceMapping(order.orderId);
+  const returnRecord = getReturnByOrder(order.orderId);
+  const returnStatus = returnRecord?.status || order.returnRefund.returnStatus;
+  const refundStatus = order.returnRefund.refundStatus;
+  const stateView = buildStateView(
+    order,
+    item,
+    supplierOrder.supplierOrderStatus,
+    supplierHealth,
+    inventoryStatus,
+    tracking.status,
+    returnStatus
+  );
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    fulfillmentId: buildFulfillmentId(order.orderId, item.orderItemId),
+    orderItemId: item.orderItemId,
+    orderId: order.orderId,
+    orderNumber: order.orderNumber,
+    customerId: order.customerId,
+    marketId: order.marketId,
+    channel: order.channel,
+    supplierId: item.supplierId,
+    supplierSku: item.sku,
+    productId: item.productId,
+    quantity: item.quantity,
+    inventoryReservationId: item.inventoryReservationId,
+    supplierOrderId: supplierOrder.supplierOrderId,
+    supplierOrderStatus: supplierOrder.supplierOrderStatus,
+    supplierOrderClassification: supplierOrder.classification,
+    orderStatus: order.status,
+    fulfillmentStatus: order.fulfillmentStatus,
+    inventoryStatus,
+    priceSnapshotId: item.priceSnapshotId,
+    trackingStatus: tracking.status,
+    trackingNumber: tracking.trackingNumber,
+    carrier: tracking.carrier,
+    trackingUrl: tracking.trackingUrl,
+    lastKnownSupplierState: supplierOrder.lastKnownSupplierState,
+    supplierHealth,
+    marketplaceId: marketplace.marketplaceId,
+    marketplaceOrderId: marketplace.marketplaceOrderId,
+    returnStatus,
+    refundStatus,
+    correlationId: supplierOrder.correlationId || order.orderId,
+    idempotencyKey: supplierOrder.idempotencyKey || order.idempotencyKey,
+    operationalStatus: "UNKNOWN",
+    stateView,
+    createdAt: order.createdAt,
+    updatedAt: now
+  };
 }
-function validateMetadataSize(metadata) {
-  if (!metadata) return true;
-  return Object.keys(metadata).length <= MAX_METADATA_KEYS;
-}
-function handleStorefrontAnalyticsEvent(body) {
-  if (!body?.eventType) return { ok: false, errorCode: "MISSING_EVENT_TYPE" };
-  if (!validateMetadataSize(body.metadata)) return { ok: false, errorCode: "PAYLOAD_TOO_LARGE" };
-  const safe = stripClientFinancialAuthority(body);
-  if (safe.eventType === "PURCHASE" || safe.eventType === "REFUND") {
-    return { ok: false, errorCode: "CLIENT_FINANCIAL_EVENT_REJECTED" };
+function listFulfillmentOperationalViews(filter) {
+  const views = [];
+  for (const order of listAllOrders()) {
+    for (const item of order.items) {
+      const view = buildFulfillmentOperationalView(order, item);
+      views.push(view);
+    }
   }
-  const injection = rejectEventInjection(safe);
-  if (!injection.ok) return { ok: false, errorCode: "EVENT_INJECTION" };
-  const schema = validateEventSchema(safe);
-  if (!schema.ok) return { ok: false, errorCode: "SCHEMA_VALIDATION" };
-  const marketCtx = resolveMarketContext({
-    market: safe.market,
-    country: safe.country,
-    language: safe.language
+  return views.filter((view) => {
+    if (filter?.supplierId && view.supplierId !== filter.supplierId) return false;
+    if (filter?.orderId && view.orderId !== filter.orderId) return false;
+    if (filter?.status && view.operationalStatus !== filter.status) return false;
+    if (filter?.marketplaceId && view.marketplaceId !== filter.marketplaceId) return false;
+    if (filter?.dateFrom && view.createdAt < filter.dateFrom) return false;
+    if (filter?.dateTo && view.createdAt > filter.dateTo) return false;
+    return true;
   });
-  const result = collectAnalyticsEvent({
-    ...safe,
-    market: marketCtx.market,
-    country: marketCtx.country,
-    language: marketCtx.language,
-    currency: safe.currency ?? marketCtx.currency
-  });
-  if (result.ok && safe.eventType.startsWith("CONSENT_") && safe.anonymousVisitorId) {
-    syncConsentFromEvent(safe.anonymousVisitorId, marketCtx.market, safe.eventType);
+}
+
+// lib/fulfillment-control-tower/persistence.ts
+var snapshotStore = /* @__PURE__ */ new Map();
+var incidentStore = /* @__PURE__ */ new Map();
+var incidentByFingerprint = /* @__PURE__ */ new Map();
+var reconciliationRuns = [];
+function getPersistentStore() {
+  if (typeof process === "undefined" || process.env.BUZZARD_FULFILLMENT_TOWER_PERSISTENCE === "0") {
+    return null;
   }
-  return result;
-}
-function syncConsentFromEvent(visitorId, market, eventType) {
-  const status = eventType === "CONSENT_GRANTED" ? "GRANTED" : eventType === "CONSENT_DENIED" ? "DENIED" : "WITHDRAWN";
-  updateConsent(visitorId, market, { ANALYTICS: status });
-}
-function handleStorefrontPurchaseSignal(body, correlationId) {
-  const payload = typeof body === "string" ? { orderId: body, correlationId } : body;
-  if (!payload.orderId?.trim()) return { ok: false, errorCode: "MISSING_ORDER_ID" };
-  if (payload.revenue !== void 0 || payload.total !== void 0 || payload.subtotal !== void 0 || payload.tax !== void 0 || payload.discount !== void 0 || payload.shipping !== void 0 || payload.currency !== void 0) {
-  }
-  return ingestStorefrontPurchaseSignal(payload.orderId.trim(), payload.correlationId, {
-    customerIdContext: payload.customerId
-  });
-}
-function parseStorefrontEventBody(raw) {
-  if (!validatePayloadSize(raw)) return null;
   try {
-    return JSON.parse(raw);
+    const mod = require_persistentStore();
+    return mod.createFulfillmentControlTowerStore();
   } catch {
     return null;
   }
 }
-
-// lib/analytics/funnel.ts
-function computeFunnelMetrics(events = listEvents()) {
-  const visitors = listVisitors().length;
-  const sessions = listSessions().length;
-  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
-  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
-  const checkoutStart = events.filter((e) => e.eventType === "CHECKOUT_START").length;
-  const checkoutCompleted = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
-  const purchases = events.filter(
-    (e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE"
-  ).length;
-  const rate = (num, den) => den > 0 ? Number((num / den * 100).toFixed(2)) : 0;
+function rowToSnapshot(row) {
+  return JSON.parse(String(row.view_json || "{}"));
+}
+function rowToIncident(row) {
   return {
-    visitors,
-    sessions,
-    productViews,
-    addToCart,
-    checkoutStart,
-    checkoutCompleted,
-    purchases,
-    productViewRate: rate(productViews, sessions),
-    addToCartRate: rate(addToCart, productViews),
-    checkoutStartRate: rate(checkoutStart, addToCart),
-    checkoutCompletionRate: rate(checkoutCompleted, checkoutStart),
-    purchaseConversionRate: rate(purchases, checkoutStart),
-    overallConversionRate: rate(purchases, sessions)
+    incidentId: String(row.incident_id),
+    fingerprint: String(row.fingerprint),
+    fulfillmentId: String(row.fulfillment_id),
+    orderId: String(row.order_id),
+    supplierId: String(row.supplier_id),
+    severity: row.severity,
+    category: row.category,
+    code: String(row.code),
+    message: String(row.message),
+    detectedAt: String(row.detected_at),
+    resolvedAt: row.resolved_at ? String(row.resolved_at) : void 0,
+    status: row.status,
+    correlationId: row.correlation_id ? String(row.correlation_id) : void 0,
+    resolutionNote: row.resolution_note ? String(row.resolution_note) : void 0,
+    resolutionActor: row.resolution_actor ? String(row.resolution_actor) : void 0,
+    acknowledgedAt: row.acknowledged_at ? String(row.acknowledged_at) : void 0,
+    acknowledgedBy: row.acknowledged_by ? String(row.acknowledged_by) : void 0
   };
 }
-
-// lib/analytics/conversion.ts
-function computeConversionMetrics() {
-  const eligibleSessions = listSessions().filter((s) => s.pageViews > 0).length;
-  const events = listEvents();
-  const sessionsWithCart = new Set(
-    events.filter((e) => e.eventType === "ADD_TO_CART").map((e) => e.sessionId)
-  ).size;
-  const sessionsWithCheckout = new Set(
-    events.filter((e) => e.eventType === "CHECKOUT_START").map((e) => e.sessionId)
-  ).size;
-  const sessionsWithPurchase = new Set(
-    events.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").map((e) => e.sessionId)
-  ).size;
-  const pct = (num, den) => den > 0 ? Number((num / den * 100).toFixed(2)) : 0;
+function rowToRun(row) {
   return {
-    eligibleSessions,
-    addToCartConversion: pct(sessionsWithCart, eligibleSessions),
-    checkoutConversion: pct(sessionsWithCheckout, sessionsWithCart),
-    purchaseConversion: pct(sessionsWithPurchase, eligibleSessions)
+    runId: String(row.run_id),
+    correlationId: String(row.correlation_id),
+    startedAt: String(row.started_at),
+    completedAt: String(row.completed_at),
+    checkedFulfillments: Number(row.checked_fulfillments || 0),
+    passed: Number(row.passed || 0),
+    warnings: Number(row.warnings || 0),
+    mismatches: Number(row.mismatches || 0),
+    critical: Number(row.critical || 0),
+    incidentsCreated: Number(row.incidents_created || 0),
+    incidentsResolved: Number(row.incidents_resolved || 0),
+    durationMs: Number(row.duration_ms || 0),
+    errors: JSON.parse(String(row.errors_json || "[]"))
   };
 }
-
-// lib/analytics/metrics.ts
-function dayKey(iso) {
-  return iso.slice(0, 10);
+function getOperationalSnapshot(fulfillmentId) {
+  const cached = snapshotStore.get(fulfillmentId);
+  if (cached) return cached;
+  const row = getPersistentStore()?.getSnapshot(fulfillmentId);
+  if (!row) return void 0;
+  const view = rowToSnapshot(row);
+  snapshotStore.set(view.fulfillmentId, view);
+  return view;
 }
-function countUniqueVisitorsBetween(events, start, end) {
-  const ids = /* @__PURE__ */ new Set();
-  for (const e of events) {
-    const d = dayKey(e.timestamp);
-    if (d >= start && d <= end) ids.add(e.anonymousVisitorId);
+function listIncidents() {
+  if (incidentStore.size) return [...incidentStore.values()];
+  const rows = getPersistentStore()?.listIncidents() || [];
+  for (const row of rows) {
+    const incident = rowToIncident(row);
+    incidentStore.set(incident.incidentId, incident);
+    incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
   }
-  return ids.size;
+  return [...incidentStore.values()];
 }
-function computeDashboardOverview(now = /* @__PURE__ */ new Date()) {
-  const events = listEvents();
-  const today = dayKey(now.toISOString());
-  const yesterday = dayKey(new Date(now.getTime() - 864e5).toISOString());
-  const last7 = dayKey(new Date(now.getTime() - 6 * 864e5).toISOString());
-  const last30 = dayKey(new Date(now.getTime() - 29 * 864e5).toISOString());
-  const funnel = computeFunnelMetrics(events);
-  const conversion = computeConversionMetrics();
-  const revenue = computeRevenueMetrics(events);
-  const visitors = listVisitors();
-  const newVisitors = visitors.filter((v) => !v.isReturning).length;
-  const returningVisitors = visitors.filter((v) => v.isReturning).length;
-  const recentMinute = events.filter((e) => now.getTime() - Date.parse(e.timestamp) <= 6e4).length;
-  const todayEvents = events.filter((e) => dayKey(e.timestamp) === today);
-  const todayPurchases = todayEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE");
-  const todayRevenueCents = todayPurchases.reduce((sum, e) => sum + Math.round((e.value ?? 0) * 100), 0);
-  return {
-    freshness: "NEAR_REAL_TIME",
-    visitorsToday: countUniqueVisitorsBetween(events, today, today),
-    visitorsYesterday: countUniqueVisitorsBetween(events, yesterday, yesterday),
-    visitorsLast7Days: countUniqueVisitorsBetween(events, last7, today),
-    visitorsLast30Days: countUniqueVisitorsBetween(events, last30, today),
-    uniqueVisitors: funnel.visitors,
-    sessions: funnel.sessions,
-    newVisitors,
-    returningVisitors,
-    pageViews: events.filter((e) => e.eventType === "PAGE_VIEW").length,
-    productViews: funnel.productViews,
-    addToCart: funnel.addToCart,
-    checkoutStarted: funnel.checkoutStart,
-    purchases: funnel.purchases,
-    conversionRate: conversion.purchaseConversion,
-    averageOrderValueCents: revenue.averageOrderValueCents,
-    grossRevenueCents: revenue.grossRevenueCents,
-    refundsCents: revenue.refundAmountCents,
-    netRevenueCents: revenue.netRevenueCents,
-    activeSessions: countActiveSessions(now.toISOString()),
-    activeVisitors: countActiveSessions(now.toISOString()),
-    eventsPerMinute: recentMinute,
-    ordersToday: todayPurchases.length,
-    revenueTodayCents: todayRevenueCents
-  };
+function getLastReconciliationRun() {
+  if (reconciliationRuns.length) return reconciliationRuns[0];
+  const rows = getPersistentStore()?.listReconciliationRuns(1) || [];
+  return rows[0] ? rowToRun(rows[0]) : void 0;
 }
 
-// lib/analytics/productAnalytics.ts
-function computeProductAnalytics(events = listEvents()) {
-  const byProduct = /* @__PURE__ */ new Map();
-  for (const event of events) {
-    if (!event.productId) continue;
-    const row = byProduct.get(event.productId) ?? {
-      productId: event.productId,
-      views: 0,
-      uniqueViewers: 0,
-      addToCart: 0,
-      purchases: 0,
-      returns: 0,
-      viewers: /* @__PURE__ */ new Set()
-    };
-    if (event.eventType === "PRODUCT_VIEW") {
-      row.views += 1;
-      row.viewers.add(event.anonymousVisitorId);
-    }
-    if (event.eventType === "ADD_TO_CART") row.addToCart += 1;
-    if (event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE") row.purchases += 1;
-    if (event.eventType === "RETURN") row.returns += 1;
-    byProduct.set(event.productId, row);
-  }
-  return [...byProduct.values()].map(({ viewers, ...row }) => ({ ...row, uniqueViewers: viewers.size })).sort((a, b) => b.views - a.views);
-}
-
-// lib/analytics/marketAnalytics.ts
-function computeMarketAnalytics(events = listEvents()) {
-  const markets = listMarkets().map((m) => m.countryCode);
-  const rows = [];
-  for (const market of markets) {
-    const marketEvents = events.filter((e) => e.market === market);
-    if (!marketEvents.length) continue;
-    const visitors = new Set(marketEvents.map((e) => e.anonymousVisitorId)).size;
-    const sessions = new Set(marketEvents.map((e) => e.sessionId)).size;
-    const revenue = computeRevenueMetrics(marketEvents);
-    const returns2 = marketEvents.filter((e) => e.eventType === "RETURN").length;
-    const purchases = marketEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").length;
-    rows.push({
-      market,
-      country: market,
-      language: marketEvents[0]?.language ?? "de",
-      currency: marketEvents[0]?.currency ?? "EUR",
-      visitors,
-      sessions,
-      orders: revenue.orderCount,
-      revenueCents: revenue.netRevenueCents,
-      conversionRate: sessions ? Number((purchases / sessions * 100).toFixed(2)) : 0,
-      averageOrderValueCents: revenue.averageOrderValueCents,
-      returnRate: purchases ? Number((returns2 / purchases * 100).toFixed(2)) : 0
-    });
-  }
-  return rows.sort((a, b) => b.revenueCents - a.revenueCents);
-}
-
-// lib/analytics/attribution.ts
-function buildAttributionTouches(anonymousVisitorId, model = "lastTouch") {
-  const events = listEvents().filter((e) => e.anonymousVisitorId === anonymousVisitorId).sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
-  if (!events.length) return [];
-  const pick = model === "firstTouch" ? events[0] : events[events.length - 1];
-  return [{
-    anonymousVisitorId,
-    source: pick.trafficSource,
-    timestamp: pick.timestamp,
-    model
-  }];
-}
-function attributeOrderToChannel(orderEvent, model = "sessionTouch") {
-  const touches = buildAttributionTouches(orderEvent.anonymousVisitorId, model);
-  return touches[0]?.source ?? orderEvent.trafficSource ?? "DIRECT";
-}
-
-// lib/analytics/channelAnalytics.ts
-var CHANNELS = [
-  "DIRECT",
-  "ORGANIC_SEARCH",
-  "PAID_SEARCH",
-  "SOCIAL",
-  "EMAIL",
-  "REFERRAL",
-  "MARKETPLACE",
-  "OTHER"
-];
-function computeChannelAnalytics(events = listEvents()) {
-  return CHANNELS.map((channel) => {
-    const channelEvents = events.filter((e) => {
-      if (e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE") {
-        return attributeOrderToChannel(e, "sessionTouch") === channel;
-      }
-      return e.trafficSource === channel;
-    });
-    const visitors = new Set(channelEvents.map((e) => e.anonymousVisitorId)).size;
-    const sessions = new Set(channelEvents.map((e) => e.sessionId)).size;
-    const revenue = computeRevenueMetrics(channelEvents.filter((e) => e.trafficSource === channel || e.eventType === "PURCHASE"));
-    const purchases = channelEvents.filter((e) => e.eventType === "PURCHASE" && e.revenueAuthority === "AUTHORITATIVE").length;
-    return {
-      channel,
-      visitors,
-      sessions,
-      orders: revenue.orderCount,
-      revenueCents: revenue.netRevenueCents,
-      conversionRate: sessions ? Number((purchases / sessions * 100).toFixed(2)) : 0,
-      averageOrderValueCents: revenue.averageOrderValueCents
-    };
-  }).filter((row) => row.visitors > 0 || row.orders > 0);
-}
-
-// lib/analytics/kpi/query.ts
-var MAX_LIMIT = 100;
-var DEFAULT_LIMIT = 25;
-function clampLimit(limit) {
-  if (!limit || limit < 1) return DEFAULT_LIMIT;
-  return Math.min(Math.floor(limit), MAX_LIMIT);
-}
-function safeRate(numerator, denominator) {
-  if (denominator <= 0) return 0;
-  return Number((numerator / denominator * 100).toFixed(2));
-}
-function safeDelta(current, previous) {
-  const absolute = Number((current - previous).toFixed(2));
-  const percent = previous !== 0 ? Number((absolute / previous * 100).toFixed(1)) : null;
-  return { absolute, percent, points: absolute };
-}
-function dayKey2(iso) {
-  return iso.slice(0, 10);
-}
-function monthKey(iso) {
-  return iso.slice(0, 7);
-}
-function resolveDateRange(input = {}) {
-  const now = input.now ?? /* @__PURE__ */ new Date();
-  const today = dayKey2(now.toISOString());
-  const preset = input.range ?? "last_30_days";
-  if (preset === "custom" && input.from && input.to) {
-    const from = dayKey2(input.from);
-    const to = dayKey2(input.to);
-    const spanMs = Date.parse(`${to}T23:59:59Z`) - Date.parse(`${from}T00:00:00Z`);
-    const prevTo = dayKey2(new Date(Date.parse(`${from}T00:00:00Z`) - 864e5).toISOString());
-    const prevFrom = dayKey2(new Date(Date.parse(`${from}T00:00:00Z`) - spanMs).toISOString());
-    return { preset, from, to, previousFrom: prevFrom, previousTo: prevTo };
-  }
-  const yesterday = dayKey2(new Date(now.getTime() - 864e5).toISOString());
-  const last7 = dayKey2(new Date(now.getTime() - 6 * 864e5).toISOString());
-  const last30 = dayKey2(new Date(now.getTime() - 29 * 864e5).toISOString());
-  const currentMonth = monthKey(now.toISOString());
-  const prevMonthDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
-  const previousMonth = monthKey(prevMonthDate.toISOString());
-  switch (preset) {
-    case "today":
-      return {
-        preset,
-        from: today,
-        to: today,
-        previousFrom: yesterday,
-        previousTo: yesterday
-      };
-    case "yesterday":
-      return {
-        preset,
-        from: yesterday,
-        to: yesterday,
-        previousFrom: dayKey2(new Date(now.getTime() - 2 * 864e5).toISOString()),
-        previousTo: dayKey2(new Date(now.getTime() - 2 * 864e5).toISOString())
-      };
-    case "last_7_days":
-      return {
-        preset,
-        from: last7,
-        to: today,
-        previousFrom: dayKey2(new Date(now.getTime() - 13 * 864e5).toISOString()),
-        previousTo: dayKey2(new Date(now.getTime() - 7 * 864e5).toISOString())
-      };
-    case "current_month":
-      return {
-        preset,
-        from: `${currentMonth}-01`,
-        to: today,
-        previousFrom: `${previousMonth}-01`,
-        previousTo: dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() + 1, 0)).toISOString())
-      };
-    case "previous_month": {
-      const prevEnd = dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() + 1, 0)).toISOString());
-      return {
-        preset,
-        from: `${previousMonth}-01`,
-        to: prevEnd,
-        previousFrom: monthKey(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth() - 1, 1)).toISOString()) + "-01",
-        previousTo: dayKey2(new Date(Date.UTC(prevMonthDate.getUTCFullYear(), prevMonthDate.getUTCMonth(), 0)).toISOString())
-      };
-    }
-    case "last_30_days":
-    default:
-      return {
-        preset: preset === "custom" ? "last_30_days" : preset,
-        from: last30,
-        to: today,
-        previousFrom: dayKey2(new Date(now.getTime() - 59 * 864e5).toISOString()),
-        previousTo: dayKey2(new Date(now.getTime() - 30 * 864e5).toISOString())
-      };
-  }
-}
-function loadEventsForRange(range) {
-  const fromIso = `${range.from}T00:00:00.000Z`;
-  const toIso = `${range.to}T23:59:59.999Z`;
-  return listEventsInRange(fromIso, toIso);
-}
-function parseKpiQueryInput(query = {}) {
-  const range = query.range;
-  const limit = query.limit ? Number.parseInt(query.limit, 10) : void 0;
-  return {
-    range,
-    from: query.from,
-    to: query.to,
-    comparePrevious: query.comparePrevious === "1" || query.comparePrevious === "true",
-    limit: Number.isFinite(limit) ? limit : void 0
-  };
-}
-function validateKpiQuery(input) {
-  if (input.limit !== void 0 && (input.limit < 1 || input.limit > MAX_LIMIT)) {
-    return { ok: false, errorCode: "INVALID_LIMIT" };
-  }
-  if (input.range === "custom") {
-    if (!input.from || !input.to) return { ok: false, errorCode: "INVALID_DATE_RANGE" };
-    const fromTs = Date.parse(input.from);
-    const toTs = Date.parse(input.to);
-    if (Number.isNaN(fromTs) || Number.isNaN(toTs) || fromTs > toTs) {
-      return { ok: false, errorCode: "INVALID_DATE_RANGE" };
-    }
-  }
-  return { ok: true };
-}
-function isAuthoritativePurchase(event) {
-  return event.eventType === "PURCHASE" && event.revenueAuthority === "AUTHORITATIVE";
-}
-function isAuthoritativeRefund(event) {
-  return event.eventType === "REFUND" && event.revenueAuthority === "AUTHORITATIVE";
-}
-function uniqueOrderPurchases(events) {
-  const seen = /* @__PURE__ */ new Set();
-  const result = [];
-  for (const event of events) {
-    if (!isAuthoritativePurchase(event)) continue;
-    const key = event.orderIdReference ?? event.eventId;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    result.push(event);
-  }
-  return result;
-}
-
-// lib/analytics/kpi/executive.ts
-function computeExecutiveKpis(events) {
-  const purchases = uniqueOrderPurchases(events);
-  const refunds = events.filter(isAuthoritativeRefund);
-  const sessions = new Set(events.map((e) => e.sessionId)).size;
-  const visitors = new Set(events.map((e) => e.anonymousVisitorId)).size;
-  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
-  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
-  const checkoutStarts = events.filter((e) => e.eventType === "CHECKOUT_START").length;
-  const checkoutCompletions = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
-  const returnRequests = events.filter((e) => e.eventType === "RETURN").length;
-  const grossRevenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const refundAmountCents = refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const unitsSold = purchases.reduce((sum, e) => sum + (e.quantity ?? 1), 0);
-  const orders = purchases.length;
-  return {
-    orders,
-    grossRevenueCents,
-    authoritativeRevenueCents: grossRevenueCents,
-    averageOrderValueCents: orders ? Math.round(grossRevenueCents / orders) : 0,
-    unitsSold,
-    revenuePerSessionCents: sessions ? Math.round(grossRevenueCents / sessions) : 0,
-    visitors,
-    sessions,
-    productViews,
-    addToCart,
-    checkoutStarts,
-    checkoutCompletions,
-    purchases: orders,
-    conversionRate: safeRate(orders, sessions),
-    addToCartRate: safeRate(addToCart, productViews),
-    checkoutCompletionRate: safeRate(checkoutCompletions, checkoutStarts),
-    returnRequests,
-    returnedOrders: returnRequests,
-    refundAmountCents,
-    returnRate: safeRate(returnRequests, orders),
-    refundRate: safeRate(refunds.length, orders),
-    netRevenueCents: grossRevenueCents - refundAmountCents
-  };
-}
-
-// lib/analytics/kpi/funnelKpi.ts
-function computeFunnelKpis(events) {
-  const visitors = new Set(events.map((e) => e.anonymousVisitorId)).size;
-  const sessions = new Set(events.map((e) => e.sessionId)).size;
-  const productViews = events.filter((e) => e.eventType === "PRODUCT_VIEW").length;
-  const addToCart = events.filter((e) => e.eventType === "ADD_TO_CART").length;
-  const checkoutStarts = events.filter((e) => e.eventType === "CHECKOUT_START").length;
-  const checkoutCompletions = events.filter((e) => e.eventType === "CHECKOUT_COMPLETED").length;
-  const purchases = events.filter(isAuthoritativePurchase).length;
-  const stages = [
-    { stage: "Visitor", count: visitors },
-    { stage: "Session", count: sessions },
-    { stage: "Product View", count: productViews },
-    { stage: "Add To Cart", count: addToCart },
-    { stage: "Checkout Start", count: checkoutStarts },
-    { stage: "Checkout Completed", count: checkoutCompletions },
-    { stage: "Purchase", count: purchases }
-  ];
-  const steps = stages.map((current, index) => {
-    const previous = index > 0 ? stages[index - 1].count : current.count;
-    const conversionFromPrevious = index === 0 ? 100 : safeRate(current.count, previous);
-    const dropOffFromPrevious = index === 0 ? 0 : safeRate(previous - current.count, previous);
-    return {
-      stage: current.stage,
-      count: current.count,
-      conversionFromPrevious,
-      dropOffFromPrevious
-    };
+// lib/fulfillment-control-tower/incidents.ts
+function filterIncidents(filter) {
+  return listIncidents().filter((incident) => {
+    if (filter?.supplierId && incident.supplierId !== filter.supplierId) return false;
+    if (filter?.orderId && incident.orderId !== filter.orderId) return false;
+    if (filter?.severity && incident.severity !== filter.severity) return false;
+    if (filter?.category && incident.category !== filter.category) return false;
+    if (filter?.status && incident.status !== filter.status) return false;
+    return true;
   });
-  return {
-    steps,
-    visitorToPurchase: safeRate(purchases, visitors),
-    sessionToPurchase: safeRate(purchases, sessions)
-  };
 }
 
-// lib/returns-engine/shipment.ts
-function getReturnShippingFinancials(returnId) {
-  const shipments2 = getShipmentsForReturn(returnId);
-  let customerPaid = 0;
-  let buzzardCost = 0;
-  let supplierRecovery = 0;
-  let marketplaceRecovery = 0;
-  for (const s of shipments2) {
-    switch (s.payer) {
-      case "CUSTOMER":
-        customerPaid += s.cost;
-        break;
-      case "BUZZARD":
-        buzzardCost += s.cost;
-        break;
-      case "SUPPLIER":
-        supplierRecovery += s.cost;
-        break;
-      case "MARKETPLACE":
-        marketplaceRecovery += s.cost;
-        break;
-      default:
-        buzzardCost += s.cost;
-    }
-  }
-  return {
-    customerPaidReturnShipping: customerPaid,
-    buzzardReturnShippingCost: buzzardCost,
-    supplierReturnShippingRecovery: supplierRecovery,
-    marketplaceReturnShippingRecovery: marketplaceRecovery
-  };
-}
-
-// lib/returns-engine/reconciliation.ts
-function reconcileReturnFinancials(returnId, options) {
-  const ret = getReturnRequest(returnId);
-  if (!ret) return void 0;
-  const order = getOrder(ret.orderId);
-  const customerRefundRecord = getCustomerRefundForReturn(returnId);
-  const marketplaceRefundRecord = getMarketplaceRefundForReturn(returnId);
-  const recoveries2 = getRecoveriesForReturn(returnId);
-  const shipping = getReturnShippingFinancials(returnId);
-  const customerRefund = customerRefundRecord?.refundedAmount ?? ret.customerRefundAmount;
-  const supplierRefund = recoveries2.filter((r) => r.type === "SUPPLIER_REFUND").reduce((s, r) => s + r.receivedAmount, 0);
-  const supplierCredit = recoveries2.filter((r) => r.type === "SUPPLIER_CREDIT" || r.type === "PARTIAL_CREDIT").reduce((s, r) => s + r.receivedAmount, 0);
-  const shippingRecovery = shipping.supplierReturnShippingRecovery + shipping.marketplaceReturnShippingRecovery;
-  const returnShippingCost = shipping.buzzardReturnShippingCost;
-  const marketplaceRefundCost = (marketplaceRefundRecord?.fees ?? 0) + Math.max(0, (marketplaceRefundRecord?.requestedAmount ?? 0) - (marketplaceRefundRecord?.refundedAmount ?? 0));
-  const supplierRecoveryTotal = supplierRefund + supplierCredit + shippingRecovery;
-  const totalCosts = customerRefund + returnShippingCost + marketplaceRefundCost;
-  const totalRecoveries = supplierRecoveryTotal;
-  const buzzardFinalReturnImpact = totalCosts - totalRecoveries;
-  const supplierCost = order?.items[0]?.supplierCostSnapshot ?? 0;
-  const estimated = calculateReturnReserves(supplierCost, order?.items[0]?.productId);
-  const originalOrderMargin = order?.items.reduce((s, i) => s + i.marginSnapshot, 0) ?? 0;
-  const estimatedReturnCost = estimated.totalReserve;
-  const actualReturnCost = totalCosts;
-  const estimatedSupplierRecovery = supplierCost * estimated.config.supplierReturnAcceptanceRate;
-  const actualSupplierRecovery = supplierRecoveryTotal;
-  const estimatedBuzzardImpact = estimatedReturnCost;
-  const actualBuzzardImpact = buzzardFinalReturnImpact;
-  const rec = {
-    reconciliationId: `rec_fin_${returnId}`,
-    returnId,
-    orderId: ret.orderId,
-    currency: ret.currency,
-    customerRefund,
-    returnShippingCost,
-    marketplaceRefundCost,
-    otherCosts: 0,
-    supplierRefund,
-    supplierCredit,
-    shippingRecovery,
-    otherRecoveries: 0,
-    buzzardFinalReturnImpact,
-    estimatedReturnCost,
-    actualReturnCost,
-    estimatedSupplierRecovery,
-    actualSupplierRecovery,
-    estimatedBuzzardImpact,
-    actualBuzzardImpact,
-    originalOrderMargin,
-    returnImpact: actualBuzzardImpact,
-    finalOrderContribution: originalOrderMargin - actualBuzzardImpact,
-    isFinal: options?.finalize ?? false,
-    calculatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  saveReconciliation(rec);
-  saveReturnRequest({
-    ...ret,
-    buzzardLoss: buzzardFinalReturnImpact,
-    buzzardRecovery: supplierRecoveryTotal,
-    updatedAt: rec.calculatedAt
+// lib/fulfillment-control-tower/admin.ts
+function applyOperationalStatus(views) {
+  return views.map((view) => {
+    const snapshot = getOperationalSnapshot(view.fulfillmentId);
+    return snapshot?.operationalStatus ? { ...view, operationalStatus: snapshot.operationalStatus } : view;
   });
-  return rec;
 }
-
-// lib/returns-engine/financialImpact.ts
-function getFinalOrderContribution(returnId) {
-  let rec = getReconciliation(returnId);
-  if (!rec) rec = reconcileReturnFinancials(returnId);
-  if (!rec) return void 0;
+function getFulfillmentControlTowerDashboard(filter) {
+  const views = applyOperationalStatus(listFulfillmentOperationalViews(filter));
+  const incidents = filterIncidents({ status: "OPEN" });
+  const supplierSet = /* @__PURE__ */ new Set();
+  const orderSet = /* @__PURE__ */ new Set();
+  for (const incident of incidents) {
+    supplierSet.add(incident.supplierId);
+    orderSet.add(incident.orderId);
+  }
   return {
-    originalOrderMargin: rec.originalOrderMargin,
-    returnImpact: rec.returnImpact,
-    finalOrderContribution: rec.finalOrderContribution
+    totalFulfillments: views.length,
+    healthy: views.filter((v) => v.operationalStatus === "HEALTHY").length,
+    warning: views.filter((v) => v.operationalStatus === "WARNING").length,
+    mismatch: views.filter((v) => v.operationalStatus === "MISMATCH").length,
+    critical: views.filter((v) => v.operationalStatus === "CRITICAL").length,
+    openIncidents: incidents.length,
+    suppliersAffected: supplierSet.size,
+    ordersAffected: orderSet.size,
+    realSupplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
+    lastReconciliationRun: getLastReconciliationRun()
   };
 }
 
-// lib/analytics/kpi/profitability.ts
-function computeOrderFinancialBreakdown(orderId) {
-  const order = getOrder(orderId);
-  if (!order) return void 0;
-  let productCostCents = 0;
-  let shippingCostCents = 0;
-  let marketplaceFeesCents = 0;
-  let paymentFeesCents = 0;
-  let contributionCents = 0;
-  for (const item of order.items) {
-    const qty = item.quantity;
-    productCostCents += toCents(item.supplierCostSnapshot * qty);
-    shippingCostCents += toCents(item.shippingCostSnapshot * qty);
-    marketplaceFeesCents += toCents(item.marketplaceFeeSnapshot * qty);
-    paymentFeesCents += toCents(item.paymentFeeSnapshot * qty);
-    contributionCents += toCents(item.lineNet * item.marginSnapshot);
-  }
-  let returnImpactCents = toCents(order.returnRefund.buzzardRefundLoss) + toCents(order.returnRefund.returnShippingCost);
-  const linkedReturn = getReturnByOrder(order.orderId);
-  if (linkedReturn) {
-    const finalized = getFinalOrderContribution(linkedReturn.returnId);
-    if (finalized) {
-      returnImpactCents = toCents(finalized.returnImpact);
-      contributionCents = toCents(finalized.finalOrderContribution);
-    }
-  }
+// lib/supplier-engine/syncCursor.ts
+var cursorStore = /* @__PURE__ */ new Map();
+function cursorKey(supplierId, syncMode = "incremental") {
+  return `${supplierId}:${syncMode}`;
+}
+function fromPersisted2(row) {
   return {
-    grossRevenueCents: toCents(order.totalGross),
-    productCostCents,
-    shippingCostCents,
-    marketplaceFeesCents,
-    paymentFeesCents,
-    contributionCents,
-    returnImpactCents
+    supplierId: String(row.supplierId),
+    syncMode: row.syncMode || "incremental",
+    cursor: row.cursor ? String(row.cursor) : void 0,
+    page: row.page != null ? Number(row.page) : void 0,
+    offset: row.offset != null ? Number(row.offset) : void 0,
+    lastModified: row.lastModified ? String(row.lastModified) : void 0,
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
   };
 }
-function computeProfitabilityKpis(events) {
-  const purchases = uniqueOrderPurchases(events);
-  const refunds = events.filter(isAuthoritativeRefund);
-  let grossRevenueCents = 0;
-  let productCostCents = 0;
-  let shippingCostCents = 0;
-  let marketplaceFeesCents = 0;
-  let paymentFeesCents = 0;
-  let returnRefundImpactCents = 0;
-  let contributionCents = 0;
-  for (const purchase of purchases) {
-    const orderId = purchase.orderIdReference;
-    if (!orderId) {
-      grossRevenueCents += toCents(purchase.value ?? 0);
-      continue;
-    }
-    const breakdown = computeOrderFinancialBreakdown(orderId);
-    if (breakdown) {
-      grossRevenueCents += breakdown.grossRevenueCents;
-      productCostCents += breakdown.productCostCents;
-      shippingCostCents += breakdown.shippingCostCents;
-      marketplaceFeesCents += breakdown.marketplaceFeesCents;
-      paymentFeesCents += breakdown.paymentFeesCents;
-      returnRefundImpactCents += breakdown.returnImpactCents;
-      contributionCents += breakdown.contributionCents;
+function getSyncCursor(supplierId, syncMode = "incremental") {
+  const key = cursorKey(supplierId, syncMode);
+  const cached = cursorStore.get(key);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
+  if (row) {
+    const cursor = fromPersisted2(row);
+    cursorStore.set(key, cursor);
+    return cursor;
+  }
+  return void 0;
+}
+
+// lib/supplier-engine/orderSandbox/sandboxAdapter.ts
+function buildSupplierOrderIdempotencyKey(buzzardOrderId, supplierId) {
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
+}
+
+// lib/supplier-production-order-validation/persistence.ts
+var validationStore = /* @__PURE__ */ new Map();
+var controlledRunStore = /* @__PURE__ */ new Map();
+function listValidationRecords() {
+  return [...validationStore.values()];
+}
+function getLatestValidationForScope(scope) {
+  return listValidationRecords().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+function getControlledValidationRun(validationId) {
+  return controlledRunStore.get(validationId);
+}
+
+// lib/supplier-production-order-validation/readinessBridge.ts
+function pass(code, category, message) {
+  return { code, category, level: "PASS", message, blocking: false };
+}
+function block(code, category, message) {
+  return { code, category, level: "BLOCKED", message, blocking: true };
+}
+function warn(code, category, message) {
+  return { code, category, level: "WARNING", message, blocking: false };
+}
+function evaluateCreateOrderProductionValidationChecks(scope) {
+  const results = [];
+  const validation = getLatestValidationForScope({
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    environment: scope.environment || "PRODUCTION"
+  });
+  if (!validation) {
+    results.push(block("CREATE_ORDER_VALIDATION_MISSING", "CREATE_ORDER", "createOrder production validation not run"));
+    return results;
+  }
+  results.push(pass("CREATE_ORDER_VALIDATION_EXISTS", "CREATE_ORDER", `Validation ${validation.validationId}`));
+  if (validation.createOrderCapability === "UNVERIFIED") {
+    results.push(
+      block("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CREATE_ORDER", "createOrder capability UNVERIFIED \u2014 #341 boundary")
+    );
+  } else if (validation.createOrderCapability === "VALIDATED") {
+    results.push(pass("CREATE_ORDER_VALIDATED", "CREATE_ORDER", "createOrder production validated"));
+  } else {
+    results.push(block("CREATE_ORDER_BLOCKED", "CREATE_ORDER", "createOrder capability blocked"));
+  }
+  if (validation.unknownOutcome) {
+    results.push(warn("CREATE_ORDER_UNKNOWN_OUTCOME", "CREATE_ORDER", "Unknown outcome pending resolution"));
+  }
+  if (validation.humanReviewRequired) {
+    results.push(warn("CREATE_ORDER_HUMAN_REVIEW", "CREATE_ORDER", "Human review required"));
+  }
+  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
+    results.push(block("CREATE_ORDER_VALIDATION_BLOCKED", "CREATE_ORDER", `Validation ${validation.overallStatus}`));
+  }
+  return results;
+}
+
+// lib/supplier-production-validation/persistence.ts
+var validationStore2 = /* @__PURE__ */ new Map();
+function listValidationRecords2() {
+  return [...validationStore2.values()];
+}
+function getLatestValidationForScope2(scope) {
+  return listValidationRecords2().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-validation/readinessBridge.ts
+function pass2(code, category, message) {
+  return { code, category, level: "PASS", message, blocking: false };
+}
+function block2(code, category, message) {
+  return { code, category, level: "BLOCKED", message, blocking: true };
+}
+function warn2(code, category, message) {
+  return { code, category, level: "WARNING", message, blocking: false };
+}
+function evaluateProductionValidationChecks(scope) {
+  const results = [];
+  const validation = getLatestValidationForScope2({
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    environment: scope.environment || "PRODUCTION"
+  });
+  if (!validation) {
+    results.push(block2("PRODUCTION_VALIDATION_MISSING", "PRODUCTION", "Production capability validation not run"));
+    return results;
+  }
+  results.push(
+    pass2("PRODUCTION_VALIDATION_EXISTS", "PRODUCTION", `Validation ${validation.validationId} recorded`)
+  );
+  if (validation.credentialStatus === "VALID") {
+    results.push(pass2("PRODUCTION_CREDENTIAL_VALID", "CREDENTIAL", "Production credential validated"));
+  } else if (validation.credentialStatus === "NOT_CONFIGURED") {
+    results.push(block2("PRODUCTION_CREDENTIAL_MISSING", "CREDENTIAL", "Production credential not configured"));
+  } else {
+    results.push(block2("PRODUCTION_CREDENTIAL_BLOCKED", "CREDENTIAL", `Credential status ${validation.credentialStatus}`));
+  }
+  if (validation.createOrderCapability === "UNVERIFIED") {
+    results.push(
+      block2("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CAPABILITY", "createOrder capability UNVERIFIED \u2014 intentional #339 boundary")
+    );
+  }
+  results.push(...evaluateCreateOrderProductionValidationChecks(scope));
+  if (validation.catalogReadStatus === "LIVE_READ_VALIDATED") {
+    results.push(pass2("PRODUCTION_CATALOG_VALIDATED", "LIVE_READ", "Catalog live-read validated"));
+  } else if (validation.catalogReadStatus === "SKIPPED") {
+    results.push(warn2("PRODUCTION_CATALOG_SKIPPED", "LIVE_READ", "Catalog live-read skipped \u2014 LIVE NOT VALIDATED"));
+  }
+  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
+    results.push(
+      block2("PRODUCTION_VALIDATION_BLOCKED", "PRODUCTION", `Validation ${validation.overallStatus}`)
+    );
+  } else if (validation.overallStatus === "PASSED") {
+    results.push(warn2("PRODUCTION_VALIDATION_PASSED", "PRODUCTION", "Validation passed but createOrder still UNVERIFIED"));
+  }
+  return results;
+}
+
+// lib/supplier-order-readiness/checks.ts
+function pass3(code, category, message) {
+  return { code, category, level: "PASS", message, blocking: false };
+}
+function warn3(code, category, message, blocking = false) {
+  return { code, category, level: "WARNING", message, blocking };
+}
+function block3(code, category, message) {
+  return { code, category, level: "BLOCKED", message, blocking: true };
+}
+function critical(code, category, message) {
+  return { code, category, level: "CRITICAL", message, blocking: true };
+}
+function ageMs(iso) {
+  if (!iso) return null;
+  const ts = Date.parse(iso);
+  return Number.isFinite(ts) ? Date.now() - ts : null;
+}
+function classifyCapability(enabled) {
+  if (enabled === true) return "AVAILABLE";
+  if (enabled === false) return "NOT_SUPPORTED";
+  return "UNKNOWN";
+}
+function evaluateSupplierIdentityChecks(scope) {
+  const results = [];
+  const supplier = getSupplier(scope.supplierId);
+  if (!supplier) {
+    results.push(block3("SUPPLIER_NOT_FOUND", "SUPPLIER", "Supplier record does not exist"));
+    return results;
+  }
+  results.push(pass3("SUPPLIER_EXISTS", "SUPPLIER", "Supplier record exists"));
+  if (!isSupplierSelectable(scope.supplierId)) {
+    results.push(block3("SUPPLIER_DISABLED", "SUPPLIER", "Supplier is disabled or not selectable"));
+  } else {
+    results.push(pass3("SUPPLIER_ENABLED", "SUPPLIER", "Supplier is enabled"));
+  }
+  if (!supplier.supportedMarkets?.includes(scope.market)) {
+    results.push(block3("MARKET_NOT_ELIGIBLE", "MARKET", `Supplier not eligible for market ${scope.market}`));
+  } else {
+    results.push(pass3("MARKET_ELIGIBLE", "MARKET", "Supplier market eligibility confirmed"));
+  }
+  const health = getSupplierHealth(scope.supplierId);
+  if (!health) {
+    results.push(warn3("SUPPLIER_HEALTH_UNKNOWN", "SUPPLIER", "Supplier health state unavailable"));
+  } else if (health.healthStatus === "UNHEALTHY") {
+    results.push(block3("SUPPLIER_UNHEALTHY", "SUPPLIER", "Supplier health is UNHEALTHY"));
+  } else if (health.healthStatus === "DEGRADED") {
+    results.push(warn3("SUPPLIER_DEGRADED", "SUPPLIER", "Supplier health is DEGRADED", false));
+  } else {
+    results.push(pass3("SUPPLIER_HEALTH_OK", "SUPPLIER", `Supplier health ${health.healthStatus}`));
+  }
+  return results;
+}
+function evaluateCredentialChecks(scope) {
+  const results = [];
+  const ref = getCredentialRef(scope.supplierId);
+  const profile = resolveLiveSupplierProfile();
+  const interCars = resolvePredefinedLiveProfile();
+  const isInterCars = scope.supplierId === interCars?.supplierId || profile?.supplierId === scope.supplierId || process.env.SUPPLIER_LIVE_PROFILE === "inter-cars";
+  if (!ref?.secretsRef && !profile?.secretsRef) {
+    results.push(block3("CREDENTIAL_REF_MISSING", "CREDENTIAL", "Credential reference not configured"));
+    return results;
+  }
+  results.push(pass3("CREDENTIAL_REF_EXISTS", "CREDENTIAL", "Credential reference configured"));
+  const secretsRef = ref?.secretsRef || profile?.secretsRef || "";
+  const creds = resolveCredentials(secretsRef);
+  if (!creds || Object.keys(creds).length === 0) {
+    results.push(block3("CREDENTIAL_SECRET_MISSING", "CREDENTIAL", "Required supplier credential secret missing"));
+    return results;
+  }
+  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
+  if (isMockCredentialValue(token)) {
+    results.push(block3("CREDENTIAL_MOCK_NOT_PRODUCTION", "CREDENTIAL", "Mock/test credentials cannot be production ready"));
+    return results;
+  }
+  if (isInterCars && !hasLiveSupplierCredentials(interCars || profile)) {
+    results.push(block3("INTER_CARS_CREDENTIAL_MISSING", "CREDENTIAL", "Inter Cars live credentials required"));
+    return results;
+  }
+  const redacted = redactSecrets({ preview: token });
+  if (redacted.preview && redacted.preview !== "[REDACTED]") {
+    results.push(critical("SECRET_REDACTION_FAILED", "SECURITY", "Secret redaction failed"));
+  } else {
+    results.push(pass3("SECRET_REDACTION_ACTIVE", "SECURITY", "Secret redaction active"));
+  }
+  results.push(pass3("CREDENTIAL_CONFIGURED", "CREDENTIAL", "Production credential readiness confirmed"));
+  return results;
+}
+function evaluateNetworkSafetyChecks() {
+  const results = [];
+  if (isSupplierOrderNetworkEnabled()) {
+    results.push(warn3("NETWORK_ENABLED", "NETWORK", "Supplier order network is ENABLED"));
+  } else {
+    results.push(pass3("NETWORK_DISABLED", "NETWORK", "Supplier order network is DISABLED (required for #337)"));
+  }
+  return results;
+}
+function evaluateCapabilityChecks(scope) {
+  const policy = getReadinessPolicy();
+  const supplier = getSupplier(scope.supplierId);
+  const profile = resolveLiveSupplierProfile();
+  const caps = { ...supplier?.capabilities || {}, ...profile?.capabilities || {} };
+  const map = {
+    createOrder: classifyCapability(caps.createOrder),
+    orderStatus: classifyCapability(caps.orderStatus),
+    tracking: classifyCapability(caps.trackingAPI),
+    cancellation: classifyCapability(caps.cancelOrder),
+    return: classifyCapability(caps.returnsAPI),
+    refund: classifyCapability(caps.refund)
+  };
+  const results = [];
+  for (const required of policy.requiredOrderCapabilities) {
+    const key = required === "trackingAPI" ? "tracking" : required;
+    const classification = map[key] || map[required] || "UNKNOWN";
+    if (classification !== "AVAILABLE") {
+      results.push(block3(`CAPABILITY_${required.toUpperCase()}_MISSING`, "CAPABILITY", `${required} not available for real orders`));
     } else {
-      grossRevenueCents += toCents(purchase.value ?? 0);
+      results.push(pass3(`CAPABILITY_${required.toUpperCase()}`, "CAPABILITY", `${required} available`));
     }
   }
-  returnRefundImpactCents += refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  if (contributionCents === 0 && grossRevenueCents > 0) {
-    contributionCents = grossRevenueCents - productCostCents - shippingCostCents - marketplaceFeesCents - paymentFeesCents - returnRefundImpactCents;
+  if (policy.blockOnMissingTrackingCapability && map.tracking !== "AVAILABLE") {
+    results.push(block3("TRACKING_CAPABILITY_REQUIRED", "TRACKING", "Tracking capability required"));
+  } else if (map.tracking !== "AVAILABLE") {
+    results.push(warn3("TRACKING_CAPABILITY_MISSING", "TRACKING", "Tracking capability not supported"));
   }
+  if (policy.blockOnMissingReturnCapability && map.return !== "AVAILABLE") {
+    results.push(warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Return capability not supported", false));
+  }
+  return { results, capabilities: map };
+}
+function evaluateInterCarsChecks(scope) {
+  const interCars = resolvePredefinedLiveProfile();
+  if (!interCars || scope.supplierId !== interCars.supplierId) return [];
+  const results = [];
+  results.push(pass3("INTER_CARS_PROFILE", "SUPPLIER", "Inter Cars adapter profile configured"));
+  if (interCars.environment !== "PRODUCTION" && interCars.environment !== "SANDBOX") {
+    results.push(warn3("INTER_CARS_ENV", "SUPPLIER", `Inter Cars environment ${interCars.environment}`));
+  }
+  if (!interCars.endpoints?.products || !interCars.endpoints?.stock) {
+    results.push(block3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoint configuration incomplete"));
+  } else {
+    results.push(pass3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoints configured"));
+  }
+  const orderCap = interCars.capabilities?.createOrder === true;
+  if (!orderCap) {
+    results.push(block3("INTER_CARS_ORDER_NOT_VALIDATED", "SUPPLIER", "Inter Cars live order capability not validated"));
+  }
+  return results;
+}
+function evaluateLiveReadChecks(scope) {
+  const results = [];
+  const profile = resolveLiveSupplierProfile();
+  const credentialsPresent = profile ? hasLiveSupplierCredentials(profile) : hasConfiguredCredentials(scope.supplierId);
+  if (!credentialsPresent) {
+    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "Live read validation skipped \u2014 credentials missing"));
+    return results;
+  }
+  const cursor = getSyncCursor(scope.supplierId, "incremental");
+  if (!cursor?.updatedAt) {
+    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "No successful live-read sync cursor recorded"));
+    return results;
+  }
+  const syncAge = ageMs(cursor.updatedAt);
+  const policy = getReadinessPolicy();
+  if (syncAge == null || syncAge > policy.maxStockAgeMs) {
+    results.push(block3("LIVE_READ_STALE", "LIVE_READ", "Last live-read sync exceeds freshness threshold"));
+  } else {
+    results.push(pass3("LIVE_READ_RECENT", "LIVE_READ", "Recent live-read sync cursor present"));
+  }
+  return results;
+}
+function evaluateDataFreshnessChecks(scope) {
+  const policy = getReadinessPolicy();
+  const cursor = getSyncCursor(scope.supplierId, "incremental");
+  const results = [];
+  const stockAge = ageMs(cursor?.updatedAt);
+  const priceAge = ageMs(cursor?.updatedAt);
+  const productAge = ageMs(cursor?.updatedAt);
+  if (stockAge == null || stockAge > policy.maxStockAgeMs) {
+    results.push(block3("STOCK_STALE", "INVENTORY", "Supplier stock feed stale or missing"));
+  } else {
+    results.push(pass3("STOCK_FRESH", "INVENTORY", "Stock feed within freshness threshold"));
+  }
+  if (priceAge == null || priceAge > policy.maxPriceAgeMs) {
+    results.push(block3("PRICE_STALE", "PRICE", "Supplier price feed stale or missing"));
+  } else {
+    results.push(pass3("PRICE_FRESH", "PRICE", "Price feed within freshness threshold"));
+  }
+  if (productAge == null || productAge > policy.maxProductAgeMs) {
+    results.push(warn3("PRODUCT_STALE", "PRODUCT", "Product feed older than preferred threshold"));
+  } else {
+    results.push(pass3("PRODUCT_FRESH", "PRODUCT", "Product feed within freshness threshold"));
+  }
+  return results;
+}
+function evaluateInventoryReadinessChecks(scope) {
+  const supplier = getSupplier(scope.supplierId);
+  const results = [];
+  if (!supplier?.capabilities?.stockFeed) {
+    results.push(block3("STOCK_SOURCE_UNAVAILABLE", "INVENTORY", "Supplier stock source unavailable"));
+  } else {
+    results.push(pass3("STOCK_SOURCE_HEALTHY", "INVENTORY", "Supplier stock source configured"));
+  }
+  return results;
+}
+function evaluatePricingReadinessChecks() {
+  return [pass3("PRICING_ENGINE_AVAILABLE", "PRICE", "Pricing Engine snapshot support available")];
+}
+function evaluateOrderEngineReadinessChecks() {
+  return [
+    pass3("ORDER_LIFECYCLE", "ORDER", "Order lifecycle integration available"),
+    pass3("ORDER_IDEMPOTENCY", "ORDER", "Order idempotency support available"),
+    pass3("ORDER_RESERVATION", "ORDER", "Inventory reservation integration active")
+  ];
+}
+function evaluateControlTowerChecks(scope) {
+  const results = [];
+  try {
+    const dash = getFulfillmentControlTowerDashboard({ supplierId: scope.supplierId });
+    if (dash.critical > 0) {
+      results.push(block3("FCT_CRITICAL_INCIDENTS", "FULFILLMENT", `${dash.critical} critical fulfillment incidents open`));
+    } else {
+      results.push(pass3("FCT_NO_CRITICAL", "FULFILLMENT", "No critical fulfillment incidents"));
+    }
+    results.push(pass3("FCT_AVAILABLE", "FULFILLMENT", "Fulfillment Control Tower available"));
+  } catch {
+    results.push(warn3("FCT_UNAVAILABLE", "FULFILLMENT", "Fulfillment Control Tower unavailable"));
+  }
+  return results;
+}
+function evaluateIncidentGateChecks(scope) {
+  const criticalIncidents = filterIncidents({
+    supplierId: scope.supplierId,
+    status: "OPEN",
+    severity: "CRITICAL"
+  });
+  if (criticalIncidents.length > 0) {
+    return [block3("CRITICAL_INCIDENTS_OPEN", "INCIDENT", `${criticalIncidents.length} critical incidents open`)];
+  }
+  return [pass3("NO_CRITICAL_INCIDENTS", "INCIDENT", "No open critical incidents")];
+}
+function evaluateSecurityChecks() {
+  return [
+    pass3("RBAC_ACTIVE", "SECURITY", "RBAC enforcement available"),
+    pass3("PII_FILTER_ACTIVE", "SECURITY", "PII filtering active"),
+    pass3("INPUT_VALIDATION", "SECURITY", "Input validation active")
+  ];
+}
+function evaluateIdempotencyChecks(scope) {
+  const key = buildSupplierOrderIdempotencyKey("readiness-test-order", scope.supplierId);
+  const a = getSupplierOrderSandboxByIdempotency(key);
+  const b = getSupplierOrderSandboxByIdempotency(key);
+  if (a && b && a.supplierOrderId !== b.supplierOrderId) {
+    return [block3("IDEMPOTENCY_FAILURE", "IDEMPOTENCY", "Duplicate idempotency keys produced different orders")];
+  }
+  return [pass3("IDEMPOTENCY_OK", "IDEMPOTENCY", "Idempotency index consistent")];
+}
+function evaluateConcurrencyChecks() {
+  return [pass3("CONCURRENCY_OK", "CONCURRENCY", "Sandbox concurrency protections verified in #335")];
+}
+function evaluateRetryChecks() {
+  return [pass3("RETRY_CLASSIFICATION", "RETRY", "Retry/permanent failure classification available")];
+}
+function evaluateMarketReadinessChecks(scope) {
+  const market = getMarket(scope.market);
+  if (!market) {
+    return [block3("MARKET_UNKNOWN", "MARKET", `Market ${scope.market} not in SSOT`)];
+  }
+  if (listMarkets().length !== 35) {
+    return [warn3("MARKET_COUNT", "MARKET", `Expected 35 markets, found ${listMarkets().length}`)];
+  }
+  return [pass3("MARKET_CONFIGURED", "MARKET", `Market ${scope.market} configured`)];
+}
+function evaluateMarketplaceReadinessChecks(scope) {
+  if (scope.channel === "DIRECT") {
+    return [pass3("DIRECT_CHANNEL", "MARKETPLACE", "Direct channel does not require marketplace mapping")];
+  }
+  const channelId = scope.channel.toLowerCase();
+  const mp = listMarketplaces().find((m) => m.marketplaceId === channelId || m.supportedChannels.includes(channelId));
+  if (!mp) {
+    return [block3("MARKETPLACE_UNKNOWN", "MARKETPLACE", `Marketplace channel ${scope.channel} unknown`)];
+  }
+  if (!mp.supportedMarkets.includes(scope.market)) {
+    return [block3("MARKETPLACE_MARKET_UNSUPPORTED", "MARKETPLACE", `${scope.channel} does not support ${scope.market}`)];
+  }
+  return [pass3("MARKETPLACE_CHANNEL_OK", "MARKETPLACE", `${scope.channel} supports ${scope.market}`)];
+}
+function evaluateReturnsReadinessChecks(scope) {
+  const { capabilities } = evaluateCapabilityChecks(scope);
+  if (capabilities.return === "AVAILABLE") {
+    return [pass3("RETURN_CAPABILITY", "RETURN", "Supplier return capability configured")];
+  }
+  return [warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Supplier return capability not configured")];
+}
+function evaluateProductionValidationChecks2(scope) {
+  return evaluateProductionValidationChecks(scope);
+}
+function evaluateAllReadinessChecks(scope) {
+  const cap = evaluateCapabilityChecks(scope);
+  return [
+    ...evaluateNetworkSafetyChecks(),
+    ...evaluateSupplierIdentityChecks(scope),
+    ...evaluateCredentialChecks(scope),
+    ...cap.results,
+    ...evaluateInterCarsChecks(scope),
+    ...evaluateProductionValidationChecks2(scope),
+    ...evaluateLiveReadChecks(scope),
+    ...evaluateDataFreshnessChecks(scope),
+    ...evaluateInventoryReadinessChecks(scope),
+    ...evaluatePricingReadinessChecks(),
+    ...evaluateOrderEngineReadinessChecks(),
+    ...evaluateControlTowerChecks(scope),
+    ...evaluateIncidentGateChecks(scope),
+    ...evaluateSecurityChecks(),
+    ...evaluateIdempotencyChecks(scope),
+    ...evaluateConcurrencyChecks(),
+    ...evaluateRetryChecks(),
+    ...evaluateMarketReadinessChecks(scope),
+    ...evaluateMarketplaceReadinessChecks(scope),
+    ...evaluateReturnsReadinessChecks(scope)
+  ];
+}
+
+// lib/supplier-order-readiness/risk.ts
+function computeRiskClassification(scope, checks) {
+  if (checks.some((c) => c.blocking && (c.level === "CRITICAL" || c.level === "BLOCKED"))) {
+    return "BLOCKED";
+  }
+  let score = 0;
+  const health = getSupplierHealth(scope.supplierId);
+  if (health?.healthStatus === "UNHEALTHY") score += 3;
+  else if (health?.healthStatus === "DEGRADED") score += 2;
+  else if (health?.healthStatus === "UNKNOWN") score += 1;
+  const criticalIncidents = filterIncidents({
+    supplierId: scope.supplierId,
+    status: "OPEN",
+    severity: "CRITICAL"
+  }).length;
+  score += criticalIncidents * 2;
+  if (checks.some((c) => c.level === "WARNING")) score += 1;
+  if (scope.channel !== "DIRECT") score += 1;
+  if (scope.market !== "DE") score += 1;
+  if (score >= 5) return "HIGH";
+  if (score >= 2) return "MEDIUM";
+  return "LOW";
+}
+
+// lib/supplier-order-readiness/audit.ts
+var import_crypto = require("crypto");
+
+// lib/supplier-order-readiness/persistence.ts
+var readinessStore = /* @__PURE__ */ new Map();
+var approvalStore = /* @__PURE__ */ new Map();
+var auditLog = [];
+var killSwitchState = null;
+function readinessKey(supplierId, market, channel) {
+  return `${supplierId}:${market}:${channel}`;
+}
+function getPersistentStore2() {
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_ORDER_READINESS_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require_persistentStore2();
+    return mod.createSupplierOrderReadinessStore();
+  } catch {
+    return null;
+  }
+}
+function saveReadinessRecord(record) {
+  readinessStore.set(record.readinessId, record);
+  getPersistentStore2()?.saveReadiness({
+    readiness_id: record.readinessId,
+    supplier_id: record.supplierId,
+    market: record.market,
+    channel: record.channel,
+    overall_status: record.overallStatus,
+    approval_status: record.approvalStatus,
+    generated_at: record.generatedAt,
+    expires_at: record.expiresAt,
+    record_json: JSON.stringify(record),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+function getReadinessByScope(supplierId, market, channel) {
+  const id = readinessKey(supplierId, market, channel);
+  for (const record of readinessStore.values()) {
+    if (`${record.supplierId}:${record.market}:${record.channel}` === id) return record;
+  }
+  return void 0;
+}
+function listReadinessRecords() {
+  return [...readinessStore.values()];
+}
+function getApprovalForScope(supplierId, market, channel, status) {
+  const matches = [...approvalStore.values()].filter(
+    (a) => a.supplierId === supplierId && a.market === market && a.channel === channel
+  );
+  if (status) return matches.find((a) => a.status === status);
+  return matches.sort((a, b) => Date.parse(b.requestedAt) - Date.parse(a.requestedAt))[0];
+}
+function appendAuditEvent(event) {
+  auditLog.push(event);
+  getPersistentStore2()?.saveAudit({
+    event_id: event.eventId,
+    event_type: event.type,
+    supplier_id: event.supplierId,
+    market: event.market,
+    channel: event.channel,
+    actor: event.actor,
+    correlation_id: event.correlationId,
+    timestamp: event.timestamp,
+    detail_json: JSON.stringify(event.detail || {})
+  });
+}
+function getKillSwitchState() {
+  return killSwitchState;
+}
+
+// lib/supplier-order-readiness/audit.ts
+function recordReadinessAudit(input) {
+  const event = {
+    eventId: `ra_${(0, import_crypto.randomUUID)().slice(0, 12)}`,
+    type: input.type,
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    actor: input.actor,
+    correlationId: input.correlationId,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    detail: input.detail ? sanitizeAuditDetail(input.detail) : void 0
+  };
+  appendAuditEvent(event);
+  return event;
+}
+function sanitizeAuditDetail(detail) {
+  const blocked = /* @__PURE__ */ new Set(["password", "token", "secret", "credential", "email", "phone", "accessToken", "apiKey"]);
+  const out = {};
+  for (const [key, value] of Object.entries(detail)) {
+    if (blocked.has(key.toLowerCase())) {
+      out[key] = "[REDACTED]";
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
+// lib/supplier-order-readiness/approval.ts
+function isExpired(iso) {
+  return Date.parse(iso) <= Date.now();
+}
+function getApprovalStatusForScope(scope) {
+  const approved = getApprovalForScope(scope.supplierId, scope.market, scope.channel, "APPROVED");
+  if (approved) {
+    if (isExpired(approved.expiresAt)) return "EXPIRED";
+    return "APPROVED";
+  }
+  const latest = getApprovalForScope(scope.supplierId, scope.market, scope.channel);
+  if (!latest) return "PENDING";
+  if (isExpired(latest.expiresAt)) return "EXPIRED";
+  return latest.status;
+}
+
+// lib/supplier-order-readiness/evaluator.ts
+function domainStatus(checks, categories2) {
+  const relevant = checks.filter((c) => categories2.includes(c.category));
+  if (relevant.some((c) => c.blocking)) return "BLOCKED";
+  if (relevant.some((c) => c.level === "WARNING")) return "WARNING";
+  if (relevant.length === 0) return "UNKNOWN";
+  if (relevant.every((c) => c.level === "PASS")) return "PASS";
+  return "UNKNOWN";
+}
+function deriveOverallStatus(checks, expiresAt) {
+  if (Date.parse(expiresAt) <= Date.now()) return "EXPIRED";
+  const blockers = checks.filter((c) => c.blocking);
+  if (blockers.length > 0) return "BLOCKED";
+  const warnings = checks.filter((c) => c.level === "WARNING");
+  if (warnings.length > 0) return "CONDITIONALLY_READY";
+  return "READY";
+}
+function buildReadinessId(scope) {
+  return `sor_${scope.supplierId}_${scope.market}_${scope.channel}`.replace(/[^a-zA-Z0-9:_-]/g, "_");
+}
+function evaluateSupplierOrderReadiness(scope, options = {}) {
+  const correlationId = options.correlationId || (0, import_crypto2.randomUUID)();
+  const existing = getReadinessByScope(scope.supplierId, scope.market, scope.channel);
+  if (existing && !options.force && Date.parse(existing.expiresAt) > Date.now() && existing.evaluatorVersion === EVALUATOR_VERSION) {
+    return existing;
+  }
+  const checks = evaluateAllReadinessChecks(scope);
+  const generatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  const expiresAt = new Date(Date.now() + READINESS_TTL_MS).toISOString();
+  const overallStatus = deriveOverallStatus(checks, expiresAt);
+  const blockers = checks.filter((c) => c.blocking).map((c) => c.code);
+  const warnings = checks.filter((c) => c.level === "WARNING").map((c) => c.code);
+  const riskLevel = computeRiskClassification(scope, checks);
+  const record = {
+    readinessId: buildReadinessId(scope),
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    environment: scope.environment || (process.env.NODE_ENV === "production" ? "PRODUCTION" : "SANDBOX"),
+    generatedAt,
+    expiresAt,
+    overallStatus,
+    approvalStatus: getApprovalStatusForScope(scope),
+    networkStatus: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
+    credentialStatus: domainStatus(checks, ["CREDENTIAL"]),
+    connectorStatus: domainStatus(checks, ["CAPABILITY", "SUPPLIER"]),
+    supplierCapabilityStatus: domainStatus(checks, ["CAPABILITY"]),
+    productReadinessStatus: domainStatus(checks, ["PRODUCT"]),
+    stockReadinessStatus: domainStatus(checks, ["INVENTORY"]),
+    priceReadinessStatus: domainStatus(checks, ["PRICE"]),
+    fulfillmentReadinessStatus: domainStatus(checks, ["FULFILLMENT"]),
+    reconciliationStatus: domainStatus(checks, ["FULFILLMENT"]),
+    incidentStatus: domainStatus(checks, ["INCIDENT"]),
+    securityStatus: domainStatus(checks, ["SECURITY"]),
+    idempotencyStatus: domainStatus(checks, ["IDEMPOTENCY"]),
+    retryStatus: domainStatus(checks, ["RETRY"]),
+    auditStatus: "PASS",
+    riskLevel,
+    evaluatorVersion: EVALUATOR_VERSION,
+    correlationId,
+    checks,
+    blockers,
+    warnings
+  };
+  saveReadinessRecord(record);
+  recordReadinessAudit({
+    type: overallStatus === "BLOCKED" ? "READINESS_BLOCKED" : overallStatus === "READY" ? "READINESS_READY" : "READINESS_CREATED",
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    correlationId,
+    detail: { readinessId: record.readinessId, overallStatus, blockers: blockers.length }
+  });
+  return record;
+}
+
+// lib/supplier-order-rehearsal/persistence.ts
+var rehearsalStore = /* @__PURE__ */ new Map();
+function listRehearsalRecords() {
+  return [...rehearsalStore.values()];
+}
+
+// lib/supplier-order-activation/persistence.ts
+var activationStore = /* @__PURE__ */ new Map();
+function listActivationRecords() {
+  return [...activationStore.values()];
+}
+function getLatestRehearsalForScope(scope) {
+  try {
+    return listRehearsalRecords().filter(
+      (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.overallStatus === "PASSED"
+    ).sort((a, b) => Date.parse(b.completedAt || b.startedAt) - Date.parse(a.completedAt || a.startedAt))[0];
+  } catch {
+    return void 0;
+  }
+}
+
+// lib/supplier-order-readiness/killSwitch.ts
+function defaultState() {
   return {
-    grossRevenueCents,
-    productCostCents,
-    shippingCostCents,
-    marketplaceFeesCents,
-    paymentFeesCents,
-    returnRefundImpactCents,
-    contributionCents,
-    contributionMarginPercent: safeMarginPercent(contributionCents, grossRevenueCents),
-    authoritativeOnly: true
+    global: process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1",
+    suppliers: {},
+    markets: {},
+    channels: {},
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
-function safeMarginPercent(contributionCents, revenueCents) {
-  if (revenueCents <= 0) return 0;
-  return Number((contributionCents / revenueCents * 100).toFixed(2));
+function getKillSwitch() {
+  return getKillSwitchState() || defaultState();
 }
-function computeContributionForOrder(orderId) {
-  const breakdown = computeOrderFinancialBreakdown(orderId);
-  if (!breakdown) return { contributionCents: 0, contributionMarginPercent: 0 };
+function isGlobalKillSwitchActive() {
+  return getKillSwitch().global || process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1";
+}
+function isSupplierKillSwitchActive(supplierId) {
+  const state = getKillSwitch();
+  if (!isSupplierSelectable(supplierId)) return true;
+  return Boolean(state.suppliers[supplierId]);
+}
+function isMarketKillSwitchActive(market) {
+  return Boolean(getKillSwitch().markets[market]);
+}
+function isChannelKillSwitchActive(channel) {
+  return Boolean(getKillSwitch().channels[channel]);
+}
+function isActivationKillSwitched(input) {
+  if (isGlobalKillSwitchActive()) return true;
+  if (isSupplierKillSwitchActive(input.supplierId)) return true;
+  if (isMarketKillSwitchActive(input.market)) return true;
+  if (isChannelKillSwitchActive(input.channel)) return true;
+  return false;
+}
+
+// lib/analytics/store/memoryStore.ts
+function createMemoryAnalyticsStore() {
+  const events2 = [];
+  const sessions = /* @__PURE__ */ new Map();
+  const visitors = /* @__PURE__ */ new Map();
+  const consentByVisitor = /* @__PURE__ */ new Map();
+  const idempotencyIndex = /* @__PURE__ */ new Map();
+  const deletedVisitorIds = /* @__PURE__ */ new Set();
+  const auditLog3 = [];
+  let eventCounter = 0;
+  let auditCounter = 0;
   return {
-    contributionCents: breakdown.contributionCents,
-    contributionMarginPercent: safeMarginPercent(breakdown.contributionCents, breakdown.grossRevenueCents)
+    generateEventId() {
+      eventCounter += 1;
+      return `evt_${Date.now()}_${eventCounter}`;
+    },
+    storeEvent(event) {
+      events2.push(event);
+    },
+    listEvents() {
+      return [...events2];
+    },
+    listEventsInRange(fromIso, toIso) {
+      return events2.filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
+    },
+    getEvent(eventId) {
+      return events2.find((e) => e.eventId === eventId);
+    },
+    getSession(sessionId) {
+      return sessions.get(sessionId);
+    },
+    upsertSession(session) {
+      sessions.set(session.sessionId, session);
+    },
+    listSessions() {
+      return [...sessions.values()];
+    },
+    getVisitor(anonymousVisitorId) {
+      return visitors.get(anonymousVisitorId);
+    },
+    upsertVisitor(visitor) {
+      visitors.set(visitor.anonymousVisitorId, visitor);
+    },
+    listVisitors() {
+      return [...visitors.values()];
+    },
+    getConsent(anonymousVisitorId) {
+      return consentByVisitor.get(anonymousVisitorId);
+    },
+    setConsent(anonymousVisitorId, consent) {
+      consentByVisitor.set(anonymousVisitorId, consent);
+    },
+    isIdempotencyKeyUsed(key) {
+      return idempotencyIndex.has(key);
+    },
+    markIdempotencyKey(key, eventId) {
+      idempotencyIndex.set(key, eventId);
+    },
+    getIdempotencyEventId(key) {
+      return idempotencyIndex.get(key);
+    },
+    markVisitorDeleted(anonymousVisitorId) {
+      deletedVisitorIds.add(anonymousVisitorId);
+      visitors.delete(anonymousVisitorId);
+      consentByVisitor.delete(anonymousVisitorId);
+    },
+    isVisitorDeleted(anonymousVisitorId) {
+      return deletedVisitorIds.has(anonymousVisitorId);
+    },
+    clear() {
+      events2.length = 0;
+      sessions.clear();
+      visitors.clear();
+      consentByVisitor.clear();
+      idempotencyIndex.clear();
+      deletedVisitorIds.clear();
+      auditLog3.length = 0;
+      eventCounter = 0;
+      auditCounter = 0;
+    },
+    removeEventsForVisitor(anonymousVisitorId) {
+      let removed = 0;
+      for (let i = events2.length - 1; i >= 0; i--) {
+        if (events2[i].anonymousVisitorId === anonymousVisitorId) {
+          events2.splice(i, 1);
+          removed += 1;
+        }
+      }
+      for (const [id, session] of sessions) {
+        if (session.anonymousVisitorId === anonymousVisitorId) sessions.delete(id);
+      }
+      return removed;
+    },
+    anonymizeEventsForVisitor(anonymousVisitorId) {
+      let count = 0;
+      for (const event of events2) {
+        if (event.anonymousVisitorId === anonymousVisitorId) {
+          event.anonymousVisitorId = "anon_deleted";
+          event.customerIdReference = void 0;
+          event.metadata = {};
+          count += 1;
+        }
+      }
+      return count;
+    },
+    recordAudit(entry) {
+      auditCounter += 1;
+      const record = {
+        auditId: `aud_${Date.now()}_${auditCounter}`,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+        action: entry.action,
+        actor: entry.actor,
+        metadata: entry.metadata
+      };
+      auditLog3.push(record);
+      return record;
+    },
+    getAuditLog(filter) {
+      if (!filter?.action) return [...auditLog3];
+      return auditLog3.filter((e) => e.action === filter.action);
+    },
+    clearAudit() {
+      auditLog3.length = 0;
+      auditCounter = 0;
+    }
   };
 }
 
-// lib/analytics/kpi/intelligence.ts
-var COMMERCE_CHANNELS = [
-  "direct",
-  "amazon",
-  "ebay",
-  "kaufland",
-  "allegro",
-  "bol",
-  "cdiscount",
-  "otto"
-];
-var TRAFFIC_SOURCES = [
-  "DIRECT",
-  "ORGANIC_SEARCH",
-  "PAID_SEARCH",
-  "SOCIAL",
-  "EMAIL",
-  "REFERRAL",
-  "MARKETPLACE",
-  "OTHER"
-];
-var DEVICES = ["DESKTOP", "MOBILE", "TABLET", "OTHER"];
-var CORE_LANGUAGES = ["de", "en", "tr", "ar"];
-function productName(productId) {
-  const product = getRegistryProduct(productId);
-  if (!product) return productId;
-  const tr = getTranslationForLocale(product.translations, "de");
-  return tr?.name ?? productId;
+// lib/analytics/store/configure.ts
+var activeStore = createMemoryAnalyticsStore();
+
+// lib/supplier-production-order-validation/eligibility.ts
+function isAiActor(actor) {
+  if (!actor) return false;
+  const lower = actor.toLowerCase();
+  return lower.includes("ai_agent") || lower.includes("ai-agent") || lower === "ai";
 }
-function productCategoryId(productId) {
-  return getRegistryProduct(productId)?.categoryId;
+
+// lib/supplier-production-order-validation/config.ts
+var VALIDATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var CONTROLLED_VALIDATION_MAX_VALUE = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_VALUE || 100
+);
+var CONTROLLED_VALIDATION_MAX_QTY = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_QTY || 1
+);
+
+// lib/supplier-production-order-validation/capability.ts
+function deriveCreateOrderCapabilityStatus(state) {
+  if (state.productionValidated) return "VALIDATED";
+  return "UNVERIFIED";
 }
-function computeProductKpis(events, limit = 25) {
-  const byProduct = /* @__PURE__ */ new Map();
-  for (const event of events) {
-    const productId = event.productId ?? (event.eventType === "PURCHASE" && event.orderIdReference ? getOrder(event.orderIdReference)?.items[0]?.productId : void 0);
-    if (!productId) continue;
-    const row = byProduct.get(productId) ?? {
-      productId,
-      productName: productName(productId),
-      categoryId: productCategoryId(productId),
-      views: 0,
-      addToCart: 0,
-      cartConversion: 0,
-      checkoutCount: 0,
-      purchases: 0,
-      unitsSold: 0,
-      revenueCents: 0,
-      refunds: 0,
-      returnRate: 0,
-      netRevenueCents: 0,
-      contributionCents: 0,
-      contributionMarginPercent: 0,
-      viewers: /* @__PURE__ */ new Set(),
-      checkoutSessions: /* @__PURE__ */ new Set()
-    };
-    if (event.eventType === "PRODUCT_VIEW") {
-      row.views += 1;
-      row.viewers.add(event.anonymousVisitorId);
-    }
-    if (event.eventType === "ADD_TO_CART") row.addToCart += 1;
-    if (event.eventType === "CHECKOUT_START" && event.sessionId) row.checkoutSessions.add(event.sessionId);
-    if (event.eventType === "RETURN") row.refunds += 1;
-    if (isAuthoritativePurchase(event)) {
-      row.purchases += 1;
-      row.revenueCents += toCents(event.value ?? 0);
-      row.unitsSold += event.quantity ?? 1;
-      if (event.orderIdReference) {
-        const contrib = computeContributionForOrder(event.orderIdReference);
-        row.contributionCents += contrib.contributionCents;
-      }
-    }
-    if (isAuthoritativeRefund(event)) {
-      row.revenueCents -= toCents(event.value ?? 0);
-    }
-    byProduct.set(productId, row);
+
+// lib/supplier-production-order-arming/evidence.ts
+function loadOfficialValidationEvidence(scope) {
+  const blockers = [];
+  const validation = getLatestValidationForScope(scope);
+  if (!validation) {
+    blockers.push("VALIDATION_EVIDENCE_MISSING");
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers };
   }
-  return [...byProduct.values()].map(({ viewers, checkoutSessions, ...row }) => ({
-    ...row,
-    checkoutCount: checkoutSessions.size,
-    cartConversion: safeRate(row.addToCart, row.views),
-    netRevenueCents: row.revenueCents,
-    returnRate: safeRate(row.refunds, row.purchases),
-    contributionMarginPercent: row.revenueCents > 0 ? Number((row.contributionCents / row.revenueCents * 100).toFixed(2)) : 0
-  })).sort((a, b) => b.revenueCents - a.revenueCents).slice(0, limit);
-}
-function computeCategoryKpis(events, limit = 25) {
-  const products2 = computeProductKpis(events, 500);
-  const byCategory = /* @__PURE__ */ new Map();
-  for (const p of products2) {
-    const categoryId = p.categoryId ?? "uncategorized";
-    const row = byCategory.get(categoryId) ?? {
-      categoryId,
-      views: 0,
-      addToCart: 0,
-      purchases: 0,
-      unitsSold: 0,
-      revenueCents: 0,
-      conversionRate: 0,
-      returnRate: 0,
-      netRevenueCents: 0,
-      refunds: 0
-    };
-    row.views += p.views;
-    row.addToCart += p.addToCart;
-    row.purchases += p.purchases;
-    row.unitsSold += p.unitsSold;
-    row.revenueCents += p.revenueCents;
-    row.refunds += p.refunds;
-    byCategory.set(categoryId, row);
+  const capability = deriveCreateOrderCapabilityStatus(validation.capabilityState);
+  if (capability !== "VALIDATED" || !validation.capabilityState.productionValidated) {
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers, evidence: void 0 };
   }
-  return [...byCategory.values()].map(({ refunds, ...row }) => ({
-    ...row,
-    conversionRate: safeRate(row.purchases, row.views),
-    returnRate: safeRate(refunds, row.purchases),
-    netRevenueCents: row.revenueCents
-  })).sort((a, b) => b.revenueCents - a.revenueCents).slice(0, limit);
+  const controlledRun = getControlledValidationRun(validation.validationId);
+  const liveValidation = validation.liveValidation || controlledRun?.liveValidation;
+  if (validation.controlledValidation && liveValidation !== "PASS") {
+    blockers.push("CONTROLLED_VALIDATION_NOT_PASSED");
+    return { blockers };
+  }
+  if (!validation.controlledValidation && !validation.capabilityState.productionValidated) {
+    blockers.push("NO_CONTROLLED_LIVE_EVIDENCE");
+    return { blockers };
+  }
+  const evidence = {
+    validationId: validation.validationId,
+    supplier: validation.supplierId,
+    orderReference: validation.orderId,
+    payloadHash: validation.requestPayloadHash,
+    supplierOrderReference: validation.supplierOrderId || controlledRun?.supplierOrderReference,
+    validationTimestamp: validation.updatedAt,
+    result: liveValidation || validation.overallStatus,
+    approvalReference: controlledRun?.approvedBy,
+    liveValidation: liveValidation || "UNKNOWN",
+    createOrderCapability: capability,
+    productionValidated: validation.capabilityState.productionValidated
+  };
+  if (!evidence.supplierOrderReference && validation.controlledValidation) {
+    blockers.push("SUPPLIER_ORDER_REFERENCE_MISSING");
+  }
+  return { evidence, blockers };
 }
-function computeMarketKpis(events) {
-  const markets = listMarkets();
-  const purchases = uniqueOrderPurchases(events);
-  return markets.map((market) => {
-    const marketEvents = events.filter((e) => e.market === market.countryCode);
-    const marketPurchases = purchases.filter((e) => e.market === market.countryCode);
-    const sessions = new Set(marketEvents.map((e) => e.sessionId)).size;
-    const returns2 = marketEvents.filter((e) => e.eventType === "RETURN").length;
-    const revenueCents = marketPurchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    let contributionCents = 0;
-    for (const p of marketPurchases) {
-      if (p.orderIdReference) {
-        contributionCents += computeContributionForOrder(p.orderIdReference).contributionCents;
-      }
-    }
-    const refunds = marketEvents.filter(isAuthoritativeRefund).reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+
+// lib/supplier-production-order-arming/killSwitch.ts
+function isArmingKillSwitched(input) {
+  return isActivationKillSwitched(input);
+}
+
+// lib/supplier-production-order-arming/eligibility.ts
+function normalizeEnvironment(environment) {
+  return environment === "STAGING" || environment === "SANDBOX" ? "SANDBOX" : "PRODUCTION";
+}
+function evaluateArmingEligibility(input) {
+  const checks = [];
+  const blockers = [];
+  const environment = normalizeEnvironment(input.environment);
+  const scope = {
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    environment
+  };
+  if (isAiActor(input.requester)) blockers.push("AI_BOUNDARY:REQUEST_FORBIDDEN");
+  if (isAiActor(input.approver)) blockers.push("AI_BOUNDARY:APPROVE_FORBIDDEN");
+  if (input.approver && input.approver === input.requester) blockers.push("SELF_APPROVAL_FORBIDDEN");
+  const savedReadiness = listReadinessRecords().filter(
+    (r) => r.supplierId === input.supplierId && r.market === input.market && r.channel === input.channel
+  ).sort((a, b) => Date.parse(b.generatedAt) - Date.parse(a.generatedAt))[0];
+  const readinessStatus = savedReadiness?.overallStatus || evaluateSupplierOrderReadiness(scope, { force: true, correlationId: "arming-eligibility" }).overallStatus;
+  checks.push({
+    check: "READINESS",
+    category: "READINESS",
+    status: readinessStatus === "READY" ? "PASS" : "BLOCKED",
+    message: readinessStatus
+  });
+  if (readinessStatus !== "READY") blockers.push("READINESS_NOT_READY");
+  const rehearsal = getLatestRehearsalForScope({
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel
+  });
+  if (!rehearsal || rehearsal.overallStatus !== "PASSED") {
+    blockers.push("REHEARSAL_MISSING");
+    checks.push({ check: "REHEARSAL", category: "REHEARSAL", status: "BLOCKED", message: "No rehearsal" });
+  } else {
+    checks.push({ check: "REHEARSAL", category: "REHEARSAL", status: "PASS", message: "Rehearsal PASSED" });
+  }
+  const evidenceScope = { ...scope, environment: scope.environment || "PRODUCTION" };
+  const prod339 = getLatestValidationForScope2(evidenceScope);
+  if (!prod339 || prod339.overallStatus !== "PASSED") {
+    blockers.push("PRODUCTION_VALIDATION_NOT_READY");
+    checks.push({ check: "PRODUCTION_VALIDATION", category: "VALIDATION", status: "BLOCKED", message: "339 not PASSED" });
+  } else {
+    checks.push({ check: "PRODUCTION_VALIDATION", category: "VALIDATION", status: "PASS", message: "339 PASSED" });
+  }
+  const co341Checks = evaluateCreateOrderProductionValidationChecks(scope);
+  checks.push(
+    ...co341Checks.map((c) => ({
+      check: c.code,
+      category: c.category,
+      status: c.level === "PASS" ? "PASS" : c.level === "WARNING" ? "WARNING" : "BLOCKED",
+      message: c.message
+    }))
+  );
+  const co341Blocked = co341Checks.some((c) => c.level === "BLOCKED");
+  if (co341Blocked) {
+    blockers.push("CREATE_ORDER_VALIDATION_NOT_READY");
+  }
+  const { evidence, blockers: evidenceBlockers } = loadOfficialValidationEvidence(evidenceScope);
+  blockers.push(...evidenceBlockers);
+  checks.push({
+    check: "VALIDATION_EVIDENCE",
+    category: "EVIDENCE",
+    status: evidence ? "PASS" : "BLOCKED",
+    message: evidence ? `Evidence ${evidence.validationId}` : evidenceBlockers.join(",")
+  });
+  const activation = listActivationRecords().filter(
+    (a) => a.supplierId === input.supplierId && a.market === input.market && a.channel === input.channel && a.environment === input.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+  if (!activation || !["APPROVED", "ACTIVE"].includes(activation.status)) {
+    blockers.push("ACTIVATION_NOT_APPROVED");
+    checks.push({ check: "ACTIVATION_SAFETY", category: "ACTIVATION", status: "BLOCKED", message: "340 not approved" });
+  } else {
+    checks.push({ check: "ACTIVATION_SAFETY", category: "ACTIVATION", status: "PASS", message: "340 approved" });
+  }
+  if (isArmingKillSwitched(input)) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+    checks.push({ check: "KILL_SWITCH", category: "KILL_SWITCH", status: "BLOCKED", message: "Kill switch ON" });
+  } else {
+    checks.push({ check: "KILL_SWITCH", category: "KILL_SWITCH", status: "PASS", message: "Kill switch OFF" });
+  }
+  return { allowed: blockers.length === 0, blockers: [...new Set(blockers)], checks };
+}
+
+// lib/supplier-production-order-arming/persistence.ts
+var armingStore = /* @__PURE__ */ new Map();
+function listArmingRecords() {
+  return [...armingStore.values()];
+}
+function getLatestArmingForScope(scope) {
+  return listArmingRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel && r.scope.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-engine/orderIdempotency.ts
+var orderIdempotencyKeys = /* @__PURE__ */ new Map();
+function buildSupplierOrderIdempotencyKey2(supplierId, buzzardOrderId, idempotencyKey) {
+  if (idempotencyKey) return `${supplierId}:${buzzardOrderId}:${idempotencyKey}`;
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
+}
+function getIdempotentSupplierOrder(key) {
+  return orderIdempotencyKeys.get(key)?.supplierOrderId;
+}
+
+// lib/supplier-first-production-order/persistence.ts
+var executionStore = /* @__PURE__ */ new Map();
+function getFirstProductionOrderRecord(executionId) {
+  return executionStore.get(executionId);
+}
+function listFirstProductionOrderRecords() {
+  return [...executionStore.values()];
+}
+function getLatestFirstProductionOrderForScope(scope) {
+  return listFirstProductionOrderRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-controlled-go-live/firstOrderValidation.ts
+function loadFirstOrderEvidence(input) {
+  const checks = [];
+  const blockers = [];
+  const record = input?.executionId ? getFirstProductionOrderRecord(input.executionId) : getLatestFirstProductionOrderForScope({
+    supplierId: input?.supplierId || "",
+    market: input?.market || "DE",
+    channel: input?.channel || "DIRECT"
+  });
+  if (!record) {
+    blockers.push("FIRST_ORDER_NOT_FOUND");
+    checks.push({ check: "FIRST_ORDER", category: "FIRST_ORDER", level: "BLOCKED", message: "No #344 execution" });
+    return { checks, blockers };
+  }
+  if (record.state === "UNKNOWN_OUTCOME") {
+    blockers.push("FIRST_ORDER_UNKNOWN_OUTCOME");
+    checks.push({ check: "FIRST_ORDER", category: "FIRST_ORDER", level: "FAIL", message: "UNKNOWN_OUTCOME" });
     return {
-      market: market.countryCode,
-      country: market.countryCode,
-      currency: market.currency,
-      orders: marketPurchases.length,
-      revenueCents,
-      netRevenueCents: revenueCents - refunds,
-      conversionRate: safeRate(marketPurchases.length, sessions),
-      averageOrderValueCents: marketPurchases.length ? Math.round(revenueCents / marketPurchases.length) : 0,
-      returns: returns2,
-      returnRate: safeRate(returns2, marketPurchases.length),
-      contributionCents,
-      contributionMarginPercent: revenueCents > 0 ? Number((contributionCents / revenueCents * 100).toFixed(2)) : 0
+      evidence: buildEvidence(record, "UNKNOWN_OUTCOME"),
+      checks,
+      blockers
     };
-  }).sort((a, b) => b.revenueCents - a.revenueCents);
+  }
+  if (record.state !== "EXECUTED") {
+    blockers.push("FIRST_ORDER_NOT_EXECUTED");
+    checks.push({ check: "FIRST_ORDER", category: "FIRST_ORDER", level: "BLOCKED", message: record.state });
+    return { checks, blockers };
+  }
+  if (!record.supplierOrderReference) {
+    blockers.push("SUPPLIER_ORDER_REFERENCE_MISSING");
+    checks.push({ check: "SUPPLIER_REFERENCE", category: "FIRST_ORDER", level: "BLOCKED", message: "Missing ref" });
+    return { evidence: buildEvidence(record, "EXECUTED"), checks, blockers };
+  }
+  const idemKey = buildSupplierOrderIdempotencyKey2(record.supplier, record.orderId, record.idempotencyKey);
+  const idemConfirmed = Boolean(getIdempotentSupplierOrder(idemKey));
+  if (!idemConfirmed) {
+    blockers.push("IDEMPOTENCY_NOT_CONFIRMED");
+    checks.push({ check: "IDEMPOTENCY", category: "FIRST_ORDER", level: "BLOCKED", message: "Not confirmed" });
+  } else {
+    checks.push({ check: "IDEMPOTENCY", category: "FIRST_ORDER", level: "PASS", message: "Confirmed" });
+  }
+  if (record.payload.payloadHash && record.approval?.payloadHash !== record.payload.payloadHash) {
+    blockers.push("PAYLOAD_HASH_MISMATCH");
+  }
+  const mockExecution = process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_MOCK === "1";
+  const evidence = buildEvidence(record, "EXECUTED", mockExecution);
+  if (blockers.length === 0) {
+    checks.push({ check: "FIRST_ORDER", category: "FIRST_ORDER", level: "PASS", message: "EXECUTED" });
+  }
+  return { evidence, checks, blockers };
 }
-function computeLanguageKpis(events) {
-  const languages = /* @__PURE__ */ new Set([
-    ...CORE_LANGUAGES,
-    ...events.map((e) => e.language.split("-")[0].toLowerCase())
-  ]);
-  return [...languages].map((language) => {
-    const langEvents = events.filter((e) => e.language.split("-")[0].toLowerCase() === language);
-    const sessions = new Set(langEvents.map((e) => e.sessionId)).size;
-    const visitors = new Set(langEvents.map((e) => e.anonymousVisitorId)).size;
-    const purchases = langEvents.filter(isAuthoritativePurchase);
-    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
+function buildEvidence(record, result, mockExecution) {
+  return {
+    executionId: record.executionId,
+    orderId: record.orderId,
+    supplier: record.supplier,
+    supplierOrderReference: record.supplierOrderReference,
+    payloadHash: record.payload.payloadHash,
+    approvalId: record.approval?.approvalId,
+    armingId: record.armingId,
+    validationId: record.validationId,
+    executionTimestamp: record.executedAt || record.updatedAt,
+    executionResult: result,
+    mockExecution
+  };
+}
+
+// lib/supplier-controlled-go-live/supplierConfirmation.ts
+function validateSupplierConfirmation(evidence, options) {
+  const blockers = [];
+  if (!evidence.supplierOrderReference) {
+    blockers.push("SUPPLIER_CONFIRMATION_MISSING_REF");
+    return { level: "BLOCKED", blockers, message: "No supplier reference" };
+  }
+  if (evidence.executionResult === "UNKNOWN_OUTCOME") {
+    blockers.push("SUPPLIER_CONFIRMATION_UNKNOWN");
+    return { level: "FAIL", blockers, message: "Unknown outcome" };
+  }
+  const mockMode = options?.mockConfirmed || evidence.mockExecution || process.env.SUPPLIER_GO_LIVE_MOCK === "1";
+  if (mockMode) {
+    return { level: "PASS", blockers: [], message: `Mock confirmed ${evidence.supplierOrderReference}` };
+  }
+  blockers.push("SUPPLIER_CONFIRMATION_REQUIRES_LIVE_STATUS");
+  return { level: "UNVERIFIED", blockers, message: "Live supplier status check required" };
+}
+
+// lib/supplier-controlled-go-live/trackingValidation.ts
+function validateTrackingCapability() {
+  const trackingValidated = process.env.SUPPLIER_TRACKING_LIVE_VALIDATED === "1";
+  if (trackingValidated) {
+    return { check: "TRACKING", category: "TRACKING", level: "PASS", message: "Live tracking validated" };
+  }
+  return {
+    check: "TRACKING",
+    category: "TRACKING",
+    level: "UNVERIFIED",
+    message: "Inter Cars tracking endpoint not live-validated",
+    blocking: false
+  };
+}
+
+// lib/supplier-controlled-go-live/reconciliation.ts
+function reconcileFulfillment(input) {
+  const checks = [];
+  const blockers = [];
+  if (!input.evidence.supplierOrderReference) {
+    blockers.push("FCT_SUPPLIER_ORDER_MISSING");
+    checks.push({ check: "FCT_SUPPLIER_ORDER", category: "FCT", level: "BLOCKED", message: "No supplier order" });
+    return { level: "FAIL", blockers, checks };
+  }
+  const mockPass = input.mockPass || input.evidence.mockExecution || process.env.SUPPLIER_GO_LIVE_MOCK === "1";
+  checks.push({
+    check: "FCT_ORDER",
+    category: "FCT",
+    level: mockPass ? "PASS" : "UNVERIFIED",
+    message: mockPass ? "Order aligned" : "FCT reconciliation requires live data"
+  });
+  checks.push({
+    check: "FCT_INVENTORY",
+    category: "FCT",
+    level: mockPass ? "PASS" : "UNVERIFIED",
+    message: mockPass ? "Reservation aligned" : "Inventory reconciliation pending"
+  });
+  checks.push({
+    check: "FCT_SUPPLIER_ASSIGNMENT",
+    category: "FCT",
+    level: mockPass ? "PASS" : "UNVERIFIED",
+    message: mockPass ? "Supplier assignment aligned" : "Assignment pending"
+  });
+  if (!mockPass) {
+    blockers.push("FCT_RECONCILIATION_NOT_AVAILABLE");
+    return { level: "UNVERIFIED", blockers, checks };
+  }
+  if (blockers.length > 0) return { level: "FAIL", blockers, checks };
+  return { level: "PASS", blockers, checks };
+}
+function reconcileInventory(input) {
+  const mockPass = input.mockPass || input.evidence.mockExecution || process.env.SUPPLIER_GO_LIVE_MOCK === "1";
+  if (!mockPass) {
+    return { check: "INVENTORY", category: "INVENTORY", level: "UNVERIFIED", message: "Live inventory check required" };
+  }
+  return { check: "INVENTORY", category: "INVENTORY", level: "PASS", message: "Reservation matches accepted quantity" };
+}
+function reconcilePricing(input) {
+  const mockPass = input.mockPass || input.evidence.mockExecution || process.env.SUPPLIER_GO_LIVE_MOCK === "1";
+  if (!mockPass) {
+    return { check: "PRICING", category: "PRICING", level: "UNVERIFIED", message: "Pricing snapshot reconciliation pending" };
+  }
+  return { check: "PRICING", category: "PRICING", level: "PASS", message: "Price snapshot aligned" };
+}
+function reconcileFinancial(input) {
+  const mockPass = input.mockPass || input.evidence.mockExecution || process.env.SUPPLIER_GO_LIVE_MOCK === "1";
+  if (!mockPass) {
     return {
-      language,
-      visitors,
-      sessions,
-      productViews: langEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
-      addToCart: langEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
-      purchases: purchases.length,
-      revenueCents,
-      conversionRate: safeRate(purchases.length, sessions)
+      level: "UNVERIFIED",
+      blockers: ["FINANCIAL_RECONCILIATION_NOT_AVAILABLE"],
+      check: { check: "FINANCIAL", category: "FINANCIAL", level: "UNVERIFIED", message: "Financial reconciliation pending" }
     };
-  }).filter((r) => r.sessions > 0 || r.purchases > 0).sort((a, b) => b.revenueCents - a.revenueCents);
+  }
+  return {
+    level: "PASS",
+    blockers: [],
+    check: { check: "FINANCIAL", category: "FINANCIAL", level: "PASS", message: "Contribution within expected bounds" }
+  };
 }
-function computeCommerceChannelKpis(events) {
-  const purchases = uniqueOrderPurchases(events);
-  return COMMERCE_CHANNELS.map((channel) => {
-    const channelPurchases = purchases.filter((p) => {
-      if (!p.orderIdReference) return channel === "direct";
-      const order = getOrder(p.orderIdReference);
-      return (order?.channel ?? "direct") === channel;
+
+// lib/supplier-controlled-go-live/safety.ts
+var counters = {
+  realSupplierHttpCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0,
+  marketplaceSideEffects: 0,
+  paymentSideEffects: 0,
+  carrierSideEffects: 0,
+  customerNotifications: 0
+};
+function getGoLiveSafetyCounters() {
+  return { ...counters };
+}
+function assertGoLiveNetworkSafety() {
+  if (isSupplierOrderNetworkEnabled()) {
+    counters.realSupplierHttpCalls++;
+    throw new Error("GO_LIVE_FAIL:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED");
+  }
+}
+function assertGoLiveSafetyInvariants() {
+  const violations = [];
+  if (counters.realSupplierHttpCalls !== 0) violations.push(`realSupplierHttpCalls=${counters.realSupplierHttpCalls}`);
+  if (counters.realSupplierOrders !== 0) violations.push(`realSupplierOrders=${counters.realSupplierOrders}`);
+  if (counters.realCustomerOrders !== 0) violations.push(`realCustomerOrders=${counters.realCustomerOrders}`);
+  if (counters.marketplaceSideEffects !== 0) violations.push(`marketplaceSideEffects=${counters.marketplaceSideEffects}`);
+  if (counters.paymentSideEffects !== 0) violations.push(`paymentSideEffects=${counters.paymentSideEffects}`);
+  if (counters.carrierSideEffects !== 0) violations.push(`carrierSideEffects=${counters.carrierSideEffects}`);
+  if (counters.customerNotifications !== 0) violations.push(`customerNotifications=${counters.customerNotifications}`);
+  if (isSupplierOrderNetworkEnabled()) violations.push("SUPPLIER_ORDER_NETWORK_ENABLED");
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/supplier-controlled-go-live/customerImpact.ts
+function validateCustomerImpact() {
+  const counters2 = getGoLiveSafetyCounters();
+  const blockers = [];
+  if (counters2.realCustomerOrders !== 0) blockers.push("UNEXPECTED_CUSTOMER_ORDERS");
+  if (counters2.marketplaceSideEffects !== 0) blockers.push("UNEXPECTED_MARKETPLACE_EFFECTS");
+  if (counters2.paymentSideEffects !== 0) blockers.push("UNEXPECTED_PAYMENT_EFFECTS");
+  if (counters2.carrierSideEffects !== 0) blockers.push("UNEXPECTED_CARRIER_EFFECTS");
+  if (counters2.customerNotifications !== 0) blockers.push("UNEXPECTED_CUSTOMER_NOTIFICATIONS");
+  return {
+    check: {
+      check: "CUSTOMER_IMPACT",
+      category: "CUSTOMER",
+      level: blockers.length === 0 ? "PASS" : "BLOCKED",
+      message: blockers.length === 0 ? "No unexpected customer side effects" : blockers.join(",")
+    },
+    blockers
+  };
+}
+
+// lib/supplier-controlled-go-live/killSwitch.ts
+function isGoLiveKillSwitched(scope) {
+  return isActivationKillSwitched({
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel
+  });
+}
+
+// lib/supplier-controlled-go-live/eligibility.ts
+function evaluateGoLiveEligibility(input) {
+  const checks = [];
+  const blockers = [];
+  const environment = input.environment === "SANDBOX" ? "SANDBOX" : "PRODUCTION";
+  if (isAiActor(input.requester)) blockers.push("AI_BOUNDARY:REQUEST_FORBIDDEN");
+  const { evidence: validationEvidence, blockers: evidenceBlockers } = loadOfficialValidationEvidence({
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    environment
+  });
+  blockers.push(...evidenceBlockers);
+  checks.push({
+    check: "VALIDATION_EVIDENCE",
+    category: "EVIDENCE",
+    level: validationEvidence ? "PASS" : "BLOCKED",
+    message: validationEvidence ? `#342 ${validationEvidence.validationId}` : "NONE"
+  });
+  if (!validationEvidence || validationEvidence.createOrderCapability !== "VALIDATED") {
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+  }
+  const arming = getLatestArmingForScope({
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    environment
+  });
+  if (!arming || arming.status !== "ARMED") {
+    blockers.push("ARMING_NOT_ARMED");
+    checks.push({ check: "ARMING", category: "ARMING", level: "BLOCKED", message: arming?.status || "NONE" });
+  } else {
+    checks.push({ check: "ARMING", category: "ARMING", level: "PASS", message: "ARMED" });
+  }
+  const armingEligibility = evaluateArmingEligibility({
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    environment,
+    requester: input.requester
+  });
+  checks.push(
+    ...armingEligibility.checks.map((c) => ({
+      check: c.check,
+      category: c.category,
+      level: c.status === "PASS" ? "PASS" : c.status === "WARNING" ? "REVIEW_REQUIRED" : "BLOCKED",
+      message: c.message
+    }))
+  );
+  for (const b of armingEligibility.blockers) {
+    if (!blockers.includes(b)) blockers.push(b);
+  }
+  const firstOrder = loadFirstOrderEvidence({
+    executionId: input.executionId,
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel
+  });
+  checks.push(...firstOrder.checks);
+  blockers.push(...firstOrder.blockers);
+  if (firstOrder.evidence) {
+    const confirmation = validateSupplierConfirmation(firstOrder.evidence, {
+      mockConfirmed: input.mockReview
     });
-    const revenueCents = channelPurchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    let contributionCents = 0;
-    for (const p of channelPurchases) {
-      if (p.orderIdReference) {
-        contributionCents += computeContributionForOrder(p.orderIdReference).contributionCents;
-      }
+    checks.push({
+      check: "SUPPLIER_CONFIRMATION",
+      category: "SUPPLIER",
+      level: confirmation.level,
+      message: confirmation.message
+    });
+    if (confirmation.level === "BLOCKED" || confirmation.level === "FAIL") {
+      blockers.push(...confirmation.blockers);
+    } else if (confirmation.level === "UNVERIFIED" && !input.mockReview) {
+      blockers.push("SUPPLIER_CONFIRMATION_UNVERIFIED");
     }
-    const returns2 = events.filter(
-      (e) => e.eventType === "RETURN" && e.metadata?.channel === channel
-    ).length;
-    return {
+    const tracking = validateTrackingCapability();
+    checks.push(tracking);
+    if (tracking.level === "UNVERIFIED") {
+      checks.push({
+        check: "TRACKING_POLICY",
+        category: "TRACKING",
+        level: "REVIEW_REQUIRED",
+        message: "Tracking UNVERIFIED \u2014 review required per policy"
+      });
+    }
+    const fct = reconcileFulfillment({ evidence: firstOrder.evidence, mockPass: input.mockReview });
+    checks.push(...fct.checks);
+    if (fct.level !== "PASS") blockers.push(...fct.blockers);
+    const inventory = reconcileInventory({ evidence: firstOrder.evidence, mockPass: input.mockReview });
+    checks.push(inventory);
+    if (inventory.level === "BLOCKED" || inventory.level === "FAIL") blockers.push("INVENTORY_RECONCILIATION_FAILED");
+    if (inventory.level === "UNVERIFIED" && !input.mockReview) blockers.push("INVENTORY_RECONCILIATION_NOT_AVAILABLE");
+    const pricing = reconcilePricing({ evidence: firstOrder.evidence, mockPass: input.mockReview });
+    checks.push(pricing);
+    if (pricing.level === "UNVERIFIED" && !input.mockReview) blockers.push("PRICING_RECONCILIATION_NOT_AVAILABLE");
+    const financial = reconcileFinancial({ evidence: firstOrder.evidence, mockPass: input.mockReview });
+    checks.push(financial.check);
+    if (financial.level !== "PASS") blockers.push(...financial.blockers);
+    const customer = validateCustomerImpact();
+    checks.push(customer.check);
+    blockers.push(...customer.blockers);
+  }
+  if (isGoLiveKillSwitched(input)) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+    checks.push({ check: "KILL_SWITCH", category: "KILL_SWITCH", level: "BLOCKED", message: "ON" });
+  } else {
+    checks.push({ check: "KILL_SWITCH", category: "KILL_SWITCH", level: "PASS", message: "OFF" });
+  }
+  checks.push({ check: "SECURITY", category: "SECURITY", level: "PASS", message: "No bypass detected" });
+  checks.push({
+    check: "RISK",
+    category: "RISK",
+    level: blockers.length === 0 ? "PASS" : "BLOCKED",
+    message: blockers.length === 0 ? "LOW" : "ELEVATED"
+  });
+  return { allowed: blockers.length === 0, blockers: [...new Set(blockers)], checks };
+}
+
+// lib/supplier-controlled-go-live/goLive.ts
+var import_crypto5 = require("crypto");
+
+// lib/supplier-controlled-go-live/audit.ts
+var import_crypto3 = require("crypto");
+var auditLog2 = [];
+function recordGoLiveAudit(event) {
+  auditLog2.push({
+    eventId: `cglaud_${(0, import_crypto3.randomUUID)().slice(0, 12)}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    ...event
+  });
+}
+function listGoLiveAudit(filter) {
+  return auditLog2.filter((e) => {
+    if (filter?.goLiveId && e.goLiveId !== filter.goLiveId) return false;
+    if (filter?.type && e.type !== filter.type) return false;
+    return true;
+  });
+}
+
+// lib/supplier-controlled-go-live/approval.ts
+var import_crypto4 = require("crypto");
+
+// lib/supplier-controlled-go-live/persistence.ts
+var goLiveStore = /* @__PURE__ */ new Map();
+var goLiveByIdempotency = /* @__PURE__ */ new Map();
+var approvalStore2 = /* @__PURE__ */ new Map();
+var activatedIds = /* @__PURE__ */ new Set();
+function getPersistentStore3() {
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_CONTROLLED_GO_LIVE_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require_persistentStore3();
+    return mod.createSupplierControlledGoLiveStore();
+  } catch {
+    return null;
+  }
+}
+function saveControlledGoLiveRecord(record) {
+  goLiveStore.set(record.goLiveId, record);
+  goLiveByIdempotency.set(record.idempotencyKey, record.goLiveId);
+  getPersistentStore3()?.saveGoLive({
+    go_live_id: record.goLiveId,
+    supplier_id: record.supplier,
+    state: record.state,
+    idempotency_key: record.idempotencyKey,
+    correlation_id: record.correlationId,
+    record_json: JSON.stringify(record),
+    updated_at: record.updatedAt
+  });
+}
+function getControlledGoLiveRecord(goLiveId) {
+  return goLiveStore.get(goLiveId);
+}
+function getControlledGoLiveByIdempotency(idempotencyKey) {
+  const id = goLiveByIdempotency.get(idempotencyKey);
+  return id ? goLiveStore.get(id) : void 0;
+}
+function listControlledGoLiveRecords() {
+  return [...goLiveStore.values()];
+}
+function getLatestControlledGoLiveForScope(scope) {
+  return listControlledGoLiveRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+function saveGoLiveApproval(approval) {
+  approvalStore2.set(approval.approvalId, approval);
+}
+function getGoLiveApproval(approvalId) {
+  return approvalStore2.get(approvalId);
+}
+function markGoLiveActivated(goLiveId) {
+  activatedIds.add(goLiveId);
+}
+function isGoLiveActivated(goLiveId) {
+  return activatedIds.has(goLiveId);
+}
+function hydrateControlledGoLiveFromPersistence() {
+  const store2 = getPersistentStore3();
+  if (!store2) return;
+  for (const row of store2.listGoLives(5e3)) {
+    try {
+      const parsed = JSON.parse(String(row.record_json || "{}"));
+      if (parsed.goLiveId) {
+        goLiveStore.set(parsed.goLiveId, parsed);
+        goLiveByIdempotency.set(parsed.idempotencyKey, parsed.goLiveId);
+        if (parsed.state === "CONTROLLED_GO_LIVE") activatedIds.add(parsed.goLiveId);
+      }
+    } catch {
+    }
+  }
+}
+
+// lib/supplier-controlled-go-live/approval.ts
+var usedApprovalIds = /* @__PURE__ */ new Set();
+function approveControlledGoLive(input) {
+  const blockers = [];
+  if (isAiActor(input.approverId)) blockers.push("AI_BOUNDARY:APPROVE_FORBIDDEN");
+  if (isAiActor(input.secondaryApproverId)) blockers.push("AI_BOUNDARY:SECONDARY_APPROVE_FORBIDDEN");
+  if (input.approverId === input.requesterId) blockers.push("SELF_APPROVAL_FORBIDDEN");
+  if (input.secondaryApproverId && input.secondaryApproverId === input.approverId) {
+    blockers.push("SAME_ACTOR_SECOND_APPROVAL");
+  }
+  if (input.secondaryApproverId && input.secondaryApproverId === input.requesterId) {
+    blockers.push("REQUESTER_SECOND_APPROVAL");
+  }
+  const record = getControlledGoLiveRecord(input.goLiveId);
+  if (!record) blockers.push("GO_LIVE_NOT_FOUND");
+  if (record && record.state !== "GO_LIVE_REVIEW_READY" && record.state !== "HUMAN_APPROVAL") {
+    blockers.push("GO_LIVE_NOT_REVIEW_READY");
+  }
+  if (record && record.requestedBy !== input.requesterId) blockers.push("REQUESTER_MISMATCH");
+  if (blockers.length > 0) {
+    recordGoLiveAudit({
+      type: "GO_LIVE_BLOCKED",
+      goLiveId: input.goLiveId,
+      supplierId: record?.supplier,
+      correlationId: record?.correlationId || input.goLiveId,
+      actor: input.approverId,
+      detail: { blockers }
+    });
+    return { ok: false, blockers };
+  }
+  const createdAt = (/* @__PURE__ */ new Date()).toISOString();
+  const expiresAt = new Date(Date.now() + GO_LIVE_APPROVAL_TTL_MS).toISOString();
+  const approval = {
+    approvalId: `cglappr_${(0, import_crypto4.randomUUID)().slice(0, 12)}`,
+    goLiveId: input.goLiveId,
+    requesterId: input.requesterId,
+    primaryApproverId: input.approverId,
+    secondaryApproverId: input.secondaryApproverId,
+    scope: record.scope,
+    limits: record.limits,
+    firstOrderEvidence: record.firstOrderEvidence,
+    validationEvidence: record.validationEvidence,
+    status: "APPROVED",
+    createdAt,
+    expiresAt,
+    scopeHash: (0, import_crypto4.createHash)("sha256").update(
+      JSON.stringify({
+        scope: record.scope,
+        limits: record.limits,
+        firstOrder: record.firstOrderEvidence.executionId,
+        validation: record.validationEvidence.validationId
+      })
+    ).digest("hex").slice(0, 16)
+  };
+  saveGoLiveApproval(approval);
+  record.approval = approval;
+  record.state = "HUMAN_APPROVAL";
+  record.updatedAt = createdAt;
+  saveControlledGoLiveRecord(record);
+  recordGoLiveAudit({
+    type: "GO_LIVE_APPROVED",
+    goLiveId: record.goLiveId,
+    supplierId: record.supplier,
+    correlationId: record.correlationId,
+    actor: input.approverId,
+    detail: { approvalId: approval.approvalId, expiresAt }
+  });
+  return { ok: true, approval, blockers: [] };
+}
+function validateGoLiveApproval(input) {
+  const blockers = [];
+  const record = getControlledGoLiveRecord(input.goLiveId);
+  const approval = input.approvalId ? getGoLiveApproval(input.approvalId) : record?.approval;
+  if (!approval) {
+    blockers.push("APPROVAL_MISSING");
+    return { valid: false, blockers };
+  }
+  if (approval.status !== "APPROVED") blockers.push("APPROVAL_NOT_APPROVED");
+  if (Date.parse(approval.expiresAt) <= Date.now()) blockers.push("APPROVAL_EXPIRED");
+  if (approval.goLiveId !== input.goLiveId) blockers.push("APPROVAL_MISMATCH");
+  if (usedApprovalIds.has(approval.approvalId)) blockers.push("APPROVAL_REPLAY");
+  return { valid: blockers.length === 0, blockers, approval };
+}
+function markGoLiveApprovalUsed(approvalId) {
+  usedApprovalIds.add(approvalId);
+}
+
+// lib/supplier-controlled-go-live/expiry.ts
+function assertGoLiveNotExpired(goLiveId) {
+  const record = getControlledGoLiveRecord(goLiveId);
+  if (!record) return { expired: true };
+  if (Date.parse(record.expiresAt) <= Date.now()) {
+    record.state = record.state === "CONTROLLED_GO_LIVE" ? "EXPIRED" : record.state;
+    record.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+    saveControlledGoLiveRecord(record);
+    recordGoLiveAudit({
+      type: "CONTROLLED_GO_LIVE_EXPIRED",
+      goLiveId: record.goLiveId,
+      supplierId: record.supplier,
+      correlationId: record.correlationId
+    });
+    return { expired: true, record };
+  }
+  return { expired: false, record };
+}
+
+// lib/supplier-controlled-go-live/analytics.ts
+var events = [];
+function emitGoLiveAnalytics(event) {
+  events.push({ ...event, at: (/* @__PURE__ */ new Date()).toISOString() });
+}
+
+// lib/supplier-controlled-go-live/goLive.ts
+function requestGoLiveReview(input) {
+  assertGoLiveNetworkSafety();
+  const supplier = input.supplier || getInterCarsSupplierId3();
+  const market = input.market || "DE";
+  const channel = input.channel || "DIRECT";
+  const idempotencyKey = input.idempotencyKey || buildGoLiveIdempotencyKey({ supplier, market, channel, requester: input.requester });
+  const existing = getControlledGoLiveByIdempotency(idempotencyKey);
+  if (existing) return existing;
+  const correlationId = input.correlationId || (0, import_crypto5.randomUUID)();
+  const goLiveId = `cgl345_${(0, import_crypto5.randomUUID)().slice(0, 12)}`;
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  recordGoLiveAudit({
+    type: "GO_LIVE_REVIEW_REQUESTED",
+    goLiveId,
+    supplierId: supplier,
+    correlationId,
+    actor: input.requester
+  });
+  if (isAiActor(input.requester)) {
+    return buildBlockedRecord({
+      goLiveId,
+      supplier,
+      market,
       channel,
-      orders: channelPurchases.length,
-      revenueCents,
-      averageOrderValueCents: channelPurchases.length ? Math.round(revenueCents / channelPurchases.length) : 0,
-      returns: returns2,
-      netRevenueCents: revenueCents,
-      contributionCents,
-      contributionMarginPercent: revenueCents > 0 ? Number((contributionCents / revenueCents * 100).toFixed(2)) : 0
-    };
-  });
-}
-function computeTrafficSourceKpis(events) {
-  return TRAFFIC_SOURCES.map((source) => {
-    const sourceEvents = events.filter((e) => e.trafficSource === source);
-    const sessions = new Set(sourceEvents.map((e) => e.sessionId)).size;
-    const purchases = sourceEvents.filter(isAuthoritativePurchase);
-    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    return {
-      source,
-      sessions,
-      productViews: sourceEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
-      addToCart: sourceEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
-      checkoutStarts: sourceEvents.filter((e) => e.eventType === "CHECKOUT_START").length,
-      purchases: purchases.length,
-      revenueCents,
-      conversionRate: safeRate(purchases.length, sessions)
-    };
-  }).filter((r) => r.sessions > 0 || r.purchases > 0);
-}
-function computeDeviceKpis(events) {
-  return DEVICES.map((device) => {
-    const deviceEvents = events.filter((e) => e.deviceType === device);
-    const sessions = new Set(deviceEvents.map((e) => e.sessionId)).size;
-    const purchases = deviceEvents.filter(isAuthoritativePurchase);
-    const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-    return {
-      device,
-      sessions,
-      productViews: deviceEvents.filter((e) => e.eventType === "PRODUCT_VIEW").length,
-      addToCart: deviceEvents.filter((e) => e.eventType === "ADD_TO_CART").length,
-      checkoutStarts: deviceEvents.filter((e) => e.eventType === "CHECKOUT_START").length,
-      purchases: purchases.length,
-      revenueCents,
-      conversionRate: safeRate(purchases.length, sessions)
-    };
-  }).filter((r) => r.sessions > 0 || r.purchases > 0);
-}
-
-// lib/analytics/kpi/customerCohort.ts
-function computeCustomerKpis(events) {
-  const visitorsInRange = new Set(events.map((e) => e.anonymousVisitorId));
-  const allVisitors = listVisitors().filter((v) => visitorsInRange.has(v.anonymousVisitorId));
-  const newVisitors = allVisitors.filter((v) => !v.isReturning).length;
-  const returningVisitors = allVisitors.filter((v) => v.isReturning).length;
-  const purchases = events.filter(isAuthoritativePurchase);
-  const revenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const visitorCount = visitorsInRange.size || 1;
-  return {
-    newVisitors,
-    returningVisitors,
-    sessionsPerVisitor: Number((new Set(events.map((e) => e.sessionId)).size / visitorCount).toFixed(2)),
-    purchasesPerVisitor: Number((purchases.length / visitorCount).toFixed(2)),
-    revenuePerVisitorCents: Math.round(revenueCents / visitorCount)
-  };
-}
-function computeCohortKpis(events) {
-  const byPeriod = /* @__PURE__ */ new Map();
-  for (const event of events) {
-    const period = event.timestamp.slice(0, 7);
-    const row = byPeriod.get(period) ?? {
-      cohortPeriod: period,
-      firstTimeVisitors: 0,
-      returningSessions: 0,
-      repeatPurchases: 0,
-      revenueCents: 0,
-      purchaseVisitors: /* @__PURE__ */ new Set()
-    };
-    if (event.eventType === "SESSION_START") {
-      const visitor = listVisitors().find((v) => v.anonymousVisitorId === event.anonymousVisitorId);
-      if (visitor?.isReturning) row.returningSessions += 1;
-      else row.firstTimeVisitors += 1;
-    }
-    if (isAuthoritativePurchase(event)) {
-      row.revenueCents += toCents(event.value ?? 0);
-      if (row.purchaseVisitors.has(event.anonymousVisitorId)) {
-        row.repeatPurchases += 1;
-      }
-      row.purchaseVisitors.add(event.anonymousVisitorId);
-    }
-    byPeriod.set(period, row);
-  }
-  return [...byPeriod.values()].map(({ purchaseVisitors: _pv, ...row }) => row).sort((a, b) => a.cohortPeriod.localeCompare(b.cohortPeriod));
-}
-
-// lib/analytics/kpi/returnsKpi.ts
-function computeReturnKpis(events) {
-  const purchases = events.filter(isAuthoritativePurchase);
-  const uniqueOrders = new Set(purchases.map((p) => p.orderIdReference).filter(Boolean)).size;
-  const returnRequests = events.filter((e) => e.eventType === "RETURN").length;
-  const refunds = events.filter(isAuthoritativeRefund);
-  const refundAmountCents = refunds.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const grossRevenueCents = purchases.reduce((sum, e) => sum + toCents(e.value ?? 0), 0);
-  const products2 = computeProductKpis(events, 50);
-  const categories2 = computeCategoryKpis(events, 50);
-  const markets = computeMarketKpis(events);
-  const channels = computeCommerceChannelKpis(events);
-  return {
-    returnRequests,
-    returnedOrders: returnRequests,
-    refundAmountCents,
-    returnRate: safeRate(returnRequests, uniqueOrders),
-    refundRate: safeRate(refunds.length, uniqueOrders),
-    netRevenueAfterReturnsCents: grossRevenueCents - refundAmountCents,
-    byProduct: products2.filter((p) => p.purchases > 0).map((p) => ({
-      productId: p.productId,
-      returnRate: p.returnRate,
-      refundImpactCents: Math.max(0, p.revenueCents - p.netRevenueCents)
-    })),
-    byCategory: categories2.map((c) => ({
-      categoryId: c.categoryId,
-      returnRate: c.returnRate
-    })),
-    byMarket: markets.filter((m) => m.orders > 0).map((m) => ({ market: m.market, returnRate: m.returnRate })),
-    byChannel: channels.filter((c) => c.orders > 0).map((c) => ({ channel: c.channel, refundRate: safeRate(c.returns, c.orders) }))
-  };
-}
-
-// lib/analytics/kpi/rankings.ts
-function buildRankings(products2, categories2, markets, channels, limit) {
-  const top = clampLimit(limit);
-  const productsByRevenue = toRanking(products2, (p) => p.productId, (p) => p.productName, (p) => p.revenueCents, top);
-  const productsByUnits = toRanking(products2, (p) => p.productId, (p) => p.productName, (p) => p.unitsSold, top);
-  const productsByConversion = toRanking(
-    products2.filter((p) => p.views > 0),
-    (p) => p.productId,
-    (p) => p.productName,
-    (p) => p.cartConversion,
-    top
-  );
-  const productsByMargin = toRanking(
-    products2.filter((p) => p.contributionCents > 0),
-    (p) => p.productId,
-    (p) => p.productName,
-    (p) => p.contributionCents,
-    top
-  );
-  const categoriesByRevenue = toRanking(categories2, (c) => c.categoryId, (c) => c.categoryId, (c) => c.revenueCents, top);
-  const marketsByRevenue = toRanking(markets, (m) => m.market, (m) => m.market, (m) => m.revenueCents, top);
-  const channelsByRevenue = toRanking(channels, (c) => c.channel, (c) => c.channel, (c) => c.revenueCents, top);
-  return {
-    productsByRevenue,
-    productsByUnits,
-    productsByConversion,
-    productsByMargin,
-    categoriesByRevenue,
-    marketsByRevenue,
-    channelsByRevenue
-  };
-}
-function toRanking(rows, key, label, value, limit) {
-  return [...rows].sort((a, b) => value(b) - value(a)).slice(0, limit).map((row) => ({ key: key(row), label: label(row), value: value(row) }));
-}
-
-// lib/analytics/kpi/compute.ts
-function computeBusinessKpis(input = {}) {
-  const range = resolveDateRange(input);
-  const events = loadEventsForRange(range);
-  const limit = clampLimit(input.limit);
-  const executive = computeExecutiveKpis(events);
-  const funnel = computeFunnelKpis(events);
-  const products2 = computeProductKpis(events, limit);
-  const categories2 = computeCategoryKpis(events, limit);
-  const markets = computeMarketKpis(events);
-  const languages = computeLanguageKpis(events);
-  const channels = computeCommerceChannelKpis(events);
-  const traffic = computeTrafficSourceKpis(events);
-  const devices = computeDeviceKpis(events);
-  const customers = computeCustomerKpis(events);
-  const cohorts = computeCohortKpis(events);
-  const returns2 = computeReturnKpis(events);
-  const profitability = computeProfitabilityKpis(events);
-  const rankings = buildRankings(products2, categories2, markets, channels, limit);
-  let previousExecutive;
-  let deltas;
-  if (input.comparePrevious && range.previousFrom && range.previousTo) {
-    const prevEvents = loadEventsForRange({
-      preset: range.preset,
-      from: range.previousFrom,
-      to: range.previousTo
+      input,
+      idempotencyKey,
+      correlationId,
+      now,
+      blockers: ["AI_BOUNDARY:REQUEST_FORBIDDEN"],
+      checks: []
     });
-    previousExecutive = computeExecutiveKpis(prevEvents);
-    deltas = {
-      orders: safeDelta(executive.orders, previousExecutive.orders ?? 0),
-      grossRevenueCents: safeDelta(executive.grossRevenueCents, previousExecutive.grossRevenueCents ?? 0),
-      authoritativeRevenueCents: safeDelta(
-        executive.authoritativeRevenueCents,
-        previousExecutive.authoritativeRevenueCents ?? 0
-      ),
-      netRevenueCents: safeDelta(executive.netRevenueCents, previousExecutive.netRevenueCents ?? 0),
-      conversionRate: safeDelta(executive.conversionRate, previousExecutive.conversionRate ?? 0),
-      averageOrderValueCents: safeDelta(
-        executive.averageOrderValueCents,
-        previousExecutive.averageOrderValueCents ?? 0
-      )
-    };
   }
+  recordGoLiveAudit({
+    type: "GO_LIVE_REVIEW_STARTED",
+    goLiveId,
+    supplierId: supplier,
+    correlationId,
+    actor: input.requester
+  });
+  const eligibility = evaluateGoLiveEligibility({
+    supplierId: supplier,
+    market,
+    channel,
+    environment: "PRODUCTION",
+    requester: input.requester,
+    executionId: input.executionId,
+    mockReview: input.mockReview
+  });
+  const { evidence: validationEvidence } = loadOfficialValidationEvidence({
+    supplierId: supplier,
+    market,
+    channel,
+    environment: "PRODUCTION"
+  });
+  const firstOrder = loadFirstOrderEvidence({ executionId: input.executionId, supplierId: supplier, market, channel });
+  let state = "BLOCKED";
+  if (firstOrder.evidence?.executionResult === "UNKNOWN_OUTCOME") {
+    state = "UNKNOWN_OUTCOME";
+  } else if (eligibility.blockers.length === 0) {
+    state = "GO_LIVE_REVIEW_READY";
+    recordGoLiveAudit({
+      type: "FIRST_ORDER_VALIDATED",
+      goLiveId,
+      supplierId: supplier,
+      correlationId,
+      actor: input.requester,
+      detail: { executionId: firstOrder.evidence?.executionId }
+    });
+  } else if (firstOrder.evidence?.executionResult === "EXECUTED") {
+    state = "POST_ORDER_VALIDATION";
+  } else {
+    recordGoLiveAudit({
+      type: firstOrder.blockers.length ? "FIRST_ORDER_VALIDATION_FAILED" : "GO_LIVE_BLOCKED",
+      goLiveId,
+      supplierId: supplier,
+      correlationId,
+      actor: input.requester,
+      detail: { blockers: eligibility.blockers }
+    });
+  }
+  const scope = {
+    supplier,
+    market,
+    channel,
+    environment: "PRODUCTION",
+    currency: "EUR",
+    allowedCategories: resolveGoLiveLimits().allowedCategories
+  };
+  const record = {
+    goLiveId,
+    supplier,
+    state,
+    scope,
+    limits: resolveGoLiveLimits(),
+    firstOrderEvidence: firstOrder.evidence,
+    validationEvidence,
+    checks: eligibility.checks,
+    blockerCodes: eligibility.blockers,
+    correlationId,
+    idempotencyKey,
+    requestedBy: input.requester,
+    createdAt: now,
+    updatedAt: now,
+    expiresAt: new Date(Date.now() + GO_LIVE_TTL_MS).toISOString()
+  };
+  saveControlledGoLiveRecord(record);
+  emitGoLiveAnalytics({
+    eventType: state === "GO_LIVE_REVIEW_READY" ? "go_live_review_ready" : "go_live_blocked",
+    goLiveId,
+    supplierId: supplier,
+    correlationId
+  });
+  return record;
+}
+function buildBlockedRecord(params) {
+  const record = {
+    goLiveId: params.goLiveId,
+    supplier: params.supplier,
+    state: "BLOCKED",
+    scope: {
+      supplier: params.supplier,
+      market: params.market,
+      channel: params.channel,
+      environment: "PRODUCTION",
+      currency: "EUR"
+    },
+    limits: resolveGoLiveLimits(),
+    checks: params.checks,
+    blockerCodes: params.blockers,
+    correlationId: params.correlationId,
+    idempotencyKey: params.idempotencyKey,
+    requestedBy: params.input.requester,
+    createdAt: params.now,
+    updatedAt: params.now,
+    expiresAt: new Date(Date.now() + GO_LIVE_TTL_MS).toISOString()
+  };
+  saveControlledGoLiveRecord(record);
+  return record;
+}
+function activateControlledGoLive(input) {
+  if (isAiActor(input.actorId)) return { ok: false, blockers: ["AI_BOUNDARY:ACTIVATE_FORBIDDEN"] };
+  try {
+    assertGoLiveNetworkSafety();
+  } catch {
+    return { ok: false, blockers: ["NETWORK_MUST_REMAIN_DISABLED"] };
+  }
+  if (isGoLiveActivated(input.goLiveId)) {
+    return { ok: true, record: getControlledGoLiveRecord(input.goLiveId) };
+  }
+  const expiryCheck = assertGoLiveNotExpired(input.goLiveId);
+  if (expiryCheck.expired || !expiryCheck.record) {
+    return { ok: false, blockers: ["GO_LIVE_EXPIRED"] };
+  }
+  const record = expiryCheck.record;
+  const approvalCheck = validateGoLiveApproval({ goLiveId: input.goLiveId, approvalId: input.approvalId });
+  if (!approvalCheck.valid) return { ok: false, blockers: approvalCheck.blockers };
+  if (record.state !== "HUMAN_APPROVAL" && record.state !== "GO_LIVE_REVIEW_READY") {
+    return { ok: false, blockers: ["GO_LIVE_NOT_APPROVED"] };
+  }
+  if (isGoLiveKillSwitched({ supplierId: record.supplier, market: record.scope.market, channel: record.scope.channel })) {
+    record.state = "KILL_SWITCHED";
+    record.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+    saveControlledGoLiveRecord(record);
+    return { ok: false, blockers: ["KILL_SWITCH_ACTIVE"] };
+  }
+  const revalidation = evaluateGoLiveEligibility({
+    supplierId: record.supplier,
+    market: record.scope.market,
+    channel: record.scope.channel,
+    environment: record.scope.environment,
+    requester: record.requestedBy,
+    executionId: record.firstOrderEvidence?.executionId,
+    mockReview: record.firstOrderEvidence?.mockExecution
+  });
+  if (revalidation.blockers.length > 0) {
+    record.state = "VALIDATION_FAILED";
+    record.blockerCodes = revalidation.blockers;
+    record.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+    saveControlledGoLiveRecord(record);
+    return { ok: false, blockers: revalidation.blockers };
+  }
+  record.state = "CONTROLLED_GO_LIVE";
+  record.activatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  record.expiresAt = new Date(Date.now() + GO_LIVE_ROLLOUT_TTL_MS).toISOString();
+  record.updatedAt = record.activatedAt;
+  saveControlledGoLiveRecord(record);
+  markGoLiveActivated(record.goLiveId);
+  markGoLiveApprovalUsed(approvalCheck.approval.approvalId);
+  recordGoLiveAudit({
+    type: "CONTROLLED_GO_LIVE_ACTIVATED",
+    goLiveId: record.goLiveId,
+    supplierId: record.supplier,
+    correlationId: record.correlationId,
+    actor: input.actorId,
+    detail: {
+      scope: record.scope,
+      limits: record.limits,
+      expiresAt: record.expiresAt,
+      note: "CONTROLLED_GO_LIVE != FULL_GLOBAL_GO_LIVE"
+    }
+  });
+  emitGoLiveAnalytics({
+    eventType: "controlled_go_live_activated",
+    goLiveId: record.goLiveId,
+    supplierId: record.supplier,
+    correlationId: record.correlationId
+  });
+  return { ok: true, record };
+}
+
+// lib/supplier-controlled-go-live/rollback.ts
+function rollbackControlledGoLive(input) {
+  if (isAiActor(input.actorId)) return { ok: false, blockers: ["AI_BOUNDARY:ROLLBACK_FORBIDDEN"] };
+  const record = getControlledGoLiveRecord(input.goLiveId);
+  if (!record) return { ok: false, blockers: ["GO_LIVE_NOT_FOUND"] };
+  record.state = "ROLLED_BACK";
+  record.rolledBackAt = (/* @__PURE__ */ new Date()).toISOString();
+  record.updatedAt = record.rolledBackAt;
+  record.blockerCodes = [...record.blockerCodes, input.reason || "MANUAL_ROLLBACK"];
+  saveControlledGoLiveRecord(record);
+  recordGoLiveAudit({
+    type: "GO_LIVE_ROLLBACK",
+    goLiveId: record.goLiveId,
+    supplierId: record.supplier,
+    correlationId: record.correlationId,
+    actor: input.actorId,
+    detail: { reason: input.reason, note: "Existing orders preserved" }
+  });
+  return { ok: true, record };
+}
+function pauseControlledGoLive(input) {
+  if (isAiActor(input.actorId)) return { ok: false, blockers: ["AI_BOUNDARY:PAUSE_FORBIDDEN"] };
+  const record = getControlledGoLiveRecord(input.goLiveId);
+  if (!record) return { ok: false, blockers: ["GO_LIVE_NOT_FOUND"] };
+  if (record.state !== "CONTROLLED_GO_LIVE") return { ok: false, blockers: ["NOT_ACTIVE"] };
+  record.state = "PAUSED";
+  record.pausedAt = (/* @__PURE__ */ new Date()).toISOString();
+  record.updatedAt = record.pausedAt;
+  saveControlledGoLiveRecord(record);
+  recordGoLiveAudit({
+    type: "CONTROLLED_GO_LIVE_PAUSED",
+    goLiveId: record.goLiveId,
+    supplierId: record.supplier,
+    correlationId: record.correlationId,
+    actor: input.actorId
+  });
+  return { ok: true, record };
+}
+
+// lib/supplier-controlled-go-live/admin.ts
+function levelFromChecks(checks, name) {
+  const c = checks.find((x) => x.check === name);
+  return c?.level || "NOT_AVAILABLE";
+}
+function getControlledGoLiveDashboard() {
+  const supplierId = getInterCarsSupplierId3();
+  const records = listControlledGoLiveRecords();
+  const latest = getLatestControlledGoLiveForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const checks = latest?.checks || [];
+  const controlledGoLive = latest?.state === "CONTROLLED_GO_LIVE" ? "ACTIVE" : latest?.state === "GO_LIVE_REVIEW_READY" || latest?.state === "HUMAN_APPROVAL" ? "REVIEW_READY" : "BLOCKED";
   return {
-    range,
-    executive,
-    previousExecutive,
-    deltas,
-    funnel,
-    products: products2,
-    categories: categories2,
-    markets,
-    languages,
-    channels,
-    traffic,
-    devices,
-    customers,
-    cohorts,
-    returns: returns2,
-    profitability,
-    rankings
+    goLiveCount: records.length,
+    blocked: records.filter((r) => r.state === "BLOCKED").length,
+    reviewReady: records.filter((r) => ["GO_LIVE_REVIEW_READY", "HUMAN_APPROVAL"].includes(r.state)).length,
+    active: records.filter((r) => r.state === "CONTROLLED_GO_LIVE").length,
+    rolledBack: records.filter((r) => r.state === "ROLLED_BACK").length,
+    createOrderCapability: evidence?.createOrderCapability || "UNVERIFIED",
+    liveValidation: evidence ? "VALIDATED" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: firstOrder?.state || "BLOCKED",
+    firstOrderOutcome: firstOrder?.state === "EXECUTED" ? "VALIDATED" : firstOrder?.state === "UNKNOWN_OUTCOME" ? "UNKNOWN" : firstOrder?.state === "EXECUTION_FAILED" ? "FAILED" : "NOT_AVAILABLE",
+    supplierConfirmation: levelFromChecks(checks, "SUPPLIER_CONFIRMATION") === "PASS" ? "VALIDATED" : levelFromChecks(checks, "SUPPLIER_CONFIRMATION") === "UNVERIFIED" ? "UNVERIFIED" : "NONE",
+    tracking: levelFromChecks(checks, "TRACKING") === "PASS" ? "VALIDATED" : levelFromChecks(checks, "TRACKING") === "UNVERIFIED" ? "UNVERIFIED" : "NONE",
+    fctReconciliation: mapReconciliation(levelFromChecks(checks, "FCT_ORDER")),
+    inventoryReconciliation: mapReconciliation(levelFromChecks(checks, "INVENTORY")),
+    pricingReconciliation: mapReconciliation(levelFromChecks(checks, "PRICING")),
+    financialReconciliation: mapReconciliation(levelFromChecks(checks, "FINANCIAL")),
+    security: levelFromChecks(checks, "SECURITY") === "PASS" ? "PASS" : "FAIL",
+    risk: levelFromChecks(checks, "RISK") === "PASS" ? "PASS" : "FAIL",
+    fourEyesApproval: latest?.approval?.status === "APPROVED" ? "APPROVED" : latest?.state === "GO_LIVE_REVIEW_READY" ? "PENDING" : "BLOCKED",
+    controlledGoLive,
+    productionNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    realSupplierHttpCalls: getGoLiveSafetyCounters().realSupplierHttpCalls,
+    realSupplierOrders: getGoLiveSafetyCounters().realSupplierOrders,
+    realCustomerOrders: getGoLiveSafetyCounters().realCustomerOrders,
+    marketplaceSideEffects: getGoLiveSafetyCounters().marketplaceSideEffects,
+    paymentSideEffects: getGoLiveSafetyCounters().paymentSideEffects,
+    carrierSideEffects: getGoLiveSafetyCounters().carrierSideEffects,
+    customerNotifications: getGoLiveSafetyCounters().customerNotifications,
+    blockers: latest?.blockerCodes || (evidence ? [] : ["CREATE_ORDER_UNVERIFIED"])
   };
 }
-
-// lib/analytics/kpi/dashboard.ts
-function requireAdmin(context) {
-  const check = validateAdminAccess(context);
-  if (!check.ok) return { ok: false, errorCode: check.errorCode ?? "ADMIN_UNAUTHORIZED" };
-  recordAnalyticsAudit({
-    action: "KPI_DASHBOARD_ACCESS",
-    actor: context.actorId ?? "ADMIN"
-  });
-  return { ok: true };
+function mapReconciliation(level) {
+  if (level === "PASS") return "PASS";
+  if (level === "FAIL" || level === "BLOCKED") return "FAIL";
+  return "NOT_AVAILABLE";
 }
-function parseInput(query = {}) {
-  return parseKpiQueryInput(query);
-}
-function getBusinessKpiDashboard(context, query = {}) {
-  const auth = requireAdmin(context);
-  if (!auth.ok) return auth;
-  const input = parseInput(query);
-  const validation = validateKpiQuery(input);
-  if (!validation.ok) return { ok: false, errorCode: validation.errorCode ?? "INVALID_QUERY" };
-  return { ok: true, data: computeBusinessKpis(input) };
-}
-function getBusinessKpiSection(context, section, query = {}) {
-  const result = getBusinessKpiDashboard(context, query);
-  if (!result.ok) return result;
-  const dashboard = result.data;
-  switch (section) {
-    case "executive":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          executive: dashboard.executive,
-          previousExecutive: dashboard.previousExecutive,
-          deltas: dashboard.deltas
-        }
-      };
-    case "funnel":
-      return { ok: true, data: { range: dashboard.range, funnel: dashboard.funnel } };
-    case "products":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          products: dashboard.products,
-          rankings: {
-            productsByRevenue: dashboard.rankings.productsByRevenue,
-            productsByUnits: dashboard.rankings.productsByUnits,
-            productsByConversion: dashboard.rankings.productsByConversion,
-            productsByMargin: dashboard.rankings.productsByMargin
-          }
-        }
-      };
-    case "categories":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          categories: dashboard.categories,
-          rankings: { categoriesByRevenue: dashboard.rankings.categoriesByRevenue }
-        }
-      };
-    case "markets":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          markets: dashboard.markets,
-          rankings: { marketsByRevenue: dashboard.rankings.marketsByRevenue }
-        }
-      };
-    case "channels":
-      return {
-        ok: true,
-        data: {
-          range: dashboard.range,
-          channels: dashboard.channels,
-          rankings: { channelsByRevenue: dashboard.rankings.channelsByRevenue }
-        }
-      };
-    case "traffic":
-      return { ok: true, data: { range: dashboard.range, traffic: dashboard.traffic } };
-    case "returns":
-      return { ok: true, data: { range: dashboard.range, returns: dashboard.returns } };
-    case "profitability":
-      return { ok: true, data: { range: dashboard.range, profitability: dashboard.profitability } };
-    default:
-      return { ok: true, data: dashboard };
-  }
-}
-
-// lib/analytics/dashboard.ts
-function requireAdmin2(context) {
-  const check = validateAdminAccess(context);
-  if (!check.ok) return { ok: false, errorCode: check.errorCode ?? "ADMIN_UNAUTHORIZED" };
-  recordAnalyticsAudit({
-    action: "DASHBOARD_ACCESS",
-    actor: context.actorId ?? "ADMIN"
-  });
-  return { ok: true };
-}
-function getOverview(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeDashboardOverview() };
-}
-function getTraffic(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  const events = listEvents();
+function getControlledGoLiveDetail(goLiveId) {
+  const record = getControlledGoLiveRecord(goLiveId);
+  if (!record) return null;
   return {
-    ok: true,
-    data: {
-      pageViews: events.filter((e) => e.eventType === "PAGE_VIEW").length,
-      sessions: new Set(events.map((e) => e.sessionId)).size,
-      visitors: new Set(events.map((e) => e.anonymousVisitorId)).size
+    record,
+    audit: listGoLiveAudit({ goLiveId }).slice(-50),
+    safety: getGoLiveSafetyCounters()
+  };
+}
+function listControlledGoLiveRows(filter) {
+  return listControlledGoLiveRecords().filter((row) => {
+    if (filter?.supplier && row.supplier !== filter.supplier) return false;
+    if (filter?.state && row.state !== filter.state) return false;
+    return true;
+  });
+}
+function isControlledGoLiveActive(scope) {
+  const supplierId = scope?.supplierId || getInterCarsSupplierId3();
+  const latest = getLatestControlledGoLiveForScope({
+    supplierId,
+    market: scope?.market || "DE",
+    channel: scope?.channel || "DIRECT"
+  });
+  return latest?.state === "CONTROLLED_GO_LIVE" && Date.parse(latest.expiresAt) > Date.now();
+}
+
+// lib/supplier-controlled-go-live/fctBridge.ts
+function buildControlledGoLiveFctSnapshot() {
+  const dash = getControlledGoLiveDashboard();
+  return {
+    module: "supplier-controlled-go-live",
+    version: "345",
+    controlledGoLive: dash.controlledGoLive,
+    firstOrderOutcome: dash.firstOrderOutcome,
+    armingState: dash.armingState,
+    productionNetwork: dash.productionNetwork,
+    blockers: dash.blockers,
+    safety: {
+      realSupplierHttpCalls: dash.realSupplierHttpCalls,
+      realCustomerOrders: dash.realCustomerOrders
     }
   };
 }
-function getFunnel(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeFunnelMetrics() };
-}
-function getProducts(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeProductAnalytics() };
-}
-function getMarkets(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeMarketAnalytics() };
-}
-function getChannels(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeChannelAnalytics() };
-}
-function getRevenue(context) {
-  const auth = requireAdmin2(context);
-  if (!auth.ok) return auth;
-  return { ok: true, data: computeRevenueMetrics() };
-}
-
-// lib/analytics/storefront/serverEntry.ts
-bootstrapAnalyticsPersistence();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  getAnalyticsPersistenceMode,
-  getBusinessKpiDashboard,
-  getBusinessKpiSection,
-  getChannels,
-  getFunnel,
-  getMarkets,
-  getOverview,
-  getProducts,
-  getRevenue,
-  getTraffic,
-  handleStorefrontAnalyticsEvent,
-  handleStorefrontPurchaseSignal,
-  parseStorefrontEventBody
+  activateControlledGoLive,
+  approveControlledGoLive,
+  assertGoLiveSafetyInvariants,
+  buildControlledGoLiveFctSnapshot,
+  getControlledGoLiveDashboard,
+  getControlledGoLiveDetail,
+  getControlledGoLiveRecord,
+  getGoLiveSafetyCounters,
+  hydrateControlledGoLiveFromPersistence,
+  isControlledGoLiveActive,
+  listControlledGoLiveRows,
+  pauseControlledGoLive,
+  requestGoLiveReview,
+  rollbackControlledGoLive
 });

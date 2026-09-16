@@ -5123,6 +5123,39 @@ CREATE TABLE IF NOT EXISTS tax_rates (
   `);
     }
     migrateSupplierProductionOrderValidation();
+    function migrateSupplierProductionOrderArming() {
+      db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_production_order_arming (
+      arming_id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      environment TEXT NOT NULL,
+      status TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_spoa_supplier
+      ON supplier_production_order_arming(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_spoa_status
+      ON supplier_production_order_arming(status);
+
+    CREATE TABLE IF NOT EXISTS supplier_production_order_arming_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      arming_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_spoaa_arming
+      ON supplier_production_order_arming_audit(arming_id);
+  `);
+    }
+    migrateSupplierProductionOrderArming();
     function seed() {
       const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
       if (count === 0) {

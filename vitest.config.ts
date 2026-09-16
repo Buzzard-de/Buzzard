@@ -20,6 +20,7 @@ export default defineConfig({
       "lib/supplier-order-activation/**/*.test.ts",
       "lib/supplier-production-order-validation/**/*.test.ts",
       "lib/supplier-production-order-arming/**/*.test.ts",
+      "lib/supplier-first-production-order/**/*.test.ts",
       "lib/marketplace-engine/**/*.test.ts",
       "lib/returns-engine/**/*.test.ts",
       "lib/ai-orchestrator/**/*.test.ts",

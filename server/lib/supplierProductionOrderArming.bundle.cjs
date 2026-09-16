@@ -4313,6 +4313,37 @@ CREATE TABLE IF NOT EXISTS tax_rates (
   `);
     }
     migrateSupplierProductionOrderArming();
+    function migrateSupplierFirstProductionOrder() {
+      db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_first_production_orders (
+      execution_id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      state TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_sfpo_supplier
+      ON supplier_first_production_orders(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_sfpo_state
+      ON supplier_first_production_orders(state);
+
+    CREATE TABLE IF NOT EXISTS supplier_first_production_order_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      execution_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_sfpoa_execution
+      ON supplier_first_production_order_audit(execution_id);
+  `);
+    }
+    migrateSupplierFirstProductionOrder();
     function seed() {
       const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
       if (count === 0) {
@@ -32364,7 +32395,7 @@ function createMemoryAnalyticsStore() {
   const consentByVisitor = /* @__PURE__ */ new Map();
   const idempotencyIndex = /* @__PURE__ */ new Map();
   const deletedVisitorIds = /* @__PURE__ */ new Set();
-  const auditLog3 = [];
+  const auditLog4 = [];
   let eventCounter = 0;
   let auditCounter = 0;
   return {
@@ -32432,7 +32463,7 @@ function createMemoryAnalyticsStore() {
       consentByVisitor.clear();
       idempotencyIndex.clear();
       deletedVisitorIds.clear();
-      auditLog3.length = 0;
+      auditLog4.length = 0;
       eventCounter = 0;
       auditCounter = 0;
     },
@@ -32470,15 +32501,15 @@ function createMemoryAnalyticsStore() {
         actor: entry.actor,
         metadata: entry.metadata
       };
-      auditLog3.push(record);
+      auditLog4.push(record);
       return record;
     },
     getAuditLog(filter) {
-      if (!filter?.action) return [...auditLog3];
-      return auditLog3.filter((e) => e.action === filter.action);
+      if (!filter?.action) return [...auditLog4];
+      return auditLog4.filter((e) => e.action === filter.action);
     },
     clearAudit() {
-      auditLog3.length = 0;
+      auditLog4.length = 0;
       auditCounter = 0;
     }
   };
@@ -32954,7 +32985,7 @@ function validateArmingApproval(input) {
 }
 
 // lib/supplier-production-order-arming/arm.ts
-var import_crypto5 = require("crypto");
+var import_crypto7 = require("crypto");
 
 // lib/supplier-production-order-arming/expiry.ts
 function isArmingExpired(record) {
@@ -32986,6 +33017,85 @@ function emitArmingAnalytics(input) {
   events.push({ ...input, timestamp: (/* @__PURE__ */ new Date()).toISOString() });
 }
 
+// lib/supplier-first-production-order/execution.ts
+var import_crypto6 = require("crypto");
+
+// lib/supplier-first-production-order/audit.ts
+var import_crypto5 = require("crypto");
+var auditLog3 = [];
+function recordFirstOrderAudit(event) {
+  auditLog3.push({
+    eventId: `fpoaud_${(0, import_crypto5.randomUUID)().slice(0, 12)}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    ...event
+  });
+}
+
+// lib/supplier-first-production-order/config.ts
+var FIRST_ORDER_TTL_MS2 = Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_TTL_MS || 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3
+);
+var EXECUTION_AUTH_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_AUTH_TTL_MS || 30 * 60 * 1e3
+);
+
+// lib/supplier-first-production-order/persistence.ts
+var executionStore = /* @__PURE__ */ new Map();
+function getFirstProductionOrderRecord(executionId) {
+  return executionStore.get(executionId);
+}
+
+// lib/supplier-first-production-order/safety.ts
+var counters2 = {
+  realSupplierHttpCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0,
+  marketplaceSideEffects: 0,
+  paymentSideEffects: 0,
+  carrierSideEffects: 0,
+  customerNotifications: 0,
+  unknownOutcomes: 0,
+  mockExecutions: 0
+};
+function assertFirstOrderNetworkSafety() {
+  if (isSupplierOrderNetworkEnabled()) {
+    counters2.realSupplierHttpCalls++;
+    throw new Error("FIRST_ORDER_FAIL:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED");
+  }
+}
+
+// lib/supplier-first-production-order/execution.ts
+function attemptFirstProductionOrderExecution(input) {
+  assertFirstOrderNetworkSafety();
+  const record = input.executionId ? getFirstProductionOrderRecord(input.executionId) : void 0;
+  const armed = Boolean(record?.armingId === input.armingId || input.armingId);
+  recordFirstOrderAudit({
+    type: "FIRST_ORDER_BLOCKED",
+    executionId: input.executionId,
+    correlationId: record?.correlationId || (0, import_crypto6.randomUUID)(),
+    actor: input.actorId,
+    detail: { armingId: input.armingId, code: "EXECUTION_REQUIRES_AUTHORIZATION" }
+  });
+  if (!input.executionId || !input.authorizationId) {
+    return {
+      blocked: true,
+      code: "EXECUTION_REQUIRES_AUTHORIZATION",
+      reason: "ARMED alone does not permit execution \u2014 authorization and full gate chain required",
+      httpCallsMade: 0,
+      armed: Boolean(armed)
+    };
+  }
+  return {
+    blocked: true,
+    code: "USE_EXECUTE_FIRST_PRODUCTION_ORDER",
+    reason: "Use executeFirstProductionOrder with valid authorization",
+    httpCallsMade: 0,
+    armed: Boolean(armed),
+    state: record?.state
+  };
+}
+
 // lib/supplier-production-order-arming/arm.ts
 function requestProductionOrderArming(input) {
   assertArmingNetworkSafety();
@@ -33005,8 +33115,8 @@ function requestProductionOrderArming(input) {
 }
 function executeArmingRequest(input, ctx) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
-  const correlationId = input.correlationId || (0, import_crypto5.randomUUID)();
-  const armingId = `arm343_${(0, import_crypto5.randomUUID)().slice(0, 12)}`;
+  const correlationId = input.correlationId || (0, import_crypto7.randomUUID)();
+  const armingId = `arm343_${(0, import_crypto7.randomUUID)().slice(0, 12)}`;
   recordArmingAudit({
     type: "PRODUCTION_ARMING_REQUESTED",
     armingId,
@@ -33189,23 +33299,7 @@ function armProductionOrder(input) {
 function attemptProductionOrderExecution(input) {
   assertArmingNetworkSafety();
   recordBlockedProductionExecutionAttempt();
-  const record = getArmingRecord(input.armingId);
-  const armed = record?.status === "ARMED";
-  recordArmingAudit({
-    type: "PRODUCTION_EXECUTION_BLOCKED",
-    armingId: input.armingId,
-    supplierId: record?.supplier,
-    correlationId: record?.correlationId || (0, import_crypto5.randomUUID)(),
-    actor: input.actorId,
-    detail: { armed, code: "EXECUTION_REQUIRES_ALL_GATES" }
-  });
-  return {
-    blocked: true,
-    code: armed ? "EXECUTION_REQUIRES_ALL_GATES" : "NOT_ARMED",
-    reason: armed ? "ARMED alone does not permit execution \u2014 first order gate and all execution gates required" : "Production order arming not active",
-    httpCallsMade: 0,
-    armed: Boolean(armed)
-  };
+  return attemptFirstProductionOrderExecution(input);
 }
 
 // lib/supplier-production-order-arming/disarm.ts

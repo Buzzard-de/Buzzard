@@ -42,4 +42,6 @@ export {
   resetReadinessForTests,
   listReadinessRecords,
   listApprovalRecords,
+  getReadinessByScope,
+  saveReadinessRecord,
 } from "./persistence";

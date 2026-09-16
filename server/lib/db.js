@@ -4202,6 +4202,43 @@ function migrateSupplierOrderReadiness() {
 
 migrateSupplierOrderReadiness();
 
+function migrateSupplierOrderRehearsal() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_order_rehearsals (
+      rehearsal_id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      overall_status TEXT NOT NULL,
+      current_stage TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_sorh_supplier
+      ON supplier_order_rehearsals(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_sorh_status
+      ON supplier_order_rehearsals(overall_status);
+
+    CREATE TABLE IF NOT EXISTS supplier_order_rehearsal_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      rehearsal_id TEXT,
+      order_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_sorha_rehearsal
+      ON supplier_order_rehearsal_audit(rehearsal_id);
+  `);
+}
+
+migrateSupplierOrderRehearsal();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

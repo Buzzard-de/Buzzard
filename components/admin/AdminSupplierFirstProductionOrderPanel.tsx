@@ -53,7 +53,8 @@ export default function AdminSupplierFirstProductionOrderPanel() {
           <p className="admin-muted">
             EXECUTION_AUTHORIZED ≠ EXECUTED ·{" "}
             <Link href="/admin/supplier-production-order-arming">Arming (#343)</Link> ·{" "}
-            <Link href="/admin/supplier-production-order-validation">Validation (#342)</Link>
+            <Link href="/admin/supplier-production-order-validation">Validation (#342)</Link> ·{" "}
+            <Link href="/admin/supplier-controlled-go-live">Go-Live (#345)</Link>
           </p>
         </div>
       </header>

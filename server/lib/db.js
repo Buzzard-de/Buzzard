@@ -4438,6 +4438,38 @@ function migrateSupplierFirstProductionOrder() {
 
 migrateSupplierFirstProductionOrder();
 
+function migrateSupplierControlledGoLive() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_controlled_go_live (
+      go_live_id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      state TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_scgl_supplier
+      ON supplier_controlled_go_live(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_scgl_state
+      ON supplier_controlled_go_live(state);
+
+    CREATE TABLE IF NOT EXISTS supplier_controlled_go_live_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      go_live_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_scgla_go_live
+      ON supplier_controlled_go_live_audit(go_live_id);
+  `);
+}
+
+migrateSupplierControlledGoLive();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

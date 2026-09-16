@@ -6,6 +6,14 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res, err) => function __init() {
+  if (err) throw err[0];
+  try {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  } catch (e) {
+    throw err = [e], e;
+  }
+};
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -34,6 +42,385 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// data/supplier-engine/live_supplier.config.template.json
+var live_supplier_config_template_default;
+var init_live_supplier_config_template = __esm({
+  "data/supplier-engine/live_supplier.config.template.json"() {
+    live_supplier_config_template_default = {
+      $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+      supplierId: "",
+      name: "",
+      displayName: "",
+      country: "DE",
+      region: "EU",
+      currency: "EUR",
+      connectorType: "b2b-sandbox",
+      environment: "SANDBOX",
+      baseUrl: "",
+      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+      authentication: "api_key",
+      authType: "API_KEY",
+      endpoints: {
+        health: "/health",
+        products: "/products",
+        stock: "/stock",
+        prices: "/prices"
+      },
+      fieldMapping: {
+        article_number: "supplierSku",
+        sku: "supplierSku",
+        ean_code: "ean",
+        gtin: "gtin",
+        mpn: "mpn",
+        brand_name: "brand",
+        title: "name",
+        price_net: "supplierPrice",
+        stock_qty: "stock"
+      },
+      categoryMapping: {},
+      supportedMarkets: ["DE"],
+      feedFormat: "json",
+      priceIncludesVat: false,
+      capabilities: {
+        productFeed: true,
+        stockFeed: true,
+        priceFeed: true,
+        orderAPI: false,
+        createOrder: false,
+        cancelOrder: false,
+        orderStatus: false,
+        trackingAPI: false,
+        returnsAPI: false,
+        refund: false,
+        credit: false,
+        replacement: false,
+        dropshipping: false,
+        whiteLabel: false,
+        blindShipping: false
+      },
+      pagination: {
+        mode: "cursor",
+        pageSize: 100
+      }
+    };
+  }
+});
+
+// data/supplier-engine/inter_cars.profile.template.json
+var inter_cars_profile_template_default;
+var init_inter_cars_profile_template = __esm({
+  "data/supplier-engine/inter_cars.profile.template.json"() {
+    inter_cars_profile_template_default = {
+      $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+      $documentation: {
+        supplier: "Inter Cars S.A.",
+        country: "PL/EU (DE market supported)",
+        type: "Automotive B2B wholesaler",
+        officialDocs: [
+          "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+          "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+        ],
+        authentication: "OAuth2 Bearer token (B2B account via sales representative)",
+        rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+        stockSemantics: "availability field = units available for purchase at location",
+        priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+        currency: "Per-response currencyCode (EUR for DE customers when configured)",
+        updateFrequency: "Real-time for API; CSV feeds daily",
+        dropshipping: "Contact sales representative \u2014 not assumed enabled",
+        whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+      },
+      supplierId: "SUP-INTER-CARS-001",
+      name: "Inter Cars",
+      displayName: "Inter Cars B2B",
+      country: "DE",
+      region: "EU",
+      currency: "EUR",
+      connectorType: "b2b-sandbox",
+      adapterProfile: "inter-cars",
+      environment: "SANDBOX",
+      baseUrl: "https://dev.gw.intercars.eu",
+      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+      authentication: "oauth2",
+      authType: "OAUTH2",
+      endpoints: {
+        health: "/ic/catalog/category",
+        products: "/ic/catalog/products",
+        stock: "/ic/inventory/stock",
+        prices: "/ic/inventory/1.0.0/pricing/quote"
+      },
+      fieldMapping: {
+        sku: "supplierSku",
+        index: "mpn",
+        articleNumber: "mpn",
+        tecDoc: "tecdocId",
+        brand: "brand",
+        shortDescription: "name",
+        description: "description",
+        eans: "ean",
+        availability: "stock",
+        customerPriceNet: "supplierPrice",
+        listPriceNet: "listPriceNet",
+        genericArticleReferences: "supplierCategory"
+      },
+      categoryMapping: {},
+      categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
+      supportedMarkets: ["DE"],
+      feedFormat: "json",
+      priceIncludesVat: false,
+      priceModel: "net",
+      priceField: "customerPriceNet",
+      capabilities: {
+        productFeed: true,
+        stockFeed: true,
+        priceFeed: true,
+        orderAPI: false,
+        createOrder: false,
+        cancelOrder: false,
+        orderStatus: false,
+        trackingAPI: false,
+        returnsAPI: false,
+        refund: false,
+        credit: false,
+        replacement: false,
+        dropshipping: false,
+        whiteLabel: false,
+        blindShipping: false
+      },
+      pagination: {
+        mode: "pageNumber",
+        pageParam: "pageNumber",
+        pageSizeParam: "pageSize",
+        pageSize: 25,
+        hasNextPageField: "hasNextPage"
+      },
+      requestHeaders: {
+        "Accept-Language": "de"
+      },
+      allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+    };
+  }
+});
+
+// data/supplier-engine/inter_cars_category_mappings.json
+var inter_cars_category_mappings_default;
+var init_inter_cars_category_mappings = __esm({
+  "data/supplier-engine/inter_cars_category_mappings.json"() {
+    inter_cars_category_mappings_default = {
+      $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
+      mappings: {
+        GenericArticle_1280: "auto-sub-05--oil-filters",
+        "Filtr oleju": "auto-sub-05--oil-filters",
+        "Oil filter": "auto-sub-05--oil-filters",
+        \u00D6lfilter: "auto-sub-05--oil-filters",
+        "Brake pad": "auto-sub-04--brake-pads",
+        Bremsbelag: "auto-sub-04--brake-pads",
+        "Brake disc": "auto-sub-04--brake-discs",
+        Bremsscheibe: "auto-sub-04--brake-discs",
+        Tyre: "auto-sub-01--car-tires",
+        Tire: "auto-sub-01--car-tires",
+        Reifen: "auto-sub-01--car-tires",
+        Battery: "auto-sub-06--car-batteries",
+        Batterie: "auto-sub-06--car-batteries",
+        "Car battery": "auto-sub-06--car-batteries",
+        Cleaning: "auto-sub-12--interior-cleaner",
+        Reinigung: "auto-sub-12--interior-cleaner"
+      }
+    };
+  }
+});
+
+// lib/supplier-engine/security.ts
+function isSecretField(fieldName) {
+  return SECRET_PATTERNS.some((p) => p.test(fieldName));
+}
+function redactSecrets(obj) {
+  if (obj == null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(redactSecrets);
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (isSecretField(key)) {
+      result[key] = "[REDACTED]";
+    } else if (typeof value === "object") {
+      result[key] = redactSecrets(value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+var SECRET_PATTERNS;
+var init_security = __esm({
+  "lib/supplier-engine/security.ts"() {
+    "use strict";
+    SECRET_PATTERNS = [
+      /api[_-]?key/i,
+      /secret/i,
+      /password/i,
+      /token/i,
+      /authorization/i,
+      /bearer/i,
+      /credential/i
+    ];
+  }
+});
+
+// lib/supplier-engine/credentials.ts
+function registerCredentialRef(supplierId, secretsRef) {
+  const entry = {
+    supplierId,
+    secretsRef,
+    configured: Boolean(secretsRef),
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  credentialRefs.set(supplierId, entry);
+  return entry;
+}
+function resolveCredentials(secretsRef) {
+  if (!secretsRef) return null;
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const raw = process.env[envKey];
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return { token: raw };
+  }
+}
+var credentialRefs;
+var init_credentials = __esm({
+  "lib/supplier-engine/credentials.ts"() {
+    "use strict";
+    init_security();
+    credentialRefs = /* @__PURE__ */ new Map();
+  }
+});
+
+// lib/supplier-engine/liveSupplier/config.ts
+function parseJsonConfig(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed.supplierId || !parsed.baseUrl) return null;
+    return normalizeProfile(parsed);
+  } catch {
+    return null;
+  }
+}
+function normalizeProfile(profile) {
+  const { $comment: _comment, ...templateBase } = live_supplier_config_template_default;
+  return {
+    ...templateBase,
+    ...profile,
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: false,
+      createOrder: false,
+      cancelOrder: false,
+      orderStatus: false,
+      trackingAPI: false,
+      returnsAPI: false,
+      refund: false,
+      credit: false,
+      replacement: false,
+      ...profile.capabilities
+    },
+    endpoints: { ...live_supplier_config_template_default.endpoints, ...profile.endpoints },
+    fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
+  };
+}
+function loadCategoryMappings(profile) {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = inter_cars_category_mappings_default.mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+function resolvePredefinedLiveProfile() {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
+    return loadCategoryMappings(normalizeProfile(base));
+  }
+  return null;
+}
+function resolveLiveSupplierProfile() {
+  const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
+  if (jsonConfig) {
+    const parsed = parseJsonConfig(jsonConfig);
+    if (parsed) return loadCategoryMappings(parsed);
+  }
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
+  const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
+  const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
+  if (!supplierId || !baseUrl) return null;
+  return loadCategoryMappings(normalizeProfile({
+    supplierId,
+    name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
+    displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
+    country: process.env.SUPPLIER_LIVE_COUNTRY?.trim() || "DE",
+    region: process.env.SUPPLIER_LIVE_REGION?.trim() || "EU",
+    currency: process.env.SUPPLIER_LIVE_CURRENCY?.trim() || "EUR",
+    connectorType: "b2b-sandbox",
+    environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
+    baseUrl,
+    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
+    endpoints: {
+      health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
+      products: process.env.SUPPLIER_LIVE_PRODUCTS_PATH?.trim() || "/products",
+      stock: process.env.SUPPLIER_LIVE_STOCK_PATH?.trim() || "/stock",
+      prices: process.env.SUPPLIER_LIVE_PRICES_PATH?.trim() || "/prices"
+    },
+    fieldMapping: live_supplier_config_template_default.fieldMapping,
+    categoryMapping: {},
+    supportedMarkets: (process.env.SUPPLIER_LIVE_MARKETS?.split(",") || ["DE"]).map((m) => m.trim()).filter(Boolean),
+    feedFormat: process.env.SUPPLIER_LIVE_FEED_FORMAT?.trim() || "json",
+    priceIncludesVat: process.env.SUPPLIER_LIVE_PRICE_INCLUDES_VAT === "1",
+    capabilities: live_supplier_config_template_default.capabilities,
+    pagination: { mode: "cursor", pageSize: 100 },
+    dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
+    whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
+    blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
+  }));
+}
+function hasLiveSupplierCredentials(profile) {
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds || Object.keys(creds).length === 0) return false;
+  const token = creds.accessToken || creds.token || creds.bearer;
+  return Boolean(String(token || "").trim());
+}
+function describeLiveCredentialReadiness(profile) {
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds) {
+    return { configured: false, authType: profile.authentication, secretFieldsPresent: [] };
+  }
+  const present = [];
+  if (creds.accessToken) present.push("accessToken");
+  if (creds.token) present.push("token");
+  if (creds.bearer) present.push("bearer");
+  if (creds.apiKey || creds.key) present.push("apiKey");
+  return {
+    configured: hasLiveSupplierCredentials(profile),
+    authType: profile.authentication,
+    secretFieldsPresent: present
+  };
+}
+var init_config = __esm({
+  "lib/supplier-engine/liveSupplier/config.ts"() {
+    "use strict";
+    init_live_supplier_config_template();
+    init_inter_cars_profile_template();
+    init_inter_cars_category_mappings();
+    init_credentials();
+  }
+});
 
 // server/lib/dbPaths.js
 var require_dbPaths = __commonJS({
@@ -4363,258 +4750,55 @@ CREATE TABLE IF NOT EXISTS tax_rates (
   }
 });
 
-// server/lib/fulfillment/persistentStore.js
+// server/lib/supplier-production-validation/persistentStore.js
 var require_persistentStore = __commonJS({
-  "server/lib/fulfillment/persistentStore.js"(exports2, module2) {
-    var { db } = require_db();
-    function createFulfillmentControlTowerStore() {
-      const upsertSnapshot = db.prepare(`
-    INSERT INTO fulfillment_control_tower_snapshots (
-      fulfillment_id, order_id, supplier_id, operational_status, view_json, last_reconciled_at, updated_at
-    ) VALUES (
-      @fulfillment_id, @order_id, @supplier_id, @operational_status, @view_json, @last_reconciled_at, @updated_at
-    )
-    ON CONFLICT(fulfillment_id) DO UPDATE SET
-      operational_status = excluded.operational_status,
-      view_json = excluded.view_json,
-      last_reconciled_at = excluded.last_reconciled_at,
-      updated_at = excluded.updated_at
-  `);
-      const upsertIncident = db.prepare(`
-    INSERT INTO fulfillment_control_tower_incidents (
-      incident_id, fingerprint, fulfillment_id, order_id, supplier_id,
-      severity, category, code, message, detected_at, resolved_at, status,
-      correlation_id, resolution_note, resolution_actor, acknowledged_at, acknowledged_by
-    ) VALUES (
-      @incident_id, @fingerprint, @fulfillment_id, @order_id, @supplier_id,
-      @severity, @category, @code, @message, @detected_at, @resolved_at, @status,
-      @correlation_id, @resolution_note, @resolution_actor, @acknowledged_at, @acknowledged_by
-    )
-    ON CONFLICT(fingerprint) DO UPDATE SET
-      severity = excluded.severity,
-      message = excluded.message,
-      resolved_at = excluded.resolved_at,
-      status = excluded.status,
-      resolution_note = excluded.resolution_note,
-      resolution_actor = excluded.resolution_actor,
-      acknowledged_at = excluded.acknowledged_at,
-      acknowledged_by = excluded.acknowledged_by
-  `);
-      const insertRun = db.prepare(`
-    INSERT OR REPLACE INTO fulfillment_control_tower_reconciliation_runs (
-      run_id, correlation_id, started_at, completed_at,
-      checked_fulfillments, passed, warnings, mismatches, critical,
-      incidents_created, incidents_resolved, duration_ms, errors_json
-    ) VALUES (
-      @run_id, @correlation_id, @started_at, @completed_at,
-      @checked_fulfillments, @passed, @warnings, @mismatches, @critical,
-      @incidents_created, @incidents_resolved, @duration_ms, @errors_json
-    )
-  `);
-      return {
-        saveSnapshot(row) {
-          upsertSnapshot.run(row);
-        },
-        getSnapshot(fulfillmentId) {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots WHERE fulfillment_id = ?").get(fulfillmentId);
-        },
-        listSnapshots() {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots ORDER BY updated_at DESC").all();
-        },
-        saveIncident(row) {
-          upsertIncident.run(row);
-        },
-        getIncidentByFingerprint(fingerprint) {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents WHERE fingerprint = ?").get(fingerprint);
-        },
-        listIncidents() {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents ORDER BY detected_at DESC").all();
-        },
-        saveReconciliationRun(row) {
-          insertRun.run(row);
-        },
-        listReconciliationRuns(limit = 20) {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_reconciliation_runs ORDER BY started_at DESC LIMIT ?").all(limit);
-        },
-        resetAll() {
-          db.prepare("DELETE FROM fulfillment_control_tower_snapshots").run();
-          db.prepare("DELETE FROM fulfillment_control_tower_incidents").run();
-          db.prepare("DELETE FROM fulfillment_control_tower_reconciliation_runs").run();
-        }
-      };
-    }
-    module2.exports = { createFulfillmentControlTowerStore };
-  }
-});
-
-// server/lib/supplier-order-readiness/persistentStore.js
-var require_persistentStore2 = __commonJS({
-  "server/lib/supplier-order-readiness/persistentStore.js"(exports2, module2) {
-    var { db } = require_db();
-    function createSupplierOrderReadinessStore() {
-      const upsertReadiness = db.prepare(`
-    INSERT INTO supplier_order_readiness (
-      readiness_id, supplier_id, market, channel, overall_status, approval_status,
-      generated_at, expires_at, record_json, updated_at
-    ) VALUES (
-      @readiness_id, @supplier_id, @market, @channel, @overall_status, @approval_status,
-      @generated_at, @expires_at, @record_json, @updated_at
-    )
-    ON CONFLICT(readiness_id) DO UPDATE SET
-      overall_status = excluded.overall_status,
-      approval_status = excluded.approval_status,
-      expires_at = excluded.expires_at,
-      record_json = excluded.record_json,
-      updated_at = excluded.updated_at
-  `);
-      const upsertApproval = db.prepare(`
-    INSERT INTO supplier_order_approvals (
-      approval_id, readiness_id, supplier_id, market, channel, status,
-      requester, approver, requested_at, approved_at, rejected_at, rejection_reason,
-      expires_at, record_json, updated_at
-    ) VALUES (
-      @approval_id, @readiness_id, @supplier_id, @market, @channel, @status,
-      @requester, @approver, @requested_at, @approved_at, @rejected_at, @rejection_reason,
-      @expires_at, @record_json, @updated_at
-    )
-    ON CONFLICT(approval_id) DO UPDATE SET
-      status = excluded.status,
-      approver = excluded.approver,
-      approved_at = excluded.approved_at,
-      rejected_at = excluded.rejected_at,
-      rejection_reason = excluded.rejection_reason,
-      expires_at = excluded.expires_at,
-      record_json = excluded.record_json,
-      updated_at = excluded.updated_at
-  `);
-      const insertAudit = db.prepare(`
-    INSERT OR REPLACE INTO supplier_order_readiness_audit (
-      event_id, event_type, supplier_id, market, channel, actor, correlation_id, timestamp, detail_json
-    ) VALUES (
-      @event_id, @event_type, @supplier_id, @market, @channel, @actor, @correlation_id, @timestamp, @detail_json
-    )
-  `);
-      const upsertKillSwitch = db.prepare(`
-    INSERT INTO supplier_order_kill_switch (id, state_json, updated_at, updated_by)
-    VALUES (1, @state_json, @updated_at, @updated_by)
-    ON CONFLICT(id) DO UPDATE SET
-      state_json = excluded.state_json,
-      updated_at = excluded.updated_at,
-      updated_by = excluded.updated_by
-  `);
-      return {
-        saveReadiness(row) {
-          upsertReadiness.run(row);
-        },
-        getReadiness(readinessId) {
-          return db.prepare("SELECT * FROM supplier_order_readiness WHERE readiness_id = ?").get(readinessId);
-        },
-        listReadiness() {
-          return db.prepare("SELECT * FROM supplier_order_readiness ORDER BY updated_at DESC").all();
-        },
-        saveApproval(row) {
-          upsertApproval.run(row);
-        },
-        getApproval(approvalId) {
-          return db.prepare("SELECT * FROM supplier_order_approvals WHERE approval_id = ?").get(approvalId);
-        },
-        listApprovals() {
-          return db.prepare("SELECT * FROM supplier_order_approvals ORDER BY requested_at DESC").all();
-        },
-        saveAudit(row) {
-          insertAudit.run(row);
-        },
-        listAudit(limit = 500) {
-          return db.prepare("SELECT * FROM supplier_order_readiness_audit ORDER BY timestamp DESC LIMIT ?").all(limit);
-        },
-        saveKillSwitch(row) {
-          upsertKillSwitch.run(row);
-        },
-        getKillSwitch() {
-          return db.prepare("SELECT * FROM supplier_order_kill_switch WHERE id = 1").get();
-        }
-      };
-    }
-    module2.exports = { createSupplierOrderReadinessStore };
-  }
-});
-
-// server/lib/supplier-order-activation/persistentStore.js
-var require_persistentStore3 = __commonJS({
-  "server/lib/supplier-order-activation/persistentStore.js"(exports2, module2) {
+  "server/lib/supplier-production-validation/persistentStore.js"(exports2, module2) {
     var { getDb } = require_db();
-    function createSupplierOrderActivationStore() {
+    function createSupplierProductionValidationStore() {
       const db = getDb();
       if (!db) return null;
-      const saveActivationStmt = db.prepare(`
-    INSERT INTO supplier_order_activation (
-      activation_id, supplier_id, market, channel, environment,
-      status, network_state, idempotency_key, correlation_id,
+      const saveValidationStmt = db.prepare(`
+    INSERT INTO supplier_production_capability_validation (
+      validation_id, supplier_id, market, channel, environment,
+      overall_status, credential_status, idempotency_key, correlation_id,
       record_json, updated_at
     ) VALUES (
-      @activation_id, @supplier_id, @market, @channel, @environment,
-      @status, @network_state, @idempotency_key, @correlation_id,
+      @validation_id, @supplier_id, @market, @channel, @environment,
+      @overall_status, @credential_status, @idempotency_key, @correlation_id,
       @record_json, @updated_at
     )
-    ON CONFLICT(activation_id) DO UPDATE SET
-      status = excluded.status,
-      network_state = excluded.network_state,
+    ON CONFLICT(validation_id) DO UPDATE SET
+      overall_status = excluded.overall_status,
+      credential_status = excluded.credential_status,
       record_json = excluded.record_json,
       updated_at = excluded.updated_at
   `);
-      const getActivationStmt = db.prepare(`
-    SELECT * FROM supplier_order_activation WHERE activation_id = ?
+      const getValidationStmt = db.prepare(`
+    SELECT * FROM supplier_production_capability_validation WHERE validation_id = ?
   `);
-      const listActivationsStmt = db.prepare(`
-    SELECT * FROM supplier_order_activation ORDER BY updated_at DESC LIMIT ?
-  `);
-      const saveFirstOrderStmt = db.prepare(`
-    INSERT INTO supplier_first_order_gate (
-      first_order_id, activation_id, supplier_id, status,
-      idempotency_key, record_json, updated_at
-    ) VALUES (
-      @first_order_id, @activation_id, @supplier_id, @status,
-      @idempotency_key, @record_json, @updated_at
-    )
-    ON CONFLICT(first_order_id) DO UPDATE SET
-      status = excluded.status,
-      record_json = excluded.record_json,
-      updated_at = excluded.updated_at
-  `);
-      const getFirstOrderStmt = db.prepare(`
-    SELECT * FROM supplier_first_order_gate WHERE first_order_id = ?
-  `);
-      const listFirstOrdersStmt = db.prepare(`
-    SELECT * FROM supplier_first_order_gate ORDER BY updated_at DESC LIMIT ?
+      const listValidationsStmt = db.prepare(`
+    SELECT * FROM supplier_production_capability_validation
+    ORDER BY updated_at DESC LIMIT ?
   `);
       const saveAuditStmt = db.prepare(`
-    INSERT OR REPLACE INTO supplier_order_activation_audit (
-      event_id, event_type, activation_id, supplier_id, correlation_id, timestamp, detail_json
+    INSERT OR REPLACE INTO supplier_production_validation_audit (
+      event_id, event_type, validation_id, supplier_id, correlation_id, timestamp, detail_json
     ) VALUES (
-      @event_id, @event_type, @activation_id, @supplier_id, @correlation_id, @timestamp, @detail_json
+      @event_id, @event_type, @validation_id, @supplier_id, @correlation_id, @timestamp, @detail_json
     )
   `);
       const listAuditStmt = db.prepare(`
-    SELECT * FROM supplier_order_activation_audit ORDER BY timestamp DESC LIMIT ?
+    SELECT * FROM supplier_production_validation_audit ORDER BY timestamp DESC LIMIT ?
   `);
       return {
-        saveActivation(row) {
-          saveActivationStmt.run(row);
+        saveValidation(row) {
+          saveValidationStmt.run(row);
         },
-        getActivation(activationId) {
-          return getActivationStmt.get(activationId);
+        getValidation(validationId) {
+          return getValidationStmt.get(validationId);
         },
-        listActivations(limit = 5e3) {
-          return listActivationsStmt.all(limit);
-        },
-        saveFirstOrder(row) {
-          saveFirstOrderStmt.run(row);
-        },
-        getFirstOrder(firstOrderId) {
-          return getFirstOrderStmt.get(firstOrderId);
-        },
-        listFirstOrders(limit = 5e3) {
-          return listFirstOrdersStmt.all(limit);
+        listValidations(limit = 5e3) {
+          return listValidationsStmt.all(limit);
         },
         saveAudit(row) {
           saveAuditStmt.run(row);
@@ -4624,422 +4808,487 @@ var require_persistentStore3 = __commonJS({
         }
       };
     }
-    module2.exports = { createSupplierOrderActivationStore };
+    module2.exports = { createSupplierProductionValidationStore };
   }
 });
 
-// lib/supplier-order-activation/serverEntry.ts
-var serverEntry_exports = {};
-__export(serverEntry_exports, {
-  approveActivationRequest: () => approveActivationRequest,
-  armActivation: () => armActivation,
-  assertActivationSafetyInvariants: () => assertActivationSafetyInvariants,
-  attemptFirstOrderSend: () => attemptFirstOrderSend,
-  cancelActivation: () => cancelActivation,
-  confirmActivation: () => confirmActivation,
-  createActivationRequest: () => createActivationRequest,
-  executeRealSupplierOrder: () => executeRealSupplierOrder,
-  getActivationRecord: () => getActivationRecord,
-  getActivationSafetyCounters: () => getActivationSafetyCounters,
-  getSupplierOrderActivationDashboard: () => getSupplierOrderActivationDashboard,
-  getSupplierOrderActivationDetail: () => getSupplierOrderActivationDetail,
-  hydrateActivationFromPersistence: () => hydrateActivationFromPersistence,
-  listActivationRecords: () => listActivationRecords,
-  listSupplierOrderActivationRows: () => listSupplierOrderActivationRows,
-  prepareFirstOrderGate: () => prepareFirstOrderGate,
-  previewFirstOrder: () => previewFirstOrder,
-  rejectActivationRequest: () => rejectActivationRequest,
-  revokeActivation: () => revokeActivation,
-  runActivationPreflight: () => runActivationPreflight
+// data/global/test_supplier_feeds.json
+var test_supplier_feeds_default;
+var init_test_supplier_feeds = __esm({
+  "data/global/test_supplier_feeds.json"() {
+    test_supplier_feeds_default = {
+      TEST_SUPPLIER_A: {
+        supplierId: "TEST_SUPPLIER_A",
+        name: "Test Supplier A (Mock)",
+        country: "DE",
+        region: "EU",
+        currency: "EUR",
+        integrationTypes: ["api", "xml", "csv", "manual"],
+        supportedMarkets: ["DE", "FR", "PL"],
+        capabilities: {
+          productFeed: true,
+          stockFeed: true,
+          priceFeed: true,
+          orderAPI: true,
+          createOrder: true,
+          cancelOrder: true,
+          orderStatus: true,
+          shippingAPI: false,
+          trackingAPI: true,
+          tracking: true,
+          returnsAPI: true,
+          returnAuthorization: true,
+          refund: true,
+          credit: true,
+          replacement: true,
+          webhook: false,
+          dropshipping: true,
+          whiteLabel: true,
+          blindShipping: true,
+          api: true,
+          xml: true,
+          csv: true
+        },
+        rateLimit: { requestsPerMinute: 60 },
+        fieldMapping: {
+          article_number: "supplierSku",
+          sku: "supplierSku",
+          ean_code: "ean",
+          price_net: "supplierPrice",
+          stock_qty: "stock",
+          title: "name",
+          brand_name: "brand"
+        },
+        apiProducts: [
+          {
+            article_number: "TSA-TIRE-225-45-17",
+            ean_code: "4006633001247",
+            brand_name: "Michelin",
+            title: "Michelin Pilot Sport 4 225/45 R17",
+            price_net: 55.79,
+            stock_qty: 8,
+            currency: "EUR"
+          },
+          {
+            article_number: "TSA-OIL-5W30-5L",
+            ean_code: "4006633001236",
+            brand_name: "Castrol",
+            title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
+            price_net: 26.6,
+            stock_qty: 50,
+            currency: "EUR"
+          },
+          {
+            article_number: "TSA-DISC-280",
+            ean_code: "4006633001234",
+            brand_name: "ATE",
+            title: "Bremsscheibe Vorderachse 280mm",
+            price_net: 21.64,
+            stock_qty: 24,
+            currency: "EUR"
+          },
+          {
+            article_number: "TSA-PADS-FRONT",
+            ean_code: "4006633001235",
+            brand_name: "Bosch",
+            title: "Bremsbel\xE4ge Satz Vorderachse",
+            price_net: 17.67,
+            stock_qty: 31,
+            currency: "EUR"
+          }
+        ],
+        xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
+        csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
+      }
+    };
+  }
 });
-module.exports = __toCommonJS(serverEntry_exports);
 
-// data/supplier-engine/live_supplier.config.template.json
-var live_supplier_config_template_default = {
-  $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
-  supplierId: "",
-  name: "",
-  displayName: "",
-  country: "DE",
-  region: "EU",
-  currency: "EUR",
-  connectorType: "b2b-sandbox",
-  environment: "SANDBOX",
-  baseUrl: "",
-  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
-  authentication: "api_key",
-  authType: "API_KEY",
-  endpoints: {
-    health: "/health",
-    products: "/products",
-    stock: "/stock",
-    prices: "/prices"
-  },
-  fieldMapping: {
-    article_number: "supplierSku",
-    sku: "supplierSku",
-    ean_code: "ean",
-    gtin: "gtin",
-    mpn: "mpn",
-    brand_name: "brand",
-    title: "name",
-    price_net: "supplierPrice",
-    stock_qty: "stock"
-  },
-  categoryMapping: {},
-  supportedMarkets: ["DE"],
-  feedFormat: "json",
-  priceIncludesVat: false,
-  capabilities: {
-    productFeed: true,
-    stockFeed: true,
-    priceFeed: true,
-    orderAPI: false,
-    createOrder: false,
-    cancelOrder: false,
-    orderStatus: false,
-    trackingAPI: false,
-    returnsAPI: false,
-    refund: false,
-    credit: false,
-    replacement: false,
-    dropshipping: false,
-    whiteLabel: false,
-    blindShipping: false
-  },
-  pagination: {
-    mode: "cursor",
-    pageSize: 100
+// data/buzzard_suppliers.json
+var buzzard_suppliers_default;
+var init_buzzard_suppliers = __esm({
+  "data/buzzard_suppliers.json"() {
+    buzzard_suppliers_default = {
+      project: "Buzzard",
+      document: "Supplier Master",
+      version: "1.0.0",
+      suppliers: [
+        {
+          supplier_id: "SUP-INTERNAL-001",
+          supplier_name: "Buzzard Internal Warehouse",
+          contact_email: "warehouse@buzzard.de",
+          contact_phone: "+49 30 1234567",
+          website: "https://buzzard24.de",
+          feed_type: "manual",
+          api_endpoint: null,
+          auth_type: "none",
+          currency: "EUR",
+          vat_handling: "gross",
+          dropshipping: false,
+          white_label: true,
+          blind_shipping: false,
+          default_markup_percent: 45,
+          minimum_margin_percent: 15,
+          safety_stock: 2,
+          active: true,
+          sync_status: "idle",
+          last_sync_at: null,
+          notes: "Internal stock for test and flagship products."
+        },
+        {
+          supplier_id: "SUP-DEMO-001",
+          production_status: "TEST_ONLY",
+          supplier_name: "Demo Automotive Parts GmbH",
+          contact_email: "orders@demo-automotive.example",
+          contact_phone: "+49 89 9876543",
+          website: "https://demo-automotive.example",
+          feed_type: "json",
+          api_endpoint: "https://demo-automotive.example/api/products.json",
+          auth_type: "api_key",
+          currency: "EUR",
+          vat_handling: "net",
+          dropshipping: true,
+          white_label: true,
+          blind_shipping: true,
+          default_markup_percent: 38,
+          minimum_margin_percent: 12,
+          safety_stock: 1,
+          active: true,
+          sync_status: "idle",
+          last_sync_at: null,
+          notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
+        }
+      ]
+    };
   }
-};
+});
 
-// data/supplier-engine/inter_cars.profile.template.json
-var inter_cars_profile_template_default = {
-  $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
-  $documentation: {
-    supplier: "Inter Cars S.A.",
-    country: "PL/EU (DE market supported)",
-    type: "Automotive B2B wholesaler",
-    officialDocs: [
-      "https://docs.webapi.intercars.eu/ic-api/contracts/api",
-      "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
-    ],
-    authentication: "OAuth2 Bearer token (B2B account via sales representative)",
-    rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
-    stockSemantics: "availability field = units available for purchase at location",
-    priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
-    currency: "Per-response currencyCode (EUR for DE customers when configured)",
-    updateFrequency: "Real-time for API; CSV feeds daily",
-    dropshipping: "Contact sales representative \u2014 not assumed enabled",
-    whiteLabel: "Contact sales representative \u2014 not assumed enabled"
-  },
-  supplierId: "SUP-INTER-CARS-001",
-  name: "Inter Cars",
-  displayName: "Inter Cars B2B",
-  country: "DE",
-  region: "EU",
-  currency: "EUR",
-  connectorType: "b2b-sandbox",
-  adapterProfile: "inter-cars",
-  environment: "SANDBOX",
-  baseUrl: "https://dev.gw.intercars.eu",
-  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
-  authentication: "oauth2",
-  authType: "OAUTH2",
-  endpoints: {
-    health: "/ic/catalog/category",
-    products: "/ic/catalog/products",
-    stock: "/ic/inventory/stock",
-    prices: "/ic/inventory/1.0.0/pricing/quote"
-  },
-  fieldMapping: {
-    sku: "supplierSku",
-    index: "mpn",
-    articleNumber: "mpn",
-    tecDoc: "tecdocId",
-    brand: "brand",
-    shortDescription: "name",
-    description: "description",
-    eans: "ean",
-    availability: "stock",
-    customerPriceNet: "supplierPrice",
-    listPriceNet: "listPriceNet",
-    genericArticleReferences: "supplierCategory"
-  },
-  categoryMapping: {},
-  categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
-  supportedMarkets: ["DE"],
-  feedFormat: "json",
-  priceIncludesVat: false,
-  priceModel: "net",
-  priceField: "customerPriceNet",
-  capabilities: {
-    productFeed: true,
-    stockFeed: true,
-    priceFeed: true,
-    orderAPI: false,
-    createOrder: false,
-    cancelOrder: false,
-    orderStatus: false,
-    trackingAPI: false,
-    returnsAPI: false,
-    refund: false,
-    credit: false,
-    replacement: false,
-    dropshipping: false,
-    whiteLabel: false,
-    blindShipping: false
-  },
-  pagination: {
-    mode: "pageNumber",
-    pageParam: "pageNumber",
-    pageSizeParam: "pageSize",
-    pageSize: 25,
-    hasNextPageField: "hasNextPage"
-  },
-  requestHeaders: {
-    "Accept-Language": "de"
-  },
-  allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
-};
-
-// data/supplier-engine/inter_cars_category_mappings.json
-var inter_cars_category_mappings_default = {
-  $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
-  mappings: {
-    GenericArticle_1280: "auto-sub-05--oil-filters",
-    "Filtr oleju": "auto-sub-05--oil-filters",
-    "Oil filter": "auto-sub-05--oil-filters",
-    \u00D6lfilter: "auto-sub-05--oil-filters",
-    "Brake pad": "auto-sub-04--brake-pads",
-    Bremsbelag: "auto-sub-04--brake-pads",
-    "Brake disc": "auto-sub-04--brake-discs",
-    Bremsscheibe: "auto-sub-04--brake-discs",
-    Tyre: "auto-sub-01--car-tires",
-    Tire: "auto-sub-01--car-tires",
-    Reifen: "auto-sub-01--car-tires",
-    Battery: "auto-sub-06--car-batteries",
-    Batterie: "auto-sub-06--car-batteries",
-    "Car battery": "auto-sub-06--car-batteries",
-    Cleaning: "auto-sub-12--interior-cleaner",
-    Reinigung: "auto-sub-12--interior-cleaner"
+// lib/supplier-engine/fixtures.ts
+var TEST_SUPPLIER_ID;
+var init_fixtures = __esm({
+  "lib/supplier-engine/fixtures.ts"() {
+    "use strict";
+    TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
   }
-};
+});
 
-// lib/supplier-engine/security.ts
-var SECRET_PATTERNS = [
-  /api[_-]?key/i,
-  /secret/i,
-  /password/i,
-  /token/i,
-  /authorization/i,
-  /bearer/i,
-  /credential/i
-];
-function isSecretField(fieldName) {
-  return SECRET_PATTERNS.some((p) => p.test(fieldName));
-}
-function redactSecrets(obj) {
-  if (obj == null || typeof obj !== "object") return obj;
-  if (Array.isArray(obj)) return obj.map(redactSecrets);
-  const result = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (isSecretField(key)) {
-      result[key] = "[REDACTED]";
-    } else if (typeof value === "object") {
-      result[key] = redactSecrets(value);
-    } else {
-      result[key] = value;
+// lib/supplier-engine/persistence.ts
+function getSupplierPersistence() {
+  if (store !== void 0) return store;
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
+    store = null;
+    return store;
+  }
+  const candidates = [
+    "server/lib/supplier/persistentStore.js",
+    "../../server/lib/supplier/persistentStore.js"
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      store = mod.createPersistentSupplierStore();
+      return store;
+    } catch {
     }
   }
-  return result;
+  store = null;
+  return store;
 }
-
-// lib/supplier-engine/credentials.ts
-var credentialRefs = /* @__PURE__ */ new Map();
-function registerCredentialRef(supplierId, secretsRef) {
-  const entry = {
-    supplierId,
-    secretsRef,
-    configured: Boolean(secretsRef),
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  credentialRefs.set(supplierId, entry);
-  return entry;
-}
-function getCredentialRef(supplierId) {
-  return credentialRefs.get(supplierId);
-}
-function hasConfiguredCredentials(supplierId) {
-  return credentialRefs.get(supplierId)?.configured === true;
-}
-function resolveCredentials(secretsRef) {
-  if (!secretsRef) return null;
-  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
-  const raw = process.env[envKey];
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw);
-    return parsed;
-  } catch {
-    return { token: raw };
+var store;
+var init_persistence = __esm({
+  "lib/supplier-engine/persistence.ts"() {
+    "use strict";
   }
-}
+});
 
-// lib/supplier-engine/liveSupplier/config.ts
-function parseJsonConfig(raw) {
-  try {
-    const parsed = JSON.parse(raw);
-    if (!parsed.supplierId || !parsed.baseUrl) return null;
-    return normalizeProfile(parsed);
-  } catch {
-    return null;
-  }
-}
-function normalizeProfile(profile) {
-  const { $comment: _comment, ...templateBase } = live_supplier_config_template_default;
+// lib/supplier-engine/liveSupplier/registry.ts
+function liveProfileToSupplierConfig(profile) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
   return {
-    ...templateBase,
-    ...profile,
+    supplierId: profile.supplierId,
+    name: profile.name,
+    displayName: profile.displayName || profile.name,
+    country: profile.country,
+    region: profile.region,
+    status: "TESTING",
+    integrationTypes: ["b2b-sandbox"],
+    currency: profile.currency,
+    supportedMarkets: profile.supportedMarkets,
+    supportedCategories: [],
+    capabilities: profile.capabilities,
+    fieldMapping: profile.fieldMapping,
+    secretsRef: profile.secretsRef,
+    rateLimit: { requestsPerMinute: 60 },
+    connectorProfile: profile,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function registerLiveSupplierIfConfigured(register2) {
+  const profile = resolveLiveSupplierProfile();
+  if (!profile) return null;
+  register2(liveProfileToSupplierConfig(profile));
+  registerCredentialRef(profile.supplierId, profile.secretsRef);
+  registeredLiveSupplierId = profile.supplierId;
+  return profile;
+}
+var registeredLiveSupplierId;
+var init_registry = __esm({
+  "lib/supplier-engine/liveSupplier/registry.ts"() {
+    "use strict";
+    init_config();
+    init_credentials();
+    registeredLiveSupplierId = null;
+  }
+});
+
+// lib/supplier-engine/registry.ts
+function mapMasterToConfig(raw) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const feedType = String(raw.feed_type || "manual");
+  const integrationTypes = feedType === "json" ? ["api"] : feedType === "manual" ? ["manual"] : [feedType];
+  return {
+    supplierId: String(raw.supplier_id),
+    name: String(raw.supplier_name),
+    country: "DE",
+    region: "EU",
+    status: raw.active === false ? "DISABLED" : raw.production_status === "TEST_ONLY" ? "TESTING" : "CONNECTED",
+    integrationTypes,
+    currency: String(raw.currency || "EUR"),
+    supportedMarkets: ["DE"],
+    supportedCategories: [],
     capabilities: {
       productFeed: true,
       stockFeed: true,
       priceFeed: true,
-      orderAPI: false,
-      createOrder: false,
-      cancelOrder: false,
-      orderStatus: false,
-      trackingAPI: false,
-      returnsAPI: false,
-      refund: false,
-      credit: false,
-      replacement: false,
-      ...profile.capabilities
+      dropshipping: raw.dropshipping === true,
+      whiteLabel: raw.white_label === true,
+      blindShipping: raw.blind_shipping === true,
+      api: feedType === "json",
+      csv: false,
+      xml: false
     },
-    endpoints: { ...live_supplier_config_template_default.endpoints, ...profile.endpoints },
-    fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
+    fieldMapping: {},
+    createdAt: now,
+    updatedAt: now
   };
 }
-function loadCategoryMappings(profile) {
-  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
-    return profile;
-  }
-  if (profile.adapterProfile === "inter-cars") {
-    const mappings = inter_cars_category_mappings_default.mappings || {};
-    return { ...profile, categoryMapping: mappings };
-  }
-  return profile;
-}
-function resolvePredefinedLiveProfile() {
-  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
-  if (preset === "inter-cars") {
-    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
-    return loadCategoryMappings(normalizeProfile(base));
-  }
-  return null;
-}
-function resolveLiveSupplierProfile() {
-  const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
-  if (jsonConfig) {
-    const parsed = parseJsonConfig(jsonConfig);
-    if (parsed) return loadCategoryMappings(parsed);
-  }
-  const predefined = resolvePredefinedLiveProfile();
-  if (predefined) return predefined;
-  const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
-  const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
-  if (!supplierId || !baseUrl) return null;
-  return loadCategoryMappings(normalizeProfile({
-    supplierId,
-    name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
-    displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
-    country: process.env.SUPPLIER_LIVE_COUNTRY?.trim() || "DE",
-    region: process.env.SUPPLIER_LIVE_REGION?.trim() || "EU",
-    currency: process.env.SUPPLIER_LIVE_CURRENCY?.trim() || "EUR",
-    connectorType: "b2b-sandbox",
-    environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
-    baseUrl,
-    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
-    authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
-    endpoints: {
-      health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
-      products: process.env.SUPPLIER_LIVE_PRODUCTS_PATH?.trim() || "/products",
-      stock: process.env.SUPPLIER_LIVE_STOCK_PATH?.trim() || "/stock",
-      prices: process.env.SUPPLIER_LIVE_PRICES_PATH?.trim() || "/prices"
-    },
-    fieldMapping: live_supplier_config_template_default.fieldMapping,
-    categoryMapping: {},
-    supportedMarkets: (process.env.SUPPLIER_LIVE_MARKETS?.split(",") || ["DE"]).map((m) => m.trim()).filter(Boolean),
-    feedFormat: process.env.SUPPLIER_LIVE_FEED_FORMAT?.trim() || "json",
-    priceIncludesVat: process.env.SUPPLIER_LIVE_PRICE_INCLUDES_VAT === "1",
-    capabilities: live_supplier_config_template_default.capabilities,
-    pagination: { mode: "cursor", pageSize: 100 },
-    dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
-    whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
-    blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
-  }));
-}
-function hasLiveSupplierCredentials(profile) {
-  const creds = resolveCredentials(profile.secretsRef);
-  if (!creds || Object.keys(creds).length === 0) return false;
-  const token = creds.accessToken || creds.token || creds.bearer;
-  return Boolean(String(token || "").trim());
-}
-function describeLiveCredentialReadiness(profile) {
-  const creds = resolveCredentials(profile.secretsRef);
-  if (!creds) {
-    return { configured: false, authType: profile.authentication, secretFieldsPresent: [] };
-  }
-  const present = [];
-  if (creds.accessToken) present.push("accessToken");
-  if (creds.token) present.push("token");
-  if (creds.bearer) present.push("bearer");
-  if (creds.apiKey || creds.key) present.push("apiKey");
+function buildTestSupplierA() {
+  const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
+  const now = (/* @__PURE__ */ new Date()).toISOString();
   return {
-    configured: hasLiveSupplierCredentials(profile),
-    authType: profile.authentication,
-    secretFieldsPresent: present
+    supplierId: TEST_SUPPLIER_ID,
+    name: String(feed.name || "Test Supplier A"),
+    country: String(feed.country || "DE"),
+    region: String(feed.region || "EU"),
+    status: "TESTING",
+    integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
+    currency: String(feed.currency || "EUR"),
+    supportedMarkets: feed.supportedMarkets || ["DE", "FR", "PL"],
+    supportedCategories: [],
+    capabilities: feed.capabilities || {},
+    fieldMapping: feed.fieldMapping || {},
+    rateLimit: feed.rateLimit,
+    createdAt: now,
+    updatedAt: now
   };
 }
+function mergePersistedOverlay(config) {
+  const overlay = persistedOverlay.get(config.supplierId);
+  if (!overlay) return config;
+  return {
+    ...config,
+    ...overlay,
+    capabilities: { ...config.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config.supportedMarkets,
+    status: overlay.status ?? config.status,
+    updatedAt: overlay.updatedAt ?? config.updatedAt
+  };
+}
+function persistRegistryEntry(config) {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  persistence.saveRegistryRow({
+    supplierId: config.supplierId,
+    name: config.name,
+    displayName: config.displayName || config.name,
+    country: config.country,
+    connectorType: config.integrationTypes[0] || "manual",
+    supportedMarkets: config.supportedMarkets,
+    capabilities: config.capabilities,
+    active: config.status !== "DISABLED" && config.status !== "PAUSED",
+    status: config.status,
+    secretsRef: config.secretsRef,
+    createdAt: config.createdAt
+  });
+  if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
+}
+function ensureRegistry() {
+  if (supplierById.size > 0) return;
+  for (const raw of buzzard_suppliers_default.suppliers) {
+    const config = mergePersistedOverlay(mapMasterToConfig(raw));
+    supplierById.set(config.supplierId, config);
+    persistRegistryEntry(config);
+  }
+  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
+  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
+  persistRegistryEntry(testSupplier);
+  registerLiveSupplierIfConfigured((config) => {
+    const merged = mergePersistedOverlay(config);
+    supplierById.set(config.supplierId, merged);
+    persistRegistryEntry(merged);
+  });
+}
+function getSupplier(supplierId) {
+  ensureRegistry();
+  const config = supplierById.get(supplierId);
+  return config ? mergePersistedOverlay(config) : void 0;
+}
+function isSupplierSelectable(supplierId) {
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return false;
+  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
+}
+var supplierById, persistedOverlay;
+var init_registry2 = __esm({
+  "lib/supplier-engine/registry.ts"() {
+    "use strict";
+    init_test_supplier_feeds();
+    init_buzzard_suppliers();
+    init_fixtures();
+    init_persistence();
+    init_credentials();
+    init_registry();
+    supplierById = /* @__PURE__ */ new Map();
+    persistedOverlay = /* @__PURE__ */ new Map();
+  }
+});
 
-// lib/supplier-order-activation/config.ts
-var ACTIVATION_TTL_MS = 24 * 60 * 60 * 1e3;
-var APPROVAL_TTL_MS = 4 * 60 * 60 * 1e3;
-var REHEARSAL_TTL_MS = Number(process.env.SUPPLIER_ACTIVATION_REHEARSAL_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
-var FIRST_ORDER_TTL_MS = 2 * 60 * 60 * 1e3;
-var FIRST_ORDER_LIMITS = {
-  maxOrderValue: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_VALUE || 500),
-  maxQuantity: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_QTY || 5),
-  maxItems: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_ITEMS || 3),
-  maxSuppliers: 1,
-  maxCustomers: 1
-};
+// lib/supplier-engine/capabilities.ts
+var init_capabilities = __esm({
+  "lib/supplier-engine/capabilities.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/orderSandbox/persistence.ts
+var init_persistence2 = __esm({
+  "lib/supplier-engine/orderSandbox/persistence.ts"() {
+    "use strict";
+    init_persistence();
+  }
+});
+
+// server/lib/supplier-production-order-validation/persistentStore.js
+var require_persistentStore2 = __commonJS({
+  "server/lib/supplier-production-order-validation/persistentStore.js"(exports2, module2) {
+    var { getDb } = require_db();
+    function createSupplierProductionOrderValidationStore() {
+      const db = getDb();
+      if (!db) return null;
+      const saveValidationStmt = db.prepare(`
+    INSERT INTO supplier_production_order_validation (
+      validation_id, supplier_id, market, channel, environment,
+      overall_status, create_order_capability, idempotency_key, correlation_id,
+      record_json, updated_at
+    ) VALUES (
+      @validation_id, @supplier_id, @market, @channel, @environment,
+      @overall_status, @create_order_capability, @idempotency_key, @correlation_id,
+      @record_json, @updated_at
+    )
+    ON CONFLICT(validation_id) DO UPDATE SET
+      overall_status = excluded.overall_status,
+      create_order_capability = excluded.create_order_capability,
+      record_json = excluded.record_json,
+      updated_at = excluded.updated_at
+  `);
+      const getValidationStmt = db.prepare(`
+    SELECT * FROM supplier_production_order_validation WHERE validation_id = ?
+  `);
+      const listValidationsStmt = db.prepare(`
+    SELECT * FROM supplier_production_order_validation ORDER BY updated_at DESC LIMIT ?
+  `);
+      const saveAuditStmt = db.prepare(`
+    INSERT OR REPLACE INTO supplier_production_order_validation_audit (
+      event_id, event_type, validation_id, supplier_id, correlation_id, timestamp, detail_json
+    ) VALUES (
+      @event_id, @event_type, @validation_id, @supplier_id, @correlation_id, @timestamp, @detail_json
+    )
+  `);
+      const listAuditStmt = db.prepare(`
+    SELECT * FROM supplier_production_order_validation_audit ORDER BY timestamp DESC LIMIT ?
+  `);
+      return {
+        saveValidation(row) {
+          saveValidationStmt.run(row);
+        },
+        getValidation(validationId) {
+          return getValidationStmt.get(validationId);
+        },
+        listValidations(limit = 5e3) {
+          return listValidationsStmt.all(limit);
+        },
+        saveAudit(row) {
+          saveAuditStmt.run(row);
+        },
+        listAudit(limit = 5e3) {
+          return listAuditStmt.all(limit);
+        }
+      };
+    }
+    module2.exports = { createSupplierProductionOrderValidationStore };
+  }
+});
+
+// lib/supplier-production-order-validation/serverEntry.ts
+var serverEntry_exports = {};
+__export(serverEntry_exports, {
+  assertCreateOrderValidationSafetyInvariants: () => assertCreateOrderValidationSafetyInvariants,
+  attemptProductionCreateOrder: () => attemptProductionCreateOrder,
+  evaluateCreateOrderProductionValidationChecks: () => evaluateCreateOrderProductionValidationChecks,
+  getCreateOrderValidationDashboard: () => getCreateOrderValidationDashboard,
+  getCreateOrderValidationDetail: () => getCreateOrderValidationDetail,
+  getCreateOrderValidationSafetyCounters: () => getCreateOrderValidationSafetyCounters,
+  getValidationRecord: () => getValidationRecord,
+  hydrateValidationFromPersistence: () => hydrateValidationFromPersistence,
+  listCreateOrderValidationRows: () => listCreateOrderValidationRows,
+  listValidationRecords: () => listValidationRecords2,
+  resolveUnknownOutcome: () => resolveUnknownOutcome,
+  runCreateOrderProductionValidation: () => runCreateOrderProductionValidation
+});
+module.exports = __toCommonJS(serverEntry_exports);
+
+// lib/supplier-production-order-validation/config.ts
+init_config();
+var VALIDATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var CONTROLLED_VALIDATION_MAX_VALUE = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_VALUE || 100
+);
+var CONTROLLED_VALIDATION_MAX_QTY = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_QTY || 1
+);
 function getInterCarsSupplierId() {
   return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
 }
 function getInterCarsAdapterProfile() {
   return resolvePredefinedLiveProfile()?.adapterProfile || "inter-cars";
 }
-function buildActivationIdempotencyKey(scope) {
-  return `act_${scope.supplierId}_${scope.market}_${scope.channel}_${scope.environment}_${scope.requester}`;
+function getCreateOrderEndpointPath() {
+  const profile = resolvePredefinedLiveProfile();
+  const endpoints = profile?.endpoints;
+  return endpoints?.createOrder || endpoints?.orders || "/ic/order/createOrder";
 }
-function resolveActivationConfig() {
-  return {
-    interCarsSupplierId: getInterCarsSupplierId(),
-    interCarsAdapterProfile: getInterCarsAdapterProfile(),
-    activationTtlMs: ACTIVATION_TTL_MS,
-    approvalTtlMs: APPROVAL_TTL_MS,
-    rehearsalTtlMs: REHEARSAL_TTL_MS,
-    firstOrderTtlMs: FIRST_ORDER_TTL_MS,
-    firstOrderMaxValue: FIRST_ORDER_LIMITS.maxOrderValue,
-    firstOrderMaxQuantity: FIRST_ORDER_LIMITS.maxQuantity,
-    firstOrderMaxItems: FIRST_ORDER_LIMITS.maxItems,
-    defaultMaxMarketValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_MARKET_VALUE || 1e4),
-    defaultMaxChannelValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_CHANNEL_VALUE || 5e3),
-    defaultMaxOrderValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_ORDER_VALUE || 1e3),
-    defaultMaxDailyOrderValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_DAILY_VALUE || 5e3),
-    defaultMaxOrders: Number(process.env.SUPPLIER_ACTIVATION_MAX_ORDERS || 10)
-  };
+function resolveValidationMode() {
+  const raw = (process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MODE || "MOCK").toUpperCase();
+  if (raw === "SANDBOX" || raw === "VALIDATION" || raw === "PRODUCTION") return raw;
+  return "MOCK";
+}
+function isControlledValidationEnabled() {
+  return process.env.SUPPLIER_CREATE_ORDER_VALIDATION_ENABLED === "1";
+}
+function buildValidationIdempotencyKey(scope) {
+  const base = `co341_${scope.supplierId}_${scope.market}_${scope.channel}_${scope.environment}`;
+  return scope.orderId ? `${base}_${scope.orderId}` : base;
 }
 
 // lib/supplier-engine/network/config.ts
@@ -5069,7 +5318,83 @@ function isSupplierOrderNetworkEnabled() {
   return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
-// lib/supplier-order-activation/safety.ts
+// lib/supplier-engine/network/allowlist.ts
+var BLOCKED_HOSTNAMES = /* @__PURE__ */ new Set([
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "::1",
+  "metadata.google.internal",
+  "metadata"
+]);
+var METADATA_IP = "169.254.169.254";
+function isPrivateIpv4(host) {
+  const parts = host.split(".").map((p) => Number(p));
+  if (parts.length !== 4 || parts.some((p) => !Number.isFinite(p))) return false;
+  const [a, b] = parts;
+  if (a === 10) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 0) return true;
+  return false;
+}
+function normalizeHost(hostname) {
+  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, "");
+}
+function isBlockedHost(hostname) {
+  const host = normalizeHost(hostname);
+  if (!host) return true;
+  if (BLOCKED_HOSTNAMES.has(host)) return true;
+  if (host.endsWith(".local") || host.endsWith(".internal")) return true;
+  if (host === METADATA_IP || host.startsWith("169.254.")) return true;
+  if (isPrivateIpv4(host)) return true;
+  if (host.includes(":") && (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80"))) {
+    return true;
+  }
+  return false;
+}
+function validateSupplierEndpoint(url, allowedHosts = []) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return { allowed: false, reason: "INVALID_URL" };
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    return { allowed: false, reason: "UNSUPPORTED_PROTOCOL", hostname: parsed.hostname };
+  }
+  const hostname = normalizeHost(parsed.hostname);
+  if (isBlockedHost(hostname)) {
+    return { allowed: false, reason: "BLOCKED_HOST", hostname };
+  }
+  if (allowedHosts.length > 0) {
+    const normalizedAllowed = allowedHosts.map(normalizeHost);
+    const hostAllowed = normalizedAllowed.some(
+      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
+    );
+    if (!hostAllowed) {
+      return { allowed: false, reason: "NOT_IN_ALLOWLIST", hostname };
+    }
+  }
+  return { allowed: true, hostname };
+}
+function extractAllowedHosts(baseUrl, extra = []) {
+  const hosts = /* @__PURE__ */ new Set();
+  for (const entry of [baseUrl, ...extra].filter(Boolean)) {
+    try {
+      hosts.add(normalizeHost(new URL(entry).hostname));
+    } catch {
+    }
+  }
+  return [...hosts];
+}
+
+// lib/supplier-engine/observability.ts
+init_security();
+
+// lib/supplier-production-order-validation/safety.ts
 var counters = {
   realSupplierOrderCalls: 0,
   realSupplierCancelCalls: 0,
@@ -5078,35 +5403,391 @@ var counters = {
   realPaymentCalls: 0,
   realMarketplaceCalls: 0,
   realCarrierCalls: 0,
+  realCustomerOrders: 0,
   realCustomerShipments: 0
 };
-function getActivationSafetyCounters() {
+function getCreateOrderValidationSafetyCounters() {
   return { ...counters };
 }
-function assertActivationNetworkSafety() {
+function assertCreateOrderValidationNetworkSafety() {
   if (isSupplierOrderNetworkEnabled()) {
     counters.realSupplierOrderCalls++;
-    throw new Error("ACTIVATION_FAIL:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED_IN_340");
+    throw new Error("CREATE_ORDER_VALIDATION_FAIL:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED");
   }
 }
-function recordBlockedRealOrderAttempt() {
+function recordBlockedProductionOrderAttempt() {
 }
-function assertActivationSafetyInvariants() {
+function assertCreateOrderValidationSafetyInvariants() {
   const violations = [];
-  if (counters.realSupplierOrderCalls !== 0) violations.push(`realSupplierOrderCalls=${counters.realSupplierOrderCalls}`);
-  if (counters.realSupplierCancelCalls !== 0) violations.push(`realSupplierCancelCalls=${counters.realSupplierCancelCalls}`);
-  if (counters.realSupplierReturnCalls !== 0) violations.push(`realSupplierReturnCalls=${counters.realSupplierReturnCalls}`);
-  if (counters.realSupplierRefundCalls !== 0) violations.push(`realSupplierRefundCalls=${counters.realSupplierRefundCalls}`);
+  if (counters.realSupplierOrderCalls !== 0) {
+    violations.push(`realSupplierOrderCalls=${counters.realSupplierOrderCalls}`);
+  }
+  if (counters.realCustomerOrders !== 0) violations.push(`realCustomerOrders=${counters.realCustomerOrders}`);
   if (counters.realPaymentCalls !== 0) violations.push(`realPaymentCalls=${counters.realPaymentCalls}`);
-  if (counters.realMarketplaceCalls !== 0) violations.push(`realMarketplaceCalls=${counters.realMarketplaceCalls}`);
   if (counters.realCarrierCalls !== 0) violations.push(`realCarrierCalls=${counters.realCarrierCalls}`);
-  if (counters.realCustomerShipments !== 0) violations.push(`realCustomerShipments=${counters.realCustomerShipments}`);
+  if (counters.realCustomerShipments !== 0) {
+    violations.push(`realCustomerShipments=${counters.realCustomerShipments}`);
+  }
   if (isSupplierOrderNetworkEnabled()) violations.push("SUPPLIER_ORDER_NETWORK_ENABLED");
   return { ok: violations.length === 0, violations };
 }
 
-// lib/supplier-order-activation/preflight.ts
-var import_crypto3 = require("crypto");
+// lib/supplier-production-order-validation/validation.ts
+var import_crypto4 = require("crypto");
+
+// lib/supplier-production-validation/audit.ts
+var import_crypto = require("crypto");
+
+// lib/supplier-production-validation/persistence.ts
+var validationStore = /* @__PURE__ */ new Map();
+var auditLog = [];
+function getPersistentStore() {
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PRODUCTION_VALIDATION_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require_persistentStore();
+    return mod.createSupplierProductionValidationStore();
+  } catch {
+    return null;
+  }
+}
+function listValidationRecords() {
+  return [...validationStore.values()];
+}
+function appendValidationAuditEvent(event) {
+  auditLog.push(event);
+  getPersistentStore()?.saveAudit({
+    event_id: event.eventId,
+    event_type: event.type,
+    validation_id: event.validationId,
+    supplier_id: event.supplierId,
+    correlation_id: event.correlationId,
+    timestamp: event.timestamp,
+    detail_json: JSON.stringify(event.detail || {})
+  });
+}
+function getLatestValidationForScope(scope) {
+  return listValidationRecords().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-validation/audit.ts
+var BLOCKED_KEYS = /* @__PURE__ */ new Set([
+  "password",
+  "token",
+  "secret",
+  "credential",
+  "email",
+  "phone",
+  "accesstoken",
+  "apikey",
+  "payment",
+  "bearertoken"
+]);
+function sanitizeDetail(detail) {
+  if (!detail) return void 0;
+  const out = {};
+  for (const [key, value] of Object.entries(detail)) {
+    if (BLOCKED_KEYS.has(key.toLowerCase())) out[key] = "[REDACTED]";
+    else if (typeof value === "string" && value.length > 64 && /token|secret|key/i.test(key)) {
+      out[key] = "[REDACTED]";
+    } else out[key] = value;
+  }
+  return out;
+}
+function recordValidationAudit(input) {
+  const event = {
+    eventId: `pv_${(0, import_crypto.randomUUID)().slice(0, 12)}`,
+    type: input.type,
+    validationId: input.validationId,
+    supplierId: input.supplierId,
+    correlationId: input.correlationId,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    detail: sanitizeDetail(input.detail)
+  };
+  appendValidationAuditEvent(event);
+  return event;
+}
+
+// lib/supplier-production-validation/endpointSecurity.ts
+function classifyEndpoint(path2) {
+  const normalized = path2.toLowerCase();
+  if (normalized.includes("order") && (normalized.includes("create") || normalized.includes("submit"))) {
+    return "ORDER_CREATE";
+  }
+  if (normalized.includes("order") && normalized.includes("status")) return "ORDER_STATUS";
+  if (normalized.includes("track")) return "TRACKING";
+  if (normalized.includes("return") || normalized.includes("rma")) return "RETURN";
+  if (normalized.includes("refund") || normalized.includes("credit")) return "REFUND";
+  if (normalized.includes("catalog") || normalized.includes("product")) return "CATALOG";
+  if (normalized.includes("stock") || normalized.includes("inventory")) return "STOCK";
+  if (normalized.includes("pric") || normalized.includes("quote")) return "PRICE";
+  if (normalized.includes("health") || normalized.includes("category")) return "HEALTH";
+  return "UNKNOWN";
+}
+function validateEndpointUrl(url, allowedHosts, requireHttpsForProduction = false) {
+  const check = validateSupplierEndpoint(url, allowedHosts);
+  if (!check.allowed) return check;
+  if (requireHttpsForProduction) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "https:") {
+        return { allowed: false, reason: "NON_HTTPS_PRODUCTION", hostname: parsed.hostname };
+      }
+    } catch {
+      return { allowed: false, reason: "INVALID_URL" };
+    }
+  }
+  return check;
+}
+function extractProfileAllowedHosts(baseUrl, extra = []) {
+  return extractAllowedHosts(baseUrl, extra);
+}
+function blockOrderEndpointAttempt(url, context) {
+  recordValidationAudit({
+    type: "REAL_ORDER_ATTEMPT_BLOCKED",
+    validationId: context.validationId,
+    supplierId: context.supplierId,
+    correlationId: context.correlationId,
+    detail: { url: url.replace(/\/\/[^@]+@/, "//[REDACTED]@"), code: "CREATE_ORDER_NEVER_CALLED" }
+  });
+  return { blocked: true, code: "CREATE_ORDER_NEVER_CALLED" };
+}
+
+// lib/supplier-production-order-validation/capability.ts
+init_registry2();
+init_config();
+
+// lib/supplier-production-validation/credentialValidation.ts
+init_credentials();
+
+// lib/supplier-engine/auth/resolver.ts
+init_credentials();
+function mapConnectorAuthType(config) {
+  const raw = String(config?.authentication || "none").toLowerCase();
+  if (raw === "api_key") return "API_KEY";
+  if (raw === "basic") return "BASIC_AUTH";
+  if (raw === "bearer" || raw === "token") return "TOKEN";
+  if (raw === "oauth2") return "OAUTH2";
+  if (raw === "custom") return "CUSTOM";
+  return "NONE";
+}
+function resolveSupplierAuth(config) {
+  const authType = mapConnectorAuthType(config);
+  const secretsRef = config.secretsRef;
+  const creds = secretsRef ? resolveCredentials(secretsRef) : null;
+  if (!creds) {
+    return { headers: { ...config.headers || {} }, authType, configured: false };
+  }
+  const headers = { ...config.headers || {} };
+  switch (authType) {
+    case "API_KEY": {
+      const headerName = creds.header || creds.headerName || "X-API-Key";
+      const value = creds.apiKey || creds.key || creds.token;
+      if (value) headers[headerName] = value;
+      break;
+    }
+    case "TOKEN": {
+      const value = creds.token || creds.accessToken || creds.bearer;
+      if (value) headers.Authorization = value.startsWith("Bearer ") ? value : `Bearer ${value}`;
+      break;
+    }
+    case "BASIC_AUTH": {
+      const user = creds.username || creds.user || "";
+      const pass2 = creds.password || creds.pass || "";
+      if (user || pass2) {
+        headers.Authorization = `Basic ${Buffer.from(`${user}:${pass2}`).toString("base64")}`;
+      }
+      break;
+    }
+    case "OAUTH2": {
+      const value = creds.accessToken || creds.token;
+      if (value) headers.Authorization = `Bearer ${value}`;
+      break;
+    }
+    case "CUSTOM": {
+      for (const [key, value] of Object.entries(creds)) {
+        if (!/password|secret|token|key/i.test(key)) continue;
+        if (/header/i.test(key)) {
+          const headerName = key.replace(/header/i, "").trim() || "Authorization";
+          headers[headerName] = value;
+        }
+      }
+      break;
+    }
+    default:
+      break;
+  }
+  return { headers, authType, configured: Object.keys(creds).length > 0 };
+}
+
+// lib/supplier-production-validation/credentialValidation.ts
+init_config();
+
+// lib/supplier-order-readiness/config.ts
+var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS = 7 * 24 * 60 * 60 * 1e3;
+var DEFAULT_POLICY = {
+  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
+  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
+  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
+  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
+  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
+  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
+  blockOnMissingTrackingCapability: false,
+  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
+};
+function isMockCredentialValue(value) {
+  const normalized = value.trim().toLowerCase();
+  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.includes("placeholder");
+}
+
+// lib/supplier-production-validation/credentialValidation.ts
+init_security();
+function validateProductionCredentials(input) {
+  const checks = [];
+  const blockerCodes = [];
+  const profile = resolveLiveSupplierProfile() || resolvePredefinedLiveProfile();
+  const secretsRef = profile?.secretsRef || "env:SUPPLIER_LIVE_CREDENTIALS";
+  const credentialType = profile?.authentication || profile?.authType || "unknown";
+  if (!profile) {
+    checks.push({ check: "CREDENTIAL_PROFILE", status: "BLOCKED", message: "Live supplier profile not configured" });
+    blockerCodes.push("CREDENTIAL_PROFILE_MISSING");
+    return { status: "NOT_CONFIGURED", credentialType, checks, blockerCodes };
+  }
+  if (profile.supplierId !== input.supplierId) {
+    checks.push({ check: "CREDENTIAL_SUPPLIER", status: "BLOCKED", message: "Profile supplier mismatch" });
+    blockerCodes.push("SUPPLIER_PROFILE_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const profileEnv = profile.environment?.toUpperCase();
+  if (input.environment === "PRODUCTION" && profileEnv === "SANDBOX" && process.env.SUPPLIER_LIVE_FORCE_PRODUCTION !== "1") {
+    checks.push({
+      check: "ENVIRONMENT_SEPARATION",
+      status: "BLOCKED",
+      message: "SANDBOX credential cannot validate PRODUCTION scope"
+    });
+    blockerCodes.push("ENVIRONMENT_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  if (input.environment === "SANDBOX" && profileEnv === "PRODUCTION" && process.env.SUPPLIER_LIVE_ALLOW_PROD_CRED_IN_SANDBOX !== "1") {
+    checks.push({
+      check: "ENVIRONMENT_SEPARATION",
+      status: "BLOCKED",
+      message: "PRODUCTION credential cannot validate SANDBOX scope"
+    });
+    blockerCodes.push("ENVIRONMENT_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const meta = describeLiveCredentialReadiness(profile);
+  if (!meta.configured) {
+    checks.push({ check: "CREDENTIAL_CONFIGURED", status: "BLOCKED", message: "Credential not configured" });
+    blockerCodes.push("CREDENTIAL_NOT_CONFIGURED");
+    return { status: "NOT_CONFIGURED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  checks.push({
+    check: "CREDENTIAL_CONFIGURED",
+    status: "PASS",
+    message: "Credential reference configured",
+    detail: { authType: meta.authType, fields: meta.secretFieldsPresent }
+  });
+  const creds = resolveCredentials(secretsRef);
+  if (!creds) {
+    checks.push({ check: "CREDENTIAL_RESOLVE", status: "BLOCKED", message: "Credential secret not resolvable" });
+    blockerCodes.push("CREDENTIAL_SECRET_MISSING");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
+  if (isMockCredentialValue(token)) {
+    checks.push({ check: "CREDENTIAL_MOCK", status: "BLOCKED", message: "Mock/test credential blocked for production validation" });
+    blockerCodes.push("CREDENTIAL_MOCK");
+    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  if (!hasLiveSupplierCredentials(profile)) {
+    checks.push({ check: "CREDENTIAL_TOKEN", status: "BLOCKED", message: "OAuth/token missing" });
+    blockerCodes.push("CREDENTIAL_INVALID");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const auth = resolveSupplierAuth({
+    authentication: profile.authentication,
+    secretsRef: profile.secretsRef
+  });
+  if (!auth.headers.Authorization?.startsWith("Bearer ")) {
+    checks.push({
+      check: "CREDENTIAL_AUTH_SCHEME",
+      status: "BLOCKED",
+      message: "Expected Authorization: Bearer <accessToken>"
+    });
+    blockerCodes.push("CREDENTIAL_AUTH_INVALID");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const redacted = redactSecrets({ accessToken: token });
+  if (redacted.accessToken && redacted.accessToken !== "[REDACTED]") {
+    checks.push({ check: "SECRET_REDACTION", status: "FAIL", message: "Secret redaction failed" });
+    blockerCodes.push("SECRET_REDACTION_FAILED");
+    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  checks.push({ check: "CREDENTIAL_VALID", status: "PASS", message: "Credential metadata validated (no secret exposed)" });
+  return { status: "VALID", credentialType, secretsRef, checks, blockerCodes };
+}
+
+// lib/supplier-production-order-validation/capability.ts
+function buildInitialCapabilityState() {
+  return {
+    declared: false,
+    configured: false,
+    authenticated: false,
+    endpointAvailable: false,
+    requestValidated: false,
+    responseValidated: false,
+    idempotencyValidated: false,
+    errorHandlingValidated: false,
+    statusValidated: false,
+    trackingValidated: false,
+    productionValidated: false
+  };
+}
+function evaluateDeclaredCapability(supplierId) {
+  const profile = resolvePredefinedLiveProfile();
+  const supplier = getSupplier(supplierId);
+  const state = buildInitialCapabilityState();
+  const blockers = [];
+  const declared = Boolean(
+    profile?.capabilities?.createOrder || profile?.capabilities?.orderAPI || supplier?.capabilities?.createOrder || supplier?.capabilities?.orderAPI
+  );
+  state.declared = declared;
+  if (!declared) blockers.push("CREATE_ORDER_NOT_DECLARED");
+  const endpointPath = getCreateOrderEndpointPath();
+  state.configured = Boolean(profile?.baseUrl && endpointPath);
+  if (!state.configured) blockers.push("CREATE_ORDER_ENDPOINT_NOT_CONFIGURED");
+  const credential = validateProductionCredentials({ supplierId, environment: "PRODUCTION" });
+  state.authenticated = credential.status === "VALID" || credential.status === "CONFIGURED";
+  if (credential.status === "NOT_CONFIGURED") {
+    blockers.push("CREDENTIAL_NOT_CONFIGURED");
+  } else if (credential.status === "BLOCKED" || credential.status === "INVALID") {
+    blockers.push("CREDENTIAL_INVALID");
+  }
+  if (profile?.baseUrl && endpointPath) {
+    const hosts = extractProfileAllowedHosts(profile.baseUrl, []);
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${endpointPath.startsWith("/") ? endpointPath : `/${endpointPath}`}`;
+    const endpointCheck = validateEndpointUrl(url, hosts, true);
+    state.endpointAvailable = endpointCheck.allowed;
+    if (!endpointCheck.allowed) blockers.push("ENDPOINT_SECURITY_BLOCKED");
+    if (classifyEndpoint(endpointPath) !== "ORDER_CREATE") blockers.push("ENDPOINT_CLASSIFICATION_MISMATCH");
+  }
+  return { state, blockers };
+}
+function deriveCreateOrderCapabilityStatus(state) {
+  if (state.productionValidated) return "VALIDATED";
+  return "UNVERIFIED";
+}
+
+// lib/supplier-production-order-validation/payload.ts
+var import_crypto2 = require("crypto");
 
 // data/global/global_countries_35.json
 var global_countries_35_default = [
@@ -5146,45 +5827,6 @@ var global_countries_35_default = [
   { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
   { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
 ];
-
-// data/global/market_country_overlay.json
-var market_country_overlay_default = {
-  DE: { flag: "\u{1F1E9}\u{1F1EA}", taxRate: 0.19, deliveryDays: "2\u20133 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  AT: { flag: "\u{1F1E6}\u{1F1F9}", taxRate: 0.2, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  BE: { flag: "\u{1F1E7}\u{1F1EA}", taxRate: 0.21, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  BG: { flag: "\u{1F1E7}\u{1F1EC}", taxRate: 0.2, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" },
-  HR: { flag: "\u{1F1ED}\u{1F1F7}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Hrvatski" },
-  CY: { flag: "\u{1F1E8}\u{1F1FE}", taxRate: 0.19, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  CZ: { flag: "\u{1F1E8}\u{1F1FF}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "\u010Ce\u0161tina" },
-  DK: { flag: "\u{1F1E9}\u{1F1F0}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Dansk" },
-  EE: { flag: "\u{1F1EA}\u{1F1EA}", taxRate: 0.22, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Eesti" },
-  FI: { flag: "\u{1F1EB}\u{1F1EE}", taxRate: 0.255, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Suomi" },
-  FR: { flag: "\u{1F1EB}\u{1F1F7}", taxRate: 0.2, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Fran\xE7ais" },
-  GR: { flag: "\u{1F1EC}\u{1F1F7}", taxRate: 0.24, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  HU: { flag: "\u{1F1ED}\u{1F1FA}", taxRate: 0.27, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Magyar" },
-  IE: { flag: "\u{1F1EE}\u{1F1EA}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "English" },
-  IT: { flag: "\u{1F1EE}\u{1F1F9}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Italiano" },
-  LV: { flag: "\u{1F1F1}\u{1F1FB}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Latvie\u0161u" },
-  LT: { flag: "\u{1F1F1}\u{1F1F9}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Lietuvi\u0173" },
-  LU: { flag: "\u{1F1F1}\u{1F1FA}", taxRate: 0.17, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "L\xEBtzebuergesch" },
-  MT: { flag: "\u{1F1F2}\u{1F1F9}", taxRate: 0.18, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Malti" },
-  NL: { flag: "\u{1F1F3}\u{1F1F1}", taxRate: 0.21, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  PL: { flag: "\u{1F1F5}\u{1F1F1}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Polski" },
-  PT: { flag: "\u{1F1F5}\u{1F1F9}", taxRate: 0.23, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Portugu\xEAs" },
-  RO: { flag: "\u{1F1F7}\u{1F1F4}", taxRate: 0.19, deliveryDays: "3\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Rom\xE2n\u0103" },
-  SK: { flag: "\u{1F1F8}\u{1F1F0}", taxRate: 0.2, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u010Dina" },
-  SI: { flag: "\u{1F1F8}\u{1F1EE}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u0161\u010Dina" },
-  ES: { flag: "\u{1F1EA}\u{1F1F8}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Espa\xF1ol" },
-  SE: { flag: "\u{1F1F8}\u{1F1EA}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Svenska" },
-  TR: { flag: "\u{1F1F9}\u{1F1F7}", taxRate: 0.2, deliveryDays: "4\u20139 Werktage", rtl: false, taxModel: "VAT", languageName: "T\xFCrk\xE7e" },
-  SA: { flag: "\u{1F1F8}\u{1F1E6}", taxRate: 0.15, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  AE: { flag: "\u{1F1E6}\u{1F1EA}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  QA: { flag: "\u{1F1F6}\u{1F1E6}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  KW: { flag: "\u{1F1F0}\u{1F1FC}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  BH: { flag: "\u{1F1E7}\u{1F1ED}", taxRate: 0.1, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  OM: { flag: "\u{1F1F4}\u{1F1F2}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  EG: { flag: "\u{1F1EA}\u{1F1EC}", taxRate: 0.14, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" }
-};
 
 // data/global/market_engine_extensions.json
 var market_engine_extensions_default = {
@@ -5441,395 +6083,10 @@ var market_engine_extensions_default = {
 var GLOBAL_COUNTRIES = global_countries_35_default;
 var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
 
-// lib/market-engine/registry.ts
-var extensions = market_engine_extensions_default;
-var overlayByCode = market_country_overlay_default;
-var marketByCode = /* @__PURE__ */ new Map();
-function resolveFeatureFlags(countryCode) {
-  const defaults = extensions.defaultFeatureFlags;
-  const overrides = extensions.featureFlags[countryCode] ?? {};
-  return { ...defaults, ...overrides };
-}
-function resolveMarketStatus(country) {
-  if (country.enabled === false) return "DISABLED";
-  return extensions.marketStatus[country.countryCode] ?? extensions.defaultMarketStatus;
-}
-function buildVatRules(countryCode) {
-  const overlay = overlayByCode[countryCode];
-  return {
-    standardRate: overlay?.taxRate ?? 0.2,
-    pricesIncludeVat: true,
-    taxModel: overlay?.taxModel ?? "VAT"
-  };
-}
-function buildMarketConfig(country) {
-  const code = country.countryCode;
-  const variants = country.localeVariants ?? [];
-  const locales = variants.map((v) => v.locale);
-  if (!locales.length) locales.push(country.locale);
-  const paymentRegion = extensions.paymentRegions[code] ?? "EU";
-  return {
-    countryCode: code,
-    countryName: country.countryName,
-    nativeCountryName: country.nativeCountryName || country.countryName,
-    defaultLanguage: country.defaultLanguage,
-    supportedLanguages: [...country.supportedLanguages],
-    locales,
-    currency: country.currency,
-    currencySymbol: country.currencySymbol,
-    timezone: country.timezone,
-    textDirection: country.textDirection === "rtl" ? "rtl" : "ltr",
-    vat: buildVatRules(code),
-    shippingRegion: extensions.shippingRegions[code] ?? "EU_CENTRAL",
-    paymentRegion,
-    legalRegion: extensions.legalRegions[code] ?? `EU_${code}`,
-    returnRegion: extensions.returnRegions[code] ?? paymentRegion,
-    supplierRegion: extensions.supplierRegions[code] ?? paymentRegion,
-    status: resolveMarketStatus(country),
-    featureFlags: resolveFeatureFlags(code),
-    marketplaces: extensions.marketplaces[code] ?? [],
-    paymentCapabilities: extensions.paymentCapabilities[paymentRegion] ?? ["card"],
-    shippingCapabilities: [...extensions.shippingCapabilities],
-    source: country
-  };
-}
-function ensureRegistryBuilt() {
-  if (marketByCode.size > 0) return;
-  for (const country of global_countries_35_default) {
-    marketByCode.set(country.countryCode, buildMarketConfig(country));
-  }
-}
-function listMarkets() {
-  ensureRegistryBuilt();
-  return [...marketByCode.values()];
-}
-function getMarket(countryCode) {
-  ensureRegistryBuilt();
-  const code = String(countryCode || "").toUpperCase();
-  return marketByCode.get(code);
-}
-
-// data/global/test_supplier_feeds.json
-var test_supplier_feeds_default = {
-  TEST_SUPPLIER_A: {
-    supplierId: "TEST_SUPPLIER_A",
-    name: "Test Supplier A (Mock)",
-    country: "DE",
-    region: "EU",
-    currency: "EUR",
-    integrationTypes: ["api", "xml", "csv", "manual"],
-    supportedMarkets: ["DE", "FR", "PL"],
-    capabilities: {
-      productFeed: true,
-      stockFeed: true,
-      priceFeed: true,
-      orderAPI: true,
-      createOrder: true,
-      cancelOrder: true,
-      orderStatus: true,
-      shippingAPI: false,
-      trackingAPI: true,
-      tracking: true,
-      returnsAPI: true,
-      returnAuthorization: true,
-      refund: true,
-      credit: true,
-      replacement: true,
-      webhook: false,
-      dropshipping: true,
-      whiteLabel: true,
-      blindShipping: true,
-      api: true,
-      xml: true,
-      csv: true
-    },
-    rateLimit: { requestsPerMinute: 60 },
-    fieldMapping: {
-      article_number: "supplierSku",
-      sku: "supplierSku",
-      ean_code: "ean",
-      price_net: "supplierPrice",
-      stock_qty: "stock",
-      title: "name",
-      brand_name: "brand"
-    },
-    apiProducts: [
-      {
-        article_number: "TSA-TIRE-225-45-17",
-        ean_code: "4006633001247",
-        brand_name: "Michelin",
-        title: "Michelin Pilot Sport 4 225/45 R17",
-        price_net: 55.79,
-        stock_qty: 8,
-        currency: "EUR"
-      },
-      {
-        article_number: "TSA-OIL-5W30-5L",
-        ean_code: "4006633001236",
-        brand_name: "Castrol",
-        title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
-        price_net: 26.6,
-        stock_qty: 50,
-        currency: "EUR"
-      },
-      {
-        article_number: "TSA-DISC-280",
-        ean_code: "4006633001234",
-        brand_name: "ATE",
-        title: "Bremsscheibe Vorderachse 280mm",
-        price_net: 21.64,
-        stock_qty: 24,
-        currency: "EUR"
-      },
-      {
-        article_number: "TSA-PADS-FRONT",
-        ean_code: "4006633001235",
-        brand_name: "Bosch",
-        title: "Bremsbel\xE4ge Satz Vorderachse",
-        price_net: 17.67,
-        stock_qty: 31,
-        currency: "EUR"
-      }
-    ],
-    xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
-    csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
-  }
-};
-
-// data/buzzard_suppliers.json
-var buzzard_suppliers_default = {
-  project: "Buzzard",
-  document: "Supplier Master",
-  version: "1.0.0",
-  suppliers: [
-    {
-      supplier_id: "SUP-INTERNAL-001",
-      supplier_name: "Buzzard Internal Warehouse",
-      contact_email: "warehouse@buzzard.de",
-      contact_phone: "+49 30 1234567",
-      website: "https://buzzard24.de",
-      feed_type: "manual",
-      api_endpoint: null,
-      auth_type: "none",
-      currency: "EUR",
-      vat_handling: "gross",
-      dropshipping: false,
-      white_label: true,
-      blind_shipping: false,
-      default_markup_percent: 45,
-      minimum_margin_percent: 15,
-      safety_stock: 2,
-      active: true,
-      sync_status: "idle",
-      last_sync_at: null,
-      notes: "Internal stock for test and flagship products."
-    },
-    {
-      supplier_id: "SUP-DEMO-001",
-      production_status: "TEST_ONLY",
-      supplier_name: "Demo Automotive Parts GmbH",
-      contact_email: "orders@demo-automotive.example",
-      contact_phone: "+49 89 9876543",
-      website: "https://demo-automotive.example",
-      feed_type: "json",
-      api_endpoint: "https://demo-automotive.example/api/products.json",
-      auth_type: "api_key",
-      currency: "EUR",
-      vat_handling: "net",
-      dropshipping: true,
-      white_label: true,
-      blind_shipping: true,
-      default_markup_percent: 38,
-      minimum_margin_percent: 12,
-      safety_stock: 1,
-      active: true,
-      sync_status: "idle",
-      last_sync_at: null,
-      notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
-    }
-  ]
-};
-
-// lib/supplier-engine/fixtures.ts
-var TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
-
-// lib/supplier-engine/persistence.ts
-var store;
-function getSupplierPersistence() {
-  if (store !== void 0) return store;
-  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
-    store = null;
-    return store;
-  }
-  const candidates = [
-    "server/lib/supplier/persistentStore.js",
-    "../../server/lib/supplier/persistentStore.js"
-  ];
-  for (const candidate of candidates) {
-    try {
-      const mod = require(candidate);
-      store = mod.createPersistentSupplierStore();
-      return store;
-    } catch {
-    }
-  }
-  store = null;
-  return store;
-}
-
-// lib/supplier-engine/liveSupplier/registry.ts
-var registeredLiveSupplierId = null;
-function liveProfileToSupplierConfig(profile) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    supplierId: profile.supplierId,
-    name: profile.name,
-    displayName: profile.displayName || profile.name,
-    country: profile.country,
-    region: profile.region,
-    status: "TESTING",
-    integrationTypes: ["b2b-sandbox"],
-    currency: profile.currency,
-    supportedMarkets: profile.supportedMarkets,
-    supportedCategories: [],
-    capabilities: profile.capabilities,
-    fieldMapping: profile.fieldMapping,
-    secretsRef: profile.secretsRef,
-    rateLimit: { requestsPerMinute: 60 },
-    connectorProfile: profile,
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function registerLiveSupplierIfConfigured(register2) {
-  const profile = resolveLiveSupplierProfile();
-  if (!profile) return null;
-  register2(liveProfileToSupplierConfig(profile));
-  registerCredentialRef(profile.supplierId, profile.secretsRef);
-  registeredLiveSupplierId = profile.supplierId;
-  return profile;
-}
-
-// lib/supplier-engine/registry.ts
-var supplierById = /* @__PURE__ */ new Map();
-var persistedOverlay = /* @__PURE__ */ new Map();
-function mapMasterToConfig(raw) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const feedType = String(raw.feed_type || "manual");
-  const integrationTypes = feedType === "json" ? ["api"] : feedType === "manual" ? ["manual"] : [feedType];
-  return {
-    supplierId: String(raw.supplier_id),
-    name: String(raw.supplier_name),
-    country: "DE",
-    region: "EU",
-    status: raw.active === false ? "DISABLED" : raw.production_status === "TEST_ONLY" ? "TESTING" : "CONNECTED",
-    integrationTypes,
-    currency: String(raw.currency || "EUR"),
-    supportedMarkets: ["DE"],
-    supportedCategories: [],
-    capabilities: {
-      productFeed: true,
-      stockFeed: true,
-      priceFeed: true,
-      dropshipping: raw.dropshipping === true,
-      whiteLabel: raw.white_label === true,
-      blindShipping: raw.blind_shipping === true,
-      api: feedType === "json",
-      csv: false,
-      xml: false
-    },
-    fieldMapping: {},
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function buildTestSupplierA() {
-  const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    supplierId: TEST_SUPPLIER_ID,
-    name: String(feed.name || "Test Supplier A"),
-    country: String(feed.country || "DE"),
-    region: String(feed.region || "EU"),
-    status: "TESTING",
-    integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
-    currency: String(feed.currency || "EUR"),
-    supportedMarkets: feed.supportedMarkets || ["DE", "FR", "PL"],
-    supportedCategories: [],
-    capabilities: feed.capabilities || {},
-    fieldMapping: feed.fieldMapping || {},
-    rateLimit: feed.rateLimit,
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function mergePersistedOverlay(config) {
-  const overlay = persistedOverlay.get(config.supplierId);
-  if (!overlay) return config;
-  return {
-    ...config,
-    ...overlay,
-    capabilities: { ...config.capabilities, ...overlay.capabilities },
-    supportedMarkets: overlay.supportedMarkets ?? config.supportedMarkets,
-    status: overlay.status ?? config.status,
-    updatedAt: overlay.updatedAt ?? config.updatedAt
-  };
-}
-function persistRegistryEntry(config) {
-  const persistence = getSupplierPersistence();
-  if (!persistence) return;
-  persistence.saveRegistryRow({
-    supplierId: config.supplierId,
-    name: config.name,
-    displayName: config.displayName || config.name,
-    country: config.country,
-    connectorType: config.integrationTypes[0] || "manual",
-    supportedMarkets: config.supportedMarkets,
-    capabilities: config.capabilities,
-    active: config.status !== "DISABLED" && config.status !== "PAUSED",
-    status: config.status,
-    secretsRef: config.secretsRef,
-    createdAt: config.createdAt
-  });
-  if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
-}
-function ensureRegistry() {
-  if (supplierById.size > 0) return;
-  for (const raw of buzzard_suppliers_default.suppliers) {
-    const config = mergePersistedOverlay(mapMasterToConfig(raw));
-    supplierById.set(config.supplierId, config);
-    persistRegistryEntry(config);
-  }
-  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
-  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
-  persistRegistryEntry(testSupplier);
-  registerLiveSupplierIfConfigured((config) => {
-    const merged = mergePersistedOverlay(config);
-    supplierById.set(config.supplierId, merged);
-    persistRegistryEntry(merged);
-  });
-}
-function getSupplier(supplierId) {
-  ensureRegistry();
-  const config = supplierById.get(supplierId);
-  return config ? mergePersistedOverlay(config) : void 0;
-}
-function isSupplierSelectable(supplierId) {
-  const supplier = getSupplier(supplierId);
-  if (!supplier) return false;
-  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
-}
-
 // lib/order-engine/registry.ts
 var orderRegistry = /* @__PURE__ */ new Map();
-function listAllOrders() {
-  return [...orderRegistry.values()];
-}
-
-// lib/inventory-engine/reservation.ts
-var reservations = /* @__PURE__ */ new Map();
-function getReservation(reservationId) {
-  return reservations.get(reservationId);
+function getOrder(orderId) {
+  return orderRegistry.get(orderId);
 }
 
 // lib/product-engine/adapters/canonical.ts
@@ -30951,6 +31208,9 @@ function indexProducts() {
 indexProducts();
 var PRODUCT_COUNT = activePublicProducts.length;
 
+// lib/pricing-engine/shipping.ts
+init_registry2();
+
 // lib/market-engine/supplier.ts
 var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 
@@ -30958,1284 +31218,386 @@ var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 var import_module2 = require("module");
 var require3 = (0, import_module2.createRequire)(__import_meta_url__);
 
+// lib/inventory-engine/market.ts
+init_registry2();
+
+// lib/inventory-engine/reservation.ts
+var reservations = /* @__PURE__ */ new Map();
+function getReservation(reservationId) {
+  return reservations.get(reservationId);
+}
+
+// lib/inventory-engine/sync.ts
+init_registry2();
+
+// lib/inventory-engine/test-fixtures.ts
+init_fixtures();
+
 // lib/supplier-engine/health.ts
-var healthCache = /* @__PURE__ */ new Map();
-function defaultHealth(supplierId) {
-  return {
-    supplierId,
-    healthStatus: "UNKNOWN",
-    responseTimeMs: 0,
-    errorCount: 0,
-    successCount: 0,
-    rateLimitCount: 0,
-    consecutiveFailures: 0,
-    reliabilityScore: 0.5,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
+init_persistence();
+
+// lib/supplier-engine/connectors/base.ts
+init_capabilities();
+
+// lib/supplier-engine/connectors/api.ts
+init_fixtures();
+
+// lib/supplier-engine/connectors/xml.ts
+init_fixtures();
+
+// lib/supplier-engine/connectors/csv.ts
+init_fixtures();
+
+// lib/supplier-engine/syncCursor.ts
+init_persistence();
+
+// lib/supplier-engine/selection.ts
+init_registry2();
+
+// lib/supplier-engine/state.ts
+init_persistence();
+
+// lib/supplier-engine/order.ts
+init_registry2();
+init_capabilities();
+
+// lib/supplier-engine/bootstrap.ts
+init_registry2();
+init_persistence2();
+
+// lib/supplier-engine/orderIdempotency.ts
+init_persistence();
+var orderIdempotencyKeys = /* @__PURE__ */ new Map();
+function buildSupplierOrderIdempotencyKey(supplierId, buzzardOrderId, idempotencyKey) {
+  if (idempotencyKey) return `${supplierId}:${buzzardOrderId}:${idempotencyKey}`;
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
 }
-function fromPersisted(row) {
-  return {
-    supplierId: String(row.supplierId),
-    healthStatus: row.healthStatus || "UNKNOWN",
-    responseTimeMs: Number(row.responseTimeMs || 0),
-    errorCount: Number(row.errorCount || 0),
-    successCount: Number(row.successCount || 0),
-    rateLimitCount: Number(row.rateLimitCount || 0),
-    consecutiveFailures: Number(row.consecutiveFailures || 0),
-    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
-    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
-    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function getSupplierHealth(supplierId) {
-  const cached = healthCache.get(supplierId);
-  if (cached) return cached;
-  const persistence = getSupplierPersistence();
-  const row = persistence?.getHealth(supplierId);
-  if (row) {
-    const record = fromPersisted(row);
-    healthCache.set(supplierId, record);
-    return record;
-  }
-  return defaultHealth(supplierId);
+function getIdempotentSupplierOrder(key) {
+  return orderIdempotencyKeys.get(key)?.supplierOrderId;
 }
 
-// lib/supplier-engine/orderSandbox/persistence.ts
-var memoryStore = /* @__PURE__ */ new Map();
-function rowToRecord(row) {
-  return {
-    supplierOrderId: String(row.supplier_order_id),
-    buzzardOrderId: String(row.buzzard_order_id),
-    supplierId: String(row.supplier_id),
-    status: row.status,
-    idempotencyKey: String(row.idempotency_key),
-    correlationId: String(row.correlation_id || ""),
-    payload: JSON.parse(String(row.payload_json || "{}")),
-    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
-    failureClass: row.failure_class,
-    failureCode: row.failure_code ? String(row.failure_code) : void 0,
-    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
-    latencyMs: Number(row.latency_ms || 0),
-    sandbox: true,
-    networkDispatched: false,
-    createdAt: String(row.created_at),
-    updatedAt: String(row.updated_at)
-  };
-}
-function getOrderSandboxPersistence() {
-  return getSupplierPersistence();
-}
-function getSupplierOrderSandboxByIdempotency(idempotencyKey) {
-  const cached = memoryStore.get(idempotencyKey);
-  if (cached) return cached;
-  const row = getOrderSandboxPersistence()?.getOrderSandboxByIdempotency?.(idempotencyKey);
-  if (!row) return void 0;
-  const record = rowToRecord(row);
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  return record;
-}
-function getSupplierOrderSandboxByReference(supplierOrderId) {
-  const cached = memoryStore.get(supplierOrderId);
-  if (cached) return cached;
-  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
-  if (!row) return void 0;
-  const record = rowToRecord(row);
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  return record;
-}
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_registry2();
 
-// lib/marketplace-engine/registry.ts
-var marketplaces = /* @__PURE__ */ new Map();
-var orderMappings = /* @__PURE__ */ new Map();
-function baseCapabilities(partial = {}) {
-  return {
-    productListing: false,
-    productUpdate: false,
-    priceUpdate: false,
-    stockUpdate: false,
-    orderImport: false,
-    orderAcknowledgement: false,
-    shipmentCreation: false,
-    trackingUpdate: false,
-    returns: false,
-    refunds: false,
-    webhooks: false,
-    api: false,
-    xml: false,
-    csv: false,
-    ...partial
-  };
-}
-var EU_MARKETS = ["DE", "FR", "PL", "CZ", "AT", "NL", "BE", "IT", "ES"];
-var GCC_MARKETS = ["SA", "AE", "EG"];
-function buildMarketplace(marketplaceId, displayName, supportedMarkets, supportedCurrencies, channel, capabilities, status = "DISCOVERED") {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    marketplaceId,
-    name: marketplaceId,
-    displayName,
-    country: supportedMarkets[0] ?? "DE",
-    supportedMarkets,
-    supportedCountries: supportedMarkets,
-    supportedCurrencies,
-    supportedChannels: [channel],
-    status,
-    capabilities: baseCapabilities(capabilities),
-    connectorType: "dry-run",
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function seedMarketplaces() {
-  if (marketplaces.size > 0) return;
-  const defs = [
-    buildMarketplace("amazon", "Amazon", [...EU_MARKETS, ...GCC_MARKETS], ["EUR", "PLN", "CZK", "SAR", "AED", "EGP"], "amazon", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      returns: true,
-      refunds: true,
-      webhooks: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("ebay", "eBay", [...EU_MARKETS, "TR"], ["EUR", "PLN", "CZK", "TRY"], "ebay", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      returns: true,
-      refunds: true,
-      webhooks: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("kaufland", "Kaufland", ["DE", "CZ", "SK", "PL", "AT"], ["EUR", "CZK", "PLN"], "kaufland", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      api: true
-    }, "TESTING"),
-    buildMarketplace("allegro", "Allegro", ["PL", "CZ", "SK", "HU"], ["PLN", "CZK"], "allegro", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("bol", "bol.com", ["NL", "BE"], ["EUR"], "bol", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("cdiscount", "Cdiscount", ["FR"], ["EUR"], "cdiscount", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      api: true,
-      xml: true
-    }, "DISCOVERED"),
-    buildMarketplace("otto", "OTTO", ["DE"], ["EUR"], "otto", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      api: true,
-      csv: true
-    }, "DISCOVERED"),
-    buildMarketplace("TEST_AMAZON", "Test Amazon", ["DE"], ["EUR"], "amazon", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      returns: true,
-      refunds: true,
-      webhooks: true,
-      api: true
-    }, "TESTING"),
-    buildMarketplace("TEST_EBAY", "Test eBay", ["DE", "FR"], ["EUR"], "ebay", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      webhooks: true,
-      api: true
-    }, "TESTING"),
-    buildMarketplace("TEST_KAUFLAND", "Test Kaufland", ["DE", "PL"], ["EUR", "PLN"], "kaufland", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      api: true
-    }, "TESTING")
-  ];
-  for (const def of defs) {
-    marketplaces.set(def.marketplaceId, def);
-  }
-}
-function listMarketplaces() {
-  seedMarketplaces();
-  return [...marketplaces.values()];
-}
-function listOrderMappings(marketplaceId) {
-  const all = [...orderMappings.values()];
-  return marketplaceId ? all.filter((m) => m.marketplaceId === marketplaceId) : all;
-}
+// lib/supplier-engine/audit.ts
+init_persistence();
+init_security();
 
-// lib/returns-engine/registry.ts
-var returns = /* @__PURE__ */ new Map();
-var returnsByOrder = /* @__PURE__ */ new Map();
-function getReturnByOrder(orderId) {
-  const id = returnsByOrder.get(orderId);
-  return id ? returns.get(id) : void 0;
-}
-
-// lib/fulfillment-control-tower/aggregator.ts
-function buildFulfillmentId(orderId, orderItemId) {
-  return `ff_${orderId}_${orderItemId}`;
-}
-function classifySupplierOrderReference(ref) {
-  if (!ref) return "UNKNOWN";
-  if (ref.startsWith("SANDBOX-ORDER-")) return "SANDBOX";
-  if (ref.startsWith("DRY-SUP-") || ref.startsWith("DRY-")) return "SANDBOX";
-  return "LIVE";
-}
-function mapInventoryStatus(reservationId) {
-  if (!reservationId) return "MISSING";
-  const reservation = getReservation(reservationId);
-  if (!reservation) return "MISSING";
-  return reservation.status;
-}
-function mapSupplierHealthState(supplierId) {
-  if (!isSupplierSelectable(supplierId)) return "DISABLED";
-  const health = getSupplierHealth(supplierId);
-  return health.healthStatus || "UNKNOWN";
-}
-function mapShipmentStatus(order) {
-  if (["SHIPPED", "DELIVERED"].includes(order.status)) return "SHIPPED";
-  if (order.fulfillmentStatus === "SUPPLIER_PREPARED" || order.fulfillmentStatus === "SUPPLIER_SUBMITTED") {
-    return "PREPARED";
-  }
-  return "NOT_SHIPPED";
-}
-function mapTrackingStatus(supplierOrderId, orderStatus) {
-  if (!supplierOrderId) {
-    return { status: orderStatus === "SHIPPED" || orderStatus === "DELIVERED" ? "MISSING" : "NOT_AVAILABLE" };
-  }
-  const sandbox = getSupplierOrderSandboxByReference(supplierOrderId);
-  if (sandbox?.tracking) {
-    return {
-      status: sandbox.tracking.shipmentStatus,
-      trackingNumber: sandbox.tracking.trackingNumber,
-      carrier: sandbox.tracking.carrier,
-      trackingUrl: sandbox.tracking.trackingUrl
-    };
-  }
-  return { status: "NOT_AVAILABLE" };
-}
-function resolveSupplierOrderForItem(order, item) {
-  const supplierOrder = order.supplierOrders.find((so) => so.supplierId === item.supplierId);
-  const sandbox = supplierOrder?.supplierOrderId ? getSupplierOrderSandboxByReference(supplierOrder.supplierOrderId) : void 0;
-  return {
-    supplierOrderId: supplierOrder?.supplierOrderId,
-    supplierOrderStatus: sandbox?.status || supplierOrder?.status || "NOT_CREATED",
-    classification: classifySupplierOrderReference(supplierOrder?.supplierOrderId),
-    lastKnownSupplierState: sandbox?.status,
-    idempotencyKey: sandbox?.idempotencyKey,
-    correlationId: sandbox?.correlationId
-  };
-}
-function resolveMarketplaceMapping(orderId) {
-  const mapping = listOrderMappings().find((m) => m.orderId === orderId);
-  return mapping ? { marketplaceId: mapping.marketplaceId, marketplaceOrderId: mapping.marketplaceOrderId } : {};
-}
-function buildStateView(order, item, supplierOrderStatus, supplierHealth, inventoryStatus, trackingStatus, returnStatus) {
-  let supplierState = "UNKNOWN";
-  if (!isSupplierSelectable(item.supplierId)) supplierState = "DISABLED";
-  else if (supplierHealth === "HEALTHY") supplierState = "HEALTHY";
-  else if (supplierHealth === "DEGRADED") supplierState = "DEGRADED";
-  else if (supplierHealth === "UNHEALTHY") supplierState = "UNHEALTHY";
-  else supplierState = "ELIGIBLE";
-  return {
-    order: order.status,
-    inventory: inventoryStatus,
-    supplier: supplierState,
-    supplierOrder: supplierOrderStatus,
-    shipment: mapShipmentStatus(order),
-    tracking: trackingStatus,
-    returns: returnStatus
-  };
-}
-function buildFulfillmentOperationalView(order, item) {
-  const supplierOrder = resolveSupplierOrderForItem(order, item);
-  const inventoryStatus = mapInventoryStatus(item.inventoryReservationId);
-  const supplierHealth = mapSupplierHealthState(item.supplierId);
-  const tracking = mapTrackingStatus(supplierOrder.supplierOrderId, order.status);
-  const marketplace = resolveMarketplaceMapping(order.orderId);
-  const returnRecord = getReturnByOrder(order.orderId);
-  const returnStatus = returnRecord?.status || order.returnRefund.returnStatus;
-  const refundStatus = order.returnRefund.refundStatus;
-  const stateView = buildStateView(
-    order,
-    item,
-    supplierOrder.supplierOrderStatus,
-    supplierHealth,
-    inventoryStatus,
-    tracking.status,
-    returnStatus
-  );
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    fulfillmentId: buildFulfillmentId(order.orderId, item.orderItemId),
-    orderItemId: item.orderItemId,
-    orderId: order.orderId,
-    orderNumber: order.orderNumber,
-    customerId: order.customerId,
-    marketId: order.marketId,
-    channel: order.channel,
-    supplierId: item.supplierId,
-    supplierSku: item.sku,
-    productId: item.productId,
-    quantity: item.quantity,
-    inventoryReservationId: item.inventoryReservationId,
-    supplierOrderId: supplierOrder.supplierOrderId,
-    supplierOrderStatus: supplierOrder.supplierOrderStatus,
-    supplierOrderClassification: supplierOrder.classification,
-    orderStatus: order.status,
-    fulfillmentStatus: order.fulfillmentStatus,
-    inventoryStatus,
-    priceSnapshotId: item.priceSnapshotId,
-    trackingStatus: tracking.status,
-    trackingNumber: tracking.trackingNumber,
-    carrier: tracking.carrier,
-    trackingUrl: tracking.trackingUrl,
-    lastKnownSupplierState: supplierOrder.lastKnownSupplierState,
-    supplierHealth,
-    marketplaceId: marketplace.marketplaceId,
-    marketplaceOrderId: marketplace.marketplaceOrderId,
-    returnStatus,
-    refundStatus,
-    correlationId: supplierOrder.correlationId || order.orderId,
-    idempotencyKey: supplierOrder.idempotencyKey || order.idempotencyKey,
-    operationalStatus: "UNKNOWN",
-    stateView,
-    createdAt: order.createdAt,
-    updatedAt: now
-  };
-}
-function listFulfillmentOperationalViews(filter) {
-  const views = [];
-  for (const order of listAllOrders()) {
-    for (const item of order.items) {
-      const view = buildFulfillmentOperationalView(order, item);
-      views.push(view);
-    }
-  }
-  return views.filter((view) => {
-    if (filter?.supplierId && view.supplierId !== filter.supplierId) return false;
-    if (filter?.orderId && view.orderId !== filter.orderId) return false;
-    if (filter?.status && view.operationalStatus !== filter.status) return false;
-    if (filter?.marketplaceId && view.marketplaceId !== filter.marketplaceId) return false;
-    if (filter?.dateFrom && view.createdAt < filter.dateFrom) return false;
-    if (filter?.dateTo && view.createdAt > filter.dateTo) return false;
-    return true;
-  });
-}
-
-// lib/fulfillment-control-tower/persistence.ts
-var snapshotStore = /* @__PURE__ */ new Map();
-var incidentStore = /* @__PURE__ */ new Map();
-var incidentByFingerprint = /* @__PURE__ */ new Map();
-var reconciliationRuns = [];
-function getPersistentStore() {
-  if (typeof process === "undefined" || process.env.BUZZARD_FULFILLMENT_TOWER_PERSISTENCE === "0") {
-    return null;
-  }
-  try {
-    const mod = require_persistentStore();
-    return mod.createFulfillmentControlTowerStore();
-  } catch {
-    return null;
-  }
-}
-function rowToSnapshot(row) {
-  return JSON.parse(String(row.view_json || "{}"));
-}
-function rowToIncident(row) {
-  return {
-    incidentId: String(row.incident_id),
-    fingerprint: String(row.fingerprint),
-    fulfillmentId: String(row.fulfillment_id),
-    orderId: String(row.order_id),
-    supplierId: String(row.supplier_id),
-    severity: row.severity,
-    category: row.category,
-    code: String(row.code),
-    message: String(row.message),
-    detectedAt: String(row.detected_at),
-    resolvedAt: row.resolved_at ? String(row.resolved_at) : void 0,
-    status: row.status,
-    correlationId: row.correlation_id ? String(row.correlation_id) : void 0,
-    resolutionNote: row.resolution_note ? String(row.resolution_note) : void 0,
-    resolutionActor: row.resolution_actor ? String(row.resolution_actor) : void 0,
-    acknowledgedAt: row.acknowledged_at ? String(row.acknowledged_at) : void 0,
-    acknowledgedBy: row.acknowledged_by ? String(row.acknowledged_by) : void 0
-  };
-}
-function rowToRun(row) {
-  return {
-    runId: String(row.run_id),
-    correlationId: String(row.correlation_id),
-    startedAt: String(row.started_at),
-    completedAt: String(row.completed_at),
-    checkedFulfillments: Number(row.checked_fulfillments || 0),
-    passed: Number(row.passed || 0),
-    warnings: Number(row.warnings || 0),
-    mismatches: Number(row.mismatches || 0),
-    critical: Number(row.critical || 0),
-    incidentsCreated: Number(row.incidents_created || 0),
-    incidentsResolved: Number(row.incidents_resolved || 0),
-    durationMs: Number(row.duration_ms || 0),
-    errors: JSON.parse(String(row.errors_json || "[]"))
-  };
-}
-function getOperationalSnapshot(fulfillmentId) {
-  const cached = snapshotStore.get(fulfillmentId);
-  if (cached) return cached;
-  const row = getPersistentStore()?.getSnapshot(fulfillmentId);
-  if (!row) return void 0;
-  const view = rowToSnapshot(row);
-  snapshotStore.set(view.fulfillmentId, view);
-  return view;
-}
-function listIncidents() {
-  if (incidentStore.size) return [...incidentStore.values()];
-  const rows = getPersistentStore()?.listIncidents() || [];
-  for (const row of rows) {
-    const incident = rowToIncident(row);
-    incidentStore.set(incident.incidentId, incident);
-    incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
-  }
-  return [...incidentStore.values()];
-}
-function getLastReconciliationRun() {
-  if (reconciliationRuns.length) return reconciliationRuns[0];
-  const rows = getPersistentStore()?.listReconciliationRuns(1) || [];
-  return rows[0] ? rowToRun(rows[0]) : void 0;
-}
-
-// lib/fulfillment-control-tower/incidents.ts
-function filterIncidents(filter) {
-  return listIncidents().filter((incident) => {
-    if (filter?.supplierId && incident.supplierId !== filter.supplierId) return false;
-    if (filter?.orderId && incident.orderId !== filter.orderId) return false;
-    if (filter?.severity && incident.severity !== filter.severity) return false;
-    if (filter?.category && incident.category !== filter.category) return false;
-    if (filter?.status && incident.status !== filter.status) return false;
-    return true;
-  });
-}
-
-// lib/fulfillment-control-tower/admin.ts
-function applyOperationalStatus(views) {
-  return views.map((view) => {
-    const snapshot = getOperationalSnapshot(view.fulfillmentId);
-    return snapshot?.operationalStatus ? { ...view, operationalStatus: snapshot.operationalStatus } : view;
-  });
-}
-function getFulfillmentControlTowerDashboard(filter) {
-  const views = applyOperationalStatus(listFulfillmentOperationalViews(filter));
-  const incidents = filterIncidents({ status: "OPEN" });
-  const supplierSet = /* @__PURE__ */ new Set();
-  const orderSet = /* @__PURE__ */ new Set();
-  for (const incident of incidents) {
-    supplierSet.add(incident.supplierId);
-    orderSet.add(incident.orderId);
-  }
-  return {
-    totalFulfillments: views.length,
-    healthy: views.filter((v) => v.operationalStatus === "HEALTHY").length,
-    warning: views.filter((v) => v.operationalStatus === "WARNING").length,
-    mismatch: views.filter((v) => v.operationalStatus === "MISMATCH").length,
-    critical: views.filter((v) => v.operationalStatus === "CRITICAL").length,
-    openIncidents: incidents.length,
-    suppliersAffected: supplierSet.size,
-    ordersAffected: orderSet.size,
-    realSupplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
-    lastReconciliationRun: getLastReconciliationRun()
-  };
-}
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_security();
 
 // lib/supplier-engine/orderSandbox/piiFilter.ts
-var BLOCKED_KEYS = /payment|card|cvv|cvc|iban|bic|password|secret|token|oauth|api[_-]?key|authorization|admin|ai[_-]?context|email|phone/i;
+var BLOCKED_KEYS2 = /payment|card|cvv|cvc|iban|bic|password|secret|token|oauth|api[_-]?key|authorization|admin|ai[_-]?context|email|phone/i;
+var PII_LOG_KEYS = /email|phone|recipient|address|street|postal|city|name/i;
 function filterSupplierFulfillmentAddress(address) {
   if (!address) return {};
   const out = {};
   for (const [key, value] of Object.entries(address)) {
-    if (BLOCKED_KEYS.test(key)) continue;
+    if (BLOCKED_KEYS2.test(key)) continue;
     if (!value?.trim()) continue;
     out[key] = value.trim();
   }
   if (!out.country && address.country) out.country = address.country;
   return out;
 }
-
-// lib/supplier-order-readiness/evaluator.ts
-var import_crypto2 = require("crypto");
-
-// lib/supplier-order-readiness/config.ts
-var EVALUATOR_VERSION = "337.1.0";
-var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
-var APPROVAL_TTL_MS2 = 7 * 24 * 60 * 60 * 1e3;
-var DEFAULT_POLICY = {
-  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
-  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
-  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
-  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
-  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
-  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
-  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
-  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
-  blockOnMissingTrackingCapability: false,
-  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
-};
-var policyOverride = null;
-function getReadinessPolicy() {
-  return { ...DEFAULT_POLICY, ...policyOverride || {} };
-}
-function isMockCredentialValue(value) {
-  const normalized = value.trim().toLowerCase();
-  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.includes("placeholder");
-}
-
-// lib/supplier-engine/syncCursor.ts
-var cursorStore = /* @__PURE__ */ new Map();
-function cursorKey(supplierId, syncMode = "incremental") {
-  return `${supplierId}:${syncMode}`;
-}
-function fromPersisted2(row) {
-  return {
-    supplierId: String(row.supplierId),
-    syncMode: row.syncMode || "incremental",
-    cursor: row.cursor ? String(row.cursor) : void 0,
-    page: row.page != null ? Number(row.page) : void 0,
-    offset: row.offset != null ? Number(row.offset) : void 0,
-    lastModified: row.lastModified ? String(row.lastModified) : void 0,
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function getSyncCursor(supplierId, syncMode = "incremental") {
-  const key = cursorKey(supplierId, syncMode);
-  const cached = cursorStore.get(key);
-  if (cached) return cached;
-  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
-  if (row) {
-    const cursor = fromPersisted2(row);
-    cursorStore.set(key, cursor);
-    return cursor;
-  }
-  return void 0;
-}
-
-// lib/supplier-engine/orderSandbox/sandboxAdapter.ts
-function buildSupplierOrderIdempotencyKey(buzzardOrderId, supplierId) {
-  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
-}
-
-// lib/supplier-production-order-validation/persistence.ts
-var validationStore = /* @__PURE__ */ new Map();
-function listValidationRecords() {
-  return [...validationStore.values()];
-}
-function getLatestValidationForScope(scope) {
-  return listValidationRecords().filter(
-    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-
-// lib/supplier-production-order-validation/readinessBridge.ts
-function pass(code, category, message) {
-  return { code, category, level: "PASS", message, blocking: false };
-}
-function block(code, category, message) {
-  return { code, category, level: "BLOCKED", message, blocking: true };
-}
-function warn(code, category, message) {
-  return { code, category, level: "WARNING", message, blocking: false };
-}
-function evaluateCreateOrderProductionValidationChecks(scope) {
-  const results = [];
-  const validation = getLatestValidationForScope({
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    environment: scope.environment || "PRODUCTION"
-  });
-  if (!validation) {
-    results.push(block("CREATE_ORDER_VALIDATION_MISSING", "CREATE_ORDER", "createOrder production validation not run"));
-    return results;
-  }
-  results.push(pass("CREATE_ORDER_VALIDATION_EXISTS", "CREATE_ORDER", `Validation ${validation.validationId}`));
-  if (validation.createOrderCapability === "UNVERIFIED") {
-    results.push(
-      block("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CREATE_ORDER", "createOrder capability UNVERIFIED \u2014 #341 boundary")
-    );
-  } else if (validation.createOrderCapability === "VALIDATED") {
-    results.push(pass("CREATE_ORDER_VALIDATED", "CREATE_ORDER", "createOrder production validated"));
-  } else {
-    results.push(block("CREATE_ORDER_BLOCKED", "CREATE_ORDER", "createOrder capability blocked"));
-  }
-  if (validation.unknownOutcome) {
-    results.push(warn("CREATE_ORDER_UNKNOWN_OUTCOME", "CREATE_ORDER", "Unknown outcome pending resolution"));
-  }
-  if (validation.humanReviewRequired) {
-    results.push(warn("CREATE_ORDER_HUMAN_REVIEW", "CREATE_ORDER", "Human review required"));
-  }
-  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
-    results.push(block("CREATE_ORDER_VALIDATION_BLOCKED", "CREATE_ORDER", `Validation ${validation.overallStatus}`));
-  }
-  return results;
-}
-
-// lib/supplier-production-validation/persistence.ts
-var validationStore2 = /* @__PURE__ */ new Map();
-function listValidationRecords2() {
-  return [...validationStore2.values()];
-}
-function getLatestValidationForScope2(scope) {
-  return listValidationRecords2().filter(
-    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-
-// lib/supplier-production-validation/readinessBridge.ts
-function pass2(code, category, message) {
-  return { code, category, level: "PASS", message, blocking: false };
-}
-function block2(code, category, message) {
-  return { code, category, level: "BLOCKED", message, blocking: true };
-}
-function warn2(code, category, message) {
-  return { code, category, level: "WARNING", message, blocking: false };
-}
-function evaluateProductionValidationChecks(scope) {
-  const results = [];
-  const validation = getLatestValidationForScope2({
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    environment: scope.environment || "PRODUCTION"
-  });
-  if (!validation) {
-    results.push(block2("PRODUCTION_VALIDATION_MISSING", "PRODUCTION", "Production capability validation not run"));
-    return results;
-  }
-  results.push(
-    pass2("PRODUCTION_VALIDATION_EXISTS", "PRODUCTION", `Validation ${validation.validationId} recorded`)
-  );
-  if (validation.credentialStatus === "VALID") {
-    results.push(pass2("PRODUCTION_CREDENTIAL_VALID", "CREDENTIAL", "Production credential validated"));
-  } else if (validation.credentialStatus === "NOT_CONFIGURED") {
-    results.push(block2("PRODUCTION_CREDENTIAL_MISSING", "CREDENTIAL", "Production credential not configured"));
-  } else {
-    results.push(block2("PRODUCTION_CREDENTIAL_BLOCKED", "CREDENTIAL", `Credential status ${validation.credentialStatus}`));
-  }
-  if (validation.createOrderCapability === "UNVERIFIED") {
-    results.push(
-      block2("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CAPABILITY", "createOrder capability UNVERIFIED \u2014 intentional #339 boundary")
-    );
-  }
-  results.push(...evaluateCreateOrderProductionValidationChecks(scope));
-  if (validation.catalogReadStatus === "LIVE_READ_VALIDATED") {
-    results.push(pass2("PRODUCTION_CATALOG_VALIDATED", "LIVE_READ", "Catalog live-read validated"));
-  } else if (validation.catalogReadStatus === "SKIPPED") {
-    results.push(warn2("PRODUCTION_CATALOG_SKIPPED", "LIVE_READ", "Catalog live-read skipped \u2014 LIVE NOT VALIDATED"));
-  }
-  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
-    results.push(
-      block2("PRODUCTION_VALIDATION_BLOCKED", "PRODUCTION", `Validation ${validation.overallStatus}`)
-    );
-  } else if (validation.overallStatus === "PASSED") {
-    results.push(warn2("PRODUCTION_VALIDATION_PASSED", "PRODUCTION", "Validation passed but createOrder still UNVERIFIED"));
-  }
-  return results;
-}
-
-// lib/supplier-order-readiness/checks.ts
-function pass3(code, category, message) {
-  return { code, category, level: "PASS", message, blocking: false };
-}
-function warn3(code, category, message, blocking = false) {
-  return { code, category, level: "WARNING", message, blocking };
-}
-function block3(code, category, message) {
-  return { code, category, level: "BLOCKED", message, blocking: true };
-}
-function critical(code, category, message) {
-  return { code, category, level: "CRITICAL", message, blocking: true };
-}
-function ageMs(iso) {
-  if (!iso) return null;
-  const ts = Date.parse(iso);
-  return Number.isFinite(ts) ? Date.now() - ts : null;
-}
-function classifyCapability(enabled) {
-  if (enabled === true) return "AVAILABLE";
-  if (enabled === false) return "NOT_SUPPORTED";
-  return "UNKNOWN";
-}
-function evaluateSupplierIdentityChecks(scope) {
-  const results = [];
-  const supplier = getSupplier(scope.supplierId);
-  if (!supplier) {
-    results.push(block3("SUPPLIER_NOT_FOUND", "SUPPLIER", "Supplier record does not exist"));
-    return results;
-  }
-  results.push(pass3("SUPPLIER_EXISTS", "SUPPLIER", "Supplier record exists"));
-  if (!isSupplierSelectable(scope.supplierId)) {
-    results.push(block3("SUPPLIER_DISABLED", "SUPPLIER", "Supplier is disabled or not selectable"));
-  } else {
-    results.push(pass3("SUPPLIER_ENABLED", "SUPPLIER", "Supplier is enabled"));
-  }
-  if (!supplier.supportedMarkets?.includes(scope.market)) {
-    results.push(block3("MARKET_NOT_ELIGIBLE", "MARKET", `Supplier not eligible for market ${scope.market}`));
-  } else {
-    results.push(pass3("MARKET_ELIGIBLE", "MARKET", "Supplier market eligibility confirmed"));
-  }
-  const health = getSupplierHealth(scope.supplierId);
-  if (!health) {
-    results.push(warn3("SUPPLIER_HEALTH_UNKNOWN", "SUPPLIER", "Supplier health state unavailable"));
-  } else if (health.healthStatus === "UNHEALTHY") {
-    results.push(block3("SUPPLIER_UNHEALTHY", "SUPPLIER", "Supplier health is UNHEALTHY"));
-  } else if (health.healthStatus === "DEGRADED") {
-    results.push(warn3("SUPPLIER_DEGRADED", "SUPPLIER", "Supplier health is DEGRADED", false));
-  } else {
-    results.push(pass3("SUPPLIER_HEALTH_OK", "SUPPLIER", `Supplier health ${health.healthStatus}`));
-  }
-  return results;
-}
-function evaluateCredentialChecks(scope) {
-  const results = [];
-  const ref = getCredentialRef(scope.supplierId);
-  const profile = resolveLiveSupplierProfile();
-  const interCars = resolvePredefinedLiveProfile();
-  const isInterCars = scope.supplierId === interCars?.supplierId || profile?.supplierId === scope.supplierId || process.env.SUPPLIER_LIVE_PROFILE === "inter-cars";
-  if (!ref?.secretsRef && !profile?.secretsRef) {
-    results.push(block3("CREDENTIAL_REF_MISSING", "CREDENTIAL", "Credential reference not configured"));
-    return results;
-  }
-  results.push(pass3("CREDENTIAL_REF_EXISTS", "CREDENTIAL", "Credential reference configured"));
-  const secretsRef = ref?.secretsRef || profile?.secretsRef || "";
-  const creds = resolveCredentials(secretsRef);
-  if (!creds || Object.keys(creds).length === 0) {
-    results.push(block3("CREDENTIAL_SECRET_MISSING", "CREDENTIAL", "Required supplier credential secret missing"));
-    return results;
-  }
-  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
-  if (isMockCredentialValue(token)) {
-    results.push(block3("CREDENTIAL_MOCK_NOT_PRODUCTION", "CREDENTIAL", "Mock/test credentials cannot be production ready"));
-    return results;
-  }
-  if (isInterCars && !hasLiveSupplierCredentials(interCars || profile)) {
-    results.push(block3("INTER_CARS_CREDENTIAL_MISSING", "CREDENTIAL", "Inter Cars live credentials required"));
-    return results;
-  }
-  const redacted = redactSecrets({ preview: token });
-  if (redacted.preview && redacted.preview !== "[REDACTED]") {
-    results.push(critical("SECRET_REDACTION_FAILED", "SECURITY", "Secret redaction failed"));
-  } else {
-    results.push(pass3("SECRET_REDACTION_ACTIVE", "SECURITY", "Secret redaction active"));
-  }
-  results.push(pass3("CREDENTIAL_CONFIGURED", "CREDENTIAL", "Production credential readiness confirmed"));
-  return results;
-}
-function evaluateNetworkSafetyChecks() {
-  const results = [];
-  if (isSupplierOrderNetworkEnabled()) {
-    results.push(warn3("NETWORK_ENABLED", "NETWORK", "Supplier order network is ENABLED"));
-  } else {
-    results.push(pass3("NETWORK_DISABLED", "NETWORK", "Supplier order network is DISABLED (required for #337)"));
-  }
-  return results;
-}
-function evaluateCapabilityChecks(scope) {
-  const policy = getReadinessPolicy();
-  const supplier = getSupplier(scope.supplierId);
-  const profile = resolveLiveSupplierProfile();
-  const caps = { ...supplier?.capabilities || {}, ...profile?.capabilities || {} };
-  const map = {
-    createOrder: classifyCapability(caps.createOrder),
-    orderStatus: classifyCapability(caps.orderStatus),
-    tracking: classifyCapability(caps.trackingAPI),
-    cancellation: classifyCapability(caps.cancelOrder),
-    return: classifyCapability(caps.returnsAPI),
-    refund: classifyCapability(caps.refund)
-  };
-  const results = [];
-  for (const required of policy.requiredOrderCapabilities) {
-    const key = required === "trackingAPI" ? "tracking" : required;
-    const classification = map[key] || map[required] || "UNKNOWN";
-    if (classification !== "AVAILABLE") {
-      results.push(block3(`CAPABILITY_${required.toUpperCase()}_MISSING`, "CAPABILITY", `${required} not available for real orders`));
-    } else {
-      results.push(pass3(`CAPABILITY_${required.toUpperCase()}`, "CAPABILITY", `${required} available`));
-    }
-  }
-  if (policy.blockOnMissingTrackingCapability && map.tracking !== "AVAILABLE") {
-    results.push(block3("TRACKING_CAPABILITY_REQUIRED", "TRACKING", "Tracking capability required"));
-  } else if (map.tracking !== "AVAILABLE") {
-    results.push(warn3("TRACKING_CAPABILITY_MISSING", "TRACKING", "Tracking capability not supported"));
-  }
-  if (policy.blockOnMissingReturnCapability && map.return !== "AVAILABLE") {
-    results.push(warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Return capability not supported", false));
-  }
-  return { results, capabilities: map };
-}
-function evaluateInterCarsChecks(scope) {
-  const interCars = resolvePredefinedLiveProfile();
-  if (!interCars || scope.supplierId !== interCars.supplierId) return [];
-  const results = [];
-  results.push(pass3("INTER_CARS_PROFILE", "SUPPLIER", "Inter Cars adapter profile configured"));
-  if (interCars.environment !== "PRODUCTION" && interCars.environment !== "SANDBOX") {
-    results.push(warn3("INTER_CARS_ENV", "SUPPLIER", `Inter Cars environment ${interCars.environment}`));
-  }
-  if (!interCars.endpoints?.products || !interCars.endpoints?.stock) {
-    results.push(block3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoint configuration incomplete"));
-  } else {
-    results.push(pass3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoints configured"));
-  }
-  const orderCap = interCars.capabilities?.createOrder === true;
-  if (!orderCap) {
-    results.push(block3("INTER_CARS_ORDER_NOT_VALIDATED", "SUPPLIER", "Inter Cars live order capability not validated"));
-  }
-  return results;
-}
-function evaluateLiveReadChecks(scope) {
-  const results = [];
-  const profile = resolveLiveSupplierProfile();
-  const credentialsPresent = profile ? hasLiveSupplierCredentials(profile) : hasConfiguredCredentials(scope.supplierId);
-  if (!credentialsPresent) {
-    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "Live read validation skipped \u2014 credentials missing"));
-    return results;
-  }
-  const cursor = getSyncCursor(scope.supplierId, "incremental");
-  if (!cursor?.updatedAt) {
-    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "No successful live-read sync cursor recorded"));
-    return results;
-  }
-  const syncAge = ageMs(cursor.updatedAt);
-  const policy = getReadinessPolicy();
-  if (syncAge == null || syncAge > policy.maxStockAgeMs) {
-    results.push(block3("LIVE_READ_STALE", "LIVE_READ", "Last live-read sync exceeds freshness threshold"));
-  } else {
-    results.push(pass3("LIVE_READ_RECENT", "LIVE_READ", "Recent live-read sync cursor present"));
-  }
-  return results;
-}
-function evaluateDataFreshnessChecks(scope) {
-  const policy = getReadinessPolicy();
-  const cursor = getSyncCursor(scope.supplierId, "incremental");
-  const results = [];
-  const stockAge = ageMs(cursor?.updatedAt);
-  const priceAge = ageMs(cursor?.updatedAt);
-  const productAge = ageMs(cursor?.updatedAt);
-  if (stockAge == null || stockAge > policy.maxStockAgeMs) {
-    results.push(block3("STOCK_STALE", "INVENTORY", "Supplier stock feed stale or missing"));
-  } else {
-    results.push(pass3("STOCK_FRESH", "INVENTORY", "Stock feed within freshness threshold"));
-  }
-  if (priceAge == null || priceAge > policy.maxPriceAgeMs) {
-    results.push(block3("PRICE_STALE", "PRICE", "Supplier price feed stale or missing"));
-  } else {
-    results.push(pass3("PRICE_FRESH", "PRICE", "Price feed within freshness threshold"));
-  }
-  if (productAge == null || productAge > policy.maxProductAgeMs) {
-    results.push(warn3("PRODUCT_STALE", "PRODUCT", "Product feed older than preferred threshold"));
-  } else {
-    results.push(pass3("PRODUCT_FRESH", "PRODUCT", "Product feed within freshness threshold"));
-  }
-  return results;
-}
-function evaluateInventoryReadinessChecks(scope) {
-  const supplier = getSupplier(scope.supplierId);
-  const results = [];
-  if (!supplier?.capabilities?.stockFeed) {
-    results.push(block3("STOCK_SOURCE_UNAVAILABLE", "INVENTORY", "Supplier stock source unavailable"));
-  } else {
-    results.push(pass3("STOCK_SOURCE_HEALTHY", "INVENTORY", "Supplier stock source configured"));
-  }
-  return results;
-}
-function evaluatePricingReadinessChecks() {
-  return [pass3("PRICING_ENGINE_AVAILABLE", "PRICE", "Pricing Engine snapshot support available")];
-}
-function evaluateOrderEngineReadinessChecks() {
-  return [
-    pass3("ORDER_LIFECYCLE", "ORDER", "Order lifecycle integration available"),
-    pass3("ORDER_IDEMPOTENCY", "ORDER", "Order idempotency support available"),
-    pass3("ORDER_RESERVATION", "ORDER", "Inventory reservation integration active")
-  ];
-}
-function evaluateControlTowerChecks(scope) {
-  const results = [];
-  try {
-    const dash = getFulfillmentControlTowerDashboard({ supplierId: scope.supplierId });
-    if (dash.critical > 0) {
-      results.push(block3("FCT_CRITICAL_INCIDENTS", "FULFILLMENT", `${dash.critical} critical fulfillment incidents open`));
-    } else {
-      results.push(pass3("FCT_NO_CRITICAL", "FULFILLMENT", "No critical fulfillment incidents"));
-    }
-    results.push(pass3("FCT_AVAILABLE", "FULFILLMENT", "Fulfillment Control Tower available"));
-  } catch {
-    results.push(warn3("FCT_UNAVAILABLE", "FULFILLMENT", "Fulfillment Control Tower unavailable"));
-  }
-  return results;
-}
-function evaluateIncidentGateChecks(scope) {
-  const criticalIncidents = filterIncidents({
-    supplierId: scope.supplierId,
-    status: "OPEN",
-    severity: "CRITICAL"
-  });
-  if (criticalIncidents.length > 0) {
-    return [block3("CRITICAL_INCIDENTS_OPEN", "INCIDENT", `${criticalIncidents.length} critical incidents open`)];
-  }
-  return [pass3("NO_CRITICAL_INCIDENTS", "INCIDENT", "No open critical incidents")];
-}
-function evaluateSecurityChecks() {
-  return [
-    pass3("RBAC_ACTIVE", "SECURITY", "RBAC enforcement available"),
-    pass3("PII_FILTER_ACTIVE", "SECURITY", "PII filtering active"),
-    pass3("INPUT_VALIDATION", "SECURITY", "Input validation active")
-  ];
-}
-function evaluateIdempotencyChecks(scope) {
-  const key = buildSupplierOrderIdempotencyKey("readiness-test-order", scope.supplierId);
-  const a = getSupplierOrderSandboxByIdempotency(key);
-  const b = getSupplierOrderSandboxByIdempotency(key);
-  if (a && b && a.supplierOrderId !== b.supplierOrderId) {
-    return [block3("IDEMPOTENCY_FAILURE", "IDEMPOTENCY", "Duplicate idempotency keys produced different orders")];
-  }
-  return [pass3("IDEMPOTENCY_OK", "IDEMPOTENCY", "Idempotency index consistent")];
-}
-function evaluateConcurrencyChecks() {
-  return [pass3("CONCURRENCY_OK", "CONCURRENCY", "Sandbox concurrency protections verified in #335")];
-}
-function evaluateRetryChecks() {
-  return [pass3("RETRY_CLASSIFICATION", "RETRY", "Retry/permanent failure classification available")];
-}
-function evaluateMarketReadinessChecks(scope) {
-  const market = getMarket(scope.market);
-  if (!market) {
-    return [block3("MARKET_UNKNOWN", "MARKET", `Market ${scope.market} not in SSOT`)];
-  }
-  if (listMarkets().length !== 35) {
-    return [warn3("MARKET_COUNT", "MARKET", `Expected 35 markets, found ${listMarkets().length}`)];
-  }
-  return [pass3("MARKET_CONFIGURED", "MARKET", `Market ${scope.market} configured`)];
-}
-function evaluateMarketplaceReadinessChecks(scope) {
-  if (scope.channel === "DIRECT") {
-    return [pass3("DIRECT_CHANNEL", "MARKETPLACE", "Direct channel does not require marketplace mapping")];
-  }
-  const channelId = scope.channel.toLowerCase();
-  const mp = listMarketplaces().find((m) => m.marketplaceId === channelId || m.supportedChannels.includes(channelId));
-  if (!mp) {
-    return [block3("MARKETPLACE_UNKNOWN", "MARKETPLACE", `Marketplace channel ${scope.channel} unknown`)];
-  }
-  if (!mp.supportedMarkets.includes(scope.market)) {
-    return [block3("MARKETPLACE_MARKET_UNSUPPORTED", "MARKETPLACE", `${scope.channel} does not support ${scope.market}`)];
-  }
-  return [pass3("MARKETPLACE_CHANNEL_OK", "MARKETPLACE", `${scope.channel} supports ${scope.market}`)];
-}
-function evaluateReturnsReadinessChecks(scope) {
-  const { capabilities } = evaluateCapabilityChecks(scope);
-  if (capabilities.return === "AVAILABLE") {
-    return [pass3("RETURN_CAPABILITY", "RETURN", "Supplier return capability configured")];
-  }
-  return [warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Supplier return capability not configured")];
-}
-function evaluateProductionValidationChecks2(scope) {
-  return evaluateProductionValidationChecks(scope);
-}
-function evaluateAllReadinessChecks(scope) {
-  const cap = evaluateCapabilityChecks(scope);
-  return [
-    ...evaluateNetworkSafetyChecks(),
-    ...evaluateSupplierIdentityChecks(scope),
-    ...evaluateCredentialChecks(scope),
-    ...cap.results,
-    ...evaluateInterCarsChecks(scope),
-    ...evaluateProductionValidationChecks2(scope),
-    ...evaluateLiveReadChecks(scope),
-    ...evaluateDataFreshnessChecks(scope),
-    ...evaluateInventoryReadinessChecks(scope),
-    ...evaluatePricingReadinessChecks(),
-    ...evaluateOrderEngineReadinessChecks(),
-    ...evaluateControlTowerChecks(scope),
-    ...evaluateIncidentGateChecks(scope),
-    ...evaluateSecurityChecks(),
-    ...evaluateIdempotencyChecks(scope),
-    ...evaluateConcurrencyChecks(),
-    ...evaluateRetryChecks(),
-    ...evaluateMarketReadinessChecks(scope),
-    ...evaluateMarketplaceReadinessChecks(scope),
-    ...evaluateReturnsReadinessChecks(scope)
-  ];
-}
-
-// lib/supplier-order-readiness/risk.ts
-function computeRiskClassification(scope, checks) {
-  if (checks.some((c) => c.blocking && (c.level === "CRITICAL" || c.level === "BLOCKED"))) {
-    return "BLOCKED";
-  }
-  let score = 0;
-  const health = getSupplierHealth(scope.supplierId);
-  if (health?.healthStatus === "UNHEALTHY") score += 3;
-  else if (health?.healthStatus === "DEGRADED") score += 2;
-  else if (health?.healthStatus === "UNKNOWN") score += 1;
-  const criticalIncidents = filterIncidents({
-    supplierId: scope.supplierId,
-    status: "OPEN",
-    severity: "CRITICAL"
-  }).length;
-  score += criticalIncidents * 2;
-  if (checks.some((c) => c.level === "WARNING")) score += 1;
-  if (scope.channel !== "DIRECT") score += 1;
-  if (scope.market !== "DE") score += 1;
-  if (score >= 5) return "HIGH";
-  if (score >= 2) return "MEDIUM";
-  return "LOW";
-}
-
-// lib/supplier-order-readiness/audit.ts
-var import_crypto = require("crypto");
-
-// lib/supplier-order-readiness/persistence.ts
-var readinessStore = /* @__PURE__ */ new Map();
-var approvalStore = /* @__PURE__ */ new Map();
-var auditLog = [];
-var killSwitchState = null;
-function readinessKey(supplierId, market, channel) {
-  return `${supplierId}:${market}:${channel}`;
-}
-function getPersistentStore2() {
-  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_ORDER_READINESS_PERSISTENCE === "0") {
-    return null;
-  }
-  try {
-    const mod = require_persistentStore2();
-    return mod.createSupplierOrderReadinessStore();
-  } catch {
-    return null;
-  }
-}
-function saveReadinessRecord(record) {
-  readinessStore.set(record.readinessId, record);
-  getPersistentStore2()?.saveReadiness({
-    readiness_id: record.readinessId,
-    supplier_id: record.supplierId,
-    market: record.market,
-    channel: record.channel,
-    overall_status: record.overallStatus,
-    approval_status: record.approvalStatus,
-    generated_at: record.generatedAt,
-    expires_at: record.expiresAt,
-    record_json: JSON.stringify(record),
-    updated_at: (/* @__PURE__ */ new Date()).toISOString()
-  });
-}
-function getReadinessByScope(supplierId, market, channel) {
-  const id = readinessKey(supplierId, market, channel);
-  for (const record of readinessStore.values()) {
-    if (`${record.supplierId}:${record.market}:${record.channel}` === id) return record;
-  }
-  return void 0;
-}
-function getApprovalForScope(supplierId, market, channel, status) {
-  const matches = [...approvalStore.values()].filter(
-    (a) => a.supplierId === supplierId && a.market === market && a.channel === channel
-  );
-  if (status) return matches.find((a) => a.status === status);
-  return matches.sort((a, b) => Date.parse(b.requestedAt) - Date.parse(a.requestedAt))[0];
-}
-function appendAuditEvent(event) {
-  auditLog.push(event);
-  getPersistentStore2()?.saveAudit({
-    event_id: event.eventId,
-    event_type: event.type,
-    supplier_id: event.supplierId,
-    market: event.market,
-    channel: event.channel,
-    actor: event.actor,
-    correlation_id: event.correlationId,
-    timestamp: event.timestamp,
-    detail_json: JSON.stringify(event.detail || {})
-  });
-}
-function getKillSwitchState() {
-  return killSwitchState;
-}
-
-// lib/supplier-order-readiness/audit.ts
-function recordReadinessAudit(input) {
-  const event = {
-    eventId: `ra_${(0, import_crypto.randomUUID)().slice(0, 12)}`,
-    type: input.type,
-    supplierId: input.supplierId,
-    market: input.market,
-    channel: input.channel,
-    actor: input.actor,
-    correlationId: input.correlationId,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    detail: input.detail ? sanitizeAuditDetail(input.detail) : void 0
-  };
-  appendAuditEvent(event);
-  return event;
-}
-function sanitizeAuditDetail(detail) {
-  const blocked = /* @__PURE__ */ new Set(["password", "token", "secret", "credential", "email", "phone", "accessToken", "apiKey"]);
+function sanitizePayloadForInspection(payload) {
   const out = {};
-  for (const [key, value] of Object.entries(detail)) {
-    if (blocked.has(key.toLowerCase())) {
+  for (const [key, value] of Object.entries(payload)) {
+    if (BLOCKED_KEYS2.test(key)) {
       out[key] = "[REDACTED]";
+      continue;
+    }
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      out[key] = sanitizePayloadForInspection(value);
+    } else if (PII_LOG_KEYS.test(key) && typeof value === "string") {
+      out[key] = maskPiiValue(value);
     } else {
       out[key] = value;
     }
   }
   return out;
 }
-
-// lib/supplier-order-readiness/approval.ts
-function isExpired(iso) {
-  return Date.parse(iso) <= Date.now();
-}
-function getApprovalStatusForScope(scope) {
-  const approved = getApprovalForScope(scope.supplierId, scope.market, scope.channel, "APPROVED");
-  if (approved) {
-    if (isExpired(approved.expiresAt)) return "EXPIRED";
-    return "APPROVED";
-  }
-  const latest = getApprovalForScope(scope.supplierId, scope.market, scope.channel);
-  if (!latest) return "PENDING";
-  if (isExpired(latest.expiresAt)) return "EXPIRED";
-  return latest.status;
+function maskPiiValue(value) {
+  if (value.length <= 4) return "****";
+  return `${value.slice(0, 2)}${"*".repeat(Math.min(6, value.length - 2))}`;
 }
 
-// lib/supplier-order-readiness/evaluator.ts
-function domainStatus(checks, categories2) {
-  const relevant = checks.filter((c) => categories2.includes(c.category));
-  if (relevant.some((c) => c.blocking)) return "BLOCKED";
-  if (relevant.some((c) => c.level === "WARNING")) return "WARNING";
-  if (relevant.length === 0) return "UNKNOWN";
-  if (relevant.every((c) => c.level === "PASS")) return "PASS";
-  return "UNKNOWN";
-}
-function deriveOverallStatus(checks, expiresAt) {
-  if (Date.parse(expiresAt) <= Date.now()) return "EXPIRED";
-  const blockers = checks.filter((c) => c.blocking);
-  if (blockers.length > 0) return "BLOCKED";
-  const warnings = checks.filter((c) => c.level === "WARNING");
-  if (warnings.length > 0) return "CONDITIONALLY_READY";
-  return "READY";
-}
-function buildReadinessId(scope) {
-  return `sor_${scope.supplierId}_${scope.market}_${scope.channel}`.replace(/[^a-zA-Z0-9:_-]/g, "_");
-}
-function evaluateSupplierOrderReadiness(scope, options = {}) {
-  const correlationId = options.correlationId || (0, import_crypto2.randomUUID)();
-  const existing = getReadinessByScope(scope.supplierId, scope.market, scope.channel);
-  if (existing && !options.force && Date.parse(existing.expiresAt) > Date.now() && existing.evaluatorVersion === EVALUATOR_VERSION) {
-    return existing;
-  }
-  const checks = evaluateAllReadinessChecks(scope);
-  const generatedAt = (/* @__PURE__ */ new Date()).toISOString();
-  const expiresAt = new Date(Date.now() + READINESS_TTL_MS).toISOString();
-  const overallStatus = deriveOverallStatus(checks, expiresAt);
-  const blockers = checks.filter((c) => c.blocking).map((c) => c.code);
-  const warnings = checks.filter((c) => c.level === "WARNING").map((c) => c.code);
-  const riskLevel = computeRiskClassification(scope, checks);
-  const record = {
-    readinessId: buildReadinessId(scope),
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    environment: scope.environment || (process.env.NODE_ENV === "production" ? "PRODUCTION" : "SANDBOX"),
-    generatedAt,
-    expiresAt,
-    overallStatus,
-    approvalStatus: getApprovalStatusForScope(scope),
-    networkStatus: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
-    credentialStatus: domainStatus(checks, ["CREDENTIAL"]),
-    connectorStatus: domainStatus(checks, ["CAPABILITY", "SUPPLIER"]),
-    supplierCapabilityStatus: domainStatus(checks, ["CAPABILITY"]),
-    productReadinessStatus: domainStatus(checks, ["PRODUCT"]),
-    stockReadinessStatus: domainStatus(checks, ["INVENTORY"]),
-    priceReadinessStatus: domainStatus(checks, ["PRICE"]),
-    fulfillmentReadinessStatus: domainStatus(checks, ["FULFILLMENT"]),
-    reconciliationStatus: domainStatus(checks, ["FULFILLMENT"]),
-    incidentStatus: domainStatus(checks, ["INCIDENT"]),
-    securityStatus: domainStatus(checks, ["SECURITY"]),
-    idempotencyStatus: domainStatus(checks, ["IDEMPOTENCY"]),
-    retryStatus: domainStatus(checks, ["RETRY"]),
-    auditStatus: "PASS",
-    riskLevel,
-    evaluatorVersion: EVALUATOR_VERSION,
-    correlationId,
-    checks,
-    blockers,
-    warnings
+// lib/supplier-engine/orderSandbox/networkSafety.ts
+init_config();
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_persistence2();
+
+// lib/supplier-engine/order.ts
+function buildDryRunPayload(request) {
+  return {
+    supplierId: request.supplierId,
+    orderId: request.orderId,
+    lines: request.lines,
+    shippingAddress: filterSupplierFulfillmentAddress(request.shippingAddress),
+    dropshipping: request.dropshipping ?? false,
+    whiteLabel: request.whiteLabel ?? false,
+    blindShipping: request.blindShipping ?? false,
+    customerSafe: true
   };
-  saveReadinessRecord(record);
-  recordReadinessAudit({
-    type: overallStatus === "BLOCKED" ? "READINESS_BLOCKED" : overallStatus === "READY" ? "READINESS_READY" : "READINESS_CREATED",
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    correlationId,
-    detail: { readinessId: record.readinessId, overallStatus, blockers: blockers.length }
+}
+function validateSupplierOrderPayload(request) {
+  const errors = [];
+  if (!request.supplierId) errors.push("MISSING_SUPPLIER_ID");
+  if (!request.orderId) errors.push("MISSING_ORDER_ID");
+  if (!request.lines?.length) errors.push("MISSING_LINES");
+  for (const line of request.lines || []) {
+    if (!line.supplierSku) errors.push("MISSING_SUPPLIER_SKU");
+    if (line.quantity <= 0) errors.push("INVALID_QUANTITY");
+  }
+  if (!request.shippingAddress?.country) errors.push("MISSING_SHIPPING_COUNTRY");
+  const payload = buildDryRunPayload(request);
+  const sanitized = sanitizePayloadForInspection(payload);
+  if (errors.length) return { valid: false, errors, sanitized };
+  return { valid: true, errors: [], payload, sanitized };
+}
+
+// lib/order-engine/fulfillment.ts
+init_registry2();
+
+// lib/supplier-production-order-validation/payload.ts
+function hashCreateOrderPayload(payload) {
+  const keys = Object.keys(payload).sort();
+  const canonical = JSON.stringify(payload, keys);
+  return (0, import_crypto2.createHash)("sha256").update(canonical).digest("hex").slice(0, 16);
+}
+function buildCanonicalPayloadFromOrder(orderId) {
+  const checks = [];
+  const blockers = [];
+  const order = getOrder(orderId);
+  if (!order) {
+    checks.push({ check: "ORDER", category: "ORDER", status: "BLOCKED", message: "Order not found", blocking: true });
+    blockers.push("ORDER_NOT_FOUND");
+    return { checks, blockers };
+  }
+  const interCarsId = getInterCarsSupplierId();
+  const assignment = order.supplierAssignments.find((a) => a.supplierId === interCarsId);
+  if (!assignment) {
+    checks.push({
+      check: "SUPPLIER_ASSIGNMENT",
+      category: "SUPPLIER",
+      status: "BLOCKED",
+      message: "Inter Cars not assigned",
+      blocking: true
+    });
+    blockers.push("SUPPLIER_ASSIGNMENT_MISMATCH");
+    return { checks, blockers };
+  }
+  const lines = order.items.filter((i) => i.supplierId === interCarsId).map((i) => ({
+    supplierSku: assignment.supplierSku || i.sku,
+    quantity: i.quantity,
+    unitPrice: i.supplierCostSnapshot
+  }));
+  const shippingAddress = filterSupplierFulfillmentAddress(
+    order.shippingAddress
+  );
+  const supplierRequest = {
+    supplierId: interCarsId,
+    orderId: order.orderId,
+    lines,
+    shippingAddress
+  };
+  const validation = validateSupplierOrderPayload(supplierRequest);
+  if (!validation.valid) {
+    checks.push({
+      check: "REQUEST_SCHEMA",
+      category: "REQUEST",
+      status: "BLOCKED",
+      message: validation.errors.join(","),
+      blocking: true
+    });
+    blockers.push("REQUEST_SCHEMA_INVALID");
+    return { checks, blockers, payloadHash: validation.sanitized ? hashCreateOrderPayload(validation.sanitized) : void 0 };
+  }
+  const idempotencyKey = buildSupplierOrderIdempotencyKey(interCarsId, order.orderId, order.idempotencyKey);
+  const payload = {
+    buzzardOrderId: order.orderId,
+    supplierId: interCarsId,
+    adapterProfile: getInterCarsAdapterProfile(),
+    idempotencyKey,
+    lines,
+    shippingAddress,
+    currency: order.currency,
+    priceSnapshotId: order.priceSnapshotId,
+    inventoryReservationIds: order.reservationIds,
+    supplierAssignmentSnapshotIds: order.supplierAssignments.map((a) => a.supplierOfferId)
+  };
+  const payloadHash = hashCreateOrderPayload({
+    orderId: payload.buzzardOrderId,
+    supplierId: payload.supplierId,
+    lines: payload.lines,
+    idempotencyKey: payload.idempotencyKey
   });
-  return record;
+  checks.push({ check: "REQUEST_SCHEMA", category: "REQUEST", status: "PASS", message: "Request contract valid" });
+  return { payload, checks, blockers, payloadHash };
+}
+
+// lib/supplier-production-order-validation/request.ts
+function validateOrderProtections(orderId, payload) {
+  const checks = [];
+  const blockers = [];
+  const order = getOrder(orderId);
+  if (!order || !payload) return { checks, blockers: ["ORDER_NOT_FOUND"] };
+  for (const item of order.items.filter((i) => i.supplierId === getInterCarsSupplierId())) {
+    if (!item.inventoryReservationId && !order.reservationIds.length) {
+      checks.push({
+        check: "INVENTORY_RESERVATION",
+        category: "INVENTORY",
+        status: "BLOCKED",
+        message: "Missing reservation",
+        blocking: true
+      });
+      blockers.push("INVENTORY_RESERVATION_MISSING");
+    } else {
+      const reservationId = item.inventoryReservationId || order.reservationIds[0];
+      const reservation = reservationId ? getReservation(reservationId) : void 0;
+      if (!reservation) {
+        checks.push({
+          check: "INVENTORY_RESERVATION",
+          category: "INVENTORY",
+          status: "BLOCKED",
+          message: "Reservation invalid",
+          blocking: true
+        });
+        blockers.push("INVENTORY_RESERVATION_INVALID");
+      } else if (reservation.status !== "ACTIVE") {
+        checks.push({
+          check: "INVENTORY_RESERVATION",
+          category: "INVENTORY",
+          status: "BLOCKED",
+          message: `Reservation ${reservation.status}`,
+          blocking: true
+        });
+        blockers.push("INVENTORY_RESERVATION_EXPIRED");
+      } else if (reservation.quantity < item.quantity) {
+        blockers.push("INVENTORY_INSUFFICIENT");
+      } else {
+        checks.push({
+          check: "INVENTORY_RESERVATION",
+          category: "INVENTORY",
+          status: "PASS",
+          message: "Reservation valid"
+        });
+      }
+    }
+    if (item.supplierCostSnapshot <= 0) {
+      blockers.push("PRICE_SNAPSHOT_MISSING");
+    } else {
+      const line = payload.lines.find((l) => l.supplierSku === (item.sku || payload.lines[0]?.supplierSku));
+      if (line && Math.abs(line.unitPrice - item.supplierCostSnapshot) > 0.01) {
+        checks.push({
+          check: "PRICE_SNAPSHOT",
+          category: "PRICING",
+          status: "BLOCKED",
+          message: "Price mismatch",
+          blocking: true
+        });
+        blockers.push("PRICE_SNAPSHOT_MISMATCH");
+      } else {
+        checks.push({
+          check: "PRICE_SNAPSHOT",
+          category: "PRICING",
+          status: "PASS",
+          message: "Price snapshot aligned"
+        });
+      }
+    }
+  }
+  const assignment = order.supplierAssignments.find((a) => a.supplierId === getInterCarsSupplierId());
+  if (!assignment) {
+    blockers.push("SUPPLIER_ASSIGNMENT_MISMATCH");
+  } else {
+    checks.push({
+      check: "SUPPLIER_ASSIGNMENT",
+      category: "SUPPLIER",
+      status: "PASS",
+      message: "Inter Cars assignment confirmed"
+    });
+  }
+  return { checks, blockers: [...new Set(blockers)] };
+}
+
+// lib/supplier-production-order-validation/response.ts
+function validateResponseContract(parsed) {
+  if (parsed.responseClass === "accepted" && parsed.supplierOrderId) {
+    return { check: "RESPONSE_SCHEMA", category: "RESPONSE", status: "PASS", message: "Response validated" };
+  }
+  if (parsed.responseClass === "duplicate") {
+    return { check: "RESPONSE_SCHEMA", category: "RESPONSE", status: "WARNING", message: "Duplicate response" };
+  }
+  return {
+    check: "RESPONSE_SCHEMA",
+    category: "RESPONSE",
+    status: "BLOCKED",
+    message: parsed.message,
+    blocking: true
+  };
+}
+
+// lib/supplier-production-order-validation/idempotency.ts
+var validationIdempotencyStore = /* @__PURE__ */ new Map();
+function buildCreateOrderValidationIdempotencyKey(payload) {
+  return buildSupplierOrderIdempotencyKey(payload.supplierId, payload.buzzardOrderId, payload.idempotencyKey);
+}
+function checkIdempotency(payload) {
+  const key = buildCreateOrderValidationIdempotencyKey(payload);
+  const existingOrderId = getIdempotentSupplierOrder(key);
+  const existingValidation = validationIdempotencyStore.get(key);
+  if (existingOrderId) {
+    return {
+      checks: [{
+        check: "IDEMPOTENCY",
+        category: "IDEMPOTENCY",
+        status: "PASS",
+        message: "Duplicate prevented \u2014 existing supplier order reference"
+      }],
+      blockers: [],
+      existingSupplierOrderId: existingOrderId,
+      isDuplicate: true
+    };
+  }
+  if (existingValidation) {
+    return {
+      checks: [{
+        check: "IDEMPOTENCY",
+        category: "IDEMPOTENCY",
+        status: "BLOCKED",
+        message: "Validation already in progress",
+        blocking: true
+      }],
+      blockers: ["DUPLICATE_IDEMPOTENCY"],
+      isDuplicate: true
+    };
+  }
+  return {
+    checks: [{
+      check: "IDEMPOTENCY",
+      category: "IDEMPOTENCY",
+      status: "PASS",
+      message: "Idempotency key valid"
+    }],
+    blockers: [],
+    isDuplicate: false
+  };
+}
+function claimValidationIdempotency(key, validationId) {
+  if (validationIdempotencyStore.has(key)) return false;
+  validationIdempotencyStore.set(key, { validationId, createdAt: (/* @__PURE__ */ new Date()).toISOString() });
+  return true;
+}
+
+// lib/supplier-order-readiness/killSwitch.ts
+init_registry2();
+
+// lib/supplier-order-readiness/persistence.ts
+var killSwitchState = null;
+function getKillSwitchState() {
+  return killSwitchState;
 }
 
 // lib/supplier-order-readiness/killSwitch.ts
@@ -32273,660 +31635,178 @@ function isActivationKillSwitched(input) {
   return false;
 }
 
-// lib/supplier-order-rehearsal/persistence.ts
-var rehearsalStore = /* @__PURE__ */ new Map();
-function getRehearsalRecord(rehearsalId) {
-  return rehearsalStore.get(rehearsalId);
-}
-function listRehearsalRecords() {
-  return [...rehearsalStore.values()];
-}
-
-// lib/supplier-engine/auth/resolver.ts
-function mapConnectorAuthType(config) {
-  const raw = String(config?.authentication || "none").toLowerCase();
-  if (raw === "api_key") return "API_KEY";
-  if (raw === "basic") return "BASIC_AUTH";
-  if (raw === "bearer" || raw === "token") return "TOKEN";
-  if (raw === "oauth2") return "OAUTH2";
-  if (raw === "custom") return "CUSTOM";
-  return "NONE";
-}
-function resolveSupplierAuth(config) {
-  const authType = mapConnectorAuthType(config);
-  const secretsRef = config.secretsRef;
-  const creds = secretsRef ? resolveCredentials(secretsRef) : null;
-  if (!creds) {
-    return { headers: { ...config.headers || {} }, authType, configured: false };
-  }
-  const headers = { ...config.headers || {} };
-  switch (authType) {
-    case "API_KEY": {
-      const headerName = creds.header || creds.headerName || "X-API-Key";
-      const value = creds.apiKey || creds.key || creds.token;
-      if (value) headers[headerName] = value;
-      break;
-    }
-    case "TOKEN": {
-      const value = creds.token || creds.accessToken || creds.bearer;
-      if (value) headers.Authorization = value.startsWith("Bearer ") ? value : `Bearer ${value}`;
-      break;
-    }
-    case "BASIC_AUTH": {
-      const user = creds.username || creds.user || "";
-      const pass5 = creds.password || creds.pass || "";
-      if (user || pass5) {
-        headers.Authorization = `Basic ${Buffer.from(`${user}:${pass5}`).toString("base64")}`;
-      }
-      break;
-    }
-    case "OAUTH2": {
-      const value = creds.accessToken || creds.token;
-      if (value) headers.Authorization = `Bearer ${value}`;
-      break;
-    }
-    case "CUSTOM": {
-      for (const [key, value] of Object.entries(creds)) {
-        if (!/password|secret|token|key/i.test(key)) continue;
-        if (/header/i.test(key)) {
-          const headerName = key.replace(/header/i, "").trim() || "Authorization";
-          headers[headerName] = value;
-        }
-      }
-      break;
-    }
-    default:
-      break;
-  }
-  return { headers, authType, configured: Object.keys(creds).length > 0 };
-}
-
-// lib/supplier-production-validation/credentialValidation.ts
-function validateProductionCredentials(input) {
-  const checks = [];
-  const blockerCodes = [];
-  const profile = resolveLiveSupplierProfile() || resolvePredefinedLiveProfile();
-  const secretsRef = profile?.secretsRef || "env:SUPPLIER_LIVE_CREDENTIALS";
-  const credentialType = profile?.authentication || profile?.authType || "unknown";
-  if (!profile) {
-    checks.push({ check: "CREDENTIAL_PROFILE", status: "BLOCKED", message: "Live supplier profile not configured" });
-    blockerCodes.push("CREDENTIAL_PROFILE_MISSING");
-    return { status: "NOT_CONFIGURED", credentialType, checks, blockerCodes };
-  }
-  if (profile.supplierId !== input.supplierId) {
-    checks.push({ check: "CREDENTIAL_SUPPLIER", status: "BLOCKED", message: "Profile supplier mismatch" });
-    blockerCodes.push("SUPPLIER_PROFILE_MISMATCH");
-    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const profileEnv = profile.environment?.toUpperCase();
-  if (input.environment === "PRODUCTION" && profileEnv === "SANDBOX" && process.env.SUPPLIER_LIVE_FORCE_PRODUCTION !== "1") {
-    checks.push({
-      check: "ENVIRONMENT_SEPARATION",
-      status: "BLOCKED",
-      message: "SANDBOX credential cannot validate PRODUCTION scope"
-    });
-    blockerCodes.push("ENVIRONMENT_MISMATCH");
-    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
-  }
-  if (input.environment === "SANDBOX" && profileEnv === "PRODUCTION" && process.env.SUPPLIER_LIVE_ALLOW_PROD_CRED_IN_SANDBOX !== "1") {
-    checks.push({
-      check: "ENVIRONMENT_SEPARATION",
-      status: "BLOCKED",
-      message: "PRODUCTION credential cannot validate SANDBOX scope"
-    });
-    blockerCodes.push("ENVIRONMENT_MISMATCH");
-    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const meta = describeLiveCredentialReadiness(profile);
-  if (!meta.configured) {
-    checks.push({ check: "CREDENTIAL_CONFIGURED", status: "BLOCKED", message: "Credential not configured" });
-    blockerCodes.push("CREDENTIAL_NOT_CONFIGURED");
-    return { status: "NOT_CONFIGURED", credentialType, secretsRef, checks, blockerCodes };
-  }
-  checks.push({
-    check: "CREDENTIAL_CONFIGURED",
-    status: "PASS",
-    message: "Credential reference configured",
-    detail: { authType: meta.authType, fields: meta.secretFieldsPresent }
-  });
-  const creds = resolveCredentials(secretsRef);
-  if (!creds) {
-    checks.push({ check: "CREDENTIAL_RESOLVE", status: "BLOCKED", message: "Credential secret not resolvable" });
-    blockerCodes.push("CREDENTIAL_SECRET_MISSING");
-    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
-  if (isMockCredentialValue(token)) {
-    checks.push({ check: "CREDENTIAL_MOCK", status: "BLOCKED", message: "Mock/test credential blocked for production validation" });
-    blockerCodes.push("CREDENTIAL_MOCK");
-    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
-  }
-  if (!hasLiveSupplierCredentials(profile)) {
-    checks.push({ check: "CREDENTIAL_TOKEN", status: "BLOCKED", message: "OAuth/token missing" });
-    blockerCodes.push("CREDENTIAL_INVALID");
-    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const auth = resolveSupplierAuth({
-    authentication: profile.authentication,
-    secretsRef: profile.secretsRef
-  });
-  if (!auth.headers.Authorization?.startsWith("Bearer ")) {
-    checks.push({
-      check: "CREDENTIAL_AUTH_SCHEME",
-      status: "BLOCKED",
-      message: "Expected Authorization: Bearer <accessToken>"
-    });
-    blockerCodes.push("CREDENTIAL_AUTH_INVALID");
-    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const redacted = redactSecrets({ accessToken: token });
-  if (redacted.accessToken && redacted.accessToken !== "[REDACTED]") {
-    checks.push({ check: "SECRET_REDACTION", status: "FAIL", message: "Secret redaction failed" });
-    blockerCodes.push("SECRET_REDACTION_FAILED");
-    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
-  }
-  checks.push({ check: "CREDENTIAL_VALID", status: "PASS", message: "Credential metadata validated (no secret exposed)" });
-  return { status: "VALID", credentialType, secretsRef, checks, blockerCodes };
-}
-
 // lib/supplier-order-activation/persistence.ts
 var activationStore = /* @__PURE__ */ new Map();
-var activationByIdempotency = /* @__PURE__ */ new Map();
-var firstOrderStore = /* @__PURE__ */ new Map();
-var firstOrderByIdempotency = /* @__PURE__ */ new Map();
+function listActivationRecords() {
+  return [...activationStore.values()];
+}
+
+// lib/fulfillment-control-tower/aggregator.ts
+init_registry2();
+init_persistence2();
+
+// lib/fulfillment-control-tower/checks.ts
+init_registry2();
+init_persistence2();
+
+// lib/supplier-order-readiness/checks.ts
+init_registry2();
+init_credentials();
+init_config();
+init_persistence2();
+init_security();
+
+// lib/supplier-production-order-validation/persistence.ts
+var validationStore2 = /* @__PURE__ */ new Map();
+var validationByIdempotency = /* @__PURE__ */ new Map();
 var auditLog2 = [];
-var inflightActivations = /* @__PURE__ */ new Map();
-function getPersistentStore3() {
-  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_ORDER_ACTIVATION_PERSISTENCE === "0") {
+var inflight = /* @__PURE__ */ new Map();
+function getPersistentStore2() {
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PRODUCTION_ORDER_VALIDATION_PERSISTENCE === "0") {
     return null;
   }
   try {
-    const mod = require_persistentStore3();
-    return mod.createSupplierOrderActivationStore();
+    const mod = require_persistentStore2();
+    return mod.createSupplierProductionOrderValidationStore();
   } catch {
     return null;
   }
 }
-function saveActivationRecord(record) {
-  activationStore.set(record.activationId, record);
-  activationByIdempotency.set(record.idempotencyKey, record.activationId);
-  getPersistentStore3()?.saveActivation({
-    activation_id: record.activationId,
+function saveValidationRecord(record) {
+  validationStore2.set(record.validationId, record);
+  validationByIdempotency.set(record.idempotencyKey, record.validationId);
+  getPersistentStore2()?.saveValidation({
+    validation_id: record.validationId,
     supplier_id: record.supplierId,
     market: record.market,
     channel: record.channel,
     environment: record.environment,
-    status: record.status,
-    network_state: record.networkState,
+    overall_status: record.overallStatus,
+    create_order_capability: record.createOrderCapability,
     idempotency_key: record.idempotencyKey,
     correlation_id: record.correlationId,
     record_json: JSON.stringify(record),
     updated_at: record.updatedAt
   });
 }
-function getActivationRecord(activationId) {
-  return activationStore.get(activationId);
+function getValidationRecord(validationId) {
+  return validationStore2.get(validationId);
 }
-function getActivationByIdempotency(idempotencyKey) {
-  const id = activationByIdempotency.get(idempotencyKey);
-  return id ? activationStore.get(id) : void 0;
+function getValidationByIdempotency(idempotencyKey) {
+  const id = validationByIdempotency.get(idempotencyKey);
+  return id ? validationStore2.get(id) : void 0;
 }
-function listActivationRecords() {
-  return [...activationStore.values()];
+function listValidationRecords2() {
+  return [...validationStore2.values()];
 }
-function saveFirstOrderGate(record) {
-  firstOrderStore.set(record.firstOrderId, record);
-  firstOrderByIdempotency.set(record.idempotencyKey, record.firstOrderId);
-  getPersistentStore3()?.saveFirstOrder({
-    first_order_id: record.firstOrderId,
-    activation_id: record.activationId,
-    supplier_id: record.supplierId,
-    status: record.status,
-    idempotency_key: record.idempotencyKey,
-    record_json: JSON.stringify(record),
-    updated_at: record.createdAt
-  });
+function getLatestValidationForScope2(scope) {
+  return listValidationRecords2().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
 }
-function getFirstOrderGate(firstOrderId) {
-  return firstOrderStore.get(firstOrderId);
-}
-function getFirstOrderByIdempotency(idempotencyKey) {
-  const id = firstOrderByIdempotency.get(idempotencyKey);
-  return id ? firstOrderStore.get(id) : void 0;
-}
-function listFirstOrderGates() {
-  return [...firstOrderStore.values()];
-}
-function appendActivationAuditEvent(event) {
+function appendValidationAuditEvent2(event) {
   auditLog2.push(event);
-  getPersistentStore3()?.saveAudit({
+  getPersistentStore2()?.saveAudit({
     event_id: event.eventId,
     event_type: event.type,
-    activation_id: event.activationId,
+    validation_id: event.validationId,
     supplier_id: event.supplierId,
     correlation_id: event.correlationId,
     timestamp: event.timestamp,
     detail_json: JSON.stringify(event.detail || {})
   });
 }
-function listActivationAuditEvents(filter) {
+function listValidationAuditEvents2(filter) {
   return auditLog2.filter((e) => {
-    if (filter?.activationId && e.activationId !== filter.activationId) return false;
+    if (filter?.validationId && e.validationId !== filter.validationId) return false;
     if (filter?.type && e.type !== filter.type) return false;
     return true;
   });
 }
-function hydrateActivationFromPersistence() {
-  const store2 = getPersistentStore3();
+function hydrateValidationFromPersistence() {
+  const store2 = getPersistentStore2();
   if (!store2) return;
-  for (const row of store2.listActivations(5e3)) {
+  for (const row of store2.listValidations(5e3)) {
     try {
       const parsed = JSON.parse(String(row.record_json || "{}"));
-      if (parsed.activationId) {
-        activationStore.set(parsed.activationId, parsed);
-        activationByIdempotency.set(parsed.idempotencyKey, parsed.activationId);
-      }
-    } catch {
-    }
-  }
-  for (const row of store2.listFirstOrders(5e3)) {
-    try {
-      const parsed = JSON.parse(String(row.record_json || "{}"));
-      if (parsed.firstOrderId) {
-        firstOrderStore.set(parsed.firstOrderId, parsed);
-        firstOrderByIdempotency.set(parsed.idempotencyKey, parsed.firstOrderId);
+      if (parsed.validationId) {
+        validationStore2.set(parsed.validationId, parsed);
+        validationByIdempotency.set(parsed.idempotencyKey, parsed.validationId);
       }
     } catch {
     }
   }
 }
-function getInflightActivation(key) {
-  return inflightActivations.get(key);
+function getInflightValidation(key) {
+  return inflight.get(key);
 }
-function getLatestRehearsalForScope(scope) {
-  try {
-    return listRehearsalRecords().filter(
-      (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.overallStatus === "PASSED"
-    ).sort((a, b) => Date.parse(b.completedAt || b.startedAt) - Date.parse(a.completedAt || a.startedAt))[0];
-  } catch {
-    return void 0;
+function setInflightValidation(key, promise) {
+  inflight.set(key, promise);
+}
+function clearInflightValidation(key) {
+  inflight.delete(key);
+}
+
+// lib/supplier-production-order-validation/readinessBridge.ts
+function pass(code, category, message) {
+  return { code, category, level: "PASS", message, blocking: false };
+}
+function block(code, category, message) {
+  return { code, category, level: "BLOCKED", message, blocking: true };
+}
+function warn(code, category, message) {
+  return { code, category, level: "WARNING", message, blocking: false };
+}
+function evaluateCreateOrderProductionValidationChecks(scope) {
+  const results = [];
+  const validation = getLatestValidationForScope2({
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    environment: scope.environment || "PRODUCTION"
+  });
+  if (!validation) {
+    results.push(block("CREATE_ORDER_VALIDATION_MISSING", "CREATE_ORDER", "createOrder production validation not run"));
+    return results;
   }
+  results.push(pass("CREATE_ORDER_VALIDATION_EXISTS", "CREATE_ORDER", `Validation ${validation.validationId}`));
+  if (validation.createOrderCapability === "UNVERIFIED") {
+    results.push(
+      block("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CREATE_ORDER", "createOrder capability UNVERIFIED \u2014 #341 boundary")
+    );
+  } else if (validation.createOrderCapability === "VALIDATED") {
+    results.push(pass("CREATE_ORDER_VALIDATED", "CREATE_ORDER", "createOrder production validated"));
+  } else {
+    results.push(block("CREATE_ORDER_BLOCKED", "CREATE_ORDER", "createOrder capability blocked"));
+  }
+  if (validation.unknownOutcome) {
+    results.push(warn("CREATE_ORDER_UNKNOWN_OUTCOME", "CREATE_ORDER", "Unknown outcome pending resolution"));
+  }
+  if (validation.humanReviewRequired) {
+    results.push(warn("CREATE_ORDER_HUMAN_REVIEW", "CREATE_ORDER", "Human review required"));
+  }
+  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
+    results.push(block("CREATE_ORDER_VALIDATION_BLOCKED", "CREATE_ORDER", `Validation ${validation.overallStatus}`));
+  }
+  return results;
 }
+
+// lib/supplier-order-activation/config.ts
+init_config();
+var ACTIVATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS2 = 4 * 60 * 60 * 1e3;
+var REHEARSAL_TTL_MS = Number(process.env.SUPPLIER_ACTIVATION_REHEARSAL_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_TTL_MS = 2 * 60 * 60 * 1e3;
+var FIRST_ORDER_LIMITS = {
+  maxOrderValue: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_VALUE || 500),
+  maxQuantity: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_QTY || 5),
+  maxItems: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_ITEMS || 3),
+  maxSuppliers: 1,
+  maxCustomers: 1
+};
 
 // lib/supplier-order-activation/preflight.ts
-function pass4(check, category, message, detail) {
-  return { check, category, status: "PASS", message, blocking: false, detail };
-}
-function block4(check, category, message, detail) {
-  return { check, category, status: "BLOCKED", message, blocking: true, detail };
-}
-function runActivationPreflight(input) {
-  const checks = [];
-  const blockers = [];
-  const supplierId = input.supplierId || getInterCarsSupplierId();
-  const market = input.market || "DE";
-  const channel = input.channel || "DIRECT";
-  const environment = input.environment || "PRODUCTION";
-  const scope = { supplierId, market, channel, environment };
-  const supplier = getSupplier(supplierId);
-  if (!supplier) {
-    checks.push(block4("SUPPLIER_IDENTITY", "SUPPLIER", "Supplier not found"));
-    blockers.push("SUPPLIER_NOT_FOUND");
-  } else if (!isSupplierSelectable(supplierId)) {
-    checks.push(block4("SUPPLIER_IDENTITY", "SUPPLIER", "Supplier disabled"));
-    blockers.push("SUPPLIER_DISABLED");
-  } else {
-    checks.push(pass4("SUPPLIER_IDENTITY", "SUPPLIER", "Supplier enabled"));
-  }
-  checks.push(
-    pass4("ENVIRONMENT", "ENVIRONMENT", `Environment ${environment}`, { adapterProfile: getInterCarsAdapterProfile() })
-  );
-  const credential = validateProductionCredentials({ supplierId, environment });
-  checks.push(...credential.checks.map((c) => ({ ...c, category: "CREDENTIAL" })));
-  blockers.push(...credential.blockerCodes);
-  const validation = getLatestValidationForScope2(scope);
-  if (!validation) {
-    checks.push(block4("PRODUCTION_VALIDATION", "VALIDATION", "Production validation not run"));
-    blockers.push("PRODUCTION_VALIDATION_MISSING");
-  } else {
-    checks.push(pass4("PRODUCTION_VALIDATION", "VALIDATION", `Validation ${validation.validationId}`));
-    if (validation.createOrderCapability === "UNVERIFIED") {
-      checks.push(block4("CREATE_ORDER_CAPABILITY", "CAPABILITY", "createOrder UNVERIFIED"));
-      blockers.push("REAL_ORDER_ENDPOINT_NOT_VALIDATED");
-    }
-  }
-  const readiness = evaluateSupplierOrderReadiness(
-    { supplierId, market, channel, environment: environment === "STAGING" ? "SANDBOX" : environment },
-    { correlationId: input.correlationId, force: true }
-  );
-  if (readiness.overallStatus !== "READY") {
-    checks.push(block4("READINESS", "READINESS", `Readiness ${readiness.overallStatus}`));
-    blockers.push("READINESS_NOT_READY");
-  } else {
-    checks.push(pass4("READINESS", "READINESS", "Readiness READY"));
-  }
-  const rehearsal = input.rehearsalId ? void 0 : getLatestRehearsalForScope({ supplierId, market, channel });
-  const rehearsalRecord = input.rehearsalId ? getRehearsalRecord(input.rehearsalId) : rehearsal;
-  if (!rehearsalRecord) {
-    checks.push(block4("REHEARSAL", "REHEARSAL", "No successful rehearsal"));
-    blockers.push("REHEARSAL_MISSING");
-  } else {
-    const completedAt = rehearsalRecord.completedAt;
-    const age = completedAt ? Date.now() - Date.parse(completedAt) : Infinity;
-    if (age > REHEARSAL_TTL_MS) {
-      checks.push(block4("REHEARSAL", "REHEARSAL", "Rehearsal expired"));
-      blockers.push("REHEARSAL_EXPIRED");
-    } else {
-      checks.push(pass4("REHEARSAL", "REHEARSAL", "Recent rehearsal PASSED"));
-    }
-  }
-  const critical2 = filterIncidents({ supplierId, status: "OPEN", severity: "CRITICAL" });
-  if (critical2.length > 0) {
-    checks.push(block4("FCT_INCIDENTS", "FCT", `${critical2.length} critical incidents`));
-    blockers.push("CRITICAL_INCIDENTS");
-  } else {
-    checks.push(pass4("FCT_INCIDENTS", "FCT", "No critical incidents"));
-  }
-  if (isActivationKillSwitched({ supplierId, market, channel })) {
-    checks.push(block4("KILL_SWITCH", "KILL_SWITCH", "Kill switch active"));
-    blockers.push("KILL_SWITCH");
-  } else {
-    checks.push(pass4("KILL_SWITCH", "KILL_SWITCH", "Kill switch off"));
-  }
-  const policy = getReadinessPolicy();
-  const orderValue = input.orderValue ?? 0;
-  if (orderValue > policy.maxSingleSupplierOrderValue) {
-    checks.push(block4("ORDER_LIMIT", "LIMITS", "Order value exceeds limit"));
-    blockers.push("ORDER_LIMIT");
-  } else {
-    checks.push(pass4("ORDER_LIMIT", "LIMITS", "Order limits OK"));
-  }
-  if (!supplier?.supportedMarkets?.includes(market)) {
-    checks.push(block4("MARKET_ELIGIBILITY", "MARKET", `Market ${market} not eligible`));
-    blockers.push("MARKET_UNSUPPORTED");
-  } else if (listMarkets().length === 35) {
-    checks.push(pass4("MARKET_ELIGIBILITY", "MARKET", "35-market SSOT eligible"));
-  }
-  checks.push(pass4("CHANNEL_ELIGIBILITY", "CHANNEL", `Channel ${channel}`));
-  checks.push(pass4("PAYMENT_BOUNDARY", "PAYMENT", "No real payment capture in activation"));
-  checks.push(pass4("CARRIER_BOUNDARY", "CARRIER", "No carrier API in activation"));
-  checks.push(pass4("MARKETPLACE_BOUNDARY", "MARKETPLACE", "No marketplace submission"));
-  checks.push(pass4("RETURNS_BOUNDARY", "RETURNS", "No return/refund in activation"));
-  checks.push(pass4("AI_BOUNDARY", "AI", "AI observe/analyze/recommend only \u2014 no activation authority"));
-  checks.push(pass4("SECURITY", "SECURITY", "Network disabled for orders", { network: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED" }));
-  checks.push(pass4("IDEMPOTENCY", "IDEMPOTENCY", "Deterministic idempotency required"));
-  checks.push(pass4("ENDPOINT", "ENDPOINT", "Production endpoint configuration-driven"));
-  filterSupplierFulfillmentAddress({ country: "DE", city: "Berlin" });
-  return {
-    checks,
-    blockers: [...new Set(blockers)],
-    readinessId: readiness.readinessId,
-    validationId: validation?.validationId,
-    rehearsalId: rehearsalRecord?.rehearsalId || input.rehearsalId,
-    createOrderCapability: validation?.createOrderCapability || "UNVERIFIED"
-  };
-}
-function hashPayload(payload) {
-  const canonical = JSON.stringify(payload, Object.keys(payload).sort());
-  return (0, import_crypto3.createHash)("sha256").update(canonical).digest("hex").slice(0, 16);
-}
-
-// lib/supplier-order-activation/activation.ts
-var import_crypto5 = require("crypto");
-
-// lib/supplier-order-activation/approval.ts
-var import_node_crypto = require("node:crypto");
-
-// lib/supplier-order-activation/audit.ts
-var import_crypto4 = require("crypto");
-var BLOCKED_KEYS2 = /* @__PURE__ */ new Set([
-  "password",
-  "token",
-  "secret",
-  "credential",
-  "email",
-  "phone",
-  "accesstoken",
-  "apikey",
-  "payment",
-  "bearertoken"
-]);
-function sanitizeDetail(detail) {
-  if (!detail) return void 0;
-  const out = {};
-  for (const [key, value] of Object.entries(detail)) {
-    if (BLOCKED_KEYS2.has(key.toLowerCase())) out[key] = "[REDACTED]";
-    else out[key] = value;
-  }
-  return out;
-}
-function recordActivationAudit(input) {
-  const event = {
-    eventId: `ao_${(0, import_crypto4.randomUUID)().slice(0, 12)}`,
-    type: input.type,
-    activationId: input.activationId,
-    firstOrderId: input.firstOrderId,
-    supplierId: input.supplierId,
-    correlationId: input.correlationId,
-    actor: input.actor,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    detail: sanitizeDetail(input.detail)
-  };
-  appendActivationAuditEvent(event);
-  return event;
-}
-function listActivationAudit(filter) {
-  return listActivationAuditEvents(filter);
-}
-
-// lib/supplier-order-activation/approval.ts
-function nowIso() {
-  return (/* @__PURE__ */ new Date()).toISOString();
-}
-function buildApprovalId() {
-  return `soa-appr-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-function createActivationApproval(input) {
-  const cfg = resolveActivationConfig();
-  const blockers = [];
-  if (input.approverId === input.requesterId) {
-    blockers.push("SELF_APPROVAL_FORBIDDEN");
-  }
-  if (!input.approverId || !input.requesterId) {
-    blockers.push("IDENTITY_REQUIRED");
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) {
-    blockers.push("ACTIVATION_NOT_FOUND");
-  }
-  if (activation && activation.requestedBy !== input.requesterId) {
-    blockers.push("REQUESTER_MISMATCH");
-  }
-  if (blockers.length > 0) {
-    return { ok: false, blockers };
-  }
-  const createdAt = nowIso();
-  const expiresAt = new Date(Date.now() + cfg.approvalTtlMs).toISOString();
-  const approval = {
-    approvalId: buildApprovalId(),
-    activationId: input.activationId,
-    requesterId: input.requesterId,
-    approverId: input.approverId,
-    scope: input.scope,
-    status: "APPROVED",
-    createdAt,
-    expiresAt,
-    scopeHash: (0, import_node_crypto.createHash)("sha256").update(JSON.stringify(input.scope)).digest("hex")
-  };
-  const record = getActivationRecord(input.activationId);
-  record.approvalId = approval.approvalId;
-  record.approvedBy = input.approverId;
-  record.status = "APPROVED";
-  record.updatedAt = createdAt;
-  saveActivationRecord(record);
-  recordActivationAudit({
-    type: "APPROVAL_GRANTED",
-    activationId: input.activationId,
-    actor: input.approverId,
-    correlationId: record.activationId,
-    detail: { approvalId: approval.approvalId, expiresAt }
-  });
-  return { ok: true, approval };
-}
-function rejectActivationApproval(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) {
-    return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  }
-  if (input.approverId === activation.requestedBy) {
-    return { ok: false, blockers: ["SELF_APPROVAL_FORBIDDEN"] };
-  }
-  activation.status = "BLOCKED";
-  activation.reason = input.reason;
-  activation.updatedAt = nowIso();
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: "APPROVAL_REJECTED",
-    activationId: input.activationId,
-    actor: input.approverId,
-    correlationId: activation.activationId,
-    detail: { reason: input.reason }
-  });
-  return { ok: true, blockers: [] };
-}
-function validateApprovalForActivation(activation, approval) {
-  const blockers = [];
-  if (!approval) {
-    blockers.push("APPROVAL_MISSING");
-    return { valid: false, blockers };
-  }
-  if (approval.status !== "APPROVED") {
-    blockers.push("APPROVAL_NOT_APPROVED");
-  }
-  if (new Date(approval.expiresAt).getTime() < Date.now()) {
-    blockers.push("APPROVAL_EXPIRED");
-  }
-  if (approval.approverId === approval.requesterId) {
-    blockers.push("SELF_APPROVAL_FORBIDDEN");
-  }
-  if (approval.activationId !== activation.activationId) {
-    blockers.push("APPROVAL_ACTIVATION_MISMATCH");
-  }
-  const scope = approval.scope;
-  if (scope.supplierId !== activation.supplierId || scope.environment !== activation.environment || scope.market !== activation.market || scope.channel !== activation.channel) {
-    blockers.push("APPROVAL_SCOPE_MISMATCH");
-  }
-  const activationMax = activation.maxOrderValue ?? scope.maxOrderValue;
-  if (scope.maxOrderValue < activationMax) {
-    blockers.push("APPROVAL_LIMIT_SCOPE_MISMATCH");
-  }
-  return { valid: blockers.length === 0, blockers };
-}
-function getApprovalForActivation(activationId) {
-  const activation = getActivationRecord(activationId);
-  if (!activation?.approvalId) return null;
-  const cfg = resolveActivationConfig();
-  const approved = activation.status === "APPROVED" || activation.status === "ACTIVE" || activation.networkState === "ARMED" || activation.networkState === "ENABLED";
-  return {
-    approvalId: activation.approvalId,
-    activationId,
-    requesterId: activation.requestedBy,
-    approverId: activation.approvedBy ?? "",
-    scope: {
-      supplierId: activation.supplierId,
-      adapterProfile: activation.adapterProfile,
-      environment: activation.environment,
-      market: activation.market,
-      channel: activation.channel,
-      maxOrderValue: activation.maxOrderValue ?? cfg.defaultMaxOrderValue,
-      maxDailyOrderValue: activation.maxDailyOrderValue ?? cfg.defaultMaxDailyOrderValue,
-      maxOrders: activation.maxOrders ?? cfg.defaultMaxOrders,
-      riskLevel: activation.riskLevel
-    },
-    status: approved ? "APPROVED" : "REJECTED",
-    createdAt: activation.createdAt,
-    expiresAt: activation.expiresAt ?? new Date(Date.now() + cfg.approvalTtlMs).toISOString(),
-    scopeHash: ""
-  };
-}
-
-// lib/supplier-order-activation/killSwitch.ts
-function evaluateKillSwitch(activation) {
-  const ks = getKillSwitch();
-  const state = {
-    global: ks.global,
-    supplier: Boolean(ks.suppliers[activation.supplierId]),
-    market: Boolean(ks.markets[activation.market]),
-    channel: Boolean(ks.channels[activation.channel])
-  };
-  const blockers = [];
-  if (isActivationKillSwitched({
-    supplierId: activation.supplierId,
-    market: activation.market,
-    channel: activation.channel
-  })) {
-    blockers.push("KILL_SWITCH_ACTIVE");
-  }
-  return {
-    blocked: blockers.length > 0,
-    state,
-    blockers
-  };
-}
-
-// lib/supplier-order-activation/limits.ts
-function evaluateOrderLimits(input) {
-  const cfg = resolveActivationConfig();
-  const blockers = [];
-  const a = input.activation;
-  const maxOrderValue = a.maxOrderValue ?? cfg.defaultMaxOrderValue;
-  const maxDailyOrderValue = a.maxDailyOrderValue ?? cfg.defaultMaxDailyOrderValue;
-  const maxOrders = a.maxOrders ?? cfg.defaultMaxOrders;
-  if (input.orderValue > maxOrderValue) {
-    blockers.push("MAX_ORDER_VALUE_EXCEEDED");
-  }
-  if ((input.dailyOrderValue ?? 0) + input.orderValue > maxDailyOrderValue) {
-    blockers.push("MAX_DAILY_ORDER_VALUE_EXCEEDED");
-  }
-  if ((input.dailyOrderCount ?? 0) >= maxOrders) {
-    blockers.push("MAX_DAILY_ORDER_COUNT_EXCEEDED");
-  }
-  if ((input.marketDailyValue ?? 0) + input.orderValue > cfg.defaultMaxMarketValue) {
-    blockers.push("MAX_MARKET_VALUE_EXCEEDED");
-  }
-  if ((input.channelDailyValue ?? 0) + input.orderValue > cfg.defaultMaxChannelValue) {
-    blockers.push("MAX_CHANNEL_VALUE_EXCEEDED");
-  }
-  if (input.isFirstOrder) {
-    if (input.orderValue > cfg.firstOrderMaxValue) {
-      blockers.push("FIRST_ORDER_VALUE_EXCEEDED");
-    }
-    if ((input.itemCount ?? 0) > cfg.firstOrderMaxItems) {
-      blockers.push("FIRST_ORDER_ITEMS_EXCEEDED");
-    }
-    if ((input.totalQuantity ?? 0) > cfg.firstOrderMaxQuantity) {
-      blockers.push("FIRST_ORDER_QUANTITY_EXCEEDED");
-    }
-  }
-  return { allowed: blockers.length === 0, blockers };
-}
-
-// lib/supplier-order-activation/risk.ts
-function evaluateActivationRisk(activation) {
-  const policy = getReadinessPolicy();
-  const riskLevel = activation.riskLevel;
-  const blockers = [];
-  if (riskLevel === "CRITICAL") {
-    blockers.push("RISK_CRITICAL");
-  } else if (riskLevel === "HIGH" && policy.maxSingleSupplierOrderValue < 1e4) {
-    blockers.push("RISK_HIGH_REQUIRES_APPROVAL");
-  }
-  return {
-    riskLevel,
-    allowed: blockers.length === 0,
-    blockers
-  };
-}
+init_registry2();
 
 // lib/analytics/store/memoryStore.ts
 function createMemoryAnalyticsStore() {
@@ -33067,27 +31947,163 @@ function recordAnalyticsAudit(entry) {
   return getAnalyticsStore().recordAudit(entry);
 }
 
-// lib/supplier-order-activation/analytics.ts
-var ACTIVATION_EVENTS = /* @__PURE__ */ new Set([
-  "activation_requested",
-  "activation_preflight",
-  "activation_approved",
-  "activation_armed",
-  "activation_blocked",
-  "activation_revoked",
-  "first_order_prepared",
-  "first_order_blocked",
-  "first_order_sent",
-  "first_order_failed",
-  "first_order_confirmed"
+// lib/supplier-production-order-validation/eligibility.ts
+function evaluateUpstreamGates(input) {
+  const blockers = [];
+  const prodVal = getLatestValidationForScope({
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    environment: input.environment
+  });
+  if (!prodVal || prodVal.overallStatus !== "PASSED") {
+    blockers.push("PRODUCTION_VALIDATION_NOT_READY");
+  }
+  const activation = listActivationRecords().filter(
+    (a) => a.supplierId === input.supplierId && a.market === input.market && a.channel === input.channel && a.environment === input.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+  if (!activation || !["APPROVED", "ACTIVE"].includes(activation.status)) {
+    blockers.push("ACTIVATION_NOT_APPROVED");
+  }
+  if (isActivationKillSwitched(input)) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+  }
+  if (input.approver && input.approver === input.requester) {
+    blockers.push("SELF_APPROVAL_FORBIDDEN");
+  }
+  return { allowed: blockers.length === 0, blockers };
+}
+function isAiActor(actor) {
+  if (!actor) return false;
+  const lower = actor.toLowerCase();
+  return lower.includes("ai_agent") || lower.includes("ai-agent") || lower === "ai";
+}
+function assertAiBoundary(input) {
+  const blockers = [];
+  if (isAiActor(input.requester)) blockers.push("AI_BOUNDARY:REQUEST_FORBIDDEN");
+  if (isAiActor(input.approver)) blockers.push("AI_BOUNDARY:APPROVE_FORBIDDEN");
+  return blockers;
+}
+
+// lib/supplier-production-order-validation/tracking.ts
+init_config();
+function evaluateTrackingCapability() {
+  const profile = resolvePredefinedLiveProfile();
+  const declared = Boolean(profile?.capabilities?.trackingAPI || profile?.capabilities?.tracking);
+  if (!declared) return "UNVERIFIED";
+  return "UNVERIFIED";
+}
+
+// lib/supplier-production-order-validation/status.ts
+function isStatusCapabilityValidated() {
+  return false;
+}
+
+// lib/supplier-production-order-validation/failureInjection.ts
+function resolveCreateOrderFailureInjection(type) {
+  const map = {
+    NONE: null,
+    HTTP_400: { blockerCode: "HTTP_400", stage: "RESPONSE", mockResponse: { responseClass: "validation_error", retryable: false, humanReviewRequired: false, message: "400" } },
+    HTTP_401: { blockerCode: "HTTP_401", stage: "RESPONSE", mockResponse: { responseClass: "authentication_error", retryable: false, humanReviewRequired: true, message: "401" } },
+    HTTP_403: { blockerCode: "HTTP_403", stage: "RESPONSE", mockResponse: { responseClass: "authorization_error", retryable: false, humanReviewRequired: true, message: "403" } },
+    HTTP_404: { blockerCode: "HTTP_404", stage: "RESPONSE", mockResponse: { responseClass: "validation_error", retryable: false, humanReviewRequired: true, message: "404" } },
+    HTTP_409: { blockerCode: "HTTP_409", stage: "RESPONSE", mockResponse: { responseClass: "duplicate", retryable: false, humanReviewRequired: false, message: "409" } },
+    HTTP_429: { blockerCode: "HTTP_429", stage: "RESPONSE", mockResponse: { responseClass: "rate_limited", retryable: true, humanReviewRequired: false, message: "429" } },
+    HTTP_500: { blockerCode: "HTTP_500", stage: "RESPONSE", mockResponse: { responseClass: "server_error", retryable: true, humanReviewRequired: false, message: "500" } },
+    HTTP_502: { blockerCode: "HTTP_502", stage: "RESPONSE", mockResponse: { responseClass: "server_error", retryable: true, humanReviewRequired: false, message: "502" } },
+    HTTP_503: { blockerCode: "HTTP_503", stage: "RESPONSE", mockResponse: { responseClass: "server_error", retryable: true, humanReviewRequired: false, message: "503" } },
+    TIMEOUT: { blockerCode: "TIMEOUT", stage: "NETWORK", mockResponse: { responseClass: "unknown", retryable: true, humanReviewRequired: true, message: "timeout" } },
+    CONNECTION_RESET: { blockerCode: "CONNECTION_RESET", stage: "NETWORK", mockResponse: { responseClass: "unknown", retryable: true, humanReviewRequired: true, message: "connection reset" } },
+    MALFORMED_JSON: { blockerCode: "MALFORMED_JSON", stage: "RESPONSE", mockResponse: { responseClass: "unknown", retryable: false, humanReviewRequired: true, message: "malformed json" } },
+    INVALID_SUPPLIER_RESPONSE: { blockerCode: "INVALID_SUPPLIER_RESPONSE", stage: "RESPONSE" },
+    MISSING_SUPPLIER_ORDER_ID: { blockerCode: "MISSING_SUPPLIER_ORDER_ID", stage: "RESPONSE", mockResponse: { responseClass: "unknown", retryable: false, humanReviewRequired: true, message: "missing id" } },
+    DUPLICATE_RESPONSE: { blockerCode: "DUPLICATE_RESPONSE", stage: "RESPONSE", mockResponse: { responseClass: "duplicate", retryable: false, humanReviewRequired: false, message: "duplicate" } },
+    UNKNOWN_OUTCOME: { blockerCode: "UNKNOWN_OUTCOME", stage: "NETWORK" },
+    IDEMPOTENCY_CONFLICT: { blockerCode: "IDEMPOTENCY_CONFLICT", stage: "IDEMPOTENCY" },
+    PRICE_MISMATCH: { blockerCode: "PRICE_SNAPSHOT_MISMATCH", stage: "PRICING" },
+    STOCK_MISMATCH: { blockerCode: "INVENTORY_INSUFFICIENT", stage: "INVENTORY" },
+    MISSING_RESERVATION: { blockerCode: "INVENTORY_RESERVATION_MISSING", stage: "INVENTORY" },
+    INVALID_SUPPLIER_ASSIGNMENT: { blockerCode: "SUPPLIER_ASSIGNMENT_MISMATCH", stage: "SUPPLIER" },
+    EXPIRED_APPROVAL: { blockerCode: "APPROVAL_EXPIRED", stage: "APPROVAL" },
+    KILL_SWITCH_ON: { blockerCode: "KILL_SWITCH_ACTIVE", stage: "KILL_SWITCH" },
+    SSRF: { blockerCode: "SSRF_URL", stage: "SECURITY" },
+    PRIVATE_IP: { blockerCode: "PRIVATE_IP", stage: "SECURITY" },
+    HTTP_NOT_HTTPS: { blockerCode: "NON_HTTPS_PRODUCTION", stage: "SECURITY" },
+    SECRET_LEAK: { blockerCode: "SECRET_LEAK", stage: "SECURITY" },
+    AI_BOUNDARY: { blockerCode: "AI_BOUNDARY", stage: "AI" }
+  };
+  return map[type] ?? null;
+}
+function applyFailureInjectionToChecks(checks, injection) {
+  checks.push({
+    check: "FAILURE_INJECTION",
+    category: injection.stage,
+    status: "BLOCKED",
+    message: injection.blockerCode,
+    blocking: true
+  });
+  return checks;
+}
+
+// lib/supplier-production-order-validation/audit.ts
+var import_crypto3 = require("crypto");
+var BLOCKED_KEYS3 = /* @__PURE__ */ new Set([
+  "password",
+  "token",
+  "secret",
+  "credential",
+  "email",
+  "phone",
+  "accesstoken",
+  "apikey",
+  "payment",
+  "bearertoken",
+  "shippingaddress"
 ]);
-function emitActivationAnalytics(input) {
-  if (!ACTIVATION_EVENTS.has(input.eventType)) return;
+function sanitizeDetail2(detail) {
+  if (!detail) return void 0;
+  const out = {};
+  for (const [key, value] of Object.entries(detail)) {
+    if (BLOCKED_KEYS3.has(key.toLowerCase())) out[key] = "[REDACTED]";
+    else out[key] = value;
+  }
+  return out;
+}
+function recordCreateOrderValidationAudit(input) {
+  const event = {
+    eventId: `co341_${(0, import_crypto3.randomUUID)().slice(0, 12)}`,
+    type: input.type,
+    validationId: input.validationId,
+    orderId: input.orderId,
+    supplierId: input.supplierId,
+    correlationId: input.correlationId,
+    actor: input.actor,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    detail: sanitizeDetail2(input.detail)
+  };
+  appendValidationAuditEvent2(event);
+  return event;
+}
+function listCreateOrderValidationAudit(filter) {
+  return listValidationAuditEvents2(filter);
+}
+
+// lib/supplier-production-order-validation/analytics.ts
+var EVENTS = /* @__PURE__ */ new Set([
+  "validation_started",
+  "validation_blocked",
+  "validation_passed",
+  "production_attempt_blocked",
+  "unknown_outcome",
+  "duplicate_prevented"
+]);
+function emitCreateOrderValidationAnalytics(input) {
+  if (!EVENTS.has(input.eventType)) return;
   recordAnalyticsAudit({
-    action: `supplier_order_${input.eventType}`,
-    actor: "supplier-order-activation",
+    action: `create_order_${input.eventType}`,
+    actor: "supplier-production-order-validation",
     metadata: {
-      activationId: input.activationId,
+      validationId: input.validationId,
       supplierId: input.supplierId,
       correlationId: input.correlationId,
       ...input.detail
@@ -33095,605 +32111,322 @@ function emitActivationAnalytics(input) {
   });
 }
 
-// lib/supplier-order-activation/activation.ts
-function nowIso2() {
-  return (/* @__PURE__ */ new Date()).toISOString();
+// lib/supplier-production-order-validation/validation.ts
+function deriveOverallStatus(blockers, checks) {
+  if (checks.some((c) => c.status === "FAIL")) return "FAILED";
+  if (blockers.length > 0 || checks.some((c) => c.status === "BLOCKED")) return "BLOCKED";
+  if (checks.every((c) => c.status === "SKIPPED")) return "SKIPPED";
+  return "PASSED";
 }
-function buildActivationId() {
-  return `soa-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-function isAiActor(actor) {
-  if (!actor) return false;
-  const lower = actor.toLowerCase();
-  return lower.includes("ai_agent") || lower.includes("ai-agent") || lower === "ai";
-}
-function createActivationRequest(input) {
-  if (isAiActor(input.requester)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:REQUEST_FORBIDDEN"] };
-  }
-  const cfg = resolveActivationConfig();
-  const supplierId = input.supplierId || cfg.interCarsSupplierId;
+async function runCreateOrderProductionValidation(input) {
+  assertCreateOrderValidationNetworkSafety();
+  const supplierId = input.supplierId || getInterCarsSupplierId();
   const market = input.market || "DE";
   const channel = input.channel || "DIRECT";
   const environment = input.environment || "PRODUCTION";
-  const correlationId = input.correlationId || (0, import_crypto5.randomUUID)();
-  const idempotencyKey = input.idempotencyKey || buildActivationIdempotencyKey({ supplierId, market, channel, environment, requester: input.requester });
-  const existing = getActivationByIdempotency(idempotencyKey);
-  if (existing) {
-    return { ok: true, activation: existing };
+  const correlationId = input.correlationId || (0, import_crypto4.randomUUID)();
+  const validationMode = input.validationMode || resolveValidationMode();
+  const idempotencyKey = input.idempotencyKey || buildValidationIdempotencyKey({ supplierId, market, channel, environment, orderId: input.orderId });
+  const existing = getValidationByIdempotency(idempotencyKey);
+  if (existing && ["PASSED", "BLOCKED", "FAILED", "SKIPPED"].includes(existing.overallStatus)) {
+    return existing;
   }
-  const inflight = getInflightActivation(idempotencyKey);
-  if (inflight) {
-    throw new Error("ACTIVATION_INFLIGHT");
-  }
-  recordActivationAudit({
-    type: "PREFLIGHT_STARTED",
-    supplierId,
-    correlationId,
-    actor: input.requester
-  });
-  const preflight = runActivationPreflight({
+  const inflight2 = getInflightValidation(idempotencyKey);
+  if (inflight2) return inflight2;
+  const promise = executeValidation(input, {
     supplierId,
     market,
     channel,
     environment,
-    requester: input.requester,
-    correlationId,
-    orderValue: input.maxOrderValue,
-    rehearsalId: input.rehearsalId
-  });
-  emitActivationAnalytics({
-    eventType: "activation_preflight",
-    supplierId,
-    correlationId,
-    detail: { blockers: preflight.blockers }
-  });
-  const readiness = evaluateSupplierOrderReadiness(
-    { supplierId, market, channel, environment: environment === "STAGING" ? "SANDBOX" : environment },
-    { correlationId, force: true }
-  );
-  const riskLevel = computeRiskClassification(
-    { supplierId, market, channel, environment: environment === "STAGING" ? "SANDBOX" : environment },
-    readiness.checks.map((c) => ({
-      code: c.code,
-      category: c.category,
-      level: c.level === "CRITICAL" ? "CRITICAL" : c.level,
-      message: c.message,
-      blocking: c.blocking
-    }))
-  );
-  const createdAt = nowIso2();
-  const expiresAt = new Date(Date.now() + cfg.activationTtlMs).toISOString();
-  const status = preflight.blockers.length > 0 ? "BLOCKED" : "PENDING_APPROVAL";
-  const activation = {
-    activationId: buildActivationId(),
-    supplierId,
-    adapterProfile: getInterCarsAdapterProfile(),
-    environment,
-    market,
-    channel,
-    requestedBy: input.requester,
-    orderScope: input.orderScope,
-    customerScope: input.customerScope,
-    maxOrderValue: input.maxOrderValue ?? cfg.defaultMaxOrderValue,
-    maxDailyOrderValue: input.maxDailyOrderValue ?? cfg.defaultMaxDailyOrderValue,
-    maxOrders: input.maxOrders ?? cfg.defaultMaxOrders,
-    riskLevel: riskLevel === "BLOCKED" ? "HIGH" : riskLevel,
-    readinessId: preflight.readinessId,
-    validationId: preflight.validationId,
-    rehearsalId: preflight.rehearsalId,
-    killSwitchState: evaluateKillSwitch({
-      activationId: "",
-      supplierId,
-      adapterProfile: getInterCarsAdapterProfile(),
-      environment,
-      market,
-      channel,
-      requestedBy: input.requester,
-      networkState: "DISABLED",
-      realOrderSent: false,
-      status: "DRAFT",
-      correlationId,
-      idempotencyKey,
-      riskLevel: "LOW",
-      createdAt,
-      updatedAt: createdAt
-    }).state,
-    networkState: "DISABLED",
-    realOrderSent: false,
-    status,
-    reason: preflight.blockers.length ? preflight.blockers.join(",") : void 0,
     correlationId,
     idempotencyKey,
-    preflightChecks: preflight.checks,
-    createdAt,
-    updatedAt: createdAt,
-    expiresAt
-  };
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: preflight.blockers.length ? "ACTIVATION_BLOCKED" : "ACTIVATION_CREATED",
-    activationId: activation.activationId,
-    supplierId,
-    correlationId,
-    actor: input.requester,
-    detail: { status, blockers: preflight.blockers }
+    validationMode
   });
-  emitActivationAnalytics({
-    eventType: "activation_requested",
-    activationId: activation.activationId,
-    supplierId,
-    correlationId,
-    detail: { status }
-  });
-  return {
-    ok: preflight.blockers.length === 0,
-    activation,
-    blockers: preflight.blockers,
-    preflight
-  };
-}
-function approveActivationRequest(input) {
-  if (isAiActor(input.approverId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:APPROVE_FORBIDDEN"] };
+  setInflightValidation(idempotencyKey, promise);
+  try {
+    return await promise;
+  } finally {
+    clearInflightValidation(idempotencyKey);
   }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  if (activation.status === "BLOCKED") return { ok: false, blockers: ["ACTIVATION_BLOCKED"] };
-  const result = createActivationApproval({
-    activationId: input.activationId,
-    approverId: input.approverId,
-    requesterId: activation.requestedBy,
-    scope: {
-      supplierId: activation.supplierId,
-      adapterProfile: activation.adapterProfile,
-      environment: activation.environment,
-      market: activation.market,
-      channel: activation.channel,
-      maxOrderValue: activation.maxOrderValue ?? resolveActivationConfig().defaultMaxOrderValue,
-      maxDailyOrderValue: activation.maxDailyOrderValue ?? resolveActivationConfig().defaultMaxDailyOrderValue,
-      maxOrders: activation.maxOrders ?? resolveActivationConfig().defaultMaxOrders,
-      riskLevel: activation.riskLevel
-    }
+}
+async function executeValidation(input, scope) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const checks = [];
+  const blockerCodes = [];
+  const { state: capabilityState, blockers: capBlockers } = evaluateDeclaredCapability(scope.supplierId);
+  blockerCodes.push(...capBlockers);
+  checks.push({
+    check: "CREATE_ORDER_CAPABILITY",
+    category: "CAPABILITY",
+    status: capBlockers.length ? "BLOCKED" : "PASS",
+    message: capBlockers.length ? capBlockers.join(",") : "Capability checks complete"
   });
-  if (result.ok) {
-    emitActivationAnalytics({
-      eventType: "activation_approved",
-      activationId: activation.activationId,
-      supplierId: activation.supplierId,
-      correlationId: activation.correlationId
+  recordCreateOrderValidationAudit({
+    type: "VALIDATION_STARTED",
+    supplierId: scope.supplierId,
+    correlationId: scope.correlationId,
+    actor: input.requester
+  });
+  const aiBlockers = assertAiBoundary(input);
+  blockerCodes.push(...aiBlockers);
+  const upstream = evaluateUpstreamGates({
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    environment: scope.environment,
+    requester: input.requester,
+    approver: input.approver
+  });
+  blockerCodes.push(...upstream.blockers);
+  const injection = resolveCreateOrderFailureInjection(
+    input.failureInjection || "NONE"
+  );
+  if (injection) {
+    applyFailureInjectionToChecks(checks, injection);
+    blockerCodes.push(injection.blockerCode);
+  }
+  let requestPayloadHash;
+  if (input.orderId) {
+    const payloadResult = buildCanonicalPayloadFromOrder(input.orderId);
+    checks.push(...payloadResult.checks);
+    blockerCodes.push(...payloadResult.blockers);
+    requestPayloadHash = payloadResult.payloadHash;
+    if (payloadResult.payload) {
+      capabilityState.requestValidated = payloadResult.blockers.length === 0;
+      const idem = checkIdempotency(payloadResult.payload);
+      checks.push(...idem.checks);
+      if (idem.isDuplicate && idem.existingSupplierOrderId) {
+        blockerCodes.push("DUPLICATE_IDEMPOTENCY");
+      } else if (payloadResult.payload) {
+        claimValidationIdempotency(
+          payloadResult.payload.idempotencyKey,
+          `pending_${scope.correlationId}`
+        );
+      }
+      const protections = validateOrderProtections(input.orderId, payloadResult.payload);
+      checks.push(...protections.checks);
+      blockerCodes.push(...protections.blockers);
+    }
+  } else {
+    checks.push({
+      check: "REQUEST_SCHEMA",
+      category: "REQUEST",
+      status: "SKIPPED",
+      message: "No orderId \u2014 request contract check skipped"
     });
   }
-  return result;
+  capabilityState.errorHandlingValidated = true;
+  checks.push({
+    check: "ERROR_POLICY",
+    category: "ERROR",
+    status: "PASS",
+    message: "Error classification policy configured"
+  });
+  capabilityState.idempotencyValidated = !blockerCodes.includes("DUPLICATE_IDEMPOTENCY");
+  capabilityState.responseValidated = false;
+  capabilityState.statusValidated = isStatusCapabilityValidated();
+  capabilityState.trackingValidated = evaluateTrackingCapability() === "VALIDATED";
+  let unknownOutcome = false;
+  let humanReviewRequired = false;
+  let responseClass;
+  let supplierOrderId;
+  const canAttemptControlledHttp = scope.validationMode === "VALIDATION" && isControlledValidationEnabled() && input.humanConfirmation && Boolean(input.confirmationNonce) && input.approver && input.approver !== input.requester && capabilityState.authenticated && blockerCodes.length === 0;
+  if (canAttemptControlledHttp) {
+    recordCreateOrderValidationAudit({
+      type: "PRODUCTION_ATTEMPT_ALLOWED",
+      supplierId: scope.supplierId,
+      correlationId: scope.correlationId,
+      actor: input.approver,
+      detail: { mode: "CONTROLLED_VALIDATION" }
+    });
+    unknownOutcome = true;
+    humanReviewRequired = true;
+    blockerCodes.push("CONTROLLED_VALIDATION_NOT_IMPLEMENTED_WITHOUT_EXPLICIT_SUPPLIER_TEST_API");
+  } else {
+    recordCreateOrderValidationAudit({
+      type: "PRODUCTION_ATTEMPT_BLOCKED",
+      supplierId: scope.supplierId,
+      correlationId: scope.correlationId,
+      actor: input.requester,
+      detail: { reason: "Network disabled / credentials / approval / mode guard" }
+    });
+    recordBlockedProductionOrderAttempt();
+    blockOrderEndpointAttempt("https://gw.intercars.eu/ic/order/createOrder", {
+      correlationId: scope.correlationId,
+      supplierId: scope.supplierId
+    });
+  }
+  if (injection?.mockResponse) {
+    const parsed = injection.mockResponse;
+    responseClass = parsed.responseClass;
+    humanReviewRequired = parsed.humanReviewRequired;
+    unknownOutcome = parsed.responseClass === "unknown";
+    checks.push(validateResponseContract(parsed));
+    if (parsed.responseClass !== "accepted") {
+      blockerCodes.push(injection.blockerCode);
+    }
+  } else if (!canAttemptControlledHttp) {
+    checks.push({
+      check: "RESPONSE_SCHEMA",
+      category: "RESPONSE",
+      status: "SKIPPED",
+      message: "No live response \u2014 contract validation deferred"
+    });
+    blockerCodes.push("REAL_ORDER_ENDPOINT_NOT_VALIDATED");
+  }
+  capabilityState.productionValidated = false;
+  const createOrderCapability = deriveCreateOrderCapabilityStatus(capabilityState);
+  const record = {
+    validationId: `co341_${(0, import_crypto4.randomUUID)().slice(0, 12)}`,
+    supplierId: scope.supplierId,
+    adapterProfile: getInterCarsAdapterProfile(),
+    environment: scope.environment,
+    market: scope.market,
+    channel: scope.channel,
+    orderId: input.orderId,
+    createOrderCapability,
+    capabilityState,
+    trackingCapability: evaluateTrackingCapability(),
+    validationMode: scope.validationMode,
+    requestPayloadHash,
+    responseClass,
+    supplierOrderId,
+    unknownOutcome,
+    humanReviewRequired,
+    blockerCodes: [...new Set(blockerCodes)],
+    correlationId: scope.correlationId,
+    idempotencyKey: scope.idempotencyKey,
+    overallStatus: "RUNNING",
+    checks,
+    createdAt: now,
+    updatedAt: now,
+    failureInjection: input.failureInjection
+  };
+  record.overallStatus = deriveOverallStatus(record.blockerCodes, record.checks);
+  record.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  saveValidationRecord(record);
+  recordCreateOrderValidationAudit({
+    type: record.overallStatus === "BLOCKED" ? "VALIDATION_BLOCKED" : "VALIDATION_PASSED",
+    validationId: record.validationId,
+    orderId: input.orderId,
+    supplierId: scope.supplierId,
+    correlationId: scope.correlationId,
+    actor: input.requester,
+    detail: {
+      createOrderCapability,
+      blockers: record.blockerCodes,
+      payloadHash: requestPayloadHash
+    }
+  });
+  emitCreateOrderValidationAnalytics({
+    eventType: record.overallStatus === "BLOCKED" ? "validation_blocked" : "validation_passed",
+    validationId: record.validationId,
+    supplierId: scope.supplierId,
+    correlationId: scope.correlationId,
+    detail: { createOrderCapability }
+  });
+  return record;
 }
-function rejectActivationRequest(input) {
-  if (isAiActor(input.approverId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:REJECT_FORBIDDEN"] };
-  }
-  return rejectActivationApproval(input);
-}
-function armActivation(input) {
-  if (isAiActor(input.actorId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:ARM_FORBIDDEN"] };
-  }
-  try {
-    assertActivationNetworkSafety();
-  } catch {
-    return { ok: false, blockers: ["NETWORK_MUST_REMAIN_DISABLED"] };
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  const preflight = runActivationPreflight({
-    supplierId: activation.supplierId,
-    market: activation.market,
-    channel: activation.channel,
-    environment: activation.environment,
-    requester: activation.requestedBy,
-    correlationId: activation.correlationId,
-    orderValue: activation.maxOrderValue,
-    rehearsalId: activation.rehearsalId
+function attemptProductionCreateOrder(input) {
+  assertCreateOrderValidationNetworkSafety();
+  recordBlockedProductionOrderAttempt();
+  blockOrderEndpointAttempt("https://gw.intercars.eu/ic/order/createOrder", {
+    correlationId: (0, import_crypto4.randomUUID)(),
+    supplierId: getInterCarsSupplierId()
   });
-  if (preflight.blockers.length > 0) {
-    activation.status = "BLOCKED";
-    activation.reason = preflight.blockers.join(",");
-    activation.updatedAt = nowIso2();
-    saveActivationRecord(activation);
-    return { ok: false, blockers: preflight.blockers };
-  }
-  const approval = getApprovalForActivation(activation.activationId);
-  const approvalCheck = validateApprovalForActivation(activation, approval);
-  if (!approvalCheck.valid) {
-    return { ok: false, blockers: approvalCheck.blockers };
-  }
-  const kill = evaluateKillSwitch(activation);
-  if (kill.blocked) return { ok: false, blockers: kill.blockers };
-  const risk = evaluateActivationRisk(activation);
-  if (!risk.allowed) return { ok: false, blockers: risk.blockers };
-  activation.networkState = "ARMED";
-  activation.status = "APPROVED";
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: "ACTIVATION_ARMED",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId,
-    actor: input.actorId
-  });
-  emitActivationAnalytics({
-    eventType: "activation_armed",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId
-  });
-  return { ok: true, activation };
-}
-function confirmActivation(input) {
-  if (isAiActor(input.actorId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:CONFIRM_FORBIDDEN"] };
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  if (input.approvalId !== activation.approvalId) {
-    return { ok: false, blockers: ["APPROVAL_ID_MISMATCH"] };
-  }
-  if (input.actorId === activation.requestedBy) {
-    return { ok: false, blockers: ["SELF_APPROVAL_FORBIDDEN"] };
-  }
-  if (!input.confirmationNonce || input.confirmationNonce.length < 8) {
-    return { ok: false, blockers: ["CONFIRMATION_NONCE_REQUIRED"] };
-  }
-  const enableAttempt = executeRealSupplierOrder({
-    activationId: activation.activationId,
-    actorId: input.actorId,
-    humanConfirmation: true,
-    confirmationNonce: input.confirmationNonce,
-    idempotencyKey: input.idempotencyKey
-  });
-  if (enableAttempt.blocked) {
-    return {
-      ok: false,
-      blockers: [enableAttempt.code],
-      code: enableAttempt.code,
-      activation
-    };
-  }
-  activation.networkState = "ENABLED";
-  activation.status = "ACTIVE";
-  activation.confirmationNonce = input.confirmationNonce;
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  return { ok: true, activation };
-}
-function revokeActivation(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false };
-  activation.status = "REVOKED";
-  activation.networkState = "DISABLED";
-  activation.reason = input.reason;
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: "ACTIVATION_REVOKED",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId,
-    actor: input.actorId,
-    detail: { reason: input.reason }
-  });
-  emitActivationAnalytics({
-    eventType: "activation_revoked",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId
-  });
-  return { ok: true, activation };
-}
-function cancelActivation(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false };
-  activation.status = "CANCELLED";
-  activation.networkState = "DISABLED";
-  activation.reason = input.reason;
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  return { ok: true, activation };
-}
-function executeRealSupplierOrder(input) {
-  const guards = {};
-  const activation = getActivationRecord(input.activationId);
-  try {
-    assertActivationNetworkSafety();
-    guards.networkEnvDisabled = true;
-  } catch {
-    guards.networkEnvDisabled = false;
-  }
-  guards.networkEnabled = isSupplierOrderNetworkEnabled();
-  guards.productionEnvironment = activation?.environment === "PRODUCTION";
-  guards.supplierEnabled = Boolean(activation?.supplierId);
-  guards.readinessReady = activation?.readinessId != null;
-  guards.validationReady = activation?.validationId != null;
-  guards.createOrderValidated = false;
-  guards.approvalApproved = activation?.status === "APPROVED" || activation?.status === "ACTIVE";
-  guards.approvalNotExpired = activation?.expiresAt ? Date.parse(activation.expiresAt) > Date.now() : false;
-  guards.requesterNotApprover = Boolean(activation) && input.actorId !== activation?.requestedBy;
-  guards.riskAllowed = activation ? evaluateActivationRisk(activation).allowed : false;
-  guards.limitsAllowed = activation ? evaluateOrderLimits({
-    activation,
-    orderValue: input.orderValue ?? activation.maxOrderValue ?? 0,
-    isFirstOrder: true
-  }).allowed : false;
-  guards.killSwitchOff = activation ? !evaluateKillSwitch(activation).blocked : false;
-  guards.payloadHashValid = Boolean(input.payloadHash);
-  guards.inventoryReservationValid = Boolean(input.inventoryReservationId);
-  guards.idempotencyValid = Boolean(input.idempotencyKey);
-  guards.securityValid = !isAiActor(input.actorId);
-  guards.humanConfirmation = Boolean(input.humanConfirmation && input.confirmationNonce);
-  recordActivationAudit({
-    type: "REAL_ORDER_ATTEMPT_BLOCKED",
-    activationId: input.activationId,
-    supplierId: activation?.supplierId,
-    correlationId: activation?.correlationId || (0, import_crypto5.randomUUID)(),
-    actor: input.actorId,
-    detail: { guards, code: "REAL_ORDER_ENDPOINT_NOT_VALIDATED" }
-  });
-  emitActivationAnalytics({
-    eventType: "first_order_blocked",
-    activationId: input.activationId,
-    supplierId: activation?.supplierId,
-    correlationId: activation?.correlationId || (0, import_crypto5.randomUUID)(),
+  recordCreateOrderValidationAudit({
+    type: "PRODUCTION_ATTEMPT_BLOCKED",
+    orderId: input.orderId,
+    supplierId: getInterCarsSupplierId(),
+    correlationId: (0, import_crypto4.randomUUID)(),
+    actor: input.requester,
     detail: { code: "REAL_ORDER_ENDPOINT_NOT_VALIDATED" }
   });
-  recordBlockedRealOrderAttempt();
   return {
-    ok: false,
     blocked: true,
     code: "REAL_ORDER_ENDPOINT_NOT_VALIDATED",
-    reason: "Inter Cars createOrder capability is UNVERIFIED \u2014 no real HTTP call permitted",
-    guards,
+    reason: "Inter Cars createOrder not production-validated \u2014 no HTTP call permitted",
     httpCallsMade: 0
   };
 }
-
-// lib/supplier-order-activation/firstOrder.ts
-function nowIso3() {
-  return (/* @__PURE__ */ new Date()).toISOString();
-}
-function buildFirstOrderId() {
-  return `fo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-function buildMinimalSupplierPayload(payload) {
-  const filtered = filterSupplierFulfillmentAddress(payload.shippingAddress);
-  return {
-    supplierId: payload.supplierId,
-    market: payload.market,
-    channel: payload.channel,
-    items: payload.items.map((i) => ({ sku: i.sku, quantity: i.quantity })),
-    shippingAddress: filtered,
-    currency: payload.currency,
-    inventoryReservationId: payload.inventoryReservationId,
-    priceSnapshotId: payload.priceSnapshotId,
-    supplierAssignmentSnapshotId: payload.supplierAssignmentSnapshotId
-  };
-}
-function previewFirstOrder(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) {
-    throw new Error("ACTIVATION_NOT_FOUND");
+function resolveUnknownOutcome(input) {
+  const payload = buildCanonicalPayloadFromOrder(input.orderId);
+  if (!payload.payload) {
+    return { outcome: "HUMAN_REVIEW_REQUIRED" };
   }
-  const supplierPayload = buildMinimalSupplierPayload(input.payload);
-  const orderPayloadHash = hashPayload(supplierPayload);
-  const supplierPayloadHash = hashPayload({ supplierId: input.payload.supplierId, items: input.payload.items });
-  const approval = getApprovalForActivation(activation.activationId);
-  const approvalCheck = validateApprovalForActivation(activation, approval);
-  const kill = evaluateKillSwitch(activation);
-  const risk = evaluateActivationRisk(activation);
-  const limits = evaluateOrderLimits({
-    activation,
-    orderValue: input.payload.items.reduce((sum, i) => sum + i.unitCost * i.quantity, 0),
-    isFirstOrder: true,
-    itemCount: input.payload.items.length,
-    totalQuantity: input.payload.items.reduce((sum, i) => sum + i.quantity, 0)
+  const idem = checkIdempotency(payload.payload);
+  if (idem.existingSupplierOrderId) {
+    return { outcome: "RESOLVED", supplierOrderId: idem.existingSupplierOrderId };
+  }
+  recordCreateOrderValidationAudit({
+    type: "UNKNOWN_OUTCOME",
+    orderId: input.orderId,
+    correlationId: input.idempotencyKey,
+    detail: { action: "CHECK_IDEMPOTENCY" }
   });
-  const orderValue = input.payload.items.reduce((sum, i) => sum + i.unitCost * i.quantity, 0);
-  return {
-    supplierId: input.payload.supplierId,
-    environment: activation.environment,
-    market: input.payload.market,
-    channel: input.payload.channel,
-    orderValue,
-    currency: input.payload.currency,
-    itemCount: input.payload.items.length,
-    orderPayloadHash,
-    supplierPayloadHash,
-    inventoryReservationId: input.payload.inventoryReservationId,
-    priceSnapshotId: input.payload.priceSnapshotId,
-    readinessStatus: activation.readinessId ? "READY" : "UNKNOWN",
-    approvalStatus: approvalCheck.valid ? "APPROVED" : "BLOCKED",
-    riskLevel: risk.riskLevel,
-    killSwitchActive: kill.blocked,
-    networkState: activation.networkState,
-    createOrderCapability: "UNVERIFIED",
-    gates: [
-      { check: "APPROVAL", category: "APPROVAL", status: approvalCheck.valid ? "PASS" : "BLOCKED", message: approvalCheck.valid ? "Approved" : approvalCheck.blockers.join(",") },
-      { check: "RISK", category: "RISK", status: risk.allowed ? "PASS" : "BLOCKED", message: risk.riskLevel },
-      { check: "LIMITS", category: "LIMITS", status: limits.allowed ? "PASS" : "BLOCKED", message: limits.allowed ? "Within limits" : limits.blockers.join(",") },
-      { check: "KILL_SWITCH", category: "KILL_SWITCH", status: kill.blocked ? "BLOCKED" : "PASS", message: kill.blocked ? "Active" : "Off" },
-      { check: "CREATE_ORDER", category: "CAPABILITY", status: "BLOCKED", message: "createOrder UNVERIFIED", blocking: true },
-      { check: "NETWORK", category: "NETWORK", status: activation.networkState === "ENABLED" ? "PASS" : "BLOCKED", message: activation.networkState }
-    ],
-    httpCallsMade: 0
-  };
-}
-function prepareFirstOrderGate(input) {
-  const cfg = resolveActivationConfig();
-  const existing = getFirstOrderByIdempotency(input.idempotencyKey);
-  if (existing) {
-    return { ok: true, gate: existing };
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  const preview = previewFirstOrder({ activationId: input.activationId, payload: input.payload });
-  const blockers = [];
-  if (preview.approvalStatus !== "APPROVED") blockers.push("APPROVAL_INVALID");
-  if (preview.killSwitchActive) blockers.push("KILL_SWITCH_ACTIVE");
-  if (!preview.gates.find((g) => g.check === "LIMITS") || preview.gates.find((g) => g.check === "LIMITS")?.status !== "PASS") {
-    blockers.push("LIMITS_EXCEEDED");
-  }
-  if (preview.createOrderCapability === "UNVERIFIED") blockers.push("REAL_ORDER_ENDPOINT_NOT_VALIDATED");
-  if (activation.networkState === "DISABLED") blockers.push("NETWORK_NOT_ARMED");
-  const createdAt = nowIso3();
-  const gate = {
-    firstOrderId: buildFirstOrderId(),
-    activationId: input.activationId,
-    supplierId: input.payload.supplierId,
-    market: input.payload.market,
-    channel: input.payload.channel,
-    orderValue: preview.orderValue,
-    currency: input.payload.currency,
-    readinessStatus: preview.readinessStatus,
-    approvalStatus: preview.approvalStatus,
-    riskLevel: preview.riskLevel,
-    limitsStatus: blockers.includes("LIMITS_EXCEEDED") ? "BLOCKED" : "PASS",
-    killSwitchState: preview.killSwitchActive ? "ON" : "OFF",
-    networkState: activation.networkState,
-    orderPayloadHash: preview.orderPayloadHash,
-    supplierPayloadHash: preview.supplierPayloadHash,
-    inventoryReservationId: input.payload.inventoryReservationId,
-    priceSnapshotId: input.payload.priceSnapshotId,
-    status: blockers.length ? "BLOCKED" : "PREPARED",
-    createdAt,
-    expiresAt: new Date(Date.now() + cfg.firstOrderTtlMs).toISOString(),
-    correlationId: activation.correlationId,
-    idempotencyKey: input.idempotencyKey
-  };
-  saveFirstOrderGate(gate);
-  recordActivationAudit({
-    type: blockers.length ? "FIRST_ORDER_BLOCKED" : "FIRST_ORDER_PREPARED",
-    activationId: activation.activationId,
-    firstOrderId: gate.firstOrderId,
-    supplierId: gate.supplierId,
-    correlationId: activation.correlationId,
-    actor: input.actorId,
-    detail: { blockers, orderPayloadHash: gate.orderPayloadHash }
+  recordCreateOrderValidationAudit({
+    type: "HUMAN_REVIEW_REQUIRED",
+    orderId: input.orderId,
+    correlationId: input.idempotencyKey
   });
-  emitActivationAnalytics({
-    eventType: blockers.length ? "first_order_blocked" : "first_order_prepared",
-    activationId: activation.activationId,
-    supplierId: gate.supplierId,
-    correlationId: activation.correlationId,
-    detail: { firstOrderId: gate.firstOrderId }
-  });
-  return { ok: blockers.length === 0, gate, blockers, preview };
-}
-function attemptFirstOrderSend(input) {
-  const gate = getFirstOrderGate(input.firstOrderId);
-  if (!gate) {
-    return {
-      ok: false,
-      blocked: true,
-      code: "FIRST_ORDER_NOT_FOUND",
-      reason: "First order gate not found",
-      guards: {},
-      httpCallsMade: 0
-    };
-  }
-  if (new Date(gate.expiresAt).getTime() < Date.now()) {
-    gate.status = "BLOCKED";
-    saveFirstOrderGate(gate);
-    return {
-      ok: false,
-      blocked: true,
-      code: "FIRST_ORDER_EXPIRED",
-      reason: "First order gate expired",
-      guards: {},
-      httpCallsMade: 0
-    };
-  }
-  return executeRealSupplierOrder({
-    activationId: gate.activationId,
-    actorId: input.actorId,
-    humanConfirmation: input.humanConfirmation,
-    confirmationNonce: input.confirmationNonce,
-    idempotencyKey: gate.idempotencyKey,
-    orderValue: gate.orderValue,
-    payloadHash: gate.orderPayloadHash,
-    inventoryReservationId: gate.inventoryReservationId
-  });
+  return { outcome: "HUMAN_REVIEW_REQUIRED" };
 }
 
-// lib/supplier-order-activation/admin.ts
-function getSupplierOrderActivationDashboard() {
-  const records = listActivationRecords();
-  const firstOrders = listFirstOrderGates();
-  const armed = records.filter((r) => r.networkState === "ARMED").length;
-  const active = records.filter((r) => r.networkState === "ENABLED" || r.status === "ACTIVE").length;
-  const sent = firstOrders.filter((f) => f.status === "SENT" || f.status === "CONFIRMED").length;
-  const validation = getLatestValidationForScope2({
-    supplierId: records[0]?.supplierId || "SUP-INTER-CARS-001",
-    environment: "PRODUCTION",
-    market: records[0]?.market || "DE",
-    channel: records[0]?.channel || "DIRECT"
+// lib/supplier-production-order-validation/admin.ts
+function getCreateOrderValidationDashboard() {
+  const records = listValidationRecords2();
+  const latest = getLatestValidationForScope2({
+    supplierId: getInterCarsSupplierId(),
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
   });
+  const timestamps = records.map((r) => Date.parse(r.updatedAt)).filter(Number.isFinite);
   return {
-    activationCount: records.length,
-    blocked: records.filter((r) => r.status === "BLOCKED").length,
-    approved: records.filter((r) => r.status === "APPROVED").length,
-    armed,
-    active,
-    firstOrdersPrepared: firstOrders.filter((f) => f.status === "PREPARED").length,
-    firstOrdersSent: sent,
-    realSupplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
-    interCarsCreateOrder: validation?.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED",
-    productionActivation: active > 0 ? "ACTIVE" : armed > 0 ? "ARMED" : "NOT ACTIVE",
-    firstRealOrder: sent > 0 ? "SENT" : "NOT SENT",
-    networkState: active > 0 ? "ENABLED" : armed > 0 ? "ARMED" : "DISABLED",
-    safety: getActivationSafetyCounters()
+    validationCount: records.length,
+    passed: records.filter((r) => r.overallStatus === "PASSED").length,
+    blocked: records.filter((r) => r.overallStatus === "BLOCKED").length,
+    failed: records.filter((r) => r.overallStatus === "FAILED").length,
+    skipped: records.filter((r) => r.overallStatus === "SKIPPED").length,
+    createOrderCapability: latest?.createOrderCapability || "UNVERIFIED",
+    trackingCapability: latest?.trackingCapability || "UNVERIFIED",
+    productionOrderNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    realSupplierOrderCalls: getCreateOrderValidationSafetyCounters().realSupplierOrderCalls,
+    realCustomerOrders: getCreateOrderValidationSafetyCounters().realCustomerOrders,
+    lastValidationAt: timestamps.length ? new Date(Math.max(...timestamps)).toISOString() : void 0,
+    blockers: latest?.blockerCodes || ["REAL_ORDER_ENDPOINT_NOT_VALIDATED"],
+    safety: getCreateOrderValidationSafetyCounters()
   };
 }
-function listSupplierOrderActivationRows(filter) {
-  return listActivationRecords().filter((row) => {
+function listCreateOrderValidationRows(filter) {
+  return listValidationRecords2().filter((row) => {
     if (filter?.supplierId && row.supplierId !== filter.supplierId) return false;
-    if (filter?.status && row.status !== filter.status) return false;
+    if (filter?.status && row.overallStatus !== filter.status) return false;
     return true;
   });
 }
-function getSupplierOrderActivationDetail(activationId) {
-  const activation = getActivationRecord(activationId);
-  if (!activation) return null;
+function getCreateOrderValidationDetail(validationId) {
+  const validation = getValidationRecord(validationId);
+  if (!validation) return null;
   return {
-    activation,
-    audit: listActivationAudit({ activationId }).slice(-50),
-    firstOrders: listFirstOrderGates().filter((f) => f.activationId === activationId),
-    safety: getActivationSafetyCounters(),
-    networkSeparate: {
-      activationStatus: activation.status,
-      networkState: activation.networkState,
-      realOrderSent: activation.realOrderSent,
-      envNetworkEnabled: isSupplierOrderNetworkEnabled()
-    }
+    validation,
+    audit: listCreateOrderValidationAudit({ validationId }).slice(-50),
+    safety: getCreateOrderValidationSafetyCounters(),
+    capabilityState: validation.capabilityState
   };
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  approveActivationRequest,
-  armActivation,
-  assertActivationSafetyInvariants,
-  attemptFirstOrderSend,
-  cancelActivation,
-  confirmActivation,
-  createActivationRequest,
-  executeRealSupplierOrder,
-  getActivationRecord,
-  getActivationSafetyCounters,
-  getSupplierOrderActivationDashboard,
-  getSupplierOrderActivationDetail,
-  hydrateActivationFromPersistence,
-  listActivationRecords,
-  listSupplierOrderActivationRows,
-  prepareFirstOrderGate,
-  previewFirstOrder,
-  rejectActivationRequest,
-  revokeActivation,
-  runActivationPreflight
+  assertCreateOrderValidationSafetyInvariants,
+  attemptProductionCreateOrder,
+  evaluateCreateOrderProductionValidationChecks,
+  getCreateOrderValidationDashboard,
+  getCreateOrderValidationDetail,
+  getCreateOrderValidationSafetyCounters,
+  getValidationRecord,
+  hydrateValidationFromPersistence,
+  listCreateOrderValidationRows,
+  listValidationRecords,
+  resolveUnknownOutcome,
+  runCreateOrderProductionValidation
 });

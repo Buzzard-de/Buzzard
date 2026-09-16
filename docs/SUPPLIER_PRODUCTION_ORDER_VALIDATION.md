@@ -1,3 +1,40 @@
+# #341 / #342 — Inter Cars createOrder Production & Controlled Live Validation
+
+## #342 — Controlled Inter Cars Live Validation Run
+
+Extends #341 with an explicit **CONTROLLED_VALIDATION** mode for proving Inter Cars `createOrder` capability under human approval — without enabling normal production order execution.
+
+### Modes
+
+`MOCK` | `SANDBOX` | `CONTROLLED_VALIDATION` | `PRODUCTION`
+
+### Scoped Network (not global order network)
+
+- `SUPPLIER_ORDER_NETWORK_ENABLED=0` remains mandatory for safety
+- `SUPPLIER_CONTROLLED_VALIDATION_NETWORK=1` enables **scoped** HTTP only inside an approved controlled validation run
+- Does NOT enable automatic customer or marketplace orders
+
+### Controlled Validation Flow
+
+1. `requestControlledValidationApproval()` — human approval with expiry, product/market limits
+2. `startControlledValidationRun()` — preflight (#337/#339/#340 gates), payload hash, idempotency
+3. Explicit human confirmation bound to `validationId`, `payloadHash`, `confirmationNonce`
+4. Scoped HTTP via existing `B2bSandboxSupplierConnector.executeControlledValidationCreateOrder()`
+5. On success only: `CREATE_ORDER = VALIDATED` via official capability promotion
+6. `NORMAL_PRODUCTION_ORDER = OFF` remains — validation ≠ go-live
+
+### Expected CI State (no live credentials)
+
+```
+IMPLEMENTATION = PASS
+LIVE_VALIDATION = BLOCKED
+CREATE_ORDER = UNVERIFIED
+NETWORK = OFF
+REAL_ORDER = 0
+```
+
+---
+
 # #341 — Inter Cars createOrder Production Capability Validation
 
 ## Architecture

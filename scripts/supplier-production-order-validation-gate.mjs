@@ -8,8 +8,12 @@ process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MODE = "MOCK";
 const steps = [
   ["Network safety env", "node -e \"if(process.env.SUPPLIER_ORDER_NETWORK_ENABLED!=='0'){process.exit(1)}\""],
   [
-    "Supplier production order validation tests",
+    "Supplier production order validation tests (#341)",
     "vitest run lib/supplier-production-order-validation/supplierProductionOrderValidation.test.ts",
+  ],
+  [
+    "Controlled live validation tests (#342)",
+    "vitest run lib/supplier-production-order-validation/supplierControlledLiveValidation.test.ts",
   ],
   ["Supplier order activation gate", "npm run gate:supplier-order-activation"],
 ];
@@ -32,6 +36,7 @@ if (failed) {
 }
 
 console.log("\nSupplier production order validation gate: ALL PASS");
-console.log("Inter Cars createOrder: UNVERIFIED (verified)");
+console.log("Inter Cars createOrder: UNVERIFIED (verified — unless controlled mock PASS in #342 tests)");
 console.log("Real supplier order HTTP calls: 0 (verified in tests)");
 console.log("Production order network: OFF (verified)");
+console.log("Controlled validation network: SCOPED only when explicitly enabled");

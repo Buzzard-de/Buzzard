@@ -6,6 +6,9 @@ export interface LiveSupplierEndpoints {
   products?: string;
   stock?: string;
   prices?: string;
+  createOrder?: string;
+  orders?: string;
+  orderStatus?: string;
 }
 
 export interface LiveSupplierProfile {

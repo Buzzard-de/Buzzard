@@ -1,4 +1,5 @@
 import type { LiveSupplierProfile } from "../../liveSupplier/types";
+import type { SupplierOrderRequest } from "../../types";
 
 /** Flatten Inter Cars catalog product into generic supplier record before field mapping. */
 export function preprocessInterCarsProduct(raw: Record<string, unknown>): Record<string, unknown> {
@@ -66,6 +67,29 @@ export function preprocessInterCarsPrice(raw: Record<string, unknown>, currency:
 
 export function isInterCarsProfile(profile?: LiveSupplierProfile | null): boolean {
   return profile?.adapterProfile === "inter-cars";
+}
+
+/** Build Inter Cars createOrder request body from canonical supplier order request. */
+export function buildInterCarsCreateOrderBody(
+  request: SupplierOrderRequest,
+  idempotencyKey: string,
+): Record<string, unknown> {
+  return {
+    externalOrderReference: request.orderId,
+    idempotencyKey,
+    lines: request.lines.map((line) => ({
+      sku: line.supplierSku,
+      quantity: line.quantity,
+      unitPriceNet: line.unitPrice,
+    })),
+    deliveryAddress: {
+      name: request.shippingAddress.name || request.shippingAddress.company,
+      street: request.shippingAddress.street || request.shippingAddress.line1,
+      city: request.shippingAddress.city,
+      postalCode: request.shippingAddress.postalCode || request.shippingAddress.zip,
+      country: request.shippingAddress.country || request.shippingAddress.countryCode,
+    },
+  };
 }
 
 export function chunkSkus(skus: string[], size = 100): string[][] {

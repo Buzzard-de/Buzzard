@@ -1,5 +1,12 @@
 import { SupplierConnector } from "../base";
-import type { ConnectorConfig, FetchResult, HealthCheckResult, SupplierConfig } from "../../types";
+import type {
+  ConnectorConfig,
+  ConnectorOperationResult,
+  FetchResult,
+  HealthCheckResult,
+  SupplierConfig,
+  SupplierOrderRequest,
+} from "../../types";
 import type { LiveSupplierProfile } from "../../liveSupplier/types";
 import { resolveSupplierAuth } from "../../auth";
 import {
@@ -15,11 +22,14 @@ import { parseSupplierFeedBody } from "./parser";
 import { normalizeB2bSandboxRecord } from "./mapping";
 import { profileToConnectorConfig, resolveB2bProfile } from "./connectorConfig";
 import {
+  buildInterCarsCreateOrderBody,
   chunkSkus,
   isInterCarsProfile,
   preprocessInterCarsPrice,
   preprocessInterCarsStock,
 } from "./interCarsAdapter";
+import { isInScopedValidationNetworkContext } from "../../network/scopedValidationNetwork";
+import { safeParseJson } from "../../network/responseSecurity";
 
 export class B2bSandboxSupplierConnector extends SupplierConnector {
   private profile: LiveSupplierProfile | null;
@@ -374,5 +384,110 @@ export class B2bSandboxSupplierConnector extends SupplierConnector {
     }
 
     return { ok: res.ok, records, total: records.length, fetchedAt: new Date().toISOString() };
+  }
+
+  protected async doCreateOrder(request: SupplierOrderRequest): Promise<ConnectorOperationResult> {
+    return this.executeControlledValidationCreateOrder(request, {
+      idempotencyKey: request.orderId,
+      correlationId: request.orderId,
+    });
+  }
+
+  /**
+   * Controlled validation createOrder — only callable within scoped validation network context.
+   * Does not require SUPPLIER_ORDER_NETWORK_ENABLED.
+   */
+  async executeControlledValidationCreateOrder(
+    request: SupplierOrderRequest,
+    context: { idempotencyKey: string; correlationId: string },
+  ): Promise<ConnectorOperationResult> {
+    const profile = this.getProfile();
+
+    if (!isInterCarsProfile(profile)) {
+      return { ok: false, errorCode: "ADAPTER_NOT_INTER_CARS", data: { status: "NOT_SUPPORTED" } };
+    }
+
+    const createOrderDeclared =
+      profile.capabilities?.createOrder === true || profile.capabilities?.orderAPI === true;
+    const endpoints = profile.endpoints as Record<string, string>;
+    const createOrderPath = endpoints.createOrder || endpoints.orders || "/ic/order/createOrder";
+
+    if (!createOrderDeclared && process.env.SUPPLIER_LIVE_CREATE_ORDER_ENABLED !== "1") {
+      return {
+        ok: false,
+        errorCode: "CREATE_ORDER_NOT_DECLARED",
+        data: { status: "BLOCKED", reason: "Inter Cars createOrder not declared on profile" },
+      };
+    }
+
+    if (!isInScopedValidationNetworkContext()) {
+      return {
+        ok: false,
+        errorCode: "SCOPED_NETWORK_REQUIRED",
+        data: { status: "BLOCKED", reason: "Controlled validation network context required" },
+      };
+    }
+
+    const transport = this.getTransport();
+    const body = JSON.stringify(buildInterCarsCreateOrderBody(request, context.idempotencyKey));
+
+    try {
+      const res = await transport.request({
+        url: this.buildUrl(createOrderPath),
+        method: "POST",
+        body,
+        headers: {
+          ...this.authHeaders(),
+          "Content-Type": "application/json",
+          "Idempotency-Key": context.idempotencyKey,
+        },
+        supplierId: this.supplierId,
+        operation: "controlledValidationCreateOrder",
+        correlationId: context.correlationId,
+        timeoutMs: this.connectorConfig.timeoutMs,
+        allowRedirects: false,
+      });
+
+      const parsed = safeParseJson(res.body);
+      const record = (parsed.ok ? parsed.data : {}) as Record<string, unknown>;
+      const supplierOrderId =
+        (record.orderId as string) ||
+        (record.supplierOrderId as string) ||
+        (record.id as string) ||
+        undefined;
+
+      if (!res.ok) {
+        return {
+          ok: false,
+          errorCode: `HTTP_${res.status}`,
+          data: { status: "REJECTED", httpStatus: res.status, body: record },
+        };
+      }
+
+      if (!supplierOrderId) {
+        return {
+          ok: false,
+          errorCode: "MISSING_SUPPLIER_ORDER_ID",
+          data: { status: "NEEDS_REVIEW", httpStatus: res.status, body: record },
+        };
+      }
+
+      return {
+        ok: true,
+        data: {
+          supplierOrderId,
+          status: String(record.status || record.orderStatus || "ACCEPTED"),
+          httpStatus: res.status,
+        },
+      };
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "CONTROLLED_CREATE_ORDER_FAILED";
+      const code = (e as { code?: string }).code || "NETWORK_ERROR";
+      return {
+        ok: false,
+        errorCode: code,
+        data: { status: "UNKNOWN", message },
+      };
+    }
   }
 }

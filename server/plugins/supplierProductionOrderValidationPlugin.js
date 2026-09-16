@@ -68,6 +68,60 @@ module.exports = {
       return res.json({ success: true, data: detail, source: "supplier-production-order-validation" });
     });
 
+    app.get("/api/admin/supplier-production-order-validation/controlled-runs", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "supplier-production-order-validation.read")) return;
+      const mod = loadValidation();
+      if (!mod) return res.status(503).json({ success: false, errorCode: "VALIDATION_UNAVAILABLE" });
+      return res.json({ success: true, data: mod.listControlledValidationRows(), source: "supplier-production-order-validation" });
+    });
+
+    app.post("/api/admin/supplier-production-order-validation/controlled-runs/approve", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "supplier-production-order-validation.admin")) return;
+      const mod = loadValidation();
+      if (!mod) return res.status(503).json({ success: false, errorCode: "VALIDATION_UNAVAILABLE" });
+      try {
+        const result = mod.requestControlledValidationApproval({
+          validationId: req.body?.validationId,
+          orderId: req.body?.orderId,
+          allowedProduct: req.body?.allowedProduct,
+          allowedMarket: req.body?.allowedMarket || "DE",
+          approvedBy: req.adminUser.email,
+          requester: req.body?.requester || req.adminUser.email,
+          maximumQuantity: req.body?.maximumQuantity,
+          maximumValue: req.body?.maximumValue,
+          currency: req.body?.currency,
+        });
+        return res.json({ success: true, data: result, source: "supplier-production-order-validation" });
+      } catch (err) {
+        return res.status(500).json({ success: false, errorCode: "APPROVAL_FAILED", message: err instanceof Error ? err.message : "Failed" });
+      }
+    });
+
+    app.post("/api/admin/supplier-production-order-validation/controlled-runs/execute", async (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "supplier-production-order-validation.run")) return;
+      const mod = loadValidation();
+      if (!mod) return res.status(503).json({ success: false, errorCode: "VALIDATION_UNAVAILABLE" });
+      try {
+        const result = await mod.startControlledValidationRun({
+          validationId: req.body?.validationId,
+          orderId: req.body?.orderId,
+          allowedProduct: req.body?.allowedProduct,
+          allowedMarket: req.body?.allowedMarket || "DE",
+          requester: req.adminUser.email,
+          approver: req.body?.approver,
+          humanConfirmation: Boolean(req.body?.humanConfirmation),
+          confirmationNonce: req.body?.confirmationNonce,
+          idempotencyKey: req.body?.idempotencyKey,
+        });
+        return res.json({ success: true, data: result, safety: result.safety, source: "supplier-production-order-validation" });
+      } catch (err) {
+        return res.status(500).json({ success: false, errorCode: "CONTROLLED_RUN_FAILED", message: err instanceof Error ? err.message : "Failed" });
+      }
+    });
+
     app.post("/api/admin/supplier-production-order-validation/run", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "supplier-production-order-validation.run")) return;

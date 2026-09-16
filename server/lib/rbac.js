@@ -39,6 +39,9 @@ const PERMISSIONS = {
     "supplier-order.readiness.admin",
     "supplier-order.rehearsal.read",
     "supplier-order.rehearsal.run",
+    "supplier-production-validation.read",
+    "supplier-production-validation.run",
+    "supplier-production-validation.admin",
   ],
   catalog_manager: [
     "products.read",
@@ -80,6 +83,8 @@ const PERMISSIONS = {
     "supplier-order.readiness.reject",
     "supplier-order.rehearsal.read",
     "supplier-order.rehearsal.run",
+    "supplier-production-validation.read",
+    "supplier-production-validation.run",
     "products.read",
     "audit.read",
     "analytics.read",

@@ -14,6 +14,7 @@ import {
 import { buildSupplierOrderIdempotencyKey } from "@/lib/supplier-engine/orderSandbox/sandboxAdapter";
 import { getSupplierOrderSandboxByIdempotency as lookupSandboxByIdempotency } from "@/lib/supplier-engine/orderSandbox/persistence";
 import { redactSecrets } from "@/lib/supplier-engine/security";
+import { evaluateProductionValidationChecks as evaluateProductionValidationChecksBridge } from "@/lib/supplier-production-validation/readinessBridge";
 import { getReadinessPolicy, isMockCredentialValue } from "./config";
 import type { CapabilityClassification, ReadinessCheckResult, ReadinessScope } from "./types";
 
@@ -369,6 +370,10 @@ export function evaluateReturnsReadinessChecks(scope: ReadinessScope): Readiness
   return [warn("RETURN_CAPABILITY_MISSING", "RETURN", "Supplier return capability not configured")];
 }
 
+export function evaluateProductionValidationChecks(scope: ReadinessScope): ReadinessCheckResult[] {
+  return evaluateProductionValidationChecksBridge(scope);
+}
+
 export function evaluateAllReadinessChecks(scope: ReadinessScope): ReadinessCheckResult[] {
   const cap = evaluateCapabilityChecks(scope);
   return [
@@ -377,6 +382,7 @@ export function evaluateAllReadinessChecks(scope: ReadinessScope): ReadinessChec
     ...evaluateCredentialChecks(scope),
     ...cap.results,
     ...evaluateInterCarsChecks(scope),
+    ...evaluateProductionValidationChecks(scope),
     ...evaluateLiveReadChecks(scope),
     ...evaluateDataFreshnessChecks(scope),
     ...evaluateInventoryReadinessChecks(scope),

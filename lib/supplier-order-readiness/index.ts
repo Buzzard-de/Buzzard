@@ -6,7 +6,11 @@ export {
   invalidateReadiness,
   buildReadinessId,
 } from "./evaluator";
-export { evaluateAllReadinessChecks, listKnownSuppliersForReadiness } from "./checks";
+export {
+  evaluateAllReadinessChecks,
+  evaluateProductionValidationChecks,
+  listKnownSuppliersForReadiness,
+} from "./checks";
 export { computeRiskClassification } from "./risk";
 export {
   getKillSwitch,

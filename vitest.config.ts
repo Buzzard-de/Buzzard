@@ -15,6 +15,7 @@ export default defineConfig({
       "lib/order-engine/**/*.test.ts",
       "lib/fulfillment-control-tower/**/*.test.ts",
       "lib/supplier-order-readiness/**/*.test.ts",
+      "lib/supplier-order-rehearsal/**/*.test.ts",
       "lib/marketplace-engine/**/*.test.ts",
       "lib/returns-engine/**/*.test.ts",
       "lib/ai-orchestrator/**/*.test.ts",

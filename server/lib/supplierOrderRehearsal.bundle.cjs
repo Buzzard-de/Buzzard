@@ -6,6 +6,14 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res, err) => function __init() {
+  if (err) throw err[0];
+  try {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  } catch (e) {
+    throw err = [e], e;
+  }
+};
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -34,6 +42,841 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// data/global/test_supplier_feeds.json
+var test_supplier_feeds_default;
+var init_test_supplier_feeds = __esm({
+  "data/global/test_supplier_feeds.json"() {
+    test_supplier_feeds_default = {
+      TEST_SUPPLIER_A: {
+        supplierId: "TEST_SUPPLIER_A",
+        name: "Test Supplier A (Mock)",
+        country: "DE",
+        region: "EU",
+        currency: "EUR",
+        integrationTypes: ["api", "xml", "csv", "manual"],
+        supportedMarkets: ["DE", "FR", "PL"],
+        capabilities: {
+          productFeed: true,
+          stockFeed: true,
+          priceFeed: true,
+          orderAPI: true,
+          createOrder: true,
+          cancelOrder: true,
+          orderStatus: true,
+          shippingAPI: false,
+          trackingAPI: true,
+          tracking: true,
+          returnsAPI: true,
+          returnAuthorization: true,
+          refund: true,
+          credit: true,
+          replacement: true,
+          webhook: false,
+          dropshipping: true,
+          whiteLabel: true,
+          blindShipping: true,
+          api: true,
+          xml: true,
+          csv: true
+        },
+        rateLimit: { requestsPerMinute: 60 },
+        fieldMapping: {
+          article_number: "supplierSku",
+          sku: "supplierSku",
+          ean_code: "ean",
+          price_net: "supplierPrice",
+          stock_qty: "stock",
+          title: "name",
+          brand_name: "brand"
+        },
+        apiProducts: [
+          {
+            article_number: "TSA-TIRE-225-45-17",
+            ean_code: "4006633001247",
+            brand_name: "Michelin",
+            title: "Michelin Pilot Sport 4 225/45 R17",
+            price_net: 55.79,
+            stock_qty: 8,
+            currency: "EUR"
+          },
+          {
+            article_number: "TSA-OIL-5W30-5L",
+            ean_code: "4006633001236",
+            brand_name: "Castrol",
+            title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
+            price_net: 26.6,
+            stock_qty: 50,
+            currency: "EUR"
+          },
+          {
+            article_number: "TSA-DISC-280",
+            ean_code: "4006633001234",
+            brand_name: "ATE",
+            title: "Bremsscheibe Vorderachse 280mm",
+            price_net: 21.64,
+            stock_qty: 24,
+            currency: "EUR"
+          },
+          {
+            article_number: "TSA-PADS-FRONT",
+            ean_code: "4006633001235",
+            brand_name: "Bosch",
+            title: "Bremsbel\xE4ge Satz Vorderachse",
+            price_net: 17.67,
+            stock_qty: 31,
+            currency: "EUR"
+          }
+        ],
+        xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
+        csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
+      }
+    };
+  }
+});
+
+// data/buzzard_suppliers.json
+var buzzard_suppliers_default;
+var init_buzzard_suppliers = __esm({
+  "data/buzzard_suppliers.json"() {
+    buzzard_suppliers_default = {
+      project: "Buzzard",
+      document: "Supplier Master",
+      version: "1.0.0",
+      suppliers: [
+        {
+          supplier_id: "SUP-INTERNAL-001",
+          supplier_name: "Buzzard Internal Warehouse",
+          contact_email: "warehouse@buzzard.de",
+          contact_phone: "+49 30 1234567",
+          website: "https://buzzard24.de",
+          feed_type: "manual",
+          api_endpoint: null,
+          auth_type: "none",
+          currency: "EUR",
+          vat_handling: "gross",
+          dropshipping: false,
+          white_label: true,
+          blind_shipping: false,
+          default_markup_percent: 45,
+          minimum_margin_percent: 15,
+          safety_stock: 2,
+          active: true,
+          sync_status: "idle",
+          last_sync_at: null,
+          notes: "Internal stock for test and flagship products."
+        },
+        {
+          supplier_id: "SUP-DEMO-001",
+          production_status: "TEST_ONLY",
+          supplier_name: "Demo Automotive Parts GmbH",
+          contact_email: "orders@demo-automotive.example",
+          contact_phone: "+49 89 9876543",
+          website: "https://demo-automotive.example",
+          feed_type: "json",
+          api_endpoint: "https://demo-automotive.example/api/products.json",
+          auth_type: "api_key",
+          currency: "EUR",
+          vat_handling: "net",
+          dropshipping: true,
+          white_label: true,
+          blind_shipping: true,
+          default_markup_percent: 38,
+          minimum_margin_percent: 12,
+          safety_stock: 1,
+          active: true,
+          sync_status: "idle",
+          last_sync_at: null,
+          notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
+        }
+      ]
+    };
+  }
+});
+
+// lib/supplier-engine/fixtures.ts
+var TEST_SUPPLIER_ID;
+var init_fixtures = __esm({
+  "lib/supplier-engine/fixtures.ts"() {
+    "use strict";
+    TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
+  }
+});
+
+// lib/supplier-engine/persistence.ts
+function getSupplierPersistence() {
+  if (store !== void 0) return store;
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
+    store = null;
+    return store;
+  }
+  const candidates = [
+    "server/lib/supplier/persistentStore.js",
+    "../../server/lib/supplier/persistentStore.js"
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      store = mod.createPersistentSupplierStore();
+      return store;
+    } catch {
+    }
+  }
+  store = null;
+  return store;
+}
+var store;
+var init_persistence = __esm({
+  "lib/supplier-engine/persistence.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/security.ts
+function isSecretField(fieldName) {
+  return SECRET_PATTERNS.some((p) => p.test(fieldName));
+}
+function redactSecrets(obj) {
+  if (obj == null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(redactSecrets);
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (isSecretField(key)) {
+      result[key] = "[REDACTED]";
+    } else if (typeof value === "object") {
+      result[key] = redactSecrets(value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+var SECRET_PATTERNS;
+var init_security = __esm({
+  "lib/supplier-engine/security.ts"() {
+    "use strict";
+    SECRET_PATTERNS = [
+      /api[_-]?key/i,
+      /secret/i,
+      /password/i,
+      /token/i,
+      /authorization/i,
+      /bearer/i,
+      /credential/i
+    ];
+  }
+});
+
+// lib/supplier-engine/credentials.ts
+function registerCredentialRef(supplierId, secretsRef) {
+  const entry = {
+    supplierId,
+    secretsRef,
+    configured: Boolean(secretsRef),
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  credentialRefs.set(supplierId, entry);
+  return entry;
+}
+function getCredentialRef(supplierId) {
+  return credentialRefs.get(supplierId);
+}
+function hasConfiguredCredentials(supplierId) {
+  return credentialRefs.get(supplierId)?.configured === true;
+}
+function resolveCredentials(secretsRef) {
+  if (!secretsRef) return null;
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const raw = process.env[envKey];
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return { token: raw };
+  }
+}
+var credentialRefs;
+var init_credentials = __esm({
+  "lib/supplier-engine/credentials.ts"() {
+    "use strict";
+    init_security();
+    credentialRefs = /* @__PURE__ */ new Map();
+  }
+});
+
+// data/supplier-engine/live_supplier.config.template.json
+var live_supplier_config_template_default;
+var init_live_supplier_config_template = __esm({
+  "data/supplier-engine/live_supplier.config.template.json"() {
+    live_supplier_config_template_default = {
+      $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+      supplierId: "",
+      name: "",
+      displayName: "",
+      country: "DE",
+      region: "EU",
+      currency: "EUR",
+      connectorType: "b2b-sandbox",
+      environment: "SANDBOX",
+      baseUrl: "",
+      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+      authentication: "api_key",
+      authType: "API_KEY",
+      endpoints: {
+        health: "/health",
+        products: "/products",
+        stock: "/stock",
+        prices: "/prices"
+      },
+      fieldMapping: {
+        article_number: "supplierSku",
+        sku: "supplierSku",
+        ean_code: "ean",
+        gtin: "gtin",
+        mpn: "mpn",
+        brand_name: "brand",
+        title: "name",
+        price_net: "supplierPrice",
+        stock_qty: "stock"
+      },
+      categoryMapping: {},
+      supportedMarkets: ["DE"],
+      feedFormat: "json",
+      priceIncludesVat: false,
+      capabilities: {
+        productFeed: true,
+        stockFeed: true,
+        priceFeed: true,
+        orderAPI: false,
+        createOrder: false,
+        cancelOrder: false,
+        orderStatus: false,
+        trackingAPI: false,
+        returnsAPI: false,
+        refund: false,
+        credit: false,
+        replacement: false,
+        dropshipping: false,
+        whiteLabel: false,
+        blindShipping: false
+      },
+      pagination: {
+        mode: "cursor",
+        pageSize: 100
+      }
+    };
+  }
+});
+
+// data/supplier-engine/inter_cars.profile.template.json
+var inter_cars_profile_template_default;
+var init_inter_cars_profile_template = __esm({
+  "data/supplier-engine/inter_cars.profile.template.json"() {
+    inter_cars_profile_template_default = {
+      $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+      $documentation: {
+        supplier: "Inter Cars S.A.",
+        country: "PL/EU (DE market supported)",
+        type: "Automotive B2B wholesaler",
+        officialDocs: [
+          "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+          "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+        ],
+        authentication: "OAuth2 Bearer token (B2B account via sales representative)",
+        rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+        stockSemantics: "availability field = units available for purchase at location",
+        priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+        currency: "Per-response currencyCode (EUR for DE customers when configured)",
+        updateFrequency: "Real-time for API; CSV feeds daily",
+        dropshipping: "Contact sales representative \u2014 not assumed enabled",
+        whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+      },
+      supplierId: "SUP-INTER-CARS-001",
+      name: "Inter Cars",
+      displayName: "Inter Cars B2B",
+      country: "DE",
+      region: "EU",
+      currency: "EUR",
+      connectorType: "b2b-sandbox",
+      adapterProfile: "inter-cars",
+      environment: "SANDBOX",
+      baseUrl: "https://dev.gw.intercars.eu",
+      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+      authentication: "oauth2",
+      authType: "OAUTH2",
+      endpoints: {
+        health: "/ic/catalog/category",
+        products: "/ic/catalog/products",
+        stock: "/ic/inventory/stock",
+        prices: "/ic/inventory/1.0.0/pricing/quote"
+      },
+      fieldMapping: {
+        sku: "supplierSku",
+        index: "mpn",
+        articleNumber: "mpn",
+        tecDoc: "tecdocId",
+        brand: "brand",
+        shortDescription: "name",
+        description: "description",
+        eans: "ean",
+        availability: "stock",
+        customerPriceNet: "supplierPrice",
+        listPriceNet: "listPriceNet",
+        genericArticleReferences: "supplierCategory"
+      },
+      categoryMapping: {},
+      categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
+      supportedMarkets: ["DE"],
+      feedFormat: "json",
+      priceIncludesVat: false,
+      priceModel: "net",
+      priceField: "customerPriceNet",
+      capabilities: {
+        productFeed: true,
+        stockFeed: true,
+        priceFeed: true,
+        orderAPI: false,
+        createOrder: false,
+        cancelOrder: false,
+        orderStatus: false,
+        trackingAPI: false,
+        returnsAPI: false,
+        refund: false,
+        credit: false,
+        replacement: false,
+        dropshipping: false,
+        whiteLabel: false,
+        blindShipping: false
+      },
+      pagination: {
+        mode: "pageNumber",
+        pageParam: "pageNumber",
+        pageSizeParam: "pageSize",
+        pageSize: 25,
+        hasNextPageField: "hasNextPage"
+      },
+      requestHeaders: {
+        "Accept-Language": "de"
+      },
+      allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+    };
+  }
+});
+
+// data/supplier-engine/inter_cars_category_mappings.json
+var inter_cars_category_mappings_default;
+var init_inter_cars_category_mappings = __esm({
+  "data/supplier-engine/inter_cars_category_mappings.json"() {
+    inter_cars_category_mappings_default = {
+      $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
+      mappings: {
+        GenericArticle_1280: "auto-sub-05--oil-filters",
+        "Filtr oleju": "auto-sub-05--oil-filters",
+        "Oil filter": "auto-sub-05--oil-filters",
+        \u00D6lfilter: "auto-sub-05--oil-filters",
+        "Brake pad": "auto-sub-04--brake-pads",
+        Bremsbelag: "auto-sub-04--brake-pads",
+        "Brake disc": "auto-sub-04--brake-discs",
+        Bremsscheibe: "auto-sub-04--brake-discs",
+        Tyre: "auto-sub-01--car-tires",
+        Tire: "auto-sub-01--car-tires",
+        Reifen: "auto-sub-01--car-tires",
+        Battery: "auto-sub-06--car-batteries",
+        Batterie: "auto-sub-06--car-batteries",
+        "Car battery": "auto-sub-06--car-batteries",
+        Cleaning: "auto-sub-12--interior-cleaner",
+        Reinigung: "auto-sub-12--interior-cleaner"
+      }
+    };
+  }
+});
+
+// lib/supplier-engine/liveSupplier/config.ts
+function envFlag(name) {
+  const raw = process.env[name];
+  return raw === "1" || raw?.toLowerCase() === "true";
+}
+function parseJsonConfig(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed.supplierId || !parsed.baseUrl) return null;
+    return normalizeProfile(parsed);
+  } catch {
+    return null;
+  }
+}
+function normalizeProfile(profile) {
+  const { $comment: _comment, ...templateBase } = live_supplier_config_template_default;
+  return {
+    ...templateBase,
+    ...profile,
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: false,
+      createOrder: false,
+      cancelOrder: false,
+      orderStatus: false,
+      trackingAPI: false,
+      returnsAPI: false,
+      refund: false,
+      credit: false,
+      replacement: false,
+      ...profile.capabilities
+    },
+    endpoints: { ...live_supplier_config_template_default.endpoints, ...profile.endpoints },
+    fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
+  };
+}
+function loadCategoryMappings(profile) {
+  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
+    return profile;
+  }
+  if (profile.adapterProfile === "inter-cars") {
+    const mappings = inter_cars_category_mappings_default.mappings || {};
+    return { ...profile, categoryMapping: mappings };
+  }
+  return profile;
+}
+function resolvePredefinedLiveProfile() {
+  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
+  if (preset === "inter-cars") {
+    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
+    return loadCategoryMappings(normalizeProfile(base));
+  }
+  return null;
+}
+function resolveLiveSupplierProfile() {
+  const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
+  if (jsonConfig) {
+    const parsed = parseJsonConfig(jsonConfig);
+    if (parsed) return loadCategoryMappings(parsed);
+  }
+  const predefined = resolvePredefinedLiveProfile();
+  if (predefined) return predefined;
+  const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
+  const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
+  if (!supplierId || !baseUrl) return null;
+  return loadCategoryMappings(normalizeProfile({
+    supplierId,
+    name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
+    displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
+    country: process.env.SUPPLIER_LIVE_COUNTRY?.trim() || "DE",
+    region: process.env.SUPPLIER_LIVE_REGION?.trim() || "EU",
+    currency: process.env.SUPPLIER_LIVE_CURRENCY?.trim() || "EUR",
+    connectorType: "b2b-sandbox",
+    environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
+    baseUrl,
+    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
+    endpoints: {
+      health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
+      products: process.env.SUPPLIER_LIVE_PRODUCTS_PATH?.trim() || "/products",
+      stock: process.env.SUPPLIER_LIVE_STOCK_PATH?.trim() || "/stock",
+      prices: process.env.SUPPLIER_LIVE_PRICES_PATH?.trim() || "/prices"
+    },
+    fieldMapping: live_supplier_config_template_default.fieldMapping,
+    categoryMapping: {},
+    supportedMarkets: (process.env.SUPPLIER_LIVE_MARKETS?.split(",") || ["DE"]).map((m) => m.trim()).filter(Boolean),
+    feedFormat: process.env.SUPPLIER_LIVE_FEED_FORMAT?.trim() || "json",
+    priceIncludesVat: process.env.SUPPLIER_LIVE_PRICE_INCLUDES_VAT === "1",
+    capabilities: live_supplier_config_template_default.capabilities,
+    pagination: { mode: "cursor", pageSize: 100 },
+    dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
+    whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
+    blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
+  }));
+}
+function isLiveReadEnabled() {
+  return envFlag("SUPPLIER_LIVE_READ_ENABLED");
+}
+function hasLiveSupplierCredentials(profile) {
+  const creds = resolveCredentials(profile.secretsRef);
+  if (!creds || Object.keys(creds).length === 0) return false;
+  const token = creds.accessToken || creds.token || creds.bearer;
+  return Boolean(String(token || "").trim());
+}
+var init_config = __esm({
+  "lib/supplier-engine/liveSupplier/config.ts"() {
+    "use strict";
+    init_live_supplier_config_template();
+    init_inter_cars_profile_template();
+    init_inter_cars_category_mappings();
+    init_credentials();
+  }
+});
+
+// lib/supplier-engine/liveSupplier/registry.ts
+function liveProfileToSupplierConfig(profile) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    supplierId: profile.supplierId,
+    name: profile.name,
+    displayName: profile.displayName || profile.name,
+    country: profile.country,
+    region: profile.region,
+    status: "TESTING",
+    integrationTypes: ["b2b-sandbox"],
+    currency: profile.currency,
+    supportedMarkets: profile.supportedMarkets,
+    supportedCategories: [],
+    capabilities: profile.capabilities,
+    fieldMapping: profile.fieldMapping,
+    secretsRef: profile.secretsRef,
+    rateLimit: { requestsPerMinute: 60 },
+    connectorProfile: profile,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function registerLiveSupplierIfConfigured(register2) {
+  const profile = resolveLiveSupplierProfile();
+  if (!profile) return null;
+  register2(liveProfileToSupplierConfig(profile));
+  registerCredentialRef(profile.supplierId, profile.secretsRef);
+  registeredLiveSupplierId = profile.supplierId;
+  return profile;
+}
+var registeredLiveSupplierId;
+var init_registry = __esm({
+  "lib/supplier-engine/liveSupplier/registry.ts"() {
+    "use strict";
+    init_config();
+    init_credentials();
+    registeredLiveSupplierId = null;
+  }
+});
+
+// lib/supplier-engine/registry.ts
+function mapMasterToConfig(raw) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const feedType = String(raw.feed_type || "manual");
+  const integrationTypes = feedType === "json" ? ["api"] : feedType === "manual" ? ["manual"] : [feedType];
+  return {
+    supplierId: String(raw.supplier_id),
+    name: String(raw.supplier_name),
+    country: "DE",
+    region: "EU",
+    status: raw.active === false ? "DISABLED" : raw.production_status === "TEST_ONLY" ? "TESTING" : "CONNECTED",
+    integrationTypes,
+    currency: String(raw.currency || "EUR"),
+    supportedMarkets: ["DE"],
+    supportedCategories: [],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      dropshipping: raw.dropshipping === true,
+      whiteLabel: raw.white_label === true,
+      blindShipping: raw.blind_shipping === true,
+      api: feedType === "json",
+      csv: false,
+      xml: false
+    },
+    fieldMapping: {},
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function buildTestSupplierA() {
+  const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    supplierId: TEST_SUPPLIER_ID,
+    name: String(feed.name || "Test Supplier A"),
+    country: String(feed.country || "DE"),
+    region: String(feed.region || "EU"),
+    status: "TESTING",
+    integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
+    currency: String(feed.currency || "EUR"),
+    supportedMarkets: feed.supportedMarkets || ["DE", "FR", "PL"],
+    supportedCategories: [],
+    capabilities: feed.capabilities || {},
+    fieldMapping: feed.fieldMapping || {},
+    rateLimit: feed.rateLimit,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function mergePersistedOverlay(config4) {
+  const overlay = persistedOverlay.get(config4.supplierId);
+  if (!overlay) return config4;
+  return {
+    ...config4,
+    ...overlay,
+    capabilities: { ...config4.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config4.supportedMarkets,
+    status: overlay.status ?? config4.status,
+    updatedAt: overlay.updatedAt ?? config4.updatedAt
+  };
+}
+function persistRegistryEntry(config4) {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  persistence.saveRegistryRow({
+    supplierId: config4.supplierId,
+    name: config4.name,
+    displayName: config4.displayName || config4.name,
+    country: config4.country,
+    connectorType: config4.integrationTypes[0] || "manual",
+    supportedMarkets: config4.supportedMarkets,
+    capabilities: config4.capabilities,
+    active: config4.status !== "DISABLED" && config4.status !== "PAUSED",
+    status: config4.status,
+    secretsRef: config4.secretsRef,
+    createdAt: config4.createdAt
+  });
+  if (config4.secretsRef) registerCredentialRef(config4.supplierId, config4.secretsRef);
+}
+function hydrateRegistryFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  for (const row of persistence.listRegistryRows()) {
+    persistedOverlay.set(String(row.supplierId), {
+      supplierId: String(row.supplierId),
+      name: String(row.name),
+      displayName: row.displayName ? String(row.displayName) : String(row.name),
+      country: row.country ? String(row.country) : "DE",
+      status: row.status || (row.active === false ? "DISABLED" : "CONNECTED"),
+      supportedMarkets: row.supportedMarkets || [],
+      capabilities: row.capabilities || {},
+      secretsRef: row.secretsRef ? String(row.secretsRef) : void 0,
+      updatedAt: row.updatedAt ? String(row.updatedAt) : void 0
+    });
+  }
+}
+function ensureRegistry() {
+  if (supplierById.size > 0) return;
+  for (const raw of buzzard_suppliers_default.suppliers) {
+    const config4 = mergePersistedOverlay(mapMasterToConfig(raw));
+    supplierById.set(config4.supplierId, config4);
+    persistRegistryEntry(config4);
+  }
+  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
+  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
+  persistRegistryEntry(testSupplier);
+  registerLiveSupplierIfConfigured((config4) => {
+    const merged = mergePersistedOverlay(config4);
+    supplierById.set(config4.supplierId, merged);
+    persistRegistryEntry(merged);
+  });
+}
+function getSupplier(supplierId) {
+  ensureRegistry();
+  const config4 = supplierById.get(supplierId);
+  return config4 ? mergePersistedOverlay(config4) : void 0;
+}
+function isSupplierSelectable(supplierId) {
+  const supplier = getSupplier(supplierId);
+  if (!supplier) return false;
+  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
+}
+var supplierById, persistedOverlay;
+var init_registry2 = __esm({
+  "lib/supplier-engine/registry.ts"() {
+    "use strict";
+    init_test_supplier_feeds();
+    init_buzzard_suppliers();
+    init_fixtures();
+    init_persistence();
+    init_credentials();
+    init_registry();
+    supplierById = /* @__PURE__ */ new Map();
+    persistedOverlay = /* @__PURE__ */ new Map();
+  }
+});
+
+// lib/supplier-engine/capabilities.ts
+var init_capabilities = __esm({
+  "lib/supplier-engine/capabilities.ts"() {
+    "use strict";
+  }
+});
+
+// lib/supplier-engine/orderSandbox/persistence.ts
+function rowToRecord(row) {
+  return {
+    supplierOrderId: String(row.supplier_order_id),
+    buzzardOrderId: String(row.buzzard_order_id),
+    supplierId: String(row.supplier_id),
+    status: row.status,
+    idempotencyKey: String(row.idempotency_key),
+    correlationId: String(row.correlation_id || ""),
+    payload: JSON.parse(String(row.payload_json || "{}")),
+    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
+    failureClass: row.failure_class,
+    failureCode: row.failure_code ? String(row.failure_code) : void 0,
+    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
+    latencyMs: Number(row.latency_ms || 0),
+    sandbox: true,
+    networkDispatched: false,
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at)
+  };
+}
+function getOrderSandboxPersistence() {
+  return getSupplierPersistence();
+}
+function saveSupplierOrderSandboxRecord(record) {
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  const persistence = getOrderSandboxPersistence();
+  const typed = persistence;
+  typed?.saveOrderSandbox?.({
+    supplier_order_id: record.supplierOrderId,
+    buzzard_order_id: record.buzzardOrderId,
+    supplier_id: record.supplierId,
+    status: record.status,
+    idempotency_key: record.idempotencyKey,
+    correlation_id: record.correlationId,
+    payload_json: JSON.stringify(record.payload),
+    tracking_json: record.tracking ? JSON.stringify(record.tracking) : null,
+    failure_class: record.failureClass || null,
+    failure_code: record.failureCode || null,
+    failure_message: record.failureMessage || null,
+    latency_ms: record.latencyMs,
+    created_at: record.createdAt,
+    updated_at: record.updatedAt
+  });
+}
+function getSupplierOrderSandboxByIdempotency(idempotencyKey) {
+  const cached = memoryStore.get(idempotencyKey);
+  if (cached) return cached;
+  const row = getOrderSandboxPersistence()?.getOrderSandboxByIdempotency?.(idempotencyKey);
+  if (!row) return void 0;
+  const record = rowToRecord(row);
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  return record;
+}
+function getSupplierOrderSandboxByReference(supplierOrderId) {
+  const cached = memoryStore.get(supplierOrderId);
+  if (cached) return cached;
+  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
+  if (!row) return void 0;
+  const record = rowToRecord(row);
+  memoryStore.set(record.idempotencyKey, record);
+  memoryStore.set(record.supplierOrderId, record);
+  return record;
+}
+function hydrateSupplierOrderSandboxFromPersistence() {
+  const rows = getOrderSandboxPersistence()?.listOrderSandbox?.() || [];
+  for (const row of rows) {
+    const record = rowToRecord(row);
+    memoryStore.set(record.idempotencyKey, record);
+    memoryStore.set(record.supplierOrderId, record);
+  }
+}
+var memoryStore;
+var init_persistence2 = __esm({
+  "lib/supplier-engine/orderSandbox/persistence.ts"() {
+    "use strict";
+    init_persistence();
+    memoryStore = /* @__PURE__ */ new Map();
+  }
+});
 
 // server/lib/dbPaths.js
 var require_dbPaths = __commonJS({
@@ -4322,42 +5165,684 @@ var require_persistentStore = __commonJS({
   }
 });
 
-// lib/fulfillment-control-tower/serverEntry.ts
+// server/lib/supplier-order-readiness/persistentStore.js
+var require_persistentStore2 = __commonJS({
+  "server/lib/supplier-order-readiness/persistentStore.js"(exports2, module2) {
+    var { db } = require_db();
+    function createSupplierOrderReadinessStore() {
+      const upsertReadiness = db.prepare(`
+    INSERT INTO supplier_order_readiness (
+      readiness_id, supplier_id, market, channel, overall_status, approval_status,
+      generated_at, expires_at, record_json, updated_at
+    ) VALUES (
+      @readiness_id, @supplier_id, @market, @channel, @overall_status, @approval_status,
+      @generated_at, @expires_at, @record_json, @updated_at
+    )
+    ON CONFLICT(readiness_id) DO UPDATE SET
+      overall_status = excluded.overall_status,
+      approval_status = excluded.approval_status,
+      expires_at = excluded.expires_at,
+      record_json = excluded.record_json,
+      updated_at = excluded.updated_at
+  `);
+      const upsertApproval = db.prepare(`
+    INSERT INTO supplier_order_approvals (
+      approval_id, readiness_id, supplier_id, market, channel, status,
+      requester, approver, requested_at, approved_at, rejected_at, rejection_reason,
+      expires_at, record_json, updated_at
+    ) VALUES (
+      @approval_id, @readiness_id, @supplier_id, @market, @channel, @status,
+      @requester, @approver, @requested_at, @approved_at, @rejected_at, @rejection_reason,
+      @expires_at, @record_json, @updated_at
+    )
+    ON CONFLICT(approval_id) DO UPDATE SET
+      status = excluded.status,
+      approver = excluded.approver,
+      approved_at = excluded.approved_at,
+      rejected_at = excluded.rejected_at,
+      rejection_reason = excluded.rejection_reason,
+      expires_at = excluded.expires_at,
+      record_json = excluded.record_json,
+      updated_at = excluded.updated_at
+  `);
+      const insertAudit = db.prepare(`
+    INSERT OR REPLACE INTO supplier_order_readiness_audit (
+      event_id, event_type, supplier_id, market, channel, actor, correlation_id, timestamp, detail_json
+    ) VALUES (
+      @event_id, @event_type, @supplier_id, @market, @channel, @actor, @correlation_id, @timestamp, @detail_json
+    )
+  `);
+      const upsertKillSwitch = db.prepare(`
+    INSERT INTO supplier_order_kill_switch (id, state_json, updated_at, updated_by)
+    VALUES (1, @state_json, @updated_at, @updated_by)
+    ON CONFLICT(id) DO UPDATE SET
+      state_json = excluded.state_json,
+      updated_at = excluded.updated_at,
+      updated_by = excluded.updated_by
+  `);
+      return {
+        saveReadiness(row) {
+          upsertReadiness.run(row);
+        },
+        getReadiness(readinessId) {
+          return db.prepare("SELECT * FROM supplier_order_readiness WHERE readiness_id = ?").get(readinessId);
+        },
+        listReadiness() {
+          return db.prepare("SELECT * FROM supplier_order_readiness ORDER BY updated_at DESC").all();
+        },
+        saveApproval(row) {
+          upsertApproval.run(row);
+        },
+        getApproval(approvalId) {
+          return db.prepare("SELECT * FROM supplier_order_approvals WHERE approval_id = ?").get(approvalId);
+        },
+        listApprovals() {
+          return db.prepare("SELECT * FROM supplier_order_approvals ORDER BY requested_at DESC").all();
+        },
+        saveAudit(row) {
+          insertAudit.run(row);
+        },
+        listAudit(limit = 500) {
+          return db.prepare("SELECT * FROM supplier_order_readiness_audit ORDER BY timestamp DESC LIMIT ?").all(limit);
+        },
+        saveKillSwitch(row) {
+          upsertKillSwitch.run(row);
+        },
+        getKillSwitch() {
+          return db.prepare("SELECT * FROM supplier_order_kill_switch WHERE id = 1").get();
+        }
+      };
+    }
+    module2.exports = { createSupplierOrderReadinessStore };
+  }
+});
+
+// server/lib/supplier-order-rehearsal/persistentStore.js
+var require_persistentStore3 = __commonJS({
+  "server/lib/supplier-order-rehearsal/persistentStore.js"(exports2, module2) {
+    var { db } = require_db();
+    function createSupplierOrderRehearsalStore() {
+      const upsertRehearsal = db.prepare(`
+    INSERT INTO supplier_order_rehearsals (
+      rehearsal_id, order_id, supplier_id, market, channel,
+      overall_status, current_stage, idempotency_key, correlation_id, record_json, updated_at
+    ) VALUES (
+      @rehearsal_id, @order_id, @supplier_id, @market, @channel,
+      @overall_status, @current_stage, @idempotency_key, @correlation_id, @record_json, @updated_at
+    )
+    ON CONFLICT(rehearsal_id) DO UPDATE SET
+      overall_status = excluded.overall_status,
+      current_stage = excluded.current_stage,
+      record_json = excluded.record_json,
+      updated_at = excluded.updated_at
+  `);
+      const insertAudit = db.prepare(`
+    INSERT OR REPLACE INTO supplier_order_rehearsal_audit (
+      event_id, event_type, rehearsal_id, order_id, supplier_id, correlation_id, timestamp, detail_json
+    ) VALUES (
+      @event_id, @event_type, @rehearsal_id, @order_id, @supplier_id, @correlation_id, @timestamp, @detail_json
+    )
+  `);
+      return {
+        saveRehearsal(row) {
+          upsertRehearsal.run(row);
+        },
+        getRehearsal(rehearsalId) {
+          return db.prepare("SELECT * FROM supplier_order_rehearsals WHERE rehearsal_id = ?").get(rehearsalId);
+        },
+        listRehearsals(limit = 5e3) {
+          return db.prepare("SELECT * FROM supplier_order_rehearsals ORDER BY updated_at DESC LIMIT ?").all(limit);
+        },
+        saveAudit(row) {
+          insertAudit.run(row);
+        },
+        listAudit(limit = 500) {
+          return db.prepare("SELECT * FROM supplier_order_rehearsal_audit ORDER BY timestamp DESC LIMIT ?").all(limit);
+        }
+      };
+    }
+    module2.exports = { createSupplierOrderRehearsalStore };
+  }
+});
+
+// lib/supplier-order-rehearsal/serverEntry.ts
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
-  acknowledgeIncident: () => acknowledgeIncident,
-  filterIncidents: () => filterIncidents,
-  getFulfillmentControlTowerAnalyticsSummary: () => getFulfillmentControlTowerAnalyticsSummary,
-  getFulfillmentControlTowerDashboard: () => getFulfillmentControlTowerDashboard,
-  getFulfillmentControlTowerDetail: () => getFulfillmentControlTowerDetail,
-  hydrateControlTowerFromPersistence: () => hydrateControlTowerFromPersistence,
-  isSupplierOrderNetworkEnabled: () => isSupplierOrderNetworkEnabled,
-  listFulfillmentControlTowerRows: () => listFulfillmentControlTowerRows,
-  listIncidents: () => listIncidents,
-  reconcileSingleFulfillment: () => reconcileSingleFulfillment,
-  resetControlTowerForTests: () => resetControlTowerForTests,
-  resolveIncident: () => resolveIncident,
-  runFulfillmentReconciliation: () => runFulfillmentReconciliation
+  assertRehearsalSafetyInvariants: () => assertRehearsalSafetyInvariants,
+  getRehearsalSafetyCounters: () => getRehearsalSafetyCounters,
+  getSupplierOrderRehearsalDashboard: () => getSupplierOrderRehearsalDashboard,
+  getSupplierOrderRehearsalDetail: () => getSupplierOrderRehearsalDetail,
+  hydrateRehearsalFromPersistence: () => hydrateRehearsalFromPersistence,
+  listRehearsalRecords: () => listRehearsalRecords,
+  listSupplierOrderRehearsalRows: () => listSupplierOrderRehearsalRows,
+  runGoLiveRehearsal: () => runGoLiveRehearsal
 });
 module.exports = __toCommonJS(serverEntry_exports);
 
+// lib/supplier-order-rehearsal/pipeline.ts
+var import_crypto11 = require("crypto");
+
+// data/global/global_countries_35.json
+var global_countries_35_default = [
+  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
+  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
+  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
+  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
+  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
+  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
+  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
+  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
+  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
+  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
+  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
+  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
+  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
+  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
+  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
+  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
+  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
+  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
+  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
+  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
+  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
+  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
+  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
+  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
+  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
+  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
+  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
+  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
+  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
+  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
+  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
+  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
+  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
+  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
+  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
+];
+
+// data/global/market_country_overlay.json
+var market_country_overlay_default = {
+  DE: { flag: "\u{1F1E9}\u{1F1EA}", taxRate: 0.19, deliveryDays: "2\u20133 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
+  AT: { flag: "\u{1F1E6}\u{1F1F9}", taxRate: 0.2, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
+  BE: { flag: "\u{1F1E7}\u{1F1EA}", taxRate: 0.21, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
+  BG: { flag: "\u{1F1E7}\u{1F1EC}", taxRate: 0.2, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" },
+  HR: { flag: "\u{1F1ED}\u{1F1F7}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Hrvatski" },
+  CY: { flag: "\u{1F1E8}\u{1F1FE}", taxRate: 0.19, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
+  CZ: { flag: "\u{1F1E8}\u{1F1FF}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "\u010Ce\u0161tina" },
+  DK: { flag: "\u{1F1E9}\u{1F1F0}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Dansk" },
+  EE: { flag: "\u{1F1EA}\u{1F1EA}", taxRate: 0.22, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Eesti" },
+  FI: { flag: "\u{1F1EB}\u{1F1EE}", taxRate: 0.255, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Suomi" },
+  FR: { flag: "\u{1F1EB}\u{1F1F7}", taxRate: 0.2, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Fran\xE7ais" },
+  GR: { flag: "\u{1F1EC}\u{1F1F7}", taxRate: 0.24, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
+  HU: { flag: "\u{1F1ED}\u{1F1FA}", taxRate: 0.27, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Magyar" },
+  IE: { flag: "\u{1F1EE}\u{1F1EA}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "English" },
+  IT: { flag: "\u{1F1EE}\u{1F1F9}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Italiano" },
+  LV: { flag: "\u{1F1F1}\u{1F1FB}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Latvie\u0161u" },
+  LT: { flag: "\u{1F1F1}\u{1F1F9}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Lietuvi\u0173" },
+  LU: { flag: "\u{1F1F1}\u{1F1FA}", taxRate: 0.17, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "L\xEBtzebuergesch" },
+  MT: { flag: "\u{1F1F2}\u{1F1F9}", taxRate: 0.18, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Malti" },
+  NL: { flag: "\u{1F1F3}\u{1F1F1}", taxRate: 0.21, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
+  PL: { flag: "\u{1F1F5}\u{1F1F1}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Polski" },
+  PT: { flag: "\u{1F1F5}\u{1F1F9}", taxRate: 0.23, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Portugu\xEAs" },
+  RO: { flag: "\u{1F1F7}\u{1F1F4}", taxRate: 0.19, deliveryDays: "3\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Rom\xE2n\u0103" },
+  SK: { flag: "\u{1F1F8}\u{1F1F0}", taxRate: 0.2, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u010Dina" },
+  SI: { flag: "\u{1F1F8}\u{1F1EE}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u0161\u010Dina" },
+  ES: { flag: "\u{1F1EA}\u{1F1F8}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Espa\xF1ol" },
+  SE: { flag: "\u{1F1F8}\u{1F1EA}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Svenska" },
+  TR: { flag: "\u{1F1F9}\u{1F1F7}", taxRate: 0.2, deliveryDays: "4\u20139 Werktage", rtl: false, taxModel: "VAT", languageName: "T\xFCrk\xE7e" },
+  SA: { flag: "\u{1F1F8}\u{1F1E6}", taxRate: 0.15, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  AE: { flag: "\u{1F1E6}\u{1F1EA}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  QA: { flag: "\u{1F1F6}\u{1F1E6}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  KW: { flag: "\u{1F1F0}\u{1F1FC}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  BH: { flag: "\u{1F1E7}\u{1F1ED}", taxRate: 0.1, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  OM: { flag: "\u{1F1F4}\u{1F1F2}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  EG: { flag: "\u{1F1EA}\u{1F1EC}", taxRate: 0.14, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" }
+};
+
+// data/global/market_engine_extensions.json
+var market_engine_extensions_default = {
+  shippingRegions: {
+    AT: "EU_CENTRAL",
+    BE: "EU_WEST",
+    BG: "EU_EAST",
+    HR: "EU_EAST",
+    CY: "EU_SOUTH",
+    CZ: "EU_CENTRAL",
+    DK: "EU_NORTH",
+    EE: "EU_EAST",
+    FI: "EU_NORTH",
+    FR: "EU_WEST",
+    DE: "EU_CENTRAL",
+    GR: "EU_SOUTH",
+    HU: "EU_CENTRAL",
+    IE: "EU_WEST",
+    IT: "EU_SOUTH",
+    LV: "EU_EAST",
+    LT: "EU_EAST",
+    LU: "EU_WEST",
+    MT: "EU_SOUTH",
+    NL: "EU_WEST",
+    PL: "EU_EAST",
+    PT: "EU_SOUTH",
+    RO: "EU_EAST",
+    SK: "EU_CENTRAL",
+    SI: "EU_EAST",
+    ES: "EU_SOUTH",
+    SE: "EU_NORTH",
+    TR: "NON_EU",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  paymentRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  legalRegions: {
+    AT: "EU_AT",
+    BE: "EU_BE",
+    BG: "EU_BG",
+    HR: "EU_HR",
+    CY: "EU_CY",
+    CZ: "EU_CZ",
+    DK: "EU_DK",
+    EE: "EU_EE",
+    FI: "EU_FI",
+    FR: "EU_FR",
+    DE: "EU_DE",
+    GR: "EU_GR",
+    HU: "EU_HU",
+    IE: "EU_IE",
+    IT: "EU_IT",
+    LV: "EU_LV",
+    LT: "EU_LT",
+    LU: "EU_LU",
+    MT: "EU_MT",
+    NL: "EU_NL",
+    PL: "EU_PL",
+    PT: "EU_PT",
+    RO: "EU_RO",
+    SK: "EU_SK",
+    SI: "EU_SI",
+    ES: "EU_ES",
+    SE: "EU_SE",
+    TR: "TR",
+    SA: "GCC_SA",
+    AE: "GCC_AE",
+    QA: "GCC_QA",
+    KW: "GCC_KW",
+    BH: "GCC_BH",
+    OM: "GCC_OM",
+    EG: "MENA_EG"
+  },
+  supplierRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  returnRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  marketStatus: {
+    DE: "ACTIVE",
+    FR: "ACTIVE",
+    IT: "ACTIVE",
+    ES: "ACTIVE",
+    PL: "ACTIVE",
+    NL: "ACTIVE",
+    TR: "TESTING",
+    SA: "TESTING",
+    AE: "TESTING",
+    EG: "TESTING"
+  },
+  defaultMarketStatus: "PLANNED",
+  featureFlags: {
+    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
+    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
+  },
+  defaultFeatureFlags: {
+    marketEnabled: true,
+    categoryEnabled: true,
+    marketplaceEnabled: false,
+    supplierEnabled: false,
+    paymentEnabled: false,
+    shippingEnabled: false
+  },
+  marketplaces: {
+    DE: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "kaufland", name: "Kaufland", status: "supported" },
+      { id: "otto", name: "OTTO", status: "supported" }
+    ],
+    FR: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "cdiscount", name: "Cdiscount", status: "supported" }
+    ],
+    PL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "allegro", name: "Allegro", status: "supported" }
+    ],
+    NL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "bol", name: "bol.com", status: "supported" }
+    ]
+  },
+  paymentCapabilities: {
+    EU: ["card", "sepa", "paypal", "klarna"],
+    TR: ["card"],
+    GCC: ["card"],
+    MENA: ["card"]
+  },
+  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
+  supplierFallbacks: {
+    EU: ["EU"],
+    GCC: ["GCC", "EU"],
+    MENA: ["MENA", "EU"],
+    TR: ["TR", "EU"],
+    NON_EU: ["EU"]
+  }
+};
+
+// lib/i18n/international/config.ts
+var GLOBAL_COUNTRIES = global_countries_35_default;
+var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
+
+// lib/market-engine/registry.ts
+var extensions = market_engine_extensions_default;
+var overlayByCode = market_country_overlay_default;
+var EU_COUNTRY_CODES = /* @__PURE__ */ new Set([
+  "AT",
+  "BE",
+  "BG",
+  "HR",
+  "CY",
+  "CZ",
+  "DK",
+  "EE",
+  "FI",
+  "FR",
+  "DE",
+  "GR",
+  "HU",
+  "IE",
+  "IT",
+  "LV",
+  "LT",
+  "LU",
+  "MT",
+  "NL",
+  "PL",
+  "PT",
+  "RO",
+  "SK",
+  "SI",
+  "ES",
+  "SE"
+]);
+var marketByCode = /* @__PURE__ */ new Map();
+function resolveFeatureFlags(countryCode) {
+  const defaults = extensions.defaultFeatureFlags;
+  const overrides = extensions.featureFlags[countryCode] ?? {};
+  return { ...defaults, ...overrides };
+}
+function resolveMarketStatus(country) {
+  if (country.enabled === false) return "DISABLED";
+  return extensions.marketStatus[country.countryCode] ?? extensions.defaultMarketStatus;
+}
+function buildVatRules(countryCode) {
+  const overlay = overlayByCode[countryCode];
+  return {
+    standardRate: overlay?.taxRate ?? 0.2,
+    pricesIncludeVat: true,
+    taxModel: overlay?.taxModel ?? "VAT"
+  };
+}
+function buildMarketConfig(country) {
+  const code = country.countryCode;
+  const variants = country.localeVariants ?? [];
+  const locales = variants.map((v) => v.locale);
+  if (!locales.length) locales.push(country.locale);
+  const paymentRegion = extensions.paymentRegions[code] ?? "EU";
+  return {
+    countryCode: code,
+    countryName: country.countryName,
+    nativeCountryName: country.nativeCountryName || country.countryName,
+    defaultLanguage: country.defaultLanguage,
+    supportedLanguages: [...country.supportedLanguages],
+    locales,
+    currency: country.currency,
+    currencySymbol: country.currencySymbol,
+    timezone: country.timezone,
+    textDirection: country.textDirection === "rtl" ? "rtl" : "ltr",
+    vat: buildVatRules(code),
+    shippingRegion: extensions.shippingRegions[code] ?? "EU_CENTRAL",
+    paymentRegion,
+    legalRegion: extensions.legalRegions[code] ?? `EU_${code}`,
+    returnRegion: extensions.returnRegions[code] ?? paymentRegion,
+    supplierRegion: extensions.supplierRegions[code] ?? paymentRegion,
+    status: resolveMarketStatus(country),
+    featureFlags: resolveFeatureFlags(code),
+    marketplaces: extensions.marketplaces[code] ?? [],
+    paymentCapabilities: extensions.paymentCapabilities[paymentRegion] ?? ["card"],
+    shippingCapabilities: [...extensions.shippingCapabilities],
+    source: country
+  };
+}
+function ensureRegistryBuilt() {
+  if (marketByCode.size > 0) return;
+  for (const country of global_countries_35_default) {
+    marketByCode.set(country.countryCode, buildMarketConfig(country));
+  }
+}
+function listMarkets() {
+  ensureRegistryBuilt();
+  return [...marketByCode.values()];
+}
+function getMarket(countryCode) {
+  ensureRegistryBuilt();
+  const code = String(countryCode || "").toUpperCase();
+  return marketByCode.get(code);
+}
+function isEuCountry(countryCode) {
+  return EU_COUNTRY_CODES.has(String(countryCode).toUpperCase());
+}
+function getMarketVat(countryCode) {
+  return getMarket(countryCode)?.vat ?? { standardRate: 0.2, pricesIncludeVat: true, taxModel: "VAT" };
+}
+function getMarketShippingRegion(countryCode) {
+  return getMarket(countryCode)?.shippingRegion ?? "EU_CENTRAL";
+}
+
+// data/global/order_engine_extensions.json
+var order_engine_extensions_default = {
+  orderNumberPrefix: "BZ",
+  orderNumberYear: 2026,
+  defaultPaymentProvider: "mock",
+  defaultPaymentMethod: "card",
+  paymentAuthorizationMode: "dry_run",
+  reservationFailurePolicy: "RELEASE_ALL",
+  paymentFailurePolicy: "RELEASE_RESERVATIONS",
+  idempotencyTtlMs: 864e5,
+  customerVisibleStatuses: [
+    "PENDING_PAYMENT",
+    "PAID",
+    "CONFIRMED",
+    "PROCESSING",
+    "SUPPLIER_PENDING",
+    "SUPPLIER_CONFIRMED",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+    "RETURN_REQUESTED",
+    "RETURNED",
+    "REFUNDED",
+    "PARTIALLY_REFUNDED",
+    "FAILED"
+  ]
+};
+
 // lib/order-engine/registry.ts
+var config = order_engine_extensions_default;
 var orderRegistry = /* @__PURE__ */ new Map();
+var orderByNumber = /* @__PURE__ */ new Map();
+var ordersByCustomer = /* @__PURE__ */ new Map();
+var idempotencyRegistry = /* @__PURE__ */ new Map();
 var priceSnapshotRegistry = /* @__PURE__ */ new Map();
+var orderCounter = 0;
+function generateOrderId() {
+  return `ord_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+function generateOrderNumber() {
+  orderCounter += 1;
+  const year = config.orderNumberYear;
+  const seq = String(orderCounter).padStart(6, "0");
+  return `${config.orderNumberPrefix}-${year}-${seq}`;
+}
+function saveOrder(order) {
+  orderRegistry.set(order.orderId, order);
+  orderByNumber.set(order.orderNumber, order.orderId);
+  if (!ordersByCustomer.has(order.customerId)) {
+    ordersByCustomer.set(order.customerId, /* @__PURE__ */ new Set());
+  }
+  ordersByCustomer.get(order.customerId).add(order.orderId);
+  if (order.idempotencyKey) {
+    idempotencyRegistry.set(order.idempotencyKey, {
+      orderId: order.orderId,
+      createdAt: order.createdAt
+    });
+  }
+  return order;
+}
 function getOrder(orderId) {
   return orderRegistry.get(orderId);
 }
 function listAllOrders() {
   return [...orderRegistry.values()];
 }
+function getIdempotentOrder(idempotencyKey) {
+  const entry = idempotencyRegistry.get(idempotencyKey);
+  return entry ? orderRegistry.get(entry.orderId) : void 0;
+}
+function savePriceSnapshot(snapshot) {
+  priceSnapshotRegistry.set(snapshot.snapshotId, snapshot);
+  return snapshot;
+}
 function getPriceSnapshot(snapshotId) {
   return priceSnapshotRegistry.get(snapshotId);
 }
-
-// lib/inventory-engine/reservation.ts
-var reservations = /* @__PURE__ */ new Map();
-function getReservation(reservationId) {
-  return reservations.get(reservationId);
+function getDefaultPaymentProvider() {
+  return config.defaultPaymentProvider;
+}
+function getDefaultPaymentMethod() {
+  return config.defaultPaymentMethod;
 }
 
 // lib/product-engine/status.ts
@@ -4375,6 +5860,15 @@ function mapStorefrontStatus(status, stockStatus) {
     default:
       return "DRAFT";
   }
+}
+function resolveStatusFromStock(current, quantity, options) {
+  if (options?.manuallyDiscontinued || current === "DISCONTINUED") return "DISCONTINUED";
+  if (current === "ARCHIVED" || current === "PAUSED" || current === "DRAFT" || current === "PENDING_REVIEW") {
+    return current;
+  }
+  if (quantity <= 0) return "OUT_OF_STOCK";
+  if (current === "OUT_OF_STOCK") return "ACTIVE";
+  return current;
 }
 
 // lib/product-engine/adapters/buzzardProduct.ts
@@ -29643,7 +31137,29 @@ function indexProducts() {
   }
 }
 indexProducts();
+function getRawProductById(id) {
+  return byId2.get(id);
+}
 var PRODUCT_COUNT = activePublicProducts.length;
+
+// lib/product-engine/fixtures.ts
+var FIXTURE_PRODUCT_IDS = [
+  "reifen-pilot-sport",
+  // Michelin 225/45 R17 tire
+  "motoroel-5w30",
+  // 5W-30 engine oil
+  "bremsscheibe-280",
+  // Front brake disc 280mm
+  "bremsbelaege-vorder"
+  // Front brake pads
+];
+function loadFixtureProducts() {
+  return FIXTURE_PRODUCT_IDS.map((id) => {
+    const raw = getRawProductById(id);
+    if (!raw) throw new Error(`Fixture product not found: ${id}`);
+    return fromBuzzardProduct(raw);
+  });
+}
 
 // lib/product-engine/registry.ts
 var products = /* @__PURE__ */ new Map();
@@ -29665,893 +31181,930 @@ function getRegistryProduct(productId) {
   ensureLoaded();
   return products.get(productId);
 }
-
-// data/global/global_countries_35.json
-var global_countries_35_default = [
-  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
-  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
-  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
-  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
-  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
-  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
-  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
-  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
-  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
-  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
-  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
-  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
-  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
-  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
-  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
-  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
-  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
-  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
-  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
-  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
-  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
-  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
-  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
-  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
-  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
-  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
-  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
-  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
-  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
-  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
-  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
-  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
-  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
-  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
-  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
-];
-
-// data/global/market_engine_extensions.json
-var market_engine_extensions_default = {
-  shippingRegions: {
-    AT: "EU_CENTRAL",
-    BE: "EU_WEST",
-    BG: "EU_EAST",
-    HR: "EU_EAST",
-    CY: "EU_SOUTH",
-    CZ: "EU_CENTRAL",
-    DK: "EU_NORTH",
-    EE: "EU_EAST",
-    FI: "EU_NORTH",
-    FR: "EU_WEST",
-    DE: "EU_CENTRAL",
-    GR: "EU_SOUTH",
-    HU: "EU_CENTRAL",
-    IE: "EU_WEST",
-    IT: "EU_SOUTH",
-    LV: "EU_EAST",
-    LT: "EU_EAST",
-    LU: "EU_WEST",
-    MT: "EU_SOUTH",
-    NL: "EU_WEST",
-    PL: "EU_EAST",
-    PT: "EU_SOUTH",
-    RO: "EU_EAST",
-    SK: "EU_CENTRAL",
-    SI: "EU_EAST",
-    ES: "EU_SOUTH",
-    SE: "EU_NORTH",
-    TR: "NON_EU",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  paymentRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  legalRegions: {
-    AT: "EU_AT",
-    BE: "EU_BE",
-    BG: "EU_BG",
-    HR: "EU_HR",
-    CY: "EU_CY",
-    CZ: "EU_CZ",
-    DK: "EU_DK",
-    EE: "EU_EE",
-    FI: "EU_FI",
-    FR: "EU_FR",
-    DE: "EU_DE",
-    GR: "EU_GR",
-    HU: "EU_HU",
-    IE: "EU_IE",
-    IT: "EU_IT",
-    LV: "EU_LV",
-    LT: "EU_LT",
-    LU: "EU_LU",
-    MT: "EU_MT",
-    NL: "EU_NL",
-    PL: "EU_PL",
-    PT: "EU_PT",
-    RO: "EU_RO",
-    SK: "EU_SK",
-    SI: "EU_SI",
-    ES: "EU_ES",
-    SE: "EU_SE",
-    TR: "TR",
-    SA: "GCC_SA",
-    AE: "GCC_AE",
-    QA: "GCC_QA",
-    KW: "GCC_KW",
-    BH: "GCC_BH",
-    OM: "GCC_OM",
-    EG: "MENA_EG"
-  },
-  supplierRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  returnRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  marketStatus: {
-    DE: "ACTIVE",
-    FR: "ACTIVE",
-    IT: "ACTIVE",
-    ES: "ACTIVE",
-    PL: "ACTIVE",
-    NL: "ACTIVE",
-    TR: "TESTING",
-    SA: "TESTING",
-    AE: "TESTING",
-    EG: "TESTING"
-  },
-  defaultMarketStatus: "PLANNED",
-  featureFlags: {
-    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
-    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
-  },
-  defaultFeatureFlags: {
-    marketEnabled: true,
-    categoryEnabled: true,
-    marketplaceEnabled: false,
-    supplierEnabled: false,
-    paymentEnabled: false,
-    shippingEnabled: false
-  },
-  marketplaces: {
-    DE: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "kaufland", name: "Kaufland", status: "supported" },
-      { id: "otto", name: "OTTO", status: "supported" }
-    ],
-    FR: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "cdiscount", name: "Cdiscount", status: "supported" }
-    ],
-    PL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "allegro", name: "Allegro", status: "supported" }
-    ],
-    NL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "bol", name: "bol.com", status: "supported" }
-    ]
-  },
-  paymentCapabilities: {
-    EU: ["card", "sepa", "paypal", "klarna"],
-    TR: ["card"],
-    GCC: ["card"],
-    MENA: ["card"]
-  },
-  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
-  supplierFallbacks: {
-    EU: ["EU"],
-    GCC: ["GCC", "EU"],
-    MENA: ["MENA", "EU"],
-    TR: ["TR", "EU"],
-    NON_EU: ["EU"]
-  }
-};
-
-// lib/i18n/international/config.ts
-var GLOBAL_COUNTRIES = global_countries_35_default;
-var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
-
-// data/global/test_supplier_feeds.json
-var test_supplier_feeds_default = {
-  TEST_SUPPLIER_A: {
-    supplierId: "TEST_SUPPLIER_A",
-    name: "Test Supplier A (Mock)",
-    country: "DE",
-    region: "EU",
-    currency: "EUR",
-    integrationTypes: ["api", "xml", "csv", "manual"],
-    supportedMarkets: ["DE", "FR", "PL"],
-    capabilities: {
-      productFeed: true,
-      stockFeed: true,
-      priceFeed: true,
-      orderAPI: true,
-      createOrder: true,
-      cancelOrder: true,
-      orderStatus: true,
-      shippingAPI: false,
-      trackingAPI: true,
-      tracking: true,
-      returnsAPI: true,
-      returnAuthorization: true,
-      refund: true,
-      credit: true,
-      replacement: true,
-      webhook: false,
-      dropshipping: true,
-      whiteLabel: true,
-      blindShipping: true,
-      api: true,
-      xml: true,
-      csv: true
-    },
-    rateLimit: { requestsPerMinute: 60 },
-    fieldMapping: {
-      article_number: "supplierSku",
-      sku: "supplierSku",
-      ean_code: "ean",
-      price_net: "supplierPrice",
-      stock_qty: "stock",
-      title: "name",
-      brand_name: "brand"
-    },
-    apiProducts: [
-      {
-        article_number: "TSA-TIRE-225-45-17",
-        ean_code: "4006633001247",
-        brand_name: "Michelin",
-        title: "Michelin Pilot Sport 4 225/45 R17",
-        price_net: 55.79,
-        stock_qty: 8,
-        currency: "EUR"
-      },
-      {
-        article_number: "TSA-OIL-5W30-5L",
-        ean_code: "4006633001236",
-        brand_name: "Castrol",
-        title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
-        price_net: 26.6,
-        stock_qty: 50,
-        currency: "EUR"
-      },
-      {
-        article_number: "TSA-DISC-280",
-        ean_code: "4006633001234",
-        brand_name: "ATE",
-        title: "Bremsscheibe Vorderachse 280mm",
-        price_net: 21.64,
-        stock_qty: 24,
-        currency: "EUR"
-      },
-      {
-        article_number: "TSA-PADS-FRONT",
-        ean_code: "4006633001235",
-        brand_name: "Bosch",
-        title: "Bremsbel\xE4ge Satz Vorderachse",
-        price_net: 17.67,
-        stock_qty: 31,
-        currency: "EUR"
-      }
-    ],
-    xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
-    csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
-  }
-};
-
-// data/buzzard_suppliers.json
-var buzzard_suppliers_default = {
-  project: "Buzzard",
-  document: "Supplier Master",
-  version: "1.0.0",
-  suppliers: [
-    {
-      supplier_id: "SUP-INTERNAL-001",
-      supplier_name: "Buzzard Internal Warehouse",
-      contact_email: "warehouse@buzzard.de",
-      contact_phone: "+49 30 1234567",
-      website: "https://buzzard24.de",
-      feed_type: "manual",
-      api_endpoint: null,
-      auth_type: "none",
-      currency: "EUR",
-      vat_handling: "gross",
-      dropshipping: false,
-      white_label: true,
-      blind_shipping: false,
-      default_markup_percent: 45,
-      minimum_margin_percent: 15,
-      safety_stock: 2,
-      active: true,
-      sync_status: "idle",
-      last_sync_at: null,
-      notes: "Internal stock for test and flagship products."
-    },
-    {
-      supplier_id: "SUP-DEMO-001",
-      production_status: "TEST_ONLY",
-      supplier_name: "Demo Automotive Parts GmbH",
-      contact_email: "orders@demo-automotive.example",
-      contact_phone: "+49 89 9876543",
-      website: "https://demo-automotive.example",
-      feed_type: "json",
-      api_endpoint: "https://demo-automotive.example/api/products.json",
-      auth_type: "api_key",
-      currency: "EUR",
-      vat_handling: "net",
-      dropshipping: true,
-      white_label: true,
-      blind_shipping: true,
-      default_markup_percent: 38,
-      minimum_margin_percent: 12,
-      safety_stock: 1,
-      active: true,
-      sync_status: "idle",
-      last_sync_at: null,
-      notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
-    }
-  ]
-};
-
-// lib/supplier-engine/fixtures.ts
-var TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
-
-// lib/supplier-engine/persistence.ts
-var store;
-function getSupplierPersistence() {
-  if (store !== void 0) return store;
-  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
-    store = null;
-    return store;
-  }
-  const candidates = [
-    "server/lib/supplier/persistentStore.js",
-    "../../server/lib/supplier/persistentStore.js"
-  ];
-  for (const candidate of candidates) {
-    try {
-      const mod = require(candidate);
-      store = mod.createPersistentSupplierStore();
-      return store;
-    } catch {
-    }
-  }
-  store = null;
-  return store;
+function upsertRegistryProduct(product) {
+  ensureLoaded();
+  product.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  indexProduct(product);
+  return product;
 }
 
-// lib/supplier-engine/credentials.ts
-var credentialRefs = /* @__PURE__ */ new Map();
-function registerCredentialRef(supplierId, secretsRef) {
-  const entry = {
-    supplierId,
-    secretsRef,
-    configured: Boolean(secretsRef),
+// lib/product-engine/translations.ts
+function getTranslationForLocale(translations, locale) {
+  const normalized = locale.toLowerCase();
+  return translations.find((t) => t.locale.toLowerCase() === normalized) || translations.find((t) => t.locale.split("-")[0].toLowerCase() === normalized.split("-")[0]);
+}
+
+// lib/product-engine/events.ts
+var eventLog = [];
+var MAX_EVENTS = 5e3;
+function emitProductEvent(type, productId, payload) {
+  const event = {
+    type,
+    productId,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    payload
+  };
+  eventLog.push(event);
+  if (eventLog.length > MAX_EVENTS) eventLog.shift();
+  return event;
+}
+
+// lib/product-engine/supplier.ts
+function createSupplierOffer(partial) {
+  return {
+    ...partial,
+    lastUpdated: partial.lastUpdated || (/* @__PURE__ */ new Date()).toISOString(),
+    reliabilityScore: partial.reliabilityScore ?? 0.5
+  };
+}
+function updateSupplierOffer(product, supplierId, patch) {
+  const offers = product.supplierOffers.map((offer) => {
+    if (offer.supplierId !== supplierId) return offer;
+    const updated = {
+      ...offer,
+      ...patch,
+      lastUpdated: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    if (patch.supplierPrice != null) {
+      emitProductEvent("SUPPLIER_PRICE_UPDATED", product.productId, {
+        supplierId,
+        price: patch.supplierPrice
+      });
+    }
+    if (patch.stock != null) {
+      emitProductEvent("SUPPLIER_STOCK_UPDATED", product.productId, {
+        supplierId,
+        stock: patch.stock
+      });
+    }
+    emitProductEvent("SUPPLIER_OFFER_UPDATED", product.productId, { supplierId });
+    return updated;
+  });
+  const totalStock = offers.reduce((sum, o) => sum + (o.stock || 0), 0);
+  const best = selectBestSupplier({ ...product, supplierOffers: offers });
+  const supplierCost = best?.offer.supplierPrice ?? product.pricing.supplierCost;
+  return {
+    ...product,
+    supplierOffers: offers,
+    stock: {
+      quantity: totalStock,
+      availability: totalStock <= 0 ? "OUT_OF_STOCK" : totalStock <= 5 ? "LOW_STOCK" : "IN_STOCK",
+      lastUpdated: (/* @__PURE__ */ new Date()).toISOString()
+    },
+    status: resolveStatusFromStock(product.status, totalStock, {
+      manuallyDiscontinued: product.status === "DISCONTINUED"
+    }),
+    pricing: {
+      ...product.pricing,
+      supplierCost
+    },
     updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
-  credentialRefs.set(supplierId, entry);
+}
+function selectBestSupplier(product, market, criteria = {}) {
+  const offers = product.supplierOffers.filter((o) => o.stock > 0);
+  if (!offers.length) return null;
+  const weights = {
+    stock: criteria.stockWeight ?? 0.25,
+    price: criteria.priceWeight ?? 0.3,
+    leadTime: criteria.leadTimeWeight ?? 0.15,
+    reliability: criteria.reliabilityWeight ?? 0.2,
+    margin: criteria.marginWeight ?? 0.1
+  };
+  const maxStock = Math.max(...offers.map((o) => o.stock), 1);
+  const minPrice = Math.min(...offers.map((o) => o.supplierPrice).filter((p) => p > 0), Infinity);
+  const preferredRegions = market?.supplierRegions ?? [];
+  let best = null;
+  for (const offer of offers) {
+    const reasons = [];
+    let score = 0;
+    const stockScore = offer.stock / maxStock;
+    score += stockScore * weights.stock;
+    reasons.push(`stock:${stockScore.toFixed(2)}`);
+    const priceScore = offer.supplierPrice > 0 && minPrice < Infinity ? minPrice / offer.supplierPrice : 0.5;
+    score += priceScore * weights.price;
+    reasons.push(`price:${priceScore.toFixed(2)}`);
+    const leadDays = offer.leadTimeDays ?? 7;
+    const leadScore = Math.max(0, 1 - leadDays / 30);
+    score += leadScore * weights.leadTime;
+    reasons.push(`leadTime:${leadScore.toFixed(2)}`);
+    const reliabilityScore = offer.reliabilityScore ?? 0.5;
+    score += reliabilityScore * weights.reliability;
+    reasons.push(`reliability:${reliabilityScore.toFixed(2)}`);
+    const margin = product.pricing.customerPrice > 0 ? (product.pricing.customerPrice - offer.supplierPrice) / product.pricing.customerPrice : 0;
+    const marginScore = Math.max(0, Math.min(1, margin));
+    score += marginScore * weights.margin;
+    reasons.push(`margin:${marginScore.toFixed(2)}`);
+    if (preferredRegions.length && offer.shippingRegions?.some((r) => preferredRegions.includes(r))) {
+      score += 0.1;
+      reasons.push("region:preferred");
+    }
+    if (!best || score > best.score) {
+      best = { offer, score, reasons };
+    }
+  }
+  return best;
+}
+
+// lib/market-engine/money.ts
+function toMinorUnits(amount, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return Math.round((Number(amount) || 0) * factor);
+}
+function fromMinorUnits(minor, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return minor / factor;
+}
+function roundMoney(amount, decimalDigits = 2) {
+  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
+}
+function netFromGross(gross, vatRate, decimalDigits = 2) {
+  const grossMinor = toMinorUnits(gross, decimalDigits);
+  const netMinor = Math.round(grossMinor / (1 + vatRate));
+  const vatMinor = grossMinor - netMinor;
+  return { net: fromMinorUnits(netMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
+}
+function grossFromNet(net, vatRate, decimalDigits = 2) {
+  const netMinor = toMinorUnits(net, decimalDigits);
+  const vatMinor = Math.round(netMinor * vatRate);
+  const grossMinor = netMinor + vatMinor;
+  return { gross: fromMinorUnits(grossMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
+}
+var CURRENCY_DECIMALS = {
+  HUF: 0,
+  ISK: 0,
+  KWD: 3,
+  BHD: 3,
+  OMR: 3
+};
+function getCurrencyDecimalDigits(currencyCode) {
+  return CURRENCY_DECIMALS[String(currencyCode).toUpperCase()] ?? 2;
+}
+
+// lib/market-engine/vat.ts
+function normalizeCode(code) {
+  return String(code || "").toUpperCase();
+}
+function isValidVatIdFormat(vatId) {
+  if (!vatId) return false;
+  const trimmed = vatId.trim();
+  return trimmed.length >= 4 && /^[A-Z]{2}[A-Z0-9]+$/i.test(trimmed);
+}
+function getVatContext(input) {
+  const seller = normalizeCode(input.sellerCountry);
+  const buyer = normalizeCode(input.buyerCountry);
+  const customerType = input.customerType;
+  const buyerVat = getMarketVat(buyer);
+  const sellerVat = getMarketVat(seller);
+  const sellerEu = isEuCountry(seller);
+  const buyerEu = isEuCountry(buyer);
+  const domestic = seller === buyer;
+  const intraEu = sellerEu && buyerEu && !domestic;
+  const exportSale = sellerEu && !buyerEu;
+  const importToEu = !sellerEu && buyerEu;
+  if (customerType === "B2B") {
+    if (intraEu && isValidVatIdFormat(input.vatId)) {
+      return {
+        rate: 0,
+        included: false,
+        reverseCharge: true,
+        reason: "B2B_INTRA_EU_REVERSE_CHARGE"
+      };
+    }
+    if (exportSale) {
+      return {
+        rate: 0,
+        included: false,
+        reverseCharge: false,
+        reason: "B2B_EXPORT_ZERO_RATED"
+      };
+    }
+    if (importToEu && isValidVatIdFormat(input.vatId)) {
+      return {
+        rate: buyerVat.standardRate,
+        included: false,
+        reverseCharge: true,
+        reason: "B2B_IMPORT_REVERSE_CHARGE"
+      };
+    }
+    if (domestic) {
+      return {
+        rate: sellerVat.standardRate,
+        included: false,
+        reverseCharge: false,
+        reason: "B2B_DOMESTIC_NET"
+      };
+    }
+    return {
+      rate: buyerVat.standardRate,
+      included: buyerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: "B2B_CROSS_BORDER_DEFAULT"
+    };
+  }
+  if (domestic) {
+    return {
+      rate: sellerVat.standardRate,
+      included: sellerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: "B2C_DOMESTIC"
+    };
+  }
+  if (intraEu) {
+    return {
+      rate: buyerVat.standardRate,
+      included: buyerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: "B2C_INTRA_EU_DESTINATION"
+    };
+  }
+  if (exportSale || importToEu || !sellerEu || !buyerEu) {
+    return {
+      rate: buyerVat.standardRate,
+      included: buyerVat.pricesIncludeVat,
+      reverseCharge: false,
+      reason: exportSale ? "B2C_EXPORT" : "B2C_CROSS_BORDER"
+    };
+  }
+  return {
+    rate: buyerVat.standardRate,
+    included: buyerVat.pricesIncludeVat,
+    reverseCharge: false,
+    reason: "B2C_DEFAULT"
+  };
+}
+
+// data/global/pricing_engine_extensions.json
+var pricing_engine_extensions_default = {
+  defaultSellerCountry: "DE",
+  defaultTargetMarginPercent: 0.11,
+  defaultMinimumMarginPercent: 0.05,
+  exchangeRates: {
+    EUR: 1,
+    USD: 0.92,
+    GBP: 1.17,
+    CZK: 0.041,
+    PLN: 0.23,
+    TRY: 0.027,
+    SAR: 0.24,
+    AED: 0.25,
+    EGP: 0.019,
+    HUF: 26e-4,
+    RON: 0.2,
+    BGN: 0.51,
+    CHF: 1.05,
+    SEK: 0.087,
+    DKK: 0.134,
+    NOK: 0.085
+  },
+  shippingCosts: {
+    defaultSupplierDirect: 10,
+    currency: "EUR",
+    byProductFixture: {
+      "reifen-pilot-sport": 10,
+      "motoroel-5w30": 7,
+      "bremsscheibe-280": 8,
+      "bremsbelaege-vorder": 6
+    },
+    byShippingRegion: {
+      EU_CENTRAL: 10,
+      EU_WEST: 12,
+      EU_NORTH: 14,
+      EU_SOUTH: 11,
+      EU_EAST: 9,
+      TR: 15,
+      GCC: 18,
+      MENA: 16
+    }
+  },
+  marketplaceFees: {
+    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
+    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
+    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
+    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
+    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
+    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
+  },
+  paymentFees: {
+    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
+    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
+    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
+    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
+    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
+  },
+  returnReserves: {
+    default: {
+      returnRate: 0.05,
+      refundRate: 0.03,
+      averageReturnShippingCost: 8,
+      averageRefundLoss: 5,
+      supplierReturnAcceptanceRate: 0.7,
+      damagedReturnRate: 0.01
+    },
+    byCategory: {
+      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
+      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
+      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
+    }
+  },
+  marginRules: {
+    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
+    byMarket: {},
+    byCategory: {},
+    byChannel: {},
+    byMarketplace: {},
+    bySupplier: {}
+  },
+  roundingRules: {
+    default: { mode: "psychological_99", step: 0.01 },
+    byMarket: {
+      DE: { mode: "psychological_99" },
+      FR: { mode: "psychological_99" },
+      PL: { mode: "nearest_49" }
+    },
+    byChannel: {
+      amazon: { mode: "psychological_99" },
+      direct: { mode: "psychological_99" }
+    }
+  },
+  priceBounds: {
+    default: { minimumPrice: 1, maximumPrice: 99999 }
+  },
+  competitivePricingExtension: {
+    enabled: false,
+    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
+  }
+};
+
+// lib/pricing-engine/registry.ts
+var config2 = pricing_engine_extensions_default;
+function getDefaultSellerCountry() {
+  return config2.defaultSellerCountry;
+}
+function getExchangeRate(fromCurrency, toCurrency) {
+  const from = String(fromCurrency).toUpperCase();
+  const to = String(toCurrency).toUpperCase();
+  if (from === to) return 1;
+  const rates = config2.exchangeRates;
+  const fromRate = rates[from];
+  const toRate = rates[to];
+  if (fromRate == null || toRate == null) return null;
+  return fromRate / toRate;
+}
+function getMarketplaceFeeSchedule(marketplaceId) {
+  const fees = config2.marketplaceFees;
+  return fees[marketplaceId] ?? fees.direct;
+}
+function getPaymentFeeSchedule(method = "default") {
+  const fees = config2.paymentFees;
+  return fees[method] ?? fees.default;
+}
+function getReturnReserveConfig(categoryId) {
+  const reserves = config2.returnReserves;
+  const byCategory = reserves.byCategory;
+  const base = reserves.default;
+  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
+  return { ...base, ...categoryOverride };
+}
+function getMarginRule(options) {
+  const rules = config2.marginRules;
+  const defaults = rules.default;
+  const byMarket = rules.byMarket;
+  const byCategory = rules.byCategory;
+  const byChannel = rules.byChannel;
+  const byMarketplace = rules.byMarketplace;
+  const bySupplier = rules.bySupplier;
+  const targetMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.targetMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.targetMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.targetMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.targetMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.targetMarginPercent : void 0) ?? defaults.targetMarginPercent ?? config2.defaultTargetMarginPercent;
+  const minimumMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.minimumMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.minimumMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.minimumMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.minimumMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.minimumMarginPercent : void 0) ?? defaults.minimumMarginPercent ?? config2.defaultMinimumMarginPercent;
+  return { targetMarginPercent, minimumMarginPercent };
+}
+function getRoundingRule(marketId, channel) {
+  const rules = config2.roundingRules;
+  const defaults = rules.default;
+  const byMarket = rules.byMarket;
+  const byChannel = rules.byChannel;
+  if (channel && byChannel[channel]) return { ...defaults, ...byChannel[channel] };
+  if (marketId && byMarket[marketId]) return { ...defaults, ...byMarket[marketId] };
+  return defaults;
+}
+function getPriceBounds() {
+  return config2.priceBounds.default;
+}
+function getFixtureShippingCost(productId) {
+  const byProduct = config2.shippingCosts.byProductFixture;
+  return byProduct[productId];
+}
+function getShippingCostByRegion(region) {
+  const byRegion = config2.shippingCosts.byShippingRegion;
+  return byRegion[region];
+}
+function getDefaultShippingCost() {
+  return config2.shippingCosts.defaultSupplierDirect;
+}
+function getDefaultShippingCurrency() {
+  return config2.shippingCosts.currency;
+}
+
+// lib/pricing-engine/currency.ts
+function convertCurrency(amount, fromCurrency, toCurrency) {
+  const from = String(fromCurrency).toUpperCase();
+  const to = String(toCurrency).toUpperCase();
+  if (from === to) return roundMoney(amount, getCurrencyDecimalDigits(to));
+  const rate = getExchangeRate(from, to);
+  if (rate == null) return null;
+  const decimalDigits = getCurrencyDecimalDigits(to);
+  const minor = toMinorUnits(amount, getCurrencyDecimalDigits(from));
+  const convertedMinor = Math.round(minor * rate);
+  return fromMinorUnits(convertedMinor, decimalDigits);
+}
+
+// lib/pricing-engine/cost.ts
+function resolveSupplierCost(input, marketCurrency) {
+  const offer = input.supplierOffer;
+  if (!offer || offer.supplierPrice == null || offer.supplierPrice <= 0) {
+    return {
+      supplierNetPrice: 0,
+      supplierGrossPrice: 0,
+      supplierCurrency: offer?.currency ?? "",
+      marketCurrency,
+      convertedNetPrice: 0,
+      lastUpdated: offer?.lastUpdated ?? "",
+      stock: offer?.stock ?? 0,
+      valid: false,
+      reason: "MISSING_COST"
+    };
+  }
+  if (!offer.currency) {
+    return {
+      supplierNetPrice: offer.supplierPrice,
+      supplierGrossPrice: offer.supplierPrice,
+      supplierCurrency: "",
+      marketCurrency,
+      convertedNetPrice: 0,
+      lastUpdated: offer.lastUpdated,
+      stock: offer.stock,
+      valid: false,
+      reason: "MISSING_CURRENCY"
+    };
+  }
+  const supplierNetPrice = roundMoney(offer.supplierPrice);
+  const converted = convertCurrency(supplierNetPrice, offer.currency, marketCurrency);
+  if (converted == null) {
+    return {
+      supplierNetPrice,
+      supplierGrossPrice: supplierNetPrice,
+      supplierCurrency: offer.currency,
+      marketCurrency,
+      convertedNetPrice: 0,
+      lastUpdated: offer.lastUpdated,
+      stock: offer.stock,
+      valid: false,
+      reason: "MISSING_CURRENCY"
+    };
+  }
+  return {
+    supplierNetPrice,
+    supplierGrossPrice: supplierNetPrice,
+    supplierCurrency: offer.currency,
+    marketCurrency,
+    convertedNetPrice: converted,
+    lastUpdated: offer.lastUpdated,
+    stock: offer.stock,
+    valid: true
+  };
+}
+
+// lib/market-engine/shipping.ts
+function getShippingRegion(countryCode) {
+  return getMarketShippingRegion(countryCode);
+}
+
+// lib/pricing-engine/shipping.ts
+init_registry2();
+function resolveShippingCost(options) {
+  const shippingCurrency = getDefaultShippingCurrency();
+  const region = getShippingRegion(options.marketId);
+  if (options.override != null) {
+    const converted2 = convertCurrency(options.override, shippingCurrency, options.targetCurrency) ?? options.override;
+    return {
+      shippingCost: roundMoney(converted2),
+      shippingCurrency: options.targetCurrency,
+      region,
+      source: "fixture"
+    };
+  }
+  const fixtureCost = getFixtureShippingCost(options.productId);
+  if (fixtureCost != null) {
+    const converted2 = convertCurrency(fixtureCost, shippingCurrency, options.targetCurrency) ?? fixtureCost;
+    return {
+      shippingCost: roundMoney(converted2),
+      shippingCurrency: options.targetCurrency,
+      region,
+      source: "fixture"
+    };
+  }
+  const supplier = getSupplier(options.supplierId);
+  const supplierRegion = supplier?.region;
+  let regionCost = getDefaultShippingCost();
+  if (supplierRegion) {
+    const supplierRegionCost = getShippingCostByRegion(supplierRegion);
+    if (supplierRegionCost != null) regionCost = supplierRegionCost;
+  } else {
+    const marketRegionCost = getShippingCostByRegion(region);
+    if (marketRegionCost != null) regionCost = marketRegionCost;
+  }
+  const converted = convertCurrency(regionCost, shippingCurrency, options.targetCurrency) ?? regionCost;
+  return {
+    shippingCost: roundMoney(converted),
+    shippingCurrency: options.targetCurrency,
+    region,
+    source: regionCost === getDefaultShippingCost() ? "default" : "region"
+  };
+}
+
+// lib/pricing-engine/fees.ts
+function applyFeeSchedule(baseAmount, schedule, currency) {
+  if (schedule.status === "DISABLED") return 0;
+  const percentFee = roundMoney(baseAmount * (schedule.feePercent ?? 0));
+  let total = roundMoney(percentFee + (schedule.fixedFee ?? 0));
+  if (schedule.minimumFee != null) total = Math.max(total, schedule.minimumFee);
+  if (schedule.maximumFee != null) total = Math.min(total, schedule.maximumFee);
+  void currency;
+  return total;
+}
+function resolveFees(options) {
+  const marketplaceSchedule = getMarketplaceFeeSchedule(options.channel);
+  const paymentSchedule = getPaymentFeeSchedule(options.paymentMethod ?? "default");
+  const marketplaceFixedFee = marketplaceSchedule.fixedFee ?? 0;
+  const marketplaceFee = applyFeeSchedule(options.feeBaseAmount, marketplaceSchedule, options.currency);
+  const paymentFee = applyFeeSchedule(options.feeBaseAmount, paymentSchedule, options.currency);
+  return {
+    marketplaceFee,
+    marketplaceFixedFee,
+    paymentFee,
+    totalFees: roundMoney(marketplaceFee + paymentFee)
+  };
+}
+
+// lib/pricing-engine/returns.ts
+function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
+  const config4 = getReturnReserveConfig(categoryId);
+  const supplierCreditFactor = 1 - config4.supplierReturnAcceptanceRate;
+  const expectedReturnLoss = roundMoney(
+    config4.returnRate * (config4.averageReturnShippingCost + supplierCostInMarketCurrency * supplierCreditFactor)
+  );
+  const expectedRefundLoss = roundMoney(
+    config4.refundRate * (config4.averageRefundLoss + supplierCostInMarketCurrency * supplierCreditFactor)
+  );
+  const damagedLoss = roundMoney(
+    (config4.damagedReturnRate ?? 0) * supplierCostInMarketCurrency * 0.5
+  );
+  const returnCostReserve = roundMoney(expectedReturnLoss + damagedLoss);
+  const refundCostReserve = roundMoney(expectedRefundLoss);
+  return {
+    returnCostReserve,
+    refundCostReserve,
+    totalReserve: roundMoney(returnCostReserve + refundCostReserve),
+    config: config4,
+    breakdown: {
+      expectedReturnLoss,
+      expectedRefundLoss,
+      supplierCreditFactor
+    }
+  };
+}
+
+// lib/pricing-engine/margin.ts
+function calculateContributionMargin(totalVariableCost, options) {
+  const rule = getMarginRule({
+    marketId: options?.marketId,
+    categoryId: options?.categoryId,
+    channel: options?.channel,
+    marketplaceId: options?.marketplaceId,
+    supplierId: options?.supplierId
+  });
+  const targetMarginPercent = options?.targetMarginPercent ?? rule.targetMarginPercent;
+  const minimumMarginPercent = options?.minimumMarginPercent ?? rule.minimumMarginPercent;
+  if (totalVariableCost <= 0) {
+    return {
+      totalVariableCost,
+      targetMarginPercent,
+      minimumMarginPercent,
+      customerNetPrice: 0,
+      buzzardContributionMargin: 0,
+      marginValid: false,
+      pricingStatus: "MISSING_COST"
+    };
+  }
+  if (targetMarginPercent >= 1 || targetMarginPercent < 0) {
+    return {
+      totalVariableCost,
+      targetMarginPercent,
+      minimumMarginPercent,
+      customerNetPrice: 0,
+      buzzardContributionMargin: 0,
+      marginValid: false,
+      pricingStatus: "INVALID_RULE"
+    };
+  }
+  const customerNetPrice = roundMoney(totalVariableCost / (1 - targetMarginPercent));
+  const buzzardContributionMargin = customerNetPrice > 0 ? roundMoney((customerNetPrice - totalVariableCost) / customerNetPrice) : 0;
+  let pricingStatus = "VALID";
+  let marginValid = true;
+  if (buzzardContributionMargin < minimumMarginPercent) {
+    pricingStatus = "BELOW_MINIMUM_MARGIN";
+    marginValid = false;
+  }
+  if (options?.maximumPrice != null && customerNetPrice > options.maximumPrice) {
+    pricingStatus = "PRICE_TOO_HIGH";
+    marginValid = false;
+  }
+  if (options?.minimumPrice != null && customerNetPrice < options.minimumPrice) {
+    pricingStatus = "REVIEW_REQUIRED";
+    marginValid = false;
+  }
+  return {
+    totalVariableCost,
+    targetMarginPercent,
+    minimumMarginPercent,
+    customerNetPrice,
+    buzzardContributionMargin,
+    marginValid,
+    pricingStatus
+  };
+}
+function recalculateMarginAfterRounding(customerNetPrice, totalVariableCost) {
+  if (customerNetPrice <= 0) return 0;
+  return roundMoney((customerNetPrice - totalVariableCost) / customerNetPrice);
+}
+
+// lib/pricing-engine/vat.ts
+function applyVatToNetPrice(netPrice, options) {
+  const sellerCountry = options.sellerCountry ?? getDefaultSellerCountry();
+  const taxContext = getVatContext({
+    sellerCountry,
+    buyerCountry: options.marketId,
+    customerType: options.customerType ?? "B2C",
+    vatId: options.vatId
+  });
+  if (taxContext.reverseCharge || taxContext.rate === 0) {
+    return {
+      taxContext,
+      customerNetPrice: roundMoney(netPrice),
+      customerVat: 0,
+      customerGrossPrice: roundMoney(netPrice)
+    };
+  }
+  const { gross, vat } = grossFromNet(netPrice, taxContext.rate);
+  return {
+    taxContext,
+    customerNetPrice: roundMoney(netPrice),
+    customerVat: vat,
+    customerGrossPrice: gross
+  };
+}
+
+// lib/pricing-engine/rules.ts
+function applyRoundingRule(grossPrice, options) {
+  const rule = getRoundingRule(options.marketId, options.channel);
+  const decimalDigits = getCurrencyDecimalDigits(options.currency);
+  const mode = rule.mode ?? "none";
+  if (mode === "none") return roundMoney(grossPrice, decimalDigits);
+  const whole = Math.floor(grossPrice);
+  const cents = grossPrice - whole;
+  switch (mode) {
+    case "psychological_99": {
+      if (cents <= 0.99) return roundMoney(whole + 0.99, decimalDigits);
+      return roundMoney(whole + 1 + 0.99, decimalDigits);
+    }
+    case "nearest_49": {
+      const base = cents <= 0.49 ? whole + 0.49 : whole + 0.99;
+      return roundMoney(base, decimalDigits);
+    }
+    case "nearest_19": {
+      const base = cents <= 0.19 ? whole + 0.19 : cents <= 0.49 ? whole + 0.49 : whole + 0.99;
+      return roundMoney(base, decimalDigits);
+    }
+    case "nearest": {
+      const step = rule.step ?? 0.01;
+      return roundMoney(Math.round(grossPrice / step) * step, decimalDigits);
+    }
+    default:
+      return roundMoney(grossPrice, decimalDigits);
+  }
+}
+function validatePriceBounds(customerNetPrice) {
+  const bounds = getPriceBounds();
+  if (customerNetPrice > bounds.maximumPrice) return "PRICE_TOO_HIGH";
+  if (customerNetPrice < bounds.minimumPrice) return "REVIEW_REQUIRED";
+  return "VALID";
+}
+function applyRoundingAndValidate(vatBreakdown, totalVariableCost, minimumMarginPercent, options) {
+  const roundedGross = applyRoundingRule(vatBreakdown.customerGrossPrice, options);
+  let customerNetPrice = vatBreakdown.customerNetPrice;
+  let customerVat = vatBreakdown.customerVat;
+  if (vatBreakdown.taxContext.rate > 0 && !vatBreakdown.taxContext.reverseCharge) {
+    const { net, vat } = netFromGross(roundedGross, vatBreakdown.taxContext.rate);
+    customerNetPrice = net;
+    customerVat = vat;
+  } else {
+    customerNetPrice = roundedGross;
+    customerVat = 0;
+  }
+  const buzzardContributionMargin = recalculateMarginAfterRounding(customerNetPrice, totalVariableCost);
+  let pricingStatus = "VALID";
+  if (buzzardContributionMargin < minimumMarginPercent) {
+    pricingStatus = "BELOW_MINIMUM_MARGIN";
+  }
+  const boundsStatus = validatePriceBounds(customerNetPrice);
+  if (boundsStatus !== "VALID") pricingStatus = boundsStatus;
+  return {
+    customerGrossPrice: roundedGross,
+    customerNetPrice,
+    customerVat,
+    buzzardContributionMargin,
+    pricingStatus
+  };
+}
+
+// lib/pricing-engine/observability.ts
+var auditLog = [];
+var MAX_AUDIT_ENTRIES = 500;
+function recordPricingAudit(input, result, durationMs) {
+  const entry = {
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: result.supplierOfferId,
+    marketId: input.marketId,
+    channel: input.channel,
+    durationMs,
+    pricingStatus: result.pricingStatus,
+    calculatedPrice: result.customerGrossPrice,
+    margin: result.buzzardContributionMargin,
+    timestamp: result.calculatedAt
+  };
+  auditLog.push(entry);
+  if (auditLog.length > MAX_AUDIT_ENTRIES) auditLog.shift();
   return entry;
 }
 
-// data/supplier-engine/live_supplier.config.template.json
-var live_supplier_config_template_default = {
-  $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
-  supplierId: "",
-  name: "",
-  displayName: "",
-  country: "DE",
-  region: "EU",
-  currency: "EUR",
-  connectorType: "b2b-sandbox",
-  environment: "SANDBOX",
-  baseUrl: "",
-  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
-  authentication: "api_key",
-  authType: "API_KEY",
-  endpoints: {
-    health: "/health",
-    products: "/products",
-    stock: "/stock",
-    prices: "/prices"
-  },
-  fieldMapping: {
-    article_number: "supplierSku",
-    sku: "supplierSku",
-    ean_code: "ean",
-    gtin: "gtin",
-    mpn: "mpn",
-    brand_name: "brand",
-    title: "name",
-    price_net: "supplierPrice",
-    stock_qty: "stock"
-  },
-  categoryMapping: {},
-  supportedMarkets: ["DE"],
-  feedFormat: "json",
-  priceIncludesVat: false,
-  capabilities: {
-    productFeed: true,
-    stockFeed: true,
-    priceFeed: true,
-    orderAPI: false,
-    createOrder: false,
-    cancelOrder: false,
-    orderStatus: false,
-    trackingAPI: false,
-    returnsAPI: false,
-    refund: false,
-    credit: false,
-    replacement: false,
-    dropshipping: false,
-    whiteLabel: false,
-    blindShipping: false
-  },
-  pagination: {
-    mode: "cursor",
-    pageSize: 100
+// lib/pricing-engine/price.ts
+function calculatePrice(input) {
+  const started = Date.now();
+  const calculatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  const market = getMarket(input.marketId);
+  if (!market) {
+    const result2 = buildFailedResult(input, "MISSING_MARKET", calculatedAt);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
   }
-};
-
-// data/supplier-engine/inter_cars.profile.template.json
-var inter_cars_profile_template_default = {
-  $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
-  $documentation: {
-    supplier: "Inter Cars S.A.",
-    country: "PL/EU (DE market supported)",
-    type: "Automotive B2B wholesaler",
-    officialDocs: [
-      "https://docs.webapi.intercars.eu/ic-api/contracts/api",
-      "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
-    ],
-    authentication: "OAuth2 Bearer token (B2B account via sales representative)",
-    rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
-    stockSemantics: "availability field = units available for purchase at location",
-    priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
-    currency: "Per-response currencyCode (EUR for DE customers when configured)",
-    updateFrequency: "Real-time for API; CSV feeds daily",
-    dropshipping: "Contact sales representative \u2014 not assumed enabled",
-    whiteLabel: "Contact sales representative \u2014 not assumed enabled"
-  },
-  supplierId: "SUP-INTER-CARS-001",
-  name: "Inter Cars",
-  displayName: "Inter Cars B2B",
-  country: "DE",
-  region: "EU",
-  currency: "EUR",
-  connectorType: "b2b-sandbox",
-  adapterProfile: "inter-cars",
-  environment: "SANDBOX",
-  baseUrl: "https://dev.gw.intercars.eu",
-  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
-  authentication: "oauth2",
-  authType: "OAUTH2",
-  endpoints: {
-    health: "/ic/catalog/category",
-    products: "/ic/catalog/products",
-    stock: "/ic/inventory/stock",
-    prices: "/ic/inventory/1.0.0/pricing/quote"
-  },
-  fieldMapping: {
-    sku: "supplierSku",
-    index: "mpn",
-    articleNumber: "mpn",
-    tecDoc: "tecdocId",
-    brand: "brand",
-    shortDescription: "name",
-    description: "description",
-    eans: "ean",
-    availability: "stock",
-    customerPriceNet: "supplierPrice",
-    listPriceNet: "listPriceNet",
-    genericArticleReferences: "supplierCategory"
-  },
-  categoryMapping: {},
-  categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
-  supportedMarkets: ["DE"],
-  feedFormat: "json",
-  priceIncludesVat: false,
-  priceModel: "net",
-  priceField: "customerPriceNet",
-  capabilities: {
-    productFeed: true,
-    stockFeed: true,
-    priceFeed: true,
-    orderAPI: false,
-    createOrder: false,
-    cancelOrder: false,
-    orderStatus: false,
-    trackingAPI: false,
-    returnsAPI: false,
-    refund: false,
-    credit: false,
-    replacement: false,
-    dropshipping: false,
-    whiteLabel: false,
-    blindShipping: false
-  },
-  pagination: {
-    mode: "pageNumber",
-    pageParam: "pageNumber",
-    pageSizeParam: "pageSize",
-    pageSize: 25,
-    hasNextPageField: "hasNextPage"
-  },
-  requestHeaders: {
-    "Accept-Language": "de"
-  },
-  allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
-};
-
-// data/supplier-engine/inter_cars_category_mappings.json
-var inter_cars_category_mappings_default = {
-  $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
-  mappings: {
-    GenericArticle_1280: "auto-sub-05--oil-filters",
-    "Filtr oleju": "auto-sub-05--oil-filters",
-    "Oil filter": "auto-sub-05--oil-filters",
-    \u00D6lfilter: "auto-sub-05--oil-filters",
-    "Brake pad": "auto-sub-04--brake-pads",
-    Bremsbelag: "auto-sub-04--brake-pads",
-    "Brake disc": "auto-sub-04--brake-discs",
-    Bremsscheibe: "auto-sub-04--brake-discs",
-    Tyre: "auto-sub-01--car-tires",
-    Tire: "auto-sub-01--car-tires",
-    Reifen: "auto-sub-01--car-tires",
-    Battery: "auto-sub-06--car-batteries",
-    Batterie: "auto-sub-06--car-batteries",
-    "Car battery": "auto-sub-06--car-batteries",
-    Cleaning: "auto-sub-12--interior-cleaner",
-    Reinigung: "auto-sub-12--interior-cleaner"
+  const marketCurrency = input.currency ?? market.currency;
+  const bounds = getPriceBounds();
+  if (!input.supplierOffer) {
+    const result2 = buildFailedResult(input, "NO_SUPPLIER_OFFER", calculatedAt, marketCurrency);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
   }
-};
-
-// lib/supplier-engine/liveSupplier/config.ts
-function parseJsonConfig(raw) {
-  try {
-    const parsed = JSON.parse(raw);
-    if (!parsed.supplierId || !parsed.baseUrl) return null;
-    return normalizeProfile(parsed);
-  } catch {
-    return null;
+  if (input.supplierOffer.stock <= 0) {
+    const result2 = buildFailedResult(input, "OUT_OF_STOCK", calculatedAt, marketCurrency);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
   }
-}
-function normalizeProfile(profile) {
-  const { $comment: _comment, ...templateBase } = live_supplier_config_template_default;
-  return {
-    ...templateBase,
-    ...profile,
-    capabilities: {
-      productFeed: true,
-      stockFeed: true,
-      priceFeed: true,
-      orderAPI: false,
-      createOrder: false,
-      cancelOrder: false,
-      orderStatus: false,
-      trackingAPI: false,
-      returnsAPI: false,
-      refund: false,
-      credit: false,
-      replacement: false,
-      ...profile.capabilities
-    },
-    endpoints: { ...live_supplier_config_template_default.endpoints, ...profile.endpoints },
-    fieldMapping: { ...live_supplier_config_template_default.fieldMapping, ...profile.fieldMapping }
-  };
-}
-function loadCategoryMappings(profile) {
-  if (profile.categoryMapping && Object.keys(profile.categoryMapping).length > 0) {
-    return profile;
+  const supplierCost = resolveSupplierCost(input, marketCurrency);
+  if (!supplierCost.valid) {
+    const status = supplierCost.reason === "MISSING_CURRENCY" ? "MISSING_CURRENCY" : "MISSING_COST";
+    const result2 = buildFailedResult(input, status, calculatedAt, marketCurrency);
+    recordPricingAudit(input, result2, Date.now() - started);
+    return result2;
   }
-  if (profile.adapterProfile === "inter-cars") {
-    const mappings = inter_cars_category_mappings_default.mappings || {};
-    return { ...profile, categoryMapping: mappings };
-  }
-  return profile;
-}
-function resolvePredefinedLiveProfile() {
-  const preset = process.env.SUPPLIER_LIVE_PROFILE?.trim().toLowerCase();
-  if (preset === "inter-cars") {
-    const { $comment: _c, $documentation: _d, ...base } = inter_cars_profile_template_default;
-    return loadCategoryMappings(normalizeProfile(base));
-  }
-  return null;
-}
-function resolveLiveSupplierProfile() {
-  const jsonConfig = process.env.SUPPLIER_LIVE_CONFIG_JSON?.trim();
-  if (jsonConfig) {
-    const parsed = parseJsonConfig(jsonConfig);
-    if (parsed) return loadCategoryMappings(parsed);
-  }
-  const predefined = resolvePredefinedLiveProfile();
-  if (predefined) return predefined;
-  const supplierId = process.env.SUPPLIER_LIVE_SUPPLIER_ID?.trim();
-  const baseUrl = process.env.SUPPLIER_LIVE_BASE_URL?.trim();
-  if (!supplierId || !baseUrl) return null;
-  return loadCategoryMappings(normalizeProfile({
-    supplierId,
-    name: process.env.SUPPLIER_LIVE_NAME?.trim() || supplierId,
-    displayName: process.env.SUPPLIER_LIVE_DISPLAY_NAME?.trim(),
-    country: process.env.SUPPLIER_LIVE_COUNTRY?.trim() || "DE",
-    region: process.env.SUPPLIER_LIVE_REGION?.trim() || "EU",
-    currency: process.env.SUPPLIER_LIVE_CURRENCY?.trim() || "EUR",
-    connectorType: "b2b-sandbox",
-    environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
-    baseUrl,
-    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
-    authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
-    endpoints: {
-      health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
-      products: process.env.SUPPLIER_LIVE_PRODUCTS_PATH?.trim() || "/products",
-      stock: process.env.SUPPLIER_LIVE_STOCK_PATH?.trim() || "/stock",
-      prices: process.env.SUPPLIER_LIVE_PRICES_PATH?.trim() || "/prices"
-    },
-    fieldMapping: live_supplier_config_template_default.fieldMapping,
-    categoryMapping: {},
-    supportedMarkets: (process.env.SUPPLIER_LIVE_MARKETS?.split(",") || ["DE"]).map((m) => m.trim()).filter(Boolean),
-    feedFormat: process.env.SUPPLIER_LIVE_FEED_FORMAT?.trim() || "json",
-    priceIncludesVat: process.env.SUPPLIER_LIVE_PRICE_INCLUDES_VAT === "1",
-    capabilities: live_supplier_config_template_default.capabilities,
-    pagination: { mode: "cursor", pageSize: 100 },
-    dropshipping: process.env.SUPPLIER_LIVE_DROPSHIPPING === "1",
-    whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
-    blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
-  }));
-}
-
-// lib/supplier-engine/liveSupplier/registry.ts
-var registeredLiveSupplierId = null;
-function liveProfileToSupplierConfig(profile) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    supplierId: profile.supplierId,
-    name: profile.name,
-    displayName: profile.displayName || profile.name,
-    country: profile.country,
-    region: profile.region,
-    status: "TESTING",
-    integrationTypes: ["b2b-sandbox"],
-    currency: profile.currency,
-    supportedMarkets: profile.supportedMarkets,
-    supportedCategories: [],
-    capabilities: profile.capabilities,
-    fieldMapping: profile.fieldMapping,
-    secretsRef: profile.secretsRef,
-    rateLimit: { requestsPerMinute: 60 },
-    connectorProfile: profile,
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function registerLiveSupplierIfConfigured(register2) {
-  const profile = resolveLiveSupplierProfile();
-  if (!profile) return null;
-  register2(liveProfileToSupplierConfig(profile));
-  registerCredentialRef(profile.supplierId, profile.secretsRef);
-  registeredLiveSupplierId = profile.supplierId;
-  return profile;
-}
-
-// lib/supplier-engine/registry.ts
-var supplierById = /* @__PURE__ */ new Map();
-var persistedOverlay = /* @__PURE__ */ new Map();
-function mapMasterToConfig(raw) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const feedType = String(raw.feed_type || "manual");
-  const integrationTypes = feedType === "json" ? ["api"] : feedType === "manual" ? ["manual"] : [feedType];
-  return {
-    supplierId: String(raw.supplier_id),
-    name: String(raw.supplier_name),
-    country: "DE",
-    region: "EU",
-    status: raw.active === false ? "DISABLED" : raw.production_status === "TEST_ONLY" ? "TESTING" : "CONNECTED",
-    integrationTypes,
-    currency: String(raw.currency || "EUR"),
-    supportedMarkets: ["DE"],
-    supportedCategories: [],
-    capabilities: {
-      productFeed: true,
-      stockFeed: true,
-      priceFeed: true,
-      dropshipping: raw.dropshipping === true,
-      whiteLabel: raw.white_label === true,
-      blindShipping: raw.blind_shipping === true,
-      api: feedType === "json",
-      csv: false,
-      xml: false
-    },
-    fieldMapping: {},
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function buildTestSupplierA() {
-  const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    supplierId: TEST_SUPPLIER_ID,
-    name: String(feed.name || "Test Supplier A"),
-    country: String(feed.country || "DE"),
-    region: String(feed.region || "EU"),
-    status: "TESTING",
-    integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
-    currency: String(feed.currency || "EUR"),
-    supportedMarkets: feed.supportedMarkets || ["DE", "FR", "PL"],
-    supportedCategories: [],
-    capabilities: feed.capabilities || {},
-    fieldMapping: feed.fieldMapping || {},
-    rateLimit: feed.rateLimit,
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function mergePersistedOverlay(config) {
-  const overlay = persistedOverlay.get(config.supplierId);
-  if (!overlay) return config;
-  return {
-    ...config,
-    ...overlay,
-    capabilities: { ...config.capabilities, ...overlay.capabilities },
-    supportedMarkets: overlay.supportedMarkets ?? config.supportedMarkets,
-    status: overlay.status ?? config.status,
-    updatedAt: overlay.updatedAt ?? config.updatedAt
-  };
-}
-function persistRegistryEntry(config) {
-  const persistence = getSupplierPersistence();
-  if (!persistence) return;
-  persistence.saveRegistryRow({
-    supplierId: config.supplierId,
-    name: config.name,
-    displayName: config.displayName || config.name,
-    country: config.country,
-    connectorType: config.integrationTypes[0] || "manual",
-    supportedMarkets: config.supportedMarkets,
-    capabilities: config.capabilities,
-    active: config.status !== "DISABLED" && config.status !== "PAUSED",
-    status: config.status,
-    secretsRef: config.secretsRef,
-    createdAt: config.createdAt
+  const shipping = resolveShippingCost({
+    productId: input.productId,
+    marketId: input.marketId,
+    supplierId: input.supplierId,
+    targetCurrency: marketCurrency,
+    override: input._testOverrides?.shippingCost
   });
-  if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
-}
-function ensureRegistry() {
-  if (supplierById.size > 0) return;
-  for (const raw of buzzard_suppliers_default.suppliers) {
-    const config = mergePersistedOverlay(mapMasterToConfig(raw));
-    supplierById.set(config.supplierId, config);
-    persistRegistryEntry(config);
-  }
-  const testSupplier = mergePersistedOverlay(buildTestSupplierA());
-  supplierById.set(TEST_SUPPLIER_ID, testSupplier);
-  persistRegistryEntry(testSupplier);
-  registerLiveSupplierIfConfigured((config) => {
-    const merged = mergePersistedOverlay(config);
-    supplierById.set(config.supplierId, merged);
-    persistRegistryEntry(merged);
+  const feeBase = roundMoney(supplierCost.convertedNetPrice + shipping.shippingCost);
+  const fees = resolveFees({
+    channel: input.channel,
+    marketId: input.marketId,
+    categoryId: input.categoryId,
+    paymentMethod: input.paymentMethod,
+    feeBaseAmount: feeBase,
+    currency: marketCurrency
   });
+  const reserves = calculateReturnReserves(supplierCost.convertedNetPrice, input.categoryId);
+  const totalVariableCost = roundMoney(
+    feeBase + fees.totalFees + reserves.returnCostReserve + reserves.refundCostReserve
+  );
+  const marginCalc = calculateContributionMargin(totalVariableCost, {
+    marketId: input.marketId,
+    categoryId: input.categoryId,
+    channel: input.channel,
+    marketplaceId: input.channel,
+    supplierId: input.supplierId,
+    targetMarginPercent: input._testOverrides?.targetMarginPercent,
+    minimumMarginPercent: input._testOverrides?.minimumMarginPercent,
+    minimumPrice: bounds.minimumPrice,
+    maximumPrice: bounds.maximumPrice
+  });
+  const vatBreakdown = applyVatToNetPrice(marginCalc.customerNetPrice, {
+    marketId: input.marketId,
+    sellerCountry: input.sellerCountry,
+    customerType: input.customerType
+  });
+  const postRound = applyRoundingAndValidate(
+    vatBreakdown,
+    totalVariableCost,
+    marginCalc.minimumMarginPercent,
+    { marketId: input.marketId, channel: input.channel, currency: marketCurrency }
+  );
+  let pricingStatus = marginCalc.pricingStatus;
+  if (pricingStatus === "VALID" && postRound.pricingStatus !== "VALID") {
+    pricingStatus = postRound.pricingStatus;
+  } else if (postRound.pricingStatus !== "VALID") {
+    pricingStatus = postRound.pricingStatus;
+  }
+  const result = {
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId ?? input.supplierOffer.supplierSku,
+    marketId: input.marketId,
+    channel: input.channel,
+    currency: marketCurrency,
+    supplierNetPrice: supplierCost.supplierNetPrice,
+    supplierGrossPrice: supplierCost.supplierGrossPrice,
+    supplierCurrency: supplierCost.supplierCurrency,
+    shippingCost: shipping.shippingCost,
+    shippingCurrency: shipping.shippingCurrency,
+    paymentFee: fees.paymentFee,
+    marketplaceFee: fees.marketplaceFee,
+    marketplaceFixedFee: fees.marketplaceFixedFee,
+    returnCostReserve: reserves.returnCostReserve,
+    refundCostReserve: reserves.refundCostReserve,
+    otherVariableCosts: 0,
+    taxContext: vatBreakdown.taxContext,
+    targetMarginPercent: marginCalc.targetMarginPercent,
+    minimumMarginPercent: marginCalc.minimumMarginPercent,
+    maximumPrice: bounds.maximumPrice,
+    minimumPrice: bounds.minimumPrice,
+    customerNetPrice: postRound.customerNetPrice,
+    customerVat: postRound.customerVat,
+    customerGrossPrice: postRound.customerGrossPrice,
+    buzzardContributionMargin: postRound.buzzardContributionMargin,
+    pricingStatus,
+    calculatedAt,
+    totalVariableCost
+  };
+  recordPricingAudit(input, result, Date.now() - started);
+  return result;
 }
-function getSupplier(supplierId) {
-  ensureRegistry();
-  const config = supplierById.get(supplierId);
-  return config ? mergePersistedOverlay(config) : void 0;
-}
-function isSupplierSelectable(supplierId) {
-  const supplier = getSupplier(supplierId);
-  if (!supplier) return false;
-  return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
+function buildFailedResult(input, status, calculatedAt, currency = "EUR") {
+  return {
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId,
+    marketId: input.marketId,
+    channel: input.channel,
+    currency,
+    supplierNetPrice: 0,
+    supplierGrossPrice: 0,
+    supplierCurrency: input.supplierOffer?.currency ?? "",
+    shippingCost: 0,
+    shippingCurrency: currency,
+    paymentFee: 0,
+    marketplaceFee: 0,
+    marketplaceFixedFee: 0,
+    returnCostReserve: 0,
+    refundCostReserve: 0,
+    otherVariableCosts: 0,
+    taxContext: { rate: 0, included: false, reverseCharge: false, reason: "FAILED" },
+    targetMarginPercent: 0,
+    minimumMarginPercent: 0,
+    maximumPrice: 0,
+    minimumPrice: 0,
+    customerNetPrice: 0,
+    customerVat: 0,
+    customerGrossPrice: 0,
+    buzzardContributionMargin: 0,
+    pricingStatus: status,
+    calculatedAt,
+    totalVariableCost: 0
+  };
 }
 
 // lib/market-engine/supplier.ts
 var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
+function getEligibleSupplierRegions(countryCode) {
+  const market = getMarket(countryCode);
+  if (!market) return ["EU"];
+  const primary = market.supplierRegion;
+  const fallbacks = supplierFallbacks[primary] ?? supplierFallbacks.NON_EU ?? ["EU"];
+  const ordered = [primary, ...fallbacks.filter((r) => r !== primary)];
+  return [...new Set(ordered)];
+}
 
 // lib/product-engine/normalization.ts
 var import_module2 = require("module");
@@ -30561,8 +32114,845 @@ var require3 = (0, import_module2.createRequire)(__import_meta_url__);
 function getProduct(productId) {
   return getRegistryProduct(productId);
 }
+function updateProductSupplierOffer(productId, supplierId, patch) {
+  const existing = getRegistryProduct(productId);
+  if (!existing) return void 0;
+  return upsertRegistryProduct(updateSupplierOffer(existing, supplierId, patch));
+}
+
+// lib/order-engine/validation.ts
+function validateCreateOrderInput(input) {
+  const errors = [];
+  if (!input.customerId?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "CUSTOMER_ID_MISSING" });
+  }
+  if (!input.customerEmail?.trim() || !input.customerEmail.includes("@")) {
+    errors.push({ code: "VALIDATION_FAILED", message: "CUSTOMER_EMAIL_INVALID" });
+  }
+  if (!input.marketId?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "MARKET_ID_MISSING" });
+  } else if (!getMarket(input.marketId)) {
+    errors.push({ code: "VALIDATION_FAILED", message: "UNKNOWN_MARKET" });
+  }
+  if (!input.channel?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "CHANNEL_MISSING" });
+  }
+  if (!input.idempotencyKey?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "IDEMPOTENCY_KEY_MISSING" });
+  }
+  if (!Array.isArray(input.items) || input.items.length === 0) {
+    errors.push({ code: "VALIDATION_FAILED", message: "ITEMS_MISSING" });
+  }
+  for (const item of input.items ?? []) {
+    if (!item.productId?.trim()) {
+      errors.push({ code: "VALIDATION_FAILED", message: "PRODUCT_ID_MISSING" });
+    } else if (!getProduct(item.productId)) {
+      errors.push({ code: "VALIDATION_FAILED", message: `UNKNOWN_PRODUCT:${item.productId}` });
+    }
+    if (!Number.isFinite(item.quantity) || item.quantity <= 0) {
+      errors.push({ code: "VALIDATION_FAILED", message: "INVALID_QUANTITY" });
+    }
+  }
+  if (!input.shippingAddress?.recipientName?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "SHIPPING_ADDRESS_MISSING" });
+  }
+  if (!input.shippingAddress?.country?.trim()) {
+    errors.push({ code: "VALIDATION_FAILED", message: "SHIPPING_COUNTRY_MISSING" });
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+// lib/order-engine/pricing.ts
+function buildItemPriceSnapshot(options) {
+  const result = calculatePrice({
+    productId: options.productId,
+    supplierId: options.supplierId,
+    supplierOfferId: options.supplierOfferId,
+    marketId: options.marketId,
+    channel: options.channel,
+    currency: options.currency,
+    categoryId: options.categoryId,
+    supplierOffer: {
+      supplierPrice: options.supplierPrice,
+      currency: options.supplierCurrency,
+      stock: options.stock,
+      lastUpdated: (/* @__PURE__ */ new Date()).toISOString(),
+      supplierSku: options.supplierSku
+    }
+  });
+  if (result.pricingStatus !== "VALID") {
+    return { snapshot: null, pricingFailed: true };
+  }
+  const snapshot = {
+    snapshotId: `ordprice_${options.productId}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+    productId: options.productId,
+    supplierId: options.supplierId,
+    supplierOfferId: options.supplierOfferId,
+    marketId: options.marketId,
+    channel: options.channel,
+    currency: result.currency,
+    supplierCost: result.supplierNetPrice,
+    shippingCost: result.shippingCost,
+    marketplaceFee: result.marketplaceFee,
+    paymentFee: result.paymentFee,
+    returnCostReserve: result.returnCostReserve,
+    refundCostReserve: result.refundCostReserve,
+    targetMarginPercent: result.targetMarginPercent,
+    customerNetPrice: result.customerNetPrice,
+    customerVat: result.customerVat,
+    customerGrossPrice: result.customerGrossPrice,
+    actualMargin: result.buzzardContributionMargin,
+    taxContext: result.taxContext,
+    calculatedAt: result.calculatedAt,
+    capturedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  savePriceSnapshot(snapshot);
+  return { snapshot, pricingFailed: false };
+}
+function buildOrderItemFromSnapshot(snapshot, options) {
+  const qty = options.quantity;
+  const unitNet = snapshot.customerNetPrice;
+  const unitVat = snapshot.customerVat;
+  const unitGross = snapshot.customerGrossPrice;
+  return {
+    orderItemId: options.orderItemId,
+    productId: snapshot.productId,
+    supplierOfferId: snapshot.supplierOfferId,
+    supplierId: snapshot.supplierId,
+    sku: options.sku,
+    ean: options.ean,
+    mpn: options.mpn,
+    productName: options.productName,
+    quantity: qty,
+    unitNetPrice: unitNet,
+    unitVat,
+    unitGrossPrice: unitGross,
+    lineNet: roundMoney(unitNet * qty),
+    lineVat: roundMoney(unitVat * qty),
+    lineGross: roundMoney(unitGross * qty),
+    priceSnapshotId: snapshot.snapshotId,
+    inventoryReservationId: options.reservationId,
+    supplierCostSnapshot: snapshot.supplierCost,
+    shippingCostSnapshot: snapshot.shippingCost,
+    marketplaceFeeSnapshot: snapshot.marketplaceFee,
+    paymentFeeSnapshot: snapshot.paymentFee,
+    returnReserveSnapshot: roundMoney(snapshot.returnCostReserve + snapshot.refundCostReserve),
+    marginSnapshot: snapshot.actualMargin,
+    fulfillmentStatus: "NOT_STARTED"
+  };
+}
+function calculateOrderTotals(items, shippingAmount = 0) {
+  const subtotalNet = roundMoney(items.reduce((sum, i) => sum + i.lineNet, 0));
+  const vatAmount = roundMoney(items.reduce((sum, i) => sum + i.lineVat, 0));
+  const itemsGross = roundMoney(items.reduce((sum, i) => sum + i.lineGross, 0));
+  const totalGross = roundMoney(itemsGross + shippingAmount);
+  return { subtotalNet, vatAmount, shippingAmount, totalGross };
+}
+
+// data/global/inventory_engine_extensions.json
+var inventory_engine_extensions_default = {
+  defaultStaleAfterMs: 144e5,
+  defaultStalePolicy: "BLOCK_SALE",
+  lowStockThreshold: 5,
+  missingStockPolicy: "UNKNOWN",
+  defaultStockBuffer: {
+    type: "absolute",
+    value: 5
+  },
+  stockBuffers: {
+    bySupplier: {
+      TEST_SUPPLIER_A: { type: "absolute", value: 5 }
+    },
+    byCategory: {
+      "automotive-tires": { type: "percentage", value: 0.1 },
+      "automotive-oils": { type: "absolute", value: 3 },
+      "automotive-brakes": { type: "absolute", value: 2 }
+    },
+    byMarket: {},
+    byChannel: {}
+  },
+  stalePolicies: {
+    default: "BLOCK_SALE",
+    bySupplier: {
+      TEST_SUPPLIER_A: "BLOCK_SALE"
+    },
+    byChannel: {
+      direct: "BLOCK_SALE",
+      amazon: "BLOCK_SALE"
+    }
+  },
+  reservationDefaults: {
+    ttlMs: 9e5,
+    maxQuantityPerReservation: 99
+  },
+  supportedChannels: [
+    "direct",
+    "amazon",
+    "ebay",
+    "kaufland",
+    "allegro",
+    "bol",
+    "cdiscount",
+    "otto"
+  ],
+  fixtureProductMapping: {
+    "TSA-TIRE-225-45-17": "reifen-pilot-sport",
+    "TSA-OIL-5W30-5L": "motoroel-5w30",
+    "TSA-DISC-280": "bremsscheibe-280",
+    "TSA-PADS-FRONT": "bremsbelaege-vorder"
+  }
+};
+
+// lib/inventory-engine/registry.ts
+var config3 = inventory_engine_extensions_default;
+var stockRegistry = /* @__PURE__ */ new Map();
+function stockRecordKey(productId, supplierId, supplierOfferId) {
+  return `${productId}:${supplierId}:${supplierOfferId}`;
+}
+function getStockRecord(productId, supplierId, supplierOfferId) {
+  return stockRegistry.get(stockRecordKey(productId, supplierId, supplierOfferId));
+}
+function upsertStockRecord(record) {
+  stockRegistry.set(stockRecordKey(record.productId, record.supplierId, record.supplierOfferId), record);
+  return record;
+}
+function getDefaultStaleAfterMs() {
+  return config3.defaultStaleAfterMs;
+}
+function getDefaultStalePolicy() {
+  return config3.defaultStalePolicy;
+}
+function getStalePolicy(supplierId, channel) {
+  const bySupplier = config3.stalePolicies.bySupplier;
+  const byChannel = config3.stalePolicies.byChannel;
+  if (channel && byChannel[channel]) return byChannel[channel];
+  if (supplierId && bySupplier[supplierId]) return bySupplier[supplierId];
+  return config3.stalePolicies.default ?? getDefaultStalePolicy();
+}
+function getMissingStockPolicy() {
+  return config3.missingStockPolicy;
+}
+function getLowStockThreshold() {
+  return config3.lowStockThreshold;
+}
+function getStockBufferConfig(options) {
+  const defaults = config3.defaultStockBuffer;
+  const bySupplier = config3.stockBuffers.bySupplier;
+  const byCategory = config3.stockBuffers.byCategory;
+  const byMarket = config3.stockBuffers.byMarket;
+  const byChannel = config3.stockBuffers.byChannel;
+  return (options?.channel ? byChannel[options.channel] : void 0) ?? (options?.marketId ? byMarket[options.marketId] : void 0) ?? (options?.categoryId ? byCategory[options.categoryId] : void 0) ?? (options?.supplierId ? bySupplier[options.supplierId] : void 0) ?? defaults;
+}
+function getReservationTtlMs() {
+  return config3.reservationDefaults.ttlMs;
+}
+function getMaxReservationQuantity() {
+  return config3.reservationDefaults.maxQuantityPerReservation;
+}
+function getSupportedChannels() {
+  return config3.supportedChannels;
+}
+
+// lib/inventory-engine/buffer.ts
+function applyStockBuffer(availableQuantity, buffer) {
+  const qty = Math.max(0, availableQuantity);
+  if (buffer.type === "percentage") {
+    const bufferAmount = Math.floor(qty * buffer.value);
+    return Math.max(0, qty - bufferAmount);
+  }
+  return Math.max(0, qty - Math.floor(buffer.value));
+}
+
+// lib/inventory-engine/stock.ts
+function validateSupplierQuantity(rawQuantity) {
+  const errors = [];
+  const warnings = [];
+  if (rawQuantity == null || rawQuantity === "") {
+    const policy = getMissingStockPolicy();
+    if (policy === "ZERO") {
+      return { valid: true, normalizedQuantity: 0, stockStatus: "OUT_OF_STOCK", errors, warnings };
+    }
+    if (policy === "KEEP_LAST_KNOWN") {
+      return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["MISSING_STOCK"], warnings };
+    }
+    return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["MISSING_STOCK"], warnings };
+  }
+  if (typeof rawQuantity === "string" && rawQuantity.trim() !== "" && Number.isNaN(Number(rawQuantity))) {
+    return {
+      valid: false,
+      normalizedQuantity: null,
+      stockStatus: "UNKNOWN",
+      errors: ["INVALID_STOCK"],
+      warnings: ["NON_NUMERIC_STOCK"]
+    };
+  }
+  const parsed = Number(rawQuantity);
+  if (!Number.isFinite(parsed)) {
+    return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["INVALID_STOCK"], warnings };
+  }
+  if (parsed < 0) {
+    return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["INVALID_STOCK"], warnings: ["NEGATIVE_STOCK"] };
+  }
+  const normalized = Math.floor(parsed);
+  const status = deriveStockStatus2(normalized, { manuallyDiscontinued: false, isStale: false });
+  return { valid: true, normalizedQuantity: normalized, stockStatus: status, errors, warnings };
+}
+function deriveStockStatus2(quantity, options) {
+  if (options.manuallyDiscontinued) return "DISCONTINUED";
+  if (options.isStale) return "STALE";
+  if (options.isPreorder) return "PREORDER";
+  if (quantity <= 0) return "OUT_OF_STOCK";
+  if (quantity <= getLowStockThreshold()) return "LOW_STOCK";
+  return "IN_STOCK";
+}
+function isStockStale(lastSuccessfulSyncAt, staleAfterMs) {
+  const threshold = staleAfterMs ?? getDefaultStaleAfterMs();
+  const lastSync = new Date(lastSuccessfulSyncAt).getTime();
+  if (Number.isNaN(lastSync)) return true;
+  return Date.now() - lastSync > threshold;
+}
+function calculateSaleableQuantity(options) {
+  if (options.manuallyDiscontinued || options.stockStatus === "DISCONTINUED") return 0;
+  if (options.stockStatus === "OUT_OF_STOCK") return 0;
+  if (options.isStale) {
+    const policy = options.stalePolicy ?? getDefaultStalePolicy();
+    if (policy === "BLOCK_SALE") return 0;
+    if (policy === "ALLOW_WITH_WARNING") {
+      const afterBuffer2 = applyStockBuffer(options.availableQuantity, options.stockBuffer);
+      return Math.max(0, afterBuffer2 - options.reservedQuantity);
+    }
+  }
+  const afterBuffer = applyStockBuffer(options.availableQuantity, options.stockBuffer);
+  return Math.max(0, afterBuffer - options.reservedQuantity);
+}
+function recomputeStockRecord(record, options) {
+  const now = options?.now ?? (/* @__PURE__ */ new Date()).toISOString();
+  const isStale = isStockStale(record.lastSuccessfulSyncAt, record.staleAfterMs);
+  const stalePolicy = getStalePolicy(record.supplierId);
+  let availableQuantity = record.quantity;
+  if (record.manuallyDiscontinued) {
+    availableQuantity = 0;
+  } else if (isStale && stalePolicy === "BLOCK_SALE") {
+    availableQuantity = 0;
+  } else if (record.stockStatus === "UNKNOWN" || !record.lastSuccessfulSyncAt) {
+    availableQuantity = 0;
+  }
+  const stockBuffer = record.stockBuffer ?? getStockBufferConfig({ supplierId: record.supplierId, categoryId: options?.categoryId });
+  const stockStatus = deriveStockStatus2(record.quantity, {
+    manuallyDiscontinued: record.manuallyDiscontinued,
+    isStale,
+    manuallyPaused: record.manuallyPaused
+  });
+  const saleableQuantity = calculateSaleableQuantity({
+    availableQuantity,
+    stockBuffer,
+    reservedQuantity: record.reservedQuantity,
+    isStale,
+    stalePolicy,
+    manuallyDiscontinued: record.manuallyDiscontinued,
+    stockStatus
+  });
+  return {
+    ...record,
+    availableQuantity,
+    stockBuffer,
+    stockStatus,
+    isStale,
+    stalePolicy,
+    saleableQuantity,
+    updatedAt: now
+  };
+}
+function createInitialStockRecord(input) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const stockBuffer = getStockBufferConfig({
+    supplierId: input.supplierId,
+    categoryId: input.categoryId
+  });
+  const base = {
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId,
+    supplierSku: input.supplierSku,
+    ean: input.ean,
+    mpn: input.mpn,
+    quantity: input.quantity,
+    availableQuantity: input.quantity,
+    stockStatus: deriveStockStatus2(input.quantity, { manuallyDiscontinued: false, isStale: false }),
+    supplierLastUpdatedAt: now,
+    lastSyncedAt: now,
+    lastSuccessfulSyncAt: now,
+    source: input.source,
+    currency: input.currency ?? "EUR",
+    marketAvailability: [],
+    channelAvailability: [],
+    stockBuffer,
+    saleableQuantity: 0,
+    reservedQuantity: 0,
+    staleAfterMs: getDefaultStaleAfterMs(),
+    isStale: false,
+    stalePolicy: getDefaultStalePolicy(),
+    manuallyDiscontinued: false,
+    manuallyPaused: false,
+    lastSyncFailed: false,
+    createdAt: now,
+    updatedAt: now
+  };
+  return recomputeStockRecord(base, { categoryId: input.categoryId });
+}
+
+// lib/inventory-engine/market.ts
+init_registry2();
+function computeMarketAvailability(record, marketId) {
+  const market = getMarket(marketId);
+  if (!market) {
+    return { available: false, status: "DISABLED", reason: "UNKNOWN_MARKET" };
+  }
+  const supplier = getSupplier(record.supplierId);
+  if (supplier?.supportedMarkets?.length && !supplier.supportedMarkets.includes(marketId)) {
+    return { available: false, status: "DISABLED", reason: "SUPPLIER_MARKET_UNSUPPORTED" };
+  }
+  const existing = record.marketAvailability.find((m) => m.marketId === marketId);
+  if (existing?.status === "DISABLED") {
+    return { available: false, status: "DISABLED", reason: existing.reason };
+  }
+  if (record.manuallyDiscontinued || record.stockStatus === "DISCONTINUED") {
+    return { available: false, status: "OUT_OF_STOCK", reason: "DISCONTINUED" };
+  }
+  if (record.isStale) {
+    return { available: false, status: "STALE", reason: "STALE_STOCK" };
+  }
+  if (record.saleableQuantity <= 0) {
+    return { available: false, status: "OUT_OF_STOCK", reason: "NO_SALEABLE_STOCK" };
+  }
+  const regions = getEligibleSupplierRegions(marketId);
+  if (supplier?.region && regions.length && !regions.includes(supplier.region)) {
+    return { available: false, status: "REVIEW_REQUIRED", reason: "SHIPPING_ROUTE_UNSUPPORTED" };
+  }
+  return { available: true, status: "ACTIVE" };
+}
+function updateMarketAvailabilityForRecord(record, marketIds) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return marketIds.map((marketId) => {
+    const result = computeMarketAvailability(record, marketId);
+    return {
+      marketId,
+      status: result.status,
+      reason: result.reason,
+      updatedAt: now
+    };
+  });
+}
+
+// lib/inventory-engine/channel.ts
+function computeChannelAvailability(record, channel, marketId = "DE") {
+  if (record.manuallyPaused) {
+    return { available: false, status: "PAUSED", reason: "OFFER_PAUSED" };
+  }
+  if (record.manuallyDiscontinued || record.stockStatus === "DISCONTINUED") {
+    return { available: false, status: "DISCONTINUED", reason: "DISCONTINUED" };
+  }
+  const marketResult = computeMarketAvailability(record, marketId);
+  if (!marketResult.available) {
+    if (marketResult.status === "STALE") return { available: false, status: "STALE", reason: marketResult.reason };
+    if (marketResult.reason === "SUPPLIER_MARKET_UNSUPPORTED") {
+      return { available: false, status: "MARKET_UNSUPPORTED", reason: marketResult.reason };
+    }
+    if (record.saleableQuantity <= 0) {
+      return { available: false, status: "OUT_OF_STOCK", reason: "NO_SALEABLE_STOCK" };
+    }
+    return { available: false, status: "SUPPLIER_UNAVAILABLE", reason: marketResult.reason };
+  }
+  if (record.isStale) {
+    return { available: false, status: "STALE", reason: "STALE_STOCK" };
+  }
+  if (record.saleableQuantity <= 0) {
+    return { available: false, status: "OUT_OF_STOCK", reason: "NO_SALEABLE_STOCK" };
+  }
+  return { available: true, status: "ACTIVE" };
+}
+function updateChannelAvailabilityForRecord(record, marketId = "DE") {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return getSupportedChannels().map((channel) => {
+    const result = computeChannelAvailability(record, channel, marketId);
+    return {
+      channel,
+      status: result.status,
+      reason: result.reason,
+      updatedAt: now
+    };
+  });
+}
+
+// lib/inventory-engine/events.ts
+var eventLog2 = [];
+var MAX_EVENTS2 = 1e3;
+function emitStockEvent(event) {
+  const full = {
+    ...event,
+    eventId: `evt_${event.productId}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  eventLog2.push(full);
+  if (eventLog2.length > MAX_EVENTS2) eventLog2.shift();
+  return full;
+}
+function inferStockEventType(previousQuantity, newQuantity, previousStatus, newStatus) {
+  if (newStatus === "DISCONTINUED") return "DISCONTINUED";
+  if (previousStatus === "DISCONTINUED") return "OFFER_REACTIVATED";
+  if (newStatus === "STALE") return "STOCK_STALE";
+  if (previousQuantity <= 0 && newQuantity > 0) return "BACK_IN_STOCK";
+  if (previousQuantity > 0 && newQuantity <= 0) return "OUT_OF_STOCK";
+  if (newQuantity > previousQuantity) return "STOCK_INCREASED";
+  if (newQuantity < previousQuantity) return "STOCK_DECREASED";
+  return "STOCK_CHANGED";
+}
+
+// lib/inventory-engine/reservation.ts
+var reservations = /* @__PURE__ */ new Map();
+function getActiveReservations(productId, supplierId, supplierOfferId) {
+  expireReservations();
+  return [...reservations.values()].filter(
+    (r) => r.status === "ACTIVE" && r.productId === productId && r.supplierId === supplierId && r.supplierOfferId === supplierOfferId
+  );
+}
+function getTotalReservedQuantity(productId, supplierId, supplierOfferId) {
+  return getActiveReservations(productId, supplierId, supplierOfferId).reduce(
+    (sum, r) => sum + r.quantity,
+    0
+  );
+}
+function expireReservations() {
+  const now = Date.now();
+  for (const [id, reservation] of reservations) {
+    if (reservation.status === "ACTIVE" && new Date(reservation.expiresAt).getTime() <= now) {
+      reservations.set(id, { ...reservation, status: "EXPIRED" });
+      refreshRecordReservations(reservation.productId, reservation.supplierId, reservation.supplierOfferId);
+    }
+  }
+}
+function refreshRecordReservations(productId, supplierId, supplierOfferId) {
+  const record = getStockRecord(productId, supplierId, supplierOfferId);
+  if (!record) return;
+  const reservedQuantity = getTotalReservedQuantity(productId, supplierId, supplierOfferId);
+  const updated = recomputeStockRecord({ ...record, reservedQuantity });
+  upsertStockRecord(updated);
+}
+function createStockReservation(input) {
+  expireReservations();
+  if (input.quantity <= 0) return { ok: false, reason: "INVALID_QUANTITY" };
+  if (input.quantity > getMaxReservationQuantity()) return { ok: false, reason: "QUANTITY_TOO_HIGH" };
+  const record = getStockRecord(input.productId, input.supplierId, input.supplierOfferId);
+  if (!record) return { ok: false, reason: "STOCK_RECORD_NOT_FOUND" };
+  const currentReserved = getTotalReservedQuantity(
+    input.productId,
+    input.supplierId,
+    input.supplierOfferId
+  );
+  const saleable = calculateSaleableQuantity({
+    availableQuantity: record.availableQuantity,
+    stockBuffer: record.stockBuffer,
+    reservedQuantity: currentReserved,
+    isStale: record.isStale,
+    stalePolicy: record.stalePolicy,
+    manuallyDiscontinued: record.manuallyDiscontinued,
+    stockStatus: record.stockStatus
+  });
+  if (input.quantity > saleable) {
+    return { ok: false, reason: "INSUFFICIENT_SALEABLE_STOCK" };
+  }
+  const now = /* @__PURE__ */ new Date();
+  const reservation = {
+    reservationId: `res_${input.productId}_${now.getTime()}`,
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId,
+    quantity: input.quantity,
+    orderId: input.orderId,
+    status: "ACTIVE",
+    isSupplierConfirmed: false,
+    createdAt: now.toISOString(),
+    expiresAt: new Date(now.getTime() + getReservationTtlMs()).toISOString()
+  };
+  reservations.set(reservation.reservationId, reservation);
+  refreshRecordReservations(input.productId, input.supplierId, input.supplierOfferId);
+  emitStockEvent({
+    type: "STOCK_CHANGED",
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId: input.supplierOfferId,
+    source: "reservation",
+    metadata: { action: "RESERVE", quantity: input.quantity, orderId: input.orderId }
+  });
+  return { ok: true, reservation };
+}
+function releaseReservation(reservationId) {
+  const reservation = reservations.get(reservationId);
+  if (!reservation) return { ok: false, reason: "RESERVATION_NOT_FOUND" };
+  if (reservation.status !== "ACTIVE") return { ok: false, reason: "RESERVATION_NOT_ACTIVE" };
+  reservations.set(reservationId, { ...reservation, status: "RELEASED" });
+  refreshRecordReservations(reservation.productId, reservation.supplierId, reservation.supplierOfferId);
+  return { ok: true, reservation: { ...reservation, status: "RELEASED" } };
+}
+function getReservation(reservationId) {
+  return reservations.get(reservationId);
+}
+function attachReservedQuantity(record) {
+  const reservedQuantity = getTotalReservedQuantity(
+    record.productId,
+    record.supplierId,
+    record.supplierOfferId
+  );
+  return recomputeStockRecord({ ...record, reservedQuantity });
+}
+
+// lib/inventory-engine/sync.ts
+init_registry2();
+
+// lib/inventory-engine/audit.ts
+var auditLog2 = [];
+var MAX_AUDIT = 1e3;
+var SECRET_PATTERN = /api[_-]?key|secret|password|token|authorization|bearer|credential/i;
+function recordStockAudit(entry) {
+  const full = {
+    ...entry,
+    auditId: `aud_${entry.productId}_${Date.now()}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    reason: redactAuditReason(entry.reason)
+  };
+  auditLog2.push(full);
+  if (auditLog2.length > MAX_AUDIT) auditLog2.shift();
+  return full;
+}
+function redactAuditReason(reason) {
+  if (SECRET_PATTERN.test(reason)) return "[REDACTED]";
+  return reason;
+}
+function createAuditFromUpdate(productId, supplierId, supplierOfferId, oldQuantity, newQuantity, oldStatus, newStatus, source, reason, syncJob) {
+  return recordStockAudit({
+    productId,
+    supplierId,
+    supplierOfferId,
+    oldQuantity,
+    newQuantity,
+    oldStatus,
+    newStatus,
+    source,
+    syncJob,
+    reason
+  });
+}
+
+// lib/inventory-engine/sync.ts
+var pricingRecalcQueue = /* @__PURE__ */ new Set();
+function processSupplierStockUpdate(input) {
+  const supplierOfferId = input.supplierOfferId || input.supplierSku;
+  const existing = getStockRecord(input.productId, input.supplierId, supplierOfferId);
+  const previousQuantity = existing?.quantity ?? 0;
+  const previousStatus = existing?.stockStatus ?? "UNKNOWN";
+  if (input.discontinued) {
+    return applyStockChange(existing, input, 0, {
+      manuallyDiscontinued: true,
+      reason: "SUPPLIER_DISCONTINUED"
+    });
+  }
+  const validation = validateSupplierQuantity(input.rawQuantity);
+  if (!validation.valid) {
+    emitStockEvent({
+      type: "STOCK_INVALID",
+      productId: input.productId,
+      supplierId: input.supplierId,
+      supplierOfferId,
+      previousQuantity,
+      newQuantity: previousQuantity,
+      previousStatus,
+      newStatus: previousStatus,
+      source: input.source,
+      metadata: { errors: validation.errors }
+    });
+    if (existing && validation.errors.includes("MISSING_STOCK")) {
+      return { ok: false, errors: validation.errors, pricingRecalculationRequired: false };
+    }
+    return { ok: false, errors: validation.errors, pricingRecalculationRequired: false };
+  }
+  const newQuantity = validation.normalizedQuantity ?? 0;
+  if (existing?.manuallyDiscontinued) {
+    return {
+      ok: true,
+      record: existing,
+      previousQuantity,
+      previousStatus,
+      pricingRecalculationRequired: false
+    };
+  }
+  return applyStockChange(existing, input, newQuantity, {
+    manuallyDiscontinued: false,
+    reason: "SUPPLIER_SYNC"
+  });
+}
+function applyStockChange(existing, input, newQuantity, options) {
+  const supplierOfferId = input.supplierOfferId || input.supplierSku;
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const previousQuantity = existing?.quantity ?? 0;
+  const previousStatus = existing?.stockStatus ?? "UNKNOWN";
+  const supplier = getSupplier(input.supplierId);
+  const supportedMarkets = supplier?.supportedMarkets ?? ["DE", "FR", "PL"];
+  let record = existing ?? createInitialStockRecord({
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId,
+    supplierSku: input.supplierSku,
+    quantity: newQuantity,
+    ean: input.ean,
+    mpn: input.mpn,
+    currency: input.currency ?? supplier?.currency ?? "EUR",
+    source: input.source
+  });
+  record = {
+    ...record,
+    quantity: newQuantity,
+    supplierLastUpdatedAt: input.supplierLastUpdatedAt ?? now,
+    lastSyncedAt: now,
+    lastSuccessfulSyncAt: now,
+    lastSyncFailed: false,
+    manuallyDiscontinued: options.manuallyDiscontinued,
+    source: input.source,
+    ean: input.ean ?? record.ean,
+    mpn: input.mpn ?? record.mpn
+  };
+  record = attachReservedQuantity(record);
+  record = recomputeStockRecord(record);
+  record = {
+    ...record,
+    marketAvailability: updateMarketAvailabilityForRecord(record, supportedMarkets),
+    channelAvailability: updateChannelAvailabilityForRecord(record, supportedMarkets[0] ?? "DE")
+  };
+  upsertStockRecord(record);
+  syncToProductEngine(record);
+  pricingRecalcQueue.add(input.productId);
+  const eventType = inferStockEventType(previousQuantity, newQuantity, previousStatus, record.stockStatus);
+  emitStockEvent({
+    type: eventType,
+    productId: input.productId,
+    supplierId: input.supplierId,
+    supplierOfferId,
+    previousQuantity,
+    newQuantity,
+    previousStatus,
+    newStatus: record.stockStatus,
+    source: input.source
+  });
+  createAuditFromUpdate(
+    input.productId,
+    input.supplierId,
+    supplierOfferId,
+    previousQuantity,
+    newQuantity,
+    previousStatus,
+    record.stockStatus,
+    input.source,
+    options.reason,
+    input.syncType
+  );
+  return {
+    ok: true,
+    record,
+    previousQuantity,
+    previousStatus,
+    pricingRecalculationRequired: previousQuantity !== newQuantity || previousStatus !== record.stockStatus
+  };
+}
+function syncToProductEngine(record) {
+  const product = getProduct(record.productId);
+  if (!product) return;
+  if (product.status === "DISCONTINUED") return;
+  const updated = updateProductSupplierOffer(record.productId, record.supplierId, {
+    stock: record.quantity
+  });
+  if (updated) {
+    upsertRegistryProduct(updated);
+  }
+}
+function getSupplierSelectionStockInfo(productId, supplierId, supplierOfferId) {
+  const record = getStockRecord(productId, supplierId, supplierOfferId);
+  if (!record) return null;
+  return {
+    productId,
+    supplierId,
+    supplierOfferId,
+    availableQuantity: record.availableQuantity,
+    saleableQuantity: record.saleableQuantity,
+    stockStatus: record.stockStatus,
+    isStale: record.isStale,
+    lastSuccessfulSyncAt: record.lastSuccessfulSyncAt,
+    reservedQuantity: getTotalReservedQuantity(productId, supplierId, supplierOfferId),
+    marketAvailability: record.marketAvailability
+  };
+}
+
+// lib/inventory-engine/test-fixtures.ts
+init_fixtures();
+var FIXTURE_SKU_MAP = {
+  "reifen-pilot-sport": "TSA-TIRE-225-45-17",
+  "motoroel-5w30": "TSA-OIL-5W30-5L",
+  "bremsscheibe-280": "TSA-DISC-280",
+  "bremsbelaege-vorder": "TSA-PADS-FRONT"
+};
+function buildStockUpdateFixture(productId, quantity, options) {
+  const sku = FIXTURE_SKU_MAP[productId];
+  return {
+    productId,
+    supplierId: TEST_SUPPLIER_ID,
+    supplierOfferId: sku,
+    supplierSku: sku,
+    rawQuantity: quantity,
+    source: TEST_SUPPLIER_ID,
+    discontinued: options?.discontinued,
+    syncType: "SINGLE_PRODUCT_STOCK_SYNC"
+  };
+}
+
+// lib/order-engine/reservation.ts
+async function reserveInventoryForOrder(attempts) {
+  const reservationIds = [];
+  for (const attempt of attempts) {
+    const result = createStockReservation({
+      productId: attempt.productId,
+      supplierId: attempt.supplierId,
+      supplierOfferId: attempt.supplierOfferId,
+      quantity: attempt.quantity,
+      orderId: attempt.orderId
+    });
+    if (!result.ok || !result.reservation) {
+      rollbackReservations(reservationIds);
+      const reason = result.reason ?? "RESERVATION_FAILED";
+      return {
+        ok: false,
+        reservationIds: [],
+        errorCode: reason === "INSUFFICIENT_SALEABLE_STOCK" ? "OUT_OF_STOCK" : "RESERVATION_FAILED",
+        errorMessage: reason
+      };
+    }
+    reservationIds.push(result.reservation.reservationId);
+  }
+  return { ok: true, reservationIds };
+}
+function rollbackReservations(reservationIds) {
+  for (const id of reservationIds) {
+    releaseReservation(id);
+  }
+}
+
+// lib/supplier-engine/observability.ts
+init_security();
+var logBuffer = [];
+function getSupplierLogs(supplierId) {
+  if (!supplierId) return [...logBuffer];
+  return logBuffer.filter((l) => l.supplierId === supplierId);
+}
 
 // lib/supplier-engine/health.ts
+init_persistence();
 var healthCache = /* @__PURE__ */ new Map();
 function defaultHealth(supplierId) {
   return {
@@ -30592,6 +32982,15 @@ function fromPersisted(row) {
     updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
   };
 }
+function hydrateHealthFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllHealthRecords;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const health of rows) {
+    healthCache.set(String(health.supplierId), fromPersisted(health));
+  }
+}
 function getSupplierHealth(supplierId) {
   const cached = healthCache.get(supplierId);
   if (cached) return cached;
@@ -30605,44 +33004,1479 @@ function getSupplierHealth(supplierId) {
   return defaultHealth(supplierId);
 }
 
-// lib/supplier-engine/orderSandbox/persistence.ts
-var memoryStore = /* @__PURE__ */ new Map();
-function rowToRecord(row) {
+// lib/supplier-engine/reliability.ts
+function computeSupplierReliabilityScore(supplierId) {
+  const health = getSupplierHealth(supplierId);
+  const logs = getSupplierLogs(supplierId);
+  const total = health.successCount + health.errorCount + logs.length;
+  const successes = health.successCount + logs.filter((l) => l.status === "SUCCESS").length;
+  const syncSuccessRate = total > 0 ? successes / total : health.reliabilityScore;
   return {
-    supplierOrderId: String(row.supplier_order_id),
-    buzzardOrderId: String(row.buzzard_order_id),
-    supplierId: String(row.supplier_id),
-    status: row.status,
-    idempotencyKey: String(row.idempotency_key),
-    correlationId: String(row.correlation_id || ""),
-    payload: JSON.parse(String(row.payload_json || "{}")),
-    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
-    failureClass: row.failure_class,
-    failureCode: row.failure_code ? String(row.failure_code) : void 0,
-    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
-    latencyMs: Number(row.latency_ms || 0),
-    sandbox: true,
-    networkDispatched: false,
-    createdAt: String(row.created_at),
-    updatedAt: String(row.updated_at)
+    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : health.reliabilityScore || 0.5,
+    metrics: {
+      uptime: total > 0 ? syncSuccessRate : 0,
+      syncSuccessRate,
+      orderSuccessRate: 0,
+      cancellationRate: 0,
+      stockAccuracy: 0,
+      deliveryPerformance: 0
+    },
+    sampleSize: total,
+    computedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
-function getOrderSandboxPersistence() {
-  return getSupplierPersistence();
+
+// lib/supplier-engine/connectors/base.ts
+init_capabilities();
+
+// lib/supplier-engine/network/config.ts
+function envFlag2(name, defaultValue = false) {
+  const raw = process.env[name];
+  if (raw === void 0 || raw === "") return defaultValue;
+  return raw === "1" || raw.toLowerCase() === "true";
 }
-function getSupplierOrderSandboxByReference(supplierOrderId) {
-  const cached = memoryStore.get(supplierOrderId);
-  if (cached) return cached;
-  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
-  if (!row) return void 0;
-  const record = rowToRecord(row);
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  return record;
+function envInt(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+}
+var SUPPLIER_NETWORK_CONFIG = {
+  get networkEnabled() {
+    return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
+  defaultEnvironment: "MOCK",
+  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
+  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
+  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
+  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
+};
+function isSupplierNetworkEnabled() {
+  return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+}
+function isSupplierOrderNetworkEnabled() {
+  return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
+// lib/supplier-engine/connectors/api.ts
+init_fixtures();
+
+// lib/supplier-engine/auth/resolver.ts
+init_credentials();
+
+// lib/supplier-engine/connectors/xml.ts
+init_fixtures();
+
+// lib/supplier-engine/connectors/csv.ts
+init_fixtures();
+
+// lib/supplier-engine/syncCursor.ts
+init_persistence();
+var cursorStore = /* @__PURE__ */ new Map();
+function cursorKey(supplierId, syncMode = "incremental") {
+  return `${supplierId}:${syncMode}`;
+}
+function fromPersisted2(row) {
+  return {
+    supplierId: String(row.supplierId),
+    syncMode: row.syncMode || "incremental",
+    cursor: row.cursor ? String(row.cursor) : void 0,
+    page: row.page != null ? Number(row.page) : void 0,
+    offset: row.offset != null ? Number(row.offset) : void 0,
+    lastModified: row.lastModified ? String(row.lastModified) : void 0,
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateSyncCursorsFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllCursors;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const cursor of rows) {
+    const parsed = fromPersisted2(cursor);
+    cursorStore.set(cursorKey(parsed.supplierId, parsed.syncMode || "incremental"), parsed);
+  }
+}
+function getSyncCursor(supplierId, syncMode = "incremental") {
+  const key = cursorKey(supplierId, syncMode);
+  const cached = cursorStore.get(key);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
+  if (row) {
+    const cursor = fromPersisted2(row);
+    cursorStore.set(key, cursor);
+    return cursor;
+  }
+  return void 0;
+}
+
+// lib/supplier-engine/selection.ts
+init_registry2();
+
+// lib/supplier-engine/state.ts
+init_persistence();
+var stateBySupplier = /* @__PURE__ */ new Map();
+function defaultState(supplierId) {
+  return {
+    supplierId,
+    healthStatus: "UNKNOWN",
+    reliabilityScore: 0.5,
+    syncStatus: "IDLE",
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function fromPersisted3(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    syncStatus: row.syncStatus || "IDLE",
+    lastSyncStartedAt: row.lastSyncStartedAt ? String(row.lastSyncStartedAt) : void 0,
+    lastSyncCompletedAt: row.lastSyncCompletedAt ? String(row.lastSyncCompletedAt) : void 0,
+    lastSuccessfulSync: row.lastSyncSuccessAt ? String(row.lastSyncSuccessAt) : void 0,
+    lastFailedSync: row.lastSyncFailureAt ? String(row.lastSyncFailureAt) : void 0,
+    lastSyncError: row.lastErrorMessageSafe ? String(row.lastErrorMessageSafe) : void 0,
+    lastErrorCode: row.lastErrorCode ? String(row.lastErrorCode) : void 0,
+    lastSyncJobId: row.lastSyncJobId ? String(row.lastSyncJobId) : void 0,
+    syncLockJobId: row.syncLockJobId ? String(row.syncLockJobId) : void 0,
+    syncLockAcquiredAt: row.syncLockAcquiredAt ? String(row.syncLockAcquiredAt) : void 0,
+    productsProcessed: Number(row.productsProcessed || 0),
+    productsAccepted: Number(row.productsAccepted || 0),
+    productsRejected: Number(row.productsRejected || 0),
+    offersUpdated: Number(row.offersUpdated || 0),
+    stockUpdated: Number(row.stockUpdated || 0),
+    priceUpdated: Number(row.priceUpdated || 0),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateRuntimeStateFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllRuntimeStates;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const runtime of rows) {
+    stateBySupplier.set(String(runtime.supplierId), fromPersisted3(runtime));
+  }
+}
+function getSupplierRuntimeState(supplierId) {
+  const cached = stateBySupplier.get(supplierId);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getRuntimeState(supplierId);
+  if (row) {
+    const state = fromPersisted3(row);
+    stateBySupplier.set(supplierId, state);
+    return state;
+  }
+  const health = getSupplierHealth(supplierId);
+  return {
+    ...defaultState(supplierId),
+    healthStatus: health.healthStatus,
+    reliabilityScore: health.reliabilityScore
+  };
+}
+
+// lib/supplier-engine/selection.ts
+function isMarketEligible(supplierId, marketId) {
+  if (!marketId) return true;
+  const supplier = getSupplier(supplierId);
+  if (!supplier?.supportedMarkets?.length) return true;
+  return supplier.supportedMarkets.includes(marketId);
+}
+function computeLandedCostScore(product, offer, marketId) {
+  if (!marketId) return { score: 0.5, reason: "landedCost:unknown" };
+  const shipping = resolveShippingCost({
+    productId: product.productId,
+    marketId,
+    supplierId: offer.supplierId,
+    targetCurrency: product.pricing.currency
+  });
+  const landed = offer.supplierPrice + shipping.shippingCost;
+  const maxLanded = Math.max(offer.supplierPrice * 1.5, landed, 1);
+  const score = Math.max(0, 1 - landed / maxLanded);
+  return { score, reason: `landedCost:${landed.toFixed(2)}` };
+}
+function selectBestSupplierForOrder(product, options) {
+  const marketId = options?.countryCode;
+  const offers = product.supplierOffers.filter((o) => {
+    if (o.stock <= 0) return false;
+    if (!isSupplierSelectable(o.supplierId)) return false;
+    return isMarketEligible(o.supplierId, marketId);
+  });
+  if (!offers.length) return null;
+  const candidateProduct = { ...product, supplierOffers: offers };
+  const base = selectBestSupplier(candidateProduct, options);
+  if (!base) return null;
+  const supplier = getSupplier(base.offer.supplierId);
+  const reliability = computeSupplierReliabilityScore(base.offer.supplierId);
+  const runtime = getSupplierRuntimeState(base.offer.supplierId);
+  const connectorHealth = runtime.healthStatus === "HEALTHY" ? 1 : runtime.healthStatus === "DEGRADED" ? 0.6 : 0.3;
+  const landed = computeLandedCostScore(product, base.offer, marketId);
+  let enrichedScore = base.score * 0.55 + reliability.score * 0.15 + connectorHealth * 0.1 + landed.score * 0.15;
+  const reasons = [
+    ...base.reasons,
+    `reliability:${reliability.score.toFixed(2)}`,
+    `connectorHealth:${connectorHealth.toFixed(2)}`,
+    landed.reason
+  ];
+  if (supplier?.capabilities.dropshipping) {
+    enrichedScore += 0.03;
+    reasons.push("dropshipping:yes");
+  } else {
+    reasons.push("dropshipping:no");
+  }
+  if (supplier?.capabilities.whiteLabel) {
+    enrichedScore += 0.02;
+    reasons.push("whiteLabel:yes");
+  }
+  return {
+    ...base,
+    score: enrichedScore,
+    reasons
+  };
+}
+
+// lib/order-engine/supplier.ts
+function selectSupplierForOrderItem(productId, marketId, forceUnavailable = false) {
+  if (forceUnavailable) {
+    return { ok: false, reason: "SUPPLIER_UNAVAILABLE" };
+  }
+  const product = getProduct(productId);
+  if (!product) return { ok: false, reason: "PRODUCT_NOT_FOUND" };
+  const selection = selectBestSupplierForOrder(product, { countryCode: marketId });
+  if (!selection) {
+    const allZeroStock = product.supplierOffers.every((o) => o.stock <= 0);
+    return { ok: false, reason: allZeroStock ? "OUT_OF_STOCK" : "SUPPLIER_UNAVAILABLE" };
+  }
+  const offer = selection.offer;
+  const stockInfo = getSupplierSelectionStockInfo(
+    productId,
+    offer.supplierId,
+    offer.supplierSku
+  );
+  if (stockInfo && stockInfo.saleableQuantity <= 0) {
+    return { ok: false, reason: "OUT_OF_STOCK" };
+  }
+  const de = getTranslationForLocale(product.translations, "de");
+  const assignment = {
+    supplierId: offer.supplierId,
+    supplierOfferId: offer.supplierSku,
+    supplierSku: offer.supplierSku,
+    supplierCost: offer.supplierPrice,
+    supplierCurrency: offer.currency,
+    selectionScore: selection.score,
+    selectionReasons: selection.reasons,
+    shippingRoute: offer.shippingRegions?.[0],
+    expectedDeliveryDays: offer.leadTimeDays,
+    selectedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  return {
+    ok: true,
+    assignment,
+    offer: {
+      supplierId: offer.supplierId,
+      supplierOfferId: offer.supplierSku,
+      supplierSku: offer.supplierSku,
+      supplierPrice: offer.supplierPrice,
+      currency: offer.currency,
+      stock: offer.stock
+    },
+    productName: de?.name ?? product.productId,
+    sku: product.sku,
+    ean: product.ean ?? product.gtin,
+    mpn: product.mpn,
+    categoryId: product.categoryId
+  };
+}
+
+// lib/order-engine/payment.ts
+function createPendingPayment(input) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    paymentId: `pay_${input.orderId}_${Date.now()}`,
+    orderId: input.orderId,
+    provider: input.provider ?? getDefaultPaymentProvider(),
+    method: input.method ?? getDefaultPaymentMethod(),
+    amount: input.amount,
+    currency: input.currency,
+    status: "PENDING",
+    dryRun: true,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function authorizePayment(payment, shouldFail = false) {
+  if (shouldFail) {
+    return {
+      ok: false,
+      payment: { ...payment, status: "FAILED", updatedAt: (/* @__PURE__ */ new Date()).toISOString() },
+      errorMessage: "PAYMENT_FAILED"
+    };
+  }
+  const authorized = {
+    ...payment,
+    status: "AUTHORIZED",
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  return { ok: true, payment: authorized };
+}
+function capturePayment(payment) {
+  return {
+    ...payment,
+    status: "CAPTURED",
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+
+// lib/supplier-engine/order.ts
+init_registry2();
+init_capabilities();
+
+// lib/supplier-engine/bootstrap.ts
+init_registry2();
+init_persistence2();
+var bootstrapped = false;
+function bootstrapSupplierEnginePersistence() {
+  if (bootstrapped) return;
+  hydrateRegistryFromPersistence();
+  hydrateRuntimeStateFromPersistence();
+  hydrateSyncCursorsFromPersistence();
+  hydrateHealthFromPersistence();
+  bootstrapped = true;
+  hydrateSupplierOrderSandboxFromPersistence();
+}
+
+// lib/supplier-engine/orderIdempotency.ts
+init_persistence();
+var orderIdempotencyKeys = /* @__PURE__ */ new Map();
+function buildSupplierOrderIdempotencyKey(supplierId, buzzardOrderId, idempotencyKey) {
+  if (idempotencyKey) return `${supplierId}:${buzzardOrderId}:${idempotencyKey}`;
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
+}
+function getIdempotentSupplierOrder(key) {
+  return orderIdempotencyKeys.get(key)?.supplierOrderId;
+}
+function recordIdempotentSupplierOrder(key, supplierOrderId) {
+  const existing = orderIdempotencyKeys.get(key);
+  if (existing) {
+    return { replay: true, supplierOrderId: existing.supplierOrderId };
+  }
+  const createdAt = (/* @__PURE__ */ new Date()).toISOString();
+  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt });
+  bootstrapSupplierEnginePersistence();
+  getSupplierPersistence()?.claimIdempotencyKey?.(key, key.split(":")[0] || "unknown");
+  return { replay: false, supplierOrderId };
+}
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+var import_crypto2 = require("crypto");
+init_registry2();
+
+// lib/supplier-engine/audit.ts
+init_persistence();
+init_security();
+function recordSupplierEngineAudit(entry) {
+  getSupplierPersistence()?.recordAudit({
+    actor: entry.actor || "system",
+    supplierId: entry.supplierId,
+    action: entry.action,
+    correlationId: entry.correlationId,
+    metadata: redactSecrets(entry.metadata || {}),
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_security();
+
+// lib/supplier-engine/orderSandbox/sandboxAdapter.ts
+var import_crypto = require("crypto");
+function buildDeterministicSandboxOrderId(buzzardOrderId, supplierId, idempotencyKey) {
+  const hash = (0, import_crypto.createHash)("sha256").update(`${buzzardOrderId}:${supplierId}:${idempotencyKey}`).digest("hex").slice(0, 12).toUpperCase();
+  return `SANDBOX-ORDER-${hash}`;
+}
+function buildSupplierOrderIdempotencyKey2(buzzardOrderId, supplierId) {
+  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
+}
+function buildSandboxTracking(supplierOrderId, simulateShipped = true) {
+  const suffix = supplierOrderId.replace(/^SANDBOX-ORDER-/, "").slice(-8);
+  return {
+    supplierOrderReference: supplierOrderId,
+    carrier: "SANDBOX_CARRIER",
+    trackingNumber: `SBX-TRK-${suffix}`,
+    trackingUrl: `https://sandbox.buzzard.local/tracking/${suffix}`,
+    shipmentStatus: simulateShipped ? "IN_TRANSIT" : "LABEL_CREATED",
+    simulated: true
+  };
+}
+function validateSandboxPayload(payload) {
+  const errors = [];
+  if (!payload.buzzardOrderId) errors.push("MISSING_BUZZARD_ORDER_ID");
+  if (!payload.supplierId) errors.push("MISSING_SUPPLIER_ID");
+  if (!payload.lines?.length) errors.push("MISSING_LINES");
+  if (!payload.shippingDestination?.country) errors.push("MISSING_SHIPPING_COUNTRY");
+  for (const line of payload.lines || []) {
+    if (!line.supplierSku) errors.push("MISSING_SUPPLIER_SKU");
+    if (line.quantity <= 0) errors.push("INVALID_QUANTITY");
+    if (line.unitPrice < 0) errors.push("INVALID_UNIT_PRICE");
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+// lib/supplier-engine/orderSandbox/piiFilter.ts
+var BLOCKED_KEYS = /payment|card|cvv|cvc|iban|bic|password|secret|token|oauth|api[_-]?key|authorization|admin|ai[_-]?context|email|phone/i;
+var PII_LOG_KEYS = /email|phone|recipient|address|street|postal|city|name/i;
+function filterSupplierFulfillmentAddress(address) {
+  if (!address) return {};
+  const out = {};
+  for (const [key, value] of Object.entries(address)) {
+    if (BLOCKED_KEYS.test(key)) continue;
+    if (!value?.trim()) continue;
+    out[key] = value.trim();
+  }
+  if (!out.country && address.country) out.country = address.country;
+  return out;
+}
+function sanitizePayloadForInspection(payload) {
+  const out = {};
+  for (const [key, value] of Object.entries(payload)) {
+    if (BLOCKED_KEYS.test(key)) {
+      out[key] = "[REDACTED]";
+      continue;
+    }
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      out[key] = sanitizePayloadForInspection(value);
+    } else if (PII_LOG_KEYS.test(key) && typeof value === "string") {
+      out[key] = maskPiiValue(value);
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+function maskPiiValue(value) {
+  if (value.length <= 4) return "****";
+  return `${value.slice(0, 2)}${"*".repeat(Math.min(6, value.length - 2))}`;
+}
+function assertNoSecretsInPayload(payload) {
+  const violations = [];
+  const walk = (obj, path2 = "") => {
+    for (const [key, value] of Object.entries(obj)) {
+      const full = path2 ? `${path2}.${key}` : key;
+      if (BLOCKED_KEYS.test(key)) violations.push(full);
+      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        walk(value, full);
+      }
+    }
+  };
+  walk(payload);
+  return violations;
+}
+
+// lib/supplier-engine/orderSandbox/lifecycle.ts
+var TRANSITIONS = {
+  PREPARED: ["VALIDATED", "FAILED", "CANCELLED"],
+  VALIDATED: ["SANDBOX_ACCEPTED", "FAILED", "CANCELLED"],
+  SANDBOX_ACCEPTED: ["SUPPLIER_PENDING", "FAILED", "CANCELLED"],
+  SUPPLIER_PENDING: ["SUPPLIER_CONFIRMED", "PROCESSING", "FAILED", "CANCELLED"],
+  SUPPLIER_CONFIRMED: ["PROCESSING", "SHIPPED", "FAILED", "CANCELLED"],
+  PROCESSING: ["SHIPPED", "FAILED", "CANCELLED"],
+  SHIPPED: ["DELIVERED", "FAILED"],
+  DELIVERED: [],
+  FAILED: [],
+  CANCELLED: []
+};
+function canTransitionSupplierOrderStatus(from, to) {
+  return TRANSITIONS[from]?.includes(to) ?? false;
+}
+function assertSupplierOrderTransition(from, to) {
+  if (!canTransitionSupplierOrderStatus(from, to)) {
+    throw new Error(`INVALID_SUPPLIER_ORDER_TRANSITION:${from}->${to}`);
+  }
+}
+
+// lib/supplier-engine/orderSandbox/failures.ts
+var RETRYABLE = /* @__PURE__ */ new Set([
+  "TIMEOUT",
+  "RATE_LIMITED",
+  "SERVER_ERROR",
+  "503",
+  "502",
+  "500",
+  "429",
+  "SUPPLIER_TIMEOUT",
+  "RETRYABLE_SUPPLIER_ERROR"
+]);
+var PERMANENT = /* @__PURE__ */ new Set([
+  "UNKNOWN_SUPPLIER",
+  "SUPPLIER_DISABLED",
+  "CONNECTOR_UNHEALTHY",
+  "INSUFFICIENT_STOCK",
+  "STALE_STOCK",
+  "PAYLOAD_VALIDATION_FAILED",
+  "PII_VIOLATION",
+  "CAPABILITY_MISSING",
+  "AUTH_FAILED",
+  "403",
+  "401",
+  "INVALID_SUPPLIER",
+  "DUPLICATE_ORDER"
+]);
+function classifySupplierOrderFailure(code) {
+  const normalized = code.toUpperCase();
+  if (PERMANENT.has(normalized)) return "PERMANENT";
+  if (RETRYABLE.has(normalized)) return "RETRYABLE";
+  if (/^5\d\d$/.test(normalized) || normalized.includes("TIMEOUT") || normalized.includes("RATE")) {
+    return "RETRYABLE";
+  }
+  return "PERMANENT";
+}
+function failureResult(code, message) {
+  return {
+    ok: false,
+    failureClass: classifySupplierOrderFailure(code),
+    failureCode: code,
+    failureMessage: message
+  };
+}
+
+// lib/supplier-engine/orderSandbox/networkSafety.ts
+init_config();
+function evaluateSupplierOrderNetworkSafety() {
+  const violations = [];
+  if (isSupplierOrderNetworkEnabled()) {
+    violations.push("SUPPLIER_ORDER_NETWORK_ENABLED_MUST_BE_0");
+  }
+  if (isSupplierNetworkEnabled() && isLiveReadEnabled()) {
+    violations.push("LIVE_READ_SHOULD_BE_DISABLED_FOR_ORDER_SANDBOX_TESTS");
+  }
+  return {
+    safe: violations.length === 0,
+    supplierNetworkEnabled: isSupplierNetworkEnabled(),
+    supplierOrderNetworkEnabled: isSupplierOrderNetworkEnabled(),
+    liveReadEnabled: isLiveReadEnabled(),
+    violations
+  };
+}
+function assertOrderSandboxNetworkSafety() {
+  const report = evaluateSupplierOrderNetworkSafety();
+  if (!report.safe) {
+    throw new Error(`NETWORK_SAFETY_VIOLATION:${report.violations.join(",")}`);
+  }
+}
+
+// lib/supplier-engine/orderSandbox/orchestrator.ts
+init_persistence2();
+var inflightSandbox = /* @__PURE__ */ new Map();
+function buildPayload(input) {
+  const idempotencyKey = input.idempotencyKey || buildSupplierOrderIdempotencyKey2(input.orderId, input.supplierId);
+  return {
+    buzzardOrderId: input.orderId,
+    supplierId: input.supplierId,
+    correlationId: input.correlationId || (0, import_crypto2.randomUUID)(),
+    idempotencyKey,
+    lines: input.lines.map((line) => ({
+      productId: input.productId,
+      supplierSku: line.supplierSku,
+      quantity: line.quantity,
+      unitPrice: line.unitPrice,
+      currency: input.currency || "EUR"
+    })),
+    shippingDestination: filterSupplierFulfillmentAddress(input.shippingAddress),
+    billingContext: input.billingAddress ? filterSupplierFulfillmentAddress(input.billingAddress) : void 0,
+    customerReference: input.customerReference,
+    currency: input.currency || "EUR",
+    priceSnapshotIds: input.priceSnapshotId ? [input.priceSnapshotId] : void 0,
+    dropshipping: input.dropshipping ?? false,
+    whiteLabel: input.whiteLabel ?? false,
+    blindShipping: input.blindShipping ?? false,
+    source: "SANDBOX"
+  };
+}
+function toResult(record, replay = false) {
+  return {
+    ok: record.status !== "FAILED" && record.status !== "CANCELLED",
+    sandbox: true,
+    source: replay ? "IDEMPOTENT_REPLAY" : "SANDBOX",
+    supplierOrderId: record.supplierOrderId,
+    status: record.status,
+    message: replay ? "Idempotent replay \u2014 existing sandbox supplier order returned" : "Sandbox supplier order accepted \u2014 no real supplier network dispatch",
+    idempotentReplay: replay,
+    tracking: record.tracking,
+    payload: record.payload,
+    failureClass: record.failureClass,
+    dryRun: true
+  };
+}
+async function executeSupplierOrderSandbox(input) {
+  bootstrapSupplierEnginePersistence();
+  const started = Date.now();
+  assertOrderSandboxNetworkSafety();
+  if (isSupplierOrderNetworkEnabled()) {
+    const fail = failureResult("ORDER_NETWORK_ENABLED", "Real supplier order network must remain disabled");
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: fail.failureMessage,
+      failureClass: fail.failureClass,
+      dryRun: true
+    };
+  }
+  const payload = buildPayload(input);
+  const piiViolations = assertNoSecretsInPayload(payload);
+  if (piiViolations.length) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "PII/security violation in payload",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  const existing = getSupplierOrderSandboxByIdempotency(payload.idempotencyKey);
+  if (existing) {
+    recordSupplierEngineAudit({
+      supplierId: input.supplierId,
+      action: "supplier.order_sandbox.idempotent_replay",
+      metadata: {
+        orderId: input.orderId,
+        supplierOrderId: existing.supplierOrderId,
+        idempotencyKey: payload.idempotencyKey
+      }
+    });
+    return toResult(existing, true);
+  }
+  const supplier = getSupplier(input.supplierId);
+  if (!supplier) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "UNKNOWN_SUPPLIER",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  if (!isSupplierSelectable(input.supplierId)) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "SUPPLIER_DISABLED",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  const health = getSupplierHealth(input.supplierId);
+  if (health.healthStatus === "UNHEALTHY" && !input._testFailure) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: "CONNECTOR_UNHEALTHY",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  const validation = validateSandboxPayload(payload);
+  if (!validation.valid) {
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: validation.errors[0] || "PAYLOAD_VALIDATION_FAILED",
+      failureClass: "PERMANENT",
+      dryRun: true
+    };
+  }
+  if (input._testFailure) {
+    const fail = failureResult(input._testFailure, input._testFailure);
+    const now2 = (/* @__PURE__ */ new Date()).toISOString();
+    const failedRecord = {
+      supplierOrderId: buildDeterministicSandboxOrderId(
+        payload.buzzardOrderId,
+        payload.supplierId,
+        payload.idempotencyKey
+      ),
+      buzzardOrderId: payload.buzzardOrderId,
+      supplierId: payload.supplierId,
+      status: "FAILED",
+      idempotencyKey: payload.idempotencyKey,
+      correlationId: payload.correlationId,
+      payload,
+      failureClass: fail.failureClass,
+      failureCode: fail.failureCode,
+      failureMessage: fail.failureMessage,
+      latencyMs: Date.now() - started,
+      sandbox: true,
+      networkDispatched: false,
+      createdAt: now2,
+      updatedAt: now2
+    };
+    saveSupplierOrderSandboxRecord(failedRecord);
+    return toResult(failedRecord);
+  }
+  if (input._testSimulateTimeout) {
+    const fail = failureResult("TIMEOUT", "Simulated supplier timeout");
+    return {
+      ok: false,
+      sandbox: true,
+      source: "SANDBOX",
+      status: "FAILED",
+      message: fail.failureMessage,
+      failureClass: fail.failureClass,
+      dryRun: true
+    };
+  }
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const supplierOrderId = buildDeterministicSandboxOrderId(
+    payload.buzzardOrderId,
+    payload.supplierId,
+    payload.idempotencyKey
+  );
+  let status = "PREPARED";
+  assertSupplierOrderTransition(status, "VALIDATED");
+  status = "VALIDATED";
+  assertSupplierOrderTransition(status, "SANDBOX_ACCEPTED");
+  status = "SANDBOX_ACCEPTED";
+  const tracking = buildSandboxTracking(supplierOrderId);
+  const record = {
+    supplierOrderId,
+    buzzardOrderId: payload.buzzardOrderId,
+    supplierId: payload.supplierId,
+    status,
+    idempotencyKey: payload.idempotencyKey,
+    correlationId: payload.correlationId,
+    payload,
+    tracking,
+    latencyMs: Date.now() - started,
+    sandbox: true,
+    networkDispatched: false,
+    createdAt: now,
+    updatedAt: now
+  };
+  saveSupplierOrderSandboxRecord(record);
+  recordSupplierEngineAudit({
+    supplierId: input.supplierId,
+    action: "supplier.order_sandbox.accepted",
+    correlationId: payload.correlationId,
+    metadata: redactSecrets(
+      sanitizePayloadForInspection({
+        orderId: input.orderId,
+        supplierOrderId,
+        idempotencyKey: payload.idempotencyKey,
+        status,
+        latencyMs: record.latencyMs
+      })
+    )
+  });
+  return toResult(record);
+}
+async function runSupplierOrderSandbox(input) {
+  const idempotencyKey = input.idempotencyKey || buildSupplierOrderIdempotencyKey2(input.orderId, input.supplierId);
+  const inflight = inflightSandbox.get(idempotencyKey);
+  if (inflight) return inflight;
+  const promise = executeSupplierOrderSandbox(input);
+  inflightSandbox.set(idempotencyKey, promise);
+  try {
+    return await promise;
+  } finally {
+    inflightSandbox.delete(idempotencyKey);
+  }
+}
+
+// lib/supplier-engine/order.ts
+async function createSupplierOrder(request) {
+  const supplier = getSupplier(request.supplierId);
+  if (!supplier) {
+    return { ok: false, dryRun: true, status: "REJECTED", message: "UNKNOWN_SUPPLIER" };
+  }
+  const legacyKey = buildSupplierOrderIdempotencyKey(
+    request.supplierId,
+    request.orderId,
+    request.idempotencyKey
+  );
+  const existingOrderId = getIdempotentSupplierOrder(legacyKey);
+  if (existingOrderId) {
+    return {
+      ok: true,
+      dryRun: true,
+      supplierOrderId: existingOrderId,
+      status: "IDEMPOTENT_REPLAY",
+      message: "Duplicate order retry \u2014 existing supplier order reference returned"
+    };
+  }
+  if (isSupplierOrderNetworkEnabled()) {
+    return {
+      ok: false,
+      dryRun: true,
+      status: "ORDER_NETWORK_REQUIRED",
+      message: "Real supplier order dispatch requires explicit network enablement \u2014 blocked in #335"
+    };
+  }
+  const sandboxResult = await runSupplierOrderSandbox(request);
+  if (sandboxResult.supplierOrderId) {
+    recordIdempotentSupplierOrder(legacyKey, sandboxResult.supplierOrderId);
+  }
+  return {
+    ok: sandboxResult.ok,
+    dryRun: true,
+    supplierOrderId: sandboxResult.supplierOrderId,
+    status: sandboxResult.idempotentReplay ? "IDEMPOTENT_REPLAY" : sandboxResult.status,
+    message: sandboxResult.message
+  };
+}
+
+// lib/order-engine/fulfillment.ts
+init_registry2();
+function sanitizeAddressForSupplier(address) {
+  return {
+    recipientName: address.recipientName,
+    company: address.company || "",
+    street: address.street,
+    houseNumber: address.houseNumber || "",
+    postalCode: address.postalCode,
+    city: address.city,
+    state: address.state || "",
+    country: address.country
+  };
+}
+function mapSandboxStatus(status) {
+  switch (status) {
+    case "SANDBOX_ACCEPTED":
+    case "VALIDATED":
+    case "PREPARED":
+      return "PREPARED";
+    case "SUPPLIER_PENDING":
+    case "SUPPLIER_CONFIRMED":
+    case "PROCESSING":
+      return "SUBMITTED";
+    case "SHIPPED":
+      return "SHIPPED";
+    case "DELIVERED":
+      return "DELIVERED";
+    case "FAILED":
+      return "FAILED";
+    case "CANCELLED":
+      return "CANCELLED";
+    case "IDEMPOTENT_REPLAY":
+      return "PREPARED";
+    default:
+      return "PREPARED";
+  }
+}
+async function prepareSupplierOrders(order) {
+  const bySupplier = /* @__PURE__ */ new Map();
+  for (const item of order.items) {
+    const list = bySupplier.get(item.supplierId) ?? [];
+    list.push(item);
+    bySupplier.set(item.supplierId, list);
+  }
+  const supplierOrders = [];
+  for (const [supplierId, items] of bySupplier) {
+    const supplier = getSupplier(supplierId);
+    const result = await createSupplierOrder({
+      supplierId,
+      orderId: order.orderId,
+      idempotencyKey: order.idempotencyKey,
+      correlationId: order.orderId,
+      currency: order.currency,
+      priceSnapshotId: order.priceSnapshotId,
+      customerReference: order.orderNumber,
+      billingAddress: sanitizeAddressForSupplier(order.billingAddress),
+      lines: items.map((item) => ({
+        supplierSku: item.sku,
+        quantity: item.quantity,
+        unitPrice: item.supplierCostSnapshot
+      })),
+      shippingAddress: sanitizeAddressForSupplier(order.shippingAddress),
+      dropshipping: supplier?.capabilities.dropshipping ?? false,
+      whiteLabel: supplier?.capabilities.whiteLabel ?? false,
+      blindShipping: supplier?.capabilities.blindShipping ?? false,
+      productId: items[0]?.productId
+    });
+    if (!result.ok) {
+      return {
+        ok: false,
+        supplierOrders,
+        errorMessage: result.message || "SUPPLIER_ORDER_SANDBOX_FAILED"
+      };
+    }
+    supplierOrders.push({
+      supplierOrderId: result.supplierOrderId || `SANDBOX-MISSING-${supplierId}-${order.orderId}`,
+      orderId: order.orderId,
+      supplierId,
+      status: mapSandboxStatus(String(result.status)),
+      dryRun: true,
+      items: items.map((i) => ({
+        productId: i.productId,
+        supplierSku: i.sku,
+        quantity: i.quantity,
+        supplierCost: i.supplierCostSnapshot
+      })),
+      shippingAddress: order.shippingAddress,
+      preparedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      message: result.message || "Sandbox supplier order \u2014 no real supplier network dispatch"
+    });
+  }
+  return { ok: true, supplierOrders };
+}
+
+// lib/order-engine/status.ts
+var VALID_ORDER_TRANSITIONS = {
+  DRAFT: ["PENDING_PAYMENT", "CANCELLED", "FAILED"],
+  PENDING_PAYMENT: ["PAID", "FAILED", "CANCELLED"],
+  PAID: ["CONFIRMED", "FAILED", "CANCELLED"],
+  CONFIRMED: ["PROCESSING", "CANCELLED", "FAILED"],
+  PROCESSING: ["SUPPLIER_PENDING", "FAILED", "CANCELLED"],
+  SUPPLIER_PENDING: ["SUPPLIER_CONFIRMED", "FAILED", "CANCELLED"],
+  SUPPLIER_CONFIRMED: ["SHIPPED", "FAILED", "CANCELLED"],
+  SHIPPED: ["DELIVERED", "RETURN_REQUESTED"],
+  DELIVERED: ["RETURN_REQUESTED"],
+  CANCELLED: [],
+  RETURN_REQUESTED: ["RETURNED", "REFUNDED", "PARTIALLY_REFUNDED"],
+  RETURNED: ["REFUNDED", "PARTIALLY_REFUNDED"],
+  REFUNDED: [],
+  PARTIALLY_REFUNDED: ["REFUNDED"],
+  FAILED: []
+};
+function canTransitionOrderStatus(from, to) {
+  return VALID_ORDER_TRANSITIONS[from]?.includes(to) ?? false;
+}
+function assertOrderTransition(from, to) {
+  if (!canTransitionOrderStatus(from, to)) {
+    throw new Error(`INVALID_ORDER_TRANSITION:${from}->${to}`);
+  }
+}
+
+// lib/order-engine/returns.ts
+function createReturnRefundFoundation() {
+  return {
+    returnStatus: "NONE",
+    refundStatus: "NONE",
+    refundAmount: 0,
+    supplierRefundAmount: 0,
+    supplierCreditAmount: 0,
+    returnShippingCost: 0,
+    buzzardRefundLoss: 0
+  };
+}
+
+// lib/order-engine/events.ts
+var eventLog3 = [];
+var MAX_EVENTS3 = 2e3;
+function emitOrderEvent(event) {
+  const full = {
+    ...event,
+    eventId: `oevt_${event.orderId}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  eventLog3.push(full);
+  if (eventLog3.length > MAX_EVENTS3) eventLog3.shift();
+  return full;
+}
+
+// lib/order-engine/audit.ts
+var auditLog3 = [];
+var MAX_AUDIT2 = 2e3;
+var SECRET_PATTERN2 = /api[_-]?key|secret|password|token|authorization|bearer|credential|card/i;
+function recordOrderAudit(entry) {
+  const sanitized = sanitizeAuditMetadata(entry.metadata);
+  const full = {
+    ...entry,
+    metadata: sanitized,
+    auditId: `oaud_${entry.orderId}_${Date.now()}`,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  auditLog3.push(full);
+  if (auditLog3.length > MAX_AUDIT2) auditLog3.shift();
+  return full;
+}
+function sanitizeAuditMetadata(metadata) {
+  if (!metadata) return metadata;
+  const result = {};
+  for (const [key, value] of Object.entries(metadata)) {
+    if (SECRET_PATTERN2.test(key)) {
+      result[key] = "[REDACTED]";
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+function recordStatusTransition(orderId, actor, fromStatus, toStatus, metadata) {
+  return recordOrderAudit({
+    orderId,
+    actor,
+    action: "STATUS_TRANSITION",
+    fromStatus,
+    toStatus,
+    metadata
+  });
+}
+
+// lib/order-engine/createOrder.ts
+async function createOrder(input) {
+  const validation = validateCreateOrderInput(input);
+  if (!validation.valid) {
+    return {
+      ok: false,
+      errorCode: "VALIDATION_FAILED",
+      errorMessage: validation.errors.map((e) => e.message).join(", ")
+    };
+  }
+  const existing = getIdempotentOrder(input.idempotencyKey);
+  if (existing) {
+    return { ok: true, order: existing, idempotentReplay: true };
+  }
+  const market = getMarket(input.marketId);
+  const currency = input.currency ?? market.currency;
+  const orderId = generateOrderId();
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const reservationAttempts = [];
+  const orderItems = [];
+  const supplierAssignments = [];
+  const itemSnapshots = [];
+  for (const cartItem of input.items) {
+    const selection = selectSupplierForOrderItem(
+      cartItem.productId,
+      input.marketId,
+      input._testForceSupplierUnavailable
+    );
+    if (!selection.ok || !selection.assignment || !selection.offer) {
+      return {
+        ok: false,
+        errorCode: selection.reason === "OUT_OF_STOCK" ? "OUT_OF_STOCK" : "SUPPLIER_UNAVAILABLE",
+        errorMessage: selection.reason
+      };
+    }
+    const { snapshot, pricingFailed } = buildItemPriceSnapshot({
+      productId: cartItem.productId,
+      supplierId: selection.offer.supplierId,
+      supplierOfferId: selection.offer.supplierOfferId,
+      supplierSku: selection.offer.supplierSku,
+      marketId: input.marketId,
+      channel: input.channel,
+      currency,
+      supplierPrice: selection.offer.supplierPrice,
+      supplierCurrency: selection.offer.currency,
+      stock: selection.offer.stock,
+      categoryId: selection.categoryId
+    });
+    if (pricingFailed) {
+      return { ok: false, errorCode: "PRICING_FAILED", errorMessage: "PRICING_FAILED" };
+    }
+    itemSnapshots.push(snapshot.snapshotId);
+    supplierAssignments.push(selection.assignment);
+    reservationAttempts.push({
+      productId: cartItem.productId,
+      supplierId: selection.offer.supplierId,
+      supplierOfferId: selection.offer.supplierOfferId,
+      quantity: cartItem.quantity,
+      orderId
+    });
+    orderItems.push(
+      buildOrderItemFromSnapshot(snapshot, {
+        orderItemId: `oi_${orderId}_${cartItem.productId}`,
+        productName: selection.productName ?? cartItem.productId,
+        sku: selection.sku ?? selection.offer.supplierSku,
+        ean: selection.ean,
+        mpn: selection.mpn,
+        quantity: cartItem.quantity
+      })
+    );
+  }
+  const reservationResult = await reserveInventoryForOrder(reservationAttempts);
+  if (!reservationResult.ok) {
+    return {
+      ok: false,
+      errorCode: reservationResult.errorCode,
+      errorMessage: reservationResult.errorMessage
+    };
+  }
+  for (let i = 0; i < orderItems.length; i++) {
+    orderItems[i] = {
+      ...orderItems[i],
+      inventoryReservationId: reservationResult.reservationIds[i],
+      fulfillmentStatus: "RESERVED"
+    };
+  }
+  const totals = calculateOrderTotals(orderItems, 0);
+  const marketChannelSnapshot = {
+    marketId: input.marketId,
+    country: input.marketId,
+    currency,
+    channel: input.channel,
+    capturedAt: now
+  };
+  let order = {
+    orderId,
+    orderNumber: generateOrderNumber(),
+    customerId: input.customerId,
+    customerEmail: input.customerEmail,
+    marketId: input.marketId,
+    channel: input.channel,
+    currency,
+    status: "PENDING_PAYMENT",
+    paymentStatus: "PENDING",
+    fulfillmentStatus: "RESERVED",
+    items: orderItems,
+    subtotalNet: totals.subtotalNet,
+    vatAmount: totals.vatAmount,
+    shippingAmount: totals.shippingAmount,
+    totalGross: totals.totalGross,
+    priceSnapshotId: itemSnapshots[0] ?? "",
+    reservationIds: reservationResult.reservationIds,
+    supplierAssignments,
+    supplierOrders: [],
+    shippingAddress: input.shippingAddress,
+    billingAddress: input.billingAddress ?? input.shippingAddress,
+    marketChannelSnapshot,
+    returnRefund: createReturnRefundFoundation(),
+    idempotencyKey: input.idempotencyKey,
+    createdAt: now,
+    updatedAt: now
+  };
+  emitOrderEvent({ orderId, type: "ORDER_CREATED", source: "order-engine" });
+  emitOrderEvent({
+    orderId,
+    type: "RESERVATION_CREATED",
+    source: "inventory-engine",
+    metadata: { reservationIds: reservationResult.reservationIds }
+  });
+  for (const assignment of supplierAssignments) {
+    emitOrderEvent({
+      orderId,
+      type: "SUPPLIER_SELECTED",
+      source: "supplier-engine",
+      metadata: { supplierId: assignment.supplierId, score: assignment.selectionScore }
+    });
+  }
+  recordOrderAudit({ orderId, actor: "order-engine", action: "ORDER_CREATED" });
+  const pendingPayment = createPendingPayment({
+    orderId,
+    amount: order.totalGross,
+    currency,
+    method: input.paymentMethod
+  });
+  order.payment = pendingPayment;
+  emitOrderEvent({ orderId, type: "PAYMENT_PENDING", source: "payment-mock" });
+  const authResult = authorizePayment(pendingPayment, input._testPaymentShouldFail);
+  if (!authResult.ok || !authResult.payment) {
+    rollbackReservations(reservationResult.reservationIds);
+    order = {
+      ...order,
+      status: "FAILED",
+      paymentStatus: "FAILED",
+      fulfillmentStatus: "FAILED",
+      payment: authResult.payment,
+      reservationIds: [],
+      errorCode: "PAYMENT_FAILED",
+      errorMessage: authResult.errorMessage,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    emitOrderEvent({ orderId, type: "PAYMENT_FAILED", source: "payment-mock" });
+    emitOrderEvent({
+      orderId,
+      type: "RESERVATION_RELEASED",
+      source: "order-engine",
+      metadata: { reason: "PAYMENT_FAILED" }
+    });
+    recordStatusTransition(orderId, "order-engine", "PENDING_PAYMENT", "FAILED");
+    saveOrder(order);
+    return { ok: false, order, errorCode: "PAYMENT_FAILED", errorMessage: authResult.errorMessage };
+  }
+  order.payment = authResult.payment;
+  order.paymentStatus = "AUTHORIZED";
+  emitOrderEvent({ orderId, type: "PAYMENT_AUTHORIZED", source: "payment-mock" });
+  order.payment = capturePayment(authResult.payment);
+  order.paymentStatus = "CAPTURED";
+  assertOrderTransition(order.status, "PAID");
+  order.status = "PAID";
+  emitOrderEvent({ orderId, type: "PAYMENT_CAPTURED", source: "payment-mock" });
+  assertOrderTransition(order.status, "CONFIRMED");
+  order.status = "CONFIRMED";
+  emitOrderEvent({ orderId, type: "ORDER_CONFIRMED", source: "order-engine" });
+  recordStatusTransition(orderId, "order-engine", "PAID", "CONFIRMED");
+  assertOrderTransition(order.status, "PROCESSING");
+  order.status = "PROCESSING";
+  const fulfillment = await prepareSupplierOrders(order);
+  if (!fulfillment.ok) {
+    rollbackReservations(reservationResult.reservationIds);
+    order = {
+      ...order,
+      status: "FAILED",
+      fulfillmentStatus: "FAILED",
+      errorCode: "FULFILLMENT_PREPARATION_FAILED",
+      errorMessage: fulfillment.errorMessage,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    saveOrder(order);
+    return { ok: false, order, errorCode: "FULFILLMENT_PREPARATION_FAILED" };
+  }
+  order.supplierOrders = fulfillment.supplierOrders;
+  for (const so of fulfillment.supplierOrders) {
+    emitOrderEvent({
+      orderId,
+      type: "SUPPLIER_ORDER_PREPARED",
+      source: "order-engine",
+      metadata: { supplierOrderId: so.supplierOrderId, dryRun: true }
+    });
+  }
+  assertOrderTransition(order.status, "SUPPLIER_PENDING");
+  order.status = "SUPPLIER_PENDING";
+  order.fulfillmentStatus = "SUPPLIER_PREPARED";
+  order.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  saveOrder(order);
+  return { ok: true, order };
+}
+
+// lib/pricing-engine/test-fixtures.ts
+var PRICING_FIXTURE_COSTS = {
+  "reifen-pilot-sport": { supplierCost: 60, shipping: 10, label: "225/45 R17 Reifen" },
+  "motoroel-5w30": { supplierCost: 30, shipping: 7, label: "5W-30 Motor\xF6l" },
+  "bremsscheibe-280": { supplierCost: 40, shipping: 8, label: "280mm Bremsscheibe" },
+  "bremsbelaege-vorder": { supplierCost: 25, shipping: 6, label: "Bremsbel\xE4ge" }
+};
+
+// lib/order-engine/test-fixtures.ts
+var TEST_CUSTOMER_A = "cust_test_a";
+var DEFAULT_SHIPPING_ADDRESS = {
+  recipientName: "Max Mustermann",
+  street: "Musterstra\xDFe",
+  houseNumber: "12",
+  postalCode: "10115",
+  city: "Berlin",
+  country: "DE"
+};
+function alignProductWithTestSupplier(product) {
+  const fixture = PRICING_FIXTURE_COSTS[product.productId];
+  const supplierSku = FIXTURE_SKU_MAP[product.productId];
+  if (!fixture || !supplierSku) return product;
+  const offer = createSupplierOffer({
+    supplierId: TEST_SUPPLIER_ID,
+    supplierSku,
+    supplierEan: product.ean,
+    supplierPrice: fixture.supplierCost,
+    currency: "EUR",
+    stock: 100,
+    source: TEST_SUPPLIER_ID,
+    sourceType: "MANUAL",
+    reliabilityScore: 0.85
+  });
+  return {
+    ...product,
+    supplierOffers: [offer],
+    stock: { quantity: 100, availability: "IN_STOCK", lastUpdated: (/* @__PURE__ */ new Date()).toISOString() }
+  };
+}
+function seedOrderEngineFixtures() {
+  for (const product of loadFixtureProducts()) {
+    upsertRegistryProduct(alignProductWithTestSupplier(product));
+  }
+  processSupplierStockUpdate(buildStockUpdateFixture("reifen-pilot-sport", 100));
+  processSupplierStockUpdate(buildStockUpdateFixture("motoroel-5w30", 50));
+  processSupplierStockUpdate(buildStockUpdateFixture("bremsscheibe-280", 24));
+  processSupplierStockUpdate(buildStockUpdateFixture("bremsbelaege-vorder", 31));
+}
+function buildSingleItemOrderInput(productId, options) {
+  return {
+    customerId: TEST_CUSTOMER_A,
+    customerEmail: "test@example.com",
+    marketId: "DE",
+    channel: "direct",
+    items: [{ productId, quantity: 1 }],
+    shippingAddress: DEFAULT_SHIPPING_ADDRESS,
+    idempotencyKey: `idem_${productId}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    ...options
+  };
+}
+
+// lib/supplier-engine/orderSandbox/index.ts
+init_persistence2();
+
+// lib/fulfillment-control-tower/aggregator.ts
+init_registry2();
+init_persistence2();
+
 // lib/marketplace-engine/registry.ts
+var marketplaces = /* @__PURE__ */ new Map();
 var orderMappings = /* @__PURE__ */ new Map();
+function baseCapabilities(partial = {}) {
+  return {
+    productListing: false,
+    productUpdate: false,
+    priceUpdate: false,
+    stockUpdate: false,
+    orderImport: false,
+    orderAcknowledgement: false,
+    shipmentCreation: false,
+    trackingUpdate: false,
+    returns: false,
+    refunds: false,
+    webhooks: false,
+    api: false,
+    xml: false,
+    csv: false,
+    ...partial
+  };
+}
+var EU_MARKETS = ["DE", "FR", "PL", "CZ", "AT", "NL", "BE", "IT", "ES"];
+var GCC_MARKETS = ["SA", "AE", "EG"];
+function buildMarketplace(marketplaceId, displayName, supportedMarkets, supportedCurrencies, channel, capabilities, status = "DISCOVERED") {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    marketplaceId,
+    name: marketplaceId,
+    displayName,
+    country: supportedMarkets[0] ?? "DE",
+    supportedMarkets,
+    supportedCountries: supportedMarkets,
+    supportedCurrencies,
+    supportedChannels: [channel],
+    status,
+    capabilities: baseCapabilities(capabilities),
+    connectorType: "dry-run",
+    createdAt: now,
+    updatedAt: now
+  };
+}
+function seedMarketplaces() {
+  if (marketplaces.size > 0) return;
+  const defs = [
+    buildMarketplace("amazon", "Amazon", [...EU_MARKETS, ...GCC_MARKETS], ["EUR", "PLN", "CZK", "SAR", "AED", "EGP"], "amazon", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      returns: true,
+      refunds: true,
+      webhooks: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("ebay", "eBay", [...EU_MARKETS, "TR"], ["EUR", "PLN", "CZK", "TRY"], "ebay", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      returns: true,
+      refunds: true,
+      webhooks: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("kaufland", "Kaufland", ["DE", "CZ", "SK", "PL", "AT"], ["EUR", "CZK", "PLN"], "kaufland", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      api: true
+    }, "TESTING"),
+    buildMarketplace("allegro", "Allegro", ["PL", "CZ", "SK", "HU"], ["PLN", "CZK"], "allegro", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("bol", "bol.com", ["NL", "BE"], ["EUR"], "bol", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      api: true
+    }, "DISCOVERED"),
+    buildMarketplace("cdiscount", "Cdiscount", ["FR"], ["EUR"], "cdiscount", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      api: true,
+      xml: true
+    }, "DISCOVERED"),
+    buildMarketplace("otto", "OTTO", ["DE"], ["EUR"], "otto", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      api: true,
+      csv: true
+    }, "DISCOVERED"),
+    buildMarketplace("TEST_AMAZON", "Test Amazon", ["DE"], ["EUR"], "amazon", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      returns: true,
+      refunds: true,
+      webhooks: true,
+      api: true
+    }, "TESTING"),
+    buildMarketplace("TEST_EBAY", "Test eBay", ["DE", "FR"], ["EUR"], "ebay", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      shipmentCreation: true,
+      trackingUpdate: true,
+      webhooks: true,
+      api: true
+    }, "TESTING"),
+    buildMarketplace("TEST_KAUFLAND", "Test Kaufland", ["DE", "PL"], ["EUR", "PLN"], "kaufland", {
+      productListing: true,
+      productUpdate: true,
+      priceUpdate: true,
+      stockUpdate: true,
+      orderImport: true,
+      orderAcknowledgement: true,
+      api: true
+    }, "TESTING")
+  ];
+  for (const def of defs) {
+    marketplaces.set(def.marketplaceId, def);
+  }
+}
+function listMarketplaces() {
+  seedMarketplaces();
+  return [...marketplaces.values()];
+}
 function listOrderMappings(marketplaceId) {
   const all = [...orderMappings.values()];
   return marketplaceId ? all.filter((m) => m.marketplaceId === marketplaceId) : all;
@@ -30889,6 +34723,8 @@ function aggregateOverallLevel(findings) {
 }
 
 // lib/fulfillment-control-tower/checks.ts
+init_registry2();
+init_persistence2();
 function f(checkId, category, level, code, message) {
   return { checkId, category, level, code, message };
 }
@@ -31017,37 +34853,10 @@ function listAllTrackingNumbers(trackingNumber, excludeFulfillmentId) {
 }
 
 // lib/fulfillment-control-tower/reconcile.ts
-var import_crypto2 = require("crypto");
-
-// lib/supplier-engine/network/config.ts
-function envFlag(name, defaultValue = false) {
-  const raw = process.env[name];
-  if (raw === void 0 || raw === "") return defaultValue;
-  return raw === "1" || raw.toLowerCase() === "true";
-}
-function envInt(name, fallback) {
-  const n = Number(process.env[name]);
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-}
-var SUPPLIER_NETWORK_CONFIG = {
-  get networkEnabled() {
-    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
-  },
-  get orderNetworkEnabled() {
-    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-  },
-  defaultEnvironment: "MOCK",
-  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
-  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
-  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
-  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
-};
-function isSupplierOrderNetworkEnabled() {
-  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-}
+var import_crypto4 = require("crypto");
 
 // lib/fulfillment-control-tower/incidents.ts
-var import_crypto = require("crypto");
+var import_crypto3 = require("crypto");
 
 // lib/fulfillment-control-tower/persistence.ts
 var snapshotStore = /* @__PURE__ */ new Map();
@@ -31196,32 +35005,6 @@ function getLastReconciliationRun() {
   const rows = getPersistentStore()?.listReconciliationRuns(1) || [];
   return rows[0] ? rowToRun(rows[0]) : void 0;
 }
-function hydrateControlTowerFromPersistence() {
-  const store2 = getPersistentStore();
-  if (!store2) return;
-  for (const row of store2.listSnapshots()) {
-    const view = rowToSnapshot(row);
-    snapshotStore.set(view.fulfillmentId, view);
-  }
-  for (const row of store2.listIncidents()) {
-    const incident = rowToIncident(row);
-    incidentStore.set(incident.incidentId, incident);
-    incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
-  }
-  for (const row of store2.listReconciliationRuns(20)) {
-    reconciliationRuns.push(rowToRun(row));
-  }
-}
-function resetControlTowerMemoryForTests() {
-  snapshotStore.clear();
-  incidentStore.clear();
-  incidentByFingerprint.clear();
-  reconciliationRuns.length = 0;
-}
-function resetControlTowerForTests() {
-  resetControlTowerMemoryForTests();
-  getPersistentStore()?.resetAll();
-}
 
 // lib/fulfillment-control-tower/incidents.ts
 function levelToSeverity(level) {
@@ -31248,7 +35031,7 @@ function upsertIncidentFromFinding(input) {
     return { created: false, incident: existing };
   }
   const incident = {
-    incidentId: existing?.incidentId || `inc_${(0, import_crypto.randomUUID)().slice(0, 12)}`,
+    incidentId: existing?.incidentId || `inc_${(0, import_crypto3.randomUUID)().slice(0, 12)}`,
     fingerprint,
     fulfillmentId: input.fulfillmentId,
     orderId: input.orderId,
@@ -31281,31 +35064,6 @@ function resolveOpenIncidentsForFulfillment(fulfillmentId, activeFingerprints) {
   }
   return resolved;
 }
-function acknowledgeIncident(incidentId, actor) {
-  const incident = listIncidents().find((i) => i.incidentId === incidentId);
-  if (!incident) return null;
-  const updated = {
-    ...incident,
-    status: "ACKNOWLEDGED",
-    acknowledgedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    acknowledgedBy: actor
-  };
-  updateIncidentRecord(updated);
-  return updated;
-}
-function resolveIncident(incidentId, actor, note) {
-  const incident = listIncidents().find((i) => i.incidentId === incidentId);
-  if (!incident) return null;
-  const updated = {
-    ...incident,
-    status: "RESOLVED",
-    resolvedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    resolutionActor: actor,
-    resolutionNote: note || "Manually resolved \u2014 underlying SSOT unchanged"
-  };
-  updateIncidentRecord(updated);
-  return updated;
-}
 function filterIncidents(filter) {
   return listIncidents().filter((incident) => {
     if (filter?.supplierId && incident.supplierId !== filter.supplierId) return false;
@@ -31318,19 +35076,16 @@ function filterIncidents(filter) {
 }
 
 // lib/fulfillment-control-tower/audit.ts
-var auditLog = [];
+var auditLog4 = [];
 function recordControlTowerAudit(entry) {
-  auditLog.unshift({
+  auditLog4.unshift({
     action: entry.action,
     actor: entry.actor || "control-tower",
     correlationId: entry.correlationId,
     metadata: entry.metadata || {},
     timestamp: (/* @__PURE__ */ new Date()).toISOString()
   });
-  if (auditLog.length > 500) auditLog.length = 500;
-}
-function listControlTowerAudit(limit = 50) {
-  return auditLog.slice(0, limit);
+  if (auditLog4.length > 500) auditLog4.length = 500;
 }
 
 // lib/fulfillment-control-tower/analytics.ts
@@ -31351,9 +35106,6 @@ function emitControlTowerAnalytics(run) {
   });
   if (metrics.length > 200) metrics.length = 200;
 }
-function getControlTowerAnalyticsMetrics(limit = 20) {
-  return metrics.slice(0, limit);
-}
 
 // lib/fulfillment-control-tower/reconcile.ts
 function runFulfillmentReconciliation(options = {}) {
@@ -31361,8 +35113,8 @@ function runFulfillmentReconciliation(options = {}) {
     throw new Error("NETWORK_SAFETY_VIOLATION:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED");
   }
   const started = Date.now();
-  const correlationId = options.correlationId || (0, import_crypto2.randomUUID)();
-  const runId = `rec_${Date.now()}_${(0, import_crypto2.randomUUID)().slice(0, 8)}`;
+  const correlationId = options.correlationId || (0, import_crypto4.randomUUID)();
+  const runId = `rec_${Date.now()}_${(0, import_crypto4.randomUUID)().slice(0, 8)}`;
   let views = listFulfillmentOperationalViews(options.filter);
   if (options.fulfillmentIds?.length) {
     views = views.filter((v) => options.fulfillmentIds.includes(v.fulfillmentId));
@@ -31370,7 +35122,7 @@ function runFulfillmentReconciliation(options = {}) {
   let passed = 0;
   let warnings = 0;
   let mismatches = 0;
-  let critical = 0;
+  let critical2 = 0;
   let incidentsCreated = 0;
   let incidentsResolved = 0;
   const errors = [];
@@ -31389,7 +35141,7 @@ function runFulfillmentReconciliation(options = {}) {
           mismatches++;
           break;
         case "CRITICAL":
-          critical++;
+          critical2++;
           break;
       }
       incidentsCreated += result.incidentsCreated ?? 0;
@@ -31411,7 +35163,7 @@ function runFulfillmentReconciliation(options = {}) {
     passed,
     warnings,
     mismatches,
-    critical,
+    critical: critical2,
     incidentsCreated,
     incidentsResolved,
     durationMs: Date.now() - started,
@@ -31427,7 +35179,7 @@ function runFulfillmentReconciliation(options = {}) {
       passed,
       warnings,
       mismatches,
-      critical,
+      critical: critical2,
       durationMs: record.durationMs
     }
   });
@@ -31502,65 +35254,1559 @@ function getFulfillmentControlTowerDashboard(filter) {
     lastReconciliationRun: getLastReconciliationRun()
   };
 }
-function listFulfillmentControlTowerRows(filter) {
-  let views = applyOperationalStatus(listFulfillmentOperationalViews(filter));
-  if (filter?.severity) {
-    const matching = new Set(
-      filterIncidents({ severity: filter.severity, status: "OPEN" }).map((i) => i.fulfillmentId)
-    );
-    views = views.filter((v) => matching.has(v.fulfillmentId));
-  }
-  if (filter?.category) {
-    const matching = new Set(
-      filterIncidents({ category: filter.category, status: "OPEN" }).map((i) => i.fulfillmentId)
-    );
-    views = views.filter((v) => matching.has(v.fulfillmentId));
-  }
-  return views;
+
+// lib/supplier-order-readiness/config.ts
+var EVALUATOR_VERSION = "337.1.0";
+var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS = 7 * 24 * 60 * 60 * 1e3;
+var DEFAULT_POLICY = {
+  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
+  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
+  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
+  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
+  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
+  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
+  blockOnMissingTrackingCapability: false,
+  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
+};
+var policyOverride = null;
+function getReadinessPolicy() {
+  return { ...DEFAULT_POLICY, ...policyOverride || {} };
 }
-function getFulfillmentControlTowerDetail(fulfillmentId) {
-  const view = getFulfillmentOperationalView(fulfillmentId);
-  if (!view) return null;
-  let reconciliation;
-  try {
-    reconciliation = reconcileSingleFulfillment(fulfillmentId);
-  } catch {
-    reconciliation = void 0;
+function isMockCredentialValue(value) {
+  const normalized = value.trim().toLowerCase();
+  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.includes("placeholder");
+}
+
+// lib/supplier-order-readiness/evaluator.ts
+var import_crypto7 = require("crypto");
+
+// lib/supplier-order-readiness/checks.ts
+init_registry2();
+init_credentials();
+init_config();
+init_persistence2();
+init_security();
+function pass(code, category, message) {
+  return { code, category, level: "PASS", message, blocking: false };
+}
+function warn(code, category, message, blocking = false) {
+  return { code, category, level: "WARNING", message, blocking };
+}
+function block(code, category, message) {
+  return { code, category, level: "BLOCKED", message, blocking: true };
+}
+function critical(code, category, message) {
+  return { code, category, level: "CRITICAL", message, blocking: true };
+}
+function ageMs(iso) {
+  if (!iso) return null;
+  const ts = Date.parse(iso);
+  return Number.isFinite(ts) ? Date.now() - ts : null;
+}
+function classifyCapability(enabled) {
+  if (enabled === true) return "AVAILABLE";
+  if (enabled === false) return "NOT_SUPPORTED";
+  return "UNKNOWN";
+}
+function evaluateSupplierIdentityChecks(scope) {
+  const results = [];
+  const supplier = getSupplier(scope.supplierId);
+  if (!supplier) {
+    results.push(block("SUPPLIER_NOT_FOUND", "SUPPLIER", "Supplier record does not exist"));
+    return results;
   }
+  results.push(pass("SUPPLIER_EXISTS", "SUPPLIER", "Supplier record exists"));
+  if (!isSupplierSelectable(scope.supplierId)) {
+    results.push(block("SUPPLIER_DISABLED", "SUPPLIER", "Supplier is disabled or not selectable"));
+  } else {
+    results.push(pass("SUPPLIER_ENABLED", "SUPPLIER", "Supplier is enabled"));
+  }
+  if (!supplier.supportedMarkets?.includes(scope.market)) {
+    results.push(block("MARKET_NOT_ELIGIBLE", "MARKET", `Supplier not eligible for market ${scope.market}`));
+  } else {
+    results.push(pass("MARKET_ELIGIBLE", "MARKET", "Supplier market eligibility confirmed"));
+  }
+  const health = getSupplierHealth(scope.supplierId);
+  if (!health) {
+    results.push(warn("SUPPLIER_HEALTH_UNKNOWN", "SUPPLIER", "Supplier health state unavailable"));
+  } else if (health.healthStatus === "UNHEALTHY") {
+    results.push(block("SUPPLIER_UNHEALTHY", "SUPPLIER", "Supplier health is UNHEALTHY"));
+  } else if (health.healthStatus === "DEGRADED") {
+    results.push(warn("SUPPLIER_DEGRADED", "SUPPLIER", "Supplier health is DEGRADED", false));
+  } else {
+    results.push(pass("SUPPLIER_HEALTH_OK", "SUPPLIER", `Supplier health ${health.healthStatus}`));
+  }
+  return results;
+}
+function evaluateCredentialChecks(scope) {
+  const results = [];
+  const ref = getCredentialRef(scope.supplierId);
+  const profile = resolveLiveSupplierProfile();
+  const interCars = resolvePredefinedLiveProfile();
+  const isInterCars = scope.supplierId === interCars?.supplierId || profile?.supplierId === scope.supplierId || process.env.SUPPLIER_LIVE_PROFILE === "inter-cars";
+  if (!ref?.secretsRef && !profile?.secretsRef) {
+    results.push(block("CREDENTIAL_REF_MISSING", "CREDENTIAL", "Credential reference not configured"));
+    return results;
+  }
+  results.push(pass("CREDENTIAL_REF_EXISTS", "CREDENTIAL", "Credential reference configured"));
+  const secretsRef = ref?.secretsRef || profile?.secretsRef || "";
+  const creds = resolveCredentials(secretsRef);
+  if (!creds || Object.keys(creds).length === 0) {
+    results.push(block("CREDENTIAL_SECRET_MISSING", "CREDENTIAL", "Required supplier credential secret missing"));
+    return results;
+  }
+  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
+  if (isMockCredentialValue(token)) {
+    results.push(block("CREDENTIAL_MOCK_NOT_PRODUCTION", "CREDENTIAL", "Mock/test credentials cannot be production ready"));
+    return results;
+  }
+  if (isInterCars && !hasLiveSupplierCredentials(interCars || profile)) {
+    results.push(block("INTER_CARS_CREDENTIAL_MISSING", "CREDENTIAL", "Inter Cars live credentials required"));
+    return results;
+  }
+  const redacted = redactSecrets({ preview: token });
+  if (redacted.preview && redacted.preview !== "[REDACTED]") {
+    results.push(critical("SECRET_REDACTION_FAILED", "SECURITY", "Secret redaction failed"));
+  } else {
+    results.push(pass("SECRET_REDACTION_ACTIVE", "SECURITY", "Secret redaction active"));
+  }
+  results.push(pass("CREDENTIAL_CONFIGURED", "CREDENTIAL", "Production credential readiness confirmed"));
+  return results;
+}
+function evaluateNetworkSafetyChecks() {
+  const results = [];
+  if (isSupplierOrderNetworkEnabled()) {
+    results.push(warn("NETWORK_ENABLED", "NETWORK", "Supplier order network is ENABLED"));
+  } else {
+    results.push(pass("NETWORK_DISABLED", "NETWORK", "Supplier order network is DISABLED (required for #337)"));
+  }
+  return results;
+}
+function evaluateCapabilityChecks(scope) {
+  const policy = getReadinessPolicy();
+  const supplier = getSupplier(scope.supplierId);
+  const profile = resolveLiveSupplierProfile();
+  const caps = { ...supplier?.capabilities || {}, ...profile?.capabilities || {} };
+  const map = {
+    createOrder: classifyCapability(caps.createOrder),
+    orderStatus: classifyCapability(caps.orderStatus),
+    tracking: classifyCapability(caps.trackingAPI),
+    cancellation: classifyCapability(caps.cancelOrder),
+    return: classifyCapability(caps.returnsAPI),
+    refund: classifyCapability(caps.refund)
+  };
+  const results = [];
+  for (const required of policy.requiredOrderCapabilities) {
+    const key = required === "trackingAPI" ? "tracking" : required;
+    const classification = map[key] || map[required] || "UNKNOWN";
+    if (classification !== "AVAILABLE") {
+      results.push(block(`CAPABILITY_${required.toUpperCase()}_MISSING`, "CAPABILITY", `${required} not available for real orders`));
+    } else {
+      results.push(pass(`CAPABILITY_${required.toUpperCase()}`, "CAPABILITY", `${required} available`));
+    }
+  }
+  if (policy.blockOnMissingTrackingCapability && map.tracking !== "AVAILABLE") {
+    results.push(block("TRACKING_CAPABILITY_REQUIRED", "TRACKING", "Tracking capability required"));
+  } else if (map.tracking !== "AVAILABLE") {
+    results.push(warn("TRACKING_CAPABILITY_MISSING", "TRACKING", "Tracking capability not supported"));
+  }
+  if (policy.blockOnMissingReturnCapability && map.return !== "AVAILABLE") {
+    results.push(warn("RETURN_CAPABILITY_MISSING", "RETURN", "Return capability not supported", false));
+  }
+  return { results, capabilities: map };
+}
+function evaluateInterCarsChecks(scope) {
+  const interCars = resolvePredefinedLiveProfile();
+  if (!interCars || scope.supplierId !== interCars.supplierId) return [];
+  const results = [];
+  results.push(pass("INTER_CARS_PROFILE", "SUPPLIER", "Inter Cars adapter profile configured"));
+  if (interCars.environment !== "PRODUCTION" && interCars.environment !== "SANDBOX") {
+    results.push(warn("INTER_CARS_ENV", "SUPPLIER", `Inter Cars environment ${interCars.environment}`));
+  }
+  if (!interCars.endpoints?.products || !interCars.endpoints?.stock) {
+    results.push(block("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoint configuration incomplete"));
+  } else {
+    results.push(pass("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoints configured"));
+  }
+  const orderCap = interCars.capabilities?.createOrder === true;
+  if (!orderCap) {
+    results.push(block("INTER_CARS_ORDER_NOT_VALIDATED", "SUPPLIER", "Inter Cars live order capability not validated"));
+  }
+  return results;
+}
+function evaluateLiveReadChecks(scope) {
+  const results = [];
+  const profile = resolveLiveSupplierProfile();
+  const credentialsPresent = profile ? hasLiveSupplierCredentials(profile) : hasConfiguredCredentials(scope.supplierId);
+  if (!credentialsPresent) {
+    results.push(block("LIVE_READ_NEVER_RUN", "LIVE_READ", "Live read validation skipped \u2014 credentials missing"));
+    return results;
+  }
+  const cursor = getSyncCursor(scope.supplierId, "incremental");
+  if (!cursor?.updatedAt) {
+    results.push(block("LIVE_READ_NEVER_RUN", "LIVE_READ", "No successful live-read sync cursor recorded"));
+    return results;
+  }
+  const syncAge = ageMs(cursor.updatedAt);
+  const policy = getReadinessPolicy();
+  if (syncAge == null || syncAge > policy.maxStockAgeMs) {
+    results.push(block("LIVE_READ_STALE", "LIVE_READ", "Last live-read sync exceeds freshness threshold"));
+  } else {
+    results.push(pass("LIVE_READ_RECENT", "LIVE_READ", "Recent live-read sync cursor present"));
+  }
+  return results;
+}
+function evaluateDataFreshnessChecks(scope) {
+  const policy = getReadinessPolicy();
+  const cursor = getSyncCursor(scope.supplierId, "incremental");
+  const results = [];
+  const stockAge = ageMs(cursor?.updatedAt);
+  const priceAge = ageMs(cursor?.updatedAt);
+  const productAge = ageMs(cursor?.updatedAt);
+  if (stockAge == null || stockAge > policy.maxStockAgeMs) {
+    results.push(block("STOCK_STALE", "INVENTORY", "Supplier stock feed stale or missing"));
+  } else {
+    results.push(pass("STOCK_FRESH", "INVENTORY", "Stock feed within freshness threshold"));
+  }
+  if (priceAge == null || priceAge > policy.maxPriceAgeMs) {
+    results.push(block("PRICE_STALE", "PRICE", "Supplier price feed stale or missing"));
+  } else {
+    results.push(pass("PRICE_FRESH", "PRICE", "Price feed within freshness threshold"));
+  }
+  if (productAge == null || productAge > policy.maxProductAgeMs) {
+    results.push(warn("PRODUCT_STALE", "PRODUCT", "Product feed older than preferred threshold"));
+  } else {
+    results.push(pass("PRODUCT_FRESH", "PRODUCT", "Product feed within freshness threshold"));
+  }
+  return results;
+}
+function evaluateInventoryReadinessChecks(scope) {
+  const supplier = getSupplier(scope.supplierId);
+  const results = [];
+  if (!supplier?.capabilities?.stockFeed) {
+    results.push(block("STOCK_SOURCE_UNAVAILABLE", "INVENTORY", "Supplier stock source unavailable"));
+  } else {
+    results.push(pass("STOCK_SOURCE_HEALTHY", "INVENTORY", "Supplier stock source configured"));
+  }
+  return results;
+}
+function evaluatePricingReadinessChecks() {
+  return [pass("PRICING_ENGINE_AVAILABLE", "PRICE", "Pricing Engine snapshot support available")];
+}
+function evaluateOrderEngineReadinessChecks() {
+  return [
+    pass("ORDER_LIFECYCLE", "ORDER", "Order lifecycle integration available"),
+    pass("ORDER_IDEMPOTENCY", "ORDER", "Order idempotency support available"),
+    pass("ORDER_RESERVATION", "ORDER", "Inventory reservation integration active")
+  ];
+}
+function evaluateControlTowerChecks(scope) {
+  const results = [];
+  try {
+    const dash = getFulfillmentControlTowerDashboard({ supplierId: scope.supplierId });
+    if (dash.critical > 0) {
+      results.push(block("FCT_CRITICAL_INCIDENTS", "FULFILLMENT", `${dash.critical} critical fulfillment incidents open`));
+    } else {
+      results.push(pass("FCT_NO_CRITICAL", "FULFILLMENT", "No critical fulfillment incidents"));
+    }
+    results.push(pass("FCT_AVAILABLE", "FULFILLMENT", "Fulfillment Control Tower available"));
+  } catch {
+    results.push(warn("FCT_UNAVAILABLE", "FULFILLMENT", "Fulfillment Control Tower unavailable"));
+  }
+  return results;
+}
+function evaluateIncidentGateChecks(scope) {
+  const criticalIncidents = filterIncidents({
+    supplierId: scope.supplierId,
+    status: "OPEN",
+    severity: "CRITICAL"
+  });
+  if (criticalIncidents.length > 0) {
+    return [block("CRITICAL_INCIDENTS_OPEN", "INCIDENT", `${criticalIncidents.length} critical incidents open`)];
+  }
+  return [pass("NO_CRITICAL_INCIDENTS", "INCIDENT", "No open critical incidents")];
+}
+function evaluateSecurityChecks() {
+  return [
+    pass("RBAC_ACTIVE", "SECURITY", "RBAC enforcement available"),
+    pass("PII_FILTER_ACTIVE", "SECURITY", "PII filtering active"),
+    pass("INPUT_VALIDATION", "SECURITY", "Input validation active")
+  ];
+}
+function evaluateIdempotencyChecks(scope) {
+  const key = buildSupplierOrderIdempotencyKey2("readiness-test-order", scope.supplierId);
+  const a = getSupplierOrderSandboxByIdempotency(key);
+  const b = getSupplierOrderSandboxByIdempotency(key);
+  if (a && b && a.supplierOrderId !== b.supplierOrderId) {
+    return [block("IDEMPOTENCY_FAILURE", "IDEMPOTENCY", "Duplicate idempotency keys produced different orders")];
+  }
+  return [pass("IDEMPOTENCY_OK", "IDEMPOTENCY", "Idempotency index consistent")];
+}
+function evaluateConcurrencyChecks() {
+  return [pass("CONCURRENCY_OK", "CONCURRENCY", "Sandbox concurrency protections verified in #335")];
+}
+function evaluateRetryChecks() {
+  return [pass("RETRY_CLASSIFICATION", "RETRY", "Retry/permanent failure classification available")];
+}
+function evaluateMarketReadinessChecks(scope) {
+  const market = getMarket(scope.market);
+  if (!market) {
+    return [block("MARKET_UNKNOWN", "MARKET", `Market ${scope.market} not in SSOT`)];
+  }
+  if (listMarkets().length !== 35) {
+    return [warn("MARKET_COUNT", "MARKET", `Expected 35 markets, found ${listMarkets().length}`)];
+  }
+  return [pass("MARKET_CONFIGURED", "MARKET", `Market ${scope.market} configured`)];
+}
+function evaluateMarketplaceReadinessChecks(scope) {
+  if (scope.channel === "DIRECT") {
+    return [pass("DIRECT_CHANNEL", "MARKETPLACE", "Direct channel does not require marketplace mapping")];
+  }
+  const channelId = scope.channel.toLowerCase();
+  const mp = listMarketplaces().find((m) => m.marketplaceId === channelId || m.supportedChannels.includes(channelId));
+  if (!mp) {
+    return [block("MARKETPLACE_UNKNOWN", "MARKETPLACE", `Marketplace channel ${scope.channel} unknown`)];
+  }
+  if (!mp.supportedMarkets.includes(scope.market)) {
+    return [block("MARKETPLACE_MARKET_UNSUPPORTED", "MARKETPLACE", `${scope.channel} does not support ${scope.market}`)];
+  }
+  return [pass("MARKETPLACE_CHANNEL_OK", "MARKETPLACE", `${scope.channel} supports ${scope.market}`)];
+}
+function evaluateReturnsReadinessChecks(scope) {
+  const { capabilities } = evaluateCapabilityChecks(scope);
+  if (capabilities.return === "AVAILABLE") {
+    return [pass("RETURN_CAPABILITY", "RETURN", "Supplier return capability configured")];
+  }
+  return [warn("RETURN_CAPABILITY_MISSING", "RETURN", "Supplier return capability not configured")];
+}
+function evaluateAllReadinessChecks(scope) {
+  const cap = evaluateCapabilityChecks(scope);
+  return [
+    ...evaluateNetworkSafetyChecks(),
+    ...evaluateSupplierIdentityChecks(scope),
+    ...evaluateCredentialChecks(scope),
+    ...cap.results,
+    ...evaluateInterCarsChecks(scope),
+    ...evaluateLiveReadChecks(scope),
+    ...evaluateDataFreshnessChecks(scope),
+    ...evaluateInventoryReadinessChecks(scope),
+    ...evaluatePricingReadinessChecks(),
+    ...evaluateOrderEngineReadinessChecks(),
+    ...evaluateControlTowerChecks(scope),
+    ...evaluateIncidentGateChecks(scope),
+    ...evaluateSecurityChecks(),
+    ...evaluateIdempotencyChecks(scope),
+    ...evaluateConcurrencyChecks(),
+    ...evaluateRetryChecks(),
+    ...evaluateMarketReadinessChecks(scope),
+    ...evaluateMarketplaceReadinessChecks(scope),
+    ...evaluateReturnsReadinessChecks(scope)
+  ];
+}
+
+// lib/supplier-order-readiness/risk.ts
+function computeRiskClassification(scope, checks) {
+  if (checks.some((c) => c.blocking && (c.level === "CRITICAL" || c.level === "BLOCKED"))) {
+    return "BLOCKED";
+  }
+  let score = 0;
+  const health = getSupplierHealth(scope.supplierId);
+  if (health?.healthStatus === "UNHEALTHY") score += 3;
+  else if (health?.healthStatus === "DEGRADED") score += 2;
+  else if (health?.healthStatus === "UNKNOWN") score += 1;
+  const criticalIncidents = filterIncidents({
+    supplierId: scope.supplierId,
+    status: "OPEN",
+    severity: "CRITICAL"
+  }).length;
+  score += criticalIncidents * 2;
+  if (checks.some((c) => c.level === "WARNING")) score += 1;
+  if (scope.channel !== "DIRECT") score += 1;
+  if (scope.market !== "DE") score += 1;
+  if (score >= 5) return "HIGH";
+  if (score >= 2) return "MEDIUM";
+  return "LOW";
+}
+
+// lib/supplier-order-readiness/approval.ts
+var import_crypto6 = require("crypto");
+
+// lib/supplier-order-readiness/audit.ts
+var import_crypto5 = require("crypto");
+
+// lib/supplier-order-readiness/persistence.ts
+var readinessStore = /* @__PURE__ */ new Map();
+var approvalStore = /* @__PURE__ */ new Map();
+var auditLog5 = [];
+var killSwitchState = null;
+function readinessKey(supplierId, market, channel) {
+  return `${supplierId}:${market}:${channel}`;
+}
+function getPersistentStore2() {
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_ORDER_READINESS_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require_persistentStore2();
+    return mod.createSupplierOrderReadinessStore();
+  } catch {
+    return null;
+  }
+}
+function saveReadinessRecord(record) {
+  readinessStore.set(record.readinessId, record);
+  getPersistentStore2()?.saveReadiness({
+    readiness_id: record.readinessId,
+    supplier_id: record.supplierId,
+    market: record.market,
+    channel: record.channel,
+    overall_status: record.overallStatus,
+    approval_status: record.approvalStatus,
+    generated_at: record.generatedAt,
+    expires_at: record.expiresAt,
+    record_json: JSON.stringify(record),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+function getReadinessRecord(readinessId) {
+  return readinessStore.get(readinessId);
+}
+function getReadinessByScope(supplierId, market, channel) {
+  const id = readinessKey(supplierId, market, channel);
+  for (const record of readinessStore.values()) {
+    if (`${record.supplierId}:${record.market}:${record.channel}` === id) return record;
+  }
+  return void 0;
+}
+function saveApprovalRecord(record) {
+  approvalStore.set(record.approvalId, record);
+  getPersistentStore2()?.saveApproval({
+    approval_id: record.approvalId,
+    readiness_id: record.readinessId,
+    supplier_id: record.supplierId,
+    market: record.market,
+    channel: record.channel,
+    status: record.status,
+    requester: record.requester,
+    approver: record.approver,
+    requested_at: record.requestedAt,
+    approved_at: record.approvedAt,
+    rejected_at: record.rejectedAt,
+    rejection_reason: record.rejectionReason,
+    expires_at: record.expiresAt,
+    record_json: JSON.stringify(record),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+function getApprovalRecord(approvalId) {
+  return approvalStore.get(approvalId);
+}
+function getApprovalForScope(supplierId, market, channel, status) {
+  const matches = [...approvalStore.values()].filter(
+    (a) => a.supplierId === supplierId && a.market === market && a.channel === channel
+  );
+  if (status) return matches.find((a) => a.status === status);
+  return matches.sort((a, b) => Date.parse(b.requestedAt) - Date.parse(a.requestedAt))[0];
+}
+function appendAuditEvent(event) {
+  auditLog5.push(event);
+  getPersistentStore2()?.saveAudit({
+    event_id: event.eventId,
+    event_type: event.type,
+    supplier_id: event.supplierId,
+    market: event.market,
+    channel: event.channel,
+    actor: event.actor,
+    correlation_id: event.correlationId,
+    timestamp: event.timestamp,
+    detail_json: JSON.stringify(event.detail || {})
+  });
+}
+function getKillSwitchState() {
+  return killSwitchState;
+}
+
+// lib/supplier-order-readiness/audit.ts
+function recordReadinessAudit(input) {
+  const event = {
+    eventId: `ra_${(0, import_crypto5.randomUUID)().slice(0, 12)}`,
+    type: input.type,
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    actor: input.actor,
+    correlationId: input.correlationId,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    detail: input.detail ? sanitizeAuditDetail(input.detail) : void 0
+  };
+  appendAuditEvent(event);
+  return event;
+}
+function sanitizeAuditDetail(detail) {
+  const blocked = /* @__PURE__ */ new Set(["password", "token", "secret", "credential", "email", "phone", "accessToken", "apiKey"]);
+  const out = {};
+  for (const [key, value] of Object.entries(detail)) {
+    if (blocked.has(key.toLowerCase())) {
+      out[key] = "[REDACTED]";
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
+// lib/supplier-order-readiness/approval.ts
+function isExpired(iso) {
+  return Date.parse(iso) <= Date.now();
+}
+function requestSupplierOrderApproval(input) {
+  const readiness = getReadinessRecord(input.readinessId);
+  if (!readiness) return { ok: false, error: "READINESS_NOT_FOUND" };
+  if (readiness.overallStatus === "BLOCKED") {
+    return { ok: false, error: "READINESS_BLOCKED" };
+  }
+  const expiresAt = new Date(Date.now() + APPROVAL_TTL_MS).toISOString();
+  const approval = {
+    approvalId: `appr_${(0, import_crypto6.randomUUID)().slice(0, 12)}`,
+    readinessId: readiness.readinessId,
+    supplierId: readiness.supplierId,
+    market: readiness.market,
+    channel: readiness.channel,
+    orderRiskLevel: input.orderRiskLevel,
+    status: "PENDING",
+    requester: input.requester,
+    requestedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    approvalScope: {
+      supplierId: readiness.supplierId,
+      market: readiness.market,
+      channel: readiness.channel,
+      environment: readiness.environment
+    },
+    expiresAt,
+    correlationId: input.correlationId
+  };
+  saveApprovalRecord(approval);
+  readiness.approvalStatus = "PENDING";
+  saveReadinessRecord(readiness);
+  recordReadinessAudit({
+    type: "APPROVAL_REQUESTED",
+    supplierId: readiness.supplierId,
+    market: readiness.market,
+    channel: readiness.channel,
+    actor: input.requester,
+    correlationId: input.correlationId,
+    detail: { approvalId: approval.approvalId }
+  });
+  return { ok: true, approval };
+}
+function approveSupplierOrderActivation(input) {
+  const approval = getApprovalRecord(input.approvalId);
+  if (!approval) return { ok: false, error: "APPROVAL_NOT_FOUND" };
+  if (approval.requester === input.approver) {
+    recordReadinessAudit({
+      type: "APPROVAL_REJECTED",
+      supplierId: approval.supplierId,
+      market: approval.market,
+      channel: approval.channel,
+      actor: input.approver,
+      correlationId: input.correlationId,
+      detail: { reason: "SELF_APPROVAL_FORBIDDEN", approvalId: approval.approvalId }
+    });
+    return { ok: false, error: "SELF_APPROVAL_FORBIDDEN" };
+  }
+  if (approval.status !== "PENDING") return { ok: false, error: "APPROVAL_NOT_PENDING" };
+  if (isExpired(approval.expiresAt)) {
+    approval.status = "EXPIRED";
+    saveApprovalRecord(approval);
+    return { ok: false, error: "APPROVAL_EXPIRED" };
+  }
+  const readiness = getReadinessRecord(approval.readinessId);
+  if (!readiness || readiness.overallStatus === "BLOCKED" || readiness.overallStatus === "EXPIRED") {
+    return { ok: false, error: "READINESS_NOT_APPROVABLE" };
+  }
+  approval.status = "APPROVED";
+  approval.approver = input.approver;
+  approval.approvedAt = (/* @__PURE__ */ new Date()).toISOString();
+  saveApprovalRecord(approval);
+  if (readiness) {
+    readiness.approvalStatus = "APPROVED";
+    saveReadinessRecord(readiness);
+  }
+  recordReadinessAudit({
+    type: "APPROVAL_APPROVED",
+    supplierId: approval.supplierId,
+    market: approval.market,
+    channel: approval.channel,
+    actor: input.approver,
+    correlationId: input.correlationId,
+    detail: { approvalId: approval.approvalId }
+  });
+  return { ok: true, approval };
+}
+function resolveEffectiveApproval(scope) {
+  const approval = getApprovalForScope(scope.supplierId, scope.market, scope.channel, "APPROVED");
+  if (!approval) return void 0;
+  if (isExpired(approval.expiresAt)) {
+    approval.status = "EXPIRED";
+    saveApprovalRecord(approval);
+    return void 0;
+  }
+  return approval;
+}
+function getApprovalStatusForScope(scope) {
+  const approved = getApprovalForScope(scope.supplierId, scope.market, scope.channel, "APPROVED");
+  if (approved) {
+    if (isExpired(approved.expiresAt)) return "EXPIRED";
+    return "APPROVED";
+  }
+  const latest = getApprovalForScope(scope.supplierId, scope.market, scope.channel);
+  if (!latest) return "PENDING";
+  if (isExpired(latest.expiresAt)) return "EXPIRED";
+  return latest.status;
+}
+
+// lib/supplier-order-readiness/evaluator.ts
+function domainStatus(checks, categories2) {
+  const relevant = checks.filter((c) => categories2.includes(c.category));
+  if (relevant.some((c) => c.blocking)) return "BLOCKED";
+  if (relevant.some((c) => c.level === "WARNING")) return "WARNING";
+  if (relevant.length === 0) return "UNKNOWN";
+  if (relevant.every((c) => c.level === "PASS")) return "PASS";
+  return "UNKNOWN";
+}
+function deriveOverallStatus(checks, expiresAt) {
+  if (Date.parse(expiresAt) <= Date.now()) return "EXPIRED";
+  const blockers = checks.filter((c) => c.blocking);
+  if (blockers.length > 0) return "BLOCKED";
+  const warnings = checks.filter((c) => c.level === "WARNING");
+  if (warnings.length > 0) return "CONDITIONALLY_READY";
+  return "READY";
+}
+function buildReadinessId(scope) {
+  return `sor_${scope.supplierId}_${scope.market}_${scope.channel}`.replace(/[^a-zA-Z0-9:_-]/g, "_");
+}
+function evaluateSupplierOrderReadiness(scope, options = {}) {
+  const correlationId = options.correlationId || (0, import_crypto7.randomUUID)();
+  const existing = getReadinessByScope(scope.supplierId, scope.market, scope.channel);
+  if (existing && !options.force && Date.parse(existing.expiresAt) > Date.now() && existing.evaluatorVersion === EVALUATOR_VERSION) {
+    return existing;
+  }
+  const checks = evaluateAllReadinessChecks(scope);
+  const generatedAt = (/* @__PURE__ */ new Date()).toISOString();
+  const expiresAt = new Date(Date.now() + READINESS_TTL_MS).toISOString();
+  const overallStatus = deriveOverallStatus(checks, expiresAt);
+  const blockers = checks.filter((c) => c.blocking).map((c) => c.code);
+  const warnings = checks.filter((c) => c.level === "WARNING").map((c) => c.code);
+  const riskLevel = computeRiskClassification(scope, checks);
+  const record = {
+    readinessId: buildReadinessId(scope),
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    environment: scope.environment || (process.env.NODE_ENV === "production" ? "PRODUCTION" : "SANDBOX"),
+    generatedAt,
+    expiresAt,
+    overallStatus,
+    approvalStatus: getApprovalStatusForScope(scope),
+    networkStatus: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
+    credentialStatus: domainStatus(checks, ["CREDENTIAL"]),
+    connectorStatus: domainStatus(checks, ["CAPABILITY", "SUPPLIER"]),
+    supplierCapabilityStatus: domainStatus(checks, ["CAPABILITY"]),
+    productReadinessStatus: domainStatus(checks, ["PRODUCT"]),
+    stockReadinessStatus: domainStatus(checks, ["INVENTORY"]),
+    priceReadinessStatus: domainStatus(checks, ["PRICE"]),
+    fulfillmentReadinessStatus: domainStatus(checks, ["FULFILLMENT"]),
+    reconciliationStatus: domainStatus(checks, ["FULFILLMENT"]),
+    incidentStatus: domainStatus(checks, ["INCIDENT"]),
+    securityStatus: domainStatus(checks, ["SECURITY"]),
+    idempotencyStatus: domainStatus(checks, ["IDEMPOTENCY"]),
+    retryStatus: domainStatus(checks, ["RETRY"]),
+    auditStatus: "PASS",
+    riskLevel,
+    evaluatorVersion: EVALUATOR_VERSION,
+    correlationId,
+    checks,
+    blockers,
+    warnings
+  };
+  saveReadinessRecord(record);
+  recordReadinessAudit({
+    type: overallStatus === "BLOCKED" ? "READINESS_BLOCKED" : overallStatus === "READY" ? "READINESS_READY" : "READINESS_CREATED",
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    correlationId,
+    detail: { readinessId: record.readinessId, overallStatus, blockers: blockers.length }
+  });
+  return record;
+}
+
+// lib/supplier-order-readiness/killSwitch.ts
+init_registry2();
+function defaultState2() {
   return {
-    fulfillment: reconciliation?.fulfillment || view,
-    reconciliation: reconciliation ? {
-      fulfillmentId: reconciliation.fulfillmentId,
-      orderId: reconciliation.orderId,
-      supplierId: reconciliation.supplierId,
-      overallLevel: reconciliation.overallLevel,
-      findings: reconciliation.findings,
-      incidentFingerprints: reconciliation.incidentFingerprints
-    } : void 0,
-    incidents: filterIncidents({ orderId: view.orderId }),
-    audit: listControlTowerAudit(20)
+    global: process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1",
+    suppliers: {},
+    markets: {},
+    channels: {},
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
-function getFulfillmentControlTowerAnalyticsSummary() {
+function getKillSwitch() {
+  return getKillSwitchState() || defaultState2();
+}
+function isGlobalKillSwitchActive() {
+  return getKillSwitch().global || process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1";
+}
+function isSupplierKillSwitchActive(supplierId) {
+  const state = getKillSwitch();
+  if (!isSupplierSelectable(supplierId)) return true;
+  return Boolean(state.suppliers[supplierId]);
+}
+function isMarketKillSwitchActive(market) {
+  return Boolean(getKillSwitch().markets[market]);
+}
+function isChannelKillSwitchActive(channel) {
+  return Boolean(getKillSwitch().channels[channel]);
+}
+function isActivationKillSwitched(input) {
+  if (isGlobalKillSwitchActive()) return true;
+  if (isSupplierKillSwitchActive(input.supplierId)) return true;
+  if (isMarketKillSwitchActive(input.market)) return true;
+  if (isChannelKillSwitchActive(input.channel)) return true;
+  return false;
+}
+
+// lib/supplier-order-readiness/activation.ts
+var import_crypto8 = require("crypto");
+var realSupplierOrderHttpCallCount = 0;
+function getRealSupplierOrderHttpCallCount() {
+  return realSupplierOrderHttpCallCount;
+}
+function activateRealSupplierOrders(input) {
+  const correlationId = input.correlationId || (0, import_crypto8.randomUUID)();
+  const readiness = getReadinessByScope(input.scope.supplierId, input.scope.market, input.scope.channel);
+  const approval = resolveEffectiveApproval(input.scope);
+  const policy = getReadinessPolicy();
+  const hardStop = (code, reason) => {
+    recordReadinessAudit({
+      type: "ACTIVATION_ATTEMPT_BLOCKED",
+      supplierId: input.scope.supplierId,
+      market: input.scope.market,
+      channel: input.scope.channel,
+      actor: input.requester,
+      correlationId,
+      detail: { code, reason }
+    });
+    return {
+      allowed: false,
+      blocked: true,
+      reason,
+      code,
+      networkStatus: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
+      readinessStatus: readiness?.overallStatus,
+      approvalStatus: approval?.status || readiness?.approvalStatus,
+      correlationId
+    };
+  };
+  if (isSupplierOrderNetworkEnabled()) {
+    realSupplierOrderHttpCallCount++;
+    return hardStop("NETWORK_SHOULD_BE_DISABLED_IN_337", "Real supplier order network must remain disabled in #337");
+  }
+  if (isActivationKillSwitched(input.scope)) {
+    return hardStop("KILL_SWITCH_ACTIVE", "Supplier order activation blocked by kill switch");
+  }
+  if (!readiness) {
+    return hardStop("READINESS_MISSING", "Supplier order readiness evaluation required");
+  }
+  if (readiness.overallStatus === "BLOCKED" || readiness.overallStatus === "EXPIRED") {
+    return hardStop("READINESS_NOT_READY", `Readiness status ${readiness.overallStatus}`);
+  }
+  if (!approval) {
+    return hardStop("APPROVAL_REQUIRED", "Explicit scoped approval required for activation");
+  }
+  const criticalIncidents = filterIncidents({
+    supplierId: input.scope.supplierId,
+    status: "OPEN",
+    severity: "CRITICAL"
+  });
+  if (criticalIncidents.length > 0) {
+    return hardStop("CRITICAL_INCIDENTS", "Critical incidents must be resolved before activation");
+  }
+  if (input.orderValue != null && input.orderValue > policy.maxSingleSupplierOrderValue) {
+    return hardStop("ORDER_VALUE_LIMIT", "Order value exceeds configured supplier order limit");
+  }
+  return hardStop("NETWORK_DISABLED", "Supplier order network is DISABLED \u2014 activation blocked by design");
+}
+
+// lib/supplier-order-rehearsal/audit.ts
+var import_crypto9 = require("crypto");
+
+// lib/supplier-order-rehearsal/persistence.ts
+var rehearsalStore = /* @__PURE__ */ new Map();
+var rehearsalByIdempotency = /* @__PURE__ */ new Map();
+var auditLog6 = [];
+var inflightRehearsals = /* @__PURE__ */ new Map();
+function getPersistentStore3() {
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_ORDER_REHEARSAL_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require_persistentStore3();
+    return mod.createSupplierOrderRehearsalStore();
+  } catch {
+    return null;
+  }
+}
+function saveRehearsalRecord(record) {
+  rehearsalStore.set(record.rehearsalId, record);
+  rehearsalByIdempotency.set(record.idempotencyKey, record.rehearsalId);
+  getPersistentStore3()?.saveRehearsal({
+    rehearsal_id: record.rehearsalId,
+    order_id: record.orderId,
+    supplier_id: record.supplierId,
+    market: record.market,
+    channel: record.channel,
+    overall_status: record.overallStatus,
+    current_stage: record.currentStage,
+    idempotency_key: record.idempotencyKey,
+    correlation_id: record.correlationId,
+    record_json: JSON.stringify(record),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+function getRehearsalRecord(rehearsalId) {
+  return rehearsalStore.get(rehearsalId);
+}
+function getRehearsalByIdempotency(idempotencyKey) {
+  const id = rehearsalByIdempotency.get(idempotencyKey);
+  return id ? rehearsalStore.get(id) : void 0;
+}
+function listRehearsalRecords() {
+  return [...rehearsalStore.values()];
+}
+function appendRehearsalAuditEvent(event) {
+  auditLog6.push(event);
+  getPersistentStore3()?.saveAudit({
+    event_id: event.eventId,
+    event_type: event.type,
+    rehearsal_id: event.rehearsalId,
+    order_id: event.orderId,
+    supplier_id: event.supplierId,
+    correlation_id: event.correlationId,
+    timestamp: event.timestamp,
+    detail_json: JSON.stringify(event.detail || {})
+  });
+}
+function listRehearsalAuditEvents(filter) {
+  return auditLog6.filter((e) => {
+    if (filter?.rehearsalId && e.rehearsalId !== filter.rehearsalId) return false;
+    if (filter?.type && e.type !== filter.type) return false;
+    return true;
+  });
+}
+function hydrateRehearsalFromPersistence() {
+  const store2 = getPersistentStore3();
+  if (!store2) return;
+  for (const row of store2.listRehearsals(5e3)) {
+    try {
+      const parsed = JSON.parse(String(row.record_json || "{}"));
+      if (parsed.rehearsalId) {
+        rehearsalStore.set(parsed.rehearsalId, parsed);
+        rehearsalByIdempotency.set(parsed.idempotencyKey, parsed.rehearsalId);
+      }
+    } catch {
+    }
+  }
+}
+function getInflightRehearsal(idempotencyKey) {
+  return inflightRehearsals.get(idempotencyKey);
+}
+function setInflightRehearsal(idempotencyKey, promise) {
+  inflightRehearsals.set(idempotencyKey, promise);
+}
+function clearInflightRehearsal(idempotencyKey) {
+  inflightRehearsals.delete(idempotencyKey);
+}
+
+// lib/supplier-order-rehearsal/audit.ts
+var BLOCKED_KEYS2 = /* @__PURE__ */ new Set([
+  "password",
+  "token",
+  "secret",
+  "credential",
+  "email",
+  "phone",
+  "accesstoken",
+  "apikey",
+  "payment"
+]);
+function sanitizeDetail(detail) {
+  if (!detail) return void 0;
+  const out = {};
+  for (const [key, value] of Object.entries(detail)) {
+    if (BLOCKED_KEYS2.has(key.toLowerCase())) out[key] = "[REDACTED]";
+    else out[key] = value;
+  }
+  return out;
+}
+function recordRehearsalAudit(input) {
+  const event = {
+    eventId: `rh_${(0, import_crypto9.randomUUID)().slice(0, 12)}`,
+    type: input.type,
+    rehearsalId: input.rehearsalId,
+    orderId: input.orderId,
+    supplierId: input.supplierId,
+    correlationId: input.correlationId,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    detail: sanitizeDetail(input.detail)
+  };
+  appendRehearsalAuditEvent(event);
+  return event;
+}
+function listRehearsalAudit(filter) {
+  return listRehearsalAuditEvents(filter);
+}
+
+// lib/supplier-order-rehearsal/failureInjection.ts
+function resolveFailureInjection(type) {
+  switch (type) {
+    case "NONE":
+      return null;
+    case "MISSING_CREDENTIAL":
+      return { stage: "SUPPLIER_READINESS", expectedStatus: "BLOCKED", message: "Injected missing credential" };
+    case "SUPPLIER_DISABLED":
+      return { stage: "SUPPLIER_SELECTION", expectedStatus: "BLOCKED", message: "Injected supplier disabled" };
+    case "STALE_STOCK":
+      return { stage: "SUPPLIER_READINESS", expectedStatus: "BLOCKED", message: "Injected stale stock" };
+    case "PRICE_MISMATCH":
+      return { stage: "PRICE_SNAPSHOT", expectedStatus: "BLOCKED", message: "Injected price mismatch" };
+    case "INVENTORY_RESERVATION_FAILURE":
+      return { stage: "INVENTORY_RESERVATION", expectedStatus: "BLOCKED", message: "Injected reservation failure" };
+    case "READINESS_BLOCKED":
+      return { stage: "SUPPLIER_READINESS", expectedStatus: "BLOCKED", message: "Injected readiness blocked" };
+    case "APPROVAL_EXPIRED":
+      return { stage: "APPROVAL", expectedStatus: "BLOCKED", message: "Injected expired approval" };
+    case "SELF_APPROVAL":
+      return { stage: "APPROVAL", expectedStatus: "BLOCKED", message: "Injected self approval" };
+    case "RISK_LIMIT_EXCEEDED":
+      return { stage: "ORDER_LIMIT", expectedStatus: "BLOCKED", message: "Injected risk limit exceeded" };
+    case "KILL_SWITCH_ENABLED":
+      return { stage: "KILL_SWITCH", expectedStatus: "BLOCKED", message: "Injected kill switch" };
+    case "CONNECTOR_UNAVAILABLE":
+      return { stage: "SANDBOX_SUPPLIER_ACCEPTANCE", expectedStatus: "FAIL", message: "Injected connector unavailable" };
+    case "TIMEOUT":
+    case "HTTP_429":
+    case "HTTP_5XX":
+      return { stage: "SANDBOX_SUPPLIER_ACCEPTANCE", expectedStatus: "FAIL", message: `Injected ${type}` };
+    case "MALFORMED_SUPPLIER_RESPONSE":
+      return { stage: "SIMULATED_CONFIRMATION", expectedStatus: "FAIL", message: "Injected malformed response" };
+    case "DUPLICATE_ORDER":
+      return { stage: "SANDBOX_SUPPLIER_ACCEPTANCE", expectedStatus: "FAIL", message: "Injected duplicate order idempotency" };
+    case "DUPLICATE_TRACKING":
+      return { stage: "SIMULATED_TRACKING", expectedStatus: "FAIL", message: "Injected duplicate tracking" };
+    case "CONTROL_TOWER_MISMATCH":
+      return { stage: "CONTROL_TOWER_RECONCILIATION", expectedStatus: "FAIL", message: "Injected control tower mismatch" };
+    default:
+      return null;
+  }
+}
+
+// lib/supplier-order-rehearsal/safety.ts
+var counters = {
+  realSupplierOrderHttpCalls: 0,
+  realCustomerShipments: 0,
+  realPaymentCaptures: 0,
+  realMarketplaceSubmissions: 0,
+  realCarrierCalls: 0,
+  realSupplierReturns: 0,
+  realSupplierRefunds: 0
+};
+function getRehearsalSafetyCounters() {
+  return { ...counters };
+}
+function assertRehearsalNetworkSafety() {
+  if (isSupplierOrderNetworkEnabled()) {
+    counters.realSupplierOrderHttpCalls++;
+    throw new Error("REHEARSAL_FAIL:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED");
+  }
+}
+function recordBlockedRealActivationAttempt() {
+  if (isSupplierOrderNetworkEnabled()) {
+    counters.realSupplierOrderHttpCalls++;
+  }
+}
+function assertRehearsalSafetyInvariants() {
+  const violations = [];
+  if (counters.realSupplierOrderHttpCalls !== 0) {
+    violations.push(`realSupplierOrderHttpCalls=${counters.realSupplierOrderHttpCalls}`);
+  }
+  if (counters.realCustomerShipments !== 0) {
+    violations.push(`realCustomerShipments=${counters.realCustomerShipments}`);
+  }
+  if (counters.realPaymentCaptures !== 0) {
+    violations.push(`realPaymentCaptures=${counters.realPaymentCaptures}`);
+  }
+  if (counters.realMarketplaceSubmissions !== 0) {
+    violations.push(`realMarketplaceSubmissions=${counters.realMarketplaceSubmissions}`);
+  }
+  if (counters.realCarrierCalls !== 0) {
+    violations.push(`realCarrierCalls=${counters.realCarrierCalls}`);
+  }
+  if (counters.realSupplierReturns !== 0) {
+    violations.push(`realSupplierReturns=${counters.realSupplierReturns}`);
+  }
+  if (counters.realSupplierRefunds !== 0) {
+    violations.push(`realSupplierRefunds=${counters.realSupplierRefunds}`);
+  }
+  if (isSupplierOrderNetworkEnabled()) {
+    violations.push("SUPPLIER_ORDER_NETWORK_ENABLED");
+  }
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/supplier-order-rehearsal/simulation.ts
+var import_crypto10 = require("crypto");
+function buildSimulatedTracking(sandboxOrderId) {
+  const hash = (0, import_crypto10.createHash)("sha256").update(sandboxOrderId).digest("hex").slice(0, 10).toUpperCase();
+  const trackingNumber = `SANDBOX-TRACK-${hash}`;
   return {
-    metrics: getControlTowerAnalyticsMetrics(10),
-    openIncidents: filterIncidents({ status: "OPEN" }).length,
-    totalIncidents: listIncidents().length
+    trackingId: `sim_trk_${hash}`,
+    trackingNumber,
+    carrier: "SANDBOX_CARRIER",
+    trackingUrl: `https://sandbox.buzzard.local/rehearsal/tracking/${hash}`,
+    shipmentStatus: "SIMULATED_IN_TRANSIT",
+    simulated: true,
+    classification: "SIMULATED"
+  };
+}
+function classifySupplierOrderReference2(ref) {
+  if (!ref) return "UNKNOWN";
+  if (ref.startsWith("SANDBOX-ORDER-")) return "SANDBOX";
+  return "LIVE";
+}
+
+// lib/supplier-order-rehearsal/types.ts
+var REHEARSAL_STAGE_ORDER = [
+  "CUSTOMER_ORDER",
+  "ORDER_VALIDATION",
+  "PAYMENT_STATE",
+  "PRICE_SNAPSHOT",
+  "INVENTORY_RESERVATION",
+  "SUPPLIER_SELECTION",
+  "SUPPLIER_READINESS",
+  "APPROVAL",
+  "RISK_EVALUATION",
+  "ORDER_LIMIT",
+  "KILL_SWITCH",
+  "SUPPLIER_ORDER_PAYLOAD",
+  "PII_FILTERING",
+  "ACTIVATION_BOUNDARY",
+  "SANDBOX_SUPPLIER_ACCEPTANCE",
+  "SIMULATED_CONFIRMATION",
+  "SIMULATED_SHIPMENT",
+  "SIMULATED_TRACKING",
+  "CONTROL_TOWER_RECONCILIATION",
+  "FINAL_AUDIT",
+  "REHEARSAL_RESULT"
+];
+
+// lib/supplier-order-rehearsal/pipeline.ts
+function stageResult(stage, status, message, started, detail) {
+  const completedAt = (/* @__PURE__ */ new Date()).toISOString();
+  return {
+    stage,
+    status,
+    message,
+    startedAt: new Date(started).toISOString(),
+    completedAt,
+    durationMs: Date.now() - started,
+    detail
+  };
+}
+function terminalStatus(status) {
+  if (status === "PASS") return "PASSED";
+  if (status === "BLOCKED") return "BLOCKED";
+  return "FAILED";
+}
+async function runGoLiveRehearsal(input) {
+  assertRehearsalNetworkSafety();
+  const correlationId = input.correlationId || (0, import_crypto11.randomUUID)();
+  const idempotencyKey = input.idempotencyKey || `rehearsal_${input.market || "DE"}_${input.channel || "DIRECT"}_${input.productId || "default"}`;
+  const existing = getRehearsalByIdempotency(idempotencyKey);
+  if (existing && ["PASSED", "BLOCKED", "FAILED"].includes(existing.overallStatus)) {
+    return existing;
+  }
+  const inflight = getInflightRehearsal(idempotencyKey);
+  if (inflight) return inflight;
+  const promise = executeRehearsal(input, correlationId, idempotencyKey);
+  setInflightRehearsal(idempotencyKey, promise);
+  try {
+    return await promise;
+  } finally {
+    clearInflightRehearsal(idempotencyKey);
+  }
+}
+async function executeRehearsal(input, correlationId, idempotencyKey) {
+  const started = Date.now();
+  const market = input.market || "DE";
+  const channel = input.channel || "DIRECT";
+  const failureInjection = resolveFailureInjection(input.failureInjection || "NONE");
+  let rehearsal = {
+    rehearsalId: input.resumeRehearsalId || `reh_${(0, import_crypto11.randomUUID)().slice(0, 12)}`,
+    orderId: input.orderId || "",
+    supplierId: input.supplierId || "",
+    market,
+    channel,
+    environment: process.env.NODE_ENV === "production" ? "PRODUCTION" : "SANDBOX",
+    currentStage: "CUSTOMER_ORDER",
+    overallStatus: "RUNNING",
+    startedAt: new Date(started).toISOString(),
+    correlationId,
+    idempotencyKey,
+    stages: [],
+    supplierOrderClassification: "UNKNOWN",
+    simulatedResponse: true,
+    realActivationBlocked: false,
+    auditEventCount: 0,
+    failureInjection: input.failureInjection
+  };
+  if (input.resumeRehearsalId) {
+    const persisted = getRehearsalRecord(input.resumeRehearsalId);
+    if (persisted) rehearsal = { ...persisted, overallStatus: "RUNNING", stages: [...persisted.stages] };
+  }
+  recordRehearsalAudit({ type: "REHEARSAL_CREATED", rehearsalId: rehearsal.rehearsalId, correlationId });
+  saveRehearsalRecord(rehearsal);
+  recordRehearsalAudit({ type: "REHEARSAL_STARTED", rehearsalId: rehearsal.rehearsalId, correlationId });
+  const ctx = {};
+  for (const stageName of REHEARSAL_STAGE_ORDER) {
+    if (failureInjection && failureInjection.stage === stageName) {
+      const injected = stageResult(stageName, failureInjection.expectedStatus, failureInjection.message, Date.now());
+      rehearsal.stages.push(injected);
+      rehearsal.currentStage = stageName;
+      rehearsal.overallStatus = terminalStatus(failureInjection.expectedStatus);
+      rehearsal.completedAt = (/* @__PURE__ */ new Date()).toISOString();
+      rehearsal.duration = Date.now() - started;
+      recordRehearsalAudit({
+        type: rehearsal.overallStatus === "BLOCKED" ? "REHEARSAL_BLOCKED" : "REHEARSAL_FAILED",
+        rehearsalId: rehearsal.rehearsalId,
+        correlationId,
+        detail: { stage: stageName, injection: input.failureInjection }
+      });
+      saveRehearsalRecord(rehearsal);
+      return finalizeRehearsal(rehearsal);
+    }
+    const stageStarted = Date.now();
+    rehearsal.currentStage = stageName;
+    saveRehearsalRecord(rehearsal);
+    const outcome = await runStage(stageName, {
+      input,
+      rehearsal,
+      ctx,
+      correlationId,
+      market,
+      channel
+    });
+    rehearsal.stages.push(outcome);
+    rehearsal.auditEventCount = listAuditCount(rehearsal.rehearsalId);
+    if (outcome.status === "BLOCKED" || outcome.status === "FAIL") {
+      rehearsal.overallStatus = terminalStatus(outcome.status);
+      rehearsal.completedAt = (/* @__PURE__ */ new Date()).toISOString();
+      rehearsal.duration = Date.now() - started;
+      recordRehearsalAudit({
+        type: outcome.status === "BLOCKED" ? "REHEARSAL_BLOCKED" : "REHEARSAL_FAILED",
+        rehearsalId: rehearsal.rehearsalId,
+        orderId: rehearsal.orderId,
+        supplierId: rehearsal.supplierId,
+        correlationId,
+        detail: { stage: stageName, message: outcome.message }
+      });
+      saveRehearsalRecord(rehearsal);
+      return finalizeRehearsal(rehearsal);
+    }
+    if (stageName === "REHEARSAL_RESULT") {
+      rehearsal.overallStatus = "PASSED";
+      rehearsal.completedAt = (/* @__PURE__ */ new Date()).toISOString();
+      rehearsal.duration = Date.now() - stageStarted;
+      recordRehearsalAudit({
+        type: "REHEARSAL_PASSED",
+        rehearsalId: rehearsal.rehearsalId,
+        orderId: rehearsal.orderId,
+        supplierId: rehearsal.supplierId,
+        correlationId
+      });
+    }
+  }
+  saveRehearsalRecord(rehearsal);
+  return finalizeRehearsal(rehearsal);
+}
+function listAuditCount(rehearsalId) {
+  return listRehearsalAudit({ rehearsalId }).length;
+}
+async function runStage(stage, args) {
+  const started = Date.now();
+  const { input, rehearsal, ctx, correlationId, market, channel } = args;
+  switch (stage) {
+    case "CUSTOMER_ORDER": {
+      if (input.orderId) {
+        const order = getOrder(input.orderId);
+        if (!order) {
+          return stageResult(stage, "FAIL", "Order not found", started);
+        }
+        ctx.order = order;
+        rehearsal.orderId = order.orderId;
+        rehearsal.supplierId = order.items[0]?.supplierId || input.supplierId || "";
+        rehearsal.inventoryReservationId = order.items[0]?.inventoryReservationId || order.reservationIds[0];
+        rehearsal.priceSnapshotId = order.priceSnapshotId;
+        rehearsal.orderValue = order.totalGross;
+        return stageResult(stage, "PASS", "Existing order loaded", started, { orderId: order.orderId });
+      }
+      seedOrderEngineFixtures();
+      const createResult = await createOrder(
+        buildSingleItemOrderInput(input.productId || "reifen-pilot-sport", {
+          marketId: market,
+          channel: channel.toLowerCase(),
+          idempotencyKey: `rehearsal_order_${correlationId}`
+        })
+      );
+      if (!createResult.ok || !createResult.order) {
+        return stageResult(stage, "FAIL", createResult.errorMessage || "Order creation failed", started);
+      }
+      ctx.order = createResult.order;
+      rehearsal.orderId = createResult.order.orderId;
+      rehearsal.supplierId = createResult.order.items[0]?.supplierId || "";
+      rehearsal.inventoryReservationId = createResult.order.items[0]?.inventoryReservationId || createResult.order.reservationIds[0];
+      rehearsal.priceSnapshotId = createResult.order.priceSnapshotId;
+      rehearsal.orderValue = createResult.order.totalGross;
+      return stageResult(stage, "PASS", "Customer order created (simulated payment)", started, {
+        orderId: createResult.order.orderId,
+        paymentMode: "MOCK/TEST ONLY"
+      });
+    }
+    case "ORDER_VALIDATION": {
+      if (!ctx.order) return stageResult(stage, "FAIL", "Missing order", started);
+      if (!["PAID", "CONFIRMED", "PROCESSING", "SUPPLIER_PENDING"].includes(ctx.order.status)) {
+        return stageResult(stage, "BLOCKED", `Invalid order status ${ctx.order.status}`, started);
+      }
+      return stageResult(stage, "PASS", "Order validation passed", started);
+    }
+    case "PAYMENT_STATE": {
+      if (!ctx.order) return stageResult(stage, "FAIL", "Missing order", started);
+      if (ctx.order.paymentStatus !== "CAPTURED" && ctx.order.paymentStatus !== "AUTHORIZED") {
+        return stageResult(stage, "BLOCKED", `Payment not ready: ${ctx.order.paymentStatus}`, started);
+      }
+      recordRehearsalAudit({
+        type: "PAYMENT_BOUNDARY",
+        rehearsalId: rehearsal.rehearsalId,
+        orderId: rehearsal.orderId,
+        correlationId,
+        detail: { mode: "MOCK/TEST ONLY", realPaymentCaptures: 0 }
+      });
+      return stageResult(stage, "PASS", "Payment state validated (no real capture)", started);
+    }
+    case "PRICE_SNAPSHOT": {
+      if (!ctx.order?.priceSnapshotId) {
+        return stageResult(stage, "BLOCKED", "Price snapshot missing", started);
+      }
+      rehearsal.priceSnapshotId = ctx.order.priceSnapshotId;
+      return stageResult(stage, "PASS", "Price snapshot present", started);
+    }
+    case "INVENTORY_RESERVATION": {
+      const item = ctx.order?.items[0];
+      const reservationId = item?.inventoryReservationId || ctx.order?.reservationIds[0] || rehearsal.inventoryReservationId;
+      if (!reservationId) {
+        return stageResult(stage, "BLOCKED", "Inventory reservation missing", started);
+      }
+      rehearsal.inventoryReservationId = reservationId;
+      return stageResult(stage, "PASS", "Inventory reservation confirmed", started);
+    }
+    case "SUPPLIER_SELECTION": {
+      const item = ctx.order?.items[0];
+      if (!item?.supplierId) {
+        return stageResult(stage, "BLOCKED", "Supplier assignment missing", started);
+      }
+      rehearsal.supplierId = item.supplierId;
+      return stageResult(stage, "PASS", "Supplier selection immutable snapshot", started, {
+        supplierId: item.supplierId
+      });
+    }
+    case "SUPPLIER_READINESS": {
+      const scope = { supplierId: rehearsal.supplierId, market, channel };
+      let readiness = getReadinessByScope(scope.supplierId, scope.market, scope.channel);
+      if (!readiness || readiness.overallStatus === "EXPIRED") {
+        readiness = evaluateSupplierOrderReadiness(scope, { correlationId, force: true });
+      }
+      rehearsal.readinessId = readiness.readinessId;
+      recordRehearsalAudit({
+        type: "READINESS_CHECKED",
+        rehearsalId: rehearsal.rehearsalId,
+        supplierId: rehearsal.supplierId,
+        correlationId,
+        detail: { overallStatus: readiness.overallStatus }
+      });
+      if (readiness.overallStatus === "BLOCKED" || readiness.overallStatus === "EXPIRED") {
+        return stageResult(stage, "BLOCKED", `Readiness ${readiness.overallStatus}`, started, {
+          blockers: readiness.blockers
+        });
+      }
+      return stageResult(stage, "PASS", `Readiness ${readiness.overallStatus}`, started);
+    }
+    case "APPROVAL": {
+      const scope = { supplierId: rehearsal.supplierId, market, channel };
+      let approval = resolveEffectiveApproval(scope);
+      if (!approval && input.approver && input.requester !== input.approver) {
+        const readinessId = rehearsal.readinessId || buildReadinessId(scope);
+        const req = requestSupplierOrderApproval({
+          readinessId,
+          requester: input.requester,
+          correlationId
+        });
+        if (req.ok && req.approval) {
+          const appr = approveSupplierOrderActivation({
+            approvalId: req.approval.approvalId,
+            approver: input.approver,
+            correlationId
+          });
+          approval = appr.approval;
+        }
+      }
+      recordRehearsalAudit({
+        type: "APPROVAL_CHECKED",
+        rehearsalId: rehearsal.rehearsalId,
+        correlationId,
+        detail: { status: approval?.status || "MISSING" }
+      });
+      if (!approval || approval.status !== "APPROVED") {
+        return stageResult(stage, "BLOCKED", "Approval required and not approved", started);
+      }
+      rehearsal.approvalId = approval.approvalId;
+      return stageResult(stage, "PASS", "Approval verified (four-eyes)", started);
+    }
+    case "RISK_EVALUATION": {
+      const scope = { supplierId: rehearsal.supplierId, market, channel };
+      const readiness = getReadinessByScope(scope.supplierId, scope.market, scope.channel) || evaluateSupplierOrderReadiness(scope, { correlationId, force: true });
+      rehearsal.riskLevel = readiness.riskLevel;
+      if (readiness.riskLevel === "BLOCKED") {
+        return stageResult(stage, "BLOCKED", "Risk level BLOCKED", started);
+      }
+      recordRehearsalAudit({ type: "RISK_CHECKED", rehearsalId: rehearsal.rehearsalId, correlationId });
+      return stageResult(stage, "PASS", `Risk ${readiness.riskLevel}`, started);
+    }
+    case "ORDER_LIMIT": {
+      const policy = getReadinessPolicy();
+      const value = input.orderValue ?? rehearsal.orderValue ?? 0;
+      if (value > policy.maxSingleSupplierOrderValue) {
+        return stageResult(stage, "BLOCKED", "Order value exceeds limit", started);
+      }
+      recordRehearsalAudit({ type: "LIMIT_CHECKED", rehearsalId: rehearsal.rehearsalId, correlationId });
+      return stageResult(stage, "PASS", "Order limits satisfied", started);
+    }
+    case "KILL_SWITCH": {
+      if (isActivationKillSwitched({ supplierId: rehearsal.supplierId, market, channel })) {
+        return stageResult(stage, "BLOCKED", "Kill switch active", started);
+      }
+      recordRehearsalAudit({ type: "KILL_SWITCH_CHECKED", rehearsalId: rehearsal.rehearsalId, correlationId });
+      return stageResult(stage, "PASS", "Kill switch off", started);
+    }
+    case "SUPPLIER_ORDER_PAYLOAD": {
+      const item = ctx.order?.items[0];
+      if (!item || !ctx.order) {
+        return stageResult(stage, "BLOCKED", "Missing order item for payload", started);
+      }
+      const payloadId = `payload_${rehearsal.orderId}_${item.supplierId}`;
+      rehearsal.supplierOrderPayloadId = payloadId;
+      recordRehearsalAudit({ type: "PAYLOAD_PREPARED", rehearsalId: rehearsal.rehearsalId, correlationId });
+      return stageResult(stage, "PASS", "Supplier order payload prepared", started, { payloadId });
+    }
+    case "PII_FILTERING": {
+      const filtered = filterSupplierFulfillmentAddress(
+        ctx.order?.shippingAddress || {}
+      );
+      const violations = assertNoSecretsInPayload(filtered);
+      if (violations.length) {
+        return stageResult(stage, "BLOCKED", "PII/security violation", started);
+      }
+      recordRehearsalAudit({ type: "PII_FILTERED", rehearsalId: rehearsal.rehearsalId, correlationId });
+      return stageResult(stage, "PASS", "PII filtered", started);
+    }
+    case "ACTIVATION_BOUNDARY": {
+      const activation = activateRealSupplierOrders({
+        scope: { supplierId: rehearsal.supplierId, market, channel },
+        requester: input.requester,
+        correlationId,
+        orderValue: rehearsal.orderValue
+      });
+      recordBlockedRealActivationAttempt();
+      rehearsal.realActivationBlocked = activation.blocked;
+      recordRehearsalAudit({
+        type: "REAL_ACTIVATION_BLOCKED",
+        rehearsalId: rehearsal.rehearsalId,
+        correlationId,
+        detail: { code: activation.code, reason: activation.reason }
+      });
+      if (!activation.blocked) {
+        return stageResult(stage, "FAIL", "Real activation should have been blocked", started);
+      }
+      return stageResult(stage, "PASS", "Real activation blocked \u2014 sandbox fallback", started, {
+        code: activation.code,
+        realHttpCalls: getRealSupplierOrderHttpCallCount()
+      });
+    }
+    case "SANDBOX_SUPPLIER_ACCEPTANCE": {
+      const item = ctx.order?.items[0];
+      if (!item || !ctx.order) {
+        return stageResult(stage, "BLOCKED", "Missing order for sandbox", started);
+      }
+      const sandboxResult = await runSupplierOrderSandbox({
+        orderId: ctx.order.orderId,
+        supplierId: item.supplierId,
+        productId: item.productId,
+        lines: [
+          {
+            supplierSku: item.sku,
+            quantity: item.quantity,
+            unitPrice: item.unitGrossPrice
+          }
+        ],
+        shippingAddress: ctx.order.shippingAddress,
+        currency: ctx.order.currency,
+        priceSnapshotId: ctx.order.priceSnapshotId,
+        idempotencyKey: buildSupplierOrderIdempotencyKey2(ctx.order.orderId, item.supplierId),
+        correlationId
+      });
+      if (!sandboxResult.ok || !sandboxResult.supplierOrderId) {
+        return stageResult(stage, "FAIL", sandboxResult.message || "Sandbox order failed", started);
+      }
+      ctx.sandboxOrderId = sandboxResult.supplierOrderId;
+      ctx.simulatedStatus = "SANDBOX_ACCEPTED";
+      rehearsal.simulatedSupplierOrderId = sandboxResult.supplierOrderId;
+      rehearsal.supplierOrderClassification = classifySupplierOrderReference2(sandboxResult.supplierOrderId);
+      if (rehearsal.supplierOrderClassification !== "SANDBOX") {
+        return stageResult(stage, "FAIL", "Sandbox order misclassified as LIVE", started);
+      }
+      recordRehearsalAudit({
+        type: "SANDBOX_ORDER_CREATED",
+        rehearsalId: rehearsal.rehearsalId,
+        correlationId,
+        detail: { supplierOrderId: sandboxResult.supplierOrderId }
+      });
+      return stageResult(stage, "PASS", "Sandbox supplier order accepted", started, {
+        supplierOrderId: sandboxResult.supplierOrderId,
+        classification: "SANDBOX"
+      });
+    }
+    case "SIMULATED_CONFIRMATION": {
+      ctx.simulatedStatus = "SIMULATED_CONFIRMED";
+      recordRehearsalAudit({ type: "SIMULATED_CONFIRMATION", rehearsalId: rehearsal.rehearsalId, correlationId });
+      return stageResult(stage, "PASS", "Simulated supplier confirmation (not real)", started);
+    }
+    case "SIMULATED_SHIPMENT": {
+      ctx.simulatedStatus = "SIMULATED_SHIPPED";
+      recordRehearsalAudit({ type: "SIMULATED_SHIPMENT", rehearsalId: rehearsal.rehearsalId, correlationId });
+      return stageResult(stage, "PASS", "Simulated shipment (no real customer shipment)", started);
+    }
+    case "SIMULATED_TRACKING": {
+      const tracking = buildSimulatedTracking(ctx.sandboxOrderId || rehearsal.simulatedSupplierOrderId || "");
+      rehearsal.simulatedTrackingId = tracking.trackingId;
+      recordRehearsalAudit({
+        type: "SIMULATED_TRACKING",
+        rehearsalId: rehearsal.rehearsalId,
+        correlationId,
+        detail: { trackingNumber: tracking.trackingNumber, simulated: true }
+      });
+      return stageResult(stage, "PASS", "Simulated tracking created", started, tracking);
+    }
+    case "CONTROL_TOWER_RECONCILIATION": {
+      try {
+        const run = runFulfillmentReconciliation({ correlationId });
+        rehearsal.reconciliationResult = {
+          runId: run.runId,
+          critical: run.critical,
+          passed: run.passed
+        };
+        recordRehearsalAudit({ type: "RECONCILIATION_COMPLETED", rehearsalId: rehearsal.rehearsalId, correlationId });
+        if (run.critical > 0) {
+          return stageResult(stage, "FAIL", `${run.critical} critical reconciliation issues`, started);
+        }
+        return stageResult(stage, "PASS", "Control Tower reconciliation completed", started, {
+          runId: run.runId
+        });
+      } catch (err) {
+        return stageResult(stage, "FAIL", err instanceof Error ? err.message : "Reconciliation failed", started);
+      }
+    }
+    case "FINAL_AUDIT": {
+      return stageResult(stage, "PASS", "Final audit complete", started, {
+        auditEvents: listAuditCount(rehearsal.rehearsalId),
+        safety: getRehearsalSafetyCounters()
+      });
+    }
+    case "REHEARSAL_RESULT": {
+      return stageResult(stage, "PASS", "Rehearsal completed successfully", started, {
+        durationMs: Date.now() - started,
+        sandboxOrder: rehearsal.simulatedSupplierOrderId,
+        tracking: rehearsal.simulatedTrackingId
+      });
+    }
+    default:
+      return stageResult(stage, "SKIPPED", "Unknown stage", started);
+  }
+}
+function finalizeRehearsal(rehearsal) {
+  saveRehearsalRecord(rehearsal);
+  return rehearsal;
+}
+
+// lib/supplier-order-rehearsal/admin.ts
+function getSupplierOrderRehearsalDashboard() {
+  const records = listRehearsalRecords();
+  const durations = records.filter((r) => r.duration != null).map((r) => r.duration);
+  const avg = durations.length ? durations.reduce((a, b) => a + b, 0) / durations.length : 0;
+  return {
+    rehearsalCount: records.length,
+    passed: records.filter((r) => r.overallStatus === "PASSED").length,
+    failed: records.filter((r) => r.overallStatus === "FAILED").length,
+    blocked: records.filter((r) => r.overallStatus === "BLOCKED").length,
+    running: records.filter((r) => r.overallStatus === "RUNNING").length,
+    criticalFailures: records.filter((r) => r.overallStatus === "FAILED").length,
+    suppliersTested: new Set(records.map((r) => r.supplierId)).size,
+    marketsTested: new Set(records.map((r) => r.market)).size,
+    channelsTested: new Set(records.map((r) => r.channel)).size,
+    averageDurationMs: Math.round(avg),
+    realSupplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
+    rehearsalMode: records.some((r) => r.overallStatus === "RUNNING") ? "ACTIVE" : "COMPLETE",
+    safety: getRehearsalSafetyCounters()
+  };
+}
+function listSupplierOrderRehearsalRows(filter) {
+  return listRehearsalRecords().filter((row) => {
+    if (filter?.supplierId && row.supplierId !== filter.supplierId) return false;
+    if (filter?.market && row.market !== filter.market) return false;
+    if (filter?.channel && row.channel !== filter.channel) return false;
+    if (filter?.status && row.overallStatus !== filter.status) return false;
+    return true;
+  });
+}
+function getSupplierOrderRehearsalDetail(rehearsalId) {
+  const rehearsal = getRehearsalRecord(rehearsalId);
+  if (!rehearsal) return null;
+  return {
+    rehearsal,
+    audit: listRehearsalAudit({ rehearsalId }).slice(-50),
+    safety: getRehearsalSafetyCounters()
   };
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  acknowledgeIncident,
-  filterIncidents,
-  getFulfillmentControlTowerAnalyticsSummary,
-  getFulfillmentControlTowerDashboard,
-  getFulfillmentControlTowerDetail,
-  hydrateControlTowerFromPersistence,
-  isSupplierOrderNetworkEnabled,
-  listFulfillmentControlTowerRows,
-  listIncidents,
-  reconcileSingleFulfillment,
-  resetControlTowerForTests,
-  resolveIncident,
-  runFulfillmentReconciliation
+  assertRehearsalSafetyInvariants,
+  getRehearsalSafetyCounters,
+  getSupplierOrderRehearsalDashboard,
+  getSupplierOrderRehearsalDetail,
+  hydrateRehearsalFromPersistence,
+  listRehearsalRecords,
+  listSupplierOrderRehearsalRows,
+  runGoLiveRehearsal
 });

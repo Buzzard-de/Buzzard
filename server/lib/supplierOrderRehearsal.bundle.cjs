@@ -5089,6 +5089,40 @@ CREATE TABLE IF NOT EXISTS tax_rates (
   `);
     }
     migrateSupplierOrderActivation();
+    function migrateSupplierProductionOrderValidation() {
+      db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_production_order_validation (
+      validation_id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      environment TEXT NOT NULL,
+      overall_status TEXT NOT NULL,
+      create_order_capability TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_spov_supplier
+      ON supplier_production_order_validation(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_spov_capability
+      ON supplier_production_order_validation(create_order_capability);
+
+    CREATE TABLE IF NOT EXISTS supplier_production_order_validation_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      validation_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_spova_validation
+      ON supplier_production_order_validation_audit(validation_id);
+  `);
+    }
+    migrateSupplierProductionOrderValidation();
     function seed() {
       const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
       if (count === 0) {
@@ -35381,7 +35415,7 @@ init_config();
 init_persistence2();
 init_security();
 
-// lib/supplier-production-validation/persistence.ts
+// lib/supplier-production-order-validation/persistence.ts
 var validationStore = /* @__PURE__ */ new Map();
 function listValidationRecords() {
   return [...validationStore.values()];
@@ -35392,7 +35426,7 @@ function getLatestValidationForScope(scope) {
   ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
 }
 
-// lib/supplier-production-validation/readinessBridge.ts
+// lib/supplier-production-order-validation/readinessBridge.ts
 function pass(code, category, message) {
   return { code, category, level: "PASS", message, blocking: false };
 }
@@ -35402,7 +35436,7 @@ function block(code, category, message) {
 function warn(code, category, message) {
   return { code, category, level: "WARNING", message, blocking: false };
 }
-function evaluateProductionValidationChecks(scope) {
+function evaluateCreateOrderProductionValidationChecks(scope) {
   const results = [];
   const validation = getLatestValidationForScope({
     supplierId: scope.supplierId,
@@ -35411,47 +35445,103 @@ function evaluateProductionValidationChecks(scope) {
     environment: scope.environment || "PRODUCTION"
   });
   if (!validation) {
-    results.push(block("PRODUCTION_VALIDATION_MISSING", "PRODUCTION", "Production capability validation not run"));
+    results.push(block("CREATE_ORDER_VALIDATION_MISSING", "CREATE_ORDER", "createOrder production validation not run"));
+    return results;
+  }
+  results.push(pass("CREATE_ORDER_VALIDATION_EXISTS", "CREATE_ORDER", `Validation ${validation.validationId}`));
+  if (validation.createOrderCapability === "UNVERIFIED") {
+    results.push(
+      block("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CREATE_ORDER", "createOrder capability UNVERIFIED \u2014 #341 boundary")
+    );
+  } else if (validation.createOrderCapability === "VALIDATED") {
+    results.push(pass("CREATE_ORDER_VALIDATED", "CREATE_ORDER", "createOrder production validated"));
+  } else {
+    results.push(block("CREATE_ORDER_BLOCKED", "CREATE_ORDER", "createOrder capability blocked"));
+  }
+  if (validation.unknownOutcome) {
+    results.push(warn("CREATE_ORDER_UNKNOWN_OUTCOME", "CREATE_ORDER", "Unknown outcome pending resolution"));
+  }
+  if (validation.humanReviewRequired) {
+    results.push(warn("CREATE_ORDER_HUMAN_REVIEW", "CREATE_ORDER", "Human review required"));
+  }
+  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
+    results.push(block("CREATE_ORDER_VALIDATION_BLOCKED", "CREATE_ORDER", `Validation ${validation.overallStatus}`));
+  }
+  return results;
+}
+
+// lib/supplier-production-validation/persistence.ts
+var validationStore2 = /* @__PURE__ */ new Map();
+function listValidationRecords2() {
+  return [...validationStore2.values()];
+}
+function getLatestValidationForScope2(scope) {
+  return listValidationRecords2().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-validation/readinessBridge.ts
+function pass2(code, category, message) {
+  return { code, category, level: "PASS", message, blocking: false };
+}
+function block2(code, category, message) {
+  return { code, category, level: "BLOCKED", message, blocking: true };
+}
+function warn2(code, category, message) {
+  return { code, category, level: "WARNING", message, blocking: false };
+}
+function evaluateProductionValidationChecks(scope) {
+  const results = [];
+  const validation = getLatestValidationForScope2({
+    supplierId: scope.supplierId,
+    market: scope.market,
+    channel: scope.channel,
+    environment: scope.environment || "PRODUCTION"
+  });
+  if (!validation) {
+    results.push(block2("PRODUCTION_VALIDATION_MISSING", "PRODUCTION", "Production capability validation not run"));
     return results;
   }
   results.push(
-    pass("PRODUCTION_VALIDATION_EXISTS", "PRODUCTION", `Validation ${validation.validationId} recorded`)
+    pass2("PRODUCTION_VALIDATION_EXISTS", "PRODUCTION", `Validation ${validation.validationId} recorded`)
   );
   if (validation.credentialStatus === "VALID") {
-    results.push(pass("PRODUCTION_CREDENTIAL_VALID", "CREDENTIAL", "Production credential validated"));
+    results.push(pass2("PRODUCTION_CREDENTIAL_VALID", "CREDENTIAL", "Production credential validated"));
   } else if (validation.credentialStatus === "NOT_CONFIGURED") {
-    results.push(block("PRODUCTION_CREDENTIAL_MISSING", "CREDENTIAL", "Production credential not configured"));
+    results.push(block2("PRODUCTION_CREDENTIAL_MISSING", "CREDENTIAL", "Production credential not configured"));
   } else {
-    results.push(block("PRODUCTION_CREDENTIAL_BLOCKED", "CREDENTIAL", `Credential status ${validation.credentialStatus}`));
+    results.push(block2("PRODUCTION_CREDENTIAL_BLOCKED", "CREDENTIAL", `Credential status ${validation.credentialStatus}`));
   }
   if (validation.createOrderCapability === "UNVERIFIED") {
     results.push(
-      block("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CAPABILITY", "createOrder capability UNVERIFIED \u2014 intentional #339 boundary")
+      block2("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CAPABILITY", "createOrder capability UNVERIFIED \u2014 intentional #339 boundary")
     );
   }
+  results.push(...evaluateCreateOrderProductionValidationChecks(scope));
   if (validation.catalogReadStatus === "LIVE_READ_VALIDATED") {
-    results.push(pass("PRODUCTION_CATALOG_VALIDATED", "LIVE_READ", "Catalog live-read validated"));
+    results.push(pass2("PRODUCTION_CATALOG_VALIDATED", "LIVE_READ", "Catalog live-read validated"));
   } else if (validation.catalogReadStatus === "SKIPPED") {
-    results.push(warn("PRODUCTION_CATALOG_SKIPPED", "LIVE_READ", "Catalog live-read skipped \u2014 LIVE NOT VALIDATED"));
+    results.push(warn2("PRODUCTION_CATALOG_SKIPPED", "LIVE_READ", "Catalog live-read skipped \u2014 LIVE NOT VALIDATED"));
   }
   if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
     results.push(
-      block("PRODUCTION_VALIDATION_BLOCKED", "PRODUCTION", `Validation ${validation.overallStatus}`)
+      block2("PRODUCTION_VALIDATION_BLOCKED", "PRODUCTION", `Validation ${validation.overallStatus}`)
     );
   } else if (validation.overallStatus === "PASSED") {
-    results.push(warn("PRODUCTION_VALIDATION_PASSED", "PRODUCTION", "Validation passed but createOrder still UNVERIFIED"));
+    results.push(warn2("PRODUCTION_VALIDATION_PASSED", "PRODUCTION", "Validation passed but createOrder still UNVERIFIED"));
   }
   return results;
 }
 
 // lib/supplier-order-readiness/checks.ts
-function pass2(code, category, message) {
+function pass3(code, category, message) {
   return { code, category, level: "PASS", message, blocking: false };
 }
-function warn2(code, category, message, blocking = false) {
+function warn3(code, category, message, blocking = false) {
   return { code, category, level: "WARNING", message, blocking };
 }
-function block2(code, category, message) {
+function block3(code, category, message) {
   return { code, category, level: "BLOCKED", message, blocking: true };
 }
 function critical(code, category, message) {
@@ -35471,29 +35561,29 @@ function evaluateSupplierIdentityChecks(scope) {
   const results = [];
   const supplier = getSupplier(scope.supplierId);
   if (!supplier) {
-    results.push(block2("SUPPLIER_NOT_FOUND", "SUPPLIER", "Supplier record does not exist"));
+    results.push(block3("SUPPLIER_NOT_FOUND", "SUPPLIER", "Supplier record does not exist"));
     return results;
   }
-  results.push(pass2("SUPPLIER_EXISTS", "SUPPLIER", "Supplier record exists"));
+  results.push(pass3("SUPPLIER_EXISTS", "SUPPLIER", "Supplier record exists"));
   if (!isSupplierSelectable(scope.supplierId)) {
-    results.push(block2("SUPPLIER_DISABLED", "SUPPLIER", "Supplier is disabled or not selectable"));
+    results.push(block3("SUPPLIER_DISABLED", "SUPPLIER", "Supplier is disabled or not selectable"));
   } else {
-    results.push(pass2("SUPPLIER_ENABLED", "SUPPLIER", "Supplier is enabled"));
+    results.push(pass3("SUPPLIER_ENABLED", "SUPPLIER", "Supplier is enabled"));
   }
   if (!supplier.supportedMarkets?.includes(scope.market)) {
-    results.push(block2("MARKET_NOT_ELIGIBLE", "MARKET", `Supplier not eligible for market ${scope.market}`));
+    results.push(block3("MARKET_NOT_ELIGIBLE", "MARKET", `Supplier not eligible for market ${scope.market}`));
   } else {
-    results.push(pass2("MARKET_ELIGIBLE", "MARKET", "Supplier market eligibility confirmed"));
+    results.push(pass3("MARKET_ELIGIBLE", "MARKET", "Supplier market eligibility confirmed"));
   }
   const health = getSupplierHealth(scope.supplierId);
   if (!health) {
-    results.push(warn2("SUPPLIER_HEALTH_UNKNOWN", "SUPPLIER", "Supplier health state unavailable"));
+    results.push(warn3("SUPPLIER_HEALTH_UNKNOWN", "SUPPLIER", "Supplier health state unavailable"));
   } else if (health.healthStatus === "UNHEALTHY") {
-    results.push(block2("SUPPLIER_UNHEALTHY", "SUPPLIER", "Supplier health is UNHEALTHY"));
+    results.push(block3("SUPPLIER_UNHEALTHY", "SUPPLIER", "Supplier health is UNHEALTHY"));
   } else if (health.healthStatus === "DEGRADED") {
-    results.push(warn2("SUPPLIER_DEGRADED", "SUPPLIER", "Supplier health is DEGRADED", false));
+    results.push(warn3("SUPPLIER_DEGRADED", "SUPPLIER", "Supplier health is DEGRADED", false));
   } else {
-    results.push(pass2("SUPPLIER_HEALTH_OK", "SUPPLIER", `Supplier health ${health.healthStatus}`));
+    results.push(pass3("SUPPLIER_HEALTH_OK", "SUPPLIER", `Supplier health ${health.healthStatus}`));
   }
   return results;
 }
@@ -35504,40 +35594,40 @@ function evaluateCredentialChecks(scope) {
   const interCars = resolvePredefinedLiveProfile();
   const isInterCars = scope.supplierId === interCars?.supplierId || profile?.supplierId === scope.supplierId || process.env.SUPPLIER_LIVE_PROFILE === "inter-cars";
   if (!ref?.secretsRef && !profile?.secretsRef) {
-    results.push(block2("CREDENTIAL_REF_MISSING", "CREDENTIAL", "Credential reference not configured"));
+    results.push(block3("CREDENTIAL_REF_MISSING", "CREDENTIAL", "Credential reference not configured"));
     return results;
   }
-  results.push(pass2("CREDENTIAL_REF_EXISTS", "CREDENTIAL", "Credential reference configured"));
+  results.push(pass3("CREDENTIAL_REF_EXISTS", "CREDENTIAL", "Credential reference configured"));
   const secretsRef = ref?.secretsRef || profile?.secretsRef || "";
   const creds = resolveCredentials(secretsRef);
   if (!creds || Object.keys(creds).length === 0) {
-    results.push(block2("CREDENTIAL_SECRET_MISSING", "CREDENTIAL", "Required supplier credential secret missing"));
+    results.push(block3("CREDENTIAL_SECRET_MISSING", "CREDENTIAL", "Required supplier credential secret missing"));
     return results;
   }
   const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
   if (isMockCredentialValue(token)) {
-    results.push(block2("CREDENTIAL_MOCK_NOT_PRODUCTION", "CREDENTIAL", "Mock/test credentials cannot be production ready"));
+    results.push(block3("CREDENTIAL_MOCK_NOT_PRODUCTION", "CREDENTIAL", "Mock/test credentials cannot be production ready"));
     return results;
   }
   if (isInterCars && !hasLiveSupplierCredentials(interCars || profile)) {
-    results.push(block2("INTER_CARS_CREDENTIAL_MISSING", "CREDENTIAL", "Inter Cars live credentials required"));
+    results.push(block3("INTER_CARS_CREDENTIAL_MISSING", "CREDENTIAL", "Inter Cars live credentials required"));
     return results;
   }
   const redacted = redactSecrets({ preview: token });
   if (redacted.preview && redacted.preview !== "[REDACTED]") {
     results.push(critical("SECRET_REDACTION_FAILED", "SECURITY", "Secret redaction failed"));
   } else {
-    results.push(pass2("SECRET_REDACTION_ACTIVE", "SECURITY", "Secret redaction active"));
+    results.push(pass3("SECRET_REDACTION_ACTIVE", "SECURITY", "Secret redaction active"));
   }
-  results.push(pass2("CREDENTIAL_CONFIGURED", "CREDENTIAL", "Production credential readiness confirmed"));
+  results.push(pass3("CREDENTIAL_CONFIGURED", "CREDENTIAL", "Production credential readiness confirmed"));
   return results;
 }
 function evaluateNetworkSafetyChecks() {
   const results = [];
   if (isSupplierOrderNetworkEnabled()) {
-    results.push(warn2("NETWORK_ENABLED", "NETWORK", "Supplier order network is ENABLED"));
+    results.push(warn3("NETWORK_ENABLED", "NETWORK", "Supplier order network is ENABLED"));
   } else {
-    results.push(pass2("NETWORK_DISABLED", "NETWORK", "Supplier order network is DISABLED (required for #337)"));
+    results.push(pass3("NETWORK_DISABLED", "NETWORK", "Supplier order network is DISABLED (required for #337)"));
   }
   return results;
 }
@@ -35559,18 +35649,18 @@ function evaluateCapabilityChecks(scope) {
     const key = required === "trackingAPI" ? "tracking" : required;
     const classification = map[key] || map[required] || "UNKNOWN";
     if (classification !== "AVAILABLE") {
-      results.push(block2(`CAPABILITY_${required.toUpperCase()}_MISSING`, "CAPABILITY", `${required} not available for real orders`));
+      results.push(block3(`CAPABILITY_${required.toUpperCase()}_MISSING`, "CAPABILITY", `${required} not available for real orders`));
     } else {
-      results.push(pass2(`CAPABILITY_${required.toUpperCase()}`, "CAPABILITY", `${required} available`));
+      results.push(pass3(`CAPABILITY_${required.toUpperCase()}`, "CAPABILITY", `${required} available`));
     }
   }
   if (policy.blockOnMissingTrackingCapability && map.tracking !== "AVAILABLE") {
-    results.push(block2("TRACKING_CAPABILITY_REQUIRED", "TRACKING", "Tracking capability required"));
+    results.push(block3("TRACKING_CAPABILITY_REQUIRED", "TRACKING", "Tracking capability required"));
   } else if (map.tracking !== "AVAILABLE") {
-    results.push(warn2("TRACKING_CAPABILITY_MISSING", "TRACKING", "Tracking capability not supported"));
+    results.push(warn3("TRACKING_CAPABILITY_MISSING", "TRACKING", "Tracking capability not supported"));
   }
   if (policy.blockOnMissingReturnCapability && map.return !== "AVAILABLE") {
-    results.push(warn2("RETURN_CAPABILITY_MISSING", "RETURN", "Return capability not supported", false));
+    results.push(warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Return capability not supported", false));
   }
   return { results, capabilities: map };
 }
@@ -35578,18 +35668,18 @@ function evaluateInterCarsChecks(scope) {
   const interCars = resolvePredefinedLiveProfile();
   if (!interCars || scope.supplierId !== interCars.supplierId) return [];
   const results = [];
-  results.push(pass2("INTER_CARS_PROFILE", "SUPPLIER", "Inter Cars adapter profile configured"));
+  results.push(pass3("INTER_CARS_PROFILE", "SUPPLIER", "Inter Cars adapter profile configured"));
   if (interCars.environment !== "PRODUCTION" && interCars.environment !== "SANDBOX") {
-    results.push(warn2("INTER_CARS_ENV", "SUPPLIER", `Inter Cars environment ${interCars.environment}`));
+    results.push(warn3("INTER_CARS_ENV", "SUPPLIER", `Inter Cars environment ${interCars.environment}`));
   }
   if (!interCars.endpoints?.products || !interCars.endpoints?.stock) {
-    results.push(block2("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoint configuration incomplete"));
+    results.push(block3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoint configuration incomplete"));
   } else {
-    results.push(pass2("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoints configured"));
+    results.push(pass3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoints configured"));
   }
   const orderCap = interCars.capabilities?.createOrder === true;
   if (!orderCap) {
-    results.push(block2("INTER_CARS_ORDER_NOT_VALIDATED", "SUPPLIER", "Inter Cars live order capability not validated"));
+    results.push(block3("INTER_CARS_ORDER_NOT_VALIDATED", "SUPPLIER", "Inter Cars live order capability not validated"));
   }
   return results;
 }
@@ -35598,20 +35688,20 @@ function evaluateLiveReadChecks(scope) {
   const profile = resolveLiveSupplierProfile();
   const credentialsPresent = profile ? hasLiveSupplierCredentials(profile) : hasConfiguredCredentials(scope.supplierId);
   if (!credentialsPresent) {
-    results.push(block2("LIVE_READ_NEVER_RUN", "LIVE_READ", "Live read validation skipped \u2014 credentials missing"));
+    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "Live read validation skipped \u2014 credentials missing"));
     return results;
   }
   const cursor = getSyncCursor(scope.supplierId, "incremental");
   if (!cursor?.updatedAt) {
-    results.push(block2("LIVE_READ_NEVER_RUN", "LIVE_READ", "No successful live-read sync cursor recorded"));
+    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "No successful live-read sync cursor recorded"));
     return results;
   }
   const syncAge = ageMs(cursor.updatedAt);
   const policy = getReadinessPolicy();
   if (syncAge == null || syncAge > policy.maxStockAgeMs) {
-    results.push(block2("LIVE_READ_STALE", "LIVE_READ", "Last live-read sync exceeds freshness threshold"));
+    results.push(block3("LIVE_READ_STALE", "LIVE_READ", "Last live-read sync exceeds freshness threshold"));
   } else {
-    results.push(pass2("LIVE_READ_RECENT", "LIVE_READ", "Recent live-read sync cursor present"));
+    results.push(pass3("LIVE_READ_RECENT", "LIVE_READ", "Recent live-read sync cursor present"));
   }
   return results;
 }
@@ -35623,19 +35713,19 @@ function evaluateDataFreshnessChecks(scope) {
   const priceAge = ageMs(cursor?.updatedAt);
   const productAge = ageMs(cursor?.updatedAt);
   if (stockAge == null || stockAge > policy.maxStockAgeMs) {
-    results.push(block2("STOCK_STALE", "INVENTORY", "Supplier stock feed stale or missing"));
+    results.push(block3("STOCK_STALE", "INVENTORY", "Supplier stock feed stale or missing"));
   } else {
-    results.push(pass2("STOCK_FRESH", "INVENTORY", "Stock feed within freshness threshold"));
+    results.push(pass3("STOCK_FRESH", "INVENTORY", "Stock feed within freshness threshold"));
   }
   if (priceAge == null || priceAge > policy.maxPriceAgeMs) {
-    results.push(block2("PRICE_STALE", "PRICE", "Supplier price feed stale or missing"));
+    results.push(block3("PRICE_STALE", "PRICE", "Supplier price feed stale or missing"));
   } else {
-    results.push(pass2("PRICE_FRESH", "PRICE", "Price feed within freshness threshold"));
+    results.push(pass3("PRICE_FRESH", "PRICE", "Price feed within freshness threshold"));
   }
   if (productAge == null || productAge > policy.maxProductAgeMs) {
-    results.push(warn2("PRODUCT_STALE", "PRODUCT", "Product feed older than preferred threshold"));
+    results.push(warn3("PRODUCT_STALE", "PRODUCT", "Product feed older than preferred threshold"));
   } else {
-    results.push(pass2("PRODUCT_FRESH", "PRODUCT", "Product feed within freshness threshold"));
+    results.push(pass3("PRODUCT_FRESH", "PRODUCT", "Product feed within freshness threshold"));
   }
   return results;
 }
@@ -35643,20 +35733,20 @@ function evaluateInventoryReadinessChecks(scope) {
   const supplier = getSupplier(scope.supplierId);
   const results = [];
   if (!supplier?.capabilities?.stockFeed) {
-    results.push(block2("STOCK_SOURCE_UNAVAILABLE", "INVENTORY", "Supplier stock source unavailable"));
+    results.push(block3("STOCK_SOURCE_UNAVAILABLE", "INVENTORY", "Supplier stock source unavailable"));
   } else {
-    results.push(pass2("STOCK_SOURCE_HEALTHY", "INVENTORY", "Supplier stock source configured"));
+    results.push(pass3("STOCK_SOURCE_HEALTHY", "INVENTORY", "Supplier stock source configured"));
   }
   return results;
 }
 function evaluatePricingReadinessChecks() {
-  return [pass2("PRICING_ENGINE_AVAILABLE", "PRICE", "Pricing Engine snapshot support available")];
+  return [pass3("PRICING_ENGINE_AVAILABLE", "PRICE", "Pricing Engine snapshot support available")];
 }
 function evaluateOrderEngineReadinessChecks() {
   return [
-    pass2("ORDER_LIFECYCLE", "ORDER", "Order lifecycle integration available"),
-    pass2("ORDER_IDEMPOTENCY", "ORDER", "Order idempotency support available"),
-    pass2("ORDER_RESERVATION", "ORDER", "Inventory reservation integration active")
+    pass3("ORDER_LIFECYCLE", "ORDER", "Order lifecycle integration available"),
+    pass3("ORDER_IDEMPOTENCY", "ORDER", "Order idempotency support available"),
+    pass3("ORDER_RESERVATION", "ORDER", "Inventory reservation integration active")
   ];
 }
 function evaluateControlTowerChecks(scope) {
@@ -35664,13 +35754,13 @@ function evaluateControlTowerChecks(scope) {
   try {
     const dash = getFulfillmentControlTowerDashboard({ supplierId: scope.supplierId });
     if (dash.critical > 0) {
-      results.push(block2("FCT_CRITICAL_INCIDENTS", "FULFILLMENT", `${dash.critical} critical fulfillment incidents open`));
+      results.push(block3("FCT_CRITICAL_INCIDENTS", "FULFILLMENT", `${dash.critical} critical fulfillment incidents open`));
     } else {
-      results.push(pass2("FCT_NO_CRITICAL", "FULFILLMENT", "No critical fulfillment incidents"));
+      results.push(pass3("FCT_NO_CRITICAL", "FULFILLMENT", "No critical fulfillment incidents"));
     }
-    results.push(pass2("FCT_AVAILABLE", "FULFILLMENT", "Fulfillment Control Tower available"));
+    results.push(pass3("FCT_AVAILABLE", "FULFILLMENT", "Fulfillment Control Tower available"));
   } catch {
-    results.push(warn2("FCT_UNAVAILABLE", "FULFILLMENT", "Fulfillment Control Tower unavailable"));
+    results.push(warn3("FCT_UNAVAILABLE", "FULFILLMENT", "Fulfillment Control Tower unavailable"));
   }
   return results;
 }
@@ -35681,15 +35771,15 @@ function evaluateIncidentGateChecks(scope) {
     severity: "CRITICAL"
   });
   if (criticalIncidents.length > 0) {
-    return [block2("CRITICAL_INCIDENTS_OPEN", "INCIDENT", `${criticalIncidents.length} critical incidents open`)];
+    return [block3("CRITICAL_INCIDENTS_OPEN", "INCIDENT", `${criticalIncidents.length} critical incidents open`)];
   }
-  return [pass2("NO_CRITICAL_INCIDENTS", "INCIDENT", "No open critical incidents")];
+  return [pass3("NO_CRITICAL_INCIDENTS", "INCIDENT", "No open critical incidents")];
 }
 function evaluateSecurityChecks() {
   return [
-    pass2("RBAC_ACTIVE", "SECURITY", "RBAC enforcement available"),
-    pass2("PII_FILTER_ACTIVE", "SECURITY", "PII filtering active"),
-    pass2("INPUT_VALIDATION", "SECURITY", "Input validation active")
+    pass3("RBAC_ACTIVE", "SECURITY", "RBAC enforcement available"),
+    pass3("PII_FILTER_ACTIVE", "SECURITY", "PII filtering active"),
+    pass3("INPUT_VALIDATION", "SECURITY", "Input validation active")
   ];
 }
 function evaluateIdempotencyChecks(scope) {
@@ -35697,46 +35787,46 @@ function evaluateIdempotencyChecks(scope) {
   const a = getSupplierOrderSandboxByIdempotency(key);
   const b = getSupplierOrderSandboxByIdempotency(key);
   if (a && b && a.supplierOrderId !== b.supplierOrderId) {
-    return [block2("IDEMPOTENCY_FAILURE", "IDEMPOTENCY", "Duplicate idempotency keys produced different orders")];
+    return [block3("IDEMPOTENCY_FAILURE", "IDEMPOTENCY", "Duplicate idempotency keys produced different orders")];
   }
-  return [pass2("IDEMPOTENCY_OK", "IDEMPOTENCY", "Idempotency index consistent")];
+  return [pass3("IDEMPOTENCY_OK", "IDEMPOTENCY", "Idempotency index consistent")];
 }
 function evaluateConcurrencyChecks() {
-  return [pass2("CONCURRENCY_OK", "CONCURRENCY", "Sandbox concurrency protections verified in #335")];
+  return [pass3("CONCURRENCY_OK", "CONCURRENCY", "Sandbox concurrency protections verified in #335")];
 }
 function evaluateRetryChecks() {
-  return [pass2("RETRY_CLASSIFICATION", "RETRY", "Retry/permanent failure classification available")];
+  return [pass3("RETRY_CLASSIFICATION", "RETRY", "Retry/permanent failure classification available")];
 }
 function evaluateMarketReadinessChecks(scope) {
   const market = getMarket(scope.market);
   if (!market) {
-    return [block2("MARKET_UNKNOWN", "MARKET", `Market ${scope.market} not in SSOT`)];
+    return [block3("MARKET_UNKNOWN", "MARKET", `Market ${scope.market} not in SSOT`)];
   }
   if (listMarkets().length !== 35) {
-    return [warn2("MARKET_COUNT", "MARKET", `Expected 35 markets, found ${listMarkets().length}`)];
+    return [warn3("MARKET_COUNT", "MARKET", `Expected 35 markets, found ${listMarkets().length}`)];
   }
-  return [pass2("MARKET_CONFIGURED", "MARKET", `Market ${scope.market} configured`)];
+  return [pass3("MARKET_CONFIGURED", "MARKET", `Market ${scope.market} configured`)];
 }
 function evaluateMarketplaceReadinessChecks(scope) {
   if (scope.channel === "DIRECT") {
-    return [pass2("DIRECT_CHANNEL", "MARKETPLACE", "Direct channel does not require marketplace mapping")];
+    return [pass3("DIRECT_CHANNEL", "MARKETPLACE", "Direct channel does not require marketplace mapping")];
   }
   const channelId = scope.channel.toLowerCase();
   const mp = listMarketplaces().find((m) => m.marketplaceId === channelId || m.supportedChannels.includes(channelId));
   if (!mp) {
-    return [block2("MARKETPLACE_UNKNOWN", "MARKETPLACE", `Marketplace channel ${scope.channel} unknown`)];
+    return [block3("MARKETPLACE_UNKNOWN", "MARKETPLACE", `Marketplace channel ${scope.channel} unknown`)];
   }
   if (!mp.supportedMarkets.includes(scope.market)) {
-    return [block2("MARKETPLACE_MARKET_UNSUPPORTED", "MARKETPLACE", `${scope.channel} does not support ${scope.market}`)];
+    return [block3("MARKETPLACE_MARKET_UNSUPPORTED", "MARKETPLACE", `${scope.channel} does not support ${scope.market}`)];
   }
-  return [pass2("MARKETPLACE_CHANNEL_OK", "MARKETPLACE", `${scope.channel} supports ${scope.market}`)];
+  return [pass3("MARKETPLACE_CHANNEL_OK", "MARKETPLACE", `${scope.channel} supports ${scope.market}`)];
 }
 function evaluateReturnsReadinessChecks(scope) {
   const { capabilities } = evaluateCapabilityChecks(scope);
   if (capabilities.return === "AVAILABLE") {
-    return [pass2("RETURN_CAPABILITY", "RETURN", "Supplier return capability configured")];
+    return [pass3("RETURN_CAPABILITY", "RETURN", "Supplier return capability configured")];
   }
-  return [warn2("RETURN_CAPABILITY_MISSING", "RETURN", "Supplier return capability not configured")];
+  return [warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Supplier return capability not configured")];
 }
 function evaluateProductionValidationChecks2(scope) {
   return evaluateProductionValidationChecks(scope);

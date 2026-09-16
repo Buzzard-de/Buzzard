@@ -50,6 +50,9 @@ const PERMISSIONS = {
     "supplier-order.activation.confirm",
     "supplier-order.activation.revoke",
     "supplier-order.activation.admin",
+    "supplier-production-order-validation.read",
+    "supplier-production-order-validation.run",
+    "supplier-production-order-validation.admin",
   ],
   catalog_manager: [
     "products.read",
@@ -98,6 +101,8 @@ const PERMISSIONS = {
     "supplier-order.activation.request",
     "supplier-order.activation.approve",
     "supplier-order.activation.arm",
+    "supplier-production-order-validation.read",
+    "supplier-production-order-validation.run",
     "products.read",
     "audit.read",
     "analytics.read",

@@ -1,4 +1,5 @@
 import type { ReadinessCheckResult, ReadinessScope } from "@/lib/supplier-order-readiness/types";
+import { evaluateCreateOrderProductionValidationChecks } from "@/lib/supplier-production-order-validation/readinessBridge";
 import { getLatestValidationForScope } from "./persistence";
 
 function pass(code: string, category: string, message: string): ReadinessCheckResult {
@@ -48,6 +49,8 @@ export function evaluateProductionValidationChecks(scope: ReadinessScope): Readi
       block("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CAPABILITY", "createOrder capability UNVERIFIED — intentional #339 boundary")
     );
   }
+
+  results.push(...evaluateCreateOrderProductionValidationChecks(scope));
 
   if (validation.catalogReadStatus === "LIVE_READ_VALIDATED") {
     results.push(pass("PRODUCTION_CATALOG_VALIDATED", "LIVE_READ", "Catalog live-read validated"));

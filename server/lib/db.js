@@ -4275,6 +4275,65 @@ function migrateSupplierProductionValidation() {
 
 migrateSupplierProductionValidation();
 
+function migrateSupplierOrderActivation() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_order_activation (
+      activation_id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      market TEXT NOT NULL,
+      channel TEXT NOT NULL,
+      environment TEXT NOT NULL,
+      status TEXT NOT NULL,
+      network_state TEXT NOT NULL DEFAULT 'DISABLED',
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_soa_supplier
+      ON supplier_order_activation(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_soa_status
+      ON supplier_order_activation(status);
+
+    CREATE TABLE IF NOT EXISTS supplier_order_activation_checks (
+      check_id TEXT PRIMARY KEY,
+      activation_id TEXT NOT NULL,
+      check_name TEXT NOT NULL,
+      status TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}',
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_soac_activation
+      ON supplier_order_activation_checks(activation_id);
+
+    CREATE TABLE IF NOT EXISTS supplier_order_activation_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      activation_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_soaa_activation
+      ON supplier_order_activation_audit(activation_id);
+
+    CREATE TABLE IF NOT EXISTS supplier_first_order_gate (
+      first_order_id TEXT PRIMARY KEY,
+      activation_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      status TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_sfo_activation
+      ON supplier_first_order_gate(activation_id);
+  `);
+}
+
+migrateSupplierOrderActivation();
+
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

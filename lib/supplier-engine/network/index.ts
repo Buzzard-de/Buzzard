@@ -24,6 +24,14 @@ export {
 export { safeParseJson, validateContentType, validateResponseSize } from "./responseSecurity";
 export { SupplierHttpTransport, createSupplierHttpTransport } from "./httpTransport";
 export {
+  isInScopedValidationNetworkContext,
+  getScopedValidationNetworkContext,
+  withScopedValidationNetwork,
+  isScopedValidationNetworkEnabled,
+  canUseScopedValidationNetwork,
+  type ScopedValidationNetworkContext,
+} from "./scopedValidationNetwork";
+export {
   MockSupplierTransport,
   buildMockTransportFixtures,
   resetMockTransportScenarios,

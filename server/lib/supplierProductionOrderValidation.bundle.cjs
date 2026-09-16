@@ -4964,10 +4964,24 @@ var init_buzzard_suppliers = __esm({
 });
 
 // lib/supplier-engine/fixtures.ts
+function getTestFeedEntry(supplierId) {
+  return test_supplier_feeds_default[supplierId];
+}
+function getTestFeedProducts(supplierId) {
+  const entry = getTestFeedEntry(supplierId);
+  return entry?.apiProducts ?? [];
+}
+function getTestXmlFeed(supplierId) {
+  return getTestFeedEntry(supplierId)?.xmlFeed ?? "";
+}
+function getTestCsvFeed(supplierId) {
+  return getTestFeedEntry(supplierId)?.csvFeed ?? "";
+}
 var TEST_SUPPLIER_ID;
 var init_fixtures = __esm({
   "lib/supplier-engine/fixtures.ts"() {
     "use strict";
+    init_test_supplier_feeds();
     TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
   }
 });
@@ -5123,6 +5137,23 @@ function persistRegistryEntry(config) {
   });
   if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
 }
+function hydrateRegistryFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  for (const row of persistence.listRegistryRows()) {
+    persistedOverlay.set(String(row.supplierId), {
+      supplierId: String(row.supplierId),
+      name: String(row.name),
+      displayName: row.displayName ? String(row.displayName) : String(row.name),
+      country: row.country ? String(row.country) : "DE",
+      status: row.status || (row.active === false ? "DISABLED" : "CONNECTED"),
+      supportedMarkets: row.supportedMarkets || [],
+      capabilities: row.capabilities || {},
+      secretsRef: row.secretsRef ? String(row.secretsRef) : void 0,
+      updatedAt: row.updatedAt ? String(row.updatedAt) : void 0
+    });
+  }
+}
 function ensureRegistry() {
   if (supplierById.size > 0) return;
   for (const raw of buzzard_suppliers_default.suppliers) {
@@ -5165,6 +5196,15 @@ var init_registry2 = __esm({
 });
 
 // lib/supplier-engine/capabilities.ts
+function hasCapability(capabilities, capability) {
+  return capabilities?.[capability] === true;
+}
+function assertCapability(capabilities, capability) {
+  if (!hasCapability(capabilities, capability)) {
+    return { allowed: false, reason: `CAPABILITY_NOT_CONFIGURED:${capability}` };
+  }
+  return { allowed: true };
+}
 var init_capabilities = __esm({
   "lib/supplier-engine/capabilities.ts"() {
     "use strict";
@@ -5172,10 +5212,43 @@ var init_capabilities = __esm({
 });
 
 // lib/supplier-engine/orderSandbox/persistence.ts
+function rowToRecord(row) {
+  return {
+    supplierOrderId: String(row.supplier_order_id),
+    buzzardOrderId: String(row.buzzard_order_id),
+    supplierId: String(row.supplier_id),
+    status: row.status,
+    idempotencyKey: String(row.idempotency_key),
+    correlationId: String(row.correlation_id || ""),
+    payload: JSON.parse(String(row.payload_json || "{}")),
+    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
+    failureClass: row.failure_class,
+    failureCode: row.failure_code ? String(row.failure_code) : void 0,
+    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
+    latencyMs: Number(row.latency_ms || 0),
+    sandbox: true,
+    networkDispatched: false,
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at)
+  };
+}
+function getOrderSandboxPersistence() {
+  return getSupplierPersistence();
+}
+function hydrateSupplierOrderSandboxFromPersistence() {
+  const rows = getOrderSandboxPersistence()?.listOrderSandbox?.() || [];
+  for (const row of rows) {
+    const record = rowToRecord(row);
+    memoryStore.set(record.idempotencyKey, record);
+    memoryStore.set(record.supplierOrderId, record);
+  }
+}
+var memoryStore;
 var init_persistence2 = __esm({
   "lib/supplier-engine/orderSandbox/persistence.ts"() {
     "use strict";
     init_persistence();
+    memoryStore = /* @__PURE__ */ new Map();
   }
 });
 
@@ -5246,15 +5319,20 @@ __export(serverEntry_exports, {
   assertCreateOrderValidationSafetyInvariants: () => assertCreateOrderValidationSafetyInvariants,
   attemptProductionCreateOrder: () => attemptProductionCreateOrder,
   evaluateCreateOrderProductionValidationChecks: () => evaluateCreateOrderProductionValidationChecks,
+  getControlledValidationRunDetail: () => getControlledValidationRunDetail,
   getCreateOrderValidationDashboard: () => getCreateOrderValidationDashboard,
   getCreateOrderValidationDetail: () => getCreateOrderValidationDetail,
   getCreateOrderValidationSafetyCounters: () => getCreateOrderValidationSafetyCounters,
   getValidationRecord: () => getValidationRecord,
   hydrateValidationFromPersistence: () => hydrateValidationFromPersistence,
+  listControlledValidationRows: () => listControlledValidationRows,
   listCreateOrderValidationRows: () => listCreateOrderValidationRows,
   listValidationRecords: () => listValidationRecords2,
+  requestControlledValidationApproval: () => requestControlledValidationApproval,
+  resolveControlledUnknownOutcome: () => resolveControlledUnknownOutcome,
   resolveUnknownOutcome: () => resolveUnknownOutcome,
-  runCreateOrderProductionValidation: () => runCreateOrderProductionValidation
+  runCreateOrderProductionValidation: () => runCreateOrderProductionValidation,
+  startControlledValidationRun: () => startControlledValidationRun
 });
 module.exports = __toCommonJS(serverEntry_exports);
 
@@ -5280,7 +5358,9 @@ function getCreateOrderEndpointPath() {
 }
 function resolveValidationMode() {
   const raw = (process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MODE || "MOCK").toUpperCase();
-  if (raw === "SANDBOX" || raw === "VALIDATION" || raw === "PRODUCTION") return raw;
+  if (raw === "SANDBOX" || raw === "VALIDATION" || raw === "CONTROLLED_VALIDATION" || raw === "PRODUCTION") {
+    return raw;
+  }
   return "MOCK";
 }
 function isControlledValidationEnabled() {
@@ -5314,8 +5394,20 @@ var SUPPLIER_NETWORK_CONFIG = {
   maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
   maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
 };
+function isSupplierNetworkEnabled() {
+  return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+}
 function isSupplierOrderNetworkEnabled() {
   return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+}
+function resolveConnectorEnvironment(configured) {
+  return configured || SUPPLIER_NETWORK_CONFIG.defaultEnvironment;
+}
+function canUseProductionNetwork(environment) {
+  if (environment === "MOCK") return false;
+  if (environment === "PRODUCTION" && !isSupplierNetworkEnabled()) return false;
+  if (environment === "SANDBOX" && !isSupplierNetworkEnabled()) return false;
+  return true;
 }
 
 // lib/supplier-engine/network/allowlist.ts
@@ -5391,11 +5483,434 @@ function extractAllowedHosts(baseUrl, extra = []) {
   return [...hosts];
 }
 
+// lib/supplier-engine/network/responseSecurity.ts
+var JSON_CONTENT = /^application\/(json|.*\+json)/i;
+var XML_CONTENT = /^(application|text)\/(xml|.*\+xml)/i;
+var CSV_CONTENT = /^text\/(csv|plain)/i;
+function validateResponseSize(body, maxBytes = SUPPLIER_NETWORK_CONFIG.maxResponseBytes) {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(body);
+  if (bytes.length <= maxBytes) {
+    return { ok: true, truncated: false, body };
+  }
+  const truncated = new TextDecoder().decode(bytes.slice(0, maxBytes));
+  return { ok: false, truncated: true, body: truncated };
+}
+function validateContentType(contentType, expected = "any") {
+  if (!contentType) {
+    return expected === "any" ? { ok: true } : { ok: false, reason: "MISSING_CONTENT_TYPE" };
+  }
+  if (expected === "any") return { ok: true };
+  if (expected === "json" && JSON_CONTENT.test(contentType)) return { ok: true };
+  if (expected === "xml" && XML_CONTENT.test(contentType)) return { ok: true };
+  if (expected === "csv" && CSV_CONTENT.test(contentType)) return { ok: true };
+  return { ok: false, reason: "INVALID_CONTENT_TYPE" };
+}
+function safeParseJson(body) {
+  try {
+    return { ok: true, data: JSON.parse(body) };
+  } catch {
+    return { ok: false, reason: "MALFORMED_JSON" };
+  }
+}
+
+// lib/supplier-engine/network/httpTransport.ts
+var import_crypto = require("crypto");
+
+// lib/supplier-engine/errors.ts
+var RETRYABLE = /* @__PURE__ */ new Set([
+  "TIMEOUT",
+  "RATE_LIMITED",
+  "SERVER_ERROR",
+  "NETWORK_ERROR",
+  "SUPPLIER_UNAVAILABLE"
+]);
+var PERMANENT = /* @__PURE__ */ new Set([
+  "AUTH_FAILED",
+  "FORBIDDEN",
+  "NOT_FOUND",
+  "VALIDATION_FAILED",
+  "MALFORMED_RESPONSE"
+]);
+function classifySupplierError(input) {
+  const message = input.message || input.code || "Unknown supplier error";
+  const status = input.httpStatus;
+  const raw = String(input.code || "").toUpperCase();
+  if (status === 401 || raw.includes("AUTH") || raw === "UNAUTHORIZED") {
+    return { code: "AUTH_FAILED", retryable: false, httpStatus: status, message };
+  }
+  if (status === 403 || raw === "FORBIDDEN") {
+    return { code: "FORBIDDEN", retryable: false, httpStatus: status, message };
+  }
+  if (status === 404 || raw === "NOT_FOUND") {
+    return { code: "NOT_FOUND", retryable: false, httpStatus: status, message };
+  }
+  if (status === 429 || raw === "RATE_LIMITED" || raw === "RATE_LIMITED") {
+    return { code: "RATE_LIMITED", retryable: true, httpStatus: status, message };
+  }
+  if (status === 502 || status === 503 || status === 500 || raw.includes("SERVER")) {
+    return { code: "SERVER_ERROR", retryable: true, httpStatus: status, message };
+  }
+  if (raw === "TIMEOUT" || raw === "ETIMEDOUT") {
+    return { code: "TIMEOUT", retryable: true, httpStatus: status, message };
+  }
+  if (raw === "NETWORK_ERROR" || raw === "ECONNREFUSED" || raw === "ENOTFOUND") {
+    return { code: "NETWORK_ERROR", retryable: true, httpStatus: status, message };
+  }
+  if (raw.includes("MALFORMED") || raw.includes("PARSE")) {
+    return { code: "MALFORMED_RESPONSE", retryable: false, httpStatus: status, message };
+  }
+  if (raw === "VALIDATION_FAILED") {
+    return { code: "VALIDATION_FAILED", retryable: false, httpStatus: status, message };
+  }
+  if (raw === "SUPPLIER_UNAVAILABLE") {
+    return { code: "SUPPLIER_UNAVAILABLE", retryable: true, httpStatus: status, message };
+  }
+  const code = raw || "UNKNOWN";
+  return {
+    code: PERMANENT.has(code) || RETRYABLE.has(code) ? code : "UNKNOWN",
+    retryable: RETRYABLE.has(code),
+    httpStatus: status,
+    message
+  };
+}
+function isClassifiedRetryable(error) {
+  return error.retryable && !PERMANENT.has(error.code);
+}
+
+// lib/supplier-engine/rateLimit.ts
+var buckets = /* @__PURE__ */ new Map();
+function checkRateLimit(supplierId, config = { requestsPerMinute: 60 }) {
+  const key = supplierId;
+  const now = Date.now();
+  const rpm = Math.max(1, config.requestsPerMinute);
+  const refillRate = rpm / 6e4;
+  let bucket = buckets.get(key);
+  if (!bucket) {
+    bucket = { tokens: rpm, lastRefill: now };
+    buckets.set(key, bucket);
+  }
+  const elapsed = now - bucket.lastRefill;
+  bucket.tokens = Math.min(rpm, bucket.tokens + elapsed * refillRate);
+  bucket.lastRefill = now;
+  if (bucket.tokens < 1) {
+    const retryAfterMs = Math.ceil((1 - bucket.tokens) / refillRate);
+    return { allowed: false, retryAfterMs };
+  }
+  bucket.tokens -= 1;
+  return { allowed: true };
+}
+function handleRateLimitResponse(retryAfterHeader) {
+  if (retryAfterHeader) {
+    const seconds = parseInt(retryAfterHeader, 10);
+    if (!Number.isNaN(seconds)) return seconds * 1e3;
+  }
+  return 6e4;
+}
+
+// lib/supplier-engine/retry.ts
+var DEFAULT_RETRYABLE = /* @__PURE__ */ new Set([
+  "TIMEOUT",
+  "RATE_LIMITED",
+  "SUPPLIER_UNAVAILABLE",
+  "NETWORK_ERROR",
+  "SERVER_ERROR",
+  "rateLimited",
+  "timeout",
+  "supplierUnavailable"
+]);
+var PERMANENT_CODES = /* @__PURE__ */ new Set([
+  "AUTH_FAILED",
+  "FORBIDDEN",
+  "NOT_FOUND",
+  "VALIDATION_FAILED",
+  "MALFORMED_RESPONSE"
+]);
+function isRetryableError(error) {
+  if (error.retryable === false) return false;
+  const classified = classifySupplierError(error);
+  if (PERMANENT_CODES.has(classified.code)) return false;
+  if (isClassifiedRetryable(classified)) return true;
+  if (error.retryable) return true;
+  if (error.code && DEFAULT_RETRYABLE.has(error.code)) return true;
+  return false;
+}
+function computeBackoffDelay(attempt, baseDelayMs = 500, maxDelayMs = 3e4) {
+  const delay = Math.min(baseDelayMs * 2 ** (attempt - 1), maxDelayMs);
+  return delay + Math.floor(Math.random() * 100);
+}
+async function withRetry(fn, options = {}) {
+  const maxAttempts = options.maxAttempts ?? 3;
+  const baseDelayMs = options.baseDelayMs ?? 500;
+  const maxDelayMs = options.maxDelayMs ?? 3e4;
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn(attempt);
+    } catch (err) {
+      lastError = err;
+      const retryable = isRetryableError(err);
+      if (!retryable || attempt >= maxAttempts) break;
+      await new Promise((r) => setTimeout(r, computeBackoffDelay(attempt, baseDelayMs, maxDelayMs)));
+    }
+  }
+  throw lastError;
+}
+
 // lib/supplier-engine/observability.ts
 init_security();
+var logBuffer = [];
+var MAX_LOG = 2e3;
+var requestMetrics = {
+  supplier_requests_total: 0,
+  supplier_request_failures: 0,
+  supplier_request_latency_ms: 0,
+  supplier_rate_limits: 0,
+  supplier_auth_failures: 0,
+  supplier_sync_success: 0,
+  supplier_sync_failure: 0
+};
+function recordSupplierRequestMetric(metric) {
+  requestMetrics.supplier_requests_total++;
+  requestMetrics.supplier_request_latency_ms += metric.latencyMs;
+  if (!metric.success) requestMetrics.supplier_request_failures++;
+  if (metric.rateLimited) requestMetrics.supplier_rate_limits++;
+  if (metric.authFailure) requestMetrics.supplier_auth_failures++;
+}
+function logSupplierOperation(entry) {
+  const record = {
+    ...entry,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    error: entry.error ? String(redactSecrets({ msg: entry.error })) : void 0
+  };
+  logBuffer.push(record);
+  if (logBuffer.length > MAX_LOG) logBuffer.shift();
+  return record;
+}
+
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+function isInScopedValidationNetworkContext() {
+  return scopedContext.getStore() !== void 0;
+}
+function withScopedValidationNetwork(context, fn) {
+  return scopedContext.run(context, fn);
+}
+function isScopedValidationNetworkEnabled() {
+  const raw = process.env.SUPPLIER_CONTROLLED_VALIDATION_NETWORK;
+  return raw === "1" || raw?.toLowerCase() === "true";
+}
+function canUseScopedValidationNetwork() {
+  return isScopedValidationNetworkEnabled() && isInScopedValidationNetworkContext();
+}
+
+// lib/supplier-engine/network/httpTransport.ts
+var SupplierHttpTransport = class {
+  constructor(allowedHosts = []) {
+    this.allowedHosts = allowedHosts;
+  }
+  async request(req) {
+    if (!isSupplierNetworkEnabled() && !canUseScopedValidationNetwork()) {
+      throw transportError("NETWORK_DISABLED", "Supplier network is disabled", false);
+    }
+    const endpointCheck = validateSupplierEndpoint(req.url, this.allowedHosts);
+    if (!endpointCheck.allowed) {
+      throw transportError(endpointCheck.reason || "ENDPOINT_INVALID", "Endpoint not allowed", false);
+    }
+    const correlationId = req.correlationId || (0, import_crypto.randomUUID)();
+    const timeoutMs = req.timeoutMs ?? SUPPLIER_NETWORK_CONFIG.defaultTimeoutMs;
+    const started = Date.now();
+    return withRetry(
+      async () => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const response = await fetch(req.url, {
+            method: req.method || "GET",
+            headers: {
+              Accept: "application/json",
+              "X-Correlation-Id": correlationId,
+              ...req.headers
+            },
+            body: req.body,
+            signal: controller.signal,
+            redirect: req.allowRedirects === false ? "manual" : "follow"
+          });
+          const rawBody = await response.text();
+          const sizeCheck = validateResponseSize(rawBody);
+          const contentType = response.headers.get("content-type") || void 0;
+          const contentCheck = validateContentType(contentType, "any");
+          if (!sizeCheck.ok) {
+            throw transportError("RESPONSE_TOO_LARGE", "Supplier response exceeded size limit", false, correlationId);
+          }
+          if (!contentCheck.ok) {
+            throw transportError(contentCheck.reason || "INVALID_CONTENT_TYPE", "Invalid content type", false, correlationId);
+          }
+          if (response.status === 429) {
+            const retryAfter = handleRateLimitResponse(response.headers.get("retry-after") || void 0);
+            throw transportError("RATE_LIMITED", "Rate limited by supplier", true, correlationId, 429, retryAfter);
+          }
+          if (response.status >= 500) {
+            throw transportError("SERVER_ERROR", `Supplier server error ${response.status}`, true, correlationId, response.status);
+          }
+          if (response.status === 401 || response.status === 403) {
+            throw transportError(
+              response.status === 401 ? "AUTH_FAILED" : "FORBIDDEN",
+              `Supplier auth error ${response.status}`,
+              false,
+              correlationId,
+              response.status
+            );
+          }
+          const durationMs = Date.now() - started;
+          const headers = {};
+          response.headers.forEach((value, key) => {
+            headers[key.toLowerCase()] = value;
+          });
+          const result = {
+            ok: response.ok,
+            status: response.status,
+            headers,
+            body: sizeCheck.body,
+            durationMs,
+            correlationId,
+            contentType,
+            truncated: sizeCheck.truncated
+          };
+          recordSupplierRequestMetric({
+            supplierId: req.supplierId,
+            operation: req.operation,
+            success: response.ok,
+            latencyMs: durationMs,
+            statusCode: response.status,
+            rateLimited: response.status === 429,
+            authFailure: response.status === 401 || response.status === 403
+          });
+          logSupplierOperation({
+            supplierId: req.supplierId,
+            connector: "http",
+            operation: req.operation,
+            durationMs,
+            status: response.ok ? "SUCCESS" : "FAILURE",
+            records: 0,
+            correlationId,
+            errorCode: response.ok ? void 0 : String(response.status)
+          });
+          return result;
+        } catch (err) {
+          if (err && typeof err === "object" && "code" in err) throw err;
+          const isAbort = err instanceof Error && err.name === "AbortError";
+          const classified = classifySupplierError({
+            code: isAbort ? "TIMEOUT" : "NETWORK_ERROR",
+            message: err instanceof Error ? err.message : "Network request failed"
+          });
+          recordSupplierRequestMetric({
+            supplierId: req.supplierId,
+            operation: req.operation,
+            success: false,
+            latencyMs: Date.now() - started,
+            rateLimited: classified.code === "RATE_LIMITED",
+            authFailure: classified.code === "AUTH_FAILED"
+          });
+          throw transportError(classified.code, classified.message, classified.retryable, correlationId);
+        } finally {
+          clearTimeout(timer);
+        }
+      },
+      {
+        maxAttempts: SUPPLIER_NETWORK_CONFIG.maxRetries,
+        baseDelayMs: 500,
+        maxDelayMs: 3e4
+      }
+    );
+  }
+};
+function transportError(code, message, retryable = false, correlationId, httpStatus, retryAfterMs) {
+  const err = new Error(message);
+  err.code = code;
+  err.message = message;
+  err.retryable = retryable && isRetryableError({ code, retryable });
+  err.correlationId = correlationId;
+  err.httpStatus = httpStatus;
+  if (retryAfterMs) {
+    void retryAfterMs;
+  }
+  return err;
+}
+function createSupplierHttpTransport(baseUrl, extraAllowed = []) {
+  return new SupplierHttpTransport(extractAllowedHosts(baseUrl, extraAllowed));
+}
+
+// lib/supplier-engine/network/mockTransport.ts
+var import_crypto2 = require("crypto");
+var globalScenarios = /* @__PURE__ */ new Map();
+var defaultScenario = { status: 200, body: '{"ok":true}' };
+var MockSupplierTransport = class {
+  constructor(scenarios = {}) {
+    this.scenarios = new Map(Object.entries(scenarios));
+  }
+  async request(req) {
+    const key = `${req.method || "GET"} ${req.url}`;
+    const urlWithoutQuery = req.url.split("?")[0];
+    const keyWithoutQuery = `${req.method || "GET"} ${urlWithoutQuery}`;
+    const scenario = this.scenarios.get(key) || this.scenarios.get(keyWithoutQuery) || this.scenarios.get(req.url) || globalScenarios.get(key) || globalScenarios.get(keyWithoutQuery) || globalScenarios.get(req.url) || defaultScenario;
+    const correlationId = req.correlationId || (0, import_crypto2.randomUUID)();
+    const started = Date.now();
+    if (scenario.delayMs) {
+      await new Promise((r) => setTimeout(r, scenario.delayMs));
+    }
+    if (scenario.timeout) {
+      await new Promise((r) => setTimeout(r, (req.timeoutMs ?? 100) + 50));
+      const err = new Error("TIMEOUT");
+      err.code = "TIMEOUT";
+      err.retryable = true;
+      throw err;
+    }
+    if (scenario.redirectUrl) {
+      const err = new Error("REDIRECT");
+      err.code = "REDIRECT";
+      err.redirectUrl = scenario.redirectUrl;
+      throw err;
+    }
+    const body = scenario.body ?? "";
+    const headers = { "content-type": "application/json", ...scenario.headers || {} };
+    return {
+      ok: scenario.status >= 200 && scenario.status < 300,
+      status: scenario.status,
+      headers,
+      body,
+      durationMs: Date.now() - started,
+      correlationId,
+      contentType: headers["content-type"]
+    };
+  }
+};
+function buildMockTransportFixtures() {
+  const base = "https://supplier-mock.example/api";
+  return {
+    [`GET ${base}/health`]: { status: 200, body: '{"status":"ok"}' },
+    [`GET ${base}/products`]: {
+      status: 200,
+      body: JSON.stringify({ products: [{ supplierSku: "MOCK-1", name: "Mock Product" }] })
+    },
+    [`GET ${base}/auth-fail`]: { status: 401, body: '{"error":"unauthorized"}' },
+    [`GET ${base}/forbidden`]: { status: 403, body: '{"error":"forbidden"}' },
+    [`GET ${base}/not-found`]: { status: 404, body: '{"error":"not found"}' },
+    [`GET ${base}/rate-limit`]: { status: 429, body: '{"error":"rate limited"}', headers: { "retry-after": "1" } },
+    [`GET ${base}/server-error`]: { status: 500, body: '{"error":"internal"}' },
+    [`GET ${base}/bad-gateway`]: { status: 502, body: '{"error":"bad gateway"}' },
+    [`GET ${base}/unavailable`]: { status: 503, body: '{"error":"unavailable"}' },
+    [`GET ${base}/malformed`]: { status: 200, body: "{not-json" },
+    [`GET ${base}/oversized`]: { status: 200, body: "x".repeat(6 * 1024 * 1024) },
+    [`GET ${base}/timeout`]: { status: 200, timeout: true },
+    [`GET ${base}/redirect`]: { status: 302, redirectUrl: "http://127.0.0.1/admin" }
+  };
+}
 
 // lib/supplier-production-order-validation/safety.ts
 var counters = {
+  controlledValidationHttpCalls: 0,
   realSupplierOrderCalls: 0,
   realSupplierCancelCalls: 0,
   realSupplierReturnCalls: 0,
@@ -5417,6 +5932,9 @@ function assertCreateOrderValidationNetworkSafety() {
 }
 function recordBlockedProductionOrderAttempt() {
 }
+function recordControlledValidationHttpCall() {
+  counters.controlledValidationHttpCalls++;
+}
 function assertCreateOrderValidationSafetyInvariants() {
   const violations = [];
   if (counters.realSupplierOrderCalls !== 0) {
@@ -5433,10 +5951,10 @@ function assertCreateOrderValidationSafetyInvariants() {
 }
 
 // lib/supplier-production-order-validation/validation.ts
-var import_crypto4 = require("crypto");
+var import_crypto6 = require("crypto");
 
 // lib/supplier-production-validation/audit.ts
-var import_crypto = require("crypto");
+var import_crypto3 = require("crypto");
 
 // lib/supplier-production-validation/persistence.ts
 var validationStore = /* @__PURE__ */ new Map();
@@ -5499,7 +6017,7 @@ function sanitizeDetail(detail) {
 }
 function recordValidationAudit(input) {
   const event = {
-    eventId: `pv_${(0, import_crypto.randomUUID)().slice(0, 12)}`,
+    eventId: `pv_${(0, import_crypto3.randomUUID)().slice(0, 12)}`,
     type: input.type,
     validationId: input.validationId,
     supplierId: input.supplierId,
@@ -5787,7 +6305,7 @@ function deriveCreateOrderCapabilityStatus(state) {
 }
 
 // lib/supplier-production-order-validation/payload.ts
-var import_crypto2 = require("crypto");
+var import_crypto4 = require("crypto");
 
 // data/global/global_countries_35.json
 var global_countries_35_default = [
@@ -31235,27 +31753,1573 @@ init_fixtures();
 
 // lib/supplier-engine/health.ts
 init_persistence();
+var healthCache = /* @__PURE__ */ new Map();
+function fromPersisted(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    responseTimeMs: Number(row.responseTimeMs || 0),
+    errorCount: Number(row.errorCount || 0),
+    successCount: Number(row.successCount || 0),
+    rateLimitCount: Number(row.rateLimitCount || 0),
+    consecutiveFailures: Number(row.consecutiveFailures || 0),
+    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
+    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateHealthFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllHealthRecords;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const health of rows) {
+    healthCache.set(String(health.supplierId), fromPersisted(health));
+  }
+}
 
 // lib/supplier-engine/connectors/base.ts
 init_capabilities();
 
+// lib/supplier-engine/connectors/capabilityResult.ts
+var CAPABILITY_NOT_SUPPORTED = "CAPABILITY_NOT_SUPPORTED";
+function capabilityNotSupportedFetch() {
+  return {
+    ok: false,
+    records: [],
+    total: 0,
+    fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    error: CAPABILITY_NOT_SUPPORTED
+  };
+}
+function capabilityNotSupportedOperation(extra) {
+  return {
+    ok: false,
+    errorCode: CAPABILITY_NOT_SUPPORTED,
+    dryRun: true,
+    ...extra || {}
+  };
+}
+
+// lib/supplier-engine/connectors/base.ts
+var SupplierConnector = class {
+  constructor(supplier, connectorConfig = {}, connectorType = "base") {
+    this.supplierId = supplier.supplierId;
+    this.config = supplier;
+    this.connectorConfig = connectorConfig;
+    this.connectorType = connectorType;
+  }
+  checkCapability(cap) {
+    const result = assertCapability(this.config.capabilities, cap);
+    if (!result.allowed) {
+      throw new Error(result.reason || CAPABILITY_NOT_SUPPORTED);
+    }
+  }
+  supports(cap) {
+    return assertCapability(this.config.capabilities, cap).allowed;
+  }
+  async fetchProducts(options) {
+    if (!this.supports("productFeed")) return capabilityNotSupportedFetch();
+    return this.doFetchProducts(options);
+  }
+  async fetchStock(options) {
+    if (!this.supports("stockFeed")) return capabilityNotSupportedFetch();
+    return this.doFetchStock(options);
+  }
+  async fetchPrices(options) {
+    if (!this.supports("priceFeed")) return capabilityNotSupportedFetch();
+    return this.doFetchPrices(options);
+  }
+  async createOrder(request) {
+    if (!this.supports("orderAPI") && !this.supports("createOrder")) {
+      return capabilityNotSupportedOperation();
+    }
+    if (!isSupplierOrderNetworkEnabled()) {
+      return {
+        ok: true,
+        dryRun: true,
+        errorCode: "ORDER_NETWORK_DISABLED",
+        data: { status: "PREPARED_NOT_SENT", orderId: request.orderId }
+      };
+    }
+    return this.doCreateOrder(request);
+  }
+  async getOrderStatus(supplierOrderId) {
+    if (!this.supports("orderAPI") && !this.supports("orderStatus")) {
+      return capabilityNotSupportedOperation();
+    }
+    return this.doGetOrderStatus(supplierOrderId);
+  }
+  async getTracking(supplierOrderId) {
+    if (!this.supports("trackingAPI") && !this.supports("tracking")) {
+      return capabilityNotSupportedOperation();
+    }
+    return this.doGetTracking(supplierOrderId);
+  }
+  async createReturn(payload) {
+    if (!this.supports("returnsAPI")) {
+      return capabilityNotSupportedOperation();
+    }
+    if (!isSupplierOrderNetworkEnabled()) {
+      return {
+        ok: true,
+        dryRun: true,
+        errorCode: "ORDER_NETWORK_DISABLED",
+        data: { status: "PREPARED_NOT_SENT" }
+      };
+    }
+    return this.doCreateReturn(payload);
+  }
+  async getReturnStatus(rmaId) {
+    if (!this.supports("returnsAPI")) {
+      return capabilityNotSupportedOperation();
+    }
+    return this.doGetReturnStatus(rmaId);
+  }
+  async doCreateOrder(_request) {
+    return capabilityNotSupportedOperation({ data: { status: "NOT_IMPLEMENTED" } });
+  }
+  async doGetOrderStatus(_supplierOrderId) {
+    return capabilityNotSupportedOperation();
+  }
+  async doGetTracking(_supplierOrderId) {
+    return capabilityNotSupportedOperation();
+  }
+  async doCreateReturn(_payload) {
+    return capabilityNotSupportedOperation();
+  }
+  async doGetReturnStatus(_rmaId) {
+    return capabilityNotSupportedOperation();
+  }
+};
+
+// lib/supplier-engine/batch.ts
+function paginateRecords(records, options = {}) {
+  const batchSize = options.batchSize ?? 50;
+  const start = options.cursor ? parseInt(options.cursor, 10) || 0 : 0;
+  const slice = records.slice(start, start + batchSize);
+  const next = start + batchSize;
+  return {
+    records: slice,
+    total: records.length,
+    cursor: next < records.length ? String(next) : void 0,
+    hasMore: next < records.length
+  };
+}
+
 // lib/supplier-engine/connectors/api.ts
 init_fixtures();
+var ApiSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}) {
+    super(supplier, connectorConfig, "api");
+    this.transport = null;
+  }
+  getTransport() {
+    if (this.transport) return this.transport;
+    const environment = resolveConnectorEnvironment(this.connectorConfig.environment);
+    if (!canUseProductionNetwork(environment)) return null;
+    if (this.connectorConfig.baseUrl?.includes("supplier-mock.example")) {
+      this.transport = new MockSupplierTransport(buildMockTransportFixtures());
+      return this.transport;
+    }
+    this.transport = createSupplierHttpTransport(
+      this.connectorConfig.baseUrl,
+      this.connectorConfig.allowedEndpoints
+    );
+    return this.transport;
+  }
+  useLiveNetwork() {
+    const environment = resolveConnectorEnvironment(this.connectorConfig.environment);
+    return canUseProductionNetwork(environment) && Boolean(this.connectorConfig.baseUrl);
+  }
+  async connect() {
+    if (!this.supports("api") && !this.supports("productFeed")) {
+      return { ok: false, message: "CAPABILITY_NOT_SUPPORTED" };
+    }
+    if (!this.useLiveNetwork()) {
+      return { ok: true, message: "API connector ready (dry-run, no live credentials)" };
+    }
+    const auth = resolveSupplierAuth({
+      ...this.connectorConfig,
+      secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
+    });
+    if (!auth.configured) {
+      return { ok: false, message: "AUTH_FAILED: credentials not configured" };
+    }
+    const transport = this.getTransport();
+    if (!transport) return { ok: false, message: "NETWORK_DISABLED" };
+    const healthUrl = `${this.connectorConfig.baseUrl?.replace(/\/$/, "")}/health`;
+    await transport.request({
+      url: healthUrl,
+      method: "GET",
+      headers: auth.headers,
+      supplierId: this.supplierId,
+      operation: "connect",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    return { ok: true, message: "API connector connected" };
+  }
+  async disconnect() {
+    this.transport = null;
+  }
+  async healthCheck() {
+    const start = Date.now();
+    if (this.useLiveNetwork()) {
+      try {
+        const auth = resolveSupplierAuth({
+          ...this.connectorConfig,
+          secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
+        });
+        const transport = this.getTransport();
+        if (transport && this.connectorConfig.baseUrl) {
+          const res = await transport.request({
+            url: `${this.connectorConfig.baseUrl.replace(/\/$/, "")}/health`,
+            headers: auth.headers,
+            supplierId: this.supplierId,
+            operation: "healthCheck",
+            timeoutMs: this.connectorConfig.timeoutMs
+          });
+          return {
+            status: res.ok ? "HEALTHY" : "DEGRADED",
+            latencyMs: Date.now() - start,
+            productsFetched: 0,
+            productsUpdated: 0,
+            productsFailed: 0,
+            connector: "api",
+            supplierId: this.supplierId,
+            lastError: res.ok ? void 0 : `HTTP_${res.status}`
+          };
+        }
+      } catch (e) {
+        return {
+          status: "UNHEALTHY",
+          latencyMs: Date.now() - start,
+          productsFetched: 0,
+          productsUpdated: 0,
+          productsFailed: 0,
+          connector: "api",
+          supplierId: this.supplierId,
+          lastError: e instanceof Error ? e.message : "HEALTH_CHECK_FAILED"
+        };
+      }
+    }
+    const products = getTestFeedProducts(this.supplierId);
+    return {
+      status: products.length > 0 ? "HEALTHY" : "DEGRADED",
+      latencyMs: Date.now() - start,
+      lastSuccessfulSync: (/* @__PURE__ */ new Date()).toISOString(),
+      productsFetched: products.length,
+      productsUpdated: 0,
+      productsFailed: 0,
+      connector: "api",
+      supplierId: this.supplierId
+    };
+  }
+  async doFetchProducts(options) {
+    const rate = checkRateLimit(this.supplierId, this.config.rateLimit);
+    if (!rate.allowed) {
+      return {
+        ok: false,
+        records: [],
+        total: 0,
+        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+        error: "RATE_LIMITED"
+      };
+    }
+    if (this.useLiveNetwork()) {
+      return this.fetchProductsViaNetwork(options);
+    }
+    const all = getTestFeedProducts(this.supplierId);
+    const page = paginateRecords(all, {
+      batchSize: options?.limit ?? 50,
+      cursor: options?.cursor
+    });
+    return {
+      ok: true,
+      records: page.records,
+      total: page.total,
+      cursor: page.cursor,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async fetchProductsViaNetwork(options) {
+    const transport = this.getTransport();
+    if (!transport || !this.connectorConfig.baseUrl) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED" };
+    }
+    const auth = resolveSupplierAuth({
+      ...this.connectorConfig,
+      secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
+    });
+    const url = new URL(`${this.connectorConfig.baseUrl.replace(/\/$/, "")}/products`);
+    if (options?.cursor) url.searchParams.set("cursor", options.cursor);
+    if (options?.limit) url.searchParams.set("limit", String(options.limit));
+    const res = await transport.request({
+      url: url.toString(),
+      headers: auth.headers,
+      supplierId: this.supplierId,
+      operation: "fetchProducts",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = safeParseJson(res.body);
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    const data = parsed.data;
+    const records = data.products || [];
+    return {
+      ok: res.ok,
+      records,
+      total: records.length,
+      cursor: options?.cursor,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  async doFetchStock(options) {
+    const all = getTestFeedProducts(this.supplierId);
+    const filtered = options?.skus?.length ? all.filter((r) => options.skus.includes(String(r.article_number || r.supplierSku))) : all;
+    return {
+      ok: true,
+      records: filtered.map((r) => ({
+        supplier_sku: r.article_number || r.supplierSku,
+        stock: r.stock_qty ?? r.stock,
+        updated_at: (/* @__PURE__ */ new Date()).toISOString()
+      })),
+      total: filtered.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: !this.useLiveNetwork()
+    };
+  }
+  async doFetchPrices(options) {
+    const all = getTestFeedProducts(this.supplierId);
+    const filtered = options?.skus?.length ? all.filter((r) => options.skus.includes(String(r.article_number || r.supplierSku))) : all;
+    return {
+      ok: true,
+      records: filtered.map((r) => ({
+        supplier_sku: r.article_number || r.supplierSku,
+        supplier_price: { amount: r.price_net ?? r.supplierPrice, currency: this.config.currency },
+        updated_at: (/* @__PURE__ */ new Date()).toISOString()
+      })),
+      total: filtered.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: !this.useLiveNetwork()
+    };
+  }
+};
 
 // lib/supplier-engine/connectors/xml.ts
 init_fixtures();
+function parseXmlProducts(xml) {
+  const records = [];
+  if (!xml?.trim()) return records;
+  const productBlocks = xml.match(/<product>([\s\S]*?)<\/product>/gi) || [];
+  for (const block2 of productBlocks) {
+    const record = {};
+    const tagPattern = /<(\w+)>([^<]*)<\/\1>/g;
+    let match;
+    while ((match = tagPattern.exec(block2)) !== null) {
+      const key = match[1];
+      const value = match[2].trim();
+      record[key] = /^\d+(\.\d+)?$/.test(value) ? Number(value) : value;
+    }
+    if (Object.keys(record).length) records.push(record);
+  }
+  return records;
+}
+var XmlSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}, xmlContent) {
+    super(supplier, connectorConfig, "xml");
+    this.xmlContent = xmlContent ?? getTestXmlFeed(supplier.supplierId);
+  }
+  async connect() {
+    this.checkCapability("xml");
+    return { ok: true, message: "XML connector ready (file/HTTP feed, dry-run)" };
+  }
+  async disconnect() {
+  }
+  async healthCheck() {
+    const start = Date.now();
+    let status = "HEALTHY";
+    let productsFetched = 0;
+    let lastError;
+    try {
+      const records = parseXmlProducts(this.xmlContent);
+      productsFetched = records.length;
+      if (!records.length) status = "DEGRADED";
+    } catch (e) {
+      status = "UNHEALTHY";
+      lastError = e instanceof Error ? e.message : "XML_PARSE_ERROR";
+    }
+    return {
+      status,
+      latencyMs: Date.now() - start,
+      lastSuccessfulSync: status === "HEALTHY" ? (/* @__PURE__ */ new Date()).toISOString() : void 0,
+      lastError,
+      productsFetched,
+      productsUpdated: 0,
+      productsFailed: 0,
+      connector: "xml",
+      supplierId: this.supplierId
+    };
+  }
+  async doFetchProducts() {
+    this.checkCapability("xml");
+    try {
+      const trimmed = this.xmlContent.trim();
+      if (trimmed && !trimmed.startsWith("<?") && !trimmed.startsWith("<")) {
+        return {
+          ok: false,
+          records: [],
+          total: 0,
+          fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+          error: "MALFORMED_XML"
+        };
+      }
+      const records = parseXmlProducts(this.xmlContent);
+      const looksLikeProductFeed = /<product[\s>]/i.test(this.xmlContent);
+      if (looksLikeProductFeed && records.length === 0) {
+        return {
+          ok: false,
+          records: [],
+          total: 0,
+          fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+          error: "MALFORMED_XML"
+        };
+      }
+      return {
+        ok: true,
+        records,
+        total: records.length,
+        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+        dryRun: true
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        records: [],
+        total: 0,
+        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+        error: e instanceof Error ? e.message : "MALFORMED_XML"
+      };
+    }
+  }
+  async doFetchStock(options) {
+    const products = await this.doFetchProducts();
+    if (!products.ok) return products;
+    const filtered = options?.skus?.length ? products.records.filter((r) => options.skus.includes(String(r.article_number))) : products.records;
+    return {
+      ok: true,
+      records: filtered.map((r) => ({ supplier_sku: r.article_number, stock: r.stock_qty })),
+      total: filtered.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async doFetchPrices(options) {
+    const products = await this.doFetchProducts();
+    if (!products.ok) return products;
+    const filtered = options?.skus?.length ? products.records.filter((r) => options.skus.includes(String(r.article_number))) : products.records;
+    return {
+      ok: true,
+      records: filtered.map((r) => ({
+        supplier_sku: r.article_number,
+        supplier_price: { amount: r.price_net, currency: this.config.currency }
+      })),
+      total: filtered.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  /** Test helper — inject malformed XML */
+  setXmlContent(xml) {
+    this.xmlContent = xml;
+  }
+};
 
 // lib/supplier-engine/connectors/csv.ts
 init_fixtures();
+function detectDelimiter(line) {
+  const counts = { ",": 0, ";": 0, "	": 0 };
+  for (const ch of line) {
+    if (ch in counts) counts[ch]++;
+  }
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0] || ",";
+}
+function parseCsvFeed(csv) {
+  const lines = csv.replace(/^\uFEFF/, "").split(/\r?\n/).filter((l) => l.trim());
+  if (lines.length < 2) return [];
+  const delimiter = detectDelimiter(lines[0]);
+  const headers = lines[0].split(delimiter).map((h) => h.trim());
+  const records = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(delimiter);
+    const record = {};
+    headers.forEach((h, idx) => {
+      const val = (values[idx] || "").trim();
+      record[h] = /^\d+(\.\d+)?$/.test(val) ? Number(val) : val;
+    });
+    records.push(record);
+  }
+  return records;
+}
+var CsvSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}, csvContent) {
+    super(supplier, connectorConfig, "csv");
+    this.csvContent = csvContent ?? getTestCsvFeed(supplier.supplierId);
+  }
+  async connect() {
+    this.checkCapability("csv");
+    return { ok: true, message: "CSV connector ready (file feed, dry-run)" };
+  }
+  async disconnect() {
+  }
+  async healthCheck() {
+    const start = Date.now();
+    const records = parseCsvFeed(this.csvContent);
+    return {
+      status: records.length > 0 ? "HEALTHY" : "DEGRADED",
+      latencyMs: Date.now() - start,
+      lastSuccessfulSync: (/* @__PURE__ */ new Date()).toISOString(),
+      productsFetched: records.length,
+      productsUpdated: 0,
+      productsFailed: 0,
+      connector: "csv",
+      supplierId: this.supplierId
+    };
+  }
+  async doFetchProducts() {
+    this.checkCapability("csv");
+    const records = parseCsvFeed(this.csvContent);
+    return {
+      ok: true,
+      records,
+      total: records.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async doFetchStock(options) {
+    const products = await this.doFetchProducts();
+    const filtered = options?.skus?.length ? products.records.filter((r) => options.skus.includes(String(r.article_number))) : products.records;
+    return {
+      ok: true,
+      records: filtered.map((r) => ({ supplier_sku: r.article_number, stock: r.stock_qty })),
+      total: filtered.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async doFetchPrices(options) {
+    const products = await this.doFetchProducts();
+    const filtered = options?.skus?.length ? products.records.filter((r) => options.skus.includes(String(r.article_number))) : products.records;
+    return {
+      ok: true,
+      records: filtered.map((r) => ({
+        supplier_sku: r.article_number,
+        supplier_price: { amount: r.price_net, currency: this.config.currency }
+      })),
+      total: filtered.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  setCsvContent(csv) {
+    this.csvContent = csv;
+  }
+};
+
+// lib/supplier-engine/connectors/manual.ts
+var ManualSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}) {
+    super(supplier, connectorConfig, "manual");
+    this.manualRecords = [];
+  }
+  setManualRecords(records) {
+    this.manualRecords = records;
+  }
+  async connect() {
+    return { ok: true, message: "Manual connector ready for admin imports" };
+  }
+  async disconnect() {
+  }
+  async healthCheck() {
+    return {
+      status: "HEALTHY",
+      latencyMs: 0,
+      productsFetched: this.manualRecords.length,
+      productsUpdated: 0,
+      productsFailed: 0,
+      connector: "manual",
+      supplierId: this.supplierId
+    };
+  }
+  async doFetchProducts() {
+    return {
+      ok: true,
+      records: [...this.manualRecords],
+      total: this.manualRecords.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async doFetchStock() {
+    return {
+      ok: true,
+      records: this.manualRecords.map((r) => ({
+        supplier_sku: r.supplier_sku || r.supplierSku,
+        stock: r.stock ?? r.stock_qty
+      })),
+      total: this.manualRecords.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async doFetchPrices() {
+    return {
+      ok: true,
+      records: this.manualRecords.map((r) => ({
+        supplier_sku: r.supplier_sku || r.supplierSku,
+        supplier_price: r.supplier_price || { amount: r.price_net || r.supplierPrice, currency: this.config.currency }
+      })),
+      total: this.manualRecords.length,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+};
+
+// lib/supplier-engine/connectors/template/index.ts
+var TemplateSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}) {
+    super(supplier, connectorConfig, "template");
+  }
+  async connect() {
+    return { ok: true, message: "Template connector ready (dry-run contract demo)" };
+  }
+  async disconnect() {
+  }
+  async healthCheck() {
+    return {
+      status: "HEALTHY",
+      latencyMs: 1,
+      productsFetched: 0,
+      productsUpdated: 0,
+      productsFailed: 0,
+      connector: "template",
+      supplierId: this.supplierId
+    };
+  }
+  async doFetchProducts() {
+    return {
+      ok: true,
+      records: [],
+      total: 0,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      dryRun: true
+    };
+  }
+  async doFetchStock() {
+    return { ok: true, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), dryRun: true };
+  }
+  async doFetchPrices() {
+    return { ok: true, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), dryRun: true };
+  }
+  async doCreateOrder(request) {
+    return {
+      ok: true,
+      dryRun: true,
+      data: { supplierOrderId: `TEMPLATE-ORD-${request.orderId}`, status: "PREPARED_NOT_SENT" }
+    };
+  }
+  async doGetOrderStatus(supplierOrderId) {
+    return { ok: true, dryRun: true, data: { supplierOrderId, status: "DRY_RUN" } };
+  }
+  async doGetTracking(supplierOrderId) {
+    return {
+      ok: true,
+      dryRun: true,
+      data: {
+        carrier: "TEMPLATE_CARRIER",
+        trackingNumber: `TRK-${supplierOrderId.slice(-6)}`,
+        status: "IN_TRANSIT",
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      }
+    };
+  }
+  async doCreateReturn() {
+    return { ok: true, dryRun: true, data: { rmaId: `TEMPLATE-RMA-${Date.now()}`, status: "PREPARED_NOT_SENT" } };
+  }
+  async doGetReturnStatus(rmaId) {
+    return {
+      ok: true,
+      dryRun: true,
+      data: { rmaId, status: "DRY_RUN", timestamp: (/* @__PURE__ */ new Date()).toISOString() }
+    };
+  }
+};
+
+// lib/supplier-engine/pagination.ts
+function parseLinkHeader(linkHeader) {
+  if (!linkHeader) return void 0;
+  const parts = linkHeader.split(",");
+  for (const part of parts) {
+    const match = part.match(/<([^>]+)>;\s*rel="?next"?/i);
+    if (match) return match[1];
+  }
+  return void 0;
+}
+function buildPaginationQuery(state) {
+  const query = {};
+  const pageKey = state.pageParam || "page";
+  const pageSizeKey = state.pageSizeParam || "pageSize";
+  switch (state.mode) {
+    case "pageNumber":
+      query[pageKey] = String(state.page ?? 0);
+      query[pageSizeKey] = String(state.pageSize);
+      break;
+    case "page":
+      query[pageKey] = String(state.page ?? 1);
+      query[pageSizeKey] = String(state.pageSize);
+      break;
+    case "offset":
+      query.offset = String(state.offset ?? 0);
+      query.limit = String(state.pageSize);
+      break;
+    case "cursor":
+      if (state.cursor) query.cursor = state.cursor;
+      query.limit = String(state.pageSize);
+      break;
+    case "nextPageToken":
+      if (state.nextPageToken) query.pageToken = state.nextPageToken;
+      query.pageSize = String(state.pageSize);
+      break;
+    default:
+      query.limit = String(state.pageSize);
+      break;
+  }
+  return query;
+}
+function advancePagination(state, response) {
+  const hasMore = response.hasNextPage ?? response.records.length >= state.pageSize;
+  const nextLink = parseLinkHeader(response.linkHeader);
+  switch (state.mode) {
+    case "pageNumber":
+      return {
+        hasMore,
+        next: hasMore ? { ...state, page: (state.page ?? 0) + 1 } : void 0
+      };
+    case "page":
+      return {
+        hasMore,
+        next: hasMore ? { ...state, page: (state.page ?? 1) + 1 } : void 0
+      };
+    case "offset":
+      return {
+        hasMore,
+        next: hasMore ? { ...state, offset: (state.offset ?? 0) + state.pageSize } : void 0
+      };
+    case "cursor":
+      return {
+        hasMore: Boolean(response.cursor),
+        nextCursor: response.cursor,
+        next: response.cursor ? { ...state, cursor: response.cursor } : void 0
+      };
+    case "nextPageToken":
+      return {
+        hasMore: Boolean(response.nextPageToken),
+        nextPageToken: response.nextPageToken,
+        next: response.nextPageToken ? { ...state, nextPageToken: response.nextPageToken } : void 0
+      };
+    case "linkHeader":
+      return {
+        hasMore: Boolean(nextLink),
+        nextLink
+      };
+    default:
+      return { hasMore: false };
+  }
+}
 
 // lib/supplier-engine/syncCursor.ts
 init_persistence();
+var cursorStore = /* @__PURE__ */ new Map();
+function cursorKey(supplierId, syncMode = "incremental") {
+  return `${supplierId}:${syncMode}`;
+}
+function fromPersisted2(row) {
+  return {
+    supplierId: String(row.supplierId),
+    syncMode: row.syncMode || "incremental",
+    cursor: row.cursor ? String(row.cursor) : void 0,
+    page: row.page != null ? Number(row.page) : void 0,
+    offset: row.offset != null ? Number(row.offset) : void 0,
+    lastModified: row.lastModified ? String(row.lastModified) : void 0,
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateSyncCursorsFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllCursors;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const cursor of rows) {
+    const parsed = fromPersisted2(cursor);
+    cursorStore.set(cursorKey(parsed.supplierId, parsed.syncMode || "incremental"), parsed);
+  }
+}
+function getSyncCursor(supplierId, syncMode = "incremental") {
+  const key = cursorKey(supplierId, syncMode);
+  const cached = cursorStore.get(key);
+  if (cached) return cached;
+  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
+  if (row) {
+    const cursor = fromPersisted2(row);
+    cursorStore.set(key, cursor);
+    return cursor;
+  }
+  return void 0;
+}
+function saveSyncCursor(supplierId, patch, syncMode = "incremental") {
+  const existing = getSyncCursor(supplierId, syncMode);
+  const next = {
+    supplierId,
+    syncMode,
+    cursor: patch.cursor ?? existing?.cursor,
+    page: patch.page ?? existing?.page,
+    offset: patch.offset ?? existing?.offset,
+    lastModified: patch.lastModified ?? existing?.lastModified,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  cursorStore.set(cursorKey(supplierId, syncMode), next);
+  getSupplierPersistence()?.saveCursor(next);
+  return next;
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/parser.ts
+function parseSafeXmlProducts(xml, itemTag = "product") {
+  const records = [];
+  if (!xml?.trim()) return records;
+  if (/<!ENTITY/i.test(xml) || /SYSTEM\s+["']/i.test(xml)) {
+    throw new Error("XXE_BLOCKED");
+  }
+  const blocks = xml.match(new RegExp(`<${itemTag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${itemTag}>`, "gi")) || [];
+  for (const block2 of blocks) {
+    const record = {};
+    const tagPattern = /<([\w:-]+)(?:\s[^>]*)?>([^<]*)<\/\1>/g;
+    let match;
+    while ((match = tagPattern.exec(block2)) !== null) {
+      const key = match[1].replace(/^.*:/, "");
+      let value = match[2].trim();
+      if (value.startsWith("<![CDATA[") && value.endsWith("]]>")) {
+        value = value.slice(9, -3);
+      }
+      record[key] = /^\d+(\.\d+)?$/.test(value) ? Number(value) : value;
+    }
+    if (Object.keys(record).length) records.push(record);
+  }
+  return records;
+}
+function parseSupplierFeedBody(body, format) {
+  if (format === "xml") {
+    try {
+      return { ok: true, records: parseSafeXmlProducts(body) };
+    } catch (e) {
+      return { ok: false, reason: e instanceof Error ? e.message : "MALFORMED_XML" };
+    }
+  }
+  const parsed = safeParseJson(body);
+  if (!parsed.ok) return { ok: false, reason: parsed.reason };
+  const data = parsed.data;
+  if (Array.isArray(data)) return { ok: true, records: data };
+  if (data && typeof data === "object") {
+    const obj = data;
+    const records = obj.products || obj.items || obj.lines || obj.data || [];
+    return {
+      ok: true,
+      records,
+      hasNextPage: obj.hasNextPage === true,
+      totalResults: typeof obj.totalResults === "number" ? obj.totalResults : void 0
+    };
+  }
+  return { ok: false, reason: "MALFORMED_JSON" };
+}
+
+// lib/supplier-engine/fieldMapping.ts
+var DEFAULT_MAPPING = {
+  article_number: "supplierSku",
+  sku: "supplierSku",
+  supplier_sku: "supplierSku",
+  ean_code: "ean",
+  ean: "ean",
+  ean_gtin: "ean",
+  gtin: "gtin",
+  mpn: "mpn",
+  price_net: "supplierPrice",
+  purchase_price: "supplierPrice",
+  supplier_price: "supplierPrice",
+  stock_qty: "stock",
+  stock: "stock",
+  title: "name",
+  name: "name",
+  brand_name: "brand",
+  brand: "brand",
+  description: "description",
+  short_description: "shortDescription",
+  supplier_category: "supplierCategory"
+};
+function applyFieldMapping(raw, mapping = {}) {
+  const merged = { ...DEFAULT_MAPPING, ...mapping };
+  const result = { ...raw };
+  for (const [supplierField, buzzardField] of Object.entries(merged)) {
+    if (supplierField in raw && !(buzzardField in result)) {
+      result[buzzardField] = raw[supplierField];
+    }
+  }
+  if (typeof result.supplierPrice === "number") {
+    result.purchase_price = result.supplierPrice;
+    result.supplier_price = { amount: result.supplierPrice, currency: raw.currency || "EUR" };
+  }
+  if (result.supplierSku && !result.supplier_sku) {
+    result.supplier_sku = result.supplierSku;
+  }
+  return result;
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/images.ts
+function validateSupplierImageUrl(url) {
+  const value = String(url || "").trim();
+  if (!value) return { ok: false, reason: "MISSING_IMAGE" };
+  try {
+    const parsed = new URL(value);
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      return { ok: false, reason: "INVALID_IMAGE_PROTOCOL" };
+    }
+    const endpointCheck = validateSupplierEndpoint(value);
+    if (!endpointCheck.allowed) {
+      return { ok: false, reason: endpointCheck.reason || "BLOCKED_IMAGE_HOST" };
+    }
+    return { ok: true, value: parsed.toString() };
+  } catch {
+    return { ok: false, reason: "INVALID_IMAGE_URL" };
+  }
+}
+function normalizeSupplierImages(raw) {
+  if (!raw) return [];
+  const list = Array.isArray(raw) ? raw : [raw];
+  const images = [];
+  for (const entry of list) {
+    const url = typeof entry === "string" ? entry : entry?.url;
+    const validated = validateSupplierImageUrl(url);
+    if (validated.ok && validated.value) images.push(validated.value);
+  }
+  return images.slice(0, 20);
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/interCarsAdapter.ts
+function preprocessInterCarsProduct(raw) {
+  const eans = raw.eans;
+  const primaryEan = Array.isArray(eans) && eans.length ? String(eans[0]) : void 0;
+  const genericRefs = raw.genericArticleReferences;
+  const primaryRef = genericRefs?.find((r) => r.genericArticleId) || genericRefs?.[0];
+  const categoryLabel = primaryRef?.genericArticleId || primaryRef?.name?.de || primaryRef?.name?.en || primaryRef?.name?.pl || void 0;
+  return {
+    ...raw,
+    ean: primaryEan,
+    gtin: primaryEan,
+    supplierCategory: categoryLabel,
+    mpn: raw.index || raw.articleNumber,
+    tecdocId: raw.tecDoc,
+    oem: raw.articleNumber,
+    brand: typeof raw.brand === "string" ? raw.brand : raw.brandReference?.name,
+    stock: raw.availability
+  };
+}
+function preprocessInterCarsStock(raw) {
+  const availability = raw.availability;
+  const qty = availability != null && Number.isFinite(Number(availability)) ? Number(availability) : void 0;
+  return {
+    ...raw,
+    supplierSku: raw.sku,
+    stock: qty,
+    stock_status: qty != null && qty > 0 ? "available" : "unavailable",
+    discontinued: false,
+    backorder: qty === 0 && raw.latestDeliveryDate ? true : void 0,
+    lead_time: raw.latestDeliveryDate
+  };
+}
+function preprocessInterCarsPrice(raw, currency) {
+  const price = raw.price;
+  const net = price?.customerPriceNet ?? price?.listPriceNet;
+  const amount = net != null && Number.isFinite(Number(net)) ? Number(net) : void 0;
+  return {
+    ...raw,
+    supplierSku: raw.sku,
+    supplierPrice: amount,
+    supplier_price: amount != null ? {
+      amount,
+      currency: String(price?.currencyCode || currency),
+      includesVat: false,
+      vatPercentage: price?.vatPercentage,
+      listPriceNet: price?.listPriceNet,
+      customerPriceNet: price?.customerPriceNet
+    } : void 0
+  };
+}
+function isInterCarsProfile(profile) {
+  return profile?.adapterProfile === "inter-cars";
+}
+function buildInterCarsCreateOrderBody(request, idempotencyKey) {
+  return {
+    externalOrderReference: request.orderId,
+    idempotencyKey,
+    lines: request.lines.map((line) => ({
+      sku: line.supplierSku,
+      quantity: line.quantity,
+      unitPriceNet: line.unitPrice
+    })),
+    deliveryAddress: {
+      name: request.shippingAddress.name || request.shippingAddress.company,
+      street: request.shippingAddress.street || request.shippingAddress.line1,
+      city: request.shippingAddress.city,
+      postalCode: request.shippingAddress.postalCode || request.shippingAddress.zip,
+      country: request.shippingAddress.country || request.shippingAddress.countryCode
+    }
+  };
+}
+function chunkSkus(skus, size = 100) {
+  const chunks = [];
+  for (let i = 0; i < skus.length; i += size) {
+    chunks.push(skus.slice(i, i + size));
+  }
+  return chunks;
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/mapping.ts
+var UNKNOWN = "UNKNOWN";
+var REVIEW_REQUIRED = "REVIEW_REQUIRED";
+function mapBuzzardCategory(rawCategory, categoryMapping = {}) {
+  const value = String(rawCategory || "").trim();
+  if (!value) return REVIEW_REQUIRED;
+  return categoryMapping[value] || REVIEW_REQUIRED;
+}
+function normalizeB2bSandboxRecord(raw, profile) {
+  const source = isInterCarsProfile(profile) ? preprocessInterCarsProduct(raw) : raw;
+  const mapped = applyFieldMapping(source, profile.fieldMapping);
+  const supplierSku = String(mapped.supplierSku || mapped.supplier_sku || UNKNOWN);
+  const ean = mapped.ean || mapped.gtin ? String(mapped.ean || mapped.gtin) : UNKNOWN;
+  const gtin = mapped.gtin ? String(mapped.gtin) : ean !== UNKNOWN ? ean : UNKNOWN;
+  const mpn = mapped.mpn ? String(mapped.mpn) : UNKNOWN;
+  const brand = mapped.brand ? String(mapped.brand) : UNKNOWN;
+  const priceRaw = mapped.supplierPrice ?? mapped.supplier_price?.amount;
+  const purchasePrice = priceRaw != null && Number.isFinite(Number(priceRaw)) ? Number(priceRaw) : void 0;
+  const stockRaw = mapped.stock ?? mapped.stock_qty;
+  const stock = stockRaw != null && Number.isFinite(Number(stockRaw)) ? Number(stockRaw) : void 0;
+  const images = normalizeSupplierImages(mapped.images || mapped.image_urls || mapped.image);
+  const vehicleFitment = Array.isArray(mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment) ? mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment : [];
+  const tecDocId = mapped.tecdocId || mapped.tecDoc;
+  const fitmentUnknown = isInterCarsProfile(profile) && (!Array.isArray(vehicleFitment) || vehicleFitment.length === 0);
+  return {
+    ...mapped,
+    supplierSku,
+    supplier_sku: supplierSku,
+    ean: ean === UNKNOWN ? void 0 : ean,
+    gtin: gtin === UNKNOWN ? void 0 : gtin,
+    mpn: mpn === UNKNOWN ? void 0 : mpn,
+    brand: brand === UNKNOWN ? void 0 : brand,
+    name: mapped.name || mapped.title || supplierSku,
+    supplierPrice: purchasePrice,
+    purchase_price: purchasePrice,
+    supplier_price: purchasePrice != null ? { amount: purchasePrice, currency: profile.currency } : void 0,
+    stock,
+    stock_qty: stock,
+    currency: profile.currency,
+    priceIncludesVat: profile.priceIncludesVat === true,
+    buzzardCategory: mapBuzzardCategory(mapped.supplierCategory || mapped.category, profile.categoryMapping),
+    images,
+    vehicleFitment: Array.isArray(vehicleFitment) && vehicleFitment.length ? vehicleFitment : void 0,
+    fitment: fitmentUnknown ? "UNKNOWN" : void 0,
+    tecdocId: tecDocId ? String(tecDocId) : void 0,
+    oemNumbers: mapped.oemNumbers || mapped.oem_numbers || mapped.oem || void 0,
+    liveSource: true
+  };
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/connectorConfig.ts
+function resolveB2bProfile(supplier) {
+  return supplier.connectorProfile || null;
+}
+function profileToConnectorConfig(profile) {
+  return {
+    baseUrl: profile.baseUrl,
+    environment: profile.environment,
+    authentication: profile.authentication,
+    authType: profile.authType,
+    secretsRef: profile.secretsRef,
+    allowedEndpoints: profile.allowedEndpoints || [new URL(profile.baseUrl).hostname],
+    pagination: profile.pagination ? { pageSize: profile.pagination.pageSize || 100, ...profile.pagination } : void 0,
+    timeoutMs: 3e4
+  };
+}
+
+// lib/supplier-engine/connectors/b2b-sandbox/index.ts
+var B2bSandboxSupplierConnector = class extends SupplierConnector {
+  constructor(supplier, connectorConfig = {}, options) {
+    const profile = resolveB2bProfile(supplier);
+    super(
+      supplier,
+      profile ? { ...profileToConnectorConfig(profile), ...connectorConfig } : connectorConfig,
+      "b2b-sandbox"
+    );
+    this.transport = null;
+    this.injectedTransport = null;
+    this.profile = profile;
+    this.injectedTransport = options?.transport || null;
+  }
+  setTransport(transport) {
+    this.injectedTransport = transport;
+    this.transport = transport;
+  }
+  getProfile() {
+    if (!this.profile) throw new Error("LIVE_SUPPLIER_PROFILE_MISSING");
+    return this.profile;
+  }
+  usesLiveNetwork() {
+    const profile = this.profile;
+    if (!profile) return false;
+    const environment = resolveConnectorEnvironment(profile.environment);
+    return canUseProductionNetwork(environment);
+  }
+  getTransport() {
+    if (this.injectedTransport) return this.injectedTransport;
+    if (this.transport) return this.transport;
+    const profile = this.getProfile();
+    this.transport = createSupplierHttpTransport(profile.baseUrl, profile.allowedEndpoints);
+    return this.transport;
+  }
+  buildUrl(path2, query) {
+    const profile = this.getProfile();
+    const base = profile.baseUrl.replace(/\/$/, "");
+    const url = new URL(`${base}${path2.startsWith("/") ? path2 : `/${path2}`}`);
+    if (query) {
+      for (const [key, value] of Object.entries(query)) {
+        url.searchParams.set(key, value);
+      }
+    }
+    return url.toString();
+  }
+  authHeaders() {
+    const profile = this.getProfile();
+    const auth = resolveSupplierAuth({
+      ...this.connectorConfig,
+      secretsRef: profile.secretsRef,
+      authentication: profile.authentication
+    }).headers;
+    return { ...profile.requestHeaders || {}, ...auth };
+  }
+  async connect() {
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return { ok: true, message: "B2B sandbox connector configured (network disabled \u2014 config only)" };
+    }
+    const transport = this.getTransport();
+    const healthPath = profile.endpoints.health || "/health";
+    await transport.request({
+      url: this.buildUrl(healthPath),
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "connect",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    return { ok: true, message: "B2B sandbox connector connected (read-only)" };
+  }
+  async disconnect() {
+    this.transport = null;
+  }
+  async healthCheck() {
+    const start = Date.now();
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return {
+        status: "DEGRADED",
+        latencyMs: Date.now() - start,
+        productsFetched: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        connector: "b2b-sandbox",
+        supplierId: this.supplierId,
+        lastError: "NETWORK_DISABLED"
+      };
+    }
+    try {
+      const transport = this.getTransport();
+      const res = await transport.request({
+        url: this.buildUrl(profile.endpoints.health || "/health"),
+        headers: this.authHeaders(),
+        supplierId: this.supplierId,
+        operation: "healthCheck",
+        timeoutMs: this.connectorConfig.timeoutMs
+      });
+      return {
+        status: res.ok ? "HEALTHY" : "DEGRADED",
+        latencyMs: Date.now() - start,
+        productsFetched: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        connector: "b2b-sandbox",
+        supplierId: this.supplierId,
+        lastError: res.ok ? void 0 : `HTTP_${res.status}`
+      };
+    } catch (e) {
+      return {
+        status: "UNHEALTHY",
+        latencyMs: Date.now() - start,
+        productsFetched: 0,
+        productsUpdated: 0,
+        productsFailed: 0,
+        connector: "b2b-sandbox",
+        supplierId: this.supplierId,
+        lastError: e instanceof Error ? e.message : "HEALTH_CHECK_FAILED"
+      };
+    }
+  }
+  async doFetchProducts(options) {
+    const profile = this.getProfile();
+    const rate = checkRateLimit(this.supplierId, this.config.rateLimit);
+    if (!rate.allowed) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "RATE_LIMITED" };
+    }
+    if (!this.usesLiveNetwork()) {
+      return {
+        ok: false,
+        records: [],
+        total: 0,
+        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
+        error: "NETWORK_DISABLED",
+        dryRun: true
+      };
+    }
+    const pagination = {
+      mode: profile.pagination?.mode || "cursor",
+      pageSize: options?.limit || profile.pagination?.pageSize || 100,
+      page: profile.pagination?.mode === "pageNumber" ? Number(getSyncCursor(this.supplierId, "incremental")?.cursor || 0) : void 0,
+      pageParam: profile.pagination?.pageParam,
+      pageSizeParam: profile.pagination?.pageSizeParam,
+      cursor: options?.cursor || getSyncCursor(this.supplierId, "incremental")?.cursor
+    };
+    const transport = this.getTransport();
+    const query = buildPaginationQuery(pagination);
+    const res = await transport.request({
+      url: this.buildUrl(profile.endpoints.products || "/products", query),
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "fetchProducts",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    const records = parsed.records.map((raw) => normalizeB2bSandboxRecord(raw, profile));
+    const page = advancePagination(pagination, {
+      records,
+      hasNextPage: parsed.hasNextPage,
+      cursor: res.headers["x-next-cursor"],
+      nextPageToken: res.headers["x-next-page-token"],
+      linkHeader: res.headers.link
+    });
+    const nextCursor = page.nextCursor || (profile.pagination?.mode === "pageNumber" && page.hasMore ? String((pagination.page ?? 0) + 1) : void 0);
+    if (nextCursor) {
+      saveSyncCursor(this.supplierId, { cursor: nextCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
+    }
+    return {
+      ok: res.ok,
+      records,
+      total: records.length,
+      cursor: nextCursor,
+      fetchedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  async doFetchStock(options) {
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
+    }
+    const transport = this.getTransport();
+    const targetSkus = options?.skus?.filter(Boolean) || [];
+    const allRecords = [];
+    if (isInterCarsProfile(profile) && targetSkus.length) {
+      for (const batch of chunkSkus(targetSkus, 100)) {
+        const res2 = await transport.request({
+          url: this.buildUrl(profile.endpoints.stock || "/stock", { sku: batch.join(",") }),
+          headers: this.authHeaders(),
+          supplierId: this.supplierId,
+          operation: "fetchStock",
+          timeoutMs: this.connectorConfig.timeoutMs
+        });
+        const parsed2 = parseSupplierFeedBody(res2.body, profile.feedFormat || "json");
+        if (!parsed2.ok) {
+          return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed2.reason };
+        }
+        for (const raw of parsed2.records) {
+          const mapped = preprocessInterCarsStock(raw);
+          allRecords.push({
+            supplier_sku: mapped.supplierSku,
+            stock: mapped.stock,
+            stock_status: mapped.stock_status,
+            discontinued: mapped.discontinued,
+            backorder: mapped.backorder,
+            lead_time: mapped.lead_time,
+            updated_at: (/* @__PURE__ */ new Date()).toISOString()
+          });
+        }
+      }
+      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    }
+    const res = await transport.request({
+      url: this.buildUrl(profile.endpoints.stock || "/stock"),
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "fetchStock",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    let records = parsed.records.map((raw) => {
+      const mapped = isInterCarsProfile(profile) ? preprocessInterCarsStock(raw) : normalizeB2bSandboxRecord(raw, profile);
+      return {
+        supplier_sku: mapped.supplierSku || mapped.supplier_sku,
+        stock: mapped.stock,
+        stock_status: mapped.stock === 0 ? "unavailable" : "available",
+        updated_at: (/* @__PURE__ */ new Date()).toISOString()
+      };
+    });
+    if (targetSkus.length) {
+      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
+    }
+    return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+  }
+  async doFetchPrices(options) {
+    const profile = this.getProfile();
+    if (!this.usesLiveNetwork()) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
+    }
+    const transport = this.getTransport();
+    const targetSkus = options?.skus?.filter(Boolean) || [];
+    const allRecords = [];
+    if (isInterCarsProfile(profile) && targetSkus.length) {
+      for (const batch of chunkSkus(targetSkus, 100)) {
+        const body = JSON.stringify({
+          lines: batch.map((sku) => ({ sku, quantity: 1 }))
+        });
+        const res2 = await transport.request({
+          url: this.buildUrl(profile.endpoints.prices || "/prices"),
+          method: "POST",
+          body,
+          headers: { ...this.authHeaders(), "Content-Type": "application/json" },
+          supplierId: this.supplierId,
+          operation: "fetchPrices",
+          timeoutMs: this.connectorConfig.timeoutMs
+        });
+        const parsed2 = parseSupplierFeedBody(res2.body, profile.feedFormat || "json");
+        if (!parsed2.ok) {
+          return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed2.reason };
+        }
+        for (const raw of parsed2.records) {
+          const mapped = preprocessInterCarsPrice(raw, profile.currency);
+          const priceObj = mapped.supplier_price;
+          allRecords.push({
+            supplier_sku: mapped.supplierSku,
+            supplier_price: {
+              amount: priceObj?.amount ?? mapped.supplierPrice,
+              currency: priceObj?.currency || profile.currency,
+              includesVat: profile.priceIncludesVat === true
+            },
+            updated_at: (/* @__PURE__ */ new Date()).toISOString()
+          });
+        }
+      }
+      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+    }
+    const res = await transport.request({
+      url: this.buildUrl(profile.endpoints.prices || "/prices"),
+      headers: this.authHeaders(),
+      supplierId: this.supplierId,
+      operation: "fetchPrices",
+      timeoutMs: this.connectorConfig.timeoutMs
+    });
+    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
+    if (!parsed.ok) {
+      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
+    }
+    let records = parsed.records.map((raw) => {
+      const mapped = isInterCarsProfile(profile) ? preprocessInterCarsPrice(raw, profile.currency) : normalizeB2bSandboxRecord(raw, profile);
+      const priceObj = mapped.supplier_price;
+      return {
+        supplier_sku: mapped.supplierSku,
+        supplier_price: {
+          amount: priceObj?.amount ?? mapped.supplierPrice,
+          currency: priceObj?.currency || profile.currency,
+          includesVat: profile.priceIncludesVat === true
+        },
+        updated_at: (/* @__PURE__ */ new Date()).toISOString()
+      };
+    });
+    if (targetSkus.length) {
+      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
+    }
+    return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
+  }
+  async doCreateOrder(request) {
+    return this.executeControlledValidationCreateOrder(request, {
+      idempotencyKey: request.orderId,
+      correlationId: request.orderId
+    });
+  }
+  /**
+   * Controlled validation createOrder — only callable within scoped validation network context.
+   * Does not require SUPPLIER_ORDER_NETWORK_ENABLED.
+   */
+  async executeControlledValidationCreateOrder(request, context) {
+    const profile = this.getProfile();
+    if (!isInterCarsProfile(profile)) {
+      return { ok: false, errorCode: "ADAPTER_NOT_INTER_CARS", data: { status: "NOT_SUPPORTED" } };
+    }
+    const createOrderDeclared = profile.capabilities?.createOrder === true || profile.capabilities?.orderAPI === true;
+    const endpoints = profile.endpoints;
+    const createOrderPath = endpoints.createOrder || endpoints.orders || "/ic/order/createOrder";
+    if (!createOrderDeclared && process.env.SUPPLIER_LIVE_CREATE_ORDER_ENABLED !== "1") {
+      return {
+        ok: false,
+        errorCode: "CREATE_ORDER_NOT_DECLARED",
+        data: { status: "BLOCKED", reason: "Inter Cars createOrder not declared on profile" }
+      };
+    }
+    if (!isInScopedValidationNetworkContext()) {
+      return {
+        ok: false,
+        errorCode: "SCOPED_NETWORK_REQUIRED",
+        data: { status: "BLOCKED", reason: "Controlled validation network context required" }
+      };
+    }
+    const transport = this.getTransport();
+    const body = JSON.stringify(buildInterCarsCreateOrderBody(request, context.idempotencyKey));
+    try {
+      const res = await transport.request({
+        url: this.buildUrl(createOrderPath),
+        method: "POST",
+        body,
+        headers: {
+          ...this.authHeaders(),
+          "Content-Type": "application/json",
+          "Idempotency-Key": context.idempotencyKey
+        },
+        supplierId: this.supplierId,
+        operation: "controlledValidationCreateOrder",
+        correlationId: context.correlationId,
+        timeoutMs: this.connectorConfig.timeoutMs,
+        allowRedirects: false
+      });
+      const parsed = safeParseJson(res.body);
+      const record = parsed.ok ? parsed.data : {};
+      const supplierOrderId = record.orderId || record.supplierOrderId || record.id || void 0;
+      if (!res.ok) {
+        return {
+          ok: false,
+          errorCode: `HTTP_${res.status}`,
+          data: { status: "REJECTED", httpStatus: res.status, body: record }
+        };
+      }
+      if (!supplierOrderId) {
+        return {
+          ok: false,
+          errorCode: "MISSING_SUPPLIER_ORDER_ID",
+          data: { status: "NEEDS_REVIEW", httpStatus: res.status, body: record }
+        };
+      }
+      return {
+        ok: true,
+        data: {
+          supplierOrderId,
+          status: String(record.status || record.orderStatus || "ACCEPTED"),
+          httpStatus: res.status
+        }
+      };
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "CONTROLLED_CREATE_ORDER_FAILED";
+      const code = e.code || "NETWORK_ERROR";
+      return {
+        ok: false,
+        errorCode: code,
+        data: { status: "UNKNOWN", message }
+      };
+    }
+  }
+};
+
+// lib/supplier-engine/connectors/factory.ts
+function createConnector(supplier, integrationType, connectorConfig = {}) {
+  const mergedConfig = integrationType === "b2b-sandbox" && supplier.connectorProfile ? { ...profileToConnectorConfig(supplier.connectorProfile), ...connectorConfig } : connectorConfig;
+  switch (integrationType) {
+    case "api":
+      return new ApiSupplierConnector(supplier, connectorConfig);
+    case "xml":
+      return new XmlSupplierConnector(supplier, connectorConfig);
+    case "csv":
+      return new CsvSupplierConnector(supplier, connectorConfig);
+    case "manual":
+      return new ManualSupplierConnector(supplier, connectorConfig);
+    case "template":
+      return new TemplateSupplierConnector(supplier, mergedConfig);
+    case "b2b-sandbox":
+      return new B2bSandboxSupplierConnector(supplier, mergedConfig);
+    default:
+      throw new Error(`UNKNOWN_INTEGRATION_TYPE:${integrationType}`);
+  }
+}
 
 // lib/supplier-engine/selection.ts
 init_registry2();
 
 // lib/supplier-engine/state.ts
 init_persistence();
+var stateBySupplier = /* @__PURE__ */ new Map();
+function fromPersisted3(row) {
+  return {
+    supplierId: String(row.supplierId),
+    healthStatus: row.healthStatus || "UNKNOWN",
+    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
+    syncStatus: row.syncStatus || "IDLE",
+    lastSyncStartedAt: row.lastSyncStartedAt ? String(row.lastSyncStartedAt) : void 0,
+    lastSyncCompletedAt: row.lastSyncCompletedAt ? String(row.lastSyncCompletedAt) : void 0,
+    lastSuccessfulSync: row.lastSyncSuccessAt ? String(row.lastSyncSuccessAt) : void 0,
+    lastFailedSync: row.lastSyncFailureAt ? String(row.lastSyncFailureAt) : void 0,
+    lastSyncError: row.lastErrorMessageSafe ? String(row.lastErrorMessageSafe) : void 0,
+    lastErrorCode: row.lastErrorCode ? String(row.lastErrorCode) : void 0,
+    lastSyncJobId: row.lastSyncJobId ? String(row.lastSyncJobId) : void 0,
+    syncLockJobId: row.syncLockJobId ? String(row.syncLockJobId) : void 0,
+    syncLockAcquiredAt: row.syncLockAcquiredAt ? String(row.syncLockAcquiredAt) : void 0,
+    productsProcessed: Number(row.productsProcessed || 0),
+    productsAccepted: Number(row.productsAccepted || 0),
+    productsRejected: Number(row.productsRejected || 0),
+    offersUpdated: Number(row.offersUpdated || 0),
+    stockUpdated: Number(row.stockUpdated || 0),
+    priceUpdated: Number(row.priceUpdated || 0),
+    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
+  };
+}
+function hydrateRuntimeStateFromPersistence() {
+  const persistence = getSupplierPersistence();
+  if (!persistence) return;
+  const listAll = persistence.listAllRuntimeStates;
+  const rows = listAll ? listAll.call(persistence) : [];
+  for (const runtime of rows) {
+    stateBySupplier.set(String(runtime.supplierId), fromPersisted3(runtime));
+  }
+}
 
 // lib/supplier-engine/order.ts
 init_registry2();
@@ -31264,6 +33328,16 @@ init_capabilities();
 // lib/supplier-engine/bootstrap.ts
 init_registry2();
 init_persistence2();
+var bootstrapped = false;
+function bootstrapSupplierEnginePersistence() {
+  if (bootstrapped) return;
+  hydrateRegistryFromPersistence();
+  hydrateRuntimeStateFromPersistence();
+  hydrateSyncCursorsFromPersistence();
+  hydrateHealthFromPersistence();
+  bootstrapped = true;
+  hydrateSupplierOrderSandboxFromPersistence();
+}
 
 // lib/supplier-engine/orderIdempotency.ts
 init_persistence();
@@ -31274,6 +33348,17 @@ function buildSupplierOrderIdempotencyKey(supplierId, buzzardOrderId, idempotenc
 }
 function getIdempotentSupplierOrder(key) {
   return orderIdempotencyKeys.get(key)?.supplierOrderId;
+}
+function recordIdempotentSupplierOrder(key, supplierOrderId) {
+  const existing = orderIdempotencyKeys.get(key);
+  if (existing) {
+    return { replay: true, supplierOrderId: existing.supplierOrderId };
+  }
+  const createdAt = (/* @__PURE__ */ new Date()).toISOString();
+  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt });
+  bootstrapSupplierEnginePersistence();
+  getSupplierPersistence()?.claimIdempotencyKey?.(key, key.split(":")[0] || "unknown");
+  return { replay: false, supplierOrderId };
 }
 
 // lib/supplier-engine/orderSandbox/orchestrator.ts
@@ -31364,7 +33449,7 @@ init_registry2();
 function hashCreateOrderPayload(payload) {
   const keys = Object.keys(payload).sort();
   const canonical = JSON.stringify(payload, keys);
-  return (0, import_crypto2.createHash)("sha256").update(canonical).digest("hex").slice(0, 16);
+  return (0, import_crypto4.createHash)("sha256").update(canonical).digest("hex").slice(0, 16);
 }
 function buildCanonicalPayloadFromOrder(orderId) {
   const checks = [];
@@ -31523,6 +33608,140 @@ function validateOrderProtections(orderId, payload) {
 }
 
 // lib/supplier-production-order-validation/response.ts
+function classifyHttpError(status) {
+  if (status === 400 || status === 422) {
+    return {
+      responseClass: "validation_error",
+      httpStatus: status,
+      retryable: false,
+      humanReviewRequired: false,
+      message: "Permanent validation error"
+    };
+  }
+  if (status === 401) {
+    return {
+      responseClass: "authentication_error",
+      httpStatus: status,
+      retryable: false,
+      humanReviewRequired: true,
+      message: "Authentication failure"
+    };
+  }
+  if (status === 403) {
+    return {
+      responseClass: "authorization_error",
+      httpStatus: status,
+      retryable: false,
+      humanReviewRequired: true,
+      message: "Authorization failure"
+    };
+  }
+  if (status === 404) {
+    return {
+      responseClass: "validation_error",
+      httpStatus: status,
+      retryable: false,
+      humanReviewRequired: true,
+      message: "Endpoint/contract issue"
+    };
+  }
+  if (status === 409) {
+    return {
+      responseClass: "duplicate",
+      httpStatus: status,
+      retryable: false,
+      humanReviewRequired: false,
+      message: "Duplicate/conflict"
+    };
+  }
+  if (status === 429) {
+    return {
+      responseClass: "rate_limited",
+      httpStatus: status,
+      retryable: true,
+      humanReviewRequired: false,
+      message: "Rate limited"
+    };
+  }
+  if (status >= 500) {
+    return {
+      responseClass: "server_error",
+      httpStatus: status,
+      retryable: true,
+      humanReviewRequired: false,
+      message: "Retryable supplier failure"
+    };
+  }
+  return {
+    responseClass: "unknown",
+    httpStatus: status,
+    retryable: false,
+    humanReviewRequired: true,
+    message: "Unknown response"
+  };
+}
+function parseInterCarsCreateOrderResponse(body, httpStatus) {
+  if (httpStatus >= 400) return classifyHttpError(httpStatus);
+  if (!body || typeof body !== "object") {
+    return {
+      responseClass: "unknown",
+      httpStatus,
+      retryable: false,
+      humanReviewRequired: true,
+      message: "Malformed response"
+    };
+  }
+  const record = body;
+  const supplierOrderId = record.orderId || record.supplierOrderId || record.id || void 0;
+  const statusRaw = String(record.status || record.orderStatus || "").toLowerCase();
+  if (statusRaw.includes("reject")) {
+    return {
+      responseClass: "rejected",
+      httpStatus,
+      supplierOrderId,
+      retryable: false,
+      humanReviewRequired: true,
+      message: "Order rejected by supplier"
+    };
+  }
+  if (statusRaw.includes("pending")) {
+    return {
+      responseClass: "pending",
+      httpStatus,
+      supplierOrderId,
+      retryable: false,
+      humanReviewRequired: false,
+      message: "Order pending"
+    };
+  }
+  if (statusRaw.includes("duplicate")) {
+    return {
+      responseClass: "duplicate",
+      httpStatus,
+      supplierOrderId,
+      retryable: false,
+      humanReviewRequired: false,
+      message: "Duplicate order"
+    };
+  }
+  if (!supplierOrderId) {
+    return {
+      responseClass: "unknown",
+      httpStatus,
+      retryable: false,
+      humanReviewRequired: true,
+      message: "Missing supplier order ID"
+    };
+  }
+  return {
+    responseClass: "accepted",
+    httpStatus,
+    supplierOrderId,
+    retryable: false,
+    humanReviewRequired: false,
+    message: "Order accepted"
+  };
+}
 function validateResponseContract(parsed) {
   if (parsed.responseClass === "accepted" && parsed.supplierOrderId) {
     return { check: "RESPONSE_SCHEMA", category: "RESPONSE", status: "PASS", message: "Response validated" };
@@ -31589,6 +33808,10 @@ function claimValidationIdempotency(key, validationId) {
   if (validationIdempotencyStore.has(key)) return false;
   validationIdempotencyStore.set(key, { validationId, createdAt: (/* @__PURE__ */ new Date()).toISOString() });
   return true;
+}
+function recordSuccessfulIdempotency(payload, supplierOrderId) {
+  const key = buildCreateOrderValidationIdempotencyKey(payload);
+  return recordIdempotentSupplierOrder(key, supplierOrderId);
 }
 
 // lib/supplier-order-readiness/killSwitch.ts
@@ -31659,8 +33882,11 @@ init_security();
 // lib/supplier-production-order-validation/persistence.ts
 var validationStore2 = /* @__PURE__ */ new Map();
 var validationByIdempotency = /* @__PURE__ */ new Map();
+var controlledRunStore = /* @__PURE__ */ new Map();
+var controlledRunByIdempotency = /* @__PURE__ */ new Map();
 var auditLog2 = [];
 var inflight = /* @__PURE__ */ new Map();
+var inflightControlled = /* @__PURE__ */ new Map();
 function getPersistentStore2() {
   if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PRODUCTION_ORDER_VALIDATION_PERSISTENCE === "0") {
     return null;
@@ -31746,6 +33972,49 @@ function setInflightValidation(key, promise) {
 function clearInflightValidation(key) {
   inflight.delete(key);
 }
+function saveControlledValidationRun(run) {
+  controlledRunStore.set(run.validationId, run);
+  controlledRunByIdempotency.set(run.idempotencyKey, run.validationId);
+  getPersistentStore2()?.saveValidation({
+    validation_id: run.validationId,
+    supplier_id: run.supplier,
+    market: run.market,
+    channel: run.channel,
+    environment: run.environment,
+    overall_status: run.overallStatus,
+    create_order_capability: run.createOrderCapability,
+    idempotency_key: run.idempotencyKey,
+    correlation_id: run.correlationId,
+    record_json: JSON.stringify({ ...run, recordType: "controlled_validation_run" }),
+    updated_at: run.updatedAt
+  });
+}
+function getControlledValidationRun(validationId) {
+  return controlledRunStore.get(validationId);
+}
+function getControlledValidationRunByIdempotency(idempotencyKey) {
+  const id = controlledRunByIdempotency.get(idempotencyKey);
+  return id ? controlledRunStore.get(id) : void 0;
+}
+function listControlledValidationRuns() {
+  return [...controlledRunStore.values()];
+}
+function getLatestControlledValidationRun(scope) {
+  return listControlledValidationRuns().filter((r) => {
+    if (scope?.supplierId && r.supplier !== scope.supplierId) return false;
+    if (scope?.market && r.market !== scope.market) return false;
+    return true;
+  }).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+function getInflightControlledRun(key) {
+  return inflightControlled.get(key);
+}
+function setInflightControlledRun(key, promise) {
+  inflightControlled.set(key, promise);
+}
+function clearInflightControlledRun(key) {
+  inflightControlled.delete(key);
+}
 
 // lib/supplier-production-order-validation/readinessBridge.ts
 function pass(code, category, message) {
@@ -31804,9 +34073,70 @@ var FIRST_ORDER_LIMITS = {
   maxSuppliers: 1,
   maxCustomers: 1
 };
+function getInterCarsSupplierId2() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+function getInterCarsAdapterProfile2() {
+  return resolvePredefinedLiveProfile()?.adapterProfile || "inter-cars";
+}
+function resolveActivationConfig() {
+  return {
+    interCarsSupplierId: getInterCarsSupplierId2(),
+    interCarsAdapterProfile: getInterCarsAdapterProfile2(),
+    activationTtlMs: ACTIVATION_TTL_MS,
+    approvalTtlMs: APPROVAL_TTL_MS2,
+    rehearsalTtlMs: REHEARSAL_TTL_MS,
+    firstOrderTtlMs: FIRST_ORDER_TTL_MS,
+    firstOrderMaxValue: FIRST_ORDER_LIMITS.maxOrderValue,
+    firstOrderMaxQuantity: FIRST_ORDER_LIMITS.maxQuantity,
+    firstOrderMaxItems: FIRST_ORDER_LIMITS.maxItems,
+    defaultMaxMarketValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_MARKET_VALUE || 1e4),
+    defaultMaxChannelValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_CHANNEL_VALUE || 5e3),
+    defaultMaxOrderValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_ORDER_VALUE || 1e3),
+    defaultMaxDailyOrderValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_DAILY_VALUE || 5e3),
+    defaultMaxOrders: Number(process.env.SUPPLIER_ACTIVATION_MAX_ORDERS || 10)
+  };
+}
 
 // lib/supplier-order-activation/preflight.ts
 init_registry2();
+
+// lib/supplier-order-activation/limits.ts
+function evaluateOrderLimits(input) {
+  const cfg = resolveActivationConfig();
+  const blockers = [];
+  const a = input.activation;
+  const maxOrderValue = a.maxOrderValue ?? cfg.defaultMaxOrderValue;
+  const maxDailyOrderValue = a.maxDailyOrderValue ?? cfg.defaultMaxDailyOrderValue;
+  const maxOrders = a.maxOrders ?? cfg.defaultMaxOrders;
+  if (input.orderValue > maxOrderValue) {
+    blockers.push("MAX_ORDER_VALUE_EXCEEDED");
+  }
+  if ((input.dailyOrderValue ?? 0) + input.orderValue > maxDailyOrderValue) {
+    blockers.push("MAX_DAILY_ORDER_VALUE_EXCEEDED");
+  }
+  if ((input.dailyOrderCount ?? 0) >= maxOrders) {
+    blockers.push("MAX_DAILY_ORDER_COUNT_EXCEEDED");
+  }
+  if ((input.marketDailyValue ?? 0) + input.orderValue > cfg.defaultMaxMarketValue) {
+    blockers.push("MAX_MARKET_VALUE_EXCEEDED");
+  }
+  if ((input.channelDailyValue ?? 0) + input.orderValue > cfg.defaultMaxChannelValue) {
+    blockers.push("MAX_CHANNEL_VALUE_EXCEEDED");
+  }
+  if (input.isFirstOrder) {
+    if (input.orderValue > cfg.firstOrderMaxValue) {
+      blockers.push("FIRST_ORDER_VALUE_EXCEEDED");
+    }
+    if ((input.itemCount ?? 0) > cfg.firstOrderMaxItems) {
+      blockers.push("FIRST_ORDER_ITEMS_EXCEEDED");
+    }
+    if ((input.totalQuantity ?? 0) > cfg.firstOrderMaxQuantity) {
+      blockers.push("FIRST_ORDER_QUANTITY_EXCEEDED");
+    }
+  }
+  return { allowed: blockers.length === 0, blockers };
+}
 
 // lib/analytics/store/memoryStore.ts
 function createMemoryAnalyticsStore() {
@@ -32046,7 +34376,7 @@ function applyFailureInjectionToChecks(checks, injection) {
 }
 
 // lib/supplier-production-order-validation/audit.ts
-var import_crypto3 = require("crypto");
+var import_crypto5 = require("crypto");
 var BLOCKED_KEYS3 = /* @__PURE__ */ new Set([
   "password",
   "token",
@@ -32071,7 +34401,7 @@ function sanitizeDetail2(detail) {
 }
 function recordCreateOrderValidationAudit(input) {
   const event = {
-    eventId: `co341_${(0, import_crypto3.randomUUID)().slice(0, 12)}`,
+    eventId: `co341_${(0, import_crypto5.randomUUID)().slice(0, 12)}`,
     type: input.type,
     validationId: input.validationId,
     orderId: input.orderId,
@@ -32124,7 +34454,7 @@ async function runCreateOrderProductionValidation(input) {
   const market = input.market || "DE";
   const channel = input.channel || "DIRECT";
   const environment = input.environment || "PRODUCTION";
-  const correlationId = input.correlationId || (0, import_crypto4.randomUUID)();
+  const correlationId = input.correlationId || (0, import_crypto6.randomUUID)();
   const validationMode = input.validationMode || resolveValidationMode();
   const idempotencyKey = input.idempotencyKey || buildValidationIdempotencyKey({ supplierId, market, channel, environment, orderId: input.orderId });
   const existing = getValidationByIdempotency(idempotencyKey);
@@ -32230,18 +34560,17 @@ async function executeValidation(input, scope) {
   let humanReviewRequired = false;
   let responseClass;
   let supplierOrderId;
-  const canAttemptControlledHttp = scope.validationMode === "VALIDATION" && isControlledValidationEnabled() && input.humanConfirmation && Boolean(input.confirmationNonce) && input.approver && input.approver !== input.requester && capabilityState.authenticated && blockerCodes.length === 0;
+  const isControlledMode = scope.validationMode === "CONTROLLED_VALIDATION" || scope.validationMode === "VALIDATION";
+  const canAttemptControlledHttp = isControlledMode && isControlledValidationEnabled() && input.humanConfirmation && Boolean(input.confirmationNonce) && input.approver && input.approver !== input.requester && capabilityState.authenticated && blockerCodes.length === 0;
   if (canAttemptControlledHttp) {
     recordCreateOrderValidationAudit({
       type: "PRODUCTION_ATTEMPT_ALLOWED",
       supplierId: scope.supplierId,
       correlationId: scope.correlationId,
       actor: input.approver,
-      detail: { mode: "CONTROLLED_VALIDATION" }
+      detail: { mode: "CONTROLLED_VALIDATION", note: "Use startControlledValidationRun for live HTTP" }
     });
-    unknownOutcome = true;
-    humanReviewRequired = true;
-    blockerCodes.push("CONTROLLED_VALIDATION_NOT_IMPLEMENTED_WITHOUT_EXPLICIT_SUPPLIER_TEST_API");
+    blockerCodes.push("USE_CONTROLLED_VALIDATION_RUN_API");
   } else {
     recordCreateOrderValidationAudit({
       type: "PRODUCTION_ATTEMPT_BLOCKED",
@@ -32277,7 +34606,7 @@ async function executeValidation(input, scope) {
   capabilityState.productionValidated = false;
   const createOrderCapability = deriveCreateOrderCapabilityStatus(capabilityState);
   const record = {
-    validationId: `co341_${(0, import_crypto4.randomUUID)().slice(0, 12)}`,
+    validationId: `co341_${(0, import_crypto6.randomUUID)().slice(0, 12)}`,
     supplierId: scope.supplierId,
     adapterProfile: getInterCarsAdapterProfile(),
     environment: scope.environment,
@@ -32331,14 +34660,14 @@ function attemptProductionCreateOrder(input) {
   assertCreateOrderValidationNetworkSafety();
   recordBlockedProductionOrderAttempt();
   blockOrderEndpointAttempt("https://gw.intercars.eu/ic/order/createOrder", {
-    correlationId: (0, import_crypto4.randomUUID)(),
+    correlationId: (0, import_crypto6.randomUUID)(),
     supplierId: getInterCarsSupplierId()
   });
   recordCreateOrderValidationAudit({
     type: "PRODUCTION_ATTEMPT_BLOCKED",
     orderId: input.orderId,
     supplierId: getInterCarsSupplierId(),
-    correlationId: (0, import_crypto4.randomUUID)(),
+    correlationId: (0, import_crypto6.randomUUID)(),
     actor: input.requester,
     detail: { code: "REAL_ORDER_ENDPOINT_NOT_VALIDATED" }
   });
@@ -32372,6 +34701,737 @@ function resolveUnknownOutcome(input) {
   return { outcome: "HUMAN_REVIEW_REQUIRED" };
 }
 
+// lib/supplier-production-order-validation/controlledValidation.ts
+var import_crypto8 = require("crypto");
+
+// lib/supplier-production-order-validation/capabilityUpdate.ts
+function promoteCreateOrderCapabilityValidated(validated) {
+  const state = buildInitialCapabilityState();
+  if (!validated) return state;
+  state.declared = true;
+  state.configured = true;
+  state.authenticated = true;
+  state.endpointAvailable = true;
+  state.requestValidated = true;
+  state.responseValidated = true;
+  state.idempotencyValidated = true;
+  state.errorHandlingValidated = true;
+  state.statusValidated = true;
+  state.trackingValidated = false;
+  state.productionValidated = true;
+  return state;
+}
+
+// lib/supplier-production-order-validation/approval.ts
+var import_crypto7 = require("crypto");
+var approvalStore = /* @__PURE__ */ new Map();
+function buildConfirmationNonce(input) {
+  const raw = `${input.validationId}:${input.orderReference}:${input.supplierId}:${input.payloadHash}:${input.expiresAt}`;
+  return (0, import_crypto7.createHash)("sha256").update(raw).digest("hex").slice(0, 24);
+}
+function createControlledValidationApproval(input) {
+  const supplier = input.supplier || getInterCarsSupplierId();
+  const approvalTimestamp = (/* @__PURE__ */ new Date()).toISOString();
+  const confirmationNonce = buildConfirmationNonce({
+    validationId: input.validationId,
+    orderReference: input.orderReference,
+    supplierId: supplier,
+    payloadHash: input.payloadHash,
+    expiresAt: input.expiresAt
+  });
+  const approval = {
+    approvalId: `cva_${(0, import_crypto7.randomUUID)().slice(0, 12)}`,
+    validationId: input.validationId,
+    supplier,
+    scope: input.scope,
+    maximumQuantity: input.maximumQuantity,
+    maximumValue: input.maximumValue,
+    currency: input.currency,
+    allowedProduct: input.allowedProduct,
+    allowedMarket: input.allowedMarket,
+    expiresAt: input.expiresAt,
+    approvedBy: input.approvedBy,
+    approvalTimestamp,
+    orderReference: input.orderReference,
+    payloadHash: input.payloadHash,
+    confirmationNonce,
+    status: "APPROVED"
+  };
+  approvalStore.set(input.validationId, approval);
+  return approval;
+}
+function validateControlledValidationApproval(input) {
+  const blockers = [];
+  const approval = approvalStore.get(input.validationId);
+  if (!approval) {
+    blockers.push("APPROVAL_MISSING");
+    return { valid: false, blockers };
+  }
+  if (approval.status !== "APPROVED") {
+    blockers.push("APPROVAL_NOT_APPROVED");
+  }
+  if (Date.parse(approval.expiresAt) <= Date.now()) {
+    blockers.push("APPROVAL_EXPIRED");
+  }
+  if (input.confirmationNonce && input.confirmationNonce !== approval.confirmationNonce) {
+    blockers.push("CONFIRMATION_NONCE_MISMATCH");
+  }
+  if (input.payloadHash && input.payloadHash !== approval.payloadHash) {
+    blockers.push("PAYLOAD_HASH_MISMATCH");
+  }
+  if (input.orderReference && input.orderReference !== approval.orderReference) {
+    blockers.push("ORDER_REFERENCE_MISMATCH");
+  }
+  return { valid: blockers.length === 0, blockers, approval };
+}
+
+// lib/supplier-production-order-validation/preflight.ts
+init_config();
+function runControlledValidationPreflight(input) {
+  const checks = [];
+  const blockers = [];
+  const supplierId = input.supplier || getInterCarsSupplierId();
+  const credential = validateProductionCredentials({ supplierId, environment: input.environment || "PRODUCTION" });
+  checks.push({
+    check: "CREDENTIALS",
+    category: "CREDENTIAL",
+    status: credential.status === "VALID" || credential.status === "CONFIGURED" ? "PASS" : "BLOCKED",
+    message: credential.status
+  });
+  blockers.push(...credential.blockerCodes);
+  const { state: capState, blockers: capBlockers } = evaluateDeclaredCapability(supplierId);
+  const createOrderEnabled = capState.declared || process.env.SUPPLIER_LIVE_CREATE_ORDER_ENABLED === "1" || Boolean(resolvePredefinedLiveProfile()?.endpoints?.createOrder);
+  if (!createOrderEnabled) blockers.push("CREATE_ORDER_NOT_DECLARED");
+  blockers.push(...capBlockers.filter((b) => b !== "CREATE_ORDER_NOT_DECLARED" || !createOrderEnabled));
+  checks.push({
+    check: "CREATE_ORDER_CAPABILITY",
+    category: "CAPABILITY",
+    status: createOrderEnabled ? "PASS" : "BLOCKED",
+    message: createOrderEnabled ? "createOrder enabled" : "createOrder not declared"
+  });
+  const profile = resolvePredefinedLiveProfile();
+  if (profile?.baseUrl) {
+    const hosts = extractProfileAllowedHosts(profile.baseUrl, []);
+    const path2 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path2.startsWith("/") ? path2 : `/${path2}`}`;
+    const endpointCheck = validateEndpointUrl(url, hosts, true);
+    checks.push({
+      check: "ENDPOINT",
+      category: "ENDPOINT",
+      status: endpointCheck.allowed ? "PASS" : "BLOCKED",
+      message: endpointCheck.reason || "Endpoint valid"
+    });
+    if (!endpointCheck.allowed) blockers.push("ENDPOINT_SECURITY_BLOCKED");
+    if (classifyEndpoint(path2) !== "ORDER_CREATE") blockers.push("ENDPOINT_CLASSIFICATION_MISMATCH");
+  }
+  blockers.push(...assertAiBoundary({
+    requester: input.requester,
+    approver: input.approver
+  }));
+  const upstream = evaluateUpstreamGates({
+    supplierId,
+    market: input.allowedMarket || input.market || "DE",
+    channel: input.channel || "DIRECT",
+    environment: input.environment || "PRODUCTION",
+    requester: input.requester,
+    approver: input.approver
+  });
+  blockers.push(...upstream.blockers);
+  if (isActivationKillSwitched({
+    supplierId,
+    market: input.allowedMarket || input.market || "DE",
+    channel: input.channel || "DIRECT"
+  })) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+  }
+  if (!isScopedValidationNetworkEnabled()) {
+    blockers.push("SCOPED_VALIDATION_NETWORK_DISABLED");
+    checks.push({
+      check: "NETWORK_VALIDATION",
+      category: "NETWORK",
+      status: "BLOCKED",
+      message: "SUPPLIER_CONTROLLED_VALIDATION_NETWORK not enabled"
+    });
+  } else {
+    checks.push({
+      check: "NETWORK_VALIDATION",
+      category: "NETWORK",
+      status: "PASS",
+      message: "Scoped validation network enabled"
+    });
+  }
+  const approvalCheck = validateControlledValidationApproval({
+    validationId: input.validationId || "",
+    confirmationNonce: input.confirmationNonce,
+    payloadHash: input.payloadHash,
+    orderReference: input.orderReference
+  });
+  checks.push({
+    check: "HUMAN_APPROVAL",
+    category: "APPROVAL",
+    status: approvalCheck.valid ? "PASS" : "BLOCKED",
+    message: approvalCheck.blockers.join(",") || "Approval valid"
+  });
+  blockers.push(...approvalCheck.blockers);
+  let payloadHash = input.payloadHash;
+  let orderValue = 0;
+  let totalQuantity = 0;
+  if (input.orderId) {
+    const payloadResult = buildCanonicalPayloadFromOrder(input.orderId);
+    checks.push(...payloadResult.checks);
+    blockers.push(...payloadResult.blockers);
+    payloadHash = payloadResult.payloadHash;
+    if (payloadResult.payload) {
+      const protections = validateOrderProtections(input.orderId, payloadResult.payload);
+      checks.push(...protections.checks);
+      blockers.push(...protections.blockers);
+      const idem = checkIdempotency(payloadResult.payload);
+      checks.push(...idem.checks);
+      if (idem.isDuplicate && idem.existingSupplierOrderId) {
+        blockers.push("DUPLICATE_IDEMPOTENCY");
+      }
+      totalQuantity = payloadResult.payload.lines.reduce((s, l) => s + l.quantity, 0);
+      orderValue = payloadResult.payload.lines.reduce((s, l) => s + l.quantity * l.unitPrice, 0);
+      if (input.allowedProduct) {
+        const skuMatch = payloadResult.payload.lines.every((l) => l.supplierSku === input.allowedProduct);
+        if (!skuMatch) blockers.push("PRODUCT_RESTRICTION_VIOLATION");
+      }
+      if (input.allowedMarket && input.allowedMarket !== (input.market || "DE")) {
+        blockers.push("MARKET_RESTRICTION_VIOLATION");
+      }
+      if (approvalCheck.approval && payloadResult.payload.currency !== approvalCheck.approval.currency) {
+        blockers.push("CURRENCY_MISMATCH");
+      }
+    }
+  } else {
+    blockers.push("ORDER_REFERENCE_MISSING");
+  }
+  const maxQty = Math.min(CONTROLLED_VALIDATION_MAX_QTY, approvalCheck.approval?.maximumQuantity ?? CONTROLLED_VALIDATION_MAX_QTY);
+  const maxValue = Math.min(CONTROLLED_VALIDATION_MAX_VALUE, approvalCheck.approval?.maximumValue ?? CONTROLLED_VALIDATION_MAX_VALUE);
+  if (totalQuantity > maxQty) blockers.push("FIRST_ORDER_QUANTITY_EXCEEDED");
+  if (orderValue > maxValue) blockers.push("MAX_ORDER_VALUE_EXCEEDED");
+  const activation = listActivationRecords().filter(
+    (a) => a.supplierId === supplierId && a.market === (input.allowedMarket || input.market || "DE") && a.channel === (input.channel || "DIRECT") && a.environment === (input.environment || "PRODUCTION")
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+  if (activation) {
+    const limits = evaluateOrderLimits({
+      activation,
+      orderValue,
+      isFirstOrder: true,
+      totalQuantity,
+      itemCount: getOrder(input.orderId || "")?.items.length ?? 1
+    });
+    blockers.push(...limits.blockers);
+  }
+  checks.push({
+    check: "FIRST_ORDER_LIMIT",
+    category: "LIMITS",
+    status: blockers.some((b) => b.includes("ORDER") && b.includes("EXCEEDED")) ? "BLOCKED" : "PASS",
+    message: `maxQty=${maxQty} maxValue=${maxValue}`
+  });
+  checks.push({
+    check: "PAYLOAD_VALIDATION",
+    category: "REQUEST",
+    status: payloadHash ? "PASS" : "BLOCKED",
+    message: payloadHash ? "Payload hash computed" : "Payload missing"
+  });
+  return { checks, blockers: [...new Set(blockers)], payloadHash, orderValue, totalQuantity };
+}
+
+// lib/supplier-production-order-validation/controlledHttp.ts
+init_registry2();
+async function executeControlledCreateOrderHttp(input) {
+  const checks = [];
+  const blockers = [];
+  let httpCallsMade = 0;
+  const supplier = getSupplier(input.supplierId);
+  if (!supplier) {
+    blockers.push("SUPPLIER_NOT_FOUND");
+    return { httpCallsMade, checks, blockers, unknownOutcome: false, humanReviewRequired: true };
+  }
+  const connector = createConnector(supplier, supplier.integrationTypes[0] ?? "b2b-sandbox");
+  if (!(connector instanceof B2bSandboxSupplierConnector)) {
+    blockers.push("CONNECTOR_NOT_B2B");
+    return { httpCallsMade, checks, blockers, unknownOutcome: false, humanReviewRequired: true };
+  }
+  if (input.transport) {
+    connector.setTransport(input.transport);
+  }
+  const supplierRequest = {
+    supplierId: input.payload.supplierId,
+    orderId: input.payload.buzzardOrderId,
+    lines: input.payload.lines,
+    shippingAddress: input.payload.shippingAddress
+  };
+  let result;
+  try {
+    result = await withScopedValidationNetwork(
+      {
+        runId: input.validationId,
+        validationId: input.validationId,
+        supplierId: input.supplierId
+      },
+      async () => {
+        httpCallsMade++;
+        recordControlledValidationHttpCall();
+        const op = await connector.executeControlledValidationCreateOrder(supplierRequest, {
+          idempotencyKey: input.payload.idempotencyKey,
+          correlationId: input.correlationId
+        });
+        if (!op.ok) {
+          const errorCode = op.errorCode || "UNKNOWN";
+          if (errorCode === "TIMEOUT" || errorCode === "NETWORK_ERROR") {
+            return {
+              httpCallsMade,
+              checks: [{
+                check: "CONTROLLED_HTTP",
+                category: "NETWORK",
+                status: "BLOCKED",
+                message: errorCode
+              }],
+              blockers: ["UNKNOWN_OUTCOME"],
+              unknownOutcome: true,
+              humanReviewRequired: true
+            };
+          }
+          const httpStatus = op.data?.httpStatus;
+          const parsed2 = httpStatus ? parseInterCarsCreateOrderResponse(op.data, httpStatus) : {
+            responseClass: "validation_error",
+            retryable: false,
+            humanReviewRequired: true,
+            message: errorCode
+          };
+          checks.push(validateResponseContract(parsed2));
+          return {
+            httpCallsMade,
+            responseClass: parsed2.responseClass,
+            supplierOrderId: parsed2.supplierOrderId,
+            checks,
+            blockers: [errorCode],
+            unknownOutcome: parsed2.responseClass === "unknown",
+            humanReviewRequired: parsed2.humanReviewRequired,
+            httpStatus
+          };
+        }
+        const data = op.data;
+        const parsed = parseInterCarsCreateOrderResponse(
+          { orderId: data.supplierOrderId, status: data.status || "accepted" },
+          data.httpStatus || 200
+        );
+        checks.push(validateResponseContract(parsed));
+        if (parsed.responseClass !== "accepted") {
+          return {
+            httpCallsMade,
+            responseClass: parsed.responseClass,
+            supplierOrderId: parsed.supplierOrderId,
+            checks,
+            blockers: ["RESPONSE_NOT_ACCEPTED"],
+            unknownOutcome: parsed.responseClass === "unknown",
+            humanReviewRequired: parsed.humanReviewRequired,
+            httpStatus: data.httpStatus
+          };
+        }
+        return {
+          httpCallsMade,
+          responseClass: parsed.responseClass,
+          supplierOrderId: parsed.supplierOrderId,
+          checks,
+          blockers: [],
+          unknownOutcome: false,
+          humanReviewRequired: false,
+          httpStatus: data.httpStatus || 200
+        };
+      }
+    );
+  } catch (e) {
+    const code = e.code || "NETWORK_ERROR";
+    blockers.push(code === "TIMEOUT" ? "UNKNOWN_OUTCOME" : "CONTROLLED_HTTP_FAILED");
+    return {
+      httpCallsMade,
+      checks: [{
+        check: "CONTROLLED_HTTP",
+        category: "NETWORK",
+        status: "BLOCKED",
+        message: e instanceof Error ? e.message : code
+      }],
+      blockers,
+      unknownOutcome: true,
+      humanReviewRequired: true
+    };
+  }
+  return result;
+}
+
+// lib/supplier-production-order-validation/controlledValidation.ts
+function deriveRunStatus(blockers, liveValidation) {
+  if (liveValidation === "PASS") return "PASSED";
+  if (liveValidation === "FAIL") return "FAILED";
+  if (blockers.length > 0) return "BLOCKED";
+  return "SKIPPED";
+}
+function requestControlledValidationApproval(input) {
+  const payloadResult = buildCanonicalPayloadFromOrder(input.orderId);
+  const blockers = [...payloadResult.blockers];
+  if (!payloadResult.payload || !payloadResult.payloadHash) {
+    blockers.push("PAYLOAD_INVALID");
+    return { approval: void 0, blockers };
+  }
+  const expiresAt = new Date(Date.now() + (input.ttlMs ?? VALIDATION_TTL_MS)).toISOString();
+  const approval = createControlledValidationApproval({
+    validationId: input.validationId,
+    supplier: input.supplier,
+    scope: {
+      market: input.allowedMarket || input.market || "DE",
+      channel: input.channel || "DIRECT",
+      environment: input.environment || "PRODUCTION"
+    },
+    maximumQuantity: input.maximumQuantity ?? CONTROLLED_VALIDATION_MAX_QTY,
+    maximumValue: input.maximumValue ?? CONTROLLED_VALIDATION_MAX_VALUE,
+    currency: input.currency || payloadResult.payload.currency,
+    allowedProduct: input.allowedProduct,
+    allowedMarket: input.allowedMarket || input.market || "DE",
+    expiresAt,
+    approvedBy: input.approvedBy,
+    orderReference: input.orderId,
+    payloadHash: payloadResult.payloadHash
+  });
+  recordCreateOrderValidationAudit({
+    type: "CONTROLLED_VALIDATION_APPROVED",
+    validationId: input.validationId,
+    orderId: input.orderId,
+    supplierId: input.supplier || getInterCarsSupplierId(),
+    correlationId: input.validationId,
+    actor: input.approvedBy,
+    detail: {
+      allowedProduct: input.allowedProduct,
+      allowedMarket: input.allowedMarket,
+      expiresAt,
+      payloadHash: payloadResult.payloadHash
+    }
+  });
+  return { approval, blockers };
+}
+async function startControlledValidationRun(input) {
+  assertCreateOrderValidationNetworkSafety();
+  const validationId = input.validationId || `cvr342_${(0, import_crypto8.randomUUID)().slice(0, 12)}`;
+  const supplierId = input.supplier || getInterCarsSupplierId();
+  const idempotencyKey = input.idempotencyKey || `cvr342_${supplierId}_${input.orderId || validationId}`;
+  const existing = getControlledValidationRunByIdempotency(idempotencyKey);
+  if (existing && ["PASSED", "BLOCKED", "FAILED", "SKIPPED"].includes(existing.overallStatus)) {
+    return { run: existing, httpCallsMade: 0, safety: getCreateOrderValidationSafetyCounters() };
+  }
+  const inflight2 = getInflightControlledRun(idempotencyKey);
+  if (inflight2) return inflight2;
+  const promise = executeControlledValidationRun({ ...input, validationId, idempotencyKey });
+  setInflightControlledRun(idempotencyKey, promise);
+  try {
+    return await promise;
+  } finally {
+    clearInflightControlledRun(idempotencyKey);
+  }
+}
+async function executeControlledValidationRun(input) {
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const supplierId = input.supplier || getInterCarsSupplierId();
+  const correlationId = input.correlationId || input.validationId;
+  const validationMode = input.validationMode || resolveValidationMode();
+  recordCreateOrderValidationAudit({
+    type: "CONTROLLED_VALIDATION_REQUESTED",
+    validationId: input.validationId,
+    orderId: input.orderId,
+    supplierId,
+    correlationId,
+    actor: input.requester
+  });
+  const modeAllowed = validationMode === "CONTROLLED_VALIDATION" || validationMode === "VALIDATION";
+  if (!modeAllowed || !isControlledValidationEnabled()) {
+    const blockers2 = ["CONTROLLED_VALIDATION_MODE_DISABLED"];
+    const run2 = buildRunRecord(input, {
+      now,
+      supplierId,
+      correlationId,
+      validationMode,
+      blockers: blockers2,
+      liveValidation: "BLOCKED",
+      preflightPassed: false
+    });
+    saveControlledValidationRun(run2);
+    recordCreateOrderValidationAudit({
+      type: "CONTROLLED_VALIDATION_BLOCKED",
+      validationId: input.validationId,
+      supplierId,
+      correlationId,
+      actor: input.requester,
+      detail: { blockers: blockers2 }
+    });
+    return { run: run2, httpCallsMade: 0, safety: getCreateOrderValidationSafetyCounters() };
+  }
+  const preflight = runControlledValidationPreflight(input);
+  const preflightPassed = preflight.blockers.length === 0;
+  if (!preflightPassed) {
+    const run2 = buildRunRecord(input, {
+      now,
+      supplierId,
+      correlationId,
+      validationMode,
+      blockers: preflight.blockers,
+      checks: preflight.checks,
+      liveValidation: preflight.blockers.includes("CREDENTIAL_NOT_CONFIGURED") ? "BLOCKED" : "BLOCKED",
+      preflightPassed: false,
+      payloadHash: preflight.payloadHash
+    });
+    saveControlledValidationRun(run2);
+    recordCreateOrderValidationAudit({
+      type: "CONTROLLED_VALIDATION_BLOCKED",
+      validationId: input.validationId,
+      supplierId,
+      correlationId,
+      actor: input.requester,
+      detail: { blockers: preflight.blockers }
+    });
+    return { run: run2, httpCallsMade: 0, safety: getCreateOrderValidationSafetyCounters() };
+  }
+  recordCreateOrderValidationAudit({
+    type: "CONTROLLED_VALIDATION_PREFLIGHT_PASSED",
+    validationId: input.validationId,
+    orderId: input.orderId,
+    supplierId,
+    correlationId,
+    actor: input.approver,
+    detail: { payloadHash: preflight.payloadHash }
+  });
+  if (!input.humanConfirmation || !input.confirmationNonce) {
+    const blockers2 = ["EXPLICIT_HUMAN_CONFIRMATION_REQUIRED"];
+    const run2 = buildRunRecord(input, {
+      now,
+      supplierId,
+      correlationId,
+      validationMode,
+      blockers: blockers2,
+      checks: preflight.checks,
+      liveValidation: "BLOCKED",
+      preflightPassed: true,
+      payloadHash: preflight.payloadHash
+    });
+    saveControlledValidationRun(run2);
+    return { run: run2, httpCallsMade: 0, safety: getCreateOrderValidationSafetyCounters() };
+  }
+  const approvalCheck = validateControlledValidationApproval({
+    validationId: input.validationId,
+    confirmationNonce: input.confirmationNonce,
+    payloadHash: preflight.payloadHash,
+    orderReference: input.orderId
+  });
+  if (!approvalCheck.valid) {
+    const run2 = buildRunRecord(input, {
+      now,
+      supplierId,
+      correlationId,
+      validationMode,
+      blockers: approvalCheck.blockers,
+      checks: preflight.checks,
+      liveValidation: "BLOCKED",
+      preflightPassed: true,
+      payloadHash: preflight.payloadHash
+    });
+    saveControlledValidationRun(run2);
+    return { run: run2, httpCallsMade: 0, safety: getCreateOrderValidationSafetyCounters() };
+  }
+  const payloadResult = buildCanonicalPayloadFromOrder(input.orderId);
+  if (!payloadResult.payload) {
+    const run2 = buildRunRecord(input, {
+      now,
+      supplierId,
+      correlationId,
+      validationMode,
+      blockers: ["PAYLOAD_INVALID"],
+      checks: preflight.checks,
+      liveValidation: "BLOCKED",
+      preflightPassed: true
+    });
+    saveControlledValidationRun(run2);
+    return { run: run2, httpCallsMade: 0, safety: getCreateOrderValidationSafetyCounters() };
+  }
+  recordCreateOrderValidationAudit({
+    type: "CONTROLLED_VALIDATION_REQUEST_SENT",
+    validationId: input.validationId,
+    orderId: input.orderId,
+    supplierId,
+    correlationId,
+    actor: input.approver,
+    detail: { payloadHash: preflight.payloadHash }
+  });
+  const httpResult = await executeControlledCreateOrderHttp({
+    validationId: input.validationId,
+    supplierId,
+    payload: payloadResult.payload,
+    correlationId,
+    transport: input.transport
+  });
+  let liveValidation = "FAIL";
+  let createOrderCapability = "UNVERIFIED";
+  let capabilityState = promoteCreateOrderCapabilityValidated(false);
+  if (httpResult.unknownOutcome) {
+    recordCreateOrderValidationAudit({
+      type: "CONTROLLED_VALIDATION_UNKNOWN_OUTCOME",
+      validationId: input.validationId,
+      orderId: input.orderId,
+      supplierId,
+      correlationId,
+      actor: input.approver
+    });
+    liveValidation = "FAIL";
+  } else if (httpResult.responseClass === "accepted" && httpResult.supplierOrderId) {
+    recordSuccessfulIdempotency(payloadResult.payload, httpResult.supplierOrderId);
+    capabilityState = promoteCreateOrderCapabilityValidated(true);
+    createOrderCapability = deriveCreateOrderCapabilityStatus(capabilityState);
+    liveValidation = "PASS";
+    recordCreateOrderValidationAudit({
+      type: "CONTROLLED_VALIDATION_ACCEPTED",
+      validationId: input.validationId,
+      orderId: input.orderId,
+      supplierId,
+      correlationId,
+      actor: input.approver,
+      detail: { supplierOrderId: httpResult.supplierOrderId }
+    });
+    recordCreateOrderValidationAudit({
+      type: "CAPABILITY_VALIDATED",
+      validationId: input.validationId,
+      supplierId,
+      correlationId,
+      actor: input.approver
+    });
+  } else {
+    recordCreateOrderValidationAudit({
+      type: "CONTROLLED_VALIDATION_REJECTED",
+      validationId: input.validationId,
+      orderId: input.orderId,
+      supplierId,
+      correlationId,
+      actor: input.approver,
+      detail: { responseClass: httpResult.responseClass }
+    });
+  }
+  const blockers = [...preflight.blockers, ...httpResult.blockers];
+  const run = buildRunRecord(input, {
+    now,
+    supplierId,
+    correlationId,
+    validationMode,
+    blockers,
+    checks: [...preflight.checks, ...httpResult.checks],
+    liveValidation,
+    preflightPassed: true,
+    payloadHash: preflight.payloadHash,
+    supplierOrderId: httpResult.supplierOrderId,
+    responseClass: httpResult.responseClass,
+    unknownOutcome: httpResult.unknownOutcome,
+    humanReviewRequired: httpResult.humanReviewRequired,
+    httpCallsMade: httpResult.httpCallsMade,
+    createOrderCapability,
+    capabilityState
+  });
+  saveControlledValidationRun(run);
+  const validationRecord = {
+    validationId: input.validationId,
+    supplierId,
+    adapterProfile: getInterCarsAdapterProfile(),
+    environment: input.environment || "PRODUCTION",
+    market: input.allowedMarket || input.market || "DE",
+    channel: input.channel || "DIRECT",
+    orderId: input.orderId,
+    createOrderCapability,
+    capabilityState,
+    trackingCapability: "UNVERIFIED",
+    validationMode,
+    requestPayloadHash: preflight.payloadHash,
+    responseClass: httpResult.responseClass,
+    supplierOrderId: httpResult.supplierOrderId,
+    unknownOutcome: httpResult.unknownOutcome,
+    humanReviewRequired: httpResult.humanReviewRequired,
+    blockerCodes: blockers,
+    correlationId,
+    idempotencyKey: input.idempotencyKey,
+    overallStatus: deriveRunStatus(blockers, liveValidation),
+    checks: run.checks,
+    createdAt: now,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    controlledValidation: true,
+    liveValidation
+  };
+  saveValidationRecord(validationRecord);
+  emitCreateOrderValidationAnalytics({
+    eventType: liveValidation === "PASS" ? "controlled_validation_passed" : "controlled_validation_failed",
+    validationId: input.validationId,
+    supplierId,
+    correlationId,
+    detail: { liveValidation, responseClass: httpResult.responseClass }
+  });
+  return {
+    run,
+    httpCallsMade: httpResult.httpCallsMade,
+    safety: getCreateOrderValidationSafetyCounters()
+  };
+}
+function buildRunRecord(input, ctx) {
+  return {
+    validationId: input.validationId,
+    supplier: ctx.supplierId,
+    orderReference: input.orderId || "",
+    orderId: input.orderId,
+    market: input.allowedMarket || input.market || "DE",
+    channel: input.channel || "DIRECT",
+    environment: input.environment || "PRODUCTION",
+    allowedProduct: input.allowedProduct || "",
+    allowedMarket: input.allowedMarket || input.market || "DE",
+    payloadHash: ctx.payloadHash,
+    approvalStatus: ctx.preflightPassed ? "APPROVED" : "MISSING",
+    preflightPassed: ctx.preflightPassed,
+    liveValidation: ctx.liveValidation,
+    createOrderCapability: ctx.createOrderCapability || "UNVERIFIED",
+    capabilityState: ctx.capabilityState,
+    supplierOrderReference: ctx.supplierOrderId,
+    responseClass: ctx.responseClass,
+    unknownOutcome: ctx.unknownOutcome ?? false,
+    humanReviewRequired: ctx.humanReviewRequired ?? false,
+    httpCallsMade: ctx.httpCallsMade ?? 0,
+    blockerCodes: ctx.blockers,
+    checks: ctx.checks || [],
+    idempotencyKey: input.idempotencyKey,
+    correlationId: ctx.correlationId,
+    validationMode: ctx.validationMode,
+    overallStatus: deriveRunStatus(ctx.blockers, ctx.liveValidation),
+    approvedBy: input.approver,
+    requester: input.requester,
+    createdAt: ctx.now,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function getControlledValidationRunDetail(validationId) {
+  return getControlledValidationRun(validationId);
+}
+function resolveControlledUnknownOutcome(input) {
+  const run = getControlledValidationRun(input.validationId);
+  if (run?.supplierOrderReference) {
+    recordCreateOrderValidationAudit({
+      type: "CONTROLLED_VALIDATION_RESOLVED",
+      validationId: input.validationId,
+      orderId: input.orderId,
+      correlationId: input.idempotencyKey,
+      detail: { supplierOrderId: run.supplierOrderReference }
+    });
+    return { outcome: "RESOLVED", supplierOrderId: run.supplierOrderReference };
+  }
+  recordCreateOrderValidationAudit({
+    type: "HUMAN_REVIEW_REQUIRED",
+    validationId: input.validationId,
+    orderId: input.orderId,
+    correlationId: input.idempotencyKey
+  });
+  return { outcome: "HUMAN_REVIEW_REQUIRED" };
+}
+
 // lib/supplier-production-order-validation/admin.ts
 function getCreateOrderValidationDashboard() {
   const records = listValidationRecords2();
@@ -32382,7 +35442,21 @@ function getCreateOrderValidationDashboard() {
     environment: "PRODUCTION"
   });
   const timestamps = records.map((r) => Date.parse(r.updatedAt)).filter(Number.isFinite);
+  const latestControlled = getLatestControlledValidationRun({
+    supplierId: getInterCarsSupplierId(),
+    market: "DE"
+  });
+  const credential = validateProductionCredentials({
+    supplierId: getInterCarsSupplierId(),
+    environment: "PRODUCTION"
+  });
   return {
+    controlledValidationEnabled: isControlledValidationEnabled(),
+    controlledValidationNetwork: isScopedValidationNetworkEnabled() ? "SCOPED" : "OFF",
+    lastControlledValidation: latestControlled?.liveValidation,
+    lastControlledValidationAt: latestControlled?.updatedAt,
+    credentialsStatus: credential.status === "VALID" || credential.status === "CONFIGURED" ? "CONFIGURED" : credential.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "INVALID",
+    apiAccessStatus: latestControlled?.liveValidation === "PASS" ? "AVAILABLE" : credential.status === "NOT_CONFIGURED" ? "NOT_AVAILABLE" : "UNKNOWN",
     validationCount: records.length,
     passed: records.filter((r) => r.overallStatus === "PASSED").length,
     blocked: records.filter((r) => r.overallStatus === "BLOCKED").length,
@@ -32407,26 +35481,36 @@ function listCreateOrderValidationRows(filter) {
 }
 function getCreateOrderValidationDetail(validationId) {
   const validation = getValidationRecord(validationId);
-  if (!validation) return null;
+  const controlledRun = getControlledValidationRun(validationId);
+  if (!validation && !controlledRun) return null;
   return {
     validation,
+    controlledRun,
     audit: listCreateOrderValidationAudit({ validationId }).slice(-50),
     safety: getCreateOrderValidationSafetyCounters(),
-    capabilityState: validation.capabilityState
+    capabilityState: validation?.capabilityState || controlledRun?.capabilityState
   };
+}
+function listControlledValidationRows() {
+  return listControlledValidationRuns();
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   assertCreateOrderValidationSafetyInvariants,
   attemptProductionCreateOrder,
   evaluateCreateOrderProductionValidationChecks,
+  getControlledValidationRunDetail,
   getCreateOrderValidationDashboard,
   getCreateOrderValidationDetail,
   getCreateOrderValidationSafetyCounters,
   getValidationRecord,
   hydrateValidationFromPersistence,
+  listControlledValidationRows,
   listCreateOrderValidationRows,
   listValidationRecords,
+  requestControlledValidationApproval,
+  resolveControlledUnknownOutcome,
   resolveUnknownOutcome,
-  runCreateOrderProductionValidation
+  runCreateOrderProductionValidation,
+  startControlledValidationRun
 });

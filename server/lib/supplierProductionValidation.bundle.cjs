@@ -5929,6 +5929,10 @@ function extractAllowedHosts(baseUrl, extra = []) {
   return [...hosts];
 }
 
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
 // lib/supplier-order-readiness/config.ts
 var EVALUATOR_VERSION = "337.1.0";
 var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;

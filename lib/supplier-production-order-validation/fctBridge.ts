@@ -7,6 +7,7 @@ export function buildCreateOrderFctSnapshot(scope: {
   environment: string;
 }): Record<string, unknown> {
   const validation = getLatestValidationForScope(scope);
+  const controlled = validation?.controlledValidation ? "CONTROLLED_VALIDATION" : "STANDARD";
   return {
     supplierCapability: validation?.createOrderCapability || "UNVERIFIED",
     trackingCapability: validation?.trackingCapability || "UNVERIFIED",
@@ -14,5 +15,7 @@ export function buildCreateOrderFctSnapshot(scope: {
     supplierOrderReference: validation?.supplierOrderId,
     reconciliationState: validation?.unknownOutcome ? "UNKNOWN_OUTCOME" : "OK",
     validationId: validation?.validationId,
+    fulfillmentClassification: controlled,
+    liveValidation: validation?.liveValidation,
   };
 }

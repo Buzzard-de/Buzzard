@@ -1,6 +1,7 @@
 import type { ReadinessChannel } from "@/lib/supplier-order-readiness/types";
 
-export type ValidationMode = "MOCK" | "SANDBOX" | "VALIDATION" | "PRODUCTION";
+export type ValidationMode = "MOCK" | "SANDBOX" | "VALIDATION" | "CONTROLLED_VALIDATION" | "PRODUCTION";
+export type ControlledValidationStatus = "PASS" | "BLOCKED" | "SKIPPED" | "FAIL" | "PENDING";
 export type CreateOrderCapabilityStatus = "UNVERIFIED" | "VALIDATED" | "BLOCKED";
 export type ValidationEnvironment = "SANDBOX" | "STAGING" | "PRODUCTION";
 export type ValidationOverallStatus = "PENDING" | "RUNNING" | "PASSED" | "FAILED" | "BLOCKED" | "SKIPPED";
@@ -50,6 +51,92 @@ export interface ValidationCheckResult {
   detail?: Record<string, unknown>;
 }
 
+export interface ControlledValidationScope {
+  market: string;
+  channel: ReadinessChannel;
+  environment: ValidationEnvironment;
+}
+
+export interface ControlledValidationApproval {
+  approvalId: string;
+  validationId: string;
+  supplier: string;
+  scope: ControlledValidationScope;
+  maximumQuantity: number;
+  maximumValue: number;
+  currency: string;
+  allowedProduct: string;
+  allowedMarket: string;
+  expiresAt: string;
+  approvedBy: string;
+  approvalTimestamp: string;
+  orderReference: string;
+  payloadHash: string;
+  confirmationNonce: string;
+  status: "APPROVED" | "REVOKED" | "EXPIRED";
+}
+
+export interface ControlledValidationRun {
+  validationId: string;
+  supplier: string;
+  orderReference: string;
+  orderId?: string;
+  market: string;
+  channel: ReadinessChannel;
+  environment: ValidationEnvironment;
+  allowedProduct: string;
+  allowedMarket: string;
+  payloadHash?: string;
+  approvalStatus: "APPROVED" | "MISSING" | "EXPIRED" | "REVOKED";
+  preflightPassed: boolean;
+  liveValidation: ControlledValidationStatus;
+  createOrderCapability: CreateOrderCapabilityStatus;
+  capabilityState?: CreateOrderCapabilityState;
+  supplierOrderReference?: string;
+  responseClass?: SupplierResponseClass;
+  unknownOutcome: boolean;
+  humanReviewRequired: boolean;
+  httpCallsMade: number;
+  blockerCodes: string[];
+  checks: ValidationCheckResult[];
+  idempotencyKey: string;
+  correlationId: string;
+  validationMode: ValidationMode;
+  overallStatus: ValidationOverallStatus;
+  approvedBy?: string;
+  requester: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ControlledValidationRunInput {
+  validationId?: string;
+  supplier?: string;
+  market?: string;
+  channel?: ReadinessChannel;
+  environment?: ValidationEnvironment;
+  orderId?: string;
+  orderReference?: string;
+  allowedProduct?: string;
+  allowedMarket?: string;
+  requester: string;
+  approver?: string;
+  correlationId?: string;
+  idempotencyKey?: string;
+  validationMode?: ValidationMode;
+  payloadHash?: string;
+  humanConfirmation?: boolean;
+  confirmationNonce?: string;
+  failureInjection?: string;
+  transport?: import("@/lib/supplier-engine/network/types").SupplierTransport;
+}
+
+export interface ControlledValidationRunResult {
+  run: ControlledValidationRun;
+  httpCallsMade: number;
+  safety: CreateOrderValidationSafetyCounters;
+}
+
 export interface SupplierProductionOrderValidation {
   validationId: string;
   supplierId: string;
@@ -75,6 +162,8 @@ export interface SupplierProductionOrderValidation {
   createdAt: string;
   updatedAt: string;
   failureInjection?: string;
+  controlledValidation?: boolean;
+  liveValidation?: ControlledValidationStatus;
 }
 
 export interface CreateOrderValidationInput {
@@ -95,6 +184,7 @@ export interface CreateOrderValidationInput {
 }
 
 export interface CreateOrderValidationSafetyCounters {
+  controlledValidationHttpCalls: number;
   realSupplierOrderCalls: number;
   realSupplierCancelCalls: number;
   realSupplierReturnCalls: number;
@@ -107,6 +197,12 @@ export interface CreateOrderValidationSafetyCounters {
 }
 
 export interface CreateOrderValidationDashboard {
+  controlledValidationEnabled: boolean;
+  controlledValidationNetwork: "OFF" | "SCOPED";
+  lastControlledValidation?: ControlledValidationStatus;
+  lastControlledValidationAt?: string;
+  credentialsStatus: "CONFIGURED" | "NOT_CONFIGURED" | "INVALID";
+  apiAccessStatus: "AVAILABLE" | "NOT_AVAILABLE" | "UNKNOWN";
   validationCount: number;
   passed: number;
   blocked: number;

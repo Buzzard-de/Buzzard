@@ -1,8 +1,17 @@
 import { isSupplierOrderNetworkEnabled } from "@/lib/supplier-engine/network";
+import { isScopedValidationNetworkEnabled } from "@/lib/supplier-engine/network/scopedValidationNetwork";
+import { validateProductionCredentials } from "@/lib/supplier-production-validation/credentialValidation";
 import { getCreateOrderValidationSafetyCounters } from "./safety";
 import { listCreateOrderValidationAudit } from "./audit";
-import { getValidationRecord, listValidationRecords, getLatestValidationForScope } from "./persistence";
-import { getInterCarsSupplierId } from "./config";
+import {
+  getValidationRecord,
+  listValidationRecords,
+  getLatestValidationForScope,
+  getLatestControlledValidationRun,
+  listControlledValidationRuns,
+  getControlledValidationRun,
+} from "./persistence";
+import { getInterCarsSupplierId, isControlledValidationEnabled } from "./config";
 import type { CreateOrderValidationDashboard } from "./types";
 
 export function getCreateOrderValidationDashboard(): CreateOrderValidationDashboard {
@@ -15,7 +24,32 @@ export function getCreateOrderValidationDashboard(): CreateOrderValidationDashbo
   });
   const timestamps = records.map((r) => Date.parse(r.updatedAt)).filter(Number.isFinite);
 
+  const latestControlled = getLatestControlledValidationRun({
+    supplierId: getInterCarsSupplierId(),
+    market: "DE",
+  });
+  const credential = validateProductionCredentials({
+    supplierId: getInterCarsSupplierId(),
+    environment: "PRODUCTION",
+  });
+
   return {
+    controlledValidationEnabled: isControlledValidationEnabled(),
+    controlledValidationNetwork: isScopedValidationNetworkEnabled() ? "SCOPED" : "OFF",
+    lastControlledValidation: latestControlled?.liveValidation,
+    lastControlledValidationAt: latestControlled?.updatedAt,
+    credentialsStatus:
+      credential.status === "VALID" || credential.status === "CONFIGURED"
+        ? "CONFIGURED"
+        : credential.status === "NOT_CONFIGURED"
+          ? "NOT_CONFIGURED"
+          : "INVALID",
+    apiAccessStatus:
+      latestControlled?.liveValidation === "PASS"
+        ? "AVAILABLE"
+        : credential.status === "NOT_CONFIGURED"
+          ? "NOT_AVAILABLE"
+          : "UNKNOWN",
     validationCount: records.length,
     passed: records.filter((r) => r.overallStatus === "PASSED").length,
     blocked: records.filter((r) => r.overallStatus === "BLOCKED").length,
@@ -45,11 +79,17 @@ export function listCreateOrderValidationRows(filter?: {
 
 export function getCreateOrderValidationDetail(validationId: string) {
   const validation = getValidationRecord(validationId);
-  if (!validation) return null;
+  const controlledRun = getControlledValidationRun(validationId);
+  if (!validation && !controlledRun) return null;
   return {
     validation,
+    controlledRun,
     audit: listCreateOrderValidationAudit({ validationId }).slice(-50),
     safety: getCreateOrderValidationSafetyCounters(),
-    capabilityState: validation.capabilityState,
+    capabilityState: validation?.capabilityState || controlledRun?.capabilityState,
   };
+}
+
+export function listControlledValidationRows() {
+  return listControlledValidationRuns();
 }

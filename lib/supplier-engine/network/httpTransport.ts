@@ -5,6 +5,7 @@ import { withRetry, isRetryableError } from "../retry";
 import { logSupplierOperation, recordSupplierRequestMetric } from "../observability";
 import { extractAllowedHosts, validateSupplierEndpoint } from "./allowlist";
 import { SUPPLIER_NETWORK_CONFIG, isSupplierNetworkEnabled } from "./config";
+import { canUseScopedValidationNetwork } from "./scopedValidationNetwork";
 import { validateContentType, validateResponseSize } from "./responseSecurity";
 import type { SupplierHttpRequest, SupplierHttpResponse, SupplierTransport, SupplierTransportError } from "./types";
 
@@ -16,7 +17,7 @@ export class SupplierHttpTransport implements SupplierTransport {
   }
 
   async request(req: SupplierHttpRequest): Promise<SupplierHttpResponse> {
-    if (!isSupplierNetworkEnabled()) {
+    if (!isSupplierNetworkEnabled() && !canUseScopedValidationNetwork()) {
       throw transportError("NETWORK_DISABLED", "Supplier network is disabled", false);
     }
 

@@ -4653,6 +4653,10 @@ function redactSecrets(obj) {
   return result;
 }
 
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
 // data/global/global_countries_35.json
 var global_countries_35_default = [
   { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },

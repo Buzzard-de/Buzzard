@@ -1,10 +1,13 @@
 import type { CreateOrderValidationAuditEvent } from "./audit";
-import type { SupplierProductionOrderValidation } from "./types";
+import type { ControlledValidationRun, ControlledValidationRunResult, SupplierProductionOrderValidation } from "./types";
 
 const validationStore = new Map<string, SupplierProductionOrderValidation>();
 const validationByIdempotency = new Map<string, string>();
+const controlledRunStore = new Map<string, ControlledValidationRun>();
+const controlledRunByIdempotency = new Map<string, string>();
 const auditLog: CreateOrderValidationAuditEvent[] = [];
 const inflight = new Map<string, Promise<SupplierProductionOrderValidation>>();
+const inflightControlled = new Map<string, Promise<ControlledValidationRunResult>>();
 
 function getPersistentStore() {
   if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PRODUCTION_ORDER_VALIDATION_PERSISTENCE === "0") {
@@ -129,9 +132,68 @@ export function clearInflightValidation(key: string): void {
   inflight.delete(key);
 }
 
+export function saveControlledValidationRun(run: ControlledValidationRun): void {
+  controlledRunStore.set(run.validationId, run);
+  controlledRunByIdempotency.set(run.idempotencyKey, run.validationId);
+  getPersistentStore()?.saveValidation({
+    validation_id: run.validationId,
+    supplier_id: run.supplier,
+    market: run.market,
+    channel: run.channel,
+    environment: run.environment,
+    overall_status: run.overallStatus,
+    create_order_capability: run.createOrderCapability,
+    idempotency_key: run.idempotencyKey,
+    correlation_id: run.correlationId,
+    record_json: JSON.stringify({ ...run, recordType: "controlled_validation_run" }),
+    updated_at: run.updatedAt,
+  });
+}
+
+export function getControlledValidationRun(validationId: string): ControlledValidationRun | undefined {
+  return controlledRunStore.get(validationId);
+}
+
+export function getControlledValidationRunByIdempotency(idempotencyKey: string): ControlledValidationRun | undefined {
+  const id = controlledRunByIdempotency.get(idempotencyKey);
+  return id ? controlledRunStore.get(id) : undefined;
+}
+
+export function listControlledValidationRuns(): ControlledValidationRun[] {
+  return [...controlledRunStore.values()];
+}
+
+export function getLatestControlledValidationRun(scope?: {
+  supplierId: string;
+  market: string;
+}): ControlledValidationRun | undefined {
+  return listControlledValidationRuns()
+    .filter((r) => {
+      if (scope?.supplierId && r.supplier !== scope.supplierId) return false;
+      if (scope?.market && r.market !== scope.market) return false;
+      return true;
+    })
+    .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+export function getInflightControlledRun(key: string): Promise<ControlledValidationRunResult> | undefined {
+  return inflightControlled.get(key);
+}
+
+export function setInflightControlledRun(key: string, promise: Promise<ControlledValidationRunResult>): void {
+  inflightControlled.set(key, promise);
+}
+
+export function clearInflightControlledRun(key: string): void {
+  inflightControlled.delete(key);
+}
+
 export function resetValidationForTests(): void {
   validationStore.clear();
   validationByIdempotency.clear();
+  controlledRunStore.clear();
+  controlledRunByIdempotency.clear();
   auditLog.splice(0, auditLog.length);
   inflight.clear();
+  inflightControlled.clear();
 }

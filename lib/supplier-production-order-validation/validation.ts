@@ -187,8 +187,10 @@ async function executeValidation(
   let responseClass: import("./types").SupplierResponseClass | undefined;
   let supplierOrderId: string | undefined;
 
+  const isControlledMode =
+    scope.validationMode === "CONTROLLED_VALIDATION" || scope.validationMode === "VALIDATION";
   const canAttemptControlledHttp =
-    scope.validationMode === "VALIDATION" &&
+    isControlledMode &&
     isControlledValidationEnabled() &&
     input.humanConfirmation &&
     Boolean(input.confirmationNonce) &&
@@ -203,11 +205,9 @@ async function executeValidation(
       supplierId: scope.supplierId,
       correlationId: scope.correlationId,
       actor: input.approver,
-      detail: { mode: "CONTROLLED_VALIDATION" },
+      detail: { mode: "CONTROLLED_VALIDATION", note: "Use startControlledValidationRun for live HTTP" },
     });
-    unknownOutcome = true;
-    humanReviewRequired = true;
-    blockerCodes.push("CONTROLLED_VALIDATION_NOT_IMPLEMENTED_WITHOUT_EXPLICIT_SUPPLIER_TEST_API");
+    blockerCodes.push("USE_CONTROLLED_VALIDATION_RUN_API");
   } else {
     recordCreateOrderValidationAudit({
       type: "PRODUCTION_ATTEMPT_BLOCKED",

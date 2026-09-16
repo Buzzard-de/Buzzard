@@ -5069,6 +5069,10 @@ function isSupplierOrderNetworkEnabled() {
   return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
 // lib/supplier-order-activation/safety.ts
 var counters = {
   realSupplierOrderCalls: 0,

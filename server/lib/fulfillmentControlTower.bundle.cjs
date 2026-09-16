@@ -31171,6 +31171,10 @@ function isSupplierOrderNetworkEnabled() {
   return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
 // lib/fulfillment-control-tower/incidents.ts
 var import_crypto = require("crypto");
 

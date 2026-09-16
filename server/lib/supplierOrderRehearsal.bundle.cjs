@@ -33184,6 +33184,10 @@ function isSupplierOrderNetworkEnabled() {
   return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
 // lib/supplier-engine/connectors/api.ts
 init_fixtures();
 

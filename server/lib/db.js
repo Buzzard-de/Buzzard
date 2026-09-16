@@ -4405,6 +4405,39 @@ function migrateSupplierProductionOrderArming() {
 
 migrateSupplierProductionOrderArming();
 
+function migrateSupplierFirstProductionOrder() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_first_production_orders (
+      execution_id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      state TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_sfpo_supplier
+      ON supplier_first_production_orders(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_sfpo_state
+      ON supplier_first_production_orders(state);
+
+    CREATE TABLE IF NOT EXISTS supplier_first_production_order_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      execution_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_sfpoa_execution
+      ON supplier_first_production_order_audit(execution_id);
+  `);
+}
+
+migrateSupplierFirstProductionOrder();
+
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
   if (count === 0) {

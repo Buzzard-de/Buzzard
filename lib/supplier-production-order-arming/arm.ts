@@ -11,7 +11,6 @@ import {
 } from "./safety";
 import {
   saveArmingRecord,
-  getArmingRecord,
   getArmingByIdempotency,
 } from "./persistence";
 import {
@@ -19,6 +18,7 @@ import {
   buildArmingIdempotencyKey,
   getInterCarsSupplierId,
 } from "./config";
+import { attemptFirstProductionOrderExecution as attemptFirstOrderExecution344 } from "@/lib/supplier-first-production-order/execution";
 import { isAiActor } from "@/lib/supplier-production-order-validation/eligibility";
 import type { ProductionArmingInput, ProductionOrderArmingRecord } from "./types";
 
@@ -273,8 +273,10 @@ export { approveProductionOrderArming };
 export function attemptProductionOrderExecution(input: {
   armingId: string;
   actorId: string;
+  executionId?: string;
+  authorizationId?: string;
 }): {
-  blocked: true;
+  blocked: boolean;
   code: string;
   reason: string;
   httpCallsMade: number;
@@ -283,25 +285,5 @@ export function attemptProductionOrderExecution(input: {
   assertArmingNetworkSafety();
   recordBlockedProductionExecutionAttempt();
 
-  const record = getArmingRecord(input.armingId);
-  const armed = record?.status === "ARMED";
-
-  recordArmingAudit({
-    type: "PRODUCTION_EXECUTION_BLOCKED",
-    armingId: input.armingId,
-    supplierId: record?.supplier,
-    correlationId: record?.correlationId || randomUUID(),
-    actor: input.actorId,
-    detail: { armed, code: "EXECUTION_REQUIRES_ALL_GATES" },
-  });
-
-  return {
-    blocked: true,
-    code: armed ? "EXECUTION_REQUIRES_ALL_GATES" : "NOT_ARMED",
-    reason: armed
-      ? "ARMED alone does not permit execution — first order gate and all execution gates required"
-      : "Production order arming not active",
-    httpCallsMade: 0,
-    armed: Boolean(armed),
-  };
+  return attemptFirstOrderExecution344(input);
 }

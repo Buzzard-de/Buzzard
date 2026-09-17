@@ -24,6 +24,13 @@ export interface MarketingProviderStatus {
   liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED";
 }
 
+export interface GoLiveChecklistItem {
+  id: string;
+  label: string;
+  status: GateCheckStatus;
+  mandatory: true;
+}
+
 export interface FinalProductionGoLiveDashboard {
   version: string;
   phase: GoLivePhase;
@@ -31,6 +38,7 @@ export interface FinalProductionGoLiveDashboard {
   marketingSpendEnabled: "OFF" | "ON";
   liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED";
   checks: FinalGateCheck[];
+  mandatoryChecklist: GoLiveChecklistItem[];
   marketingProviders: MarketingProviderStatus[];
   safetyCounters: {
     realSupplierOrders: number;

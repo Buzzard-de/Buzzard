@@ -27,5 +27,7 @@ export function getDefaultAiProviderId(): AiProductionProviderId {
 }
 
 export function resolveAiSecretRef(providerId: AiProductionProviderId): string {
-  return process.env[`AI_${providerId.toUpperCase()}_SECRET_REF`] || `${providerId}_secret_ref`;
+  const specific = process.env[`AI_${providerId.toUpperCase()}_SECRET_REF`];
+  const generic = process.env.AI_PROVIDER_SECRET_REF;
+  return specific || generic || "";
 }

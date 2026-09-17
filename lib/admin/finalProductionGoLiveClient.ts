@@ -1,0 +1,41 @@
+import { getAdminToken } from "@/lib/admin/client";
+
+export interface FinalGoLiveDashboard {
+  version: string;
+  phase: string;
+  salesEnabled: "CLOSED" | "OPEN";
+  marketingSpendEnabled: "OFF" | "ON";
+  liveStatus: string;
+  blockers: string[];
+  safetyCounters: Record<string, number>;
+  mandatoryChecklist: Array<{ id: string; label: string; status: string }>;
+}
+
+function apiBase(): string {
+  return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
+}
+
+function authHeaders(): HeadersInit {
+  const token = getAdminToken();
+  return {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
+async function adminFetch<T>(path: string): Promise<{ data: T }> {
+  if (!getAdminToken()) throw new Error("admin.auth.required");
+  const res = await fetch(`${apiBase()}${path}`, { headers: authHeaders() });
+  const json = await res.json();
+  if (!res.ok || !json.success) throw new Error(json.errorCode || "REQUEST_FAILED");
+  return json;
+}
+
+export function fetchFinalGoLiveDashboard() {
+  return adminFetch<FinalGoLiveDashboard>("/api/admin/final-production-go-live/dashboard");
+}
+
+export function fetchFinalProductionStatusReport() {
+  return adminFetch<Record<string, unknown>>("/api/admin/final-production-go-live/status-report");
+}

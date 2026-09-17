@@ -7,6 +7,10 @@ export function isCarrierProductionEnabled(): boolean {
   return isProductionFlagEnabled("CARRIER_PRODUCTION");
 }
 
+export function resolveCarrierSecretRef(): string {
+  return process.env.CARRIER_PROVIDER_SECRET_REF || process.env.CARRIER_PROVIDER_SECRET || "";
+}
+
 export function getDefaultCarrierId(): CarrierProviderId {
   const id = (process.env.CARRIER_PROVIDER || "mock").toLowerCase();
   if (id === "dhl" || id === "dpd" || id === "gls") return id;

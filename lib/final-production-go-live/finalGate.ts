@@ -9,6 +9,7 @@ import { evaluateInterCarsProductionAccess } from "@/lib/supplier-inter-cars-pro
 import { isSalesEnabled, isMarketingSpendEnabled } from "./config";
 import { evaluateMarketingProviders } from "./marketingRegistry";
 import { assertFinalGoLiveSafetyInvariants, getFinalGoLiveSafetyCounters } from "./safety";
+import { buildGoLiveChecklist } from "./goLiveChecklist";
 import type { FinalGateCheck, FinalProductionGoLiveDashboard, GoLivePhase } from "./types";
 
 function check(domain: string, name: string, status: FinalGateCheck["status"], message: string): FinalGateCheck {
@@ -55,6 +56,11 @@ export function evaluateFinalProductionGate(): FinalProductionGoLiveDashboard {
 
   const phase = resolveGoLivePhase(checks, blockers);
 
+  const mandatoryChecklist = buildGoLiveChecklist();
+  const checklistBlockers = mandatoryChecklist
+    .filter((item) => item.status !== "PASS")
+    .map((item) => `CHECKLIST:${item.id}`);
+
   return {
     version: "354.1.0",
     phase,
@@ -62,9 +68,10 @@ export function evaluateFinalProductionGate(): FinalProductionGoLiveDashboard {
     marketingSpendEnabled: isMarketingSpendEnabled() ? "ON" : "OFF",
     liveStatus: "BLOCKED",
     checks,
+    mandatoryChecklist,
     marketingProviders: marketing,
     safetyCounters: getFinalGoLiveSafetyCounters(),
-    blockers: [...new Set(blockers)],
+    blockers: [...new Set([...blockers, ...checklistBlockers])],
   };
 }
 

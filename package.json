@@ -127,6 +127,7 @@
     "test:final-production-go-live": "vitest run lib/final-production-go-live/finalProductionGoLive.test.ts",
     "gate:final-production-go-live": "node scripts/final-production-go-live-gate.mjs",
     "gate:final-production-build": "npm run gate:final-production-go-live",
+    "status:final-production": "node scripts/final-production-status.mjs",
     "test:supplier-production-order-validation": "vitest run lib/supplier-production-order-validation/supplierProductionOrderValidation.test.ts lib/supplier-production-order-validation/supplierControlledLiveValidation.test.ts",
     "test:supplier-controlled-live-validation": "vitest run lib/supplier-production-order-validation/supplierControlledLiveValidation.test.ts",
     "test:supplier-order-activation": "vitest run lib/supplier-order-activation/supplierOrderActivation.test.ts",

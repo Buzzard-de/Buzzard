@@ -14,9 +14,11 @@ export function getDefaultPaymentProviderId(): PaymentProviderId {
 }
 
 export function resolvePaymentProviderConfig(providerId: PaymentProviderId): PaymentProviderConfig {
+  const providerRef = process.env[`PAYMENT_${providerId.toUpperCase()}_SECRET_REF`];
+  const genericRef = process.env.PAYMENT_PROVIDER_SECRET_REF || process.env.PAYMENT_PROVIDER_SECRET;
   return {
     providerId,
-    secretRef: process.env[`PAYMENT_${providerId.toUpperCase()}_SECRET_REF`] || `${providerId}_secret_ref`,
+    secretRef: providerRef || genericRef || `${providerId}_secret_ref_unconfigured`,
     environment: isPaymentProductionEnabled() ? "PRODUCTION" : "SANDBOX",
     webhookSecretRef: process.env[`PAYMENT_${providerId.toUpperCase()}_WEBHOOK_SECRET_REF`],
   };

@@ -11,7 +11,7 @@ export function getAiProviderHealth(providerId: AiProductionProviderId = getDefa
   assertAiProductionSafety();
   return {
     providerId,
-    configured: Boolean(resolveAiSecretRef(providerId)),
+    configured: Boolean(resolveAiSecretRef(providerId)?.trim()),
     environment: isAiProductionEnabled() ? "PRODUCTION" : "SANDBOX",
     secretRef: "[METADATA_ONLY]",
   };

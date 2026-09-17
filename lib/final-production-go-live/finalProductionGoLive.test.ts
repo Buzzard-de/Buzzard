@@ -5,6 +5,8 @@ import {
   authorizeMarketingSpend,
   assertFinalGoLiveSafetyInvariants,
   resetFinalGoLiveSafetyCountersForTests,
+  buildFinalProductionStatusReport,
+  buildGoLiveChecklist,
 } from "./index";
 
 const ORIGINAL = { ...process.env };
@@ -49,5 +51,18 @@ describe("#354 Final production go-live", () => {
 
   it("zero real side effects", () => {
     expect(assertFinalGoLiveSafetyInvariants().ok).toBe(true);
+  });
+
+  it("mandatory checklist present and sales closed item PASS", () => {
+    const checklist = buildGoLiveChecklist();
+    expect(checklist.length).toBeGreaterThanOrEqual(16);
+    expect(checklist.find((c) => c.id === "sales_closed")?.status).toBe("PASS");
+  });
+
+  it("status report separates implementation and live", () => {
+    const report = buildFinalProductionStatusReport();
+    expect(report.workstreams.length).toBe(8);
+    expect(report.sales).toBe("CLOSED");
+    expect(report.realSideEffects.realSupplierOrders).toBe(0);
   });
 });

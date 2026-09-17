@@ -32,6 +32,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
   assertFinalGoLiveSafetyInvariants: () => assertFinalGoLiveSafetyInvariants,
+  buildFinalProductionStatusReport: () => buildFinalProductionStatusReport,
   evaluateFinalProductionGate: () => evaluateFinalProductionGate,
   getFinalGoLiveSafetyCounters: () => getFinalGoLiveSafetyCounters,
   getFinalProductionGoLiveDashboard: () => getFinalProductionGoLiveDashboard
@@ -27375,6 +27376,41 @@ function evaluateInterCarsProductionAccess() {
   };
 }
 
+// lib/final-production-go-live/goLiveChecklist.ts
+function buildGoLiveChecklist() {
+  const interCars = evaluateInterCarsProductionAccess();
+  return [
+    { id: "website_checkout", label: "Website/checkout", status: "UNVERIFIED", mandatory: true },
+    { id: "international_35_markets", label: "35 markets/VAT/currency/shipping", status: "UNVERIFIED", mandatory: true },
+    { id: "product_pim", label: "Product/PIM/translations", status: "UNVERIFIED", mandatory: true },
+    {
+      id: "inter_cars_create_order",
+      label: "Inter Cars live access + createOrder validation",
+      status: interCars.createOrderCapability === "VALIDATED" ? "PASS" : "UNVERIFIED",
+      mandatory: true
+    },
+    { id: "inventory_order_fulfillment", label: "Inventory/order/supplier fulfillment", status: "UNVERIFIED", mandatory: true },
+    { id: "marketplace_production", label: "Marketplace production", status: "UNVERIFIED", mandatory: true },
+    { id: "payment_production", label: "Payment production", status: "NOT_CONFIGURED", mandatory: true },
+    { id: "carrier_tracking", label: "Carrier + tracking", status: "NOT_CONFIGURED", mandatory: true },
+    { id: "returns_refunds", label: "Returns/refunds", status: "NOT_CONFIGURED", mandatory: true },
+    { id: "ai_provider_security", label: "AI provider/security", status: "UNVERIFIED", mandatory: true },
+    { id: "monitoring_alerts", label: "Monitoring/alerts", status: "UNVERIFIED", mandatory: true },
+    { id: "backup_recovery", label: "Backup/recovery", status: "UNVERIFIED", mandatory: true },
+    { id: "analytics", label: "Analytics", status: "UNVERIFIED", mandatory: true },
+    { id: "legal_compliance", label: "Legal/compliance", status: "UNVERIFIED", mandatory: true },
+    { id: "customer_support", label: "Customer support", status: "UNVERIFIED", mandatory: true },
+    { id: "rollback_kill_switches", label: "Rollback/kill switches", status: "PASS", mandatory: true },
+    { id: "four_eyes_approval", label: "Four-eyes approval", status: "PASS", mandatory: true },
+    {
+      id: "sales_closed",
+      label: "Sales closed until all mandatory gates PASS",
+      status: isSalesEnabled() ? "BLOCKED" : "PASS",
+      mandatory: true
+    }
+  ];
+}
+
 // lib/final-production-go-live/finalGate.ts
 function check(domain, name, status, message) {
   return { domain, check: name, status, message };
@@ -27415,6 +27451,8 @@ function evaluateFinalProductionGate() {
     ...safety.violations
   ];
   const phase = resolveGoLivePhase(checks, blockers);
+  const mandatoryChecklist = buildGoLiveChecklist();
+  const checklistBlockers = mandatoryChecklist.filter((item) => item.status !== "PASS").map((item) => `CHECKLIST:${item.id}`);
   return {
     version: "354.1.0",
     phase,
@@ -27422,9 +27460,10 @@ function evaluateFinalProductionGate() {
     marketingSpendEnabled: isMarketingSpendEnabled() ? "ON" : "OFF",
     liveStatus: "BLOCKED",
     checks,
+    mandatoryChecklist,
     marketingProviders: marketing,
     safetyCounters: getFinalGoLiveSafetyCounters(),
-    blockers: [...new Set(blockers)]
+    blockers: [.../* @__PURE__ */ new Set([...blockers, ...checklistBlockers])]
   };
 }
 function resolveGoLivePhase(checks, blockers) {
@@ -27436,9 +27475,107 @@ function resolveGoLivePhase(checks, blockers) {
 function getFinalProductionGoLiveDashboard() {
   return evaluateFinalProductionGate();
 }
+
+// lib/final-production-go-live/statusReport.ts
+function buildFinalProductionStatusReport() {
+  const gate = evaluateFinalProductionGate();
+  const flags = getProductionFlagsSnapshot();
+  const interCars = evaluateInterCarsProductionAccess();
+  const counters10 = getFinalGoLiveSafetyCounters();
+  const checklist = buildGoLiveChecklist();
+  const workstreams = [
+    {
+      workstream: "#347",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: interCars.controlledLiveValidation === "READY" ? "UNVERIFIED" : "BLOCKED",
+      production: "DISABLED"
+    },
+    {
+      workstream: "#348",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: getFulfillmentPipelineDashboard().liveStatus,
+      production: "DISABLED"
+    },
+    {
+      workstream: "#349",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: getTrackingFulfillmentDashboard().liveStatus,
+      production: "DISABLED"
+    },
+    {
+      workstream: "#350",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: getPaymentProductionDashboard().liveStatus,
+      production: getPaymentProductionDashboard().productionEnabled
+    },
+    {
+      workstream: "#351",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: getCarrierProductionDashboard().liveStatus,
+      production: getCarrierProductionDashboard().productionEnabled
+    },
+    {
+      workstream: "#352",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: getAiProductionDashboard().liveStatus,
+      production: getAiProductionDashboard().productionEnabled
+    },
+    {
+      workstream: "#353",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: getReturnsRefundsProductionDashboard().liveStatus,
+      production: getReturnsRefundsProductionDashboard().productionEnabled
+    },
+    {
+      workstream: "#354",
+      implementation: "PASS",
+      sandbox: "PASS",
+      live: gate.liveStatus,
+      production: "DISABLED"
+    }
+  ];
+  return {
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    workstreams,
+    live: {
+      interCars: interCars.productionCredentials === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "UNVERIFIED",
+      payment: getPaymentProductionDashboard().liveStatus,
+      carrier: getCarrierProductionDashboard().liveStatus,
+      tracking: getTrackingFulfillmentDashboard().liveStatus,
+      ai: getAiProductionDashboard().liveStatus,
+      returns: getReturnsRefundsProductionDashboard().liveStatus,
+      marketing: "NOT_CONFIGURED"
+    },
+    realSideEffects: counters10,
+    flags: {
+      supplierNetwork: flags.SUPPLIER_NETWORK,
+      supplierOrders: flags.SUPPLIER_ORDER_NETWORK,
+      payment: flags.PAYMENT_PRODUCTION,
+      carrier: flags.CARRIER_PRODUCTION,
+      returns: flags.RETURNS_PRODUCTION,
+      ai: flags.AI_PRODUCTION,
+      marketing: flags.MARKETING_SPEND,
+      sales: flags.SALES
+    },
+    blockers: gate.blockers,
+    finalPhase: gate.phase,
+    sales: gate.salesEnabled,
+    goLiveGate: gate.liveStatus,
+    mandatoryChecklist: checklist,
+    gate
+  };
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   assertFinalGoLiveSafetyInvariants,
+  buildFinalProductionStatusReport,
   evaluateFinalProductionGate,
   getFinalGoLiveSafetyCounters,
   getFinalProductionGoLiveDashboard

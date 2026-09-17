@@ -59,6 +59,22 @@ module.exports = {
       });
     });
 
+    app.get("/api/admin/final-production-go-live/missing-access", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      let accessMod = null;
+      try {
+        accessMod = require("../lib/productionAccess.bundle.cjs");
+      } catch {
+        return res.status(503).json({ success: false, errorCode: "PRODUCTION_ACCESS_UNAVAILABLE" });
+      }
+      return res.json({
+        success: true,
+        data: accessMod.buildMissingProductionAccessReport(),
+        source: "missing-production-access",
+      });
+    });
+
     app.get("/api/admin/final-production-go-live/status-report", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

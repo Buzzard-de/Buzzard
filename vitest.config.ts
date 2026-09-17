@@ -31,6 +31,7 @@ export default defineConfig({
       "lib/ai-production/**/*.test.ts",
       "lib/returns-refunds-production/**/*.test.ts",
       "lib/final-production-go-live/**/*.test.ts",
+      "lib/production-access/**/*.test.ts",
       "lib/marketplace-engine/**/*.test.ts",
       "lib/returns-engine/**/*.test.ts",
       "lib/ai-orchestrator/**/*.test.ts",

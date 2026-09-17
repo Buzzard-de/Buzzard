@@ -192,6 +192,7 @@ const EXACT = {
   "POST /api/admin/supplier-go-live-observation/pause-rollout": "supplier-rollout.activate",
   "POST /api/admin/supplier-go-live-observation/rollback-rollout": "supplier-rollout.rollback",
   "GET /api/admin/final-production-go-live/dashboard": "system.read",
+  "GET /api/admin/final-production-go-live/missing-access": "system.read",
   "GET /api/admin/final-production-go-live/status-report": "system.read",
   "GET /api/admin/inter-cars-production-access/dashboard": "supplier-observation.read",
   "POST /api/admin/inter-cars-production-access/preflight": "supplier-observation.manage",

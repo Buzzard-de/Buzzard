@@ -30936,7 +30936,7 @@ function resolveLiveSupplierProfile() {
     connectorType: "b2b-sandbox",
     environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
     baseUrl,
-    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    secretsRef: process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim() || process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
     authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
     endpoints: {
       health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
@@ -32698,6 +32698,7 @@ function listFulfillmentPipelineRecords() {
 // lib/production-defaults/index.ts
 var FLAG_ENV = {
   SUPPLIER_NETWORK: "SUPPLIER_NETWORK_ENABLED",
+  SUPPLIER_LIVE_READ: "SUPPLIER_LIVE_READ_ENABLED",
   SUPPLIER_ORDER_NETWORK: "SUPPLIER_ORDER_NETWORK_ENABLED",
   PAYMENT_PRODUCTION: "PAYMENT_PRODUCTION_ENABLED",
   CARRIER_PRODUCTION: "CARRIER_PRODUCTION_ENABLED",

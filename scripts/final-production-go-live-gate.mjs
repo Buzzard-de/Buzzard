@@ -12,6 +12,9 @@ process.env.AI_PRODUCTION_ENABLED = "0";
 const steps = [
   ["Production flags OFF", "node -e \"const f=['SALES_ENABLED','MARKETING_SPEND_ENABLED','SUPPLIER_ORDER_NETWORK_ENABLED'];for(const k of f){if(process.env[k]==='1')process.exit(1)}\""],
   ["#354 final gate tests", "vitest run lib/final-production-go-live/finalProductionGoLive.test.ts"],
+  ["Production access tests", "vitest run lib/production-access/productionAccess.test.ts"],
+  ["Production completion tests", "vitest run lib/production-completion/productionCompletion.test.ts"],
+  ["Production kill switch tests", "vitest run lib/production-kill-switch/productionKillSwitch.test.ts"],
   ["Upstream #353 gate", "npm run gate:returns-refunds-production"],
 ];
 

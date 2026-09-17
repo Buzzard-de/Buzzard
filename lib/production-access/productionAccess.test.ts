@@ -3,6 +3,9 @@ import {
   buildMissingProductionAccessReport,
   resolveInterCarsSecretRef,
   buildInterCarsAccessChecklist,
+  getAllProviderStates,
+  recordProviderAccessEvidence,
+  resetEvidenceStoreForTests,
 } from "./index";
 import { resetSupplierEngineForTests } from "@/lib/supplier-engine/testReset";
 import { getSupplier } from "@/lib/supplier-engine/registry";
@@ -16,6 +19,7 @@ describe("Missing production access diagnostics", () => {
     process.env.SALES_ENABLED = "0";
     delete process.env.SUPPLIER_LIVE_CREDENTIALS;
     delete process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF;
+    resetEvidenceStoreForTests();
   });
 
   afterEach(() => {
@@ -57,5 +61,40 @@ describe("Missing production access diagnostics", () => {
     const report = buildMissingProductionAccessReport();
     expect(report.productionFlags.SALES).toBe("OFF");
     expect(report.productionFlags.SUPPLIER_ORDER_NETWORK).toBe("OFF");
+  });
+
+  it("provider registry tracks all six providers", () => {
+    const states = getAllProviderStates();
+    expect(states).toHaveLength(6);
+    expect(states.map((s) => s.providerId).sort()).toEqual(
+      ["ai", "carrier", "inter-cars", "marketing", "payment", "returns"].sort(),
+    );
+  });
+
+  it("rejects MOCK/SANDBOX evidence", () => {
+    expect(() =>
+      recordProviderAccessEvidence({
+        provider: "inter-cars",
+        capability: "health",
+        endpoint: "/health",
+        requestPayload: {},
+        responseStatus: 200,
+        environment: "MOCK",
+      }),
+    ).toThrow("FAKE_EVIDENCE_REJECTED");
+  });
+
+  it("accepts PRODUCTION evidence metadata only", () => {
+    const evidence = recordProviderAccessEvidence({
+      provider: "inter-cars",
+      capability: "health",
+      endpoint: "/health",
+      requestPayload: { probe: true },
+      responseStatus: 200,
+      environment: "PRODUCTION",
+      operator: "ops@test.com",
+    });
+    expect(evidence.requestHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(evidence.environment).toBe("PRODUCTION");
   });
 });

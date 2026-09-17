@@ -756,7 +756,19 @@ function isControlledValidationEnabled() {
 }
 
 // lib/supplier-production-order-validation/persistence.ts
+var validationStore2 = /* @__PURE__ */ new Map();
 var controlledRunStore = /* @__PURE__ */ new Map();
+function listValidationRecords2() {
+  return [...validationStore2.values()];
+}
+function getLatestValidationForScope2(scope) {
+  return listValidationRecords2().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+function getControlledValidationRun(validationId) {
+  return controlledRunStore.get(validationId);
+}
 function listControlledValidationRuns() {
   return [...controlledRunStore.values()];
 }
@@ -27013,9 +27025,168 @@ function evaluateInterCarsProductionAccess() {
   };
 }
 
+// lib/supplier-production-order-arming/persistence.ts
+var armingStore = /* @__PURE__ */ new Map();
+function listArmingRecords() {
+  return [...armingStore.values()];
+}
+function getLatestArmingForScope(scope) {
+  return listArmingRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel && r.scope.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-first-production-order/persistence.ts
+var executionStore = /* @__PURE__ */ new Map();
+function listFirstProductionOrderRecords() {
+  return [...executionStore.values()];
+}
+function getLatestFirstProductionOrderForScope(scope) {
+  return listFirstProductionOrderRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-order-arming/config.ts
+var ARMING_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_TTL_MS || 24 * 60 * 60 * 1e3);
+var ARMING_APPROVAL_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3);
+
+// lib/supplier-first-production-order/config.ts
+var FIRST_ORDER_TTL_MS2 = Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_TTL_MS || 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3
+);
+var EXECUTION_AUTH_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_AUTH_TTL_MS || 30 * 60 * 1e3
+);
+
+// lib/supplier-controlled-go-live/config.ts
+var GO_LIVE_TTL_MS = Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var GO_LIVE_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_APPROVAL_TTL_MS || 24 * 60 * 60 * 1e3
+);
+var GO_LIVE_ROLLOUT_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_ROLLOUT_TTL_MS || 30 * 24 * 60 * 60 * 1e3
+);
+function getInterCarsSupplierId3() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-production-order-validation/capability.ts
+function deriveCreateOrderCapabilityStatus(state) {
+  if (state.productionValidated) return "VALIDATED";
+  return "UNVERIFIED";
+}
+
+// lib/supplier-production-order-arming/evidence.ts
+function loadOfficialValidationEvidence(scope) {
+  const blockers = [];
+  const validation = getLatestValidationForScope2(scope);
+  if (!validation) {
+    blockers.push("VALIDATION_EVIDENCE_MISSING");
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers };
+  }
+  const capability = deriveCreateOrderCapabilityStatus(validation.capabilityState);
+  if (capability !== "VALIDATED" || !validation.capabilityState.productionValidated) {
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers, evidence: void 0 };
+  }
+  const controlledRun = getControlledValidationRun(validation.validationId);
+  const liveValidation = validation.liveValidation || controlledRun?.liveValidation;
+  if (validation.controlledValidation && liveValidation !== "PASS") {
+    blockers.push("CONTROLLED_VALIDATION_NOT_PASSED");
+    return { blockers };
+  }
+  if (!validation.controlledValidation && !validation.capabilityState.productionValidated) {
+    blockers.push("NO_CONTROLLED_LIVE_EVIDENCE");
+    return { blockers };
+  }
+  const evidence = {
+    validationId: validation.validationId,
+    supplier: validation.supplierId,
+    orderReference: validation.orderId,
+    payloadHash: validation.requestPayloadHash,
+    supplierOrderReference: validation.supplierOrderId || controlledRun?.supplierOrderReference,
+    validationTimestamp: validation.updatedAt,
+    result: liveValidation || validation.overallStatus,
+    approvalReference: controlledRun?.approvedBy,
+    liveValidation: liveValidation || "UNKNOWN",
+    createOrderCapability: capability,
+    productionValidated: validation.capabilityState.productionValidated
+  };
+  if (!evidence.supplierOrderReference && validation.controlledValidation) {
+    blockers.push("SUPPLIER_ORDER_REFERENCE_MISSING");
+  }
+  return { evidence, blockers };
+}
+
+// lib/supplier-controlled-go-live/persistence.ts
+var goLiveStore = /* @__PURE__ */ new Map();
+function listControlledGoLiveRecords() {
+  return [...goLiveStore.values()];
+}
+function getLatestControlledGoLiveForScope(scope) {
+  return listControlledGoLiveRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-controlled-go-live/admin.ts
+function isControlledGoLiveActive(scope) {
+  const supplierId = scope?.supplierId || getInterCarsSupplierId3();
+  const latest = getLatestControlledGoLiveForScope({
+    supplierId,
+    market: scope?.market || "DE",
+    channel: scope?.channel || "DIRECT"
+  });
+  return latest?.state === "CONTROLLED_GO_LIVE" && Date.parse(latest.expiresAt) > Date.now();
+}
+
+// lib/supplier-go-live-observation/persistence.ts
+var observationStore = /* @__PURE__ */ new Map();
+function listObservationRecords() {
+  return [...observationStore.values()];
+}
+function getLatestObservationForScope(scope) {
+  return listObservationRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-inter-cars-production-access/admin.ts
+function getProductionAccessDashboard() {
+  const diagnostic = evaluateInterCarsProductionAccess();
+  const supplierId = getInterCarsSupplierId();
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const observation = getLatestObservationForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  return {
+    ...diagnostic,
+    liveValidationEvidence: evidence ? "PRESENT" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: firstOrder?.state || "BLOCKED",
+    controlledGoLive: isControlledGoLiveActive({ supplierId, market: "DE", channel: "DIRECT" }) ? "ACTIVE" : "BLOCKED",
+    observationState: observation?.state || "BLOCKED",
+    broaderRollout: observation?.state === "BROADER_ROLLOUT_ACTIVE" ? "ACTIVE" : "BLOCKED"
+  };
+}
+
 // lib/production-defaults/index.ts
 var FLAG_ENV = {
   SUPPLIER_NETWORK: "SUPPLIER_NETWORK_ENABLED",
+  SUPPLIER_LIVE_READ: "SUPPLIER_LIVE_READ_ENABLED",
   SUPPLIER_ORDER_NETWORK: "SUPPLIER_ORDER_NETWORK_ENABLED",
   PAYMENT_PRODUCTION: "PAYMENT_PRODUCTION_ENABLED",
   CARRIER_PRODUCTION: "CARRIER_PRODUCTION_ENABLED",
@@ -27035,6 +27206,177 @@ function getProductionFlagsSnapshot() {
     out[flag] = isProductionFlagEnabled(flag) ? "ON" : "OFF";
   }
   return out;
+}
+
+// lib/payment-production/config.ts
+var PAYMENT_PRODUCTION_VERSION = "350.1.0";
+function isPaymentProductionEnabled() {
+  return isProductionFlagEnabled("PAYMENT_PRODUCTION");
+}
+function getDefaultPaymentProviderId() {
+  const configured = (process.env.PAYMENT_PROVIDER || "mock").toLowerCase();
+  if (configured === "stripe" || configured === "adyen" || configured === "paypal") return configured;
+  return "mock";
+}
+
+// lib/payment-production/safety.ts
+var counters3 = { realCharges: 0, realRefunds: 0, webhookProcessed: 0 };
+function getPaymentProductionSafetyCounters() {
+  return { ...counters3 };
+}
+function assertPaymentProductionSafetyInvariants() {
+  const violations = [];
+  if (counters3.realCharges !== 0) violations.push(`realCharges=${counters3.realCharges}`);
+  if (counters3.realRefunds !== 0) violations.push(`realRefunds=${counters3.realRefunds}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/payment-production/admin.ts
+function getPaymentProductionDashboard() {
+  const safety = assertPaymentProductionSafetyInvariants();
+  return {
+    version: PAYMENT_PRODUCTION_VERSION,
+    productionEnabled: isPaymentProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    defaultProvider: getDefaultPaymentProviderId(),
+    safetyCounters: getPaymentProductionSafetyCounters(),
+    blockers: isPaymentProductionEnabled() ? ["PAYMENT_PRODUCTION_MUST_BE_DISABLED_IN_PREP"] : safety.violations
+  };
+}
+
+// lib/carrier-production/config.ts
+var CARRIER_PRODUCTION_VERSION = "351.1.0";
+function isCarrierProductionEnabled() {
+  return isProductionFlagEnabled("CARRIER_PRODUCTION");
+}
+
+// lib/carrier-production/safety.ts
+var counters4 = { realLabels: 0, realHttpCalls: 0 };
+function getCarrierProductionSafetyCounters() {
+  return { ...counters4 };
+}
+function assertCarrierProductionSafetyInvariants() {
+  const violations = [];
+  if (counters4.realLabels !== 0) violations.push(`realLabels=${counters4.realLabels}`);
+  if (counters4.realHttpCalls !== 0) violations.push(`realHttpCalls=${counters4.realHttpCalls}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/carrier-production/admin.ts
+function getCarrierProductionDashboard() {
+  const safety = assertCarrierProductionSafetyInvariants();
+  return {
+    version: CARRIER_PRODUCTION_VERSION,
+    productionEnabled: isCarrierProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    safetyCounters: getCarrierProductionSafetyCounters(),
+    blockers: safety.violations
+  };
+}
+
+// lib/ai-production/config.ts
+var AI_PRODUCTION_VERSION = "352.1.0";
+var AI_WORKERS = [
+  "PRODUCT_AI",
+  "SUPPLIER_AI",
+  "PRICING_AI",
+  "INVENTORY_AI",
+  "ORDER_AI",
+  "MARKETPLACE_AI",
+  "CUSTOMS_AI",
+  "CUSTOMER_SERVICE_AI",
+  "RETURNS_AI",
+  "FINANCE_AI"
+];
+function isAiProductionEnabled() {
+  return isProductionFlagEnabled("AI_PRODUCTION");
+}
+
+// lib/ai-production/safety.ts
+var counters5 = { realProviderCalls: 0, blockedExecutions: 0 };
+function getAiProductionSafetyCounters() {
+  return { ...counters5 };
+}
+function assertAiProductionSafetyInvariants() {
+  const violations = [];
+  if (counters5.realProviderCalls !== 0) violations.push(`realProviderCalls=${counters5.realProviderCalls}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/ai-production/authority.ts
+function resolveDefaultAuthority() {
+  return "RECOMMEND";
+}
+
+// lib/ai-production/admin.ts
+function getAiProductionDashboard() {
+  const safety = assertAiProductionSafetyInvariants();
+  return {
+    version: AI_PRODUCTION_VERSION,
+    productionEnabled: isAiProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    defaultAuthority: resolveDefaultAuthority(),
+    workers: AI_WORKERS,
+    safetyCounters: getAiProductionSafetyCounters(),
+    blockers: safety.violations
+  };
+}
+
+// lib/returns-refunds-production/config.ts
+var RETURNS_REFUNDS_PRODUCTION_VERSION = "353.1.0";
+function isReturnsProductionEnabled() {
+  return isProductionFlagEnabled("RETURNS_PRODUCTION");
+}
+
+// lib/returns-refunds-production/safety.ts
+var counters6 = { realRefunds: 0, assumedRecoveries: 0 };
+function getReturnsRefundsSafetyCounters() {
+  return { ...counters6 };
+}
+function assertReturnsRefundsSafetyInvariants() {
+  const violations = [];
+  if (counters6.realRefunds !== 0) violations.push(`realRefunds=${counters6.realRefunds}`);
+  if (counters6.assumedRecoveries !== 0) violations.push(`assumedRecoveries=${counters6.assumedRecoveries}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/returns-refunds-production/admin.ts
+function getReturnsRefundsProductionDashboard() {
+  const safety = assertReturnsRefundsSafetyInvariants();
+  return {
+    version: RETURNS_REFUNDS_PRODUCTION_VERSION,
+    productionEnabled: isReturnsProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    safetyCounters: getReturnsRefundsSafetyCounters(),
+    blockers: safety.violations
+  };
+}
+
+// lib/tracking-fulfillment/config.ts
+var TRACKING_FULFILLMENT_VERSION = "349.1.0";
+
+// lib/tracking-fulfillment/safety.ts
+var counters7 = { realHttpCalls: 0, fabricatedTrackingIds: 0, webhookProcessed: 0 };
+function getTrackingSafetyCounters() {
+  return { ...counters7 };
+}
+function assertTrackingSafetyInvariants() {
+  const violations = [];
+  if (counters7.realHttpCalls !== 0) violations.push(`realHttpCalls=${counters7.realHttpCalls}`);
+  if (counters7.fabricatedTrackingIds !== 0) violations.push(`fabricatedTrackingIds=${counters7.fabricatedTrackingIds}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/tracking-fulfillment/admin.ts
+function getTrackingFulfillmentDashboard() {
+  const safety = assertTrackingSafetyInvariants();
+  return {
+    version: TRACKING_FULFILLMENT_VERSION,
+    liveStatus: "UNVERIFIED",
+    productionEnabled: "DISABLED",
+    safetyCounters: getTrackingSafetyCounters(),
+    blockers: safety.ok ? [] : safety.violations
+  };
 }
 
 // lib/production-access/accessChecklists.ts
@@ -27102,27 +27444,42 @@ function buildMarketingAccessChecklist() {
   }
   return items;
 }
+function gateStatusToAccess(status) {
+  if (status === "PASS" || status === "VALIDATED" || status === "EXECUTED" || status === "COMPLETED" || status === "ARMED" || status === "ACTIVE") {
+    return "VALIDATED";
+  }
+  if (status === "CONFIGURED" || status === "ENABLED" || status === "REVIEW_READY") return "CONFIGURED";
+  if (status === "NOT_CONFIGURED" || status === "NONE") return "NOT_CONFIGURED";
+  if (status === "BLOCKED" || status === "FAILED") return "BLOCKED";
+  return "UNVERIFIED";
+}
 function buildRealWorldGoLiveChecklist() {
   const interCars = evaluateInterCarsProductionAccess();
+  const accessDash = getProductionAccessDashboard();
+  const payment = getPaymentProductionDashboard();
+  const carrier = getCarrierProductionDashboard();
+  const returns = getReturnsRefundsProductionDashboard();
+  const ai = getAiProductionDashboard();
+  const tracking = getTrackingFulfillmentDashboard();
   return [
     item("rw_ic_credentials", "Inter Cars credentials deployed", interCars.productionCredentials === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "CONFIGURED"),
     item("rw_ic_read_live", "Inter Cars read-only live PASS", interCars.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
     item("rw_342", "#342 genuine controlled validation PASS", interCars.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("rw_343", "#343 PASS", "UNVERIFIED"),
-    item("rw_344", "#344 PASS", "UNVERIFIED"),
-    item("rw_345", "#345 PASS", "UNVERIFIED"),
-    item("rw_346", "#346 observation PASS", "UNVERIFIED"),
-    item("rw_payment", "Payment production validated", "UNVERIFIED"),
-    item("rw_carrier", "Carrier production validated", "UNVERIFIED"),
-    item("rw_tracking", "Tracking production validated", "UNVERIFIED"),
-    item("rw_returns", "Returns/refunds production validated", "UNVERIFIED"),
-    item("rw_ai", "AI production validated", "UNVERIFIED"),
+    item("rw_343", "#343 arming PASS", gateStatusToAccess(accessDash.armingState)),
+    item("rw_344", "#344 first order PASS", gateStatusToAccess(accessDash.firstOrderState)),
+    item("rw_345", "#345 controlled go-live PASS", gateStatusToAccess(accessDash.controlledGoLive)),
+    item("rw_346", "#346 observation PASS", gateStatusToAccess(String(accessDash.observationState))),
+    item("rw_payment", "Payment production validated", gateStatusToAccess(payment.liveStatus)),
+    item("rw_carrier", "Carrier production validated", gateStatusToAccess(carrier.liveStatus)),
+    item("rw_tracking", "Tracking production validated", gateStatusToAccess(tracking.liveStatus)),
+    item("rw_returns", "Returns/refunds production validated", gateStatusToAccess(returns.liveStatus)),
+    item("rw_ai", "AI production validated", gateStatusToAccess(ai.liveStatus)),
     item("rw_sales_closed", "SALES_ENABLED=0 until all mandatory PASS", isProductionFlagEnabled("SALES") ? "BLOCKED" : "CONFIGURED")
   ];
 }
 
 // lib/first-order-fulfillment/safety.ts
-var counters3 = {
+var counters8 = {
   realSupplierHttpCalls: 0,
   realSupplierOrders: 0,
   realCustomerOrders: 0,
@@ -27132,29 +27489,11 @@ var counters3 = {
   mockExecutions: 0
 };
 function getFulfillmentSafetyCounters() {
-  return { ...counters3 };
-}
-
-// lib/payment-production/safety.ts
-var counters4 = { realCharges: 0, realRefunds: 0, webhookProcessed: 0 };
-function getPaymentProductionSafetyCounters() {
-  return { ...counters4 };
-}
-
-// lib/returns-refunds-production/safety.ts
-var counters5 = { realRefunds: 0, assumedRecoveries: 0 };
-function getReturnsRefundsSafetyCounters() {
-  return { ...counters5 };
-}
-
-// lib/carrier-production/safety.ts
-var counters6 = { realLabels: 0, realHttpCalls: 0 };
-function getCarrierProductionSafetyCounters() {
-  return { ...counters6 };
+  return { ...counters8 };
 }
 
 // lib/final-production-go-live/safety.ts
-var counters7 = { realMarketplaceMutations: 0, realMarketingSpend: 0 };
+var counters9 = { realMarketplaceMutations: 0, realMarketingSpend: 0 };
 function getFinalGoLiveSafetyCounters() {
   const fulfillment = getFulfillmentSafetyCounters();
   const payment = getPaymentProductionSafetyCounters();
@@ -27165,9 +27504,224 @@ function getFinalGoLiveSafetyCounters() {
     realPayments: payment.realCharges,
     realRefunds: returns.realRefunds,
     realCarrierLabels: carrier.realLabels,
-    realMarketplaceMutations: counters7.realMarketplaceMutations,
-    realMarketingSpend: counters7.realMarketingSpend
+    realMarketplaceMutations: counters9.realMarketplaceMutations,
+    realMarketingSpend: counters9.realMarketingSpend
   };
+}
+
+// lib/production-access/providerRegistry.ts
+var import_crypto2 = require("crypto");
+
+// lib/production-access/evidenceStore.ts
+var evidenceStore = /* @__PURE__ */ new Map();
+var evidenceByProvider = /* @__PURE__ */ new Map();
+function listProviderAccessEvidence(provider) {
+  const ids = evidenceByProvider.get(provider) || [];
+  return ids.map((id) => evidenceStore.get(id)).filter(Boolean);
+}
+function hasProductionEvidence(provider, capability) {
+  return listProviderAccessEvidence(provider).some(
+    (e) => e.capability === capability && e.environment === "PRODUCTION" && e.responseStatus >= 200 && e.responseStatus < 300
+  );
+}
+
+// lib/production-access/providerRegistry.ts
+function resolveAccessState(input) {
+  if (input.blocked) return "BLOCKED";
+  if (!input.credentialConfigured && !input.secretRefConfigured) return "NOT_CONFIGURED";
+  if (input.liveValidation === "VALIDATED") return "VALIDATED";
+  if (input.liveValidation === "VALIDATING") return "VALIDATING";
+  if (input.liveValidation === "FAILED") return "FAILED";
+  if (input.liveValidation === "REVOKED") return "REVOKED";
+  if (input.liveValidation === "EXPIRED") return "EXPIRED";
+  if (input.credentialConfigured || input.secretRefConfigured) return "CONFIGURED";
+  return "UNVERIFIED";
+}
+function evaluateInterCarsProviderState() {
+  const secret = resolveInterCarsSecretRef();
+  const diag = evaluateInterCarsProductionAccess();
+  const profile = resolvePredefinedLiveProfile();
+  const evidence = listProviderAccessEvidence("inter-cars");
+  const latest = evidence[evidence.length - 1];
+  const readValidated = diag.readOnlyLiveValidation === "VALIDATED" || hasProductionEvidence("inter-cars", "health");
+  const createValidated = diag.createOrderCapability === "VALIDATED";
+  const liveValidation = createValidated ? "VALIDATED" : readValidated ? "CONFIGURED" : secret.credentialStatus === "BLOCKED" ? "BLOCKED" : "UNVERIFIED";
+  const blockers = [];
+  if (!profile) blockers.push("MISSING_INTER_CARS_PROFILE");
+  if (secret.credentialStatus === "NOT_CONFIGURED") blockers.push("MISSING_INTER_CARS_CREDENTIAL");
+  if (createValidated === false) blockers.push("CREATE_ORDER_NOT_VALIDATED");
+  return {
+    providerId: "inter-cars",
+    domain: "SUPPLIER",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation,
+      blocked: secret.credentialStatus === "BLOCKED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(profile?.baseUrl),
+    networkPermission: process.env.SUPPLIER_LIVE_READ_ENABLED === "1",
+    healthCheck: readValidated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: createValidated ? "VALIDATED" : "UNVERIFIED",
+    liveValidation,
+    evidenceCount: evidence.length,
+    lastValidationAt: latest?.timestamp,
+    correlationId: diag.correlationId,
+    productionEnabled: isProductionFlagEnabled("SUPPLIER_ORDER_NETWORK") ? "ON" : "OFF",
+    blockers
+  };
+}
+function evaluatePaymentProviderState() {
+  const secret = resolveGenericSecretRef({
+    providerId: "payment",
+    secretRefEnvKey: "PAYMENT_PROVIDER_SECRET_REF",
+    fallbackEnvKey: "PAYMENT_PROVIDER_SECRET"
+  });
+  const dash = getPaymentProductionDashboard();
+  const evidence = listProviderAccessEvidence("payment");
+  const validated = hasProductionEvidence("payment", "authentication");
+  return {
+    providerId: "payment",
+    domain: "PAYMENT",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.PAYMENT_PROVIDER_ENDPOINT),
+    networkPermission: false,
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["PAYMENT_NOT_VALIDATED"]
+  };
+}
+function evaluateCarrierProviderState() {
+  const secret = resolveGenericSecretRef({
+    providerId: "carrier",
+    secretRefEnvKey: "CARRIER_PROVIDER_SECRET_REF"
+  });
+  const dash = getCarrierProductionDashboard();
+  const evidence = listProviderAccessEvidence("carrier");
+  const validated = hasProductionEvidence("carrier", "health");
+  return {
+    providerId: "carrier",
+    domain: "CARRIER",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.CARRIER_PROVIDER_ENDPOINT),
+    networkPermission: false,
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["CARRIER_NOT_VALIDATED"]
+  };
+}
+function evaluateAiProviderState() {
+  const secret = resolveGenericSecretRef({
+    providerId: "ai",
+    secretRefEnvKey: "AI_PROVIDER_SECRET_REF"
+  });
+  const dash = getAiProductionDashboard();
+  const evidence = listProviderAccessEvidence("ai");
+  const validated = hasProductionEvidence("ai", "health");
+  return {
+    providerId: "ai",
+    domain: "AI",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.AI_PROVIDER_ENDPOINT),
+    networkPermission: false,
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["AI_NOT_VALIDATED"]
+  };
+}
+function evaluateReturnsProviderState() {
+  const dash = getReturnsRefundsProductionDashboard();
+  const evidence = listProviderAccessEvidence("returns");
+  const validated = hasProductionEvidence("returns", "refund");
+  return {
+    providerId: "returns",
+    domain: "RETURNS",
+    accessState: validated ? "VALIDATED" : "UNVERIFIED",
+    credentialConfigured: false,
+    secretRefConfigured: false,
+    endpointConfigured: false,
+    networkPermission: false,
+    healthCheck: "UNVERIFIED",
+    authenticationCheck: "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["RETURNS_NOT_VALIDATED"]
+  };
+}
+function evaluateMarketingProviderState() {
+  const providers = ["GOOGLE_ADS", "META", "TIKTOK", "YOUTUBE"];
+  const configured = providers.some((p) => Boolean(process.env[`${p}_SECRET_REF`]?.trim()));
+  const evidence = listProviderAccessEvidence("marketing");
+  return {
+    providerId: "marketing",
+    domain: "MARKETING",
+    accessState: configured ? "CONFIGURED" : "NOT_CONFIGURED",
+    credentialConfigured: configured,
+    secretRefConfigured: configured,
+    endpointConfigured: false,
+    networkPermission: false,
+    healthCheck: "UNVERIFIED",
+    authenticationCheck: configured ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: "UNVERIFIED",
+    evidenceCount: evidence.length,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: isProductionFlagEnabled("MARKETING_SPEND") ? "ON" : "OFF",
+    blockers: configured ? ["MARKETING_NOT_VALIDATED"] : ["MARKETING_NOT_CONFIGURED"]
+  };
+}
+function getAllProviderStates() {
+  return [
+    evaluateInterCarsProviderState(),
+    evaluatePaymentProviderState(),
+    evaluateCarrierProviderState(),
+    evaluateAiProviderState(),
+    evaluateReturnsProviderState(),
+    evaluateMarketingProviderState()
+  ];
 }
 
 // lib/production-access/missingAccessReport.ts
@@ -27266,6 +27820,11 @@ function buildMissingProductionAccessReport() {
   const flags = getProductionFlagsSnapshot();
   const flagRecord = {};
   for (const [k, v] of Object.entries(flags)) flagRecord[k] = v;
+  const providerStates = getAllProviderStates();
+  const stateById = Object.fromEntries(providerStates.map((s) => [s.providerId, s]));
+  for (const p of [interCars, payment, carrier, ai, returns, marketing]) {
+    p.state = stateById[p.providerId];
+  }
   const providers = [interCars, payment, carrier, ai, returns, marketing];
   const blockers = [
     .../* @__PURE__ */ new Set([

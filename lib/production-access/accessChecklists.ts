@@ -1,4 +1,10 @@
 import { evaluateInterCarsProductionAccess } from "@/lib/supplier-inter-cars-production-access/diagnostic";
+import { getProductionAccessDashboard } from "@/lib/supplier-inter-cars-production-access/admin";
+import { getPaymentProductionDashboard } from "@/lib/payment-production/admin";
+import { getCarrierProductionDashboard } from "@/lib/carrier-production/admin";
+import { getAiProductionDashboard } from "@/lib/ai-production/admin";
+import { getReturnsRefundsProductionDashboard } from "@/lib/returns-refunds-production/admin";
+import { getTrackingFulfillmentDashboard } from "@/lib/tracking-fulfillment/admin";
 import { isProductionFlagEnabled } from "@/lib/production-defaults";
 import type { AccessChecklistItem, AccessStatus, SecretRefStatus } from "./types";
 
@@ -73,21 +79,38 @@ export function buildMarketingAccessChecklist(): AccessChecklistItem[] {
   return items;
 }
 
+function gateStatusToAccess(status: string): AccessStatus {
+  if (status === "PASS" || status === "VALIDATED" || status === "EXECUTED" || status === "COMPLETED" || status === "ARMED" || status === "ACTIVE") {
+    return "VALIDATED";
+  }
+  if (status === "CONFIGURED" || status === "ENABLED" || status === "REVIEW_READY") return "CONFIGURED";
+  if (status === "NOT_CONFIGURED" || status === "NONE") return "NOT_CONFIGURED";
+  if (status === "BLOCKED" || status === "FAILED") return "BLOCKED";
+  return "UNVERIFIED";
+}
+
 export function buildRealWorldGoLiveChecklist(): AccessChecklistItem[] {
   const interCars = evaluateInterCarsProductionAccess();
+  const accessDash = getProductionAccessDashboard();
+  const payment = getPaymentProductionDashboard();
+  const carrier = getCarrierProductionDashboard();
+  const returns = getReturnsRefundsProductionDashboard();
+  const ai = getAiProductionDashboard();
+  const tracking = getTrackingFulfillmentDashboard();
+
   return [
     item("rw_ic_credentials", "Inter Cars credentials deployed", interCars.productionCredentials === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "CONFIGURED"),
     item("rw_ic_read_live", "Inter Cars read-only live PASS", interCars.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
     item("rw_342", "#342 genuine controlled validation PASS", interCars.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("rw_343", "#343 PASS", "UNVERIFIED"),
-    item("rw_344", "#344 PASS", "UNVERIFIED"),
-    item("rw_345", "#345 PASS", "UNVERIFIED"),
-    item("rw_346", "#346 observation PASS", "UNVERIFIED"),
-    item("rw_payment", "Payment production validated", "UNVERIFIED"),
-    item("rw_carrier", "Carrier production validated", "UNVERIFIED"),
-    item("rw_tracking", "Tracking production validated", "UNVERIFIED"),
-    item("rw_returns", "Returns/refunds production validated", "UNVERIFIED"),
-    item("rw_ai", "AI production validated", "UNVERIFIED"),
+    item("rw_343", "#343 arming PASS", gateStatusToAccess(accessDash.armingState)),
+    item("rw_344", "#344 first order PASS", gateStatusToAccess(accessDash.firstOrderState)),
+    item("rw_345", "#345 controlled go-live PASS", gateStatusToAccess(accessDash.controlledGoLive)),
+    item("rw_346", "#346 observation PASS", gateStatusToAccess(String(accessDash.observationState))),
+    item("rw_payment", "Payment production validated", gateStatusToAccess(payment.liveStatus)),
+    item("rw_carrier", "Carrier production validated", gateStatusToAccess(carrier.liveStatus)),
+    item("rw_tracking", "Tracking production validated", gateStatusToAccess(tracking.liveStatus)),
+    item("rw_returns", "Returns/refunds production validated", gateStatusToAccess(returns.liveStatus)),
+    item("rw_ai", "AI production validated", gateStatusToAccess(ai.liveStatus)),
     item("rw_sales_closed", "SALES_ENABLED=0 until all mandatory PASS", isProductionFlagEnabled("SALES") ? "BLOCKED" : "CONFIGURED"),
   ];
 }

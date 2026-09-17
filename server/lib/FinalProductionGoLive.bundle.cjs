@@ -42,6 +42,7 @@ module.exports = __toCommonJS(serverEntry_exports);
 // lib/production-defaults/index.ts
 var FLAG_ENV = {
   SUPPLIER_NETWORK: "SUPPLIER_NETWORK_ENABLED",
+  SUPPLIER_LIVE_READ: "SUPPLIER_LIVE_READ_ENABLED",
   SUPPLIER_ORDER_NETWORK: "SUPPLIER_ORDER_NETWORK_ENABLED",
   PAYMENT_PRODUCTION: "PAYMENT_PRODUCTION_ENABLED",
   CARRIER_PRODUCTION: "CARRIER_PRODUCTION_ENABLED",
@@ -807,7 +808,7 @@ function resolveLiveSupplierProfile() {
     connectorType: "b2b-sandbox",
     environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
     baseUrl,
-    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    secretsRef: process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim() || process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
     authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
     endpoints: {
       health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",
@@ -26907,6 +26908,17 @@ function evaluateUpstreamGates(input) {
   return { allowed: blockers.length === 0, blockers };
 }
 
+// lib/supplier-production-order-arming/persistence.ts
+var armingStore = /* @__PURE__ */ new Map();
+function listArmingRecords() {
+  return [...armingStore.values()];
+}
+function getLatestArmingForScope(scope) {
+  return listArmingRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel && r.scope.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
 // lib/first-order-fulfillment/pipeline.ts
 function resolveFulfillmentLiveStatus() {
   return "UNVERIFIED";
@@ -27241,8 +27253,8 @@ function runProductionAccessPreflight() {
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
-    const path2 = getCreateOrderEndpointPath();
-    const url = `${profile.baseUrl.replace(/\/$/, "")}${path2.startsWith("/") ? path2 : `/${path2}`}`;
+    const path4 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path4.startsWith("/") ? path4 : `/${path4}`}`;
     endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
     checks.push({
       check: "ENDPOINT",
@@ -27336,8 +27348,8 @@ function evaluateInterCarsProductionAccess() {
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
-    const path2 = getCreateOrderEndpointPath();
-    const url = `${profile.baseUrl.replace(/\/$/, "")}${path2.startsWith("/") ? path2 : `/${path2}`}`;
+    const path4 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path4.startsWith("/") ? path4 : `/${path4}`}`;
     endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
   }
   const blockers = [];
@@ -27376,9 +27388,304 @@ function evaluateInterCarsProductionAccess() {
   };
 }
 
+// lib/supplier-production-order-arming/config.ts
+var ARMING_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_TTL_MS || 24 * 60 * 60 * 1e3);
+var ARMING_APPROVAL_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3);
+
+// lib/supplier-first-production-order/config.ts
+var FIRST_ORDER_TTL_MS2 = Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_TTL_MS || 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3
+);
+var EXECUTION_AUTH_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_AUTH_TTL_MS || 30 * 60 * 1e3
+);
+
+// lib/supplier-controlled-go-live/config.ts
+var GO_LIVE_TTL_MS = Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var GO_LIVE_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_APPROVAL_TTL_MS || 24 * 60 * 60 * 1e3
+);
+var GO_LIVE_ROLLOUT_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_ROLLOUT_TTL_MS || 30 * 24 * 60 * 60 * 1e3
+);
+function getInterCarsSupplierId3() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-controlled-go-live/persistence.ts
+var goLiveStore = /* @__PURE__ */ new Map();
+function listControlledGoLiveRecords() {
+  return [...goLiveStore.values()];
+}
+function getLatestControlledGoLiveForScope(scope) {
+  return listControlledGoLiveRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-controlled-go-live/admin.ts
+function isControlledGoLiveActive(scope) {
+  const supplierId = scope?.supplierId || getInterCarsSupplierId3();
+  const latest = getLatestControlledGoLiveForScope({
+    supplierId,
+    market: scope?.market || "DE",
+    channel: scope?.channel || "DIRECT"
+  });
+  return latest?.state === "CONTROLLED_GO_LIVE" && Date.parse(latest.expiresAt) > Date.now();
+}
+
+// lib/supplier-go-live-observation/persistence.ts
+var observationStore = /* @__PURE__ */ new Map();
+function listObservationRecords() {
+  return [...observationStore.values()];
+}
+function getLatestObservationForScope(scope) {
+  return listObservationRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-inter-cars-production-access/admin.ts
+function getProductionAccessDashboard() {
+  const diagnostic = evaluateInterCarsProductionAccess();
+  const supplierId = getInterCarsSupplierId2();
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const observation = getLatestObservationForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  return {
+    ...diagnostic,
+    liveValidationEvidence: evidence ? "PRESENT" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: firstOrder?.state || "BLOCKED",
+    controlledGoLive: isControlledGoLiveActive({ supplierId, market: "DE", channel: "DIRECT" }) ? "ACTIVE" : "BLOCKED",
+    observationState: observation?.state || "BLOCKED",
+    broaderRollout: observation?.state === "BROADER_ROLLOUT_ACTIVE" ? "ACTIVE" : "BLOCKED"
+  };
+}
+
+// lib/production-kill-switch/persistence.ts
+var inMemory = null;
+function getPersistentStore() {
+  if (typeof process === "undefined" || process.env.BUZZARD_PRODUCTION_KILL_SWITCH_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require("../../server/lib/production-kill-switch/persistentStore.js");
+    return mod.createProductionKillSwitchStore();
+  } catch {
+    return null;
+  }
+}
+function getGlobalKillSwitchState() {
+  if (inMemory) return inMemory;
+  const row = getPersistentStore()?.getState();
+  if (!row) return null;
+  return {
+    global: Boolean(row.global),
+    domains: JSON.parse(String(row.domains_json || "{}")),
+    updatedAt: String(row.updated_at),
+    updatedBy: row.updated_by ? String(row.updated_by) : void 0,
+    correlationId: row.correlation_id ? String(row.correlation_id) : void 0,
+    reason: row.reason ? String(row.reason) : void 0
+  };
+}
+
+// lib/production-kill-switch/index.ts
+var DEFAULT_DOMAINS = {
+  SUPPLIER_ORDERS: false,
+  PAYMENTS: false,
+  CARRIER: false,
+  REFUNDS: false,
+  MARKETING_SPEND: false,
+  SALES: false
+};
+function defaultState2() {
+  return {
+    global: process.env.PRODUCTION_GLOBAL_KILL_SWITCH === "1" || isGlobalKillSwitchActive(),
+    domains: { ...DEFAULT_DOMAINS },
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function getProductionKillSwitch() {
+  return getGlobalKillSwitchState() || defaultState2();
+}
+function isProductionKillSwitchActive(domain) {
+  const state = getProductionKillSwitch();
+  if (state.global || isGlobalKillSwitchActive()) return true;
+  if (domain && state.domains[domain]) return true;
+  return false;
+}
+function getProductionKillSwitchDashboard() {
+  const state = getProductionKillSwitch();
+  return {
+    global: state.global || isGlobalKillSwitchActive(),
+    domains: state.domains,
+    salesEnabled: isProductionFlagEnabled("SALES"),
+    supplierNetworkEnabled: isProductionFlagEnabled("SUPPLIER_ORDER_NETWORK"),
+    updatedAt: state.updatedAt,
+    updatedBy: state.updatedBy
+  };
+}
+
+// lib/production-completion/securityGate.ts
+var import_fs2 = require("fs");
+var import_path2 = __toESM(require("path"));
+function evaluateSecurityGate() {
+  const blockers = [];
+  const flags = getProductionFlagsSnapshot();
+  const securityFiles = [
+    "server/lib/rbac.js",
+    "server/lib/routePermissions.js",
+    "server/plugins/securityPlugin.js",
+    "lib/supplier-production-validation/endpointSecurity.ts",
+    "scripts/security-check.mjs"
+  ];
+  for (const f of securityFiles) {
+    if (!(0, import_fs2.existsSync)(import_path2.default.join(process.cwd(), f))) {
+      blockers.push({
+        code: "SECURITY_MODULE_MISSING",
+        severity: "CRITICAL",
+        description: `Security module missing: ${f}`,
+        resolution: "Restore security module",
+        status: "BLOCKED"
+      });
+    }
+  }
+  if (flags.SALES === "ON") {
+    blockers.push({
+      code: "SALES_ENABLED_IN_PREP",
+      severity: "CRITICAL",
+      description: "Sales enabled before final gate PASS",
+      resolution: "Set SALES_ENABLED=0 until all gates pass",
+      status: "BLOCKED"
+    });
+  }
+  if (flags.SUPPLIER_ORDER_NETWORK === "ON") {
+    blockers.push({
+      code: "SUPPLIER_NETWORK_ENABLED_IN_PREP",
+      severity: "CRITICAL",
+      description: "Supplier order network enabled in prep phase",
+      resolution: "Set SUPPLIER_ORDER_NETWORK_ENABLED=0 until controlled go-live",
+      status: "BLOCKED"
+    });
+  }
+  try {
+    getProductionKillSwitchDashboard();
+  } catch {
+    blockers.push({
+      code: "KILL_SWITCH_UNAVAILABLE",
+      severity: "HIGH",
+      description: "Global kill switch module unavailable",
+      resolution: "Verify production-kill-switch module",
+      status: "BLOCKED"
+    });
+  }
+  const critical = blockers.filter((b) => b.severity === "CRITICAL");
+  const status = critical.length > 0 ? "BLOCKED" : blockers.length > 0 ? "WARNING" : "PASS";
+  return {
+    section: "SECURITY",
+    status,
+    message: status === "PASS" ? "Core security modules present; production flags safe" : "Security blockers detected",
+    blockers
+  };
+}
+
+// lib/production-completion/backupGate.ts
+var import_fs3 = require("fs");
+var import_path3 = __toESM(require("path"));
+function evaluateBackupGate() {
+  const blockers = [];
+  const scripts = ["scripts/db-backup.mjs", "scripts/backup-db.mjs", "scripts/restore-db.mjs"];
+  const dbPath = import_path3.default.join(process.cwd(), "server/data/buzzard.db");
+  for (const s of scripts) {
+    if (!(0, import_fs3.existsSync)(import_path3.default.join(process.cwd(), s))) {
+      blockers.push({
+        code: "BACKUP_SCRIPT_MISSING",
+        severity: "HIGH",
+        description: `Backup script missing: ${s}`,
+        resolution: "Restore backup script",
+        status: "BLOCKED"
+      });
+    }
+  }
+  if (!(0, import_fs3.existsSync)(dbPath)) {
+    blockers.push({
+      code: "DATABASE_NOT_FOUND",
+      severity: "MEDIUM",
+      description: "Production SQLite database not found for backup verification",
+      resolution: "Initialize database or run in deployment environment",
+      status: "UNVERIFIED"
+    });
+  }
+  const status = blockers.some((b) => b.severity === "CRITICAL" || b.severity === "HIGH" && b.status === "BLOCKED") ? "BLOCKED" : blockers.length > 0 ? "UNVERIFIED" : "PASS";
+  return {
+    section: "BACKUP",
+    status,
+    message: status === "PASS" ? "Backup scripts available" : "Backup verification incomplete",
+    blockers
+  };
+}
+
+// lib/production-completion/monitoringDashboard.ts
+function buildProductionMonitoringSnapshot() {
+  const safety = getFinalGoLiveSafetyCounters();
+  const validation342 = getCreateOrderValidationSafetyCounters();
+  const validations = listValidationRecords();
+  const unknownOutcomes = validations.filter((v) => String(v.overallStatus).includes("UNKNOWN")).length;
+  const supplierFailures = validations.filter((v) => v.overallStatus === "FAILED").length;
+  const criticalIncidents = (safety.realSupplierOrders > 0 && validation342.realSupplierOrderCalls === 0 ? 1 : 0) + (unknownOutcomes > 0 ? unknownOutcomes : 0);
+  let healthStatus = "HEALTHY";
+  if (criticalIncidents > 0 || unknownOutcomes > 0) healthStatus = "CRITICAL";
+  else if (supplierFailures > 0) healthStatus = "DEGRADED";
+  else if (safety.realSupplierOrders > 0 || safety.realPayments > 0) healthStatus = "DEGRADED";
+  return {
+    healthStatus,
+    orders: safety.realSupplierOrders,
+    supplierOrders: safety.realSupplierOrders,
+    supplierFailures,
+    paymentFailures: 0,
+    carrierFailures: 0,
+    returns: safety.realRefunds,
+    refunds: safety.realRefunds,
+    inventoryAnomalies: 0,
+    pricingAnomalies: 0,
+    aiFailures: 0,
+    marketingSpend: safety.realMarketingSpend,
+    unknownOutcomes,
+    criticalIncidents
+  };
+}
+
 // lib/final-production-go-live/goLiveChecklist.ts
+function toGateStatus(access) {
+  if (access === "VALIDATED" || access === "PASS" || access === "EXECUTED" || access === "COMPLETED" || access === "ARMED" || access === "ACTIVE") return "PASS";
+  if (access === "CONFIGURED") return "UNVERIFIED";
+  if (access === "NOT_CONFIGURED" || access === "NONE") return "NOT_CONFIGURED";
+  if (access === "BLOCKED" || access === "FAILED") return "BLOCKED";
+  return "UNVERIFIED";
+}
 function buildGoLiveChecklist() {
   const interCars = evaluateInterCarsProductionAccess();
+  const accessDash = getProductionAccessDashboard();
+  const payment = getPaymentProductionDashboard();
+  const carrier = getCarrierProductionDashboard();
+  const returns = getReturnsRefundsProductionDashboard();
+  const ai = getAiProductionDashboard();
+  const security = evaluateSecurityGate();
+  const backup = evaluateBackupGate();
+  const killSwitchActive = isProductionKillSwitchActive();
   return [
     { id: "website_checkout", label: "Website/checkout", status: "UNVERIFIED", mandatory: true },
     { id: "international_35_markets", label: "35 markets/VAT/currency/shipping", status: "UNVERIFIED", mandatory: true },
@@ -27391,17 +27698,22 @@ function buildGoLiveChecklist() {
     },
     { id: "inventory_order_fulfillment", label: "Inventory/order/supplier fulfillment", status: "UNVERIFIED", mandatory: true },
     { id: "marketplace_production", label: "Marketplace production", status: "UNVERIFIED", mandatory: true },
-    { id: "payment_production", label: "Payment production", status: "NOT_CONFIGURED", mandatory: true },
-    { id: "carrier_tracking", label: "Carrier + tracking", status: "NOT_CONFIGURED", mandatory: true },
-    { id: "returns_refunds", label: "Returns/refunds", status: "NOT_CONFIGURED", mandatory: true },
-    { id: "ai_provider_security", label: "AI provider/security", status: "UNVERIFIED", mandatory: true },
+    { id: "payment_production", label: "Payment production", status: toGateStatus(payment.liveStatus), mandatory: true },
+    { id: "carrier_tracking", label: "Carrier + tracking", status: toGateStatus(carrier.liveStatus), mandatory: true },
+    { id: "returns_refunds", label: "Returns/refunds", status: toGateStatus(returns.liveStatus), mandatory: true },
+    { id: "ai_provider_security", label: "AI provider/security", status: toGateStatus(ai.liveStatus), mandatory: true },
+    { id: "arming_complete", label: "#343 arming complete", status: toGateStatus(accessDash.armingState), mandatory: true },
+    { id: "first_order_complete", label: "#344 first order complete", status: toGateStatus(accessDash.firstOrderState), mandatory: true },
+    { id: "controlled_go_live", label: "#345 controlled go-live", status: toGateStatus(accessDash.controlledGoLive), mandatory: true },
+    { id: "observation_complete", label: "#346 observation complete", status: toGateStatus(String(accessDash.observationState)), mandatory: true },
     { id: "monitoring_alerts", label: "Monitoring/alerts", status: "UNVERIFIED", mandatory: true },
-    { id: "backup_recovery", label: "Backup/recovery", status: "UNVERIFIED", mandatory: true },
+    { id: "backup_recovery", label: "Backup/recovery", status: backup.status === "PASS" ? "PASS" : backup.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", mandatory: true },
     { id: "analytics", label: "Analytics", status: "UNVERIFIED", mandatory: true },
     { id: "legal_compliance", label: "Legal/compliance", status: "UNVERIFIED", mandatory: true },
     { id: "customer_support", label: "Customer support", status: "UNVERIFIED", mandatory: true },
-    { id: "rollback_kill_switches", label: "Rollback/kill switches", status: "PASS", mandatory: true },
-    { id: "four_eyes_approval", label: "Four-eyes approval", status: "PASS", mandatory: true },
+    { id: "rollback_kill_switches", label: "Rollback/kill switches", status: killSwitchActive ? "BLOCKED" : "PASS", mandatory: true },
+    { id: "security_gate", label: "Security final gate", status: security.status === "PASS" ? "PASS" : security.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", mandatory: true },
+    { id: "four_eyes_approval", label: "Four-eyes approval", status: "UNVERIFIED", mandatory: true },
     {
       id: "sales_closed",
       label: "Sales closed until all mandatory gates PASS",
@@ -27426,6 +27738,11 @@ function evaluateFinalProductionGate() {
   const returns = getReturnsRefundsProductionDashboard();
   const marketing = evaluateMarketingProviders();
   const safety = assertFinalGoLiveSafetyInvariants();
+  const accessDash = getProductionAccessDashboard();
+  const killSwitch = getProductionKillSwitchDashboard();
+  const securityGate = evaluateSecurityGate();
+  const backupGate = evaluateBackupGate();
+  const monitoring = buildProductionMonitoringSnapshot();
   const checks = [
     check("WEBSITE", "production_build", "UNVERIFIED", "Requires deployment verification"),
     check("INTERNATIONAL", "35_markets", "UNVERIFIED", "Market engine configured"),
@@ -27442,9 +27759,19 @@ function evaluateFinalProductionGate() {
     check("SECURITY", "network_off", flags.SUPPLIER_ORDER_NETWORK === "OFF" ? "PASS" : "BLOCKED", flags.SUPPLIER_ORDER_NETWORK),
     check("SECURITY", "sales_closed", !isSalesEnabled() ? "PASS" : "BLOCKED", isSalesEnabled() ? "ON" : "OFF"),
     check("MARKETING", "spend_disabled", !isMarketingSpendEnabled() ? "PASS" : "BLOCKED", isMarketingSpendEnabled() ? "ON" : "OFF"),
-    check("OPERATIONS", "kill_switch", "PASS", "Available via supplier readiness"),
-    check("MONITORING", "fct", "UNVERIFIED", "Fulfillment control tower available"),
-    check("BACKUP", "database_backup", "UNVERIFIED", "Backup scripts available")
+    check(
+      "OPERATIONS",
+      "kill_switch",
+      killSwitch.global || isProductionKillSwitchActive() ? "BLOCKED" : "PASS",
+      killSwitch.global ? "GLOBAL_KILL_SWITCH_ACTIVE" : "Kill switch available"
+    ),
+    check("ARMING", "343_state", accessDash.armingState === "ARMED" ? "PASS" : "UNVERIFIED", accessDash.armingState),
+    check("FIRST_ORDER", "344_state", accessDash.firstOrderState === "EXECUTED" ? "PASS" : "UNVERIFIED", accessDash.firstOrderState),
+    check("GO_LIVE", "345_state", accessDash.controlledGoLive === "ACTIVE" ? "PASS" : "UNVERIFIED", accessDash.controlledGoLive),
+    check("OBSERVATION", "346_state", String(accessDash.observationState).includes("COMPLETED") ? "PASS" : "UNVERIFIED", String(accessDash.observationState)),
+    check("SECURITY", "final_gate", securityGate.status === "PASS" ? "PASS" : securityGate.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", securityGate.message),
+    check("MONITORING", "health", monitoring.healthStatus === "HEALTHY" ? "PASS" : monitoring.healthStatus === "CRITICAL" ? "BLOCKED" : "UNVERIFIED", monitoring.healthStatus),
+    check("BACKUP", "database_backup", backupGate.status === "PASS" ? "PASS" : backupGate.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", backupGate.message)
   ];
   const blockers = [
     ...checks.filter((c) => c.status === "BLOCKED" || c.status === "NOT_CONFIGURED").map((c) => `${c.domain}:${c.check}`),

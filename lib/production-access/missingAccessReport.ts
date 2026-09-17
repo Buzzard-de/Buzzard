@@ -11,6 +11,7 @@ import {
   buildReturnsAccessChecklist,
 } from "./accessChecklists";
 import { resolveGenericSecretRef, resolveInterCarsSecretRef } from "./secretRefs";
+import { getAllProviderStates } from "./providerRegistry";
 import type { AccessStatus, MissingProductionAccessReport, ProviderAccessReport } from "./types";
 
 function providerReport(input: {
@@ -129,6 +130,12 @@ export function buildMissingProductionAccessReport(): MissingProductionAccessRep
   const flags = getProductionFlagsSnapshot();
   const flagRecord: Record<string, "ON" | "OFF"> = {};
   for (const [k, v] of Object.entries(flags)) flagRecord[k] = v;
+
+  const providerStates = getAllProviderStates();
+  const stateById = Object.fromEntries(providerStates.map((s) => [s.providerId, s]));
+  for (const p of [interCars, payment, carrier, ai, returns, marketing]) {
+    p.state = stateById[p.providerId];
+  }
 
   const providers = [interCars, payment, carrier, ai, returns, marketing];
   const blockers = [

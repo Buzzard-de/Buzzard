@@ -75,6 +75,22 @@ module.exports = {
       });
     });
 
+    app.get("/api/admin/final-production-go-live/completion", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      let completionMod = null;
+      try {
+        completionMod = require("../lib/productionCompletion.bundle.cjs");
+      } catch {
+        return res.status(503).json({ success: false, errorCode: "PRODUCTION_COMPLETION_UNAVAILABLE" });
+      }
+      return res.json({
+        success: true,
+        data: completionMod.buildFinalProductionCompletionReport(),
+        source: "production-completion",
+      });
+    });
+
     app.get("/api/admin/final-production-go-live/status-report", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

@@ -30950,7 +30950,7 @@ function resolveLiveSupplierProfile() {
     connectorType: "b2b-sandbox",
     environment: process.env.SUPPLIER_LIVE_ENVIRONMENT?.trim() || "SANDBOX",
     baseUrl,
-    secretsRef: process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
+    secretsRef: process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim() || process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS",
     authentication: process.env.SUPPLIER_LIVE_AUTH_TYPE?.trim() || "api_key",
     endpoints: {
       health: process.env.SUPPLIER_LIVE_HEALTH_PATH?.trim() || "/health",

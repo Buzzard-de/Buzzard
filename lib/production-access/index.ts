@@ -10,3 +10,19 @@ export {
   buildRealWorldGoLiveChecklist,
 } from "./accessChecklists";
 export { buildMissingProductionAccessReport } from "./missingAccessReport";
+export {
+  getAllProviderStates,
+  evaluateInterCarsProviderState,
+  PROVIDER_IDS,
+} from "./providerRegistry";
+export {
+  recordProviderAccessEvidence,
+  listProviderAccessEvidence,
+  hasProductionEvidence,
+  resetEvidenceStoreForTests,
+} from "./evidenceStore";
+export {
+  recordProductionAccessAudit,
+  listProductionAccessAudit,
+  resetProductionAccessAuditForTests,
+} from "./audit";

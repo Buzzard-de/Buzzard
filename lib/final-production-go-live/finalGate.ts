@@ -6,6 +6,11 @@ import { getCarrierProductionDashboard } from "@/lib/carrier-production/admin";
 import { getAiProductionDashboard } from "@/lib/ai-production/admin";
 import { getReturnsRefundsProductionDashboard } from "@/lib/returns-refunds-production/admin";
 import { evaluateInterCarsProductionAccess } from "@/lib/supplier-inter-cars-production-access/diagnostic";
+import { getProductionAccessDashboard } from "@/lib/supplier-inter-cars-production-access/admin";
+import { isProductionKillSwitchActive, getProductionKillSwitchDashboard } from "@/lib/production-kill-switch";
+import { evaluateSecurityGate } from "@/lib/production-completion/securityGate";
+import { evaluateBackupGate } from "@/lib/production-completion/backupGate";
+import { buildProductionMonitoringSnapshot } from "@/lib/production-completion/monitoringDashboard";
 import { isSalesEnabled, isMarketingSpendEnabled } from "./config";
 import { evaluateMarketingProviders } from "./marketingRegistry";
 import { assertFinalGoLiveSafetyInvariants, getFinalGoLiveSafetyCounters } from "./safety";
@@ -27,6 +32,11 @@ export function evaluateFinalProductionGate(): FinalProductionGoLiveDashboard {
   const returns = getReturnsRefundsProductionDashboard();
   const marketing = evaluateMarketingProviders();
   const safety = assertFinalGoLiveSafetyInvariants();
+  const accessDash = getProductionAccessDashboard();
+  const killSwitch = getProductionKillSwitchDashboard();
+  const securityGate = evaluateSecurityGate();
+  const backupGate = evaluateBackupGate();
+  const monitoring = buildProductionMonitoringSnapshot();
 
   const checks: FinalGateCheck[] = [
     check("WEBSITE", "production_build", "UNVERIFIED", "Requires deployment verification"),
@@ -44,9 +54,19 @@ export function evaluateFinalProductionGate(): FinalProductionGoLiveDashboard {
     check("SECURITY", "network_off", flags.SUPPLIER_ORDER_NETWORK === "OFF" ? "PASS" : "BLOCKED", flags.SUPPLIER_ORDER_NETWORK),
     check("SECURITY", "sales_closed", !isSalesEnabled() ? "PASS" : "BLOCKED", isSalesEnabled() ? "ON" : "OFF"),
     check("MARKETING", "spend_disabled", !isMarketingSpendEnabled() ? "PASS" : "BLOCKED", isMarketingSpendEnabled() ? "ON" : "OFF"),
-    check("OPERATIONS", "kill_switch", "PASS", "Available via supplier readiness"),
-    check("MONITORING", "fct", "UNVERIFIED", "Fulfillment control tower available"),
-    check("BACKUP", "database_backup", "UNVERIFIED", "Backup scripts available"),
+    check(
+      "OPERATIONS",
+      "kill_switch",
+      killSwitch.global || isProductionKillSwitchActive() ? "BLOCKED" : "PASS",
+      killSwitch.global ? "GLOBAL_KILL_SWITCH_ACTIVE" : "Kill switch available",
+    ),
+    check("ARMING", "343_state", accessDash.armingState === "ARMED" ? "PASS" : "UNVERIFIED", accessDash.armingState),
+    check("FIRST_ORDER", "344_state", accessDash.firstOrderState === "EXECUTED" ? "PASS" : "UNVERIFIED", accessDash.firstOrderState),
+    check("GO_LIVE", "345_state", accessDash.controlledGoLive === "ACTIVE" ? "PASS" : "UNVERIFIED", accessDash.controlledGoLive),
+    check("OBSERVATION", "346_state", String(accessDash.observationState).includes("COMPLETED") ? "PASS" : "UNVERIFIED", String(accessDash.observationState)),
+    check("SECURITY", "final_gate", securityGate.status === "PASS" ? "PASS" : securityGate.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", securityGate.message),
+    check("MONITORING", "health", monitoring.healthStatus === "HEALTHY" ? "PASS" : monitoring.healthStatus === "CRITICAL" ? "BLOCKED" : "UNVERIFIED", monitoring.healthStatus),
+    check("BACKUP", "database_backup", backupGate.status === "PASS" ? "PASS" : backupGate.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", backupGate.message),
   ];
 
   const blockers = [

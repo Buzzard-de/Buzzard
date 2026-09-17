@@ -11,6 +11,25 @@ export interface FinalGoLiveDashboard {
   mandatoryChecklist: Array<{ id: string; label: string; status: string }>;
 }
 
+export interface CompletionSectionReport {
+  section: string;
+  status: string;
+  message: string;
+  blockers: Array<{ code: string; severity: string; description: string }>;
+}
+
+export interface FinalProductionCompletionReport {
+  generatedAt: string;
+  software: string;
+  sections: CompletionSectionReport[];
+  blockers: Array<{ code: string; severity: string; description: string; resolution: string }>;
+  sales: "OPEN" | "CLOSED";
+  finalGoLive: "READY" | "BLOCKED";
+  realSideEffects: Record<string, number>;
+  fakeEvidenceCount: number;
+  monitoring: { healthStatus: string };
+}
+
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
 }
@@ -36,6 +55,14 @@ export function fetchFinalGoLiveDashboard() {
   return adminFetch<FinalGoLiveDashboard>("/api/admin/final-production-go-live/dashboard");
 }
 
+export function fetchFinalProductionCompletionReport() {
+  return adminFetch<FinalProductionCompletionReport>("/api/admin/final-production-go-live/completion");
+}
+
 export function fetchFinalProductionStatusReport() {
   return adminFetch<Record<string, unknown>>("/api/admin/final-production-go-live/status-report");
+}
+
+export function fetchMissingProductionAccessReport() {
+  return adminFetch<Record<string, unknown>>("/api/admin/final-production-go-live/missing-access");
 }

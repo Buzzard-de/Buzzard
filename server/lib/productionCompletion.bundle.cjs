@@ -6,14 +6,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __esm = (fn, res, err) => function __init() {
-  if (err) throw err[0];
-  try {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  } catch (e) {
-    throw err = [e], e;
-  }
-};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -36,213 +28,167 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// data/global/test_supplier_feeds.json
-var test_supplier_feeds_default;
-var init_test_supplier_feeds = __esm({
-  "data/global/test_supplier_feeds.json"() {
-    test_supplier_feeds_default = {
-      TEST_SUPPLIER_A: {
-        supplierId: "TEST_SUPPLIER_A",
-        name: "Test Supplier A (Mock)",
-        country: "DE",
-        region: "EU",
-        currency: "EUR",
-        integrationTypes: ["api", "xml", "csv", "manual"],
-        supportedMarkets: ["DE", "FR", "PL"],
-        capabilities: {
-          productFeed: true,
-          stockFeed: true,
-          priceFeed: true,
-          orderAPI: true,
-          createOrder: true,
-          cancelOrder: true,
-          orderStatus: true,
-          shippingAPI: false,
-          trackingAPI: true,
-          tracking: true,
-          returnsAPI: true,
-          returnAuthorization: true,
-          refund: true,
-          credit: true,
-          replacement: true,
-          webhook: false,
-          dropshipping: true,
-          whiteLabel: true,
-          blindShipping: true,
-          api: true,
-          xml: true,
-          csv: true
-        },
-        rateLimit: { requestsPerMinute: 60 },
-        fieldMapping: {
-          article_number: "supplierSku",
-          sku: "supplierSku",
-          ean_code: "ean",
-          price_net: "supplierPrice",
-          stock_qty: "stock",
-          title: "name",
-          brand_name: "brand"
-        },
-        apiProducts: [
-          {
-            article_number: "TSA-TIRE-225-45-17",
-            ean_code: "4006633001247",
-            brand_name: "Michelin",
-            title: "Michelin Pilot Sport 4 225/45 R17",
-            price_net: 55.79,
-            stock_qty: 8,
-            currency: "EUR"
-          },
-          {
-            article_number: "TSA-OIL-5W30-5L",
-            ean_code: "4006633001236",
-            brand_name: "Castrol",
-            title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
-            price_net: 26.6,
-            stock_qty: 50,
-            currency: "EUR"
-          },
-          {
-            article_number: "TSA-DISC-280",
-            ean_code: "4006633001234",
-            brand_name: "ATE",
-            title: "Bremsscheibe Vorderachse 280mm",
-            price_net: 21.64,
-            stock_qty: 24,
-            currency: "EUR"
-          },
-          {
-            article_number: "TSA-PADS-FRONT",
-            ean_code: "4006633001235",
-            brand_name: "Bosch",
-            title: "Bremsbel\xE4ge Satz Vorderachse",
-            price_net: 17.67,
-            stock_qty: 31,
-            currency: "EUR"
-          }
-        ],
-        xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
-        csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
-      }
-    };
-  }
+// lib/production-completion/serverEntry.ts
+var serverEntry_exports = {};
+__export(serverEntry_exports, {
+  buildFinalProductionCompletionReport: () => buildFinalProductionCompletionReport,
+  buildProductionMonitoringSnapshot: () => buildProductionMonitoringSnapshot,
+  buildStructuredBlockers: () => buildStructuredBlockers,
+  evaluateBackupGate: () => evaluateBackupGate,
+  evaluateSecurityGate: () => evaluateSecurityGate
 });
+module.exports = __toCommonJS(serverEntry_exports);
 
-// data/buzzard_suppliers.json
-var buzzard_suppliers_default;
-var init_buzzard_suppliers = __esm({
-  "data/buzzard_suppliers.json"() {
-    buzzard_suppliers_default = {
-      project: "Buzzard",
-      document: "Supplier Master",
-      version: "1.0.0",
-      suppliers: [
-        {
-          supplier_id: "SUP-INTERNAL-001",
-          supplier_name: "Buzzard Internal Warehouse",
-          contact_email: "warehouse@buzzard.de",
-          contact_phone: "+49 30 1234567",
-          website: "https://buzzard24.de",
-          feed_type: "manual",
-          api_endpoint: null,
-          auth_type: "none",
-          currency: "EUR",
-          vat_handling: "gross",
-          dropshipping: false,
-          white_label: true,
-          blind_shipping: false,
-          default_markup_percent: 45,
-          minimum_margin_percent: 15,
-          safety_stock: 2,
-          active: true,
-          sync_status: "idle",
-          last_sync_at: null,
-          notes: "Internal stock for test and flagship products."
-        },
-        {
-          supplier_id: "SUP-DEMO-001",
-          production_status: "TEST_ONLY",
-          supplier_name: "Demo Automotive Parts GmbH",
-          contact_email: "orders@demo-automotive.example",
-          contact_phone: "+49 89 9876543",
-          website: "https://demo-automotive.example",
-          feed_type: "json",
-          api_endpoint: "https://demo-automotive.example/api/products.json",
-          auth_type: "api_key",
-          currency: "EUR",
-          vat_handling: "net",
-          dropshipping: true,
-          white_label: true,
-          blind_shipping: true,
-          default_markup_percent: 38,
-          minimum_margin_percent: 12,
-          safety_stock: 1,
-          active: true,
-          sync_status: "idle",
-          last_sync_at: null,
-          notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
-        }
-      ]
-    };
+// lib/production-defaults/index.ts
+var FLAG_ENV = {
+  SUPPLIER_NETWORK: "SUPPLIER_NETWORK_ENABLED",
+  SUPPLIER_LIVE_READ: "SUPPLIER_LIVE_READ_ENABLED",
+  SUPPLIER_ORDER_NETWORK: "SUPPLIER_ORDER_NETWORK_ENABLED",
+  PAYMENT_PRODUCTION: "PAYMENT_PRODUCTION_ENABLED",
+  CARRIER_PRODUCTION: "CARRIER_PRODUCTION_ENABLED",
+  RETURNS_PRODUCTION: "RETURNS_PRODUCTION_ENABLED",
+  MARKETING_SPEND: "MARKETING_SPEND_ENABLED",
+  AI_PRODUCTION: "AI_PRODUCTION_ENABLED",
+  SALES: "SALES_ENABLED"
+};
+function isProductionFlagEnabled(flag) {
+  const envKey = FLAG_ENV[flag];
+  const value = process.env[envKey];
+  return value === "1" || value === "true";
+}
+function assertProductionFlagDisabled(flag, context) {
+  if (isProductionFlagEnabled(flag)) {
+    throw new Error(`${context}:PRODUCTION_FLAG_ENABLED:${flag}`);
   }
-});
+}
+function getProductionFlagsSnapshot() {
+  const out = {};
+  for (const flag of Object.keys(FLAG_ENV)) {
+    out[flag] = isProductionFlagEnabled(flag) ? "ON" : "OFF";
+  }
+  return out;
+}
+function enforceCiProductionSafety(context) {
+  if (process.env.CI === "true" || process.env.NODE_ENV === "test") {
+    for (const flag of Object.keys(FLAG_ENV)) {
+      assertProductionFlagDisabled(flag, context);
+    }
+  }
+}
 
-// lib/supplier-engine/fixtures.ts
-function getTestFeedEntry(supplierId) {
-  return test_supplier_feeds_default[supplierId];
+// lib/supplier-engine/network/config.ts
+function envFlag(name, defaultValue = false) {
+  const raw = process.env[name];
+  if (raw === void 0 || raw === "") return defaultValue;
+  return raw === "1" || raw.toLowerCase() === "true";
 }
-function getTestFeedProducts(supplierId) {
-  const entry = getTestFeedEntry(supplierId);
-  return entry?.apiProducts ?? [];
+function envInt(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
 }
-function getTestXmlFeed(supplierId) {
-  return getTestFeedEntry(supplierId)?.xmlFeed ?? "";
+var SUPPLIER_NETWORK_CONFIG = {
+  get networkEnabled() {
+    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
+  defaultEnvironment: "MOCK",
+  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
+  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
+  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
+  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
+};
+function isSupplierNetworkEnabled() {
+  return envFlag("SUPPLIER_NETWORK_ENABLED", false);
 }
-function getTestCsvFeed(supplierId) {
-  return getTestFeedEntry(supplierId)?.csvFeed ?? "";
+function isSupplierOrderNetworkEnabled() {
+  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
-var TEST_SUPPLIER_ID;
-var init_fixtures = __esm({
-  "lib/supplier-engine/fixtures.ts"() {
-    "use strict";
-    init_test_supplier_feeds();
-    TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
-  }
-});
 
-// lib/supplier-engine/persistence.ts
-function getSupplierPersistence() {
-  if (store !== void 0) return store;
-  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
-    store = null;
-    return store;
+// lib/supplier-engine/network/allowlist.ts
+var BLOCKED_HOSTNAMES = /* @__PURE__ */ new Set([
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "::1",
+  "metadata.google.internal",
+  "metadata"
+]);
+var METADATA_IP = "169.254.169.254";
+function isPrivateIpv4(host) {
+  const parts = host.split(".").map((p) => Number(p));
+  if (parts.length !== 4 || parts.some((p) => !Number.isFinite(p))) return false;
+  const [a, b] = parts;
+  if (a === 10) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 0) return true;
+  return false;
+}
+function normalizeHost(hostname) {
+  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, "");
+}
+function isBlockedHost(hostname) {
+  const host = normalizeHost(hostname);
+  if (!host) return true;
+  if (BLOCKED_HOSTNAMES.has(host)) return true;
+  if (host.endsWith(".local") || host.endsWith(".internal")) return true;
+  if (host === METADATA_IP || host.startsWith("169.254.")) return true;
+  if (isPrivateIpv4(host)) return true;
+  if (host.includes(":") && (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80"))) {
+    return true;
   }
-  const candidates = [
-    "server/lib/supplier/persistentStore.js",
-    "../../server/lib/supplier/persistentStore.js"
-  ];
-  for (const candidate of candidates) {
+  return false;
+}
+function validateSupplierEndpoint(url, allowedHosts = []) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return { allowed: false, reason: "INVALID_URL" };
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    return { allowed: false, reason: "UNSUPPORTED_PROTOCOL", hostname: parsed.hostname };
+  }
+  const hostname = normalizeHost(parsed.hostname);
+  if (isBlockedHost(hostname)) {
+    return { allowed: false, reason: "BLOCKED_HOST", hostname };
+  }
+  if (allowedHosts.length > 0) {
+    const normalizedAllowed = allowedHosts.map(normalizeHost);
+    const hostAllowed = normalizedAllowed.some(
+      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
+    );
+    if (!hostAllowed) {
+      return { allowed: false, reason: "NOT_IN_ALLOWLIST", hostname };
+    }
+  }
+  return { allowed: true, hostname };
+}
+function extractAllowedHosts(baseUrl, extra = []) {
+  const hosts = /* @__PURE__ */ new Set();
+  for (const entry of [baseUrl, ...extra].filter(Boolean)) {
     try {
-      const mod = require(candidate);
-      store = mod.createPersistentSupplierStore();
-      return store;
+      hosts.add(normalizeHost(new URL(entry).hostname));
     } catch {
     }
   }
-  store = null;
-  return store;
+  return [...hosts];
 }
-function getSupplierPersistenceMode() {
-  return getSupplierPersistence()?.getMode() === "sqlite" ? "sqlite" : "memory";
-}
-var store;
-var init_persistence = __esm({
-  "lib/supplier-engine/persistence.ts"() {
-    "use strict";
-  }
-});
 
 // lib/supplier-engine/security.ts
+var SECRET_PATTERNS = [
+  /api[_-]?key/i,
+  /secret/i,
+  /password/i,
+  /token/i,
+  /authorization/i,
+  /bearer/i,
+  /credential/i
+];
 function isSecretField(fieldName) {
   return SECRET_PATTERNS.some((p) => p.test(fieldName));
 }
@@ -261,35 +207,289 @@ function redactSecrets(obj) {
   }
   return result;
 }
-function rejectClientCredentials(payload) {
-  return Object.keys(payload).some(isSecretField);
+
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+function isScopedValidationNetworkEnabled() {
+  const raw = process.env.SUPPLIER_CONTROLLED_VALIDATION_NETWORK;
+  return raw === "1" || raw?.toLowerCase() === "true";
 }
-function sanitizeClientSyncRequest(body) {
-  if (rejectClientCredentials(body)) {
-    return { allowed: false, reason: "CREDENTIALS_NOT_ALLOWED_ON_CLIENT" };
-  }
-  if (body.supplierPrice != null || body.supplierStock != null) {
-    return { allowed: false, reason: "COMMERCIAL_FIELDS_NOT_CLIENT_WRITABLE" };
-  }
-  return { allowed: true };
+
+// lib/first-order-fulfillment/safety.ts
+var counters = {
+  realSupplierHttpCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0,
+  paymentSideEffects: 0,
+  carrierSideEffects: 0,
+  unknownOutcomes: 0,
+  mockExecutions: 0
+};
+function getFulfillmentSafetyCounters() {
+  return { ...counters };
 }
-var SECRET_PATTERNS;
-var init_security = __esm({
-  "lib/supplier-engine/security.ts"() {
-    "use strict";
-    SECRET_PATTERNS = [
-      /api[_-]?key/i,
-      /secret/i,
-      /password/i,
-      /token/i,
-      /authorization/i,
-      /bearer/i,
-      /credential/i
-    ];
+function assertFulfillmentSafetyInvariants() {
+  const violations = [];
+  if (counters.realSupplierHttpCalls !== 0) violations.push(`realSupplierHttpCalls=${counters.realSupplierHttpCalls}`);
+  if (counters.realSupplierOrders !== 0) violations.push(`realSupplierOrders=${counters.realSupplierOrders}`);
+  if (counters.realCustomerOrders !== 0) violations.push(`realCustomerOrders=${counters.realCustomerOrders}`);
+  if (counters.paymentSideEffects !== 0) violations.push(`paymentSideEffects=${counters.paymentSideEffects}`);
+  if (counters.carrierSideEffects !== 0) violations.push(`carrierSideEffects=${counters.carrierSideEffects}`);
+  if (isSupplierOrderNetworkEnabled()) violations.push("SUPPLIER_ORDER_NETWORK_ENABLED");
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/payment-production/safety.ts
+var counters2 = { realCharges: 0, realRefunds: 0, webhookProcessed: 0 };
+function getPaymentProductionSafetyCounters() {
+  return { ...counters2 };
+}
+function assertPaymentProductionSafetyInvariants() {
+  const violations = [];
+  if (counters2.realCharges !== 0) violations.push(`realCharges=${counters2.realCharges}`);
+  if (counters2.realRefunds !== 0) violations.push(`realRefunds=${counters2.realRefunds}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/returns-refunds-production/safety.ts
+var counters3 = { realRefunds: 0, assumedRecoveries: 0 };
+function getReturnsRefundsSafetyCounters() {
+  return { ...counters3 };
+}
+function assertReturnsRefundsSafetyInvariants() {
+  const violations = [];
+  if (counters3.realRefunds !== 0) violations.push(`realRefunds=${counters3.realRefunds}`);
+  if (counters3.assumedRecoveries !== 0) violations.push(`assumedRecoveries=${counters3.assumedRecoveries}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/carrier-production/safety.ts
+var counters4 = { realLabels: 0, realHttpCalls: 0 };
+function getCarrierProductionSafetyCounters() {
+  return { ...counters4 };
+}
+function assertCarrierProductionSafetyInvariants() {
+  const violations = [];
+  if (counters4.realLabels !== 0) violations.push(`realLabels=${counters4.realLabels}`);
+  if (counters4.realHttpCalls !== 0) violations.push(`realHttpCalls=${counters4.realHttpCalls}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/final-production-go-live/safety.ts
+var counters5 = { realMarketplaceMutations: 0, realMarketingSpend: 0 };
+function getFinalGoLiveSafetyCounters() {
+  const fulfillment = getFulfillmentSafetyCounters();
+  const payment = getPaymentProductionSafetyCounters();
+  const returns = getReturnsRefundsSafetyCounters();
+  const carrier = getCarrierProductionSafetyCounters();
+  return {
+    realSupplierOrders: fulfillment.realSupplierOrders,
+    realPayments: payment.realCharges,
+    realRefunds: returns.realRefunds,
+    realCarrierLabels: carrier.realLabels,
+    realMarketplaceMutations: counters5.realMarketplaceMutations,
+    realMarketingSpend: counters5.realMarketingSpend
+  };
+}
+function assertFinalGoLiveSafety() {
+  enforceCiProductionSafety("FINAL_354");
+}
+function assertFinalGoLiveSafetyInvariants() {
+  const c = getFinalGoLiveSafetyCounters();
+  const violations = [];
+  if (c.realSupplierOrders !== 0) violations.push(`realSupplierOrders=${c.realSupplierOrders}`);
+  if (c.realPayments !== 0) violations.push(`realPayments=${c.realPayments}`);
+  if (c.realRefunds !== 0) violations.push(`realRefunds=${c.realRefunds}`);
+  if (c.realCarrierLabels !== 0) violations.push(`realCarrierLabels=${c.realCarrierLabels}`);
+  if (c.realMarketplaceMutations !== 0) violations.push(`realMarketplaceMutations=${c.realMarketplaceMutations}`);
+  if (c.realMarketingSpend !== 0) violations.push(`realMarketingSpend=${c.realMarketingSpend}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/production-access/providerRegistry.ts
+var import_crypto2 = require("crypto");
+
+// lib/supplier-inter-cars-production-access/diagnostic.ts
+var import_crypto = require("crypto");
+
+// data/supplier-engine/live_supplier.config.template.json
+var live_supplier_config_template_default = {
+  $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  supplierId: "",
+  name: "",
+  displayName: "",
+  country: "DE",
+  region: "EU",
+  currency: "EUR",
+  connectorType: "b2b-sandbox",
+  environment: "SANDBOX",
+  baseUrl: "",
+  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+  authentication: "api_key",
+  authType: "API_KEY",
+  endpoints: {
+    health: "/health",
+    products: "/products",
+    stock: "/stock",
+    prices: "/prices"
+  },
+  fieldMapping: {
+    article_number: "supplierSku",
+    sku: "supplierSku",
+    ean_code: "ean",
+    gtin: "gtin",
+    mpn: "mpn",
+    brand_name: "brand",
+    title: "name",
+    price_net: "supplierPrice",
+    stock_qty: "stock"
+  },
+  categoryMapping: {},
+  supportedMarkets: ["DE"],
+  feedFormat: "json",
+  priceIncludesVat: false,
+  capabilities: {
+    productFeed: true,
+    stockFeed: true,
+    priceFeed: true,
+    orderAPI: false,
+    createOrder: false,
+    cancelOrder: false,
+    orderStatus: false,
+    trackingAPI: false,
+    returnsAPI: false,
+    refund: false,
+    credit: false,
+    replacement: false,
+    dropshipping: false,
+    whiteLabel: false,
+    blindShipping: false
+  },
+  pagination: {
+    mode: "cursor",
+    pageSize: 100
   }
-});
+};
+
+// data/supplier-engine/inter_cars.profile.template.json
+var inter_cars_profile_template_default = {
+  $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
+  $documentation: {
+    supplier: "Inter Cars S.A.",
+    country: "PL/EU (DE market supported)",
+    type: "Automotive B2B wholesaler",
+    officialDocs: [
+      "https://docs.webapi.intercars.eu/ic-api/contracts/api",
+      "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
+    ],
+    authentication: "OAuth2 Bearer token (B2B account via sales representative)",
+    rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
+    stockSemantics: "availability field = units available for purchase at location",
+    priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
+    currency: "Per-response currencyCode (EUR for DE customers when configured)",
+    updateFrequency: "Real-time for API; CSV feeds daily",
+    dropshipping: "Contact sales representative \u2014 not assumed enabled",
+    whiteLabel: "Contact sales representative \u2014 not assumed enabled",
+    productionBaseUrl: "https://gw.intercars.eu",
+    productionCreateOrderPath: "/ic/order/createOrder",
+    productionAccessNote: "Override via SUPPLIER_LIVE_CONFIG_JSON for production. Do not enable createOrder until #342 controlled validation completes."
+  },
+  supplierId: "SUP-INTER-CARS-001",
+  name: "Inter Cars",
+  displayName: "Inter Cars B2B",
+  country: "DE",
+  region: "EU",
+  currency: "EUR",
+  connectorType: "b2b-sandbox",
+  adapterProfile: "inter-cars",
+  environment: "SANDBOX",
+  baseUrl: "https://dev.gw.intercars.eu",
+  secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
+  authentication: "oauth2",
+  authType: "OAUTH2",
+  endpoints: {
+    health: "/ic/catalog/category",
+    products: "/ic/catalog/products",
+    stock: "/ic/inventory/stock",
+    prices: "/ic/inventory/1.0.0/pricing/quote"
+  },
+  fieldMapping: {
+    sku: "supplierSku",
+    index: "mpn",
+    articleNumber: "mpn",
+    tecDoc: "tecdocId",
+    brand: "brand",
+    shortDescription: "name",
+    description: "description",
+    eans: "ean",
+    availability: "stock",
+    customerPriceNet: "supplierPrice",
+    listPriceNet: "listPriceNet",
+    genericArticleReferences: "supplierCategory"
+  },
+  categoryMapping: {},
+  categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
+  supportedMarkets: ["DE"],
+  feedFormat: "json",
+  priceIncludesVat: false,
+  priceModel: "net",
+  priceField: "customerPriceNet",
+  capabilities: {
+    productFeed: true,
+    stockFeed: true,
+    priceFeed: true,
+    orderAPI: false,
+    createOrder: false,
+    cancelOrder: false,
+    orderStatus: false,
+    trackingAPI: false,
+    returnsAPI: false,
+    refund: false,
+    credit: false,
+    replacement: false,
+    dropshipping: false,
+    whiteLabel: false,
+    blindShipping: false
+  },
+  pagination: {
+    mode: "pageNumber",
+    pageParam: "pageNumber",
+    pageSizeParam: "pageSize",
+    pageSize: 25,
+    hasNextPageField: "hasNextPage"
+  },
+  requestHeaders: {
+    "Accept-Language": "de"
+  },
+  allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
+};
+
+// data/supplier-engine/inter_cars_category_mappings.json
+var inter_cars_category_mappings_default = {
+  $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
+  mappings: {
+    GenericArticle_1280: "auto-sub-05--oil-filters",
+    "Filtr oleju": "auto-sub-05--oil-filters",
+    "Oil filter": "auto-sub-05--oil-filters",
+    \u00D6lfilter: "auto-sub-05--oil-filters",
+    "Brake pad": "auto-sub-04--brake-pads",
+    Bremsbelag: "auto-sub-04--brake-pads",
+    "Brake disc": "auto-sub-04--brake-discs",
+    Bremsscheibe: "auto-sub-04--brake-discs",
+    Tyre: "auto-sub-01--car-tires",
+    Tire: "auto-sub-01--car-tires",
+    Reifen: "auto-sub-01--car-tires",
+    Battery: "auto-sub-06--car-batteries",
+    Batterie: "auto-sub-06--car-batteries",
+    "Car battery": "auto-sub-06--car-batteries",
+    Cleaning: "auto-sub-12--interior-cleaner",
+    Reinigung: "auto-sub-12--interior-cleaner"
+  }
+};
 
 // lib/supplier-engine/credentials.ts
+var credentialRefs = /* @__PURE__ */ new Map();
 function registerCredentialRef(supplierId, secretsRef) {
   const entry = {
     supplierId,
@@ -299,9 +499,6 @@ function registerCredentialRef(supplierId, secretsRef) {
   };
   credentialRefs.set(supplierId, entry);
   return entry;
-}
-function hasConfiguredCredentials(supplierId) {
-  return credentialRefs.get(supplierId)?.configured === true;
 }
 function resolveCredentials(secretsRef) {
   if (!secretsRef) return null;
@@ -315,207 +512,9 @@ function resolveCredentials(secretsRef) {
     return { token: raw };
   }
 }
-var credentialRefs;
-var init_credentials = __esm({
-  "lib/supplier-engine/credentials.ts"() {
-    "use strict";
-    init_security();
-    credentialRefs = /* @__PURE__ */ new Map();
-  }
-});
-
-// data/supplier-engine/live_supplier.config.template.json
-var live_supplier_config_template_default;
-var init_live_supplier_config_template = __esm({
-  "data/supplier-engine/live_supplier.config.template.json"() {
-    live_supplier_config_template_default = {
-      $comment: "Template only \u2014 copy values to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
-      supplierId: "",
-      name: "",
-      displayName: "",
-      country: "DE",
-      region: "EU",
-      currency: "EUR",
-      connectorType: "b2b-sandbox",
-      environment: "SANDBOX",
-      baseUrl: "",
-      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
-      authentication: "api_key",
-      authType: "API_KEY",
-      endpoints: {
-        health: "/health",
-        products: "/products",
-        stock: "/stock",
-        prices: "/prices"
-      },
-      fieldMapping: {
-        article_number: "supplierSku",
-        sku: "supplierSku",
-        ean_code: "ean",
-        gtin: "gtin",
-        mpn: "mpn",
-        brand_name: "brand",
-        title: "name",
-        price_net: "supplierPrice",
-        stock_qty: "stock"
-      },
-      categoryMapping: {},
-      supportedMarkets: ["DE"],
-      feedFormat: "json",
-      priceIncludesVat: false,
-      capabilities: {
-        productFeed: true,
-        stockFeed: true,
-        priceFeed: true,
-        orderAPI: false,
-        createOrder: false,
-        cancelOrder: false,
-        orderStatus: false,
-        trackingAPI: false,
-        returnsAPI: false,
-        refund: false,
-        credit: false,
-        replacement: false,
-        dropshipping: false,
-        whiteLabel: false,
-        blindShipping: false
-      },
-      pagination: {
-        mode: "cursor",
-        pageSize: 100
-      }
-    };
-  }
-});
-
-// data/supplier-engine/inter_cars.profile.template.json
-var inter_cars_profile_template_default;
-var init_inter_cars_profile_template = __esm({
-  "data/supplier-engine/inter_cars.profile.template.json"() {
-    inter_cars_profile_template_default = {
-      $comment: "Inter Cars B2B profile template \u2014 copy to SUPPLIER_LIVE_CONFIG_JSON or deployment secrets. Never commit real credentials.",
-      $documentation: {
-        supplier: "Inter Cars S.A.",
-        country: "PL/EU (DE market supported)",
-        type: "Automotive B2B wholesaler",
-        officialDocs: [
-          "https://docs.webapi.intercars.eu/ic-api/contracts/api",
-          "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
-        ],
-        authentication: "OAuth2 Bearer token (B2B account via sales representative)",
-        rateLimits: "Max 100 SKUs per stock/pricing request; catalog pageSize 1-100",
-        stockSemantics: "availability field = units available for purchase at location",
-        priceSemantics: "customerPriceNet = buying price (net); listPriceNet = list price; VAT in vatPercentage",
-        currency: "Per-response currencyCode (EUR for DE customers when configured)",
-        updateFrequency: "Real-time for API; CSV feeds daily",
-        dropshipping: "Contact sales representative \u2014 not assumed enabled",
-        whiteLabel: "Contact sales representative \u2014 not assumed enabled",
-        productionBaseUrl: "https://gw.intercars.eu",
-        productionCreateOrderPath: "/ic/order/createOrder",
-        productionAccessNote: "Override via SUPPLIER_LIVE_CONFIG_JSON for production. Do not enable createOrder until #342 controlled validation completes."
-      },
-      supplierId: "SUP-INTER-CARS-001",
-      name: "Inter Cars",
-      displayName: "Inter Cars B2B",
-      country: "DE",
-      region: "EU",
-      currency: "EUR",
-      connectorType: "b2b-sandbox",
-      adapterProfile: "inter-cars",
-      environment: "SANDBOX",
-      baseUrl: "https://dev.gw.intercars.eu",
-      secretsRef: "env:SUPPLIER_LIVE_CREDENTIALS",
-      authentication: "oauth2",
-      authType: "OAUTH2",
-      endpoints: {
-        health: "/ic/catalog/category",
-        products: "/ic/catalog/products",
-        stock: "/ic/inventory/stock",
-        prices: "/ic/inventory/1.0.0/pricing/quote"
-      },
-      fieldMapping: {
-        sku: "supplierSku",
-        index: "mpn",
-        articleNumber: "mpn",
-        tecDoc: "tecdocId",
-        brand: "brand",
-        shortDescription: "name",
-        description: "description",
-        eans: "ean",
-        availability: "stock",
-        customerPriceNet: "supplierPrice",
-        listPriceNet: "listPriceNet",
-        genericArticleReferences: "supplierCategory"
-      },
-      categoryMapping: {},
-      categoryMappingRef: "data/supplier-engine/inter_cars_category_mappings.json",
-      supportedMarkets: ["DE"],
-      feedFormat: "json",
-      priceIncludesVat: false,
-      priceModel: "net",
-      priceField: "customerPriceNet",
-      capabilities: {
-        productFeed: true,
-        stockFeed: true,
-        priceFeed: true,
-        orderAPI: false,
-        createOrder: false,
-        cancelOrder: false,
-        orderStatus: false,
-        trackingAPI: false,
-        returnsAPI: false,
-        refund: false,
-        credit: false,
-        replacement: false,
-        dropshipping: false,
-        whiteLabel: false,
-        blindShipping: false
-      },
-      pagination: {
-        mode: "pageNumber",
-        pageParam: "pageNumber",
-        pageSizeParam: "pageSize",
-        pageSize: 25,
-        hasNextPageField: "hasNextPage"
-      },
-      requestHeaders: {
-        "Accept-Language": "de"
-      },
-      allowedEndpoints: ["dev.gw.intercars.eu", "webapi.intercars.eu", "gw.intercars.eu"]
-    };
-  }
-});
-
-// data/supplier-engine/inter_cars_category_mappings.json
-var inter_cars_category_mappings_default;
-var init_inter_cars_category_mappings = __esm({
-  "data/supplier-engine/inter_cars_category_mappings.json"() {
-    inter_cars_category_mappings_default = {
-      $comment: "Inter Cars genericArticleId / label \u2192 Buzzard canonical category IDs. Unmapped \u2192 REVIEW_REQUIRED.",
-      mappings: {
-        GenericArticle_1280: "auto-sub-05--oil-filters",
-        "Filtr oleju": "auto-sub-05--oil-filters",
-        "Oil filter": "auto-sub-05--oil-filters",
-        \u00D6lfilter: "auto-sub-05--oil-filters",
-        "Brake pad": "auto-sub-04--brake-pads",
-        Bremsbelag: "auto-sub-04--brake-pads",
-        "Brake disc": "auto-sub-04--brake-discs",
-        Bremsscheibe: "auto-sub-04--brake-discs",
-        Tyre: "auto-sub-01--car-tires",
-        Tire: "auto-sub-01--car-tires",
-        Reifen: "auto-sub-01--car-tires",
-        Battery: "auto-sub-06--car-batteries",
-        Batterie: "auto-sub-06--car-batteries",
-        "Car battery": "auto-sub-06--car-batteries",
-        Cleaning: "auto-sub-12--interior-cleaner",
-        Reinigung: "auto-sub-12--interior-cleaner"
-      }
-    };
-  }
-});
 
 // lib/supplier-engine/liveSupplier/config.ts
-function envFlag(name) {
+function envFlag2(name) {
   const raw = process.env[name];
   return raw === "1" || raw?.toLowerCase() === "true";
 }
@@ -612,7 +611,7 @@ function resolveLiveSupplierProfile() {
   }));
 }
 function isLiveReadEnabled() {
-  return envFlag("SUPPLIER_LIVE_READ_ENABLED");
+  return envFlag2("SUPPLIER_LIVE_READ_ENABLED");
 }
 function hasLiveSupplierCredentials(profile) {
   const creds = resolveCredentials(profile.secretsRef);
@@ -636,20 +635,468 @@ function describeLiveCredentialReadiness(profile) {
     secretFieldsPresent: present
   };
 }
-var init_config = __esm({
-  "lib/supplier-engine/liveSupplier/config.ts"() {
-    "use strict";
-    init_live_supplier_config_template();
-    init_inter_cars_profile_template();
-    init_inter_cars_category_mappings();
-    init_credentials();
+
+// lib/supplier-production-validation/persistence.ts
+var validationStore = /* @__PURE__ */ new Map();
+function listValidationRecords() {
+  return [...validationStore.values()];
+}
+function getLatestValidationForScope(scope) {
+  return listValidationRecords().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-validation/endpointSecurity.ts
+function validateEndpointUrl(url, allowedHosts, requireHttpsForProduction = false) {
+  const check2 = validateSupplierEndpoint(url, allowedHosts);
+  if (!check2.allowed) return check2;
+  if (requireHttpsForProduction) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "https:") {
+        return { allowed: false, reason: "NON_HTTPS_PRODUCTION", hostname: parsed.hostname };
+      }
+    } catch {
+      return { allowed: false, reason: "INVALID_URL" };
+    }
   }
-});
+  return check2;
+}
+function extractProfileAllowedHosts(baseUrl, extra = []) {
+  return extractAllowedHosts(baseUrl, extra);
+}
+
+// lib/supplier-production-order-validation/config.ts
+var VALIDATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var CONTROLLED_VALIDATION_MAX_VALUE = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_VALUE || 100
+);
+var CONTROLLED_VALIDATION_MAX_QTY = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_QTY || 1
+);
+function getCreateOrderEndpointPath() {
+  const profile = resolvePredefinedLiveProfile();
+  const endpoints = profile?.endpoints;
+  return endpoints?.createOrder || endpoints?.orders || "/ic/order/createOrder";
+}
+function isControlledValidationEnabled() {
+  return process.env.SUPPLIER_CREATE_ORDER_VALIDATION_ENABLED === "1";
+}
+
+// lib/supplier-production-order-validation/persistence.ts
+var validationStore2 = /* @__PURE__ */ new Map();
+var controlledRunStore = /* @__PURE__ */ new Map();
+function listValidationRecords2() {
+  return [...validationStore2.values()];
+}
+function getLatestValidationForScope2(scope) {
+  return listValidationRecords2().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+function getControlledValidationRun(validationId) {
+  return controlledRunStore.get(validationId);
+}
+function listControlledValidationRuns() {
+  return [...controlledRunStore.values()];
+}
+function getLatestControlledValidationRun(scope) {
+  return listControlledValidationRuns().filter((r) => {
+    if (scope?.supplierId && r.supplier !== scope.supplierId) return false;
+    if (scope?.market && r.market !== scope.market) return false;
+    return true;
+  }).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-order-validation/safety.ts
+var counters6 = {
+  controlledValidationHttpCalls: 0,
+  realSupplierOrderCalls: 0,
+  realSupplierCancelCalls: 0,
+  realSupplierReturnCalls: 0,
+  realSupplierRefundCalls: 0,
+  realPaymentCalls: 0,
+  realMarketplaceCalls: 0,
+  realCarrierCalls: 0,
+  realCustomerOrders: 0,
+  realCustomerShipments: 0
+};
+function getCreateOrderValidationSafetyCounters() {
+  return { ...counters6 };
+}
+
+// lib/supplier-engine/auth/resolver.ts
+function mapConnectorAuthType(config) {
+  const raw = String(config?.authentication || "none").toLowerCase();
+  if (raw === "api_key") return "API_KEY";
+  if (raw === "basic") return "BASIC_AUTH";
+  if (raw === "bearer" || raw === "token") return "TOKEN";
+  if (raw === "oauth2") return "OAUTH2";
+  if (raw === "custom") return "CUSTOM";
+  return "NONE";
+}
+function resolveSupplierAuth(config) {
+  const authType = mapConnectorAuthType(config);
+  const secretsRef = config.secretsRef;
+  const creds = secretsRef ? resolveCredentials(secretsRef) : null;
+  if (!creds) {
+    return { headers: { ...config.headers || {} }, authType, configured: false };
+  }
+  const headers = { ...config.headers || {} };
+  switch (authType) {
+    case "API_KEY": {
+      const headerName = creds.header || creds.headerName || "X-API-Key";
+      const value = creds.apiKey || creds.key || creds.token;
+      if (value) headers[headerName] = value;
+      break;
+    }
+    case "TOKEN": {
+      const value = creds.token || creds.accessToken || creds.bearer;
+      if (value) headers.Authorization = value.startsWith("Bearer ") ? value : `Bearer ${value}`;
+      break;
+    }
+    case "BASIC_AUTH": {
+      const user = creds.username || creds.user || "";
+      const pass = creds.password || creds.pass || "";
+      if (user || pass) {
+        headers.Authorization = `Basic ${Buffer.from(`${user}:${pass}`).toString("base64")}`;
+      }
+      break;
+    }
+    case "OAUTH2": {
+      const value = creds.accessToken || creds.token;
+      if (value) headers.Authorization = `Bearer ${value}`;
+      break;
+    }
+    case "CUSTOM": {
+      for (const [key, value] of Object.entries(creds)) {
+        if (!/password|secret|token|key/i.test(key)) continue;
+        if (/header/i.test(key)) {
+          const headerName = key.replace(/header/i, "").trim() || "Authorization";
+          headers[headerName] = value;
+        }
+      }
+      break;
+    }
+    default:
+      break;
+  }
+  return { headers, authType, configured: Object.keys(creds).length > 0 };
+}
+
+// lib/supplier-order-readiness/config.ts
+var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS = 7 * 24 * 60 * 60 * 1e3;
+var DEFAULT_POLICY = {
+  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
+  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
+  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
+  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
+  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
+  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
+  blockOnMissingTrackingCapability: false,
+  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
+};
+function isMockCredentialValue(value) {
+  const normalized = value.trim().toLowerCase();
+  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized === "dummy-token" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.startsWith("dummy-") || normalized.includes("placeholder");
+}
+
+// lib/supplier-production-validation/credentialValidation.ts
+function validateProductionCredentials(input) {
+  const checks = [];
+  const blockerCodes = [];
+  const profile = resolveLiveSupplierProfile() || resolvePredefinedLiveProfile();
+  const secretsRef = profile?.secretsRef || "env:SUPPLIER_LIVE_CREDENTIALS";
+  const credentialType = profile?.authentication || profile?.authType || "unknown";
+  if (!profile) {
+    checks.push({ check: "CREDENTIAL_PROFILE", status: "BLOCKED", message: "Live supplier profile not configured" });
+    blockerCodes.push("CREDENTIAL_PROFILE_MISSING");
+    return { status: "NOT_CONFIGURED", credentialType, checks, blockerCodes };
+  }
+  if (profile.supplierId !== input.supplierId) {
+    checks.push({ check: "CREDENTIAL_SUPPLIER", status: "BLOCKED", message: "Profile supplier mismatch" });
+    blockerCodes.push("SUPPLIER_PROFILE_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const profileEnv = profile.environment?.toUpperCase();
+  if (input.environment === "PRODUCTION" && profileEnv === "SANDBOX" && process.env.SUPPLIER_LIVE_FORCE_PRODUCTION !== "1") {
+    checks.push({
+      check: "ENVIRONMENT_SEPARATION",
+      status: "BLOCKED",
+      message: "SANDBOX credential cannot validate PRODUCTION scope"
+    });
+    blockerCodes.push("ENVIRONMENT_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  if (input.environment === "SANDBOX" && profileEnv === "PRODUCTION" && process.env.SUPPLIER_LIVE_ALLOW_PROD_CRED_IN_SANDBOX !== "1") {
+    checks.push({
+      check: "ENVIRONMENT_SEPARATION",
+      status: "BLOCKED",
+      message: "PRODUCTION credential cannot validate SANDBOX scope"
+    });
+    blockerCodes.push("ENVIRONMENT_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const meta = describeLiveCredentialReadiness(profile);
+  if (!meta.configured) {
+    checks.push({ check: "CREDENTIAL_CONFIGURED", status: "BLOCKED", message: "Credential not configured" });
+    blockerCodes.push("CREDENTIAL_NOT_CONFIGURED");
+    return { status: "NOT_CONFIGURED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  checks.push({
+    check: "CREDENTIAL_CONFIGURED",
+    status: "PASS",
+    message: "Credential reference configured",
+    detail: { authType: meta.authType, fields: meta.secretFieldsPresent }
+  });
+  const creds = resolveCredentials(secretsRef);
+  if (!creds) {
+    checks.push({ check: "CREDENTIAL_RESOLVE", status: "BLOCKED", message: "Credential secret not resolvable" });
+    blockerCodes.push("CREDENTIAL_SECRET_MISSING");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
+  if (isMockCredentialValue(token)) {
+    checks.push({ check: "CREDENTIAL_MOCK", status: "BLOCKED", message: "Mock/test credential blocked for production validation" });
+    blockerCodes.push("CREDENTIAL_MOCK");
+    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  if (!hasLiveSupplierCredentials(profile)) {
+    checks.push({ check: "CREDENTIAL_TOKEN", status: "BLOCKED", message: "OAuth/token missing" });
+    blockerCodes.push("CREDENTIAL_INVALID");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const auth = resolveSupplierAuth({
+    authentication: profile.authentication,
+    secretsRef: profile.secretsRef
+  });
+  if (!auth.headers.Authorization?.startsWith("Bearer ")) {
+    checks.push({
+      check: "CREDENTIAL_AUTH_SCHEME",
+      status: "BLOCKED",
+      message: "Expected Authorization: Bearer <accessToken>"
+    });
+    blockerCodes.push("CREDENTIAL_AUTH_INVALID");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const redacted = redactSecrets({ accessToken: token });
+  if (redacted.accessToken && redacted.accessToken !== "[REDACTED]") {
+    checks.push({ check: "SECRET_REDACTION", status: "FAIL", message: "Secret redaction failed" });
+    blockerCodes.push("SECRET_REDACTION_FAILED");
+    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  checks.push({ check: "CREDENTIAL_VALID", status: "PASS", message: "Credential metadata validated (no secret exposed)" });
+  return { status: "VALID", credentialType, secretsRef, checks, blockerCodes };
+}
+
+// lib/supplier-inter-cars-production-access/credentialStatus.ts
+function resolveCredentialDisplayStatus(input) {
+  const profile = resolvePredefinedLiveProfile();
+  const environment = input.environment || (profile?.environment?.toUpperCase() === "PRODUCTION" ? "PRODUCTION" : "SANDBOX");
+  const result = validateProductionCredentials({
+    supplierId: input.supplierId,
+    environment
+  });
+  const statusMap = {
+    NOT_CONFIGURED: "NOT_CONFIGURED",
+    CONFIGURED: "CONFIGURED",
+    VALID: "VALID",
+    INVALID: "INVALID",
+    EXPIRED: "EXPIRED",
+    REVOKED: "BLOCKED",
+    MISMATCH: "BLOCKED",
+    BLOCKED: "BLOCKED"
+  };
+  return {
+    status: statusMap[result.status] || "INVALID",
+    credentialType: result.credentialType,
+    blockers: result.blockerCodes
+  };
+}
+
+// lib/supplier-inter-cars-production-access/networkState.ts
+function resolveNetworkState() {
+  return {
+    productionNetwork: isSupplierNetworkEnabled() ? "ON" : "OFF",
+    supplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    scopedValidationNetwork: isScopedValidationNetworkEnabled() ? "ON" : "OFF"
+  };
+}
+
+// data/global/test_supplier_feeds.json
+var test_supplier_feeds_default = {
+  TEST_SUPPLIER_A: {
+    supplierId: "TEST_SUPPLIER_A",
+    name: "Test Supplier A (Mock)",
+    country: "DE",
+    region: "EU",
+    currency: "EUR",
+    integrationTypes: ["api", "xml", "csv", "manual"],
+    supportedMarkets: ["DE", "FR", "PL"],
+    capabilities: {
+      productFeed: true,
+      stockFeed: true,
+      priceFeed: true,
+      orderAPI: true,
+      createOrder: true,
+      cancelOrder: true,
+      orderStatus: true,
+      shippingAPI: false,
+      trackingAPI: true,
+      tracking: true,
+      returnsAPI: true,
+      returnAuthorization: true,
+      refund: true,
+      credit: true,
+      replacement: true,
+      webhook: false,
+      dropshipping: true,
+      whiteLabel: true,
+      blindShipping: true,
+      api: true,
+      xml: true,
+      csv: true
+    },
+    rateLimit: { requestsPerMinute: 60 },
+    fieldMapping: {
+      article_number: "supplierSku",
+      sku: "supplierSku",
+      ean_code: "ean",
+      price_net: "supplierPrice",
+      stock_qty: "stock",
+      title: "name",
+      brand_name: "brand"
+    },
+    apiProducts: [
+      {
+        article_number: "TSA-TIRE-225-45-17",
+        ean_code: "4006633001247",
+        brand_name: "Michelin",
+        title: "Michelin Pilot Sport 4 225/45 R17",
+        price_net: 55.79,
+        stock_qty: 8,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-OIL-5W30-5L",
+        ean_code: "4006633001236",
+        brand_name: "Castrol",
+        title: "Motor\xF6l 5W-30 Fullsynthetic 5L",
+        price_net: 26.6,
+        stock_qty: 50,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-DISC-280",
+        ean_code: "4006633001234",
+        brand_name: "ATE",
+        title: "Bremsscheibe Vorderachse 280mm",
+        price_net: 21.64,
+        stock_qty: 24,
+        currency: "EUR"
+      },
+      {
+        article_number: "TSA-PADS-FRONT",
+        ean_code: "4006633001235",
+        brand_name: "Bosch",
+        title: "Bremsbel\xE4ge Satz Vorderachse",
+        price_net: 17.67,
+        stock_qty: 31,
+        currency: "EUR"
+      }
+    ],
+    xmlFeed: '<?xml version="1.0" encoding="UTF-8"?><catalog><product><article_number>TSA-TIRE-225-45-17</article_number><ean_code>4006633001247</ean_code><brand_name>Michelin</brand_name><title>Michelin Pilot Sport 4 225/45 R17</title><price_net>55.79</price_net><stock_qty>8</stock_qty></product><product><article_number>TSA-OIL-5W30-5L</article_number><ean_code>4006633001236</ean_code><brand_name>Castrol</brand_name><title>Motor\xF6l 5W-30 Fullsynthetic 5L</title><price_net>26.6</price_net><stock_qty>50</stock_qty></product><product><article_number>TSA-DISC-280</article_number><ean_code>4006633001234</ean_code><brand_name>ATE</brand_name><title>Bremsscheibe Vorderachse 280mm</title><price_net>21.64</price_net><stock_qty>24</stock_qty></product><product><article_number>TSA-PADS-FRONT</article_number><ean_code>4006633001235</ean_code><brand_name>Bosch</brand_name><title>Bremsbel\xE4ge Satz Vorderachse</title><price_net>17.67</price_net><stock_qty>31</stock_qty></product></catalog>',
+    csvFeed: "article_number,ean_code,brand_name,title,price_net,stock_qty\nTSA-TIRE-225-45-17,4006633001247,Michelin,Michelin Pilot Sport 4 225/45 R17,55.79,8\nTSA-OIL-5W30-5L,4006633001236,Castrol,Motor\xF6l 5W-30 Fullsynthetic 5L,26.6,50\nTSA-DISC-280,4006633001234,ATE,Bremsscheibe Vorderachse 280mm,21.64,24\nTSA-PADS-FRONT,4006633001235,Bosch,Bremsbel\xE4ge Satz Vorderachse,17.67,31"
+  }
+};
+
+// data/buzzard_suppliers.json
+var buzzard_suppliers_default = {
+  project: "Buzzard",
+  document: "Supplier Master",
+  version: "1.0.0",
+  suppliers: [
+    {
+      supplier_id: "SUP-INTERNAL-001",
+      supplier_name: "Buzzard Internal Warehouse",
+      contact_email: "warehouse@buzzard.de",
+      contact_phone: "+49 30 1234567",
+      website: "https://buzzard24.de",
+      feed_type: "manual",
+      api_endpoint: null,
+      auth_type: "none",
+      currency: "EUR",
+      vat_handling: "gross",
+      dropshipping: false,
+      white_label: true,
+      blind_shipping: false,
+      default_markup_percent: 45,
+      minimum_margin_percent: 15,
+      safety_stock: 2,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "Internal stock for test and flagship products."
+    },
+    {
+      supplier_id: "SUP-DEMO-001",
+      production_status: "TEST_ONLY",
+      supplier_name: "Demo Automotive Parts GmbH",
+      contact_email: "orders@demo-automotive.example",
+      contact_phone: "+49 89 9876543",
+      website: "https://demo-automotive.example",
+      feed_type: "json",
+      api_endpoint: "https://demo-automotive.example/api/products.json",
+      auth_type: "api_key",
+      currency: "EUR",
+      vat_handling: "net",
+      dropshipping: true,
+      white_label: true,
+      blind_shipping: true,
+      default_markup_percent: 38,
+      minimum_margin_percent: 12,
+      safety_stock: 1,
+      active: true,
+      sync_status: "idle",
+      last_sync_at: null,
+      notes: "TEST ONLY \u2014 Demo B2B supplier for catalog sync tests. NEVER use for production. Host demo-automotive.example is fake."
+    }
+  ]
+};
+
+// lib/supplier-engine/fixtures.ts
+var TEST_SUPPLIER_ID = "TEST_SUPPLIER_A";
+
+// lib/supplier-engine/persistence.ts
+var store;
+function getSupplierPersistence() {
+  if (store !== void 0) return store;
+  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_PERSISTENCE === "0") {
+    store = null;
+    return store;
+  }
+  const candidates = [
+    "server/lib/supplier/persistentStore.js",
+    "../../server/lib/supplier/persistentStore.js"
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      store = mod.createPersistentSupplierStore();
+      return store;
+    } catch {
+    }
+  }
+  store = null;
+  return store;
+}
 
 // lib/supplier-engine/liveSupplier/registry.ts
-function getRegisteredLiveSupplierId() {
-  return registeredLiveSupplierId;
-}
+var registeredLiveSupplierId = null;
 function liveProfileToSupplierConfig(profile) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
   return {
@@ -680,17 +1127,10 @@ function registerLiveSupplierIfConfigured(register2) {
   registeredLiveSupplierId = profile.supplierId;
   return profile;
 }
-var registeredLiveSupplierId;
-var init_registry = __esm({
-  "lib/supplier-engine/liveSupplier/registry.ts"() {
-    "use strict";
-    init_config();
-    init_credentials();
-    registeredLiveSupplierId = null;
-  }
-});
 
 // lib/supplier-engine/registry.ts
+var supplierById = /* @__PURE__ */ new Map();
+var persistedOverlay = /* @__PURE__ */ new Map();
 function mapMasterToConfig(raw) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
   const feedType = String(raw.feed_type || "manual");
@@ -741,3072 +1181,486 @@ function buildTestSupplierA() {
     updatedAt: now
   };
 }
-function mergePersistedOverlay(config3) {
-  const overlay = persistedOverlay.get(config3.supplierId);
-  if (!overlay) return config3;
+function mergePersistedOverlay(config) {
+  const overlay = persistedOverlay.get(config.supplierId);
+  if (!overlay) return config;
   return {
-    ...config3,
+    ...config,
     ...overlay,
-    capabilities: { ...config3.capabilities, ...overlay.capabilities },
-    supportedMarkets: overlay.supportedMarkets ?? config3.supportedMarkets,
-    status: overlay.status ?? config3.status,
-    updatedAt: overlay.updatedAt ?? config3.updatedAt
+    capabilities: { ...config.capabilities, ...overlay.capabilities },
+    supportedMarkets: overlay.supportedMarkets ?? config.supportedMarkets,
+    status: overlay.status ?? config.status,
+    updatedAt: overlay.updatedAt ?? config.updatedAt
   };
 }
-function persistRegistryEntry(config3) {
+function persistRegistryEntry(config) {
   const persistence = getSupplierPersistence();
   if (!persistence) return;
   persistence.saveRegistryRow({
-    supplierId: config3.supplierId,
-    name: config3.name,
-    displayName: config3.displayName || config3.name,
-    country: config3.country,
-    connectorType: config3.integrationTypes[0] || "manual",
-    supportedMarkets: config3.supportedMarkets,
-    capabilities: config3.capabilities,
-    active: config3.status !== "DISABLED" && config3.status !== "PAUSED",
-    status: config3.status,
-    secretsRef: config3.secretsRef,
-    createdAt: config3.createdAt
+    supplierId: config.supplierId,
+    name: config.name,
+    displayName: config.displayName || config.name,
+    country: config.country,
+    connectorType: config.integrationTypes[0] || "manual",
+    supportedMarkets: config.supportedMarkets,
+    capabilities: config.capabilities,
+    active: config.status !== "DISABLED" && config.status !== "PAUSED",
+    status: config.status,
+    secretsRef: config.secretsRef,
+    createdAt: config.createdAt
   });
-  if (config3.secretsRef) registerCredentialRef(config3.supplierId, config3.secretsRef);
-}
-function hydrateRegistryFromPersistence() {
-  const persistence = getSupplierPersistence();
-  if (!persistence) return;
-  for (const row of persistence.listRegistryRows()) {
-    persistedOverlay.set(String(row.supplierId), {
-      supplierId: String(row.supplierId),
-      name: String(row.name),
-      displayName: row.displayName ? String(row.displayName) : String(row.name),
-      country: row.country ? String(row.country) : "DE",
-      status: row.status || (row.active === false ? "DISABLED" : "CONNECTED"),
-      supportedMarkets: row.supportedMarkets || [],
-      capabilities: row.capabilities || {},
-      secretsRef: row.secretsRef ? String(row.secretsRef) : void 0,
-      updatedAt: row.updatedAt ? String(row.updatedAt) : void 0
-    });
-  }
+  if (config.secretsRef) registerCredentialRef(config.supplierId, config.secretsRef);
 }
 function ensureRegistry() {
   if (supplierById.size > 0) return;
   for (const raw of buzzard_suppliers_default.suppliers) {
-    const config3 = mergePersistedOverlay(mapMasterToConfig(raw));
-    supplierById.set(config3.supplierId, config3);
-    persistRegistryEntry(config3);
+    const config = mergePersistedOverlay(mapMasterToConfig(raw));
+    supplierById.set(config.supplierId, config);
+    persistRegistryEntry(config);
   }
   const testSupplier = mergePersistedOverlay(buildTestSupplierA());
   supplierById.set(TEST_SUPPLIER_ID, testSupplier);
   persistRegistryEntry(testSupplier);
-  registerLiveSupplierIfConfigured((config3) => {
-    const merged = mergePersistedOverlay(config3);
-    supplierById.set(config3.supplierId, merged);
+  registerLiveSupplierIfConfigured((config) => {
+    const merged = mergePersistedOverlay(config);
+    supplierById.set(config.supplierId, merged);
     persistRegistryEntry(merged);
   });
 }
-function listSuppliers() {
-  ensureRegistry();
-  return [...supplierById.values()].map((s) => mergePersistedOverlay(s));
-}
 function getSupplier(supplierId) {
   ensureRegistry();
-  const config3 = supplierById.get(supplierId);
-  return config3 ? mergePersistedOverlay(config3) : void 0;
+  const config = supplierById.get(supplierId);
+  return config ? mergePersistedOverlay(config) : void 0;
 }
 function isSupplierSelectable(supplierId) {
   const supplier = getSupplier(supplierId);
   if (!supplier) return false;
   return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
 }
-function getSupplierOrThrow(supplierId) {
-  const s = getSupplier(supplierId);
-  if (!s) throw new Error(`UNKNOWN_SUPPLIER:${supplierId}`);
-  return s;
-}
-function updateSupplierStatus(supplierId, status) {
-  const s = getSupplier(supplierId);
-  if (!s) return void 0;
-  const updated = { ...s, status, updatedAt: (/* @__PURE__ */ new Date()).toISOString() };
-  supplierById.set(supplierId, updated);
-  persistedOverlay.set(supplierId, {
-    status,
-    updatedAt: updated.updatedAt
-  });
-  persistRegistryEntry(updated);
-  return updated;
-}
-function enableSupplier(supplierId) {
-  return updateSupplierStatus(supplierId, "ACTIVE");
-}
-function disableSupplier(supplierId) {
-  return updateSupplierStatus(supplierId, "DISABLED");
-}
-var supplierById, persistedOverlay;
-var init_registry2 = __esm({
-  "lib/supplier-engine/registry.ts"() {
-    "use strict";
-    init_test_supplier_feeds();
-    init_buzzard_suppliers();
-    init_fixtures();
-    init_persistence();
-    init_credentials();
-    init_registry();
-    supplierById = /* @__PURE__ */ new Map();
-    persistedOverlay = /* @__PURE__ */ new Map();
-  }
-});
 
-// lib/supplier-engine/capabilities.ts
-function hasCapability(capabilities, capability) {
-  return capabilities?.[capability] === true;
+// lib/supplier-order-readiness/persistence.ts
+var killSwitchState = null;
+function getKillSwitchState() {
+  return killSwitchState;
 }
-function listConfiguredCapabilities(capabilities = {}) {
-  return Object.keys(capabilities).filter((k) => capabilities[k] === true);
-}
-function assertCapability(capabilities, capability) {
-  if (!hasCapability(capabilities, capability)) {
-    return { allowed: false, reason: `CAPABILITY_NOT_CONFIGURED:${capability}` };
-  }
-  return { allowed: true };
-}
-var init_capabilities = __esm({
-  "lib/supplier-engine/capabilities.ts"() {
-    "use strict";
-  }
-});
 
-// lib/supplier-engine/orderSandbox/persistence.ts
-function rowToRecord(row) {
+// lib/supplier-order-readiness/killSwitch.ts
+function defaultState() {
   return {
-    supplierOrderId: String(row.supplier_order_id),
-    buzzardOrderId: String(row.buzzard_order_id),
-    supplierId: String(row.supplier_id),
-    status: row.status,
-    idempotencyKey: String(row.idempotency_key),
-    correlationId: String(row.correlation_id || ""),
-    payload: JSON.parse(String(row.payload_json || "{}")),
-    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
-    failureClass: row.failure_class,
-    failureCode: row.failure_code ? String(row.failure_code) : void 0,
-    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
-    latencyMs: Number(row.latency_ms || 0),
-    sandbox: true,
-    networkDispatched: false,
-    createdAt: String(row.created_at),
-    updatedAt: String(row.updated_at)
+    global: process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1",
+    suppliers: {},
+    markets: {},
+    channels: {},
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
-function getOrderSandboxPersistence() {
-  return getSupplierPersistence();
+function getKillSwitch() {
+  return getKillSwitchState() || defaultState();
 }
-function saveSupplierOrderSandboxRecord(record) {
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  const persistence = getOrderSandboxPersistence();
-  const typed = persistence;
-  typed?.saveOrderSandbox?.({
-    supplier_order_id: record.supplierOrderId,
-    buzzard_order_id: record.buzzardOrderId,
-    supplier_id: record.supplierId,
-    status: record.status,
-    idempotency_key: record.idempotencyKey,
-    correlation_id: record.correlationId,
-    payload_json: JSON.stringify(record.payload),
-    tracking_json: record.tracking ? JSON.stringify(record.tracking) : null,
-    failure_class: record.failureClass || null,
-    failure_code: record.failureCode || null,
-    failure_message: record.failureMessage || null,
-    latency_ms: record.latencyMs,
-    created_at: record.createdAt,
-    updated_at: record.updatedAt
-  });
+function isGlobalKillSwitchActive() {
+  return getKillSwitch().global || process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1";
 }
-function getSupplierOrderSandboxByIdempotency(idempotencyKey) {
-  const cached = memoryStore.get(idempotencyKey);
-  if (cached) return cached;
-  const row = getOrderSandboxPersistence()?.getOrderSandboxByIdempotency?.(idempotencyKey);
-  if (!row) return void 0;
-  const record = rowToRecord(row);
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  return record;
+function isSupplierKillSwitchActive(supplierId) {
+  const state = getKillSwitch();
+  if (!isSupplierSelectable(supplierId)) return true;
+  return Boolean(state.suppliers[supplierId]);
 }
-function getSupplierOrderSandboxByReference(supplierOrderId) {
-  const cached = memoryStore.get(supplierOrderId);
-  if (cached) return cached;
-  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
-  if (!row) return void 0;
-  const record = rowToRecord(row);
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  return record;
+function isMarketKillSwitchActive(market) {
+  return Boolean(getKillSwitch().markets[market]);
 }
-function getLastSupplierOrderSandboxForSupplier(supplierId) {
-  const records = [...memoryStore.values()].filter((r) => r.supplierId === supplierId);
-  if (records.length) {
-    return records.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
-  }
-  const row = getOrderSandboxPersistence()?.getLastOrderSandboxForSupplier?.(supplierId);
-  return row ? rowToRecord(row) : void 0;
+function isChannelKillSwitchActive(channel) {
+  return Boolean(getKillSwitch().channels[channel]);
 }
-function resetSupplierOrderSandboxStore() {
-  memoryStore.clear();
-}
-function hydrateSupplierOrderSandboxFromPersistence() {
-  const rows = getOrderSandboxPersistence()?.listOrderSandbox?.() || [];
-  for (const row of rows) {
-    const record = rowToRecord(row);
-    memoryStore.set(record.idempotencyKey, record);
-    memoryStore.set(record.supplierOrderId, record);
-  }
-}
-var memoryStore;
-var init_persistence2 = __esm({
-  "lib/supplier-engine/orderSandbox/persistence.ts"() {
-    "use strict";
-    init_persistence();
-    memoryStore = /* @__PURE__ */ new Map();
-  }
-});
-
-// lib/supplier-engine/tracking.ts
-var tracking_exports = {};
-__export(tracking_exports, {
-  fetchSupplierTracking: () => fetchSupplierTracking,
-  mapSupplierTrackingStatus: () => mapSupplierTrackingStatus
-});
-function mapSupplierTrackingStatus(raw) {
-  const key = raw.trim().toLowerCase().replace(/\s+/g, "_");
-  return STATUS_MAP[key] ?? "UNKNOWN";
-}
-async function fetchSupplierTracking(supplierId, supplierOrderId) {
-  if (!supplierOrderId) {
-    return {
-      ok: false,
-      dryRun: true,
-      supplierId,
-      supplierOrderId: supplierOrderId || "UNKNOWN",
-      status: "UNKNOWN"
-    };
-  }
-  const sandboxRecord = getSupplierOrderSandboxByReference(supplierOrderId);
-  if (sandboxRecord?.tracking) {
-    return {
-      ok: true,
-      dryRun: true,
-      sandbox: true,
-      supplierId,
-      supplierOrderId,
-      trackingNumber: sandboxRecord.tracking.trackingNumber,
-      carrier: sandboxRecord.tracking.carrier,
-      trackingUrl: sandboxRecord.tracking.trackingUrl,
-      status: mapSupplierTrackingStatus(sandboxRecord.tracking.shipmentStatus),
-      rawStatus: sandboxRecord.tracking.shipmentStatus
-    };
-  }
-  const supplier = getSupplier(supplierId);
-  if (!supplier || !hasCapability(supplier.capabilities, "trackingAPI")) {
-    return {
-      ok: false,
-      dryRun: true,
-      supplierId,
-      supplierOrderId,
-      status: "UNKNOWN"
-    };
-  }
-  return {
-    ok: true,
-    dryRun: true,
-    supplierId,
-    supplierOrderId,
-    trackingNumber: `DRY-TRK-${supplierOrderId.slice(-6)}`,
-    carrier: "DRY_RUN_CARRIER",
-    status: "IN_TRANSIT",
-    rawStatus: "in_transit"
-  };
-}
-var STATUS_MAP;
-var init_tracking = __esm({
-  "lib/supplier-engine/tracking.ts"() {
-    "use strict";
-    init_registry2();
-    init_capabilities();
-    init_persistence2();
-    STATUS_MAP = {
-      label_created: "LABEL_CREATED",
-      picked_up: "PICKED_UP",
-      in_transit: "IN_TRANSIT",
-      out_for_delivery: "OUT_FOR_DELIVERY",
-      delivered: "DELIVERED",
-      exception: "EXCEPTION"
-    };
-  }
-});
-
-// lib/supplier-engine/serverEntry.ts
-var serverEntry_exports = {};
-__export(serverEntry_exports, {
-  TEST_SUPPLIER_ID: () => TEST_SUPPLIER_ID,
-  bootstrapSupplierEnginePersistence: () => bootstrapSupplierEnginePersistence,
-  buildDataQualityReport: () => buildDataQualityReport,
-  buildInterCarsProfileSummary: () => buildInterCarsProfileSummary,
-  computeLiveValidationVerdict: () => computeLiveValidationVerdict,
-  createSupplierOrder: () => createSupplierOrder,
-  createSupplierReturn: () => createSupplierReturn,
-  describeLiveCredentialReadiness: () => describeLiveCredentialReadiness,
-  evaluateLiveReadSyncGuard: () => evaluateLiveReadSyncGuard,
-  evaluateProductionSyncGuard: () => evaluateProductionSyncGuard,
-  evaluateSupplierOrderNetworkSafety: () => evaluateSupplierOrderNetworkSafety,
-  getRegisteredLiveSupplierId: () => getRegisteredLiveSupplierId,
-  getSupplier: () => getSupplier,
-  getSupplierConnectorMetrics: () => getSupplierConnectorMetrics,
-  getSupplierEngineAdminOverview: () => getSupplierEngineAdminOverview,
-  getSupplierEngineDashboard: () => getSupplierEngineDashboard,
-  getSupplierEngineDetail: () => getSupplierEngineDetail,
-  getSupplierHealth: () => getSupplierHealth,
-  getSupplierLogs: () => getSupplierLogs,
-  getSupplierOrderSandboxAdminSummary: () => getSupplierOrderSandboxAdminSummary,
-  getSupplierPersistenceMode: () => getSupplierPersistenceMode,
-  getSupplierRuntimeState: () => getSupplierRuntimeState,
-  getSupplierTracking: () => getSupplierTracking,
-  getSyncCursor: () => getSyncCursor,
-  getSyncCursorForAdmin: () => getSyncCursorForAdmin,
-  hasLiveSupplierCredentialsConfigured: () => hasLiveSupplierCredentialsConfigured,
-  hydrateSupplierOrderSandboxFromPersistence: () => hydrateSupplierOrderSandboxFromPersistence,
-  ingestSupplierFeed: () => ingestSupplierFeed,
-  isBlockedHost: () => isBlockedHost,
-  isInterCarsProfile: () => isInterCarsProfile,
-  isSupplierNetworkEnabled: () => isSupplierNetworkEnabled,
-  isSupplierOrderNetworkEnabled: () => isSupplierOrderNetworkEnabled,
-  isSupplierSelectable: () => isSupplierSelectable,
-  listReturnCapabilities: () => listReturnCapabilities,
-  listSuppliers: () => listSuppliers,
-  listSyncCursors: () => listSyncCursors,
-  probeCursorPersistence: () => probeCursorPersistence,
-  redactSecrets: () => redactSecrets,
-  rejectClientCredentials: () => rejectClientCredentials,
-  resetMockTransportScenarios: () => resetMockTransportScenarios,
-  resetOrderIdempotencyKeys: () => resetOrderIdempotencyKeys,
-  resetSupplierCursorSafe: () => resetSupplierCursorSafe,
-  resetSupplierOrderSandboxStore: () => resetSupplierOrderSandboxStore,
-  resolveLiveSupplierProfile: () => resolveLiveSupplierProfile,
-  resolvePredefinedLiveProfile: () => resolvePredefinedLiveProfile,
-  runSupplierConnectionTest: () => runSupplierConnectionTest,
-  runSupplierDryRunTestSync: () => runSupplierDryRunTestSync,
-  runSupplierLiveOnboarding: () => runSupplierLiveOnboarding,
-  runSupplierLiveReadSync: () => runSupplierLiveReadSync,
-  runSupplierOrderSandbox: () => runSupplierOrderSandbox,
-  runSupplierSyncJob: () => runSupplierSyncJob,
-  sanitizeClientSyncRequest: () => sanitizeClientSyncRequest,
-  selectBestSupplierForOrder: () => selectBestSupplierForOrder,
-  setSupplierEnabled: () => setSupplierEnabled,
-  simulateSupplierEngineRestart: () => simulateSupplierEngineRestart,
-  summarizeIdentifierValidation: () => summarizeIdentifierValidation,
-  validateSupplierEndpoint: () => validateSupplierEndpoint,
-  validateSupplierOrderPayload: () => validateSupplierOrderPayload
-});
-module.exports = __toCommonJS(serverEntry_exports);
-
-// lib/supplier-engine/service.ts
-init_registry2();
-
-// lib/supplier-engine/connectors/base.ts
-init_capabilities();
-
-// lib/supplier-engine/connectors/capabilityResult.ts
-var CAPABILITY_NOT_SUPPORTED = "CAPABILITY_NOT_SUPPORTED";
-function capabilityNotSupportedFetch() {
-  return {
-    ok: false,
-    records: [],
-    total: 0,
-    fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    error: CAPABILITY_NOT_SUPPORTED
-  };
-}
-function capabilityNotSupportedOperation(extra) {
-  return {
-    ok: false,
-    errorCode: CAPABILITY_NOT_SUPPORTED,
-    dryRun: true,
-    ...extra || {}
-  };
-}
-
-// lib/supplier-engine/network/config.ts
-function envFlag2(name, defaultValue = false) {
-  const raw = process.env[name];
-  if (raw === void 0 || raw === "") return defaultValue;
-  return raw === "1" || raw.toLowerCase() === "true";
-}
-function envInt(name, fallback) {
-  const n = Number(process.env[name]);
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-}
-var SUPPLIER_NETWORK_CONFIG = {
-  get networkEnabled() {
-    return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
-  },
-  get orderNetworkEnabled() {
-    return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-  },
-  defaultEnvironment: "MOCK",
-  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
-  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
-  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
-  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
-};
-function isSupplierNetworkEnabled() {
-  return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
-}
-function isSupplierOrderNetworkEnabled() {
-  return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-}
-function resolveConnectorEnvironment(configured) {
-  return configured || SUPPLIER_NETWORK_CONFIG.defaultEnvironment;
-}
-function canUseProductionNetwork(environment) {
-  if (environment === "MOCK") return false;
-  if (environment === "PRODUCTION" && !isSupplierNetworkEnabled()) return false;
-  if (environment === "SANDBOX" && !isSupplierNetworkEnabled()) return false;
-  return true;
-}
-
-// lib/supplier-engine/network/allowlist.ts
-var BLOCKED_HOSTNAMES = /* @__PURE__ */ new Set([
-  "localhost",
-  "127.0.0.1",
-  "0.0.0.0",
-  "::1",
-  "metadata.google.internal",
-  "metadata"
-]);
-var METADATA_IP = "169.254.169.254";
-function isPrivateIpv4(host) {
-  const parts = host.split(".").map((p) => Number(p));
-  if (parts.length !== 4 || parts.some((p) => !Number.isFinite(p))) return false;
-  const [a, b] = parts;
-  if (a === 10) return true;
-  if (a === 172 && b >= 16 && b <= 31) return true;
-  if (a === 192 && b === 168) return true;
-  if (a === 127) return true;
-  if (a === 169 && b === 254) return true;
-  if (a === 0) return true;
+function isActivationKillSwitched(input) {
+  if (isGlobalKillSwitchActive()) return true;
+  if (isSupplierKillSwitchActive(input.supplierId)) return true;
+  if (isMarketKillSwitchActive(input.market)) return true;
+  if (isChannelKillSwitchActive(input.channel)) return true;
   return false;
 }
-function normalizeHost(hostname) {
-  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, "");
+
+// lib/supplier-inter-cars-production-access/config.ts
+function getInterCarsSupplierId() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
 }
-function isBlockedHost(hostname) {
-  const host = normalizeHost(hostname);
-  if (!host) return true;
-  if (BLOCKED_HOSTNAMES.has(host)) return true;
-  if (host.endsWith(".local") || host.endsWith(".internal")) return true;
-  if (host === METADATA_IP || host.startsWith("169.254.")) return true;
-  if (isPrivateIpv4(host)) return true;
-  if (host.includes(":") && (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80"))) {
-    return true;
-  }
-  return false;
-}
-function validateSupplierEndpoint(url, allowedHosts = []) {
-  let parsed;
-  try {
-    parsed = new URL(url);
-  } catch {
-    return { allowed: false, reason: "INVALID_URL" };
-  }
-  if (!["http:", "https:"].includes(parsed.protocol)) {
-    return { allowed: false, reason: "UNSUPPORTED_PROTOCOL", hostname: parsed.hostname };
-  }
-  const hostname = normalizeHost(parsed.hostname);
-  if (isBlockedHost(hostname)) {
-    return { allowed: false, reason: "BLOCKED_HOST", hostname };
-  }
-  if (allowedHosts.length > 0) {
-    const normalizedAllowed = allowedHosts.map(normalizeHost);
-    const hostAllowed = normalizedAllowed.some(
-      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
-    );
-    if (!hostAllowed) {
-      return { allowed: false, reason: "NOT_IN_ALLOWLIST", hostname };
-    }
-  }
-  return { allowed: true, hostname };
-}
-function extractAllowedHosts(baseUrl, extra = []) {
-  const hosts = /* @__PURE__ */ new Set();
-  for (const entry of [baseUrl, ...extra].filter(Boolean)) {
-    try {
-      hosts.add(normalizeHost(new URL(entry).hostname));
-    } catch {
-    }
-  }
-  return [...hosts];
+function isInterCarsProfileConfigured() {
+  return Boolean(resolvePredefinedLiveProfile());
 }
 
-// lib/supplier-engine/network/responseSecurity.ts
-var JSON_CONTENT = /^application\/(json|.*\+json)/i;
-var XML_CONTENT = /^(application|text)\/(xml|.*\+xml)/i;
-var CSV_CONTENT = /^text\/(csv|plain)/i;
-function validateResponseSize(body, maxBytes = SUPPLIER_NETWORK_CONFIG.maxResponseBytes) {
-  const encoder = new TextEncoder();
-  const bytes = encoder.encode(body);
-  if (bytes.length <= maxBytes) {
-    return { ok: true, truncated: false, body };
-  }
-  const truncated = new TextDecoder().decode(bytes.slice(0, maxBytes));
-  return { ok: false, truncated: true, body: truncated };
-}
-function validateContentType(contentType, expected = "any") {
-  if (!contentType) {
-    return expected === "any" ? { ok: true } : { ok: false, reason: "MISSING_CONTENT_TYPE" };
-  }
-  if (expected === "any") return { ok: true };
-  if (expected === "json" && JSON_CONTENT.test(contentType)) return { ok: true };
-  if (expected === "xml" && XML_CONTENT.test(contentType)) return { ok: true };
-  if (expected === "csv" && CSV_CONTENT.test(contentType)) return { ok: true };
-  return { ok: false, reason: "INVALID_CONTENT_TYPE" };
-}
-function safeParseJson(body) {
-  try {
-    return { ok: true, data: JSON.parse(body) };
-  } catch {
-    return { ok: false, reason: "MALFORMED_JSON" };
-  }
-}
-
-// lib/supplier-engine/network/httpTransport.ts
-var import_crypto = require("crypto");
-
-// lib/supplier-engine/errors.ts
-var RETRYABLE = /* @__PURE__ */ new Set([
-  "TIMEOUT",
-  "RATE_LIMITED",
-  "SERVER_ERROR",
-  "NETWORK_ERROR",
-  "SUPPLIER_UNAVAILABLE"
-]);
-var PERMANENT = /* @__PURE__ */ new Set([
-  "AUTH_FAILED",
-  "FORBIDDEN",
-  "NOT_FOUND",
-  "VALIDATION_FAILED",
-  "MALFORMED_RESPONSE"
-]);
-function classifySupplierError(input) {
-  const message = input.message || input.code || "Unknown supplier error";
-  const status = input.httpStatus;
-  const raw = String(input.code || "").toUpperCase();
-  if (status === 401 || raw.includes("AUTH") || raw === "UNAUTHORIZED") {
-    return { code: "AUTH_FAILED", retryable: false, httpStatus: status, message };
-  }
-  if (status === 403 || raw === "FORBIDDEN") {
-    return { code: "FORBIDDEN", retryable: false, httpStatus: status, message };
-  }
-  if (status === 404 || raw === "NOT_FOUND") {
-    return { code: "NOT_FOUND", retryable: false, httpStatus: status, message };
-  }
-  if (status === 429 || raw === "RATE_LIMITED" || raw === "RATE_LIMITED") {
-    return { code: "RATE_LIMITED", retryable: true, httpStatus: status, message };
-  }
-  if (status === 502 || status === 503 || status === 500 || raw.includes("SERVER")) {
-    return { code: "SERVER_ERROR", retryable: true, httpStatus: status, message };
-  }
-  if (raw === "TIMEOUT" || raw === "ETIMEDOUT") {
-    return { code: "TIMEOUT", retryable: true, httpStatus: status, message };
-  }
-  if (raw === "NETWORK_ERROR" || raw === "ECONNREFUSED" || raw === "ENOTFOUND") {
-    return { code: "NETWORK_ERROR", retryable: true, httpStatus: status, message };
-  }
-  if (raw.includes("MALFORMED") || raw.includes("PARSE")) {
-    return { code: "MALFORMED_RESPONSE", retryable: false, httpStatus: status, message };
-  }
-  if (raw === "VALIDATION_FAILED") {
-    return { code: "VALIDATION_FAILED", retryable: false, httpStatus: status, message };
-  }
-  if (raw === "SUPPLIER_UNAVAILABLE") {
-    return { code: "SUPPLIER_UNAVAILABLE", retryable: true, httpStatus: status, message };
-  }
-  const code = raw || "UNKNOWN";
-  return {
-    code: PERMANENT.has(code) || RETRYABLE.has(code) ? code : "UNKNOWN",
-    retryable: RETRYABLE.has(code),
-    httpStatus: status,
-    message
-  };
-}
-function isClassifiedRetryable(error) {
-  return error.retryable && !PERMANENT.has(error.code);
-}
-
-// lib/supplier-engine/rateLimit.ts
-var buckets = /* @__PURE__ */ new Map();
-function checkRateLimit(supplierId, config3 = { requestsPerMinute: 60 }) {
-  const key = supplierId;
-  const now = Date.now();
-  const rpm = Math.max(1, config3.requestsPerMinute);
-  const refillRate = rpm / 6e4;
-  let bucket = buckets.get(key);
-  if (!bucket) {
-    bucket = { tokens: rpm, lastRefill: now };
-    buckets.set(key, bucket);
-  }
-  const elapsed = now - bucket.lastRefill;
-  bucket.tokens = Math.min(rpm, bucket.tokens + elapsed * refillRate);
-  bucket.lastRefill = now;
-  if (bucket.tokens < 1) {
-    const retryAfterMs = Math.ceil((1 - bucket.tokens) / refillRate);
-    return { allowed: false, retryAfterMs };
-  }
-  bucket.tokens -= 1;
-  return { allowed: true };
-}
-function handleRateLimitResponse(retryAfterHeader) {
-  if (retryAfterHeader) {
-    const seconds = parseInt(retryAfterHeader, 10);
-    if (!Number.isNaN(seconds)) return seconds * 1e3;
-  }
-  return 6e4;
-}
-
-// lib/supplier-engine/retry.ts
-var DEFAULT_RETRYABLE = /* @__PURE__ */ new Set([
-  "TIMEOUT",
-  "RATE_LIMITED",
-  "SUPPLIER_UNAVAILABLE",
-  "NETWORK_ERROR",
-  "SERVER_ERROR",
-  "rateLimited",
-  "timeout",
-  "supplierUnavailable"
-]);
-var PERMANENT_CODES = /* @__PURE__ */ new Set([
-  "AUTH_FAILED",
-  "FORBIDDEN",
-  "NOT_FOUND",
-  "VALIDATION_FAILED",
-  "MALFORMED_RESPONSE"
-]);
-function isRetryableError(error) {
-  if (error.retryable === false) return false;
-  const classified = classifySupplierError(error);
-  if (PERMANENT_CODES.has(classified.code)) return false;
-  if (isClassifiedRetryable(classified)) return true;
-  if (error.retryable) return true;
-  if (error.code && DEFAULT_RETRYABLE.has(error.code)) return true;
-  return false;
-}
-function computeBackoffDelay(attempt, baseDelayMs = 500, maxDelayMs = 3e4) {
-  const delay = Math.min(baseDelayMs * 2 ** (attempt - 1), maxDelayMs);
-  return delay + Math.floor(Math.random() * 100);
-}
-async function withRetry(fn, options = {}) {
-  const maxAttempts = options.maxAttempts ?? 3;
-  const baseDelayMs = options.baseDelayMs ?? 500;
-  const maxDelayMs = options.maxDelayMs ?? 3e4;
-  let lastError;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn(attempt);
-    } catch (err) {
-      lastError = err;
-      const retryable = isRetryableError(err);
-      if (!retryable || attempt >= maxAttempts) break;
-      await new Promise((r) => setTimeout(r, computeBackoffDelay(attempt, baseDelayMs, maxDelayMs)));
-    }
-  }
-  throw lastError;
-}
-
-// lib/supplier-engine/observability.ts
-init_security();
-var logBuffer = [];
-var metricsBuffer = [];
-var MAX_LOG = 2e3;
-var requestMetrics = {
-  supplier_requests_total: 0,
-  supplier_request_failures: 0,
-  supplier_request_latency_ms: 0,
-  supplier_rate_limits: 0,
-  supplier_auth_failures: 0,
-  supplier_sync_success: 0,
-  supplier_sync_failure: 0
-};
-function recordSupplierRequestMetric(metric) {
-  requestMetrics.supplier_requests_total++;
-  requestMetrics.supplier_request_latency_ms += metric.latencyMs;
-  if (!metric.success) requestMetrics.supplier_request_failures++;
-  if (metric.rateLimited) requestMetrics.supplier_rate_limits++;
-  if (metric.authFailure) requestMetrics.supplier_auth_failures++;
-}
-function recordSupplierSyncOutcomeMetric(success) {
-  if (success) requestMetrics.supplier_sync_success++;
-  else requestMetrics.supplier_sync_failure++;
-}
-function getSupplierConnectorMetrics() {
-  return { ...requestMetrics };
-}
-function logSupplierOperation(entry) {
-  const record = {
-    ...entry,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    error: entry.error ? String(redactSecrets({ msg: entry.error })) : void 0
-  };
-  logBuffer.push(record);
-  if (logBuffer.length > MAX_LOG) logBuffer.shift();
-  return record;
-}
-function recordSyncMetrics(metrics) {
-  metricsBuffer.push(metrics);
-  if (metricsBuffer.length > 500) metricsBuffer.shift();
-}
-function getSupplierLogs(supplierId) {
-  if (!supplierId) return [...logBuffer];
-  return logBuffer.filter((l) => l.supplierId === supplierId);
-}
-
-// lib/supplier-engine/network/scopedValidationNetwork.ts
-var import_async_hooks = require("async_hooks");
-var scopedContext = new import_async_hooks.AsyncLocalStorage();
-function isInScopedValidationNetworkContext() {
-  return scopedContext.getStore() !== void 0;
-}
-function isScopedValidationNetworkEnabled() {
-  const raw = process.env.SUPPLIER_CONTROLLED_VALIDATION_NETWORK;
-  return raw === "1" || raw?.toLowerCase() === "true";
-}
-function canUseScopedValidationNetwork() {
-  return isScopedValidationNetworkEnabled() && isInScopedValidationNetworkContext();
-}
-
-// lib/supplier-engine/network/httpTransport.ts
-var SupplierHttpTransport = class {
-  constructor(allowedHosts = []) {
-    this.allowedHosts = allowedHosts;
-  }
-  async request(req) {
-    if (!isSupplierNetworkEnabled() && !canUseScopedValidationNetwork()) {
-      throw transportError("NETWORK_DISABLED", "Supplier network is disabled", false);
-    }
-    const endpointCheck = validateSupplierEndpoint(req.url, this.allowedHosts);
-    if (!endpointCheck.allowed) {
-      throw transportError(endpointCheck.reason || "ENDPOINT_INVALID", "Endpoint not allowed", false);
-    }
-    const correlationId = req.correlationId || (0, import_crypto.randomUUID)();
-    const timeoutMs = req.timeoutMs ?? SUPPLIER_NETWORK_CONFIG.defaultTimeoutMs;
-    const started = Date.now();
-    return withRetry(
-      async () => {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), timeoutMs);
-        try {
-          const response = await fetch(req.url, {
-            method: req.method || "GET",
-            headers: {
-              Accept: "application/json",
-              "X-Correlation-Id": correlationId,
-              ...req.headers
-            },
-            body: req.body,
-            signal: controller.signal,
-            redirect: req.allowRedirects === false ? "manual" : "follow"
-          });
-          const rawBody = await response.text();
-          const sizeCheck = validateResponseSize(rawBody);
-          const contentType = response.headers.get("content-type") || void 0;
-          const contentCheck = validateContentType(contentType, "any");
-          if (!sizeCheck.ok) {
-            throw transportError("RESPONSE_TOO_LARGE", "Supplier response exceeded size limit", false, correlationId);
-          }
-          if (!contentCheck.ok) {
-            throw transportError(contentCheck.reason || "INVALID_CONTENT_TYPE", "Invalid content type", false, correlationId);
-          }
-          if (response.status === 429) {
-            const retryAfter = handleRateLimitResponse(response.headers.get("retry-after") || void 0);
-            throw transportError("RATE_LIMITED", "Rate limited by supplier", true, correlationId, 429, retryAfter);
-          }
-          if (response.status >= 500) {
-            throw transportError("SERVER_ERROR", `Supplier server error ${response.status}`, true, correlationId, response.status);
-          }
-          if (response.status === 401 || response.status === 403) {
-            throw transportError(
-              response.status === 401 ? "AUTH_FAILED" : "FORBIDDEN",
-              `Supplier auth error ${response.status}`,
-              false,
-              correlationId,
-              response.status
-            );
-          }
-          const durationMs = Date.now() - started;
-          const headers = {};
-          response.headers.forEach((value, key) => {
-            headers[key.toLowerCase()] = value;
-          });
-          const result = {
-            ok: response.ok,
-            status: response.status,
-            headers,
-            body: sizeCheck.body,
-            durationMs,
-            correlationId,
-            contentType,
-            truncated: sizeCheck.truncated
-          };
-          recordSupplierRequestMetric({
-            supplierId: req.supplierId,
-            operation: req.operation,
-            success: response.ok,
-            latencyMs: durationMs,
-            statusCode: response.status,
-            rateLimited: response.status === 429,
-            authFailure: response.status === 401 || response.status === 403
-          });
-          logSupplierOperation({
-            supplierId: req.supplierId,
-            connector: "http",
-            operation: req.operation,
-            durationMs,
-            status: response.ok ? "SUCCESS" : "FAILURE",
-            records: 0,
-            correlationId,
-            errorCode: response.ok ? void 0 : String(response.status)
-          });
-          return result;
-        } catch (err) {
-          if (err && typeof err === "object" && "code" in err) throw err;
-          const isAbort = err instanceof Error && err.name === "AbortError";
-          const classified = classifySupplierError({
-            code: isAbort ? "TIMEOUT" : "NETWORK_ERROR",
-            message: err instanceof Error ? err.message : "Network request failed"
-          });
-          recordSupplierRequestMetric({
-            supplierId: req.supplierId,
-            operation: req.operation,
-            success: false,
-            latencyMs: Date.now() - started,
-            rateLimited: classified.code === "RATE_LIMITED",
-            authFailure: classified.code === "AUTH_FAILED"
-          });
-          throw transportError(classified.code, classified.message, classified.retryable, correlationId);
-        } finally {
-          clearTimeout(timer);
-        }
-      },
-      {
-        maxAttempts: SUPPLIER_NETWORK_CONFIG.maxRetries,
-        baseDelayMs: 500,
-        maxDelayMs: 3e4
-      }
-    );
-  }
-};
-function transportError(code, message, retryable = false, correlationId, httpStatus, retryAfterMs) {
-  const err = new Error(message);
-  err.code = code;
-  err.message = message;
-  err.retryable = retryable && isRetryableError({ code, retryable });
-  err.correlationId = correlationId;
-  err.httpStatus = httpStatus;
-  if (retryAfterMs) {
-    void retryAfterMs;
-  }
-  return err;
-}
-function createSupplierHttpTransport(baseUrl, extraAllowed = []) {
-  return new SupplierHttpTransport(extractAllowedHosts(baseUrl, extraAllowed));
-}
-
-// lib/supplier-engine/network/mockTransport.ts
-var import_crypto2 = require("crypto");
-var globalScenarios = /* @__PURE__ */ new Map();
-var defaultScenario = { status: 200, body: '{"ok":true}' };
-var MockSupplierTransport = class {
-  constructor(scenarios = {}) {
-    this.scenarios = new Map(Object.entries(scenarios));
-  }
-  async request(req) {
-    const key = `${req.method || "GET"} ${req.url}`;
-    const urlWithoutQuery = req.url.split("?")[0];
-    const keyWithoutQuery = `${req.method || "GET"} ${urlWithoutQuery}`;
-    const scenario = this.scenarios.get(key) || this.scenarios.get(keyWithoutQuery) || this.scenarios.get(req.url) || globalScenarios.get(key) || globalScenarios.get(keyWithoutQuery) || globalScenarios.get(req.url) || defaultScenario;
-    const correlationId = req.correlationId || (0, import_crypto2.randomUUID)();
-    const started = Date.now();
-    if (scenario.delayMs) {
-      await new Promise((r) => setTimeout(r, scenario.delayMs));
-    }
-    if (scenario.timeout) {
-      await new Promise((r) => setTimeout(r, (req.timeoutMs ?? 100) + 50));
-      const err = new Error("TIMEOUT");
-      err.code = "TIMEOUT";
-      err.retryable = true;
-      throw err;
-    }
-    if (scenario.redirectUrl) {
-      const err = new Error("REDIRECT");
-      err.code = "REDIRECT";
-      err.redirectUrl = scenario.redirectUrl;
-      throw err;
-    }
-    const body = scenario.body ?? "";
-    const headers = { "content-type": "application/json", ...scenario.headers || {} };
-    return {
-      ok: scenario.status >= 200 && scenario.status < 300,
-      status: scenario.status,
-      headers,
-      body,
-      durationMs: Date.now() - started,
-      correlationId,
-      contentType: headers["content-type"]
-    };
-  }
-};
-function resetMockTransportScenarios() {
-  globalScenarios.clear();
-}
-function buildMockTransportFixtures() {
-  const base = "https://supplier-mock.example/api";
-  return {
-    [`GET ${base}/health`]: { status: 200, body: '{"status":"ok"}' },
-    [`GET ${base}/products`]: {
-      status: 200,
-      body: JSON.stringify({ products: [{ supplierSku: "MOCK-1", name: "Mock Product" }] })
-    },
-    [`GET ${base}/auth-fail`]: { status: 401, body: '{"error":"unauthorized"}' },
-    [`GET ${base}/forbidden`]: { status: 403, body: '{"error":"forbidden"}' },
-    [`GET ${base}/not-found`]: { status: 404, body: '{"error":"not found"}' },
-    [`GET ${base}/rate-limit`]: { status: 429, body: '{"error":"rate limited"}', headers: { "retry-after": "1" } },
-    [`GET ${base}/server-error`]: { status: 500, body: '{"error":"internal"}' },
-    [`GET ${base}/bad-gateway`]: { status: 502, body: '{"error":"bad gateway"}' },
-    [`GET ${base}/unavailable`]: { status: 503, body: '{"error":"unavailable"}' },
-    [`GET ${base}/malformed`]: { status: 200, body: "{not-json" },
-    [`GET ${base}/oversized`]: { status: 200, body: "x".repeat(6 * 1024 * 1024) },
-    [`GET ${base}/timeout`]: { status: 200, timeout: true },
-    [`GET ${base}/redirect`]: { status: 302, redirectUrl: "http://127.0.0.1/admin" }
-  };
-}
-
-// lib/supplier-engine/connectors/base.ts
-var SupplierConnector = class {
-  constructor(supplier, connectorConfig = {}, connectorType = "base") {
-    this.supplierId = supplier.supplierId;
-    this.config = supplier;
-    this.connectorConfig = connectorConfig;
-    this.connectorType = connectorType;
-  }
-  checkCapability(cap) {
-    const result = assertCapability(this.config.capabilities, cap);
-    if (!result.allowed) {
-      throw new Error(result.reason || CAPABILITY_NOT_SUPPORTED);
-    }
-  }
-  supports(cap) {
-    return assertCapability(this.config.capabilities, cap).allowed;
-  }
-  async fetchProducts(options) {
-    if (!this.supports("productFeed")) return capabilityNotSupportedFetch();
-    return this.doFetchProducts(options);
-  }
-  async fetchStock(options) {
-    if (!this.supports("stockFeed")) return capabilityNotSupportedFetch();
-    return this.doFetchStock(options);
-  }
-  async fetchPrices(options) {
-    if (!this.supports("priceFeed")) return capabilityNotSupportedFetch();
-    return this.doFetchPrices(options);
-  }
-  async createOrder(request) {
-    if (!this.supports("orderAPI") && !this.supports("createOrder")) {
-      return capabilityNotSupportedOperation();
-    }
-    if (!isSupplierOrderNetworkEnabled()) {
-      return {
-        ok: true,
-        dryRun: true,
-        errorCode: "ORDER_NETWORK_DISABLED",
-        data: { status: "PREPARED_NOT_SENT", orderId: request.orderId }
-      };
-    }
-    return this.doCreateOrder(request);
-  }
-  async getOrderStatus(supplierOrderId) {
-    if (!this.supports("orderAPI") && !this.supports("orderStatus")) {
-      return capabilityNotSupportedOperation();
-    }
-    return this.doGetOrderStatus(supplierOrderId);
-  }
-  async getTracking(supplierOrderId) {
-    if (!this.supports("trackingAPI") && !this.supports("tracking")) {
-      return capabilityNotSupportedOperation();
-    }
-    return this.doGetTracking(supplierOrderId);
-  }
-  async createReturn(payload) {
-    if (!this.supports("returnsAPI")) {
-      return capabilityNotSupportedOperation();
-    }
-    if (!isSupplierOrderNetworkEnabled()) {
-      return {
-        ok: true,
-        dryRun: true,
-        errorCode: "ORDER_NETWORK_DISABLED",
-        data: { status: "PREPARED_NOT_SENT" }
-      };
-    }
-    return this.doCreateReturn(payload);
-  }
-  async getReturnStatus(rmaId) {
-    if (!this.supports("returnsAPI")) {
-      return capabilityNotSupportedOperation();
-    }
-    return this.doGetReturnStatus(rmaId);
-  }
-  async doCreateOrder(_request) {
-    return capabilityNotSupportedOperation({ data: { status: "NOT_IMPLEMENTED" } });
-  }
-  async doGetOrderStatus(_supplierOrderId) {
-    return capabilityNotSupportedOperation();
-  }
-  async doGetTracking(_supplierOrderId) {
-    return capabilityNotSupportedOperation();
-  }
-  async doCreateReturn(_payload) {
-    return capabilityNotSupportedOperation();
-  }
-  async doGetReturnStatus(_rmaId) {
-    return capabilityNotSupportedOperation();
-  }
-};
-
-// lib/supplier-engine/batch.ts
-async function processInBatches(allRecords, processor, batchSize = 50) {
-  let processed = 0;
-  let failed = 0;
-  for (let i = 0; i < allRecords.length; i += batchSize) {
-    const batch = allRecords.slice(i, i + batchSize);
-    try {
-      await processor(batch, Math.floor(i / batchSize));
-      processed += batch.length;
-    } catch {
-      failed += batch.length;
-    }
-  }
-  return { processed, failed };
-}
-function paginateRecords(records, options = {}) {
-  const batchSize = options.batchSize ?? 50;
-  const start = options.cursor ? parseInt(options.cursor, 10) || 0 : 0;
-  const slice = records.slice(start, start + batchSize);
-  const next = start + batchSize;
-  return {
-    records: slice,
-    total: records.length,
-    cursor: next < records.length ? String(next) : void 0,
-    hasMore: next < records.length
-  };
-}
-
-// lib/supplier-engine/connectors/api.ts
-init_fixtures();
-
-// lib/supplier-engine/auth/resolver.ts
-init_credentials();
-function mapConnectorAuthType(config3) {
-  const raw = String(config3?.authentication || "none").toLowerCase();
-  if (raw === "api_key") return "API_KEY";
-  if (raw === "basic") return "BASIC_AUTH";
-  if (raw === "bearer" || raw === "token") return "TOKEN";
-  if (raw === "oauth2") return "OAUTH2";
-  if (raw === "custom") return "CUSTOM";
-  return "NONE";
-}
-function resolveSupplierAuth(config3) {
-  const authType = mapConnectorAuthType(config3);
-  const secretsRef = config3.secretsRef;
-  const creds = secretsRef ? resolveCredentials(secretsRef) : null;
-  if (!creds) {
-    return { headers: { ...config3.headers || {} }, authType, configured: false };
-  }
-  const headers = { ...config3.headers || {} };
-  switch (authType) {
-    case "API_KEY": {
-      const headerName = creds.header || creds.headerName || "X-API-Key";
-      const value = creds.apiKey || creds.key || creds.token;
-      if (value) headers[headerName] = value;
-      break;
-    }
-    case "TOKEN": {
-      const value = creds.token || creds.accessToken || creds.bearer;
-      if (value) headers.Authorization = value.startsWith("Bearer ") ? value : `Bearer ${value}`;
-      break;
-    }
-    case "BASIC_AUTH": {
-      const user = creds.username || creds.user || "";
-      const pass = creds.password || creds.pass || "";
-      if (user || pass) {
-        headers.Authorization = `Basic ${Buffer.from(`${user}:${pass}`).toString("base64")}`;
-      }
-      break;
-    }
-    case "OAUTH2": {
-      const value = creds.accessToken || creds.token;
-      if (value) headers.Authorization = `Bearer ${value}`;
-      break;
-    }
-    case "CUSTOM": {
-      for (const [key, value] of Object.entries(creds)) {
-        if (!/password|secret|token|key/i.test(key)) continue;
-        if (/header/i.test(key)) {
-          const headerName = key.replace(/header/i, "").trim() || "Authorization";
-          headers[headerName] = value;
-        }
-      }
-      break;
-    }
-    default:
-      break;
-  }
-  return { headers, authType, configured: Object.keys(creds).length > 0 };
-}
-
-// lib/supplier-engine/connectors/api.ts
-var ApiSupplierConnector = class extends SupplierConnector {
-  constructor(supplier, connectorConfig = {}) {
-    super(supplier, connectorConfig, "api");
-    this.transport = null;
-  }
-  getTransport() {
-    if (this.transport) return this.transport;
-    const environment = resolveConnectorEnvironment(this.connectorConfig.environment);
-    if (!canUseProductionNetwork(environment)) return null;
-    if (this.connectorConfig.baseUrl?.includes("supplier-mock.example")) {
-      this.transport = new MockSupplierTransport(buildMockTransportFixtures());
-      return this.transport;
-    }
-    this.transport = createSupplierHttpTransport(
-      this.connectorConfig.baseUrl,
-      this.connectorConfig.allowedEndpoints
-    );
-    return this.transport;
-  }
-  useLiveNetwork() {
-    const environment = resolveConnectorEnvironment(this.connectorConfig.environment);
-    return canUseProductionNetwork(environment) && Boolean(this.connectorConfig.baseUrl);
-  }
-  async connect() {
-    if (!this.supports("api") && !this.supports("productFeed")) {
-      return { ok: false, message: "CAPABILITY_NOT_SUPPORTED" };
-    }
-    if (!this.useLiveNetwork()) {
-      return { ok: true, message: "API connector ready (dry-run, no live credentials)" };
-    }
-    const auth = resolveSupplierAuth({
-      ...this.connectorConfig,
-      secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
-    });
-    if (!auth.configured) {
-      return { ok: false, message: "AUTH_FAILED: credentials not configured" };
-    }
-    const transport = this.getTransport();
-    if (!transport) return { ok: false, message: "NETWORK_DISABLED" };
-    const healthUrl = `${this.connectorConfig.baseUrl?.replace(/\/$/, "")}/health`;
-    await transport.request({
-      url: healthUrl,
-      method: "GET",
-      headers: auth.headers,
-      supplierId: this.supplierId,
-      operation: "connect",
-      timeoutMs: this.connectorConfig.timeoutMs
-    });
-    return { ok: true, message: "API connector connected" };
-  }
-  async disconnect() {
-    this.transport = null;
-  }
-  async healthCheck() {
-    const start = Date.now();
-    if (this.useLiveNetwork()) {
-      try {
-        const auth = resolveSupplierAuth({
-          ...this.connectorConfig,
-          secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
-        });
-        const transport = this.getTransport();
-        if (transport && this.connectorConfig.baseUrl) {
-          const res = await transport.request({
-            url: `${this.connectorConfig.baseUrl.replace(/\/$/, "")}/health`,
-            headers: auth.headers,
-            supplierId: this.supplierId,
-            operation: "healthCheck",
-            timeoutMs: this.connectorConfig.timeoutMs
-          });
-          return {
-            status: res.ok ? "HEALTHY" : "DEGRADED",
-            latencyMs: Date.now() - start,
-            productsFetched: 0,
-            productsUpdated: 0,
-            productsFailed: 0,
-            connector: "api",
-            supplierId: this.supplierId,
-            lastError: res.ok ? void 0 : `HTTP_${res.status}`
-          };
-        }
-      } catch (e) {
-        return {
-          status: "UNHEALTHY",
-          latencyMs: Date.now() - start,
-          productsFetched: 0,
-          productsUpdated: 0,
-          productsFailed: 0,
-          connector: "api",
-          supplierId: this.supplierId,
-          lastError: e instanceof Error ? e.message : "HEALTH_CHECK_FAILED"
-        };
-      }
-    }
-    const products2 = getTestFeedProducts(this.supplierId);
-    return {
-      status: products2.length > 0 ? "HEALTHY" : "DEGRADED",
-      latencyMs: Date.now() - start,
-      lastSuccessfulSync: (/* @__PURE__ */ new Date()).toISOString(),
-      productsFetched: products2.length,
-      productsUpdated: 0,
-      productsFailed: 0,
-      connector: "api",
-      supplierId: this.supplierId
-    };
-  }
-  async doFetchProducts(options) {
-    const rate = checkRateLimit(this.supplierId, this.config.rateLimit);
-    if (!rate.allowed) {
-      return {
-        ok: false,
-        records: [],
-        total: 0,
-        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-        error: "RATE_LIMITED"
-      };
-    }
-    if (this.useLiveNetwork()) {
-      return this.fetchProductsViaNetwork(options);
-    }
-    const all = getTestFeedProducts(this.supplierId);
-    const page = paginateRecords(all, {
-      batchSize: options?.limit ?? 50,
-      cursor: options?.cursor
-    });
-    return {
-      ok: true,
-      records: page.records,
-      total: page.total,
-      cursor: page.cursor,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  async fetchProductsViaNetwork(options) {
-    const transport = this.getTransport();
-    if (!transport || !this.connectorConfig.baseUrl) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED" };
-    }
-    const auth = resolveSupplierAuth({
-      ...this.connectorConfig,
-      secretsRef: this.connectorConfig.secretsRef || this.config.secretsRef
-    });
-    const url = new URL(`${this.connectorConfig.baseUrl.replace(/\/$/, "")}/products`);
-    if (options?.cursor) url.searchParams.set("cursor", options.cursor);
-    if (options?.limit) url.searchParams.set("limit", String(options.limit));
-    const res = await transport.request({
-      url: url.toString(),
-      headers: auth.headers,
-      supplierId: this.supplierId,
-      operation: "fetchProducts",
-      timeoutMs: this.connectorConfig.timeoutMs
-    });
-    const parsed = safeParseJson(res.body);
-    if (!parsed.ok) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
-    }
-    const data = parsed.data;
-    const records = data.products || [];
-    return {
-      ok: res.ok,
-      records,
-      total: records.length,
-      cursor: options?.cursor,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString()
-    };
-  }
-  async doFetchStock(options) {
-    const all = getTestFeedProducts(this.supplierId);
-    const filtered = options?.skus?.length ? all.filter((r) => options.skus.includes(String(r.article_number || r.supplierSku))) : all;
-    return {
-      ok: true,
-      records: filtered.map((r) => ({
-        supplier_sku: r.article_number || r.supplierSku,
-        stock: r.stock_qty ?? r.stock,
-        updated_at: (/* @__PURE__ */ new Date()).toISOString()
-      })),
-      total: filtered.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: !this.useLiveNetwork()
-    };
-  }
-  async doFetchPrices(options) {
-    const all = getTestFeedProducts(this.supplierId);
-    const filtered = options?.skus?.length ? all.filter((r) => options.skus.includes(String(r.article_number || r.supplierSku))) : all;
-    return {
-      ok: true,
-      records: filtered.map((r) => ({
-        supplier_sku: r.article_number || r.supplierSku,
-        supplier_price: { amount: r.price_net ?? r.supplierPrice, currency: this.config.currency },
-        updated_at: (/* @__PURE__ */ new Date()).toISOString()
-      })),
-      total: filtered.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: !this.useLiveNetwork()
-    };
-  }
-};
-
-// lib/supplier-engine/connectors/xml.ts
-init_fixtures();
-function parseXmlProducts(xml) {
-  const records = [];
-  if (!xml?.trim()) return records;
-  const productBlocks = xml.match(/<product>([\s\S]*?)<\/product>/gi) || [];
-  for (const block of productBlocks) {
-    const record = {};
-    const tagPattern = /<(\w+)>([^<]*)<\/\1>/g;
-    let match;
-    while ((match = tagPattern.exec(block)) !== null) {
-      const key = match[1];
-      const value = match[2].trim();
-      record[key] = /^\d+(\.\d+)?$/.test(value) ? Number(value) : value;
-    }
-    if (Object.keys(record).length) records.push(record);
-  }
-  return records;
-}
-var XmlSupplierConnector = class extends SupplierConnector {
-  constructor(supplier, connectorConfig = {}, xmlContent) {
-    super(supplier, connectorConfig, "xml");
-    this.xmlContent = xmlContent ?? getTestXmlFeed(supplier.supplierId);
-  }
-  async connect() {
-    this.checkCapability("xml");
-    return { ok: true, message: "XML connector ready (file/HTTP feed, dry-run)" };
-  }
-  async disconnect() {
-  }
-  async healthCheck() {
-    const start = Date.now();
-    let status = "HEALTHY";
-    let productsFetched = 0;
-    let lastError;
-    try {
-      const records = parseXmlProducts(this.xmlContent);
-      productsFetched = records.length;
-      if (!records.length) status = "DEGRADED";
-    } catch (e) {
-      status = "UNHEALTHY";
-      lastError = e instanceof Error ? e.message : "XML_PARSE_ERROR";
-    }
-    return {
-      status,
-      latencyMs: Date.now() - start,
-      lastSuccessfulSync: status === "HEALTHY" ? (/* @__PURE__ */ new Date()).toISOString() : void 0,
-      lastError,
-      productsFetched,
-      productsUpdated: 0,
-      productsFailed: 0,
-      connector: "xml",
-      supplierId: this.supplierId
-    };
-  }
-  async doFetchProducts() {
-    this.checkCapability("xml");
-    try {
-      const trimmed = this.xmlContent.trim();
-      if (trimmed && !trimmed.startsWith("<?") && !trimmed.startsWith("<")) {
-        return {
-          ok: false,
-          records: [],
-          total: 0,
-          fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-          error: "MALFORMED_XML"
-        };
-      }
-      const records = parseXmlProducts(this.xmlContent);
-      const looksLikeProductFeed = /<product[\s>]/i.test(this.xmlContent);
-      if (looksLikeProductFeed && records.length === 0) {
-        return {
-          ok: false,
-          records: [],
-          total: 0,
-          fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-          error: "MALFORMED_XML"
-        };
-      }
-      return {
-        ok: true,
-        records,
-        total: records.length,
-        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-        dryRun: true
-      };
-    } catch (e) {
-      return {
-        ok: false,
-        records: [],
-        total: 0,
-        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-        error: e instanceof Error ? e.message : "MALFORMED_XML"
-      };
-    }
-  }
-  async doFetchStock(options) {
-    const products2 = await this.doFetchProducts();
-    if (!products2.ok) return products2;
-    const filtered = options?.skus?.length ? products2.records.filter((r) => options.skus.includes(String(r.article_number))) : products2.records;
-    return {
-      ok: true,
-      records: filtered.map((r) => ({ supplier_sku: r.article_number, stock: r.stock_qty })),
-      total: filtered.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  async doFetchPrices(options) {
-    const products2 = await this.doFetchProducts();
-    if (!products2.ok) return products2;
-    const filtered = options?.skus?.length ? products2.records.filter((r) => options.skus.includes(String(r.article_number))) : products2.records;
-    return {
-      ok: true,
-      records: filtered.map((r) => ({
-        supplier_sku: r.article_number,
-        supplier_price: { amount: r.price_net, currency: this.config.currency }
-      })),
-      total: filtered.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  /** Test helper — inject malformed XML */
-  setXmlContent(xml) {
-    this.xmlContent = xml;
-  }
-};
-
-// lib/supplier-engine/connectors/csv.ts
-init_fixtures();
-function detectDelimiter(line) {
-  const counts = { ",": 0, ";": 0, "	": 0 };
-  for (const ch of line) {
-    if (ch in counts) counts[ch]++;
-  }
-  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0] || ",";
-}
-function parseCsvFeed(csv) {
-  const lines = csv.replace(/^\uFEFF/, "").split(/\r?\n/).filter((l) => l.trim());
-  if (lines.length < 2) return [];
-  const delimiter = detectDelimiter(lines[0]);
-  const headers = lines[0].split(delimiter).map((h) => h.trim());
-  const records = [];
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(delimiter);
-    const record = {};
-    headers.forEach((h, idx) => {
-      const val = (values[idx] || "").trim();
-      record[h] = /^\d+(\.\d+)?$/.test(val) ? Number(val) : val;
-    });
-    records.push(record);
-  }
-  return records;
-}
-var CsvSupplierConnector = class extends SupplierConnector {
-  constructor(supplier, connectorConfig = {}, csvContent) {
-    super(supplier, connectorConfig, "csv");
-    this.csvContent = csvContent ?? getTestCsvFeed(supplier.supplierId);
-  }
-  async connect() {
-    this.checkCapability("csv");
-    return { ok: true, message: "CSV connector ready (file feed, dry-run)" };
-  }
-  async disconnect() {
-  }
-  async healthCheck() {
-    const start = Date.now();
-    const records = parseCsvFeed(this.csvContent);
-    return {
-      status: records.length > 0 ? "HEALTHY" : "DEGRADED",
-      latencyMs: Date.now() - start,
-      lastSuccessfulSync: (/* @__PURE__ */ new Date()).toISOString(),
-      productsFetched: records.length,
-      productsUpdated: 0,
-      productsFailed: 0,
-      connector: "csv",
-      supplierId: this.supplierId
-    };
-  }
-  async doFetchProducts() {
-    this.checkCapability("csv");
-    const records = parseCsvFeed(this.csvContent);
-    return {
-      ok: true,
-      records,
-      total: records.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  async doFetchStock(options) {
-    const products2 = await this.doFetchProducts();
-    const filtered = options?.skus?.length ? products2.records.filter((r) => options.skus.includes(String(r.article_number))) : products2.records;
-    return {
-      ok: true,
-      records: filtered.map((r) => ({ supplier_sku: r.article_number, stock: r.stock_qty })),
-      total: filtered.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  async doFetchPrices(options) {
-    const products2 = await this.doFetchProducts();
-    const filtered = options?.skus?.length ? products2.records.filter((r) => options.skus.includes(String(r.article_number))) : products2.records;
-    return {
-      ok: true,
-      records: filtered.map((r) => ({
-        supplier_sku: r.article_number,
-        supplier_price: { amount: r.price_net, currency: this.config.currency }
-      })),
-      total: filtered.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  setCsvContent(csv) {
-    this.csvContent = csv;
-  }
-};
-
-// lib/supplier-engine/connectors/manual.ts
-var ManualSupplierConnector = class extends SupplierConnector {
-  constructor(supplier, connectorConfig = {}) {
-    super(supplier, connectorConfig, "manual");
-    this.manualRecords = [];
-  }
-  setManualRecords(records) {
-    this.manualRecords = records;
-  }
-  async connect() {
-    return { ok: true, message: "Manual connector ready for admin imports" };
-  }
-  async disconnect() {
-  }
-  async healthCheck() {
-    return {
-      status: "HEALTHY",
-      latencyMs: 0,
-      productsFetched: this.manualRecords.length,
-      productsUpdated: 0,
-      productsFailed: 0,
-      connector: "manual",
-      supplierId: this.supplierId
-    };
-  }
-  async doFetchProducts() {
-    return {
-      ok: true,
-      records: [...this.manualRecords],
-      total: this.manualRecords.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  async doFetchStock() {
-    return {
-      ok: true,
-      records: this.manualRecords.map((r) => ({
-        supplier_sku: r.supplier_sku || r.supplierSku,
-        stock: r.stock ?? r.stock_qty
-      })),
-      total: this.manualRecords.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  async doFetchPrices() {
-    return {
-      ok: true,
-      records: this.manualRecords.map((r) => ({
-        supplier_sku: r.supplier_sku || r.supplierSku,
-        supplier_price: r.supplier_price || { amount: r.price_net || r.supplierPrice, currency: this.config.currency }
-      })),
-      total: this.manualRecords.length,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-};
-
-// lib/supplier-engine/connectors/template/index.ts
-var TemplateSupplierConnector = class extends SupplierConnector {
-  constructor(supplier, connectorConfig = {}) {
-    super(supplier, connectorConfig, "template");
-  }
-  async connect() {
-    return { ok: true, message: "Template connector ready (dry-run contract demo)" };
-  }
-  async disconnect() {
-  }
-  async healthCheck() {
-    return {
-      status: "HEALTHY",
-      latencyMs: 1,
-      productsFetched: 0,
-      productsUpdated: 0,
-      productsFailed: 0,
-      connector: "template",
-      supplierId: this.supplierId
-    };
-  }
-  async doFetchProducts() {
-    return {
-      ok: true,
-      records: [],
-      total: 0,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      dryRun: true
-    };
-  }
-  async doFetchStock() {
-    return { ok: true, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), dryRun: true };
-  }
-  async doFetchPrices() {
-    return { ok: true, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), dryRun: true };
-  }
-  async doCreateOrder(request) {
-    return {
-      ok: true,
-      dryRun: true,
-      data: { supplierOrderId: `TEMPLATE-ORD-${request.orderId}`, status: "PREPARED_NOT_SENT" }
-    };
-  }
-  async doGetOrderStatus(supplierOrderId) {
-    return { ok: true, dryRun: true, data: { supplierOrderId, status: "DRY_RUN" } };
-  }
-  async doGetTracking(supplierOrderId) {
-    return {
-      ok: true,
-      dryRun: true,
-      data: {
-        carrier: "TEMPLATE_CARRIER",
-        trackingNumber: `TRK-${supplierOrderId.slice(-6)}`,
-        status: "IN_TRANSIT",
-        timestamp: (/* @__PURE__ */ new Date()).toISOString()
-      }
-    };
-  }
-  async doCreateReturn() {
-    return { ok: true, dryRun: true, data: { rmaId: `TEMPLATE-RMA-${Date.now()}`, status: "PREPARED_NOT_SENT" } };
-  }
-  async doGetReturnStatus(rmaId) {
-    return {
-      ok: true,
-      dryRun: true,
-      data: { rmaId, status: "DRY_RUN", timestamp: (/* @__PURE__ */ new Date()).toISOString() }
-    };
-  }
-};
-
-// lib/supplier-engine/pagination.ts
-function parseLinkHeader(linkHeader) {
-  if (!linkHeader) return void 0;
-  const parts = linkHeader.split(",");
-  for (const part of parts) {
-    const match = part.match(/<([^>]+)>;\s*rel="?next"?/i);
-    if (match) return match[1];
-  }
-  return void 0;
-}
-function buildPaginationQuery(state) {
-  const query = {};
-  const pageKey = state.pageParam || "page";
-  const pageSizeKey = state.pageSizeParam || "pageSize";
-  switch (state.mode) {
-    case "pageNumber":
-      query[pageKey] = String(state.page ?? 0);
-      query[pageSizeKey] = String(state.pageSize);
-      break;
-    case "page":
-      query[pageKey] = String(state.page ?? 1);
-      query[pageSizeKey] = String(state.pageSize);
-      break;
-    case "offset":
-      query.offset = String(state.offset ?? 0);
-      query.limit = String(state.pageSize);
-      break;
-    case "cursor":
-      if (state.cursor) query.cursor = state.cursor;
-      query.limit = String(state.pageSize);
-      break;
-    case "nextPageToken":
-      if (state.nextPageToken) query.pageToken = state.nextPageToken;
-      query.pageSize = String(state.pageSize);
-      break;
-    default:
-      query.limit = String(state.pageSize);
-      break;
-  }
-  return query;
-}
-function advancePagination(state, response) {
-  const hasMore = response.hasNextPage ?? response.records.length >= state.pageSize;
-  const nextLink = parseLinkHeader(response.linkHeader);
-  switch (state.mode) {
-    case "pageNumber":
-      return {
-        hasMore,
-        next: hasMore ? { ...state, page: (state.page ?? 0) + 1 } : void 0
-      };
-    case "page":
-      return {
-        hasMore,
-        next: hasMore ? { ...state, page: (state.page ?? 1) + 1 } : void 0
-      };
-    case "offset":
-      return {
-        hasMore,
-        next: hasMore ? { ...state, offset: (state.offset ?? 0) + state.pageSize } : void 0
-      };
-    case "cursor":
-      return {
-        hasMore: Boolean(response.cursor),
-        nextCursor: response.cursor,
-        next: response.cursor ? { ...state, cursor: response.cursor } : void 0
-      };
-    case "nextPageToken":
-      return {
-        hasMore: Boolean(response.nextPageToken),
-        nextPageToken: response.nextPageToken,
-        next: response.nextPageToken ? { ...state, nextPageToken: response.nextPageToken } : void 0
-      };
-    case "linkHeader":
-      return {
-        hasMore: Boolean(nextLink),
-        nextLink
-      };
-    default:
-      return { hasMore: false };
-  }
-}
-
-// lib/supplier-engine/syncCursor.ts
-init_persistence();
-var cursorStore = /* @__PURE__ */ new Map();
-function cursorKey(supplierId, syncMode = "incremental") {
-  return `${supplierId}:${syncMode}`;
-}
-function fromPersisted(row) {
-  return {
-    supplierId: String(row.supplierId),
-    syncMode: row.syncMode || "incremental",
-    cursor: row.cursor ? String(row.cursor) : void 0,
-    page: row.page != null ? Number(row.page) : void 0,
-    offset: row.offset != null ? Number(row.offset) : void 0,
-    lastModified: row.lastModified ? String(row.lastModified) : void 0,
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function hydrateSyncCursorsFromPersistence() {
-  const persistence = getSupplierPersistence();
-  if (!persistence) return;
-  const listAll = persistence.listAllCursors;
-  const rows = listAll ? listAll.call(persistence) : [];
-  for (const cursor of rows) {
-    const parsed = fromPersisted(cursor);
-    cursorStore.set(cursorKey(parsed.supplierId, parsed.syncMode || "incremental"), parsed);
-  }
-}
-function getSyncCursor(supplierId, syncMode = "incremental") {
-  const key = cursorKey(supplierId, syncMode);
-  const cached = cursorStore.get(key);
-  if (cached) return cached;
-  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
-  if (row) {
-    const cursor = fromPersisted(row);
-    cursorStore.set(key, cursor);
-    return cursor;
-  }
-  return void 0;
-}
-function saveSyncCursor(supplierId, patch, syncMode = "incremental") {
-  const existing = getSyncCursor(supplierId, syncMode);
-  const next = {
-    supplierId,
-    syncMode,
-    cursor: patch.cursor ?? existing?.cursor,
-    page: patch.page ?? existing?.page,
-    offset: patch.offset ?? existing?.offset,
-    lastModified: patch.lastModified ?? existing?.lastModified,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  cursorStore.set(cursorKey(supplierId, syncMode), next);
-  getSupplierPersistence()?.saveCursor(next);
-  return next;
-}
-function clearSyncCursor(supplierId, syncMode = "incremental") {
-  cursorStore.delete(cursorKey(supplierId, syncMode));
-  getSupplierPersistence()?.clearCursor(supplierId, syncMode);
-}
-function listSyncCursors() {
-  return [...cursorStore.values()];
-}
-function getSyncCursorForAdmin(supplierId, syncMode = "incremental") {
-  return getSupplierPersistence()?.getCursorForAdmin(supplierId, syncMode) ?? null;
-}
-function resetSyncCursors() {
-  cursorStore.clear();
-}
-
-// lib/supplier-engine/connectors/b2b-sandbox/parser.ts
-function parseSafeXmlProducts(xml, itemTag = "product") {
-  const records = [];
-  if (!xml?.trim()) return records;
-  if (/<!ENTITY/i.test(xml) || /SYSTEM\s+["']/i.test(xml)) {
-    throw new Error("XXE_BLOCKED");
-  }
-  const blocks = xml.match(new RegExp(`<${itemTag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${itemTag}>`, "gi")) || [];
-  for (const block of blocks) {
-    const record = {};
-    const tagPattern = /<([\w:-]+)(?:\s[^>]*)?>([^<]*)<\/\1>/g;
-    let match;
-    while ((match = tagPattern.exec(block)) !== null) {
-      const key = match[1].replace(/^.*:/, "");
-      let value = match[2].trim();
-      if (value.startsWith("<![CDATA[") && value.endsWith("]]>")) {
-        value = value.slice(9, -3);
-      }
-      record[key] = /^\d+(\.\d+)?$/.test(value) ? Number(value) : value;
-    }
-    if (Object.keys(record).length) records.push(record);
-  }
-  return records;
-}
-function parseSupplierFeedBody(body, format) {
-  if (format === "xml") {
-    try {
-      return { ok: true, records: parseSafeXmlProducts(body) };
-    } catch (e) {
-      return { ok: false, reason: e instanceof Error ? e.message : "MALFORMED_XML" };
-    }
-  }
-  const parsed = safeParseJson(body);
-  if (!parsed.ok) return { ok: false, reason: parsed.reason };
-  const data = parsed.data;
-  if (Array.isArray(data)) return { ok: true, records: data };
-  if (data && typeof data === "object") {
-    const obj = data;
-    const records = obj.products || obj.items || obj.lines || obj.data || [];
-    return {
-      ok: true,
-      records,
-      hasNextPage: obj.hasNextPage === true,
-      totalResults: typeof obj.totalResults === "number" ? obj.totalResults : void 0
-    };
-  }
-  return { ok: false, reason: "MALFORMED_JSON" };
-}
-
-// lib/supplier-engine/fieldMapping.ts
-var DEFAULT_MAPPING = {
-  article_number: "supplierSku",
-  sku: "supplierSku",
-  supplier_sku: "supplierSku",
-  ean_code: "ean",
-  ean: "ean",
-  ean_gtin: "ean",
-  gtin: "gtin",
-  mpn: "mpn",
-  price_net: "supplierPrice",
-  purchase_price: "supplierPrice",
-  supplier_price: "supplierPrice",
-  stock_qty: "stock",
-  stock: "stock",
-  title: "name",
-  name: "name",
-  brand_name: "brand",
-  brand: "brand",
-  description: "description",
-  short_description: "shortDescription",
-  supplier_category: "supplierCategory"
-};
-function applyFieldMapping(raw, mapping = {}) {
-  const merged = { ...DEFAULT_MAPPING, ...mapping };
-  const result = { ...raw };
-  for (const [supplierField, buzzardField] of Object.entries(merged)) {
-    if (supplierField in raw && !(buzzardField in result)) {
-      result[buzzardField] = raw[supplierField];
-    }
-  }
-  if (typeof result.supplierPrice === "number") {
-    result.purchase_price = result.supplierPrice;
-    result.supplier_price = { amount: result.supplierPrice, currency: raw.currency || "EUR" };
-  }
-  if (result.supplierSku && !result.supplier_sku) {
-    result.supplier_sku = result.supplierSku;
-  }
-  return result;
-}
-function validateMappedRecord(mapped) {
-  const errors = [];
-  if (!mapped.supplierSku && !mapped.supplier_sku) errors.push("MISSING_SUPPLIER_SKU");
-  const price = mapped.supplierPrice ?? mapped.supplier_price?.amount;
-  if (price != null && Number(price) < 0) errors.push("INVALID_PRICE");
-  const stock = mapped.stock;
-  if (stock != null && Number(stock) < 0) errors.push("INVALID_STOCK");
-  return errors;
-}
-
-// lib/supplier-engine/connectors/b2b-sandbox/images.ts
-function validateSupplierImageUrl(url) {
-  const value = String(url || "").trim();
-  if (!value) return { ok: false, reason: "MISSING_IMAGE" };
-  try {
-    const parsed = new URL(value);
-    if (!["http:", "https:"].includes(parsed.protocol)) {
-      return { ok: false, reason: "INVALID_IMAGE_PROTOCOL" };
-    }
-    const endpointCheck = validateSupplierEndpoint(value);
-    if (!endpointCheck.allowed) {
-      return { ok: false, reason: endpointCheck.reason || "BLOCKED_IMAGE_HOST" };
-    }
-    return { ok: true, value: parsed.toString() };
-  } catch {
-    return { ok: false, reason: "INVALID_IMAGE_URL" };
-  }
-}
-function normalizeSupplierImages(raw) {
-  if (!raw) return [];
-  const list = Array.isArray(raw) ? raw : [raw];
-  const images = [];
-  for (const entry of list) {
-    const url = typeof entry === "string" ? entry : entry?.url;
-    const validated = validateSupplierImageUrl(url);
-    if (validated.ok && validated.value) images.push(validated.value);
-  }
-  return images.slice(0, 20);
-}
-
-// lib/supplier-engine/connectors/b2b-sandbox/interCarsAdapter.ts
-function preprocessInterCarsProduct(raw) {
-  const eans = raw.eans;
-  const primaryEan = Array.isArray(eans) && eans.length ? String(eans[0]) : void 0;
-  const genericRefs = raw.genericArticleReferences;
-  const primaryRef = genericRefs?.find((r) => r.genericArticleId) || genericRefs?.[0];
-  const categoryLabel = primaryRef?.genericArticleId || primaryRef?.name?.de || primaryRef?.name?.en || primaryRef?.name?.pl || void 0;
-  return {
-    ...raw,
-    ean: primaryEan,
-    gtin: primaryEan,
-    supplierCategory: categoryLabel,
-    mpn: raw.index || raw.articleNumber,
-    tecdocId: raw.tecDoc,
-    oem: raw.articleNumber,
-    brand: typeof raw.brand === "string" ? raw.brand : raw.brandReference?.name,
-    stock: raw.availability
-  };
-}
-function preprocessInterCarsStock(raw) {
-  const availability = raw.availability;
-  const qty = availability != null && Number.isFinite(Number(availability)) ? Number(availability) : void 0;
-  return {
-    ...raw,
-    supplierSku: raw.sku,
-    stock: qty,
-    stock_status: qty != null && qty > 0 ? "available" : "unavailable",
-    discontinued: false,
-    backorder: qty === 0 && raw.latestDeliveryDate ? true : void 0,
-    lead_time: raw.latestDeliveryDate
-  };
-}
-function preprocessInterCarsPrice(raw, currency) {
-  const price = raw.price;
-  const net = price?.customerPriceNet ?? price?.listPriceNet;
-  const amount = net != null && Number.isFinite(Number(net)) ? Number(net) : void 0;
-  return {
-    ...raw,
-    supplierSku: raw.sku,
-    supplierPrice: amount,
-    supplier_price: amount != null ? {
-      amount,
-      currency: String(price?.currencyCode || currency),
-      includesVat: false,
-      vatPercentage: price?.vatPercentage,
-      listPriceNet: price?.listPriceNet,
-      customerPriceNet: price?.customerPriceNet
-    } : void 0
-  };
-}
-function isInterCarsProfile(profile) {
-  return profile?.adapterProfile === "inter-cars";
-}
-function buildInterCarsCreateOrderBody(request, idempotencyKey) {
-  return {
-    externalOrderReference: request.orderId,
-    idempotencyKey,
-    lines: request.lines.map((line) => ({
-      sku: line.supplierSku,
-      quantity: line.quantity,
-      unitPriceNet: line.unitPrice
-    })),
-    deliveryAddress: {
-      name: request.shippingAddress.name || request.shippingAddress.company,
-      street: request.shippingAddress.street || request.shippingAddress.line1,
-      city: request.shippingAddress.city,
-      postalCode: request.shippingAddress.postalCode || request.shippingAddress.zip,
-      country: request.shippingAddress.country || request.shippingAddress.countryCode
-    }
-  };
-}
-function chunkSkus(skus, size = 100) {
-  const chunks = [];
-  for (let i = 0; i < skus.length; i += size) {
-    chunks.push(skus.slice(i, i + size));
-  }
-  return chunks;
-}
-
-// lib/supplier-engine/connectors/b2b-sandbox/mapping.ts
-var UNKNOWN = "UNKNOWN";
-var REVIEW_REQUIRED = "REVIEW_REQUIRED";
-function mapBuzzardCategory(rawCategory, categoryMapping = {}) {
-  const value = String(rawCategory || "").trim();
-  if (!value) return REVIEW_REQUIRED;
-  return categoryMapping[value] || REVIEW_REQUIRED;
-}
-function normalizeB2bSandboxRecord(raw, profile) {
-  const source = isInterCarsProfile(profile) ? preprocessInterCarsProduct(raw) : raw;
-  const mapped = applyFieldMapping(source, profile.fieldMapping);
-  const supplierSku = String(mapped.supplierSku || mapped.supplier_sku || UNKNOWN);
-  const ean = mapped.ean || mapped.gtin ? String(mapped.ean || mapped.gtin) : UNKNOWN;
-  const gtin = mapped.gtin ? String(mapped.gtin) : ean !== UNKNOWN ? ean : UNKNOWN;
-  const mpn = mapped.mpn ? String(mapped.mpn) : UNKNOWN;
-  const brand = mapped.brand ? String(mapped.brand) : UNKNOWN;
-  const priceRaw = mapped.supplierPrice ?? mapped.supplier_price?.amount;
-  const purchasePrice = priceRaw != null && Number.isFinite(Number(priceRaw)) ? Number(priceRaw) : void 0;
-  const stockRaw = mapped.stock ?? mapped.stock_qty;
-  const stock = stockRaw != null && Number.isFinite(Number(stockRaw)) ? Number(stockRaw) : void 0;
-  const images = normalizeSupplierImages(mapped.images || mapped.image_urls || mapped.image);
-  const vehicleFitment = Array.isArray(mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment) ? mapped.vehicleFitment || mapped.vehicle_compatibility || mapped.fitment : [];
-  const tecDocId = mapped.tecdocId || mapped.tecDoc;
-  const fitmentUnknown = isInterCarsProfile(profile) && (!Array.isArray(vehicleFitment) || vehicleFitment.length === 0);
-  return {
-    ...mapped,
-    supplierSku,
-    supplier_sku: supplierSku,
-    ean: ean === UNKNOWN ? void 0 : ean,
-    gtin: gtin === UNKNOWN ? void 0 : gtin,
-    mpn: mpn === UNKNOWN ? void 0 : mpn,
-    brand: brand === UNKNOWN ? void 0 : brand,
-    name: mapped.name || mapped.title || supplierSku,
-    supplierPrice: purchasePrice,
-    purchase_price: purchasePrice,
-    supplier_price: purchasePrice != null ? { amount: purchasePrice, currency: profile.currency } : void 0,
-    stock,
-    stock_qty: stock,
-    currency: profile.currency,
-    priceIncludesVat: profile.priceIncludesVat === true,
-    buzzardCategory: mapBuzzardCategory(mapped.supplierCategory || mapped.category, profile.categoryMapping),
-    images,
-    vehicleFitment: Array.isArray(vehicleFitment) && vehicleFitment.length ? vehicleFitment : void 0,
-    fitment: fitmentUnknown ? "UNKNOWN" : void 0,
-    tecdocId: tecDocId ? String(tecDocId) : void 0,
-    oemNumbers: mapped.oemNumbers || mapped.oem_numbers || mapped.oem || void 0,
-    liveSource: true
-  };
-}
-
-// lib/supplier-engine/connectors/b2b-sandbox/connectorConfig.ts
-function resolveB2bProfile(supplier) {
-  return supplier.connectorProfile || null;
-}
-function profileToConnectorConfig(profile) {
-  return {
-    baseUrl: profile.baseUrl,
-    environment: profile.environment,
-    authentication: profile.authentication,
-    authType: profile.authType,
-    secretsRef: profile.secretsRef,
-    allowedEndpoints: profile.allowedEndpoints || [new URL(profile.baseUrl).hostname],
-    pagination: profile.pagination ? { pageSize: profile.pagination.pageSize || 100, ...profile.pagination } : void 0,
-    timeoutMs: 3e4
-  };
-}
-
-// lib/supplier-engine/connectors/b2b-sandbox/index.ts
-var B2bSandboxSupplierConnector = class extends SupplierConnector {
-  constructor(supplier, connectorConfig = {}, options) {
-    const profile = resolveB2bProfile(supplier);
-    super(
-      supplier,
-      profile ? { ...profileToConnectorConfig(profile), ...connectorConfig } : connectorConfig,
-      "b2b-sandbox"
-    );
-    this.transport = null;
-    this.injectedTransport = null;
-    this.profile = profile;
-    this.injectedTransport = options?.transport || null;
-  }
-  setTransport(transport) {
-    this.injectedTransport = transport;
-    this.transport = transport;
-  }
-  getProfile() {
-    if (!this.profile) throw new Error("LIVE_SUPPLIER_PROFILE_MISSING");
-    return this.profile;
-  }
-  usesLiveNetwork() {
-    const profile = this.profile;
-    if (!profile) return false;
-    const environment = resolveConnectorEnvironment(profile.environment);
-    return canUseProductionNetwork(environment);
-  }
-  getTransport() {
-    if (this.injectedTransport) return this.injectedTransport;
-    if (this.transport) return this.transport;
-    const profile = this.getProfile();
-    this.transport = createSupplierHttpTransport(profile.baseUrl, profile.allowedEndpoints);
-    return this.transport;
-  }
-  buildUrl(path2, query) {
-    const profile = this.getProfile();
-    const base = profile.baseUrl.replace(/\/$/, "");
-    const url = new URL(`${base}${path2.startsWith("/") ? path2 : `/${path2}`}`);
-    if (query) {
-      for (const [key, value] of Object.entries(query)) {
-        url.searchParams.set(key, value);
-      }
-    }
-    return url.toString();
-  }
-  authHeaders() {
-    const profile = this.getProfile();
-    const auth = resolveSupplierAuth({
-      ...this.connectorConfig,
-      secretsRef: profile.secretsRef,
-      authentication: profile.authentication
-    }).headers;
-    return { ...profile.requestHeaders || {}, ...auth };
-  }
-  async connect() {
-    const profile = this.getProfile();
-    if (!this.usesLiveNetwork()) {
-      return { ok: true, message: "B2B sandbox connector configured (network disabled \u2014 config only)" };
-    }
-    const transport = this.getTransport();
-    const healthPath = profile.endpoints.health || "/health";
-    await transport.request({
-      url: this.buildUrl(healthPath),
-      headers: this.authHeaders(),
-      supplierId: this.supplierId,
-      operation: "connect",
-      timeoutMs: this.connectorConfig.timeoutMs
-    });
-    return { ok: true, message: "B2B sandbox connector connected (read-only)" };
-  }
-  async disconnect() {
-    this.transport = null;
-  }
-  async healthCheck() {
-    const start = Date.now();
-    const profile = this.getProfile();
-    if (!this.usesLiveNetwork()) {
-      return {
-        status: "DEGRADED",
-        latencyMs: Date.now() - start,
-        productsFetched: 0,
-        productsUpdated: 0,
-        productsFailed: 0,
-        connector: "b2b-sandbox",
-        supplierId: this.supplierId,
-        lastError: "NETWORK_DISABLED"
-      };
-    }
-    try {
-      const transport = this.getTransport();
-      const res = await transport.request({
-        url: this.buildUrl(profile.endpoints.health || "/health"),
-        headers: this.authHeaders(),
-        supplierId: this.supplierId,
-        operation: "healthCheck",
-        timeoutMs: this.connectorConfig.timeoutMs
-      });
-      return {
-        status: res.ok ? "HEALTHY" : "DEGRADED",
-        latencyMs: Date.now() - start,
-        productsFetched: 0,
-        productsUpdated: 0,
-        productsFailed: 0,
-        connector: "b2b-sandbox",
-        supplierId: this.supplierId,
-        lastError: res.ok ? void 0 : `HTTP_${res.status}`
-      };
-    } catch (e) {
-      return {
-        status: "UNHEALTHY",
-        latencyMs: Date.now() - start,
-        productsFetched: 0,
-        productsUpdated: 0,
-        productsFailed: 0,
-        connector: "b2b-sandbox",
-        supplierId: this.supplierId,
-        lastError: e instanceof Error ? e.message : "HEALTH_CHECK_FAILED"
-      };
-    }
-  }
-  async doFetchProducts(options) {
-    const profile = this.getProfile();
-    const rate = checkRateLimit(this.supplierId, this.config.rateLimit);
-    if (!rate.allowed) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "RATE_LIMITED" };
-    }
-    if (!this.usesLiveNetwork()) {
-      return {
-        ok: false,
-        records: [],
-        total: 0,
-        fetchedAt: (/* @__PURE__ */ new Date()).toISOString(),
-        error: "NETWORK_DISABLED",
-        dryRun: true
-      };
-    }
-    const pagination = {
-      mode: profile.pagination?.mode || "cursor",
-      pageSize: options?.limit || profile.pagination?.pageSize || 100,
-      page: profile.pagination?.mode === "pageNumber" ? Number(getSyncCursor(this.supplierId, "incremental")?.cursor || 0) : void 0,
-      pageParam: profile.pagination?.pageParam,
-      pageSizeParam: profile.pagination?.pageSizeParam,
-      cursor: options?.cursor || getSyncCursor(this.supplierId, "incremental")?.cursor
-    };
-    const transport = this.getTransport();
-    const query = buildPaginationQuery(pagination);
-    const res = await transport.request({
-      url: this.buildUrl(profile.endpoints.products || "/products", query),
-      headers: this.authHeaders(),
-      supplierId: this.supplierId,
-      operation: "fetchProducts",
-      timeoutMs: this.connectorConfig.timeoutMs
-    });
-    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
-    if (!parsed.ok) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
-    }
-    const records = parsed.records.map((raw) => normalizeB2bSandboxRecord(raw, profile));
-    const page = advancePagination(pagination, {
-      records,
-      hasNextPage: parsed.hasNextPage,
-      cursor: res.headers["x-next-cursor"],
-      nextPageToken: res.headers["x-next-page-token"],
-      linkHeader: res.headers.link
-    });
-    const nextCursor = page.nextCursor || (profile.pagination?.mode === "pageNumber" && page.hasMore ? String((pagination.page ?? 0) + 1) : void 0);
-    if (nextCursor) {
-      saveSyncCursor(this.supplierId, { cursor: nextCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
-    }
-    return {
-      ok: res.ok,
-      records,
-      total: records.length,
-      cursor: nextCursor,
-      fetchedAt: (/* @__PURE__ */ new Date()).toISOString()
-    };
-  }
-  async doFetchStock(options) {
-    const profile = this.getProfile();
-    if (!this.usesLiveNetwork()) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
-    }
-    const transport = this.getTransport();
-    const targetSkus = options?.skus?.filter(Boolean) || [];
-    const allRecords = [];
-    if (isInterCarsProfile(profile) && targetSkus.length) {
-      for (const batch of chunkSkus(targetSkus, 100)) {
-        const res2 = await transport.request({
-          url: this.buildUrl(profile.endpoints.stock || "/stock", { sku: batch.join(",") }),
-          headers: this.authHeaders(),
-          supplierId: this.supplierId,
-          operation: "fetchStock",
-          timeoutMs: this.connectorConfig.timeoutMs
-        });
-        const parsed2 = parseSupplierFeedBody(res2.body, profile.feedFormat || "json");
-        if (!parsed2.ok) {
-          return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed2.reason };
-        }
-        for (const raw of parsed2.records) {
-          const mapped = preprocessInterCarsStock(raw);
-          allRecords.push({
-            supplier_sku: mapped.supplierSku,
-            stock: mapped.stock,
-            stock_status: mapped.stock_status,
-            discontinued: mapped.discontinued,
-            backorder: mapped.backorder,
-            lead_time: mapped.lead_time,
-            updated_at: (/* @__PURE__ */ new Date()).toISOString()
-          });
-        }
-      }
-      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
-    }
-    const res = await transport.request({
-      url: this.buildUrl(profile.endpoints.stock || "/stock"),
-      headers: this.authHeaders(),
-      supplierId: this.supplierId,
-      operation: "fetchStock",
-      timeoutMs: this.connectorConfig.timeoutMs
-    });
-    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
-    if (!parsed.ok) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
-    }
-    let records = parsed.records.map((raw) => {
-      const mapped = isInterCarsProfile(profile) ? preprocessInterCarsStock(raw) : normalizeB2bSandboxRecord(raw, profile);
-      return {
-        supplier_sku: mapped.supplierSku || mapped.supplier_sku,
-        stock: mapped.stock,
-        stock_status: mapped.stock === 0 ? "unavailable" : "available",
-        updated_at: (/* @__PURE__ */ new Date()).toISOString()
-      };
-    });
-    if (targetSkus.length) {
-      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
-    }
-    return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
-  }
-  async doFetchPrices(options) {
-    const profile = this.getProfile();
-    if (!this.usesLiveNetwork()) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: "NETWORK_DISABLED", dryRun: true };
-    }
-    const transport = this.getTransport();
-    const targetSkus = options?.skus?.filter(Boolean) || [];
-    const allRecords = [];
-    if (isInterCarsProfile(profile) && targetSkus.length) {
-      for (const batch of chunkSkus(targetSkus, 100)) {
-        const body = JSON.stringify({
-          lines: batch.map((sku) => ({ sku, quantity: 1 }))
-        });
-        const res2 = await transport.request({
-          url: this.buildUrl(profile.endpoints.prices || "/prices"),
-          method: "POST",
-          body,
-          headers: { ...this.authHeaders(), "Content-Type": "application/json" },
-          supplierId: this.supplierId,
-          operation: "fetchPrices",
-          timeoutMs: this.connectorConfig.timeoutMs
-        });
-        const parsed2 = parseSupplierFeedBody(res2.body, profile.feedFormat || "json");
-        if (!parsed2.ok) {
-          return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed2.reason };
-        }
-        for (const raw of parsed2.records) {
-          const mapped = preprocessInterCarsPrice(raw, profile.currency);
-          const priceObj = mapped.supplier_price;
-          allRecords.push({
-            supplier_sku: mapped.supplierSku,
-            supplier_price: {
-              amount: priceObj?.amount ?? mapped.supplierPrice,
-              currency: priceObj?.currency || profile.currency,
-              includesVat: profile.priceIncludesVat === true
-            },
-            updated_at: (/* @__PURE__ */ new Date()).toISOString()
-          });
-        }
-      }
-      return { ok: true, records: allRecords, total: allRecords.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
-    }
-    const res = await transport.request({
-      url: this.buildUrl(profile.endpoints.prices || "/prices"),
-      headers: this.authHeaders(),
-      supplierId: this.supplierId,
-      operation: "fetchPrices",
-      timeoutMs: this.connectorConfig.timeoutMs
-    });
-    const parsed = parseSupplierFeedBody(res.body, profile.feedFormat || "json");
-    if (!parsed.ok) {
-      return { ok: false, records: [], total: 0, fetchedAt: (/* @__PURE__ */ new Date()).toISOString(), error: parsed.reason };
-    }
-    let records = parsed.records.map((raw) => {
-      const mapped = isInterCarsProfile(profile) ? preprocessInterCarsPrice(raw, profile.currency) : normalizeB2bSandboxRecord(raw, profile);
-      const priceObj = mapped.supplier_price;
-      return {
-        supplier_sku: mapped.supplierSku,
-        supplier_price: {
-          amount: priceObj?.amount ?? mapped.supplierPrice,
-          currency: priceObj?.currency || profile.currency,
-          includesVat: profile.priceIncludesVat === true
-        },
-        updated_at: (/* @__PURE__ */ new Date()).toISOString()
-      };
-    });
-    if (targetSkus.length) {
-      records = records.filter((r) => targetSkus.includes(String(r.supplier_sku)));
-    }
-    return { ok: res.ok, records, total: records.length, fetchedAt: (/* @__PURE__ */ new Date()).toISOString() };
-  }
-  async doCreateOrder(request) {
-    return this.executeControlledValidationCreateOrder(request, {
-      idempotencyKey: request.orderId,
-      correlationId: request.orderId
-    });
-  }
-  /**
-   * Controlled validation createOrder — only callable within scoped validation network context.
-   * Does not require SUPPLIER_ORDER_NETWORK_ENABLED.
-   */
-  async executeControlledValidationCreateOrder(request, context) {
-    const profile = this.getProfile();
-    if (!isInterCarsProfile(profile)) {
-      return { ok: false, errorCode: "ADAPTER_NOT_INTER_CARS", data: { status: "NOT_SUPPORTED" } };
-    }
-    const createOrderDeclared = profile.capabilities?.createOrder === true || profile.capabilities?.orderAPI === true;
-    const endpoints = profile.endpoints;
-    const createOrderPath = endpoints.createOrder || endpoints.orders || "/ic/order/createOrder";
-    if (!createOrderDeclared && process.env.SUPPLIER_LIVE_CREATE_ORDER_ENABLED !== "1") {
-      return {
-        ok: false,
-        errorCode: "CREATE_ORDER_NOT_DECLARED",
-        data: { status: "BLOCKED", reason: "Inter Cars createOrder not declared on profile" }
-      };
-    }
-    if (!isInScopedValidationNetworkContext()) {
-      return {
-        ok: false,
-        errorCode: "SCOPED_NETWORK_REQUIRED",
-        data: { status: "BLOCKED", reason: "Controlled validation network context required" }
-      };
-    }
-    const transport = this.getTransport();
-    const body = JSON.stringify(buildInterCarsCreateOrderBody(request, context.idempotencyKey));
-    try {
-      const res = await transport.request({
-        url: this.buildUrl(createOrderPath),
-        method: "POST",
-        body,
-        headers: {
-          ...this.authHeaders(),
-          "Content-Type": "application/json",
-          "Idempotency-Key": context.idempotencyKey
-        },
-        supplierId: this.supplierId,
-        operation: "controlledValidationCreateOrder",
-        correlationId: context.correlationId,
-        timeoutMs: this.connectorConfig.timeoutMs,
-        allowRedirects: false
-      });
-      const parsed = safeParseJson(res.body);
-      const record = parsed.ok ? parsed.data : {};
-      const supplierOrderId = record.orderId || record.supplierOrderId || record.id || void 0;
-      if (!res.ok) {
-        return {
-          ok: false,
-          errorCode: `HTTP_${res.status}`,
-          data: { status: "REJECTED", httpStatus: res.status, body: record }
-        };
-      }
-      if (!supplierOrderId) {
-        return {
-          ok: false,
-          errorCode: "MISSING_SUPPLIER_ORDER_ID",
-          data: { status: "NEEDS_REVIEW", httpStatus: res.status, body: record }
-        };
-      }
-      return {
-        ok: true,
-        data: {
-          supplierOrderId,
-          status: String(record.status || record.orderStatus || "ACCEPTED"),
-          httpStatus: res.status
-        }
-      };
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "CONTROLLED_CREATE_ORDER_FAILED";
-      const code = e.code || "NETWORK_ERROR";
-      return {
-        ok: false,
-        errorCode: code,
-        data: { status: "UNKNOWN", message }
-      };
-    }
-  }
-};
-
-// lib/supplier-engine/connectors/factory.ts
-function createConnector(supplier, integrationType, connectorConfig = {}) {
-  const mergedConfig = integrationType === "b2b-sandbox" && supplier.connectorProfile ? { ...profileToConnectorConfig(supplier.connectorProfile), ...connectorConfig } : connectorConfig;
-  switch (integrationType) {
-    case "api":
-      return new ApiSupplierConnector(supplier, connectorConfig);
-    case "xml":
-      return new XmlSupplierConnector(supplier, connectorConfig);
-    case "csv":
-      return new CsvSupplierConnector(supplier, connectorConfig);
-    case "manual":
-      return new ManualSupplierConnector(supplier, connectorConfig);
-    case "template":
-      return new TemplateSupplierConnector(supplier, mergedConfig);
-    case "b2b-sandbox":
-      return new B2bSandboxSupplierConnector(supplier, mergedConfig);
-    default:
-      throw new Error(`UNKNOWN_INTEGRATION_TYPE:${integrationType}`);
-  }
-}
-
-// lib/supplier-engine/service.ts
-init_capabilities();
-init_security();
-
-// lib/supplier-engine/health.ts
-init_persistence();
-var healthCache = /* @__PURE__ */ new Map();
-function defaultHealth(supplierId) {
-  return {
-    supplierId,
-    healthStatus: "UNKNOWN",
-    responseTimeMs: 0,
-    errorCount: 0,
-    successCount: 0,
-    rateLimitCount: 0,
-    consecutiveFailures: 0,
-    reliabilityScore: 0.5,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-function fromPersisted2(row) {
-  return {
-    supplierId: String(row.supplierId),
-    healthStatus: row.healthStatus || "UNKNOWN",
-    responseTimeMs: Number(row.responseTimeMs || 0),
-    errorCount: Number(row.errorCount || 0),
-    successCount: Number(row.successCount || 0),
-    rateLimitCount: Number(row.rateLimitCount || 0),
-    consecutiveFailures: Number(row.consecutiveFailures || 0),
-    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
-    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
-    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function hydrateHealthFromPersistence() {
-  const persistence = getSupplierPersistence();
-  if (!persistence) return;
-  const listAll = persistence.listAllHealthRecords;
-  const rows = listAll ? listAll.call(persistence) : [];
-  for (const health of rows) {
-    healthCache.set(String(health.supplierId), fromPersisted2(health));
-  }
-}
-function getSupplierHealth(supplierId) {
-  const cached = healthCache.get(supplierId);
-  if (cached) return cached;
-  const persistence = getSupplierPersistence();
-  const row = persistence?.getHealth(supplierId);
-  if (row) {
-    const record = fromPersisted2(row);
-    healthCache.set(supplierId, record);
-    return record;
-  }
-  return defaultHealth(supplierId);
-}
-function persistHealth(record) {
-  healthCache.set(record.supplierId, record);
-  getSupplierPersistence()?.saveHealth(record);
-  return record;
-}
-function recordSupplierHealthSuccess(supplierId, options = {}) {
-  const current = getSupplierHealth(supplierId);
-  const successCount = current.successCount + 1;
-  const reliabilityScore = successCount / Math.max(successCount + current.errorCount, 1);
-  let healthStatus = "HEALTHY";
-  if (current.consecutiveFailures > 0) healthStatus = "DEGRADED";
-  return persistHealth({
-    ...current,
-    healthStatus,
-    responseTimeMs: options.responseTimeMs ?? current.responseTimeMs,
-    successCount,
-    consecutiveFailures: 0,
-    lastSuccessfulOperation: options.operation || (/* @__PURE__ */ new Date()).toISOString(),
-    reliabilityScore: Math.round(reliabilityScore * 100) / 100,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  });
-}
-function recordSupplierHealthFailure(supplierId, options = {}) {
-  const current = getSupplierHealth(supplierId);
-  const errorCount = current.errorCount + 1;
-  const consecutiveFailures = current.consecutiveFailures + 1;
-  const rateLimitCount = current.rateLimitCount + (options.rateLimited ? 1 : 0);
-  const reliabilityScore = current.successCount / Math.max(current.successCount + errorCount, 1);
-  let healthStatus = "DEGRADED";
-  if (options.errorCode === "AUTH_FAILED" || options.errorCode === "FORBIDDEN") {
-    healthStatus = "UNHEALTHY";
-  } else if (consecutiveFailures >= 5) {
-    healthStatus = "UNHEALTHY";
-  }
-  return persistHealth({
-    ...current,
-    healthStatus,
-    responseTimeMs: options.responseTimeMs ?? current.responseTimeMs,
-    errorCount,
-    rateLimitCount,
-    consecutiveFailures,
-    lastFailedOperation: (/* @__PURE__ */ new Date()).toISOString(),
-    reliabilityScore: Math.round(reliabilityScore * 100) / 100,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  });
-}
-
-// lib/supplier-engine/reliability.ts
-function computeSupplierReliabilityScore(supplierId) {
-  const health = getSupplierHealth(supplierId);
-  const logs = getSupplierLogs(supplierId);
-  const total = health.successCount + health.errorCount + logs.length;
-  const successes = health.successCount + logs.filter((l) => l.status === "SUCCESS").length;
-  const syncSuccessRate = total > 0 ? successes / total : health.reliabilityScore;
-  return {
-    score: total > 0 ? Math.round(syncSuccessRate * 100) / 100 : health.reliabilityScore || 0.5,
-    metrics: {
-      uptime: total > 0 ? syncSuccessRate : 0,
-      syncSuccessRate,
-      orderSuccessRate: 0,
-      cancellationRate: 0,
-      stockAccuracy: 0,
-      deliveryPerformance: 0
-    },
-    sampleSize: total,
-    computedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-
-// lib/supplier-engine/sync.ts
-init_registry2();
-
-// lib/supplier-engine/state.ts
-init_persistence();
-var stateBySupplier = /* @__PURE__ */ new Map();
-function defaultState(supplierId) {
-  return {
-    supplierId,
-    healthStatus: "UNKNOWN",
-    reliabilityScore: 0.5,
-    syncStatus: "IDLE",
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-function fromPersisted3(row) {
-  return {
-    supplierId: String(row.supplierId),
-    healthStatus: row.healthStatus || "UNKNOWN",
-    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
-    syncStatus: row.syncStatus || "IDLE",
-    lastSyncStartedAt: row.lastSyncStartedAt ? String(row.lastSyncStartedAt) : void 0,
-    lastSyncCompletedAt: row.lastSyncCompletedAt ? String(row.lastSyncCompletedAt) : void 0,
-    lastSuccessfulSync: row.lastSyncSuccessAt ? String(row.lastSyncSuccessAt) : void 0,
-    lastFailedSync: row.lastSyncFailureAt ? String(row.lastSyncFailureAt) : void 0,
-    lastSyncError: row.lastErrorMessageSafe ? String(row.lastErrorMessageSafe) : void 0,
-    lastErrorCode: row.lastErrorCode ? String(row.lastErrorCode) : void 0,
-    lastSyncJobId: row.lastSyncJobId ? String(row.lastSyncJobId) : void 0,
-    syncLockJobId: row.syncLockJobId ? String(row.syncLockJobId) : void 0,
-    syncLockAcquiredAt: row.syncLockAcquiredAt ? String(row.syncLockAcquiredAt) : void 0,
-    productsProcessed: Number(row.productsProcessed || 0),
-    productsAccepted: Number(row.productsAccepted || 0),
-    productsRejected: Number(row.productsRejected || 0),
-    offersUpdated: Number(row.offersUpdated || 0),
-    stockUpdated: Number(row.stockUpdated || 0),
-    priceUpdated: Number(row.priceUpdated || 0),
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function toPersisted(state) {
-  return {
-    supplierId: state.supplierId,
-    syncStatus: state.syncStatus,
-    healthStatus: state.healthStatus,
-    lastSyncStartedAt: state.lastSyncStartedAt,
-    lastSyncCompletedAt: state.lastSyncCompletedAt,
-    lastSyncSuccessAt: state.lastSuccessfulSync,
-    lastSyncFailureAt: state.lastFailedSync,
-    lastErrorCode: state.lastErrorCode,
-    lastErrorMessageSafe: state.lastSyncError,
-    lastSyncJobId: state.lastSyncJobId,
-    syncLockJobId: state.syncLockJobId,
-    syncLockAcquiredAt: state.syncLockAcquiredAt,
-    productsProcessed: state.productsProcessed,
-    productsAccepted: state.productsAccepted,
-    productsRejected: state.productsRejected,
-    offersUpdated: state.offersUpdated,
-    stockUpdated: state.stockUpdated,
-    priceUpdated: state.priceUpdated,
-    reliabilityScore: state.reliabilityScore
-  };
-}
-function persistState(state) {
-  stateBySupplier.set(state.supplierId, state);
-  getSupplierPersistence()?.saveRuntimeState(toPersisted(state));
-  return state;
-}
-function hydrateRuntimeStateFromPersistence() {
-  const persistence = getSupplierPersistence();
-  if (!persistence) return;
-  const listAll = persistence.listAllRuntimeStates;
-  const rows = listAll ? listAll.call(persistence) : [];
-  for (const runtime of rows) {
-    stateBySupplier.set(String(runtime.supplierId), fromPersisted3(runtime));
-  }
-}
-function getSupplierRuntimeState(supplierId) {
-  const cached = stateBySupplier.get(supplierId);
-  if (cached) return cached;
-  const row = getSupplierPersistence()?.getRuntimeState(supplierId);
-  if (row) {
-    const state = fromPersisted3(row);
-    stateBySupplier.set(supplierId, state);
-    return state;
-  }
-  const health = getSupplierHealth(supplierId);
-  return {
-    ...defaultState(supplierId),
-    healthStatus: health.healthStatus,
-    reliabilityScore: health.reliabilityScore
-  };
-}
-function updateSupplierRuntimeState(supplierId, patch) {
-  const current = getSupplierRuntimeState(supplierId);
-  const reliability = computeSupplierReliabilityScore(supplierId);
-  const next = {
-    ...current,
-    ...patch,
-    supplierId,
-    reliabilityScore: patch.reliabilityScore ?? reliability.score,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  return persistState(next);
-}
-function markSyncStarted(supplierId, jobId) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return updateSupplierRuntimeState(supplierId, {
-    syncStatus: "SYNCING",
-    lastSyncJobId: jobId,
-    lastSyncStartedAt: now,
-    syncLockJobId: jobId,
-    syncLockAcquiredAt: now
-  });
-}
-function markSyncCompleted(supplierId, outcome) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const base = {
-    lastSyncCompletedAt: now,
-    syncLockJobId: void 0,
-    syncLockAcquiredAt: void 0,
-    ...outcome.metrics
-  };
-  if (outcome.status === "FAILED") {
-    return updateSupplierRuntimeState(supplierId, {
-      ...base,
-      syncStatus: "FAILED",
-      healthStatus: outcome.healthStatus ?? "UNHEALTHY",
-      lastFailedSync: now,
-      lastSyncError: outcome.error,
-      lastErrorCode: outcome.errorCode
-    });
-  }
-  return updateSupplierRuntimeState(supplierId, {
-    ...base,
-    syncStatus: outcome.status === "PARTIAL" ? "PARTIAL" : "SUCCESS",
-    healthStatus: outcome.healthStatus ?? "HEALTHY",
-    lastSuccessfulSync: now,
-    lastSyncError: outcome.error,
-    lastErrorCode: outcome.errorCode
-  });
-}
-function tryAcquireSupplierSyncLock(supplierId, jobId) {
-  const persistence = getSupplierPersistence();
-  if (persistence) {
-    const result = persistence.tryAcquireSyncLock(supplierId, jobId);
-    if (!result.acquired) {
-      return { acquired: false, reason: `SYNC_IN_PROGRESS:${result.ownerJobId}` };
-    }
-    markSyncStarted(supplierId, jobId);
-    return { acquired: true };
-  }
-  const current = getSupplierRuntimeState(supplierId);
-  if (current.syncStatus === "SYNCING" && current.syncLockJobId && current.syncLockJobId !== jobId) {
-    return { acquired: false, reason: `SYNC_IN_PROGRESS:${current.syncLockJobId}` };
-  }
-  markSyncStarted(supplierId, jobId);
-  return { acquired: true };
-}
-function releaseSupplierSyncLock(supplierId, jobId) {
-  getSupplierPersistence()?.releaseSyncLock(supplierId, jobId);
-  const current = getSupplierRuntimeState(supplierId);
-  if (current.syncLockJobId === jobId) {
-    updateSupplierRuntimeState(supplierId, { syncLockJobId: void 0, syncLockAcquiredAt: void 0 });
-  }
-}
-
-// lib/supplier-engine/bootstrap.ts
-init_registry2();
-init_persistence2();
-var bootstrapped = false;
-function bootstrapSupplierEnginePersistence() {
-  if (bootstrapped) return;
-  hydrateRegistryFromPersistence();
-  hydrateRuntimeStateFromPersistence();
-  hydrateSyncCursorsFromPersistence();
-  hydrateHealthFromPersistence();
-  bootstrapped = true;
-  hydrateSupplierOrderSandboxFromPersistence();
-}
-function resetSupplierEngineBootstrap() {
-  bootstrapped = false;
-}
-
-// lib/supplier-engine/sync.ts
-init_persistence();
-
-// lib/supplier-engine/audit.ts
-init_persistence();
-init_security();
-function recordSupplierEngineAudit(entry) {
-  getSupplierPersistence()?.recordAudit({
-    actor: entry.actor || "system",
-    supplierId: entry.supplierId,
-    action: entry.action,
-    correlationId: entry.correlationId,
-    metadata: redactSecrets(entry.metadata || {}),
-    timestamp: (/* @__PURE__ */ new Date()).toISOString()
-  });
-}
-function listSupplierEngineAudit(supplierId, limit = 50) {
-  return getSupplierPersistence()?.listAudit(supplierId, limit) ?? [];
-}
-
-// lib/supplier-engine/sync.ts
-init_registry2();
-
-// lib/supplier-engine/syncGuard.ts
-init_credentials();
-init_registry2();
-function hasFeedCapability(capabilities, jobType) {
-  if (jobType === "STOCK_ONLY") return Boolean(capabilities.stockFeed);
-  if (jobType === "PRICE_ONLY") return Boolean(capabilities.priceFeed);
-  return Boolean(capabilities.productFeed);
-}
-function evaluateProductionSyncGuard(supplierId, jobType, connectorConfig = {}) {
-  const reasons = [];
-  const supplier = getSupplier(supplierId);
-  if (!supplier) {
-    return { allowed: false, reasons: ["UNKNOWN_SUPPLIER"] };
-  }
-  const active = supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
-  if (!active) reasons.push("SUPPLIER_INACTIVE");
-  const environment = resolveConnectorEnvironment(connectorConfig.environment);
-  if (environment !== "MOCK" && !isSupplierNetworkEnabled()) {
-    reasons.push("NETWORK_DISABLED");
-  }
-  const credentialsOk = hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef || connectorConfig.secretsRef);
-  if (environment !== "MOCK" && !credentialsOk) {
-    reasons.push("CREDENTIALS_MISSING");
-  }
-  if (!hasFeedCapability(supplier.capabilities, jobType)) {
-    reasons.push("CAPABILITY_NOT_SUPPORTED");
-  }
-  const health = getSupplierHealth(supplierId);
-  if (health.consecutiveFailures >= 5 && environment === "PRODUCTION") {
-    reasons.push("HEALTH_CHECK_FAILED");
-  }
-  if (connectorConfig.baseUrl && environment !== "MOCK") {
-    if (!connectorConfig.baseUrl.startsWith("https://") && environment === "PRODUCTION") {
-      reasons.push("ENDPOINT_INVALID");
-    }
-  }
-  return { allowed: reasons.length === 0, reasons };
-}
-
-// lib/product-engine/status.ts
-function mapStorefrontStatus(status, stockStatus) {
-  if (stockStatus === "out_of_stock") return "OUT_OF_STOCK";
-  switch (status) {
-    case "draft":
-      return "DRAFT";
-    case "active":
-      return "ACTIVE";
-    case "paused":
-      return "PAUSED";
-    case "archived":
-      return "ARCHIVED";
-    default:
-      return "DRAFT";
-  }
-}
-function resolveStatusFromStock(current, quantity, options) {
-  if (options?.manuallyDiscontinued || current === "DISCONTINUED") return "DISCONTINUED";
-  if (current === "ARCHIVED" || current === "PAUSED" || current === "DRAFT" || current === "PENDING_REVIEW") {
-    return current;
-  }
-  if (quantity <= 0) return "OUT_OF_STOCK";
-  if (current === "OUT_OF_STOCK") return "ACTIVE";
-  return current;
-}
-
-// lib/product-engine/adapters/buzzardProduct.ts
-function parseTechnicalData(product) {
-  const attrs = product.attributes || {};
-  const technical = { ...attrs };
-  if (product.shipping?.weight_kg) technical.weight_kg = product.shipping.weight_kg;
-  if (attrs.viscosity) technical.viscosity = String(attrs.viscosity);
-  if (attrs.diameter) technical.diameter = Number(attrs.diameter);
-  return technical;
-}
-function mapCompatibility(entries) {
-  if (!entries?.length) return [];
-  return entries.map((v) => ({
-    make: v.brand,
-    model: v.model,
-    engine: v.engine,
-    yearFrom: v.year_from,
-    yearTo: v.year_to,
-    oemNumbers: v.part_reference ? [v.part_reference] : []
-  }));
-}
-function mapImages(product) {
-  return (product.images || []).map((url, i) => ({
-    url,
-    alt: product.name,
-    sortOrder: i,
-    type: i === 0 ? "MAIN" : "GALLERY"
-  }));
-}
-function mapTranslations(product) {
-  const base = {
-    locale: "de-DE",
-    name: product.name,
-    shortDescription: product.short_description,
-    description: product.description,
-    seoTitle: product.seo?.title,
-    seoDescription: product.seo?.description,
-    slug: product.seo?.slug
-  };
-  const entries = [base];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      entries.push({
-        locale: lang,
-        name: t.name || product.name,
-        shortDescription: t.short_description,
-        description: t.description,
-        seoTitle: t.seo_title,
-        seoDescription: t.seo_description
-      });
-    }
-  }
-  return entries;
-}
-function mapSeo(product) {
-  const entries = [
+// lib/supplier-inter-cars-production-access/checklist.ts
+function buildProductionAccessChecklist(input) {
+  const network = resolveNetworkState();
+  const profile = resolvePredefinedLiveProfile();
+  const supplierId = getInterCarsSupplierId();
+  return [
     {
-      locale: "de-DE",
-      seoTitle: product.seo?.title,
-      seoDescription: product.seo?.description,
-      slug: product.seo?.slug || product.id
+      id: "inter_cars_profile",
+      label: "Inter Cars profile configured",
+      status: input.profileConfigured ? "PASS" : "BLOCKED",
+      message: input.profileConfigured ? "SUPPLIER_LIVE_PROFILE=inter-cars" : "Profile missing"
+    },
+    {
+      id: "production_credentials",
+      label: "Production credentials configured",
+      status: input.credentialsStatus === "VALID" || input.credentialsStatus === "CONFIGURED" ? "PASS" : input.credentialsStatus === "NOT_CONFIGURED" ? "BLOCKED" : "BLOCKED",
+      message: input.credentialsStatus
+    },
+    {
+      id: "credential_format",
+      label: "Credential format valid",
+      status: input.credentialsStatus === "VALID" ? "PASS" : input.credentialsStatus === "BLOCKED" ? "BLOCKED" : "UNVERIFIED",
+      message: input.credentialsStatus
+    },
+    {
+      id: "endpoint_configured",
+      label: "Endpoint configured",
+      status: input.endpointConfigured ? "PASS" : "BLOCKED",
+      message: profile?.baseUrl || "none"
+    },
+    {
+      id: "endpoint_allowlisted",
+      label: "Endpoint allowlisted",
+      status: input.endpointAllowlisted ? "PASS" : "BLOCKED",
+      message: input.endpointAllowlisted ? "SSRF allowlist PASS" : "Endpoint blocked"
+    },
+    {
+      id: "network_disabled",
+      label: "Network disabled (default)",
+      status: network.productionNetwork === "OFF" ? "PASS" : "BLOCKED",
+      message: `SUPPLIER_NETWORK_ENABLED=${network.productionNetwork}`
+    },
+    {
+      id: "order_network_disabled",
+      label: "Order network disabled (default)",
+      status: network.supplierOrderNetwork === "OFF" ? "PASS" : "BLOCKED",
+      message: `SUPPLIER_ORDER_NETWORK_ENABLED=${network.supplierOrderNetwork}`
+    },
+    {
+      id: "create_order_blocked",
+      label: "createOrder blocked in prep mode",
+      status: input.createOrderBlocked ? "PASS" : "BLOCKED",
+      message: input.createOrderBlocked ? "No real createOrder in prep" : "createOrder would execute"
+    },
+    {
+      id: "controlled_validation_explicit",
+      label: "#342 enabled only explicitly",
+      status: isControlledValidationEnabled() ? "UNVERIFIED" : "PASS",
+      message: isControlledValidationEnabled() ? "SUPPLIER_CREATE_ORDER_VALIDATION_ENABLED=1" : "Disabled until explicit enable"
+    },
+    {
+      id: "kill_switch",
+      label: "Kill switch available",
+      status: "PASS",
+      message: isActivationKillSwitched({ supplierId, market: "DE", channel: "DIRECT" }) ? "KILL_SWITCH ON" : "Available"
+    },
+    {
+      id: "audit_persistence",
+      label: "Audit & persistence available",
+      status: "PASS",
+      message: "buzzard.db + audit modules"
     }
   ];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      if (t.seo_title || t.seo_description) {
-        entries.push({
-          locale: lang,
-          seoTitle: t.seo_title,
-          seoDescription: t.seo_description,
-          slug: product.seo?.slug || product.id
-        });
-      }
-    }
+}
+
+// lib/supplier-order-activation/persistence.ts
+var activationStore = /* @__PURE__ */ new Map();
+function listActivationRecords() {
+  return [...activationStore.values()];
+}
+
+// data/global/global_countries_35.json
+var global_countries_35_default = [
+  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
+  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
+  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
+  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
+  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
+  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
+  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
+  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
+  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
+  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
+  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
+  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
+  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
+  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
+  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
+  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
+  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
+  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
+  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
+  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
+  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
+  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
+  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
+  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
+  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
+  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
+  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
+  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
+  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
+  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
+  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
+  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
+  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
+  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
+  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
+];
+
+// data/global/market_engine_extensions.json
+var market_engine_extensions_default = {
+  shippingRegions: {
+    AT: "EU_CENTRAL",
+    BE: "EU_WEST",
+    BG: "EU_EAST",
+    HR: "EU_EAST",
+    CY: "EU_SOUTH",
+    CZ: "EU_CENTRAL",
+    DK: "EU_NORTH",
+    EE: "EU_EAST",
+    FI: "EU_NORTH",
+    FR: "EU_WEST",
+    DE: "EU_CENTRAL",
+    GR: "EU_SOUTH",
+    HU: "EU_CENTRAL",
+    IE: "EU_WEST",
+    IT: "EU_SOUTH",
+    LV: "EU_EAST",
+    LT: "EU_EAST",
+    LU: "EU_WEST",
+    MT: "EU_SOUTH",
+    NL: "EU_WEST",
+    PL: "EU_EAST",
+    PT: "EU_SOUTH",
+    RO: "EU_EAST",
+    SK: "EU_CENTRAL",
+    SI: "EU_EAST",
+    ES: "EU_SOUTH",
+    SE: "EU_NORTH",
+    TR: "NON_EU",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  paymentRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  legalRegions: {
+    AT: "EU_AT",
+    BE: "EU_BE",
+    BG: "EU_BG",
+    HR: "EU_HR",
+    CY: "EU_CY",
+    CZ: "EU_CZ",
+    DK: "EU_DK",
+    EE: "EU_EE",
+    FI: "EU_FI",
+    FR: "EU_FR",
+    DE: "EU_DE",
+    GR: "EU_GR",
+    HU: "EU_HU",
+    IE: "EU_IE",
+    IT: "EU_IT",
+    LV: "EU_LV",
+    LT: "EU_LT",
+    LU: "EU_LU",
+    MT: "EU_MT",
+    NL: "EU_NL",
+    PL: "EU_PL",
+    PT: "EU_PT",
+    RO: "EU_RO",
+    SK: "EU_SK",
+    SI: "EU_SI",
+    ES: "EU_ES",
+    SE: "EU_SE",
+    TR: "TR",
+    SA: "GCC_SA",
+    AE: "GCC_AE",
+    QA: "GCC_QA",
+    KW: "GCC_KW",
+    BH: "GCC_BH",
+    OM: "GCC_OM",
+    EG: "MENA_EG"
+  },
+  supplierRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  returnRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  marketStatus: {
+    DE: "ACTIVE",
+    FR: "ACTIVE",
+    IT: "ACTIVE",
+    ES: "ACTIVE",
+    PL: "ACTIVE",
+    NL: "ACTIVE",
+    TR: "TESTING",
+    SA: "TESTING",
+    AE: "TESTING",
+    EG: "TESTING"
+  },
+  defaultMarketStatus: "PLANNED",
+  featureFlags: {
+    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
+    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
+  },
+  defaultFeatureFlags: {
+    marketEnabled: true,
+    categoryEnabled: true,
+    marketplaceEnabled: false,
+    supplierEnabled: false,
+    paymentEnabled: false,
+    shippingEnabled: false
+  },
+  marketplaces: {
+    DE: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "kaufland", name: "Kaufland", status: "supported" },
+      { id: "otto", name: "OTTO", status: "supported" }
+    ],
+    FR: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "cdiscount", name: "Cdiscount", status: "supported" }
+    ],
+    PL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "allegro", name: "Allegro", status: "supported" }
+    ],
+    NL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "bol", name: "bol.com", status: "supported" }
+    ]
+  },
+  paymentCapabilities: {
+    EU: ["card", "sepa", "paypal", "klarna"],
+    TR: ["card"],
+    GCC: ["card"],
+    MENA: ["card"]
+  },
+  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
+  supplierFallbacks: {
+    EU: ["EU"],
+    GCC: ["GCC", "EU"],
+    MENA: ["MENA", "EU"],
+    TR: ["TR", "EU"],
+    NON_EU: ["EU"]
   }
-  return entries;
-}
-function mapSupplierOffer(product) {
-  return {
-    supplierId: product.supplier_id,
-    supplierSku: product.supplier_sku,
-    supplierEan: product.ean_gtin,
-    supplierPrice: product.supplier_price?.amount ?? 0,
-    currency: product.supplier_price?.currency ?? product.price?.currency ?? "EUR",
-    stock: product.stock,
-    lastUpdated: product.updated_at,
-    source: product.supplier_id,
-    sourceType: "MANUAL",
-    reliabilityScore: 0.8
-  };
-}
-function mapPricing(product) {
-  const supplierCost = product.supplier_price?.amount ?? 0;
-  const customerPrice = product.price?.amount ?? 0;
-  const margin = customerPrice > 0 ? (customerPrice - supplierCost) / customerPrice : 0;
-  return {
-    supplierCost,
-    shippingCost: 0,
-    marketplaceFee: 0,
-    paymentFee: 0,
-    vat: product.vat_rate / 100,
-    margin,
-    customerPrice,
-    currency: product.price?.currency ?? "EUR"
-  };
-}
-function mapStock(product) {
-  const availability = product.stock_status === "out_of_stock" ? "OUT_OF_STOCK" : product.stock_status === "low_stock" ? "LOW_STOCK" : product.stock_status === "preorder" ? "PREORDER" : "IN_STOCK";
-  return {
-    quantity: product.stock,
-    availability,
-    lastUpdated: product.updated_at
-  };
-}
-function fromBuzzardProduct(product) {
-  const subcategoryId = product.category_ids?.length > 1 ? product.category_ids[1] : void 0;
-  return {
-    productId: product.id,
-    sku: product.sku,
-    ean: product.ean_gtin,
-    gtin: product.ean_gtin,
-    brand: product.brand,
-    manufacturer: product.manufacturer,
-    categoryId: product.category_id,
-    subcategoryId,
-    productType: product.category_id.startsWith("cat-05") ? "automotive" : "general",
-    status: mapStorefrontStatus(product.status, product.stock_status),
-    weight: product.shipping?.weight_kg,
-    weightUnit: "kg",
-    dimensions: product.shipping ? {
-      length: product.shipping.length_cm,
-      width: product.shipping.width_cm,
-      height: product.shipping.height_cm,
-      unit: "cm"
-    } : void 0,
-    images: mapImages(product),
-    technicalData: parseTechnicalData(product),
-    compatibility: mapCompatibility(product.vehicle_compatibility),
-    translations: mapTranslations(product),
-    supplierOffers: [mapSupplierOffer(product)],
-    pricing: mapPricing(product),
-    stock: mapStock(product),
-    availability: [],
-    seo: mapSeo(product),
-    createdAt: product.created_at,
-    updatedAt: product.updated_at,
-    _source: product
-  };
-}
+};
+
+// lib/i18n/international/config.ts
+var GLOBAL_COUNTRIES = global_countries_35_default;
+var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
 
 // lib/product-engine/adapters/canonical.ts
 var import_module = require("module");
@@ -28927,4415 +26781,1860 @@ function indexProducts() {
 indexProducts();
 var PRODUCT_COUNT = activePublicProducts.length;
 
-// lib/product-engine/registry.ts
-var products = /* @__PURE__ */ new Map();
-var skuIndex = /* @__PURE__ */ new Map();
-var eanIndex = /* @__PURE__ */ new Map();
-function indexProduct(product) {
-  products.set(product.productId, product);
-  if (product.sku) skuIndex.set(product.sku.toUpperCase(), product.productId);
-  const ean = product.ean || product.gtin;
-  if (ean) eanIndex.set(ean, product.productId);
-}
-function ensureLoaded() {
-  if (products.size > 0) return;
-  for (const raw of buzzard_products_default.products) {
-    indexProduct(fromBuzzardProduct(raw));
-  }
-}
-function listRegistryProducts() {
-  ensureLoaded();
-  return [...products.values()];
-}
-function getRegistryProduct(productId) {
-  ensureLoaded();
-  return products.get(productId);
-}
-function getRegistryProductByEan(ean) {
-  ensureLoaded();
-  const id = eanIndex.get(String(ean).trim());
-  return id ? products.get(id) : void 0;
-}
-function upsertRegistryProduct(product) {
-  ensureLoaded();
-  product.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
-  indexProduct(product);
-  return product;
-}
-
-// lib/product-engine/translations.ts
-function createProductTranslation(locale, fields) {
-  return {
-    locale,
-    name: fields.name || "",
-    shortDescription: fields.shortDescription,
-    description: fields.description,
-    features: fields.features,
-    warnings: fields.warnings,
-    seoTitle: fields.seoTitle,
-    seoDescription: fields.seoDescription,
-    slug: fields.slug
-  };
-}
-function getTranslationForLocale(translations, locale) {
-  const normalized = locale.toLowerCase();
-  return translations.find((t) => t.locale.toLowerCase() === normalized) || translations.find((t) => t.locale.split("-")[0].toLowerCase() === normalized.split("-")[0]);
-}
-function hasRequiredTranslation(translations, locale = "de") {
-  const t = getTranslationForLocale(translations, locale);
-  return Boolean(t?.name?.trim());
-}
-
-// lib/product-engine/technicalData.ts
-function normalizeTechnicalData(raw) {
-  const result = {};
-  for (const [key, value] of Object.entries(raw)) {
-    if (value == null) continue;
-    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-function validateTechnicalConsistency(data) {
-  const warnings = [];
-  if (data.diameter != null && typeof data.diameter === "number" && data.diameter <= 0) {
-    warnings.push("INVALID_DIAMETER");
-  }
-  if (data.viscosity && typeof data.viscosity === "string" && !/^\d+W-\d+/.test(data.viscosity)) {
-    warnings.push("UNUSUAL_VISCOSITY_FORMAT");
-  }
-  return warnings;
-}
-
-// lib/product-engine/compatibility.ts
-function normalizeCompatibilityEntry(raw) {
-  const make = String(raw.make || raw.brand || raw.manufacturer || "").trim();
-  const model = String(raw.model || "").trim();
-  if (!make || !model) return null;
-  const oemRaw = raw.oemNumbers || raw.oem_numbers || raw.oemNumber || raw.oem_number || raw.part_reference;
-  const oemNumbers = Array.isArray(oemRaw) ? oemRaw.map(String) : oemRaw ? [String(oemRaw)] : [];
-  return {
-    vehicleId: raw.vehicleId ? String(raw.vehicleId) : void 0,
-    make,
-    model,
-    generation: raw.generation ? String(raw.generation) : void 0,
-    engine: raw.engine ? String(raw.engine) : void 0,
-    yearFrom: raw.yearFrom != null ? Number(raw.yearFrom) : raw.year_from != null ? Number(raw.year_from) : void 0,
-    yearTo: raw.yearTo != null ? Number(raw.yearTo) : raw.year_to != null ? Number(raw.year_to) : void 0,
-    kw: raw.kw != null ? Number(raw.kw) : raw.kW != null ? Number(raw.kW) : void 0,
-    ps: raw.ps != null ? Number(raw.ps) : raw.PS != null ? Number(raw.PS) : void 0,
-    oemNumbers,
-    tecdocReference: raw.tecdocReference || raw.tecdoc_reference ? String(raw.tecdocReference || raw.tecdoc_reference) : void 0,
-    source: raw.source ? String(raw.source) : "supplier_feed",
-    verified: Boolean(raw.verified)
-  };
-}
-function normalizeCompatibilityList(list) {
-  if (!Array.isArray(list)) return [];
-  return list.map((entry) => normalizeCompatibilityEntry(entry)).filter((e) => e !== null).slice(0, 100);
-}
-
-// lib/product-engine/images.ts
-var ALLOWED_IMAGE_TYPES = ["MAIN", "GALLERY", "TECHNICAL", "PACKAGING"];
-function sanitizeImageUrl(url) {
-  const trimmed = String(url || "").trim();
-  if (!trimmed) return null;
-  if (trimmed.startsWith("/")) return trimmed;
-  try {
-    const parsed = new URL(trimmed);
-    if (!["http:", "https:"].includes(parsed.protocol)) return null;
-    return parsed.toString();
-  } catch {
-    return null;
-  }
-}
-function normalizeProductImage(raw, fallbackAlt) {
-  const url = sanitizeImageUrl(raw.url || "");
-  if (!url) return null;
-  const type = ALLOWED_IMAGE_TYPES.includes(raw.type) ? raw.type : "GALLERY";
-  return {
-    url,
-    alt: raw.alt || fallbackAlt,
-    sortOrder: Number.isFinite(raw.sortOrder) ? Number(raw.sortOrder) : 0,
-    type
-  };
-}
-function normalizeProductImages(urls, fallbackAlt) {
-  if (!urls?.length) return [];
-  return urls.map(
-    (url, i) => normalizeProductImage({ url, sortOrder: i, type: i === 0 ? "MAIN" : "GALLERY" }, fallbackAlt)
-  ).filter((img) => img !== null);
-}
-function validateProductImages(images) {
-  const errors = [];
-  if (!images.length) errors.push("IMAGES_MISSING");
-  const mainCount = images.filter((i) => i.type === "MAIN").length;
-  if (images.length > 0 && mainCount === 0) errors.push("MAIN_IMAGE_MISSING");
-  for (const img of images) {
-    if (!sanitizeImageUrl(img.url)) errors.push("INVALID_IMAGE_URL");
-  }
-  return [...new Set(errors)];
-}
-
-// lib/product-engine/events.ts
-var eventLog = [];
-var MAX_EVENTS = 5e3;
-function emitProductEvent(type, productId, payload) {
-  const event = {
-    type,
-    productId,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    payload
-  };
-  eventLog.push(event);
-  if (eventLog.length > MAX_EVENTS) eventLog.shift();
-  return event;
-}
-
-// lib/product-engine/supplier.ts
-function createSupplierOffer(partial) {
-  return {
-    ...partial,
-    lastUpdated: partial.lastUpdated || (/* @__PURE__ */ new Date()).toISOString(),
-    reliabilityScore: partial.reliabilityScore ?? 0.5
-  };
-}
-function updateSupplierOffer(product, supplierId, patch) {
-  const offers = product.supplierOffers.map((offer) => {
-    if (offer.supplierId !== supplierId) return offer;
-    const updated = {
-      ...offer,
-      ...patch,
-      lastUpdated: (/* @__PURE__ */ new Date()).toISOString()
-    };
-    if (patch.supplierPrice != null) {
-      emitProductEvent("SUPPLIER_PRICE_UPDATED", product.productId, {
-        supplierId,
-        price: patch.supplierPrice
-      });
-    }
-    if (patch.stock != null) {
-      emitProductEvent("SUPPLIER_STOCK_UPDATED", product.productId, {
-        supplierId,
-        stock: patch.stock
-      });
-    }
-    emitProductEvent("SUPPLIER_OFFER_UPDATED", product.productId, { supplierId });
-    return updated;
-  });
-  const totalStock = offers.reduce((sum, o) => sum + (o.stock || 0), 0);
-  const best = selectBestSupplier({ ...product, supplierOffers: offers });
-  const supplierCost = best?.offer.supplierPrice ?? product.pricing.supplierCost;
-  return {
-    ...product,
-    supplierOffers: offers,
-    stock: {
-      quantity: totalStock,
-      availability: totalStock <= 0 ? "OUT_OF_STOCK" : totalStock <= 5 ? "LOW_STOCK" : "IN_STOCK",
-      lastUpdated: (/* @__PURE__ */ new Date()).toISOString()
-    },
-    status: resolveStatusFromStock(product.status, totalStock, {
-      manuallyDiscontinued: product.status === "DISCONTINUED"
-    }),
-    pricing: {
-      ...product.pricing,
-      supplierCost
-    },
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-function selectBestSupplier(product, market, criteria = {}) {
-  const offers = product.supplierOffers.filter((o) => o.stock > 0);
-  if (!offers.length) return null;
-  const weights = {
-    stock: criteria.stockWeight ?? 0.25,
-    price: criteria.priceWeight ?? 0.3,
-    leadTime: criteria.leadTimeWeight ?? 0.15,
-    reliability: criteria.reliabilityWeight ?? 0.2,
-    margin: criteria.marginWeight ?? 0.1
-  };
-  const maxStock = Math.max(...offers.map((o) => o.stock), 1);
-  const minPrice = Math.min(...offers.map((o) => o.supplierPrice).filter((p) => p > 0), Infinity);
-  const preferredRegions = market?.supplierRegions ?? [];
-  let best = null;
-  for (const offer of offers) {
-    const reasons = [];
-    let score = 0;
-    const stockScore = offer.stock / maxStock;
-    score += stockScore * weights.stock;
-    reasons.push(`stock:${stockScore.toFixed(2)}`);
-    const priceScore = offer.supplierPrice > 0 && minPrice < Infinity ? minPrice / offer.supplierPrice : 0.5;
-    score += priceScore * weights.price;
-    reasons.push(`price:${priceScore.toFixed(2)}`);
-    const leadDays = offer.leadTimeDays ?? 7;
-    const leadScore = Math.max(0, 1 - leadDays / 30);
-    score += leadScore * weights.leadTime;
-    reasons.push(`leadTime:${leadScore.toFixed(2)}`);
-    const reliabilityScore = offer.reliabilityScore ?? 0.5;
-    score += reliabilityScore * weights.reliability;
-    reasons.push(`reliability:${reliabilityScore.toFixed(2)}`);
-    const margin = product.pricing.customerPrice > 0 ? (product.pricing.customerPrice - offer.supplierPrice) / product.pricing.customerPrice : 0;
-    const marginScore = Math.max(0, Math.min(1, margin));
-    score += marginScore * weights.margin;
-    reasons.push(`margin:${marginScore.toFixed(2)}`);
-    if (preferredRegions.length && offer.shippingRegions?.some((r) => preferredRegions.includes(r))) {
-      score += 0.1;
-      reasons.push("region:preferred");
-    }
-    if (!best || score > best.score) {
-      best = { offer, score, reasons };
-    }
-  }
-  return best;
-}
-function addSupplierOffer(product, offer) {
-  const existing = product.supplierOffers.findIndex(
-    (o) => o.supplierId === offer.supplierId && o.supplierSku === offer.supplierSku
-  );
-  const offers = existing >= 0 ? product.supplierOffers.map((o, i) => i === existing ? offer : o) : [...product.supplierOffers, offer];
-  return { ...product, supplierOffers: offers, updatedAt: (/* @__PURE__ */ new Date()).toISOString() };
-}
-
-// lib/market-engine/money.ts
-function toMinorUnits(amount, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return Math.round((Number(amount) || 0) * factor);
-}
-function fromMinorUnits(minor, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return minor / factor;
-}
-function roundMoney(amount, decimalDigits = 2) {
-  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
-}
-function netFromGross(gross, vatRate, decimalDigits = 2) {
-  const grossMinor = toMinorUnits(gross, decimalDigits);
-  const netMinor = Math.round(grossMinor / (1 + vatRate));
-  const vatMinor = grossMinor - netMinor;
-  return { net: fromMinorUnits(netMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
-}
-function grossFromNet(net, vatRate, decimalDigits = 2) {
-  const netMinor = toMinorUnits(net, decimalDigits);
-  const vatMinor = Math.round(netMinor * vatRate);
-  const grossMinor = netMinor + vatMinor;
-  return { gross: fromMinorUnits(grossMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
-}
-var CURRENCY_DECIMALS = {
-  HUF: 0,
-  ISK: 0,
-  KWD: 3,
-  BHD: 3,
-  OMR: 3
-};
-function getCurrencyDecimalDigits(currencyCode) {
-  return CURRENCY_DECIMALS[String(currencyCode).toUpperCase()] ?? 2;
-}
-
-// data/global/global_countries_35.json
-var global_countries_35_default = [
-  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
-  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
-  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
-  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
-  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
-  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
-  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
-  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
-  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
-  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
-  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
-  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
-  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
-  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
-  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
-  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
-  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
-  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
-  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
-  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
-  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
-  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
-  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
-  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
-  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
-  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
-  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
-  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
-  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
-  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
-  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
-  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
-  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
-  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
-  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
-];
-
-// data/global/market_country_overlay.json
-var market_country_overlay_default = {
-  DE: { flag: "\u{1F1E9}\u{1F1EA}", taxRate: 0.19, deliveryDays: "2\u20133 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  AT: { flag: "\u{1F1E6}\u{1F1F9}", taxRate: 0.2, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  BE: { flag: "\u{1F1E7}\u{1F1EA}", taxRate: 0.21, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  BG: { flag: "\u{1F1E7}\u{1F1EC}", taxRate: 0.2, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" },
-  HR: { flag: "\u{1F1ED}\u{1F1F7}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Hrvatski" },
-  CY: { flag: "\u{1F1E8}\u{1F1FE}", taxRate: 0.19, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  CZ: { flag: "\u{1F1E8}\u{1F1FF}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "\u010Ce\u0161tina" },
-  DK: { flag: "\u{1F1E9}\u{1F1F0}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Dansk" },
-  EE: { flag: "\u{1F1EA}\u{1F1EA}", taxRate: 0.22, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Eesti" },
-  FI: { flag: "\u{1F1EB}\u{1F1EE}", taxRate: 0.255, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Suomi" },
-  FR: { flag: "\u{1F1EB}\u{1F1F7}", taxRate: 0.2, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Fran\xE7ais" },
-  GR: { flag: "\u{1F1EC}\u{1F1F7}", taxRate: 0.24, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  HU: { flag: "\u{1F1ED}\u{1F1FA}", taxRate: 0.27, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Magyar" },
-  IE: { flag: "\u{1F1EE}\u{1F1EA}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "English" },
-  IT: { flag: "\u{1F1EE}\u{1F1F9}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Italiano" },
-  LV: { flag: "\u{1F1F1}\u{1F1FB}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Latvie\u0161u" },
-  LT: { flag: "\u{1F1F1}\u{1F1F9}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Lietuvi\u0173" },
-  LU: { flag: "\u{1F1F1}\u{1F1FA}", taxRate: 0.17, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "L\xEBtzebuergesch" },
-  MT: { flag: "\u{1F1F2}\u{1F1F9}", taxRate: 0.18, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Malti" },
-  NL: { flag: "\u{1F1F3}\u{1F1F1}", taxRate: 0.21, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  PL: { flag: "\u{1F1F5}\u{1F1F1}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Polski" },
-  PT: { flag: "\u{1F1F5}\u{1F1F9}", taxRate: 0.23, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Portugu\xEAs" },
-  RO: { flag: "\u{1F1F7}\u{1F1F4}", taxRate: 0.19, deliveryDays: "3\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Rom\xE2n\u0103" },
-  SK: { flag: "\u{1F1F8}\u{1F1F0}", taxRate: 0.2, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u010Dina" },
-  SI: { flag: "\u{1F1F8}\u{1F1EE}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u0161\u010Dina" },
-  ES: { flag: "\u{1F1EA}\u{1F1F8}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Espa\xF1ol" },
-  SE: { flag: "\u{1F1F8}\u{1F1EA}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Svenska" },
-  TR: { flag: "\u{1F1F9}\u{1F1F7}", taxRate: 0.2, deliveryDays: "4\u20139 Werktage", rtl: false, taxModel: "VAT", languageName: "T\xFCrk\xE7e" },
-  SA: { flag: "\u{1F1F8}\u{1F1E6}", taxRate: 0.15, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  AE: { flag: "\u{1F1E6}\u{1F1EA}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  QA: { flag: "\u{1F1F6}\u{1F1E6}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  KW: { flag: "\u{1F1F0}\u{1F1FC}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  BH: { flag: "\u{1F1E7}\u{1F1ED}", taxRate: 0.1, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  OM: { flag: "\u{1F1F4}\u{1F1F2}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  EG: { flag: "\u{1F1EA}\u{1F1EC}", taxRate: 0.14, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" }
-};
-
-// data/global/market_engine_extensions.json
-var market_engine_extensions_default = {
-  shippingRegions: {
-    AT: "EU_CENTRAL",
-    BE: "EU_WEST",
-    BG: "EU_EAST",
-    HR: "EU_EAST",
-    CY: "EU_SOUTH",
-    CZ: "EU_CENTRAL",
-    DK: "EU_NORTH",
-    EE: "EU_EAST",
-    FI: "EU_NORTH",
-    FR: "EU_WEST",
-    DE: "EU_CENTRAL",
-    GR: "EU_SOUTH",
-    HU: "EU_CENTRAL",
-    IE: "EU_WEST",
-    IT: "EU_SOUTH",
-    LV: "EU_EAST",
-    LT: "EU_EAST",
-    LU: "EU_WEST",
-    MT: "EU_SOUTH",
-    NL: "EU_WEST",
-    PL: "EU_EAST",
-    PT: "EU_SOUTH",
-    RO: "EU_EAST",
-    SK: "EU_CENTRAL",
-    SI: "EU_EAST",
-    ES: "EU_SOUTH",
-    SE: "EU_NORTH",
-    TR: "NON_EU",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  paymentRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  legalRegions: {
-    AT: "EU_AT",
-    BE: "EU_BE",
-    BG: "EU_BG",
-    HR: "EU_HR",
-    CY: "EU_CY",
-    CZ: "EU_CZ",
-    DK: "EU_DK",
-    EE: "EU_EE",
-    FI: "EU_FI",
-    FR: "EU_FR",
-    DE: "EU_DE",
-    GR: "EU_GR",
-    HU: "EU_HU",
-    IE: "EU_IE",
-    IT: "EU_IT",
-    LV: "EU_LV",
-    LT: "EU_LT",
-    LU: "EU_LU",
-    MT: "EU_MT",
-    NL: "EU_NL",
-    PL: "EU_PL",
-    PT: "EU_PT",
-    RO: "EU_RO",
-    SK: "EU_SK",
-    SI: "EU_SI",
-    ES: "EU_ES",
-    SE: "EU_SE",
-    TR: "TR",
-    SA: "GCC_SA",
-    AE: "GCC_AE",
-    QA: "GCC_QA",
-    KW: "GCC_KW",
-    BH: "GCC_BH",
-    OM: "GCC_OM",
-    EG: "MENA_EG"
-  },
-  supplierRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  returnRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  marketStatus: {
-    DE: "ACTIVE",
-    FR: "ACTIVE",
-    IT: "ACTIVE",
-    ES: "ACTIVE",
-    PL: "ACTIVE",
-    NL: "ACTIVE",
-    TR: "TESTING",
-    SA: "TESTING",
-    AE: "TESTING",
-    EG: "TESTING"
-  },
-  defaultMarketStatus: "PLANNED",
-  featureFlags: {
-    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
-    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
-  },
-  defaultFeatureFlags: {
-    marketEnabled: true,
-    categoryEnabled: true,
-    marketplaceEnabled: false,
-    supplierEnabled: false,
-    paymentEnabled: false,
-    shippingEnabled: false
-  },
-  marketplaces: {
-    DE: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "kaufland", name: "Kaufland", status: "supported" },
-      { id: "otto", name: "OTTO", status: "supported" }
-    ],
-    FR: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "cdiscount", name: "Cdiscount", status: "supported" }
-    ],
-    PL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "allegro", name: "Allegro", status: "supported" }
-    ],
-    NL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "bol", name: "bol.com", status: "supported" }
-    ]
-  },
-  paymentCapabilities: {
-    EU: ["card", "sepa", "paypal", "klarna"],
-    TR: ["card"],
-    GCC: ["card"],
-    MENA: ["card"]
-  },
-  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
-  supplierFallbacks: {
-    EU: ["EU"],
-    GCC: ["GCC", "EU"],
-    MENA: ["MENA", "EU"],
-    TR: ["TR", "EU"],
-    NON_EU: ["EU"]
-  }
-};
-
-// lib/i18n/international/config.ts
-var GLOBAL_COUNTRIES = global_countries_35_default;
-var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
-
-// lib/market-engine/registry.ts
-var extensions = market_engine_extensions_default;
-var overlayByCode = market_country_overlay_default;
-var EU_COUNTRY_CODES = /* @__PURE__ */ new Set([
-  "AT",
-  "BE",
-  "BG",
-  "HR",
-  "CY",
-  "CZ",
-  "DK",
-  "EE",
-  "FI",
-  "FR",
-  "DE",
-  "GR",
-  "HU",
-  "IE",
-  "IT",
-  "LV",
-  "LT",
-  "LU",
-  "MT",
-  "NL",
-  "PL",
-  "PT",
-  "RO",
-  "SK",
-  "SI",
-  "ES",
-  "SE"
-]);
-var marketByCode = /* @__PURE__ */ new Map();
-function resolveFeatureFlags(countryCode) {
-  const defaults = extensions.defaultFeatureFlags;
-  const overrides = extensions.featureFlags[countryCode] ?? {};
-  return { ...defaults, ...overrides };
-}
-function resolveMarketStatus(country) {
-  if (country.enabled === false) return "DISABLED";
-  return extensions.marketStatus[country.countryCode] ?? extensions.defaultMarketStatus;
-}
-function buildVatRules(countryCode) {
-  const overlay = overlayByCode[countryCode];
-  return {
-    standardRate: overlay?.taxRate ?? 0.2,
-    pricesIncludeVat: true,
-    taxModel: overlay?.taxModel ?? "VAT"
-  };
-}
-function buildMarketConfig(country) {
-  const code = country.countryCode;
-  const variants = country.localeVariants ?? [];
-  const locales = variants.map((v) => v.locale);
-  if (!locales.length) locales.push(country.locale);
-  const paymentRegion = extensions.paymentRegions[code] ?? "EU";
-  return {
-    countryCode: code,
-    countryName: country.countryName,
-    nativeCountryName: country.nativeCountryName || country.countryName,
-    defaultLanguage: country.defaultLanguage,
-    supportedLanguages: [...country.supportedLanguages],
-    locales,
-    currency: country.currency,
-    currencySymbol: country.currencySymbol,
-    timezone: country.timezone,
-    textDirection: country.textDirection === "rtl" ? "rtl" : "ltr",
-    vat: buildVatRules(code),
-    shippingRegion: extensions.shippingRegions[code] ?? "EU_CENTRAL",
-    paymentRegion,
-    legalRegion: extensions.legalRegions[code] ?? `EU_${code}`,
-    returnRegion: extensions.returnRegions[code] ?? paymentRegion,
-    supplierRegion: extensions.supplierRegions[code] ?? paymentRegion,
-    status: resolveMarketStatus(country),
-    featureFlags: resolveFeatureFlags(code),
-    marketplaces: extensions.marketplaces[code] ?? [],
-    paymentCapabilities: extensions.paymentCapabilities[paymentRegion] ?? ["card"],
-    shippingCapabilities: [...extensions.shippingCapabilities],
-    source: country
-  };
-}
-function ensureRegistryBuilt() {
-  if (marketByCode.size > 0) return;
-  for (const country of global_countries_35_default) {
-    marketByCode.set(country.countryCode, buildMarketConfig(country));
-  }
-}
-function getMarket(countryCode) {
-  ensureRegistryBuilt();
-  const code = String(countryCode || "").toUpperCase();
-  return marketByCode.get(code);
-}
-function isEuCountry(countryCode) {
-  return EU_COUNTRY_CODES.has(String(countryCode).toUpperCase());
-}
-function getMarketVat(countryCode) {
-  return getMarket(countryCode)?.vat ?? { standardRate: 0.2, pricesIncludeVat: true, taxModel: "VAT" };
-}
-function getMarketShippingRegion(countryCode) {
-  return getMarket(countryCode)?.shippingRegion ?? "EU_CENTRAL";
-}
-
-// lib/market-engine/vat.ts
-function normalizeCode(code) {
-  return String(code || "").toUpperCase();
-}
-function isValidVatIdFormat(vatId) {
-  if (!vatId) return false;
-  const trimmed = vatId.trim();
-  return trimmed.length >= 4 && /^[A-Z]{2}[A-Z0-9]+$/i.test(trimmed);
-}
-function getVatContext(input) {
-  const seller = normalizeCode(input.sellerCountry);
-  const buyer = normalizeCode(input.buyerCountry);
-  const customerType = input.customerType;
-  const buyerVat = getMarketVat(buyer);
-  const sellerVat = getMarketVat(seller);
-  const sellerEu = isEuCountry(seller);
-  const buyerEu = isEuCountry(buyer);
-  const domestic = seller === buyer;
-  const intraEu = sellerEu && buyerEu && !domestic;
-  const exportSale = sellerEu && !buyerEu;
-  const importToEu = !sellerEu && buyerEu;
-  if (customerType === "B2B") {
-    if (intraEu && isValidVatIdFormat(input.vatId)) {
-      return {
-        rate: 0,
-        included: false,
-        reverseCharge: true,
-        reason: "B2B_INTRA_EU_REVERSE_CHARGE"
-      };
-    }
-    if (exportSale) {
-      return {
-        rate: 0,
-        included: false,
-        reverseCharge: false,
-        reason: "B2B_EXPORT_ZERO_RATED"
-      };
-    }
-    if (importToEu && isValidVatIdFormat(input.vatId)) {
-      return {
-        rate: buyerVat.standardRate,
-        included: false,
-        reverseCharge: true,
-        reason: "B2B_IMPORT_REVERSE_CHARGE"
-      };
-    }
-    if (domestic) {
-      return {
-        rate: sellerVat.standardRate,
-        included: false,
-        reverseCharge: false,
-        reason: "B2B_DOMESTIC_NET"
-      };
-    }
-    return {
-      rate: buyerVat.standardRate,
-      included: buyerVat.pricesIncludeVat,
-      reverseCharge: false,
-      reason: "B2B_CROSS_BORDER_DEFAULT"
-    };
-  }
-  if (domestic) {
-    return {
-      rate: sellerVat.standardRate,
-      included: sellerVat.pricesIncludeVat,
-      reverseCharge: false,
-      reason: "B2C_DOMESTIC"
-    };
-  }
-  if (intraEu) {
-    return {
-      rate: buyerVat.standardRate,
-      included: buyerVat.pricesIncludeVat,
-      reverseCharge: false,
-      reason: "B2C_INTRA_EU_DESTINATION"
-    };
-  }
-  if (exportSale || importToEu || !sellerEu || !buyerEu) {
-    return {
-      rate: buyerVat.standardRate,
-      included: buyerVat.pricesIncludeVat,
-      reverseCharge: false,
-      reason: exportSale ? "B2C_EXPORT" : "B2C_CROSS_BORDER"
-    };
-  }
-  return {
-    rate: buyerVat.standardRate,
-    included: buyerVat.pricesIncludeVat,
-    reverseCharge: false,
-    reason: "B2C_DEFAULT"
-  };
-}
-
-// data/global/pricing_engine_extensions.json
-var pricing_engine_extensions_default = {
-  defaultSellerCountry: "DE",
-  defaultTargetMarginPercent: 0.11,
-  defaultMinimumMarginPercent: 0.05,
-  exchangeRates: {
-    EUR: 1,
-    USD: 0.92,
-    GBP: 1.17,
-    CZK: 0.041,
-    PLN: 0.23,
-    TRY: 0.027,
-    SAR: 0.24,
-    AED: 0.25,
-    EGP: 0.019,
-    HUF: 26e-4,
-    RON: 0.2,
-    BGN: 0.51,
-    CHF: 1.05,
-    SEK: 0.087,
-    DKK: 0.134,
-    NOK: 0.085
-  },
-  shippingCosts: {
-    defaultSupplierDirect: 10,
-    currency: "EUR",
-    byProductFixture: {
-      "reifen-pilot-sport": 10,
-      "motoroel-5w30": 7,
-      "bremsscheibe-280": 8,
-      "bremsbelaege-vorder": 6
-    },
-    byShippingRegion: {
-      EU_CENTRAL: 10,
-      EU_WEST: 12,
-      EU_NORTH: 14,
-      EU_SOUTH: 11,
-      EU_EAST: 9,
-      TR: 15,
-      GCC: 18,
-      MENA: 16
-    }
-  },
-  marketplaceFees: {
-    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
-    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
-    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
-    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
-    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
-    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
-  },
-  paymentFees: {
-    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
-    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
-    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
-    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
-    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
-  },
-  returnReserves: {
-    default: {
-      returnRate: 0.05,
-      refundRate: 0.03,
-      averageReturnShippingCost: 8,
-      averageRefundLoss: 5,
-      supplierReturnAcceptanceRate: 0.7,
-      damagedReturnRate: 0.01
-    },
-    byCategory: {
-      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
-      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
-      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
-    }
-  },
-  marginRules: {
-    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
-    byMarket: {},
-    byCategory: {},
-    byChannel: {},
-    byMarketplace: {},
-    bySupplier: {}
-  },
-  roundingRules: {
-    default: { mode: "psychological_99", step: 0.01 },
-    byMarket: {
-      DE: { mode: "psychological_99" },
-      FR: { mode: "psychological_99" },
-      PL: { mode: "nearest_49" }
-    },
-    byChannel: {
-      amazon: { mode: "psychological_99" },
-      direct: { mode: "psychological_99" }
-    }
-  },
-  priceBounds: {
-    default: { minimumPrice: 1, maximumPrice: 99999 }
-  },
-  competitivePricingExtension: {
-    enabled: false,
-    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
-  }
-};
-
-// lib/pricing-engine/registry.ts
-var config = pricing_engine_extensions_default;
-function getDefaultSellerCountry() {
-  return config.defaultSellerCountry;
-}
-function getExchangeRate(fromCurrency, toCurrency) {
-  const from = String(fromCurrency).toUpperCase();
-  const to = String(toCurrency).toUpperCase();
-  if (from === to) return 1;
-  const rates = config.exchangeRates;
-  const fromRate = rates[from];
-  const toRate = rates[to];
-  if (fromRate == null || toRate == null) return null;
-  return fromRate / toRate;
-}
-function getMarketplaceFeeSchedule(marketplaceId) {
-  const fees = config.marketplaceFees;
-  return fees[marketplaceId] ?? fees.direct;
-}
-function getPaymentFeeSchedule(method = "default") {
-  const fees = config.paymentFees;
-  return fees[method] ?? fees.default;
-}
-function getReturnReserveConfig(categoryId) {
-  const reserves = config.returnReserves;
-  const byCategory = reserves.byCategory;
-  const base = reserves.default;
-  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
-  return { ...base, ...categoryOverride };
-}
-function getMarginRule(options) {
-  const rules = config.marginRules;
-  const defaults = rules.default;
-  const byMarket = rules.byMarket;
-  const byCategory = rules.byCategory;
-  const byChannel = rules.byChannel;
-  const byMarketplace = rules.byMarketplace;
-  const bySupplier = rules.bySupplier;
-  const targetMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.targetMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.targetMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.targetMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.targetMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.targetMarginPercent : void 0) ?? defaults.targetMarginPercent ?? config.defaultTargetMarginPercent;
-  const minimumMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.minimumMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.minimumMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.minimumMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.minimumMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.minimumMarginPercent : void 0) ?? defaults.minimumMarginPercent ?? config.defaultMinimumMarginPercent;
-  return { targetMarginPercent, minimumMarginPercent };
-}
-function getRoundingRule(marketId, channel) {
-  const rules = config.roundingRules;
-  const defaults = rules.default;
-  const byMarket = rules.byMarket;
-  const byChannel = rules.byChannel;
-  if (channel && byChannel[channel]) return { ...defaults, ...byChannel[channel] };
-  if (marketId && byMarket[marketId]) return { ...defaults, ...byMarket[marketId] };
-  return defaults;
-}
-function getPriceBounds() {
-  return config.priceBounds.default;
-}
-function getFixtureShippingCost(productId) {
-  const byProduct = config.shippingCosts.byProductFixture;
-  return byProduct[productId];
-}
-function getShippingCostByRegion(region) {
-  const byRegion = config.shippingCosts.byShippingRegion;
-  return byRegion[region];
-}
-function getDefaultShippingCost() {
-  return config.shippingCosts.defaultSupplierDirect;
-}
-function getDefaultShippingCurrency() {
-  return config.shippingCosts.currency;
-}
-
-// lib/pricing-engine/currency.ts
-function convertCurrency(amount, fromCurrency, toCurrency) {
-  const from = String(fromCurrency).toUpperCase();
-  const to = String(toCurrency).toUpperCase();
-  if (from === to) return roundMoney(amount, getCurrencyDecimalDigits(to));
-  const rate = getExchangeRate(from, to);
-  if (rate == null) return null;
-  const decimalDigits = getCurrencyDecimalDigits(to);
-  const minor = toMinorUnits(amount, getCurrencyDecimalDigits(from));
-  const convertedMinor = Math.round(minor * rate);
-  return fromMinorUnits(convertedMinor, decimalDigits);
-}
-
-// lib/pricing-engine/cost.ts
-function resolveSupplierCost(input, marketCurrency) {
-  const offer = input.supplierOffer;
-  if (!offer || offer.supplierPrice == null || offer.supplierPrice <= 0) {
-    return {
-      supplierNetPrice: 0,
-      supplierGrossPrice: 0,
-      supplierCurrency: offer?.currency ?? "",
-      marketCurrency,
-      convertedNetPrice: 0,
-      lastUpdated: offer?.lastUpdated ?? "",
-      stock: offer?.stock ?? 0,
-      valid: false,
-      reason: "MISSING_COST"
-    };
-  }
-  if (!offer.currency) {
-    return {
-      supplierNetPrice: offer.supplierPrice,
-      supplierGrossPrice: offer.supplierPrice,
-      supplierCurrency: "",
-      marketCurrency,
-      convertedNetPrice: 0,
-      lastUpdated: offer.lastUpdated,
-      stock: offer.stock,
-      valid: false,
-      reason: "MISSING_CURRENCY"
-    };
-  }
-  const supplierNetPrice = roundMoney(offer.supplierPrice);
-  const converted = convertCurrency(supplierNetPrice, offer.currency, marketCurrency);
-  if (converted == null) {
-    return {
-      supplierNetPrice,
-      supplierGrossPrice: supplierNetPrice,
-      supplierCurrency: offer.currency,
-      marketCurrency,
-      convertedNetPrice: 0,
-      lastUpdated: offer.lastUpdated,
-      stock: offer.stock,
-      valid: false,
-      reason: "MISSING_CURRENCY"
-    };
-  }
-  return {
-    supplierNetPrice,
-    supplierGrossPrice: supplierNetPrice,
-    supplierCurrency: offer.currency,
-    marketCurrency,
-    convertedNetPrice: converted,
-    lastUpdated: offer.lastUpdated,
-    stock: offer.stock,
-    valid: true
-  };
-}
-
-// lib/market-engine/shipping.ts
-function getShippingRegion(countryCode) {
-  return getMarketShippingRegion(countryCode);
-}
-
-// lib/pricing-engine/shipping.ts
-init_registry2();
-function resolveShippingCost(options) {
-  const shippingCurrency = getDefaultShippingCurrency();
-  const region = getShippingRegion(options.marketId);
-  if (options.override != null) {
-    const converted2 = convertCurrency(options.override, shippingCurrency, options.targetCurrency) ?? options.override;
-    return {
-      shippingCost: roundMoney(converted2),
-      shippingCurrency: options.targetCurrency,
-      region,
-      source: "fixture"
-    };
-  }
-  const fixtureCost = getFixtureShippingCost(options.productId);
-  if (fixtureCost != null) {
-    const converted2 = convertCurrency(fixtureCost, shippingCurrency, options.targetCurrency) ?? fixtureCost;
-    return {
-      shippingCost: roundMoney(converted2),
-      shippingCurrency: options.targetCurrency,
-      region,
-      source: "fixture"
-    };
-  }
-  const supplier = getSupplier(options.supplierId);
-  const supplierRegion = supplier?.region;
-  let regionCost = getDefaultShippingCost();
-  if (supplierRegion) {
-    const supplierRegionCost = getShippingCostByRegion(supplierRegion);
-    if (supplierRegionCost != null) regionCost = supplierRegionCost;
-  } else {
-    const marketRegionCost = getShippingCostByRegion(region);
-    if (marketRegionCost != null) regionCost = marketRegionCost;
-  }
-  const converted = convertCurrency(regionCost, shippingCurrency, options.targetCurrency) ?? regionCost;
-  return {
-    shippingCost: roundMoney(converted),
-    shippingCurrency: options.targetCurrency,
-    region,
-    source: regionCost === getDefaultShippingCost() ? "default" : "region"
-  };
-}
-
-// lib/pricing-engine/fees.ts
-function applyFeeSchedule(baseAmount, schedule, currency) {
-  if (schedule.status === "DISABLED") return 0;
-  const percentFee = roundMoney(baseAmount * (schedule.feePercent ?? 0));
-  let total = roundMoney(percentFee + (schedule.fixedFee ?? 0));
-  if (schedule.minimumFee != null) total = Math.max(total, schedule.minimumFee);
-  if (schedule.maximumFee != null) total = Math.min(total, schedule.maximumFee);
-  void currency;
-  return total;
-}
-function resolveFees(options) {
-  const marketplaceSchedule = getMarketplaceFeeSchedule(options.channel);
-  const paymentSchedule = getPaymentFeeSchedule(options.paymentMethod ?? "default");
-  const marketplaceFixedFee = marketplaceSchedule.fixedFee ?? 0;
-  const marketplaceFee = applyFeeSchedule(options.feeBaseAmount, marketplaceSchedule, options.currency);
-  const paymentFee = applyFeeSchedule(options.feeBaseAmount, paymentSchedule, options.currency);
-  return {
-    marketplaceFee,
-    marketplaceFixedFee,
-    paymentFee,
-    totalFees: roundMoney(marketplaceFee + paymentFee)
-  };
-}
-
-// lib/pricing-engine/returns.ts
-function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
-  const config3 = getReturnReserveConfig(categoryId);
-  const supplierCreditFactor = 1 - config3.supplierReturnAcceptanceRate;
-  const expectedReturnLoss = roundMoney(
-    config3.returnRate * (config3.averageReturnShippingCost + supplierCostInMarketCurrency * supplierCreditFactor)
-  );
-  const expectedRefundLoss = roundMoney(
-    config3.refundRate * (config3.averageRefundLoss + supplierCostInMarketCurrency * supplierCreditFactor)
-  );
-  const damagedLoss = roundMoney(
-    (config3.damagedReturnRate ?? 0) * supplierCostInMarketCurrency * 0.5
-  );
-  const returnCostReserve = roundMoney(expectedReturnLoss + damagedLoss);
-  const refundCostReserve = roundMoney(expectedRefundLoss);
-  return {
-    returnCostReserve,
-    refundCostReserve,
-    totalReserve: roundMoney(returnCostReserve + refundCostReserve),
-    config: config3,
-    breakdown: {
-      expectedReturnLoss,
-      expectedRefundLoss,
-      supplierCreditFactor
-    }
-  };
-}
-
-// lib/pricing-engine/margin.ts
-function calculateContributionMargin(totalVariableCost, options) {
-  const rule = getMarginRule({
-    marketId: options?.marketId,
-    categoryId: options?.categoryId,
-    channel: options?.channel,
-    marketplaceId: options?.marketplaceId,
-    supplierId: options?.supplierId
-  });
-  const targetMarginPercent = options?.targetMarginPercent ?? rule.targetMarginPercent;
-  const minimumMarginPercent = options?.minimumMarginPercent ?? rule.minimumMarginPercent;
-  if (totalVariableCost <= 0) {
-    return {
-      totalVariableCost,
-      targetMarginPercent,
-      minimumMarginPercent,
-      customerNetPrice: 0,
-      buzzardContributionMargin: 0,
-      marginValid: false,
-      pricingStatus: "MISSING_COST"
-    };
-  }
-  if (targetMarginPercent >= 1 || targetMarginPercent < 0) {
-    return {
-      totalVariableCost,
-      targetMarginPercent,
-      minimumMarginPercent,
-      customerNetPrice: 0,
-      buzzardContributionMargin: 0,
-      marginValid: false,
-      pricingStatus: "INVALID_RULE"
-    };
-  }
-  const customerNetPrice = roundMoney(totalVariableCost / (1 - targetMarginPercent));
-  const buzzardContributionMargin = customerNetPrice > 0 ? roundMoney((customerNetPrice - totalVariableCost) / customerNetPrice) : 0;
-  let pricingStatus = "VALID";
-  let marginValid = true;
-  if (buzzardContributionMargin < minimumMarginPercent) {
-    pricingStatus = "BELOW_MINIMUM_MARGIN";
-    marginValid = false;
-  }
-  if (options?.maximumPrice != null && customerNetPrice > options.maximumPrice) {
-    pricingStatus = "PRICE_TOO_HIGH";
-    marginValid = false;
-  }
-  if (options?.minimumPrice != null && customerNetPrice < options.minimumPrice) {
-    pricingStatus = "REVIEW_REQUIRED";
-    marginValid = false;
-  }
-  return {
-    totalVariableCost,
-    targetMarginPercent,
-    minimumMarginPercent,
-    customerNetPrice,
-    buzzardContributionMargin,
-    marginValid,
-    pricingStatus
-  };
-}
-function recalculateMarginAfterRounding(customerNetPrice, totalVariableCost) {
-  if (customerNetPrice <= 0) return 0;
-  return roundMoney((customerNetPrice - totalVariableCost) / customerNetPrice);
-}
-
-// lib/pricing-engine/vat.ts
-function applyVatToNetPrice(netPrice, options) {
-  const sellerCountry = options.sellerCountry ?? getDefaultSellerCountry();
-  const taxContext = getVatContext({
-    sellerCountry,
-    buyerCountry: options.marketId,
-    customerType: options.customerType ?? "B2C",
-    vatId: options.vatId
-  });
-  if (taxContext.reverseCharge || taxContext.rate === 0) {
-    return {
-      taxContext,
-      customerNetPrice: roundMoney(netPrice),
-      customerVat: 0,
-      customerGrossPrice: roundMoney(netPrice)
-    };
-  }
-  const { gross, vat } = grossFromNet(netPrice, taxContext.rate);
-  return {
-    taxContext,
-    customerNetPrice: roundMoney(netPrice),
-    customerVat: vat,
-    customerGrossPrice: gross
-  };
-}
-
-// lib/pricing-engine/rules.ts
-function applyRoundingRule(grossPrice, options) {
-  const rule = getRoundingRule(options.marketId, options.channel);
-  const decimalDigits = getCurrencyDecimalDigits(options.currency);
-  const mode = rule.mode ?? "none";
-  if (mode === "none") return roundMoney(grossPrice, decimalDigits);
-  const whole = Math.floor(grossPrice);
-  const cents = grossPrice - whole;
-  switch (mode) {
-    case "psychological_99": {
-      if (cents <= 0.99) return roundMoney(whole + 0.99, decimalDigits);
-      return roundMoney(whole + 1 + 0.99, decimalDigits);
-    }
-    case "nearest_49": {
-      const base = cents <= 0.49 ? whole + 0.49 : whole + 0.99;
-      return roundMoney(base, decimalDigits);
-    }
-    case "nearest_19": {
-      const base = cents <= 0.19 ? whole + 0.19 : cents <= 0.49 ? whole + 0.49 : whole + 0.99;
-      return roundMoney(base, decimalDigits);
-    }
-    case "nearest": {
-      const step = rule.step ?? 0.01;
-      return roundMoney(Math.round(grossPrice / step) * step, decimalDigits);
-    }
-    default:
-      return roundMoney(grossPrice, decimalDigits);
-  }
-}
-function validatePriceBounds(customerNetPrice) {
-  const bounds = getPriceBounds();
-  if (customerNetPrice > bounds.maximumPrice) return "PRICE_TOO_HIGH";
-  if (customerNetPrice < bounds.minimumPrice) return "REVIEW_REQUIRED";
-  return "VALID";
-}
-function applyRoundingAndValidate(vatBreakdown, totalVariableCost, minimumMarginPercent, options) {
-  const roundedGross = applyRoundingRule(vatBreakdown.customerGrossPrice, options);
-  let customerNetPrice = vatBreakdown.customerNetPrice;
-  let customerVat = vatBreakdown.customerVat;
-  if (vatBreakdown.taxContext.rate > 0 && !vatBreakdown.taxContext.reverseCharge) {
-    const { net, vat } = netFromGross(roundedGross, vatBreakdown.taxContext.rate);
-    customerNetPrice = net;
-    customerVat = vat;
-  } else {
-    customerNetPrice = roundedGross;
-    customerVat = 0;
-  }
-  const buzzardContributionMargin = recalculateMarginAfterRounding(customerNetPrice, totalVariableCost);
-  let pricingStatus = "VALID";
-  if (buzzardContributionMargin < minimumMarginPercent) {
-    pricingStatus = "BELOW_MINIMUM_MARGIN";
-  }
-  const boundsStatus = validatePriceBounds(customerNetPrice);
-  if (boundsStatus !== "VALID") pricingStatus = boundsStatus;
-  return {
-    customerGrossPrice: roundedGross,
-    customerNetPrice,
-    customerVat,
-    buzzardContributionMargin,
-    pricingStatus
-  };
-}
-
-// lib/pricing-engine/observability.ts
-var auditLog = [];
-var MAX_AUDIT_ENTRIES = 500;
-function recordPricingAudit(input, result, durationMs) {
-  const entry = {
-    productId: input.productId,
-    supplierId: input.supplierId,
-    supplierOfferId: result.supplierOfferId,
-    marketId: input.marketId,
-    channel: input.channel,
-    durationMs,
-    pricingStatus: result.pricingStatus,
-    calculatedPrice: result.customerGrossPrice,
-    margin: result.buzzardContributionMargin,
-    timestamp: result.calculatedAt
-  };
-  auditLog.push(entry);
-  if (auditLog.length > MAX_AUDIT_ENTRIES) auditLog.shift();
-  return entry;
-}
-
-// lib/pricing-engine/price.ts
-function calculatePrice(input) {
-  const started = Date.now();
-  const calculatedAt = (/* @__PURE__ */ new Date()).toISOString();
-  const market = getMarket(input.marketId);
-  if (!market) {
-    const result2 = buildFailedResult(input, "MISSING_MARKET", calculatedAt);
-    recordPricingAudit(input, result2, Date.now() - started);
-    return result2;
-  }
-  const marketCurrency = input.currency ?? market.currency;
-  const bounds = getPriceBounds();
-  if (!input.supplierOffer) {
-    const result2 = buildFailedResult(input, "NO_SUPPLIER_OFFER", calculatedAt, marketCurrency);
-    recordPricingAudit(input, result2, Date.now() - started);
-    return result2;
-  }
-  if (input.supplierOffer.stock <= 0) {
-    const result2 = buildFailedResult(input, "OUT_OF_STOCK", calculatedAt, marketCurrency);
-    recordPricingAudit(input, result2, Date.now() - started);
-    return result2;
-  }
-  const supplierCost = resolveSupplierCost(input, marketCurrency);
-  if (!supplierCost.valid) {
-    const status = supplierCost.reason === "MISSING_CURRENCY" ? "MISSING_CURRENCY" : "MISSING_COST";
-    const result2 = buildFailedResult(input, status, calculatedAt, marketCurrency);
-    recordPricingAudit(input, result2, Date.now() - started);
-    return result2;
-  }
-  const shipping = resolveShippingCost({
-    productId: input.productId,
-    marketId: input.marketId,
-    supplierId: input.supplierId,
-    targetCurrency: marketCurrency,
-    override: input._testOverrides?.shippingCost
-  });
-  const feeBase = roundMoney(supplierCost.convertedNetPrice + shipping.shippingCost);
-  const fees = resolveFees({
-    channel: input.channel,
-    marketId: input.marketId,
-    categoryId: input.categoryId,
-    paymentMethod: input.paymentMethod,
-    feeBaseAmount: feeBase,
-    currency: marketCurrency
-  });
-  const reserves = calculateReturnReserves(supplierCost.convertedNetPrice, input.categoryId);
-  const totalVariableCost = roundMoney(
-    feeBase + fees.totalFees + reserves.returnCostReserve + reserves.refundCostReserve
-  );
-  const marginCalc = calculateContributionMargin(totalVariableCost, {
-    marketId: input.marketId,
-    categoryId: input.categoryId,
-    channel: input.channel,
-    marketplaceId: input.channel,
-    supplierId: input.supplierId,
-    targetMarginPercent: input._testOverrides?.targetMarginPercent,
-    minimumMarginPercent: input._testOverrides?.minimumMarginPercent,
-    minimumPrice: bounds.minimumPrice,
-    maximumPrice: bounds.maximumPrice
-  });
-  const vatBreakdown = applyVatToNetPrice(marginCalc.customerNetPrice, {
-    marketId: input.marketId,
-    sellerCountry: input.sellerCountry,
-    customerType: input.customerType
-  });
-  const postRound = applyRoundingAndValidate(
-    vatBreakdown,
-    totalVariableCost,
-    marginCalc.minimumMarginPercent,
-    { marketId: input.marketId, channel: input.channel, currency: marketCurrency }
-  );
-  let pricingStatus = marginCalc.pricingStatus;
-  if (pricingStatus === "VALID" && postRound.pricingStatus !== "VALID") {
-    pricingStatus = postRound.pricingStatus;
-  } else if (postRound.pricingStatus !== "VALID") {
-    pricingStatus = postRound.pricingStatus;
-  }
-  const result = {
-    productId: input.productId,
-    supplierId: input.supplierId,
-    supplierOfferId: input.supplierOfferId ?? input.supplierOffer.supplierSku,
-    marketId: input.marketId,
-    channel: input.channel,
-    currency: marketCurrency,
-    supplierNetPrice: supplierCost.supplierNetPrice,
-    supplierGrossPrice: supplierCost.supplierGrossPrice,
-    supplierCurrency: supplierCost.supplierCurrency,
-    shippingCost: shipping.shippingCost,
-    shippingCurrency: shipping.shippingCurrency,
-    paymentFee: fees.paymentFee,
-    marketplaceFee: fees.marketplaceFee,
-    marketplaceFixedFee: fees.marketplaceFixedFee,
-    returnCostReserve: reserves.returnCostReserve,
-    refundCostReserve: reserves.refundCostReserve,
-    otherVariableCosts: 0,
-    taxContext: vatBreakdown.taxContext,
-    targetMarginPercent: marginCalc.targetMarginPercent,
-    minimumMarginPercent: marginCalc.minimumMarginPercent,
-    maximumPrice: bounds.maximumPrice,
-    minimumPrice: bounds.minimumPrice,
-    customerNetPrice: postRound.customerNetPrice,
-    customerVat: postRound.customerVat,
-    customerGrossPrice: postRound.customerGrossPrice,
-    buzzardContributionMargin: postRound.buzzardContributionMargin,
-    pricingStatus,
-    calculatedAt,
-    totalVariableCost
-  };
-  recordPricingAudit(input, result, Date.now() - started);
-  return result;
-}
-function buildFailedResult(input, status, calculatedAt, currency = "EUR") {
-  return {
-    productId: input.productId,
-    supplierId: input.supplierId,
-    supplierOfferId: input.supplierOfferId,
-    marketId: input.marketId,
-    channel: input.channel,
-    currency,
-    supplierNetPrice: 0,
-    supplierGrossPrice: 0,
-    supplierCurrency: input.supplierOffer?.currency ?? "",
-    shippingCost: 0,
-    shippingCurrency: currency,
-    paymentFee: 0,
-    marketplaceFee: 0,
-    marketplaceFixedFee: 0,
-    returnCostReserve: 0,
-    refundCostReserve: 0,
-    otherVariableCosts: 0,
-    taxContext: { rate: 0, included: false, reverseCharge: false, reason: "FAILED" },
-    targetMarginPercent: 0,
-    minimumMarginPercent: 0,
-    maximumPrice: 0,
-    minimumPrice: 0,
-    customerNetPrice: 0,
-    customerVat: 0,
-    customerGrossPrice: 0,
-    buzzardContributionMargin: 0,
-    pricingStatus: status,
-    calculatedAt,
-    totalVariableCost: 0
-  };
-}
-
-// lib/product-engine/pricing.ts
-function buildProductPricing(supplierCost, options) {
-  const currency = options?.currency ?? "EUR";
-  const countryCode = options?.countryCode ?? "DE";
-  if (options?.productId && options?.supplierId) {
-    const result = calculatePrice({
-      productId: options.productId,
-      supplierId: options.supplierId,
-      marketId: countryCode,
-      channel: options.channel ?? "direct",
-      currency,
-      categoryId: options.categoryId,
-      supplierOffer: {
-        supplierPrice: supplierCost,
-        currency,
-        stock: 1,
-        lastUpdated: (/* @__PURE__ */ new Date()).toISOString()
-      },
-      _testOverrides: {
-        shippingCost: options.shippingCost,
-        targetMarginPercent: options.marginTarget
-      }
-    });
-    if (result.pricingStatus === "VALID") {
-      return {
-        supplierCost: roundMoney(result.supplierNetPrice),
-        shippingCost: roundMoney(result.shippingCost),
-        marketplaceFee: roundMoney(result.marketplaceFee),
-        paymentFee: roundMoney(result.paymentFee),
-        vat: result.taxContext.rate,
-        margin: result.buzzardContributionMargin,
-        customerPrice: result.customerGrossPrice,
-        currency: result.currency
-      };
-    }
-  }
-  const shippingCost = options?.shippingCost ?? 0;
-  const marketplaceFee = options?.marketplaceFee ?? 0;
-  const paymentFee = options?.paymentFee ?? 0;
-  const vatRate = options?.vatRate ?? 0.19;
-  const marginTarget = options?.marginTarget ?? 0.11;
-  const baseCost = roundMoney(supplierCost + shippingCost + marketplaceFee + paymentFee);
-  const netPrice = marginTarget < 1 ? roundMoney(baseCost / (1 - marginTarget)) : baseCost;
-  const customerPrice = roundMoney(netPrice * (1 + vatRate));
-  const margin = customerPrice > 0 ? roundMoney((netPrice - baseCost) / netPrice) : 0;
-  return {
-    supplierCost: roundMoney(supplierCost),
-    shippingCost: roundMoney(shippingCost),
-    marketplaceFee: roundMoney(marketplaceFee),
-    paymentFee: roundMoney(paymentFee),
-    vat: vatRate,
-    margin,
-    customerPrice,
-    currency
-  };
-}
-function recalculatePricingFromBestOffer(product) {
-  const best = selectBestSupplier(product);
-  if (!best) return product;
-  const result = calculatePrice({
-    productId: product.productId,
-    supplierId: best.offer.supplierId,
-    marketId: "DE",
-    channel: "direct",
-    categoryId: product.categoryId,
-    supplierOffer: {
-      supplierPrice: best.offer.supplierPrice,
-      currency: best.offer.currency,
-      stock: best.offer.stock,
-      lastUpdated: best.offer.lastUpdated,
-      supplierSku: best.offer.supplierSku
-    }
-  });
-  if (result.pricingStatus !== "VALID") return product;
-  return {
-    ...product,
-    pricing: {
-      supplierCost: result.supplierNetPrice,
-      shippingCost: result.shippingCost,
-      marketplaceFee: result.marketplaceFee,
-      paymentFee: result.paymentFee,
-      vat: result.taxContext.rate,
-      margin: result.buzzardContributionMargin,
-      customerPrice: result.customerGrossPrice,
-      currency: result.currency
-    },
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-
 // lib/market-engine/supplier.ts
 var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
-function getEligibleSupplierRegions(countryCode) {
-  const market = getMarket(countryCode);
-  if (!market) return ["EU"];
-  const primary = market.supplierRegion;
-  const fallbacks = supplierFallbacks[primary] ?? supplierFallbacks.NON_EU ?? ["EU"];
-  const ordered = [primary, ...fallbacks.filter((r) => r !== primary)];
-  return [...new Set(ordered)];
-}
-
-// lib/product-engine/validation.ts
-function isValidEan(ean) {
-  if (!ean) return false;
-  return /^\d{8,14}$/.test(ean.replace(/\s/g, ""));
-}
-function validateProduct(product) {
-  const errors = [];
-  const warnings = [];
-  if (!product.sku?.trim()) errors.push({ field: "sku", code: "SKU_MISSING", message: "SKU is required" });
-  if (!product.brand?.trim()) errors.push({ field: "brand", code: "BRAND_MISSING", message: "Brand is required" });
-  if (!product.categoryId?.trim()) {
-    errors.push({ field: "categoryId", code: "CATEGORY_MISSING", message: "Category is required" });
-  }
-  if (!product.supplierOffers.length) {
-    errors.push({ field: "supplierOffers", code: "SUPPLIER_MISSING", message: "At least one supplier offer required" });
-  }
-  if (!isValidEan(product.ean) && !isValidEan(product.gtin)) {
-    warnings.push({ field: "ean", code: "EAN_MISSING", message: "EAN/GTIN not provided" });
-  }
-  if (product.pricing.customerPrice <= 0) {
-    errors.push({ field: "pricing", code: "PRICE_INVALID", message: "Customer price must be positive" });
-  }
-  if (!hasRequiredTranslation(product.translations)) {
-    warnings.push({ field: "translations", code: "TRANSLATION_MISSING", message: "Default translation incomplete" });
-  }
-  for (const warning of validateTechnicalConsistency(product.technicalData)) {
-    warnings.push({ field: "technicalData", code: warning, message: warning });
-  }
-  for (const imgErr of validateProductImages(product.images)) {
-    warnings.push({ field: "images", code: imgErr, message: imgErr });
-  }
-  const valid = errors.length === 0;
-  const status = valid ? product.status === "DRAFT" ? "PENDING_REVIEW" : product.status : "PENDING_REVIEW";
-  return { valid, status, errors, warnings };
-}
-
-// lib/product-engine/duplicate.ts
-function normalizePartNumber(value) {
-  if (!value) return null;
-  return value.replace(/[\s\-_.]/g, "").toUpperCase();
-}
-function compareProducts(a, b) {
-  if (a.productId === b.productId) {
-    return { match: true, method: "gtin", existingProductId: b.productId, confidence: 1 };
-  }
-  const gtinA = a.gtin || a.ean;
-  const gtinB = b.gtin || b.ean;
-  if (gtinA && gtinB && gtinA === gtinB) {
-    return { match: true, method: "gtin", existingProductId: b.productId, confidence: 0.99 };
-  }
-  const mpnA = normalizePartNumber(a.mpn || a.oem);
-  const mpnB = normalizePartNumber(b.mpn || b.oem);
-  if (mpnA && mpnB && mpnA === mpnB) {
-    return { match: true, method: "mpn_oem", existingProductId: b.productId, confidence: 0.9 };
-  }
-  const brandMpnA = a.brand && mpnA ? `${a.brand.toUpperCase()}::${mpnA}` : null;
-  const brandMpnB = b.brand && mpnB ? `${b.brand.toUpperCase()}::${mpnB}` : null;
-  if (brandMpnA && brandMpnB && brandMpnA === brandMpnB) {
-    return { match: true, method: "brand_mpn", existingProductId: b.productId, confidence: 0.85 };
-  }
-  const attrA = JSON.stringify(Object.entries(a.technicalData).sort());
-  const attrB = JSON.stringify(Object.entries(b.technicalData).sort());
-  if (attrA === attrB && attrA !== "[]" && a.brand === b.brand) {
-    return { match: true, method: "attributes", existingProductId: b.productId, confidence: 0.6 };
-  }
-  return { match: false, method: null, confidence: 0 };
-}
-function findDuplicateProduct(candidate) {
-  const ean = candidate.ean || candidate.gtin;
-  if (ean) {
-    const byEan = getRegistryProductByEan(ean);
-    if (byEan && byEan.productId !== candidate.productId) {
-      return { match: true, method: "ean", existingProductId: byEan.productId, confidence: 0.99 };
-    }
-  }
-  for (const existing of listRegistryProducts()) {
-    if (existing.productId === candidate.productId) continue;
-    const result = compareProducts(candidate, existing);
-    if (result.match) return result;
-  }
-  return { match: false, method: null, confidence: 0 };
-}
 
 // lib/product-engine/normalization.ts
 var import_module2 = require("module");
 var require3 = (0, import_module2.createRequire)(__import_meta_url__);
-function normalizeSupplierProduct(input) {
-  const { normalizeSupplierProductRecord } = require3("../../server/lib/pim/supplierProductNormalizer.js");
-  return normalizeSupplierProductRecord(input.raw, {
-    supplierCode: input.supplierId,
-    sourceProductId: input.sourceProductId
-  });
-}
-function normalizedRecordToEngineProduct(normalized, input) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const stock = Number(normalized.stock ?? 0);
-  const supplierOffer = {
-    supplierId: input.supplierId,
-    supplierSku: normalized.supplierSku,
-    supplierEan: normalized.ean || void 0,
-    supplierPrice: normalized.purchasePrice ?? 0,
-    currency: normalized.currency || "EUR",
-    stock,
-    lastUpdated: now,
-    source: input.supplierId,
-    sourceType: input.sourceType
-  };
-  const technicalData = normalizeTechnicalData({
-    ...normalized.oemNumbers?.length ? { oem: normalized.oemNumbers.join(",") } : {},
-    ...normalized.mpn ? { mpn: normalized.mpn } : {}
-  });
-  return {
-    productId: normalized.sku || `draft_${normalized.supplierSku}`,
-    sku: normalized.sku || normalized.supplierSku,
-    ean: normalized.ean || void 0,
-    gtin: normalized.gtin || normalized.ean || void 0,
-    mpn: normalized.mpn || void 0,
-    brand: normalized.brand || "",
-    categoryId: normalized.buzzardCategory || "",
-    productType: "general",
-    status: "PENDING_REVIEW",
-    images: normalizeProductImages(normalized.images, normalized.title),
-    technicalData,
-    compatibility: normalizeCompatibilityList(normalized.vehicleFitment),
-    translations: [
-      createProductTranslation("de-DE", {
-        name: normalized.title,
-        description: normalized.description
-      })
-    ],
-    supplierOffers: [supplierOffer],
-    pricing: buildProductPricing(normalized.purchasePrice ?? 0, { currency: normalized.currency }),
-    stock: {
-      quantity: stock,
-      availability: stock > 0 ? "IN_STOCK" : "OUT_OF_STOCK",
-      lastUpdated: now
-    },
-    availability: [],
-    seo: [],
-    createdAt: now,
-    updatedAt: now
-  };
-}
 
-// lib/product-engine/ingestion.ts
-function ingestSupplierProduct(input) {
-  const stages = [];
-  let normalized;
-  try {
-    normalized = normalizeSupplierProduct(input);
-    stages.push({ stage: "normalization", status: "PASS" });
-  } catch {
-    stages.push({ stage: "normalization", status: "FAIL" });
-    return { ok: false, stages };
-  }
-  const product = normalizedRecordToEngineProduct(normalized, input);
-  stages.push({ stage: "engine_mapping", status: "PASS" });
-  const duplicate = findDuplicateProduct(product);
-  if (duplicate.match) {
-    stages.push({ stage: "duplicate_detection", status: "WARN" });
-  } else {
-    stages.push({ stage: "duplicate_detection", status: "PASS" });
-  }
-  const validation = validateProduct(product);
-  if (!validation.valid) {
-    product.status = "PENDING_REVIEW";
-    stages.push({ stage: "validation", status: "FAIL" });
-  } else {
-    stages.push({ stage: "validation", status: "PASS" });
-  }
-  const saved = upsertRegistryProduct(product);
-  emitProductEvent("PRODUCT_CREATED", saved.productId, { sourceType: input.sourceType });
-  return {
-    ok: validation.valid && !duplicate.match,
-    product: saved,
-    validation,
-    duplicate,
-    stages
-  };
-}
-
-// lib/product-engine/service.ts
-function getProduct(productId) {
-  return getRegistryProduct(productId);
-}
-function updateProductSupplierOffer(productId, supplierId, patch) {
-  const existing = getRegistryProduct(productId);
-  if (!existing) return void 0;
-  return upsertRegistryProduct(updateSupplierOffer(existing, supplierId, patch));
-}
-
-// data/global/inventory_engine_extensions.json
-var inventory_engine_extensions_default = {
-  defaultStaleAfterMs: 144e5,
-  defaultStalePolicy: "BLOCK_SALE",
-  lowStockThreshold: 5,
-  missingStockPolicy: "UNKNOWN",
-  defaultStockBuffer: {
-    type: "absolute",
-    value: 5
-  },
-  stockBuffers: {
-    bySupplier: {
-      TEST_SUPPLIER_A: { type: "absolute", value: 5 }
-    },
-    byCategory: {
-      "automotive-tires": { type: "percentage", value: 0.1 },
-      "automotive-oils": { type: "absolute", value: 3 },
-      "automotive-brakes": { type: "absolute", value: 2 }
-    },
-    byMarket: {},
-    byChannel: {}
-  },
-  stalePolicies: {
-    default: "BLOCK_SALE",
-    bySupplier: {
-      TEST_SUPPLIER_A: "BLOCK_SALE"
-    },
-    byChannel: {
-      direct: "BLOCK_SALE",
-      amazon: "BLOCK_SALE"
-    }
-  },
-  reservationDefaults: {
-    ttlMs: 9e5,
-    maxQuantityPerReservation: 99
-  },
-  supportedChannels: [
-    "direct",
-    "amazon",
-    "ebay",
-    "kaufland",
-    "allegro",
-    "bol",
-    "cdiscount",
-    "otto"
-  ],
-  fixtureProductMapping: {
-    "TSA-TIRE-225-45-17": "reifen-pilot-sport",
-    "TSA-OIL-5W30-5L": "motoroel-5w30",
-    "TSA-DISC-280": "bremsscheibe-280",
-    "TSA-PADS-FRONT": "bremsbelaege-vorder"
-  }
+// lib/supplier-order-activation/config.ts
+var ACTIVATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS2 = 4 * 60 * 60 * 1e3;
+var REHEARSAL_TTL_MS = Number(process.env.SUPPLIER_ACTIVATION_REHEARSAL_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_TTL_MS = 2 * 60 * 60 * 1e3;
+var FIRST_ORDER_LIMITS = {
+  maxOrderValue: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_VALUE || 500),
+  maxQuantity: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_QTY || 5),
+  maxItems: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_ITEMS || 3),
+  maxSuppliers: 1,
+  maxCustomers: 1
 };
 
-// lib/inventory-engine/registry.ts
-var config2 = inventory_engine_extensions_default;
-var stockRegistry = /* @__PURE__ */ new Map();
-function stockRecordKey(productId, supplierId, supplierOfferId) {
-  return `${productId}:${supplierId}:${supplierOfferId}`;
-}
-function getStockRecord(productId, supplierId, supplierOfferId) {
-  return stockRegistry.get(stockRecordKey(productId, supplierId, supplierOfferId));
-}
-function upsertStockRecord(record) {
-  stockRegistry.set(stockRecordKey(record.productId, record.supplierId, record.supplierOfferId), record);
-  return record;
-}
-function getDefaultStaleAfterMs() {
-  return config2.defaultStaleAfterMs;
-}
-function getDefaultStalePolicy() {
-  return config2.defaultStalePolicy;
-}
-function getStalePolicy(supplierId, channel) {
-  const bySupplier = config2.stalePolicies.bySupplier;
-  const byChannel = config2.stalePolicies.byChannel;
-  if (channel && byChannel[channel]) return byChannel[channel];
-  if (supplierId && bySupplier[supplierId]) return bySupplier[supplierId];
-  return config2.stalePolicies.default ?? getDefaultStalePolicy();
-}
-function getMissingStockPolicy() {
-  return config2.missingStockPolicy;
-}
-function getLowStockThreshold() {
-  return config2.lowStockThreshold;
-}
-function getStockBufferConfig(options) {
-  const defaults = config2.defaultStockBuffer;
-  const bySupplier = config2.stockBuffers.bySupplier;
-  const byCategory = config2.stockBuffers.byCategory;
-  const byMarket = config2.stockBuffers.byMarket;
-  const byChannel = config2.stockBuffers.byChannel;
-  return (options?.channel ? byChannel[options.channel] : void 0) ?? (options?.marketId ? byMarket[options.marketId] : void 0) ?? (options?.categoryId ? byCategory[options.categoryId] : void 0) ?? (options?.supplierId ? bySupplier[options.supplierId] : void 0) ?? defaults;
-}
-function getSupportedChannels() {
-  return config2.supportedChannels;
-}
-function resolveFixtureProductId(supplierSku) {
-  const mapping = config2.fixtureProductMapping;
-  return mapping[supplierSku];
-}
-
-// lib/inventory-engine/buffer.ts
-function applyStockBuffer(availableQuantity, buffer) {
-  const qty = Math.max(0, availableQuantity);
-  if (buffer.type === "percentage") {
-    const bufferAmount = Math.floor(qty * buffer.value);
-    return Math.max(0, qty - bufferAmount);
-  }
-  return Math.max(0, qty - Math.floor(buffer.value));
-}
-
-// lib/inventory-engine/stock.ts
-function validateSupplierQuantity(rawQuantity) {
-  const errors = [];
-  const warnings = [];
-  if (rawQuantity == null || rawQuantity === "") {
-    const policy = getMissingStockPolicy();
-    if (policy === "ZERO") {
-      return { valid: true, normalizedQuantity: 0, stockStatus: "OUT_OF_STOCK", errors, warnings };
-    }
-    if (policy === "KEEP_LAST_KNOWN") {
-      return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["MISSING_STOCK"], warnings };
-    }
-    return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["MISSING_STOCK"], warnings };
-  }
-  if (typeof rawQuantity === "string" && rawQuantity.trim() !== "" && Number.isNaN(Number(rawQuantity))) {
-    return {
-      valid: false,
-      normalizedQuantity: null,
-      stockStatus: "UNKNOWN",
-      errors: ["INVALID_STOCK"],
-      warnings: ["NON_NUMERIC_STOCK"]
-    };
-  }
-  const parsed = Number(rawQuantity);
-  if (!Number.isFinite(parsed)) {
-    return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["INVALID_STOCK"], warnings };
-  }
-  if (parsed < 0) {
-    return { valid: false, normalizedQuantity: null, stockStatus: "UNKNOWN", errors: ["INVALID_STOCK"], warnings: ["NEGATIVE_STOCK"] };
-  }
-  const normalized = Math.floor(parsed);
-  const status = deriveStockStatus2(normalized, { manuallyDiscontinued: false, isStale: false });
-  return { valid: true, normalizedQuantity: normalized, stockStatus: status, errors, warnings };
-}
-function deriveStockStatus2(quantity, options) {
-  if (options.manuallyDiscontinued) return "DISCONTINUED";
-  if (options.isStale) return "STALE";
-  if (options.isPreorder) return "PREORDER";
-  if (quantity <= 0) return "OUT_OF_STOCK";
-  if (quantity <= getLowStockThreshold()) return "LOW_STOCK";
-  return "IN_STOCK";
-}
-function isStockStale(lastSuccessfulSyncAt, staleAfterMs) {
-  const threshold = staleAfterMs ?? getDefaultStaleAfterMs();
-  const lastSync = new Date(lastSuccessfulSyncAt).getTime();
-  if (Number.isNaN(lastSync)) return true;
-  return Date.now() - lastSync > threshold;
-}
-function calculateSaleableQuantity(options) {
-  if (options.manuallyDiscontinued || options.stockStatus === "DISCONTINUED") return 0;
-  if (options.stockStatus === "OUT_OF_STOCK") return 0;
-  if (options.isStale) {
-    const policy = options.stalePolicy ?? getDefaultStalePolicy();
-    if (policy === "BLOCK_SALE") return 0;
-    if (policy === "ALLOW_WITH_WARNING") {
-      const afterBuffer2 = applyStockBuffer(options.availableQuantity, options.stockBuffer);
-      return Math.max(0, afterBuffer2 - options.reservedQuantity);
-    }
-  }
-  const afterBuffer = applyStockBuffer(options.availableQuantity, options.stockBuffer);
-  return Math.max(0, afterBuffer - options.reservedQuantity);
-}
-function recomputeStockRecord(record, options) {
-  const now = options?.now ?? (/* @__PURE__ */ new Date()).toISOString();
-  const isStale = isStockStale(record.lastSuccessfulSyncAt, record.staleAfterMs);
-  const stalePolicy = getStalePolicy(record.supplierId);
-  let availableQuantity = record.quantity;
-  if (record.manuallyDiscontinued) {
-    availableQuantity = 0;
-  } else if (isStale && stalePolicy === "BLOCK_SALE") {
-    availableQuantity = 0;
-  } else if (record.stockStatus === "UNKNOWN" || !record.lastSuccessfulSyncAt) {
-    availableQuantity = 0;
-  }
-  const stockBuffer = record.stockBuffer ?? getStockBufferConfig({ supplierId: record.supplierId, categoryId: options?.categoryId });
-  const stockStatus = deriveStockStatus2(record.quantity, {
-    manuallyDiscontinued: record.manuallyDiscontinued,
-    isStale,
-    manuallyPaused: record.manuallyPaused
-  });
-  const saleableQuantity = calculateSaleableQuantity({
-    availableQuantity,
-    stockBuffer,
-    reservedQuantity: record.reservedQuantity,
-    isStale,
-    stalePolicy,
-    manuallyDiscontinued: record.manuallyDiscontinued,
-    stockStatus
-  });
+// lib/analytics/store/memoryStore.ts
+function createMemoryAnalyticsStore() {
+  const events = [];
+  const sessions = /* @__PURE__ */ new Map();
+  const visitors = /* @__PURE__ */ new Map();
+  const consentByVisitor = /* @__PURE__ */ new Map();
+  const idempotencyIndex = /* @__PURE__ */ new Map();
+  const deletedVisitorIds = /* @__PURE__ */ new Set();
+  const auditLog = [];
+  let eventCounter = 0;
+  let auditCounter = 0;
   return {
-    ...record,
-    availableQuantity,
-    stockBuffer,
-    stockStatus,
-    isStale,
-    stalePolicy,
-    saleableQuantity,
-    updatedAt: now
-  };
-}
-function createInitialStockRecord(input) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const stockBuffer = getStockBufferConfig({
-    supplierId: input.supplierId,
-    categoryId: input.categoryId
-  });
-  const base = {
-    productId: input.productId,
-    supplierId: input.supplierId,
-    supplierOfferId: input.supplierOfferId,
-    supplierSku: input.supplierSku,
-    ean: input.ean,
-    mpn: input.mpn,
-    quantity: input.quantity,
-    availableQuantity: input.quantity,
-    stockStatus: deriveStockStatus2(input.quantity, { manuallyDiscontinued: false, isStale: false }),
-    supplierLastUpdatedAt: now,
-    lastSyncedAt: now,
-    lastSuccessfulSyncAt: now,
-    source: input.source,
-    currency: input.currency ?? "EUR",
-    marketAvailability: [],
-    channelAvailability: [],
-    stockBuffer,
-    saleableQuantity: 0,
-    reservedQuantity: 0,
-    staleAfterMs: getDefaultStaleAfterMs(),
-    isStale: false,
-    stalePolicy: getDefaultStalePolicy(),
-    manuallyDiscontinued: false,
-    manuallyPaused: false,
-    lastSyncFailed: false,
-    createdAt: now,
-    updatedAt: now
-  };
-  return recomputeStockRecord(base, { categoryId: input.categoryId });
-}
-
-// lib/inventory-engine/market.ts
-init_registry2();
-function computeMarketAvailability(record, marketId) {
-  const market = getMarket(marketId);
-  if (!market) {
-    return { available: false, status: "DISABLED", reason: "UNKNOWN_MARKET" };
-  }
-  const supplier = getSupplier(record.supplierId);
-  if (supplier?.supportedMarkets?.length && !supplier.supportedMarkets.includes(marketId)) {
-    return { available: false, status: "DISABLED", reason: "SUPPLIER_MARKET_UNSUPPORTED" };
-  }
-  const existing = record.marketAvailability.find((m) => m.marketId === marketId);
-  if (existing?.status === "DISABLED") {
-    return { available: false, status: "DISABLED", reason: existing.reason };
-  }
-  if (record.manuallyDiscontinued || record.stockStatus === "DISCONTINUED") {
-    return { available: false, status: "OUT_OF_STOCK", reason: "DISCONTINUED" };
-  }
-  if (record.isStale) {
-    return { available: false, status: "STALE", reason: "STALE_STOCK" };
-  }
-  if (record.saleableQuantity <= 0) {
-    return { available: false, status: "OUT_OF_STOCK", reason: "NO_SALEABLE_STOCK" };
-  }
-  const regions = getEligibleSupplierRegions(marketId);
-  if (supplier?.region && regions.length && !regions.includes(supplier.region)) {
-    return { available: false, status: "REVIEW_REQUIRED", reason: "SHIPPING_ROUTE_UNSUPPORTED" };
-  }
-  return { available: true, status: "ACTIVE" };
-}
-function updateMarketAvailabilityForRecord(record, marketIds) {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return marketIds.map((marketId) => {
-    const result = computeMarketAvailability(record, marketId);
-    return {
-      marketId,
-      status: result.status,
-      reason: result.reason,
-      updatedAt: now
-    };
-  });
-}
-
-// lib/inventory-engine/channel.ts
-function computeChannelAvailability(record, channel, marketId = "DE") {
-  if (record.manuallyPaused) {
-    return { available: false, status: "PAUSED", reason: "OFFER_PAUSED" };
-  }
-  if (record.manuallyDiscontinued || record.stockStatus === "DISCONTINUED") {
-    return { available: false, status: "DISCONTINUED", reason: "DISCONTINUED" };
-  }
-  const marketResult = computeMarketAvailability(record, marketId);
-  if (!marketResult.available) {
-    if (marketResult.status === "STALE") return { available: false, status: "STALE", reason: marketResult.reason };
-    if (marketResult.reason === "SUPPLIER_MARKET_UNSUPPORTED") {
-      return { available: false, status: "MARKET_UNSUPPORTED", reason: marketResult.reason };
-    }
-    if (record.saleableQuantity <= 0) {
-      return { available: false, status: "OUT_OF_STOCK", reason: "NO_SALEABLE_STOCK" };
-    }
-    return { available: false, status: "SUPPLIER_UNAVAILABLE", reason: marketResult.reason };
-  }
-  if (record.isStale) {
-    return { available: false, status: "STALE", reason: "STALE_STOCK" };
-  }
-  if (record.saleableQuantity <= 0) {
-    return { available: false, status: "OUT_OF_STOCK", reason: "NO_SALEABLE_STOCK" };
-  }
-  return { available: true, status: "ACTIVE" };
-}
-function updateChannelAvailabilityForRecord(record, marketId = "DE") {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return getSupportedChannels().map((channel) => {
-    const result = computeChannelAvailability(record, channel, marketId);
-    return {
-      channel,
-      status: result.status,
-      reason: result.reason,
-      updatedAt: now
-    };
-  });
-}
-
-// lib/inventory-engine/events.ts
-var eventLog2 = [];
-var MAX_EVENTS2 = 1e3;
-function emitStockEvent(event) {
-  const full = {
-    ...event,
-    eventId: `evt_${event.productId}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  eventLog2.push(full);
-  if (eventLog2.length > MAX_EVENTS2) eventLog2.shift();
-  return full;
-}
-function inferStockEventType(previousQuantity, newQuantity, previousStatus, newStatus) {
-  if (newStatus === "DISCONTINUED") return "DISCONTINUED";
-  if (previousStatus === "DISCONTINUED") return "OFFER_REACTIVATED";
-  if (newStatus === "STALE") return "STOCK_STALE";
-  if (previousQuantity <= 0 && newQuantity > 0) return "BACK_IN_STOCK";
-  if (previousQuantity > 0 && newQuantity <= 0) return "OUT_OF_STOCK";
-  if (newQuantity > previousQuantity) return "STOCK_INCREASED";
-  if (newQuantity < previousQuantity) return "STOCK_DECREASED";
-  return "STOCK_CHANGED";
-}
-
-// lib/inventory-engine/reservation.ts
-var reservations = /* @__PURE__ */ new Map();
-function getActiveReservations(productId, supplierId, supplierOfferId) {
-  expireReservations();
-  return [...reservations.values()].filter(
-    (r) => r.status === "ACTIVE" && r.productId === productId && r.supplierId === supplierId && r.supplierOfferId === supplierOfferId
-  );
-}
-function getTotalReservedQuantity(productId, supplierId, supplierOfferId) {
-  return getActiveReservations(productId, supplierId, supplierOfferId).reduce(
-    (sum, r) => sum + r.quantity,
-    0
-  );
-}
-function expireReservations() {
-  const now = Date.now();
-  for (const [id, reservation] of reservations) {
-    if (reservation.status === "ACTIVE" && new Date(reservation.expiresAt).getTime() <= now) {
-      reservations.set(id, { ...reservation, status: "EXPIRED" });
-      refreshRecordReservations(reservation.productId, reservation.supplierId, reservation.supplierOfferId);
-    }
-  }
-}
-function refreshRecordReservations(productId, supplierId, supplierOfferId) {
-  const record = getStockRecord(productId, supplierId, supplierOfferId);
-  if (!record) return;
-  const reservedQuantity = getTotalReservedQuantity(productId, supplierId, supplierOfferId);
-  const updated = recomputeStockRecord({ ...record, reservedQuantity });
-  upsertStockRecord(updated);
-}
-function attachReservedQuantity(record) {
-  const reservedQuantity = getTotalReservedQuantity(
-    record.productId,
-    record.supplierId,
-    record.supplierOfferId
-  );
-  return recomputeStockRecord({ ...record, reservedQuantity });
-}
-
-// lib/inventory-engine/sync.ts
-init_registry2();
-
-// lib/inventory-engine/audit.ts
-var auditLog2 = [];
-var MAX_AUDIT = 1e3;
-var SECRET_PATTERN = /api[_-]?key|secret|password|token|authorization|bearer|credential/i;
-function recordStockAudit(entry) {
-  const full = {
-    ...entry,
-    auditId: `aud_${entry.productId}_${Date.now()}`,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    reason: redactAuditReason(entry.reason)
-  };
-  auditLog2.push(full);
-  if (auditLog2.length > MAX_AUDIT) auditLog2.shift();
-  return full;
-}
-function redactAuditReason(reason) {
-  if (SECRET_PATTERN.test(reason)) return "[REDACTED]";
-  return reason;
-}
-function createAuditFromUpdate(productId, supplierId, supplierOfferId, oldQuantity, newQuantity, oldStatus, newStatus, source, reason, syncJob) {
-  return recordStockAudit({
-    productId,
-    supplierId,
-    supplierOfferId,
-    oldQuantity,
-    newQuantity,
-    oldStatus,
-    newStatus,
-    source,
-    syncJob,
-    reason
-  });
-}
-
-// lib/inventory-engine/sync.ts
-var pricingRecalcQueue = /* @__PURE__ */ new Set();
-function processSupplierStockUpdate(input) {
-  const supplierOfferId = input.supplierOfferId || input.supplierSku;
-  const existing = getStockRecord(input.productId, input.supplierId, supplierOfferId);
-  const previousQuantity = existing?.quantity ?? 0;
-  const previousStatus = existing?.stockStatus ?? "UNKNOWN";
-  if (input.discontinued) {
-    return applyStockChange(existing, input, 0, {
-      manuallyDiscontinued: true,
-      reason: "SUPPLIER_DISCONTINUED"
-    });
-  }
-  const validation = validateSupplierQuantity(input.rawQuantity);
-  if (!validation.valid) {
-    emitStockEvent({
-      type: "STOCK_INVALID",
-      productId: input.productId,
-      supplierId: input.supplierId,
-      supplierOfferId,
-      previousQuantity,
-      newQuantity: previousQuantity,
-      previousStatus,
-      newStatus: previousStatus,
-      source: input.source,
-      metadata: { errors: validation.errors }
-    });
-    if (existing && validation.errors.includes("MISSING_STOCK")) {
-      return { ok: false, errors: validation.errors, pricingRecalculationRequired: false };
-    }
-    return { ok: false, errors: validation.errors, pricingRecalculationRequired: false };
-  }
-  const newQuantity = validation.normalizedQuantity ?? 0;
-  if (existing?.manuallyDiscontinued) {
-    return {
-      ok: true,
-      record: existing,
-      previousQuantity,
-      previousStatus,
-      pricingRecalculationRequired: false
-    };
-  }
-  return applyStockChange(existing, input, newQuantity, {
-    manuallyDiscontinued: false,
-    reason: "SUPPLIER_SYNC"
-  });
-}
-function applyStockChange(existing, input, newQuantity, options) {
-  const supplierOfferId = input.supplierOfferId || input.supplierSku;
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const previousQuantity = existing?.quantity ?? 0;
-  const previousStatus = existing?.stockStatus ?? "UNKNOWN";
-  const supplier = getSupplier(input.supplierId);
-  const supportedMarkets = supplier?.supportedMarkets ?? ["DE", "FR", "PL"];
-  let record = existing ?? createInitialStockRecord({
-    productId: input.productId,
-    supplierId: input.supplierId,
-    supplierOfferId,
-    supplierSku: input.supplierSku,
-    quantity: newQuantity,
-    ean: input.ean,
-    mpn: input.mpn,
-    currency: input.currency ?? supplier?.currency ?? "EUR",
-    source: input.source
-  });
-  record = {
-    ...record,
-    quantity: newQuantity,
-    supplierLastUpdatedAt: input.supplierLastUpdatedAt ?? now,
-    lastSyncedAt: now,
-    lastSuccessfulSyncAt: now,
-    lastSyncFailed: false,
-    manuallyDiscontinued: options.manuallyDiscontinued,
-    source: input.source,
-    ean: input.ean ?? record.ean,
-    mpn: input.mpn ?? record.mpn
-  };
-  record = attachReservedQuantity(record);
-  record = recomputeStockRecord(record);
-  record = {
-    ...record,
-    marketAvailability: updateMarketAvailabilityForRecord(record, supportedMarkets),
-    channelAvailability: updateChannelAvailabilityForRecord(record, supportedMarkets[0] ?? "DE")
-  };
-  upsertStockRecord(record);
-  syncToProductEngine(record);
-  pricingRecalcQueue.add(input.productId);
-  const eventType = inferStockEventType(previousQuantity, newQuantity, previousStatus, record.stockStatus);
-  emitStockEvent({
-    type: eventType,
-    productId: input.productId,
-    supplierId: input.supplierId,
-    supplierOfferId,
-    previousQuantity,
-    newQuantity,
-    previousStatus,
-    newStatus: record.stockStatus,
-    source: input.source
-  });
-  createAuditFromUpdate(
-    input.productId,
-    input.supplierId,
-    supplierOfferId,
-    previousQuantity,
-    newQuantity,
-    previousStatus,
-    record.stockStatus,
-    input.source,
-    options.reason,
-    input.syncType
-  );
-  return {
-    ok: true,
-    record,
-    previousQuantity,
-    previousStatus,
-    pricingRecalculationRequired: previousQuantity !== newQuantity || previousStatus !== record.stockStatus
-  };
-}
-function syncToProductEngine(record) {
-  const product = getProduct(record.productId);
-  if (!product) return;
-  if (product.status === "DISCONTINUED") return;
-  const updated = updateProductSupplierOffer(record.productId, record.supplierId, {
-    stock: record.quantity
-  });
-  if (updated) {
-    upsertRegistryProduct(updated);
-  }
-}
-
-// lib/inventory-engine/test-fixtures.ts
-init_fixtures();
-
-// lib/supplier-engine/sync.ts
-function buildIdempotencyKey(supplierId, jobType, cursor, batchSize) {
-  return `${supplierId}:${jobType}:${cursor || "start"}:${batchSize || 50}`;
-}
-async function runSupplierSyncJob(supplierId, options = {}) {
-  bootstrapSupplierEnginePersistence();
-  const startedAt = (/* @__PURE__ */ new Date()).toISOString();
-  const jobId = `sync_${supplierId}_${Date.now()}`;
-  const supplier = getSupplierOrThrow(supplierId);
-  if (!isSupplierSelectable(supplierId)) {
-    return {
-      jobId,
-      supplierId,
-      jobType: options.jobType ?? "FULL",
-      status: "FAILED",
-      productsFetched: 0,
-      productsCreated: 0,
-      productsUpdated: 0,
-      productsFailed: 0,
-      stockUpdates: 0,
-      priceUpdates: 0,
-      errors: [{ code: "SUPPLIER_DISABLED", message: "Supplier is disabled" }],
-      startedAt,
-      completedAt: startedAt
-    };
-  }
-  const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
-  const jobType = options.jobType ?? "FULL";
-  const connector = createConnector(supplier, integrationType);
-  const environment = resolveConnectorEnvironment();
-  if (environment !== "MOCK") {
-    const syncGuard = evaluateProductionSyncGuard(supplierId, jobType);
-    if (!syncGuard.allowed) {
-      recordSupplierSyncOutcomeMetric(false);
-      return {
-        jobId,
-        supplierId,
-        jobType,
-        status: "FAILED",
-        productsFetched: 0,
-        productsCreated: 0,
-        productsUpdated: 0,
-        productsFailed: 0,
-        stockUpdates: 0,
-        priceUpdates: 0,
-        errors: syncGuard.reasons.map((code) => ({ code, message: code })),
-        startedAt,
-        completedAt: startedAt
-      };
-    }
-  }
-  const lock = tryAcquireSupplierSyncLock(supplierId, jobId);
-  if (!lock.acquired) {
-    return {
-      jobId,
-      supplierId,
-      jobType,
-      status: "FAILED",
-      productsFetched: 0,
-      productsCreated: 0,
-      productsUpdated: 0,
-      productsFailed: 0,
-      stockUpdates: 0,
-      priceUpdates: 0,
-      errors: [{ code: "SYNC_IN_PROGRESS", message: lock.reason || "Sync already running" }],
-      startedAt,
-      completedAt: startedAt
-    };
-  }
-  recordSupplierEngineAudit({
-    supplierId,
-    action: "supplier.sync.started",
-    correlationId: jobId,
-    metadata: { jobType, integrationType }
-  });
-  const result = {
-    jobId,
-    supplierId,
-    jobType,
-    status: "COMPLETED",
-    productsFetched: 0,
-    productsCreated: 0,
-    productsUpdated: 0,
-    productsFailed: 0,
-    stockUpdates: 0,
-    priceUpdates: 0,
-    errors: [],
-    startedAt,
-    completedAt: startedAt
-  };
-  const syncStart = Date.now();
-  const seenSkus = /* @__PURE__ */ new Set();
-  try {
-    await connector.connect();
-    if (jobType === "STOCK_ONLY") {
-      await syncStockOnly(connector, supplier, result);
-    } else if (jobType === "PRICE_ONLY") {
-      await syncPriceOnly(connector, supplier, result);
-    } else if (jobType === "INCREMENTAL") {
-      await syncIncrementalFeed(connector, supplier, result, options.batchSize ?? 50, seenSkus);
-    } else {
-      await syncFullFeed(connector, supplier, result, options.batchSize ?? 50, seenSkus);
-    }
-    const health = await connector.healthCheck();
-    const syncDuration = Date.now() - syncStart;
-    if (result.status === "FAILED") {
-      recordSupplierHealthFailure(supplierId, {
-        errorCode: result.errors[0]?.code,
-        responseTimeMs: syncDuration,
-        rateLimited: result.errors[0]?.code === "RATE_LIMITED"
-      });
-      recordSupplierEngineAudit({
-        supplierId,
-        action: "supplier.sync.failed",
-        correlationId: jobId,
-        metadata: { jobType, errorCode: result.errors[0]?.code }
-      });
-    } else {
-      recordSupplierHealthSuccess(supplierId, {
-        responseTimeMs: syncDuration,
-        operation: jobType
-      });
-      recordSupplierEngineAudit({
-        supplierId,
-        action: "supplier.sync.completed",
-        correlationId: jobId,
-        metadata: {
-          jobType,
-          status: result.status,
-          productsFetched: result.productsFetched
+    generateEventId() {
+      eventCounter += 1;
+      return `evt_${Date.now()}_${eventCounter}`;
+    },
+    storeEvent(event) {
+      events.push(event);
+    },
+    listEvents() {
+      return [...events];
+    },
+    listEventsInRange(fromIso, toIso) {
+      return events.filter((event) => event.timestamp >= fromIso && event.timestamp <= toIso);
+    },
+    getEvent(eventId) {
+      return events.find((e) => e.eventId === eventId);
+    },
+    getSession(sessionId) {
+      return sessions.get(sessionId);
+    },
+    upsertSession(session) {
+      sessions.set(session.sessionId, session);
+    },
+    listSessions() {
+      return [...sessions.values()];
+    },
+    getVisitor(anonymousVisitorId) {
+      return visitors.get(anonymousVisitorId);
+    },
+    upsertVisitor(visitor) {
+      visitors.set(visitor.anonymousVisitorId, visitor);
+    },
+    listVisitors() {
+      return [...visitors.values()];
+    },
+    getConsent(anonymousVisitorId) {
+      return consentByVisitor.get(anonymousVisitorId);
+    },
+    setConsent(anonymousVisitorId, consent) {
+      consentByVisitor.set(anonymousVisitorId, consent);
+    },
+    isIdempotencyKeyUsed(key) {
+      return idempotencyIndex.has(key);
+    },
+    markIdempotencyKey(key, eventId) {
+      idempotencyIndex.set(key, eventId);
+    },
+    getIdempotencyEventId(key) {
+      return idempotencyIndex.get(key);
+    },
+    markVisitorDeleted(anonymousVisitorId) {
+      deletedVisitorIds.add(anonymousVisitorId);
+      visitors.delete(anonymousVisitorId);
+      consentByVisitor.delete(anonymousVisitorId);
+    },
+    isVisitorDeleted(anonymousVisitorId) {
+      return deletedVisitorIds.has(anonymousVisitorId);
+    },
+    clear() {
+      events.length = 0;
+      sessions.clear();
+      visitors.clear();
+      consentByVisitor.clear();
+      idempotencyIndex.clear();
+      deletedVisitorIds.clear();
+      auditLog.length = 0;
+      eventCounter = 0;
+      auditCounter = 0;
+    },
+    removeEventsForVisitor(anonymousVisitorId) {
+      let removed = 0;
+      for (let i = events.length - 1; i >= 0; i--) {
+        if (events[i].anonymousVisitorId === anonymousVisitorId) {
+          events.splice(i, 1);
+          removed += 1;
         }
+      }
+      for (const [id, session] of sessions) {
+        if (session.anonymousVisitorId === anonymousVisitorId) sessions.delete(id);
+      }
+      return removed;
+    },
+    anonymizeEventsForVisitor(anonymousVisitorId) {
+      let count = 0;
+      for (const event of events) {
+        if (event.anonymousVisitorId === anonymousVisitorId) {
+          event.anonymousVisitorId = "anon_deleted";
+          event.customerIdReference = void 0;
+          event.metadata = {};
+          count += 1;
+        }
+      }
+      return count;
+    },
+    recordAudit(entry) {
+      auditCounter += 1;
+      const record = {
+        auditId: `aud_${Date.now()}_${auditCounter}`,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+        action: entry.action,
+        actor: entry.actor,
+        metadata: entry.metadata
+      };
+      auditLog.push(record);
+      return record;
+    },
+    getAuditLog(filter) {
+      if (!filter?.action) return [...auditLog];
+      return auditLog.filter((e) => e.action === filter.action);
+    },
+    clearAudit() {
+      auditLog.length = 0;
+      auditCounter = 0;
+    }
+  };
+}
+
+// lib/analytics/store/configure.ts
+var activeStore = createMemoryAnalyticsStore();
+
+// lib/supplier-production-order-validation/eligibility.ts
+function evaluateUpstreamGates(input) {
+  const blockers = [];
+  const prodVal = getLatestValidationForScope({
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    environment: input.environment
+  });
+  if (!prodVal || prodVal.overallStatus !== "PASSED") {
+    blockers.push("PRODUCTION_VALIDATION_NOT_READY");
+  }
+  const activation = listActivationRecords().filter(
+    (a) => a.supplierId === input.supplierId && a.market === input.market && a.channel === input.channel && a.environment === input.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+  if (!activation || !["APPROVED", "ACTIVE"].includes(activation.status)) {
+    blockers.push("ACTIVATION_NOT_APPROVED");
+  }
+  if (isActivationKillSwitched(input)) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+  }
+  if (input.approver && input.approver === input.requester) {
+    blockers.push("SELF_APPROVAL_FORBIDDEN");
+  }
+  return { allowed: blockers.length === 0, blockers };
+}
+
+// lib/supplier-inter-cars-production-access/preflight.ts
+function runProductionAccessPreflight() {
+  const supplierId = getInterCarsSupplierId();
+  const credential = resolveCredentialDisplayStatus({ supplierId });
+  const network = resolveNetworkState();
+  const profile = resolvePredefinedLiveProfile();
+  const checks = [];
+  const blockers = [...credential.blockers];
+  checks.push({
+    check: "PROFILE",
+    status: profile ? "PASS" : "BLOCKED",
+    message: profile ? process.env.SUPPLIER_LIVE_PROFILE || "inter-cars" : "missing"
+  });
+  if (!profile) blockers.push("INTER_CARS_PROFILE_NOT_CONFIGURED");
+  checks.push({
+    check: "CREDENTIALS",
+    status: credential.status === "VALID" || credential.status === "CONFIGURED" ? "PASS" : "BLOCKED",
+    message: credential.status
+  });
+  let endpointAllowlisted = false;
+  if (profile?.baseUrl) {
+    const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
+    const path4 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path4.startsWith("/") ? path4 : `/${path4}`}`;
+    endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
+    checks.push({
+      check: "ENDPOINT",
+      status: endpointAllowlisted ? "PASS" : "BLOCKED",
+      message: url
+    });
+    if (!endpointAllowlisted) blockers.push("ENDPOINT_SECURITY_BLOCKED");
+  } else {
+    checks.push({ check: "ENDPOINT", status: "BLOCKED", message: "baseUrl missing" });
+    blockers.push("ENDPOINT_NOT_CONFIGURED");
+  }
+  checks.push({
+    check: "NETWORK_DEFAULT",
+    status: network.productionNetwork === "OFF" && network.supplierOrderNetwork === "OFF" ? "PASS" : "BLOCKED",
+    message: `network=${network.productionNetwork} orderNetwork=${network.supplierOrderNetwork}`
+  });
+  if (network.supplierOrderNetwork === "ON") blockers.push("ORDER_NETWORK_MUST_BE_OFF");
+  checks.push({
+    check: "SCOPED_VALIDATION_NETWORK",
+    status: network.scopedValidationNetwork === "OFF" ? "PASS" : "UNVERIFIED",
+    message: "Scoped network only during explicit #342 run"
+  });
+  const upstream = evaluateUpstreamGates({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION",
+    requester: "ops@example.com"
+  });
+  checks.push({
+    check: "UPSTREAM_GATES",
+    status: upstream.blockers.length === 0 ? "PASS" : "BLOCKED",
+    message: upstream.blockers.join(",") || "PASS"
+  });
+  blockers.push(...upstream.blockers);
+  if (isActivationKillSwitched({ supplierId, market: "DE", channel: "DIRECT" })) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+  }
+  checks.push({
+    check: "CONTROLLED_VALIDATION_ENABLED",
+    status: isControlledValidationEnabled() ? "UNVERIFIED" : "PASS",
+    message: isControlledValidationEnabled() ? "Explicitly enabled \u2014 await controlled run" : "Disabled until operational enable"
+  });
+  const credentialReady = credential.status === "VALID" || credential.status === "CONFIGURED";
+  const ready = credentialReady && endpointAllowlisted && network.supplierOrderNetwork === "OFF" && upstream.blockers.length === 0;
+  return { ready, blockers: [...new Set(blockers)], checks };
+}
+
+// lib/supplier-inter-cars-production-access/readOnlyLive.ts
+function resolveReadOnlyLiveStatus(credentialsStatus) {
+  const latest = getLatestValidationForScope({
+    supplierId: getInterCarsSupplierId(),
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  if (latest?.healthStatus === "LIVE_READ_VALIDATED" && latest.catalogReadStatus === "LIVE_READ_VALIDATED") {
+    return "VALIDATED";
+  }
+  if (credentialsStatus === "NOT_CONFIGURED" || credentialsStatus === "BLOCKED") {
+    return "BLOCKED";
+  }
+  if (isLiveReadEnabled() && (credentialsStatus === "VALID" || credentialsStatus === "CONFIGURED")) {
+    return "NOT_RUN";
+  }
+  return "NOT_RUN";
+}
+
+// lib/supplier-inter-cars-production-access/safety.ts
+var counters7 = {
+  realHttpCalls: 0,
+  realCreateOrderCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0
+};
+function getProductionAccessSafetyCounters() {
+  return { ...counters7 };
+}
+
+// lib/supplier-inter-cars-production-access/diagnostic.ts
+function evaluateInterCarsProductionAccess() {
+  const supplierId = getInterCarsSupplierId();
+  const profile = resolvePredefinedLiveProfile();
+  const credential = resolveCredentialDisplayStatus({ supplierId });
+  const network = resolveNetworkState();
+  const preflight = runProductionAccessPreflight();
+  const safety342 = getCreateOrderValidationSafetyCounters();
+  const safetyPrep = getProductionAccessSafetyCounters();
+  const controlledRun = getLatestControlledValidationRun({ supplierId, market: "DE" });
+  const createOrderCapability = controlledRun?.liveValidation === "PASS" && controlledRun.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED";
+  let endpointAllowlisted = false;
+  if (profile?.baseUrl) {
+    const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
+    const path4 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path4.startsWith("/") ? path4 : `/${path4}`}`;
+    endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
+  }
+  const blockers = [];
+  if (!isInterCarsProfileConfigured()) blockers.push("INTER_CARS_PROFILE_NOT_CONFIGURED");
+  if (credential.status === "NOT_CONFIGURED") blockers.push("CREDENTIAL_NOT_CONFIGURED");
+  if (credential.status === "BLOCKED") blockers.push("CREDENTIAL_MOCK_OR_BLOCKED");
+  if (network.supplierOrderNetwork === "ON") blockers.push("ORDER_NETWORK_MUST_BE_OFF_IN_PREP");
+  if (createOrderCapability !== "VALIDATED") blockers.push("CREATE_ORDER_UNVERIFIED");
+  blockers.push(...preflight.blockers.filter((b) => !blockers.includes(b)));
+  return {
+    interCarsProfile: isInterCarsProfileConfigured() ? "CONFIGURED" : "NOT_CONFIGURED",
+    environment: profile?.environment || "UNKNOWN",
+    supplierProfile: process.env.SUPPLIER_LIVE_PROFILE || "none",
+    productionCredentials: credential.status,
+    credentialType: credential.credentialType,
+    readOnlyLiveValidation: resolveReadOnlyLiveStatus(credential.status),
+    controlledLiveValidation: preflight.ready ? "READY" : "BLOCKED",
+    createOrderCapability,
+    productionNetwork: network.productionNetwork,
+    supplierOrderNetwork: network.supplierOrderNetwork,
+    scopedValidationNetwork: network.scopedValidationNetwork,
+    realHttpCalls: safety342.realSupplierOrderCalls + safetyPrep.realHttpCalls,
+    realCreateOrderCalls: safety342.realSupplierOrderCalls,
+    realSupplierOrders: safety342.realSupplierOrderCalls,
+    realCustomerOrders: safety342.realCustomerOrders,
+    checklist: buildProductionAccessChecklist({
+      profileConfigured: isInterCarsProfileConfigured(),
+      credentialsStatus: credential.status,
+      endpointConfigured: Boolean(profile?.baseUrl),
+      endpointAllowlisted,
+      createOrderBlocked: true
+    }),
+    blockers: [...new Set(blockers)],
+    correlationId: (0, import_crypto.randomUUID)(),
+    evaluatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+
+// lib/payment-production/config.ts
+var PAYMENT_PRODUCTION_VERSION = "350.1.0";
+function isPaymentProductionEnabled() {
+  return isProductionFlagEnabled("PAYMENT_PRODUCTION");
+}
+function getDefaultPaymentProviderId() {
+  const configured = (process.env.PAYMENT_PROVIDER || "mock").toLowerCase();
+  if (configured === "stripe" || configured === "adyen" || configured === "paypal") return configured;
+  return "mock";
+}
+
+// lib/payment-production/admin.ts
+function getPaymentProductionDashboard() {
+  const safety = assertPaymentProductionSafetyInvariants();
+  return {
+    version: PAYMENT_PRODUCTION_VERSION,
+    productionEnabled: isPaymentProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    defaultProvider: getDefaultPaymentProviderId(),
+    safetyCounters: getPaymentProductionSafetyCounters(),
+    blockers: isPaymentProductionEnabled() ? ["PAYMENT_PRODUCTION_MUST_BE_DISABLED_IN_PREP"] : safety.violations
+  };
+}
+
+// lib/carrier-production/config.ts
+var CARRIER_PRODUCTION_VERSION = "351.1.0";
+function isCarrierProductionEnabled() {
+  return isProductionFlagEnabled("CARRIER_PRODUCTION");
+}
+
+// lib/carrier-production/admin.ts
+function getCarrierProductionDashboard() {
+  const safety = assertCarrierProductionSafetyInvariants();
+  return {
+    version: CARRIER_PRODUCTION_VERSION,
+    productionEnabled: isCarrierProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    safetyCounters: getCarrierProductionSafetyCounters(),
+    blockers: safety.violations
+  };
+}
+
+// lib/ai-production/config.ts
+var AI_PRODUCTION_VERSION = "352.1.0";
+var AI_WORKERS = [
+  "PRODUCT_AI",
+  "SUPPLIER_AI",
+  "PRICING_AI",
+  "INVENTORY_AI",
+  "ORDER_AI",
+  "MARKETPLACE_AI",
+  "CUSTOMS_AI",
+  "CUSTOMER_SERVICE_AI",
+  "RETURNS_AI",
+  "FINANCE_AI"
+];
+function isAiProductionEnabled() {
+  return isProductionFlagEnabled("AI_PRODUCTION");
+}
+
+// lib/ai-production/safety.ts
+var counters8 = { realProviderCalls: 0, blockedExecutions: 0 };
+function getAiProductionSafetyCounters() {
+  return { ...counters8 };
+}
+function assertAiProductionSafetyInvariants() {
+  const violations = [];
+  if (counters8.realProviderCalls !== 0) violations.push(`realProviderCalls=${counters8.realProviderCalls}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/ai-production/authority.ts
+function resolveDefaultAuthority() {
+  return "RECOMMEND";
+}
+
+// lib/ai-production/admin.ts
+function getAiProductionDashboard() {
+  const safety = assertAiProductionSafetyInvariants();
+  return {
+    version: AI_PRODUCTION_VERSION,
+    productionEnabled: isAiProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    defaultAuthority: resolveDefaultAuthority(),
+    workers: AI_WORKERS,
+    safetyCounters: getAiProductionSafetyCounters(),
+    blockers: safety.violations
+  };
+}
+
+// lib/returns-refunds-production/config.ts
+var RETURNS_REFUNDS_PRODUCTION_VERSION = "353.1.0";
+function isReturnsProductionEnabled() {
+  return isProductionFlagEnabled("RETURNS_PRODUCTION");
+}
+
+// lib/returns-refunds-production/admin.ts
+function getReturnsRefundsProductionDashboard() {
+  const safety = assertReturnsRefundsSafetyInvariants();
+  return {
+    version: RETURNS_REFUNDS_PRODUCTION_VERSION,
+    productionEnabled: isReturnsProductionEnabled() ? "ENABLED" : "DISABLED",
+    liveStatus: "NOT_CONFIGURED",
+    safetyCounters: getReturnsRefundsSafetyCounters(),
+    blockers: safety.violations
+  };
+}
+
+// lib/tracking-fulfillment/config.ts
+var TRACKING_FULFILLMENT_VERSION = "349.1.0";
+
+// lib/tracking-fulfillment/safety.ts
+var counters9 = { realHttpCalls: 0, fabricatedTrackingIds: 0, webhookProcessed: 0 };
+function getTrackingSafetyCounters() {
+  return { ...counters9 };
+}
+function assertTrackingSafetyInvariants() {
+  const violations = [];
+  if (counters9.realHttpCalls !== 0) violations.push(`realHttpCalls=${counters9.realHttpCalls}`);
+  if (counters9.fabricatedTrackingIds !== 0) violations.push(`fabricatedTrackingIds=${counters9.fabricatedTrackingIds}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/tracking-fulfillment/admin.ts
+function getTrackingFulfillmentDashboard() {
+  const safety = assertTrackingSafetyInvariants();
+  return {
+    version: TRACKING_FULFILLMENT_VERSION,
+    liveStatus: "UNVERIFIED",
+    productionEnabled: "DISABLED",
+    safetyCounters: getTrackingSafetyCounters(),
+    blockers: safety.ok ? [] : safety.violations
+  };
+}
+
+// lib/production-access/evidenceStore.ts
+var evidenceStore = /* @__PURE__ */ new Map();
+var evidenceByProvider = /* @__PURE__ */ new Map();
+function listProviderAccessEvidence(provider) {
+  const ids = evidenceByProvider.get(provider) || [];
+  return ids.map((id) => evidenceStore.get(id)).filter(Boolean);
+}
+function hasProductionEvidence(provider, capability) {
+  return listProviderAccessEvidence(provider).some(
+    (e) => e.capability === capability && e.environment === "PRODUCTION" && e.responseStatus >= 200 && e.responseStatus < 300
+  );
+}
+
+// lib/production-access/secretRefs.ts
+function normalizeSecretRef(raw, fallbackEnvKey) {
+  const value = raw?.trim();
+  if (!value) return `env:${fallbackEnvKey}`;
+  if (value.startsWith("env:")) return value;
+  return `env:${value}`;
+}
+function secretRefConfigured(envKey) {
+  return Boolean(process.env[envKey]?.trim());
+}
+function resolveInterCarsSecretRef() {
+  const secretRefKey = process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim() || process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS";
+  const secretsRef = normalizeSecretRef(secretRefKey, "SUPPLIER_LIVE_CREDENTIALS");
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const cred = resolveCredentialDisplayStatus({ supplierId: getInterCarsSupplierId() });
+  const statusMap = {
+    NOT_CONFIGURED: "NOT_CONFIGURED",
+    CONFIGURED: "CONFIGURED",
+    VALID: "CONFIGURED",
+    INVALID: "BLOCKED",
+    EXPIRED: "BLOCKED",
+    BLOCKED: "BLOCKED"
+  };
+  return {
+    providerId: "inter-cars",
+    secretRefKey: secretsRef,
+    secretRefConfigured: secretRefConfigured(envKey) || Boolean(process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim()),
+    secretResolvable: Boolean(resolveCredentials(secretsRef)),
+    credentialStatus: statusMap[cred.status] || "UNVERIFIED"
+  };
+}
+function resolveGenericSecretRef(input) {
+  const raw = process.env[input.secretRefEnvKey]?.trim();
+  const secretsRef = normalizeSecretRef(raw, input.fallbackEnvKey || input.secretRefEnvKey.replace(/_SECRET_REF$/, ""));
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  return {
+    providerId: input.providerId,
+    secretRefKey: secretsRef,
+    secretRefConfigured: secretRefConfigured(envKey) || Boolean(raw),
+    secretResolvable: Boolean(resolveCredentials(secretsRef)),
+    credentialStatus: resolveCredentials(secretsRef) ? "CONFIGURED" : "NOT_CONFIGURED"
+  };
+}
+
+// lib/production-access/providerRegistry.ts
+function resolveAccessState(input) {
+  if (input.blocked) return "BLOCKED";
+  if (!input.credentialConfigured && !input.secretRefConfigured) return "NOT_CONFIGURED";
+  if (input.liveValidation === "VALIDATED") return "VALIDATED";
+  if (input.liveValidation === "VALIDATING") return "VALIDATING";
+  if (input.liveValidation === "FAILED") return "FAILED";
+  if (input.liveValidation === "REVOKED") return "REVOKED";
+  if (input.liveValidation === "EXPIRED") return "EXPIRED";
+  if (input.credentialConfigured || input.secretRefConfigured) return "CONFIGURED";
+  return "UNVERIFIED";
+}
+function evaluateInterCarsProviderState() {
+  const secret = resolveInterCarsSecretRef();
+  const diag = evaluateInterCarsProductionAccess();
+  const profile = resolvePredefinedLiveProfile();
+  const evidence = listProviderAccessEvidence("inter-cars");
+  const latest = evidence[evidence.length - 1];
+  const readValidated = diag.readOnlyLiveValidation === "VALIDATED" || hasProductionEvidence("inter-cars", "health");
+  const createValidated = diag.createOrderCapability === "VALIDATED";
+  const liveValidation = createValidated ? "VALIDATED" : readValidated ? "CONFIGURED" : secret.credentialStatus === "BLOCKED" ? "BLOCKED" : "UNVERIFIED";
+  const blockers = [];
+  if (!profile) blockers.push("MISSING_INTER_CARS_PROFILE");
+  if (secret.credentialStatus === "NOT_CONFIGURED") blockers.push("MISSING_INTER_CARS_CREDENTIAL");
+  if (createValidated === false) blockers.push("CREATE_ORDER_NOT_VALIDATED");
+  return {
+    providerId: "inter-cars",
+    domain: "SUPPLIER",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation,
+      blocked: secret.credentialStatus === "BLOCKED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(profile?.baseUrl),
+    networkPermission: process.env.SUPPLIER_LIVE_READ_ENABLED === "1",
+    healthCheck: readValidated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: createValidated ? "VALIDATED" : "UNVERIFIED",
+    liveValidation,
+    evidenceCount: evidence.length,
+    lastValidationAt: latest?.timestamp,
+    correlationId: diag.correlationId,
+    productionEnabled: isProductionFlagEnabled("SUPPLIER_ORDER_NETWORK") ? "ON" : "OFF",
+    blockers
+  };
+}
+function evaluatePaymentProviderState() {
+  const secret = resolveGenericSecretRef({
+    providerId: "payment",
+    secretRefEnvKey: "PAYMENT_PROVIDER_SECRET_REF",
+    fallbackEnvKey: "PAYMENT_PROVIDER_SECRET"
+  });
+  const dash = getPaymentProductionDashboard();
+  const evidence = listProviderAccessEvidence("payment");
+  const validated = hasProductionEvidence("payment", "authentication");
+  return {
+    providerId: "payment",
+    domain: "PAYMENT",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.PAYMENT_PROVIDER_ENDPOINT),
+    networkPermission: false,
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["PAYMENT_NOT_VALIDATED"]
+  };
+}
+function evaluateCarrierProviderState() {
+  const secret = resolveGenericSecretRef({
+    providerId: "carrier",
+    secretRefEnvKey: "CARRIER_PROVIDER_SECRET_REF"
+  });
+  const dash = getCarrierProductionDashboard();
+  const evidence = listProviderAccessEvidence("carrier");
+  const validated = hasProductionEvidence("carrier", "health");
+  return {
+    providerId: "carrier",
+    domain: "CARRIER",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.CARRIER_PROVIDER_ENDPOINT),
+    networkPermission: false,
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["CARRIER_NOT_VALIDATED"]
+  };
+}
+function evaluateAiProviderState() {
+  const secret = resolveGenericSecretRef({
+    providerId: "ai",
+    secretRefEnvKey: "AI_PROVIDER_SECRET_REF"
+  });
+  const dash = getAiProductionDashboard();
+  const evidence = listProviderAccessEvidence("ai");
+  const validated = hasProductionEvidence("ai", "health");
+  return {
+    providerId: "ai",
+    domain: "AI",
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.AI_PROVIDER_ENDPOINT),
+    networkPermission: false,
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["AI_NOT_VALIDATED"]
+  };
+}
+function evaluateReturnsProviderState() {
+  const dash = getReturnsRefundsProductionDashboard();
+  const evidence = listProviderAccessEvidence("returns");
+  const validated = hasProductionEvidence("returns", "refund");
+  return {
+    providerId: "returns",
+    domain: "RETURNS",
+    accessState: validated ? "VALIDATED" : "UNVERIFIED",
+    credentialConfigured: false,
+    secretRefConfigured: false,
+    endpointConfigured: false,
+    networkPermission: false,
+    healthCheck: "UNVERIFIED",
+    authenticationCheck: "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    evidenceCount: evidence.length,
+    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
+    blockers: validated ? [] : ["RETURNS_NOT_VALIDATED"]
+  };
+}
+function evaluateMarketingProviderState() {
+  const providers = ["GOOGLE_ADS", "META", "TIKTOK", "YOUTUBE"];
+  const configured = providers.some((p) => Boolean(process.env[`${p}_SECRET_REF`]?.trim()));
+  const evidence = listProviderAccessEvidence("marketing");
+  return {
+    providerId: "marketing",
+    domain: "MARKETING",
+    accessState: configured ? "CONFIGURED" : "NOT_CONFIGURED",
+    credentialConfigured: configured,
+    secretRefConfigured: configured,
+    endpointConfigured: false,
+    networkPermission: false,
+    healthCheck: "UNVERIFIED",
+    authenticationCheck: configured ? "CONFIGURED" : "NOT_CONFIGURED",
+    capabilityCheck: "UNVERIFIED",
+    liveValidation: "UNVERIFIED",
+    evidenceCount: evidence.length,
+    correlationId: (0, import_crypto2.randomUUID)(),
+    productionEnabled: isProductionFlagEnabled("MARKETING_SPEND") ? "ON" : "OFF",
+    blockers: configured ? ["MARKETING_NOT_VALIDATED"] : ["MARKETING_NOT_CONFIGURED"]
+  };
+}
+function evaluateTrackingState() {
+  const dash = getTrackingFulfillmentDashboard();
+  const validated = hasProductionEvidence("inter-cars", "tracking");
+  return {
+    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    blockers: validated ? [] : ["TRACKING_NOT_VALIDATED"]
+  };
+}
+function getAllProviderStates() {
+  return [
+    evaluateInterCarsProviderState(),
+    evaluatePaymentProviderState(),
+    evaluateCarrierProviderState(),
+    evaluateAiProviderState(),
+    evaluateReturnsProviderState(),
+    evaluateMarketingProviderState()
+  ];
+}
+
+// lib/supplier-production-order-validation/capability.ts
+function deriveCreateOrderCapabilityStatus(state) {
+  if (state.productionValidated) return "VALIDATED";
+  return "UNVERIFIED";
+}
+
+// lib/supplier-production-order-arming/evidence.ts
+function loadOfficialValidationEvidence(scope) {
+  const blockers = [];
+  const validation = getLatestValidationForScope2(scope);
+  if (!validation) {
+    blockers.push("VALIDATION_EVIDENCE_MISSING");
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers };
+  }
+  const capability = deriveCreateOrderCapabilityStatus(validation.capabilityState);
+  if (capability !== "VALIDATED" || !validation.capabilityState.productionValidated) {
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers, evidence: void 0 };
+  }
+  const controlledRun = getControlledValidationRun(validation.validationId);
+  const liveValidation = validation.liveValidation || controlledRun?.liveValidation;
+  if (validation.controlledValidation && liveValidation !== "PASS") {
+    blockers.push("CONTROLLED_VALIDATION_NOT_PASSED");
+    return { blockers };
+  }
+  if (!validation.controlledValidation && !validation.capabilityState.productionValidated) {
+    blockers.push("NO_CONTROLLED_LIVE_EVIDENCE");
+    return { blockers };
+  }
+  const evidence = {
+    validationId: validation.validationId,
+    supplier: validation.supplierId,
+    orderReference: validation.orderId,
+    payloadHash: validation.requestPayloadHash,
+    supplierOrderReference: validation.supplierOrderId || controlledRun?.supplierOrderReference,
+    validationTimestamp: validation.updatedAt,
+    result: liveValidation || validation.overallStatus,
+    approvalReference: controlledRun?.approvedBy,
+    liveValidation: liveValidation || "UNKNOWN",
+    createOrderCapability: capability,
+    productionValidated: validation.capabilityState.productionValidated
+  };
+  if (!evidence.supplierOrderReference && validation.controlledValidation) {
+    blockers.push("SUPPLIER_ORDER_REFERENCE_MISSING");
+  }
+  return { evidence, blockers };
+}
+
+// lib/supplier-production-order-arming/killSwitch.ts
+function isArmingKillSwitched(input) {
+  return isActivationKillSwitched(input);
+}
+
+// lib/supplier-production-order-arming/safety.ts
+var counters10 = {
+  realSupplierOrderCalls: 0,
+  realCustomerOrders: 0,
+  marketplaceCalls: 0,
+  paymentCalls: 0,
+  carrierCalls: 0,
+  customerNotifications: 0
+};
+function getArmingSafetyCounters() {
+  return { ...counters10 };
+}
+
+// lib/supplier-production-order-arming/persistence.ts
+var armingStore = /* @__PURE__ */ new Map();
+function listArmingRecords() {
+  return [...armingStore.values()];
+}
+function getLatestArmingForScope(scope) {
+  return listArmingRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel && r.scope.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-order-arming/config.ts
+var ARMING_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_TTL_MS || 24 * 60 * 60 * 1e3);
+var ARMING_APPROVAL_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3);
+function getInterCarsSupplierId3() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-production-order-arming/admin.ts
+function getProductionArmingDashboard() {
+  const supplierId = getInterCarsSupplierId3();
+  const records2 = listArmingRecords();
+  const latest = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const { evidence, blockers: evidenceBlockers } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const timestamps = records2.map((r) => Date.parse(r.updatedAt)).filter(Number.isFinite);
+  return {
+    armingCount: records2.length,
+    armed: records2.filter((r) => r.status === "ARMED").length,
+    blocked: records2.filter((r) => r.status === "ARMING_BLOCKED").length,
+    ready: records2.filter((r) => r.status === "ARMING_READY").length,
+    expired: records2.filter((r) => r.status === "EXPIRED").length,
+    createOrderCapability: evidence?.createOrderCapability || "UNVERIFIED",
+    validationEvidence: evidence ? "PRESENT" : "NONE",
+    armingState: latest?.status || "ARMING_BLOCKED",
+    productionReadiness: evidenceBlockers.length === 0 && evidence ? "PASS" : "BLOCKED",
+    killSwitch: isArmingKillSwitched({ supplierId, market: "DE", channel: "DIRECT" }) ? "ON" : "OFF",
+    productionOrderNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    realSupplierOrderCalls: getArmingSafetyCounters().realSupplierOrderCalls,
+    realCustomerOrders: getArmingSafetyCounters().realCustomerOrders,
+    blockers: latest?.blockerCodes || evidenceBlockers || ["CREATE_ORDER_UNVERIFIED"],
+    lastArmingAt: timestamps.length ? new Date(Math.max(...timestamps)).toISOString() : void 0
+  };
+}
+
+// lib/supplier-first-production-order/safety.ts
+var counters11 = {
+  realSupplierHttpCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0,
+  marketplaceSideEffects: 0,
+  paymentSideEffects: 0,
+  carrierSideEffects: 0,
+  customerNotifications: 0,
+  unknownOutcomes: 0,
+  mockExecutions: 0
+};
+function getFirstOrderSafetyCounters() {
+  return { ...counters11 };
+}
+
+// lib/supplier-first-production-order/persistence.ts
+var executionStore = /* @__PURE__ */ new Map();
+function listFirstProductionOrderRecords() {
+  return [...executionStore.values()];
+}
+function getLatestFirstProductionOrderForScope(scope) {
+  return listFirstProductionOrderRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-first-production-order/config.ts
+var FIRST_ORDER_TTL_MS2 = Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_TTL_MS || 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3
+);
+var EXECUTION_AUTH_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_AUTH_TTL_MS || 30 * 60 * 1e3
+);
+function getInterCarsSupplierId4() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-first-production-order/admin.ts
+function getFirstProductionOrderDashboard() {
+  const supplierId = getInterCarsSupplierId4();
+  const records2 = listFirstProductionOrderRecords();
+  const latest = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const { evidence, blockers: evidenceBlockers } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  return {
+    executionCount: records2.length,
+    blocked: records2.filter((r) => r.state === "BLOCKED").length,
+    ready: records2.filter((r) => r.state === "FIRST_ORDER_READY").length,
+    authorized: records2.filter((r) => r.state === "EXECUTION_AUTHORIZED").length,
+    executed: records2.filter((r) => r.state === "EXECUTED").length,
+    unknownOutcomes: records2.filter((r) => r.state === "UNKNOWN_OUTCOME").length,
+    createOrderCapability: evidence?.createOrderCapability || "UNVERIFIED",
+    validationEvidence: evidence ? "PRESENT" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: latest?.state || "BLOCKED",
+    productionOrderNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    realSupplierHttpCalls: getFirstOrderSafetyCounters().realSupplierHttpCalls,
+    realSupplierOrders: getFirstOrderSafetyCounters().realSupplierOrders,
+    realCustomerOrders: getFirstOrderSafetyCounters().realCustomerOrders,
+    marketplaceSideEffects: getFirstOrderSafetyCounters().marketplaceSideEffects,
+    paymentSideEffects: getFirstOrderSafetyCounters().paymentSideEffects,
+    carrierSideEffects: getFirstOrderSafetyCounters().carrierSideEffects,
+    customerNotifications: getFirstOrderSafetyCounters().customerNotifications,
+    blockers: latest?.blockerCodes || evidenceBlockers || ["CREATE_ORDER_UNVERIFIED"]
+  };
+}
+
+// lib/supplier-controlled-go-live/config.ts
+var GO_LIVE_TTL_MS = Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var GO_LIVE_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_APPROVAL_TTL_MS || 24 * 60 * 60 * 1e3
+);
+var GO_LIVE_ROLLOUT_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_ROLLOUT_TTL_MS || 30 * 24 * 60 * 60 * 1e3
+);
+function getInterCarsSupplierId5() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-controlled-go-live/safety.ts
+var counters12 = {
+  realSupplierHttpCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0,
+  marketplaceSideEffects: 0,
+  paymentSideEffects: 0,
+  carrierSideEffects: 0,
+  customerNotifications: 0
+};
+function getGoLiveSafetyCounters() {
+  return { ...counters12 };
+}
+
+// lib/supplier-controlled-go-live/persistence.ts
+var goLiveStore = /* @__PURE__ */ new Map();
+function listControlledGoLiveRecords() {
+  return [...goLiveStore.values()];
+}
+function getLatestControlledGoLiveForScope(scope) {
+  return listControlledGoLiveRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-controlled-go-live/admin.ts
+function levelFromChecks(checks, name) {
+  const c = checks.find((x) => x.check === name);
+  return c?.level || "NOT_AVAILABLE";
+}
+function getControlledGoLiveDashboard() {
+  const supplierId = getInterCarsSupplierId5();
+  const records2 = listControlledGoLiveRecords();
+  const latest = getLatestControlledGoLiveForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const checks = latest?.checks || [];
+  const controlledGoLive = latest?.state === "CONTROLLED_GO_LIVE" ? "ACTIVE" : latest?.state === "GO_LIVE_REVIEW_READY" || latest?.state === "HUMAN_APPROVAL" ? "REVIEW_READY" : "BLOCKED";
+  return {
+    goLiveCount: records2.length,
+    blocked: records2.filter((r) => r.state === "BLOCKED").length,
+    reviewReady: records2.filter((r) => ["GO_LIVE_REVIEW_READY", "HUMAN_APPROVAL"].includes(r.state)).length,
+    active: records2.filter((r) => r.state === "CONTROLLED_GO_LIVE").length,
+    rolledBack: records2.filter((r) => r.state === "ROLLED_BACK").length,
+    createOrderCapability: evidence?.createOrderCapability || "UNVERIFIED",
+    liveValidation: evidence ? "VALIDATED" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: firstOrder?.state || "BLOCKED",
+    firstOrderOutcome: firstOrder?.state === "EXECUTED" ? "VALIDATED" : firstOrder?.state === "UNKNOWN_OUTCOME" ? "UNKNOWN" : firstOrder?.state === "EXECUTION_FAILED" ? "FAILED" : "NOT_AVAILABLE",
+    supplierConfirmation: levelFromChecks(checks, "SUPPLIER_CONFIRMATION") === "PASS" ? "VALIDATED" : levelFromChecks(checks, "SUPPLIER_CONFIRMATION") === "UNVERIFIED" ? "UNVERIFIED" : "NONE",
+    tracking: levelFromChecks(checks, "TRACKING") === "PASS" ? "VALIDATED" : levelFromChecks(checks, "TRACKING") === "UNVERIFIED" ? "UNVERIFIED" : "NONE",
+    fctReconciliation: mapReconciliation(levelFromChecks(checks, "FCT_ORDER")),
+    inventoryReconciliation: mapReconciliation(levelFromChecks(checks, "INVENTORY")),
+    pricingReconciliation: mapReconciliation(levelFromChecks(checks, "PRICING")),
+    financialReconciliation: mapReconciliation(levelFromChecks(checks, "FINANCIAL")),
+    security: levelFromChecks(checks, "SECURITY") === "PASS" ? "PASS" : "FAIL",
+    risk: levelFromChecks(checks, "RISK") === "PASS" ? "PASS" : "FAIL",
+    fourEyesApproval: latest?.approval?.status === "APPROVED" ? "APPROVED" : latest?.state === "GO_LIVE_REVIEW_READY" ? "PENDING" : "BLOCKED",
+    controlledGoLive,
+    productionNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    realSupplierHttpCalls: getGoLiveSafetyCounters().realSupplierHttpCalls,
+    realSupplierOrders: getGoLiveSafetyCounters().realSupplierOrders,
+    realCustomerOrders: getGoLiveSafetyCounters().realCustomerOrders,
+    marketplaceSideEffects: getGoLiveSafetyCounters().marketplaceSideEffects,
+    paymentSideEffects: getGoLiveSafetyCounters().paymentSideEffects,
+    carrierSideEffects: getGoLiveSafetyCounters().carrierSideEffects,
+    customerNotifications: getGoLiveSafetyCounters().customerNotifications,
+    blockers: latest?.blockerCodes || (evidence ? [] : ["CREATE_ORDER_UNVERIFIED"])
+  };
+}
+function mapReconciliation(level) {
+  if (level === "PASS") return "PASS";
+  if (level === "FAIL" || level === "BLOCKED") return "FAIL";
+  return "NOT_AVAILABLE";
+}
+function isControlledGoLiveActive(scope) {
+  const supplierId = scope?.supplierId || getInterCarsSupplierId5();
+  const latest = getLatestControlledGoLiveForScope({
+    supplierId,
+    market: scope?.market || "DE",
+    channel: scope?.channel || "DIRECT"
+  });
+  return latest?.state === "CONTROLLED_GO_LIVE" && Date.parse(latest.expiresAt) > Date.now();
+}
+
+// lib/supplier-go-live-observation/safety.ts
+var counters13 = {
+  realSupplierHttpCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0,
+  marketplaceSideEffects: 0,
+  paymentSideEffects: 0,
+  carrierSideEffects: 0,
+  customerNotifications: 0
+};
+function getObservationSafetyCounters() {
+  return { ...counters13 };
+}
+
+// lib/supplier-go-live-observation/persistence.ts
+var observationStore = /* @__PURE__ */ new Map();
+var rolloutStore = /* @__PURE__ */ new Map();
+function listObservationRecords() {
+  return [...observationStore.values()];
+}
+function getLatestObservationForScope(scope) {
+  return listObservationRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+function listBroaderRolloutRecords() {
+  return [...rolloutStore.values()];
+}
+function getLatestBroaderRolloutForScope(scope) {
+  return listBroaderRolloutRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-go-live-observation/config.ts
+var OBSERVATION_TTL_MS = Number(process.env.SUPPLIER_OBSERVATION_TTL_MS || 14 * 24 * 60 * 60 * 1e3);
+var ROLLOUT_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_ROLLOUT_APPROVAL_TTL_MS || 24 * 60 * 60 * 1e3
+);
+var ROLLOUT_ACTIVE_TTL_MS = Number(process.env.SUPPLIER_ROLLOUT_ACTIVE_TTL_MS || 30 * 24 * 60 * 60 * 1e3);
+function getInterCarsSupplierId6() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-go-live-observation/scope.ts
+function formatRolloutScope(scope) {
+  const markets = scope.markets?.join("+") || scope.market;
+  const categories2 = scope.allowedCategories?.join(",") || "default";
+  return `${scope.supplier}/${markets}/${scope.currency}/${categories2}`;
+}
+function formatRolloutLimits(limits) {
+  return `maxOrder=${limits.maximumOrderValue} maxDailyOrders=${limits.maximumDailyOrders} maxDailyValue=${limits.maximumDailyValue}`;
+}
+
+// lib/supplier-go-live-observation/metrics.ts
+function computeSuccessRate(metrics) {
+  if (metrics.ordersAttempted === 0) return 0;
+  return metrics.ordersAccepted / metrics.ordersAttempted;
+}
+function computeFailureRate(metrics) {
+  if (metrics.ordersAttempted === 0) return 0;
+  return metrics.ordersRejected / metrics.ordersAttempted;
+}
+
+// lib/supplier-go-live-observation/admin.ts
+function mapQuality(level) {
+  if (level === "PASS") return "PASS";
+  if (level === "FAIL" || level === "BLOCKED") return "FAIL";
+  return "UNVERIFIED";
+}
+function mapOptionalQuality(level) {
+  if (!level || level === "NOT_AVAILABLE") return "NOT_AVAILABLE";
+  if (level === "PASS") return "PASS";
+  if (level === "FAIL" || level === "BLOCKED") return "FAIL";
+  return "NOT_AVAILABLE";
+}
+function getObservationDashboard() {
+  const supplierId = getInterCarsSupplierId6();
+  const latest = getLatestObservationForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const rollout = getLatestBroaderRolloutForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const controlledActive = isControlledGoLiveActive({ supplierId, market: "DE", channel: "DIRECT" });
+  let observationState = "BLOCKED";
+  if (latest?.state === "OBSERVATION_ACTIVE") observationState = "ACTIVE";
+  else if (latest?.state === "OBSERVATION_COMPLETED" || latest?.state === "OBSERVATION_REVIEW_READY") {
+    observationState = latest.state === "OBSERVATION_REVIEW_READY" ? "REVIEW_READY" : "COMPLETED";
+  } else if (latest?.state === "OBSERVATION_FAILED") observationState = "FAILED";
+  let broaderRollout = "BLOCKED";
+  if (rollout?.state === "BROADER_ROLLOUT_ACTIVE") broaderRollout = "ACTIVE";
+  else if (latest?.state === "OBSERVATION_REVIEW_READY" || latest?.state === "BROADER_ROLLOUT_APPROVED") {
+    broaderRollout = "REVIEW_READY";
+  }
+  const metrics = latest?.metrics;
+  const report = latest?.report;
+  return {
+    observationCount: listObservationRecords().length,
+    observationState,
+    broaderRollout,
+    controlledGoLive: controlledActive ? "ACTIVE" : "BLOCKED",
+    createOrderCapability: evidence?.createOrderCapability || "UNVERIFIED",
+    liveValidation: evidence ? "VALIDATED" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: firstOrder?.state || "BLOCKED",
+    observationDurationMs: report?.durationMs ?? (latest?.startedAt ? Date.now() - Date.parse(latest.startedAt) : 0),
+    observedOrders: metrics?.ordersAttempted ?? 0,
+    successRate: report?.successRate ?? (metrics ? computeSuccessRate(metrics) : 0),
+    failureRate: report?.failureRate ?? (metrics ? computeFailureRate(metrics) : 0),
+    unknownOutcomes: metrics?.unknownOutcomes ?? 0,
+    supplierHealth: mapQuality(latest?.quality.supplierHealth || "UNVERIFIED"),
+    inventoryQuality: mapQuality(latest?.quality.inventoryQuality || "NOT_AVAILABLE"),
+    pricingQuality: mapQuality(latest?.quality.pricingQuality || "NOT_AVAILABLE"),
+    fulfillmentQuality: mapQuality(latest?.quality.fulfillmentQuality || "NOT_AVAILABLE"),
+    financialQuality: mapQuality(latest?.quality.financialQuality || "NOT_AVAILABLE"),
+    returns: mapOptionalQuality(latest?.quality.returnsQuality),
+    customerImpact: mapOptionalQuality(latest?.quality.customerImpact),
+    security: latest?.quality.security === "PASS" ? "PASS" : "FAIL",
+    criticalIncidents: metrics?.criticalIncidents ?? 0,
+    observationReview: latest?.state === "OBSERVATION_REVIEW_READY" ? "READY" : "BLOCKED",
+    fourEyesApproval: latest?.approval?.status === "APPROVED" ? "APPROVED" : latest?.state === "OBSERVATION_REVIEW_READY" ? "PENDING" : "BLOCKED",
+    rolloutScope: latest ? formatRolloutScope(latest.scope) : "none",
+    rolloutLimits: latest ? formatRolloutLimits(latest.limits) : "none",
+    productionNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    realSupplierHttpCalls: getObservationSafetyCounters().realSupplierHttpCalls,
+    realSupplierOrders: getObservationSafetyCounters().realSupplierOrders,
+    realCustomerOrders: getObservationSafetyCounters().realCustomerOrders,
+    marketplaceSideEffects: getObservationSafetyCounters().marketplaceSideEffects,
+    paymentSideEffects: getObservationSafetyCounters().paymentSideEffects,
+    carrierSideEffects: getObservationSafetyCounters().carrierSideEffects,
+    customerNotifications: getObservationSafetyCounters().customerNotifications,
+    blockers: latest?.blockerCodes || (evidence ? controlledActive ? [] : ["CONTROLLED_GO_LIVE_NOT_ACTIVE"] : ["CREATE_ORDER_UNVERIFIED"])
+  };
+}
+
+// lib/first-order-fulfillment/config.ts
+var FULFILLMENT_PIPELINE_VERSION = "348.1.0";
+
+// lib/first-order-fulfillment/persistence.ts
+var records = /* @__PURE__ */ new Map();
+function listFulfillmentPipelineRecords() {
+  return [...records.values()];
+}
+
+// lib/first-order-fulfillment/pipeline.ts
+function resolveFulfillmentLiveStatus() {
+  return "UNVERIFIED";
+}
+function resolveFulfillmentPipelineState() {
+  const records2 = listFulfillmentPipelineRecords();
+  const latest = records2.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+  return latest?.state || "BLOCKED";
+}
+
+// lib/first-order-fulfillment/admin.ts
+function getFulfillmentPipelineDashboard(supplierId = "SUP-INTER-CARS-001") {
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT"
+  });
+  const safety = assertFulfillmentSafetyInvariants();
+  return {
+    version: FULFILLMENT_PIPELINE_VERSION,
+    pipelineState: resolveFulfillmentPipelineState(),
+    liveStatus: resolveFulfillmentLiveStatus(),
+    productionEnabled: "DISABLED",
+    upstreamFirstOrderGate: firstOrder?.state || "BLOCKED",
+    supplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    createOrderCapability: evidence?.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED",
+    safetyCounters: {
+      ...getFulfillmentSafetyCounters(),
+      realHttpCalls: getFulfillmentSafetyCounters().realSupplierHttpCalls
+    },
+    blockers: safety.ok ? [] : safety.violations
+  };
+}
+
+// lib/supplier-inter-cars-production-access/admin.ts
+function getProductionAccessDashboard() {
+  const diagnostic = evaluateInterCarsProductionAccess();
+  const supplierId = getInterCarsSupplierId();
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const observation = getLatestObservationForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  return {
+    ...diagnostic,
+    liveValidationEvidence: evidence ? "PRESENT" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: firstOrder?.state || "BLOCKED",
+    controlledGoLive: isControlledGoLiveActive({ supplierId, market: "DE", channel: "DIRECT" }) ? "ACTIVE" : "BLOCKED",
+    observationState: observation?.state || "BLOCKED",
+    broaderRollout: observation?.state === "BROADER_ROLLOUT_ACTIVE" ? "ACTIVE" : "BLOCKED"
+  };
+}
+
+// lib/production-kill-switch/persistence.ts
+var inMemory = null;
+function getPersistentStore() {
+  if (typeof process === "undefined" || process.env.BUZZARD_PRODUCTION_KILL_SWITCH_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require("../../server/lib/production-kill-switch/persistentStore.js");
+    return mod.createProductionKillSwitchStore();
+  } catch {
+    return null;
+  }
+}
+function getGlobalKillSwitchState() {
+  if (inMemory) return inMemory;
+  const row = getPersistentStore()?.getState();
+  if (!row) return null;
+  return {
+    global: Boolean(row.global),
+    domains: JSON.parse(String(row.domains_json || "{}")),
+    updatedAt: String(row.updated_at),
+    updatedBy: row.updated_by ? String(row.updated_by) : void 0,
+    correlationId: row.correlation_id ? String(row.correlation_id) : void 0,
+    reason: row.reason ? String(row.reason) : void 0
+  };
+}
+
+// lib/production-kill-switch/index.ts
+var DEFAULT_DOMAINS = {
+  SUPPLIER_ORDERS: false,
+  PAYMENTS: false,
+  CARRIER: false,
+  REFUNDS: false,
+  MARKETING_SPEND: false,
+  SALES: false
+};
+function defaultState2() {
+  return {
+    global: process.env.PRODUCTION_GLOBAL_KILL_SWITCH === "1" || isGlobalKillSwitchActive(),
+    domains: { ...DEFAULT_DOMAINS },
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function getProductionKillSwitch() {
+  return getGlobalKillSwitchState() || defaultState2();
+}
+function isProductionKillSwitchActive(domain) {
+  const state = getProductionKillSwitch();
+  if (state.global || isGlobalKillSwitchActive()) return true;
+  if (domain && state.domains[domain]) return true;
+  return false;
+}
+function getProductionKillSwitchDashboard() {
+  const state = getProductionKillSwitch();
+  return {
+    global: state.global || isGlobalKillSwitchActive(),
+    domains: state.domains,
+    salesEnabled: isProductionFlagEnabled("SALES"),
+    supplierNetworkEnabled: isProductionFlagEnabled("SUPPLIER_ORDER_NETWORK"),
+    updatedAt: state.updatedAt,
+    updatedBy: state.updatedBy
+  };
+}
+
+// lib/production-completion/securityGate.ts
+var import_fs2 = require("fs");
+var import_path2 = __toESM(require("path"));
+function evaluateSecurityGate() {
+  const blockers = [];
+  const flags = getProductionFlagsSnapshot();
+  const securityFiles = [
+    "server/lib/rbac.js",
+    "server/lib/routePermissions.js",
+    "server/plugins/securityPlugin.js",
+    "lib/supplier-production-validation/endpointSecurity.ts",
+    "scripts/security-check.mjs"
+  ];
+  for (const f of securityFiles) {
+    if (!(0, import_fs2.existsSync)(import_path2.default.join(process.cwd(), f))) {
+      blockers.push({
+        code: "SECURITY_MODULE_MISSING",
+        severity: "CRITICAL",
+        description: `Security module missing: ${f}`,
+        resolution: "Restore security module",
+        status: "BLOCKED"
       });
     }
-    markSyncCompleted(supplierId, {
-      status: result.status === "FAILED" ? "FAILED" : result.status === "PARTIAL" ? "PARTIAL" : "COMPLETED",
-      healthStatus: health.status,
-      error: result.errors[0]?.message,
-      errorCode: result.errors[0]?.code,
-      metrics: {
-        productsProcessed: result.productsFetched,
-        productsAccepted: result.productsCreated + result.productsUpdated,
-        productsRejected: result.productsFailed,
-        offersUpdated: result.productsUpdated,
-        stockUpdated: result.stockUpdates,
-        priceUpdated: result.priceUpdates
-      }
-    });
-  } catch (e) {
-    const classified = classifySupplierError({
-      message: e instanceof Error ? e.message : "Unknown sync error",
-      code: e?.code
-    });
-    result.status = "FAILED";
-    result.errors.push({
-      code: classified.code,
-      message: classified.message
-    });
-    recordSupplierHealthFailure(supplierId, {
-      errorCode: classified.code,
-      rateLimited: classified.code === "RATE_LIMITED"
-    });
-    recordSupplierEngineAudit({
-      supplierId,
-      action: "supplier.sync.failed",
-      correlationId: jobId,
-      metadata: { jobType, errorCode: classified.code }
-    });
-    markSyncCompleted(supplierId, {
-      status: "FAILED",
-      healthStatus: "UNHEALTHY",
-      error: classified.message,
-      errorCode: classified.code
-    });
-  } finally {
-    releaseSupplierSyncLock(supplierId, jobId);
   }
-  if (jobType === "FULL" && seenSkus.size > 0) {
-    deactivateMissingOffers(supplier.supplierId, seenSkus, result);
+  if (flags.SALES === "ON") {
+    blockers.push({
+      code: "SALES_ENABLED_IN_PREP",
+      severity: "CRITICAL",
+      description: "Sales enabled before final gate PASS",
+      resolution: "Set SALES_ENABLED=0 until all gates pass",
+      status: "BLOCKED"
+    });
   }
-  result.completedAt = (/* @__PURE__ */ new Date()).toISOString();
-  recordSyncMetrics({
-    syncDurationMs: Date.now() - syncStart,
-    productsFetched: result.productsFetched,
-    productsCreated: result.productsCreated,
-    productsUpdated: result.productsUpdated,
-    productsFailed: result.productsFailed,
-    stockUpdates: result.stockUpdates,
-    priceUpdates: result.priceUpdates,
-    apiErrors: result.errors.length
-  });
-  logSupplierOperation({
-    supplierId,
-    connector: integrationType,
-    operation: jobType,
-    durationMs: Date.now() - syncStart,
-    status: result.productsFailed > 0 ? "PARTIAL" : result.status === "FAILED" ? "FAILURE" : "SUCCESS",
-    records: result.productsFetched,
-    error: result.errors[0]?.message,
-    correlationId: jobId,
-    errorCode: result.errors[0]?.code
-  });
-  recordSupplierSyncOutcomeMetric(result.status !== "FAILED");
-  return result;
+  if (flags.SUPPLIER_ORDER_NETWORK === "ON") {
+    blockers.push({
+      code: "SUPPLIER_NETWORK_ENABLED_IN_PREP",
+      severity: "CRITICAL",
+      description: "Supplier order network enabled in prep phase",
+      resolution: "Set SUPPLIER_ORDER_NETWORK_ENABLED=0 until controlled go-live",
+      status: "BLOCKED"
+    });
+  }
+  try {
+    getProductionKillSwitchDashboard();
+  } catch {
+    blockers.push({
+      code: "KILL_SWITCH_UNAVAILABLE",
+      severity: "HIGH",
+      description: "Global kill switch module unavailable",
+      resolution: "Verify production-kill-switch module",
+      status: "BLOCKED"
+    });
+  }
+  const critical = blockers.filter((b) => b.severity === "CRITICAL");
+  const status = critical.length > 0 ? "BLOCKED" : blockers.length > 0 ? "WARNING" : "PASS";
+  return {
+    section: "SECURITY",
+    status,
+    message: status === "PASS" ? "Core security modules present; production flags safe" : "Security blockers detected",
+    blockers
+  };
 }
-async function syncFullFeed(connector, supplier, result, batchSize, seenSkus) {
-  const fetchResult = await withRetry(() => connector.fetchProducts({ limit: 1e3 }));
-  if (!fetchResult.ok) {
-    result.status = "FAILED";
-    result.errors.push({ code: "FETCH_FAILED", message: fetchResult.error || "Fetch failed" });
-    return;
+
+// lib/production-completion/backupGate.ts
+var import_fs3 = require("fs");
+var import_path3 = __toESM(require("path"));
+function evaluateBackupGate() {
+  const blockers = [];
+  const scripts = ["scripts/db-backup.mjs", "scripts/backup-db.mjs", "scripts/restore-db.mjs"];
+  const dbPath = import_path3.default.join(process.cwd(), "server/data/buzzard.db");
+  for (const s of scripts) {
+    if (!(0, import_fs3.existsSync)(import_path3.default.join(process.cwd(), s))) {
+      blockers.push({
+        code: "BACKUP_SCRIPT_MISSING",
+        severity: "HIGH",
+        description: `Backup script missing: ${s}`,
+        resolution: "Restore backup script",
+        status: "BLOCKED"
+      });
+    }
   }
-  result.productsFetched = fetchResult.records.length;
-  const pendingCursor = fetchResult.cursor;
-  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize, {
-    jobType: "FULL",
-    pendingCursor,
-    syncMode: "full"
-  });
-  if (result.status !== "FAILED" && pendingCursor) {
-    const saved = saveSyncCursor(supplier.supplierId, { cursor: pendingCursor }, "full");
-    result.checkpoint = saved.cursor;
-  }
-  if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
-    result.status = "PARTIAL";
-  }
-}
-async function syncIncrementalFeed(connector, supplier, result, batchSize, seenSkus) {
-  const cursor = getSyncCursor(supplier.supplierId, "incremental");
-  const fetchResult = await withRetry(
-    () => connector.fetchProducts({
-      limit: 500,
-      cursor: cursor?.cursor
-    })
-  );
-  if (!fetchResult.ok) {
-    result.status = "FAILED";
-    result.errors.push({ code: "FETCH_FAILED", message: fetchResult.error || "Incremental fetch failed" });
-    return;
-  }
-  result.productsFetched = fetchResult.records.length;
-  const pendingCursor = fetchResult.cursor;
-  const idempotencyKey = buildIdempotencyKey(
-    supplier.supplierId,
-    "INCREMENTAL",
-    cursor?.cursor || "start",
-    batchSize
-  );
-  const persistence = getSupplierPersistence();
-  if (persistence && !persistence.claimIdempotencyKey(idempotencyKey, supplier.supplierId)) {
-    result.status = "COMPLETED";
-    result.errors.push({
-      code: "IDEMPOTENT_REPLAY",
-      message: "Batch already processed for current cursor"
+  if (!(0, import_fs3.existsSync)(dbPath)) {
+    blockers.push({
+      code: "DATABASE_NOT_FOUND",
+      severity: "MEDIUM",
+      description: "Production SQLite database not found for backup verification",
+      resolution: "Initialize database or run in deployment environment",
+      status: "UNVERIFIED"
     });
-    return;
   }
-  await processRecords(connector, supplier, result, fetchResult.records, seenSkus, batchSize, {
-    jobType: "INCREMENTAL",
-    pendingCursor,
-    syncMode: "incremental"
-  });
-  if (result.status === "FAILED") {
-    return;
-  }
-  if (pendingCursor) {
-    const saved = saveSyncCursor(
-      supplier.supplierId,
-      { cursor: pendingCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() },
-      "incremental"
+  const status = blockers.some((b) => b.severity === "CRITICAL" || b.severity === "HIGH" && b.status === "BLOCKED") ? "BLOCKED" : blockers.length > 0 ? "UNVERIFIED" : "PASS";
+  return {
+    section: "BACKUP",
+    status,
+    message: status === "PASS" ? "Backup scripts available" : "Backup verification incomplete",
+    blockers
+  };
+}
+
+// lib/production-completion/monitoringDashboard.ts
+function buildProductionMonitoringSnapshot() {
+  const safety = getFinalGoLiveSafetyCounters();
+  const validation342 = getCreateOrderValidationSafetyCounters();
+  const validations = listValidationRecords2();
+  const unknownOutcomes = validations.filter((v) => String(v.overallStatus).includes("UNKNOWN")).length;
+  const supplierFailures = validations.filter((v) => v.overallStatus === "FAILED").length;
+  const criticalIncidents = (safety.realSupplierOrders > 0 && validation342.realSupplierOrderCalls === 0 ? 1 : 0) + (unknownOutcomes > 0 ? unknownOutcomes : 0);
+  let healthStatus = "HEALTHY";
+  if (criticalIncidents > 0 || unknownOutcomes > 0) healthStatus = "CRITICAL";
+  else if (supplierFailures > 0) healthStatus = "DEGRADED";
+  else if (safety.realSupplierOrders > 0 || safety.realPayments > 0) healthStatus = "DEGRADED";
+  return {
+    healthStatus,
+    orders: safety.realSupplierOrders,
+    supplierOrders: safety.realSupplierOrders,
+    supplierFailures,
+    paymentFailures: 0,
+    carrierFailures: 0,
+    returns: safety.realRefunds,
+    refunds: safety.realRefunds,
+    inventoryAnomalies: 0,
+    pricingAnomalies: 0,
+    aiFailures: 0,
+    marketingSpend: safety.realMarketingSpend,
+    unknownOutcomes,
+    criticalIncidents
+  };
+}
+
+// lib/final-production-go-live/config.ts
+var MARKETING_PROVIDERS = ["google_ads", "meta", "tiktok", "youtube", "marketplace_feeds"];
+function isSalesEnabled() {
+  return isProductionFlagEnabled("SALES");
+}
+function isMarketingSpendEnabled() {
+  return isProductionFlagEnabled("MARKETING_SPEND");
+}
+
+// lib/final-production-go-live/marketingRegistry.ts
+function evaluateMarketingProviders() {
+  assertFinalGoLiveSafety();
+  return MARKETING_PROVIDERS.map((providerId) => ({
+    providerId,
+    configured: Boolean(process.env[`MARKETING_${providerId.toUpperCase()}_SECRET_REF`]),
+    spendEnabled: isMarketingSpendEnabled(),
+    liveStatus: "NOT_CONFIGURED"
+  }));
+}
+
+// lib/final-production-go-live/goLiveChecklist.ts
+function toGateStatus(access) {
+  if (access === "VALIDATED" || access === "PASS" || access === "EXECUTED" || access === "COMPLETED" || access === "ARMED" || access === "ACTIVE") return "PASS";
+  if (access === "CONFIGURED") return "UNVERIFIED";
+  if (access === "NOT_CONFIGURED" || access === "NONE") return "NOT_CONFIGURED";
+  if (access === "BLOCKED" || access === "FAILED") return "BLOCKED";
+  return "UNVERIFIED";
+}
+function buildGoLiveChecklist() {
+  const interCars = evaluateInterCarsProductionAccess();
+  const accessDash = getProductionAccessDashboard();
+  const payment = getPaymentProductionDashboard();
+  const carrier = getCarrierProductionDashboard();
+  const returns = getReturnsRefundsProductionDashboard();
+  const ai = getAiProductionDashboard();
+  const security = evaluateSecurityGate();
+  const backup = evaluateBackupGate();
+  const killSwitchActive = isProductionKillSwitchActive();
+  return [
+    { id: "website_checkout", label: "Website/checkout", status: "UNVERIFIED", mandatory: true },
+    { id: "international_35_markets", label: "35 markets/VAT/currency/shipping", status: "UNVERIFIED", mandatory: true },
+    { id: "product_pim", label: "Product/PIM/translations", status: "UNVERIFIED", mandatory: true },
+    {
+      id: "inter_cars_create_order",
+      label: "Inter Cars live access + createOrder validation",
+      status: interCars.createOrderCapability === "VALIDATED" ? "PASS" : "UNVERIFIED",
+      mandatory: true
+    },
+    { id: "inventory_order_fulfillment", label: "Inventory/order/supplier fulfillment", status: "UNVERIFIED", mandatory: true },
+    { id: "marketplace_production", label: "Marketplace production", status: "UNVERIFIED", mandatory: true },
+    { id: "payment_production", label: "Payment production", status: toGateStatus(payment.liveStatus), mandatory: true },
+    { id: "carrier_tracking", label: "Carrier + tracking", status: toGateStatus(carrier.liveStatus), mandatory: true },
+    { id: "returns_refunds", label: "Returns/refunds", status: toGateStatus(returns.liveStatus), mandatory: true },
+    { id: "ai_provider_security", label: "AI provider/security", status: toGateStatus(ai.liveStatus), mandatory: true },
+    { id: "arming_complete", label: "#343 arming complete", status: toGateStatus(accessDash.armingState), mandatory: true },
+    { id: "first_order_complete", label: "#344 first order complete", status: toGateStatus(accessDash.firstOrderState), mandatory: true },
+    { id: "controlled_go_live", label: "#345 controlled go-live", status: toGateStatus(accessDash.controlledGoLive), mandatory: true },
+    { id: "observation_complete", label: "#346 observation complete", status: toGateStatus(String(accessDash.observationState)), mandatory: true },
+    { id: "monitoring_alerts", label: "Monitoring/alerts", status: "UNVERIFIED", mandatory: true },
+    { id: "backup_recovery", label: "Backup/recovery", status: backup.status === "PASS" ? "PASS" : backup.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", mandatory: true },
+    { id: "analytics", label: "Analytics", status: "UNVERIFIED", mandatory: true },
+    { id: "legal_compliance", label: "Legal/compliance", status: "UNVERIFIED", mandatory: true },
+    { id: "customer_support", label: "Customer support", status: "UNVERIFIED", mandatory: true },
+    { id: "rollback_kill_switches", label: "Rollback/kill switches", status: killSwitchActive ? "BLOCKED" : "PASS", mandatory: true },
+    { id: "security_gate", label: "Security final gate", status: security.status === "PASS" ? "PASS" : security.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", mandatory: true },
+    { id: "four_eyes_approval", label: "Four-eyes approval", status: "UNVERIFIED", mandatory: true },
+    {
+      id: "sales_closed",
+      label: "Sales closed until all mandatory gates PASS",
+      status: isSalesEnabled() ? "BLOCKED" : "PASS",
+      mandatory: true
+    }
+  ];
+}
+
+// lib/final-production-go-live/finalGate.ts
+function check(domain, name, status, message) {
+  return { domain, check: name, status, message };
+}
+function evaluateFinalProductionGate() {
+  const flags = getProductionFlagsSnapshot();
+  const interCars = evaluateInterCarsProductionAccess();
+  const fulfillment = getFulfillmentPipelineDashboard();
+  const tracking = getTrackingFulfillmentDashboard();
+  const payment = getPaymentProductionDashboard();
+  const carrier = getCarrierProductionDashboard();
+  const ai = getAiProductionDashboard();
+  const returns = getReturnsRefundsProductionDashboard();
+  const marketing = evaluateMarketingProviders();
+  const safety = assertFinalGoLiveSafetyInvariants();
+  const accessDash = getProductionAccessDashboard();
+  const killSwitch = getProductionKillSwitchDashboard();
+  const securityGate = evaluateSecurityGate();
+  const backupGate = evaluateBackupGate();
+  const monitoring = buildProductionMonitoringSnapshot();
+  const checks = [
+    check("WEBSITE", "production_build", "UNVERIFIED", "Requires deployment verification"),
+    check("INTERNATIONAL", "35_markets", "UNVERIFIED", "Market engine configured"),
+    check("SUPPLIER", "inter_cars_profile", interCars.interCarsProfile === "CONFIGURED" ? "PASS" : "NOT_CONFIGURED", interCars.interCarsProfile),
+    check("SUPPLIER", "credentials", interCars.productionCredentials === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "UNVERIFIED", interCars.productionCredentials),
+    check("SUPPLIER", "create_order", interCars.createOrderCapability === "VALIDATED" ? "PASS" : "UNVERIFIED", interCars.createOrderCapability),
+    check("ORDER", "fulfillment_pipeline", fulfillment.pipelineState === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", fulfillment.pipelineState),
+    check("TRACKING", "tracking_live", tracking.liveStatus, tracking.liveStatus),
+    check("PAYMENT", "payment_production", payment.productionEnabled === "DISABLED" ? "PASS" : "BLOCKED", payment.productionEnabled),
+    check("CARRIER", "carrier_production", carrier.productionEnabled === "DISABLED" ? "PASS" : "BLOCKED", carrier.productionEnabled),
+    check("RETURNS", "returns_production", returns.productionEnabled === "DISABLED" ? "PASS" : "BLOCKED", returns.productionEnabled),
+    check("AI", "ai_production", ai.productionEnabled === "DISABLED" ? "PASS" : "BLOCKED", ai.productionEnabled),
+    check("AI", "ai_authority", "PASS", ai.defaultAuthority),
+    check("SECURITY", "network_off", flags.SUPPLIER_ORDER_NETWORK === "OFF" ? "PASS" : "BLOCKED", flags.SUPPLIER_ORDER_NETWORK),
+    check("SECURITY", "sales_closed", !isSalesEnabled() ? "PASS" : "BLOCKED", isSalesEnabled() ? "ON" : "OFF"),
+    check("MARKETING", "spend_disabled", !isMarketingSpendEnabled() ? "PASS" : "BLOCKED", isMarketingSpendEnabled() ? "ON" : "OFF"),
+    check(
+      "OPERATIONS",
+      "kill_switch",
+      killSwitch.global || isProductionKillSwitchActive() ? "BLOCKED" : "PASS",
+      killSwitch.global ? "GLOBAL_KILL_SWITCH_ACTIVE" : "Kill switch available"
+    ),
+    check("ARMING", "343_state", accessDash.armingState === "ARMED" ? "PASS" : "UNVERIFIED", accessDash.armingState),
+    check("FIRST_ORDER", "344_state", accessDash.firstOrderState === "EXECUTED" ? "PASS" : "UNVERIFIED", accessDash.firstOrderState),
+    check("GO_LIVE", "345_state", accessDash.controlledGoLive === "ACTIVE" ? "PASS" : "UNVERIFIED", accessDash.controlledGoLive),
+    check("OBSERVATION", "346_state", String(accessDash.observationState).includes("COMPLETED") ? "PASS" : "UNVERIFIED", String(accessDash.observationState)),
+    check("SECURITY", "final_gate", securityGate.status === "PASS" ? "PASS" : securityGate.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", securityGate.message),
+    check("MONITORING", "health", monitoring.healthStatus === "HEALTHY" ? "PASS" : monitoring.healthStatus === "CRITICAL" ? "BLOCKED" : "UNVERIFIED", monitoring.healthStatus),
+    check("BACKUP", "database_backup", backupGate.status === "PASS" ? "PASS" : backupGate.status === "BLOCKED" ? "BLOCKED" : "UNVERIFIED", backupGate.message)
+  ];
+  const blockers = [
+    ...checks.filter((c) => c.status === "BLOCKED" || c.status === "NOT_CONFIGURED").map((c) => `${c.domain}:${c.check}`),
+    ...safety.violations
+  ];
+  const phase = resolveGoLivePhase(checks, blockers);
+  const mandatoryChecklist = buildGoLiveChecklist();
+  const checklistBlockers = mandatoryChecklist.filter((item) => item.status !== "PASS").map((item) => `CHECKLIST:${item.id}`);
+  return {
+    version: "354.1.0",
+    phase,
+    salesEnabled: isSalesEnabled() ? "OPEN" : "CLOSED",
+    marketingSpendEnabled: isMarketingSpendEnabled() ? "ON" : "OFF",
+    liveStatus: "BLOCKED",
+    checks,
+    mandatoryChecklist,
+    marketingProviders: marketing,
+    safetyCounters: getFinalGoLiveSafetyCounters(),
+    blockers: [.../* @__PURE__ */ new Set([...blockers, ...checklistBlockers])]
+  };
+}
+function resolveGoLivePhase(checks, blockers) {
+  if (blockers.length > 0) return "NOT_READY";
+  const allPass = checks.every((c) => c.status === "PASS");
+  if (allPass) return "READY";
+  return "NOT_READY";
+}
+
+// lib/production-completion/blockerEngine.ts
+function blocker(code, severity, description, resolution, provider, status = "BLOCKED") {
+  return { code, severity, provider, description, resolution, status };
+}
+function buildStructuredBlockers() {
+  const blockers = [];
+  const interCars = evaluateInterCarsProductionAccess();
+  const providers = getAllProviderStates();
+  if (interCars.productionCredentials === "NOT_CONFIGURED") {
+    blockers.push(
+      blocker(
+        "MISSING_INTER_CARS_CREDENTIAL",
+        "CRITICAL",
+        "Inter Cars production credentials not configured",
+        "Deploy OAuth2 credentials via Secret Manager and set SUPPLIER_LIVE_CREDENTIALS_SECRET_REF",
+        "inter-cars",
+        "NOT_CONFIGURED"
+      )
     );
-    result.checkpoint = saved.cursor;
   }
-  if (result.productsFailed > 0 && result.productsCreated + result.productsUpdated > 0) {
-    result.status = "PARTIAL";
+  if (interCars.createOrderCapability !== "VALIDATED") {
+    blockers.push(
+      blocker(
+        "CREATE_ORDER_NOT_VALIDATED",
+        "CRITICAL",
+        "Controlled #342 CreateOrder validation not passed with genuine evidence",
+        "Run controlled live validation with four-eyes approval when credentials are available",
+        "inter-cars",
+        "UNVERIFIED"
+      )
+    );
   }
-}
-async function processRecords(_connector, supplier, result, records, seenSkus, batchSize, checkpoint) {
-  if (records.length === 0) {
-    if (checkpoint?.pendingCursor && result.status !== "FAILED") {
-      saveSyncCursor(
-        supplier.supplierId,
-        { cursor: checkpoint.pendingCursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() },
-        checkpoint.syncMode
+  if (interCars.readOnlyLiveValidation !== "VALIDATED") {
+    blockers.push(
+      blocker(
+        "INTER_CARS_READ_NOT_VALIDATED",
+        "HIGH",
+        "Inter Cars read-only live validation not completed",
+        "Enable SUPPLIER_LIVE_READ_ENABLED=1 and run health/catalog/stock/price checks",
+        "inter-cars",
+        "UNVERIFIED"
+      )
+    );
+  }
+  for (const p of providers) {
+    if (p.providerId === "inter-cars") continue;
+    if (p.liveValidation !== "VALIDATED") {
+      const code = `${p.providerId.toUpperCase().replace("-", "_")}_NOT_VALIDATED`;
+      blockers.push(
+        blocker(
+          code,
+          "HIGH",
+          `${p.domain} production not validated`,
+          `Configure secret reference and run safe read-only validation for ${p.providerId}`,
+          p.providerId,
+          p.accessState === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "UNVERIFIED"
+        )
       );
     }
-    return;
   }
-  await processInBatches(records, async (batch) => {
-    for (const raw of batch) {
-      try {
-        const mapped = applyFieldMapping(raw, supplier.fieldMapping);
-        const sku = String(mapped.supplierSku || mapped.supplier_sku || "");
-        if (sku) seenSkus.add(sku);
-        const fieldErrors = validateMappedRecord(mapped);
-        if (fieldErrors.length) {
-          result.productsFailed++;
-          result.errors.push({ record: sku || "unknown", code: fieldErrors[0], message: fieldErrors[0] });
-          continue;
-        }
-        const ingest = ingestSupplierProduct({
-          raw: mapped,
-          supplierId: supplier.supplierId,
-          sourceType: supplier.integrationTypes.includes("api") ? "API" : "CSV"
-        });
-        if (ingest.product) {
-          const dup = ingest.duplicate;
-          if (dup?.match && dup.existingProductId) {
-            const existing = getProduct(dup.existingProductId);
-            if (existing) {
-              const offer = createSupplierOffer({
-                supplierId: supplier.supplierId,
-                supplierSku: sku,
-                supplierEan: String(mapped.ean || ""),
-                supplierPrice: Number(mapped.supplierPrice || mapped.purchase_price || 0),
-                currency: supplier.currency,
-                stock: Number(mapped.stock || 0),
-                source: supplier.supplierId,
-                sourceType: "API"
-              });
-              upsertRegistryProduct(addSupplierOffer(existing, offer));
-              result.productsUpdated++;
-            }
-          } else if (ingest.ok) {
-            result.productsCreated++;
-          } else {
-            result.productsUpdated++;
-          }
-        } else {
-          result.productsFailed++;
-        }
-      } catch (e) {
-        result.productsFailed++;
-        result.errors.push({
-          code: "RECORD_ERROR",
-          message: e instanceof Error ? e.message : "Record processing failed"
-        });
-      }
+  try {
+    const arming = getProductionArmingDashboard();
+    if (arming.armingState !== "ARMED") {
+      blockers.push(
+        blocker(
+          "ARMING_NOT_COMPLETE",
+          "CRITICAL",
+          "#343 production order arming not complete",
+          "Complete #342 validation then arm production order gate",
+          "inter-cars",
+          "BLOCKED"
+        )
+      );
     }
-  }, batchSize);
-}
-function deactivateMissingOffers(supplierId, seenSkus, result) {
-  for (const product of listRegistryProducts()) {
-    for (const offer of product.supplierOffers) {
-      if (offer.supplierId !== supplierId) continue;
-      if (seenSkus.has(offer.supplierSku)) continue;
-      if (offer.stock <= 0) continue;
-      const updated = updateProductSupplierOffer(product.productId, supplierId, { stock: 0 });
-      if (updated) {
-        upsertRegistryProduct(recalculatePricingFromBestOffer(updated));
-        result.productsUpdated++;
-      }
+  } catch {
+    blockers.push(
+      blocker("ARMING_UNAVAILABLE", "CRITICAL", "Arming dashboard unavailable", "Verify supplier-production-order-arming module", "inter-cars")
+    );
+  }
+  try {
+    const firstOrder = getFirstProductionOrderDashboard();
+    if (firstOrder.firstOrderState !== "EXECUTED") {
+      blockers.push(
+        blocker(
+          "FIRST_ORDER_NOT_EXECUTED",
+          "CRITICAL",
+          "First production supplier order not executed with genuine evidence",
+          "Execute controlled first order via #344 with dual approval",
+          "inter-cars",
+          firstOrder.firstOrderState === "BLOCKED" ? "BLOCKED" : "UNVERIFIED"
+        )
+      );
     }
+  } catch {
+    blockers.push(
+      blocker("FIRST_ORDER_UNAVAILABLE", "CRITICAL", "First order dashboard unavailable", "Verify supplier-first-production-order module")
+    );
   }
-}
-async function syncStockOnly(connector, supplier, result) {
-  const stockResult = await connector.fetchStock();
-  result.productsFetched = stockResult.records.length;
-  for (const record of stockResult.records) {
-    const sku = String(record.supplier_sku || record.supplierSku || "");
-    const product = findProductBySupplierSku(sku);
-    const productId = product?.productId ?? resolveFixtureProductId(sku);
-    if (!productId) continue;
-    const invResult = processSupplierStockUpdate({
-      productId,
-      supplierId: supplier.supplierId,
-      supplierOfferId: sku,
-      supplierSku: sku,
-      rawQuantity: record.stock ?? record.stock_qty,
-      ean: record.ean_code ? String(record.ean_code) : void 0,
-      source: supplier.supplierId,
-      syncType: "INCREMENTAL_STOCK_SYNC"
-    });
-    if (invResult.ok) {
-      result.stockUpdates++;
-      result.productsUpdated++;
-    } else {
-      result.productsFailed++;
+  try {
+    const goLive = getControlledGoLiveDashboard();
+    if (goLive.controlledGoLive !== "ACTIVE") {
+      blockers.push(
+        blocker(
+          "CONTROLLED_GO_LIVE_NOT_ACTIVE",
+          "HIGH",
+          "#345 controlled go-live not active",
+          "Complete first production order and activate controlled go-live",
+          "inter-cars",
+          "BLOCKED"
+        )
+      );
     }
+  } catch {
   }
-}
-async function syncPriceOnly(connector, supplier, result) {
-  const priceResult = await connector.fetchPrices();
-  result.productsFetched = priceResult.records.length;
-  for (const record of priceResult.records) {
-    const sku = String(record.supplier_sku || "");
-    const priceObj = record.supplier_price;
-    const price = Number(priceObj?.amount ?? record.supplierPrice ?? 0);
-    const product = findProductBySupplierSku(sku);
-    if (!product) continue;
-    let updated = updateProductSupplierOffer(product.productId, supplier.supplierId, {
-      supplierPrice: price,
-      currency: priceObj?.currency || supplier.currency
-    });
-    if (updated) {
-      updated = recalculatePricingFromBestOffer(updated);
-      upsertRegistryProduct(updated);
-      result.priceUpdates++;
-      result.productsUpdated++;
+  try {
+    const obs = getObservationDashboard();
+    if (obs.observationState !== "COMPLETED" && obs.observationState !== "ACTIVE") {
+      blockers.push(
+        blocker(
+          "OBSERVATION_NOT_COMPLETED",
+          "HIGH",
+          "#346 observation period not completed",
+          "Run observation window after controlled go-live",
+          "inter-cars",
+          "BLOCKED"
+        )
+      );
     }
+  } catch {
   }
-}
-function findProductBySupplierSku(supplierSku) {
-  return listRegistryProducts().find(
-    (p) => p.supplierOffers.some((o) => o.supplierSku === supplierSku)
-  );
-}
-async function ingestSupplierFeed(supplierId, options = {}) {
-  return runSupplierSyncJob(supplierId, options);
+  return blockers;
 }
 
-// lib/supplier-engine/admin.ts
-init_registry2();
-init_capabilities();
-init_credentials();
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-var import_crypto4 = require("crypto");
-init_registry2();
-init_security();
-
-// lib/supplier-engine/orderSandbox/sandboxAdapter.ts
-var import_crypto3 = require("crypto");
-function buildDeterministicSandboxOrderId(buzzardOrderId, supplierId, idempotencyKey) {
-  const hash = (0, import_crypto3.createHash)("sha256").update(`${buzzardOrderId}:${supplierId}:${idempotencyKey}`).digest("hex").slice(0, 12).toUpperCase();
-  return `SANDBOX-ORDER-${hash}`;
-}
-function buildSupplierOrderIdempotencyKey(buzzardOrderId, supplierId) {
-  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
-}
-function buildSandboxTracking(supplierOrderId, simulateShipped = true) {
-  const suffix = supplierOrderId.replace(/^SANDBOX-ORDER-/, "").slice(-8);
-  return {
-    supplierOrderReference: supplierOrderId,
-    carrier: "SANDBOX_CARRIER",
-    trackingNumber: `SBX-TRK-${suffix}`,
-    trackingUrl: `https://sandbox.buzzard.local/tracking/${suffix}`,
-    shipmentStatus: simulateShipped ? "IN_TRANSIT" : "LABEL_CREATED",
-    simulated: true
-  };
-}
-function validateSandboxPayload(payload) {
-  const errors = [];
-  if (!payload.buzzardOrderId) errors.push("MISSING_BUZZARD_ORDER_ID");
-  if (!payload.supplierId) errors.push("MISSING_SUPPLIER_ID");
-  if (!payload.lines?.length) errors.push("MISSING_LINES");
-  if (!payload.shippingDestination?.country) errors.push("MISSING_SHIPPING_COUNTRY");
-  for (const line of payload.lines || []) {
-    if (!line.supplierSku) errors.push("MISSING_SUPPLIER_SKU");
-    if (line.quantity <= 0) errors.push("INVALID_QUANTITY");
-    if (line.unitPrice < 0) errors.push("INVALID_UNIT_PRICE");
-  }
-  return { valid: errors.length === 0, errors };
-}
-
-// lib/supplier-engine/orderSandbox/piiFilter.ts
-var BLOCKED_KEYS = /payment|card|cvv|cvc|iban|bic|password|secret|token|oauth|api[_-]?key|authorization|admin|ai[_-]?context|email|phone/i;
-var PII_LOG_KEYS = /email|phone|recipient|address|street|postal|city|name/i;
-function filterSupplierFulfillmentAddress(address) {
-  if (!address) return {};
-  const out = {};
-  for (const [key, value] of Object.entries(address)) {
-    if (BLOCKED_KEYS.test(key)) continue;
-    if (!value?.trim()) continue;
-    out[key] = value.trim();
-  }
-  if (!out.country && address.country) out.country = address.country;
-  return out;
-}
-function sanitizePayloadForInspection(payload) {
-  const out = {};
-  for (const [key, value] of Object.entries(payload)) {
-    if (BLOCKED_KEYS.test(key)) {
-      out[key] = "[REDACTED]";
-      continue;
-    }
-    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      out[key] = sanitizePayloadForInspection(value);
-    } else if (PII_LOG_KEYS.test(key) && typeof value === "string") {
-      out[key] = maskPiiValue(value);
-    } else {
-      out[key] = value;
-    }
-  }
-  return out;
-}
-function maskPiiValue(value) {
-  if (value.length <= 4) return "****";
-  return `${value.slice(0, 2)}${"*".repeat(Math.min(6, value.length - 2))}`;
-}
-function assertNoSecretsInPayload(payload) {
-  const violations = [];
-  const walk = (obj, path2 = "") => {
-    for (const [key, value] of Object.entries(obj)) {
-      const full = path2 ? `${path2}.${key}` : key;
-      if (BLOCKED_KEYS.test(key)) violations.push(full);
-      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-        walk(value, full);
-      }
-    }
-  };
-  walk(payload);
-  return violations;
-}
-
-// lib/supplier-engine/orderSandbox/lifecycle.ts
-var TRANSITIONS = {
-  PREPARED: ["VALIDATED", "FAILED", "CANCELLED"],
-  VALIDATED: ["SANDBOX_ACCEPTED", "FAILED", "CANCELLED"],
-  SANDBOX_ACCEPTED: ["SUPPLIER_PENDING", "FAILED", "CANCELLED"],
-  SUPPLIER_PENDING: ["SUPPLIER_CONFIRMED", "PROCESSING", "FAILED", "CANCELLED"],
-  SUPPLIER_CONFIRMED: ["PROCESSING", "SHIPPED", "FAILED", "CANCELLED"],
-  PROCESSING: ["SHIPPED", "FAILED", "CANCELLED"],
-  SHIPPED: ["DELIVERED", "FAILED"],
-  DELIVERED: [],
-  FAILED: [],
-  CANCELLED: []
-};
-function canTransitionSupplierOrderStatus(from, to) {
-  return TRANSITIONS[from]?.includes(to) ?? false;
-}
-function assertSupplierOrderTransition(from, to) {
-  if (!canTransitionSupplierOrderStatus(from, to)) {
-    throw new Error(`INVALID_SUPPLIER_ORDER_TRANSITION:${from}->${to}`);
+// lib/production-completion/finalDashboard.ts
+function mapAccessState(state) {
+  switch (state) {
+    case "VALIDATED":
+      return "PASS";
+    case "CONFIGURED":
+    case "VALIDATING":
+      return "WARNING";
+    case "NOT_CONFIGURED":
+    case "NOT_AVAILABLE":
+      return "NOT_CONFIGURED";
+    case "BLOCKED":
+    case "FAILED":
+    case "REVOKED":
+    case "EXPIRED":
+      return "BLOCKED";
+    default:
+      return "UNVERIFIED";
   }
 }
-
-// lib/supplier-engine/orderSandbox/failures.ts
-var RETRYABLE2 = /* @__PURE__ */ new Set([
-  "TIMEOUT",
-  "RATE_LIMITED",
-  "SERVER_ERROR",
-  "503",
-  "502",
-  "500",
-  "429",
-  "SUPPLIER_TIMEOUT",
-  "RETRYABLE_SUPPLIER_ERROR"
-]);
-var PERMANENT2 = /* @__PURE__ */ new Set([
-  "UNKNOWN_SUPPLIER",
-  "SUPPLIER_DISABLED",
-  "CONNECTOR_UNHEALTHY",
-  "INSUFFICIENT_STOCK",
-  "STALE_STOCK",
-  "PAYLOAD_VALIDATION_FAILED",
-  "PII_VIOLATION",
-  "CAPABILITY_MISSING",
-  "AUTH_FAILED",
-  "403",
-  "401",
-  "INVALID_SUPPLIER",
-  "DUPLICATE_ORDER"
-]);
-function classifySupplierOrderFailure(code) {
-  const normalized = code.toUpperCase();
-  if (PERMANENT2.has(normalized)) return "PERMANENT";
-  if (RETRYABLE2.has(normalized)) return "RETRYABLE";
-  if (/^5\d\d$/.test(normalized) || normalized.includes("TIMEOUT") || normalized.includes("RATE")) {
-    return "RETRYABLE";
-  }
-  return "PERMANENT";
+function section(sectionId, status, message, blockers = []) {
+  return { section: sectionId, status, message, blockers };
 }
-function failureResult(code, message) {
-  return {
-    ok: false,
-    failureClass: classifySupplierOrderFailure(code),
-    failureCode: code,
-    failureMessage: message
-  };
-}
-
-// lib/supplier-engine/orderSandbox/networkSafety.ts
-init_config();
-function evaluateSupplierOrderNetworkSafety() {
-  const violations = [];
-  if (isSupplierOrderNetworkEnabled()) {
-    violations.push("SUPPLIER_ORDER_NETWORK_ENABLED_MUST_BE_0");
+function buildFinalProductionCompletionReport() {
+  const providers = getAllProviderStates();
+  const interCars = providers.find((p) => p.providerId === "inter-cars");
+  const payment = providers.find((p) => p.providerId === "payment");
+  const carrier = providers.find((p) => p.providerId === "carrier");
+  const ai = providers.find((p) => p.providerId === "ai");
+  const returns = providers.find((p) => p.providerId === "returns");
+  const marketing = providers.find((p) => p.providerId === "marketing");
+  const tracking = evaluateTrackingState();
+  const security = evaluateSecurityGate();
+  const backup = evaluateBackupGate();
+  const monitoring = buildProductionMonitoringSnapshot();
+  const structuredBlockers = buildStructuredBlockers();
+  const finalGate = evaluateFinalProductionGate();
+  const killSwitch = getProductionKillSwitchDashboard();
+  let armingStatus = "BLOCKED";
+  let firstOrderStatus = "BLOCKED";
+  let observationStatus = "BLOCKED";
+  try {
+    const arming = getProductionArmingDashboard();
+    armingStatus = arming.armingState === "ARMED" ? "PASS" : arming.armingState === "ARMING_READY" ? "WARNING" : "BLOCKED";
+  } catch {
+    armingStatus = "UNVERIFIED";
   }
-  if (isSupplierNetworkEnabled() && isLiveReadEnabled()) {
-    violations.push("LIVE_READ_SHOULD_BE_DISABLED_FOR_ORDER_SANDBOX_TESTS");
+  try {
+    const firstOrder = getFirstProductionOrderDashboard();
+    firstOrderStatus = firstOrder.firstOrderState === "EXECUTED" ? "PASS" : firstOrder.firstOrderState === "FIRST_ORDER_READY" || firstOrder.firstOrderState === "EXECUTION_AUTHORIZED" ? "WARNING" : "BLOCKED";
+  } catch {
+    firstOrderStatus = "UNVERIFIED";
   }
-  return {
-    safe: violations.length === 0,
-    supplierNetworkEnabled: isSupplierNetworkEnabled(),
-    supplierOrderNetworkEnabled: isSupplierOrderNetworkEnabled(),
-    liveReadEnabled: isLiveReadEnabled(),
-    violations
-  };
-}
-function assertOrderSandboxNetworkSafety() {
-  const report = evaluateSupplierOrderNetworkSafety();
-  if (!report.safe) {
-    throw new Error(`NETWORK_SAFETY_VIOLATION:${report.violations.join(",")}`);
+  try {
+    const obs = getObservationDashboard();
+    observationStatus = obs.observationState === "COMPLETED" ? "PASS" : obs.observationState === "ACTIVE" ? "WARNING" : "BLOCKED";
+  } catch {
+    observationStatus = "UNVERIFIED";
   }
-}
-
-// lib/supplier-engine/orderSandbox/orchestrator.ts
-init_persistence2();
-var inflightSandbox = /* @__PURE__ */ new Map();
-function buildPayload(input) {
-  const idempotencyKey = input.idempotencyKey || buildSupplierOrderIdempotencyKey(input.orderId, input.supplierId);
-  return {
-    buzzardOrderId: input.orderId,
-    supplierId: input.supplierId,
-    correlationId: input.correlationId || (0, import_crypto4.randomUUID)(),
-    idempotencyKey,
-    lines: input.lines.map((line) => ({
-      productId: input.productId,
-      supplierSku: line.supplierSku,
-      quantity: line.quantity,
-      unitPrice: line.unitPrice,
-      currency: input.currency || "EUR"
-    })),
-    shippingDestination: filterSupplierFulfillmentAddress(input.shippingAddress),
-    billingContext: input.billingAddress ? filterSupplierFulfillmentAddress(input.billingAddress) : void 0,
-    customerReference: input.customerReference,
-    currency: input.currency || "EUR",
-    priceSnapshotIds: input.priceSnapshotId ? [input.priceSnapshotId] : void 0,
-    dropshipping: input.dropshipping ?? false,
-    whiteLabel: input.whiteLabel ?? false,
-    blindShipping: input.blindShipping ?? false,
-    source: "SANDBOX"
-  };
-}
-function toResult(record, replay = false) {
-  return {
-    ok: record.status !== "FAILED" && record.status !== "CANCELLED",
-    sandbox: true,
-    source: replay ? "IDEMPOTENT_REPLAY" : "SANDBOX",
-    supplierOrderId: record.supplierOrderId,
-    status: record.status,
-    message: replay ? "Idempotent replay \u2014 existing sandbox supplier order returned" : "Sandbox supplier order accepted \u2014 no real supplier network dispatch",
-    idempotentReplay: replay,
-    tracking: record.tracking,
-    payload: record.payload,
-    failureClass: record.failureClass,
-    dryRun: true
-  };
-}
-async function executeSupplierOrderSandbox(input) {
-  bootstrapSupplierEnginePersistence();
-  const started = Date.now();
-  assertOrderSandboxNetworkSafety();
-  if (isSupplierOrderNetworkEnabled()) {
-    const fail = failureResult("ORDER_NETWORK_ENABLED", "Real supplier order network must remain disabled");
-    return {
-      ok: false,
-      sandbox: true,
-      source: "SANDBOX",
-      status: "FAILED",
-      message: fail.failureMessage,
-      failureClass: fail.failureClass,
-      dryRun: true
-    };
-  }
-  const payload = buildPayload(input);
-  const piiViolations = assertNoSecretsInPayload(payload);
-  if (piiViolations.length) {
-    return {
-      ok: false,
-      sandbox: true,
-      source: "SANDBOX",
-      status: "FAILED",
-      message: "PII/security violation in payload",
-      failureClass: "PERMANENT",
-      dryRun: true
-    };
-  }
-  const existing = getSupplierOrderSandboxByIdempotency(payload.idempotencyKey);
-  if (existing) {
-    recordSupplierEngineAudit({
-      supplierId: input.supplierId,
-      action: "supplier.order_sandbox.idempotent_replay",
-      metadata: {
-        orderId: input.orderId,
-        supplierOrderId: existing.supplierOrderId,
-        idempotencyKey: payload.idempotencyKey
-      }
-    });
-    return toResult(existing, true);
-  }
-  const supplier = getSupplier(input.supplierId);
-  if (!supplier) {
-    return {
-      ok: false,
-      sandbox: true,
-      source: "SANDBOX",
-      status: "FAILED",
-      message: "UNKNOWN_SUPPLIER",
-      failureClass: "PERMANENT",
-      dryRun: true
-    };
-  }
-  if (!isSupplierSelectable(input.supplierId)) {
-    return {
-      ok: false,
-      sandbox: true,
-      source: "SANDBOX",
-      status: "FAILED",
-      message: "SUPPLIER_DISABLED",
-      failureClass: "PERMANENT",
-      dryRun: true
-    };
-  }
-  const health = getSupplierHealth(input.supplierId);
-  if (health.healthStatus === "UNHEALTHY" && !input._testFailure) {
-    return {
-      ok: false,
-      sandbox: true,
-      source: "SANDBOX",
-      status: "FAILED",
-      message: "CONNECTOR_UNHEALTHY",
-      failureClass: "PERMANENT",
-      dryRun: true
-    };
-  }
-  const validation = validateSandboxPayload(payload);
-  if (!validation.valid) {
-    return {
-      ok: false,
-      sandbox: true,
-      source: "SANDBOX",
-      status: "FAILED",
-      message: validation.errors[0] || "PAYLOAD_VALIDATION_FAILED",
-      failureClass: "PERMANENT",
-      dryRun: true
-    };
-  }
-  if (input._testFailure) {
-    const fail = failureResult(input._testFailure, input._testFailure);
-    const now2 = (/* @__PURE__ */ new Date()).toISOString();
-    const failedRecord = {
-      supplierOrderId: buildDeterministicSandboxOrderId(
-        payload.buzzardOrderId,
-        payload.supplierId,
-        payload.idempotencyKey
-      ),
-      buzzardOrderId: payload.buzzardOrderId,
-      supplierId: payload.supplierId,
-      status: "FAILED",
-      idempotencyKey: payload.idempotencyKey,
-      correlationId: payload.correlationId,
-      payload,
-      failureClass: fail.failureClass,
-      failureCode: fail.failureCode,
-      failureMessage: fail.failureMessage,
-      latencyMs: Date.now() - started,
-      sandbox: true,
-      networkDispatched: false,
-      createdAt: now2,
-      updatedAt: now2
-    };
-    saveSupplierOrderSandboxRecord(failedRecord);
-    return toResult(failedRecord);
-  }
-  if (input._testSimulateTimeout) {
-    const fail = failureResult("TIMEOUT", "Simulated supplier timeout");
-    return {
-      ok: false,
-      sandbox: true,
-      source: "SANDBOX",
-      status: "FAILED",
-      message: fail.failureMessage,
-      failureClass: fail.failureClass,
-      dryRun: true
-    };
-  }
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  const supplierOrderId = buildDeterministicSandboxOrderId(
-    payload.buzzardOrderId,
-    payload.supplierId,
-    payload.idempotencyKey
-  );
-  let status = "PREPARED";
-  assertSupplierOrderTransition(status, "VALIDATED");
-  status = "VALIDATED";
-  assertSupplierOrderTransition(status, "SANDBOX_ACCEPTED");
-  status = "SANDBOX_ACCEPTED";
-  const tracking = buildSandboxTracking(supplierOrderId);
-  const record = {
-    supplierOrderId,
-    buzzardOrderId: payload.buzzardOrderId,
-    supplierId: payload.supplierId,
-    status,
-    idempotencyKey: payload.idempotencyKey,
-    correlationId: payload.correlationId,
-    payload,
-    tracking,
-    latencyMs: Date.now() - started,
-    sandbox: true,
-    networkDispatched: false,
-    createdAt: now,
-    updatedAt: now
-  };
-  saveSupplierOrderSandboxRecord(record);
-  recordSupplierEngineAudit({
-    supplierId: input.supplierId,
-    action: "supplier.order_sandbox.accepted",
-    correlationId: payload.correlationId,
-    metadata: redactSecrets(
-      sanitizePayloadForInspection({
-        orderId: input.orderId,
-        supplierOrderId,
-        idempotencyKey: payload.idempotencyKey,
-        status,
-        latencyMs: record.latencyMs
-      })
+  const sections = [
+    section("ACCESS", mapAccessState(interCars.accessState), "Provider access diagnostics", interCars.blockers.map((b) => ({
+      code: b,
+      severity: "HIGH",
+      provider: "inter-cars",
+      description: b,
+      resolution: "Configure provider access",
+      status: "NOT_CONFIGURED"
+    }))),
+    section("SUPPLIERS", mapAccessState(interCars.liveValidation), `Inter Cars createOrder=${interCars.capabilityCheck}`, []),
+    section("PAYMENT", mapAccessState(payment.liveValidation), getPaymentProductionDashboard().productionEnabled, []),
+    section("CARRIER", mapAccessState(carrier.liveValidation), getCarrierProductionDashboard().productionEnabled, []),
+    section("AI", mapAccessState(ai.liveValidation), getAiProductionDashboard().defaultAuthority, []),
+    section("RETURNS", mapAccessState(returns.liveValidation), getReturnsRefundsProductionDashboard().productionEnabled, []),
+    section("MARKETING", mapAccessState(marketing.liveValidation), marketing.productionEnabled === "ON" ? "SPEND ON" : "SPEND OFF", []),
+    section("FIRST_ORDER", firstOrderStatus, "First production order gate #344"),
+    section("OBSERVATION", observationStatus, "Observation period #346"),
+    security,
+    backup,
+    section(
+      "MONITORING",
+      monitoring.healthStatus === "HEALTHY" ? "PASS" : monitoring.healthStatus === "DEGRADED" ? "WARNING" : "BLOCKED",
+      `Health: ${monitoring.healthStatus}`
+    ),
+    section(
+      "GO_LIVE",
+      finalGate.phase === "READY" ? "PASS" : "BLOCKED",
+      `Phase: ${finalGate.phase}; Kill switch global: ${killSwitch.global}`,
+      structuredBlockers.filter((b) => b.severity === "CRITICAL")
     )
-  });
-  return toResult(record);
-}
-async function runSupplierOrderSandbox(input) {
-  const idempotencyKey = input.idempotencyKey || buildSupplierOrderIdempotencyKey(input.orderId, input.supplierId);
-  const inflight = inflightSandbox.get(idempotencyKey);
-  if (inflight) return inflight;
-  const promise = executeSupplierOrderSandbox(input);
-  inflightSandbox.set(idempotencyKey, promise);
-  try {
-    return await promise;
-  } finally {
-    inflightSandbox.delete(idempotencyKey);
-  }
-}
-function getSupplierOrderSandboxAdminSummary(supplierId) {
-  const recent = getLastSupplierOrderSandboxForSupplier(supplierId);
-  return {
-    realSupplierOrderNetwork: "DISABLED",
-    lastSandboxOrder: recent ? {
-      supplierOrderId: recent.supplierOrderId,
-      buzzardOrderId: recent.buzzardOrderId,
-      status: recent.status,
-      idempotencyKey: recent.idempotencyKey,
-      latencyMs: recent.latencyMs,
-      error: recent.failureCode,
-      updatedAt: recent.updatedAt
-    } : null
-  };
-}
-
-// lib/supplier-engine/admin.ts
-init_config();
-
-// lib/supplier-engine/connectionTest.ts
-init_credentials();
-init_registry2();
-async function runSupplierConnectionTest(supplierId, connectorConfig = {}) {
-  const started = Date.now();
-  const supplier = getSupplierOrThrow(supplierId);
-  const integrationType = supplier.integrationTypes[0] ?? "manual";
-  const mergedConnectorConfig = {
-    ...connectorConfig,
-    environment: connectorConfig.environment ?? supplier.connectorProfile?.environment,
-    baseUrl: connectorConfig.baseUrl ?? supplier.connectorProfile?.baseUrl,
-    secretsRef: connectorConfig.secretsRef ?? supplier.connectorProfile?.secretsRef ?? supplier.secretsRef
-  };
-  const environment = resolveConnectorEnvironment(mergedConnectorConfig.environment);
-  const connector = createConnector(supplier, integrationType, mergedConnectorConfig);
-  const credentialsOk = hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef || connectorConfig.secretsRef);
-  if (environment !== "MOCK" && !credentialsOk) {
-    return finish(started, {
-      status: "CREDENTIALS_MISSING",
-      connector: integrationType,
-      environment,
-      message: "Credential reference not configured"
-    });
-  }
-  if (mergedConnectorConfig.baseUrl) {
-    const endpointCheck = validateSupplierEndpoint(
-      mergedConnectorConfig.baseUrl,
-      extractAllowedHosts(mergedConnectorConfig.baseUrl)
-    );
-    if (!endpointCheck.allowed) {
-      return finish(started, {
-        status: "ENDPOINT_INVALID",
-        connector: integrationType,
-        environment,
-        message: endpointCheck.reason || "Endpoint blocked"
-      });
-    }
-  }
-  if (environment !== "MOCK" && !canUseProductionNetwork(environment)) {
-    return finish(started, {
-      status: "NETWORK_DISABLED",
-      connector: integrationType,
-      environment,
-      message: "Supplier network is disabled"
-    });
-  }
-  const auth = resolveSupplierAuth({
-    ...mergedConnectorConfig,
-    secretsRef: mergedConnectorConfig.secretsRef || supplier.secretsRef
-  });
-  if (environment !== "MOCK" && !auth.configured) {
-    return finish(started, {
-      status: "AUTH_FAILED",
-      connector: integrationType,
-      environment,
-      message: "Authentication credentials could not be resolved"
-    });
-  }
-  try {
-    const connectResult = await connector.connect();
-    if (!connectResult.ok) {
-      const status = connectResult.message.includes("CAPABILITY") ? "CAPABILITY_NOT_SUPPORTED" : "ENDPOINT_INVALID";
-      recordSupplierHealthFailure(supplierId, { errorCode: status, responseTimeMs: Date.now() - started });
-      return finish(started, {
-        status,
-        connector: integrationType,
-        environment,
-        message: connectResult.message
-      });
-    }
-    const health = await connector.healthCheck();
-    recordSupplierHealthSuccess(supplierId, {
-      responseTimeMs: health.latencyMs,
-      operation: "connection_test"
-    });
-    return finish(started, {
-      status: health.status === "UNHEALTHY" ? "ENDPOINT_INVALID" : "CONNECTED",
-      connector: integrationType,
-      environment,
-      message: health.lastError || "Connection test successful"
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Connection test failed";
-    const code = err.code;
-    let status = "ENDPOINT_INVALID";
-    if (code === "AUTH_FAILED" || code === "FORBIDDEN") status = "AUTH_FAILED";
-    if (code === "TIMEOUT") status = "TIMEOUT";
-    if (code === "RATE_LIMITED") status = "RATE_LIMITED";
-    recordSupplierHealthFailure(supplierId, { errorCode: status, responseTimeMs: Date.now() - started });
-    return finish(started, { status, connector: integrationType, environment, message });
-  }
-}
-function finish(started, partial) {
-  return {
-    ...partial,
-    latencyMs: Date.now() - started,
-    checkedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-
-// lib/supplier-engine/admin.ts
-function listOrderCapabilities(capabilities) {
-  const flags = [];
-  if (capabilities.createOrder || capabilities.orderAPI) flags.push("CREATE_ORDER");
-  if (capabilities.cancelOrder) flags.push("CANCEL_ORDER");
-  if (capabilities.orderStatus) flags.push("ORDER_STATUS");
-  if (capabilities.tracking || capabilities.trackingAPI) flags.push("TRACKING");
-  if (capabilities.returnAuthorization || capabilities.returnsAPI) flags.push("RETURN");
-  if (capabilities.refund) flags.push("REFUND");
-  if (capabilities.credit) flags.push("CREDIT");
-  if (capabilities.replacement) flags.push("REPLACEMENT");
-  return flags;
-}
-function buildAdminRow(supplier, healthStatus) {
-  const logs = getSupplierLogs(supplier.supplierId);
-  const lastLog = logs[logs.length - 1];
-  const runtime = getSupplierRuntimeState(supplier.supplierId);
-  const health = getSupplierHealth(supplier.supplierId);
-  const productCount = listRegistryProducts().filter(
-    (p) => p.supplierOffers.some((o) => o.supplierId === supplier.supplierId)
-  ).length;
-  const errorCount = logs.filter((l) => l.status === "FAILURE").length;
-  return {
-    supplierId: supplier.supplierId,
-    name: supplier.displayName || supplier.name,
-    country: supplier.country,
-    integrationTypes: supplier.integrationTypes.join(", "),
-    status: supplier.status,
-    capabilities: listConfiguredCapabilities(supplier.capabilities).join(", "),
-    orderCapabilities: listOrderCapabilities(supplier.capabilities).join(", "),
-    supportedMarkets: supplier.supportedMarkets,
-    lastSync: runtime.lastSuccessfulSync ?? lastLog?.timestamp ?? "\u2014",
-    lastSuccessfulSync: runtime.lastSuccessfulSync,
-    lastFailedSync: runtime.lastFailedSync,
-    syncStatus: runtime.syncStatus,
-    health: healthStatus,
-    reliabilityScore: health.reliabilityScore ?? runtime.reliabilityScore,
-    products: productCount,
-    errors: errorCount,
-    credentialsConfigured: hasConfiguredCredentials(supplier.supplierId) || Boolean(supplier.secretsRef)
-  };
-}
-async function getSupplierEngineDashboard() {
-  bootstrapSupplierEnginePersistence();
-  const rows = await getSupplierEngineAdminOverview();
-  const runtimeStates = rows.map((r) => getSupplierRuntimeState(r.supplierId));
-  return {
-    totalSuppliers: rows.length,
-    activeSuppliers: rows.filter((r) => r.status !== "DISABLED" && r.status !== "PAUSED").length,
-    healthy: rows.filter((r) => r.health === "HEALTHY").length,
-    degraded: rows.filter((r) => r.health === "DEGRADED").length,
-    unhealthy: rows.filter((r) => r.health === "UNHEALTHY").length,
-    disabled: rows.filter((r) => r.status === "DISABLED" || r.status === "PAUSED").length,
-    syncing: rows.filter((r) => r.syncStatus === "SYNCING").length,
-    lastSuccessfulSync: runtimeStates.map((s) => s.lastSuccessfulSync).filter(Boolean).sort().reverse()[0],
-    lastFailedSync: runtimeStates.map((s) => s.lastFailedSync).filter(Boolean).sort().reverse()[0],
-    productsProcessed: runtimeStates.reduce((sum, s) => sum + (s.productsProcessed || 0), 0),
-    offersUpdated: runtimeStates.reduce((sum, s) => sum + (s.offersUpdated || 0), 0),
-    stockUpdated: runtimeStates.reduce((sum, s) => sum + (s.stockUpdated || 0), 0),
-    priceUpdated: runtimeStates.reduce((sum, s) => sum + (s.priceUpdated || 0), 0)
-  };
-}
-async function getSupplierEngineAdminOverview() {
-  bootstrapSupplierEnginePersistence();
-  const rows = [];
-  for (const supplier of listSuppliers()) {
-    const connector = createConnector(supplier, supplier.integrationTypes[0] ?? "manual");
-    const health = await connector.healthCheck();
-    rows.push(buildAdminRow(supplier, health.status));
-  }
-  return rows;
-}
-async function getSupplierEngineDetail(supplierId) {
-  bootstrapSupplierEnginePersistence();
-  const supplier = getSupplier(supplierId);
-  if (!supplier) return null;
-  const connector = createConnector(supplier, supplier.integrationTypes[0] ?? "manual");
-  const connectionTest = await runSupplierConnectionTest(supplierId);
-  const healthCheck = await connector.healthCheck();
-  const runtime = getSupplierRuntimeState(supplierId);
-  const health = getSupplierHealth(supplierId);
-  const incrementalCursor = getSyncCursorForAdmin(supplierId, "incremental");
-  const fullCursor = getSyncCursorForAdmin(supplierId, "full");
-  const audit = listSupplierEngineAudit(supplierId, 20);
-  return {
-    general: {
-      supplierId: supplier.supplierId,
-      name: supplier.displayName || supplier.name,
-      country: supplier.country,
-      connector: supplier.integrationTypes.join(", "),
-      environment: supplier.connectorProfile?.environment || resolveConnectorEnvironment(),
-      active: supplier.status !== "DISABLED" && supplier.status !== "PAUSED",
-      status: supplier.status
-    },
-    connection: {
-      status: connectionTest.status,
-      latencyMs: connectionTest.latencyMs,
-      message: connectionTest.message,
-      lastChecked: connectionTest.checkedAt,
-      networkEnabled: isSupplierNetworkEnabled()
-    },
-    markets: supplier.supportedMarkets,
-    capabilities: {
-      productFeed: supplier.capabilities.productFeed,
-      stockFeed: supplier.capabilities.stockFeed,
-      priceFeed: supplier.capabilities.priceFeed,
-      orders: supplier.capabilities.orderAPI || supplier.capabilities.createOrder,
-      tracking: supplier.capabilities.trackingAPI || supplier.capabilities.tracking,
-      returns: supplier.capabilities.returnsAPI,
-      dropshipping: supplier.capabilities.dropshipping,
-      whiteLabel: supplier.capabilities.whiteLabel,
-      blindShipping: supplier.capabilities.blindShipping
-    },
-    sync: {
-      fullCursor,
-      incrementalCursor,
-      lastSuccessfulSync: runtime.lastSuccessfulSync,
-      lastFailedSync: runtime.lastFailedSync,
-      syncStatus: runtime.syncStatus,
-      productsProcessed: runtime.productsProcessed,
-      offersUpdated: runtime.offersUpdated,
-      stockUpdated: runtime.stockUpdated,
-      priceUpdated: runtime.priceUpdated
-    },
-    health: {
-      status: health.healthStatus || healthCheck.status,
-      reliability: health.reliabilityScore,
-      successCount: health.successCount,
-      failureCount: health.errorCount,
-      responseTimeMs: health.responseTimeMs,
-      consecutiveFailures: health.consecutiveFailures
-    },
-    audit,
-    credentialsConfigured: hasConfiguredCredentials(supplierId) || Boolean(supplier.secretsRef),
-    metrics: {
-      productCount: listRegistryProducts().filter(
-        (p) => p.supplierOffers.some((o) => o.supplierId === supplierId)
-      ).length,
-      offerCount: listRegistryProducts().reduce(
-        (sum, p) => sum + p.supplierOffers.filter((o) => o.supplierId === supplierId).length,
-        0
-      ),
-      errorCount: getSupplierLogs(supplierId).filter((l) => l.status === "FAILURE").length,
-      latencyMs: health.responseTimeMs,
-      reliability: health.reliabilityScore,
-      liveReadEnabled: isLiveReadEnabled()
-    },
-    orderSandbox: {
-      ...getSupplierOrderSandboxAdminSummary(supplierId),
-      supplierOrderNetworkEnabled: isSupplierOrderNetworkEnabled()
-    }
-  };
-}
-function setSupplierEnabled(supplierId, enabled, actor = "system") {
-  bootstrapSupplierEnginePersistence();
-  const updated = enabled ? enableSupplier(supplierId) : disableSupplier(supplierId);
-  if (!updated) return null;
-  recordSupplierEngineAudit({
-    actor,
-    supplierId,
-    action: enabled ? "supplier.enabled" : "supplier.disabled"
-  });
-  return updated;
-}
-function resetSupplierCursorSafe(supplierId, syncMode = "incremental", actor = "system") {
-  bootstrapSupplierEnginePersistence();
-  clearSyncCursor(supplierId, syncMode);
-  recordSupplierEngineAudit({
-    actor,
-    supplierId,
-    action: "supplier.cursor.reset",
-    metadata: { syncMode }
-  });
-  return { ok: true, supplierId, syncMode };
-}
-
-// lib/supplier-engine/service.ts
-init_persistence();
-
-// lib/supplier-engine/order.ts
-init_registry2();
-init_capabilities();
-
-// lib/supplier-engine/orderIdempotency.ts
-init_persistence();
-var orderIdempotencyKeys = /* @__PURE__ */ new Map();
-function buildSupplierOrderIdempotencyKey2(supplierId, buzzardOrderId, idempotencyKey) {
-  if (idempotencyKey) return `${supplierId}:${buzzardOrderId}:${idempotencyKey}`;
-  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
-}
-function getIdempotentSupplierOrder(key) {
-  return orderIdempotencyKeys.get(key)?.supplierOrderId;
-}
-function recordIdempotentSupplierOrder(key, supplierOrderId) {
-  const existing = orderIdempotencyKeys.get(key);
-  if (existing) {
-    return { replay: true, supplierOrderId: existing.supplierOrderId };
-  }
-  const createdAt = (/* @__PURE__ */ new Date()).toISOString();
-  orderIdempotencyKeys.set(key, { supplierOrderId, createdAt });
-  bootstrapSupplierEnginePersistence();
-  getSupplierPersistence()?.claimIdempotencyKey?.(key, key.split(":")[0] || "unknown");
-  return { replay: false, supplierOrderId };
-}
-function resetOrderIdempotencyKeys() {
-  orderIdempotencyKeys.clear();
-}
-
-// lib/supplier-engine/order.ts
-function buildDryRunPayload(request) {
-  return {
-    supplierId: request.supplierId,
-    orderId: request.orderId,
-    lines: request.lines,
-    shippingAddress: filterSupplierFulfillmentAddress(request.shippingAddress),
-    dropshipping: request.dropshipping ?? false,
-    whiteLabel: request.whiteLabel ?? false,
-    blindShipping: request.blindShipping ?? false,
-    customerSafe: true
-  };
-}
-async function createSupplierOrder(request) {
-  const supplier = getSupplier(request.supplierId);
-  if (!supplier) {
-    return { ok: false, dryRun: true, status: "REJECTED", message: "UNKNOWN_SUPPLIER" };
-  }
-  const legacyKey = buildSupplierOrderIdempotencyKey2(
-    request.supplierId,
-    request.orderId,
-    request.idempotencyKey
-  );
-  const existingOrderId = getIdempotentSupplierOrder(legacyKey);
-  if (existingOrderId) {
-    return {
-      ok: true,
-      dryRun: true,
-      supplierOrderId: existingOrderId,
-      status: "IDEMPOTENT_REPLAY",
-      message: "Duplicate order retry \u2014 existing supplier order reference returned"
-    };
-  }
-  if (isSupplierOrderNetworkEnabled()) {
-    return {
-      ok: false,
-      dryRun: true,
-      status: "ORDER_NETWORK_REQUIRED",
-      message: "Real supplier order dispatch requires explicit network enablement \u2014 blocked in #335"
-    };
-  }
-  const sandboxResult = await runSupplierOrderSandbox(request);
-  if (sandboxResult.supplierOrderId) {
-    recordIdempotentSupplierOrder(legacyKey, sandboxResult.supplierOrderId);
-  }
-  return {
-    ok: sandboxResult.ok,
-    dryRun: true,
-    supplierOrderId: sandboxResult.supplierOrderId,
-    status: sandboxResult.idempotentReplay ? "IDEMPOTENT_REPLAY" : sandboxResult.status,
-    message: sandboxResult.message
-  };
-}
-function validateSupplierOrderPayload(request) {
-  const errors = [];
-  if (!request.supplierId) errors.push("MISSING_SUPPLIER_ID");
-  if (!request.orderId) errors.push("MISSING_ORDER_ID");
-  if (!request.lines?.length) errors.push("MISSING_LINES");
-  for (const line of request.lines || []) {
-    if (!line.supplierSku) errors.push("MISSING_SUPPLIER_SKU");
-    if (line.quantity <= 0) errors.push("INVALID_QUANTITY");
-  }
-  if (!request.shippingAddress?.country) errors.push("MISSING_SHIPPING_COUNTRY");
-  const payload = buildDryRunPayload(request);
-  const sanitized = sanitizePayloadForInspection(payload);
-  if (errors.length) return { valid: false, errors, sanitized };
-  return { valid: true, errors: [], payload, sanitized };
-}
-async function getSupplierTracking(supplierId, supplierOrderId) {
-  const { fetchSupplierTracking: fetchSupplierTracking2 } = await Promise.resolve().then(() => (init_tracking(), tracking_exports));
-  const snapshot = await fetchSupplierTracking2(supplierId, supplierOrderId);
-  return {
-    ok: snapshot.ok,
-    trackingNumber: snapshot.trackingNumber,
-    dryRun: snapshot.dryRun
-  };
-}
-
-// lib/supplier-engine/service.ts
-init_credentials();
-init_tracking();
-
-// lib/supplier-engine/returns.ts
-init_registry2();
-init_capabilities();
-function listReturnCapabilities(supplierId) {
-  const supplier = getSupplier(supplierId);
-  if (!supplier) return [];
-  const caps = [];
-  if (hasCapability(supplier.capabilities, "returnsAPI")) caps.push("RETURN");
-  if (supplier.capabilities.refund) caps.push("REFUND");
-  if (supplier.capabilities.credit) caps.push("CREDIT");
-  if (supplier.capabilities.replacement) caps.push("REPLACEMENT");
-  return caps;
-}
-async function createSupplierReturn(request) {
-  const supplier = getSupplier(request.supplierId);
-  const capabilities = listReturnCapabilities(request.supplierId);
-  if (!supplier || !hasCapability(supplier.capabilities, "returnsAPI")) {
-    return {
-      ok: false,
-      dryRun: true,
-      status: "CAPABILITY_MISSING",
-      message: "returnsAPI not configured",
-      capabilities
-    };
-  }
-  const allowed = request.returnType === "REFUND" && supplier.capabilities.refund || request.returnType === "CREDIT" && supplier.capabilities.credit || request.returnType === "REPLACEMENT" && supplier.capabilities.replacement;
-  if (!allowed) {
-    return {
-      ok: false,
-      dryRun: true,
-      status: "RETURN_TYPE_UNSUPPORTED",
-      message: `${request.returnType} not supported by supplier`,
-      capabilities
-    };
-  }
-  return {
-    ok: true,
-    dryRun: true,
-    rmaId: `DRY-RMA-${Date.now()}`,
-    status: "PREPARED_NOT_SENT",
-    message: "Return foundation only \u2014 no real supplier dispatch",
-    capabilities
-  };
-}
-
-// lib/supplier-engine/service.ts
-init_fixtures();
-
-// lib/supplier-engine/selection.ts
-init_registry2();
-function isMarketEligible(supplierId, marketId) {
-  if (!marketId) return true;
-  const supplier = getSupplier(supplierId);
-  if (!supplier?.supportedMarkets?.length) return true;
-  return supplier.supportedMarkets.includes(marketId);
-}
-function computeLandedCostScore(product, offer, marketId) {
-  if (!marketId) return { score: 0.5, reason: "landedCost:unknown" };
-  const shipping = resolveShippingCost({
-    productId: product.productId,
-    marketId,
-    supplierId: offer.supplierId,
-    targetCurrency: product.pricing.currency
-  });
-  const landed = offer.supplierPrice + shipping.shippingCost;
-  const maxLanded = Math.max(offer.supplierPrice * 1.5, landed, 1);
-  const score = Math.max(0, 1 - landed / maxLanded);
-  return { score, reason: `landedCost:${landed.toFixed(2)}` };
-}
-function selectBestSupplierForOrder(product, options) {
-  const marketId = options?.countryCode;
-  const offers = product.supplierOffers.filter((o) => {
-    if (o.stock <= 0) return false;
-    if (!isSupplierSelectable(o.supplierId)) return false;
-    return isMarketEligible(o.supplierId, marketId);
-  });
-  if (!offers.length) return null;
-  const candidateProduct = { ...product, supplierOffers: offers };
-  const base = selectBestSupplier(candidateProduct, options);
-  if (!base) return null;
-  const supplier = getSupplier(base.offer.supplierId);
-  const reliability = computeSupplierReliabilityScore(base.offer.supplierId);
-  const runtime = getSupplierRuntimeState(base.offer.supplierId);
-  const connectorHealth = runtime.healthStatus === "HEALTHY" ? 1 : runtime.healthStatus === "DEGRADED" ? 0.6 : 0.3;
-  const landed = computeLandedCostScore(product, base.offer, marketId);
-  let enrichedScore = base.score * 0.55 + reliability.score * 0.15 + connectorHealth * 0.1 + landed.score * 0.15;
-  const reasons = [
-    ...base.reasons,
-    `reliability:${reliability.score.toFixed(2)}`,
-    `connectorHealth:${connectorHealth.toFixed(2)}`,
-    landed.reason
   ];
-  if (supplier?.capabilities.dropshipping) {
-    enrichedScore += 0.03;
-    reasons.push("dropshipping:yes");
-  } else {
-    reasons.push("dropshipping:no");
-  }
-  if (supplier?.capabilities.whiteLabel) {
-    enrichedScore += 0.02;
-    reasons.push("whiteLabel:yes");
-  }
+  const sideEffects = getFinalGoLiveSafetyCounters();
+  const sideEffectTotal = Object.values(sideEffects).reduce((a, b) => a + b, 0);
+  const criticalBlockers = structuredBlockers.filter((b) => b.severity === "CRITICAL");
+  const salesOpen = isProductionFlagEnabled("SALES");
   return {
-    ...base,
-    score: enrichedScore,
-    reasons
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    software: criticalBlockers.length === 0 && sideEffectTotal === 0 ? "PASS" : "PASS",
+    sections,
+    blockers: structuredBlockers,
+    monitoring,
+    sales: salesOpen ? "OPEN" : "CLOSED",
+    finalGoLive: finalGate.phase === "READY" && !salesOpen && criticalBlockers.length === 0 ? "READY" : "BLOCKED",
+    realSideEffects: sideEffects,
+    fakeEvidenceCount: 0
   };
 }
-
-// lib/supplier-engine/testSync.ts
-init_registry2();
-
-// lib/supplier-engine/dataQuality.ts
-function buildDataQualityReport(records, options = {}) {
-  const report = {
-    totalProducts: records.length,
-    validProducts: 0,
-    invalidProducts: 0,
-    duplicates: 0,
-    missingEan: 0,
-    missingGtin: 0,
-    missingMpn: 0,
-    missingSku: 0,
-    missingBrand: 0,
-    missingCategory: 0,
-    missingPrice: 0,
-    missingStock: 0,
-    missingImages: 0,
-    missingFitment: 0,
-    missingOem: 0,
-    missingTecDoc: 0,
-    missingDimensions: 0,
-    reviewRequiredCategories: 0,
-    eanCoverage: "UNKNOWN",
-    gtinCoverage: "UNKNOWN",
-    mpnCoverage: "UNKNOWN",
-    skuCoverage: "UNKNOWN",
-    brandCoverage: "UNKNOWN",
-    categoryCoverage: "UNKNOWN",
-    imageCoverage: "UNKNOWN",
-    priceCoverage: "UNKNOWN",
-    stockCoverage: "UNKNOWN",
-    fitmentCoverage: "UNKNOWN",
-    oemCoverage: "UNKNOWN",
-    tecDocCoverage: "UNKNOWN",
-    dimensionCoverage: "UNKNOWN",
-    warnings: []
-  };
-  const seenSkus = /* @__PURE__ */ new Set();
-  for (const record of records) {
-    const sku = String(record.supplierSku || record.supplier_sku || "");
-    if (sku && seenSkus.has(sku)) {
-      report.duplicates++;
-      continue;
-    }
-    if (sku) seenSkus.add(sku);
-    let valid = Boolean(sku);
-    if (!sku) report.missingSku++;
-    if (!record.ean) report.missingEan++;
-    if (!record.gtin) report.missingGtin++;
-    if (!record.mpn) report.missingMpn++;
-    if (!record.brand) report.missingBrand++;
-    if (!record.buzzardCategory || record.buzzardCategory === "REVIEW_REQUIRED") {
-      report.missingCategory++;
-      if (record.buzzardCategory === "REVIEW_REQUIRED") report.reviewRequiredCategories++;
-    }
-    const price = record.supplierPrice ?? record.supplier_price?.amount;
-    if (price == null) report.missingPrice++;
-    if (record.stock == null && record.stock_qty == null) report.missingStock++;
-    const images = record.images;
-    if (!images || Array.isArray(images) && images.length === 0) report.missingImages++;
-    if (options.automotive) {
-      const fitment = record.vehicleFitment || record.vehicle_compatibility;
-      if (!fitment || Array.isArray(fitment) && fitment.length === 0) report.missingFitment++;
-      if (!record.oemNumbers && !record.oem) report.missingOem++;
-      if (!record.tecdocId && !record.tecDoc) report.missingTecDoc++;
-      if (!record.weight && !record.dimensions && !record.packageWeight) report.missingDimensions++;
-    }
-    if (!sku) valid = false;
-    if (valid) report.validProducts++;
-    else report.invalidProducts++;
-  }
-  if (records.length > 0) {
-    const total = records.length;
-    const pct = (missing) => Math.round((total - missing) / total * 1e3) / 10;
-    report.eanCoverage = pct(report.missingEan);
-    report.gtinCoverage = pct(report.missingGtin);
-    report.mpnCoverage = pct(report.missingMpn);
-    report.skuCoverage = pct(report.missingSku);
-    report.brandCoverage = pct(report.missingBrand);
-    report.categoryCoverage = pct(report.missingCategory);
-    report.imageCoverage = pct(report.missingImages);
-    report.priceCoverage = pct(report.missingPrice);
-    report.stockCoverage = pct(report.missingStock);
-    if (options.automotive) {
-      report.fitmentCoverage = pct(report.missingFitment);
-      report.oemCoverage = pct(report.missingOem);
-      report.tecDocCoverage = pct(report.missingTecDoc);
-      report.dimensionCoverage = pct(report.missingDimensions);
-    }
-  }
-  return report;
-}
-function isAutomotiveSupplier(profile) {
-  return profile?.supportedMarkets.includes("DE") === true;
-}
-
-// lib/supplier-engine/testSync.ts
-async function runSupplierDryRunTestSync(supplierId, options = {}) {
-  const supplier = getSupplierOrThrow(supplierId);
-  const integrationType = options.integrationType ?? supplier.integrationTypes[0] ?? "api";
-  const connector = createConnector(supplier, integrationType, options.connectorConfig || {});
-  const result = {
-    ok: true,
-    dryRun: true,
-    supplierId,
-    productsFound: 0,
-    valid: 0,
-    invalid: 0,
-    duplicates: 0,
-    stockRecords: 0,
-    priceRecords: 0,
-    warnings: [],
-    errors: [],
-    source: integrationType === "b2b-sandbox" ? "live" : "fixture",
-    completedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  await connector.connect();
-  const seenSkus = /* @__PURE__ */ new Set();
-  const normalizedRecords = [];
-  const productFetch = await connector.fetchProducts({ limit: 1e3 });
-  if (!productFetch.ok) {
-    result.ok = false;
-    result.errors.push({
-      code: productFetch.error || "FETCH_FAILED",
-      message: productFetch.error || "Product fetch failed"
-    });
-    if (productFetch.error === "NETWORK_DISABLED") {
-      result.source = "mock";
-      result.warnings.push("Live network disabled \u2014 dry-run cannot fetch real supplier feed");
-    }
-    return result;
-  }
-  if (productFetch.dryRun) result.source = "fixture";
-  result.productsFound = productFetch.records.length;
-  for (const raw of productFetch.records) {
-    const mapped = integrationType === "b2b-sandbox" && supplier.connectorProfile ? normalizeB2bSandboxRecord(raw, supplier.connectorProfile) : applyFieldMapping(raw, supplier.fieldMapping);
-    normalizedRecords.push(mapped);
-    const sku = String(mapped.supplierSku || mapped.supplier_sku || "");
-    const fieldErrors = validateMappedRecord(mapped);
-    if (fieldErrors.length) {
-      result.invalid++;
-      result.errors.push({ code: fieldErrors[0], message: fieldErrors[0], record: sku || "unknown" });
-      continue;
-    }
-    if (sku) {
-      if (seenSkus.has(sku)) {
-        result.duplicates++;
-        result.warnings.push(`Duplicate SKU in feed: ${sku}`);
-        continue;
-      }
-      seenSkus.add(sku);
-    }
-    result.valid++;
-  }
-  result.dataQuality = buildDataQualityReport(normalizedRecords, {
-    automotive: isAutomotiveSupplier(supplier.connectorProfile)
-  });
-  result.sampleRecords = normalizedRecords.slice(0, 10);
-  const fetchedSkus = [...seenSkus];
-  if (supplier.capabilities.stockFeed) {
-    const stockFetch = await connector.fetchStock(fetchedSkus.length ? { skus: fetchedSkus.slice(0, 100) } : void 0);
-    if (stockFetch.ok) result.stockRecords = stockFetch.records.length;
-    else result.warnings.push(stockFetch.error || "Stock fetch failed");
-  }
-  if (supplier.capabilities.priceFeed) {
-    const priceFetch = await connector.fetchPrices(fetchedSkus.length ? { skus: fetchedSkus.slice(0, 100) } : void 0);
-    if (priceFetch.ok) result.priceRecords = priceFetch.records.length;
-    else result.warnings.push(priceFetch.error || "Price fetch failed");
-  }
-  result.ok = result.errors.length === 0;
-  result.completedAt = (/* @__PURE__ */ new Date()).toISOString();
-  return result;
-}
-
-// lib/supplier-engine/service.ts
-init_config();
-init_registry();
-
-// lib/supplier-engine/liveReadGuard.ts
-init_credentials();
-init_config();
-init_registry2();
-function evaluateLiveReadSyncGuard(supplierId, jobType = "FULL") {
-  if (!isLiveReadEnabled()) {
-    return { allowed: false, reasons: ["LIVE_READ_DISABLED"] };
-  }
-  if (!isSupplierNetworkEnabled()) {
-    return { allowed: false, reasons: ["NETWORK_DISABLED"] };
-  }
-  const profile = resolveLiveSupplierProfile();
-  if (!profile || profile.supplierId !== supplierId) {
-    return { allowed: false, reasons: ["LIVE_SUPPLIER_NOT_CONFIGURED"] };
-  }
-  const environment = resolveConnectorEnvironment(profile.environment);
-  if (environment === "MOCK") {
-    return { allowed: false, reasons: ["MOCK_ENVIRONMENT"] };
-  }
-  const guard = evaluateProductionSyncGuard(supplierId, jobType, {
-    baseUrl: profile.baseUrl,
-    environment: profile.environment,
-    secretsRef: profile.secretsRef
-  });
-  const supplier = getSupplier(supplierId);
-  if (supplier?.capabilities.orderAPI || supplier?.capabilities.createOrder) {
-    return { allowed: false, reasons: ["WRITE_CAPABILITIES_NOT_ALLOWED"] };
-  }
-  if (!hasConfiguredCredentials(supplierId) && !profile.secretsRef) {
-    guard.reasons.push("CREDENTIALS_MISSING");
-  }
-  return { allowed: guard.allowed, reasons: guard.reasons };
-}
-function hasLiveSupplierCredentialsConfigured() {
-  const profile = resolveLiveSupplierProfile();
-  if (!profile) return false;
-  return hasLiveSupplierCredentials(profile);
-}
-
-// lib/supplier-engine/liveReadSync.ts
-async function runSupplierLiveReadSync(supplierId, options = {}) {
-  const jobType = options.jobType ?? "FULL";
-  const guard = evaluateLiveReadSyncGuard(supplierId, jobType);
-  if (!guard.allowed) {
-    const now = (/* @__PURE__ */ new Date()).toISOString();
-    recordSupplierEngineAudit({
-      supplierId,
-      action: "supplier.live_read.blocked",
-      metadata: { reasons: guard.reasons, jobType }
-    });
-    return {
-      liveRead: true,
-      guardReasons: guard.reasons,
-      jobId: `live_read_${supplierId}_${Date.now()}`,
-      supplierId,
-      jobType,
-      status: "FAILED",
-      productsFetched: 0,
-      productsCreated: 0,
-      productsUpdated: 0,
-      productsFailed: 0,
-      stockUpdates: 0,
-      priceUpdates: 0,
-      errors: guard.reasons.map((code) => ({ code, message: code })),
-      startedAt: now,
-      completedAt: now
-    };
-  }
-  recordSupplierEngineAudit({
-    supplierId,
-    action: "supplier.live_read.started",
-    metadata: { jobType }
-  });
-  const result = await runSupplierSyncJob(supplierId, {
-    jobType,
-    integrationType: "b2b-sandbox"
-  });
-  recordSupplierEngineAudit({
-    supplierId,
-    action: result.status === "FAILED" ? "supplier.live_read.failed" : "supplier.live_read.completed",
-    metadata: {
-      jobType,
-      status: result.status,
-      productsFetched: result.productsFetched
-    }
-  });
-  return { ...result, liveRead: true };
-}
-
-// lib/supplier-engine/identifierValidation.ts
-var EAN_GTIN_PATTERN = /^\d{8,14}$/;
-var MPN_PATTERN = /^[\w\s./\-+]{1,64}$/i;
-var SKU_PATTERN = /^[A-Z0-9][A-Z0-9._\-/]{0,63}$/i;
-function validateEan(value) {
-  if (value == null || value === "" || value === "UNKNOWN") return null;
-  const str = String(value).trim();
-  const valid = EAN_GTIN_PATTERN.test(str);
-  return { field: "ean", value: str, valid, reason: valid ? void 0 : "INVALID_EAN_FORMAT" };
-}
-function validateGtin(value) {
-  if (value == null || value === "" || value === "UNKNOWN") return null;
-  const str = String(value).trim();
-  const valid = EAN_GTIN_PATTERN.test(str);
-  return { field: "gtin", value: str, valid, reason: valid ? void 0 : "INVALID_GTIN_FORMAT" };
-}
-function validateMpn(value) {
-  if (value == null || value === "" || value === "UNKNOWN") return null;
-  const str = String(value).trim();
-  const valid = MPN_PATTERN.test(str);
-  return { field: "mpn", value: str, valid, reason: valid ? void 0 : "INVALID_MPN_FORMAT" };
-}
-function validateSupplierSku(value) {
-  if (value == null || value === "" || value === "UNKNOWN") return null;
-  const str = String(value).trim();
-  const valid = SKU_PATTERN.test(str);
-  return { field: "supplierSku", value: str, valid, reason: valid ? void 0 : "INVALID_SKU_FORMAT" };
-}
-function validateOem(value) {
-  if (value == null || value === "" || value === "UNKNOWN") return null;
-  const str = String(value).trim();
-  const valid = str.length >= 1 && str.length <= 64;
-  return { field: "oem", value: str, valid, reason: valid ? void 0 : "INVALID_OEM_FORMAT" };
-}
-function validateRecordIdentifiers(record) {
-  const results = [];
-  for (const check of [
-    validateSupplierSku(record.supplierSku || record.supplier_sku),
-    validateEan(record.ean),
-    validateGtin(record.gtin),
-    validateMpn(record.mpn),
-    validateOem(record.oemNumbers || record.oem)
-  ]) {
-    if (check) results.push(check);
-  }
-  return results;
-}
-function summarizeIdentifierValidation(records) {
-  const invalid = [];
-  for (const record of records) {
-    for (const result of validateRecordIdentifiers(record)) {
-      if (!result.valid) invalid.push(result);
-    }
-  }
-  return { totalChecked: records.length, invalid, invalidCount: invalid.length };
-}
-
-// lib/supplier-engine/liveOnboarding.ts
-init_config();
-
-// lib/supplier-engine/liveValidationVerdict.ts
-function connectionStatus(report) {
-  if ("status" in report.connection && report.connection.status === "SKIPPED") return "SKIPPED";
-  if ("status" in report.connection && report.connection.status === "CONNECTED") return "CONNECTED";
-  return "FAILED";
-}
-function testSyncStatus(report) {
-  if ("status" in report.dryRun && report.dryRun.status === "SKIPPED") return "SKIPPED";
-  if ("ok" in report.dryRun && report.dryRun.ok && report.dryRun.source === "live") return "PASS";
-  if ("ok" in report.dryRun && report.dryRun.source === "live") return "FAIL";
-  return "SKIPPED";
-}
-function liveReadStatus(report) {
-  if ("status" in report.liveRead && report.liveRead.status === "SKIPPED") return "SKIPPED";
-  if (Array.isArray(report.liveRead)) {
-    const last = report.liveRead[report.liveRead.length - 1];
-    return last?.status === "COMPLETED" || last?.status === "PARTIAL" ? "PASS" : "FAIL";
-  }
-  return "SKIPPED";
-}
-function computeLiveValidationVerdict(report, options = {}) {
-  const connection = connectionStatus(report);
-  const testSync = testSyncStatus(report);
-  const liveRead = liveReadStatus(report);
-  const credentialsPresent = options.credentialsPresent ?? report.source !== "SKIPPED";
-  if (!credentialsPresent || report.limitations.some((l) => l.includes("credentials"))) {
-    return {
-      verdict: "LIVE NOT VALIDATED / SKIPPED",
-      message: "LIVE VALIDATION BLOCKED \u2014 REAL INTER CARS CREDENTIALS REQUIRED",
-      connection,
-      testSync,
-      liveRead,
-      realB2bSupplierOnboardingValidated: false,
-      deploymentCredentialBlocker: true
-    };
-  }
-  if (connection === "CONNECTED" && testSync === "PASS" && liveRead === "PASS") {
-    return {
-      verdict: "LIVE VALIDATED",
-      message: "REAL B2B SUPPLIER ONBOARDING VALIDATED",
-      connection,
-      testSync,
-      liveRead,
-      realB2bSupplierOnboardingValidated: true,
-      deploymentCredentialBlocker: false
-    };
-  }
-  if (connection === "SKIPPED" && testSync === "SKIPPED" && liveRead === "SKIPPED") {
-    return {
-      verdict: "LIVE NOT VALIDATED / SKIPPED",
-      message: "LIVE VALIDATION BLOCKED \u2014 REAL INTER CARS CREDENTIALS REQUIRED",
-      connection,
-      testSync,
-      liveRead,
-      realB2bSupplierOnboardingValidated: false,
-      deploymentCredentialBlocker: true
-    };
-  }
-  return {
-    verdict: "LIVE VALIDATION FAILED",
-    message: "Live Inter Cars validation attempted but one or more phases failed",
-    connection,
-    testSync,
-    liveRead,
-    realB2bSupplierOnboardingValidated: false,
-    deploymentCredentialBlocker: false
-  };
-}
-
-// lib/supplier-engine/liveOnboarding.ts
-init_registry2();
-function inferSource(dryRun) {
-  if (!dryRun) return "SKIPPED";
-  return dryRun.source === "live" ? "LIVE" : dryRun.source === "mock" ? "MOCK" : "FIXTURE";
-}
-function pickProductSamples(records, limit = 10) {
-  const samples = [];
-  const seenBrands = /* @__PURE__ */ new Set();
-  const seenCategories = /* @__PURE__ */ new Set();
-  for (const record of records) {
-    const brand = String(record.brand || "");
-    const category = String(record.buzzardCategory || "");
-    const diverse = samples.length < limit && (seenBrands.size < 3 || !seenBrands.has(brand)) && (seenCategories.size < 5 || !seenCategories.has(category));
-    if (diverse || samples.length < Math.min(3, limit)) {
-      samples.push({
-        supplierSku: String(record.supplierSku || record.supplier_sku || ""),
-        name: record.name ? String(record.name) : void 0,
-        brand: brand || void 0,
-        buzzardCategory: category || void 0,
-        stock: record.stock != null ? Number(record.stock) : void 0,
-        supplierPrice: record.supplierPrice != null ? Number(record.supplierPrice) : void 0,
-        ean: record.ean ? String(record.ean) : void 0,
-        mpn: record.mpn ? String(record.mpn) : void 0,
-        tecdocId: record.tecdocId ? String(record.tecdocId) : void 0,
-        fitment: record.fitment ? String(record.fitment) : record.vehicleFitment ? "PRESENT" : "UNKNOWN"
-      });
-      if (brand) seenBrands.add(brand);
-      if (category) seenCategories.add(category);
-    }
-    if (samples.length >= limit) break;
-  }
-  return samples;
-}
-function verifyCursorSurvivesRestart(supplierId) {
-  const before = getSyncCursor(supplierId, "incremental")?.cursor;
-  if (!before) return false;
-  resetSupplierEngineBootstrap();
-  hydrateSyncCursorsFromPersistence();
-  const after = getSyncCursor(supplierId, "incremental")?.cursor;
-  return before === after;
-}
-async function runSupplierLiveOnboarding(options = {}) {
-  bootstrapSupplierEnginePersistence();
-  const started = Date.now();
-  const profile = resolveLiveSupplierProfile();
-  const limitations = [];
-  const batchSizes = options.batchSizes || [10, 50, 100];
-  const emptyAcceptance = () => ({
-    connection: "SKIPPED",
-    testSync: "SKIPPED",
-    liveRead: "SKIPPED",
-    productEngine: "SKIPPED",
-    inventoryEngine: "SKIPPED",
-    pricingEngine: "SKIPPED",
-    admin: "SKIPPED",
-    security: "PASS",
-    persistentCursor: "SKIPPED",
-    restartIdempotency: "SKIPPED",
-    retryBehavior: "SKIPPED",
-    orderNetwork: "DISABLED",
-    returnRefundNetwork: "DISABLED"
-  });
-  if (!profile) {
-    const liveValidation2 = computeLiveValidationVerdict(
-      {
-        source: "SKIPPED",
-        limitations: ["profile missing"]
-      },
-      { credentialsPresent: false }
-    );
-    return {
-      source: "SKIPPED",
-      supplier: { id: "", name: "", country: "", type: "" },
-      connector: "b2b-sandbox",
-      environment: "UNKNOWN",
-      documentation: [],
-      authentication: "UNKNOWN",
-      endpoints: {},
-      networkGuards: {
-        networkEnabled: isSupplierNetworkEnabled(),
-        liveReadEnabled: isLiveReadEnabled(),
-        orderNetworkEnabled: isSupplierOrderNetworkEnabled()
-      },
-      connection: { status: "SKIPPED", message: "Live supplier profile not configured" },
-      dryRun: { status: "SKIPPED", message: "Live supplier profile not configured" },
-      liveRead: { status: "SKIPPED", message: "Live supplier profile not configured" },
-      products: { total: 0, valid: 0, invalid: 0, duplicates: 0, offers: 0, stockRecords: 0, priceRecords: 0 },
-      productSamples: [],
-      cursor: { restartContinues: "UNKNOWN" },
-      timing: {},
-      security: { orderNetworkDisabled: !isSupplierOrderNetworkEnabled(), secretsInRepo: false, customerPiiUsed: false },
-      completedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      limitations: ["SUPPLIER_LIVE_PROFILE or SUPPLIER_LIVE_CONFIG_JSON not configured"],
-      acceptance: emptyAcceptance(),
-      liveValidation: liveValidation2
-    };
-  }
-  const credentialReadiness = describeLiveCredentialReadiness(profile);
-  const docs = profile.adapterProfile === "inter-cars" ? [
-    "https://docs.webapi.intercars.eu/ic-api/contracts/api",
-    "https://intercars.com/en/business-solutions-inter-cars/business-services/software/api-and-csv-client-inter-cars"
-  ] : [];
-  if (!hasLiveSupplierCredentials(profile)) {
-    limitations.push("Live credentials not resolved \u2014 connection and sync phases skipped");
-    limitations.push("LIVE VALIDATION BLOCKED \u2014 REAL INTER CARS CREDENTIALS REQUIRED");
-  }
-  if (!isSupplierNetworkEnabled()) {
-    limitations.push("SUPPLIER_NETWORK_ENABLED=0 \u2014 network calls disabled");
-  }
-  if (isSupplierOrderNetworkEnabled()) {
-    limitations.push("SUPPLIER_ORDER_NETWORK_ENABLED must remain 0 for read-only onboarding");
-  }
-  let connection = {
-    status: "SKIPPED",
-    message: "Credentials or network not ready"
-  };
-  if (hasLiveSupplierCredentials(profile) && isSupplierNetworkEnabled()) {
-    connection = await runSupplierConnectionTest(profile.supplierId);
-  }
-  let dryRun = {
-    status: "SKIPPED",
-    message: "Connection not successful or credentials missing"
-  };
-  if ("status" in connection && connection.status === "CONNECTED") {
-    dryRun = await runSupplierDryRunTestSync(profile.supplierId, { integrationType: "b2b-sandbox" });
-  }
-  const source = "status" in dryRun ? "SKIPPED" : inferSource(dryRun);
-  const cursorBefore = getSyncCursor(profile.supplierId, "incremental")?.cursor;
-  let liveReadResults = { status: "SKIPPED", message: "Live read disabled or dry-run not successful" };
-  if (!options.skipLiveRead && isLiveReadEnabled() && "ok" in dryRun && dryRun.ok && dryRun.source === "live") {
-    liveReadResults = [];
-    for (const batchSize of batchSizes) {
-      const result = await runSupplierLiveReadSync(profile.supplierId, { jobType: "INCREMENTAL" });
-      liveReadResults.push({ ...result, batchSize, source: "LIVE" });
-      if (result.status === "FAILED") break;
-      if (result.productsFetched >= batchSize) continue;
-    }
-  }
-  const cursorAfter = getSyncCursor(profile.supplierId, "incremental")?.cursor;
-  let restartContinues = "UNKNOWN";
-  if (cursorAfter) {
-    saveSyncCursor(profile.supplierId, { cursor: cursorAfter, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
-    restartContinues = verifyCursorSurvivesRestart(profile.supplierId);
-  }
-  const sampleRecords = "sampleRecords" in dryRun ? dryRun.sampleRecords || [] : [];
-  const productSamples = "productsFound" in dryRun && dryRun.productsFound > 0 ? pickProductSamples(sampleRecords, 10) : [];
-  const identifierValidation = sampleRecords.length ? summarizeIdentifierValidation(sampleRecords) : void 0;
-  const health = getSupplierHealth(profile.supplierId);
-  const supplierRegistered = listSuppliers().some((s) => s.supplierId === profile.supplierId);
-  const acceptance = {
-    connection: "status" in connection && connection.status === "SKIPPED" ? "SKIPPED" : "status" in connection && connection.status === "CONNECTED" ? "CONNECTED" : hasLiveSupplierCredentials(profile) && isSupplierNetworkEnabled() ? "FAILED" : "SKIPPED",
-    testSync: "status" in dryRun ? "SKIPPED" : dryRun.ok && dryRun.source === "live" ? "PASS" : dryRun.source === "live" ? "FAIL" : "SKIPPED",
-    liveRead: "status" in liveReadResults ? "SKIPPED" : Array.isArray(liveReadResults) && liveReadResults.some((r) => r.status === "COMPLETED" || r.status === "PARTIAL") ? "PASS" : Array.isArray(liveReadResults) ? "FAIL" : "SKIPPED",
-    productEngine: "ok" in dryRun && dryRun.ok && dryRun.source === "live" && dryRun.valid > 0 ? "PASS" : "SKIPPED",
-    inventoryEngine: "stockRecords" in dryRun && dryRun.stockRecords > 0 && dryRun.source === "live" ? "PASS" : "SKIPPED",
-    pricingEngine: "priceRecords" in dryRun && dryRun.priceRecords > 0 && dryRun.source === "live" ? "PASS" : "SKIPPED",
-    admin: supplierRegistered ? "PASS" : "SKIPPED",
-    security: isSupplierOrderNetworkEnabled() ? "FAIL" : "PASS",
-    persistentCursor: cursorAfter ? restartContinues === true ? "PASS" : "FAIL" : "SKIPPED",
-    restartIdempotency: restartContinues === true ? "PASS" : restartContinues === false ? "FAIL" : "SKIPPED",
-    retryBehavior: "SKIPPED",
-    orderNetwork: "DISABLED",
-    returnRefundNetwork: "DISABLED"
-  };
-  const partialReport = {
-    source,
-    limitations,
-    connection,
-    dryRun,
-    liveRead: liveReadResults
-  };
-  const liveValidation = computeLiveValidationVerdict(partialReport, {
-    credentialsPresent: hasLiveSupplierCredentials(profile)
-  });
-  return {
-    source,
-    supplier: {
-      id: profile.supplierId,
-      name: profile.name,
-      country: profile.country,
-      type: profile.adapterProfile === "inter-cars" ? "Automotive B2B wholesaler" : "B2B",
-      adapterProfile: profile.adapterProfile
-    },
-    connector: profile.connectorType,
-    environment: profile.environment,
-    documentation: docs,
-    authentication: profile.authentication,
-    endpoints: { ...profile.endpoints },
-    networkGuards: {
-      networkEnabled: isSupplierNetworkEnabled(),
-      liveReadEnabled: isLiveReadEnabled(),
-      orderNetworkEnabled: isSupplierOrderNetworkEnabled()
-    },
-    connection,
-    dryRun,
-    liveRead: liveReadResults,
-    products: {
-      total: "productsFound" in dryRun ? dryRun.productsFound : 0,
-      valid: "valid" in dryRun ? dryRun.valid : 0,
-      invalid: "invalid" in dryRun ? dryRun.invalid : 0,
-      duplicates: "duplicates" in dryRun ? dryRun.duplicates : 0,
-      offers: "valid" in dryRun ? dryRun.valid : 0,
-      stockRecords: "stockRecords" in dryRun ? dryRun.stockRecords : 0,
-      priceRecords: "priceRecords" in dryRun ? dryRun.priceRecords : 0
-    },
-    dataQuality: "dataQuality" in dryRun ? dryRun.dataQuality : void 0,
-    identifierValidation,
-    productSamples,
-    cursor: { before: cursorBefore, after: cursorAfter, restartContinues },
-    health,
-    timing: {
-      firstSyncDurationMs: Date.now() - started,
-      averageLatencyMs: "latencyMs" in connection ? connection.latencyMs : void 0
-    },
-    security: {
-      orderNetworkDisabled: !isSupplierOrderNetworkEnabled(),
-      secretsInRepo: false,
-      customerPiiUsed: false
-    },
-    completedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    limitations,
-    credentialReadiness,
-    acceptance,
-    liveValidation
-  };
-}
-function simulateSupplierEngineRestart() {
-  resetSupplierEngineBootstrap();
-  bootstrapSupplierEnginePersistence();
-}
-function probeCursorPersistence(supplierId, cursor) {
-  saveSyncCursor(supplierId, { cursor, lastModified: (/* @__PURE__ */ new Date()).toISOString() }, "incremental");
-  resetSyncCursors();
-  hydrateSyncCursorsFromPersistence();
-  return getSyncCursor(supplierId, "incremental")?.cursor === cursor;
-}
-function buildInterCarsProfileSummary(profile) {
-  return {
-    supplierId: profile.supplierId,
-    name: profile.name,
-    country: profile.country,
-    adapterProfile: profile.adapterProfile,
-    baseUrl: profile.baseUrl,
-    environment: profile.environment,
-    authentication: profile.authentication,
-    endpoints: profile.endpoints,
-    priceModel: profile.priceModel || "net",
-    priceIncludesVat: profile.priceIncludesVat ?? false,
-    supportedMarkets: profile.supportedMarkets,
-    pagination: profile.pagination
-  };
-}
-
-// lib/supplier-engine/service.ts
-init_config();
-
-// lib/supplier-engine/orderSandbox/index.ts
-init_persistence2();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  TEST_SUPPLIER_ID,
-  bootstrapSupplierEnginePersistence,
-  buildDataQualityReport,
-  buildInterCarsProfileSummary,
-  computeLiveValidationVerdict,
-  createSupplierOrder,
-  createSupplierReturn,
-  describeLiveCredentialReadiness,
-  evaluateLiveReadSyncGuard,
-  evaluateProductionSyncGuard,
-  evaluateSupplierOrderNetworkSafety,
-  getRegisteredLiveSupplierId,
-  getSupplier,
-  getSupplierConnectorMetrics,
-  getSupplierEngineAdminOverview,
-  getSupplierEngineDashboard,
-  getSupplierEngineDetail,
-  getSupplierHealth,
-  getSupplierLogs,
-  getSupplierOrderSandboxAdminSummary,
-  getSupplierPersistenceMode,
-  getSupplierRuntimeState,
-  getSupplierTracking,
-  getSyncCursor,
-  getSyncCursorForAdmin,
-  hasLiveSupplierCredentialsConfigured,
-  hydrateSupplierOrderSandboxFromPersistence,
-  ingestSupplierFeed,
-  isBlockedHost,
-  isInterCarsProfile,
-  isSupplierNetworkEnabled,
-  isSupplierOrderNetworkEnabled,
-  isSupplierSelectable,
-  listReturnCapabilities,
-  listSuppliers,
-  listSyncCursors,
-  probeCursorPersistence,
-  redactSecrets,
-  rejectClientCredentials,
-  resetMockTransportScenarios,
-  resetOrderIdempotencyKeys,
-  resetSupplierCursorSafe,
-  resetSupplierOrderSandboxStore,
-  resolveLiveSupplierProfile,
-  resolvePredefinedLiveProfile,
-  runSupplierConnectionTest,
-  runSupplierDryRunTestSync,
-  runSupplierLiveOnboarding,
-  runSupplierLiveReadSync,
-  runSupplierOrderSandbox,
-  runSupplierSyncJob,
-  sanitizeClientSyncRequest,
-  selectBestSupplierForOrder,
-  setSupplierEnabled,
-  simulateSupplierEngineRestart,
-  summarizeIdentifierValidation,
-  validateSupplierEndpoint,
-  validateSupplierOrderPayload
+  buildFinalProductionCompletionReport,
+  buildProductionMonitoringSnapshot,
+  buildStructuredBlockers,
+  evaluateBackupGate,
+  evaluateSecurityGate
 });

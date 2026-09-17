@@ -1,10 +1,17 @@
+/** Canonical provider access states — never conflate with MOCK/SANDBOX success. */
 export type AccessStatus =
   | "NOT_CONFIGURED"
   | "CONFIGURED"
-  | "NOT_AVAILABLE"
-  | "UNVERIFIED"
+  | "VALIDATING"
+  | "VALIDATED"
   | "BLOCKED"
-  | "VALIDATED";
+  | "FAILED"
+  | "REVOKED"
+  | "EXPIRED"
+  | "NOT_AVAILABLE"
+  | "UNVERIFIED";
+
+export type ValidationEnvironment = "MOCK" | "SANDBOX" | "CONTROLLED_VALIDATION" | "PRODUCTION";
 
 export interface SecretRefStatus {
   providerId: string;
@@ -21,6 +28,42 @@ export interface AccessChecklistItem {
   required: true;
 }
 
+export interface ProviderAccessEvidence {
+  evidenceId: string;
+  provider: string;
+  capability: string;
+  endpoint: string;
+  timestamp: string;
+  correlationId: string;
+  requestHash: string;
+  responseStatus: number;
+  supplierReference?: string;
+  environment: ValidationEnvironment;
+  operator?: string;
+}
+
+export interface ProviderAccessState {
+  providerId: string;
+  domain: string;
+  accessState: AccessStatus;
+  credentialConfigured: boolean;
+  secretRefConfigured: boolean;
+  endpointConfigured: boolean;
+  networkPermission: boolean;
+  healthCheck: AccessStatus;
+  authenticationCheck: AccessStatus;
+  capabilityCheck: AccessStatus;
+  liveValidation: AccessStatus;
+  evidenceCount: number;
+  lastValidationAt?: string;
+  expirationAt?: string;
+  operator?: string;
+  correlationId?: string;
+  failureReason?: string;
+  productionEnabled: "OFF" | "ON" | "BLOCKED";
+  blockers: string[];
+}
+
 export interface ProviderAccessReport {
   providerId: string;
   domain: string;
@@ -29,6 +72,7 @@ export interface ProviderAccessReport {
   liveValidation: AccessStatus;
   productionEnabled: "OFF" | "ON" | "BLOCKED";
   blockers: string[];
+  state?: ProviderAccessState;
 }
 
 export interface MissingProductionAccessReport {

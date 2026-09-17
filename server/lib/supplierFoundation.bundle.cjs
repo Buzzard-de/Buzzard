@@ -409,7 +409,10 @@ var init_inter_cars_profile_template = __esm({
         currency: "Per-response currencyCode (EUR for DE customers when configured)",
         updateFrequency: "Real-time for API; CSV feeds daily",
         dropshipping: "Contact sales representative \u2014 not assumed enabled",
-        whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+        whiteLabel: "Contact sales representative \u2014 not assumed enabled",
+        productionBaseUrl: "https://gw.intercars.eu",
+        productionCreateOrderPath: "/ic/order/createOrder",
+        productionAccessNote: "Override via SUPPLIER_LIVE_CONFIG_JSON for production. Do not enable createOrder until #342 controlled validation completes."
       },
       supplierId: "SUP-INTER-CARS-001",
       name: "Inter Cars",

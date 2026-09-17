@@ -59,8 +59,10 @@ export function isMockCredentialValue(value: string): boolean {
     normalized === "mock" ||
     normalized === "test" ||
     normalized === "fake" ||
+    normalized === "dummy-token" ||
     normalized.startsWith("mock-") ||
     normalized.startsWith("test-") ||
+    normalized.startsWith("dummy-") ||
     normalized.includes("placeholder")
   );
 }

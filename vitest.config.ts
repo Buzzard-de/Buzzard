@@ -23,6 +23,7 @@ export default defineConfig({
       "lib/supplier-first-production-order/**/*.test.ts",
       "lib/supplier-controlled-go-live/**/*.test.ts",
       "lib/supplier-go-live-observation/**/*.test.ts",
+      "lib/supplier-inter-cars-production-access/**/*.test.ts",
       "lib/marketplace-engine/**/*.test.ts",
       "lib/returns-engine/**/*.test.ts",
       "lib/ai-orchestrator/**/*.test.ts",

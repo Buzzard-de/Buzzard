@@ -1,0 +1,40 @@
+export type CredentialDisplayStatus =
+  | "NOT_CONFIGURED"
+  | "CONFIGURED"
+  | "VALID"
+  | "INVALID"
+  | "EXPIRED"
+  | "BLOCKED";
+
+export type LiveValidationPrepStatus = "READY" | "BLOCKED" | "NOT_RUN";
+
+export type ReadOnlyLiveStatus = "VALIDATED" | "NOT_RUN" | "BLOCKED";
+
+export interface ProductionAccessChecklistItem {
+  id: string;
+  label: string;
+  status: "PASS" | "BLOCKED" | "UNVERIFIED";
+  message: string;
+}
+
+export interface ProductionAccessDiagnostic {
+  interCarsProfile: "CONFIGURED" | "NOT_CONFIGURED";
+  environment: string;
+  supplierProfile: string;
+  productionCredentials: CredentialDisplayStatus;
+  credentialType: string;
+  readOnlyLiveValidation: ReadOnlyLiveStatus;
+  controlledLiveValidation: LiveValidationPrepStatus;
+  createOrderCapability: "VALIDATED" | "UNVERIFIED" | "BLOCKED";
+  productionNetwork: "ON" | "OFF";
+  supplierOrderNetwork: "ON" | "OFF";
+  scopedValidationNetwork: "ON" | "OFF";
+  realHttpCalls: number;
+  realCreateOrderCalls: number;
+  realSupplierOrders: number;
+  realCustomerOrders: number;
+  checklist: ProductionAccessChecklistItem[];
+  blockers: string[];
+  correlationId: string;
+  evaluatedAt: string;
+}

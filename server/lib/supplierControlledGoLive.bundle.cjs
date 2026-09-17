@@ -4835,7 +4835,10 @@ var inter_cars_profile_template_default = {
     currency: "Per-response currencyCode (EUR for DE customers when configured)",
     updateFrequency: "Real-time for API; CSV feeds daily",
     dropshipping: "Contact sales representative \u2014 not assumed enabled",
-    whiteLabel: "Contact sales representative \u2014 not assumed enabled"
+    whiteLabel: "Contact sales representative \u2014 not assumed enabled",
+    productionBaseUrl: "https://gw.intercars.eu",
+    productionCreateOrderPath: "/ic/order/createOrder",
+    productionAccessNote: "Override via SUPPLIER_LIVE_CONFIG_JSON for production. Do not enable createOrder until #342 controlled validation completes."
   },
   supplierId: "SUP-INTER-CARS-001",
   name: "Inter Cars",
@@ -5245,7 +5248,7 @@ function getReadinessPolicy() {
 }
 function isMockCredentialValue(value) {
   const normalized = value.trim().toLowerCase();
-  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.includes("placeholder");
+  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized === "dummy-token" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.startsWith("dummy-") || normalized.includes("placeholder");
 }
 
 // data/global/global_countries_35.json

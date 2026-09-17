@@ -6,13 +6,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __commonJS = (cb, mod) => function __require() {
-  try {
-    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-  } catch (e) {
-    throw mod = 0, e;
-  }
-};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -35,4761 +28,14 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// server/lib/dbPaths.js
-var require_dbPaths = __commonJS({
-  "server/lib/dbPaths.js"(exports2, module2) {
-    "use strict";
-    var fs2 = require("fs");
-    var path2 = require("path");
-    var serverDataDir = path2.join(__dirname, "..", "data");
-    var defaultDbPath = path2.join(serverDataDir, "buzzard.db");
-    var defaultBackupDir = path2.join(serverDataDir, "backups");
-    function resolveDbPath() {
-      if (process.env.BUZZARD_DB_PATH) {
-        return path2.resolve(process.env.BUZZARD_DB_PATH);
-      }
-      return defaultDbPath;
-    }
-    function resolveBackupDir() {
-      if (process.env.BUZZARD_BACKUP_DIR) {
-        return path2.resolve(process.env.BUZZARD_BACKUP_DIR);
-      }
-      return defaultBackupDir;
-    }
-    function ensureDbDirectory(dbPath = resolveDbPath()) {
-      fs2.mkdirSync(path2.dirname(dbPath), { recursive: true });
-      return dbPath;
-    }
-    function getRenderDiskDiagnostics() {
-      const mountPath = "/var/data";
-      let exists = false;
-      let writable = false;
-      try {
-        exists = fs2.existsSync(mountPath);
-        if (exists) {
-          fs2.accessSync(mountPath, fs2.constants.W_OK);
-          writable = true;
-        }
-      } catch {
-        writable = false;
-      }
-      return {
-        mountPath,
-        exists,
-        writable,
-        envBuzzardDbPath: process.env.BUZZARD_DB_PATH || null,
-        envBuzzardBackupDir: process.env.BUZZARD_BACKUP_DIR || null
-      };
-    }
-    function getPersistenceInfo(dbPath = resolveDbPath()) {
-      const isProduction = process.env.NODE_ENV === "production";
-      const onRenderDisk = dbPath.startsWith("/var/data");
-      const customPath = Boolean(process.env.BUZZARD_DB_PATH);
-      const persistent = onRenderDisk || customPath && !dbPath.includes("/tmp");
-      const ephemeralRisk = isProduction && !persistent ? "Production without persistent disk \u2014 SQLite data lost on redeploy" : null;
-      let mode = "development_default";
-      if (onRenderDisk) mode = "render_persistent_disk";
-      else if (customPath) mode = "custom_path";
-      else if (isProduction) mode = "production_ephemeral";
-      const disk = getRenderDiskDiagnostics();
-      let syncHint = null;
-      if (isProduction && !persistent) {
-        if (disk.exists && !disk.envBuzzardDbPath) {
-          syncHint = "Disk /var/data is mounted but BUZZARD_DB_PATH is missing \u2014 set env and redeploy buzzard-api";
-        } else if (!disk.exists && !disk.envBuzzardDbPath) {
-          syncHint = "No /var/data mount and no BUZZARD_DB_PATH \u2014 Blueprint sync may be pending or not applied to buzzard-api";
-        } else if (disk.envBuzzardDbPath && !onRenderDisk) {
-          syncHint = "BUZZARD_DB_PATH is set but DB still on default path \u2014 redeploy buzzard-api";
-        }
-      }
-      return {
-        path: dbPath,
-        mode,
-        persistent,
-        ephemeralRisk,
-        backupDir: resolveBackupDir(),
-        env: process.env.NODE_ENV || "development",
-        renderDisk: disk,
-        syncHint
-      };
-    }
-    module2.exports = {
-      serverDataDir,
-      defaultDbPath,
-      defaultBackupDir,
-      resolveDbPath,
-      resolveBackupDir,
-      ensureDbDirectory,
-      getRenderDiskDiagnostics,
-      getPersistenceInfo
-    };
-  }
-});
-
-// server/lib/db.js
-var require_db = __commonJS({
-  "server/lib/db.js"(exports2, module2) {
-    "use strict";
-    var fs2 = require("fs");
-    var path2 = require("path");
-    var Database = require("better-sqlite3");
-    var { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require_dbPaths();
-    var dataDir = path2.join(__dirname, "..", "data");
-    fs2.mkdirSync(dataDir, { recursive: true });
-    var dbPath = ensureDbDirectory(resolveDbPath());
-    var db = new Database(dbPath);
-    db.pragma("foreign_keys = ON");
-    db.exec(`
-CREATE TABLE IF NOT EXISTS users (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- email TEXT UNIQUE NOT NULL,
- password_hash TEXT NOT NULL,
- role TEXT NOT NULL DEFAULT 'customer',
- name TEXT NOT NULL,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS addresses (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- user_id INTEGER NOT NULL,
- name TEXT NOT NULL,
- line1 TEXT NOT NULL,
- city TEXT NOT NULL,
- postal_code TEXT NOT NULL,
- country_code TEXT NOT NULL,
- FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS categories (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- name TEXT UNIQUE NOT NULL
-);
-CREATE TABLE IF NOT EXISTS products (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- sku TEXT UNIQUE NOT NULL,
- name TEXT NOT NULL,
- description TEXT,
- category_id INTEGER,
- price_eur REAL NOT NULL,
- weight_kg REAL NOT NULL DEFAULT 0,
- stock INTEGER NOT NULL DEFAULT 0,
- active INTEGER NOT NULL DEFAULT 1,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
- FOREIGN KEY(category_id) REFERENCES categories(id)
-);
-CREATE TABLE IF NOT EXISTS carts (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- user_id INTEGER UNIQUE,
- session_id TEXT UNIQUE,
- updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS cart_items (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- cart_id INTEGER NOT NULL,
- product_id INTEGER NOT NULL,
- quantity INTEGER NOT NULL,
- UNIQUE(cart_id, product_id),
- FOREIGN KEY(cart_id) REFERENCES carts(id) ON DELETE CASCADE,
- FOREIGN KEY(product_id) REFERENCES products(id)
-);
-CREATE TABLE IF NOT EXISTS orders (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- order_number TEXT UNIQUE NOT NULL,
- user_id INTEGER,
- country_code TEXT NOT NULL,
- currency TEXT NOT NULL,
- subtotal REAL NOT NULL,
- shipping REAL NOT NULL,
- tax REAL NOT NULL,
- total REAL NOT NULL,
- status TEXT NOT NULL DEFAULT 'pending_payment',
- shipping_status TEXT NOT NULL DEFAULT 'pending',
- payment_status TEXT NOT NULL DEFAULT 'pending',
- shipping_address TEXT NOT NULL,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
- FOREIGN KEY(user_id) REFERENCES users(id)
-);
-CREATE TABLE IF NOT EXISTS order_items (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- order_id INTEGER NOT NULL,
- product_id INTEGER NOT NULL,
- sku TEXT NOT NULL,
- name TEXT NOT NULL,
- unit_price_eur REAL NOT NULL,
- quantity INTEGER NOT NULL,
- FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS integration_events (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- event_key TEXT UNIQUE NOT NULL,
- type TEXT NOT NULL,
- order_number TEXT,
- provider TEXT,
- status TEXT NOT NULL,
- payload TEXT,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS automation_jobs (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- job_key TEXT UNIQUE NOT NULL,
- type TEXT NOT NULL,
- order_number TEXT,
- status TEXT NOT NULL DEFAULT 'queued',
- attempts INTEGER NOT NULL DEFAULT 0,
- next_run_at TEXT,
- last_error TEXT,
- payload TEXT,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS order_flow (
- order_number TEXT PRIMARY KEY,
- payment_status TEXT NOT NULL DEFAULT 'pending',
- fulfillment_status TEXT NOT NULL DEFAULT 'pending',
- shipping_status TEXT NOT NULL DEFAULT 'pending',
- supplier_status TEXT NOT NULL DEFAULT 'pending',
- tracking_number TEXT,
- last_error TEXT,
- updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS suppliers (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- code TEXT UNIQUE NOT NULL,
- name TEXT NOT NULL,
- country TEXT,
- feed_type TEXT NOT NULL DEFAULT 'manual',
- feed_url TEXT,
- api_key TEXT,
- active INTEGER NOT NULL DEFAULT 1,
- dropship INTEGER NOT NULL DEFAULT 0,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS supplier_products (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- supplier_id INTEGER NOT NULL,
- supplier_sku TEXT NOT NULL,
- buzzard_sku TEXT,
- name TEXT,
- cost_eur REAL,
- stock INTEGER NOT NULL DEFAULT 0,
- active INTEGER NOT NULL DEFAULT 1,
- updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
- UNIQUE(supplier_id, supplier_sku),
- FOREIGN KEY(supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS sync_runs (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- supplier_id INTEGER NOT NULL,
- status TEXT NOT NULL,
- imported INTEGER NOT NULL DEFAULT 0,
- updated INTEGER NOT NULL DEFAULT 0,
- errors INTEGER NOT NULL DEFAULT 0,
- message TEXT,
- started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
- FOREIGN KEY(supplier_id) REFERENCES suppliers(id)
-);
-CREATE TABLE IF NOT EXISTS vehicles (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- make TEXT NOT NULL,
- model TEXT NOT NULL,
- year_from INTEGER,
- year_to INTEGER,
- engine TEXT
-);
-CREATE TABLE IF NOT EXISTS compatibility (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- product_sku TEXT NOT NULL,
- vehicle_id INTEGER NOT NULL,
- status TEXT NOT NULL DEFAULT 'compatible',
- source TEXT NOT NULL DEFAULT 'tecdoc_adapter',
- UNIQUE(product_sku, vehicle_id),
- FOREIGN KEY(vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS sync_errors (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- supplier_id INTEGER,
- message TEXT NOT NULL,
- payload TEXT,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS product_images (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- product_id INTEGER NOT NULL,
- url TEXT NOT NULL,
- alt_text TEXT DEFAULT '',
- sort_order INTEGER DEFAULT 0,
- FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS product_audit (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- product_id INTEGER,
- action TEXT,
- details TEXT,
- created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE IF NOT EXISTS locales (
- code TEXT PRIMARY KEY,
- name TEXT NOT NULL,
- currency TEXT NOT NULL,
- country_code TEXT NOT NULL,
- active INTEGER NOT NULL DEFAULT 1
-);
-CREATE TABLE IF NOT EXISTS product_translations (
- product_id INTEGER NOT NULL,
- locale TEXT NOT NULL,
- name TEXT NOT NULL,
- description TEXT DEFAULT '',
- seo_title TEXT DEFAULT '',
- seo_description TEXT DEFAULT '',
- slug TEXT DEFAULT '',
- PRIMARY KEY(product_id, locale),
- FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS category_translations (
- category_id INTEGER NOT NULL,
- locale TEXT NOT NULL,
- name TEXT NOT NULL,
- slug TEXT DEFAULT '',
- PRIMARY KEY(category_id, locale),
- FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS price_overrides (
- product_id INTEGER NOT NULL,
- locale TEXT NOT NULL,
- currency TEXT NOT NULL,
- price REAL NOT NULL,
- PRIMARY KEY(product_id, locale),
- FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS shipping_rates (
- country_code TEXT NOT NULL,
- method TEXT NOT NULL,
- price REAL NOT NULL,
- free_from REAL NOT NULL DEFAULT 0,
- PRIMARY KEY(country_code, method)
-);
-CREATE TABLE IF NOT EXISTS tax_rates (
- country_code TEXT PRIMARY KEY,
- rate REAL NOT NULL
-);
-`);
-    function slugify(value) {
-      return String(value || "").toLowerCase().trim().replace(/[^a-z0-9äöüß\s-]/gi, "").replace(/\s+/g, "-").replace(/-+/g, "-");
-    }
-    function ensureColumn(table, column, definition) {
-      const columns = db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name);
-      if (!columns.includes(column)) {
-        db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
-      }
-    }
-    function migrateCatalogSeo() {
-      ensureColumn("categories", "slug", "TEXT");
-      ensureColumn("categories", "active", "INTEGER NOT NULL DEFAULT 1");
-      ensureColumn("products", "slug", "TEXT");
-      ensureColumn("products", "supplier_cost_eur", "REAL DEFAULT 0");
-      ensureColumn("products", "margin_floor", "REAL DEFAULT 0.12");
-      ensureColumn("products", "image_url", "TEXT DEFAULT ''");
-      ensureColumn("products", "seo_title", "TEXT DEFAULT ''");
-      ensureColumn("products", "seo_description", "TEXT DEFAULT ''");
-      ensureColumn("products", "updated_at", "TEXT");
-      const categories2 = db.prepare("SELECT id, name, slug FROM categories").all();
-      const updateCategorySlug = db.prepare("UPDATE categories SET slug = ? WHERE id = ?");
-      for (const row of categories2) {
-        if (!row.slug) updateCategorySlug.run(slugify(row.name), row.id);
-      }
-      const products = db.prepare("SELECT id, sku, name, slug, seo_title, seo_description FROM products").all();
-      const updateProductMeta = db.prepare(`
-    UPDATE products
-    SET slug = ?, seo_title = ?, seo_description = ?, updated_at = COALESCE(updated_at, CURRENT_TIMESTAMP)
-    WHERE id = ?
-  `);
-      for (const row of products) {
-        const slug = row.slug || slugify(row.name || row.sku);
-        const seoTitle = row.seo_title || `${row.name} | BUZZARD`;
-        const seoDescription = row.seo_description || row.name || "";
-        updateProductMeta.run(slug, seoTitle, seoDescription, row.id);
-      }
-      db.exec(`
-    UPDATE products
-    SET updated_at = COALESCE(updated_at, created_at, datetime('now'))
-    WHERE updated_at IS NULL OR updated_at = ''
-  `);
-    }
-    migrateCatalogSeo();
-    var DEFAULT_LOCALES = [
-      ["de-DE", "Deutsch", "EUR", "DE"],
-      ["en-GB", "English", "GBP", "GB"],
-      ["fr-FR", "Fran\xE7ais", "EUR", "FR"],
-      ["nl-NL", "Nederlands", "EUR", "NL"],
-      ["pl-PL", "Polski", "PLN", "PL"],
-      ["tr-TR", "T\xFCrk\xE7e", "TRY", "TR"],
-      ["sr-RS", "Srpski", "RSD", "RS"],
-      ["bs-BA", "Bosanski", "BAM", "BA"],
-      ["sq-AL", "Shqip", "ALL", "AL"],
-      ["mk-MK", "\u041C\u0430\u043A\u0435\u0434\u043E\u043D\u0441\u043A\u0438", "MKD", "MK"],
-      ["bg-BG", "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", "BGN", "BG"],
-      ["ro-RO", "Rom\xE2n\u0103", "RON", "RO"],
-      ["el-GR", "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", "EUR", "GR"],
-      ["hr-HR", "Hrvatski", "EUR", "HR"],
-      ["hu-HU", "Magyar", "HUF", "HU"],
-      ["cs-CZ", "\u010Ce\u0161tina", "CZK", "CZ"],
-      ["sk-SK", "Sloven\u010Dina", "EUR", "SK"],
-      ["sl-SI", "Sloven\u0161\u010Dina", "EUR", "SI"],
-      ["it-IT", "Italiano", "EUR", "IT"],
-      ["es-ES", "Espa\xF1ol", "EUR", "ES"]
-    ];
-    var DEFAULT_TAX_RATES = [
-      ["DE", 0.19],
-      ["FR", 0.2],
-      ["NL", 0.21],
-      ["PL", 0.23],
-      ["GB", 0.2],
-      ["TR", 0.2],
-      ["RS", 0.2],
-      ["BA", 0.17],
-      ["AL", 0.2],
-      ["MK", 0.18],
-      ["BG", 0.2],
-      ["RO", 0.21],
-      ["GR", 0.24],
-      ["HR", 0.25],
-      ["HU", 0.27],
-      ["CZ", 0.21],
-      ["SK", 0.23],
-      ["SI", 0.22],
-      ["IT", 0.22],
-      ["ES", 0.21]
-    ];
-    function migrateLocalizationFeeds() {
-      const insertLocale = db.prepare(
-        "INSERT OR IGNORE INTO locales(code, name, currency, country_code) VALUES(?,?,?,?)"
-      );
-      for (const row of DEFAULT_LOCALES) insertLocale.run(...row);
-      const insertTax = db.prepare("INSERT OR IGNORE INTO tax_rates(country_code, rate) VALUES(?,?)");
-      for (const row of DEFAULT_TAX_RATES) insertTax.run(...row);
-      const shippingCount = db.prepare("SELECT COUNT(*) n FROM shipping_rates").get().n;
-      if (shippingCount === 0) {
-        const insertShipping = db.prepare(
-          "INSERT INTO shipping_rates(country_code, method, price, free_from) VALUES(?,?,?,?)"
-        );
-        insertShipping.run("DE", "standard", 4.99, 49);
-        insertShipping.run("GB", "standard", 6.99, 59);
-        insertShipping.run("TR", "standard", 5.99, 49);
-      }
-      const translationCount = db.prepare("SELECT COUNT(*) n FROM product_translations").get().n;
-      if (translationCount === 0) {
-        const products = db.prepare("SELECT id, name, description, slug, seo_title, seo_description FROM products LIMIT 3").all();
-        const insertTranslation = db.prepare(`
-      INSERT OR IGNORE INTO product_translations(product_id, locale, name, description, seo_title, seo_description, slug)
-      VALUES(?,?,?,?,?,?,?)
-    `);
-        for (const product of products) {
-          insertTranslation.run(
-            product.id,
-            "de-DE",
-            product.name,
-            product.description || "",
-            product.seo_title || product.name,
-            product.seo_description || product.description || "",
-            product.slug || slugify(product.name)
-          );
-          insertTranslation.run(
-            product.id,
-            "en-GB",
-            `${product.name} (EN)`,
-            product.description || "",
-            `${product.name} | BUZZARD`,
-            product.seo_description || product.description || "",
-            product.slug || slugify(product.name)
-          );
-        }
-      }
-      const demoCosts = {
-        "BZ-OIL-5W30": [24, 39.9],
-        "BZ-CLEAN-001": [7, 12.9],
-        "BZ-GARDEN-001": [28, 49.9],
-        "BZ-HOME-001": [15, 24.9],
-        "BZ-PET-001": [18, 29.9],
-        "BZ-SPORT-001": [6, 14.9]
-      };
-      const restorePrice = db.prepare(
-        "UPDATE products SET supplier_cost_eur = ?, price_eur = ? WHERE sku = ? AND (price_eur IS NULL OR price_eur <= 0)"
-      );
-      for (const [sku, [cost, price]] of Object.entries(demoCosts)) {
-        restorePrice.run(cost, price, sku);
-      }
-    }
-    migrateLocalizationFeeds();
-    function migrateCustomerCheckout() {
-      ensureColumn("addresses", "phone", "TEXT DEFAULT ''");
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS coupons (
-      code TEXT PRIMARY KEY,
-      type TEXT NOT NULL,
-      value REAL NOT NULL,
-      min_order REAL DEFAULT 0,
-      active INTEGER DEFAULT 1,
-      expires_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS wishlists (
-      user_id INTEGER NOT NULL,
-      product_id TEXT NOT NULL,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY(user_id, product_id),
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS reviews (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      product_id TEXT NOT NULL,
-      rating INTEGER NOT NULL,
-      title TEXT DEFAULT '',
-      body TEXT DEFAULT '',
-      status TEXT DEFAULT 'pending',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
-    );
-    CREATE TABLE IF NOT EXISTS notifications (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      title TEXT NOT NULL,
-      message TEXT NOT NULL,
-      read_at TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS checkout_drafts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER UNIQUE NOT NULL,
-      address_id INTEGER,
-      country_code TEXT,
-      currency TEXT,
-      shipping_method TEXT,
-      coupon_code TEXT,
-      notes TEXT,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS shipping_methods (
-      country_code TEXT NOT NULL,
-      code TEXT NOT NULL,
-      name TEXT NOT NULL,
-      price REAL NOT NULL,
-      free_from REAL DEFAULT 0,
-      PRIMARY KEY(country_code, code)
-    );
-  `);
-      const couponCount = db.prepare("SELECT COUNT(*) n FROM coupons").get().n;
-      if (couponCount === 0) {
-        const insertCoupon = db.prepare(
-          "INSERT INTO coupons(code, type, value, min_order) VALUES(?,?,?,?)"
-        );
-        insertCoupon.run("WELCOME10", "percent", 10, 30);
-        insertCoupon.run("BUZZARD5", "fixed", 5, 50);
-      }
-      const methodCount = db.prepare("SELECT COUNT(*) n FROM shipping_methods").get().n;
-      if (methodCount === 0) {
-        const insertMethod = db.prepare(
-          "INSERT INTO shipping_methods(country_code, code, name, price, free_from) VALUES(?,?,?,?,?)"
-        );
-        [
-          ["DE", "standard", "DHL Standard", 4.99, 79],
-          ["DE", "express", "Express", 9.99, 149],
-          ["FR", "standard", "Standard", 8.99, 99],
-          ["NL", "standard", "Standard", 7.99, 99],
-          ["PL", "standard", "Standard", 29.99, 449],
-          ["GB", "standard", "Standard", 9.99, 99],
-          ["TR", "standard", "Standard", 5.99, 49],
-          ["RS", "standard", "Standard", 6.99, 59],
-          ["BA", "standard", "Standard", 6.99, 59]
-        ].forEach((row) => insertMethod.run(...row));
-      }
-    }
-    migrateCustomerCheckout();
-    function migrateCustomerSupport() {
-      ensureColumn("notifications", "channel", "TEXT DEFAULT 'in_app'");
-      ensureColumn("notifications", "status", "TEXT DEFAULT 'unread'");
-      ensureColumn("notifications", "subject", "TEXT DEFAULT ''");
-      ensureColumn("notifications", "body", "TEXT DEFAULT ''");
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS tickets (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      ticket_number TEXT UNIQUE NOT NULL,
-      user_id INTEGER,
-      order_number TEXT,
-      subject TEXT NOT NULL,
-      category TEXT DEFAULT 'general',
-      priority TEXT DEFAULT 'normal',
-      status TEXT DEFAULT 'open',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
-    );
-    CREATE TABLE IF NOT EXISTS ticket_messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      ticket_id INTEGER NOT NULL,
-      user_id INTEGER,
-      sender_type TEXT NOT NULL,
-      message TEXT NOT NULL,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(ticket_id) REFERENCES tickets(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS tracking_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT NOT NULL,
-      carrier TEXT,
-      tracking_number TEXT,
-      status TEXT,
-      location TEXT,
-      event_time TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS support_templates (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      body TEXT NOT NULL,
-      active INTEGER DEFAULT 1
-    );
-  `);
-      const templateCount = db.prepare("SELECT COUNT(*) n FROM support_templates").get().n;
-      if (templateCount === 0) {
-        const insertTemplate = db.prepare("INSERT INTO support_templates(title, body) VALUES(?,?)");
-        insertTemplate.run("Order status", "We are checking the current status of your Buzzard order.");
-        insertTemplate.run("Shipping delay", "We are checking the shipment status with the carrier.");
-        insertTemplate.run("Return request", "Please provide the order number and the reason for the return.");
-      }
-    }
-    migrateCustomerSupport();
-    function migrateCrmLoyalty() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS crm_profiles (
-      user_id INTEGER PRIMARY KEY,
-      phone TEXT,
-      country_code TEXT,
-      language TEXT DEFAULT 'de-DE',
-      marketing_email INTEGER DEFAULT 0,
-      marketing_sms INTEGER DEFAULT 0,
-      marketing_whatsapp INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS loyalty_accounts (
-      user_id INTEGER PRIMARY KEY,
-      points INTEGER DEFAULT 0,
-      lifetime_points INTEGER DEFAULT 0,
-      tier TEXT DEFAULT 'Bronze',
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS loyalty_ledger (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      points INTEGER NOT NULL,
-      reason TEXT,
-      reference TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS rewards (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE,
-      title TEXT,
-      points_cost INTEGER,
-      discount_type TEXT,
-      discount_value REAL,
-      active INTEGER DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS customer_segments (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT UNIQUE,
-      description TEXT,
-      rules_json TEXT
-    );
-    CREATE TABLE IF NOT EXISTS customer_segment_members (
-      segment_id INTEGER,
-      user_id INTEGER,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY(segment_id, user_id),
-      FOREIGN KEY(segment_id) REFERENCES customer_segments(id) ON DELETE CASCADE,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS offers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      title TEXT,
-      code TEXT,
-      discount_type TEXT,
-      discount_value REAL,
-      status TEXT DEFAULT 'active',
-      expires_at TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS abandoned_carts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      cart_key TEXT UNIQUE,
-      subtotal REAL,
-      currency TEXT DEFAULT 'EUR',
-      item_count INTEGER DEFAULT 0,
-      status TEXT DEFAULT 'open',
-      last_seen_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      recovered_at TEXT,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS recovery_campaigns (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      abandoned_cart_id INTEGER,
-      channel TEXT,
-      status TEXT DEFAULT 'queued',
-      scheduled_at TEXT,
-      sent_at TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(abandoned_cart_id) REFERENCES abandoned_carts(id) ON DELETE CASCADE
-    );
-  `);
-      const rewardCount = db.prepare("SELECT COUNT(*) n FROM rewards").get().n;
-      if (rewardCount === 0) {
-        const insertReward = db.prepare(
-          "INSERT INTO rewards(code, title, points_cost, discount_type, discount_value) VALUES(?,?,?,?,?)"
-        );
-        insertReward.run("REWARD5", "5 EUR reward", 500, "fixed", 5);
-        insertReward.run("REWARD15", "15 EUR reward", 1200, "fixed", 15);
-      }
-      const segmentCount = db.prepare("SELECT COUNT(*) n FROM customer_segments").get().n;
-      if (segmentCount === 0) {
-        const insertSegment = db.prepare(
-          "INSERT INTO customer_segments(name, description, rules_json) VALUES(?,?,?)"
-        );
-        insertSegment.run("New Customers", "First purchase / newly registered", '{"orders":0}');
-        insertSegment.run("Repeat Customers", "Customers with repeat purchases", '{"orders_min":2}');
-        insertSegment.run("High Value", "High lifetime value customers", '{"lifetime_value_min":500}');
-        insertSegment.run("Cart Recovery", "Open abandoned cart", '{"abandoned_cart":true}');
-      }
-    }
-    migrateCrmLoyalty();
-    function migrateAnalyticsDashboard() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS analytics_orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT UNIQUE,
-      country_code TEXT,
-      category TEXT,
-      product_sku TEXT,
-      product_name TEXT,
-      revenue REAL,
-      cost REAL,
-      currency TEXT DEFAULT 'EUR',
-      status TEXT DEFAULT 'paid',
-      source TEXT DEFAULT 'direct',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS analytics_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      session_id TEXT,
-      event_type TEXT,
-      page TEXT,
-      product_sku TEXT,
-      source TEXT,
-      country_code TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS analytics_customers (
-      user_id INTEGER PRIMARY KEY,
-      orders_count INTEGER DEFAULT 0,
-      lifetime_value REAL DEFAULT 0,
-      first_order_at TEXT,
-      last_order_at TEXT,
-      country_code TEXT,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-  `);
-      const orderCount = db.prepare("SELECT COUNT(*) n FROM analytics_orders").get().n;
-      if (orderCount === 0) {
-        const insertOrder = db.prepare(`
-      INSERT INTO analytics_orders(order_number, country_code, category, product_sku, product_name, revenue, cost, source, created_at)
-      VALUES(?,?,?,?,?,?,?,?,datetime('now', ?))
-    `);
-        [
-          ["BZ1001", "DE", "Automotive", "OIL-5W30", "Premium Motor\xF6l 5W-30", 79, 45, "google", "-2 days"],
-          ["BZ1002", "DE", "Garden", "GARDEN-001", "Garten Bew\xE4sserungsset", 119, 68, "direct", "-2 days"],
-          ["BZ1003", "FR", "Automotive", "BRAKE-001", "Bremsbelag Set", 149, 91, "google", "-1 days"],
-          ["BZ1004", "NL", "Home", "HOME-001", "Home Organizer", 59, 31, "instagram", "-1 days"],
-          ["BZ1005", "PL", "Sports", "SPORT-001", "Running Performance Set", 129, 76, "google", "-0 days"],
-          ["BZ1006", "DE", "Cleaning", "CLEAN-001", "Universal Fahrzeugreiniger", 39, 19, "direct", "-0 days"]
-        ].forEach((row) => insertOrder.run(...row));
-        const insertEvent = db.prepare(`
-      INSERT INTO analytics_events(session_id, event_type, page, product_sku, source, country_code, created_at)
-      VALUES(?,?,?,?,?,?,datetime('now', ?))
-    `);
-        [
-          ["s1", "page_view", "/", "", "google", "DE", "-2 days"],
-          ["s2", "product_view", "/product/oil", "OIL-5W30", "google", "DE", "-2 days"],
-          ["s3", "add_to_cart", "/product/oil", "OIL-5W30", "google", "DE", "-2 days"],
-          ["s4", "checkout_start", "/checkout", "OIL-5W30", "google", "DE", "-2 days"],
-          ["s5", "purchase", "/checkout", "OIL-5W30", "google", "DE", "-2 days"],
-          ["s6", "page_view", "/", "", "direct", "DE", "-1 days"],
-          ["s7", "product_view", "/product/garden", "GARDEN-001", "direct", "DE", "-1 days"],
-          ["s8", "add_to_cart", "/product/garden", "GARDEN-001", "direct", "DE", "-1 days"],
-          ["s9", "checkout_start", "/checkout", "GARDEN-001", "direct", "DE", "-1 days"],
-          ["s10", "purchase", "/checkout", "GARDEN-001", "direct", "DE", "-1 days"],
-          ["s11", "page_view", "/", "", "instagram", "NL", "-1 days"],
-          ["s12", "product_view", "/product/home", "HOME-001", "instagram", "NL", "-1 days"],
-          ["s13", "add_to_cart", "/product/home", "HOME-001", "instagram", "NL", "-1 days"],
-          ["s14", "checkout_start", "/checkout", "HOME-001", "instagram", "NL", "-1 days"],
-          ["s15", "purchase", "/checkout", "HOME-001", "instagram", "NL", "-1 days"],
-          ["s16", "page_view", "/", "", "google", "PL", "-0 days"],
-          ["s17", "product_view", "/product/sport", "SPORT-001", "google", "PL", "-0 days"],
-          ["s18", "add_to_cart", "/product/sport", "SPORT-001", "google", "PL", "-0 days"],
-          ["s19", "checkout_start", "/checkout", "SPORT-001", "google", "PL", "-0 days"],
-          ["s20", "purchase", "/checkout", "SPORT-001", "google", "PL", "-0 days"]
-        ].forEach((row) => insertEvent.run(...row));
-      }
-    }
-    migrateAnalyticsDashboard();
-    function migrateMarketingCenter() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS marketing_campaigns (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT UNIQUE NOT NULL,
-      channel TEXT NOT NULL,
-      objective TEXT DEFAULT 'sales',
-      status TEXT DEFAULT 'draft',
-      budget REAL DEFAULT 0,
-      start_date TEXT,
-      end_date TEXT,
-      utm_source TEXT,
-      utm_medium TEXT,
-      utm_campaign TEXT,
-      coupon_code TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS marketing_campaign_spend (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      campaign_id INTEGER,
-      spend REAL NOT NULL,
-      currency TEXT DEFAULT 'EUR',
-      spend_date TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(campaign_id) REFERENCES marketing_campaigns(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS marketing_campaign_conversions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      campaign_id INTEGER,
-      order_number TEXT,
-      revenue REAL,
-      currency TEXT DEFAULT 'EUR',
-      source TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(campaign_id, order_number),
-      FOREIGN KEY(campaign_id) REFERENCES marketing_campaigns(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS marketing_center_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      session_id TEXT,
-      event_type TEXT,
-      campaign TEXT,
-      source TEXT,
-      medium TEXT,
-      country_code TEXT,
-      product_sku TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS marketing_provider_connections (
-      provider TEXT PRIMARY KEY,
-      enabled INTEGER DEFAULT 0,
-      account_label TEXT,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const providers = ["google_ads", "meta", "tiktok", "ebay", "amazon", "google_shopping"];
-      const insertProvider = db.prepare(
-        "INSERT OR IGNORE INTO marketing_provider_connections(provider) VALUES(?)"
-      );
-      providers.forEach((provider) => insertProvider.run(provider));
-      const campaignCount = db.prepare("SELECT COUNT(*) n FROM marketing_campaigns").get().n;
-      if (campaignCount === 0) {
-        const insertCampaign = db.prepare(`
-      INSERT INTO marketing_campaigns(name, channel, objective, status, budget, start_date, end_date, utm_source, utm_medium, utm_campaign, coupon_code)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?)
-    `);
-        insertCampaign.run(
-          "Summer Europe",
-          "google_ads",
-          "sales",
-          "active",
-          5e3,
-          "2026-08-01",
-          "2026-08-31",
-          "google",
-          "cpc",
-          "summer-europe",
-          "SUMMER10"
-        );
-        insertCampaign.run(
-          "Social Launch",
-          "meta",
-          "sales",
-          "active",
-          2500,
-          "2026-08-01",
-          "2026-08-31",
-          "meta",
-          "paid_social",
-          "social-launch",
-          "WELCOME10"
-        );
-        insertCampaign.run(
-          "Marketplace Push",
-          "amazon",
-          "sales",
-          "active",
-          3e3,
-          "2026-08-01",
-          "2026-08-31",
-          "amazon",
-          "marketplace",
-          "marketplace-push",
-          ""
-        );
-        const insertSpend = db.prepare(
-          "INSERT INTO marketing_campaign_spend(campaign_id, spend, spend_date) VALUES(?,?,?)"
-        );
-        insertSpend.run(1, 1650, "2026-08-08");
-        insertSpend.run(2, 900, "2026-08-08");
-        insertSpend.run(3, 1200, "2026-08-08");
-        const insertConversion = db.prepare(
-          "INSERT INTO marketing_campaign_conversions(campaign_id, order_number, revenue, source) VALUES(?,?,?,?)"
-        );
-        insertConversion.run(1, "BZ-MKT-1001", 5200, "google");
-        insertConversion.run(1, "BZ-MKT-1002", 1800, "google");
-        insertConversion.run(2, "BZ-MKT-1003", 3100, "meta");
-        insertConversion.run(3, "BZ-MKT-1004", 4200, "amazon");
-        const insertEvent = db.prepare(`
-      INSERT INTO marketing_center_events(session_id, event_type, campaign, source, medium, country_code, product_sku)
-      VALUES(?,?,?,?,?,?,?)
-    `);
-        insertEvent.run("mc1", "page_view", "summer-europe", "google", "cpc", "DE", "");
-        insertEvent.run("mc2", "page_view", "social-launch", "meta", "paid_social", "DE", "");
-        insertEvent.run("mc3", "view_item", "summer-europe", "google", "cpc", "DE", "BZ-OIL-5W30");
-        insertEvent.run("mc4", "add_to_cart", "summer-europe", "google", "cpc", "DE", "BZ-OIL-5W30");
-      }
-    }
-    migrateMarketingCenter();
-    function migrateMarketplaceHub() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS marketplace_channels (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      enabled INTEGER DEFAULT 0,
-      account_label TEXT DEFAULT '',
-      status TEXT DEFAULT 'disconnected',
-      last_sync TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS marketplace_listings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      marketplace_id INTEGER,
-      product_sku TEXT NOT NULL,
-      channel_sku TEXT,
-      title TEXT,
-      price REAL,
-      currency TEXT DEFAULT 'EUR',
-      stock INTEGER DEFAULT 0,
-      status TEXT DEFAULT 'draft',
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(marketplace_id, product_sku),
-      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS marketplace_sync_jobs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      marketplace_id INTEGER,
-      job_type TEXT NOT NULL,
-      entity_key TEXT,
-      payload_json TEXT,
-      status TEXT DEFAULT 'queued',
-      attempts INTEGER DEFAULT 0,
-      error_message TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      finished_at TEXT,
-      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS marketplace_channel_orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      marketplace_id INTEGER,
-      external_order_id TEXT,
-      internal_order_number TEXT,
-      status TEXT DEFAULT 'imported',
-      total REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      customer_country TEXT,
-      imported_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(marketplace_id, external_order_id),
-      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS marketplace_sku_mappings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      marketplace_id INTEGER,
-      product_sku TEXT,
-      channel_sku TEXT,
-      UNIQUE(marketplace_id, product_sku),
-      FOREIGN KEY(marketplace_id) REFERENCES marketplace_channels(id) ON DELETE CASCADE
-    );
-  `);
-      const channels = [
-        ["amazon", "Amazon"],
-        ["ebay", "eBay"],
-        ["google_shopping", "Google Shopping"],
-        ["tiktok_shop", "TikTok Shop"]
-      ];
-      const insertChannel = db.prepare(
-        "INSERT OR IGNORE INTO marketplace_channels(code, name) VALUES(?, ?)"
-      );
-      channels.forEach(([code, name]) => insertChannel.run(code, name));
-      const listingCount = db.prepare("SELECT COUNT(*) n FROM marketplace_listings").get().n;
-      if (listingCount === 0) {
-        const ids = Object.fromEntries(
-          db.prepare("SELECT id, code FROM marketplace_channels").all().map((row) => [row.code, row.id])
-        );
-        const insertListing = db.prepare(`
-      INSERT INTO marketplace_listings(marketplace_id, product_sku, channel_sku, title, price, currency, stock, status)
-      VALUES(?,?,?,?,?,?,?,?)
-    `);
-        insertListing.run(
-          ids.amazon,
-          "BZ-OIL-5W30",
-          "AMZ-BZ-OIL-5W30",
-          "Premium Motor\xF6l 5W-30",
-          39.9,
-          "EUR",
-          48,
-          "published"
-        );
-        insertListing.run(
-          ids.ebay,
-          "BZ-OIL-5W30",
-          "EB-BZ-OIL-5W30",
-          "Premium Motor\xF6l 5W-30",
-          39.9,
-          "EUR",
-          48,
-          "published"
-        );
-        insertListing.run(
-          ids.google_shopping,
-          "BZ-OIL-5W30",
-          "BZ-OIL-5W30",
-          "Premium Motor\xF6l 5W-30",
-          39.9,
-          "EUR",
-          48,
-          "published"
-        );
-        const insertOrder = db.prepare(`
-      INSERT INTO marketplace_channel_orders(marketplace_id, external_order_id, internal_order_number, status, total, currency, customer_country)
-      VALUES(?,?,?,?,?,?,?)
-    `);
-        insertOrder.run(ids.amazon, "AMZ-90001", "BZ-MP-1001", "imported", 79.8, "EUR", "DE");
-        insertOrder.run(ids.ebay, "EB-55002", "BZ-MP-1002", "imported", 39.9, "EUR", "FR");
-      }
-    }
-    migrateMarketplaceHub();
-    function migrateSupplierHubV16() {
-      [
-        ["suppliers", "api_enabled", "INTEGER NOT NULL DEFAULT 0"],
-        ["suppliers", "xml_enabled", "INTEGER NOT NULL DEFAULT 0"],
-        ["suppliers", "tecdoc_enabled", "INTEGER NOT NULL DEFAULT 0"],
-        ["suppliers", "white_label_enabled", "INTEGER NOT NULL DEFAULT 0"],
-        ["suppliers", "blind_shipping", "INTEGER NOT NULL DEFAULT 0"],
-        ["suppliers", "currency", "TEXT DEFAULT 'EUR'"],
-        ["suppliers", "rating", "REAL DEFAULT 0"],
-        ["suppliers", "lead_time_days", "INTEGER DEFAULT 3"],
-        ["suppliers", "status", "TEXT DEFAULT 'active'"],
-        ["supplier_products", "product_sku", "TEXT"],
-        ["supplier_products", "brand", "TEXT"],
-        ["supplier_products", "category", "TEXT"],
-        ["supplier_products", "ean", "TEXT"],
-        ["supplier_products", "tecdoc_article", "TEXT"]
-      ].forEach(([table, column, definition]) => ensureColumn(table, column, definition));
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_sync_jobs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      job_type TEXT,
-      entity_key TEXT,
-      status TEXT DEFAULT 'queued',
-      attempts INTEGER DEFAULT 0,
-      error_message TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      finished_at TEXT,
-      FOREIGN KEY(supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS supplier_orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      order_number TEXT,
-      supplier_order_number TEXT,
-      status TEXT DEFAULT 'queued',
-      shipping_method TEXT,
-      white_label INTEGER DEFAULT 0,
-      blind_shipping INTEGER DEFAULT 0,
-      payload_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(supplier_id, order_number),
-      FOREIGN KEY(supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
-    );
-  `);
-      db.prepare(`
-    UPDATE supplier_products
-    SET product_sku = buzzard_sku
-    WHERE (product_sku IS NULL OR product_sku = '') AND buzzard_sku IS NOT NULL AND buzzard_sku <> ''
-  `).run();
-      const demoCount = db.prepare("SELECT COUNT(*) n FROM suppliers WHERE code LIKE 'SUP-%'").get().n;
-      if (demoCount === 0) {
-        const insertSupplier = db.prepare(`
-      INSERT INTO suppliers(code, name, country, feed_type, api_enabled, xml_enabled, tecdoc_enabled, dropship, white_label_enabled, blind_shipping, currency, rating, lead_time_days, status)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `);
-        insertSupplier.run("SUP-DE-01", "Demo B2B Automotive Supplier", "DE", "api", 1, 1, 1, 1, 1, 1, "EUR", 4.8, 2, "active");
-        insertSupplier.run("SUP-DE-02", "Demo Garden & Home Supplier", "DE", "xml", 1, 1, 0, 1, 1, 1, "EUR", 4.5, 3, "active");
-        insertSupplier.run("SUP-NL-01", "Demo EU General Supplier", "NL", "manual", 0, 1, 0, 1, 0, 0, "EUR", 4.2, 4, "active");
-        const ids = Object.fromEntries(
-          db.prepare("SELECT id, code FROM suppliers WHERE code LIKE 'SUP-%'").all().map((row) => [row.code, row.id])
-        );
-        const insertProduct = db.prepare(`
-      INSERT INTO supplier_products(supplier_id, supplier_sku, product_sku, buzzard_sku, name, cost_eur, stock, brand, category, ean, tecdoc_article, active)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,1)
-    `);
-        if (ids["SUP-DE-01"]) {
-          insertProduct.run(
-            ids["SUP-DE-01"],
-            "SUP-OIL-5W30",
-            "BZ-OIL-5W30",
-            "BZ-OIL-5W30",
-            "Premium Motor\xF6l 5W-30",
-            22,
-            150,
-            "DemoBrand",
-            "Automotive",
-            "4000000000012",
-            "TD-5W30-001"
-          );
-        }
-        if (ids["SUP-DE-02"]) {
-          insertProduct.run(
-            ids["SUP-DE-02"],
-            "SUP-GARDEN-001",
-            "BZ-GARDEN-001",
-            "BZ-GARDEN-001",
-            "Garten Bew\xE4sserungsset",
-            25,
-            80,
-            "DemoGarden",
-            "Garden",
-            "4000000000029",
-            ""
-          );
-        }
-      }
-    }
-    migrateSupplierHubV16();
-    function migrateLogisticsFulfillmentV17() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS logistics_carriers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      country_scope TEXT DEFAULT 'EU',
-      enabled INTEGER DEFAULT 1,
-      api_connected INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS logistics_shipping_services (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      carrier_id INTEGER,
-      code TEXT,
-      name TEXT,
-      max_weight_kg REAL DEFAULT 31.5,
-      base_price REAL DEFAULT 0,
-      delivery_days_min INTEGER DEFAULT 2,
-      delivery_days_max INTEGER DEFAULT 5,
-      countries TEXT DEFAULT 'DE',
-      active INTEGER DEFAULT 1,
-      FOREIGN KEY(carrier_id) REFERENCES logistics_carriers(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS logistics_shipments (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT UNIQUE NOT NULL,
-      carrier_id INTEGER,
-      service_id INTEGER,
-      tracking_number TEXT,
-      label_url TEXT,
-      status TEXT DEFAULT 'pending',
-      shipping_cost REAL DEFAULT 0,
-      destination_country TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      shipped_at TEXT,
-      FOREIGN KEY(carrier_id) REFERENCES logistics_carriers(id),
-      FOREIGN KEY(service_id) REFERENCES logistics_shipping_services(id)
-    );
-    CREATE TABLE IF NOT EXISTS logistics_tracking_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      shipment_id INTEGER NOT NULL,
-      status TEXT,
-      location TEXT,
-      message TEXT,
-      event_time TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(shipment_id) REFERENCES logistics_shipments(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS logistics_fulfillment_jobs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT,
-      job_type TEXT,
-      status TEXT DEFAULT 'queued',
-      attempts INTEGER DEFAULT 0,
-      error_message TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      finished_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS logistics_returns (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      rma_number TEXT UNIQUE NOT NULL,
-      order_number TEXT,
-      customer_id INTEGER,
-      reason TEXT,
-      status TEXT DEFAULT 'requested',
-      carrier_code TEXT,
-      return_tracking TEXT,
-      refund_status TEXT DEFAULT 'pending',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const carrierCount = db.prepare("SELECT COUNT(*) n FROM logistics_carriers").get().n;
-      if (carrierCount === 0) {
-        const insertCarrier = db.prepare(
-          "INSERT INTO logistics_carriers(code, name, country_scope) VALUES(?,?,?)"
-        );
-        insertCarrier.run("DHL", "DHL", "EU");
-        insertCarrier.run("DPD", "DPD", "EU");
-        insertCarrier.run("GLS", "GLS", "EU");
-        insertCarrier.run("UPS", "UPS", "GLOBAL");
-        insertCarrier.run("EVRI", "Evri / Hermes", "UK/EU");
-        const ids = Object.fromEntries(
-          db.prepare("SELECT id, code FROM logistics_carriers").all().map((row) => [row.code, row.id])
-        );
-        const insertService = db.prepare(`
-      INSERT INTO logistics_shipping_services(
-        carrier_id, code, name, max_weight_kg, base_price, delivery_days_min, delivery_days_max, countries
-      )
-      VALUES(?,?,?,?,?,?,?,?)
-    `);
-        insertService.run(ids.DHL, "standard", "DHL Paket Standard", 31.5, 4.99, 1, 3, "DE,AT,BE,NL,FR");
-        insertService.run(ids.DHL, "express", "DHL Express", 31.5, 11.99, 1, 2, "DE,AT,BE,NL,FR");
-        insertService.run(ids.DPD, "standard", "DPD Classic", 31.5, 5.49, 2, 4, "DE,AT,BE,NL,FR,PL");
-        insertService.run(ids.GLS, "standard", "GLS Standard", 40, 5.29, 2, 4, "DE,AT,BE,NL,FR,PL,CZ");
-        insertService.run(ids.UPS, "standard", "UPS Standard", 70, 8.99, 2, 5, "DE,FR,NL,BE,PL,IT,ES");
-      }
-    }
-    migrateLogisticsFulfillmentV17();
-    function migrateWmsInventoryV18() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS wms_warehouses (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      country_code TEXT DEFAULT 'DE',
-      address TEXT,
-      active INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS wms_locations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      warehouse_id INTEGER,
-      code TEXT NOT NULL,
-      zone TEXT,
-      bin_type TEXT DEFAULT 'standard',
-      UNIQUE(warehouse_id, code),
-      FOREIGN KEY(warehouse_id) REFERENCES wms_warehouses(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS wms_inventory (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      warehouse_id INTEGER,
-      location_id INTEGER,
-      product_sku TEXT NOT NULL,
-      barcode TEXT,
-      on_hand INTEGER DEFAULT 0,
-      reserved INTEGER DEFAULT 0,
-      damaged INTEGER DEFAULT 0,
-      reorder_point INTEGER DEFAULT 10,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(warehouse_id, location_id, product_sku),
-      FOREIGN KEY(warehouse_id) REFERENCES wms_warehouses(id) ON DELETE CASCADE,
-      FOREIGN KEY(location_id) REFERENCES wms_locations(id) ON DELETE SET NULL
-    );
-    CREATE TABLE IF NOT EXISTS wms_stock_movements (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      warehouse_id INTEGER,
-      location_id INTEGER,
-      product_sku TEXT,
-      barcode TEXT,
-      movement_type TEXT,
-      quantity INTEGER,
-      reference TEXT,
-      user_id INTEGER,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS wms_reservations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      warehouse_id INTEGER,
-      location_id INTEGER,
-      product_sku TEXT,
-      quantity INTEGER,
-      order_number TEXT,
-      status TEXT DEFAULT 'reserved',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS wms_warehouse_jobs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      warehouse_id INTEGER,
-      order_number TEXT,
-      job_type TEXT,
-      status TEXT DEFAULT 'queued',
-      assigned_to INTEGER,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      finished_at TEXT,
-      FOREIGN KEY(warehouse_id) REFERENCES wms_warehouses(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS wms_transfers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      from_warehouse_id INTEGER,
-      to_warehouse_id INTEGER,
-      product_sku TEXT,
-      quantity INTEGER,
-      status TEXT DEFAULT 'requested',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS wms_stocktakes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      warehouse_id INTEGER,
-      location_id INTEGER,
-      product_sku TEXT,
-      system_qty INTEGER,
-      counted_qty INTEGER,
-      variance INTEGER,
-      status TEXT DEFAULT 'open',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const warehouseCount = db.prepare("SELECT COUNT(*) n FROM wms_warehouses").get().n;
-      if (warehouseCount === 0) {
-        const insertWarehouse = db.prepare(
-          "INSERT INTO wms_warehouses(code, name, country_code, address) VALUES(?,?,?,?)"
-        );
-        insertWarehouse.run("DE-01", "Buzzard Hauptlager", "DE", "Hessen");
-        insertWarehouse.run("DE-02", "Buzzard S\xFCddepot", "DE", "Bayern");
-        const mainId = db.prepare("SELECT id FROM wms_warehouses WHERE code = ?").get("DE-01").id;
-        const insertLocation = db.prepare(
-          "INSERT INTO wms_locations(warehouse_id, code, zone, bin_type) VALUES(?,?,?,?)"
-        );
-        insertLocation.run(mainId, "A-01-01", "A", "standard");
-        insertLocation.run(mainId, "A-01-02", "A", "standard");
-        insertLocation.run(mainId, "B-02-01", "B", "oversize");
-        const locationId = db.prepare("SELECT id FROM wms_locations WHERE code = ?").get("A-01-01").id;
-        const insertInventory = db.prepare(`
-      INSERT INTO wms_inventory(
-        warehouse_id, location_id, product_sku, barcode, on_hand, reserved, damaged, reorder_point
-      )
-      VALUES(?,?,?,?,?,?,?,?)
-    `);
-        insertInventory.run(mainId, locationId, "BZ-OIL-5W30", "4000000000012", 120, 12, 0, 20);
-        insertInventory.run(mainId, locationId, "BZ-GARDEN-001", "4000000000029", 8, 2, 0, 15);
-      }
-    }
-    migrateWmsInventoryV18();
-    function migratePimCatalogV19() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS pim_categories (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      parent_id INTEGER,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      slug TEXT UNIQUE NOT NULL,
-      active INTEGER DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS pim_brands (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT UNIQUE NOT NULL,
-      slug TEXT UNIQUE NOT NULL,
-      active INTEGER DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS pim_products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      sku TEXT UNIQUE NOT NULL,
-      brand_id INTEGER,
-      category_id INTEGER,
-      ean TEXT,
-      gtin TEXT,
-      status TEXT DEFAULT 'draft',
-      price REAL DEFAULT 0,
-      cost REAL DEFAULT 0,
-      weight_kg REAL DEFAULT 0,
-      stock INTEGER DEFAULT 0,
-      completeness INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(brand_id) REFERENCES pim_brands(id),
-      FOREIGN KEY(category_id) REFERENCES pim_categories(id)
-    );
-    CREATE TABLE IF NOT EXISTS pim_product_translations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_id INTEGER NOT NULL,
-      language TEXT NOT NULL,
-      title TEXT,
-      short_description TEXT,
-      description TEXT,
-      UNIQUE(product_id, language),
-      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS pim_product_attributes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_id INTEGER NOT NULL,
-      attribute_key TEXT NOT NULL,
-      attribute_value TEXT,
-      unit TEXT,
-      UNIQUE(product_id, attribute_key),
-      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS pim_product_variants (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_id INTEGER NOT NULL,
-      variant_sku TEXT UNIQUE,
-      option_name TEXT,
-      option_value TEXT,
-      ean TEXT,
-      price_delta REAL DEFAULT 0,
-      stock INTEGER DEFAULT 0,
-      active INTEGER DEFAULT 1,
-      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS pim_product_media (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_id INTEGER NOT NULL,
-      media_type TEXT DEFAULT 'image',
-      url TEXT,
-      alt_text TEXT,
-      sort_order INTEGER DEFAULT 0,
-      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS pim_product_seo (
-      product_id INTEGER PRIMARY KEY,
-      meta_title TEXT,
-      meta_description TEXT,
-      slug TEXT UNIQUE,
-      FOREIGN KEY(product_id) REFERENCES pim_products(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS pim_catalog_import_jobs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      source_type TEXT,
-      source_name TEXT,
-      status TEXT DEFAULT 'queued',
-      items_total INTEGER DEFAULT 0,
-      items_processed INTEGER DEFAULT 0,
-      error_message TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      finished_at TEXT
-    );
-  `);
-      const categoryCount = db.prepare("SELECT COUNT(*) n FROM pim_categories").get().n;
-      if (categoryCount === 0) {
-        const categories2 = [
-          ["AUT", "Automotive", "automotive"],
-          ["TXT", "Textile", "textile"],
-          ["COS", "Kozmetik & Ki\u015Fisel Bak\u0131m", "cosmetics"],
-          ["CLN", "Temizlik \xDCr\xFCnleri", "cleaning"],
-          ["SCH", "Okul & K\u0131rtasiye", "school-stationery"],
-          ["PET", "Pet", "pet"],
-          ["GAR", "Bah\xE7e", "garden"],
-          ["SAF", "\u0130\u015F G\xFCvenli\u011Fi & \u0130\u015F K\u0131yafetleri", "safety-workwear"],
-          ["HOM", "Home & Living", "home-living"],
-          ["SPT", "Sports & Outdoor", "sports-outdoor"],
-          ["ELE", "Elektronik", "electronics"],
-          ["APP", "Appliances", "appliances"]
-        ];
-        const insertCategory = db.prepare(
-          "INSERT INTO pim_categories(code, name, slug) VALUES(?,?,?)"
-        );
-        categories2.forEach((row) => insertCategory.run(...row));
-        db.prepare("INSERT INTO pim_brands(name, slug) VALUES(?,?)").run("Buzzard Demo", "buzzard-demo");
-        const categoryId = db.prepare("SELECT id FROM pim_categories WHERE code = ?").get("AUT").id;
-        const brandId = db.prepare("SELECT id FROM pim_brands LIMIT 1").get().id;
-        const result = db.prepare(`
-        INSERT INTO pim_products(sku, brand_id, category_id, ean, price, cost, weight_kg, stock, status)
-        VALUES(?,?,?,?,?,?,?,?,?)
-      `).run("BZ-OIL-5W30", brandId, categoryId, "4000000000012", 39.9, 22, 1, 120, "published");
-        const productId = result.lastInsertRowid;
-        db.prepare(`
-      INSERT INTO pim_product_translations(product_id, language, title, short_description, description)
-      VALUES(?,?,?,?,?)
-    `).run(
-          productId,
-          "de-DE",
-          "Premium Motor\xF6l 5W-30",
-          "Hochwertiges Motor\xF6l",
-          "F\xFCr moderne Fahrzeuge geeignet."
-        );
-        db.prepare(`
-      INSERT INTO pim_product_translations(product_id, language, title, short_description, description)
-      VALUES(?,?,?,?,?)
-    `).run(
-          productId,
-          "en-GB",
-          "Premium Motor Oil 5W-30",
-          "Premium engine oil",
-          "Suitable for modern vehicles."
-        );
-        db.prepare(`
-      INSERT INTO pim_product_attributes(product_id, attribute_key, attribute_value, unit)
-      VALUES(?,?,?,?)
-    `).run(productId, "Viscosity", "5W-30", "");
-        db.prepare(`
-      INSERT INTO pim_product_media(product_id, media_type, url, alt_text, sort_order)
-      VALUES(?,?,?,?,?)
-    `).run(productId, "image", "https://example.com/demo-oil.jpg", "Premium Motor\xF6l 5W-30", 0);
-        db.prepare(`
-      INSERT INTO pim_product_seo(product_id, meta_title, meta_description, slug)
-      VALUES(?,?,?,?)
-    `).run(
-          productId,
-          "Premium Motor\xF6l 5W-30 | Buzzard",
-          "Premium Motor\xF6l 5W-30 f\xFCr moderne Fahrzeuge.",
-          "premium-motoroel-5w30"
-        );
-        db.prepare("UPDATE pim_products SET completeness = 100, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-          productId
-        );
-      }
-    }
-    migratePimCatalogV19();
-    function migrateIdentitySecurityV20() {
-      [
-        ["users", "first_name", "TEXT DEFAULT ''"],
-        ["users", "last_name", "TEXT DEFAULT ''"],
-        ["users", "status", "TEXT DEFAULT 'active'"],
-        ["users", "email_verified", "INTEGER DEFAULT 0"],
-        ["users", "twofa_enabled", "INTEGER DEFAULT 0"],
-        ["users", "twofa_secret", "TEXT DEFAULT ''"],
-        ["users", "updated_at", "TEXT"]
-      ].forEach(([table, column, definition]) => ensureColumn(table, column, definition));
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS identity_sessions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      refresh_hash TEXT UNIQUE,
-      user_agent TEXT,
-      ip_hash TEXT,
-      expires_at TEXT,
-      revoked INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS identity_verification_tokens (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      token_hash TEXT UNIQUE,
-      token_type TEXT,
-      expires_at TEXT,
-      used INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS identity_login_attempts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT,
-      success INTEGER,
-      ip_hash TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS identity_security_audit (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      event_type TEXT,
-      ip_hash TEXT,
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS identity_privacy_requests (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      request_type TEXT,
-      status TEXT DEFAULT 'requested',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS identity_addresses (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      type TEXT DEFAULT 'shipping',
-      first_name TEXT,
-      last_name TEXT,
-      company TEXT,
-      street TEXT,
-      house_number TEXT,
-      postal_code TEXT,
-      city TEXT,
-      country_code TEXT,
-      phone TEXT,
-      is_default INTEGER DEFAULT 0,
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-  `);
-      const admin = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get();
-      if (admin) {
-        db.prepare(`
-      UPDATE users
-      SET email_verified = 1, status = 'active', first_name = COALESCE(NULLIF(first_name, ''), 'Buzzard'), last_name = COALESCE(NULLIF(last_name, ''), 'Admin'),
-          updated_at = COALESCE(updated_at, CURRENT_TIMESTAMP)
-      WHERE id = ?
-    `).run(admin.id);
-      }
-      db.prepare("UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL OR updated_at = ''").run();
-    }
-    migrateIdentitySecurityV20();
-    function migratePaymentsFinanceV21() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS finance_payment_providers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      enabled INTEGER DEFAULT 0,
-      environment TEXT DEFAULT 'test',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS finance_payment_methods (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      provider_id INTEGER,
-      code TEXT NOT NULL,
-      name TEXT NOT NULL,
-      currency TEXT DEFAULT 'EUR',
-      active INTEGER DEFAULT 1,
-      FOREIGN KEY(provider_id) REFERENCES finance_payment_providers(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS finance_payment_intents (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT NOT NULL,
-      provider_id INTEGER,
-      method_id INTEGER,
-      external_id TEXT,
-      amount REAL NOT NULL,
-      currency TEXT DEFAULT 'EUR',
-      status TEXT DEFAULT 'requires_payment',
-      idempotency_key TEXT UNIQUE,
-      customer_email TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(provider_id) REFERENCES finance_payment_providers(id),
-      FOREIGN KEY(method_id) REFERENCES finance_payment_methods(id)
-    );
-    CREATE TABLE IF NOT EXISTS finance_payment_transactions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      payment_intent_id INTEGER,
-      type TEXT NOT NULL,
-      amount REAL NOT NULL,
-      currency TEXT DEFAULT 'EUR',
-      external_id TEXT,
-      status TEXT DEFAULT 'pending',
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(payment_intent_id) REFERENCES finance_payment_intents(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS finance_refunds (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      payment_intent_id INTEGER,
-      external_id TEXT,
-      amount REAL NOT NULL,
-      currency TEXT DEFAULT 'EUR',
-      reason TEXT,
-      status TEXT DEFAULT 'pending',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(payment_intent_id) REFERENCES finance_payment_intents(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS finance_invoices (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT UNIQUE NOT NULL,
-      invoice_number TEXT UNIQUE NOT NULL,
-      customer_email TEXT,
-      net_amount REAL DEFAULT 0,
-      tax_amount REAL DEFAULT 0,
-      gross_amount REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      status TEXT DEFAULT 'issued',
-      issued_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS finance_payouts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      provider_id INTEGER,
-      external_payout_id TEXT,
-      amount REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      status TEXT DEFAULT 'pending',
-      payout_date TEXT,
-      reconciled INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(provider_id) REFERENCES finance_payment_providers(id)
-    );
-    CREATE TABLE IF NOT EXISTS finance_disputes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      payment_intent_id INTEGER,
-      provider_code TEXT,
-      external_case_id TEXT,
-      amount REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      status TEXT DEFAULT 'open',
-      reason TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(payment_intent_id) REFERENCES finance_payment_intents(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS finance_audit (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      event_type TEXT,
-      reference_id TEXT,
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const providerCount = db.prepare("SELECT COUNT(*) n FROM finance_payment_providers").get().n;
-      if (providerCount === 0) {
-        const insertProvider = db.prepare(
-          "INSERT INTO finance_payment_providers(code, name, enabled, environment) VALUES(?,?,?,?)"
-        );
-        insertProvider.run("stripe", "Stripe", 0, "test");
-        insertProvider.run("paypal", "PayPal", 0, "test");
-        insertProvider.run("klarna", "Klarna", 0, "test");
-        const ids = Object.fromEntries(
-          db.prepare("SELECT id, code FROM finance_payment_providers").all().map((row) => [row.code, row.id])
-        );
-        const insertMethod = db.prepare(
-          "INSERT INTO finance_payment_methods(provider_id, code, name, currency) VALUES(?,?,?,?)"
-        );
-        insertMethod.run(ids.stripe, "card", "Credit / Debit Card", "EUR");
-        insertMethod.run(ids.stripe, "apple_pay", "Apple Pay", "EUR");
-        insertMethod.run(ids.paypal, "paypal", "PayPal", "EUR");
-        insertMethod.run(ids.klarna, "klarna", "Klarna", "EUR");
-      }
-    }
-    migratePaymentsFinanceV21();
-    function migrateOrderManagementV22() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS oms_orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT UNIQUE NOT NULL,
-      customer_id INTEGER,
-      customer_email TEXT,
-      channel TEXT DEFAULT 'web',
-      currency TEXT DEFAULT 'EUR',
-      subtotal REAL DEFAULT 0,
-      shipping_total REAL DEFAULT 0,
-      discount_total REAL DEFAULT 0,
-      tax_total REAL DEFAULT 0,
-      grand_total REAL DEFAULT 0,
-      payment_status TEXT DEFAULT 'pending',
-      fulfillment_status TEXT DEFAULT 'unfulfilled',
-      order_status TEXT DEFAULT 'pending',
-      shipping_address_json TEXT,
-      billing_address_json TEXT,
-      parent_order_id INTEGER,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS oms_order_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_id INTEGER,
-      product_sku TEXT NOT NULL,
-      title TEXT,
-      quantity INTEGER NOT NULL,
-      unit_price REAL NOT NULL,
-      tax_rate REAL DEFAULT 0,
-      supplier_id INTEGER,
-      warehouse_id INTEGER,
-      reserved_quantity INTEGER DEFAULT 0,
-      fulfilled_quantity INTEGER DEFAULT 0,
-      cancelled_quantity INTEGER DEFAULT 0,
-      FOREIGN KEY(order_id) REFERENCES oms_orders(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS oms_order_splits (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      parent_order_id INTEGER,
-      child_order_id INTEGER,
-      split_reason TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS oms_order_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_id INTEGER,
-      event_type TEXT,
-      old_status TEXT,
-      new_status TEXT,
-      message TEXT,
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS oms_order_notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_id INTEGER,
-      note TEXT,
-      internal INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS oms_fulfillment_links (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_id INTEGER,
-      order_item_id INTEGER,
-      supplier_id INTEGER,
-      warehouse_id INTEGER,
-      shipment_id INTEGER,
-      status TEXT DEFAULT 'queued',
-      external_reference TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS oms_order_idempotency (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      idempotency_key TEXT UNIQUE NOT NULL,
-      order_id INTEGER,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const orderCount = db.prepare("SELECT COUNT(*) n FROM oms_orders").get().n;
-      if (orderCount === 0) {
-        const result = db.prepare(`
-        INSERT INTO oms_orders(
-          order_number, customer_id, customer_email, channel, currency,
-          subtotal, shipping_total, tax_total, grand_total, payment_status, order_status
-        )
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)
-      `).run("BZ-2026-DEMO01", 1, "demo@example.com", "web", "EUR", 79.8, 4.99, 13.55, 84.79, "paid", "confirmed");
-        db.prepare(`
-      INSERT INTO oms_order_items(order_id, product_sku, title, quantity, unit_price, tax_rate, reserved_quantity)
-      VALUES(?,?,?,?,?,?,?)
-    `).run(result.lastInsertRowid, "BZ-OIL-5W30", "Premium Motor\xF6l 5W-30", 2, 39.9, 19, 2);
-        db.prepare(`
-      INSERT INTO oms_order_events(order_id, event_type, old_status, new_status, message)
-      VALUES(?,?,?,?,?)
-    `).run(result.lastInsertRowid, "order_created", null, "confirmed", "Demo order created");
-      }
-    }
-    migrateOrderManagementV22();
-    function migrateCartCheckoutV23() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS cc_carts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      token TEXT UNIQUE NOT NULL,
-      customer_id INTEGER,
-      email TEXT,
-      country TEXT DEFAULT 'DE',
-      currency TEXT DEFAULT 'EUR',
-      coupon TEXT,
-      status TEXT DEFAULT 'active',
-      expires_at TEXT DEFAULT (datetime('now', '+30 days'))
-    );
-    CREATE TABLE IF NOT EXISTS cc_cart_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      cart_id INTEGER NOT NULL,
-      sku TEXT NOT NULL,
-      title TEXT,
-      qty INTEGER NOT NULL,
-      price REAL NOT NULL,
-      tax REAL DEFAULT 19,
-      UNIQUE(cart_id, sku),
-      FOREIGN KEY(cart_id) REFERENCES cc_carts(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS cc_coupons (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      type TEXT NOT NULL,
-      value REAL NOT NULL,
-      min_order REAL DEFAULT 0,
-      active INTEGER DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS cc_shipping_rates (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      country TEXT NOT NULL,
-      code TEXT NOT NULL,
-      name TEXT NOT NULL,
-      price REAL NOT NULL,
-      min_days INTEGER,
-      max_days INTEGER,
-      active INTEGER DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS cc_checkout_sessions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      token TEXT UNIQUE NOT NULL,
-      cart_id INTEGER,
-      email TEXT,
-      country TEXT,
-      currency TEXT,
-      shipping_id INTEGER,
-      payment_method TEXT,
-      shipping_json TEXT,
-      billing_json TEXT,
-      subtotal REAL,
-      discount REAL,
-      shipping REAL,
-      tax REAL,
-      total REAL,
-      status TEXT DEFAULT 'open',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(cart_id) REFERENCES cc_carts(id)
-    );
-  `);
-      const couponCount = db.prepare("SELECT COUNT(*) n FROM cc_coupons").get().n;
-      if (couponCount === 0) {
-        const insertCcCoupon = db.prepare(
-          "INSERT INTO cc_coupons(code, type, value, min_order) VALUES(?,?,?,?)"
-        );
-        insertCcCoupon.run("WELCOME10", "percent", 10, 30);
-        insertCcCoupon.run("BUZZARD5", "fixed", 5, 50);
-      } else if (!db.prepare("SELECT code FROM cc_coupons WHERE code = ?").get("BUZZARD5")) {
-        db.prepare("INSERT INTO cc_coupons(code, type, value, min_order) VALUES(?,?,?,?)").run(
-          "BUZZARD5",
-          "fixed",
-          5,
-          50
-        );
-      }
-      const shippingCount = db.prepare("SELECT COUNT(*) n FROM cc_shipping_rates").get().n;
-      if (shippingCount === 0) {
-        const insert = db.prepare(`
-      INSERT INTO cc_shipping_rates(country, code, name, price, min_days, max_days)
-      VALUES(?,?,?,?,?,?)
-    `);
-        for (const [country, price] of [
-          ["DE", 4.99],
-          ["AT", 8.99],
-          ["BE", 9.49],
-          ["NL", 9.49],
-          ["FR", 9.99],
-          ["PL", 10.99],
-          ["IT", 12.99],
-          ["ES", 13.99]
-        ]) {
-          insert.run(country, "standard", "Standard Delivery", price, 2, 5);
-        }
-        insert.run("DE", "express", "Express Delivery", 11.99, 1, 2);
-      }
-    }
-    migrateCartCheckoutV23();
-    function migrateCrmCustomerServiceV24() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS crmcs_customers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      external_user_id INTEGER,
-      email TEXT UNIQUE NOT NULL,
-      first_name TEXT DEFAULT '',
-      last_name TEXT DEFAULT '',
-      phone TEXT DEFAULT '',
-      country_code TEXT DEFAULT 'DE',
-      language TEXT DEFAULT 'de-DE',
-      segment TEXT DEFAULT 'standard',
-      status TEXT DEFAULT 'active',
-      marketing_email INTEGER DEFAULT 0,
-      marketing_sms INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS crmcs_customer_tags (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customer_id INTEGER,
-      tag TEXT,
-      UNIQUE(customer_id, tag),
-      FOREIGN KEY(customer_id) REFERENCES crmcs_customers(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS crmcs_customer_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customer_id INTEGER,
-      event_type TEXT,
-      reference TEXT,
-      message TEXT,
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS crmcs_tickets (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      ticket_number TEXT UNIQUE NOT NULL,
-      customer_id INTEGER,
-      subject TEXT NOT NULL,
-      category TEXT DEFAULT 'general',
-      priority TEXT DEFAULT 'normal',
-      status TEXT DEFAULT 'open',
-      channel TEXT DEFAULT 'web',
-      assigned_agent TEXT,
-      sla_due_at TEXT,
-      order_number TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(customer_id) REFERENCES crmcs_customers(id)
-    );
-    CREATE TABLE IF NOT EXISTS crmcs_ticket_messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      ticket_id INTEGER,
-      sender_type TEXT,
-      sender_name TEXT,
-      message TEXT,
-      internal INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(ticket_id) REFERENCES crmcs_tickets(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS crmcs_ticket_notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      ticket_id INTEGER,
-      note TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(ticket_id) REFERENCES crmcs_tickets(id) ON DELETE CASCADE
-    );
-  `);
-      const customerCount = db.prepare("SELECT COUNT(*) n FROM crmcs_customers").get().n;
-      if (customerCount === 0) {
-        const customer = db.prepare(`
-        INSERT INTO crmcs_customers(email, first_name, last_name, phone, country_code, language, segment, marketing_email)
-        VALUES(?,?,?,?,?,?,?,?)
-      `).run("demo@buzzard.de", "Demo", "Kunde", "", "DE", "de-DE", "standard", 1);
-        db.prepare(`
-      INSERT INTO crmcs_customer_events(customer_id, event_type, reference, message)
-      VALUES(?,?,?,?)
-    `).run(customer.lastInsertRowid, "customer_created", "", "Demo customer created");
-        const ticket = db.prepare(`
-        INSERT INTO crmcs_tickets(
-          ticket_number, customer_id, subject, category, priority, status, channel,
-          assigned_agent, sla_due_at, order_number
-        )
-        VALUES(?,?,?,?,?,?,?,?,datetime('now','+24 hours'),?)
-      `).run(
-          `TKT-${(/* @__PURE__ */ new Date()).getFullYear()}-DEMO001`,
-          customer.lastInsertRowid,
-          "Demo support request",
-          "order",
-          "normal",
-          "open",
-          "web",
-          "Nesrin",
-          "BZ-2026-DEMO01"
-        );
-        db.prepare(`
-      INSERT INTO crmcs_ticket_messages(ticket_id, sender_type, sender_name, message)
-      VALUES(?,?,?,?)
-    `).run(ticket.lastInsertRowid, "customer", "Demo Kunde", "Where is my order?");
-      }
-    }
-    migrateCrmCustomerServiceV24();
-    function migrateReturnsRmaV25() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS rma_returns (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      rma_number TEXT UNIQUE NOT NULL,
-      order_number TEXT NOT NULL,
-      customer_id INTEGER,
-      customer_email TEXT,
-      reason TEXT NOT NULL,
-      type TEXT DEFAULT 'refund',
-      status TEXT DEFAULT 'requested',
-      customer_note TEXT DEFAULT '',
-      return_address_json TEXT,
-      shipping_label_status TEXT DEFAULT 'pending',
-      shipping_tracking TEXT DEFAULT '',
-      inspection_status TEXT DEFAULT 'pending',
-      inspection_due_at TEXT,
-      refund_status TEXT DEFAULT 'not_requested',
-      refund_amount REAL DEFAULT 0,
-      exchange_order_number TEXT DEFAULT '',
-      warranty_claim INTEGER DEFAULT 0,
-      risk_flag TEXT DEFAULT 'none',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS rma_return_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      return_id INTEGER,
-      order_item_id INTEGER,
-      sku TEXT,
-      title TEXT,
-      quantity INTEGER,
-      unit_price REAL,
-      condition TEXT DEFAULT 'unknown',
-      restockable INTEGER DEFAULT 0,
-      inspection_note TEXT DEFAULT '',
-      FOREIGN KEY(return_id) REFERENCES rma_returns(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS rma_return_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      return_id INTEGER,
-      event_type TEXT,
-      old_status TEXT,
-      new_status TEXT,
-      message TEXT,
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS rma_return_notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      return_id INTEGER,
-      note TEXT,
-      internal INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS rma_return_labels (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      return_id INTEGER,
-      carrier TEXT,
-      service TEXT,
-      label_url TEXT,
-      tracking_number TEXT,
-      status TEXT DEFAULT 'requested',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS rma_warranty_claims (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      return_id INTEGER,
-      claim_number TEXT UNIQUE NOT NULL,
-      warranty_type TEXT DEFAULT 'manufacturer',
-      status TEXT DEFAULT 'submitted',
-      manufacturer TEXT DEFAULT '',
-      product_sku TEXT DEFAULT '',
-      description TEXT DEFAULT '',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const returnCount = db.prepare("SELECT COUNT(*) n FROM rma_returns").get().n;
-      if (returnCount === 0) {
-        const result = db.prepare(`
-        INSERT INTO rma_returns(
-          rma_number, order_number, customer_id, customer_email, reason, type, status,
-          inspection_due_at, refund_amount
-        )
-        VALUES(?,?,?,?,?,?,?,datetime('now','+48 hours'),?)
-      `).run(
-          `RMA-${(/* @__PURE__ */ new Date()).getFullYear()}-DEMO01`,
-          "BZ-2026-DEMO01",
-          1,
-          "demo@buzzard.de",
-          "damaged",
-          "refund",
-          "requested",
-          84.79
-        );
-        db.prepare(`
-      INSERT INTO rma_return_items(return_id, order_item_id, sku, title, quantity, unit_price)
-      VALUES(?,?,?,?,?,?)
-    `).run(result.lastInsertRowid, null, "BZ-OIL-5W30", "Premium Motor\xF6l 5W-30", 1, 39.9);
-        db.prepare(`
-      INSERT INTO rma_return_events(return_id, event_type, old_status, new_status, message)
-      VALUES(?,?,?,?,?)
-    `).run(result.lastInsertRowid, "return_created", null, "requested", "Demo return created");
-      }
-    }
-    migrateReturnsRmaV25();
-    function migrateMarketingLoyaltyV26() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS mktloy_campaigns (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      type TEXT DEFAULT 'coupon',
-      status TEXT DEFAULT 'draft',
-      audience_segment TEXT DEFAULT 'all',
-      discount_type TEXT DEFAULT 'percent',
-      discount_value REAL DEFAULT 0,
-      minimum_order REAL DEFAULT 0,
-      max_uses INTEGER DEFAULT 0,
-      used_count INTEGER DEFAULT 0,
-      starts_at TEXT,
-      ends_at TEXT,
-      channel TEXT DEFAULT 'all',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS mktloy_promotion_uses (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      campaign_id INTEGER,
-      customer_id INTEGER,
-      order_number TEXT,
-      discount_amount REAL DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS mktloy_loyalty_tiers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE,
-      name TEXT,
-      min_points INTEGER,
-      multiplier REAL DEFAULT 1,
-      benefits_json TEXT DEFAULT '{}'
-    );
-    CREATE TABLE IF NOT EXISTS mktloy_loyalty_accounts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customer_id INTEGER UNIQUE,
-      tier_id INTEGER,
-      points_balance INTEGER DEFAULT 0,
-      lifetime_points INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS mktloy_loyalty_ledger (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customer_id INTEGER,
-      points INTEGER,
-      type TEXT,
-      reference TEXT,
-      description TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS mktloy_referrals (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      referrer_customer_id INTEGER,
-      referred_customer_id INTEGER,
-      code TEXT UNIQUE,
-      status TEXT DEFAULT 'pending',
-      reward_points INTEGER DEFAULT 250,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS mktloy_marketing_preferences (
-      customer_id INTEGER PRIMARY KEY,
-      email_opt_in INTEGER DEFAULT 0,
-      sms_opt_in INTEGER DEFAULT 0,
-      push_opt_in INTEGER DEFAULT 0,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const tierCount = db.prepare("SELECT COUNT(*) n FROM mktloy_loyalty_tiers").get().n;
-      if (tierCount === 0) {
-        const insertTier = db.prepare(`
-      INSERT INTO mktloy_loyalty_tiers(code, name, min_points, multiplier, benefits_json)
-      VALUES(?,?,?,?,?)
-    `);
-        insertTier.run("BRONZE", "Bronze", 0, 1, '{"shipping":"standard"}');
-        insertTier.run("SILVER", "Silver", 1e3, 1.1, '{"discount":5}');
-        insertTier.run("GOLD", "Gold", 5e3, 1.25, '{"discount":10,"priority_support":true}');
-        insertTier.run("PLATINUM", "Platinum", 15e3, 1.5, '{"discount":15,"priority_support":true,"early_access":true}');
-      }
-      const campaignCount = db.prepare("SELECT COUNT(*) n FROM mktloy_campaigns").get().n;
-      if (campaignCount === 0) {
-        db.prepare(`
-      INSERT INTO mktloy_campaigns(
-        code, name, type, status, audience_segment, discount_type, discount_value,
-        minimum_order, max_uses, channel
-      )
-      VALUES(?,?,?,?,?,?,?,?,?,?)
-    `).run("WELCOME10", "Welcome discount", "coupon", "active", "new_customers", "percent", 10, 49, 500, "email");
-        const customer = db.prepare("SELECT id FROM crmcs_customers LIMIT 1").get();
-        if (customer) {
-          const bronze = db.prepare("SELECT id FROM mktloy_loyalty_tiers WHERE code = 'BRONZE'").get();
-          db.prepare(`
-        INSERT INTO mktloy_loyalty_accounts(customer_id, tier_id, points_balance, lifetime_points)
-        VALUES(?,?,?,?)
-      `).run(customer.id, bronze.id, 120, 120);
-          db.prepare(`
-        INSERT INTO mktloy_loyalty_ledger(customer_id, points, type, reference, description)
-        VALUES(?,?,?,?,?)
-      `).run(customer.id, 120, "signup", "WELCOME", "Welcome bonus");
-          db.prepare(`
-        INSERT INTO mktloy_marketing_preferences(customer_id, email_opt_in, sms_opt_in)
-        VALUES(?,?,?)
-      `).run(customer.id, 1, 0);
-        }
-      }
-    }
-    migrateMarketingLoyaltyV26();
-    function migrateReviewsRatingsV27() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS revr_reviews (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_sku TEXT NOT NULL,
-      customer_id INTEGER,
-      customer_name TEXT DEFAULT '',
-      order_number TEXT DEFAULT '',
-      rating INTEGER NOT NULL,
-      title TEXT DEFAULT '',
-      body TEXT NOT NULL,
-      status TEXT DEFAULT 'pending',
-      verified_purchase INTEGER DEFAULT 0,
-      risk_flag TEXT DEFAULT 'none',
-      helpful_count INTEGER DEFAULT 0,
-      report_count INTEGER DEFAULT 0,
-      language TEXT DEFAULT 'de',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS revr_review_media (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      review_id INTEGER,
-      media_type TEXT DEFAULT 'image',
-      storage_key TEXT,
-      url TEXT,
-      alt_text TEXT DEFAULT '',
-      status TEXT DEFAULT 'pending',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS revr_review_votes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      review_id INTEGER,
-      customer_id INTEGER,
-      vote TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(review_id, customer_id)
-    );
-    CREATE TABLE IF NOT EXISTS revr_review_replies (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      review_id INTEGER,
-      author_type TEXT,
-      author_name TEXT,
-      body TEXT,
-      status TEXT DEFAULT 'published',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS revr_review_reports (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      review_id INTEGER,
-      customer_id INTEGER,
-      reason TEXT,
-      status TEXT DEFAULT 'open',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS revr_product_rating_stats (
-      product_sku TEXT PRIMARY KEY,
-      review_count INTEGER DEFAULT 0,
-      average_rating REAL DEFAULT 0,
-      rating_1 INTEGER DEFAULT 0,
-      rating_2 INTEGER DEFAULT 0,
-      rating_3 INTEGER DEFAULT 0,
-      rating_4 INTEGER DEFAULT 0,
-      rating_5 INTEGER DEFAULT 0,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const reviewCount = db.prepare("SELECT COUNT(*) n FROM revr_reviews").get().n;
-      if (reviewCount === 0) {
-        const customer = db.prepare("SELECT id, first_name, last_name FROM crmcs_customers LIMIT 1").get();
-        const customerId = customer?.id || 1;
-        const customerName = customer ? `${customer.first_name || ""} ${customer.last_name || ""}`.trim() || "Demo Kunde" : "Demo Kunde";
-        db.prepare(`
-      INSERT INTO revr_reviews(
-        product_sku, customer_id, customer_name, order_number, rating, title, body,
-        status, verified_purchase
-      )
-      VALUES(?,?,?,?,?,?,?,?,?)
-    `).run(
-          "BZ-OIL-5W30",
-          customerId,
-          customerName,
-          "BZ-2026-DEMO01",
-          5,
-          "Sehr gutes Produkt",
-          "Schnelle Lieferung und gute Qualit\xE4t.",
-          "published",
-          1
-        );
-        db.prepare(`
-      INSERT INTO revr_product_rating_stats(
-        product_sku, review_count, average_rating, rating_1, rating_2, rating_3, rating_4, rating_5
-      )
-      VALUES(?,?,?,?,?,?,?,?)
-    `).run("BZ-OIL-5W30", 1, 5, 0, 0, 0, 0, 1);
-      }
-    }
-    migrateReviewsRatingsV27();
-    function migrateAiCenterV28() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS aictr_sessions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      session_token TEXT UNIQUE NOT NULL,
-      customer_id INTEGER,
-      language TEXT DEFAULT 'de',
-      channel TEXT DEFAULT 'web',
-      status TEXT DEFAULT 'active',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS aictr_messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      session_id INTEGER,
-      role TEXT NOT NULL,
-      intent TEXT DEFAULT '',
-      content TEXT NOT NULL,
-      model TEXT DEFAULT 'adapter',
-      prompt_version TEXT DEFAULT 'v1',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS aictr_jobs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      job_type TEXT NOT NULL,
-      entity_type TEXT DEFAULT '',
-      entity_id TEXT DEFAULT '',
-      input_json TEXT,
-      output_json TEXT,
-      status TEXT DEFAULT 'queued',
-      model TEXT DEFAULT 'adapter',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS aictr_audit (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      session_id INTEGER,
-      customer_id INTEGER,
-      action TEXT,
-      intent TEXT,
-      risk_level TEXT DEFAULT 'low',
-      human_handoff INTEGER DEFAULT 0,
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS aictr_prompt_versions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      version TEXT,
-      purpose TEXT,
-      active INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const promptCount = db.prepare("SELECT COUNT(*) n FROM aictr_prompt_versions").get().n;
-      if (promptCount === 0) {
-        const insert = db.prepare(`
-      INSERT INTO aictr_prompt_versions(name, version, purpose)
-      VALUES(?,?,?)
-    `);
-        insert.run("commerce-assistant", "v1", "General customer commerce assistant");
-        insert.run("product-copy", "v1", "Product description generation");
-        insert.run("translation", "v1", "Multilingual product/content translation");
-        insert.run("review-sentiment", "v1", "Review sentiment classification");
-        insert.run("smart-search", "v1", "Search query normalization and intent");
-      }
-    }
-    migrateAiCenterV28();
-    function migrateAdvancedSearchV29() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS srch_products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      sku TEXT UNIQUE NOT NULL,
-      title TEXT NOT NULL,
-      description TEXT DEFAULT '',
-      category TEXT DEFAULT '',
-      subcategory TEXT DEFAULT '',
-      brand TEXT DEFAULT '',
-      price REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      rating REAL DEFAULT 0,
-      review_count INTEGER DEFAULT 0,
-      stock INTEGER DEFAULT 0,
-      tags TEXT DEFAULT '',
-      attributes_json TEXT DEFAULT '{}',
-      active INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS srch_synonyms (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      term TEXT UNIQUE NOT NULL,
-      synonyms_json TEXT NOT NULL,
-      active INTEGER DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS srch_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      query TEXT,
-      normalized_query TEXT,
-      customer_id INTEGER,
-      result_count INTEGER DEFAULT 0,
-      clicked_sku TEXT DEFAULT '',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const productCount = db.prepare("SELECT COUNT(*) n FROM srch_products").get().n;
-      if (productCount === 0) {
-        const insert = db.prepare(`
-      INSERT INTO srch_products(
-        sku, title, description, category, subcategory, brand, price, rating, review_count, stock, tags, attributes_json
-      )
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
-    `);
-        insert.run(
-          "BZ-OIL-5W30",
-          "Castrol Edge 5W-30 Motor Oil",
-          "Premium engine oil for compatible vehicles",
-          "Automotive",
-          "Motor Oils",
-          "Castrol",
-          49.9,
-          4.8,
-          124,
-          40,
-          "oil,motor,5w30,engine",
-          '{"viscosity":"5W-30","volume":"5L"}'
-        );
-        insert.run(
-          "BZ-TIRE-2055516",
-          "205/55 R16 Premium Tire",
-          "Passenger car summer tire",
-          "Automotive",
-          "Tires",
-          "Buzzard Premium",
-          79.9,
-          4.5,
-          87,
-          22,
-          "tire,tyre,205/55 R16,summer",
-          '{"size":"205/55 R16","season":"summer"}'
-        );
-        insert.run(
-          "BZ-CLEAN-001",
-          "Vehicle Interior Cleaner",
-          "Interior cleaning product",
-          "Automotive",
-          "Car Care",
-          "Buzzard Care",
-          9.9,
-          4.7,
-          52,
-          100,
-          "cleaner,car care,interior",
-          '{"volume":"500ml"}'
-        );
-        insert.run(
-          "BZ-GARDEN-001",
-          "Garden Water Storage Tank 1000L",
-          "IBC-compatible water storage solution",
-          "Garden",
-          "Water Storage & Irrigation",
-          "Buzzard Garden",
-          299,
-          4.6,
-          31,
-          12,
-          "garden,water tank,IBC,irrigation",
-          '{"capacity":"1000L"}'
-        );
-        const synonym = db.prepare("INSERT INTO srch_synonyms(term, synonyms_json) VALUES(?,?)");
-        synonym.run("motor\xF6l", '["engine oil","motor oil","\xF6l"]');
-        synonym.run("reifen", '["tire","tyre"]');
-        synonym.run("auto", '["automotive","car","vehicle"]');
-        synonym.run("k\xFChlerfrostschutz", '["antifreeze","coolant"]');
-      }
-    }
-    migrateAdvancedSearchV29();
-    function migrateProductCatalogPimV30() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS pim30_brands (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT UNIQUE NOT NULL,
-      slug TEXT UNIQUE NOT NULL,
-      status TEXT DEFAULT 'active',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS pim30_categories (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      parent_id INTEGER,
-      name TEXT NOT NULL,
-      slug TEXT UNIQUE NOT NULL,
-      level INTEGER DEFAULT 1,
-      status TEXT DEFAULT 'active',
-      sort_order INTEGER DEFAULT 0
-    );
-    CREATE TABLE IF NOT EXISTS pim30_products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      sku TEXT UNIQUE NOT NULL,
-      parent_sku TEXT DEFAULT '',
-      barcode TEXT DEFAULT '',
-      brand_id INTEGER,
-      category_id INTEGER,
-      product_type TEXT DEFAULT 'simple',
-      status TEXT DEFAULT 'draft',
-      cost_price REAL DEFAULT 0,
-      selling_price REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      tax_class TEXT DEFAULT 'standard',
-      stock_qty INTEGER DEFAULT 0,
-      weight_kg REAL DEFAULT 0,
-      supplier_id TEXT DEFAULT '',
-      supplier_sku TEXT DEFAULT '',
-      supplier_feed_ref TEXT DEFAULT '',
-      tecdoc_ref TEXT DEFAULT '',
-      completeness INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS pim30_product_translations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_id INTEGER,
-      language TEXT,
-      title TEXT DEFAULT '',
-      short_description TEXT DEFAULT '',
-      description TEXT DEFAULT '',
-      meta_title TEXT DEFAULT '',
-      meta_description TEXT DEFAULT '',
-      slug TEXT DEFAULT '',
-      UNIQUE(product_id, language)
-    );
-    CREATE TABLE IF NOT EXISTS pim30_product_attributes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_id INTEGER,
-      attribute_code TEXT,
-      attribute_value TEXT,
-      language TEXT DEFAULT '',
-      UNIQUE(product_id, attribute_code, language)
-    );
-    CREATE TABLE IF NOT EXISTS pim30_product_media (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      product_id INTEGER,
-      media_type TEXT DEFAULT 'image',
-      url TEXT,
-      alt_text TEXT DEFAULT '',
-      sort_order INTEGER DEFAULT 0,
-      status TEXT DEFAULT 'active'
-    );
-    CREATE TABLE IF NOT EXISTS pim30_product_variants (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      parent_product_id INTEGER,
-      sku TEXT UNIQUE NOT NULL,
-      barcode TEXT DEFAULT '',
-      option_json TEXT DEFAULT '{}',
-      selling_price REAL DEFAULT 0,
-      stock_qty INTEGER DEFAULT 0,
-      status TEXT DEFAULT 'active'
-    );
-  `);
-      const brandCount = db.prepare("SELECT COUNT(*) n FROM pim30_brands").get().n;
-      if (brandCount === 0) {
-        const brand = db.prepare("INSERT INTO pim30_brands(name, slug) VALUES(?,?)");
-        brand.run("Castrol", "castrol");
-        brand.run("Michelin", "michelin");
-        brand.run("Buzzard Care", "buzzard-care");
-        brand.run("Buzzard Garden", "buzzard-garden");
-        const category = db.prepare(`
-      INSERT INTO pim30_categories(parent_id, name, slug, level)
-      VALUES(?,?,?,?)
-    `);
-        category.run(null, "Automotive", "automotive", 1);
-        category.run(null, "Garden", "garden", 1);
-        const auto = db.prepare("SELECT id FROM pim30_categories WHERE slug = 'automotive'").get();
-        category.run(auto.id, "Motor Oils", "motor-oils", 2);
-        category.run(auto.id, "Tires", "tires", 2);
-        category.run(auto.id, "Car Care", "car-care", 2);
-        const garden = db.prepare("SELECT id FROM pim30_categories WHERE slug = 'garden'").get();
-        category.run(garden.id, "Water Storage & Irrigation", "water-storage-irrigation", 2);
-        const castrol = db.prepare("SELECT id FROM pim30_brands WHERE slug = 'castrol'").get();
-        const motorOils = db.prepare("SELECT id FROM pim30_categories WHERE slug = 'motor-oils'").get();
-        const product = db.prepare(`
-        INSERT INTO pim30_products(
-          sku, barcode, brand_id, category_id, product_type, status, cost_price, selling_price,
-          stock_qty, supplier_id, supplier_sku, tecdoc_ref
-        )
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
-      `).run(
-          "BZ-OIL-5W30",
-          "4008177104722",
-          castrol.id,
-          motorOils.id,
-          "simple",
-          "active",
-          32,
-          49.9,
-          40,
-          "SUP-DEMO",
-          "CAST-5W30",
-          "TEC-00001"
-        );
-        db.prepare(`
-      INSERT INTO pim30_product_translations(
-        product_id, language, title, short_description, description, meta_title, meta_description, slug
-      )
-      VALUES(?,?,?,?,?,?,?,?)
-    `).run(
-          product.lastInsertRowid,
-          "de",
-          "Castrol Edge 5W-30 Motor\xF6l",
-          "Premium Motor\xF6l",
-          "Hochwertiges 5W-30 Motor\xF6l f\xFCr kompatible Fahrzeuge.",
-          "Castrol Edge 5W-30 | Buzzard",
-          "Premium Motor\xF6l bei Buzzard",
-          "castrol-edge-5w30"
-        );
-        db.prepare(`
-      INSERT INTO pim30_product_translations(product_id, language, title, description)
-      VALUES(?,?,?,?)
-    `).run(
-          product.lastInsertRowid,
-          "en",
-          "Castrol Edge 5W-30 Engine Oil",
-          "Premium 5W-30 engine oil for compatible vehicles."
-        );
-        db.prepare(`
-      INSERT INTO pim30_product_attributes(product_id, attribute_code, attribute_value)
-      VALUES(?,?,?)
-    `).run(product.lastInsertRowid, "viscosity", "5W-30");
-        db.prepare(`
-      INSERT INTO pim30_product_attributes(product_id, attribute_code, attribute_value)
-      VALUES(?,?,?)
-    `).run(product.lastInsertRowid, "volume", "5L");
-        db.prepare(`
-      INSERT INTO pim30_product_media(product_id, media_type, url, alt_text)
-      VALUES(?,?,?,?)
-    `).run(
-          product.lastInsertRowid,
-          "image",
-          "/media/demo/castrol-edge-5w30.jpg",
-          "Castrol Edge 5W-30 Motor\xF6l"
-        );
-        const row = db.prepare("SELECT * FROM pim30_products WHERE id = ?").get(product.lastInsertRowid);
-        let score = 0;
-        if (row.sku) score += 10;
-        if (row.barcode) score += 5;
-        if (row.brand_id) score += 10;
-        if (row.category_id) score += 10;
-        if (row.selling_price > 0) score += 10;
-        if (row.stock_qty >= 0) score += 5;
-        score += 15 + 10 + 5 + 10 + 10;
-        db.prepare("UPDATE pim30_products SET completeness = ? WHERE id = ?").run(Math.min(100, score), row.id);
-      }
-    }
-    migrateProductCatalogPimV30();
-    function migrateSupplierIntegrationHubV31() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supih_suppliers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      country TEXT DEFAULT 'DE',
-      status TEXT DEFAULT 'active',
-      feed_type TEXT DEFAULT 'api',
-      base_url TEXT DEFAULT '',
-      feed_url TEXT DEFAULT '',
-      auth_type TEXT DEFAULT 'none',
-      credentials_ref TEXT DEFAULT '',
-      api_version TEXT DEFAULT '',
-      supports_dropshipping INTEGER DEFAULT 0,
-      supports_blind_shipping INTEGER DEFAULT 0,
-      supports_white_label INTEGER DEFAULT 0,
-      supports_api INTEGER DEFAULT 0,
-      supports_xml INTEGER DEFAULT 0,
-      supports_csv INTEGER DEFAULT 0,
-      supports_ftp INTEGER DEFAULT 0,
-      default_currency TEXT DEFAULT 'EUR',
-      lead_time_days INTEGER DEFAULT 2,
-      last_sync_at TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS supih_mappings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      supplier_sku TEXT NOT NULL,
-      buzzard_sku TEXT NOT NULL,
-      barcode TEXT DEFAULT '',
-      category_hint TEXT DEFAULT '',
-      brand_hint TEXT DEFAULT '',
-      price_multiplier REAL DEFAULT 1,
-      active INTEGER DEFAULT 1,
-      UNIQUE(supplier_id, supplier_sku)
-    );
-    CREATE TABLE IF NOT EXISTS supih_product_snapshots (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      supplier_sku TEXT,
-      buzzard_sku TEXT,
-      supplier_price REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      stock_qty INTEGER DEFAULT 0,
-      lead_time_days INTEGER DEFAULT 0,
-      raw_ref TEXT DEFAULT '',
-      captured_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS supih_sync_jobs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      job_type TEXT DEFAULT 'full',
-      status TEXT DEFAULT 'queued',
-      records_read INTEGER DEFAULT 0,
-      records_created INTEGER DEFAULT 0,
-      records_updated INTEGER DEFAULT 0,
-      records_failed INTEGER DEFAULT 0,
-      started_at TEXT,
-      completed_at TEXT,
-      error_message TEXT DEFAULT ''
-    );
-    CREATE TABLE IF NOT EXISTS supih_sync_logs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      job_id INTEGER,
-      level TEXT DEFAULT 'info',
-      message TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS supih_shipping_methods (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      code TEXT,
-      name TEXT,
-      carrier TEXT DEFAULT '',
-      service TEXT DEFAULT '',
-      price REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      estimated_days INTEGER DEFAULT 2,
-      active INTEGER DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS supih_orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      supplier_id INTEGER,
-      buzzard_order_number TEXT,
-      supplier_order_number TEXT DEFAULT '',
-      status TEXT DEFAULT 'queued',
-      dropship INTEGER DEFAULT 1,
-      blind_shipping INTEGER DEFAULT 0,
-      white_label INTEGER DEFAULT 0,
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-      const supplierCount = db.prepare("SELECT COUNT(*) n FROM supih_suppliers").get().n;
-      if (supplierCount === 0) {
-        const result = db.prepare(`
-        INSERT INTO supih_suppliers(
-          code, name, country, feed_type, base_url, feed_url, supports_dropshipping,
-          supports_blind_shipping, supports_white_label, supports_api, supports_xml,
-          default_currency, lead_time_days
-        )
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
-      `).run(
-          "DEMO-SUP",
-          "Demo B2B Supplier",
-          "DE",
-          "xml",
-          "https://supplier.example/api",
-          "https://supplier.example/feed.xml",
-          1,
-          1,
-          1,
-          1,
-          1,
-          "EUR",
-          2
-        );
-        db.prepare(`
-      INSERT INTO supih_mappings(supplier_id, supplier_sku, buzzard_sku, barcode, brand_hint)
-      VALUES(?,?,?,?,?)
-    `).run(result.lastInsertRowid, "SUP-5W30", "BZ-OIL-5W30", "4008177104722", "Castrol");
-        db.prepare(`
-      INSERT INTO supih_shipping_methods(supplier_id, code, name, carrier, service, price, estimated_days)
-      VALUES(?,?,?,?,?,?,?)
-    `).run(result.lastInsertRowid, "DE-DHL", "Standard DHL", "DHL", "Standard", 4.99, 2);
-      }
-    }
-    migrateSupplierIntegrationHubV31();
-    function migrateOrderManagementV32() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS oms32_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS oms32_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM oms32_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO oms32_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-OMS",
-          "Buzzard Demo Order Pipeline",
-          "active",
-          JSON.stringify({ version: "3.2", module: "Order Management System" })
-        );
-      }
-    }
-    migrateOrderManagementV32();
-    function migrateFulfillmentV33() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS ful33_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS ful33_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM ful33_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO ful33_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-FUL",
-          "Buzzard Demo Warehouse",
-          "active",
-          JSON.stringify({ version: "3.3", module: "Fulfillment & Warehouse" })
-        );
-      }
-    }
-    migrateFulfillmentV33();
-    function migrateLogisticsV34() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS log34_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS log34_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM log34_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO log34_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-LOG",
-          "Buzzard Demo Shipping Hub",
-          "active",
-          JSON.stringify({ version: "3.4", module: "Logistics & Shipping" })
-        );
-      }
-    }
-    migrateLogisticsV34();
-    function migrateMarketplaceV35() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS mkt35_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS mkt35_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM mkt35_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO mkt35_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-MKT",
-          "Buzzard Demo Marketplace",
-          "active",
-          JSON.stringify({ version: "3.5", module: "Marketplace Integration" })
-        );
-      }
-    }
-    migrateMarketplaceV35();
-    function migratePaymentsV36() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS pay36_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS pay36_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM pay36_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO pay36_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-PAY",
-          "Buzzard Demo Payments",
-          "active",
-          JSON.stringify({ version: "3.6", module: "Payments & Finance" })
-        );
-      }
-    }
-    migratePaymentsV36();
-    function migrateInternationalV37() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS int37_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS int37_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM int37_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO int37_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-INT",
-          "Buzzard Demo EU Markets",
-          "active",
-          JSON.stringify({ version: "3.7", module: "Europe & International" })
-        );
-      }
-    }
-    migrateInternationalV37();
-    function migrateSecurityV38() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS sec38_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS sec38_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM sec38_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO sec38_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-SEC",
-          "Buzzard Demo Security",
-          "active",
-          JSON.stringify({ version: "3.8", module: "Security & Compliance" })
-        );
-      }
-    }
-    migrateSecurityV38();
-    function migrateAnalyticsV39() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS anl39_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS anl39_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM anl39_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO anl39_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-ANL",
-          "Buzzard Demo Analytics",
-          "active",
-          JSON.stringify({ version: "3.9", module: "Analytics & BI" })
-        );
-      }
-    }
-    migrateAnalyticsV39();
-    function migrateMasterAdminV40() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS mad40_records(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      status TEXT DEFAULT 'active',
-      data_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS mad40_jobs(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      completed_at TEXT
-    );
-  `);
-      const count = db.prepare("SELECT COUNT(*) n FROM mad40_records").get().n;
-      if (count === 0) {
-        db.prepare(`
-      INSERT INTO mad40_records(code, name, status, data_json)
-      VALUES(?,?,?,?)
-    `).run(
-          "DEMO-MASTER",
-          "Buzzard Platform Control",
-          "active",
-          JSON.stringify({ version: "4.0", module: "Master Admin & Platform Control" })
-        );
-      }
-    }
-    migrateMasterAdminV40();
-    function migrateCoreFoundationPart2() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS core_ai_employees(
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      department TEXT,
-      description TEXT,
-      responsibility TEXT,
-      permissions_json TEXT DEFAULT '[]',
-      status TEXT DEFAULT 'ACTIVE',
-      priority INTEGER DEFAULT 50,
-      capabilities_json TEXT DEFAULT '[]',
-      last_activity_at TEXT,
-      error_message TEXT,
-      performance_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_ai_tasks(
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      description TEXT,
-      employee_id TEXT,
-      priority TEXT DEFAULT 'NORMAL',
-      status TEXT DEFAULT 'PENDING',
-      permissions_required_json TEXT DEFAULT '[]',
-      payload_json TEXT DEFAULT '{}',
-      result_json TEXT,
-      error_message TEXT,
-      retry_count INTEGER DEFAULT 0,
-      max_retries INTEGER DEFAULT 3,
-      depends_on_task_id TEXT,
-      created_by TEXT,
-      assigned_at TEXT,
-      started_at TEXT,
-      completed_at TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_approvals(
-      id TEXT PRIMARY KEY,
-      task_id TEXT,
-      resource_type TEXT,
-      resource_id TEXT,
-      ai_recommendation TEXT,
-      reason TEXT,
-      risk_level TEXT DEFAULT 'MEDIUM',
-      status TEXT DEFAULT 'PENDING',
-      decided_by TEXT,
-      decided_at TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_escalations(
-      id TEXT PRIMARY KEY,
-      source_type TEXT,
-      source_id TEXT,
-      title TEXT NOT NULL,
-      message TEXT,
-      risk_level TEXT DEFAULT 'MEDIUM',
-      status TEXT DEFAULT 'OPEN',
-      assigned_to TEXT,
-      resolved_at TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_notifications(
-      id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      priority TEXT DEFAULT 'NORMAL',
-      recipient TEXT,
-      channel TEXT DEFAULT 'internal',
-      status TEXT DEFAULT 'PENDING',
-      payload_json TEXT DEFAULT '{}',
-      delivery_result TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      sent_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS core_integrations(
-      id TEXT PRIMARY KEY,
-      code TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      type TEXT NOT NULL,
-      status TEXT DEFAULT 'DISCONNECTED',
-      health_url TEXT,
-      last_check_at TEXT,
-      last_error TEXT,
-      config_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_system_events(
-      id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      actor_type TEXT,
-      actor_id TEXT,
-      resource_type TEXT,
-      resource_id TEXT,
-      summary TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_background_jobs(
-      id TEXT PRIMARY KEY,
-      job_type TEXT NOT NULL,
-      status TEXT DEFAULT 'queued',
-      payload_json TEXT DEFAULT '{}',
-      result_json TEXT,
-      error_message TEXT,
-      retry_count INTEGER DEFAULT 0,
-      next_run_at TEXT,
-      started_at TEXT,
-      completed_at TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_category_visibility(
-      category_id TEXT PRIMARY KEY,
-      status TEXT DEFAULT 'ACTIVE',
-      readiness_json TEXT DEFAULT '{}',
-      updated_by TEXT,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_config(
-      key TEXT PRIMARY KEY,
-      value TEXT NOT NULL,
-      updated_by TEXT,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_core_tasks_status ON core_ai_tasks(status);
-    CREATE INDEX IF NOT EXISTS idx_core_tasks_employee ON core_ai_tasks(employee_id);
-    CREATE INDEX IF NOT EXISTS idx_core_events_created ON core_system_events(created_at);
-    CREATE INDEX IF NOT EXISTS idx_core_approvals_status ON core_approvals(status);
-  `);
-    }
-    function migrateCoreFoundationPart5() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS core_scheduled_jobs(
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      job_type TEXT NOT NULL,
-      schedule_type TEXT NOT NULL,
-      cron_expr TEXT,
-      interval_ms INTEGER,
-      payload_json TEXT DEFAULT '{}',
-      priority TEXT DEFAULT 'NORMAL',
-      enabled INTEGER DEFAULT 1,
-      next_run_at TEXT,
-      last_run_at TEXT,
-      run_count INTEGER DEFAULT 0,
-      max_retries INTEGER DEFAULT 3,
-      created_by TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_job_logs(
-      id TEXT PRIMARY KEY,
-      job_id TEXT NOT NULL,
-      level TEXT DEFAULT 'INFO',
-      message TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_worker_state(
-      id TEXT PRIMARY KEY DEFAULT 'default',
-      status TEXT DEFAULT 'STOPPED',
-      worker_id TEXT,
-      jobs_processed INTEGER DEFAULT 0,
-      last_tick_at TEXT,
-      paused_at TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      started_at TEXT,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS core_integration_health(
-      integration_code TEXT PRIMARY KEY,
-      status TEXT DEFAULT 'DISCONNECTED',
-      response_time_ms INTEGER,
-      last_success_at TEXT,
-      last_failure_at TEXT,
-      error_count INTEGER DEFAULT 0,
-      last_error TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_core_jobs_status ON core_background_jobs(status);
-    CREATE INDEX IF NOT EXISTS idx_core_jobs_next_run ON core_background_jobs(next_run_at);
-    CREATE INDEX IF NOT EXISTS idx_core_schedules_next ON core_scheduled_jobs(next_run_at);
-    CREATE INDEX IF NOT EXISTS idx_core_job_logs_job ON core_job_logs(job_id);
-  `);
-      const jobCols = db.prepare("PRAGMA table_info(core_background_jobs)").all().map((c) => c.name);
-      const addCol = (sql) => {
-        try {
-          db.exec(sql);
-        } catch {
-        }
-      };
-      if (!jobCols.includes("lock_owner")) addCol("ALTER TABLE core_background_jobs ADD COLUMN lock_owner TEXT");
-      if (!jobCols.includes("lock_expires_at")) addCol("ALTER TABLE core_background_jobs ADD COLUMN lock_expires_at TEXT");
-      if (!jobCols.includes("worker_id")) addCol("ALTER TABLE core_background_jobs ADD COLUMN worker_id TEXT");
-      if (!jobCols.includes("schedule_id")) addCol("ALTER TABLE core_background_jobs ADD COLUMN schedule_id TEXT");
-      if (!jobCols.includes("priority")) addCol("ALTER TABLE core_background_jobs ADD COLUMN priority TEXT DEFAULT 'NORMAL'");
-      if (!jobCols.includes("execution_ms")) addCol("ALTER TABLE core_background_jobs ADD COLUMN execution_ms INTEGER");
-      if (!jobCols.includes("failure_kind")) addCol("ALTER TABLE core_background_jobs ADD COLUMN failure_kind TEXT");
-      if (!jobCols.includes("updated_at")) addCol("ALTER TABLE core_background_jobs ADD COLUMN updated_at TEXT");
-      db.prepare(`
-    INSERT OR IGNORE INTO core_worker_state(id, status) VALUES ('default', 'STOPPED')
-  `).run();
-    }
-    function migrateCoreFoundationPart6() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS pim_core_brands (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT UNIQUE NOT NULL,
-      slug TEXT UNIQUE NOT NULL,
-      manufacturer TEXT,
-      country TEXT,
-      logo_url TEXT,
-      website TEXT,
-      status TEXT DEFAULT 'ACTIVE',
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_products (
-      id TEXT PRIMARY KEY,
-      sku TEXT UNIQUE NOT NULL,
-      supplier_sku TEXT,
-      ean TEXT,
-      gtin TEXT,
-      mpn TEXT,
-      brand_id INTEGER,
-      manufacturer TEXT,
-      title TEXT NOT NULL,
-      description TEXT,
-      short_description TEXT,
-      taxonomy_category_id TEXT,
-      pim_category_id INTEGER,
-      subcategory_id TEXT,
-      attributes_json TEXT DEFAULT '{}',
-      price REAL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      stock INTEGER DEFAULT 0,
-      supplier_id TEXT,
-      status TEXT DEFAULT 'DRAFT',
-      visibility TEXT DEFAULT 'HIDDEN',
-      seo_json TEXT DEFAULT '{}',
-      metadata_json TEXT DEFAULT '{}',
-      quality_score INTEGER DEFAULT 0,
-      parent_product_id TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(brand_id) REFERENCES pim_core_brands(id),
-      FOREIGN KEY(parent_product_id) REFERENCES pim_core_products(id)
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_variants (
-      id TEXT PRIMARY KEY,
-      product_id TEXT NOT NULL,
-      sku TEXT UNIQUE,
-      axis TEXT NOT NULL,
-      value TEXT NOT NULL,
-      ean TEXT,
-      price_delta REAL DEFAULT 0,
-      stock INTEGER DEFAULT 0,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(product_id) REFERENCES pim_core_products(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_media (
-      id TEXT PRIMARY KEY,
-      product_id TEXT NOT NULL,
-      media_type TEXT NOT NULL,
-      url TEXT NOT NULL,
-      alt_text TEXT,
-      is_primary INTEGER DEFAULT 0,
-      sort_order INTEGER DEFAULT 0,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(product_id) REFERENCES pim_core_products(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_supplier_mappings (
-      id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      supplier_product_id TEXT,
-      supplier_sku TEXT,
-      internal_product_id TEXT,
-      internal_sku TEXT,
-      ean TEXT,
-      gtin TEXT,
-      mpn TEXT,
-      brand TEXT,
-      confidence REAL DEFAULT 0.5,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(internal_product_id) REFERENCES pim_core_products(id)
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_category_mappings (
-      taxonomy_category_id TEXT PRIMARY KEY,
-      pim_category_id INTEGER,
-      main_category_id TEXT,
-      subcategory_id TEXT,
-      sub_subcategory_id TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_attribute_schemas (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      category_id TEXT NOT NULL,
-      schema_json TEXT NOT NULL,
-      version INTEGER DEFAULT 1,
-      active INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(category_id, version)
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_product_audit (
-      id TEXT PRIMARY KEY,
-      product_id TEXT,
-      action TEXT NOT NULL,
-      source TEXT NOT NULL,
-      actor_id TEXT,
-      field_name TEXT,
-      before_json TEXT,
-      after_json TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS pim_core_import_stages (
-      id TEXT PRIMARY KEY,
-      import_job_id TEXT,
-      product_id TEXT,
-      stage TEXT NOT NULL,
-      status TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_ean ON pim_core_products(ean) WHERE ean IS NOT NULL AND ean != '';
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_gtin ON pim_core_products(gtin) WHERE gtin IS NOT NULL AND gtin != '';
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_pim_core_mpn ON pim_core_products(mpn) WHERE mpn IS NOT NULL AND mpn != '';
-    CREATE INDEX IF NOT EXISTS idx_pim_core_products_status ON pim_core_products(status);
-    CREATE INDEX IF NOT EXISTS idx_pim_core_products_taxonomy ON pim_core_products(taxonomy_category_id);
-    CREATE INDEX IF NOT EXISTS idx_pim_core_supplier_map ON pim_core_supplier_mappings(supplier_id, supplier_sku);
-  `);
-      const brandCount = db.prepare("SELECT COUNT(*) n FROM pim_core_brands").get().n;
-      if (brandCount === 0) {
-        db.prepare(`
-      INSERT INTO pim_core_brands(name, slug, manufacturer, country, status)
-      VALUES ('Buzzard Demo', 'buzzard-demo', 'Buzzard GmbH', 'DE', 'ACTIVE')
-    `).run();
-        const brandId = db.prepare("SELECT id FROM pim_core_brands LIMIT 1").get().id;
-        db.prepare(`
-      INSERT INTO pim_core_products(
-        id, sku, ean, gtin, brand_id, title, short_description, description,
-        taxonomy_category_id, price, stock, status, visibility, quality_score
-      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `).run(
-          "pim_prod_demo001",
-          "BZ-CORE-DEMO-001",
-          "5901234123457",
-          "5901234123457",
-          brandId,
-          "Universal Demo Product",
-          "Category-agnostic PIM demo",
-          "Part 6 Product Core foundation item.",
-          "cat-05",
-          29.99,
-          50,
-          "READY",
-          "PUBLIC",
-          72
-        );
-        db.prepare(`
-      INSERT INTO pim_core_attribute_schemas(category_id, schema_json) VALUES (?, ?)
-    `).run(
-          "cat-05",
-          JSON.stringify({
-            attributes: [
-              { key: "oem", label: "OEM Number", type: "string" },
-              { key: "engine", label: "Engine", type: "string" },
-              { key: "year", label: "Year", type: "string" },
-              { key: "vehicle_compatibility", label: "Vehicle Compatibility", type: "text" }
-            ]
-          })
-        );
-        db.prepare(`
-      INSERT INTO pim_core_attribute_schemas(category_id, schema_json) VALUES (?, ?)
-    `).run(
-          "cat-02",
-          JSON.stringify({
-            attributes: [
-              { key: "skin_type", label: "Skin Type", type: "string" },
-              { key: "volume", label: "Volume", type: "string" },
-              { key: "ingredients", label: "Ingredients", type: "text" }
-            ]
-          })
-        );
-      }
-      db.prepare(`UPDATE pim_core_products SET taxonomy_category_id = 'cat-05' WHERE taxonomy_category_id = 'automotive'`).run();
-      db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-05' WHERE category_id = 'automotive'`).run();
-      db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-02' WHERE category_id = 'cosmetics'`).run();
-      db.prepare(`UPDATE pim_core_products SET ean = '5901234123457', gtin = '5901234123457' WHERE sku = 'BZ-CORE-DEMO-001'`).run();
-      db.prepare(`UPDATE pim_core_products SET visibility = 'HIDDEN' WHERE id = 'pim_prod_demo001'`).run();
-      db.prepare(`
-    UPDATE pim_core_products SET seo_json = ?
-    WHERE id = 'pim_prod_demo001'
-  `).run(JSON.stringify({
-        slug: "universal-demo-product",
-        metaTitle: "Universal Demo Product | Buzzard",
-        metaDescription: "Category-agnostic PIM demo product",
-        canonical: "/produkt/universal-demo-product/"
-      }));
-    }
-    function migrateCoreFoundationPart8() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS commerce_carts (
-      id TEXT PRIMARY KEY,
-      customer_id TEXT,
-      session_id TEXT,
-      country TEXT DEFAULT 'DE',
-      currency TEXT DEFAULT 'EUR',
-      status TEXT DEFAULT 'active',
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      expires_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS commerce_cart_items (
-      id TEXT PRIMARY KEY,
-      cart_id TEXT NOT NULL,
-      product_id TEXT NOT NULL,
-      variant_id TEXT,
-      quantity INTEGER NOT NULL DEFAULT 1,
-      price_snapshot REAL NOT NULL DEFAULT 0,
-      currency TEXT DEFAULT 'EUR',
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(cart_id) REFERENCES commerce_carts(id) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS commerce_checkouts (
-      id TEXT PRIMARY KEY,
-      cart_id TEXT,
-      customer_id TEXT,
-      state TEXT DEFAULT 'DRAFT',
-      billing_json TEXT DEFAULT '{}',
-      shipping_json TEXT DEFAULT '{}',
-      totals_json TEXT DEFAULT '{}',
-      idempotency_key TEXT,
-      order_type TEXT DEFAULT 'DRY_RUN',
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS commerce_orders (
-      id TEXT PRIMARY KEY,
-      checkout_id TEXT,
-      customer_id TEXT,
-      order_type TEXT NOT NULL DEFAULT 'DRY_RUN',
-      status TEXT DEFAULT 'PENDING',
-      payment_status TEXT DEFAULT 'NONE',
-      fulfillment_status TEXT DEFAULT 'NONE',
-      currency TEXT DEFAULT 'EUR',
-      subtotal REAL DEFAULT 0,
-      shipping REAL DEFAULT 0,
-      tax REAL DEFAULT 0,
-      discount REAL DEFAULT 0,
-      total REAL DEFAULT 0,
-      items_json TEXT DEFAULT '[]',
-      metadata_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS commerce_idempotency (
-      key_hash TEXT PRIMARY KEY,
-      scope TEXT NOT NULL,
-      resource_id TEXT,
-      response_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      expires_at TEXT
-    );
-    CREATE TABLE IF NOT EXISTS commerce_go_live (
-      id TEXT PRIMARY KEY,
-      requested_by TEXT,
-      status TEXT DEFAULT 'PENDING',
-      readiness_snapshot_json TEXT DEFAULT '{}',
-      admin_approval INTEGER DEFAULT 0,
-      production_lock INTEGER DEFAULT 1,
-      notes TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      decided_at TEXT,
-      decided_by TEXT
-    );
-    CREATE TABLE IF NOT EXISTS commerce_webhook_events (
-      id TEXT PRIMARY KEY,
-      provider TEXT NOT NULL,
-      event_id TEXT UNIQUE NOT NULL,
-      event_type TEXT,
-      payload_json TEXT DEFAULT '{}',
-      verified INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_commerce_carts_customer ON commerce_carts(customer_id);
-    CREATE INDEX IF NOT EXISTS idx_commerce_orders_type ON commerce_orders(order_type);
-    CREATE INDEX IF NOT EXISTS idx_commerce_checkouts_state ON commerce_checkouts(state);
-  `);
-    }
-    function migrateCoreFoundationPart10() {
-      const cols = db.prepare("PRAGMA table_info(commerce_carts)").all().map((c) => c.name);
-      if (!cols.includes("coupon_code")) {
-        db.exec(`ALTER TABLE commerce_carts ADD COLUMN coupon_code TEXT`);
-      }
-    }
-    function migrateCoreFoundationPart16() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS pim_core_product_staging (
-      id TEXT PRIMARY KEY,
-      import_job_id TEXT,
-      source_supplier_code TEXT NOT NULL,
-      source_product_id TEXT,
-      supplier_sku TEXT,
-      raw_json TEXT NOT NULL,
-      normalized_json TEXT,
-      provenance_json TEXT DEFAULT '{}',
-      validation_json TEXT DEFAULT '{}',
-      quality_json TEXT DEFAULT '{}',
-      lifecycle_status TEXT NOT NULL DEFAULT 'DISCOVERED',
-      blocked_reason TEXT,
-      duplicate_of TEXT,
-      imported_product_id TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      imported_at TEXT,
-      validated_at TEXT
-    );
-    CREATE INDEX IF NOT EXISTS idx_pim_staging_supplier ON pim_core_product_staging(source_supplier_code, supplier_sku);
-    CREATE INDEX IF NOT EXISTS idx_pim_staging_lifecycle ON pim_core_product_staging(lifecycle_status);
-    CREATE INDEX IF NOT EXISTS idx_pim_staging_job ON pim_core_product_staging(import_job_id);
-  `);
-      const productCols = db.prepare("PRAGMA table_info(pim_core_products)").all().map((c) => c.name);
-      if (!productCols.includes("purchase_price")) {
-        db.exec(`ALTER TABLE pim_core_products ADD COLUMN purchase_price REAL`);
-      }
-      if (!productCols.includes("price_updated_at")) {
-        db.exec(`ALTER TABLE pim_core_products ADD COLUMN price_updated_at TEXT`);
-      }
-      if (!productCols.includes("stock_updated_at")) {
-        db.exec(`ALTER TABLE pim_core_products ADD COLUMN stock_updated_at TEXT`);
-      }
-      if (!productCols.includes("supplier_updated_at")) {
-        db.exec(`ALTER TABLE pim_core_products ADD COLUMN supplier_updated_at TEXT`);
-      }
-      if (!productCols.includes("provenance_json")) {
-        db.exec(`ALTER TABLE pim_core_products ADD COLUMN provenance_json TEXT DEFAULT '{}'`);
-      }
-    }
-    function migrateCoreFoundationPart17() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS core_operations_audit (
-      id TEXT PRIMARY KEY,
-      timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
-      actor TEXT,
-      action TEXT NOT NULL,
-      resource TEXT,
-      resource_id TEXT,
-      result TEXT NOT NULL,
-      reason TEXT,
-      correlation_id TEXT,
-      request_id TEXT,
-      job_id TEXT,
-      metadata_json TEXT
-    );
-    CREATE INDEX IF NOT EXISTS idx_ops_audit_action ON core_operations_audit(action);
-    CREATE INDEX IF NOT EXISTS idx_ops_audit_correlation ON core_operations_audit(correlation_id);
-    CREATE INDEX IF NOT EXISTS idx_ops_audit_timestamp ON core_operations_audit(timestamp);
-
-    CREATE TABLE IF NOT EXISTS core_job_idempotency (
-      id TEXT PRIMARY KEY,
-      idempotency_key TEXT UNIQUE NOT NULL,
-      operation TEXT NOT NULL,
-      scope TEXT DEFAULT 'global',
-      job_id TEXT,
-      status TEXT NOT NULL,
-      attempts INTEGER DEFAULT 0,
-      result_json TEXT,
-      error_message TEXT,
-      metadata_json TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      finished_at TEXT
-    );
-    CREATE INDEX IF NOT EXISTS idx_job_idempotency_operation ON core_job_idempotency(operation, status);
-  `);
-      const jobCols = db.prepare("PRAGMA table_info(core_background_jobs)").all().map((c) => c.name);
-      if (!jobCols.includes("idempotency_key")) {
-        db.exec(`ALTER TABLE core_background_jobs ADD COLUMN idempotency_key TEXT`);
-        db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_core_jobs_idempotency ON core_background_jobs(idempotency_key) WHERE idempotency_key IS NOT NULL`);
-      }
-      if (!jobCols.includes("correlation_id")) {
-        db.exec(`ALTER TABLE core_background_jobs ADD COLUMN correlation_id TEXT`);
-      }
-    }
-    function migrateAnalyticsFoundation() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS analytics_foundation_events (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      event_timestamp TEXT NOT NULL,
-      session_id TEXT NOT NULL,
-      anonymous_visitor_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      country TEXT NOT NULL,
-      language TEXT NOT NULL,
-      currency TEXT NOT NULL,
-      device_type TEXT NOT NULL,
-      traffic_source TEXT NOT NULL,
-      traffic_medium TEXT,
-      traffic_campaign TEXT,
-      landing_page TEXT,
-      page_path TEXT,
-      product_id TEXT,
-      category_id TEXT,
-      order_id_reference TEXT,
-      cart_id_reference TEXT,
-      value REAL,
-      quantity INTEGER,
-      revenue_authority TEXT NOT NULL,
-      correlation_id TEXT,
-      sanitized INTEGER NOT NULL DEFAULT 1,
-      metadata_json TEXT DEFAULT '{}',
-      payload_json TEXT NOT NULL,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_af_events_type ON analytics_foundation_events(event_type);
-    CREATE INDEX IF NOT EXISTS idx_af_events_timestamp ON analytics_foundation_events(event_timestamp);
-    CREATE INDEX IF NOT EXISTS idx_af_events_order ON analytics_foundation_events(order_id_reference);
-    CREATE INDEX IF NOT EXISTS idx_af_events_visitor ON analytics_foundation_events(anonymous_visitor_id);
-    CREATE INDEX IF NOT EXISTS idx_af_events_session ON analytics_foundation_events(session_id);
-    CREATE INDEX IF NOT EXISTS idx_af_events_correlation ON analytics_foundation_events(correlation_id);
-
-    CREATE TABLE IF NOT EXISTS analytics_foundation_idempotency (
-      idempotency_key TEXT PRIMARY KEY,
-      event_id TEXT NOT NULL,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_af_idempotency_event ON analytics_foundation_idempotency(event_id);
-
-    CREATE TABLE IF NOT EXISTS analytics_foundation_sessions (
-      session_id TEXT PRIMARY KEY,
-      anonymous_visitor_id TEXT NOT NULL,
-      started_at TEXT NOT NULL,
-      last_activity_at TEXT NOT NULL,
-      ended_at TEXT,
-      landing_page TEXT,
-      exit_page TEXT,
-      page_views INTEGER DEFAULT 0,
-      product_views INTEGER DEFAULT 0,
-      cart_events INTEGER DEFAULT 0,
-      checkout_started INTEGER DEFAULT 0,
-      purchase_completed INTEGER DEFAULT 0,
-      traffic_source TEXT NOT NULL,
-      market TEXT NOT NULL,
-      language TEXT NOT NULL,
-      device_type TEXT NOT NULL,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_af_sessions_visitor ON analytics_foundation_sessions(anonymous_visitor_id);
-
-    CREATE TABLE IF NOT EXISTS analytics_foundation_visitors (
-      anonymous_visitor_id TEXT PRIMARY KEY,
-      first_seen_at TEXT NOT NULL,
-      last_seen_at TEXT NOT NULL,
-      session_count INTEGER DEFAULT 0,
-      is_returning INTEGER DEFAULT 0,
-      deleted INTEGER DEFAULT 0,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS analytics_foundation_consent (
-      anonymous_visitor_id TEXT PRIMARY KEY,
-      consent_json TEXT NOT NULL,
-      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS analytics_foundation_audit (
-      audit_id TEXT PRIMARY KEY,
-      audit_timestamp TEXT NOT NULL,
-      action TEXT NOT NULL,
-      actor_id TEXT,
-      detail_json TEXT DEFAULT '{}',
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE INDEX IF NOT EXISTS idx_af_audit_action ON analytics_foundation_audit(action);
-    CREATE INDEX IF NOT EXISTS idx_af_audit_timestamp ON analytics_foundation_audit(audit_timestamp);
-  `);
-    }
-    migrateCoreFoundationPart2();
-    migrateCoreFoundationPart5();
-    migrateCoreFoundationPart6();
-    migrateCoreFoundationPart8();
-    migrateCoreFoundationPart10();
-    migrateCoreFoundationPart16();
-    migrateCoreFoundationPart17();
-    migrateAnalyticsFoundation();
-    function migrateSupplierEngineOperations() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_engine_registry (
-      supplier_id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      display_name TEXT,
-      country TEXT,
-      connector_type TEXT,
-      supported_markets_json TEXT DEFAULT '[]',
-      capabilities_json TEXT DEFAULT '{}',
-      active INTEGER DEFAULT 1,
-      status TEXT DEFAULT 'CONNECTED',
-      secrets_ref TEXT,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS supplier_engine_runtime_state (
-      supplier_id TEXT PRIMARY KEY,
-      sync_status TEXT DEFAULT 'IDLE',
-      health_status TEXT DEFAULT 'UNKNOWN',
-      last_sync_started_at TEXT,
-      last_sync_completed_at TEXT,
-      last_sync_success_at TEXT,
-      last_sync_failure_at TEXT,
-      last_error_code TEXT,
-      last_error_message_safe TEXT,
-      last_sync_job_id TEXT,
-      sync_lock_job_id TEXT,
-      sync_lock_acquired_at TEXT,
-      products_processed INTEGER DEFAULT 0,
-      products_accepted INTEGER DEFAULT 0,
-      products_rejected INTEGER DEFAULT 0,
-      offers_updated INTEGER DEFAULT 0,
-      stock_updated INTEGER DEFAULT 0,
-      price_updated INTEGER DEFAULT 0,
-      reliability_score REAL DEFAULT 0.5,
-      updated_at TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS supplier_engine_sync_cursors (
-      supplier_id TEXT NOT NULL,
-      sync_mode TEXT NOT NULL DEFAULT 'incremental',
-      cursor_value TEXT,
-      page INTEGER,
-      offset_value INTEGER,
-      last_modified TEXT,
-      updated_at TEXT NOT NULL,
-      PRIMARY KEY (supplier_id, sync_mode)
-    );
-
-    CREATE TABLE IF NOT EXISTS supplier_engine_health (
-      supplier_id TEXT PRIMARY KEY,
-      health_status TEXT DEFAULT 'UNKNOWN',
-      response_time_ms REAL DEFAULT 0,
-      error_count INTEGER DEFAULT 0,
-      success_count INTEGER DEFAULT 0,
-      rate_limit_count INTEGER DEFAULT 0,
-      consecutive_failures INTEGER DEFAULT 0,
-      last_successful_operation TEXT,
-      last_failed_operation TEXT,
-      reliability_score REAL DEFAULT 0.5,
-      updated_at TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS supplier_engine_sync_idempotency (
-      idempotency_key TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      created_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_supeng_idempotency_supplier
-      ON supplier_engine_sync_idempotency(supplier_id);
-
-    CREATE TABLE IF NOT EXISTS supplier_engine_audit (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      actor TEXT,
-      supplier_id TEXT,
-      action TEXT NOT NULL,
-      correlation_id TEXT,
-      metadata_json TEXT DEFAULT '{}',
-      audit_timestamp TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_supeng_audit_supplier
-      ON supplier_engine_audit(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_supeng_audit_timestamp
-      ON supplier_engine_audit(audit_timestamp);
-
-    CREATE TABLE IF NOT EXISTS supplier_engine_order_sandbox (
-      supplier_order_id TEXT PRIMARY KEY,
-      buzzard_order_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      status TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT,
-      payload_json TEXT NOT NULL DEFAULT '{}',
-      tracking_json TEXT,
-      failure_class TEXT,
-      failure_code TEXT,
-      failure_message TEXT,
-      latency_ms REAL DEFAULT 0,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_supeng_order_sandbox_supplier
-      ON supplier_engine_order_sandbox(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_supeng_order_sandbox_buzzard_order
-      ON supplier_engine_order_sandbox(buzzard_order_id);
-  `);
-    }
-    migrateSupplierEngineOperations();
-    function migrateFulfillmentControlTower() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS fulfillment_control_tower_snapshots (
-      fulfillment_id TEXT PRIMARY KEY,
-      order_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      operational_status TEXT NOT NULL DEFAULT 'UNKNOWN',
-      view_json TEXT NOT NULL DEFAULT '{}',
-      last_reconciled_at TEXT,
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_fct_snapshots_order
-      ON fulfillment_control_tower_snapshots(order_id);
-    CREATE INDEX IF NOT EXISTS idx_fct_snapshots_supplier
-      ON fulfillment_control_tower_snapshots(supplier_id);
-
-    CREATE TABLE IF NOT EXISTS fulfillment_control_tower_incidents (
-      incident_id TEXT PRIMARY KEY,
-      fingerprint TEXT NOT NULL UNIQUE,
-      fulfillment_id TEXT NOT NULL,
-      order_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      severity TEXT NOT NULL,
-      category TEXT NOT NULL,
-      code TEXT NOT NULL,
-      message TEXT NOT NULL,
-      detected_at TEXT NOT NULL,
-      resolved_at TEXT,
-      status TEXT NOT NULL DEFAULT 'OPEN',
-      correlation_id TEXT,
-      resolution_note TEXT,
-      resolution_actor TEXT,
-      acknowledged_at TEXT,
-      acknowledged_by TEXT
-    );
-    CREATE INDEX IF NOT EXISTS idx_fct_incidents_fulfillment
-      ON fulfillment_control_tower_incidents(fulfillment_id);
-    CREATE INDEX IF NOT EXISTS idx_fct_incidents_status
-      ON fulfillment_control_tower_incidents(status);
-
-    CREATE TABLE IF NOT EXISTS fulfillment_control_tower_reconciliation_runs (
-      run_id TEXT PRIMARY KEY,
-      correlation_id TEXT NOT NULL,
-      started_at TEXT NOT NULL,
-      completed_at TEXT NOT NULL,
-      checked_fulfillments INTEGER DEFAULT 0,
-      passed INTEGER DEFAULT 0,
-      warnings INTEGER DEFAULT 0,
-      mismatches INTEGER DEFAULT 0,
-      critical INTEGER DEFAULT 0,
-      incidents_created INTEGER DEFAULT 0,
-      incidents_resolved INTEGER DEFAULT 0,
-      duration_ms REAL DEFAULT 0,
-      errors_json TEXT DEFAULT '[]'
-    );
-    CREATE INDEX IF NOT EXISTS idx_fct_runs_started
-      ON fulfillment_control_tower_reconciliation_runs(started_at);
-  `);
-    }
-    migrateFulfillmentControlTower();
-    function migrateSupplierOrderReadiness() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_order_readiness (
-      readiness_id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      channel TEXT NOT NULL,
-      overall_status TEXT NOT NULL,
-      approval_status TEXT NOT NULL,
-      generated_at TEXT NOT NULL,
-      expires_at TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_sor_supplier
-      ON supplier_order_readiness(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_sor_scope
-      ON supplier_order_readiness(supplier_id, market, channel);
-
-    CREATE TABLE IF NOT EXISTS supplier_order_approvals (
-      approval_id TEXT PRIMARY KEY,
-      readiness_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      channel TEXT NOT NULL,
-      status TEXT NOT NULL,
-      requester TEXT NOT NULL,
-      approver TEXT,
-      requested_at TEXT NOT NULL,
-      approved_at TEXT,
-      rejected_at TEXT,
-      rejection_reason TEXT,
-      expires_at TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_soa_scope
-      ON supplier_order_approvals(supplier_id, market, channel);
-
-    CREATE TABLE IF NOT EXISTS supplier_order_readiness_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      supplier_id TEXT,
-      market TEXT,
-      channel TEXT,
-      actor TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_sora_supplier
-      ON supplier_order_readiness_audit(supplier_id);
-
-    CREATE TABLE IF NOT EXISTS supplier_order_kill_switch (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      state_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL,
-      updated_by TEXT
-    );
-  `);
-    }
-    migrateSupplierOrderReadiness();
-    function migrateSupplierOrderRehearsal() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_order_rehearsals (
-      rehearsal_id TEXT PRIMARY KEY,
-      order_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      channel TEXT NOT NULL,
-      overall_status TEXT NOT NULL,
-      current_stage TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_sorh_supplier
-      ON supplier_order_rehearsals(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_sorh_status
-      ON supplier_order_rehearsals(overall_status);
-
-    CREATE TABLE IF NOT EXISTS supplier_order_rehearsal_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      rehearsal_id TEXT,
-      order_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_sorha_rehearsal
-      ON supplier_order_rehearsal_audit(rehearsal_id);
-  `);
-    }
-    migrateSupplierOrderRehearsal();
-    function migrateSupplierProductionValidation() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_production_capability_validation (
-      validation_id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      channel TEXT NOT NULL,
-      environment TEXT NOT NULL,
-      overall_status TEXT NOT NULL,
-      credential_status TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_spv_supplier
-      ON supplier_production_capability_validation(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_spv_status
-      ON supplier_production_capability_validation(overall_status);
-
-    CREATE TABLE IF NOT EXISTS supplier_production_validation_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      validation_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_spva_validation
-      ON supplier_production_validation_audit(validation_id);
-  `);
-    }
-    migrateSupplierProductionValidation();
-    function migrateSupplierOrderActivation() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_order_activation (
-      activation_id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      channel TEXT NOT NULL,
-      environment TEXT NOT NULL,
-      status TEXT NOT NULL,
-      network_state TEXT NOT NULL DEFAULT 'DISABLED',
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_soa_supplier
-      ON supplier_order_activation(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_soa_status
-      ON supplier_order_activation(status);
-
-    CREATE TABLE IF NOT EXISTS supplier_order_activation_checks (
-      check_id TEXT PRIMARY KEY,
-      activation_id TEXT NOT NULL,
-      check_name TEXT NOT NULL,
-      status TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}',
-      created_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_soac_activation
-      ON supplier_order_activation_checks(activation_id);
-
-    CREATE TABLE IF NOT EXISTS supplier_order_activation_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      activation_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_soaa_activation
-      ON supplier_order_activation_audit(activation_id);
-
-    CREATE TABLE IF NOT EXISTS supplier_first_order_gate (
-      first_order_id TEXT PRIMARY KEY,
-      activation_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      status TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_sfo_activation
-      ON supplier_first_order_gate(activation_id);
-  `);
-    }
-    migrateSupplierOrderActivation();
-    function migrateSupplierProductionOrderValidation() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_production_order_validation (
-      validation_id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      channel TEXT NOT NULL,
-      environment TEXT NOT NULL,
-      overall_status TEXT NOT NULL,
-      create_order_capability TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_spov_supplier
-      ON supplier_production_order_validation(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_spov_capability
-      ON supplier_production_order_validation(create_order_capability);
-
-    CREATE TABLE IF NOT EXISTS supplier_production_order_validation_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      validation_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_spova_validation
-      ON supplier_production_order_validation_audit(validation_id);
-  `);
-    }
-    migrateSupplierProductionOrderValidation();
-    function migrateSupplierProductionOrderArming() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_production_order_arming (
-      arming_id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      market TEXT NOT NULL,
-      channel TEXT NOT NULL,
-      environment TEXT NOT NULL,
-      status TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_spoa_supplier
-      ON supplier_production_order_arming(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_spoa_status
-      ON supplier_production_order_arming(status);
-
-    CREATE TABLE IF NOT EXISTS supplier_production_order_arming_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      arming_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_spoaa_arming
-      ON supplier_production_order_arming_audit(arming_id);
-  `);
-    }
-    migrateSupplierProductionOrderArming();
-    function migrateSupplierFirstProductionOrder() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_first_production_orders (
-      execution_id TEXT PRIMARY KEY,
-      order_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      state TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_sfpo_supplier
-      ON supplier_first_production_orders(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_sfpo_state
-      ON supplier_first_production_orders(state);
-
-    CREATE TABLE IF NOT EXISTS supplier_first_production_order_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      execution_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_sfpoa_execution
-      ON supplier_first_production_order_audit(execution_id);
-  `);
-    }
-    migrateSupplierFirstProductionOrder();
-    function migrateSupplierControlledGoLive() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_controlled_go_live (
-      go_live_id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      state TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_scgl_supplier
-      ON supplier_controlled_go_live(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_scgl_state
-      ON supplier_controlled_go_live(state);
-
-    CREATE TABLE IF NOT EXISTS supplier_controlled_go_live_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      go_live_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_scgla_go_live
-      ON supplier_controlled_go_live_audit(go_live_id);
-  `);
-    }
-    migrateSupplierControlledGoLive();
-    function migrateSupplierGoLiveObservation() {
-      db.exec(`
-    CREATE TABLE IF NOT EXISTS supplier_go_live_observations (
-      observation_id TEXT PRIMARY KEY,
-      supplier_id TEXT NOT NULL,
-      state TEXT NOT NULL,
-      go_live_id TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_sglo_supplier
-      ON supplier_go_live_observations(supplier_id);
-    CREATE INDEX IF NOT EXISTS idx_sglo_state
-      ON supplier_go_live_observations(state);
-
-    CREATE TABLE IF NOT EXISTS supplier_go_live_rollout (
-      rollout_id TEXT PRIMARY KEY,
-      observation_id TEXT NOT NULL,
-      supplier_id TEXT NOT NULL,
-      state TEXT NOT NULL,
-      idempotency_key TEXT NOT NULL UNIQUE,
-      correlation_id TEXT NOT NULL,
-      record_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL
-    );
-    CREATE INDEX IF NOT EXISTS idx_sglr_observation
-      ON supplier_go_live_rollout(observation_id);
-
-    CREATE TABLE IF NOT EXISTS supplier_go_live_rollout_audit (
-      event_id TEXT PRIMARY KEY,
-      event_type TEXT NOT NULL,
-      observation_id TEXT,
-      rollout_id TEXT,
-      supplier_id TEXT,
-      correlation_id TEXT NOT NULL,
-      timestamp TEXT NOT NULL,
-      detail_json TEXT DEFAULT '{}'
-    );
-    CREATE INDEX IF NOT EXISTS idx_sglra_observation
-      ON supplier_go_live_rollout_audit(observation_id);
-  `);
-    }
-    migrateSupplierGoLiveObservation();
-    function seed() {
-      const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
-      if (count === 0) {
-        const insert = db.prepare("INSERT INTO categories(name) VALUES (?)");
-        [
-          "Automotive",
-          "Garden",
-          "Home",
-          "Pet",
-          "Sports",
-          "Cleaning",
-          "Textile",
-          "Electronics"
-        ].forEach((name) => insert.run(name));
-      }
-      const productCount = db.prepare("SELECT COUNT(*) n FROM products").get().n;
-      if (productCount === 0) {
-        const categories2 = db.prepare("SELECT id, name FROM categories").all();
-        const map = Object.fromEntries(categories2.map((row) => [row.name, row.id]));
-        const insert = db.prepare(`
-      INSERT INTO products (sku, name, description, category_id, price_eur, weight_kg, stock)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-        const rows = [
-          ["BZ-OIL-5W30", "Premium Motor\xF6l 5W-30", "Motor\xF6l f\xFCr kompatible Fahrzeuge", map.Automotive, 39.9, 5, 48],
-          ["BZ-CLEAN-001", "Universal Fahrzeugreiniger 1L", "Fahrzeugpflege", map.Cleaning, 12.9, 1.2, 120],
-          ["BZ-GARDEN-001", "Garten Bew\xE4sserungsset", "Bew\xE4sserung f\xFCr Garten und Gew\xE4chshaus", map.Garden, 49.9, 2.5, 35],
-          ["BZ-HOME-001", "Premium Aufbewahrungsbox", "Haushalt und Lagerung", map.Home, 24.9, 1.8, 74],
-          ["BZ-PET-001", "Premium Haustierdecke", "Waschbare Haustierdecke", map.Pet, 29.9, 1, 62],
-          ["BZ-SPORT-001", "Performance Sportsocken", "Atmungsaktive Sportsocken", map.Sports, 14.9, 0.2, 150]
-        ];
-        for (const row of rows) insert.run(...row);
-      }
-    }
-    seed();
-    function getDatabaseHealth() {
-      try {
-        const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
-        const products = db.prepare("SELECT COUNT(*) n FROM products").get().n;
-        const orders = db.prepare("SELECT COUNT(*) n FROM orders").get().n;
-        const persistence = getPersistenceInfo(dbPath);
-        return {
-          enabled: true,
-          path: dbPath,
-          version: "0.3.0",
-          users,
-          products,
-          orders,
-          persistence: {
-            mode: persistence.mode,
-            persistent: persistence.persistent,
-            ephemeralRisk: persistence.ephemeralRisk,
-            backupDir: persistence.backupDir,
-            renderDisk: persistence.renderDisk,
-            syncHint: persistence.syncHint
-          }
-        };
-      } catch (error) {
-        const persistence = getPersistenceInfo(dbPath);
-        return {
-          enabled: true,
-          path: dbPath,
-          version: "0.3.0",
-          error: error.message,
-          persistence: {
-            mode: persistence.mode,
-            persistent: persistence.persistent,
-            ephemeralRisk: persistence.ephemeralRisk,
-            renderDisk: persistence.renderDisk,
-            syncHint: persistence.syncHint
-          }
-        };
-      }
-    }
-    module2.exports = {
-      db,
-      dbPath,
-      getDatabaseHealth,
-      getPersistenceInfo: () => getPersistenceInfo(dbPath)
-    };
-  }
-});
-
-// server/lib/fulfillment/persistentStore.js
-var require_persistentStore = __commonJS({
-  "server/lib/fulfillment/persistentStore.js"(exports2, module2) {
-    var { db } = require_db();
-    function createFulfillmentControlTowerStore() {
-      const upsertSnapshot = db.prepare(`
-    INSERT INTO fulfillment_control_tower_snapshots (
-      fulfillment_id, order_id, supplier_id, operational_status, view_json, last_reconciled_at, updated_at
-    ) VALUES (
-      @fulfillment_id, @order_id, @supplier_id, @operational_status, @view_json, @last_reconciled_at, @updated_at
-    )
-    ON CONFLICT(fulfillment_id) DO UPDATE SET
-      operational_status = excluded.operational_status,
-      view_json = excluded.view_json,
-      last_reconciled_at = excluded.last_reconciled_at,
-      updated_at = excluded.updated_at
-  `);
-      const upsertIncident = db.prepare(`
-    INSERT INTO fulfillment_control_tower_incidents (
-      incident_id, fingerprint, fulfillment_id, order_id, supplier_id,
-      severity, category, code, message, detected_at, resolved_at, status,
-      correlation_id, resolution_note, resolution_actor, acknowledged_at, acknowledged_by
-    ) VALUES (
-      @incident_id, @fingerprint, @fulfillment_id, @order_id, @supplier_id,
-      @severity, @category, @code, @message, @detected_at, @resolved_at, @status,
-      @correlation_id, @resolution_note, @resolution_actor, @acknowledged_at, @acknowledged_by
-    )
-    ON CONFLICT(fingerprint) DO UPDATE SET
-      severity = excluded.severity,
-      message = excluded.message,
-      resolved_at = excluded.resolved_at,
-      status = excluded.status,
-      resolution_note = excluded.resolution_note,
-      resolution_actor = excluded.resolution_actor,
-      acknowledged_at = excluded.acknowledged_at,
-      acknowledged_by = excluded.acknowledged_by
-  `);
-      const insertRun = db.prepare(`
-    INSERT OR REPLACE INTO fulfillment_control_tower_reconciliation_runs (
-      run_id, correlation_id, started_at, completed_at,
-      checked_fulfillments, passed, warnings, mismatches, critical,
-      incidents_created, incidents_resolved, duration_ms, errors_json
-    ) VALUES (
-      @run_id, @correlation_id, @started_at, @completed_at,
-      @checked_fulfillments, @passed, @warnings, @mismatches, @critical,
-      @incidents_created, @incidents_resolved, @duration_ms, @errors_json
-    )
-  `);
-      return {
-        saveSnapshot(row) {
-          upsertSnapshot.run(row);
-        },
-        getSnapshot(fulfillmentId) {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots WHERE fulfillment_id = ?").get(fulfillmentId);
-        },
-        listSnapshots() {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_snapshots ORDER BY updated_at DESC").all();
-        },
-        saveIncident(row) {
-          upsertIncident.run(row);
-        },
-        getIncidentByFingerprint(fingerprint) {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents WHERE fingerprint = ?").get(fingerprint);
-        },
-        listIncidents() {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_incidents ORDER BY detected_at DESC").all();
-        },
-        saveReconciliationRun(row) {
-          insertRun.run(row);
-        },
-        listReconciliationRuns(limit = 20) {
-          return db.prepare("SELECT * FROM fulfillment_control_tower_reconciliation_runs ORDER BY started_at DESC LIMIT ?").all(limit);
-        },
-        resetAll() {
-          db.prepare("DELETE FROM fulfillment_control_tower_snapshots").run();
-          db.prepare("DELETE FROM fulfillment_control_tower_incidents").run();
-          db.prepare("DELETE FROM fulfillment_control_tower_reconciliation_runs").run();
-        }
-      };
-    }
-    module2.exports = { createFulfillmentControlTowerStore };
-  }
-});
-
-// server/lib/supplier-order-readiness/persistentStore.js
-var require_persistentStore2 = __commonJS({
-  "server/lib/supplier-order-readiness/persistentStore.js"(exports2, module2) {
-    var { db } = require_db();
-    function createSupplierOrderReadinessStore() {
-      const upsertReadiness = db.prepare(`
-    INSERT INTO supplier_order_readiness (
-      readiness_id, supplier_id, market, channel, overall_status, approval_status,
-      generated_at, expires_at, record_json, updated_at
-    ) VALUES (
-      @readiness_id, @supplier_id, @market, @channel, @overall_status, @approval_status,
-      @generated_at, @expires_at, @record_json, @updated_at
-    )
-    ON CONFLICT(readiness_id) DO UPDATE SET
-      overall_status = excluded.overall_status,
-      approval_status = excluded.approval_status,
-      expires_at = excluded.expires_at,
-      record_json = excluded.record_json,
-      updated_at = excluded.updated_at
-  `);
-      const upsertApproval = db.prepare(`
-    INSERT INTO supplier_order_approvals (
-      approval_id, readiness_id, supplier_id, market, channel, status,
-      requester, approver, requested_at, approved_at, rejected_at, rejection_reason,
-      expires_at, record_json, updated_at
-    ) VALUES (
-      @approval_id, @readiness_id, @supplier_id, @market, @channel, @status,
-      @requester, @approver, @requested_at, @approved_at, @rejected_at, @rejection_reason,
-      @expires_at, @record_json, @updated_at
-    )
-    ON CONFLICT(approval_id) DO UPDATE SET
-      status = excluded.status,
-      approver = excluded.approver,
-      approved_at = excluded.approved_at,
-      rejected_at = excluded.rejected_at,
-      rejection_reason = excluded.rejection_reason,
-      expires_at = excluded.expires_at,
-      record_json = excluded.record_json,
-      updated_at = excluded.updated_at
-  `);
-      const insertAudit = db.prepare(`
-    INSERT OR REPLACE INTO supplier_order_readiness_audit (
-      event_id, event_type, supplier_id, market, channel, actor, correlation_id, timestamp, detail_json
-    ) VALUES (
-      @event_id, @event_type, @supplier_id, @market, @channel, @actor, @correlation_id, @timestamp, @detail_json
-    )
-  `);
-      const upsertKillSwitch = db.prepare(`
-    INSERT INTO supplier_order_kill_switch (id, state_json, updated_at, updated_by)
-    VALUES (1, @state_json, @updated_at, @updated_by)
-    ON CONFLICT(id) DO UPDATE SET
-      state_json = excluded.state_json,
-      updated_at = excluded.updated_at,
-      updated_by = excluded.updated_by
-  `);
-      return {
-        saveReadiness(row) {
-          upsertReadiness.run(row);
-        },
-        getReadiness(readinessId) {
-          return db.prepare("SELECT * FROM supplier_order_readiness WHERE readiness_id = ?").get(readinessId);
-        },
-        listReadiness() {
-          return db.prepare("SELECT * FROM supplier_order_readiness ORDER BY updated_at DESC").all();
-        },
-        saveApproval(row) {
-          upsertApproval.run(row);
-        },
-        getApproval(approvalId) {
-          return db.prepare("SELECT * FROM supplier_order_approvals WHERE approval_id = ?").get(approvalId);
-        },
-        listApprovals() {
-          return db.prepare("SELECT * FROM supplier_order_approvals ORDER BY requested_at DESC").all();
-        },
-        saveAudit(row) {
-          insertAudit.run(row);
-        },
-        listAudit(limit = 500) {
-          return db.prepare("SELECT * FROM supplier_order_readiness_audit ORDER BY timestamp DESC LIMIT ?").all(limit);
-        },
-        saveKillSwitch(row) {
-          upsertKillSwitch.run(row);
-        },
-        getKillSwitch() {
-          return db.prepare("SELECT * FROM supplier_order_kill_switch WHERE id = 1").get();
-        }
-      };
-    }
-    module2.exports = { createSupplierOrderReadinessStore };
-  }
-});
-
-// server/lib/supplier-order-activation/persistentStore.js
-var require_persistentStore3 = __commonJS({
-  "server/lib/supplier-order-activation/persistentStore.js"(exports2, module2) {
-    var { getDb } = require_db();
-    function createSupplierOrderActivationStore() {
-      const db = getDb();
-      if (!db) return null;
-      const saveActivationStmt = db.prepare(`
-    INSERT INTO supplier_order_activation (
-      activation_id, supplier_id, market, channel, environment,
-      status, network_state, idempotency_key, correlation_id,
-      record_json, updated_at
-    ) VALUES (
-      @activation_id, @supplier_id, @market, @channel, @environment,
-      @status, @network_state, @idempotency_key, @correlation_id,
-      @record_json, @updated_at
-    )
-    ON CONFLICT(activation_id) DO UPDATE SET
-      status = excluded.status,
-      network_state = excluded.network_state,
-      record_json = excluded.record_json,
-      updated_at = excluded.updated_at
-  `);
-      const getActivationStmt = db.prepare(`
-    SELECT * FROM supplier_order_activation WHERE activation_id = ?
-  `);
-      const listActivationsStmt = db.prepare(`
-    SELECT * FROM supplier_order_activation ORDER BY updated_at DESC LIMIT ?
-  `);
-      const saveFirstOrderStmt = db.prepare(`
-    INSERT INTO supplier_first_order_gate (
-      first_order_id, activation_id, supplier_id, status,
-      idempotency_key, record_json, updated_at
-    ) VALUES (
-      @first_order_id, @activation_id, @supplier_id, @status,
-      @idempotency_key, @record_json, @updated_at
-    )
-    ON CONFLICT(first_order_id) DO UPDATE SET
-      status = excluded.status,
-      record_json = excluded.record_json,
-      updated_at = excluded.updated_at
-  `);
-      const getFirstOrderStmt = db.prepare(`
-    SELECT * FROM supplier_first_order_gate WHERE first_order_id = ?
-  `);
-      const listFirstOrdersStmt = db.prepare(`
-    SELECT * FROM supplier_first_order_gate ORDER BY updated_at DESC LIMIT ?
-  `);
-      const saveAuditStmt = db.prepare(`
-    INSERT OR REPLACE INTO supplier_order_activation_audit (
-      event_id, event_type, activation_id, supplier_id, correlation_id, timestamp, detail_json
-    ) VALUES (
-      @event_id, @event_type, @activation_id, @supplier_id, @correlation_id, @timestamp, @detail_json
-    )
-  `);
-      const listAuditStmt = db.prepare(`
-    SELECT * FROM supplier_order_activation_audit ORDER BY timestamp DESC LIMIT ?
-  `);
-      return {
-        saveActivation(row) {
-          saveActivationStmt.run(row);
-        },
-        getActivation(activationId) {
-          return getActivationStmt.get(activationId);
-        },
-        listActivations(limit = 5e3) {
-          return listActivationsStmt.all(limit);
-        },
-        saveFirstOrder(row) {
-          saveFirstOrderStmt.run(row);
-        },
-        getFirstOrder(firstOrderId) {
-          return getFirstOrderStmt.get(firstOrderId);
-        },
-        listFirstOrders(limit = 5e3) {
-          return listFirstOrdersStmt.all(limit);
-        },
-        saveAudit(row) {
-          saveAuditStmt.run(row);
-        },
-        listAudit(limit = 5e3) {
-          return listAuditStmt.all(limit);
-        }
-      };
-    }
-    module2.exports = { createSupplierOrderActivationStore };
-  }
-});
-
-// lib/supplier-order-activation/serverEntry.ts
+// lib/supplier-inter-cars-production-access/serverEntry.ts
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
-  approveActivationRequest: () => approveActivationRequest,
-  armActivation: () => armActivation,
-  assertActivationSafetyInvariants: () => assertActivationSafetyInvariants,
-  attemptFirstOrderSend: () => attemptFirstOrderSend,
-  cancelActivation: () => cancelActivation,
-  confirmActivation: () => confirmActivation,
-  createActivationRequest: () => createActivationRequest,
-  executeRealSupplierOrder: () => executeRealSupplierOrder,
-  getActivationRecord: () => getActivationRecord,
-  getActivationSafetyCounters: () => getActivationSafetyCounters,
-  getSupplierOrderActivationDashboard: () => getSupplierOrderActivationDashboard,
-  getSupplierOrderActivationDetail: () => getSupplierOrderActivationDetail,
-  hydrateActivationFromPersistence: () => hydrateActivationFromPersistence,
-  listActivationRecords: () => listActivationRecords,
-  listSupplierOrderActivationRows: () => listSupplierOrderActivationRows,
-  prepareFirstOrderGate: () => prepareFirstOrderGate,
-  previewFirstOrder: () => previewFirstOrder,
-  rejectActivationRequest: () => rejectActivationRequest,
-  revokeActivation: () => revokeActivation,
-  runActivationPreflight: () => runActivationPreflight
+  assertProductionAccessSafetyInvariants: () => assertProductionAccessSafetyInvariants,
+  evaluateInterCarsProductionAccess: () => evaluateInterCarsProductionAccess,
+  getProductionAccessDashboard: () => getProductionAccessDashboard,
+  getProductionAccessSafetyCounters: () => getProductionAccessSafetyCounters,
+  runProductionAccessPreflight: () => runProductionAccessPreflight
 });
 module.exports = __toCommonJS(serverEntry_exports);
 
@@ -5009,12 +255,6 @@ function registerCredentialRef(supplierId, secretsRef) {
   credentialRefs.set(supplierId, entry);
   return entry;
 }
-function getCredentialRef(supplierId) {
-  return credentialRefs.get(supplierId);
-}
-function hasConfiguredCredentials(supplierId) {
-  return credentialRefs.get(supplierId)?.configured === true;
-}
 function resolveCredentials(secretsRef) {
   if (!secretsRef) return null;
   const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
@@ -5029,6 +269,10 @@ function resolveCredentials(secretsRef) {
 }
 
 // lib/supplier-engine/liveSupplier/config.ts
+function envFlag(name) {
+  const raw = process.env[name];
+  return raw === "1" || raw?.toLowerCase() === "true";
+}
 function parseJsonConfig(raw) {
   try {
     const parsed = JSON.parse(raw);
@@ -5121,6 +365,9 @@ function resolveLiveSupplierProfile() {
     blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
   }));
 }
+function isLiveReadEnabled() {
+  return envFlag("SUPPLIER_LIVE_READ_ENABLED");
+}
 function hasLiveSupplierCredentials(profile) {
   const creds = resolveCredentials(profile.secretsRef);
   if (!creds || Object.keys(creds).length === 0) return false;
@@ -5144,48 +391,165 @@ function describeLiveCredentialReadiness(profile) {
   };
 }
 
-// lib/supplier-order-activation/config.ts
-var ACTIVATION_TTL_MS = 24 * 60 * 60 * 1e3;
-var APPROVAL_TTL_MS = 4 * 60 * 60 * 1e3;
-var REHEARSAL_TTL_MS = Number(process.env.SUPPLIER_ACTIVATION_REHEARSAL_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
-var FIRST_ORDER_TTL_MS = 2 * 60 * 60 * 1e3;
-var FIRST_ORDER_LIMITS = {
-  maxOrderValue: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_VALUE || 500),
-  maxQuantity: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_QTY || 5),
-  maxItems: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_ITEMS || 3),
-  maxSuppliers: 1,
-  maxCustomers: 1
-};
+// lib/supplier-inter-cars-production-access/config.ts
 function getInterCarsSupplierId() {
   return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
 }
-function getInterCarsAdapterProfile() {
-  return resolvePredefinedLiveProfile()?.adapterProfile || "inter-cars";
+function isInterCarsProfileConfigured() {
+  return Boolean(resolvePredefinedLiveProfile());
 }
-function buildActivationIdempotencyKey(scope) {
-  return `act_${scope.supplierId}_${scope.market}_${scope.channel}_${scope.environment}_${scope.requester}`;
+
+// lib/supplier-inter-cars-production-access/diagnostic.ts
+var import_crypto = require("crypto");
+
+// lib/supplier-engine/network/allowlist.ts
+var BLOCKED_HOSTNAMES = /* @__PURE__ */ new Set([
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "::1",
+  "metadata.google.internal",
+  "metadata"
+]);
+var METADATA_IP = "169.254.169.254";
+function isPrivateIpv4(host) {
+  const parts = host.split(".").map((p) => Number(p));
+  if (parts.length !== 4 || parts.some((p) => !Number.isFinite(p))) return false;
+  const [a, b] = parts;
+  if (a === 10) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 0) return true;
+  return false;
 }
-function resolveActivationConfig() {
-  return {
-    interCarsSupplierId: getInterCarsSupplierId(),
-    interCarsAdapterProfile: getInterCarsAdapterProfile(),
-    activationTtlMs: ACTIVATION_TTL_MS,
-    approvalTtlMs: APPROVAL_TTL_MS,
-    rehearsalTtlMs: REHEARSAL_TTL_MS,
-    firstOrderTtlMs: FIRST_ORDER_TTL_MS,
-    firstOrderMaxValue: FIRST_ORDER_LIMITS.maxOrderValue,
-    firstOrderMaxQuantity: FIRST_ORDER_LIMITS.maxQuantity,
-    firstOrderMaxItems: FIRST_ORDER_LIMITS.maxItems,
-    defaultMaxMarketValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_MARKET_VALUE || 1e4),
-    defaultMaxChannelValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_CHANNEL_VALUE || 5e3),
-    defaultMaxOrderValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_ORDER_VALUE || 1e3),
-    defaultMaxDailyOrderValue: Number(process.env.SUPPLIER_ACTIVATION_MAX_DAILY_VALUE || 5e3),
-    defaultMaxOrders: Number(process.env.SUPPLIER_ACTIVATION_MAX_ORDERS || 10)
-  };
+function normalizeHost(hostname) {
+  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, "");
+}
+function isBlockedHost(hostname) {
+  const host = normalizeHost(hostname);
+  if (!host) return true;
+  if (BLOCKED_HOSTNAMES.has(host)) return true;
+  if (host.endsWith(".local") || host.endsWith(".internal")) return true;
+  if (host === METADATA_IP || host.startsWith("169.254.")) return true;
+  if (isPrivateIpv4(host)) return true;
+  if (host.includes(":") && (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80"))) {
+    return true;
+  }
+  return false;
+}
+function validateSupplierEndpoint(url, allowedHosts = []) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return { allowed: false, reason: "INVALID_URL" };
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    return { allowed: false, reason: "UNSUPPORTED_PROTOCOL", hostname: parsed.hostname };
+  }
+  const hostname = normalizeHost(parsed.hostname);
+  if (isBlockedHost(hostname)) {
+    return { allowed: false, reason: "BLOCKED_HOST", hostname };
+  }
+  if (allowedHosts.length > 0) {
+    const normalizedAllowed = allowedHosts.map(normalizeHost);
+    const hostAllowed = normalizedAllowed.some(
+      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
+    );
+    if (!hostAllowed) {
+      return { allowed: false, reason: "NOT_IN_ALLOWLIST", hostname };
+    }
+  }
+  return { allowed: true, hostname };
+}
+function extractAllowedHosts(baseUrl, extra = []) {
+  const hosts = /* @__PURE__ */ new Set();
+  for (const entry of [baseUrl, ...extra].filter(Boolean)) {
+    try {
+      hosts.add(normalizeHost(new URL(entry).hostname));
+    } catch {
+    }
+  }
+  return [...hosts];
+}
+
+// lib/supplier-production-validation/persistence.ts
+var validationStore = /* @__PURE__ */ new Map();
+function listValidationRecords() {
+  return [...validationStore.values()];
+}
+function getLatestValidationForScope(scope) {
+  return listValidationRecords().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-validation/endpointSecurity.ts
+function validateEndpointUrl(url, allowedHosts, requireHttpsForProduction = false) {
+  const check = validateSupplierEndpoint(url, allowedHosts);
+  if (!check.allowed) return check;
+  if (requireHttpsForProduction) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "https:") {
+        return { allowed: false, reason: "NON_HTTPS_PRODUCTION", hostname: parsed.hostname };
+      }
+    } catch {
+      return { allowed: false, reason: "INVALID_URL" };
+    }
+  }
+  return check;
+}
+function extractProfileAllowedHosts(baseUrl, extra = []) {
+  return extractAllowedHosts(baseUrl, extra);
+}
+
+// lib/supplier-production-order-validation/config.ts
+var VALIDATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var CONTROLLED_VALIDATION_MAX_VALUE = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_VALUE || 100
+);
+var CONTROLLED_VALIDATION_MAX_QTY = Number(
+  process.env.SUPPLIER_CREATE_ORDER_VALIDATION_MAX_QTY || 1
+);
+function getCreateOrderEndpointPath() {
+  const profile = resolvePredefinedLiveProfile();
+  const endpoints = profile?.endpoints;
+  return endpoints?.createOrder || endpoints?.orders || "/ic/order/createOrder";
+}
+function isControlledValidationEnabled() {
+  return process.env.SUPPLIER_CREATE_ORDER_VALIDATION_ENABLED === "1";
+}
+
+// lib/supplier-production-order-validation/persistence.ts
+var validationStore2 = /* @__PURE__ */ new Map();
+var controlledRunStore = /* @__PURE__ */ new Map();
+function listValidationRecords2() {
+  return [...validationStore2.values()];
+}
+function getLatestValidationForScope2(scope) {
+  return listValidationRecords2().filter(
+    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+function getControlledValidationRun(validationId) {
+  return controlledRunStore.get(validationId);
+}
+function listControlledValidationRuns() {
+  return [...controlledRunStore.values()];
+}
+function getLatestControlledValidationRun(scope) {
+  return listControlledValidationRuns().filter((r) => {
+    if (scope?.supplierId && r.supplier !== scope.supplierId) return false;
+    if (scope?.market && r.market !== scope.market) return false;
+    return true;
+  }).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
 }
 
 // lib/supplier-engine/network/config.ts
-function envFlag(name, defaultValue = false) {
+function envFlag2(name, defaultValue = false) {
   const raw = process.env[name];
   if (raw === void 0 || raw === "") return defaultValue;
   return raw === "1" || raw.toLowerCase() === "true";
@@ -5196,10 +560,10 @@ function envInt(name, fallback) {
 }
 var SUPPLIER_NETWORK_CONFIG = {
   get networkEnabled() {
-    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+    return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
   },
   get orderNetworkEnabled() {
-    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+    return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
   },
   defaultEnvironment: "MOCK",
   defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
@@ -5207,16 +571,24 @@ var SUPPLIER_NETWORK_CONFIG = {
   maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
   maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
 };
+function isSupplierNetworkEnabled() {
+  return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+}
 function isSupplierOrderNetworkEnabled() {
-  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
 // lib/supplier-engine/network/scopedValidationNetwork.ts
 var import_async_hooks = require("async_hooks");
 var scopedContext = new import_async_hooks.AsyncLocalStorage();
+function isScopedValidationNetworkEnabled() {
+  const raw = process.env.SUPPLIER_CONTROLLED_VALIDATION_NETWORK;
+  return raw === "1" || raw?.toLowerCase() === "true";
+}
 
-// lib/supplier-order-activation/safety.ts
+// lib/supplier-production-order-validation/safety.ts
 var counters = {
+  controlledValidationHttpCalls: 0,
   realSupplierOrderCalls: 0,
   realSupplierCancelCalls: 0,
   realSupplierReturnCalls: 0,
@@ -5224,435 +596,212 @@ var counters = {
   realPaymentCalls: 0,
   realMarketplaceCalls: 0,
   realCarrierCalls: 0,
+  realCustomerOrders: 0,
   realCustomerShipments: 0
 };
-function getActivationSafetyCounters() {
+function getCreateOrderValidationSafetyCounters() {
   return { ...counters };
 }
-function assertActivationNetworkSafety() {
-  if (isSupplierOrderNetworkEnabled()) {
-    counters.realSupplierOrderCalls++;
-    throw new Error("ACTIVATION_FAIL:SUPPLIER_ORDER_NETWORK_MUST_BE_DISABLED_IN_340");
+
+// lib/supplier-engine/auth/resolver.ts
+function mapConnectorAuthType(config) {
+  const raw = String(config?.authentication || "none").toLowerCase();
+  if (raw === "api_key") return "API_KEY";
+  if (raw === "basic") return "BASIC_AUTH";
+  if (raw === "bearer" || raw === "token") return "TOKEN";
+  if (raw === "oauth2") return "OAUTH2";
+  if (raw === "custom") return "CUSTOM";
+  return "NONE";
+}
+function resolveSupplierAuth(config) {
+  const authType = mapConnectorAuthType(config);
+  const secretsRef = config.secretsRef;
+  const creds = secretsRef ? resolveCredentials(secretsRef) : null;
+  if (!creds) {
+    return { headers: { ...config.headers || {} }, authType, configured: false };
   }
-}
-function recordBlockedRealOrderAttempt() {
-}
-function assertActivationSafetyInvariants() {
-  const violations = [];
-  if (counters.realSupplierOrderCalls !== 0) violations.push(`realSupplierOrderCalls=${counters.realSupplierOrderCalls}`);
-  if (counters.realSupplierCancelCalls !== 0) violations.push(`realSupplierCancelCalls=${counters.realSupplierCancelCalls}`);
-  if (counters.realSupplierReturnCalls !== 0) violations.push(`realSupplierReturnCalls=${counters.realSupplierReturnCalls}`);
-  if (counters.realSupplierRefundCalls !== 0) violations.push(`realSupplierRefundCalls=${counters.realSupplierRefundCalls}`);
-  if (counters.realPaymentCalls !== 0) violations.push(`realPaymentCalls=${counters.realPaymentCalls}`);
-  if (counters.realMarketplaceCalls !== 0) violations.push(`realMarketplaceCalls=${counters.realMarketplaceCalls}`);
-  if (counters.realCarrierCalls !== 0) violations.push(`realCarrierCalls=${counters.realCarrierCalls}`);
-  if (counters.realCustomerShipments !== 0) violations.push(`realCustomerShipments=${counters.realCustomerShipments}`);
-  if (isSupplierOrderNetworkEnabled()) violations.push("SUPPLIER_ORDER_NETWORK_ENABLED");
-  return { ok: violations.length === 0, violations };
-}
-
-// lib/supplier-order-activation/preflight.ts
-var import_crypto3 = require("crypto");
-
-// data/global/global_countries_35.json
-var global_countries_35_default = [
-  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
-  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
-  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
-  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
-  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
-  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
-  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
-  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
-  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
-  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
-  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
-  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
-  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
-  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
-  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
-  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
-  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
-  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
-  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
-  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
-  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
-  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
-  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
-  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
-  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
-  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
-  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
-  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
-  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
-  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
-  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
-  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
-  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
-  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
-  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
-];
-
-// data/global/market_country_overlay.json
-var market_country_overlay_default = {
-  DE: { flag: "\u{1F1E9}\u{1F1EA}", taxRate: 0.19, deliveryDays: "2\u20133 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  AT: { flag: "\u{1F1E6}\u{1F1F9}", taxRate: 0.2, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  BE: { flag: "\u{1F1E7}\u{1F1EA}", taxRate: 0.21, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  BG: { flag: "\u{1F1E7}\u{1F1EC}", taxRate: 0.2, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" },
-  HR: { flag: "\u{1F1ED}\u{1F1F7}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Hrvatski" },
-  CY: { flag: "\u{1F1E8}\u{1F1FE}", taxRate: 0.19, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  CZ: { flag: "\u{1F1E8}\u{1F1FF}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "\u010Ce\u0161tina" },
-  DK: { flag: "\u{1F1E9}\u{1F1F0}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Dansk" },
-  EE: { flag: "\u{1F1EA}\u{1F1EA}", taxRate: 0.22, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Eesti" },
-  FI: { flag: "\u{1F1EB}\u{1F1EE}", taxRate: 0.255, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Suomi" },
-  FR: { flag: "\u{1F1EB}\u{1F1F7}", taxRate: 0.2, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Fran\xE7ais" },
-  GR: { flag: "\u{1F1EC}\u{1F1F7}", taxRate: 0.24, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  HU: { flag: "\u{1F1ED}\u{1F1FA}", taxRate: 0.27, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Magyar" },
-  IE: { flag: "\u{1F1EE}\u{1F1EA}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "English" },
-  IT: { flag: "\u{1F1EE}\u{1F1F9}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Italiano" },
-  LV: { flag: "\u{1F1F1}\u{1F1FB}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Latvie\u0161u" },
-  LT: { flag: "\u{1F1F1}\u{1F1F9}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Lietuvi\u0173" },
-  LU: { flag: "\u{1F1F1}\u{1F1FA}", taxRate: 0.17, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "L\xEBtzebuergesch" },
-  MT: { flag: "\u{1F1F2}\u{1F1F9}", taxRate: 0.18, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Malti" },
-  NL: { flag: "\u{1F1F3}\u{1F1F1}", taxRate: 0.21, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  PL: { flag: "\u{1F1F5}\u{1F1F1}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Polski" },
-  PT: { flag: "\u{1F1F5}\u{1F1F9}", taxRate: 0.23, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Portugu\xEAs" },
-  RO: { flag: "\u{1F1F7}\u{1F1F4}", taxRate: 0.19, deliveryDays: "3\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Rom\xE2n\u0103" },
-  SK: { flag: "\u{1F1F8}\u{1F1F0}", taxRate: 0.2, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u010Dina" },
-  SI: { flag: "\u{1F1F8}\u{1F1EE}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u0161\u010Dina" },
-  ES: { flag: "\u{1F1EA}\u{1F1F8}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Espa\xF1ol" },
-  SE: { flag: "\u{1F1F8}\u{1F1EA}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Svenska" },
-  TR: { flag: "\u{1F1F9}\u{1F1F7}", taxRate: 0.2, deliveryDays: "4\u20139 Werktage", rtl: false, taxModel: "VAT", languageName: "T\xFCrk\xE7e" },
-  SA: { flag: "\u{1F1F8}\u{1F1E6}", taxRate: 0.15, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  AE: { flag: "\u{1F1E6}\u{1F1EA}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  QA: { flag: "\u{1F1F6}\u{1F1E6}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  KW: { flag: "\u{1F1F0}\u{1F1FC}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  BH: { flag: "\u{1F1E7}\u{1F1ED}", taxRate: 0.1, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  OM: { flag: "\u{1F1F4}\u{1F1F2}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  EG: { flag: "\u{1F1EA}\u{1F1EC}", taxRate: 0.14, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" }
-};
-
-// data/global/market_engine_extensions.json
-var market_engine_extensions_default = {
-  shippingRegions: {
-    AT: "EU_CENTRAL",
-    BE: "EU_WEST",
-    BG: "EU_EAST",
-    HR: "EU_EAST",
-    CY: "EU_SOUTH",
-    CZ: "EU_CENTRAL",
-    DK: "EU_NORTH",
-    EE: "EU_EAST",
-    FI: "EU_NORTH",
-    FR: "EU_WEST",
-    DE: "EU_CENTRAL",
-    GR: "EU_SOUTH",
-    HU: "EU_CENTRAL",
-    IE: "EU_WEST",
-    IT: "EU_SOUTH",
-    LV: "EU_EAST",
-    LT: "EU_EAST",
-    LU: "EU_WEST",
-    MT: "EU_SOUTH",
-    NL: "EU_WEST",
-    PL: "EU_EAST",
-    PT: "EU_SOUTH",
-    RO: "EU_EAST",
-    SK: "EU_CENTRAL",
-    SI: "EU_EAST",
-    ES: "EU_SOUTH",
-    SE: "EU_NORTH",
-    TR: "NON_EU",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  paymentRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  legalRegions: {
-    AT: "EU_AT",
-    BE: "EU_BE",
-    BG: "EU_BG",
-    HR: "EU_HR",
-    CY: "EU_CY",
-    CZ: "EU_CZ",
-    DK: "EU_DK",
-    EE: "EU_EE",
-    FI: "EU_FI",
-    FR: "EU_FR",
-    DE: "EU_DE",
-    GR: "EU_GR",
-    HU: "EU_HU",
-    IE: "EU_IE",
-    IT: "EU_IT",
-    LV: "EU_LV",
-    LT: "EU_LT",
-    LU: "EU_LU",
-    MT: "EU_MT",
-    NL: "EU_NL",
-    PL: "EU_PL",
-    PT: "EU_PT",
-    RO: "EU_RO",
-    SK: "EU_SK",
-    SI: "EU_SI",
-    ES: "EU_ES",
-    SE: "EU_SE",
-    TR: "TR",
-    SA: "GCC_SA",
-    AE: "GCC_AE",
-    QA: "GCC_QA",
-    KW: "GCC_KW",
-    BH: "GCC_BH",
-    OM: "GCC_OM",
-    EG: "MENA_EG"
-  },
-  supplierRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  returnRegions: {
-    AT: "EU",
-    BE: "EU",
-    BG: "EU",
-    HR: "EU",
-    CY: "EU",
-    CZ: "EU",
-    DK: "EU",
-    EE: "EU",
-    FI: "EU",
-    FR: "EU",
-    DE: "EU",
-    GR: "EU",
-    HU: "EU",
-    IE: "EU",
-    IT: "EU",
-    LV: "EU",
-    LT: "EU",
-    LU: "EU",
-    MT: "EU",
-    NL: "EU",
-    PL: "EU",
-    PT: "EU",
-    RO: "EU",
-    SK: "EU",
-    SI: "EU",
-    ES: "EU",
-    SE: "EU",
-    TR: "TR",
-    SA: "GCC",
-    AE: "GCC",
-    QA: "GCC",
-    KW: "GCC",
-    BH: "GCC",
-    OM: "GCC",
-    EG: "MENA"
-  },
-  marketStatus: {
-    DE: "ACTIVE",
-    FR: "ACTIVE",
-    IT: "ACTIVE",
-    ES: "ACTIVE",
-    PL: "ACTIVE",
-    NL: "ACTIVE",
-    TR: "TESTING",
-    SA: "TESTING",
-    AE: "TESTING",
-    EG: "TESTING"
-  },
-  defaultMarketStatus: "PLANNED",
-  featureFlags: {
-    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
-    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
-    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
-  },
-  defaultFeatureFlags: {
-    marketEnabled: true,
-    categoryEnabled: true,
-    marketplaceEnabled: false,
-    supplierEnabled: false,
-    paymentEnabled: false,
-    shippingEnabled: false
-  },
-  marketplaces: {
-    DE: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "kaufland", name: "Kaufland", status: "supported" },
-      { id: "otto", name: "OTTO", status: "supported" }
-    ],
-    FR: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "ebay", name: "eBay", status: "supported" },
-      { id: "cdiscount", name: "Cdiscount", status: "supported" }
-    ],
-    PL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "allegro", name: "Allegro", status: "supported" }
-    ],
-    NL: [
-      { id: "amazon", name: "Amazon", status: "supported" },
-      { id: "bol", name: "bol.com", status: "supported" }
-    ]
-  },
-  paymentCapabilities: {
-    EU: ["card", "sepa", "paypal", "klarna"],
-    TR: ["card"],
-    GCC: ["card"],
-    MENA: ["card"]
-  },
-  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
-  supplierFallbacks: {
-    EU: ["EU"],
-    GCC: ["GCC", "EU"],
-    MENA: ["MENA", "EU"],
-    TR: ["TR", "EU"],
-    NON_EU: ["EU"]
+  const headers = { ...config.headers || {} };
+  switch (authType) {
+    case "API_KEY": {
+      const headerName = creds.header || creds.headerName || "X-API-Key";
+      const value = creds.apiKey || creds.key || creds.token;
+      if (value) headers[headerName] = value;
+      break;
+    }
+    case "TOKEN": {
+      const value = creds.token || creds.accessToken || creds.bearer;
+      if (value) headers.Authorization = value.startsWith("Bearer ") ? value : `Bearer ${value}`;
+      break;
+    }
+    case "BASIC_AUTH": {
+      const user = creds.username || creds.user || "";
+      const pass = creds.password || creds.pass || "";
+      if (user || pass) {
+        headers.Authorization = `Basic ${Buffer.from(`${user}:${pass}`).toString("base64")}`;
+      }
+      break;
+    }
+    case "OAUTH2": {
+      const value = creds.accessToken || creds.token;
+      if (value) headers.Authorization = `Bearer ${value}`;
+      break;
+    }
+    case "CUSTOM": {
+      for (const [key, value] of Object.entries(creds)) {
+        if (!/password|secret|token|key/i.test(key)) continue;
+        if (/header/i.test(key)) {
+          const headerName = key.replace(/header/i, "").trim() || "Authorization";
+          headers[headerName] = value;
+        }
+      }
+      break;
+    }
+    default:
+      break;
   }
+  return { headers, authType, configured: Object.keys(creds).length > 0 };
+}
+
+// lib/supplier-order-readiness/config.ts
+var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS = 7 * 24 * 60 * 60 * 1e3;
+var DEFAULT_POLICY = {
+  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
+  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
+  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
+  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
+  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
+  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
+  blockOnMissingTrackingCapability: false,
+  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
 };
-
-// lib/i18n/international/config.ts
-var GLOBAL_COUNTRIES = global_countries_35_default;
-var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
-
-// lib/market-engine/registry.ts
-var extensions = market_engine_extensions_default;
-var overlayByCode = market_country_overlay_default;
-var marketByCode = /* @__PURE__ */ new Map();
-function resolveFeatureFlags(countryCode) {
-  const defaults = extensions.defaultFeatureFlags;
-  const overrides = extensions.featureFlags[countryCode] ?? {};
-  return { ...defaults, ...overrides };
+function isMockCredentialValue(value) {
+  const normalized = value.trim().toLowerCase();
+  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized === "dummy-token" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.startsWith("dummy-") || normalized.includes("placeholder");
 }
-function resolveMarketStatus(country) {
-  if (country.enabled === false) return "DISABLED";
-  return extensions.marketStatus[country.countryCode] ?? extensions.defaultMarketStatus;
+
+// lib/supplier-production-validation/credentialValidation.ts
+function validateProductionCredentials(input) {
+  const checks = [];
+  const blockerCodes = [];
+  const profile = resolveLiveSupplierProfile() || resolvePredefinedLiveProfile();
+  const secretsRef = profile?.secretsRef || "env:SUPPLIER_LIVE_CREDENTIALS";
+  const credentialType = profile?.authentication || profile?.authType || "unknown";
+  if (!profile) {
+    checks.push({ check: "CREDENTIAL_PROFILE", status: "BLOCKED", message: "Live supplier profile not configured" });
+    blockerCodes.push("CREDENTIAL_PROFILE_MISSING");
+    return { status: "NOT_CONFIGURED", credentialType, checks, blockerCodes };
+  }
+  if (profile.supplierId !== input.supplierId) {
+    checks.push({ check: "CREDENTIAL_SUPPLIER", status: "BLOCKED", message: "Profile supplier mismatch" });
+    blockerCodes.push("SUPPLIER_PROFILE_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const profileEnv = profile.environment?.toUpperCase();
+  if (input.environment === "PRODUCTION" && profileEnv === "SANDBOX" && process.env.SUPPLIER_LIVE_FORCE_PRODUCTION !== "1") {
+    checks.push({
+      check: "ENVIRONMENT_SEPARATION",
+      status: "BLOCKED",
+      message: "SANDBOX credential cannot validate PRODUCTION scope"
+    });
+    blockerCodes.push("ENVIRONMENT_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  if (input.environment === "SANDBOX" && profileEnv === "PRODUCTION" && process.env.SUPPLIER_LIVE_ALLOW_PROD_CRED_IN_SANDBOX !== "1") {
+    checks.push({
+      check: "ENVIRONMENT_SEPARATION",
+      status: "BLOCKED",
+      message: "PRODUCTION credential cannot validate SANDBOX scope"
+    });
+    blockerCodes.push("ENVIRONMENT_MISMATCH");
+    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const meta = describeLiveCredentialReadiness(profile);
+  if (!meta.configured) {
+    checks.push({ check: "CREDENTIAL_CONFIGURED", status: "BLOCKED", message: "Credential not configured" });
+    blockerCodes.push("CREDENTIAL_NOT_CONFIGURED");
+    return { status: "NOT_CONFIGURED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  checks.push({
+    check: "CREDENTIAL_CONFIGURED",
+    status: "PASS",
+    message: "Credential reference configured",
+    detail: { authType: meta.authType, fields: meta.secretFieldsPresent }
+  });
+  const creds = resolveCredentials(secretsRef);
+  if (!creds) {
+    checks.push({ check: "CREDENTIAL_RESOLVE", status: "BLOCKED", message: "Credential secret not resolvable" });
+    blockerCodes.push("CREDENTIAL_SECRET_MISSING");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
+  if (isMockCredentialValue(token)) {
+    checks.push({ check: "CREDENTIAL_MOCK", status: "BLOCKED", message: "Mock/test credential blocked for production validation" });
+    blockerCodes.push("CREDENTIAL_MOCK");
+    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  if (!hasLiveSupplierCredentials(profile)) {
+    checks.push({ check: "CREDENTIAL_TOKEN", status: "BLOCKED", message: "OAuth/token missing" });
+    blockerCodes.push("CREDENTIAL_INVALID");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const auth = resolveSupplierAuth({
+    authentication: profile.authentication,
+    secretsRef: profile.secretsRef
+  });
+  if (!auth.headers.Authorization?.startsWith("Bearer ")) {
+    checks.push({
+      check: "CREDENTIAL_AUTH_SCHEME",
+      status: "BLOCKED",
+      message: "Expected Authorization: Bearer <accessToken>"
+    });
+    blockerCodes.push("CREDENTIAL_AUTH_INVALID");
+    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
+  }
+  const redacted = redactSecrets({ accessToken: token });
+  if (redacted.accessToken && redacted.accessToken !== "[REDACTED]") {
+    checks.push({ check: "SECRET_REDACTION", status: "FAIL", message: "Secret redaction failed" });
+    blockerCodes.push("SECRET_REDACTION_FAILED");
+    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
+  }
+  checks.push({ check: "CREDENTIAL_VALID", status: "PASS", message: "Credential metadata validated (no secret exposed)" });
+  return { status: "VALID", credentialType, secretsRef, checks, blockerCodes };
 }
-function buildVatRules(countryCode) {
-  const overlay = overlayByCode[countryCode];
+
+// lib/supplier-inter-cars-production-access/credentialStatus.ts
+function resolveCredentialDisplayStatus(input) {
+  const profile = resolvePredefinedLiveProfile();
+  const environment = input.environment || (profile?.environment?.toUpperCase() === "PRODUCTION" ? "PRODUCTION" : "SANDBOX");
+  const result = validateProductionCredentials({
+    supplierId: input.supplierId,
+    environment
+  });
+  const statusMap = {
+    NOT_CONFIGURED: "NOT_CONFIGURED",
+    CONFIGURED: "CONFIGURED",
+    VALID: "VALID",
+    INVALID: "INVALID",
+    EXPIRED: "EXPIRED",
+    REVOKED: "BLOCKED",
+    MISMATCH: "BLOCKED",
+    BLOCKED: "BLOCKED"
+  };
   return {
-    standardRate: overlay?.taxRate ?? 0.2,
-    pricesIncludeVat: true,
-    taxModel: overlay?.taxModel ?? "VAT"
+    status: statusMap[result.status] || "INVALID",
+    credentialType: result.credentialType,
+    blockers: result.blockerCodes
   };
 }
-function buildMarketConfig(country) {
-  const code = country.countryCode;
-  const variants = country.localeVariants ?? [];
-  const locales = variants.map((v) => v.locale);
-  if (!locales.length) locales.push(country.locale);
-  const paymentRegion = extensions.paymentRegions[code] ?? "EU";
+
+// lib/supplier-inter-cars-production-access/networkState.ts
+function resolveNetworkState() {
   return {
-    countryCode: code,
-    countryName: country.countryName,
-    nativeCountryName: country.nativeCountryName || country.countryName,
-    defaultLanguage: country.defaultLanguage,
-    supportedLanguages: [...country.supportedLanguages],
-    locales,
-    currency: country.currency,
-    currencySymbol: country.currencySymbol,
-    timezone: country.timezone,
-    textDirection: country.textDirection === "rtl" ? "rtl" : "ltr",
-    vat: buildVatRules(code),
-    shippingRegion: extensions.shippingRegions[code] ?? "EU_CENTRAL",
-    paymentRegion,
-    legalRegion: extensions.legalRegions[code] ?? `EU_${code}`,
-    returnRegion: extensions.returnRegions[code] ?? paymentRegion,
-    supplierRegion: extensions.supplierRegions[code] ?? paymentRegion,
-    status: resolveMarketStatus(country),
-    featureFlags: resolveFeatureFlags(code),
-    marketplaces: extensions.marketplaces[code] ?? [],
-    paymentCapabilities: extensions.paymentCapabilities[paymentRegion] ?? ["card"],
-    shippingCapabilities: [...extensions.shippingCapabilities],
-    source: country
+    productionNetwork: isSupplierNetworkEnabled() ? "ON" : "OFF",
+    supplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ON" : "OFF",
+    scopedValidationNetwork: isScopedValidationNetworkEnabled() ? "ON" : "OFF"
   };
-}
-function ensureRegistryBuilt() {
-  if (marketByCode.size > 0) return;
-  for (const country of global_countries_35_default) {
-    marketByCode.set(country.countryCode, buildMarketConfig(country));
-  }
-}
-function listMarkets() {
-  ensureRegistryBuilt();
-  return [...marketByCode.values()];
-}
-function getMarket(countryCode) {
-  ensureRegistryBuilt();
-  const code = String(countryCode || "").toUpperCase();
-  return marketByCode.get(code);
 }
 
 // data/global/test_supplier_feeds.json
@@ -5966,17 +1115,421 @@ function isSupplierSelectable(supplierId) {
   return supplier.status !== "DISABLED" && supplier.status !== "PAUSED";
 }
 
-// lib/order-engine/registry.ts
-var orderRegistry = /* @__PURE__ */ new Map();
-function listAllOrders() {
-  return [...orderRegistry.values()];
+// lib/supplier-order-readiness/persistence.ts
+var killSwitchState = null;
+function getKillSwitchState() {
+  return killSwitchState;
 }
 
-// lib/inventory-engine/reservation.ts
-var reservations = /* @__PURE__ */ new Map();
-function getReservation(reservationId) {
-  return reservations.get(reservationId);
+// lib/supplier-order-readiness/killSwitch.ts
+function defaultState() {
+  return {
+    global: process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1",
+    suppliers: {},
+    markets: {},
+    channels: {},
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
 }
+function getKillSwitch() {
+  return getKillSwitchState() || defaultState();
+}
+function isGlobalKillSwitchActive() {
+  return getKillSwitch().global || process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1";
+}
+function isSupplierKillSwitchActive(supplierId) {
+  const state = getKillSwitch();
+  if (!isSupplierSelectable(supplierId)) return true;
+  return Boolean(state.suppliers[supplierId]);
+}
+function isMarketKillSwitchActive(market) {
+  return Boolean(getKillSwitch().markets[market]);
+}
+function isChannelKillSwitchActive(channel) {
+  return Boolean(getKillSwitch().channels[channel]);
+}
+function isActivationKillSwitched(input) {
+  if (isGlobalKillSwitchActive()) return true;
+  if (isSupplierKillSwitchActive(input.supplierId)) return true;
+  if (isMarketKillSwitchActive(input.market)) return true;
+  if (isChannelKillSwitchActive(input.channel)) return true;
+  return false;
+}
+
+// lib/supplier-inter-cars-production-access/checklist.ts
+function buildProductionAccessChecklist(input) {
+  const network = resolveNetworkState();
+  const profile = resolvePredefinedLiveProfile();
+  const supplierId = getInterCarsSupplierId();
+  return [
+    {
+      id: "inter_cars_profile",
+      label: "Inter Cars profile configured",
+      status: input.profileConfigured ? "PASS" : "BLOCKED",
+      message: input.profileConfigured ? "SUPPLIER_LIVE_PROFILE=inter-cars" : "Profile missing"
+    },
+    {
+      id: "production_credentials",
+      label: "Production credentials configured",
+      status: input.credentialsStatus === "VALID" || input.credentialsStatus === "CONFIGURED" ? "PASS" : input.credentialsStatus === "NOT_CONFIGURED" ? "BLOCKED" : "BLOCKED",
+      message: input.credentialsStatus
+    },
+    {
+      id: "credential_format",
+      label: "Credential format valid",
+      status: input.credentialsStatus === "VALID" ? "PASS" : input.credentialsStatus === "BLOCKED" ? "BLOCKED" : "UNVERIFIED",
+      message: input.credentialsStatus
+    },
+    {
+      id: "endpoint_configured",
+      label: "Endpoint configured",
+      status: input.endpointConfigured ? "PASS" : "BLOCKED",
+      message: profile?.baseUrl || "none"
+    },
+    {
+      id: "endpoint_allowlisted",
+      label: "Endpoint allowlisted",
+      status: input.endpointAllowlisted ? "PASS" : "BLOCKED",
+      message: input.endpointAllowlisted ? "SSRF allowlist PASS" : "Endpoint blocked"
+    },
+    {
+      id: "network_disabled",
+      label: "Network disabled (default)",
+      status: network.productionNetwork === "OFF" ? "PASS" : "BLOCKED",
+      message: `SUPPLIER_NETWORK_ENABLED=${network.productionNetwork}`
+    },
+    {
+      id: "order_network_disabled",
+      label: "Order network disabled (default)",
+      status: network.supplierOrderNetwork === "OFF" ? "PASS" : "BLOCKED",
+      message: `SUPPLIER_ORDER_NETWORK_ENABLED=${network.supplierOrderNetwork}`
+    },
+    {
+      id: "create_order_blocked",
+      label: "createOrder blocked in prep mode",
+      status: input.createOrderBlocked ? "PASS" : "BLOCKED",
+      message: input.createOrderBlocked ? "No real createOrder in prep" : "createOrder would execute"
+    },
+    {
+      id: "controlled_validation_explicit",
+      label: "#342 enabled only explicitly",
+      status: isControlledValidationEnabled() ? "UNVERIFIED" : "PASS",
+      message: isControlledValidationEnabled() ? "SUPPLIER_CREATE_ORDER_VALIDATION_ENABLED=1" : "Disabled until explicit enable"
+    },
+    {
+      id: "kill_switch",
+      label: "Kill switch available",
+      status: "PASS",
+      message: isActivationKillSwitched({ supplierId, market: "DE", channel: "DIRECT" }) ? "KILL_SWITCH ON" : "Available"
+    },
+    {
+      id: "audit_persistence",
+      label: "Audit & persistence available",
+      status: "PASS",
+      message: "buzzard.db + audit modules"
+    }
+  ];
+}
+
+// lib/supplier-order-activation/persistence.ts
+var activationStore = /* @__PURE__ */ new Map();
+function listActivationRecords() {
+  return [...activationStore.values()];
+}
+
+// data/global/global_countries_35.json
+var global_countries_35_default = [
+  { countryCode: "AT", countryName: "Austria", nativeCountryName: "\xD6sterreich", defaultLanguage: "de", supportedLanguages: ["de"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-AT", timezone: "Europe/Vienna", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-AT", phoneCountryCode: "+43", marketId: "at", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "AT_VAT", seoLocale: "de-AT", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-AT", nativeName: "Deutsch", isDefault: true }] },
+  { countryCode: "BE", countryName: "Belgium", nativeCountryName: "Belgi\xEB", defaultLanguage: "nl", supportedLanguages: ["nl", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-BE", timezone: "Europe/Brussels", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "nl-BE", phoneCountryCode: "+32", marketId: "be", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BE_VAT", seoLocale: "nl-BE", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-BE", nativeName: "Nederlands", isDefault: true }, { languageCode: "fr", locale: "fr-BE", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-BE", nativeName: "Deutsch" }] },
+  { countryCode: "BG", countryName: "Bulgaria", nativeCountryName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0438\u044F", defaultLanguage: "bg", supportedLanguages: ["bg"], currency: "EUR", currencySymbol: "\u20AC", locale: "bg-BG", timezone: "Europe/Sofia", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "bg-BG", phoneCountryCode: "+359", marketId: "bg", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "BG_VAT", seoLocale: "bg-BG", fallbackLanguage: "bg", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "bg", locale: "bg-BG", nativeName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438", isDefault: true }] },
+  { countryCode: "HR", countryName: "Croatia", nativeCountryName: "Hrvatska", defaultLanguage: "hr", supportedLanguages: ["hr"], currency: "EUR", currencySymbol: "\u20AC", locale: "hr-HR", timezone: "Europe/Zagreb", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "hr-HR", phoneCountryCode: "+385", marketId: "hr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HR_VAT", seoLocale: "hr-HR", fallbackLanguage: "hr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hr", locale: "hr-HR", nativeName: "Hrvatski", isDefault: true }] },
+  { countryCode: "CY", countryName: "Cyprus", nativeCountryName: "\u039A\u03CD\u03C0\u03C1\u03BF\u03C2", defaultLanguage: "el", supportedLanguages: ["el", "tr"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-CY", timezone: "Asia/Nicosia", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-CY", phoneCountryCode: "+357", marketId: "cy", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CY_VAT", seoLocale: "el-CY", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-CY", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }, { languageCode: "tr", locale: "tr-CY", nativeName: "T\xFCrk\xE7e" }] },
+  { countryCode: "CZ", countryName: "Czechia", nativeCountryName: "\u010Cesko", defaultLanguage: "cs", supportedLanguages: ["cs"], currency: "CZK", currencySymbol: "K\u010D", locale: "cs-CZ", timezone: "Europe/Prague", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "cs-CZ", phoneCountryCode: "+420", marketId: "cz", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "CZ_VAT", seoLocale: "cs-CZ", fallbackLanguage: "cs", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "cs", locale: "cs-CZ", nativeName: "\u010Ce\u0161tina", isDefault: true }] },
+  { countryCode: "DK", countryName: "Denmark", nativeCountryName: "Danmark", defaultLanguage: "da", supportedLanguages: ["da"], currency: "DKK", currencySymbol: "kr", locale: "da-DK", timezone: "Europe/Copenhagen", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "da-DK", phoneCountryCode: "+45", marketId: "dk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DK_VAT", seoLocale: "da-DK", fallbackLanguage: "da", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "da", locale: "da-DK", nativeName: "Dansk", isDefault: true }] },
+  { countryCode: "EE", countryName: "Estonia", nativeCountryName: "Eesti", defaultLanguage: "et", supportedLanguages: ["et"], currency: "EUR", currencySymbol: "\u20AC", locale: "et-EE", timezone: "Europe/Tallinn", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "et-EE", phoneCountryCode: "+372", marketId: "ee", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "EE_VAT", seoLocale: "et-EE", fallbackLanguage: "et", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "et", locale: "et-EE", nativeName: "Eesti", isDefault: true }] },
+  { countryCode: "FI", countryName: "Finland", nativeCountryName: "Suomi", defaultLanguage: "fi", supportedLanguages: ["fi"], currency: "EUR", currencySymbol: "\u20AC", locale: "fi-FI", timezone: "Europe/Helsinki", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "fi-FI", phoneCountryCode: "+358", marketId: "fi", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FI_VAT", seoLocale: "fi-FI", fallbackLanguage: "fi", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fi", locale: "fi-FI", nativeName: "Suomi", isDefault: true }] },
+  { countryCode: "FR", countryName: "France", nativeCountryName: "France", defaultLanguage: "fr", supportedLanguages: ["fr"], currency: "EUR", currencySymbol: "\u20AC", locale: "fr-FR", timezone: "Europe/Paris", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "fr-FR", phoneCountryCode: "+33", marketId: "fr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "FR_VAT", seoLocale: "fr-FR", fallbackLanguage: "fr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "fr", locale: "fr-FR", nativeName: "Fran\xE7ais", isDefault: true }] },
+  { countryCode: "DE", countryName: "Germany", nativeCountryName: "Deutschland", defaultLanguage: "de", supportedLanguages: ["de", "en", "tr", "ar"], currency: "EUR", currencySymbol: "\u20AC", locale: "de-DE", timezone: "Europe/Berlin", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "de-DE", phoneCountryCode: "+49", marketId: "de", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "DE_VAT", seoLocale: "de-DE", fallbackLanguage: "de", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "de", locale: "de-DE", nativeName: "Deutsch", isDefault: true }, { languageCode: "en", locale: "en-DE", nativeName: "English", uiExtension: true }, { languageCode: "tr", locale: "tr-DE", nativeName: "T\xFCrk\xE7e", uiExtension: true }, { languageCode: "ar", locale: "ar-DE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", uiExtension: true }] },
+  { countryCode: "GR", countryName: "Greece", nativeCountryName: "\u0395\u03BB\u03BB\u03AC\u03B4\u03B1", defaultLanguage: "el", supportedLanguages: ["el"], currency: "EUR", currencySymbol: "\u20AC", locale: "el-GR", timezone: "Europe/Athens", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "el-GR", phoneCountryCode: "+30", marketId: "gr", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "GR_VAT", seoLocale: "el-GR", fallbackLanguage: "el", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "el", locale: "el-GR", nativeName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC", isDefault: true }] },
+  { countryCode: "HU", countryName: "Hungary", nativeCountryName: "Magyarorsz\xE1g", defaultLanguage: "hu", supportedLanguages: ["hu"], currency: "HUF", currencySymbol: "Ft", locale: "hu-HU", timezone: "Europe/Budapest", measurementSystem: "metric", dateFormat: "YYYY.MM.DD", numberFormat: "hu-HU", phoneCountryCode: "+36", marketId: "hu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "HU_VAT", seoLocale: "hu-HU", fallbackLanguage: "hu", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "hu", locale: "hu-HU", nativeName: "Magyar", isDefault: true }] },
+  { countryCode: "IE", countryName: "Ireland", nativeCountryName: "Ireland", defaultLanguage: "en", supportedLanguages: ["en", "ga"], currency: "EUR", currencySymbol: "\u20AC", locale: "en-IE", timezone: "Europe/Dublin", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "en-IE", phoneCountryCode: "+353", marketId: "ie", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IE_VAT", seoLocale: "en-IE", fallbackLanguage: "en", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "en", locale: "en-IE", nativeName: "English", isDefault: true }, { languageCode: "ga", locale: "ga-IE", nativeName: "Gaeilge" }] },
+  { countryCode: "IT", countryName: "Italy", nativeCountryName: "Italia", defaultLanguage: "it", supportedLanguages: ["it"], currency: "EUR", currencySymbol: "\u20AC", locale: "it-IT", timezone: "Europe/Rome", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "it-IT", phoneCountryCode: "+39", marketId: "it", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "IT_VAT", seoLocale: "it-IT", fallbackLanguage: "it", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "it", locale: "it-IT", nativeName: "Italiano", isDefault: true }] },
+  { countryCode: "LV", countryName: "Latvia", nativeCountryName: "Latvija", defaultLanguage: "lv", supportedLanguages: ["lv"], currency: "EUR", currencySymbol: "\u20AC", locale: "lv-LV", timezone: "Europe/Riga", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "lv-LV", phoneCountryCode: "+371", marketId: "lv", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LV_VAT", seoLocale: "lv-LV", fallbackLanguage: "lv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lv", locale: "lv-LV", nativeName: "Latvie\u0161u", isDefault: true }] },
+  { countryCode: "LT", countryName: "Lithuania", nativeCountryName: "Lietuva", defaultLanguage: "lt", supportedLanguages: ["lt"], currency: "EUR", currencySymbol: "\u20AC", locale: "lt-LT", timezone: "Europe/Vilnius", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "lt-LT", phoneCountryCode: "+370", marketId: "lt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LT_VAT", seoLocale: "lt-LT", fallbackLanguage: "lt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lt", locale: "lt-LT", nativeName: "Lietuvi\u0173", isDefault: true }] },
+  { countryCode: "LU", countryName: "Luxembourg", nativeCountryName: "L\xEBtzebuerg", defaultLanguage: "lb", supportedLanguages: ["lb", "fr", "de"], currency: "EUR", currencySymbol: "\u20AC", locale: "lb-LU", timezone: "Europe/Luxembourg", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "lb-LU", phoneCountryCode: "+352", marketId: "lu", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "LU_VAT", seoLocale: "lb-LU", fallbackLanguage: "lb", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "lb", locale: "lb-LU", nativeName: "L\xEBtzebuergesch", isDefault: true }, { languageCode: "fr", locale: "fr-LU", nativeName: "Fran\xE7ais" }, { languageCode: "de", locale: "de-LU", nativeName: "Deutsch" }] },
+  { countryCode: "MT", countryName: "Malta", nativeCountryName: "Malta", defaultLanguage: "mt", supportedLanguages: ["mt", "en"], currency: "EUR", currencySymbol: "\u20AC", locale: "mt-MT", timezone: "Europe/Malta", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "mt-MT", phoneCountryCode: "+356", marketId: "mt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "MT_VAT", seoLocale: "mt-MT", fallbackLanguage: "mt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "mt", locale: "mt-MT", nativeName: "Malti", isDefault: true }, { languageCode: "en", locale: "en-MT", nativeName: "English" }] },
+  { countryCode: "NL", countryName: "Netherlands", nativeCountryName: "Nederland", defaultLanguage: "nl", supportedLanguages: ["nl"], currency: "EUR", currencySymbol: "\u20AC", locale: "nl-NL", timezone: "Europe/Amsterdam", measurementSystem: "metric", dateFormat: "DD-MM-YYYY", numberFormat: "nl-NL", phoneCountryCode: "+31", marketId: "nl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "NL_VAT", seoLocale: "nl-NL", fallbackLanguage: "nl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "nl", locale: "nl-NL", nativeName: "Nederlands", isDefault: true }] },
+  { countryCode: "PL", countryName: "Poland", nativeCountryName: "Polska", defaultLanguage: "pl", supportedLanguages: ["pl"], currency: "PLN", currencySymbol: "z\u0142", locale: "pl-PL", timezone: "Europe/Warsaw", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "pl-PL", phoneCountryCode: "+48", marketId: "pl", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PL_VAT", seoLocale: "pl-PL", fallbackLanguage: "pl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pl", locale: "pl-PL", nativeName: "Polski", isDefault: true }] },
+  { countryCode: "PT", countryName: "Portugal", nativeCountryName: "Portugal", defaultLanguage: "pt", supportedLanguages: ["pt"], currency: "EUR", currencySymbol: "\u20AC", locale: "pt-PT", timezone: "Europe/Lisbon", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "pt-PT", phoneCountryCode: "+351", marketId: "pt", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "PT_VAT", seoLocale: "pt-PT", fallbackLanguage: "pt", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "pt", locale: "pt-PT", nativeName: "Portugu\xEAs", isDefault: true }] },
+  { countryCode: "RO", countryName: "Romania", nativeCountryName: "Rom\xE2nia", defaultLanguage: "ro", supportedLanguages: ["ro"], currency: "RON", currencySymbol: "lei", locale: "ro-RO", timezone: "Europe/Bucharest", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "ro-RO", phoneCountryCode: "+40", marketId: "ro", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "RO_VAT", seoLocale: "ro-RO", fallbackLanguage: "ro", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ro", locale: "ro-RO", nativeName: "Rom\xE2n\u0103", isDefault: true }] },
+  { countryCode: "SK", countryName: "Slovakia", nativeCountryName: "Slovensko", defaultLanguage: "sk", supportedLanguages: ["sk"], currency: "EUR", currencySymbol: "\u20AC", locale: "sk-SK", timezone: "Europe/Bratislava", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sk-SK", phoneCountryCode: "+421", marketId: "sk", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SK_VAT", seoLocale: "sk-SK", fallbackLanguage: "sk", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sk", locale: "sk-SK", nativeName: "Sloven\u010Dina", isDefault: true }] },
+  { countryCode: "SI", countryName: "Slovenia", nativeCountryName: "Slovenija", defaultLanguage: "sl", supportedLanguages: ["sl"], currency: "EUR", currencySymbol: "\u20AC", locale: "sl-SI", timezone: "Europe/Ljubljana", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "sl-SI", phoneCountryCode: "+386", marketId: "si", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SI_VAT", seoLocale: "sl-SI", fallbackLanguage: "sl", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sl", locale: "sl-SI", nativeName: "Sloven\u0161\u010Dina", isDefault: true }] },
+  { countryCode: "ES", countryName: "Spain", nativeCountryName: "Espa\xF1a", defaultLanguage: "es", supportedLanguages: ["es", "ca", "eu", "gl"], currency: "EUR", currencySymbol: "\u20AC", locale: "es-ES", timezone: "Europe/Madrid", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "es-ES", phoneCountryCode: "+34", marketId: "es", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "ES_VAT", seoLocale: "es-ES", fallbackLanguage: "es", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "es", locale: "es-ES", nativeName: "Espa\xF1ol", isDefault: true }, { languageCode: "ca", locale: "ca-ES", nativeName: "Catal\xE0" }, { languageCode: "eu", locale: "eu-ES", nativeName: "Euskara" }, { languageCode: "gl", locale: "gl-ES", nativeName: "Galego" }] },
+  { countryCode: "SE", countryName: "Sweden", nativeCountryName: "Sverige", defaultLanguage: "sv", supportedLanguages: ["sv"], currency: "SEK", currencySymbol: "kr", locale: "sv-SE", timezone: "Europe/Stockholm", measurementSystem: "metric", dateFormat: "YYYY-MM-DD", numberFormat: "sv-SE", phoneCountryCode: "+46", marketId: "se", catalogEnabled: true, searchEnabled: true, shippingRegion: "EU", taxConfigurationKey: "SE_VAT", seoLocale: "sv-SE", fallbackLanguage: "sv", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "sv", locale: "sv-SE", nativeName: "Svenska", isDefault: true }] },
+  { countryCode: "TR", countryName: "T\xFCrkiye", nativeCountryName: "T\xFCrkiye", defaultLanguage: "tr", supportedLanguages: ["tr"], currency: "TRY", currencySymbol: "\u20BA", locale: "tr-TR", timezone: "Europe/Istanbul", measurementSystem: "metric", dateFormat: "DD.MM.YYYY", numberFormat: "tr-TR", phoneCountryCode: "+90", marketId: "tr", catalogEnabled: true, searchEnabled: true, shippingRegion: "TR", taxConfigurationKey: "TR_VAT", seoLocale: "tr-TR", fallbackLanguage: "tr", enabled: true, domain: "", textDirection: "ltr", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "tr", locale: "tr-TR", nativeName: "T\xFCrk\xE7e", isDefault: true }] },
+  { countryCode: "SA", countryName: "Saudi Arabia", nativeCountryName: "\u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "SAR", currencySymbol: "\u0631.\u0633", locale: "ar-SA", timezone: "Asia/Riyadh", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-SA", phoneCountryCode: "+966", marketId: "sa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "SA_VAT", seoLocale: "ar-SA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-SA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-SA", nativeName: "English" }] },
+  { countryCode: "AE", countryName: "United Arab Emirates", nativeCountryName: "\u0627\u0644\u0625\u0645\u0627\u0631\u0627\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "AED", currencySymbol: "\u062F.\u0625", locale: "ar-AE", timezone: "Asia/Dubai", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-AE", phoneCountryCode: "+971", marketId: "ae", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "AE_VAT", seoLocale: "ar-AE", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-AE", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-AE", nativeName: "English" }] },
+  { countryCode: "QA", countryName: "Qatar", nativeCountryName: "\u0642\u0637\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "QAR", currencySymbol: "\u0631.\u0642", locale: "ar-QA", timezone: "Asia/Qatar", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-QA", phoneCountryCode: "+974", marketId: "qa", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "QA_VAT", seoLocale: "ar-QA", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-QA", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-QA", nativeName: "English" }] },
+  { countryCode: "KW", countryName: "Kuwait", nativeCountryName: "\u0627\u0644\u0643\u0648\u064A\u062A", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "KWD", currencySymbol: "\u062F.\u0643", locale: "ar-KW", timezone: "Asia/Kuwait", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-KW", phoneCountryCode: "+965", marketId: "kw", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "KW_VAT", seoLocale: "ar-KW", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-KW", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-KW", nativeName: "English" }] },
+  { countryCode: "BH", countryName: "Bahrain", nativeCountryName: "\u0627\u0644\u0628\u062D\u0631\u064A\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "BHD", currencySymbol: "\u062F.\u0628", locale: "ar-BH", timezone: "Asia/Bahrain", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-BH", phoneCountryCode: "+973", marketId: "bh", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "BH_VAT", seoLocale: "ar-BH", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-BH", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-BH", nativeName: "English" }] },
+  { countryCode: "OM", countryName: "Oman", nativeCountryName: "\u0639\u064F\u0645\u0627\u0646", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "OMR", currencySymbol: "\u0631.\u0639.", locale: "ar-OM", timezone: "Asia/Muscat", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-OM", phoneCountryCode: "+968", marketId: "om", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "OM_VAT", seoLocale: "ar-OM", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-OM", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-OM", nativeName: "English" }] },
+  { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
+];
+
+// data/global/market_engine_extensions.json
+var market_engine_extensions_default = {
+  shippingRegions: {
+    AT: "EU_CENTRAL",
+    BE: "EU_WEST",
+    BG: "EU_EAST",
+    HR: "EU_EAST",
+    CY: "EU_SOUTH",
+    CZ: "EU_CENTRAL",
+    DK: "EU_NORTH",
+    EE: "EU_EAST",
+    FI: "EU_NORTH",
+    FR: "EU_WEST",
+    DE: "EU_CENTRAL",
+    GR: "EU_SOUTH",
+    HU: "EU_CENTRAL",
+    IE: "EU_WEST",
+    IT: "EU_SOUTH",
+    LV: "EU_EAST",
+    LT: "EU_EAST",
+    LU: "EU_WEST",
+    MT: "EU_SOUTH",
+    NL: "EU_WEST",
+    PL: "EU_EAST",
+    PT: "EU_SOUTH",
+    RO: "EU_EAST",
+    SK: "EU_CENTRAL",
+    SI: "EU_EAST",
+    ES: "EU_SOUTH",
+    SE: "EU_NORTH",
+    TR: "NON_EU",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  paymentRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  legalRegions: {
+    AT: "EU_AT",
+    BE: "EU_BE",
+    BG: "EU_BG",
+    HR: "EU_HR",
+    CY: "EU_CY",
+    CZ: "EU_CZ",
+    DK: "EU_DK",
+    EE: "EU_EE",
+    FI: "EU_FI",
+    FR: "EU_FR",
+    DE: "EU_DE",
+    GR: "EU_GR",
+    HU: "EU_HU",
+    IE: "EU_IE",
+    IT: "EU_IT",
+    LV: "EU_LV",
+    LT: "EU_LT",
+    LU: "EU_LU",
+    MT: "EU_MT",
+    NL: "EU_NL",
+    PL: "EU_PL",
+    PT: "EU_PT",
+    RO: "EU_RO",
+    SK: "EU_SK",
+    SI: "EU_SI",
+    ES: "EU_ES",
+    SE: "EU_SE",
+    TR: "TR",
+    SA: "GCC_SA",
+    AE: "GCC_AE",
+    QA: "GCC_QA",
+    KW: "GCC_KW",
+    BH: "GCC_BH",
+    OM: "GCC_OM",
+    EG: "MENA_EG"
+  },
+  supplierRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  returnRegions: {
+    AT: "EU",
+    BE: "EU",
+    BG: "EU",
+    HR: "EU",
+    CY: "EU",
+    CZ: "EU",
+    DK: "EU",
+    EE: "EU",
+    FI: "EU",
+    FR: "EU",
+    DE: "EU",
+    GR: "EU",
+    HU: "EU",
+    IE: "EU",
+    IT: "EU",
+    LV: "EU",
+    LT: "EU",
+    LU: "EU",
+    MT: "EU",
+    NL: "EU",
+    PL: "EU",
+    PT: "EU",
+    RO: "EU",
+    SK: "EU",
+    SI: "EU",
+    ES: "EU",
+    SE: "EU",
+    TR: "TR",
+    SA: "GCC",
+    AE: "GCC",
+    QA: "GCC",
+    KW: "GCC",
+    BH: "GCC",
+    OM: "GCC",
+    EG: "MENA"
+  },
+  marketStatus: {
+    DE: "ACTIVE",
+    FR: "ACTIVE",
+    IT: "ACTIVE",
+    ES: "ACTIVE",
+    PL: "ACTIVE",
+    NL: "ACTIVE",
+    TR: "TESTING",
+    SA: "TESTING",
+    AE: "TESTING",
+    EG: "TESTING"
+  },
+  defaultMarketStatus: "PLANNED",
+  featureFlags: {
+    DE: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: true, supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    FR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: "testing", supplierEnabled: true, paymentEnabled: true, shippingEnabled: true },
+    TR: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: true },
+    SA: { marketEnabled: true, categoryEnabled: true, marketplaceEnabled: false, supplierEnabled: "testing", paymentEnabled: "testing", shippingEnabled: "testing" }
+  },
+  defaultFeatureFlags: {
+    marketEnabled: true,
+    categoryEnabled: true,
+    marketplaceEnabled: false,
+    supplierEnabled: false,
+    paymentEnabled: false,
+    shippingEnabled: false
+  },
+  marketplaces: {
+    DE: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "kaufland", name: "Kaufland", status: "supported" },
+      { id: "otto", name: "OTTO", status: "supported" }
+    ],
+    FR: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "ebay", name: "eBay", status: "supported" },
+      { id: "cdiscount", name: "Cdiscount", status: "supported" }
+    ],
+    PL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "allegro", name: "Allegro", status: "supported" }
+    ],
+    NL: [
+      { id: "amazon", name: "Amazon", status: "supported" },
+      { id: "bol", name: "bol.com", status: "supported" }
+    ]
+  },
+  paymentCapabilities: {
+    EU: ["card", "sepa", "paypal", "klarna"],
+    TR: ["card"],
+    GCC: ["card"],
+    MENA: ["card"]
+  },
+  shippingCapabilities: ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
+  supplierFallbacks: {
+    EU: ["EU"],
+    GCC: ["GCC", "EU"],
+    MENA: ["MENA", "EU"],
+    TR: ["TR", "EU"],
+    NON_EU: ["EU"]
+  }
+};
+
+// lib/i18n/international/config.ts
+var GLOBAL_COUNTRIES = global_countries_35_default;
+var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
 
 // lib/product-engine/adapters/canonical.ts
 var import_module = require("module");
@@ -31104,1975 +26657,18 @@ var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;
 var import_module2 = require("module");
 var require3 = (0, import_module2.createRequire)(__import_meta_url__);
 
-// lib/supplier-engine/health.ts
-var healthCache = /* @__PURE__ */ new Map();
-function defaultHealth(supplierId) {
-  return {
-    supplierId,
-    healthStatus: "UNKNOWN",
-    responseTimeMs: 0,
-    errorCount: 0,
-    successCount: 0,
-    rateLimitCount: 0,
-    consecutiveFailures: 0,
-    reliabilityScore: 0.5,
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-function fromPersisted(row) {
-  return {
-    supplierId: String(row.supplierId),
-    healthStatus: row.healthStatus || "UNKNOWN",
-    responseTimeMs: Number(row.responseTimeMs || 0),
-    errorCount: Number(row.errorCount || 0),
-    successCount: Number(row.successCount || 0),
-    rateLimitCount: Number(row.rateLimitCount || 0),
-    consecutiveFailures: Number(row.consecutiveFailures || 0),
-    lastSuccessfulOperation: row.lastSuccessfulOperation ? String(row.lastSuccessfulOperation) : void 0,
-    lastFailedOperation: row.lastFailedOperation ? String(row.lastFailedOperation) : void 0,
-    reliabilityScore: Number(row.reliabilityScore ?? 0.5),
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function getSupplierHealth(supplierId) {
-  const cached = healthCache.get(supplierId);
-  if (cached) return cached;
-  const persistence = getSupplierPersistence();
-  const row = persistence?.getHealth(supplierId);
-  if (row) {
-    const record = fromPersisted(row);
-    healthCache.set(supplierId, record);
-    return record;
-  }
-  return defaultHealth(supplierId);
-}
-
-// lib/supplier-engine/orderSandbox/persistence.ts
-var memoryStore = /* @__PURE__ */ new Map();
-function rowToRecord(row) {
-  return {
-    supplierOrderId: String(row.supplier_order_id),
-    buzzardOrderId: String(row.buzzard_order_id),
-    supplierId: String(row.supplier_id),
-    status: row.status,
-    idempotencyKey: String(row.idempotency_key),
-    correlationId: String(row.correlation_id || ""),
-    payload: JSON.parse(String(row.payload_json || "{}")),
-    tracking: row.tracking_json ? JSON.parse(String(row.tracking_json)) : void 0,
-    failureClass: row.failure_class,
-    failureCode: row.failure_code ? String(row.failure_code) : void 0,
-    failureMessage: row.failure_message ? String(row.failure_message) : void 0,
-    latencyMs: Number(row.latency_ms || 0),
-    sandbox: true,
-    networkDispatched: false,
-    createdAt: String(row.created_at),
-    updatedAt: String(row.updated_at)
-  };
-}
-function getOrderSandboxPersistence() {
-  return getSupplierPersistence();
-}
-function getSupplierOrderSandboxByIdempotency(idempotencyKey) {
-  const cached = memoryStore.get(idempotencyKey);
-  if (cached) return cached;
-  const row = getOrderSandboxPersistence()?.getOrderSandboxByIdempotency?.(idempotencyKey);
-  if (!row) return void 0;
-  const record = rowToRecord(row);
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  return record;
-}
-function getSupplierOrderSandboxByReference(supplierOrderId) {
-  const cached = memoryStore.get(supplierOrderId);
-  if (cached) return cached;
-  const row = getOrderSandboxPersistence()?.getOrderSandboxByReference?.(supplierOrderId);
-  if (!row) return void 0;
-  const record = rowToRecord(row);
-  memoryStore.set(record.idempotencyKey, record);
-  memoryStore.set(record.supplierOrderId, record);
-  return record;
-}
-
-// lib/marketplace-engine/registry.ts
-var marketplaces = /* @__PURE__ */ new Map();
-var orderMappings = /* @__PURE__ */ new Map();
-function baseCapabilities(partial = {}) {
-  return {
-    productListing: false,
-    productUpdate: false,
-    priceUpdate: false,
-    stockUpdate: false,
-    orderImport: false,
-    orderAcknowledgement: false,
-    shipmentCreation: false,
-    trackingUpdate: false,
-    returns: false,
-    refunds: false,
-    webhooks: false,
-    api: false,
-    xml: false,
-    csv: false,
-    ...partial
-  };
-}
-var EU_MARKETS = ["DE", "FR", "PL", "CZ", "AT", "NL", "BE", "IT", "ES"];
-var GCC_MARKETS = ["SA", "AE", "EG"];
-function buildMarketplace(marketplaceId, displayName, supportedMarkets, supportedCurrencies, channel, capabilities, status = "DISCOVERED") {
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    marketplaceId,
-    name: marketplaceId,
-    displayName,
-    country: supportedMarkets[0] ?? "DE",
-    supportedMarkets,
-    supportedCountries: supportedMarkets,
-    supportedCurrencies,
-    supportedChannels: [channel],
-    status,
-    capabilities: baseCapabilities(capabilities),
-    connectorType: "dry-run",
-    createdAt: now,
-    updatedAt: now
-  };
-}
-function seedMarketplaces() {
-  if (marketplaces.size > 0) return;
-  const defs = [
-    buildMarketplace("amazon", "Amazon", [...EU_MARKETS, ...GCC_MARKETS], ["EUR", "PLN", "CZK", "SAR", "AED", "EGP"], "amazon", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      returns: true,
-      refunds: true,
-      webhooks: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("ebay", "eBay", [...EU_MARKETS, "TR"], ["EUR", "PLN", "CZK", "TRY"], "ebay", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      returns: true,
-      refunds: true,
-      webhooks: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("kaufland", "Kaufland", ["DE", "CZ", "SK", "PL", "AT"], ["EUR", "CZK", "PLN"], "kaufland", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      api: true
-    }, "TESTING"),
-    buildMarketplace("allegro", "Allegro", ["PL", "CZ", "SK", "HU"], ["PLN", "CZK"], "allegro", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("bol", "bol.com", ["NL", "BE"], ["EUR"], "bol", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      api: true
-    }, "DISCOVERED"),
-    buildMarketplace("cdiscount", "Cdiscount", ["FR"], ["EUR"], "cdiscount", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      api: true,
-      xml: true
-    }, "DISCOVERED"),
-    buildMarketplace("otto", "OTTO", ["DE"], ["EUR"], "otto", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      api: true,
-      csv: true
-    }, "DISCOVERED"),
-    buildMarketplace("TEST_AMAZON", "Test Amazon", ["DE"], ["EUR"], "amazon", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      returns: true,
-      refunds: true,
-      webhooks: true,
-      api: true
-    }, "TESTING"),
-    buildMarketplace("TEST_EBAY", "Test eBay", ["DE", "FR"], ["EUR"], "ebay", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      shipmentCreation: true,
-      trackingUpdate: true,
-      webhooks: true,
-      api: true
-    }, "TESTING"),
-    buildMarketplace("TEST_KAUFLAND", "Test Kaufland", ["DE", "PL"], ["EUR", "PLN"], "kaufland", {
-      productListing: true,
-      productUpdate: true,
-      priceUpdate: true,
-      stockUpdate: true,
-      orderImport: true,
-      orderAcknowledgement: true,
-      api: true
-    }, "TESTING")
-  ];
-  for (const def of defs) {
-    marketplaces.set(def.marketplaceId, def);
-  }
-}
-function listMarketplaces() {
-  seedMarketplaces();
-  return [...marketplaces.values()];
-}
-function listOrderMappings(marketplaceId) {
-  const all = [...orderMappings.values()];
-  return marketplaceId ? all.filter((m) => m.marketplaceId === marketplaceId) : all;
-}
-
-// lib/returns-engine/registry.ts
-var returns = /* @__PURE__ */ new Map();
-var returnsByOrder = /* @__PURE__ */ new Map();
-function getReturnByOrder(orderId) {
-  const id = returnsByOrder.get(orderId);
-  return id ? returns.get(id) : void 0;
-}
-
-// lib/fulfillment-control-tower/aggregator.ts
-function buildFulfillmentId(orderId, orderItemId) {
-  return `ff_${orderId}_${orderItemId}`;
-}
-function classifySupplierOrderReference(ref) {
-  if (!ref) return "UNKNOWN";
-  if (ref.startsWith("SANDBOX-ORDER-")) return "SANDBOX";
-  if (ref.startsWith("DRY-SUP-") || ref.startsWith("DRY-")) return "SANDBOX";
-  return "LIVE";
-}
-function mapInventoryStatus(reservationId) {
-  if (!reservationId) return "MISSING";
-  const reservation = getReservation(reservationId);
-  if (!reservation) return "MISSING";
-  return reservation.status;
-}
-function mapSupplierHealthState(supplierId) {
-  if (!isSupplierSelectable(supplierId)) return "DISABLED";
-  const health = getSupplierHealth(supplierId);
-  return health.healthStatus || "UNKNOWN";
-}
-function mapShipmentStatus(order) {
-  if (["SHIPPED", "DELIVERED"].includes(order.status)) return "SHIPPED";
-  if (order.fulfillmentStatus === "SUPPLIER_PREPARED" || order.fulfillmentStatus === "SUPPLIER_SUBMITTED") {
-    return "PREPARED";
-  }
-  return "NOT_SHIPPED";
-}
-function mapTrackingStatus(supplierOrderId, orderStatus) {
-  if (!supplierOrderId) {
-    return { status: orderStatus === "SHIPPED" || orderStatus === "DELIVERED" ? "MISSING" : "NOT_AVAILABLE" };
-  }
-  const sandbox = getSupplierOrderSandboxByReference(supplierOrderId);
-  if (sandbox?.tracking) {
-    return {
-      status: sandbox.tracking.shipmentStatus,
-      trackingNumber: sandbox.tracking.trackingNumber,
-      carrier: sandbox.tracking.carrier,
-      trackingUrl: sandbox.tracking.trackingUrl
-    };
-  }
-  return { status: "NOT_AVAILABLE" };
-}
-function resolveSupplierOrderForItem(order, item) {
-  const supplierOrder = order.supplierOrders.find((so) => so.supplierId === item.supplierId);
-  const sandbox = supplierOrder?.supplierOrderId ? getSupplierOrderSandboxByReference(supplierOrder.supplierOrderId) : void 0;
-  return {
-    supplierOrderId: supplierOrder?.supplierOrderId,
-    supplierOrderStatus: sandbox?.status || supplierOrder?.status || "NOT_CREATED",
-    classification: classifySupplierOrderReference(supplierOrder?.supplierOrderId),
-    lastKnownSupplierState: sandbox?.status,
-    idempotencyKey: sandbox?.idempotencyKey,
-    correlationId: sandbox?.correlationId
-  };
-}
-function resolveMarketplaceMapping(orderId) {
-  const mapping = listOrderMappings().find((m) => m.orderId === orderId);
-  return mapping ? { marketplaceId: mapping.marketplaceId, marketplaceOrderId: mapping.marketplaceOrderId } : {};
-}
-function buildStateView(order, item, supplierOrderStatus, supplierHealth, inventoryStatus, trackingStatus, returnStatus) {
-  let supplierState = "UNKNOWN";
-  if (!isSupplierSelectable(item.supplierId)) supplierState = "DISABLED";
-  else if (supplierHealth === "HEALTHY") supplierState = "HEALTHY";
-  else if (supplierHealth === "DEGRADED") supplierState = "DEGRADED";
-  else if (supplierHealth === "UNHEALTHY") supplierState = "UNHEALTHY";
-  else supplierState = "ELIGIBLE";
-  return {
-    order: order.status,
-    inventory: inventoryStatus,
-    supplier: supplierState,
-    supplierOrder: supplierOrderStatus,
-    shipment: mapShipmentStatus(order),
-    tracking: trackingStatus,
-    returns: returnStatus
-  };
-}
-function buildFulfillmentOperationalView(order, item) {
-  const supplierOrder = resolveSupplierOrderForItem(order, item);
-  const inventoryStatus = mapInventoryStatus(item.inventoryReservationId);
-  const supplierHealth = mapSupplierHealthState(item.supplierId);
-  const tracking = mapTrackingStatus(supplierOrder.supplierOrderId, order.status);
-  const marketplace = resolveMarketplaceMapping(order.orderId);
-  const returnRecord = getReturnByOrder(order.orderId);
-  const returnStatus = returnRecord?.status || order.returnRefund.returnStatus;
-  const refundStatus = order.returnRefund.refundStatus;
-  const stateView = buildStateView(
-    order,
-    item,
-    supplierOrder.supplierOrderStatus,
-    supplierHealth,
-    inventoryStatus,
-    tracking.status,
-    returnStatus
-  );
-  const now = (/* @__PURE__ */ new Date()).toISOString();
-  return {
-    fulfillmentId: buildFulfillmentId(order.orderId, item.orderItemId),
-    orderItemId: item.orderItemId,
-    orderId: order.orderId,
-    orderNumber: order.orderNumber,
-    customerId: order.customerId,
-    marketId: order.marketId,
-    channel: order.channel,
-    supplierId: item.supplierId,
-    supplierSku: item.sku,
-    productId: item.productId,
-    quantity: item.quantity,
-    inventoryReservationId: item.inventoryReservationId,
-    supplierOrderId: supplierOrder.supplierOrderId,
-    supplierOrderStatus: supplierOrder.supplierOrderStatus,
-    supplierOrderClassification: supplierOrder.classification,
-    orderStatus: order.status,
-    fulfillmentStatus: order.fulfillmentStatus,
-    inventoryStatus,
-    priceSnapshotId: item.priceSnapshotId,
-    trackingStatus: tracking.status,
-    trackingNumber: tracking.trackingNumber,
-    carrier: tracking.carrier,
-    trackingUrl: tracking.trackingUrl,
-    lastKnownSupplierState: supplierOrder.lastKnownSupplierState,
-    supplierHealth,
-    marketplaceId: marketplace.marketplaceId,
-    marketplaceOrderId: marketplace.marketplaceOrderId,
-    returnStatus,
-    refundStatus,
-    correlationId: supplierOrder.correlationId || order.orderId,
-    idempotencyKey: supplierOrder.idempotencyKey || order.idempotencyKey,
-    operationalStatus: "UNKNOWN",
-    stateView,
-    createdAt: order.createdAt,
-    updatedAt: now
-  };
-}
-function listFulfillmentOperationalViews(filter) {
-  const views = [];
-  for (const order of listAllOrders()) {
-    for (const item of order.items) {
-      const view = buildFulfillmentOperationalView(order, item);
-      views.push(view);
-    }
-  }
-  return views.filter((view) => {
-    if (filter?.supplierId && view.supplierId !== filter.supplierId) return false;
-    if (filter?.orderId && view.orderId !== filter.orderId) return false;
-    if (filter?.status && view.operationalStatus !== filter.status) return false;
-    if (filter?.marketplaceId && view.marketplaceId !== filter.marketplaceId) return false;
-    if (filter?.dateFrom && view.createdAt < filter.dateFrom) return false;
-    if (filter?.dateTo && view.createdAt > filter.dateTo) return false;
-    return true;
-  });
-}
-
-// lib/fulfillment-control-tower/persistence.ts
-var snapshotStore = /* @__PURE__ */ new Map();
-var incidentStore = /* @__PURE__ */ new Map();
-var incidentByFingerprint = /* @__PURE__ */ new Map();
-var reconciliationRuns = [];
-function getPersistentStore() {
-  if (typeof process === "undefined" || process.env.BUZZARD_FULFILLMENT_TOWER_PERSISTENCE === "0") {
-    return null;
-  }
-  try {
-    const mod = require_persistentStore();
-    return mod.createFulfillmentControlTowerStore();
-  } catch {
-    return null;
-  }
-}
-function rowToSnapshot(row) {
-  return JSON.parse(String(row.view_json || "{}"));
-}
-function rowToIncident(row) {
-  return {
-    incidentId: String(row.incident_id),
-    fingerprint: String(row.fingerprint),
-    fulfillmentId: String(row.fulfillment_id),
-    orderId: String(row.order_id),
-    supplierId: String(row.supplier_id),
-    severity: row.severity,
-    category: row.category,
-    code: String(row.code),
-    message: String(row.message),
-    detectedAt: String(row.detected_at),
-    resolvedAt: row.resolved_at ? String(row.resolved_at) : void 0,
-    status: row.status,
-    correlationId: row.correlation_id ? String(row.correlation_id) : void 0,
-    resolutionNote: row.resolution_note ? String(row.resolution_note) : void 0,
-    resolutionActor: row.resolution_actor ? String(row.resolution_actor) : void 0,
-    acknowledgedAt: row.acknowledged_at ? String(row.acknowledged_at) : void 0,
-    acknowledgedBy: row.acknowledged_by ? String(row.acknowledged_by) : void 0
-  };
-}
-function rowToRun(row) {
-  return {
-    runId: String(row.run_id),
-    correlationId: String(row.correlation_id),
-    startedAt: String(row.started_at),
-    completedAt: String(row.completed_at),
-    checkedFulfillments: Number(row.checked_fulfillments || 0),
-    passed: Number(row.passed || 0),
-    warnings: Number(row.warnings || 0),
-    mismatches: Number(row.mismatches || 0),
-    critical: Number(row.critical || 0),
-    incidentsCreated: Number(row.incidents_created || 0),
-    incidentsResolved: Number(row.incidents_resolved || 0),
-    durationMs: Number(row.duration_ms || 0),
-    errors: JSON.parse(String(row.errors_json || "[]"))
-  };
-}
-function getOperationalSnapshot(fulfillmentId) {
-  const cached = snapshotStore.get(fulfillmentId);
-  if (cached) return cached;
-  const row = getPersistentStore()?.getSnapshot(fulfillmentId);
-  if (!row) return void 0;
-  const view = rowToSnapshot(row);
-  snapshotStore.set(view.fulfillmentId, view);
-  return view;
-}
-function listIncidents() {
-  if (incidentStore.size) return [...incidentStore.values()];
-  const rows = getPersistentStore()?.listIncidents() || [];
-  for (const row of rows) {
-    const incident = rowToIncident(row);
-    incidentStore.set(incident.incidentId, incident);
-    incidentByFingerprint.set(incident.fingerprint, incident.incidentId);
-  }
-  return [...incidentStore.values()];
-}
-function getLastReconciliationRun() {
-  if (reconciliationRuns.length) return reconciliationRuns[0];
-  const rows = getPersistentStore()?.listReconciliationRuns(1) || [];
-  return rows[0] ? rowToRun(rows[0]) : void 0;
-}
-
-// lib/fulfillment-control-tower/incidents.ts
-function filterIncidents(filter) {
-  return listIncidents().filter((incident) => {
-    if (filter?.supplierId && incident.supplierId !== filter.supplierId) return false;
-    if (filter?.orderId && incident.orderId !== filter.orderId) return false;
-    if (filter?.severity && incident.severity !== filter.severity) return false;
-    if (filter?.category && incident.category !== filter.category) return false;
-    if (filter?.status && incident.status !== filter.status) return false;
-    return true;
-  });
-}
-
-// lib/fulfillment-control-tower/admin.ts
-function applyOperationalStatus(views) {
-  return views.map((view) => {
-    const snapshot = getOperationalSnapshot(view.fulfillmentId);
-    return snapshot?.operationalStatus ? { ...view, operationalStatus: snapshot.operationalStatus } : view;
-  });
-}
-function getFulfillmentControlTowerDashboard(filter) {
-  const views = applyOperationalStatus(listFulfillmentOperationalViews(filter));
-  const incidents = filterIncidents({ status: "OPEN" });
-  const supplierSet = /* @__PURE__ */ new Set();
-  const orderSet = /* @__PURE__ */ new Set();
-  for (const incident of incidents) {
-    supplierSet.add(incident.supplierId);
-    orderSet.add(incident.orderId);
-  }
-  return {
-    totalFulfillments: views.length,
-    healthy: views.filter((v) => v.operationalStatus === "HEALTHY").length,
-    warning: views.filter((v) => v.operationalStatus === "WARNING").length,
-    mismatch: views.filter((v) => v.operationalStatus === "MISMATCH").length,
-    critical: views.filter((v) => v.operationalStatus === "CRITICAL").length,
-    openIncidents: incidents.length,
-    suppliersAffected: supplierSet.size,
-    ordersAffected: orderSet.size,
-    realSupplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
-    lastReconciliationRun: getLastReconciliationRun()
-  };
-}
-
-// lib/supplier-engine/orderSandbox/piiFilter.ts
-var BLOCKED_KEYS = /payment|card|cvv|cvc|iban|bic|password|secret|token|oauth|api[_-]?key|authorization|admin|ai[_-]?context|email|phone/i;
-function filterSupplierFulfillmentAddress(address) {
-  if (!address) return {};
-  const out = {};
-  for (const [key, value] of Object.entries(address)) {
-    if (BLOCKED_KEYS.test(key)) continue;
-    if (!value?.trim()) continue;
-    out[key] = value.trim();
-  }
-  if (!out.country && address.country) out.country = address.country;
-  return out;
-}
-
-// lib/supplier-order-readiness/evaluator.ts
-var import_crypto2 = require("crypto");
-
-// lib/supplier-order-readiness/config.ts
-var EVALUATOR_VERSION = "337.1.0";
-var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
-var APPROVAL_TTL_MS2 = 7 * 24 * 60 * 60 * 1e3;
-var DEFAULT_POLICY = {
-  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
-  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
-  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
-  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
-  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
-  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
-  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
-  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
-  blockOnMissingTrackingCapability: false,
-  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
+// lib/supplier-order-activation/config.ts
+var ACTIVATION_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS2 = 4 * 60 * 60 * 1e3;
+var REHEARSAL_TTL_MS = Number(process.env.SUPPLIER_ACTIVATION_REHEARSAL_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_TTL_MS = 2 * 60 * 60 * 1e3;
+var FIRST_ORDER_LIMITS = {
+  maxOrderValue: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_VALUE || 500),
+  maxQuantity: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_QTY || 5),
+  maxItems: Number(process.env.SUPPLIER_FIRST_ORDER_MAX_ITEMS || 3),
+  maxSuppliers: 1,
+  maxCustomers: 1
 };
-var policyOverride = null;
-function getReadinessPolicy() {
-  return { ...DEFAULT_POLICY, ...policyOverride || {} };
-}
-function isMockCredentialValue(value) {
-  const normalized = value.trim().toLowerCase();
-  return !normalized || normalized === "mock" || normalized === "test" || normalized === "fake" || normalized === "dummy-token" || normalized.startsWith("mock-") || normalized.startsWith("test-") || normalized.startsWith("dummy-") || normalized.includes("placeholder");
-}
-
-// lib/supplier-engine/syncCursor.ts
-var cursorStore = /* @__PURE__ */ new Map();
-function cursorKey(supplierId, syncMode = "incremental") {
-  return `${supplierId}:${syncMode}`;
-}
-function fromPersisted2(row) {
-  return {
-    supplierId: String(row.supplierId),
-    syncMode: row.syncMode || "incremental",
-    cursor: row.cursor ? String(row.cursor) : void 0,
-    page: row.page != null ? Number(row.page) : void 0,
-    offset: row.offset != null ? Number(row.offset) : void 0,
-    lastModified: row.lastModified ? String(row.lastModified) : void 0,
-    updatedAt: String(row.updatedAt || (/* @__PURE__ */ new Date()).toISOString())
-  };
-}
-function getSyncCursor(supplierId, syncMode = "incremental") {
-  const key = cursorKey(supplierId, syncMode);
-  const cached = cursorStore.get(key);
-  if (cached) return cached;
-  const row = getSupplierPersistence()?.getCursor(supplierId, syncMode);
-  if (row) {
-    const cursor = fromPersisted2(row);
-    cursorStore.set(key, cursor);
-    return cursor;
-  }
-  return void 0;
-}
-
-// lib/supplier-engine/orderSandbox/sandboxAdapter.ts
-function buildSupplierOrderIdempotencyKey(buzzardOrderId, supplierId) {
-  return `BUZZARD-${buzzardOrderId}-${supplierId}`;
-}
-
-// lib/supplier-production-order-validation/persistence.ts
-var validationStore = /* @__PURE__ */ new Map();
-function listValidationRecords() {
-  return [...validationStore.values()];
-}
-function getLatestValidationForScope(scope) {
-  return listValidationRecords().filter(
-    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-
-// lib/supplier-production-order-validation/readinessBridge.ts
-function pass(code, category, message) {
-  return { code, category, level: "PASS", message, blocking: false };
-}
-function block(code, category, message) {
-  return { code, category, level: "BLOCKED", message, blocking: true };
-}
-function warn(code, category, message) {
-  return { code, category, level: "WARNING", message, blocking: false };
-}
-function evaluateCreateOrderProductionValidationChecks(scope) {
-  const results = [];
-  const validation = getLatestValidationForScope({
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    environment: scope.environment || "PRODUCTION"
-  });
-  if (!validation) {
-    results.push(block("CREATE_ORDER_VALIDATION_MISSING", "CREATE_ORDER", "createOrder production validation not run"));
-    return results;
-  }
-  results.push(pass("CREATE_ORDER_VALIDATION_EXISTS", "CREATE_ORDER", `Validation ${validation.validationId}`));
-  if (validation.createOrderCapability === "UNVERIFIED") {
-    results.push(
-      block("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CREATE_ORDER", "createOrder capability UNVERIFIED \u2014 #341 boundary")
-    );
-  } else if (validation.createOrderCapability === "VALIDATED") {
-    results.push(pass("CREATE_ORDER_VALIDATED", "CREATE_ORDER", "createOrder production validated"));
-  } else {
-    results.push(block("CREATE_ORDER_BLOCKED", "CREATE_ORDER", "createOrder capability blocked"));
-  }
-  if (validation.unknownOutcome) {
-    results.push(warn("CREATE_ORDER_UNKNOWN_OUTCOME", "CREATE_ORDER", "Unknown outcome pending resolution"));
-  }
-  if (validation.humanReviewRequired) {
-    results.push(warn("CREATE_ORDER_HUMAN_REVIEW", "CREATE_ORDER", "Human review required"));
-  }
-  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
-    results.push(block("CREATE_ORDER_VALIDATION_BLOCKED", "CREATE_ORDER", `Validation ${validation.overallStatus}`));
-  }
-  return results;
-}
-
-// lib/supplier-production-validation/persistence.ts
-var validationStore2 = /* @__PURE__ */ new Map();
-function listValidationRecords2() {
-  return [...validationStore2.values()];
-}
-function getLatestValidationForScope2(scope) {
-  return listValidationRecords2().filter(
-    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-
-// lib/supplier-production-validation/readinessBridge.ts
-function pass2(code, category, message) {
-  return { code, category, level: "PASS", message, blocking: false };
-}
-function block2(code, category, message) {
-  return { code, category, level: "BLOCKED", message, blocking: true };
-}
-function warn2(code, category, message) {
-  return { code, category, level: "WARNING", message, blocking: false };
-}
-function evaluateProductionValidationChecks(scope) {
-  const results = [];
-  const validation = getLatestValidationForScope2({
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    environment: scope.environment || "PRODUCTION"
-  });
-  if (!validation) {
-    results.push(block2("PRODUCTION_VALIDATION_MISSING", "PRODUCTION", "Production capability validation not run"));
-    return results;
-  }
-  results.push(
-    pass2("PRODUCTION_VALIDATION_EXISTS", "PRODUCTION", `Validation ${validation.validationId} recorded`)
-  );
-  if (validation.credentialStatus === "VALID") {
-    results.push(pass2("PRODUCTION_CREDENTIAL_VALID", "CREDENTIAL", "Production credential validated"));
-  } else if (validation.credentialStatus === "NOT_CONFIGURED") {
-    results.push(block2("PRODUCTION_CREDENTIAL_MISSING", "CREDENTIAL", "Production credential not configured"));
-  } else {
-    results.push(block2("PRODUCTION_CREDENTIAL_BLOCKED", "CREDENTIAL", `Credential status ${validation.credentialStatus}`));
-  }
-  if (validation.createOrderCapability === "UNVERIFIED") {
-    results.push(
-      block2("REAL_ORDER_ENDPOINT_NOT_VALIDATED", "CAPABILITY", "createOrder capability UNVERIFIED \u2014 intentional #339 boundary")
-    );
-  }
-  results.push(...evaluateCreateOrderProductionValidationChecks(scope));
-  if (validation.catalogReadStatus === "LIVE_READ_VALIDATED") {
-    results.push(pass2("PRODUCTION_CATALOG_VALIDATED", "LIVE_READ", "Catalog live-read validated"));
-  } else if (validation.catalogReadStatus === "SKIPPED") {
-    results.push(warn2("PRODUCTION_CATALOG_SKIPPED", "LIVE_READ", "Catalog live-read skipped \u2014 LIVE NOT VALIDATED"));
-  }
-  if (validation.overallStatus === "BLOCKED" || validation.overallStatus === "FAILED") {
-    results.push(
-      block2("PRODUCTION_VALIDATION_BLOCKED", "PRODUCTION", `Validation ${validation.overallStatus}`)
-    );
-  } else if (validation.overallStatus === "PASSED") {
-    results.push(warn2("PRODUCTION_VALIDATION_PASSED", "PRODUCTION", "Validation passed but createOrder still UNVERIFIED"));
-  }
-  return results;
-}
-
-// lib/supplier-order-readiness/checks.ts
-function pass3(code, category, message) {
-  return { code, category, level: "PASS", message, blocking: false };
-}
-function warn3(code, category, message, blocking = false) {
-  return { code, category, level: "WARNING", message, blocking };
-}
-function block3(code, category, message) {
-  return { code, category, level: "BLOCKED", message, blocking: true };
-}
-function critical(code, category, message) {
-  return { code, category, level: "CRITICAL", message, blocking: true };
-}
-function ageMs(iso) {
-  if (!iso) return null;
-  const ts = Date.parse(iso);
-  return Number.isFinite(ts) ? Date.now() - ts : null;
-}
-function classifyCapability(enabled) {
-  if (enabled === true) return "AVAILABLE";
-  if (enabled === false) return "NOT_SUPPORTED";
-  return "UNKNOWN";
-}
-function evaluateSupplierIdentityChecks(scope) {
-  const results = [];
-  const supplier = getSupplier(scope.supplierId);
-  if (!supplier) {
-    results.push(block3("SUPPLIER_NOT_FOUND", "SUPPLIER", "Supplier record does not exist"));
-    return results;
-  }
-  results.push(pass3("SUPPLIER_EXISTS", "SUPPLIER", "Supplier record exists"));
-  if (!isSupplierSelectable(scope.supplierId)) {
-    results.push(block3("SUPPLIER_DISABLED", "SUPPLIER", "Supplier is disabled or not selectable"));
-  } else {
-    results.push(pass3("SUPPLIER_ENABLED", "SUPPLIER", "Supplier is enabled"));
-  }
-  if (!supplier.supportedMarkets?.includes(scope.market)) {
-    results.push(block3("MARKET_NOT_ELIGIBLE", "MARKET", `Supplier not eligible for market ${scope.market}`));
-  } else {
-    results.push(pass3("MARKET_ELIGIBLE", "MARKET", "Supplier market eligibility confirmed"));
-  }
-  const health = getSupplierHealth(scope.supplierId);
-  if (!health) {
-    results.push(warn3("SUPPLIER_HEALTH_UNKNOWN", "SUPPLIER", "Supplier health state unavailable"));
-  } else if (health.healthStatus === "UNHEALTHY") {
-    results.push(block3("SUPPLIER_UNHEALTHY", "SUPPLIER", "Supplier health is UNHEALTHY"));
-  } else if (health.healthStatus === "DEGRADED") {
-    results.push(warn3("SUPPLIER_DEGRADED", "SUPPLIER", "Supplier health is DEGRADED", false));
-  } else {
-    results.push(pass3("SUPPLIER_HEALTH_OK", "SUPPLIER", `Supplier health ${health.healthStatus}`));
-  }
-  return results;
-}
-function evaluateCredentialChecks(scope) {
-  const results = [];
-  const ref = getCredentialRef(scope.supplierId);
-  const profile = resolveLiveSupplierProfile();
-  const interCars = resolvePredefinedLiveProfile();
-  const isInterCars = scope.supplierId === interCars?.supplierId || profile?.supplierId === scope.supplierId || process.env.SUPPLIER_LIVE_PROFILE === "inter-cars";
-  if (!ref?.secretsRef && !profile?.secretsRef) {
-    results.push(block3("CREDENTIAL_REF_MISSING", "CREDENTIAL", "Credential reference not configured"));
-    return results;
-  }
-  results.push(pass3("CREDENTIAL_REF_EXISTS", "CREDENTIAL", "Credential reference configured"));
-  const secretsRef = ref?.secretsRef || profile?.secretsRef || "";
-  const creds = resolveCredentials(secretsRef);
-  if (!creds || Object.keys(creds).length === 0) {
-    results.push(block3("CREDENTIAL_SECRET_MISSING", "CREDENTIAL", "Required supplier credential secret missing"));
-    return results;
-  }
-  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
-  if (isMockCredentialValue(token)) {
-    results.push(block3("CREDENTIAL_MOCK_NOT_PRODUCTION", "CREDENTIAL", "Mock/test credentials cannot be production ready"));
-    return results;
-  }
-  if (isInterCars && !hasLiveSupplierCredentials(interCars || profile)) {
-    results.push(block3("INTER_CARS_CREDENTIAL_MISSING", "CREDENTIAL", "Inter Cars live credentials required"));
-    return results;
-  }
-  const redacted = redactSecrets({ preview: token });
-  if (redacted.preview && redacted.preview !== "[REDACTED]") {
-    results.push(critical("SECRET_REDACTION_FAILED", "SECURITY", "Secret redaction failed"));
-  } else {
-    results.push(pass3("SECRET_REDACTION_ACTIVE", "SECURITY", "Secret redaction active"));
-  }
-  results.push(pass3("CREDENTIAL_CONFIGURED", "CREDENTIAL", "Production credential readiness confirmed"));
-  return results;
-}
-function evaluateNetworkSafetyChecks() {
-  const results = [];
-  if (isSupplierOrderNetworkEnabled()) {
-    results.push(warn3("NETWORK_ENABLED", "NETWORK", "Supplier order network is ENABLED"));
-  } else {
-    results.push(pass3("NETWORK_DISABLED", "NETWORK", "Supplier order network is DISABLED (required for #337)"));
-  }
-  return results;
-}
-function evaluateCapabilityChecks(scope) {
-  const policy = getReadinessPolicy();
-  const supplier = getSupplier(scope.supplierId);
-  const profile = resolveLiveSupplierProfile();
-  const caps = { ...supplier?.capabilities || {}, ...profile?.capabilities || {} };
-  const map = {
-    createOrder: classifyCapability(caps.createOrder),
-    orderStatus: classifyCapability(caps.orderStatus),
-    tracking: classifyCapability(caps.trackingAPI),
-    cancellation: classifyCapability(caps.cancelOrder),
-    return: classifyCapability(caps.returnsAPI),
-    refund: classifyCapability(caps.refund)
-  };
-  const results = [];
-  for (const required of policy.requiredOrderCapabilities) {
-    const key = required === "trackingAPI" ? "tracking" : required;
-    const classification = map[key] || map[required] || "UNKNOWN";
-    if (classification !== "AVAILABLE") {
-      results.push(block3(`CAPABILITY_${required.toUpperCase()}_MISSING`, "CAPABILITY", `${required} not available for real orders`));
-    } else {
-      results.push(pass3(`CAPABILITY_${required.toUpperCase()}`, "CAPABILITY", `${required} available`));
-    }
-  }
-  if (policy.blockOnMissingTrackingCapability && map.tracking !== "AVAILABLE") {
-    results.push(block3("TRACKING_CAPABILITY_REQUIRED", "TRACKING", "Tracking capability required"));
-  } else if (map.tracking !== "AVAILABLE") {
-    results.push(warn3("TRACKING_CAPABILITY_MISSING", "TRACKING", "Tracking capability not supported"));
-  }
-  if (policy.blockOnMissingReturnCapability && map.return !== "AVAILABLE") {
-    results.push(warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Return capability not supported", false));
-  }
-  return { results, capabilities: map };
-}
-function evaluateInterCarsChecks(scope) {
-  const interCars = resolvePredefinedLiveProfile();
-  if (!interCars || scope.supplierId !== interCars.supplierId) return [];
-  const results = [];
-  results.push(pass3("INTER_CARS_PROFILE", "SUPPLIER", "Inter Cars adapter profile configured"));
-  if (interCars.environment !== "PRODUCTION" && interCars.environment !== "SANDBOX") {
-    results.push(warn3("INTER_CARS_ENV", "SUPPLIER", `Inter Cars environment ${interCars.environment}`));
-  }
-  if (!interCars.endpoints?.products || !interCars.endpoints?.stock) {
-    results.push(block3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoint configuration incomplete"));
-  } else {
-    results.push(pass3("INTER_CARS_ENDPOINTS", "SUPPLIER", "Inter Cars endpoints configured"));
-  }
-  const orderCap = interCars.capabilities?.createOrder === true;
-  if (!orderCap) {
-    results.push(block3("INTER_CARS_ORDER_NOT_VALIDATED", "SUPPLIER", "Inter Cars live order capability not validated"));
-  }
-  return results;
-}
-function evaluateLiveReadChecks(scope) {
-  const results = [];
-  const profile = resolveLiveSupplierProfile();
-  const credentialsPresent = profile ? hasLiveSupplierCredentials(profile) : hasConfiguredCredentials(scope.supplierId);
-  if (!credentialsPresent) {
-    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "Live read validation skipped \u2014 credentials missing"));
-    return results;
-  }
-  const cursor = getSyncCursor(scope.supplierId, "incremental");
-  if (!cursor?.updatedAt) {
-    results.push(block3("LIVE_READ_NEVER_RUN", "LIVE_READ", "No successful live-read sync cursor recorded"));
-    return results;
-  }
-  const syncAge = ageMs(cursor.updatedAt);
-  const policy = getReadinessPolicy();
-  if (syncAge == null || syncAge > policy.maxStockAgeMs) {
-    results.push(block3("LIVE_READ_STALE", "LIVE_READ", "Last live-read sync exceeds freshness threshold"));
-  } else {
-    results.push(pass3("LIVE_READ_RECENT", "LIVE_READ", "Recent live-read sync cursor present"));
-  }
-  return results;
-}
-function evaluateDataFreshnessChecks(scope) {
-  const policy = getReadinessPolicy();
-  const cursor = getSyncCursor(scope.supplierId, "incremental");
-  const results = [];
-  const stockAge = ageMs(cursor?.updatedAt);
-  const priceAge = ageMs(cursor?.updatedAt);
-  const productAge = ageMs(cursor?.updatedAt);
-  if (stockAge == null || stockAge > policy.maxStockAgeMs) {
-    results.push(block3("STOCK_STALE", "INVENTORY", "Supplier stock feed stale or missing"));
-  } else {
-    results.push(pass3("STOCK_FRESH", "INVENTORY", "Stock feed within freshness threshold"));
-  }
-  if (priceAge == null || priceAge > policy.maxPriceAgeMs) {
-    results.push(block3("PRICE_STALE", "PRICE", "Supplier price feed stale or missing"));
-  } else {
-    results.push(pass3("PRICE_FRESH", "PRICE", "Price feed within freshness threshold"));
-  }
-  if (productAge == null || productAge > policy.maxProductAgeMs) {
-    results.push(warn3("PRODUCT_STALE", "PRODUCT", "Product feed older than preferred threshold"));
-  } else {
-    results.push(pass3("PRODUCT_FRESH", "PRODUCT", "Product feed within freshness threshold"));
-  }
-  return results;
-}
-function evaluateInventoryReadinessChecks(scope) {
-  const supplier = getSupplier(scope.supplierId);
-  const results = [];
-  if (!supplier?.capabilities?.stockFeed) {
-    results.push(block3("STOCK_SOURCE_UNAVAILABLE", "INVENTORY", "Supplier stock source unavailable"));
-  } else {
-    results.push(pass3("STOCK_SOURCE_HEALTHY", "INVENTORY", "Supplier stock source configured"));
-  }
-  return results;
-}
-function evaluatePricingReadinessChecks() {
-  return [pass3("PRICING_ENGINE_AVAILABLE", "PRICE", "Pricing Engine snapshot support available")];
-}
-function evaluateOrderEngineReadinessChecks() {
-  return [
-    pass3("ORDER_LIFECYCLE", "ORDER", "Order lifecycle integration available"),
-    pass3("ORDER_IDEMPOTENCY", "ORDER", "Order idempotency support available"),
-    pass3("ORDER_RESERVATION", "ORDER", "Inventory reservation integration active")
-  ];
-}
-function evaluateControlTowerChecks(scope) {
-  const results = [];
-  try {
-    const dash = getFulfillmentControlTowerDashboard({ supplierId: scope.supplierId });
-    if (dash.critical > 0) {
-      results.push(block3("FCT_CRITICAL_INCIDENTS", "FULFILLMENT", `${dash.critical} critical fulfillment incidents open`));
-    } else {
-      results.push(pass3("FCT_NO_CRITICAL", "FULFILLMENT", "No critical fulfillment incidents"));
-    }
-    results.push(pass3("FCT_AVAILABLE", "FULFILLMENT", "Fulfillment Control Tower available"));
-  } catch {
-    results.push(warn3("FCT_UNAVAILABLE", "FULFILLMENT", "Fulfillment Control Tower unavailable"));
-  }
-  return results;
-}
-function evaluateIncidentGateChecks(scope) {
-  const criticalIncidents = filterIncidents({
-    supplierId: scope.supplierId,
-    status: "OPEN",
-    severity: "CRITICAL"
-  });
-  if (criticalIncidents.length > 0) {
-    return [block3("CRITICAL_INCIDENTS_OPEN", "INCIDENT", `${criticalIncidents.length} critical incidents open`)];
-  }
-  return [pass3("NO_CRITICAL_INCIDENTS", "INCIDENT", "No open critical incidents")];
-}
-function evaluateSecurityChecks() {
-  return [
-    pass3("RBAC_ACTIVE", "SECURITY", "RBAC enforcement available"),
-    pass3("PII_FILTER_ACTIVE", "SECURITY", "PII filtering active"),
-    pass3("INPUT_VALIDATION", "SECURITY", "Input validation active")
-  ];
-}
-function evaluateIdempotencyChecks(scope) {
-  const key = buildSupplierOrderIdempotencyKey("readiness-test-order", scope.supplierId);
-  const a = getSupplierOrderSandboxByIdempotency(key);
-  const b = getSupplierOrderSandboxByIdempotency(key);
-  if (a && b && a.supplierOrderId !== b.supplierOrderId) {
-    return [block3("IDEMPOTENCY_FAILURE", "IDEMPOTENCY", "Duplicate idempotency keys produced different orders")];
-  }
-  return [pass3("IDEMPOTENCY_OK", "IDEMPOTENCY", "Idempotency index consistent")];
-}
-function evaluateConcurrencyChecks() {
-  return [pass3("CONCURRENCY_OK", "CONCURRENCY", "Sandbox concurrency protections verified in #335")];
-}
-function evaluateRetryChecks() {
-  return [pass3("RETRY_CLASSIFICATION", "RETRY", "Retry/permanent failure classification available")];
-}
-function evaluateMarketReadinessChecks(scope) {
-  const market = getMarket(scope.market);
-  if (!market) {
-    return [block3("MARKET_UNKNOWN", "MARKET", `Market ${scope.market} not in SSOT`)];
-  }
-  if (listMarkets().length !== 35) {
-    return [warn3("MARKET_COUNT", "MARKET", `Expected 35 markets, found ${listMarkets().length}`)];
-  }
-  return [pass3("MARKET_CONFIGURED", "MARKET", `Market ${scope.market} configured`)];
-}
-function evaluateMarketplaceReadinessChecks(scope) {
-  if (scope.channel === "DIRECT") {
-    return [pass3("DIRECT_CHANNEL", "MARKETPLACE", "Direct channel does not require marketplace mapping")];
-  }
-  const channelId = scope.channel.toLowerCase();
-  const mp = listMarketplaces().find((m) => m.marketplaceId === channelId || m.supportedChannels.includes(channelId));
-  if (!mp) {
-    return [block3("MARKETPLACE_UNKNOWN", "MARKETPLACE", `Marketplace channel ${scope.channel} unknown`)];
-  }
-  if (!mp.supportedMarkets.includes(scope.market)) {
-    return [block3("MARKETPLACE_MARKET_UNSUPPORTED", "MARKETPLACE", `${scope.channel} does not support ${scope.market}`)];
-  }
-  return [pass3("MARKETPLACE_CHANNEL_OK", "MARKETPLACE", `${scope.channel} supports ${scope.market}`)];
-}
-function evaluateReturnsReadinessChecks(scope) {
-  const { capabilities } = evaluateCapabilityChecks(scope);
-  if (capabilities.return === "AVAILABLE") {
-    return [pass3("RETURN_CAPABILITY", "RETURN", "Supplier return capability configured")];
-  }
-  return [warn3("RETURN_CAPABILITY_MISSING", "RETURN", "Supplier return capability not configured")];
-}
-function evaluateProductionValidationChecks2(scope) {
-  return evaluateProductionValidationChecks(scope);
-}
-function evaluateAllReadinessChecks(scope) {
-  const cap = evaluateCapabilityChecks(scope);
-  return [
-    ...evaluateNetworkSafetyChecks(),
-    ...evaluateSupplierIdentityChecks(scope),
-    ...evaluateCredentialChecks(scope),
-    ...cap.results,
-    ...evaluateInterCarsChecks(scope),
-    ...evaluateProductionValidationChecks2(scope),
-    ...evaluateLiveReadChecks(scope),
-    ...evaluateDataFreshnessChecks(scope),
-    ...evaluateInventoryReadinessChecks(scope),
-    ...evaluatePricingReadinessChecks(),
-    ...evaluateOrderEngineReadinessChecks(),
-    ...evaluateControlTowerChecks(scope),
-    ...evaluateIncidentGateChecks(scope),
-    ...evaluateSecurityChecks(),
-    ...evaluateIdempotencyChecks(scope),
-    ...evaluateConcurrencyChecks(),
-    ...evaluateRetryChecks(),
-    ...evaluateMarketReadinessChecks(scope),
-    ...evaluateMarketplaceReadinessChecks(scope),
-    ...evaluateReturnsReadinessChecks(scope)
-  ];
-}
-
-// lib/supplier-order-readiness/risk.ts
-function computeRiskClassification(scope, checks) {
-  if (checks.some((c) => c.blocking && (c.level === "CRITICAL" || c.level === "BLOCKED"))) {
-    return "BLOCKED";
-  }
-  let score = 0;
-  const health = getSupplierHealth(scope.supplierId);
-  if (health?.healthStatus === "UNHEALTHY") score += 3;
-  else if (health?.healthStatus === "DEGRADED") score += 2;
-  else if (health?.healthStatus === "UNKNOWN") score += 1;
-  const criticalIncidents = filterIncidents({
-    supplierId: scope.supplierId,
-    status: "OPEN",
-    severity: "CRITICAL"
-  }).length;
-  score += criticalIncidents * 2;
-  if (checks.some((c) => c.level === "WARNING")) score += 1;
-  if (scope.channel !== "DIRECT") score += 1;
-  if (scope.market !== "DE") score += 1;
-  if (score >= 5) return "HIGH";
-  if (score >= 2) return "MEDIUM";
-  return "LOW";
-}
-
-// lib/supplier-order-readiness/audit.ts
-var import_crypto = require("crypto");
-
-// lib/supplier-order-readiness/persistence.ts
-var readinessStore = /* @__PURE__ */ new Map();
-var approvalStore = /* @__PURE__ */ new Map();
-var auditLog = [];
-var killSwitchState = null;
-function readinessKey(supplierId, market, channel) {
-  return `${supplierId}:${market}:${channel}`;
-}
-function getPersistentStore2() {
-  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_ORDER_READINESS_PERSISTENCE === "0") {
-    return null;
-  }
-  try {
-    const mod = require_persistentStore2();
-    return mod.createSupplierOrderReadinessStore();
-  } catch {
-    return null;
-  }
-}
-function saveReadinessRecord(record) {
-  readinessStore.set(record.readinessId, record);
-  getPersistentStore2()?.saveReadiness({
-    readiness_id: record.readinessId,
-    supplier_id: record.supplierId,
-    market: record.market,
-    channel: record.channel,
-    overall_status: record.overallStatus,
-    approval_status: record.approvalStatus,
-    generated_at: record.generatedAt,
-    expires_at: record.expiresAt,
-    record_json: JSON.stringify(record),
-    updated_at: (/* @__PURE__ */ new Date()).toISOString()
-  });
-}
-function getReadinessByScope(supplierId, market, channel) {
-  const id = readinessKey(supplierId, market, channel);
-  for (const record of readinessStore.values()) {
-    if (`${record.supplierId}:${record.market}:${record.channel}` === id) return record;
-  }
-  return void 0;
-}
-function getApprovalForScope(supplierId, market, channel, status) {
-  const matches = [...approvalStore.values()].filter(
-    (a) => a.supplierId === supplierId && a.market === market && a.channel === channel
-  );
-  if (status) return matches.find((a) => a.status === status);
-  return matches.sort((a, b) => Date.parse(b.requestedAt) - Date.parse(a.requestedAt))[0];
-}
-function appendAuditEvent(event) {
-  auditLog.push(event);
-  getPersistentStore2()?.saveAudit({
-    event_id: event.eventId,
-    event_type: event.type,
-    supplier_id: event.supplierId,
-    market: event.market,
-    channel: event.channel,
-    actor: event.actor,
-    correlation_id: event.correlationId,
-    timestamp: event.timestamp,
-    detail_json: JSON.stringify(event.detail || {})
-  });
-}
-function getKillSwitchState() {
-  return killSwitchState;
-}
-
-// lib/supplier-order-readiness/audit.ts
-function recordReadinessAudit(input) {
-  const event = {
-    eventId: `ra_${(0, import_crypto.randomUUID)().slice(0, 12)}`,
-    type: input.type,
-    supplierId: input.supplierId,
-    market: input.market,
-    channel: input.channel,
-    actor: input.actor,
-    correlationId: input.correlationId,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    detail: input.detail ? sanitizeAuditDetail(input.detail) : void 0
-  };
-  appendAuditEvent(event);
-  return event;
-}
-function sanitizeAuditDetail(detail) {
-  const blocked = /* @__PURE__ */ new Set(["password", "token", "secret", "credential", "email", "phone", "accessToken", "apiKey"]);
-  const out = {};
-  for (const [key, value] of Object.entries(detail)) {
-    if (blocked.has(key.toLowerCase())) {
-      out[key] = "[REDACTED]";
-    } else {
-      out[key] = value;
-    }
-  }
-  return out;
-}
-
-// lib/supplier-order-readiness/approval.ts
-function isExpired(iso) {
-  return Date.parse(iso) <= Date.now();
-}
-function getApprovalStatusForScope(scope) {
-  const approved = getApprovalForScope(scope.supplierId, scope.market, scope.channel, "APPROVED");
-  if (approved) {
-    if (isExpired(approved.expiresAt)) return "EXPIRED";
-    return "APPROVED";
-  }
-  const latest = getApprovalForScope(scope.supplierId, scope.market, scope.channel);
-  if (!latest) return "PENDING";
-  if (isExpired(latest.expiresAt)) return "EXPIRED";
-  return latest.status;
-}
-
-// lib/supplier-order-readiness/evaluator.ts
-function domainStatus(checks, categories2) {
-  const relevant = checks.filter((c) => categories2.includes(c.category));
-  if (relevant.some((c) => c.blocking)) return "BLOCKED";
-  if (relevant.some((c) => c.level === "WARNING")) return "WARNING";
-  if (relevant.length === 0) return "UNKNOWN";
-  if (relevant.every((c) => c.level === "PASS")) return "PASS";
-  return "UNKNOWN";
-}
-function deriveOverallStatus(checks, expiresAt) {
-  if (Date.parse(expiresAt) <= Date.now()) return "EXPIRED";
-  const blockers = checks.filter((c) => c.blocking);
-  if (blockers.length > 0) return "BLOCKED";
-  const warnings = checks.filter((c) => c.level === "WARNING");
-  if (warnings.length > 0) return "CONDITIONALLY_READY";
-  return "READY";
-}
-function buildReadinessId(scope) {
-  return `sor_${scope.supplierId}_${scope.market}_${scope.channel}`.replace(/[^a-zA-Z0-9:_-]/g, "_");
-}
-function evaluateSupplierOrderReadiness(scope, options = {}) {
-  const correlationId = options.correlationId || (0, import_crypto2.randomUUID)();
-  const existing = getReadinessByScope(scope.supplierId, scope.market, scope.channel);
-  if (existing && !options.force && Date.parse(existing.expiresAt) > Date.now() && existing.evaluatorVersion === EVALUATOR_VERSION) {
-    return existing;
-  }
-  const checks = evaluateAllReadinessChecks(scope);
-  const generatedAt = (/* @__PURE__ */ new Date()).toISOString();
-  const expiresAt = new Date(Date.now() + READINESS_TTL_MS).toISOString();
-  const overallStatus = deriveOverallStatus(checks, expiresAt);
-  const blockers = checks.filter((c) => c.blocking).map((c) => c.code);
-  const warnings = checks.filter((c) => c.level === "WARNING").map((c) => c.code);
-  const riskLevel = computeRiskClassification(scope, checks);
-  const record = {
-    readinessId: buildReadinessId(scope),
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    environment: scope.environment || (process.env.NODE_ENV === "production" ? "PRODUCTION" : "SANDBOX"),
-    generatedAt,
-    expiresAt,
-    overallStatus,
-    approvalStatus: getApprovalStatusForScope(scope),
-    networkStatus: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
-    credentialStatus: domainStatus(checks, ["CREDENTIAL"]),
-    connectorStatus: domainStatus(checks, ["CAPABILITY", "SUPPLIER"]),
-    supplierCapabilityStatus: domainStatus(checks, ["CAPABILITY"]),
-    productReadinessStatus: domainStatus(checks, ["PRODUCT"]),
-    stockReadinessStatus: domainStatus(checks, ["INVENTORY"]),
-    priceReadinessStatus: domainStatus(checks, ["PRICE"]),
-    fulfillmentReadinessStatus: domainStatus(checks, ["FULFILLMENT"]),
-    reconciliationStatus: domainStatus(checks, ["FULFILLMENT"]),
-    incidentStatus: domainStatus(checks, ["INCIDENT"]),
-    securityStatus: domainStatus(checks, ["SECURITY"]),
-    idempotencyStatus: domainStatus(checks, ["IDEMPOTENCY"]),
-    retryStatus: domainStatus(checks, ["RETRY"]),
-    auditStatus: "PASS",
-    riskLevel,
-    evaluatorVersion: EVALUATOR_VERSION,
-    correlationId,
-    checks,
-    blockers,
-    warnings
-  };
-  saveReadinessRecord(record);
-  recordReadinessAudit({
-    type: overallStatus === "BLOCKED" ? "READINESS_BLOCKED" : overallStatus === "READY" ? "READINESS_READY" : "READINESS_CREATED",
-    supplierId: scope.supplierId,
-    market: scope.market,
-    channel: scope.channel,
-    correlationId,
-    detail: { readinessId: record.readinessId, overallStatus, blockers: blockers.length }
-  });
-  return record;
-}
-
-// lib/supplier-order-readiness/killSwitch.ts
-function defaultState() {
-  return {
-    global: process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1",
-    suppliers: {},
-    markets: {},
-    channels: {},
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-function getKillSwitch() {
-  return getKillSwitchState() || defaultState();
-}
-function isGlobalKillSwitchActive() {
-  return getKillSwitch().global || process.env.SUPPLIER_ORDER_GLOBAL_KILL_SWITCH === "1";
-}
-function isSupplierKillSwitchActive(supplierId) {
-  const state = getKillSwitch();
-  if (!isSupplierSelectable(supplierId)) return true;
-  return Boolean(state.suppliers[supplierId]);
-}
-function isMarketKillSwitchActive(market) {
-  return Boolean(getKillSwitch().markets[market]);
-}
-function isChannelKillSwitchActive(channel) {
-  return Boolean(getKillSwitch().channels[channel]);
-}
-function isActivationKillSwitched(input) {
-  if (isGlobalKillSwitchActive()) return true;
-  if (isSupplierKillSwitchActive(input.supplierId)) return true;
-  if (isMarketKillSwitchActive(input.market)) return true;
-  if (isChannelKillSwitchActive(input.channel)) return true;
-  return false;
-}
-
-// lib/supplier-order-rehearsal/persistence.ts
-var rehearsalStore = /* @__PURE__ */ new Map();
-function getRehearsalRecord(rehearsalId) {
-  return rehearsalStore.get(rehearsalId);
-}
-function listRehearsalRecords() {
-  return [...rehearsalStore.values()];
-}
-
-// lib/supplier-engine/auth/resolver.ts
-function mapConnectorAuthType(config) {
-  const raw = String(config?.authentication || "none").toLowerCase();
-  if (raw === "api_key") return "API_KEY";
-  if (raw === "basic") return "BASIC_AUTH";
-  if (raw === "bearer" || raw === "token") return "TOKEN";
-  if (raw === "oauth2") return "OAUTH2";
-  if (raw === "custom") return "CUSTOM";
-  return "NONE";
-}
-function resolveSupplierAuth(config) {
-  const authType = mapConnectorAuthType(config);
-  const secretsRef = config.secretsRef;
-  const creds = secretsRef ? resolveCredentials(secretsRef) : null;
-  if (!creds) {
-    return { headers: { ...config.headers || {} }, authType, configured: false };
-  }
-  const headers = { ...config.headers || {} };
-  switch (authType) {
-    case "API_KEY": {
-      const headerName = creds.header || creds.headerName || "X-API-Key";
-      const value = creds.apiKey || creds.key || creds.token;
-      if (value) headers[headerName] = value;
-      break;
-    }
-    case "TOKEN": {
-      const value = creds.token || creds.accessToken || creds.bearer;
-      if (value) headers.Authorization = value.startsWith("Bearer ") ? value : `Bearer ${value}`;
-      break;
-    }
-    case "BASIC_AUTH": {
-      const user = creds.username || creds.user || "";
-      const pass5 = creds.password || creds.pass || "";
-      if (user || pass5) {
-        headers.Authorization = `Basic ${Buffer.from(`${user}:${pass5}`).toString("base64")}`;
-      }
-      break;
-    }
-    case "OAUTH2": {
-      const value = creds.accessToken || creds.token;
-      if (value) headers.Authorization = `Bearer ${value}`;
-      break;
-    }
-    case "CUSTOM": {
-      for (const [key, value] of Object.entries(creds)) {
-        if (!/password|secret|token|key/i.test(key)) continue;
-        if (/header/i.test(key)) {
-          const headerName = key.replace(/header/i, "").trim() || "Authorization";
-          headers[headerName] = value;
-        }
-      }
-      break;
-    }
-    default:
-      break;
-  }
-  return { headers, authType, configured: Object.keys(creds).length > 0 };
-}
-
-// lib/supplier-production-validation/credentialValidation.ts
-function validateProductionCredentials(input) {
-  const checks = [];
-  const blockerCodes = [];
-  const profile = resolveLiveSupplierProfile() || resolvePredefinedLiveProfile();
-  const secretsRef = profile?.secretsRef || "env:SUPPLIER_LIVE_CREDENTIALS";
-  const credentialType = profile?.authentication || profile?.authType || "unknown";
-  if (!profile) {
-    checks.push({ check: "CREDENTIAL_PROFILE", status: "BLOCKED", message: "Live supplier profile not configured" });
-    blockerCodes.push("CREDENTIAL_PROFILE_MISSING");
-    return { status: "NOT_CONFIGURED", credentialType, checks, blockerCodes };
-  }
-  if (profile.supplierId !== input.supplierId) {
-    checks.push({ check: "CREDENTIAL_SUPPLIER", status: "BLOCKED", message: "Profile supplier mismatch" });
-    blockerCodes.push("SUPPLIER_PROFILE_MISMATCH");
-    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const profileEnv = profile.environment?.toUpperCase();
-  if (input.environment === "PRODUCTION" && profileEnv === "SANDBOX" && process.env.SUPPLIER_LIVE_FORCE_PRODUCTION !== "1") {
-    checks.push({
-      check: "ENVIRONMENT_SEPARATION",
-      status: "BLOCKED",
-      message: "SANDBOX credential cannot validate PRODUCTION scope"
-    });
-    blockerCodes.push("ENVIRONMENT_MISMATCH");
-    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
-  }
-  if (input.environment === "SANDBOX" && profileEnv === "PRODUCTION" && process.env.SUPPLIER_LIVE_ALLOW_PROD_CRED_IN_SANDBOX !== "1") {
-    checks.push({
-      check: "ENVIRONMENT_SEPARATION",
-      status: "BLOCKED",
-      message: "PRODUCTION credential cannot validate SANDBOX scope"
-    });
-    blockerCodes.push("ENVIRONMENT_MISMATCH");
-    return { status: "MISMATCH", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const meta = describeLiveCredentialReadiness(profile);
-  if (!meta.configured) {
-    checks.push({ check: "CREDENTIAL_CONFIGURED", status: "BLOCKED", message: "Credential not configured" });
-    blockerCodes.push("CREDENTIAL_NOT_CONFIGURED");
-    return { status: "NOT_CONFIGURED", credentialType, secretsRef, checks, blockerCodes };
-  }
-  checks.push({
-    check: "CREDENTIAL_CONFIGURED",
-    status: "PASS",
-    message: "Credential reference configured",
-    detail: { authType: meta.authType, fields: meta.secretFieldsPresent }
-  });
-  const creds = resolveCredentials(secretsRef);
-  if (!creds) {
-    checks.push({ check: "CREDENTIAL_RESOLVE", status: "BLOCKED", message: "Credential secret not resolvable" });
-    blockerCodes.push("CREDENTIAL_SECRET_MISSING");
-    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const token = String(creds.accessToken || creds.token || creds.bearer || creds.apiKey || creds.key || "");
-  if (isMockCredentialValue(token)) {
-    checks.push({ check: "CREDENTIAL_MOCK", status: "BLOCKED", message: "Mock/test credential blocked for production validation" });
-    blockerCodes.push("CREDENTIAL_MOCK");
-    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
-  }
-  if (!hasLiveSupplierCredentials(profile)) {
-    checks.push({ check: "CREDENTIAL_TOKEN", status: "BLOCKED", message: "OAuth/token missing" });
-    blockerCodes.push("CREDENTIAL_INVALID");
-    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const auth = resolveSupplierAuth({
-    authentication: profile.authentication,
-    secretsRef: profile.secretsRef
-  });
-  if (!auth.headers.Authorization?.startsWith("Bearer ")) {
-    checks.push({
-      check: "CREDENTIAL_AUTH_SCHEME",
-      status: "BLOCKED",
-      message: "Expected Authorization: Bearer <accessToken>"
-    });
-    blockerCodes.push("CREDENTIAL_AUTH_INVALID");
-    return { status: "INVALID", credentialType, secretsRef, checks, blockerCodes };
-  }
-  const redacted = redactSecrets({ accessToken: token });
-  if (redacted.accessToken && redacted.accessToken !== "[REDACTED]") {
-    checks.push({ check: "SECRET_REDACTION", status: "FAIL", message: "Secret redaction failed" });
-    blockerCodes.push("SECRET_REDACTION_FAILED");
-    return { status: "BLOCKED", credentialType, secretsRef, checks, blockerCodes };
-  }
-  checks.push({ check: "CREDENTIAL_VALID", status: "PASS", message: "Credential metadata validated (no secret exposed)" });
-  return { status: "VALID", credentialType, secretsRef, checks, blockerCodes };
-}
-
-// lib/supplier-order-activation/persistence.ts
-var activationStore = /* @__PURE__ */ new Map();
-var activationByIdempotency = /* @__PURE__ */ new Map();
-var firstOrderStore = /* @__PURE__ */ new Map();
-var firstOrderByIdempotency = /* @__PURE__ */ new Map();
-var auditLog2 = [];
-var inflightActivations = /* @__PURE__ */ new Map();
-function getPersistentStore3() {
-  if (typeof process === "undefined" || process.env.BUZZARD_SUPPLIER_ORDER_ACTIVATION_PERSISTENCE === "0") {
-    return null;
-  }
-  try {
-    const mod = require_persistentStore3();
-    return mod.createSupplierOrderActivationStore();
-  } catch {
-    return null;
-  }
-}
-function saveActivationRecord(record) {
-  activationStore.set(record.activationId, record);
-  activationByIdempotency.set(record.idempotencyKey, record.activationId);
-  getPersistentStore3()?.saveActivation({
-    activation_id: record.activationId,
-    supplier_id: record.supplierId,
-    market: record.market,
-    channel: record.channel,
-    environment: record.environment,
-    status: record.status,
-    network_state: record.networkState,
-    idempotency_key: record.idempotencyKey,
-    correlation_id: record.correlationId,
-    record_json: JSON.stringify(record),
-    updated_at: record.updatedAt
-  });
-}
-function getActivationRecord(activationId) {
-  return activationStore.get(activationId);
-}
-function getActivationByIdempotency(idempotencyKey) {
-  const id = activationByIdempotency.get(idempotencyKey);
-  return id ? activationStore.get(id) : void 0;
-}
-function listActivationRecords() {
-  return [...activationStore.values()];
-}
-function saveFirstOrderGate(record) {
-  firstOrderStore.set(record.firstOrderId, record);
-  firstOrderByIdempotency.set(record.idempotencyKey, record.firstOrderId);
-  getPersistentStore3()?.saveFirstOrder({
-    first_order_id: record.firstOrderId,
-    activation_id: record.activationId,
-    supplier_id: record.supplierId,
-    status: record.status,
-    idempotency_key: record.idempotencyKey,
-    record_json: JSON.stringify(record),
-    updated_at: record.createdAt
-  });
-}
-function getFirstOrderGate(firstOrderId) {
-  return firstOrderStore.get(firstOrderId);
-}
-function getFirstOrderByIdempotency(idempotencyKey) {
-  const id = firstOrderByIdempotency.get(idempotencyKey);
-  return id ? firstOrderStore.get(id) : void 0;
-}
-function listFirstOrderGates() {
-  return [...firstOrderStore.values()];
-}
-function appendActivationAuditEvent(event) {
-  auditLog2.push(event);
-  getPersistentStore3()?.saveAudit({
-    event_id: event.eventId,
-    event_type: event.type,
-    activation_id: event.activationId,
-    supplier_id: event.supplierId,
-    correlation_id: event.correlationId,
-    timestamp: event.timestamp,
-    detail_json: JSON.stringify(event.detail || {})
-  });
-}
-function listActivationAuditEvents(filter) {
-  return auditLog2.filter((e) => {
-    if (filter?.activationId && e.activationId !== filter.activationId) return false;
-    if (filter?.type && e.type !== filter.type) return false;
-    return true;
-  });
-}
-function hydrateActivationFromPersistence() {
-  const store2 = getPersistentStore3();
-  if (!store2) return;
-  for (const row of store2.listActivations(5e3)) {
-    try {
-      const parsed = JSON.parse(String(row.record_json || "{}"));
-      if (parsed.activationId) {
-        activationStore.set(parsed.activationId, parsed);
-        activationByIdempotency.set(parsed.idempotencyKey, parsed.activationId);
-      }
-    } catch {
-    }
-  }
-  for (const row of store2.listFirstOrders(5e3)) {
-    try {
-      const parsed = JSON.parse(String(row.record_json || "{}"));
-      if (parsed.firstOrderId) {
-        firstOrderStore.set(parsed.firstOrderId, parsed);
-        firstOrderByIdempotency.set(parsed.idempotencyKey, parsed.firstOrderId);
-      }
-    } catch {
-    }
-  }
-}
-function getInflightActivation(key) {
-  return inflightActivations.get(key);
-}
-function getLatestRehearsalForScope(scope) {
-  try {
-    return listRehearsalRecords().filter(
-      (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.overallStatus === "PASSED"
-    ).sort((a, b) => Date.parse(b.completedAt || b.startedAt) - Date.parse(a.completedAt || a.startedAt))[0];
-  } catch {
-    return void 0;
-  }
-}
-
-// lib/supplier-order-activation/preflight.ts
-function pass4(check, category, message, detail) {
-  return { check, category, status: "PASS", message, blocking: false, detail };
-}
-function block4(check, category, message, detail) {
-  return { check, category, status: "BLOCKED", message, blocking: true, detail };
-}
-function runActivationPreflight(input) {
-  const checks = [];
-  const blockers = [];
-  const supplierId = input.supplierId || getInterCarsSupplierId();
-  const market = input.market || "DE";
-  const channel = input.channel || "DIRECT";
-  const environment = input.environment || "PRODUCTION";
-  const scope = { supplierId, market, channel, environment };
-  const supplier = getSupplier(supplierId);
-  if (!supplier) {
-    checks.push(block4("SUPPLIER_IDENTITY", "SUPPLIER", "Supplier not found"));
-    blockers.push("SUPPLIER_NOT_FOUND");
-  } else if (!isSupplierSelectable(supplierId)) {
-    checks.push(block4("SUPPLIER_IDENTITY", "SUPPLIER", "Supplier disabled"));
-    blockers.push("SUPPLIER_DISABLED");
-  } else {
-    checks.push(pass4("SUPPLIER_IDENTITY", "SUPPLIER", "Supplier enabled"));
-  }
-  checks.push(
-    pass4("ENVIRONMENT", "ENVIRONMENT", `Environment ${environment}`, { adapterProfile: getInterCarsAdapterProfile() })
-  );
-  const credential = validateProductionCredentials({ supplierId, environment });
-  checks.push(...credential.checks.map((c) => ({ ...c, category: "CREDENTIAL" })));
-  blockers.push(...credential.blockerCodes);
-  const validation = getLatestValidationForScope2(scope);
-  if (!validation) {
-    checks.push(block4("PRODUCTION_VALIDATION", "VALIDATION", "Production validation not run"));
-    blockers.push("PRODUCTION_VALIDATION_MISSING");
-  } else {
-    checks.push(pass4("PRODUCTION_VALIDATION", "VALIDATION", `Validation ${validation.validationId}`));
-    if (validation.createOrderCapability === "UNVERIFIED") {
-      checks.push(block4("CREATE_ORDER_CAPABILITY", "CAPABILITY", "createOrder UNVERIFIED"));
-      blockers.push("REAL_ORDER_ENDPOINT_NOT_VALIDATED");
-    }
-  }
-  const readiness = evaluateSupplierOrderReadiness(
-    { supplierId, market, channel, environment: environment === "STAGING" ? "SANDBOX" : environment },
-    { correlationId: input.correlationId, force: true }
-  );
-  if (readiness.overallStatus !== "READY") {
-    checks.push(block4("READINESS", "READINESS", `Readiness ${readiness.overallStatus}`));
-    blockers.push("READINESS_NOT_READY");
-  } else {
-    checks.push(pass4("READINESS", "READINESS", "Readiness READY"));
-  }
-  const rehearsal = input.rehearsalId ? void 0 : getLatestRehearsalForScope({ supplierId, market, channel });
-  const rehearsalRecord = input.rehearsalId ? getRehearsalRecord(input.rehearsalId) : rehearsal;
-  if (!rehearsalRecord) {
-    checks.push(block4("REHEARSAL", "REHEARSAL", "No successful rehearsal"));
-    blockers.push("REHEARSAL_MISSING");
-  } else {
-    const completedAt = rehearsalRecord.completedAt;
-    const age = completedAt ? Date.now() - Date.parse(completedAt) : Infinity;
-    if (age > REHEARSAL_TTL_MS) {
-      checks.push(block4("REHEARSAL", "REHEARSAL", "Rehearsal expired"));
-      blockers.push("REHEARSAL_EXPIRED");
-    } else {
-      checks.push(pass4("REHEARSAL", "REHEARSAL", "Recent rehearsal PASSED"));
-    }
-  }
-  const critical2 = filterIncidents({ supplierId, status: "OPEN", severity: "CRITICAL" });
-  if (critical2.length > 0) {
-    checks.push(block4("FCT_INCIDENTS", "FCT", `${critical2.length} critical incidents`));
-    blockers.push("CRITICAL_INCIDENTS");
-  } else {
-    checks.push(pass4("FCT_INCIDENTS", "FCT", "No critical incidents"));
-  }
-  if (isActivationKillSwitched({ supplierId, market, channel })) {
-    checks.push(block4("KILL_SWITCH", "KILL_SWITCH", "Kill switch active"));
-    blockers.push("KILL_SWITCH");
-  } else {
-    checks.push(pass4("KILL_SWITCH", "KILL_SWITCH", "Kill switch off"));
-  }
-  const policy = getReadinessPolicy();
-  const orderValue = input.orderValue ?? 0;
-  if (orderValue > policy.maxSingleSupplierOrderValue) {
-    checks.push(block4("ORDER_LIMIT", "LIMITS", "Order value exceeds limit"));
-    blockers.push("ORDER_LIMIT");
-  } else {
-    checks.push(pass4("ORDER_LIMIT", "LIMITS", "Order limits OK"));
-  }
-  if (!supplier?.supportedMarkets?.includes(market)) {
-    checks.push(block4("MARKET_ELIGIBILITY", "MARKET", `Market ${market} not eligible`));
-    blockers.push("MARKET_UNSUPPORTED");
-  } else if (listMarkets().length === 35) {
-    checks.push(pass4("MARKET_ELIGIBILITY", "MARKET", "35-market SSOT eligible"));
-  }
-  checks.push(pass4("CHANNEL_ELIGIBILITY", "CHANNEL", `Channel ${channel}`));
-  checks.push(pass4("PAYMENT_BOUNDARY", "PAYMENT", "No real payment capture in activation"));
-  checks.push(pass4("CARRIER_BOUNDARY", "CARRIER", "No carrier API in activation"));
-  checks.push(pass4("MARKETPLACE_BOUNDARY", "MARKETPLACE", "No marketplace submission"));
-  checks.push(pass4("RETURNS_BOUNDARY", "RETURNS", "No return/refund in activation"));
-  checks.push(pass4("AI_BOUNDARY", "AI", "AI observe/analyze/recommend only \u2014 no activation authority"));
-  checks.push(pass4("SECURITY", "SECURITY", "Network disabled for orders", { network: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED" }));
-  checks.push(pass4("IDEMPOTENCY", "IDEMPOTENCY", "Deterministic idempotency required"));
-  checks.push(pass4("ENDPOINT", "ENDPOINT", "Production endpoint configuration-driven"));
-  filterSupplierFulfillmentAddress({ country: "DE", city: "Berlin" });
-  return {
-    checks,
-    blockers: [...new Set(blockers)],
-    readinessId: readiness.readinessId,
-    validationId: validation?.validationId,
-    rehearsalId: rehearsalRecord?.rehearsalId || input.rehearsalId,
-    createOrderCapability: validation?.createOrderCapability || "UNVERIFIED"
-  };
-}
-function hashPayload(payload) {
-  const canonical = JSON.stringify(payload, Object.keys(payload).sort());
-  return (0, import_crypto3.createHash)("sha256").update(canonical).digest("hex").slice(0, 16);
-}
-
-// lib/supplier-order-activation/activation.ts
-var import_crypto5 = require("crypto");
-
-// lib/supplier-order-activation/approval.ts
-var import_node_crypto = require("node:crypto");
-
-// lib/supplier-order-activation/audit.ts
-var import_crypto4 = require("crypto");
-var BLOCKED_KEYS2 = /* @__PURE__ */ new Set([
-  "password",
-  "token",
-  "secret",
-  "credential",
-  "email",
-  "phone",
-  "accesstoken",
-  "apikey",
-  "payment",
-  "bearertoken"
-]);
-function sanitizeDetail(detail) {
-  if (!detail) return void 0;
-  const out = {};
-  for (const [key, value] of Object.entries(detail)) {
-    if (BLOCKED_KEYS2.has(key.toLowerCase())) out[key] = "[REDACTED]";
-    else out[key] = value;
-  }
-  return out;
-}
-function recordActivationAudit(input) {
-  const event = {
-    eventId: `ao_${(0, import_crypto4.randomUUID)().slice(0, 12)}`,
-    type: input.type,
-    activationId: input.activationId,
-    firstOrderId: input.firstOrderId,
-    supplierId: input.supplierId,
-    correlationId: input.correlationId,
-    actor: input.actor,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    detail: sanitizeDetail(input.detail)
-  };
-  appendActivationAuditEvent(event);
-  return event;
-}
-function listActivationAudit(filter) {
-  return listActivationAuditEvents(filter);
-}
-
-// lib/supplier-order-activation/approval.ts
-function nowIso() {
-  return (/* @__PURE__ */ new Date()).toISOString();
-}
-function buildApprovalId() {
-  return `soa-appr-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-function createActivationApproval(input) {
-  const cfg = resolveActivationConfig();
-  const blockers = [];
-  if (input.approverId === input.requesterId) {
-    blockers.push("SELF_APPROVAL_FORBIDDEN");
-  }
-  if (!input.approverId || !input.requesterId) {
-    blockers.push("IDENTITY_REQUIRED");
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) {
-    blockers.push("ACTIVATION_NOT_FOUND");
-  }
-  if (activation && activation.requestedBy !== input.requesterId) {
-    blockers.push("REQUESTER_MISMATCH");
-  }
-  if (blockers.length > 0) {
-    return { ok: false, blockers };
-  }
-  const createdAt = nowIso();
-  const expiresAt = new Date(Date.now() + cfg.approvalTtlMs).toISOString();
-  const approval = {
-    approvalId: buildApprovalId(),
-    activationId: input.activationId,
-    requesterId: input.requesterId,
-    approverId: input.approverId,
-    scope: input.scope,
-    status: "APPROVED",
-    createdAt,
-    expiresAt,
-    scopeHash: (0, import_node_crypto.createHash)("sha256").update(JSON.stringify(input.scope)).digest("hex")
-  };
-  const record = getActivationRecord(input.activationId);
-  record.approvalId = approval.approvalId;
-  record.approvedBy = input.approverId;
-  record.status = "APPROVED";
-  record.updatedAt = createdAt;
-  saveActivationRecord(record);
-  recordActivationAudit({
-    type: "APPROVAL_GRANTED",
-    activationId: input.activationId,
-    actor: input.approverId,
-    correlationId: record.activationId,
-    detail: { approvalId: approval.approvalId, expiresAt }
-  });
-  return { ok: true, approval };
-}
-function rejectActivationApproval(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) {
-    return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  }
-  if (input.approverId === activation.requestedBy) {
-    return { ok: false, blockers: ["SELF_APPROVAL_FORBIDDEN"] };
-  }
-  activation.status = "BLOCKED";
-  activation.reason = input.reason;
-  activation.updatedAt = nowIso();
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: "APPROVAL_REJECTED",
-    activationId: input.activationId,
-    actor: input.approverId,
-    correlationId: activation.activationId,
-    detail: { reason: input.reason }
-  });
-  return { ok: true, blockers: [] };
-}
-function validateApprovalForActivation(activation, approval) {
-  const blockers = [];
-  if (!approval) {
-    blockers.push("APPROVAL_MISSING");
-    return { valid: false, blockers };
-  }
-  if (approval.status !== "APPROVED") {
-    blockers.push("APPROVAL_NOT_APPROVED");
-  }
-  if (new Date(approval.expiresAt).getTime() < Date.now()) {
-    blockers.push("APPROVAL_EXPIRED");
-  }
-  if (approval.approverId === approval.requesterId) {
-    blockers.push("SELF_APPROVAL_FORBIDDEN");
-  }
-  if (approval.activationId !== activation.activationId) {
-    blockers.push("APPROVAL_ACTIVATION_MISMATCH");
-  }
-  const scope = approval.scope;
-  if (scope.supplierId !== activation.supplierId || scope.environment !== activation.environment || scope.market !== activation.market || scope.channel !== activation.channel) {
-    blockers.push("APPROVAL_SCOPE_MISMATCH");
-  }
-  const activationMax = activation.maxOrderValue ?? scope.maxOrderValue;
-  if (scope.maxOrderValue < activationMax) {
-    blockers.push("APPROVAL_LIMIT_SCOPE_MISMATCH");
-  }
-  return { valid: blockers.length === 0, blockers };
-}
-function getApprovalForActivation(activationId) {
-  const activation = getActivationRecord(activationId);
-  if (!activation?.approvalId) return null;
-  const cfg = resolveActivationConfig();
-  const approved = activation.status === "APPROVED" || activation.status === "ACTIVE" || activation.networkState === "ARMED" || activation.networkState === "ENABLED";
-  return {
-    approvalId: activation.approvalId,
-    activationId,
-    requesterId: activation.requestedBy,
-    approverId: activation.approvedBy ?? "",
-    scope: {
-      supplierId: activation.supplierId,
-      adapterProfile: activation.adapterProfile,
-      environment: activation.environment,
-      market: activation.market,
-      channel: activation.channel,
-      maxOrderValue: activation.maxOrderValue ?? cfg.defaultMaxOrderValue,
-      maxDailyOrderValue: activation.maxDailyOrderValue ?? cfg.defaultMaxDailyOrderValue,
-      maxOrders: activation.maxOrders ?? cfg.defaultMaxOrders,
-      riskLevel: activation.riskLevel
-    },
-    status: approved ? "APPROVED" : "REJECTED",
-    createdAt: activation.createdAt,
-    expiresAt: activation.expiresAt ?? new Date(Date.now() + cfg.approvalTtlMs).toISOString(),
-    scopeHash: ""
-  };
-}
-
-// lib/supplier-order-activation/killSwitch.ts
-function evaluateKillSwitch(activation) {
-  const ks = getKillSwitch();
-  const state = {
-    global: ks.global,
-    supplier: Boolean(ks.suppliers[activation.supplierId]),
-    market: Boolean(ks.markets[activation.market]),
-    channel: Boolean(ks.channels[activation.channel])
-  };
-  const blockers = [];
-  if (isActivationKillSwitched({
-    supplierId: activation.supplierId,
-    market: activation.market,
-    channel: activation.channel
-  })) {
-    blockers.push("KILL_SWITCH_ACTIVE");
-  }
-  return {
-    blocked: blockers.length > 0,
-    state,
-    blockers
-  };
-}
-
-// lib/supplier-order-activation/limits.ts
-function evaluateOrderLimits(input) {
-  const cfg = resolveActivationConfig();
-  const blockers = [];
-  const a = input.activation;
-  const maxOrderValue = a.maxOrderValue ?? cfg.defaultMaxOrderValue;
-  const maxDailyOrderValue = a.maxDailyOrderValue ?? cfg.defaultMaxDailyOrderValue;
-  const maxOrders = a.maxOrders ?? cfg.defaultMaxOrders;
-  if (input.orderValue > maxOrderValue) {
-    blockers.push("MAX_ORDER_VALUE_EXCEEDED");
-  }
-  if ((input.dailyOrderValue ?? 0) + input.orderValue > maxDailyOrderValue) {
-    blockers.push("MAX_DAILY_ORDER_VALUE_EXCEEDED");
-  }
-  if ((input.dailyOrderCount ?? 0) >= maxOrders) {
-    blockers.push("MAX_DAILY_ORDER_COUNT_EXCEEDED");
-  }
-  if ((input.marketDailyValue ?? 0) + input.orderValue > cfg.defaultMaxMarketValue) {
-    blockers.push("MAX_MARKET_VALUE_EXCEEDED");
-  }
-  if ((input.channelDailyValue ?? 0) + input.orderValue > cfg.defaultMaxChannelValue) {
-    blockers.push("MAX_CHANNEL_VALUE_EXCEEDED");
-  }
-  if (input.isFirstOrder) {
-    if (input.orderValue > cfg.firstOrderMaxValue) {
-      blockers.push("FIRST_ORDER_VALUE_EXCEEDED");
-    }
-    if ((input.itemCount ?? 0) > cfg.firstOrderMaxItems) {
-      blockers.push("FIRST_ORDER_ITEMS_EXCEEDED");
-    }
-    if ((input.totalQuantity ?? 0) > cfg.firstOrderMaxQuantity) {
-      blockers.push("FIRST_ORDER_QUANTITY_EXCEEDED");
-    }
-  }
-  return { allowed: blockers.length === 0, blockers };
-}
-
-// lib/supplier-order-activation/risk.ts
-function evaluateActivationRisk(activation) {
-  const policy = getReadinessPolicy();
-  const riskLevel = activation.riskLevel;
-  const blockers = [];
-  if (riskLevel === "CRITICAL") {
-    blockers.push("RISK_CRITICAL");
-  } else if (riskLevel === "HIGH" && policy.maxSingleSupplierOrderValue < 1e4) {
-    blockers.push("RISK_HIGH_REQUIRES_APPROVAL");
-  }
-  return {
-    riskLevel,
-    allowed: blockers.length === 0,
-    blockers
-  };
-}
 
 // lib/analytics/store/memoryStore.ts
 function createMemoryAnalyticsStore() {
@@ -33082,7 +26678,7 @@ function createMemoryAnalyticsStore() {
   const consentByVisitor = /* @__PURE__ */ new Map();
   const idempotencyIndex = /* @__PURE__ */ new Map();
   const deletedVisitorIds = /* @__PURE__ */ new Set();
-  const auditLog3 = [];
+  const auditLog = [];
   let eventCounter = 0;
   let auditCounter = 0;
   return {
@@ -33150,7 +26746,7 @@ function createMemoryAnalyticsStore() {
       consentByVisitor.clear();
       idempotencyIndex.clear();
       deletedVisitorIds.clear();
-      auditLog3.length = 0;
+      auditLog.length = 0;
       eventCounter = 0;
       auditCounter = 0;
     },
@@ -33188,15 +26784,15 @@ function createMemoryAnalyticsStore() {
         actor: entry.actor,
         metadata: entry.metadata
       };
-      auditLog3.push(record);
+      auditLog.push(record);
       return record;
     },
     getAuditLog(filter) {
-      if (!filter?.action) return [...auditLog3];
-      return auditLog3.filter((e) => e.action === filter.action);
+      if (!filter?.action) return [...auditLog];
+      return auditLog.filter((e) => e.action === filter.action);
     },
     clearAudit() {
-      auditLog3.length = 0;
+      auditLog.length = 0;
       auditCounter = 0;
     }
   };
@@ -33204,642 +26800,361 @@ function createMemoryAnalyticsStore() {
 
 // lib/analytics/store/configure.ts
 var activeStore = createMemoryAnalyticsStore();
-function getAnalyticsStore() {
-  return activeStore;
-}
 
-// lib/analytics/audit.ts
-function recordAnalyticsAudit(entry) {
-  return getAnalyticsStore().recordAudit(entry);
-}
-
-// lib/supplier-order-activation/analytics.ts
-var ACTIVATION_EVENTS = /* @__PURE__ */ new Set([
-  "activation_requested",
-  "activation_preflight",
-  "activation_approved",
-  "activation_armed",
-  "activation_blocked",
-  "activation_revoked",
-  "first_order_prepared",
-  "first_order_blocked",
-  "first_order_sent",
-  "first_order_failed",
-  "first_order_confirmed"
-]);
-function emitActivationAnalytics(input) {
-  if (!ACTIVATION_EVENTS.has(input.eventType)) return;
-  recordAnalyticsAudit({
-    action: `supplier_order_${input.eventType}`,
-    actor: "supplier-order-activation",
-    metadata: {
-      activationId: input.activationId,
-      supplierId: input.supplierId,
-      correlationId: input.correlationId,
-      ...input.detail
-    }
-  });
-}
-
-// lib/supplier-order-activation/activation.ts
-function nowIso2() {
-  return (/* @__PURE__ */ new Date()).toISOString();
-}
-function buildActivationId() {
-  return `soa-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-function isAiActor(actor) {
-  if (!actor) return false;
-  const lower = actor.toLowerCase();
-  return lower.includes("ai_agent") || lower.includes("ai-agent") || lower === "ai";
-}
-function createActivationRequest(input) {
-  if (isAiActor(input.requester)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:REQUEST_FORBIDDEN"] };
-  }
-  const cfg = resolveActivationConfig();
-  const supplierId = input.supplierId || cfg.interCarsSupplierId;
-  const market = input.market || "DE";
-  const channel = input.channel || "DIRECT";
-  const environment = input.environment || "PRODUCTION";
-  const correlationId = input.correlationId || (0, import_crypto5.randomUUID)();
-  const idempotencyKey = input.idempotencyKey || buildActivationIdempotencyKey({ supplierId, market, channel, environment, requester: input.requester });
-  const existing = getActivationByIdempotency(idempotencyKey);
-  if (existing) {
-    return { ok: true, activation: existing };
-  }
-  const inflight = getInflightActivation(idempotencyKey);
-  if (inflight) {
-    throw new Error("ACTIVATION_INFLIGHT");
-  }
-  recordActivationAudit({
-    type: "PREFLIGHT_STARTED",
-    supplierId,
-    correlationId,
-    actor: input.requester
-  });
-  const preflight = runActivationPreflight({
-    supplierId,
-    market,
-    channel,
-    environment,
-    requester: input.requester,
-    correlationId,
-    orderValue: input.maxOrderValue,
-    rehearsalId: input.rehearsalId
-  });
-  emitActivationAnalytics({
-    eventType: "activation_preflight",
-    supplierId,
-    correlationId,
-    detail: { blockers: preflight.blockers }
-  });
-  const readiness = evaluateSupplierOrderReadiness(
-    { supplierId, market, channel, environment: environment === "STAGING" ? "SANDBOX" : environment },
-    { correlationId, force: true }
-  );
-  const riskLevel = computeRiskClassification(
-    { supplierId, market, channel, environment: environment === "STAGING" ? "SANDBOX" : environment },
-    readiness.checks.map((c) => ({
-      code: c.code,
-      category: c.category,
-      level: c.level === "CRITICAL" ? "CRITICAL" : c.level,
-      message: c.message,
-      blocking: c.blocking
-    }))
-  );
-  const createdAt = nowIso2();
-  const expiresAt = new Date(Date.now() + cfg.activationTtlMs).toISOString();
-  const status = preflight.blockers.length > 0 ? "BLOCKED" : "PENDING_APPROVAL";
-  const activation = {
-    activationId: buildActivationId(),
-    supplierId,
-    adapterProfile: getInterCarsAdapterProfile(),
-    environment,
-    market,
-    channel,
-    requestedBy: input.requester,
-    orderScope: input.orderScope,
-    customerScope: input.customerScope,
-    maxOrderValue: input.maxOrderValue ?? cfg.defaultMaxOrderValue,
-    maxDailyOrderValue: input.maxDailyOrderValue ?? cfg.defaultMaxDailyOrderValue,
-    maxOrders: input.maxOrders ?? cfg.defaultMaxOrders,
-    riskLevel: riskLevel === "BLOCKED" ? "HIGH" : riskLevel,
-    readinessId: preflight.readinessId,
-    validationId: preflight.validationId,
-    rehearsalId: preflight.rehearsalId,
-    killSwitchState: evaluateKillSwitch({
-      activationId: "",
-      supplierId,
-      adapterProfile: getInterCarsAdapterProfile(),
-      environment,
-      market,
-      channel,
-      requestedBy: input.requester,
-      networkState: "DISABLED",
-      realOrderSent: false,
-      status: "DRAFT",
-      correlationId,
-      idempotencyKey,
-      riskLevel: "LOW",
-      createdAt,
-      updatedAt: createdAt
-    }).state,
-    networkState: "DISABLED",
-    realOrderSent: false,
-    status,
-    reason: preflight.blockers.length ? preflight.blockers.join(",") : void 0,
-    correlationId,
-    idempotencyKey,
-    preflightChecks: preflight.checks,
-    createdAt,
-    updatedAt: createdAt,
-    expiresAt
-  };
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: preflight.blockers.length ? "ACTIVATION_BLOCKED" : "ACTIVATION_CREATED",
-    activationId: activation.activationId,
-    supplierId,
-    correlationId,
-    actor: input.requester,
-    detail: { status, blockers: preflight.blockers }
-  });
-  emitActivationAnalytics({
-    eventType: "activation_requested",
-    activationId: activation.activationId,
-    supplierId,
-    correlationId,
-    detail: { status }
-  });
-  return {
-    ok: preflight.blockers.length === 0,
-    activation,
-    blockers: preflight.blockers,
-    preflight
-  };
-}
-function approveActivationRequest(input) {
-  if (isAiActor(input.approverId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:APPROVE_FORBIDDEN"] };
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  if (activation.status === "BLOCKED") return { ok: false, blockers: ["ACTIVATION_BLOCKED"] };
-  const result = createActivationApproval({
-    activationId: input.activationId,
-    approverId: input.approverId,
-    requesterId: activation.requestedBy,
-    scope: {
-      supplierId: activation.supplierId,
-      adapterProfile: activation.adapterProfile,
-      environment: activation.environment,
-      market: activation.market,
-      channel: activation.channel,
-      maxOrderValue: activation.maxOrderValue ?? resolveActivationConfig().defaultMaxOrderValue,
-      maxDailyOrderValue: activation.maxDailyOrderValue ?? resolveActivationConfig().defaultMaxDailyOrderValue,
-      maxOrders: activation.maxOrders ?? resolveActivationConfig().defaultMaxOrders,
-      riskLevel: activation.riskLevel
-    }
-  });
-  if (result.ok) {
-    emitActivationAnalytics({
-      eventType: "activation_approved",
-      activationId: activation.activationId,
-      supplierId: activation.supplierId,
-      correlationId: activation.correlationId
-    });
-  }
-  return result;
-}
-function rejectActivationRequest(input) {
-  if (isAiActor(input.approverId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:REJECT_FORBIDDEN"] };
-  }
-  return rejectActivationApproval(input);
-}
-function armActivation(input) {
-  if (isAiActor(input.actorId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:ARM_FORBIDDEN"] };
-  }
-  try {
-    assertActivationNetworkSafety();
-  } catch {
-    return { ok: false, blockers: ["NETWORK_MUST_REMAIN_DISABLED"] };
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  const preflight = runActivationPreflight({
-    supplierId: activation.supplierId,
-    market: activation.market,
-    channel: activation.channel,
-    environment: activation.environment,
-    requester: activation.requestedBy,
-    correlationId: activation.correlationId,
-    orderValue: activation.maxOrderValue,
-    rehearsalId: activation.rehearsalId
-  });
-  if (preflight.blockers.length > 0) {
-    activation.status = "BLOCKED";
-    activation.reason = preflight.blockers.join(",");
-    activation.updatedAt = nowIso2();
-    saveActivationRecord(activation);
-    return { ok: false, blockers: preflight.blockers };
-  }
-  const approval = getApprovalForActivation(activation.activationId);
-  const approvalCheck = validateApprovalForActivation(activation, approval);
-  if (!approvalCheck.valid) {
-    return { ok: false, blockers: approvalCheck.blockers };
-  }
-  const kill = evaluateKillSwitch(activation);
-  if (kill.blocked) return { ok: false, blockers: kill.blockers };
-  const risk = evaluateActivationRisk(activation);
-  if (!risk.allowed) return { ok: false, blockers: risk.blockers };
-  activation.networkState = "ARMED";
-  activation.status = "APPROVED";
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: "ACTIVATION_ARMED",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId,
-    actor: input.actorId
-  });
-  emitActivationAnalytics({
-    eventType: "activation_armed",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId
-  });
-  return { ok: true, activation };
-}
-function confirmActivation(input) {
-  if (isAiActor(input.actorId)) {
-    return { ok: false, blockers: ["AI_BOUNDARY:CONFIRM_FORBIDDEN"] };
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  if (input.approvalId !== activation.approvalId) {
-    return { ok: false, blockers: ["APPROVAL_ID_MISMATCH"] };
-  }
-  if (input.actorId === activation.requestedBy) {
-    return { ok: false, blockers: ["SELF_APPROVAL_FORBIDDEN"] };
-  }
-  if (!input.confirmationNonce || input.confirmationNonce.length < 8) {
-    return { ok: false, blockers: ["CONFIRMATION_NONCE_REQUIRED"] };
-  }
-  const enableAttempt = executeRealSupplierOrder({
-    activationId: activation.activationId,
-    actorId: input.actorId,
-    humanConfirmation: true,
-    confirmationNonce: input.confirmationNonce,
-    idempotencyKey: input.idempotencyKey
-  });
-  if (enableAttempt.blocked) {
-    return {
-      ok: false,
-      blockers: [enableAttempt.code],
-      code: enableAttempt.code,
-      activation
-    };
-  }
-  activation.networkState = "ENABLED";
-  activation.status = "ACTIVE";
-  activation.confirmationNonce = input.confirmationNonce;
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  return { ok: true, activation };
-}
-function revokeActivation(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false };
-  activation.status = "REVOKED";
-  activation.networkState = "DISABLED";
-  activation.reason = input.reason;
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  recordActivationAudit({
-    type: "ACTIVATION_REVOKED",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId,
-    actor: input.actorId,
-    detail: { reason: input.reason }
-  });
-  emitActivationAnalytics({
-    eventType: "activation_revoked",
-    activationId: activation.activationId,
-    supplierId: activation.supplierId,
-    correlationId: activation.correlationId
-  });
-  return { ok: true, activation };
-}
-function cancelActivation(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false };
-  activation.status = "CANCELLED";
-  activation.networkState = "DISABLED";
-  activation.reason = input.reason;
-  activation.updatedAt = nowIso2();
-  saveActivationRecord(activation);
-  return { ok: true, activation };
-}
-function executeRealSupplierOrder(input) {
-  const guards = {};
-  const activation = getActivationRecord(input.activationId);
-  try {
-    assertActivationNetworkSafety();
-    guards.networkEnvDisabled = true;
-  } catch {
-    guards.networkEnvDisabled = false;
-  }
-  guards.networkEnabled = isSupplierOrderNetworkEnabled();
-  guards.productionEnvironment = activation?.environment === "PRODUCTION";
-  guards.supplierEnabled = Boolean(activation?.supplierId);
-  guards.readinessReady = activation?.readinessId != null;
-  guards.validationReady = activation?.validationId != null;
-  guards.createOrderValidated = false;
-  guards.approvalApproved = activation?.status === "APPROVED" || activation?.status === "ACTIVE";
-  guards.approvalNotExpired = activation?.expiresAt ? Date.parse(activation.expiresAt) > Date.now() : false;
-  guards.requesterNotApprover = Boolean(activation) && input.actorId !== activation?.requestedBy;
-  guards.riskAllowed = activation ? evaluateActivationRisk(activation).allowed : false;
-  guards.limitsAllowed = activation ? evaluateOrderLimits({
-    activation,
-    orderValue: input.orderValue ?? activation.maxOrderValue ?? 0,
-    isFirstOrder: true
-  }).allowed : false;
-  guards.killSwitchOff = activation ? !evaluateKillSwitch(activation).blocked : false;
-  guards.payloadHashValid = Boolean(input.payloadHash);
-  guards.inventoryReservationValid = Boolean(input.inventoryReservationId);
-  guards.idempotencyValid = Boolean(input.idempotencyKey);
-  guards.securityValid = !isAiActor(input.actorId);
-  guards.humanConfirmation = Boolean(input.humanConfirmation && input.confirmationNonce);
-  recordActivationAudit({
-    type: "REAL_ORDER_ATTEMPT_BLOCKED",
-    activationId: input.activationId,
-    supplierId: activation?.supplierId,
-    correlationId: activation?.correlationId || (0, import_crypto5.randomUUID)(),
-    actor: input.actorId,
-    detail: { guards, code: "REAL_ORDER_ENDPOINT_NOT_VALIDATED" }
-  });
-  emitActivationAnalytics({
-    eventType: "first_order_blocked",
-    activationId: input.activationId,
-    supplierId: activation?.supplierId,
-    correlationId: activation?.correlationId || (0, import_crypto5.randomUUID)(),
-    detail: { code: "REAL_ORDER_ENDPOINT_NOT_VALIDATED" }
-  });
-  recordBlockedRealOrderAttempt();
-  return {
-    ok: false,
-    blocked: true,
-    code: "REAL_ORDER_ENDPOINT_NOT_VALIDATED",
-    reason: "Inter Cars createOrder capability is UNVERIFIED \u2014 no real HTTP call permitted",
-    guards,
-    httpCallsMade: 0
-  };
-}
-
-// lib/supplier-order-activation/firstOrder.ts
-function nowIso3() {
-  return (/* @__PURE__ */ new Date()).toISOString();
-}
-function buildFirstOrderId() {
-  return `fo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-function buildMinimalSupplierPayload(payload) {
-  const filtered = filterSupplierFulfillmentAddress(payload.shippingAddress);
-  return {
-    supplierId: payload.supplierId,
-    market: payload.market,
-    channel: payload.channel,
-    items: payload.items.map((i) => ({ sku: i.sku, quantity: i.quantity })),
-    shippingAddress: filtered,
-    currency: payload.currency,
-    inventoryReservationId: payload.inventoryReservationId,
-    priceSnapshotId: payload.priceSnapshotId,
-    supplierAssignmentSnapshotId: payload.supplierAssignmentSnapshotId
-  };
-}
-function previewFirstOrder(input) {
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) {
-    throw new Error("ACTIVATION_NOT_FOUND");
-  }
-  const supplierPayload = buildMinimalSupplierPayload(input.payload);
-  const orderPayloadHash = hashPayload(supplierPayload);
-  const supplierPayloadHash = hashPayload({ supplierId: input.payload.supplierId, items: input.payload.items });
-  const approval = getApprovalForActivation(activation.activationId);
-  const approvalCheck = validateApprovalForActivation(activation, approval);
-  const kill = evaluateKillSwitch(activation);
-  const risk = evaluateActivationRisk(activation);
-  const limits = evaluateOrderLimits({
-    activation,
-    orderValue: input.payload.items.reduce((sum, i) => sum + i.unitCost * i.quantity, 0),
-    isFirstOrder: true,
-    itemCount: input.payload.items.length,
-    totalQuantity: input.payload.items.reduce((sum, i) => sum + i.quantity, 0)
-  });
-  const orderValue = input.payload.items.reduce((sum, i) => sum + i.unitCost * i.quantity, 0);
-  return {
-    supplierId: input.payload.supplierId,
-    environment: activation.environment,
-    market: input.payload.market,
-    channel: input.payload.channel,
-    orderValue,
-    currency: input.payload.currency,
-    itemCount: input.payload.items.length,
-    orderPayloadHash,
-    supplierPayloadHash,
-    inventoryReservationId: input.payload.inventoryReservationId,
-    priceSnapshotId: input.payload.priceSnapshotId,
-    readinessStatus: activation.readinessId ? "READY" : "UNKNOWN",
-    approvalStatus: approvalCheck.valid ? "APPROVED" : "BLOCKED",
-    riskLevel: risk.riskLevel,
-    killSwitchActive: kill.blocked,
-    networkState: activation.networkState,
-    createOrderCapability: "UNVERIFIED",
-    gates: [
-      { check: "APPROVAL", category: "APPROVAL", status: approvalCheck.valid ? "PASS" : "BLOCKED", message: approvalCheck.valid ? "Approved" : approvalCheck.blockers.join(",") },
-      { check: "RISK", category: "RISK", status: risk.allowed ? "PASS" : "BLOCKED", message: risk.riskLevel },
-      { check: "LIMITS", category: "LIMITS", status: limits.allowed ? "PASS" : "BLOCKED", message: limits.allowed ? "Within limits" : limits.blockers.join(",") },
-      { check: "KILL_SWITCH", category: "KILL_SWITCH", status: kill.blocked ? "BLOCKED" : "PASS", message: kill.blocked ? "Active" : "Off" },
-      { check: "CREATE_ORDER", category: "CAPABILITY", status: "BLOCKED", message: "createOrder UNVERIFIED", blocking: true },
-      { check: "NETWORK", category: "NETWORK", status: activation.networkState === "ENABLED" ? "PASS" : "BLOCKED", message: activation.networkState }
-    ],
-    httpCallsMade: 0
-  };
-}
-function prepareFirstOrderGate(input) {
-  const cfg = resolveActivationConfig();
-  const existing = getFirstOrderByIdempotency(input.idempotencyKey);
-  if (existing) {
-    return { ok: true, gate: existing };
-  }
-  const activation = getActivationRecord(input.activationId);
-  if (!activation) return { ok: false, blockers: ["ACTIVATION_NOT_FOUND"] };
-  const preview = previewFirstOrder({ activationId: input.activationId, payload: input.payload });
+// lib/supplier-production-order-validation/eligibility.ts
+function evaluateUpstreamGates(input) {
   const blockers = [];
-  if (preview.approvalStatus !== "APPROVED") blockers.push("APPROVAL_INVALID");
-  if (preview.killSwitchActive) blockers.push("KILL_SWITCH_ACTIVE");
-  if (!preview.gates.find((g) => g.check === "LIMITS") || preview.gates.find((g) => g.check === "LIMITS")?.status !== "PASS") {
-    blockers.push("LIMITS_EXCEEDED");
-  }
-  if (preview.createOrderCapability === "UNVERIFIED") blockers.push("REAL_ORDER_ENDPOINT_NOT_VALIDATED");
-  if (activation.networkState === "DISABLED") blockers.push("NETWORK_NOT_ARMED");
-  const createdAt = nowIso3();
-  const gate = {
-    firstOrderId: buildFirstOrderId(),
-    activationId: input.activationId,
-    supplierId: input.payload.supplierId,
-    market: input.payload.market,
-    channel: input.payload.channel,
-    orderValue: preview.orderValue,
-    currency: input.payload.currency,
-    readinessStatus: preview.readinessStatus,
-    approvalStatus: preview.approvalStatus,
-    riskLevel: preview.riskLevel,
-    limitsStatus: blockers.includes("LIMITS_EXCEEDED") ? "BLOCKED" : "PASS",
-    killSwitchState: preview.killSwitchActive ? "ON" : "OFF",
-    networkState: activation.networkState,
-    orderPayloadHash: preview.orderPayloadHash,
-    supplierPayloadHash: preview.supplierPayloadHash,
-    inventoryReservationId: input.payload.inventoryReservationId,
-    priceSnapshotId: input.payload.priceSnapshotId,
-    status: blockers.length ? "BLOCKED" : "PREPARED",
-    createdAt,
-    expiresAt: new Date(Date.now() + cfg.firstOrderTtlMs).toISOString(),
-    correlationId: activation.correlationId,
-    idempotencyKey: input.idempotencyKey
-  };
-  saveFirstOrderGate(gate);
-  recordActivationAudit({
-    type: blockers.length ? "FIRST_ORDER_BLOCKED" : "FIRST_ORDER_PREPARED",
-    activationId: activation.activationId,
-    firstOrderId: gate.firstOrderId,
-    supplierId: gate.supplierId,
-    correlationId: activation.correlationId,
-    actor: input.actorId,
-    detail: { blockers, orderPayloadHash: gate.orderPayloadHash }
+  const prodVal = getLatestValidationForScope({
+    supplierId: input.supplierId,
+    market: input.market,
+    channel: input.channel,
+    environment: input.environment
   });
-  emitActivationAnalytics({
-    eventType: blockers.length ? "first_order_blocked" : "first_order_prepared",
-    activationId: activation.activationId,
-    supplierId: gate.supplierId,
-    correlationId: activation.correlationId,
-    detail: { firstOrderId: gate.firstOrderId }
-  });
-  return { ok: blockers.length === 0, gate, blockers, preview };
-}
-function attemptFirstOrderSend(input) {
-  const gate = getFirstOrderGate(input.firstOrderId);
-  if (!gate) {
-    return {
-      ok: false,
-      blocked: true,
-      code: "FIRST_ORDER_NOT_FOUND",
-      reason: "First order gate not found",
-      guards: {},
-      httpCallsMade: 0
-    };
+  if (!prodVal || prodVal.overallStatus !== "PASSED") {
+    blockers.push("PRODUCTION_VALIDATION_NOT_READY");
   }
-  if (new Date(gate.expiresAt).getTime() < Date.now()) {
-    gate.status = "BLOCKED";
-    saveFirstOrderGate(gate);
-    return {
-      ok: false,
-      blocked: true,
-      code: "FIRST_ORDER_EXPIRED",
-      reason: "First order gate expired",
-      guards: {},
-      httpCallsMade: 0
-    };
+  const activation = listActivationRecords().filter(
+    (a) => a.supplierId === input.supplierId && a.market === input.market && a.channel === input.channel && a.environment === input.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+  if (!activation || !["APPROVED", "ACTIVE"].includes(activation.status)) {
+    blockers.push("ACTIVATION_NOT_APPROVED");
   }
-  return executeRealSupplierOrder({
-    activationId: gate.activationId,
-    actorId: input.actorId,
-    humanConfirmation: input.humanConfirmation,
-    confirmationNonce: input.confirmationNonce,
-    idempotencyKey: gate.idempotencyKey,
-    orderValue: gate.orderValue,
-    payloadHash: gate.orderPayloadHash,
-    inventoryReservationId: gate.inventoryReservationId
-  });
+  if (isActivationKillSwitched(input)) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+  }
+  if (input.approver && input.approver === input.requester) {
+    blockers.push("SELF_APPROVAL_FORBIDDEN");
+  }
+  return { allowed: blockers.length === 0, blockers };
 }
 
-// lib/supplier-order-activation/admin.ts
-function getSupplierOrderActivationDashboard() {
-  const records = listActivationRecords();
-  const firstOrders = listFirstOrderGates();
-  const armed = records.filter((r) => r.networkState === "ARMED").length;
-  const active = records.filter((r) => r.networkState === "ENABLED" || r.status === "ACTIVE").length;
-  const sent = firstOrders.filter((f) => f.status === "SENT" || f.status === "CONFIRMED").length;
-  const validation = getLatestValidationForScope2({
-    supplierId: records[0]?.supplierId || "SUP-INTER-CARS-001",
-    environment: "PRODUCTION",
-    market: records[0]?.market || "DE",
-    channel: records[0]?.channel || "DIRECT"
+// lib/supplier-inter-cars-production-access/preflight.ts
+function runProductionAccessPreflight() {
+  const supplierId = getInterCarsSupplierId();
+  const credential = resolveCredentialDisplayStatus({ supplierId });
+  const network = resolveNetworkState();
+  const profile = resolvePredefinedLiveProfile();
+  const checks = [];
+  const blockers = [...credential.blockers];
+  checks.push({
+    check: "PROFILE",
+    status: profile ? "PASS" : "BLOCKED",
+    message: profile ? process.env.SUPPLIER_LIVE_PROFILE || "inter-cars" : "missing"
   });
+  if (!profile) blockers.push("INTER_CARS_PROFILE_NOT_CONFIGURED");
+  checks.push({
+    check: "CREDENTIALS",
+    status: credential.status === "VALID" || credential.status === "CONFIGURED" ? "PASS" : "BLOCKED",
+    message: credential.status
+  });
+  let endpointAllowlisted = false;
+  if (profile?.baseUrl) {
+    const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
+    const path2 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path2.startsWith("/") ? path2 : `/${path2}`}`;
+    endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
+    checks.push({
+      check: "ENDPOINT",
+      status: endpointAllowlisted ? "PASS" : "BLOCKED",
+      message: url
+    });
+    if (!endpointAllowlisted) blockers.push("ENDPOINT_SECURITY_BLOCKED");
+  } else {
+    checks.push({ check: "ENDPOINT", status: "BLOCKED", message: "baseUrl missing" });
+    blockers.push("ENDPOINT_NOT_CONFIGURED");
+  }
+  checks.push({
+    check: "NETWORK_DEFAULT",
+    status: network.productionNetwork === "OFF" && network.supplierOrderNetwork === "OFF" ? "PASS" : "BLOCKED",
+    message: `network=${network.productionNetwork} orderNetwork=${network.supplierOrderNetwork}`
+  });
+  if (network.supplierOrderNetwork === "ON") blockers.push("ORDER_NETWORK_MUST_BE_OFF");
+  checks.push({
+    check: "SCOPED_VALIDATION_NETWORK",
+    status: network.scopedValidationNetwork === "OFF" ? "PASS" : "UNVERIFIED",
+    message: "Scoped network only during explicit #342 run"
+  });
+  const upstream = evaluateUpstreamGates({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION",
+    requester: "ops@example.com"
+  });
+  checks.push({
+    check: "UPSTREAM_GATES",
+    status: upstream.blockers.length === 0 ? "PASS" : "BLOCKED",
+    message: upstream.blockers.join(",") || "PASS"
+  });
+  blockers.push(...upstream.blockers);
+  if (isActivationKillSwitched({ supplierId, market: "DE", channel: "DIRECT" })) {
+    blockers.push("KILL_SWITCH_ACTIVE");
+  }
+  checks.push({
+    check: "CONTROLLED_VALIDATION_ENABLED",
+    status: isControlledValidationEnabled() ? "UNVERIFIED" : "PASS",
+    message: isControlledValidationEnabled() ? "Explicitly enabled \u2014 await controlled run" : "Disabled until operational enable"
+  });
+  const credentialReady = credential.status === "VALID" || credential.status === "CONFIGURED";
+  const ready = credentialReady && endpointAllowlisted && network.supplierOrderNetwork === "OFF" && upstream.blockers.length === 0;
+  return { ready, blockers: [...new Set(blockers)], checks };
+}
+
+// lib/supplier-inter-cars-production-access/readOnlyLive.ts
+function resolveReadOnlyLiveStatus(credentialsStatus) {
+  const latest = getLatestValidationForScope({
+    supplierId: getInterCarsSupplierId(),
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  if (latest?.healthStatus === "LIVE_READ_VALIDATED" && latest.catalogReadStatus === "LIVE_READ_VALIDATED") {
+    return "VALIDATED";
+  }
+  if (credentialsStatus === "NOT_CONFIGURED" || credentialsStatus === "BLOCKED") {
+    return "BLOCKED";
+  }
+  if (isLiveReadEnabled() && (credentialsStatus === "VALID" || credentialsStatus === "CONFIGURED")) {
+    return "NOT_RUN";
+  }
+  return "NOT_RUN";
+}
+
+// lib/supplier-inter-cars-production-access/safety.ts
+var counters2 = {
+  realHttpCalls: 0,
+  realCreateOrderCalls: 0,
+  realSupplierOrders: 0,
+  realCustomerOrders: 0
+};
+function getProductionAccessSafetyCounters() {
+  return { ...counters2 };
+}
+function assertProductionAccessSafetyInvariants() {
+  const violations = [];
+  if (counters2.realHttpCalls !== 0) violations.push(`realHttpCalls=${counters2.realHttpCalls}`);
+  if (counters2.realCreateOrderCalls !== 0) violations.push(`realCreateOrderCalls=${counters2.realCreateOrderCalls}`);
+  if (counters2.realSupplierOrders !== 0) violations.push(`realSupplierOrders=${counters2.realSupplierOrders}`);
+  if (counters2.realCustomerOrders !== 0) violations.push(`realCustomerOrders=${counters2.realCustomerOrders}`);
+  return { ok: violations.length === 0, violations };
+}
+
+// lib/supplier-inter-cars-production-access/diagnostic.ts
+function evaluateInterCarsProductionAccess() {
+  const supplierId = getInterCarsSupplierId();
+  const profile = resolvePredefinedLiveProfile();
+  const credential = resolveCredentialDisplayStatus({ supplierId });
+  const network = resolveNetworkState();
+  const preflight = runProductionAccessPreflight();
+  const safety342 = getCreateOrderValidationSafetyCounters();
+  const safetyPrep = getProductionAccessSafetyCounters();
+  const controlledRun = getLatestControlledValidationRun({ supplierId, market: "DE" });
+  const createOrderCapability = controlledRun?.liveValidation === "PASS" && controlledRun.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED";
+  let endpointAllowlisted = false;
+  if (profile?.baseUrl) {
+    const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
+    const path2 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path2.startsWith("/") ? path2 : `/${path2}`}`;
+    endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
+  }
+  const blockers = [];
+  if (!isInterCarsProfileConfigured()) blockers.push("INTER_CARS_PROFILE_NOT_CONFIGURED");
+  if (credential.status === "NOT_CONFIGURED") blockers.push("CREDENTIAL_NOT_CONFIGURED");
+  if (credential.status === "BLOCKED") blockers.push("CREDENTIAL_MOCK_OR_BLOCKED");
+  if (network.supplierOrderNetwork === "ON") blockers.push("ORDER_NETWORK_MUST_BE_OFF_IN_PREP");
+  if (createOrderCapability !== "VALIDATED") blockers.push("CREATE_ORDER_UNVERIFIED");
+  blockers.push(...preflight.blockers.filter((b) => !blockers.includes(b)));
   return {
-    activationCount: records.length,
-    blocked: records.filter((r) => r.status === "BLOCKED").length,
-    approved: records.filter((r) => r.status === "APPROVED").length,
-    armed,
-    active,
-    firstOrdersPrepared: firstOrders.filter((f) => f.status === "PREPARED").length,
-    firstOrdersSent: sent,
-    realSupplierOrderNetwork: isSupplierOrderNetworkEnabled() ? "ENABLED" : "DISABLED",
-    interCarsCreateOrder: validation?.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED",
-    productionActivation: active > 0 ? "ACTIVE" : armed > 0 ? "ARMED" : "NOT ACTIVE",
-    firstRealOrder: sent > 0 ? "SENT" : "NOT SENT",
-    networkState: active > 0 ? "ENABLED" : armed > 0 ? "ARMED" : "DISABLED",
-    safety: getActivationSafetyCounters()
+    interCarsProfile: isInterCarsProfileConfigured() ? "CONFIGURED" : "NOT_CONFIGURED",
+    environment: profile?.environment || "UNKNOWN",
+    supplierProfile: process.env.SUPPLIER_LIVE_PROFILE || "none",
+    productionCredentials: credential.status,
+    credentialType: credential.credentialType,
+    readOnlyLiveValidation: resolveReadOnlyLiveStatus(credential.status),
+    controlledLiveValidation: preflight.ready ? "READY" : "BLOCKED",
+    createOrderCapability,
+    productionNetwork: network.productionNetwork,
+    supplierOrderNetwork: network.supplierOrderNetwork,
+    scopedValidationNetwork: network.scopedValidationNetwork,
+    realHttpCalls: safety342.realSupplierOrderCalls + safetyPrep.realHttpCalls,
+    realCreateOrderCalls: safety342.realSupplierOrderCalls,
+    realSupplierOrders: safety342.realSupplierOrderCalls,
+    realCustomerOrders: safety342.realCustomerOrders,
+    checklist: buildProductionAccessChecklist({
+      profileConfigured: isInterCarsProfileConfigured(),
+      credentialsStatus: credential.status,
+      endpointConfigured: Boolean(profile?.baseUrl),
+      endpointAllowlisted,
+      createOrderBlocked: true
+    }),
+    blockers: [...new Set(blockers)],
+    correlationId: (0, import_crypto.randomUUID)(),
+    evaluatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
 }
-function listSupplierOrderActivationRows(filter) {
-  return listActivationRecords().filter((row) => {
-    if (filter?.supplierId && row.supplierId !== filter.supplierId) return false;
-    if (filter?.status && row.status !== filter.status) return false;
-    return true;
-  });
+
+// lib/supplier-production-order-arming/persistence.ts
+var armingStore = /* @__PURE__ */ new Map();
+function listArmingRecords() {
+  return [...armingStore.values()];
 }
-function getSupplierOrderActivationDetail(activationId) {
-  const activation = getActivationRecord(activationId);
-  if (!activation) return null;
+function getLatestArmingForScope(scope) {
+  return listArmingRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel && r.scope.environment === scope.environment
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-first-production-order/persistence.ts
+var executionStore = /* @__PURE__ */ new Map();
+function listFirstProductionOrderRecords() {
+  return [...executionStore.values()];
+}
+function getLatestFirstProductionOrderForScope(scope) {
+  return listFirstProductionOrderRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-production-order-arming/config.ts
+var ARMING_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_TTL_MS || 24 * 60 * 60 * 1e3);
+var ARMING_APPROVAL_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3);
+
+// lib/supplier-first-production-order/config.ts
+var FIRST_ORDER_TTL_MS2 = Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_TTL_MS || 24 * 60 * 60 * 1e3);
+var FIRST_ORDER_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3
+);
+var EXECUTION_AUTH_TTL_MS = Number(
+  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_AUTH_TTL_MS || 30 * 60 * 1e3
+);
+
+// lib/supplier-controlled-go-live/config.ts
+var GO_LIVE_TTL_MS = Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
+var GO_LIVE_APPROVAL_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_APPROVAL_TTL_MS || 24 * 60 * 60 * 1e3
+);
+var GO_LIVE_ROLLOUT_TTL_MS = Number(
+  process.env.SUPPLIER_CONTROLLED_GO_LIVE_ROLLOUT_TTL_MS || 30 * 24 * 60 * 60 * 1e3
+);
+function getInterCarsSupplierId3() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-production-order-validation/capability.ts
+function deriveCreateOrderCapabilityStatus(state) {
+  if (state.productionValidated) return "VALIDATED";
+  return "UNVERIFIED";
+}
+
+// lib/supplier-production-order-arming/evidence.ts
+function loadOfficialValidationEvidence(scope) {
+  const blockers = [];
+  const validation = getLatestValidationForScope2(scope);
+  if (!validation) {
+    blockers.push("VALIDATION_EVIDENCE_MISSING");
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers };
+  }
+  const capability = deriveCreateOrderCapabilityStatus(validation.capabilityState);
+  if (capability !== "VALIDATED" || !validation.capabilityState.productionValidated) {
+    blockers.push("CREATE_ORDER_UNVERIFIED");
+    return { blockers, evidence: void 0 };
+  }
+  const controlledRun = getControlledValidationRun(validation.validationId);
+  const liveValidation = validation.liveValidation || controlledRun?.liveValidation;
+  if (validation.controlledValidation && liveValidation !== "PASS") {
+    blockers.push("CONTROLLED_VALIDATION_NOT_PASSED");
+    return { blockers };
+  }
+  if (!validation.controlledValidation && !validation.capabilityState.productionValidated) {
+    blockers.push("NO_CONTROLLED_LIVE_EVIDENCE");
+    return { blockers };
+  }
+  const evidence = {
+    validationId: validation.validationId,
+    supplier: validation.supplierId,
+    orderReference: validation.orderId,
+    payloadHash: validation.requestPayloadHash,
+    supplierOrderReference: validation.supplierOrderId || controlledRun?.supplierOrderReference,
+    validationTimestamp: validation.updatedAt,
+    result: liveValidation || validation.overallStatus,
+    approvalReference: controlledRun?.approvedBy,
+    liveValidation: liveValidation || "UNKNOWN",
+    createOrderCapability: capability,
+    productionValidated: validation.capabilityState.productionValidated
+  };
+  if (!evidence.supplierOrderReference && validation.controlledValidation) {
+    blockers.push("SUPPLIER_ORDER_REFERENCE_MISSING");
+  }
+  return { evidence, blockers };
+}
+
+// lib/supplier-controlled-go-live/persistence.ts
+var goLiveStore = /* @__PURE__ */ new Map();
+function listControlledGoLiveRecords() {
+  return [...goLiveStore.values()];
+}
+function getLatestControlledGoLiveForScope(scope) {
+  return listControlledGoLiveRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-controlled-go-live/admin.ts
+function isControlledGoLiveActive(scope) {
+  const supplierId = scope?.supplierId || getInterCarsSupplierId3();
+  const latest = getLatestControlledGoLiveForScope({
+    supplierId,
+    market: scope?.market || "DE",
+    channel: scope?.channel || "DIRECT"
+  });
+  return latest?.state === "CONTROLLED_GO_LIVE" && Date.parse(latest.expiresAt) > Date.now();
+}
+
+// lib/supplier-go-live-observation/persistence.ts
+var observationStore = /* @__PURE__ */ new Map();
+function listObservationRecords() {
+  return [...observationStore.values()];
+}
+function getLatestObservationForScope(scope) {
+  return listObservationRecords().filter(
+    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
+  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
+}
+
+// lib/supplier-inter-cars-production-access/admin.ts
+function getProductionAccessDashboard() {
+  const diagnostic = evaluateInterCarsProductionAccess();
+  const supplierId = getInterCarsSupplierId();
+  const { evidence } = loadOfficialValidationEvidence({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const arming = getLatestArmingForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
+  const observation = getLatestObservationForScope({ supplierId, market: "DE", channel: "DIRECT" });
   return {
-    activation,
-    audit: listActivationAudit({ activationId }).slice(-50),
-    firstOrders: listFirstOrderGates().filter((f) => f.activationId === activationId),
-    safety: getActivationSafetyCounters(),
-    networkSeparate: {
-      activationStatus: activation.status,
-      networkState: activation.networkState,
-      realOrderSent: activation.realOrderSent,
-      envNetworkEnabled: isSupplierOrderNetworkEnabled()
-    }
+    ...diagnostic,
+    liveValidationEvidence: evidence ? "PRESENT" : "NONE",
+    armingState: arming?.status || "ARMING_BLOCKED",
+    firstOrderState: firstOrder?.state || "BLOCKED",
+    controlledGoLive: isControlledGoLiveActive({ supplierId, market: "DE", channel: "DIRECT" }) ? "ACTIVE" : "BLOCKED",
+    observationState: observation?.state || "BLOCKED",
+    broaderRollout: observation?.state === "BROADER_ROLLOUT_ACTIVE" ? "ACTIVE" : "BLOCKED"
   };
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  approveActivationRequest,
-  armActivation,
-  assertActivationSafetyInvariants,
-  attemptFirstOrderSend,
-  cancelActivation,
-  confirmActivation,
-  createActivationRequest,
-  executeRealSupplierOrder,
-  getActivationRecord,
-  getActivationSafetyCounters,
-  getSupplierOrderActivationDashboard,
-  getSupplierOrderActivationDetail,
-  hydrateActivationFromPersistence,
-  listActivationRecords,
-  listSupplierOrderActivationRows,
-  prepareFirstOrderGate,
-  previewFirstOrder,
-  rejectActivationRequest,
-  revokeActivation,
-  runActivationPreflight
+  assertProductionAccessSafetyInvariants,
+  evaluateInterCarsProductionAccess,
+  getProductionAccessDashboard,
+  getProductionAccessSafetyCounters,
+  runProductionAccessPreflight
 });

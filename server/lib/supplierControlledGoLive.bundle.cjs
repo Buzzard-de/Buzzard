@@ -4374,6 +4374,51 @@ CREATE TABLE IF NOT EXISTS tax_rates (
   `);
     }
     migrateSupplierControlledGoLive();
+    function migrateSupplierGoLiveObservation() {
+      db.exec(`
+    CREATE TABLE IF NOT EXISTS supplier_go_live_observations (
+      observation_id TEXT PRIMARY KEY,
+      supplier_id TEXT NOT NULL,
+      state TEXT NOT NULL,
+      go_live_id TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_sglo_supplier
+      ON supplier_go_live_observations(supplier_id);
+    CREATE INDEX IF NOT EXISTS idx_sglo_state
+      ON supplier_go_live_observations(state);
+
+    CREATE TABLE IF NOT EXISTS supplier_go_live_rollout (
+      rollout_id TEXT PRIMARY KEY,
+      observation_id TEXT NOT NULL,
+      supplier_id TEXT NOT NULL,
+      state TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      correlation_id TEXT NOT NULL,
+      record_json TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_sglr_observation
+      ON supplier_go_live_rollout(observation_id);
+
+    CREATE TABLE IF NOT EXISTS supplier_go_live_rollout_audit (
+      event_id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      observation_id TEXT,
+      rollout_id TEXT,
+      supplier_id TEXT,
+      correlation_id TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      detail_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_sglra_observation
+      ON supplier_go_live_rollout_audit(observation_id);
+  `);
+    }
+    migrateSupplierGoLiveObservation();
     function seed() {
       const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;
       if (count === 0) {

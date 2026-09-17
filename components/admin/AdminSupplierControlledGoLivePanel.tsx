@@ -54,7 +54,8 @@ export default function AdminSupplierControlledGoLivePanel() {
             CONTROLLED_GO_LIVE ≠ UNLIMITED_GO_LIVE ·{" "}
             <Link href="/admin/supplier-first-production-order">First Order (#344)</Link> ·{" "}
             <Link href="/admin/supplier-production-order-arming">Arming (#343)</Link> ·{" "}
-            <Link href="/admin/supplier-production-order-validation">Validation (#342)</Link>
+            <Link href="/admin/supplier-production-order-validation">Validation (#342)</Link> ·{" "}
+            <Link href="/admin/supplier-go-live-observation">Observation (#346)</Link>
           </p>
         </div>
       </header>

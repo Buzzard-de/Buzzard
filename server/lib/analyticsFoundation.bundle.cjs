@@ -4974,6 +4974,16 @@ var init_persistence2 = __esm({
   }
 });
 
+// lib/supplier-engine/tracking.ts
+var init_tracking = __esm({
+  "lib/supplier-engine/tracking.ts"() {
+    "use strict";
+    init_registry2();
+    init_capabilities();
+    init_persistence2();
+  }
+});
+
 // lib/analytics/storefront/serverEntry.ts
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
@@ -5601,204 +5611,138 @@ function getMarketCurrency(countryCode) {
   };
 }
 
-// lib/order-engine/registry.ts
-var orderRegistry = /* @__PURE__ */ new Map();
-function getOrder(orderId) {
-  return orderRegistry.get(orderId);
+// lib/order-engine/createOrder.ts
+init_registry2();
+
+// lib/pricing-engine/shipping.ts
+init_registry2();
+
+// lib/market-engine/money.ts
+function toMinorUnits(amount, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return Math.round((Number(amount) || 0) * factor);
+}
+function fromMinorUnits(minor, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return minor / factor;
+}
+function roundMoney(amount, decimalDigits = 2) {
+  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
 }
 
-// lib/product-engine/status.ts
-function mapStorefrontStatus(status, stockStatus) {
-  if (stockStatus === "out_of_stock") return "OUT_OF_STOCK";
-  switch (status) {
-    case "draft":
-      return "DRAFT";
-    case "active":
-      return "ACTIVE";
-    case "paused":
-      return "PAUSED";
-    case "archived":
-      return "ARCHIVED";
-    default:
-      return "DRAFT";
-  }
-}
-
-// lib/product-engine/adapters/buzzardProduct.ts
-function parseTechnicalData(product) {
-  const attrs = product.attributes || {};
-  const technical = { ...attrs };
-  if (product.shipping?.weight_kg) technical.weight_kg = product.shipping.weight_kg;
-  if (attrs.viscosity) technical.viscosity = String(attrs.viscosity);
-  if (attrs.diameter) technical.diameter = Number(attrs.diameter);
-  return technical;
-}
-function mapCompatibility(entries) {
-  if (!entries?.length) return [];
-  return entries.map((v) => ({
-    make: v.brand,
-    model: v.model,
-    engine: v.engine,
-    yearFrom: v.year_from,
-    yearTo: v.year_to,
-    oemNumbers: v.part_reference ? [v.part_reference] : []
-  }));
-}
-function mapImages(product) {
-  return (product.images || []).map((url, i) => ({
-    url,
-    alt: product.name,
-    sortOrder: i,
-    type: i === 0 ? "MAIN" : "GALLERY"
-  }));
-}
-function mapTranslations(product) {
-  const base = {
-    locale: "de-DE",
-    name: product.name,
-    shortDescription: product.short_description,
-    description: product.description,
-    seoTitle: product.seo?.title,
-    seoDescription: product.seo?.description,
-    slug: product.seo?.slug
-  };
-  const entries = [base];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      entries.push({
-        locale: lang,
-        name: t.name || product.name,
-        shortDescription: t.short_description,
-        description: t.description,
-        seoTitle: t.seo_title,
-        seoDescription: t.seo_description
-      });
+// data/global/pricing_engine_extensions.json
+var pricing_engine_extensions_default = {
+  defaultSellerCountry: "DE",
+  defaultTargetMarginPercent: 0.11,
+  defaultMinimumMarginPercent: 0.05,
+  exchangeRates: {
+    EUR: 1,
+    USD: 0.92,
+    GBP: 1.17,
+    CZK: 0.041,
+    PLN: 0.23,
+    TRY: 0.027,
+    SAR: 0.24,
+    AED: 0.25,
+    EGP: 0.019,
+    HUF: 26e-4,
+    RON: 0.2,
+    BGN: 0.51,
+    CHF: 1.05,
+    SEK: 0.087,
+    DKK: 0.134,
+    NOK: 0.085
+  },
+  shippingCosts: {
+    defaultSupplierDirect: 10,
+    currency: "EUR",
+    byProductFixture: {
+      "reifen-pilot-sport": 10,
+      "motoroel-5w30": 7,
+      "bremsscheibe-280": 8,
+      "bremsbelaege-vorder": 6
+    },
+    byShippingRegion: {
+      EU_CENTRAL: 10,
+      EU_WEST: 12,
+      EU_NORTH: 14,
+      EU_SOUTH: 11,
+      EU_EAST: 9,
+      TR: 15,
+      GCC: 18,
+      MENA: 16
     }
-  }
-  return entries;
-}
-function mapSeo(product) {
-  const entries = [
-    {
-      locale: "de-DE",
-      seoTitle: product.seo?.title,
-      seoDescription: product.seo?.description,
-      slug: product.seo?.slug || product.id
+  },
+  marketplaceFees: {
+    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
+    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
+    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
+    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
+    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
+    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
+  },
+  paymentFees: {
+    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
+    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
+    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
+    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
+    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
+  },
+  returnReserves: {
+    default: {
+      returnRate: 0.05,
+      refundRate: 0.03,
+      averageReturnShippingCost: 8,
+      averageRefundLoss: 5,
+      supplierReturnAcceptanceRate: 0.7,
+      damagedReturnRate: 0.01
+    },
+    byCategory: {
+      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
+      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
+      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
     }
-  ];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      if (t.seo_title || t.seo_description) {
-        entries.push({
-          locale: lang,
-          seoTitle: t.seo_title,
-          seoDescription: t.seo_description,
-          slug: product.seo?.slug || product.id
-        });
-      }
+  },
+  marginRules: {
+    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
+    byMarket: {},
+    byCategory: {},
+    byChannel: {},
+    byMarketplace: {},
+    bySupplier: {}
+  },
+  roundingRules: {
+    default: { mode: "psychological_99", step: 0.01 },
+    byMarket: {
+      DE: { mode: "psychological_99" },
+      FR: { mode: "psychological_99" },
+      PL: { mode: "nearest_49" }
+    },
+    byChannel: {
+      amazon: { mode: "psychological_99" },
+      direct: { mode: "psychological_99" }
     }
+  },
+  priceBounds: {
+    default: { minimumPrice: 1, maximumPrice: 99999 }
+  },
+  competitivePricingExtension: {
+    enabled: false,
+    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
   }
-  return entries;
-}
-function mapSupplierOffer(product) {
-  return {
-    supplierId: product.supplier_id,
-    supplierSku: product.supplier_sku,
-    supplierEan: product.ean_gtin,
-    supplierPrice: product.supplier_price?.amount ?? 0,
-    currency: product.supplier_price?.currency ?? product.price?.currency ?? "EUR",
-    stock: product.stock,
-    lastUpdated: product.updated_at,
-    source: product.supplier_id,
-    sourceType: "MANUAL",
-    reliabilityScore: 0.8
-  };
-}
-function mapPricing(product) {
-  const supplierCost = product.supplier_price?.amount ?? 0;
-  const customerPrice = product.price?.amount ?? 0;
-  const margin = customerPrice > 0 ? (customerPrice - supplierCost) / customerPrice : 0;
-  return {
-    supplierCost,
-    shippingCost: 0,
-    marketplaceFee: 0,
-    paymentFee: 0,
-    vat: product.vat_rate / 100,
-    margin,
-    customerPrice,
-    currency: product.price?.currency ?? "EUR"
-  };
-}
-function mapStock(product) {
-  const availability = product.stock_status === "out_of_stock" ? "OUT_OF_STOCK" : product.stock_status === "low_stock" ? "LOW_STOCK" : product.stock_status === "preorder" ? "PREORDER" : "IN_STOCK";
-  return {
-    quantity: product.stock,
-    availability,
-    lastUpdated: product.updated_at
-  };
-}
-function fromBuzzardProduct(product) {
-  const subcategoryId = product.category_ids?.length > 1 ? product.category_ids[1] : void 0;
-  return {
-    productId: product.id,
-    sku: product.sku,
-    ean: product.ean_gtin,
-    gtin: product.ean_gtin,
-    brand: product.brand,
-    manufacturer: product.manufacturer,
-    categoryId: product.category_id,
-    subcategoryId,
-    productType: product.category_id.startsWith("cat-05") ? "automotive" : "general",
-    status: mapStorefrontStatus(product.status, product.stock_status),
-    weight: product.shipping?.weight_kg,
-    weightUnit: "kg",
-    dimensions: product.shipping ? {
-      length: product.shipping.length_cm,
-      width: product.shipping.width_cm,
-      height: product.shipping.height_cm,
-      unit: "cm"
-    } : void 0,
-    images: mapImages(product),
-    technicalData: parseTechnicalData(product),
-    compatibility: mapCompatibility(product.vehicle_compatibility),
-    translations: mapTranslations(product),
-    supplierOffers: [mapSupplierOffer(product)],
-    pricing: mapPricing(product),
-    stock: mapStock(product),
-    availability: [],
-    seo: mapSeo(product),
-    createdAt: product.created_at,
-    updatedAt: product.updated_at,
-    _source: product
-  };
-}
+};
 
-// lib/product-engine/adapters/canonical.ts
-var import_module = require("module");
-
-// lib/product-engine/adapters/resolveRepoPath.ts
-var import_fs = __toESM(require("fs"));
-var import_path = __toESM(require("path"));
-var import_url = require("url");
-function resolveRepoFile(...segments) {
-  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
-  const roots = [
-    process.cwd(),
-    import_path.default.join(process.cwd(), ".."),
-    import_path.default.resolve(moduleDir, "../.."),
-    import_path.default.resolve(moduleDir, "../../..")
-  ];
-  for (const root of roots) {
-    const candidate = import_path.default.join(root, ...segments);
-    if (import_fs.default.existsSync(candidate)) return candidate;
-  }
-  return import_path.default.join(process.cwd(), ...segments);
+// lib/pricing-engine/registry.ts
+var config = pricing_engine_extensions_default;
+function getReturnReserveConfig(categoryId) {
+  const reserves = config.returnReserves;
+  const byCategory = reserves.byCategory;
+  const base = reserves.default;
+  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
+  return { ...base, ...categoryOverride };
 }
-
-// lib/product-engine/adapters/canonical.ts
-var require2 = (0, import_module.createRequire)(__import_meta_url__);
-var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
-var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
 
 // data/buzzard_categories.json
 var buzzard_categories_default = {
@@ -30892,6 +30836,239 @@ function indexProducts() {
 indexProducts();
 var PRODUCT_COUNT = activePublicProducts.length;
 
+// lib/tracking-fulfillment/adapter.ts
+init_tracking();
+
+// lib/supplier-engine/network/config.ts
+function envFlag(name, defaultValue = false) {
+  const raw = process.env[name];
+  if (raw === void 0 || raw === "") return defaultValue;
+  return raw === "1" || raw.toLowerCase() === "true";
+}
+function envInt(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+}
+var SUPPLIER_NETWORK_CONFIG = {
+  get networkEnabled() {
+    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
+  defaultEnvironment: "MOCK",
+  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
+  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
+  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
+  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
+};
+
+// lib/supplier-engine/observability.ts
+init_security();
+
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
+// lib/order-engine/registry.ts
+var orderRegistry = /* @__PURE__ */ new Map();
+function getOrder(orderId) {
+  return orderRegistry.get(orderId);
+}
+
+// lib/product-engine/status.ts
+function mapStorefrontStatus(status, stockStatus) {
+  if (stockStatus === "out_of_stock") return "OUT_OF_STOCK";
+  switch (status) {
+    case "draft":
+      return "DRAFT";
+    case "active":
+      return "ACTIVE";
+    case "paused":
+      return "PAUSED";
+    case "archived":
+      return "ARCHIVED";
+    default:
+      return "DRAFT";
+  }
+}
+
+// lib/product-engine/adapters/buzzardProduct.ts
+function parseTechnicalData(product) {
+  const attrs = product.attributes || {};
+  const technical = { ...attrs };
+  if (product.shipping?.weight_kg) technical.weight_kg = product.shipping.weight_kg;
+  if (attrs.viscosity) technical.viscosity = String(attrs.viscosity);
+  if (attrs.diameter) technical.diameter = Number(attrs.diameter);
+  return technical;
+}
+function mapCompatibility(entries) {
+  if (!entries?.length) return [];
+  return entries.map((v) => ({
+    make: v.brand,
+    model: v.model,
+    engine: v.engine,
+    yearFrom: v.year_from,
+    yearTo: v.year_to,
+    oemNumbers: v.part_reference ? [v.part_reference] : []
+  }));
+}
+function mapImages(product) {
+  return (product.images || []).map((url, i) => ({
+    url,
+    alt: product.name,
+    sortOrder: i,
+    type: i === 0 ? "MAIN" : "GALLERY"
+  }));
+}
+function mapTranslations(product) {
+  const base = {
+    locale: "de-DE",
+    name: product.name,
+    shortDescription: product.short_description,
+    description: product.description,
+    seoTitle: product.seo?.title,
+    seoDescription: product.seo?.description,
+    slug: product.seo?.slug
+  };
+  const entries = [base];
+  if (product.i18n) {
+    for (const [lang, t] of Object.entries(product.i18n)) {
+      entries.push({
+        locale: lang,
+        name: t.name || product.name,
+        shortDescription: t.short_description,
+        description: t.description,
+        seoTitle: t.seo_title,
+        seoDescription: t.seo_description
+      });
+    }
+  }
+  return entries;
+}
+function mapSeo(product) {
+  const entries = [
+    {
+      locale: "de-DE",
+      seoTitle: product.seo?.title,
+      seoDescription: product.seo?.description,
+      slug: product.seo?.slug || product.id
+    }
+  ];
+  if (product.i18n) {
+    for (const [lang, t] of Object.entries(product.i18n)) {
+      if (t.seo_title || t.seo_description) {
+        entries.push({
+          locale: lang,
+          seoTitle: t.seo_title,
+          seoDescription: t.seo_description,
+          slug: product.seo?.slug || product.id
+        });
+      }
+    }
+  }
+  return entries;
+}
+function mapSupplierOffer(product) {
+  return {
+    supplierId: product.supplier_id,
+    supplierSku: product.supplier_sku,
+    supplierEan: product.ean_gtin,
+    supplierPrice: product.supplier_price?.amount ?? 0,
+    currency: product.supplier_price?.currency ?? product.price?.currency ?? "EUR",
+    stock: product.stock,
+    lastUpdated: product.updated_at,
+    source: product.supplier_id,
+    sourceType: "MANUAL",
+    reliabilityScore: 0.8
+  };
+}
+function mapPricing(product) {
+  const supplierCost = product.supplier_price?.amount ?? 0;
+  const customerPrice = product.price?.amount ?? 0;
+  const margin = customerPrice > 0 ? (customerPrice - supplierCost) / customerPrice : 0;
+  return {
+    supplierCost,
+    shippingCost: 0,
+    marketplaceFee: 0,
+    paymentFee: 0,
+    vat: product.vat_rate / 100,
+    margin,
+    customerPrice,
+    currency: product.price?.currency ?? "EUR"
+  };
+}
+function mapStock(product) {
+  const availability = product.stock_status === "out_of_stock" ? "OUT_OF_STOCK" : product.stock_status === "low_stock" ? "LOW_STOCK" : product.stock_status === "preorder" ? "PREORDER" : "IN_STOCK";
+  return {
+    quantity: product.stock,
+    availability,
+    lastUpdated: product.updated_at
+  };
+}
+function fromBuzzardProduct(product) {
+  const subcategoryId = product.category_ids?.length > 1 ? product.category_ids[1] : void 0;
+  return {
+    productId: product.id,
+    sku: product.sku,
+    ean: product.ean_gtin,
+    gtin: product.ean_gtin,
+    brand: product.brand,
+    manufacturer: product.manufacturer,
+    categoryId: product.category_id,
+    subcategoryId,
+    productType: product.category_id.startsWith("cat-05") ? "automotive" : "general",
+    status: mapStorefrontStatus(product.status, product.stock_status),
+    weight: product.shipping?.weight_kg,
+    weightUnit: "kg",
+    dimensions: product.shipping ? {
+      length: product.shipping.length_cm,
+      width: product.shipping.width_cm,
+      height: product.shipping.height_cm,
+      unit: "cm"
+    } : void 0,
+    images: mapImages(product),
+    technicalData: parseTechnicalData(product),
+    compatibility: mapCompatibility(product.vehicle_compatibility),
+    translations: mapTranslations(product),
+    supplierOffers: [mapSupplierOffer(product)],
+    pricing: mapPricing(product),
+    stock: mapStock(product),
+    availability: [],
+    seo: mapSeo(product),
+    createdAt: product.created_at,
+    updatedAt: product.updated_at,
+    _source: product
+  };
+}
+
+// lib/product-engine/adapters/canonical.ts
+var import_module = require("module");
+
+// lib/product-engine/adapters/resolveRepoPath.ts
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+var import_url = require("url");
+function resolveRepoFile(...segments) {
+  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
+  const roots = [
+    process.cwd(),
+    import_path.default.join(process.cwd(), ".."),
+    import_path.default.resolve(moduleDir, "../.."),
+    import_path.default.resolve(moduleDir, "../../..")
+  ];
+  for (const root of roots) {
+    const candidate = import_path.default.join(root, ...segments);
+    if (import_fs.default.existsSync(candidate)) return candidate;
+  }
+  return import_path.default.join(process.cwd(), ...segments);
+}
+
+// lib/product-engine/adapters/canonical.ts
+var require2 = (0, import_module.createRequire)(__import_meta_url__);
+var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
+var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
+
 // lib/product-engine/registry.ts
 var products = /* @__PURE__ */ new Map();
 var skuIndex = /* @__PURE__ */ new Map();
@@ -30918,136 +31095,6 @@ function getTranslationForLocale(translations, locale) {
   const normalized = locale.toLowerCase();
   return translations.find((t) => t.locale.toLowerCase() === normalized) || translations.find((t) => t.locale.split("-")[0].toLowerCase() === normalized.split("-")[0]);
 }
-
-// lib/market-engine/money.ts
-function toMinorUnits(amount, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return Math.round((Number(amount) || 0) * factor);
-}
-function fromMinorUnits(minor, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return minor / factor;
-}
-function roundMoney(amount, decimalDigits = 2) {
-  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
-}
-
-// data/global/pricing_engine_extensions.json
-var pricing_engine_extensions_default = {
-  defaultSellerCountry: "DE",
-  defaultTargetMarginPercent: 0.11,
-  defaultMinimumMarginPercent: 0.05,
-  exchangeRates: {
-    EUR: 1,
-    USD: 0.92,
-    GBP: 1.17,
-    CZK: 0.041,
-    PLN: 0.23,
-    TRY: 0.027,
-    SAR: 0.24,
-    AED: 0.25,
-    EGP: 0.019,
-    HUF: 26e-4,
-    RON: 0.2,
-    BGN: 0.51,
-    CHF: 1.05,
-    SEK: 0.087,
-    DKK: 0.134,
-    NOK: 0.085
-  },
-  shippingCosts: {
-    defaultSupplierDirect: 10,
-    currency: "EUR",
-    byProductFixture: {
-      "reifen-pilot-sport": 10,
-      "motoroel-5w30": 7,
-      "bremsscheibe-280": 8,
-      "bremsbelaege-vorder": 6
-    },
-    byShippingRegion: {
-      EU_CENTRAL: 10,
-      EU_WEST: 12,
-      EU_NORTH: 14,
-      EU_SOUTH: 11,
-      EU_EAST: 9,
-      TR: 15,
-      GCC: 18,
-      MENA: 16
-    }
-  },
-  marketplaceFees: {
-    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
-    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
-    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
-    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
-    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
-    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
-  },
-  paymentFees: {
-    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
-    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
-    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
-    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
-    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
-  },
-  returnReserves: {
-    default: {
-      returnRate: 0.05,
-      refundRate: 0.03,
-      averageReturnShippingCost: 8,
-      averageRefundLoss: 5,
-      supplierReturnAcceptanceRate: 0.7,
-      damagedReturnRate: 0.01
-    },
-    byCategory: {
-      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
-      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
-      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
-    }
-  },
-  marginRules: {
-    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
-    byMarket: {},
-    byCategory: {},
-    byChannel: {},
-    byMarketplace: {},
-    bySupplier: {}
-  },
-  roundingRules: {
-    default: { mode: "psychological_99", step: 0.01 },
-    byMarket: {
-      DE: { mode: "psychological_99" },
-      FR: { mode: "psychological_99" },
-      PL: { mode: "nearest_49" }
-    },
-    byChannel: {
-      amazon: { mode: "psychological_99" },
-      direct: { mode: "psychological_99" }
-    }
-  },
-  priceBounds: {
-    default: { minimumPrice: 1, maximumPrice: 99999 }
-  },
-  competitivePricingExtension: {
-    enabled: false,
-    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
-  }
-};
-
-// lib/pricing-engine/registry.ts
-var config = pricing_engine_extensions_default;
-function getReturnReserveConfig(categoryId) {
-  const reserves = config.returnReserves;
-  const byCategory = reserves.byCategory;
-  const base = reserves.default;
-  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
-  return { ...base, ...categoryOverride };
-}
-
-// lib/pricing-engine/shipping.ts
-init_registry2();
 
 // lib/pricing-engine/returns.ts
 function calculateReturnReserves(supplierCostInMarketCurrency, categoryId) {
@@ -31093,42 +31140,11 @@ init_registry2();
 // lib/inventory-engine/test-fixtures.ts
 init_fixtures();
 
-// lib/supplier-engine/observability.ts
-init_security();
-
 // lib/supplier-engine/health.ts
 init_persistence();
 
 // lib/supplier-engine/connectors/base.ts
 init_capabilities();
-
-// lib/supplier-engine/network/config.ts
-function envFlag(name, defaultValue = false) {
-  const raw = process.env[name];
-  if (raw === void 0 || raw === "") return defaultValue;
-  return raw === "1" || raw.toLowerCase() === "true";
-}
-function envInt(name, fallback) {
-  const n = Number(process.env[name]);
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-}
-var SUPPLIER_NETWORK_CONFIG = {
-  get networkEnabled() {
-    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
-  },
-  get orderNetworkEnabled() {
-    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-  },
-  defaultEnvironment: "MOCK",
-  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
-  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
-  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
-  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
-};
-
-// lib/supplier-engine/network/scopedValidationNetwork.ts
-var import_async_hooks = require("async_hooks");
-var scopedContext = new import_async_hooks.AsyncLocalStorage();
 
 // lib/supplier-engine/connectors/api.ts
 init_fixtures();

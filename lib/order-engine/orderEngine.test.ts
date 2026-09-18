@@ -175,10 +175,86 @@ describe("Order Engine Foundation", () => {
   describe("Market Snapshot", () => {
     it("stores immutable market/channel snapshot", async () => {
       const result = await createOrder(
-        buildSingleItemOrderInput("reifen-pilot-sport", { marketId: "PL", channel: "allegro" })
+        buildSingleItemOrderInput("reifen-pilot-sport", {
+          marketId: "PL",
+          channel: "allegro",
+          shippingAddress: {
+            ...buildSingleItemOrderInput("reifen-pilot-sport").shippingAddress,
+            country: "PL",
+            city: "Warsaw",
+            postalCode: "00-001",
+          },
+        })
       );
       expect(result.order?.marketChannelSnapshot.marketId).toBe("PL");
       expect(result.order?.marketChannelSnapshot.channel).toBe("allegro");
+    });
+  });
+
+  describe("Trade Route Integration", () => {
+    it("EU → EU completes pipeline and reaches SUPPLIER_PENDING", async () => {
+      const result = await createOrder(
+        buildSingleItemOrderInput("reifen-pilot-sport", {
+          marketId: "FR",
+          shippingAddress: {
+            recipientName: "Jean Dupont",
+            street: "Rue de Rivoli",
+            houseNumber: "1",
+            postalCode: "75001",
+            city: "Paris",
+            country: "FR",
+          },
+        })
+      );
+      expect(result.ok).toBe(true);
+      expect(result.order?.tradeRouteFulfillment?.tradeRoute).toBe("EU_TO_EU");
+      expect(result.order?.tradeRouteFulfillment?.customsDecision).toBe("CUSTOMS_NOT_REQUIRED");
+      expect(result.order?.status).toBe("SUPPLIER_PENDING");
+    });
+
+    it("EU → NON-EU holds for customs review", async () => {
+      const result = await createOrder(
+        buildSingleItemOrderInput("reifen-pilot-sport", {
+          marketId: "TR",
+          shippingAddress: {
+            recipientName: "Ali Yilmaz",
+            street: "Istiklal Cd",
+            postalCode: "34000",
+            city: "Istanbul",
+            country: "TR",
+          },
+        })
+      );
+      expect(result.ok).toBe(false);
+      expect(result.errorCode).toBe("CUSTOMS_HOLD");
+      expect(result.order?.fulfillmentStatus).toBe("CUSTOMS_HOLD");
+      expect(result.order?.tradeRouteFulfillment?.tradeRoute).toBe("EU_TO_NON_EU");
+      expect(result.order?.supplierOrders).toHaveLength(0);
+    });
+
+    it("country mismatch blocks before supplier prep", async () => {
+      const result = await createOrder(
+        buildSingleItemOrderInput("reifen-pilot-sport", {
+          marketId: "DE",
+          shippingAddress: {
+            ...buildSingleItemOrderInput("reifen-pilot-sport").shippingAddress,
+            country: "FR",
+            city: "Paris",
+            postalCode: "75001",
+          },
+        })
+      );
+      expect(result.ok).toBe(false);
+      expect(result.errorCode).toBe("TRADE_ROUTE_COUNTRY_MISMATCH");
+      expect(result.order?.supplierOrders).toHaveLength(0);
+    });
+
+    it("records trade route audit events", async () => {
+      const result = await createOrder(buildSingleItemOrderInput("reifen-pilot-sport"));
+      const events = getOrderEvents(result.order!.orderId);
+      expect(events.some((e) => e.type === "TARGET_COUNTRY_RESOLVED")).toBe(true);
+      expect(events.some((e) => e.type === "TRADE_ROUTE_CLASSIFIED")).toBe(true);
+      expect(events.some((e) => e.type === "CARRIER_SELECTED")).toBe(true);
     });
   });
 

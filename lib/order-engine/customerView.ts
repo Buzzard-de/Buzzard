@@ -3,12 +3,15 @@ import { canCustomerAccessOrder } from "./security";
 import type { BuzzardOrder, CustomerOrderView } from "./types";
 
 export function toCustomerOrderView(order: BuzzardOrder): CustomerOrderView {
+  const pipeline = order.tradeRouteFulfillment;
+  const tracking = order.tracking;
   return {
     orderId: order.orderId,
     orderNumber: order.orderNumber,
     createdAt: order.createdAt,
     status: order.status,
     paymentStatus: order.paymentStatus,
+    fulfillmentStatus: order.fulfillmentStatus,
     currency: order.currency,
     totalGross: order.totalGross,
     items: order.items.map((i) => ({
@@ -23,6 +26,11 @@ export function toCustomerOrderView(order: BuzzardOrder): CustomerOrderView {
       country: order.shippingAddress.country,
       postalCode: order.shippingAddress.postalCode,
     },
+    shippingMethod: pipeline?.carrierServiceLevel,
+    carrier: pipeline?.carrierId ?? tracking?.carrier,
+    estimatedDelivery: pipeline?.estimatedDelivery ?? tracking?.estimatedDelivery,
+    trackingNumber: tracking?.status === "ATTACHED" ? tracking.trackingNumber : undefined,
+    trackingStatus: tracking?.trackingStatus ?? tracking?.status,
   };
 }
 

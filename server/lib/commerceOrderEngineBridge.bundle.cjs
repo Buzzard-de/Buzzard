@@ -48,7 +48,7 @@ var init_test_supplier_feeds = __esm({
         region: "EU",
         currency: "EUR",
         integrationTypes: ["api", "xml", "csv", "manual"],
-        supportedMarkets: ["DE", "FR", "PL"],
+        supportedMarkets: ["DE", "FR", "PL", "TR", "SA", "AE", "EG", "QA"],
         capabilities: {
           productFeed: true,
           stockFeed: true,
@@ -840,6 +840,16 @@ var init_persistence2 = __esm({
   }
 });
 
+// lib/supplier-engine/tracking.ts
+var init_tracking = __esm({
+  "lib/supplier-engine/tracking.ts"() {
+    "use strict";
+    init_registry2();
+    init_capabilities();
+    init_persistence2();
+  }
+});
+
 // lib/commerce/commerceServerEntry.ts
 var commerceServerEntry_exports = {};
 __export(commerceServerEntry_exports, {
@@ -1308,276 +1318,614 @@ function getMarketShippingRegion(countryCode) {
   return getMarket(countryCode)?.shippingRegion ?? "EU_CENTRAL";
 }
 
-// data/global/order_engine_extensions.json
-var order_engine_extensions_default = {
-  orderNumberPrefix: "BZ",
-  orderNumberYear: 2026,
-  defaultPaymentProvider: "mock",
-  defaultPaymentMethod: "card",
-  paymentAuthorizationMode: "dry_run",
-  reservationFailurePolicy: "RELEASE_ALL",
-  paymentFailurePolicy: "RELEASE_RESERVATIONS",
-  idempotencyTtlMs: 864e5,
-  customerVisibleStatuses: [
-    "PENDING_PAYMENT",
-    "PAID",
-    "CONFIRMED",
-    "PROCESSING",
-    "SUPPLIER_PENDING",
-    "SUPPLIER_CONFIRMED",
-    "SHIPPED",
-    "DELIVERED",
-    "CANCELLED",
-    "RETURN_REQUESTED",
-    "RETURNED",
-    "REFUNDED",
-    "PARTIALLY_REFUNDED",
-    "FAILED"
-  ]
+// lib/order-engine/createOrder.ts
+init_registry2();
+
+// lib/trade-route-fulfillment/targetCountry.ts
+var COUNTRY_CODE_RE = /^[A-Z]{2}$/;
+function normalizeCountryCode(raw) {
+  const code = String(raw ?? "").trim().toUpperCase();
+  if (!COUNTRY_CODE_RE.test(code)) return null;
+  return code;
+}
+function isKnownMarketCountry(countryCode) {
+  return Boolean(getMarket(countryCode));
+}
+function resolveTargetCountry(input) {
+  const marketId = normalizeCountryCode(input.marketId);
+  const shippingCountry = normalizeCountryCode(input.shippingAddressCountry);
+  const checkoutCountry = input.validatedCheckoutCountry ? normalizeCountryCode(input.validatedCheckoutCountry) : null;
+  if (!marketId || !isKnownMarketCountry(marketId)) {
+    return {
+      ok: false,
+      errorCode: "INVALID_COUNTRY",
+      errorMessage: "INVALID_MARKET",
+      marketId: input.marketId
+    };
+  }
+  const shippingProvided = Boolean(String(input.shippingAddressCountry ?? "").trim());
+  if (shippingProvided) {
+    if (!shippingCountry || !isKnownMarketCountry(shippingCountry)) {
+      return {
+        ok: false,
+        errorCode: "INVALID_COUNTRY",
+        errorMessage: "INVALID_SHIPPING_COUNTRY",
+        marketId,
+        shippingCountry: shippingCountry ?? void 0
+      };
+    }
+    if (shippingCountry !== marketId) {
+      return {
+        ok: false,
+        errorCode: "TRADE_ROUTE_COUNTRY_MISMATCH",
+        errorMessage: "TRADE_ROUTE_COUNTRY_MISMATCH",
+        marketId,
+        shippingCountry
+      };
+    }
+    return { ok: true, country: shippingCountry, source: "shipping_address", marketId, shippingCountry };
+  }
+  if (checkoutCountry && isKnownMarketCountry(checkoutCountry)) {
+    if (checkoutCountry !== marketId) {
+      return {
+        ok: false,
+        errorCode: "TRADE_ROUTE_COUNTRY_MISMATCH",
+        errorMessage: "TRADE_ROUTE_COUNTRY_MISMATCH",
+        marketId,
+        shippingCountry: checkoutCountry
+      };
+    }
+    return { ok: true, country: checkoutCountry, source: "checkout", marketId, shippingCountry: checkoutCountry };
+  }
+  if (isKnownMarketCountry(marketId)) {
+    return { ok: true, country: marketId, source: "market", marketId, shippingCountry: shippingCountry ?? void 0 };
+  }
+  return {
+    ok: false,
+    errorCode: "INVALID_COUNTRY",
+    errorMessage: "INVALID_DESTINATION_COUNTRY",
+    marketId,
+    shippingCountry: shippingCountry ?? void 0
+  };
+}
+
+// lib/trade-route-fulfillment/fulfillmentOrigin.ts
+function pickOrigin(supplier) {
+  const candidates = [
+    { value: supplier.shippingOrigin, source: "shippingOrigin" },
+    { value: supplier.warehouseCountry, source: "warehouseCountry" },
+    { value: supplier.fulfillmentCountry, source: "fulfillmentCountry" },
+    { value: supplier.supplierCountry, source: "supplierCountry" },
+    { value: supplier.country, source: "supplier.country" }
+  ];
+  for (const candidate of candidates) {
+    const normalized = normalizeCountryCode(candidate.value);
+    if (normalized && isKnownMarketCountry(normalized)) {
+      return { country: normalized, source: candidate.source };
+    }
+  }
+  return null;
+}
+function resolveFulfillmentOrigin(input) {
+  const picked = pickOrigin(input.supplier);
+  if (!picked) {
+    return {
+      ok: false,
+      errorCode: "ORIGIN_UNKNOWN",
+      errorMessage: "ORIGIN_UNKNOWN"
+    };
+  }
+  return {
+    ok: true,
+    originCountry: picked.country,
+    source: picked.source
+  };
+}
+
+// lib/trade-route-fulfillment/tradeRoute.ts
+function buildFlags(tradeRoute) {
+  const thirdCountry = tradeRoute === "EU_TO_NON_EU" || tradeRoute === "NON_EU_TO_EU" || tradeRoute === "NON_EU_TO_NON_EU";
+  return {
+    requiresExportProcess: thirdCountry,
+    requiresImportProcess: thirdCountry,
+    requiresCustomsPrecheck: thirdCountry,
+    requiresCustomsDocuments: thirdCountry,
+    requiresDutyAssessment: thirdCountry,
+    requiresVatAssessment: thirdCountry
+  };
+}
+function classifyTradeRoute(input) {
+  const origin = normalizeCountryCode(input.originCountry);
+  const destination = normalizeCountryCode(input.destinationCountry);
+  if (!origin || !destination || !isKnownMarketCountry(origin) || !isKnownMarketCountry(destination)) {
+    return {
+      tradeRoute: "UNKNOWN",
+      originCountry: origin ?? "UNKNOWN",
+      destinationCountry: destination ?? "UNKNOWN",
+      flags: {
+        requiresExportProcess: true,
+        requiresImportProcess: true,
+        requiresCustomsPrecheck: true,
+        requiresCustomsDocuments: true,
+        requiresDutyAssessment: true,
+        requiresVatAssessment: true
+      }
+    };
+  }
+  const originEu = isEuCountry(origin);
+  const destinationEu = isEuCountry(destination);
+  let tradeRoute;
+  if (origin === destination) {
+    tradeRoute = "SAME_COUNTRY";
+  } else if (originEu && destinationEu) {
+    tradeRoute = "EU_TO_EU";
+  } else if (originEu && !destinationEu) {
+    tradeRoute = "EU_TO_NON_EU";
+  } else if (!originEu && destinationEu) {
+    tradeRoute = "NON_EU_TO_EU";
+  } else {
+    tradeRoute = "NON_EU_TO_NON_EU";
+  }
+  return {
+    tradeRoute,
+    originCountry: origin,
+    destinationCountry: destination,
+    flags: buildFlags(tradeRoute)
+  };
+}
+
+// lib/market-engine/shipping.ts
+function getShippingRegion(countryCode) {
+  return getMarketShippingRegion(countryCode);
+}
+
+// lib/pricing-engine/shipping.ts
+init_registry2();
+
+// lib/market-engine/money.ts
+function toMinorUnits(amount, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return Math.round((Number(amount) || 0) * factor);
+}
+function fromMinorUnits(minor, decimalDigits = 2) {
+  const factor = 10 ** decimalDigits;
+  return minor / factor;
+}
+function roundMoney(amount, decimalDigits = 2) {
+  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
+}
+function netFromGross(gross, vatRate, decimalDigits = 2) {
+  const grossMinor = toMinorUnits(gross, decimalDigits);
+  const netMinor = Math.round(grossMinor / (1 + vatRate));
+  const vatMinor = grossMinor - netMinor;
+  return { net: fromMinorUnits(netMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
+}
+function grossFromNet(net, vatRate, decimalDigits = 2) {
+  const netMinor = toMinorUnits(net, decimalDigits);
+  const vatMinor = Math.round(netMinor * vatRate);
+  const grossMinor = netMinor + vatMinor;
+  return { gross: fromMinorUnits(grossMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
+}
+var CURRENCY_DECIMALS = {
+  HUF: 0,
+  ISK: 0,
+  KWD: 3,
+  BHD: 3,
+  OMR: 3
+};
+function getCurrencyDecimalDigits(currencyCode) {
+  return CURRENCY_DECIMALS[String(currencyCode).toUpperCase()] ?? 2;
+}
+
+// data/global/pricing_engine_extensions.json
+var pricing_engine_extensions_default = {
+  defaultSellerCountry: "DE",
+  defaultTargetMarginPercent: 0.11,
+  defaultMinimumMarginPercent: 0.05,
+  exchangeRates: {
+    EUR: 1,
+    USD: 0.92,
+    GBP: 1.17,
+    CZK: 0.041,
+    PLN: 0.23,
+    TRY: 0.027,
+    SAR: 0.24,
+    AED: 0.25,
+    EGP: 0.019,
+    HUF: 26e-4,
+    RON: 0.2,
+    BGN: 0.51,
+    CHF: 1.05,
+    SEK: 0.087,
+    DKK: 0.134,
+    NOK: 0.085
+  },
+  shippingCosts: {
+    defaultSupplierDirect: 10,
+    currency: "EUR",
+    byProductFixture: {
+      "reifen-pilot-sport": 10,
+      "motoroel-5w30": 7,
+      "bremsscheibe-280": 8,
+      "bremsbelaege-vorder": 6
+    },
+    byShippingRegion: {
+      EU_CENTRAL: 10,
+      EU_WEST: 12,
+      EU_NORTH: 14,
+      EU_SOUTH: 11,
+      EU_EAST: 9,
+      TR: 15,
+      GCC: 18,
+      MENA: 16
+    }
+  },
+  marketplaceFees: {
+    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
+    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
+    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
+    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
+    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
+    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
+    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
+  },
+  paymentFees: {
+    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
+    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
+    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
+    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
+    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
+  },
+  returnReserves: {
+    default: {
+      returnRate: 0.05,
+      refundRate: 0.03,
+      averageReturnShippingCost: 8,
+      averageRefundLoss: 5,
+      supplierReturnAcceptanceRate: 0.7,
+      damagedReturnRate: 0.01
+    },
+    byCategory: {
+      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
+      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
+      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
+    }
+  },
+  marginRules: {
+    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
+    byMarket: {},
+    byCategory: {},
+    byChannel: {},
+    byMarketplace: {},
+    bySupplier: {}
+  },
+  roundingRules: {
+    default: { mode: "psychological_99", step: 0.01 },
+    byMarket: {
+      DE: { mode: "psychological_99" },
+      FR: { mode: "psychological_99" },
+      PL: { mode: "nearest_49" }
+    },
+    byChannel: {
+      amazon: { mode: "psychological_99" },
+      direct: { mode: "psychological_99" }
+    }
+  },
+  priceBounds: {
+    default: { minimumPrice: 1, maximumPrice: 99999 }
+  },
+  competitivePricingExtension: {
+    enabled: false,
+    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
+  }
 };
 
-// lib/order-engine/registry.ts
-var config = order_engine_extensions_default;
-var orderRegistry = /* @__PURE__ */ new Map();
-var orderByNumber = /* @__PURE__ */ new Map();
-var ordersByCustomer = /* @__PURE__ */ new Map();
-var idempotencyRegistry = /* @__PURE__ */ new Map();
-var priceSnapshotRegistry = /* @__PURE__ */ new Map();
-var orderCounter = 0;
-function generateOrderId() {
-  return `ord_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+// lib/pricing-engine/registry.ts
+var config = pricing_engine_extensions_default;
+function getDefaultSellerCountry() {
+  return config.defaultSellerCountry;
 }
-function generateOrderNumber() {
-  orderCounter += 1;
-  const year = config.orderNumberYear;
-  const seq = String(orderCounter).padStart(6, "0");
-  return `${config.orderNumberPrefix}-${year}-${seq}`;
+function getExchangeRate(fromCurrency, toCurrency) {
+  const from = String(fromCurrency).toUpperCase();
+  const to = String(toCurrency).toUpperCase();
+  if (from === to) return 1;
+  const rates = config.exchangeRates;
+  const fromRate = rates[from];
+  const toRate = rates[to];
+  if (fromRate == null || toRate == null) return null;
+  return fromRate / toRate;
 }
-function saveOrder(order) {
-  orderRegistry.set(order.orderId, order);
-  orderByNumber.set(order.orderNumber, order.orderId);
-  if (!ordersByCustomer.has(order.customerId)) {
-    ordersByCustomer.set(order.customerId, /* @__PURE__ */ new Set());
+function getMarketplaceFeeSchedule(marketplaceId) {
+  const fees = config.marketplaceFees;
+  return fees[marketplaceId] ?? fees.direct;
+}
+function getPaymentFeeSchedule(method = "default") {
+  const fees = config.paymentFees;
+  return fees[method] ?? fees.default;
+}
+function getReturnReserveConfig(categoryId) {
+  const reserves = config.returnReserves;
+  const byCategory = reserves.byCategory;
+  const base = reserves.default;
+  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
+  return { ...base, ...categoryOverride };
+}
+function getMarginRule(options) {
+  const rules = config.marginRules;
+  const defaults = rules.default;
+  const byMarket = rules.byMarket;
+  const byCategory = rules.byCategory;
+  const byChannel = rules.byChannel;
+  const byMarketplace = rules.byMarketplace;
+  const bySupplier = rules.bySupplier;
+  const targetMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.targetMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.targetMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.targetMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.targetMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.targetMarginPercent : void 0) ?? defaults.targetMarginPercent ?? config.defaultTargetMarginPercent;
+  const minimumMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.minimumMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.minimumMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.minimumMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.minimumMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.minimumMarginPercent : void 0) ?? defaults.minimumMarginPercent ?? config.defaultMinimumMarginPercent;
+  return { targetMarginPercent, minimumMarginPercent };
+}
+function getRoundingRule(marketId, channel) {
+  const rules = config.roundingRules;
+  const defaults = rules.default;
+  const byMarket = rules.byMarket;
+  const byChannel = rules.byChannel;
+  if (channel && byChannel[channel]) return { ...defaults, ...byChannel[channel] };
+  if (marketId && byMarket[marketId]) return { ...defaults, ...byMarket[marketId] };
+  return defaults;
+}
+function getPriceBounds() {
+  return config.priceBounds.default;
+}
+function getFixtureShippingCost(productId) {
+  const byProduct = config.shippingCosts.byProductFixture;
+  return byProduct[productId];
+}
+function getShippingCostByRegion(region) {
+  const byRegion = config.shippingCosts.byShippingRegion;
+  return byRegion[region];
+}
+function getDefaultShippingCost() {
+  return config.shippingCosts.defaultSupplierDirect;
+}
+function getDefaultShippingCurrency() {
+  return config.shippingCosts.currency;
+}
+
+// lib/pricing-engine/currency.ts
+function convertCurrency(amount, fromCurrency, toCurrency) {
+  const from = String(fromCurrency).toUpperCase();
+  const to = String(toCurrency).toUpperCase();
+  if (from === to) return roundMoney(amount, getCurrencyDecimalDigits(to));
+  const rate = getExchangeRate(from, to);
+  if (rate == null) return null;
+  const decimalDigits = getCurrencyDecimalDigits(to);
+  const minor = toMinorUnits(amount, getCurrencyDecimalDigits(from));
+  const convertedMinor = Math.round(minor * rate);
+  return fromMinorUnits(convertedMinor, decimalDigits);
+}
+
+// lib/pricing-engine/shipping.ts
+function resolveShippingCost(options) {
+  const shippingCurrency = getDefaultShippingCurrency();
+  const region = getShippingRegion(options.marketId);
+  if (options.override != null) {
+    const converted2 = convertCurrency(options.override, shippingCurrency, options.targetCurrency) ?? options.override;
+    return {
+      shippingCost: roundMoney(converted2),
+      shippingCurrency: options.targetCurrency,
+      region,
+      source: "fixture"
+    };
   }
-  ordersByCustomer.get(order.customerId).add(order.orderId);
-  if (order.idempotencyKey) {
-    idempotencyRegistry.set(order.idempotencyKey, {
-      orderId: order.orderId,
-      createdAt: order.createdAt
+  const fixtureCost = getFixtureShippingCost(options.productId);
+  if (fixtureCost != null) {
+    const converted2 = convertCurrency(fixtureCost, shippingCurrency, options.targetCurrency) ?? fixtureCost;
+    return {
+      shippingCost: roundMoney(converted2),
+      shippingCurrency: options.targetCurrency,
+      region,
+      source: "fixture"
+    };
+  }
+  const supplier = getSupplier(options.supplierId);
+  const supplierRegion = supplier?.region;
+  let regionCost = getDefaultShippingCost();
+  if (supplierRegion) {
+    const supplierRegionCost = getShippingCostByRegion(supplierRegion);
+    if (supplierRegionCost != null) regionCost = supplierRegionCost;
+  } else {
+    const marketRegionCost = getShippingCostByRegion(region);
+    if (marketRegionCost != null) regionCost = marketRegionCost;
+  }
+  const converted = convertCurrency(regionCost, shippingCurrency, options.targetCurrency) ?? regionCost;
+  return {
+    shippingCost: roundMoney(converted),
+    shippingCurrency: options.targetCurrency,
+    region,
+    source: regionCost === getDefaultShippingCost() ? "default" : "region"
+  };
+}
+
+// lib/trade-route-fulfillment/shippingQuote.ts
+var DEFAULT_WEIGHT_KG = 2.5;
+function quoteShipping(input) {
+  if (!input.destinationCountry || input.destinationCountry.length !== 2) {
+    return { ok: false, errorCode: "INVALID_DESTINATION", errorMessage: "INVALID_DESTINATION" };
+  }
+  const resolved = resolveShippingCost({
+    productId: input.productId,
+    marketId: input.destinationCountry,
+    supplierId: input.supplierId,
+    targetCurrency: input.targetCurrency
+  });
+  return {
+    ok: true,
+    shippingCost: resolved.shippingCost,
+    shippingCurrency: resolved.shippingCurrency,
+    region: resolved.region,
+    source: resolved.source
+  };
+}
+function estimateParcelWeightKg(itemCount, override) {
+  if (override != null && override > 0) return override;
+  return Math.max(0.5, itemCount * DEFAULT_WEIGHT_KG);
+}
+
+// lib/carrier-production/adapter.ts
+function validateParcel(input) {
+  const errors = [];
+  if (input.weightKg <= 0) errors.push("INVALID_WEIGHT");
+  if (input.dimensionsCm.length <= 0 || input.dimensionsCm.width <= 0 || input.dimensionsCm.height <= 0) {
+    errors.push("INVALID_DIMENSIONS");
+  }
+  if (!input.country || input.country.length !== 2) errors.push("INVALID_COUNTRY");
+  return { ok: errors.length === 0, errors };
+}
+
+// lib/trade-route-fulfillment/carrierSelection.ts
+var CARRIER_PROFILES = [
+  {
+    carrierId: "DHL",
+    adapterId: "dhl",
+    serviceLevel: "standard",
+    maxWeightKg: 31.5,
+    maxLengthCm: 120,
+    internationalSupport: true,
+    customsSupport: true,
+    trackingSupport: true,
+    returnsSupport: true,
+    dangerousGoods: false,
+    oversized: false,
+    supportedOrigins: "*",
+    supportedDestinations: "*",
+    deliveryDaysMin: 2,
+    deliveryDaysMax: 5,
+    baseCost: 6.99
+  },
+  {
+    carrierId: "DPD",
+    adapterId: "dpd",
+    serviceLevel: "standard",
+    maxWeightKg: 31.5,
+    maxLengthCm: 175,
+    internationalSupport: true,
+    customsSupport: true,
+    trackingSupport: true,
+    returnsSupport: true,
+    dangerousGoods: false,
+    oversized: false,
+    supportedOrigins: "*",
+    supportedDestinations: "*",
+    deliveryDaysMin: 2,
+    deliveryDaysMax: 6,
+    baseCost: 5.99
+  },
+  {
+    carrierId: "GLS",
+    adapterId: "gls",
+    serviceLevel: "standard",
+    maxWeightKg: 40,
+    maxLengthCm: 200,
+    internationalSupport: true,
+    customsSupport: false,
+    trackingSupport: true,
+    returnsSupport: true,
+    dangerousGoods: false,
+    oversized: false,
+    supportedOrigins: "*",
+    supportedDestinations: "*",
+    deliveryDaysMin: 2,
+    deliveryDaysMax: 7,
+    baseCost: 5.49
+  },
+  {
+    carrierId: "UPS",
+    adapterId: "dhl",
+    serviceLevel: "express",
+    maxWeightKg: 70,
+    maxLengthCm: 274,
+    internationalSupport: true,
+    customsSupport: true,
+    trackingSupport: true,
+    returnsSupport: false,
+    dangerousGoods: false,
+    oversized: true,
+    supportedOrigins: "*",
+    supportedDestinations: "*",
+    deliveryDaysMin: 1,
+    deliveryDaysMax: 3,
+    baseCost: 14.99
+  },
+  {
+    carrierId: "DHL_EXPRESS",
+    adapterId: "dhl",
+    serviceLevel: "express",
+    maxWeightKg: 70,
+    maxLengthCm: 120,
+    internationalSupport: true,
+    customsSupport: true,
+    trackingSupport: true,
+    returnsSupport: false,
+    dangerousGoods: false,
+    oversized: false,
+    supportedOrigins: "*",
+    supportedDestinations: "*",
+    deliveryDaysMin: 1,
+    deliveryDaysMax: 2,
+    baseCost: 19.99
+  }
+];
+function supportsRoute(profile, origin, destination) {
+  const originOk = profile.supportedOrigins === "*" || profile.supportedOrigins.includes(origin);
+  const destOk = profile.supportedDestinations === "*" || profile.supportedDestinations.includes(destination);
+  return originOk && destOk;
+}
+function requiresCustomsRoute(tradeRoute) {
+  return tradeRoute === "EU_TO_NON_EU" || tradeRoute === "NON_EU_TO_EU" || tradeRoute === "NON_EU_TO_NON_EU";
+}
+function selectCarrier(input) {
+  const evaluated = [];
+  const needsCustoms = requiresCustomsRoute(input.tradeRoute);
+  const preferredLevel = input.serviceLevel ?? "standard";
+  const candidates = CARRIER_PROFILES.filter((p) => {
+    evaluated.push(p.carrierId);
+    if (preferredLevel === "express" && p.serviceLevel !== "express") return false;
+    if (preferredLevel === "standard" && p.serviceLevel === "express") return false;
+    if (!supportsRoute(p, input.originCountry, input.destinationCountry)) return false;
+    if (needsCustoms && !p.customsSupport) return false;
+    if (input.weightKg > p.maxWeightKg) return false;
+    if (input.dimensionsCm.length > p.maxLengthCm) return false;
+    return true;
+  });
+  for (const profile of candidates) {
+    const validation = validateParcel({
+      shipmentId: input.shipmentId,
+      carrierId: profile.adapterId,
+      country: input.destinationCountry,
+      weightKg: input.weightKg,
+      dimensionsCm: input.dimensionsCm,
+      addressRef: "order-shipping-address",
+      idempotencyKey: input.idempotencyKey
     });
+    if (!validation.ok) continue;
+    const deliveryDays = profile.deliveryDaysMax;
+    const estimatedDelivery = new Date(Date.now() + deliveryDays * 864e5).toISOString();
+    return {
+      ok: true,
+      carrierId: profile.carrierId,
+      serviceLevel: profile.serviceLevel,
+      shippingCost: input.shippingCost ?? profile.baseCost,
+      estimatedDelivery,
+      trackingSupported: profile.trackingSupport,
+      evaluatedCarriers: evaluated
+    };
   }
-  return order;
-}
-function getOrder(orderId) {
-  return orderRegistry.get(orderId);
-}
-function getIdempotentOrder(idempotencyKey) {
-  const entry = idempotencyRegistry.get(idempotencyKey);
-  return entry ? orderRegistry.get(entry.orderId) : void 0;
-}
-function savePriceSnapshot(snapshot) {
-  priceSnapshotRegistry.set(snapshot.snapshotId, snapshot);
-  return snapshot;
-}
-function getDefaultPaymentProvider() {
-  return config.defaultPaymentProvider;
-}
-function getDefaultPaymentMethod() {
-  return config.defaultPaymentMethod;
-}
-
-// lib/product-engine/status.ts
-function mapStorefrontStatus(status, stockStatus) {
-  if (stockStatus === "out_of_stock") return "OUT_OF_STOCK";
-  switch (status) {
-    case "draft":
-      return "DRAFT";
-    case "active":
-      return "ACTIVE";
-    case "paused":
-      return "PAUSED";
-    case "archived":
-      return "ARCHIVED";
-    default:
-      return "DRAFT";
-  }
-}
-
-// lib/product-engine/adapters/buzzardProduct.ts
-function parseTechnicalData(product) {
-  const attrs = product.attributes || {};
-  const technical = { ...attrs };
-  if (product.shipping?.weight_kg) technical.weight_kg = product.shipping.weight_kg;
-  if (attrs.viscosity) technical.viscosity = String(attrs.viscosity);
-  if (attrs.diameter) technical.diameter = Number(attrs.diameter);
-  return technical;
-}
-function mapCompatibility(entries) {
-  if (!entries?.length) return [];
-  return entries.map((v) => ({
-    make: v.brand,
-    model: v.model,
-    engine: v.engine,
-    yearFrom: v.year_from,
-    yearTo: v.year_to,
-    oemNumbers: v.part_reference ? [v.part_reference] : []
-  }));
-}
-function mapImages(product) {
-  return (product.images || []).map((url, i) => ({
-    url,
-    alt: product.name,
-    sortOrder: i,
-    type: i === 0 ? "MAIN" : "GALLERY"
-  }));
-}
-function mapTranslations(product) {
-  const base = {
-    locale: "de-DE",
-    name: product.name,
-    shortDescription: product.short_description,
-    description: product.description,
-    seoTitle: product.seo?.title,
-    seoDescription: product.seo?.description,
-    slug: product.seo?.slug
-  };
-  const entries = [base];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      entries.push({
-        locale: lang,
-        name: t.name || product.name,
-        shortDescription: t.short_description,
-        description: t.description,
-        seoTitle: t.seo_title,
-        seoDescription: t.seo_description
-      });
-    }
-  }
-  return entries;
-}
-function mapSeo(product) {
-  const entries = [
-    {
-      locale: "de-DE",
-      seoTitle: product.seo?.title,
-      seoDescription: product.seo?.description,
-      slug: product.seo?.slug || product.id
-    }
-  ];
-  if (product.i18n) {
-    for (const [lang, t] of Object.entries(product.i18n)) {
-      if (t.seo_title || t.seo_description) {
-        entries.push({
-          locale: lang,
-          seoTitle: t.seo_title,
-          seoDescription: t.seo_description,
-          slug: product.seo?.slug || product.id
-        });
-      }
-    }
-  }
-  return entries;
-}
-function mapSupplierOffer(product) {
   return {
-    supplierId: product.supplier_id,
-    supplierSku: product.supplier_sku,
-    supplierEan: product.ean_gtin,
-    supplierPrice: product.supplier_price?.amount ?? 0,
-    currency: product.supplier_price?.currency ?? product.price?.currency ?? "EUR",
-    stock: product.stock,
-    lastUpdated: product.updated_at,
-    source: product.supplier_id,
-    sourceType: "MANUAL",
-    reliabilityScore: 0.8
+    ok: false,
+    errorCode: "NO_CARRIER",
+    errorMessage: "SHIPPING_HOLD",
+    evaluatedCarriers: evaluated
   };
 }
-function mapPricing(product) {
-  const supplierCost = product.supplier_price?.amount ?? 0;
-  const customerPrice = product.price?.amount ?? 0;
-  const margin = customerPrice > 0 ? (customerPrice - supplierCost) / customerPrice : 0;
-  return {
-    supplierCost,
-    shippingCost: 0,
-    marketplaceFee: 0,
-    paymentFee: 0,
-    vat: product.vat_rate / 100,
-    margin,
-    customerPrice,
-    currency: product.price?.currency ?? "EUR"
-  };
-}
-function mapStock(product) {
-  const availability = product.stock_status === "out_of_stock" ? "OUT_OF_STOCK" : product.stock_status === "low_stock" ? "LOW_STOCK" : product.stock_status === "preorder" ? "PREORDER" : "IN_STOCK";
-  return {
-    quantity: product.stock,
-    availability,
-    lastUpdated: product.updated_at
-  };
-}
-function fromBuzzardProduct(product) {
-  const subcategoryId = product.category_ids?.length > 1 ? product.category_ids[1] : void 0;
-  return {
-    productId: product.id,
-    sku: product.sku,
-    ean: product.ean_gtin,
-    gtin: product.ean_gtin,
-    brand: product.brand,
-    manufacturer: product.manufacturer,
-    categoryId: product.category_id,
-    subcategoryId,
-    productType: product.category_id.startsWith("cat-05") ? "automotive" : "general",
-    status: mapStorefrontStatus(product.status, product.stock_status),
-    weight: product.shipping?.weight_kg,
-    weightUnit: "kg",
-    dimensions: product.shipping ? {
-      length: product.shipping.length_cm,
-      width: product.shipping.width_cm,
-      height: product.shipping.height_cm,
-      unit: "cm"
-    } : void 0,
-    images: mapImages(product),
-    technicalData: parseTechnicalData(product),
-    compatibility: mapCompatibility(product.vehicle_compatibility),
-    translations: mapTranslations(product),
-    supplierOffers: [mapSupplierOffer(product)],
-    pricing: mapPricing(product),
-    stock: mapStock(product),
-    availability: [],
-    seo: mapSeo(product),
-    createdAt: product.created_at,
-    updatedAt: product.updated_at,
-    _source: product
-  };
-}
-
-// lib/product-engine/adapters/canonical.ts
-var import_module = require("module");
-
-// lib/product-engine/adapters/resolveRepoPath.ts
-var import_fs = __toESM(require("fs"));
-var import_path = __toESM(require("path"));
-var import_url = require("url");
-function resolveRepoFile(...segments) {
-  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
-  const roots = [
-    process.cwd(),
-    import_path.default.join(process.cwd(), ".."),
-    import_path.default.resolve(moduleDir, "../.."),
-    import_path.default.resolve(moduleDir, "../../..")
-  ];
-  for (const root of roots) {
-    const candidate = import_path.default.join(root, ...segments);
-    if (import_fs.default.existsSync(candidate)) return candidate;
-  }
-  return import_path.default.join(process.cwd(), ...segments);
-}
-
-// lib/product-engine/adapters/canonical.ts
-var require2 = (0, import_module.createRequire)(__import_meta_url__);
-var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
-var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
 
 // data/buzzard_categories.json
 var buzzard_categories_default = {
@@ -26669,7 +27017,699 @@ function indexProducts() {
   }
 }
 indexProducts();
+function getRawProductById(id) {
+  return byId2.get(id);
+}
 var PRODUCT_COUNT = activePublicProducts.length;
+
+// lib/customs-fulfillment-gate/productCustoms.ts
+function loadProductCustomsSnapshot(productId, lineGross, productName) {
+  const raw = getRawProductById(productId);
+  const customs = raw?.customs;
+  return {
+    productId,
+    hsCode: customs?.gtip || customs?.taric?.slice(0, 4),
+    originCountry: customs?.origin_country,
+    customsValue: lineGross,
+    commodityDescription: raw?.name ?? productName,
+    restrictedGoods: customs?.import_restricted === true,
+    documentationRequired: Boolean(customs?.review_required),
+    reviewRequired: customs?.review_required === true,
+    source: customs?.source
+  };
+}
+
+// lib/customs-fulfillment-gate/precheck.ts
+var completedCache = /* @__PURE__ */ new Map();
+function cacheKey(orderId, idempotencyKey) {
+  return `${orderId}:${idempotencyKey}:customs-precheck`;
+}
+function assessLine(input) {
+  const snapshot = loadProductCustomsSnapshot(input.productId, input.lineGross, input.productName);
+  const missingFields = [];
+  if (!snapshot.hsCode) missingFields.push("hsCode");
+  if (!snapshot.originCountry) missingFields.push("originCountry");
+  if (snapshot.customsValue == null || snapshot.customsValue <= 0) missingFields.push("customsValue");
+  if (!snapshot.commodityDescription) missingFields.push("commodityDescription");
+  return {
+    productId: input.productId,
+    hsCode: snapshot.hsCode,
+    originCountry: snapshot.originCountry,
+    customsValue: snapshot.customsValue,
+    commodityDescription: snapshot.commodityDescription,
+    restrictedGoods: snapshot.restrictedGoods,
+    documentationRequired: snapshot.documentationRequired,
+    missingFields
+  };
+}
+function decideFromLines(tradeRoute, lines) {
+  if (tradeRoute.tradeRoute === "SAME_COUNTRY" || tradeRoute.tradeRoute === "EU_TO_EU") {
+    return {
+      ok: true,
+      decision: "CUSTOMS_NOT_REQUIRED",
+      missingFields: [],
+      lineAssessments: lines,
+      exportRequired: false,
+      importRequired: false,
+      hold: false
+    };
+  }
+  if (tradeRoute.tradeRoute === "UNKNOWN") {
+    return {
+      ok: false,
+      decision: "CUSTOMS_BLOCKED",
+      reason: "TRADE_ROUTE_UNKNOWN",
+      missingFields: ["tradeRoute"],
+      lineAssessments: lines,
+      exportRequired: true,
+      importRequired: true,
+      hold: true
+    };
+  }
+  const blocked = lines.some((l) => l.restrictedGoods);
+  if (blocked) {
+    return {
+      ok: false,
+      decision: "CUSTOMS_BLOCKED",
+      reason: "RESTRICTED_GOODS",
+      missingFields: [],
+      lineAssessments: lines,
+      exportRequired: tradeRoute.flags.requiresExportProcess,
+      importRequired: tradeRoute.flags.requiresImportProcess,
+      hold: true
+    };
+  }
+  const allMissing = [...new Set(lines.flatMap((l) => l.missingFields))];
+  if (allMissing.length === 0) {
+    const dutyEstimate = lines.reduce((sum, l) => sum + (l.customsValue ?? 0) * 0.05, 0);
+    const taxEstimate = lines.reduce((sum, l) => sum + (l.customsValue ?? 0) * 0.19, 0);
+    return {
+      ok: true,
+      decision: "CUSTOMS_READY",
+      missingFields: [],
+      lineAssessments: lines,
+      dutyEstimate: Math.round(dutyEstimate * 100) / 100,
+      taxEstimate: Math.round(taxEstimate * 100) / 100,
+      exportRequired: tradeRoute.flags.requiresExportProcess,
+      importRequired: tradeRoute.flags.requiresImportProcess,
+      hold: false
+    };
+  }
+  return {
+    ok: false,
+    decision: "CUSTOMS_REVIEW_REQUIRED",
+    reason: "MISSING_CUSTOMS_DATA",
+    missingFields: allMissing,
+    lineAssessments: lines,
+    exportRequired: tradeRoute.flags.requiresExportProcess,
+    importRequired: tradeRoute.flags.requiresImportProcess,
+    hold: true
+  };
+}
+function runCustomsPrecheck(input) {
+  const key = cacheKey(input.orderId, input.idempotencyKey);
+  const cached = completedCache.get(key);
+  if (cached) return cached;
+  const lines = input.items.map((item) => assessLine(item));
+  const result = decideFromLines(input.tradeRoute, lines);
+  completedCache.set(key, result);
+  return result;
+}
+
+// lib/trade-route-fulfillment/idempotency.ts
+var pipelineCache = /* @__PURE__ */ new Map();
+function pipelineCacheKey(orderId, idempotencyKey) {
+  return `${orderId}:${idempotencyKey}:trade-route-pipeline`;
+}
+function getCachedPipelineSnapshot(orderId, idempotencyKey) {
+  return pipelineCache.get(pipelineCacheKey(orderId, idempotencyKey));
+}
+function cachePipelineSnapshot(orderId, idempotencyKey, snapshot) {
+  pipelineCache.set(pipelineCacheKey(orderId, idempotencyKey), snapshot);
+}
+
+// lib/trade-route-fulfillment/orchestrator.ts
+var PIPELINE_VERSION = "1.0.0";
+var DEFAULT_DIMENSIONS = { length: 40, width: 30, height: 20 };
+function buildSnapshot(partial) {
+  return { pipelineVersion: PIPELINE_VERSION, ...partial };
+}
+function runTradeRouteFulfillmentPipeline(input) {
+  const events = [];
+  const idempotencyKeys = {
+    pipeline: input.idempotencyKey,
+    customs: `${input.idempotencyKey}:customs`,
+    shipping: `${input.idempotencyKey}:shipping`,
+    carrier: `${input.idempotencyKey}:carrier`
+  };
+  const cached = getCachedPipelineSnapshot(input.orderId, input.idempotencyKey);
+  if (cached) {
+    return { ok: !cached.holdReason, snapshot: cached, events };
+  }
+  const target = resolveTargetCountry({
+    shippingAddressCountry: input.shippingAddress.country,
+    marketId: input.marketId,
+    validatedCheckoutCountry: input.validatedCheckoutCountry
+  });
+  events.push({
+    type: target.ok ? "TARGET_COUNTRY_RESOLVED" : "COUNTRY_MISMATCH",
+    metadata: {
+      country: target.country,
+      source: target.source,
+      marketId: target.marketId,
+      shippingCountry: target.shippingCountry
+    }
+  });
+  if (!target.ok || !target.country || !target.source) {
+    const snapshot2 = buildSnapshot({
+      targetCountry: target.shippingCountry ?? input.shippingAddress.country,
+      targetCountrySource: "market",
+      originCountry: "ORIGIN_UNKNOWN",
+      tradeRoute: "UNKNOWN",
+      tradeRouteFlags: classifyTradeRoute({
+        originCountry: "UNKNOWN",
+        destinationCountry: target.shippingCountry ?? "UNKNOWN"
+      }).flags,
+      holdReason: target.errorCode === "TRADE_ROUTE_COUNTRY_MISMATCH" ? "TRADE_ROUTE_COUNTRY_MISMATCH" : void 0,
+      holdMessage: target.errorMessage,
+      idempotencyKeys
+    });
+    cachePipelineSnapshot(input.orderId, input.idempotencyKey, snapshot2);
+    return {
+      ok: false,
+      snapshot: snapshot2,
+      errorCode: target.errorCode === "TRADE_ROUTE_COUNTRY_MISMATCH" ? "TRADE_ROUTE_COUNTRY_MISMATCH" : "INVALID_COUNTRY",
+      errorMessage: target.errorMessage,
+      events
+    };
+  }
+  const origin = resolveFulfillmentOrigin({ supplier: input.supplier });
+  events.push({
+    type: origin.ok ? "FULFILLMENT_ORIGIN_RESOLVED" : "ORIGIN_UNKNOWN",
+    metadata: { originCountry: origin.originCountry, source: origin.source }
+  });
+  if (!origin.ok || !origin.originCountry) {
+    const snapshot2 = buildSnapshot({
+      targetCountry: target.country,
+      targetCountrySource: target.source,
+      originCountry: "ORIGIN_UNKNOWN",
+      tradeRoute: "UNKNOWN",
+      tradeRouteFlags: classifyTradeRoute({
+        originCountry: "UNKNOWN",
+        destinationCountry: target.country
+      }).flags,
+      holdReason: "ORIGIN_UNKNOWN",
+      holdMessage: origin.errorMessage,
+      idempotencyKeys
+    });
+    cachePipelineSnapshot(input.orderId, input.idempotencyKey, snapshot2);
+    return { ok: false, snapshot: snapshot2, errorCode: "ORIGIN_UNKNOWN", errorMessage: origin.errorMessage, events };
+  }
+  const route = classifyTradeRoute({
+    originCountry: origin.originCountry,
+    destinationCountry: target.country
+  });
+  events.push({
+    type: "TRADE_ROUTE_CLASSIFIED",
+    metadata: {
+      tradeRoute: route.tradeRoute,
+      originCountry: route.originCountry,
+      destinationCountry: route.destinationCountry
+    }
+  });
+  if (route.tradeRoute === "UNKNOWN") {
+    const snapshot2 = buildSnapshot({
+      targetCountry: target.country,
+      targetCountrySource: target.source,
+      originCountry: origin.originCountry,
+      originSource: origin.source,
+      tradeRoute: route.tradeRoute,
+      tradeRouteFlags: route.flags,
+      holdReason: "TRADE_ROUTE_UNKNOWN",
+      holdMessage: "TRADE_ROUTE_UNKNOWN",
+      idempotencyKeys
+    });
+    cachePipelineSnapshot(input.orderId, input.idempotencyKey, snapshot2);
+    return { ok: false, snapshot: snapshot2, errorCode: "TRADE_ROUTE_UNKNOWN", errorMessage: "TRADE_ROUTE_UNKNOWN", events };
+  }
+  events.push({ type: "CUSTOMS_PRECHECK_STARTED", metadata: { tradeRoute: route.tradeRoute } });
+  const customs = runCustomsPrecheck({
+    orderId: input.orderId,
+    idempotencyKey: idempotencyKeys.customs,
+    tradeRoute: route,
+    supplierOrigin: origin.originCountry,
+    items: input.items
+  });
+  if (customs.decision === "CUSTOMS_NOT_REQUIRED") {
+    events.push({ type: "CUSTOMS_NOT_REQUIRED", metadata: { tradeRoute: route.tradeRoute } });
+  } else if (customs.decision === "CUSTOMS_READY") {
+    events.push({ type: "CUSTOMS_READY", metadata: { dutyEstimate: customs.dutyEstimate } });
+  } else if (customs.decision === "CUSTOMS_REVIEW_REQUIRED") {
+    events.push({
+      type: "CUSTOMS_REVIEW_REQUIRED",
+      metadata: { missingFields: customs.missingFields }
+    });
+  } else {
+    events.push({ type: "CUSTOMS_BLOCKED", metadata: { reason: customs.reason } });
+  }
+  if (customs.hold) {
+    const snapshot2 = buildSnapshot({
+      targetCountry: target.country,
+      targetCountrySource: target.source,
+      originCountry: origin.originCountry,
+      originSource: origin.source,
+      tradeRoute: route.tradeRoute,
+      tradeRouteFlags: route.flags,
+      customsDecision: customs.decision,
+      customsHold: true,
+      customsMissingFields: customs.missingFields,
+      customsReason: customs.reason,
+      dutyEstimate: customs.dutyEstimate,
+      taxEstimate: customs.taxEstimate,
+      exportRequired: customs.exportRequired,
+      importRequired: customs.importRequired,
+      holdReason: "CUSTOMS_HOLD",
+      holdMessage: customs.reason ?? customs.decision,
+      idempotencyKeys
+    });
+    events.push({ type: "CUSTOMS_HOLD", metadata: { decision: customs.decision } });
+    cachePipelineSnapshot(input.orderId, input.idempotencyKey, snapshot2);
+    return { ok: false, snapshot: snapshot2, errorCode: "CUSTOMS_HOLD", errorMessage: customs.decision, events };
+  }
+  const primaryItem = input.items[0];
+  const weightKg = estimateParcelWeightKg(input.items.length, input.weightKg);
+  const dimensions = input.dimensionsCm ?? DEFAULT_DIMENSIONS;
+  const shipping = quoteShipping({
+    originCountry: origin.originCountry,
+    destinationCountry: target.country,
+    postalCode: input.shippingAddress.postalCode,
+    weight: weightKg,
+    productId: primaryItem.productId,
+    supplierId: primaryItem.supplierId,
+    targetCurrency: input.currency,
+    serviceLevel: input.serviceLevel
+  });
+  if (!shipping.ok) {
+    const snapshot2 = buildSnapshot({
+      targetCountry: target.country,
+      targetCountrySource: target.source,
+      originCountry: origin.originCountry,
+      originSource: origin.source,
+      tradeRoute: route.tradeRoute,
+      tradeRouteFlags: route.flags,
+      customsDecision: customs.decision,
+      holdReason: "SHIPPING_HOLD",
+      holdMessage: shipping.errorMessage,
+      idempotencyKeys
+    });
+    cachePipelineSnapshot(input.orderId, input.idempotencyKey, snapshot2);
+    return { ok: false, snapshot: snapshot2, errorCode: "SHIPPING_HOLD", errorMessage: shipping.errorMessage, events };
+  }
+  events.push({
+    type: "SHIPPING_QUOTED",
+    metadata: { cost: shipping.shippingCost, currency: shipping.shippingCurrency }
+  });
+  const carrier = selectCarrier({
+    originCountry: origin.originCountry,
+    destinationCountry: target.country,
+    tradeRoute: route.tradeRoute,
+    weightKg,
+    dimensionsCm: dimensions,
+    serviceLevel: input.serviceLevel,
+    shippingCost: shipping.shippingCost,
+    shipmentId: input.orderId,
+    idempotencyKey: idempotencyKeys.carrier
+  });
+  if (!carrier.ok) {
+    const snapshot2 = buildSnapshot({
+      targetCountry: target.country,
+      targetCountrySource: target.source,
+      originCountry: origin.originCountry,
+      originSource: origin.source,
+      tradeRoute: route.tradeRoute,
+      tradeRouteFlags: route.flags,
+      customsDecision: customs.decision,
+      shippingQuoted: true,
+      shippingCost: shipping.shippingCost,
+      shippingCurrency: shipping.shippingCurrency,
+      holdReason: "SHIPPING_HOLD",
+      holdMessage: carrier.errorMessage,
+      idempotencyKeys
+    });
+    events.push({ type: "SHIPPING_HOLD", metadata: { evaluated: carrier.evaluatedCarriers } });
+    cachePipelineSnapshot(input.orderId, input.idempotencyKey, snapshot2);
+    return { ok: false, snapshot: snapshot2, errorCode: "SHIPPING_HOLD", errorMessage: carrier.errorMessage, events };
+  }
+  events.push({
+    type: "CARRIER_SELECTED",
+    metadata: {
+      carrierId: carrier.carrierId,
+      serviceLevel: carrier.serviceLevel,
+      trackingSupported: carrier.trackingSupported
+    }
+  });
+  const snapshot = buildSnapshot({
+    targetCountry: target.country,
+    targetCountrySource: target.source,
+    originCountry: origin.originCountry,
+    originSource: origin.source,
+    tradeRoute: route.tradeRoute,
+    tradeRouteFlags: route.flags,
+    customsDecision: customs.decision,
+    customsHold: false,
+    dutyEstimate: customs.dutyEstimate,
+    taxEstimate: customs.taxEstimate,
+    exportRequired: customs.exportRequired,
+    importRequired: customs.importRequired,
+    shippingQuoted: true,
+    shippingCost: carrier.shippingCost ?? shipping.shippingCost,
+    shippingCurrency: shipping.shippingCurrency,
+    carrierId: carrier.carrierId,
+    carrierServiceLevel: carrier.serviceLevel,
+    estimatedDelivery: carrier.estimatedDelivery,
+    trackingSupported: carrier.trackingSupported,
+    completedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    idempotencyKeys
+  });
+  cachePipelineSnapshot(input.orderId, input.idempotencyKey, snapshot);
+  return { ok: true, snapshot, events };
+}
+
+// lib/tracking-fulfillment/adapter.ts
+init_tracking();
+
+// lib/supplier-engine/network/config.ts
+function envFlag2(name, defaultValue = false) {
+  const raw = process.env[name];
+  if (raw === void 0 || raw === "") return defaultValue;
+  return raw === "1" || raw.toLowerCase() === "true";
+}
+function envInt(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+}
+var SUPPLIER_NETWORK_CONFIG = {
+  get networkEnabled() {
+    return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
+  defaultEnvironment: "MOCK",
+  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
+  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
+  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
+  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
+};
+function isSupplierNetworkEnabled() {
+  return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+}
+function isSupplierOrderNetworkEnabled() {
+  return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+}
+
+// lib/supplier-engine/observability.ts
+init_security();
+var logBuffer = [];
+function getSupplierLogs(supplierId) {
+  if (!supplierId) return [...logBuffer];
+  return logBuffer.filter((l) => l.supplierId === supplierId);
+}
+
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+
+// data/global/order_engine_extensions.json
+var order_engine_extensions_default = {
+  orderNumberPrefix: "BZ",
+  orderNumberYear: 2026,
+  defaultPaymentProvider: "mock",
+  defaultPaymentMethod: "card",
+  paymentAuthorizationMode: "dry_run",
+  reservationFailurePolicy: "RELEASE_ALL",
+  paymentFailurePolicy: "RELEASE_RESERVATIONS",
+  idempotencyTtlMs: 864e5,
+  customerVisibleStatuses: [
+    "PENDING_PAYMENT",
+    "PAID",
+    "CONFIRMED",
+    "PROCESSING",
+    "SUPPLIER_PENDING",
+    "SUPPLIER_CONFIRMED",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+    "RETURN_REQUESTED",
+    "RETURNED",
+    "REFUNDED",
+    "PARTIALLY_REFUNDED",
+    "FAILED"
+  ]
+};
+
+// lib/order-engine/registry.ts
+var config2 = order_engine_extensions_default;
+var orderRegistry = /* @__PURE__ */ new Map();
+var orderByNumber = /* @__PURE__ */ new Map();
+var ordersByCustomer = /* @__PURE__ */ new Map();
+var idempotencyRegistry = /* @__PURE__ */ new Map();
+var priceSnapshotRegistry = /* @__PURE__ */ new Map();
+var orderCounter = 0;
+function generateOrderId() {
+  return `ord_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+function generateOrderNumber() {
+  orderCounter += 1;
+  const year = config2.orderNumberYear;
+  const seq = String(orderCounter).padStart(6, "0");
+  return `${config2.orderNumberPrefix}-${year}-${seq}`;
+}
+function saveOrder(order) {
+  orderRegistry.set(order.orderId, order);
+  orderByNumber.set(order.orderNumber, order.orderId);
+  if (!ordersByCustomer.has(order.customerId)) {
+    ordersByCustomer.set(order.customerId, /* @__PURE__ */ new Set());
+  }
+  ordersByCustomer.get(order.customerId).add(order.orderId);
+  if (order.idempotencyKey) {
+    idempotencyRegistry.set(order.idempotencyKey, {
+      orderId: order.orderId,
+      createdAt: order.createdAt
+    });
+  }
+  return order;
+}
+function getOrder(orderId) {
+  return orderRegistry.get(orderId);
+}
+function getIdempotentOrder(idempotencyKey) {
+  const entry = idempotencyRegistry.get(idempotencyKey);
+  return entry ? orderRegistry.get(entry.orderId) : void 0;
+}
+function savePriceSnapshot(snapshot) {
+  priceSnapshotRegistry.set(snapshot.snapshotId, snapshot);
+  return snapshot;
+}
+function getDefaultPaymentProvider() {
+  return config2.defaultPaymentProvider;
+}
+function getDefaultPaymentMethod() {
+  return config2.defaultPaymentMethod;
+}
+
+// lib/product-engine/status.ts
+function mapStorefrontStatus(status, stockStatus) {
+  if (stockStatus === "out_of_stock") return "OUT_OF_STOCK";
+  switch (status) {
+    case "draft":
+      return "DRAFT";
+    case "active":
+      return "ACTIVE";
+    case "paused":
+      return "PAUSED";
+    case "archived":
+      return "ARCHIVED";
+    default:
+      return "DRAFT";
+  }
+}
+
+// lib/product-engine/adapters/buzzardProduct.ts
+function parseTechnicalData(product) {
+  const attrs = product.attributes || {};
+  const technical = { ...attrs };
+  if (product.shipping?.weight_kg) technical.weight_kg = product.shipping.weight_kg;
+  if (attrs.viscosity) technical.viscosity = String(attrs.viscosity);
+  if (attrs.diameter) technical.diameter = Number(attrs.diameter);
+  return technical;
+}
+function mapCompatibility(entries) {
+  if (!entries?.length) return [];
+  return entries.map((v) => ({
+    make: v.brand,
+    model: v.model,
+    engine: v.engine,
+    yearFrom: v.year_from,
+    yearTo: v.year_to,
+    oemNumbers: v.part_reference ? [v.part_reference] : []
+  }));
+}
+function mapImages(product) {
+  return (product.images || []).map((url, i) => ({
+    url,
+    alt: product.name,
+    sortOrder: i,
+    type: i === 0 ? "MAIN" : "GALLERY"
+  }));
+}
+function mapTranslations(product) {
+  const base = {
+    locale: "de-DE",
+    name: product.name,
+    shortDescription: product.short_description,
+    description: product.description,
+    seoTitle: product.seo?.title,
+    seoDescription: product.seo?.description,
+    slug: product.seo?.slug
+  };
+  const entries = [base];
+  if (product.i18n) {
+    for (const [lang, t] of Object.entries(product.i18n)) {
+      entries.push({
+        locale: lang,
+        name: t.name || product.name,
+        shortDescription: t.short_description,
+        description: t.description,
+        seoTitle: t.seo_title,
+        seoDescription: t.seo_description
+      });
+    }
+  }
+  return entries;
+}
+function mapSeo(product) {
+  const entries = [
+    {
+      locale: "de-DE",
+      seoTitle: product.seo?.title,
+      seoDescription: product.seo?.description,
+      slug: product.seo?.slug || product.id
+    }
+  ];
+  if (product.i18n) {
+    for (const [lang, t] of Object.entries(product.i18n)) {
+      if (t.seo_title || t.seo_description) {
+        entries.push({
+          locale: lang,
+          seoTitle: t.seo_title,
+          seoDescription: t.seo_description,
+          slug: product.seo?.slug || product.id
+        });
+      }
+    }
+  }
+  return entries;
+}
+function mapSupplierOffer(product) {
+  return {
+    supplierId: product.supplier_id,
+    supplierSku: product.supplier_sku,
+    supplierEan: product.ean_gtin,
+    supplierPrice: product.supplier_price?.amount ?? 0,
+    currency: product.supplier_price?.currency ?? product.price?.currency ?? "EUR",
+    stock: product.stock,
+    lastUpdated: product.updated_at,
+    source: product.supplier_id,
+    sourceType: "MANUAL",
+    reliabilityScore: 0.8
+  };
+}
+function mapPricing(product) {
+  const supplierCost = product.supplier_price?.amount ?? 0;
+  const customerPrice = product.price?.amount ?? 0;
+  const margin = customerPrice > 0 ? (customerPrice - supplierCost) / customerPrice : 0;
+  return {
+    supplierCost,
+    shippingCost: 0,
+    marketplaceFee: 0,
+    paymentFee: 0,
+    vat: product.vat_rate / 100,
+    margin,
+    customerPrice,
+    currency: product.price?.currency ?? "EUR"
+  };
+}
+function mapStock(product) {
+  const availability = product.stock_status === "out_of_stock" ? "OUT_OF_STOCK" : product.stock_status === "low_stock" ? "LOW_STOCK" : product.stock_status === "preorder" ? "PREORDER" : "IN_STOCK";
+  return {
+    quantity: product.stock,
+    availability,
+    lastUpdated: product.updated_at
+  };
+}
+function fromBuzzardProduct(product) {
+  const subcategoryId = product.category_ids?.length > 1 ? product.category_ids[1] : void 0;
+  return {
+    productId: product.id,
+    sku: product.sku,
+    ean: product.ean_gtin,
+    gtin: product.ean_gtin,
+    brand: product.brand,
+    manufacturer: product.manufacturer,
+    categoryId: product.category_id,
+    subcategoryId,
+    productType: product.category_id.startsWith("cat-05") ? "automotive" : "general",
+    status: mapStorefrontStatus(product.status, product.stock_status),
+    weight: product.shipping?.weight_kg,
+    weightUnit: "kg",
+    dimensions: product.shipping ? {
+      length: product.shipping.length_cm,
+      width: product.shipping.width_cm,
+      height: product.shipping.height_cm,
+      unit: "cm"
+    } : void 0,
+    images: mapImages(product),
+    technicalData: parseTechnicalData(product),
+    compatibility: mapCompatibility(product.vehicle_compatibility),
+    translations: mapTranslations(product),
+    supplierOffers: [mapSupplierOffer(product)],
+    pricing: mapPricing(product),
+    stock: mapStock(product),
+    availability: [],
+    seo: mapSeo(product),
+    createdAt: product.created_at,
+    updatedAt: product.updated_at,
+    _source: product
+  };
+}
+
+// lib/product-engine/adapters/canonical.ts
+var import_module = require("module");
+
+// lib/product-engine/adapters/resolveRepoPath.ts
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+var import_url = require("url");
+function resolveRepoFile(...segments) {
+  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
+  const roots = [
+    process.cwd(),
+    import_path.default.join(process.cwd(), ".."),
+    import_path.default.resolve(moduleDir, "../.."),
+    import_path.default.resolve(moduleDir, "../../..")
+  ];
+  for (const root of roots) {
+    const candidate = import_path.default.join(root, ...segments);
+    if (import_fs.default.existsSync(candidate)) return candidate;
+  }
+  return import_path.default.join(process.cwd(), ...segments);
+}
+
+// lib/product-engine/adapters/canonical.ts
+var require2 = (0, import_module.createRequire)(__import_meta_url__);
+var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
+var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
 
 // lib/product-engine/registry.ts
 var products = /* @__PURE__ */ new Map();
@@ -26742,41 +27782,6 @@ function selectBestSupplier(product, market, criteria = {}) {
     }
   }
   return best;
-}
-
-// lib/market-engine/money.ts
-function toMinorUnits(amount, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return Math.round((Number(amount) || 0) * factor);
-}
-function fromMinorUnits(minor, decimalDigits = 2) {
-  const factor = 10 ** decimalDigits;
-  return minor / factor;
-}
-function roundMoney(amount, decimalDigits = 2) {
-  return fromMinorUnits(toMinorUnits(amount, decimalDigits), decimalDigits);
-}
-function netFromGross(gross, vatRate, decimalDigits = 2) {
-  const grossMinor = toMinorUnits(gross, decimalDigits);
-  const netMinor = Math.round(grossMinor / (1 + vatRate));
-  const vatMinor = grossMinor - netMinor;
-  return { net: fromMinorUnits(netMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
-}
-function grossFromNet(net, vatRate, decimalDigits = 2) {
-  const netMinor = toMinorUnits(net, decimalDigits);
-  const vatMinor = Math.round(netMinor * vatRate);
-  const grossMinor = netMinor + vatMinor;
-  return { gross: fromMinorUnits(grossMinor, decimalDigits), vat: fromMinorUnits(vatMinor, decimalDigits) };
-}
-var CURRENCY_DECIMALS = {
-  HUF: 0,
-  ISK: 0,
-  KWD: 3,
-  BHD: 3,
-  OMR: 3
-};
-function getCurrencyDecimalDigits(currencyCode) {
-  return CURRENCY_DECIMALS[String(currencyCode).toUpperCase()] ?? 2;
 }
 
 // lib/market-engine/vat.ts
@@ -26872,192 +27877,6 @@ function getVatContext(input) {
   };
 }
 
-// data/global/pricing_engine_extensions.json
-var pricing_engine_extensions_default = {
-  defaultSellerCountry: "DE",
-  defaultTargetMarginPercent: 0.11,
-  defaultMinimumMarginPercent: 0.05,
-  exchangeRates: {
-    EUR: 1,
-    USD: 0.92,
-    GBP: 1.17,
-    CZK: 0.041,
-    PLN: 0.23,
-    TRY: 0.027,
-    SAR: 0.24,
-    AED: 0.25,
-    EGP: 0.019,
-    HUF: 26e-4,
-    RON: 0.2,
-    BGN: 0.51,
-    CHF: 1.05,
-    SEK: 0.087,
-    DKK: 0.134,
-    NOK: 0.085
-  },
-  shippingCosts: {
-    defaultSupplierDirect: 10,
-    currency: "EUR",
-    byProductFixture: {
-      "reifen-pilot-sport": 10,
-      "motoroel-5w30": 7,
-      "bremsscheibe-280": 8,
-      "bremsbelaege-vorder": 6
-    },
-    byShippingRegion: {
-      EU_CENTRAL: 10,
-      EU_WEST: 12,
-      EU_NORTH: 14,
-      EU_SOUTH: 11,
-      EU_EAST: 9,
-      TR: 15,
-      GCC: 18,
-      MENA: 16
-    }
-  },
-  marketplaceFees: {
-    direct: { feePercent: 0, fixedFee: 0, minimumFee: 0, maximumFee: 0, currency: "EUR", status: "ACTIVE" },
-    amazon: { feePercent: 0.15, fixedFee: 0.99, minimumFee: 0.99, maximumFee: 50, currency: "EUR", status: "ACTIVE" },
-    ebay: { feePercent: 0.12, fixedFee: 0.35, minimumFee: 0.35, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    kaufland: { feePercent: 0.13, fixedFee: 0, minimumFee: 0, maximumFee: 40, currency: "EUR", status: "ACTIVE" },
-    allegro: { feePercent: 0.11, fixedFee: 0, minimumFee: 0, maximumFee: 35, currency: "EUR", status: "ACTIVE" },
-    bol: { feePercent: 0.1, fixedFee: 0.25, minimumFee: 0.25, maximumFee: 25, currency: "EUR", status: "ACTIVE" },
-    cdiscount: { feePercent: 0.12, fixedFee: 0.49, minimumFee: 0.49, maximumFee: 30, currency: "EUR", status: "ACTIVE" },
-    otto: { feePercent: 0.14, fixedFee: 0, minimumFee: 0, maximumFee: 45, currency: "EUR", status: "ACTIVE" }
-  },
-  paymentFees: {
-    card: { feePercent: 0.029, fixedFee: 0.3, currency: "EUR", status: "ACTIVE" },
-    paypal: { feePercent: 0.034, fixedFee: 0.35, currency: "EUR", status: "ACTIVE" },
-    sepa: { feePercent: 5e-3, fixedFee: 0.1, currency: "EUR", status: "ACTIVE" },
-    instant: { feePercent: 0.015, fixedFee: 0.2, currency: "EUR", status: "ACTIVE" },
-    default: { feePercent: 0.025, fixedFee: 0.25, currency: "EUR", status: "ACTIVE" }
-  },
-  returnReserves: {
-    default: {
-      returnRate: 0.05,
-      refundRate: 0.03,
-      averageReturnShippingCost: 8,
-      averageRefundLoss: 5,
-      supplierReturnAcceptanceRate: 0.7,
-      damagedReturnRate: 0.01
-    },
-    byCategory: {
-      "automotive-tires": { returnRate: 0.04, refundRate: 0.025 },
-      "automotive-oils": { returnRate: 0.02, refundRate: 0.015 },
-      "automotive-brakes": { returnRate: 0.06, refundRate: 0.035 }
-    }
-  },
-  marginRules: {
-    default: { targetMarginPercent: 0.11, minimumMarginPercent: 0.05 },
-    byMarket: {},
-    byCategory: {},
-    byChannel: {},
-    byMarketplace: {},
-    bySupplier: {}
-  },
-  roundingRules: {
-    default: { mode: "psychological_99", step: 0.01 },
-    byMarket: {
-      DE: { mode: "psychological_99" },
-      FR: { mode: "psychological_99" },
-      PL: { mode: "nearest_49" }
-    },
-    byChannel: {
-      amazon: { mode: "psychological_99" },
-      direct: { mode: "psychological_99" }
-    }
-  },
-  priceBounds: {
-    default: { minimumPrice: 1, maximumPrice: 99999 }
-  },
-  competitivePricingExtension: {
-    enabled: false,
-    fields: ["competitorPrice", "marketAveragePrice", "lowestMarketPrice", "recommendedCompetitivePrice"]
-  }
-};
-
-// lib/pricing-engine/registry.ts
-var config2 = pricing_engine_extensions_default;
-function getDefaultSellerCountry() {
-  return config2.defaultSellerCountry;
-}
-function getExchangeRate(fromCurrency, toCurrency) {
-  const from = String(fromCurrency).toUpperCase();
-  const to = String(toCurrency).toUpperCase();
-  if (from === to) return 1;
-  const rates = config2.exchangeRates;
-  const fromRate = rates[from];
-  const toRate = rates[to];
-  if (fromRate == null || toRate == null) return null;
-  return fromRate / toRate;
-}
-function getMarketplaceFeeSchedule(marketplaceId) {
-  const fees = config2.marketplaceFees;
-  return fees[marketplaceId] ?? fees.direct;
-}
-function getPaymentFeeSchedule(method = "default") {
-  const fees = config2.paymentFees;
-  return fees[method] ?? fees.default;
-}
-function getReturnReserveConfig(categoryId) {
-  const reserves = config2.returnReserves;
-  const byCategory = reserves.byCategory;
-  const base = reserves.default;
-  const categoryOverride = categoryId ? byCategory[categoryId] : void 0;
-  return { ...base, ...categoryOverride };
-}
-function getMarginRule(options) {
-  const rules = config2.marginRules;
-  const defaults = rules.default;
-  const byMarket = rules.byMarket;
-  const byCategory = rules.byCategory;
-  const byChannel = rules.byChannel;
-  const byMarketplace = rules.byMarketplace;
-  const bySupplier = rules.bySupplier;
-  const targetMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.targetMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.targetMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.targetMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.targetMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.targetMarginPercent : void 0) ?? defaults.targetMarginPercent ?? config2.defaultTargetMarginPercent;
-  const minimumMarginPercent = (options?.supplierId ? bySupplier[options.supplierId]?.minimumMarginPercent : void 0) ?? (options?.marketplaceId ? byMarketplace[options.marketplaceId]?.minimumMarginPercent : void 0) ?? (options?.channel ? byChannel[options.channel]?.minimumMarginPercent : void 0) ?? (options?.categoryId ? byCategory[options.categoryId]?.minimumMarginPercent : void 0) ?? (options?.marketId ? byMarket[options.marketId]?.minimumMarginPercent : void 0) ?? defaults.minimumMarginPercent ?? config2.defaultMinimumMarginPercent;
-  return { targetMarginPercent, minimumMarginPercent };
-}
-function getRoundingRule(marketId, channel) {
-  const rules = config2.roundingRules;
-  const defaults = rules.default;
-  const byMarket = rules.byMarket;
-  const byChannel = rules.byChannel;
-  if (channel && byChannel[channel]) return { ...defaults, ...byChannel[channel] };
-  if (marketId && byMarket[marketId]) return { ...defaults, ...byMarket[marketId] };
-  return defaults;
-}
-function getPriceBounds() {
-  return config2.priceBounds.default;
-}
-function getFixtureShippingCost(productId) {
-  const byProduct = config2.shippingCosts.byProductFixture;
-  return byProduct[productId];
-}
-function getShippingCostByRegion(region) {
-  const byRegion = config2.shippingCosts.byShippingRegion;
-  return byRegion[region];
-}
-function getDefaultShippingCost() {
-  return config2.shippingCosts.defaultSupplierDirect;
-}
-function getDefaultShippingCurrency() {
-  return config2.shippingCosts.currency;
-}
-
-// lib/pricing-engine/currency.ts
-function convertCurrency(amount, fromCurrency, toCurrency) {
-  const from = String(fromCurrency).toUpperCase();
-  const to = String(toCurrency).toUpperCase();
-  if (from === to) return roundMoney(amount, getCurrencyDecimalDigits(to));
-  const rate = getExchangeRate(from, to);
-  if (rate == null) return null;
-  const decimalDigits = getCurrencyDecimalDigits(to);
-  const minor = toMinorUnits(amount, getCurrencyDecimalDigits(from));
-  const convertedMinor = Math.round(minor * rate);
-  return fromMinorUnits(convertedMinor, decimalDigits);
-}
-
 // lib/pricing-engine/cost.ts
 function resolveSupplierCost(input, marketCurrency) {
   const offer = input.supplierOffer;
@@ -27111,54 +27930,6 @@ function resolveSupplierCost(input, marketCurrency) {
     lastUpdated: offer.lastUpdated,
     stock: offer.stock,
     valid: true
-  };
-}
-
-// lib/market-engine/shipping.ts
-function getShippingRegion(countryCode) {
-  return getMarketShippingRegion(countryCode);
-}
-
-// lib/pricing-engine/shipping.ts
-init_registry2();
-function resolveShippingCost(options) {
-  const shippingCurrency = getDefaultShippingCurrency();
-  const region = getShippingRegion(options.marketId);
-  if (options.override != null) {
-    const converted2 = convertCurrency(options.override, shippingCurrency, options.targetCurrency) ?? options.override;
-    return {
-      shippingCost: roundMoney(converted2),
-      shippingCurrency: options.targetCurrency,
-      region,
-      source: "fixture"
-    };
-  }
-  const fixtureCost = getFixtureShippingCost(options.productId);
-  if (fixtureCost != null) {
-    const converted2 = convertCurrency(fixtureCost, shippingCurrency, options.targetCurrency) ?? fixtureCost;
-    return {
-      shippingCost: roundMoney(converted2),
-      shippingCurrency: options.targetCurrency,
-      region,
-      source: "fixture"
-    };
-  }
-  const supplier = getSupplier(options.supplierId);
-  const supplierRegion = supplier?.region;
-  let regionCost = getDefaultShippingCost();
-  if (supplierRegion) {
-    const supplierRegionCost = getShippingCostByRegion(supplierRegion);
-    if (supplierRegionCost != null) regionCost = supplierRegionCost;
-  } else {
-    const marketRegionCost = getShippingCostByRegion(region);
-    if (marketRegionCost != null) regionCost = marketRegionCost;
-  }
-  const converted = convertCurrency(regionCost, shippingCurrency, options.targetCurrency) ?? regionCost;
-  return {
-    shippingCost: roundMoney(converted),
-    shippingCurrency: options.targetCurrency,
-    region,
-    source: regionCost === getDefaultShippingCost() ? "default" : "region"
   };
 }
 
@@ -28007,14 +28778,6 @@ function rollbackReservations(reservationIds) {
   }
 }
 
-// lib/supplier-engine/observability.ts
-init_security();
-var logBuffer = [];
-function getSupplierLogs(supplierId) {
-  if (!supplierId) return [...logBuffer];
-  return logBuffer.filter((l) => l.supplierId === supplierId);
-}
-
 // lib/supplier-engine/health.ts
 init_persistence();
 var healthCache = /* @__PURE__ */ new Map();
@@ -28092,40 +28855,6 @@ function computeSupplierReliabilityScore(supplierId) {
 
 // lib/supplier-engine/connectors/base.ts
 init_capabilities();
-
-// lib/supplier-engine/network/config.ts
-function envFlag2(name, defaultValue = false) {
-  const raw = process.env[name];
-  if (raw === void 0 || raw === "") return defaultValue;
-  return raw === "1" || raw.toLowerCase() === "true";
-}
-function envInt(name, fallback) {
-  const n = Number(process.env[name]);
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-}
-var SUPPLIER_NETWORK_CONFIG = {
-  get networkEnabled() {
-    return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
-  },
-  get orderNetworkEnabled() {
-    return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-  },
-  defaultEnvironment: "MOCK",
-  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
-  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
-  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
-  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
-};
-function isSupplierNetworkEnabled() {
-  return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
-}
-function isSupplierOrderNetworkEnabled() {
-  return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-}
-
-// lib/supplier-engine/network/scopedValidationNetwork.ts
-var import_async_hooks = require("async_hooks");
-var scopedContext = new import_async_hooks.AsyncLocalStorage();
 
 // lib/supplier-engine/connectors/api.ts
 init_fixtures();
@@ -29264,6 +29993,77 @@ async function createOrder(input) {
   recordStatusTransition(orderId, "order-engine", "PAID", "CONFIRMED");
   assertOrderTransition(order.status, "PROCESSING");
   order.status = "PROCESSING";
+  const primarySupplierId = supplierAssignments[0]?.supplierId;
+  const supplierConfig = primarySupplierId ? getSupplier(primarySupplierId) : void 0;
+  const tradeRoutePipeline = runTradeRouteFulfillmentPipeline({
+    orderId,
+    marketId: input.marketId,
+    shippingAddress: input.shippingAddress,
+    validatedCheckoutCountry: input.validatedCheckoutCountry,
+    items: orderItems.map((item) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      supplierId: item.supplierId,
+      lineGross: item.lineGross,
+      productName: item.productName
+    })),
+    currency,
+    supplier: {
+      supplierId: supplierConfig?.supplierId ?? primarySupplierId ?? "UNKNOWN",
+      country: supplierConfig?.country,
+      region: supplierConfig?.region,
+      shippingOrigin: input._testSupplierShippingOrigin,
+      warehouseCountry: input._testSupplierWarehouseCountry,
+      fulfillmentCountry: input._testSupplierFulfillmentCountry,
+      supplierCountry: input._testSupplierCountry
+    },
+    idempotencyKey: input.idempotencyKey,
+    serviceLevel: input.serviceLevel,
+    weightKg: input._testParcelWeightKg,
+    dimensionsCm: input._testParcelDimensions
+  });
+  for (const event of tradeRoutePipeline.events) {
+    emitOrderEvent({
+      orderId,
+      type: event.type,
+      source: "trade-route-fulfillment",
+      metadata: event.metadata
+    });
+  }
+  if (tradeRoutePipeline.snapshot) {
+    order.tradeRouteFulfillment = tradeRoutePipeline.snapshot;
+    if (tradeRoutePipeline.snapshot.shippingCost != null) {
+      order.shippingAmount = tradeRoutePipeline.snapshot.shippingCost;
+    }
+  }
+  if (!tradeRoutePipeline.ok) {
+    const holdReason = tradeRoutePipeline.snapshot?.holdReason;
+    const fulfillmentStatus = holdReason === "SHIPPING_HOLD" ? "SHIPPING_HOLD" : "CUSTOMS_HOLD";
+    order = {
+      ...order,
+      fulfillmentStatus,
+      errorCode: tradeRoutePipeline.errorCode ?? "CUSTOMS_HOLD",
+      errorMessage: tradeRoutePipeline.errorMessage,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    recordOrderAudit({
+      orderId,
+      actor: "trade-route-fulfillment",
+      action: fulfillmentStatus,
+      metadata: {
+        holdReason,
+        tradeRoute: tradeRoutePipeline.snapshot?.tradeRoute,
+        missingFields: tradeRoutePipeline.snapshot?.customsMissingFields
+      }
+    });
+    saveOrder(order);
+    return {
+      ok: false,
+      order,
+      errorCode: order.errorCode,
+      errorMessage: order.errorMessage
+    };
+  }
   const fulfillment = await prepareSupplierOrders(order);
   if (!fulfillment.ok) {
     rollbackReservations(reservationResult.reservationIds);

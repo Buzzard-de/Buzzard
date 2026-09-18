@@ -32,6 +32,8 @@ export type PaymentStatus =
 export type FulfillmentStatus =
   | "NOT_STARTED"
   | "RESERVED"
+  | "CUSTOMS_HOLD"
+  | "SHIPPING_HOLD"
   | "SUPPLIER_PREPARED"
   | "SUPPLIER_SUBMITTED"
   | "SHIPPED"
@@ -64,6 +66,20 @@ export type OrderEventType =
   | "RESERVATION_CREATED"
   | "RESERVATION_RELEASED"
   | "SUPPLIER_SELECTED"
+  | "TARGET_COUNTRY_RESOLVED"
+  | "COUNTRY_MISMATCH"
+  | "FULFILLMENT_ORIGIN_RESOLVED"
+  | "TRADE_ROUTE_CLASSIFIED"
+  | "CUSTOMS_PRECHECK_STARTED"
+  | "CUSTOMS_NOT_REQUIRED"
+  | "CUSTOMS_READY"
+  | "CUSTOMS_REVIEW_REQUIRED"
+  | "CUSTOMS_BLOCKED"
+  | "CUSTOMS_HOLD"
+  | "SHIPPING_QUOTED"
+  | "CARRIER_SELECTED"
+  | "SHIPPING_HOLD"
+  | "TRACKING_ATTACHED"
   | "SUPPLIER_ORDER_PREPARED"
   | "SUPPLIER_ORDER_SUBMITTED"
   | "SUPPLIER_ORDER_CONFIRMED"
@@ -85,7 +101,13 @@ export type OrderErrorCode =
   | "FULFILLMENT_PREPARATION_FAILED"
   | "VALIDATION_FAILED"
   | "UNAUTHORIZED"
-  | "IDEMPOTENCY_CONFLICT";
+  | "IDEMPOTENCY_CONFLICT"
+  | "TRADE_ROUTE_COUNTRY_MISMATCH"
+  | "ORIGIN_UNKNOWN"
+  | "TRADE_ROUTE_UNKNOWN"
+  | "CUSTOMS_HOLD"
+  | "SHIPPING_HOLD"
+  | "INVALID_COUNTRY";
 
 export interface AddressSnapshot {
   recipientName: string;
@@ -212,6 +234,15 @@ export interface ReturnRefundFoundation {
   buzzardRefundLoss: number;
 }
 
+export interface OrderTrackingView {
+  carrier?: string;
+  trackingNumber?: string;
+  shipmentId?: string;
+  status: "NOT_ATTACHED" | "ATTACHED" | "BLOCKED";
+  trackingStatus?: string;
+  estimatedDelivery?: string;
+}
+
 export interface BuzzardOrder {
   orderId: string;
   orderNumber: string;
@@ -237,6 +268,8 @@ export interface BuzzardOrder {
   marketChannelSnapshot: MarketChannelSnapshot;
   payment?: PaymentRecord;
   returnRefund: ReturnRefundFoundation;
+  tradeRouteFulfillment?: import("@/lib/trade-route-fulfillment/types").TradeRouteFulfillmentSnapshot;
+  tracking?: OrderTrackingView;
   idempotencyKey?: string;
   errorCode?: OrderErrorCode;
   errorMessage?: string;
@@ -259,6 +292,16 @@ export interface CreateOrderInput {
   _testPaymentShouldFail?: boolean;
   /** Test-only — simulate supplier selection failure */
   _testForceSupplierUnavailable?: boolean;
+  /** Checkout-validated destination country (server authoritative) */
+  validatedCheckoutCountry?: string;
+  serviceLevel?: string;
+  /** Test-only supplier origin overrides */
+  _testSupplierCountry?: string;
+  _testSupplierShippingOrigin?: string;
+  _testSupplierWarehouseCountry?: string;
+  _testSupplierFulfillmentCountry?: string;
+  _testParcelWeightKg?: number;
+  _testParcelDimensions?: { length: number; width: number; height: number };
 }
 
 export interface CreateOrderResult {
@@ -298,6 +341,7 @@ export interface CustomerOrderView {
   createdAt: string;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  fulfillmentStatus: FulfillmentStatus;
   currency: string;
   totalGross: number;
   items: Array<{
@@ -307,6 +351,11 @@ export interface CustomerOrderView {
     lineGross: number;
   }>;
   shippingAddress: Pick<AddressSnapshot, "recipientName" | "city" | "country" | "postalCode">;
+  shippingMethod?: string;
+  carrier?: string;
+  estimatedDelivery?: string;
+  trackingNumber?: string;
+  trackingStatus?: string;
 }
 
 export interface OrderEngineAdminRow {
@@ -322,6 +371,16 @@ export interface OrderEngineAdminRow {
   supplierOrderStatus: SupplierOrderStatus;
   reservationCount: number;
   fulfillmentStatus: FulfillmentStatus;
+  originCountry: string;
+  destinationCountry: string;
+  tradeRoute: string;
+  customsStatus: string;
+  customsMissingFields: string;
+  carrierOptions: string;
+  selectedCarrier: string;
+  shippingStatus: string;
+  trackingStatus: string;
+  holdReason: string;
   returnStatus: ReturnStatus;
   refundStatus: RefundStatus;
   createdAt: string;

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T16:05:09.930Z",
+  "generatedAt": "2026-09-18T16:08:21.764Z",
   "scoreboard": {
     "SOFTWARE_COMPLETE": "YES",
     "CONFIG_COMPLETE": "YES",
@@ -52,7 +52,7 @@
       "status": "BLOCKED",
       "ssot": "lib/marketplace-engine",
       "tests": "test:marketplace-engine",
-      "notes": "Software complete; external credentials blocked"
+      "notes": "External marketplace credentials not configured"
     },
     {
       "area": "RETURNS",
@@ -438,7 +438,7 @@
     },
     {
       "code": "payment",
-      "category": "CONFIGURATION",
+      "category": "EXTERNAL_CREDENTIAL",
       "message": "payment:pay_api_credentials"
     },
     {
@@ -473,7 +473,7 @@
     },
     {
       "code": "carrier",
-      "category": "CONFIGURATION",
+      "category": "EXTERNAL_CREDENTIAL",
       "message": "carrier:carrier_credentials"
     },
     {
@@ -548,7 +548,7 @@
     },
     {
       "code": "REAL_WORLD",
-      "category": "CONFIGURATION",
+      "category": "EXTERNAL_CREDENTIAL",
       "message": "REAL_WORLD:rw_ic_credentials"
     },
     {
@@ -628,8 +628,8 @@
     },
     {
       "code": "MARKETPLACE",
-      "category": "SOFTWARE",
-      "message": "MARKETPLACE: Software complete; external credentials blocked"
+      "category": "EXTERNAL_CREDENTIAL",
+      "message": "MARKETPLACE: External marketplace credentials not configured"
     },
     {
       "code": "PERSISTENCE",
@@ -691,7 +691,7 @@
     {
       "step": 1,
       "label": "Resolve internal software blockers",
-      "status": "PENDING"
+      "status": "COMPLETE"
     },
     {
       "step": 2,
@@ -743,77 +743,77 @@
     {
       "command": "npm run typecheck",
       "status": "PASS",
-      "durationMs": 1984
+      "durationMs": 1991
     },
     {
       "command": "npm run lint",
       "status": "PASS",
-      "durationMs": 1435
+      "durationMs": 1444
     },
     {
       "command": "npm run build",
       "status": "PASS",
-      "durationMs": 31089
+      "durationMs": 31380
     },
     {
       "command": "npm run gate:buzzard-final",
       "status": "PASS",
-      "durationMs": 103035
+      "durationMs": 105989
     },
     {
       "command": "npm run test:final-external-access",
       "status": "PASS",
-      "durationMs": 1567
+      "durationMs": 1598
     },
     {
       "command": "npm run test:trade-route-fulfillment",
       "status": "PASS",
-      "durationMs": 951
+      "durationMs": 950
     },
     {
       "command": "npm run test:order-engine",
       "status": "PASS",
-      "durationMs": 1753
+      "durationMs": 1837
     },
     {
       "command": "npm run test:production-access",
       "status": "PASS",
-      "durationMs": 1421
+      "durationMs": 1441
     },
     {
       "command": "npm run test:pricing-engine",
       "status": "PASS",
-      "durationMs": 845
+      "durationMs": 860
     },
     {
       "command": "npm run test:inventory-engine",
       "status": "PASS",
-      "durationMs": 1029
+      "durationMs": 1033
     },
     {
       "command": "npm run test:returns-engine",
       "status": "PASS",
-      "durationMs": 1758
+      "durationMs": 1934
     },
     {
       "command": "npm run test:marketplace-engine",
       "status": "PASS",
-      "durationMs": 1425
+      "durationMs": 1434
     },
     {
       "command": "npm run test:ai-orchestrator",
       "status": "PASS",
-      "durationMs": 1001
+      "durationMs": 995
     },
     {
       "command": "npm run test:buzzard-i18n",
       "status": "PASS",
-      "durationMs": 854
+      "durationMs": 852
     },
     {
       "command": "npm run test:internal-production-readiness",
       "status": "PASS",
-      "durationMs": 1609
+      "durationMs": 1632
     }
   ],
   "sideEffectCounters": {

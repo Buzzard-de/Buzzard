@@ -30843,7 +30843,7 @@ function buildReadinessMatrix() {
       ) ? "BLOCKED" : "PASS",
       "lib/marketplace-engine",
       "test:marketplace-engine",
-      "Software complete; external credentials blocked"
+      "External marketplace credentials not configured"
     ),
     entry("RETURNS", "PASS", "lib/returns-engine", "test:returns-engine", "Customer refund \u2260 supplier recovery; no auto-restock"),
     entry("ANALYTICS", "PASS", "lib/analytics", "test:analytics", "KPI + storefront + persistence integration"),
@@ -31018,8 +31018,10 @@ function classify(code, message) {
     category = "EXTERNAL_ACCESS";
   } else if (upper.includes("LEGAL") || upper.includes("COMPLIANCE")) {
     category = "LEGAL_BUSINESS";
-  } else if (upper.includes("SOFTWARE") || upper.includes("MISSING ENGINE") || upper.includes("DUPLICATE")) {
+  } else if ((upper.includes("MISSING ENGINE") || upper.includes("DUPLICATE ENGINE") || code === "SOFTWARE") && !upper.includes("SOFTWARE COMPLETE")) {
     category = "SOFTWARE";
+  } else if (upper.includes("MARKETPLACE") || upper.includes("CREDENTIAL")) {
+    category = "EXTERNAL_CREDENTIAL";
   }
   return { code, category, message };
 }

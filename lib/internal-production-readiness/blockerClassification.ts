@@ -19,8 +19,13 @@ function classify(code: string, message: string): ClassifiedBlocker {
     category = "EXTERNAL_ACCESS";
   } else if (upper.includes("LEGAL") || upper.includes("COMPLIANCE")) {
     category = "LEGAL_BUSINESS";
-  } else if (upper.includes("SOFTWARE") || upper.includes("MISSING ENGINE") || upper.includes("DUPLICATE")) {
+  } else if (
+    (upper.includes("MISSING ENGINE") || upper.includes("DUPLICATE ENGINE") || code === "SOFTWARE") &&
+    !upper.includes("SOFTWARE COMPLETE")
+  ) {
     category = "SOFTWARE";
+  } else if (upper.includes("MARKETPLACE") || upper.includes("CREDENTIAL")) {
+    category = "EXTERNAL_CREDENTIAL";
   }
 
   return { code, category, message };

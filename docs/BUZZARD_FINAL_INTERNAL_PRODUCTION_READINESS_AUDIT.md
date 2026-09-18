@@ -1,6 +1,6 @@
 # BUZZARD — Final Internal Production Readiness Audit
 
-**Generated:** 2026-09-18T16:05:09.930Z
+**Generated:** 2026-09-18T16:08:21.764Z
 **Branch:** `cursor/internal-production-readiness-audit-c293`
 **Base:** PR #356 (Final External Access Preflight)
 **Command:** `npm run audit:internal-production-readiness`
@@ -32,7 +32,7 @@
 | INVENTORY | PASS | lib/inventory-engine | test:inventory-engine | No Buzzard warehouse stock; saleable = available - buffer - reserved |
 | PRICING | PASS | lib/pricing-engine | test:pricing-engine | Integer-cent formula with margin, VAT, rounding; no duplicate engine |
 | ORDER | PASS | lib/order-engine | test:order-engine | Cart → checkout → reservation → trade route → supplier prep |
-| MARKETPLACE | BLOCKED | lib/marketplace-engine | test:marketplace-engine | Software complete; external credentials blocked |
+| MARKETPLACE | BLOCKED | lib/marketplace-engine | test:marketplace-engine | External marketplace credentials not configured |
 | RETURNS | PASS | lib/returns-engine | test:returns-engine | Customer refund ≠ supplier recovery; no auto-restock |
 | ANALYTICS | PASS | lib/analytics | test:analytics | KPI + storefront + persistence integration |
 | AI | PASS | lib/ai-orchestrator + lib/ai-workers | test:ai-orchestrator | OBSERVE/ANALYZE/RECOMMEND only; no autonomous procurement or payments |
@@ -91,14 +91,14 @@
 - **[CONFIGURATION]** `inter-cars`: inter-cars:ic_price
 - **[CONFIGURATION]** `inter-cars`: inter-cars:ic_controlled_validation
 - **[CONFIGURATION]** `payment`: payment:pay_merchant_account
-- **[CONFIGURATION]** `payment`: payment:pay_api_credentials
+- **[EXTERNAL_CREDENTIAL]** `payment`: payment:pay_api_credentials
 - **[CONFIGURATION]** `payment`: payment:pay_webhook
 - **[CONFIGURATION]** `payment`: payment:pay_webhook_secret
 - **[CONFIGURATION]** `payment`: payment:pay_currencies
 - **[CONFIGURATION]** `payment`: payment:pay_refund
 - **[CONFIGURATION]** `payment`: payment:pay_secret_manager
 - **[CONFIGURATION]** `carrier`: carrier:carrier_account
-- **[CONFIGURATION]** `carrier`: carrier:carrier_credentials
+- **[EXTERNAL_CREDENTIAL]** `carrier`: carrier:carrier_credentials
 - **[CONFIGURATION]** `carrier`: carrier:carrier_service_mapping
 - **[CONFIGURATION]** `carrier`: carrier:carrier_secret_manager
 - **[CONFIGURATION]** `ai`: ai:ai_provider_account
@@ -113,7 +113,7 @@
 - **[CONFIGURATION]** `marketing`: marketing:marketing_meta
 - **[CONFIGURATION]** `marketing`: marketing:marketing_tiktok
 - **[CONFIGURATION]** `marketing`: marketing:marketing_youtube
-- **[CONFIGURATION]** `REAL_WORLD`: REAL_WORLD:rw_ic_credentials
+- **[EXTERNAL_CREDENTIAL]** `REAL_WORLD`: REAL_WORLD:rw_ic_credentials
 - **[CONFIGURATION]** `REAL_WORLD`: REAL_WORLD:rw_ic_read_live
 - **[CONFIGURATION]** `REAL_WORLD`: REAL_WORLD:rw_342
 - **[CONFIGURATION]** `REAL_WORLD`: REAL_WORLD:rw_343
@@ -129,7 +129,7 @@
 - **[MANUAL_DEPLOYMENT]** `PERSISTENT STORAGE`: PERSISTENT STORAGE:BLOCKED — MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)
 - **[EXTERNAL_CREDENTIAL]** `BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS`: BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS
 - **[EXTERNAL_CREDENTIAL]** `SUPPLIER`: SUPPLIER: BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS
-- **[SOFTWARE]** `MARKETPLACE`: MARKETPLACE: Software complete; external credentials blocked
+- **[EXTERNAL_CREDENTIAL]** `MARKETPLACE`: MARKETPLACE: External marketplace credentials not configured
 - **[MANUAL_DEPLOYMENT]** `PERSISTENCE`: PERSISTENCE: BLOCKED — MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)
 - **[LIVE_VALIDATION]** `EXTERNAL_ACCESS`: EXTERNAL_ACCESS: External credentials and live validation required
 - **[EXTERNAL_CREDENTIAL]** `external-credentials`: BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS
@@ -179,7 +179,7 @@
 
 ## Next Actions
 
-1. Resolve internal software blockers — **PENDING**
+1. Resolve internal software blockers — **COMPLETE**
 2. Manual configuration (Render /var/data, env vars, secret refs) — **BLOCKED**
 3. External credentials (Inter Cars, Payment, Carrier) — **BLOCKED**
 4. Read-only validation (Inter Cars Stage A, payment/carrier dry-run) — **BLOCKED**
@@ -196,21 +196,21 @@
 
 | Command | Status | Duration |
 |---------|--------|----------|
-| `npm run typecheck` | PASS | 1984ms |
-| `npm run lint` | PASS | 1435ms |
-| `npm run build` | PASS | 31089ms |
-| `npm run gate:buzzard-final` | PASS | 103035ms |
-| `npm run test:final-external-access` | PASS | 1567ms |
-| `npm run test:trade-route-fulfillment` | PASS | 951ms |
-| `npm run test:order-engine` | PASS | 1753ms |
-| `npm run test:production-access` | PASS | 1421ms |
-| `npm run test:pricing-engine` | PASS | 845ms |
-| `npm run test:inventory-engine` | PASS | 1029ms |
-| `npm run test:returns-engine` | PASS | 1758ms |
-| `npm run test:marketplace-engine` | PASS | 1425ms |
-| `npm run test:ai-orchestrator` | PASS | 1001ms |
-| `npm run test:buzzard-i18n` | PASS | 854ms |
-| `npm run test:internal-production-readiness` | PASS | 1609ms |
+| `npm run typecheck` | PASS | 1991ms |
+| `npm run lint` | PASS | 1444ms |
+| `npm run build` | PASS | 31380ms |
+| `npm run gate:buzzard-final` | PASS | 105989ms |
+| `npm run test:final-external-access` | PASS | 1598ms |
+| `npm run test:trade-route-fulfillment` | PASS | 950ms |
+| `npm run test:order-engine` | PASS | 1837ms |
+| `npm run test:production-access` | PASS | 1441ms |
+| `npm run test:pricing-engine` | PASS | 860ms |
+| `npm run test:inventory-engine` | PASS | 1033ms |
+| `npm run test:returns-engine` | PASS | 1934ms |
+| `npm run test:marketplace-engine` | PASS | 1434ms |
+| `npm run test:ai-orchestrator` | PASS | 995ms |
+| `npm run test:buzzard-i18n` | PASS | 852ms |
+| `npm run test:internal-production-readiness` | PASS | 1632ms |
 
 ---
 

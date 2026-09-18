@@ -62,7 +62,7 @@ export function buildReadinessMatrix(): ReadinessMatrixEntry[] {
         : "PASS",
       "lib/marketplace-engine",
       "test:marketplace-engine",
-      "Software complete; external credentials blocked",
+      "External marketplace credentials not configured",
     ),
     entry("RETURNS", "PASS", "lib/returns-engine", "test:returns-engine", "Customer refund ≠ supplier recovery; no auto-restock"),
     entry("ANALYTICS", "PASS", "lib/analytics", "test:analytics", "KPI + storefront + persistence integration"),

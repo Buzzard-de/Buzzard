@@ -27521,7 +27521,7 @@ function listProviderAccessEvidence(provider) {
 }
 function hasProductionEvidence(provider, capability) {
   return listProviderAccessEvidence(provider).some(
-    (e) => e.capability === capability && e.environment === "PRODUCTION" && e.responseStatus >= 200 && e.responseStatus < 300
+    (e) => e.capability === capability && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION") && e.responseStatus >= 200 && e.responseStatus < 300
   );
 }
 

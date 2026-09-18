@@ -6,8 +6,10 @@ import { getAdminToken } from "@/lib/admin/client";
 import {
   fetchFinalGoLiveDashboard,
   fetchFinalProductionCompletionReport,
+  fetchFinalClosureReport,
   type FinalGoLiveDashboard,
   type FinalProductionCompletionReport,
+  type FinalClosureReport,
 } from "@/lib/admin/finalProductionGoLiveClient";
 
 const SECTION_LINKS: Record<string, string> = {
@@ -21,6 +23,7 @@ const SECTION_LINKS: Record<string, string> = {
 export default function AdminFinalProductionGoLivePanel() {
   const [dashboard, setDashboard] = useState<FinalGoLiveDashboard | null>(null);
   const [completion, setCompletion] = useState<FinalProductionCompletionReport | null>(null);
+  const [closure, setClosure] = useState<FinalClosureReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -28,12 +31,14 @@ export default function AdminFinalProductionGoLivePanel() {
     setError("");
     setLoading(true);
     try {
-      const [dashRes, completionRes] = await Promise.all([
+      const [dashRes, completionRes, closureRes] = await Promise.all([
         fetchFinalGoLiveDashboard(),
         fetchFinalProductionCompletionReport(),
+        fetchFinalClosureReport(),
       ]);
       setDashboard(dashRes.data);
       setCompletion(completionRes.data);
+      setClosure(closureRes.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load dashboard");
     } finally {
@@ -68,6 +73,46 @@ export default function AdminFinalProductionGoLivePanel() {
 
       {error && <p className="admin-error">{error}</p>}
       {loading && <p className="admin-muted">Loading…</p>}
+
+      {closure && (
+        <section className="admin-card">
+          <h2>Final closure — {closure.finalState}</h2>
+          <ul>
+            <li>Final go-live: {closure.finalGoLive}</li>
+            <li>Decision: {closure.finalDecision}</li>
+            <li>Critical blockers: {closure.criticalBlockerCount}</li>
+            <li>Fake evidence: {closure.fakeEvidenceCount}</li>
+          </ul>
+          <h3>Inter Cars flow (A→F)</h3>
+          <ul>
+            {closure.interCarsFlow.map((s) => (
+              <li key={s.stage}>
+                Stage {s.stage}: [{s.status}] {s.name}
+              </li>
+            ))}
+          </ul>
+          <h3>All sections</h3>
+          <ul>
+            {closure.sections.map((s) => (
+              <li key={s.section}>
+                [{s.status}] {s.section}
+              </li>
+            ))}
+          </ul>
+          {closure.blockers.length > 0 && (
+            <>
+              <h3>Blockers (required actions — no secrets shown)</h3>
+              <ul>
+                {closure.blockers.slice(0, 20).map((b) => (
+                  <li key={`${b.code}-${b.provider || ""}`}>
+                    [{b.severity}] {b.code}: {b.requiredAction}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      )}
 
       {completion && (
         <section className="admin-card">

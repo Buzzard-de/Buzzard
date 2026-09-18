@@ -34,6 +34,7 @@ export default defineConfig({
       "lib/production-access/**/*.test.ts",
       "lib/production-kill-switch/**/*.test.ts",
       "lib/production-completion/**/*.test.ts",
+      "lib/final-closure/**/*.test.ts",
       "lib/marketplace-engine/**/*.test.ts",
       "lib/returns-engine/**/*.test.ts",
       "lib/ai-orchestrator/**/*.test.ts",

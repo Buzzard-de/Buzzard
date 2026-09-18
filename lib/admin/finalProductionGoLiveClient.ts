@@ -66,3 +66,36 @@ export function fetchFinalProductionStatusReport() {
 export function fetchMissingProductionAccessReport() {
   return adminFetch<Record<string, unknown>>("/api/admin/final-production-go-live/missing-access");
 }
+
+export interface FinalClosureBlocker {
+  code: string;
+  provider?: string;
+  severity: string;
+  status: string;
+  description: string;
+  requiredAction: string;
+}
+
+export interface FinalClosureReport {
+  generatedAt: string;
+  finalState: string;
+  finalGoLive: "READY" | "BLOCKED";
+  finalDecision: "READY" | "BLOCKED";
+  software: string;
+  sections: Array<{ section: string; status: string; message: string }>;
+  blockers: FinalClosureBlocker[];
+  criticalBlockerCount: number;
+  sales: "OPEN" | "CLOSED";
+  fakeEvidenceCount: number;
+  interCarsFlow: Array<{ stage: string; name: string; status: string; blockers: string[] }>;
+}
+
+export function fetchFinalClosureReport() {
+  return adminFetch<FinalClosureReport>("/api/admin/final-production-go-live/closure");
+}
+
+export function fetchFinalGoLiveCheck() {
+  return adminFetch<{ finalGoLive: string; finalState: string; criticalBlockers: number; blockers: string[] }>(
+    "/api/admin/final-production-go-live/go-live-check",
+  );
+}

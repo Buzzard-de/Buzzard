@@ -75,6 +75,38 @@ module.exports = {
       });
     });
 
+    app.get("/api/admin/final-production-go-live/closure", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      let closureMod = null;
+      try {
+        closureMod = require("../lib/finalClosure.bundle.cjs");
+      } catch {
+        return res.status(503).json({ success: false, errorCode: "FINAL_CLOSURE_UNAVAILABLE" });
+      }
+      return res.json({
+        success: true,
+        data: closureMod.buildFinalClosureReport(),
+        source: "final-closure",
+      });
+    });
+
+    app.get("/api/admin/final-production-go-live/go-live-check", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      let closureMod = null;
+      try {
+        closureMod = require("../lib/finalClosure.bundle.cjs");
+      } catch {
+        return res.status(503).json({ success: false, errorCode: "FINAL_CLOSURE_UNAVAILABLE" });
+      }
+      return res.json({
+        success: true,
+        data: closureMod.runFinalGoLiveCheck(),
+        source: "final-closure",
+      });
+    });
+
     app.get("/api/admin/final-production-go-live/completion", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

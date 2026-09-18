@@ -26,3 +26,9 @@ export {
   listProductionAccessAudit,
   resetProductionAccessAuditForTests,
 } from "./audit";
+export {
+  assertEvidenceEnvironmentAllowed,
+  isRejectedEvidenceEnvironment,
+  countRejectedEvidenceAttempts,
+  resetRejectedEvidenceAttemptsForTests,
+} from "./evidencePolicy";

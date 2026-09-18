@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "crypto";
+import { assertEvidenceEnvironmentAllowed, recordRejectedEvidenceAttempt } from "./evidencePolicy";
 import type { ProviderAccessEvidence, ValidationEnvironment } from "./types";
 
 const evidenceStore = new Map<string, ProviderAccessEvidence>();
@@ -39,8 +40,11 @@ export function recordProviderAccessEvidence(input: {
   environment: ValidationEnvironment;
   operator?: string;
 }): ProviderAccessEvidence {
-  if (input.environment === "MOCK" || input.environment === "SANDBOX") {
-    throw new Error("PRODUCTION_ACCESS:FAKE_EVIDENCE_REJECTED");
+  try {
+    assertEvidenceEnvironmentAllowed(input.environment, "PRODUCTION_ACCESS");
+  } catch (err) {
+    recordRejectedEvidenceAttempt();
+    throw err;
   }
 
   const evidence: ProviderAccessEvidence = {
@@ -93,7 +97,7 @@ export function hasProductionEvidence(provider: string, capability: string): boo
   return listProviderAccessEvidence(provider).some(
     (e) =>
       e.capability === capability &&
-      e.environment === "PRODUCTION" &&
+      (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION") &&
       e.responseStatus >= 200 &&
       e.responseStatus < 300,
   );

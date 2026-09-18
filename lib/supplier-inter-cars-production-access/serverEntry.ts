@@ -4,4 +4,8 @@ export {
   getProductionAccessDashboard,
   getProductionAccessSafetyCounters,
   assertProductionAccessSafetyInvariants,
+  buildInterCarsAccessStatusReport,
+  formatInterCarsAccessStatusReport,
+  evaluateStageAReadValidation,
+  isStageAValidated,
 } from "./index";

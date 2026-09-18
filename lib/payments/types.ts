@@ -1,4 +1,16 @@
-export type PaymentProviderId = "paypal" | "stripe" | "klarna" | "sepa";
+export type PaymentProviderId =
+  | "paypal"
+  | "stripe"
+  | "klarna"
+  | "sepa"
+  | "card"
+  | "apple_pay"
+  | "google_pay"
+  | "amazon_pay"
+  | "local_ideal"
+  | "local_giropay"
+  | "paypal_pay_later"
+  | string;
 
 export type PaymentStatus = "pending" | "authorized" | "paid" | "failed" | "cancelled";
 

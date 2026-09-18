@@ -20,7 +20,8 @@ import {
   type CheckoutStep,
 } from "@/lib/checkout";
 import { useCart } from "@/lib/cart";
-import { listPaymentProviders } from "@/lib/payments";
+import { listPaymentProvidersForCheckout } from "@/lib/payments/providers";
+import { fetchCheckoutPaymentMethods } from "@/lib/payment-production/client";
 import { saveConfirmedOrder, submitOrder, fetchOrderQuote } from "@/lib/orders";
 import { ensureServerCartSynced } from "@/lib/store/cartSync";
 import type { PaymentProviderId } from "@/lib/payments/types";
@@ -84,6 +85,9 @@ export default function CheckoutForm() {
     total: number;
   } | null>(null);
   const [apiShippingMethods, setApiShippingMethods] = useState<CustomerShippingMethod[]>([]);
+  const [checkoutPaymentMethods, setCheckoutPaymentMethods] = useState<
+    ReturnType<typeof listPaymentProvidersForCheckout>
+  >([]);
   const useCustomerCheckoutApi = shouldUseCustomerCheckoutApi();
 
   useEffect(() => {
@@ -285,7 +289,15 @@ export default function CheckoutForm() {
     );
   }, [items, shippingMethodId, couponCode]);
 
-  const paymentProviders = listPaymentProviders();
+  const checkoutDisplayTotal = serverQuote?.total ?? quote?.total ?? total;
+  const paymentProviders =
+    checkoutPaymentMethods.length > 0
+      ? checkoutPaymentMethods
+      : listPaymentProvidersForCheckout({
+          country: countryCode,
+          currency: "EUR",
+          amount: checkoutDisplayTotal,
+        });
   const shippingOptions =
     useCustomerCheckoutApi && apiShippingMethods.length > 0
       ? apiShippingMethods.map((method) => ({
@@ -302,6 +314,47 @@ export default function CheckoutForm() {
           baseCost: method.baseCost,
           freeFrom: getFreeShippingThreshold(countryCode),
         }));
+
+  useEffect(() => {
+    if (step !== "payment" && step !== "review") return;
+    let cancelled = false;
+    async function loadMethods() {
+      const apiMethods = await fetchCheckoutPaymentMethods({
+        country: countryCode,
+        currency: "EUR",
+        amount: checkoutDisplayTotal,
+      });
+      if (cancelled) return;
+      if (apiMethods.length > 0) {
+        setCheckoutPaymentMethods(
+          apiMethods.map((m) => ({
+            id: m.id as PaymentProviderId,
+            labelKey: m.labelKey,
+            descriptionKey: m.descriptionKey ?? m.labelKey,
+            supportsGuest: true,
+            async process() {
+              return { success: true, provider: m.id as PaymentProviderId, status: "paid" as const };
+            },
+          })),
+        );
+        if (!apiMethods.some((m) => m.id === paymentProvider)) {
+          setPaymentProvider(apiMethods[0].id as PaymentProviderId);
+        }
+      } else {
+        setCheckoutPaymentMethods(
+          listPaymentProvidersForCheckout({
+            country: countryCode,
+            currency: "EUR",
+            amount: checkoutDisplayTotal,
+          }),
+        );
+      }
+    }
+    void loadMethods();
+    return () => {
+      cancelled = true;
+    };
+  }, [step, countryCode, checkoutDisplayTotal, paymentProvider]);
 
   useEffect(() => {
     if (step === "review") {

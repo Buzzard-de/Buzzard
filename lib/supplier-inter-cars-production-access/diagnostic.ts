@@ -12,6 +12,7 @@ import { resolveNetworkState } from "./networkState";
 import { buildProductionAccessChecklist } from "./checklist";
 import { runProductionAccessPreflight } from "./preflight";
 import { resolveReadOnlyLiveStatus } from "./readOnlyLive";
+import { evaluateStageAReadValidation } from "./stageA";
 import { getProductionAccessSafetyCounters } from "./safety";
 import { getInterCarsSupplierId, isInterCarsProfileConfigured } from "./config";
 import type { ProductionAccessDiagnostic } from "./types";
@@ -26,10 +27,13 @@ export function evaluateInterCarsProductionAccess(): ProductionAccessDiagnostic 
   const safetyPrep = getProductionAccessSafetyCounters();
 
   const controlledRun = getLatestControlledValidationRun({ supplierId, market: "DE" });
+  const stageA = evaluateStageAReadValidation(credential.status);
   const createOrderCapability =
     controlledRun?.liveValidation === "PASS" && controlledRun.createOrderCapability === "VALIDATED"
       ? ("VALIDATED" as const)
       : ("UNVERIFIED" as const);
+  const handoffStage343 =
+    createOrderCapability === "VALIDATED" ? ("READY_FOR_343_ARMING" as const) : ("BLOCKED" as const);
 
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
@@ -54,7 +58,9 @@ export function evaluateInterCarsProductionAccess(): ProductionAccessDiagnostic 
     productionCredentials: credential.status,
     credentialType: credential.credentialType,
     readOnlyLiveValidation: resolveReadOnlyLiveStatus(credential.status),
-    controlledLiveValidation: preflight.ready ? "READY" : "BLOCKED",
+    stageAHandoff: stageA.handoff,
+    handoffStage343,
+    controlledLiveValidation: preflight.ready ? "READY" : preflight.stageAHandoff === "READY_FOR_STAGE_B_342" ? "NOT_RUN" : "BLOCKED",
     createOrderCapability,
     productionNetwork: network.productionNetwork,
     supplierOrderNetwork: network.supplierOrderNetwork,

@@ -18,6 +18,7 @@ export default defineConfig({
       "lib/customs-fulfillment-gate/**/*.test.ts",
       "lib/final-external-access/**/*.test.ts",
       "lib/internal-production-readiness/**/*.test.ts",
+      "lib/production-storage-preflight/**/*.test.ts",
       "lib/fulfillment-control-tower/**/*.test.ts",
       "lib/supplier-order-readiness/**/*.test.ts",
       "lib/supplier-order-rehearsal/**/*.test.ts",

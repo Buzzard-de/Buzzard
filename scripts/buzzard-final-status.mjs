@@ -50,6 +50,15 @@ const internalReadiness = load("internal-readiness", () => {
   }
 });
 
+const storagePreflight = load("storage-preflight", () => {
+  try {
+    const mod = require("../server/lib/productionStoragePreflight.bundle.cjs");
+    return mod.buildProductionStoragePreflightReport();
+  } catch {
+    return null;
+  }
+});
+
 function runTest(cmd) {
   try {
     execSync(cmd, { stdio: "pipe", timeout: 180000 });
@@ -124,6 +133,16 @@ const report = {
   internalAuditReport: internalReadiness
     ? "docs/BUZZARD_FINAL_INTERNAL_PRODUCTION_READINESS_AUDIT.json"
     : undefined,
+  PERSISTENCE_CONFIGURED: storagePreflight?.healthStatus?.PERSISTENCE_CONFIGURED ?? null,
+  PERSISTENCE_PATH: storagePreflight?.healthStatus?.PERSISTENCE_PATH ?? null,
+  PERSISTENCE_WRITABLE: storagePreflight?.healthStatus?.PERSISTENCE_WRITABLE ?? null,
+  SQLITE_READY: storagePreflight?.healthStatus?.SQLITE_READY ?? null,
+  MIGRATION_READY: storagePreflight?.healthStatus?.MIGRATION_READY ?? null,
+  BACKUP_READY: storagePreflight?.healthStatus?.BACKUP_READY ?? null,
+  RESTORE_EVIDENCE: storagePreflight?.healthStatus?.RESTORE_EVIDENCE ?? null,
+  RESTART_PERSISTENCE: storagePreflight?.healthStatus?.RESTART_PERSISTENCE ?? null,
+  RENDER_MANUAL_ACTION_REQUIRED: storagePreflight?.healthStatus?.RENDER_MANUAL_ACTION_REQUIRED ?? null,
+  storagePreflightReport: storagePreflight ? "docs/BUZZARD_PRODUCTION_STORAGE_PREFLIGHT.json" : undefined,
 };
 
 if (jsonOutput) {
@@ -159,6 +178,10 @@ if (jsonOutput) {
   console.log(`35 MARKETS: ${report.market35Valid ? "PASS" : "PARTIAL"}`);
   if (report.INTERNAL_READINESS) {
     console.log(`INTERNAL_READINESS: ${report.INTERNAL_READINESS}`);
+  }
+  if (report.PERSISTENCE_CONFIGURED) {
+    console.log(`PERSISTENCE: ${report.PERSISTENCE_CONFIGURED} path=${report.PERSISTENCE_PATH}`);
+    console.log(`  SQLITE_READY=${report.SQLITE_READY} RESTORE_EVIDENCE=${report.RESTORE_EVIDENCE}`);
   }
 
   if (currentBlocker) {

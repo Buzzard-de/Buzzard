@@ -12,7 +12,7 @@ import {
 import { getLanguageOptionsForCountry } from "@/lib/i18n/international/config";
 
 export default function CountrySelector() {
-  const { t, locale } = useLocale();
+  const { t } = useLocale();
   const { country, setCountry } = useGlobalLocale();
   const countries = listGlobalCountries();
 

@@ -225,10 +225,12 @@ export function runTradeRouteFulfillmentPipeline(
   const carrier = selectCarrier({
     originCountry: origin.originCountry,
     destinationCountry: target.country,
+    postalCode: input.shippingAddress.postalCode,
     tradeRoute: route.tradeRoute,
     weightKg,
     dimensionsCm: dimensions,
     serviceLevel: input.serviceLevel,
+    customsRequired: route.flags.requiresCustomsPrecheck,
     shippingCost: shipping.shippingCost,
     shipmentId: input.orderId,
     idempotencyKey: idempotencyKeys.carrier,

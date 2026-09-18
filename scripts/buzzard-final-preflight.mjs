@@ -14,9 +14,10 @@ process.env.MARKETING_SPEND_ENABLED = "0";
 process.env.AI_PRODUCTION_ENABLED = "0";
 
 const steps = [
+  ["External access preflight tests", "npm run test:final-external-access"],
   ["Provider credential preflight", "node scripts/provider-credential-preflight.mjs"],
   ["Inter Cars access preflight", "node scripts/supplier-inter-cars-production-access-preflight.mjs"],
-  ["Master completion status", "node scripts/master-completion-status.mjs"],
+  ["Buzzard final status", "node scripts/buzzard-final-status.mjs"],
 ];
 
 let failed = 0;

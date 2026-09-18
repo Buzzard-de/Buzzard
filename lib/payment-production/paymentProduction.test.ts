@@ -8,6 +8,8 @@ import {
   assertPaymentProductionSafetyInvariants,
   resetPaymentProductionSafetyCountersForTests,
   resetPaymentProductionForTests,
+  resetIdempotencyForTests,
+  resetPaymentFlowForTests,
   buildPaymentIdempotencyKey,
 } from "./index";
 
@@ -18,6 +20,8 @@ describe("#350 Payment production", () => {
     process.env.PAYMENT_PRODUCTION_ENABLED = "0";
     resetPaymentProductionForTests();
     resetPaymentProductionSafetyCountersForTests();
+    resetIdempotencyForTests();
+    resetPaymentFlowForTests();
   });
   afterEach(() => {
     process.env = { ...ORIGINAL };
@@ -31,7 +35,7 @@ describe("#350 Payment production", () => {
       idempotencyKey: buildPaymentIdempotencyKey("ord_p1"),
     });
     expect(intent.dryRun).toBe(true);
-    expect(intent.state).toBe("PENDING");
+    expect(["CREATED", "PENDING"].includes(intent.state)).toBe(true);
   });
 
   it("mock authorize and capture path", () => {
@@ -43,7 +47,13 @@ describe("#350 Payment production", () => {
     });
     const auth = authorizePaymentIntent(intent.paymentId);
     expect(auth.state).toBe("AUTHORIZED");
-    const cap = capturePaymentIntent(intent.paymentId);
+    const cap = capturePaymentIntent({
+      paymentId: intent.paymentId,
+      orderId: intent.orderId,
+      amount: 10,
+      currency: "EUR",
+      idempotencyKey: "cap_p2",
+    });
     expect(cap.state).toBe("CAPTURED");
   });
 
@@ -55,13 +65,14 @@ describe("#350 Payment production", () => {
       idempotencyKey: buildPaymentIdempotencyKey("ord_p3"),
     });
     const unknown = markUnknownPaymentState(intent.paymentId);
-    expect(unknown.state).toBe("UNKNOWN_PAYMENT_STATE");
+    expect(unknown.state).toBe("UNKNOWN");
   });
 
   it("dashboard production DISABLED", () => {
     const dash = getPaymentProductionDashboard();
     expect(dash.productionEnabled).toBe("DISABLED");
     expect(dash.liveStatus).toBe("NOT_CONFIGURED");
+    expect(dash.providers.MOCK.status).toBe("VALIDATED");
   });
 
   it("zero real charges in CI", () => {

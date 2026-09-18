@@ -3,7 +3,9 @@ import { execSync } from "node:child_process";
 process.env.PAYMENT_PRODUCTION_ENABLED = "0";
 
 const steps = [
-  ["#350 payment tests", "vitest run lib/payment-production/paymentProduction.test.ts"],
+  ["Build payment production bridge", "npm run build:payment-production-bridge"],
+  ["#350 payment tests", "vitest run lib/payment-production/paymentProduction.test.ts lib/payment-production/multiPayment.test.ts"],
+  ["Payment production status", "npm run status:payment-production"],
   ["Upstream #349 gate", "npm run gate:tracking-fulfillment"],
 ];
 

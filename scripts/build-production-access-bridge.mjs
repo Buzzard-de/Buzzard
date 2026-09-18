@@ -13,7 +13,7 @@ await esbuild.build({
   alias: { "@": root },
   banner: { js: 'const __import_meta_url__=require("url").pathToFileURL(__filename).href;' },
   define: { "import.meta.url": "__import_meta_url__" },
-  external: ["better-sqlite3"],
+  external: ["better-sqlite3", "./server/lib/production-access/persistentStore.js"],
 });
 
 console.log("Built server/lib/productionAccess.bundle.cjs");

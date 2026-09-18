@@ -17,7 +17,7 @@ export type AiWorkerId =
 export interface AiProductionDashboard {
   version: string;
   productionEnabled: "DISABLED" | "ENABLED" | "BLOCKED";
-  liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED";
+  liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED" | "VALIDATED";
   defaultAuthority: AiProductionAuthority;
   workers: AiWorkerId[];
   safetyCounters: { realProviderCalls: number; blockedExecutions: number };

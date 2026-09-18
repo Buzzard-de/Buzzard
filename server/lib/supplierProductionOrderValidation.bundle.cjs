@@ -34929,10 +34929,97 @@ function validateControlledValidationApproval(input) {
 
 // lib/supplier-production-order-validation/preflight.ts
 init_config();
+
+// lib/supplier-inter-cars-production-access/credentialStatus.ts
+init_config();
+function resolveCredentialDisplayStatus(input) {
+  const profile = resolvePredefinedLiveProfile();
+  const environment = input.environment || (profile?.environment?.toUpperCase() === "PRODUCTION" ? "PRODUCTION" : "SANDBOX");
+  const result = validateProductionCredentials({
+    supplierId: input.supplierId,
+    environment
+  });
+  const statusMap = {
+    NOT_CONFIGURED: "NOT_CONFIGURED",
+    CONFIGURED: "CONFIGURED",
+    VALID: "VALID",
+    INVALID: "INVALID",
+    EXPIRED: "EXPIRED",
+    REVOKED: "BLOCKED",
+    MISMATCH: "BLOCKED",
+    BLOCKED: "BLOCKED"
+  };
+  return {
+    status: statusMap[result.status] || "INVALID",
+    credentialType: result.credentialType,
+    blockers: result.blockerCodes
+  };
+}
+
+// lib/supplier-inter-cars-production-access/config.ts
+init_config();
+function getInterCarsSupplierId3() {
+  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
+}
+
+// lib/supplier-inter-cars-production-access/stageA.ts
+var STAGE_A_CAPABILITIES = ["health", "catalog", "stock", "price"];
+function evaluateStageAReadValidation(credentialsStatus) {
+  const blockers = [];
+  const supplierId = getInterCarsSupplierId3();
+  const latest = getLatestValidationForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const capabilities = {
+    health: latest?.healthStatus === "LIVE_READ_VALIDATED",
+    catalog: latest?.catalogReadStatus === "LIVE_READ_VALIDATED",
+    stock: latest?.stockReadStatus === "LIVE_READ_VALIDATED",
+    price: latest?.priceReadStatus === "LIVE_READ_VALIDATED"
+  };
+  const allPass = STAGE_A_CAPABILITIES.every((c) => capabilities[c]);
+  if (credentialsStatus === "NOT_CONFIGURED") {
+    blockers.push("CREDENTIAL_NOT_CONFIGURED");
+    return { status: "BLOCKED", capabilities, handoff: "BLOCKED", blockers };
+  }
+  if (credentialsStatus === "BLOCKED") {
+    blockers.push("CREDENTIAL_MOCK_OR_BLOCKED");
+    return { status: "BLOCKED", capabilities, handoff: "BLOCKED", blockers };
+  }
+  if (allPass) {
+    return { status: "VALIDATED", capabilities, handoff: "READY_FOR_STAGE_B_342", blockers: [] };
+  }
+  blockers.push("INTER_CARS_READ_VALIDATION");
+  return { status: "NOT_RUN", capabilities, handoff: "BLOCKED", blockers };
+}
+function isStageAValidated(credentialsStatus) {
+  const cred = credentialsStatus ?? resolveCredentialDisplayStatus({ supplierId: getInterCarsSupplierId3() }).status;
+  return evaluateStageAReadValidation(cred).status === "VALIDATED";
+}
+
+// lib/supplier-production-order-validation/preflight.ts
 function runControlledValidationPreflight(input) {
   const checks = [];
   const blockers = [];
   const supplierId = input.supplier || getInterCarsSupplierId();
+  if (!isStageAValidated()) {
+    blockers.push("STAGE_A_READ_VALIDATION_REQUIRED");
+    checks.push({
+      check: "STAGE_A_READ_ONLY",
+      category: "LIVE_READ",
+      status: "BLOCKED",
+      message: "Stage A read-only validation (health/catalog/stock/price) must PASS before #342"
+    });
+  } else {
+    checks.push({
+      check: "STAGE_A_READ_ONLY",
+      category: "LIVE_READ",
+      status: "PASS",
+      message: "Stage A read-only validation PASS"
+    });
+  }
   const credential = validateProductionCredentials({ supplierId, environment: input.environment || "PRODUCTION" });
   checks.push({
     check: "CREDENTIALS",

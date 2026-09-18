@@ -15,6 +15,7 @@ import {
   guardHttpMethod,
   validateEndpointUrl,
 } from "./endpointSecurity";
+import { syncLiveReadEvidenceFromValidation } from "@/lib/production-access/liveReadEvidenceBridge";
 import { recordValidationAudit } from "./audit";
 import { resolveFailureInjection, applyFailureInjection } from "./failureInjection";
 import {
@@ -291,6 +292,11 @@ async function executeValidation(
     for (const type of ["HEALTH_CHECKED", "CATALOG_CHECKED", "STOCK_CHECKED", "PRICE_CHECKED"] as const) {
       recordValidationAudit({ type, validationId: record.validationId, correlationId: scope.correlationId });
     }
+    syncLiveReadEvidenceFromValidation({
+      supplierId: scope.supplierId,
+      market: scope.market,
+      channel: scope.channel,
+    });
   } else {
     const skipReason =
       credential.status !== "VALID" ? "Credential not VALID" : "Live read not enabled or not requested";

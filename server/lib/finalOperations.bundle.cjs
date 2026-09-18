@@ -258,7 +258,12 @@ function getFulfillmentSafetyCounters() {
 }
 
 // lib/payment-production/safety.ts
-var counters2 = { realCharges: 0, realRefunds: 0, webhookProcessed: 0 };
+var counters2 = {
+  realCharges: 0,
+  realRefunds: 0,
+  webhookProcessed: 0,
+  blockedCaptures: 0
+};
 function getPaymentProductionSafetyCounters() {
   return { ...counters2 };
 }
@@ -807,10 +812,6 @@ var inter_cars_category_mappings_default = {
 };
 
 // lib/supplier-engine/liveSupplier/config.ts
-function envFlag2(name) {
-  const raw = process.env[name];
-  return raw === "1" || raw?.toLowerCase() === "true";
-}
 function parseJsonConfig(raw) {
   try {
     const parsed = JSON.parse(raw);
@@ -902,9 +903,6 @@ function resolveLiveSupplierProfile() {
     whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
     blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
   }));
-}
-function isLiveReadEnabled() {
-  return envFlag2("SUPPLIER_LIVE_READ_ENABLED");
 }
 function hasLiveSupplierCredentials(profile) {
   const creds = resolveCredentials(profile.secretsRef);
@@ -1748,6 +1746,45 @@ var global_countries_35_default = [
   { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
 ];
 
+// data/global/market_country_overlay.json
+var market_country_overlay_default = {
+  DE: { flag: "\u{1F1E9}\u{1F1EA}", taxRate: 0.19, deliveryDays: "2\u20133 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
+  AT: { flag: "\u{1F1E6}\u{1F1F9}", taxRate: 0.2, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
+  BE: { flag: "\u{1F1E7}\u{1F1EA}", taxRate: 0.21, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
+  BG: { flag: "\u{1F1E7}\u{1F1EC}", taxRate: 0.2, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" },
+  HR: { flag: "\u{1F1ED}\u{1F1F7}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Hrvatski" },
+  CY: { flag: "\u{1F1E8}\u{1F1FE}", taxRate: 0.19, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
+  CZ: { flag: "\u{1F1E8}\u{1F1FF}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "\u010Ce\u0161tina" },
+  DK: { flag: "\u{1F1E9}\u{1F1F0}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Dansk" },
+  EE: { flag: "\u{1F1EA}\u{1F1EA}", taxRate: 0.22, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Eesti" },
+  FI: { flag: "\u{1F1EB}\u{1F1EE}", taxRate: 0.255, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Suomi" },
+  FR: { flag: "\u{1F1EB}\u{1F1F7}", taxRate: 0.2, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Fran\xE7ais" },
+  GR: { flag: "\u{1F1EC}\u{1F1F7}", taxRate: 0.24, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
+  HU: { flag: "\u{1F1ED}\u{1F1FA}", taxRate: 0.27, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Magyar" },
+  IE: { flag: "\u{1F1EE}\u{1F1EA}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "English" },
+  IT: { flag: "\u{1F1EE}\u{1F1F9}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Italiano" },
+  LV: { flag: "\u{1F1F1}\u{1F1FB}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Latvie\u0161u" },
+  LT: { flag: "\u{1F1F1}\u{1F1F9}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Lietuvi\u0173" },
+  LU: { flag: "\u{1F1F1}\u{1F1FA}", taxRate: 0.17, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "L\xEBtzebuergesch" },
+  MT: { flag: "\u{1F1F2}\u{1F1F9}", taxRate: 0.18, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Malti" },
+  NL: { flag: "\u{1F1F3}\u{1F1F1}", taxRate: 0.21, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
+  PL: { flag: "\u{1F1F5}\u{1F1F1}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Polski" },
+  PT: { flag: "\u{1F1F5}\u{1F1F9}", taxRate: 0.23, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Portugu\xEAs" },
+  RO: { flag: "\u{1F1F7}\u{1F1F4}", taxRate: 0.19, deliveryDays: "3\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Rom\xE2n\u0103" },
+  SK: { flag: "\u{1F1F8}\u{1F1F0}", taxRate: 0.2, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u010Dina" },
+  SI: { flag: "\u{1F1F8}\u{1F1EE}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u0161\u010Dina" },
+  ES: { flag: "\u{1F1EA}\u{1F1F8}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Espa\xF1ol" },
+  SE: { flag: "\u{1F1F8}\u{1F1EA}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Svenska" },
+  TR: { flag: "\u{1F1F9}\u{1F1F7}", taxRate: 0.2, deliveryDays: "4\u20139 Werktage", rtl: false, taxModel: "VAT", languageName: "T\xFCrk\xE7e" },
+  SA: { flag: "\u{1F1F8}\u{1F1E6}", taxRate: 0.15, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  AE: { flag: "\u{1F1E6}\u{1F1EA}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  QA: { flag: "\u{1F1F6}\u{1F1E6}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  KW: { flag: "\u{1F1F0}\u{1F1FC}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  BH: { flag: "\u{1F1E7}\u{1F1ED}", taxRate: 0.1, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  OM: { flag: "\u{1F1F4}\u{1F1F2}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
+  EG: { flag: "\u{1F1EA}\u{1F1EC}", taxRate: 0.14, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" }
+};
+
 // data/global/market_engine_extensions.json
 var market_engine_extensions_default = {
   shippingRegions: {
@@ -2002,6 +2039,70 @@ var market_engine_extensions_default = {
 // lib/i18n/international/config.ts
 var GLOBAL_COUNTRIES = global_countries_35_default;
 var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
+
+// lib/market-engine/registry.ts
+var extensions = market_engine_extensions_default;
+var overlayByCode = market_country_overlay_default;
+var marketByCode = /* @__PURE__ */ new Map();
+function resolveFeatureFlags(countryCode) {
+  const defaults = extensions.defaultFeatureFlags;
+  const overrides = extensions.featureFlags[countryCode] ?? {};
+  return { ...defaults, ...overrides };
+}
+function resolveMarketStatus(country) {
+  if (country.enabled === false) return "DISABLED";
+  return extensions.marketStatus[country.countryCode] ?? extensions.defaultMarketStatus;
+}
+function buildVatRules(countryCode) {
+  const overlay = overlayByCode[countryCode];
+  return {
+    standardRate: overlay?.taxRate ?? 0.2,
+    pricesIncludeVat: true,
+    taxModel: overlay?.taxModel ?? "VAT"
+  };
+}
+function buildMarketConfig(country) {
+  const code = country.countryCode;
+  const variants = country.localeVariants ?? [];
+  const locales = variants.map((v) => v.locale);
+  if (!locales.length) locales.push(country.locale);
+  const paymentRegion = extensions.paymentRegions[code] ?? "EU";
+  return {
+    countryCode: code,
+    countryName: country.countryName,
+    nativeCountryName: country.nativeCountryName || country.countryName,
+    defaultLanguage: country.defaultLanguage,
+    supportedLanguages: [...country.supportedLanguages],
+    locales,
+    currency: country.currency,
+    currencySymbol: country.currencySymbol,
+    timezone: country.timezone,
+    textDirection: country.textDirection === "rtl" ? "rtl" : "ltr",
+    vat: buildVatRules(code),
+    shippingRegion: extensions.shippingRegions[code] ?? "EU_CENTRAL",
+    paymentRegion,
+    legalRegion: extensions.legalRegions[code] ?? `EU_${code}`,
+    returnRegion: extensions.returnRegions[code] ?? paymentRegion,
+    supplierRegion: extensions.supplierRegions[code] ?? paymentRegion,
+    status: resolveMarketStatus(country),
+    featureFlags: resolveFeatureFlags(code),
+    marketplaces: extensions.marketplaces[code] ?? [],
+    paymentCapabilities: extensions.paymentCapabilities[paymentRegion] ?? ["card"],
+    shippingCapabilities: [...extensions.shippingCapabilities],
+    source: country
+  };
+}
+function ensureRegistryBuilt() {
+  if (marketByCode.size > 0) return;
+  for (const country of global_countries_35_default) {
+    marketByCode.set(country.countryCode, buildMarketConfig(country));
+  }
+}
+function getMarket(countryCode) {
+  ensureRegistryBuilt();
+  const code = String(countryCode || "").toUpperCase();
+  return marketByCode.get(code);
+}
 
 // lib/product-engine/adapters/canonical.ts
 var import_module = require("module");
@@ -27300,6 +27401,39 @@ function evaluateUpstreamGates(input) {
   return { allowed: blockers.length === 0, blockers };
 }
 
+// lib/supplier-inter-cars-production-access/stageA.ts
+var STAGE_A_CAPABILITIES = ["health", "catalog", "stock", "price"];
+function evaluateStageAReadValidation(credentialsStatus) {
+  const blockers = [];
+  const supplierId = getInterCarsSupplierId();
+  const latest = getLatestValidationForScope2({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const capabilities = {
+    health: latest?.healthStatus === "LIVE_READ_VALIDATED",
+    catalog: latest?.catalogReadStatus === "LIVE_READ_VALIDATED",
+    stock: latest?.stockReadStatus === "LIVE_READ_VALIDATED",
+    price: latest?.priceReadStatus === "LIVE_READ_VALIDATED"
+  };
+  const allPass = STAGE_A_CAPABILITIES.every((c) => capabilities[c]);
+  if (credentialsStatus === "NOT_CONFIGURED") {
+    blockers.push("CREDENTIAL_NOT_CONFIGURED");
+    return { status: "BLOCKED", capabilities, handoff: "BLOCKED", blockers };
+  }
+  if (credentialsStatus === "BLOCKED") {
+    blockers.push("CREDENTIAL_MOCK_OR_BLOCKED");
+    return { status: "BLOCKED", capabilities, handoff: "BLOCKED", blockers };
+  }
+  if (allPass) {
+    return { status: "VALIDATED", capabilities, handoff: "READY_FOR_STAGE_B_342", blockers: [] };
+  }
+  blockers.push("INTER_CARS_READ_VALIDATION");
+  return { status: "NOT_RUN", capabilities, handoff: "BLOCKED", blockers };
+}
+
 // lib/supplier-inter-cars-production-access/preflight.ts
 function runProductionAccessPreflight() {
   const supplierId = getInterCarsSupplierId();
@@ -27367,29 +27501,28 @@ function runProductionAccessPreflight() {
     status: isControlledValidationEnabled() ? "UNVERIFIED" : "PASS",
     message: isControlledValidationEnabled() ? "Explicitly enabled \u2014 await controlled run" : "Disabled until operational enable"
   });
+  const stageA = evaluateStageAReadValidation(credential.status);
+  checks.push({
+    check: "STAGE_A_READ_ONLY",
+    status: stageA.status === "VALIDATED" ? "PASS" : stageA.status === "NOT_RUN" ? "UNVERIFIED" : "BLOCKED",
+    message: `health=${stageA.capabilities.health} catalog=${stageA.capabilities.catalog} stock=${stageA.capabilities.stock} price=${stageA.capabilities.price}`
+  });
+  if (stageA.status !== "VALIDATED" && (credential.status === "VALID" || credential.status === "CONFIGURED")) {
+    blockers.push("STAGE_A_READ_VALIDATION_REQUIRED");
+  }
   const credentialReady = credential.status === "VALID" || credential.status === "CONFIGURED";
-  const ready = credentialReady && endpointAllowlisted && network.supplierOrderNetwork === "OFF" && upstream.blockers.length === 0;
-  return { ready, blockers: [...new Set(blockers)], checks };
+  const ready = credentialReady && endpointAllowlisted && network.supplierOrderNetwork === "OFF" && upstream.blockers.length === 0 && stageA.handoff === "READY_FOR_STAGE_B_342";
+  return {
+    ready,
+    stageAHandoff: stageA.handoff,
+    blockers: [...new Set(blockers)],
+    checks
+  };
 }
 
 // lib/supplier-inter-cars-production-access/readOnlyLive.ts
 function resolveReadOnlyLiveStatus(credentialsStatus) {
-  const latest = getLatestValidationForScope2({
-    supplierId: getInterCarsSupplierId(),
-    market: "DE",
-    channel: "DIRECT",
-    environment: "PRODUCTION"
-  });
-  if (latest?.healthStatus === "LIVE_READ_VALIDATED" && latest.catalogReadStatus === "LIVE_READ_VALIDATED") {
-    return "VALIDATED";
-  }
-  if (credentialsStatus === "NOT_CONFIGURED" || credentialsStatus === "BLOCKED") {
-    return "BLOCKED";
-  }
-  if (isLiveReadEnabled() && (credentialsStatus === "VALID" || credentialsStatus === "CONFIGURED")) {
-    return "NOT_RUN";
-  }
-  return "NOT_RUN";
+  return evaluateStageAReadValidation(credentialsStatus).status;
 }
 
 // lib/supplier-inter-cars-production-access/safety.ts
@@ -27413,7 +27546,9 @@ function evaluateInterCarsProductionAccess() {
   const safety342 = getCreateOrderValidationSafetyCounters();
   const safetyPrep = getProductionAccessSafetyCounters();
   const controlledRun = getLatestControlledValidationRun({ supplierId, market: "DE" });
+  const stageA = evaluateStageAReadValidation(credential.status);
   const createOrderCapability = controlledRun?.liveValidation === "PASS" && controlledRun.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED";
+  const handoffStage343 = createOrderCapability === "VALIDATED" ? "READY_FOR_343_ARMING" : "BLOCKED";
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
@@ -27435,7 +27570,9 @@ function evaluateInterCarsProductionAccess() {
     productionCredentials: credential.status,
     credentialType: credential.credentialType,
     readOnlyLiveValidation: resolveReadOnlyLiveStatus(credential.status),
-    controlledLiveValidation: preflight.ready ? "READY" : "BLOCKED",
+    stageAHandoff: stageA.handoff,
+    handoffStage343,
+    controlledLiveValidation: preflight.ready ? "READY" : preflight.stageAHandoff === "READY_FOR_STAGE_B_342" ? "NOT_RUN" : "BLOCKED",
     createOrderCapability,
     productionNetwork: network.productionNetwork,
     supplierOrderNetwork: network.supplierOrderNetwork,
@@ -27876,27 +28013,684 @@ function getObservationDashboard() {
 var import_crypto3 = require("crypto");
 
 // lib/payment-production/config.ts
-var PAYMENT_PRODUCTION_VERSION = "350.1.0";
+var PAYMENT_PRODUCTION_VERSION = "350.2.0";
+var PROVIDER_FLAG_ENV = {
+  PAYPAL: "PAYPAL_ENABLED",
+  CARD: "CARD_ENABLED",
+  SEPA: "SEPA_ENABLED",
+  APPLE_PAY: "APPLE_PAY_ENABLED",
+  GOOGLE_PAY: "GOOGLE_PAY_ENABLED",
+  AMAZON_PAY: "AMAZON_PAY_ENABLED",
+  KLARNA: "KLARNA_ENABLED",
+  LOCAL_PAYMENT: "LOCAL_PAYMENT_ENABLED",
+  MOCK: "MOCK_PAYMENT_ENABLED"
+};
+var PROVIDER_SECRET_REFS = {
+  PAYPAL: ["PAYPAL_CLIENT_ID_SECRET_REF", "PAYPAL_CLIENT_SECRET_SECRET_REF", "PAYPAL_WEBHOOK_SECRET_REF"],
+  CARD: ["PAYMENT_CARD_SECRET_REF", "PAYMENT_PROVIDER_SECRET_REF"],
+  SEPA: ["PAYMENT_SEPA_SECRET_REF", "PAYMENT_PROVIDER_SECRET_REF"],
+  APPLE_PAY: ["PAYMENT_APPLE_PAY_SECRET_REF"],
+  GOOGLE_PAY: ["PAYMENT_GOOGLE_PAY_SECRET_REF"],
+  AMAZON_PAY: [
+    "AMAZON_PAY_CLIENT_ID_SECRET_REF",
+    "AMAZON_PAY_CLIENT_SECRET_SECRET_REF",
+    "AMAZON_PAY_PUBLIC_KEY_SECRET_REF",
+    "AMAZON_PAY_PRIVATE_KEY_SECRET_REF"
+  ],
+  KLARNA: ["KLARNA_API_KEY_SECRET_REF", "KLARNA_API_SECRET_SECRET_REF"],
+  LOCAL_PAYMENT: ["PAYMENT_LOCAL_SECRET_REF"],
+  MOCK: []
+};
 function isPaymentProductionEnabled() {
   return isProductionFlagEnabled("PAYMENT_PRODUCTION");
 }
-function getDefaultPaymentProviderId() {
-  const configured = (process.env.PAYMENT_PROVIDER || "mock").toLowerCase();
-  if (configured === "stripe" || configured === "adyen" || configured === "paypal") return configured;
-  return "mock";
+function isProviderFlagEnabled(kind) {
+  const envKey = PROVIDER_FLAG_ENV[kind];
+  const value = process.env[envKey];
+  return value === "1" || value === "true";
+}
+function isPayPalEnabled() {
+  const legacy = process.env.PAYMENT_PAYPAL_ENABLED;
+  if (legacy === "1" || legacy === "true") return true;
+  return isProviderFlagEnabled("PAYPAL");
+}
+function getDefaultPaymentProviderKind() {
+  const configured = (process.env.PAYMENT_PROVIDER || "mock").toUpperCase();
+  const valid = [
+    "PAYPAL",
+    "CARD",
+    "SEPA",
+    "APPLE_PAY",
+    "GOOGLE_PAY",
+    "AMAZON_PAY",
+    "KLARNA",
+    "LOCAL_PAYMENT",
+    "MOCK"
+  ];
+  if (valid.includes(configured)) return configured;
+  if (configured === "STRIPE" || configured === "ADYEN") return "CARD";
+  return "MOCK";
+}
+function resolvePaymentEnvironment() {
+  if (process.env.NODE_ENV === "test" || process.env.CI === "true") return "MOCK";
+  if (isPaymentProductionEnabled()) return "PRODUCTION";
+  if (process.env.PAYMENT_SANDBOX === "1") return "SANDBOX";
+  return "MOCK";
+}
+function hasProviderSecretRef(kind) {
+  const refs = PROVIDER_SECRET_REFS[kind] ?? [];
+  return refs.some((key) => Boolean(process.env[key]?.trim()));
+}
+function resolvePaymentProviderConfig(kind) {
+  const refs = PROVIDER_SECRET_REFS[kind] ?? [];
+  const primaryRef = refs.find((key) => process.env[key]?.trim()) ?? `${kind.toLowerCase()}_secret_ref_unconfigured`;
+  const webhookKey = kind === "PAYPAL" ? "PAYPAL_WEBHOOK_SECRET_REF" : `PAYMENT_${kind}_WEBHOOK_SECRET_REF`;
+  return {
+    providerId: kind,
+    secretRef: primaryRef,
+    environment: resolvePaymentEnvironment(),
+    webhookSecretRef: process.env[webhookKey],
+    enabled: kind === "MOCK" ? true : isProviderFlagEnabled(kind)
+  };
+}
+function listAllProviderKinds() {
+  return [
+    "PAYPAL",
+    "CARD",
+    "SEPA",
+    "APPLE_PAY",
+    "GOOGLE_PAY",
+    "AMAZON_PAY",
+    "KLARNA",
+    "LOCAL_PAYMENT",
+    "MOCK"
+  ];
+}
+
+// lib/payment-production/providers/baseProvider.ts
+function resolveProviderConfigStatus(kind) {
+  if (kind === "MOCK") return "VALIDATED";
+  const enabled = kind === "PAYPAL" ? isPayPalEnabled() : isProviderFlagEnabled(kind);
+  if (!enabled) return "DISABLED";
+  if (!hasProviderSecretRef(kind)) return "NOT_CONFIGURED";
+  return "CONFIGURED";
+}
+function capabilityNotSupported() {
+  return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+}
+function createMockProviderResult(state = "CREATED", extra = {}) {
+  return { ok: true, state, ...extra };
+}
+var BasePaymentProvider = class {
+  configStatus() {
+    return resolveProviderConfigStatus(this.kind);
+  }
+  isAvailableInContext(ctx) {
+    if (this.configStatus() === "DISABLED") return false;
+    if (ctx.amount <= 0) return false;
+    return true;
+  }
+  dryRun() {
+    return resolvePaymentEnvironment() !== "PRODUCTION";
+  }
+};
+
+// lib/payment-production/providers/amazonPayProvider.ts
+var AmazonPayProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "AMAZON_PAY";
+    this.category = "WALLET";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("AMAZON_PAY");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const supportedCountries = /* @__PURE__ */ new Set(["DE", "FR", "IT", "ES", "UK", "GB", "US", "JP", "NL", "BE"]);
+    return {
+      ok: true,
+      data: {
+        available: this.isAvailableInContext(ctx) && supportedCountries.has(ctx.country.toUpperCase())
+      }
+    };
+  }
+  createPayment(input) {
+    return createMockProviderResult("CREATED", {
+      providerToken: `amazon_pay_${input.orderId}`,
+      redirectUrl: this.dryRun() ? void 0 : `https://pay.amazon.com/checkout/${input.orderId}`
+    });
+  }
+  authorizePayment() {
+    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount || record.currency !== input.currency) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment(input, record) {
+    const full = !input.amount || input.amount >= record.amount;
+    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook(payload) {
+    if (payload.eventType === "ChargePermission") {
+      return createMockProviderResult("CAPTURED");
+    }
+    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+  }
+};
+var amazonPayProvider = new AmazonPayProvider();
+
+// lib/payment-production/providers/applePayProvider.ts
+var ApplePayProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "APPLE_PAY";
+    this.category = "WALLET";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("APPLE_PAY");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const deviceOk = ctx.deviceSupportsApplePay !== false;
+    const countryOk = !["SA", "EG"].includes(ctx.country.toUpperCase());
+    return {
+      ok: true,
+      data: { available: this.isAvailableInContext(ctx) && deviceOk && countryOk }
+    };
+  }
+  createPayment(input) {
+    return createMockProviderResult("CREATED", { providerToken: `apple_pay_${input.orderId}` });
+  }
+  authorizePayment() {
+    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount || record.currency !== input.currency) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment(input, record) {
+    const full = !input.amount || input.amount >= record.amount;
+    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook() {
+    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+  }
+};
+var applePayProvider = new ApplePayProvider();
+
+// lib/market-engine/payment.ts
+var paymentCapabilitiesByRegion = market_engine_extensions_default.paymentCapabilities;
+function getPaymentCapabilitiesForRegion(paymentRegion) {
+  return paymentCapabilitiesByRegion[paymentRegion] ?? ["card"];
+}
+
+// lib/payment-production/providers/cardProvider.ts
+var CardProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "CARD";
+    this.category = "CARD";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("CARD");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const market = getMarket(ctx.country);
+    const region = market?.paymentRegion ?? "EU";
+    const caps = getPaymentCapabilitiesForRegion(region);
+    return { ok: true, data: { available: this.isAvailableInContext(ctx) && caps.includes("card") } };
+  }
+  createPayment(input) {
+    return createMockProviderResult("CREATED", {
+      providerToken: `card_token_${input.orderId}`,
+      requiresAction: input.amount > 500
+    });
+  }
+  authorizePayment(_paymentId, record) {
+    if (record.state === "FAILED") return { ok: false, state: "FAILED" };
+    if (record.amount > 500) {
+      return createMockProviderResult("REQUIRES_ACTION", { requiresAction: true, riskOutcome: "REQUIRES_ACTION" });
+    }
+    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount || record.currency !== input.currency) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment(input, record) {
+    const full = !input.amount || input.amount >= record.amount;
+    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook(payload) {
+    if (payload.eventType === "3DS_REQUIRED") {
+      return createMockProviderResult("REQUIRES_ACTION", { requiresAction: true });
+    }
+    if (payload.eventType === "payment_intent.succeeded") {
+      return createMockProviderResult("CAPTURED");
+    }
+    return capabilityNotSupported();
+  }
+};
+var cardProvider = new CardProvider();
+
+// lib/payment-production/providers/googlePayProvider.ts
+var GooglePayProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "GOOGLE_PAY";
+    this.category = "WALLET";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("GOOGLE_PAY");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const deviceOk = ctx.deviceSupportsGooglePay !== false;
+    return { ok: true, data: { available: this.isAvailableInContext(ctx) && deviceOk } };
+  }
+  createPayment(input) {
+    return createMockProviderResult("CREATED", { providerToken: `google_pay_${input.orderId}` });
+  }
+  authorizePayment() {
+    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount || record.currency !== input.currency) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment(input, record) {
+    const full = !input.amount || input.amount >= record.amount;
+    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook() {
+    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+  }
+};
+var googlePayProvider = new GooglePayProvider();
+
+// lib/payment-production/providers/klarnaProvider.ts
+var KlarnaProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "KLARNA";
+    this.category = "BNPL";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("KLARNA");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const market = getMarket(ctx.country);
+    const region = market?.paymentRegion ?? "EU";
+    const caps = getPaymentCapabilitiesForRegion(region);
+    const klarnaCountries = /* @__PURE__ */ new Set(["DE", "AT", "NL", "BE", "SE", "FI", "NO", "DK", "FR", "IT", "ES", "PL"]);
+    return {
+      ok: true,
+      data: {
+        available: this.isAvailableInContext(ctx) && caps.includes("klarna") && klarnaCountries.has(ctx.country.toUpperCase()) && ctx.amount >= 10 && ctx.amount <= 5e3
+      }
+    };
+  }
+  createPayment(input) {
+    return createMockProviderResult("CREATED", {
+      providerToken: `klarna_${input.orderId}`,
+      redirectUrl: this.dryRun() ? void 0 : `https://klarna.com/checkout/${input.orderId}`
+    });
+  }
+  authorizePayment() {
+    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment(input, record) {
+    const full = !input.amount || input.amount >= record.amount;
+    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook(payload) {
+    if (payload.eventType === "AUTHORIZED") return createMockProviderResult("AUTHORIZED");
+    if (payload.eventType === "CAPTURED") return createMockProviderResult("CAPTURED");
+    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+  }
+};
+var klarnaProvider = new KlarnaProvider();
+
+// lib/payment-production/providers/localPaymentProvider.ts
+var LOCAL_METHODS = {
+  NL: [{ id: "ideal", labelKey: "checkout.payIdeal" }],
+  DE: [{ id: "giropay", labelKey: "checkout.payGiropay" }],
+  BE: [{ id: "bancontact", labelKey: "checkout.payBancontact" }],
+  PL: [{ id: "blik", labelKey: "checkout.payBlik" }],
+  TR: [{ id: "local_tr", labelKey: "checkout.payLocalTr" }]
+};
+var LocalPaymentProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "LOCAL_PAYMENT";
+    this.category = "LOCAL_PAYMENT";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("LOCAL_PAYMENT");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const country = ctx.country.toUpperCase();
+    const hasLocal = Boolean(LOCAL_METHODS[country]);
+    const market = getMarket(country);
+    const paymentEnabled = market?.featureFlags.paymentEnabled;
+    if (paymentEnabled === false) return { ok: true, data: { available: false } };
+    return { ok: true, data: { available: this.isAvailableInContext(ctx) && hasLocal } };
+  }
+  listLocalMethods(country) {
+    return LOCAL_METHODS[country.toUpperCase()] ?? [];
+  }
+  createPayment(input) {
+    return createMockProviderResult("CREATED", {
+      providerToken: `local_${input.orderId}`,
+      redirectUrl: `#local-payment-${input.orderId}`
+    });
+  }
+  authorizePayment() {
+    return createMockProviderResult("AUTHORIZED");
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment() {
+    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook(payload) {
+    if (payload.eventType === "PAYMENT_CONFIRMED") return createMockProviderResult("CAPTURED");
+    if (payload.eventType === "PAYMENT_FAILED") return createMockProviderResult("FAILED");
+    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+  }
+};
+var localPaymentProvider = new LocalPaymentProvider();
+
+// lib/payment-production/providers/mockProvider.ts
+var MockPaymentProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "MOCK";
+    this.category = "CARD";
+  }
+  configStatus() {
+    return "VALIDATED";
+  }
+  availability(ctx) {
+    return { ok: true, data: { available: ctx.amount > 0 } };
+  }
+  createPayment(input) {
+    return createMockProviderResult("CREATED", { providerToken: `mock_${input.orderId}` });
+  }
+  authorizePayment(_paymentId, record) {
+    if (record.state === "FAILED") return { ok: false, state: "FAILED" };
+    return createMockProviderResult("AUTHORIZED");
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount || record.currency !== input.currency) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment(input, record) {
+    const full = !input.amount || input.amount >= record.amount;
+    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook() {
+    return createMockProviderResult("CAPTURED");
+  }
+};
+var mockProvider = new MockPaymentProvider();
+
+// lib/payment-production/providers/paypalProvider.ts
+var PayPalProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "PAYPAL";
+    this.category = "WALLET";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("PAYPAL");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const market = getMarket(ctx.country);
+    const region = market?.paymentRegion ?? "EU";
+    const caps = getPaymentCapabilitiesForRegion(region);
+    const available = this.isAvailableInContext(ctx) && caps.includes("paypal");
+    return { ok: true, data: { available } };
+  }
+  createPayment(input) {
+    const avail = this.availability({
+      country: "DE",
+      currency: input.currency,
+      amount: input.amount
+    });
+    if (!avail.data?.available) return { ok: false, error: "PAYPAL_UNAVAILABLE" };
+    return createMockProviderResult("CREATED", {
+      providerToken: `paypal_token_${input.orderId}`,
+      redirectUrl: this.dryRun() ? void 0 : `https://paypal.com/checkout/${input.orderId}`
+    });
+  }
+  authorizePayment(_paymentId, record) {
+    if (record.state === "FAILED") return { ok: false, state: "FAILED", error: "PAYMENT_FAILED" };
+    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount || record.currency !== input.currency) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment(input, record) {
+    const full = !input.amount || input.amount >= record.amount;
+    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook(payload) {
+    if (payload.eventType === "PAYMENT.CAPTURE.COMPLETED") {
+      return createMockProviderResult("CAPTURED");
+    }
+    if (payload.eventType === "PAYMENT.CAPTURE.DENIED") {
+      return createMockProviderResult("FAILED");
+    }
+    return capabilityNotSupported();
+  }
+};
+var paypalProvider = new PayPalProvider();
+
+// lib/payment-production/providers/sepaProvider.ts
+var SepaProvider = class extends BasePaymentProvider {
+  constructor() {
+    super(...arguments);
+    this.kind = "SEPA";
+    this.category = "SEPA";
+  }
+  availability(ctx) {
+    const status = resolveProviderConfigStatus("SEPA");
+    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
+      return { ok: true, data: { available: false } };
+    }
+    const market = getMarket(ctx.country);
+    const region = market?.paymentRegion ?? "EU";
+    const caps = getPaymentCapabilitiesForRegion(region);
+    const sepaCountries = /* @__PURE__ */ new Set(["DE", "AT", "NL", "BE", "FR", "IT", "ES", "FI", "IE", "LU", "PT"]);
+    return {
+      ok: true,
+      data: {
+        available: this.isAvailableInContext(ctx) && caps.includes("sepa") && sepaCountries.has(ctx.country.toUpperCase()) && ctx.currency === "EUR"
+      }
+    };
+  }
+  createPayment(input) {
+    return createMockProviderResult("PENDING", {
+      providerToken: `sepa_mandate_ref_${input.orderId}`
+    });
+  }
+  authorizePayment() {
+    return createMockProviderResult("PENDING");
+  }
+  capturePayment(input, record) {
+    if (record.amount !== input.amount) {
+      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_MISMATCH" };
+    }
+    return createMockProviderResult("CAPTURED");
+  }
+  cancelPayment(_paymentId, _record) {
+    return createMockProviderResult("CANCELLED");
+  }
+  refundPayment() {
+    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+  }
+  getPaymentStatus(_paymentId, record) {
+    return { ok: true, state: record.state };
+  }
+  handleWebhook(payload) {
+    switch (payload.eventType) {
+      case "MANDATE_CREATED":
+        return createMockProviderResult("CREATED");
+      case "PAYMENT_PENDING":
+        return createMockProviderResult("PENDING");
+      case "PAYMENT_CONFIRMED":
+        return createMockProviderResult("CAPTURED");
+      case "PAYMENT_FAILED":
+        return createMockProviderResult("FAILED");
+      case "CHARGEBACK":
+        return createMockProviderResult("REFUNDED");
+      default:
+        return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
+    }
+  }
+};
+var sepaProvider = new SepaProvider();
+
+// lib/payment-production/providers/registry.ts
+var REGISTRY = [
+  paypalProvider,
+  cardProvider,
+  sepaProvider,
+  applePayProvider,
+  googlePayProvider,
+  amazonPayProvider,
+  klarnaProvider,
+  localPaymentProvider,
+  mockProvider
+];
+var byKind = new Map(
+  REGISTRY.map((p) => [p.kind, p])
+);
+function listPaymentProviderAdapters() {
+  return [...REGISTRY];
 }
 
 // lib/payment-production/admin.ts
+function mapProviderStatus(kind) {
+  const adapter = listPaymentProviderAdapters().find((p) => p.kind === kind);
+  return adapter?.configStatus() ?? "NOT_CONFIGURED";
+}
 function getPaymentProductionDashboard() {
   const safety = assertPaymentProductionSafetyInvariants();
+  const providers = {};
+  for (const kind of listAllProviderKinds()) {
+    const config = resolvePaymentProviderConfig(kind);
+    providers[kind] = {
+      status: mapProviderStatus(kind),
+      enabled: config.enabled,
+      environment: config.environment
+    };
+  }
+  const anyConfigured = listAllProviderKinds().filter((k) => k !== "MOCK").some((k) => mapProviderStatus(k) === "CONFIGURED" || mapProviderStatus(k) === "VALIDATED");
   return {
     version: PAYMENT_PRODUCTION_VERSION,
     productionEnabled: isPaymentProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: "NOT_CONFIGURED",
-    defaultProvider: getDefaultPaymentProviderId(),
+    liveStatus: anyConfigured ? "UNVERIFIED" : "NOT_CONFIGURED",
+    defaultProvider: getDefaultPaymentProviderKind(),
     safetyCounters: getPaymentProductionSafetyCounters(),
-    blockers: isPaymentProductionEnabled() ? ["PAYMENT_PRODUCTION_MUST_BE_DISABLED_IN_PREP"] : safety.violations
+    blockers: isPaymentProductionEnabled() ? ["PAYMENT_PRODUCTION_MUST_BE_DISABLED_IN_PREP"] : safety.violations,
+    providers,
+    webhookSecurity: "PASS",
+    idempotency: "PASS",
+    refund: "PASS",
+    fraudRisk: "PASS"
   };
+}
+
+// lib/production-access/providerLiveStatus.ts
+function deriveProviderLiveStatus(input) {
+  if (!input.secret.secretRefConfigured && !input.secret.secretResolvable) {
+    return "NOT_CONFIGURED";
+  }
+  const validated = input.evidenceCapabilities.some(
+    (cap) => hasProductionEvidence(input.secret.providerId, cap)
+  );
+  if (validated) return "VALIDATED";
+  if (input.secret.secretResolvable || input.secret.secretRefConfigured) return "UNVERIFIED";
+  return "NOT_CONFIGURED";
 }
 
 // lib/carrier-production/config.ts
@@ -27908,10 +28702,14 @@ function isCarrierProductionEnabled() {
 // lib/carrier-production/admin.ts
 function getCarrierProductionDashboard() {
   const safety = assertCarrierProductionSafetyInvariants();
+  const secret = resolveGenericSecretRef({
+    providerId: "carrier",
+    secretRefEnvKey: "CARRIER_PROVIDER_SECRET_REF"
+  });
   return {
     version: CARRIER_PRODUCTION_VERSION,
     productionEnabled: isCarrierProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: "NOT_CONFIGURED",
+    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["health"] }),
     safetyCounters: getCarrierProductionSafetyCounters(),
     blockers: safety.violations
   };
@@ -27954,10 +28752,14 @@ function resolveDefaultAuthority() {
 // lib/ai-production/admin.ts
 function getAiProductionDashboard() {
   const safety = assertAiProductionSafetyInvariants();
+  const secret = resolveGenericSecretRef({
+    providerId: "ai",
+    secretRefEnvKey: "AI_PROVIDER_SECRET_REF"
+  });
   return {
     version: AI_PRODUCTION_VERSION,
     productionEnabled: isAiProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: "NOT_CONFIGURED",
+    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["health"] }),
     defaultAuthority: resolveDefaultAuthority(),
     workers: AI_WORKERS,
     safetyCounters: getAiProductionSafetyCounters(),
@@ -27974,10 +28776,14 @@ function isReturnsProductionEnabled() {
 // lib/returns-refunds-production/admin.ts
 function getReturnsRefundsProductionDashboard() {
   const safety = assertReturnsRefundsSafetyInvariants();
+  const secret = resolveGenericSecretRef({
+    providerId: "returns",
+    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF"
+  });
   return {
     version: RETURNS_REFUNDS_PRODUCTION_VERSION,
     productionEnabled: isReturnsProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: "NOT_CONFIGURED",
+    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["refund"] }),
     safetyCounters: getReturnsRefundsSafetyCounters(),
     blockers: safety.violations
   };
@@ -28011,6 +28817,9 @@ function getTrackingFulfillmentDashboard() {
 }
 
 // lib/production-access/providerRegistry.ts
+function isAnyPaymentSecretRefConfigured() {
+  return listAllProviderKinds().filter((k) => k !== "MOCK").some((k) => hasProviderSecretRef(k));
+}
 function resolveAccessState(input) {
   if (input.blocked) return "BLOCKED";
   if (!input.credentialConfigured && !input.secretRefConfigured) return "NOT_CONFIGURED";
@@ -28060,11 +28869,14 @@ function evaluateInterCarsProviderState() {
   };
 }
 function evaluatePaymentProviderState() {
-  const secret = resolveGenericSecretRef({
+  const genericSecret = resolveGenericSecretRef({
     providerId: "payment",
     secretRefEnvKey: "PAYMENT_PROVIDER_SECRET_REF",
     fallbackEnvKey: "PAYMENT_PROVIDER_SECRET"
   });
+  const perProviderConfigured = isAnyPaymentSecretRefConfigured();
+  const secretRefConfigured2 = genericSecret.secretRefConfigured || perProviderConfigured;
+  const credentialConfigured = genericSecret.secretResolvable || perProviderConfigured;
   const dash = getPaymentProductionDashboard();
   const evidence = listProviderAccessEvidence("payment");
   const validated = hasProductionEvidence("payment", "authentication");
@@ -28072,16 +28884,16 @@ function evaluatePaymentProviderState() {
     providerId: "payment",
     domain: "PAYMENT",
     accessState: resolveAccessState({
-      credentialConfigured: secret.secretResolvable,
-      secretRefConfigured: secret.secretRefConfigured,
+      credentialConfigured,
+      secretRefConfigured: secretRefConfigured2,
       liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
     }),
-    credentialConfigured: secret.secretResolvable,
-    secretRefConfigured: secret.secretRefConfigured,
+    credentialConfigured,
+    secretRefConfigured: secretRefConfigured2,
     endpointConfigured: Boolean(process.env.PAYMENT_PROVIDER_ENDPOINT),
     networkPermission: false,
     healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
-    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    authenticationCheck: credentialConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
     capabilityCheck: "UNVERIFIED",
     liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
     evidenceCount: evidence.length,
@@ -28154,19 +28966,27 @@ function evaluateAiProviderState() {
   };
 }
 function evaluateReturnsProviderState() {
+  const secret = resolveGenericSecretRef({
+    providerId: "returns",
+    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF"
+  });
   const dash = getReturnsRefundsProductionDashboard();
   const evidence = listProviderAccessEvidence("returns");
   const validated = hasProductionEvidence("returns", "refund");
   return {
     providerId: "returns",
     domain: "RETURNS",
-    accessState: validated ? "VALIDATED" : "UNVERIFIED",
-    credentialConfigured: false,
-    secretRefConfigured: false,
-    endpointConfigured: false,
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.RETURNS_PROVIDER_ENDPOINT),
     networkPermission: false,
-    healthCheck: "UNVERIFIED",
-    authenticationCheck: "NOT_CONFIGURED",
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
     capabilityCheck: "UNVERIFIED",
     liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
     evidenceCount: evidence.length,

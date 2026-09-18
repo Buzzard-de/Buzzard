@@ -73,6 +73,20 @@ function isAiProductionEnabled() {
   return isProductionFlagEnabled("AI_PRODUCTION");
 }
 
+// lib/supplier-engine/credentials.ts
+function resolveCredentials(secretsRef) {
+  if (!secretsRef) return null;
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const raw = process.env[envKey];
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return { token: raw };
+  }
+}
+
 // lib/supplier-engine/network/config.ts
 function envFlag(name, defaultValue = false) {
   const raw = process.env[name];
@@ -25697,13 +25711,66 @@ function resolveDefaultAuthority() {
   return "RECOMMEND";
 }
 
+// lib/production-access/evidenceStore.ts
+var evidenceStore = /* @__PURE__ */ new Map();
+var evidenceByProvider = /* @__PURE__ */ new Map();
+function listProviderAccessEvidence(provider) {
+  const ids = evidenceByProvider.get(provider) || [];
+  return ids.map((id) => evidenceStore.get(id)).filter(Boolean);
+}
+function hasProductionEvidence(provider, capability) {
+  return listProviderAccessEvidence(provider).some(
+    (e) => e.capability === capability && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION") && e.responseStatus >= 200 && e.responseStatus < 300
+  );
+}
+
+// lib/production-access/providerLiveStatus.ts
+function deriveProviderLiveStatus(input) {
+  if (!input.secret.secretRefConfigured && !input.secret.secretResolvable) {
+    return "NOT_CONFIGURED";
+  }
+  const validated = input.evidenceCapabilities.some(
+    (cap) => hasProductionEvidence(input.secret.providerId, cap)
+  );
+  if (validated) return "VALIDATED";
+  if (input.secret.secretResolvable || input.secret.secretRefConfigured) return "UNVERIFIED";
+  return "NOT_CONFIGURED";
+}
+
+// lib/production-access/secretRefs.ts
+function normalizeSecretRef(raw, fallbackEnvKey) {
+  const value = raw?.trim();
+  if (!value) return `env:${fallbackEnvKey}`;
+  if (value.startsWith("env:")) return value;
+  return `env:${value}`;
+}
+function secretRefConfigured(envKey) {
+  return Boolean(process.env[envKey]?.trim());
+}
+function resolveGenericSecretRef(input) {
+  const raw = process.env[input.secretRefEnvKey]?.trim();
+  const secretsRef = normalizeSecretRef(raw, input.fallbackEnvKey || input.secretRefEnvKey.replace(/_SECRET_REF$/, ""));
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  return {
+    providerId: input.providerId,
+    secretRefKey: secretsRef,
+    secretRefConfigured: secretRefConfigured(envKey) || Boolean(raw),
+    secretResolvable: Boolean(resolveCredentials(secretsRef)),
+    credentialStatus: resolveCredentials(secretsRef) ? "CONFIGURED" : "NOT_CONFIGURED"
+  };
+}
+
 // lib/ai-production/admin.ts
 function getAiProductionDashboard() {
   const safety = assertAiProductionSafetyInvariants();
+  const secret = resolveGenericSecretRef({
+    providerId: "ai",
+    secretRefEnvKey: "AI_PROVIDER_SECRET_REF"
+  });
   return {
     version: AI_PRODUCTION_VERSION,
     productionEnabled: isAiProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: "NOT_CONFIGURED",
+    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["health"] }),
     defaultAuthority: resolveDefaultAuthority(),
     workers: AI_WORKERS,
     safetyCounters: getAiProductionSafetyCounters(),

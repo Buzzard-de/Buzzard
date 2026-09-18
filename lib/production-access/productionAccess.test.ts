@@ -6,7 +6,11 @@ import {
   getAllProviderStates,
   recordProviderAccessEvidence,
   resetEvidenceStoreForTests,
+  validateProviderCredentialPipeline,
+  validateAllProviderCredentialPipelines,
+  deriveProviderLiveStatus,
 } from "./index";
+import { resolveGenericSecretRef } from "./secretRefs";
 import { resetSupplierEngineForTests } from "@/lib/supplier-engine/testReset";
 import { getSupplier } from "@/lib/supplier-engine/registry";
 import { getInterCarsSupplierId } from "@/lib/supplier-inter-cars-production-access/config";
@@ -96,5 +100,51 @@ describe("Missing production access diagnostics", () => {
     });
     expect(evidence.requestHash).toMatch(/^[a-f0-9]{64}$/);
     expect(evidence.environment).toBe("PRODUCTION");
+  });
+
+  it("returns provider detects secretRef when configured", () => {
+    process.env.RETURNS_PROVIDER_SECRET_REF = "RETURNS_LIVE_CREDENTIALS";
+    process.env.RETURNS_LIVE_CREDENTIALS = JSON.stringify({ apiKey: "live-returns-key" });
+    const states = getAllProviderStates();
+    const returns = states.find((s) => s.providerId === "returns");
+    expect(returns?.secretRefConfigured).toBe(true);
+    expect(returns?.credentialConfigured).toBe(true);
+    delete process.env.RETURNS_PROVIDER_SECRET_REF;
+    delete process.env.RETURNS_LIVE_CREDENTIALS;
+  });
+
+  it("payment provider detects per-provider secretRef", () => {
+    process.env.PAYPAL_CLIENT_ID_SECRET_REF = "PAYPAL_LIVE_ID";
+    process.env.PAYPAL_LIVE_ID = "live-paypal-client-id";
+    const states = getAllProviderStates();
+    const payment = states.find((s) => s.providerId === "payment");
+    expect(payment?.secretRefConfigured).toBe(true);
+    delete process.env.PAYPAL_CLIENT_ID_SECRET_REF;
+    delete process.env.PAYPAL_LIVE_ID;
+  });
+
+  it("credential validation pipeline reports NOT_CONFIGURED without credentials", () => {
+    const result = validateProviderCredentialPipeline("carrier");
+    expect(result.overallStatus).toBe("NOT_CONFIGURED");
+    expect(result.liveValidationAttempted).toBe(false);
+    expect(result.blockers).toContain("PROVIDER_NOT_CONFIGURED");
+  });
+
+  it("validateAllProviderCredentialPipelines covers six providers", () => {
+    const results = validateAllProviderCredentialPipelines();
+    expect(results).toHaveLength(6);
+    expect(results.every((r) => r.liveValidationAttempted === false)).toBe(true);
+  });
+
+  it("deriveProviderLiveStatus never VALIDATED without evidence", () => {
+    process.env.CARRIER_PROVIDER_SECRET_REF = "CARRIER_LIVE";
+    process.env.CARRIER_LIVE = JSON.stringify({ apiKey: "carrier-live" });
+    const secret = resolveGenericSecretRef({
+      providerId: "carrier",
+      secretRefEnvKey: "CARRIER_PROVIDER_SECRET_REF",
+    });
+    expect(deriveProviderLiveStatus({ secret, evidenceCapabilities: ["health"] })).toBe("UNVERIFIED");
+    delete process.env.CARRIER_PROVIDER_SECRET_REF;
+    delete process.env.CARRIER_LIVE;
   });
 });

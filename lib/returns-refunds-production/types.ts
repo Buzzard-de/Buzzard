@@ -24,7 +24,7 @@ export interface SupplierRecoveryRecord {
 export interface ReturnsRefundsProductionDashboard {
   version: string;
   productionEnabled: "DISABLED" | "ENABLED" | "BLOCKED";
-  liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED";
+  liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED" | "VALIDATED";
   safetyCounters: { realRefunds: number; assumedRecoveries: number };
   blockers: string[];
 }

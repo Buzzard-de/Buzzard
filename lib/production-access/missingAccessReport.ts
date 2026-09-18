@@ -98,18 +98,17 @@ export function buildMissingProductionAccessReport(): MissingProductionAccessRep
     productionFlag: "AI_PRODUCTION",
   });
 
+  const returnsSecret = resolveGenericSecretRef({
+    providerId: "returns",
+    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF",
+  });
   const returns = providerReport({
     providerId: "returns",
     domain: "RETURNS",
-    secret: {
-      providerId: "returns",
-      secretRefKey: "n/a",
-      secretRefConfigured: false,
-      secretResolvable: false,
-      credentialStatus: "NOT_CONFIGURED",
-    },
-    checklist: buildReturnsAccessChecklist(),
+    secret: returnsSecret,
+    checklist: buildReturnsAccessChecklist(returnsSecret),
     productionFlag: "RETURNS_PRODUCTION",
+    liveStatus: returnsSecret.secretResolvable ? "UNVERIFIED" : "NOT_CONFIGURED",
   });
 
   const marketing = providerReport({

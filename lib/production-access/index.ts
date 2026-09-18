@@ -15,6 +15,11 @@ export {
   evaluateInterCarsProviderState,
   PROVIDER_IDS,
 } from "./providerRegistry";
+export { deriveProviderLiveStatus } from "./providerLiveStatus";
+export {
+  validateProviderCredentialPipeline,
+  validateAllProviderCredentialPipelines,
+} from "./credentialValidationPipeline";
 export {
   recordProviderAccessEvidence,
   listProviderAccessEvidence,

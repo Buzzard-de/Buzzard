@@ -26,7 +26,7 @@ export interface CarrierLabelRecord {
 export interface CarrierProductionDashboard {
   version: string;
   productionEnabled: "DISABLED" | "ENABLED" | "BLOCKED";
-  liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED";
+  liveStatus: "BLOCKED" | "NOT_CONFIGURED" | "UNVERIFIED" | "VALIDATED";
   safetyCounters: { realLabels: number; realHttpCalls: number };
   blockers: string[];
 }

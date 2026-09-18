@@ -63,13 +63,96 @@ function assertReturnsRefundsSafetyInvariants() {
   return { ok: violations.length === 0, violations };
 }
 
+// lib/production-access/evidenceStore.ts
+var evidenceStore = /* @__PURE__ */ new Map();
+var evidenceByProvider = /* @__PURE__ */ new Map();
+function listProviderAccessEvidence(provider) {
+  const ids = evidenceByProvider.get(provider) || [];
+  return ids.map((id) => evidenceStore.get(id)).filter(Boolean);
+}
+function hasProductionEvidence(provider, capability) {
+  return listProviderAccessEvidence(provider).some(
+    (e) => e.capability === capability && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION") && e.responseStatus >= 200 && e.responseStatus < 300
+  );
+}
+
+// lib/production-access/providerLiveStatus.ts
+function deriveProviderLiveStatus(input) {
+  if (!input.secret.secretRefConfigured && !input.secret.secretResolvable) {
+    return "NOT_CONFIGURED";
+  }
+  const validated = input.evidenceCapabilities.some(
+    (cap) => hasProductionEvidence(input.secret.providerId, cap)
+  );
+  if (validated) return "VALIDATED";
+  if (input.secret.secretResolvable || input.secret.secretRefConfigured) return "UNVERIFIED";
+  return "NOT_CONFIGURED";
+}
+
+// lib/supplier-engine/credentials.ts
+function resolveCredentials(secretsRef) {
+  if (!secretsRef) return null;
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const raw = process.env[envKey];
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return { token: raw };
+  }
+}
+
+// lib/supplier-order-readiness/config.ts
+var READINESS_TTL_MS = 24 * 60 * 60 * 1e3;
+var APPROVAL_TTL_MS = 7 * 24 * 60 * 60 * 1e3;
+var DEFAULT_POLICY = {
+  maxStockAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_STOCK_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxPriceAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRICE_AGE_MS || 6 * 60 * 60 * 1e3),
+  maxProductAgeMs: Number(process.env.SUPPLIER_READINESS_MAX_PRODUCT_AGE_MS || 24 * 60 * 60 * 1e3),
+  maxOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_ORDER_VALUE || 5e3),
+  maxDailyOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_DAILY_ORDER_VALUE || 25e3),
+  maxSingleSupplierOrderValue: Number(process.env.SUPPLIER_READINESS_MAX_SINGLE_ORDER_VALUE || 2500),
+  blockOnWarningIncidents: process.env.SUPPLIER_READINESS_BLOCK_ON_WARNING_INCIDENTS === "1",
+  blockOnMissingReturnCapability: process.env.SUPPLIER_READINESS_BLOCK_MISSING_RETURN !== "0",
+  blockOnMissingTrackingCapability: false,
+  requiredOrderCapabilities: ["createOrder", "orderStatus", "trackingAPI"]
+};
+
+// lib/production-access/secretRefs.ts
+function normalizeSecretRef(raw, fallbackEnvKey) {
+  const value = raw?.trim();
+  if (!value) return `env:${fallbackEnvKey}`;
+  if (value.startsWith("env:")) return value;
+  return `env:${value}`;
+}
+function secretRefConfigured(envKey) {
+  return Boolean(process.env[envKey]?.trim());
+}
+function resolveGenericSecretRef(input) {
+  const raw = process.env[input.secretRefEnvKey]?.trim();
+  const secretsRef = normalizeSecretRef(raw, input.fallbackEnvKey || input.secretRefEnvKey.replace(/_SECRET_REF$/, ""));
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  return {
+    providerId: input.providerId,
+    secretRefKey: secretsRef,
+    secretRefConfigured: secretRefConfigured(envKey) || Boolean(raw),
+    secretResolvable: Boolean(resolveCredentials(secretsRef)),
+    credentialStatus: resolveCredentials(secretsRef) ? "CONFIGURED" : "NOT_CONFIGURED"
+  };
+}
+
 // lib/returns-refunds-production/admin.ts
 function getReturnsRefundsProductionDashboard() {
   const safety = assertReturnsRefundsSafetyInvariants();
+  const secret = resolveGenericSecretRef({
+    providerId: "returns",
+    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF"
+  });
   return {
     version: RETURNS_REFUNDS_PRODUCTION_VERSION,
     productionEnabled: isReturnsProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: "NOT_CONFIGURED",
+    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["refund"] }),
     safetyCounters: getReturnsRefundsSafetyCounters(),
     blockers: safety.violations
   };

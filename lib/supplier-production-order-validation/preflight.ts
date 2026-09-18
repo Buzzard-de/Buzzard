@@ -22,6 +22,7 @@ import { validateOrderProtections } from "./request";
 import { checkIdempotency } from "./idempotency";
 import { validateControlledValidationApproval } from "./approval";
 import { evaluateUpstreamGates, assertAiBoundary } from "./eligibility";
+import { isStageAValidated } from "@/lib/supplier-inter-cars-production-access/stageA";
 import type { ControlledValidationRunInput, ValidationCheckResult } from "./types";
 
 export function runControlledValidationPreflight(input: ControlledValidationRunInput): {
@@ -34,6 +35,23 @@ export function runControlledValidationPreflight(input: ControlledValidationRunI
   const checks: ValidationCheckResult[] = [];
   const blockers: string[] = [];
   const supplierId = input.supplier || getInterCarsSupplierId();
+
+  if (!isStageAValidated()) {
+    blockers.push("STAGE_A_READ_VALIDATION_REQUIRED");
+    checks.push({
+      check: "STAGE_A_READ_ONLY",
+      category: "LIVE_READ",
+      status: "BLOCKED",
+      message: "Stage A read-only validation (health/catalog/stock/price) must PASS before #342",
+    });
+  } else {
+    checks.push({
+      check: "STAGE_A_READ_ONLY",
+      category: "LIVE_READ",
+      status: "PASS",
+      message: "Stage A read-only validation PASS",
+    });
+  }
 
   const credential = validateProductionCredentials({ supplierId, environment: input.environment || "PRODUCTION" });
   checks.push({

@@ -7,4 +7,6 @@ export * from "./hreflang";
 export * from "./format";
 export * from "./productTranslation";
 export * from "./admin";
+export * from "./countryLocaleSwitch";
+export * from "./validateInput";
 export { validateBuzzardI18n } from "./validate";

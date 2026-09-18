@@ -32,9 +32,13 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
   assertProductionAccessSafetyInvariants: () => assertProductionAccessSafetyInvariants,
+  buildInterCarsAccessStatusReport: () => buildInterCarsAccessStatusReport,
   evaluateInterCarsProductionAccess: () => evaluateInterCarsProductionAccess,
+  evaluateStageAReadValidation: () => evaluateStageAReadValidation,
+  formatInterCarsAccessStatusReport: () => formatInterCarsAccessStatusReport,
   getProductionAccessDashboard: () => getProductionAccessDashboard,
   getProductionAccessSafetyCounters: () => getProductionAccessSafetyCounters,
+  isStageAValidated: () => isStageAValidated,
   runProductionAccessPreflight: () => runProductionAccessPreflight
 });
 module.exports = __toCommonJS(serverEntry_exports);
@@ -269,10 +273,6 @@ function resolveCredentials(secretsRef) {
 }
 
 // lib/supplier-engine/liveSupplier/config.ts
-function envFlag(name) {
-  const raw = process.env[name];
-  return raw === "1" || raw?.toLowerCase() === "true";
-}
 function parseJsonConfig(raw) {
   try {
     const parsed = JSON.parse(raw);
@@ -364,9 +364,6 @@ function resolveLiveSupplierProfile() {
     whiteLabel: process.env.SUPPLIER_LIVE_WHITE_LABEL === "1",
     blindShipping: process.env.SUPPLIER_LIVE_BLIND_SHIPPING === "1"
   }));
-}
-function isLiveReadEnabled() {
-  return envFlag("SUPPLIER_LIVE_READ_ENABLED");
 }
 function hasLiveSupplierCredentials(profile) {
   const creds = resolveCredentials(profile.secretsRef);
@@ -549,7 +546,7 @@ function getLatestControlledValidationRun(scope) {
 }
 
 // lib/supplier-engine/network/config.ts
-function envFlag2(name, defaultValue = false) {
+function envFlag(name, defaultValue = false) {
   const raw = process.env[name];
   if (raw === void 0 || raw === "") return defaultValue;
   return raw === "1" || raw.toLowerCase() === "true";
@@ -560,10 +557,10 @@ function envInt(name, fallback) {
 }
 var SUPPLIER_NETWORK_CONFIG = {
   get networkEnabled() {
-    return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
   },
   get orderNetworkEnabled() {
-    return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
   },
   defaultEnvironment: "MOCK",
   defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
@@ -572,10 +569,10 @@ var SUPPLIER_NETWORK_CONFIG = {
   maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
 };
 function isSupplierNetworkEnabled() {
-  return envFlag2("SUPPLIER_NETWORK_ENABLED", false);
+  return envFlag("SUPPLIER_NETWORK_ENABLED", false);
 }
 function isSupplierOrderNetworkEnabled() {
-  return envFlag2("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
 }
 
 // lib/supplier-engine/network/scopedValidationNetwork.ts
@@ -26828,6 +26825,43 @@ function evaluateUpstreamGates(input) {
   return { allowed: blockers.length === 0, blockers };
 }
 
+// lib/supplier-inter-cars-production-access/stageA.ts
+var STAGE_A_CAPABILITIES = ["health", "catalog", "stock", "price"];
+function evaluateStageAReadValidation(credentialsStatus) {
+  const blockers = [];
+  const supplierId = getInterCarsSupplierId();
+  const latest = getLatestValidationForScope({
+    supplierId,
+    market: "DE",
+    channel: "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const capabilities = {
+    health: latest?.healthStatus === "LIVE_READ_VALIDATED",
+    catalog: latest?.catalogReadStatus === "LIVE_READ_VALIDATED",
+    stock: latest?.stockReadStatus === "LIVE_READ_VALIDATED",
+    price: latest?.priceReadStatus === "LIVE_READ_VALIDATED"
+  };
+  const allPass = STAGE_A_CAPABILITIES.every((c) => capabilities[c]);
+  if (credentialsStatus === "NOT_CONFIGURED") {
+    blockers.push("CREDENTIAL_NOT_CONFIGURED");
+    return { status: "BLOCKED", capabilities, handoff: "BLOCKED", blockers };
+  }
+  if (credentialsStatus === "BLOCKED") {
+    blockers.push("CREDENTIAL_MOCK_OR_BLOCKED");
+    return { status: "BLOCKED", capabilities, handoff: "BLOCKED", blockers };
+  }
+  if (allPass) {
+    return { status: "VALIDATED", capabilities, handoff: "READY_FOR_STAGE_B_342", blockers: [] };
+  }
+  blockers.push("INTER_CARS_READ_VALIDATION");
+  return { status: "NOT_RUN", capabilities, handoff: "BLOCKED", blockers };
+}
+function isStageAValidated(credentialsStatus) {
+  const cred = credentialsStatus ?? resolveCredentialDisplayStatus({ supplierId: getInterCarsSupplierId() }).status;
+  return evaluateStageAReadValidation(cred).status === "VALIDATED";
+}
+
 // lib/supplier-inter-cars-production-access/preflight.ts
 function runProductionAccessPreflight() {
   const supplierId = getInterCarsSupplierId();
@@ -26895,29 +26929,28 @@ function runProductionAccessPreflight() {
     status: isControlledValidationEnabled() ? "UNVERIFIED" : "PASS",
     message: isControlledValidationEnabled() ? "Explicitly enabled \u2014 await controlled run" : "Disabled until operational enable"
   });
+  const stageA = evaluateStageAReadValidation(credential.status);
+  checks.push({
+    check: "STAGE_A_READ_ONLY",
+    status: stageA.status === "VALIDATED" ? "PASS" : stageA.status === "NOT_RUN" ? "UNVERIFIED" : "BLOCKED",
+    message: `health=${stageA.capabilities.health} catalog=${stageA.capabilities.catalog} stock=${stageA.capabilities.stock} price=${stageA.capabilities.price}`
+  });
+  if (stageA.status !== "VALIDATED" && (credential.status === "VALID" || credential.status === "CONFIGURED")) {
+    blockers.push("STAGE_A_READ_VALIDATION_REQUIRED");
+  }
   const credentialReady = credential.status === "VALID" || credential.status === "CONFIGURED";
-  const ready = credentialReady && endpointAllowlisted && network.supplierOrderNetwork === "OFF" && upstream.blockers.length === 0;
-  return { ready, blockers: [...new Set(blockers)], checks };
+  const ready = credentialReady && endpointAllowlisted && network.supplierOrderNetwork === "OFF" && upstream.blockers.length === 0 && stageA.handoff === "READY_FOR_STAGE_B_342";
+  return {
+    ready,
+    stageAHandoff: stageA.handoff,
+    blockers: [...new Set(blockers)],
+    checks
+  };
 }
 
 // lib/supplier-inter-cars-production-access/readOnlyLive.ts
 function resolveReadOnlyLiveStatus(credentialsStatus) {
-  const latest = getLatestValidationForScope({
-    supplierId: getInterCarsSupplierId(),
-    market: "DE",
-    channel: "DIRECT",
-    environment: "PRODUCTION"
-  });
-  if (latest?.healthStatus === "LIVE_READ_VALIDATED" && latest.catalogReadStatus === "LIVE_READ_VALIDATED") {
-    return "VALIDATED";
-  }
-  if (credentialsStatus === "NOT_CONFIGURED" || credentialsStatus === "BLOCKED") {
-    return "BLOCKED";
-  }
-  if (isLiveReadEnabled() && (credentialsStatus === "VALID" || credentialsStatus === "CONFIGURED")) {
-    return "NOT_RUN";
-  }
-  return "NOT_RUN";
+  return evaluateStageAReadValidation(credentialsStatus).status;
 }
 
 // lib/supplier-inter-cars-production-access/safety.ts
@@ -26949,7 +26982,9 @@ function evaluateInterCarsProductionAccess() {
   const safety342 = getCreateOrderValidationSafetyCounters();
   const safetyPrep = getProductionAccessSafetyCounters();
   const controlledRun = getLatestControlledValidationRun({ supplierId, market: "DE" });
+  const stageA = evaluateStageAReadValidation(credential.status);
   const createOrderCapability = controlledRun?.liveValidation === "PASS" && controlledRun.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED";
+  const handoffStage343 = createOrderCapability === "VALIDATED" ? "READY_FOR_343_ARMING" : "BLOCKED";
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
@@ -26971,7 +27006,9 @@ function evaluateInterCarsProductionAccess() {
     productionCredentials: credential.status,
     credentialType: credential.credentialType,
     readOnlyLiveValidation: resolveReadOnlyLiveStatus(credential.status),
-    controlledLiveValidation: preflight.ready ? "READY" : "BLOCKED",
+    stageAHandoff: stageA.handoff,
+    handoffStage343,
+    controlledLiveValidation: preflight.ready ? "READY" : preflight.stageAHandoff === "READY_FOR_STAGE_B_342" ? "NOT_RUN" : "BLOCKED",
     createOrderCapability,
     productionNetwork: network.productionNetwork,
     supplierOrderNetwork: network.supplierOrderNetwork,
@@ -26991,6 +27028,81 @@ function evaluateInterCarsProductionAccess() {
     correlationId: (0, import_crypto.randomUUID)(),
     evaluatedAt: (/* @__PURE__ */ new Date()).toISOString()
   };
+}
+
+// lib/production-access/secretRefs.ts
+function normalizeSecretRef(raw, fallbackEnvKey) {
+  const value = raw?.trim();
+  if (!value) return `env:${fallbackEnvKey}`;
+  if (value.startsWith("env:")) return value;
+  return `env:${value}`;
+}
+function secretRefConfigured(envKey) {
+  return Boolean(process.env[envKey]?.trim());
+}
+function resolveInterCarsSecretRef() {
+  const secretRefKey = process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim() || process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS";
+  const secretsRef = normalizeSecretRef(secretRefKey, "SUPPLIER_LIVE_CREDENTIALS");
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const cred = resolveCredentialDisplayStatus({ supplierId: getInterCarsSupplierId() });
+  const statusMap = {
+    NOT_CONFIGURED: "NOT_CONFIGURED",
+    CONFIGURED: "CONFIGURED",
+    VALID: "CONFIGURED",
+    INVALID: "BLOCKED",
+    EXPIRED: "BLOCKED",
+    BLOCKED: "BLOCKED"
+  };
+  return {
+    providerId: "inter-cars",
+    secretRefKey: secretsRef,
+    secretRefConfigured: secretRefConfigured(envKey) || Boolean(process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim()),
+    secretResolvable: Boolean(resolveCredentials(secretsRef)),
+    credentialStatus: statusMap[cred.status] || "UNVERIFIED"
+  };
+}
+
+// lib/supplier-inter-cars-production-access/statusReport.ts
+function buildInterCarsAccessStatusReport() {
+  const diag = evaluateInterCarsProductionAccess();
+  const secret = resolveInterCarsSecretRef();
+  const stageA = evaluateStageAReadValidation(diag.productionCredentials);
+  const counters3 = getProductionAccessSafetyCounters();
+  const realSideEffects = counters3.realHttpCalls + diag.realHttpCalls + diag.realCreateOrderCalls;
+  const handoff343 = diag.createOrderCapability === "VALIDATED" ? "READY_FOR_343_ARMING" : "BLOCKED";
+  const credential = secret.credentialStatus === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : secret.credentialStatus === "BLOCKED" ? "BLOCKED" : diag.productionCredentials === "VALID" ? "CONFIGURED" : String(diag.productionCredentials);
+  const finalStatus = stageA.status === "VALIDATED" && diag.createOrderCapability === "VALIDATED" ? "READY_FOR_OPS" : stageA.handoff === "READY_FOR_STAGE_B_342" ? "READY_FOR_STAGE_B" : secret.credentialStatus === "NOT_CONFIGURED" ? "BLOCKED_NO_CREDENTIALS" : "BLOCKED";
+  return {
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    software: "COMPLETE",
+    credential,
+    stageA: stageA.status,
+    stage342: diag.createOrderCapability,
+    supplierOrder: diag.supplierOrderNetwork === "ON" ? "ENABLED" : "DISABLED",
+    realSideEffects,
+    fakeEvidence: 0,
+    finalStatus,
+    handoffStageB: stageA.handoff,
+    handoffStage343: handoff343,
+    blockers: [.../* @__PURE__ */ new Set([...diag.blockers, ...stageA.blockers])]
+  };
+}
+function formatInterCarsAccessStatusReport() {
+  const r = buildInterCarsAccessStatusReport();
+  return [
+    "INTER CARS AUTOMATIC ACCESS",
+    `SOFTWARE: ${r.software}`,
+    `CREDENTIAL: ${r.credential}`,
+    `STAGE_A: ${r.stageA}`,
+    `#342: ${r.stage342}`,
+    `SUPPLIER_ORDER: ${r.supplierOrder}`,
+    `REAL_SIDE_EFFECTS: ${r.realSideEffects}`,
+    `FAKE_EVIDENCE: ${r.fakeEvidence}`,
+    `HANDOFF_STAGE_B: ${r.handoffStageB}`,
+    `HANDOFF_343: ${r.handoffStage343}`,
+    `FINAL_STATUS: ${r.finalStatus}`,
+    r.blockers.length ? `BLOCKERS: ${r.blockers.join(", ")}` : "BLOCKERS: none"
+  ].join("\n");
 }
 
 // lib/supplier-production-order-arming/persistence.ts
@@ -27153,8 +27265,12 @@ function getProductionAccessDashboard() {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   assertProductionAccessSafetyInvariants,
+  buildInterCarsAccessStatusReport,
   evaluateInterCarsProductionAccess,
+  evaluateStageAReadValidation,
+  formatInterCarsAccessStatusReport,
   getProductionAccessDashboard,
   getProductionAccessSafetyCounters,
+  isStageAValidated,
   runProductionAccessPreflight
 });

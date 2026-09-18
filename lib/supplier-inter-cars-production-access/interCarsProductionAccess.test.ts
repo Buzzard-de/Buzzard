@@ -7,7 +7,11 @@ import {
   resetProductionAccessSafetyCountersForTests,
   resolveCredentialDisplayStatus,
   getInterCarsSupplierId,
+  evaluateStageAReadValidation,
+  buildInterCarsAccessStatusReport,
+  isStageAValidated,
 } from "./index";
+import { resetValidationForTests, saveValidationRecord } from "@/lib/supplier-production-validation/persistence";
 import { resetSupplierEngineForTests } from "@/lib/supplier-engine/testReset";
 import { getSupplier } from "@/lib/supplier-engine/registry";
 
@@ -32,6 +36,7 @@ describe("Inter Cars production access preparation", () => {
     seedEnv();
     resetSupplierEngineForTests();
     resetProductionAccessSafetyCountersForTests();
+    resetValidationForTests();
     getSupplier(getInterCarsSupplierId());
   });
 
@@ -104,6 +109,62 @@ describe("Inter Cars production access preparation", () => {
       const preflight = runProductionAccessPreflight();
       expect(preflight.ready).toBe(false);
       expect(preflight.blockers.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("Stage A read-only validation", () => {
+    it("NOT_RUN without live read evidence", () => {
+      process.env.SUPPLIER_LIVE_CREDENTIALS = VALID_JWT_CREDENTIAL;
+      const stageA = evaluateStageAReadValidation("VALID");
+      expect(stageA.status).toBe("NOT_RUN");
+      expect(stageA.handoff).toBe("BLOCKED");
+    });
+
+    it("VALIDATED when all four capabilities pass", () => {
+      process.env.SUPPLIER_LIVE_CREDENTIALS = VALID_JWT_CREDENTIAL;
+      saveValidationRecord({
+        validationId: "val_stage_a",
+        supplierId: getInterCarsSupplierId(),
+        adapterProfile: "inter-cars",
+        market: "DE",
+        channel: "DIRECT",
+        environment: "PRODUCTION",
+        overallStatus: "PASSED",
+        credentialStatus: "VALID",
+        credentialType: "oauth",
+        healthStatus: "LIVE_READ_VALIDATED",
+        catalogReadStatus: "LIVE_READ_VALIDATED",
+        stockReadStatus: "LIVE_READ_VALIDATED",
+        priceReadStatus: "LIVE_READ_VALIDATED",
+        createOrderCapability: "UNVERIFIED",
+        orderStatusCapability: "UNVERIFIED",
+        trackingCapability: "UNVERIFIED",
+        returnCapability: "UNVERIFIED",
+        refundCapability: "UNVERIFIED",
+        dropshippingCapability: "DECLARED",
+        blindShippingCapability: "DECLARED",
+        whiteLabelCapability: "DECLARED",
+        capabilityVersion: "339",
+        riskLevel: "LOW",
+        readinessStatus: "READY",
+        blockerCodes: [],
+        checks: [],
+        idempotencyKey: "idem_stage_a",
+        correlationId: "corr_stage_a",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+      expect(isStageAValidated("VALID")).toBe(true);
+      const preflight = runProductionAccessPreflight();
+      expect(preflight.stageAHandoff).toBe("READY_FOR_STAGE_B_342");
+    });
+
+    it("status report without credentials", () => {
+      const report = buildInterCarsAccessStatusReport();
+      expect(report.software).toBe("COMPLETE");
+      expect(report.credential).toBe("NOT_CONFIGURED");
+      expect(report.realSideEffects).toBe(0);
+      expect(report.fakeEvidence).toBe(0);
     });
   });
 

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+<rect width="1200" height="700" fill="#0b0b0b"/>
+<rect x="45" y="45" width="1110" height="610" rx="28" fill="#111111" stroke="#d4af37" stroke-width="3"/>
+<text x="600" y="115" text-anchor="middle" fill="#d4af37" font-family="Arial, sans-serif" font-size="38" font-weight="700">BUZZARD — CURSOR HINWEIS</text>
+<text x="600" y="180" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="28" font-weight="700">Inter Cars Production Access</text>
+<text x="100" y="250" fill="#ffffff" font-family="Arial, sans-serif" font-size="25">1. ZIP-Paket in Cursor öffnen / als Referenz verwenden</text>
+<text x="100" y="305" fill="#ffffff" font-family="Arial, sans-serif" font-size="25">2. 05_CURSOR/ONE_PASS_COMMAND.md öffnen</text>
+<text x="100" y="360" fill="#ffffff" font-family="Arial, sans-serif" font-size="25">3. An Cursor: „Führe die Anweisung vollständig aus.“</text>
+<text x="100" y="415" fill="#ffffff" font-family="Arial, sans-serif" font-size="25">4. Echte Credentials NIEMALS in Git oder Chat eintragen</text>
+<text x="100" y="470" fill="#ffffff" font-family="Arial, sans-serif" font-size="25">5. Inter Cars OAuth2 über Secret Manager bereitstellen</text>
+<text x="100" y="525" fill="#d4af37" font-family="Arial, sans-serif" font-size="25" font-weight="700">Ohne echte Zugangsdaten: NOT_CONFIGURED / BLOCKED</text>
+<text x="100" y="575" fill="#ffffff" font-family="Arial, sans-serif" font-size="22">Stage A → #342 → #343 → #344 erfolgt nur mit echter Evidence und Freigabe.</text>
+</svg>

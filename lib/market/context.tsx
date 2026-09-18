@@ -10,9 +10,10 @@ import {
   type ReactNode,
 } from "react";
 import type { BuzzardLocale } from "@/lib/i18n/types";
-import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
-import { hasManualLocaleOverride, persistMarketLocale } from "@/lib/i18n/detect";
+import { hasManualLocaleOverride } from "@/lib/i18n/detect";
 import { useLocale } from "@/lib/i18n/context";
+import { resolveLocaleForCountryChange } from "@/lib/i18n/international/countryLocaleSwitch";
+import { validateCountryCode } from "@/lib/i18n/international/validateInput";
 import {
   defaultMarketCountryCode,
   detectMarketCountryCode,
@@ -55,21 +56,21 @@ export function MarketProvider({ children }: { children: ReactNode }) {
 
   const setCountryCode = useCallback(
     (code: string, manual = true) => {
-      const country = getDeliverableMarketCountry(code);
+      const valid = validateCountryCode(code);
+      const country = valid ? getDeliverableMarketCountry(valid) : getDeliverableMarketCountry(code);
       if (!country) return;
 
       setCountryCodeState(country.code);
       persistCountryCode(country.code, manual);
 
       if (manual && !hasManualLocaleOverride()) {
-        const nextLocale = country.language as BuzzardLocale;
-        if (SUPPORTED_LOCALES.includes(nextLocale)) {
-          setLocale(nextLocale, false);
-          persistMarketLocale(country.locale, false);
+        const selection = resolveLocaleForCountryChange(country.code, { respectManualLanguage: false });
+        if (selection) {
+          setLocale(selection.languageCode as BuzzardLocale, false);
         }
       }
     },
-    [setLocale]
+    [setLocale],
   );
 
   useEffect(() => {
@@ -100,7 +101,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       taxRate: apiCountryConfig?.taxRate ?? country.taxRate,
       setCountryCode,
     }),
-    [country, setCountryCode, apiCountryConfig]
+    [country, setCountryCode, apiCountryConfig],
   );
 
   return <MarketContext.Provider value={value}>{children}</MarketContext.Provider>;

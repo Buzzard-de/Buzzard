@@ -69,9 +69,11 @@ export function resolveLocaleForCountryChange(
 
   const respectManual = options.respectManualLanguage ?? hasManualLocaleOverride();
   const savedLang = respectManual ? readStoredLocale() ?? undefined : undefined;
+  const defaultLang = respectManual ? undefined : getDefaultLanguageForCountry(validCountry);
 
   const resolved = resolveLanguage({
     explicitCountryCode: validCountry,
+    explicitLanguage: defaultLang,
     savedLanguage: savedLang,
     savedManualOverride: respectManual,
     manualOverride: respectManual,

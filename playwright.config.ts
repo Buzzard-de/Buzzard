@@ -37,6 +37,11 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
     },
     {
+      name: "country-language-e2e",
+      testMatch: /country-language-switch\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
+    },
+    {
       name: "chromium-mobile",
       testMatch: /customer-journey\.spec\.ts/,
       use: { ...devices["Pixel 5"], viewport: VIEWPORTS.mobile375 },

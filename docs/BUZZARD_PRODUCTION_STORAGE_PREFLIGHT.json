@@ -1,0 +1,181 @@
+{
+  "generatedAt": "2026-09-18T16:35:48.928Z",
+  "softwarePersistenceSupport": "PASS",
+  "persistenceConfiguration": "PASS",
+  "renderPersistentDisk": "BLOCKED",
+  "livePersistenceValidation": "UNVERIFIED",
+  "productionReadyImpact": "BLOCKED",
+  "salesEnabled": "0",
+  "persistenceMode": "DEVELOPMENT",
+  "healthStatus": {
+    "PERSISTENCE_CONFIGURED": "PASS",
+    "PERSISTENCE_PATH": "server/data/buzzard.db",
+    "PERSISTENCE_WRITABLE": "BLOCKED",
+    "SQLITE_READY": "PASS",
+    "MIGRATION_READY": "PASS",
+    "BACKUP_READY": "WARNING",
+    "RESTORE_EVIDENCE": "PASS",
+    "RESTART_PERSISTENCE": "PASS",
+    "RENDER_MANUAL_ACTION_REQUIRED": "BLOCKED"
+  },
+  "environment": [
+    {
+      "name": "BUZZARD_DB_PATH",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    },
+    {
+      "name": "BUZZARD_BACKUP_DIR",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    },
+    {
+      "name": "PERSISTENT_DATA_PATH",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    },
+    {
+      "name": "SQLITE_PATH",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    },
+    {
+      "name": "DATABASE_PATH",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    },
+    {
+      "name": "DATA_DIR",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    },
+    {
+      "name": "NODE_ENV",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    },
+    {
+      "name": "REQUIRE_PERSISTENT_DB",
+      "configured": false,
+      "valueHint": "NOT_SET"
+    }
+  ],
+  "varData": {
+    "path": "/var/data",
+    "exists": false,
+    "isDirectory": false,
+    "writable": false,
+    "sqliteOpenable": false,
+    "status": "UNVERIFIED",
+    "notes": "MANUAL_RENDER_ACTION_REQUIRED: mount persistent disk at /var/data; Local/dev environment — live Render disk validation required"
+  },
+  "sqlite": {
+    "databasePath": "/workspace/server/data/buzzard.db",
+    "fileExists": true,
+    "walMode": "delete",
+    "journalMode": "delete",
+    "foreignKeys": true,
+    "busyTimeout": null,
+    "integrityCheck": "ok",
+    "schemaVersion": "0",
+    "migrationReady": true,
+    "status": "PASS"
+  },
+  "restartPersistence": {
+    "status": "PASS",
+    "testDbPath": "/tmp/buzzard-storage-preflight/restart-persistence-test.db",
+    "writeOk": true,
+    "readOk": true,
+    "cleanupOk": true,
+    "notes": "Isolated write/reopen/read cycle passed (local temp DB)"
+  },
+  "backupRestore": {
+    "backupScriptPresent": true,
+    "restoreScriptPresent": true,
+    "backupDir": "/workspace/server/data/backups",
+    "backupDirExists": false,
+    "backupAvailable": false,
+    "restoreProcedureDocumented": true,
+    "restoreEvidence": "PASS",
+    "integrityCheckSupported": true,
+    "status": "WARNING",
+    "notes": "No backup files found in backup directory"
+  },
+  "deployment": {
+    "renderYamlPresent": true,
+    "persistentDiskInBlueprint": true,
+    "buzzardDbPathInBlueprint": true,
+    "backupDirInBlueprint": true,
+    "healthCheckConfigured": true,
+    "status": "PASS",
+    "notes": "Render Blueprint supports persistent disk configuration"
+  },
+  "manualActions": [
+    {
+      "step": 1,
+      "action": "Upgrade buzzard-api to Starter plan and add persistent disk mounted at /var/data (1 GB)",
+      "reason": "Render free tier filesystem is ephemeral — SQLite data lost on redeploy"
+    },
+    {
+      "step": 2,
+      "action": "Set BUZZARD_DB_PATH=/var/data/buzzard.db and BUZZARD_BACKUP_DIR=/var/data/backups in Render environment",
+      "reason": "Application uses BUZZARD_DB_PATH SSOT — do not duplicate with new env keys"
+    },
+    {
+      "step": 3,
+      "action": "Sync Render Blueprint (render.yaml) or apply manual disk configuration",
+      "reason": "Blueprint ready — dashboard sync pending"
+    },
+    {
+      "step": 4,
+      "action": "Deploy latest commit (manual deploy — do not auto-trigger from this preflight)",
+      "reason": "Disk mount requires redeploy"
+    },
+    {
+      "step": 5,
+      "action": "Verify: curl https://buzzard-api.onrender.com/api/health/db — expect path /var/data/buzzard.db, persistent=true",
+      "reason": "LIVE_PERSISTENCE_VALIDATION only possible on production instance"
+    },
+    {
+      "step": 6,
+      "action": "Run npm run backup:db on Render after first persistent deploy",
+      "reason": "Establish backup baseline on persistent disk"
+    }
+  ],
+  "productionFlags": {
+    "SALES_ENABLED": "0",
+    "SUPPLIER_NETWORK_ENABLED": "0",
+    "SUPPLIER_ORDER_NETWORK_ENABLED": "0",
+    "PAYMENT_PRODUCTION_ENABLED": "0",
+    "CARRIER_PRODUCTION_ENABLED": "0",
+    "MARKETING_SPEND_ENABLED": "0",
+    "AI_PRODUCTION_ENABLED": "0"
+  },
+  "sideEffectCounters": {
+    "realSupplierOrders": 0,
+    "realPaymentTransactions": 0,
+    "realRefunds": 0,
+    "realShipments": 0,
+    "realMarketplaceOrders": 0,
+    "realMarketplaceListings": 0,
+    "realAdSpend": 0,
+    "fakeEvidence": 0
+  },
+  "pass": [
+    "SQLite path SSOT via server/lib/dbPaths.js (BUZZARD_DB_PATH)",
+    "Startup validation in server/lib/dbStartup.js",
+    "Integrity checks in server/lib/dbIntegrity.js",
+    "Ephemeral→persistent one-time migration on first /var/data mount",
+    "Backup script: scripts/db-backup.mjs",
+    "Restore script: scripts/restore-db.mjs (production guard)",
+    "Render Blueprint: render.yaml with /var/data disk",
+    "Isolated restart persistence test (temp DB only)"
+  ],
+  "blocked": [
+    "RENDER_PERSISTENT_DISK — /var/data not mounted on this instance",
+    "BLOCKED_MANUAL_DEPLOYMENT — configure Render persistent disk"
+  ],
+  "unverified": [
+    "LIVE_PERSISTENCE_VALIDATION — requires production Render instance check"
+  ]
+}

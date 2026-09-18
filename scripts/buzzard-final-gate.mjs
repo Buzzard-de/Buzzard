@@ -19,6 +19,7 @@ const steps = [
   ["Trade route fulfillment", "npm run test:trade-route-fulfillment"],
   ["Order engine", "npm run test:order-engine"],
   ["Supplier international origin", "npx vitest run lib/supplier-engine/internationalOrigin.test.ts"],
+  ["Final external access", "npm run test:final-external-access"],
   ["Production access", "npm run test:production-access"],
   ["Payment production", "npm run test:payment-production"],
   ["Country language", "npm run test:buzzard-i18n"],

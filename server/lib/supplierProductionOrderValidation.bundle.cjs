@@ -4966,7 +4966,7 @@ var init_test_supplier_feeds = __esm({
         region: "EU",
         currency: "EUR",
         integrationTypes: ["api", "xml", "csv", "manual"],
-        supportedMarkets: ["DE", "FR", "PL"],
+        supportedMarkets: ["DE", "FR", "PL", "TR", "SA", "AE", "EG", "QA"],
         capabilities: {
           productFeed: true,
           stockFeed: true,
@@ -5391,6 +5391,16 @@ var init_persistence2 = __esm({
     "use strict";
     init_persistence();
     memoryStore = /* @__PURE__ */ new Map();
+  }
+});
+
+// lib/supplier-engine/tracking.ts
+var init_tracking = __esm({
+  "lib/supplier-engine/tracking.ts"() {
+    "use strict";
+    init_registry2();
+    init_capabilities();
+    init_persistence2();
   }
 });
 
@@ -6743,38 +6753,11 @@ var market_engine_extensions_default = {
 var GLOBAL_COUNTRIES = global_countries_35_default;
 var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
 
-// lib/order-engine/registry.ts
-var orderRegistry = /* @__PURE__ */ new Map();
-function getOrder(orderId) {
-  return orderRegistry.get(orderId);
-}
+// lib/order-engine/createOrder.ts
+init_registry2();
 
-// lib/product-engine/adapters/canonical.ts
-var import_module = require("module");
-
-// lib/product-engine/adapters/resolveRepoPath.ts
-var import_fs = __toESM(require("fs"));
-var import_path = __toESM(require("path"));
-var import_url = require("url");
-function resolveRepoFile(...segments) {
-  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
-  const roots = [
-    process.cwd(),
-    import_path.default.join(process.cwd(), ".."),
-    import_path.default.resolve(moduleDir, "../.."),
-    import_path.default.resolve(moduleDir, "../../..")
-  ];
-  for (const root of roots) {
-    const candidate = import_path.default.join(root, ...segments);
-    if (import_fs.default.existsSync(candidate)) return candidate;
-  }
-  return import_path.default.join(process.cwd(), ...segments);
-}
-
-// lib/product-engine/adapters/canonical.ts
-var require2 = (0, import_module.createRequire)(__import_meta_url__);
-var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
-var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
+// lib/pricing-engine/shipping.ts
+init_registry2();
 
 // data/buzzard_categories.json
 var buzzard_categories_default = {
@@ -31868,8 +31851,41 @@ function indexProducts() {
 indexProducts();
 var PRODUCT_COUNT = activePublicProducts.length;
 
-// lib/pricing-engine/shipping.ts
-init_registry2();
+// lib/tracking-fulfillment/adapter.ts
+init_tracking();
+
+// lib/order-engine/registry.ts
+var orderRegistry = /* @__PURE__ */ new Map();
+function getOrder(orderId) {
+  return orderRegistry.get(orderId);
+}
+
+// lib/product-engine/adapters/canonical.ts
+var import_module = require("module");
+
+// lib/product-engine/adapters/resolveRepoPath.ts
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+var import_url = require("url");
+function resolveRepoFile(...segments) {
+  const moduleDir = import_path.default.dirname((0, import_url.fileURLToPath)(__import_meta_url__));
+  const roots = [
+    process.cwd(),
+    import_path.default.join(process.cwd(), ".."),
+    import_path.default.resolve(moduleDir, "../.."),
+    import_path.default.resolve(moduleDir, "../../..")
+  ];
+  for (const root of roots) {
+    const candidate = import_path.default.join(root, ...segments);
+    if (import_fs.default.existsSync(candidate)) return candidate;
+  }
+  return import_path.default.join(process.cwd(), ...segments);
+}
+
+// lib/product-engine/adapters/canonical.ts
+var require2 = (0, import_module.createRequire)(__import_meta_url__);
+var canonicalModelPath = resolveRepoFile("server/lib/global/productCanonicalModel.js");
+var { normalizeCanonicalProduct, toFlatCanonicalProduct } = require2(canonicalModelPath);
 
 // lib/market-engine/supplier.ts
 var supplierFallbacks = market_engine_extensions_default.supplierFallbacks;

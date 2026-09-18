@@ -164,6 +164,7 @@
     "test:pricing-engine": "vitest run lib/pricing-engine/pricingEngine.test.ts && node --test server/__tests__/pricingEngine.test.mjs",
     "test:inventory-engine": "vitest run lib/inventory-engine/inventoryEngine.test.ts && node --test server/__tests__/inventoryEngine.test.mjs",
     "test:order-engine": "vitest run lib/order-engine/orderEngine.test.ts && node --test server/__tests__/orderEngine.test.mjs",
+    "test:trade-route-fulfillment": "vitest run lib/trade-route-fulfillment/tradeRouteFulfillment.test.ts lib/customs-fulfillment-gate/customsFulfillmentGate.test.ts",
     "test:marketplace-engine": "vitest run lib/marketplace-engine/marketplaceEngine.test.ts && node --test server/__tests__/marketplaceEngine.test.mjs",
     "test:returns-engine": "vitest run lib/returns-engine/returnsEngine.test.ts && node --test server/__tests__/returnsEngine.test.mjs",
     "test:ai-orchestrator": "vitest run lib/ai-orchestrator/aiOrchestrator.test.ts && node --test server/__tests__/aiOrchestrator.test.mjs",

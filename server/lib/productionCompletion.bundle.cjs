@@ -1029,7 +1029,7 @@ var test_supplier_feeds_default = {
     region: "EU",
     currency: "EUR",
     integrationTypes: ["api", "xml", "csv", "manual"],
-    supportedMarkets: ["DE", "FR", "PL"],
+    supportedMarkets: ["DE", "FR", "PL", "TR", "SA", "AE", "EG", "QA"],
     capabilities: {
       productFeed: true,
       stockFeed: true,

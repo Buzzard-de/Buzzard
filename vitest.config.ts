@@ -13,6 +13,8 @@ export default defineConfig({
       "lib/pricing-engine/**/*.test.ts",
       "lib/inventory-engine/**/*.test.ts",
       "lib/order-engine/**/*.test.ts",
+      "lib/trade-route-fulfillment/**/*.test.ts",
+      "lib/customs-fulfillment-gate/**/*.test.ts",
       "lib/fulfillment-control-tower/**/*.test.ts",
       "lib/supplier-order-readiness/**/*.test.ts",
       "lib/supplier-order-rehearsal/**/*.test.ts",

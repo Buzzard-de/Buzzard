@@ -427,7 +427,7 @@ var init_test_supplier_feeds = __esm({
         region: "EU",
         currency: "EUR",
         integrationTypes: ["api", "xml", "csv", "manual"],
-        supportedMarkets: ["DE", "FR", "PL"],
+        supportedMarkets: ["DE", "FR", "PL", "TR", "SA", "AE", "EG", "QA"],
         capabilities: {
           productFeed: true,
           stockFeed: true,
@@ -5515,6 +5515,16 @@ function assertCapability(capabilities, capability) {
 var init_capabilities = __esm({
   "lib/supplier-engine/capabilities.ts"() {
     "use strict";
+  }
+});
+
+// lib/supplier-engine/tracking.ts
+var init_tracking = __esm({
+  "lib/supplier-engine/tracking.ts"() {
+    "use strict";
+    init_registry2();
+    init_capabilities();
+    init_persistence2();
   }
 });
 
@@ -33633,6 +33643,12 @@ var import_crypto6 = require("crypto");
 
 // lib/supplier-production-order-validation/payload.ts
 var import_crypto5 = require("crypto");
+
+// lib/order-engine/createOrder.ts
+init_registry2();
+
+// lib/tracking-fulfillment/adapter.ts
+init_tracking();
 
 // lib/inventory-engine/market.ts
 init_registry2();

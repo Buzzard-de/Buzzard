@@ -5,6 +5,8 @@ import type { BuzzardOrder, OrderEngineAdminRow } from "./types";
 export function buildOrderAdminRow(order: BuzzardOrder): OrderEngineAdminRow {
   const primarySupplier = order.supplierAssignments[0];
   const primarySupplierOrder = order.supplierOrders[0];
+  const pipeline = order.tradeRouteFulfillment;
+  const tracking = order.tracking;
   return {
     orderNumber: order.orderNumber,
     customerId: order.customerId,
@@ -18,6 +20,16 @@ export function buildOrderAdminRow(order: BuzzardOrder): OrderEngineAdminRow {
     supplierOrderStatus: primarySupplierOrder?.status ?? "NOT_CREATED",
     reservationCount: order.reservationIds.length,
     fulfillmentStatus: order.fulfillmentStatus,
+    originCountry: pipeline?.originCountry ?? "N/A",
+    destinationCountry: pipeline?.targetCountry ?? order.shippingAddress.country,
+    tradeRoute: pipeline?.tradeRoute ?? "N/A",
+    customsStatus: pipeline?.customsDecision ?? "N/A",
+    customsMissingFields: (pipeline?.customsMissingFields ?? []).join(", ") || "—",
+    carrierOptions: "DHL,DPD,GLS,UPS,DHL_EXPRESS",
+    selectedCarrier: pipeline?.carrierId ?? "—",
+    shippingStatus: pipeline?.shippingQuoted ? "QUOTED" : pipeline?.holdReason === "SHIPPING_HOLD" ? "HOLD" : "PENDING",
+    trackingStatus: tracking?.status ?? "NOT_ATTACHED",
+    holdReason: pipeline?.holdReason ?? "—",
     returnStatus: order.returnRefund.returnStatus,
     refundStatus: order.returnRefund.refundStatus,
     createdAt: order.createdAt,

@@ -1,4 +1,6 @@
 import { getMarket } from "@/lib/market-engine/registry";
+import { getSupplier } from "@/lib/supplier-engine/registry";
+import { runTradeRouteFulfillmentPipeline } from "@/lib/trade-route-fulfillment";
 import {
   generateOrderId,
   generateOrderNumber,
@@ -230,6 +232,82 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   assertOrderTransition(order.status, "PROCESSING");
   order.status = "PROCESSING";
+
+  const primarySupplierId = supplierAssignments[0]?.supplierId;
+  const supplierConfig = primarySupplierId ? getSupplier(primarySupplierId) : undefined;
+  const tradeRoutePipeline = runTradeRouteFulfillmentPipeline({
+    orderId,
+    marketId: input.marketId,
+    shippingAddress: input.shippingAddress,
+    validatedCheckoutCountry: input.validatedCheckoutCountry,
+    items: orderItems.map((item) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      supplierId: item.supplierId,
+      lineGross: item.lineGross,
+      productName: item.productName,
+    })),
+    currency,
+    supplier: {
+      supplierId: supplierConfig?.supplierId ?? primarySupplierId ?? "UNKNOWN",
+      country: supplierConfig?.country,
+      region: supplierConfig?.region,
+      shippingOrigin: input._testSupplierShippingOrigin,
+      warehouseCountry: input._testSupplierWarehouseCountry,
+      fulfillmentCountry: input._testSupplierFulfillmentCountry,
+      supplierCountry: input._testSupplierCountry,
+    },
+    idempotencyKey: input.idempotencyKey,
+    serviceLevel: input.serviceLevel,
+    weightKg: input._testParcelWeightKg,
+    dimensionsCm: input._testParcelDimensions,
+  });
+
+  for (const event of tradeRoutePipeline.events) {
+    emitOrderEvent({
+      orderId,
+      type: event.type as import("./types").OrderEventType,
+      source: "trade-route-fulfillment",
+      metadata: event.metadata,
+    });
+  }
+
+  if (tradeRoutePipeline.snapshot) {
+    order.tradeRouteFulfillment = tradeRoutePipeline.snapshot;
+    if (tradeRoutePipeline.snapshot.shippingCost != null) {
+      order.shippingAmount = tradeRoutePipeline.snapshot.shippingCost;
+    }
+  }
+
+  if (!tradeRoutePipeline.ok) {
+    const holdReason = tradeRoutePipeline.snapshot?.holdReason;
+    const fulfillmentStatus =
+      holdReason === "SHIPPING_HOLD" ? "SHIPPING_HOLD" : "CUSTOMS_HOLD";
+    order = {
+      ...order,
+      fulfillmentStatus,
+      errorCode: (tradeRoutePipeline.errorCode ?? "CUSTOMS_HOLD") as import("./types").OrderErrorCode,
+      errorMessage: tradeRoutePipeline.errorMessage,
+      updatedAt: new Date().toISOString(),
+    };
+    recordOrderAudit({
+      orderId,
+      actor: "trade-route-fulfillment",
+      action: fulfillmentStatus,
+      metadata: {
+        holdReason,
+        tradeRoute: tradeRoutePipeline.snapshot?.tradeRoute,
+        missingFields: tradeRoutePipeline.snapshot?.customsMissingFields,
+      },
+    });
+    saveOrder(order);
+    return {
+      ok: false,
+      order,
+      errorCode: order.errorCode,
+      errorMessage: order.errorMessage,
+    };
+  }
 
   const fulfillment = await prepareSupplierOrders(order);
   if (!fulfillment.ok) {

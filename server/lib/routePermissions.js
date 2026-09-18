@@ -196,6 +196,7 @@ const EXACT = {
   "GET /api/admin/final-production-go-live/status-report": "system.read",
   "GET /api/admin/final-production-go-live/completion": "system.read",
   "GET /api/admin/final-production-go-live/closure": "system.read",
+  "GET /api/admin/final-production-go-live/operations": "system.read",
   "GET /api/admin/final-production-go-live/go-live-check": "system.read",
   "GET /api/admin/inter-cars-production-access/dashboard": "supplier-observation.read",
   "POST /api/admin/inter-cars-production-access/preflight": "supplier-observation.manage",

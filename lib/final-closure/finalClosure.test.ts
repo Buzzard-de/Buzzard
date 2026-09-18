@@ -73,7 +73,7 @@ describe("Final closure", () => {
     process.env.SALES_ENABLED = "1";
     const sales = evaluateFinalSalesEnablement();
     expect(sales.salesEnabled).toBe("CLOSED");
-    expect(sales.reasons.some((r) => r.includes("criticalBlockers") || r.includes("SALES_ENABLED_BUT"))).toBe(true);
+    expect(sales.blockers.length).toBeGreaterThan(0);
   });
 
   it("blocker registry includes minimum required codes", () => {

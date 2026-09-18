@@ -99,3 +99,33 @@ export function fetchFinalGoLiveCheck() {
     "/api/admin/final-production-go-live/go-live-check",
   );
 }
+
+export interface FinalOperationsReport {
+  softwareComplete: true;
+  operationalBlockers: string[];
+  interCarsCredential: string;
+  interCarsRead: string;
+  createOrder342: string;
+  arming343: string;
+  firstOrder344: string;
+  controlledGoLive345: string;
+  observation346: string;
+  payment: string;
+  carrier: string;
+  ai: string;
+  returns: string;
+  marketing: string;
+  financialReconciliation: string;
+  backupRestore: string;
+  security: string;
+  monitoring: string;
+  sales: "OPEN" | "CLOSED";
+  finalGoLive: "READY" | "BLOCKED";
+  fakeEvidenceCount: number;
+  criticalBlockers: number;
+  chain: Array<{ id: string; label: string; status: string; blockers: string[] }>;
+}
+
+export function fetchFinalOperationsReport() {
+  return adminFetch<FinalOperationsReport>("/api/admin/final-production-go-live/operations");
+}

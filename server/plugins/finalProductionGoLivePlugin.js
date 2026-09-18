@@ -75,6 +75,26 @@ module.exports = {
       });
     });
 
+    app.get("/api/admin/final-production-go-live/operations", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      let opsMod = null;
+      try {
+        opsMod = require("../lib/finalOperations.bundle.cjs");
+      } catch {
+        return res.status(503).json({ success: false, errorCode: "FINAL_OPERATIONS_UNAVAILABLE" });
+      }
+      const result = opsMod.runFinalOperationsCheck();
+      return res.json({
+        success: true,
+        data: result.report,
+        formatted: result.formatted,
+        softwareComplete: result.softwareComplete,
+        finalGoLive: result.finalGoLive,
+        source: "final-operations",
+      });
+    });
+
     app.get("/api/admin/final-production-go-live/closure", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;

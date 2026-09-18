@@ -7,9 +7,11 @@ import {
   fetchFinalGoLiveDashboard,
   fetchFinalProductionCompletionReport,
   fetchFinalClosureReport,
+  fetchFinalOperationsReport,
   type FinalGoLiveDashboard,
   type FinalProductionCompletionReport,
   type FinalClosureReport,
+  type FinalOperationsReport,
 } from "@/lib/admin/finalProductionGoLiveClient";
 
 const SECTION_LINKS: Record<string, string> = {
@@ -24,6 +26,7 @@ export default function AdminFinalProductionGoLivePanel() {
   const [dashboard, setDashboard] = useState<FinalGoLiveDashboard | null>(null);
   const [completion, setCompletion] = useState<FinalProductionCompletionReport | null>(null);
   const [closure, setClosure] = useState<FinalClosureReport | null>(null);
+  const [operations, setOperations] = useState<FinalOperationsReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -31,14 +34,16 @@ export default function AdminFinalProductionGoLivePanel() {
     setError("");
     setLoading(true);
     try {
-      const [dashRes, completionRes, closureRes] = await Promise.all([
+      const [dashRes, completionRes, closureRes, opsRes] = await Promise.all([
         fetchFinalGoLiveDashboard(),
         fetchFinalProductionCompletionReport(),
         fetchFinalClosureReport(),
+        fetchFinalOperationsReport(),
       ]);
       setDashboard(dashRes.data);
       setCompletion(completionRes.data);
       setClosure(closureRes.data);
+      setOperations(opsRes.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load dashboard");
     } finally {
@@ -73,6 +78,34 @@ export default function AdminFinalProductionGoLivePanel() {
 
       {error && <p className="admin-error">{error}</p>}
       {loading && <p className="admin-muted">Loading…</p>}
+
+      {operations && (
+        <section className="admin-card">
+          <h2>Final operations — SOFTWARE COMPLETE</h2>
+          <p className="admin-muted">
+            Operational blockers: {operations.operationalBlockers.length} · Fake evidence: {operations.fakeEvidenceCount}
+          </p>
+          <ul>
+            <li>Inter Cars credential: {operations.interCarsCredential}</li>
+            <li>Read validation: {operations.interCarsRead}</li>
+            <li>#342 CreateOrder: {operations.createOrder342}</li>
+            <li>#343 Arming: {operations.arming343}</li>
+            <li>#344 First order: {operations.firstOrder344}</li>
+            <li>#345 Go-live: {operations.controlledGoLive345}</li>
+            <li>#346 Observation: {operations.observation346}</li>
+            <li>Financial: {operations.financialReconciliation}</li>
+            <li>Final go-live: {operations.finalGoLive}</li>
+          </ul>
+          <h3>Operations chain</h3>
+          <ul>
+            {operations.chain.map((step) => (
+              <li key={step.id}>
+                [{step.status}] {step.label}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {closure && (
         <section className="admin-card">

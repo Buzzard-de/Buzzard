@@ -7,6 +7,7 @@ process.env.SUPPLIER_ORDER_NETWORK_ENABLED = "0";
 
 const steps = [
   ["Final closure tests", "vitest run lib/final-closure/finalClosure.test.ts"],
+  ["Final operations tests", "vitest run lib/final-operations/finalOperations.test.ts"],
   ["Production access tests", "vitest run lib/production-access/productionAccess.test.ts"],
   ["Upstream production-completion gate", "npm run gate:production-completion"],
 ];

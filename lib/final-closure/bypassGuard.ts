@@ -2,15 +2,19 @@
 const PRODUCTION_BYPASS_KEYS = [
   "BUZZARD_FORCE_GO_LIVE",
   "BUZZARD_SKIP_VALIDATION",
+  "BUZZARD_SKIP_APPROVAL",
   "BUZZARD_CREATE_ORDER_VALIDATED",
   "BUZZARD_FIRST_ORDER_EXECUTED",
   "BUZZARD_OBSERVATION_COMPLETED",
   "BUZZARD_SALES_ENABLED_BYPASS",
+  "BUZZARD_FORCE_SALES_ENABLED",
   "forceGoLive",
   "skipValidation",
+  "skipApproval",
   "createOrderValidated",
   "firstOrderExecuted",
   "observationCompleted",
+  "forceSalesEnabled",
   "salesEnabled",
 ] as const;
 

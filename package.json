@@ -194,6 +194,7 @@
     "test:return-recovery": "vitest run returnRecovery",
     "test:return-recovery:smoke": "node scripts/return-recovery-smoke.mjs",
     "test:master-system": "node scripts/master-system-test.mjs",
+    "status:master-completion": "node scripts/master-completion-status.mjs",
     "audit:master-system": "node scripts/buzzard-master-system-audit.mjs",
     "backup:schedule": "node scripts/backup-scheduler.mjs",
     "test:part16": "vitest run part16TechnicalCompletion",

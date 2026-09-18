@@ -5,6 +5,11 @@ export { runProductionAccessPreflight } from "./preflight";
 export { resolveCredentialDisplayStatus } from "./credentialStatus";
 export { resolveNetworkState } from "./networkState";
 export { resolveReadOnlyLiveStatus } from "./readOnlyLive";
+export { evaluateStageAReadValidation, isStageAValidated } from "./stageA";
+export {
+  buildInterCarsAccessStatusReport,
+  formatInterCarsAccessStatusReport,
+} from "./statusReport";
 export { buildProductionAccessChecklist } from "./checklist";
 export { getProductionAccessDashboard } from "./admin";
 export {

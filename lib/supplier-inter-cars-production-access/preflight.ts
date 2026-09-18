@@ -9,11 +9,13 @@ import { evaluateUpstreamGates } from "@/lib/supplier-production-order-validatio
 import { isActivationKillSwitched } from "@/lib/supplier-order-readiness/killSwitch";
 import { resolveCredentialDisplayStatus } from "./credentialStatus";
 import { resolveNetworkState } from "./networkState";
+import { evaluateStageAReadValidation } from "./stageA";
 import { getInterCarsSupplierId } from "./config";
 
 /** Dry-run #342 readiness — no HTTP, no createOrder, no order payload. */
 export function runProductionAccessPreflight(): {
   ready: boolean;
+  stageAHandoff: "READY_FOR_STAGE_B_342" | "BLOCKED" | "NOT_RUN";
   blockers: string[];
   checks: { check: string; status: string; message: string }[];
 } {
@@ -93,8 +95,28 @@ export function runProductionAccessPreflight(): {
       : "Disabled until operational enable",
   });
 
-  const credentialReady = credential.status === "VALID" || credential.status === "CONFIGURED";
-  const ready = credentialReady && endpointAllowlisted && network.supplierOrderNetwork === "OFF" && upstream.blockers.length === 0;
+  const stageA = evaluateStageAReadValidation(credential.status);
+  checks.push({
+    check: "STAGE_A_READ_ONLY",
+    status: stageA.status === "VALIDATED" ? "PASS" : stageA.status === "NOT_RUN" ? "UNVERIFIED" : "BLOCKED",
+    message: `health=${stageA.capabilities.health} catalog=${stageA.capabilities.catalog} stock=${stageA.capabilities.stock} price=${stageA.capabilities.price}`,
+  });
+  if (stageA.status !== "VALIDATED" && (credential.status === "VALID" || credential.status === "CONFIGURED")) {
+    blockers.push("STAGE_A_READ_VALIDATION_REQUIRED");
+  }
 
-  return { ready, blockers: [...new Set(blockers)], checks };
+  const credentialReady = credential.status === "VALID" || credential.status === "CONFIGURED";
+  const ready =
+    credentialReady &&
+    endpointAllowlisted &&
+    network.supplierOrderNetwork === "OFF" &&
+    upstream.blockers.length === 0 &&
+    stageA.handoff === "READY_FOR_STAGE_B_342";
+
+  return {
+    ready,
+    stageAHandoff: stageA.handoff,
+    blockers: [...new Set(blockers)],
+    checks,
+  };
 }

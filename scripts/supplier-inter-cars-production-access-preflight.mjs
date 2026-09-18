@@ -20,4 +20,5 @@ if (diagnostic.realHttpCalls !== 0 || diagnostic.realCreateOrderCalls !== 0) {
   process.exit(1);
 }
 
-console.log("\nInter Cars production access preflight complete (dry-run, no HTTP).");
+console.log("\n" + mod.formatInterCarsAccessStatusReport());
+console.log("\nInter Cars production preflight complete (dry-run, no HTTP, no CreateOrder).");

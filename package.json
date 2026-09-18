@@ -181,7 +181,7 @@
     "build:supplier-foundation-bridge": "node scripts/build-supplier-foundation-bridge.mjs",
     "build:fulfillment-control-tower-bridge": "node scripts/build-fulfillment-control-tower-bridge.mjs",
     "test:commerce-order-engine-analytics": "vitest run lib/commerce/commerceOrderEngineAnalytics.test.ts",
-    "test:buzzard-i18n": "vitest run lib/i18n/international/international.test.ts lib/i18n/localeCatalog.test.ts",
+    "test:buzzard-i18n": "vitest run lib/i18n/international/international.test.ts lib/i18n/international/countryLocaleSwitch.test.ts lib/i18n/localeCatalog.test.ts",
     "test:locale-parity": "node --experimental-strip-types scripts/validate-locale-parity.mjs",
     "test:final-catalog-completion": "node --test server/__tests__/finalCatalogCompletion.test.mjs",
     "test:final-system": "node scripts/final-system-test.mjs",

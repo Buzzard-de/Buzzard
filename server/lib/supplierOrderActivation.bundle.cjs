@@ -5661,6 +5661,11 @@ var test_supplier_feeds_default = {
     supplierId: "TEST_SUPPLIER_A",
     name: "Test Supplier A (Mock)",
     country: "DE",
+    supplierCountry: "DE",
+    warehouseCountries: ["DE", "PL"],
+    fulfillmentCountries: ["DE"],
+    shippingOrigins: ["DE"],
+    internationalShippingSupported: true,
     region: "EU",
     currency: "EUR",
     integrationTypes: ["api", "xml", "csv", "manual"],
@@ -5892,10 +5897,19 @@ function mapMasterToConfig(raw) {
 function buildTestSupplierA() {
   const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
   const now = (/* @__PURE__ */ new Date()).toISOString();
+  const country = String(feed.country || "DE");
   return {
     supplierId: TEST_SUPPLIER_ID,
     name: String(feed.name || "Test Supplier A"),
-    country: String(feed.country || "DE"),
+    country,
+    supplierCountry: String(feed.supplierCountry || country),
+    warehouseCountries: feed.warehouseCountries || [country],
+    fulfillmentCountries: feed.fulfillmentCountries || [country],
+    shippingOrigins: feed.shippingOrigins || [country],
+    internationalShippingSupported: feed.internationalShippingSupported !== false,
+    dropshippingSupported: feed.capabilities?.dropshipping === true,
+    blindShippingSupported: feed.capabilities?.blindShipping === true,
+    whiteLabelSupported: feed.capabilities?.whiteLabel === true,
     region: String(feed.region || "EU"),
     status: "TESTING",
     integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],

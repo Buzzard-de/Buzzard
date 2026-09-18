@@ -10,6 +10,7 @@ export default defineConfig({
       "lib/market-engine/**/*.test.ts",
       "lib/product-engine/**/*.test.ts",
       "lib/supplier-engine/**/*.test.ts",
+      "lib/supplier-engine/internationalOrigin.test.ts",
       "lib/pricing-engine/**/*.test.ts",
       "lib/inventory-engine/**/*.test.ts",
       "lib/order-engine/**/*.test.ts",

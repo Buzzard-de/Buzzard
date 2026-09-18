@@ -1,34 +1,19 @@
+import {
+  buildSupplierInternationalProfile,
+  resolveSupplierOriginCountry,
+} from "@/lib/supplier-engine/internationalOrigin";
 import { normalizeCountryCode, isKnownMarketCountry } from "./targetCountry";
 import type { FulfillmentOriginResolution, FulfillmentOriginSource } from "./types";
 
-type OriginCandidate = { country: string; source: FulfillmentOriginSource };
-
-function pickOrigin(supplier: {
-  shippingOrigin?: string;
-  warehouseCountry?: string;
-  fulfillmentCountry?: string;
-  supplierCountry?: string;
-  country?: string;
-}): OriginCandidate | null {
-  const candidates: Array<{ value?: string; source: FulfillmentOriginSource }> = [
-    { value: supplier.shippingOrigin, source: "shippingOrigin" },
-    { value: supplier.warehouseCountry, source: "warehouseCountry" },
-    { value: supplier.fulfillmentCountry, source: "fulfillmentCountry" },
-    { value: supplier.supplierCountry, source: "supplierCountry" },
-    { value: supplier.country, source: "supplier.country" },
-  ];
-
-  for (const candidate of candidates) {
-    const normalized = normalizeCountryCode(candidate.value);
-    if (normalized && isKnownMarketCountry(normalized)) {
-      return { country: normalized, source: candidate.source };
-    }
-  }
-  return null;
-}
+const SOURCE_MAP: Record<string, FulfillmentOriginSource> = {
+  shippingOrigins: "shippingOrigin",
+  warehouseCountries: "warehouseCountry",
+  fulfillmentCountries: "fulfillmentCountry",
+  supplierCountry: "supplierCountry",
+};
 
 /**
- * Resolve supplier fulfillment origin from explicit supplier metadata.
+ * Resolve supplier fulfillment origin from Supplier Engine SSOT.
  * Does not default to DE when origin is unknown.
  */
 export function resolveFulfillmentOrigin(input: {
@@ -36,23 +21,73 @@ export function resolveFulfillmentOrigin(input: {
     supplierId: string;
     country?: string;
     region?: string;
+    supplierCountry?: string;
+    warehouseCountries?: string[];
+    fulfillmentCountries?: string[];
+    shippingOrigins?: string[];
+    euMemberState?: boolean;
+    internationalShippingSupported?: boolean;
+    dropshippingSupported?: boolean;
+    blindShippingSupported?: boolean;
+    whiteLabelSupported?: boolean;
+    capabilities?: {
+      dropshipping?: boolean;
+      blindShipping?: boolean;
+      whiteLabel?: boolean;
+    };
     shippingOrigin?: string;
     warehouseCountry?: string;
     fulfillmentCountry?: string;
-    supplierCountry?: string;
   };
 }): FulfillmentOriginResolution {
-  const picked = pickOrigin(input.supplier);
-  if (!picked) {
+  const profile = buildSupplierInternationalProfile({
+    supplierId: input.supplier.supplierId,
+    country: input.supplier.country ?? "UNKNOWN",
+    supplierCountry: input.supplier.supplierCountry,
+    warehouseCountries:
+      input.supplier.warehouseCountries ??
+      (input.supplier.warehouseCountry ? [input.supplier.warehouseCountry] : undefined),
+    fulfillmentCountries:
+      input.supplier.fulfillmentCountries ??
+      (input.supplier.fulfillmentCountry ? [input.supplier.fulfillmentCountry] : undefined),
+    shippingOrigins:
+      input.supplier.shippingOrigins ??
+      (input.supplier.shippingOrigin ? [input.supplier.shippingOrigin] : undefined),
+    euMemberState: input.supplier.euMemberState,
+    internationalShippingSupported: input.supplier.internationalShippingSupported,
+    dropshippingSupported: input.supplier.dropshippingSupported,
+    blindShippingSupported: input.supplier.blindShippingSupported,
+    whiteLabelSupported: input.supplier.whiteLabelSupported,
+    capabilities: input.supplier.capabilities ?? {},
+  });
+
+  const resolved = resolveSupplierOriginCountry(profile);
+  if (resolved.originCountry) {
     return {
-      ok: false,
-      errorCode: "ORIGIN_UNKNOWN",
-      errorMessage: "ORIGIN_UNKNOWN",
+      ok: true,
+      originCountry: resolved.originCountry,
+      source: resolved.source ? SOURCE_MAP[resolved.source] : "supplierCountry",
     };
   }
+
+  // Legacy single-field fallbacks (test overrides only)
+  const legacy = [
+    input.supplier.shippingOrigin,
+    input.supplier.warehouseCountry,
+    input.supplier.fulfillmentCountry,
+    input.supplier.supplierCountry,
+    input.supplier.country,
+  ];
+  for (const value of legacy) {
+    const normalized = normalizeCountryCode(value);
+    if (normalized && isKnownMarketCountry(normalized)) {
+      return { ok: true, originCountry: normalized, source: "supplierCountry" };
+    }
+  }
+
   return {
-    ok: true,
-    originCountry: picked.country,
-    source: picked.source,
+    ok: false,
+    errorCode: "ORIGIN_UNKNOWN",
+    errorMessage: "ORIGIN_UNKNOWN",
   };
 }

@@ -17,6 +17,8 @@ export type {
   VatRules,
 } from "./types";
 
+export { normalizeCountryCode, isKnownMarketCountry } from "./countryCode";
+export { validateAll35Markets } from "./market35Validation";
 export {
   addMoney,
   formatCurrencyIntl,

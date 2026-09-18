@@ -91,6 +91,17 @@ export interface SupplierConfig {
   legalName?: string;
   country: string;
   region: string;
+  /** Explicit supplier legal/home country (falls back to country) */
+  supplierCountry?: string;
+  /** Warehouse locations for fulfillment origin resolution */
+  warehouseCountries?: string[];
+  fulfillmentCountries?: string[];
+  shippingOrigins?: string[];
+  euMemberState?: boolean;
+  internationalShippingSupported?: boolean;
+  dropshippingSupported?: boolean;
+  blindShippingSupported?: boolean;
+  whiteLabelSupported?: boolean;
   status: SupplierStatus;
   integrationTypes: IntegrationType[];
   currency: string;

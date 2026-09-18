@@ -136,17 +136,27 @@ function requiresCustomsRoute(tradeRoute: TradeRouteType): boolean {
 export function selectCarrier(input: {
   originCountry: string;
   destinationCountry: string;
+  postalCode?: string;
   tradeRoute: TradeRouteType;
   weightKg: number;
   dimensionsCm: { length: number; width: number; height: number };
   serviceLevel?: string;
+  productType?: string;
+  customsRequired?: boolean;
+  dangerousGoods?: boolean;
+  oversized?: boolean;
+  insuranceRequired?: boolean;
   shippingCost?: number;
   shipmentId: string;
   idempotencyKey: string;
 }): CarrierSelectionResult {
   const evaluated: string[] = [];
-  const needsCustoms = requiresCustomsRoute(input.tradeRoute);
+  const needsCustoms = input.customsRequired ?? requiresCustomsRoute(input.tradeRoute);
   const preferredLevel = input.serviceLevel ?? "standard";
+  const isOversized =
+    input.oversized === true ||
+    input.dimensionsCm.length > 120 ||
+    input.weightKg > 31.5;
 
   const candidates = CARRIER_PROFILES.filter((p) => {
     evaluated.push(p.carrierId);
@@ -154,6 +164,8 @@ export function selectCarrier(input: {
     if (preferredLevel === "standard" && p.serviceLevel === "express") return false;
     if (!supportsRoute(p, input.originCountry, input.destinationCountry)) return false;
     if (needsCustoms && !p.customsSupport) return false;
+    if (input.dangerousGoods === true && !p.dangerousGoods) return false;
+    if (isOversized && !p.oversized) return false;
     if (input.weightKg > p.maxWeightKg) return false;
     if (input.dimensionsCm.length > p.maxLengthCm) return false;
     return true;

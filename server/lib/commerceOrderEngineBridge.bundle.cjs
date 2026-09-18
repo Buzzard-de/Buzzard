@@ -45,6 +45,11 @@ var init_test_supplier_feeds = __esm({
         supplierId: "TEST_SUPPLIER_A",
         name: "Test Supplier A (Mock)",
         country: "DE",
+        supplierCountry: "DE",
+        warehouseCountries: ["DE", "PL"],
+        fulfillmentCountries: ["DE"],
+        shippingOrigins: ["DE"],
+        internationalShippingSupported: true,
         region: "EU",
         currency: "EUR",
         integrationTypes: ["api", "xml", "csv", "manual"],
@@ -655,10 +660,19 @@ function mapMasterToConfig(raw) {
 function buildTestSupplierA() {
   const feed = test_supplier_feeds_default[TEST_SUPPLIER_ID];
   const now = (/* @__PURE__ */ new Date()).toISOString();
+  const country = String(feed.country || "DE");
   return {
     supplierId: TEST_SUPPLIER_ID,
     name: String(feed.name || "Test Supplier A"),
-    country: String(feed.country || "DE"),
+    country,
+    supplierCountry: String(feed.supplierCountry || country),
+    warehouseCountries: feed.warehouseCountries || [country],
+    fulfillmentCountries: feed.fulfillmentCountries || [country],
+    shippingOrigins: feed.shippingOrigins || [country],
+    internationalShippingSupported: feed.internationalShippingSupported !== false,
+    dropshippingSupported: feed.capabilities?.dropshipping === true,
+    blindShippingSupported: feed.capabilities?.blindShipping === true,
+    whiteLabelSupported: feed.capabilities?.whiteLabel === true,
     region: String(feed.region || "EU"),
     status: "TESTING",
     integrationTypes: feed.integrationTypes || ["api", "xml", "csv", "manual"],
@@ -1321,7 +1335,7 @@ function getMarketShippingRegion(countryCode) {
 // lib/order-engine/createOrder.ts
 init_registry2();
 
-// lib/trade-route-fulfillment/targetCountry.ts
+// lib/market-engine/countryCode.ts
 var COUNTRY_CODE_RE = /^[A-Z]{2}$/;
 function normalizeCountryCode(raw) {
   const code = String(raw ?? "").trim().toUpperCase();
@@ -1331,6 +1345,8 @@ function normalizeCountryCode(raw) {
 function isKnownMarketCountry(countryCode) {
   return Boolean(getMarket(countryCode));
 }
+
+// lib/trade-route-fulfillment/targetCountry.ts
 function resolveTargetCountry(input) {
   const marketId = normalizeCountryCode(input.marketId);
   const shippingCountry = normalizeCountryCode(input.shippingAddressCountry);
@@ -1389,36 +1405,98 @@ function resolveTargetCountry(input) {
   };
 }
 
-// lib/trade-route-fulfillment/fulfillmentOrigin.ts
-function pickOrigin(supplier) {
-  const candidates = [
-    { value: supplier.shippingOrigin, source: "shippingOrigin" },
-    { value: supplier.warehouseCountry, source: "warehouseCountry" },
-    { value: supplier.fulfillmentCountry, source: "fulfillmentCountry" },
-    { value: supplier.supplierCountry, source: "supplierCountry" },
-    { value: supplier.country, source: "supplier.country" }
-  ];
-  for (const candidate of candidates) {
-    const normalized = normalizeCountryCode(candidate.value);
-    if (normalized && isKnownMarketCountry(normalized)) {
-      return { country: normalized, source: candidate.source };
-    }
+// lib/supplier-engine/internationalOrigin.ts
+function normalizeCountryList(values) {
+  if (!values?.length) return [];
+  const out = [];
+  for (const raw of values) {
+    const code = normalizeCountryCode(raw);
+    if (code && isKnownMarketCountry(code) && !out.includes(code)) out.push(code);
   }
-  return null;
+  return out;
 }
+function buildSupplierInternationalProfile(supplier) {
+  const supplierCountry = normalizeCountryCode(supplier.supplierCountry) ?? normalizeCountryCode(supplier.country) ?? void 0;
+  const warehouseCountries = normalizeCountryList(supplier.warehouseCountries);
+  const fulfillmentCountries = normalizeCountryList(supplier.fulfillmentCountries);
+  const shippingOrigins = normalizeCountryList(supplier.shippingOrigins);
+  const euMemberState = supplier.euMemberState ?? (supplierCountry ? isEuCountry(supplierCountry) : void 0);
+  return {
+    supplierId: supplier.supplierId,
+    supplierCountry,
+    warehouseCountries,
+    fulfillmentCountries,
+    shippingOrigins,
+    euMemberState,
+    internationalShippingSupported: supplier.internationalShippingSupported ?? true,
+    dropshippingSupported: supplier.dropshippingSupported ?? supplier.capabilities?.dropshipping === true,
+    blindShippingSupported: supplier.blindShippingSupported ?? supplier.capabilities?.blindShipping === true,
+    whiteLabelSupported: supplier.whiteLabelSupported ?? supplier.capabilities?.whiteLabel === true
+  };
+}
+function resolveSupplierOriginCountry(profile) {
+  if (profile.shippingOrigins[0]) {
+    return { originCountry: profile.shippingOrigins[0], source: "shippingOrigins" };
+  }
+  if (profile.warehouseCountries[0]) {
+    return { originCountry: profile.warehouseCountries[0], source: "warehouseCountries" };
+  }
+  if (profile.fulfillmentCountries[0]) {
+    return { originCountry: profile.fulfillmentCountries[0], source: "fulfillmentCountries" };
+  }
+  if (profile.supplierCountry && isKnownMarketCountry(profile.supplierCountry)) {
+    return { originCountry: profile.supplierCountry, source: "supplierCountry" };
+  }
+  return {};
+}
+
+// lib/trade-route-fulfillment/fulfillmentOrigin.ts
+var SOURCE_MAP = {
+  shippingOrigins: "shippingOrigin",
+  warehouseCountries: "warehouseCountry",
+  fulfillmentCountries: "fulfillmentCountry",
+  supplierCountry: "supplierCountry"
+};
 function resolveFulfillmentOrigin(input) {
-  const picked = pickOrigin(input.supplier);
-  if (!picked) {
+  const profile = buildSupplierInternationalProfile({
+    supplierId: input.supplier.supplierId,
+    country: input.supplier.country ?? "UNKNOWN",
+    supplierCountry: input.supplier.supplierCountry,
+    warehouseCountries: input.supplier.warehouseCountries ?? (input.supplier.warehouseCountry ? [input.supplier.warehouseCountry] : void 0),
+    fulfillmentCountries: input.supplier.fulfillmentCountries ?? (input.supplier.fulfillmentCountry ? [input.supplier.fulfillmentCountry] : void 0),
+    shippingOrigins: input.supplier.shippingOrigins ?? (input.supplier.shippingOrigin ? [input.supplier.shippingOrigin] : void 0),
+    euMemberState: input.supplier.euMemberState,
+    internationalShippingSupported: input.supplier.internationalShippingSupported,
+    dropshippingSupported: input.supplier.dropshippingSupported,
+    blindShippingSupported: input.supplier.blindShippingSupported,
+    whiteLabelSupported: input.supplier.whiteLabelSupported,
+    capabilities: input.supplier.capabilities ?? {}
+  });
+  const resolved = resolveSupplierOriginCountry(profile);
+  if (resolved.originCountry) {
     return {
-      ok: false,
-      errorCode: "ORIGIN_UNKNOWN",
-      errorMessage: "ORIGIN_UNKNOWN"
+      ok: true,
+      originCountry: resolved.originCountry,
+      source: resolved.source ? SOURCE_MAP[resolved.source] : "supplierCountry"
     };
   }
+  const legacy = [
+    input.supplier.shippingOrigin,
+    input.supplier.warehouseCountry,
+    input.supplier.fulfillmentCountry,
+    input.supplier.supplierCountry,
+    input.supplier.country
+  ];
+  for (const value of legacy) {
+    const normalized = normalizeCountryCode(value);
+    if (normalized && isKnownMarketCountry(normalized)) {
+      return { ok: true, originCountry: normalized, source: "supplierCountry" };
+    }
+  }
   return {
-    ok: true,
-    originCountry: picked.country,
-    source: picked.source
+    ok: false,
+    errorCode: "ORIGIN_UNKNOWN",
+    errorMessage: "ORIGIN_UNKNOWN"
   };
 }
 
@@ -1884,14 +1962,17 @@ function requiresCustomsRoute(tradeRoute) {
 }
 function selectCarrier(input) {
   const evaluated = [];
-  const needsCustoms = requiresCustomsRoute(input.tradeRoute);
+  const needsCustoms = input.customsRequired ?? requiresCustomsRoute(input.tradeRoute);
   const preferredLevel = input.serviceLevel ?? "standard";
+  const isOversized = input.oversized === true || input.dimensionsCm.length > 120 || input.weightKg > 31.5;
   const candidates = CARRIER_PROFILES.filter((p) => {
     evaluated.push(p.carrierId);
     if (preferredLevel === "express" && p.serviceLevel !== "express") return false;
     if (preferredLevel === "standard" && p.serviceLevel === "express") return false;
     if (!supportsRoute(p, input.originCountry, input.destinationCountry)) return false;
     if (needsCustoms && !p.customsSupport) return false;
+    if (input.dangerousGoods === true && !p.dangerousGoods) return false;
+    if (isOversized && !p.oversized) return false;
     if (input.weightKg > p.maxWeightKg) return false;
     if (input.dimensionsCm.length > p.maxLengthCm) return false;
     return true;
@@ -27332,10 +27413,12 @@ function runTradeRouteFulfillmentPipeline(input) {
   const carrier = selectCarrier({
     originCountry: origin.originCountry,
     destinationCountry: target.country,
+    postalCode: input.shippingAddress.postalCode,
     tradeRoute: route.tradeRoute,
     weightKg,
     dimensionsCm: dimensions,
     serviceLevel: input.serviceLevel,
+    customsRequired: route.flags.requiresCustomsPrecheck,
     shippingCost: shipping.shippingCost,
     shipmentId: input.orderId,
     idempotencyKey: idempotencyKeys.carrier
@@ -30012,10 +30095,19 @@ async function createOrder(input) {
       supplierId: supplierConfig?.supplierId ?? primarySupplierId ?? "UNKNOWN",
       country: supplierConfig?.country,
       region: supplierConfig?.region,
+      supplierCountry: input._testSupplierCountry ?? supplierConfig?.supplierCountry,
+      warehouseCountries: supplierConfig?.warehouseCountries,
+      fulfillmentCountries: supplierConfig?.fulfillmentCountries,
+      shippingOrigins: input._testSupplierShippingOrigin ? [input._testSupplierShippingOrigin] : supplierConfig?.shippingOrigins,
+      euMemberState: supplierConfig?.euMemberState,
+      internationalShippingSupported: supplierConfig?.internationalShippingSupported,
+      dropshippingSupported: supplierConfig?.dropshippingSupported,
+      blindShippingSupported: supplierConfig?.blindShippingSupported,
+      whiteLabelSupported: supplierConfig?.whiteLabelSupported,
+      capabilities: supplierConfig?.capabilities,
       shippingOrigin: input._testSupplierShippingOrigin,
       warehouseCountry: input._testSupplierWarehouseCountry,
-      fulfillmentCountry: input._testSupplierFulfillmentCountry,
-      supplierCountry: input._testSupplierCountry
+      fulfillmentCountry: input._testSupplierFulfillmentCountry
     },
     idempotencyKey: input.idempotencyKey,
     serviceLevel: input.serviceLevel,

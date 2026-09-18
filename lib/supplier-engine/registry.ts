@@ -45,10 +45,19 @@ function mapMasterToConfig(raw: Record<string, unknown>): SupplierConfig {
 function buildTestSupplierA(): SupplierConfig {
   const feed = (testFeeds as Record<string, unknown>)[TEST_SUPPLIER_ID] as Record<string, unknown>;
   const now = new Date().toISOString();
+  const country = String(feed.country || "DE");
   return {
     supplierId: TEST_SUPPLIER_ID,
     name: String(feed.name || "Test Supplier A"),
-    country: String(feed.country || "DE"),
+    country,
+    supplierCountry: String(feed.supplierCountry || country),
+    warehouseCountries: (feed.warehouseCountries as string[]) || [country],
+    fulfillmentCountries: (feed.fulfillmentCountries as string[]) || [country],
+    shippingOrigins: (feed.shippingOrigins as string[]) || [country],
+    internationalShippingSupported: feed.internationalShippingSupported !== false,
+    dropshippingSupported: (feed.capabilities as SupplierConfig["capabilities"])?.dropshipping === true,
+    blindShippingSupported: (feed.capabilities as SupplierConfig["capabilities"])?.blindShipping === true,
+    whiteLabelSupported: (feed.capabilities as SupplierConfig["capabilities"])?.whiteLabel === true,
     region: String(feed.region || "EU"),
     status: "TESTING",
     integrationTypes: (feed.integrationTypes as IntegrationType[]) || ["api", "xml", "csv", "manual"],

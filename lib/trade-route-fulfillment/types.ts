@@ -132,10 +132,23 @@ export interface TradeRoutePipelineInput {
     supplierId: string;
     country?: string;
     region?: string;
+    supplierCountry?: string;
+    warehouseCountries?: string[];
+    fulfillmentCountries?: string[];
+    shippingOrigins?: string[];
+    euMemberState?: boolean;
+    internationalShippingSupported?: boolean;
+    dropshippingSupported?: boolean;
+    blindShippingSupported?: boolean;
+    whiteLabelSupported?: boolean;
+    capabilities?: {
+      dropshipping?: boolean;
+      blindShipping?: boolean;
+      whiteLabel?: boolean;
+    };
     shippingOrigin?: string;
     warehouseCountry?: string;
     fulfillmentCountry?: string;
-    supplierCountry?: string;
   };
   weightKg?: number;
   dimensionsCm?: { length: number; width: number; height: number };

@@ -41,6 +41,15 @@ const market35 = load("market35", () => {
   return mod.validateMarketRegistry?.() ?? { valid: false, count: 0, errors: [] };
 });
 
+const internalReadiness = load("internal-readiness", () => {
+  try {
+    const mod = require("../server/lib/internalProductionReadiness.bundle.cjs");
+    return mod.buildInternalProductionReadinessAudit();
+  } catch {
+    return null;
+  }
+});
+
 function runTest(cmd) {
   try {
     execSync(cmd, { stdio: "pipe", timeout: 180000 });
@@ -108,6 +117,13 @@ const report = {
   testResults: jsonOutput ? undefined : testResults,
   finalGoLive: closure.finalGoLive,
   market35Valid: market35.valid,
+  INTERNAL_READINESS: internalReadiness?.scoreboard?.INTERNAL_READINESS ?? null,
+  internalReadinessMatrix: internalReadiness?.readinessMatrix?.length
+    ? internalReadiness.readinessMatrix.map((e) => ({ area: e.area, status: e.status }))
+    : undefined,
+  internalAuditReport: internalReadiness
+    ? "docs/BUZZARD_FINAL_INTERNAL_PRODUCTION_READINESS_AUDIT.json"
+    : undefined,
 };
 
 if (jsonOutput) {
@@ -141,6 +157,9 @@ if (jsonOutput) {
   console.log(`SALES_ENABLED: ${report.SALES_ENABLED}`);
   console.log(`FINAL GO-LIVE: ${report.finalGoLive}`);
   console.log(`35 MARKETS: ${report.market35Valid ? "PASS" : "PARTIAL"}`);
+  if (report.INTERNAL_READINESS) {
+    console.log(`INTERNAL_READINESS: ${report.INTERNAL_READINESS}`);
+  }
 
   if (currentBlocker) {
     console.log(`\nCURRENT BLOCKING STEP: ${currentBlocker.label}`);

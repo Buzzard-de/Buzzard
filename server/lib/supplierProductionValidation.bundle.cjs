@@ -4740,6 +4740,61 @@ var require_persistentStore3 = __commonJS({
   }
 });
 
+// server/lib/production-access/persistentStore.js
+var require_persistentStore4 = __commonJS({
+  "server/lib/production-access/persistentStore.js"(exports2, module2) {
+    var { getDb } = require_db();
+    function ensureTables(db) {
+      db.exec(`
+    CREATE TABLE IF NOT EXISTS production_access_evidence (
+      evidence_id TEXT PRIMARY KEY,
+      provider TEXT NOT NULL,
+      capability TEXT NOT NULL,
+      endpoint TEXT,
+      timestamp TEXT NOT NULL,
+      correlation_id TEXT,
+      request_hash TEXT NOT NULL,
+      response_status INTEGER NOT NULL,
+      supplier_reference TEXT,
+      environment TEXT NOT NULL,
+      operator TEXT,
+      record_json TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_pae_provider ON production_access_evidence(provider);
+  `);
+    }
+    function createProductionAccessStore() {
+      const db = getDb();
+      if (!db) return null;
+      ensureTables(db);
+      const saveEvidenceStmt = db.prepare(`
+    INSERT OR REPLACE INTO production_access_evidence (
+      evidence_id, provider, capability, endpoint, timestamp, correlation_id,
+      request_hash, response_status, supplier_reference, environment, operator, record_json
+    ) VALUES (
+      @evidence_id, @provider, @capability, @endpoint, @timestamp, @correlation_id,
+      @request_hash, @response_status, @supplier_reference, @environment, @operator, @record_json
+    )
+  `);
+      const listEvidenceStmt = db.prepare(`
+    SELECT * FROM production_access_evidence
+    WHERE provider = ?
+    ORDER BY timestamp DESC
+    LIMIT ?
+  `);
+      return {
+        saveEvidence(row) {
+          saveEvidenceStmt.run(row);
+        },
+        listEvidence(provider, limit = 5e3) {
+          return listEvidenceStmt.all(provider, limit);
+        }
+      };
+    }
+    module2.exports = { createProductionAccessStore };
+  }
+});
+
 // lib/supplier-production-validation/serverEntry.ts
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
@@ -4757,7 +4812,7 @@ __export(serverEntry_exports, {
 module.exports = __toCommonJS(serverEntry_exports);
 
 // lib/supplier-production-validation/pipeline.ts
-var import_crypto4 = require("crypto");
+var import_crypto5 = require("crypto");
 
 // data/global/global_countries_35.json
 var global_countries_35_default = [
@@ -33017,6 +33072,147 @@ function blockOrderEndpointAttempt(url, context) {
   return { blocked: true, code: "CREATE_ORDER_NEVER_CALLED" };
 }
 
+// lib/production-access/evidenceStore.ts
+var import_crypto4 = require("crypto");
+
+// lib/production-access/evidencePolicy.ts
+var ACCEPTED_EVIDENCE_ENVIRONMENTS = [
+  "PRODUCTION",
+  "CONTROLLED_VALIDATION"
+];
+var REJECTED_EVIDENCE_ENVIRONMENTS = [
+  "MOCK",
+  "SANDBOX",
+  "SIMULATION",
+  "UNIT_TEST",
+  "FIXTURE"
+];
+function isAcceptedEvidenceEnvironment(env) {
+  return ACCEPTED_EVIDENCE_ENVIRONMENTS.includes(env);
+}
+function isRejectedEvidenceEnvironment(env) {
+  return REJECTED_EVIDENCE_ENVIRONMENTS.includes(env);
+}
+function assertEvidenceEnvironmentAllowed(env, context) {
+  if (isRejectedEvidenceEnvironment(env)) {
+    throw new Error(`${context}:FAKE_EVIDENCE_REJECTED:${env}`);
+  }
+  if (!isAcceptedEvidenceEnvironment(env)) {
+    throw new Error(`${context}:EVIDENCE_ENVIRONMENT_NOT_ACCEPTED:${env}`);
+  }
+}
+var rejectedAttempts = 0;
+function recordRejectedEvidenceAttempt() {
+  rejectedAttempts += 1;
+}
+
+// lib/production-access/evidenceStore.ts
+var evidenceStore = /* @__PURE__ */ new Map();
+var evidenceByProvider = /* @__PURE__ */ new Map();
+function getPersistentStore4() {
+  if (typeof process === "undefined" || process.env.BUZZARD_PRODUCTION_ACCESS_PERSISTENCE === "0") {
+    return null;
+  }
+  try {
+    const mod = require_persistentStore4();
+    return mod.createProductionAccessStore();
+  } catch {
+    return null;
+  }
+}
+function hashRequestPayload(payload) {
+  return (0, import_crypto4.createHash)("sha256").update(JSON.stringify(payload)).digest("hex");
+}
+function recordProviderAccessEvidence(input) {
+  try {
+    assertEvidenceEnvironmentAllowed(input.environment, "PRODUCTION_ACCESS");
+  } catch (err) {
+    recordRejectedEvidenceAttempt();
+    throw err;
+  }
+  const evidence = {
+    evidenceId: (0, import_crypto4.randomUUID)(),
+    provider: input.provider,
+    capability: input.capability,
+    endpoint: input.endpoint,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    correlationId: input.correlationId || (0, import_crypto4.randomUUID)(),
+    requestHash: hashRequestPayload(input.requestPayload),
+    responseStatus: input.responseStatus,
+    supplierReference: input.supplierReference,
+    environment: input.environment,
+    operator: input.operator
+  };
+  evidenceStore.set(evidence.evidenceId, evidence);
+  const list = evidenceByProvider.get(input.provider) || [];
+  list.push(evidence.evidenceId);
+  evidenceByProvider.set(input.provider, list);
+  getPersistentStore4()?.saveEvidence({
+    evidence_id: evidence.evidenceId,
+    provider: evidence.provider,
+    capability: evidence.capability,
+    endpoint: evidence.endpoint,
+    timestamp: evidence.timestamp,
+    correlation_id: evidence.correlationId,
+    request_hash: evidence.requestHash,
+    response_status: evidence.responseStatus,
+    supplier_reference: evidence.supplierReference || null,
+    environment: evidence.environment,
+    operator: evidence.operator || null,
+    record_json: JSON.stringify(evidence)
+  });
+  return evidence;
+}
+function listProviderAccessEvidence(provider) {
+  const ids = evidenceByProvider.get(provider) || [];
+  return ids.map((id) => evidenceStore.get(id)).filter(Boolean);
+}
+function hasProductionEvidence(provider, capability) {
+  return listProviderAccessEvidence(provider).some(
+    (e) => e.capability === capability && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION") && e.responseStatus >= 200 && e.responseStatus < 300
+  );
+}
+
+// lib/production-access/liveReadEvidenceBridge.ts
+var CAPABILITY_MAP = [
+  { field: "healthStatus", capability: "health", endpoint: "/health" },
+  { field: "catalogReadStatus", capability: "catalog", endpoint: "/catalog" },
+  { field: "stockReadStatus", capability: "stock", endpoint: "/stock" },
+  { field: "priceReadStatus", capability: "price", endpoint: "/price" }
+];
+function syncLiveReadEvidenceFromValidation(input) {
+  const validation = getLatestValidationForScope2({
+    supplierId: input.supplierId,
+    market: input.market ?? "DE",
+    channel: input.channel ?? "DIRECT",
+    environment: "PRODUCTION"
+  });
+  const synced = [];
+  const skipped = [];
+  if (!validation) return { synced, skipped: CAPABILITY_MAP.map((c) => c.capability) };
+  for (const { field, capability, endpoint } of CAPABILITY_MAP) {
+    if (hasProductionEvidence("inter-cars", capability)) {
+      skipped.push(capability);
+      continue;
+    }
+    if (validation[field] !== "LIVE_READ_VALIDATED") {
+      skipped.push(capability);
+      continue;
+    }
+    recordProviderAccessEvidence({
+      provider: "inter-cars",
+      capability,
+      endpoint,
+      correlationId: validation.validationId,
+      requestPayload: { validationId: validation.validationId, capability },
+      responseStatus: 200,
+      environment: "PRODUCTION"
+    });
+    synced.push(capability);
+  }
+  return { synced, skipped };
+}
+
 // lib/supplier-production-validation/failureInjection.ts
 function resolveFailureInjection(type) {
   switch (type) {
@@ -33096,7 +33292,7 @@ async function runProductionCapabilityValidation(input) {
   const market = input.market || "DE";
   const channel = input.channel || "DIRECT";
   const environment = input.environment || (profile?.environment === "PRODUCTION" ? "PRODUCTION" : "SANDBOX");
-  const correlationId = input.correlationId || (0, import_crypto4.randomUUID)();
+  const correlationId = input.correlationId || (0, import_crypto5.randomUUID)();
   const secretsRef = profile?.secretsRef;
   const idempotencyKey = input.idempotencyKey || buildValidationIdempotencyKey({
     supplierId,
@@ -33132,7 +33328,7 @@ async function executeValidation(input, scope) {
   const blockerCodes = [];
   const injection = resolveFailureInjection(input.failureInjection || "NONE");
   const record = {
-    validationId: `pval_${(0, import_crypto4.randomUUID)().slice(0, 12)}`,
+    validationId: `pval_${(0, import_crypto5.randomUUID)().slice(0, 12)}`,
     supplierId: scope.supplierId,
     adapterProfile: getInterCarsAdapterProfile(),
     environment: scope.environment,
@@ -33306,6 +33502,11 @@ async function executeValidation(input, scope) {
     for (const type of ["HEALTH_CHECKED", "CATALOG_CHECKED", "STOCK_CHECKED", "PRICE_CHECKED"]) {
       recordValidationAudit({ type, validationId: record.validationId, correlationId: scope.correlationId });
     }
+    syncLiveReadEvidenceFromValidation({
+      supplierId: scope.supplierId,
+      market: scope.market,
+      channel: scope.channel
+    });
   } else {
     const skipReason = credential.status !== "VALID" ? "Credential not VALID" : "Live read not enabled or not requested";
     checks.push({ check: "LIVE_READ", status: "SKIPPED", message: skipReason });

@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { isProductionFlagEnabled } from "@/lib/production-defaults";
+import { hasProviderSecretRef, listAllProviderKinds } from "@/lib/payment-production/config";
 import { evaluateInterCarsProductionAccess } from "@/lib/supplier-inter-cars-production-access/diagnostic";
 import { resolvePredefinedLiveProfile } from "@/lib/supplier-engine/liveSupplier/config";
 import { getPaymentProductionDashboard } from "@/lib/payment-production/admin";
@@ -10,6 +11,12 @@ import { getTrackingFulfillmentDashboard } from "@/lib/tracking-fulfillment/admi
 import { hasProductionEvidence, listProviderAccessEvidence } from "./evidenceStore";
 import { resolveGenericSecretRef, resolveInterCarsSecretRef } from "./secretRefs";
 import type { AccessStatus, ProviderAccessState } from "./types";
+
+function isAnyPaymentSecretRefConfigured(): boolean {
+  return listAllProviderKinds()
+    .filter((k) => k !== "MOCK")
+    .some((k) => hasProviderSecretRef(k));
+}
 
 export const PROVIDER_IDS = ["inter-cars", "payment", "carrier", "ai", "returns", "marketing"] as const;
 export type ProviderId = (typeof PROVIDER_IDS)[number];
@@ -97,11 +104,14 @@ export function evaluateInterCarsProviderState(): ProviderAccessState {
 }
 
 export function evaluatePaymentProviderState(): ProviderAccessState {
-  const secret = resolveGenericSecretRef({
+  const genericSecret = resolveGenericSecretRef({
     providerId: "payment",
     secretRefEnvKey: "PAYMENT_PROVIDER_SECRET_REF",
     fallbackEnvKey: "PAYMENT_PROVIDER_SECRET",
   });
+  const perProviderConfigured = isAnyPaymentSecretRefConfigured();
+  const secretRefConfigured = genericSecret.secretRefConfigured || perProviderConfigured;
+  const credentialConfigured = genericSecret.secretResolvable || perProviderConfigured;
   const dash = getPaymentProductionDashboard();
   const evidence = listProviderAccessEvidence("payment");
   const validated = hasProductionEvidence("payment", "authentication");
@@ -110,16 +120,16 @@ export function evaluatePaymentProviderState(): ProviderAccessState {
     providerId: "payment",
     domain: "PAYMENT",
     accessState: resolveAccessState({
-      credentialConfigured: secret.secretResolvable,
-      secretRefConfigured: secret.secretRefConfigured,
+      credentialConfigured,
+      secretRefConfigured,
       liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
     }),
-    credentialConfigured: secret.secretResolvable,
-    secretRefConfigured: secret.secretRefConfigured,
+    credentialConfigured,
+    secretRefConfigured,
     endpointConfigured: Boolean(process.env.PAYMENT_PROVIDER_ENDPOINT),
     networkPermission: false,
     healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
-    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
+    authenticationCheck: credentialConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
     capabilityCheck: "UNVERIFIED",
     liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
     evidenceCount: evidence.length,
@@ -197,6 +207,10 @@ export function evaluateAiProviderState(): ProviderAccessState {
 }
 
 export function evaluateReturnsProviderState(): ProviderAccessState {
+  const secret = resolveGenericSecretRef({
+    providerId: "returns",
+    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF",
+  });
   const dash = getReturnsRefundsProductionDashboard();
   const evidence = listProviderAccessEvidence("returns");
   const validated = hasProductionEvidence("returns", "refund");
@@ -204,13 +218,17 @@ export function evaluateReturnsProviderState(): ProviderAccessState {
   return {
     providerId: "returns",
     domain: "RETURNS",
-    accessState: validated ? "VALIDATED" : "UNVERIFIED",
-    credentialConfigured: false,
-    secretRefConfigured: false,
-    endpointConfigured: false,
+    accessState: resolveAccessState({
+      credentialConfigured: secret.secretResolvable,
+      secretRefConfigured: secret.secretRefConfigured,
+      liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
+    }),
+    credentialConfigured: secret.secretResolvable,
+    secretRefConfigured: secret.secretRefConfigured,
+    endpointConfigured: Boolean(process.env.RETURNS_PROVIDER_ENDPOINT),
     networkPermission: false,
-    healthCheck: "UNVERIFIED",
-    authenticationCheck: "NOT_CONFIGURED",
+    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
+    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
     capabilityCheck: "UNVERIFIED",
     liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
     evidenceCount: evidence.length,

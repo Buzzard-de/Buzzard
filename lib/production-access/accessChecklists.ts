@@ -58,8 +58,10 @@ export function buildAiAccessChecklist(secret: SecretRefStatus): AccessChecklist
   ];
 }
 
-export function buildReturnsAccessChecklist(): AccessChecklistItem[] {
+export function buildReturnsAccessChecklist(secret?: SecretRefStatus): AccessChecklistItem[] {
+  const credStatus = secret?.secretResolvable ? "CONFIGURED" : secret?.secretRefConfigured ? "CONFIGURED" : "NOT_CONFIGURED";
   return [
+    item("returns_secret_ref", "Returns provider secret reference", credStatus),
     item("returns_eligibility", "Return eligibility rules", "UNVERIFIED"),
     item("returns_supplier_credit", "Supplier credit path", "UNVERIFIED"),
     item("returns_customer_refund", "Customer refund path", "UNVERIFIED"),

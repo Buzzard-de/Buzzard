@@ -32,3 +32,11 @@ console.log(`Phase1 Access: ${report.liveSequence.phase1Access}`);
 console.log(`Phase2 Supplier: ${report.liveSequence.phase2Supplier}`);
 console.log(`Sales: ${report.sales}`);
 console.log(`Blockers: ${report.blockers.length}`);
+
+try {
+  const ic = require("../server/lib/supplierInterCarsProductionAccess.bundle.cjs");
+  console.log("\n--- INTER CARS ACCESS PACK ---");
+  console.log(ic.formatInterCarsAccessStatusReport());
+} catch {
+  console.log("\n--- INTER CARS ACCESS PACK --- (bundle unavailable)");
+}

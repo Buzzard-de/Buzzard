@@ -24,6 +24,8 @@ export interface ProductionAccessDiagnostic {
   productionCredentials: CredentialDisplayStatus;
   credentialType: string;
   readOnlyLiveValidation: ReadOnlyLiveStatus;
+  stageAHandoff: "READY_FOR_STAGE_B_342" | "BLOCKED" | "NOT_RUN";
+  handoffStage343: "READY_FOR_343_ARMING" | "BLOCKED";
   controlledLiveValidation: LiveValidationPrepStatus;
   createOrderCapability: "VALIDATED" | "UNVERIFIED" | "BLOCKED";
   productionNetwork: "ON" | "OFF";

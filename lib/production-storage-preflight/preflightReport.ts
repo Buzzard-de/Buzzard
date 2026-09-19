@@ -7,6 +7,7 @@ import { checkSqliteConfiguration } from "./sqliteCheck";
 import { runRestartPersistenceTest, getRenderRestartRequirement } from "./restartPersistenceTest";
 import { checkBackupRestorePreflight } from "./backupRestorePreflight";
 import { checkDeploymentConfiguration } from "./deploymentConfig";
+import { validateRenderBlueprint } from "./renderBlueprintValidation";
 import type { ManualRenderAction, PreflightStatus, ProductionStoragePreflightReport } from "./types";
 
 function buildManualActions(varData: ReturnType<typeof validateVarDataMount>, deployment: ReturnType<typeof checkDeploymentConfiguration>): ManualRenderAction[] {
@@ -61,12 +62,14 @@ export function buildProductionStoragePreflightReport(): ProductionStoragePrefli
   const restartPersistence = runRestartPersistenceTest();
   const backupRestore = checkBackupRestorePreflight();
   const deployment = checkDeploymentConfiguration();
+  const blueprint = validateRenderBlueprint();
   const manualActions = buildManualActions(varData, deployment);
 
   const flags = getProductionFlagsSnapshot();
   const sideEffects = getFinalGoLiveSafetyCounters();
 
-  const renderPersistentDisk: PreflightStatus = varData.status === "PASS" ? "PASS" : varData.exists ? "WARNING" : "BLOCKED";
+  /** Local mount only — not live Render verification */
+  const renderPersistentDisk: PreflightStatus = varData.status === "PASS" ? "UNVERIFIED" : varData.exists ? "WARNING" : "BLOCKED";
   const livePersistenceValidation: PreflightStatus =
     process.env.NODE_ENV === "production" && varData.exists && persistenceMode === "PERSISTENT"
       ? "UNVERIFIED"
@@ -89,7 +92,19 @@ export function buildProductionStoragePreflightReport(): ProductionStoragePrefli
     BACKUP_READY: backupRestore.status,
     RESTORE_EVIDENCE: backupRestore.restoreEvidence,
     RESTART_PERSISTENCE: restartPersistence.status,
-    RENDER_MANUAL_ACTION_REQUIRED: varData.exists ? "UNVERIFIED" as PreflightStatus : "BLOCKED" as PreflightStatus,
+    RENDER_MANUAL_ACTION_REQUIRED:
+      blueprint.BLUEPRINT_CONFIGURATION === "PASS"
+        ? ("BLOCKED" as PreflightStatus)
+        : varData.exists
+          ? ("UNVERIFIED" as PreflightStatus)
+          : ("BLOCKED" as PreflightStatus),
+    RENDER_BLUEPRINT_DISK_CONFIGURED: blueprint.RENDER_BLUEPRINT_DISK_CONFIGURED,
+    RENDER_DISK_MOUNT_PATH: blueprint.RENDER_DISK_MOUNT_PATH,
+    RENDER_DB_PATH: blueprint.RENDER_DB_PATH,
+    RENDER_BACKUP_PATH: blueprint.RENDER_BACKUP_PATH,
+    RENDER_PERSISTENCE_READY: "UNVERIFIED" as PreflightStatus,
+    BLUEPRINT_CONFIGURATION: blueprint.BLUEPRINT_CONFIGURATION,
+    LIVE_RENDER_DISK: "UNVERIFIED" as PreflightStatus,
   };
 
   const pass: string[] = [
@@ -123,8 +138,7 @@ export function buildProductionStoragePreflightReport(): ProductionStoragePrefli
     unverified.push(restartNote);
   }
 
-  const productionReadyImpact: "NO" | "BLOCKED" =
-    renderPersistentDisk === "PASS" && livePersistenceValidation !== "UNVERIFIED" ? "NO" : "BLOCKED";
+  const productionReadyImpact: "NO" | "BLOCKED" = "BLOCKED";
 
   return {
     generatedAt: new Date().toISOString(),

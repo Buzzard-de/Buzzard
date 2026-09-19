@@ -51,6 +51,22 @@ describe("Production Storage Preflight", () => {
     expect(deployment.buzzardDbPathInBlueprint).toBe(true);
   });
 
+  it("validates buzzard-api blueprint disk without claiming live Render ready", async () => {
+    const { validateRenderBlueprint, buildRenderBlueprintValidation } = await import("./renderBlueprintValidation");
+    const sync = validateRenderBlueprint();
+    expect(sync.buzzardApiServiceFound).toBe(true);
+    expect(sync.RENDER_BLUEPRINT_DISK_CONFIGURED).toBe("PASS");
+    expect(sync.RENDER_DISK_MOUNT_PATH).toBe("/var/data");
+    expect(sync.RENDER_DB_PATH).toBe("/var/data/buzzard.db");
+    expect(sync.RENDER_BACKUP_PATH).toBe("/var/data/backups");
+    const full = await buildRenderBlueprintValidation();
+    if (!process.env.BUZZARD_API_URL) {
+      expect(full.RENDER_PERSISTENCE_READY).toBe("UNVERIFIED");
+      expect(full.LIVE_RENDER_DISK).toBe("UNVERIFIED");
+    }
+    expect(full.BLUEPRINT_CONFIGURATION).toBe("PASS");
+  });
+
   it("full preflight keeps SALES_ENABLED at 0 and zero side effects", () => {
     const report = buildProductionStoragePreflightReport();
     expect(report.salesEnabled).toBe("0");

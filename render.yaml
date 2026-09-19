@@ -6,6 +6,7 @@
 #   3. Set BUZZARD_DB_PATH=/var/data/buzzard.db
 #   4. Set BUZZARD_BACKUP_DIR=/var/data/backups (optional)
 #   5. After deploy: npm run backup:db && node scripts/sync-search-index.mjs
+#   6. Verify persistence: GET /api/health/db → persistent=true, path /var/data/buzzard.db
 #
 # Ephemeral free-tier filesystem LOSES all SQLite data on redeploy.
 # buzzard-api uses starter + persistent disk (see disk: below).

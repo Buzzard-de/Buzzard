@@ -26,9 +26,12 @@ execSync("node scripts/build-production-storage-preflight-bridge.mjs", { stdio: 
 
 const mod = require("../server/lib/productionStoragePreflight.bundle.cjs");
 const report = mod.buildProductionStoragePreflightReport();
+const blueprintReport = await mod.buildRenderPersistentDiskBlueprintReport();
 
 const mdPath = path.join(root, "docs/BUZZARD_PRODUCTION_STORAGE_PREFLIGHT.md");
 const jsonPath = path.join(root, "docs/BUZZARD_PRODUCTION_STORAGE_PREFLIGHT.json");
+const blueprintMdPath = path.join(root, "docs/BUZZARD_RENDER_PERSISTENT_DISK_BLUEPRINT.md");
+const blueprintJsonPath = path.join(root, "docs/BUZZARD_RENDER_PERSISTENT_DISK_BLUEPRINT.json");
 
 function renderMarkdown(r) {
   const h = r.healthStatus;
@@ -172,9 +175,33 @@ ${JSON.stringify(r.productionFlags, null, 2)}
 `;
 }
 
+function renderBlueprintMarkdown(r) {
+  const b = r.blueprint;
+  return `# BUZZARD — Render Persistent Disk Blueprint
+
+**Generated:** ${r.generatedAt}
+
+| Check | Status |
+|-------|--------|
+| SOFTWARE_SUPPORT | ${r.SOFTWARE_SUPPORT} |
+| BLUEPRINT_CONFIGURATION | ${r.BLUEPRINT_CONFIGURATION} |
+| DATABASE_CONFIGURATION | ${r.DATABASE_CONFIGURATION} |
+| BACKUP_CONFIGURATION | ${r.BACKUP_CONFIGURATION} |
+| LIVE_RENDER_DISK | ${r.LIVE_RENDER_DISK} |
+| LIVE_PERSISTENCE | ${r.LIVE_PERSISTENCE} |
+| MANUAL_RENDER_ACTION | ${r.MANUAL_RENDER_ACTION} |
+| PRODUCTION_READY | ${r.PRODUCTION_READY} |
+
+Blueprint: disk=${b.RENDER_BLUEPRINT_DISK_CONFIGURED} mount=${b.RENDER_DISK_MOUNT_PATH} db=${b.RENDER_DB_PATH} backup=${b.RENDER_BACKUP_PATH}
+RENDER_PERSISTENCE_READY=${b.RENDER_PERSISTENCE_READY} (never PASS from YAML alone)
+`;
+}
+
 fs.mkdirSync(path.dirname(mdPath), { recursive: true });
 fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2));
 fs.writeFileSync(mdPath, renderMarkdown(report));
+fs.writeFileSync(blueprintJsonPath, JSON.stringify(blueprintReport, null, 2));
+fs.writeFileSync(blueprintMdPath, renderBlueprintMarkdown(blueprintReport));
 
 if (jsonOutput) {
   console.log(JSON.stringify(report, null, 2));
@@ -194,12 +221,18 @@ if (jsonOutput) {
   console.log(`SQLITE_READY: ${report.healthStatus.SQLITE_READY}`);
   console.log(`RESTORE_EVIDENCE: ${report.healthStatus.RESTORE_EVIDENCE}`);
   console.log(`RESTART_PERSISTENCE: ${report.healthStatus.RESTART_PERSISTENCE}`);
+  console.log(`BLUEPRINT_CONFIGURATION: ${report.healthStatus.BLUEPRINT_CONFIGURATION}`);
+  console.log(`RENDER_BLUEPRINT_DISK: ${report.healthStatus.RENDER_BLUEPRINT_DISK_CONFIGURED}`);
+  console.log(`LIVE_RENDER_DISK: ${report.healthStatus.LIVE_RENDER_DISK}`);
+  console.log(`RENDER_PERSISTENCE_READY: ${report.healthStatus.RENDER_PERSISTENCE_READY}`);
   console.log("\nBLOCKED:");
   for (const b of report.blocked) console.log(`  - ${b}`);
   console.log("\nMANUAL ACTIONS:");
   for (const a of report.manualActions.slice(0, 4)) console.log(`  ${a.step}. ${a.action}`);
   console.log(`\nReports: ${mdPath}`);
   console.log(`         ${jsonPath}`);
+  console.log(`         ${blueprintMdPath}`);
+  console.log(`         ${blueprintJsonPath}`);
   console.log("========================================");
 }
 

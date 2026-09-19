@@ -32,6 +32,8 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
   buildProductionStoragePreflightReport: () => buildProductionStoragePreflightReport,
+  buildRenderBlueprintValidation: () => buildRenderBlueprintValidation,
+  buildRenderPersistentDiskBlueprintReport: () => buildRenderPersistentDiskBlueprintReport,
   checkBackupRestorePreflight: () => checkBackupRestorePreflight,
   checkDeploymentConfiguration: () => checkDeploymentConfiguration,
   checkEnvironmentVariables: () => checkEnvironmentVariables,
@@ -39,6 +41,7 @@ __export(serverEntry_exports, {
   resolveEffectiveDbPath: () => resolveEffectiveDbPath,
   resolvePersistenceMode: () => resolvePersistenceMode,
   runRestartPersistenceTest: () => runRestartPersistenceTest,
+  validateRenderBlueprint: () => validateRenderBlueprint,
   validateVarDataMount: () => validateVarDataMount
 });
 module.exports = __toCommonJS(serverEntry_exports);
@@ -663,6 +666,142 @@ function checkDeploymentConfiguration() {
   };
 }
 
+// lib/production-storage-preflight/renderBlueprintValidation.ts
+var import_fs7 = __toESM(require("fs"));
+var import_path7 = __toESM(require("path"));
+var TARGET_MOUNT = "/var/data";
+var TARGET_DB = "/var/data/buzzard.db";
+var TARGET_BACKUP = "/var/data/backups";
+function extractBuzzardApiBlock(yaml) {
+  const start = yaml.indexOf("name: buzzard-api");
+  if (start < 0) return null;
+  const after = yaml.slice(start);
+  const nextService = after.search(/\n  - type: web\n    name: buzzard-(?!api)/);
+  if (nextService > 0) return after.slice(0, nextService);
+  return after;
+}
+function countDiskBlocksInBuzzardApi(block) {
+  return (block.match(/\bdisk:/g) || []).length;
+}
+function validateRenderBlueprint() {
+  const renderYamlPath = import_path7.default.join(process.cwd(), "render.yaml");
+  const dbStartupPath = import_path7.default.join(process.cwd(), "server/lib/dbStartup.js");
+  const healthPluginPath = import_path7.default.join(process.cwd(), "server/plugins/controlCenterPlugin.js");
+  const renderYamlPresent = import_fs7.default.existsSync(renderYamlPath);
+  const yaml = renderYamlPresent ? import_fs7.default.readFileSync(renderYamlPath, "utf8") : "";
+  const apiBlock = yaml ? extractBuzzardApiBlock(yaml) : null;
+  const buzzardApiServiceFound = Boolean(apiBlock);
+  let diskMountPath = null;
+  let diskSizeGB = null;
+  let diskName = null;
+  let duplicateBuzzardApiDisks = 0;
+  if (apiBlock) {
+    duplicateBuzzardApiDisks = countDiskBlocksInBuzzardApi(apiBlock);
+    const mountMatch = apiBlock.match(/mountPath:\s*(\S+)/);
+    diskMountPath = mountMatch?.[1] ?? null;
+    const sizeMatch = apiBlock.match(/sizeGB:\s*(\d+)/);
+    diskSizeGB = sizeMatch ? Number(sizeMatch[1]) : null;
+    const nameMatch = apiBlock.match(/disk:[\s\S]*?name:\s*(\S+)/);
+    diskName = nameMatch?.[1] ?? null;
+  }
+  const diskConfigured = buzzardApiServiceFound && diskMountPath === TARGET_MOUNT && diskSizeGB === 1 && duplicateBuzzardApiDisks === 1;
+  const dbPathInBlueprint = buzzardApiServiceFound && apiBlock.includes("BUZZARD_DB_PATH") && apiBlock.includes(TARGET_DB);
+  const backupInBlueprint = buzzardApiServiceFound && apiBlock.includes("BUZZARD_BACKUP_DIR") && apiBlock.includes(TARGET_BACKUP);
+  const healthEndpointDbSupported = import_fs7.default.existsSync(healthPluginPath) && import_fs7.default.readFileSync(healthPluginPath, "utf8").includes("/api/health/db");
+  const dbStartupMigrationPresent = import_fs7.default.existsSync(dbStartupPath) && import_fs7.default.readFileSync(dbStartupPath, "utf8").includes("migrateEphemeralToPersistentIfNeeded");
+  let renderYamlStatus = "BLOCKED";
+  if (renderYamlPresent && buzzardApiServiceFound && diskConfigured && dbPathInBlueprint && backupInBlueprint) {
+    renderYamlStatus = "PASS";
+  } else if (renderYamlPresent && buzzardApiServiceFound) {
+    renderYamlStatus = "WARNING";
+  }
+  const blueprintConfiguration = diskConfigured && dbPathInBlueprint && backupInBlueprint ? "PASS" : "BLOCKED";
+  return {
+    RENDER_BLUEPRINT_DISK_CONFIGURED: diskConfigured ? "PASS" : buzzardApiServiceFound ? "WARNING" : "BLOCKED",
+    RENDER_DISK_MOUNT_PATH: diskMountPath ?? TARGET_MOUNT,
+    RENDER_DB_PATH: TARGET_DB,
+    RENDER_BACKUP_PATH: TARGET_BACKUP,
+    BLUEPRINT_CONFIGURATION: blueprintConfiguration,
+    DATABASE_CONFIGURATION: dbPathInBlueprint ? "PASS" : "BLOCKED",
+    BACKUP_CONFIGURATION: backupInBlueprint ? "PASS" : "BLOCKED",
+    SOFTWARE_SUPPORT: healthEndpointDbSupported && dbStartupMigrationPresent && import_fs7.default.existsSync(import_path7.default.join(process.cwd(), "server/lib/dbPaths.js")) ? "PASS" : "WARNING",
+    buzzardApiServiceFound,
+    diskName,
+    diskSizeGB,
+    diskMountPath,
+    duplicateBuzzardApiDisks,
+    healthEndpointDbSupported,
+    dbStartupMigrationPresent,
+    renderYamlStatus
+  };
+}
+async function probeLiveRenderHealthDb() {
+  const api = (process.env.BUZZARD_API_URL || "").replace(/\/$/, "");
+  if (!api) {
+    return {
+      attempted: false,
+      reachable: false,
+      persistent: null,
+      path: null,
+      notes: "BUZZARD_API_URL not set \u2014 skip live probe"
+    };
+  }
+  try {
+    const res = await fetch(`${api}/api/health/db`, { headers: { Accept: "application/json" } });
+    if (!res.ok) {
+      return {
+        attempted: true,
+        reachable: false,
+        persistent: null,
+        path: null,
+        notes: `HTTP ${res.status}`
+      };
+    }
+    const body = await res.json();
+    const dbPath = body.database?.path ?? null;
+    const persistent = body.database?.persistence?.persistent ?? null;
+    return {
+      attempted: true,
+      reachable: true,
+      persistent,
+      path: dbPath,
+      notes: persistent === true && dbPath?.includes("/var/data") ? "Live health confirms persistent disk" : "Live instance not yet on persistent disk"
+    };
+  } catch (err) {
+    return {
+      attempted: true,
+      reachable: false,
+      persistent: null,
+      path: null,
+      notes: err instanceof Error ? err.message : "fetch_failed"
+    };
+  }
+}
+async function buildRenderBlueprintValidation() {
+  const base = validateRenderBlueprint();
+  const varData = validateVarDataMount();
+  const liveHealthProbe = await probeLiveRenderHealthDb();
+  let LIVE_RENDER_DISK = "UNVERIFIED";
+  let LIVE_PERSISTENCE = "UNVERIFIED";
+  if (liveHealthProbe.reachable && liveHealthProbe.persistent === true && liveHealthProbe.path?.includes("/var/data")) {
+    LIVE_RENDER_DISK = "PASS";
+    LIVE_PERSISTENCE = "PASS";
+  } else if (varData.exists && varData.writable && varData.sqliteOpenable) {
+    LIVE_RENDER_DISK = "UNVERIFIED";
+    LIVE_PERSISTENCE = "UNVERIFIED";
+  }
+  const RENDER_PERSISTENCE_READY = LIVE_RENDER_DISK === "PASS" && LIVE_PERSISTENCE === "PASS" ? "PASS" : "UNVERIFIED";
+  const MANUAL_RENDER_ACTION = base.BLUEPRINT_CONFIGURATION === "PASS" && LIVE_RENDER_DISK !== "PASS" ? "BLOCKED" : LIVE_RENDER_DISK === "PASS" ? "UNVERIFIED" : "BLOCKED";
+  return {
+    ...base,
+    liveHealthProbe,
+    LIVE_RENDER_DISK,
+    LIVE_PERSISTENCE,
+    RENDER_PERSISTENCE_READY,
+    MANUAL_RENDER_ACTION
+  };
+}
+
 // lib/production-storage-preflight/preflightReport.ts
 function buildManualActions(varData, deployment) {
   const actions = [];
@@ -715,10 +854,11 @@ function buildProductionStoragePreflightReport() {
   const restartPersistence = runRestartPersistenceTest();
   const backupRestore = checkBackupRestorePreflight();
   const deployment = checkDeploymentConfiguration();
+  const blueprint = validateRenderBlueprint();
   const manualActions = buildManualActions(varData, deployment);
   const flags = getProductionFlagsSnapshot();
   const sideEffects = getFinalGoLiveSafetyCounters();
-  const renderPersistentDisk = varData.status === "PASS" ? "PASS" : varData.exists ? "WARNING" : "BLOCKED";
+  const renderPersistentDisk = varData.status === "PASS" ? "UNVERIFIED" : varData.exists ? "WARNING" : "BLOCKED";
   const livePersistenceValidation = process.env.NODE_ENV === "production" && varData.exists && persistenceMode === "PERSISTENT" ? "UNVERIFIED" : "UNVERIFIED";
   const softwarePersistenceSupport = deployment.renderYamlPresent && restartPersistence.status === "PASS" ? "PASS" : "WARNING";
   const persistenceConfiguration = deployment.buzzardDbPathInBlueprint && deployment.persistentDiskInBlueprint ? "PASS" : "WARNING";
@@ -732,7 +872,14 @@ function buildProductionStoragePreflightReport() {
     BACKUP_READY: backupRestore.status,
     RESTORE_EVIDENCE: backupRestore.restoreEvidence,
     RESTART_PERSISTENCE: restartPersistence.status,
-    RENDER_MANUAL_ACTION_REQUIRED: varData.exists ? "UNVERIFIED" : "BLOCKED"
+    RENDER_MANUAL_ACTION_REQUIRED: blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "BLOCKED" : varData.exists ? "UNVERIFIED" : "BLOCKED",
+    RENDER_BLUEPRINT_DISK_CONFIGURED: blueprint.RENDER_BLUEPRINT_DISK_CONFIGURED,
+    RENDER_DISK_MOUNT_PATH: blueprint.RENDER_DISK_MOUNT_PATH,
+    RENDER_DB_PATH: blueprint.RENDER_DB_PATH,
+    RENDER_BACKUP_PATH: blueprint.RENDER_BACKUP_PATH,
+    RENDER_PERSISTENCE_READY: "UNVERIFIED",
+    BLUEPRINT_CONFIGURATION: blueprint.BLUEPRINT_CONFIGURATION,
+    LIVE_RENDER_DISK: "UNVERIFIED"
   };
   const pass = [
     "SQLite path SSOT via server/lib/dbPaths.js (BUZZARD_DB_PATH)",
@@ -762,7 +909,7 @@ function buildProductionStoragePreflightReport() {
   if (restartNote) {
     unverified.push(restartNote);
   }
-  const productionReadyImpact = renderPersistentDisk === "PASS" && livePersistenceValidation !== "UNVERIFIED" ? "NO" : "BLOCKED";
+  const productionReadyImpact = "BLOCKED";
   return {
     generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
     softwarePersistenceSupport,
@@ -804,9 +951,83 @@ function buildProductionStoragePreflightReport() {
     unverified
   };
 }
+
+// lib/production-storage-preflight/renderPersistentDiskBlueprintReport.ts
+async function buildRenderPersistentDiskBlueprintReport() {
+  const storagePreflight = buildProductionStoragePreflightReport();
+  const blueprint = await buildRenderBlueprintValidation();
+  const flags = getProductionFlagsSnapshot();
+  const sideEffects = getFinalGoLiveSafetyCounters();
+  const manualSteps = [
+    "Sync Render Blueprint (render.yaml) in Render Dashboard for buzzard-api",
+    "Confirm Starter plan + persistent disk buzzard-data at /var/data (1 GB)",
+    "Confirm env BUZZARD_DB_PATH=/var/data/buzzard.db and BUZZARD_BACKUP_DIR=/var/data/backups",
+    "Manual deploy buzzard-api (do not auto-trigger from repository preflight)",
+    "Verify GET /api/health/db \u2192 persistent=true and path /var/data/buzzard.db",
+    "Run backup baseline on Render after first persistent deploy"
+  ];
+  const manualRequired = blueprint.BLUEPRINT_CONFIGURATION === "PASS" && blueprint.LIVE_RENDER_DISK !== "PASS";
+  return {
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    SOFTWARE_SUPPORT: blueprint.SOFTWARE_SUPPORT,
+    BLUEPRINT_CONFIGURATION: blueprint.BLUEPRINT_CONFIGURATION,
+    DATABASE_CONFIGURATION: blueprint.DATABASE_CONFIGURATION,
+    BACKUP_CONFIGURATION: blueprint.BACKUP_CONFIGURATION,
+    LIVE_RENDER_DISK: blueprint.LIVE_RENDER_DISK,
+    LIVE_PERSISTENCE: blueprint.LIVE_PERSISTENCE,
+    MANUAL_RENDER_ACTION: manualRequired ? "BLOCKED" : blueprint.MANUAL_RENDER_ACTION,
+    PRODUCTION_READY: blueprint.LIVE_RENDER_DISK === "PASS" ? "NO" : "BLOCKED",
+    SALES_ENABLED: flags.SALES === "ON" ? "1" : "0",
+    renderYamlStatus: blueprint.renderYamlStatus,
+    blueprint,
+    storagePreflight,
+    sections: {
+      blueprint: {
+        status: blueprint.BLUEPRINT_CONFIGURATION,
+        summary: blueprint.buzzardApiServiceFound ? `buzzard-api disk=${blueprint.diskName ?? "?"} mount=${blueprint.diskMountPath ?? "?"} sizeGB=${blueprint.diskSizeGB ?? "?"}` : "buzzard-api service not found in render.yaml"
+      },
+      database: {
+        status: blueprint.DATABASE_CONFIGURATION,
+        path: blueprint.RENDER_DB_PATH
+      },
+      backup: {
+        status: blueprint.BACKUP_CONFIGURATION,
+        path: blueprint.RENDER_BACKUP_PATH
+      },
+      live: {
+        status: blueprint.LIVE_RENDER_DISK,
+        summary: blueprint.liveHealthProbe.notes
+      },
+      manualAction: {
+        required: manualRequired,
+        steps: manualRequired ? manualSteps : ["No manual action if live disk already verified"]
+      }
+    },
+    sideEffectCounters: {
+      ...storagePreflight.sideEffectCounters,
+      fakeEvidence: countRejectedEvidenceAttempts(),
+      realSupplierOrders: sideEffects.realSupplierOrders,
+      realPaymentTransactions: sideEffects.realPayments,
+      realRefunds: sideEffects.realRefunds,
+      realShipments: sideEffects.realCarrierLabels,
+      realMarketplaceOrders: sideEffects.realMarketplaceMutations,
+      realMarketplaceListings: 0,
+      realAdSpend: sideEffects.realMarketingSpend
+    },
+    productionFlags: storagePreflight.productionFlags,
+    externalClassification: {
+      software: blueprint.SOFTWARE_SUPPORT === "PASS" && blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "COMPLETE" : "INCOMPLETE",
+      renderDisk: blueprint.LIVE_RENDER_DISK === "PASS" ? "VALIDATED_EXTERNAL" : blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "HUMAN_REQUIRED" : "UNVERIFIED_EXTERNAL",
+      globalExternalAccess: "BLOCKED_EXTERNAL_ACCESS",
+      liveValidation: "BLOCKED"
+    }
+  };
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   buildProductionStoragePreflightReport,
+  buildRenderBlueprintValidation,
+  buildRenderPersistentDiskBlueprintReport,
   checkBackupRestorePreflight,
   checkDeploymentConfiguration,
   checkEnvironmentVariables,
@@ -814,5 +1035,6 @@ function buildProductionStoragePreflightReport() {
   resolveEffectiveDbPath,
   resolvePersistenceMode,
   runRestartPersistenceTest,
+  validateRenderBlueprint,
   validateVarDataMount
 });

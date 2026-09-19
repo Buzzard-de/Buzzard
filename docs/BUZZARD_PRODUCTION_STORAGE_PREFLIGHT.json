@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T16:35:48.928Z",
+  "generatedAt": "2026-09-19T11:50:26.486Z",
   "softwarePersistenceSupport": "PASS",
   "persistenceConfiguration": "PASS",
   "renderPersistentDisk": "BLOCKED",
@@ -16,7 +16,14 @@
     "BACKUP_READY": "WARNING",
     "RESTORE_EVIDENCE": "PASS",
     "RESTART_PERSISTENCE": "PASS",
-    "RENDER_MANUAL_ACTION_REQUIRED": "BLOCKED"
+    "RENDER_MANUAL_ACTION_REQUIRED": "BLOCKED",
+    "RENDER_BLUEPRINT_DISK_CONFIGURED": "PASS",
+    "RENDER_DISK_MOUNT_PATH": "/var/data",
+    "RENDER_DB_PATH": "/var/data/buzzard.db",
+    "RENDER_BACKUP_PATH": "/var/data/backups",
+    "RENDER_PERSISTENCE_READY": "UNVERIFIED",
+    "BLUEPRINT_CONFIGURATION": "PASS",
+    "LIVE_RENDER_DISK": "UNVERIFIED"
   },
   "environment": [
     {

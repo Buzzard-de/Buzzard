@@ -143,6 +143,10 @@ const report = {
   RESTART_PERSISTENCE: storagePreflight?.healthStatus?.RESTART_PERSISTENCE ?? null,
   RENDER_MANUAL_ACTION_REQUIRED: storagePreflight?.healthStatus?.RENDER_MANUAL_ACTION_REQUIRED ?? null,
   storagePreflightReport: storagePreflight ? "docs/BUZZARD_PRODUCTION_STORAGE_PREFLIGHT.json" : undefined,
+  RENDER_BLUEPRINT_DISK_CONFIGURED: storagePreflight?.healthStatus?.RENDER_BLUEPRINT_DISK_CONFIGURED ?? null,
+  LIVE_RENDER_DISK: storagePreflight?.healthStatus?.LIVE_RENDER_DISK ?? null,
+  RENDER_PERSISTENCE_READY: storagePreflight?.healthStatus?.RENDER_PERSISTENCE_READY ?? null,
+  renderPersistentDiskBlueprintReport: "docs/BUZZARD_RENDER_PERSISTENT_DISK_BLUEPRINT.json",
 };
 
 if (jsonOutput) {

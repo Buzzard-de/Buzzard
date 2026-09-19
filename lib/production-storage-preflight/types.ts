@@ -88,6 +88,13 @@ export interface ProductionStoragePreflightReport {
     RESTORE_EVIDENCE: PreflightStatus;
     RESTART_PERSISTENCE: PreflightStatus;
     RENDER_MANUAL_ACTION_REQUIRED: PreflightStatus;
+    RENDER_BLUEPRINT_DISK_CONFIGURED?: PreflightStatus;
+    RENDER_DISK_MOUNT_PATH?: string;
+    RENDER_DB_PATH?: string;
+    RENDER_BACKUP_PATH?: string;
+    RENDER_PERSISTENCE_READY?: PreflightStatus;
+    BLUEPRINT_CONFIGURATION?: PreflightStatus;
+    LIVE_RENDER_DISK?: PreflightStatus;
   };
   environment: EnvVarCheck[];
   varData: VarDataCheck;

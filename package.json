@@ -65,6 +65,7 @@
     "build:production-storage-preflight-bridge": "node scripts/build-production-storage-preflight-bridge.mjs",
     "preflight:production-storage": "node scripts/production-storage-preflight.mjs",
     "preflight:production-storage:json": "node scripts/production-storage-preflight.mjs --json",
+    "preflight:render-persistent-disk-blueprint": "node scripts/render-persistent-disk-blueprint.mjs",
     "test:production-storage-preflight": "vitest run lib/production-storage-preflight/productionStoragePreflight.test.ts",
     "test:part15": "node scripts/part15-readiness.mjs",
     "pim:import": "node scripts/pim-import.mjs",

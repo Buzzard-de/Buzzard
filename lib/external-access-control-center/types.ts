@@ -143,8 +143,19 @@ export interface ExternalAccessControlCenterReport {
   renderControl: {
     BLUEPRINT_CONFIGURATION: ControlCenterStatus;
     LIVE_PERSISTENT_DISK: ControlCenterStatus;
+    LIVE_DB_PATH: ControlCenterStatus;
+    LIVE_DB_HEALTH: ControlCenterStatus;
+    LIVE_RESTART_PERSISTENCE: ControlCenterStatus;
+    LIVE_BACKUP: ControlCenterStatus;
+    LIVE_RESTORE: ControlCenterStatus;
     LIVE_DEPLOYMENT: ControlCenterStatus;
     LIVE_HEALTH: ControlCenterStatus;
+    PERSISTENCE: ControlCenterStatus;
+  };
+  renderPersistenceVerification?: {
+    acceptedEvidenceCount: number;
+    expiredEvidenceCount: number;
+    localHintsNote: string;
   };
   market35Summary: { ready: number; partial: number; blocked: number; humanRequired: number };
   nextHumanActions: HumanActionItem[];

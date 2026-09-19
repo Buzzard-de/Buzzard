@@ -4,6 +4,7 @@ import {
 } from "@/lib/production-access/evidencePolicy";
 import { listProviderAccessEvidence } from "@/lib/production-access/evidenceStore";
 import type { ProviderAccessEvidence } from "@/lib/production-access/types";
+import { listRenderPersistenceEvidence } from "@/lib/render-persistence-evidence-bridge/evidenceStore";
 import type { EvidenceRecordView, EvidenceType } from "./types";
 
 const KNOWN_PROVIDERS = [
@@ -44,9 +45,31 @@ function toView(e: ProviderAccessEvidence): EvidenceRecordView {
   };
 }
 
+function renderPersistenceToView(e: ReturnType<typeof listRenderPersistenceEvidence>[number]): EvidenceRecordView {
+  const accepted = e.source === "RENDER_LIVE" && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION");
+  return {
+    id: e.id,
+    providerId: "render",
+    type: e.kind === "RENDER_PERSISTENCE_HEALTH" ? "LIVE_HEALTH" : "CONFIGURATION",
+    environment: e.environment,
+    timestamp: e.timestamp,
+    source: "render-persistence-evidence-bridge",
+    status: accepted ? "ACCEPTED" : "REJECTED_FOR_PRODUCTION",
+    reference: e.evidenceReference,
+    payloadHash: e.payloadHash,
+    operator: e.operator,
+    isProductionEvidence: accepted,
+  };
+}
+
 export function collectEvidenceRecords(providerIds: string[] = KNOWN_PROVIDERS): EvidenceRecordView[] {
   const out: EvidenceRecordView[] = [];
   const seen = new Set<string>();
+  for (const e of listRenderPersistenceEvidence(false)) {
+    if (seen.has(e.id)) continue;
+    seen.add(e.id);
+    out.push(renderPersistenceToView(e));
+  }
   for (const provider of providerIds) {
     for (const e of listProviderAccessEvidence(provider)) {
       if (seen.has(e.evidenceId)) continue;

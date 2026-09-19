@@ -28,6 +28,13 @@ export interface RenderPersistentDiskBlueprintReport {
   };
   sideEffectCounters: ReturnType<typeof buildProductionStoragePreflightReport>["sideEffectCounters"];
   productionFlags: Record<string, string>;
+  /** Maps operator safety vocabulary — no simulated external completion */
+  externalClassification: {
+    software: "COMPLETE" | "INCOMPLETE";
+    renderDisk: "HUMAN_REQUIRED" | "UNVERIFIED_EXTERNAL" | "VALIDATED_EXTERNAL";
+    globalExternalAccess: "BLOCKED_EXTERNAL_ACCESS" | "HUMAN_REQUIRED";
+    liveValidation: "BLOCKED" | "UNVERIFIED_EXTERNAL";
+  };
 }
 
 export async function buildRenderPersistentDiskBlueprintReport(): Promise<RenderPersistentDiskBlueprintReport> {
@@ -97,5 +104,19 @@ export async function buildRenderPersistentDiskBlueprintReport(): Promise<Render
       realAdSpend: sideEffects.realMarketingSpend,
     },
     productionFlags: storagePreflight.productionFlags,
+    externalClassification: {
+      software:
+        blueprint.SOFTWARE_SUPPORT === "PASS" && blueprint.BLUEPRINT_CONFIGURATION === "PASS"
+          ? "COMPLETE"
+          : "INCOMPLETE",
+      renderDisk:
+        blueprint.LIVE_RENDER_DISK === "PASS"
+          ? "VALIDATED_EXTERNAL"
+          : blueprint.BLUEPRINT_CONFIGURATION === "PASS"
+            ? "HUMAN_REQUIRED"
+            : "UNVERIFIED_EXTERNAL",
+      globalExternalAccess: "BLOCKED_EXTERNAL_ACCESS",
+      liveValidation: "BLOCKED",
+    },
   };
 }

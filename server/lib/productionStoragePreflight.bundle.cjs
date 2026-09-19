@@ -1014,7 +1014,13 @@ async function buildRenderPersistentDiskBlueprintReport() {
       realMarketplaceListings: 0,
       realAdSpend: sideEffects.realMarketingSpend
     },
-    productionFlags: storagePreflight.productionFlags
+    productionFlags: storagePreflight.productionFlags,
+    externalClassification: {
+      software: blueprint.SOFTWARE_SUPPORT === "PASS" && blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "COMPLETE" : "INCOMPLETE",
+      renderDisk: blueprint.LIVE_RENDER_DISK === "PASS" ? "VALIDATED_EXTERNAL" : blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "HUMAN_REQUIRED" : "UNVERIFIED_EXTERNAL",
+      globalExternalAccess: "BLOCKED_EXTERNAL_ACCESS",
+      liveValidation: "BLOCKED"
+    }
   };
 }
 // Annotate the CommonJS export names for ESM import in node:

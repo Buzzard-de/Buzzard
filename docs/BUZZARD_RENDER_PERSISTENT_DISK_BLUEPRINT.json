@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T11:44:11.666Z",
+  "generatedAt": "2026-09-19T11:51:10.568Z",
   "SOFTWARE_SUPPORT": "PASS",
   "BLUEPRINT_CONFIGURATION": "PASS",
   "DATABASE_CONFIGURATION": "PASS",
@@ -40,7 +40,7 @@
     "MANUAL_RENDER_ACTION": "BLOCKED"
   },
   "storagePreflight": {
-    "generatedAt": "2026-09-19T11:44:11.666Z",
+    "generatedAt": "2026-09-19T11:51:10.567Z",
     "softwarePersistenceSupport": "PASS",
     "persistenceConfiguration": "PASS",
     "renderPersistentDisk": "BLOCKED",
@@ -274,5 +274,11 @@
     "CARRIER_PRODUCTION_ENABLED": "0",
     "MARKETING_SPEND_ENABLED": "0",
     "AI_PRODUCTION_ENABLED": "0"
+  },
+  "externalClassification": {
+    "software": "COMPLETE",
+    "renderDisk": "HUMAN_REQUIRED",
+    "globalExternalAccess": "BLOCKED_EXTERNAL_ACCESS",
+    "liveValidation": "BLOCKED"
   }
 }

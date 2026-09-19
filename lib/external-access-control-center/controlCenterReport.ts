@@ -3,6 +3,7 @@ import { getFinalGoLiveSafetyCounters } from "@/lib/final-production-go-live/saf
 import { countRejectedEvidenceAttempts } from "@/lib/production-access/evidencePolicy";
 import { buildExternalAccessPreflightReport } from "@/lib/final-external-access/preflightReport";
 import { runMarket35Preflight } from "@/lib/final-external-access/market35Preflight";
+import { buildInterCarsProductionAccessBridgeReport } from "@/lib/inter-cars-production-access-evidence-bridge/accessReport";
 import { buildRenderPersistenceVerificationReport } from "@/lib/render-persistence-evidence-bridge/renderPersistenceReport";
 import { evaluateFinalSecurityGate } from "@/lib/final-closure/securityGate";
 import { getBackupRestoreEvidence } from "@/lib/final-closure/backupRestore";
@@ -16,6 +17,7 @@ import type { BuzzardFinalStatusScoreboard, ExternalAccessControlCenterReport } 
 export function buildExternalAccessControlCenterReport(): ExternalAccessControlCenterReport {
   const preflight = buildExternalAccessPreflightReport();
   const renderPersistence = buildRenderPersistenceVerificationReport();
+  const interCars = buildInterCarsProductionAccessBridgeReport();
   const registry = buildProviderRegistry();
   const accessMatrix = buildAccessMatrixRows();
   const evidenceRecords = collectEvidenceRecords();
@@ -41,7 +43,12 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
     LIVE_VALIDATION: "BLOCKED",
     SECURITY: security.status === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
     BACKUP: backup.result === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
-    SUPPLIER: registry.find((r) => r.name === "INTER CARS")?.liveValidationState ?? "NOT_CONFIGURED",
+    SUPPLIER:
+      interCars.readOnlyAccess === "VALIDATED"
+        ? "VALIDATED"
+        : interCars.credentialReference === "NOT_CONFIGURED"
+          ? "BLOCKED_EXTERNAL_ACCESS"
+          : "HUMAN_REQUIRED",
     PAYMENT: registry.find((r) => r.name === "PAYMENT")?.liveValidationState ?? "NOT_CONFIGURED",
     CARRIER: registry.find((r) => r.name === "CARRIER")?.liveValidationState ?? "NOT_CONFIGURED",
     RETURNS: registry.find((r) => r.name === "RETURNS")?.liveValidationState ?? "NOT_CONFIGURED",
@@ -102,6 +109,14 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
       acceptedEvidenceCount: renderPersistence.acceptedEvidenceCount,
       expiredEvidenceCount: renderPersistence.expiredEvidenceCount,
       localHintsNote: renderPersistence.localHints.note,
+    },
+    interCarsAccess: {
+      credentialReference: interCars.credentialReference,
+      credentialValidation: interCars.credentialValidation,
+      readOnlyAccess: interCars.readOnlyAccess,
+      createOrder: interCars.createOrder,
+      stage342Gate: interCars.stage342Gate,
+      capabilitySummary: Object.fromEntries(interCars.capabilities.map((c) => [c.capability, c.status])),
     },
     market35Summary,
     nextHumanActions,

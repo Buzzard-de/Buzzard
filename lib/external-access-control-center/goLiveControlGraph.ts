@@ -1,5 +1,6 @@
 import { buildGoLiveDependencyGraph } from "@/lib/final-external-access/goLiveDependencyGraph";
 import { validateRenderBlueprint } from "@/lib/production-storage-preflight/renderBlueprintValidation";
+import { buildInterCarsGoLiveSteps } from "@/lib/inter-cars-production-access-evidence-bridge/goLiveInterCarsSteps";
 import { buildRenderPersistenceGoLiveSteps } from "@/lib/render-persistence-evidence-bridge/goLivePersistenceGraph";
 import type { GoLiveControlStep } from "./types";
 
@@ -34,12 +35,7 @@ export function buildExtendedGoLiveGraph(): GoLiveControlStep[] {
       blockingReason: "PROVIDER_CREDENTIALS_AND_HUMAN_ACTIONS_PENDING",
     },
     ...renderSteps,
-    {
-      id: "supplier-live-validated",
-      label: "SUPPLIER_LIVE_VALIDATED",
-      status: "UNVERIFIED_EXTERNAL",
-      blockingReason: "INTER_CARS_STAGE_A_NOT_COMPLETE",
-    },
+    ...buildInterCarsGoLiveSteps(),
     {
       id: "payment-live-validated",
       label: "PAYMENT_LIVE_VALIDATED",

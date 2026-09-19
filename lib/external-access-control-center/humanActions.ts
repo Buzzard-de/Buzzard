@@ -1,23 +1,14 @@
 import { buildExternalAccessPreflightReport } from "@/lib/final-external-access/preflightReport";
+import { buildInterCarsHumanActions } from "@/lib/inter-cars-production-access-evidence-bridge/humanActions";
 import { buildRenderPersistenceHumanActions } from "@/lib/render-persistence-evidence-bridge/humanActions";
 import type { HumanActionItem, ProviderRegistryEntry } from "./types";
 
 export function buildNextHumanActions(registry: ProviderRegistryEntry[]): HumanActionItem[] {
-  const actions: HumanActionItem[] = [...buildRenderPersistenceHumanActions()];
+  const actions: HumanActionItem[] = [
+    ...buildRenderPersistenceHumanActions(),
+    ...buildInterCarsHumanActions(),
+  ];
   const preflight = buildExternalAccessPreflightReport();
-
-  const interCars = registry.find((r) => r.name === "INTER CARS");
-  if (interCars && interCars.credentialState !== "VALIDATED") {
-    actions.push({
-      priority: 2,
-      provider: "Inter Cars",
-      action: "Configure SUPPLIER_LIVE_CREDENTIALS_SECRET_REF and complete B2B/OAuth2 production access",
-      why: "Supplier production network blocked without credentials",
-      requiredEvidence: "LIVE_API",
-      verificationMethod: "Stage A read-only validation + #342 human approval",
-      blocking: true,
-    });
-  }
 
   for (const step of preflight.nextRequiredActions.slice(0, 5)) {
     actions.push({

@@ -1,6 +1,6 @@
 # BUZZARD External Access & Go-Live Control Center
 
-Generated: 2026-09-19T12:34:49.919Z
+Generated: 2026-09-19T14:52:54.901Z
 
 ## Master Status
 
@@ -15,4 +15,4 @@ Generated: 2026-09-19T12:34:49.919Z
 | SALES_ENABLED | 0 |
 
 Providers in registry: 27
-Blockers: 60
+Blockers: 87

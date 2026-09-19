@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T12:34:49.919Z",
+  "generatedAt": "2026-09-19T14:52:54.901Z",
   "masterStatus": {
     "SOFTWARE_COMPLETE": true,
     "CONFIGURATION_COMPLETE": true,
@@ -21,7 +21,7 @@
     "PAYMENT": "NOT_CONFIGURED",
     "CARRIER": "NOT_CONFIGURED",
     "RETURNS": "NOT_CONFIGURED",
-    "MARKETPLACE": "NOT_CONFIGURED",
+    "MARKETPLACE": "UNVERIFIED_EXTERNAL",
     "AI": "NOT_CONFIGURED",
     "MARKETING": "NOT_CONFIGURED",
     "MARKETS_35": "PARTIAL",
@@ -1068,40 +1068,97 @@
       "requiredHumanApproval": true
     },
     {
-      "id": "supplier-live-validated",
-      "label": "SUPPLIER_LIVE_VALIDATED",
+      "id": "inter-cars-secret-reference",
+      "label": "INTER_CARS_SECRET_REFERENCE",
+      "status": "HUMAN_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "inter-cars-credential-validated",
+      "label": "INTER_CARS_CREDENTIAL_VALIDATED",
       "status": "UNVERIFIED_EXTERNAL",
-      "blockingReason": "INTER_CARS_STAGE_A_NOT_COMPLETE"
+      "requiredHumanApproval": true
     },
     {
-      "id": "payment-live-validated",
-      "label": "PAYMENT_LIVE_VALIDATED",
-      "status": "NOT_CONFIGURED"
+      "id": "inter-cars-read-access-validated",
+      "label": "INTER_CARS_READ_ACCESS_VALIDATED",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "READ_ONLY_LIVE_EVIDENCE_REQUIRED",
+      "requiredHumanApproval": true
     },
     {
-      "id": "carrier-live-validated",
-      "label": "CARRIER_LIVE_VALIDATED",
-      "status": "NOT_CONFIGURED"
+      "id": "inter-cars-create-order-validation",
+      "label": "INTER_CARS_CREATE_ORDER_VALIDATION",
+      "status": "UNVERIFIED_EXTERNAL",
+      "blockingReason": "ONLY_342_MAY_VALIDATE_CREATE_ORDER",
+      "requiredHumanApproval": true
     },
     {
-      "id": "returns-live-validated",
-      "label": "RETURNS_LIVE_VALIDATED",
-      "status": "NOT_CONFIGURED"
+      "id": "inter-cars-production-order-arming",
+      "label": "INTER_CARS_PRODUCTION_ORDER_ARMING",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "requiredHumanApproval": true
     },
     {
-      "id": "marketplace-live-validated",
-      "label": "MARKETPLACE_LIVE_VALIDATED",
-      "status": "NOT_CONFIGURED"
+      "id": "first-order-gate",
+      "label": "FIRST_ORDER_GATE",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "requiredHumanApproval": true
     },
     {
-      "id": "ai-provider-validated",
-      "label": "AI_PROVIDER_VALIDATED",
-      "status": "NOT_CONFIGURED"
+      "id": "post-order-validation",
+      "label": "POST_ORDER_VALIDATION",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "requiredHumanApproval": true
     },
     {
-      "id": "marketing-validated",
-      "label": "MARKETING_VALIDATED",
-      "status": "NOT_CONFIGURED"
+      "id": "payment-external",
+      "label": "PAYMENT",
+      "status": "NOT_CONFIGURED",
+      "blockingReason": "PAYMENT_EXTERNAL_EVIDENCE_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "carrier-external",
+      "label": "CARRIER",
+      "status": "NOT_CONFIGURED",
+      "blockingReason": "CARRIER_EXTERNAL_EVIDENCE_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "returns-external",
+      "label": "RETURNS",
+      "status": "NOT_CONFIGURED",
+      "blockingReason": "RETURNS_EXTERNAL_EVIDENCE_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "marketplace-external",
+      "label": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "blockingReason": "MARKETPLACE_EXTERNAL_EVIDENCE_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "ai-external",
+      "label": "AI",
+      "status": "NOT_CONFIGURED",
+      "blockingReason": "AI_EXTERNAL_EVIDENCE_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "marketing-external",
+      "label": "MARKETING",
+      "status": "NOT_CONFIGURED",
+      "blockingReason": "MARKETING_EXTERNAL_EVIDENCE_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "35-market-readiness",
+      "label": "35_MARKET_READINESS",
+      "status": "PARTIAL",
+      "blockingReason": "PROVIDER_CREDENTIALS_PENDING_PER_MARKET",
+      "requiredHumanApproval": true
     },
     {
       "id": "external-credentials",
@@ -1200,6 +1257,714 @@
     "expiredEvidenceCount": 0,
     "localHintsNote": "Local hints never promote LIVE_* to VALIDATED"
   },
+  "masterExternalReadiness": {
+    "scoreboard": {
+      "SOFTWARE": "VALIDATED",
+      "CONFIGURATION": "CONFIGURED",
+      "PERSISTENCE": "HUMAN_REQUIRED",
+      "EXTERNAL_ACCESS": "HUMAN_REQUIRED",
+      "LIVE_VALIDATION": "BLOCKED",
+      "PRODUCTION": "BLOCKED",
+      "GO_LIVE": "BLOCKED",
+      "SALES": "DISABLED",
+      "RENDER": "UNVERIFIED_EXTERNAL",
+      "INTER_CARS": "NOT_CONFIGURED",
+      "PAYMENT": "NOT_CONFIGURED",
+      "CARRIER": "NOT_CONFIGURED",
+      "RETURNS": "NOT_CONFIGURED",
+      "MARKETPLACE": "UNVERIFIED_EXTERNAL",
+      "AI": "NOT_CONFIGURED",
+      "MARKETING": "NOT_CONFIGURED",
+      "MARKETS_35": "PARTIAL",
+      "CUSTOMS": "UNVERIFIED_EXTERNAL",
+      "CHECKOUT": "CONFIGURED",
+      "SECURITY": "UNVERIFIED_EXTERNAL",
+      "BACKUP": "UNVERIFIED_EXTERNAL",
+      "HUMAN_APPROVAL": "HUMAN_REQUIRED",
+      "FIRST_ORDER": "BLOCKED_EXTERNAL_ACCESS",
+      "OBSERVATION": "BLOCKED_EXTERNAL_ACCESS"
+    },
+    "blockerCount": 27,
+    "matrixSize": 27,
+    "market35": {
+      "ready": 3,
+      "partial": 32,
+      "blocked": 0,
+      "humanRequired": 32
+    }
+  },
+  "masterProviderMatrix": [
+    {
+      "provider": "RENDER",
+      "category": "RENDER",
+      "required": true,
+      "configured": true,
+      "secretRef": "n/a",
+      "credentialState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Create/mount Persistent Disk on buzzard-api — path /var/data, size ≥ 1 GB"
+    },
+    {
+      "provider": "INTER_CARS",
+      "category": "SUPPLIER",
+      "required": true,
+      "configured": false,
+      "secretRef": "env:SUPPLIER_LIVE_CREDENTIALS_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "BLOCKED_EXTERNAL_ACCESS",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Configure Inter Cars Production SecretRef (SUPPLIER_LIVE_CREDENTIALS_SECRET_REF)"
+    },
+    {
+      "provider": "PAYMENT",
+      "category": "PAYMENT",
+      "required": true,
+      "configured": false,
+      "secretRef": "env:PAYMENT_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Configure payment provider SecretRef + KYC/webhooks"
+    },
+    {
+      "provider": "CARRIER",
+      "category": "CARRIER",
+      "required": true,
+      "configured": false,
+      "secretRef": "env:CARRIER_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Configure carrier account SecretRef; validate API read-only — no labels"
+    },
+    {
+      "provider": "DHL",
+      "category": "CARRIER",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:CARRIER_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Carrier DHL: credentials + live validation before labels"
+    },
+    {
+      "provider": "DPD",
+      "category": "CARRIER",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:CARRIER_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Carrier DPD: credentials + live validation before labels"
+    },
+    {
+      "provider": "GLS",
+      "category": "CARRIER",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:CARRIER_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Carrier GLS: credentials + live validation before labels"
+    },
+    {
+      "provider": "UPS",
+      "category": "CARRIER",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:CARRIER_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Carrier UPS: credentials + live validation before labels"
+    },
+    {
+      "provider": "DHL_EXPRESS",
+      "category": "CARRIER",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:CARRIER_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Carrier DHL_EXPRESS: credentials + live validation before labels"
+    },
+    {
+      "provider": "RETURNS",
+      "category": "RETURNS",
+      "required": true,
+      "configured": false,
+      "secretRef": "env:RETURNS_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Configure returns/refunds SecretRef; customer refund vs supplier credit remain separate"
+    },
+    {
+      "provider": "REFUNDS",
+      "category": "RETURNS",
+      "required": true,
+      "configured": false,
+      "secretRef": "env:RETURNS_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "No automatic refunds — production evidence required per provider"
+    },
+    {
+      "provider": "AMAZON",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "EBAY",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "KAUFLAND",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "ALLEGRO",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "BOL.COM",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "CDISCOUNT",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "OTTO",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "TEST AMAZON",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "TEST EBAY",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "TEST KAUFLAND",
+      "category": "MARKETPLACE",
+      "required": false,
+      "configured": true,
+      "secretRef": "env:MARKETPLACE_PROVIDER_SECRET_REF",
+      "credentialState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketplace credentials + dry-run only until explicit live evidence"
+    },
+    {
+      "provider": "AI",
+      "category": "AI",
+      "required": false,
+      "configured": false,
+      "secretRef": "env:AI_PROVIDER_SECRET",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "AI provider SecretRef — no secrets in AI context; production network off"
+    },
+    {
+      "provider": "GOOGLE_ADS",
+      "category": "MARKETING",
+      "required": false,
+      "configured": false,
+      "secretRef": "env:MARKETING_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketing spend OFF — configure account only, no campaign activation"
+    },
+    {
+      "provider": "META",
+      "category": "MARKETING",
+      "required": false,
+      "configured": false,
+      "secretRef": "env:MARKETING_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketing spend OFF — configure account only, no campaign activation"
+    },
+    {
+      "provider": "TIKTOK",
+      "category": "MARKETING",
+      "required": false,
+      "configured": false,
+      "secretRef": "env:MARKETING_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketing spend OFF — configure account only, no campaign activation"
+    },
+    {
+      "provider": "YOUTUBE",
+      "category": "MARKETING",
+      "required": false,
+      "configured": false,
+      "secretRef": "env:MARKETING_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketing spend OFF — configure account only, no campaign activation"
+    },
+    {
+      "provider": "MARKETPLACE_FEEDS",
+      "category": "MARKETING",
+      "required": false,
+      "configured": false,
+      "secretRef": "env:MARKETING_PROVIDER_SECRET_REF",
+      "credentialState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocking": true,
+      "nextHumanAction": "Marketing spend OFF — configure account only, no campaign activation"
+    }
+  ],
+  "externalBlockers": [
+    {
+      "id": "RENDER_RENDER_BLOCKED",
+      "provider": "RENDER",
+      "category": "RENDER",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "LIVE_VALIDATION_MISSING",
+      "requiredHumanAction": "Create/mount Persistent Disk on buzzard-api — path /var/data, size ≥ 1 GB",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "SUPPLIER_INTER_CARS_BLOCKED",
+      "provider": "INTER_CARS",
+      "category": "SUPPLIER",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Configure Inter Cars Production SecretRef (SUPPLIER_LIVE_CREDENTIALS_SECRET_REF)",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "PAYMENT_PAYMENT_BLOCKED",
+      "provider": "PAYMENT",
+      "category": "PAYMENT",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Configure payment provider SecretRef + KYC/webhooks",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "CARRIER_CARRIER_BLOCKED",
+      "provider": "CARRIER",
+      "category": "CARRIER",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Configure carrier account SecretRef; validate API read-only — no labels",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "CARRIER_DHL_BLOCKED",
+      "provider": "DHL",
+      "category": "CARRIER",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Carrier DHL: credentials + live validation before labels",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "CARRIER_DPD_BLOCKED",
+      "provider": "DPD",
+      "category": "CARRIER",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Carrier DPD: credentials + live validation before labels",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "CARRIER_GLS_BLOCKED",
+      "provider": "GLS",
+      "category": "CARRIER",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Carrier GLS: credentials + live validation before labels",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "CARRIER_UPS_BLOCKED",
+      "provider": "UPS",
+      "category": "CARRIER",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Carrier UPS: credentials + live validation before labels",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "CARRIER_DHL_EXPRESS_BLOCKED",
+      "provider": "DHL_EXPRESS",
+      "category": "CARRIER",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Carrier DHL_EXPRESS: credentials + live validation before labels",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "RETURNS_RETURNS_BLOCKED",
+      "provider": "RETURNS",
+      "category": "RETURNS",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Configure returns/refunds SecretRef; customer refund vs supplier credit remain separate",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "RETURNS_REFUNDS_BLOCKED",
+      "provider": "REFUNDS",
+      "category": "RETURNS",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "No automatic refunds — production evidence required per provider",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_AMAZON_BLOCKED",
+      "provider": "AMAZON",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_EBAY_BLOCKED",
+      "provider": "EBAY",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_KAUFLAND_BLOCKED",
+      "provider": "KAUFLAND",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "LIVE_VALIDATION_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_ALLEGRO_BLOCKED",
+      "provider": "ALLEGRO",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_BOL.COM_BLOCKED",
+      "provider": "BOL.COM",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_CDISCOUNT_BLOCKED",
+      "provider": "CDISCOUNT",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_OTTO_BLOCKED",
+      "provider": "OTTO",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_TEST_AMAZON_BLOCKED",
+      "provider": "TEST AMAZON",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "LIVE_VALIDATION_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_TEST_EBAY_BLOCKED",
+      "provider": "TEST EBAY",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "LIVE_VALIDATION_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETPLACE_TEST_KAUFLAND_BLOCKED",
+      "provider": "TEST KAUFLAND",
+      "category": "MARKETPLACE",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "LIVE_VALIDATION_MISSING",
+      "requiredHumanAction": "Marketplace credentials + dry-run only until explicit live evidence",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "AI_AI_BLOCKED",
+      "provider": "AI",
+      "category": "AI",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "AI provider SecretRef — no secrets in AI context; production network off",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETING_GOOGLE_ADS_BLOCKED",
+      "provider": "GOOGLE_ADS",
+      "category": "MARKETING",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketing spend OFF — configure account only, no campaign activation",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETING_META_BLOCKED",
+      "provider": "META",
+      "category": "MARKETING",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketing spend OFF — configure account only, no campaign activation",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETING_TIKTOK_BLOCKED",
+      "provider": "TIKTOK",
+      "category": "MARKETING",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketing spend OFF — configure account only, no campaign activation",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETING_YOUTUBE_BLOCKED",
+      "provider": "YOUTUBE",
+      "category": "MARKETING",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketing spend OFF — configure account only, no campaign activation",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    },
+    {
+      "id": "MARKETING_MARKETPLACE_FEEDS_BLOCKED",
+      "provider": "MARKETPLACE_FEEDS",
+      "category": "MARKETING",
+      "status": "UNVERIFIED_EXTERNAL",
+      "reason": "CREDENTIAL_MISSING",
+      "requiredHumanAction": "Marketing spend OFF — configure account only, no campaign activation",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "blocking": true
+    }
+  ],
+  "interCarsAccess": {
+    "credentialReference": "NOT_CONFIGURED",
+    "credentialValidation": "BLOCKED_EXTERNAL_ACCESS",
+    "readOnlyAccess": "BLOCKED_EXTERNAL_ACCESS",
+    "createOrder": "UNVERIFIED",
+    "stage342Gate": "UNVERIFIED",
+    "capabilitySummary": {
+      "health": "BLOCKED_EXTERNAL_ACCESS",
+      "catalog": "BLOCKED_EXTERNAL_ACCESS",
+      "products": "BLOCKED_EXTERNAL_ACCESS",
+      "stock": "BLOCKED_EXTERNAL_ACCESS",
+      "pricing": "BLOCKED_EXTERNAL_ACCESS",
+      "createOrder": "UNVERIFIED",
+      "cancelOrder": "UNVERIFIED",
+      "orderStatus": "UNVERIFIED",
+      "tracking": "UNVERIFIED",
+      "returns": "UNVERIFIED",
+      "refund": "UNVERIFIED"
+    }
+  },
   "market35Summary": {
     "ready": 3,
     "partial": 32,
@@ -1217,21 +1982,21 @@
       "blocking": true
     },
     {
+      "priority": 1,
+      "provider": "Inter Cars",
+      "action": "Configure Inter Cars Production SecretRef (SUPPLIER_LIVE_CREDENTIALS_SECRET_REF)",
+      "why": "Production API access requires operator-provided credentials",
+      "requiredEvidence": "HUMAN_APPROVAL",
+      "verificationMethod": "Secret ref present without exposing values in repo",
+      "blocking": true
+    },
+    {
       "priority": 2,
       "provider": "Render",
       "action": "Deploy buzzard-api after disk mount and env BUZZARD_DB_PATH / BUZZARD_BACKUP_DIR",
       "why": "Blueprint env vars must apply to running service",
       "requiredEvidence": "RENDER_PERSISTENCE_HEALTH",
       "verificationMethod": "GET /api/health/db on production URL",
-      "blocking": true
-    },
-    {
-      "priority": 2,
-      "provider": "Inter Cars",
-      "action": "Configure SUPPLIER_LIVE_CREDENTIALS_SECRET_REF and complete B2B/OAuth2 production access",
-      "why": "Supplier production network blocked without credentials",
-      "requiredEvidence": "LIVE_API",
-      "verificationMethod": "Stage A read-only validation + #342 human approval",
       "blocking": true
     },
     {
@@ -1253,6 +2018,15 @@
       "blocking": true
     },
     {
+      "priority": 4,
+      "provider": "Inter Cars",
+      "action": "Keep SUPPLIER_ORDER_NETWORK_ENABLED=0 until #342–#346 gates complete",
+      "why": "Order network must remain off during preparation",
+      "requiredEvidence": "CONFIGURATION",
+      "verificationMethod": "Environment flags",
+      "blocking": true
+    },
+    {
       "priority": 5,
       "provider": "Render",
       "action": "Manual production restart; re-check /api/health/db; register RENDER_RESTART_PERSISTENCE evidence",
@@ -1262,48 +2036,210 @@
       "blocking": true
     },
     {
-      "priority": 16,
-      "provider": "Platform",
-      "action": "Configure SUPPLIER_LIVE_CREDENTIALS_SECRET_REF for Inter Cars",
-      "why": "From external access preflight SSOT",
-      "requiredEvidence": "HUMAN_APPROVAL",
-      "verificationMethod": "Operator confirmation",
-      "blocking": true
-    },
-    {
-      "priority": 17,
-      "provider": "Platform",
-      "action": "Configure Render persistent disk mount at /var/data",
-      "why": "From external access preflight SSOT",
-      "requiredEvidence": "HUMAN_APPROVAL",
-      "verificationMethod": "Operator confirmation",
-      "blocking": true
-    },
-    {
-      "priority": 18,
-      "provider": "Platform",
-      "action": "Complete blocked step: EXTERNAL CREDENTIALS",
-      "why": "From external access preflight SSOT",
-      "requiredEvidence": "HUMAN_APPROVAL",
-      "verificationMethod": "Operator confirmation",
-      "blocking": true
-    },
-    {
-      "priority": 19,
-      "provider": "Platform",
-      "action": "Run Stage A read-only Inter Cars validation after credentials",
-      "why": "From external access preflight SSOT",
-      "requiredEvidence": "HUMAN_APPROVAL",
-      "verificationMethod": "Operator confirmation",
-      "blocking": true
-    },
-    {
       "priority": 20,
-      "provider": "Platform",
-      "action": "Obtain four-eyes human approval for #342–#346 chain",
-      "why": "From external access preflight SSOT",
-      "requiredEvidence": "HUMAN_APPROVAL",
-      "verificationMethod": "Operator confirmation",
+      "provider": "RENDER",
+      "action": "Create/mount Persistent Disk on buzzard-api — path /var/data, size ≥ 1 GB",
+      "why": "RENDER: CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 21,
+      "provider": "INTER_CARS",
+      "action": "Configure Inter Cars Production SecretRef (SUPPLIER_LIVE_CREDENTIALS_SECRET_REF)",
+      "why": "SUPPLIER: NOT_CONFIGURED / live=BLOCKED_EXTERNAL_ACCESS",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 22,
+      "provider": "PAYMENT",
+      "action": "Configure payment provider SecretRef + KYC/webhooks",
+      "why": "PAYMENT: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 23,
+      "provider": "CARRIER",
+      "action": "Configure carrier account SecretRef; validate API read-only — no labels",
+      "why": "CARRIER: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 24,
+      "provider": "DHL",
+      "action": "Carrier DHL: credentials + live validation before labels",
+      "why": "CARRIER: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 25,
+      "provider": "DPD",
+      "action": "Carrier DPD: credentials + live validation before labels",
+      "why": "CARRIER: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 26,
+      "provider": "GLS",
+      "action": "Carrier GLS: credentials + live validation before labels",
+      "why": "CARRIER: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 27,
+      "provider": "UPS",
+      "action": "Carrier UPS: credentials + live validation before labels",
+      "why": "CARRIER: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 28,
+      "provider": "DHL_EXPRESS",
+      "action": "Carrier DHL_EXPRESS: credentials + live validation before labels",
+      "why": "CARRIER: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 29,
+      "provider": "RETURNS",
+      "action": "Configure returns/refunds SecretRef; customer refund vs supplier credit remain separate",
+      "why": "RETURNS: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 30,
+      "provider": "REFUNDS",
+      "action": "No automatic refunds — production evidence required per provider",
+      "why": "RETURNS: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 31,
+      "provider": "AMAZON",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 32,
+      "provider": "EBAY",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 33,
+      "provider": "KAUFLAND",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 34,
+      "provider": "ALLEGRO",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 35,
+      "provider": "BOL.COM",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 36,
+      "provider": "CDISCOUNT",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 37,
+      "provider": "OTTO",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 38,
+      "provider": "TEST AMAZON",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 39,
+      "provider": "TEST EBAY",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 40,
+      "provider": "TEST KAUFLAND",
+      "action": "Marketplace credentials + dry-run only until explicit live evidence",
+      "why": "MARKETPLACE: CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 41,
+      "provider": "AI",
+      "action": "AI provider SecretRef — no secrets in AI context; production network off",
+      "why": "AI: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
+      "blocking": true
+    },
+    {
+      "priority": 42,
+      "provider": "GOOGLE_ADS",
+      "action": "Marketing spend OFF — configure account only, no campaign activation",
+      "why": "MARKETING: NOT_CONFIGURED / live=UNVERIFIED_EXTERNAL",
+      "requiredEvidence": "EXTERNAL_LIVE",
+      "verificationMethod": "Operator-run provider validation + evidence registration",
       "blocking": true
     }
   ],
@@ -1367,7 +2303,34 @@
     "NOT_CONFIGURED",
     "RENDER_DEPLOYMENT_MANUAL_VERIFICATION",
     "BLOCKED — MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)",
-    "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+    "NO_LABEL_CREATION_WITHOUT_CREDENTIALS",
+    "RENDER_RENDER_BLOCKED",
+    "SUPPLIER_INTER_CARS_BLOCKED",
+    "PAYMENT_PAYMENT_BLOCKED",
+    "CARRIER_CARRIER_BLOCKED",
+    "CARRIER_DHL_BLOCKED",
+    "CARRIER_DPD_BLOCKED",
+    "CARRIER_GLS_BLOCKED",
+    "CARRIER_UPS_BLOCKED",
+    "CARRIER_DHL_EXPRESS_BLOCKED",
+    "RETURNS_RETURNS_BLOCKED",
+    "RETURNS_REFUNDS_BLOCKED",
+    "MARKETPLACE_AMAZON_BLOCKED",
+    "MARKETPLACE_EBAY_BLOCKED",
+    "MARKETPLACE_KAUFLAND_BLOCKED",
+    "MARKETPLACE_ALLEGRO_BLOCKED",
+    "MARKETPLACE_BOL.COM_BLOCKED",
+    "MARKETPLACE_CDISCOUNT_BLOCKED",
+    "MARKETPLACE_OTTO_BLOCKED",
+    "MARKETPLACE_TEST_AMAZON_BLOCKED",
+    "MARKETPLACE_TEST_EBAY_BLOCKED",
+    "MARKETPLACE_TEST_KAUFLAND_BLOCKED",
+    "AI_AI_BLOCKED",
+    "MARKETING_GOOGLE_ADS_BLOCKED",
+    "MARKETING_META_BLOCKED",
+    "MARKETING_TIKTOK_BLOCKED",
+    "MARKETING_YOUTUBE_BLOCKED",
+    "MARKETING_MARKETPLACE_FEEDS_BLOCKED"
   ],
   "warnings": [
     "AT:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",

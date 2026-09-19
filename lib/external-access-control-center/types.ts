@@ -157,6 +157,14 @@ export interface ExternalAccessControlCenterReport {
     expiredEvidenceCount: number;
     localHintsNote: string;
   };
+  masterExternalReadiness?: {
+    scoreboard: Record<string, string>;
+    blockerCount: number;
+    matrixSize: number;
+    market35: { ready: number; partial: number; blocked: number; humanRequired: number };
+  };
+  masterProviderMatrix?: import("@/lib/master-external-provider-readiness/types").MasterProviderMatrixRow[];
+  externalBlockers?: import("@/lib/master-external-provider-readiness/types").ExternalBlocker[];
   interCarsAccess?: {
     credentialReference: string;
     credentialValidation: ControlCenterStatus;

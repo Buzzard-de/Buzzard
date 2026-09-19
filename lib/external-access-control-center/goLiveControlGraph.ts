@@ -1,6 +1,8 @@
 import { buildGoLiveDependencyGraph } from "@/lib/final-external-access/goLiveDependencyGraph";
 import { validateRenderBlueprint } from "@/lib/production-storage-preflight/renderBlueprintValidation";
 import { buildInterCarsGoLiveSteps } from "@/lib/inter-cars-production-access-evidence-bridge/goLiveInterCarsSteps";
+import { buildMasterGoLiveProviderSteps } from "@/lib/master-external-provider-readiness/goLiveMasterSteps";
+import { buildMasterProviderMatrix } from "@/lib/master-external-provider-readiness/masterProviderMatrix";
 import { buildRenderPersistenceGoLiveSteps } from "@/lib/render-persistence-evidence-bridge/goLivePersistenceGraph";
 import type { GoLiveControlStep } from "./types";
 
@@ -36,36 +38,7 @@ export function buildExtendedGoLiveGraph(): GoLiveControlStep[] {
     },
     ...renderSteps,
     ...buildInterCarsGoLiveSteps(),
-    {
-      id: "payment-live-validated",
-      label: "PAYMENT_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED",
-    },
-    {
-      id: "carrier-live-validated",
-      label: "CARRIER_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED",
-    },
-    {
-      id: "returns-live-validated",
-      label: "RETURNS_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED",
-    },
-    {
-      id: "marketplace-live-validated",
-      label: "MARKETPLACE_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED",
-    },
-    {
-      id: "ai-provider-validated",
-      label: "AI_PROVIDER_VALIDATED",
-      status: "NOT_CONFIGURED",
-    },
-    {
-      id: "marketing-validated",
-      label: "MARKETING_VALIDATED",
-      status: "NOT_CONFIGURED",
-    },
+    ...buildMasterGoLiveProviderSteps(buildMasterProviderMatrix()),
   ];
 
   const mappedBase: GoLiveControlStep[] = base.map((s) => ({

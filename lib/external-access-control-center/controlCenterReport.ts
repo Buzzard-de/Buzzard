@@ -4,6 +4,7 @@ import { countRejectedEvidenceAttempts } from "@/lib/production-access/evidenceP
 import { buildExternalAccessPreflightReport } from "@/lib/final-external-access/preflightReport";
 import { runMarket35Preflight } from "@/lib/final-external-access/market35Preflight";
 import { buildInterCarsProductionAccessBridgeReport } from "@/lib/inter-cars-production-access-evidence-bridge/accessReport";
+import { buildMasterExternalProviderReadinessReport } from "@/lib/master-external-provider-readiness/masterReadinessReport";
 import { buildRenderPersistenceVerificationReport } from "@/lib/render-persistence-evidence-bridge/renderPersistenceReport";
 import { evaluateFinalSecurityGate } from "@/lib/final-closure/securityGate";
 import { getBackupRestoreEvidence } from "@/lib/final-closure/backupRestore";
@@ -18,6 +19,7 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
   const preflight = buildExternalAccessPreflightReport();
   const renderPersistence = buildRenderPersistenceVerificationReport();
   const interCars = buildInterCarsProductionAccessBridgeReport();
+  const masterReadiness = buildMasterExternalProviderReadinessReport();
   const registry = buildProviderRegistry();
   const accessMatrix = buildAccessMatrixRows();
   const evidenceRecords = collectEvidenceRecords();
@@ -35,9 +37,10 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
     humanRequired: market35.markets.filter((m) => m.warnings.some((w) => w.includes("SUPPLIER"))).length,
   };
 
+  const ms = masterReadiness.scoreboard;
   const scoreboard: BuzzardFinalStatusScoreboard = {
-    SOFTWARE: preflight.softwareComplete ? "VALIDATED" : "BLOCKED",
-    CONFIGURATION: preflight.configComplete ? "CONFIGURED" : "UNVERIFIED_EXTERNAL",
+    SOFTWARE: (ms.SOFTWARE as BuzzardFinalStatusScoreboard["SOFTWARE"]) ?? "BLOCKED",
+    CONFIGURATION: (ms.CONFIGURATION as BuzzardFinalStatusScoreboard["CONFIGURATION"]) ?? "UNVERIFIED_EXTERNAL",
     PERSISTENCE: renderPersistence.live.PERSISTENCE,
     EXTERNAL_ACCESS: "HUMAN_REQUIRED",
     LIVE_VALIDATION: "BLOCKED",
@@ -49,12 +52,12 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
         : interCars.credentialReference === "NOT_CONFIGURED"
           ? "BLOCKED_EXTERNAL_ACCESS"
           : "HUMAN_REQUIRED",
-    PAYMENT: registry.find((r) => r.name === "PAYMENT")?.liveValidationState ?? "NOT_CONFIGURED",
-    CARRIER: registry.find((r) => r.name === "CARRIER")?.liveValidationState ?? "NOT_CONFIGURED",
-    RETURNS: registry.find((r) => r.name === "RETURNS")?.liveValidationState ?? "NOT_CONFIGURED",
-    MARKETPLACE: "NOT_CONFIGURED",
-    AI: registry.find((r) => r.name === "AI PROVIDER")?.liveValidationState ?? "NOT_CONFIGURED",
-    MARKETING: registry.find((r) => r.name === "MARKETING")?.liveValidationState ?? "NOT_CONFIGURED",
+    PAYMENT: (ms.PAYMENT as BuzzardFinalStatusScoreboard["PAYMENT"]) ?? "NOT_CONFIGURED",
+    CARRIER: (ms.CARRIER as BuzzardFinalStatusScoreboard["CARRIER"]) ?? "NOT_CONFIGURED",
+    RETURNS: (ms.RETURNS as BuzzardFinalStatusScoreboard["RETURNS"]) ?? "NOT_CONFIGURED",
+    MARKETPLACE: (ms.MARKETPLACE as BuzzardFinalStatusScoreboard["MARKETPLACE"]) ?? "NOT_CONFIGURED",
+    AI: (ms.AI as BuzzardFinalStatusScoreboard["AI"]) ?? "NOT_CONFIGURED",
+    MARKETING: (ms.MARKETING as BuzzardFinalStatusScoreboard["MARKETING"]) ?? "NOT_CONFIGURED",
     MARKETS_35: market35Summary.blocked === 0 ? "PARTIAL" : "PARTIAL",
     CUSTOMS: "UNVERIFIED_EXTERNAL",
     CHECKOUT: "CONFIGURED",
@@ -65,7 +68,13 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
     SALES: flags.SALES === "ON" ? "FAILED" : "DISABLED",
   };
 
-  const blockers = [...new Set([...preflight.blockers, ...registry.flatMap((r) => r.blockers)])];
+  const blockers = [
+    ...new Set([
+      ...preflight.blockers,
+      ...registry.flatMap((r) => r.blockers),
+      ...masterReadiness.blockers.map((b) => b.id),
+    ]),
+  ];
   const warnings = [...preflight.warnings];
 
   if (flags.SALES === "ON") {
@@ -75,7 +84,7 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
     blockers.push("KILL_SWITCH_SALES_MISMATCH");
   }
 
-  const nextHumanActions = buildNextHumanActions(registry);
+  const nextHumanActions = buildNextHumanActions(registry).slice(0, 30);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -110,6 +119,14 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
       expiredEvidenceCount: renderPersistence.expiredEvidenceCount,
       localHintsNote: renderPersistence.localHints.note,
     },
+    masterExternalReadiness: {
+      scoreboard: masterReadiness.scoreboard,
+      blockerCount: masterReadiness.blockers.length,
+      matrixSize: masterReadiness.masterMatrix.length,
+      market35: masterReadiness.market35ProviderImpact,
+    },
+    masterProviderMatrix: masterReadiness.masterMatrix,
+    externalBlockers: masterReadiness.blockers,
     interCarsAccess: {
       credentialReference: interCars.credentialReference,
       credentialValidation: interCars.credentialValidation,

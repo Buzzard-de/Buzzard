@@ -4,6 +4,7 @@ import {
 } from "@/lib/production-access/evidencePolicy";
 import { listProviderAccessEvidence } from "@/lib/production-access/evidenceStore";
 import type { ProviderAccessEvidence } from "@/lib/production-access/types";
+import { listExternalProviderEvidence } from "@/lib/master-external-provider-readiness/externalProviderEvidenceStore";
 import { listInterCarsCredentialEvidence } from "@/lib/inter-cars-production-access-evidence-bridge/evidenceStore";
 import { listRenderPersistenceEvidence } from "@/lib/render-persistence-evidence-bridge/evidenceStore";
 import type { EvidenceRecordView, EvidenceType } from "./types";
@@ -70,6 +71,23 @@ export function collectEvidenceRecords(providerIds: string[] = KNOWN_PROVIDERS):
     if (seen.has(e.id)) continue;
     seen.add(e.id);
     out.push(renderPersistenceToView(e));
+  }
+  for (const e of listExternalProviderEvidence(false)) {
+    if (seen.has(e.id)) continue;
+    seen.add(e.id);
+    out.push({
+      id: e.id,
+      providerId: e.providerId,
+      type: "LIVE_API",
+      environment: e.environment,
+      timestamp: e.timestamp,
+      source: "master-external-provider-readiness",
+      status: e.source === "EXTERNAL_LIVE" ? "ACCEPTED" : "REJECTED_FOR_PRODUCTION",
+      reference: e.evidenceReference,
+      payloadHash: e.payloadHash,
+      operator: e.operator,
+      isProductionEvidence: e.source === "EXTERNAL_LIVE",
+    });
   }
   for (const e of listInterCarsCredentialEvidence(false)) {
     if (seen.has(e.id)) continue;

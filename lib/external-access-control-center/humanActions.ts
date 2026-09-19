@@ -1,4 +1,6 @@
 import { buildExternalAccessPreflightReport } from "@/lib/final-external-access/preflightReport";
+import { buildMasterExternalHumanActions } from "@/lib/master-external-provider-readiness/humanActionsMaster";
+import { buildMasterProviderMatrix } from "@/lib/master-external-provider-readiness/masterProviderMatrix";
 import { buildInterCarsHumanActions } from "@/lib/inter-cars-production-access-evidence-bridge/humanActions";
 import { buildRenderPersistenceHumanActions } from "@/lib/render-persistence-evidence-bridge/humanActions";
 import type { HumanActionItem, ProviderRegistryEntry } from "./types";
@@ -7,6 +9,7 @@ export function buildNextHumanActions(registry: ProviderRegistryEntry[]): HumanA
   const actions: HumanActionItem[] = [
     ...buildRenderPersistenceHumanActions(),
     ...buildInterCarsHumanActions(),
+    ...buildMasterExternalHumanActions(buildMasterProviderMatrix()),
   ];
   const preflight = buildExternalAccessPreflightReport();
 

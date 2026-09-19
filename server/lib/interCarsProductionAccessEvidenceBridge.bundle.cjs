@@ -28,276 +28,25 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// lib/external-access-control-center/serverEntry.ts
+// lib/inter-cars-production-access-evidence-bridge/serverEntry.ts
 var serverEntry_exports = {};
 __export(serverEntry_exports, {
-  buildAccessMatrixRows: () => buildAccessMatrixRows,
-  buildExtendedGoLiveGraph: () => buildExtendedGoLiveGraph,
-  buildExternalAccessControlCenterReport: () => buildExternalAccessControlCenterReport,
-  buildNextHumanActions: () => buildNextHumanActions,
-  buildProviderRegistry: () => buildProviderRegistry,
-  collectEvidenceRecords: () => collectEvidenceRecords
+  buildInterCarsCapabilityMatrix: () => buildInterCarsCapabilityMatrix,
+  buildInterCarsGoLiveSteps: () => buildInterCarsGoLiveSteps,
+  buildInterCarsHumanActions: () => buildInterCarsHumanActions,
+  buildInterCarsProductionAccessBridgeReport: () => buildInterCarsProductionAccessBridgeReport,
+  listInterCarsCredentialEvidence: () => listInterCarsCredentialEvidence,
+  registerInterCarsCredentialEvidence: () => registerInterCarsCredentialEvidence
 });
 module.exports = __toCommonJS(serverEntry_exports);
 
-// lib/production-defaults/index.ts
-var FLAG_ENV = {
-  SUPPLIER_NETWORK: "SUPPLIER_NETWORK_ENABLED",
-  SUPPLIER_LIVE_READ: "SUPPLIER_LIVE_READ_ENABLED",
-  SUPPLIER_ORDER_NETWORK: "SUPPLIER_ORDER_NETWORK_ENABLED",
-  PAYMENT_PRODUCTION: "PAYMENT_PRODUCTION_ENABLED",
-  CARRIER_PRODUCTION: "CARRIER_PRODUCTION_ENABLED",
-  RETURNS_PRODUCTION: "RETURNS_PRODUCTION_ENABLED",
-  MARKETING_SPEND: "MARKETING_SPEND_ENABLED",
-  AI_PRODUCTION: "AI_PRODUCTION_ENABLED",
-  SALES: "SALES_ENABLED"
-};
-function isProductionFlagEnabled(flag) {
-  const envKey = FLAG_ENV[flag];
-  const value = process.env[envKey];
-  return value === "1" || value === "true";
-}
-function getProductionFlagsSnapshot() {
-  const out = {};
-  for (const flag of Object.keys(FLAG_ENV)) {
-    out[flag] = isProductionFlagEnabled(flag) ? "ON" : "OFF";
-  }
-  return out;
-}
-
-// lib/supplier-engine/network/config.ts
-function envFlag(name, defaultValue = false) {
-  const raw = process.env[name];
-  if (raw === void 0 || raw === "") return defaultValue;
-  return raw === "1" || raw.toLowerCase() === "true";
-}
-function envInt(name, fallback) {
-  const n = Number(process.env[name]);
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-}
-var SUPPLIER_NETWORK_CONFIG = {
-  get networkEnabled() {
-    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
-  },
-  get orderNetworkEnabled() {
-    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-  },
-  defaultEnvironment: "MOCK",
-  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
-  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
-  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
-  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
-};
-function isSupplierNetworkEnabled() {
-  return envFlag("SUPPLIER_NETWORK_ENABLED", false);
-}
-function isSupplierOrderNetworkEnabled() {
-  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
-}
-
-// lib/supplier-engine/network/allowlist.ts
-var BLOCKED_HOSTNAMES = /* @__PURE__ */ new Set([
-  "localhost",
-  "127.0.0.1",
-  "0.0.0.0",
-  "::1",
-  "metadata.google.internal",
-  "metadata"
-]);
-var METADATA_IP = "169.254.169.254";
-function isPrivateIpv4(host) {
-  const parts = host.split(".").map((p) => Number(p));
-  if (parts.length !== 4 || parts.some((p) => !Number.isFinite(p))) return false;
-  const [a, b] = parts;
-  if (a === 10) return true;
-  if (a === 172 && b >= 16 && b <= 31) return true;
-  if (a === 192 && b === 168) return true;
-  if (a === 127) return true;
-  if (a === 169 && b === 254) return true;
-  if (a === 0) return true;
-  return false;
-}
-function normalizeHost(hostname) {
-  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, "");
-}
-function isBlockedHost(hostname) {
-  const host = normalizeHost(hostname);
-  if (!host) return true;
-  if (BLOCKED_HOSTNAMES.has(host)) return true;
-  if (host.endsWith(".local") || host.endsWith(".internal")) return true;
-  if (host === METADATA_IP || host.startsWith("169.254.")) return true;
-  if (isPrivateIpv4(host)) return true;
-  if (host.includes(":") && (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80"))) {
-    return true;
-  }
-  return false;
-}
-function validateSupplierEndpoint(url, allowedHosts = []) {
-  let parsed;
-  try {
-    parsed = new URL(url);
-  } catch {
-    return { allowed: false, reason: "INVALID_URL" };
-  }
-  if (!["http:", "https:"].includes(parsed.protocol)) {
-    return { allowed: false, reason: "UNSUPPORTED_PROTOCOL", hostname: parsed.hostname };
-  }
-  const hostname = normalizeHost(parsed.hostname);
-  if (isBlockedHost(hostname)) {
-    return { allowed: false, reason: "BLOCKED_HOST", hostname };
-  }
-  if (allowedHosts.length > 0) {
-    const normalizedAllowed = allowedHosts.map(normalizeHost);
-    const hostAllowed = normalizedAllowed.some(
-      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
-    );
-    if (!hostAllowed) {
-      return { allowed: false, reason: "NOT_IN_ALLOWLIST", hostname };
-    }
-  }
-  return { allowed: true, hostname };
-}
-function extractAllowedHosts(baseUrl, extra = []) {
-  const hosts = /* @__PURE__ */ new Set();
-  for (const entry of [baseUrl, ...extra].filter(Boolean)) {
-    try {
-      hosts.add(normalizeHost(new URL(entry).hostname));
-    } catch {
-    }
-  }
-  return [...hosts];
-}
-
-// lib/supplier-engine/security.ts
-var SECRET_PATTERNS = [
-  /api[_-]?key/i,
-  /secret/i,
-  /password/i,
-  /token/i,
-  /authorization/i,
-  /bearer/i,
-  /credential/i
-];
-function isSecretField(fieldName) {
-  return SECRET_PATTERNS.some((p) => p.test(fieldName));
-}
-function redactSecrets(obj) {
-  if (obj == null || typeof obj !== "object") return obj;
-  if (Array.isArray(obj)) return obj.map(redactSecrets);
-  const result = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (isSecretField(key)) {
-      result[key] = "[REDACTED]";
-    } else if (typeof value === "object") {
-      result[key] = redactSecrets(value);
-    } else {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-
-// lib/supplier-engine/network/scopedValidationNetwork.ts
-var import_async_hooks = require("async_hooks");
-var scopedContext = new import_async_hooks.AsyncLocalStorage();
-function isScopedValidationNetworkEnabled() {
-  const raw = process.env.SUPPLIER_CONTROLLED_VALIDATION_NETWORK;
-  return raw === "1" || raw?.toLowerCase() === "true";
-}
-
-// lib/first-order-fulfillment/safety.ts
-var counters = {
-  realSupplierHttpCalls: 0,
-  realSupplierOrders: 0,
-  realCustomerOrders: 0,
-  paymentSideEffects: 0,
-  carrierSideEffects: 0,
-  unknownOutcomes: 0,
-  mockExecutions: 0
-};
-function getFulfillmentSafetyCounters() {
-  return { ...counters };
-}
-
-// lib/payment-production/safety.ts
-var counters2 = {
-  realCharges: 0,
-  realRefunds: 0,
-  webhookProcessed: 0,
-  blockedCaptures: 0
-};
-function getPaymentProductionSafetyCounters() {
-  return { ...counters2 };
-}
-function assertPaymentProductionSafetyInvariants() {
-  const violations = [];
-  if (counters2.realCharges !== 0) violations.push(`realCharges=${counters2.realCharges}`);
-  if (counters2.realRefunds !== 0) violations.push(`realRefunds=${counters2.realRefunds}`);
-  return { ok: violations.length === 0, violations };
-}
-
-// lib/returns-refunds-production/safety.ts
-var counters3 = { realRefunds: 0, assumedRecoveries: 0 };
-function getReturnsRefundsSafetyCounters() {
-  return { ...counters3 };
-}
-function assertReturnsRefundsSafetyInvariants() {
-  const violations = [];
-  if (counters3.realRefunds !== 0) violations.push(`realRefunds=${counters3.realRefunds}`);
-  if (counters3.assumedRecoveries !== 0) violations.push(`assumedRecoveries=${counters3.assumedRecoveries}`);
-  return { ok: violations.length === 0, violations };
-}
-
-// lib/carrier-production/safety.ts
-var counters4 = { realLabels: 0, realHttpCalls: 0 };
-function getCarrierProductionSafetyCounters() {
-  return { ...counters4 };
-}
-function assertCarrierProductionSafetyInvariants() {
-  const violations = [];
-  if (counters4.realLabels !== 0) violations.push(`realLabels=${counters4.realLabels}`);
-  if (counters4.realHttpCalls !== 0) violations.push(`realHttpCalls=${counters4.realHttpCalls}`);
-  return { ok: violations.length === 0, violations };
-}
-
-// lib/final-production-go-live/safety.ts
-var counters5 = { realMarketplaceMutations: 0, realMarketingSpend: 0 };
-function getFinalGoLiveSafetyCounters() {
-  const fulfillment = getFulfillmentSafetyCounters();
-  const payment = getPaymentProductionSafetyCounters();
-  const returns = getReturnsRefundsSafetyCounters();
-  const carrier = getCarrierProductionSafetyCounters();
-  return {
-    realSupplierOrders: fulfillment.realSupplierOrders,
-    realPayments: payment.realCharges,
-    realRefunds: returns.realRefunds,
-    realCarrierLabels: carrier.realLabels,
-    realMarketplaceMutations: counters5.realMarketplaceMutations,
-    realMarketingSpend: counters5.realMarketingSpend
-  };
-}
-
 // lib/production-access/evidencePolicy.ts
-var ACCEPTED_EVIDENCE_ENVIRONMENTS = [
-  "PRODUCTION",
-  "CONTROLLED_VALIDATION"
-];
-var REJECTED_EVIDENCE_ENVIRONMENTS = [
-  "MOCK",
-  "SANDBOX",
-  "SIMULATION",
-  "UNIT_TEST",
-  "FIXTURE"
-];
-function isAcceptedEvidenceEnvironment(env) {
-  return ACCEPTED_EVIDENCE_ENVIRONMENTS.includes(env);
-}
-function isRejectedEvidenceEnvironment(env) {
-  return REJECTED_EVIDENCE_ENVIRONMENTS.includes(env);
-}
 var rejectedAttempts = 0;
 function countRejectedEvidenceAttempts() {
   return rejectedAttempts;
+}
+function recordRejectedEvidenceAttempt() {
+  rejectedAttempts += 1;
 }
 
 // lib/supplier-inter-cars-production-access/diagnostic.ts
@@ -478,6 +227,35 @@ var inter_cars_category_mappings_default = {
   }
 };
 
+// lib/supplier-engine/security.ts
+var SECRET_PATTERNS = [
+  /api[_-]?key/i,
+  /secret/i,
+  /password/i,
+  /token/i,
+  /authorization/i,
+  /bearer/i,
+  /credential/i
+];
+function isSecretField(fieldName) {
+  return SECRET_PATTERNS.some((p) => p.test(fieldName));
+}
+function redactSecrets(obj) {
+  if (obj == null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(redactSecrets);
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (isSecretField(key)) {
+      result[key] = "[REDACTED]";
+    } else if (typeof value === "object") {
+      result[key] = redactSecrets(value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
 // lib/supplier-engine/credentials.ts
 var credentialRefs = /* @__PURE__ */ new Map();
 function registerCredentialRef(supplierId, secretsRef) {
@@ -619,6 +397,79 @@ function describeLiveCredentialReadiness(profile) {
   };
 }
 
+// lib/supplier-engine/network/allowlist.ts
+var BLOCKED_HOSTNAMES = /* @__PURE__ */ new Set([
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "::1",
+  "metadata.google.internal",
+  "metadata"
+]);
+var METADATA_IP = "169.254.169.254";
+function isPrivateIpv4(host) {
+  const parts = host.split(".").map((p) => Number(p));
+  if (parts.length !== 4 || parts.some((p) => !Number.isFinite(p))) return false;
+  const [a, b] = parts;
+  if (a === 10) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 0) return true;
+  return false;
+}
+function normalizeHost(hostname) {
+  return hostname.trim().toLowerCase().replace(/^\[|\]$/g, "");
+}
+function isBlockedHost(hostname) {
+  const host = normalizeHost(hostname);
+  if (!host) return true;
+  if (BLOCKED_HOSTNAMES.has(host)) return true;
+  if (host.endsWith(".local") || host.endsWith(".internal")) return true;
+  if (host === METADATA_IP || host.startsWith("169.254.")) return true;
+  if (isPrivateIpv4(host)) return true;
+  if (host.includes(":") && (host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80"))) {
+    return true;
+  }
+  return false;
+}
+function validateSupplierEndpoint(url, allowedHosts = []) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return { allowed: false, reason: "INVALID_URL" };
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    return { allowed: false, reason: "UNSUPPORTED_PROTOCOL", hostname: parsed.hostname };
+  }
+  const hostname = normalizeHost(parsed.hostname);
+  if (isBlockedHost(hostname)) {
+    return { allowed: false, reason: "BLOCKED_HOST", hostname };
+  }
+  if (allowedHosts.length > 0) {
+    const normalizedAllowed = allowedHosts.map(normalizeHost);
+    const hostAllowed = normalizedAllowed.some(
+      (allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`)
+    );
+    if (!hostAllowed) {
+      return { allowed: false, reason: "NOT_IN_ALLOWLIST", hostname };
+    }
+  }
+  return { allowed: true, hostname };
+}
+function extractAllowedHosts(baseUrl, extra = []) {
+  const hosts = /* @__PURE__ */ new Set();
+  for (const entry of [baseUrl, ...extra].filter(Boolean)) {
+    try {
+      hosts.add(normalizeHost(new URL(entry).hostname));
+    } catch {
+    }
+  }
+  return [...hosts];
+}
+
 // lib/supplier-production-validation/persistence.ts
 var validationStore = /* @__PURE__ */ new Map();
 function listValidationRecords() {
@@ -668,19 +519,7 @@ function isControlledValidationEnabled() {
 }
 
 // lib/supplier-production-order-validation/persistence.ts
-var validationStore2 = /* @__PURE__ */ new Map();
 var controlledRunStore = /* @__PURE__ */ new Map();
-function listValidationRecords2() {
-  return [...validationStore2.values()];
-}
-function getLatestValidationForScope2(scope) {
-  return listValidationRecords2().filter(
-    (r) => r.supplierId === scope.supplierId && r.market === scope.market && r.channel === scope.channel && r.environment === scope.environment
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-function getControlledValidationRun(validationId) {
-  return controlledRunStore.get(validationId);
-}
 function listControlledValidationRuns() {
   return [...controlledRunStore.values()];
 }
@@ -692,8 +531,46 @@ function getLatestControlledValidationRun(scope) {
   }).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
 }
 
+// lib/supplier-engine/network/config.ts
+function envFlag(name, defaultValue = false) {
+  const raw = process.env[name];
+  if (raw === void 0 || raw === "") return defaultValue;
+  return raw === "1" || raw.toLowerCase() === "true";
+}
+function envInt(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+}
+var SUPPLIER_NETWORK_CONFIG = {
+  get networkEnabled() {
+    return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+  },
+  get orderNetworkEnabled() {
+    return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+  },
+  defaultEnvironment: "MOCK",
+  defaultTimeoutMs: envInt("SUPPLIER_HTTP_TIMEOUT_MS", 3e4),
+  maxResponseBytes: envInt("SUPPLIER_MAX_RESPONSE_BYTES", 5 * 1024 * 1024),
+  maxRetries: envInt("SUPPLIER_HTTP_MAX_RETRIES", 3),
+  maxConcurrentRequests: envInt("SUPPLIER_MAX_CONCURRENT_REQUESTS", 5)
+};
+function isSupplierNetworkEnabled() {
+  return envFlag("SUPPLIER_NETWORK_ENABLED", false);
+}
+function isSupplierOrderNetworkEnabled() {
+  return envFlag("SUPPLIER_ORDER_NETWORK_ENABLED", false);
+}
+
+// lib/supplier-engine/network/scopedValidationNetwork.ts
+var import_async_hooks = require("async_hooks");
+var scopedContext = new import_async_hooks.AsyncLocalStorage();
+function isScopedValidationNetworkEnabled() {
+  const raw = process.env.SUPPLIER_CONTROLLED_VALIDATION_NETWORK;
+  return raw === "1" || raw?.toLowerCase() === "true";
+}
+
 // lib/supplier-production-order-validation/safety.ts
-var counters6 = {
+var counters = {
   controlledValidationHttpCalls: 0,
   realSupplierOrderCalls: 0,
   realSupplierCancelCalls: 0,
@@ -706,7 +583,7 @@ var counters6 = {
   realCustomerShipments: 0
 };
 function getCreateOrderValidationSafetyCounters() {
-  return { ...counters6 };
+  return { ...counters };
 }
 
 // lib/supplier-engine/auth/resolver.ts
@@ -1404,45 +1281,6 @@ var global_countries_35_default = [
   { countryCode: "EG", countryName: "Egypt", nativeCountryName: "\u0645\u0635\u0631", defaultLanguage: "ar", supportedLanguages: ["ar", "en"], currency: "EGP", currencySymbol: "\u062C.\u0645", locale: "ar-EG", timezone: "Africa/Cairo", measurementSystem: "metric", dateFormat: "DD/MM/YYYY", numberFormat: "ar-EG", phoneCountryCode: "+20", marketId: "eg", catalogEnabled: true, searchEnabled: true, shippingRegion: "MENA", taxConfigurationKey: "EG_VAT", seoLocale: "ar-EG", fallbackLanguage: "ar", enabled: true, domain: "", textDirection: "rtl", supportedProductTypes: ["automotive", "general"], localeVariants: [{ languageCode: "ar", locale: "ar-EG", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629", isDefault: true }, { languageCode: "en", locale: "en-EG", nativeName: "English" }] }
 ];
 
-// data/global/market_country_overlay.json
-var market_country_overlay_default = {
-  DE: { flag: "\u{1F1E9}\u{1F1EA}", taxRate: 0.19, deliveryDays: "2\u20133 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  AT: { flag: "\u{1F1E6}\u{1F1F9}", taxRate: 0.2, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Deutsch" },
-  BE: { flag: "\u{1F1E7}\u{1F1EA}", taxRate: 0.21, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  BG: { flag: "\u{1F1E7}\u{1F1EC}", taxRate: 0.2, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" },
-  HR: { flag: "\u{1F1ED}\u{1F1F7}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Hrvatski" },
-  CY: { flag: "\u{1F1E8}\u{1F1FE}", taxRate: 0.19, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  CZ: { flag: "\u{1F1E8}\u{1F1FF}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "\u010Ce\u0161tina" },
-  DK: { flag: "\u{1F1E9}\u{1F1F0}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Dansk" },
-  EE: { flag: "\u{1F1EA}\u{1F1EA}", taxRate: 0.22, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Eesti" },
-  FI: { flag: "\u{1F1EB}\u{1F1EE}", taxRate: 0.255, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Suomi" },
-  FR: { flag: "\u{1F1EB}\u{1F1F7}", taxRate: 0.2, deliveryDays: "2\u20135 Werktage", rtl: false, taxModel: "VAT", languageName: "Fran\xE7ais" },
-  GR: { flag: "\u{1F1EC}\u{1F1F7}", taxRate: 0.24, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC" },
-  HU: { flag: "\u{1F1ED}\u{1F1FA}", taxRate: 0.27, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Magyar" },
-  IE: { flag: "\u{1F1EE}\u{1F1EA}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "English" },
-  IT: { flag: "\u{1F1EE}\u{1F1F9}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Italiano" },
-  LV: { flag: "\u{1F1F1}\u{1F1FB}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Latvie\u0161u" },
-  LT: { flag: "\u{1F1F1}\u{1F1F9}", taxRate: 0.21, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Lietuvi\u0173" },
-  LU: { flag: "\u{1F1F1}\u{1F1FA}", taxRate: 0.17, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "L\xEBtzebuergesch" },
-  MT: { flag: "\u{1F1F2}\u{1F1F9}", taxRate: 0.18, deliveryDays: "4\u20138 Werktage", rtl: false, taxModel: "VAT", languageName: "Malti" },
-  NL: { flag: "\u{1F1F3}\u{1F1F1}", taxRate: 0.21, deliveryDays: "2\u20134 Werktage", rtl: false, taxModel: "VAT", languageName: "Nederlands" },
-  PL: { flag: "\u{1F1F5}\u{1F1F1}", taxRate: 0.23, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Polski" },
-  PT: { flag: "\u{1F1F5}\u{1F1F9}", taxRate: 0.23, deliveryDays: "4\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Portugu\xEAs" },
-  RO: { flag: "\u{1F1F7}\u{1F1F4}", taxRate: 0.19, deliveryDays: "3\u20137 Werktage", rtl: false, taxModel: "VAT", languageName: "Rom\xE2n\u0103" },
-  SK: { flag: "\u{1F1F8}\u{1F1F0}", taxRate: 0.2, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u010Dina" },
-  SI: { flag: "\u{1F1F8}\u{1F1EE}", taxRate: 0.22, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Sloven\u0161\u010Dina" },
-  ES: { flag: "\u{1F1EA}\u{1F1F8}", taxRate: 0.21, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Espa\xF1ol" },
-  SE: { flag: "\u{1F1F8}\u{1F1EA}", taxRate: 0.25, deliveryDays: "3\u20136 Werktage", rtl: false, taxModel: "VAT", languageName: "Svenska" },
-  TR: { flag: "\u{1F1F9}\u{1F1F7}", taxRate: 0.2, deliveryDays: "4\u20139 Werktage", rtl: false, taxModel: "VAT", languageName: "T\xFCrk\xE7e" },
-  SA: { flag: "\u{1F1F8}\u{1F1E6}", taxRate: 0.15, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  AE: { flag: "\u{1F1E6}\u{1F1EA}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  QA: { flag: "\u{1F1F6}\u{1F1E6}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  KW: { flag: "\u{1F1F0}\u{1F1FC}", taxRate: 0, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  BH: { flag: "\u{1F1E7}\u{1F1ED}", taxRate: 0.1, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  OM: { flag: "\u{1F1F4}\u{1F1F2}", taxRate: 0.05, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" },
-  EG: { flag: "\u{1F1EA}\u{1F1EC}", taxRate: 0.14, deliveryDays: "5\u201310 business days", rtl: true, taxModel: "VAT", languageName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629" }
-};
-
 // data/global/market_engine_extensions.json
 var market_engine_extensions_default = {
   shippingRegions: {
@@ -1696,135 +1534,7 @@ var market_engine_extensions_default = {
 
 // lib/i18n/international/config.ts
 var GLOBAL_COUNTRIES = global_countries_35_default;
-var REQUIRED_MARKET_COUNT = 35;
 var countryByCode = new Map(GLOBAL_COUNTRIES.map((c) => [c.countryCode, c]));
-
-// lib/market-engine/registry.ts
-var extensions = market_engine_extensions_default;
-var overlayByCode = market_country_overlay_default;
-var EU_COUNTRY_CODES = /* @__PURE__ */ new Set([
-  "AT",
-  "BE",
-  "BG",
-  "HR",
-  "CY",
-  "CZ",
-  "DK",
-  "EE",
-  "FI",
-  "FR",
-  "DE",
-  "GR",
-  "HU",
-  "IE",
-  "IT",
-  "LV",
-  "LT",
-  "LU",
-  "MT",
-  "NL",
-  "PL",
-  "PT",
-  "RO",
-  "SK",
-  "SI",
-  "ES",
-  "SE"
-]);
-var marketByCode = /* @__PURE__ */ new Map();
-function resolveFeatureFlags(countryCode) {
-  const defaults = extensions.defaultFeatureFlags;
-  const overrides = extensions.featureFlags[countryCode] ?? {};
-  return { ...defaults, ...overrides };
-}
-function resolveMarketStatus(country) {
-  if (country.enabled === false) return "DISABLED";
-  return extensions.marketStatus[country.countryCode] ?? extensions.defaultMarketStatus;
-}
-function buildVatRules(countryCode) {
-  const overlay = overlayByCode[countryCode];
-  return {
-    standardRate: overlay?.taxRate ?? 0.2,
-    pricesIncludeVat: true,
-    taxModel: overlay?.taxModel ?? "VAT"
-  };
-}
-function buildMarketConfig(country) {
-  const code = country.countryCode;
-  const variants = country.localeVariants ?? [];
-  const locales = variants.map((v) => v.locale);
-  if (!locales.length) locales.push(country.locale);
-  const paymentRegion = extensions.paymentRegions[code] ?? "EU";
-  return {
-    countryCode: code,
-    countryName: country.countryName,
-    nativeCountryName: country.nativeCountryName || country.countryName,
-    defaultLanguage: country.defaultLanguage,
-    supportedLanguages: [...country.supportedLanguages],
-    locales,
-    currency: country.currency,
-    currencySymbol: country.currencySymbol,
-    timezone: country.timezone,
-    textDirection: country.textDirection === "rtl" ? "rtl" : "ltr",
-    vat: buildVatRules(code),
-    shippingRegion: extensions.shippingRegions[code] ?? "EU_CENTRAL",
-    paymentRegion,
-    legalRegion: extensions.legalRegions[code] ?? `EU_${code}`,
-    returnRegion: extensions.returnRegions[code] ?? paymentRegion,
-    supplierRegion: extensions.supplierRegions[code] ?? paymentRegion,
-    status: resolveMarketStatus(country),
-    featureFlags: resolveFeatureFlags(code),
-    marketplaces: extensions.marketplaces[code] ?? [],
-    paymentCapabilities: extensions.paymentCapabilities[paymentRegion] ?? ["card"],
-    shippingCapabilities: [...extensions.shippingCapabilities],
-    source: country
-  };
-}
-function ensureRegistryBuilt() {
-  if (marketByCode.size > 0) return;
-  for (const country of global_countries_35_default) {
-    marketByCode.set(country.countryCode, buildMarketConfig(country));
-  }
-}
-function validateMarketRegistry() {
-  ensureRegistryBuilt();
-  const errors = [];
-  const count = marketByCode.size;
-  if (count !== REQUIRED_MARKET_COUNT) {
-    errors.push(`Expected ${REQUIRED_MARKET_COUNT} markets, found ${count}`);
-  }
-  for (const country of global_countries_35_default) {
-    if (!marketByCode.has(country.countryCode)) {
-      errors.push(`Missing market config for ${country.countryCode}`);
-    }
-  }
-  return { valid: errors.length === 0, count, errors };
-}
-function listMarkets() {
-  ensureRegistryBuilt();
-  return [...marketByCode.values()];
-}
-function getMarket(countryCode) {
-  ensureRegistryBuilt();
-  const code = String(countryCode || "").toUpperCase();
-  return marketByCode.get(code);
-}
-function isEuCountry(countryCode) {
-  return EU_COUNTRY_CODES.has(String(countryCode).toUpperCase());
-}
-function getMarketLanguages(countryCode) {
-  const market = getMarket(countryCode);
-  return market?.supportedLanguages ?? [];
-}
-function getMarketVat(countryCode) {
-  return getMarket(countryCode)?.vat ?? { standardRate: 0.2, pricesIncludeVat: true, taxModel: "VAT" };
-}
-function getMarketShippingRegion(countryCode) {
-  return getMarket(countryCode)?.shippingRegion ?? "EU_CENTRAL";
-}
-function getMarketPaymentRegion(countryCode) {
-  return getMarket(countryCode)?.paymentRegion ?? "EU";
-}
 
 // lib/product-engine/adapters/canonical.ts
 var import_module = require("module");
@@ -27178,8 +26888,8 @@ function runProductionAccessPreflight() {
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
-    const path9 = getCreateOrderEndpointPath();
-    const url = `${profile.baseUrl.replace(/\/$/, "")}${path9.startsWith("/") ? path9 : `/${path9}`}`;
+    const path2 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path2.startsWith("/") ? path2 : `/${path2}`}`;
     endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
     checks.push({
       check: "ENDPOINT",
@@ -27248,14 +26958,14 @@ function resolveReadOnlyLiveStatus(credentialsStatus) {
 }
 
 // lib/supplier-inter-cars-production-access/safety.ts
-var counters7 = {
+var counters2 = {
   realHttpCalls: 0,
   realCreateOrderCalls: 0,
   realSupplierOrders: 0,
   realCustomerOrders: 0
 };
 function getProductionAccessSafetyCounters() {
-  return { ...counters7 };
+  return { ...counters2 };
 }
 
 // lib/supplier-inter-cars-production-access/diagnostic.ts
@@ -27274,8 +26984,8 @@ function evaluateInterCarsProductionAccess() {
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
-    const path9 = getCreateOrderEndpointPath();
-    const url = `${profile.baseUrl.replace(/\/$/, "")}${path9.startsWith("/") ? path9 : `/${path9}`}`;
+    const path2 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path2.startsWith("/") ? path2 : `/${path2}`}`;
     endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
   }
   const blockers = [];
@@ -27316,2188 +27026,101 @@ function evaluateInterCarsProductionAccess() {
   };
 }
 
-// lib/supplier-production-order-arming/persistence.ts
-var armingStore = /* @__PURE__ */ new Map();
-function listArmingRecords() {
-  return [...armingStore.values()];
-}
-function getLatestArmingForScope(scope) {
-  return listArmingRecords().filter(
-    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel && r.scope.environment === scope.environment
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
+// lib/inter-cars-production-access-evidence-bridge/evidenceStore.ts
+var import_crypto3 = require("crypto");
 
-// lib/supplier-first-production-order/persistence.ts
-var executionStore = /* @__PURE__ */ new Map();
-function listFirstProductionOrderRecords() {
-  return [...executionStore.values()];
-}
-function getLatestFirstProductionOrderForScope(scope) {
-  return listFirstProductionOrderRecords().filter(
-    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-
-// lib/supplier-production-order-arming/config.ts
-var ARMING_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_TTL_MS || 24 * 60 * 60 * 1e3);
-var ARMING_APPROVAL_TTL_MS = Number(process.env.SUPPLIER_PRODUCTION_ARMING_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3);
-
-// lib/supplier-first-production-order/config.ts
-var FIRST_ORDER_TTL_MS2 = Number(process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_TTL_MS || 24 * 60 * 60 * 1e3);
-var FIRST_ORDER_APPROVAL_TTL_MS = Number(
-  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_APPROVAL_TTL_MS || 4 * 60 * 60 * 1e3
-);
-var EXECUTION_AUTH_TTL_MS = Number(
-  process.env.SUPPLIER_FIRST_PRODUCTION_ORDER_AUTH_TTL_MS || 30 * 60 * 1e3
-);
-
-// lib/supplier-controlled-go-live/config.ts
-var GO_LIVE_TTL_MS = Number(process.env.SUPPLIER_CONTROLLED_GO_LIVE_TTL_MS || 7 * 24 * 60 * 60 * 1e3);
-var GO_LIVE_APPROVAL_TTL_MS = Number(
-  process.env.SUPPLIER_CONTROLLED_GO_LIVE_APPROVAL_TTL_MS || 24 * 60 * 60 * 1e3
-);
-var GO_LIVE_ROLLOUT_TTL_MS = Number(
-  process.env.SUPPLIER_CONTROLLED_GO_LIVE_ROLLOUT_TTL_MS || 30 * 24 * 60 * 60 * 1e3
-);
-function getInterCarsSupplierId3() {
-  return resolvePredefinedLiveProfile()?.supplierId || "SUP-INTER-CARS-001";
-}
-
-// lib/supplier-production-order-validation/capability.ts
-function deriveCreateOrderCapabilityStatus(state) {
-  if (state.productionValidated) return "VALIDATED";
-  return "UNVERIFIED";
-}
-
-// lib/supplier-production-order-arming/evidence.ts
-function loadOfficialValidationEvidence(scope) {
-  const blockers = [];
-  const validation = getLatestValidationForScope2(scope);
-  if (!validation) {
-    blockers.push("VALIDATION_EVIDENCE_MISSING");
-    blockers.push("CREATE_ORDER_UNVERIFIED");
-    return { blockers };
-  }
-  const capability = deriveCreateOrderCapabilityStatus(validation.capabilityState);
-  if (capability !== "VALIDATED" || !validation.capabilityState.productionValidated) {
-    blockers.push("CREATE_ORDER_UNVERIFIED");
-    return { blockers, evidence: void 0 };
-  }
-  const controlledRun = getControlledValidationRun(validation.validationId);
-  const liveValidation = validation.liveValidation || controlledRun?.liveValidation;
-  if (validation.controlledValidation && liveValidation !== "PASS") {
-    blockers.push("CONTROLLED_VALIDATION_NOT_PASSED");
-    return { blockers };
-  }
-  if (!validation.controlledValidation && !validation.capabilityState.productionValidated) {
-    blockers.push("NO_CONTROLLED_LIVE_EVIDENCE");
-    return { blockers };
-  }
-  const evidence = {
-    validationId: validation.validationId,
-    supplier: validation.supplierId,
-    orderReference: validation.orderId,
-    payloadHash: validation.requestPayloadHash,
-    supplierOrderReference: validation.supplierOrderId || controlledRun?.supplierOrderReference,
-    validationTimestamp: validation.updatedAt,
-    result: liveValidation || validation.overallStatus,
-    approvalReference: controlledRun?.approvedBy,
-    liveValidation: liveValidation || "UNKNOWN",
-    createOrderCapability: capability,
-    productionValidated: validation.capabilityState.productionValidated
-  };
-  if (!evidence.supplierOrderReference && validation.controlledValidation) {
-    blockers.push("SUPPLIER_ORDER_REFERENCE_MISSING");
-  }
-  return { evidence, blockers };
-}
-
-// lib/supplier-controlled-go-live/persistence.ts
-var goLiveStore = /* @__PURE__ */ new Map();
-function listControlledGoLiveRecords() {
-  return [...goLiveStore.values()];
-}
-function getLatestControlledGoLiveForScope(scope) {
-  return listControlledGoLiveRecords().filter(
-    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-
-// lib/supplier-controlled-go-live/admin.ts
-function isControlledGoLiveActive(scope) {
-  const supplierId = scope?.supplierId || getInterCarsSupplierId3();
-  const latest = getLatestControlledGoLiveForScope({
-    supplierId,
-    market: scope?.market || "DE",
-    channel: scope?.channel || "DIRECT"
-  });
-  return latest?.state === "CONTROLLED_GO_LIVE" && Date.parse(latest.expiresAt) > Date.now();
-}
-
-// lib/supplier-go-live-observation/persistence.ts
-var observationStore = /* @__PURE__ */ new Map();
-function listObservationRecords() {
-  return [...observationStore.values()];
-}
-function getLatestObservationForScope(scope) {
-  return listObservationRecords().filter(
-    (r) => r.supplier === scope.supplierId && r.scope.market === scope.market && r.scope.channel === scope.channel
-  ).sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt))[0];
-}
-
-// lib/supplier-inter-cars-production-access/admin.ts
-function getProductionAccessDashboard() {
-  const diagnostic = evaluateInterCarsProductionAccess();
-  const supplierId = getInterCarsSupplierId();
-  const { evidence } = loadOfficialValidationEvidence({
-    supplierId,
-    market: "DE",
-    channel: "DIRECT",
-    environment: "PRODUCTION"
-  });
-  const arming = getLatestArmingForScope({
-    supplierId,
-    market: "DE",
-    channel: "DIRECT",
-    environment: "PRODUCTION"
-  });
-  const firstOrder = getLatestFirstProductionOrderForScope({ supplierId, market: "DE", channel: "DIRECT" });
-  const observation = getLatestObservationForScope({ supplierId, market: "DE", channel: "DIRECT" });
-  return {
-    ...diagnostic,
-    liveValidationEvidence: evidence ? "PRESENT" : "NONE",
-    armingState: arming?.status || "ARMING_BLOCKED",
-    firstOrderState: firstOrder?.state || "BLOCKED",
-    controlledGoLive: isControlledGoLiveActive({ supplierId, market: "DE", channel: "DIRECT" }) ? "ACTIVE" : "BLOCKED",
-    observationState: observation?.state || "BLOCKED",
-    broaderRollout: observation?.state === "BROADER_ROLLOUT_ACTIVE" ? "ACTIVE" : "BLOCKED"
-  };
-}
-
-// lib/payment-production/config.ts
-var PAYMENT_PRODUCTION_VERSION = "350.2.0";
-var PROVIDER_FLAG_ENV = {
-  PAYPAL: "PAYPAL_ENABLED",
-  CARD: "CARD_ENABLED",
-  SEPA: "SEPA_ENABLED",
-  APPLE_PAY: "APPLE_PAY_ENABLED",
-  GOOGLE_PAY: "GOOGLE_PAY_ENABLED",
-  AMAZON_PAY: "AMAZON_PAY_ENABLED",
-  KLARNA: "KLARNA_ENABLED",
-  LOCAL_PAYMENT: "LOCAL_PAYMENT_ENABLED",
-  MOCK: "MOCK_PAYMENT_ENABLED"
-};
-var PROVIDER_SECRET_REFS = {
-  PAYPAL: ["PAYPAL_CLIENT_ID_SECRET_REF", "PAYPAL_CLIENT_SECRET_SECRET_REF", "PAYPAL_WEBHOOK_SECRET_REF"],
-  CARD: ["PAYMENT_CARD_SECRET_REF", "PAYMENT_PROVIDER_SECRET_REF"],
-  SEPA: ["PAYMENT_SEPA_SECRET_REF", "PAYMENT_PROVIDER_SECRET_REF"],
-  APPLE_PAY: ["PAYMENT_APPLE_PAY_SECRET_REF"],
-  GOOGLE_PAY: ["PAYMENT_GOOGLE_PAY_SECRET_REF"],
-  AMAZON_PAY: [
-    "AMAZON_PAY_CLIENT_ID_SECRET_REF",
-    "AMAZON_PAY_CLIENT_SECRET_SECRET_REF",
-    "AMAZON_PAY_PUBLIC_KEY_SECRET_REF",
-    "AMAZON_PAY_PRIVATE_KEY_SECRET_REF"
-  ],
-  KLARNA: ["KLARNA_API_KEY_SECRET_REF", "KLARNA_API_SECRET_SECRET_REF"],
-  LOCAL_PAYMENT: ["PAYMENT_LOCAL_SECRET_REF"],
-  MOCK: []
-};
-function isPaymentProductionEnabled() {
-  return isProductionFlagEnabled("PAYMENT_PRODUCTION");
-}
-function isProviderFlagEnabled(kind) {
-  const envKey = PROVIDER_FLAG_ENV[kind];
-  const value = process.env[envKey];
-  return value === "1" || value === "true";
-}
-function isPayPalEnabled() {
-  const legacy = process.env.PAYMENT_PAYPAL_ENABLED;
-  if (legacy === "1" || legacy === "true") return true;
-  return isProviderFlagEnabled("PAYPAL");
-}
-function getDefaultPaymentProviderKind() {
-  const configured = (process.env.PAYMENT_PROVIDER || "mock").toUpperCase();
-  const valid = [
-    "PAYPAL",
-    "CARD",
-    "SEPA",
-    "APPLE_PAY",
-    "GOOGLE_PAY",
-    "AMAZON_PAY",
-    "KLARNA",
-    "LOCAL_PAYMENT",
-    "MOCK"
-  ];
-  if (valid.includes(configured)) return configured;
-  if (configured === "STRIPE" || configured === "ADYEN") return "CARD";
-  return "MOCK";
-}
-function resolvePaymentEnvironment() {
-  if (process.env.NODE_ENV === "test" || process.env.CI === "true") return "MOCK";
-  if (isPaymentProductionEnabled()) return "PRODUCTION";
-  if (process.env.PAYMENT_SANDBOX === "1") return "SANDBOX";
-  return "MOCK";
-}
-function hasProviderSecretRef(kind) {
-  const refs = PROVIDER_SECRET_REFS[kind] ?? [];
-  return refs.some((key) => Boolean(process.env[key]?.trim()));
-}
-function resolvePaymentProviderConfig(kind) {
-  const refs = PROVIDER_SECRET_REFS[kind] ?? [];
-  const primaryRef = refs.find((key) => process.env[key]?.trim()) ?? `${kind.toLowerCase()}_secret_ref_unconfigured`;
-  const webhookKey = kind === "PAYPAL" ? "PAYPAL_WEBHOOK_SECRET_REF" : `PAYMENT_${kind}_WEBHOOK_SECRET_REF`;
-  return {
-    providerId: kind,
-    secretRef: primaryRef,
-    environment: resolvePaymentEnvironment(),
-    webhookSecretRef: process.env[webhookKey],
-    enabled: kind === "MOCK" ? true : isProviderFlagEnabled(kind)
-  };
-}
-function listAllProviderKinds() {
-  return [
-    "PAYPAL",
-    "CARD",
-    "SEPA",
-    "APPLE_PAY",
-    "GOOGLE_PAY",
-    "AMAZON_PAY",
-    "KLARNA",
-    "LOCAL_PAYMENT",
-    "MOCK"
-  ];
-}
-
-// lib/payment-production/providers/baseProvider.ts
-function resolveProviderConfigStatus(kind) {
-  if (kind === "MOCK") return "VALIDATED";
-  const enabled = kind === "PAYPAL" ? isPayPalEnabled() : isProviderFlagEnabled(kind);
-  if (!enabled) return "DISABLED";
-  if (!hasProviderSecretRef(kind)) return "NOT_CONFIGURED";
-  return "CONFIGURED";
-}
-function capabilityNotSupported() {
-  return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-}
-function createMockProviderResult(state = "CREATED", extra = {}) {
-  return { ok: true, state, ...extra };
-}
-var BasePaymentProvider = class {
-  configStatus() {
-    return resolveProviderConfigStatus(this.kind);
-  }
-  isAvailableInContext(ctx) {
-    if (this.configStatus() === "DISABLED") return false;
-    if (ctx.amount <= 0) return false;
-    return true;
-  }
-  dryRun() {
-    return resolvePaymentEnvironment() !== "PRODUCTION";
-  }
-};
-
-// lib/payment-production/providers/amazonPayProvider.ts
-var AmazonPayProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "AMAZON_PAY";
-    this.category = "WALLET";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("AMAZON_PAY");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const supportedCountries = /* @__PURE__ */ new Set(["DE", "FR", "IT", "ES", "UK", "GB", "US", "JP", "NL", "BE"]);
-    return {
-      ok: true,
-      data: {
-        available: this.isAvailableInContext(ctx) && supportedCountries.has(ctx.country.toUpperCase())
-      }
-    };
-  }
-  createPayment(input) {
-    return createMockProviderResult("CREATED", {
-      providerToken: `amazon_pay_${input.orderId}`,
-      redirectUrl: this.dryRun() ? void 0 : `https://pay.amazon.com/checkout/${input.orderId}`
-    });
-  }
-  authorizePayment() {
-    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount || record.currency !== input.currency) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment(input, record) {
-    const full = !input.amount || input.amount >= record.amount;
-    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook(payload) {
-    if (payload.eventType === "ChargePermission") {
-      return createMockProviderResult("CAPTURED");
-    }
-    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-  }
-};
-var amazonPayProvider = new AmazonPayProvider();
-
-// lib/payment-production/providers/applePayProvider.ts
-var ApplePayProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "APPLE_PAY";
-    this.category = "WALLET";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("APPLE_PAY");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const deviceOk = ctx.deviceSupportsApplePay !== false;
-    const countryOk = !["SA", "EG"].includes(ctx.country.toUpperCase());
-    return {
-      ok: true,
-      data: { available: this.isAvailableInContext(ctx) && deviceOk && countryOk }
-    };
-  }
-  createPayment(input) {
-    return createMockProviderResult("CREATED", { providerToken: `apple_pay_${input.orderId}` });
-  }
-  authorizePayment() {
-    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount || record.currency !== input.currency) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment(input, record) {
-    const full = !input.amount || input.amount >= record.amount;
-    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook() {
-    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-  }
-};
-var applePayProvider = new ApplePayProvider();
-
-// lib/market-engine/payment.ts
-var paymentCapabilitiesByRegion = market_engine_extensions_default.paymentCapabilities;
-function getPaymentCapabilitiesForRegion(paymentRegion) {
-  return paymentCapabilitiesByRegion[paymentRegion] ?? ["card"];
-}
-
-// lib/payment-production/providers/cardProvider.ts
-var CardProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "CARD";
-    this.category = "CARD";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("CARD");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const market = getMarket(ctx.country);
-    const region = market?.paymentRegion ?? "EU";
-    const caps = getPaymentCapabilitiesForRegion(region);
-    return { ok: true, data: { available: this.isAvailableInContext(ctx) && caps.includes("card") } };
-  }
-  createPayment(input) {
-    return createMockProviderResult("CREATED", {
-      providerToken: `card_token_${input.orderId}`,
-      requiresAction: input.amount > 500
-    });
-  }
-  authorizePayment(_paymentId, record) {
-    if (record.state === "FAILED") return { ok: false, state: "FAILED" };
-    if (record.amount > 500) {
-      return createMockProviderResult("REQUIRES_ACTION", { requiresAction: true, riskOutcome: "REQUIRES_ACTION" });
-    }
-    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount || record.currency !== input.currency) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment(input, record) {
-    const full = !input.amount || input.amount >= record.amount;
-    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook(payload) {
-    if (payload.eventType === "3DS_REQUIRED") {
-      return createMockProviderResult("REQUIRES_ACTION", { requiresAction: true });
-    }
-    if (payload.eventType === "payment_intent.succeeded") {
-      return createMockProviderResult("CAPTURED");
-    }
-    return capabilityNotSupported();
-  }
-};
-var cardProvider = new CardProvider();
-
-// lib/payment-production/providers/googlePayProvider.ts
-var GooglePayProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "GOOGLE_PAY";
-    this.category = "WALLET";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("GOOGLE_PAY");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const deviceOk = ctx.deviceSupportsGooglePay !== false;
-    return { ok: true, data: { available: this.isAvailableInContext(ctx) && deviceOk } };
-  }
-  createPayment(input) {
-    return createMockProviderResult("CREATED", { providerToken: `google_pay_${input.orderId}` });
-  }
-  authorizePayment() {
-    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount || record.currency !== input.currency) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment(input, record) {
-    const full = !input.amount || input.amount >= record.amount;
-    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook() {
-    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-  }
-};
-var googlePayProvider = new GooglePayProvider();
-
-// lib/payment-production/providers/klarnaProvider.ts
-var KlarnaProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "KLARNA";
-    this.category = "BNPL";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("KLARNA");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const market = getMarket(ctx.country);
-    const region = market?.paymentRegion ?? "EU";
-    const caps = getPaymentCapabilitiesForRegion(region);
-    const klarnaCountries = /* @__PURE__ */ new Set(["DE", "AT", "NL", "BE", "SE", "FI", "NO", "DK", "FR", "IT", "ES", "PL"]);
-    return {
-      ok: true,
-      data: {
-        available: this.isAvailableInContext(ctx) && caps.includes("klarna") && klarnaCountries.has(ctx.country.toUpperCase()) && ctx.amount >= 10 && ctx.amount <= 5e3
-      }
-    };
-  }
-  createPayment(input) {
-    return createMockProviderResult("CREATED", {
-      providerToken: `klarna_${input.orderId}`,
-      redirectUrl: this.dryRun() ? void 0 : `https://klarna.com/checkout/${input.orderId}`
-    });
-  }
-  authorizePayment() {
-    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment(input, record) {
-    const full = !input.amount || input.amount >= record.amount;
-    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook(payload) {
-    if (payload.eventType === "AUTHORIZED") return createMockProviderResult("AUTHORIZED");
-    if (payload.eventType === "CAPTURED") return createMockProviderResult("CAPTURED");
-    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-  }
-};
-var klarnaProvider = new KlarnaProvider();
-
-// lib/payment-production/providers/localPaymentProvider.ts
-var LOCAL_METHODS = {
-  NL: [{ id: "ideal", labelKey: "checkout.payIdeal" }],
-  DE: [{ id: "giropay", labelKey: "checkout.payGiropay" }],
-  BE: [{ id: "bancontact", labelKey: "checkout.payBancontact" }],
-  PL: [{ id: "blik", labelKey: "checkout.payBlik" }],
-  TR: [{ id: "local_tr", labelKey: "checkout.payLocalTr" }]
-};
-var LocalPaymentProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "LOCAL_PAYMENT";
-    this.category = "LOCAL_PAYMENT";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("LOCAL_PAYMENT");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const country = ctx.country.toUpperCase();
-    const hasLocal = Boolean(LOCAL_METHODS[country]);
-    const market = getMarket(country);
-    const paymentEnabled = market?.featureFlags.paymentEnabled;
-    if (paymentEnabled === false) return { ok: true, data: { available: false } };
-    return { ok: true, data: { available: this.isAvailableInContext(ctx) && hasLocal } };
-  }
-  listLocalMethods(country) {
-    return LOCAL_METHODS[country.toUpperCase()] ?? [];
-  }
-  createPayment(input) {
-    return createMockProviderResult("CREATED", {
-      providerToken: `local_${input.orderId}`,
-      redirectUrl: `#local-payment-${input.orderId}`
-    });
-  }
-  authorizePayment() {
-    return createMockProviderResult("AUTHORIZED");
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment() {
-    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook(payload) {
-    if (payload.eventType === "PAYMENT_CONFIRMED") return createMockProviderResult("CAPTURED");
-    if (payload.eventType === "PAYMENT_FAILED") return createMockProviderResult("FAILED");
-    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-  }
-};
-var localPaymentProvider = new LocalPaymentProvider();
-
-// lib/payment-production/providers/mockProvider.ts
-var MockPaymentProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "MOCK";
-    this.category = "CARD";
-  }
-  configStatus() {
-    return "VALIDATED";
-  }
-  availability(ctx) {
-    return { ok: true, data: { available: ctx.amount > 0 } };
-  }
-  createPayment(input) {
-    return createMockProviderResult("CREATED", { providerToken: `mock_${input.orderId}` });
-  }
-  authorizePayment(_paymentId, record) {
-    if (record.state === "FAILED") return { ok: false, state: "FAILED" };
-    return createMockProviderResult("AUTHORIZED");
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount || record.currency !== input.currency) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment(input, record) {
-    const full = !input.amount || input.amount >= record.amount;
-    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook() {
-    return createMockProviderResult("CAPTURED");
-  }
-};
-var mockProvider = new MockPaymentProvider();
-
-// lib/payment-production/providers/paypalProvider.ts
-var PayPalProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "PAYPAL";
-    this.category = "WALLET";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("PAYPAL");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const market = getMarket(ctx.country);
-    const region = market?.paymentRegion ?? "EU";
-    const caps = getPaymentCapabilitiesForRegion(region);
-    const available = this.isAvailableInContext(ctx) && caps.includes("paypal");
-    return { ok: true, data: { available } };
-  }
-  createPayment(input) {
-    const avail = this.availability({
-      country: "DE",
-      currency: input.currency,
-      amount: input.amount
-    });
-    if (!avail.data?.available) return { ok: false, error: "PAYPAL_UNAVAILABLE" };
-    return createMockProviderResult("CREATED", {
-      providerToken: `paypal_token_${input.orderId}`,
-      redirectUrl: this.dryRun() ? void 0 : `https://paypal.com/checkout/${input.orderId}`
-    });
-  }
-  authorizePayment(_paymentId, record) {
-    if (record.state === "FAILED") return { ok: false, state: "FAILED", error: "PAYMENT_FAILED" };
-    return createMockProviderResult("AUTHORIZED", { riskOutcome: "APPROVED" });
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount || record.currency !== input.currency) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_OR_CURRENCY_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment(input, record) {
-    const full = !input.amount || input.amount >= record.amount;
-    return createMockProviderResult(full ? "REFUNDED" : "PARTIALLY_REFUNDED");
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook(payload) {
-    if (payload.eventType === "PAYMENT.CAPTURE.COMPLETED") {
-      return createMockProviderResult("CAPTURED");
-    }
-    if (payload.eventType === "PAYMENT.CAPTURE.DENIED") {
-      return createMockProviderResult("FAILED");
-    }
-    return capabilityNotSupported();
-  }
-};
-var paypalProvider = new PayPalProvider();
-
-// lib/payment-production/providers/sepaProvider.ts
-var SepaProvider = class extends BasePaymentProvider {
-  constructor() {
-    super(...arguments);
-    this.kind = "SEPA";
-    this.category = "SEPA";
-  }
-  availability(ctx) {
-    const status = resolveProviderConfigStatus("SEPA");
-    if (status === "DISABLED" || status === "NOT_CONFIGURED") {
-      return { ok: true, data: { available: false } };
-    }
-    const market = getMarket(ctx.country);
-    const region = market?.paymentRegion ?? "EU";
-    const caps = getPaymentCapabilitiesForRegion(region);
-    const sepaCountries = /* @__PURE__ */ new Set(["DE", "AT", "NL", "BE", "FR", "IT", "ES", "FI", "IE", "LU", "PT"]);
-    return {
-      ok: true,
-      data: {
-        available: this.isAvailableInContext(ctx) && caps.includes("sepa") && sepaCountries.has(ctx.country.toUpperCase()) && ctx.currency === "EUR"
-      }
-    };
-  }
-  createPayment(input) {
-    return createMockProviderResult("PENDING", {
-      providerToken: `sepa_mandate_ref_${input.orderId}`
-    });
-  }
-  authorizePayment() {
-    return createMockProviderResult("PENDING");
-  }
-  capturePayment(input, record) {
-    if (record.amount !== input.amount) {
-      return { ok: false, state: "PAYMENT_BLOCKED", error: "AMOUNT_MISMATCH" };
-    }
-    return createMockProviderResult("CAPTURED");
-  }
-  cancelPayment(_paymentId, _record) {
-    return createMockProviderResult("CANCELLED");
-  }
-  refundPayment() {
-    return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-  }
-  getPaymentStatus(_paymentId, record) {
-    return { ok: true, state: record.state };
-  }
-  handleWebhook(payload) {
-    switch (payload.eventType) {
-      case "MANDATE_CREATED":
-        return createMockProviderResult("CREATED");
-      case "PAYMENT_PENDING":
-        return createMockProviderResult("PENDING");
-      case "PAYMENT_CONFIRMED":
-        return createMockProviderResult("CAPTURED");
-      case "PAYMENT_FAILED":
-        return createMockProviderResult("FAILED");
-      case "CHARGEBACK":
-        return createMockProviderResult("REFUNDED");
-      default:
-        return { ok: false, error: "CAPABILITY_NOT_SUPPORTED", capabilityNotSupported: true };
-    }
-  }
-};
-var sepaProvider = new SepaProvider();
-
-// lib/payment-production/providers/registry.ts
-var REGISTRY = [
-  paypalProvider,
-  cardProvider,
-  sepaProvider,
-  applePayProvider,
-  googlePayProvider,
-  amazonPayProvider,
-  klarnaProvider,
-  localPaymentProvider,
-  mockProvider
-];
-var byKind = new Map(
-  REGISTRY.map((p) => [p.kind, p])
-);
-function listPaymentProviderAdapters() {
-  return [...REGISTRY];
-}
-
-// lib/payment-production/admin.ts
-function mapProviderStatus(kind) {
-  const adapter = listPaymentProviderAdapters().find((p) => p.kind === kind);
-  return adapter?.configStatus() ?? "NOT_CONFIGURED";
-}
-function getPaymentProductionDashboard() {
-  const safety = assertPaymentProductionSafetyInvariants();
-  const providers = {};
-  for (const kind of listAllProviderKinds()) {
-    const config = resolvePaymentProviderConfig(kind);
-    providers[kind] = {
-      status: mapProviderStatus(kind),
-      enabled: config.enabled,
-      environment: config.environment
-    };
-  }
-  const anyConfigured = listAllProviderKinds().filter((k) => k !== "MOCK").some((k) => mapProviderStatus(k) === "CONFIGURED" || mapProviderStatus(k) === "VALIDATED");
-  return {
-    version: PAYMENT_PRODUCTION_VERSION,
-    productionEnabled: isPaymentProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: anyConfigured ? "UNVERIFIED" : "NOT_CONFIGURED",
-    defaultProvider: getDefaultPaymentProviderKind(),
-    safetyCounters: getPaymentProductionSafetyCounters(),
-    blockers: isPaymentProductionEnabled() ? ["PAYMENT_PRODUCTION_MUST_BE_DISABLED_IN_PREP"] : safety.violations,
-    providers,
-    webhookSecurity: "PASS",
-    idempotency: "PASS",
-    refund: "PASS",
-    fraudRisk: "PASS"
-  };
-}
-
-// lib/production-access/evidenceStore.ts
-var evidenceStore = /* @__PURE__ */ new Map();
-var evidenceByProvider = /* @__PURE__ */ new Map();
-function listProviderAccessEvidence(provider) {
-  const ids = evidenceByProvider.get(provider) || [];
-  return ids.map((id) => evidenceStore.get(id)).filter(Boolean);
-}
-function hasProductionEvidence(provider, capability) {
-  return listProviderAccessEvidence(provider).some(
-    (e) => e.capability === capability && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION") && e.responseStatus >= 200 && e.responseStatus < 300
-  );
-}
-
-// lib/production-access/providerLiveStatus.ts
-function deriveProviderLiveStatus(input) {
-  if (!input.secret.secretRefConfigured && !input.secret.secretResolvable) {
-    return "NOT_CONFIGURED";
-  }
-  const validated = input.evidenceCapabilities.some(
-    (cap) => hasProductionEvidence(input.secret.providerId, cap)
-  );
-  if (validated) return "VALIDATED";
-  if (input.secret.secretResolvable || input.secret.secretRefConfigured) return "UNVERIFIED";
-  return "NOT_CONFIGURED";
-}
-
-// lib/production-access/secretRefs.ts
-function normalizeSecretRef(raw, fallbackEnvKey) {
-  const value = raw?.trim();
-  if (!value) return `env:${fallbackEnvKey}`;
-  if (value.startsWith("env:")) return value;
-  return `env:${value}`;
-}
-function secretRefConfigured(envKey) {
-  return Boolean(process.env[envKey]?.trim());
-}
-function resolveInterCarsSecretRef() {
-  const secretRefKey = process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim() || process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS";
-  const secretsRef = normalizeSecretRef(secretRefKey, "SUPPLIER_LIVE_CREDENTIALS");
-  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
-  const cred = resolveCredentialDisplayStatus({ supplierId: getInterCarsSupplierId() });
-  const statusMap = {
-    NOT_CONFIGURED: "NOT_CONFIGURED",
-    CONFIGURED: "CONFIGURED",
-    VALID: "CONFIGURED",
-    INVALID: "BLOCKED",
-    EXPIRED: "BLOCKED",
-    BLOCKED: "BLOCKED"
-  };
-  return {
-    providerId: "inter-cars",
-    secretRefKey: secretsRef,
-    secretRefConfigured: secretRefConfigured(envKey) || Boolean(process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim()),
-    secretResolvable: Boolean(resolveCredentials(secretsRef)),
-    credentialStatus: statusMap[cred.status] || "UNVERIFIED"
-  };
-}
-function resolveGenericSecretRef(input) {
-  const raw = process.env[input.secretRefEnvKey]?.trim();
-  const secretsRef = normalizeSecretRef(raw, input.fallbackEnvKey || input.secretRefEnvKey.replace(/_SECRET_REF$/, ""));
-  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
-  return {
-    providerId: input.providerId,
-    secretRefKey: secretsRef,
-    secretRefConfigured: secretRefConfigured(envKey) || Boolean(raw),
-    secretResolvable: Boolean(resolveCredentials(secretsRef)),
-    credentialStatus: resolveCredentials(secretsRef) ? "CONFIGURED" : "NOT_CONFIGURED"
-  };
-}
-
-// lib/carrier-production/config.ts
-var CARRIER_PRODUCTION_VERSION = "351.1.0";
-function isCarrierProductionEnabled() {
-  return isProductionFlagEnabled("CARRIER_PRODUCTION");
-}
-
-// lib/carrier-production/admin.ts
-function getCarrierProductionDashboard() {
-  const safety = assertCarrierProductionSafetyInvariants();
-  const secret = resolveGenericSecretRef({
-    providerId: "carrier",
-    secretRefEnvKey: "CARRIER_PROVIDER_SECRET_REF"
-  });
-  return {
-    version: CARRIER_PRODUCTION_VERSION,
-    productionEnabled: isCarrierProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["health"] }),
-    safetyCounters: getCarrierProductionSafetyCounters(),
-    blockers: safety.violations
-  };
-}
-
-// lib/ai-production/config.ts
-var AI_PRODUCTION_VERSION = "352.1.0";
-var AI_WORKERS = [
-  "PRODUCT_AI",
-  "SUPPLIER_AI",
-  "PRICING_AI",
-  "INVENTORY_AI",
-  "ORDER_AI",
-  "MARKETPLACE_AI",
-  "CUSTOMS_AI",
-  "CUSTOMER_SERVICE_AI",
-  "RETURNS_AI",
-  "FINANCE_AI"
-];
-function isAiProductionEnabled() {
-  return isProductionFlagEnabled("AI_PRODUCTION");
-}
-
-// lib/ai-production/safety.ts
-var counters8 = { realProviderCalls: 0, blockedExecutions: 0 };
-function getAiProductionSafetyCounters() {
-  return { ...counters8 };
-}
-function assertAiProductionSafetyInvariants() {
-  const violations = [];
-  if (counters8.realProviderCalls !== 0) violations.push(`realProviderCalls=${counters8.realProviderCalls}`);
-  return { ok: violations.length === 0, violations };
-}
-
-// lib/ai-production/authority.ts
-function resolveDefaultAuthority() {
-  return "RECOMMEND";
-}
-
-// lib/ai-production/admin.ts
-function getAiProductionDashboard() {
-  const safety = assertAiProductionSafetyInvariants();
-  const secret = resolveGenericSecretRef({
-    providerId: "ai",
-    secretRefEnvKey: "AI_PROVIDER_SECRET_REF"
-  });
-  return {
-    version: AI_PRODUCTION_VERSION,
-    productionEnabled: isAiProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["health"] }),
-    defaultAuthority: resolveDefaultAuthority(),
-    workers: AI_WORKERS,
-    safetyCounters: getAiProductionSafetyCounters(),
-    blockers: safety.violations
-  };
-}
-
-// lib/returns-refunds-production/config.ts
-var RETURNS_REFUNDS_PRODUCTION_VERSION = "353.1.0";
-function isReturnsProductionEnabled() {
-  return isProductionFlagEnabled("RETURNS_PRODUCTION");
-}
-
-// lib/returns-refunds-production/admin.ts
-function getReturnsRefundsProductionDashboard() {
-  const safety = assertReturnsRefundsSafetyInvariants();
-  const secret = resolveGenericSecretRef({
-    providerId: "returns",
-    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF"
-  });
-  return {
-    version: RETURNS_REFUNDS_PRODUCTION_VERSION,
-    productionEnabled: isReturnsProductionEnabled() ? "ENABLED" : "DISABLED",
-    liveStatus: deriveProviderLiveStatus({ secret, evidenceCapabilities: ["refund"] }),
-    safetyCounters: getReturnsRefundsSafetyCounters(),
-    blockers: safety.violations
-  };
-}
-
-// lib/tracking-fulfillment/config.ts
-var TRACKING_FULFILLMENT_VERSION = "349.1.0";
-
-// lib/tracking-fulfillment/safety.ts
-var counters9 = { realHttpCalls: 0, fabricatedTrackingIds: 0, webhookProcessed: 0 };
-function getTrackingSafetyCounters() {
-  return { ...counters9 };
-}
-function assertTrackingSafetyInvariants() {
-  const violations = [];
-  if (counters9.realHttpCalls !== 0) violations.push(`realHttpCalls=${counters9.realHttpCalls}`);
-  if (counters9.fabricatedTrackingIds !== 0) violations.push(`fabricatedTrackingIds=${counters9.fabricatedTrackingIds}`);
-  return { ok: violations.length === 0, violations };
-}
-
-// lib/tracking-fulfillment/admin.ts
-function getTrackingFulfillmentDashboard() {
-  const safety = assertTrackingSafetyInvariants();
-  return {
-    version: TRACKING_FULFILLMENT_VERSION,
-    liveStatus: "UNVERIFIED",
-    productionEnabled: "DISABLED",
-    safetyCounters: getTrackingSafetyCounters(),
-    blockers: safety.ok ? [] : safety.violations
-  };
-}
-
-// lib/production-access/accessChecklists.ts
-function item(id, label, status) {
-  return { id, label, status, required: true };
-}
-function buildInterCarsAccessChecklist(secret) {
-  const diag = evaluateInterCarsProductionAccess();
-  return [
-    item("ic_production_account", "Inter Cars production API account", "NOT_AVAILABLE"),
-    item("ic_oauth2_token", "OAuth2 production token/access", secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED"),
-    item("ic_secret_manager", "Deployment Secret Manager entry", secret.secretRefConfigured ? "CONFIGURED" : "NOT_CONFIGURED"),
-    item("ic_live_profile", "SUPPLIER_LIVE_PROFILE=inter-cars", diag.interCarsProfile === "CONFIGURED" ? "CONFIGURED" : "NOT_CONFIGURED"),
-    item("ic_read_network", "Read-only network access", process.env.SUPPLIER_LIVE_READ_ENABLED === "1" ? "CONFIGURED" : "NOT_CONFIGURED"),
-    item("ic_health", "Health endpoint", diag.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("ic_catalog", "Catalog endpoint", diag.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("ic_stock", "Stock endpoint", diag.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("ic_price", "Price endpoint", diag.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("ic_controlled_validation", "#342 controlled validation", diag.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED")
-  ];
-}
-function buildPaymentAccessChecklist(secret) {
-  return [
-    item("pay_merchant_account", "Merchant/business account", "NOT_AVAILABLE"),
-    item("pay_api_credentials", "Production API credentials", secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED"),
-    item("pay_webhook", "Production webhook configuration", "NOT_CONFIGURED"),
-    item("pay_webhook_secret", "Webhook signing secret", "NOT_CONFIGURED"),
-    item("pay_currencies", "EUR and required market currencies", "UNVERIFIED"),
-    item("pay_refund", "Refund capability", "UNVERIFIED"),
-    item("pay_secret_manager", "Deployment Secret Manager entry", secret.secretRefConfigured ? "CONFIGURED" : "NOT_CONFIGURED")
-  ];
-}
-function buildCarrierAccessChecklist(secret) {
-  return [
-    item("carrier_account", "Carrier production account", "NOT_AVAILABLE"),
-    item("carrier_credentials", "Production API credentials", secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED"),
-    item("carrier_service_mapping", "Country/service mapping", "UNVERIFIED"),
-    item("carrier_secret_manager", "Deployment Secret Manager entry", secret.secretRefConfigured ? "CONFIGURED" : "NOT_CONFIGURED")
-  ];
-}
-function buildAiAccessChecklist(secret) {
-  return [
-    item("ai_provider_account", "AI production provider account", "NOT_AVAILABLE"),
-    item("ai_secret_ref", "Production secret reference", secret.secretRefConfigured ? "CONFIGURED" : "NOT_CONFIGURED"),
-    item("ai_health", "Provider health check", "UNVERIFIED"),
-    item("ai_rate_limit", "Rate limit configuration", "UNVERIFIED")
-  ];
-}
-function buildReturnsAccessChecklist(secret) {
-  const credStatus = secret?.secretResolvable ? "CONFIGURED" : secret?.secretRefConfigured ? "CONFIGURED" : "NOT_CONFIGURED";
-  return [
-    item("returns_secret_ref", "Returns provider secret reference", credStatus),
-    item("returns_eligibility", "Return eligibility rules", "UNVERIFIED"),
-    item("returns_supplier_credit", "Supplier credit path", "UNVERIFIED"),
-    item("returns_customer_refund", "Customer refund path", "UNVERIFIED"),
-    item("returns_production_flag", "Returns production disabled by default", isProductionFlagEnabled("RETURNS_PRODUCTION") ? "BLOCKED" : "CONFIGURED")
-  ];
-}
-function buildMarketingAccessChecklist() {
-  const providers = ["GOOGLE_ADS", "META", "TIKTOK", "YOUTUBE"];
-  const items = [
-    item("marketing_spend_off", "Marketing spend disabled by default", isProductionFlagEnabled("MARKETING_SPEND") ? "BLOCKED" : "CONFIGURED")
-  ];
-  for (const p of providers) {
-    const configured = Boolean(process.env[`${p}_SECRET_REF`]?.trim());
-    items.push(item(`marketing_${p.toLowerCase()}`, `${p} secret reference`, configured ? "CONFIGURED" : "NOT_CONFIGURED"));
-  }
-  return items;
-}
-function gateStatusToAccess(status) {
-  if (status === "PASS" || status === "VALIDATED" || status === "EXECUTED" || status === "COMPLETED" || status === "ARMED" || status === "ACTIVE") {
-    return "VALIDATED";
-  }
-  if (status === "CONFIGURED" || status === "ENABLED" || status === "REVIEW_READY") return "CONFIGURED";
-  if (status === "NOT_CONFIGURED" || status === "NONE") return "NOT_CONFIGURED";
-  if (status === "BLOCKED" || status === "FAILED") return "BLOCKED";
-  return "UNVERIFIED";
-}
-function buildRealWorldGoLiveChecklist() {
-  const interCars = evaluateInterCarsProductionAccess();
-  const accessDash = getProductionAccessDashboard();
-  const payment = getPaymentProductionDashboard();
-  const carrier = getCarrierProductionDashboard();
-  const returns = getReturnsRefundsProductionDashboard();
-  const ai = getAiProductionDashboard();
-  const tracking = getTrackingFulfillmentDashboard();
-  return [
-    item("rw_ic_credentials", "Inter Cars credentials deployed", interCars.productionCredentials === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "CONFIGURED"),
-    item("rw_ic_read_live", "Inter Cars read-only live PASS", interCars.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("rw_342", "#342 genuine controlled validation PASS", interCars.createOrderCapability === "VALIDATED" ? "VALIDATED" : "UNVERIFIED"),
-    item("rw_343", "#343 arming PASS", gateStatusToAccess(accessDash.armingState)),
-    item("rw_344", "#344 first order PASS", gateStatusToAccess(accessDash.firstOrderState)),
-    item("rw_345", "#345 controlled go-live PASS", gateStatusToAccess(accessDash.controlledGoLive)),
-    item("rw_346", "#346 observation PASS", gateStatusToAccess(String(accessDash.observationState))),
-    item("rw_payment", "Payment production validated", gateStatusToAccess(payment.liveStatus)),
-    item("rw_carrier", "Carrier production validated", gateStatusToAccess(carrier.liveStatus)),
-    item("rw_tracking", "Tracking production validated", gateStatusToAccess(tracking.liveStatus)),
-    item("rw_returns", "Returns/refunds production validated", gateStatusToAccess(returns.liveStatus)),
-    item("rw_ai", "AI production validated", gateStatusToAccess(ai.liveStatus)),
-    item("rw_sales_closed", "SALES_ENABLED=0 until all mandatory PASS", isProductionFlagEnabled("SALES") ? "BLOCKED" : "CONFIGURED")
-  ];
-}
-
-// lib/production-access/providerRegistry.ts
+// lib/inter-cars-production-access-evidence-bridge/evidenceHash.ts
 var import_crypto2 = require("crypto");
-function isAnyPaymentSecretRefConfigured() {
-  return listAllProviderKinds().filter((k) => k !== "MOCK").some((k) => hasProviderSecretRef(k));
-}
-function resolveAccessState(input) {
-  if (input.blocked) return "BLOCKED";
-  if (!input.credentialConfigured && !input.secretRefConfigured) return "NOT_CONFIGURED";
-  if (input.liveValidation === "VALIDATED") return "VALIDATED";
-  if (input.liveValidation === "VALIDATING") return "VALIDATING";
-  if (input.liveValidation === "FAILED") return "FAILED";
-  if (input.liveValidation === "REVOKED") return "REVOKED";
-  if (input.liveValidation === "EXPIRED") return "EXPIRED";
-  if (input.credentialConfigured || input.secretRefConfigured) return "CONFIGURED";
-  return "UNVERIFIED";
-}
-function evaluateInterCarsProviderState() {
-  const secret = resolveInterCarsSecretRef();
-  const diag = evaluateInterCarsProductionAccess();
-  const profile = resolvePredefinedLiveProfile();
-  const evidence = listProviderAccessEvidence("inter-cars");
-  const latest = evidence[evidence.length - 1];
-  const readValidated = diag.readOnlyLiveValidation === "VALIDATED" || hasProductionEvidence("inter-cars", "health");
-  const createValidated = diag.createOrderCapability === "VALIDATED";
-  const liveValidation = createValidated ? "VALIDATED" : readValidated ? "CONFIGURED" : secret.credentialStatus === "BLOCKED" ? "BLOCKED" : "UNVERIFIED";
-  const blockers = [];
-  if (!profile) blockers.push("MISSING_INTER_CARS_PROFILE");
-  if (secret.credentialStatus === "NOT_CONFIGURED") blockers.push("MISSING_INTER_CARS_CREDENTIAL");
-  if (createValidated === false) blockers.push("CREATE_ORDER_NOT_VALIDATED");
-  return {
-    providerId: "inter-cars",
-    domain: "SUPPLIER",
-    accessState: resolveAccessState({
-      credentialConfigured: secret.secretResolvable,
-      secretRefConfigured: secret.secretRefConfigured,
-      liveValidation,
-      blocked: secret.credentialStatus === "BLOCKED"
-    }),
-    credentialConfigured: secret.secretResolvable,
-    secretRefConfigured: secret.secretRefConfigured,
-    endpointConfigured: Boolean(profile?.baseUrl),
-    networkPermission: process.env.SUPPLIER_LIVE_READ_ENABLED === "1",
-    healthCheck: readValidated ? "VALIDATED" : "UNVERIFIED",
-    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
-    capabilityCheck: createValidated ? "VALIDATED" : "UNVERIFIED",
-    liveValidation,
-    evidenceCount: evidence.length,
-    lastValidationAt: latest?.timestamp,
-    correlationId: diag.correlationId,
-    productionEnabled: isProductionFlagEnabled("SUPPLIER_ORDER_NETWORK") ? "ON" : "OFF",
-    blockers
-  };
-}
-function evaluatePaymentProviderState() {
-  const genericSecret = resolveGenericSecretRef({
-    providerId: "payment",
-    secretRefEnvKey: "PAYMENT_PROVIDER_SECRET_REF",
-    fallbackEnvKey: "PAYMENT_PROVIDER_SECRET"
-  });
-  const perProviderConfigured = isAnyPaymentSecretRefConfigured();
-  const secretRefConfigured2 = genericSecret.secretRefConfigured || perProviderConfigured;
-  const credentialConfigured = genericSecret.secretResolvable || perProviderConfigured;
-  const dash = getPaymentProductionDashboard();
-  const evidence = listProviderAccessEvidence("payment");
-  const validated = hasProductionEvidence("payment", "authentication");
-  return {
-    providerId: "payment",
-    domain: "PAYMENT",
-    accessState: resolveAccessState({
-      credentialConfigured,
-      secretRefConfigured: secretRefConfigured2,
-      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
-    }),
-    credentialConfigured,
-    secretRefConfigured: secretRefConfigured2,
-    endpointConfigured: Boolean(process.env.PAYMENT_PROVIDER_ENDPOINT),
-    networkPermission: false,
-    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
-    authenticationCheck: credentialConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
-    capabilityCheck: "UNVERIFIED",
-    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
-    evidenceCount: evidence.length,
-    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
-    correlationId: (0, import_crypto2.randomUUID)(),
-    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
-    blockers: validated ? [] : ["PAYMENT_NOT_VALIDATED"]
-  };
-}
-function evaluateCarrierProviderState() {
-  const secret = resolveGenericSecretRef({
-    providerId: "carrier",
-    secretRefEnvKey: "CARRIER_PROVIDER_SECRET_REF"
-  });
-  const dash = getCarrierProductionDashboard();
-  const evidence = listProviderAccessEvidence("carrier");
-  const validated = hasProductionEvidence("carrier", "health");
-  return {
-    providerId: "carrier",
-    domain: "CARRIER",
-    accessState: resolveAccessState({
-      credentialConfigured: secret.secretResolvable,
-      secretRefConfigured: secret.secretRefConfigured,
-      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
-    }),
-    credentialConfigured: secret.secretResolvable,
-    secretRefConfigured: secret.secretRefConfigured,
-    endpointConfigured: Boolean(process.env.CARRIER_PROVIDER_ENDPOINT),
-    networkPermission: false,
-    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
-    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
-    capabilityCheck: "UNVERIFIED",
-    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
-    evidenceCount: evidence.length,
-    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
-    correlationId: (0, import_crypto2.randomUUID)(),
-    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
-    blockers: validated ? [] : ["CARRIER_NOT_VALIDATED"]
-  };
-}
-function evaluateAiProviderState() {
-  const secret = resolveGenericSecretRef({
-    providerId: "ai",
-    secretRefEnvKey: "AI_PROVIDER_SECRET_REF"
-  });
-  const dash = getAiProductionDashboard();
-  const evidence = listProviderAccessEvidence("ai");
-  const validated = hasProductionEvidence("ai", "health");
-  return {
-    providerId: "ai",
-    domain: "AI",
-    accessState: resolveAccessState({
-      credentialConfigured: secret.secretResolvable,
-      secretRefConfigured: secret.secretRefConfigured,
-      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
-    }),
-    credentialConfigured: secret.secretResolvable,
-    secretRefConfigured: secret.secretRefConfigured,
-    endpointConfigured: Boolean(process.env.AI_PROVIDER_ENDPOINT),
-    networkPermission: false,
-    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
-    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
-    capabilityCheck: "UNVERIFIED",
-    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
-    evidenceCount: evidence.length,
-    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
-    correlationId: (0, import_crypto2.randomUUID)(),
-    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
-    blockers: validated ? [] : ["AI_NOT_VALIDATED"]
-  };
-}
-function evaluateReturnsProviderState() {
-  const secret = resolveGenericSecretRef({
-    providerId: "returns",
-    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF"
-  });
-  const dash = getReturnsRefundsProductionDashboard();
-  const evidence = listProviderAccessEvidence("returns");
-  const validated = hasProductionEvidence("returns", "refund");
-  return {
-    providerId: "returns",
-    domain: "RETURNS",
-    accessState: resolveAccessState({
-      credentialConfigured: secret.secretResolvable,
-      secretRefConfigured: secret.secretRefConfigured,
-      liveValidation: validated ? "VALIDATED" : "UNVERIFIED"
-    }),
-    credentialConfigured: secret.secretResolvable,
-    secretRefConfigured: secret.secretRefConfigured,
-    endpointConfigured: Boolean(process.env.RETURNS_PROVIDER_ENDPOINT),
-    networkPermission: false,
-    healthCheck: validated ? "VALIDATED" : "UNVERIFIED",
-    authenticationCheck: secret.secretResolvable ? "CONFIGURED" : "NOT_CONFIGURED",
-    capabilityCheck: "UNVERIFIED",
-    liveValidation: validated ? "VALIDATED" : "UNVERIFIED",
-    evidenceCount: evidence.length,
-    lastValidationAt: evidence[evidence.length - 1]?.timestamp,
-    correlationId: (0, import_crypto2.randomUUID)(),
-    productionEnabled: dash.productionEnabled === "ENABLED" ? "ON" : "OFF",
-    blockers: validated ? [] : ["RETURNS_NOT_VALIDATED"]
-  };
-}
-function evaluateMarketingProviderState() {
-  const providers = ["GOOGLE_ADS", "META", "TIKTOK", "YOUTUBE"];
-  const configured = providers.some((p) => Boolean(process.env[`${p}_SECRET_REF`]?.trim()));
-  const evidence = listProviderAccessEvidence("marketing");
-  return {
-    providerId: "marketing",
-    domain: "MARKETING",
-    accessState: configured ? "CONFIGURED" : "NOT_CONFIGURED",
-    credentialConfigured: configured,
-    secretRefConfigured: configured,
-    endpointConfigured: false,
-    networkPermission: false,
-    healthCheck: "UNVERIFIED",
-    authenticationCheck: configured ? "CONFIGURED" : "NOT_CONFIGURED",
-    capabilityCheck: "UNVERIFIED",
-    liveValidation: "UNVERIFIED",
-    evidenceCount: evidence.length,
-    correlationId: (0, import_crypto2.randomUUID)(),
-    productionEnabled: isProductionFlagEnabled("MARKETING_SPEND") ? "ON" : "OFF",
-    blockers: configured ? ["MARKETING_NOT_VALIDATED"] : ["MARKETING_NOT_CONFIGURED"]
-  };
-}
-function getAllProviderStates() {
-  return [
-    evaluateInterCarsProviderState(),
-    evaluatePaymentProviderState(),
-    evaluateCarrierProviderState(),
-    evaluateAiProviderState(),
-    evaluateReturnsProviderState(),
-    evaluateMarketingProviderState()
-  ];
-}
-
-// lib/production-access/missingAccessReport.ts
-function providerReport(input) {
-  const productionEnabled = input.productionFlag && isProductionFlagEnabled(input.productionFlag) ? "ON" : "OFF";
-  const blockers = input.checklist.filter((c) => !["CONFIGURED", "VALIDATED"].includes(c.status)).map((c) => `${input.providerId}:${c.id}`);
-  return {
+function hashInterCarsEvidenceMetadata(input) {
+  const safe = {
     providerId: input.providerId,
-    domain: input.domain,
-    secretRef: input.secret,
-    checklist: input.checklist,
-    liveValidation: input.liveStatus || "UNVERIFIED",
-    productionEnabled: productionEnabled === "ON" ? "ON" : "OFF",
-    blockers
+    environment: input.environment,
+    source: input.source,
+    credentialType: input.credentialType,
+    secretRef: input.secretRef.startsWith("env:") ? input.secretRef : "env:***",
+    validationMethod: input.validationMethod,
+    timestamp: input.timestamp,
+    endpoint: input.endpoint,
+    responseStatus: input.responseStatus,
+    capability: input.capability,
+    evidenceReference: input.evidenceReference,
+    operator: input.operator,
+    expiresAt: input.expiresAt
   };
-}
-function phaseStatus(items, passStatuses = ["CONFIGURED", "VALIDATED"]) {
-  if (items.some((i) => i.status === "BLOCKED")) return "BLOCKED";
-  if (items.every((i) => passStatuses.includes(i.status))) return "VALIDATED";
-  if (items.some((i) => i.status === "NOT_CONFIGURED")) return "NOT_CONFIGURED";
-  return "UNVERIFIED";
-}
-function buildMissingProductionAccessReport() {
-  const interCarsSecret = resolveInterCarsSecretRef();
-  const interCarsChecklist = buildInterCarsAccessChecklist(interCarsSecret);
-  const interCarsDiag = evaluateInterCarsProductionAccess();
-  const interCars = providerReport({
-    providerId: "inter-cars",
-    domain: "SUPPLIER",
-    secret: interCarsSecret,
-    checklist: interCarsChecklist,
-    productionFlag: "SUPPLIER_ORDER_NETWORK",
-    liveStatus: interCarsDiag.readOnlyLiveValidation === "VALIDATED" ? "VALIDATED" : interCarsSecret.secretResolvable ? "UNVERIFIED" : "NOT_CONFIGURED"
-  });
-  const paymentSecret = resolveGenericSecretRef({
-    providerId: "payment",
-    secretRefEnvKey: "PAYMENT_PROVIDER_SECRET_REF",
-    fallbackEnvKey: "PAYMENT_PROVIDER_SECRET"
-  });
-  const payment = providerReport({
-    providerId: "payment",
-    domain: "PAYMENT",
-    secret: paymentSecret,
-    checklist: buildPaymentAccessChecklist(paymentSecret),
-    productionFlag: "PAYMENT_PRODUCTION"
-  });
-  const carrierSecret = resolveGenericSecretRef({
-    providerId: "carrier",
-    secretRefEnvKey: "CARRIER_PROVIDER_SECRET_REF"
-  });
-  const carrier = providerReport({
-    providerId: "carrier",
-    domain: "CARRIER",
-    secret: carrierSecret,
-    checklist: buildCarrierAccessChecklist(carrierSecret),
-    productionFlag: "CARRIER_PRODUCTION"
-  });
-  const aiSecret = resolveGenericSecretRef({
-    providerId: "ai",
-    secretRefEnvKey: "AI_PROVIDER_SECRET_REF"
-  });
-  const ai = providerReport({
-    providerId: "ai",
-    domain: "AI",
-    secret: aiSecret,
-    checklist: buildAiAccessChecklist(aiSecret),
-    productionFlag: "AI_PRODUCTION"
-  });
-  const returnsSecret = resolveGenericSecretRef({
-    providerId: "returns",
-    secretRefEnvKey: "RETURNS_PROVIDER_SECRET_REF"
-  });
-  const returns = providerReport({
-    providerId: "returns",
-    domain: "RETURNS",
-    secret: returnsSecret,
-    checklist: buildReturnsAccessChecklist(returnsSecret),
-    productionFlag: "RETURNS_PRODUCTION",
-    liveStatus: returnsSecret.secretResolvable ? "UNVERIFIED" : "NOT_CONFIGURED"
-  });
-  const marketing = providerReport({
-    providerId: "marketing",
-    domain: "MARKETING",
-    secret: {
-      providerId: "marketing",
-      secretRefKey: "multi",
-      secretRefConfigured: ["GOOGLE_ADS", "META", "TIKTOK", "YOUTUBE"].some((p) => Boolean(process.env[`${p}_SECRET_REF`])),
-      secretResolvable: false,
-      credentialStatus: "NOT_CONFIGURED"
-    },
-    checklist: buildMarketingAccessChecklist(),
-    productionFlag: "MARKETING_SPEND"
-  });
-  const realWorld = buildRealWorldGoLiveChecklist();
-  const flags = getProductionFlagsSnapshot();
-  const flagRecord = {};
-  for (const [k, v] of Object.entries(flags)) flagRecord[k] = v;
-  const providerStates = getAllProviderStates();
-  const stateById = Object.fromEntries(providerStates.map((s) => [s.providerId, s]));
-  for (const p of [interCars, payment, carrier, ai, returns, marketing]) {
-    p.state = stateById[p.providerId];
-  }
-  const providers = [interCars, payment, carrier, ai, returns, marketing];
-  const blockers = [
-    .../* @__PURE__ */ new Set([
-      ...providers.flatMap((p) => p.blockers),
-      ...realWorld.filter((c) => c.status !== "VALIDATED" && c.status !== "CONFIGURED").map((c) => `REAL_WORLD:${c.id}`)
-    ])
-  ];
-  return {
-    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    providers,
-    interCars,
-    liveSequence: {
-      phase1Access: phaseStatus(interCarsChecklist.slice(0, 9)),
-      phase2Supplier: phaseStatus(realWorld.slice(0, 6)),
-      phase3Providers: phaseStatus([...payment.checklist, ...carrier.checklist, ...ai.checklist, ...returns.checklist, ...marketing.checklist]),
-      phase4Final: phaseStatus(realWorld)
-    },
-    productionFlags: flagRecord,
-    realSideEffects: getFinalGoLiveSafetyCounters(),
-    sales: isProductionFlagEnabled("SALES") ? "OPEN" : "CLOSED",
-    blockers,
-    realWorldChecklist: realWorld
-  };
+  return (0, import_crypto2.createHash)("sha256").update(JSON.stringify(safe)).digest("hex");
 }
 
-// lib/trade-route-fulfillment/carrierSelection.ts
-var CARRIER_PROFILES = [
-  {
-    carrierId: "DHL",
-    adapterId: "dhl",
-    serviceLevel: "standard",
-    maxWeightKg: 31.5,
-    maxLengthCm: 120,
-    internationalSupport: true,
-    customsSupport: true,
-    trackingSupport: true,
-    returnsSupport: true,
-    dangerousGoods: false,
-    oversized: false,
-    supportedOrigins: "*",
-    supportedDestinations: "*",
-    deliveryDaysMin: 2,
-    deliveryDaysMax: 5,
-    baseCost: 6.99
-  },
-  {
-    carrierId: "DPD",
-    adapterId: "dpd",
-    serviceLevel: "standard",
-    maxWeightKg: 31.5,
-    maxLengthCm: 175,
-    internationalSupport: true,
-    customsSupport: true,
-    trackingSupport: true,
-    returnsSupport: true,
-    dangerousGoods: false,
-    oversized: false,
-    supportedOrigins: "*",
-    supportedDestinations: "*",
-    deliveryDaysMin: 2,
-    deliveryDaysMax: 6,
-    baseCost: 5.99
-  },
-  {
-    carrierId: "GLS",
-    adapterId: "gls",
-    serviceLevel: "standard",
-    maxWeightKg: 40,
-    maxLengthCm: 200,
-    internationalSupport: true,
-    customsSupport: false,
-    trackingSupport: true,
-    returnsSupport: true,
-    dangerousGoods: false,
-    oversized: false,
-    supportedOrigins: "*",
-    supportedDestinations: "*",
-    deliveryDaysMin: 2,
-    deliveryDaysMax: 7,
-    baseCost: 5.49
-  },
-  {
-    carrierId: "UPS",
-    adapterId: "dhl",
-    serviceLevel: "express",
-    maxWeightKg: 70,
-    maxLengthCm: 274,
-    internationalSupport: true,
-    customsSupport: true,
-    trackingSupport: true,
-    returnsSupport: false,
-    dangerousGoods: false,
-    oversized: true,
-    supportedOrigins: "*",
-    supportedDestinations: "*",
-    deliveryDaysMin: 1,
-    deliveryDaysMax: 3,
-    baseCost: 14.99
-  },
-  {
-    carrierId: "DHL_EXPRESS",
-    adapterId: "dhl",
-    serviceLevel: "express",
-    maxWeightKg: 70,
-    maxLengthCm: 120,
-    internationalSupport: true,
-    customsSupport: true,
-    trackingSupport: true,
-    returnsSupport: false,
-    dangerousGoods: false,
-    oversized: false,
-    supportedOrigins: "*",
-    supportedDestinations: "*",
-    deliveryDaysMin: 1,
-    deliveryDaysMax: 2,
-    baseCost: 19.99
-  }
+// lib/inter-cars-production-access-evidence-bridge/evidenceValidation.ts
+var READ_ONLY_CAPABILITIES = ["health", "catalog", "products", "stock", "pricing"];
+var ORDER_CAPABILITIES = [
+  "createOrder",
+  "cancelOrder",
+  "orderStatus",
+  "tracking",
+  "returns",
+  "refund"
 ];
-
-// lib/supplier-inter-cars-production-access/statusReport.ts
-function buildInterCarsAccessStatusReport() {
-  const diag = evaluateInterCarsProductionAccess();
-  const secret = resolveInterCarsSecretRef();
-  const stageA = evaluateStageAReadValidation(diag.productionCredentials);
-  const counters10 = getProductionAccessSafetyCounters();
-  const realSideEffects = counters10.realHttpCalls + diag.realHttpCalls + diag.realCreateOrderCalls;
-  const handoff343 = diag.createOrderCapability === "VALIDATED" ? "READY_FOR_343_ARMING" : "BLOCKED";
-  const credential = secret.credentialStatus === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : secret.credentialStatus === "BLOCKED" ? "BLOCKED" : diag.productionCredentials === "VALID" ? "CONFIGURED" : String(diag.productionCredentials);
-  const finalStatus = stageA.status === "VALIDATED" && diag.createOrderCapability === "VALIDATED" ? "READY_FOR_OPS" : stageA.handoff === "READY_FOR_STAGE_B_342" ? "READY_FOR_STAGE_B" : secret.credentialStatus === "NOT_CONFIGURED" ? "BLOCKED_NO_CREDENTIALS" : "BLOCKED";
-  return {
-    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    software: "COMPLETE",
-    credential,
-    stageA: stageA.status,
-    stage342: diag.createOrderCapability,
-    supplierOrder: diag.supplierOrderNetwork === "ON" ? "ENABLED" : "DISABLED",
-    realSideEffects,
-    fakeEvidence: 0,
-    finalStatus,
-    handoffStageB: stageA.handoff,
-    handoffStage343: handoff343,
-    blockers: [.../* @__PURE__ */ new Set([...diag.blockers, ...stageA.blockers])]
-  };
-}
-
-// lib/final-external-access/externalAccessMatrix.ts
-function mapStatus(configured, validated, blocked, liveNetwork) {
-  if (blocked) return "BLOCKED";
-  if (liveNetwork && validated) return "ENABLED";
-  if (validated) return "VALIDATED";
-  if (configured) return "CONFIGURED";
-  return "NOT_CONFIGURED";
-}
-function entryFromProviderState(input) {
-  const s = input.state;
-  const configured = Boolean(s?.credentialConfigured || s?.secretRefConfigured);
-  const validated = s?.liveValidation === "VALIDATED" || s?.accessState === "VALIDATED";
-  const blocked = s?.accessState === "BLOCKED" || Boolean(input.extraBlocker);
-  const liveNetwork = s?.networkPermission === true && s?.productionEnabled === "ON";
-  const status = mapStatus(configured, validated, blocked, liveNetwork);
-  const evidence = listProviderAccessEvidence(input.provider.replace(/\s+/g, "-").toLowerCase());
-  const latest = evidence[evidence.length - 1];
-  return {
-    provider: input.provider,
-    environment: input.environment ?? "PRODUCTION",
-    credentialSecretRef: input.secretRef,
-    credentialConfigured: configured,
-    credentialValid: validated || configured && !blocked,
-    endpointConfigured: s?.endpointConfigured ?? configured,
-    endpointReachable: validated,
-    capabilityDeclared: s?.capabilityCheck !== "NOT_CONFIGURED",
-    capabilityValidated: s?.capabilityCheck === "VALIDATED" || validated,
-    liveNetworkEnabled: liveNetwork,
-    productionReady: status === "VALIDATED" && validated && s?.endpointConfigured !== false,
-    status,
-    blockingReason: input.extraBlocker || s?.blockers?.[0] || (configured ? "AWAITING_LIVE_VALIDATION" : "NOT_CONFIGURED"),
-    requiredHumanApproval: input.humanApproval ?? false,
-    lastValidationTimestamp: s?.lastValidationAt ?? latest?.timestamp,
-    evidenceReference: latest?.evidenceId
-  };
-}
-function buildExternalAccessMatrix() {
-  const states = getAllProviderStates();
-  const byId3 = (id) => states.find((s) => s.providerId === id);
-  const interCarsReport = buildInterCarsAccessStatusReport();
-  const interCarsSecret = resolveInterCarsSecretRef();
-  const interCarsState = evaluateInterCarsProviderState();
-  const entries = [
-    entryFromProviderState({
-      provider: "INTER CARS",
-      secretRef: interCarsSecret.secretRefKey,
-      state: interCarsState,
-      humanApproval: true,
-      extraBlocker: interCarsReport.credential === "NOT_CONFIGURED" ? "BLOCKED \u2014 MISSING PRODUCTION CREDENTIALS / ACCESS" : interCarsReport.stage342 === "UNVERIFIED" ? "CREATE_ORDER_UNVERIFIED" : void 0
-    }),
-    entryFromProviderState({
-      provider: "PAYMENT",
-      secretRef: "env:PAYMENT_PROVIDER_SECRET_REF",
-      state: byId3("payment")
-    }),
-    entryFromProviderState({
-      provider: "CARRIER",
-      secretRef: "env:CARRIER_PROVIDER_SECRET_REF",
-      state: byId3("carrier")
-    }),
-    {
-      provider: "TRACKING",
-      environment: "PRODUCTION",
-      credentialSecretRef: "env:CARRIER_PROVIDER_SECRET_REF",
-      credentialConfigured: byId3("carrier")?.credentialConfigured ?? false,
-      credentialValid: false,
-      endpointConfigured: false,
-      endpointReachable: false,
-      capabilityDeclared: true,
-      capabilityValidated: false,
-      liveNetworkEnabled: false,
-      productionReady: false,
-      status: byId3("carrier")?.credentialConfigured ? "UNVERIFIED" : "NOT_CONFIGURED",
-      blockingReason: "CARRIER_CREDENTIAL_REQUIRED",
-      requiredHumanApproval: false
-    },
-    entryFromProviderState({
-      provider: "RETURNS",
-      secretRef: "env:RETURNS_PROVIDER_SECRET_REF",
-      state: byId3("returns")
-    }),
-    entryFromProviderState({
-      provider: "REFUNDS",
-      secretRef: "env:RETURNS_PROVIDER_SECRET_REF",
-      state: byId3("returns")
-    }),
-    {
-      provider: "FINANCIAL PROVIDER",
-      environment: "PRODUCTION",
-      credentialSecretRef: "n/a",
-      credentialConfigured: true,
-      credentialValid: false,
-      endpointConfigured: true,
-      endpointReachable: false,
-      capabilityDeclared: true,
-      capabilityValidated: false,
-      liveNetworkEnabled: false,
-      productionReady: false,
-      status: "UNVERIFIED",
-      blockingReason: "REQUIRES_LIVE_ORDER_CHAIN",
-      requiredHumanApproval: true
-    },
-    ...["AMAZON", "EBAY", "KAUFLAND", "ALLEGRO", "BOL", "CDISCOUNT", "OTTO", "EMAG", "SKROUTZ"].map(
-      (mp) => ({
-        provider: mp,
-        environment: "PRODUCTION",
-        credentialSecretRef: `env:MARKETPLACE_${mp}_SECRET_REF`,
-        credentialConfigured: Boolean(process.env[`MARKETPLACE_${mp}_SECRET_REF`]?.trim()),
-        credentialValid: hasProductionEvidence("marketplace", mp.toLowerCase()),
-        endpointConfigured: false,
-        endpointReachable: false,
-        capabilityDeclared: true,
-        capabilityValidated: false,
-        liveNetworkEnabled: false,
-        productionReady: false,
-        status: "NOT_CONFIGURED",
-        blockingReason: "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED",
-        requiredHumanApproval: true
-      })
-    ),
-    {
-      provider: "OTHER MARKETPLACES",
-      environment: "PRODUCTION",
-      credentialSecretRef: "env:MARKETPLACE_PROVIDER_SECRET_REF",
-      credentialConfigured: Boolean(process.env.MARKETPLACE_PROVIDER_SECRET_REF?.trim()),
-      credentialValid: false,
-      endpointConfigured: false,
-      endpointReachable: false,
-      capabilityDeclared: true,
-      capabilityValidated: false,
-      liveNetworkEnabled: false,
-      productionReady: false,
-      status: "NOT_CONFIGURED",
-      blockingReason: "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED",
-      requiredHumanApproval: true
-    },
-    entryFromProviderState({
-      provider: "AI PROVIDER",
-      secretRef: "env:AI_PROVIDER_SECRET_REF",
-      state: byId3("ai")
-    }),
-    entryFromProviderState({
-      provider: "MARKETING",
-      secretRef: "env:GOOGLE_ADS_SECRET_REF",
-      state: byId3("marketing")
-    }),
-    {
-      provider: "EMAIL",
-      environment: "PRODUCTION",
-      credentialSecretRef: "env:EMAIL_PROVIDER_SECRET_REF",
-      credentialConfigured: Boolean(
-        process.env.EMAIL_PROVIDER_SECRET_REF?.trim() || process.env.SMTP_SECRET_REF?.trim()
-      ),
-      credentialValid: false,
-      endpointConfigured: Boolean(process.env.SMTP_HOST?.trim()),
-      endpointReachable: false,
-      capabilityDeclared: true,
-      capabilityValidated: false,
-      liveNetworkEnabled: false,
-      productionReady: false,
-      status: process.env.EMAIL_PROVIDER_SECRET_REF ? "CONFIGURED" : "NOT_CONFIGURED",
-      blockingReason: process.env.EMAIL_PROVIDER_SECRET_REF ? "AWAITING_LIVE_VALIDATION" : "NOT_CONFIGURED",
-      requiredHumanApproval: false
-    },
-    {
-      provider: "DEPLOYMENT",
-      environment: "PRODUCTION",
-      credentialSecretRef: "env:RENDER_API_KEY",
-      credentialConfigured: Boolean(process.env.RENDER_API_KEY?.trim()),
-      credentialValid: false,
-      endpointConfigured: Boolean(process.env.RENDER_SERVICE_ID?.trim()),
-      endpointReachable: false,
-      capabilityDeclared: true,
-      capabilityValidated: false,
-      liveNetworkEnabled: false,
-      productionReady: false,
-      status: "UNVERIFIED",
-      blockingReason: "RENDER_DEPLOYMENT_MANUAL_VERIFICATION",
-      requiredHumanApproval: true
-    },
-    {
-      provider: "PERSISTENT STORAGE",
-      environment: "PRODUCTION",
-      credentialSecretRef: "n/a",
-      credentialConfigured: Boolean(process.env.PERSISTENT_DATA_PATH?.trim() || process.env.SQLITE_PATH?.trim()),
-      credentialValid: false,
-      endpointConfigured: Boolean(process.env.PERSISTENT_DATA_PATH?.trim()),
-      endpointReachable: false,
-      capabilityDeclared: true,
-      capabilityValidated: false,
-      liveNetworkEnabled: false,
-      productionReady: false,
-      status: process.env.PERSISTENT_DATA_PATH === "/var/data" ? "CONFIGURED" : "BLOCKED",
-      blockingReason: "BLOCKED \u2014 MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)",
-      requiredHumanApproval: true
-    }
-  ];
-  for (const kind of listAllProviderKinds().filter((k) => k !== "MOCK")) {
-    if (!hasProviderSecretRef(kind)) continue;
-    const secret = resolveGenericSecretRef({
-      providerId: `payment-${kind.toLowerCase()}`,
-      secretRefEnvKey: `PAYMENT_${kind}_SECRET_REF`,
-      fallbackEnvKey: "PAYMENT_PROVIDER_SECRET"
-    });
-    entries.push({
-      provider: `PAYMENT/${kind}`,
-      environment: "PRODUCTION",
-      credentialSecretRef: secret.secretRefKey,
-      credentialConfigured: secret.secretRefConfigured,
-      credentialValid: secret.credentialStatus === "CONFIGURED",
-      endpointConfigured: secret.secretRefConfigured,
-      endpointReachable: hasProductionEvidence("payment", kind.toLowerCase()),
-      capabilityDeclared: true,
-      capabilityValidated: hasProductionEvidence("payment", kind.toLowerCase()),
-      liveNetworkEnabled: isProductionFlagEnabled("PAYMENT_PRODUCTION"),
-      productionReady: false,
-      status: secret.secretRefConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
-      blockingReason: secret.secretRefConfigured ? "AWAITING_LIVE_VALIDATION" : "NOT_CONFIGURED",
-      requiredHumanApproval: true
-    });
+function assertInterCarsLiveEvidenceSource(input) {
+  if (input.source !== "INTER_CARS_LIVE") {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:SOURCE_NOT_LIVE");
   }
-  for (const profile of CARRIER_PROFILES) {
-    entries.push({
-      provider: `CARRIER/${profile.carrierId}`,
-      environment: "PRODUCTION",
-      credentialSecretRef: "env:CARRIER_PROVIDER_SECRET_REF",
-      credentialConfigured: byId3("carrier")?.credentialConfigured ?? false,
-      credentialValid: false,
-      endpointConfigured: true,
-      endpointReachable: false,
-      capabilityDeclared: true,
-      capabilityValidated: false,
-      liveNetworkEnabled: false,
-      productionReady: false,
-      status: byId3("carrier")?.credentialConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
-      blockingReason: "NO_LABEL_CREATION_WITHOUT_CREDENTIALS",
-      requiredHumanApproval: true
-    });
+  if (input.environment !== "PRODUCTION" && input.environment !== "CONTROLLED_VALIDATION") {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:ENVIRONMENT_NOT_PRODUCTION");
   }
-  return entries;
-}
-
-// lib/final-external-access/goLiveDependencyGraph.ts
-function stepStatus(complete, blocked, configured) {
-  if (complete) return "COMPLETE";
-  if (blocked) return "BLOCKED";
-  if (configured) return "CONFIGURED";
-  return "NOT_CONFIGURED";
-}
-function buildGoLiveDependencyGraph() {
-  const interCars = buildInterCarsAccessStatusReport();
-  const secret = resolveInterCarsSecretRef();
-  const providers = getAllProviderStates();
-  const paymentOk = providers.find((p) => p.providerId === "payment")?.liveValidation === "VALIDATED";
-  const carrierOk = providers.find((p) => p.providerId === "carrier")?.liveValidation === "VALIDATED";
-  const returnsOk = providers.find((p) => p.providerId === "returns")?.liveValidation === "VALIDATED";
-  const credentialsConfigured = secret.secretRefConfigured;
-  const stageAComplete = interCars.stageA === "VALIDATED";
-  const stage342Complete = interCars.stage342 === "VALIDATED";
-  return [
-    {
-      id: "external-credentials",
-      label: "EXTERNAL CREDENTIALS",
-      status: stepStatus(false, !credentialsConfigured, credentialsConfigured),
-      blockingReason: credentialsConfigured ? void 0 : "BLOCKED \u2014 MISSING PRODUCTION CREDENTIALS / ACCESS"
-    },
-    {
-      id: "preflight",
-      label: "PREFLIGHT",
-      status: credentialsConfigured ? "CONFIGURED" : "BLOCKED",
-      blockingReason: credentialsConfigured ? void 0 : "AWAITING_CREDENTIALS"
-    },
-    {
-      id: "read-only-live-validation",
-      label: "READ-ONLY LIVE VALIDATION",
-      status: stepStatus(stageAComplete, !credentialsConfigured, credentialsConfigured),
-      blockingReason: stageAComplete ? void 0 : "STAGE_A_NOT_VALIDATED"
-    },
-    {
-      id: "342-human-approval",
-      label: "#342 HUMAN APPROVAL",
-      status: stepStatus(stage342Complete, !stageAComplete, stageAComplete),
-      requiredHumanApproval: true,
-      blockingReason: stage342Complete ? void 0 : "FOUR_EYES_APPROVAL_REQUIRED"
-    },
-    {
-      id: "controlled-create-order",
-      label: "CONTROLLED CREATE ORDER",
-      status: stepStatus(stage342Complete, interCars.stage342 === "UNVERIFIED", stageAComplete),
-      requiredHumanApproval: true,
-      blockingReason: interCars.stage342 === "UNVERIFIED" ? "CREATE_ORDER_UNVERIFIED" : void 0
-    },
-    {
-      id: "343-production-order-arming",
-      label: "#343 PRODUCTION ORDER ARMING",
-      status: stepStatus(false, !stage342Complete, stage342Complete),
-      requiredHumanApproval: true,
-      blockingReason: "ARMING_NOT_COMPLETE"
-    },
-    {
-      id: "344-first-order-execution",
-      label: "#344 FIRST ORDER EXECUTION",
-      status: "BLOCKED",
-      requiredHumanApproval: true,
-      blockingReason: "FIRST_ORDER_NOT_EXECUTED"
-    },
-    {
-      id: "345-post-first-order-validation",
-      label: "#345 POST-FIRST-ORDER VALIDATION",
-      status: "BLOCKED",
-      requiredHumanApproval: true,
-      blockingReason: "CONTROLLED_GO_LIVE_NOT_COMPLETE"
-    },
-    {
-      id: "346-observation",
-      label: "#346 OBSERVATION / BROADER ROLLOUT",
-      status: "BLOCKED",
-      requiredHumanApproval: true,
-      blockingReason: "OBSERVATION_NOT_COMPLETE"
-    },
-    {
-      id: "provider-validation",
-      label: "PROVIDER VALIDATION",
-      status: stepStatus(paymentOk && carrierOk && returnsOk, false, credentialsConfigured),
-      blockingReason: paymentOk && carrierOk && returnsOk ? void 0 : "PROVIDER_LIVE_VALIDATION_INCOMPLETE"
-    },
-    {
-      id: "final-go-live-gate",
-      label: "FINAL GO-LIVE GATE",
-      status: "BLOCKED",
-      blockingReason: "CREDENTIALS_AND_APPROVAL"
-    },
-    {
-      id: "sales-enabled",
-      label: "SALES_ENABLED=1",
-      status: "BLOCKED",
-      requiredHumanApproval: true,
-      blockingReason: "EXPLICIT_GO_LIVE_APPROVAL_REQUIRED"
-    }
-  ];
-}
-function getCurrentBlockingStep(graph) {
-  return graph.find((s) => s.status === "BLOCKED" || s.status === "NOT_CONFIGURED");
-}
-
-// lib/market-engine/market35Validation.ts
-function validateAll35Markets() {
-  const registry = validateMarketRegistry();
-  const markets = listMarkets();
-  const checks = [];
-  for (const market of markets) {
-    const code = market.countryCode;
-    const errors = [];
-    const m = getMarket(code);
-    if (!m) errors.push("MISSING_MARKET_CONFIG");
-    if (!m?.locales?.length) errors.push("MISSING_LOCALE");
-    if (!getMarketLanguages(code).length) errors.push("MISSING_LANGUAGE");
-    if (!m?.currency) errors.push("MISSING_CURRENCY");
-    if (!getMarketVat(code)) errors.push("MISSING_VAT");
-    if (!getMarketShippingRegion(code)) errors.push("MISSING_SHIPPING_REGION");
-    if (!getMarketPaymentRegion(code)) errors.push("MISSING_PAYMENT_REGION");
-    checks.push({
-      countryCode: code,
-      locale: Boolean(m?.locales?.length),
-      language: getMarketLanguages(code).length > 0,
-      currency: Boolean(m?.currency),
-      vat: Boolean(getMarketVat(code)),
-      shipping: Boolean(getMarketShippingRegion(code)),
-      payment: Boolean(getMarketPaymentRegion(code)),
-      ok: errors.length === 0,
-      errors
-    });
+  if (!input.timestamp || !input.evidenceReference?.trim()) {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:MISSING_REFERENCE_OR_TIMESTAMP");
   }
-  return {
-    valid: registry.valid && checks.every((c) => c.ok),
-    count: checks.length,
-    markets: checks,
-    errors: registry.errors
-  };
-}
-
-// lib/market-engine/countryCode.ts
-var COUNTRY_CODE_RE = /^[A-Z]{2}$/;
-function normalizeCountryCode(raw) {
-  const code = String(raw ?? "").trim().toUpperCase();
-  if (!COUNTRY_CODE_RE.test(code)) return null;
-  return code;
-}
-function isKnownMarketCountry(countryCode) {
-  return Boolean(getMarket(countryCode));
-}
-
-// lib/trade-route-fulfillment/tradeRoute.ts
-function buildFlags(tradeRoute) {
-  const thirdCountry = tradeRoute === "EU_TO_NON_EU" || tradeRoute === "NON_EU_TO_EU" || tradeRoute === "NON_EU_TO_NON_EU";
-  return {
-    requiresExportProcess: thirdCountry,
-    requiresImportProcess: thirdCountry,
-    requiresCustomsPrecheck: thirdCountry,
-    requiresCustomsDocuments: thirdCountry,
-    requiresDutyAssessment: thirdCountry,
-    requiresVatAssessment: thirdCountry
-  };
-}
-function classifyTradeRoute(input) {
-  const origin = normalizeCountryCode(input.originCountry);
-  const destination = normalizeCountryCode(input.destinationCountry);
-  if (!origin || !destination || !isKnownMarketCountry(origin) || !isKnownMarketCountry(destination)) {
-    return {
-      tradeRoute: "UNKNOWN",
-      originCountry: origin ?? "UNKNOWN",
-      destinationCountry: destination ?? "UNKNOWN",
-      flags: {
-        requiresExportProcess: true,
-        requiresImportProcess: true,
-        requiresCustomsPrecheck: true,
-        requiresCustomsDocuments: true,
-        requiresDutyAssessment: true,
-        requiresVatAssessment: true
-      }
-    };
+  if (!input.operator?.trim()) {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:MISSING_OPERATOR");
   }
-  const originEu = isEuCountry(origin);
-  const destinationEu = isEuCountry(destination);
-  let tradeRoute;
-  if (origin === destination) {
-    tradeRoute = "SAME_COUNTRY";
-  } else if (originEu && destinationEu) {
-    tradeRoute = "EU_TO_EU";
-  } else if (originEu && !destinationEu) {
-    tradeRoute = "EU_TO_NON_EU";
-  } else if (!originEu && destinationEu) {
-    tradeRoute = "NON_EU_TO_EU";
-  } else {
-    tradeRoute = "NON_EU_TO_NON_EU";
+  if (!input.secretRef?.trim()) {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:MISSING_SECRET_REF");
   }
-  return {
-    tradeRoute,
-    originCountry: origin,
-    destinationCountry: destination,
-    flags: buildFlags(tradeRoute)
-  };
+  if (input.responseStatus < 200 || input.responseStatus >= 300) {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:NON_SUCCESS_RESPONSE");
+  }
 }
-
-// lib/supplier-engine/internationalOrigin.ts
-function normalizeCountryList(values) {
-  if (!values?.length) return [];
-  const out = [];
-  for (const raw of values) {
-    const code = normalizeCountryCode(raw);
-    if (code && isKnownMarketCountry(code) && !out.includes(code)) out.push(code);
+function validateInterCarsCredentialEvidenceInput(input) {
+  assertInterCarsLiveEvidenceSource(input);
+  if (ORDER_CAPABILITIES.includes(input.capability)) {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:ORDER_CAPABILITY_NOT_ALLOWED_IN_BRIDGE");
   }
-  return out;
-}
-function buildSupplierInternationalProfile(supplier) {
-  const supplierCountry = normalizeCountryCode(supplier.supplierCountry) ?? normalizeCountryCode(supplier.country) ?? void 0;
-  const warehouseCountries = normalizeCountryList(supplier.warehouseCountries);
-  const fulfillmentCountries = normalizeCountryList(supplier.fulfillmentCountries);
-  const shippingOrigins = normalizeCountryList(supplier.shippingOrigins);
-  const euMemberState = supplier.euMemberState ?? (supplierCountry ? isEuCountry(supplierCountry) : void 0);
-  return {
-    supplierId: supplier.supplierId,
-    supplierCountry,
-    warehouseCountries,
-    fulfillmentCountries,
-    shippingOrigins,
-    euMemberState,
-    internationalShippingSupported: supplier.internationalShippingSupported ?? true,
-    dropshippingSupported: supplier.dropshippingSupported ?? supplier.capabilities?.dropshipping === true,
-    blindShippingSupported: supplier.blindShippingSupported ?? supplier.capabilities?.blindShipping === true,
-    whiteLabelSupported: supplier.whiteLabelSupported ?? supplier.capabilities?.whiteLabel === true
-  };
-}
-
-// lib/final-external-access/market35Preflight.ts
-var DEFAULT_SUPPLIER_ORIGIN = "DE";
-function runMarket35Preflight() {
-  const base = validateAll35Markets();
-  const supplier = getSupplier(TEST_SUPPLIER_ID);
-  const profile = supplier ? buildSupplierInternationalProfile(supplier) : { supplierCountry: DEFAULT_SUPPLIER_ORIGIN, shippingOrigins: [DEFAULT_SUPPLIER_ORIGIN] };
-  const origin = profile.shippingOrigins[0] ?? profile.warehouseCountries?.[0] ?? profile.supplierCountry ?? DEFAULT_SUPPLIER_ORIGIN;
-  const markets = base.markets.map((m) => {
-    const code = m.countryCode;
-    const warnings = [];
-    const route = classifyTradeRoute({ originCountry: origin, destinationCountry: code });
-    const supplierEligible = supplier?.supportedMarkets?.includes(code) ?? false;
-    const customsRequired = route.flags.requiresCustomsPrecheck;
-    const carrierAvailable = CARRIER_PROFILES.some(
-      (p) => customsRequired ? p.customsSupport && p.internationalSupport : p.internationalSupport
-    );
-    if (!supplierEligible) warnings.push("SUPPLIER_NOT_IN_SUPPORTED_MARKETS");
-    if (customsRequired) warnings.push("CUSTOMS_PRECHECK_REQUIRED");
-    if (!carrierAvailable) warnings.push("NO_CARRIER_PROFILE_FOR_ROUTE");
-    let status = "PASS";
-    if (!m.ok) status = "BLOCKED";
-    else if (warnings.length) status = "WARNING";
-    return {
-      countryCode: code,
-      country: m.ok,
-      locale: m.locale,
-      currency: m.currency,
-      vat: m.vat,
-      b2c: true,
-      b2b: isEuCountry(code),
-      shipping: m.shipping,
-      supplierEligibility: supplierEligible,
-      supplierOrigin: Boolean(origin),
-      customs: !customsRequired || Boolean(route.tradeRoute),
-      carrier: carrierAvailable,
-      payment: m.payment,
-      returns: true,
-      availability: m.ok,
-      tradeRouteSample: route.tradeRoute,
-      status,
-      warnings
-    };
-  });
-  return {
-    valid: markets.every((m) => m.status !== "BLOCKED"),
-    pass: markets.filter((m) => m.status === "PASS").length,
-    warning: markets.filter((m) => m.status === "WARNING").length,
-    blocked: markets.filter((m) => m.status === "BLOCKED").length,
-    markets
-  };
-}
-
-// lib/final-external-access/preflightReport.ts
-function buildExternalAccessPreflightReport() {
-  const accessReport = buildMissingProductionAccessReport();
-  const matrix = buildExternalAccessMatrix();
-  const market35 = runMarket35Preflight();
-  const graph = buildGoLiveDependencyGraph();
-  const currentBlocker = getCurrentBlockingStep(graph);
-  const blockers = [
-    .../* @__PURE__ */ new Set([
-      ...accessReport.blockers,
-      ...matrix.filter((e) => e.status === "BLOCKED").map((e) => `${e.provider}:${e.blockingReason}`),
-      ...currentBlocker?.blockingReason ? [currentBlocker.blockingReason] : []
-    ])
-  ];
-  const warnings = market35.markets.filter((m) => m.status === "WARNING").map((m) => `${m.countryCode}:${m.warnings.join(",")}`);
-  const externalAccessComplete = matrix.every(
-    (e) => e.status === "VALIDATED" || e.status === "ENABLED" || e.status === "READY"
-  );
-  const liveValidationComplete = matrix.some((e) => e.capabilityValidated && e.endpointReachable);
-  const nextRequiredActions = [];
-  if (!process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim()) {
-    nextRequiredActions.push("Configure SUPPLIER_LIVE_CREDENTIALS_SECRET_REF for Inter Cars");
+  if (!READ_ONLY_CAPABILITIES.includes(input.capability)) {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:UNKNOWN_CAPABILITY");
   }
-  if (process.env.PERSISTENT_DATA_PATH !== "/var/data") {
-    nextRequiredActions.push("Configure Render persistent disk mount at /var/data");
+  if (!input.endpoint.startsWith("https://")) {
+    recordRejectedEvidenceAttempt();
+    throw new Error("INTER_CARS_EVIDENCE:HTTPS_REQUIRED");
   }
-  if (currentBlocker) {
-    nextRequiredActions.push(`Complete blocked step: ${currentBlocker.label}`);
-  }
-  nextRequiredActions.push("Run Stage A read-only Inter Cars validation after credentials");
-  nextRequiredActions.push("Obtain four-eyes human approval for #342\u2013#346 chain");
-  const flags = getProductionFlagsSnapshot();
-  return {
-    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    softwareComplete: true,
-    configComplete: true,
-    externalAccessComplete,
-    liveValidationComplete,
-    productionReady: false,
-    goLiveReady: false,
-    salesEnabled: flags.SALES === "ON" ? "1" : "0",
-    externalAccessMatrix: matrix,
-    market35Preflight: market35.markets,
-    goLiveDependencyGraph: graph,
-    blockers,
-    warnings,
-    nextRequiredActions,
-    counters: {
-      realSupplierOrders: accessReport.realSideEffects?.realSupplierOrders ?? 0,
-      realPaymentTransactions: accessReport.realSideEffects?.realPayments ?? 0,
-      realRefunds: accessReport.realSideEffects?.realRefunds ?? 0,
-      realShipments: accessReport.realSideEffects?.realCarrierLabels ?? 0,
-      realTrackingEvents: 0,
-      realMarketplaceOrders: 0,
-      realMarketplaceListings: 0,
-      realMarketingSpend: accessReport.realSideEffects?.realMarketingSpend ?? 0,
-      fakeEvidence: 0
-    },
-    productionFlags: {
-      SALES_ENABLED: flags.SALES === "ON" ? "1" : "0",
-      SUPPLIER_NETWORK_ENABLED: flags.SUPPLIER_NETWORK === "ON" ? "1" : "0",
-      SUPPLIER_ORDER_NETWORK_ENABLED: flags.SUPPLIER_ORDER_NETWORK === "ON" ? "1" : "0",
-      PAYMENT_PRODUCTION_ENABLED: flags.PAYMENT_PRODUCTION === "ON" ? "1" : "0",
-      CARRIER_PRODUCTION_ENABLED: flags.CARRIER_PRODUCTION === "ON" ? "1" : "0",
-      RETURNS_PRODUCTION_ENABLED: flags.RETURNS_PRODUCTION === "ON" ? "1" : "0",
-      MARKETING_SPEND_ENABLED: flags.MARKETING_SPEND === "ON" ? "1" : "0",
-      AI_PRODUCTION_ENABLED: flags.AI_PRODUCTION === "ON" ? "1" : "0"
-    }
-  };
 }
 
 // lib/inter-cars-production-access-evidence-bridge/evidenceStore.ts
 var store2 = /* @__PURE__ */ new Map();
+var dedupe = /* @__PURE__ */ new Set();
 function isExpired(e, now = Date.now()) {
   if (!e.expiresAt) return false;
   const t = Date.parse(e.expiresAt);
   return Number.isFinite(t) && t < now;
+}
+function registerInterCarsCredentialEvidence(input) {
+  validateInterCarsCredentialEvidenceInput(input);
+  const payloadHash = hashInterCarsEvidenceMetadata(input);
+  const key = `${input.capability}:${payloadHash}:${input.evidenceReference}`;
+  if (dedupe.has(key)) {
+    throw new Error("INTER_CARS_EVIDENCE:DUPLICATE");
+  }
+  const evidence = { id: (0, import_crypto3.randomUUID)(), ...input, payloadHash };
+  store2.set(evidence.id, evidence);
+  dedupe.add(key);
+  return evidence;
 }
 function listInterCarsCredentialEvidence(includeExpired = false) {
   const all = [...store2.values()];
@@ -29580,6 +27203,38 @@ function buildInterCarsCapabilityMatrix() {
 }
 function getCreateOrderCapabilityStatus() {
   return buildInterCarsCapabilityMatrix().find((r) => r.capability === "createOrder")?.status ?? "UNVERIFIED";
+}
+
+// lib/production-access/secretRefs.ts
+function normalizeSecretRef(raw, fallbackEnvKey) {
+  const value = raw?.trim();
+  if (!value) return `env:${fallbackEnvKey}`;
+  if (value.startsWith("env:")) return value;
+  return `env:${value}`;
+}
+function secretRefConfigured(envKey) {
+  return Boolean(process.env[envKey]?.trim());
+}
+function resolveInterCarsSecretRef() {
+  const secretRefKey = process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim() || process.env.SUPPLIER_LIVE_SECRETS_REF?.trim() || "env:SUPPLIER_LIVE_CREDENTIALS";
+  const secretsRef = normalizeSecretRef(secretRefKey, "SUPPLIER_LIVE_CREDENTIALS");
+  const envKey = secretsRef.startsWith("env:") ? secretsRef.slice(4) : secretsRef;
+  const cred = resolveCredentialDisplayStatus({ supplierId: getInterCarsSupplierId() });
+  const statusMap = {
+    NOT_CONFIGURED: "NOT_CONFIGURED",
+    CONFIGURED: "CONFIGURED",
+    VALID: "CONFIGURED",
+    INVALID: "BLOCKED",
+    EXPIRED: "BLOCKED",
+    BLOCKED: "BLOCKED"
+  };
+  return {
+    providerId: "inter-cars",
+    secretRefKey: secretsRef,
+    secretRefConfigured: secretRefConfigured(envKey) || Boolean(process.env.SUPPLIER_LIVE_CREDENTIALS_SECRET_REF?.trim()),
+    secretResolvable: Boolean(resolveCredentials(secretsRef)),
+    credentialStatus: statusMap[cred.status] || "UNVERIFIED"
+  };
 }
 
 // lib/inter-cars-production-access-evidence-bridge/secretRefBridge.ts
@@ -29678,7 +27333,7 @@ function buildInterCarsProductionAccessBridgeReport() {
   const credentialReference = resolveInterCarsCredentialBridgeState();
   const capabilities = buildInterCarsCapabilityMatrix();
   const createOrder = getCreateOrderCapabilityStatus();
-  const counters10 = getProductionAccessSafetyCounters();
+  const counters3 = getProductionAccessSafetyCounters();
   const actions = buildInterCarsHumanActions();
   const readCaps = capabilities.filter(
     (c) => ["health", "catalog", "products", "stock", "pricing"].includes(c.capability)
@@ -29705,907 +27360,8 @@ function buildInterCarsProductionAccessBridgeReport() {
     humanActionCount: actions.length,
     nextHumanAction: actions[0]?.action,
     fakeProductionEvidence: countRejectedEvidenceAttempts(),
-    realSideEffects: counters10.realHttpCalls + diag.realHttpCalls + diag.realCreateOrderCalls
+    realSideEffects: counters3.realHttpCalls + diag.realHttpCalls + diag.realCreateOrderCalls
   };
-}
-
-// lib/production-storage-preflight/renderBlueprintValidation.ts
-var import_fs3 = __toESM(require("fs"));
-var import_path3 = __toESM(require("path"));
-
-// lib/production-storage-preflight/varDataValidation.ts
-var import_fs2 = __toESM(require("fs"));
-var import_os = __toESM(require("os"));
-var import_path2 = __toESM(require("path"));
-
-// lib/production-storage-preflight/environmentValidation.ts
-var CANONICAL_MOUNT = "/var/data";
-
-// lib/production-storage-preflight/varDataValidation.ts
-function loadSqlite() {
-  try {
-    return require("better-sqlite3");
-  } catch {
-    try {
-      return require(import_path2.default.join(process.cwd(), "server/node_modules/better-sqlite3"));
-    } catch {
-      return null;
-    }
-  }
-}
-function validateVarDataMount() {
-  const mountPath = CANONICAL_MOUNT;
-  let exists = false;
-  let isDirectory = false;
-  let writable = false;
-  let sqliteOpenable = false;
-  const notes = [];
-  try {
-    exists = import_fs2.default.existsSync(mountPath);
-    if (exists) {
-      const stat = import_fs2.default.statSync(mountPath);
-      isDirectory = stat.isDirectory();
-      if (isDirectory) {
-        import_fs2.default.accessSync(mountPath, import_fs2.default.constants.W_OK);
-        writable = true;
-      }
-    }
-  } catch (err) {
-    notes.push(err instanceof Error ? err.message : "access_check_failed");
-  }
-  if (exists && isDirectory && writable) {
-    const Database = loadSqlite();
-    if (Database) {
-      const testDb = import_path2.default.join(mountPath, ".buzzard-preflight-test.db");
-      try {
-        const db = new Database(testDb);
-        db.close();
-        import_fs2.default.unlinkSync(testDb);
-        sqliteOpenable = true;
-      } catch (err) {
-        notes.push(`sqlite_test:${err instanceof Error ? err.message : "failed"}`);
-      }
-    } else {
-      notes.push("sqlite_module_unavailable_for_mount_test");
-    }
-  } else if (!exists) {
-    notes.push("MANUAL_RENDER_ACTION_REQUIRED: mount persistent disk at /var/data");
-  }
-  let status = "BLOCKED";
-  if (exists && isDirectory && writable && sqliteOpenable) {
-    status = "PASS";
-  } else if (exists && isDirectory) {
-    status = "WARNING";
-  } else if (process.env.NODE_ENV !== "production") {
-    status = "UNVERIFIED";
-    notes.push("Local/dev environment \u2014 live Render disk validation required");
-  }
-  return {
-    path: mountPath,
-    exists,
-    isDirectory,
-    writable,
-    sqliteOpenable,
-    status,
-    notes: notes.join("; ") || (status === "PASS" ? "Mount ready" : "Not configured on this instance")
-  };
-}
-function getIsolatedPreflightDir() {
-  return import_path2.default.join(import_os.default.tmpdir(), "buzzard-storage-preflight");
-}
-
-// lib/production-storage-preflight/renderBlueprintValidation.ts
-var TARGET_MOUNT = "/var/data";
-var TARGET_DB = "/var/data/buzzard.db";
-var TARGET_BACKUP = "/var/data/backups";
-function extractBuzzardApiBlock(yaml) {
-  const start = yaml.indexOf("name: buzzard-api");
-  if (start < 0) return null;
-  const after = yaml.slice(start);
-  const nextService = after.search(/\n  - type: web\n    name: buzzard-(?!api)/);
-  if (nextService > 0) return after.slice(0, nextService);
-  return after;
-}
-function countDiskBlocksInBuzzardApi(block) {
-  return (block.match(/\bdisk:/g) || []).length;
-}
-function manualRenderActionForBlueprint(blueprintConfiguration, liveRenderDisk) {
-  if (blueprintConfiguration === "PASS" && liveRenderDisk !== "PASS") return "BLOCKED";
-  if (liveRenderDisk === "PASS") return "UNVERIFIED";
-  return "BLOCKED";
-}
-function validateRenderBlueprint() {
-  const renderYamlPath = import_path3.default.join(process.cwd(), "render.yaml");
-  const dbStartupPath = import_path3.default.join(process.cwd(), "server/lib/dbStartup.js");
-  const healthPluginPath = import_path3.default.join(process.cwd(), "server/plugins/controlCenterPlugin.js");
-  const renderYamlPresent = import_fs3.default.existsSync(renderYamlPath);
-  const yaml = renderYamlPresent ? import_fs3.default.readFileSync(renderYamlPath, "utf8") : "";
-  const apiBlock = yaml ? extractBuzzardApiBlock(yaml) : null;
-  const buzzardApiServiceFound = Boolean(apiBlock);
-  let diskMountPath = null;
-  let diskSizeGB = null;
-  let diskName = null;
-  let duplicateBuzzardApiDisks = 0;
-  if (apiBlock) {
-    duplicateBuzzardApiDisks = countDiskBlocksInBuzzardApi(apiBlock);
-    const mountMatch = apiBlock.match(/mountPath:\s*(\S+)/);
-    diskMountPath = mountMatch?.[1] ?? null;
-    const sizeMatch = apiBlock.match(/sizeGB:\s*(\d+)/);
-    diskSizeGB = sizeMatch ? Number(sizeMatch[1]) : null;
-    const nameMatch = apiBlock.match(/disk:[\s\S]*?name:\s*(\S+)/);
-    diskName = nameMatch?.[1] ?? null;
-  }
-  const diskConfigured = buzzardApiServiceFound && diskMountPath === TARGET_MOUNT && diskSizeGB === 1 && duplicateBuzzardApiDisks === 1;
-  const dbPathInBlueprint = buzzardApiServiceFound && apiBlock.includes("BUZZARD_DB_PATH") && apiBlock.includes(TARGET_DB);
-  const backupInBlueprint = buzzardApiServiceFound && apiBlock.includes("BUZZARD_BACKUP_DIR") && apiBlock.includes(TARGET_BACKUP);
-  const healthEndpointDbSupported = import_fs3.default.existsSync(healthPluginPath) && import_fs3.default.readFileSync(healthPluginPath, "utf8").includes("/api/health/db");
-  const dbStartupMigrationPresent = import_fs3.default.existsSync(dbStartupPath) && import_fs3.default.readFileSync(dbStartupPath, "utf8").includes("migrateEphemeralToPersistentIfNeeded");
-  let renderYamlStatus = "BLOCKED";
-  if (renderYamlPresent && buzzardApiServiceFound && diskConfigured && dbPathInBlueprint && backupInBlueprint) {
-    renderYamlStatus = "PASS";
-  } else if (renderYamlPresent && buzzardApiServiceFound) {
-    renderYamlStatus = "WARNING";
-  }
-  const blueprintConfiguration = diskConfigured && dbPathInBlueprint && backupInBlueprint ? "PASS" : "BLOCKED";
-  let LIVE_RENDER_DISK = "UNVERIFIED";
-  const LIVE_PERSISTENCE = "UNVERIFIED";
-  const RENDER_PERSISTENCE_READY = "UNVERIFIED";
-  const MANUAL_RENDER_ACTION = manualRenderActionForBlueprint(blueprintConfiguration, LIVE_RENDER_DISK);
-  return {
-    RENDER_BLUEPRINT_DISK_CONFIGURED: diskConfigured ? "PASS" : buzzardApiServiceFound ? "WARNING" : "BLOCKED",
-    RENDER_DISK_MOUNT_PATH: diskMountPath ?? TARGET_MOUNT,
-    RENDER_DB_PATH: TARGET_DB,
-    RENDER_BACKUP_PATH: TARGET_BACKUP,
-    RENDER_PERSISTENCE_READY,
-    BLUEPRINT_CONFIGURATION: blueprintConfiguration,
-    DATABASE_CONFIGURATION: dbPathInBlueprint ? "PASS" : "BLOCKED",
-    BACKUP_CONFIGURATION: backupInBlueprint ? "PASS" : "BLOCKED",
-    LIVE_RENDER_DISK,
-    LIVE_PERSISTENCE,
-    MANUAL_RENDER_ACTION,
-    SOFTWARE_SUPPORT: healthEndpointDbSupported && dbStartupMigrationPresent && import_fs3.default.existsSync(import_path3.default.join(process.cwd(), "server/lib/dbPaths.js")) ? "PASS" : "WARNING",
-    buzzardApiServiceFound,
-    diskName,
-    diskSizeGB,
-    diskMountPath,
-    duplicateBuzzardApiDisks,
-    healthEndpointDbSupported,
-    dbStartupMigrationPresent,
-    renderYamlStatus
-  };
-}
-
-// lib/production-storage-preflight/restartPersistenceTest.ts
-var import_fs4 = __toESM(require("fs"));
-var import_path4 = __toESM(require("path"));
-var TEST_TABLE = "buzzard_preflight_restart_test";
-var TEST_KEY = "preflight_marker";
-function loadSqlite2() {
-  try {
-    return require("better-sqlite3");
-  } catch {
-    try {
-      return require(import_path4.default.join(process.cwd(), "server/node_modules/better-sqlite3"));
-    } catch {
-      return null;
-    }
-  }
-}
-function runRestartPersistenceTest() {
-  const Database = loadSqlite2();
-  const testDir = getIsolatedPreflightDir();
-  const testDbPath = import_path4.default.join(testDir, "restart-persistence-test.db");
-  const marker = `preflight-${Date.now()}`;
-  if (!Database) {
-    return {
-      status: "WARNING",
-      testDbPath,
-      writeOk: false,
-      readOk: false,
-      cleanupOk: false,
-      notes: "better-sqlite3 unavailable \u2014 restart test skipped"
-    };
-  }
-  let writeOk = false;
-  let readOk = false;
-  let cleanupOk = false;
-  try {
-    import_fs4.default.mkdirSync(testDir, { recursive: true });
-    if (import_fs4.default.existsSync(testDbPath)) import_fs4.default.unlinkSync(testDbPath);
-    const db1 = new Database(testDbPath);
-    db1.exec(`CREATE TABLE IF NOT EXISTS ${TEST_TABLE} (key TEXT PRIMARY KEY, value TEXT NOT NULL)`);
-    db1.prepare(`INSERT OR REPLACE INTO ${TEST_TABLE} (key, value) VALUES (?, ?)`).run(TEST_KEY, marker);
-    db1.close();
-    writeOk = true;
-    const db2 = new Database(testDbPath);
-    const row = db2.prepare(`SELECT value FROM ${TEST_TABLE} WHERE key = ?`).get(TEST_KEY);
-    db2.close();
-    readOk = row?.value === marker;
-    import_fs4.default.unlinkSync(testDbPath);
-    cleanupOk = true;
-    return {
-      status: writeOk && readOk && cleanupOk ? "PASS" : "BLOCKED",
-      testDbPath,
-      writeOk,
-      readOk,
-      cleanupOk,
-      notes: writeOk && readOk ? "Isolated write/reopen/read cycle passed (local temp DB)" : "Restart persistence cycle failed"
-    };
-  } catch (err) {
-    try {
-      if (import_fs4.default.existsSync(testDbPath)) import_fs4.default.unlinkSync(testDbPath);
-      cleanupOk = true;
-    } catch {
-      cleanupOk = false;
-    }
-    return {
-      status: "BLOCKED",
-      testDbPath,
-      writeOk,
-      readOk,
-      cleanupOk,
-      notes: err instanceof Error ? err.message : "restart_test_failed"
-    };
-  }
-}
-
-// lib/render-persistence-evidence-bridge/persistenceStatus.ts
-var import_fs5 = __toESM(require("fs"));
-var import_path5 = __toESM(require("path"));
-
-// lib/render-persistence-evidence-bridge/evidenceStore.ts
-var store3 = /* @__PURE__ */ new Map();
-function isExpired2(e, now = Date.now()) {
-  if (!e.expiresAt) return false;
-  const t = Date.parse(e.expiresAt);
-  return Number.isFinite(t) && t < now;
-}
-function listRenderPersistenceEvidence(includeExpired = false) {
-  const all = [...store3.values()];
-  if (includeExpired) return all.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-  return all.filter((e) => !isExpired2(e)).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-}
-function countExpiredRenderPersistenceEvidence() {
-  return [...store3.values()].filter((e) => isExpired2(e)).length;
-}
-
-// lib/render-persistence-evidence-bridge/persistenceStatus.ts
-function mapBlueprint(blueprintPass) {
-  return blueprintPass ? "VALIDATED" : "BLOCKED";
-}
-function liveFromEvidence(kind, predicate) {
-  const active = listRenderPersistenceEvidence(false).filter((e) => e.kind === kind && e.source === "RENDER_LIVE");
-  if (active.some(predicate)) return "VALIDATED";
-  return "UNVERIFIED_EXTERNAL";
-}
-function buildRenderPersistenceLiveStatus() {
-  const blueprint = validateRenderBlueprint();
-  const blueprintOk = blueprint.BLUEPRINT_CONFIGURATION === "PASS";
-  const healthEvidence = listRenderPersistenceEvidence(false).filter(
-    (e) => e.kind === "RENDER_PERSISTENCE_HEALTH" && e.source === "RENDER_LIVE"
-  );
-  const healthValid = healthEvidence.some((e) => e.persistent === true && e.dbPath?.includes("/var/data/buzzard.db"));
-  const LIVE_RENDER_DISK = healthValid ? "VALIDATED" : "UNVERIFIED_EXTERNAL";
-  const LIVE_DB_PATH = healthValid ? "VALIDATED" : "UNVERIFIED_EXTERNAL";
-  const LIVE_DB_HEALTH = healthValid ? "VALIDATED" : "UNVERIFIED_EXTERNAL";
-  const LIVE_RESTART_PERSISTENCE = liveFromEvidence(
-    "RENDER_RESTART_PERSISTENCE",
-    (e) => e.restart?.samePersistentPath === true && e.restart.databaseIntegrity === "ok"
-  );
-  const LIVE_BACKUP = liveFromEvidence(
-    "RENDER_BACKUP",
-    (e) => e.backup?.success === true && Boolean(e.backup.backupPath?.includes("/var/data/backups"))
-  );
-  const LIVE_RESTORE = liveFromEvidence("RENDER_RESTORE", (e) => e.restore?.success === true);
-  let PERSISTENCE = "HUMAN_REQUIRED";
-  if (!blueprintOk) {
-    PERSISTENCE = "BLOCKED";
-  } else if (LIVE_RENDER_DISK === "VALIDATED" && LIVE_DB_PATH === "VALIDATED" && LIVE_DB_HEALTH === "VALIDATED" && LIVE_RESTART_PERSISTENCE === "VALIDATED" && LIVE_BACKUP === "VALIDATED") {
-    PERSISTENCE = "VALIDATED";
-  } else if (blueprintOk) {
-    PERSISTENCE = "HUMAN_REQUIRED";
-  }
-  return {
-    BLUEPRINT_CONFIGURATION: mapBlueprint(blueprintOk),
-    LIVE_RENDER_DISK,
-    LIVE_DB_PATH,
-    LIVE_DB_HEALTH,
-    LIVE_RESTART_PERSISTENCE,
-    LIVE_BACKUP,
-    LIVE_RESTORE,
-    PERSISTENCE
-  };
-}
-function buildRenderPersistenceLocalHints() {
-  const varData = validateVarDataMount();
-  const restart = runRestartPersistenceTest();
-  const backupScript = import_fs5.default.existsSync(import_path5.default.join(process.cwd(), "scripts/db-backup.mjs"));
-  return {
-    localVarDataWritable: varData.exists && varData.writable && varData.sqliteOpenable,
-    localRestartTest: restart.status === "PASS" ? "PASS" : "WARNING",
-    localBackupScriptPresent: backupScript,
-    note: "Local hints never promote LIVE_* to VALIDATED"
-  };
-}
-
-// lib/render-persistence-evidence-bridge/humanActions.ts
-function buildRenderPersistenceHumanActions() {
-  const live = buildRenderPersistenceLiveStatus();
-  const actions = [];
-  if (live.BLUEPRINT_CONFIGURATION === "VALIDATED" && live.LIVE_RENDER_DISK !== "VALIDATED") {
-    actions.push({
-      priority: 1,
-      provider: "Render",
-      action: "Create/mount Persistent Disk on buzzard-api \u2014 path /var/data, size \u2265 1 GB",
-      why: "Production SQLite requires Render persistent volume",
-      requiredEvidence: "RENDER_PERSISTENCE_HEALTH",
-      verificationMethod: "Deploy, then GET /api/health/db \u2192 persistent=true, path /var/data/buzzard.db",
-      blocking: true
-    });
-    actions.push({
-      priority: 2,
-      provider: "Render",
-      action: "Deploy buzzard-api after disk mount and env BUZZARD_DB_PATH / BUZZARD_BACKUP_DIR",
-      why: "Blueprint env vars must apply to running service",
-      requiredEvidence: "RENDER_PERSISTENCE_HEALTH",
-      verificationMethod: "GET /api/health/db on production URL",
-      blocking: true
-    });
-  }
-  if (live.LIVE_RENDER_DISK !== "VALIDATED") {
-    actions.push({
-      priority: 3,
-      provider: "Render",
-      action: "Verify /api/health/db (persistent=true, /var/data/buzzard.db) and register RENDER_LIVE evidence",
-      why: "Control center only accepts explicit external evidence",
-      requiredEvidence: "LIVE_HEALTH",
-      verificationMethod: "Operator-run curl + evidence registration (no auto-fetch in CI)",
-      blocking: true
-    });
-  }
-  if (live.LIVE_BACKUP !== "VALIDATED") {
-    actions.push({
-      priority: 4,
-      provider: "Render",
-      action: "Run npm run backup:db on production instance; store backup artifact reference",
-      why: "Backup path /var/data/backups must be proven with RENDER_BACKUP evidence",
-      requiredEvidence: "RENDER_BACKUP",
-      verificationMethod: "Artifact reference + metadata hash (no DB file in git)",
-      blocking: true
-    });
-  }
-  if (live.LIVE_RESTART_PERSISTENCE !== "VALIDATED") {
-    actions.push({
-      priority: 5,
-      provider: "Render",
-      action: "Manual production restart; re-check /api/health/db; register RENDER_RESTART_PERSISTENCE evidence",
-      why: "Cursor cannot trigger production restart \u2014 operator must verify same DB path after restart",
-      requiredEvidence: "RENDER_RESTART_PERSISTENCE",
-      verificationMethod: "before/after health + integrity ok + samePersistentPath",
-      blocking: true
-    });
-  }
-  return actions.sort((a, b) => a.priority - b.priority);
-}
-
-// lib/render-persistence-evidence-bridge/renderPersistenceReport.ts
-function buildRenderPersistenceVerificationReport() {
-  const live = buildRenderPersistenceLiveStatus();
-  const localHints = buildRenderPersistenceLocalHints();
-  const actions = buildRenderPersistenceHumanActions();
-  return {
-    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    live,
-    localHints,
-    acceptedEvidenceCount: listRenderPersistenceEvidence(false).length,
-    expiredEvidenceCount: countExpiredRenderPersistenceEvidence(),
-    rejectedEvidenceAttempts: countRejectedEvidenceAttempts(),
-    nextHumanAction: actions[0]?.action,
-    humanActionCount: actions.length
-  };
-}
-
-// lib/final-closure/securityGate.ts
-var import_fs7 = require("fs");
-var import_path7 = __toESM(require("path"));
-
-// lib/production-completion/securityGate.ts
-var import_fs6 = require("fs");
-var import_path6 = __toESM(require("path"));
-
-// lib/production-kill-switch/persistence.ts
-var inMemory = null;
-function getPersistentStore() {
-  if (typeof process === "undefined" || process.env.BUZZARD_PRODUCTION_KILL_SWITCH_PERSISTENCE === "0") {
-    return null;
-  }
-  try {
-    const mod = require("../../server/lib/production-kill-switch/persistentStore.js");
-    return mod.createProductionKillSwitchStore();
-  } catch {
-    return null;
-  }
-}
-function getGlobalKillSwitchState() {
-  if (inMemory) return inMemory;
-  const row = getPersistentStore()?.getState();
-  if (!row) return null;
-  return {
-    global: Boolean(row.global),
-    domains: JSON.parse(String(row.domains_json || "{}")),
-    updatedAt: String(row.updated_at),
-    updatedBy: row.updated_by ? String(row.updated_by) : void 0,
-    correlationId: row.correlation_id ? String(row.correlation_id) : void 0,
-    reason: row.reason ? String(row.reason) : void 0
-  };
-}
-
-// lib/production-kill-switch/index.ts
-var DEFAULT_DOMAINS = {
-  SUPPLIER_ORDERS: false,
-  PAYMENTS: false,
-  CARRIER: false,
-  REFUNDS: false,
-  MARKETING_SPEND: false,
-  SALES: false
-};
-function defaultState2() {
-  return {
-    global: process.env.PRODUCTION_GLOBAL_KILL_SWITCH === "1" || isGlobalKillSwitchActive(),
-    domains: { ...DEFAULT_DOMAINS },
-    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-function getProductionKillSwitch() {
-  return getGlobalKillSwitchState() || defaultState2();
-}
-function isProductionKillSwitchActive(domain) {
-  const state = getProductionKillSwitch();
-  if (state.global || isGlobalKillSwitchActive()) return true;
-  if (domain && state.domains[domain]) return true;
-  return false;
-}
-function getProductionKillSwitchDashboard() {
-  const state = getProductionKillSwitch();
-  return {
-    global: state.global || isGlobalKillSwitchActive(),
-    domains: state.domains,
-    salesEnabled: isProductionFlagEnabled("SALES"),
-    supplierNetworkEnabled: isProductionFlagEnabled("SUPPLIER_ORDER_NETWORK"),
-    updatedAt: state.updatedAt,
-    updatedBy: state.updatedBy
-  };
-}
-
-// lib/production-completion/securityGate.ts
-function evaluateSecurityGate() {
-  const blockers = [];
-  const flags = getProductionFlagsSnapshot();
-  const securityFiles = [
-    "server/lib/rbac.js",
-    "server/lib/routePermissions.js",
-    "server/plugins/securityPlugin.js",
-    "lib/supplier-production-validation/endpointSecurity.ts",
-    "scripts/security-check.mjs"
-  ];
-  for (const f of securityFiles) {
-    if (!(0, import_fs6.existsSync)(import_path6.default.join(process.cwd(), f))) {
-      blockers.push({
-        code: "SECURITY_MODULE_MISSING",
-        severity: "CRITICAL",
-        description: `Security module missing: ${f}`,
-        resolution: "Restore security module",
-        status: "BLOCKED"
-      });
-    }
-  }
-  if (flags.SALES === "ON") {
-    blockers.push({
-      code: "SALES_ENABLED_IN_PREP",
-      severity: "CRITICAL",
-      description: "Sales enabled before final gate PASS",
-      resolution: "Set SALES_ENABLED=0 until all gates pass",
-      status: "BLOCKED"
-    });
-  }
-  if (flags.SUPPLIER_ORDER_NETWORK === "ON") {
-    blockers.push({
-      code: "SUPPLIER_NETWORK_ENABLED_IN_PREP",
-      severity: "CRITICAL",
-      description: "Supplier order network enabled in prep phase",
-      resolution: "Set SUPPLIER_ORDER_NETWORK_ENABLED=0 until controlled go-live",
-      status: "BLOCKED"
-    });
-  }
-  try {
-    getProductionKillSwitchDashboard();
-  } catch {
-    blockers.push({
-      code: "KILL_SWITCH_UNAVAILABLE",
-      severity: "HIGH",
-      description: "Global kill switch module unavailable",
-      resolution: "Verify production-kill-switch module",
-      status: "BLOCKED"
-    });
-  }
-  const critical = blockers.filter((b) => b.severity === "CRITICAL");
-  const status = critical.length > 0 ? "BLOCKED" : blockers.length > 0 ? "WARNING" : "PASS";
-  return {
-    section: "SECURITY",
-    status,
-    message: status === "PASS" ? "Core security modules present; production flags safe" : "Security blockers detected",
-    blockers
-  };
-}
-
-// lib/final-closure/bypassGuard.ts
-var PRODUCTION_BYPASS_KEYS = [
-  "BUZZARD_FORCE_GO_LIVE",
-  "BUZZARD_SKIP_VALIDATION",
-  "BUZZARD_SKIP_APPROVAL",
-  "BUZZARD_CREATE_ORDER_VALIDATED",
-  "BUZZARD_FIRST_ORDER_EXECUTED",
-  "BUZZARD_OBSERVATION_COMPLETED",
-  "BUZZARD_SALES_ENABLED_BYPASS",
-  "BUZZARD_FORCE_SALES_ENABLED",
-  "forceGoLive",
-  "skipValidation",
-  "skipApproval",
-  "createOrderValidated",
-  "firstOrderExecuted",
-  "observationCompleted",
-  "forceSalesEnabled",
-  "salesEnabled"
-];
-function detectProductionBypasses() {
-  const active = [];
-  const isProd = process.env.NODE_ENV === "production" && process.env.CI !== "true";
-  for (const key of PRODUCTION_BYPASS_KEYS) {
-    const val = process.env[key];
-    if (val === "1" || val === "true" || val === "yes") {
-      if (isProd || process.env.BUZZARD_ENFORCE_BYPASS_GUARD === "1") {
-        active.push(key);
-      }
-    }
-  }
-  return active;
-}
-
-// lib/final-closure/securityGate.ts
-var SECURITY_CHECKS = [
-  "SECRET_LEAK",
-  "PII_LEAK",
-  "SSRF",
-  "XXE",
-  "RBAC",
-  "AUTH",
-  "AUTHORIZATION",
-  "WEBHOOK",
-  "REPLAY",
-  "IDEMPOTENCY",
-  "RATE_LIMIT",
-  "CUSTOMER_ISOLATION",
-  "AUDIT",
-  "KILL_SWITCH"
-];
-function evaluateFinalSecurityGate() {
-  const blockers = [];
-  const checks = [];
-  const base = evaluateSecurityGate();
-  if (base.status !== "PASS") {
-    blockers.push(...base.blockers.map((b) => b.code));
-  }
-  const securityModules = [
-    "server/lib/rbac.js",
-    "server/lib/routePermissions.js",
-    "lib/supplier-production-validation/endpointSecurity.ts",
-    "scripts/security-check.mjs"
-  ];
-  for (const mod of securityModules) {
-    checks.push({
-      check: "RBAC",
-      status: (0, import_fs7.existsSync)(import_path7.default.join(process.cwd(), mod)) ? "PASS" : "BLOCKED",
-      message: mod
-    });
-  }
-  checks.push({
-    check: "KILL_SWITCH",
-    status: isProductionKillSwitchActive() ? "BLOCKED" : "PASS",
-    message: getProductionKillSwitchDashboard().global ? "ACTIVE" : "INACTIVE"
-  });
-  const bypasses = detectProductionBypasses();
-  checks.push({
-    check: "AUTH",
-    status: bypasses.length > 0 ? "BLOCKED" : "PASS",
-    message: bypasses.length ? `bypasses:${bypasses.join(",")}` : "no_bypass"
-  });
-  for (const check of SECURITY_CHECKS) {
-    if (!checks.some((c) => c.check === check)) {
-      checks.push({ check, status: "UNVERIFIED", message: "Requires live deployment verification" });
-    }
-  }
-  const critical = checks.filter((c) => c.status === "BLOCKED");
-  const status = critical.length > 0 || base.status === "BLOCKED" ? "BLOCKED" : base.status === "PASS" ? "PASS" : "UNVERIFIED";
-  return { status, checks, blockers: [.../* @__PURE__ */ new Set([...blockers, ...critical.map((c) => c.check)])] };
-}
-
-// lib/final-closure/backupRestore.ts
-var import_crypto3 = require("crypto");
-var import_fs8 = require("fs");
-var import_path8 = __toESM(require("path"));
-var cachedEvidence = null;
-function step(name, status, detail) {
-  return { step: name, status, detail };
-}
-function loadSqlite3() {
-  try {
-    return require("better-sqlite3");
-  } catch {
-    return null;
-  }
-}
-function trySqliteIntegrity(dbPath) {
-  try {
-    const Database = loadSqlite3();
-    if (!Database) return { ok: false, detail: "sqlite_unavailable" };
-    const db = new Database(dbPath, { readonly: true });
-    const row = db.prepare("PRAGMA integrity_check").get();
-    db.close();
-    const ok = row?.integrity_check === "ok";
-    return { ok, detail: row?.integrity_check };
-  } catch (err) {
-    return { ok: false, detail: err instanceof Error ? err.message : "sqlite_unavailable" };
-  }
-}
-function verifyCriticalTables(dbPath) {
-  try {
-    const Database = loadSqlite3();
-    if (!Database) return { ok: false, detail: "sqlite_unavailable" };
-    const db = new Database(dbPath, { readonly: true });
-    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
-    db.close();
-    const names = new Set(tables.map((t) => t.name));
-    const hasAny = names.size > 0;
-    return { ok: hasAny, detail: `tables=${names.size}` };
-  } catch (err) {
-    return { ok: false, detail: err instanceof Error ? err.message : "tables_check_failed" };
-  }
-}
-function runBackupRestoreValidation() {
-  const steps = [];
-  const root = process.cwd();
-  const dbPath = import_path8.default.join(root, "server/data/buzzard.db");
-  const backupDir = import_path8.default.join(root, "server/data/backups");
-  const isolatedDir = import_path8.default.join(root, "server/data/.closure-restore-test");
-  const isolatedDb = import_path8.default.join(isolatedDir, "restored.db");
-  const scripts = ["scripts/db-backup.mjs", "scripts/restore-db.mjs"];
-  for (const s of scripts) {
-    if (!(0, import_fs8.existsSync)(import_path8.default.join(root, s))) {
-      steps.push(step("CREATE_BACKUP", "BLOCKED", `missing:${s}`));
-      cachedEvidence = buildEvidence(steps, "BLOCKED");
-      return cachedEvidence;
-    }
-  }
-  steps.push(step("CREATE_BACKUP", "PASS", "scripts_present"));
-  if (!(0, import_fs8.existsSync)(dbPath)) {
-    steps.push(step("VERIFY_BACKUP", "SKIPPED", "no_source_db"));
-    steps.push(step("CREATE_ISOLATED_RESTORE", "SKIPPED", "no_source_db"));
-    steps.push(step("VERIFY_DATABASE_INTEGRITY", "SKIPPED", "no_source_db"));
-    steps.push(step("VERIFY_CRITICAL_TABLES", "SKIPPED", "no_source_db"));
-    steps.push(step("VERIFY_ENGINE_STATE", "SKIPPED", "no_source_db"));
-    steps.push(step("RESTORE_RESULT", "SKIPPED", "no_source_db"));
-    cachedEvidence = buildEvidence(steps, "UNVERIFIED");
-    return cachedEvidence;
-  }
-  const dbStat = (0, import_fs8.statSync)(dbPath);
-  if (dbStat.size < 1024) {
-    steps.push(step("VERIFY_BACKUP", "BLOCKED", "source_db_too_small"));
-    cachedEvidence = buildEvidence(steps, "BLOCKED");
-    return cachedEvidence;
-  }
-  steps.push(step("VERIFY_BACKUP", "PASS", `size=${dbStat.size}`));
-  try {
-    (0, import_fs8.mkdirSync)(isolatedDir, { recursive: true });
-    (0, import_fs8.copyFileSync)(dbPath, isolatedDb);
-    steps.push(step("CREATE_ISOLATED_RESTORE", "PASS", isolatedDb));
-  } catch (err) {
-    steps.push(step("CREATE_ISOLATED_RESTORE", "BLOCKED", String(err)));
-    cachedEvidence = buildEvidence(steps, "BLOCKED");
-    return cachedEvidence;
-  }
-  const integrity = trySqliteIntegrity(isolatedDb);
-  steps.push(step("VERIFY_DATABASE_INTEGRITY", integrity.ok ? "PASS" : "BLOCKED", integrity.detail));
-  const tables = verifyCriticalTables(isolatedDb);
-  steps.push(step("VERIFY_CRITICAL_TABLES", tables.ok ? "PASS" : "BLOCKED", tables.detail));
-  steps.push(step("VERIFY_ENGINE_STATE", "PASS", "isolated_copy_only_no_ssot_mutation"));
-  try {
-    (0, import_fs8.rmSync)(isolatedDir, { recursive: true, force: true });
-  } catch {
-  }
-  const blocked = steps.some((s) => s.status === "BLOCKED");
-  const allPass = steps.every((s) => s.status === "PASS");
-  steps.push(step("RESTORE_RESULT", blocked ? "BLOCKED" : allPass ? "PASS" : "SKIPPED"));
-  cachedEvidence = buildEvidence(steps, blocked ? "BLOCKED" : allPass ? "PASS" : "UNVERIFIED");
-  return cachedEvidence;
-}
-function buildEvidence(steps, result) {
-  return {
-    evidenceId: (0, import_crypto3.randomUUID)(),
-    steps,
-    result,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString()
-  };
-}
-function getBackupRestoreEvidence() {
-  if (!cachedEvidence) {
-    return runBackupRestoreValidation();
-  }
-  return cachedEvidence;
-}
-
-// lib/external-access-control-center/statusModel.ts
-function liveValidationFromEntry(entry, hasProductionEvidence2) {
-  if (entry.capabilityValidated && hasProductionEvidence2) return "VALIDATED";
-  if (entry.status === "BLOCKED") return "BLOCKED_EXTERNAL_ACCESS";
-  if (entry.credentialConfigured) return "UNVERIFIED_EXTERNAL";
-  return "NOT_CONFIGURED";
-}
-
-// lib/external-access-control-center/masterProviderRegistry.ts
-function categoryFor(provider) {
-  if (provider.includes("CARRIER/")) return "CARRIER";
-  if (provider.startsWith("PAYMENT/")) return "PAYMENT";
-  if (["AMAZON", "EBAY", "KAUFLAND", "ALLEGRO", "BOL", "CDISCOUNT", "OTTO", "EMAG", "SKROUTZ"].includes(provider)) {
-    return "MARKETPLACE";
-  }
-  if (provider === "INTER CARS") return "SUPPLIER";
-  if (provider === "PERSISTENT STORAGE" || provider === "DEPLOYMENT") return "RENDER";
-  if (provider === "MARKETING") return "MARKETING";
-  if (provider === "AI PROVIDER") return "AI";
-  if (provider === "RETURNS" || provider === "REFUNDS") return "RETURNS";
-  return "PLATFORM";
-}
-function providerIdSlug(provider) {
-  return provider.toLowerCase().replace(/\s+/g, "-").replace(/\//g, "-");
-}
-function riskLevel(entry) {
-  if (entry.provider === "INTER CARS" || entry.provider === "PAYMENT") return "CRITICAL";
-  if (entry.provider.startsWith("CARRIER/") || entry.provider === "PERSISTENT STORAGE") return "HIGH";
-  return "MEDIUM";
-}
-function buildProviderRegistry() {
-  const matrix = buildExternalAccessMatrix();
-  return matrix.map((entry) => {
-    const slug = providerIdSlug(entry.provider);
-    const evidence = hasProductionEvidence(slug.split("-")[0] ?? slug, "health") || entry.capabilityValidated;
-    return {
-      providerId: slug,
-      name: entry.provider,
-      category: categoryFor(entry.provider),
-      environment: entry.environment,
-      required: entry.provider !== "EMAIL" && entry.provider !== "FINANCIAL PROVIDER",
-      secretRefs: entry.credentialSecretRef ? [entry.credentialSecretRef] : [],
-      credentialState: entry.credentialConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
-      configurationState: entry.endpointConfigured ? "CONFIGURED" : "NOT_CONFIGURED",
-      networkState: entry.liveNetworkEnabled ? "VALIDATED" : "DISABLED",
-      liveValidationState: liveValidationFromEntry(entry, evidence),
-      evidenceState: evidence ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
-      humanActionRequired: entry.requiredHumanApproval || entry.status === "BLOCKED",
-      productionEnabled: entry.liveNetworkEnabled,
-      riskLevel: riskLevel(entry),
-      dependencies: entry.provider === "TRACKING" ? ["carrier"] : [],
-      lastValidation: entry.lastValidationTimestamp,
-      blockers: entry.blockingReason ? [entry.blockingReason] : [],
-      warnings: entry.status === "CONFIGURED" && !entry.capabilityValidated ? ["CONFIGURED_NOT_VALIDATED"] : []
-    };
-  });
-}
-function buildAccessMatrixRows() {
-  const matrix = buildExternalAccessMatrix();
-  return matrix.map((entry) => {
-    const slug = providerIdSlug(entry.provider);
-    const hasEv = hasProductionEvidence(slug.split("-")[0] ?? slug, "health");
-    return {
-      provider: entry.provider,
-      required: entry.provider !== "EMAIL",
-      configured: entry.endpointConfigured || entry.credentialConfigured,
-      credentialsPresent: entry.credentialConfigured,
-      secretReferencePresent: Boolean(entry.credentialSecretRef && entry.credentialSecretRef !== "n/a"),
-      networkEnabled: entry.liveNetworkEnabled,
-      liveValidation: liveValidationFromEntry(entry, hasEv || entry.capabilityValidated),
-      productionEvidence: hasEv ? "VALIDATED" : entry.capabilityValidated ? "PARTIAL" : "NONE",
-      humanApproval: entry.requiredHumanApproval,
-      blocked: entry.status === "BLOCKED" || entry.status === "NOT_CONFIGURED",
-      nextHumanAction: entry.blockingReason || (entry.requiredHumanApproval ? "HUMAN_APPROVAL_REQUIRED" : "NONE")
-    };
-  });
-}
-
-// lib/external-access-control-center/evidenceEngine.ts
-var KNOWN_PROVIDERS = [
-  "inter-cars",
-  "payment",
-  "carrier",
-  "ai",
-  "returns",
-  "marketing",
-  "marketplace",
-  "render",
-  "deployment"
-];
-function mapEvidenceType(env) {
-  if (env === "PRODUCTION") return "LIVE_API";
-  if (env === "CONTROLLED_VALIDATION") return "LIVE_API";
-  if (env === "SANDBOX") return "SANDBOX";
-  if (env === "MOCK") return "LOCAL_TEST";
-  return "CONFIGURATION";
-}
-function toView(e) {
-  const rejected = isRejectedEvidenceEnvironment(e.environment);
-  const accepted = isAcceptedEvidenceEnvironment(e.environment);
-  return {
-    id: e.evidenceId,
-    providerId: e.provider,
-    type: mapEvidenceType(e.environment),
-    environment: e.environment,
-    timestamp: e.timestamp,
-    source: "production-access/evidenceStore",
-    status: rejected ? "REJECTED_FOR_PRODUCTION" : accepted ? "ACCEPTED" : "UNVERIFIED",
-    reference: e.correlationId,
-    payloadHash: e.requestHash,
-    operator: e.operator,
-    isProductionEvidence: accepted && !rejected
-  };
-}
-function renderPersistenceToView(e) {
-  const accepted = e.source === "RENDER_LIVE" && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION");
-  return {
-    id: e.id,
-    providerId: "render",
-    type: e.kind === "RENDER_PERSISTENCE_HEALTH" ? "LIVE_HEALTH" : "CONFIGURATION",
-    environment: e.environment,
-    timestamp: e.timestamp,
-    source: "render-persistence-evidence-bridge",
-    status: accepted ? "ACCEPTED" : "REJECTED_FOR_PRODUCTION",
-    reference: e.evidenceReference,
-    payloadHash: e.payloadHash,
-    operator: e.operator,
-    isProductionEvidence: accepted
-  };
-}
-function collectEvidenceRecords(providerIds = KNOWN_PROVIDERS) {
-  const out = [];
-  const seen = /* @__PURE__ */ new Set();
-  for (const e of listRenderPersistenceEvidence(false)) {
-    if (seen.has(e.id)) continue;
-    seen.add(e.id);
-    out.push(renderPersistenceToView(e));
-  }
-  for (const e of listInterCarsCredentialEvidence(false)) {
-    if (seen.has(e.id)) continue;
-    seen.add(e.id);
-    out.push({
-      id: e.id,
-      providerId: "inter-cars",
-      type: "LIVE_API",
-      environment: e.environment,
-      timestamp: e.timestamp,
-      source: "inter-cars-production-access-evidence-bridge",
-      status: e.source === "INTER_CARS_LIVE" ? "ACCEPTED" : "REJECTED_FOR_PRODUCTION",
-      reference: e.evidenceReference,
-      payloadHash: e.payloadHash,
-      operator: e.operator,
-      isProductionEvidence: e.source === "INTER_CARS_LIVE"
-    });
-  }
-  for (const provider of providerIds) {
-    for (const e of listProviderAccessEvidence(provider)) {
-      if (seen.has(e.evidenceId)) continue;
-      seen.add(e.evidenceId);
-      out.push(toView(e));
-    }
-  }
-  return out.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 }
 
 // lib/inter-cars-production-access-evidence-bridge/goLiveInterCarsSteps.ts
@@ -30614,7 +27370,7 @@ function buildInterCarsGoLiveSteps() {
   const matrix = buildInterCarsCapabilityMatrix();
   const readOk = matrix.filter((c) => ["health", "catalog", "stock", "pricing"].includes(c.capability)).every((c) => c.status === "LIVE_READ_VALIDATED");
   const createOrder = matrix.find((c) => c.capability === "createOrder");
-  const step2 = (id, label, status, blockingReason) => ({
+  const step = (id, label, status, blockingReason) => ({
     id,
     label,
     status,
@@ -30622,306 +27378,39 @@ function buildInterCarsGoLiveSteps() {
     requiredHumanApproval: true
   });
   return [
-    step2(
+    step(
       "inter-cars-secret-reference",
       "INTER_CARS_SECRET_REFERENCE",
       credential === "NOT_CONFIGURED" ? "HUMAN_REQUIRED" : "CONFIGURED"
     ),
-    step2(
+    step(
       "inter-cars-credential-validated",
       "INTER_CARS_CREDENTIAL_VALIDATED",
       credential === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
     ),
-    step2(
+    step(
       "inter-cars-read-access-validated",
       "INTER_CARS_READ_ACCESS_VALIDATED",
       readOk ? "VALIDATED" : "BLOCKED_EXTERNAL_ACCESS",
       readOk ? void 0 : "READ_ONLY_LIVE_EVIDENCE_REQUIRED"
     ),
-    step2(
+    step(
       "inter-cars-create-order-validation",
       "INTER_CARS_CREATE_ORDER_VALIDATION",
       createOrder?.status === "ORDER_VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
       "ONLY_342_MAY_VALIDATE_CREATE_ORDER"
     ),
-    step2("inter-cars-production-order-arming", "INTER_CARS_PRODUCTION_ORDER_ARMING", "BLOCKED_EXTERNAL_ACCESS"),
-    step2("first-order-gate", "FIRST_ORDER_GATE", "BLOCKED_EXTERNAL_ACCESS"),
-    step2("post-order-validation", "POST_ORDER_VALIDATION", "BLOCKED_EXTERNAL_ACCESS")
+    step("inter-cars-production-order-arming", "INTER_CARS_PRODUCTION_ORDER_ARMING", "BLOCKED_EXTERNAL_ACCESS"),
+    step("first-order-gate", "FIRST_ORDER_GATE", "BLOCKED_EXTERNAL_ACCESS"),
+    step("post-order-validation", "POST_ORDER_VALIDATION", "BLOCKED_EXTERNAL_ACCESS")
   ];
-}
-
-// lib/render-persistence-evidence-bridge/goLivePersistenceGraph.ts
-function buildRenderPersistenceGoLiveSteps() {
-  const live = buildRenderPersistenceLiveStatus();
-  const step2 = (id, label, status, blockingReason) => ({
-    id,
-    label,
-    status,
-    blockingReason,
-    requiredHumanApproval: status === "HUMAN_REQUIRED" || status === "UNVERIFIED_EXTERNAL"
-  });
-  return [
-    step2(
-      "blueprint-configuration",
-      "BLUEPRINT_CONFIGURATION",
-      live.BLUEPRINT_CONFIGURATION === "VALIDATED" ? "CONFIGURED" : "BLOCKED"
-    ),
-    step2(
-      "render-persistent-disk",
-      "RENDER_PERSISTENT_DISK",
-      live.LIVE_RENDER_DISK === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
-      live.LIVE_RENDER_DISK === "VALIDATED" ? void 0 : "LIVE_DISK_EVIDENCE_REQUIRED"
-    ),
-    step2(
-      "live-db-health",
-      "LIVE_DB_HEALTH",
-      live.LIVE_DB_HEALTH === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
-    ),
-    step2(
-      "restart-persistence",
-      "RESTART_PERSISTENCE",
-      live.LIVE_RESTART_PERSISTENCE === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
-    ),
-    step2(
-      "backup",
-      "BACKUP",
-      live.LIVE_BACKUP === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
-    ),
-    step2(
-      "persistence-validated",
-      "PERSISTENCE_VALIDATED",
-      live.PERSISTENCE === "VALIDATED" ? "VALIDATED" : live.PERSISTENCE === "HUMAN_REQUIRED" ? "HUMAN_REQUIRED" : "BLOCKED",
-      live.PERSISTENCE === "VALIDATED" ? void 0 : "RENDER_LIVE_EVIDENCE_INCOMPLETE"
-    )
-  ];
-}
-
-// lib/external-access-control-center/goLiveControlGraph.ts
-function mapStepStatus(status) {
-  if (status === "COMPLETE") return "VALIDATED";
-  if (status === "CONFIGURED") return "CONFIGURED";
-  if (status === "BLOCKED") return "BLOCKED_EXTERNAL_ACCESS";
-  if (status === "NOT_CONFIGURED") return "NOT_CONFIGURED";
-  return "UNVERIFIED_EXTERNAL";
-}
-function buildExtendedGoLiveGraph() {
-  const blueprint = validateRenderBlueprint();
-  const renderSteps = buildRenderPersistenceGoLiveSteps();
-  const base = buildGoLiveDependencyGraph();
-  const prefix = [
-    {
-      id: "software-complete",
-      label: "SOFTWARE_COMPLETE",
-      status: "VALIDATED"
-    },
-    {
-      id: "configuration-complete",
-      label: "CONFIGURATION_COMPLETE",
-      status: blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "CONFIGURED" : "UNVERIFIED_EXTERNAL"
-    },
-    {
-      id: "external-access-complete",
-      label: "EXTERNAL_ACCESS_COMPLETE",
-      status: "BLOCKED_EXTERNAL_ACCESS",
-      blockingReason: "PROVIDER_CREDENTIALS_AND_HUMAN_ACTIONS_PENDING"
-    },
-    ...renderSteps,
-    ...buildInterCarsGoLiveSteps(),
-    {
-      id: "payment-live-validated",
-      label: "PAYMENT_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED"
-    },
-    {
-      id: "carrier-live-validated",
-      label: "CARRIER_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED"
-    },
-    {
-      id: "returns-live-validated",
-      label: "RETURNS_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED"
-    },
-    {
-      id: "marketplace-live-validated",
-      label: "MARKETPLACE_LIVE_VALIDATED",
-      status: "NOT_CONFIGURED"
-    },
-    {
-      id: "ai-provider-validated",
-      label: "AI_PROVIDER_VALIDATED",
-      status: "NOT_CONFIGURED"
-    },
-    {
-      id: "marketing-validated",
-      label: "MARKETING_VALIDATED",
-      status: "NOT_CONFIGURED"
-    }
-  ];
-  const mappedBase = base.map((s) => ({
-    id: s.id,
-    label: s.label,
-    status: mapStepStatus(s.status),
-    blockingReason: s.blockingReason,
-    requiredHumanApproval: s.requiredHumanApproval
-  }));
-  const salesStep = mappedBase.find((s) => s.id === "sales-enabled");
-  if (salesStep) {
-    salesStep.status = "BLOCKED_EXTERNAL_ACCESS";
-    salesStep.blockingReason = "SALES_ENABLEMENT_BLOCKED_UNTIL_ALL_GATES";
-  }
-  return [...prefix, ...mappedBase];
-}
-
-// lib/external-access-control-center/humanActions.ts
-function buildNextHumanActions(registry) {
-  const actions = [
-    ...buildRenderPersistenceHumanActions(),
-    ...buildInterCarsHumanActions()
-  ];
-  const preflight = buildExternalAccessPreflightReport();
-  for (const step2 of preflight.nextRequiredActions.slice(0, 5)) {
-    actions.push({
-      priority: 10 + actions.length,
-      provider: "Platform",
-      action: step2,
-      why: "From external access preflight SSOT",
-      requiredEvidence: "HUMAN_APPROVAL",
-      verificationMethod: "Operator confirmation",
-      blocking: true
-    });
-  }
-  return actions.sort((a, b) => a.priority - b.priority);
-}
-
-// lib/external-access-control-center/controlCenterReport.ts
-function buildExternalAccessControlCenterReport() {
-  const preflight = buildExternalAccessPreflightReport();
-  const renderPersistence = buildRenderPersistenceVerificationReport();
-  const interCars = buildInterCarsProductionAccessBridgeReport();
-  const registry = buildProviderRegistry();
-  const accessMatrix = buildAccessMatrixRows();
-  const evidenceRecords = collectEvidenceRecords();
-  const graph = buildExtendedGoLiveGraph();
-  const market35 = runMarket35Preflight();
-  const security = evaluateFinalSecurityGate();
-  const backup = getBackupRestoreEvidence();
-  const flags = getProductionFlagsSnapshot();
-  const sideEffects = getFinalGoLiveSafetyCounters();
-  const market35Summary = {
-    ready: market35.markets.filter((m) => m.status === "PASS").length,
-    partial: market35.markets.filter((m) => m.status === "WARNING").length,
-    blocked: market35.markets.filter((m) => m.status === "BLOCKED").length,
-    humanRequired: market35.markets.filter((m) => m.warnings.some((w) => w.includes("SUPPLIER"))).length
-  };
-  const scoreboard = {
-    SOFTWARE: preflight.softwareComplete ? "VALIDATED" : "BLOCKED",
-    CONFIGURATION: preflight.configComplete ? "CONFIGURED" : "UNVERIFIED_EXTERNAL",
-    PERSISTENCE: renderPersistence.live.PERSISTENCE,
-    EXTERNAL_ACCESS: "HUMAN_REQUIRED",
-    LIVE_VALIDATION: "BLOCKED",
-    SECURITY: security.status === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
-    BACKUP: backup.result === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
-    SUPPLIER: interCars.readOnlyAccess === "VALIDATED" ? "VALIDATED" : interCars.credentialReference === "NOT_CONFIGURED" ? "BLOCKED_EXTERNAL_ACCESS" : "HUMAN_REQUIRED",
-    PAYMENT: registry.find((r) => r.name === "PAYMENT")?.liveValidationState ?? "NOT_CONFIGURED",
-    CARRIER: registry.find((r) => r.name === "CARRIER")?.liveValidationState ?? "NOT_CONFIGURED",
-    RETURNS: registry.find((r) => r.name === "RETURNS")?.liveValidationState ?? "NOT_CONFIGURED",
-    MARKETPLACE: "NOT_CONFIGURED",
-    AI: registry.find((r) => r.name === "AI PROVIDER")?.liveValidationState ?? "NOT_CONFIGURED",
-    MARKETING: registry.find((r) => r.name === "MARKETING")?.liveValidationState ?? "NOT_CONFIGURED",
-    MARKETS_35: market35Summary.blocked === 0 ? "PARTIAL" : "PARTIAL",
-    CUSTOMS: "UNVERIFIED_EXTERNAL",
-    CHECKOUT: "CONFIGURED",
-    HUMAN_APPROVAL: "HUMAN_REQUIRED",
-    FIRST_ORDER: "BLOCKED_EXTERNAL_ACCESS",
-    OBSERVATION: "BLOCKED_EXTERNAL_ACCESS",
-    PRODUCTION: "BLOCKED",
-    SALES: flags.SALES === "ON" ? "FAILED" : "DISABLED"
-  };
-  const blockers = [.../* @__PURE__ */ new Set([...preflight.blockers, ...registry.flatMap((r) => r.blockers)])];
-  const warnings = [...preflight.warnings];
-  if (flags.SALES === "ON") {
-    blockers.push("SALES_ENABLED_UNEXPECTEDLY_ON");
-  }
-  if (!isProductionKillSwitchActive() && isProductionFlagEnabled("SALES")) {
-    blockers.push("KILL_SWITCH_SALES_MISMATCH");
-  }
-  const nextHumanActions = buildNextHumanActions(registry);
-  return {
-    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    masterStatus: {
-      SOFTWARE_COMPLETE: preflight.softwareComplete,
-      CONFIGURATION_COMPLETE: preflight.configComplete,
-      EXTERNAL_ACCESS: "HUMAN_REQUIRED",
-      LIVE_VALIDATION: "BLOCKED",
-      PRODUCTION: "BLOCKED",
-      GO_LIVE: "BLOCKED",
-      SALES_ENABLED: flags.SALES === "ON" ? "1" : "0"
-    },
-    scoreboard,
-    providerRegistry: registry,
-    accessMatrix,
-    evidenceRecords,
-    goLiveDependencyGraph: graph,
-    renderControl: {
-      BLUEPRINT_CONFIGURATION: renderPersistence.live.BLUEPRINT_CONFIGURATION,
-      LIVE_PERSISTENT_DISK: renderPersistence.live.LIVE_RENDER_DISK,
-      LIVE_DB_PATH: renderPersistence.live.LIVE_DB_PATH,
-      LIVE_DB_HEALTH: renderPersistence.live.LIVE_DB_HEALTH,
-      LIVE_RESTART_PERSISTENCE: renderPersistence.live.LIVE_RESTART_PERSISTENCE,
-      LIVE_BACKUP: renderPersistence.live.LIVE_BACKUP,
-      LIVE_RESTORE: renderPersistence.live.LIVE_RESTORE,
-      LIVE_DEPLOYMENT: "HUMAN_REQUIRED",
-      LIVE_HEALTH: renderPersistence.live.LIVE_DB_HEALTH,
-      PERSISTENCE: renderPersistence.live.PERSISTENCE
-    },
-    renderPersistenceVerification: {
-      acceptedEvidenceCount: renderPersistence.acceptedEvidenceCount,
-      expiredEvidenceCount: renderPersistence.expiredEvidenceCount,
-      localHintsNote: renderPersistence.localHints.note
-    },
-    interCarsAccess: {
-      credentialReference: interCars.credentialReference,
-      credentialValidation: interCars.credentialValidation,
-      readOnlyAccess: interCars.readOnlyAccess,
-      createOrder: interCars.createOrder,
-      stage342Gate: interCars.stage342Gate,
-      capabilitySummary: Object.fromEntries(interCars.capabilities.map((c) => [c.capability, c.status]))
-    },
-    market35Summary,
-    nextHumanActions,
-    blockers,
-    warnings,
-    sideEffectCounters: {
-      realSupplierOrders: sideEffects.realSupplierOrders,
-      realCustomerOrders: 0,
-      realPayments: sideEffects.realPayments,
-      realRefunds: sideEffects.realRefunds,
-      realShipments: sideEffects.realCarrierLabels,
-      realLabels: sideEffects.realCarrierLabels,
-      realMarketplaceListings: 0,
-      realMarketplaceOrders: sideEffects.realMarketplaceMutations,
-      realAdSpend: sideEffects.realMarketingSpend,
-      productionDeployments: 0,
-      externalMutations: 0,
-      fakeEvidence: countRejectedEvidenceAttempts()
-    },
-    fakeProductionEvidence: countRejectedEvidenceAttempts(),
-    auditSnapshot: [
-      "ACCESS_STATUS_CHANGED:READ_ONLY",
-      "EVIDENCE_REGISTERED:READ_ONLY",
-      "HUMAN_ACTION_REQUIRED:ACTIVE",
-      "GO_LIVE_BLOCKED:ACTIVE",
-      "SALES_ENABLEMENT_BLOCKED:ACTIVE"
-    ]
-  };
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  buildAccessMatrixRows,
-  buildExtendedGoLiveGraph,
-  buildExternalAccessControlCenterReport,
-  buildNextHumanActions,
-  buildProviderRegistry,
-  collectEvidenceRecords
+  buildInterCarsCapabilityMatrix,
+  buildInterCarsGoLiveSteps,
+  buildInterCarsHumanActions,
+  buildInterCarsProductionAccessBridgeReport,
+  listInterCarsCredentialEvidence,
+  registerInterCarsCredentialEvidence
 });

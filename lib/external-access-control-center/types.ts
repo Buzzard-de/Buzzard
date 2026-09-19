@@ -157,6 +157,14 @@ export interface ExternalAccessControlCenterReport {
     expiredEvidenceCount: number;
     localHintsNote: string;
   };
+  interCarsAccess?: {
+    credentialReference: string;
+    credentialValidation: ControlCenterStatus;
+    readOnlyAccess: ControlCenterStatus;
+    createOrder: string;
+    stage342Gate: string;
+    capabilitySummary: Record<string, string>;
+  };
   market35Summary: { ready: number; partial: number; blocked: number; humanRequired: number };
   nextHumanActions: HumanActionItem[];
   blockers: string[];

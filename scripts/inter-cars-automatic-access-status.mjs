@@ -1,20 +1,18 @@
 #!/usr/bin/env node
 /**
- * Inter Cars Automatic Access Pack — final status report (metadata only).
+ * Inter Cars access status — #362 evidence bridge report (metadata only).
  */
-import { createRequire } from "node:module";
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "url";
 
 process.env.SUPPLIER_ORDER_NETWORK_ENABLED = "0";
 process.env.SUPPLIER_NETWORK_ENABLED = "0";
 process.env.SALES_ENABLED = "0";
 
-const require = createRequire(import.meta.url);
-
-try {
-  const mod = require("../server/lib/supplierInterCarsProductionAccess.bundle.cjs");
-  console.log(mod.formatInterCarsAccessStatusReport());
-} catch (err) {
-  console.error("Bundle unavailable. Run: npm run build:supplier-inter-cars-production-access-bridge");
-  console.error(err.message);
-  process.exit(1);
-}
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+const json = process.argv.includes("--json");
+const args = ["scripts/inter-cars-access-evidence-bridge-cli.mjs", "status"];
+if (json) args.push("--json");
+const r = spawnSync("node", args, { cwd: root, stdio: "inherit" });
+process.exit(r.status ?? 1);

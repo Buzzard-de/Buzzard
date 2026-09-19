@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T11:51:10.568Z",
+  "generatedAt": "2026-09-19T11:54:23.536Z",
   "SOFTWARE_SUPPORT": "PASS",
   "BLUEPRINT_CONFIGURATION": "PASS",
   "DATABASE_CONFIGURATION": "PASS",
@@ -40,7 +40,7 @@
     "MANUAL_RENDER_ACTION": "BLOCKED"
   },
   "storagePreflight": {
-    "generatedAt": "2026-09-19T11:51:10.567Z",
+    "generatedAt": "2026-09-19T11:54:23.536Z",
     "softwarePersistenceSupport": "PASS",
     "persistenceConfiguration": "PASS",
     "renderPersistentDisk": "BLOCKED",

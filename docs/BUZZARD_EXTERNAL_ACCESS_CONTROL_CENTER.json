@@ -1,0 +1,1350 @@
+{
+  "generatedAt": "2026-09-19T12:08:18.380Z",
+  "masterStatus": {
+    "SOFTWARE_COMPLETE": true,
+    "CONFIGURATION_COMPLETE": true,
+    "EXTERNAL_ACCESS": "HUMAN_REQUIRED",
+    "LIVE_VALIDATION": "BLOCKED",
+    "PRODUCTION": "BLOCKED",
+    "GO_LIVE": "BLOCKED",
+    "SALES_ENABLED": "0"
+  },
+  "scoreboard": {
+    "SOFTWARE": "VALIDATED",
+    "CONFIGURATION": "CONFIGURED",
+    "PERSISTENCE": "CONFIGURED",
+    "EXTERNAL_ACCESS": "HUMAN_REQUIRED",
+    "LIVE_VALIDATION": "BLOCKED",
+    "SECURITY": "VALIDATED",
+    "BACKUP": "VALIDATED",
+    "SUPPLIER": "BLOCKED_EXTERNAL_ACCESS",
+    "PAYMENT": "NOT_CONFIGURED",
+    "CARRIER": "NOT_CONFIGURED",
+    "RETURNS": "NOT_CONFIGURED",
+    "MARKETPLACE": "NOT_CONFIGURED",
+    "AI": "NOT_CONFIGURED",
+    "MARKETING": "NOT_CONFIGURED",
+    "MARKETS_35": "PARTIAL",
+    "CUSTOMS": "UNVERIFIED_EXTERNAL",
+    "CHECKOUT": "CONFIGURED",
+    "HUMAN_APPROVAL": "HUMAN_REQUIRED",
+    "FIRST_ORDER": "BLOCKED_EXTERNAL_ACCESS",
+    "OBSERVATION": "BLOCKED_EXTERNAL_ACCESS",
+    "PRODUCTION": "BLOCKED",
+    "SALES": "DISABLED"
+  },
+  "providerRegistry": [
+    {
+      "providerId": "inter-cars",
+      "name": "INTER CARS",
+      "category": "SUPPLIER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:SUPPLIER_LIVE_CREDENTIALS"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "BLOCKED_EXTERNAL_ACCESS",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "CRITICAL",
+      "dependencies": [],
+      "blockers": [
+        "BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "payment",
+      "name": "PAYMENT",
+      "category": "PLATFORM",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:PAYMENT_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "CRITICAL",
+      "dependencies": [],
+      "blockers": [
+        "PAYMENT_NOT_VALIDATED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "carrier",
+      "name": "CARRIER",
+      "category": "PLATFORM",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:CARRIER_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "CARRIER_NOT_VALIDATED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "tracking",
+      "name": "TRACKING",
+      "category": "PLATFORM",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:CARRIER_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [
+        "carrier"
+      ],
+      "blockers": [
+        "CARRIER_CREDENTIAL_REQUIRED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "returns",
+      "name": "RETURNS",
+      "category": "RETURNS",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:RETURNS_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "RETURNS_NOT_VALIDATED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "refunds",
+      "name": "REFUNDS",
+      "category": "RETURNS",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:RETURNS_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "RETURNS_NOT_VALIDATED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "financial-provider",
+      "name": "FINANCIAL PROVIDER",
+      "category": "PLATFORM",
+      "environment": "PRODUCTION",
+      "required": false,
+      "secretRefs": [
+        "n/a"
+      ],
+      "credentialState": "CONFIGURED",
+      "configurationState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "UNVERIFIED_EXTERNAL",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "REQUIRES_LIVE_ORDER_CHAIN"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "amazon",
+      "name": "AMAZON",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_AMAZON_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "ebay",
+      "name": "EBAY",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_EBAY_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "kaufland",
+      "name": "KAUFLAND",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_KAUFLAND_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "allegro",
+      "name": "ALLEGRO",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_ALLEGRO_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "bol",
+      "name": "BOL",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_BOL_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "cdiscount",
+      "name": "CDISCOUNT",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_CDISCOUNT_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "otto",
+      "name": "OTTO",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_OTTO_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "emag",
+      "name": "EMAG",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_EMAG_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "skroutz",
+      "name": "SKROUTZ",
+      "category": "MARKETPLACE",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_SKROUTZ_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "other-marketplaces",
+      "name": "OTHER MARKETPLACES",
+      "category": "PLATFORM",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:MARKETPLACE_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "ai-provider",
+      "name": "AI PROVIDER",
+      "category": "AI",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:AI_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "AI_NOT_VALIDATED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "marketing",
+      "name": "MARKETING",
+      "category": "MARKETING",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:GOOGLE_ADS_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "MARKETING_NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "email",
+      "name": "EMAIL",
+      "category": "PLATFORM",
+      "environment": "PRODUCTION",
+      "required": false,
+      "secretRefs": [
+        "env:EMAIL_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": false,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "NOT_CONFIGURED"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "deployment",
+      "name": "DEPLOYMENT",
+      "category": "RENDER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:RENDER_API_KEY"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "MEDIUM",
+      "dependencies": [],
+      "blockers": [
+        "RENDER_DEPLOYMENT_MANUAL_VERIFICATION"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "persistent-storage",
+      "name": "PERSISTENT STORAGE",
+      "category": "RENDER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "n/a"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "NOT_CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "BLOCKED_EXTERNAL_ACCESS",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "HIGH",
+      "dependencies": [],
+      "blockers": [
+        "BLOCKED — MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "carrier-dhl",
+      "name": "CARRIER/DHL",
+      "category": "CARRIER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:CARRIER_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "HIGH",
+      "dependencies": [],
+      "blockers": [
+        "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "carrier-dpd",
+      "name": "CARRIER/DPD",
+      "category": "CARRIER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:CARRIER_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "HIGH",
+      "dependencies": [],
+      "blockers": [
+        "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "carrier-gls",
+      "name": "CARRIER/GLS",
+      "category": "CARRIER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:CARRIER_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "HIGH",
+      "dependencies": [],
+      "blockers": [
+        "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "carrier-ups",
+      "name": "CARRIER/UPS",
+      "category": "CARRIER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:CARRIER_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "HIGH",
+      "dependencies": [],
+      "blockers": [
+        "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+      ],
+      "warnings": []
+    },
+    {
+      "providerId": "carrier-dhl_express",
+      "name": "CARRIER/DHL_EXPRESS",
+      "category": "CARRIER",
+      "environment": "PRODUCTION",
+      "required": true,
+      "secretRefs": [
+        "env:CARRIER_PROVIDER_SECRET_REF"
+      ],
+      "credentialState": "NOT_CONFIGURED",
+      "configurationState": "CONFIGURED",
+      "networkState": "DISABLED",
+      "liveValidationState": "NOT_CONFIGURED",
+      "evidenceState": "UNVERIFIED_EXTERNAL",
+      "humanActionRequired": true,
+      "productionEnabled": false,
+      "riskLevel": "HIGH",
+      "dependencies": [],
+      "blockers": [
+        "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+      ],
+      "warnings": []
+    }
+  ],
+  "accessMatrix": [
+    {
+      "provider": "INTER CARS",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "BLOCKED_EXTERNAL_ACCESS",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS"
+    },
+    {
+      "provider": "PAYMENT",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "PAYMENT_NOT_VALIDATED"
+    },
+    {
+      "provider": "CARRIER",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "CARRIER_NOT_VALIDATED"
+    },
+    {
+      "provider": "TRACKING",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "CARRIER_CREDENTIAL_REQUIRED"
+    },
+    {
+      "provider": "RETURNS",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "RETURNS_NOT_VALIDATED"
+    },
+    {
+      "provider": "REFUNDS",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "RETURNS_NOT_VALIDATED"
+    },
+    {
+      "provider": "FINANCIAL PROVIDER",
+      "required": true,
+      "configured": true,
+      "credentialsPresent": true,
+      "secretReferencePresent": false,
+      "networkEnabled": false,
+      "liveValidation": "UNVERIFIED_EXTERNAL",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": false,
+      "nextHumanAction": "REQUIRES_LIVE_ORDER_CHAIN"
+    },
+    {
+      "provider": "AMAZON",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "EBAY",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "KAUFLAND",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "ALLEGRO",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "BOL",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "CDISCOUNT",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "OTTO",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "EMAG",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "SKROUTZ",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "OTHER MARKETPLACES",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED"
+    },
+    {
+      "provider": "AI PROVIDER",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "AI_NOT_VALIDATED"
+    },
+    {
+      "provider": "MARKETING",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "MARKETING_NOT_CONFIGURED"
+    },
+    {
+      "provider": "EMAIL",
+      "required": false,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": false,
+      "blocked": true,
+      "nextHumanAction": "NOT_CONFIGURED"
+    },
+    {
+      "provider": "DEPLOYMENT",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": false,
+      "nextHumanAction": "RENDER_DEPLOYMENT_MANUAL_VERIFICATION"
+    },
+    {
+      "provider": "PERSISTENT STORAGE",
+      "required": true,
+      "configured": false,
+      "credentialsPresent": false,
+      "secretReferencePresent": false,
+      "networkEnabled": false,
+      "liveValidation": "BLOCKED_EXTERNAL_ACCESS",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "BLOCKED — MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)"
+    },
+    {
+      "provider": "CARRIER/DHL",
+      "required": true,
+      "configured": true,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+    },
+    {
+      "provider": "CARRIER/DPD",
+      "required": true,
+      "configured": true,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+    },
+    {
+      "provider": "CARRIER/GLS",
+      "required": true,
+      "configured": true,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+    },
+    {
+      "provider": "CARRIER/UPS",
+      "required": true,
+      "configured": true,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+    },
+    {
+      "provider": "CARRIER/DHL_EXPRESS",
+      "required": true,
+      "configured": true,
+      "credentialsPresent": false,
+      "secretReferencePresent": true,
+      "networkEnabled": false,
+      "liveValidation": "NOT_CONFIGURED",
+      "productionEvidence": "NONE",
+      "humanApproval": true,
+      "blocked": true,
+      "nextHumanAction": "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+    }
+  ],
+  "evidenceRecords": [],
+  "goLiveDependencyGraph": [
+    {
+      "id": "software-complete",
+      "label": "SOFTWARE_COMPLETE",
+      "status": "VALIDATED"
+    },
+    {
+      "id": "configuration-complete",
+      "label": "CONFIGURATION_COMPLETE",
+      "status": "CONFIGURED"
+    },
+    {
+      "id": "external-access-complete",
+      "label": "EXTERNAL_ACCESS_COMPLETE",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "PROVIDER_CREDENTIALS_AND_HUMAN_ACTIONS_PENDING"
+    },
+    {
+      "id": "render-persistence-validated",
+      "label": "RENDER_PERSISTENCE_VALIDATED",
+      "status": "HUMAN_REQUIRED",
+      "blockingReason": "LIVE_PERSISTENT_DISK_UNVERIFIED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "supplier-live-validated",
+      "label": "SUPPLIER_LIVE_VALIDATED",
+      "status": "UNVERIFIED_EXTERNAL",
+      "blockingReason": "INTER_CARS_STAGE_A_NOT_COMPLETE"
+    },
+    {
+      "id": "payment-live-validated",
+      "label": "PAYMENT_LIVE_VALIDATED",
+      "status": "NOT_CONFIGURED"
+    },
+    {
+      "id": "carrier-live-validated",
+      "label": "CARRIER_LIVE_VALIDATED",
+      "status": "NOT_CONFIGURED"
+    },
+    {
+      "id": "returns-live-validated",
+      "label": "RETURNS_LIVE_VALIDATED",
+      "status": "NOT_CONFIGURED"
+    },
+    {
+      "id": "marketplace-live-validated",
+      "label": "MARKETPLACE_LIVE_VALIDATED",
+      "status": "NOT_CONFIGURED"
+    },
+    {
+      "id": "ai-provider-validated",
+      "label": "AI_PROVIDER_VALIDATED",
+      "status": "NOT_CONFIGURED"
+    },
+    {
+      "id": "marketing-validated",
+      "label": "MARKETING_VALIDATED",
+      "status": "NOT_CONFIGURED"
+    },
+    {
+      "id": "external-credentials",
+      "label": "EXTERNAL CREDENTIALS",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS"
+    },
+    {
+      "id": "preflight",
+      "label": "PREFLIGHT",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "AWAITING_CREDENTIALS"
+    },
+    {
+      "id": "read-only-live-validation",
+      "label": "READ-ONLY LIVE VALIDATION",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "STAGE_A_NOT_VALIDATED"
+    },
+    {
+      "id": "342-human-approval",
+      "label": "#342 HUMAN APPROVAL",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "FOUR_EYES_APPROVAL_REQUIRED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "controlled-create-order",
+      "label": "CONTROLLED CREATE ORDER",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "CREATE_ORDER_UNVERIFIED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "343-production-order-arming",
+      "label": "#343 PRODUCTION ORDER ARMING",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "ARMING_NOT_COMPLETE",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "344-first-order-execution",
+      "label": "#344 FIRST ORDER EXECUTION",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "FIRST_ORDER_NOT_EXECUTED",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "345-post-first-order-validation",
+      "label": "#345 POST-FIRST-ORDER VALIDATION",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "CONTROLLED_GO_LIVE_NOT_COMPLETE",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "346-observation",
+      "label": "#346 OBSERVATION / BROADER ROLLOUT",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "OBSERVATION_NOT_COMPLETE",
+      "requiredHumanApproval": true
+    },
+    {
+      "id": "provider-validation",
+      "label": "PROVIDER VALIDATION",
+      "status": "NOT_CONFIGURED",
+      "blockingReason": "PROVIDER_LIVE_VALIDATION_INCOMPLETE"
+    },
+    {
+      "id": "final-go-live-gate",
+      "label": "FINAL GO-LIVE GATE",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "CREDENTIALS_AND_APPROVAL"
+    },
+    {
+      "id": "sales-enabled",
+      "label": "SALES_ENABLED=1",
+      "status": "BLOCKED_EXTERNAL_ACCESS",
+      "blockingReason": "SALES_ENABLEMENT_BLOCKED_UNTIL_ALL_GATES",
+      "requiredHumanApproval": true
+    }
+  ],
+  "renderControl": {
+    "BLUEPRINT_CONFIGURATION": "VALIDATED",
+    "LIVE_PERSISTENT_DISK": "UNVERIFIED_EXTERNAL",
+    "LIVE_DEPLOYMENT": "HUMAN_REQUIRED",
+    "LIVE_HEALTH": "UNVERIFIED_EXTERNAL"
+  },
+  "market35Summary": {
+    "ready": 3,
+    "partial": 32,
+    "blocked": 0,
+    "humanRequired": 27
+  },
+  "nextHumanActions": [
+    {
+      "priority": 1,
+      "provider": "Render",
+      "action": "Create/mount Persistent Disk at /var/data (1 GB) and sync Blueprint",
+      "why": "Required for production SQLite persistence",
+      "requiredEvidence": "LIVE_HEALTH",
+      "verificationMethod": "GET /api/health/db → persistent=true, path /var/data/buzzard.db",
+      "blocking": true
+    },
+    {
+      "priority": 2,
+      "provider": "Inter Cars",
+      "action": "Configure SUPPLIER_LIVE_CREDENTIALS_SECRET_REF and complete B2B/OAuth2 production access",
+      "why": "Supplier production network blocked without credentials",
+      "requiredEvidence": "LIVE_API",
+      "verificationMethod": "Stage A read-only validation + #342 human approval",
+      "blocking": true
+    },
+    {
+      "priority": 12,
+      "provider": "Platform",
+      "action": "Configure SUPPLIER_LIVE_CREDENTIALS_SECRET_REF for Inter Cars",
+      "why": "From external access preflight SSOT",
+      "requiredEvidence": "HUMAN_APPROVAL",
+      "verificationMethod": "Operator confirmation",
+      "blocking": true
+    },
+    {
+      "priority": 13,
+      "provider": "Platform",
+      "action": "Configure Render persistent disk mount at /var/data",
+      "why": "From external access preflight SSOT",
+      "requiredEvidence": "HUMAN_APPROVAL",
+      "verificationMethod": "Operator confirmation",
+      "blocking": true
+    },
+    {
+      "priority": 14,
+      "provider": "Platform",
+      "action": "Complete blocked step: EXTERNAL CREDENTIALS",
+      "why": "From external access preflight SSOT",
+      "requiredEvidence": "HUMAN_APPROVAL",
+      "verificationMethod": "Operator confirmation",
+      "blocking": true
+    },
+    {
+      "priority": 15,
+      "provider": "Platform",
+      "action": "Run Stage A read-only Inter Cars validation after credentials",
+      "why": "From external access preflight SSOT",
+      "requiredEvidence": "HUMAN_APPROVAL",
+      "verificationMethod": "Operator confirmation",
+      "blocking": true
+    },
+    {
+      "priority": 16,
+      "provider": "Platform",
+      "action": "Obtain four-eyes human approval for #342–#346 chain",
+      "why": "From external access preflight SSOT",
+      "requiredEvidence": "HUMAN_APPROVAL",
+      "verificationMethod": "Operator confirmation",
+      "blocking": true
+    }
+  ],
+  "blockers": [
+    "inter-cars:ic_production_account",
+    "inter-cars:ic_oauth2_token",
+    "inter-cars:ic_secret_manager",
+    "inter-cars:ic_live_profile",
+    "inter-cars:ic_read_network",
+    "inter-cars:ic_health",
+    "inter-cars:ic_catalog",
+    "inter-cars:ic_stock",
+    "inter-cars:ic_price",
+    "inter-cars:ic_controlled_validation",
+    "payment:pay_merchant_account",
+    "payment:pay_api_credentials",
+    "payment:pay_webhook",
+    "payment:pay_webhook_secret",
+    "payment:pay_currencies",
+    "payment:pay_refund",
+    "payment:pay_secret_manager",
+    "carrier:carrier_account",
+    "carrier:carrier_credentials",
+    "carrier:carrier_service_mapping",
+    "carrier:carrier_secret_manager",
+    "ai:ai_provider_account",
+    "ai:ai_secret_ref",
+    "ai:ai_health",
+    "ai:ai_rate_limit",
+    "returns:returns_secret_ref",
+    "returns:returns_eligibility",
+    "returns:returns_supplier_credit",
+    "returns:returns_customer_refund",
+    "marketing:marketing_google_ads",
+    "marketing:marketing_meta",
+    "marketing:marketing_tiktok",
+    "marketing:marketing_youtube",
+    "REAL_WORLD:rw_ic_credentials",
+    "REAL_WORLD:rw_ic_read_live",
+    "REAL_WORLD:rw_342",
+    "REAL_WORLD:rw_343",
+    "REAL_WORLD:rw_344",
+    "REAL_WORLD:rw_345",
+    "REAL_WORLD:rw_346",
+    "REAL_WORLD:rw_payment",
+    "REAL_WORLD:rw_carrier",
+    "REAL_WORLD:rw_tracking",
+    "REAL_WORLD:rw_returns",
+    "REAL_WORLD:rw_ai",
+    "INTER CARS:BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS",
+    "PERSISTENT STORAGE:BLOCKED — MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)",
+    "BLOCKED — MISSING PRODUCTION CREDENTIALS / ACCESS",
+    "PAYMENT_NOT_VALIDATED",
+    "CARRIER_NOT_VALIDATED",
+    "CARRIER_CREDENTIAL_REQUIRED",
+    "RETURNS_NOT_VALIDATED",
+    "REQUIRES_LIVE_ORDER_CHAIN",
+    "MARKETPLACE_CREDENTIALS_NOT_CONFIGURED",
+    "AI_NOT_VALIDATED",
+    "MARKETING_NOT_CONFIGURED",
+    "NOT_CONFIGURED",
+    "RENDER_DEPLOYMENT_MANUAL_VERIFICATION",
+    "BLOCKED — MANUAL DEPLOYMENT CONFIGURATION REQUIRED (/var/data)",
+    "NO_LABEL_CREATION_WITHOUT_CREDENTIALS"
+  ],
+  "warnings": [
+    "AT:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "BE:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "BG:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "HR:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "CY:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "CZ:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "DK:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "EE:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "FI:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "GR:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "HU:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "IE:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "IT:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "LV:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "LT:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "LU:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "MT:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "NL:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "PT:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "RO:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "SK:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "SI:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "ES:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "SE:SUPPLIER_NOT_IN_SUPPORTED_MARKETS",
+    "TR:CUSTOMS_PRECHECK_REQUIRED",
+    "SA:CUSTOMS_PRECHECK_REQUIRED",
+    "AE:CUSTOMS_PRECHECK_REQUIRED",
+    "QA:CUSTOMS_PRECHECK_REQUIRED",
+    "KW:SUPPLIER_NOT_IN_SUPPORTED_MARKETS,CUSTOMS_PRECHECK_REQUIRED",
+    "BH:SUPPLIER_NOT_IN_SUPPORTED_MARKETS,CUSTOMS_PRECHECK_REQUIRED",
+    "OM:SUPPLIER_NOT_IN_SUPPORTED_MARKETS,CUSTOMS_PRECHECK_REQUIRED",
+    "EG:CUSTOMS_PRECHECK_REQUIRED"
+  ],
+  "sideEffectCounters": {
+    "realSupplierOrders": 0,
+    "realCustomerOrders": 0,
+    "realPayments": 0,
+    "realRefunds": 0,
+    "realShipments": 0,
+    "realLabels": 0,
+    "realMarketplaceListings": 0,
+    "realMarketplaceOrders": 0,
+    "realAdSpend": 0,
+    "productionDeployments": 0,
+    "externalMutations": 0,
+    "fakeEvidence": 0
+  },
+  "fakeProductionEvidence": 0,
+  "auditSnapshot": [
+    "ACCESS_STATUS_CHANGED:READ_ONLY",
+    "EVIDENCE_REGISTERED:READ_ONLY",
+    "HUMAN_ACTION_REQUIRED:ACTIVE",
+    "GO_LIVE_BLOCKED:ACTIVE",
+    "SALES_ENABLEMENT_BLOCKED:ACTIVE"
+  ]
+}

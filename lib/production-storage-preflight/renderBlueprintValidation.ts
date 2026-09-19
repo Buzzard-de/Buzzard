@@ -51,12 +51,16 @@ function countDiskBlocksInBuzzardApi(block: string): number {
   return (block.match(/\bdisk:/g) || []).length;
 }
 
-type RenderBlueprintBase = Omit<
-  RenderBlueprintValidation,
-  "liveHealthProbe" | "LIVE_RENDER_DISK" | "LIVE_PERSISTENCE" | "RENDER_PERSISTENCE_READY" | "MANUAL_RENDER_ACTION"
->;
+function manualRenderActionForBlueprint(blueprintConfiguration: PreflightStatus, liveRenderDisk: PreflightStatus): PreflightStatus {
+  if (blueprintConfiguration === "PASS" && liveRenderDisk !== "PASS") return "BLOCKED";
+  if (liveRenderDisk === "PASS") return "UNVERIFIED";
+  return "BLOCKED";
+}
 
-export function validateRenderBlueprint(): RenderBlueprintBase {
+/** Sync blueprint check — never infers live Render mount from YAML alone */
+export type RenderBlueprintSync = Omit<RenderBlueprintValidation, "liveHealthProbe">;
+
+export function validateRenderBlueprint(): RenderBlueprintSync {
   const renderYamlPath = path.join(process.cwd(), "render.yaml");
   const dbStartupPath = path.join(process.cwd(), "server/lib/dbStartup.js");
   const healthPluginPath = path.join(process.cwd(), "server/plugins/controlCenterPlugin.js");
@@ -113,14 +117,23 @@ export function validateRenderBlueprint(): RenderBlueprintBase {
 
   const blueprintConfiguration: PreflightStatus = diskConfigured && dbPathInBlueprint && backupInBlueprint ? "PASS" : "BLOCKED";
 
+  let LIVE_RENDER_DISK: PreflightStatus = "UNVERIFIED";
+  const LIVE_PERSISTENCE: PreflightStatus = "UNVERIFIED";
+  const RENDER_PERSISTENCE_READY: PreflightStatus = "UNVERIFIED";
+  const MANUAL_RENDER_ACTION: PreflightStatus = manualRenderActionForBlueprint(blueprintConfiguration, LIVE_RENDER_DISK);
+
   return {
     RENDER_BLUEPRINT_DISK_CONFIGURED: diskConfigured ? "PASS" : buzzardApiServiceFound ? "WARNING" : "BLOCKED",
     RENDER_DISK_MOUNT_PATH: diskMountPath ?? TARGET_MOUNT,
     RENDER_DB_PATH: TARGET_DB,
     RENDER_BACKUP_PATH: TARGET_BACKUP,
+    RENDER_PERSISTENCE_READY,
     BLUEPRINT_CONFIGURATION: blueprintConfiguration,
     DATABASE_CONFIGURATION: dbPathInBlueprint ? "PASS" : "BLOCKED",
     BACKUP_CONFIGURATION: backupInBlueprint ? "PASS" : "BLOCKED",
+    LIVE_RENDER_DISK,
+    LIVE_PERSISTENCE,
+    MANUAL_RENDER_ACTION,
     SOFTWARE_SUPPORT:
       healthEndpointDbSupported && dbStartupMigrationPresent && fs.existsSync(path.join(process.cwd(), "server/lib/dbPaths.js"))
         ? "PASS"
@@ -201,8 +214,7 @@ export async function buildRenderBlueprintValidation(): Promise<RenderBlueprintV
   const RENDER_PERSISTENCE_READY: PreflightStatus =
     LIVE_RENDER_DISK === "PASS" && LIVE_PERSISTENCE === "PASS" ? "PASS" : "UNVERIFIED";
 
-  const MANUAL_RENDER_ACTION: PreflightStatus =
-    base.BLUEPRINT_CONFIGURATION === "PASS" && LIVE_RENDER_DISK !== "PASS" ? "BLOCKED" : LIVE_RENDER_DISK === "PASS" ? "UNVERIFIED" : "BLOCKED";
+  const MANUAL_RENDER_ACTION: PreflightStatus = manualRenderActionForBlueprint(base.BLUEPRINT_CONFIGURATION, LIVE_RENDER_DISK);
 
   return {
     ...base,

@@ -25,6 +25,14 @@ process.env.AI_PRODUCTION_ENABLED = "0";
 execSync("node scripts/build-external-access-control-center-bridge.mjs", { stdio: "pipe", cwd: root });
 const mod = require("../server/lib/externalAccessControlCenter.bundle.cjs");
 const report = mod.buildExternalAccessControlCenterReport();
+let masterBanner = "";
+try {
+  execSync("node scripts/build-master-external-provider-readiness-bridge.mjs", { stdio: "pipe", cwd: root });
+  const master = require("../server/lib/masterExternalProviderReadiness.bundle.cjs");
+  masterBanner = master.formatMasterExternalReadinessBanner(master.buildMasterExternalProviderReadinessReport());
+} catch {
+  masterBanner = "";
+}
 
 function writeDocs() {
   const docsDir = path.join(root, "docs");
@@ -123,6 +131,7 @@ if (jsonOutput) {
 
 if (mode === "status" || mode === "go-live") {
   printFinalReport();
+  if (masterBanner) console.log("\n" + masterBanner);
   if (mode === "go-live") {
     console.log("\nGo-Live Graph (first 8 steps):");
     for (const s of report.goLiveDependencyGraph.slice(0, 8)) {
@@ -135,6 +144,7 @@ if (mode === "status" || mode === "go-live") {
 if (mode === "preflight") {
   writeDocs();
   printFinalReport();
+  if (masterBanner) console.log("\n" + masterBanner);
   console.log("\nDocs updated under docs/BUZZARD_*");
   process.exit(0);
 }
@@ -144,6 +154,7 @@ if (mode === "gate") {
     ["typecheck", "npm run typecheck"],
     ["test:external-access-control-center", "npm run test:external-access-control-center"],
     ["test:final-external-access", "npm run test:final-external-access"],
+    ["test:master-external-provider-readiness", "npm run test:master-external-provider-readiness"],
   ];
   let failed = 0;
   for (const [label, cmd] of steps) {
@@ -166,6 +177,7 @@ if (mode === "gate") {
     failed++;
   }
   printFinalReport();
+  if (masterBanner) console.log("\n" + masterBanner);
   process.exit(failed ? 1 : 0);
 }
 

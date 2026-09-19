@@ -22,6 +22,7 @@ export default defineConfig({
       "lib/external-access-control-center/**/*.test.ts",
       "lib/render-persistence-evidence-bridge/**/*.test.ts",
       "lib/inter-cars-production-access-evidence-bridge/**/*.test.ts",
+      "lib/master-external-provider-readiness/**/*.test.ts",
       "lib/fulfillment-control-tower/**/*.test.ts",
       "lib/supplier-order-readiness/**/*.test.ts",
       "lib/supplier-order-rehearsal/**/*.test.ts",

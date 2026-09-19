@@ -36,6 +36,16 @@ const externalPreflight = load("external-access", () => {
   return mod.buildExternalAccessPreflightReport();
 });
 
+const masterExternalReadiness = load("master-external-readiness", () => {
+  try {
+    execSync("node scripts/build-master-external-provider-readiness-bridge.mjs", { stdio: "pipe" });
+    const mod = require("../server/lib/masterExternalProviderReadiness.bundle.cjs");
+    return mod.buildMasterExternalProviderReadinessReport();
+  } catch {
+    return null;
+  }
+});
+
 const market35 = load("market35", () => {
   const mod = require("../server/core/marketEngineRegistry.js");
   return mod.validateMarketRegistry?.() ?? { valid: false, count: 0, errors: [] };
@@ -147,6 +157,9 @@ const report = {
   LIVE_RENDER_DISK: storagePreflight?.healthStatus?.LIVE_RENDER_DISK ?? null,
   RENDER_PERSISTENCE_READY: storagePreflight?.healthStatus?.RENDER_PERSISTENCE_READY ?? null,
   renderPersistentDiskBlueprintReport: "docs/BUZZARD_RENDER_PERSISTENT_DISK_BLUEPRINT.json",
+  masterExternalReadinessScoreboard: masterExternalReadiness?.scoreboard ?? null,
+  masterExternalBlockers: masterExternalReadiness?.blockers?.length ?? null,
+  masterExternalHandoff: masterExternalReadiness ? "docs/BUZZARD_FINAL_EXTERNAL_ACCESS_HANDOFF.md" : null,
 };
 
 if (jsonOutput) {
@@ -186,6 +199,12 @@ if (jsonOutput) {
   if (report.PERSISTENCE_CONFIGURED) {
     console.log(`PERSISTENCE: ${report.PERSISTENCE_CONFIGURED} path=${report.PERSISTENCE_PATH}`);
     console.log(`  SQLITE_READY=${report.SQLITE_READY} RESTORE_EVIDENCE=${report.RESTORE_EVIDENCE}`);
+  }
+  if (report.masterExternalReadinessScoreboard) {
+    const s = report.masterExternalReadinessScoreboard;
+    console.log("\nMASTER EXTERNAL READINESS (summary):");
+    console.log(`  PAYMENT=${s.PAYMENT} CARRIER=${s.CARRIER} MARKETPLACE=${s.MARKETPLACE} AI=${s.AI} MARKETING=${s.MARKETING}`);
+    console.log(`  Blockers=${report.masterExternalBlockers} Handoff=${report.masterExternalHandoff}`);
   }
 
   if (currentBlocker) {

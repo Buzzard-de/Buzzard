@@ -30675,46 +30675,7 @@ function marketplaceScoreboardStatus(rows) {
 
 // lib/master-external-provider-readiness/masterProviderMatrix.ts
 function buildMasterProviderMatrix() {
-  const render = buildRenderPersistenceVerificationReport();
-  const interCars = buildInterCarsProductionAccessBridgeReport();
-  const renderRow = {
-    provider: "RENDER",
-    category: "RENDER",
-    required: true,
-    configured: render.live.BLUEPRINT_CONFIGURATION === "VALIDATED",
-    secretRef: "n/a",
-    credentialState: render.live.BLUEPRINT_CONFIGURATION === "VALIDATED" ? "CONFIGURED" : "NOT_CONFIGURED",
-    networkState: "DISABLED",
-    liveValidation: render.live.LIVE_RENDER_DISK === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
-    productionEvidence: render.live.LIVE_RENDER_DISK === "VALIDATED" ? "VALIDATED" : "NONE",
-    humanApproval: true,
-    blocking: render.live.PERSISTENCE !== "VALIDATED",
-    nextHumanAction: render.nextHumanAction ?? "Render persistent disk live verification"
-  };
-  const interCarsRow = {
-    provider: "INTER_CARS",
-    category: "SUPPLIER",
-    required: true,
-    configured: interCars.credentialReference !== "NOT_CONFIGURED",
-    secretRef: "env:SUPPLIER_LIVE_CREDENTIALS_SECRET_REF",
-    credentialState: interCars.credentialReference === "VALIDATED" ? "VALIDATED" : interCars.credentialReference === "REFERENCE_PRESENT" ? "REFERENCE_PRESENT" : interCars.credentialReference === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "CONFIGURED",
-    networkState: "DISABLED",
-    liveValidation: interCars.readOnlyAccess === "VALIDATED" ? "VALIDATED" : "BLOCKED_EXTERNAL_ACCESS",
-    productionEvidence: interCars.stage342Gate === "VALIDATED" ? "PARTIAL" : "NONE",
-    humanApproval: true,
-    blocking: interCars.stage342Gate !== "VALIDATED",
-    nextHumanAction: interCars.nextHumanAction ?? "Inter Cars production credentials"
-  };
-  return [
-    renderRow,
-    interCarsRow,
-    ...buildPaymentMasterRows(),
-    ...buildCarrierMasterRows(),
-    ...buildReturnsMasterRows(),
-    ...buildMarketplaceMasterRows(),
-    ...buildAiMasterRows(),
-    ...buildMarketingMasterRows()
-  ];
+  return executeMasterExternalPhasesInOrder().masterMatrix;
 }
 function rowScore(rows, provider) {
   const match = rows.filter((r) => r.provider === provider || provider.length <= 12 && r.category === provider && r.provider === provider);
@@ -30727,6 +30688,118 @@ function rowScore(rows, provider) {
   if (primary.credentialState === "NOT_CONFIGURED") return "NOT_CONFIGURED";
   if (primary.credentialState === "CONFIGURED") return "UNVERIFIED_EXTERNAL";
   return "BLOCKED_EXTERNAL_ACCESS";
+}
+
+// lib/master-external-provider-readiness/phaseExecution.ts
+function buildFoundationRows() {
+  const render = buildRenderPersistenceVerificationReport();
+  const interCars = buildInterCarsProductionAccessBridgeReport();
+  return [
+    {
+      provider: "RENDER",
+      category: "RENDER",
+      required: true,
+      configured: render.live.BLUEPRINT_CONFIGURATION === "VALIDATED",
+      secretRef: "n/a",
+      credentialState: render.live.BLUEPRINT_CONFIGURATION === "VALIDATED" ? "CONFIGURED" : "NOT_CONFIGURED",
+      networkState: "DISABLED",
+      liveValidation: render.live.LIVE_RENDER_DISK === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
+      productionEvidence: render.live.LIVE_RENDER_DISK === "VALIDATED" ? "VALIDATED" : "NONE",
+      humanApproval: true,
+      blocking: render.live.PERSISTENCE !== "VALIDATED",
+      nextHumanAction: render.nextHumanAction ?? "Render persistent disk live verification"
+    },
+    {
+      provider: "INTER_CARS",
+      category: "SUPPLIER",
+      required: true,
+      configured: interCars.credentialReference !== "NOT_CONFIGURED",
+      secretRef: "env:SUPPLIER_LIVE_CREDENTIALS_SECRET_REF",
+      credentialState: interCars.credentialReference === "VALIDATED" ? "VALIDATED" : interCars.credentialReference === "REFERENCE_PRESENT" ? "REFERENCE_PRESENT" : interCars.credentialReference === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "CONFIGURED",
+      networkState: "DISABLED",
+      liveValidation: interCars.readOnlyAccess === "VALIDATED" ? "VALIDATED" : "BLOCKED_EXTERNAL_ACCESS",
+      productionEvidence: interCars.stage342Gate === "VALIDATED" ? "PARTIAL" : "NONE",
+      humanApproval: true,
+      blocking: interCars.stage342Gate !== "VALIDATED",
+      nextHumanAction: interCars.nextHumanAction ?? "Inter Cars production credentials"
+    }
+  ];
+}
+function executePhase363PaymentCarrierReturns() {
+  const foundationRows = buildFoundationRows();
+  const operationalRows = [
+    ...buildPaymentMasterRows(),
+    ...buildCarrierMasterRows(),
+    ...buildReturnsMasterRows()
+  ];
+  const partialMatrix = [...foundationRows, ...operationalRows];
+  return {
+    phase: "363",
+    foundationRows,
+    operationalRows,
+    scores: {
+      PAYMENT: rowScore(partialMatrix, "PAYMENT"),
+      CARRIER: rowScore(partialMatrix, "CARRIER"),
+      RETURNS: rowScore(partialMatrix, "RETURNS")
+    }
+  };
+}
+function executePhase364MarketplaceAccess(phase363) {
+  const marketplaceRows = buildMarketplaceMasterRows();
+  const partialMatrix = [...phase363.foundationRows, ...phase363.operationalRows, ...marketplaceRows];
+  return {
+    phase: "364",
+    prior: phase363,
+    marketplaceRows,
+    score: marketplaceScoreboardStatus(marketplaceRows)
+  };
+}
+function executePhase365AiMarketing(phase364) {
+  const aiMarketingRows = [...buildAiMasterRows(), ...buildMarketingMasterRows()];
+  const partialMatrix = [
+    ...phase364.prior.foundationRows,
+    ...phase364.prior.operationalRows,
+    ...phase364.marketplaceRows,
+    ...aiMarketingRows
+  ];
+  return {
+    phase: "365",
+    prior: phase364,
+    aiMarketingRows,
+    scores: {
+      AI: rowScore(partialMatrix, "AI"),
+      MARKETING: rowScore(partialMatrix, "MARKETING")
+    }
+  };
+}
+function executePhase366FinalConsolidation(phase365) {
+  const masterMatrix = [
+    ...phase365.prior.prior.foundationRows,
+    ...phase365.prior.prior.operationalRows,
+    ...phase365.prior.marketplaceRows,
+    ...phase365.aiMarketingRows
+  ];
+  return {
+    phase: "366",
+    prior: phase365,
+    masterMatrix,
+    scores: {
+      RENDER: rowScore(masterMatrix, "RENDER"),
+      INTER_CARS: rowScore(masterMatrix, "INTER_CARS"),
+      PAYMENT: phase365.prior.prior.scores.PAYMENT,
+      CARRIER: phase365.prior.prior.scores.CARRIER,
+      RETURNS: phase365.prior.prior.scores.RETURNS,
+      MARKETPLACE: phase365.prior.score,
+      AI: phase365.scores.AI,
+      MARKETING: phase365.scores.MARKETING
+    }
+  };
+}
+function executeMasterExternalPhasesInOrder() {
+  const p363 = executePhase363PaymentCarrierReturns();
+  const p364 = executePhase364MarketplaceAccess(p363);
+  const p365 = executePhase365AiMarketing(p364);
+  return executePhase366FinalConsolidation(p365);
 }
 
 // lib/master-external-provider-readiness/market35ProviderImpact.ts
@@ -30746,12 +30819,47 @@ function summarizeMarket35ProviderImpact() {
 // lib/master-external-provider-readiness/masterReadinessReport.ts
 function buildMasterExternalProviderReadinessReport() {
   const preflight = buildExternalAccessPreflightReport();
-  const matrix = buildMasterProviderMatrix();
+  const phase366 = executeMasterExternalPhasesInOrder();
+  const matrix = phase366.masterMatrix;
   const blockers = buildExternalBlockers(matrix);
   const nextHumanActions = buildMasterExternalHumanActions(matrix);
   const flags = getProductionFlagsSnapshot();
   const sideEffects = getFinalGoLiveSafetyCounters();
   const render = buildRenderPersistenceVerificationReport();
+  const p363 = phase366.prior.prior.prior;
+  const p364 = phase366.prior.prior;
+  const p365 = phase366.prior;
+  const phases = [
+    {
+      phase: "363",
+      complete: true,
+      summary: {
+        PAYMENT: p363.scores.PAYMENT,
+        CARRIER: p363.scores.CARRIER,
+        RETURNS: p363.scores.RETURNS
+      }
+    },
+    {
+      phase: "364",
+      complete: true,
+      summary: { MARKETPLACE: p364.score }
+    },
+    {
+      phase: "365",
+      complete: true,
+      summary: { AI: p365.scores.AI, MARKETING: p365.scores.MARKETING }
+    },
+    {
+      phase: "366",
+      complete: true,
+      summary: {
+        EXTERNAL_ACCESS: "HUMAN_REQUIRED",
+        LIVE_VALIDATION: "BLOCKED",
+        PRODUCTION: "BLOCKED",
+        GO_LIVE: "BLOCKED"
+      }
+    }
+  ];
   const scoreboard = {
     SOFTWARE: preflight.softwareComplete ? "VALIDATED" : "BLOCKED",
     CONFIGURATION: preflight.configComplete ? "CONFIGURED" : "UNVERIFIED_EXTERNAL",
@@ -30761,14 +30869,14 @@ function buildMasterExternalProviderReadinessReport() {
     PRODUCTION: "BLOCKED",
     GO_LIVE: "BLOCKED",
     SALES: flags.SALES === "ON" ? "FAILED" : "DISABLED",
-    RENDER: rowScore(matrix, "RENDER"),
-    INTER_CARS: rowScore(matrix, "INTER_CARS"),
-    PAYMENT: rowScore(matrix, "PAYMENT"),
-    CARRIER: rowScore(matrix, "CARRIER"),
-    RETURNS: rowScore(matrix, "RETURNS"),
-    MARKETPLACE: marketplaceScoreboardStatus(buildMarketplaceMasterRows()),
-    AI: rowScore(matrix, "AI"),
-    MARKETING: rowScore(matrix, "MARKETING"),
+    RENDER: phase366.scores.RENDER,
+    INTER_CARS: phase366.scores.INTER_CARS,
+    PAYMENT: phase366.scores.PAYMENT,
+    CARRIER: phase366.scores.CARRIER,
+    RETURNS: phase366.scores.RETURNS,
+    MARKETPLACE: phase366.scores.MARKETPLACE,
+    AI: phase366.scores.AI,
+    MARKETING: phase366.scores.MARKETING,
     MARKETS_35: "PARTIAL",
     CUSTOMS: "UNVERIFIED_EXTERNAL",
     CHECKOUT: "CONFIGURED",
@@ -30780,6 +30888,8 @@ function buildMasterExternalProviderReadinessReport() {
   };
   return {
     generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    executionOrder: ["363", "364", "365", "366"],
+    phases,
     scoreboard,
     masterMatrix: matrix,
     blockers,
@@ -30806,7 +30916,7 @@ function formatMasterExternalReadinessBanner(report) {
   return [
     "BUZZARD MASTER EXTERNAL PROVIDER READINESS",
     "==========================================",
-    `SOFTWARE = ${s.SOFTWARE}`,
+    `SOFTWARE = ${s.SOFTWARE === "VALIDATED" ? "COMPLETE" : s.SOFTWARE}`,
     `CONFIGURATION = ${s.CONFIGURATION}`,
     `PERSISTENCE = ${s.PERSISTENCE}`,
     `EXTERNAL_ACCESS = ${s.EXTERNAL_ACCESS}`,

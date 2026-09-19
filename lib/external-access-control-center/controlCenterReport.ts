@@ -3,7 +3,7 @@ import { getFinalGoLiveSafetyCounters } from "@/lib/final-production-go-live/saf
 import { countRejectedEvidenceAttempts } from "@/lib/production-access/evidencePolicy";
 import { buildExternalAccessPreflightReport } from "@/lib/final-external-access/preflightReport";
 import { runMarket35Preflight } from "@/lib/final-external-access/market35Preflight";
-import { validateRenderBlueprint } from "@/lib/production-storage-preflight/renderBlueprintValidation";
+import { buildRenderPersistenceVerificationReport } from "@/lib/render-persistence-evidence-bridge/renderPersistenceReport";
 import { evaluateFinalSecurityGate } from "@/lib/final-closure/securityGate";
 import { getBackupRestoreEvidence } from "@/lib/final-closure/backupRestore";
 import { isProductionKillSwitchActive } from "@/lib/production-kill-switch";
@@ -15,7 +15,7 @@ import type { BuzzardFinalStatusScoreboard, ExternalAccessControlCenterReport } 
 
 export function buildExternalAccessControlCenterReport(): ExternalAccessControlCenterReport {
   const preflight = buildExternalAccessPreflightReport();
-  const blueprint = validateRenderBlueprint();
+  const renderPersistence = buildRenderPersistenceVerificationReport();
   const registry = buildProviderRegistry();
   const accessMatrix = buildAccessMatrixRows();
   const evidenceRecords = collectEvidenceRecords();
@@ -36,7 +36,7 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
   const scoreboard: BuzzardFinalStatusScoreboard = {
     SOFTWARE: preflight.softwareComplete ? "VALIDATED" : "BLOCKED",
     CONFIGURATION: preflight.configComplete ? "CONFIGURED" : "UNVERIFIED_EXTERNAL",
-    PERSISTENCE: blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "CONFIGURED" : "HUMAN_REQUIRED",
+    PERSISTENCE: renderPersistence.live.PERSISTENCE,
     EXTERNAL_ACCESS: "HUMAN_REQUIRED",
     LIVE_VALIDATION: "BLOCKED",
     SECURITY: security.status === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
@@ -87,10 +87,21 @@ export function buildExternalAccessControlCenterReport(): ExternalAccessControlC
     evidenceRecords,
     goLiveDependencyGraph: graph,
     renderControl: {
-      BLUEPRINT_CONFIGURATION: blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "VALIDATED" : "BLOCKED",
-      LIVE_PERSISTENT_DISK: blueprint.LIVE_RENDER_DISK === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
+      BLUEPRINT_CONFIGURATION: renderPersistence.live.BLUEPRINT_CONFIGURATION,
+      LIVE_PERSISTENT_DISK: renderPersistence.live.LIVE_RENDER_DISK,
+      LIVE_DB_PATH: renderPersistence.live.LIVE_DB_PATH,
+      LIVE_DB_HEALTH: renderPersistence.live.LIVE_DB_HEALTH,
+      LIVE_RESTART_PERSISTENCE: renderPersistence.live.LIVE_RESTART_PERSISTENCE,
+      LIVE_BACKUP: renderPersistence.live.LIVE_BACKUP,
+      LIVE_RESTORE: renderPersistence.live.LIVE_RESTORE,
       LIVE_DEPLOYMENT: "HUMAN_REQUIRED",
-      LIVE_HEALTH: blueprint.LIVE_RENDER_DISK === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
+      LIVE_HEALTH: renderPersistence.live.LIVE_DB_HEALTH,
+      PERSISTENCE: renderPersistence.live.PERSISTENCE,
+    },
+    renderPersistenceVerification: {
+      acceptedEvidenceCount: renderPersistence.acceptedEvidenceCount,
+      expiredEvidenceCount: renderPersistence.expiredEvidenceCount,
+      localHintsNote: renderPersistence.localHints.note,
     },
     market35Summary,
     nextHumanActions,

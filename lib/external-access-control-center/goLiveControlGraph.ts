@@ -1,5 +1,6 @@
 import { buildGoLiveDependencyGraph } from "@/lib/final-external-access/goLiveDependencyGraph";
 import { validateRenderBlueprint } from "@/lib/production-storage-preflight/renderBlueprintValidation";
+import { buildRenderPersistenceGoLiveSteps } from "@/lib/render-persistence-evidence-bridge/goLivePersistenceGraph";
 import type { GoLiveControlStep } from "./types";
 
 function mapStepStatus(status: string): GoLiveControlStep["status"] {
@@ -12,6 +13,7 @@ function mapStepStatus(status: string): GoLiveControlStep["status"] {
 
 export function buildExtendedGoLiveGraph(): GoLiveControlStep[] {
   const blueprint = validateRenderBlueprint();
+  const renderSteps = buildRenderPersistenceGoLiveSteps();
   const base = buildGoLiveDependencyGraph();
 
   const prefix: GoLiveControlStep[] = [
@@ -31,19 +33,7 @@ export function buildExtendedGoLiveGraph(): GoLiveControlStep[] {
       status: "BLOCKED_EXTERNAL_ACCESS",
       blockingReason: "PROVIDER_CREDENTIALS_AND_HUMAN_ACTIONS_PENDING",
     },
-    {
-      id: "render-persistence-validated",
-      label: "RENDER_PERSISTENCE_VALIDATED",
-      status:
-        blueprint.LIVE_RENDER_DISK === "PASS"
-          ? "VALIDATED"
-          : blueprint.BLUEPRINT_CONFIGURATION === "PASS"
-            ? "HUMAN_REQUIRED"
-            : "UNVERIFIED_EXTERNAL",
-      blockingReason:
-        blueprint.LIVE_RENDER_DISK === "PASS" ? undefined : "LIVE_PERSISTENT_DISK_UNVERIFIED",
-      requiredHumanApproval: true,
-    },
+    ...renderSteps,
     {
       id: "supplier-live-validated",
       label: "SUPPLIER_LIVE_VALIDATED",

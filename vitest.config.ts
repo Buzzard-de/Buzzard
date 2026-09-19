@@ -20,6 +20,7 @@ export default defineConfig({
       "lib/internal-production-readiness/**/*.test.ts",
       "lib/production-storage-preflight/**/*.test.ts",
       "lib/external-access-control-center/**/*.test.ts",
+      "lib/render-persistence-evidence-bridge/**/*.test.ts",
       "lib/fulfillment-control-tower/**/*.test.ts",
       "lib/supplier-order-readiness/**/*.test.ts",
       "lib/supplier-order-rehearsal/**/*.test.ts",

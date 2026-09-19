@@ -1,23 +1,10 @@
 import { buildExternalAccessPreflightReport } from "@/lib/final-external-access/preflightReport";
-import { validateRenderBlueprint } from "@/lib/production-storage-preflight/renderBlueprintValidation";
+import { buildRenderPersistenceHumanActions } from "@/lib/render-persistence-evidence-bridge/humanActions";
 import type { HumanActionItem, ProviderRegistryEntry } from "./types";
 
 export function buildNextHumanActions(registry: ProviderRegistryEntry[]): HumanActionItem[] {
-  const actions: HumanActionItem[] = [];
+  const actions: HumanActionItem[] = [...buildRenderPersistenceHumanActions()];
   const preflight = buildExternalAccessPreflightReport();
-  const blueprint = validateRenderBlueprint();
-
-  if (blueprint.BLUEPRINT_CONFIGURATION === "PASS" && blueprint.LIVE_RENDER_DISK !== "PASS") {
-    actions.push({
-      priority: 1,
-      provider: "Render",
-      action: "Create/mount Persistent Disk at /var/data (1 GB) and sync Blueprint",
-      why: "Required for production SQLite persistence",
-      requiredEvidence: "LIVE_HEALTH",
-      verificationMethod: "GET /api/health/db → persistent=true, path /var/data/buzzard.db",
-      blocking: true,
-    });
-  }
 
   const interCars = registry.find((r) => r.name === "INTER CARS");
   if (interCars && interCars.credentialState !== "VALIDATED") {

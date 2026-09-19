@@ -27178,8 +27178,8 @@ function runProductionAccessPreflight() {
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
-    const path6 = getCreateOrderEndpointPath();
-    const url = `${profile.baseUrl.replace(/\/$/, "")}${path6.startsWith("/") ? path6 : `/${path6}`}`;
+    const path9 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path9.startsWith("/") ? path9 : `/${path9}`}`;
     endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
     checks.push({
       check: "ENDPOINT",
@@ -27274,8 +27274,8 @@ function evaluateInterCarsProductionAccess() {
   let endpointAllowlisted = false;
   if (profile?.baseUrl) {
     const hosts = extractProfileAllowedHosts(profile.baseUrl, profile.allowedEndpoints || []);
-    const path6 = getCreateOrderEndpointPath();
-    const url = `${profile.baseUrl.replace(/\/$/, "")}${path6.startsWith("/") ? path6 : `/${path6}`}`;
+    const path9 = getCreateOrderEndpointPath();
+    const url = `${profile.baseUrl.replace(/\/$/, "")}${path9.startsWith("/") ? path9 : `/${path9}`}`;
     endpointAllowlisted = validateEndpointUrl(url, hosts, true).allowed;
   }
   const blockers = [];
@@ -29493,8 +29493,91 @@ function buildExternalAccessPreflightReport() {
 }
 
 // lib/production-storage-preflight/renderBlueprintValidation.ts
+var import_fs3 = __toESM(require("fs"));
+var import_path3 = __toESM(require("path"));
+
+// lib/production-storage-preflight/varDataValidation.ts
 var import_fs2 = __toESM(require("fs"));
+var import_os = __toESM(require("os"));
 var import_path2 = __toESM(require("path"));
+
+// lib/production-storage-preflight/environmentValidation.ts
+var CANONICAL_MOUNT = "/var/data";
+
+// lib/production-storage-preflight/varDataValidation.ts
+function loadSqlite() {
+  try {
+    return require("better-sqlite3");
+  } catch {
+    try {
+      return require(import_path2.default.join(process.cwd(), "server/node_modules/better-sqlite3"));
+    } catch {
+      return null;
+    }
+  }
+}
+function validateVarDataMount() {
+  const mountPath = CANONICAL_MOUNT;
+  let exists = false;
+  let isDirectory = false;
+  let writable = false;
+  let sqliteOpenable = false;
+  const notes = [];
+  try {
+    exists = import_fs2.default.existsSync(mountPath);
+    if (exists) {
+      const stat = import_fs2.default.statSync(mountPath);
+      isDirectory = stat.isDirectory();
+      if (isDirectory) {
+        import_fs2.default.accessSync(mountPath, import_fs2.default.constants.W_OK);
+        writable = true;
+      }
+    }
+  } catch (err) {
+    notes.push(err instanceof Error ? err.message : "access_check_failed");
+  }
+  if (exists && isDirectory && writable) {
+    const Database = loadSqlite();
+    if (Database) {
+      const testDb = import_path2.default.join(mountPath, ".buzzard-preflight-test.db");
+      try {
+        const db = new Database(testDb);
+        db.close();
+        import_fs2.default.unlinkSync(testDb);
+        sqliteOpenable = true;
+      } catch (err) {
+        notes.push(`sqlite_test:${err instanceof Error ? err.message : "failed"}`);
+      }
+    } else {
+      notes.push("sqlite_module_unavailable_for_mount_test");
+    }
+  } else if (!exists) {
+    notes.push("MANUAL_RENDER_ACTION_REQUIRED: mount persistent disk at /var/data");
+  }
+  let status = "BLOCKED";
+  if (exists && isDirectory && writable && sqliteOpenable) {
+    status = "PASS";
+  } else if (exists && isDirectory) {
+    status = "WARNING";
+  } else if (process.env.NODE_ENV !== "production") {
+    status = "UNVERIFIED";
+    notes.push("Local/dev environment \u2014 live Render disk validation required");
+  }
+  return {
+    path: mountPath,
+    exists,
+    isDirectory,
+    writable,
+    sqliteOpenable,
+    status,
+    notes: notes.join("; ") || (status === "PASS" ? "Mount ready" : "Not configured on this instance")
+  };
+}
+function getIsolatedPreflightDir() {
+  return import_path2.default.join(import_os.default.tmpdir(), "buzzard-storage-preflight");
+}
+
+// lib/production-storage-preflight/renderBlueprintValidation.ts
 var TARGET_MOUNT = "/var/data";
 var TARGET_DB = "/var/data/buzzard.db";
 var TARGET_BACKUP = "/var/data/backups";
@@ -29515,11 +29598,11 @@ function manualRenderActionForBlueprint(blueprintConfiguration, liveRenderDisk) 
   return "BLOCKED";
 }
 function validateRenderBlueprint() {
-  const renderYamlPath = import_path2.default.join(process.cwd(), "render.yaml");
-  const dbStartupPath = import_path2.default.join(process.cwd(), "server/lib/dbStartup.js");
-  const healthPluginPath = import_path2.default.join(process.cwd(), "server/plugins/controlCenterPlugin.js");
-  const renderYamlPresent = import_fs2.default.existsSync(renderYamlPath);
-  const yaml = renderYamlPresent ? import_fs2.default.readFileSync(renderYamlPath, "utf8") : "";
+  const renderYamlPath = import_path3.default.join(process.cwd(), "render.yaml");
+  const dbStartupPath = import_path3.default.join(process.cwd(), "server/lib/dbStartup.js");
+  const healthPluginPath = import_path3.default.join(process.cwd(), "server/plugins/controlCenterPlugin.js");
+  const renderYamlPresent = import_fs3.default.existsSync(renderYamlPath);
+  const yaml = renderYamlPresent ? import_fs3.default.readFileSync(renderYamlPath, "utf8") : "";
   const apiBlock = yaml ? extractBuzzardApiBlock(yaml) : null;
   const buzzardApiServiceFound = Boolean(apiBlock);
   let diskMountPath = null;
@@ -29538,8 +29621,8 @@ function validateRenderBlueprint() {
   const diskConfigured = buzzardApiServiceFound && diskMountPath === TARGET_MOUNT && diskSizeGB === 1 && duplicateBuzzardApiDisks === 1;
   const dbPathInBlueprint = buzzardApiServiceFound && apiBlock.includes("BUZZARD_DB_PATH") && apiBlock.includes(TARGET_DB);
   const backupInBlueprint = buzzardApiServiceFound && apiBlock.includes("BUZZARD_BACKUP_DIR") && apiBlock.includes(TARGET_BACKUP);
-  const healthEndpointDbSupported = import_fs2.default.existsSync(healthPluginPath) && import_fs2.default.readFileSync(healthPluginPath, "utf8").includes("/api/health/db");
-  const dbStartupMigrationPresent = import_fs2.default.existsSync(dbStartupPath) && import_fs2.default.readFileSync(dbStartupPath, "utf8").includes("migrateEphemeralToPersistentIfNeeded");
+  const healthEndpointDbSupported = import_fs3.default.existsSync(healthPluginPath) && import_fs3.default.readFileSync(healthPluginPath, "utf8").includes("/api/health/db");
+  const dbStartupMigrationPresent = import_fs3.default.existsSync(dbStartupPath) && import_fs3.default.readFileSync(dbStartupPath, "utf8").includes("migrateEphemeralToPersistentIfNeeded");
   let renderYamlStatus = "BLOCKED";
   if (renderYamlPresent && buzzardApiServiceFound && diskConfigured && dbPathInBlueprint && backupInBlueprint) {
     renderYamlStatus = "PASS";
@@ -29563,7 +29646,7 @@ function validateRenderBlueprint() {
     LIVE_RENDER_DISK,
     LIVE_PERSISTENCE,
     MANUAL_RENDER_ACTION,
-    SOFTWARE_SUPPORT: healthEndpointDbSupported && dbStartupMigrationPresent && import_fs2.default.existsSync(import_path2.default.join(process.cwd(), "server/lib/dbPaths.js")) ? "PASS" : "WARNING",
+    SOFTWARE_SUPPORT: healthEndpointDbSupported && dbStartupMigrationPresent && import_fs3.default.existsSync(import_path3.default.join(process.cwd(), "server/lib/dbPaths.js")) ? "PASS" : "WARNING",
     buzzardApiServiceFound,
     diskName,
     diskSizeGB,
@@ -29575,13 +29658,243 @@ function validateRenderBlueprint() {
   };
 }
 
-// lib/final-closure/securityGate.ts
-var import_fs4 = require("fs");
+// lib/production-storage-preflight/restartPersistenceTest.ts
+var import_fs4 = __toESM(require("fs"));
 var import_path4 = __toESM(require("path"));
+var TEST_TABLE = "buzzard_preflight_restart_test";
+var TEST_KEY = "preflight_marker";
+function loadSqlite2() {
+  try {
+    return require("better-sqlite3");
+  } catch {
+    try {
+      return require(import_path4.default.join(process.cwd(), "server/node_modules/better-sqlite3"));
+    } catch {
+      return null;
+    }
+  }
+}
+function runRestartPersistenceTest() {
+  const Database = loadSqlite2();
+  const testDir = getIsolatedPreflightDir();
+  const testDbPath = import_path4.default.join(testDir, "restart-persistence-test.db");
+  const marker = `preflight-${Date.now()}`;
+  if (!Database) {
+    return {
+      status: "WARNING",
+      testDbPath,
+      writeOk: false,
+      readOk: false,
+      cleanupOk: false,
+      notes: "better-sqlite3 unavailable \u2014 restart test skipped"
+    };
+  }
+  let writeOk = false;
+  let readOk = false;
+  let cleanupOk = false;
+  try {
+    import_fs4.default.mkdirSync(testDir, { recursive: true });
+    if (import_fs4.default.existsSync(testDbPath)) import_fs4.default.unlinkSync(testDbPath);
+    const db1 = new Database(testDbPath);
+    db1.exec(`CREATE TABLE IF NOT EXISTS ${TEST_TABLE} (key TEXT PRIMARY KEY, value TEXT NOT NULL)`);
+    db1.prepare(`INSERT OR REPLACE INTO ${TEST_TABLE} (key, value) VALUES (?, ?)`).run(TEST_KEY, marker);
+    db1.close();
+    writeOk = true;
+    const db2 = new Database(testDbPath);
+    const row = db2.prepare(`SELECT value FROM ${TEST_TABLE} WHERE key = ?`).get(TEST_KEY);
+    db2.close();
+    readOk = row?.value === marker;
+    import_fs4.default.unlinkSync(testDbPath);
+    cleanupOk = true;
+    return {
+      status: writeOk && readOk && cleanupOk ? "PASS" : "BLOCKED",
+      testDbPath,
+      writeOk,
+      readOk,
+      cleanupOk,
+      notes: writeOk && readOk ? "Isolated write/reopen/read cycle passed (local temp DB)" : "Restart persistence cycle failed"
+    };
+  } catch (err) {
+    try {
+      if (import_fs4.default.existsSync(testDbPath)) import_fs4.default.unlinkSync(testDbPath);
+      cleanupOk = true;
+    } catch {
+      cleanupOk = false;
+    }
+    return {
+      status: "BLOCKED",
+      testDbPath,
+      writeOk,
+      readOk,
+      cleanupOk,
+      notes: err instanceof Error ? err.message : "restart_test_failed"
+    };
+  }
+}
+
+// lib/render-persistence-evidence-bridge/persistenceStatus.ts
+var import_fs5 = __toESM(require("fs"));
+var import_path5 = __toESM(require("path"));
+
+// lib/render-persistence-evidence-bridge/evidenceStore.ts
+var store2 = /* @__PURE__ */ new Map();
+function isExpired(e, now = Date.now()) {
+  if (!e.expiresAt) return false;
+  const t = Date.parse(e.expiresAt);
+  return Number.isFinite(t) && t < now;
+}
+function listRenderPersistenceEvidence(includeExpired = false) {
+  const all = [...store2.values()];
+  if (includeExpired) return all.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  return all.filter((e) => !isExpired(e)).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+}
+function countExpiredRenderPersistenceEvidence() {
+  return [...store2.values()].filter((e) => isExpired(e)).length;
+}
+
+// lib/render-persistence-evidence-bridge/persistenceStatus.ts
+function mapBlueprint(blueprintPass) {
+  return blueprintPass ? "VALIDATED" : "BLOCKED";
+}
+function liveFromEvidence(kind, predicate) {
+  const active = listRenderPersistenceEvidence(false).filter((e) => e.kind === kind && e.source === "RENDER_LIVE");
+  if (active.some(predicate)) return "VALIDATED";
+  return "UNVERIFIED_EXTERNAL";
+}
+function buildRenderPersistenceLiveStatus() {
+  const blueprint = validateRenderBlueprint();
+  const blueprintOk = blueprint.BLUEPRINT_CONFIGURATION === "PASS";
+  const healthEvidence = listRenderPersistenceEvidence(false).filter(
+    (e) => e.kind === "RENDER_PERSISTENCE_HEALTH" && e.source === "RENDER_LIVE"
+  );
+  const healthValid = healthEvidence.some((e) => e.persistent === true && e.dbPath?.includes("/var/data/buzzard.db"));
+  const LIVE_RENDER_DISK = healthValid ? "VALIDATED" : "UNVERIFIED_EXTERNAL";
+  const LIVE_DB_PATH = healthValid ? "VALIDATED" : "UNVERIFIED_EXTERNAL";
+  const LIVE_DB_HEALTH = healthValid ? "VALIDATED" : "UNVERIFIED_EXTERNAL";
+  const LIVE_RESTART_PERSISTENCE = liveFromEvidence(
+    "RENDER_RESTART_PERSISTENCE",
+    (e) => e.restart?.samePersistentPath === true && e.restart.databaseIntegrity === "ok"
+  );
+  const LIVE_BACKUP = liveFromEvidence(
+    "RENDER_BACKUP",
+    (e) => e.backup?.success === true && Boolean(e.backup.backupPath?.includes("/var/data/backups"))
+  );
+  const LIVE_RESTORE = liveFromEvidence("RENDER_RESTORE", (e) => e.restore?.success === true);
+  let PERSISTENCE = "HUMAN_REQUIRED";
+  if (!blueprintOk) {
+    PERSISTENCE = "BLOCKED";
+  } else if (LIVE_RENDER_DISK === "VALIDATED" && LIVE_DB_PATH === "VALIDATED" && LIVE_DB_HEALTH === "VALIDATED" && LIVE_RESTART_PERSISTENCE === "VALIDATED" && LIVE_BACKUP === "VALIDATED") {
+    PERSISTENCE = "VALIDATED";
+  } else if (blueprintOk) {
+    PERSISTENCE = "HUMAN_REQUIRED";
+  }
+  return {
+    BLUEPRINT_CONFIGURATION: mapBlueprint(blueprintOk),
+    LIVE_RENDER_DISK,
+    LIVE_DB_PATH,
+    LIVE_DB_HEALTH,
+    LIVE_RESTART_PERSISTENCE,
+    LIVE_BACKUP,
+    LIVE_RESTORE,
+    PERSISTENCE
+  };
+}
+function buildRenderPersistenceLocalHints() {
+  const varData = validateVarDataMount();
+  const restart = runRestartPersistenceTest();
+  const backupScript = import_fs5.default.existsSync(import_path5.default.join(process.cwd(), "scripts/db-backup.mjs"));
+  return {
+    localVarDataWritable: varData.exists && varData.writable && varData.sqliteOpenable,
+    localRestartTest: restart.status === "PASS" ? "PASS" : "WARNING",
+    localBackupScriptPresent: backupScript,
+    note: "Local hints never promote LIVE_* to VALIDATED"
+  };
+}
+
+// lib/render-persistence-evidence-bridge/humanActions.ts
+function buildRenderPersistenceHumanActions() {
+  const live = buildRenderPersistenceLiveStatus();
+  const actions = [];
+  if (live.BLUEPRINT_CONFIGURATION === "VALIDATED" && live.LIVE_RENDER_DISK !== "VALIDATED") {
+    actions.push({
+      priority: 1,
+      provider: "Render",
+      action: "Create/mount Persistent Disk on buzzard-api \u2014 path /var/data, size \u2265 1 GB",
+      why: "Production SQLite requires Render persistent volume",
+      requiredEvidence: "RENDER_PERSISTENCE_HEALTH",
+      verificationMethod: "Deploy, then GET /api/health/db \u2192 persistent=true, path /var/data/buzzard.db",
+      blocking: true
+    });
+    actions.push({
+      priority: 2,
+      provider: "Render",
+      action: "Deploy buzzard-api after disk mount and env BUZZARD_DB_PATH / BUZZARD_BACKUP_DIR",
+      why: "Blueprint env vars must apply to running service",
+      requiredEvidence: "RENDER_PERSISTENCE_HEALTH",
+      verificationMethod: "GET /api/health/db on production URL",
+      blocking: true
+    });
+  }
+  if (live.LIVE_RENDER_DISK !== "VALIDATED") {
+    actions.push({
+      priority: 3,
+      provider: "Render",
+      action: "Verify /api/health/db (persistent=true, /var/data/buzzard.db) and register RENDER_LIVE evidence",
+      why: "Control center only accepts explicit external evidence",
+      requiredEvidence: "LIVE_HEALTH",
+      verificationMethod: "Operator-run curl + evidence registration (no auto-fetch in CI)",
+      blocking: true
+    });
+  }
+  if (live.LIVE_BACKUP !== "VALIDATED") {
+    actions.push({
+      priority: 4,
+      provider: "Render",
+      action: "Run npm run backup:db on production instance; store backup artifact reference",
+      why: "Backup path /var/data/backups must be proven with RENDER_BACKUP evidence",
+      requiredEvidence: "RENDER_BACKUP",
+      verificationMethod: "Artifact reference + metadata hash (no DB file in git)",
+      blocking: true
+    });
+  }
+  if (live.LIVE_RESTART_PERSISTENCE !== "VALIDATED") {
+    actions.push({
+      priority: 5,
+      provider: "Render",
+      action: "Manual production restart; re-check /api/health/db; register RENDER_RESTART_PERSISTENCE evidence",
+      why: "Cursor cannot trigger production restart \u2014 operator must verify same DB path after restart",
+      requiredEvidence: "RENDER_RESTART_PERSISTENCE",
+      verificationMethod: "before/after health + integrity ok + samePersistentPath",
+      blocking: true
+    });
+  }
+  return actions.sort((a, b) => a.priority - b.priority);
+}
+
+// lib/render-persistence-evidence-bridge/renderPersistenceReport.ts
+function buildRenderPersistenceVerificationReport() {
+  const live = buildRenderPersistenceLiveStatus();
+  const localHints = buildRenderPersistenceLocalHints();
+  const actions = buildRenderPersistenceHumanActions();
+  return {
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    live,
+    localHints,
+    acceptedEvidenceCount: listRenderPersistenceEvidence(false).length,
+    expiredEvidenceCount: countExpiredRenderPersistenceEvidence(),
+    rejectedEvidenceAttempts: countRejectedEvidenceAttempts(),
+    nextHumanAction: actions[0]?.action,
+    humanActionCount: actions.length
+  };
+}
+
+// lib/final-closure/securityGate.ts
+var import_fs7 = require("fs");
+var import_path7 = __toESM(require("path"));
 
 // lib/production-completion/securityGate.ts
-var import_fs3 = require("fs");
-var import_path3 = __toESM(require("path"));
+var import_fs6 = require("fs");
+var import_path6 = __toESM(require("path"));
 
 // lib/production-kill-switch/persistence.ts
 var inMemory = null;
@@ -29659,7 +29972,7 @@ function evaluateSecurityGate() {
     "scripts/security-check.mjs"
   ];
   for (const f of securityFiles) {
-    if (!(0, import_fs3.existsSync)(import_path3.default.join(process.cwd(), f))) {
+    if (!(0, import_fs6.existsSync)(import_path6.default.join(process.cwd(), f))) {
       blockers.push({
         code: "SECURITY_MODULE_MISSING",
         severity: "CRITICAL",
@@ -29774,7 +30087,7 @@ function evaluateFinalSecurityGate() {
   for (const mod of securityModules) {
     checks.push({
       check: "RBAC",
-      status: (0, import_fs4.existsSync)(import_path4.default.join(process.cwd(), mod)) ? "PASS" : "BLOCKED",
+      status: (0, import_fs7.existsSync)(import_path7.default.join(process.cwd(), mod)) ? "PASS" : "BLOCKED",
       message: mod
     });
   }
@@ -29801,13 +30114,13 @@ function evaluateFinalSecurityGate() {
 
 // lib/final-closure/backupRestore.ts
 var import_crypto3 = require("crypto");
-var import_fs5 = require("fs");
-var import_path5 = __toESM(require("path"));
+var import_fs8 = require("fs");
+var import_path8 = __toESM(require("path"));
 var cachedEvidence = null;
 function step(name, status, detail) {
   return { step: name, status, detail };
 }
-function loadSqlite() {
+function loadSqlite3() {
   try {
     return require("better-sqlite3");
   } catch {
@@ -29816,7 +30129,7 @@ function loadSqlite() {
 }
 function trySqliteIntegrity(dbPath) {
   try {
-    const Database = loadSqlite();
+    const Database = loadSqlite3();
     if (!Database) return { ok: false, detail: "sqlite_unavailable" };
     const db = new Database(dbPath, { readonly: true });
     const row = db.prepare("PRAGMA integrity_check").get();
@@ -29829,7 +30142,7 @@ function trySqliteIntegrity(dbPath) {
 }
 function verifyCriticalTables(dbPath) {
   try {
-    const Database = loadSqlite();
+    const Database = loadSqlite3();
     if (!Database) return { ok: false, detail: "sqlite_unavailable" };
     const db = new Database(dbPath, { readonly: true });
     const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
@@ -29844,20 +30157,20 @@ function verifyCriticalTables(dbPath) {
 function runBackupRestoreValidation() {
   const steps = [];
   const root = process.cwd();
-  const dbPath = import_path5.default.join(root, "server/data/buzzard.db");
-  const backupDir = import_path5.default.join(root, "server/data/backups");
-  const isolatedDir = import_path5.default.join(root, "server/data/.closure-restore-test");
-  const isolatedDb = import_path5.default.join(isolatedDir, "restored.db");
+  const dbPath = import_path8.default.join(root, "server/data/buzzard.db");
+  const backupDir = import_path8.default.join(root, "server/data/backups");
+  const isolatedDir = import_path8.default.join(root, "server/data/.closure-restore-test");
+  const isolatedDb = import_path8.default.join(isolatedDir, "restored.db");
   const scripts = ["scripts/db-backup.mjs", "scripts/restore-db.mjs"];
   for (const s of scripts) {
-    if (!(0, import_fs5.existsSync)(import_path5.default.join(root, s))) {
+    if (!(0, import_fs8.existsSync)(import_path8.default.join(root, s))) {
       steps.push(step("CREATE_BACKUP", "BLOCKED", `missing:${s}`));
       cachedEvidence = buildEvidence(steps, "BLOCKED");
       return cachedEvidence;
     }
   }
   steps.push(step("CREATE_BACKUP", "PASS", "scripts_present"));
-  if (!(0, import_fs5.existsSync)(dbPath)) {
+  if (!(0, import_fs8.existsSync)(dbPath)) {
     steps.push(step("VERIFY_BACKUP", "SKIPPED", "no_source_db"));
     steps.push(step("CREATE_ISOLATED_RESTORE", "SKIPPED", "no_source_db"));
     steps.push(step("VERIFY_DATABASE_INTEGRITY", "SKIPPED", "no_source_db"));
@@ -29867,7 +30180,7 @@ function runBackupRestoreValidation() {
     cachedEvidence = buildEvidence(steps, "UNVERIFIED");
     return cachedEvidence;
   }
-  const dbStat = (0, import_fs5.statSync)(dbPath);
+  const dbStat = (0, import_fs8.statSync)(dbPath);
   if (dbStat.size < 1024) {
     steps.push(step("VERIFY_BACKUP", "BLOCKED", "source_db_too_small"));
     cachedEvidence = buildEvidence(steps, "BLOCKED");
@@ -29875,8 +30188,8 @@ function runBackupRestoreValidation() {
   }
   steps.push(step("VERIFY_BACKUP", "PASS", `size=${dbStat.size}`));
   try {
-    (0, import_fs5.mkdirSync)(isolatedDir, { recursive: true });
-    (0, import_fs5.copyFileSync)(dbPath, isolatedDb);
+    (0, import_fs8.mkdirSync)(isolatedDir, { recursive: true });
+    (0, import_fs8.copyFileSync)(dbPath, isolatedDb);
     steps.push(step("CREATE_ISOLATED_RESTORE", "PASS", isolatedDb));
   } catch (err) {
     steps.push(step("CREATE_ISOLATED_RESTORE", "BLOCKED", String(err)));
@@ -29889,7 +30202,7 @@ function runBackupRestoreValidation() {
   steps.push(step("VERIFY_CRITICAL_TABLES", tables.ok ? "PASS" : "BLOCKED", tables.detail));
   steps.push(step("VERIFY_ENGINE_STATE", "PASS", "isolated_copy_only_no_ssot_mutation"));
   try {
-    (0, import_fs5.rmSync)(isolatedDir, { recursive: true, force: true });
+    (0, import_fs8.rmSync)(isolatedDir, { recursive: true, force: true });
   } catch {
   }
   const blocked = steps.some((s) => s.status === "BLOCKED");
@@ -30027,9 +30340,30 @@ function toView(e) {
     isProductionEvidence: accepted && !rejected
   };
 }
+function renderPersistenceToView(e) {
+  const accepted = e.source === "RENDER_LIVE" && (e.environment === "PRODUCTION" || e.environment === "CONTROLLED_VALIDATION");
+  return {
+    id: e.id,
+    providerId: "render",
+    type: e.kind === "RENDER_PERSISTENCE_HEALTH" ? "LIVE_HEALTH" : "CONFIGURATION",
+    environment: e.environment,
+    timestamp: e.timestamp,
+    source: "render-persistence-evidence-bridge",
+    status: accepted ? "ACCEPTED" : "REJECTED_FOR_PRODUCTION",
+    reference: e.evidenceReference,
+    payloadHash: e.payloadHash,
+    operator: e.operator,
+    isProductionEvidence: accepted
+  };
+}
 function collectEvidenceRecords(providerIds = KNOWN_PROVIDERS) {
   const out = [];
   const seen = /* @__PURE__ */ new Set();
+  for (const e of listRenderPersistenceEvidence(false)) {
+    if (seen.has(e.id)) continue;
+    seen.add(e.id);
+    out.push(renderPersistenceToView(e));
+  }
   for (const provider of providerIds) {
     for (const e of listProviderAccessEvidence(provider)) {
       if (seen.has(e.evidenceId)) continue;
@@ -30038,6 +30372,52 @@ function collectEvidenceRecords(providerIds = KNOWN_PROVIDERS) {
     }
   }
   return out.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+}
+
+// lib/render-persistence-evidence-bridge/goLivePersistenceGraph.ts
+function buildRenderPersistenceGoLiveSteps() {
+  const live = buildRenderPersistenceLiveStatus();
+  const step2 = (id, label, status, blockingReason) => ({
+    id,
+    label,
+    status,
+    blockingReason,
+    requiredHumanApproval: status === "HUMAN_REQUIRED" || status === "UNVERIFIED_EXTERNAL"
+  });
+  return [
+    step2(
+      "blueprint-configuration",
+      "BLUEPRINT_CONFIGURATION",
+      live.BLUEPRINT_CONFIGURATION === "VALIDATED" ? "CONFIGURED" : "BLOCKED"
+    ),
+    step2(
+      "render-persistent-disk",
+      "RENDER_PERSISTENT_DISK",
+      live.LIVE_RENDER_DISK === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
+      live.LIVE_RENDER_DISK === "VALIDATED" ? void 0 : "LIVE_DISK_EVIDENCE_REQUIRED"
+    ),
+    step2(
+      "live-db-health",
+      "LIVE_DB_HEALTH",
+      live.LIVE_DB_HEALTH === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
+    ),
+    step2(
+      "restart-persistence",
+      "RESTART_PERSISTENCE",
+      live.LIVE_RESTART_PERSISTENCE === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
+    ),
+    step2(
+      "backup",
+      "BACKUP",
+      live.LIVE_BACKUP === "VALIDATED" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
+    ),
+    step2(
+      "persistence-validated",
+      "PERSISTENCE_VALIDATED",
+      live.PERSISTENCE === "VALIDATED" ? "VALIDATED" : live.PERSISTENCE === "HUMAN_REQUIRED" ? "HUMAN_REQUIRED" : "BLOCKED",
+      live.PERSISTENCE === "VALIDATED" ? void 0 : "RENDER_LIVE_EVIDENCE_INCOMPLETE"
+    )
+  ];
 }
 
 // lib/external-access-control-center/goLiveControlGraph.ts
@@ -30050,6 +30430,7 @@ function mapStepStatus(status) {
 }
 function buildExtendedGoLiveGraph() {
   const blueprint = validateRenderBlueprint();
+  const renderSteps = buildRenderPersistenceGoLiveSteps();
   const base = buildGoLiveDependencyGraph();
   const prefix = [
     {
@@ -30068,13 +30449,7 @@ function buildExtendedGoLiveGraph() {
       status: "BLOCKED_EXTERNAL_ACCESS",
       blockingReason: "PROVIDER_CREDENTIALS_AND_HUMAN_ACTIONS_PENDING"
     },
-    {
-      id: "render-persistence-validated",
-      label: "RENDER_PERSISTENCE_VALIDATED",
-      status: blueprint.LIVE_RENDER_DISK === "PASS" ? "VALIDATED" : blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "HUMAN_REQUIRED" : "UNVERIFIED_EXTERNAL",
-      blockingReason: blueprint.LIVE_RENDER_DISK === "PASS" ? void 0 : "LIVE_PERSISTENT_DISK_UNVERIFIED",
-      requiredHumanApproval: true
-    },
+    ...renderSteps,
     {
       id: "supplier-live-validated",
       label: "SUPPLIER_LIVE_VALIDATED",
@@ -30129,20 +30504,8 @@ function buildExtendedGoLiveGraph() {
 
 // lib/external-access-control-center/humanActions.ts
 function buildNextHumanActions(registry) {
-  const actions = [];
+  const actions = [...buildRenderPersistenceHumanActions()];
   const preflight = buildExternalAccessPreflightReport();
-  const blueprint = validateRenderBlueprint();
-  if (blueprint.BLUEPRINT_CONFIGURATION === "PASS" && blueprint.LIVE_RENDER_DISK !== "PASS") {
-    actions.push({
-      priority: 1,
-      provider: "Render",
-      action: "Create/mount Persistent Disk at /var/data (1 GB) and sync Blueprint",
-      why: "Required for production SQLite persistence",
-      requiredEvidence: "LIVE_HEALTH",
-      verificationMethod: "GET /api/health/db \u2192 persistent=true, path /var/data/buzzard.db",
-      blocking: true
-    });
-  }
   const interCars = registry.find((r) => r.name === "INTER CARS");
   if (interCars && interCars.credentialState !== "VALIDATED") {
     actions.push({
@@ -30172,7 +30535,7 @@ function buildNextHumanActions(registry) {
 // lib/external-access-control-center/controlCenterReport.ts
 function buildExternalAccessControlCenterReport() {
   const preflight = buildExternalAccessPreflightReport();
-  const blueprint = validateRenderBlueprint();
+  const renderPersistence = buildRenderPersistenceVerificationReport();
   const registry = buildProviderRegistry();
   const accessMatrix = buildAccessMatrixRows();
   const evidenceRecords = collectEvidenceRecords();
@@ -30191,7 +30554,7 @@ function buildExternalAccessControlCenterReport() {
   const scoreboard = {
     SOFTWARE: preflight.softwareComplete ? "VALIDATED" : "BLOCKED",
     CONFIGURATION: preflight.configComplete ? "CONFIGURED" : "UNVERIFIED_EXTERNAL",
-    PERSISTENCE: blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "CONFIGURED" : "HUMAN_REQUIRED",
+    PERSISTENCE: renderPersistence.live.PERSISTENCE,
     EXTERNAL_ACCESS: "HUMAN_REQUIRED",
     LIVE_VALIDATION: "BLOCKED",
     SECURITY: security.status === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
@@ -30238,10 +30601,21 @@ function buildExternalAccessControlCenterReport() {
     evidenceRecords,
     goLiveDependencyGraph: graph,
     renderControl: {
-      BLUEPRINT_CONFIGURATION: blueprint.BLUEPRINT_CONFIGURATION === "PASS" ? "VALIDATED" : "BLOCKED",
-      LIVE_PERSISTENT_DISK: blueprint.LIVE_RENDER_DISK === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL",
+      BLUEPRINT_CONFIGURATION: renderPersistence.live.BLUEPRINT_CONFIGURATION,
+      LIVE_PERSISTENT_DISK: renderPersistence.live.LIVE_RENDER_DISK,
+      LIVE_DB_PATH: renderPersistence.live.LIVE_DB_PATH,
+      LIVE_DB_HEALTH: renderPersistence.live.LIVE_DB_HEALTH,
+      LIVE_RESTART_PERSISTENCE: renderPersistence.live.LIVE_RESTART_PERSISTENCE,
+      LIVE_BACKUP: renderPersistence.live.LIVE_BACKUP,
+      LIVE_RESTORE: renderPersistence.live.LIVE_RESTORE,
       LIVE_DEPLOYMENT: "HUMAN_REQUIRED",
-      LIVE_HEALTH: blueprint.LIVE_RENDER_DISK === "PASS" ? "VALIDATED" : "UNVERIFIED_EXTERNAL"
+      LIVE_HEALTH: renderPersistence.live.LIVE_DB_HEALTH,
+      PERSISTENCE: renderPersistence.live.PERSISTENCE
+    },
+    renderPersistenceVerification: {
+      acceptedEvidenceCount: renderPersistence.acceptedEvidenceCount,
+      expiredEvidenceCount: renderPersistence.expiredEvidenceCount,
+      localHintsNote: renderPersistence.localHints.note
     },
     market35Summary,
     nextHumanActions,

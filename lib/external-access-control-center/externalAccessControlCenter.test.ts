@@ -46,6 +46,8 @@ describe("External Access Control Center", () => {
     expect(report.renderControl.BLUEPRINT_CONFIGURATION).toBe("VALIDATED");
     expect(report.renderControl.LIVE_PERSISTENT_DISK).toBe("UNVERIFIED_EXTERNAL");
     expect(report.renderControl.LIVE_DEPLOYMENT).toBe("HUMAN_REQUIRED");
+    expect(report.scoreboard.PERSISTENCE).toBe("HUMAN_REQUIRED");
+    expect(report.renderControl.PERSISTENCE).toBe("HUMAN_REQUIRED");
   });
 
   it("rejects sandbox evidence as production evidence", () => {

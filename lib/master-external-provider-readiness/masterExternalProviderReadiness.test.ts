@@ -3,6 +3,11 @@ import { resetRejectedEvidenceAttemptsForTests } from "@/lib/production-access/e
 import { buildMasterExternalProviderReadinessReport } from "./masterReadinessReport";
 import { buildMasterProviderMatrix } from "./masterProviderMatrix";
 import {
+  executeMasterExternalPhasesInOrder,
+  executePhase363PaymentCarrierReturns,
+  executePhase364MarketplaceAccess,
+} from "./phaseExecution";
+import {
   registerExternalProviderEvidence,
   resetExternalProviderEvidenceStoreForTests,
 } from "./externalProviderEvidenceStore";
@@ -89,6 +94,30 @@ describe("Master external provider readiness (#363-#366)", () => {
     expect(matrix.some((r) => r.provider === "RENDER")).toBe(true);
     expect(matrix.some((r) => r.provider === "INTER_CARS")).toBe(true);
     expect(matrix.some((r) => r.category === "MARKETPLACE")).toBe(true);
+  });
+
+  it("executes phases 363 → 364 → 365 → 366 in strict order", () => {
+    const p363 = executePhase363PaymentCarrierReturns();
+    expect(p363.phase).toBe("363");
+    expect(p363.scores.PAYMENT).not.toBe("VALIDATED");
+
+    const p364 = executePhase364MarketplaceAccess(p363);
+    expect(p364.phase).toBe("364");
+    expect(p364.prior.phase).toBe("363");
+    expect(p364.prior.scores.PAYMENT).toBe(p363.scores.PAYMENT);
+
+    const full = executeMasterExternalPhasesInOrder();
+    expect(full.phase).toBe("366");
+    const report = buildMasterExternalProviderReadinessReport();
+    expect(report.executionOrder).toEqual(["363", "364", "365", "366"]);
+    expect(report.phases.map((p) => p.phase)).toEqual(["363", "364", "365", "366"]);
+  });
+
+  it("never marks PRODUCTION or GO_LIVE ready without external evidence", () => {
+    const report = buildMasterExternalProviderReadinessReport();
+    expect(report.scoreboard.PRODUCTION).toBe("BLOCKED");
+    expect(report.scoreboard.GO_LIVE).toBe("BLOCKED");
+    expect(report.phases.find((p) => p.phase === "366")?.summary.PRODUCTION).toBe("BLOCKED");
   });
 
   it("generates blockers and human actions without executing them", () => {

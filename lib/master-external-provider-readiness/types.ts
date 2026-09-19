@@ -65,8 +65,16 @@ export interface ExternalBlocker {
   blocking: boolean;
 }
 
+export interface MasterPhaseStatusSnapshot {
+  phase: "363" | "364" | "365" | "366";
+  complete: true;
+  summary: Record<string, string>;
+}
+
 export interface MasterExternalProviderReadinessReport {
   generatedAt: string;
+  executionOrder: ["363", "364", "365", "366"];
+  phases: MasterPhaseStatusSnapshot[];
   scoreboard: Record<string, ControlCenterStatus | string>;
   masterMatrix: MasterProviderMatrixRow[];
   blockers: ExternalBlocker[];

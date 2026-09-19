@@ -26,6 +26,12 @@ function writeHandoff() {
 
 Generated: ${report.generatedAt}
 
+## Execution order (mandatory)
+363 Payment/Carrier/Returns → 364 Marketplace → 365 AI/Marketing → 366 Consolidation
+
+Phase snapshots:
+${report.phases.map((p) => `- #${p.phase}: ${JSON.stringify(p.summary)}`).join("\n")}
+
 ## Cursor completed (repository-safe)
 - Master provider matrix (${report.masterMatrix.length} rows)
 - Payment / carrier / returns / marketplace / AI / marketing readiness views

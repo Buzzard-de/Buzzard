@@ -1,6 +1,6 @@
 # BUZZARD — Production Storage Preflight (Render)
 
-**Generated:** 2026-09-18T16:35:48.928Z
+**Generated:** 2026-09-19T11:44:11.567Z
 **Command:** `npm run preflight:production-storage`
 
 ---

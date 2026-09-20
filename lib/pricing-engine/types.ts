@@ -9,7 +9,9 @@ export type PricingChannel =
   | "allegro"
   | "bol"
   | "cdiscount"
-  | "otto";
+  | "otto"
+  | "emag"
+  | "skroutz";
 
 export type PricingStatus =
   | "VALID"

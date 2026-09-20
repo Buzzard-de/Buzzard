@@ -136,6 +136,7 @@
     "test:central-ai-memory": "vitest run lib/central-ai-memory/centralAiMemory.test.ts",
     "test:human-approval-center": "vitest run lib/human-approval-center/humanApprovalCenter.test.ts",
     "test:exception-engine": "vitest run lib/exception-engine/exceptionEngine.test.ts",
+    "test:e2e-order-harness": "vitest run lib/e2e-order-harness/e2eOrderHarness.test.ts",
     "status:master-final-completion": "node scripts/master-final-completion-cli.mjs",
     "status:master-final-completion:json": "node scripts/master-final-completion-cli.mjs json",
     "gate:final-buzzard-completion": "node scripts/gate-final-buzzard-completion.mjs",

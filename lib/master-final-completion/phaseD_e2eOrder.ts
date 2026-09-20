@@ -1,3 +1,15 @@
+import {
+  AUTO_RESTOCK_POLICY,
+  E2E_FAILURE_INJECTIONS,
+  E2E_ORDER_ASSERTIONS,
+} from "@/lib/e2e-order-harness/types";
+import {
+  evaluateProductionE2eGate,
+  formatE2eTestOrderId,
+  isE2eTestOrderId,
+  resolveDefaultE2eMode,
+} from "@/lib/e2e-order-harness/gate";
+import { evaluateReturnInventoryOutcome } from "@/lib/returns-engine/customerView";
 import { getRehearsalSafetyCounters } from "@/lib/supplier-order-rehearsal/safety";
 import { REHEARSAL_STAGE_ORDER } from "@/lib/supplier-order-rehearsal/types";
 import type { PhaseReport } from "./types";
@@ -22,29 +34,22 @@ export const E2E_CANONICAL_STAGES = [
   "ANALYTICS",
 ] as const;
 
-export type E2eTestMode = "LOCAL" | "MOCK" | "SANDBOX" | "CONTROLLED_PRODUCTION";
-
-export function defaultE2eTestMode(): E2eTestMode {
-  return "LOCAL";
-}
-
-export function evaluateControlledProductionGate(): { allowed: boolean; reasons: string[] } {
-  const reasons: string[] = [];
-  if (process.env.SALES_ENABLED === "1") reasons.push("SALES_ENABLED");
-  if (process.env.SUPPLIER_ORDER_NETWORK_ENABLED === "1") reasons.push("SUPPLIER_ORDER_NETWORK");
-  if (process.env.PAYMENT_PRODUCTION_ENABLED === "1") reasons.push("PAYMENT_PRODUCTION");
-  return { allowed: reasons.length === 0, reasons };
-}
-
 export function evaluatePhaseD_e2eOrder(): PhaseReport {
   const blockers: string[] = [];
-  const mode = defaultE2eTestMode();
-  if (mode !== "LOCAL") blockers.push("E2E_DEFAULT_NOT_LOCAL");
 
-  const controlled = evaluateControlledProductionGate();
-  if (controlled.allowed && process.env.E2E_CONTROLLED_PRODUCTION === "1") {
-    blockers.push("CONTROLLED_PRODUCTION_WITHOUT_GATES");
-  }
+  if (resolveDefaultE2eMode() !== "LOCAL") blockers.push("E2E_DEFAULT_NOT_LOCAL");
+
+  const prodGate = evaluateProductionE2eGate();
+  if (prodGate.allowed) blockers.push("PRODUCTION_E2E_GATE_OPEN_WITHOUT_OPERATOR");
+
+  const testId = formatE2eTestOrderId("001");
+  if (!isE2eTestOrderId(testId)) blockers.push("E2E_TEST_ID_FORMAT");
+
+  if (AUTO_RESTOCK_POLICY !== "FORBIDDEN") blockers.push("AUTO_RESTOCK_NOT_FORBIDDEN");
+  if (!evaluateReturnInventoryOutcome().includes("does not auto-restock")) blockers.push("RETURNS_AUTO_RESTOCK");
+
+  if (E2E_ORDER_ASSERTIONS.length < 10) blockers.push("E2E_ASSERTIONS_INCOMPLETE");
+  if (E2E_FAILURE_INJECTIONS.length < 10) blockers.push("E2E_FAILURE_INJECTIONS_INCOMPLETE");
 
   const rehearsalCoverage: Record<(typeof E2E_CANONICAL_STAGES)[number], string[]> = {
     CUSTOMER_ORDER: ["CUSTOMER_ORDER"],
@@ -79,7 +84,7 @@ export function evaluatePhaseD_e2eOrder(): PhaseReport {
     phase: "D",
     label: "End-to-End Order Test Harness",
     status: blockers.length === 0 ? "COMPLETE" : "BLOCKED",
-    tests: "test:supplier-order-rehearsal,test:order-engine,test:first-order-fulfillment",
+    tests: "test:supplier-order-rehearsal,test:e2e-order-harness,test:order-engine,test:returns-engine",
     blockers,
   };
 }

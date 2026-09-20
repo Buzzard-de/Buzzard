@@ -180,6 +180,11 @@ const report = {
   MEMORY: masterFinalCompletion?.scoreboard?.MEMORY ?? null,
   EXCEPTION: masterFinalCompletion?.scoreboard?.EXCEPTION ?? null,
   E2E_TEST: masterFinalCompletion?.scoreboard?.E2E_TEST ?? null,
+  buzzardFinalScoreboard: masterFinalCompletion?.scoreboard ?? null,
+  testCoverageMatrix: masterFinalCompletion?.testCoverage ?? null,
+  humanActionMatrix: masterFinalCompletion?.humanActionMatrix?.slice(0, 30) ?? null,
+  sideEffectZero: masterFinalCompletion?.sideEffects ?? null,
+  FAKE_PRODUCTION_EVIDENCE: masterFinalCompletion?.fakeProductionEvidence ?? null,
 };
 
 if (jsonOutput) {

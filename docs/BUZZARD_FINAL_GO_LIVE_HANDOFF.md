@@ -1,6 +1,6 @@
 # BUZZARD Final Go-Live Handoff
 
-Generated: 2026-09-20T17:08:30.122Z
+Generated: 2026-09-20T17:14:28.857Z
 
 ## Execution order (mandatory)
 A AI → B Memory/Approval/Exception → C Marketplace → D E2E → E Security → F Go-Live
@@ -67,18 +67,18 @@ A AI → B Memory/Approval/Exception → C Marketplace → D E2E → E Security 
 - MARKETPLACE_ALLEGRO_BLOCKED
 
 ### 15. Required human actions
-- **RENDER**: Create/mount Persistent Disk on buzzard-api — path /var/data, size ≥ 1 GB
-- **INTER_CARS**: Configure Inter Cars Production SecretRef (SUPPLIER_LIVE_CREDENTIALS_SECRET_REF)
-- **PAYMENT**: Configure payment provider SecretRef + KYC/webhooks
-- **CARRIER**: Configure carrier account SecretRef; validate API read-only — no labels
-- **DHL**: Carrier DHL: credentials + live validation before labels
-- **DPD**: Carrier DPD: credentials + live validation before labels
-- **GLS**: Carrier GLS: credentials + live validation before labels
-- **UPS**: Carrier UPS: credentials + live validation before labels
-- **DHL_EXPRESS**: Carrier DHL_EXPRESS: credentials + live validation before labels
-- **RETURNS**: Configure returns/refunds SecretRef; customer refund vs supplier credit remain separate
-- **REFUNDS**: No automatic refunds — production evidence required per provider
-- **AMAZON**: Marketplace credentials + dry-run only until explicit live evidence
+- **RENDER**: Create/mount Persistent Disk on buzzard-api — path /var/data, size ≥ 1 GB (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **INTER_CARS**: Configure Inter Cars Production SecretRef (SUPPLIER_LIVE_CREDENTIALS_SECRET_REF) (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **PAYMENT**: Configure payment provider SecretRef + KYC/webhooks (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **CARRIER**: Configure carrier account SecretRef; validate API read-only — no labels (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **DHL**: Carrier DHL: credentials + live validation before labels (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **DPD**: Carrier DPD: credentials + live validation before labels (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **GLS**: Carrier GLS: credentials + live validation before labels (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **UPS**: Carrier UPS: credentials + live validation before labels (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **DHL_EXPRESS**: Carrier DHL_EXPRESS: credentials + live validation before labels (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **RETURNS**: Configure returns/refunds SecretRef; customer refund vs supplier credit remain separate (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **REFUNDS**: No automatic refunds — production evidence required per provider (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
+- **AMAZON**: Marketplace credentials + dry-run only until explicit live evidence (evidence: EXTERNAL_LIVE, verify: Operator-run provider validation + evidence registration, status: HUMAN_REQUIRED)
 
 ### 16. Required evidence
 - EXTERNAL_LIVE only (no MOCK/SANDBOX/UNIT_TEST as production)

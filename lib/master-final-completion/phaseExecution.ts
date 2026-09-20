@@ -1,5 +1,6 @@
 /**
  * Master final completion — mandatory execution order A → F.
+ * Each phase consumes the prior phase output; a BLOCKED prior phase blocks downstream software validation.
  */
 import { evaluatePhaseA_aiIntegration } from "./phaseA_aiIntegration";
 import { evaluatePhaseB_memoryApprovalException } from "./phaseB_memoryApprovalException";
@@ -16,14 +17,30 @@ export interface PhaseExecutionChain {
   dependencyGraph: ReturnType<typeof buildFinalDependencyGraph>;
 }
 
+function blockedFromPrior(phase: FinalCompletionPhase, prior: PhaseReport): PhaseReport {
+  return {
+    phase,
+    label: `Blocked — prior phase ${prior.phase} not complete`,
+    status: "BLOCKED",
+    tests: "n/a",
+    blockers: [`PRIOR_PHASE_${prior.phase}_BLOCKED`],
+  };
+}
+
 export function executeMasterFinalPhasesInOrder(): PhaseExecutionChain {
   const executionOrder: FinalCompletionPhase[] = ["A", "B", "C", "D", "E", "F"];
+
   const phaseA = evaluatePhaseA_aiIntegration();
-  const phaseB = evaluatePhaseB_memoryApprovalException();
-  const phaseC = evaluatePhaseC_marketplace();
-  const phaseD = evaluatePhaseD_e2eOrder();
-  const phaseE = evaluatePhaseE_security();
-  const phaseF = evaluatePhaseF_goLive();
+  const phaseB =
+    phaseA.status === "BLOCKED" ? blockedFromPrior("B", phaseA) : evaluatePhaseB_memoryApprovalException();
+  const phaseC =
+    phaseB.status === "BLOCKED" ? blockedFromPrior("C", phaseB) : evaluatePhaseC_marketplace();
+  const phaseD =
+    phaseC.status === "BLOCKED" ? blockedFromPrior("D", phaseC) : evaluatePhaseD_e2eOrder();
+  const phaseE =
+    phaseD.status === "BLOCKED" ? blockedFromPrior("E", phaseD) : evaluatePhaseE_security();
+  const phaseF =
+    phaseE.status === "BLOCKED" ? blockedFromPrior("F", phaseE) : evaluatePhaseF_goLive();
 
   const phases = [phaseA, phaseB, phaseC, phaseD, phaseE, phaseF];
   const phaseInputsValid = phases.every((p, i) => {

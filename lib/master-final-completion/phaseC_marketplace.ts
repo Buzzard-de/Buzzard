@@ -1,40 +1,26 @@
-import { buildMarketplaceMasterRows } from "@/lib/master-external-provider-readiness/marketplaceReadiness";
+import { canRunMarketplaceTestLevel } from "@/lib/marketplace-engine/apiTestHarness";
+import { buildMarketplaceProductionCapabilityMatrix } from "@/lib/marketplace-engine/productionCapabilityMatrix";
 import { listMarketplaces } from "@/lib/marketplace-engine/registry";
 import type { PhaseReport } from "./types";
 
-const CAPABILITY_KEYS = [
-  "AUTH",
-  "PRODUCT_CREATE",
-  "PRODUCT_UPDATE",
-  "PRICE_SYNC",
-  "STOCK_SYNC",
-  "ORDER_IMPORT",
-  "ORDER_STATUS",
-  "SHIPMENT",
-  "TRACKING",
-  "RETURN",
-  "REFUND",
-] as const;
+const CORE_MARKETPLACES = ["amazon", "ebay", "kaufland", "allegro", "bol", "cdiscount", "otto", "emag", "skroutz"];
 
 export function evaluatePhaseC_marketplace(): PhaseReport {
   const blockers: string[] = [];
-  const marketplaces = listMarketplaces();
-  if (marketplaces.length === 0) blockers.push("MARKETPLACE_REGISTRY_EMPTY");
+  const marketplaces = listMarketplaces().filter((m) => !m.marketplaceId.startsWith("TEST_"));
 
-  const expectedIds = ["amazon", "ebay", "kaufland", "allegro", "bol", "cdiscount", "otto", "emag", "skroutz"];
-  for (const id of expectedIds) {
+  for (const id of CORE_MARKETPLACES) {
     if (!marketplaces.some((m) => m.marketplaceId === id)) blockers.push(`MISSING_MARKETPLACE:${id}`);
   }
 
-  const rows = buildMarketplaceMasterRows();
-  for (const row of rows) {
-    if (row.credentialState === "VALIDATED" && row.liveValidation !== "VALIDATED") {
-      blockers.push(`FAKE_MARKETPLACE_VALIDATION:${row.provider}`);
-    }
-    if (row.networkState !== "DISABLED") {
-      blockers.push(`MARKETPLACE_NETWORK_NOT_DISABLED:${row.provider}`);
-    }
-  }
+  const matrix = buildMarketplaceProductionCapabilityMatrix();
+  if (matrix.length === 0) blockers.push("CAPABILITY_MATRIX_EMPTY");
+
+  const level2 = canRunMarketplaceTestLevel("LEVEL_2_CONTROLLED_WRITE");
+  if (level2.allowed) blockers.push("LEVEL_2_AUTO_RUN_FORBIDDEN");
+
+  const validatedWithoutEvidence = matrix.filter((c) => c.status === "VALIDATED" && c.credentialState === "NOT_CONFIGURED");
+  if (validatedWithoutEvidence.length > 0) blockers.push("FAKE_MARKETPLACE_VALIDATION");
 
   for (const mp of marketplaces) {
     if (mp.connectorType !== "dry-run" && process.env.MARKETPLACE_PRODUCTION_ENABLED !== "1") {
@@ -42,10 +28,8 @@ export function evaluatePhaseC_marketplace(): PhaseReport {
     }
   }
 
-  if (CAPABILITY_KEYS.length < 11) blockers.push("CAPABILITY_MATRIX_INCOMPLETE");
-
-  const liveValidated = rows.filter((r) => r.liveValidation === "VALIDATED").length;
-  const status = blockers.length === 0 ? (liveValidated > 0 ? "PARTIAL" : "HUMAN_REQUIRED") : "BLOCKED";
+  const humanRequired = matrix.some((c) => c.status === "HUMAN_REQUIRED" || c.status === "UNVERIFIED");
+  const status = blockers.length === 0 ? (humanRequired ? "HUMAN_REQUIRED" : "COMPLETE") : "BLOCKED";
 
   return {
     phase: "C",

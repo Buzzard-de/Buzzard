@@ -1,6 +1,7 @@
 import { evaluateFinalSecurityGate } from "@/lib/final-closure/securityGate";
 import { detectProductionBypasses } from "@/lib/final-closure/bypassGuard";
 import { getProductionFlagsSnapshot } from "@/lib/production-defaults";
+import { runRepositorySecurityHardeningChecks } from "./securityHardeningChecks";
 import type { PhaseReport } from "./types";
 
 const FLAG_KEYS = [
@@ -29,6 +30,8 @@ export function evaluatePhaseE_security(): PhaseReport {
 
   const bypasses = detectProductionBypasses();
   if (bypasses.length > 0) blockers.push(...bypasses.map((b) => `BYPASS:${b}`));
+
+  blockers.push(...runRepositorySecurityHardeningChecks().map((f) => `HARDENING:${f}`));
 
   const status =
     blockers.length === 0 ? (gate.status === "PASS" ? "COMPLETE" : "HUMAN_REQUIRED") : "BLOCKED";

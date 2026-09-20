@@ -4,6 +4,8 @@ import { countRejectedEvidenceAttempts } from "@/lib/production-access/evidenceP
 import { getFinalGoLiveSafetyCounters } from "@/lib/final-production-go-live/safety";
 import { getProductionFlagsSnapshot } from "@/lib/production-defaults";
 import { buildRenderPersistenceVerificationReport } from "@/lib/render-persistence-evidence-bridge/renderPersistenceReport";
+import { auditAiWorkerRegistry } from "@/lib/ai-workers/workerRegistryAudit";
+import { buildMarketplaceProductionCapabilityMatrix } from "@/lib/marketplace-engine/productionCapabilityMatrix";
 import { executeMasterFinalPhasesInOrder } from "./phaseExecution";
 import { buildFinalHumanActionMatrix } from "./humanActionMatrix";
 import { buildTestCoverageMatrix } from "./testCoverageMatrix";
@@ -13,6 +15,8 @@ export function buildMasterFinalCompletionReport(): MasterFinalCompletionReport 
   process.env.SALES_ENABLED = process.env.SALES_ENABLED ?? "0";
 
   const chain = executeMasterFinalPhasesInOrder();
+  const workerAudit = auditAiWorkerRegistry();
+  const marketplaceCells = buildMarketplaceProductionCapabilityMatrix();
   const external = buildMasterExternalProviderReadinessReport();
   const control = buildExternalAccessControlCenterReport();
   const render = buildRenderPersistenceVerificationReport();
@@ -89,6 +93,8 @@ export function buildMasterFinalCompletionReport(): MasterFinalCompletionReport 
     nextHumanAction,
     SALES_ENABLED: flags.SALES === "ON" ? "1" : "0",
     phaseInputsValid: chain.phaseInputsValid,
+    workerRegistryAudit: { ok: workerAudit.ok, workerCount: workerAudit.rows.length },
+    marketplaceCapabilityCells: marketplaceCells.length,
   };
 }
 

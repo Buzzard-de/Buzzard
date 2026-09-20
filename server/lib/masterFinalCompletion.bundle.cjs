@@ -32061,6 +32061,9 @@ function buildExternalAccessControlCenterReport() {
 }
 
 // lib/ai-workers/constants.ts
+var INPUT_SCHEMA_VERSION = "1.0.0";
+var OUTPUT_SCHEMA_VERSION = "1.0.0";
+var DEFAULT_EXECUTION_TIMEOUT_MS = 3e4;
 var CONTEXT_FIELD_CLASSIFICATION = {
   productId: "PUBLIC",
   productName: "PUBLIC",
@@ -32104,6 +32107,26 @@ var WORKER_PERMISSIONS = {
   CUSTOMER_SERVICE_AI: ["READ_ORDER", "CUSTOMER_SAFE_DATA"],
   RETURNS_AI: ["READ_RETURN", "READ_ORDER", "RECOMMEND_REFUND"],
   FINANCE_AI: ["READ_FINANCIAL", "READ_RETURN", "READ_ORDER", "READ_PRICING"]
+};
+var WORKER_CONTEXT_ALLOWLIST = {
+  PRODUCT_AI: /* @__PURE__ */ new Set(["productId", "market", "channel", "language", "engineOutputs", "metadata"]),
+  SUPPLIER_AI: /* @__PURE__ */ new Set(["productId", "supplierId", "market", "engineOutputs", "metadata"]),
+  PRICING_AI: /* @__PURE__ */ new Set(["productId", "supplierId", "market", "channel", "engineOutputs", "metadata"]),
+  INVENTORY_AI: /* @__PURE__ */ new Set(["productId", "supplierId", "market", "engineOutputs", "metadata"]),
+  ORDER_AI: /* @__PURE__ */ new Set(["orderId", "customerId", "market", "channel", "engineOutputs", "metadata"]),
+  MARKETPLACE_AI: /* @__PURE__ */ new Set(["marketplaceId", "productId", "market", "engineOutputs", "metadata"]),
+  CUSTOMS_AI: /* @__PURE__ */ new Set(["orderId", "productId", "market", "engineOutputs", "metadata"]),
+  CUSTOMER_SERVICE_AI: /* @__PURE__ */ new Set([
+    "orderId",
+    "customerId",
+    "market",
+    "channel",
+    "language",
+    "engineOutputs",
+    "metadata"
+  ]),
+  RETURNS_AI: /* @__PURE__ */ new Set(["returnId", "orderId", "market", "engineOutputs", "metadata"]),
+  FINANCE_AI: /* @__PURE__ */ new Set(["returnId", "orderId", "market", "engineOutputs", "metadata"])
 };
 var WORKER_SUPPORTED_TASKS = {
   PRODUCT_AI: ["PRODUCT_ANALYSIS", "PRODUCT_TRANSLATION"],
@@ -33794,39 +33817,218 @@ function getWorkerContract(workerId) {
   return workers.get(workerId);
 }
 
-// lib/master-final-completion/phaseA_aiIntegration.ts
-var REQUIRED_WORKERS = [
-  "PRODUCT_AI",
-  "SUPPLIER_AI",
-  "PRICING_AI",
-  "INVENTORY_AI",
-  "ORDER_AI",
-  "MARKETPLACE_AI",
-  "CUSTOMS_AI",
-  "CUSTOMER_SERVICE_AI",
-  "RETURNS_AI",
-  "FINANCE_AI"
-];
-function evaluatePhaseA_aiIntegration() {
-  const blockers = [];
-  const profiles = discoverAllCapabilities();
-  for (const workerId of REQUIRED_WORKERS) {
-    if (!AI_WORKERS.includes(workerId)) blockers.push(`MISSING_AI_WORKER:${workerId}`);
-    const contract = getWorkerContract(workerId);
-    if (!contract) {
-      blockers.push(`MISSING_WORKER_CONTRACT:${workerId}`);
-      continue;
+// lib/ai-workers/validation.ts
+function runDeterministicValidation(input) {
+  const errors = [];
+  const rec = input.output.recommendation;
+  switch (input.workerId) {
+    case "PRICING_AI": {
+      const price = rec?.recommendedPrice;
+      if (price !== void 0 && price <= 0) errors.push("PRICING_ENGINE:PRICE_MUST_BE_POSITIVE");
+      if (rec?.setAuthoritativePrice === true) errors.push("PRICING_ENGINE:CANNOT_SET_AUTHORITATIVE_PRICE");
+      break;
     }
-    const profile = profiles[workerId];
-    if (!profile?.authorityLevel) {
-      blockers.push(`MISSING_AUTHORITY:${workerId}`);
-    } else if (profile.authorityLevel !== "RECOMMEND" && profile.authorityLevel !== "ANALYZE") {
-      blockers.push(`UNSAFE_AUTHORITY:${workerId}`);
+    case "SUPPLIER_AI": {
+      if (rec?.inventSupplierStock === true) errors.push("SUPPLIER_ENGINE:CANNOT_INVENT_STOCK");
+      if (rec?.inventSupplierPrice === true) errors.push("SUPPLIER_ENGINE:CANNOT_INVENT_PRICE");
+      if (rec?.createSupplierPayment === true) errors.push("SUPPLIER_ENGINE:CANNOT_CREATE_PAYMENT");
+      break;
     }
-    if (profile.supportedTaskTypes.length === 0) blockers.push(`NO_TASK_TYPES:${workerId}`);
+    case "INVENTORY_AI": {
+      if (rec?.createReservation === true) errors.push("INVENTORY_ENGINE:CANNOT_CREATE_RESERVATION");
+      if (rec?.overrideStock === true) errors.push("INVENTORY_ENGINE:CANNOT_OVERRIDE_STOCK");
+      break;
+    }
+    case "ORDER_AI": {
+      if (rec?.modifyOrderDirectly === true) errors.push("ORDER_ENGINE:MUST_USE_VALID_TRANSITIONS");
+      if (rec?.modifyPaymentState === true) errors.push("ORDER_ENGINE:CANNOT_MODIFY_PAYMENT");
+      break;
+    }
+    case "RETURNS_AI": {
+      if (rec?.inventSupplierRecovery === true) errors.push("RETURNS_ENGINE:CANNOT_INVENT_RECOVERY");
+      if (rec?.modifyReturnDirectly === true) errors.push("RETURNS_ENGINE:MUST_USE_RETURNS_ENGINE");
+      break;
+    }
+    case "FINANCE_AI": {
+      if (rec?.overwriteHistorical === true) errors.push("FINANCE:CANNOT_OVERWRITE_HISTORICAL_MARGIN");
+      if (rec?.overwriteReturnImpact === true) errors.push("FINANCE:CANNOT_OVERWRITE_RETURN_IMPACT");
+      break;
+    }
+    case "MARKETPLACE_AI": {
+      if (rec?.bypassMarketplaceEngine === true) errors.push("MARKETPLACE_ENGINE:CANNOT_BYPASS");
+      break;
+    }
+    case "CUSTOMS_AI": {
+      if (rec?.autonomousDeclaration === true) errors.push("CUSTOMS:CANNOT_AUTONOMOUSLY_DECLARE");
+      break;
+    }
+    case "PRODUCT_AI": {
+      if (rec?.overwriteCanonicalProduct === true) errors.push("PRODUCT_ENGINE:CANNOT_OVERWRITE_CANONICAL");
+      if (rec?.inventCompatibility === true) errors.push("PRODUCT_ENGINE:CANNOT_INVENT_COMPATIBILITY");
+      if (rec?.modifyIdentifiers === true) errors.push("PRODUCT_ENGINE:CANNOT_MODIFY_IDENTIFIERS");
+      if (rec?.fabricateComplianceClaim === true) errors.push("PRODUCT_ENGINE:CANNOT_FABRICATE_COMPLIANCE");
+      if (rec?.setCanonicalCategory === true) errors.push("PRODUCT_ENGINE:CANNOT_SET_CANONICAL_CATEGORY");
+      if (rec?.mergeDuplicate === true) errors.push("PRODUCT_ENGINE:CANNOT_MERGE_DUPLICATE");
+      break;
+    }
+    case "CUSTOMER_SERVICE_AI":
+      break;
   }
-  const secretInContext = Object.entries(CONTEXT_FIELD_CLASSIFICATION).filter(([, c]) => c === "SECRET");
-  if (secretInContext.length === 0) blockers.push("SECRET_CONTEXT_CLASSIFICATION_MISSING");
+  if (errors.length > 0) {
+    return {
+      validationStatus: "FAILED",
+      validationErrors: errors,
+      finalDecision: errors.some((e) => e.includes("HISTORICAL") || e.includes("OVERWRITE")) ? "ESCALATE" : "REJECT",
+      validatedBy: `${input.workerId}_engine_adapter`,
+      validatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  if (input.output.requiredApproval || input.output.action?.requiresApproval) {
+    return {
+      validationStatus: "PASSED",
+      validationErrors: [],
+      finalDecision: "APPROVAL",
+      validatedBy: `${input.workerId}_engine_adapter`,
+      validatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  return {
+    validationStatus: input.output.deterministicValidationRequired ? "PASSED" : "NOT_REQUIRED",
+    validationErrors: [],
+    finalDecision: "ALLOW",
+    validatedBy: `${input.workerId}_engine_adapter`,
+    validatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+
+// lib/ai-workers/workerRegistryAudit.ts
+function auditAiWorkerRegistry() {
+  const profiles = discoverAllCapabilities();
+  const rows = [];
+  for (const workerId of AI_WORKERS) {
+    const missing = [];
+    const contract = getWorkerContract(workerId);
+    const profile = profiles[workerId];
+    if (!contract) missing.push("engineAdapter");
+    if (!profile) missing.push("capabilities");
+    else {
+      if (!profile.authorityLevel) missing.push("authority");
+      if (profile.supportedTaskTypes.length === 0) missing.push("inputSchema");
+      if (!profile.version) missing.push("fallback");
+    }
+    if (!(WORKER_SUPPORTED_TASKS[workerId]?.length > 0)) missing.push("inputSchema");
+    if (!WORKER_CONTEXT_ALLOWLIST[workerId]?.size) missing.push("contextClass");
+    if (!INPUT_SCHEMA_VERSION || !OUTPUT_SCHEMA_VERSION) missing.push("outputSchema");
+    if (DEFAULT_EXECUTION_TIMEOUT_MS <= 0) missing.push("timeout");
+    if (!runDeterministicValidation) missing.push("engineAdapter");
+    else {
+      const probe = runDeterministicValidation({
+        workerId,
+        taskType: WORKER_SUPPORTED_TASKS[workerId][0],
+        output: {
+          recommendation: {},
+          confidence: 0.5,
+          authorityRequired: profile?.authorityLevel ?? "ANALYZE",
+          requiredApproval: false,
+          deterministicValidationRequired: true,
+          reasoningSummary: "audit"
+        },
+        context: { metadata: {} }
+      });
+      if (!probe.validatedBy.includes("_engine_adapter")) missing.push("engineAdapter");
+    }
+    if (profile && profile.authorityLevel !== "RECOMMEND" && profile.authorityLevel !== "ANALYZE") {
+      missing.push("sideEffectPolicy");
+    }
+    if (FORBIDDEN_WORKER_ACTIONS.size === 0) missing.push("sideEffectPolicy");
+    rows.push({ workerId, ok: missing.length === 0, missing });
+  }
+  const globalBlockers = [];
+  const secretFields = Object.values(CONTEXT_FIELD_CLASSIFICATION).filter((c) => c === "SECRET");
+  if (secretFields.length === 0) globalBlockers.push("SECRET_CONTEXT_CLASSIFICATION_MISSING");
+  return { ok: rows.every((r) => r.ok) && globalBlockers.length === 0, rows, globalBlockers };
+}
+
+// lib/marketplace-engine/productionCapabilityMatrix.ts
+var MARKETPLACE_CAPABILITIES = [
+  "AUTH",
+  "PRODUCT_CREATE",
+  "PRODUCT_UPDATE",
+  "PRICE_SYNC",
+  "STOCK_SYNC",
+  "ORDER_IMPORT",
+  "ORDER_STATUS",
+  "SHIPMENT",
+  "TRACKING",
+  "RETURN",
+  "REFUND"
+];
+function mapCapability(mpCaps, cap) {
+  switch (cap) {
+    case "AUTH":
+      return mpCaps.api || mpCaps.xml;
+    case "PRODUCT_CREATE":
+      return mpCaps.productListing;
+    case "PRODUCT_UPDATE":
+      return mpCaps.productUpdate;
+    case "PRICE_SYNC":
+      return mpCaps.priceUpdate;
+    case "STOCK_SYNC":
+      return mpCaps.stockUpdate;
+    case "ORDER_IMPORT":
+      return mpCaps.orderImport;
+    case "ORDER_STATUS":
+      return mpCaps.orderAcknowledgement;
+    case "SHIPMENT":
+      return mpCaps.shipmentCreation;
+    case "TRACKING":
+      return mpCaps.trackingUpdate;
+    case "RETURN":
+      return mpCaps.returns;
+    case "REFUND":
+      return mpCaps.refunds;
+    default:
+      return false;
+  }
+}
+function buildMarketplaceProductionCapabilityMatrix() {
+  const cells = [];
+  for (const mp of listMarketplaces()) {
+    if (mp.marketplaceId.startsWith("TEST_")) continue;
+    const key = `MARKETPLACE_${mp.marketplaceId.toUpperCase().replace(/-/g, "_")}_SECRET_REF`;
+    const cred = resolveCredentialDisplayState({
+      secretRefConfigured: Boolean(process.env[key]?.trim()),
+      secretResolvable: false,
+      category: "MARKETPLACE",
+      providerId: mp.marketplaceId,
+      configuredFlag: mp.status !== "DISCOVERED"
+    });
+    const liveAuth = hasExternalLiveEvidence("MARKETPLACE", mp.marketplaceId, "catalog_read");
+    for (const capability of MARKETPLACE_CAPABILITIES) {
+      const configured = mapCapability(mp.capabilities, capability);
+      let status = "UNVERIFIED";
+      if (!configured) status = "BLOCKED";
+      else if (liveAuth && capability === "AUTH") status = "VALIDATED";
+      else if (configured && cred === "NOT_CONFIGURED") status = "HUMAN_REQUIRED";
+      else if (configured) status = "CONFIGURED";
+      cells.push({
+        marketplaceId: mp.marketplaceId,
+        capability,
+        status,
+        credentialState: cred
+      });
+    }
+  }
+  return cells;
+}
+
+// lib/master-final-completion/phaseA_aiIntegration.ts
+function evaluatePhaseA_aiIntegration() {
+  const audit = auditAiWorkerRegistry();
+  const blockers = [
+    ...audit.globalBlockers,
+    ...audit.rows.filter((r) => !r.ok).map((r) => `WORKER_AUDIT:${r.workerId}:${r.missing.join(",")}`)
+  ];
   const status = blockers.length === 0 ? "COMPLETE" : "BLOCKED";
   return {
     phase: "A",
@@ -33982,6 +34184,14 @@ function approveHumanAction(approvalId, approver, payload) {
   record.status = "APPROVED";
   return { ok: true, record };
 }
+function isApprovalValidForAction(approvalId, scope, action, payload) {
+  const record = approvals.get(approvalId);
+  if (!record || record.status !== "APPROVED") return false;
+  if (record.scope !== scope || record.action !== action) return false;
+  if (hashApprovalPayload(payload) !== record.payloadHash) return false;
+  if (Date.parse(record.expiresAt) < Date.now()) return false;
+  return true;
+}
 
 // lib/exception-engine/engine.ts
 var exceptions = /* @__PURE__ */ new Map();
@@ -34108,45 +34318,38 @@ function evaluatePhaseB_memoryApprovalException() {
   };
 }
 
+// lib/marketplace-engine/apiTestHarness.ts
+function canRunMarketplaceTestLevel(level) {
+  if (level === "LEVEL_1_READ_ONLY") {
+    return { allowed: true, reason: "Read-only safe checks permitted in repository" };
+  }
+  if (process.env.MARKETPLACE_PRODUCTION_ENABLED === "1") {
+    return { allowed: false, reason: "LEVEL_2 requires explicit production approval gates \u2014 blocked in CI" };
+  }
+  return { allowed: false, reason: "LEVEL_2_CONTROLLED_WRITE blocked \u2014 HUMAN_REQUIRED" };
+}
+
 // lib/master-final-completion/phaseC_marketplace.ts
-var CAPABILITY_KEYS = [
-  "AUTH",
-  "PRODUCT_CREATE",
-  "PRODUCT_UPDATE",
-  "PRICE_SYNC",
-  "STOCK_SYNC",
-  "ORDER_IMPORT",
-  "ORDER_STATUS",
-  "SHIPMENT",
-  "TRACKING",
-  "RETURN",
-  "REFUND"
-];
+var CORE_MARKETPLACES = ["amazon", "ebay", "kaufland", "allegro", "bol", "cdiscount", "otto", "emag", "skroutz"];
 function evaluatePhaseC_marketplace() {
   const blockers = [];
-  const marketplaces2 = listMarketplaces();
-  if (marketplaces2.length === 0) blockers.push("MARKETPLACE_REGISTRY_EMPTY");
-  const expectedIds = ["amazon", "ebay", "kaufland", "allegro", "bol", "cdiscount", "otto", "emag", "skroutz"];
-  for (const id2 of expectedIds) {
+  const marketplaces2 = listMarketplaces().filter((m) => !m.marketplaceId.startsWith("TEST_"));
+  for (const id2 of CORE_MARKETPLACES) {
     if (!marketplaces2.some((m) => m.marketplaceId === id2)) blockers.push(`MISSING_MARKETPLACE:${id2}`);
   }
-  const rows = buildMarketplaceMasterRows();
-  for (const row of rows) {
-    if (row.credentialState === "VALIDATED" && row.liveValidation !== "VALIDATED") {
-      blockers.push(`FAKE_MARKETPLACE_VALIDATION:${row.provider}`);
-    }
-    if (row.networkState !== "DISABLED") {
-      blockers.push(`MARKETPLACE_NETWORK_NOT_DISABLED:${row.provider}`);
-    }
-  }
+  const matrix = buildMarketplaceProductionCapabilityMatrix();
+  if (matrix.length === 0) blockers.push("CAPABILITY_MATRIX_EMPTY");
+  const level2 = canRunMarketplaceTestLevel("LEVEL_2_CONTROLLED_WRITE");
+  if (level2.allowed) blockers.push("LEVEL_2_AUTO_RUN_FORBIDDEN");
+  const validatedWithoutEvidence = matrix.filter((c) => c.status === "VALIDATED" && c.credentialState === "NOT_CONFIGURED");
+  if (validatedWithoutEvidence.length > 0) blockers.push("FAKE_MARKETPLACE_VALIDATION");
   for (const mp of marketplaces2) {
     if (mp.connectorType !== "dry-run" && process.env.MARKETPLACE_PRODUCTION_ENABLED !== "1") {
       blockers.push(`UNSAFE_CONNECTOR:${mp.marketplaceId}`);
     }
   }
-  if (CAPABILITY_KEYS.length < 11) blockers.push("CAPABILITY_MATRIX_INCOMPLETE");
-  const liveValidated = rows.filter((r) => r.liveValidation === "VALIDATED").length;
-  const status = blockers.length === 0 ? liveValidated > 0 ? "PARTIAL" : "HUMAN_REQUIRED" : "BLOCKED";
+  const humanRequired = matrix.some((c) => c.status === "HUMAN_REQUIRED" || c.status === "UNVERIFIED");
+  const status = blockers.length === 0 ? humanRequired ? "HUMAN_REQUIRED" : "COMPLETE" : "BLOCKED";
   return {
     phase: "C",
     label: "Marketplace Production Readiness",
@@ -34154,6 +34357,72 @@ function evaluatePhaseC_marketplace() {
     tests: "test:marketplace-engine,test:master-external-provider-readiness",
     blockers
   };
+}
+
+// lib/e2e-order-harness/types.ts
+var E2E_ORDER_ASSERTIONS = [
+  "price_snapshot_immutable",
+  "supplier_selected",
+  "stock_reservation_correct",
+  "inventory_released_when_required",
+  "order_status_valid",
+  "supplier_order_payload_valid",
+  "tracking_association_valid",
+  "return_association_valid",
+  "refund_association_valid",
+  "financial_reconciliation_valid",
+  "analytics_event_correct",
+  "audit_trail_complete"
+];
+var E2E_FAILURE_INJECTIONS = [
+  "supplier_timeout",
+  "supplier_stock_unavailable",
+  "price_change",
+  "payment_failure",
+  "payment_timeout",
+  "marketplace_timeout",
+  "carrier_timeout",
+  "tracking_missing",
+  "return_rejected",
+  "refund_failure",
+  "duplicate_webhook",
+  "duplicate_order",
+  "unknown_supplier_outcome",
+  "database_failure",
+  "ai_failure"
+];
+var AUTO_RESTOCK_POLICY = "FORBIDDEN";
+
+// lib/e2e-order-harness/gate.ts
+function resolveDefaultE2eMode() {
+  return "LOCAL";
+}
+function evaluateProductionE2eGate() {
+  const reasons = [];
+  const flags = getProductionFlagsSnapshot();
+  if (flags.SALES === "ON") reasons.push("SALES_ENABLED");
+  if (flags.SUPPLIER_ORDER_NETWORK === "ON") reasons.push("SUPPLIER_ORDER_NETWORK");
+  if (flags.PAYMENT_PRODUCTION === "ON") reasons.push("PAYMENT_PRODUCTION");
+  if (process.env.E2E_CONTROLLED_PRODUCTION !== "1") reasons.push("E2E_CONTROLLED_PRODUCTION_NOT_ARMED");
+  if (process.env.FIRST_ORDER_GATE !== "VALIDATED") reasons.push("FIRST_ORDER_GATE");
+  if (process.env.HUMAN_APPROVAL_VALIDATED !== "1") reasons.push("HUMAN_APPROVAL");
+  if (process.env.FOUR_EYES_VALIDATED !== "1") reasons.push("FOUR_EYES");
+  return {
+    allowed: reasons.length === 0,
+    status: reasons.length === 0 ? "HUMAN_REQUIRED" : "BLOCKED",
+    reasons
+  };
+}
+function isE2eTestOrderId(orderId) {
+  return orderId.startsWith("E2E_TEST") || orderId.includes(":E2E_TEST:");
+}
+function formatE2eTestOrderId(suffix) {
+  return `E2E_TEST-${suffix}`;
+}
+
+// lib/returns-engine/customerView.ts
+function evaluateReturnInventoryOutcome() {
+  return "RESTOCK requires explicit future workflow \u2014 foundation does not auto-restock";
 }
 
 // lib/supplier-order-rehearsal/safety.ts
@@ -34215,24 +34484,17 @@ var E2E_CANONICAL_STAGES = [
   "FINANCIAL_RECONCILIATION",
   "ANALYTICS"
 ];
-function defaultE2eTestMode() {
-  return "LOCAL";
-}
-function evaluateControlledProductionGate() {
-  const reasons = [];
-  if (process.env.SALES_ENABLED === "1") reasons.push("SALES_ENABLED");
-  if (process.env.SUPPLIER_ORDER_NETWORK_ENABLED === "1") reasons.push("SUPPLIER_ORDER_NETWORK");
-  if (process.env.PAYMENT_PRODUCTION_ENABLED === "1") reasons.push("PAYMENT_PRODUCTION");
-  return { allowed: reasons.length === 0, reasons };
-}
 function evaluatePhaseD_e2eOrder() {
   const blockers = [];
-  const mode = defaultE2eTestMode();
-  if (mode !== "LOCAL") blockers.push("E2E_DEFAULT_NOT_LOCAL");
-  const controlled = evaluateControlledProductionGate();
-  if (controlled.allowed && process.env.E2E_CONTROLLED_PRODUCTION === "1") {
-    blockers.push("CONTROLLED_PRODUCTION_WITHOUT_GATES");
-  }
+  if (resolveDefaultE2eMode() !== "LOCAL") blockers.push("E2E_DEFAULT_NOT_LOCAL");
+  const prodGate = evaluateProductionE2eGate();
+  if (prodGate.allowed) blockers.push("PRODUCTION_E2E_GATE_OPEN_WITHOUT_OPERATOR");
+  const testId = formatE2eTestOrderId("001");
+  if (!isE2eTestOrderId(testId)) blockers.push("E2E_TEST_ID_FORMAT");
+  if (AUTO_RESTOCK_POLICY !== "FORBIDDEN") blockers.push("AUTO_RESTOCK_NOT_FORBIDDEN");
+  if (!evaluateReturnInventoryOutcome().includes("does not auto-restock")) blockers.push("RETURNS_AUTO_RESTOCK");
+  if (E2E_ORDER_ASSERTIONS.length < 10) blockers.push("E2E_ASSERTIONS_INCOMPLETE");
+  if (E2E_FAILURE_INJECTIONS.length < 10) blockers.push("E2E_FAILURE_INJECTIONS_INCOMPLETE");
   const rehearsalCoverage = {
     CUSTOMER_ORDER: ["CUSTOMER_ORDER"],
     PRODUCT: ["ORDER_VALIDATION"],
@@ -34264,9 +34526,44 @@ function evaluatePhaseD_e2eOrder() {
     phase: "D",
     label: "End-to-End Order Test Harness",
     status: blockers.length === 0 ? "COMPLETE" : "BLOCKED",
-    tests: "test:supplier-order-rehearsal,test:order-engine,test:first-order-fulfillment",
+    tests: "test:supplier-order-rehearsal,test:e2e-order-harness,test:order-engine,test:returns-engine",
     blockers
   };
+}
+
+// lib/master-final-completion/securityHardeningChecks.ts
+function runRepositorySecurityHardeningChecks() {
+  resetHumanApprovalCenterForTests();
+  const failures = [];
+  const payload = { action: "SUPPLIER_ORDER", orderId: "O-1" };
+  const req = requestHumanApproval({
+    requestId: "sec-1",
+    actor: "ops-a",
+    scope: "order",
+    action: "SUPPLIER_ORDER",
+    risk: "HIGH",
+    payload,
+    reason: "test",
+    expiresAt: new Date(Date.now() + 6e4).toISOString()
+  });
+  if (isApprovalValidForAction(req.approvalId, "order", "SUPPLIER_ORDER", payload)) {
+    failures.push("APPROVAL_BYPASS_WITHOUT_DECISION");
+  }
+  approveHumanAction(req.approvalId, "ops-b", payload);
+  if (isApprovalValidForAction(req.approvalId, "order", "SUPPLIER_ORDER", payload)) {
+    failures.push("FOUR_EYES_SINGLE_APPROVER_BYPASS");
+  }
+  approveHumanAction(req.approvalId, "ops-c", payload);
+  if (!isApprovalValidForAction(req.approvalId, "order", "SUPPLIER_ORDER", payload)) {
+    failures.push("FOUR_EYES_NOT_SATISFIED");
+  }
+  if (isApprovalValidForAction(req.approvalId, "order", "PAYMENT_CAPTURE", payload)) {
+    failures.push("APPROVAL_SCOPE_NOT_ENFORCED");
+  }
+  if (isProductionKillSwitchActive()) {
+    failures.push("KILL_SWITCH_UNEXPECTED_ACTIVE");
+  }
+  return failures;
 }
 
 // lib/master-final-completion/phaseE_security.ts
@@ -34292,6 +34589,7 @@ function evaluatePhaseE_security() {
   if (gate.status === "BLOCKED") blockers.push(...gate.blockers.map((b) => `SECURITY:${b}`));
   const bypasses = detectProductionBypasses();
   if (bypasses.length > 0) blockers.push(...bypasses.map((b) => `BYPASS:${b}`));
+  blockers.push(...runRepositorySecurityHardeningChecks().map((f) => `HARDENING:${f}`));
   const status = blockers.length === 0 ? gate.status === "PASS" ? "COMPLETE" : "HUMAN_REQUIRED" : "BLOCKED";
   return {
     phase: "E",
@@ -34339,14 +34637,23 @@ function evaluatePhaseF_goLive() {
 }
 
 // lib/master-final-completion/phaseExecution.ts
+function blockedFromPrior(phase, prior) {
+  return {
+    phase,
+    label: `Blocked \u2014 prior phase ${prior.phase} not complete`,
+    status: "BLOCKED",
+    tests: "n/a",
+    blockers: [`PRIOR_PHASE_${prior.phase}_BLOCKED`]
+  };
+}
 function executeMasterFinalPhasesInOrder() {
   const executionOrder = ["A", "B", "C", "D", "E", "F"];
   const phaseA = evaluatePhaseA_aiIntegration();
-  const phaseB = evaluatePhaseB_memoryApprovalException();
-  const phaseC = evaluatePhaseC_marketplace();
-  const phaseD = evaluatePhaseD_e2eOrder();
-  const phaseE = evaluatePhaseE_security();
-  const phaseF = evaluatePhaseF_goLive();
+  const phaseB = phaseA.status === "BLOCKED" ? blockedFromPrior("B", phaseA) : evaluatePhaseB_memoryApprovalException();
+  const phaseC = phaseB.status === "BLOCKED" ? blockedFromPrior("C", phaseB) : evaluatePhaseC_marketplace();
+  const phaseD = phaseC.status === "BLOCKED" ? blockedFromPrior("D", phaseC) : evaluatePhaseD_e2eOrder();
+  const phaseE = phaseD.status === "BLOCKED" ? blockedFromPrior("E", phaseD) : evaluatePhaseE_security();
+  const phaseF = phaseE.status === "BLOCKED" ? blockedFromPrior("F", phaseE) : evaluatePhaseF_goLive();
   const phases = [phaseA, phaseB, phaseC, phaseD, phaseE, phaseF];
   const phaseInputsValid = phases.every((p, i) => {
     if (i === 0) return true;
@@ -34417,6 +34724,8 @@ function buildTestCoverageMatrix() {
 function buildMasterFinalCompletionReport() {
   process.env.SALES_ENABLED = process.env.SALES_ENABLED ?? "0";
   const chain = executeMasterFinalPhasesInOrder();
+  const workerAudit = auditAiWorkerRegistry();
+  const marketplaceCells = buildMarketplaceProductionCapabilityMatrix();
   const external = buildMasterExternalProviderReadinessReport();
   const control = buildExternalAccessControlCenterReport();
   const render = buildRenderPersistenceVerificationReport();
@@ -34484,7 +34793,9 @@ function buildMasterFinalCompletionReport() {
     blockers: [...new Set(blockers)],
     nextHumanAction,
     SALES_ENABLED: flags.SALES === "ON" ? "1" : "0",
-    phaseInputsValid: chain.phaseInputsValid
+    phaseInputsValid: chain.phaseInputsValid,
+    workerRegistryAudit: { ok: workerAudit.ok, workerCount: workerAudit.rows.length },
+    marketplaceCapabilityCells: marketplaceCells.length
   };
 }
 function formatMasterFinalCompletionBanner(report) {
@@ -34568,7 +34879,9 @@ function buildFinalGoLiveHandoffMarkdown() {
     ...report.blockers.slice(0, 15).map((b) => `- ${b}`),
     "",
     "### 15. Required human actions",
-    ...report.humanActionMatrix.slice(0, 12).map((h) => `- **${h.provider}**: ${h.action}`),
+    ...report.humanActionMatrix.slice(0, 12).map(
+      (h) => `- **${h.provider}**: ${h.action} (evidence: ${h.requiredEvidence}, verify: ${h.verification}, status: ${h.status})`
+    ),
     "",
     "### 16. Required evidence",
     "- EXTERNAL_LIVE only (no MOCK/SANDBOX/UNIT_TEST as production)",

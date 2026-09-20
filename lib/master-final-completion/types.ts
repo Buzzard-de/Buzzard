@@ -47,4 +47,6 @@ export interface MasterFinalCompletionReport {
   nextHumanAction: string;
   SALES_ENABLED: string;
   phaseInputsValid: boolean;
+  workerRegistryAudit?: { ok: boolean; workerCount: number };
+  marketplaceCapabilityCells?: number;
 }

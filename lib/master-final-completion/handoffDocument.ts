@@ -58,7 +58,10 @@ export function buildFinalGoLiveHandoffMarkdown(): string {
     ...report.blockers.slice(0, 15).map((b) => `- ${b}`),
     "",
     "### 15. Required human actions",
-    ...report.humanActionMatrix.slice(0, 12).map((h) => `- **${h.provider}**: ${h.action}`),
+    ...report.humanActionMatrix.slice(0, 12).map(
+      (h) =>
+        `- **${h.provider}**: ${h.action} (evidence: ${h.requiredEvidence}, verify: ${h.verification}, status: ${h.status})`,
+    ),
     "",
     "### 16. Required evidence",
     "- EXTERNAL_LIVE only (no MOCK/SANDBOX/UNIT_TEST as production)",

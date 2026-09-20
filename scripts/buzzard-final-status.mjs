@@ -46,6 +46,16 @@ const masterExternalReadiness = load("master-external-readiness", () => {
   }
 });
 
+const masterFinalCompletion = load("master-final-completion", () => {
+  try {
+    execSync("node scripts/build-master-final-completion-bridge.mjs", { stdio: "pipe" });
+    const mod = require("../server/lib/masterFinalCompletion.bundle.cjs");
+    return mod.buildMasterFinalCompletionReport();
+  } catch {
+    return null;
+  }
+});
+
 const market35 = load("market35", () => {
   const mod = require("../server/core/marketEngineRegistry.js");
   return mod.validateMarketRegistry?.() ?? { valid: false, count: 0, errors: [] };
@@ -160,6 +170,16 @@ const report = {
   masterExternalReadinessScoreboard: masterExternalReadiness?.scoreboard ?? null,
   masterExternalBlockers: masterExternalReadiness?.blockers?.length ?? null,
   masterExternalHandoff: masterExternalReadiness ? "docs/BUZZARD_FINAL_EXTERNAL_ACCESS_HANDOFF.md" : null,
+  masterFinalCompletionScoreboard: masterFinalCompletion?.scoreboard ?? null,
+  masterFinalCompletionPhases: masterFinalCompletion?.phases?.map((p) => ({
+    phase: p.phase,
+    status: p.status,
+  })),
+  masterFinalGoLiveHandoff: masterFinalCompletion ? "docs/BUZZARD_FINAL_GO_LIVE_HANDOFF.md" : null,
+  INTERNAL_INTEGRATION: masterFinalCompletion?.scoreboard?.INTERNAL_INTEGRATION ?? null,
+  MEMORY: masterFinalCompletion?.scoreboard?.MEMORY ?? null,
+  EXCEPTION: masterFinalCompletion?.scoreboard?.EXCEPTION ?? null,
+  E2E_TEST: masterFinalCompletion?.scoreboard?.E2E_TEST ?? null,
 };
 
 if (jsonOutput) {
@@ -205,6 +225,12 @@ if (jsonOutput) {
     console.log("\nMASTER EXTERNAL READINESS (summary):");
     console.log(`  PAYMENT=${s.PAYMENT} CARRIER=${s.CARRIER} MARKETPLACE=${s.MARKETPLACE} AI=${s.AI} MARKETING=${s.MARKETING}`);
     console.log(`  Blockers=${report.masterExternalBlockers} Handoff=${report.masterExternalHandoff}`);
+  }
+  if (report.masterFinalCompletionScoreboard) {
+    const s = report.masterFinalCompletionScoreboard;
+    console.log("\nMASTER FINAL COMPLETION (A→F):");
+    console.log(`  INTERNAL_INTEGRATION=${s.INTERNAL_INTEGRATION} MEMORY=${s.MEMORY} E2E=${s.E2E_TEST} SECURITY=${s.SECURITY}`);
+    console.log(`  Handoff=${report.masterFinalGoLiveHandoff}`);
   }
 
   if (currentBlocker) {

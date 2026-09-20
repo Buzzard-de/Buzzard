@@ -12,7 +12,7 @@ Behebt die **Live-Deploy-Lücke** für:
 | Field | Value |
 |--------|--------|
 | **CURRENT_BRANCH** | `cursor/admin-pages-deploy-gap-c293` |
-| **CURRENT_COMMIT** | Set after push: `git rev-parse HEAD` on `cursor/admin-pages-deploy-gap-c293` |
+| **CURRENT_COMMIT** | `19c3d3d` — `fix(pages): port admin returns and analytics-foundation for GitHub Pages` |
 | **MAIN_COMMIT** | `38384532b5cc380b0607dcc13e17c80161bacd7b` — `fix: sync UI language when country is selected in header` |
 | **MISSING_COMMIT** | `app/admin/returns/`, `app/admin/analytics-foundation/`, nav slugs, and client libs were **absent on `main`** (originally on feature line `49cb3b8`, `c6d5e89`) |
 | **REQUIRED_MERGE** | Merge PR from `cursor/admin-pages-deploy-gap-c293` → **`main`** (minimal port of existing pages + deps + nav) |

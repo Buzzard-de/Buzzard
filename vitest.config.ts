@@ -28,6 +28,7 @@ export default defineConfig({
       "lib/human-approval-center/**/*.test.ts",
       "lib/exception-engine/**/*.test.ts",
       "lib/e2e-order-harness/**/*.test.ts",
+      "lib/render-operator-assistant/**/*.test.ts",
       "lib/fulfillment-control-tower/**/*.test.ts",
       "lib/supplier-order-readiness/**/*.test.ts",
       "lib/supplier-order-rehearsal/**/*.test.ts",

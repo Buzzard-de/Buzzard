@@ -61,11 +61,19 @@ BUZZARD_SITE_URL=https://buzzard24.de node scripts/verify-go-live.mjs
 - `LIVE_ADMIN_*` → **UNVERIFIED_EXTERNAL** until Pages deploy completes and URLs return 200
 - `PAGES_DEPLOY` → **HUMAN_REQUIRED** until live verify passes → **VERIFIED**
 
-## HUMAN ACTION REQUIRED
+## Deployment completion (live evidence)
 
-1. Review and **merge** `cursor/admin-pages-deploy-gap-c293` into **`main`**.
-2. Wait for **Deploy to GitHub Pages** (or run workflow manually).
-3. Re-run `npm run verify:admin-pages-deploy` and `verify-go-live.mjs`.
-4. Confirm both admin URLs return **200**.
+| Field | Value |
+|--------|--------|
+| **PR** | [#366](https://github.com/Buzzard-de/Buzzard/pull/366) — **MERGED** |
+| **MAIN_AFTER_MERGE** | `ca1fe31af7b20564b37ccae50e6c6611b12793d0` |
+| **PAGES_WORKFLOW** | [Run 35532890070](https://github.com/Buzzard-de/Buzzard/actions/runs/35532890070) — **success** |
+| **PAGES_DEPLOY** | **VERIFIED** |
+| **LIVE_ADMIN_RETURNS** | **PASS** (HTTP 200) |
+| **LIVE_ADMIN_ANALYTICS_FOUNDATION** | **PASS** (HTTP 200) |
+| **SALES_ENABLED** | **0** |
+| **Verified at** | 2026-09-20 (UTC) via `npm run verify:admin-pages-deploy` |
+
+No further operator action required for this deploy gap.
 
 **Do not** set `SALES_ENABLED=1`. **Do not** claim live fix without HTTP evidence.

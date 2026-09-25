@@ -8,12 +8,28 @@ const feedAdapters = require("../lib/feedAdapters");
 module.exports = {
   register(app) {
     app.get("/api/feeds/google-merchant.tsv", (req, res) => {
+      if (process.env.BUZZARD_SALES_ENABLED !== "1") {
+        return res.status(503).json({
+          success: false,
+          status: "BLOCKED",
+          reason: "Sales disabled — merchant feed omits price offers until explicitly enabled",
+        });
+      }
       const rows = feedAdapters.googleMerchantRows();
       res.setHeader("Content-Type", "text/tab-separated-values; charset=utf-8");
       return res.send(feedAdapters.toCsv(rows));
     });
 
     app.get("/api/feeds/google-merchant.json", (req, res) => {
+      if (process.env.BUZZARD_SALES_ENABLED !== "1") {
+        return res.json({
+          success: true,
+          status: "BLOCKED",
+          salesEnabled: false,
+          products: [],
+          note: "No price offers emitted while sales are disabled",
+        });
+      }
       return res.json({ success: true, products: feedAdapters.googleMerchantRows() });
     });
 

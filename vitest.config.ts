@@ -4,7 +4,7 @@ import path from "path";
 export default defineConfig({
   test: {
     environment: "node",
-    include: ["server/__tests__/**/*.test.mjs"],
+    include: ["server/__tests__/**/*.test.mjs", "lib/**/*.test.ts"],
     globals: false,
     testTimeout: 15000,
   },

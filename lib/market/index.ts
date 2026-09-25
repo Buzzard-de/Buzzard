@@ -16,4 +16,8 @@ export { getMarketTaxRate, estimateDestinationTax, formatTaxRatePercent } from "
 export { getDeliveryEstimate } from "./delivery";
 export { calculateLinesWeightKg } from "./weight";
 export { MarketProvider, useMarket } from "./context";
+export {
+  getInternationalMarketCountries,
+  getInternationalMarketCountry,
+} from "./internationalBridge";
 export type { MarketCountry, CountryShippingRules, ShippingRateTier } from "./types";

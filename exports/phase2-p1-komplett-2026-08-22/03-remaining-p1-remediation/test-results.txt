@@ -1,0 +1,16 @@
+=== Independent verification 2026-08-22T10:11:37Z ===
+
+=== Full suite V2=1 ===
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_category_audit_maximal.py:57: Angebote & Sonderkollektionen ist aktuell nicht als L1 im Shop-Katalog
+451 passed, 1 skipped, 20 warnings in 15.06s
+
+=== Full suite V2=0 ===
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_category_audit_maximal.py:57: Angebote & Sonderkollektionen ist aktuell nicht als L1 im Shop-Katalog
+451 passed, 1 skipped, 20 warnings in 14.08s
+
+=== Phase 2 tests ===
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+109 tests collected in 0.64s

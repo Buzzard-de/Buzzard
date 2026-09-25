@@ -5,33 +5,41 @@ const { normalizeBrand } = require("../pim/brandNormalizer");
 const { normalizeSku } = require("../pim/skuNormalizer");
 const { validateGtin } = require("./realSupplierConnector");
 const { validateMpn } = require("./realSupplierConnector");
-const categoryEngine = require("../pim/categoryEngine");
+const { resolveProductCategory } = require("../pim/categoryResolver");
 const { SUPPLIER_READINESS_STATUS } = require("../../core/supplierIntegrationConstants");
 
-function mapSupplierCategory(supplierCategory, buzzardCategory) {
-  if (buzzardCategory) {
-    const mapping = categoryEngine.getMapping(buzzardCategory);
-    if (mapping) {
-      return { ok: true, categoryId: buzzardCategory, status: SUPPLIER_READINESS_STATUS.PASS };
-    }
+function mapSupplierCategory(supplierCategory, buzzardCategory, supplierId = null) {
+  const resolved = resolveProductCategory({
+    supplierId,
+    supplierCategory,
+    buzzardCategoryHint: buzzardCategory,
+  });
+
+  if (resolved.ok) {
     return {
-      ok: false,
-      categoryId: buzzardCategory,
-      status: SUPPLIER_READINESS_STATUS.BLOCKED,
-      code: "CATEGORY_UNKNOWN",
+      ok: true,
+      categoryId: resolved.categoryId,
+      status: SUPPLIER_READINESS_STATUS.PASS,
+      mappingSource: resolved.mappingSource,
     };
   }
 
-  if (!supplierCategory) {
-    return { ok: false, status: SUPPLIER_READINESS_STATUS.BLOCKED, code: "CATEGORY_MISSING" };
+  if (resolved.status === "REVIEW_REQUIRED") {
+    return {
+      ok: false,
+      supplierCategory,
+      categoryId: null,
+      status: SUPPLIER_READINESS_STATUS.CONDITION,
+      code: resolved.code || "CATEGORY_UNMAPPED",
+      message: resolved.message,
+    };
   }
 
   return {
     ok: false,
-    supplierCategory,
-    status: SUPPLIER_READINESS_STATUS.CONDITION,
-    code: "CATEGORY_UNMAPPED",
-    message: "Supplier category requires taxonomy mapping",
+    categoryId: buzzardCategory || null,
+    status: SUPPLIER_READINESS_STATUS.BLOCKED,
+    code: resolved.code || "CATEGORY_UNKNOWN",
   };
 }
 
@@ -62,7 +70,8 @@ function mapSupplierProduct(raw, { supplierId = "unknown", buzzardCategory = nul
 
   const categoryMap = mapSupplierCategory(
     raw.supplier_category || raw.category,
-    buzzardCategory || raw.buzzard_category
+    buzzardCategory || raw.buzzard_category,
+    supplierId
   );
   if (!categoryMap.ok) {
     findings.push({

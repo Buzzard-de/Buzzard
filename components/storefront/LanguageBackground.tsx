@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useLocale } from "@/lib/i18n/context";
+import { useMarket } from "@/lib/market/context";
 import { getLanguageBackground } from "@/lib/backgrounds/languageBackgrounds";
 
 const LANGUAGE_BACKGROUND_CLASS = "has-language-background";
@@ -9,7 +10,8 @@ const LANGUAGE_BACKGROUND_VAR = "--language-background-image";
 
 export default function LanguageBackground() {
   const { locale } = useLocale();
-  const src = getLanguageBackground(locale);
+  const { countryCode } = useMarket();
+  const src = getLanguageBackground(locale, countryCode);
 
   useEffect(() => {
     const root = document.documentElement;

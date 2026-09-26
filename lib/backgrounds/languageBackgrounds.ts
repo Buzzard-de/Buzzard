@@ -1,17 +1,13 @@
 export const GERMANY_LANGUAGE_BACKGROUND =
   "/images/backgrounds/germany/buzzard-germany-de.png";
 
+export const GERMANY_BACKGROUND_COUNTRY = "DE";
+
 /**
- * Language-keyed page backgrounds. Country is never consulted.
- * Only `de` is active. Other languages stay on the existing default.
+ * Language backgrounds. Germany photo is active only for Deutsch + Deutschland.
  */
 export const LANGUAGE_BACKGROUNDS: Record<string, string> = {
   de: GERMANY_LANGUAGE_BACKGROUND,
-  // ileride:
-  // fr: "/images/backgrounds/france/buzzard-france-fr.png",
-  // it: "/images/backgrounds/italy/buzzard-italy-it.png",
-  // es: "/images/backgrounds/spain/buzzard-spain-es.png",
-  // tr: "/images/backgrounds/turkey/buzzard-turkey-tr.png",
 };
 
 export function normalizeLanguage(locale: string | null | undefined): string {
@@ -21,8 +17,22 @@ export function normalizeLanguage(locale: string | null | undefined): string {
   return normalized.split("-")[0] ?? "";
 }
 
-export function getLanguageBackground(locale: string | null | undefined): string | null {
+export function normalizeCountry(countryCode: string | null | undefined): string {
+  if (!countryCode) return "";
+  return String(countryCode).trim().toUpperCase();
+}
+
+/**
+ * Germany background only when language is German AND country is Germany.
+ * DE + en → null. IT + de → null. DE + de → asset.
+ */
+export function getLanguageBackground(
+  locale: string | null | undefined,
+  countryCode?: string | null
+): string | null {
   const language = normalizeLanguage(locale);
-  if (!language) return null;
-  return LANGUAGE_BACKGROUNDS[language] ?? null;
+  const country = normalizeCountry(countryCode);
+  if (language !== "de") return null;
+  if (country !== GERMANY_BACKGROUND_COUNTRY) return null;
+  return LANGUAGE_BACKGROUNDS.de;
 }

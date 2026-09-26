@@ -10,7 +10,7 @@ export const catalog: TranslationTree = {
     catalogSupport: "Telefon & E-Mail erreichbar",
   },
   header: {
-    searchPlaceholder: "Suche nach Produkten, Marken, SKU, Kategorien…",
+    searchPlaceholder: "Produkte, Marken, Kategorien, Teilenummern, ...",
     account: "Mein Konto",
     login: "Anmelden",
     wishlist: "Wunschliste",

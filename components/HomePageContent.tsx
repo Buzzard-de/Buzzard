@@ -6,7 +6,9 @@ import HomeHeroCampaign from "./home/HomeHeroCampaign";
 import HomeNewsletter from "./home/HomeNewsletter";
 import HomeProductRail from "./home/HomeProductRail";
 import HomeTrustReviews from "./home/HomeTrustReviews";
+import HomeLayout from "./HomeLayout";
 import ServiceBar from "./ServiceBar";
+import BuzzardServices from "./storefront/BuzzardServices";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function HomePageContent() {
@@ -14,13 +16,15 @@ export default function HomePageContent() {
 
   return (
     <div className="home-page">
+      <HomeLayout />
       <HomeHeroCampaign />
       <HomeCategoryDiscovery />
+      <HomeTrustReviews />
+      <BuzzardServices />
       <HomeProductRail variant="featured" title={t("home.featured")} limit={6} />
       <HomeProductRail variant="bestsellers" title={t("home.bestsellers")} limit={6} />
       <HomeCampaigns />
       <HomeProductRail variant="new" title={t("homeRails.new")} limit={4} />
-      <HomeTrustReviews />
       <HomeNewsletter />
       <ServiceBar />
     </div>

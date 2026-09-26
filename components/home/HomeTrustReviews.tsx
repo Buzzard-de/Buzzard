@@ -1,6 +1,5 @@
 import Link from "next/link";
 import CategoryIcon from "@/components/CategoryIcon";
-import BrandsStrip from "@/components/BrandsStrip";
 import { getDiversePopularCategories } from "@/lib/categories";
 import { isSalesEnabled } from "@/lib/shop/mode";
 
@@ -45,7 +44,6 @@ export default function HomeTrustReviews() {
             </div>
           ))}
         </div>
-        <BrandsStrip variant="promo" />
       </section>
 
       {!salesOn && (

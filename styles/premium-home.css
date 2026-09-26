@@ -1,0 +1,315 @@
+/* Premium storefront composition — uses existing Buzzard tokens */
+
+.home-page {
+  overflow-x: hidden;
+}
+
+.home-hero-campaign {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.home-hero-campaign::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(201, 168, 64, 0.16), transparent 42%),
+    linear-gradient(135deg, #080808 0%, #0d0d0d 55%, #111 100%);
+}
+
+.home-hero-campaign::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(201, 168, 64, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 168, 64, 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.usp-bar {
+  border-top: 1px solid var(--border-gold);
+  border-bottom: 1px solid var(--border-gold);
+  background: #111;
+}
+
+.usp-bar-list {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 14px 20px;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.usp-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e5e5e5;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.usp-item svg {
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.offer-grid {
+  padding: 8px 0 16px;
+}
+
+.offer-grid-title {
+  margin: 0 0 12px;
+  color: var(--gold);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+}
+
+.offer-grid-list {
+  display: grid;
+  gap: 12px;
+}
+
+.offer-card {
+  background: #151515;
+  border: 1px solid rgba(201, 168, 64, 0.35);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.offer-card-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+  color: var(--gold);
+  background: linear-gradient(160deg, #1a1a1a, #0d0d0d);
+}
+
+.offer-card-pattern {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(201, 168, 64, 0.18), transparent 40%),
+    repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 8px,
+      rgba(255, 255, 255, 0.02) 8px,
+      rgba(255, 255, 255, 0.02) 9px
+    );
+}
+
+.offer-card-visual svg {
+  position: relative;
+  z-index: 1;
+}
+
+.offer-card-body {
+  padding: 14px;
+}
+
+.offer-card-category {
+  margin: 0 0 4px;
+  color: #a0a0a0;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.offer-card-title {
+  margin: 0 0 6px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.offer-card-text {
+  margin: 0 0 12px;
+  color: #e5e5e5;
+  font-size: 0.82rem;
+}
+
+.offer-card-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 6px;
+  background: var(--gold);
+  color: #111;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.offer-card-cta:focus-visible,
+.usp-item:focus-visible,
+.mobile-bottom-nav-item:focus-visible,
+.buzzard-service-card:focus-visible {
+  outline: 2px solid var(--gold-light);
+  outline-offset: 2px;
+}
+
+.buzzard-services {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 20px 8px;
+}
+
+.buzzard-services-title {
+  margin: 0 0 16px;
+  color: #fff;
+  font-size: 1.25rem;
+}
+
+.buzzard-services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.buzzard-service-card {
+  padding: 16px;
+  background: #111;
+  border: 1px solid rgba(201, 168, 64, 0.35);
+  border-radius: 10px;
+}
+
+.buzzard-service-card svg {
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.buzzard-service-card h3 {
+  margin: 0 0 6px;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.buzzard-service-card p {
+  margin: 0;
+  color: #a0a0a0;
+  font-size: 0.82rem;
+}
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .home-layout {
+    grid-template-columns: minmax(220px, 260px) 1fr minmax(260px, 320px);
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .home-layout {
+    grid-template-columns: minmax(190px, 220px) 1fr minmax(220px, 280px);
+  }
+
+  .buzzard-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .usp-bar-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .buzzard-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) and (min-width: 600px) {
+  .usp-bar-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .buzzard-services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  body {
+    padding-bottom: 68px;
+  }
+
+  .mobile-bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    background: #080808;
+    border-top: 1px solid rgba(201, 168, 64, 0.35);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 48px;
+    border: 0;
+    background: transparent;
+    color: #a0a0a0;
+    font-size: 0.62rem;
+    font-weight: 700;
+  }
+
+  .mobile-bottom-nav-item.active,
+  .mobile-bottom-nav-item[aria-expanded="true"] {
+    color: var(--gold);
+  }
+
+  .mobile-bottom-nav-cart {
+    position: relative;
+  }
+
+  .mobile-bottom-nav-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: #111;
+    font-size: 0.6rem;
+    line-height: 16px;
+    text-align: center;
+  }
+
+  .usp-bar-list {
+    padding: 12px 16px;
+  }
+
+  .buzzard-services-grid {
+    grid-template-columns: 1fr;
+  }
+}

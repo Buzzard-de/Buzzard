@@ -1,4 +1,4 @@
-/* Language-keyed page background. Does not change header, nav, or logo. */
+/* Language photo only. Must not change header, nav, logo, or the home flex layout. */
 
 .language-page-background {
   position: fixed;
@@ -19,58 +19,5 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(10, 10, 10, 0.22), rgba(10, 10, 10, 0.4));
-}
-
-.storefront-shell {
-  position: relative;
-  z-index: 1;
-}
-
-/* Only when a language background is active (currently German). Other locales keep the default canvas. */
-html.has-language-background body {
-  background-color: transparent;
-}
-
-html.has-language-background #maincontent,
-html.has-language-background .home-page {
-  background: transparent;
-}
-
-html.has-language-background .home-hero {
-  background: linear-gradient(
-    135deg,
-    rgba(20, 20, 20, 0.42) 0%,
-    rgba(10, 10, 10, 0.5) 60%,
-    rgba(201, 160, 102, 0.16) 100%
-  );
-}
-
-html.has-language-background .home-hero-campaign::before {
-  background:
-    radial-gradient(circle at 18% 20%, rgba(201, 168, 64, 0.16), transparent 42%),
-    linear-gradient(135deg, rgba(8, 8, 8, 0.28) 0%, rgba(13, 13, 13, 0.42) 55%, rgba(17, 17, 17, 0.48) 100%);
-}
-
-/* Fullscreen catalog chrome is otherwise opaque and hides the language photo. */
-html.has-language-background .home-shell,
-html.has-language-background .home-fullscreen,
-html.has-language-background .home-layout {
-  background: transparent;
-}
-
-html.has-language-background .mega-panel {
-  background: rgba(10, 10, 10, 0.28);
-}
-
-html.has-language-background .home-sidebar {
-  background: rgba(17, 17, 17, 0.58);
-}
-
-html.has-language-background .home-promo {
-  background: rgba(17, 17, 17, 0.42);
-}
-
-html.has-language-background .usp-bar {
-  background: rgba(17, 17, 17, 0.55);
+  background: rgba(10, 10, 10, 0.35);
 }

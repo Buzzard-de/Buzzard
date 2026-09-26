@@ -25,7 +25,7 @@ Die Facade ist **kein** Orchestrator, **kein** Task-Processor, **kein** Approval
 
 ## 2. Input Request Schema
 
-Normative JSON (future `POST /api/admin/orchestration/dispatch` — **Route nicht anlegen**):
+Normative JSON (`POST /api/admin/orchestration/dispatch` — implemented, flag default OFF):
 
 ```json
 {
@@ -136,8 +136,8 @@ Default: **OFF**. Production Render: **do not add** these env vars.
 
 ## 7. RBAC-Anforderung
 
-- Transport: future admin route only (not specified as implemented).
-- Permission: **`ai.assign`** (same as `POST /api/admin/ai/tasks` in `routePermissions.js` lines 91–92).
+- Transport: `POST /api/admin/orchestration/dispatch` (`orchestrationFacadePlugin.js`), flag default OFF.
+- Permission: **`ai.assign`** (same as `POST /api/admin/ai/tasks` in `routePermissions.js`).
 - Identity: existing admin session (`requireAuth` / `wrapRouteHandler` / CSRF).
 - Employee permissions: if `createAiTask` includes `permissionsRequired`, existing `assertAiPermissionsAllowed` / `aiCanExecute` apply.
 - Facade **must not** invent a Pusat JWT or second RBAC model.

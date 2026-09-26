@@ -20,7 +20,7 @@
 | Pusat bridge | `server/lib/pusatRuntimeBridge.js` | Flag `PUSAT_RUNTIME_ENABLED === "1"`; `dispatchPusatTask`; **no plugin** |
 | Policy | `server/lib/pusatPolicyAdapter.js` | Read-only allowlist; writes → `createApproval`; `GET_ORDER` → `phoneAssistantService` |
 | RBAC | `server/lib/rbac.js` | `ai.read` / `ai.assign` / `ai.execute` on admin role |
-| Routes | `server/lib/routePermissions.js` | `POST /api/admin/ai/tasks` = `ai.assign`; **no** `/api/admin/orchestration/dispatch` |
+| Routes | `server/lib/routePermissions.js` | `POST /api/admin/ai/tasks` and `POST /api/admin/orchestration/dispatch` = `ai.assign` |
 | **Facade** | `server/lib/orchestrationFacade.js` | **NOT FOUND** |
 
 Pusat Runtime (`pusat-ai-runtime/src/orchestrator.ts`) is an **in-memory** specialist. It must not become a fourth production orchestrator (own task DB / own approval DB).
@@ -196,20 +196,23 @@ Do **not** invent stock/price/product from Pusat `agents.ts`.
 
 ---
 
-## I. Future route (spec only — do not implement)
+## I. Admin route (implemented — flag default OFF)
 
-**Proposed:** `POST /api/admin/orchestration/dispatch`
+**Route:** `POST /api/admin/orchestration/dispatch`  
+**Plugin:** `server/plugins/orchestrationFacadePlugin.js`  
+**Permission:** `ai.assign` in `routePermissions.js` EXACT map.
 
-| Topic | Spec from existing patterns |
+| Topic | Binding |
 |---|---|
-| **RBAC** | Same family as `POST /api/admin/ai/tasks` → **`ai.assign`**. Read-only GET_ORDER could be `ai.read` if split later; MVP: `ai.assign` is conservative and already on `admin` in `rbac.js` |
-| **routePermissions** | Add EXACT `"POST /api/admin/orchestration/dispatch": "ai.assign"` — **not present today** |
-| **Auth** | `globalAuthMiddleware` + CSRF like other `/api/admin/*` |
-| **Feature flag** | If OFF → `503` `{ errorCode: "ORCHESTRATION_FACADE_DISABLED" }` without creating tasks |
-| **Request** | `{ action, idempotencyKey` (required), `payload, targetEmployeeId?, delegate? }` — `delegate` only `"none"` \| `"python"` \| `"pusat"` |
-| **Correlation** | Use `req.correlationId` from `server.js`; echo `X-Correlation-Id` |
-| **Response** | `{ taskId, correlationId, status, replay, approvalId, result, errorCode }` — `errorCode: NOT_IMPLEMENTED` for unmapped reads |
-| **Audit** | `recordSystemEvent` + optional `logAuditFromRequest` like `ai.task.create` |
+| **RBAC** | Same family as `POST /api/admin/ai/tasks` → **`ai.assign`** |
+| **Auth** | `wrapRouteHandler` + plugin `attachAdmin` / `requirePermission` |
+| **Feature flag** | `BUZZARD_ORCHESTRATION_FACADE !== "1"` → HTTP `503` `{ errorCode: "ORCHESTRATION_FACADE_DISABLED" }`; no tasks |
+| **Pusat** | `PUSAT_RUNTIME_ENABLED` unused/OFF; plugin does not call the Pusat bridge |
+| **Request** | `{ action, idempotencyKey, payload, targetEmployeeId?, delegate? }` — MVP `delegate` omitted or `"none"` |
+| **Handler** | Calls `orchestrationFacade.dispatch` only |
+| **Audit** | Facade `recordSystemEvent` + plugin `logAuditFromRequest` |
+
+No production activation. No deploy. Flag stays OFF.
 
 `GET /api/orchestrator/*` stays the **Python proxy**, not the facade.
 

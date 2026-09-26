@@ -33,6 +33,20 @@ function uniqueKey(prefix) {
   return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
 }
 
+function rejectFacadeTestApprovals() {
+  const { db } = require("../lib/db.js");
+  const controlCenter = require("../lib/controlCenter.js");
+  const rows = db
+    .prepare(
+      `SELECT id FROM core_approvals
+       WHERE status = 'PENDING' AND reason LIKE 'HUMAN_APPROVAL_REQUIRED:%'`
+    )
+    .all();
+  for (const row of rows) {
+    controlCenter.decideApproval(row.id, "reject", "orchestration-facade-tests");
+  }
+}
+
 function adminReq(overrides = {}) {
   return {
     correlationId: overrides.correlationId || `corr_${crypto.randomBytes(4).toString("hex")}`,
@@ -56,6 +70,7 @@ describe("orchestrationFacade (Phase C MVP)", () => {
 
   afterEach(() => {
     process.env = { ...envBackup };
+    rejectFacadeTestApprovals();
     if (ordersBackup !== null) {
       fs.writeFileSync(ordersPath, ordersBackup, "utf8");
       ordersBackup = null;

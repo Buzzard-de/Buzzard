@@ -86,13 +86,12 @@ Pusat **must not**:
 
 ## 4. Facade position
 
-`orchestrationFacade.js` (future) sits **under** Buzzard, as a composer:
+`orchestrationFacade.js` sits **under** Buzzard, as a composer:
 
 ```
-Caller
-  → orchestrationFacade (flag OFF by default)
+Caller (POST /api/admin/orchestration/dispatch, flag OFF by default)
+  → orchestrationFacade
     → controlCenter.createAiTask / createApproval / recordSystemEvent
-    → aiOrchestrator.enqueueTaskProcessing
     → pusatPolicyAdapter.executeReadOnlyBuzzardAction (GET_ORDER only in MVP)
 ```
 

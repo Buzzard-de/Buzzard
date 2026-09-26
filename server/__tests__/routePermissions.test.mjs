@@ -29,6 +29,12 @@ describe("routePermissions", () => {
     });
   });
 
+  it("orchestration dispatch requires ai.assign", () => {
+    expect(resolveRoutePermission("POST", "/api/admin/orchestration/dispatch")).toEqual({
+      permission: "ai.assign",
+    });
+  });
+
   it("job enqueue requires system.configure", () => {
     expect(resolveRoutePermission("POST", "/api/admin/control-center/jobs")).toEqual({
       permission: "system.configure",

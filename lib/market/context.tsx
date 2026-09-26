@@ -61,7 +61,11 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       persistCountryCode(country.code, manual);
 
       if (manual) {
-        setLocale(resolveUiLocaleForCountry(country.code), false);
+        if (country.code === "DE") {
+          setLocale("de", true);
+        } else {
+          setLocale(resolveUiLocaleForCountry(country.code), false);
+        }
       }
     },
     [setLocale]

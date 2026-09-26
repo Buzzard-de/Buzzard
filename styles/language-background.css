@@ -1,18 +1,18 @@
 /* German photo on the existing home canvas. No extra wrapper, no flex changes. */
 
-html.has-language-background .home-shell {
+html.has-language-background .home-shell,
+html.has-language-background .mega-panel {
   background-color: #0a0a0a;
   background-image:
-    linear-gradient(rgba(8, 8, 8, 0.38), rgba(8, 8, 8, 0.55)),
+    linear-gradient(rgba(8, 8, 8, 0.32), rgba(8, 8, 8, 0.5)),
     var(--language-background-image);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-html.has-language-background .mega-panel,
 html.has-language-background .home-sidebar,
 html.has-language-background .home-promo,
 html.has-language-background .usp-bar {
-  background-color: rgba(12, 12, 12, 0.5);
+  background-color: rgba(12, 12, 12, 0.45);
 }

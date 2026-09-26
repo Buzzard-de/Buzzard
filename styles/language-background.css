@@ -19,10 +19,35 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(10, 10, 10, 0.72), rgba(10, 10, 10, 0.84));
+  background: linear-gradient(rgba(10, 10, 10, 0.38), rgba(10, 10, 10, 0.55));
 }
 
 .storefront-shell {
   position: relative;
   z-index: 1;
+}
+
+/* Only when a language background is active (currently German). Other locales keep the default canvas. */
+html.has-language-background body {
+  background-color: transparent;
+}
+
+html.has-language-background #maincontent,
+html.has-language-background .home-page {
+  background: transparent;
+}
+
+html.has-language-background .home-hero {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 20, 0.42) 0%,
+    rgba(10, 10, 10, 0.5) 60%,
+    rgba(201, 160, 102, 0.16) 100%
+  );
+}
+
+html.has-language-background .home-hero-campaign::before {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(201, 168, 64, 0.16), transparent 42%),
+    linear-gradient(135deg, rgba(8, 8, 8, 0.28) 0%, rgba(13, 13, 13, 0.42) 55%, rgba(17, 17, 17, 0.48) 100%);
 }

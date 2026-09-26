@@ -1,53 +1,49 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import ProductSvg from "./ProductSvg";
-import CategoryIcon from "./CategoryIcon";
-import BrandsStrip from "./BrandsStrip";
+import OfferGrid from "@/components/storefront/OfferGrid";
+import type { OfferCardData } from "@/components/storefront/OfferCard";
 import {
   categoryHref,
   formatMenuLabel,
   getCategoryById,
   getCategoryLabel,
   getChildren,
-  trustBadges,
+  getMainCategoryIcon,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
-import { useCart } from "@/lib/cart";
-import { getProductById, getProductsForCategory } from "@/lib/products";
-import PriceLabel from "@/components/shop/PriceLabel";
-import { showPrices } from "@/lib/shop/mode";
 import type { BuzzardCategory } from "@/lib/categories/types";
-import { smartMenuSignalHref } from "@/lib/smartMenu/bridge";
-import { useSmartMenuSignals } from "@/lib/smartMenu/useSmartMenuSignals";
 
 interface FeaturedBannerProps {
   mainCategory?: BuzzardCategory;
   activeSubId: string;
 }
 
-export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBannerProps) {
-  const { add } = useCart();
-  const [addedId, setAddedId] = useState<string | null>(null);
-  const activeSub = activeSubId ? getCategoryById(activeSubId) : undefined;
-  const level3 = activeSub ? getChildren(activeSub.id) : [];
-  const signals = useSmartMenuSignals(activeSubId);
-  const signalPopular = signals?.popular ?? [];
-  const signalBrands = signals?.brands ?? [];
-  const promoSubs = mainCategory ? getChildren(mainCategory.id).slice(0, 2) : [];
-  const categoryProducts = mainCategory ? getProductsForCategory(mainCategory, 3) : [];
+const GENERIC_TITLES = [
+  "Professionelle Lösungen",
+  "Fahrzeugtechnik",
+  "Arbeits- & Sicherheitsausrüstung",
+];
 
-  function handleAdd(productId: string) {
-    const product = getProductById(productId);
-    if (!product) return;
-    add({ productId: productId });
-    setAddedId(productId);
-    setTimeout(() => setAddedId(null), 1800);
-  }
+function buildOffers(mainCategory: BuzzardCategory, activeSubId: string): OfferCardData[] {
+  const subs = getChildren(mainCategory.id).slice(0, 3);
+  return subs.map((sub, index) => ({
+    id: sub.id,
+    title: GENERIC_TITLES[index] || "Katalogbereich",
+    category: getCategoryLabel(activeSubId === sub.id ? getCategoryById(activeSubId) || sub : sub, DEFAULT_LOCALE),
+    description: `${getCategoryLabel(sub, DEFAULT_LOCALE)} im Buzzard-Katalog entdecken.`,
+    href: categoryHref(sub),
+    cta: "Jetzt entdecken",
+    icon: getMainCategoryIcon(mainCategory.id),
+  }));
+}
+
+export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBannerProps) {
+  const activeSub = activeSubId ? getCategoryById(activeSubId) : undefined;
+  const offers = mainCategory ? buildOffers(mainCategory, activeSubId) : [];
 
   return (
-    <aside className="home-promo" aria-label="Angebote und Empfehlungen">
+    <aside className="home-promo" aria-label="Empfehlungen">
       {mainCategory && (
         <div className="promo-section promo-section--context">
           <h2 className="promo-title">AUSGEWÄHLTE KATEGORIE</h2>
@@ -63,115 +59,7 @@ export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBa
         </div>
       )}
 
-      {level3.length > 0 && (
-        <div className="promo-section promo-section--subsub">
-          <h2 className="promo-title">WEITERE UNTERKATEGORIEN</h2>
-          <ul className="subsubcategory-list">
-            {level3.slice(0, 6).map((child) => (
-              <li key={child.id}>
-                <Link href={categoryHref(child)} className="subsubcategory-link">
-                  <span>{getCategoryLabel(child, DEFAULT_LOCALE)}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {signalPopular.length > 0 && (
-        <div className="promo-section promo-section--signals">
-          <h2 className="promo-title">BELIEBT IN DIESER KATEGORIE</h2>
-          <ul className="subsubcategory-list">
-            {signalPopular.map((item) => (
-              <li key={item.id}>
-                <Link href={smartMenuSignalHref(item.slug)} className="subsubcategory-link">
-                  <span>{item.name}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {signalBrands.length > 0 && (
-        <div className="promo-section promo-section--brands">
-          <h2 className="promo-title">TOP MARKEN</h2>
-          <div className="promo-brand-chips">
-            {signalBrands.slice(0, 6).map((brand) => (
-              <Link
-                key={brand.name}
-                href={`/products/?q=${encodeURIComponent(brand.name)}`}
-                className="promo-brand-chip"
-              >
-                {brand.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {promoSubs.length > 0 && (
-        <div className="promo-section">
-          <h2 className="promo-title">TOP ANGEBOTE</h2>
-          {promoSubs.map((sub, index) => (
-            <div key={sub.id} className="promo-deal-card">
-              <div className="promo-deal-image">
-                <ProductSvg imageKey={index === 0 ? "tire" : "batterie"} />
-              </div>
-              <div className="promo-deal-body">
-                <span className="promo-deal-tag">{getCategoryLabel(sub, DEFAULT_LOCALE).toUpperCase()}</span>
-                <strong>JETZT ENTDECKEN</strong>
-                <Link href={categoryHref(sub)} className="promo-deal-btn">
-                  ANSEHEN
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="promo-trust-list">
-        {trustBadges.map((badge) => (
-          <div key={badge.label} className="promo-trust-item">
-            <CategoryIcon name={badge.icon} size={20} />
-            <span>{badge.label}</span>
-          </div>
-        ))}
-      </div>
-
-      <BrandsStrip variant="promo" />
-
-      {categoryProducts.length > 0 && (
-        <div className="promo-section promo-section--products">
-          <h2 className="promo-title">BELIEBTE PRODUKTE</h2>
-          <ul className="popular-products">
-            {categoryProducts.map((product) => (
-              <li key={product.id} className="popular-product">
-                <Link href={product.url} className="popular-product-img">
-                  <ProductSvg imageKey={product.imageKey ?? "oel"} />
-                </Link>
-                <div className="popular-product-body">
-                  <Link href={product.url} className="popular-product-name">
-                    {product.name}
-                  </Link>
-                  {showPrices() ? (
-                    <div className="popular-product-prices">
-                      <PriceLabel amount={product.price} className="popular-product-price" />
-                    </div>
-                  ) : null}
-                  <button
-                    type="button"
-                    className="popular-add-btn"
-                    onClick={() => handleAdd(product.id)}
-                  >
-                    {addedId === product.id ? "✓ Hinzugefügt" : "In den Warenkorb"}
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <OfferGrid offers={offers} />
     </aside>
   );
 }

@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";
 import TopUtilityBar from "@/components/TopUtilityBar";
 import ShopProviders from "@/components/ShopProviders";
+import MobileBottomNavigation from "@/components/storefront/MobileBottomNavigation";
 import SkipLink from "@/components/SkipLink";
 import { SECURITY_HEADERS } from "@/lib/security";
 import { marketingConfig } from "@/lib/marketing/config";
@@ -14,6 +15,7 @@ import "@/styles/pusart.css";
 import "@/styles/shop.css";
 import "@/styles/rtl.css";
 import "@/styles/storefront-responsive.css";
+import "@/styles/premium-home.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -88,6 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navbar />
           <main id="maincontent">{children}</main>
           <Footer />
+          <MobileBottomNavigation />
         </ShopProviders>
       </body>
     </html>

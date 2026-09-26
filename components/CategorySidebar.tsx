@@ -12,6 +12,7 @@ import {
   getVisibleMainCategories,
   isCategoryVisibleToCustomer,
   mainCategories,
+  MAIN_CATEGORY_COUNT,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
 import { useCategoryVisibilityMap } from "@/lib/categories/visibility-client";
@@ -149,7 +150,7 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
         aria-label="Hauptkategorien"
       >
         <div className="home-sidebar-head">
-          <strong>{isMobile ? "Kategorien" : "Hauptkategorien"}</strong>
+          <strong>{`Alle Kategorien (${MAIN_CATEGORY_COUNT})`}</strong>
           <button
             type="button"
             className="sidebar-close-btn"

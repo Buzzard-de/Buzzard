@@ -80,10 +80,10 @@ export const mainNavLinks: MainNavLink[] = [
 ];
 
 export const trustBadges = [
-  { label: "TOP MARKEN", icon: "star" },
-  { label: "SCHNELLE LIEFERUNG", icon: "truck" },
-  { label: "KOSTENLOSER VERSAND", icon: "box" },
+  { label: "SCHNELLER VERSAND", icon: "truck" },
+  { label: "30 TAGE RÜCKGABE", icon: "return" },
   { label: "SICHERE ZAHLUNG", icon: "shield" },
+  { label: "TOP QUALITÄT", icon: "star" },
 ];
 
 export function getPopularProducts(): PopularProduct[] {

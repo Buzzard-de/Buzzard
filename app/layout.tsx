@@ -16,6 +16,7 @@ import "@/styles/shop.css";
 import "@/styles/rtl.css";
 import "@/styles/storefront-responsive.css";
 import "@/styles/premium-home.css";
+import "@/styles/language-background.css";
 
 const inter = Inter({
   subsets: ["latin"],

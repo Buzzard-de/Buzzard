@@ -6,3 +6,17 @@ export { localizePath, localeLandingPath, hreflangAlternates, stripLocalePrefix,
 export { siteMetadata, htmlLang } from "./seo";
 export type { BuzzardLocale } from "./types";
 export { isRtlLocale, LOCALE_LABELS as localeLabels, RTL_LOCALES } from "./types";
+export {
+  MARKETS as INTERNATIONAL_MARKETS,
+  getMarket as getInternationalMarket,
+  getEnabledMarkets,
+  validateMarkets,
+  initializeBuzzardI18n,
+  t as internationalT,
+  formatMarketPrice,
+  generateHreflang,
+  getCountrySelectorData,
+  getLanguageSelectorData,
+  toBuzzardLocale,
+} from "./internationalCore";
+export type { CountryCode, MarketConfig, Locale as InternationalLocale } from "./internationalCore";

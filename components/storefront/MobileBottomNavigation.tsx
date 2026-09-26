@@ -14,7 +14,7 @@ export default function MobileBottomNavigation() {
 
   return (
     <nav className="mobile-bottom-nav" aria-label="Mobile Schnellnavigation">
-      <Link href="/" className={`mobile-bottom-nav-item${pathname === "/" ? " active" : ""}`}>
+      <Link href="/" className={`mobile-bottom-nav-item${pathname === "/" ? " active" : ""}`} aria-label="Home">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="22" height="22" aria-hidden="true">
           <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z" />
         </svg>
@@ -48,6 +48,7 @@ export default function MobileBottomNavigation() {
       <Link
         href="/konto/"
         className={`mobile-bottom-nav-item${pathname.startsWith("/konto") ? " active" : ""}`}
+        aria-label="Konto"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="22" height="22" aria-hidden="true">
           <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
@@ -58,6 +59,7 @@ export default function MobileBottomNavigation() {
       <Link
         href="/warenkorb/"
         className={`mobile-bottom-nav-item${pathname.startsWith("/warenkorb") ? " active" : ""}`}
+        aria-label="Warenkorb"
       >
         <span className="mobile-bottom-nav-cart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="22" height="22" aria-hidden="true">

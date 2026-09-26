@@ -236,6 +236,21 @@
   .buzzard-services-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .home-highlights .popular-categories-grid,
+  .popular-categories-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 8px;
+    scroll-snap-type: x proximity;
+  }
+
+  .home-highlights .popular-categories-grid > li,
+  .popular-categories-grid > li {
+    flex: 0 0 160px;
+    scroll-snap-align: start;
+  }
 }
 
 @media (max-width: 767px) and (min-width: 600px) {

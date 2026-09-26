@@ -30,7 +30,7 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
               <GlobalStructuredData />
               <StorefrontApiBanner />
               <LanguageBackground />
-              <div className="storefront-shell">{children}</div>
+              {children}
               <LocaleHead />
               <PageViewTracker />
               <ConsentBanner />

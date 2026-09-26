@@ -10,8 +10,9 @@ import {
   getCategoryLabel,
   getChildren,
   getMainCategoryIcon,
-  DEFAULT_LOCALE,
 } from "@/lib/categories";
+import { useLocale } from "@/lib/i18n/context";
+import type { BuzzardLocale } from "@/lib/i18n/types";
 import type { BuzzardCategory } from "@/lib/categories/types";
 
 interface FeaturedBannerProps {
@@ -19,42 +20,43 @@ interface FeaturedBannerProps {
   activeSubId: string;
 }
 
-const GENERIC_TITLES = [
-  "Professionelle Lösungen",
-  "Fahrzeugtechnik",
-  "Arbeits- & Sicherheitsausrüstung",
-];
-
-function buildOffers(mainCategory: BuzzardCategory, activeSubId: string): OfferCardData[] {
+function buildOffers(
+  mainCategory: BuzzardCategory,
+  activeSubId: string,
+  locale: BuzzardLocale,
+  t: (key: string) => string
+): OfferCardData[] {
+  const titles = [t("home.offerProfessional"), t("home.offerVehicle"), t("home.offerSafety")];
   const subs = getChildren(mainCategory.id).slice(0, 3);
   return subs.map((sub, index) => ({
     id: sub.id,
-    title: GENERIC_TITLES[index] || "Katalogbereich",
-    category: getCategoryLabel(activeSubId === sub.id ? getCategoryById(activeSubId) || sub : sub, DEFAULT_LOCALE),
-    description: `${getCategoryLabel(sub, DEFAULT_LOCALE)} im Buzzard-Katalog entdecken.`,
+    title: titles[index] || t("home.offerFallback"),
+    category: getCategoryLabel(activeSubId === sub.id ? getCategoryById(activeSubId) || sub : sub, locale),
+    description: t("home.catalogDiscover").replace("{name}", getCategoryLabel(sub, locale)),
     href: categoryHref(sub),
-    cta: "Jetzt entdecken",
+    cta: t("home.offerCta"),
     icon: getMainCategoryIcon(mainCategory.id),
   }));
 }
 
 export default function FeaturedBanner({ mainCategory, activeSubId }: FeaturedBannerProps) {
+  const { locale, t } = useLocale();
   const activeSub = activeSubId ? getCategoryById(activeSubId) : undefined;
-  const offers = mainCategory ? buildOffers(mainCategory, activeSubId) : [];
+  const offers = mainCategory ? buildOffers(mainCategory, activeSubId, locale, t) : [];
 
   return (
-    <aside className="home-promo" aria-label="Empfehlungen">
+    <aside className="home-promo" aria-label={t("home.recommendations")}>
       {mainCategory && (
         <div className="promo-section promo-section--context">
-          <h2 className="promo-title">AUSGEWÄHLTE KATEGORIE</h2>
-          <p className="promo-context">{formatMenuLabel(mainCategory, DEFAULT_LOCALE)}</p>
+          <h2 className="promo-title">{t("home.selectedCategory")}</h2>
+          <p className="promo-context">{formatMenuLabel(mainCategory, locale)}</p>
           {activeSub && (
             <Link href={categoryHref(activeSub)} className="promo-all-link">
-              {getCategoryLabel(activeSub, DEFAULT_LOCALE)} entdecken →
+              {t("home.discoverCategory").replace("{name}", getCategoryLabel(activeSub, locale))}
             </Link>
           )}
           <Link href={categoryHref(mainCategory)} className="promo-all-link">
-            Gesamte Kategorie ansehen →
+            {t("home.viewCategory")}
           </Link>
         </div>
       )}

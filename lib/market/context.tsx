@@ -9,8 +9,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { hasManualLocaleOverride } from "@/lib/i18n/detect";
-import { useLocale } from "@/lib/i18n/context";
 import {
   defaultMarketCountryCode,
   detectMarketCountryCode,
@@ -25,7 +23,6 @@ import {
   persistCountryCode,
   readStoredCountryCode,
 } from "./storage";
-import { resolveUiLocaleForCountry } from "./localeForCountry";
 
 interface MarketContextValue {
   countryCode: string;
@@ -39,7 +36,6 @@ interface MarketContextValue {
 const MarketContext = createContext<MarketContextValue | null>(null);
 
 export function MarketProvider({ children }: { children: ReactNode }) {
-  const { setLocale } = useLocale();
   const [countryCode, setCountryCodeState] = useState(defaultMarketCountryCode());
   const [ready, setReady] = useState(false);
   const [apiCountryConfig, setApiCountryConfig] = useState<LocalizationCountryConfig | null>(null);
@@ -52,29 +48,13 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
 
-  const setCountryCode = useCallback(
-    (code: string, manual = true) => {
-      const country = getDeliverableMarketCountry(code);
-      if (!country) return;
+  const setCountryCode = useCallback((code: string, manual = true) => {
+    const country = getDeliverableMarketCountry(code);
+    if (!country) return;
 
-      setCountryCodeState(country.code);
-      persistCountryCode(country.code, manual);
-
-      if (manual) {
-        if (country.code === "DE") {
-          setLocale("de", true);
-        } else {
-          setLocale(resolveUiLocaleForCountry(country.code), false);
-        }
-      }
-    },
-    [setLocale]
-  );
-
-  useEffect(() => {
-    if (!ready || hasManualLocaleOverride()) return;
-    setLocale(resolveUiLocaleForCountry(countryCode), false);
-  }, [ready, countryCode, setLocale]);
+    setCountryCodeState(country.code);
+    persistCountryCode(country.code, manual);
+  }, []);
 
   useEffect(() => {
     if (!ready || hasManualCountryOverride()) return;

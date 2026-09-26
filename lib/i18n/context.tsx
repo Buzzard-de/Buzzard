@@ -69,7 +69,6 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     setRuntimeLocale(locale);
     document.documentElement.lang = locale === "ar" ? "ar" : locale;
     document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
-    persistLocale(locale);
   }, [locale, ready]);
 
   const setLocale = useCallback((next: BuzzardLocale, manual = true) => {

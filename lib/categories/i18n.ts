@@ -10,6 +10,7 @@ export function getCategoryLabel(
   if (locale === "de") return categoryLabelsDe[category.id] ?? category.name;
   if (locale === "en") return categoryLabelsEn[category.id] ?? category.name;
   if (locale === "ar") return categoryLabelsAr[category.id] ?? category.name;
+  if (locale === "tr") return categoryLabelsEn[category.id] ?? category.name;
   return category.name;
 }
 

@@ -4,6 +4,9 @@ import { Suspense } from "react";
 import ProductList from "@/components/ProductList";
 import KfzPartsBrowse from "@/components/KfzPartsBrowse";
 import JsonLd from "@/components/seo/JsonLd";
+import CategoryCatalogView from "@/components/category/CategoryCatalogView";
+import CategoryChildrenGrid from "@/components/category/CategoryChildrenGrid";
+import CategoryNotFound from "@/components/category/CategoryNotFound";
 import {
   categoryHref,
   findCategoryBySlugPath,
@@ -163,14 +166,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const category = findCategoryBySlugPath(slug.join("/"));
 
   if (!category) {
-    return (
-      <section className="shop-page">
-        <div className="shop-empty">
-          <h1>Kategorie nicht gefunden</h1>
-          <Link href="/" className="shop-btn-primary">Zur Startseite</Link>
-        </div>
-      </section>
-    );
+    return <CategoryNotFound />;
   }
 
   const breadcrumb = getCategoryBreadcrumb(category.id);
@@ -182,37 +178,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     <>
       <JsonLd data={breadcrumbSchema(categoryBreadcrumbItems(breadcrumb, DEFAULT_LOCALE))} />
       <JsonLd data={categoryCollectionSchema(category, DEFAULT_LOCALE, description)} />
-      <section className="page-hero">
-        <div className="page-hero-inner">
-          <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
-            <Link href="/">Startseite</Link>
-            {breadcrumb.map((crumb, index) => (
-              <span key={crumb.id}>
-                <span>/</span>
-                {index === breadcrumb.length - 1 ? (
-                  <span>{getCategoryLabel(crumb, DEFAULT_LOCALE)}</span>
-                ) : (
-                  <Link href={categoryHref(crumb)}>{getCategoryLabel(crumb, DEFAULT_LOCALE)}</Link>
-                )}
-              </span>
-            ))}
-          </nav>
-          <h1>{name}</h1>
-          {children.length > 0 && (
-            <p>{children.length} Unterkategorien verfügbar</p>
-          )}
-        </div>
-      </section>
-
-      {children.length > 0 && (
-        <section className="subpage-content category-children-grid">
-          {children.map((child) => (
-            <Link key={child.id} href={categoryHref(child)} className="category-child-card">
-              {getCategoryLabel(child, DEFAULT_LOCALE)}
-            </Link>
-          ))}
-        </section>
-      )}
+      <CategoryCatalogView category={category} />
+      <CategoryChildrenGrid children={children} />
 
       {category.id === "cat-05" && <KfzPartsBrowse compact />}
 

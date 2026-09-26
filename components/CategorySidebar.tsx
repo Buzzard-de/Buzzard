@@ -11,13 +11,13 @@ import {
   getMainCategoryIcon,
   getVisibleMainCategories,
   isCategoryVisibleToCustomer,
-  mainCategories,
   MAIN_CATEGORY_COUNT,
-  DEFAULT_LOCALE,
 } from "@/lib/categories";
 import { useCategoryVisibilityMap } from "@/lib/categories/visibility-client";
 import { useHomeUI } from "@/lib/home-ui";
 import { useIsMobileNav } from "@/lib/use-media-query";
+import { useLocale } from "@/lib/i18n/context";
+import type { BuzzardLocale } from "@/lib/i18n/types";
 import type { BuzzardCategory } from "@/lib/categories/types";
 
 interface CategorySidebarProps {
@@ -34,6 +34,8 @@ interface AccordionNodeProps {
   expandedIds: Set<string>;
   onToggle: (id: string) => void;
   onNavigate: () => void;
+  locale: BuzzardLocale;
+  t: (key: string) => string;
 }
 
 function AccordionNode({
@@ -43,6 +45,8 @@ function AccordionNode({
   expandedIds,
   onToggle,
   onNavigate,
+  locale,
+  t,
   visibilityMap,
 }: AccordionNodeProps & { visibilityMap: Record<string, { status?: string }> }) {
   const children = getChildren(category.id).filter((c) =>
@@ -60,7 +64,7 @@ function AccordionNode({
             type="button"
             className={`category-accordion-toggle${expanded ? " open" : ""}`}
             aria-expanded={expanded}
-            aria-label={`${getCategoryLabel(category, DEFAULT_LOCALE)} ${expanded ? "einklappen" : "ausklappen"}`}
+            aria-label={`${getCategoryLabel(category, locale)} ${expanded ? t("home.collapse") : t("home.expand")}`}
             onClick={() => onToggle(category.id)}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true">
@@ -76,7 +80,7 @@ function AccordionNode({
           onClick={onNavigate}
         >
           {isMain && <CategoryIcon name={getMainCategoryIcon(category.id)} size={16} />}
-          <span>{isMain ? formatMenuLabel(category, DEFAULT_LOCALE) : getCategoryLabel(category, DEFAULT_LOCALE)}</span>
+          <span>{isMain ? formatMenuLabel(category, locale) : getCategoryLabel(category, locale)}</span>
         </Link>
       </div>
       {hasChildren && expanded && (
@@ -90,6 +94,8 @@ function AccordionNode({
               expandedIds={expandedIds}
               onToggle={onToggle}
               onNavigate={onNavigate}
+              locale={locale}
+              t={t}
               visibilityMap={visibilityMap}
             />
           ))}
@@ -103,6 +109,7 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
   const homeUI = useHomeUI();
   const isMobile = useIsMobileNav();
   const visibilityMap = useCategoryVisibilityMap();
+  const { locale, t } = useLocale();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
   const mainCategoryNodes = getVisibleMainCategories(visibilityMap);
 
@@ -141,20 +148,20 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
         <button
           type="button"
           className={`sidebar-backdrop${homeUI?.sidebarOpen ? " open" : ""}`}
-          aria-label="Menü schließen"
+          aria-label={t("megaMenu.close")}
           onClick={homeUI?.closeSidebar}
         />
       )}
       <aside
         className={`home-sidebar${isOpen ? " open" : ""}${isMobile ? " mobile-nav" : ""}${embedded ? " embedded" : ""}`}
-        aria-label="Hauptkategorien"
+        aria-label={t("home.mainCategories")}
       >
         <div className="home-sidebar-head">
-          <strong>{`Alle Kategorien (${MAIN_CATEGORY_COUNT})`}</strong>
+          <strong>{t("home.allCategoriesCount").replace("{count}", String(MAIN_CATEGORY_COUNT))}</strong>
           <button
             type="button"
             className="sidebar-close-btn"
-            aria-label="Schließen"
+            aria-label={t("home.close")}
             onClick={embedded ? homeUI?.closeMegaMenu : homeUI?.closeSidebar}
           >
             ×
@@ -172,26 +179,26 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
                 expandedIds={expandedIds}
                 onToggle={handleToggle}
                 onNavigate={handleNavigate}
+                locale={locale}
+                t={t}
                 visibilityMap={visibilityMap}
               />
             ))}
           </ul>
         ) : (
           <ul className="home-sidebar-list">
-            {mainCategories
-              .filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap))
-              .map((cat) => (
+            {mainCategoryNodes.map((cat) => (
               <li key={cat.id}>
                 <Link
-                  href={cat.href}
+                  href={categoryHref(cat)}
                   className={`home-sidebar-item${activeId === cat.id ? " active" : ""}`}
                   aria-current={activeId === cat.id ? "page" : undefined}
                   onMouseEnter={() => handleDesktopSelect(cat.id)}
                   onFocus={() => handleDesktopSelect(cat.id)}
                   onClick={() => handleDesktopSelect(cat.id)}
                 >
-                  <CategoryIcon name={cat.icon} size={16} />
-                  <span>{cat.label}</span>
+                  <CategoryIcon name={getMainCategoryIcon(cat.id)} size={16} />
+                  <span>{formatMenuLabel(cat, locale)}</span>
                   <svg
                     className="chevron"
                     viewBox="0 0 24 24"

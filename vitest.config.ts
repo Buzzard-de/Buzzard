@@ -4,7 +4,11 @@ import path from "path";
 export default defineConfig({
   test: {
     environment: "node",
-    include: ["server/__tests__/**/*.test.mjs", "lib/backgrounds/**/*.test.ts"],
+    include: [
+      "server/__tests__/**/*.test.mjs",
+      "lib/backgrounds/**/*.test.ts",
+      "lib/market/languageIndependence.test.ts",
+    ],
     globals: false,
     testTimeout: 15000,
   },

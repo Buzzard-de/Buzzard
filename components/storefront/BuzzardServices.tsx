@@ -1,40 +1,29 @@
+"use client";
+
 import CategoryIcon from "@/components/CategoryIcon";
+import { useLocale } from "@/lib/i18n/context";
 
 const SERVICES = [
-  {
-    title: "Fachberatung",
-    text: "Technische Fragen zu Kategorien, Passgenauigkeit und Auswahl.",
-    icon: "phone",
-  },
-  {
-    title: "Katalog & Suche",
-    text: "Teile, Kategorien und Nummern zentral durchsuchen.",
-    icon: "box",
-  },
-  {
-    title: "Lieferung & Service",
-    text: "Transparente Informationen zu Versand und Rückgabe.",
-    icon: "truck",
-  },
-  {
-    title: "Sichere Prozesse",
-    text: "Konto, Warenkorb und Anfragen mit klaren Schutzregeln.",
-    icon: "lock",
-  },
+  { titleKey: "home.serviceAdvice", textKey: "home.serviceAdviceText", icon: "phone" },
+  { titleKey: "home.serviceCatalog", textKey: "home.serviceCatalogText", icon: "box" },
+  { titleKey: "home.serviceDelivery", textKey: "home.serviceDeliveryText", icon: "truck" },
+  { titleKey: "home.serviceSecure", textKey: "home.serviceSecureText", icon: "lock" },
 ] as const;
 
 export default function BuzzardServices() {
+  const { t } = useLocale();
+
   return (
     <section className="buzzard-services" aria-labelledby="buzzard-services-title">
       <h2 id="buzzard-services-title" className="buzzard-services-title">
-        Buzzard Services
+        {t("home.servicesTitle")}
       </h2>
       <ul className="buzzard-services-grid">
         {SERVICES.map((item) => (
-          <li key={item.title} className="buzzard-service-card">
+          <li key={item.titleKey} className="buzzard-service-card">
             <CategoryIcon name={item.icon} size={28} />
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
+            <h3>{t(item.titleKey)}</h3>
+            <p>{t(item.textKey)}</p>
           </li>
         ))}
       </ul>

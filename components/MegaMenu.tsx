@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
-import BrandsStrip from "./BrandsStrip";
 import PopularCategories from "./PopularCategories";
 import {
   categoryHref,
@@ -99,7 +98,6 @@ export default function MegaMenu({
       </div>
 
       <PopularCategories mainCategoryId={mainCategory.id} />
-      {mainCategory.id === "cat-05" && <BrandsStrip variant="mega" />}
     </section>
   );
 }

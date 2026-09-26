@@ -10,7 +10,7 @@ export const catalog: TranslationTree = {
     catalogSupport: "Advice & contact available",
   },
   header: {
-    searchPlaceholder: "Search products, brands, SKU, categories…",
+    searchPlaceholder: "Products, brands, categories, part numbers, ...",
     account: "My Account",
     login: "Sign in",
     wishlist: "Wishlist",

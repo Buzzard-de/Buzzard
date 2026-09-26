@@ -5,6 +5,7 @@ import { useLocale } from "@/lib/i18n/context";
 import { getLanguageBackground } from "@/lib/backgrounds/languageBackgrounds";
 
 const LANGUAGE_BACKGROUND_CLASS = "has-language-background";
+const LANGUAGE_BACKGROUND_VAR = "--language-background-image";
 
 export default function LanguageBackground() {
   const { locale } = useLocale();
@@ -12,16 +13,18 @@ export default function LanguageBackground() {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (src) root.classList.add(LANGUAGE_BACKGROUND_CLASS);
-    else root.classList.remove(LANGUAGE_BACKGROUND_CLASS);
-    return () => root.classList.remove(LANGUAGE_BACKGROUND_CLASS);
+    if (src) {
+      root.classList.add(LANGUAGE_BACKGROUND_CLASS);
+      root.style.setProperty(LANGUAGE_BACKGROUND_VAR, `url("${src}")`);
+    } else {
+      root.classList.remove(LANGUAGE_BACKGROUND_CLASS);
+      root.style.removeProperty(LANGUAGE_BACKGROUND_VAR);
+    }
+    return () => {
+      root.classList.remove(LANGUAGE_BACKGROUND_CLASS);
+      root.style.removeProperty(LANGUAGE_BACKGROUND_VAR);
+    };
   }, [src]);
 
-  if (!src) return null;
-
-  return (
-    <div className="language-page-background" aria-hidden="true">
-      <img src={src} alt="" />
-    </div>
-  );
+  return null;
 }

@@ -1,23 +1,18 @@
-/* Language photo only. Must not change header, nav, logo, or the home flex layout. */
+/* German photo on the existing home canvas. No extra wrapper, no flex changes. */
 
-.language-page-background {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
+html.has-language-background .home-shell {
+  background-color: #0a0a0a;
+  background-image:
+    linear-gradient(rgba(8, 8, 8, 0.38), rgba(8, 8, 8, 0.55)),
+    var(--language-background-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.language-page-background img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.language-page-background::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(10, 10, 10, 0.35);
+html.has-language-background .mega-panel,
+html.has-language-background .home-sidebar,
+html.has-language-background .home-promo,
+html.has-language-background .usp-bar {
+  background-color: rgba(12, 12, 12, 0.5);
 }

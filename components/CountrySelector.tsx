@@ -3,18 +3,26 @@
 import { getDeliverableMarketCountries } from "@/lib/market/countries";
 import { useMarket } from "@/lib/market/context";
 import { useLocale } from "@/lib/i18n/context";
+import { resolveUiLocaleForCountry } from "@/lib/market/localeForCountry";
 
 export default function CountrySelector() {
   const { countryCode, setCountryCode } = useMarket();
-  const { t } = useLocale();
+  const { t, setLocale } = useLocale();
   const countries = getDeliverableMarketCountries();
+
+  function applyCountry(code: string) {
+    setCountryCode(code, true);
+    if (resolveUiLocaleForCountry(code) === "de") {
+      setLocale("de", true);
+    }
+  }
 
   return (
     <label className="country-selector">
       <span className="sr-only">{t("market.srLabel")}</span>
       <select
         value={countryCode}
-        onChange={(e) => setCountryCode(e.target.value, true)}
+        onChange={(e) => applyCountry(e.target.value)}
         aria-label={t("market.label")}
       >
         {countries.map((country) => (

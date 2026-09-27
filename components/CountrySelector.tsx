@@ -6,25 +6,15 @@ import { useLocale } from "@/lib/i18n/context";
 
 export default function CountrySelector() {
   const { countryCode, setCountryCode } = useMarket();
-  const { t, setLocale } = useLocale();
+  const { t } = useLocale();
   const countries = getDeliverableMarketCountries();
-
-  function applyCountry(code: string) {
-    setCountryCode(code, true);
-    if (code.toUpperCase() === "DE") {
-      setLocale("de", true);
-    }
-  }
 
   return (
     <label className="country-selector">
       <span className="sr-only">{t("market.srLabel")}</span>
       <select
         value={countryCode}
-        onChange={(e) => applyCountry(e.target.value)}
-        onPointerUp={() => {
-          if (countryCode === "DE") applyCountry("DE");
-        }}
+        onChange={(e) => setCountryCode(e.target.value, true)}
         aria-label={t("market.label")}
       >
         {countries.map((country) => (

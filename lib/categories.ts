@@ -110,20 +110,27 @@ export const filterOptions = getChildren("cat-05").map((cat) => ({
   href: categoryHref(cat),
 }));
 
-function homeCard(category: BuzzardCategory): CategoryCard {
+function homeCard(category: BuzzardCategory, locale: BuzzardLocale = DEFAULT_LOCALE): CategoryCard {
   return {
     id: category.id,
-    label: getCategoryLabel(category, DEFAULT_LOCALE).toUpperCase(),
+    label: getCategoryLabel(category, locale).toUpperCase(),
     href: categoryHref(category),
   };
 }
 
-export function getFeaturedSubcategories(mainId: string, limit = 6): CategoryCard[] {
-  return getChildren(mainId).slice(0, limit).map(homeCard);
+export function getFeaturedSubcategories(
+  mainId: string,
+  limit = 6,
+  locale: BuzzardLocale = DEFAULT_LOCALE
+): CategoryCard[] {
+  return getChildren(mainId).slice(0, limit).map((category) => homeCard(category, locale));
 }
 
 /** Cross-category highlights for homepage (one subcategory per main branch). */
-export function getDiversePopularCategories(limit = 8): Array<CategoryCard & { icon: string }> {
+export function getDiversePopularCategories(
+  limit = 8,
+  locale: BuzzardLocale = DEFAULT_LOCALE
+): Array<CategoryCard & { icon: string }> {
   const featuredMainIds = [
     "cat-05",
     "cat-01",
@@ -142,7 +149,7 @@ export function getDiversePopularCategories(limit = 8): Array<CategoryCard & { i
     const child = getChildren(mainId)[0];
     if (!child) continue;
     cards.push({
-      ...homeCard(child),
+      ...homeCard(child, locale),
       icon: getMainCategoryIcon(mainId),
     });
     if (cards.length >= limit) break;

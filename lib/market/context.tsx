@@ -9,23 +9,16 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { hasManualLocaleOverride } from "@/lib/i18n/detect";
-import { useLocale } from "@/lib/i18n/context";
 import {
   defaultMarketCountryCode,
-  detectMarketCountryCode,
   getDeliverableMarketCountry,
 } from "./countries";
 import { fetchCountryConfig } from "@/lib/localizationFeeds/client";
 import { isLocalizationFeedsEnabled } from "@/lib/api/config";
 import type { LocalizationCountryConfig } from "@/lib/localizationFeeds/types";
 import type { MarketCountry } from "./types";
-import {
-  hasManualCountryOverride,
-  persistCountryCode,
-  readStoredCountryCode,
-} from "./storage";
-import { resolveUiLocaleForCountry } from "./localeForCountry";
+import { persistCountryCode } from "./storage";
+import { resolveBootCountryCode } from "./resolveInitialCountry";
 
 interface MarketContextValue {
   countryCode: string;
@@ -39,49 +32,22 @@ interface MarketContextValue {
 const MarketContext = createContext<MarketContextValue | null>(null);
 
 export function MarketProvider({ children }: { children: ReactNode }) {
-  const { setLocale } = useLocale();
   const [countryCode, setCountryCodeState] = useState(defaultMarketCountryCode());
   const [ready, setReady] = useState(false);
   const [apiCountryConfig, setApiCountryConfig] = useState<LocalizationCountryConfig | null>(null);
 
   useEffect(() => {
-    const stored = readStoredCountryCode();
-    const detected = detectMarketCountryCode();
-    const initial = getDeliverableMarketCountry(stored ?? detected)?.code ?? defaultMarketCountryCode();
-    setCountryCodeState(initial);
+    setCountryCodeState(resolveBootCountryCode());
     setReady(true);
   }, []);
 
-  const setCountryCode = useCallback(
-    (code: string, manual = true) => {
-      const country = getDeliverableMarketCountry(code);
-      if (!country) return;
+  const setCountryCode = useCallback((code: string, manual = true) => {
+    const country = getDeliverableMarketCountry(code);
+    if (!country) return;
 
-      setCountryCodeState(country.code);
-      persistCountryCode(country.code, manual);
-
-      if (manual) {
-        if (country.code === "DE") {
-          setLocale("de", true);
-        } else {
-          setLocale(resolveUiLocaleForCountry(country.code), false);
-        }
-      }
-    },
-    [setLocale]
-  );
-
-  useEffect(() => {
-    if (!ready || hasManualLocaleOverride()) return;
-    setLocale(resolveUiLocaleForCountry(countryCode), false);
-  }, [ready, countryCode, setLocale]);
-
-  useEffect(() => {
-    if (!ready || hasManualCountryOverride()) return;
-    const detected = detectMarketCountryCode();
-    const country = getDeliverableMarketCountry(detected);
-    if (country) setCountryCodeState(country.code);
-  }, [ready]);
+    setCountryCodeState(country.code);
+    persistCountryCode(country.code, manual);
+  }, []);
 
   useEffect(() => {
     if (!ready || !isLocalizationFeedsEnabled()) {

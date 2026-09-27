@@ -142,6 +142,50 @@ const mainAr = {
   "cat-41": "العروض والمجموعات الخاصة",
 };
 
+const mainTr = {
+  "cat-01": "Tekstil",
+  "cat-02": "Kozmetik ve Kişisel Bakım",
+  "cat-03": "Temizlik Ürünleri",
+  "cat-04": "Okul ve Ofis Malzemeleri",
+  "cat-05": "Otomotiv",
+  "cat-06": "Evcil Hayvan Ürünleri",
+  "cat-07": "Bahçe",
+  "cat-08": "İş Güvenliği ve İş Kıyafetleri",
+  "cat-09": "Aletler ve Hırdavat",
+  "cat-10": "Ev ve Yaşam",
+  "cat-11": "Mobilya",
+  "cat-12": "Elektronik",
+  "cat-13": "Ev Aletleri",
+  "cat-14": "Spor ve Outdoor",
+  "cat-15": "Ayakkabı",
+  "cat-16": "Çanta ve Aksesuar",
+  "cat-17": "Anne ve Bebek",
+  "cat-18": "Oyuncak ve Çocuk",
+  "cat-19": "Hobi ve Boş Zaman",
+  "cat-20": "Hayvancılık ve Çiftlik Ekipmanı",
+  "cat-21": "İnşaat",
+  "cat-22": "Elektrik ve Aydınlatma",
+  "cat-23": "Su, Isıtma ve Tesisat",
+  "cat-24": "Mutfak ve Yemek",
+  "cat-25": "Gıda ve İçecek",
+  "cat-26": "Evcil Hayvan Maması",
+  "cat-27": "Sağlık ve Wellness",
+  "cat-28": "Ofis ve Ticaret",
+  "cat-29": "Ambalaj ve Kargo",
+  "cat-30": "Endüstriyel ve Ticari Ekipman",
+  "cat-31": "Güvenlik ve Gözetim",
+  "cat-32": "Seyahat ve Valiz",
+  "cat-33": "Bahçe Hobi ve Kamp",
+  "cat-34": "Sezonluk ve Kutlama",
+  "cat-35": "Dekorasyon",
+  "cat-36": "Kişisel Elektronik ve Mobil",
+  "cat-37": "Fotoğraf ve Video",
+  "cat-38": "Bilgisayar ve Oyun",
+  "cat-39": "Araç ve Mobilite",
+  "cat-40": "Enerji ve Solar",
+  "cat-41": "Fırsatlar ve Özel Koleksiyonlar",
+};
+
 /** Turkish word/phrase → German */
 const trDe = {
   Tekstil: "Textil",
@@ -649,6 +693,7 @@ function toGermanLabel(node) {
 const de = {};
 const en = {};
 const ar = {};
+const tr = {};
 
 function walk(nodes) {
   for (const node of nodes) {
@@ -656,6 +701,7 @@ function walk(nodes) {
     de[node.id] = toGermanLabel(node);
     en[node.id] = mainEn[node.id] ?? sourceName;
     ar[node.id] = mainAr[node.id] ?? sourceName;
+    tr[node.id] = mainTr[node.id] ?? sourceName;
     if (node.legacy_name) {
       node.name = de[node.id];
     }
@@ -677,4 +723,5 @@ export const ${constName}: Record<string, string> = ${JSON.stringify(labels, nul
 writeLocaleFile("de.generated.ts", "categoryLabelsDe", de);
 writeLocaleFile("en.generated.ts", "categoryLabelsEn", en);
 writeLocaleFile("ar.generated.ts", "categoryLabelsAr", ar);
-console.log("Generated", Object.keys(de).length, "German,", Object.keys(en).length, "English and", Object.keys(ar).length, "Arabic labels");
+writeLocaleFile("tr.generated.ts", "categoryLabelsTr", tr);
+console.log("Generated", Object.keys(de).length, "German,", Object.keys(en).length, "English,", Object.keys(ar).length, "Arabic and", Object.keys(tr).length, "Turkish labels");

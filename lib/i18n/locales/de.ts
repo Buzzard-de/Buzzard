@@ -455,6 +455,29 @@ export const catalog: TranslationTree = {
     automotiveTitle: "Automotive-Kategorien",
     allAutomotive: "Alle Automotive-Kategorien",
     filterAll: "Alle Kategorien",
+    jsonLdDescription: "{name} bei Buzzard24 — Produkte und Unterkategorien im Online-Katalog.",
+  },
+  shippingPage: {
+    title: "Versand & Lieferung",
+    lead: "Informationen zur Lieferung bei Buzzard24",
+    catalogTitle: "Katalogmodus:",
+    catalogText:
+      "Sie können Produkte und Kategorien vollständig durchstöbern sowie Artikel in den Warenkorb legen. Verkaufspreise werden erst mit Verkaufsstart angezeigt.",
+    statusTitle: "Aktueller Status",
+    statusText:
+      "Im Katalogmodus erfolgt kein Versand und keine Lieferung. Sie können Produkte ansehen und uns für Beratung oder Verfügbarkeitsanfragen kontaktieren.",
+    areaTitle: "Geplantes Liefergebiet (bei Verkaufsstart)",
+    areaText: "Deutschland und weitere EU-Länder — Details werden vor Aktivierung des Verkaufs veröffentlicht.",
+    timeTitle: "Geplante Lieferzeiten (bei Verkaufsstart)",
+    timeText:
+      "Angestrebte Lieferzeit: 1–3 Werktage innerhalb Deutschlands, abhängig von Verfügbarkeit und Lieferadresse. Konkrete Angaben folgen mit dem Verkaufsstart.",
+    costTitle: "Versandkosten (bei Verkaufsstart)",
+    costText:
+      "Versandkosten und ggf. kostenloser Versand ab einem Bestellwert werden vor Aktivierung des Online-Verkaufs hier veröffentlicht.",
+    contactTitle: "Beratung & Anfragen",
+    contactText: "Für Fragen zu Produkten oder geplantem Versand:",
+    or: "oder",
+    contactForm: "Kontaktformular",
   },
   service: {
     aria: "Service-Informationen",

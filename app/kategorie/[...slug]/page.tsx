@@ -3,16 +3,15 @@ import Link from "next/link";
 import { Suspense } from "react";
 import ProductList from "@/components/ProductList";
 import KfzPartsBrowse from "@/components/KfzPartsBrowse";
-import JsonLd from "@/components/seo/JsonLd";
 import CategoryCatalogView from "@/components/category/CategoryCatalogView";
 import CategoryChildrenGrid from "@/components/category/CategoryChildrenGrid";
+import CategoryJsonLd from "@/components/category/CategoryJsonLd";
 import CategoryNotFound from "@/components/category/CategoryNotFound";
+import KfzSubcategoryCount from "@/components/category/KfzSubcategoryCount";
 import {
-  categoryHref,
   findCategoryBySlugPath,
   getAllCategoryStaticParams,
   getCategoryBreadcrumb,
-  getCategoryLabel,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
 import {
@@ -26,7 +25,6 @@ import {
   getKfzL3Href,
 } from "@/lib/categories/kfzTree";
 import { buildCategoryMetadata } from "@/lib/seo/metadata";
-import { breadcrumbSchema, categoryBreadcrumbItems, categoryCollectionSchema } from "@/lib/seo/structured-data";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string[] }>;
@@ -82,7 +80,7 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             <span className="kfz-parts-id">{main.kfz_id}</span> {main.name_de}
           </h1>
           <p>
-            {main.subcategory_count} Unterkategorien
+            <KfzSubcategoryCount count={main.subcategory_count} />
             {main.l3_count ? ` · ${main.l3_count} Produktgruppen (L3)` : ""} · {main.kfz_name}
           </p>
           {shopHref && (
@@ -170,16 +168,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   }
 
   const breadcrumb = getCategoryBreadcrumb(category.id);
-  const name = getCategoryLabel(category, DEFAULT_LOCALE);
   const children = category.children ?? [];
-  const description = `${name} bei Buzzard24 — Produkte und Unterkategorien im Online-Katalog.`;
 
   return (
     <>
-      <JsonLd data={breadcrumbSchema(categoryBreadcrumbItems(breadcrumb, DEFAULT_LOCALE))} />
-      <JsonLd data={categoryCollectionSchema(category, DEFAULT_LOCALE, description)} />
+      <CategoryJsonLd category={category} breadcrumb={breadcrumb} />
       <CategoryCatalogView category={category} />
-      <CategoryChildrenGrid children={children} />
+      <CategoryChildrenGrid categories={children} />
 
       {category.id === "cat-05" && <KfzPartsBrowse compact />}
 

@@ -449,6 +449,29 @@ export const catalog: TranslationTree = {
     automotiveTitle: "Otomotiv kategorileri",
     allAutomotive: "Tüm otomotiv kategorileri",
     filterAll: "Tüm kategoriler",
+    jsonLdDescription: "{name} — Buzzard24 çevrimiçi kataloğunda ürünler ve alt kategoriler.",
+  },
+  shippingPage: {
+    title: "Kargo ve teslimat",
+    lead: "Buzzard24 teslimat bilgileri",
+    catalogTitle: "Katalog modu:",
+    catalogText:
+      "Ürünleri ve kategorileri gezebilir, sepete ekleyebilirsiniz. Satış fiyatları satış başlangıcında görünür.",
+    statusTitle: "Güncel durum",
+    statusText:
+      "Katalog modunda kargo ve teslimat yoktur. Ürünleri inceleyebilir, danışmanlık veya stok için bize ulaşabilirsiniz.",
+    areaTitle: "Planlanan teslimat bölgesi (satış başlangıcında)",
+    areaText: "Almanya ve diğer AB ülkeleri — ayrıntılar satış açılmadan önce yayınlanır.",
+    timeTitle: "Planlanan teslimat süreleri (satış başlangıcında)",
+    timeText:
+      "Hedef teslimat: Almanya içinde 1–3 iş günü, stok ve teslimat adresine bağlıdır. Kesin bilgiler satış başlangıcında gelir.",
+    costTitle: "Kargo ücretleri (satış başlangıcında)",
+    costText:
+      "Kargo ücretleri ve varsa ücretsiz kargo eşiği online satış açılmadan önce burada yayınlanır.",
+    contactTitle: "Danışmanlık ve talepler",
+    contactText: "Ürünler veya planlanan kargo için:",
+    or: "veya",
+    contactForm: "İletişim formu",
   },
   service: {
     aria: "Hizmet bilgileri",

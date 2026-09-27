@@ -4,16 +4,23 @@ interface LegalPageShellProps {
   title: string;
   description: string;
   breadcrumb: string;
+  homeLabel?: string;
   children: React.ReactNode;
 }
 
-export function LegalPageShell({ title, description, breadcrumb, children }: LegalPageShellProps) {
+export function LegalPageShell({
+  title,
+  description,
+  breadcrumb,
+  homeLabel = "Startseite",
+  children,
+}: LegalPageShellProps) {
   return (
     <>
       <section className="page-hero">
         <div className="page-hero-inner">
           <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
-            <Link href="/">Startseite</Link> <span>/</span> <span>{breadcrumb}</span>
+            <Link href="/">{homeLabel}</Link> <span>/</span> <span>{breadcrumb}</span>
           </nav>
           <h1>{title}</h1>
           <p>{description}</p>

@@ -447,6 +447,29 @@ export const catalog: TranslationTree = {
     automotiveTitle: "Automotive categories",
     allAutomotive: "All automotive categories",
     filterAll: "All categories",
+    jsonLdDescription: "{name} at Buzzard24 — products and subcategories in the online catalog.",
+  },
+  shippingPage: {
+    title: "Shipping & delivery",
+    lead: "Shipping information at Buzzard24",
+    catalogTitle: "Catalog mode:",
+    catalogText:
+      "You can browse products and categories and add items to the cart. Sale prices appear when selling starts.",
+    statusTitle: "Current status",
+    statusText:
+      "In catalog mode there is no shipping or delivery. You can view products and contact us for advice or availability.",
+    areaTitle: "Planned delivery area (at sales launch)",
+    areaText: "Germany and other EU countries — details will be published before sales are activated.",
+    timeTitle: "Planned delivery times (at sales launch)",
+    timeText:
+      "Target delivery time: 1–3 working days within Germany, depending on availability and delivery address. Exact details follow at sales launch.",
+    costTitle: "Shipping costs (at sales launch)",
+    costText:
+      "Shipping costs and any free-shipping threshold will be published here before online sales start.",
+    contactTitle: "Advice & inquiries",
+    contactText: "For questions about products or planned shipping:",
+    or: "or",
+    contactForm: "Contact form",
   },
   service: {
     aria: "Service information",

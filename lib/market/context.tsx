@@ -11,18 +11,14 @@ import {
 } from "react";
 import {
   defaultMarketCountryCode,
-  detectMarketCountryCode,
   getDeliverableMarketCountry,
 } from "./countries";
 import { fetchCountryConfig } from "@/lib/localizationFeeds/client";
 import { isLocalizationFeedsEnabled } from "@/lib/api/config";
 import type { LocalizationCountryConfig } from "@/lib/localizationFeeds/types";
 import type { MarketCountry } from "./types";
-import {
-  hasManualCountryOverride,
-  persistCountryCode,
-  readStoredCountryCode,
-} from "./storage";
+import { persistCountryCode } from "./storage";
+import { resolveBootCountryCode } from "./resolveInitialCountry";
 
 interface MarketContextValue {
   countryCode: string;
@@ -41,10 +37,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   const [apiCountryConfig, setApiCountryConfig] = useState<LocalizationCountryConfig | null>(null);
 
   useEffect(() => {
-    const stored = readStoredCountryCode();
-    const detected = detectMarketCountryCode();
-    const initial = getDeliverableMarketCountry(stored ?? detected)?.code ?? defaultMarketCountryCode();
-    setCountryCodeState(initial);
+    setCountryCodeState(resolveBootCountryCode());
     setReady(true);
   }, []);
 
@@ -55,13 +48,6 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     setCountryCodeState(country.code);
     persistCountryCode(country.code, manual);
   }, []);
-
-  useEffect(() => {
-    if (!ready || hasManualCountryOverride()) return;
-    const detected = detectMarketCountryCode();
-    const country = getDeliverableMarketCountry(detected);
-    if (country) setCountryCodeState(country.code);
-  }, [ready]);
 
   useEffect(() => {
     if (!ready || !isLocalizationFeedsEnabled()) {

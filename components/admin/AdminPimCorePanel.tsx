@@ -6,15 +6,34 @@ import {
   fetchCategoryAttributeSchema,
   fetchPimAiCapabilities,
   fetchPimBrands,
+  fetchPimHealth,
   fetchPimProducts,
   fetchPimQuality,
   fetchSupplierMappings,
   runPimImport,
   validatePimProduct,
 } from "@/lib/admin/pimCore";
-import type { PimBrand, PimProduct, PimSupplierMapping, PimValidationResult } from "@/lib/admin/pimCoreTypes";
+import type {
+  PimBrand,
+  PimHealthReport,
+  PimProduct,
+  PimStructuredValidationReport,
+  PimSupplierMapping,
+  PimValidationResult,
+  PimWorkflowStatus,
+} from "@/lib/admin/pimCoreTypes";
 
 type Tab = "products" | "brands" | "import" | "validation" | "mapping" | "attributes";
+
+const WORKFLOW_FILTERS: Array<PimWorkflowStatus | "ALL"> = [
+  "ALL",
+  "DRAFT",
+  "INVALID",
+  "REVIEW_REQUIRED",
+  "READY_FOR_REVIEW",
+  "APPROVED",
+  "PUBLISH_BLOCKED",
+];
 
 export default function AdminPimCorePanel() {
   const [tab, setTab] = useState<Tab>("products");
@@ -23,6 +42,9 @@ export default function AdminPimCorePanel() {
   const [mappings, setMappings] = useState<PimSupplierMapping[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [validation, setValidation] = useState<PimValidationResult | null>(null);
+  const [validationReport, setValidationReport] = useState<PimStructuredValidationReport | null>(null);
+  const [health, setHealth] = useState<PimHealthReport | null>(null);
+  const [workflowFilter, setWorkflowFilter] = useState<PimWorkflowStatus | "ALL">("ALL");
   const [quality, setQuality] = useState<{ score: number; dimensions: Record<string, number> } | null>(null);
   const [importResult, setImportResult] = useState<string | null>(null);
   const [attributeSchema, setAttributeSchema] = useState<string | null>(null);
@@ -31,18 +53,20 @@ export default function AdminPimCorePanel() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    const [productRows, brandRows, mappingRows, caps] = await Promise.all([
-      fetchPimProducts(),
+    const [productRows, brandRows, mappingRows, caps, healthReport] = await Promise.all([
+      fetchPimProducts(workflowFilter === "ALL" ? undefined : { workflow: workflowFilter }),
       fetchPimBrands(),
       fetchSupplierMappings(),
       fetchPimAiCapabilities(),
+      fetchPimHealth().catch(() => null),
     ]);
     setProducts(productRows);
     setBrands(brandRows);
     setMappings(mappingRows);
     setAiCaps(caps);
+    setHealth(healthReport);
     if (productRows[0] && !selectedId) setSelectedId(productRows[0].id);
-  }, [selectedId]);
+  }, [selectedId, workflowFilter]);
 
   useEffect(() => {
     if (!getAdminToken()) {
@@ -70,7 +94,8 @@ export default function AdminPimCorePanel() {
   async function handleValidate() {
     if (!selectedId) return;
     const result = await validatePimProduct(selectedId);
-    setValidation(result);
+    setValidation(result.validation);
+    setValidationReport(result.report);
     setTab("validation");
   }
 
@@ -106,7 +131,13 @@ export default function AdminPimCorePanel() {
     <div className="admin-pim-core">
       <header className="admin-page-header">
         <h1>Product Core & PIM</h1>
-        <p>Category-agnostic PIM foundation (Part 6). Sales remain disabled.</p>
+        <p>Category-agnostic PIM foundation. Sales remain disabled — publish is manual only.</p>
+        {health && (
+          <p className="admin-note">
+            PIM health: {health.summary.totalProducts} products · {health.summary.reviewRequired} review ·{" "}
+            {health.summary.demoProducts} demo · publish blocked
+          </p>
+        )}
       </header>
 
       <nav className="admin-tabs" aria-label="PIM Core sections">
@@ -134,12 +165,26 @@ export default function AdminPimCorePanel() {
       {tab === "products" && (
         <section className="admin-panel">
           <h2>Products</h2>
+          <label className="admin-filter">
+            Workflow filter{" "}
+            <select
+              value={workflowFilter}
+              onChange={(e) => setWorkflowFilter(e.target.value as PimWorkflowStatus | "ALL")}
+            >
+              {WORKFLOW_FILTERS.map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
+          </label>
           <table className="admin-table">
             <thead>
               <tr>
                 <th>SKU</th>
                 <th>Title</th>
                 <th>Status</th>
+                <th>Workflow</th>
                 <th>Category</th>
                 <th>Quality</th>
               </tr>
@@ -150,6 +195,7 @@ export default function AdminPimCorePanel() {
                   <td>{p.sku}</td>
                   <td>{p.title}</td>
                   <td>{p.status}</td>
+                  <td>{p.workflowStatus || "—"}</td>
                   <td>{p.category || "—"}</td>
                   <td>{p.qualityScore ?? "—"}</td>
                 </tr>
@@ -193,10 +239,21 @@ export default function AdminPimCorePanel() {
           {!validation && <p>Select a product and run validation from Products tab.</p>}
           {validation && (
             <>
-              <p>Overall: <strong>{validation.overall}</strong> ({validation.failCount} fail, {validation.warningCount} warn)</p>
+              <p>
+                Overall: <strong>{validation.overall}</strong> ({validation.failCount} fail, {validation.warningCount}{" "}
+                warn)
+              </p>
+              {validationReport && (
+                <p>
+                  Structured: {validationReport.status} · valid={String(validationReport.valid)} · missing:{" "}
+                  {validationReport.missingFields.join(", ") || "—"}
+                </p>
+              )}
               <ul>
                 {validation.results.map((r) => (
-                  <li key={r.field}>{r.field}: {r.status}</li>
+                  <li key={r.field}>
+                    {r.field}: {r.status}
+                  </li>
                 ))}
               </ul>
             </>

@@ -3868,6 +3868,7 @@ migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
 migrateMasterIntegrationFoundation();
+migrateMasterIntegrationPhase2();
 
 function migrateMasterIntegrationFoundation() {
   db.exec(`
@@ -3929,6 +3930,76 @@ function migrateMasterIntegrationFoundation() {
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE INDEX IF NOT EXISTS idx_system_events_type ON system_events(type);
+  `);
+}
+
+function migrateMasterIntegrationPhase2() {
+  ensureColumn("product_identity_map", "ean_gtin", "TEXT");
+  ensureColumn("product_identity_map", "normalized_brand", "TEXT");
+  ensureColumn("product_identity_map", "normalized_model", "TEXT");
+  ensureColumn("product_identity_map", "match_method", "TEXT DEFAULT 'UNMATCHED'");
+  ensureColumn("product_identity_map", "match_confidence", "REAL DEFAULT 0");
+
+  ensureColumn("system_events", "aggregate_id", "TEXT");
+  ensureColumn("system_events", "aggregate_type", "TEXT");
+  ensureColumn("system_events", "version", "INTEGER DEFAULT 1");
+  ensureColumn("system_exceptions", "retryable", "INTEGER DEFAULT 0");
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS product_identity_match_audit (
+      id TEXT PRIMARY KEY,
+      map_id TEXT,
+      source_system TEXT,
+      source_id TEXT,
+      match_method TEXT,
+      confidence REAL,
+      collision_status TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_identity_match_audit_source
+      ON product_identity_match_audit(source_system, source_id);
+
+    CREATE TABLE IF NOT EXISTS product_identity_review_queue (
+      id TEXT PRIMARY KEY,
+      map_id TEXT,
+      source_system TEXT,
+      source_id TEXT,
+      reason TEXT,
+      collision_status TEXT NOT NULL DEFAULT 'POSSIBLE',
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_identity_review_status
+      ON product_identity_review_queue(status);
+
+    CREATE TABLE IF NOT EXISTS inventory_sot_reservations (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      sku TEXT,
+      quantity INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'RESERVED',
+      correlation_id TEXT,
+      idempotency_key TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(idempotency_key)
+    );
+    CREATE INDEX IF NOT EXISTS idx_inv_sot_product ON inventory_sot_reservations(product_id, status);
+
+    CREATE TABLE IF NOT EXISTS order_sot_preparations (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      sku TEXT,
+      quantity INTEGER NOT NULL,
+      product_snapshot_json TEXT NOT NULL,
+      price_snapshot_json TEXT NOT NULL,
+      tax_snapshot_json TEXT DEFAULT '{}',
+      inventory_snapshot_json TEXT DEFAULT '{}',
+      supplier_snapshot_json TEXT DEFAULT '{}',
+      correlation_id TEXT,
+      status TEXT NOT NULL DEFAULT 'PREPARED',
+      mode TEXT NOT NULL DEFAULT 'DRY_RUN',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 }
 

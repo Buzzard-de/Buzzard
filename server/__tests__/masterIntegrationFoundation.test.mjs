@@ -90,6 +90,6 @@ describe("master integration foundation", () => {
     expect(product.source).toBe("D");
     expect(product.mode).toBe("DRY_RUN");
     const denied = pusat.executeReadOnly("CREATE_ORDER", {});
-    expect(denied.code).toBe("NOT_IMPLEMENTED");
+    expect(denied.code).toBe("PERMISSION_DENIED");
   });
 });

@@ -6,6 +6,7 @@
 const crypto = require("crypto");
 const { db } = require("./db");
 const { MODE, label } = require("./integrationMode");
+const { MODES, resolveSotMode } = require("./productSotMode");
 
 const TARGET = "D";
 const TARGET_TABLE = "pim_core_products";
@@ -22,24 +23,34 @@ const SOURCE = Object.freeze({
 });
 
 function isExclusiveWriteEnabled() {
-  return process.env.BUZZARD_PRODUCT_SOT_EXCLUSIVE === "1";
+  if (process.env.BUZZARD_PRODUCT_SOT_EXCLUSIVE === "1") return true;
+  return resolveSotMode().exclusive === true;
 }
 
 function isSotActive() {
   return process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1" && isExclusiveWriteEnabled();
 }
 
+function getSotMode() {
+  return resolveSotMode();
+}
+
 function getStatus() {
+  const sotMode = resolveSotMode();
   return {
     target: TARGET,
     targetTable: TARGET_TABLE,
     targetModule: TARGET_MODULE,
     selected: true,
+    sotMode: sotMode.mode,
+    requestedSotMode: sotMode.requested,
     exclusiveWrite: isExclusiveWriteEnabled(),
+    exclusiveBlockedReason: sotMode.blockedReason,
     active: isSotActive(),
     status: isSotActive() ? "ACTIVE" : "SELECTED_AS_TARGET / NOT_YET_ACTIVE",
-    migration: "NOT_STARTED",
+    migration: sotMode.mode === MODES.MIGRATION ? "IN_PROGRESS" : "NOT_STARTED",
     identityUnified: false,
+    productionIdentityExport: process.env.BUZZARD_PRODUCT_IDENTITY_PRODUCTION_EXPORT === "1" ? "AVAILABLE" : "BLOCKED_BY_PRODUCTION_ACCESS",
     mode: isSotActive() ? MODE.LIVE : MODE.DRY_RUN,
     ...label(isSotActive() ? MODE.LIVE : MODE.DRY_RUN),
   };
@@ -54,6 +65,20 @@ function assertCanonicalWrite(source) {
   const err = new Error(`Legacy product write locked (source=${src}). Canonical writer is D/${TARGET_MODULE}`);
   err.code = "product_sot_legacy_locked";
   err.status = 423;
+  try {
+    const exceptions = require("./exceptionBus");
+    exceptions.emit({
+      type: exceptions.TYPES.PRODUCT_WRITE_BLOCKED,
+      severity: "HIGH",
+      source: "productSot",
+      entity: "product",
+      message: err.message,
+      context: { source: src },
+      retryable: false,
+    });
+  } catch {
+    /* bus may be mid-init */
+  }
   throw err;
 }
 
@@ -67,6 +92,10 @@ function upsertIdentityMap({
   collisionStatus = "UNVERIFIED",
   confidence = 0,
   evidence = "code",
+  eanGtin = null,
+  normalizedBrand = null,
+  normalizedModel = null,
+  matchMethod = "UNMATCHED",
 } = {}) {
   if (!sourceSystem || sourceId == null) {
     throw new Error("sourceSystem and sourceId required");
@@ -84,6 +113,8 @@ function upsertIdentityMap({
       UPDATE product_identity_map SET
         source_sku = ?, target_product_id = ?, target_sku = ?,
         mapping_status = ?, collision_status = ?, confidence = ?, evidence = ?,
+        ean_gtin = ?, normalized_brand = ?, normalized_model = ?,
+        match_method = ?, match_confidence = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `
@@ -95,6 +126,11 @@ function upsertIdentityMap({
       collisionStatus,
       confidence,
       evidence,
+      eanGtin,
+      normalizedBrand,
+      normalizedModel,
+      matchMethod,
+      confidence,
       existing.id
     );
     return getIdentity(existing.id);
@@ -104,8 +140,9 @@ function upsertIdentityMap({
     `
     INSERT INTO product_identity_map(
       id, source_system, source_id, source_sku, target_system, target_product_id,
-      target_sku, mapping_status, collision_status, confidence, evidence
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+      target_sku, mapping_status, collision_status, confidence, evidence,
+      ean_gtin, normalized_brand, normalized_model, match_method, match_confidence
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
   `
   ).run(
     id,
@@ -118,7 +155,12 @@ function upsertIdentityMap({
     mappingStatus,
     collisionStatus,
     confidence,
-    evidence
+    evidence,
+    eanGtin,
+    normalizedBrand,
+    normalizedModel,
+    matchMethod,
+    confidence
   );
   return getIdentity(id);
 }
@@ -158,6 +200,7 @@ module.exports = {
   SOURCE,
   isExclusiveWriteEnabled,
   isSotActive,
+  getSotMode,
   getStatus,
   assertCanonicalWrite,
   upsertIdentityMap,

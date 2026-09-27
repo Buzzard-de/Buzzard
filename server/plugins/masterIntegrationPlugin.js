@@ -7,6 +7,9 @@ const productSot = require("../lib/productSot");
 const { evaluateSalesGate } = require("../lib/salesSafetyGate");
 const pusat = require("../lib/pusat/runtime");
 const { list: listExceptions } = require("../lib/exceptionBus");
+const { sourceMatrix } = require("../lib/productIdentitySources");
+const { validateMigration } = require("../lib/productSotValidator");
+const { listReviewQueue } = require("../lib/productCollisionDetector");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -44,6 +47,20 @@ module.exports = {
         productSot: sot.status,
         pusat: pusat.health().enabled,
       });
+    });
+
+    app.get("/api/health/product-sot/sources", (_req, res) => {
+      res.json({ success: true, sources: sourceMatrix(), productSot: productSot.getStatus() });
+    });
+
+    app.get("/api/health/product-sot/validator", (_req, res) => {
+      res.json({ success: true, validator: validateMigration() });
+    });
+
+    app.get("/api/admin/product-sot/review-queue", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "products.read")) return;
+      res.json({ success: true, queue: listReviewQueue({ status: req.query.status || "PENDING" }) });
     });
 
     app.get("/api/admin/product-sot/identity", (req, res) => {

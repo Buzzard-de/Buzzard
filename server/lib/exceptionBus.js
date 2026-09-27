@@ -19,6 +19,14 @@ const TYPES = Object.freeze({
   SECURITY_ALERT: "SECURITY_ALERT",
   DATA_INCONSISTENCY: "DATA_INCONSISTENCY",
   PRODUCT_SOT_LOCKED: "PRODUCT_SOT_LOCKED",
+  PRODUCT_IDENTITY_CONFLICT: "PRODUCT_IDENTITY_CONFLICT",
+  PRODUCT_SOT_CONFLICT: "PRODUCT_SOT_CONFLICT",
+  PRODUCT_WRITE_BLOCKED: "PRODUCT_WRITE_BLOCKED",
+  INVENTORY_CONFLICT: "INVENTORY_CONFLICT",
+  PRICE_CONFLICT: "PRICE_CONFLICT",
+  CART_STOCK_CONFLICT: "CART_STOCK_CONFLICT",
+  CHECKOUT_VALIDATION_FAILED: "CHECKOUT_VALIDATION_FAILED",
+  ORDER_PREPARATION_FAILED: "ORDER_PREPARATION_FAILED",
 });
 
 function emit({
@@ -32,6 +40,7 @@ function emit({
   context = {},
   retryPolicy = "none",
   owner = null,
+  retryable = false,
 } = {}) {
   if (!type || !TYPES[type]) {
     throw new Error(`Unknown exception type: ${type}`);
@@ -41,8 +50,8 @@ function emit({
     `
     INSERT INTO system_exceptions(
       id, type, severity, source, entity, entity_id, correlation_id,
-      message, context_json, retry_policy, owner, status
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'OPEN')
+      message, context_json, retry_policy, owner, status, retryable
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'OPEN', ?)
   `
   ).run(
     id,
@@ -55,7 +64,8 @@ function emit({
     message || type,
     JSON.stringify(context),
     retryPolicy,
-    owner
+    owner,
+    retryable ? 1 : 0
   );
   return get(id);
 }

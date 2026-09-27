@@ -17,6 +17,7 @@ const ACTIONS = Object.freeze({
   GET_ORDER_STATUS: "GET_ORDER_STATUS",
   GET_SOT_STATUS: "GET_SOT_STATUS",
   GET_SALES_GATE: "GET_SALES_GATE",
+  GET_EXCEPTIONS: "GET_EXCEPTIONS",
   PING: "PING",
 });
 
@@ -28,6 +29,7 @@ const WRITE_ACTIONS = Object.freeze([
   "UPDATE_PRODUCT",
   "CREATE_ORDER",
   "CAPTURE_PAYMENT",
+  "CREATE_SHIPMENT",
 ]);
 
 const SPECIALISTS = Object.freeze([
@@ -80,6 +82,20 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
   const corr = correlationId || `pusat_${crypto.randomBytes(6).toString("hex")}`;
 
   if (WRITE_ACTIONS.includes(action)) {
+    try {
+      const exceptions = require("../exceptionBus");
+      exceptions.emit({
+        type: exceptions.TYPES.PERMISSION_DENIED,
+        severity: "HIGH",
+        source: "pusat",
+        entity: "tool",
+        correlationId: corr,
+        message: `Pusat write denied: ${action}`,
+        retryable: false,
+      });
+    } catch {
+      /* audit best-effort */
+    }
     return {
       ok: false,
       code: "PERMISSION_DENIED",
@@ -179,6 +195,17 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
       return { ok: false, code: "NOT_FOUND", action, correlationId: corr, ...label(MODE.DRY_RUN) };
     }
     return { ok: true, action, data: order, correlationId: corr, ...label(MODE.DRY_RUN) };
+  }
+
+  if (action === ACTIONS.GET_EXCEPTIONS) {
+    const { list } = require("../exceptionBus");
+    return {
+      ok: true,
+      action,
+      data: list({ status: payload.status || "OPEN", limit: Number(payload.limit) || 20 }),
+      correlationId: corr,
+      ...label(MODE.DRY_RUN),
+    };
   }
 
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId: corr, ...label(MODE.DISABLED) };

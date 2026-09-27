@@ -97,4 +97,76 @@ function validateMigration() {
   };
 }
 
-module.exports = { validateMigration };
+function validateIdentityExport(exportDoc) {
+  if (!exportDoc || typeof exportDoc !== "object" || !exportDoc.sources) {
+    return {
+      result: "BLOCK",
+      canActivateExclusive: false,
+      findings: [
+        finding(
+          "BLOCK",
+          "BLOCKED_BY_PRODUCTION_ACCESS",
+          "No real A–G identity export provided. Exclusive SoT stays off."
+        ),
+      ],
+      counts: { block: 1, warn: 0 },
+    };
+  }
+
+  const findings = [];
+  const eans = new Map();
+  const skus = new Map();
+  const sourceIds = new Map();
+  const sources = exportDoc.sources;
+
+  for (const key of ["A", "B", "C", "D", "E", "F", "G"]) {
+    const rows = Array.isArray(sources[key]) ? sources[key] : [];
+    for (const row of rows) {
+      const sid = String(row.id || row.sourceId || "").trim();
+      const sku = String(row.sku || "").trim();
+      const ean = String(row.ean || row.ean_gtin || row.gtin || "").trim();
+      if (!sid) findings.push(finding("BLOCK", "MISSING_CANONICAL_ID", `Source ${key} row missing id`));
+      if (sid) {
+        const k = `${key}:${sid}`;
+        if (sourceIds.has(k)) {
+          findings.push(finding("BLOCK", "CONFLICTING_SOURCE_ID", `Duplicate source id ${k}`));
+        }
+        sourceIds.set(k, true);
+      }
+      if (sku) {
+        const prev = skus.get(sku);
+        if (prev && prev !== `${key}:${sid}`) {
+          findings.push(finding("BLOCK", "DUPLICATE_SKU", `SKU ${sku} on ${prev} and ${key}:${sid}`));
+        }
+        skus.set(sku, `${key}:${sid}`);
+      }
+      if (ean) {
+        const prev = eans.get(ean);
+        if (prev && prev !== `${key}:${sid}`) {
+          findings.push(finding("WARN", "DUPLICATE_EAN", `EAN ${ean} on ${prev} and ${key}:${sid}`));
+        }
+        eans.set(ean, `${key}:${sid}`);
+      }
+    }
+  }
+
+  if (exportDoc.orphans > 0) {
+    findings.push(finding("BLOCK", "ORPHAN_MAPPING", `${exportDoc.orphans} orphan mappings`));
+  }
+  if (Array.isArray(exportDoc.collisions) && exportDoc.collisions.length) {
+    findings.push(finding("BLOCK", "PRODUCT_IDENTITY_CONFLICT", `${exportDoc.collisions.length} collisions unresolved`));
+  }
+  if (Array.isArray(exportDoc.unresolved) && exportDoc.unresolved.length) {
+    findings.push(finding("WARN", "UNRESOLVED_IDENTITY", `${exportDoc.unresolved.length} unresolved identities`));
+  }
+
+  const local = validateMigration();
+  findings.push(...local.findings);
+
+  const blocks = findings.filter((f) => f.level === "BLOCK");
+  const warns = findings.filter((f) => f.level === "WARN");
+  const result = blocks.length ? "BLOCK" : warns.length ? "WARN" : "PASS";
+  return { result, canActivateExclusive: result !== "BLOCK", findings, counts: { block: blocks.length, warn: warns.length } };
+}
+
+module.exports = { validateMigration, validateIdentityExport };

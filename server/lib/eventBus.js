@@ -13,6 +13,11 @@ const TYPES = Object.freeze({
   CartCreated: "CartCreated",
   CartUpdated: "CartUpdated",
   OrderPrepared: "OrderPrepared",
+  ProductResolved: "ProductResolved",
+  InventoryChecked: "InventoryChecked",
+  PriceResolved: "PriceResolved",
+  CheckoutValidated: "CheckoutValidated",
+  OrderCreated: "OrderCreated",
 });
 
 const listeners = new Map();

@@ -104,6 +104,47 @@ function getProviderHealth() {
   };
 }
 
+function authorizePayment(input = {}) {
+  return {
+    ...createPaymentIntent({ ...input, dryRun: true }),
+    captured: false,
+    mode: "DRY_RUN",
+  };
+}
+
+function capturePayment() {
+  const { MODE, label } = require("../integrationMode");
+  const exceptions = require("../exceptionBus");
+  exceptions.emit({
+    type: exceptions.TYPES.PAYMENT_NOT_LIVE,
+    source: "paymentService",
+    entity: "payment",
+    message: "capturePayment is fail-closed while payment is not LIVE",
+    retryable: false,
+  });
+  return {
+    ok: false,
+    error: "PAYMENT_NOT_LIVE",
+    code: "PAYMENT_NOT_LIVE",
+    status: 403,
+    captured: false,
+    realMoneyMovement: false,
+    paymentStatus: PAYMENT_STATUS.AUTHORIZED,
+    ...label(MODE.DISABLED),
+  };
+}
+
+function cancelPayment(intent = {}) {
+  return {
+    ...intent,
+    status: PAYMENT_STATUS.FAILED,
+    cancelled: true,
+    realMoneyMovement: false,
+    captured: false,
+    mode: "DRY_RUN",
+  };
+}
+
 function sanitizePaymentPayload(body = {}) {
   const forbidden = ["cardNumber", "cvv", "cvc", "pan", "card_number"];
   const keys = Object.keys(body);
@@ -122,6 +163,9 @@ module.exports = {
   PayPalProvider,
   resolveProvider,
   createPaymentIntent,
+  authorizePayment,
+  capturePayment,
+  cancelPayment,
   getProviderHealth,
   sanitizePaymentPayload,
 };

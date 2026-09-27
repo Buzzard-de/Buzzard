@@ -71,15 +71,31 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
   const totals = checkout.totals || {};
   const cartService = require("./cartService");
   const cart = cartService.getCart(checkout.cartId);
-  const items = (cart.items || []).map((i) => ({
-    productId: i.productId,
-    variantId: i.variantId,
-    sku: i.sku,
-    title: i.title,
-    quantity: i.quantity,
-    priceSnapshot: i.priceSnapshot,
-    lineTotal: i.lineTotal,
-  }));
+  const pathAdapter = require("./canonicalCommercePath");
+  const items = [];
+  for (const i of cart.items || []) {
+    const snap = pathAdapter.buildImmutableSnapshot(i.productId, i.quantity);
+    if (!snap.ok) {
+      return { error: snap.error, code: snap.code, status: snap.status || 400 };
+    }
+    items.push({
+      productId: i.productId,
+      canonicalProductId: i.productId,
+      variantId: i.variantId,
+      sku: i.sku,
+      title: i.title,
+      quantity: i.quantity,
+      priceSnapshot: i.priceSnapshot,
+      unitPrice: i.unitPrice || i.priceSnapshot,
+      lineTotal: i.lineTotal,
+      snapshotVersion: i.snapshotVersion || snap.snapshotVersion || null,
+      productSnapshot: i.productSnapshot || snap.productSnapshot || null,
+      priceQuoteSnapshot: snap.ok ? snap.priceSnapshot : null,
+      taxSnapshot: snap.ok ? snap.taxSnapshot : null,
+      inventorySnapshot: snap.ok ? snap.inventorySnapshot : null,
+      supplierSnapshot: snap.supplierSnapshot,
+    });
+  }
 
   const id = newId("ord");
   const status = isCommercialOrderType(orderType) ? ORDER_STATUS.PENDING : ORDER_STATUS.CONFIRMED;
@@ -107,6 +123,8 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
     JSON.stringify({
       dryRun: !isCommercialOrderType(orderType),
       paymentReference: payment?.reference,
+      paymentStatus: payment?.status || "NONE",
+      captured: false,
       realMoneyMovement: false,
       supplierOrderSubmitted: false,
     })
@@ -139,6 +157,20 @@ function transitionOrderStatus(orderId, toStatus) {
   if (!canTransitionOrder(row.status, toStatus)) {
     return { error: "illegal_order_transition", from: row.status, to: toStatus, status: 409 };
   }
+
+  const livePayment = process.env.BUZZARD_PAYMENT_LIVE === "1";
+  const liveFulfillment = process.env.BUZZARD_FULFILLMENT_LIVE === "1";
+  const liveRefund = process.env.BUZZARD_REFUND_LIVE === "1";
+  if (toStatus === ORDER_STATUS.PAID && !livePayment) {
+    return { error: "PAYMENT_NOT_LIVE", code: "PAYMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
+  }
+  if ((toStatus === ORDER_STATUS.SHIPPED || toStatus === ORDER_STATUS.DELIVERED) && !liveFulfillment) {
+    return { error: "FULFILLMENT_NOT_LIVE", code: "FULFILLMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
+  }
+  if (toStatus === ORDER_STATUS.REFUNDED && !liveRefund) {
+    return { error: "REFUND_NOT_LIVE", code: "REFUND_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
+  }
+
   db.prepare("UPDATE commerce_orders SET status = ? WHERE id = ?").run(toStatus, orderId);
   return getOrder(orderId);
 }
@@ -153,8 +185,18 @@ function submitSupplierOrder(orderId, { req } = {}) {
   if (order.error) return order;
 
   logCommerceBlock("order_creation_blocked", { orderId, type: "supplier_boundary", dryRun: true }, req);
+  const exceptions = require("../exceptionBus");
+  exceptions.emit({
+    type: exceptions.TYPES.SUPPLIER_NOT_LIVE,
+    source: "orderService",
+    entity: "order",
+    entityId: orderId,
+    message: "Supplier order submission is not live",
+    retryable: false,
+  });
   return {
     error: "supplier_order_blocked",
+    code: "SUPPLIER_NOT_LIVE",
     message: "Supplier order submission is disabled in Part 8",
     status: 403,
     orderId,

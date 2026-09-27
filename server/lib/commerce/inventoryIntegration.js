@@ -53,10 +53,10 @@ function reserve({ productId, quantity, correlationId = null, idempotencyKey = n
 
   const tx = db.transaction(() => {
     const inv = getInventory(productId);
-    if (inv.error) return inv;
+    if (inv.error) return { ok: false, code: "PRODUCT_NOT_FOUND", ...inv, ...label(MODE.DRY_RUN) };
     if (inv.saleable < qty) {
       exceptions.emit({
-        type: exceptions.TYPES.INVENTORY_CONFLICT,
+        type: exceptions.TYPES.INVENTORY_INSUFFICIENT,
         severity: "HIGH",
         source: "inventoryIntegration",
         entity: "product",
@@ -66,7 +66,14 @@ function reserve({ productId, quantity, correlationId = null, idempotencyKey = n
         context: { requested: qty, saleable: inv.saleable },
         retryable: true,
       });
-      return { ok: false, error: "insufficient_saleable", saleable: inv.saleable, status: 409, ...label(MODE.DRY_RUN) };
+      return {
+        ok: false,
+        code: "INSUFFICIENT_STOCK",
+        error: "insufficient_saleable",
+        saleable: inv.saleable,
+        status: 409,
+        ...label(MODE.DRY_RUN),
+      };
     }
     const id = `rsv_${crypto.randomBytes(6).toString("hex")}`;
     db.prepare(

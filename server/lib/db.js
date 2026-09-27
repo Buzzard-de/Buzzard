@@ -3869,6 +3869,7 @@ migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
 migrateMasterIntegrationFoundation();
 migrateMasterIntegrationPhase2();
+migrateMasterIntegrationPhase3();
 
 function migrateMasterIntegrationFoundation() {
   db.exec(`
@@ -4001,6 +4002,10 @@ function migrateMasterIntegrationPhase2() {
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
   `);
+}
+
+function migrateMasterIntegrationPhase3() {
+  ensureColumn("commerce_idempotency", "payload_hash", "TEXT");
 }
 
 function seed() {

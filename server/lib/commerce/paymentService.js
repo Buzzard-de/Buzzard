@@ -91,6 +91,8 @@ function createPaymentIntent({ amount, currency = "EUR", customerId, idempotency
 
 function getProviderHealth() {
   const flags = getEffectiveFlags();
+  const { MODE, label } = require("../integrationMode");
+  const live = process.env.BUZZARD_PAYMENT_LIVE === "1" && flags.paymentEnabled;
   return {
     activeProvider: flags.stripeEnabled ? "stripe" : flags.paypalEnabled ? "paypal" : "mock",
     stripeEnabled: flags.stripeEnabled,
@@ -98,6 +100,7 @@ function getProviderHealth() {
     mockPaymentOnly: flags.mockPaymentOnly,
     realMoneyMovement: false,
     credentialsStored: false,
+    ...label(live ? MODE.LIVE : MODE.MOCK),
   };
 }
 

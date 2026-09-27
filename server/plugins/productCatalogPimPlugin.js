@@ -1,6 +1,7 @@
 const { extractToken, verifyToken } = require("../lib/dbAuth");
 const { extractToken: extractAdminToken, getSession } = require("../lib/auth");
 const productCatalogPim = require("../lib/productCatalogPim");
+const { rejectLegacyProductWrite } = require("../lib/productSotHttp");
 
 function requireAnyAdmin(req, res) {
   const bearer = extractToken(req);
@@ -55,6 +56,7 @@ module.exports = {
     });
 
     app.post("/api/product-catalog-pim/products", (req, res) => {
+      if (rejectLegacyProductWrite(res, "C")) return;
       const result = productCatalogPim.createProduct(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json({ product: result.product, completeness: result.completeness });

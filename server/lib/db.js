@@ -3867,7 +3867,70 @@ migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
+migrateMasterIntegrationFoundation();
 
+function migrateMasterIntegrationFoundation() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS product_identity_map (
+      id TEXT PRIMARY KEY,
+      source_system TEXT NOT NULL,
+      source_id TEXT NOT NULL,
+      source_sku TEXT,
+      target_system TEXT NOT NULL DEFAULT 'D',
+      target_product_id TEXT,
+      target_sku TEXT,
+      mapping_status TEXT NOT NULL DEFAULT 'UNMAPPED',
+      collision_status TEXT NOT NULL DEFAULT 'UNVERIFIED',
+      confidence REAL DEFAULT 0,
+      evidence TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(source_system, source_id),
+      FOREIGN KEY(target_product_id) REFERENCES pim_core_products(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_product_identity_sku ON product_identity_map(source_sku);
+    CREATE INDEX IF NOT EXISTS idx_product_identity_target ON product_identity_map(target_product_id);
+
+    CREATE TABLE IF NOT EXISTS marketplace_product_map (
+      id TEXT PRIMARY KEY,
+      marketplace_id INTEGER,
+      marketplace_sku TEXT NOT NULL,
+      product_id TEXT,
+      listing_status TEXT DEFAULT 'draft',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(marketplace_id, marketplace_sku),
+      FOREIGN KEY(product_id) REFERENCES pim_core_products(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS system_exceptions (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      severity TEXT NOT NULL,
+      source TEXT,
+      entity TEXT,
+      entity_id TEXT,
+      correlation_id TEXT,
+      message TEXT,
+      context_json TEXT DEFAULT '{}',
+      retry_policy TEXT,
+      owner TEXT,
+      status TEXT NOT NULL DEFAULT 'OPEN',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_system_exceptions_status ON system_exceptions(status);
+    CREATE INDEX IF NOT EXISTS idx_system_exceptions_type ON system_exceptions(type);
+
+    CREATE TABLE IF NOT EXISTS system_events (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      payload_json TEXT DEFAULT '{}',
+      correlation_id TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_system_events_type ON system_events(type);
+  `);
+}
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

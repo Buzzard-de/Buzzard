@@ -1,0 +1,16 @@
+{
+  "DE": {
+    "personaId": "de-suzan",
+    "displayName": "Suzan",
+    "locale": "de-DE",
+    "language": "de",
+    "voiceId": "de-default"
+  },
+  "GB": {
+    "personaId": "gb-simone",
+    "displayName": "Simone",
+    "locale": "en-GB",
+    "language": "en",
+    "voiceId": "en-gb-default"
+  }
+}

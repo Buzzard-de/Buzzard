@@ -26,7 +26,7 @@ import {
 } from "@/lib/categories/service";
 
 export const MAIN_CATEGORY_COUNT = categoryCatalog.main_category_count;
-import { getCategoryLabel, formatMenuLabel } from "@/lib/categories/i18n";
+import { getCategoryLabel, formatMenuLabel, toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
 import { getMainCategoryIcon } from "@/lib/categories/icons";
 import { getProductsForCategory } from "@/lib/products";
 
@@ -113,7 +113,7 @@ export const filterOptions = getChildren("cat-05").map((cat) => ({
 function homeCard(category: BuzzardCategory, locale: BuzzardLocale = DEFAULT_LOCALE): CategoryCard {
   return {
     id: category.id,
-    label: getCategoryLabel(category, locale).toUpperCase(),
+    label: toCategoryDisplayUpperCase(getCategoryLabel(category, locale), locale),
     href: categoryHref(category),
   };
 }

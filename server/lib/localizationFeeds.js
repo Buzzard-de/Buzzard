@@ -182,7 +182,11 @@ function buildGoogleMerchantFeed(filters = {}) {
     .map((product) => {
       const priced = applyPriceOverride(product, locale);
       const availability = product.stock > 0 ? "in_stock" : "out_of_stock";
-      return `<item><g:id>${escapeXml(product.sku)}</g:id><g:title>${escapeXml(priced.name)}</g:title><g:description>${escapeXml(priced.description)}</g:description><g:link>${base}/produkt/${escapeXml(priced.slug)}/?lang=${escapeXml(locale)}</g:link><g:availability>${availability}</g:availability><g:price>${Number(priced.price).toFixed(2)} ${currency}</g:price><g:condition>new</g:condition><g:shipping><g:country>${country}</g:country></g:shipping></item>`;
+      const priceTag =
+        process.env.BUZZARD_SALES_ENABLED === "1"
+          ? `<g:price>${Number(priced.price).toFixed(2)} ${currency}</g:price>`
+          : "";
+      return `<item><g:id>${escapeXml(product.sku)}</g:id><g:title>${escapeXml(priced.name)}</g:title><g:description>${escapeXml(priced.description)}</g:description><g:link>${base}/produkt/${escapeXml(priced.slug)}/?lang=${escapeXml(locale)}</g:link><g:availability>${availability}</g:availability>${priceTag}<g:condition>new</g:condition><g:shipping><g:country>${country}</g:country></g:shipping></item>`;
     })
     .join("");
 

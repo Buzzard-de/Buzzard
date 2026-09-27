@@ -1,0 +1,32 @@
+[
+  {
+    "canonical": "BRAKE_DISC",
+    "categoryId": "automotive",
+    "subcategoryId": "auto-sub-04",
+    "synonyms": ["brake disc", "brake disk", "brake rotor", "bremsscheibe", "disque de frein", "fren diski", "قرص فرامل"]
+  },
+  {
+    "canonical": "BRAKE_PAD",
+    "categoryId": "automotive",
+    "subcategoryId": "auto-sub-04",
+    "synonyms": ["brake pad", "bremsbelag", "plaquette de frein", "fren balatasi", "فحمات فرامل"]
+  },
+  {
+    "canonical": "TIRE",
+    "categoryId": "automotive",
+    "subcategoryId": "auto-sub-01",
+    "synonyms": ["tire", "tyre", "reifen", "pneu", "lastik", "إطار"]
+  },
+  {
+    "canonical": "OIL_FILTER",
+    "categoryId": "automotive",
+    "subcategoryId": "auto-sub-08",
+    "synonyms": ["oil filter", "ölfilter", "filtre à huile", "yağ filtresi"]
+  },
+  {
+    "canonical": "SPARK_PLUG",
+    "categoryId": "automotive",
+    "subcategoryId": "auto-sub-09",
+    "synonyms": ["spark plug", "zündkerze", "bougie", "buji"]
+  }
+]

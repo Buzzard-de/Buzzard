@@ -11,6 +11,22 @@ const pricing = require("../lib/pricing");
 const productValidator = require("../lib/productValidator");
 const { validateImportPayload } = require("../lib/security");
 const { logSecurityEvent } = require("../lib/securityLog");
+const productSot = require("../lib/productSot");
+
+function rejectLegacyProductWrite(res, source) {
+  try {
+    productSot.assertCanonicalWrite(source);
+    return false;
+  } catch (err) {
+    res.status(err.status || 423).json({
+      success: false,
+      error: err.message,
+      code: err.code || "product_sot_legacy_locked",
+      productSot: productSot.getStatus(),
+    });
+    return true;
+  }
+}
 
 const ordersFile = path.join(__dirname, "..", "data", "orders.json");
 
@@ -59,6 +75,7 @@ module.exports = {
     app.post("/api/admin/products", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "products.write")) return;
+      if (rejectLegacyProductWrite(res, "A")) return;
       const body = req.body || {};
       const supplier = supplierStore.getSupplier(body.supplier_id);
       if (!supplier) return res.status(400).json({ success: false, errorKey: "admin.supplier.notFound" });
@@ -102,6 +119,7 @@ module.exports = {
     app.put("/api/admin/products/:id", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "products.write")) return;
+      if (rejectLegacyProductWrite(res, "A")) return;
       const existing = productStore.getProductById(req.params.id);
       if (!existing) return res.status(404).json({ success: false, errorKey: "admin.product.notFound" });
 

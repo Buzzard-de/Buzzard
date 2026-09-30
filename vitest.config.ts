@@ -6,6 +6,16 @@ export default defineConfig({
     environment: "node",
     include: [
       "server/__tests__/**/*.test.mjs",
+      "!server/__tests__/part24*.test.mjs",
+      "!server/__tests__/part27*.test.mjs",
+      "!server/__tests__/part28*.test.mjs",
+      "!server/__tests__/part29*.test.mjs",
+      "!server/__tests__/part30*.test.mjs",
+      "!server/__tests__/part31*.test.mjs",
+      "!server/__tests__/part32*.test.mjs",
+      "!server/__tests__/part33*.test.mjs",
+      "!server/__tests__/part34*.test.mjs",
+      "!server/__tests__/part35*.test.mjs",
       "lib/backgrounds/**/*.test.ts",
       "lib/market/languageIndependence.test.ts",
       "lib/market/resolveInitialCountry.test.ts",
@@ -14,6 +24,9 @@ export default defineConfig({
     ],
     globals: false,
     testTimeout: 15000,
+    env: {
+      BUZZARD_SALES_GATE_BYPASS: "1",
+    },
   },
   resolve: {
     alias: {

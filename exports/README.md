@@ -30,6 +30,8 @@ Gespeicherte Berichte und Snapshots des Buzzard-Projekts.
 
 ## Session-Checkpoint
 
+[`buzzard-session-checkpoint-2026-09-30.md`](./buzzard-session-checkpoint-2026-09-30.md) — Master-Integration / Product SoT (aktuell)
+
 [`buzzard24-session-checkpoint-2026-08-27.md`](./buzzard24-session-checkpoint-2026-08-27.md)
 
 ## Tagesbericht 28.08.2026 (komplett)

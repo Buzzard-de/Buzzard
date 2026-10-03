@@ -12,9 +12,13 @@ const { validateMigration } = require("../lib/productSotValidator");
 const { listReviewQueue } = require("../lib/productCollisionDetector");
 const { createSourceOfTruthService } = require("../lib/sot/sourceOfTruthService");
 const { createExternalIntegrationVerification } = require("../lib/externalIntegrationVerification");
+const { createGoLiveGate } = require("../lib/goLiveGate");
+const { createGoLiveActivation } = require("../lib/goLiveActivation");
 
 const sotService = createSourceOfTruthService();
 const externalVerification = createExternalIntegrationVerification();
+const goLiveGate = createGoLiveGate();
+const goLiveActivation = createGoLiveActivation({ mutateEnv: false, productionSafetyLock: true });
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -47,6 +51,10 @@ module.exports = {
 
     app.get("/api/health/external-integrations", (_req, res) => {
       res.json(externalVerification.publicHealth());
+    });
+
+    app.get("/api/health/go-live", (_req, res) => {
+      res.json(goLiveGate.publicHealth());
     });
 
     app.get("/api/health/readiness", (_req, res) => {
@@ -105,6 +113,43 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;
       res.json(externalVerification.adminReport());
+    });
+
+    app.get("/api/admin/system/go-live", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      res.json(goLiveGate.adminReport());
+    });
+
+    app.get("/api/admin/system/go-live/checks", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      const report = goLiveGate.evaluateGoLive();
+      res.json({ checks: report.checks, correlationId: report.correlationId });
+    });
+
+    app.post("/api/admin/system/go-live/activate", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.configure")) return;
+      if (req.query.force === "true" || req.query.override === "true") {
+        return res.status(400).json({ ok: false, error: "BYPASS_FORBIDDEN" });
+      }
+      const result = goLiveActivation.activateProduction({
+        approvalId: req.body?.approvalId,
+        correlationId: req.correlationId || req.body?.correlationId,
+      });
+      res.status(result.ok ? 200 : 409).json({ success: result.ok, salesEnabled: false, ...result });
+    });
+
+    app.post("/api/admin/system/go-live/deactivate", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.configure")) return;
+      const result = goLiveActivation.deactivateProduction({
+        reason: req.body?.reason,
+        actor: req.adminUser?.email || req.adminUser?.userId,
+        correlationId: req.correlationId || req.body?.correlationId,
+      });
+      res.json({ success: true, salesEnabled: false, ...result });
     });
 
     app.post("/api/admin/pusat/dispatch", (req, res) => {

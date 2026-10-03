@@ -10,6 +10,9 @@ const { list: listExceptions } = require("../lib/exceptionBus");
 const { sourceMatrix } = require("../lib/productIdentitySources");
 const { validateMigration } = require("../lib/productSotValidator");
 const { listReviewQueue } = require("../lib/productCollisionDetector");
+const { createSourceOfTruthService } = require("../lib/sot/sourceOfTruthService");
+
+const sotService = createSourceOfTruthService();
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -34,6 +37,10 @@ module.exports = {
 
     app.get("/api/health/liveness", (_req, res) => {
       res.json({ success: true, status: "ok" });
+    });
+
+    app.get("/api/health/sot", (_req, res) => {
+      res.json(sotService.publicHealth());
     });
 
     app.get("/api/health/readiness", (_req, res) => {
@@ -80,6 +87,12 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
       res.json({ success: true, exceptions: listExceptions({ status: req.query.status || "OPEN" }) });
+    });
+
+    app.get("/api/admin/system/sot", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      res.json(sotService.adminStatus());
     });
 
     app.post("/api/admin/pusat/dispatch", (req, res) => {

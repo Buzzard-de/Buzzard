@@ -9,6 +9,16 @@ const inventory = require("../commerce/inventoryIntegration");
 const pricing = require("../commerce/pricingIntegration");
 const { db } = require("../db");
 const { isSotActive, getStatus: getProductSotStatus } = require("../productSot");
+const { createIdempotencyService } = require("./idempotencyService");
+
+let pusatIdempotency = null;
+
+function getIdempotencyService() {
+  if (!pusatIdempotency) {
+    pusatIdempotency = createIdempotencyService(db);
+  }
+  return pusatIdempotency;
+}
 
 const ACTIONS = Object.freeze({
   GET_PRODUCT: "GET_PRODUCT",
@@ -211,6 +221,41 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId: corr, ...label(MODE.DISABLED) };
 }
 
+/**
+ * Optional idempotent wrapper around read-only dispatch.
+ * Does not enable writes, sales, or exclusive SoT.
+ */
+async function dispatch({
+  action,
+  payload = {},
+  actorId = null,
+  correlationId = null,
+  idempotencyKey = null,
+} = {}) {
+  const run = () => executeReadOnly(action, payload, { actorId, correlationId });
+  if (!idempotencyKey) {
+    const result = run();
+    return { replayed: false, result };
+  }
+  const outcome = await getIdempotencyService().execute({
+    operation: "PUSAT_DISPATCH",
+    idempotencyKey,
+    payload: { action, payload },
+    correlationId,
+    actorId,
+    execute: async () => run(),
+  });
+  return {
+    replayed: Boolean(outcome.replayed),
+    result: outcome.result,
+    idempotency: {
+      status: outcome.status,
+      operation: outcome.operation,
+      idempotencyKey: outcome.idempotencyKey,
+    },
+  };
+}
+
 module.exports = {
   ACTIONS,
   WRITE_ACTIONS,
@@ -219,4 +264,6 @@ module.exports = {
   isHealthy,
   health,
   executeReadOnly,
+  dispatch,
+  getIdempotencyService,
 };

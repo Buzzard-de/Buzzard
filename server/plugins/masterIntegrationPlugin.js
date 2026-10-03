@@ -11,8 +11,10 @@ const { sourceMatrix } = require("../lib/productIdentitySources");
 const { validateMigration } = require("../lib/productSotValidator");
 const { listReviewQueue } = require("../lib/productCollisionDetector");
 const { createSourceOfTruthService } = require("../lib/sot/sourceOfTruthService");
+const { createExternalIntegrationVerification } = require("../lib/externalIntegrationVerification");
 
 const sotService = createSourceOfTruthService();
+const externalVerification = createExternalIntegrationVerification();
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -41,6 +43,10 @@ module.exports = {
 
     app.get("/api/health/sot", (_req, res) => {
       res.json(sotService.publicHealth());
+    });
+
+    app.get("/api/health/external-integrations", (_req, res) => {
+      res.json(externalVerification.publicHealth());
     });
 
     app.get("/api/health/readiness", (_req, res) => {
@@ -93,6 +99,12 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;
       res.json(sotService.adminStatus());
+    });
+
+    app.get("/api/admin/system/external-integrations", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      res.json(externalVerification.adminReport());
     });
 
     app.post("/api/admin/pusat/dispatch", (req, res) => {

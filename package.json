@@ -47,7 +47,7 @@
     "test:backup-restore": "node scripts/restore-db.mjs --dry-run --from server/data/buzzard.db",
     "test:unit": "vitest run",
     "product:sot:validate": "node scripts/product-sot-validate.mjs",
-    "test:unit:ci": "vitest run server/__tests__/masterIntegrationFoundation.test.mjs server/__tests__/masterIntegrationPhase2.test.mjs server/__tests__/masterIntegrationPhase3.test.mjs lib/backgrounds lib/market/languageIndependence.test.ts lib/market/resolveInitialCountry.test.ts lib/i18n/catalog.test.ts lib/categories/i18n.test.ts",
+    "test:unit:ci": "vitest run server/__tests__/masterIntegrationFoundation.test.mjs server/__tests__/masterIntegrationPhase2.test.mjs server/__tests__/masterIntegrationPhase3.test.mjs server/__tests__/pusatIdempotency.test.mjs lib/backgrounds lib/market/languageIndependence.test.ts lib/market/resolveInitialCountry.test.ts lib/i18n/catalog.test.ts lib/categories/i18n.test.ts",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:api": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test e2e/commerce-storefront.spec.ts e2e/commerce-security.spec.ts",

@@ -82,15 +82,37 @@ module.exports = {
       res.json({ success: true, exceptions: listExceptions({ status: req.query.status || "OPEN" }) });
     });
 
-    app.post("/api/admin/pusat/dispatch", (req, res) => {
+    app.post("/api/admin/pusat/dispatch", async (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
       const body = req.body || {};
-      const result = pusat.executeReadOnly(body.action, body.payload || {}, {
-        actorId: req.adminUser?.email || req.adminUser?.userId,
-        correlationId: req.correlationId || body.correlationId,
-      });
-      res.status(result.ok ? 200 : result.code === "PUSAT_DISABLED" ? 503 : 400).json({ success: result.ok, ...result });
+      const idempotencyKey = body.idempotencyKey || req.headers["idempotency-key"] || null;
+      try {
+        const outcome = await pusat.dispatch({
+          action: body.action,
+          payload: body.payload || {},
+          actorId: req.adminUser?.email || req.adminUser?.userId,
+          correlationId: req.correlationId || body.correlationId,
+          idempotencyKey,
+        });
+        const result = outcome.result;
+        res.status(result.ok ? 200 : result.code === "PUSAT_DISABLED" ? 503 : 400).json({
+          success: result.ok,
+          replayed: outcome.replayed,
+          ...result,
+        });
+      } catch (error) {
+        if (error.code === "IDEMPOTENCY_CONFLICT" || error.code === "IDEMPOTENCY_IN_PROGRESS") {
+          res.status(error.statusCode || 409).json({
+            success: false,
+            code: error.code,
+            message: error.message,
+            metadata: error.metadata || {},
+          });
+          return;
+        }
+        throw error;
+      }
     });
   },
 };

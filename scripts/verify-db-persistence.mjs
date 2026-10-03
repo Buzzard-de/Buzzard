@@ -11,17 +11,16 @@ async function main() {
     console.error(`FAIL: /api/health/db HTTP ${res.status}`);
     process.exit(1);
   }
-  const { database } = await res.json();
-  const path = database?.path || "";
-  const p = database?.persistence || {};
+  const body = await res.json();
+  const database = body.database || {};
+  const p = body.persistence || database.persistence || {};
 
   console.log("DB Persistence Check");
   console.log(`  API:        ${API}`);
-  console.log(`  path:       ${path}`);
   console.log(`  mode:       ${p.mode}`);
   console.log(`  persistent: ${p.persistent}`);
 
-  if (p.persistent === true && path.includes("/var/data")) {
+  if (p.persistent === true && p.mode === "render_persistent_disk") {
     console.log("\nPASS — persistent disk active");
     process.exit(0);
   }

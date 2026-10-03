@@ -58,6 +58,7 @@ const EXACT = {
   "GET /api/admin/operations/readiness": "system.read",
   "GET /api/admin/operations/dashboard": "system.read",
   "GET /api/admin/operations/incidents": "system.read",
+  "GET /api/admin/system/production-db-verification": "system.read",
   "GET /api/admin/control-center/status": "system.read",
   "GET /api/admin/control-center/summary": "system.read",
   "GET /api/admin/control-center/activity": "audit.read",

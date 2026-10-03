@@ -99,6 +99,7 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
     return {
       ok: false,
       code: "PERMISSION_DENIED",
+      sotCode: "SOT_WRITE_AUTHORITY_VIOLATION",
       action,
       actorId,
       correlationId: corr,

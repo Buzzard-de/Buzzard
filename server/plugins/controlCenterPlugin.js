@@ -3,7 +3,14 @@ const { requirePermission } = require("../lib/rbac");
 const { logAuditFromRequest } = require("../lib/coreAudit");
 const controlCenter = require("../lib/controlCenter");
 const { enqueueTaskProcessing, resumeAfterApproval } = require("../lib/aiOrchestrator");
-const { getDatabaseHealth } = require("../lib/db");
+const { db } = require("../lib/db");
+const {
+  createProductionDbVerification,
+  toPublicDbHealth,
+  toAdminVerification,
+} = require("../lib/productionDbVerification");
+
+const productionDbVerification = createProductionDbVerification(db);
 const { getOrchestratorStatus } = require("../lib/orchestratorBridge");
 const { getGuardianStatus } = require("../lib/guardianBridge");
 
@@ -27,8 +34,56 @@ function requirePerm(req, res, permission) {
 
 module.exports = {
   register(app) {
-    app.get("/api/health/db", (_req, res) => {
-      res.json({ success: true, database: getDatabaseHealth() });
+    app.get("/api/health/db", (req, res) => {
+      try {
+        const verification = productionDbVerification.verifyProductionDb({
+          correlationId: req.correlationId || null,
+        });
+        const body = toPublicDbHealth(verification);
+        res.status(body.database.connected ? 200 : 503).json(body);
+      } catch {
+        res.status(500).json({
+          ok: false,
+          database: { connected: false },
+          persistence: { persistent: false, mode: "unknown" },
+          salesEnabled: false,
+        });
+      }
+    });
+
+    app.get("/api/admin/system/production-db-verification", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePerm(req, res, "system.read")) return;
+      try {
+        const verification = productionDbVerification.verifyProductionDb({
+          correlationId: req.correlationId || req.headers["x-correlation-id"] || null,
+        });
+        if (req.correlationId) {
+          res.setHeader("X-Correlation-Id", req.correlationId);
+        }
+        logAuditFromRequest(req, {
+          action: "production.db.verification",
+          entityType: "system",
+          entityId: verification.verification.verificationId,
+          result: verification.verified ? "success" : "failure",
+          metadata: {
+            verificationId: verification.verification.verificationId,
+            status: verification.status,
+            reasons: verification.reasons,
+            correlationId: verification.verification.correlationId,
+            persistent: verification.persistence.persistent,
+            mode: verification.persistence.mode,
+          },
+        });
+        const payload = { ok: verification.verified, verification: toAdminVerification(verification) };
+        if (verification.status === "FAIL") {
+          res.status(503).json(payload);
+          return;
+        }
+        res.status(200).json(payload);
+      } catch {
+        res.status(500).json({ ok: false, error: "verification_failed" });
+      }
     });
 
     app.get("/api/health/ai", async (_req, res) => {

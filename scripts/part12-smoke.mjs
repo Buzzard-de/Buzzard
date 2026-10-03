@@ -60,7 +60,9 @@ async function main() {
     if (!res.ok) throw new Error(`status ${res.status}`);
     const persistence = body.database?.persistence || body.persistence;
     if (!persistence?.mode) throw new Error("missing persistence.mode");
-    if (!body.database?.path && !body.path) throw new Error("missing path");
+    if (body.database?.connected !== true && !body.database?.path && !body.path) {
+      throw new Error("missing database connected/path");
+    }
   });
 
   await test("dbPaths module resolves canonical path", async () => {

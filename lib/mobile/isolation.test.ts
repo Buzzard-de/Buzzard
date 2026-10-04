@@ -23,5 +23,7 @@ describe("buzzard mobile CSS isolation", () => {
     expect(phoneBlock).toContain(".buzzard-desktop-chrome");
     expect(phoneBlock).toContain("display: none !important");
     expect(phoneBlock).toContain("body.buzzard-admin-route .buzzard-desktop-chrome");
+    expect(phoneBlock).toContain("body:has(.home-fullscreen)");
+    expect(phoneBlock).toContain("height: auto !important");
   });
 });

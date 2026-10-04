@@ -16,6 +16,7 @@ import MarketingScripts from "./marketing/MarketingScripts";
 import PageViewTracker from "./marketing/PageViewTracker";
 import AiChatWidget from "./ai/AiChatWidget";
 import StorefrontApiBanner from "./StorefrontApiBanner";
+import LanguageBackground from "./storefront/LanguageBackground";
 
 export default function ShopProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -28,6 +29,7 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
               <HomeUIProvider>
               <GlobalStructuredData />
               <StorefrontApiBanner />
+              <LanguageBackground />
               {children}
               <LocaleHead />
               <PageViewTracker />

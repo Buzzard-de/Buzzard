@@ -56,11 +56,11 @@ export default function Header() {
           </svg>
         </button>
 
-        <Link href="/" className="brand" aria-label="Buzzard Startseite">
+        <Link href="/" className="brand" aria-label={t("header.homeAria")}>
           <Image src="/logo/logo.png" alt="Buzzard Logo" width={52} height={52} priority />
           <div className="brand-text">
             <span className="brand-name">BUZZARD</span>
-            <span className="brand-tagline">QUALITÄT. LEISTUNG. VERTRAUEN.</span>
+            <span className="brand-tagline">{t("header.tagline")}</span>
           </div>
         </Link>
 
@@ -115,7 +115,7 @@ export default function Header() {
               {t("header.wishlist")}
               <small>
                 {wishlistReady && wishlistCount > 0
-                  ? `${wishlistCount} Artikel`
+                  ? t("headerItems.count").replace("{count}", String(wishlistCount))
                   : t("header.wishlistEmpty")}
               </small>
             </span>

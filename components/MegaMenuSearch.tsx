@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { apiBaseUrl } from "@/lib/api/config";
 import { categoryHref } from "@/lib/categories";
 import { findCategoryBySlugPath } from "@/lib/categories/service";
+import { useLocale } from "@/lib/i18n/context";
 
 interface SearchHit {
   main: { id: string; name: string; slug: string };
@@ -24,6 +25,7 @@ function resolveCategoryHref(slug: string): string {
 }
 
 export default function MegaMenuSearch({ onNavigate }: { onNavigate?: () => void }) {
+  const { t } = useLocale();
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,11 +62,11 @@ export default function MegaMenuSearch({ onNavigate }: { onNavigate?: () => void
   }, [trimmed]);
 
   const hint = useMemo(() => {
-    if (!trimmed) return "48 Kategorien · 3 Ebenen durchsuchen";
-    if (loading) return "Suche läuft…";
-    if (hits.length === 0) return "Keine Treffer";
-    return `${hits.length} Treffer`;
-  }, [trimmed, loading, hits.length]);
+    if (!trimmed) return t("search.megaHint");
+    if (loading) return t("search.megaSearching");
+    if (hits.length === 0) return t("search.megaNoHits");
+    return t("search.megaHits").replace("{count}", String(hits.length));
+  }, [trimmed, loading, hits.length, t]);
 
   return (
     <div className="mega-menu-search">
@@ -72,8 +74,8 @@ export default function MegaMenuSearch({ onNavigate }: { onNavigate?: () => void
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Kategorien durchsuchen…"
-        aria-label="Kategorien durchsuchen"
+        placeholder={t("search.megaPlaceholder")}
+        aria-label={t("search.megaPlaceholder")}
         className="mega-menu-search-input"
       />
       <span className="mega-menu-search-hint">{hint}</span>

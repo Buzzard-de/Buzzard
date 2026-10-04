@@ -118,3 +118,24 @@ export interface FinanceAnalytics {
   estimatedContributionMargin: number;
   disclaimer: string;
 }
+
+export type DataFreshness = "CURRENT" | "NEAR_REAL_TIME" | "REPORTING_DELAYED";
+
+/** Admin analytics foundation overview (API: /api/admin/analytics-foundation/overview). */
+export interface DashboardOverview {
+  freshness: DataFreshness;
+  visitorsToday: number;
+  visitorsYesterday: number;
+  visitorsLast7Days: number;
+  visitorsLast30Days: number;
+  uniqueVisitors: number;
+  sessions: number;
+  newVisitors: number;
+  returningVisitors: number;
+  pageViews: number;
+  productViews: number;
+  addToCart: number;
+  checkoutStarted: number;
+  purchases: number;
+  conversionRate: number;
+}

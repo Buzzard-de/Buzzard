@@ -26,7 +26,7 @@ import {
 } from "@/lib/categories/service";
 
 export const MAIN_CATEGORY_COUNT = categoryCatalog.main_category_count;
-import { getCategoryLabel, formatMenuLabel } from "@/lib/categories/i18n";
+import { getCategoryLabel, formatMenuLabel, toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
 import { getMainCategoryIcon } from "@/lib/categories/icons";
 import { getProductsForCategory } from "@/lib/products";
 
@@ -80,10 +80,10 @@ export const mainNavLinks: MainNavLink[] = [
 ];
 
 export const trustBadges = [
-  { label: "TOP MARKEN", icon: "star" },
-  { label: "SCHNELLE LIEFERUNG", icon: "truck" },
-  { label: "KOSTENLOSER VERSAND", icon: "box" },
+  { label: "SCHNELLER VERSAND", icon: "truck" },
+  { label: "30 TAGE RÜCKGABE", icon: "return" },
   { label: "SICHERE ZAHLUNG", icon: "shield" },
+  { label: "TOP QUALITÄT", icon: "star" },
 ];
 
 export function getPopularProducts(): PopularProduct[] {
@@ -110,20 +110,27 @@ export const filterOptions = getChildren("cat-05").map((cat) => ({
   href: categoryHref(cat),
 }));
 
-function homeCard(category: BuzzardCategory): CategoryCard {
+function homeCard(category: BuzzardCategory, locale: BuzzardLocale = DEFAULT_LOCALE): CategoryCard {
   return {
     id: category.id,
-    label: getCategoryLabel(category, DEFAULT_LOCALE).toUpperCase(),
+    label: toCategoryDisplayUpperCase(getCategoryLabel(category, locale), locale),
     href: categoryHref(category),
   };
 }
 
-export function getFeaturedSubcategories(mainId: string, limit = 6): CategoryCard[] {
-  return getChildren(mainId).slice(0, limit).map(homeCard);
+export function getFeaturedSubcategories(
+  mainId: string,
+  limit = 6,
+  locale: BuzzardLocale = DEFAULT_LOCALE
+): CategoryCard[] {
+  return getChildren(mainId).slice(0, limit).map((category) => homeCard(category, locale));
 }
 
 /** Cross-category highlights for homepage (one subcategory per main branch). */
-export function getDiversePopularCategories(limit = 8): Array<CategoryCard & { icon: string }> {
+export function getDiversePopularCategories(
+  limit = 8,
+  locale: BuzzardLocale = DEFAULT_LOCALE
+): Array<CategoryCard & { icon: string }> {
   const featuredMainIds = [
     "cat-05",
     "cat-01",
@@ -142,7 +149,7 @@ export function getDiversePopularCategories(limit = 8): Array<CategoryCard & { i
     const child = getChildren(mainId)[0];
     if (!child) continue;
     cards.push({
-      ...homeCard(child),
+      ...homeCard(child, locale),
       icon: getMainCategoryIcon(mainId),
     });
     if (cards.length >= limit) break;

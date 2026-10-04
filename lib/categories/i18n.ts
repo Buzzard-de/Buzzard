@@ -2,6 +2,7 @@ import type { BuzzardLocale } from "@/lib/i18n/types";
 import { categoryLabelsDe } from "./translations/de.generated";
 import { categoryLabelsEn } from "./translations/en.generated";
 import { categoryLabelsAr } from "./translations/ar.generated";
+import { categoryLabelsTr } from "./translations/tr.generated";
 
 export function getCategoryLabel(
   category: { id: string; name: string },
@@ -10,7 +11,20 @@ export function getCategoryLabel(
   if (locale === "de") return categoryLabelsDe[category.id] ?? category.name;
   if (locale === "en") return categoryLabelsEn[category.id] ?? category.name;
   if (locale === "ar") return categoryLabelsAr[category.id] ?? category.name;
+  if (locale === "tr") return categoryLabelsTr[category.id] ?? category.name;
   return category.name;
+}
+
+const UPPERCASE_LOCALE_TAG: Record<BuzzardLocale, string> = {
+  de: "de-DE",
+  en: "en-US",
+  tr: "tr-TR",
+  ar: "ar",
+};
+
+/** Locale-aware uppercase so Turkish i → İ (TEKSTİL, OTOMOTİV). */
+export function toCategoryDisplayUpperCase(label: string, locale: BuzzardLocale): string {
+  return label.toLocaleUpperCase(UPPERCASE_LOCALE_TAG[locale] ?? "de-DE");
 }
 
 export function formatMenuLabel(
@@ -19,7 +33,7 @@ export function formatMenuLabel(
 ): string {
   const label = getCategoryLabel(category, locale);
   if (category.id.match(/^cat-\d{2}$/)) {
-    return `${String(category.menu_order).padStart(2, "0")}. ${label.toUpperCase()}`;
+    return `${String(category.menu_order).padStart(2, "0")}. ${toCategoryDisplayUpperCase(label, locale)}`;
   }
   return label;
 }

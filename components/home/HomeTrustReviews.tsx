@@ -1,25 +1,28 @@
+"use client";
+
 import Link from "next/link";
 import CategoryIcon from "@/components/CategoryIcon";
-import BrandsStrip from "@/components/BrandsStrip";
 import { getDiversePopularCategories } from "@/lib/categories";
 import { isSalesEnabled } from "@/lib/shop/mode";
+import { useLocale } from "@/lib/i18n/context";
 
 const catalogTrust = [
-  { label: "Große Kategorieauswahl", icon: "star" },
-  { label: "Transparente Infos", icon: "box" },
-  { label: "Support erreichbar", icon: "phone" },
-  { label: "Persönliche Beratung", icon: "shield" },
+  { key: "home.trustChoice", icon: "star" },
+  { key: "home.trustInfo", icon: "box" },
+  { key: "home.trustSupport", icon: "phone" },
+  { key: "home.trustAdvice", icon: "shield" },
 ] as const;
 
 export default function HomeTrustReviews() {
-  const highlights = getDiversePopularCategories(8);
+  const { locale, t } = useLocale();
+  const highlights = getDiversePopularCategories(8, locale);
   const salesOn = isSalesEnabled();
 
   return (
     <>
       <section className="home-section home-highlights" aria-labelledby="home-highlights-title">
         <div className="home-section-head">
-          <h2 id="home-highlights-title">Beliebte Kategorien</h2>
+          <h2 id="home-highlights-title">{t("home.highlights")}</h2>
         </div>
         <ul className="popular-categories-grid">
           {highlights.map((cat) => (
@@ -36,29 +39,24 @@ export default function HomeTrustReviews() {
       </section>
 
       <section className="home-section home-trust" aria-labelledby="home-trust-title">
-        <h2 id="home-trust-title">{salesOn ? "Warum Buzzard?" : "Ihr Vorteil"}</h2>
+        <h2 id="home-trust-title">{salesOn ? t("home.trustSales") : t("home.trust")}</h2>
         <div className="home-trust-grid">
           {catalogTrust.map((badge) => (
-            <div key={badge.label} className="home-trust-item">
+            <div key={badge.key} className="home-trust-item">
               <CategoryIcon name={badge.icon} size={24} />
-              <span>{badge.label}</span>
+              <span>{t(badge.key)}</span>
             </div>
           ))}
         </div>
-        <BrandsStrip variant="promo" />
       </section>
 
       {!salesOn && (
         <section className="home-section home-reviews" aria-labelledby="home-status-title">
-          <h2 id="home-status-title">Shop-Status</h2>
+          <h2 id="home-status-title">{t("home.statusTitle")}</h2>
           <div className="home-review-card">
-            <p>
-              Buzzard24 befindet sich im <strong>Katalogmodus</strong>. Produkte und Kategorien sind
-              vollständig verfügbar — Preise folgen mit Verkaufsstart. Bis dahin senden Sie uns Ihre
-              Anfrage über Hilfe & Kontakt.
-            </p>
+            <p>{t("home.statusText")}</p>
             <footer>
-              <Link href="/hilfe/">Mehr erfahren → Hilfe & FAQ</Link>
+              <Link href="/hilfe/">{t("home.learnMore")}</Link>
             </footer>
           </div>
         </section>

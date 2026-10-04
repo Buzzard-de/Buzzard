@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import CategorySidebar from "./CategorySidebar";
 import FeaturedBanner from "./FeaturedBanner";
-import HomeHero from "./HomeHero";
 import MegaMenu from "./MegaMenu";
-import ServiceBar from "./ServiceBar";
+import USPBar from "./storefront/USPBar";
 import {
   getCategoryById,
   getDefaultMainCategoryId,
@@ -44,9 +43,8 @@ export default function HomeLayout() {
           )}
           <FeaturedBanner mainCategory={mainCategory} activeSubId={activeSubId} />
         </div>
-        <HomeHero />
+        <USPBar />
       </div>
-      <ServiceBar />
     </div>
   );
 }

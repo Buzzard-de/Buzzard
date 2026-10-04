@@ -3867,7 +3867,158 @@ migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
+migrateMasterIntegrationFoundation();
+migrateMasterIntegrationPhase2();
+migrateMasterIntegrationPhase3();
+migrateGoLiveClosure();
 
+function migrateMasterIntegrationFoundation() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS product_identity_map (
+      id TEXT PRIMARY KEY,
+      source_system TEXT NOT NULL,
+      source_id TEXT NOT NULL,
+      source_sku TEXT,
+      target_system TEXT NOT NULL DEFAULT 'D',
+      target_product_id TEXT,
+      target_sku TEXT,
+      mapping_status TEXT NOT NULL DEFAULT 'UNMAPPED',
+      collision_status TEXT NOT NULL DEFAULT 'UNVERIFIED',
+      confidence REAL DEFAULT 0,
+      evidence TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(source_system, source_id),
+      FOREIGN KEY(target_product_id) REFERENCES pim_core_products(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_product_identity_sku ON product_identity_map(source_sku);
+    CREATE INDEX IF NOT EXISTS idx_product_identity_target ON product_identity_map(target_product_id);
+
+    CREATE TABLE IF NOT EXISTS marketplace_product_map (
+      id TEXT PRIMARY KEY,
+      marketplace_id INTEGER,
+      marketplace_sku TEXT NOT NULL,
+      product_id TEXT,
+      listing_status TEXT DEFAULT 'draft',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(marketplace_id, marketplace_sku),
+      FOREIGN KEY(product_id) REFERENCES pim_core_products(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS system_exceptions (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      severity TEXT NOT NULL,
+      source TEXT,
+      entity TEXT,
+      entity_id TEXT,
+      correlation_id TEXT,
+      message TEXT,
+      context_json TEXT DEFAULT '{}',
+      retry_policy TEXT,
+      owner TEXT,
+      status TEXT NOT NULL DEFAULT 'OPEN',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_system_exceptions_status ON system_exceptions(status);
+    CREATE INDEX IF NOT EXISTS idx_system_exceptions_type ON system_exceptions(type);
+
+    CREATE TABLE IF NOT EXISTS system_events (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      payload_json TEXT DEFAULT '{}',
+      correlation_id TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_system_events_type ON system_events(type);
+  `);
+}
+
+function migrateMasterIntegrationPhase2() {
+  ensureColumn("product_identity_map", "ean_gtin", "TEXT");
+  ensureColumn("product_identity_map", "normalized_brand", "TEXT");
+  ensureColumn("product_identity_map", "normalized_model", "TEXT");
+  ensureColumn("product_identity_map", "match_method", "TEXT DEFAULT 'UNMATCHED'");
+  ensureColumn("product_identity_map", "match_confidence", "REAL DEFAULT 0");
+
+  ensureColumn("system_events", "aggregate_id", "TEXT");
+  ensureColumn("system_events", "aggregate_type", "TEXT");
+  ensureColumn("system_events", "version", "INTEGER DEFAULT 1");
+  ensureColumn("system_exceptions", "retryable", "INTEGER DEFAULT 0");
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS product_identity_match_audit (
+      id TEXT PRIMARY KEY,
+      map_id TEXT,
+      source_system TEXT,
+      source_id TEXT,
+      match_method TEXT,
+      confidence REAL,
+      collision_status TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_identity_match_audit_source
+      ON product_identity_match_audit(source_system, source_id);
+
+    CREATE TABLE IF NOT EXISTS product_identity_review_queue (
+      id TEXT PRIMARY KEY,
+      map_id TEXT,
+      source_system TEXT,
+      source_id TEXT,
+      reason TEXT,
+      collision_status TEXT NOT NULL DEFAULT 'POSSIBLE',
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_identity_review_status
+      ON product_identity_review_queue(status);
+
+    CREATE TABLE IF NOT EXISTS inventory_sot_reservations (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      sku TEXT,
+      quantity INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'RESERVED',
+      correlation_id TEXT,
+      idempotency_key TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(idempotency_key)
+    );
+    CREATE INDEX IF NOT EXISTS idx_inv_sot_product ON inventory_sot_reservations(product_id, status);
+
+    CREATE TABLE IF NOT EXISTS order_sot_preparations (
+      id TEXT PRIMARY KEY,
+      product_id TEXT NOT NULL,
+      sku TEXT,
+      quantity INTEGER NOT NULL,
+      product_snapshot_json TEXT NOT NULL,
+      price_snapshot_json TEXT NOT NULL,
+      tax_snapshot_json TEXT DEFAULT '{}',
+      inventory_snapshot_json TEXT DEFAULT '{}',
+      supplier_snapshot_json TEXT DEFAULT '{}',
+      correlation_id TEXT,
+      status TEXT NOT NULL DEFAULT 'PREPARED',
+      mode TEXT NOT NULL DEFAULT 'DRY_RUN',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
+function migrateMasterIntegrationPhase3() {
+  ensureColumn("commerce_idempotency", "payload_hash", "TEXT");
+}
+
+function migrateGoLiveClosure() {
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_commerce_checkouts_idempotency
+      ON commerce_checkouts(idempotency_key)
+      WHERE idempotency_key IS NOT NULL AND idempotency_key <> '';
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_commerce_orders_checkout
+      ON commerce_orders(checkout_id)
+      WHERE checkout_id IS NOT NULL AND checkout_id <> '';
+  `);
+}
 
 function seed() {
   const count = db.prepare("SELECT COUNT(*) n FROM categories").get().n;

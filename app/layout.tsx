@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";
 import TopUtilityBar from "@/components/TopUtilityBar";
 import ShopProviders from "@/components/ShopProviders";
+import MobileBottomNavigation from "@/components/storefront/MobileBottomNavigation";
 import SkipLink from "@/components/SkipLink";
 import { SECURITY_HEADERS } from "@/lib/security";
 import { marketingConfig } from "@/lib/marketing/config";
@@ -14,6 +15,10 @@ import "@/styles/pusart.css";
 import "@/styles/shop.css";
 import "@/styles/rtl.css";
 import "@/styles/storefront-responsive.css";
+import "@/styles/premium-home.css";
+import "@/styles/language-background.css";
+import "@/styles/buzzard-mobile.css";
+import MobileStorefrontChrome from "@/components/mobile/MobileStorefrontChrome";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -62,6 +67,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -80,14 +86,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
         <meta name="format-detection" content="telephone=no" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{var admin=(location.pathname||"").indexOf("/admin")===0;var phone=window.matchMedia("(max-width: 767px)").matches;if(admin){document.body.classList.add("buzzard-admin-route");}else if(phone){document.body.classList.add("buzzard-phone-storefront");document.documentElement.classList.add("buzzard-phone-storefront");}}catch(e){}})();',
+          }}
+        />
         <ShopProviders>
           <SkipLink />
-          <TopUtilityBar />
-          <Header />
-          <Navbar />
+          <div className="buzzard-desktop-chrome">
+            <TopUtilityBar />
+            <Header />
+            <Navbar />
+          </div>
+          <MobileStorefrontChrome />
           <main id="maincontent">{children}</main>
-          <Footer />
+          <div className="buzzard-desktop-chrome">
+            <Footer />
+            <MobileBottomNavigation />
+          </div>
         </ShopProviders>
       </body>
     </html>

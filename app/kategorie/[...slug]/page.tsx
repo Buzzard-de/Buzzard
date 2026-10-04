@@ -3,13 +3,16 @@ import Link from "next/link";
 import { Suspense } from "react";
 import ProductList from "@/components/ProductList";
 import KfzPartsBrowse from "@/components/KfzPartsBrowse";
-import JsonLd from "@/components/seo/JsonLd";
+import CategoryCatalogView from "@/components/category/CategoryCatalogView";
+import CategoryChildrenGrid from "@/components/category/CategoryChildrenGrid";
+import CategoryJsonLd from "@/components/category/CategoryJsonLd";
+import CategoryNotFound from "@/components/category/CategoryNotFound";
+import MobileCategoryPage from "@/components/mobile/MobileCategoryPage";
+import KfzSubcategoryCount from "@/components/category/KfzSubcategoryCount";
 import {
-  categoryHref,
   findCategoryBySlugPath,
   getAllCategoryStaticParams,
   getCategoryBreadcrumb,
-  getCategoryLabel,
   DEFAULT_LOCALE,
 } from "@/lib/categories";
 import {
@@ -23,7 +26,6 @@ import {
   getKfzL3Href,
 } from "@/lib/categories/kfzTree";
 import { buildCategoryMetadata } from "@/lib/seo/metadata";
-import { breadcrumbSchema, categoryBreadcrumbItems, categoryCollectionSchema } from "@/lib/seo/structured-data";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string[] }>;
@@ -79,7 +81,7 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
             <span className="kfz-parts-id">{main.kfz_id}</span> {main.name_de}
           </h1>
           <p>
-            {main.subcategory_count} Unterkategorien
+            <KfzSubcategoryCount count={main.subcategory_count} />
             {main.l3_count ? ` · ${main.l3_count} Produktgruppen (L3)` : ""} · {main.kfz_name}
           </p>
           {shopHref && (
@@ -163,60 +165,23 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const category = findCategoryBySlugPath(slug.join("/"));
 
   if (!category) {
-    return (
-      <section className="shop-page">
-        <div className="shop-empty">
-          <h1>Kategorie nicht gefunden</h1>
-          <Link href="/" className="shop-btn-primary">Zur Startseite</Link>
-        </div>
-      </section>
-    );
+    return <CategoryNotFound />;
   }
 
   const breadcrumb = getCategoryBreadcrumb(category.id);
-  const name = getCategoryLabel(category, DEFAULT_LOCALE);
   const children = category.children ?? [];
-  const description = `${name} bei Buzzard24 — Produkte und Unterkategorien im Online-Katalog.`;
 
   return (
     <>
-      <JsonLd data={breadcrumbSchema(categoryBreadcrumbItems(breadcrumb, DEFAULT_LOCALE))} />
-      <JsonLd data={categoryCollectionSchema(category, DEFAULT_LOCALE, description)} />
-      <section className="page-hero">
-        <div className="page-hero-inner">
-          <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
-            <Link href="/">Startseite</Link>
-            {breadcrumb.map((crumb, index) => (
-              <span key={crumb.id}>
-                <span>/</span>
-                {index === breadcrumb.length - 1 ? (
-                  <span>{getCategoryLabel(crumb, DEFAULT_LOCALE)}</span>
-                ) : (
-                  <Link href={categoryHref(crumb)}>{getCategoryLabel(crumb, DEFAULT_LOCALE)}</Link>
-                )}
-              </span>
-            ))}
-          </nav>
-          <h1>{name}</h1>
-          {children.length > 0 && (
-            <p>{children.length} Unterkategorien verfügbar</p>
-          )}
-        </div>
-      </section>
+      <CategoryJsonLd category={category} breadcrumb={breadcrumb} />
+      <div className="buzzard-desktop-chrome">
+        <CategoryCatalogView category={category} />
+        <CategoryChildrenGrid categories={children} />
+        {category.id === "cat-05" && <KfzPartsBrowse compact />}
+      </div>
+      <MobileCategoryPage category={category} />
 
-      {children.length > 0 && (
-        <section className="subpage-content category-children-grid">
-          {children.map((child) => (
-            <Link key={child.id} href={categoryHref(child)} className="category-child-card">
-              {getCategoryLabel(child, DEFAULT_LOCALE)}
-            </Link>
-          ))}
-        </section>
-      )}
-
-      {category.id === "cat-05" && <KfzPartsBrowse compact />}
-
-      <section className="subpage-content products-page-layout">
+      <section className={`subpage-content products-page-layout${children.length > 0 ? " buzzard-desktop-chrome" : ""}`}>
         <Suspense fallback={<div className="products-grid" />}>
           <ProductList categorySlug={slug.join("/")} />
         </Suspense>

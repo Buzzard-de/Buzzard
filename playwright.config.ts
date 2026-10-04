@@ -46,6 +46,11 @@ export default defineConfig({
       testMatch: /customer-journey\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.tablet768 },
     },
+    {
+      name: "orchestrator-isolation",
+      testMatch: /orchestrator-voice-call\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
   webServer: process.env.PLAYWRIGHT_SKIP_WEBSERVER
     ? undefined

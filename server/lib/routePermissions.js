@@ -65,6 +65,7 @@ const EXACT = {
   "GET /api/admin/system/sot": "system.read",
   "GET /api/admin/system/external-integrations": "system.read",
   "GET /api/admin/system/go-live": "system.read",
+  "GET /api/admin/system/go-live/closure": "system.read",
   "GET /api/admin/system/go-live/checks": "system.read",
   "POST /api/admin/system/go-live/activate": "system.configure",
   "POST /api/admin/system/go-live/deactivate": "system.configure",

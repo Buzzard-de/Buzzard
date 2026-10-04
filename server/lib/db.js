@@ -3871,6 +3871,7 @@ migrateMasterIntegrationFoundation();
 migrateMasterIntegrationPhase2();
 migrateMasterIntegrationPhase3();
 migrateGoLiveClosure();
+migrateMaximumOrchestrator();
 
 function migrateMasterIntegrationFoundation() {
   db.exec(`
@@ -4017,6 +4018,112 @@ function migrateGoLiveClosure() {
     CREATE UNIQUE INDEX IF NOT EXISTS idx_commerce_orders_checkout
       ON commerce_orders(checkout_id)
       WHERE checkout_id IS NOT NULL AND checkout_id <> '';
+  `);
+}
+
+function migrateMaximumOrchestrator() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS orch_conversations (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      channel TEXT NOT NULL DEFAULT 'TEXT',
+      language TEXT DEFAULT 'de',
+      session_id TEXT,
+      intent TEXT,
+      active_agent TEXT,
+      active_task TEXT,
+      status TEXT NOT NULL DEFAULT 'NEW',
+      context_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_messages (
+      id TEXT PRIMARY KEY,
+      conversation_id TEXT NOT NULL,
+      role TEXT NOT NULL,
+      content TEXT,
+      intent TEXT,
+      agent TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_memory (
+      id TEXT PRIMARY KEY,
+      kind TEXT NOT NULL,
+      owner_id TEXT,
+      conversation_id TEXT,
+      summary TEXT,
+      payload_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_tasks (
+      id TEXT PRIMARY KEY,
+      type TEXT,
+      status TEXT DEFAULT 'QUEUED',
+      priority TEXT DEFAULT 'NORMAL',
+      owner TEXT,
+      agent TEXT,
+      conversation_id TEXT,
+      input_json TEXT DEFAULT '{}',
+      output_json TEXT,
+      error TEXT,
+      retry_count INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_audit_events (
+      id TEXT PRIMARY KEY,
+      request_id TEXT,
+      conversation_id TEXT,
+      who TEXT,
+      what TEXT,
+      channel TEXT,
+      agent TEXT,
+      tool TEXT,
+      risk TEXT,
+      approval TEXT,
+      result_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_idempotency (
+      id TEXT PRIMARY KEY,
+      scope TEXT NOT NULL,
+      key_hash TEXT,
+      result_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_voice_sessions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      conversation_id TEXT,
+      language TEXT DEFAULT 'de',
+      state TEXT DEFAULT 'CONNECTING',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      ended_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS orch_phone_calls (
+      id TEXT PRIMARY KEY,
+      conversation_id TEXT,
+      voice_session_id TEXT,
+      direction TEXT,
+      from_number TEXT,
+      to_number TEXT,
+      status TEXT,
+      provider TEXT,
+      recording_policy TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_handoffs (
+      id TEXT PRIMARY KEY,
+      conversation_id TEXT,
+      reason TEXT,
+      context_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_orch_conv_status ON orch_conversations(status);
+    CREATE INDEX IF NOT EXISTS idx_orch_msg_conv ON orch_messages(conversation_id);
+    CREATE INDEX IF NOT EXISTS idx_orch_idemp_scope ON orch_idempotency(scope);
   `);
 }
 

@@ -107,15 +107,9 @@
 
   .buzzard-mobile-logo img {
     width: auto;
-    height: 32px;
-  }
-
-  .buzzard-mobile-wordmark {
-    color: var(--gold, #c9a840);
-    font-family: var(--font-barlow), "Barlow Condensed", sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.14em;
+    height: 36px;
+    max-width: 168px;
+    object-fit: contain;
   }
 
   .buzzard-mobile-cart-wrap {
@@ -205,10 +199,12 @@
 
   .buzzard-mobile-hero h1 {
     margin: 0 0 8px;
+    max-width: 14em;
     font-size: 28px;
     line-height: 1.12;
     font-weight: 800;
     letter-spacing: -0.02em;
+    overflow-wrap: break-word;
   }
 
   .buzzard-mobile-hero p {

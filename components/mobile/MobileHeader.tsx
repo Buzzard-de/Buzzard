@@ -42,8 +42,7 @@ export default function MobileHeader() {
       )}
 
       <Link href="/" className="buzzard-mobile-logo" aria-label={t("header.homeAria")}>
-        <Image src="/logo/logo.png" alt="Buzzard Logo" width={36} height={36} priority />
-        <span className="buzzard-mobile-wordmark">BUZZARD</span>
+        <Image src="/logo/logo.png" alt="Buzzard Logo" width={140} height={36} priority />
       </Link>
 
       <div className="buzzard-mobile-header-actions">

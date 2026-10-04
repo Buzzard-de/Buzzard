@@ -17,6 +17,8 @@ import "@/styles/rtl.css";
 import "@/styles/storefront-responsive.css";
 import "@/styles/premium-home.css";
 import "@/styles/language-background.css";
+import "@/styles/buzzard-mobile.css";
+import MobileStorefrontChrome from "@/components/mobile/MobileStorefrontChrome";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -65,6 +67,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -86,12 +89,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ShopProviders>
           <SkipLink />
-          <TopUtilityBar />
-          <Header />
-          <Navbar />
+          <div className="buzzard-desktop-chrome">
+            <TopUtilityBar />
+            <Header />
+            <Navbar />
+          </div>
+          <MobileStorefrontChrome />
           <main id="maincontent">{children}</main>
-          <Footer />
-          <MobileBottomNavigation />
+          <div className="buzzard-desktop-chrome">
+            <Footer />
+            <MobileBottomNavigation />
+          </div>
         </ShopProviders>
       </body>
     </html>

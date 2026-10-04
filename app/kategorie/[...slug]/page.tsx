@@ -7,6 +7,7 @@ import CategoryCatalogView from "@/components/category/CategoryCatalogView";
 import CategoryChildrenGrid from "@/components/category/CategoryChildrenGrid";
 import CategoryJsonLd from "@/components/category/CategoryJsonLd";
 import CategoryNotFound from "@/components/category/CategoryNotFound";
+import MobileCategoryPage from "@/components/mobile/MobileCategoryPage";
 import KfzSubcategoryCount from "@/components/category/KfzSubcategoryCount";
 import {
   findCategoryBySlugPath,
@@ -173,12 +174,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <>
       <CategoryJsonLd category={category} breadcrumb={breadcrumb} />
-      <CategoryCatalogView category={category} />
-      <CategoryChildrenGrid categories={children} />
+      <div className="buzzard-desktop-chrome">
+        <CategoryCatalogView category={category} />
+        <CategoryChildrenGrid categories={children} />
+        {category.id === "cat-05" && <KfzPartsBrowse compact />}
+      </div>
+      <MobileCategoryPage category={category} />
 
-      {category.id === "cat-05" && <KfzPartsBrowse compact />}
-
-      <section className="subpage-content products-page-layout">
+      <section className={`subpage-content products-page-layout${children.length > 0 ? " buzzard-desktop-chrome" : ""}`}>
         <Suspense fallback={<div className="products-grid" />}>
           <ProductList categorySlug={slug.join("/")} />
         </Suspense>

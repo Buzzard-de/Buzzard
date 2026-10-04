@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <>
-      <section className="page-hero">
+      <section className="page-hero buzzard-desktop-chrome">
         <div className="page-hero-inner">
           <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
             <Link href="/">Startseite</Link> <span>/</span> <span>Produkte</span>
@@ -31,9 +31,11 @@ export default function ProductsPage() {
         <Suspense fallback={null}>
           <ProductsSeoGuard />
         </Suspense>
-        <Suspense fallback={<aside className="home-sidebar" />}>
-          <ProductsFilterSidebar />
-        </Suspense>
+        <div className="buzzard-desktop-chrome">
+          <Suspense fallback={<aside className="home-sidebar" />}>
+            <ProductsFilterSidebar />
+          </Suspense>
+        </div>
         <Suspense fallback={<div className="products-grid" />}>
           <ProductList />
         </Suspense>

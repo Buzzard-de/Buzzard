@@ -116,6 +116,20 @@ services:
         value: "24"
       - key: BUZZARD_SALES_ENABLED
         value: "0"
+      - key: ORCHESTRATOR_ENABLED
+        value: "0"
+      - key: VOICE_ENABLED
+        value: "0"
+      - key: VOICE_WEBRTC_ENABLED
+        value: "0"
+      - key: PHONE_ENABLED
+        value: "0"
+      - key: PHONE_INBOUND_ENABLED
+        value: "0"
+      - key: PHONE_OUTBOUND_ENABLED
+        value: "0"
+      - key: CALL_RECORDING_ENABLED
+        value: "0"
       - key: BUZZARD_DB_PATH
         value: /var/data/buzzard.db
       - key: BUZZARD_BACKUP_DIR

@@ -2,27 +2,44 @@ const crypto = require("crypto");
 const { getFlags, isProduction } = require("../flags");
 const { PROVIDER_HEALTH } = require("../constants");
 const breaker = require("../circuitBreaker");
+const { providerFetch } = require("./httpClient");
+const cost = require("../costControl");
+
+let lastLiveOk = false;
+
+function sid() {
+  return process.env.TELEPHONY_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID || "";
+}
+
+function token() {
+  return process.env.TELEPHONY_AUTH_TOKEN || process.env.TWILIO_AUTH_TOKEN || "";
+}
+
+function fromNumber() {
+  return process.env.PHONE_NUMBER || process.env.TWILIO_PHONE_NUMBER || "";
+}
 
 function credentialsPresent() {
-  return Boolean(
-    process.env.TELEPHONY_ACCOUNT_SID &&
-      process.env.TELEPHONY_AUTH_TOKEN &&
-      process.env.PHONE_NUMBER
-  );
+  if (sid() && token() && fromNumber()) return true;
+  if (process.env.TELNYX_API_KEY && process.env.TELNYX_CONNECTION_ID && fromNumber()) return true;
+  if (process.env.VONAGE_API_KEY && process.env.VONAGE_API_SECRET && fromNumber()) return true;
+  if (process.env.PLIVO_AUTH_ID && process.env.PLIVO_AUTH_TOKEN && fromNumber()) return true;
+  return false;
 }
 
 function providerName() {
-  return process.env.TELEPHONY_PROVIDER || "none";
+  if (process.env.TELEPHONY_PROVIDER) return process.env.TELEPHONY_PROVIDER;
+  if (sid()) return "twilio";
+  if (process.env.TELNYX_API_KEY) return "telnyx";
+  if (process.env.VONAGE_API_KEY) return "vonage";
+  if (process.env.PLIVO_AUTH_ID) return "plivo";
+  if (process.env.SIP_ENDPOINT) return "sip";
+  return "none";
 }
 
 function liveAllowed() {
   const flags = getFlags();
-  return (
-    flags.PHONE_ENABLED &&
-    credentialsPresent() &&
-    providerName() !== "none" &&
-    providerName() !== "mock"
-  );
+  return flags.PHONE_ENABLED && credentialsPresent() && !["none", "mock"].includes(providerName());
 }
 
 function notConfigured(action) {
@@ -35,7 +52,88 @@ function notConfigured(action) {
   };
 }
 
-async function createCall({ to, from, conversationId } = {}) {
+async function twilioForm(path, fields, fetchImpl) {
+  const auth = Buffer.from(`${sid()}:${token()}`).toString("base64");
+  const body = new URLSearchParams(fields);
+  return providerFetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${sid()}/${path}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body,
+    },
+    { breakerName: "telephony", fetchImpl, timeoutMs: Number(process.env.PHONE_TIMEOUT_MS || 15000) }
+  );
+}
+
+async function createTwilioCall({ to, from, conversationId, fetchImpl }) {
+  const voiceUrl = process.env.TELEPHONY_VOICE_URL || process.env.TWILIO_VOICE_URL || "";
+  const fields = {
+    To: to,
+    From: from || fromNumber(),
+    StatusCallback: process.env.TELEPHONY_STATUS_URL || "",
+  };
+  if (voiceUrl) fields.Url = voiceUrl;
+  else fields.Twiml = "<Response><Say language=\"de-DE\">Buzzard</Say></Response>";
+  const result = await twilioForm("Calls.json", fields, fetchImpl);
+  if (!result.ok) {
+    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : "PHONE_PROVIDER_ERROR", provider: "twilio", live: false, status: result.status };
+  }
+  lastLiveOk = true;
+  cost.recordUsage({ conversationId, phoneSeconds: 0, provider: "twilio", kind: "phone_create" });
+  return {
+    ok: true,
+    live: true,
+    mock: false,
+    callId: result.body?.sid,
+    to,
+    from: fields.From,
+    conversationId,
+    status: result.body?.status || "queued",
+    provider: "twilio",
+    requestId: result.requestId,
+  };
+}
+
+async function createTelnyxCall({ to, from, conversationId, fetchImpl }) {
+  const result = await providerFetch(
+    "https://api.telnyx.com/v2/calls",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.TELNYX_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to,
+        from: from || fromNumber(),
+        connection_id: process.env.TELNYX_CONNECTION_ID,
+      }),
+    },
+    { breakerName: "telephony", fetchImpl }
+  );
+  if (!result.ok) {
+    return { ok: false, code: "PHONE_PROVIDER_ERROR", provider: "telnyx", live: false, status: result.status };
+  }
+  lastLiveOk = true;
+  return {
+    ok: true,
+    live: true,
+    mock: false,
+    callId: result.body?.data?.call_control_id,
+    to,
+    from: from || fromNumber(),
+    conversationId,
+    status: result.body?.data?.status || "initiated",
+    provider: "telnyx",
+    requestId: result.requestId,
+  };
+}
+
+async function createCall({ to, from, conversationId, fetchImpl } = {}) {
   const flags = getFlags();
   if (!flags.PHONE_ENABLED || !flags.OUTBOUND_CALL_ENABLED) {
     return { ok: false, code: "PHONE_DISABLED", live: false };
@@ -49,7 +147,7 @@ async function createCall({ to, from, conversationId } = {}) {
         code: "MOCK_TELEPHONY",
         callId: `mock_${crypto.randomBytes(4).toString("hex")}`,
         to,
-        from: from || process.env.PHONE_NUMBER || null,
+        from: from || fromNumber() || null,
         conversationId,
         status: "MOCK_CREATED",
       };
@@ -57,39 +155,72 @@ async function createCall({ to, from, conversationId } = {}) {
     return notConfigured("createCall");
   }
   if (!breaker.allow("telephony")) return { ok: false, code: "CIRCUIT_OPEN" };
-  return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", provider: providerName(), live: false };
+  const name = providerName();
+  if (name === "twilio") return createTwilioCall({ to, from, conversationId, fetchImpl });
+  if (name === "telnyx") return createTelnyxCall({ to, from, conversationId, fetchImpl });
+  if (["vonage", "plivo", "sip"].includes(name)) {
+    return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", provider: name, live: false };
+  }
+  return notConfigured("createCall");
 }
 
-async function answerCall(callId) {
+async function answerCall(callId, fetchImpl) {
   if (!liveAllowed()) return notConfigured("answerCall");
-  return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId };
+  if (providerName() !== "twilio") return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId };
+  return twilioForm(`Calls/${callId}.json`, { Status: "in-progress" }, fetchImpl).then((result) =>
+    result.ok
+      ? { ok: true, callId, status: result.body?.status, live: true }
+      : { ok: false, code: "PHONE_PROVIDER_ERROR", callId }
+  );
 }
 
-async function hangupCall(callId) {
+async function hangupCall(callId, fetchImpl) {
   if (!liveAllowed()) return notConfigured("hangupCall");
-  return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId };
+  if (providerName() !== "twilio") return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId };
+  return twilioForm(`Calls/${callId}.json`, { Status: "completed" }, fetchImpl).then((result) =>
+    result.ok
+      ? { ok: true, callId, status: "completed", live: true }
+      : { ok: false, code: "PHONE_PROVIDER_ERROR", callId }
+  );
 }
 
-async function transferCall(callId, target) {
+async function transferCall(callId, target, fetchImpl) {
   if (!liveAllowed()) return notConfigured("transferCall");
-  return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId, target };
+  if (providerName() !== "twilio") return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId, target };
+  const twiml = `<Response><Dial>${String(target || "").replace(/[^\d+]/g, "")}</Dial></Response>`;
+  return twilioForm(`Calls/${callId}.json`, { Twiml: twiml }, fetchImpl).then((result) =>
+    result.ok
+      ? { ok: true, callId, target, status: "transferring", live: true }
+      : { ok: false, code: "PHONE_PROVIDER_ERROR", callId }
+  );
 }
 
-async function sendDTMF(callId, digits) {
+async function sendDTMF(callId, digits, fetchImpl) {
   if (!liveAllowed()) return notConfigured("sendDTMF");
-  return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId, digits };
+  if (providerName() !== "twilio") return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId, digits };
+  return twilioForm(`Calls/${callId}.json`, { SendDigits: String(digits || "") }, fetchImpl).then((result) =>
+    result.ok ? { ok: true, callId, digits, live: true } : { ok: false, code: "PHONE_PROVIDER_ERROR", callId }
+  );
 }
 
-async function getCallStatus(callId) {
+async function getCallStatus(callId, fetchImpl) {
   if (!callId) return { ok: false, code: "INVALID_CALL" };
   if (!liveAllowed()) return { ok: true, callId, status: "NOT_LIVE", code: "PHONE_PROVIDER_NOT_CONFIGURED" };
-  return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId };
+  if (providerName() !== "twilio") return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", callId };
+  const auth = Buffer.from(`${sid()}:${token()}`).toString("base64");
+  const result = await providerFetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${sid()}/Calls/${callId}.json`,
+    { headers: { Authorization: `Basic ${auth}` } },
+    { breakerName: "telephony", fetchImpl }
+  );
+  if (!result.ok) return { ok: false, code: "PHONE_PROVIDER_ERROR", callId };
+  return { ok: true, callId, status: result.body?.status, live: true, provider: "twilio" };
 }
 
 async function recordCall() {
   if (!getFlags().CALL_RECORDING_ENABLED) return { ok: false, code: "RECORDING_DISABLED" };
   if (!liveAllowed()) return notConfigured("recordCall");
-  return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED" };
+  return { ok: false, code: "RECORDING_CONSENT_REQUIRED" };
 }
 
 async function getRecording() {
@@ -106,6 +237,10 @@ function health() {
   return breaker.healthOf("telephony");
 }
 
+function lastLiveSuccess() {
+  return lastLiveOk;
+}
+
 module.exports = {
   createCall,
   answerCall,
@@ -120,4 +255,5 @@ module.exports = {
   liveAllowed,
   credentialsPresent,
   providerName,
+  lastLiveSuccess,
 };

@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { seen, remember } = require("./idempotency");
+const { checkLimit } = require("./rateLimit");
 
 function verifySignature({ payload, signature, secret }) {
   if (!secret) return { ok: false, code: "WEBHOOK_SECRET_MISSING" };
@@ -20,21 +21,37 @@ function verifyTimestamp(timestamp, maxSkewMs = 5 * 60 * 1000) {
   return { ok: true };
 }
 
-function acceptEvent({ eventId, payload, signature, timestamp, secret }) {
+function verifySchema(payload) {
+  const body = payload && typeof payload === "object" ? payload : {};
+  const type = body.type || body.event || body.EventType;
+  if (!type) return { ok: false, code: "WEBHOOK_SCHEMA_INVALID" };
+  return { ok: true, type };
+}
+
+function acceptEvent({ eventId, payload, signature, timestamp, secret, nonce, ip } = {}) {
+  const limit = checkLimit({ ip, scope: "webhook" });
+  if (!limit.allowed) return { ok: false, code: "RATE_LIMITED" };
   const sig = verifySignature({ payload, signature, secret });
   if (!sig.ok) return sig;
   const time = verifyTimestamp(timestamp);
   if (!time.ok) return time;
+  const schema = verifySchema(payload);
+  if (!schema.ok) return schema;
   if (!eventId) return { ok: false, code: "EVENT_ID_REQUIRED" };
+  if (nonce && seen("phone_webhook_nonce", nonce)) {
+    return { ok: true, duplicate: true, code: "REPLAY_PREVENTED" };
+  }
   if (seen("phone_webhook", eventId)) {
     return { ok: true, duplicate: true, code: "REPLAY_PREVENTED" };
   }
   remember("phone_webhook", eventId, { accepted: true });
-  return { ok: true, duplicate: false };
+  if (nonce) remember("phone_webhook_nonce", nonce, { accepted: true });
+  return { ok: true, duplicate: false, type: schema.type };
 }
 
 module.exports = {
   verifySignature,
   verifyTimestamp,
+  verifySchema,
   acceptEvent,
 };

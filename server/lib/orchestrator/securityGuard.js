@@ -12,6 +12,9 @@ const INJECTION_PATTERNS = [
   /disregard (the )?(rules|policy)/i,
   /<\|system\|>/i,
   /\[INST\]/i,
+  /admin command/i,
+  /(give|send|reveal).{0,20}(api key|password|credential|jwt)/i,
+  /tool injection/i,
 ];
 
 const SECRET_KEYS = [

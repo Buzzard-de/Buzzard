@@ -14,6 +14,8 @@ const stt = require("./providers/stt");
 const tts = require("./providers/tts");
 const telephony = require("./providers/telephony");
 const { acceptEvent } = require("./webhookSecurity");
+const webrtc = require("./providers/webrtc");
+const { validateProduction } = require("./productionValidator");
 
 function status() {
   const f = flags.getFlags();
@@ -25,14 +27,20 @@ function status() {
       text: f.ORCHESTRATOR_ENABLED,
       voice: f.VOICE_ENABLED,
       phone: f.PHONE_ENABLED,
+      webrtc: f.VOICE_WEBRTC_ENABLED,
     },
     providers: {
       ai: require("./providers/ai").health(),
       stt: stt.health(),
       tts: tts.health(),
       telephony: telephony.health(),
+      webrtc: webrtc.health(),
     },
     realPhoneCalls: telephony.liveAllowed(),
+    realSttActive: stt.configured() && stt.lastLiveSuccess(),
+    realTtsActive: tts.configured() && tts.lastLiveSuccess(),
+    realPhoneActive: telephony.liveAllowed() && telephony.lastLiveSuccess(),
+    production: validateProduction(),
   };
 }
 
@@ -58,6 +66,8 @@ module.exports = {
   stt,
   tts,
   telephony,
+  webrtc,
   acceptEvent,
   status,
+  validateProduction,
 };

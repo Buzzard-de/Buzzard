@@ -4124,7 +4124,46 @@ function migrateMaximumOrchestrator() {
     CREATE INDEX IF NOT EXISTS idx_orch_conv_status ON orch_conversations(status);
     CREATE INDEX IF NOT EXISTS idx_orch_msg_conv ON orch_messages(conversation_id);
     CREATE INDEX IF NOT EXISTS idx_orch_idemp_scope ON orch_idempotency(scope);
+    CREATE TABLE IF NOT EXISTS orch_cost_events (
+      id TEXT PRIMARY KEY,
+      request_id TEXT,
+      conversation_id TEXT,
+      session_id TEXT,
+      call_id TEXT,
+      provider TEXT,
+      kind TEXT,
+      estimated_cost REAL DEFAULT 0,
+      actual_cost REAL DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
   `);
+  const extras = [
+    ["orch_voice_sessions", "session_token TEXT"],
+    ["orch_voice_sessions", "trace_id TEXT"],
+    ["orch_voice_sessions", "muted INTEGER DEFAULT 0"],
+    ["orch_voice_sessions", "last_heartbeat TEXT"],
+    ["orch_phone_calls", "trace_id TEXT"],
+    ["orch_phone_calls", "session_id TEXT"],
+    ["orch_phone_calls", "call_state TEXT"],
+    ["orch_phone_calls", "last_event TEXT"],
+    ["orch_conversations", "call_id TEXT"],
+    ["orch_conversations", "voice_session_id TEXT"],
+    ["orch_conversations", "customer_id TEXT"],
+    ["orch_messages", "channel TEXT"],
+    ["orch_messages", "session_id TEXT"],
+    ["orch_messages", "call_id TEXT"],
+    ["orch_messages", "trace_id TEXT"],
+    ["orch_handoffs", "channel TEXT"],
+    ["orch_handoffs", "call_id TEXT"],
+    ["orch_handoffs", "session_id TEXT"],
+  ];
+  for (const [table, ddl] of extras) {
+    const col = ddl.split(/\s+/)[0];
+    const existing = db.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name);
+    if (!existing.includes(col)) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+    }
+  }
 }
 
 function seed() {

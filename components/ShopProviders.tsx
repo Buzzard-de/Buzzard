@@ -15,6 +15,8 @@ import ConsentBanner from "./marketing/ConsentBanner";
 import MarketingScripts from "./marketing/MarketingScripts";
 import PageViewTracker from "./marketing/PageViewTracker";
 import AiChatWidget from "./ai/AiChatWidget";
+import VoiceControl from "./orchestrator/VoiceControl";
+import CallControl from "./orchestrator/CallControl";
 import StorefrontApiBanner from "./StorefrontApiBanner";
 import LanguageBackground from "./storefront/LanguageBackground";
 
@@ -35,6 +37,8 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
               <PageViewTracker />
               <ConsentBanner />
               <AiChatWidget />
+              <VoiceControl />
+              <CallControl />
               <MarketingScripts />
               <MegaMenuOverlay />
                 <ShopModals />

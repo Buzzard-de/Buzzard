@@ -86,7 +86,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
         <meta name="format-detection" content="telephone=no" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{var admin=(location.pathname||"").indexOf("/admin")===0;var phone=window.matchMedia("(max-width: 767px)").matches;if(admin){document.body.classList.add("buzzard-admin-route");}else if(phone){document.body.classList.add("buzzard-phone-storefront");document.documentElement.classList.add("buzzard-phone-storefront");}}catch(e){}})();',
+          }}
+        />
         <ShopProviders>
           <SkipLink />
           <div className="buzzard-desktop-chrome">

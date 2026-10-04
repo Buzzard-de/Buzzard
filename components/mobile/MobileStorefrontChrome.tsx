@@ -11,9 +11,13 @@ export default function MobileStorefrontChrome() {
   const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
-    document.body.classList.toggle("buzzard-phone-storefront", !isAdmin);
+    const phone = window.matchMedia("(max-width: 767px)").matches && !isAdmin;
+    document.body.classList.toggle("buzzard-phone-storefront", phone);
+    document.body.classList.toggle("buzzard-admin-route", isAdmin);
+    document.documentElement.classList.toggle("buzzard-phone-storefront", phone);
     return () => {
-      document.body.classList.remove("buzzard-phone-storefront");
+      document.body.classList.remove("buzzard-phone-storefront", "buzzard-admin-route");
+      document.documentElement.classList.remove("buzzard-phone-storefront");
     };
   }, [isAdmin]);
 

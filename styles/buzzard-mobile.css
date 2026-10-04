@@ -10,6 +10,27 @@
     display: none !important;
   }
 
+  /* HomeLayout stays in SSR HTML and :has(.home-fullscreen) would keep the old canvas. */
+  body:has(.home-fullscreen),
+  body:has(.home-page) {
+    display: block !important;
+    height: auto !important;
+    overflow: auto !important;
+  }
+
+  body:has(.home-fullscreen) #maincontent,
+  body:has(.home-page) #maincontent {
+    display: block !important;
+    overflow: visible !important;
+    flex: none !important;
+    min-height: 0 !important;
+  }
+
+  html.has-language-background .home-shell,
+  html.has-language-background .mega-panel {
+    background-image: none;
+  }
+
   .buzzard-mobile-only {
     display: block;
   }
@@ -36,8 +57,8 @@
   }
 
   .buzzard-mobile-shell {
-    background: #050505;
-    color: #fff;
+    background: #f4f4f4;
+    color: #111;
     min-height: 100%;
   }
 
@@ -79,12 +100,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     flex: 1;
+    text-decoration: none;
   }
 
   .buzzard-mobile-logo img {
     width: auto;
-    height: 40px;
+    height: 32px;
+  }
+
+  .buzzard-mobile-wordmark {
+    color: var(--gold, #c9a840);
+    font-family: var(--font-barlow), "Barlow Condensed", sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
   }
 
   .buzzard-mobile-cart-wrap {
@@ -108,7 +139,7 @@
   }
 
   .buzzard-mobile-search {
-    padding: 10px 12px 4px;
+    padding: 10px 12px 8px;
     background: #0a0a0a;
   }
 
@@ -152,24 +183,30 @@
   }
 
   .buzzard-mobile-content {
-    padding: 8px 12px 24px;
+    padding: 0 0 24px;
+    background: #fff;
   }
 
   .buzzard-mobile-hero {
     position: relative;
-    margin: 8px 0 16px;
-    padding: 28px 20px;
-    border-radius: 16px;
+    margin: 0 0 8px;
+    padding: 36px 20px 28px;
+    border-radius: 0;
     overflow: hidden;
-    background: linear-gradient(160deg, #1a1408 0%, #0a0a0a 70%);
-    border: 1px solid rgba(201, 168, 64, 0.22);
-    min-height: 168px;
+    background:
+      linear-gradient(180deg, rgba(8, 8, 8, 0.2) 0%, rgba(8, 8, 8, 0.78) 100%),
+      linear-gradient(160deg, #1a1408 0%, #0a0a0a 70%);
+    background-size: cover;
+    background-position: center;
+    border: 0;
+    min-height: 220px;
+    color: #fff;
   }
 
   .buzzard-mobile-hero h1 {
     margin: 0 0 8px;
-    font-size: 26px;
-    line-height: 1.15;
+    font-size: 28px;
+    line-height: 1.12;
     font-weight: 800;
     letter-spacing: -0.02em;
   }
@@ -178,7 +215,7 @@
     margin: 0 0 16px;
     font-size: 14px;
     line-height: 1.45;
-    color: #c8c8c8;
+    color: #e8e8e8;
   }
 
   .buzzard-mobile-hero-cta {
@@ -194,16 +231,36 @@
     text-decoration: none;
   }
 
+  .buzzard-mobile-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 16px 8px;
+  }
+
   .buzzard-mobile-section-title {
-    margin: 8px 0 12px;
+    margin: 0;
     font-size: 20px;
+    font-weight: 800;
+    color: #111;
+  }
+
+  .buzzard-mobile-section-link {
+    color: var(--gold, #c9a840);
+    font-size: 13px;
     font-weight: 700;
+    text-decoration: none;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
   }
 
   .buzzard-mobile-category-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+    padding: 0 12px;
   }
 
   .buzzard-mobile-category-card {
@@ -215,9 +272,9 @@
     min-height: 112px;
     padding: 16px 10px;
     border-radius: 14px;
-    background: #141414;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: #fff;
+    background: #f7f7f7;
+    border: 1px solid #ececec;
+    color: #111;
     text-decoration: none;
     text-align: center;
   }
@@ -241,13 +298,18 @@
 
   .buzzard-mobile-promo {
     display: block;
-    margin: 18px 0 8px;
-    padding: 18px 16px;
+    margin: 16px 12px 8px;
+    padding: 16px 16px;
     border-radius: 14px;
-    background: linear-gradient(90deg, #c9a840 0%, #8a7020 100%);
-    color: #111;
+    background: #111;
+    color: #f5f0e6;
     text-decoration: none;
     min-height: 72px;
+    border: 1px solid rgba(201, 168, 64, 0.35);
+  }
+
+  .buzzard-mobile-promo strong {
+    color: var(--gold, #c9a840);
   }
 
   .buzzard-mobile-promo strong {
@@ -529,8 +591,8 @@
     justify-content: space-around;
     min-height: 56px;
     padding: 4px 4px calc(6px + env(safe-area-inset-bottom, 0px));
-    background: #080808;
-    border-top: 1px solid rgba(201, 168, 64, 0.35);
+    background: #fff;
+    border-top: 1px solid #ececec;
   }
 
   .buzzard-mobile-bottom-nav-item {

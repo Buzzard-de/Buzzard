@@ -1,3 +1,5 @@
+"use client";
+
 import HomeCategoryDiscovery from "./home/HomeCategoryDiscovery";
 import HomeHeroCampaign from "./home/HomeHeroCampaign";
 import HomeNewsletter from "./home/HomeNewsletter";
@@ -6,19 +8,24 @@ import HomeLayout from "./HomeLayout";
 import ServiceBar from "./ServiceBar";
 import BuzzardServices from "./storefront/BuzzardServices";
 import MobileHome from "./mobile/MobileHome";
+import { useIsMobileNav } from "@/lib/use-media-query";
 
 export default function HomePageContent() {
+  const isPhone = useIsMobileNav();
+
   return (
     <div className="home-page">
-      <div className="buzzard-desktop-chrome">
-        <HomeLayout />
-        <HomeHeroCampaign />
-        <HomeCategoryDiscovery />
-        <HomeTrustReviews />
-        <BuzzardServices />
-        <HomeNewsletter />
-        <ServiceBar />
-      </div>
+      {!isPhone ? (
+        <div className="buzzard-desktop-chrome">
+          <HomeLayout />
+          <HomeHeroCampaign />
+          <HomeCategoryDiscovery />
+          <HomeTrustReviews />
+          <BuzzardServices />
+          <HomeNewsletter />
+          <ServiceBar />
+        </div>
+      ) : null}
       <MobileHome />
     </div>
   );

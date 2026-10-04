@@ -15,6 +15,12 @@ describe("i18n catalog keys", () => {
     expect(translate("en", "home.subcategories")).toBe("Subcategories");
   });
 
+  it("maps mobile.startShopping per locale", () => {
+    expect(translate("de", "mobile.startShopping")).toContain("Einkaufen");
+    expect(translate("tr", "mobile.startShopping")).toContain("Alışverişe");
+    expect(translate("en", "mobile.startShopping")).toContain("Start shopping");
+  });
+
   it("maps category.jsonLdDescription from catalog", () => {
     expect(translate("de", "category.jsonLdDescription")).toContain("Unterkategorien");
     expect(translate("tr", "category.jsonLdDescription")).toContain("alt kategoriler");

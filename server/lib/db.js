@@ -3870,6 +3870,7 @@ migrateCoreFoundationPart17();
 migrateMasterIntegrationFoundation();
 migrateMasterIntegrationPhase2();
 migrateMasterIntegrationPhase3();
+migrateGoLiveClosure();
 
 function migrateMasterIntegrationFoundation() {
   db.exec(`
@@ -4006,6 +4007,17 @@ function migrateMasterIntegrationPhase2() {
 
 function migrateMasterIntegrationPhase3() {
   ensureColumn("commerce_idempotency", "payload_hash", "TEXT");
+}
+
+function migrateGoLiveClosure() {
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_commerce_checkouts_idempotency
+      ON commerce_checkouts(idempotency_key)
+      WHERE idempotency_key IS NOT NULL AND idempotency_key <> '';
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_commerce_orders_checkout
+      ON commerce_orders(checkout_id)
+      WHERE checkout_id IS NOT NULL AND checkout_id <> '';
+  `);
 }
 
 function seed() {

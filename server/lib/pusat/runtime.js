@@ -191,11 +191,20 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
         ...label(MODE.DRY_RUN),
       };
     }
-    const order = db.prepare("SELECT id, status, order_type FROM commerce_orders WHERE id = ?").get(key);
-    if (!order) {
-      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+    const { createCanonicalOrderFacade } = require("../canonicalOrderFacade");
+    const lookup = createCanonicalOrderFacade().getOrder(key);
+    if (!lookup.ok) {
+      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, store: lookup.store, ...label(MODE.DRY_RUN) };
     }
-    return { ok: true, action, data: order, correlationId: corr, ...label(MODE.DRY_RUN) };
+    return {
+      ok: true,
+      action,
+      data: { id: lookup.order.id, status: lookup.order.status, orderType: lookup.order.orderType || lookup.order.order_type },
+      store: lookup.store,
+      source: lookup.source,
+      correlationId: corr,
+      ...label(MODE.DRY_RUN),
+    };
   }
 
   if (action === ACTIONS.GET_EXCEPTIONS) {

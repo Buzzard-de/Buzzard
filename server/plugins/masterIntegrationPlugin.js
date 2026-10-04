@@ -14,11 +14,13 @@ const { createSourceOfTruthService } = require("../lib/sot/sourceOfTruthService"
 const { createExternalIntegrationVerification } = require("../lib/externalIntegrationVerification");
 const { createGoLiveGate } = require("../lib/goLiveGate");
 const { createGoLiveActivation } = require("../lib/goLiveActivation");
+const { createProductionGoLiveClosure } = require("../lib/productionGoLiveClosure");
 
 const sotService = createSourceOfTruthService();
 const externalVerification = createExternalIntegrationVerification();
 const goLiveGate = createGoLiveGate();
 const goLiveActivation = createGoLiveActivation({ mutateEnv: false, productionSafetyLock: true });
+const goLiveClosure = createProductionGoLiveClosure();
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -119,6 +121,12 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "system.read")) return;
       res.json(goLiveGate.adminReport());
+    });
+
+    app.get("/api/admin/system/go-live/closure", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "system.read")) return;
+      res.json(goLiveClosure.evaluate());
     });
 
     app.get("/api/admin/system/go-live/checks", (req, res) => {

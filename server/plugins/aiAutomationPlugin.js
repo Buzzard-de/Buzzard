@@ -560,12 +560,39 @@ module.exports = {
       return res.json({ success: true, ...collectHealth() });
     });
 
-    app.post("/api/ai/chat", (req, res) => {
+    app.post("/api/ai/chat", async (req, res) => {
       if (process.env.BUZZARD_AI_CHAT_ENABLED === "0") {
         return res.status(503).json({ success: false, errorKey: "ai.chat.disabled" });
       }
       if (chatRateLimit(req)) {
         return res.status(429).json({ success: false, errorKey: "ai.chat.rateLimited" });
+      }
+      if (process.env.ORCHESTRATOR_ENABLED === "1") {
+        try {
+          const orch = require("../lib/orchestrator");
+          const orchestrated = await orch.handleRequest({
+            message: req.body?.message,
+            sessionId: req.body?.sessionId,
+            language: req.body?.locale,
+            channel: "TEXT",
+            ip: req.ip,
+            userId: req.body?.customerEmail,
+          });
+          if (orchestrated.ok) {
+            return res.json({
+              success: true,
+              sessionId: orchestrated.sessionId,
+              reply: orchestrated.reply,
+              intent: orchestrated.intent?.intent,
+              escalate: orchestrated.state === "ESCALATED",
+              orchestrator: true,
+              conversationId: orchestrated.conversationId,
+              requestId: orchestrated.requestId,
+            });
+          }
+        } catch {
+          /* fall back to existing chat */
+        }
       }
       const result = aiChatService.handleMessage({
         message: req.body?.message,

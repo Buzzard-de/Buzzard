@@ -11,6 +11,7 @@ export default defineConfig({
       "lib/market/resolveInitialCountry.test.ts",
       "lib/i18n/catalog.test.ts",
       "lib/categories/i18n.test.ts",
+      "lib/mobile/isolation.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

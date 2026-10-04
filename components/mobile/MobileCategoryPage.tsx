@@ -19,10 +19,11 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
   const children = category.children ?? [];
   const productCount = getProductsForCategory(category).length;
   const filtered = useMemo(() => {
+    const list = category.children ?? [];
     const q = query.trim().toLocaleLowerCase(locale);
-    if (!q) return children;
-    return children.filter((child) => getCategoryLabel(child, locale).toLocaleLowerCase(locale).includes(q));
-  }, [children, locale, query]);
+    if (!q) return list;
+    return list.filter((child) => getCategoryLabel(child, locale).toLocaleLowerCase(locale).includes(q));
+  }, [category, locale, query]);
 
   return (
     <div className="buzzard-mobile-only buzzard-mobile-shell">

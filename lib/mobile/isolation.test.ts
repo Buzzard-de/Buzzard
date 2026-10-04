@@ -18,9 +18,10 @@ describe("buzzard mobile CSS isolation", () => {
     expect(beforeMedia).not.toContain(".buzzard-desktop-chrome");
   });
 
-  it("only hides desktop chrome inside the phone media query", () => {
+  it("hides desktop chrome inside the phone media query without a JS body class", () => {
     const phoneBlock = css.split("@media (max-width: 767px)")[1] ?? "";
-    expect(phoneBlock).toContain("body.buzzard-phone-storefront .buzzard-desktop-chrome");
+    expect(phoneBlock).toContain(".buzzard-desktop-chrome");
     expect(phoneBlock).toContain("display: none !important");
+    expect(phoneBlock).toContain("body.buzzard-admin-route .buzzard-desktop-chrome");
   });
 });

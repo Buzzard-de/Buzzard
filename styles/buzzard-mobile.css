@@ -5,21 +5,34 @@
 }
 
 @media (max-width: 767px) {
-  body.buzzard-phone-storefront .buzzard-desktop-chrome {
+  /* Phone storefront activates from the viewport, not from a post-hydration body class. */
+  .buzzard-desktop-chrome {
     display: none !important;
   }
 
-  body.buzzard-phone-storefront .buzzard-mobile-only {
+  .buzzard-mobile-only {
     display: block;
   }
 
-  body.buzzard-phone-storefront .buzzard-mobile-only.buzzard-mobile-bottom-nav,
-  body.buzzard-phone-storefront nav.buzzard-mobile-bottom-nav.buzzard-mobile-only {
+  .buzzard-mobile-only.buzzard-mobile-bottom-nav,
+  nav.buzzard-mobile-bottom-nav.buzzard-mobile-only {
     display: flex;
   }
 
-  body.buzzard-phone-storefront #maincontent {
+  #maincontent {
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  body.buzzard-admin-route .buzzard-desktop-chrome {
+    display: block !important;
+  }
+
+  body.buzzard-admin-route .buzzard-mobile-only {
+    display: none !important;
+  }
+
+  body.buzzard-admin-route #maincontent {
+    padding-bottom: 0;
   }
 
   .buzzard-mobile-shell {

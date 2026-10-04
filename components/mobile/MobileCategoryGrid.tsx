@@ -16,9 +16,14 @@ export default function MobileCategoryGrid() {
 
   return (
     <section aria-labelledby="buzzard-mobile-categories-title">
-      <h2 id="buzzard-mobile-categories-title" className="buzzard-mobile-section-title">
-        {t("mobile.categories")}
-      </h2>
+      <div className="buzzard-mobile-section-head">
+        <h2 id="buzzard-mobile-categories-title" className="buzzard-mobile-section-title">
+          {t("megaMenu.mainCategories")}
+        </h2>
+        <Link href="/products/" className="buzzard-mobile-section-link">
+          {t("hero.secondary")}
+        </Link>
+      </div>
       <div className="buzzard-mobile-category-grid">
         {categories.map((cat) => (
           <Link key={cat.id} href={categoryHref(cat)} className="buzzard-mobile-category-card">

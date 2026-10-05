@@ -5,6 +5,8 @@ const stt = require("../providers/stt");
 const tts = require("../providers/tts");
 const telephony = require("../providers/telephony");
 const webrtc = require("../providers/webrtc");
+const openaiRealtime = require("../providers/openaiRealtime");
+const twilioIce = require("../providers/twilioIce");
 
 function yn(value) {
   return value ? "YES" : "NO";
@@ -67,11 +69,18 @@ function liveCriteriaSnapshot() {
       authenticated: telephony.lastLiveSuccess(),
       liveOk: telephony.lastLiveSuccess() && f.PHONE_ENABLED,
     }),
-    webrtc: row({
-      configured: ice.stunConfigured || ice.turnConfigured,
-      wired: ice.stunConfigured && ice.turnConfigured,
-      reachable: false,
-      authenticated: Boolean(process.env.WEBRTC_TURN_USERNAME && process.env.WEBRTC_TURN_CREDENTIAL),
+    openaiRealtime: row({
+      configured: openaiRealtime.configured(),
+      wired: openaiRealtime.configured(),
+      reachable: openaiRealtime.lastLiveSuccess(),
+      authenticated: openaiRealtime.lastLiveSuccess(),
+      liveOk: openaiRealtime.lastLiveSuccess() && f.VOICE_ENABLED,
+    }),
+    turn: row({
+      configured: twilioIce.configured() || ice.stunConfigured || ice.turnConfigured,
+      wired: twilioIce.configured() || (ice.stunConfigured && ice.turnConfigured),
+      reachable: twilioIce.lastLiveSuccess(),
+      authenticated: twilioIce.lastLiveSuccess() || Boolean(process.env.WEBRTC_TURN_USERNAME && process.env.WEBRTC_TURN_CREDENTIAL),
       liveOk: false,
     }),
   };

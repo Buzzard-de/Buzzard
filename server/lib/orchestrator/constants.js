@@ -78,6 +78,7 @@ const VOICE_STATE = Object.freeze({
   ENDING: "ENDING",
   ENDED: "ENDED",
   FAILED: "FAILED",
+  RECONNECTING: "RECONNECTING",
   ERROR: "FAILED",
 });
 

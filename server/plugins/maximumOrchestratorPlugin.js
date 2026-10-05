@@ -2,6 +2,8 @@ const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
 const orch = require("../lib/orchestrator");
 const webrtc = require("../lib/orchestrator/providers/webrtc");
+const openaiRealtime = require("../lib/orchestrator/providers/openaiRealtime");
+const twilioIce = require("../lib/orchestrator/providers/twilioIce");
 const { validateProduction } = require("../lib/orchestrator/productionValidator");
 const { checkLimit } = require("../lib/orchestrator/rateLimit");
 const embodied = require("../lib/orchestrator/embodied");
@@ -111,6 +113,55 @@ module.exports = {
       if (!orch.flags.getFlags().VOICE_WEBRTC_ENABLED) return publicDisabled(res, "VOICE_DISABLED");
       const result = webrtc.addIce(req.body?.sessionId, req.body?.token, req.body?.candidate);
       res.status(result.ok ? 200 : 401).json({ success: result.ok, ...result });
+    });
+
+    app.post("/api/orchestrator/voice/webrtc/stats", (req, res) => {
+      if (!orch.flags.getFlags().VOICE_WEBRTC_ENABLED) return publicDisabled(res, "VOICE_DISABLED");
+      const result = webrtc.reportMediaStats(req.body?.sessionId, req.body?.token, req.body?.stats || req.body || {});
+      res.status(result.ok ? 200 : 401).json({ success: result.ok, ...result });
+    });
+
+    app.get("/api/orchestrator/voice/webrtc/ice-servers", async (_req, res) => {
+      if (!orch.flags.getFlags().VOICE_WEBRTC_ENABLED) return publicDisabled(res, "VOICE_DISABLED");
+      const minted = await twilioIce.mintIceServers();
+      if (!minted.ok) {
+        const ice = webrtc.iceConfig();
+        return res.status(503).json({
+          success: false,
+          ...minted,
+          fallbackUrls: ice.urls,
+          mediaConnected: false,
+        });
+      }
+      res.json({ success: true, iceServers: minted.iceServers, ttl: minted.ttl, provider: minted.provider });
+    });
+
+    app.post("/api/orchestrator/voice/realtime/session", async (req, res) => {
+      if (!orch.flags.getFlags().VOICE_ENABLED) return publicDisabled(res, "VOICE_DISABLED");
+      const result = await openaiRealtime.createEphemeralSession({
+        language: req.body?.language,
+        userId: req.body?.userId || req.user?.id,
+        conversationId: req.body?.conversationId,
+      });
+      const payload = { success: result.ok, ...result };
+      res.status(result.ok ? 200 : 503).json(payload);
+    });
+
+    app.post("/api/orchestrator/voice/realtime/:id/transcript", async (req, res) => {
+      if (!orch.flags.getFlags().VOICE_ENABLED) return publicDisabled(res, "VOICE_DISABLED");
+      const result = await openaiRealtime.handleUserTranscript(req.params.id, req.body || {});
+      res.status(result.ok ? 200 : 400).json({ success: result.ok, ...result });
+    });
+
+    app.post("/api/orchestrator/voice/realtime/:id/barge-in", (req, res) => {
+      if (!orch.flags.getFlags().VOICE_ENABLED) return publicDisabled(res, "VOICE_DISABLED");
+      res.json({ success: true, ...openaiRealtime.bargeIn(req.params.id) });
+    });
+
+    app.get("/api/orchestrator/phone/twiml/stream", (_req, res) => {
+      const stream = orch.telephony.mediaStreamTwiml();
+      if (!stream.ok) return res.status(503).json({ success: false, ...stream });
+      res.type("text/xml").send(stream.twiml);
     });
 
     app.post("/api/orchestrator/phone/call", async (req, res) => {
@@ -229,6 +280,7 @@ module.exports = {
         honestHealth(live ? "READY" : report.providerReady.stt, {
           stt: report.providerReady.stt,
           tts: report.providerReady.tts,
+          openaiRealtime: require("../lib/orchestrator/providers/openaiRealtime").inspect(),
           liveStt: Boolean(report.realSttActive),
           liveTts: Boolean(report.realTtsActive),
           code: live ? "OK" : "BLOCKED_BY_PROVIDER_CONFIGURATION",
@@ -243,6 +295,7 @@ module.exports = {
         honestHealth(status, {
           ice,
           mediaConnected: false,
+          twilioIce: require("../lib/orchestrator/providers/twilioIce").inspect(),
           code: ice === "PASS" ? "OK" : "WEBRTC_ICE_NOT_CONFIGURED",
         })
       );

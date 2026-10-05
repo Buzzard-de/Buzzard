@@ -176,7 +176,7 @@ async function handleTurn(id, input = {}) {
   const orch = await handleRequest({
     message: input.message,
     language: input.language || session.language,
-    channel: input.channel || "TEXT",
+    channel: input.channel || (input.audio ? "VOICE" : "TEXT"),
     userId: session.userId,
     conversationId: input.conversationId,
     sessionId: id,

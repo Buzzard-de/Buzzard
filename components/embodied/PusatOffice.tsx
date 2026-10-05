@@ -37,6 +37,8 @@ export default function PusatOffice() {
   const [muted, setMuted] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [note, setNote] = useState("");
+  const [connection, setConnection] = useState("offline");
+  const [voiceCode, setVoiceCode] = useState("BLOCKED_BY_PROVIDER_CONFIGURATION");
 
   useEffect(() => {
     fetch("/api/health/embodied")
@@ -44,6 +46,8 @@ export default function PusatOffice() {
       .then((data) => {
         setEnabled(Boolean(data?.embodied?.flags?.EMBODIED_AI_ENABLED));
         setNote(data?.embodied?.fallback?.userStatus || data?.avatar?.code || "Avatar service unavailable");
+        setVoiceCode(data?.embodied?.code || "BLOCKED_BY_PROVIDER_CONFIGURATION");
+        setConnection(data?.embodied?.realAvatarActive ? "connected" : "provider-unavailable");
       })
       .catch(() => setEnabled(false));
   }, []);
@@ -55,7 +59,12 @@ export default function PusatOffice() {
       body: JSON.stringify({ language: locale.slice(0, 2) }),
     });
     const data = await res.json();
-    if (data.session) setSession(data.session);
+    if (data.session) {
+      setSession(data.session);
+      setConnection("connected");
+    } else {
+      setConnection("provider-unavailable");
+    }
     setNote(data.code || data.session?.provider?.code || "");
   }
 
@@ -71,11 +80,30 @@ export default function PusatOffice() {
     setReply(data.orchestrator?.reply || data.reply || "");
     if (data.direction?.camera) setCamera(data.direction.camera);
     setMessage("");
+    if (data.orchestrator?.approval?.required || data.session?.state === "WAITING") {
+      setNote("WAITING_APPROVAL");
+    }
+  }
+
+  async function listen() {
+    if (!session || muted) return;
+    setConnection("listening");
+    const res = await fetch(`/api/orchestrator/embodied/session/${session.id}/realtime`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audio: true, language: locale.slice(0, 2), energy: 0.2, speaking: true }),
+    });
+    const data = await res.json();
+    if (data.session) setSession(data.session);
+    setVoiceCode(data.claims?.REAL_STT_ACTIVE ? "OK" : data.code || "BLOCKED_BY_PROVIDER_CONFIGURATION");
+    setNote(data.code || "STT unavailable");
+    setConnection(data.ok ? "speaking" : "provider-unavailable");
   }
 
   async function end() {
     setSession(null);
     setReply("");
+    setConnection("offline");
   }
 
   const objects = session?.objects || [];
@@ -92,6 +120,10 @@ export default function PusatOffice() {
       data-live-video="false"
       data-renderer={session?.renderer || "CSS_3D_FALLBACK"}
       data-quality={quality}
+      data-connection={connection}
+      data-listening={connection === "listening" ? "true" : "false"}
+      data-provider-unavailable={connection === "provider-unavailable" ? "true" : "false"}
+      data-approval={note === "WAITING_APPROVAL" ? "true" : "false"}
     >
       <div className="pusat-office__bar">
         <h1>Pusat Living Office</h1>
@@ -99,6 +131,15 @@ export default function PusatOffice() {
           {session?.activity || session?.state || "OFFLINE"} · {session?.fallback?.mode || "CSS_3D_FALLBACK"}
         </p>
       </div>
+      <ul className="pusat-office__chips" aria-label="Session status">
+        <li data-chip="connection">{connection}</li>
+        <li data-chip="listening">{connection === "listening" ? "LISTENING" : "IDLE"}</li>
+        <li data-chip="thinking">{session?.state === "THINKING" ? "THINKING" : "—"}</li>
+        <li data-chip="speaking">{session?.state === "SPEAKING" ? "SPEAKING" : "—"}</li>
+        <li data-chip="handoff">{session?.state === "HANDOFF" ? "HANDOFF" : "—"}</li>
+        <li data-chip="approval">{note === "WAITING_APPROVAL" ? "WAITING_APPROVAL" : "—"}</li>
+        <li data-chip="voice">{voiceCode}</li>
+      </ul>
       <div className="pusat-office__fallback" role="status">
         {note || "Avatar service unavailable"}. Real-time avatar: {session?.liveAvatar ? "YES" : "NO"}.
       </div>
@@ -132,6 +173,9 @@ export default function PusatOffice() {
         ))}
         <button type="button" onClick={start} disabled={!enabled}>
           Start
+        </button>
+        <button type="button" onClick={() => void listen()} disabled={!session || muted} data-mic>
+          Microphone
         </button>
         <button type="button" onClick={() => setMuted((v) => !v)} data-mute aria-pressed={muted}>
           {muted ? "Unmute" : "Mute"}

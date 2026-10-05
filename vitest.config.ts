@@ -22,6 +22,7 @@ export default defineConfig({
       "lib/i18n/catalog.test.ts",
       "lib/categories/i18n.test.ts",
       "lib/mobile/isolation.test.ts",
+      "lib/orchestrator/isolation.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

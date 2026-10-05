@@ -14,9 +14,12 @@ const stt = require("./providers/stt");
 const tts = require("./providers/tts");
 const telephony = require("./providers/telephony");
 const { acceptEvent } = require("./webhookSecurity");
+const webrtc = require("./providers/webrtc");
+const { validateProduction } = require("./productionValidator");
 
 function status() {
   const f = flags.getFlags();
+  const production = validateProduction();
   return {
     name: "buzzard-maximum-orchestrator",
     enabled: f.ORCHESTRATOR_ENABLED,
@@ -25,14 +28,21 @@ function status() {
       text: f.ORCHESTRATOR_ENABLED,
       voice: f.VOICE_ENABLED,
       phone: f.PHONE_ENABLED,
+      webrtc: f.VOICE_WEBRTC_ENABLED,
     },
     providers: {
       ai: require("./providers/ai").health(),
       stt: stt.health(),
       tts: tts.health(),
       telephony: telephony.health(),
+      webrtc: webrtc.health(),
     },
     realPhoneCalls: telephony.liveAllowed(),
+    inspect: require("./providers/health").inspectAll(),
+    production,
+    realSttActive: Boolean(production.realSttActive),
+    realTtsActive: Boolean(production.realTtsActive),
+    realPhoneActive: Boolean(production.realPhoneActive),
   };
 }
 
@@ -58,6 +68,8 @@ module.exports = {
   stt,
   tts,
   telephony,
+  webrtc,
   acceptEvent,
   status,
+  validateProduction,
 };

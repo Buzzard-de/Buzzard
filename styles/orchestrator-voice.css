@@ -1,0 +1,80 @@
+.orch-voice-shell,
+.orch-call-shell {
+  position: fixed;
+  z-index: 46;
+  font-family: inherit;
+  color: #f5e6b8;
+}
+
+.orch-voice-shell {
+  right: 1.1rem;
+  bottom: 6.4rem;
+}
+
+.orch-call-shell {
+  right: 5.4rem;
+  bottom: 6.4rem;
+}
+
+.orch-voice-shell button,
+.orch-call-shell button {
+  appearance: none;
+  border: 1px solid #c9a227;
+  background: #111;
+  color: #f5e6b8;
+  border-radius: 999px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+}
+
+.orch-voice-panel,
+.orch-call-panel {
+  margin-top: 0.45rem;
+  width: min(320px, calc(100vw - 2rem));
+  background: #111;
+  border: 1px solid #c9a227;
+  border-radius: 16px;
+  padding: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.orch-voice-panel[hidden],
+.orch-call-panel[hidden] {
+  display: none;
+}
+
+.orch-voice-status,
+.orch-call-status {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.orch-voice-actions,
+.orch-call-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.orch-voice-note,
+.orch-call-note {
+  margin-top: 0.55rem;
+  font-size: 0.75rem;
+  color: #d7c48a;
+}
+
+@media (max-width: 767px) {
+  .orch-voice-shell {
+    right: 0.75rem;
+    bottom: 5.6rem;
+  }
+
+  .orch-call-shell {
+    right: 4.7rem;
+    bottom: 5.6rem;
+  }
+}

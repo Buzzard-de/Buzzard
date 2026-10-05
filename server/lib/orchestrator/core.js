@@ -164,10 +164,12 @@ async function handleRequest(input = {}) {
   let text = String(input.message || input.text || "").trim();
   if (!text && input.transcript) text = String(input.transcript);
   if (!text && (input.audio || input.testTranscript) && channel !== CHANNELS.TEXT) {
-    const heard = await stt.transcribeAudio({
+    const heard = await stt.transcribe({
       audio: input.audio,
       language,
       testTranscript: input.testTranscript,
+      conversationId: conversation.id,
+      customerId: input.userId,
     });
     if (!heard.ok) {
       return {
@@ -178,7 +180,10 @@ async function handleRequest(input = {}) {
         conversationId: conversation.id,
       };
     }
-    text = heard.text;
+    text = heard.transcript || heard.text;
+    if (heard.language) {
+      conversations.updateConversation(conversation.id, { language: heard.language });
+    }
   }
 
   const injection = detectPromptInjection(text);
@@ -197,6 +202,8 @@ async function handleRequest(input = {}) {
       conversationId: conversation.id,
       locale: language,
       reason: "PAYMENT_SECRET",
+      channel,
+      extra: { intent: classification.intent, risk: RISK.CRITICAL, sessionId: input.sessionId, callId: input.callId },
     });
     audit.writeAudit({
       who: input.userId,
@@ -229,6 +236,8 @@ async function handleRequest(input = {}) {
       conversationId: conversation.id,
       locale: language,
       reason: classification.intent,
+      channel,
+      extra: { intent: classification.intent, risk: classification.risk, sessionId: input.sessionId, callId: input.callId },
     });
     conversations.updateConversation(conversation.id, {
       status: CONVERSATION_STATUS.HANDOFF,
@@ -489,13 +498,15 @@ async function handleRequest(input = {}) {
 
 function dashboard() {
   const flags = getFlags();
+  const production = require("./productionValidator").validateProduction();
   return {
     flags,
     conversations: require("../db")
       .db.prepare("SELECT COUNT(*) n FROM orch_conversations WHERE status IN ('NEW','ACTIVE','WAITING','APPROVAL','HANDOFF')")
       .get().n,
-    voiceSessions: require("./voiceSession").listActive().length,
-    calls: require("./phoneSession").listActiveCalls().length,
+    voiceSessions: require("./voiceSession").listActive(),
+    calls: require("./phoneSession").listActiveCalls(),
+    handoffs: require("./phoneSession").listHandoffs(10),
     tasks: tasks.listTasks({ limit: 20 }),
     pendingApprovals: require("../db")
       .db.prepare("SELECT COUNT(*) n FROM core_approvals WHERE status = 'PENDING'")
@@ -507,6 +518,14 @@ function dashboard() {
       stt: stt.health(),
       tts: tts.health(),
       telephony: require("./providers/telephony").health(),
+      webrtc: require("./providers/webrtc").health(),
+    },
+    inspect: require("./providers/health").inspectAll(),
+    production,
+    real: {
+      stt: Boolean(production.realSttActive),
+      tts: Boolean(production.realTtsActive),
+      phone: Boolean(production.realPhoneActive),
     },
   };
 }

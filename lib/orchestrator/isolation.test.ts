@@ -18,4 +18,11 @@ describe("orchestrator UI isolation", () => {
     expect(css).not.toMatch(/^body\s*\{/m);
     expect(css).not.toContain(".buzzard-desktop-chrome");
   });
+
+  it("keeps embodied office CSS off the homepage selectors", () => {
+    const embodied = readFileSync(resolve(process.cwd(), "styles/embodied-office.css"), "utf8");
+    expect(embodied).toContain(".pusat-office");
+    expect(embodied).not.toContain(".buzzard-mobile-only");
+    expect(embodied).not.toContain(".home-fullscreen");
+  });
 });

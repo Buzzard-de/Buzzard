@@ -69,6 +69,10 @@ function validateProduction(probes) {
     ui: "PASS",
     e2e: "PASS",
     providerConfiguration: inspect.stt.configured || inspect.tts.configured || inspect.telephony.configured ? "PARTIAL" : "PARTIAL",
+    embodied: f.EMBODIED_AI_ENABLED ? "PARTIAL" : "PARTIAL",
+    avatar: "PARTIAL",
+    video: "PARTIAL",
+    world3d: f.WORLD_3D_ENABLED || f.EMBODIED_AI_ENABLED ? "PASS" : "PARTIAL",
   };
 
   const values = Object.values(checks);
@@ -98,6 +102,8 @@ function validateProduction(probes) {
     realSttActive,
     realTtsActive,
     realPhoneActive,
+    realAvatarActive: false,
+    realTimeVideoActive: false,
     liveCriteria: {
       required: ["configured", "wired", "reachable", "authenticated", "successful test call"],
     },

@@ -43,6 +43,9 @@ function userFacingError(code) {
     ORCHESTRATOR_DISABLED: "Der Assistent ist derzeit deaktiviert.",
     VOICE_DISABLED: "Ses hizmeti şu anda kullanılamıyor. Yazılı olarak devam edebilirsiniz.",
     PHONE_PROVIDER_NOT_CONFIGURED: "Telefon hizmeti yapılandırılmadı.",
+    AVATAR_PROVIDER_NOT_CONFIGURED: "Avatar sağlayıcısı yapılandırılmadı.",
+    EMBODIED_AI_DISABLED: "Gömülü AI oturumu kapalı.",
+    VIDEO_PROVIDER_NOT_CONFIGURED: "Canlı video sağlayıcısı yapılandırılmadı.",
     RATE_LIMITED: "Bitte versuchen Sie es in einem Moment erneut.",
     COST_LIMIT: "Die Anfragelimit wurde erreicht.",
   };

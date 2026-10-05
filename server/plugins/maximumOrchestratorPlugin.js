@@ -10,6 +10,17 @@ function publicDisabled(res, code = "ORCHESTRATOR_DISABLED") {
   return res.status(503).json({ success: false, code, message: orch.userFacingError(code) });
 }
 
+function honestHealth(status, extra = {}) {
+  const live = status === "READY";
+  return {
+    success: true,
+    status,
+    healthy: live,
+    live,
+    ...extra,
+  };
+}
+
 module.exports = {
   register(app) {
     app.get("/api/health/orchestrator", (_req, res) => {
@@ -193,6 +204,84 @@ module.exports = {
         production: validateProduction(),
         embodied: embodied.validator.validateEmbodied(),
         inspect: require("../lib/orchestrator/providers/health").inspectAll(),
+        matrix: embodied.productionMatrix.productionMatrix(),
+        claims: embodied.livePipeline.liveClaims(),
+        credentials: embodied.credentialDiscovery.discoverCredentials().keys,
+        activation: embodied.activation.evaluateActivation(),
+      });
+    });
+
+    app.get("/api/health/avatar", (_req, res) => {
+      const report = embodied.validator.validateEmbodied();
+      res.json(
+        honestHealth(report.providerReady.avatar, {
+          code: report.realAvatarActive ? "OK" : "BLOCKED_BY_PROVIDER_CONFIGURATION",
+          liveAvatar: Boolean(report.realAvatarActive),
+          fallback: report.fallback,
+        })
+      );
+    });
+
+    app.get("/api/health/voice", (_req, res) => {
+      const report = embodied.validator.validateEmbodied();
+      const live = Boolean(report.realSttActive && report.realTtsActive);
+      res.json(
+        honestHealth(live ? "READY" : report.providerReady.stt, {
+          stt: report.providerReady.stt,
+          tts: report.providerReady.tts,
+          liveStt: Boolean(report.realSttActive),
+          liveTts: Boolean(report.realTtsActive),
+          code: live ? "OK" : "BLOCKED_BY_PROVIDER_CONFIGURATION",
+        })
+      );
+    });
+
+    app.get("/api/health/webrtc", (_req, res) => {
+      const ice = embodied.activation.iceStatus();
+      const status = ice === "PASS" ? "READY" : ice === "PARTIAL" ? "DEGRADED" : "NOT_CONFIGURED";
+      res.json(
+        honestHealth(status, {
+          ice,
+          mediaConnected: false,
+          code: ice === "PASS" ? "OK" : "WEBRTC_ICE_NOT_CONFIGURED",
+        })
+      );
+    });
+
+    app.get("/api/health/phone", (_req, res) => {
+      const report = embodied.validator.validateEmbodied();
+      res.json(
+        honestHealth(report.providerReady.telephony, {
+          livePhone: Boolean(report.realPhoneActive),
+          code: report.realPhoneActive ? "OK" : "PHONE_PROVIDER_NOT_CONFIGURED",
+        })
+      );
+    });
+
+    app.get("/api/health/providers", (_req, res) => {
+      const report = embodied.validator.validateEmbodied();
+      const claims = embodied.livePipeline.liveClaims();
+      res.json({
+        success: true,
+        credentials: embodied.credentialDiscovery.discoverCredentials().keys,
+        claims,
+        services: report.providerReady,
+        healthy: Object.values(claims).some(Boolean),
+        code: report.code,
+      });
+    });
+
+    app.get("/api/health/production-readiness", (_req, res) => {
+      const matrix = embodied.productionMatrix.productionMatrix();
+      const report = embodied.validator.validateEmbodied();
+      res.json({
+        success: true,
+        healthy: matrix.activation === "LIVE_VALIDATED",
+        productionReady: report.productionReady,
+        matrix,
+        claims: embodied.livePipeline.liveClaims(),
+        activation: embodied.activation.evaluateActivation(),
+        code: matrix.activation,
       });
     });
 
@@ -246,6 +335,12 @@ module.exports = {
     app.post("/api/orchestrator/embodied/session/:id/turn", async (req, res) => {
       if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
       const result = await embodied.runtime.handleTurn(req.params.id, req.body || {});
+      res.status(result.ok ? 200 : 400).json({ success: result.ok, ...result });
+    });
+
+    app.post("/api/orchestrator/embodied/session/:id/realtime", async (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      const result = await embodied.livePipeline.runRealtimeTurn(req.params.id, req.body || {});
       res.status(result.ok ? 200 : 400).json({ success: result.ok, ...result });
     });
 

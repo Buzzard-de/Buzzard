@@ -40,6 +40,7 @@ test.describe("embodied office isolation", () => {
     await expect(office).toHaveAttribute("data-live-avatar", "false");
     await expect(office).toHaveAttribute("data-live-video", "false");
     await expect(office).toHaveAttribute("data-renderer", "CSS_3D_FALLBACK");
+    await expect(page.getByRole("button", { name: "Microphone" })).toBeVisible();
     for (const cam of ["FRONT", "BACK", "LEFT", "RIGHT", "OVERHEAD"]) {
       await expect(page.getByRole("button", { name: cam, exact: true })).toBeVisible();
     }

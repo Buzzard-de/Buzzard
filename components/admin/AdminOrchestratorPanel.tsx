@@ -22,6 +22,8 @@ type Dashboard = {
   costs?: unknown;
   real?: { stt?: boolean; tts?: boolean; phone?: boolean };
   production?: { realSttActive?: boolean; realTtsActive?: boolean; realPhoneActive?: boolean };
+  claims?: Record<string, boolean>;
+  matrix?: Record<string, string>;
 };
 
 function label(row?: InspectRow) {
@@ -47,7 +49,13 @@ export default function AdminOrchestratorPanel() {
       .then((res) => res.json())
       .then((data) => {
         if (!data.success) setError(data.code || "Fehler");
-        else setDash({ ...data.dashboard, inspect: data.inspect || data.dashboard?.inspect });
+        else
+          setDash({
+            ...data.dashboard,
+            inspect: data.inspect || data.dashboard?.inspect,
+            claims: data.claims,
+            matrix: data.matrix,
+          });
       })
       .catch(() => setError("Fehler"));
   }, []);
@@ -74,8 +82,9 @@ export default function AdminOrchestratorPanel() {
           <p>Real STT: {dash.production?.realSttActive || dash.real?.stt ? "YES" : "NO"}</p>
           <p>Real TTS: {dash.production?.realTtsActive || dash.real?.tts ? "YES" : "NO"}</p>
           <p>Real Phone: {dash.production?.realPhoneActive || dash.real?.phone ? "YES" : "NO"}</p>
-          <p>Real Avatar: NO</p>
-          <p>Real-time video: NO</p>
+          <p>Real Avatar: {dash.claims?.REAL_AVATAR_ACTIVE ? "YES" : "NO"}</p>
+          <p>Real-time video: {dash.claims?.REAL_VIDEO_ACTIVE ? "YES" : "NO"}</p>
+          <p>Production: {dash.matrix?.activation || "BLOCKED_BY_PROVIDER_CONFIGURATION"}</p>
           <pre>{JSON.stringify(dash.flags, null, 2)}</pre>
           <pre>{JSON.stringify(dash.inspect, null, 2)}</pre>
         </div>

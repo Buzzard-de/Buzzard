@@ -15,6 +15,8 @@ const tts = require("./providers/tts");
 const telephony = require("./providers/telephony");
 const { acceptEvent } = require("./webhookSecurity");
 const webrtc = require("./providers/webrtc");
+const openaiRealtime = require("./providers/openaiRealtime");
+const twilioIce = require("./providers/twilioIce");
 const { validateProduction } = require("./productionValidator");
 const embodied = require("./embodied");
 
@@ -40,6 +42,8 @@ function status() {
       tts: tts.health(),
       telephony: telephony.health(),
       webrtc: webrtc.health(),
+      openaiRealtime: openaiRealtime.health(),
+      twilioIce: twilioIce.inspect().status,
       avatar: embodied.avatarProvider.health(),
     },
     realPhoneCalls: telephony.liveAllowed(),
@@ -77,6 +81,8 @@ module.exports = {
   tts,
   telephony,
   webrtc,
+  openaiRealtime,
+  twilioIce,
   acceptEvent,
   status,
   validateProduction,

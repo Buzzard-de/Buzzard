@@ -14,7 +14,7 @@ function discoverCredentials() {
     mark("VIDEO_PROVIDER", process.env.VIDEO_PROVIDER),
     mark("VIDEO_API_KEY", process.env.VIDEO_API_KEY),
     mark("VIDEO_BASE_URL", process.env.VIDEO_BASE_URL),
-    mark("STT_PROVIDER", process.env.STT_PROVIDER),
+    mark("OPENAI_API_KEY", process.env.OPENAI_API_KEY),
     mark("STT_API_KEY", process.env.STT_API_KEY || process.env.OPENAI_API_KEY || process.env.DEEPGRAM_API_KEY),
     mark("STT_BASE_URL", process.env.STT_BASE_URL),
     mark("TTS_PROVIDER", process.env.TTS_PROVIDER),

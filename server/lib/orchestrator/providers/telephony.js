@@ -70,6 +70,29 @@ async function twilioForm(path, fields, fetchImpl) {
   );
 }
 
+function xmlEscape(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/"/g, "&quot;");
+}
+
+function mediaStreamUrl() {
+  return String(process.env.TELEPHONY_MEDIA_STREAM_URL || process.env.TWILIO_MEDIA_STREAM_URL || "").trim();
+}
+
+function mediaStreamTwiml({ bidirectional } = {}) {
+  const url = mediaStreamUrl();
+  if (!url.startsWith("wss://")) {
+    return { ok: false, code: "PHONE_MEDIA_STREAM_NOT_CONFIGURED", wss: false, twiml: null };
+  }
+  const bi = bidirectional != null ? Boolean(bidirectional) : process.env.TELEPHONY_MEDIA_STREAM_BIDIRECTIONAL === "1";
+  const inner = bi
+    ? `<Connect><Stream url="${xmlEscape(url)}" /></Connect>`
+    : `<Start><Stream url="${xmlEscape(url)}" /></Start>`;
+  return { ok: true, wss: true, bidirectional: bi, twiml: `<Response>${inner}</Response>` };
+}
+
 async function createTwilioCall({ to, from, conversationId, fetchImpl }) {
   const voiceUrl = process.env.TELEPHONY_VOICE_URL || process.env.TWILIO_VOICE_URL || "";
   const fields = {
@@ -78,7 +101,10 @@ async function createTwilioCall({ to, from, conversationId, fetchImpl }) {
     StatusCallback: process.env.TELEPHONY_STATUS_URL || "",
   };
   if (voiceUrl) fields.Url = voiceUrl;
-  else fields.Twiml = "<Response><Say language=\"de-DE\">Buzzard</Say></Response>";
+  else {
+    const stream = mediaStreamTwiml();
+    fields.Twiml = stream.ok ? stream.twiml : "<Response><Say language=\"de-DE\">Buzzard</Say></Response>";
+  }
   const result = await twilioForm("Calls.json", fields, fetchImpl);
   if (!result.ok) {
     return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : "PHONE_PROVIDER_ERROR", provider: "twilio", live: false, status: result.status };
@@ -358,4 +384,6 @@ module.exports = {
   lastLiveSuccess,
   inspect,
   e164,
+  mediaStreamTwiml,
+  mediaStreamUrl,
 };

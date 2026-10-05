@@ -84,6 +84,35 @@ function addIce(sessionId, token, candidate) {
   return { ok: true, iceCount: auth.room.ice.length, connectionState: auth.room.connectionState };
 }
 
+function reportMediaStats(sessionId, token, stats = {}) {
+  const auth = authorize(sessionId, token);
+  if (!auth.ok) return auth;
+  const connectionState = String(stats.connectionState || "");
+  const iceConnectionState = String(stats.iceConnectionState || "");
+  const connected = connectionState === "connected" || iceConnectionState === "connected";
+  const bytesReceived = Number(stats.bytesReceived || 0);
+  const packetsReceived = Number(stats.packetsReceived || 0);
+  const hasTrack = Boolean(stats.audioTrack || stats.videoTrack || Number(stats.trackCount || 0) > 0);
+  const mediaConnected = Boolean(connected && hasTrack && bytesReceived > 0 && packetsReceived > 0);
+  auth.room.mediaConnected = mediaConnected;
+  auth.room.rtcStats = {
+    bytesSent: Number(stats.bytesSent || 0),
+    bytesReceived,
+    packetsReceived,
+    packetsLost: Number(stats.packetsLost || 0),
+    candidatePair: stats.candidatePair || null,
+    connectionState,
+    iceConnectionState,
+  };
+  return {
+    ok: true,
+    signalingComplete: Boolean(auth.room.offer && auth.room.answer),
+    mediaConnected,
+    rtcStats: auth.room.rtcStats,
+    fakeConnected: false,
+  };
+}
+
 function iceConfig() {
   const stun = process.env.WEBRTC_STUN_URL || "";
   const turn = process.env.WEBRTC_TURN_URL || "";
@@ -101,7 +130,7 @@ function connectionState(sessionId) {
   return {
     ok: true,
     connectionState: signalingComplete ? "SIGNALING_COMPLETE" : room.connectionState,
-    mediaConnected: false,
+    mediaConnected: Boolean(room.mediaConnected),
     iceConfigured: Boolean(process.env.WEBRTC_STUN_URL || process.env.WEBRTC_TURN_URL),
     fakeConnected: false,
   };
@@ -164,4 +193,5 @@ module.exports = {
   getRoom,
   inspect,
   iceConfig,
+  reportMediaStats,
 };

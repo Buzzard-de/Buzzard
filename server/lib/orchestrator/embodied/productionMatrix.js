@@ -35,6 +35,7 @@ function productionMatrix() {
     TTS: ttsCell,
     WEBRTC_SIGNALING: "PASS",
     WEBRTC_MEDIA: "BLOCKED",
+    OPENAI_REALTIME: cell(false, activation.credentials.OPENAI_API_KEY === "FOUND"),
     WEBRTC: ice === "PASS" ? "PASS" : ice === "PARTIAL" ? "PARTIAL" : "BLOCKED",
     TURN_STUN: ice === "PASS" ? "PASS" : "BLOCKED",
     PHONE: cell(embodied.realPhoneActive, activation.credentials.TELEPHONY_ACCOUNT_SID === "FOUND" || activation.credentials.TELEPHONY_API_KEY === "FOUND"),

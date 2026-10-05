@@ -14,6 +14,11 @@ function dayKey(customerId = "anon") {
   return `${customerId}:${new Date().toISOString().slice(0, 10)}`;
 }
 
+function estimateRealtime(durationMs) {
+  const minutes = Number(durationMs || 0) / 60000;
+  return Number((minutes * 0.06).toFixed(6));
+}
+
 function estimateStt(durationMs, provider) {
   const rates = { openai: 0.006, whisper: 0.006, deepgram: 0.0043, azure: 0.016, google: 0.006 };
   const rate = rates[provider];
@@ -126,6 +131,7 @@ module.exports = {
   estimateStt,
   estimateTts,
   estimatePhone,
+  estimateRealtime,
   resetCosts,
   RATES,
 };

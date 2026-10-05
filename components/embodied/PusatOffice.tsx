@@ -88,6 +88,21 @@ export default function PusatOffice() {
   async function listen() {
     if (!session || muted) return;
     setConnection("listening");
+    const realtime = await fetch("/api/orchestrator/voice/realtime/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ language: locale.slice(0, 2) }),
+    });
+    const realtimeData = await realtime.json();
+    if (realtimeData.ephemeralKey && navigator.mediaDevices?.getUserMedia) {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        setVoiceCode("CONNECTING");
+        setNote("OpenAI realtime ephemeral session");
+      } catch {
+        setConnection("provider-unavailable");
+      }
+    }
     const res = await fetch(`/api/orchestrator/embodied/session/${session.id}/realtime`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -95,9 +110,9 @@ export default function PusatOffice() {
     });
     const data = await res.json();
     if (data.session) setSession(data.session);
-    setVoiceCode(data.claims?.REAL_STT_ACTIVE ? "OK" : data.code || "BLOCKED_BY_PROVIDER_CONFIGURATION");
-    setNote(data.code || "STT unavailable");
-    setConnection(data.ok ? "speaking" : "provider-unavailable");
+    setVoiceCode(data.claims?.REAL_STT_ACTIVE ? "OK" : data.code || realtimeData.code || "BLOCKED_BY_PROVIDER_CONFIGURATION");
+    setNote(data.code || realtimeData.code || "STT unavailable");
+    setConnection(data.ok ? "speaking" : realtimeData.ok ? "connecting" : "provider-unavailable");
   }
 
   async function end() {
@@ -208,6 +223,7 @@ export default function PusatOffice() {
         </button>
       </div>
       {reply ? <p className="pusat-office__status">{reply}</p> : null}
+      <audio data-remote-audio hidden />
       {session?.debug ? <pre className="pusat-office__debug">{JSON.stringify(session.debug, null, 2)}</pre> : null}
     </section>
   );

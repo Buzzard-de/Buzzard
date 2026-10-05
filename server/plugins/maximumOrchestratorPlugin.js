@@ -281,6 +281,10 @@ module.exports = {
         matrix,
         claims: embodied.livePipeline.liveClaims(),
         activation: embodied.activation.evaluateActivation(),
+        liveCriteria: embodied.liveCriteriaSnapshot.overallLiveCriteria(
+          embodied.liveCriteriaSnapshot.liveCriteriaSnapshot()
+        ),
+        checklist: embodied.externalActivationChecklist.externalActivationChecklist(),
         code: matrix.activation,
       });
     });

@@ -5,6 +5,7 @@ const { handleTurn, createSession } = require("./runtime");
 const avatar = require("./avatarProvider");
 const telemetry = require("./telemetry");
 const { evaluateActivation } = require("./activation");
+const { recoverFromFailure } = require("./failureRecovery");
 
 function liveClaims() {
   const activation = evaluateActivation();
@@ -38,10 +39,12 @@ async function runRealtimeTurn(sessionId, input = {}) {
     });
     telemetry.mark(sessionId, "sttMs", Date.now() - sttStarted);
     if (!heard.ok && !input.message) {
+      const recovery = recoverFromFailure(heard.code);
       return {
         ok: false,
         code: heard.code,
         vad: voiceActivity,
+        recovery,
         claims: liveClaims(),
         webrtc: webrtc.connectionState(input.webrtcSessionId || sessionId),
         telemetry: telemetry.finish(sessionId, { errors: [heard.code] }),

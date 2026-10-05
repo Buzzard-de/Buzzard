@@ -6,6 +6,7 @@ const telephony = require("../providers/telephony");
 const webrtc = require("../providers/webrtc");
 const { liveCriteria } = require("../productionValidator");
 const { discoverCredentials } = require("./credentialDiscovery");
+const { liveCriteriaSnapshot, overallLiveCriteria } = require("./liveCriteriaSnapshot");
 
 function evaluateActivation() {
   const f = flags.getFlags();
@@ -24,9 +25,12 @@ function evaluateActivation() {
     phone: telephony.lastLiveSuccess() && f.PHONE_ENABLED,
     webrtcMedia: false,
   };
+  const snapshot = liveCriteriaSnapshot();
   return {
     credentials: creds.keys,
     live,
+    criteria: snapshot,
+    overall: overallLiveCriteria(snapshot),
     activateFlags: false,
     reason: live.avatar && live.stt && live.tts ? "LIVE_VALIDATED" : "BLOCKED_BY_PROVIDER_CONFIGURATION",
     note: "Flags are never auto-enabled without a successful live provider session.",

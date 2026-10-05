@@ -30,6 +30,9 @@ const telemetry = require("./telemetry");
 const activation = require("./activation");
 const livePipeline = require("./livePipeline");
 const productionMatrix = require("./productionMatrix");
+const liveCriteriaSnapshot = require("./liveCriteriaSnapshot");
+const externalActivationChecklist = require("./externalActivationChecklist");
+const failureRecovery = require("./failureRecovery");
 
 module.exports = {
   ...constants,
@@ -64,4 +67,7 @@ module.exports = {
   activation,
   livePipeline,
   productionMatrix,
+  liveCriteriaSnapshot,
+  externalActivationChecklist,
+  failureRecovery,
 };

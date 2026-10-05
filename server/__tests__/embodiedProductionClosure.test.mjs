@@ -91,6 +91,9 @@ describe("embodied production activation closure", () => {
     expect(matrix.PHONE).toBe("NOT CONFIGURED");
     expect(matrix.WEBRTC).toBe("BLOCKED");
     expect(matrix.TURN_STUN).toBe("BLOCKED");
+    expect(matrix.WEBRTC_SIGNALING).toBe("PASS");
+    expect(matrix.WEBRTC_MEDIA).toBe("BLOCKED");
+    expect(matrix.REAL_AVATAR).toBe("NOT CONFIGURED");
     expect(matrix.activation).toBe("BLOCKED_BY_PROVIDER_CONFIGURATION");
     expect(matrix.fakeSuccess).toBe(false);
     expect(matrix.ORCHESTRATOR).toMatch(/PASS|PARTIAL/);
@@ -104,5 +107,51 @@ describe("embodied production activation closure", () => {
     const { serviceStatus } = require("../lib/orchestrator/embodied/validator");
     expect(serviceStatus({ configured: false, wired: false, live: false })).toBe("NOT_CONFIGURED");
     expect(serviceStatus({ configured: true, wired: true, live: true })).toBe("READY");
+  });
+
+  it("reports liveCriteria stages as NO/BLOCKED without credentials", () => {
+    const { evaluateActivation } = require("../lib/orchestrator/embodied/activation");
+    const row = evaluateActivation();
+    expect(row.overall.CONFIGURED).toBe("NO");
+    expect(row.overall.WIRED).toBe("NO");
+    expect(row.overall.REACHABLE).toBe("NO");
+    expect(row.overall.AUTHENTICATED).toBe("NO");
+    expect(row.overall.LIVE_TEST).toBe("BLOCKED");
+    expect(row.criteria.avatar.LIVE_TEST).toBe("BLOCKED");
+  });
+
+  it("lists required external services without inventing credentials", () => {
+    const { externalActivationChecklist } = require("../lib/orchestrator/embodied/externalActivationChecklist");
+    const list = externalActivationChecklist();
+    expect(list.code).toBe("BLOCKED_BY_PROVIDER_CONFIGURATION");
+    expect(list.avatar.environment).toContain("AVATAR_API_KEY");
+    expect(list.architectureCompatible.doNotAddUnlessPresent).toContain("LiveKit");
+  });
+
+  it("falls back on provider failures without claiming live media", () => {
+    const { recoverFromFailure } = require("../lib/orchestrator/embodied/failureRecovery");
+    for (const code of ["TIMEOUT", "PROVIDER_429", "PROVIDER_500", "AVATAR_DISCONNECT", "WEBRTC_DISCONNECT", "NETWORK_INTERRUPTION"]) {
+      const row = recoverFromFailure(code);
+      expect(row.live).toBe(false);
+      expect(row.WEBRTC_MEDIA_ACTIVE).toBe(false);
+      expect(row.REAL_AVATAR_ACTIVE).toBe(false);
+    }
+    expect(recoverFromFailure("STT_PROVIDER_NOT_CONFIGURED").fallback).toBe("TEXT_FALLBACK");
+  });
+
+  it("keeps file/note/handoff visual paths from inventing live phone or video", async () => {
+    const runtime = require("../lib/orchestrator/embodied/runtime");
+    const created = runtime.createSession({ language: "tr" });
+    const fileTurn = await runtime.handleTurn(created.session.id, {
+      message: "Dosyayi getir",
+      language: "tr",
+      truth: { documentFound: true },
+    });
+    expect(fileTurn.session.liveAvatar).not.toBe(true);
+    const note = await runtime.handleTurn(created.session.id, { message: "Not al", language: "tr" });
+    expect(note.claims?.REAL_VIDEO_ACTIVE || false).toBe(false);
+    const handoff = runtime.handoff(created.session.id, { reason: "human" });
+    expect(handoff.ok).toBe(true);
+    expect(handoff.session.state).toBe("HANDOFF");
   });
 });

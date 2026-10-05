@@ -38,6 +38,19 @@ function assertAllowedUrl(url) {
   if (isPrivateHostname(parsed.hostname)) return { ok: false, code: "SSRF_BLOCKED" };
   if (ALLOWED_HOSTS.has(parsed.hostname)) return { ok: true, host: parsed.hostname };
   if (ALLOWED_HOST_PATTERNS.some((re) => re.test(parsed.hostname))) return { ok: true, host: parsed.hostname };
+  const extras = [process.env.AVATAR_BASE_URL, process.env.VIDEO_BASE_URL]
+    .filter(Boolean)
+    .map((value) => {
+      try {
+        return new URL(value).hostname.toLowerCase();
+      } catch {
+        return "";
+      }
+    })
+    .filter(Boolean);
+  if (extras.includes(parsed.hostname.toLowerCase()) && !isPrivateHostname(parsed.hostname)) {
+    return { ok: true, host: parsed.hostname, extra: true };
+  }
   return { ok: false, code: "SSRF_BLOCKED", host: parsed.hostname };
 }
 

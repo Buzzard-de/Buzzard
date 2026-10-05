@@ -1,48 +1,25 @@
-const VISEMES = Object.freeze({
-  a: "aa",
-  e: "E",
-  i: "ih",
-  o: "oh",
-  u: "ou",
-  m: "PP",
-  b: "PP",
-  p: "PP",
-  f: "FF",
-  v: "FF",
-  s: "SS",
-  t: "DD",
-  d: "DD",
-  n: "nn",
-  l: "nn",
-  k: "kk",
-  g: "kk",
-  r: "RR",
-  w: "ou",
-  y: "ih",
-});
+const viseme = require("./visemeEngine");
 
 function visemesFromText(text) {
-  const raw = String(text || "").toLowerCase();
-  const frames = [];
-  for (const ch of raw) {
-    if (/\s/.test(ch)) {
-      frames.push({ viseme: "sil", weight: 0.1 });
-      continue;
-    }
-    frames.push({ viseme: VISEMES[ch] || "neutral", weight: 0.6 });
-  }
-  return { ok: true, frames, realtime: false, source: "grapheme-approx" };
+  return viseme.buildTimeline({ text });
 }
 
-function syncWithAudio({ text, audioPresent, ttsLive }) {
-  const visemes = visemesFromText(text);
+function syncWithAudio({ text, audioPresent, ttsLive, durationMs, audioBytes, sampleRate, nativeLipSync, interrupted }) {
+  if (interrupted) return viseme.silence();
+  const timeline = viseme.buildTimeline({
+    text,
+    durationMs: audioPresent ? durationMs : null,
+    audioBytes,
+    sampleRate,
+    nativeLipSync,
+  });
   return {
-    ...visemes,
+    ...timeline,
     audioPresent: Boolean(audioPresent),
     ttsLive: Boolean(ttsLive),
     claimedLiveHuman: false,
-    jaw: ttsLive && audioPresent ? "synced" : "idle",
+    jaw: timeline.audioLocked ? "synced" : "idle",
   };
 }
 
-module.exports = { visemesFromText, syncWithAudio, VISEMES };
+module.exports = { visemesFromText, syncWithAudio, VISEMES: viseme.STATES };

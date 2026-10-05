@@ -7,6 +7,9 @@ const phone = require("../phoneSession");
 const { EMBODIED_STATE } = require("./constants");
 const { createCharacterState, applyCharacterPatch } = require("./characterState");
 const { createOfficeWorld, cloneWorld, getObject, objectsInZone } = require("./worldGraph");
+const { snapshot } = require("./worldState");
+const { resolveFallback } = require("./fallback");
+const viseme = require("./visemeEngine");
 const { planBehavior, materializeStep } = require("./behaviorPlanner");
 const { direct } = require("./behaviorDirector");
 const { applyInterrupt, resumePaused } = require("./interruption");
@@ -31,6 +34,12 @@ function createSession({ userId, language, debug } = {}) {
   const world = createOfficeWorld();
   const character = createCharacterState({ position: { ...world.spawn } });
   const id = newId("emb");
+  const fallback = resolveFallback({
+    liveAvatar: avatar.lastLiveSuccess(),
+    providerConfigured: avatar.configured(),
+    providerWired: avatar.wired(),
+    local3d: false,
+  });
   const session = {
     id,
     avatarId: "pusat-digital-human-v1",
@@ -46,9 +55,11 @@ function createSession({ userId, language, debug } = {}) {
     pausedTask: null,
     queued: [],
     provider: avatar.health(),
-    renderer: "CSS_3D_FALLBACK",
-    liveAvatar: false,
+    renderer: fallback.mode,
+    fallback,
+    liveAvatar: Boolean(fallback.live),
     liveVideo: false,
+    lips: viseme.silence(),
     debug: Boolean(debug) && process.env.NODE_ENV !== "production",
     createdAt: Date.now(),
   };
@@ -57,27 +68,41 @@ function createSession({ userId, language, debug } = {}) {
   return { ok: true, session: publicSession(session) };
 }
 
+function activityLabel(state) {
+  const map = {
+    LISTENING: "Dinliyor",
+    THINKING: "Düşünüyor",
+    WORKING: "Çalışıyor",
+    SPEAKING: "Konuşuyor",
+    GETTING_DOCUMENT: "Arşivde",
+    USING_COMPUTER: "Masada",
+    USING_PHONE: "Aramada",
+    HANDOFF: "Handoff",
+    IDLE: "Hazır",
+  };
+  return map[state] || state;
+}
+
 function publicSession(session) {
+  const world = snapshot(session.world, session.character, { activeTask: session.currentTask, camera: session.camera });
   const out = redactObject({
     id: session.id,
     avatarId: session.avatarId,
     worldId: session.worldId,
     state: session.state,
+    activity: activityLabel(session.state),
     character: session.character,
-    objects: session.world.objects.map((obj) => ({
-      id: obj.id,
-      type: obj.type,
-      zone: obj.zone,
-      position: obj.position,
-      state: obj.state,
-    })),
+    objects: world.objects,
+    world,
     presence: session.presence,
-    liveAvatar: false,
+    liveAvatar: Boolean(session.liveAvatar),
     liveVideo: false,
     renderer: session.renderer,
+    fallback: session.fallback,
     provider: session.provider,
     currentTask: session.currentTask,
     cameraPolicy: sessionOnlyCameraPolicy(),
+    userStatus: session.fallback?.userStatus || "Avatar service unavailable",
   });
   if (session.debug) {
     out.debug = {
@@ -136,6 +161,9 @@ async function handleTurn(id, input = {}) {
 
   if (input.interrupt) {
     Object.assign(session, applyInterrupt(session, { kind: input.interruptKind || "USER_CURRENT_REQUEST", task: input.task }));
+    session.lips = viseme.silence();
+    session.character = applyCharacterPatch(session.character, { speaking: false, listening: true });
+    avatar.interrupt(session.avatarSessionId);
     emit("avatar.interrupted", { sessionId: id, status: session.state });
   }
 
@@ -263,9 +291,12 @@ async function handleTurn(id, input = {}) {
     speaking: true,
     ttsLive: Boolean(ttsResult.ok && tts.lastLiveSuccess && tts.lastLiveSuccess()),
     speechText: orch.reply,
+    durationMs: ttsResult.durationMs,
     userVideoPriority: session.presence.cameraOn,
     walking: executed.some((row) => row.action === "walk_to"),
+    cabinet: executed.some((row) => row.targetId === "cabinet" || row.action === "retrieve_document"),
   });
+  session.lips = direction.lips;
   session.character = applyCharacterPatch(session.character, {
     speaking: true,
     lastAction: executed[executed.length - 1]?.action || "speak",
@@ -284,7 +315,7 @@ async function handleTurn(id, input = {}) {
     tts: ttsResult.ok ? { ok: true } : ttsResult,
     session: publicSession(session),
     latencyMs: Date.now() - started,
-    liveAvatar: false,
+    liveAvatar: Boolean(session.liveAvatar),
     renderer: session.renderer,
   };
 }

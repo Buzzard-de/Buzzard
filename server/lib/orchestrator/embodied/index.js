@@ -18,6 +18,13 @@ const avatarProvider = require("./avatarProvider");
 const videoSession = require("./videoSession");
 const runtime = require("./runtime");
 const validator = require("./validator");
+const capabilityRegistry = require("./capabilityRegistry");
+const visemeEngine = require("./visemeEngine");
+const facialAnimationEngine = require("./facialAnimationEngine");
+const bodyAnimation = require("./bodyAnimation");
+const worldState = require("./worldState");
+const quality = require("./quality");
+const fallback = require("./fallback");
 
 module.exports = {
   ...constants,
@@ -40,4 +47,11 @@ module.exports = {
   videoSession,
   runtime,
   validator,
+  capabilityRegistry,
+  visemeEngine,
+  facialAnimationEngine,
+  bodyAnimation,
+  worldState,
+  quality,
+  fallback,
 };

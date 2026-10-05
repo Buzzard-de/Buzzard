@@ -38,7 +38,24 @@ function candidatePlans(goal, truth) {
       step("look_at", { targetId: "computer_main" }),
       step("speak"),
     ];
-    return truth?.documentFound ? [cabinet, computer, archive, notebook] : [computer, archive, notebook];
+    const print = [
+      step("walk_to", { targetId: "desk_main" }),
+      step("type", { targetId: "computer_main", representationOnly: true }),
+      step("walk_to", { targetId: "printer" }),
+      step("print", { targetId: "printer", representationOnly: true }),
+      step("walk_to", { targetId: "desk_main" }),
+      step("speak"),
+    ];
+    const compare = [
+      step("walk_to", { targetId: "screens_ops" }),
+      step("walk_to", { targetId: "archive" }),
+      step("inspect", { targetId: "archive" }),
+      step("look_at", { targetId: "notebook" }),
+      step("speak"),
+    ];
+    return truth?.documentFound
+      ? [cabinet, computer, archive, notebook, print, compare]
+      : [computer, archive, notebook, print, compare];
   }
   if (/ara|anrufen|call|telefon/i.test(g)) {
     return [[step("walk_to", { targetId: "phone_front" }), step("call", { requires: "callAuthorized" })]];
@@ -49,8 +66,38 @@ function candidatePlans(goal, truth) {
   return [[step("listen"), step("think"), step("speak")]];
 }
 
-function planBehavior({ goal, intent, characterState, truth, recentSequences, urgency, hour } = {}) {
-  const candidates = candidatePlans(goal || intent, truth);
+function decorate(stepRow) {
+  const gaze =
+    stepRow.targetId === "cabinet"
+      ? "CABINET"
+      : stepRow.targetId === "computer_main" || stepRow.targetId === "screens_ops"
+        ? "SCREEN"
+        : stepRow.action === "speak"
+          ? "USER"
+          : stepRow.targetId === "phone_front"
+            ? "PHONE"
+            : "OBJECT";
+  const camera =
+    stepRow.action === "walk_to"
+      ? "FOLLOW"
+      : stepRow.targetId === "cabinet"
+        ? "CABINET"
+        : stepRow.action === "speak"
+          ? "MEDIUM"
+          : "DESK";
+  return {
+    ...stepRow,
+    gaze,
+    camera,
+    gesture: stepRow.action === "speak" ? "open-hand" : stepRow.action === "walk_to" ? "none" : "reach",
+    timingMs: stepRow.action === "think" ? null : stepRow.action === "walk_to" ? 900 : 350,
+    interruptible: stepRow.action !== "retrieve_document",
+    speech: stepRow.action === "speak",
+  };
+}
+
+function planBehavior({ goal, intent, characterState, truth, recentSequences, urgency, hour, risk, availableObjects } = {}) {
+  const candidates = candidatePlans(goal || intent, truth).map((plan) => plan.map(decorate));
   const varied = varyPlan(candidates, {
     goal,
     intent,
@@ -58,6 +105,8 @@ function planBehavior({ goal, intent, characterState, truth, recentSequences, ur
     recentSequences,
     urgency,
     hour,
+    risk,
+    availableObjects,
   });
   return {
     ok: true,
@@ -74,7 +123,7 @@ function materializeStep(world, character, stepRow, truth) {
   if (stepRow.action === "retrieve_document") return retrieveDocument(world, truth);
   if (stepRow.action === "call") return startCall(world, truth);
   if (stepRow.action === "write") return writeNote(stepRow.text, truth);
-  if (["type", "click", "scroll"].includes(stepRow.action)) return computerAction(stepRow.action, truth);
+  if (["type", "click", "scroll", "print"].includes(stepRow.action)) return computerAction(stepRow.action, truth);
   if (stepRow.targetId && !getObject(world, stepRow.targetId) && stepRow.action !== "speak") {
     return { ok: false, code: "OBJECT_NOT_FOUND", visual: false };
   }

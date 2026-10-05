@@ -18,7 +18,20 @@ const EMBODIED_STATE = Object.freeze({
   OFFLINE: "OFFLINE",
 });
 
-const CAMERAS = Object.freeze(["FRONT", "BACK", "LEFT", "RIGHT", "OVERHEAD", "FOLLOW", "DESK", "CLOSEUP"]);
+const CAMERAS = Object.freeze([
+  "FRONT",
+  "MEDIUM",
+  "CLOSE",
+  "CLOSEUP",
+  "FOLLOW",
+  "DESK",
+  "CABINET",
+  "SCREEN",
+  "LEFT",
+  "RIGHT",
+  "BACK",
+  "OVERHEAD",
+]);
 
 const ZONES = Object.freeze({
   FRONT: "FRONT",

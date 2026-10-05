@@ -74,6 +74,8 @@ export default function AdminOrchestratorPanel() {
           <p>Real STT: {dash.production?.realSttActive || dash.real?.stt ? "YES" : "NO"}</p>
           <p>Real TTS: {dash.production?.realTtsActive || dash.real?.tts ? "YES" : "NO"}</p>
           <p>Real Phone: {dash.production?.realPhoneActive || dash.real?.phone ? "YES" : "NO"}</p>
+          <p>Real Avatar: NO</p>
+          <p>Real-time video: NO</p>
           <pre>{JSON.stringify(dash.flags, null, 2)}</pre>
           <pre>{JSON.stringify(dash.inspect, null, 2)}</pre>
         </div>

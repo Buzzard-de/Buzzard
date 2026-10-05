@@ -1,0 +1,123 @@
+.pusat-office {
+  --gold: #c9a227;
+  --black: #0a0a0a;
+  background: radial-gradient(circle at 50% 0%, #1a1408, var(--black) 55%);
+  color: #f4ead0;
+  min-height: 100vh;
+  padding: 1.25rem;
+  font-family: inherit;
+}
+
+.pusat-office[dir="rtl"] {
+  text-align: right;
+}
+
+.pusat-office__stage {
+  perspective: 1200px;
+  height: min(70vh, 640px);
+  margin: 1rem auto;
+  max-width: 1100px;
+}
+
+.pusat-office__room {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+  background: linear-gradient(180deg, #16120b, #0d0b08);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pusat-office__room[data-camera="FRONT"] { transform: rotateY(0deg) rotateX(6deg); }
+.pusat-office__room[data-camera="BACK"] { transform: rotateY(180deg) rotateX(6deg); }
+.pusat-office__room[data-camera="LEFT"] { transform: rotateY(90deg) rotateX(6deg); }
+.pusat-office__room[data-camera="RIGHT"] { transform: rotateY(-90deg) rotateX(6deg); }
+.pusat-office__room[data-camera="OVERHEAD"] { transform: rotateX(70deg); }
+.pusat-office__room[data-camera="FOLLOW"] { transform: rotateY(-18deg) rotateX(8deg); }
+.pusat-office__room[data-camera="DESK"] { transform: rotateX(12deg) scale(1.12); }
+.pusat-office__room[data-camera="CLOSEUP"] { transform: scale(1.28) rotateX(8deg); }
+
+.pusat-office__object {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background: rgba(201, 162, 39, 0.12);
+  color: #f4ead0;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.35rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.pusat-office__avatar {
+  position: absolute;
+  width: 42px;
+  height: 72px;
+  border-radius: 18px 18px 8px 8px;
+  background: linear-gradient(180deg, #e8d7a3, #8a6d1f);
+  border: 2px solid var(--gold);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+}
+
+.pusat-office__avatar[data-expression="listening"] { box-shadow: 0 0 12px rgba(201, 162, 39, 0.5); }
+.pusat-office__avatar[data-expression="thinking"] { opacity: 0.9; }
+.pusat-office__avatar[data-expression="speaking"] { filter: brightness(1.08); }
+
+.pusat-office__bar,
+.pusat-office__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.pusat-office button,
+.pusat-office input,
+.pusat-office textarea {
+  background: #111;
+  color: #f4ead0;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+}
+
+.pusat-office__status {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.pusat-office__fallback {
+  margin: 0.75rem auto;
+  max-width: 1100px;
+  border: 1px dashed var(--gold);
+  padding: 0.75rem;
+}
+
+.pusat-office__debug {
+  max-width: 1100px;
+  margin: 1rem auto;
+  font-size: 0.75rem;
+  background: #111;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+@media (max-width: 767px) {
+  .pusat-office__stage { height: 46vh; }
+  .pusat-office__room { transform: none !important; }
+  .pusat-office { padding: 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pusat-office__room { transition: none; }
+}
+
+.pusat-office:not(.pusat-office--enabled) .pusat-office__stage {
+  filter: grayscale(0.4);
+}

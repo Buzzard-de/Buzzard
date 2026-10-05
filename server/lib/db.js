@@ -3872,6 +3872,7 @@ migrateMasterIntegrationPhase2();
 migrateMasterIntegrationPhase3();
 migrateGoLiveClosure();
 migrateMaximumOrchestrator();
+migrateEmbodiedAi();
 
 function migrateMasterIntegrationFoundation() {
   db.exec(`
@@ -4164,6 +4165,34 @@ function migrateMaximumOrchestrator() {
       db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
     }
   }
+}
+
+function migrateEmbodiedAi() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS orch_embodied_sessions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      conversation_id TEXT,
+      language TEXT DEFAULT 'de',
+      state TEXT DEFAULT 'IDLE',
+      world_id TEXT,
+      avatar_id TEXT,
+      character_json TEXT DEFAULT '{}',
+      world_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orch_embodied_events (
+      id TEXT PRIMARY KEY,
+      session_id TEXT,
+      conversation_id TEXT,
+      type TEXT,
+      payload_json TEXT DEFAULT '{}',
+      latency_ms INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_orch_embodied_session ON orch_embodied_events(session_id);
+  `);
 }
 
 function seed() {

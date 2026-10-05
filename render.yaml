@@ -130,6 +130,20 @@ services:
         value: "0"
       - key: CALL_RECORDING_ENABLED
         value: "0"
+      - key: EMBODIED_AI_ENABLED
+        value: "0"
+      - key: AVATAR_ENABLED
+        value: "0"
+      - key: VIDEO_ENABLED
+        value: "0"
+      - key: WORLD_3D_ENABLED
+        value: "0"
+      - key: BEHAVIOR_PLANNER_ENABLED
+        value: "0"
+      - key: OBJECT_INTERACTION_ENABLED
+        value: "0"
+      - key: REALTIME_AVATAR_ENABLED
+        value: "0"
       - key: BUZZARD_DB_PATH
         value: /var/data/buzzard.db
       - key: BUZZARD_BACKUP_DIR

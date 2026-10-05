@@ -16,6 +16,7 @@ const telephony = require("./providers/telephony");
 const { acceptEvent } = require("./webhookSecurity");
 const webrtc = require("./providers/webrtc");
 const { validateProduction } = require("./productionValidator");
+const embodied = require("./embodied");
 
 function status() {
   const f = flags.getFlags();
@@ -28,7 +29,10 @@ function status() {
       text: f.ORCHESTRATOR_ENABLED,
       voice: f.VOICE_ENABLED,
       phone: f.PHONE_ENABLED,
-      webrtc: f.VOICE_WEBRTC_ENABLED,
+      webrtc: f.VOICE_WEBRTC_ENABLED || f.WEBRTC_ENABLED,
+      video: f.VIDEO_ENABLED,
+      avatar: f.AVATAR_ENABLED,
+      embodied: f.EMBODIED_AI_ENABLED,
     },
     providers: {
       ai: require("./providers/ai").health(),
@@ -36,6 +40,7 @@ function status() {
       tts: tts.health(),
       telephony: telephony.health(),
       webrtc: webrtc.health(),
+      avatar: embodied.avatarProvider.health(),
     },
     realPhoneCalls: telephony.liveAllowed(),
     inspect: require("./providers/health").inspectAll(),
@@ -43,6 +48,9 @@ function status() {
     realSttActive: Boolean(production.realSttActive),
     realTtsActive: Boolean(production.realTtsActive),
     realPhoneActive: Boolean(production.realPhoneActive),
+    realAvatarActive: false,
+    realTimeVideoActive: false,
+    embodied: embodied.validator.validateEmbodied(),
   };
 }
 
@@ -72,4 +80,5 @@ module.exports = {
   acceptEvent,
   status,
   validateProduction,
+  embodied,
 };

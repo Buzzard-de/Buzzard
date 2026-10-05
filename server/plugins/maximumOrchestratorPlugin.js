@@ -4,6 +4,7 @@ const orch = require("../lib/orchestrator");
 const webrtc = require("../lib/orchestrator/providers/webrtc");
 const { validateProduction } = require("../lib/orchestrator/productionValidator");
 const { checkLimit } = require("../lib/orchestrator/rateLimit");
+const embodied = require("../lib/orchestrator/embodied");
 
 function publicDisabled(res, code = "ORCHESTRATOR_DISABLED") {
   return res.status(503).json({ success: false, code, message: orch.userFacingError(code) });
@@ -174,8 +175,65 @@ module.exports = {
         success: true,
         dashboard: orch.dashboard(),
         production: validateProduction(),
+        embodied: embodied.validator.validateEmbodied(),
         inspect: require("../lib/orchestrator/providers/health").inspectAll(),
       });
+    });
+
+    app.get("/api/health/embodied", (_req, res) => {
+      res.json({
+        success: true,
+        embodied: embodied.validator.validateEmbodied(),
+        avatar: embodied.avatarProvider.health(),
+        liveAvatar: false,
+        liveVideo: false,
+      });
+    });
+
+    app.post("/api/orchestrator/embodied/session", (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      const created = embodied.runtime.createSession({
+        userId: req.body?.userId || req.user?.id,
+        language: req.body?.language || "de",
+        debug: req.body?.debug,
+      });
+      res.status(created.ok ? 200 : 503).json({ success: created.ok, ...created });
+    });
+
+    app.get("/api/orchestrator/embodied/session/:id", (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      const session = embodied.runtime.getSession(req.params.id);
+      if (!session) return res.status(404).json({ success: false, code: "SESSION_NOT_FOUND" });
+      res.json({ success: true, session });
+    });
+
+    app.get("/api/orchestrator/embodied/session/:id/world", (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      const snap = embodied.runtime.worldSnapshot(req.params.id, req.query?.camera);
+      res.status(snap.ok ? 200 : 404).json({ success: snap.ok, ...snap });
+    });
+
+    app.post("/api/orchestrator/embodied/session/:id/turn", async (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      const result = await embodied.runtime.handleTurn(req.params.id, req.body || {});
+      res.status(result.ok ? 200 : 400).json({ success: result.ok, ...result });
+    });
+
+    app.post("/api/orchestrator/embodied/session/:id/presence", (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      const result = embodied.runtime.setPresence(req.params.id, req.body || {});
+      res.status(result.ok ? 200 : 400).json({ success: result.ok, ...result });
+    });
+
+    app.post("/api/orchestrator/embodied/session/:id/handoff", (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      const result = embodied.runtime.handoff(req.params.id, req.body || {});
+      res.json({ success: result.ok, ...result });
+    });
+
+    app.post("/api/orchestrator/embodied/session/:id/idle", (req, res) => {
+      if (!orch.flags.getFlags().EMBODIED_AI_ENABLED) return publicDisabled(res, "EMBODIED_AI_DISABLED");
+      res.json({ success: true, ...embodied.runtime.idleTick(req.params.id) });
     });
   },
 };

@@ -48,7 +48,7 @@ export default defineConfig({
     },
     {
       name: "orchestrator-isolation",
-      testMatch: /orchestrator-voice-call\.spec\.ts/,
+      testMatch: /orchestrator-voice-call\.spec\.ts|embodied-office\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
   ],

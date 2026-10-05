@@ -14,10 +14,13 @@ type Session = {
   liveAvatar?: boolean;
   renderer?: string;
   provider?: { code?: string };
+  activity?: string;
+  userStatus?: string;
+  fallback?: { mode?: string; live?: boolean };
   debug?: unknown;
 };
 
-const CAMERAS = ["FRONT", "BACK", "LEFT", "RIGHT", "OVERHEAD", "FOLLOW", "DESK", "CLOSEUP"];
+const CAMERAS = ["FRONT", "MEDIUM", "CLOSE", "FOLLOW", "DESK", "CABINET", "SCREEN", "LEFT", "RIGHT", "BACK", "OVERHEAD"];
 
 function pct(value: number, max = 10) {
   return `${Math.min(95, Math.max(4, (value / max) * 100))}%`;
@@ -40,9 +43,7 @@ export default function PusatOffice() {
       .then((res) => res.json())
       .then((data) => {
         setEnabled(Boolean(data?.embodied?.flags?.EMBODIED_AI_ENABLED));
-        if (!data?.embodied?.realAvatarActive) {
-          setNote(data?.avatar?.code || "AVATAR_PROVIDER_NOT_CONFIGURED");
-        }
+        setNote(data?.embodied?.fallback?.userStatus || data?.avatar?.code || "Avatar service unavailable");
       })
       .catch(() => setEnabled(false));
   }, []);
@@ -87,19 +88,19 @@ export default function PusatOffice() {
       dir={rtl ? "rtl" : "ltr"}
       data-pusat-office="1"
       data-camera={camera}
-      data-live-avatar="false"
+      data-live-avatar={session?.liveAvatar ? "true" : "false"}
       data-live-video="false"
-      data-renderer="CSS_3D_FALLBACK"
+      data-renderer={session?.renderer || "CSS_3D_FALLBACK"}
       data-quality={quality}
     >
       <div className="pusat-office__bar">
         <h1>Pusat Living Office</h1>
-        <p className="pusat-office__status" data-state={session?.state || "OFFLINE"}>
-          {session?.state || "OFFLINE"} · fallback renderer · not live human video
+        <p className="pusat-office__status" data-state={session?.state || "OFFLINE"} aria-live="polite">
+          {session?.activity || session?.state || "OFFLINE"} · {session?.fallback?.mode || "CSS_3D_FALLBACK"}
         </p>
       </div>
       <div className="pusat-office__fallback" role="status">
-        Digital character (fictional). Provider: {note || "NOT_CONFIGURED"}. Real-time avatar: NO.
+        {note || "Avatar service unavailable"}. Real-time avatar: {session?.liveAvatar ? "YES" : "NO"}.
       </div>
       <div className="pusat-office__stage">
         <div className="pusat-office__room" data-camera={camera}>
@@ -132,10 +133,13 @@ export default function PusatOffice() {
         <button type="button" onClick={start} disabled={!enabled}>
           Start
         </button>
-        <button type="button" onClick={() => setMuted((v) => !v)} data-mute>
+        <button type="button" onClick={() => setMuted((v) => !v)} data-mute aria-pressed={muted}>
           {muted ? "Unmute" : "Mute"}
         </button>
-        <button type="button" onClick={() => setCameraOn((v) => !v)} data-user-camera>
+        <button type="button" aria-pressed={!muted} data-speaker>
+          Speaker
+        </button>
+        <button type="button" onClick={() => setCameraOn((v) => !v)} data-user-camera aria-pressed={cameraOn}>
           {cameraOn ? "Camera off" : "Camera on"}
         </button>
         <button type="button" onClick={end}>
@@ -147,6 +151,12 @@ export default function PusatOffice() {
           aria-label="Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              void send();
+            }
+          }}
           placeholder="Text to Pusat"
         />
         <button type="button" onClick={send} disabled={!session}>

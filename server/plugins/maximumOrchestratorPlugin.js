@@ -13,7 +13,23 @@ function publicDisabled(res, code = "ORCHESTRATOR_DISABLED") {
 module.exports = {
   register(app) {
     app.get("/api/health/orchestrator", (_req, res) => {
-      res.json({ success: true, orchestrator: orch.status(), production: validateProduction() });
+      const production = validateProduction();
+      const embodiedReport = embodied.validator.validateEmbodied();
+      res.json({
+        success: true,
+        orchestrator: orch.status(),
+        production,
+        embodied: embodiedReport,
+        services: {
+          orchestrator: production.flags.ORCHESTRATOR_ENABLED ? "READY" : "NOT_CONFIGURED",
+          stt: embodiedReport.providerReady.stt,
+          tts: embodiedReport.providerReady.tts,
+          avatar: embodiedReport.providerReady.avatar,
+          video: embodiedReport.providerReady.video,
+          webrtc: embodiedReport.providerReady.webrtc,
+          telephony: embodiedReport.providerReady.telephony,
+        },
+      });
     });
 
     app.post("/api/orchestrator/message", async (req, res) => {
@@ -181,12 +197,26 @@ module.exports = {
     });
 
     app.get("/api/health/embodied", (_req, res) => {
+      const report = embodied.validator.validateEmbodied();
       res.json({
         success: true,
-        embodied: embodied.validator.validateEmbodied(),
+        embodied: report,
         avatar: embodied.avatarProvider.health(),
-        liveAvatar: false,
+        liveAvatar: Boolean(report.realAvatarActive),
         liveVideo: false,
+        services: {
+          orchestrator: report.flags.ORCHESTRATOR_ENABLED ? "READY" : "NOT_CONFIGURED",
+          stt: report.providerReady.stt,
+          tts: report.providerReady.tts,
+          avatar: report.providerReady.avatar,
+          video: report.providerReady.video,
+          webrtc: report.providerReady.webrtc,
+          telephony: report.providerReady.telephony,
+          world: report.codeReady.world,
+          behavior: report.codeReady.behavior,
+          security: report.codeReady.security,
+          approval: report.codeReady.approval,
+        },
       });
     });
 

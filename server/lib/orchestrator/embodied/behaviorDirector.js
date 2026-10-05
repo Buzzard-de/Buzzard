@@ -1,8 +1,6 @@
-const { gazeForState } = require("./gaze");
-const { expressionFor } = require("./expression");
+const { compose } = require("./facialAnimationEngine");
 const { selectCamera } = require("./cameraDirector");
 const { nextIdle } = require("./microBehaviors");
-const { syncWithAudio } = require("./lipSync");
 
 function direct({
   state,
@@ -16,19 +14,33 @@ function direct({
   speechText,
   walking,
   writing,
+  durationMs,
+  audioBytes,
+  interrupted,
+  cabinet,
 } = {}) {
-  const gaze = gazeForState(state, { lookAtScreen: state === "THINKING" && !speaking });
-  const expression = expressionFor(state, { risk, failed, listening });
-  const camera = selectCamera(state, { sessionId, userVideoPriority, walking, writing });
+  const face = compose({
+    state,
+    speechText,
+    durationMs,
+    audioBytes,
+    nativeLipSync: false,
+    risk,
+    failed,
+    listening,
+    speaking,
+    interrupted,
+  });
+  const camera = selectCamera(state, { sessionId, userVideoPriority, walking, writing, cabinet });
   const idle = speaking ? null : nextIdle({ sessionId, state, speaking, listening });
-  const lips = speaking ? syncWithAudio({ text: speechText, audioPresent: Boolean(ttsLive), ttsLive }) : { viseme: "sil" };
   return {
     layer: "HOW_LOOK",
-    gaze,
-    expression,
+    gaze: face.gaze,
+    expression: face.expression,
     camera,
     idle,
-    lips,
+    lips: face.visemes,
+    face,
     timingMs: speaking ? 400 : listening ? 250 : 600,
   };
 }

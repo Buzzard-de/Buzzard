@@ -1,6 +1,16 @@
 const { EMBODIED_STATE } = require("./constants");
 
-const TARGETS = Object.freeze(["USER", "CAMERA", "SCREEN", "DOCUMENT", "OBJECT", "DOOR", "PHONE"]);
+const TARGETS = Object.freeze([
+  "USER",
+  "CAMERA",
+  "SCREEN",
+  "DOCUMENT",
+  "PHONE",
+  "CABINET",
+  "DESK",
+  "OBJECT",
+  "DOOR",
+]);
 
 function gazeForState(state, extras = {}) {
   if (extras.target && TARGETS.includes(extras.target)) return extras.target;
@@ -10,8 +20,9 @@ function gazeForState(state, extras = {}) {
     case EMBODIED_STATE.WAITING:
       return "USER";
     case EMBODIED_STATE.READING:
+      return extras.objectType === "DOCUMENT" ? "DOCUMENT" : "DESK";
     case EMBODIED_STATE.GETTING_DOCUMENT:
-      return extras.objectType === "DOCUMENT" ? "DOCUMENT" : "OBJECT";
+      return extras.targetId === "cabinet" || extras.objectType === "CABINET" ? "CABINET" : "DOCUMENT";
     case EMBODIED_STATE.USING_COMPUTER:
     case EMBODIED_STATE.WRITING:
       return "SCREEN";

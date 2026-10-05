@@ -19,6 +19,7 @@ const { validateProduction } = require("./productionValidator");
 
 function status() {
   const f = flags.getFlags();
+  const production = validateProduction();
   return {
     name: "buzzard-maximum-orchestrator",
     enabled: f.ORCHESTRATOR_ENABLED,
@@ -37,10 +38,11 @@ function status() {
       webrtc: webrtc.health(),
     },
     realPhoneCalls: telephony.liveAllowed(),
-    realSttActive: stt.configured() && stt.lastLiveSuccess(),
-    realTtsActive: tts.configured() && tts.lastLiveSuccess(),
-    realPhoneActive: telephony.liveAllowed() && telephony.lastLiveSuccess(),
-    production: validateProduction(),
+    inspect: require("./providers/health").inspectAll(),
+    production,
+    realSttActive: Boolean(production.realSttActive),
+    realTtsActive: Boolean(production.realTtsActive),
+    realPhoneActive: Boolean(production.realPhoneActive),
   };
 }
 

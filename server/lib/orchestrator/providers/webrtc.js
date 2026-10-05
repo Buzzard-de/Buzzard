@@ -64,9 +64,17 @@ function setAnswer(sessionId, token, sdp) {
   if (!auth.room.offer) return { ok: false, code: "WEBRTC_OFFER_REQUIRED" };
   if (!sdp) return { ok: false, code: "WEBRTC_ANSWER_REQUIRED" };
   auth.room.answer = sdp;
-  auth.room.connectionState = "CONNECTED";
+  const iceConfigured = Boolean(process.env.WEBRTC_STUN_URL || process.env.WEBRTC_TURN_URL);
+  auth.room.connectionState = iceConfigured ? "SIGNALING_COMPLETE" : "SIGNALING_COMPLETE";
+  auth.room.mediaConnected = false;
   voice.setState(sessionId, VOICE_STATE.CONNECTED);
-  return { ok: true, sessionId, connectionState: "CONNECTED" };
+  return {
+    ok: true,
+    sessionId,
+    connectionState: "SIGNALING_COMPLETE",
+    mediaConnected: false,
+    iceConfigured,
+  };
 }
 
 function addIce(sessionId, token, candidate) {
@@ -76,13 +84,25 @@ function addIce(sessionId, token, candidate) {
   return { ok: true, iceCount: auth.room.ice.length, connectionState: auth.room.connectionState };
 }
 
+function iceConfig() {
+  const stun = process.env.WEBRTC_STUN_URL || "";
+  const turn = process.env.WEBRTC_TURN_URL || "";
+  return {
+    stunConfigured: Boolean(stun),
+    turnConfigured: Boolean(turn),
+    urls: [stun, turn].filter(Boolean),
+  };
+}
+
 function connectionState(sessionId) {
   const room = getRoom(sessionId);
-  if (!room) return { ok: false, code: "SESSION_NOT_FOUND", connectionState: "FAILED" };
-  const connected = Boolean(room.offer && room.answer);
+  if (!room) return { ok: false, code: "SESSION_NOT_FOUND", connectionState: "FAILED", mediaConnected: false };
+  const signalingComplete = Boolean(room.offer && room.answer);
   return {
     ok: true,
-    connectionState: connected ? "CONNECTED" : room.connectionState,
+    connectionState: signalingComplete ? "SIGNALING_COMPLETE" : room.connectionState,
+    mediaConnected: false,
+    iceConfigured: Boolean(process.env.WEBRTC_STUN_URL || process.env.WEBRTC_TURN_URL),
     fakeConnected: false,
   };
 }
@@ -111,7 +131,24 @@ function reconnect(sessionId, token) {
 function health() {
   const flags = getFlags();
   if (!flags.VOICE_WEBRTC_ENABLED) return "NOT_CONFIGURED";
-  return "HEALTHY";
+  if (!process.env.WEBRTC_STUN_URL && !process.env.WEBRTC_TURN_URL) return "NOT_CONFIGURED";
+  return "CONFIGURED";
+}
+
+function inspect() {
+  const ice = iceConfig();
+  return {
+    provider: "webrtc",
+    configured: Boolean(getFlags().VOICE_WEBRTC_ENABLED),
+    wired: true,
+    iceConfigured: ice.stunConfigured || ice.turnConfigured,
+    mediaConnected: false,
+    status: !getFlags().VOICE_WEBRTC_ENABLED
+      ? "DISABLED"
+      : ice.stunConfigured || ice.turnConfigured
+        ? "CONFIGURED"
+        : "NOT_CONFIGURED",
+  };
 }
 
 module.exports = {
@@ -125,4 +162,6 @@ module.exports = {
   httpsRequired,
   health,
   getRoom,
+  inspect,
+  iceConfig,
 };

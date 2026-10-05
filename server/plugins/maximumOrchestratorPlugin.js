@@ -174,6 +174,7 @@ module.exports = {
         success: true,
         dashboard: orch.dashboard(),
         production: validateProduction(),
+        inspect: require("../lib/orchestrator/providers/health").inspectAll(),
       });
     });
   },

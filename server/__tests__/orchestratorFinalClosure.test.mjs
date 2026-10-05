@@ -97,7 +97,8 @@ describe("orchestrator final closure", () => {
     expect(early.connectionState).not.toBe("CONNECTED");
     webrtc.setOffer(created.session.id, created.token, "offer-sdp");
     const answered = webrtc.setAnswer(created.session.id, created.token, "answer-sdp");
-    expect(answered.connectionState).toBe("CONNECTED");
+    expect(answered.connectionState).toBe("SIGNALING_COMPLETE");
+    expect(answered.mediaConnected).toBe(false);
   });
 
   it("rejects Webrtc without a session token", () => {
@@ -112,7 +113,7 @@ describe("orchestrator final closure", () => {
     process.env.TELEPHONY_PROVIDER = "twilio";
     process.env.TELEPHONY_ACCOUNT_SID = "ACtest";
     process.env.TELEPHONY_AUTH_TOKEN = "token";
-    process.env.PHONE_NUMBER = "+49151";
+    process.env.PHONE_NUMBER = "+4915126219394";
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
       status: 201,
@@ -120,7 +121,7 @@ describe("orchestrator final closure", () => {
       json: async () => ({ sid: "CAreal", status: "queued" }),
     });
     const telephony = require("../lib/orchestrator/providers/telephony");
-    const call = await telephony.createCall({ to: "+49111", fetchImpl });
+    const call = await telephony.createCall({ to: "+4915126219394", fetchImpl });
     expect(call.ok).toBe(true);
     expect(call.live).toBe(true);
     expect(call.mock).toBe(false);
@@ -230,5 +231,101 @@ describe("orchestrator final closure", () => {
     expect(css).not.toContain("body:has(.home-fullscreen)");
     expect(css).not.toContain(".buzzard-mobile-only");
     expect(css).not.toContain(".home-fullscreen");
+  });
+
+  it("maps provider HTTP 401 and 429 without fake success", async () => {
+    const breaker = require("../lib/orchestrator/circuitBreaker");
+    breaker.resetAll();
+    process.env.OPENAI_API_KEY = "sk-test";
+    const stt = require("../lib/orchestrator/providers/stt");
+    const unauthorized = await stt.transcribe({
+      audio: Buffer.from("audio-bytes"),
+      fetchImpl: vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+        headers: { get: () => "application/json" },
+        json: async () => ({ error: "invalid" }),
+      }),
+    });
+    expect(unauthorized.ok).toBe(false);
+    expect(unauthorized.code).toBe("PROVIDER_AUTH_FAILED");
+    const limited = await stt.transcribe({
+      audio: Buffer.from("audio-bytes"),
+      fetchImpl: vi.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: { get: () => "application/json" },
+        json: async () => ({ error: "rate" }),
+      }),
+    });
+    expect(limited.ok).toBe(false);
+    expect(["RATE_LIMITED", "CIRCUIT_OPEN"]).toContain(limited.code);
+  });
+
+  it("rejects malformed STT JSON as INVALID_RESPONSE", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    const stt = require("../lib/orchestrator/providers/stt");
+    const result = await stt.transcribe({
+      audio: Buffer.from("audio-bytes"),
+      fetchImpl: vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: { get: () => "application/json" },
+        json: async () => ({ unexpected: true }),
+      }),
+    });
+    expect(result.ok).toBe(false);
+    expect(result.code).toBe("INVALID_RESPONSE");
+  });
+
+  it("blocks private provider URLs", async () => {
+    const { providerFetch } = require("../lib/orchestrator/providers/httpClient");
+    const result = await providerFetch("http://127.0.0.1/secret", { method: "GET" }, { attempts: 1 });
+    expect(result.ok).toBe(false);
+    expect(result.code).toBe("SSRF_BLOCKED");
+  });
+
+  it("blocks invalid voice state transitions", () => {
+    const voice = require("../lib/orchestrator/voiceSession");
+    const session = voice.createSession({ language: "de" });
+    const blocked = voice.setState(session.id, "SPEAKING");
+    expect(blocked.ok).toBe(false);
+    expect(blocked.code).toBe("INVALID_STATE_TRANSITION");
+  });
+
+  it("does not invent cost for unknown providers", () => {
+    const cost = require("../lib/orchestrator/costControl");
+    expect(cost.estimateStt(60000, "mystery")).toBeNull();
+  });
+
+  it("keeps AWS Transcribe and SIP explicitly not wired", async () => {
+    process.env.STT_PROVIDER = "aws";
+    process.env.AWS_TRANSCRIBE_ACCESS_KEY = "AKIATEST";
+    process.env.VOICE_ENABLED = "1";
+    const stt = require("../lib/orchestrator/providers/stt");
+    const result = await stt.transcribe({ audio: Buffer.from("abcd") });
+    expect(result.code).toBe("STT_PROVIDER_NOT_WIRED");
+    delete process.env.STT_PROVIDER;
+    delete process.env.AWS_TRANSCRIBE_ACCESS_KEY;
+    process.env.TELEPHONY_PROVIDER = "sip";
+    process.env.TELEPHONY_ACCOUNT_SID = "ACtest";
+    process.env.TELEPHONY_AUTH_TOKEN = "token";
+    process.env.PHONE_NUMBER = "+4915126219394";
+    const telephony = require("../lib/orchestrator/providers/telephony");
+    const call = await telephony.createCall({ to: "+4915126219394" });
+    expect(call.ok).toBe(false);
+    expect(["TELEPHONY_PROVIDER_NOT_WIRED", "PHONE_PROVIDER_NOT_CONFIGURED"]).toContain(call.code);
+    delete process.env.TELEPHONY_PROVIDER;
+    delete process.env.TELEPHONY_ACCOUNT_SID;
+    delete process.env.TELEPHONY_AUTH_TOKEN;
+    delete process.env.PHONE_NUMBER;
+  });
+
+  it("inspects admin provider status without claiming CONNECTED", () => {
+    const health = require("../lib/orchestrator/providers/health");
+    const rows = health.inspectAll();
+    expect(rows.stt.status).not.toBe("CONNECTED");
+    expect(rows.tts.status).not.toBe("CONNECTED");
+    expect(["NOT_CONFIGURED", "DISABLED", "CONFIGURED", "NOT_WIRED"]).toContain(rows.webrtc.status);
   });
 });

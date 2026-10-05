@@ -498,6 +498,7 @@ async function handleRequest(input = {}) {
 
 function dashboard() {
   const flags = getFlags();
+  const production = require("./productionValidator").validateProduction();
   return {
     flags,
     conversations: require("../db")
@@ -519,10 +520,12 @@ function dashboard() {
       telephony: require("./providers/telephony").health(),
       webrtc: require("./providers/webrtc").health(),
     },
+    inspect: require("./providers/health").inspectAll(),
+    production,
     real: {
-      stt: require("./providers/stt").configured() && require("./providers/stt").lastLiveSuccess(),
-      tts: require("./providers/tts").configured() && require("./providers/tts").lastLiveSuccess(),
-      phone: require("./providers/telephony").liveAllowed() && require("./providers/telephony").lastLiveSuccess(),
+      stt: Boolean(production.realSttActive),
+      tts: Boolean(production.realTtsActive),
+      phone: Boolean(production.realPhoneActive),
     },
   };
 }

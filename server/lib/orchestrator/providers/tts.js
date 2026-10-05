@@ -4,6 +4,9 @@ const breaker = require("../circuitBreaker");
 const { providerFetch } = require("./httpClient");
 const { redactObject, containsSensitivePayment, sanitizeText } = require("../securityGuard");
 const cost = require("../costControl");
+const { runChain } = require("./failover");
+const { snapshot } = require("./status");
+const { signAws } = require("./awsSigV4");
 
 let lastLiveOk = false;
 
@@ -15,22 +18,33 @@ function elevenKey() {
   return process.env.ELEVENLABS_API_KEY || "";
 }
 
+function azureKey() {
+  return process.env.AZURE_SPEECH_KEY || "";
+}
+
+function googleKey() {
+  return process.env.GOOGLE_TTS_KEY || process.env.GOOGLE_SPEECH_KEY || "";
+}
+
+function pollyKeys() {
+  return {
+    accessKey: process.env.AWS_POLLY_ACCESS_KEY || process.env.AWS_ACCESS_KEY_ID || "",
+    secretKey: process.env.AWS_POLLY_SECRET_KEY || process.env.AWS_SECRET_ACCESS_KEY || "",
+    region: process.env.AWS_POLLY_REGION || process.env.AWS_REGION || "eu-central-1",
+  };
+}
+
 function configured() {
-  return Boolean(
-    openaiKey() ||
-      elevenKey() ||
-      process.env.AZURE_SPEECH_KEY ||
-      process.env.AWS_POLLY_ACCESS_KEY ||
-      process.env.GOOGLE_TTS_KEY
-  );
+  return Boolean(openaiKey() || elevenKey() || azureKey() || googleKey() || pollyKeys().accessKey);
 }
 
 function providerName() {
   if (process.env.TTS_PROVIDER) return process.env.TTS_PROVIDER;
   if (elevenKey() && !openaiKey()) return "elevenlabs";
   if (openaiKey()) return "openai";
-  if (process.env.AZURE_SPEECH_KEY) return "azure";
-  if (process.env.AWS_POLLY_ACCESS_KEY) return "aws";
+  if (azureKey()) return "azure";
+  if (googleKey()) return "google";
+  if (pollyKeys().accessKey) return "aws";
   return "none";
 }
 
@@ -89,7 +103,7 @@ async function synthesizeOpenAI({ text, language, fetchImpl }) {
     { breakerName: "tts", fetchImpl, timeoutMs: Number(process.env.TTS_TIMEOUT_MS || 20000) }
   );
   if (!result.ok || !result.body?.audio) {
-    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : "TTS_PROVIDER_ERROR", provider: "openai", status: result.status };
+    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : result.code || "TTS_PROVIDER_ERROR", provider: "openai", status: result.status };
   }
   lastLiveOk = true;
   return canonical({
@@ -122,7 +136,7 @@ async function synthesizeEleven({ text, language, fetchImpl }) {
     { breakerName: "tts", fetchImpl, timeoutMs: Number(process.env.TTS_TIMEOUT_MS || 20000) }
   );
   if (!result.ok || !result.body?.audio) {
-    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : "TTS_PROVIDER_ERROR", provider: "elevenlabs", status: result.status };
+    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : result.code || "TTS_PROVIDER_ERROR", provider: "elevenlabs", status: result.status };
   }
   lastLiveOk = true;
   return canonical({
@@ -131,6 +145,110 @@ async function synthesizeEleven({ text, language, fetchImpl }) {
     format: "mp3",
     durationMs: null,
     provider: "elevenlabs",
+    requestId: result.requestId,
+  });
+}
+
+function localeOf(language) {
+  const map = { de: "de-DE", en: "en-US", tr: "tr-TR", ar: "ar-SA" };
+  return map[language] || "de-DE";
+}
+
+async function synthesizeAzure({ text, language, fetchImpl }) {
+  const region = process.env.AZURE_SPEECH_REGION || "westeurope";
+  const ssml = `<speak version="1.0" xml:lang="${localeOf(language)}"><voice xml:lang="${localeOf(language)}">${text.replace(/[<>]/g, "")}</voice></speak>`;
+  const result = await providerFetch(
+    `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`,
+    {
+      method: "POST",
+      headers: {
+        "Ocp-Apim-Subscription-Key": azureKey(),
+        "Content-Type": "application/ssml+xml",
+        "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
+      },
+      body: ssml,
+    },
+    { breakerName: "tts", fetchImpl, timeoutMs: Number(process.env.TTS_TIMEOUT_MS || 20000) }
+  );
+  if (!result.ok || !result.body?.audio) {
+    return { ok: false, code: result.code || "TTS_PROVIDER_ERROR", provider: "azure", status: result.status };
+  }
+  lastLiveOk = true;
+  return canonical({
+    audio: result.body.audio.toString("base64"),
+    mimeType: result.body.mimeType || "audio/mpeg",
+    format: "mp3",
+    durationMs: null,
+    provider: "azure",
+    requestId: result.requestId,
+  });
+}
+
+async function synthesizeGoogle({ text, language, fetchImpl }) {
+  const result = await providerFetch(
+    `https://texttospeech.googleapis.com/v1/text:synthesize?key=${encodeURIComponent(googleKey())}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: { text },
+        voice: { languageCode: localeOf(language) },
+        audioConfig: { audioEncoding: "MP3" },
+      }),
+    },
+    { breakerName: "tts", fetchImpl, timeoutMs: Number(process.env.TTS_TIMEOUT_MS || 20000) }
+  );
+  if (!result.ok || typeof result.body?.audioContent !== "string") {
+    return { ok: false, code: result.ok ? "INVALID_RESPONSE" : result.code || "TTS_PROVIDER_ERROR", provider: "google", status: result.status };
+  }
+  lastLiveOk = true;
+  return canonical({
+    audio: result.body.audioContent,
+    mimeType: "audio/mpeg",
+    format: "mp3",
+    durationMs: null,
+    provider: "google",
+    requestId: result.requestId,
+  });
+}
+
+async function synthesizePolly({ text, language, fetchImpl }) {
+  const creds = pollyKeys();
+  if (!creds.accessKey || !creds.secretKey) {
+    return { ok: false, code: "TTS_PROVIDER_NOT_CONFIGURED", provider: "aws" };
+  }
+  const voiceId = { de: "Marlene", en: "Joanna", tr: "Filiz", ar: "Zeina" }[language] || "Marlene";
+  const body = JSON.stringify({ Text: text, OutputFormat: "mp3", VoiceId: voiceId, Engine: "standard" });
+  const host = `polly.${creds.region}.amazonaws.com`;
+  const headers = signAws({
+    method: "POST",
+    host,
+    path: "/v1/speech",
+    region: creds.region,
+    service: "polly",
+    body,
+    accessKey: creds.accessKey,
+    secretKey: creds.secretKey,
+  });
+  const result = await providerFetch(
+    `https://${host}/v1/speech`,
+    {
+      method: "POST",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body,
+    },
+    { breakerName: "tts", fetchImpl, timeoutMs: Number(process.env.TTS_TIMEOUT_MS || 20000) }
+  );
+  if (!result.ok || !result.body?.audio) {
+    return { ok: false, code: result.code || "TTS_PROVIDER_ERROR", provider: "aws", status: result.status };
+  }
+  lastLiveOk = true;
+  return canonical({
+    audio: result.body.audio.toString("base64"),
+    mimeType: "audio/mpeg",
+    format: "mp3",
+    durationMs: null,
+    provider: "aws",
     requestId: result.requestId,
   });
 }
@@ -161,20 +279,24 @@ async function synthesize({ text, language, fetchImpl, customerId, conversationI
   if (!breaker.allow("tts")) return { ok: false, code: "CIRCUIT_OPEN" };
 
   const name = providerName();
-  let result;
-  if (name === "elevenlabs" && elevenKey()) {
-    result = await synthesizeEleven({ text: safe.text, language, fetchImpl });
-  } else if (name === "openai" && openaiKey()) {
-    result = await synthesizeOpenAI({ text: safe.text, language, fetchImpl });
-  } else if (["azure", "aws", "google"].includes(name)) {
-    return { ok: false, code: "TTS_PROVIDER_NOT_WIRED", provider: name };
-  } else if (openaiKey()) {
-    result = await synthesizeOpenAI({ text: safe.text, language, fetchImpl });
-  } else if (elevenKey()) {
-    result = await synthesizeEleven({ text: safe.text, language, fetchImpl });
-  } else {
+  const runners = [];
+  const add = (key, fn, present) => {
+    if (present) runners.push({ name: key, fn: () => fn({ text: safe.text, language, fetchImpl }) });
+  };
+  if (name === "elevenlabs") add("elevenlabs", synthesizeEleven, elevenKey());
+  else if (name === "azure") add("azure", synthesizeAzure, azureKey());
+  else if (name === "google") add("google", synthesizeGoogle, googleKey());
+  else if (name === "aws") add("aws", synthesizePolly, Boolean(pollyKeys().accessKey && pollyKeys().secretKey));
+  else add("openai", synthesizeOpenAI, openaiKey());
+  add("openai", synthesizeOpenAI, openaiKey());
+  add("elevenlabs", synthesizeEleven, elevenKey());
+  add("azure", synthesizeAzure, azureKey());
+  add("google", synthesizeGoogle, googleKey());
+  add("aws", synthesizePolly, Boolean(pollyKeys().accessKey && pollyKeys().secretKey));
+  if (!runners.length) {
     return { ok: false, code: "TTS_PROVIDER_NOT_CONFIGURED", provider: name };
   }
+  const result = await runChain(runners);
 
   if (result.ok) {
     cost.recordUsage({
@@ -203,6 +325,23 @@ function lastLiveSuccess() {
   return lastLiveOk;
 }
 
+function inspect() {
+  const name = providerName();
+  const wired = new Set(["openai", "elevenlabs", "azure", "google", "aws"]);
+  return {
+    provider: name,
+    configured: configured(),
+    wired: wired.has(name),
+    liveOk: lastLiveOk,
+    status: snapshot({
+      configured: configured(),
+      wired: wired.has(name),
+      disabled: !getFlags().VOICE_ENABLED,
+      liveOk: lastLiveOk,
+    }),
+  };
+}
+
 module.exports = {
   synthesize,
   synthesizeStream,
@@ -214,4 +353,5 @@ module.exports = {
   providerName,
   lastLiveSuccess,
   redactForSpeech,
+  inspect,
 };

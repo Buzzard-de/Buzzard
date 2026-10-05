@@ -4,6 +4,7 @@ const { PROVIDER_HEALTH } = require("../constants");
 const breaker = require("../circuitBreaker");
 const { providerFetch } = require("./httpClient");
 const cost = require("../costControl");
+const { snapshot } = require("./status");
 
 let lastLiveOk = false;
 
@@ -133,6 +134,84 @@ async function createTelnyxCall({ to, from, conversationId, fetchImpl }) {
   };
 }
 
+function e164(value) {
+  const raw = String(value || "").replace(/[^\d+]/g, "");
+  return /^\+[1-9]\d{7,14}$/.test(raw) ? raw : null;
+}
+
+async function createVonageCall({ to, from, conversationId, fetchImpl }) {
+  const answer = process.env.TELEPHONY_VOICE_URL || process.env.VONAGE_ANSWER_URL;
+  if (!answer) return { ok: false, code: "PHONE_PROVIDER_NOT_CONFIGURED", provider: "vonage", live: false };
+  const auth = Buffer.from(`${process.env.VONAGE_API_KEY}:${process.env.VONAGE_API_SECRET}`).toString("base64");
+  const dest = e164(to);
+  const src = e164(from || fromNumber());
+  if (!dest || !src) return { ok: false, code: "INVALID_PHONE_NUMBER", provider: "vonage" };
+  const result = await providerFetch(
+    "https://api.nexmo.com/v1/calls",
+    {
+      method: "POST",
+      headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: [{ type: "phone", number: dest.replace("+", "") }],
+        from: { type: "phone", number: src.replace("+", "") },
+        answer_url: [answer],
+      }),
+    },
+    { breakerName: "telephony", fetchImpl }
+  );
+  if (!result.ok) {
+    return { ok: false, code: result.code || "PHONE_PROVIDER_ERROR", provider: "vonage", live: false, status: result.status };
+  }
+  lastLiveOk = true;
+  return {
+    ok: true,
+    live: true,
+    mock: false,
+    callId: result.body?.uuid,
+    to: dest,
+    from: src,
+    conversationId,
+    status: result.body?.status || "started",
+    provider: "vonage",
+    requestId: result.requestId,
+  };
+}
+
+async function createPlivoCall({ to, from, conversationId, fetchImpl }) {
+  const answer = process.env.TELEPHONY_VOICE_URL || process.env.PLIVO_ANSWER_URL;
+  if (!answer) return { ok: false, code: "PHONE_PROVIDER_NOT_CONFIGURED", provider: "plivo", live: false };
+  const authId = process.env.PLIVO_AUTH_ID;
+  const dest = e164(to);
+  const src = e164(from || fromNumber());
+  if (!dest || !src) return { ok: false, code: "INVALID_PHONE_NUMBER", provider: "plivo" };
+  const auth = Buffer.from(`${authId}:${process.env.PLIVO_AUTH_TOKEN}`).toString("base64");
+  const result = await providerFetch(
+    `https://api.plivo.com/v1/Account/${authId}/Call/`,
+    {
+      method: "POST",
+      headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: src, to: dest, answer_url: answer }),
+    },
+    { breakerName: "telephony", fetchImpl }
+  );
+  if (!result.ok) {
+    return { ok: false, code: result.code || "PHONE_PROVIDER_ERROR", provider: "plivo", live: false, status: result.status };
+  }
+  lastLiveOk = true;
+  return {
+    ok: true,
+    live: true,
+    mock: false,
+    callId: result.body?.request_uuid,
+    to: dest,
+    from: src,
+    conversationId,
+    status: "queued",
+    provider: "plivo",
+    requestId: result.requestId,
+  };
+}
+
 async function createCall({ to, from, conversationId, fetchImpl } = {}) {
   const flags = getFlags();
   if (!flags.PHONE_ENABLED || !flags.OUTBOUND_CALL_ENABLED) {
@@ -155,11 +234,15 @@ async function createCall({ to, from, conversationId, fetchImpl } = {}) {
     return notConfigured("createCall");
   }
   if (!breaker.allow("telephony")) return { ok: false, code: "CIRCUIT_OPEN" };
+  const dest = e164(to);
+  if (!dest) return { ok: false, code: "INVALID_PHONE_NUMBER", live: false };
   const name = providerName();
-  if (name === "twilio") return createTwilioCall({ to, from, conversationId, fetchImpl });
-  if (name === "telnyx") return createTelnyxCall({ to, from, conversationId, fetchImpl });
-  if (["vonage", "plivo", "sip"].includes(name)) {
-    return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", provider: name, live: false };
+  if (name === "twilio") return createTwilioCall({ to: dest, from, conversationId, fetchImpl });
+  if (name === "telnyx") return createTelnyxCall({ to: dest, from, conversationId, fetchImpl });
+  if (name === "vonage") return createVonageCall({ to: dest, from, conversationId, fetchImpl });
+  if (name === "plivo") return createPlivoCall({ to: dest, from, conversationId, fetchImpl });
+  if (name === "sip") {
+    return { ok: false, code: "TELEPHONY_PROVIDER_NOT_WIRED", provider: "sip", live: false };
   }
   return notConfigured("createCall");
 }
@@ -241,6 +324,23 @@ function lastLiveSuccess() {
   return lastLiveOk;
 }
 
+function inspect() {
+  const name = providerName();
+  const wired = ["twilio", "telnyx", "vonage", "plivo"].includes(name);
+  return {
+    provider: name,
+    configured: credentialsPresent(),
+    wired,
+    liveOk: lastLiveOk,
+    status: snapshot({
+      configured: credentialsPresent(),
+      wired,
+      disabled: !getFlags().PHONE_ENABLED,
+      liveOk: lastLiveOk,
+    }),
+  };
+}
+
 module.exports = {
   createCall,
   answerCall,
@@ -256,4 +356,6 @@ module.exports = {
   credentialsPresent,
   providerName,
   lastLiveSuccess,
+  inspect,
+  e164,
 };

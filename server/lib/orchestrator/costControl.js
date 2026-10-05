@@ -14,20 +14,26 @@ function dayKey(customerId = "anon") {
   return `${customerId}:${new Date().toISOString().slice(0, 10)}`;
 }
 
-function estimateStt(durationMs, provider = "openai") {
+function estimateStt(durationMs, provider) {
+  const rates = { openai: 0.006, whisper: 0.006, deepgram: 0.0043, azure: 0.016, google: 0.006 };
+  const rate = rates[provider];
+  if (rate == null) return null;
   const minutes = Number(durationMs || 0) / 60000;
-  const rate = provider === "deepgram" ? RATES.deepgram_stt_per_min : RATES.openai_stt_per_min;
   return Number((minutes * rate).toFixed(6));
 }
 
-function estimateTts(chars, provider = "openai") {
-  const rate = provider === "elevenlabs" ? RATES.elevenlabs_tts_per_char : RATES.openai_tts_per_char;
+function estimateTts(chars, provider) {
+  const rates = { openai: 0.000015, elevenlabs: 0.00003, azure: 0.000016, google: 0.000016, aws: 0.000004 };
+  const rate = rates[provider];
+  if (rate == null) return null;
   return Number((Number(chars || 0) * rate).toFixed(6));
 }
 
-function estimatePhone(seconds, provider = "twilio") {
+function estimatePhone(seconds, provider) {
+  const rates = { twilio: 0.014, telnyx: 0.01, vonage: 0.014, plivo: 0.012 };
+  const rate = rates[provider];
+  if (rate == null) return null;
   const minutes = Number(seconds || 0) / 60;
-  const rate = provider === "twilio" ? RATES.twilio_per_min : RATES.twilio_per_min;
   return Number((minutes * rate).toFixed(6));
 }
 
@@ -66,8 +72,10 @@ function recordUsage({
   const est =
     estimatedCost != null
       ? Number(estimatedCost)
-      : estimateStt(sttSeconds * 1000) + estimateTts(ttsSeconds * 12) + estimatePhone(phoneSeconds) + Number(tokens) * RATES.llm_per_token;
-  row.estimatedCost = Number((row.estimatedCost + est).toFixed(6));
+      : null;
+  if (est != null) {
+    row.estimatedCost = Number((row.estimatedCost + est).toFixed(6));
+  }
   row.actualCost = Number((row.actualCost + Number(actualCost || 0)).toFixed(6));
   spend.set(key, row);
   const event = {

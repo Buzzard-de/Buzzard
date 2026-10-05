@@ -16,8 +16,10 @@ const TRANSITIONS = {
   [VOICE_STATE.LISTENING]: [VOICE_STATE.TRANSCRIBING, VOICE_STATE.INTERRUPTED, VOICE_STATE.ENDING, VOICE_STATE.FAILED],
   [VOICE_STATE.TRANSCRIBING]: [VOICE_STATE.THINKING, VOICE_STATE.LISTENING, VOICE_STATE.FAILED],
   [VOICE_STATE.THINKING]: [VOICE_STATE.SPEAKING, VOICE_STATE.ENDING, VOICE_STATE.FAILED],
-  [VOICE_STATE.SPEAKING]: [VOICE_STATE.INTERRUPTED, VOICE_STATE.LISTENING, VOICE_STATE.ENDING, VOICE_STATE.FAILED],
+  [VOICE_STATE.SPEAKING]: [VOICE_STATE.INTERRUPTED, VOICE_STATE.LISTENING, VOICE_STATE.PAUSED, VOICE_STATE.HANDOFF, VOICE_STATE.ENDING, VOICE_STATE.FAILED],
   [VOICE_STATE.INTERRUPTED]: [VOICE_STATE.LISTENING, VOICE_STATE.TRANSCRIBING, VOICE_STATE.ENDING, VOICE_STATE.FAILED],
+  [VOICE_STATE.PAUSED]: [VOICE_STATE.LISTENING, VOICE_STATE.HANDOFF, VOICE_STATE.ENDING, VOICE_STATE.FAILED],
+  [VOICE_STATE.HANDOFF]: [VOICE_STATE.ENDING, VOICE_STATE.ENDED, VOICE_STATE.FAILED],
   [VOICE_STATE.ENDING]: [VOICE_STATE.ENDED],
   [VOICE_STATE.ENDED]: [],
   [VOICE_STATE.FAILED]: [],
@@ -43,14 +45,14 @@ function getSession(id) {
   return db.prepare("SELECT * FROM orch_voice_sessions WHERE id = ?").get(id) || null;
 }
 
-function setState(id, state) {
+function setState(id, state, options = {}) {
   const session = getSession(id);
-  if (!session) return null;
+  if (!session) return { ok: false, code: "SESSION_NOT_FOUND" };
   const current = session.state === "ERROR" ? VOICE_STATE.FAILED : session.state;
   const next = state === "ERROR" ? VOICE_STATE.FAILED : state;
   const allowed = TRANSITIONS[current] || [];
-  if (current !== next && allowed.length && !allowed.includes(next) && process.env.ORCH_STRICT_VOICE_TRANSITIONS === "1") {
-    return session;
+  if (current !== next && allowed.length && !allowed.includes(next) && !options.force) {
+    return { ok: false, code: "INVALID_STATE_TRANSITION", session, from: current, to: next };
   }
   db.prepare("UPDATE orch_voice_sessions SET state = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(next, id);
   return getSession(id);

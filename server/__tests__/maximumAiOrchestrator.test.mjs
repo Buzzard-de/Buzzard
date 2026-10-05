@@ -154,7 +154,7 @@ describe("maximum AI orchestrator", () => {
   it("supports barge-in by stopping TTS when the user speaks", () => {
     const voice = require("../lib/orchestrator/voiceSession");
     const session = voice.createSession({ language: "de" });
-    voice.setState(session.id, "SPEAKING");
+    voice.setState(session.id, "SPEAKING", { force: true });
     const barged = voice.bargeIn(session.id);
     expect(barged.ttsStopped).toBe(true);
     expect(barged.state).toBe("INTERRUPTED");

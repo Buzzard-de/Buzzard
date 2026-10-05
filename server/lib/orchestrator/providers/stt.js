@@ -4,6 +4,8 @@ const breaker = require("../circuitBreaker");
 const { providerFetch } = require("./httpClient");
 const { normalizeAudio } = require("./audio");
 const cost = require("../costControl");
+const { runChain } = require("./failover");
+const { snapshot } = require("./status");
 
 let lastLiveOk = false;
 
@@ -15,16 +17,26 @@ function deepgramKey() {
   return process.env.DEEPGRAM_API_KEY || "";
 }
 
+const WIRED_STT = new Set(["openai", "whisper", "deepgram", "azure", "google"]);
+
+function azureKey() {
+  return process.env.AZURE_SPEECH_KEY || "";
+}
+
+function googleKey() {
+  return process.env.GOOGLE_SPEECH_KEY || process.env.GOOGLE_STT_KEY || "";
+}
+
 function configured() {
-  return Boolean(openaiKey() || deepgramKey() || process.env.AZURE_SPEECH_KEY || process.env.GOOGLE_SPEECH_KEY || process.env.AWS_TRANSCRIBE_ACCESS_KEY);
+  return Boolean(openaiKey() || deepgramKey() || azureKey() || googleKey() || process.env.AWS_TRANSCRIBE_ACCESS_KEY);
 }
 
 function providerName() {
   if (process.env.STT_PROVIDER) return process.env.STT_PROVIDER;
   if (deepgramKey() && !openaiKey()) return "deepgram";
   if (openaiKey()) return "openai";
-  if (process.env.AZURE_SPEECH_KEY) return "azure";
-  if (process.env.GOOGLE_SPEECH_KEY) return "google";
+  if (azureKey()) return "azure";
+  if (googleKey()) return "google";
   if (process.env.AWS_TRANSCRIBE_ACCESS_KEY) return "aws";
   return "none";
 }
@@ -72,9 +84,12 @@ async function transcribeOpenAI({ audio, language, fetchImpl }) {
     { breakerName: "stt", fetchImpl, timeoutMs: Number(process.env.STT_TIMEOUT_MS || 20000) }
   );
   if (!result.ok) {
-    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : "STT_PROVIDER_ERROR", provider: "openai", status: result.status };
+    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : result.code || "STT_PROVIDER_ERROR", provider: "openai", status: result.status };
   }
-  const transcript = result.body?.text || "";
+  const transcript = result.body?.text;
+  if (typeof transcript !== "string") {
+    return { ok: false, code: "INVALID_RESPONSE", provider: "openai", status: result.status };
+  }
   lastLiveOk = true;
   return canonical({
     transcript,
@@ -105,16 +120,91 @@ async function transcribeDeepgram({ audio, language, fetchImpl }) {
     { breakerName: "stt", fetchImpl, timeoutMs: Number(process.env.STT_TIMEOUT_MS || 20000) }
   );
   if (!result.ok) {
-    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : "STT_PROVIDER_ERROR", provider: "deepgram", status: result.status };
+    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : result.code || "STT_PROVIDER_ERROR", provider: "deepgram", status: result.status };
   }
-  const alt = result.body?.results?.channels?.[0]?.alternatives?.[0] || {};
+  const alt = result.body?.results?.channels?.[0]?.alternatives?.[0];
+  if (!alt || typeof alt.transcript !== "string") {
+    return { ok: false, code: "INVALID_RESPONSE", provider: "deepgram", status: result.status };
+  }
   lastLiveOk = true;
   return canonical({
-    transcript: alt.transcript || "",
+    transcript: alt.transcript,
     language: language || detectLanguage(alt.transcript),
     confidence: alt.confidence,
     durationMs: audio.durationMs,
     provider: "deepgram",
+    requestId: result.requestId,
+  });
+}
+
+function localeOf(language) {
+  const map = { de: "de-DE", en: "en-US", tr: "tr-TR", ar: "ar-SA" };
+  return map[language] || "de-DE";
+}
+
+async function transcribeAzure({ audio, language, fetchImpl }) {
+  const region = process.env.AZURE_SPEECH_REGION || "westeurope";
+  const result = await providerFetch(
+    `https://${region}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=${encodeURIComponent(localeOf(language))}`,
+    {
+      method: "POST",
+      headers: {
+        "Ocp-Apim-Subscription-Key": azureKey(),
+        "Content-Type": audio.mime || "audio/wav",
+        Accept: "application/json",
+      },
+      body: audio.buf,
+    },
+    { breakerName: "stt", fetchImpl, timeoutMs: Number(process.env.STT_TIMEOUT_MS || 20000) }
+  );
+  if (!result.ok) {
+    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : result.code || "STT_PROVIDER_ERROR", provider: "azure", status: result.status };
+  }
+  const transcript = result.body?.DisplayText ?? result.body?.NBest?.[0]?.Display;
+  if (typeof transcript !== "string") {
+    return { ok: false, code: "INVALID_RESPONSE", provider: "azure" };
+  }
+  lastLiveOk = true;
+  return canonical({
+    transcript,
+    language: language || detectLanguage(transcript),
+    confidence: result.body?.NBest?.[0]?.Confidence,
+    durationMs: audio.durationMs,
+    provider: "azure",
+    requestId: result.requestId,
+  });
+}
+
+async function transcribeGoogle({ audio, language, fetchImpl }) {
+  const result = await providerFetch(
+    `https://speech.googleapis.com/v1/speech:recognize?key=${encodeURIComponent(googleKey())}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        config: {
+          languageCode: localeOf(language),
+          encoding: "WEBM_OPUS",
+        },
+        audio: { content: audio.buf.toString("base64") },
+      }),
+    },
+    { breakerName: "stt", fetchImpl, timeoutMs: Number(process.env.STT_TIMEOUT_MS || 20000) }
+  );
+  if (!result.ok) {
+    return { ok: false, code: result.code === "CIRCUIT_OPEN" ? "CIRCUIT_OPEN" : result.code || "STT_PROVIDER_ERROR", provider: "google", status: result.status };
+  }
+  const transcript = result.body?.results?.[0]?.alternatives?.[0]?.transcript;
+  if (typeof transcript !== "string") {
+    return { ok: false, code: "INVALID_RESPONSE", provider: "google" };
+  }
+  lastLiveOk = true;
+  return canonical({
+    transcript,
+    language: language || detectLanguage(transcript),
+    confidence: result.body?.results?.[0]?.alternatives?.[0]?.confidence,
+    durationMs: audio.durationMs,
+    provider: "google",
     requestId: result.requestId,
   });
 }
@@ -154,20 +244,27 @@ async function transcribe({ audio, language, testTranscript, fetchImpl, customer
   const normalized = normalizeAudio(audio);
   if (!normalized.ok) return normalized;
 
-  let result;
-  if (name === "deepgram" && deepgramKey()) {
-    result = await transcribeDeepgram({ audio: normalized, language, fetchImpl });
-  } else if ((name === "openai" || name === "whisper") && openaiKey()) {
-    result = await transcribeOpenAI({ audio: normalized, language, fetchImpl });
-  } else if (["azure", "google", "aws"].includes(name)) {
-    return { ok: false, code: "STT_PROVIDER_NOT_WIRED", provider: name };
-  } else if (openaiKey()) {
-    result = await transcribeOpenAI({ audio: normalized, language, fetchImpl });
-  } else if (deepgramKey()) {
-    result = await transcribeDeepgram({ audio: normalized, language, fetchImpl });
-  } else {
+  if (name === "aws") {
+    return { ok: false, code: "STT_PROVIDER_NOT_WIRED", provider: "aws" };
+  }
+
+  const runners = [];
+  const add = (key, fn, present) => {
+    if (present) runners.push({ name: key, fn: () => fn({ audio: normalized, language, fetchImpl }) });
+  };
+  if (name === "deepgram") add("deepgram", transcribeDeepgram, deepgramKey());
+  else if (name === "azure") add("azure", transcribeAzure, azureKey());
+  else if (name === "google") add("google", transcribeGoogle, googleKey());
+  else add("openai", transcribeOpenAI, openaiKey());
+  add("openai", transcribeOpenAI, openaiKey());
+  add("deepgram", transcribeDeepgram, deepgramKey());
+  add("azure", transcribeAzure, azureKey());
+  add("google", transcribeGoogle, googleKey());
+
+  if (!runners.length) {
     return { ok: false, code: "STT_PROVIDER_NOT_CONFIGURED", provider: name };
   }
+  const result = await runChain(runners);
 
   if (result.ok) {
     cost.recordUsage({
@@ -214,6 +311,22 @@ function lastLiveSuccess() {
   return lastLiveOk;
 }
 
+function inspect() {
+  const name = providerName();
+  return {
+    provider: name,
+    configured: configured(),
+    wired: WIRED_STT.has(name),
+    liveOk: lastLiveOk,
+    status: snapshot({
+      configured: configured(),
+      wired: name === "aws" ? false : WIRED_STT.has(name) || configured(),
+      disabled: getFlags().VOICE_ENABLED === false,
+      liveOk: lastLiveOk,
+    }),
+  };
+}
+
 module.exports = {
   transcribe,
   transcribeAudio,
@@ -224,4 +337,6 @@ module.exports = {
   configured,
   providerName,
   lastLiveSuccess,
+  inspect,
+  WIRED_STT,
 };

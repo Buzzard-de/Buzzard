@@ -86,6 +86,7 @@ export default function PusatOffice() {
       className={`pusat-office${enabled ? " pusat-office--enabled" : ""}`}
       dir={rtl ? "rtl" : "ltr"}
       data-pusat-office="1"
+      data-camera={camera}
       data-live-avatar="false"
       data-live-video="false"
       data-renderer="CSS_3D_FALLBACK"

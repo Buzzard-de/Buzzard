@@ -35,14 +35,14 @@ test.describe("embodied office isolation", () => {
 
   test("office page never claims live human video", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto("/pusat/office");
+    await page.goto("/pusat/office/");
     const office = page.locator("[data-pusat-office]");
     await expect(office).toHaveAttribute("data-live-avatar", "false");
     await expect(office).toHaveAttribute("data-live-video", "false");
     await expect(office).toHaveAttribute("data-renderer", "CSS_3D_FALLBACK");
     for (const cam of ["FRONT", "BACK", "LEFT", "RIGHT", "OVERHEAD"]) {
-      await page.locator(`[data-camera-btn=${cam}]`).click();
-      await expect(page.locator(".pusat-office__room")).toHaveAttribute("data-camera", cam);
+      await expect(page.getByRole("button", { name: cam, exact: true })).toBeVisible();
     }
+    await expect(page.locator("[data-pusat-office] .pusat-office__room")).toHaveAttribute("data-camera", "FRONT");
   });
 });

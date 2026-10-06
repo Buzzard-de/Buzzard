@@ -57,9 +57,13 @@
   }
 
   .buzzard-mobile-shell {
-    background: #f4f4f4;
+    background: #fff;
     color: #111;
     min-height: 100%;
+    --bz-gold: #c9a227;
+    --bz-black: #111111;
+    --bz-muted: #8a8a8a;
+    --bz-border: #ececec;
   }
 
   .buzzard-mobile-header {
@@ -70,10 +74,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    min-height: 60px;
-    padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 8px;
-    background: #0a0a0a;
-    border-bottom: 1px solid rgba(201, 168, 64, 0.28);
+    min-height: 56px;
+    padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 4px;
+    background: #fff;
+    border-bottom: 1px solid var(--bz-border, #ececec);
   }
 
   .buzzard-mobile-header-btn,
@@ -85,7 +89,7 @@
     height: 44px;
     border: 0;
     background: transparent;
-    color: #f5f0e6;
+    color: #111;
     text-decoration: none;
     flex-shrink: 0;
   }
@@ -107,8 +111,8 @@
 
   .buzzard-mobile-logo img {
     width: auto;
-    height: 36px;
-    max-width: 168px;
+    height: 32px;
+    max-width: 160px;
     object-fit: contain;
   }
 
@@ -133,8 +137,8 @@
   }
 
   .buzzard-mobile-search {
-    padding: 10px 12px 8px;
-    background: #0a0a0a;
+    padding: 6px 12px 10px;
+    background: #fff;
   }
 
   .buzzard-mobile-search-form {
@@ -142,37 +146,37 @@
     align-items: center;
     gap: 8px;
     width: 100%;
-    min-height: 46px;
-    padding: 4px 4px 4px 14px;
-    border-radius: 12px;
-    background: #161616;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    min-height: 44px;
+    padding: 3px 3px 3px 14px;
+    border-radius: 999px;
+    background: #f3f3f3;
+    border: 1px solid #ececec;
   }
 
   .buzzard-mobile-search-input {
     flex: 1;
     width: 100%;
-    min-height: 44px;
+    min-height: 38px;
     border: 0;
     background: transparent;
-    color: #fff;
+    color: #111;
     font-size: 14px;
     font-family: inherit;
   }
 
   .buzzard-mobile-search-input::placeholder {
-    color: #8a8a8a;
+    color: #9a9a9a;
   }
 
   .buzzard-mobile-search-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     border: 0;
-    border-radius: 10px;
-    background: var(--gold, #c9a840);
+    border-radius: 999px;
+    background: var(--bz-gold, #c9a227);
     color: #111;
   }
 
@@ -183,27 +187,27 @@
 
   .buzzard-mobile-hero {
     position: relative;
-    margin: 0 0 8px;
-    padding: 36px 20px 28px;
-    border-radius: 0;
+    margin: 0 12px 10px;
+    padding: 28px 18px 24px;
+    border-radius: 16px;
     overflow: hidden;
     background:
-      linear-gradient(180deg, rgba(8, 8, 8, 0.2) 0%, rgba(8, 8, 8, 0.78) 100%),
+      linear-gradient(180deg, rgba(8, 8, 8, 0.12) 0%, rgba(8, 8, 8, 0.72) 100%),
       linear-gradient(160deg, #1a1408 0%, #0a0a0a 70%);
     background-size: cover;
     background-position: center;
     border: 0;
-    min-height: 220px;
+    min-height: 210px;
     color: #fff;
   }
 
   .buzzard-mobile-hero h1 {
     margin: 0 0 8px;
-    max-width: 14em;
-    font-size: 28px;
+    max-width: 11em;
+    font-size: 26px;
     line-height: 1.12;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     overflow-wrap: break-word;
   }
 
@@ -217,14 +221,18 @@
   .buzzard-mobile-hero-cta {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
+    min-height: 40px;
     padding: 0 16px;
-    border-radius: 10px;
-    background: var(--gold, #c9a840);
+    border-radius: 999px;
+    background: var(--bz-gold, #c9a227);
     color: #111;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     text-decoration: none;
+  }
+
+  .buzzard-mobile-hero-cta::after {
+    content: " →";
   }
 
   .buzzard-mobile-section-head {
@@ -237,13 +245,13 @@
 
   .buzzard-mobile-section-title {
     margin: 0;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
     color: #111;
   }
 
   .buzzard-mobile-section-link {
-    color: var(--gold, #c9a840);
+    color: var(--bz-gold, #c9a227);
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
@@ -262,34 +270,40 @@
   .buzzard-mobile-category-card {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    min-height: 112px;
-    padding: 16px 10px;
+    align-items: stretch;
+    gap: 8px;
+    min-height: 0;
+    padding: 0 0 8px;
     border-radius: 14px;
-    background: #f7f7f7;
-    border: 1px solid #ececec;
+    background: #fff;
+    border: 0;
     color: #111;
     text-decoration: none;
     text-align: center;
   }
 
+  .buzzard-mobile-category-card-visual,
   .buzzard-mobile-category-card-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: rgba(201, 168, 64, 0.12);
-    color: var(--gold, #c9a840);
+    width: 100%;
+    height: 92px;
+    border-radius: 14px;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(201, 162, 39, 0.16), rgba(17, 17, 17, 0.55)),
+      #1a1408;
+    background-size: cover;
+    background-position: center;
+    color: #f5f0e6;
   }
 
   .buzzard-mobile-category-card-label {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     line-height: 1.25;
+    padding: 0 4px;
   }
 
   .buzzard-mobile-promo {
@@ -305,7 +319,7 @@
   }
 
   .buzzard-mobile-promo strong {
-    color: var(--gold, #c9a840);
+    color: var(--bz-gold, #c9a227);
   }
 
   .buzzard-mobile-promo strong {
@@ -370,7 +384,7 @@
   }
 
   .buzzard-mobile-breadcrumb a {
-    color: var(--gold, #c9a840);
+    color: var(--bz-gold, #c9a227);
     text-decoration: none;
     min-height: 32px;
     display: inline-flex;
@@ -382,55 +396,83 @@
   }
 
   .buzzard-mobile-page-title {
-    margin: 0 0 4px;
-    font-size: 26px;
+    margin: 0 0 2px;
+    font-size: 28px;
     font-weight: 800;
-    color: inherit;
+    color: #111;
+    letter-spacing: -0.03em;
   }
 
   .buzzard-mobile-page-count {
-    margin: 0 0 12px;
-    font-size: 14px;
+    margin: 0;
+    font-size: 13px;
     color: #8a8a8a;
   }
 
   .buzzard-mobile-category-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     margin: 0 0 8px;
-    padding: 28px 20px 22px;
-    min-height: 140px;
+    padding: 4px 0 10px;
+    min-height: 0;
+    background: transparent;
+    color: #111;
+  }
+
+  .buzzard-mobile-category-heading {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .buzzard-mobile-category-thumb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 86px;
+    height: 72px;
+    border-radius: 14px;
+    flex-shrink: 0;
+    overflow: hidden;
     background:
-      linear-gradient(180deg, rgba(8, 8, 8, 0.2) 0%, rgba(8, 8, 8, 0.78) 100%),
-      linear-gradient(160deg, #1a1408 0%, #0a0a0a 70%);
+      linear-gradient(180deg, rgba(8, 8, 8, 0.05), rgba(8, 8, 8, 0.4)),
+      #1a1408;
     background-size: cover;
     background-position: center;
     color: #fff;
   }
 
-  .buzzard-mobile-category-hero .buzzard-mobile-page-count {
-    color: #d8d8d8;
-    margin-bottom: 0;
-  }
-
   .buzzard-mobile-trust {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
     list-style: none;
     margin: 0;
-    padding: 12px 16px 4px;
+    padding: 0 12px 8px;
   }
 
   .buzzard-mobile-trust li {
-    min-height: 40px;
+    min-height: 44px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    padding: 8px 12px;
-    border-radius: 10px;
-    background: #111;
-    color: #f5f0e6;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 4px;
+    border-radius: 12px;
+    background: #f7f7f7;
+    color: #111;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    border: 1px solid #f0f0f0;
+  }
+
+  .buzzard-mobile-trust-icon {
+    color: var(--bz-gold, #c9a227);
     font-size: 12px;
-    font-weight: 600;
-    border: 1px solid rgba(201, 168, 64, 0.28);
   }
 
   .buzzard-mobile-inline-search {
@@ -453,9 +495,10 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    border: 1px solid #ececec;
-    border-radius: 14px;
-    overflow: hidden;
+    margin: 0 -16px;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
     background: #fff;
   }
 
@@ -463,11 +506,11 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    min-height: 56px;
-    padding: 10px 14px;
+    min-height: 54px;
+    padding: 8px 16px;
     background: #fff;
     border: 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f2f2f2;
     color: #111;
     text-decoration: none;
     font-size: 15px;
@@ -488,6 +531,7 @@
   .buzzard-mobile-header-link:focus-visible,
   .buzzard-mobile-search-btn:focus-visible,
   .buzzard-mobile-toolbar-btn:focus-visible,
+  .buzzard-mobile-toolbar-view:focus-visible,
   .buzzard-mobile-bottom-nav-item:focus-visible,
   .buzzard-mobile-icon-btn:focus-visible {
     outline: 2px solid var(--gold, #c9a840);
@@ -498,11 +542,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: rgba(201, 168, 64, 0.12);
-    color: var(--gold, #c9a840);
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: rgba(201, 162, 39, 0.14);
+    color: var(--bz-gold, #c9a227);
     flex-shrink: 0;
   }
 
@@ -569,24 +613,48 @@
 
   .buzzard-mobile-toolbar {
     display: flex;
+    align-items: center;
     gap: 8px;
-    margin: 0 0 14px;
+    margin: 0 0 12px;
   }
 
   .buzzard-mobile-toolbar-btn {
-    flex: 1;
-    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 0 1 auto;
+    min-height: 40px;
+    padding: 0 12px;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: #161616;
-    color: #fff;
+    border: 1px solid #ececec;
+    background: #f7f7f7;
+    color: #111;
     font-size: 13px;
     font-weight: 700;
   }
 
+  .buzzard-mobile-toolbar-spacer {
+    flex: 1;
+  }
+
+  .buzzard-mobile-toolbar-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid #ececec;
+    background: #fff;
+    color: #8a8a8a;
+  }
+
+  .buzzard-mobile-toolbar-view[aria-pressed="true"],
   .buzzard-mobile-toolbar-btn[aria-pressed="true"] {
-    border-color: var(--gold, #c9a840);
-    color: var(--gold, #c9a840);
+    border-color: var(--bz-gold, #c9a227);
+    color: var(--bz-gold, #c9a227);
+    background: rgba(201, 162, 39, 0.08);
   }
 
   .buzzard-mobile-sheet-backdrop {
@@ -632,7 +700,7 @@
 
   .buzzard-mobile-sheet button.active,
   .buzzard-mobile-sheet a.active {
-    color: var(--gold, #c9a840);
+    color: var(--bz-gold, #c9a227);
     font-weight: 700;
   }
 
@@ -759,6 +827,12 @@
     border-top: 1px solid #ececec;
   }
 
+  .buzzard-mobile-icon-btn.is-cart {
+    background: var(--bz-gold, #c9a227);
+    border-color: var(--bz-gold, #c9a227);
+    color: #111;
+  }
+
   .buzzard-mobile-bottom-nav-item {
     flex: 1;
     display: flex;
@@ -769,19 +843,22 @@
     min-height: 48px;
     border: 0;
     background: transparent;
-    color: #a0a0a0;
-    font-size: 11px;
+    color: #b8b8b8;
+    font-size: 10px;
     font-weight: 700;
     text-decoration: none;
   }
 
   .buzzard-mobile-bottom-nav-item.active,
   .buzzard-mobile-bottom-nav-item[aria-current="page"] {
-    color: var(--gold, #c9a840);
+    color: var(--bz-gold, #c9a227);
   }
 
-  .buzzard-mobile-bottom-nav-cart {
-    position: relative;
+  .buzzard-mobile-bottom-nav-item span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .buzzard-mobile-icon-btn:disabled,

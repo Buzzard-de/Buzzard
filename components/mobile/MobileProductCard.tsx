@@ -72,7 +72,7 @@ export default function MobileProductCard({
         {onAdd ? (
           <button
             type="button"
-            className="buzzard-mobile-icon-btn"
+            className="buzzard-mobile-icon-btn is-cart"
             onClick={() => onAdd(product.id)}
             aria-label={addedId === product.id ? t("product.added") : t("product.addToCart")}
           >

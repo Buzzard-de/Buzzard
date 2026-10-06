@@ -584,7 +584,7 @@ export const catalog: TranslationTree = {
     sort: "Sırala",
     grid: "Izgara",
     list: "Liste",
-    startShopping: "Alışverişe Başla →",
+    startShopping: "Alışverişe Başla",
     buyNow: "Hemen al",
     back: "Geri",
     breadcrumb: "Gezinti",
@@ -593,7 +593,7 @@ export const catalog: TranslationTree = {
     heroTitle: "Aracınız için doğru parçalar",
     heroText: "Geniş ürün yelpazesi, güvenilir tedarikçiler, hızlı teslimat.",
     searchPlaceholder: "Ürün, marka, kategori veya parça ara...",
-    categorySearchPlaceholder: "Kategori ara...",
+    categorySearchPlaceholder: "Kategori içinde ara...",
     productCount: "{count} ürün",
     loadingProducts: "Ürünler yükleniyor…",
     promoCta: "Şimdi keşfet",
@@ -601,6 +601,9 @@ export const catalog: TranslationTree = {
     sortBestseller: "Çok satanlar",
     emptyCategories: "Kategori bulunamadı.",
     emptyHint: "Başka bir arama deneyin veya bir üst seviyeye dönün.",
+    trustFast: "Hızlı teslimat",
+    trustReturn: "Kolay iade",
+    trustPay: "Güvenli ödeme",
   },
   ai: {
     chat: {

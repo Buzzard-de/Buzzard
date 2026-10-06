@@ -84,19 +84,42 @@ export default function MobileProductToolbar({
     <>
       <div className="buzzard-mobile-toolbar" role="toolbar" aria-label={t("mobile.filter")}>
         <button type="button" className="buzzard-mobile-toolbar-btn" onClick={() => setSheet("filter")}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="16" height="16" aria-hidden="true">
+            <path d="M4 6h16M7 12h10M10 18h4" />
+          </svg>
           {t("mobile.filter")}
         </button>
         <button type="button" className="buzzard-mobile-toolbar-btn" onClick={() => setSheet("sort")}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="16" height="16" aria-hidden="true">
+            <path d="M8 6v12M8 6l-3 3M8 6l3 3M16 18V6M16 18l-3-3M16 18l3-3" />
+          </svg>
           {t("mobile.sort")}
+        </button>
+        <span className="buzzard-mobile-toolbar-spacer" />
+        <button
+          type="button"
+          className="buzzard-mobile-toolbar-view"
+          aria-pressed={view === "grid"}
+          aria-label={t("mobile.grid")}
+          onClick={() => onViewChange("grid")}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
         </button>
         <button
           type="button"
-          className="buzzard-mobile-toolbar-btn"
-          aria-pressed={view === "grid"}
-          aria-label={view === "grid" ? t("mobile.list") : t("mobile.grid")}
-          onClick={() => onViewChange(view === "grid" ? "list" : "grid")}
+          className="buzzard-mobile-toolbar-view"
+          aria-pressed={view === "list"}
+          aria-label={t("mobile.list")}
+          onClick={() => onViewChange("list")}
         >
-          {view === "grid" ? t("mobile.list") : t("mobile.grid")}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18" aria-hidden="true">
+            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+          </svg>
         </button>
       </div>
 

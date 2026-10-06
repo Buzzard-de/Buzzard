@@ -31,7 +31,9 @@ describe("buzzard mobile CSS isolation", () => {
     const phoneBlock = css.split("@media (max-width: 767px)")[1] ?? "";
     expect(phoneBlock).toContain(".buzzard-mobile-category-row-icon");
     expect(phoneBlock).toContain(".buzzard-mobile-trust");
+    expect(phoneBlock).toContain("grid-template-columns: repeat(3, minmax(0, 1fr))");
     expect(phoneBlock).toContain(".buzzard-mobile-category-hero");
+    expect(phoneBlock).toContain(".buzzard-mobile-category-thumb");
     expect(phoneBlock).toContain(".ai-chat-fab");
     expect(phoneBlock).toContain("safe-area-inset-bottom");
   });

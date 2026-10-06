@@ -46,3 +46,13 @@ export const mainCategoryIcons: Record<string, string> = {
 export function getMainCategoryIcon(id: string): string {
   return mainCategoryIcons[id] ?? "star";
 }
+
+const ROW_ICONS = ["car", "tools", "electronics", "home", "sport", "box", "shield", "appliance", "build", "care"] as const;
+
+/** Visual row glyph from live category id — not a second category tree. */
+export function getCategoryRowIcon(id: string): string {
+  if (mainCategoryIcons[id]) return mainCategoryIcons[id];
+  let hash = 0;
+  for (let i = 0; i < id.length; i += 1) hash = (hash + id.charCodeAt(i) * (i + 1)) % ROW_ICONS.length;
+  return ROW_ICONS[hash];
+}

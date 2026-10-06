@@ -601,6 +601,9 @@ export const catalog: TranslationTree = {
     sortBestseller: "الأكثر مبيعًا",
     emptyCategories: "لم يتم العثور على فئات.",
     emptyHint: "جرّب بحثًا آخر أو ارجع مستوى واحدًا.",
+    trustFast: "توصيل سريع",
+    trustReturn: "إرجاع سهل",
+    trustPay: "دفع آمن",
   },
   ai: {
     chat: {

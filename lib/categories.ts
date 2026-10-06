@@ -28,7 +28,7 @@ import {
 
 export const MAIN_CATEGORY_COUNT = categoryCatalog.main_category_count;
 import { getCategoryLabel, formatMenuLabel, toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
-import { getMainCategoryIcon } from "@/lib/categories/icons";
+import { getMainCategoryIcon, getCategoryRowIcon } from "@/lib/categories/icons";
 import { getProductsForCategory } from "@/lib/products";
 
 export const DEFAULT_LOCALE: BuzzardLocale = "de";
@@ -59,6 +59,7 @@ export {
   getCategoryLabel,
   formatMenuLabel,
   getMainCategoryIcon,
+  getCategoryRowIcon,
 };
 
 /** Linke Spalte: Hauptkategorien aus JSON (Smart-Menü: 48 Kategorien via API) */

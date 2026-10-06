@@ -591,7 +591,7 @@ export const catalog: TranslationTree = {
     sort: "Sort",
     grid: "Grid",
     list: "List",
-    startShopping: "Start shopping →",
+    startShopping: "Start shopping",
     buyNow: "Buy now",
     back: "Back",
     breadcrumb: "Breadcrumb",
@@ -600,7 +600,7 @@ export const catalog: TranslationTree = {
     heroTitle: "The right parts for your vehicle",
     heroText: "Wide range, reliable suppliers, fast delivery.",
     searchPlaceholder: "Search products, brands, categories or parts…",
-    categorySearchPlaceholder: "Search category…",
+    categorySearchPlaceholder: "Search in category…",
     productCount: "{count} products",
     loadingProducts: "Loading products…",
     promoCta: "Discover now",
@@ -608,6 +608,9 @@ export const catalog: TranslationTree = {
     sortBestseller: "Bestsellers",
     emptyCategories: "No categories found.",
     emptyHint: "Try another search or go back one level.",
+    trustFast: "Fast delivery",
+    trustReturn: "Easy returns",
+    trustPay: "Secure payment",
   },
   ai: {
     chat: {

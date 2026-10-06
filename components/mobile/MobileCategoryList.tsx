@@ -2,19 +2,9 @@
 
 import Link from "next/link";
 import CategoryIcon from "@/components/CategoryIcon";
-import {
-  categoryHref,
-  getCategoryAncestors,
-  getCategoryLabel,
-  getMainCategoryIcon,
-} from "@/lib/categories";
+import { categoryHref, getCategoryLabel, getCategoryRowIcon } from "@/lib/categories";
 import type { BuzzardCategory } from "@/lib/categories/types";
 import { useLocale } from "@/lib/i18n/context";
-
-function iconFor(category: BuzzardCategory): string {
-  const root = getCategoryAncestors(category.id)[0] ?? category;
-  return getMainCategoryIcon(root.id);
-}
 
 export default function MobileCategoryList({ categories }: { categories: BuzzardCategory[] }) {
   const { locale } = useLocale();
@@ -25,7 +15,7 @@ export default function MobileCategoryList({ categories }: { categories: Buzzard
       {categories.map((child) => (
         <Link key={child.id} href={categoryHref(child)} className="buzzard-mobile-category-row">
           <span className="buzzard-mobile-category-row-icon" aria-hidden="true">
-            <CategoryIcon name={iconFor(child)} size={22} />
+            <CategoryIcon name={getCategoryRowIcon(child.id)} size={20} />
           </span>
           <span className="buzzard-mobile-category-row-label">{getCategoryLabel(child, locale)}</span>
           <span className="buzzard-mobile-category-row-arrow" aria-hidden="true">

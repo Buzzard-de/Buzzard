@@ -594,7 +594,7 @@ export const catalog: TranslationTree = {
     sort: "Sortieren",
     grid: "Raster",
     list: "Liste",
-    startShopping: "Einkaufen starten →",
+    startShopping: "Einkaufen starten",
     buyNow: "Jetzt kaufen",
     back: "Zurück",
     breadcrumb: "Brotkrumen",
@@ -603,7 +603,7 @@ export const catalog: TranslationTree = {
     heroTitle: "Die richtigen Teile für Ihr Fahrzeug",
     heroText: "Breites Sortiment, zuverlässige Lieferanten, schnelle Lieferung.",
     searchPlaceholder: "Produkt, Marke, Kategorie oder Teil suchen…",
-    categorySearchPlaceholder: "Kategorie suchen…",
+    categorySearchPlaceholder: "In der Kategorie suchen…",
     productCount: "{count} Produkte",
     loadingProducts: "Produkte werden geladen…",
     promoCta: "Jetzt entdecken",
@@ -611,6 +611,9 @@ export const catalog: TranslationTree = {
     sortBestseller: "Bestseller",
     emptyCategories: "Keine Kategorien gefunden.",
     emptyHint: "Versuchen Sie eine andere Suche oder gehen Sie eine Ebene zurück.",
+    trustFast: "Schnelle Lieferung",
+    trustReturn: "Einfache Rückgabe",
+    trustPay: "Sichere Zahlung",
   },
   ai: {
     chat: {

@@ -66,7 +66,7 @@
   .buzzard-mobile-shell {
     background: #fff;
     color: #111;
-    min-height: calc(100dvh - 72px);
+    min-height: 0;
     --bz-gold: #c9a840;
     --bz-black: #111111;
     --bz-muted: #8a8a8a;
@@ -82,8 +82,8 @@
   }
 
   .subpage-content.products-page-layout {
-    display: block;
-    grid-template-columns: none;
+    display: block !important;
+    grid-template-columns: none !important;
     max-width: none;
     margin: 0;
     padding: 0 0 8px;

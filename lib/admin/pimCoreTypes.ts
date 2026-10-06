@@ -8,6 +8,18 @@ export type PimProductStatus =
   | "BLOCKED"
   | "ARCHIVED";
 
+export type PimWorkflowStatus =
+  | "DRAFT"
+  | "IMPORTED"
+  | "NORMALIZED"
+  | "VALIDATED"
+  | "REVIEW_REQUIRED"
+  | "READY_FOR_REVIEW"
+  | "APPROVED"
+  | "PUBLISH_BLOCKED"
+  | "PUBLISHED"
+  | "INVALID";
+
 export type ValidationStatus = "PASS" | "WARNING" | "FAIL";
 
 export interface PimBrand {
@@ -42,6 +54,8 @@ export interface PimProduct {
   status: PimProductStatus;
   visibility: string;
   qualityScore?: number | null;
+  workflowStatus?: PimWorkflowStatus;
+  validationOverall?: ValidationStatus;
   seo?: Record<string, unknown>;
   createdAt?: string;
   updatedAt?: string;
@@ -52,6 +66,46 @@ export interface PimValidationResult {
   results: Array<{ field: string; status: ValidationStatus; detail: unknown }>;
   failCount: number;
   warningCount: number;
+}
+
+export interface PimStructuredValidationReport {
+  valid: boolean;
+  status: string;
+  overall?: ValidationStatus;
+  errors: Array<{ field: string; detail?: unknown; code?: string }>;
+  warnings: Array<{ field: string; detail?: unknown }>;
+  missingFields: string[];
+  failCount?: number;
+  warningCount?: number;
+  lifecycleStatus?: string;
+  score?: number | null;
+  ready?: boolean;
+}
+
+export interface PimHealthReport {
+  timestamp: string;
+  diagnosticOnly: boolean;
+  autoActivate: boolean;
+  activationAllowed: boolean;
+  humanApprovalRequired: boolean;
+  publishBlocked: boolean;
+  liveSupplierContacted: boolean;
+  salesEnabled: boolean;
+  summary: {
+    totalProducts: number;
+    validProducts: number;
+    invalidProducts: number;
+    reviewRequired: number;
+    missingImages: number;
+    missingCategories: number;
+    duplicateSkus: number;
+    duplicateEans: number;
+    publishBlocked: number;
+    demoProducts: number;
+    publicCatalogProducts: number;
+    stagingRecords: number;
+  };
+  workflow: Record<string, number>;
 }
 
 export interface PimSupplierMapping {

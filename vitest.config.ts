@@ -13,6 +13,7 @@ export default defineConfig({
       "lib/categories/i18n.test.ts",
       "lib/mobile/isolation.test.ts",
       "lib/mobile/categoryFilters.test.ts",
+      "lib/mobile/visuals.test.ts",
     ],
     globals: false,
     testTimeout: 15000,

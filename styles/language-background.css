@@ -4,10 +4,10 @@ html.has-language-background .home-shell,
 html.has-language-background .mega-panel {
   background-color: #0a0a0a;
   background-image:
-    linear-gradient(rgba(8, 8, 8, 0.32), rgba(8, 8, 8, 0.5)),
+    linear-gradient(rgba(8, 8, 8, 0.18), rgba(8, 8, 8, 0.42)),
     var(--language-background-image);
   background-size: cover;
-  background-position: center;
+  background-position: center 40%;
   background-repeat: no-repeat;
 }
 

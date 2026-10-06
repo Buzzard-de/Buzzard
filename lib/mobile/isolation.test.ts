@@ -38,7 +38,8 @@ describe("buzzard mobile CSS isolation", () => {
     expect(phoneBlock).toContain("safe-area-inset-bottom");
     expect(phoneBlock).toContain("body.buzzard-phone-storefront");
     expect(phoneBlock).toContain("a.buzzard-mobile-product-title");
-    expect(phoneBlock).toContain(".subpage-content.products-page-layout");
+    expect(phoneBlock).toContain("background-size: cover");
+    expect(phoneBlock).toContain(".buzzard-mobile-hero");
     expect(phoneBlock).toContain(".subpage-content.products-page-layout.buzzard-desktop-chrome");
   });
 });

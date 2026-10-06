@@ -30,7 +30,7 @@ export default function MobileCategoryGrid() {
           <Link key={cat.id} href={categoryHref(cat)} className="buzzard-mobile-category-card">
             <span
               className="buzzard-mobile-category-card-visual"
-              style={getMobileCoverStyle(cat.id, locale, getCategoryCoverImage(cat))}
+              style={getMobileCoverStyle(cat.id, getCategoryCoverImage(cat))}
             >
               <CategoryIcon name={getMainCategoryIcon(cat.id)} size={28} />
             </span>

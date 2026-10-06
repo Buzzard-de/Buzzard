@@ -37,7 +37,7 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
             </div>
             <span
               className="buzzard-mobile-category-thumb"
-              style={getMobileCoverStyle(category.id, locale, getCategoryCoverImage(category))}
+              style={getMobileCoverStyle(category.id, getCategoryCoverImage(category))}
             >
               <CategoryIcon name={getCategoryRowIcon(category.id)} size={28} />
             </span>

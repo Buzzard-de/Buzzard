@@ -224,13 +224,18 @@
     border-radius: 16px;
     overflow: hidden;
     background:
-      linear-gradient(180deg, rgba(8, 8, 8, 0.12) 0%, rgba(8, 8, 8, 0.72) 100%),
+      linear-gradient(180deg, rgba(8, 8, 8, 0.12) 0%, rgba(8, 8, 8, 0.55) 100%),
       linear-gradient(160deg, #1a1408 0%, #0a0a0a 70%);
     background-size: cover;
-    background-position: center;
+    background-position: 58% 38%;
+    background-repeat: no-repeat;
     border: 0;
-    min-height: 228px;
+    min-height: 240px;
     color: #fff;
+  }
+
+  .buzzard-mobile-hero.has-locale-photo {
+    background-color: #0a0a0a;
   }
 
   .buzzard-mobile-hero h1 {

@@ -11,12 +11,20 @@ function normalizeFitmentEntry(entry) {
   if (!brand || !model) return null;
 
   return {
-    brand,
+    make: brand,
     model,
+    generation: String(entry.generation || "").trim() || null,
     type: String(entry.type || entry.variant || "").trim() || null,
     engine: String(entry.engine || "").trim() || null,
+    engineCode: String(entry.engineCode || entry.engine_code || "").trim() || null,
+    fuel: String(entry.fuel || "").trim() || null,
+    displacement: entry.displacement ?? entry.displacement_cc ?? null,
+    transmission: String(entry.transmission || "").trim() || null,
     yearFrom: entry.year_from ?? entry.yearFrom ?? null,
     yearTo: entry.year_to ?? entry.yearTo ?? null,
+    kw: entry.kw ?? entry.kW ?? null,
+    ps: entry.ps ?? entry.PS ?? null,
+    body: String(entry.body || "").trim() || null,
     kba: String(entry.kba || entry.kba_number || "").trim() || null,
     oemNumber: String(entry.oem_number || entry.oemNumber || entry.part_reference || "").trim() || null,
     tecdocReference: String(entry.tecdoc_reference || entry.tecdocArticle || entry.tecdoc_article || "").trim() || null,

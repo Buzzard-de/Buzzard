@@ -1,6 +1,6 @@
-import type { MarketCountry, ShippingRulesMap } from "./types";
-import countries from "@/data/buzzard_europe_countries.json";
+import type { ShippingRulesMap } from "./types";
 import shipping from "@/data/buzzard_europe_shipping.json";
+import { marketCountries } from "./marketCountryAdapter";
 
-export const marketCountries = countries as MarketCountry[];
+export { marketCountries };
 export const marketShippingRules = shipping as ShippingRulesMap;

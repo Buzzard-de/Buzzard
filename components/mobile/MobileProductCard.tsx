@@ -53,9 +53,9 @@ export default function MobileProductCard({
         </Link>
         {quality ? <div className="buzzard-mobile-product-meta">{quality}</div> : null}
         {stars ? (
-          <div className="buzzard-mobile-product-meta" aria-label={String(rating)}>
+          <div className="buzzard-mobile-product-rating" aria-label={String(rating)}>
             {stars}
-            {reviews ? ` (${reviews})` : ""}
+            {reviews ? <span> ({reviews})</span> : null}
           </div>
         ) : null}
         {showPrices() ? <PriceLabel amount={product.price} className="buzzard-mobile-product-price" /> : null}
@@ -67,7 +67,9 @@ export default function MobileProductCard({
           onClick={() => onToggleWishlist(product.id)}
           aria-label={t("header.wishlist")}
         >
-          {inWishlist ? "♥" : "♡"}
+          <svg viewBox="0 0 24 24" fill={inWishlist ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" width="20" height="20" aria-hidden="true">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+          </svg>
         </button>
         {onAdd ? (
           <button
@@ -76,7 +78,17 @@ export default function MobileProductCard({
             onClick={() => onAdd(product.id)}
             aria-label={addedId === product.id ? t("product.added") : t("product.addToCart")}
           >
-            {addedId === product.id ? "✓" : "🛒"}
+            {addedId === product.id ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="20" height="20" aria-hidden="true">
+                <path d="M5 12l4 4 10-10" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="20" height="20" aria-hidden="true">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6" />
+              </svg>
+            )}
           </button>
         ) : null}
       </div>

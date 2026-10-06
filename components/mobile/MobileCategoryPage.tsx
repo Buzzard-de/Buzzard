@@ -7,7 +7,7 @@ import {
   getCategoryRowIcon,
 } from "@/lib/categories";
 import type { BuzzardCategory } from "@/lib/categories/types";
-import { getLanguageBackground } from "@/lib/backgrounds/languageBackgrounds";
+import { getCategoryCoverImage, getMobileCoverStyle } from "@/lib/mobile/visuals";
 import { getProductsForCategory } from "@/lib/products";
 import { useLocale } from "@/lib/i18n/context";
 import MobileBreadcrumb from "./MobileBreadcrumb";
@@ -19,7 +19,6 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
   const name = getCategoryLabel(category, locale);
   const children = category.children ?? [];
   const productCount = getProductsForCategory(category).length;
-  const photo = getLanguageBackground(locale);
 
   return (
     <div className="buzzard-mobile-only buzzard-mobile-shell">
@@ -35,13 +34,7 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
             </div>
             <span
               className="buzzard-mobile-category-thumb"
-              style={
-                photo
-                  ? {
-                      backgroundImage: `linear-gradient(180deg, rgba(8,8,8,0.05) 0%, rgba(8,8,8,0.35) 100%), url("${photo}")`,
-                    }
-                  : undefined
-              }
+              style={getMobileCoverStyle(category.id, locale, getCategoryCoverImage(category))}
             >
               <CategoryIcon name={getCategoryRowIcon(category.id)} size={28} />
             </span>

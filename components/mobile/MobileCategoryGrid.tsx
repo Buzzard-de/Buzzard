@@ -8,13 +8,12 @@ import {
   getMainCategoryIcon,
   getVisibleMainCategories,
 } from "@/lib/categories";
-import { getLanguageBackground } from "@/lib/backgrounds/languageBackgrounds";
+import { getCategoryCoverImage, getMobileCoverStyle } from "@/lib/mobile/visuals";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function MobileCategoryGrid() {
   const { locale, t } = useLocale();
   const categories = getVisibleMainCategories().slice(0, 8);
-  const photo = getLanguageBackground(locale);
 
   return (
     <section aria-labelledby="buzzard-mobile-categories-title">
@@ -27,18 +26,11 @@ export default function MobileCategoryGrid() {
         </Link>
       </div>
       <div className="buzzard-mobile-category-grid">
-        {categories.map((cat, index) => (
+        {categories.map((cat) => (
           <Link key={cat.id} href={categoryHref(cat)} className="buzzard-mobile-category-card">
             <span
               className="buzzard-mobile-category-card-visual"
-              style={
-                photo
-                  ? {
-                      backgroundImage: `linear-gradient(180deg, rgba(8,8,8,0.08) 0%, rgba(8,8,8,0.55) 100%), url("${photo}")`,
-                      backgroundPosition: `${(index * 12) % 100}% center`,
-                    }
-                  : undefined
-              }
+              style={getMobileCoverStyle(cat.id, locale, getCategoryCoverImage(cat))}
             >
               <CategoryIcon name={getMainCategoryIcon(cat.id)} size={28} />
             </span>

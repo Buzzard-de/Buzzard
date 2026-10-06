@@ -36,5 +36,8 @@ describe("buzzard mobile CSS isolation", () => {
     expect(phoneBlock).toContain(".buzzard-mobile-category-thumb");
     expect(phoneBlock).toContain(".ai-chat-fab");
     expect(phoneBlock).toContain("safe-area-inset-bottom");
+    expect(phoneBlock).toContain("body.buzzard-phone-storefront");
+    expect(phoneBlock).toContain("a.buzzard-mobile-product-title");
+    expect(phoneBlock).toContain(".subpage-content.products-page-layout");
   });
 });

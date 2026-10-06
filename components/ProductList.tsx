@@ -300,6 +300,11 @@ export default function ProductList({ categorySlug }: ProductListProps) {
           </>
         ) : null}
         <MobileProductToolbar view={mobileView} onViewChange={setMobileView} category={kategorie} />
+        {catalogLoading ? (
+          <p className="buzzard-mobile-page-count" role="status">
+            {t("mobile.loadingProducts")}
+          </p>
+        ) : null}
         </div>
       </div>
 

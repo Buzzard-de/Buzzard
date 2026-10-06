@@ -118,7 +118,6 @@ test.describe("Mobile five-stage category UX", () => {
     await card.click({ force: true });
     await page.waitForURL(/\/kategorie\//, { timeout: 15_000 });
     const mainCategoryUrl = page.url();
-    await expect(page.locator(".buzzard-mobile-breadcrumb")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();
 
     const row = page.locator(".buzzard-mobile-category-row").first();
@@ -127,6 +126,7 @@ test.describe("Mobile five-stage category UX", () => {
     await row.click();
     await expect(page).not.toHaveURL(mainCategoryUrl);
     await expect(page.locator(".buzzard-mobile-breadcrumb")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();
     await page.getByRole("button", { name: /back|zurück|geri|رجوع/i }).click();
     await expect(page).toHaveURL(mainCategoryUrl);
     await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();

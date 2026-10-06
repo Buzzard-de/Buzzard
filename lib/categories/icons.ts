@@ -47,7 +47,24 @@ export function getMainCategoryIcon(id: string): string {
   return mainCategoryIcons[id] ?? "star";
 }
 
-const ROW_ICONS = ["car", "tools", "electronics", "home", "sport", "box", "shield", "appliance", "build", "care"] as const;
+const ROW_ICONS = [
+  "car",
+  "tools",
+  "electronics",
+  "home",
+  "sport",
+  "box",
+  "shield",
+  "appliance",
+  "build",
+  "care",
+  "parts",
+  "oil",
+  "battery",
+  "tire",
+  "tuning",
+  "truck",
+] as const;
 
 /** Visual row glyph from live category id — not a second category tree. */
 export function getCategoryRowIcon(id: string): string {

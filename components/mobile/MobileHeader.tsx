@@ -46,6 +46,12 @@ export default function MobileHeader() {
       </Link>
 
       <div className="buzzard-mobile-header-actions">
+        <Link href="/konto/" className="buzzard-mobile-header-link" aria-label={t("header.account")}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="22" height="22" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </Link>
         <Link href="/warenkorb/" className="buzzard-mobile-header-link" aria-label={t("header.cart")}>
           <span className="buzzard-mobile-cart-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="22" height="22" aria-hidden="true">

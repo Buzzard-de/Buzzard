@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { categoryHref, getCategoryLabel, getChildren } from "@/lib/categories";
+import { categoryHref, getCategoryLabel } from "@/lib/categories";
+import type { BuzzardCategory } from "@/lib/categories/types";
+import { getMobileFilterScope } from "@/lib/mobile/categoryFilters";
 import { isAllowedFilter } from "@/lib/security";
 import { showPrices } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
@@ -10,18 +12,24 @@ import { useLocale } from "@/lib/i18n/context";
 interface MobileProductToolbarProps {
   view: "grid" | "list";
   onViewChange: (view: "grid" | "list") => void;
+  category?: BuzzardCategory | null;
 }
 
-export default function MobileProductToolbar({ view, onViewChange }: MobileProductToolbarProps) {
+export default function MobileProductToolbar({
+  view,
+  onViewChange,
+  category = null,
+}: MobileProductToolbarProps) {
   const { locale, t } = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [sheet, setSheet] = useState<"filter" | "sort" | null>(null);
   const sort = searchParams.get("sort") || "default";
+  const scope = getMobileFilterScope(category);
   const options = [
-    { id: "alle", label: t("category.filterAll"), href: "/products/" },
-    ...getChildren("cat-05").map((cat) => ({
+    { id: "alle", label: t("category.filterAll"), href: scope.allHref },
+    ...scope.categories.map((cat) => ({
       id: cat.id,
       label: getCategoryLabel(cat, locale),
       href: categoryHref(cat),
@@ -74,7 +82,7 @@ export default function MobileProductToolbar({ view, onViewChange }: MobileProdu
 
   return (
     <>
-      <div className="buzzard-mobile-toolbar">
+      <div className="buzzard-mobile-toolbar" role="toolbar" aria-label={t("mobile.filter")}>
         <button type="button" className="buzzard-mobile-toolbar-btn" onClick={() => setSheet("filter")}>
           {t("mobile.filter")}
         </button>
@@ -85,6 +93,7 @@ export default function MobileProductToolbar({ view, onViewChange }: MobileProdu
           type="button"
           className="buzzard-mobile-toolbar-btn"
           aria-pressed={view === "grid"}
+          aria-label={view === "grid" ? t("mobile.list") : t("mobile.grid")}
           onClick={() => onViewChange(view === "grid" ? "list" : "grid")}
         >
           {view === "grid" ? t("mobile.list") : t("mobile.grid")}
@@ -96,7 +105,7 @@ export default function MobileProductToolbar({ view, onViewChange }: MobileProdu
           <button
             type="button"
             className="buzzard-mobile-sheet-backdrop"
-            aria-label={t("home.close")}
+            aria-label={t("megaMenu.close")}
             onClick={() => setSheet(null)}
           />
           <div className="buzzard-mobile-sheet" role="dialog" aria-modal="true">

@@ -31,6 +31,10 @@ export default function MobileProductCard({
   const quality = product.shortDescription || product.attributes?.quality || categoryLabel;
   const rating = product.attributes?.rating;
   const reviews = product.attributes?.reviews;
+  const filledStars = rating
+    ? Math.min(5, Math.max(0, Math.round(Number(rating))))
+    : 0;
+  const stars = rating ? `${"★".repeat(filledStars)}${"☆".repeat(5 - filledStars)}` : "";
 
   return (
     <article className="buzzard-mobile-product-card">
@@ -48,9 +52,9 @@ export default function MobileProductCard({
           {localeName}
         </Link>
         {quality ? <div className="buzzard-mobile-product-meta">{quality}</div> : null}
-        {rating ? (
-          <div className="buzzard-mobile-product-meta">
-            ★ {rating}
+        {stars ? (
+          <div className="buzzard-mobile-product-meta" aria-label={String(rating)}>
+            {stars}
             {reviews ? ` (${reviews})` : ""}
           </div>
         ) : null}

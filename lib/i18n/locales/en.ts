@@ -606,6 +606,8 @@ export const catalog: TranslationTree = {
     promoCta: "Discover now",
     sortDefault: "Default",
     sortBestseller: "Bestsellers",
+    emptyCategories: "No categories found.",
+    emptyHint: "Try another search or go back one level.",
   },
   ai: {
     chat: {

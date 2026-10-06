@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart";
 import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
+import { categoryHref, getVisibleMainCategories } from "@/lib/categories";
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -12,6 +13,9 @@ export default function MobileBottomNav() {
   const homeUI = useHomeUI();
   const { count, ready } = useCart();
   const { t } = useLocale();
+  const firstCategory = getVisibleMainCategories()[0];
+  const categoriesHref = firstCategory ? categoryHref(firstCategory) : "/products/";
+  const searchActive = pathname.startsWith("/products");
 
   return (
     <nav className="buzzard-mobile-only buzzard-mobile-bottom-nav" aria-label={t("mobile.navAria")}>
@@ -27,8 +31,9 @@ export default function MobileBottomNav() {
         <span>{t("mobile.home")}</span>
       </Link>
       <Link
-        href="/kategorie/automotive/"
+        href={categoriesHref}
         className={`buzzard-mobile-bottom-nav-item${pathname.startsWith("/kategorie") ? " active" : ""}`}
+        aria-current={pathname.startsWith("/kategorie") ? "page" : undefined}
         aria-label={t("mobile.categories")}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="22" height="22" aria-hidden="true">
@@ -41,9 +46,15 @@ export default function MobileBottomNav() {
       </Link>
       <button
         type="button"
-        className="buzzard-mobile-bottom-nav-item"
+        className={`buzzard-mobile-bottom-nav-item${searchActive ? " active" : ""}`}
         aria-label={t("mobile.search")}
         onClick={() => {
+          const input = document.getElementById("buzzard-mobile-search-input") as HTMLInputElement | null;
+          if (input) {
+            input.focus();
+            input.scrollIntoView({ block: "nearest" });
+            return;
+          }
           if (pathname.startsWith("/products")) {
             homeUI?.toggleMobileSearch();
             return;
@@ -60,6 +71,7 @@ export default function MobileBottomNav() {
       <Link
         href="/warenkorb/"
         className={`buzzard-mobile-bottom-nav-item${pathname.startsWith("/warenkorb") ? " active" : ""}`}
+        aria-current={pathname.startsWith("/warenkorb") ? "page" : undefined}
         aria-label={t("mobile.cart")}
       >
         <span className="buzzard-mobile-bottom-nav-cart">
@@ -75,6 +87,7 @@ export default function MobileBottomNav() {
       <Link
         href="/konto/"
         className={`buzzard-mobile-bottom-nav-item${pathname.startsWith("/konto") ? " active" : ""}`}
+        aria-current={pathname.startsWith("/konto") ? "page" : undefined}
         aria-label={t("mobile.account")}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="22" height="22" aria-hidden="true">

@@ -12,7 +12,7 @@ import { useLocale } from "@/lib/i18n/context";
 
 export default function MobileCategoryGrid() {
   const { locale, t } = useLocale();
-  const categories = getVisibleMainCategories().slice(0, 8);
+  const categories = getVisibleMainCategories();
 
   return (
     <section aria-labelledby="buzzard-mobile-categories-title">

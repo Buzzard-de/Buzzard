@@ -599,6 +599,8 @@ export const catalog: TranslationTree = {
     promoCta: "Şimdi keşfet",
     sortDefault: "Varsayılan",
     sortBestseller: "Çok satanlar",
+    emptyCategories: "Kategori bulunamadı.",
+    emptyHint: "Başka bir arama deneyin veya bir üst seviyeye dönün.",
   },
   ai: {
     chat: {

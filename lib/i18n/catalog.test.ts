@@ -21,6 +21,12 @@ describe("i18n catalog keys", () => {
     expect(translate("en", "mobile.startShopping")).toContain("Start shopping");
   });
 
+  it("maps mobile empty states per locale", () => {
+    expect(translate("de", "mobile.emptyCategories")).toContain("Keine Kategorien");
+    expect(translate("tr", "mobile.emptyHint")).toContain("arama");
+    expect(translate("en", "mobile.emptyHint")).toContain("search");
+  });
+
   it("maps category.jsonLdDescription from catalog", () => {
     expect(translate("de", "category.jsonLdDescription")).toContain("Unterkategorien");
     expect(translate("tr", "category.jsonLdDescription")).toContain("alt kategoriler");

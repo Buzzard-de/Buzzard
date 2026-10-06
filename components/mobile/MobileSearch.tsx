@@ -29,6 +29,7 @@ export default function MobileSearch() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          id="buzzard-mobile-search-input"
           placeholder={t("mobile.searchPlaceholder")}
           aria-label={t("header.search")}
         />

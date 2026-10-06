@@ -26,4 +26,13 @@ describe("buzzard mobile CSS isolation", () => {
     expect(phoneBlock).toContain("body:has(.home-fullscreen)");
     expect(phoneBlock).toContain("height: auto !important");
   });
+
+  it("reconstructs compact category rows and keeps the assistant above the tab bar", () => {
+    const phoneBlock = css.split("@media (max-width: 767px)")[1] ?? "";
+    expect(phoneBlock).toContain(".buzzard-mobile-category-row-icon");
+    expect(phoneBlock).toContain(".buzzard-mobile-trust");
+    expect(phoneBlock).toContain(".buzzard-mobile-category-hero");
+    expect(phoneBlock).toContain(".ai-chat-fab");
+    expect(phoneBlock).toContain("safe-area-inset-bottom");
+  });
 });

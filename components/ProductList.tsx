@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import MobileProductCard from "@/components/mobile/MobileProductCard";
 import MobileProductToolbar from "@/components/mobile/MobileProductToolbar";
+import MobileEmptyState from "@/components/mobile/MobileEmptyState";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useShop } from "@/lib/shop";
@@ -18,7 +19,7 @@ import {
   sortProducts,
 } from "@/lib/products";
 import { localizePublicProduct } from "@/lib/products/i18n";
-import { findCategoryBySlugPath, getCategoryLabel } from "@/lib/categories";
+import { findCategoryBySlugPath, getCategoryLabel, getParentCategory, categoryHref } from "@/lib/categories";
 import { isLiveCatalogEnabled, loadLiveCatalogProducts, mergeCatalogProducts } from "@/lib/catalogSeo/runtime";
 import {
   isLiveLocalizationEnabled,
@@ -55,6 +56,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const page = Math.max(1, Number(searchParams.get("page") || "1") || 1);
   const kategorieSlug = categorySlug || searchParams.get("kategorie");
   const kategorie = kategorieSlug ? findCategoryBySlugPath(kategorieSlug) : null;
+  const parentCategory = kategorie ? getParentCategory(kategorie.id) : null;
   const rawVin = searchParams.get("vin");
   const vin = rawVin ? normalizeVin(rawVin) : null;
   const { vehicle } = useShop();
@@ -286,6 +288,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
       </div>
 
       <div className="buzzard-mobile-only buzzard-mobile-content">
+        <div className="buzzard-mobile-page-pad">
         {!kategorie ? (
           <>
             <h1 className="buzzard-mobile-page-title">{t("product.products")}</h1>
@@ -302,13 +305,26 @@ export default function ProductList({ categorySlug }: ProductListProps) {
               : t("mobile.productCount").replace("{count}", String(result.total))}
           </p>
         )}
-        <MobileProductToolbar view={mobileView} onViewChange={setMobileView} />
+        <MobileProductToolbar view={mobileView} onViewChange={setMobileView} category={kategorie} />
+        </div>
       </div>
 
       {!catalogLoading && result.items.length === 0 ? (
-        <div className="products-empty">
-          <p>{t("product.empty")}</p>
-        </div>
+        <>
+          <div className="products-empty buzzard-desktop-chrome">
+            <p>{t("product.empty")}</p>
+          </div>
+          <div className="buzzard-mobile-only">
+            <MobileEmptyState
+              title={t("product.empty")}
+              hint={t("mobile.emptyHint")}
+              backHref={parentCategory ? categoryHref(parentCategory) : kategorie ? "/" : "/"}
+              backLabel={
+                parentCategory ? getCategoryLabel(parentCategory, locale) : t("category.home")
+              }
+            />
+          </div>
+        </>
       ) : (
         <>
           <div className="products-grid buzzard-desktop-chrome">

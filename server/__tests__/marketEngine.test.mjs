@@ -1,30 +1,30 @@
-import { describe, it } from "node:test";
-import assert from "node:assert/strict";
-import marketEngine from "../core/marketEngineRegistry.js";
+import { describe, it, expect } from "vitest";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const marketEngine = require("../core/marketEngineRegistry.js");
 
 const TEST_MARKETS = ["DE", "FR", "IT", "ES", "PL", "NL", "TR", "SA", "AE", "EG"];
 
 describe("Server Market Engine Registry", () => {
   it("loads 35 markets", () => {
     const validation = marketEngine.validateMarketRegistry();
-    assert.equal(validation.valid, true);
-    assert.equal(validation.count, 35);
-    assert.equal(marketEngine.getMarketRegistryCount(), 35);
+    expect(validation.valid).toBe(true);
+    expect(validation.count).toBe(35);
+    expect(marketEngine.getMarketRegistryCount()).toBe(35);
   });
 
   for (const code of TEST_MARKETS) {
     it(`resolves ${code}`, () => {
       const market = marketEngine.getMarket(code);
-      assert.ok(market);
-      assert.equal(market.countryCode, code);
+      expect(market).toBeTruthy();
+      expect(market.countryCode).toBe(code);
     });
   }
 
   it("validates market requests server-side", () => {
-    const valid = marketEngine.validateMarketRequest("DE");
-    assert.equal(valid.valid, true);
-    const invalid = marketEngine.validateMarketRequest("XX");
-    assert.equal(invalid.valid, false);
+    expect(marketEngine.validateMarketRequest("DE").valid).toBe(true);
+    expect(marketEngine.validateMarketRequest("XX").valid).toBe(false);
   });
 
   it("B2B intra-EU reverse charge on server", () => {
@@ -34,14 +34,14 @@ describe("Server Market Engine Registry", () => {
       customerType: "B2B",
       vatId: "IT12345678901",
     });
-    assert.equal(ctx.reverseCharge, true);
-    assert.equal(ctx.rate, 0);
+    expect(ctx.reverseCharge).toBe(true);
+    expect(ctx.rate).toBe(0);
   });
 
   it("supplier regions for GCC", () => {
     const regions = marketEngine.getEligibleSupplierRegions("AE");
-    assert.equal(regions[0], "GCC");
-    assert.ok(regions.includes("EU"));
+    expect(regions[0]).toBe("GCC");
+    expect(regions).toContain("EU");
   });
 
   it("product availability delegates to country availability", () => {
@@ -49,6 +49,6 @@ describe("Server Market Engine Registry", () => {
       { countryAvailability: { DE: true } },
       "DE"
     );
-    assert.equal(result.available, true);
+    expect(result.available).toBe(true);
   });
 });

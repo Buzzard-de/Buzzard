@@ -5,10 +5,11 @@ import {
   getCategoryBreadcrumb,
   getCategoryLabel,
   getCategoryRowIcon,
+  isCategoryInScope,
 } from "@/lib/categories";
 import type { BuzzardCategory } from "@/lib/categories/types";
 import { getCategoryCoverImage, getMobileCoverStyle } from "@/lib/mobile/visuals";
-import { getProductsForCategory } from "@/lib/products";
+import { getAllProducts } from "@/lib/products";
 import { useLocale } from "@/lib/i18n/context";
 import MobileBreadcrumb from "./MobileBreadcrumb";
 import MobileCategoryList from "./MobileCategoryList";
@@ -18,7 +19,9 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
   const crumbs = getCategoryBreadcrumb(category.id);
   const name = getCategoryLabel(category, locale);
   const children = category.children ?? [];
-  const productCount = getProductsForCategory(category).length;
+  const productCount = getAllProducts().filter((product) =>
+    isCategoryInScope(product.categoryId, category.id)
+  ).length;
 
   return (
     <div className="buzzard-mobile-only buzzard-mobile-shell">

@@ -39,5 +39,6 @@ describe("buzzard mobile CSS isolation", () => {
     expect(phoneBlock).toContain("body.buzzard-phone-storefront");
     expect(phoneBlock).toContain("a.buzzard-mobile-product-title");
     expect(phoneBlock).toContain(".subpage-content.products-page-layout");
+    expect(phoneBlock).toContain(".subpage-content.products-page-layout.buzzard-desktop-chrome");
   });
 });

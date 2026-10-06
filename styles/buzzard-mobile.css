@@ -90,6 +90,10 @@
     background: #fff;
   }
 
+  .subpage-content.products-page-layout.buzzard-desktop-chrome {
+    display: none !important;
+  }
+
   .products-main {
     background: #fff;
   }

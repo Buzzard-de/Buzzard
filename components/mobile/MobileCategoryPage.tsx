@@ -73,7 +73,6 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
                   title={t("mobile.emptyCategories")}
                   hint={t("mobile.emptyHint")}
                   backHref={parent ? categoryHref(parent) : "/"}
-                  backLabel={parent ? getCategoryLabel(parent, locale) : t("category.home")}
                 />
               )}
             </>

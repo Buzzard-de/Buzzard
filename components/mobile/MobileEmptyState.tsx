@@ -7,7 +7,6 @@ interface MobileEmptyStateProps {
   title: string;
   hint?: string;
   backHref?: string;
-  backLabel?: string;
   searchHref?: string;
 }
 
@@ -15,7 +14,6 @@ export default function MobileEmptyState({
   title,
   hint,
   backHref,
-  backLabel,
   searchHref = "/products/",
 }: MobileEmptyStateProps) {
   const { t } = useLocale();
@@ -27,7 +25,7 @@ export default function MobileEmptyState({
       <div className="buzzard-mobile-empty-actions">
         {backHref ? (
           <Link href={backHref} className="buzzard-mobile-empty-btn">
-            {backLabel || t("mobile.back")}
+            {t("mobile.back")}
           </Link>
         ) : null}
         <Link href={searchHref} className="buzzard-mobile-empty-btn is-secondary">

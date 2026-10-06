@@ -298,13 +298,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                 : t("mobile.productCount").replace("{count}", String(result.total))}
             </p>
           </>
-        ) : (
-          <p className="buzzard-mobile-page-count">
-            {catalogLoading
-              ? t("mobile.loadingProducts")
-              : t("mobile.productCount").replace("{count}", String(result.total))}
-          </p>
-        )}
+        ) : null}
         <MobileProductToolbar view={mobileView} onViewChange={setMobileView} category={kategorie} />
         </div>
       </div>
@@ -318,10 +312,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
             <MobileEmptyState
               title={t("product.empty")}
               hint={t("mobile.emptyHint")}
-              backHref={parentCategory ? categoryHref(parentCategory) : kategorie ? "/" : "/"}
-              backLabel={
-                parentCategory ? getCategoryLabel(parentCategory, locale) : t("category.home")
-              }
+              backHref={parentCategory ? categoryHref(parentCategory) : "/"}
             />
           </div>
         </>

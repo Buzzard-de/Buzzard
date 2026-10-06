@@ -41,7 +41,7 @@
   }
 
   #maincontent {
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   }
 
   body.buzzard-admin-route .buzzard-desktop-chrome {
@@ -547,11 +547,12 @@
     gap: 8px;
   }
 
-  .buzzard-mobile-empty-btn {
+  a.buzzard-mobile-empty-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 44px;
+    min-width: 96px;
     padding: 0 14px;
     border-radius: 10px;
     background: var(--gold, #c9a840);
@@ -561,7 +562,7 @@
     text-decoration: none;
   }
 
-  .buzzard-mobile-empty-btn.is-secondary {
+  a.buzzard-mobile-empty-btn.is-secondary {
     background: #111;
     color: #f5f0e6;
   }
@@ -753,7 +754,7 @@
     align-items: stretch;
     justify-content: space-around;
     min-height: 56px;
-    padding: 4px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+    padding: 4px 4px calc(10px + env(safe-area-inset-bottom, 0px));
     background: #fff;
     border-top: 1px solid #ececec;
   }

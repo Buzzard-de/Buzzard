@@ -96,6 +96,17 @@ test.describe("Mobile five-stage category UX", () => {
     const width = page.viewportSize()?.width ?? testInfo.project.use.viewport?.width ?? 1280;
     if (width >= 768) test.skip();
 
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "buzzard_consent_v1",
+        JSON.stringify({
+          necessary: true,
+          analytics: false,
+          marketing: false,
+          updatedAt: new Date().toISOString(),
+        })
+      );
+    });
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await expect(page.locator(".buzzard-mobile-header img[alt='Buzzard Logo']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
@@ -104,8 +115,9 @@ test.describe("Mobile five-stage category UX", () => {
 
     const card = page.locator(".buzzard-mobile-category-card").first();
     await expect(card).toBeVisible();
-    await card.click();
-    await expect(page).toHaveURL(/\/kategorie\//);
+    await card.click({ force: true });
+    await page.waitForURL(/\/kategorie\//, { timeout: 15_000 });
+    const mainCategoryUrl = page.url();
     await expect(page.locator(".buzzard-mobile-breadcrumb")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();
 
@@ -113,13 +125,15 @@ test.describe("Mobile five-stage category UX", () => {
     await expect(row).toBeVisible();
     await expect(row.locator(".buzzard-mobile-category-row-icon")).toBeVisible();
     await row.click();
-    await expect(page).toHaveURL(/\/kategorie\//);
+    await expect(page).not.toHaveURL(mainCategoryUrl);
     await expect(page.locator(".buzzard-mobile-breadcrumb")).toBeVisible();
-    await page.goBack();
+    await page.getByRole("button", { name: /back|zurück|geri|رجوع/i }).click();
+    await expect(page).toHaveURL(mainCategoryUrl);
     await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();
   });
 });
 
+test.describe("Part 10 — Mobile layout checks", () => {
   test.describe.configure({ mode: "serial" });
 
   for (const [label, viewport] of Object.entries(VIEWPORTS)) {

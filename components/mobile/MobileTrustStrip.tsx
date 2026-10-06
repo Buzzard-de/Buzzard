@@ -9,7 +9,7 @@ export default function MobileTrustStrip() {
     <ul className="buzzard-mobile-trust" aria-label={t("home.trust")}>
       <li>{t("topBar.shipping")}</li>
       <li>{t("topBar.returns")}</li>
-      <li>{t("catalog.trustInfo")}</li>
+      <li>{t("topBar.trust")}</li>
     </ul>
   );
 }

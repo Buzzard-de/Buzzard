@@ -1248,7 +1248,8 @@ html[dir="rtl"] .checkout-nav {
 
 .ai-chat-fab {
   position: fixed;
-  right: 20px;
+  inset-inline-end: 20px;
+  inset-inline-start: auto;
   bottom: 20px;
   z-index: 1250;
   border: 0;
@@ -1267,7 +1268,8 @@ html[dir="rtl"] .checkout-nav {
 
 .ai-chat-panel {
   position: fixed;
-  right: 20px;
+  inset-inline-end: 20px;
+  inset-inline-start: auto;
   bottom: 76px;
   width: min(420px, calc(100vw - 24px));
   max-height: min(70vh, 640px);
@@ -1282,8 +1284,8 @@ html[dir="rtl"] .checkout-nav {
 }
 
 .ai-chat-panel.rtl {
-  right: auto;
-  left: 20px;
+  inset-inline-end: 20px;
+  inset-inline-start: auto;
 }
 
 .ai-chat-header {

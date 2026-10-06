@@ -32,4 +32,9 @@ describe("i18n catalog keys", () => {
     expect(translate("tr", "category.jsonLdDescription")).toContain("alt kategoriler");
     expect(translate("en", "category.jsonLdDescription")).toContain("subcategories");
   });
+
+  it("maps mobile.productCount for Arabic without mixing Turkish", () => {
+    expect(translate("ar", "mobile.productCount")).toMatch(/[\u0600-\u06FF]/);
+    expect(translate("ar", "mobile.productCount")).not.toMatch(/ürün/i);
+  });
 });

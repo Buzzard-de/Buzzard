@@ -40,12 +40,12 @@ export const catalog: TranslationTree = {
     pickMain: "اختر فئة رئيسية لعرض الفئات الفرعية.",
   },
   hero: {
-    kicker: "كتalog. اكتشف. استفسر.",
+    kicker: "كتالوج. اكتشف. استفسر.",
     title: "اكتشف مجموعتنا",
-    text: "تصفح الكatalog عبر السيارات والمنسوجات والإلكترونيات — استشارة عبر الهاتف والبريد.",
-    cta: "تصفح الكatalog",
+    text: "تصفح الكتالوج عبر السيارات والمنسوجات والإلكترونيات — استشارة عبر الهاتف والبريد.",
+    cta: "تصفح الكتالوج",
     secondary: "جميع الفئات",
-    sidebarText: "تصفح الكatalog عبر الإنترنت — استفسارات عبر الهاتف والبريد في أي وقت.",
+    sidebarText: "تصفح الكتالوج عبر الإنترنت — استفسارات عبر الهاتف والبريد في أي وقت.",
   },
   commerce: {
     dryRunBanner: "وضع اختبار داخلي — لا مبيعات للعملاء.",
@@ -144,7 +144,7 @@ export const catalog: TranslationTree = {
   cart: {
     title: "السلة",
     emptyTitle: "سلتك فارغة",
-    emptyText: "تصفح الكatalog وأضف منتجات.",
+    emptyText: "تصفح الكتالوج وأضف منتجات.",
     shopCta: "إلى المتجر",
     summary: "ملخص الطلب",
     subtotal: "المجموع الفرعي",
@@ -534,7 +534,7 @@ export const catalog: TranslationTree = {
     new: "وصل حديثًا",
   },
   catalog: {
-    browseOnlyTitle: "وضع الكatalog فقط",
+    browseOnlyTitle: "وضع الكتالوج فقط",
     browseOnlyText: "الدفع عبر الإنترنت غير نشط بعد. يمكنك تصفح المنتجات والأسعار — أرسل استفسارك عبر المساعدة والاتصال.",
     salesDisabled: "الطلب عبر الإنترنت غير متاح حاليًا.",
     inquiryTitle: "استفسار عن منتج",
@@ -542,7 +542,7 @@ export const catalog: TranslationTree = {
     inquiryNote: "أضف المنتجات إلى السلة وأرسل استفسارك.",
     inquiryHint: "أرسل استفسارك عبر المساعدة والاتصال إذا كنت مهتمًا.",
     inquiryCta: "إرسال استفسار",
-    cartNotice: "وضع الكatalog — لا دفع عبر الإنترنت. أضف المنتجات إلى السلة وأرسل استفسارك.",
+    cartNotice: "وضع الكتالوج — لا دفع عبر الإنترنت. أضف المنتجات إلى السلة وأرسل استفسارك.",
   },
   contactForm: {
     nameLabel: "اسمك",

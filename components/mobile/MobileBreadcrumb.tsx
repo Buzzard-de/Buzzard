@@ -13,7 +13,7 @@ export default function MobileBreadcrumb({ crumbs }: { crumbs: BuzzardCategory[]
       <Link href="/">{t("category.home")}</Link>
       {crumbs.map((crumb, index) => (
         <span key={crumb.id} className="buzzard-mobile-breadcrumb-item">
-          <span aria-hidden="true">›</span>
+          <span className="buzzard-mobile-breadcrumb-sep" aria-hidden="true">›</span>
           {index === crumbs.length - 1 ? (
             <span aria-current="page">{getCategoryLabel(crumb, locale)}</span>
           ) : (

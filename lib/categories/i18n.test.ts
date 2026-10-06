@@ -16,10 +16,14 @@ describe("category labels", () => {
     expect(formatMenuLabel({ id: "cat-05", menu_order: 5, name: "Automotive" }, "tr")).toBe("05. OTOMOTİV");
   });
 
-  it("keeps German and English catalogs", () => {
-    expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "de")).toBe("Textil");
-    expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "en")).toBe("Textiles");
-    expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "de")).toBe("Automotive");
-    expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "en")).toBe("Automotive");
+  it("uses Arabic catalog instead of Turkish source names", () => {
+    const arabic = getCategoryLabel({ id: "cat-01", name: "Tekstil" }, "ar");
+    expect(arabic).toMatch(/[\u0600-\u06FF]/);
+    expect(arabic).not.toBe("Tekstil");
+  });
+
+  it("falls back to German labels for locales without a category map", () => {
+    expect(getCategoryLabel({ id: "cat-01", name: "Tekstil" }, "fr")).toBe("Textil");
+    expect(getCategoryLabel({ id: "cat-01", name: "Tekstil" }, "fr")).not.toBe("Tekstil");
   });
 });

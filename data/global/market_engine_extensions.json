@@ -1,0 +1,96 @@
+{
+  "shippingRegions": {
+    "AT": "EU_CENTRAL", "BE": "EU_WEST", "BG": "EU_EAST", "HR": "EU_EAST",
+    "CY": "EU_SOUTH", "CZ": "EU_CENTRAL", "DK": "EU_NORTH", "EE": "EU_EAST",
+    "FI": "EU_NORTH", "FR": "EU_WEST", "DE": "EU_CENTRAL", "GR": "EU_SOUTH",
+    "HU": "EU_CENTRAL", "IE": "EU_WEST", "IT": "EU_SOUTH", "LV": "EU_EAST",
+    "LT": "EU_EAST", "LU": "EU_WEST", "MT": "EU_SOUTH", "NL": "EU_WEST",
+    "PL": "EU_EAST", "PT": "EU_SOUTH", "RO": "EU_EAST", "SK": "EU_CENTRAL",
+    "SI": "EU_EAST", "ES": "EU_SOUTH", "SE": "EU_NORTH", "TR": "NON_EU",
+    "SA": "GCC", "AE": "GCC", "QA": "GCC", "KW": "GCC", "BH": "GCC", "OM": "GCC",
+    "EG": "MENA"
+  },
+  "paymentRegions": {
+    "AT": "EU", "BE": "EU", "BG": "EU", "HR": "EU", "CY": "EU", "CZ": "EU",
+    "DK": "EU", "EE": "EU", "FI": "EU", "FR": "EU", "DE": "EU", "GR": "EU",
+    "HU": "EU", "IE": "EU", "IT": "EU", "LV": "EU", "LT": "EU", "LU": "EU",
+    "MT": "EU", "NL": "EU", "PL": "EU", "PT": "EU", "RO": "EU", "SK": "EU",
+    "SI": "EU", "ES": "EU", "SE": "EU", "TR": "TR", "SA": "GCC", "AE": "GCC",
+    "QA": "GCC", "KW": "GCC", "BH": "GCC", "OM": "GCC", "EG": "MENA"
+  },
+  "legalRegions": {
+    "AT": "EU_AT", "BE": "EU_BE", "BG": "EU_BG", "HR": "EU_HR", "CY": "EU_CY",
+    "CZ": "EU_CZ", "DK": "EU_DK", "EE": "EU_EE", "FI": "EU_FI", "FR": "EU_FR",
+    "DE": "EU_DE", "GR": "EU_GR", "HU": "EU_HU", "IE": "EU_IE", "IT": "EU_IT",
+    "LV": "EU_LV", "LT": "EU_LT", "LU": "EU_LU", "MT": "EU_MT", "NL": "EU_NL",
+    "PL": "EU_PL", "PT": "EU_PT", "RO": "EU_RO", "SK": "EU_SK", "SI": "EU_SI",
+    "ES": "EU_ES", "SE": "EU_SE", "TR": "TR", "SA": "GCC_SA", "AE": "GCC_AE",
+    "QA": "GCC_QA", "KW": "GCC_KW", "BH": "GCC_BH", "OM": "GCC_OM", "EG": "MENA_EG"
+  },
+  "supplierRegions": {
+    "AT": "EU", "BE": "EU", "BG": "EU", "HR": "EU", "CY": "EU", "CZ": "EU",
+    "DK": "EU", "EE": "EU", "FI": "EU", "FR": "EU", "DE": "EU", "GR": "EU",
+    "HU": "EU", "IE": "EU", "IT": "EU", "LV": "EU", "LT": "EU", "LU": "EU",
+    "MT": "EU", "NL": "EU", "PL": "EU", "PT": "EU", "RO": "EU", "SK": "EU",
+    "SI": "EU", "ES": "EU", "SE": "EU", "TR": "TR", "SA": "GCC", "AE": "GCC",
+    "QA": "GCC", "KW": "GCC", "BH": "GCC", "OM": "GCC", "EG": "MENA"
+  },
+  "returnRegions": {
+    "AT": "EU", "BE": "EU", "BG": "EU", "HR": "EU", "CY": "EU", "CZ": "EU",
+    "DK": "EU", "EE": "EU", "FI": "EU", "FR": "EU", "DE": "EU", "GR": "EU",
+    "HU": "EU", "IE": "EU", "IT": "EU", "LV": "EU", "LT": "EU", "LU": "EU",
+    "MT": "EU", "NL": "EU", "PL": "EU", "PT": "EU", "RO": "EU", "SK": "EU",
+    "SI": "EU", "ES": "EU", "SE": "EU", "TR": "TR", "SA": "GCC", "AE": "GCC",
+    "QA": "GCC", "KW": "GCC", "BH": "GCC", "OM": "GCC", "EG": "MENA"
+  },
+  "marketStatus": {
+    "DE": "ACTIVE", "FR": "ACTIVE", "IT": "ACTIVE", "ES": "ACTIVE", "PL": "ACTIVE",
+    "NL": "ACTIVE", "TR": "TESTING", "SA": "TESTING", "AE": "TESTING", "EG": "TESTING"
+  },
+  "defaultMarketStatus": "PLANNED",
+  "featureFlags": {
+    "DE": { "marketEnabled": true, "categoryEnabled": true, "marketplaceEnabled": true, "supplierEnabled": true, "paymentEnabled": true, "shippingEnabled": true },
+    "FR": { "marketEnabled": true, "categoryEnabled": true, "marketplaceEnabled": "testing", "supplierEnabled": true, "paymentEnabled": true, "shippingEnabled": true },
+    "TR": { "marketEnabled": true, "categoryEnabled": true, "marketplaceEnabled": false, "supplierEnabled": "testing", "paymentEnabled": "testing", "shippingEnabled": true },
+    "SA": { "marketEnabled": true, "categoryEnabled": true, "marketplaceEnabled": false, "supplierEnabled": "testing", "paymentEnabled": "testing", "shippingEnabled": "testing" }
+  },
+  "defaultFeatureFlags": {
+    "marketEnabled": true, "categoryEnabled": true, "marketplaceEnabled": false,
+    "supplierEnabled": false, "paymentEnabled": false, "shippingEnabled": false
+  },
+  "marketplaces": {
+    "DE": [
+      { "id": "amazon", "name": "Amazon", "status": "supported" },
+      { "id": "ebay", "name": "eBay", "status": "supported" },
+      { "id": "kaufland", "name": "Kaufland", "status": "supported" },
+      { "id": "otto", "name": "OTTO", "status": "supported" }
+    ],
+    "FR": [
+      { "id": "amazon", "name": "Amazon", "status": "supported" },
+      { "id": "ebay", "name": "eBay", "status": "supported" },
+      { "id": "cdiscount", "name": "Cdiscount", "status": "supported" }
+    ],
+    "PL": [
+      { "id": "amazon", "name": "Amazon", "status": "supported" },
+      { "id": "allegro", "name": "Allegro", "status": "supported" }
+    ],
+    "NL": [
+      { "id": "amazon", "name": "Amazon", "status": "supported" },
+      { "id": "bol", "name": "bol.com", "status": "supported" }
+    ]
+  },
+  "paymentCapabilities": {
+    "EU": ["card", "sepa", "paypal", "klarna"],
+    "TR": ["card"],
+    "GCC": ["card"],
+    "MENA": ["card"]
+  },
+  "shippingCapabilities": ["standard", "express", "free", "pickup", "supplier_direct", "dropshipping"],
+  "supplierFallbacks": {
+    "EU": ["EU"],
+    "GCC": ["GCC", "EU"],
+    "MENA": ["MENA", "EU"],
+    "TR": ["TR", "EU"],
+    "NON_EU": ["EU"]
+  }
+}

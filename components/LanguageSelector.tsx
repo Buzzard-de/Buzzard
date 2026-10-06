@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, LOCALE_LABELS, SUPPORTED_LOCALES } from "@/lib/i18n/context";
-import type { BuzzardLocale } from "@/lib/i18n/types";
+import { isRtlLocale, type BuzzardLocale } from "@/lib/i18n/types";
 
 export default function LanguageSelector() {
   const { locale, setLocale, t } = useLocale();
@@ -13,9 +13,10 @@ export default function LanguageSelector() {
         value={locale}
         onChange={(e) => setLocale(e.target.value as BuzzardLocale, true)}
         aria-label={t("language.label")}
+        dir={isRtlLocale(locale) ? "rtl" : "ltr"}
       >
         {SUPPORTED_LOCALES.map((code) => (
-          <option key={code} value={code}>
+          <option key={code} value={code} dir={isRtlLocale(code) ? "rtl" : "ltr"}>
             {LOCALE_LABELS[code]}
           </option>
         ))}

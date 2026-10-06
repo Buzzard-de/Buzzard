@@ -1,39 +1,17 @@
 import type { BuzzardLocale } from "@/lib/i18n/types";
+import { getIntlLocale } from "@/lib/i18n/format";
+import { getMarket } from "@/lib/market-engine";
 import type { LocalizedCatalogProduct } from "./types";
 import type { PublicProduct, StockStatus } from "@/lib/products/types";
 
-const LOCALE_BY_COUNTRY: Record<string, string> = {
-  DE: "de-DE",
-  GB: "en-GB",
-  FR: "fr-FR",
-  NL: "nl-NL",
-  PL: "pl-PL",
-  TR: "tr-TR",
-  RS: "sr-RS",
-  BA: "bs-BA",
-  AL: "sq-AL",
-  MK: "mk-MK",
-  BG: "bg-BG",
-  RO: "ro-RO",
-  GR: "el-GR",
-  HR: "hr-HR",
-  HU: "hu-HU",
-  CZ: "cs-CZ",
-  SK: "sk-SK",
-  SI: "sl-SI",
-  IT: "it-IT",
-  ES: "es-ES",
-};
-
-const LOCALE_BY_UI: Record<BuzzardLocale, string> = {
-  de: "de-DE",
-  en: "en-GB",
-  tr: "tr-TR",
-  ar: "en-GB",
-};
-
 export function resolveApiLocale(uiLocale: BuzzardLocale, countryCode: string): string {
-  return LOCALE_BY_COUNTRY[countryCode.toUpperCase()] || LOCALE_BY_UI[uiLocale] || "de-DE";
+  const market = getMarket(countryCode);
+  if (market) {
+    const match = market.locales.find((tag) => tag.toLowerCase().startsWith(`${uiLocale}-`) || tag.toLowerCase() === uiLocale);
+    if (match) return match;
+    if (market.locales[0]) return market.locales[0];
+  }
+  return getIntlLocale(uiLocale);
 }
 
 function stockStatus(stock: number): StockStatus {

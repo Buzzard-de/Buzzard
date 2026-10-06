@@ -1,30 +1,29 @@
 import type { BuzzardLocale } from "@/lib/i18n/types";
+import { getIntlLocale } from "@/lib/i18n/format";
 import { categoryLabelsDe } from "./translations/de.generated";
 import { categoryLabelsEn } from "./translations/en.generated";
 import { categoryLabelsAr } from "./translations/ar.generated";
 import { categoryLabelsTr } from "./translations/tr.generated";
 
+const CATEGORY_LABELS: Partial<Record<BuzzardLocale, Record<string, string>>> = {
+  de: categoryLabelsDe,
+  en: categoryLabelsEn,
+  ar: categoryLabelsAr,
+  tr: categoryLabelsTr,
+};
+
 export function getCategoryLabel(
   category: { id: string; name: string },
   locale: BuzzardLocale = "de"
 ): string {
-  if (locale === "de") return categoryLabelsDe[category.id] ?? category.name;
-  if (locale === "en") return categoryLabelsEn[category.id] ?? category.name;
-  if (locale === "ar") return categoryLabelsAr[category.id] ?? category.name;
-  if (locale === "tr") return categoryLabelsTr[category.id] ?? category.name;
-  return category.name;
+  const localized = CATEGORY_LABELS[locale]?.[category.id];
+  if (localized) return localized;
+  return categoryLabelsDe[category.id] ?? category.name;
 }
-
-const UPPERCASE_LOCALE_TAG: Record<BuzzardLocale, string> = {
-  de: "de-DE",
-  en: "en-US",
-  tr: "tr-TR",
-  ar: "ar",
-};
 
 /** Locale-aware uppercase so Turkish i → İ (TEKSTİL, OTOMOTİV). */
 export function toCategoryDisplayUpperCase(label: string, locale: BuzzardLocale): string {
-  return label.toLocaleUpperCase(UPPERCASE_LOCALE_TAG[locale] ?? "de-DE");
+  return label.toLocaleUpperCase(getIntlLocale(locale));
 }
 
 export function formatMenuLabel(

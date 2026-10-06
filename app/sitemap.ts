@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllCategoryStaticParams } from "@/lib/categories/service";
 import { getProductStaticParams } from "@/lib/products";
 import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
-import { localizePath } from "@/lib/i18n/routing";
+import { localizePath, toRoutingLocale } from "@/lib/i18n/routing";
 import { absoluteUrl } from "@/lib/seo/config";
 
 export const dynamic = "force-static";
@@ -11,7 +11,7 @@ const STATIC_PAGES = ["/", "/products/", "/store/", "/kontakt/", "/impressum/", 
 
 function localizedEntries(path: string, priority = 0.7): MetadataRoute.Sitemap {
   return SUPPORTED_LOCALES.map((locale) => ({
-    url: absoluteUrl(localizePath(path, locale)),
+    url: absoluteUrl(localizePath(path, toRoutingLocale(locale))),
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority,

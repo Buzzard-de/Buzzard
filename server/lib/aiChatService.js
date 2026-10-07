@@ -14,6 +14,12 @@ const RESPONSES = {
     en: "Hello! I'm the Buzzard AI assistant. I can help with products, orders, shipping, and returns. How can I help?",
     tr: "Merhaba! Ben Buzzard yapay zeka asistanıyım. Ürünler, siparişler, kargo ve iadeler konusunda yardımcı olabilirim.",
     ar: "مرحبًا! أنا مساعد Buzzard الذكي. يمكنني المساعدة في المنتجات والطلبات والشحن والإرجاع.",
+    fr: "Bonjour ! Je suis l'assistant IA Buzzard. Je peux aider pour les produits, commandes, livraison et retours.",
+    nl: "Hallo! Ik ben de Buzzard AI-assistent. Ik help bij producten, bestellingen, verzending en retouren.",
+    it: "Ciao! Sono l'assistente IA Buzzard. Posso aiutare con prodotti, ordini, spedizioni e resi.",
+    es: "Hola! Soy el asistente de IA de Buzzard. Puedo ayudar con productos, pedidos, envíos y devoluciones.",
+    pl: "Cześć! Jestem asystentem AI Buzzard. Pomagam przy produktach, zamówieniach, wysyłce i zwrotach.",
+    pt: "Olá! Sou o assistente de IA Buzzard. Posso ajudar com produtos, encomendas, envios e devoluções.",
   },
   escalation: {
     de: "Dazu kann ich leider keine sichere Antwort geben. Bitte kontaktieren Sie unseren Kundenservice unter service@buzzard24.de oder nutzen Sie das Kontaktformular.",
@@ -56,6 +62,12 @@ const RESPONSES = {
     en: "Matching products from our catalog:",
     tr: "Katalogumuzdan eşleşen ürünler:",
     ar: "منتجات مطابقة من كتالوجنا:",
+    fr: "Produits correspondants dans notre catalogue :",
+    nl: "Overeenkomende producten uit onze catalogus:",
+    it: "Prodotti corrispondenti dal nostro catalogo:",
+    es: "Productos coincidentes de nuestro catálogo:",
+    pl: "Pasujące produkty z naszego katalogu:",
+    pt: "Produtos correspondentes do nosso catálogo:",
   },
 };
 
@@ -75,7 +87,11 @@ function resolveLocale(locale) {
 
 function responseText(kind, locale) {
   const pack = RESPONSES[kind] || {};
-  return pack[locale] || pack.en || pack.de || "";
+  if (pack[locale]) return pack[locale];
+  if (locale !== "en" && process.env.NODE_ENV !== "production") {
+    console.warn(`[BUZZARD ai] English fallback for ${locale}.${kind}`);
+  }
+  return pack.en || "";
 }
 
 function readOrders() {

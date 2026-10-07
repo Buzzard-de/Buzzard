@@ -33,7 +33,12 @@ export type BuzzardLanguageCode =
   | "sv"
   | "ga";
 
-/** URL routing prefixes — legacy path structure /de/, /en/, /tr/, /ar/ */
+/**
+ * URL routing prefixes remain /de|en|tr|ar/ by design: the static export
+ * historically shipped four prefixed trees. The other 26 UI locales are
+ * selected in-app (buzzard_locale) and encoded as `?lang=` on German paths.
+ * This is intentional, not a leftover 4-locale product whitelist.
+ */
 export type BuzzardRoutingLocale = "de" | "en" | "tr" | "ar";
 
 export type BuzzardLocale = BuzzardLanguageCode;

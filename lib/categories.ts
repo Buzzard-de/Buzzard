@@ -1,6 +1,5 @@
 import type { CategoryCard, MainNavLink, PopularProduct } from "@/types";
 import type { BuzzardCategory, BuzzardLocale } from "@/lib/categories/types";
-import { categoryCatalog } from "@/lib/categories/source";
 import {
   getMainCategories,
   getVisibleMainCategories,
@@ -26,10 +25,15 @@ import {
   categoryTree,
 } from "@/lib/categories/service";
 
-export const MAIN_CATEGORY_COUNT = categoryCatalog.main_category_count;
+import { APPROVED_CUSTOMER_FACING_L1_COUNT, INTERNAL_SHOP_L1_COUNT } from "@/lib/categories/customerFacing";
+
 import { getCategoryLabel, formatMenuLabel, toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
 import { getMainCategoryIcon, getCategoryRowIcon } from "@/lib/categories/icons";
 import { getProductsForCategory } from "@/lib/products";
+
+/** Customer-facing L1 count (50). Internal JSON still has 53 records. */
+export const MAIN_CATEGORY_COUNT = APPROVED_CUSTOMER_FACING_L1_COUNT;
+export const INTERNAL_L1_COUNT = INTERNAL_SHOP_L1_COUNT;
 
 export const DEFAULT_LOCALE: BuzzardLocale = "de";
 
@@ -62,8 +66,8 @@ export {
   getCategoryRowIcon,
 };
 
-/** Linke Spalte: Hauptkategorien aus JSON (Smart-Menü: 48 Kategorien via API) */
-export const mainCategories = getMainCategories().map((cat) => ({
+/** Linke Spalte: customer-facing Hauptkategorien (50; JSON still holds 53). */
+export const mainCategories = getVisibleMainCategories().map((cat) => ({
   id: cat.id,
   slug: cat.slug,
   label: formatMenuLabel(cat, DEFAULT_LOCALE),

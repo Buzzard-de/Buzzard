@@ -1,0 +1,210 @@
+{
+  "fr": {
+    "gapKeys": 141,
+    "equalToEnglish": 40,
+    "nativeOrDifferent": 101,
+    "missingNativeCustomerKeys_C": 40,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "nl": {
+    "gapKeys": 141,
+    "equalToEnglish": 106,
+    "nativeOrDifferent": 35,
+    "missingNativeCustomerKeys_C": 106,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "bg": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "hr": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "el": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "cs": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "da": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "et": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "fi": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "hu": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "it": {
+    "gapKeys": 141,
+    "equalToEnglish": 130,
+    "nativeOrDifferent": 11,
+    "missingNativeCustomerKeys_C": 130,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "lv": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "lt": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "lb": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "mt": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "pl": {
+    "gapKeys": 141,
+    "equalToEnglish": 108,
+    "nativeOrDifferent": 33,
+    "missingNativeCustomerKeys_C": 108,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "pt": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "ro": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "sk": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "sl": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "es": {
+    "gapKeys": 141,
+    "equalToEnglish": 128,
+    "nativeOrDifferent": 13,
+    "missingNativeCustomerKeys_C": 128,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "ca": {
+    "gapKeys": 141,
+    "equalToEnglish": 40,
+    "nativeOrDifferent": 101,
+    "missingNativeCustomerKeys_C": 40,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "eu": {
+    "gapKeys": 141,
+    "equalToEnglish": 40,
+    "nativeOrDifferent": 101,
+    "missingNativeCustomerKeys_C": 40,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "gl": {
+    "gapKeys": 141,
+    "equalToEnglish": 40,
+    "nativeOrDifferent": 101,
+    "missingNativeCustomerKeys_C": 40,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "sv": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  },
+  "ga": {
+    "gapKeys": 141,
+    "equalToEnglish": 141,
+    "nativeOrDifferent": 0,
+    "missingNativeCustomerKeys_C": 141,
+    "intentionalEnglish_A": 0,
+    "approvedFallback_B": 0
+  }
+}

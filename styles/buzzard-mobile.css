@@ -393,7 +393,7 @@
     background: #14110a;
     color: #f5f0e6;
     font-size: 14px;
-    text-align: left;
+    text-align: start;
   }
 
   .buzzard-mobile-vehicle-btn small {
@@ -748,7 +748,7 @@
     border: 0;
     background: transparent;
     color: #111;
-    text-align: left;
+    text-align: start;
     text-decoration: none;
     font-size: 15px;
   }

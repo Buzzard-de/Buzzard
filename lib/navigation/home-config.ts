@@ -1,6 +1,6 @@
 import homepageSpec from "@/data/buzzard_homepage_navigation_spec.json";
 import navSpec from "@/data/buzzard_home_navigation_spec.json";
-import { getMainCategories } from "@/lib/categories/service";
+import { getVisibleMainCategories } from "@/lib/categories/service";
 
 export const homepageSections = homepageSpec.layout.homepage_sections;
 export const supportedLocales = navSpec.languages as string[];
@@ -9,7 +9,7 @@ export const brandConfig = homepageSpec.brand;
 
 /** Featured category IDs for homepage discovery (first 12 mains by menu_order). */
 export function getHomeFeaturedCategoryIds(limit = 12): string[] {
-  return getMainCategories()
+  return getVisibleMainCategories()
     .slice(0, limit)
     .map((cat) => cat.id);
 }

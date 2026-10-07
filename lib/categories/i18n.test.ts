@@ -40,9 +40,12 @@ describe("category labels", () => {
 
   it("covers every master category in every enabled locale", () => {
     const ids = listMasterCategoryIds();
-    expect(ids.length).toBeGreaterThanOrEqual(50);
+    expect(ids).toHaveLength(50);
     expect(ids).toContain("cat-01");
     expect(ids).toContain("cat-50");
+    expect(ids).not.toContain("cat-30");
+    expect(ids).not.toContain("cat-37");
+    expect(ids).not.toContain("cat-39");
     for (const locale of SUPPORTED_LOCALES) {
       expect(listMissingCategoryKeys(locale)).toEqual([]);
       for (const id of ids) {

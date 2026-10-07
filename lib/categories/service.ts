@@ -1,5 +1,6 @@
 import type { BuzzardCategory } from "./types";
 import { categoryCatalog } from "./source";
+import { isCustomerFacingL1 } from "./customerFacing";
 
 const { categories } = categoryCatalog;
 
@@ -50,7 +51,9 @@ export function isCategoryVisibleToCustomer(
 export function getVisibleMainCategories(
   visibilityMap?: Record<string, { status?: string }>
 ): BuzzardCategory[] {
-  return getMainCategories().filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap));
+  return getMainCategories().filter(
+    (cat) => isCustomerFacingL1(cat.id) && isCategoryVisibleToCustomer(cat.id, visibilityMap)
+  );
 }
 
 export function filterVisibleTree(

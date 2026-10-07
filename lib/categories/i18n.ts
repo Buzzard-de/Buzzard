@@ -1,21 +1,15 @@
 import type { BuzzardLocale } from "@/lib/i18n/types";
 import { getIntlLocale } from "@/lib/i18n/format";
-import categoryMains from "@/data/i18n/category-mains.json";
-import { categoryLabelsDe } from "./translations/de.generated";
-import { categoryLabelsEn } from "./translations/en.generated";
-import { categoryLabelsAr } from "./translations/ar.generated";
-import { categoryLabelsTr } from "./translations/tr.generated";
+import categoryTree from "@/data/i18n/category-tree.json";
+import categoryFallbacks from "@/data/i18n/category-tree-fallbacks.json";
+import { isCustomerFacingL1 } from "./customerFacing";
 
-const CATEGORY_LABELS: Partial<Record<BuzzardLocale, Record<string, string>>> = {
-  de: categoryLabelsDe,
-  en: categoryLabelsEn,
-  ar: categoryLabelsAr,
-  tr: categoryLabelsTr,
-};
-
-type CategoryMainMap = Record<string, Partial<Record<BuzzardLocale, string>>>;
-const MAINS = categoryMains as CategoryMainMap;
+type CategoryTreeMap = Record<string, Partial<Record<BuzzardLocale, string>>>;
+const TREE = categoryTree as CategoryTreeMap;
 const missingCategoryKeys = new Set<string>();
+
+const TURKISH_RE = /[İıŞşĞğ]|Elbise|Giyim|Pantolon|Gömlek|Tişört|Şort|Bluz|Hırka|Kazak/;
+const GERMAN_RE = /[äöüÄÖÜß]|Bekleidung|Reinigung|Heizung|Fahrzeug|Küche/;
 
 function logMissingCategory(locale: BuzzardLocale, categoryId: string): void {
   const token = `${locale}:${categoryId}`;
@@ -24,42 +18,60 @@ function logMissingCategory(locale: BuzzardLocale, categoryId: string): void {
   console.warn(`[BUZZARD i18n] Missing category translation:\n${locale}.${categoryId}`);
 }
 
-export function listMasterCategoryIds(): string[] {
-  return Object.keys(MAINS).sort();
+export function listCategoryIds(): string[] {
+  return Object.keys(TREE).sort();
 }
 
-/** Locale → English → technical name. Never a silent German/Turkish fallback. */
+export function listMasterCategoryIds(): string[] {
+  return listCategoryIds().filter((id) => /^cat-\d{2}$/.test(id) && isCustomerFacingL1(id));
+}
+
+export function listLevelCategoryIds(level: 1 | 2 | 3): string[] {
+  const depth = level;
+  return listCategoryIds().filter((id) => id.split("-").length === depth + 1 || (depth === 1 && /^cat-\d{2}$/.test(id)));
+}
+
+/** Locale → English. Never a silent German/Turkish fallback. */
 export function getCategoryLabel(
   category: { id: string; name: string },
   locale: BuzzardLocale = "de"
 ): string {
-  const fromMains = MAINS[category.id]?.[locale];
-  if (fromMains) return fromMains;
-
-  const fromLocaleMap = CATEGORY_LABELS[locale]?.[category.id];
-  if (fromLocaleMap) return fromLocaleMap;
-
-  const englishMain = MAINS[category.id]?.en;
-  if (englishMain) {
+  const row = TREE[category.id];
+  const localized = row?.[locale];
+  if (localized) return localized;
+  const english = row?.en;
+  if (english) {
     logMissingCategory(locale, category.id);
-    return englishMain;
+    return english;
   }
-
-  const fromEnglishMap = CATEGORY_LABELS.en?.[category.id];
-  if (fromEnglishMap) {
-    logMissingCategory(locale, category.id);
-    return fromEnglishMap;
-  }
-
   logMissingCategory(locale, category.id);
   return category.name;
 }
 
 export function listMissingCategoryKeys(locale: BuzzardLocale): string[] {
-  return listMasterCategoryIds().filter((id) => !MAINS[id]?.[locale]);
+  return listMasterCategoryIds().filter((id) => !TREE[id]?.[locale]);
 }
 
-/** Locale-aware uppercase so Turkish i → İ (TEKSTİL, OTOMOTİV). */
+export function listMissingTreeKeys(locale: BuzzardLocale, level?: 1 | 2 | 3): string[] {
+  const ids = level ? listLevelCategoryIds(level) : listCategoryIds();
+  return ids.filter((id) => !TREE[id]?.[locale]);
+}
+
+export function isRecordedEnglishFallback(categoryId: string, locale: BuzzardLocale): boolean {
+  const examples = (categoryFallbacks as { examples?: Array<{ id: string; locale: string }> }).examples ?? [];
+  return examples.some((item) => item.id === categoryId && item.locale === locale);
+}
+
+export function looksLikeTurkishLabel(label: string): boolean {
+  return TURKISH_RE.test(label);
+}
+
+export function looksLikeGermanLabel(label: string): boolean {
+  return GERMAN_RE.test(label);
+}
+
+export { categoryFallbacks };
+
 export function toCategoryDisplayUpperCase(label: string, locale: BuzzardLocale): string {
   return label.toLocaleUpperCase(getIntlLocale(locale));
 }

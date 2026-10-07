@@ -56,10 +56,29 @@ const templates: Partial<Record<BuzzardEmailLocale, Record<EmailTemplateKey, Ema
   },
 };
 
+const emailFallbackLog = new Set<string>();
+
+function logEmailFallback(locale: BuzzardLocale, key: EmailTemplateKey): void {
+  const token = `${locale}:${key}`;
+  if (emailFallbackLog.has(token)) return;
+  emailFallbackLog.add(token);
+  if (process.env.NODE_ENV === "production") return;
+  console.warn(`[BUZZARD email] English fallback for ${locale}.${key}`);
+}
+
 export function getEmailTemplate(key: EmailTemplateKey, locale: BuzzardLocale): EmailTemplate {
   const native = templates[locale as BuzzardEmailLocale];
   if (native?.[key]) return native[key];
+  logEmailFallback(locale, key);
   return templates.en![key];
+}
+
+export function listNativeEmailLocales(): BuzzardEmailLocale[] {
+  return Object.keys(templates) as BuzzardEmailLocale[];
+}
+
+export function usesEnglishEmailFallback(locale: BuzzardLocale): boolean {
+  return !(locale in templates);
 }
 
 export function renderEmailTemplate(

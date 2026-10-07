@@ -190,7 +190,7 @@ select, input, button { font-family: inherit; }
     border-radius: 3px;
     letter-spacing: 0.06em;
 }
-.vin-text { text-align: left; font-weight: 600; text-transform: uppercase; }
+.vin-text { text-align: start; font-weight: 600; text-transform: uppercase; }
 
 /* Header actions */
 .header-actions {
@@ -949,7 +949,7 @@ select, input, button { font-family: inherit; }
 .legal-catalog-notice {
     padding: 14px 16px;
     margin-bottom: 28px;
-    border-left: 3px solid var(--gold);
+    border-inline-start: 3px solid var(--gold);
     background: rgba(201, 168, 64, 0.08);
     color: var(--muted);
     font-size: 0.88rem;
@@ -1463,7 +1463,7 @@ select, input, button { font-family: inherit; }
 .category-sidebar-list { display: flex; flex-direction: column; gap: 6px; }
 .category-sidebar-btn {
     width: 100%;
-    text-align: left;
+    text-align: start;
     background: transparent;
     border: 1px solid transparent;
     color: var(--muted);

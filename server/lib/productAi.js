@@ -59,7 +59,8 @@ function updateReview(id, patch) {
 
 async function enrichProduct(input, options = {}) {
   const language = options.language || "de";
-  const locales = options.locales || ["de", "en", "tr", "ar"];
+  const { SUPPORTED_LOCALES } = require("./canonicalLocales");
+  const locales = options.locales || SUPPORTED_LOCALES;
 
   const copy = aiCenter.aiAdapter({
     task: "product_copy",

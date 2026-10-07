@@ -66,9 +66,13 @@ const catalogs: Record<BuzzardLanguageCode, TranslationTree> = {
   ga,
 };
 
-export const FALLBACK_LOCALE: BuzzardLanguageCode = "de";
-const TECHNICAL_FALLBACK: BuzzardLanguageCode[] = ["en", "de"];
+import gapFills from "@/data/i18n/ui-gap-fills.json";
+
+/** Display fallback is English. German is never a silent UI fallback. */
+export const FALLBACK_LOCALE: BuzzardLanguageCode = "en";
+const TECHNICAL_FALLBACK: BuzzardLanguageCode[] = ["en"];
 const missingKeys = new Set<string>();
+const mergedCatalogs = new Map<BuzzardLanguageCode, TranslationTree>();
 
 function resolve(tree: TranslationTree, key: string): string | undefined {
   const parts = key.split(".");
@@ -80,36 +84,80 @@ function resolve(tree: TranslationTree, key: string): string | undefined {
   return typeof node === "string" ? node : undefined;
 }
 
+function setPath(tree: TranslationTree, key: string, value: string): void {
+  const parts = key.split(".");
+  let node: TranslationTree = tree;
+  for (let i = 0; i < parts.length - 1; i += 1) {
+    const part = parts[i];
+    const next = node[part];
+    if (!next || typeof next === "string") {
+      node[part] = {};
+    }
+    node = node[part] as TranslationTree;
+  }
+  node[parts[parts.length - 1]] = value;
+}
+
+function cloneTree(tree: TranslationTree): TranslationTree {
+  return JSON.parse(JSON.stringify(tree)) as TranslationTree;
+}
+
+export function getCatalog(language: BuzzardLanguageCode): TranslationTree {
+  const cached = mergedCatalogs.get(language);
+  if (cached) return cached;
+  const merged = cloneTree(catalogs[language] ?? catalogs.en);
+  const fills = (gapFills as Record<string, Record<string, string>>)[language];
+  if (fills) {
+    for (const [key, value] of Object.entries(fills)) {
+      if (!resolve(merged, key)) setPath(merged, key, value);
+    }
+  }
+  mergedCatalogs.set(language, merged);
+  return merged;
+}
+
 function logMissingTranslation(localeLabel: string, key: string): void {
-  if (process.env.NODE_ENV !== "development" || missingKeys.has(`${localeLabel}:${key}`)) return;
+  if (process.env.NODE_ENV === "production" || missingKeys.has(`${localeLabel}:${key}`)) return;
   missingKeys.add(`${localeLabel}:${key}`);
   console.warn(`[BUZZARD i18n] Missing translation:\n${localeLabel}.${key}`);
 }
 
+export function fallbackChain(language: BuzzardLanguageCode): BuzzardLanguageCode[] {
+  if (language === "en") return ["en"];
+  return [language, "en"];
+}
+
+export function flattenCatalog(tree: TranslationTree, prefix = ""): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(tree)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === "string") out[path] = value;
+    else if (value && typeof value === "object") Object.assign(out, flattenCatalog(value, path));
+  }
+  return out;
+}
+
+export function listMissingKeys(language: BuzzardLanguageCode, baseline: BuzzardLanguageCode = "de"): string[] {
+  const base = flattenCatalog(getCatalog(baseline));
+  const current = flattenCatalog(getCatalog(language));
+  return Object.keys(base).filter((key) => !(key in current));
+}
+
 export function translate(language: BuzzardLanguageCode, key: string, localeLabel?: string): string {
   const label = localeLabel ?? language;
-  const primary = resolve(catalogs[language], key);
-  if (primary) return primary;
-
-  for (const fallback of TECHNICAL_FALLBACK) {
-    if (fallback === language) continue;
-    const value = resolve(catalogs[fallback], key);
+  for (const candidate of fallbackChain(language)) {
+    const value = resolve(getCatalog(candidate), key);
     if (value) {
-      logMissingTranslation(label, key);
+      if (candidate !== language) logMissingTranslation(label, key);
       return value;
     }
   }
-
   logMissingTranslation(label, key);
   return key;
 }
 
-export function getCatalog(language: BuzzardLanguageCode): TranslationTree {
-  return catalogs[language];
-}
-
 export async function loadCatalog(language: BuzzardLanguageCode): Promise<TranslationTree> {
-  return catalogs[language];
+  return getCatalog(language);
 }
 
 export async function loadLocale(localeTag: string): Promise<TranslationTree> {

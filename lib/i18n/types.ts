@@ -1,3 +1,5 @@
+import supportedLocalesJson from "./supported-locales.json";
+
 /** All Buzzard UI language codes with full translation catalogs. */
 export type BuzzardLanguageCode =
   | "de"
@@ -34,16 +36,10 @@ export type BuzzardLanguageCode =
 /** URL routing prefixes — legacy path structure /de/, /en/, /tr/, /ar/ */
 export type BuzzardRoutingLocale = "de" | "en" | "tr" | "ar";
 
-/** Email template locales — transactional emails currently in 4 languages. */
-export type BuzzardEmailLocale = "de" | "en" | "tr" | "ar";
-
 export type BuzzardLocale = BuzzardLanguageCode;
+export type BuzzardEmailLocale = BuzzardLanguageCode;
 
-export const UI_READY_LANGUAGES: BuzzardLanguageCode[] = [
-  "de", "en", "tr", "ar", "fr", "nl", "bg", "hr", "el", "cs", "da", "et", "fi",
-  "hu", "it", "lv", "lt", "lb", "mt", "pl", "pt", "ro", "sk", "sl", "es", "ca",
-  "eu", "gl", "sv", "ga",
-];
+export const UI_READY_LANGUAGES = supportedLocalesJson as BuzzardLanguageCode[];
 
 /** Legacy 4-locale prefix routing support. */
 export const ROUTING_LOCALE_PREFIXES = ["de", "en", "tr", "ar"] as const;
@@ -118,6 +114,20 @@ export const LOCALE_TAG_MAP: Record<string, BuzzardLanguageCode> = {
   "ar-OM": "ar", "ar-EG": "ar", "ar-DE": "ar",
   "ga-IE": "ga",
 };
+
+export function isSupportedLocale(code: string): code is BuzzardLanguageCode {
+  const lang = code.replace("_", "-").split("-")[0]?.toLowerCase() ?? "";
+  return (SUPPORTED_LOCALES as string[]).includes(lang);
+}
+
+export function resolveSupportedLocale(code: string, fallback: BuzzardLanguageCode = "en"): BuzzardLanguageCode {
+  if (isSupportedLocale(code)) {
+    return code.replace("_", "-").split("-")[0]?.toLowerCase() as BuzzardLanguageCode;
+  }
+  const lang = code.replace("_", "-").split("-")[0]?.toLowerCase() ?? "";
+  if ((SUPPORTED_LOCALES as string[]).includes(lang)) return lang as BuzzardLanguageCode;
+  return fallback;
+}
 
 export function resolveLanguageFromLocaleTag(localeTag: string): BuzzardLanguageCode {
   const normalized = localeTag.replace("_", "-");

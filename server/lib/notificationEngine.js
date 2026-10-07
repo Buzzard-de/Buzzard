@@ -102,14 +102,15 @@ function interpolate(template, vars) {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key) => String(vars[key] ?? ""));
 }
 
+const { resolveSupportedLocale } = require("./canonicalLocales");
+
 function resolveLocale(locale) {
-  const supported = new Set(["de", "en", "tr", "ar"]);
-  return supported.has(locale) ? locale : "de";
+  return resolveSupportedLocale(locale, "en");
 }
 
 function renderTemplate(eventType, locale, payload) {
   const lang = resolveLocale(locale);
-  const tpl = TEMPLATES[eventType]?.[lang] || TEMPLATES[eventType]?.de;
+  const tpl = TEMPLATES[eventType]?.[lang] || TEMPLATES[eventType]?.en || TEMPLATES[eventType]?.de;
   if (!tpl) return { subject: eventType, body: JSON.stringify(payload) };
   return {
     subject: interpolate(tpl.subject, payload),

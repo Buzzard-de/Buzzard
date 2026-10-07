@@ -45,6 +45,18 @@ const RESPONSES = {
     tr: "Ben bir yapay zeka asistanıyım, insan çalışan değilim.",
     ar: "أنا مساعد ذكاء اصطناعي ولست موظفًا بشريًا.",
   },
+  orderNeedDetails: {
+    de: "Bitte nennen Sie Ihre Bestellnummer und die E-Mail-Adresse der Bestellung.",
+    en: "Please provide your order number and the email used for the order.",
+    tr: "Lütfen sipariş numaranızı ve sipariş e-postasını belirtin.",
+    ar: "يرجى ذكر رقم الطلب والبريد الإلكتروني للطلب.",
+  },
+  productMatches: {
+    de: "Hier sind passende Produkte aus unserem Katalog:",
+    en: "Matching products from our catalog:",
+    tr: "Katalogumuzdan eşleşen ürünler:",
+    ar: "منتجات مطابقة من كتالوجنا:",
+  },
 };
 
 function ensureDataDir() {
@@ -55,8 +67,15 @@ function salesEnabled() {
   return process.env.BUZZARD_SALES_ENABLED === "1";
 }
 
+const { resolveSupportedLocale } = require("./canonicalLocales");
+
 function resolveLocale(locale) {
-  return ["de", "en", "tr", "ar"].includes(locale) ? locale : "de";
+  return resolveSupportedLocale(locale, "en");
+}
+
+function responseText(kind, locale) {
+  const pack = RESPONSES[kind] || {};
+  return pack[locale] || pack.en || pack.de || "";
 }
 
 function readOrders() {
@@ -169,13 +188,13 @@ function handleMessage(input) {
 
   switch (intent) {
     case "greeting":
-      reply = RESPONSES.greeting[locale];
+      reply = responseText("greeting", locale);
       break;
     case "shipping":
-      reply = RESPONSES.shipping[locale];
+      reply = responseText("shipping", locale);
       break;
     case "returns":
-      reply = RESPONSES.returns[locale];
+      reply = responseText("returns", locale);
       break;
     case "order": {
       const { orderNumber, email } = extractOrderQuery(userMessage);
@@ -185,18 +204,13 @@ function handleMessage(input) {
         if (order) {
           reply = formatOrderStatus(order, locale);
         } else {
-          reply = RESPONSES.orderNotFound[locale];
+          reply = responseText("orderNotFound", locale);
           escalate = true;
         }
       } else {
         reply =
-          locale === "de"
-            ? "Bitte nennen Sie Ihre Bestellnummer und die E-Mail-Adresse der Bestellung."
-            : locale === "tr"
-              ? "Lütfen sipariş numaranızı ve sipariş e-postasını belirtin."
-              : locale === "ar"
-                ? "يرجى ذكر رقم الطلب والبريد الإلكتروني للطلب."
-                : "Please provide your order number and the email used for the order.";
+          responseText("orderNeedDetails", locale) ||
+          "Please provide your order number and the email used for the order.";
       }
       break;
     }
@@ -207,30 +221,24 @@ function handleMessage(input) {
         const list = salesEnabled()
           ? products.map((p) => `${p.name} (${p.price?.toFixed(2)} €)`).join("; ")
           : products.map((p) => p.name).join("; ");
-        reply =
-          locale === "de"
-            ? `Hier sind passende Produkte aus unserem Katalog: ${list}`
-            : locale === "tr"
-              ? `Katalogumuzdan eşleşen ürünler: ${list}`
-              : locale === "ar"
-                ? `منتجات مطابقة من كatalogنا: ${list}`
-                : `Matching products from our catalog: ${list}`;
+        const intro = responseText("productMatches", locale) || "Matching products from our catalog:";
+        reply = `${intro} ${list}`;
       } else {
-        reply = RESPONSES.escalation[locale];
+        reply = responseText("escalation", locale);
         escalate = true;
       }
       break;
     }
     case "escalation":
-      reply = RESPONSES.escalation[locale];
+      reply = responseText("escalation", locale);
       escalate = true;
       break;
     default:
-      reply = RESPONSES.escalation[locale];
+      reply = responseText("escalation", locale);
       escalate = true;
   }
 
-  reply += `\n\n(${RESPONSES.aiDisclaimer[locale]})`;
+  reply += `\n\n(${responseText("aiDisclaimer", locale)})`;
   session.messages.push({ role: "assistant", content: reply, at: new Date().toISOString(), intent, escalate });
   session.updatedAt = new Date().toISOString();
   saveSession(session);

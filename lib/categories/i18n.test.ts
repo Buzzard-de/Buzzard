@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { formatMenuLabel, getCategoryLabel, toCategoryDisplayUpperCase } from "./i18n";
+import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
+import {
+  formatMenuLabel,
+  getCategoryLabel,
+  listMasterCategoryIds,
+  listMissingCategoryKeys,
+  toCategoryDisplayUpperCase,
+} from "./i18n";
 
 describe("category labels", () => {
   it("uses Turkish catalog for main categories, not English", () => {
@@ -20,10 +27,29 @@ describe("category labels", () => {
     const arabic = getCategoryLabel({ id: "cat-01", name: "Tekstil" }, "ar");
     expect(arabic).toMatch(/[\u0600-\u06FF]/);
     expect(arabic).not.toBe("Tekstil");
+    expect(getCategoryLabel({ id: "cat-03", name: "Reinigungsprodukte" }, "ar")).toBe("منتجات التنظيف");
   });
 
-  it("falls back to German labels for locales without a category map", () => {
-    expect(getCategoryLabel({ id: "cat-01", name: "Tekstil" }, "fr")).toBe("Textil");
-    expect(getCategoryLabel({ id: "cat-01", name: "Tekstil" }, "fr")).not.toBe("Tekstil");
+  it("does not fall back to German labels for other locales", () => {
+    expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "fr")).toBe("Textiles");
+    expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "fr")).not.toBe("Textil");
+    expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "nl")).not.toBe("Textil");
+    expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "pl")).not.toBe("Textil");
+    expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "it")).not.toBe("Textil");
+  });
+
+  it("covers every master category in every enabled locale", () => {
+    const ids = listMasterCategoryIds();
+    expect(ids.length).toBeGreaterThanOrEqual(50);
+    expect(ids).toContain("cat-01");
+    expect(ids).toContain("cat-50");
+    for (const locale of SUPPORTED_LOCALES) {
+      expect(listMissingCategoryKeys(locale)).toEqual([]);
+      for (const id of ids) {
+        const label = getCategoryLabel({ id, name: "FALLBACK" }, locale);
+        expect(label).not.toBe("FALLBACK");
+        expect(label.length).toBeGreaterThan(0);
+      }
+    }
   });
 });

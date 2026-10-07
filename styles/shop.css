@@ -7,7 +7,8 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 10px 44px 10px 16px;
+  padding: 10px 16px;
+  padding-inline-end: 44px;
   background: #1a1a1a;
   border-bottom: 1px solid #3a3a3a;
   color: #ccc;
@@ -22,7 +23,7 @@
 .storefront-api-banner-dismiss {
   position: absolute;
   top: 6px;
-  right: 10px;
+  inset-inline-end: 10px;
   border: none;
   background: transparent;
   color: #888;
@@ -616,7 +617,7 @@
 .checkout-success-summary {
   margin: 20px auto;
   max-width: 320px;
-  text-align: left;
+  text-align: start;
 }
 
 .checkout-success-support {
@@ -1077,7 +1078,7 @@ html[dir="rtl"] .checkout-nav {
 .product-gallery-zoom-close {
   position: absolute;
   top: 20px;
-  right: 20px;
+  inset-inline-end: 20px;
   width: 40px;
   height: 40px;
   border: 1px solid var(--border);
@@ -1195,8 +1196,7 @@ html[dir="rtl"] .checkout-nav {
 
 .consent-banner {
   position: fixed;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   bottom: 0;
   z-index: 1200;
   padding: 16px;
@@ -1406,16 +1406,11 @@ html[dir="rtl"] .checkout-nav {
 }
 
 @media (max-width: 900px) {
-  .ai-chat-panel {
-    right: 12px;
-    left: 12px;
+  .ai-chat-panel,
+  .ai-chat-panel.rtl {
+    inset-inline: 12px;
     width: auto;
     bottom: 72px;
-  }
-
-  .ai-chat-panel.rtl {
-    left: 12px;
-    right: 12px;
   }
 }
 
@@ -1452,7 +1447,7 @@ html[dir="rtl"] .checkout-nav {
 
   .cart-item-total {
     grid-column: 1 / -1;
-    text-align: right;
+    text-align: end;
   }
 
   .cart-checkout-btn,

@@ -1,6 +1,6 @@
 import type { BuzzardCategory } from "@/lib/categories/types";
 import { getCategoryLabel } from "@/lib/categories/i18n";
-import type { BuzzardLocale } from "@/lib/i18n/types";
+import { SUPPORTED_LOCALES, type BuzzardLocale } from "@/lib/i18n/types";
 import type { PublicProduct } from "@/lib/products/types";
 import { absoluteUrl, SEO_DEFAULTS, SITE_URL } from "./config";
 import { CONTACT_EMAIL, CONTACT_PHONE_TEL } from "@/lib/site/contact";
@@ -27,7 +27,7 @@ export function organizationSchema() {
       contactType: "customer service",
       email: CONTACT_EMAIL,
       telephone: CONTACT_PHONE_TEL,
-      availableLanguage: ["de", "en", "tr", "ar"],
+      availableLanguage: [...SUPPORTED_LOCALES],
       areaServed: "DE",
     },
   };

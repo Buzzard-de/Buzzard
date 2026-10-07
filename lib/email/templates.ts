@@ -17,7 +17,7 @@ type EmailTemplate = {
   body: string;
 };
 
-const templates: Record<BuzzardEmailLocale, Record<EmailTemplateKey, EmailTemplate>> = {
+const templates: Partial<Record<BuzzardEmailLocale, Record<EmailTemplateKey, EmailTemplate>>> = {
   de: {
     account_verification: { subject: "Bitte bestätigen Sie Ihr Buzzard-Konto", body: "Hallo {firstName},\n\nbitte bestätigen Sie Ihre E-Mail-Adresse." },
     password_reset: { subject: "Passwort zurücksetzen", body: "Hallo {firstName},\n\nsetzen Sie Ihr Passwort über den Link zurück." },
@@ -57,8 +57,9 @@ const templates: Record<BuzzardEmailLocale, Record<EmailTemplateKey, EmailTempla
 };
 
 export function getEmailTemplate(key: EmailTemplateKey, locale: BuzzardLocale): EmailTemplate {
-  const emailLocale = (locale in templates ? locale : "de") as BuzzardEmailLocale;
-  return templates[emailLocale]?.[key] ?? templates.de[key];
+  const native = templates[locale as BuzzardEmailLocale];
+  if (native?.[key]) return native[key];
+  return templates.en![key];
 }
 
 export function renderEmailTemplate(

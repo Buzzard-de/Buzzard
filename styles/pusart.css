@@ -1857,6 +1857,14 @@ body:has(.home-fullscreen) #maincontent {
   cursor: pointer;
 }
 
+.mega-menu-locale-market {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
 .mega-menu-search {
   padding: 10px 16px 8px;
   border-bottom: 1px solid var(--border);
@@ -2145,7 +2153,8 @@ html[dir="rtl"] .mega-menu-shell-head {
 }
 
 @media (max-width: 767px) {
-  .language-selector {
+  .buzzard-desktop-chrome .language-selector,
+  .header .language-selector {
     display: none;
   }
 

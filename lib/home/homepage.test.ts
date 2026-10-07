@@ -52,7 +52,7 @@ describe("homepage canonical content", () => {
   it("keeps the vehicle selector as a homepage feature, not the hero definition", () => {
     const home = readFileSync(resolve("components/mobile/MobileHome.tsx"), "utf8");
     expect(home).toContain("MobileVehicleSelector");
-    expect(home.indexOf("MobileVehicleSelector")).toBeLessThan(home.indexOf("MobileHero"));
+    expect(home.indexOf("<MobileVehicleSelector")).toBeLessThan(home.indexOf("<MobileHero"));
     expect(getHomeCategoryList().some((c) => c.id === "cat-05")).toBe(true);
   });
 

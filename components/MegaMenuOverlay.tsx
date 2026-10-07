@@ -53,12 +53,10 @@ export default function MegaMenuOverlay() {
           </button>
         </div>
         <MegaMenuSearch onNavigate={homeUI?.closeMegaMenu} />
-        {isMobile ? (
-          <div className="mega-menu-locale-market">
-            <LanguageSelector />
-            <CountrySelector />
-          </div>
-        ) : null}
+        <div className="mega-menu-locale-market">
+          <LanguageSelector />
+          <CountrySelector />
+        </div>
 
         {isMobile ? (
           <CategorySidebar activeId={activeMainId} onSelect={setActiveMainId} embedded />

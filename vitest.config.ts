@@ -12,6 +12,7 @@ export default defineConfig({
       "lib/i18n/catalog.test.ts",
       "lib/i18n/localeCatalog.test.ts",
       "lib/i18n/localeMarketRtl.test.ts",
+      "lib/i18n/localeCompletion.test.ts",
       "lib/i18n/international/international.test.ts",
       "lib/market-engine/marketEngine.test.ts",
       "lib/categories/i18n.test.ts",

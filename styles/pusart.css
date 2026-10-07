@@ -1170,13 +1170,16 @@ body:has(.home-fullscreen) #maincontent {
   font-weight: 800;
   color: #fff;
   margin-bottom: 8px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .home-hero-text {
   font-size: 0.88rem;
   color: #888;
   margin-bottom: 16px;
-  max-width: 420px;
+  max-width: min(42em, 100%);
+  overflow-wrap: anywhere;
 }
 
 .home-hero-btn {

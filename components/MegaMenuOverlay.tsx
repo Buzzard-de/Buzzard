@@ -12,6 +12,8 @@ import {
 } from "@/lib/categories";
 import { useIsMobileNav, useIsTabletNav } from "@/lib/use-media-query";
 import MegaMenuSearch from "./MegaMenuSearch";
+import LanguageSelector from "./LanguageSelector";
+import CountrySelector from "./CountrySelector";
 
 export default function MegaMenuOverlay() {
   const homeUI = useHomeUI();
@@ -51,6 +53,12 @@ export default function MegaMenuOverlay() {
           </button>
         </div>
         <MegaMenuSearch onNavigate={homeUI?.closeMegaMenu} />
+        {isMobile ? (
+          <div className="mega-menu-locale-market">
+            <LanguageSelector />
+            <CountrySelector />
+          </div>
+        ) : null}
 
         {isMobile ? (
           <CategorySidebar activeId={activeMainId} onSelect={setActiveMainId} embedded />

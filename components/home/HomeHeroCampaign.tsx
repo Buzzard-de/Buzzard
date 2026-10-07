@@ -9,7 +9,7 @@ export default function HomeHeroCampaign() {
   const { t } = useLocale();
 
   return (
-    <section className="home-hero home-hero-campaign" aria-label="Startbereich">
+    <section className="home-hero home-hero-campaign" aria-label={t("mobile.heroAria")}>
       <div className="home-hero-content">
         <p className="home-hero-kicker">{t("hero.kicker")}</p>
         <h1 className="home-hero-title">{t("hero.title")}</h1>

@@ -17,8 +17,8 @@ export default function HomePageContent() {
     <div className="home-page">
       {!isPhone ? (
         <div className="buzzard-desktop-chrome">
-          <HomeLayout />
           <HomeHeroCampaign />
+          <HomeLayout />
           <HomeCategoryDiscovery />
           <HomeTrustReviews />
           <BuzzardServices />

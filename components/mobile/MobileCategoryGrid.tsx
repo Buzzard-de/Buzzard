@@ -6,14 +6,14 @@ import {
   categoryHref,
   formatMenuLabel,
   getMainCategoryIcon,
-  getVisibleMainCategories,
 } from "@/lib/categories";
+import { getHomeCategoryList } from "@/lib/home/homepageContent";
 import { getCategoryCoverImage, getMobileCoverStyle } from "@/lib/mobile/visuals";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function MobileCategoryGrid() {
   const { locale, t } = useLocale();
-  const categories = getVisibleMainCategories().slice(0, 8);
+  const categories = getHomeCategoryList();
 
   return (
     <section aria-labelledby="buzzard-mobile-categories-title">

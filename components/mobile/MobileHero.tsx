@@ -14,10 +14,11 @@ export default function MobileHero() {
       aria-label={t("mobile.heroAria")}
       style={photoStyle}
     >
-      <h1>{t("mobile.heroTitle")}</h1>
-      <p>{t("mobile.heroText")}</p>
+      <p className="buzzard-mobile-hero-kicker">{t("hero.kicker")}</p>
+      <h1>{t("hero.title")}</h1>
+      <p>{t("hero.text")}</p>
       <Link href="/products/" className="buzzard-mobile-hero-cta">
-        {t("mobile.startShopping")}
+        {t("hero.cta")}
       </Link>
     </section>
   );

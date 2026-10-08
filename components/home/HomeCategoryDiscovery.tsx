@@ -17,7 +17,7 @@ export default function HomeCategoryDiscovery() {
   return (
     <section className="home-section home-category-discovery" aria-labelledby="home-categories-title">
       <div className="home-section-head">
-        <h2 id="home-categories-title">{t("home.categoryDiscovery")}</h2>
+        <h2 id="home-categories-title">{t("home.mainCategories")}</h2>
         <Link href="/products/" className="home-section-link">
           {t("home.allCategories")}
         </Link>

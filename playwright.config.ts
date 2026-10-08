@@ -8,6 +8,7 @@ const VIEWPORTS = {
   mobile360: { width: 360, height: 800 },
   mobile375: { width: 375, height: 812 },
   mobile390: { width: 390, height: 844 },
+  mobile393: { width: 393, height: 852 },
   mobile414: { width: 414, height: 896 },
   tablet768: { width: 768, height: 1024 },
 };

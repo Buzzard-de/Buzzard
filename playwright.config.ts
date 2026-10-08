@@ -49,7 +49,7 @@ export default defineConfig({
     },
     {
       name: "homepage-viewports",
-      testMatch: /homepage-viewports\.spec\.ts/,
+      testMatch: /homepage-viewports\.spec\.ts|mobile-category-overlay\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
   ],

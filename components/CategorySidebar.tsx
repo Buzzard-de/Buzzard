@@ -156,17 +156,19 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
         className={`home-sidebar${isOpen ? " open" : ""}${isMobile ? " mobile-nav" : ""}${embedded ? " embedded" : ""}`}
         aria-label={t("home.mainCategories")}
       >
-        <div className="home-sidebar-head">
-          <strong>{t("home.allCategoriesCount").replace("{count}", String(MAIN_CATEGORY_COUNT))}</strong>
-          <button
-            type="button"
-            className="sidebar-close-btn"
-            aria-label={t("home.close")}
-            onClick={embedded ? homeUI?.closeMegaMenu : homeUI?.closeSidebar}
-          >
-            ×
-          </button>
-        </div>
+        {!embedded && (
+          <div className="home-sidebar-head">
+            <strong>{t("home.allCategoriesCount").replace("{count}", String(MAIN_CATEGORY_COUNT))}</strong>
+            <button
+              type="button"
+              className="sidebar-close-btn"
+              aria-label={t("home.close")}
+              onClick={homeUI?.closeSidebar}
+            >
+              ×
+            </button>
+          </div>
+        )}
 
         {isMobile ? (
           <ul className="home-sidebar-list category-accordion-list">

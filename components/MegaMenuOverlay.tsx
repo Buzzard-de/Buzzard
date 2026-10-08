@@ -9,6 +9,7 @@ import { useLocale } from "@/lib/i18n/context";
 import {
   getCategoryById,
   getChildren,
+  MAIN_CATEGORY_COUNT,
 } from "@/lib/categories";
 import { useIsMobileNav, useIsTabletNav } from "@/lib/use-media-query";
 import MegaMenuSearch from "./MegaMenuSearch";
@@ -45,9 +46,13 @@ export default function MegaMenuOverlay() {
         aria-label={t("megaMenu.close")}
         onClick={homeUI?.closeMegaMenu}
       />
-      <div className={`mega-menu-shell${isTablet ? " tablet" : ""}${isMobile ? " mobile" : ""}`}>
+      <div className={`mega-menu-shell${isTablet && !isMobile ? " tablet" : ""}${isMobile ? " mobile" : ""}`}>
         <div className="mega-menu-shell-head">
-          <strong>{t("nav.allCategories")}</strong>
+          <strong>
+            {isMobile
+              ? t("home.allCategoriesCount").replace("{count}", String(MAIN_CATEGORY_COUNT))
+              : t("nav.allCategories")}
+          </strong>
           <button type="button" className="mega-menu-close" onClick={homeUI?.closeMegaMenu} aria-label={t("megaMenu.close")}>
             ×
           </button>

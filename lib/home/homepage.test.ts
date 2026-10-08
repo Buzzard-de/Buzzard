@@ -34,6 +34,15 @@ describe("homepage canonical content", () => {
     expect(page).not.toContain("useIsMobileNav");
   });
 
+  it("does not render a second overlay header when CategorySidebar is embedded", () => {
+    const sidebar = readFileSync(resolve("components/CategorySidebar.tsx"), "utf8");
+    expect(sidebar).toContain("{!embedded && (");
+    expect(sidebar).toContain("home-sidebar-head");
+    const overlay = readFileSync(resolve("components/MegaMenuOverlay.tsx"), "utf8");
+    expect(overlay).toContain("home.allCategoriesCount");
+    expect(overlay).toContain("isTablet && !isMobile");
+  });
+
   it("does not render unverified delivery/return/payment claims on the homepage USP row", () => {
     const usp = readFileSync(resolve("components/storefront/USPBar.tsx"), "utf8");
     expect(usp).toContain("home.trustChoice");

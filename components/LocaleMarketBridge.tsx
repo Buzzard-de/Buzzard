@@ -11,15 +11,20 @@ import { resolveLocaleAfterMarketChange } from "@/lib/i18n/marketCompatibility";
  */
 export default function LocaleMarketBridge({ children }: { children: ReactNode }) {
   const { locale, setLocale } = useLocale();
-  const { countryCode } = useMarket();
-  const previousCountry = useRef(countryCode);
+  const { countryCode, ready } = useMarket();
+  const previousCountry = useRef<string | null>(null);
 
   useEffect(() => {
+    if (!ready) return;
+    if (previousCountry.current === null) {
+      previousCountry.current = countryCode;
+      return;
+    }
     if (previousCountry.current === countryCode) return;
     previousCountry.current = countryCode;
     const next = resolveLocaleAfterMarketChange(locale, countryCode);
     if (next !== locale) setLocale(next, false);
-  }, [countryCode, locale, setLocale]);
+  }, [ready, countryCode, locale, setLocale]);
 
   return <>{children}</>;
 }

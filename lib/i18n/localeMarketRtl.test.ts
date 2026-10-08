@@ -99,15 +99,17 @@ describe("document direction", () => {
       classList: { toggle() {} },
       setAttribute(name: string, value: string) {
         attrs[name] = value;
-        if (name === "lang") this.lang = value;
-        if (name === "dir") this.dir = value;
+        if (name === "lang") html.lang = value;
+        if (name === "dir") html.dir = value;
       },
       getAttribute(name: string) {
         return attrs[name] ?? null;
       },
-    } as unknown as HTMLElement;
+    };
     const original = globalThis.document;
-    (globalThis as { document?: { documentElement: HTMLElement } }).document = { documentElement: html };
+    (globalThis as { document?: { documentElement: HTMLElement } }).document = {
+      documentElement: html as unknown as HTMLElement,
+    };
     applyDocumentDirection("ar");
     expect(html.dir).toBe("rtl");
     expect(html.lang).toBe("ar");

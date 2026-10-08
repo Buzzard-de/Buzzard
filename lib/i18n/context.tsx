@@ -48,7 +48,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<BuzzardLocale>("de");
   const [ready, setReady] = useState(false);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     setLocaleState(detectLocale());
     setReady(true);
   }, []);
@@ -68,7 +68,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     });
   }, [ready]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!ready) return;
     setRuntimeLocale(locale);
     applyDocumentDirection(locale);

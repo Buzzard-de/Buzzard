@@ -28,6 +28,8 @@ async function dismissConsent(page: import("@playwright/test").Page, locale = "d
       );
       localStorage.setItem("buzzard_locale", code);
       localStorage.setItem("buzzard_locale_manual", "1");
+      localStorage.setItem("buzzard_market_country", "DE");
+      localStorage.setItem("buzzard_market_country_manual", "1");
     },
     { locale },
   );

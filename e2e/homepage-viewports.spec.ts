@@ -2,14 +2,14 @@ import { test, expect } from "@playwright/test";
 import { VIEWPORTS } from "../playwright.config";
 
 const LOCALES = ["de", "en", "tr", "fr", "ar"] as const;
-const FORBIDDEN_DE = [
+const FORBIDDEN = [
   "Die richtigen Teile für Ihr Fahrzeug",
+  "Aracınız için doğru parçalar",
   "Breites Sortiment, zuverlässige Lieferanten, schnelle Lieferung.",
   "Schnelle Lieferung",
   "Einfache Rückgabe",
   "Sichere Zahlung",
 ];
-const FORBIDDEN_TR = ["Aracınız için doğru parçalar"];
 
 const HERO_TITLE: Record<(typeof LOCALES)[number], string> = {
   de: "Entdecken Sie unser Sortiment",
@@ -19,38 +19,23 @@ const HERO_TITLE: Record<(typeof LOCALES)[number], string> = {
   ar: "اكتشف مجموعتنا",
 };
 
-async function dismissConsent(page: import("@playwright/test").Page) {
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "buzzard_consent_v1",
-      JSON.stringify({ necessary: true, analytics: false, marketing: false, updatedAt: new Date().toISOString() }),
-    );
-  });
+async function dismissConsent(page: import("@playwright/test").Page, locale = "de") {
+  await page.addInitScript(
+    ({ locale: code }) => {
+      localStorage.setItem(
+        "buzzard_consent_v1",
+        JSON.stringify({ necessary: true, analytics: false, marketing: false, updatedAt: new Date().toISOString() }),
+      );
+      localStorage.setItem("buzzard_locale", code);
+      localStorage.setItem("buzzard_locale_manual", "1");
+    },
+    { locale },
+  );
 }
 
 async function applyLocale(page: import("@playwright/test").Page, locale: string) {
-  await dismissConsent(page);
+  await dismissConsent(page, locale);
   await page.goto("/");
-  const isPhone = await page.evaluate(() => document.body.classList.contains("buzzard-phone-storefront"));
-  if (isPhone) {
-    await page.locator(".buzzard-mobile-header-btn").first().click();
-    await expect(page.locator(".mega-menu-overlay")).toBeVisible();
-    const lang = page.locator(".mega-menu-overlay .language-selector select");
-    const market = page.locator(".mega-menu-overlay .country-selector select");
-    await lang.waitFor({ state: "attached" });
-    await expect(lang.locator("option")).toHaveCount(30);
-    await expect(market.locator("option")).toHaveCount(35);
-    await lang.selectOption(locale, { force: true });
-    await page.keyboard.press("Escape");
-    await expect(page.locator(".mega-menu-overlay")).toHaveCount(0);
-  } else {
-    const lang = page.locator(".language-selector select");
-    const market = page.locator(".country-selector select");
-    await expect(lang).toBeVisible();
-    await expect(lang.locator("option")).toHaveCount(30);
-    await expect(market.locator("option")).toHaveCount(35);
-    await lang.selectOption(locale);
-  }
 }
 
 async function assertNoHorizontalOverflow(page: import("@playwright/test").Page) {
@@ -70,15 +55,30 @@ async function assertAiAboveBottomNav(page: import("@playwright/test").Page) {
   expect(collision).toBe(false);
 }
 
-async function assertCanonicalGermanHome(page: import("@playwright/test").Page) {
+async function assertNoForbiddenCopy(page: import("@playwright/test").Page) {
+  const heroText = await page.locator(".home-hero-campaign").innerText();
+  for (const phrase of FORBIDDEN) {
+    expect(heroText).not.toContain(phrase);
+  }
+  const usp = page.locator(".usp-bar");
+  if ((await usp.count()) > 0 && (await usp.first().isVisible())) {
+    const uspText = await usp.first().innerText();
+    expect(uspText).not.toContain("Schnelle Lieferung");
+    expect(uspText).not.toContain("Einfache Rückgabe");
+    expect(uspText).not.toContain("Sichere Zahlung");
+  }
+}
+
+async function assertCanonicalHome(page: import("@playwright/test").Page, locale: (typeof LOCALES)[number]) {
   const hero = page.locator(".home-hero-campaign");
   await expect(hero.locator("h1")).toBeVisible();
-  await expect(hero.locator("h1")).toHaveText(HERO_TITLE.de);
-  const heroText = await hero.innerText();
-  expect(heroText).not.toContain("Die richtigen Teile für Ihr Fahrzeug");
-  expect(heroText).not.toContain("Breites Sortiment, zuverlässige Lieferanten");
+  await expect(hero.locator("h1")).toHaveText(HERO_TITLE[locale]);
+  await expect(page.locator(".buzzard-mobile-hero")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
   await expect(page.locator(".home-category-tile")).toHaveCount(50);
+  await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", locale);
+  await expect(page.locator("html")).toHaveAttribute("dir", locale === "ar" ? "rtl" : "ltr");
+  await assertNoForbiddenCopy(page);
 }
 
 test.describe("homepage viewports", () => {
@@ -87,13 +87,14 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize(VIEWPORTS.mobile390);
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
-    await assertCanonicalGermanHome(page);
+    await assertCanonicalHome(page, "de");
     await expect(page.locator(".buzzard-mobile-vehicle")).toBeVisible();
-    await expect(page.locator(".buzzard-mobile-hero")).toHaveCount(0);
-    await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
     await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
+    await page.locator(".buzzard-mobile-header-btn").first().click();
+    await expect(page.locator(".mega-menu-locale-market .language-selector select option")).toHaveCount(30);
+    await expect(page.locator(".mega-menu-locale-market .country-selector select option")).toHaveCount(35);
     await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
   });
 
@@ -102,7 +103,7 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize(VIEWPORTS.mobile393);
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
-    await assertCanonicalGermanHome(page);
+    await assertCanonicalHome(page, "de");
     await assertNoHorizontalOverflow(page);
   });
 
@@ -111,7 +112,7 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize({ width: 844, height: 390 });
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
-    await assertCanonicalGermanHome(page);
+    await assertCanonicalHome(page, "de");
     await expect(page.locator(".home-fullscreen")).toBeHidden();
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
@@ -124,17 +125,22 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".home-hero-campaign")).toBeVisible({ timeout: 20_000 });
     await expect(page.locator("body.buzzard-phone-storefront")).toHaveCount(0);
     await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.de);
+    await expect(page.locator(".home-category-tile")).toHaveCount(50);
   });
 
   test("desktop 1440x900 shares the same hero and 50 categories", async ({ page }) => {
     await dismissConsent(page);
     await page.setViewportSize(VIEWPORTS.desktop1440);
     await page.goto("/");
-    await assertCanonicalGermanHome(page);
-    const lang = page.locator(".language-selector select");
-    const market = page.locator(".country-selector select");
-    await expect(lang.locator("option")).toHaveCount(30);
-    await expect(market.locator("option")).toHaveCount(35);
+    await assertCanonicalHome(page, "de");
+    const languageSelect = page.locator(".site-header .language-selector select");
+    const marketSelect = page.locator(".site-header .country-selector select");
+    await expect(languageSelect.locator("option")).toHaveCount(30);
+    await expect(marketSelect.locator("option")).toHaveCount(35);
+    const marketBefore = await marketSelect.inputValue();
+    await languageSelect.selectOption("tr");
+    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.tr);
+    await expect(marketSelect).toHaveValue(marketBefore);
     await assertNoHorizontalOverflow(page);
     await page.screenshot({ path: "test-results/homepage-de-desktop.png", fullPage: false });
   });
@@ -144,6 +150,7 @@ test.describe("homepage viewports", () => {
     await applyLocale(page, "ar");
     await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.ar, { timeout: 20_000 });
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", "ar");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible();
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
@@ -155,12 +162,7 @@ test.describe("homepage viewports", () => {
       await page.setViewportSize(VIEWPORTS.mobile390);
       await applyLocale(page, locale);
       await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE[locale], { timeout: 20_000 });
-      const heroText = await page.locator(".home-hero-campaign").innerText();
-      for (const phrase of FORBIDDEN_TR) expect(heroText).not.toContain(phrase);
-      expect(heroText).not.toContain("Die richtigen Teile für Ihr Fahrzeug");
-      await expect(page.locator("html")).toHaveAttribute("lang", locale);
-      await expect(page.locator("html")).toHaveAttribute("dir", locale === "ar" ? "rtl" : "ltr");
-      await expect(page.locator(".home-category-tile")).toHaveCount(50);
+      await assertCanonicalHome(page, locale);
       await assertNoHorizontalOverflow(page);
       if (locale === "tr" || locale === "fr" || locale === "ar") {
         await page.screenshot({ path: `test-results/homepage-${locale}-portrait.png`, fullPage: false });

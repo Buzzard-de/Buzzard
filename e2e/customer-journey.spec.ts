@@ -111,9 +111,10 @@ test.describe("Mobile five-stage category UX", () => {
     await expect(page.locator(".buzzard-mobile-header img[alt='Buzzard Logo']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
-    await expect(page.locator(".buzzard-mobile-trust")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
+    await expect(page.locator(".home-hero-campaign h1")).toBeVisible();
 
-    const card = page.locator(".buzzard-mobile-category-card").first();
+    const card = page.locator(".home-category-tile").first();
     await expect(card).toBeVisible();
     await card.click({ force: true });
     await page.waitForURL(/\/kategorie\//, { timeout: 15_000 });

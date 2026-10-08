@@ -34,6 +34,18 @@ describe("homepage canonical content", () => {
     expect(page).not.toContain("useIsMobileNav");
   });
 
+  it("does not render unverified delivery/return/payment claims on the homepage USP row", () => {
+    const usp = readFileSync(resolve("components/storefront/USPBar.tsx"), "utf8");
+    expect(usp).toContain("home.trustChoice");
+    expect(usp).not.toContain("home.uspShipping");
+    expect(usp).not.toContain("home.uspPayment");
+    expect(usp).not.toContain("mobile.trustFast");
+    const trust = readFileSync(resolve("components/mobile/MobileTrustStrip.tsx"), "utf8");
+    expect(trust).not.toContain("mobile.trustFast");
+    expect(trust).not.toContain("mobile.trustReturn");
+    expect(trust).not.toContain("mobile.trustPay");
+  });
+
   it("canonical hero keys are multicategory, not automotive-only", () => {
     const desktop = readFileSync(resolve("components/home/HomeHeroCampaign.tsx"), "utf8");
     expect(desktop).toContain('t("hero.title")');

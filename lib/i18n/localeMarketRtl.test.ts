@@ -92,12 +92,26 @@ describe("document direction", () => {
   });
 
   it("applyDocumentDirection writes html dir", () => {
-    const html = { lang: "de", dir: "ltr", classList: { toggle() {} } } as unknown as HTMLElement;
+    const attrs: Record<string, string> = {};
+    const html = {
+      lang: "de",
+      dir: "ltr",
+      classList: { toggle() {} },
+      setAttribute(name: string, value: string) {
+        attrs[name] = value;
+        if (name === "lang") this.lang = value;
+        if (name === "dir") this.dir = value;
+      },
+      getAttribute(name: string) {
+        return attrs[name] ?? null;
+      },
+    } as unknown as HTMLElement;
     const original = globalThis.document;
     (globalThis as { document?: { documentElement: HTMLElement } }).document = { documentElement: html };
     applyDocumentDirection("ar");
     expect(html.dir).toBe("rtl");
     expect(html.lang).toBe("ar");
+    expect(html.getAttribute("data-buzzard-locale")).toBe("ar");
     applyDocumentDirection("de");
     expect(html.dir).toBe("ltr");
     (globalThis as { document?: typeof original }).document = original;

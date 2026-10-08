@@ -140,9 +140,16 @@ export function toBuzzardUiLocale(languageCode: string): BuzzardLanguageCode {
 
 export function applyDocumentDirection(languageCode: string): void {
   if (typeof document === "undefined") return;
+  const root = document.documentElement;
   const dir = languageCode === "ar" ? "rtl" : "ltr";
-  document.documentElement.dir = dir;
-  document.documentElement.lang = languageCode === "ar" ? "ar" : languageCode;
-  document.documentElement.classList.toggle("rtl", dir === "rtl");
-  document.documentElement.classList.toggle("ltr", dir === "ltr");
+  const lang = languageCode === "ar" ? "ar" : languageCode;
+  root.dir = dir;
+  root.lang = lang;
+  root.classList.toggle("rtl", dir === "rtl");
+  root.classList.toggle("ltr", dir === "ltr");
+  if (typeof root.setAttribute === "function") {
+    root.setAttribute("lang", lang);
+    root.setAttribute("dir", dir);
+    root.setAttribute("data-buzzard-locale", lang);
+  }
 }

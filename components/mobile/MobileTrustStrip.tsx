@@ -14,7 +14,7 @@ export default function MobileTrustStrip() {
             <path d="M3 7v10" />
           </svg>
         </span>
-        {t("mobile.trustFast")}
+        {t("home.trustChoice")}
       </li>
       <li>
         <span className="buzzard-mobile-trust-icon" aria-hidden="true">
@@ -23,7 +23,7 @@ export default function MobileTrustStrip() {
             <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
           </svg>
         </span>
-        {t("mobile.trustReturn")}
+        {t("home.trustInfo")}
       </li>
       <li>
         <span className="buzzard-mobile-trust-icon" aria-hidden="true">
@@ -32,7 +32,7 @@ export default function MobileTrustStrip() {
             <path d="M8 11V7a4 4 0 018 0v4" />
           </svg>
         </span>
-        {t("mobile.trustPay")}
+        {t("home.trustSupport")}
       </li>
     </ul>
   );

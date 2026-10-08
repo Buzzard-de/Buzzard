@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -31,6 +32,8 @@ interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 async function syncAccountLanguage(locale: BuzzardLocale) {
   if (!getAccountToken()) return;
   try {
@@ -45,7 +48,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<BuzzardLocale>("de");
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLocaleState(detectLocale());
     setReady(true);
   }, []);
@@ -65,7 +68,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     });
   }, [ready]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ready) return;
     setRuntimeLocale(locale);
     applyDocumentDirection(locale);

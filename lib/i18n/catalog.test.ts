@@ -23,8 +23,8 @@ describe("i18n catalog keys", () => {
 
   it("maps mobile.emptyCategories and trust chips per locale", () => {
     expect(translate("de", "mobile.emptyCategories")).toContain("Keine Kategorien");
-    expect(translate("tr", "mobile.trustFast")).toContain("Hızlı");
-    expect(translate("en", "mobile.trustPay")).toContain("Secure");
+    expect(translate("tr", "home.trustChoice")).toBeTruthy();
+    expect(translate("en", "home.trustSupport")).toBeTruthy();
   });
 
   it("maps category.jsonLdDescription from catalog", () => {

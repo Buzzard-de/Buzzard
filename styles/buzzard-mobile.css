@@ -1443,6 +1443,7 @@
 
   .home-page-canonical .home-hero-campaign {
     position: relative;
+    isolation: isolate;
     min-height: 272px;
     margin: 0 10px 14px;
     padding: 26px 18px 22px;
@@ -1460,8 +1461,23 @@
       0 14px 32px rgba(0, 0, 0, 0.28);
   }
 
+  .home-page-canonical .home-hero-campaign.has-locale-photo::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(90deg, rgba(5, 5, 5, 0.8) 0%, rgba(5, 5, 5, 0.38) 58%, rgba(5, 5, 5, 0.12) 100%),
+      url("/images/backgrounds/germany/buzzard-germany-de.png");
+    background-position: center;
+    background-size: cover;
+    content: "";
+    filter: brightness(1.28) saturate(1.14);
+  }
+
   .home-page-canonical .home-hero-content {
     display: flex;
+    position: relative;
+    z-index: 1;
     min-height: 222px;
     flex-direction: column;
     align-items: flex-start;

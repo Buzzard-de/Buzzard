@@ -158,6 +158,7 @@ test.describe("homepage viewports", () => {
   });
 
   test("tablet 768x1024 is not the phone chrome", async ({ page }) => {
+    await dismissConsent(page);
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto("/");
     await expect(page.locator(".home-hero-campaign")).toBeVisible({ timeout: 20_000 });

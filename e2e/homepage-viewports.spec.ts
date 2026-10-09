@@ -137,13 +137,13 @@ async function assertLastCategoryClearsBottomNav(page: import("@playwright/test"
   await expect
     .poll(() =>
       page.evaluate(() => {
-        const lastCategory = document.querySelector(".home-category-tile:last-child");
+        const categories = [...document.querySelectorAll(".home-category-tile")];
+        const finalRow = categories.slice(-2);
         const bottomNav = document.querySelector(".buzzard-mobile-bottom-nav");
-        if (!lastCategory || !bottomNav) return null;
-        const categoryBox = lastCategory.getBoundingClientRect();
+        if (finalRow.length !== 2 || !bottomNav) return null;
         const navBox = bottomNav.getBoundingClientRect();
         return {
-          categoryBottom: categoryBox.bottom,
+          categoryBottom: Math.max(...finalRow.map((category) => category.getBoundingClientRect().bottom)),
           navTop: navBox.top,
         };
       }),
@@ -151,12 +151,14 @@ async function assertLastCategoryClearsBottomNav(page: import("@playwright/test"
     .not.toBeNull();
 
   const clearance = await page.evaluate(() => {
-    const lastCategory = document.querySelector(".home-category-tile:last-child");
+    const categories = [...document.querySelectorAll(".home-category-tile")];
+    const finalRow = categories.slice(-2);
     const bottomNav = document.querySelector(".buzzard-mobile-bottom-nav");
-    if (!lastCategory || !bottomNav) return false;
-    return lastCategory.getBoundingClientRect().bottom <= bottomNav.getBoundingClientRect().top;
+    if (finalRow.length !== 2 || !bottomNav) return -1;
+    const finalRowBottom = Math.max(...finalRow.map((category) => category.getBoundingClientRect().bottom));
+    return bottomNav.getBoundingClientRect().top - finalRowBottom;
   });
-  expect(clearance).toBe(true);
+  expect(clearance).toBeGreaterThanOrEqual(32);
 }
 
 async function assertNoForbiddenCopy(page: import("@playwright/test").Page) {
@@ -241,6 +243,7 @@ test.describe("homepage viewports", () => {
         await assertLabelsAreNotClipped(page, ".mobile-home-locale-value");
         await assertHeroActionsLayout(page, width === 320 ? "column" : "row");
         await assertNoHorizontalOverflow(page);
+        await assertLastCategoryClearsBottomNav(page);
       });
     }
   }

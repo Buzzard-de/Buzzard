@@ -57,6 +57,49 @@ async function assertAiAboveBottomNav(page: import("@playwright/test").Page) {
   expect(collision).toBe(false);
 }
 
+async function assertLabelsAreNotClipped(
+  page: import("@playwright/test").Page,
+  selector: string,
+) {
+  const clippedLabels = await page.locator(selector).evaluateAll((labels) =>
+    labels
+      .filter((label) => {
+        const style = window.getComputedStyle(label);
+        return style.display !== "none" && style.visibility !== "hidden";
+      })
+      .filter((label) => label.scrollHeight > label.clientHeight + 1 || label.scrollWidth > label.clientWidth + 1)
+      .map((label) => label.textContent?.trim()),
+  );
+  expect(clippedLabels).toEqual([]);
+}
+
+async function assertLastCategoryClearsBottomNav(page: import("@playwright/test").Page) {
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const lastCategory = document.querySelector(".home-category-tile:last-child");
+        const bottomNav = document.querySelector(".buzzard-mobile-bottom-nav");
+        if (!lastCategory || !bottomNav) return null;
+        const categoryBox = lastCategory.getBoundingClientRect();
+        const navBox = bottomNav.getBoundingClientRect();
+        return {
+          categoryBottom: categoryBox.bottom,
+          navTop: navBox.top,
+        };
+      }),
+    )
+    .not.toBeNull();
+
+  const clearance = await page.evaluate(() => {
+    const lastCategory = document.querySelector(".home-category-tile:last-child");
+    const bottomNav = document.querySelector(".buzzard-mobile-bottom-nav");
+    if (!lastCategory || !bottomNav) return false;
+    return lastCategory.getBoundingClientRect().bottom <= bottomNav.getBoundingClientRect().top;
+  });
+  expect(clearance).toBe(true);
+}
+
 async function assertNoForbiddenCopy(page: import("@playwright/test").Page) {
   const heroText = await page.locator(".home-hero-campaign").innerText();
   for (const phrase of FORBIDDEN) {
@@ -94,6 +137,8 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-category-rail")).toBeVisible();
     await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(10);
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", /\/kategorie\//);
+    await assertLabelsAreNotClipped(page, ".mobile-home-category-rail-link > span:last-child");
+    await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
     await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
     await expect(page.locator("#buzzard-mobile-search-input")).toBeVisible();
@@ -102,6 +147,7 @@ test.describe("homepage viewports", () => {
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
     await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
+    await assertLastCategoryClearsBottomNav(page);
     await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
     await page.locator(".buzzard-mobile-header-btn").first().click();
     await expect(page.locator(".mega-menu-locale-market .language-selector select option")).toHaveCount(30);
@@ -114,6 +160,9 @@ test.describe("homepage viewports", () => {
     await page.goto("/");
     await expect(page.locator(".mobile-home-category-rail")).toBeHidden();
     await expect(page.locator(".home-hero-campaign")).toBeVisible();
+    await expect(page.locator(".home-category-grid")).toHaveCSS("grid-template-columns", /.+ .+/);
+    await assertLabelsAreNotClipped(page, ".home-category-tile-label");
+    await assertLastCategoryClearsBottomNav(page);
     await page.locator(".buzzard-mobile-header-btn").first().click();
     await expect(page.locator(".mega-menu-overlay")).toBeVisible();
     await expect(page.locator(".home-sidebar.embedded .home-sidebar-item")).toHaveCount(50);

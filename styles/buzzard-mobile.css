@@ -1376,11 +1376,13 @@
     padding-block: 1px;
     padding-inline: 0 18px;
     border: 0;
-    background: transparent;
+    background: #080808;
     color: #f4efe5;
+    -webkit-text-fill-color: #f4efe5;
     font-size: 11px;
     line-height: 1.2;
     text-overflow: ellipsis;
+    transform: translateZ(0);
   }
 
   .home-phone-controls .buzzard-mobile-search {

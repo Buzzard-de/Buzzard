@@ -1254,7 +1254,7 @@
 
   .mobile-home-category-rail-link {
     display: flex;
-    min-height: 74px;
+    min-height: 82px;
     padding: 8px 6px;
     flex-direction: column;
     align-items: center;
@@ -1289,7 +1289,7 @@
     max-width: 100%;
     overflow: hidden;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
     overflow-wrap: normal;
     word-break: normal;
     hyphens: auto;

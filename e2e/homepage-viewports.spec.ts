@@ -73,6 +73,51 @@ async function assertLabelsAreNotClipped(
   expect(clippedLabels).toEqual([]);
 }
 
+async function assertLocaleControlsAreReadable(page: import("@playwright/test").Page) {
+  const issues = await page.locator(".mobile-home-locale-control").evaluateAll((controls) =>
+    controls.flatMap((control) => {
+      const label = control.querySelector(".mobile-home-locale-label");
+      const selector = control.querySelector(".language-selector, .country-selector");
+      const select = control.querySelector("select");
+      if (!label || !selector || !select) return ["missing control element"];
+
+      const controlBox = control.getBoundingClientRect();
+      const labelBox = label.getBoundingClientRect();
+      const selectorBox = selector.getBoundingClientRect();
+      const overlap = !(
+        labelBox.bottom <= selectorBox.top ||
+        labelBox.top >= selectorBox.bottom ||
+        labelBox.right <= selectorBox.left ||
+        labelBox.left >= selectorBox.right
+      );
+      const contained =
+        labelBox.left >= controlBox.left - 1 &&
+        labelBox.right <= controlBox.right + 1 &&
+        selectorBox.left >= controlBox.left - 1 &&
+        selectorBox.right <= controlBox.right + 1;
+
+      return [
+        ...(overlap ? [`${label.textContent?.trim()}: label overlaps selected value`] : []),
+        ...(!contained ? [`${label.textContent?.trim()}: content exceeds control`] : []),
+        ...(select.getBoundingClientRect().width < 90 ? [`${label.textContent?.trim()}: selected value is too narrow`] : []),
+      ];
+    }),
+  );
+  expect(issues).toEqual([]);
+}
+
+async function assertHeroActionsLayout(
+  page: import("@playwright/test").Page,
+  layout: "row" | "column",
+) {
+  const buttons = page.locator(".home-hero-actions .home-hero-btn");
+  await expect(buttons).toHaveCount(2);
+  await assertLabelsAreNotClipped(page, ".home-hero-actions .home-hero-btn");
+  const boxes = await buttons.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().toJSON()));
+  expect(Math.abs(boxes[0].top - boxes[1].top) <= 2).toBe(layout === "row");
+  expect(boxes[0].bottom <= boxes[1].top || boxes[0].right <= boxes[1].left).toBe(true);
+}
+
 async function assertLastCategoryClearsBottomNav(page: import("@playwright/test").Page) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect
@@ -168,6 +213,20 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".home-sidebar.embedded .home-sidebar-item")).toHaveCount(50);
     await assertNoHorizontalOverflow(page);
   });
+
+  for (const locale of ["de", "tr"] as const) {
+    for (const width of [320, 390] as const) {
+      test(`${locale} locale and market controls remain readable at ${width}px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 844 });
+        await applyLocale(page, locale);
+        await expect(page.locator(".mobile-home-locale-market .language-selector select")).toHaveValue(locale);
+        await expect(page.locator(".mobile-home-locale-market .country-selector select")).toHaveValue("DE");
+        await assertLocaleControlsAreReadable(page);
+        await assertHeroActionsLayout(page, width === 320 ? "column" : "row");
+        await assertNoHorizontalOverflow(page);
+      });
+    }
+  }
 
   test("mobile homepage search submits to the working product search route", async ({ page }) => {
     await dismissConsent(page);

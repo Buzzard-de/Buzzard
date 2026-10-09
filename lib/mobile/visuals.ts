@@ -7,9 +7,16 @@ import { getProductsForCategory } from "@/lib/products";
 
 export { GERMANY_LANGUAGE_BACKGROUND };
 
-/** German-locale home hero only. Other locales keep their existing (no) photo. */
-export function getMobileHeroPhoto(locale?: string | null): string | null {
-  return getLanguageBackground(locale);
+/** German language or explicitly selected German market may use the approved Germany hero asset. */
+export function getMobileHeroPhoto(
+  locale?: string | null,
+  marketCountryCode?: string | null,
+): string | null {
+  const languagePhoto = getLanguageBackground(locale);
+  if (languagePhoto) return languagePhoto;
+  return marketCountryCode?.trim().toUpperCase() === "DE"
+    ? GERMANY_LANGUAGE_BACKGROUND
+    : null;
 }
 
 export function getCategoryCoverImage(category: BuzzardCategory): string | null {
@@ -39,8 +46,11 @@ export function getMobileCoverStyle(
 }
 
 /** Controlled overlay so white copy and the gold CTA stay readable on the Germany photo. */
-export function getMobileHeroStyle(locale?: string | null): { backgroundImage?: string } | undefined {
-  const photo = getMobileHeroPhoto(locale);
+export function getMobileHeroStyle(
+  locale?: string | null,
+  marketCountryCode?: string | null,
+): { backgroundImage?: string } | undefined {
+  const photo = getMobileHeroPhoto(locale, marketCountryCode);
   if (!photo) return undefined;
   return {
     backgroundImage: `linear-gradient(180deg, rgba(8,8,8,0.10) 0%, rgba(8,8,8,0.28) 48%, rgba(8,8,8,0.55) 100%), url("${photo}")`,

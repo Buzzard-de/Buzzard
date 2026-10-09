@@ -4,11 +4,15 @@ import Link from "next/link";
 import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
 import { getMobileHeroStyle } from "@/lib/mobile/visuals";
+import { useMarket } from "@/lib/market/context";
+import { useIsMobileNav } from "@/lib/use-media-query";
 
 export default function HomeHeroCampaign() {
   const homeUI = useHomeUI();
   const { locale, t } = useLocale();
-  const photoStyle = getMobileHeroStyle(locale);
+  const { countryCode } = useMarket();
+  const isPhone = useIsMobileNav();
+  const photoStyle = getMobileHeroStyle(locale, isPhone ? countryCode : null);
 
   return (
     <section

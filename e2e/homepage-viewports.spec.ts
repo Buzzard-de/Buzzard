@@ -279,6 +279,10 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize({ width: 430, height: 932 });
     await page.goto("/");
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("aria-current", "page");
+    await expect(page.locator(".home-hero-campaign")).toHaveClass(/has-locale-photo/);
+    await expect
+      .poll(() => page.locator(".home-hero-campaign").evaluate((hero) => window.getComputedStyle(hero).backgroundImage))
+      .toContain("buzzard-germany-de.png");
     const columnCount = await page.locator(".home-category-grid").evaluate((grid) =>
       window.getComputedStyle(grid).gridTemplateColumns.split(" ").length,
     );

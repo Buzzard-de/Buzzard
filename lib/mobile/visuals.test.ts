@@ -7,7 +7,7 @@ import {
 } from "@/lib/backgrounds/languageBackgrounds";
 import { getMobileCoverStyle, getMobileHeroPhoto, getMobileHeroStyle } from "./visuals";
 
-describe("mobile Germany hero is locale-scoped", () => {
+describe("mobile Germany hero uses canonical language and market state", () => {
   it("uses the Germany background asset only for German locales", () => {
     expect(getMobileHeroPhoto("de")).toBe(GERMANY_LANGUAGE_BACKGROUND);
     expect(getMobileHeroPhoto("de-DE")).toBe(GERMANY_LANGUAGE_BACKGROUND);
@@ -23,6 +23,12 @@ describe("mobile Germany hero is locale-scoped", () => {
     expect(getLanguageBackground("tr")).toBeNull();
     expect(getLanguageBackground("en")).toBeNull();
     expect(getLanguageBackground("ar")).toBeNull();
+  });
+
+  it("uses the approved Germany image for the independently selected German market", () => {
+    expect(getMobileHeroPhoto("tr", "DE")).toBe(GERMANY_LANGUAGE_BACKGROUND);
+    expect(getMobileHeroPhoto("tr", "TR")).toBeNull();
+    expect(getMobileHeroStyle("tr", "DE")?.backgroundImage).toContain(GERMANY_LANGUAGE_BACKGROUND);
   });
 
   it("does not stamp the Germany image onto category-card covers", () => {

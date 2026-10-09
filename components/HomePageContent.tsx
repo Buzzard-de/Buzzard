@@ -7,21 +7,30 @@ import HomeTrustReviews from "./home/HomeTrustReviews";
 import HomeLayout from "./HomeLayout";
 import ServiceBar from "./ServiceBar";
 import BuzzardServices from "./storefront/BuzzardServices";
-import MobileVehicleSelector from "./mobile/MobileVehicleSelector";
+import MobileHomeCategoryRail from "./mobile/MobileHomeCategoryRail";
+import MobileLocaleMarketBar from "./mobile/MobileLocaleMarketBar";
+import MobileSearch from "./mobile/MobileSearch";
 
 /**
  * One homepage content tree for every viewport.
- * Phone/desktop differ only by CSS (.buzzard-mobile-only / .buzzard-desktop-chrome).
+ * Hero and category content stay canonical across viewports.
+ * Phone-only controls add navigation chrome without a second homepage data source.
  * Do not mount a second phone-only homepage with its own hero/trust/category data.
  */
 export default function HomePageContent() {
   return (
     <div className="home-page home-page-canonical">
-      <div className="buzzard-mobile-only">
-        <MobileVehicleSelector />
+      <div className="home-phone-layout">
+        <MobileHomeCategoryRail />
+        <div className="home-phone-main">
+          <div className="buzzard-mobile-only home-phone-controls">
+            <MobileLocaleMarketBar />
+            <MobileSearch />
+          </div>
+          <HomeHeroCampaign />
+          <HomeCategoryDiscovery />
+        </div>
       </div>
-      <HomeHeroCampaign />
-      <HomeCategoryDiscovery />
       <div className="buzzard-desktop-chrome">
         <HomeLayout />
         <HomeTrustReviews />

@@ -10,6 +10,7 @@ import MobileSearch from "./MobileSearch";
 export default function MobileStorefrontChrome() {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const media = window.matchMedia(PHONE_MEDIA_QUERY);
@@ -34,7 +35,7 @@ export default function MobileStorefrontChrome() {
     <>
       <div className="buzzard-mobile-only">
         <MobileHeader />
-        <MobileSearch />
+        {!isHome && <MobileSearch />}
       </div>
       <MobileBottomNav />
     </>

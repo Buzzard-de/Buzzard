@@ -26,12 +26,20 @@ describe("homepage canonical content", () => {
     const page = readFileSync(resolve("components/HomePageContent.tsx"), "utf8");
     expect(page).toContain("HomeHeroCampaign");
     expect(page).toContain("HomeCategoryDiscovery");
-    expect(page).toContain("MobileVehicleSelector");
-    expect(page).not.toContain("import MobileHome");
-    expect(page).not.toContain("<MobileHome");
+    expect(page).toContain("MobileHomeCategoryRail");
+    expect(page).not.toContain("MobileVehicleSelector");
+    expect(page).not.toMatch(/import\s+MobileHome\s+from/);
+    expect(page).not.toMatch(/<MobileHome[\s/>]/);
     expect(page).not.toContain("MobileHero");
     expect(page).not.toContain("MobileTrustStrip");
     expect(page).not.toContain("useIsMobileNav");
+  });
+
+  it("keeps the mobile category rail on the canonical homepage category source", () => {
+    const rail = readFileSync(resolve("components/mobile/MobileHomeCategoryRail.tsx"), "utf8");
+    expect(rail).toContain("getHomeCategoryList");
+    expect(rail).toContain("categoryHref");
+    expect(rail).not.toContain("const categories = [");
   });
 
   it("does not render a second overlay header when CategorySidebar is embedded", () => {

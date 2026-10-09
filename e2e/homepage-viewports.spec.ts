@@ -90,14 +90,44 @@ test.describe("homepage viewports", () => {
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
     await assertCanonicalHome(page, "de");
-    await expect(page.locator(".buzzard-mobile-vehicle")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-vehicle")).toHaveCount(0);
+    await expect(page.locator(".mobile-home-category-rail")).toBeVisible();
+    await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(10);
+    await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", /\/kategorie\//);
+    await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
+    await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
+    await expect(page.locator("#buzzard-mobile-search-input")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-header-link[href='/warenkorb/']")).toBeVisible();
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
     await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
+    await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
     await page.locator(".buzzard-mobile-header-btn").first().click();
     await expect(page.locator(".mega-menu-locale-market .language-selector select option")).toHaveCount(30);
     await expect(page.locator(".mega-menu-locale-market .country-selector select option")).toHaveCount(35);
-    await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
+  });
+
+  test("narrow 320px homepage collapses the category rail to the accessible menu", async ({ page }) => {
+    await dismissConsent(page);
+    await page.setViewportSize(VIEWPORTS.mobile320);
+    await page.goto("/");
+    await expect(page.locator(".mobile-home-category-rail")).toBeHidden();
+    await expect(page.locator(".home-hero-campaign")).toBeVisible();
+    await page.locator(".buzzard-mobile-header-btn").first().click();
+    await expect(page.locator(".mega-menu-overlay")).toBeVisible();
+    await expect(page.locator(".home-sidebar.embedded .home-sidebar-item")).toHaveCount(50);
+    await assertNoHorizontalOverflow(page);
+  });
+
+  test("mobile homepage search submits to the working product search route", async ({ page }) => {
+    await dismissConsent(page);
+    await page.setViewportSize(VIEWPORTS.mobile390);
+    await page.goto("/");
+    const search = page.locator("#buzzard-mobile-search-input");
+    await search.fill("textil");
+    await search.press("Enter");
+    await expect(page).toHaveURL(/\/products\/\?q=textil$/);
   });
 
   test("portrait 393x852 German — same canonical content", async ({ page }) => {
@@ -106,6 +136,12 @@ test.describe("homepage viewports", () => {
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
     await assertCanonicalHome(page, "de");
+    const mobileLanguage = page.locator(".mobile-home-locale-market .language-selector select");
+    const mobileMarket = page.locator(".mobile-home-locale-market .country-selector select");
+    await expect(mobileMarket).toHaveValue("DE");
+    await mobileLanguage.selectOption("tr");
+    await expect(mobileMarket).toHaveValue("DE");
+    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.tr);
     await assertNoHorizontalOverflow(page);
   });
 
@@ -135,6 +171,7 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize(VIEWPORTS.desktop1440);
     await page.goto("/");
     await assertCanonicalHome(page, "de");
+    await expect(page.locator(".vehicle-select-btn")).toBeVisible();
     const languageSelect = page.locator(".site-header .language-selector select");
     const marketSelect = page.locator(".site-header .country-selector select");
     await expect(languageSelect.locator("option")).toHaveCount(30);

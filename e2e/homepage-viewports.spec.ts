@@ -84,6 +84,17 @@ async function assertLocaleControlsAreReadable(page: import("@playwright/test").
       const controlBox = control.getBoundingClientRect();
       const labelBox = label.getBoundingClientRect();
       const selectorBox = selector.getBoundingClientRect();
+      const selectStyle = window.getComputedStyle(select);
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      if (context) context.font = selectStyle.font;
+      const selectedText = select.options[select.selectedIndex]?.text ?? "";
+      const selectedTextWidth = context?.measureText(selectedText).width ?? 0;
+      const availableTextWidth =
+        select.clientWidth -
+        Number.parseFloat(selectStyle.paddingInlineStart) -
+        Number.parseFloat(selectStyle.paddingInlineEnd) -
+        14;
       const overlap = !(
         labelBox.bottom <= selectorBox.top ||
         labelBox.top >= selectorBox.bottom ||
@@ -100,6 +111,9 @@ async function assertLocaleControlsAreReadable(page: import("@playwright/test").
         ...(overlap ? [`${label.textContent?.trim()}: label overlaps selected value`] : []),
         ...(!contained ? [`${label.textContent?.trim()}: content exceeds control`] : []),
         ...(select.getBoundingClientRect().width < 90 ? [`${label.textContent?.trim()}: selected value is too narrow`] : []),
+        ...(selectedTextWidth > availableTextWidth
+          ? [`${label.textContent?.trim()}: "${selectedText}" is clipped`]
+          : []),
       ];
     }),
   );

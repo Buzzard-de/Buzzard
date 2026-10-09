@@ -1220,7 +1220,7 @@
 
   .home-phone-layout {
     display: grid;
-    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-columns: 94px minmax(0, 1fr);
     align-items: start;
     min-width: 0;
     background:
@@ -1312,7 +1312,7 @@
 
   .mobile-home-locale-market {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
     gap: 6px;
     margin-block-end: 8px;
   }

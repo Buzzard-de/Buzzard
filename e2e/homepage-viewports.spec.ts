@@ -236,6 +236,9 @@ test.describe("homepage viewports", () => {
         await expect(page.locator(".mobile-home-locale-market .language-selector select")).toHaveValue(locale);
         await expect(page.locator(".mobile-home-locale-market .country-selector select")).toHaveValue("DE");
         await assertLocaleControlsAreReadable(page);
+        await expect(page.locator(".mobile-home-locale-value").nth(0)).toHaveText(locale === "de" ? "Deutsch" : "Türkçe");
+        await expect(page.locator(".mobile-home-locale-value").nth(1)).toContainText("Deutschland");
+        await assertLabelsAreNotClipped(page, ".mobile-home-locale-value");
         await assertHeroActionsLayout(page, width === 320 ? "column" : "row");
         await assertNoHorizontalOverflow(page);
       });

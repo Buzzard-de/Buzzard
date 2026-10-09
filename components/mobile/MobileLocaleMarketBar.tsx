@@ -2,10 +2,14 @@
 
 import CountrySelector from "@/components/CountrySelector";
 import LanguageSelector from "@/components/LanguageSelector";
-import { useLocale } from "@/lib/i18n/context";
+import { LOCALE_LABELS, useLocale } from "@/lib/i18n/context";
+import { getDeliverableMarketCountries } from "@/lib/market/countries";
+import { useMarket } from "@/lib/market/context";
 
 export default function MobileLocaleMarketBar() {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
+  const { countryCode } = useMarket();
+  const country = getDeliverableMarketCountries().find((market) => market.code === countryCode);
 
   return (
     <div className="mobile-home-locale-market" aria-label={`${t("language.srLabel")} · ${t("market.srLabel")}`}>
@@ -17,6 +21,7 @@ export default function MobileLocaleMarketBar() {
           </svg>
           {t("language.srLabel")}
         </span>
+        <span className="mobile-home-locale-value" aria-hidden="true">{LOCALE_LABELS[locale]}</span>
         <LanguageSelector />
       </div>
       <div className="mobile-home-locale-control">
@@ -26,6 +31,9 @@ export default function MobileLocaleMarketBar() {
             <circle cx="12" cy="10" r="2.5" />
           </svg>
           {t("market.srLabel")}
+        </span>
+        <span className="mobile-home-locale-value" aria-hidden="true">
+          {country ? `${country.flag} ${country.name}` : countryCode}
         </span>
         <CountrySelector />
       </div>

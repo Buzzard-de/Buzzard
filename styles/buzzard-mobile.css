@@ -1343,6 +1343,11 @@
     pointer-events: none;
   }
 
+  .mobile-home-locale-control:has(select:focus-visible) {
+    outline: 2px solid #d5aa4d;
+    outline-offset: 1px;
+  }
+
   .mobile-home-locale-label {
     display: inline-flex;
     flex: 0 0 auto;
@@ -1363,8 +1368,25 @@
   .mobile-home-locale-control .language-selector,
   .mobile-home-locale-control .country-selector {
     display: block !important;
-    flex: 1;
+    position: absolute;
+    inset-inline: 7px;
+    bottom: 4px;
+    z-index: 2;
     min-width: 0;
+    height: 27px;
+  }
+
+  .mobile-home-locale-value {
+    display: block;
+    min-width: 0;
+    padding-inline-end: 18px;
+    overflow: hidden;
+    color: #f4efe5;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 27px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .mobile-home-locale-control select {
@@ -1381,6 +1403,7 @@
     -webkit-text-fill-color: #f4efe5;
     font-size: 11px;
     line-height: 1.2;
+    opacity: 0;
     text-overflow: ellipsis;
     transform: translateZ(0);
   }

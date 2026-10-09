@@ -1442,14 +1442,17 @@
   }
 
   .home-page-canonical .home-hero-campaign {
+    position: relative;
     min-height: 272px;
     margin: 0 10px 14px;
     padding: 26px 18px 22px;
+    overflow: hidden;
     border: 1px solid rgba(205, 164, 78, 0.58);
     border-radius: 4px;
     background:
-      linear-gradient(180deg, rgba(5, 5, 5, 0.12), rgba(5, 5, 5, 0.85)),
-      linear-gradient(145deg, #17120a, #050505 72%);
+      linear-gradient(180deg, rgba(5, 5, 5, 0.08), rgba(5, 5, 5, 0.82)),
+      radial-gradient(circle at 82% 42%, rgba(205, 164, 78, 0.23), transparent 34%),
+      linear-gradient(145deg, #21180a, #050505 70%);
     background-size: cover;
     background-position: 58% center;
     box-shadow:
@@ -1597,6 +1600,16 @@
   @media (max-width: 339px) {
     .home-page-canonical .home-hero-actions {
       grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 420px) and (min-height: 501px) {
+    .home-page-canonical .home-category-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .home-page-canonical .home-category-tile {
+      min-height: 126px;
     }
   }
 

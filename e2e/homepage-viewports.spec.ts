@@ -197,7 +197,8 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".buzzard-mobile-vehicle")).toHaveCount(0);
     await expect(page.locator(".mobile-home-category-rail")).toBeVisible();
     await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(10);
-    await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", /\/kategorie\//);
+    await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", "/");
+    await expect(page.locator(".mobile-home-category-rail a").nth(1)).toHaveAttribute("href", /\/kategorie\//);
     await assertLabelsAreNotClipped(page, ".mobile-home-category-rail-link > span:last-child");
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
@@ -270,6 +271,19 @@ test.describe("homepage viewports", () => {
     await mobileLanguage.selectOption("tr");
     await expect(mobileMarket).toHaveValue("DE");
     await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.tr);
+    await assertNoHorizontalOverflow(page);
+  });
+
+  test("reference-width 430px uses the premium three-column category grid", async ({ page }) => {
+    await dismissConsent(page, "tr");
+    await page.setViewportSize({ width: 430, height: 932 });
+    await page.goto("/");
+    await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("aria-current", "page");
+    const columnCount = await page.locator(".home-category-grid").evaluate((grid) =>
+      window.getComputedStyle(grid).gridTemplateColumns.split(" ").length,
+    );
+    expect(columnCount).toBe(3);
+    await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertNoHorizontalOverflow(page);
   });
 

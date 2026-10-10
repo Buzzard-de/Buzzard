@@ -1297,7 +1297,7 @@
     align-items: center;
     justify-content: center;
     gap: 3px;
-    color: #f4efe5;
+    color: #e2b957;
     border: 0;
     border-bottom: 1px solid rgba(205, 164, 78, 0.18);
     background: transparent;
@@ -1320,7 +1320,7 @@
     flex: 0 0 auto;
     width: 18px;
     height: 18px;
-    color: #d5aa4d;
+    color: #e2b957;
   }
 
   .mobile-home-category-rail-link > span:last-child {
@@ -1640,7 +1640,7 @@
   }
 
   .home-page-canonical .home-category-tile + .home-category-tile {
-    border-top: 1px solid rgba(205, 164, 78, 0.22);
+    border-top: 0;
   }
 
   .home-page-canonical .home-category-tile-icon,

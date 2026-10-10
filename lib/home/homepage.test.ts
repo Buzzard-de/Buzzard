@@ -35,6 +35,20 @@ describe("homepage canonical content", () => {
     expect(page).not.toContain("useIsMobileNav");
   });
 
+  it("places the phone AI assistant between cart and account in the bottom nav", () => {
+    const nav = readFileSync(resolve("components/mobile/MobileBottomNav.tsx"), "utf8");
+    const cart = nav.indexOf('href="/warenkorb/"');
+    const ai = nav.indexOf("buzzard-mobile-bottom-nav-ai");
+    const account = nav.indexOf('href="/konto/"');
+    expect(cart).toBeGreaterThan(-1);
+    expect(ai).toBeGreaterThan(cart);
+    expect(account).toBeGreaterThan(ai);
+    const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
+    expect(css).toContain(".buzzard-mobile-bottom-nav-ai-label");
+    expect(css).toContain("background: #1b8f3a");
+    expect(css).toContain("color: #e2b957");
+  });
+
   it("keeps the mobile category rail on the canonical homepage category source", () => {
     const rail = readFileSync(resolve("components/mobile/MobileHomeCategoryRail.tsx"), "utf8");
     expect(rail).toContain("getHomeCategoryList");

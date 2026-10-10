@@ -1130,11 +1130,30 @@
     pointer-events: none;
   }
 
+  .buzzard-mobile-bottom-nav-ai {
+    color: #d5aa4d;
+  }
+
+  .buzzard-mobile-bottom-nav-ai-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 28px;
+    padding: 0 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #1b8f3a;
+    color: #e2b957;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-overflow: clip;
+    white-space: nowrap;
+  }
+
   .ai-chat-fab {
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-    inset-inline-end: 12px;
-    inset-inline-start: auto;
-    z-index: 70;
+    display: none;
   }
 
   .ai-chat-panel,
@@ -1233,6 +1252,11 @@
   body:has(.home-page-canonical) .buzzard-mobile-bottom-nav-item.active,
   body:has(.home-page-canonical) .buzzard-mobile-bottom-nav-item[aria-current="page"] {
     color: #d5aa4d;
+  }
+
+  body:has(.home-page-canonical) .buzzard-mobile-bottom-nav-ai-label {
+    background: #1b8f3a;
+    color: #e2b957;
   }
 
   .home-phone-layout {
@@ -1630,33 +1654,14 @@
   }
 
   body:has(.home-page-canonical) .ai-chat-fab {
-    inset-inline-start: auto;
-    inset-inline-end: 8px;
-    bottom: calc(54px + env(safe-area-inset-bottom, 0px));
-    width: 44px;
-    min-width: 44px;
-    height: 44px;
-    padding: 0;
-    overflow: hidden;
-    font-size: 0;
-    line-height: 0;
-    z-index: 70;
-  }
-
-  body:has(.home-page-canonical) .ai-chat-fab::after {
-    content: "AI";
-    font-size: 11px;
-    font-weight: 800;
-    line-height: 44px;
-    letter-spacing: 0.04em;
-    color: #fff;
+    display: none;
   }
 
   body:has(.home-page-canonical) .ai-chat-panel,
   body:has(.home-page-canonical) .ai-chat-panel.rtl {
-    inset-inline-start: auto;
-    inset-inline-end: 8px;
-    bottom: calc(106px + env(safe-area-inset-bottom, 0px));
+    inset-inline-start: 12px;
+    inset-inline-end: 12px;
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   }
 
   @media (max-width: 389px) {
@@ -1742,17 +1747,13 @@
     }
 
     .ai-chat-fab {
-      bottom: calc(54px + env(safe-area-inset-bottom, 0px));
+      display: none;
     }
 
     .ai-chat-panel,
     .ai-chat-panel.rtl {
-      bottom: calc(106px + env(safe-area-inset-bottom, 0px));
+      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
       max-height: min(52vh, 420px);
-    }
-
-    body:has(.home-page-canonical) .ai-chat-fab {
-      bottom: calc(52px + env(safe-area-inset-bottom, 0px));
     }
   }
 }

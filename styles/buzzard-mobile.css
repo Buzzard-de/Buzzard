@@ -1648,6 +1648,19 @@
     display: none;
   }
 
+  @media (min-width: 390px) {
+    .home-page-canonical .home-category-grid {
+      gap: 0 8px;
+    }
+
+    .home-page-canonical .home-category-tile {
+      min-height: 0;
+      height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+
   body:has(.home-page-canonical) .ai-chat-fab {
     display: none;
   }

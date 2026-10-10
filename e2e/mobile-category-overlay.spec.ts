@@ -61,6 +61,8 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
 
   const header = page.locator(".buzzard-mobile-header");
   const nav = page.locator(".buzzard-mobile-bottom-nav");
+  const search = page.locator(".home-phone-controls .buzzard-mobile-search-form");
+  const tekstil = page.locator('.mobile-home-category-rail [data-category-id="cat-01"]');
   const viewport = page.viewportSize()!;
   const headerBox = await boxOf(header);
   const navBox = await boxOf(nav);
@@ -68,26 +70,38 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   expect(first.top).toBeGreaterThanOrEqual(headerBox.bottom - 2);
   expect(first.bottom).toBeLessThanOrEqual(navBox.top + 4);
   expect(overlaps(headerBox, first)).toBe(false);
+  if (await search.isVisible()) {
+    const searchBox = await boxOf(search);
+    expect(first.top).toBeGreaterThanOrEqual(searchBox.bottom - 2);
+  }
+  if (await tekstil.isVisible()) {
+    const tekstilBox = await boxOf(tekstil);
+    expect(first.top).toBeGreaterThanOrEqual(tekstilBox.top - 2);
+  }
+  await expect(rows.first()).not.toHaveText(/^\d{2}\./);
 
   const gold = await overlay.locator(".home-sidebar.embedded .home-sidebar-item").first().evaluate((el) => {
     const style = window.getComputedStyle(el);
+    const label = el.querySelector("span");
     const icon = el.querySelector("svg");
     return {
       text: style.color,
       icon: icon ? window.getComputedStyle(icon).color : "",
       chevron: Boolean(el.querySelector(".chevron")),
+      fontSize: label ? window.getComputedStyle(label).fontSize : "",
     };
   });
   expect(gold.text).toBe("rgb(226, 185, 87)");
   expect(gold.icon).toBe("rgb(226, 185, 87)");
   expect(gold.chevron).toBe(true);
+  expect(gold.fontSize).toBe("11px");
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
   expect(overflow).toBe(false);
 
   const shell = overlay.locator(".mega-menu-shell.mobile");
   const shellBox = await boxOf(shell);
-  expect(shellBox.right - shellBox.left).toBeLessThanOrEqual(286);
+  expect(shellBox.right - shellBox.left).toBeLessThanOrEqual(208);
   const dir = await shell.evaluate((el) => getComputedStyle(el).direction);
   if (dir === "rtl") {
     expect(shellBox.left).toBeGreaterThan(viewport.width * 0.2);

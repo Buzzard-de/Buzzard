@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import CategorySidebar from "./CategorySidebar";
 import FeaturedBanner from "./FeaturedBanner";
 import MegaMenu from "./MegaMenu";
@@ -12,6 +12,15 @@ import MegaMenuSearch from "./MegaMenuSearch";
 import LanguageSelector from "./LanguageSelector";
 import CountrySelector from "./CountrySelector";
 
+function measurePhoneDrawerTop(): number {
+  const search = document.querySelector<HTMLElement>(".home-phone-controls .buzzard-mobile-search-form");
+  const tekstil = document.querySelector<HTMLElement>('.mobile-home-category-rail [data-category-id="cat-01"]');
+  const searchBottom = search?.getBoundingClientRect().bottom ?? 0;
+  const tekstilTop = tekstil?.getBoundingClientRect().top ?? 0;
+  const candidates = [searchBottom, tekstilTop].filter((value) => value > 0);
+  return Math.round(candidates.length ? Math.max(...candidates) : 170);
+}
+
 export default function MegaMenuOverlay() {
   const homeUI = useHomeUI();
   const { t } = useLocale();
@@ -19,6 +28,7 @@ export default function MegaMenuOverlay() {
   const isTablet = useIsTabletNav();
   const [activeMainId, setActiveMainId] = useState("");
   const [activeSubId, setActiveSubId] = useState("");
+  const [phoneDrawerTop, setPhoneDrawerTop] = useState<number | null>(null);
 
   const open = homeUI?.megaMenuOpen ?? false;
   const mainCategory = activeMainId ? getCategoryById(activeMainId) : undefined;
@@ -32,6 +42,23 @@ export default function MegaMenuOverlay() {
     setActiveSubId("");
   }, [activeMainId]);
 
+  useLayoutEffect(() => {
+    if (!open || !isMobile) {
+      setPhoneDrawerTop(null);
+      return;
+    }
+    function measure() {
+      setPhoneDrawerTop(measurePhoneDrawerTop());
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    window.addEventListener("scroll", measure, true);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", measure, true);
+    };
+  }, [open, isMobile]);
+
   if (!open) return null;
 
   return (
@@ -42,7 +69,10 @@ export default function MegaMenuOverlay() {
         aria-label={t("megaMenu.close")}
         onClick={homeUI?.closeMegaMenu}
       />
-      <div className={`mega-menu-shell${isTablet && !isMobile ? " tablet" : ""}${isMobile ? " mobile" : ""}`}>
+      <div
+        className={`mega-menu-shell${isTablet && !isMobile ? " tablet" : ""}${isMobile ? " mobile" : ""}`}
+        style={isMobile && phoneDrawerTop != null ? { top: `${phoneDrawerTop}px` } : undefined}
+      >
         {isMobile ? null : (
           <>
             <div className="mega-menu-shell-head">

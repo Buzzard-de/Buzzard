@@ -13,6 +13,7 @@ import {
   isCategoryVisibleToCustomer,
   MAIN_CATEGORY_COUNT,
 } from "@/lib/categories";
+import { toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
 import { useCategoryVisibilityMap } from "@/lib/categories/visibility-client";
 import { useHomeUI } from "@/lib/home-ui";
 import { useIsMobileNav } from "@/lib/use-media-query";
@@ -174,11 +175,11 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
           <ul className="home-sidebar-list">
             <li>
               <Link href="/products/" className="home-sidebar-item home-sidebar-all" onClick={handleNavigate}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15" aria-hidden="true">
                   <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z" />
                 </svg>
                 <span>{t("megaMenu.categories")}</span>
-                <svg className="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true">
+                <svg className="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12" aria-hidden="true">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </Link>
@@ -191,9 +192,9 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
                   aria-current={activeId === cat.id ? "page" : undefined}
                   onClick={handleNavigate}
                 >
-                  <CategoryIcon name={getMainCategoryIcon(cat.id)} size={18} />
-                  <span>{formatMenuLabel(cat, locale)}</span>
-                  <svg className="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true">
+                  <CategoryIcon name={getMainCategoryIcon(cat.id)} size={15} />
+                  <span>{toCategoryDisplayUpperCase(getCategoryLabel(cat, locale), locale)}</span>
+                  <svg className="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12" aria-hidden="true">
                     <path d="M9 18l6-6-6-6" />
                   </svg>
                 </Link>

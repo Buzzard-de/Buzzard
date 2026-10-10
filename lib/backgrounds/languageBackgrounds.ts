@@ -2,7 +2,7 @@ export const GERMANY_LANGUAGE_BACKGROUND =
   "/images/backgrounds/germany/buzzard-germany-de.png";
 
 export const GERMANY_PHONE_BAND_BACKGROUND =
-  "/images/backgrounds/germany/buzzard-germany-phone-band.jpg";
+  "/images/backgrounds/germany/buzzard-germany-phone-panel.png";
 
 export function getGermanyPhoneBandBackground(countryCode?: string | null): string | null {
   return countryCode?.trim().toUpperCase() === "DE" ? GERMANY_PHONE_BAND_BACKGROUND : null;

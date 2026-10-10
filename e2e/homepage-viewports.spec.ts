@@ -57,6 +57,72 @@ async function assertAiAboveBottomNav(page: import("@playwright/test").Page) {
   expect(collision).toBe(false);
 }
 
+async function assertSearchPlaceholderFits(page: import("@playwright/test").Page) {
+  const input = page.locator("#buzzard-mobile-search-input");
+  await expect(input).toBeVisible();
+  const clipped = await input.evaluate((el) => {
+    const style = window.getComputedStyle(el);
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) return false;
+    context.font = `${style.fontSize} ${style.fontFamily}`;
+    const placeholder = el.getAttribute("placeholder") ?? "";
+    return context.measureText(placeholder).width > el.clientWidth + 1;
+  });
+  expect(clipped).toBe(false);
+}
+
+async function assertHeroCopyFits(page: import("@playwright/test").Page) {
+  const issues = await page.locator(".home-hero-campaign").evaluate((hero) => {
+    const title = hero.querySelector(".home-hero-title");
+    const text = hero.querySelector(".home-hero-text");
+    const heroBox = hero.getBoundingClientRect();
+    const problems: string[] = [];
+    for (const el of [title, text]) {
+      if (!el) continue;
+      const box = el.getBoundingClientRect();
+      if (el.scrollHeight > el.clientHeight + 1) problems.push(`${el.className} clipped vertically`);
+      if (el.scrollWidth > el.clientWidth + 1) problems.push(`${el.className} clipped horizontally`);
+      if (box.right > heroBox.right + 1 || box.left < heroBox.left - 1) {
+        problems.push(`${el.className} overflows hero`);
+      }
+    }
+    if (title && text) {
+      const titleBox = title.getBoundingClientRect();
+      const textBox = text.getBoundingClientRect();
+      const overlap = !(
+        titleBox.bottom <= textBox.top + 1 ||
+        titleBox.top >= textBox.bottom - 1 ||
+        titleBox.right <= textBox.left + 1 ||
+        titleBox.left >= textBox.right - 1
+      );
+      if (overlap) problems.push("title overlaps text");
+    }
+    return problems;
+  });
+  expect(issues).toEqual([]);
+}
+
+async function assertFabClearsCategoryLabels(page: import("@playwright/test").Page) {
+  const overlap = await page.evaluate(() => {
+    const fab = document.querySelector(".ai-chat-fab");
+    if (!fab) return false;
+    const fabBox = fab.getBoundingClientRect();
+    return [...document.querySelectorAll(".home-category-tile-label")].some((label) => {
+      const box = label.getBoundingClientRect();
+      const visible = box.bottom > 0 && box.top < window.innerHeight;
+      if (!visible) return false;
+      return !(
+        box.bottom <= fabBox.top + 2 ||
+        box.top >= fabBox.bottom - 2 ||
+        box.right <= fabBox.left + 2 ||
+        box.left >= fabBox.right - 2
+      );
+    });
+  });
+  expect(overlap).toBe(false);
+}
+
 async function assertLabelsAreNotClipped(
   page: import("@playwright/test").Page,
   selector: string,
@@ -221,6 +287,8 @@ test.describe("homepage viewports", () => {
     await assertCanonicalHome(page, "de");
     await expect(page.locator(".buzzard-mobile-vehicle")).toHaveCount(0);
     await expect(page.locator(".mobile-home-category-rail")).toBeVisible();
+    const railWidth = await page.locator(".mobile-home-category-rail").evaluate((el) => el.getBoundingClientRect().width);
+    expect(railWidth).toBeLessThanOrEqual(64);
     await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(10);
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", "/");
     await expect(page.locator(".mobile-home-category-rail a").nth(1)).toHaveAttribute("href", /\/kategorie\//);
@@ -230,10 +298,13 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
     await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
     await expect(page.locator("#buzzard-mobile-search-input")).toBeVisible();
+    await assertSearchPlaceholderFits(page);
+    await assertHeroCopyFits(page);
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-header-link[href='/warenkorb/']")).toBeVisible();
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
+    await assertFabClearsCategoryLabels(page);
     await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
     await assertLastCategoryClearsBottomNav(page);
     await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
@@ -269,9 +340,12 @@ test.describe("homepage viewports", () => {
         await expect(page.locator(".mobile-home-locale-value").nth(1)).toContainText("Deutschland");
         await assertLabelsAreNotClipped(page, ".mobile-home-locale-value");
         await assertHeroActionsLayout(page, width === 320 ? "column" : "row");
+        await assertSearchPlaceholderFits(page);
+        await assertHeroCopyFits(page);
         await assertVerticalCanonicalCategories(page);
         await assertNoHorizontalOverflow(page);
         await assertLastCategoryClearsBottomNav(page);
+        await assertFabClearsCategoryLabels(page);
       });
     }
   }

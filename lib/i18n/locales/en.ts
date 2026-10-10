@@ -611,7 +611,7 @@ export const catalog: TranslationTree = {
     heroAria: "Hero",
     heroTitle: "Discover our range",
     heroText: "Browse our online catalog across automotive, textiles, electronics and more — personal advice by phone and email.",
-    searchPlaceholder: "Search products, brands, categories or parts…",
+    searchPlaceholder: "Search products or categories…",
     categorySearchPlaceholder: "Search in category…",
     productCount: "{count} products",
     loadingProducts: "Loading products…",

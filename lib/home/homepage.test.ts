@@ -40,6 +40,8 @@ describe("homepage canonical content", () => {
     expect(rail).toContain("getHomeCategoryList");
     expect(rail).toContain("categoryHref");
     expect(rail).not.toContain("const categories = [");
+    expect(rail).not.toContain("RAIL_CATEGORY_COUNT");
+    expect(rail).not.toContain(".slice(");
   });
 
   it("does not render a second overlay header when CategorySidebar is embedded", () => {

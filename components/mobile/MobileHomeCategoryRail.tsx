@@ -11,12 +11,10 @@ import { useHomeUI } from "@/lib/home-ui";
 import { getHomeCategoryList } from "@/lib/home/homepageContent";
 import { useLocale } from "@/lib/i18n/context";
 
-const RAIL_CATEGORY_COUNT = 8;
-
 export default function MobileHomeCategoryRail() {
   const homeUI = useHomeUI();
   const { locale, t } = useLocale();
-  const categories = getHomeCategoryList().slice(0, RAIL_CATEGORY_COUNT);
+  const categories = getHomeCategoryList();
 
   return (
     <nav className="buzzard-mobile-only mobile-home-category-rail" aria-label={t("home.mainCategories")}>
@@ -27,7 +25,12 @@ export default function MobileHomeCategoryRail() {
         <span>{t("mobile.home")}</span>
       </Link>
       {categories.map((category) => (
-        <Link key={category.id} href={categoryHref(category)} className="mobile-home-category-rail-link">
+        <Link
+          key={category.id}
+          href={categoryHref(category)}
+          className="mobile-home-category-rail-link"
+          data-category-id={category.id}
+        >
           <CategoryIcon name={getMainCategoryIcon(category.id)} size={22} />
           <span>{getCategoryLabel(category, locale)}</span>
         </Link>

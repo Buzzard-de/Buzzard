@@ -289,9 +289,15 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-category-rail")).toBeVisible();
     const railWidth = await page.locator(".mobile-home-category-rail").evaluate((el) => el.getBoundingClientRect().width);
     expect(railWidth).toBeLessThanOrEqual(64);
-    await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(10);
+    await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(52);
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", "/");
     await expect(page.locator(".mobile-home-category-rail a").nth(1)).toHaveAttribute("href", /\/kategorie\//);
+    await expect(page.locator(".mobile-home-category-rail [data-category-id]")).toHaveCount(50);
+    await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-08']")).toBeVisible();
+    await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeAttached();
+    await expect(page.locator(".mobile-home-category-rail [data-category-id]").last()).toHaveAttribute("data-category-id", "cat-53");
+    await page.locator(".mobile-home-category-rail [data-category-id='cat-09']").scrollIntoViewIfNeeded();
+    await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeVisible();
     await assertLabelsAreNotClipped(page, ".mobile-home-category-rail-link > span:last-child");
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertVerticalCanonicalCategories(page);

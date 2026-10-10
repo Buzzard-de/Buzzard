@@ -283,8 +283,38 @@ async function assertBoxesContinueToRailEnd(page: import("@playwright/test").Pag
   expect(metrics.twoColumns).toBe(true);
 }
 
-async function assertGermanyPhoneBandHidden(page: import("@playwright/test").Page) {
-  await expect(page.locator(".home-phone-germany-bg")).toHaveCount(0);
+async function assertGermanyPhonePanel(page: import("@playwright/test").Page) {
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const bg = document.querySelector(".home-phone-germany-bg");
+        const search =
+          document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
+          document.querySelector(".home-phone-controls .buzzard-mobile-search");
+        const groups = [...document.querySelectorAll(".home-page-canonical .home-category-tile-group")];
+        const first = groups[0];
+        const second = groups[1] ?? groups[0];
+        const rail = document.querySelector(".mobile-home-category-rail");
+        if (!bg || !search || !first) return 99;
+        const band = bg.getBoundingClientRect();
+        const searchBox = search.getBoundingClientRect();
+        const a = first.getBoundingClientRect();
+        const b = second.getBoundingClientRect();
+        const railVisible = Boolean(rail && window.getComputedStyle(rail).display !== "none");
+        const leftEdge = railVisible && rail ? rail.getBoundingClientRect().right : Math.min(a.left, b.left);
+        const rightEdge = Math.max(a.right, b.right);
+        const topEdge = searchBox.bottom;
+        const bottomEdge = Math.min(a.top, b.top);
+        const underSearch = Math.abs(band.top - topEdge) <= 4 ? 0 : 8;
+        const aboveBoxes = Math.abs(band.bottom - bottomEdge) <= 4 ? 0 : 8;
+        const fromRail = Math.abs(band.left - leftEdge) <= 4 ? 0 : 8;
+        const toBoxes = Math.abs(band.right - rightEdge) <= 8 ? 0 : 8;
+        const covered = window.getComputedStyle(bg).backgroundSize.includes("cover") ? 0 : 8;
+        return Math.max(underSearch, aboveBoxes, fromRail, toBoxes, covered);
+      }),
+    )
+    .toBeLessThanOrEqual(4);
 }
 
 async function assertBottomNavGold(page: import("@playwright/test").Page) {
@@ -461,7 +491,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBandHidden(page);
+    await assertGermanyPhonePanel(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
@@ -529,7 +559,7 @@ test.describe("homepage viewports", () => {
           await assertBoxesContinueToRailEnd(page);
           await assertRailGold(page);
         }
-        await assertGermanyPhoneBandHidden(page);
+        await assertGermanyPhonePanel(page);
         await assertBottomNavGold(page);
         await assertNoHorizontalOverflow(page);
         await assertLastCategoryClearsBottomNav(page);
@@ -563,7 +593,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBandHidden(page);
+    await assertGermanyPhonePanel(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertNoHorizontalOverflow(page);
@@ -579,7 +609,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBandHidden(page);
+    await assertGermanyPhonePanel(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
@@ -597,7 +627,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBandHidden(page);
+    await assertGermanyPhonePanel(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertNoHorizontalOverflow(page);

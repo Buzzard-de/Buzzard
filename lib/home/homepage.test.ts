@@ -26,7 +26,7 @@ describe("homepage canonical content", () => {
     const page = readFileSync(resolve("components/HomePageContent.tsx"), "utf8");
     expect(page).toContain("HomeHeroCampaign");
     expect(page).toContain("HomeCategoryDiscovery");
-    expect(page).not.toContain("HomePhoneGermanyBackground");
+    expect(page).toContain("HomePhoneGermanyBackground");
     expect(page).toContain("MobileHomeCategoryRail");
     expect(page).not.toContain("MobileVehicleSelector");
     expect(page).not.toMatch(/import\s+MobileHome\s+from/);
@@ -85,7 +85,12 @@ describe("homepage canonical content", () => {
     expect(discovery).toContain("home-category-tile-group--fill");
     expect(discovery).toContain("cat-09");
     expect(discovery).not.toContain("cat-07");
-    expect(readFileSync(resolve("components/HomePageContent.tsx"), "utf8")).not.toContain("HomePhoneGermanyBackground");
+    expect(readFileSync(resolve("components/HomePageContent.tsx"), "utf8")).toContain("HomePhoneGermanyBackground");
+    expect(readFileSync(resolve("components/home/HomePhoneGermanyBackground.tsx"), "utf8")).toContain("layoutGermanyPanel");
+    expect(css).toContain(".home-phone-germany-bg");
+    expect(css).toContain("buzzard-germany-phone-panel.png");
+    expect(css).toContain("cover no-repeat");
+    expect(css).not.toMatch(/buzzard-germany-phone-panel\.png"\) center \/ contain/);
     expect(css).toMatch(/@media \(min-width: 390px\) \{[\s\S]*?\.home-page-canonical \.home-category-grid \{[\s\S]*?gap: 0 8px;/);
     const search = readFileSync(resolve("components/mobile/MobileSearch.tsx"), "utf8");
     expect(search).not.toContain("alignSearchWithAutomotive");

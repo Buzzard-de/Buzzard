@@ -72,37 +72,6 @@ async function assertSearchPlaceholderFits(page: import("@playwright/test").Page
   expect(clipped).toBe(false);
 }
 
-async function assertHeroCopyFits(page: import("@playwright/test").Page) {
-  const issues = await page.locator(".home-hero-campaign").evaluate((hero) => {
-    const title = hero.querySelector(".home-hero-title");
-    const text = hero.querySelector(".home-hero-text");
-    const heroBox = hero.getBoundingClientRect();
-    const problems: string[] = [];
-    for (const el of [title, text]) {
-      if (!el) continue;
-      const box = el.getBoundingClientRect();
-      if (el.scrollHeight > el.clientHeight + 1) problems.push(`${el.className} clipped vertically`);
-      if (el.scrollWidth > el.clientWidth + 1) problems.push(`${el.className} clipped horizontally`);
-      if (box.right > heroBox.right + 1 || box.left < heroBox.left - 1) {
-        problems.push(`${el.className} overflows hero`);
-      }
-    }
-    if (title && text) {
-      const titleBox = title.getBoundingClientRect();
-      const textBox = text.getBoundingClientRect();
-      const overlap = !(
-        titleBox.bottom <= textBox.top + 1 ||
-        titleBox.top >= textBox.bottom - 1 ||
-        titleBox.right <= textBox.left + 1 ||
-        titleBox.left >= textBox.right - 1
-      );
-      if (overlap) problems.push("title overlaps text");
-    }
-    return problems;
-  });
-  expect(issues).toEqual([]);
-}
-
 async function assertFabClearsCategoryLabels(page: import("@playwright/test").Page) {
   const overlap = await page.evaluate(() => {
     const fab = document.querySelector(".ai-chat-fab");
@@ -215,18 +184,6 @@ async function assertLocaleControlsAreReadable(page: import("@playwright/test").
   expect(issues).toEqual([]);
 }
 
-async function assertHeroActionsLayout(
-  page: import("@playwright/test").Page,
-  layout: "row" | "column",
-) {
-  const buttons = page.locator(".home-hero-actions .home-hero-btn");
-  await expect(buttons).toHaveCount(2);
-  await assertLabelsAreNotClipped(page, ".home-hero-actions .home-hero-btn");
-  const boxes = await buttons.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().toJSON()));
-  expect(Math.abs(boxes[0].top - boxes[1].top) <= 2).toBe(layout === "row");
-  expect(boxes[0].bottom <= boxes[1].top || boxes[0].right <= boxes[1].left).toBe(true);
-}
-
 async function assertVerticalCanonicalCategories(page: import("@playwright/test").Page) {
   const categories = page.locator(".home-category-tile");
   await expect(categories).toHaveCount(50);
@@ -282,9 +239,12 @@ async function assertLastCategoryClearsBottomNav(page: import("@playwright/test"
 }
 
 async function assertNoForbiddenCopy(page: import("@playwright/test").Page) {
-  const heroText = await page.locator(".home-hero-campaign").innerText();
-  for (const phrase of FORBIDDEN) {
-    expect(heroText).not.toContain(phrase);
+  const hero = page.locator(".home-hero-campaign");
+  if (await hero.isVisible()) {
+    const heroText = await hero.innerText();
+    for (const phrase of FORBIDDEN) {
+      expect(heroText).not.toContain(phrase);
+    }
   }
   const usp = page.locator(".usp-bar");
   if ((await usp.count()) > 0 && (await usp.first().isVisible())) {
@@ -295,10 +255,18 @@ async function assertNoForbiddenCopy(page: import("@playwright/test").Page) {
   }
 }
 
-async function assertCanonicalHome(page: import("@playwright/test").Page, locale: (typeof LOCALES)[number]) {
+async function assertCanonicalHome(
+  page: import("@playwright/test").Page,
+  locale: (typeof LOCALES)[number],
+  heroVisible = true,
+) {
   const hero = page.locator(".home-hero-campaign");
-  await expect(hero.locator("h1")).toBeVisible();
-  await expect(hero.locator("h1")).toHaveText(HERO_TITLE[locale]);
+  if (heroVisible) {
+    await expect(hero.locator("h1")).toBeVisible();
+    await expect(hero.locator("h1")).toHaveText(HERO_TITLE[locale]);
+  } else {
+    await expect(hero).toBeHidden();
+  }
   await expect(page.locator(".buzzard-mobile-hero")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
   await expect(page.locator(".home-category-tile")).toHaveCount(50);
@@ -313,7 +281,7 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize(VIEWPORTS.mobile390);
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
-    await assertCanonicalHome(page, "de");
+    await assertCanonicalHome(page, "de", false);
     await expect(page.locator(".buzzard-mobile-vehicle")).toHaveCount(0);
     await expect(page.locator(".mobile-home-category-rail")).toBeVisible();
     const railWidth = await page.locator(".mobile-home-category-rail").evaluate((el) => el.getBoundingClientRect().width);
@@ -362,7 +330,6 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
     await expect(page.locator("#buzzard-mobile-search-input")).toBeVisible();
     await assertSearchPlaceholderFits(page);
-    await assertHeroCopyFits(page);
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-header-link[href='/warenkorb/']")).toBeVisible();
     await assertNoHorizontalOverflow(page);
@@ -398,7 +365,7 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize(VIEWPORTS.mobile320);
     await page.goto("/");
     await expect(page.locator(".mobile-home-category-rail")).toBeHidden();
-    await expect(page.locator(".home-hero-campaign")).toBeVisible();
+    await expect(page.locator(".home-hero-campaign")).toBeHidden();
     await assertVerticalCanonicalCategories(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertLastCategoryClearsBottomNav(page);
@@ -419,9 +386,8 @@ test.describe("homepage viewports", () => {
         await expect(page.locator(".mobile-home-locale-value").nth(0)).toHaveText(locale === "de" ? "Deutsch" : "Türkçe");
         await expect(page.locator(".mobile-home-locale-value").nth(1)).toContainText("Deutschland");
         await assertLabelsAreNotClipped(page, ".mobile-home-locale-value");
-        await assertHeroActionsLayout(page, width === 320 ? "column" : "row");
+        await expect(page.locator(".home-hero-campaign")).toBeHidden();
         await assertSearchPlaceholderFits(page);
-        await assertHeroCopyFits(page);
         await assertVerticalCanonicalCategories(page);
         await assertNoHorizontalOverflow(page);
         await assertLastCategoryClearsBottomNav(page);
@@ -445,13 +411,13 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize(VIEWPORTS.mobile393);
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
-    await assertCanonicalHome(page, "de");
+    await assertCanonicalHome(page, "de", false);
     const mobileLanguage = page.locator(".mobile-home-locale-market .language-selector select");
     const mobileMarket = page.locator(".mobile-home-locale-market .country-selector select");
     await expect(mobileMarket).toHaveValue("DE");
     await mobileLanguage.selectOption("tr");
     await expect(mobileMarket).toHaveValue("DE");
-    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.tr);
+    await expect(page.locator(".home-hero-campaign")).toBeHidden();
     await assertNoHorizontalOverflow(page);
   });
 
@@ -460,10 +426,7 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize({ width: 430, height: 932 });
     await page.goto("/");
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("aria-current", "page");
-    await expect(page.locator(".home-hero-campaign")).toHaveClass(/has-locale-photo/);
-    await expect
-      .poll(() => page.locator(".home-hero-campaign").evaluate((hero) => window.getComputedStyle(hero).backgroundImage))
-      .toContain("buzzard-germany-de.png");
+    await expect(page.locator(".home-hero-campaign")).toBeHidden();
     await assertVerticalCanonicalCategories(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertNoHorizontalOverflow(page);
@@ -474,7 +437,7 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize({ width: 844, height: 390 });
     await page.goto("/");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
-    await assertCanonicalHome(page, "de");
+    await assertCanonicalHome(page, "de", false);
     await expect(page.locator(".home-fullscreen")).toBeHidden();
     await assertVerticalCanonicalCategories(page);
     await assertNoHorizontalOverflow(page);
@@ -513,7 +476,7 @@ test.describe("homepage viewports", () => {
   test("arabic landscape 844x390 — RTL phone layout", async ({ page }) => {
     await page.setViewportSize({ width: 844, height: 390 });
     await applyLocale(page, "ar");
-    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.ar, { timeout: 20_000 });
+    await expect(page.locator(".home-hero-campaign")).toBeHidden();
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", "ar");
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible();
@@ -526,8 +489,8 @@ test.describe("homepage viewports", () => {
     test(`portrait ${locale} homepage loads without overflow or legacy automotive hero`, async ({ page }) => {
       await page.setViewportSize(VIEWPORTS.mobile390);
       await applyLocale(page, locale);
-      await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE[locale], { timeout: 20_000 });
-      await assertCanonicalHome(page, locale);
+      await expect(page.locator(".home-hero-campaign")).toBeHidden();
+      await assertCanonicalHome(page, locale, false);
       await assertNoHorizontalOverflow(page);
       if (locale === "tr" || locale === "fr" || locale === "ar") {
         await page.screenshot({ path: `test-results/homepage-${locale}-portrait.png`, fullPage: false });

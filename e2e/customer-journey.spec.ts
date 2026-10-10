@@ -112,7 +112,7 @@ test.describe("Mobile five-stage category UX", () => {
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
-    await expect(page.locator(".home-hero-campaign h1")).toBeVisible();
+    await expect(page.locator(".home-hero-campaign")).toBeHidden();
 
     const card = page.locator(".home-category-tile").first();
     await expect(card).toBeVisible();

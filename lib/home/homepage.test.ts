@@ -43,10 +43,13 @@ describe("homepage canonical content", () => {
     expect(cart).toBeGreaterThan(-1);
     expect(ai).toBeGreaterThan(cart);
     expect(account).toBeGreaterThan(ai);
+    expect(nav).toContain("buzzard-mobile-bottom-nav-gold");
+    expect((nav.match(/buzzard-mobile-bottom-nav-gold/g) || []).length).toBe(3);
     const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
     expect(css).toContain(".buzzard-mobile-bottom-nav-ai-label");
     expect(css).toContain("background: #1b8f3a");
     expect(css).toContain("color: #e2b957");
+    expect(css).toContain(".buzzard-mobile-bottom-nav-gold");
   });
 
   it("keeps the mobile category rail on the canonical homepage category source", () => {
@@ -79,6 +82,7 @@ describe("homepage canonical content", () => {
     expect(discovery).toContain("alignBoxesWithAutomotive");
     expect(discovery).toContain("fillBoxesToLastCategory");
     expect(discovery).toContain("home-category-tile-group--fill");
+    expect(discovery).toContain("cat-07");
     expect(css).toMatch(/@media \(min-width: 390px\) \{[\s\S]*?\.home-page-canonical \.home-category-grid \{[\s\S]*?gap: 0 8px;/);
     const search = readFileSync(resolve("components/mobile/MobileSearch.tsx"), "utf8");
     expect(search).not.toContain("alignSearchWithAutomotive");

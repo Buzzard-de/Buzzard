@@ -1254,6 +1254,19 @@
     color: #d5aa4d;
   }
 
+  .buzzard-mobile-bottom-nav-gold,
+  .buzzard-mobile-bottom-nav-gold.active,
+  .buzzard-mobile-bottom-nav-gold[aria-current="page"],
+  body:has(.home-page-canonical) .buzzard-mobile-bottom-nav-gold,
+  body:has(.home-page-canonical) .buzzard-mobile-bottom-nav-gold.active,
+  body:has(.home-page-canonical) .buzzard-mobile-bottom-nav-gold[aria-current="page"] {
+    color: #e2b957;
+  }
+
+  .buzzard-mobile-bottom-nav-gold svg {
+    color: #e2b957;
+  }
+
   body:has(.home-page-canonical) .buzzard-mobile-bottom-nav-ai-label {
     background: #1b8f3a;
     color: #e2b957;

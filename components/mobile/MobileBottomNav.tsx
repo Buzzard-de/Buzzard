@@ -46,7 +46,7 @@ export default function MobileBottomNav() {
       </Link>
       <button
         type="button"
-        className={`buzzard-mobile-bottom-nav-item${searchActive ? " active" : ""}`}
+        className={`buzzard-mobile-bottom-nav-item buzzard-mobile-bottom-nav-gold${searchActive ? " active" : ""}`}
         aria-label={t("mobile.search")}
         onClick={() => {
           const input = document.getElementById("buzzard-mobile-search-input") as HTMLInputElement | null;
@@ -70,7 +70,7 @@ export default function MobileBottomNav() {
       </button>
       <Link
         href="/warenkorb/"
-        className={`buzzard-mobile-bottom-nav-item${pathname.startsWith("/warenkorb") ? " active" : ""}`}
+        className={`buzzard-mobile-bottom-nav-item buzzard-mobile-bottom-nav-gold${pathname.startsWith("/warenkorb") ? " active" : ""}`}
         aria-current={pathname.startsWith("/warenkorb") ? "page" : undefined}
         aria-label={t("mobile.cart")}
       >
@@ -94,7 +94,7 @@ export default function MobileBottomNav() {
       </button>
       <Link
         href="/konto/"
-        className={`buzzard-mobile-bottom-nav-item${pathname.startsWith("/konto") ? " active" : ""}`}
+        className={`buzzard-mobile-bottom-nav-item buzzard-mobile-bottom-nav-gold${pathname.startsWith("/konto") ? " active" : ""}`}
         aria-current={pathname.startsWith("/konto") ? "page" : undefined}
         aria-label={t("mobile.account")}
       >

@@ -85,6 +85,10 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
   expect(overflow).toBe(false);
 
+  const shellBox = await boxOf(overlay.locator(".mega-menu-shell.mobile"));
+  expect(shellBox.right - shellBox.left).toBeLessThanOrEqual(286);
+  expect(shellBox.right).toBeLessThan(viewport.width * 0.8);
+
   const sidebar = overlay.locator(".home-sidebar.embedded");
   const overflowY = await sidebar.evaluate((el) => getComputedStyle(el).overflowY);
   expect(["auto", "scroll", "overlay"]).toContain(overflowY);
@@ -120,8 +124,9 @@ test.describe("mobile Alle Kategorien overlay", () => {
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
     await openPhoneOverlay(page);
     await assertPhoneOverlayLayout(page);
-    await expect(page.locator(".mega-menu-locale-market .language-selector select option")).toHaveCount(30);
-    await expect(page.locator(".mega-menu-locale-market .country-selector select option")).toHaveCount(35);
+    await expect(page.locator(".mega-menu-overlay .mega-menu-locale-market")).toHaveCount(0);
+    await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
+    await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
     await page.screenshot({ path: "test-results/overlay-de-portrait.png", fullPage: false });
   });
 

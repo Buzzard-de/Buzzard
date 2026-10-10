@@ -105,6 +105,9 @@ describe("homepage canonical content", () => {
     expect(overlay).toContain("isTablet && !isMobile");
     expect(overlay).toContain('isMobile ? null');
     expect(readFileSync(resolve("components/CategorySidebar.tsx"), "utf8")).toContain("home-sidebar-all");
+    const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
+    expect(css).toContain(".mega-menu-overlay .mega-menu-shell.mobile");
+    expect(css).toContain("width: min(74vw, 286px)");
   });
 
   it("does not render unverified delivery/return/payment claims on the homepage USP row", () => {

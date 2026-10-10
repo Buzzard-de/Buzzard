@@ -520,8 +520,11 @@ test.describe("homepage viewports", () => {
     await assertLastCategoryClearsBottomNav(page);
     await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
     await page.locator(".buzzard-mobile-header-btn").first().click();
-    await expect(page.locator(".mega-menu-locale-market .language-selector select option")).toHaveCount(30);
-    await expect(page.locator(".mega-menu-locale-market .country-selector select option")).toHaveCount(35);
+    await expect(page.locator(".mega-menu-overlay")).toBeVisible();
+    await expect(page.locator(".mega-menu-shell.mobile")).toBeVisible();
+    await expect(page.locator(".mega-menu-overlay .mega-menu-locale-market")).toHaveCount(0);
+    await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
+    await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
   });
 
   test("narrow 320px homepage collapses the category rail to the accessible menu", async ({ page }) => {

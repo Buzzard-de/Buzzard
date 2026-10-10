@@ -60,8 +60,11 @@ describe("homepage canonical content", () => {
     const railBlock = css.slice(css.indexOf(".mobile-home-category-rail {"), css.indexOf(".mobile-home-category-rail-link {"));
     expect(railBlock).toContain("height: auto");
     expect(railBlock).toContain("overflow: visible");
+    expect(railBlock).toContain("border-inline-end: 0");
     expect(railBlock).not.toContain("position: sticky");
     expect(railBlock).not.toContain("overflow-y: auto");
+    expect(css).toContain("border-inline-end: 0");
+    expect(css).toMatch(/\.home-page-canonical \.home-hero-campaign \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none;/);
   });
 
   it("does not render a second overlay header when CategorySidebar is embedded", () => {

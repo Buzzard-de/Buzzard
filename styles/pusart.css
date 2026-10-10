@@ -2021,6 +2021,10 @@ body:has(.home-fullscreen) #maincontent {
   gap: 12px;
 }
 
+.home-category-tile-group {
+  display: contents;
+}
+
 .home-category-tile {
   display: flex;
   flex-direction: column;

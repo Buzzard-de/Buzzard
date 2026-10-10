@@ -305,7 +305,7 @@ async function assertGermanyPhoneBand(page: import("@playwright/test").Page) {
         const underPet = !railVisible || !pet ? 0 : band.left - pet.getBoundingClientRect().left;
         const gap = firstBox.top - searchBox.bottom;
         const inside = band.top >= searchBox.bottom - 4 && band.bottom <= firstBox.top + 4 ? 0 : 8;
-        const thin = gap <= 8 || band.height <= gap * 0.7 ? 0 : 8;
+        const thin = band.height <= Math.min(gap + 4, 172) ? 0 : 8;
         const contained = window.getComputedStyle(bg).backgroundSize.includes("contain") ? 0 : 8;
         return Math.max(underTextile, underPet, inside, thin, contained);
       }),

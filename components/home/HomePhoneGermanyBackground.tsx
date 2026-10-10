@@ -5,6 +5,7 @@ import { getGermanyPhoneBandBackground } from "@/lib/backgrounds/languageBackgro
 import { useMarket } from "@/lib/market/context";
 
 const GERMANY_BAND_ASPECT = 687 / 1536;
+const GERMANY_BAND_MAX_HEIGHT = 168;
 
 function layoutGermanyBand() {
   const bg = document.querySelector(".home-phone-germany-bg");
@@ -23,7 +24,10 @@ function layoutGermanyBand() {
   const boxesTop = boxes.getBoundingClientRect().top;
   const gapTop = searchBottom - layoutBox.top;
   const gap = boxesTop - searchBottom;
-  const height = Math.max(0, Math.min(Math.round(layoutBox.width * GERMANY_BAND_ASPECT), Math.round(gap)));
+  const height = Math.max(
+    0,
+    Math.min(Math.round(layoutBox.width * GERMANY_BAND_ASPECT), Math.round(gap), GERMANY_BAND_MAX_HEIGHT),
+  );
   const top = gapTop + Math.max(0, Math.round((gap - height) / 2));
   bg.style.top = `${Math.round(top)}px`;
   bg.style.height = `${height}px`;

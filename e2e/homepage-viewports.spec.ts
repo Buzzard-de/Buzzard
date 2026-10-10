@@ -190,14 +190,15 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
   const result = await page.evaluate(() => {
     const tiles = [...document.querySelectorAll(".home-category-tile")];
     const groups = [...document.querySelectorAll(".home-category-tile-group")];
+    const realGroups = groups.filter((group) => !group.classList.contains("home-category-tile-group--fill"));
     const ids = tiles.map((tile) => tile.getAttribute("data-category-id") ?? "");
     const numbers = ids.map((id) => Number.parseInt(id.replace("cat-", ""), 10));
-    const groupBoxes = groups.map((group) => group.getBoundingClientRect());
+    const groupBoxes = realGroups.map((group) => group.getBoundingClientRect());
     return {
       ids,
       numbers,
-      groupCount: groups.length,
-      groupSizes: groups.map((group) => group.querySelectorAll(".home-category-tile").length),
+      groupCount: realGroups.length,
+      groupSizes: realGroups.map((group) => group.querySelectorAll(".home-category-tile").length),
       twoColumns:
         groupBoxes.length >= 2 &&
         Math.abs(groupBoxes[0].top - groupBoxes[1].top) <= 2 &&
@@ -233,13 +234,46 @@ async function assertBoxesAlignWithAutomotive(page: import("@playwright/test").P
   await expect
     .poll(async () =>
       page.evaluate(() => {
-        const boxes = document.querySelector(".home-page-canonical .home-category-discovery");
+        const first = document.querySelector(".home-page-canonical .home-category-tile-group");
         const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
-        if (!boxes || !automotive) return null;
-        return Math.abs(boxes.getBoundingClientRect().top - automotive.getBoundingClientRect().top);
+        if (!first || !automotive) return null;
+        return Math.abs(first.getBoundingClientRect().top - automotive.getBoundingClientRect().top);
       }),
     )
     .toBeLessThanOrEqual(4);
+}
+
+async function assertBoxesContinueToRailEnd(page: import("@playwright/test").Page) {
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const groups = [...document.querySelectorAll(".home-page-canonical .home-category-tile-group")];
+        const first = groups[0];
+        const lastGroup = groups.at(-1);
+        const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
+        const pet = document.querySelector(".mobile-home-category-rail [data-category-id='cat-06']");
+        const lastCat = document.querySelector(".mobile-home-category-rail [data-category-id='cat-53']");
+        if (!first || !lastGroup || !automotive || !pet || !lastCat) return 99;
+        const start = Math.abs(first.getBoundingClientRect().top - automotive.getBoundingClientRect().top);
+        const firstBand = Math.abs(first.getBoundingClientRect().bottom - pet.getBoundingClientRect().bottom);
+        const end = Math.abs(lastGroup.getBoundingClientRect().bottom - lastCat.getBoundingClientRect().bottom);
+        return Math.max(start, firstBand, end);
+      }),
+    )
+    .toBeLessThanOrEqual(4);
+  const metrics = await page.evaluate(() => {
+    const groups = [...document.querySelectorAll(".home-page-canonical .home-category-tile-group")];
+    return {
+      count: groups.length,
+      twoColumns:
+        groups.length >= 2 &&
+        Math.abs(groups[0].getBoundingClientRect().top - groups[1].getBoundingClientRect().top) <= 2,
+    };
+  });
+  expect(metrics.count).toBeGreaterThanOrEqual(46);
+  expect(metrics.count % 2).toBe(0);
+  expect(metrics.twoColumns).toBe(true);
 }
 
 async function assertRailGold(page: import("@playwright/test").Page) {
@@ -397,6 +431,7 @@ test.describe("homepage viewports", () => {
     await assertSearchPlaceholderFits(page);
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
+    await assertBoxesContinueToRailEnd(page);
     await assertRailGold(page);
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-header-link[href='/warenkorb/']")).toBeVisible();
@@ -460,6 +495,7 @@ test.describe("homepage viewports", () => {
         await assertSearchUnderLocale(page);
         if (width >= 390) {
           await assertBoxesAlignWithAutomotive(page);
+          await assertBoxesContinueToRailEnd(page);
           await assertRailGold(page);
         }
         await assertNoHorizontalOverflow(page);
@@ -493,6 +529,7 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".home-hero-campaign")).toBeHidden();
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
+    await assertBoxesContinueToRailEnd(page);
     await assertRailGold(page);
     await assertNoHorizontalOverflow(page);
   });
@@ -506,6 +543,7 @@ test.describe("homepage viewports", () => {
     await assertPhoneCategoryBoxes(page);
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
+    await assertBoxesContinueToRailEnd(page);
     await assertRailGold(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertNoHorizontalOverflow(page);
@@ -521,6 +559,7 @@ test.describe("homepage viewports", () => {
     await assertPhoneCategoryBoxes(page);
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
+    await assertBoxesContinueToRailEnd(page);
     await assertRailGold(page);
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);

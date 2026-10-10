@@ -77,6 +77,9 @@ describe("homepage canonical content", () => {
     expect(discovery).toContain("home-category-tile-group");
     expect(discovery).toContain("groupCategories(categories, 3)");
     expect(discovery).toContain("alignBoxesWithAutomotive");
+    expect(discovery).toContain("fillBoxesToLastCategory");
+    expect(discovery).toContain("home-category-tile-group--fill");
+    expect(css).toMatch(/@media \(min-width: 390px\) \{[\s\S]*?\.home-page-canonical \.home-category-grid \{[\s\S]*?gap: 0 8px;/);
     const search = readFileSync(resolve("components/mobile/MobileSearch.tsx"), "utf8");
     expect(search).not.toContain("alignSearchWithAutomotive");
     expect(search).not.toContain("cat-05");

@@ -11,21 +11,89 @@ import {
 import { getHomeCategoryList } from "@/lib/home/homepageContent";
 import { useLocale } from "@/lib/i18n/context";
 
+function resetPhoneBoxLayout(boxes: HTMLElement, grid: HTMLElement | null) {
+  boxes.style.marginTop = "0px";
+  if (!grid) return;
+  for (const node of grid.querySelectorAll(".home-category-tile-group--fill")) node.remove();
+  for (const node of grid.querySelectorAll(".home-category-tile-group")) {
+    if (node instanceof HTMLElement) {
+      node.style.height = "";
+      node.style.minHeight = "";
+    }
+  }
+}
+
+function fillBoxesToLastCategory() {
+  const grid = document.querySelector(".home-page-canonical .home-category-grid");
+  const rail = document.querySelector(".mobile-home-category-rail");
+  if (!(grid instanceof HTMLElement)) return;
+  if (!(rail instanceof HTMLElement) || window.getComputedStyle(rail).display === "none") {
+    for (const node of grid.querySelectorAll(".home-category-tile-group--fill")) node.remove();
+    for (const node of grid.querySelectorAll(".home-category-tile-group")) {
+      if (node instanceof HTMLElement) {
+        node.style.height = "";
+        node.style.minHeight = "";
+      }
+    }
+    return;
+  }
+
+  const cats = [...rail.querySelectorAll("[data-category-id]")];
+  const autoIndex = cats.findIndex((el) => el.getAttribute("data-category-id") === "cat-05");
+  if (autoIndex < 0) return;
+
+  const pairs: Element[][] = [];
+  for (let index = autoIndex; index < cats.length; index += 2) {
+    pairs.push(cats.slice(index, index + 2));
+  }
+
+  const needed = pairs.length * 2;
+  const realCount = grid.querySelectorAll(".home-category-tile-group:not(.home-category-tile-group--fill)").length;
+  let fills = [...grid.querySelectorAll(".home-category-tile-group--fill")];
+  while (realCount + fills.length < needed) {
+    const fill = document.createElement("div");
+    fill.className = "home-category-tile-group home-category-tile-group--fill";
+    fill.setAttribute("aria-hidden", "true");
+    grid.appendChild(fill);
+    fills.push(fill);
+  }
+  while (realCount + fills.length > needed) {
+    fills.pop()?.remove();
+  }
+
+  const groups = [...grid.querySelectorAll(".home-category-tile-group")];
+  const gap = Number.parseFloat(window.getComputedStyle(grid).rowGap) || 0;
+  pairs.forEach((pair, index) => {
+    const start = pair[0].getBoundingClientRect();
+    const end = pair[pair.length - 1].getBoundingClientRect();
+    const isLast = index === pairs.length - 1;
+    const height = Math.max(0, Math.round(end.bottom - start.top - (isLast ? 0 : gap)));
+    const left = groups[index * 2];
+    const right = groups[index * 2 + 1];
+    if (left instanceof HTMLElement) left.style.height = `${height}px`;
+    if (right instanceof HTMLElement) right.style.height = `${height}px`;
+  });
+}
+
 function alignBoxesWithAutomotive() {
   const boxes = document.querySelector(".home-page-canonical .home-category-discovery");
+  const first = document.querySelector(".home-page-canonical .home-category-tile-group");
   const rail = document.querySelector(".mobile-home-category-rail");
   const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
   if (!(boxes instanceof HTMLElement)) return;
+  const grid = document.querySelector(".home-page-canonical .home-category-grid");
   if (
     !(rail instanceof HTMLElement) ||
     !(automotive instanceof HTMLElement) ||
     window.getComputedStyle(rail).display === "none"
   ) {
-    boxes.style.marginTop = "0px";
+    resetPhoneBoxLayout(boxes, grid instanceof HTMLElement ? grid : null);
     return;
   }
+  fillBoxesToLastCategory();
+  const target = first instanceof HTMLElement ? first : boxes;
   const currentMargin = Number.parseFloat(boxes.style.marginTop || "0") || 0;
-  const delta = automotive.getBoundingClientRect().top - boxes.getBoundingClientRect().top;
+  const delta = automotive.getBoundingClientRect().top - target.getBoundingClientRect().top;
   if (Math.abs(delta) < 1) return;
   boxes.style.marginTop = `${Math.max(0, Math.round(currentMargin + delta))}px`;
 }

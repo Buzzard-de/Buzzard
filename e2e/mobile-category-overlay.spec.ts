@@ -38,21 +38,22 @@ async function openPhoneOverlay(page: import("@playwright/test").Page) {
     await page.locator(".buzzard-mobile-header-btn").first().click();
   }
   await expect(page.locator(".mega-menu-overlay")).toBeVisible({ timeout: 20_000 });
-  await expect(page.locator(".mega-menu-shell.mobile")).toBeVisible();
+  await expect(page.locator(".mega-menu-shell.mobile.phone-category-drawer")).toBeVisible();
 }
 
 async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   const overlay = page.locator(".mega-menu-overlay");
+  const drawer = page.locator(".phone-category-drawer");
   await expect(overlay.locator(".mega-menu-shell-head")).toHaveCount(0);
   await expect(overlay.locator(".mega-menu-search")).toHaveCount(0);
   await expect(overlay.locator(".mega-menu-locale-market")).toHaveCount(0);
-  await expect(overlay.locator(".home-sidebar-head")).toHaveCount(0);
+  await expect(drawer.locator(".home-sidebar-head")).toHaveCount(0);
   await expect(overlay.locator(".mega-menu-close")).toHaveCount(0);
-  await expect(overlay.locator(".sidebar-close-btn")).toHaveCount(0);
+  await expect(drawer.locator(".sidebar-close-btn")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-header-btn").first()).toBeVisible();
 
-  const allRow = overlay.locator(".home-sidebar.embedded .home-sidebar-all");
-  const rows = overlay.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)");
+  const allRow = drawer.locator(".home-sidebar.embedded .home-sidebar-all");
+  const rows = drawer.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)");
   await expect(allRow).toHaveCount(1);
   await expect(rows).toHaveCount(50);
   for (let i = 0; i < 4; i += 1) {
@@ -80,7 +81,7 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   }
   await expect(rows.first()).not.toHaveText(/^\d{2}\./);
 
-  const gold = await overlay.locator(".home-sidebar.embedded .home-sidebar-item").first().evaluate((el) => {
+  const gold = await drawer.locator(".home-sidebar.embedded .home-sidebar-item").first().evaluate((el) => {
     const style = window.getComputedStyle(el);
     const label = el.querySelector("span");
     const icon = el.querySelector("svg");
@@ -99,7 +100,7 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
   expect(overflow).toBe(false);
 
-  const shell = overlay.locator(".mega-menu-shell.mobile");
+  const shell = page.locator(".phone-category-drawer");
   const shellBox = await boxOf(shell);
   expect(shellBox.right - shellBox.left).toBeLessThanOrEqual(208);
   const dir = await shell.evaluate((el) => getComputedStyle(el).direction);
@@ -109,17 +110,23 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
     expect(shellBox.right).toBeLessThan(viewport.width * 0.8);
   }
 
-  const sidebar = overlay.locator(".home-sidebar.embedded");
-  const overflowY = await sidebar.evaluate((el) => getComputedStyle(el).overflowY);
-  expect(["auto", "scroll", "overlay"]).toContain(overflowY);
-  const scrolled = await sidebar.evaluate((el) => {
-    const before = el.scrollTop;
-    el.scrollTop = Math.min(el.scrollHeight, before + 80);
-    const after = el.scrollTop;
-    el.scrollTop = before;
-    return after >= before;
-  });
-  expect(scrolled).toBe(true);
+  const pinned = await page.locator(".home-phone-layout > .phone-category-drawer").count();
+  if (pinned && await search.isVisible()) {
+    const searchBefore = await boxOf(search);
+    const firstBefore = await boxOf(allRow);
+    await page.evaluate(() => window.scrollBy(0, 140));
+    await page.waitForTimeout(50);
+    const searchAfter = await boxOf(search);
+    const firstAfter = await boxOf(allRow);
+    const searchDelta = searchAfter.top - searchBefore.top;
+    const firstDelta = firstAfter.top - firstBefore.top;
+    expect(Math.abs(firstDelta - searchDelta)).toBeLessThan(4);
+    await page.evaluate(() => window.scrollTo(0, 0));
+  } else {
+    const sidebar = drawer.locator(".home-sidebar.embedded");
+    const overflowY = await sidebar.evaluate((el) => getComputedStyle(el).overflowY);
+    expect(["auto", "scroll", "overlay", "visible"]).toContain(overflowY);
+  }
 
   const homeVisible = await page.evaluate(() => {
     const search = document.querySelector(".home-phone-controls .buzzard-mobile-search-form");

@@ -132,18 +132,44 @@ async function assertHeroActionsLayout(
   expect(boxes[0].bottom <= boxes[1].top || boxes[0].right <= boxes[1].left).toBe(true);
 }
 
+async function assertVerticalCanonicalCategories(page: import("@playwright/test").Page) {
+  const categories = page.locator(".home-category-tile");
+  await expect(categories).toHaveCount(50);
+  const result = await categories.evaluateAll((tiles) => {
+    const ids = tiles.map((tile) => tile.getAttribute("data-category-id") ?? "");
+    const numbers = ids.map((id) => Number.parseInt(id.replace("cat-", ""), 10));
+    const boxes = tiles.map((tile) => tile.getBoundingClientRect());
+    return {
+      ids,
+      numbers,
+      oneColumn: boxes.every((box, index) => {
+        if (index === 0) return true;
+        const previous = boxes[index - 1];
+        return Math.abs(box.left - boxes[0].left) <= 1 && box.top >= previous.bottom;
+      }),
+    };
+  });
+  expect(result.ids[0]).toBe("cat-01");
+  expect(result.ids.at(-1)).toBe("cat-53");
+  expect(result.numbers).toEqual([...result.numbers].sort((a, b) => a - b));
+  expect(result.numbers).not.toContain(30);
+  expect(result.numbers).not.toContain(37);
+  expect(result.numbers).not.toContain(39);
+  expect(result.oneColumn).toBe(true);
+}
+
 async function assertLastCategoryClearsBottomNav(page: import("@playwright/test").Page) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect
     .poll(() =>
       page.evaluate(() => {
         const categories = [...document.querySelectorAll(".home-category-tile")];
-        const finalRow = categories.slice(-2);
+        const lastCategory = categories.at(-1);
         const bottomNav = document.querySelector(".buzzard-mobile-bottom-nav");
-        if (finalRow.length !== 2 || !bottomNav) return null;
+        if (!lastCategory || !bottomNav) return null;
         const navBox = bottomNav.getBoundingClientRect();
         return {
-          categoryBottom: Math.max(...finalRow.map((category) => category.getBoundingClientRect().bottom)),
+          categoryBottom: lastCategory.getBoundingClientRect().bottom,
           navTop: navBox.top,
         };
       }),
@@ -152,11 +178,10 @@ async function assertLastCategoryClearsBottomNav(page: import("@playwright/test"
 
   const clearance = await page.evaluate(() => {
     const categories = [...document.querySelectorAll(".home-category-tile")];
-    const finalRow = categories.slice(-2);
+    const lastCategory = categories.at(-1);
     const bottomNav = document.querySelector(".buzzard-mobile-bottom-nav");
-    if (finalRow.length !== 2 || !bottomNav) return -1;
-    const finalRowBottom = Math.max(...finalRow.map((category) => category.getBoundingClientRect().bottom));
-    return bottomNav.getBoundingClientRect().top - finalRowBottom;
+    if (!lastCategory || !bottomNav) return -1;
+    return bottomNav.getBoundingClientRect().top - lastCategory.getBoundingClientRect().bottom;
   });
   expect(clearance).toBeGreaterThanOrEqual(32);
 }
@@ -201,6 +226,7 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-category-rail a").nth(1)).toHaveAttribute("href", /\/kategorie\//);
     await assertLabelsAreNotClipped(page, ".mobile-home-category-rail-link > span:last-child");
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
+    await assertVerticalCanonicalCategories(page);
     await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
     await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
     await expect(page.locator("#buzzard-mobile-search-input")).toBeVisible();
@@ -222,7 +248,7 @@ test.describe("homepage viewports", () => {
     await page.goto("/");
     await expect(page.locator(".mobile-home-category-rail")).toBeHidden();
     await expect(page.locator(".home-hero-campaign")).toBeVisible();
-    await expect(page.locator(".home-category-grid")).toHaveCSS("grid-template-columns", /.+ .+/);
+    await assertVerticalCanonicalCategories(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertLastCategoryClearsBottomNav(page);
     await page.locator(".buzzard-mobile-header-btn").first().click();
@@ -243,6 +269,7 @@ test.describe("homepage viewports", () => {
         await expect(page.locator(".mobile-home-locale-value").nth(1)).toContainText("Deutschland");
         await assertLabelsAreNotClipped(page, ".mobile-home-locale-value");
         await assertHeroActionsLayout(page, width === 320 ? "column" : "row");
+        await assertVerticalCanonicalCategories(page);
         await assertNoHorizontalOverflow(page);
         await assertLastCategoryClearsBottomNav(page);
       });
@@ -274,7 +301,7 @@ test.describe("homepage viewports", () => {
     await assertNoHorizontalOverflow(page);
   });
 
-  test("reference-width 430px uses the premium three-column category grid", async ({ page }) => {
+  test("reference-width 430px shows all canonical categories in one ordered column", async ({ page }) => {
     await dismissConsent(page, "tr");
     await page.setViewportSize({ width: 430, height: 932 });
     await page.goto("/");
@@ -283,10 +310,7 @@ test.describe("homepage viewports", () => {
     await expect
       .poll(() => page.locator(".home-hero-campaign").evaluate((hero) => window.getComputedStyle(hero).backgroundImage))
       .toContain("buzzard-germany-de.png");
-    const columnCount = await page.locator(".home-category-grid").evaluate((grid) =>
-      window.getComputedStyle(grid).gridTemplateColumns.split(" ").length,
-    );
-    expect(columnCount).toBe(3);
+    await assertVerticalCanonicalCategories(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertNoHorizontalOverflow(page);
   });
@@ -298,6 +322,7 @@ test.describe("homepage viewports", () => {
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
     await assertCanonicalHome(page, "de");
     await expect(page.locator(".home-fullscreen")).toBeHidden();
+    await assertVerticalCanonicalCategories(page);
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
     await page.screenshot({ path: "test-results/homepage-de-landscape.png", fullPage: false });

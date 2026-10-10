@@ -22,9 +22,15 @@ export default function HomeCategoryDiscovery() {
           {t("home.allCategories")}
         </Link>
       </div>
-      <div className="home-category-grid">
+      <div className="home-category-grid" role="list">
         {categories.map((cat) => (
-          <Link key={cat.id} href={categoryHref(cat)} className="home-category-tile">
+          <Link
+            key={cat.id}
+            href={categoryHref(cat)}
+            className="home-category-tile"
+            role="listitem"
+            data-category-id={cat.id}
+          >
             <span className="home-category-tile-icon">
               <CategoryIcon name={getMainCategoryIcon(cat.id)} size={28} />
             </span>

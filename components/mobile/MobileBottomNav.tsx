@@ -84,6 +84,14 @@ export default function MobileBottomNav() {
         </span>
         <span>{t("mobile.cart")}</span>
       </Link>
+      <button
+        type="button"
+        className="buzzard-mobile-bottom-nav-item buzzard-mobile-bottom-nav-ai"
+        aria-label={t("ai.chat.open")}
+        onClick={() => document.querySelector<HTMLButtonElement>(".ai-chat-fab")?.click()}
+      >
+        <span className="buzzard-mobile-bottom-nav-ai-label">AI</span>
+      </button>
       <Link
         href="/konto/"
         className={`buzzard-mobile-bottom-nav-item${pathname.startsWith("/konto") ? " active" : ""}`}

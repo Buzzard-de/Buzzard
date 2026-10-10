@@ -340,6 +340,23 @@ test.describe("homepage viewports", () => {
     await assertAiAboveBottomNav(page);
     await assertFabClearsCategoryLabels(page);
     await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
+    const aiNav = page.locator(".buzzard-mobile-bottom-nav-ai");
+    await expect(aiNav).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-bottom-nav-ai-label")).toHaveText("AI");
+    const navOrder = await page.locator(".buzzard-mobile-bottom-nav > *").evaluateAll((els) =>
+      els.map((el) => {
+        if (el.classList.contains("buzzard-mobile-bottom-nav-ai")) return "ai";
+        return (el as HTMLAnchorElement).getAttribute("href") ?? "";
+      }),
+    );
+    expect(navOrder.indexOf("/warenkorb/")).toBeLessThan(navOrder.indexOf("ai"));
+    expect(navOrder.indexOf("ai")).toBeLessThan(navOrder.indexOf("/konto/"));
+    const aiColors = await page.locator(".buzzard-mobile-bottom-nav-ai-label").evaluate((el) => {
+      const style = window.getComputedStyle(el);
+      return { background: style.backgroundColor, color: style.color };
+    });
+    expect(aiColors.background).toBe("rgb(27, 143, 58)");
+    expect(aiColors.color).toBe("rgb(226, 185, 87)");
     await assertLastCategoryClearsBottomNav(page);
     await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
     await page.locator(".buzzard-mobile-header-btn").first().click();

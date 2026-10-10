@@ -333,7 +333,23 @@ test.describe("homepage viewports", () => {
     expect(frames?.heroBorder).toBe(0);
     await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(52);
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", "/");
+    await expect(page.locator(".mobile-home-category-rail-more")).toBeVisible();
     await expect(page.locator(".mobile-home-category-rail a").nth(1)).toHaveAttribute("href", /\/kategorie\//);
+    const railStack = await page.evaluate(() => {
+      const home = document.querySelector(".mobile-home-category-rail a[href='/']");
+      const all = document.querySelector(".mobile-home-category-rail-more");
+      const textile = document.querySelector(".mobile-home-category-rail [data-category-id='cat-01']");
+      if (!home || !all || !textile) return null;
+      const a = home.getBoundingClientRect();
+      const b = all.getBoundingClientRect();
+      const c = textile.getBoundingClientRect();
+      return {
+        stacked: Math.abs(a.left - b.left) <= 2 && Math.abs(b.left - c.left) <= 2,
+        between: a.bottom <= b.top + 1 && b.bottom <= c.top + 1,
+      };
+    });
+    expect(railStack?.stacked).toBe(true);
+    expect(railStack?.between).toBe(true);
     await expect(page.locator(".mobile-home-category-rail [data-category-id]")).toHaveCount(50);
     await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-08']")).toBeVisible();
     await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeAttached();

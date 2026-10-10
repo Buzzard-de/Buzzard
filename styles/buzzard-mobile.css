@@ -1337,6 +1337,9 @@
 
   .mobile-home-category-rail-more {
     width: 100%;
+    min-height: 54px;
+    color: #e2b957;
+    font-size: 8px;
   }
 
   .mobile-home-category-rail-dots {

@@ -24,6 +24,20 @@ export default function MobileHomeCategoryRail() {
         </svg>
         <span>{t("mobile.home")}</span>
       </Link>
+      <button
+        type="button"
+        className="mobile-home-category-rail-link mobile-home-category-rail-more"
+        onClick={homeUI?.openMegaMenu}
+        aria-label={t("nav.allCategories")}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+        <span>{t("nav.allCategories")}</span>
+      </button>
       {categories.map((category) => (
         <Link
           key={category.id}
@@ -35,15 +49,6 @@ export default function MobileHomeCategoryRail() {
           <span>{getCategoryLabel(category, locale)}</span>
         </Link>
       ))}
-      <button
-        type="button"
-        className="mobile-home-category-rail-link mobile-home-category-rail-more"
-        onClick={homeUI?.openMegaMenu}
-        aria-label={t("nav.allCategories")}
-      >
-        <span className="mobile-home-category-rail-dots" aria-hidden="true">•••</span>
-        <span>{t("mobile.categories")}</span>
-      </button>
     </nav>
   );
 }

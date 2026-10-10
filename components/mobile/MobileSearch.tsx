@@ -6,21 +6,24 @@ import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 
 function alignSearchWithAutomotive() {
-  const search = document.querySelector(".home-phone-controls .buzzard-mobile-search");
+  const wrap = document.querySelector(".home-phone-controls .buzzard-mobile-search");
+  const bar = document.querySelector(".home-phone-controls .buzzard-mobile-search-form");
   const rail = document.querySelector(".mobile-home-category-rail");
   const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
-  if (!(search instanceof HTMLElement)) return;
+  if (!(wrap instanceof HTMLElement)) return;
   if (
     !(rail instanceof HTMLElement) ||
     !(automotive instanceof HTMLElement) ||
     window.getComputedStyle(rail).display === "none"
   ) {
-    search.style.marginTop = "0px";
+    wrap.style.marginTop = "0px";
     return;
   }
-  search.style.marginTop = "0px";
-  const delta = automotive.getBoundingClientRect().top - search.getBoundingClientRect().top;
-  search.style.marginTop = `${Math.max(0, Math.round(delta))}px`;
+  const target = bar instanceof HTMLElement ? bar : wrap;
+  const currentMargin = Number.parseFloat(wrap.style.marginTop || "0") || 0;
+  const delta = automotive.getBoundingClientRect().top - target.getBoundingClientRect().top;
+  if (Math.abs(delta) < 1) return;
+  wrap.style.marginTop = `${Math.max(0, Math.round(currentMargin + delta))}px`;
 }
 
 export default function MobileSearch() {
@@ -31,16 +34,20 @@ export default function MobileSearch() {
   const inCategory = pathname.startsWith("/kategorie");
 
   useLayoutEffect(() => {
-    alignSearchWithAutomotive();
+    const run = () => alignSearchWithAutomotive();
+    run();
+    const frame = window.requestAnimationFrame(() => window.requestAnimationFrame(run));
+    void document.fonts?.ready.then(run);
     const rail = document.querySelector(".mobile-home-category-rail");
     const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
-    const observer = new ResizeObserver(() => alignSearchWithAutomotive());
+    const observer = new ResizeObserver(run);
     if (rail) observer.observe(rail);
     if (automotive) observer.observe(automotive);
-    window.addEventListener("resize", alignSearchWithAutomotive);
+    window.addEventListener("resize", run);
     return () => {
+      window.cancelAnimationFrame(frame);
       observer.disconnect();
-      window.removeEventListener("resize", alignSearchWithAutomotive);
+      window.removeEventListener("resize", run);
     };
   }, []);
 

@@ -222,14 +222,19 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
 }
 
 async function assertSearchAlignsWithAutomotive(page: import("@playwright/test").Page) {
-  const offset = await page.evaluate(() => {
-    const search = document.querySelector(".home-phone-controls .buzzard-mobile-search");
-    const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
-    if (!search || !automotive) return null;
-    return Math.abs(search.getBoundingClientRect().top - automotive.getBoundingClientRect().top);
-  });
-  expect(offset).not.toBeNull();
-  expect(offset ?? 99).toBeLessThanOrEqual(4);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const bar =
+          document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
+          document.querySelector(".home-phone-controls .buzzard-mobile-search");
+        const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
+        if (!bar || !automotive) return null;
+        return Math.abs(bar.getBoundingClientRect().top - automotive.getBoundingClientRect().top);
+      }),
+    )
+    .toBeLessThanOrEqual(4);
 }
 
 async function assertLastCategoryClearsBottomNav(page: import("@playwright/test").Page) {

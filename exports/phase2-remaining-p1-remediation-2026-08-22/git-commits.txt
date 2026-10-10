@@ -1,0 +1,32 @@
+81e8178 fix(phase2): close 5 remaining fixable P1 gaps — Kurmay failure path, tests, permissions
+84abc0e docs: export P1 result-check package (verification, reports, code, ZIP)
+fc131b2 docs: independent P1 remediation result check (verification only)
+5e53884 docs: session checkpoint 2026-08-21 — Phase 2 P1 remediation saved
+dd16be5 docs: export Phase 2 P1 remediation package (code, tests, reports, ZIP)
+60d4fe6 fix(phase2): remediate 11 of 15 P1 gaps — enforcement, RBAC, persistence
+06d6eef docs: export Phase 2 blocker remediation package (code, tests, reports, ZIP)
+b799227 fix(phase2): remediate 27 blockers — foundation, tests, verification
+ebce3db Implement Phase 2 AI Core foundation and workers
+4bf7562 docs: update export with blocker analysis in docs mirror
+f6f74f9 docs: Phase 2 blocker analysis — why 18/100, 27 blockers, remediation order
+6c27c75 docs: update export ZIP with Phase 2 final verification
+1b26cfd docs: Phase 2 final verification — PHASE2_BLOCKED (18/100)
+b70549c docs: add complete session report (SESSION_BERICHT.md) to export
+a98452c docs: add Phase 2 implementation status reports (NOT STARTED)
+5ce7335 docs: add Phase 2 architecture final review (NOT_READY_FOR_IMPLEMENTATION)
+532b809 docs: dynamic Category Intelligence architecture — taxonomy-driven, no hard-coded counts
+54f8938 docs: update complete session export with architecture review in docs/
+333241f docs: update complete export ZIP with architecture review
+d295357 docs: Phase 2 architecture consistency review — NOT_READY_FOR_IMPLEMENTATION
+ad08a11 docs: add complete Buzzard AI Core export folder (Phase 1 + Phase 2)
+2b1c3f2 docs: add Phase 2 architecture ZIP download
+06c7419 docs: add Phase 2 architecture export folder
+96bfa53 docs: Phase 2 architecture design for Buzzard AI worker ecosystem
+9ac118d docs: add Phase 1 final verification export (P1 hardening, 88/100)
+ae0bb85 fix(ai-core): Phase 1 P1 hardening — pagination, idempotency, memory index, request-id
+f69aee4 chore(exports): Phase 1 P0 remediation package (zip + folder)
+03c0de8 fix(ai-core): P0 blocker remediation — PostgreSQL, workers, auth, halt
+36907b4 chore(exports): Phase 1 verification package (zip + folder)
+3b13b95 docs(ai-core): Phase 1 full verification report
+cdd4ae2 feat(ai-core): Phase 1 — unified orchestrator, memory, exceptions, audit
+00b6dcc docs(ai-core): repository analysis and architecture plan

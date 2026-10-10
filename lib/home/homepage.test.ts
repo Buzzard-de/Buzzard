@@ -107,7 +107,7 @@ describe("homepage canonical content", () => {
     expect(readFileSync(resolve("components/CategorySidebar.tsx"), "utf8")).toContain("home-sidebar-all");
     const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
     expect(css).toContain(".phone-category-drawer");
-    expect(css).toContain(".home-phone-layout > .phone-category-drawer");
+    expect(css).toContain(".home-phone-layout > .mega-menu-shell.mobile.phone-category-drawer");
     expect(css).toContain("width: min(56vw, 208px)");
     expect(readFileSync(resolve("components/MegaMenuOverlay.tsx"), "utf8")).toContain("measurePhoneDrawerTop");
     expect(readFileSync(resolve("components/MegaMenuOverlay.tsx"), "utf8")).toContain("createPortal");

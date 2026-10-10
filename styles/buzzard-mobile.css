@@ -301,7 +301,8 @@
     background: transparent;
   }
 
-  .phone-category-drawer {
+  .mega-menu-shell.mobile.phone-category-drawer,
+  .home-phone-layout > .phone-category-drawer {
     position: fixed;
     inset: auto;
     inset-inline-start: 0;
@@ -325,7 +326,7 @@
     z-index: 5;
   }
 
-  .home-phone-layout > .phone-category-drawer {
+  .home-phone-layout > .mega-menu-shell.mobile.phone-category-drawer {
     position: absolute;
     bottom: 0;
     z-index: 5;

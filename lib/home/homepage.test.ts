@@ -106,9 +106,11 @@ describe("homepage canonical content", () => {
     expect(overlay).toContain('isMobile ? null');
     expect(readFileSync(resolve("components/CategorySidebar.tsx"), "utf8")).toContain("home-sidebar-all");
     const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
-    expect(css).toContain(".mega-menu-overlay .mega-menu-shell.mobile");
+    expect(css).toContain(".phone-category-drawer");
+    expect(css).toContain(".home-phone-layout > .phone-category-drawer");
     expect(css).toContain("width: min(56vw, 208px)");
     expect(readFileSync(resolve("components/MegaMenuOverlay.tsx"), "utf8")).toContain("measurePhoneDrawerTop");
+    expect(readFileSync(resolve("components/MegaMenuOverlay.tsx"), "utf8")).toContain("createPortal");
     expect(readFileSync(resolve("components/CategorySidebar.tsx"), "utf8")).toContain("toCategoryDisplayUpperCase(getCategoryLabel");
   });
 

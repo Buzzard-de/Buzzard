@@ -294,7 +294,7 @@ async function assertBottomNavGold(page: import("@playwright/test").Page) {
       };
     }),
   );
-  expect(colors).toHaveLength(3);
+  expect(colors).toHaveLength(4);
   for (const color of colors) {
     expect(color.text).toBe("rgb(226, 185, 87)");
     expect(color.icon).toBe("rgb(226, 185, 87)");

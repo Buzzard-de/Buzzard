@@ -39,7 +39,7 @@ function fillBoxesToLastCategory() {
   }
 
   const cats = [...rail.querySelectorAll("[data-category-id]")];
-  const startIndex = cats.findIndex((el) => el.getAttribute("data-category-id") === "cat-07");
+  const startIndex = cats.findIndex((el) => el.getAttribute("data-category-id") === "cat-09");
   if (startIndex < 0) return;
 
   const pairs: Element[][] = [];
@@ -77,7 +77,7 @@ function alignBoxesWithAutomotive() {
   const boxes = document.querySelector(".home-page-canonical .home-category-discovery");
   const first = document.querySelector(".home-page-canonical .home-category-tile-group");
   const rail = document.querySelector(".mobile-home-category-rail");
-  const start = document.querySelector(".mobile-home-category-rail [data-category-id='cat-07']");
+  const start = document.querySelector(".mobile-home-category-rail [data-category-id='cat-09']");
   if (!(boxes instanceof HTMLElement)) return;
   const grid = document.querySelector(".home-page-canonical .home-category-grid");
   if (
@@ -114,7 +114,7 @@ export default function HomeCategoryDiscovery() {
     const frame = window.requestAnimationFrame(() => window.requestAnimationFrame(run));
     void document.fonts?.ready.then(run);
     const rail = document.querySelector(".mobile-home-category-rail");
-    const start = document.querySelector(".mobile-home-category-rail [data-category-id='cat-07']");
+    const start = document.querySelector(".mobile-home-category-rail [data-category-id='cat-09']");
     const observer = new ResizeObserver(run);
     if (rail) observer.observe(rail);
     if (start) observer.observe(start);

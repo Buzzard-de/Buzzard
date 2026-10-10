@@ -318,6 +318,19 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-category-rail")).toBeVisible();
     const railWidth = await page.locator(".mobile-home-category-rail").evaluate((el) => el.getBoundingClientRect().width);
     expect(railWidth).toBeLessThanOrEqual(64);
+    const frames = await page.evaluate(() => {
+      const rail = document.querySelector(".mobile-home-category-rail");
+      const hero = document.querySelector(".home-hero-campaign");
+      if (!rail || !hero) return null;
+      const railStyle = window.getComputedStyle(rail);
+      const heroStyle = window.getComputedStyle(hero);
+      return {
+        railBorder: Number.parseFloat(railStyle.borderInlineEndWidth),
+        heroBorder: Number.parseFloat(heroStyle.borderWidth),
+      };
+    });
+    expect(frames?.railBorder).toBe(0);
+    expect(frames?.heroBorder).toBe(0);
     await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(52);
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", "/");
     await expect(page.locator(".mobile-home-category-rail a").nth(1)).toHaveAttribute("href", /\/kategorie\//);

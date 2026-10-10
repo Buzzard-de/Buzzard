@@ -85,9 +85,15 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
   expect(overflow).toBe(false);
 
-  const shellBox = await boxOf(overlay.locator(".mega-menu-shell.mobile"));
+  const shell = overlay.locator(".mega-menu-shell.mobile");
+  const shellBox = await boxOf(shell);
   expect(shellBox.right - shellBox.left).toBeLessThanOrEqual(286);
-  expect(shellBox.right).toBeLessThan(viewport.width * 0.8);
+  const dir = await shell.evaluate((el) => getComputedStyle(el).direction);
+  if (dir === "rtl") {
+    expect(shellBox.left).toBeGreaterThan(viewport.width * 0.2);
+  } else {
+    expect(shellBox.right).toBeLessThan(viewport.width * 0.8);
+  }
 
   const sidebar = overlay.locator(".home-sidebar.embedded");
   const overflowY = await sidebar.evaluate((el) => getComputedStyle(el).overflowY);

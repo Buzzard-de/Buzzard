@@ -42,6 +42,12 @@ describe("homepage canonical content", () => {
     expect(rail).not.toContain("const categories = [");
     expect(rail).not.toContain("RAIL_CATEGORY_COUNT");
     expect(rail).not.toContain(".slice(");
+    const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
+    const railBlock = css.slice(css.indexOf(".mobile-home-category-rail {"), css.indexOf(".mobile-home-category-rail-link {"));
+    expect(railBlock).toContain("height: auto");
+    expect(railBlock).toContain("overflow: visible");
+    expect(railBlock).not.toContain("position: sticky");
+    expect(railBlock).not.toContain("overflow-y: auto");
   });
 
   it("does not render a second overlay header when CategorySidebar is embedded", () => {

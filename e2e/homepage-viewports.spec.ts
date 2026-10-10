@@ -123,6 +123,35 @@ async function assertFabClearsCategoryLabels(page: import("@playwright/test").Pa
   expect(overlap).toBe(false);
 }
 
+async function assertRailRevealsRemainingCategories(page: import("@playwright/test").Page) {
+  const rail = page.locator(".mobile-home-category-rail");
+  await expect(rail).toBeVisible();
+  const locking = await rail.evaluate((el) => {
+    const style = window.getComputedStyle(el);
+    return {
+      position: style.position,
+      overflowY: style.overflowY,
+      maxHeight: style.maxHeight,
+    };
+  });
+  expect(["static", "relative"]).toContain(locking.position);
+  expect(["visible", "clip"]).toContain(locking.overflowY);
+  expect(locking.maxHeight).toBe("none");
+
+  await page.locator(".mobile-home-category-rail [data-category-id='cat-09']").scrollIntoViewIfNeeded();
+  await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeVisible();
+  await page.locator(".mobile-home-category-rail [data-category-id='cat-53']").scrollIntoViewIfNeeded();
+  await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-53']")).toBeVisible();
+
+  const clearance = await page.evaluate(() => {
+    const last = document.querySelector(".mobile-home-category-rail [data-category-id='cat-53']");
+    const nav = document.querySelector(".buzzard-mobile-bottom-nav");
+    if (!last || !nav) return -1;
+    return nav.getBoundingClientRect().top - last.getBoundingClientRect().bottom;
+  });
+  expect(clearance).toBeGreaterThanOrEqual(4);
+}
+
 async function assertLabelsAreNotClipped(
   page: import("@playwright/test").Page,
   selector: string,
@@ -296,8 +325,7 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-08']")).toBeVisible();
     await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeAttached();
     await expect(page.locator(".mobile-home-category-rail [data-category-id]").last()).toHaveAttribute("data-category-id", "cat-53");
-    await page.locator(".mobile-home-category-rail [data-category-id='cat-09']").scrollIntoViewIfNeeded();
-    await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeVisible();
+    await assertRailRevealsRemainingCategories(page);
     await assertLabelsAreNotClipped(page, ".mobile-home-category-rail-link > span:last-child");
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertVerticalCanonicalCategories(page);

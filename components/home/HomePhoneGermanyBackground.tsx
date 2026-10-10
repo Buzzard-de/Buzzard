@@ -4,8 +4,16 @@ import { useLayoutEffect } from "react";
 import { getGermanyPhoneBandBackground } from "@/lib/backgrounds/languageBackgrounds";
 import { useMarket } from "@/lib/market/context";
 
-const GERMANY_BAND_ASPECT = 687 / 1536;
-const GERMANY_BAND_MAX_HEIGHT = 168;
+function twoBoxBounds(first: Element, second: Element) {
+  const a = first.getBoundingClientRect();
+  const b = second.getBoundingClientRect();
+  return {
+    left: Math.min(a.left, b.left),
+    width: Math.max(a.right, b.right) - Math.min(a.left, b.left),
+    height: Math.max(a.height, b.height),
+    top: Math.min(a.top, b.top),
+  };
+}
 
 function layoutGermanyBand() {
   const bg = document.querySelector(".home-phone-germany-bg");
@@ -13,24 +21,24 @@ function layoutGermanyBand() {
   const search =
     document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
     document.querySelector(".home-phone-controls .buzzard-mobile-search");
-  const boxes = document.querySelector(".home-page-canonical .home-category-tile-group");
+  const groups = [...document.querySelectorAll(".home-page-canonical .home-category-tile-group")];
+  const first = groups[0];
+  const second = groups[1] ?? groups[0];
   if (!(bg instanceof HTMLElement) || !(layout instanceof HTMLElement)) return;
-  if (!(search instanceof HTMLElement) || !(boxes instanceof HTMLElement)) {
+  if (!(search instanceof HTMLElement) || !(first instanceof Element)) {
     bg.style.height = "0px";
     return;
   }
   const layoutBox = layout.getBoundingClientRect();
   const searchBottom = search.getBoundingClientRect().bottom;
-  const boxesTop = boxes.getBoundingClientRect().top;
-  const gapTop = searchBottom - layoutBox.top;
-  const gap = boxesTop - searchBottom;
-  const height = Math.max(
-    0,
-    Math.min(Math.round(layoutBox.width * GERMANY_BAND_ASPECT), Math.round(gap), GERMANY_BAND_MAX_HEIGHT),
-  );
-  const top = gapTop + Math.max(0, Math.round((gap - height) / 2));
-  bg.style.top = `${Math.round(top)}px`;
+  const boxes = twoBoxBounds(first, second);
+  const gap = boxes.top - searchBottom;
+  const height = Math.max(0, Math.min(Math.round(boxes.height), Math.round(gap)));
+  bg.style.top = `${Math.round(searchBottom - layoutBox.top)}px`;
+  bg.style.left = `${Math.round(boxes.left - layoutBox.left)}px`;
+  bg.style.width = `${Math.round(boxes.width)}px`;
   bg.style.height = `${height}px`;
+  bg.style.right = "auto";
 }
 
 export default function HomePhoneGermanyBackground() {

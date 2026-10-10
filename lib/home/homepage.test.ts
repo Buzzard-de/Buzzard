@@ -85,7 +85,8 @@ describe("homepage canonical content", () => {
     expect(discovery).toContain("home-category-tile-group--fill");
     expect(discovery).toContain("cat-07");
     expect(readFileSync(resolve("components/HomePageContent.tsx"), "utf8")).toContain("HomePhoneGermanyBackground");
-    expect(readFileSync(resolve("components/home/HomePhoneGermanyBackground.tsx"), "utf8")).toContain("GERMANY_BAND_ASPECT");
+    expect(readFileSync(resolve("components/home/HomePhoneGermanyBackground.tsx"), "utf8")).toContain("twoBoxBounds");
+    expect(readFileSync(resolve("components/home/HomePhoneGermanyBackground.tsx"), "utf8")).toContain("searchBottom - layoutBox.top");
     expect(css).toContain(".home-phone-germany-bg");
     expect(css).toContain("buzzard-germany-phone-band.jpg");
     expect(css).toContain("contain no-repeat");

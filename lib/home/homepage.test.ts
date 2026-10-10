@@ -102,8 +102,8 @@ describe("homepage canonical content", () => {
     expect(sidebar).toContain("{!embedded && (");
     expect(sidebar).toContain("home-sidebar-head");
     const overlay = readFileSync(resolve("components/MegaMenuOverlay.tsx"), "utf8");
-    expect(overlay).toContain("isTablet && !isMobile");
-    expect(overlay).toContain('isMobile ? null');
+    expect(overlay).toContain("createPortal");
+    expect(overlay).toContain("phone-category-drawer");
     expect(readFileSync(resolve("components/CategorySidebar.tsx"), "utf8")).toContain("home-sidebar-all");
     const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
     expect(css).toContain(".phone-category-drawer");

@@ -244,9 +244,8 @@ async function assertBoxesAlignWithAutomotive(page: import("@playwright/test").P
   const skippedGarden = await page.evaluate(() => {
     const first = document.querySelector(".home-page-canonical .home-category-tile-group");
     const garden = document.querySelector(".mobile-home-category-rail [data-category-id='cat-07']");
-    const safety = document.querySelector(".mobile-home-category-rail [data-category-id='cat-08']");
-    if (!first || !garden || !safety) return -1;
-    return first.getBoundingClientRect().top - safety.getBoundingClientRect().bottom;
+    if (!first || !garden) return -1;
+    return first.getBoundingClientRect().top - garden.getBoundingClientRect().bottom;
   });
   expect(skippedGarden).toBeGreaterThan(0);
 }

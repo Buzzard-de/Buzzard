@@ -292,22 +292,26 @@ async function assertGermanyPhoneBand(page: import("@playwright/test").Page) {
         const search =
           document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
           document.querySelector(".home-phone-controls .buzzard-mobile-search");
-        const first = document.querySelector(".home-page-canonical .home-category-tile-group");
-        const rail = document.querySelector(".mobile-home-category-rail");
-        const textile = document.querySelector(".mobile-home-category-rail [data-category-id='cat-01']");
-        const pet = document.querySelector(".mobile-home-category-rail [data-category-id='cat-06']");
+        const groups = [...document.querySelectorAll(".home-page-canonical .home-category-tile-group")];
+        const first = groups[0];
+        const second = groups[1] ?? groups[0];
         if (!bg || !search || !first) return 99;
         const band = bg.getBoundingClientRect();
         const searchBox = search.getBoundingClientRect();
-        const firstBox = first.getBoundingClientRect();
-        const railVisible = Boolean(rail && window.getComputedStyle(rail).display !== "none");
-        const underTextile = !railVisible || !textile ? 0 : band.left - textile.getBoundingClientRect().left;
-        const underPet = !railVisible || !pet ? 0 : band.left - pet.getBoundingClientRect().left;
-        const gap = firstBox.top - searchBox.bottom;
-        const inside = band.top >= searchBox.bottom - 4 && band.bottom <= firstBox.top + 4 ? 0 : 8;
-        const thin = band.height <= Math.min(gap + 4, 172) ? 0 : 8;
+        const a = first.getBoundingClientRect();
+        const b = second.getBoundingClientRect();
+        const unionLeft = Math.min(a.left, b.left);
+        const unionWidth = Math.max(a.right, b.right) - unionLeft;
+        const unionHeight = Math.max(a.height, b.height);
+        const gap = Math.min(a.top, b.top) - searchBox.bottom;
+        const expectedHeight = Math.max(0, Math.min(unionHeight, Math.round(gap)));
+        const underSearch = Math.abs(band.top - searchBox.bottom) <= 4 ? 0 : 8;
+        const sizedH = Math.abs(band.height - expectedHeight) <= 4 ? 0 : 8;
+        const sizedW = Math.abs(band.width - unionWidth) <= 8 ? 0 : 8;
+        const aligned = Math.abs(band.left - unionLeft) <= 4 ? 0 : 8;
+        const aboveBoxes = band.bottom <= Math.min(a.top, b.top) + 4 ? 0 : 8;
         const contained = window.getComputedStyle(bg).backgroundSize.includes("contain") ? 0 : 8;
-        return Math.max(underTextile, underPet, inside, thin, contained);
+        return Math.max(underSearch, sizedH, sizedW, aligned, aboveBoxes, contained);
       }),
     )
     .toBeLessThanOrEqual(4);

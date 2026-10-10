@@ -1643,16 +1643,7 @@
     border-top: 1px solid rgba(205, 164, 78, 0.22);
   }
 
-  .home-page-canonical .home-category-tile-icon {
-    flex: 0 0 auto;
-    color: #d5aa4d;
-  }
-
-  .home-page-canonical .home-category-tile-icon svg {
-    width: 26px;
-    height: 26px;
-  }
-
+  .home-page-canonical .home-category-tile-icon,
   .home-page-canonical .home-category-tile-label {
     display: none;
   }

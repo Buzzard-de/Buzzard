@@ -206,6 +206,10 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
         const label = tile.querySelector(".home-category-tile-label");
         return !label || window.getComputedStyle(label).display === "none";
       }),
+      iconsHidden: tiles.every((tile) => {
+        const icon = tile.querySelector(".home-category-tile-icon");
+        return !icon || window.getComputedStyle(icon).display === "none";
+      }),
     };
   });
   expect(result.ids[0]).toBe("cat-01");
@@ -219,22 +223,21 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
   expect(result.groupSizes.at(-1)).toBe(2);
   expect(result.twoColumns).toBe(true);
   expect(result.labelsHidden).toBe(true);
+  expect(result.iconsHidden).toBe(true);
 }
 
-async function assertSearchAlignsWithAutomotive(page: import("@playwright/test").Page) {
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await expect
-    .poll(async () =>
-      page.evaluate(() => {
-        const bar =
-          document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
-          document.querySelector(".home-phone-controls .buzzard-mobile-search");
-        const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
-        if (!bar || !automotive) return null;
-        return Math.abs(bar.getBoundingClientRect().top - automotive.getBoundingClientRect().top);
-      }),
-    )
-    .toBeLessThanOrEqual(4);
+async function assertSearchUnderLocale(page: import("@playwright/test").Page) {
+  const gap = await page.evaluate(() => {
+    const locale = document.querySelector(".mobile-home-locale-market");
+    const search =
+      document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
+      document.querySelector(".home-phone-controls .buzzard-mobile-search");
+    if (!locale || !search) return null;
+    return search.getBoundingClientRect().top - locale.getBoundingClientRect().bottom;
+  });
+  expect(gap).not.toBeNull();
+  expect(gap ?? 99).toBeGreaterThanOrEqual(0);
+  expect(gap ?? 99).toBeLessThanOrEqual(16);
 }
 
 async function assertLastCategoryClearsBottomNav(page: import("@playwright/test").Page) {
@@ -358,7 +361,7 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
     await expect(page.locator("#buzzard-mobile-search-input")).toBeVisible();
     await assertSearchPlaceholderFits(page);
-    await assertSearchAlignsWithAutomotive(page);
+    await assertSearchUnderLocale(page);
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
     await expect(page.locator(".buzzard-mobile-header-link[href='/warenkorb/']")).toBeVisible();
     await assertNoHorizontalOverflow(page);
@@ -418,7 +421,7 @@ test.describe("homepage viewports", () => {
         await expect(page.locator(".home-hero-campaign")).toBeHidden();
         await assertSearchPlaceholderFits(page);
         await assertPhoneCategoryBoxes(page);
-        if (width >= 390) await assertSearchAlignsWithAutomotive(page);
+        if (width >= 390) await assertSearchUnderLocale(page);
         await assertNoHorizontalOverflow(page);
         await assertLastCategoryClearsBottomNav(page);
         await assertFabClearsCategoryLabels(page);
@@ -448,7 +451,7 @@ test.describe("homepage viewports", () => {
     await mobileLanguage.selectOption("tr");
     await expect(mobileMarket).toHaveValue("DE");
     await expect(page.locator(".home-hero-campaign")).toBeHidden();
-    await assertSearchAlignsWithAutomotive(page);
+    await assertSearchUnderLocale(page);
     await assertNoHorizontalOverflow(page);
   });
 
@@ -459,7 +462,7 @@ test.describe("homepage viewports", () => {
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("aria-current", "page");
     await expect(page.locator(".home-hero-campaign")).toBeHidden();
     await assertPhoneCategoryBoxes(page);
-    await assertSearchAlignsWithAutomotive(page);
+    await assertSearchUnderLocale(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertNoHorizontalOverflow(page);
   });
@@ -472,7 +475,7 @@ test.describe("homepage viewports", () => {
     await assertCanonicalHome(page, "de", false);
     await expect(page.locator(".home-fullscreen")).toBeHidden();
     await assertPhoneCategoryBoxes(page);
-    await assertSearchAlignsWithAutomotive(page);
+    await assertSearchUnderLocale(page);
     await assertNoHorizontalOverflow(page);
     await assertAiAboveBottomNav(page);
     await page.screenshot({ path: "test-results/homepage-de-landscape.png", fullPage: false });

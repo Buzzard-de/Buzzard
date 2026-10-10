@@ -32,7 +32,7 @@ export default function MobileBottomNav() {
       </Link>
       <Link
         href={categoriesHref}
-        className={`buzzard-mobile-bottom-nav-item${pathname.startsWith("/kategorie") ? " active" : ""}`}
+        className={`buzzard-mobile-bottom-nav-item buzzard-mobile-bottom-nav-gold${pathname.startsWith("/kategorie") ? " active" : ""}`}
         aria-current={pathname.startsWith("/kategorie") ? "page" : undefined}
         aria-label={t("mobile.categories")}
       >

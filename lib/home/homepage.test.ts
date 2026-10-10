@@ -44,7 +44,7 @@ describe("homepage canonical content", () => {
     expect(ai).toBeGreaterThan(cart);
     expect(account).toBeGreaterThan(ai);
     expect(nav).toContain("buzzard-mobile-bottom-nav-gold");
-    expect((nav.match(/buzzard-mobile-bottom-nav-gold/g) || []).length).toBe(3);
+    expect((nav.match(/buzzard-mobile-bottom-nav-gold/g) || []).length).toBe(4);
     const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
     expect(css).toContain(".buzzard-mobile-bottom-nav-ai-label");
     expect(css).toContain("background: #1b8f3a");

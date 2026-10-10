@@ -297,11 +297,11 @@
     inset: auto;
     inset-inline-start: 0;
     inset-inline-end: auto;
-    top: calc(50px + env(safe-area-inset-top, 0px));
+    top: calc(168px + env(safe-area-inset-top, 0px));
     bottom: calc(48px + env(safe-area-inset-bottom, 0px));
     transform: none;
-    width: min(74vw, 286px);
-    max-width: min(74vw, 286px);
+    width: min(56vw, 208px);
+    max-width: min(56vw, 208px);
     height: auto;
     max-height: none;
     border-radius: 0;
@@ -368,9 +368,9 @@
   .mega-menu-overlay .mega-menu-shell.mobile .home-sidebar.embedded .home-sidebar-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-height: 42px;
-    padding: 8px 12px;
+    gap: 7px;
+    min-height: 34px;
+    padding: 5px 8px;
     color: #e2b957;
     text-decoration: none;
   }
@@ -379,8 +379,8 @@
     flex: 1 1 auto;
     min-width: 0;
     color: #e2b957;
-    font-size: 13px;
-    line-height: 1.25;
+    font-size: 11px;
+    line-height: 1.2;
   }
 
   .mega-menu-overlay .mega-menu-shell.mobile .home-sidebar.embedded .home-sidebar-item svg {

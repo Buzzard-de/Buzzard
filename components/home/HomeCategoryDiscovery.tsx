@@ -49,16 +49,14 @@ function fillBoxesToLastCategory() {
 
   const needed = pairs.length * 2;
   const realCount = grid.querySelectorAll(".home-category-tile-group:not(.home-category-tile-group--fill)").length;
-  let fills = [...grid.querySelectorAll(".home-category-tile-group--fill")];
-  while (realCount + fills.length < needed) {
+  while (realCount + grid.querySelectorAll(".home-category-tile-group--fill").length < needed) {
     const fill = document.createElement("div");
     fill.className = "home-category-tile-group home-category-tile-group--fill";
     fill.setAttribute("aria-hidden", "true");
     grid.appendChild(fill);
-    fills.push(fill);
   }
-  while (realCount + fills.length > needed) {
-    fills.pop()?.remove();
+  while (realCount + grid.querySelectorAll(".home-category-tile-group--fill").length > needed) {
+    grid.querySelector(".home-category-tile-group--fill:last-child")?.remove();
   }
 
   const groups = [...grid.querySelectorAll(".home-category-tile-group")];

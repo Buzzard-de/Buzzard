@@ -90,6 +90,7 @@ const EXACT = {
   "PATCH /api/admin/ai/employees/:id/status": "ai.assign",
   "GET /api/admin/ai/tasks": "ai.read",
   "POST /api/admin/ai/tasks": "ai.assign",
+  "POST /api/admin/orchestration/dispatch": "ai.assign",
   "PATCH /api/admin/ai/tasks/:id/status": "ai.execute",
   "GET /api/admin/approvals": "ai.read",
   "POST /api/admin/approvals": "ai.assign",

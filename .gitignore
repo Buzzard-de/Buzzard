@@ -9,6 +9,7 @@ yarn-error.log*
 .next/
 out/
 tsconfig.tsbuildinfo
+pusat-ai-runtime/dist/
 
 # Screenshots (local only)
 screenshot-*.png

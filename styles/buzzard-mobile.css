@@ -283,20 +283,34 @@
     z-index: 400;
   }
 
+  body:has(.mega-menu-overlay) .buzzard-mobile-header,
+  body:has(.mega-menu-overlay) .buzzard-mobile-bottom-nav {
+    z-index: 420;
+  }
+
+  .mega-menu-backdrop {
+    background: rgba(0, 0, 0, 0.18);
+  }
+
   .mega-menu-shell {
     position: fixed;
-    inset: 0;
-    inset-inline: 0;
-    top: 0;
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+    top: calc(50px + env(safe-area-inset-top, 0px));
+    bottom: calc(48px + env(safe-area-inset-bottom, 0px));
     transform: none;
-    width: 100%;
-    max-width: 100%;
-    height: 100dvh;
-    max-height: 100dvh;
+    width: min(74vw, 286px);
+    max-width: min(74vw, 286px);
+    height: auto;
+    max-height: none;
     border-radius: 0;
+    border: 0;
+    border-inline-end: 1px solid rgba(205, 164, 78, 0.42);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    background: #050505;
+    box-shadow: 18px 0 32px rgba(0, 0, 0, 0.35);
   }
 
   .mega-menu-shell-head,
@@ -345,7 +359,39 @@
     overflow-x: hidden;
     overflow-y: auto;
     box-shadow: none;
-    padding-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
+    background: #050505;
+    padding: 6px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mega-menu-shell .home-sidebar.embedded .home-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 8px 12px;
+    color: #e2b957;
+    text-decoration: none;
+  }
+
+  .mega-menu-shell .home-sidebar.embedded .home-sidebar-item span {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #e2b957;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .mega-menu-shell .home-sidebar.embedded .home-sidebar-item svg {
+    color: #e2b957;
+    flex: 0 0 auto;
+  }
+
+  .mega-menu-shell .home-sidebar.embedded .home-sidebar-item .chevron {
+    margin-inline-start: auto;
+  }
+
+  .mega-menu-shell .home-sidebar.embedded .home-sidebar-all {
+    background: rgba(226, 185, 87, 0.08);
   }
 
   .mega-menu-shell .home-sidebar.embedded .home-sidebar-head,

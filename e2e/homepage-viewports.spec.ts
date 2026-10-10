@@ -535,7 +535,8 @@ test.describe("homepage viewports", () => {
     await assertLastCategoryClearsBottomNav(page);
     await page.locator(".buzzard-mobile-header-btn").first().click();
     await expect(page.locator(".mega-menu-overlay")).toBeVisible();
-    await expect(page.locator(".home-sidebar.embedded .home-sidebar-item")).toHaveCount(50);
+    await expect(page.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)")).toHaveCount(50);
+    await expect(page.locator(".home-sidebar.embedded .home-sidebar-all")).toHaveCount(1);
     await assertNoHorizontalOverflow(page);
   });
 

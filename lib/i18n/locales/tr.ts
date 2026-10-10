@@ -610,7 +610,7 @@ export const catalog: TranslationTree = {
     heroAria: "Karşılama alanı",
     heroTitle: "Ürün yelpazemizi keşfedin",
     heroText: "Otomotiv, tekstil, elektronik ve daha fazlasında kategoriler — telefon ve e-posta ile danışmanlık.",
-    searchPlaceholder: "Ürün, marka, kategori veya parça ara...",
+    searchPlaceholder: "Ürün, marka veya kategori ara…",
     categorySearchPlaceholder: "Kategori içinde ara...",
     productCount: "{count} ürün",
     loadingProducts: "Ürünler yükleniyor…",

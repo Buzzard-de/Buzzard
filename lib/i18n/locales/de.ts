@@ -602,7 +602,7 @@ export const catalog: TranslationTree = {
     heroAria: "Startbereich",
     heroTitle: "Entdecken Sie unser Sortiment",
     heroText: "Stöbern Sie in unserem Online-Katalog mit Kategorien aus Automotive, Textil, Elektronik und mehr — Beratung per Telefon und E-Mail.",
-    searchPlaceholder: "Produkt, Marke, Kategorie oder Teil suchen…",
+    searchPlaceholder: "Produkt, Marke, Kategorie…",
     categorySearchPlaceholder: "In der Kategorie suchen…",
     productCount: "{count} Produkte",
     loadingProducts: "Produkte werden geladen…",

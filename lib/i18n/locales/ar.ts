@@ -610,7 +610,7 @@ export const catalog: TranslationTree = {
     heroAria: "قسم الترحيب",
     heroTitle: "اكتشف مجموعتنا",
     heroText: "تصفح الكتالوج عبر السيارات والمنسوجات والإلكترونيات — استشارة عبر الهاتف والبريد.",
-    searchPlaceholder: "ابحث عن منتج أو علامة أو فئة أو قطعة...",
+    searchPlaceholder: "ابحث عن منتج أو فئة…",
     categorySearchPlaceholder: "ابحث في الفئة...",
     productCount: "{count} منتج",
     loadingProducts: "جاري تحميل المنتجات…",

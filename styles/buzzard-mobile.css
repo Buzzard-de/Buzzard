@@ -1757,4 +1757,8 @@
       max-height: min(52vh, 420px);
     }
   }
+
+  .home-page-canonical .home-hero-campaign {
+    display: none !important;
+  }
 }

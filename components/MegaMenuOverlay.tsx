@@ -6,11 +6,7 @@ import FeaturedBanner from "./FeaturedBanner";
 import MegaMenu from "./MegaMenu";
 import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
-import {
-  getCategoryById,
-  getChildren,
-  MAIN_CATEGORY_COUNT,
-} from "@/lib/categories";
+import { getCategoryById, getChildren } from "@/lib/categories";
 import { useIsMobileNav, useIsTabletNav } from "@/lib/use-media-query";
 import MegaMenuSearch from "./MegaMenuSearch";
 import LanguageSelector from "./LanguageSelector";
@@ -47,21 +43,21 @@ export default function MegaMenuOverlay() {
         onClick={homeUI?.closeMegaMenu}
       />
       <div className={`mega-menu-shell${isTablet && !isMobile ? " tablet" : ""}${isMobile ? " mobile" : ""}`}>
-        <div className="mega-menu-shell-head">
-          <strong>
-            {isMobile
-              ? t("home.allCategoriesCount").replace("{count}", String(MAIN_CATEGORY_COUNT))
-              : t("nav.allCategories")}
-          </strong>
-          <button type="button" className="mega-menu-close" onClick={homeUI?.closeMegaMenu} aria-label={t("megaMenu.close")}>
-            ×
-          </button>
-        </div>
-        <MegaMenuSearch onNavigate={homeUI?.closeMegaMenu} />
-        <div className="mega-menu-locale-market">
-          <LanguageSelector />
-          <CountrySelector />
-        </div>
+        {isMobile ? null : (
+          <>
+            <div className="mega-menu-shell-head">
+              <strong>{t("nav.allCategories")}</strong>
+              <button type="button" className="mega-menu-close" onClick={homeUI?.closeMegaMenu} aria-label={t("megaMenu.close")}>
+                ×
+              </button>
+            </div>
+            <MegaMenuSearch onNavigate={homeUI?.closeMegaMenu} />
+            <div className="mega-menu-locale-market">
+              <LanguageSelector />
+              <CountrySelector />
+            </div>
+          </>
+        )}
 
         {isMobile ? (
           <CategorySidebar activeId={activeMainId} onSelect={setActiveMainId} embedded />

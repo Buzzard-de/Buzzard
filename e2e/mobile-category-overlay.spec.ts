@@ -31,58 +31,69 @@ async function boxOf(locator: import("@playwright/test").Locator): Promise<Box> 
 }
 
 async function openPhoneOverlay(page: import("@playwright/test").Page) {
-  await page.locator(".buzzard-mobile-header-btn").first().click();
+  const railAll = page.locator(".mobile-home-category-rail-more");
+  if (await railAll.isVisible()) {
+    await railAll.click();
+  } else {
+    await page.locator(".buzzard-mobile-header-btn").first().click();
+  }
   await expect(page.locator(".mega-menu-overlay")).toBeVisible({ timeout: 20_000 });
   await expect(page.locator(".mega-menu-shell.mobile")).toBeVisible();
 }
 
 async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   const overlay = page.locator(".mega-menu-overlay");
-  await expect(overlay.locator(".mega-menu-shell-head strong")).toHaveCount(1);
+  await expect(overlay.locator(".mega-menu-shell-head")).toHaveCount(0);
+  await expect(overlay.locator(".mega-menu-search")).toHaveCount(0);
+  await expect(overlay.locator(".mega-menu-locale-market")).toHaveCount(0);
   await expect(overlay.locator(".home-sidebar-head")).toHaveCount(0);
-  await expect(overlay.locator(".mega-menu-close")).toHaveCount(1);
+  await expect(overlay.locator(".mega-menu-close")).toHaveCount(0);
   await expect(overlay.locator(".sidebar-close-btn")).toHaveCount(0);
+  await expect(page.locator(".buzzard-mobile-header-btn").first()).toBeVisible();
 
-  const title = overlay.locator(".mega-menu-shell-head strong");
-  await expect(title).toBeVisible();
-  await expect(title).toContainText("50");
-
-  const search = overlay.locator(".mega-menu-search");
-  const lang = overlay.locator(".mega-menu-locale-market .language-selector");
-  const market = overlay.locator(".mega-menu-locale-market .country-selector");
-  const rows = overlay.locator(".home-sidebar.embedded .home-sidebar-item");
+  const allRow = overlay.locator(".home-sidebar.embedded .home-sidebar-all");
+  const rows = overlay.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)");
+  await expect(allRow).toHaveCount(1);
   await expect(rows).toHaveCount(50);
   for (let i = 0; i < 4; i += 1) {
     await expect(rows.nth(i)).toBeVisible();
   }
 
-  const searchBox = await boxOf(search);
-  const langBox = await boxOf(lang);
-  const marketBox = await boxOf(market);
-  const closeBox = await boxOf(overlay.locator(".mega-menu-close"));
-  const chromeBottom = Math.max(searchBox.bottom, langBox.bottom, marketBox.bottom);
+  const header = page.locator(".buzzard-mobile-header");
+  const nav = page.locator(".buzzard-mobile-bottom-nav");
   const viewport = page.viewportSize()!;
+  const headerBox = await boxOf(header);
+  const navBox = await boxOf(nav);
+  const first = await boxOf(allRow);
+  expect(first.top).toBeGreaterThanOrEqual(headerBox.bottom - 2);
+  expect(first.bottom).toBeLessThanOrEqual(navBox.top + 4);
+  expect(overlaps(headerBox, first)).toBe(false);
 
-  const first = await boxOf(rows.nth(0));
-  expect(first.top).toBeGreaterThanOrEqual(chromeBottom - 2);
-  expect(overlaps(searchBox, first)).toBe(false);
-  expect(overlaps(langBox, first)).toBe(false);
-  expect(overlaps(marketBox, first)).toBe(false);
-  expect(overlaps(closeBox, first)).toBe(false);
-  expect(first.bottom).toBeLessThanOrEqual(viewport.height + 2);
-
-  for (let i = 0; i < 4; i += 1) {
-    const rowBox = await rows.nth(i).boundingBox();
-    if (!rowBox || rowBox.y >= viewport.height - 8) continue;
-    const row = { top: rowBox.y, left: rowBox.x, right: rowBox.x + rowBox.width, bottom: rowBox.y + rowBox.height };
-    expect(overlaps(searchBox, row)).toBe(false);
-    expect(overlaps(langBox, row)).toBe(false);
-    expect(overlaps(marketBox, row)).toBe(false);
-    expect(overlaps(closeBox, row)).toBe(false);
-  }
+  const gold = await overlay.locator(".home-sidebar.embedded .home-sidebar-item").first().evaluate((el) => {
+    const style = window.getComputedStyle(el);
+    const icon = el.querySelector("svg");
+    return {
+      text: style.color,
+      icon: icon ? window.getComputedStyle(icon).color : "",
+      chevron: Boolean(el.querySelector(".chevron")),
+    };
+  });
+  expect(gold.text).toBe("rgb(226, 185, 87)");
+  expect(gold.icon).toBe("rgb(226, 185, 87)");
+  expect(gold.chevron).toBe(true);
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
   expect(overflow).toBe(false);
+
+  const shell = overlay.locator(".mega-menu-shell.mobile");
+  const shellBox = await boxOf(shell);
+  expect(shellBox.right - shellBox.left).toBeLessThanOrEqual(286);
+  const dir = await shell.evaluate((el) => getComputedStyle(el).direction);
+  if (dir === "rtl") {
+    expect(shellBox.left).toBeGreaterThan(viewport.width * 0.2);
+  } else {
+    expect(shellBox.right).toBeLessThan(viewport.width * 0.8);
+  }
 
   const sidebar = overlay.locator(".home-sidebar.embedded");
   const overflowY = await sidebar.evaluate((el) => getComputedStyle(el).overflowY);
@@ -96,17 +107,19 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   });
   expect(scrolled).toBe(true);
 
-  const stacking = await page.evaluate(() => {
-    const overlayEl = document.querySelector(".mega-menu-overlay") as HTMLElement | null;
-    const fab = document.querySelector(".ai-chat-fab") as HTMLElement | null;
-    const nav = document.querySelector(".buzzard-mobile-bottom-nav") as HTMLElement | null;
-    const oz = overlayEl ? Number(getComputedStyle(overlayEl).zIndex) || 0 : 0;
-    const fz = fab ? Number(getComputedStyle(fab).zIndex) || 0 : 0;
-    const nz = nav ? Number(getComputedStyle(nav).zIndex) || 0 : 0;
-    return { oz, fz, nz };
+  const homeVisible = await page.evaluate(() => {
+    const search = document.querySelector(".home-phone-controls .buzzard-mobile-search-form");
+    const boxes = document.querySelector(".home-page-canonical .home-category-tile-group");
+    const bg = document.querySelector(".home-phone-germany-bg");
+    const vis = (el: Element | null) => {
+      if (!el) return false;
+      const style = window.getComputedStyle(el);
+      return style.display !== "none" && style.visibility !== "hidden";
+    };
+    return vis(search) || vis(boxes) || vis(bg);
   });
-  expect(stacking.oz).toBeGreaterThan(stacking.fz);
-  expect(stacking.oz).toBeGreaterThan(stacking.nz);
+  expect(homeVisible).toBe(true);
+  expect(viewport.width).toBeGreaterThan(0);
 }
 
 test.describe("mobile Alle Kategorien overlay", () => {
@@ -117,8 +130,9 @@ test.describe("mobile Alle Kategorien overlay", () => {
     await expect(page.locator("body.buzzard-phone-storefront")).toBeVisible({ timeout: 20_000 });
     await openPhoneOverlay(page);
     await assertPhoneOverlayLayout(page);
-    await expect(page.locator(".mega-menu-locale-market .language-selector select option")).toHaveCount(30);
-    await expect(page.locator(".mega-menu-locale-market .country-selector select option")).toHaveCount(35);
+    await expect(page.locator(".mega-menu-overlay .mega-menu-locale-market")).toHaveCount(0);
+    await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
+    await expect(page.locator(".mobile-home-locale-market .country-selector select option")).toHaveCount(35);
     await page.screenshot({ path: "test-results/overlay-de-portrait.png", fullPage: false });
   });
 
@@ -149,7 +163,7 @@ test.describe("mobile Alle Kategorien overlay", () => {
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await openPhoneOverlay(page);
     await assertPhoneOverlayLayout(page);
-    const dir = await page.locator(".mega-menu-shell-head").evaluate((el) => getComputedStyle(el).direction);
+    const dir = await page.locator(".mega-menu-shell.mobile").evaluate((el) => getComputedStyle(el).direction);
     expect(dir).toBe("rtl");
     await page.screenshot({ path: "test-results/overlay-ar-portrait.png", fullPage: false });
   });

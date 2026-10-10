@@ -283,6 +283,37 @@ async function assertBoxesContinueToRailEnd(page: import("@playwright/test").Pag
   expect(metrics.twoColumns).toBe(true);
 }
 
+async function assertGermanyPhoneBand(page: import("@playwright/test").Page) {
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const bg = document.querySelector(".home-phone-germany-bg");
+        const search =
+          document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
+          document.querySelector(".home-phone-controls .buzzard-mobile-search");
+        const first = document.querySelector(".home-page-canonical .home-category-tile-group");
+        const rail = document.querySelector(".mobile-home-category-rail");
+        const textile = document.querySelector(".mobile-home-category-rail [data-category-id='cat-01']");
+        const pet = document.querySelector(".mobile-home-category-rail [data-category-id='cat-06']");
+        if (!bg || !search || !first) return 99;
+        const band = bg.getBoundingClientRect();
+        const searchBox = search.getBoundingClientRect();
+        const firstBox = first.getBoundingClientRect();
+        const railVisible = Boolean(rail && window.getComputedStyle(rail).display !== "none");
+        const underTextile = !railVisible || !textile ? 0 : band.left - textile.getBoundingClientRect().left;
+        const underPet = !railVisible || !pet ? 0 : band.left - pet.getBoundingClientRect().left;
+        return Math.max(
+          Math.abs(band.top - searchBox.bottom),
+          Math.abs(band.bottom - firstBox.top),
+          underTextile,
+          underPet,
+        );
+      }),
+    )
+    .toBeLessThanOrEqual(4);
+}
+
 async function assertBottomNavGold(page: import("@playwright/test").Page) {
   const colors = await page.locator(".buzzard-mobile-bottom-nav-gold").evaluateAll((items) =>
     items.map((item) => {
@@ -457,6 +488,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
+    await assertGermanyPhoneBand(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
@@ -524,6 +556,7 @@ test.describe("homepage viewports", () => {
           await assertBoxesContinueToRailEnd(page);
           await assertRailGold(page);
         }
+        await assertGermanyPhoneBand(page);
         await assertBottomNavGold(page);
         await assertNoHorizontalOverflow(page);
         await assertLastCategoryClearsBottomNav(page);
@@ -557,6 +590,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
+    await assertGermanyPhoneBand(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertNoHorizontalOverflow(page);
@@ -572,6 +606,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
+    await assertGermanyPhoneBand(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
@@ -589,6 +624,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
+    await assertGermanyPhoneBand(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertNoHorizontalOverflow(page);
@@ -604,6 +640,7 @@ test.describe("homepage viewports", () => {
     await expect(page.locator("body.buzzard-phone-storefront")).toHaveCount(0);
     await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.de);
     await expect(page.locator(".home-category-tile")).toHaveCount(50);
+    await expect(page.locator(".home-phone-germany-bg")).toBeHidden();
   });
 
   test("desktop 1440x900 shares the same hero and 50 categories", async ({ page }) => {

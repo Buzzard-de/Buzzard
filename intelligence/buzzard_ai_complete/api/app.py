@@ -86,6 +86,7 @@ from buzzard_ai_complete.supplier_intelligence_ai_maximal.api.routes import (
 from buzzard_ai_complete.intelligence_pipeline.api.routes import (
     router as intelligence_pipeline_router,
 )
+from buzzard_ai_complete.ai_core.api.v1.router import router as ai_core_v1_router
 
 if FastAPI:
 
@@ -97,6 +98,9 @@ if FastAPI:
         yield
 
     app = FastAPI(title="Buzzard AI COMPLETE API", version=APP_VERSION, lifespan=lifespan)
+    from buzzard_ai_complete.ai_core.api.middleware import RequestIdMiddleware
+
+    app.add_middleware(RequestIdMiddleware)
     service = BuzzardService()
     if commerce_router is not None:
         app.include_router(commerce_router)
@@ -176,6 +180,8 @@ if FastAPI:
         app.include_router(supplier_intelligence_router)
     if intelligence_pipeline_router is not None:
         app.include_router(intelligence_pipeline_router)
+    if ai_core_v1_router is not None:
+        app.include_router(ai_core_v1_router)
     if bey_router is not None:
         app.include_router(bey_router)
 

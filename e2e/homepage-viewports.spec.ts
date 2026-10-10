@@ -235,19 +235,20 @@ async function assertBoxesAlignWithAutomotive(page: import("@playwright/test").P
     .poll(async () =>
       page.evaluate(() => {
         const first = document.querySelector(".home-page-canonical .home-category-tile-group");
-        const garden = document.querySelector(".mobile-home-category-rail [data-category-id='cat-07']");
-        if (!first || !garden) return null;
-        return Math.abs(first.getBoundingClientRect().top - garden.getBoundingClientRect().top);
+        const tools = document.querySelector(".mobile-home-category-rail [data-category-id='cat-09']");
+        if (!first || !tools) return null;
+        return Math.abs(first.getBoundingClientRect().top - tools.getBoundingClientRect().top);
       }),
     )
     .toBeLessThanOrEqual(4);
-  const skippedAuto = await page.evaluate(() => {
+  const skippedGarden = await page.evaluate(() => {
     const first = document.querySelector(".home-page-canonical .home-category-tile-group");
-    const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
-    if (!first || !automotive) return -1;
-    return first.getBoundingClientRect().top - automotive.getBoundingClientRect().bottom;
+    const garden = document.querySelector(".mobile-home-category-rail [data-category-id='cat-07']");
+    const safety = document.querySelector(".mobile-home-category-rail [data-category-id='cat-08']");
+    if (!first || !garden || !safety) return -1;
+    return first.getBoundingClientRect().top - safety.getBoundingClientRect().bottom;
   });
-  expect(skippedAuto).toBeGreaterThan(0);
+  expect(skippedGarden).toBeGreaterThan(0);
 }
 
 async function assertBoxesContinueToRailEnd(page: import("@playwright/test").Page) {
@@ -258,12 +259,12 @@ async function assertBoxesContinueToRailEnd(page: import("@playwright/test").Pag
         const groups = [...document.querySelectorAll(".home-page-canonical .home-category-tile-group")];
         const first = groups[0];
         const lastGroup = groups.at(-1);
-        const garden = document.querySelector(".mobile-home-category-rail [data-category-id='cat-07']");
-        const safety = document.querySelector(".mobile-home-category-rail [data-category-id='cat-08']");
+        const tools = document.querySelector(".mobile-home-category-rail [data-category-id='cat-09']");
+        const home = document.querySelector(".mobile-home-category-rail [data-category-id='cat-10']");
         const lastCat = document.querySelector(".mobile-home-category-rail [data-category-id='cat-53']");
-        if (!first || !lastGroup || !garden || !safety || !lastCat) return 99;
-        const start = Math.abs(first.getBoundingClientRect().top - garden.getBoundingClientRect().top);
-        const firstBand = Math.abs(first.getBoundingClientRect().bottom - safety.getBoundingClientRect().bottom);
+        if (!first || !lastGroup || !tools || !home || !lastCat) return 99;
+        const start = Math.abs(first.getBoundingClientRect().top - tools.getBoundingClientRect().top);
+        const firstBand = Math.abs(first.getBoundingClientRect().bottom - home.getBoundingClientRect().bottom);
         const end = Math.abs(lastGroup.getBoundingClientRect().bottom - lastCat.getBoundingClientRect().bottom);
         return Math.max(start, firstBand, end);
       }),
@@ -278,43 +279,13 @@ async function assertBoxesContinueToRailEnd(page: import("@playwright/test").Pag
         Math.abs(groups[0].getBoundingClientRect().top - groups[1].getBoundingClientRect().top) <= 2,
     };
   });
-  expect(metrics.count).toBeGreaterThanOrEqual(44);
+  expect(metrics.count).toBeGreaterThanOrEqual(42);
   expect(metrics.count % 2).toBe(0);
   expect(metrics.twoColumns).toBe(true);
 }
 
-async function assertGermanyPhoneBand(page: import("@playwright/test").Page) {
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await expect
-    .poll(async () =>
-      page.evaluate(() => {
-        const bg = document.querySelector(".home-phone-germany-bg");
-        const search =
-          document.querySelector(".home-phone-controls .buzzard-mobile-search-form") ??
-          document.querySelector(".home-phone-controls .buzzard-mobile-search");
-        const groups = [...document.querySelectorAll(".home-page-canonical .home-category-tile-group")];
-        const first = groups[0];
-        const second = groups[1] ?? groups[0];
-        if (!bg || !search || !first) return 99;
-        const band = bg.getBoundingClientRect();
-        const searchBox = search.getBoundingClientRect();
-        const a = first.getBoundingClientRect();
-        const b = second.getBoundingClientRect();
-        const unionLeft = Math.min(a.left, b.left);
-        const unionWidth = Math.max(a.right, b.right) - unionLeft;
-        const unionHeight = Math.max(a.height, b.height);
-        const gap = Math.min(a.top, b.top) - searchBox.bottom;
-        const expectedHeight = Math.max(0, Math.min(unionHeight, Math.round(gap)));
-        const underSearch = Math.abs(band.top - searchBox.bottom) <= 4 ? 0 : 8;
-        const sizedH = Math.abs(band.height - expectedHeight) <= 4 ? 0 : 8;
-        const sizedW = Math.abs(band.width - unionWidth) <= 8 ? 0 : 8;
-        const aligned = Math.abs(band.left - unionLeft) <= 4 ? 0 : 8;
-        const aboveBoxes = band.bottom <= Math.min(a.top, b.top) + 4 ? 0 : 8;
-        const contained = window.getComputedStyle(bg).backgroundSize.includes("contain") ? 0 : 8;
-        return Math.max(underSearch, sizedH, sizedW, aligned, aboveBoxes, contained);
-      }),
-    )
-    .toBeLessThanOrEqual(4);
+async function assertGermanyPhoneBandHidden(page: import("@playwright/test").Page) {
+  await expect(page.locator(".home-phone-germany-bg")).toHaveCount(0);
 }
 
 async function assertBottomNavGold(page: import("@playwright/test").Page) {
@@ -491,7 +462,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBand(page);
+    await assertGermanyPhoneBandHidden(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
@@ -559,7 +530,7 @@ test.describe("homepage viewports", () => {
           await assertBoxesContinueToRailEnd(page);
           await assertRailGold(page);
         }
-        await assertGermanyPhoneBand(page);
+        await assertGermanyPhoneBandHidden(page);
         await assertBottomNavGold(page);
         await assertNoHorizontalOverflow(page);
         await assertLastCategoryClearsBottomNav(page);
@@ -593,7 +564,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBand(page);
+    await assertGermanyPhoneBandHidden(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertNoHorizontalOverflow(page);
@@ -609,7 +580,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBand(page);
+    await assertGermanyPhoneBandHidden(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
@@ -627,7 +598,7 @@ test.describe("homepage viewports", () => {
     await assertSearchUnderLocale(page);
     await assertBoxesAlignWithAutomotive(page);
     await assertBoxesContinueToRailEnd(page);
-    await assertGermanyPhoneBand(page);
+    await assertGermanyPhoneBandHidden(page);
     await assertRailGold(page);
     await assertBottomNavGold(page);
     await assertNoHorizontalOverflow(page);

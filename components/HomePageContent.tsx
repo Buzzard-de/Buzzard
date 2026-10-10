@@ -2,7 +2,6 @@
 
 import HomeCategoryDiscovery from "./home/HomeCategoryDiscovery";
 import HomeHeroCampaign from "./home/HomeHeroCampaign";
-import HomePhoneGermanyBackground from "./home/HomePhoneGermanyBackground";
 import HomeNewsletter from "./home/HomeNewsletter";
 import HomeTrustReviews from "./home/HomeTrustReviews";
 import HomeLayout from "./HomeLayout";
@@ -22,7 +21,6 @@ export default function HomePageContent() {
   return (
     <div className="home-page home-page-canonical">
       <div className="home-phone-layout">
-        <HomePhoneGermanyBackground />
         <MobileHomeCategoryRail />
         <div className="home-phone-main">
           <div className="buzzard-mobile-only home-phone-controls">

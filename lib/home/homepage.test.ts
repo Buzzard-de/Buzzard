@@ -56,6 +56,8 @@ describe("homepage canonical content", () => {
     expect(rail).not.toContain("const categories = [");
     expect(rail).not.toContain("RAIL_CATEGORY_COUNT");
     expect(rail).not.toContain(".slice(");
+    expect(rail.indexOf("mobile-home-category-rail-more")).toBeLessThan(rail.indexOf("categories.map"));
+    expect((rail.match(/mobile-home-category-rail-more/g) || []).length).toBe(1);
     const css = readFileSync(resolve("styles/buzzard-mobile.css"), "utf8");
     const railBlock = css.slice(css.indexOf(".mobile-home-category-rail {"), css.indexOf(".mobile-home-category-rail-link {"));
     expect(railBlock).toContain("height: auto");

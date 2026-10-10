@@ -1294,8 +1294,8 @@
     z-index: 0;
     pointer-events: none;
     background:
-      linear-gradient(180deg, rgba(5, 5, 5, 0.22), rgba(5, 5, 5, 0.08) 40%, rgba(5, 5, 5, 0.28)),
-      url("/images/backgrounds/germany/buzzard-germany-phone-band.jpg") center / cover no-repeat;
+      linear-gradient(180deg, rgba(5, 5, 5, 0.16), rgba(5, 5, 5, 0.04) 45%, rgba(5, 5, 5, 0.18)),
+      url("/images/backgrounds/germany/buzzard-germany-phone-band.jpg") center / contain no-repeat;
   }
 
   .home-phone-layout:has(.home-phone-germany-bg) .mobile-home-category-rail {

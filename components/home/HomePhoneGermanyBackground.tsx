@@ -4,6 +4,8 @@ import { useLayoutEffect } from "react";
 import { getGermanyPhoneBandBackground } from "@/lib/backgrounds/languageBackgrounds";
 import { useMarket } from "@/lib/market/context";
 
+const GERMANY_BAND_ASPECT = 687 / 1536;
+
 function layoutGermanyBand() {
   const bg = document.querySelector(".home-phone-germany-bg");
   const layout = document.querySelector(".home-phone-layout");
@@ -17,10 +19,14 @@ function layoutGermanyBand() {
     return;
   }
   const layoutBox = layout.getBoundingClientRect();
-  const top = search.getBoundingClientRect().bottom - layoutBox.top;
-  const height = boxes.getBoundingClientRect().top - search.getBoundingClientRect().bottom;
-  bg.style.top = `${Math.max(0, Math.round(top))}px`;
-  bg.style.height = `${Math.max(0, Math.round(height))}px`;
+  const searchBottom = search.getBoundingClientRect().bottom;
+  const boxesTop = boxes.getBoundingClientRect().top;
+  const gapTop = searchBottom - layoutBox.top;
+  const gap = boxesTop - searchBottom;
+  const height = Math.max(0, Math.min(Math.round(layoutBox.width * GERMANY_BAND_ASPECT), Math.round(gap)));
+  const top = gapTop + Math.max(0, Math.round((gap - height) / 2));
+  bg.style.top = `${Math.round(top)}px`;
+  bg.style.height = `${height}px`;
 }
 
 export default function HomePhoneGermanyBackground() {

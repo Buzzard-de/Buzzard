@@ -303,12 +303,11 @@ async function assertGermanyPhoneBand(page: import("@playwright/test").Page) {
         const railVisible = Boolean(rail && window.getComputedStyle(rail).display !== "none");
         const underTextile = !railVisible || !textile ? 0 : band.left - textile.getBoundingClientRect().left;
         const underPet = !railVisible || !pet ? 0 : band.left - pet.getBoundingClientRect().left;
-        return Math.max(
-          Math.abs(band.top - searchBox.bottom),
-          Math.abs(band.bottom - firstBox.top),
-          underTextile,
-          underPet,
-        );
+        const gap = firstBox.top - searchBox.bottom;
+        const inside = band.top >= searchBox.bottom - 4 && band.bottom <= firstBox.top + 4 ? 0 : 8;
+        const thin = gap <= 8 || band.height <= gap * 0.7 ? 0 : 8;
+        const contained = window.getComputedStyle(bg).backgroundSize.includes("contain") ? 0 : 8;
+        return Math.max(underTextile, underPet, inside, thin, contained);
       }),
     )
     .toBeLessThanOrEqual(4);

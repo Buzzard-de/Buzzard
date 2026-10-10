@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   GERMANY_LANGUAGE_BACKGROUND,
+  GERMANY_PHONE_BAND_BACKGROUND,
+  getGermanyPhoneBandBackground,
   getLanguageBackground,
   normalizeLanguage,
 } from "./languageBackgrounds";
@@ -27,5 +29,15 @@ describe("getLanguageBackground — language only", () => {
     expect(getLanguageBackground("en")).toBeNull();
     expect(getLanguageBackground("ar")).toBeNull();
     expect(getLanguageBackground("it")).toBeNull();
+  });
+});
+
+describe("getGermanyPhoneBandBackground — Germany market only", () => {
+  it("shows the phone band only for the German market", () => {
+    expect(getGermanyPhoneBandBackground("DE")).toBe(GERMANY_PHONE_BAND_BACKGROUND);
+    expect(getGermanyPhoneBandBackground("de")).toBe(GERMANY_PHONE_BAND_BACKGROUND);
+    expect(getGermanyPhoneBandBackground("TR")).toBeNull();
+    expect(getGermanyPhoneBandBackground("FR")).toBeNull();
+    expect(getGermanyPhoneBandBackground(null)).toBeNull();
   });
 });

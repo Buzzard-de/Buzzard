@@ -69,6 +69,14 @@ describe("homepage canonical content", () => {
     expect(css).toMatch(/\.home-page-canonical \.home-hero-campaign \{[\s\S]*?border: 0;[\s\S]*?box-shadow: none;/);
     expect(css).toMatch(/\.home-page-canonical \.home-hero-campaign \{\s*display: none !important;/);
     expect(css).toMatch(/\.home-page-canonical \.home-section-head \{\s*display: none !important;/);
+    expect(css).toMatch(/\.home-page-canonical \.home-category-grid \{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/);
+    expect(css).toMatch(/\.home-page-canonical \.home-category-tile-label \{\s*display: none;/);
+    const discovery = readFileSync(resolve("components/home/HomeCategoryDiscovery.tsx"), "utf8");
+    expect(discovery).toContain("home-category-tile-group");
+    expect(discovery).toContain("groupCategories(categories, 3)");
+    const search = readFileSync(resolve("components/mobile/MobileSearch.tsx"), "utf8");
+    expect(search).toContain("data-category-id='cat-05'");
+    expect(search).toContain("alignSearchWithAutomotive");
   });
 
   it("does not render a second overlay header when CategorySidebar is embedded", () => {

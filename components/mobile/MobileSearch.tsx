@@ -1,9 +1,27 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useLayoutEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
+
+function alignSearchWithAutomotive() {
+  const search = document.querySelector(".home-phone-controls .buzzard-mobile-search");
+  const rail = document.querySelector(".mobile-home-category-rail");
+  const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
+  if (!(search instanceof HTMLElement)) return;
+  if (
+    !(rail instanceof HTMLElement) ||
+    !(automotive instanceof HTMLElement) ||
+    window.getComputedStyle(rail).display === "none"
+  ) {
+    search.style.marginTop = "0px";
+    return;
+  }
+  search.style.marginTop = "0px";
+  const delta = automotive.getBoundingClientRect().top - search.getBoundingClientRect().top;
+  search.style.marginTop = `${Math.max(0, Math.round(delta))}px`;
+}
 
 export default function MobileSearch() {
   const router = useRouter();
@@ -11,6 +29,20 @@ export default function MobileSearch() {
   const { t } = useLocale();
   const [query, setQuery] = useState("");
   const inCategory = pathname.startsWith("/kategorie");
+
+  useLayoutEffect(() => {
+    alignSearchWithAutomotive();
+    const rail = document.querySelector(".mobile-home-category-rail");
+    const automotive = document.querySelector(".mobile-home-category-rail [data-category-id='cat-05']");
+    const observer = new ResizeObserver(() => alignSearchWithAutomotive());
+    if (rail) observer.observe(rail);
+    if (automotive) observer.observe(automotive);
+    window.addEventListener("resize", alignSearchWithAutomotive);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", alignSearchWithAutomotive);
+    };
+  }, []);
 
   function handleSearch(e?: FormEvent) {
     e?.preventDefault();

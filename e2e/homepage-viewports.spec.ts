@@ -266,6 +266,7 @@ async function assertCanonicalHome(
     await expect(hero.locator("h1")).toHaveText(HERO_TITLE[locale]);
   } else {
     await expect(hero).toBeHidden();
+    await expect(page.locator(".home-category-discovery .home-section-head")).toBeHidden();
   }
   await expect(page.locator(".buzzard-mobile-hero")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);

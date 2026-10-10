@@ -1761,4 +1761,8 @@
   .home-page-canonical .home-hero-campaign {
     display: none !important;
   }
+
+  .home-page-canonical .home-section-head {
+    display: none !important;
+  }
 }

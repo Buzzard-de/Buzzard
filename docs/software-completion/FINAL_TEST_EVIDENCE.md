@@ -18,7 +18,7 @@ No production database.
 | `npm run diagnostics:providers` | 0 | dry-run, attempted=false, live=0, 31 items, all NOT_CONFIGURED |
 | `npm run security:check` | 0 | 1 warning (eslint-config-next/braces, dev-only) |
 | `npm audit --omit=dev` | 0 | **0** production vulnerabilities |
-| Playwright storefront/admin | not re-run locally | last CI SUCCESS was `f4ba504` run 38161918900 — **not** this HEAD |
+| Playwright storefront/admin | CI, not local | **SUCCESS** on `de95d5f` run 38163750323 (quality + e2e-storefront + e2e-admin). Also SUCCESS on implementation `70c77d3` run 38163582824. |
 
 ## What tests do not prove
 

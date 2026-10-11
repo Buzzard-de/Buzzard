@@ -1,14 +1,15 @@
 {
-  "generatedAt": "2026-10-11T18:25:00Z",
+  "generatedAt": "2026-10-11T18:28:00Z",
   "verification": {
     "branch": "cursor/software-completion-c293",
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6",
+    "head": "de95d5f48a61bc97c061117e6a01992aa44ecef5",
+    "implementationHead": "70c77d37d9452ed81b80e7faf3a9a82c682528b6",
     "headBeforeThisReport": "fb96743839e52694469a4a4e69250ce58224da56",
-    "observedCiGreenHead": "f4ba504b0fbf4c61e689cc8d8f151f333eb1c7e6",
-    "observedCiRun": 38161918900,
+    "observedCiGreenHead": "de95d5f48a61bc97c061117e6a01992aa44ecef5",
+    "observedCiRun": 38163750323,
     "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, adapters, workflow audit, worker recovery, and external checklist"
   },
   "method": {
@@ -55,7 +56,9 @@
     "diagnostics:providers": { "exit": 0, "dryRun": true, "live": 0, "items": 31 },
     "render:preflight": { "exit": 0, "warnings": 2, "deployed": false, "note": "existing script; read-only health GET; not production verification" },
     "security:check": { "exit": 0, "warnings": 1 },
-    "github_actions_f4ba504": { "run": 38161918900, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS", "url": "https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900" },
+    "github_actions_de95d5f": { "run": 38163750323, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS", "url": "https://github.com/Buzzard-de/Buzzard/actions/runs/38163750323" },
+    "github_actions_70c77d3": { "run": 38163582824, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS", "url": "https://github.com/Buzzard-de/Buzzard/actions/runs/38163582824" },
+    "github_actions_f4ba504": { "run": 38161918900, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS", "url": "https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900", "superseded": true },
     "github_actions_da0dfd3": { "run": 38158295514, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS", "superseded": true },
     "github_actions_a26b51d": { "run": 38153709074, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" },
     "github_actions_0d71a18": { "run": 38150996642, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" }

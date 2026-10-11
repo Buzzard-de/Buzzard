@@ -145,6 +145,19 @@ const EXACT = {
   "GET /api/admin/identity-security/overview": "security.read",
   "GET /api/admin/identity-security/audit": "audit.read",
   "GET /api/admin/identity-security/sessions": "security.read",
+  "GET /api/admin/returns": "returns.read",
+  "GET /api/admin/returns-health": "returns.read",
+  "GET /api/admin/returns/:id": "returns.read",
+  "POST /api/admin/returns": "returns.write",
+  "POST /api/admin/returns/:id/approve": "returns.approve",
+  "POST /api/admin/returns/:id/receive": "returns.write",
+  "POST /api/admin/returns/:id/inspect": "returns.inspect",
+  "POST /api/admin/returns/:id/refund/calculate": "returns.refund",
+  "POST /api/admin/returns/:id/refund/request": "returns.refund",
+  "POST /api/admin/returns/:id/supplier-recovery": "returns.supplier_recovery",
+  "POST /api/admin/returns/:id/supplier-recovery/confirm": "returns.supplier_recovery",
+  "POST /api/admin/returns/:id/reconcile": "returns.read",
+  "POST /api/admin/returns/:id/close": "returns.close",
 };
 
 const PREFIX = [
@@ -154,6 +167,7 @@ const PREFIX = [
   { prefix: "/api/admin/storefront", read: "products.read", write: "sync.run" },
   { prefix: "/api/admin/commerce", read: "system.read", write: "system.configure" },
   { prefix: "/api/admin/orders", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/admin/returns", read: "returns.read", write: "returns.write" },
   { prefix: "/api/admin/order", read: "orders.read", write: "orders.write" },
   { prefix: "/api/admin/suppliers", read: "suppliers.read", write: "suppliers.write" },
   { prefix: "/api/admin/supplier", read: "suppliers.read", write: "suppliers.write" },

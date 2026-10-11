@@ -127,11 +127,21 @@ describe("Pusat Guardian", () => {
     });
     expect(secrets.allowed).toBe(false);
 
-    const sensitive = pusat.guardian.evaluate({
+    const dangerous = pusat.guardian.evaluate({
       agentId: "esat_bey",
       employee,
       action: "refund.issue",
       payload: { orderNumber: "1" },
+      permissionsRequired: [],
+    });
+    expect(dangerous.allowed).toBe(false);
+    expect(dangerous.requireApproval).toBe(true);
+
+    const sensitive = pusat.guardian.evaluate({
+      agentId: "esat_bey",
+      employee,
+      action: "prices.update",
+      payload: { sku: "1" },
       permissionsRequired: [],
     });
     expect(sensitive.allowed).toBe(true);

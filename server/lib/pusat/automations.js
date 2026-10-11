@@ -165,7 +165,17 @@ function customerServiceAutomation(input = {}) {
 }
 
 function customsAutomation(input = {}) {
-  const assessment = customsAi.assessCustoms(input.product || input);
+  let assessment;
+  try {
+    assessment = customsAi.assessCustoms(input.product || input);
+  } catch (error) {
+    assessment = {
+      customs: { review_required: true, source: "module_unavailable" },
+      review_required: true,
+      disclaimer: "Customs classification could not be validated. Not legal or tax advice.",
+      error: error.message,
+    };
+  }
   return {
     ok: true,
     workflow: "customs_market",

@@ -1,0 +1,754 @@
+{
+  "generatedAt": "2026-10-11T10:50:00Z",
+  "baseline": {
+    "implementation": 33,
+    "operational": 10.8,
+    "source": "docs/progress-audit historical AI system I"
+  },
+  "scores": {
+    "implementation": 70.5,
+    "testVerification": 69.4,
+    "operationalReadiness": 22.9,
+    "productionVerification": 0,
+    "totalWeight": 161
+  },
+  "notes": [
+    "Complete+tested items use 1.0 of weight for impl/test.",
+    "Partial items use a documented fraction.",
+    "Operational scores stay low: stub provider, sales lock, no staging/prod probe.",
+    "Production column is 0.0 because nothing was deployed or live-verified."
+  ],
+  "commandsRun": {
+    "test:ai": {
+      "exit": 0,
+      "tests": 40,
+      "passed": 40
+    },
+    "lint": {
+      "exit": 0
+    },
+    "typecheck": {
+      "exit": 0
+    },
+    "build": {
+      "exit": 0
+    },
+    "security:check": {
+      "exit": 0,
+      "warnings": 2
+    }
+  },
+  "safety": {
+    "productionDeployed": false,
+    "salesLockChanged": false,
+    "featureFlagsChanged": false,
+    "realOrdersPaymentsPurchasesMessages": false,
+    "productSotActivated": false
+  },
+  "requirements": [
+    {
+      "id": "PUSAT-01",
+      "name": "Central submit",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-02",
+      "name": "Unique task ids",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-03",
+      "name": "Persisted task state",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": "prod_db_not_probed"
+    },
+    {
+      "id": "PUSAT-04",
+      "name": "Classification and routing",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-05",
+      "name": "Agent selection",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-06",
+      "name": "Lifecycle status tracking",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-07",
+      "name": "Timeout management",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-08",
+      "name": "Controlled retries",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-09",
+      "name": "Idempotency",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-10",
+      "name": "Failure classification",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-11",
+      "name": "Structured results",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-12",
+      "name": "Audit events",
+      "weight": 2,
+      "impl": 1,
+      "test": 0.5,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-13",
+      "name": "Permission checks",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-14",
+      "name": "Human approval integration",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-15",
+      "name": "Guardian on execute path",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": "remote_guardian_unconfigured"
+    },
+    {
+      "id": "PUSAT-16",
+      "name": "Exception handling",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-17",
+      "name": "Correlation ids",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-18",
+      "name": "Duplicate request safety",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-19",
+      "name": "Unavailable agents",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "PUSAT-20",
+      "name": "Health and readiness",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "MEM-01",
+      "name": "SQLite memory not /tmp",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": "prod_db_not_probed"
+    },
+    {
+      "id": "MEM-02",
+      "name": "Memory kinds",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "MEM-03",
+      "name": "Read/update/conflict",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "MEM-04",
+      "name": "Validation and secret reject",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "MEM-05",
+      "name": "Access control",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "MEM-06",
+      "name": "Retention purge",
+      "weight": 1,
+      "impl": 0.8,
+      "test": 0.3,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial",
+      "blocker": null
+    },
+    {
+      "id": "MEM-07",
+      "name": "Restart persistence proof",
+      "weight": 2,
+      "impl": 0.7,
+      "test": 0.5,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial",
+      "blocker": "no_process_restart_test"
+    },
+    {
+      "id": "AGT-01",
+      "name": "Price assistant",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-02",
+      "name": "Stock assistant",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-03",
+      "name": "SEO assistant",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-04",
+      "name": "Customer assistant",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-05",
+      "name": "Sales assistant",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-06",
+      "name": "Category assistant",
+      "weight": 2,
+      "impl": 0.8,
+      "test": 0.8,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-07",
+      "name": "Dogu Bey",
+      "weight": 2,
+      "impl": 0.8,
+      "test": 0.8,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": "no_live_research"
+    },
+    {
+      "id": "AGT-08",
+      "name": "Esat Bey",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": "remote_guardian_unconfigured"
+    },
+    {
+      "id": "AGT-09",
+      "name": "Aslan Bey",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-10",
+      "name": "Registry and schemas",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "AGT-11",
+      "name": "External LLM provider",
+      "weight": 3,
+      "impl": 0.2,
+      "test": 0.2,
+      "ops": 0,
+      "prod": 0,
+      "status": "blocked",
+      "blocker": "provider_not_implemented"
+    },
+    {
+      "id": "AUT-01",
+      "name": "Product creation automation",
+      "weight": 2,
+      "impl": 0.7,
+      "test": 0.7,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": "no_pim_write"
+    },
+    {
+      "id": "AUT-02",
+      "name": "Supplier import automation",
+      "weight": 2,
+      "impl": 0.6,
+      "test": 0.7,
+      "ops": 0.1,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": "mock_adapter_only"
+    },
+    {
+      "id": "AUT-03",
+      "name": "Price automation",
+      "weight": 2,
+      "impl": 0.8,
+      "test": 0.8,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": "undercut_rule_missing"
+    },
+    {
+      "id": "AUT-04",
+      "name": "Stock automation",
+      "weight": 2,
+      "impl": 0.8,
+      "test": 0.8,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": null
+    },
+    {
+      "id": "AUT-05",
+      "name": "Order automation",
+      "weight": 2,
+      "impl": 0.6,
+      "test": 0.7,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": "sales_lock"
+    },
+    {
+      "id": "AUT-06",
+      "name": "Customer service automation",
+      "weight": 2,
+      "impl": 0.7,
+      "test": 0.7,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": "no_message_send"
+    },
+    {
+      "id": "AUT-07",
+      "name": "Customs automation",
+      "weight": 2,
+      "impl": 0.5,
+      "test": 0.5,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": "validateCustoms_missing"
+    },
+    {
+      "id": "AUT-08",
+      "name": "Reporting automation",
+      "weight": 2,
+      "impl": 0.8,
+      "test": 0.8,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": null
+    },
+    {
+      "id": "APR-01",
+      "name": "Approval states",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "APR-02",
+      "name": "Input-hash binding",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "APR-03",
+      "name": "Expire duplicate change",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "EXC-01",
+      "name": "Exception retry DLQ",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "EXC-02",
+      "name": "Sensitive no-retry",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "WRK-01",
+      "name": "Worker recover enqueue",
+      "weight": 3,
+      "impl": 0.7,
+      "test": 0.7,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "partial_tested",
+      "blocker": null
+    },
+    {
+      "id": "WRK-02",
+      "name": "No duplicate worker side effects",
+      "weight": 2,
+      "impl": 0.6,
+      "test": 0.5,
+      "ops": 0.2,
+      "prod": 0,
+      "status": "partial",
+      "blocker": null
+    },
+    {
+      "id": "CI-01",
+      "name": "CI unit tests",
+      "weight": 3,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": "github_actions_unobserved"
+    },
+    {
+      "id": "CI-02",
+      "name": "Lint typecheck build",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.5,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "DOC-01",
+      "name": "Completion docs",
+      "weight": 2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.4,
+      "prod": 0,
+      "status": "complete_tested",
+      "blocker": null
+    },
+    {
+      "id": "LIVE-01",
+      "name": "Live LLM provider wired",
+      "weight": 8,
+      "impl": 0.2,
+      "test": 0.2,
+      "ops": 0,
+      "prod": 0,
+      "status": "blocked",
+      "blocker": "provider_not_implemented"
+    },
+    {
+      "id": "LIVE-02",
+      "name": "Remote Python orchestrator deployed",
+      "weight": 4,
+      "impl": 0.1,
+      "test": 0.1,
+      "ops": 0,
+      "prod": 0,
+      "status": "blocked",
+      "blocker": "BUZZARD_ORCHESTRATOR_URL"
+    },
+    {
+      "id": "LIVE-03",
+      "name": "Remote Python Guardian deployed",
+      "weight": 4,
+      "impl": 0.3,
+      "test": 0.3,
+      "ops": 0,
+      "prod": 0,
+      "status": "blocked",
+      "blocker": "BUZZARD_GUARDIAN_URL"
+    },
+    {
+      "id": "LIVE-04",
+      "name": "Voice/phone assistant live",
+      "weight": 6,
+      "impl": 0,
+      "test": 0,
+      "ops": 0,
+      "prod": 0,
+      "status": "not_implemented",
+      "blocker": "out_of_this_slice"
+    },
+    {
+      "id": "LIVE-05",
+      "name": "Realtime/embodied AI live",
+      "weight": 6,
+      "impl": 0,
+      "test": 0,
+      "ops": 0,
+      "prod": 0,
+      "status": "not_implemented",
+      "blocker": "out_of_this_slice"
+    },
+    {
+      "id": "LIVE-06",
+      "name": "Production memory verified on persistent disk",
+      "weight": 4,
+      "impl": 0,
+      "test": 0,
+      "ops": 0,
+      "prod": 0,
+      "status": "blocked",
+      "blocker": "prod_not_probed"
+    },
+    {
+      "id": "LIVE-07",
+      "name": "Live supplier AI import",
+      "weight": 4,
+      "impl": 0,
+      "test": 0,
+      "ops": 0,
+      "prod": 0,
+      "status": "blocked",
+      "blocker": "mock_adapter_only"
+    },
+    {
+      "id": "LIVE-08",
+      "name": "Production Pusat health verified",
+      "weight": 4,
+      "impl": 0,
+      "test": 0,
+      "ops": 0,
+      "prod": 0,
+      "status": "blocked",
+      "blocker": "not_deployed"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ AI 161 weights were **not** edited.
 
 Fractions rose only for modules that gained real wiring or observed evidence this pass: supplier feed dry-run preview, customer message drafts, WMS reservation audit, Control Center tab browser coverage, and CI `e2e-admin` SUCCESS on `a2879e4` (run 38150381530). Operational stays **19.4%** because sales remain locked, live providers stay BLOCKED/NOT_CONFIGURED, and nothing was staged. Production stays **0.0%**.
 
-CI `e2e-admin` on superseded `a273651` (run 38149927916) **failed** (`Admin login → dashboard` navigated to `/products/` via the storefront header). `a2879e4` token/session path is observed green. Latest HEAD `f967c01` is not treated as CI-green until that run completes.
+CI `e2e-admin` on superseded `a273651` (run 38149927916) **failed** (`Admin login → dashboard` navigated to `/products/` via the storefront header). `a2879e4` token/session path is observed green. HEAD `0d71a18` run 38150996642 is quality + e2e-storefront + e2e-admin SUCCESS. `de6b95c` quality FAILURE was the leftover draft-hash collision and is fixed.
 
 ## 2. AI / automation (unchanged)
 

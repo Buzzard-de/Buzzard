@@ -15,7 +15,7 @@ These are **not** missing software modules in the same sense as an empty handler
 | Sales unlock | policy | `BUZZARD_SALES_ENABLED` must stay off | catalog mode |
 | Production DB migrate | policy | no production touch | local/isolated SQLite |
 | Production deploy | policy | out of scope | — |
-| CI on HEAD `f967c01` | not yet observed | pushed after `a2879e4` green | local tests passed |
+| CI on HEAD `0d71a18` | observed | run 38150996642 quality + e2e-storefront + e2e-admin SUCCESS | does not prove live providers |
 
 Health payloads list blocked ids (`llm_live`, `stripe`, `twilio`, `marketplace_publish`, `carrier_shipment_create`, `supplier_purchase_order_send`, `customer_message_send`, `product_source_of_truth`, `sales_unlock`). A green `/api/health/software` `code` object does **not** mean `liveReady`.
 

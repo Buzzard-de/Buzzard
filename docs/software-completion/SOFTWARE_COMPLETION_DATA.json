@@ -5,7 +5,7 @@
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "f967c01",
+    "head": "0d71a18",
     "headBeforeThisReport": "a2879e43058e277b19770f4aa2714eda5295033c",
     "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, admin browser CI, supplier-feed preview, message drafts, and WMS audit"
   },
@@ -47,7 +47,9 @@
     "test:unit_local_after_unique_draft": { "exit": 1, "files": 59, "passed": 723, "failed": 1, "note": "first shared-SQLite collision on leftover BLOCKED draft; fixed in f967c01; softwareCompletion 31/31 after unique message" },
     "playwright_admin_pim_journey": { "exit": 0, "passed": 26, "skipped": 1, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "github_actions_a273651": { "run": 38149927916, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "FAILURE", "failedTest": "Admin login → dashboard waitForURL /products" },
-    "github_actions_a2879e4": { "run": 38150381530, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" }
+    "github_actions_a2879e4": { "run": 38150381530, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" },
+    "github_actions_de6b95c": { "run": 38150791513, "quality": "FAILURE", "note": "shared leftover draft hash; fixed in f967c01" },
+    "github_actions_0d71a18": { "run": 38150996642, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" }
   },
   "safety": {
     "productionDeployed": false,

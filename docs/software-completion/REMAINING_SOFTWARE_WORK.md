@@ -4,13 +4,12 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. CI `e2e-admin` is green on `a2879e4`; HEAD `f967c01` is not claimed until its run is observed.
+None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. CI on HEAD `0d71a18` run 38150996642 is quality + e2e-storefront + e2e-admin SUCCESS.
 
 ## HIGH
 
-1. Observe GitHub Actions on HEAD `f967c01` (quality + e2e-storefront + e2e-admin).
-2. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
-3. Local SQLite can contain leftover public PIM rows and draft hashes. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
+1. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
+2. Local SQLite can contain leftover public PIM rows and draft hashes. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
 
 ## MEDIUM
 

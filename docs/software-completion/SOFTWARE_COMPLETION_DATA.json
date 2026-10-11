@@ -46,12 +46,15 @@
   "commandsRun": {
     "test:software": { "exit": 0, "tests": 46, "passed": 46 },
     "test:ai": { "exit": 0, "tests": 58, "passed": 58 },
-    "test:unit": { "exit": "pending", "note": "run after this commit" },
+    "test:unit": { "exit": 0, "files": 59, "passed": 739, "failed": 0 },
     "playwright_admin_pim": { "exit": 0, "passed": 13, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_admin_pim_journey": { "exit": 0, "passed": 37, "skipped": 4, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_homepage_viewports": { "exit": 0, "passed": 18, "locales": ["de", "en", "tr", "fr", "ar"] },
-    "render:preflight": { "exit": 0, "warnings": 2, "deployed": false },
-    "security:check": { "exit": 0, "warnings": 2 },
+    "lint": { "exit": 0 },
+    "typecheck": { "exit": 0 },
+    "diagnostics:providers": { "exit": 0, "dryRun": true, "live": 0, "items": 31 },
+    "render:preflight": { "exit": 0, "warnings": 2, "deployed": false, "note": "existing script; read-only health GET; not production verification" },
+    "security:check": { "exit": 0, "warnings": 1 },
     "github_actions_a26b51d": { "run": 38153709074, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" },
     "github_actions_0d71a18": { "run": 38150996642, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" }
   },

@@ -6,10 +6,12 @@ Production operations were **not** exercised.
 ## Worker / queue
 
 `jobQueue` + `pusat.worker`:
-- Unique job ids, claim lock, `releaseStaleLocks` → RETRYING.
+- Unique job ids, claim lock, `releaseStaleLocks` → RETRYING for non-financial jobs.
+- Financial job types force `maxRetries=0`. Stale financial locks go to **DEAD_LETTER**, not RETRYING. `retryJob` refuses them.
 - `markDeadLetter` terminal.
 - Financial classify `retryable:false` for payment/refund/timeout.
 - Software test 38 recovers a unique `SW_RECOVERY_*` job and dead-letters it.
+- Software test 48 proves `payment.capture` stale lock does not auto-retry.
 
 ## Task cancel
 

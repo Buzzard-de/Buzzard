@@ -16,6 +16,7 @@ Tables (all `CREATE TABLE IF NOT EXISTS`):
 | `software_shipments` | Tracking | unique tracking number; customer + order indexes |
 | `software_shipment_events` | Carrier-normalized events | FK to shipments |
 | `software_audit` | Software-layer audit | kind index |
+| `software_return_ledger` | Customer refund vs supplier credit | executed flags default 0; `assumed_supplier_will_reimburse` default 0 |
 
 Foreign keys: `PRAGMA foreign_keys = ON` already set in `db.js`.
 
@@ -23,11 +24,11 @@ Foreign keys: `PRAGMA foreign_keys = ON` already set in `db.js`.
 
 Unchanged except that software migration runs after `migrateCoreFoundationPusat()`. Pusat tables (`core_ai_memory`, `core_ai_exceptions`, `core_ai_task_meta`, approval columns) remain the AI persistence path. Memory is **not** moved to `/tmp`.
 
-Local catalog note: this development SQLite has public PIM rows (health reported 26 catalog products; storefront catalog list is non-empty). Demo SKU `BZ-CORE-DEMO-001` is not storefront-visible. Tests no longer assume `publicProducts === 0`.
+Local catalog note: this development SQLite has public PIM rows. Demo SKU `BZ-CORE-DEMO-001` is not storefront-visible. CI runners do **not** have those leftover public rows. Cart/checkout unit tests now seed an isolated READY/PUBLIC `UNIT-CART-*` fixture instead of assuming catalog contents. The fixture is never ACTIVE.
 
 ## Rollback strategy (not executed)
 
-Software tables are additive. Rollback is `DROP TABLE` of the six names above. No existing column was removed. No production apply.
+Software tables are additive. Rollback is `DROP TABLE` of the seven names above. No existing column was removed. No production apply.
 
 ## Tests
 
@@ -35,7 +36,8 @@ Software tables are additive. Rollback is `DROP TABLE` of the six names above. N
 - Transaction rollback: reserve inside `db.transaction` then throw → zero leftover rows (scenario 24).
 - Cross-process: child process with `BUZZARD_DB_PATH` reads shipment written by another PID (scenarios 8–9).
 - Idempotent reserve: same `idempotency_key` returns the same row (scenario 25).
+- Returns ledger: supplier credit REJECTED does not imply customer refund executed (scenario 26).
 
 ## Production
 
-`PRODUCTION_VERIFIED` is false. Render disk / live `buzzard.db` was not opened.
+`PRODUCTION_VERIFIED` is false. Render disk / live `buzzard.db` was not opened. `BUZZARD_DB_PATH` production path was not changed.

@@ -1,23 +1,25 @@
 # Completion Percentages
 
-Two scoring systems are kept **separate**.
+Two scoring systems are kept **separate**. Method name remains `whole-software-weighted-v1`. Weights were not changed.
 
 ## 1. Whole software (this slice)
 
 Source: `SOFTWARE_COMPLETION_DATA.json`  
 Method: `score = Σ(weight × fraction) / Σ(weight)`  
-Total weight: **148** (new method; not the AI 161 list).  
-AI 161 weights were **not** edited to improve the number.
+Total weight: **148** (not the AI 161 list).  
+AI 161 weights were **not** edited.
 
-| Layer | Previous | Now | Meaning |
+| Layer | Previous verification | Now | Meaning |
 | --- | --- | --- | --- |
-| Code implementation | 76.3% | **76.4%** | Code exists and is reachable in-repo |
-| Test verification | 68.4% | **73.6%** | Automated tests cover the module |
-| Integration verification | 53.4% | **56.8%** | Wired to another real module in tests |
-| Operational readiness | 19.1% | **19.4%** | Could run with current env/locks |
+| Code implementation | 76.4% | **78.0%** | Code exists and is reachable in-repo |
+| Test verification | 73.6% | **75.9%** | Automated tests cover the module |
+| Integration verification | 56.8% | **59.0%** | Wired to another real module in tests |
+| Operational readiness | 19.4% | **19.4%** | Could run with current env/locks |
 | Production verification | 0.0% | **0.0%** | No production evidence |
 
-Test % rose because this session ran full `test:unit`, homepage Playwright, commerce API Playwright, and observed CI — not because modules were rewritten. Code % barely moved (checkout diagnostic + guest-cart guard only). Operational stays low because sales are locked, providers are stub/BLOCKED, and nothing was staged. Production stays 0% even when local tests pass.
+Code/test/integration rose only for modules that gained real wiring or tests this pass: returns ledger, catalog search, diagnostic reporting, extra specialist assistants, admin API PIM proof, CI job expansion. Operational stays **19.4%** because sales remain locked, live providers stay BLOCKED/NOT_CONFIGURED, and nothing was staged. Production stays **0.0%**.
+
+CI `quality` on `25a48da` **failed** (`test:unit` 715/717). That failure is documented; it did not raise the CI ops fraction. Homepage Playwright in the new `e2e-storefront` job **did** succeed on that SHA.
 
 ## 2. AI / automation (unchanged)
 
@@ -32,15 +34,15 @@ Source: `docs/ai-automation-completion/AI_AUTOMATION_COMPLETION_DATA.json` (161 
 
 ## How not to read these numbers
 
-- Do not average 76.4% and 72.2% into a single “Buzzard is X% done”.
+- Do not average 78.0% and 72.2% into a single “Buzzard is X% done”.
 - Do not promote test % into production %.
 - Do not treat mock connector tests as live marketplace completion.
-- Do not treat `/api/health/software` `code.ok` as `liveReady`.
+- Do not treat `/api/health/software` `ready:true` as `liveReady`.
 - Do not treat homepage Playwright on static `:3040` as production Pages verification.
-- Do not treat CI `quality` SUCCESS as `test:unit` / Playwright green in GitHub Actions.
+- Do not treat a local 717/717 as GitHub-proven after `25a48da` failed `test:unit`.
 
 ## Module fractions
 
 Every module row with `impl` / `test` / `integ` / `ops` / `prod` is in `SOFTWARE_COMPLETION_DATA.json`. LIVE/blocked modules contribute ~0 to ops and prod.
 
-Largest honest test-fraction moves this session: storefront (Playwright 18/18), security/commerce API (9/9), CI (observed SUCCESS), admin (login + API only). Admin Control Center UI and live providers were **not** raised to verified.
+Largest honest moves this pass: returns, search, observability, specialist agents, admin API, CI job presence. Admin Control Center UI and live providers were **not** raised to verified.

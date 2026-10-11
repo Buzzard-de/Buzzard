@@ -27,7 +27,7 @@ Live probe requires key **and** `BUZZARD_AI_LIVE_PROBE=1`. Neither was used.
 
 | Adapter | Code interface | Live |
 | --- | --- | --- |
-| Twilio | `software.voice` | BLOCKED |
+| Twilio | `software.voice` | NOT_CONFIGURED / BLOCKED |
 | STT / TTS | interface | BLOCKED |
 | WebRTC / realtime | interface | BLOCKED |
 | Digital human | interface | BLOCKED |
@@ -56,4 +56,5 @@ See classification in `server/lib/software/marketplace.js`. All `liveVerified: f
 | Production Render API | not called |
 | Production database | not opened |
 | Customer email/SMS | `customerSend` blocked |
-| GitHub Actions `quality` | observed SUCCESS for `8adcc87` (38138267824), `ba95c26` (38140924702), `a56674d` (38141461171) |
+| GitHub Actions `quality` | SUCCESS on `8adcc87`, `ba95c26`, `a56674d`, `65a5b3a`; **FAILURE** on `25a48da` (`test:unit`) |
+| GitHub Actions `e2e-storefront` | SUCCESS on `25a48da` |

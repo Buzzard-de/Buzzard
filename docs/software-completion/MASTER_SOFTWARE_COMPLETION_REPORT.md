@@ -1,23 +1,23 @@
 # Master Software Completion Report
 
-Date: 2026-10-11 (PR #426 final software verification)  
+Date: 2026-10-11 (master completion / integration / verification)  
 Branch: `cursor/software-completion-c293`  
-Work is additive on top of the Pusat AI slice (PR #425 @ `40c35af`). PR #425 was not recreated.
+Work is additive on top of the Pusat AI slice (PR #425 @ `40c35af`). PR #425 was not recreated or merged.
 
-## What this verification pass did
+## What this pass did
 
-Existing engines stay canonical. Pusat remains the only orchestrator. This pass **did not** invent a new architecture. It ran the full unit suite, Playwright that already exists, live local API checks with sales locked, inspected GitHub Actions, and fixed isolation / catalog-assumption / checkout-diagnostic bugs inside the current design.
+Existing engines stay canonical. Pusat remains the only orchestrator. This pass connected remaining software facades (returns ledger, catalog search, diagnostic reporting, extra specialist assistants), expanded CI, verified storefront/admin APIs, and fixed the empty-CI catalog assumption that failed `test:unit` on `25a48da`.
 
 Historical reports in `docs/audit/`, `docs/progress-audit/`, and `docs/ai-automation-completion/` were not overwritten.
 
 ## PR relationship
 
-| PR | Branch | HEAD at review start | vs main |
+| PR | Branch | HEAD | vs main |
 | --- | --- | --- | --- |
 | #425 | `cursor/ai-automation-completion-c293` | `40c35af` | 3 AI commits |
-| #426 | `cursor/software-completion-c293` | `8adcc87` then verification commits | #425 commits + software facade + verification fixes |
+| #426 | `cursor/software-completion-c293` | this branch (contains #425) | #425 + software facade + verification + CI expansion |
 
-Both are open drafts, GitHub `MERGEABLE`, base `main`. #426 contains #425; do not merge both as independent stacks without a human plan.
+Both are open drafts, GitHub `MERGEABLE`, base `main`. #426 contains #425; do not merge both as independent stacks without a human plan. Do not auto-merge.
 
 ## Safety (unchanged)
 
@@ -34,26 +34,29 @@ Both are open drafts, GitHub `MERGEABLE`, base `main`. #426 contains #425; do no
 
 See `TEST_RESULTS.md`. Headline:
 
-- `npm run test:unit` → **713/713**
+- Local `npm run test:unit` → **717/717**
+- CI `test:unit` on `25a48da` → **715/717 FAIL** (part8 empty catalog)
+- part8 after isolated READY/PUBLIC fixture → **17/17**
 - `npm run test:ai` → **58/58**
-- `npm run test:software` → **23/23**
+- `npm run test:software` → **27/27** (CI SUCCESS on `25a48da`)
 - `node --test` part24 + part27–35 → **221/221**
-- Playwright homepage-viewports → **18/18** on `:3040`
-- Playwright admin → **2/4**
-- Playwright commerce API → **9/9** after checkout diagnostic fix
-- GitHub Actions `quality` → SUCCESS on `8adcc87`, `ba95c26`, and `a56674d`
+- Playwright homepage-viewports → **18/18** on `:3040` and CI `e2e-storefront` SUCCESS
+- Playwright admin → **2/4** (Control Center / Sessions **NOT VERIFIED**)
+- Admin PIM browser → **NOT VERIFIED**; PIM APIs proven
+- customer-journey page loads → **2/2**; checkout UI **NOT VERIFIED**
+- Playwright commerce API → **12/12**
 
 ## Scores (do not mix)
 
-**Whole software** (148-weight method):
+**Whole software** (148-weight method, unchanged formula):
 
-| Layer | Score |
-| --- | --- |
-| Code implementation | **76.4%** |
-| Test verification | **73.6%** |
-| Integration verification | **56.8%** |
-| Operational readiness | **19.4%** |
-| Production verification | **0.0%** |
+| Layer | Previous | Now |
+| --- | --- | --- |
+| Code implementation | 76.4% | **78.0%** |
+| Test verification | 73.6% | **75.9%** |
+| Integration verification | 56.8% | **59.0%** |
+| Operational readiness | 19.4% | **19.4%** |
+| Production verification | 0.0% | **0.0%** |
 
 **AI / automation** (161 weights, unchanged):
 
@@ -66,22 +69,22 @@ See `TEST_RESULTS.md`. Headline:
 
 Local tests do not raise production verification.
 
-## Bugs fixed this verification (architecture kept)
+## Architecture changes (small, additive)
 
-1. Vitest collected 10 `node:test` files (`No test suite found`) and raced shared SQLite — sequential files + exclude list.
-2. `jobLock` claimed the oldest `SYSTEM_HEALTH` among leftover queue rows — unique `jobType` + filtered claim.
-3. Catalog/publishing tests assumed 0 PUBLIC products — local DB has public PIM rows; tests now assert sales OFF + numeric count.
-4. Demo SKU `pim_prod_demo001` is READY/HIDDEN (demo guard) — storefront visibility / cart tests use a real public catalog item.
-5. Import dry-run returned before a `validation` stage — still validates, `written:false`.
-6. Guest carts (`!resourceCustomerId`) tripped IDOR unauthenticated logs — guest resources skip that gate.
-7. `/api/commerce/checkout/attempt` returned HTTP 503 when the hidden demo SKU was missing — diagnostic 200 with `blocked:true`, `commercialOrders:0`, `salesEnabled:false`.
+1. Software facade gained returns ledger, catalog search, and diagnostic reporting — wrapping existing RMA / catalog / Pusat, not replacing them.
+2. Specialist assistants for returns, shipping, marketplace, localization, and software health — recommendation-only.
+3. Admin client can take a runtime `window.__BUZZARD_API_URL__` for authenticated browser tests.
+4. CI `quality` now includes `test:unit`. New `e2e-storefront` job serves `out/` and runs homepage Playwright.
+5. Cart/checkout unit tests seed an isolated READY/PUBLIC fixture instead of assuming leftover public PIM rows.
+
+Pusat remains the single orchestrator. No second task authority. No brand rewrite. No €0.10 undercut.
 
 ## Honest limits
 
-Admin Control Center and Sessions were **not** browser-verified on static export. Live LLM, Stripe, Twilio, carrier, marketplace publish, and supplier PO send remain **BLOCKED**. CI does not run `test:unit` or Playwright. Production verification is **0%**.
+Admin Control Center, Sessions, and PIM Core were **not** browser-verified on static export. Full customer-journey checkout UI was **not** run. Live LLM, Stripe, Twilio, carrier, marketplace publish, and supplier PO send remain **BLOCKED**. CI `quality` on `25a48da` failed `test:unit`; the fixture fix is not GitHub-proven until the next observed run. Production verification is **0%**.
 
 See `REMAINING_SOFTWARE_WORK.md` and `BLOCKED_ITEMS.md`.
 
 ## Review / merge
 
-PR #426 is **ready for human review** as a draft with evidence. It is **not** ready to treat as production-complete or to auto-merge. Sales stay locked. Do not merge solely because CI `quality` is green.
+PR #426 is **ready for human review** as a draft with evidence. It is **not** production-complete and must **not** be auto-merged. Sales stay locked. Do not merge solely because homepage e2e is green.

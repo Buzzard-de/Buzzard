@@ -4,25 +4,22 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny are in place.
+1. Observe GitHub Actions `quality` after the part8 isolated-catalog fixture. `25a48da` failed `test:unit` 715/717. Do not treat local 717/717 as CI-green until the next run is observed.
 
 ## HIGH
 
-1. Admin Control Center and Sessions in a **session-aware** browser (Next or authenticated static). On static `:3040` both pages re-show the login form after a successful dashboard login. Not verified.
-2. Returns financial consistency (customer refund vs supplier receivable) beyond mock payment safety.
-3. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
-4. CI `quality` does not run `test:unit` or Playwright. Local 713 and 18 homepage tests are not GitHub-proven.
-5. Broader API contract tests (auth, rate limit, error shape) beyond health + commerce e2e.
-6. Local SQLite contains public PIM rows. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
+1. Admin Control Center, Sessions, and PIM Core in a **session-aware** browser (Next runtime, not only static export). On static `:3040` those pages re-show the login form. APIs work with bearer.
+2. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
+3. Broader API contract tests (auth, rate limit, error shape) beyond health + commerce e2e.
+4. Local SQLite contains public PIM rows. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
 
 ## MEDIUM
 
-1. Search: wire `software.searchCatalog` to the real catalog index; keep empty/invalid query behavior. Mobile search → `/products/?q=` was Playwright-verified; the software helper remains isolated.
+1. Full `customer-journey` checkout UI (product → cart → checkout form) was not executed. Homepage + warenkorb page loads passed.
 2. WMS `reserveInventory` vs `software.inventory.reserve` — two reservation tables; document operator path and eventually share events.
-3. Returns RMA + order engine state machine integration tests.
-4. Supplier feed validation (CSV/XML) on fixtures, still mock.
-5. `customer-journey` and `admin-pim-core` Playwright projects were not used as proof this session.
-6. Arabic homepage does not show the German photo band (expected locale-specific). Confirm that is intentional for every RTL market.
+3. Supplier feed validation (CSV/XML) on fixtures, still mock.
+4. Arabic homepage does not show the German photo band (expected locale-specific). Confirm that is intentional for every RTL market.
+5. Authenticated admin Playwright still depends on a rebuilt static export with `NEXT_PUBLIC_BUZZARD_API_URL` plus runtime override. A Next server would be the honest Control Center proof.
 
 ## LOW
 

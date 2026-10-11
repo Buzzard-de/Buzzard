@@ -7,12 +7,17 @@ export const API = (process.env.NEXT_PUBLIC_BUZZARD_API_URL || process.env.BUZZA
   "",
 );
 
+let cachedToken: string | undefined;
+
 export async function seedAdminSession(page: Page, request: APIRequestContext) {
-  const login = await request.post(`${API}/api/admin/login`, {
-    data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
-  });
-  const body = await login.json();
-  const token = body.token as string | undefined;
+  if (!cachedToken) {
+    const login = await request.post(`${API}/api/admin/login`, {
+      data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
+    });
+    const body = await login.json();
+    cachedToken = body.token as string | undefined;
+  }
+  const token = cachedToken;
   if (!token) {
     throw new Error("admin_login_failed");
   }

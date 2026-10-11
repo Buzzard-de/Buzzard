@@ -57,6 +57,27 @@ describe("commerceValidation", () => {
   });
 });
 
+function seedVisibleCatalogProduct() {
+  const productCore = require("../lib/pim/productCore.js");
+  const catalogCache = require("../lib/storefront/catalogCache.js");
+  const suffix = crypto.randomBytes(3).toString("hex");
+  const product = productCore.createProduct(
+    {
+      sku: `UNIT-CART-${suffix}`,
+      title: "Isolated cart fixture",
+      description: "Unit-test fixture for cart and checkout only.",
+      category: "cat-05",
+      price: 12.5,
+      stock: 10,
+      status: "READY",
+      visibility: "PUBLIC",
+    },
+    { source: "SYSTEM", actorId: "vitest" }
+  );
+  catalogCache.invalidate();
+  return product;
+}
+
 describe("cartService", () => {
   it("creates cart and resolves authoritative price", () => {
     const cartService = require("../lib/commerce/cartService.js");
@@ -66,9 +87,10 @@ describe("cartService", () => {
     const hiddenPrice = cartService.resolveAuthoritativePrice(demo.id);
     expect(hiddenPrice.error).toBeTruthy();
 
-    const catalogReadService = require("../lib/storefront/catalogReadService.js");
-    const visible = catalogReadService.listProducts({ page: 1, limit: 5 }).items?.[0];
+    const visible = seedVisibleCatalogProduct();
     expect(visible?.id).toBeTruthy();
+    expect(visible.status).toBe("READY");
+    expect(visible.visibility).toBe("PUBLIC");
 
     const cart = cartService.createCart({ sessionId: `vitest-${crypto.randomBytes(3).toString("hex")}` });
     expect(cart.cart?.id).toBeTruthy();
@@ -89,9 +111,7 @@ describe("checkoutService state machine", () => {
   it("blocks illegal transitions", () => {
     const checkoutService = require("../lib/commerce/checkoutService.js");
     const cartService = require("../lib/commerce/cartService.js");
-    const productCore = require("../lib/pim/productCore.js");
-    const catalogReadService = require("../lib/storefront/catalogReadService.js");
-    const visible = catalogReadService.listProducts({ page: 1, limit: 5 }).items?.[0];
+    const visible = seedVisibleCatalogProduct();
     expect(visible?.id).toBeTruthy();
     const cart = cartService.createCart({ sessionId: `state-test-${Date.now()}` });
     cartService.addItem(cart.cart.id, { productId: visible.id, quantity: 1 });

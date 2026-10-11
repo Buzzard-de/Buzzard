@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-10-11T13:40:00Z",
+  "generatedAt": "2026-10-11T15:21:00Z",
   "verification": {
     "branch": "cursor/software-completion-c293",
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "headBeforeThisReport": "7f815851bca9c9160d6346aeed85141cd046b447",
-    "basedOn": "Pusat AI completion HEAD (PR #425 commits 3e06198, 4c83d3e, 40c35af) plus software facade and verification commits through 25a48da"
+    "head": "f967c01",
+    "headBeforeThisReport": "a2879e43058e277b19770f4aa2714eda5295033c",
+    "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, admin browser CI, supplier-feed preview, message drafts, and WMS audit"
   },
   "method": {
     "name": "whole-software-weighted-v1",
@@ -26,59 +27,27 @@
     "productionVerification": 0.0
   },
   "scores": {
-    "codeImplementation": 78.0,
-    "testVerification": 76.9,
-    "integrationVerification": 59.9,
+    "codeImplementation": 79.1,
+    "testVerification": 78.2,
+    "integrationVerification": 61.5,
     "operationalReadiness": 19.4,
     "productionVerification": 0.0,
     "totalWeight": 148,
     "previousVerificationPass": {
-      "codeImplementation": 76.4,
-      "testVerification": 73.6,
-      "integrationVerification": 56.8,
+      "codeImplementation": 78.0,
+      "testVerification": 76.9,
+      "integrationVerification": 59.9,
       "operationalReadiness": 19.4,
       "productionVerification": 0.0
     }
   },
   "commandsRun": {
-    "test:unit_local": { "exit": 0, "files": 58, "tests": 717, "passed": 717, "note": "local shared SQLite; later CI on 25a48da failed 2 part8 tests" },
-    "test:unit_ci_25a48da": { "exit": 1, "files": 58, "passed": 715, "failed": 2, "runs": [38143086398, 38143084048], "note": "part8Foundation assumed leftover public PIM rows" },
-    "test:unit_part8_after_fixture": { "exit": 0, "tests": 17, "passed": 17 },
+    "test:software": { "exit": 0, "tests": 31, "passed": 31 },
     "test:ai": { "exit": 0, "tests": 58, "passed": 58 },
-    "test:software": { "exit": 0, "tests": 27, "passed": 27, "scenariosCovered": 29, "ciOn25a48da": "SUCCESS" },
-    "test:part24": { "exit": 0, "tests": 10, "passed": 10 },
-    "test:part27": { "exit": 0, "tests": 18, "passed": 18 },
-    "test:part28": { "exit": 0, "tests": 24, "passed": 24 },
-    "test:part29": { "exit": 0, "tests": 36, "passed": 36 },
-    "test:part30": { "exit": 0, "tests": 22, "passed": 22 },
-    "test:part31": { "exit": 0, "tests": 24, "passed": 24 },
-    "test:part32": { "exit": 0, "tests": 15, "passed": 15 },
-    "test:part33": { "exit": 0, "tests": 21, "passed": 21 },
-    "test:part34": { "exit": 0, "tests": 26, "passed": 26 },
-    "test:part35": { "exit": 0, "tests": 25, "passed": 25 },
-    "playwright_homepage_viewports": { "exit": 0, "tests": 18, "passed": 18, "baseURL": "http://127.0.0.1:3040", "note": "static export out/; CI e2e-storefront SUCCESS on 25a48da" },
-    "playwright_admin": { "exit": 1, "passed": 2, "failed": 2, "note": "login + dashboard passed; Control Center and Sessions failed on static export" },
-    "playwright_admin_pim_core_browser": { "status": "NOT_VERIFIED", "note": "static AdminGuard / session; proven via admin PIM APIs instead" },
-    "playwright_customer_journey": { "pageLoads": { "passed": 2, "total": 2 }, "fullCheckoutUi": "NOT_VERIFIED" },
-    "playwright_commerce_api": { "exit": 0, "tests": 12, "passed": 12, "baseURL": "http://127.0.0.1:3001" },
-    "admin_pim_api": { "unauth": 401, "login": 200, "products": 50, "demoVisibility": "HIDDEN", "validate": "WARNING", "importDryRunWritten": false },
-    "github_actions_8adcc87": { "run": 38138267824, "job": "quality", "conclusion": "SUCCESS" },
-    "github_actions_ba95c26": { "run": 38140924702, "job": "quality", "conclusion": "SUCCESS" },
-    "github_actions_a56674d": { "run": 38141461171, "job": "quality", "conclusion": "SUCCESS" },
-    "github_actions_65a5b3a": { "run": 38141677035, "job": "quality", "conclusion": "SUCCESS" },
-    "github_actions_25a48da": {
-      "runs": [38143086398, 38143084048],
-      "quality": "FAILURE",
-      "e2eStorefront": "SUCCESS",
-      "failedJob": "quality / npm run test:unit",
-      "failedTests": ["part8Foundation cartService", "part8Foundation checkoutService"]
-    },
-    "github_actions_7f81585": {
-      "run": 38144084891,
-      "quality": "SUCCESS",
-      "e2eStorefront": "SUCCESS",
-      "steps": ["lint", "typecheck", "build", "test:ai", "test:software", "test:unit", "render:preflight", "security:check", "homepage-viewports"]
-    }
+    "test:unit_local_after_unique_draft": { "exit": 1, "files": 59, "passed": 723, "failed": 1, "note": "first shared-SQLite collision on leftover BLOCKED draft; fixed in f967c01; softwareCompletion 31/31 after unique message" },
+    "playwright_admin_pim_journey": { "exit": 0, "passed": 26, "skipped": 1, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
+    "github_actions_a273651": { "run": 38149927916, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "FAILURE", "failedTest": "Admin login → dashboard waitForURL /products" },
+    "github_actions_a2879e4": { "run": 38150381530, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" }
   },
   "safety": {
     "productionDeployed": false,
@@ -86,7 +55,8 @@
     "salesEnabled": false,
     "productSotActivated": false,
     "marketUndercutImplemented": false,
-    "realExternalOperations": false
+    "realExternalOperations": false,
+    "commercialOrders": 0
   },
   "modules": [
     {"id":"SW-PUSAT","name":"Pusat orchestrator","weight":8,"impl":1,"test":1,"integ":0.9,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
@@ -100,24 +70,24 @@
     {"id":"SW-I18N","name":"i18n/RTL","weight":5,"impl":0.95,"test":0.95,"integ":0.85,"ops":0.4,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-MKT","name":"Market engine","weight":5,"impl":0.9,"test":0.85,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-PRICE","name":"Pricing","weight":6,"impl":0.85,"test":0.85,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-INV","name":"Inventory","weight":6,"impl":0.8,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-SUP","name":"Supplier","weight":5,"impl":0.55,"test":0.5,"integ":0.3,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
+    {"id":"SW-INV","name":"Inventory","weight":6,"impl":0.8,"test":0.75,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-SUP","name":"Supplier","weight":5,"impl":0.65,"test":0.65,"integ":0.45,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-ORD","name":"Order engine","weight":7,"impl":0.75,"test":0.8,"integ":0.65,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-PAY","name":"Payment","weight":5,"impl":0.6,"test":0.55,"integ":0.3,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-RMA","name":"Returns","weight":4,"impl":0.7,"test":0.7,"integ":0.5,"ops":0,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-MP","name":"Marketplace","weight":5,"impl":0.45,"test":0.4,"integ":0.2,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-SHIP","name":"Shipping/tracking","weight":5,"impl":0.7,"test":0.7,"integ":0.4,"ops":0.1,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-CUS","name":"Customer","weight":5,"impl":0.7,"test":0.7,"integ":0.55,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-ADM","name":"Admin/control","weight":5,"impl":0.85,"test":0.85,"integ":0.75,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-CUS","name":"Customer","weight":5,"impl":0.78,"test":0.78,"integ":0.62,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-ADM","name":"Admin/control","weight":5,"impl":0.85,"test":0.90,"integ":0.82,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SF","name":"Storefront","weight":6,"impl":0.7,"test":0.82,"integ":0.6,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SEA","name":"Search","weight":3,"impl":0.75,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-VOICE","name":"Voice/phone","weight":4,"impl":0.35,"test":0.3,"integ":0.1,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-DB","name":"Database","weight":5,"impl":0.85,"test":0.7,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-API","name":"API","weight":5,"impl":0.7,"test":0.7,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-API","name":"API","weight":5,"impl":0.7,"test":0.75,"integ":0.63,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SEC","name":"Security","weight":6,"impl":0.75,"test":0.75,"integ":0.55,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-OBS","name":"Observability","weight":3,"impl":0.85,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-WRK","name":"Workers","weight":4,"impl":0.85,"test":0.85,"integ":0.7,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-CI","name":"CI","weight":3,"impl":0.9,"test":0.9,"integ":0.8,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.9,"test":0.8,"integ":0.55,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}
+    {"id":"SW-CI","name":"CI","weight":3,"impl":0.95,"test":0.95,"integ":0.90,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.9,"test":0.85,"integ":0.60,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}
   ]
 }

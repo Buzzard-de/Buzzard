@@ -17,13 +17,13 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | Market 35 | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | locale ≠ market on homepage controls |
 | Pricing | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Node canonical; price-tamper e2e |
 | Inventory | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Fail-closed reserve |
-| Supplier | PARTIALLY_IMPLEMENTED | TESTED (mock) | BLOCKED | `MockSupplierAdapter` |
+| Supplier | PARTIALLY_IMPLEMENTED | TESTED (fixture dry-run) | BLOCKED | CSV/XML preview; live fetch BLOCKED |
 | Order / PO | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Draft ≠ send; commercial attempt blocked |
 | Payment | PARTIALLY_IMPLEMENTED | TESTED (mock) | BLOCKED | No auto financial retry |
 | Returns | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Ledger keeps customer refund ≠ supplier credit; no refund executed |
 | Marketplace | PARTIALLY_IMPLEMENTED | TESTED (mock) | BLOCKED | Classified; publish blocked |
 | Shipping / tracking | TESTED | PARTIALLY_IMPLEMENTED | BLOCKED | No live carrier; no invented GPS |
-| Customer | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Isolation on order + tracking + cart IDOR e2e |
+| Customer | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Isolation + blocked message drafts |
 | Admin / Control Center | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Authenticated browser on static `:3040` + API `:3001` |
 | Storefront | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Static `:3040` homepage 18/18 + CI e2e-storefront |
 | Search | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `software.search` uses `catalogReadService`; invented:false |
@@ -32,7 +32,7 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | API | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Health + commerce + admin PIM + software report |
 | Security | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Sales lock + guardian + isolation + tamper e2e |
 | Workers | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | No double-claim; expired lock recovery |
-| CI | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `7f81585` quality + e2e-storefront SUCCESS (run 38144084891) |
+| CI | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `a2879e4` quality + e2e-storefront + e2e-admin SUCCESS (run 38150381530) |
 
 ## Wiring that was proven in code
 

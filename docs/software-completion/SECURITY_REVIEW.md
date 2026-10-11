@@ -25,7 +25,7 @@ Scope: isolated software-completion slice plus verification fixes. No production
 
 ## `npm run security:check`
 
-Previously exit 0 with **2 warnings** (pre-existing): frontend `npm audit` and contact form time-trap. GitHub Actions skipped it on `25a48da` because `test:unit` failed first. On `7f81585` run 38144084891, `security:check` completed **SUCCESS**.
+Previously exit 0 with **2 warnings** (pre-existing): frontend `npm audit` and contact form time-trap. GitHub Actions skipped it on `25a48da` because `test:unit` failed first. On `7f81585` run 38144084891 and `a2879e4` run 38150381530, `security:check` completed **SUCCESS**.
 
 ## Issues classified
 

@@ -11,15 +11,15 @@ AI 161 weights were **not** edited.
 
 | Layer | Previous verification | Now | Meaning |
 | --- | --- | --- | --- |
-| Code implementation | 76.4% | **78.0%** | Code exists and is reachable in-repo |
-| Test verification | 73.6% | **76.9%** | Automated tests cover the module |
-| Integration verification | 56.8% | **59.9%** | Wired to another real module in tests |
+| Code implementation | 78.0% | **79.1%** | Code exists and is reachable in-repo |
+| Test verification | 76.9% | **78.2%** | Automated tests cover the module |
+| Integration verification | 59.9% | **61.5%** | Wired to another real module in tests |
 | Operational readiness | 19.4% | **19.4%** | Could run with current env/locks |
 | Production verification | 0.0% | **0.0%** | No production evidence |
 
-Code/test/integration rose only for modules that gained real wiring or tests this pass: returns ledger, catalog search, diagnostic reporting, extra specialist assistants, admin API PIM proof, CI job expansion. Operational stays **19.4%** because sales remain locked, live providers stay BLOCKED/NOT_CONFIGURED, and nothing was staged. Production stays **0.0%**.
+Fractions rose only for modules that gained real wiring or observed evidence this pass: supplier feed dry-run preview, customer message drafts, WMS reservation audit, Control Center tab browser coverage, and CI `e2e-admin` SUCCESS on `a2879e4` (run 38150381530). Operational stays **19.4%** because sales remain locked, live providers stay BLOCKED/NOT_CONFIGURED, and nothing was staged. Production stays **0.0%**.
 
-CI `quality` on `25a48da` **failed** (`test:unit` 715/717). After the isolated cart fixture, run [38144084891](https://github.com/Buzzard-de/Buzzard/actions/runs/38144084891) on `7f81585` observed **quality SUCCESS** (including `test:unit`, preflight, `security:check`) and **e2e-storefront SUCCESS**. That raises only the CI module test/integration fractions. Ops and production stay unchanged.
+CI `e2e-admin` on superseded `a273651` (run 38149927916) **failed** (`Admin login → dashboard` navigated to `/products/` via the storefront header). `a2879e4` token/session path is observed green. Latest HEAD `f967c01` is not treated as CI-green until that run completes.
 
 ## 2. AI / automation (unchanged)
 
@@ -34,15 +34,15 @@ Source: `docs/ai-automation-completion/AI_AUTOMATION_COMPLETION_DATA.json` (161 
 
 ## How not to read these numbers
 
-- Do not average 78.0% and 72.2% into a single “Buzzard is X% done”.
+- Do not average 79.1% and 72.2% into a single “Buzzard is X% done”.
 - Do not promote test % into production %.
 - Do not treat mock connector tests as live marketplace completion.
 - Do not treat `/api/health/software` `ready:true` as `liveReady`.
 - Do not treat homepage Playwright on static `:3040` as production Pages verification.
-- Do not treat a local 717/717 as GitHub-proven without an observed Actions run. `7f81585` now has that observation.
+- Do not treat a local 31/31 or 26/26 browser pass as production verification.
 
 ## Module fractions
 
 Every module row with `impl` / `test` / `integ` / `ops` / `prod` is in `SOFTWARE_COMPLETION_DATA.json`. LIVE/blocked modules contribute ~0 to ops and prod.
 
-Largest honest moves this pass: returns, search, observability, specialist agents, admin API, CI job presence. Admin Control Center UI and live providers were **not** raised to verified.
+Largest honest moves this pass: supplier feed preview, communications drafts, admin Control Center tabs, CI `e2e-admin`. Live providers were **not** raised.

@@ -6,118 +6,64 @@ All commands below were run on isolated local data or observed GitHub Actions. N
 
 | Command | Exit | Passed | Failed | Notes |
 | --- | --- | --- | --- | --- |
-| `npm run test:unit` (local) | 0 | 717 | 0 | 58 vitest files. Shared local SQLite had public PIM rows. |
-| `npm run test:unit` (CI `25a48da`) | 1 | 715 | 2 | `part8Foundation` cart + checkout assumed leftover public catalog. |
-| `vitest part8Foundation` after fixture | 0 | 17 | 0 | Seeds a READY/PUBLIC `UNIT-CART-*` fixture. Not ACTIVE. |
+| `npm run test:software` | 0 | 31 | 0 | Includes feed preview, message drafts, WMS audit, auth 401 |
 | `npm run test:ai` | 0 | 58 | 0 | Memory restart, Guardian, approval, workers |
-| `npm run test:software` | 0 | 27 | 0 | CI on `25a48da` also SUCCESS |
-| `npm run test:part24` | 0 | 10 | 0 | `node --test` |
-| `npm run test:part27` | 0 | 18 | 0 | `node --test` |
-| `npm run test:part28` | 0 | 24 | 0 | publishing asserts `enabled===false` + numeric count |
-| `npm run test:part29` | 0 | 36 | 0 | same publishing assertion |
-| `npm run test:part30` | 0 | 22 | 0 | |
-| `npm run test:part31` | 0 | 24 | 0 | |
-| `npm run test:part32` | 0 | 15 | 0 | |
-| `npm run test:part33` | 0 | 21 | 0 | |
-| `npm run test:part34` | 0 | 26 | 0 | |
-| `npm run test:part35` | 0 | 25 | 0 | |
-| Playwright `homepage-viewports` | 0 | 18 | 0 | static `out/` on `:3040`; CI `e2e-storefront` SUCCESS |
-| Playwright `admin.spec` | 0 | 6 | 0 | login, unauth redirect, token, dashboard, Control Center, Sessions on `:3040` |
-| Playwright `admin-pim-core` browser | 0 | 5 | 0 | Product Core, demo SKU, Validate, dry-run, Brands |
-| Playwright `customer-journey` chromium-desktop | 0 | 18 | 0 | 1 skipped (phone-only UX); checkout catalog/blocked, `commercialOrders:0` |
-| Playwright commerce API | 0 | 12 | 0 | API `:3001`, sales locked |
-| GitHub Actions `7f81585` | 0 | quality + e2e-storefront | 0 | run 38144084891; includes `test:unit` |
+| `npm run test:unit` (local, before unique draft) | 1 | 723 | 1 | Shared SQLite leftover `BLOCKED` draft hash; fixed in `f967c01` |
+| `vitest run softwareCompletion` after unique draft | 0 | 31 | 0 | Isolated message body |
+| Playwright admin + PIM + customer-journey | 0 | 26 | 0 | 1 skipped (phone-only UX) |
+| GitHub Actions `a273651` | 1 | quality + e2e-storefront | e2e-admin | run 38149927916; login submit hit storefront search |
+| GitHub Actions `a2879e4` | 0 | quality + e2e-storefront + e2e-admin | 0 | run 38150381530 |
+| GitHub Actions `f967c01` | pending | — | — | pushed after docs; not claimed green |
 
 ## Required scenarios → tests
 
 | # | Scenario | Evidence |
 | --- | --- | --- |
-| 1 | Product dry-run | `softwareCompletion` it 1; `productCore.createProduct({dryRun:true})` |
-| 2 | ACTIVE rejected | it 2 |
-| 3 | Canonical price | it 3; `software.pricing.quote`; commerce price-tamper e2e |
-| 4 | Unreliable stock blocked | it 4; estimate + stale |
-| 5 | Safe order draft | it 5 |
-| 6 | PO draft not sent | it 6 |
-| 7 | No double claim | it 7; `SOFTWARE_ISOLATED` |
-| 8 | Restart keeps task/state | it 8-9; second Node process |
-| 9 | Memory/tracking readable in other process | same; `softwareRestartChild.cjs` |
-| 10 | Guardian denies dangerous | it 10; `supplier.order.submit` |
-| 11 | Approval input change | it 11 |
-| 12 | No financial auto-retry | it 12 |
-| 13 | Customs fail-closed | it 13 |
-| 14 | Supplier mock errors | it 14 |
-| 15 | Marketplace mock errors | it 15 |
-| 16 | Tracking own order only | it 16-17 |
-| 17 | Other customer denied | it 16-17; cart IDOR e2e |
-| 18 | Arabic RTL | it 18 + homepage Playwright AR landscape/portrait `dir=rtl` |
-| 19 | Language ≠ market | it 19 + languageIndependence + DE/TR locale controls |
-| 20 | Sales lock | it 20; `/api/health/software` `salesEnabled:false`; commercial checkout blocked |
-| 21 | Missing externals BLOCKED | it 21; live health payload |
-| 22 | Secrets not logged | it 22 |
-| 23 | Worker crash recovery | it 23; expired lock reclaim |
-| 24 | Transaction rollback | it 24 |
-| 25 | Consistent API/idempotent reserve | it 25; checkout idempotency e2e |
-| 26 | Returns ledger does not assume supplier credit | it 26 |
-| 27 | Reporting does not invent revenue | it 27 |
-| 28 | Canonical search does not invent products | it 28 |
-| 29 | Specialist assistants recommendation-only | it 29 |
+| 1–29 | Prior softwareCompletion cases | still passing |
+| 30 | CSV/XML feed preview | it 30; `written:false`, `purchaseOrderSent:false` |
+| 31 | Message draft never sends | it 31; send path `BLOCKED`, `sent=0` |
+| 32 | WMS vs commercial reserve | it 32; `sharedAuthority:false` |
+| 33 | API 401 + health fail-closed | it 33 + Playwright unauth admin APIs |
 
-## Storefront browser
+## Authenticated browser
 
-Served `out/` on **`:3040`**. Stale Next on `:3000` was not used.
-
-Passed (18/18): German 390/320/393/430/landscape, desktop 1440, tablet 768, DE/TR locale controls, mobile search → `/products/?q=textil`, AR landscape RTL, portrait de/en/tr/fr/ar.
-
-CI `e2e-storefront` on `25a48da` reproduced the homepage suite successfully.
-
-Not claimed: live production Pages, full customer-journey checkout UI, Arabic Germany photo band (DE-locale specific).
-
-## Admin
+Served `out/` on **`:3040`** against API **`:3001`**. Sales locked.
 
 | Check | Result |
 | --- | --- |
-| `/admin/login/` browser | passed |
-| login → `/admin/` dashboard | passed |
-| `/admin/control-center/` browser | **NOT VERIFIED** — static export returned the login form |
-| `/admin/sessions/` browser | **NOT VERIFIED** — same |
-| `/admin/pim-core/` browser | **NOT VERIFIED** — same AdminGuard/session issue |
-| `POST /api/admin/login` | 200, token issued (rate-limited after many attempts; token cache added) |
-| Admin PIM products | 50 rows; demo `HIDDEN` |
-| Admin PIM validate | WARNING |
-| Admin PIM import dry-run | `written:false` |
-| `GET /api/admin/commerce/overview` with bearer | 200, `salesEnabled:false` |
-| `GET /api/admin/approvals` with bearer | 200 |
-| same admin routes without auth | 401 |
+| Admin login page | passed |
+| Unauth Control Center → login | passed |
+| Login form stores session token | passed |
+| Authenticated dashboard | passed |
+| Control Center page | passed |
+| Sessions page | passed |
+| Control Center tabs: Onaylar / Commerce / Workers / Entegrasyonlar | passed |
+| Unauth `/api/admin/software/*` | 401 |
+| Admin PIM Core / demo SKU / Validate / dry-run / Brands | 5/5 passed |
+| customer-journey homepage + warenkorb + catalog/blocked checkout | 18 passed / 1 skipped |
+| `POST /api/commerce/checkout/attempt` | `blocked:true`, `salesEnabled:false`, `commercialOrders:0` |
 
 ## Live local API (sales locked)
 
-`GET /api/health/software` → `ready:true`, `liveReady:false`, `salesEnabled:false`, `productSourceOfTruthActive:false`, `marketUndercutImplemented:false`.
-
-Engine map (explicit, not inferred from process health): payment/marketplace/tracking **BLOCKED**, voice **NOT_CONFIGURED**, production **NOT_TESTED**.
-
-`POST /api/commerce/checkout/attempt` → HTTP 200, `blocked:true`, `commercialOrders:0`, `salesEnabled:false`.
+`GET /api/health/software` → `ready:true`, `liveReady:false`, `salesEnabled:false`, `productSourceOfTruthActive:false`, `version:1.2.0`.
 
 ## GitHub Actions
 
 Observed, not inferred:
 
-| SHA | Run | quality | e2e-storefront |
-| --- | --- | --- | --- |
-| `8adcc87` | [38138267824](https://github.com/Buzzard-de/Buzzard/actions/runs/38138267824) | SUCCESS | n/a |
-| `ba95c26` | [38140924702](https://github.com/Buzzard-de/Buzzard/actions/runs/38140924702) | SUCCESS | n/a |
-| `a56674d` | [38141461171](https://github.com/Buzzard-de/Buzzard/actions/runs/38141461171) | SUCCESS | n/a |
-| `65a5b3a` | [38141677035](https://github.com/Buzzard-de/Buzzard/actions/runs/38141677035) | SUCCESS | n/a |
-| `25a48da` | [38143086398](https://github.com/Buzzard-de/Buzzard/actions/runs/38143086398) / [38143084048](https://github.com/Buzzard-de/Buzzard/actions/runs/38143084048) | **FAILURE** (`test:unit` 2 failed) | **SUCCESS** |
-| `7f81585` | [38144084891](https://github.com/Buzzard-de/Buzzard/actions/runs/38144084891) | **SUCCESS** (lint, typecheck, build, `test:ai`, `test:software`, `test:unit`, preflight, `security:check`) | **SUCCESS** |
+| SHA | Run | quality | e2e-storefront | e2e-admin |
+| --- | --- | --- | --- | --- |
+| `7f81585` | [38144084891](https://github.com/Buzzard-de/Buzzard/actions/runs/38144084891) | SUCCESS | SUCCESS | n/a |
+| `a273651` | [38149927916](https://github.com/Buzzard-de/Buzzard/actions/runs/38149927916) | SUCCESS | SUCCESS | **FAILURE** (login → `/products/`) |
+| `a2879e4` | [38150381530](https://github.com/Buzzard-de/Buzzard/actions/runs/38150381530) | SUCCESS | SUCCESS | **SUCCESS** |
 
-Current workflow: `quality` runs lint, typecheck, build, `test:ai`, `test:software`, `test:unit`, `render:preflight`, `security:check`. Separate `e2e-storefront` serves `out/` on `:3040` and runs homepage Playwright. The empty-CI catalog failure on `25a48da` is fixed and observed green on `7f81585`.
+Current workflow: `quality` (lint, typecheck, build, `test:ai`, `test:software`, `test:unit`, preflight, `security:check`), `e2e-storefront` (homepage on `out/:3040`), `e2e-admin` (API `:3001` + static `:3040` + admin / PIM / journey).
 
 ## What tests do not prove
 
 - Live OpenAI / Anthropic / Google.
-- Live Stripe / PayPal / Twilio / DHL / marketplace.
+- Live Stripe / PayPal / Twilio / DHL / marketplace / supplier PO.
 - Production SQLite on Render disk.
-- Admin Control Center / Sessions / PIM in a browser against a session-aware Next server.
-- Full customer-journey checkout UI.
+- Full customer-journey checkout form while sales are locked.
 - Production verification (`PRODUCTION_VERIFIED` stays 0).
-- Authenticated admin Control Center / PIM browser tests (still not in CI).
+- CI green on HEAD `f967c01` until that run is observed.

@@ -1,12 +1,14 @@
 # Code Implementation Status
 
-Lineage: `40c35af` (AI) → `8adcc87` (software facade) → isolation/verification commits → `25a48da` (engines + CI) → this report (part8 CI fixture + evidence). Implementation status is **code present and reachable**, not production proof.
+Lineage: `40c35af` (AI) → software facade → admin browser CI (`a2879e4`) → `de6b95c`/`f967c01` (feed preview, message drafts, WMS audit). Implementation status is **code present and reachable**, not production proof.
 
 ## New / changed implementation
 
 | Path | Role |
 | --- | --- |
 | `server/lib/software/*` | Facade. Not a second orchestrator. |
+| `server/lib/software/supplierFeeds.js` | CSV/XML/JSON dry-run preview. No live fetch. No PO. |
+| `server/lib/software/communications.js` | Message drafts; send always BLOCKED. |
 | `server/lib/software/returns.js` | Wraps existing RMA; customer refund ≠ supplier credit. |
 | `server/lib/software/search.js` | Canonical catalog search via `catalogReadService`. |
 | `server/lib/software/reporting.js` | Local diagnostic counts; `inventedRevenue:false`. |
@@ -41,7 +43,7 @@ Lineage: `40c35af` (AI) → `8adcc87` (software facade) → isolation/verificati
 | Area | Why not complete |
 | --- | --- |
 | Product SoT | Intentionally closed. Code exists to keep it off. |
-| Admin UI | Login + dashboard browser-verified; Control Center / Sessions / PIM **not**. Admin APIs work with bearer. |
+| Admin UI | Login, dashboard, Control Center, Sessions, PIM, and Approval/Commerce/Workers/Integration tabs browser-verified on static `:3040`. |
 | Storefront | Existing UI kept. Homepage viewports verified on static export. Full checkout UI not run. |
 | Voice | Python/legacy files exist; Node adapter is interface + BLOCKED/NOT_CONFIGURED. |
 | Marketplace live | Classification only. |

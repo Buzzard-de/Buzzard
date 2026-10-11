@@ -4,27 +4,26 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests or the observed `7f81585` CI jobs. Sales lock, ACTIVE reject, and Guardian deny remain in place.
+None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. CI `e2e-admin` is green on `a2879e4`; HEAD `f967c01` is not claimed until its run is observed.
 
 ## HIGH
 
-1. Observe the new GitHub Actions `e2e-admin` job (API + static `:3040` + admin/PIM/journey). Local browser proof exists; CI is not yet observed.
+1. Observe GitHub Actions on HEAD `f967c01` (quality + e2e-storefront + e2e-admin).
 2. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
-3. Broader API contract tests (auth, rate limit, error shape) beyond health + commerce e2e.
-4. Local SQLite contains public PIM rows. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
+3. Local SQLite can contain leftover public PIM rows and draft hashes. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
 
 ## MEDIUM
 
-1. Full `customer-journey` checkout UI (product → cart → checkout form) was not executed. Homepage + warenkorb page loads passed.
-2. WMS `reserveInventory` vs `software.inventory.reserve` — two reservation tables; document operator path and eventually share events.
-3. Supplier feed validation (CSV/XML) on fixtures, still mock.
-4. Arabic homepage does not show the German photo band (expected locale-specific). Confirm that is intentional for every RTL market.
-5. Authenticated admin Playwright still depends on a rebuilt static export with `NEXT_PUBLIC_BUZZARD_API_URL` plus runtime override. A Next server would be the honest Control Center proof.
+1. Full `customer-journey` checkout form is not executable while sales are locked. Catalog/blocked path is the truthful path.
+2. WMS `reserveInventory` and `software.inventory.reserve` remain two tables. They now share an audit event; they do not share reservation authority.
+3. Supplier feed validation is fixture/dry-run only. Live fetch stays BLOCKED.
+4. Arabic homepage does not show the German photo band (expected locale-specific).
+5. Authenticated admin Playwright still uses static export + runtime API override, not a Next server.
 
 ## LOW
 
 1. Contact form time-trap (pre-existing security warning).
-2. Reduce duplicate marketplace list sources (`marketplaceHub` 4 channels vs software 11 classified).
+2. Reduce duplicate marketplace list sources (`marketplaceHub` vs software classification).
 3. Voice Python leftovers: keep or quarantine so operators do not assume live telephony.
 
 ## Explicitly out of scope here

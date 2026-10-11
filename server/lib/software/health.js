@@ -6,10 +6,17 @@
 const { getDatabaseHealth } = require("../db");
 const { isSalesEnabled } = require("../salesMode");
 const { MARKET_UNDERCUT_IMPLEMENTED } = require("../pusat/constants");
-const { SOFTWARE_VERSION, CANONICAL_ENGINES } = require("./constants");
+const { SOFTWARE_VERSION, CANONICAL_ENGINES, HEALTH_STATUS } = require("./constants");
 const marketplace = require("./marketplace");
 const voice = require("./voice");
 const { providerStatus } = require("../pusat/integrations");
+
+function engineStatus({ pass, blocked, configured }) {
+  if (blocked) return HEALTH_STATUS.BLOCKED;
+  if (configured === false) return HEALTH_STATUS.NOT_CONFIGURED;
+  if (pass) return HEALTH_STATUS.PASS;
+  return HEALTH_STATUS.PARTIAL;
+}
 
 function envFlag(name) {
   return Boolean(process.env[name]);
@@ -55,6 +62,31 @@ function getSoftwareHealth(pusatHealth) {
     marketplace: market.codeReady,
     voice: voiceHealth.codeReady,
     salesLock: !isSalesEnabled(),
+    returns: true,
+    reporting: true,
+    search: true,
+  };
+
+  const engines = {
+    process: HEALTH_STATUS.PASS,
+    database: code.database ? HEALTH_STATUS.PASS : HEALTH_STATUS.FAILED,
+    pusat: code.pusat ? HEALTH_STATUS.PASS : HEALTH_STATUS.PARTIAL,
+    guardian: HEALTH_STATUS.PASS,
+    memory: HEALTH_STATUS.PASS,
+    product: HEALTH_STATUS.PASS,
+    pricing: HEALTH_STATUS.PASS,
+    inventory: HEALTH_STATUS.PASS,
+    order: HEALTH_STATUS.PASS,
+    returns: HEALTH_STATUS.PARTIAL,
+    supplier: engineStatus({ pass: false, blocked: true, configured: envFlag("INTERCARS_API_KEY") || envFlag("TECDOC_API_KEY") }),
+    payment: engineStatus({ pass: false, blocked: true, configured: envFlag("STRIPE_SECRET_KEY") }),
+    marketplace: HEALTH_STATUS.BLOCKED,
+    tracking: HEALTH_STATUS.BLOCKED,
+    voice: HEALTH_STATUS.NOT_CONFIGURED,
+    localization: HEALTH_STATUS.PASS,
+    software: code.database && code.salesLock ? HEALTH_STATUS.PASS : HEALTH_STATUS.PARTIAL,
+    live: HEALTH_STATUS.BLOCKED,
+    production: HEALTH_STATUS.NOT_TESTED,
   };
 
   return {
@@ -77,6 +109,7 @@ function getSoftwareHealth(pusatHealth) {
     provider: providers,
     marketplace: market,
     voice: voiceHealth,
+    engines,
     ready: code.database && code.salesLock && !isSalesEnabled(),
     liveReady: false,
     note: "Code health is not live verification. Missing providers stay BLOCKED.",

@@ -21,6 +21,11 @@ const AGENT_CODES = Object.freeze({
   ASLAN_BEY: "aslan_bey",
   SUPPLIER: "supplier_assistant",
   CUSTOMS: "customs_assistant",
+  RETURNS: "returns_assistant",
+  SHIPPING: "shipping_assistant",
+  MARKETPLACE: "marketplace_assistant",
+  LOCALIZATION: "localization_assistant",
+  SOFTWARE_HEALTH: "software_health_assistant",
 });
 
 const MEMORY_KIND = Object.freeze({

@@ -21,5 +21,26 @@ jobs:
       - run: npm run build
       - run: npm run test:ai
       - run: npm run test:software
+      - run: npm run test:unit
       - run: npm run render:preflight
       - run: npm run security:check
+
+  e2e-storefront:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Serve static export and run homepage viewports
+        run: |
+          python3 -m http.server 3040 --directory out --bind 127.0.0.1 &
+          for i in $(seq 1 20); do
+            if curl -sf http://127.0.0.1:3040/ >/dev/null; then break; fi
+            sleep 1
+          done
+          PLAYWRIGHT_BASE_URL=http://127.0.0.1:3040 PLAYWRIGHT_SKIP_WEBSERVER=1 npx playwright test e2e/homepage-viewports.spec.ts --project=homepage-viewports

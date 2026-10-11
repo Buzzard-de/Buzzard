@@ -360,4 +360,54 @@ describe("software completion — isolated engines", () => {
     expect(search.invented).toBe(false);
     expect(software.canonical.assertCanonicalOrchestrator()).toBe(true);
   });
+
+  it("26 returns ledger keeps supplier credit independent of customer refund", () => {
+    const opened = software.returns.openCase(db, {
+      orderNumber: `SW-RMA-${Date.now()}`,
+      customerId: "cust_sw",
+      reason: "defective",
+      refundAmount: 10,
+    });
+    expect(opened.ok).toBe(true);
+    expect(opened.refundExecuted).toBe(false);
+    expect(opened.customerRefund.status).toBe("REQUESTED");
+    expect(opened.supplierCredit.status).toBe("NOT_REQUESTED");
+    expect(opened.supplierCredit.assumedFromCustomerRefund).toBe(false);
+    const rejected = software.returns.recordSupplierCredit(db, opened.id, "REJECTED");
+    expect(rejected.supplierCredit.status).toBe("REJECTED");
+    expect(rejected.supplierCredit.received).toBe(false);
+    expect(rejected.refundExecuted).toBe(false);
+  });
+
+  it("27 reporting does not invent revenue and health engines stay explicit", () => {
+    const report = software.reporting.getOperationalReport(db, { windowMinutes: 15 });
+    expect(report.inventedRevenue).toBe(false);
+    expect(report.productionVerified).toBe(false);
+    expect(report.health.liveReady).toBe(false);
+    const health = software.health();
+    expect(health.engines.live).toBe("BLOCKED");
+    expect(health.engines.production).toBe("NOT_TESTED");
+    expect(health.engines.payment).toBe("BLOCKED");
+    expect(health.engines.voice).toBe("NOT_CONFIGURED");
+    expect(health.liveReady).toBe(false);
+  });
+
+  it("28 canonical catalog search does not invent products", () => {
+    const search = software.searchCanonicalCatalog({ q: "zzzz-no-such-sku", pageSize: 5 });
+    expect(search.invented).toBe(false);
+    expect(search.fitmentClaimed).toBe(false);
+    expect(search.source).toBe("catalogReadService");
+    expect(Array.isArray(search.items)).toBe(true);
+  });
+
+  it("29 specialist assistants stay recommendation-only", () => {
+    const returns = pusat.agents.executeAgent("returns_assistant", { orderNumber: "x" });
+    expect(returns.refundExecuted).toBe(false);
+    const shipping = pusat.agents.executeAgent("shipping_assistant", { orderId: "y" });
+    expect(shipping.gpsInvented).toBe(false);
+    const market = pusat.agents.executeAgent("marketplace_assistant", {});
+    expect(market.published).toBe(false);
+    const health = pusat.agents.executeAgent("software_health_assistant", {});
+    expect(health.liveReady).toBe(false);
+  });
 });

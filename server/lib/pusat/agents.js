@@ -162,6 +162,66 @@ const SPECIALIST_EMPLOYEES = [
     code: AGENT_CODES.ESAT_BEY,
     tools: ["guardian.evaluate"],
   },
+  {
+    id: "returns_ai",
+    name: "Returns Assistant",
+    department: "Finance",
+    description: "Customer refund vs supplier credit — never assumes reimbursement",
+    responsibility: "Returns accounting",
+    permissions: ["orders.read", "ai.execute"],
+    capabilities: ["returns_inspect"],
+    priority: 60,
+    code: AGENT_CODES.RETURNS,
+    tools: ["returns.inspect", "memory.write"],
+  },
+  {
+    id: "shipping_ai",
+    name: "Shipping and Tracking Assistant",
+    department: "Fulfillment",
+    description: "Carrier tracking without invented GPS",
+    responsibility: "Shipment tracking",
+    permissions: ["orders.read", "ai.execute"],
+    capabilities: ["tracking"],
+    priority: 58,
+    code: AGENT_CODES.SHIPPING,
+    tools: ["tracking.inspect"],
+  },
+  {
+    id: "marketplace_ai",
+    name: "Marketplace Assistant",
+    department: "Channels",
+    description: "Connector classification and draft listings only",
+    responsibility: "Marketplace drafts",
+    permissions: ["products.read", "ai.execute"],
+    capabilities: ["marketplace_classify"],
+    priority: 52,
+    code: AGENT_CODES.MARKETPLACE,
+    tools: ["marketplace.classify"],
+  },
+  {
+    id: "localization_ai",
+    name: "Localization Assistant",
+    department: "International",
+    description: "Locale and market independence checks",
+    responsibility: "i18n / RTL",
+    permissions: ["ai.execute"],
+    capabilities: ["locale_market"],
+    priority: 50,
+    code: AGENT_CODES.LOCALIZATION,
+    tools: ["locale.inspect"],
+  },
+  {
+    id: "software_health_ai",
+    name: "Software Health and Monitoring Assistant",
+    department: "Operations",
+    description: "Code vs live readiness — never inflates liveReady",
+    responsibility: "Software health",
+    permissions: ["ai.read", "ai.execute"],
+    capabilities: ["health"],
+    priority: 54,
+    code: AGENT_CODES.SOFTWARE_HEALTH,
+    tools: ["software.health"],
+  },
 ];
 
 function ensureSpecialistEmployees() {
@@ -577,6 +637,76 @@ function runOrderAssistant(input, ctx = {}) {
   };
 }
 
+function runReturnsAssistant(input, ctx = {}) {
+  return {
+    ok: true,
+    agent: AGENT_CODES.RETURNS,
+    invented: false,
+    customerRefundAssumesSupplierCredit: false,
+    refundExecuted: false,
+    recommendation: "Track supplier credit independently. Do not refund live.",
+    inputPresent: Boolean(input && input.orderNumber),
+    taskId: ctx.taskId,
+  };
+}
+
+function runShippingAssistant(input, ctx = {}) {
+  return {
+    ok: true,
+    agent: AGENT_CODES.SHIPPING,
+    invented: false,
+    gpsInvented: false,
+    liveCarrier: false,
+    blocked: true,
+    recommendation: "Use authorized carrier events only. Do not invent GPS.",
+    orderId: input.orderId || null,
+    taskId: ctx.taskId,
+  };
+}
+
+function runMarketplaceAssistant(input, ctx = {}) {
+  const software = require("../software");
+  const connectors = software.marketplace.classifyConnectors();
+  return {
+    ok: true,
+    agent: AGENT_CODES.MARKETPLACE,
+    invented: false,
+    published: false,
+    liveWrite: false,
+    connectors: connectors.length,
+    recommendation: "Draft only. Publishing stays disabled.",
+    taskId: ctx.taskId,
+  };
+}
+
+function runLocalizationAssistant(input, ctx = {}) {
+  return {
+    ok: true,
+    agent: AGENT_CODES.LOCALIZATION,
+    invented: false,
+    localeIndependentOfMarket: true,
+    locale: input.locale || null,
+    market: input.market || null,
+    recommendation: "Keep language and market selectors independent.",
+    taskId: ctx.taskId,
+  };
+}
+
+function runSoftwareHealthAssistant(input, ctx = {}) {
+  const software = require("../software");
+  const health = software.health();
+  return {
+    ok: true,
+    agent: AGENT_CODES.SOFTWARE_HEALTH,
+    invented: false,
+    liveReady: false,
+    ready: health.ready,
+    blocked: health.blocked,
+    engines: health.engines,
+    taskId: ctx.taskId,
+  };
+}
+
 const AGENT_BY_CODE = {
   [AGENT_CODES.PRICE]: { employeeId: "price_ai", schema: ["supplierCost?"], execute: runPriceAssistant, permissions: ["products.read", "prices.read", "ai.execute"] },
   [AGENT_CODES.STOCK]: { employeeId: "stock_ai", schema: ["stock?"], execute: runStockAssistant, permissions: ["products.read", "ai.execute"] },
@@ -591,6 +721,11 @@ const AGENT_BY_CODE = {
   [AGENT_CODES.DOGU_BEY]: { employeeId: "dogu_bey", schema: ["question"], execute: runDoguBey, permissions: ["ai.execute"] },
   [AGENT_CODES.ESAT_BEY]: { employeeId: "esat_bey", schema: ["action?"], execute: runEsatBey, permissions: ["security.read", "ai.execute"] },
   [AGENT_CODES.ASLAN_BEY]: { employeeId: "aslan_bey", schema: ["request?"], execute: runAslanBey, permissions: ["ai.read", "ai.execute"] },
+  [AGENT_CODES.RETURNS]: { employeeId: "returns_ai", schema: ["orderNumber?"], execute: runReturnsAssistant, permissions: ["orders.read", "ai.execute"] },
+  [AGENT_CODES.SHIPPING]: { employeeId: "shipping_ai", schema: ["orderId?"], execute: runShippingAssistant, permissions: ["orders.read", "ai.execute"] },
+  [AGENT_CODES.MARKETPLACE]: { employeeId: "marketplace_ai", schema: [], execute: runMarketplaceAssistant, permissions: ["products.read", "ai.execute"] },
+  [AGENT_CODES.LOCALIZATION]: { employeeId: "localization_ai", schema: ["locale?"], execute: runLocalizationAssistant, permissions: ["ai.execute"] },
+  [AGENT_CODES.SOFTWARE_HEALTH]: { employeeId: "software_health_ai", schema: [], execute: runSoftwareHealthAssistant, permissions: ["ai.read", "ai.execute"] },
 };
 
 function classifyAgent(title, payload = {}) {
@@ -607,6 +742,11 @@ function classifyAgent(title, payload = {}) {
   if (/supplier|feed|xml|csv/.test(text)) return AGENT_CODES.SUPPLIER;
   if (/guardian|security|esat/.test(text)) return AGENT_CODES.ESAT_BEY;
   if (/aslan|triage|route/.test(text)) return AGENT_CODES.ASLAN_BEY;
+  if (/return|rma/.test(text)) return AGENT_CODES.RETURNS;
+  if (/track|ship|carrier|dhl/.test(text)) return AGENT_CODES.SHIPPING;
+  if (/marketplace|amazon|ebay/.test(text)) return AGENT_CODES.MARKETPLACE;
+  if (/locale|rtl|i18n|translation/.test(text)) return AGENT_CODES.LOCALIZATION;
+  if (/health|monitor|readiness/.test(text)) return AGENT_CODES.SOFTWARE_HEALTH;
   if (/order/.test(text)) return AGENT_CODES.ORDER;
   if (/product/.test(text)) return AGENT_CODES.PRODUCT;
   return AGENT_CODES.ASLAN_BEY;

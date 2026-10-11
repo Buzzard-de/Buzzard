@@ -13,7 +13,9 @@ const voice = require("./voice");
 const customerAccess = require("./customerAccess");
 const orders = require("./orders");
 const { getSoftwareHealth } = require("./health");
-const { searchCatalog } = require("./search");
+const { searchCatalog, searchCanonicalCatalog } = require("./search");
+const returns = require("./returns");
+const reporting = require("./reporting");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -40,4 +42,7 @@ module.exports = {
   customerAccess,
   orders,
   searchCatalog,
+  searchCanonicalCatalog,
+  returns,
+  reporting,
 };

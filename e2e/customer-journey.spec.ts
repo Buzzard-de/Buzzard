@@ -3,11 +3,11 @@ import { VIEWPORTS } from "../playwright.config";
 
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
-async function resolveDemoProduct(request: import("@playwright/test").APIRequestContext) {
-  const catalog = await request.get(`${API}/api/catalog/products?q=BZ-CORE&limit=1`);
+async function resolvePublicProduct(request: import("@playwright/test").APIRequestContext) {
+  const catalog = await request.get(`${API}/api/catalog/products?page=1&limit=5`);
   expect(catalog.ok()).toBeTruthy();
   const body = await catalog.json();
-  const product = body.items?.[0];
+  const product = (body.items || []).find((item: { id?: string; price?: number }) => item?.id && Number(item.price) > 0);
   expect(product?.id).toBeTruthy();
   return product as { id: string; slug?: string; name?: string };
 }
@@ -60,7 +60,7 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
   });
 
   test("product → cart → checkout → READINESS_TEST success", async ({ page, request }) => {
-    const product = await resolveDemoProduct(request);
+    const product = await resolvePublicProduct(request);
 
     const cartRes = await request.post(`${API}/api/commerce/cart`, {
       data: { sessionId: `e2e-ui-${Date.now()}`, country: "DE" },

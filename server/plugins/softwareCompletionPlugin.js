@@ -46,6 +46,35 @@ module.exports = {
       res.json({ success: true, connectors: software.marketplace.classifyConnectors() });
     });
 
+    app.get("/api/admin/software/report", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      res.json({ success: true, report: software.reporting.getOperationalReport(db) });
+    });
+
+    app.get("/api/admin/software/returns/:id", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      const result = software.returns.inspect(db, req.params.id);
+      res.status(result.ok ? 200 : 404).json({ success: result.ok, ...result });
+    });
+
+    app.get("/api/software/search", (req, res) => {
+      const software = require("../lib/software");
+      const result = software.searchCanonicalCatalog({
+        q: req.query.q,
+        category: req.query.category,
+        locale: req.query.locale,
+        page: req.query.page,
+        pageSize: req.query.pageSize,
+      });
+      res.json({ success: true, ...result });
+    });
+
     app.get("/api/customer/tracking/:orderId", (req, res) => {
       const session = requireCustomer(req, res);
       if (!session) return;

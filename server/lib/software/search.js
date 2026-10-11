@@ -1,12 +1,28 @@
 /**
- * Catalog search over provided records only. Does not invent products or fitment.
+ * Catalog search over provided records, or the canonical storefront catalog.
+ * Does not invent products or fitment.
  */
 
-function searchCatalog(items = [], query = {}) {
+function loadCanonicalRows(query = {}) {
+  try {
+    const catalogReadService = require("../storefront/catalogReadService");
+    const listed = catalogReadService.listProducts({
+      q: query.q || undefined,
+      page: 1,
+      limit: 100,
+    });
+    return Array.isArray(listed.items) ? listed.items : [];
+  } catch {
+    return [];
+  }
+}
+
+function searchCatalog(items, query = {}) {
   const q = String(query.q || "").trim().toLowerCase();
   const category = query.category || null;
   const locale = query.locale || "de";
-  let rows = Array.isArray(items) ? items.slice() : [];
+  const usedCanonical = !Array.isArray(items);
+  let rows = Array.isArray(items) ? items.slice() : loadCanonicalRows(query);
 
   if (category) {
     rows = rows.filter((item) => item.category === category || item.canonicalCategory === category);
@@ -40,7 +56,12 @@ function searchCatalog(items = [], query = {}) {
     items: pageRows,
     invented: false,
     fitmentClaimed: false,
+    source: usedCanonical ? "catalogReadService" : "provided_rows",
   };
 }
 
-module.exports = { searchCatalog };
+function searchCanonicalCatalog(query = {}) {
+  return searchCatalog(undefined, query);
+}
+
+module.exports = { searchCatalog, searchCanonicalCatalog };

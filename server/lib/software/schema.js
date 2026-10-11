@@ -86,6 +86,23 @@ function migrateSoftwareSchema(db) {
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE INDEX IF NOT EXISTS idx_sw_audit_kind ON software_audit(kind);
+
+    CREATE TABLE IF NOT EXISTS software_return_ledger (
+      id TEXT PRIMARY KEY,
+      rma_id TEXT,
+      order_number TEXT,
+      customer_id TEXT,
+      customer_refund_status TEXT NOT NULL DEFAULT 'NOT_REQUESTED',
+      supplier_credit_status TEXT NOT NULL DEFAULT 'NOT_REQUESTED',
+      customer_refund_executed INTEGER NOT NULL DEFAULT 0,
+      supplier_credit_received INTEGER NOT NULL DEFAULT 0,
+      assumed_supplier_will_reimburse INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_ret_order ON software_return_ledger(order_number);
+    CREATE INDEX IF NOT EXISTS idx_sw_ret_customer ON software_return_ledger(customer_id);
   `);
 }
 

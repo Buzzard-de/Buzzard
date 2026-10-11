@@ -54,4 +54,29 @@ function getOperationalReport(db, { windowMinutes = 60 } = {}) {
   };
 }
 
-module.exports = { getOperationalReport };
+function getLifecycleLedger(db, input = {}) {
+  const returnsOpen = countSafe(db, "SELECT COUNT(*) AS n FROM software_return_ledger");
+  const assumedCredit = countSafe(
+    db,
+    "SELECT COUNT(*) AS n FROM software_return_ledger WHERE assumed_supplier_will_reimburse = 1"
+  );
+  const published = countSafe(
+    db,
+    "SELECT COUNT(*) AS n FROM software_marketplace_drafts WHERE published = 1"
+  );
+  const sent = countSafe(db, "SELECT COUNT(*) AS n FROM software_message_drafts WHERE sent = 1");
+  return {
+    inventedRevenue: false,
+    productionVerified: false,
+    commercialOrders: 0,
+    refundsExecuted: 0,
+    listingsPublished: Number(published || 0),
+    messagesSent: Number(sent || 0),
+    supplierCreditAssumed: Number(assumedCredit || 0),
+    returnsRecorded: Number(returnsOpen || 0),
+    subject: input.subject || null,
+    note: "Diagnostic ledger only. Counts are not revenue or profit.",
+  };
+}
+
+module.exports = { getOperationalReport, getLifecycleLedger };

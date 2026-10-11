@@ -27,11 +27,11 @@ const CHANNEL_REQUIRED_FIELDS = Object.freeze({
   tiktok_shop: ["sku", "price"],
   kaufland: ["sku", "price"],
   allegro: ["sku", "price"],
-  bol: ["sku"],
-  cdiscount: ["sku"],
-  otto: ["sku"],
-  emag: ["sku"],
-  skroutz: ["sku"],
+  bol: ["sku", "price"],
+  cdiscount: ["sku", "price"],
+  otto: ["sku", "price"],
+  emag: ["sku", "price"],
+  skroutz: ["sku", "price"],
 });
 
 function hashDraft(input) {
@@ -60,9 +60,12 @@ function classifyConnectors() {
     liveVerified: false,
     blocked: true,
     listingId: null,
+    safeInterface: true,
+    vendorContractDocumented: Boolean(c.existingModule),
+    liveEndpoint: null,
     note: c.existingModule
       ? "No live marketplace credentials in this environment. Publish remains BLOCKED."
-      : "Classification-only. Dedicated adapter does not exist. Publish remains BLOCKED.",
+      : "Classification-only. Safe draft/publish-block interface exists. Vendor API contract is undocumented and not invented. Publish remains BLOCKED.",
   }));
 }
 
@@ -72,6 +75,7 @@ function classify(id) {
     status: CONNECTOR_STATUS.NONE,
     adapterExists: false,
     classificationOnly: true,
+    safeInterface: true,
     live: false,
     blocked: true,
     published: false,
@@ -80,7 +84,7 @@ function classify(id) {
 }
 
 function requiredFields(channelId) {
-  return CHANNEL_REQUIRED_FIELDS[channelId] || ["sku"];
+  return CHANNEL_REQUIRED_FIELDS[channelId] || ["sku", "price"];
 }
 
 function validateDraftInput(input, channel) {
@@ -177,6 +181,51 @@ function draftListing(input = {}, db = null) {
   };
 }
 
+function publishListing(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  return {
+    ok: false,
+    published: false,
+    live: false,
+    listingId: null,
+    inventedListingId: false,
+    write: false,
+    reason: "PUBLISH_BLOCKED",
+    channel: channel.id,
+    adapterExists: channel.adapterExists,
+    classificationOnly: channel.classificationOnly,
+    safeInterface: true,
+    note: "Publish is never executed from this adapter. A draft is not a listing.",
+  };
+}
+
+function createSafeAdapter(channelId) {
+  const channel = classify(channelId);
+  return {
+    id: channel.id,
+    name: channel.name,
+    adapterExists: channel.adapterExists,
+    classificationOnly: channel.classificationOnly,
+    safeInterface: true,
+    vendorContractDocumented: Boolean(channel.existingModule || channel.vendorContractDocumented),
+    liveEndpoint: null,
+    requiredFields: requiredFields(channel.id),
+    validate(input = {}) {
+      return validateDraftInput(input, channel);
+    },
+    draft(input = {}, db = null) {
+      return draftListing({ ...input, channel: channel.id }, db);
+    },
+    publish(input = {}) {
+      return publishListing({ ...input, channel: channel.id });
+    },
+  };
+}
+
+function listSafeAdapters() {
+  return CONNECTORS.map((connector) => createSafeAdapter(connector.id));
+}
+
 function health() {
   const connectors = classifyConnectors();
   return {
@@ -187,6 +236,8 @@ function health() {
     anyLive: false,
     adaptersPresent: connectors.filter((c) => c.adapterExists).length,
     classificationOnly: connectors.filter((c) => c.classificationOnly).length,
+    safeInterfaces: connectors.filter((c) => c.safeInterface).length,
+    anyPublished: false,
   };
 }
 
@@ -198,5 +249,8 @@ module.exports = {
   requiredFields,
   validateDraftInput,
   draftListing,
+  publishListing,
+  createSafeAdapter,
+  listSafeAdapters,
   health,
 };

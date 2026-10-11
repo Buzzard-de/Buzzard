@@ -10,6 +10,7 @@ const { SOFTWARE_VERSION, CANONICAL_ENGINES, HEALTH_STATUS } = require("./consta
 const marketplace = require("./marketplace");
 const voice = require("./voice");
 const { providerStatus } = require("../pusat/integrations");
+const { inventory } = require("./externalIntegrations");
 
 function engineStatus({ pass, blocked, configured }) {
   if (blocked) return HEALTH_STATUS.BLOCKED;
@@ -115,7 +116,17 @@ function getSoftwareHealth(pusatHealth) {
     engines,
     ready: code.database && code.salesLock && !isSalesEnabled(),
     liveReady: false,
-    note: "Code health is not live verification. Missing providers stay BLOCKED.",
+    readiness: {
+      processAlive: true,
+      applicationReady: Boolean(code.database && code.salesLock && !isSalesEnabled()),
+      databaseReady: Boolean(code.database),
+      providerConfigured: inventory().items.some((item) => item.credentialsPresent),
+      providerReachable: false,
+      providerAuthenticated: false,
+      providerEndToEndVerified: false,
+      productionVerified: false,
+    },
+    note: "Code health is not live verification. Missing providers stay BLOCKED. Process alive is not database ready. Configured is not authenticated.",
   };
 }
 

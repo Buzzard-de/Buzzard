@@ -69,5 +69,10 @@ Capabilities: title/description generation, attribute extraction, category sugge
 ```bash
 npm run test:unit      # includes part6Foundation.test.mjs
 npm run test:part6     # API smoke (requires API on :3001)
+npm run test:pim-catalog
+npm run pim:health
+npm run pim:dry-run
 npm run test:e2e       # Playwright admin-pim-core.spec.ts
 ```
+
+See also [PIM_CATALOG_FOUNDATION.md](./PIM_CATALOG_FOUNDATION.md) for catalog/PIM foundation (dry-run, health, workflow).

@@ -20,7 +20,7 @@ Columns: adapter / unit / configured / creds present / auth / reachable / sandbo
 | Supplier API / TecDoc | `software/supplierFeeds` | preview + URL reject | no | no | no | no | no | no | NOT_CONFIGURED |
 | DHL/DPD/GLS/Hermes/UPS | `software/carriers` | outage/malformed | no | no | no | no | no | no | NOT_CONFIGURED |
 | Amazon/eBay/Kaufland/Allegro | marketplace hub + drafts | unpublished | no | no | no | no | no | no | NOT_CONFIGURED |
-| OTTO/eMAG/Skroutz/bol/Cdiscount | classification only | `adapterExists=false` | no | no | no | no | no | no | NOT_IMPLEMENTED adapter |
+| OTTO/eMAG/Skroutz/bol/Cdiscount | safe draft/publish-block interface; no vendor contract | `adapterExists=false`, `safeInterface=true` | no | no | no | no | no | no | NOT_IMPLEMENTED vendor adapter / safe interface TESTED |
 
 Diagnostics: `configured=false` for all 31, `attempted=false`, `authenticated=false`, `reachable=false`, `endToEndVerified=false`, `productionVerified=false`, `live=0`.  
 HTTP reachability is never treated as authentication. Not attempted is not failed authentication.

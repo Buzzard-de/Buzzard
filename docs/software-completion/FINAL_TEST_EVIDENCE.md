@@ -1,7 +1,7 @@
 # Final Test Evidence
 
 Branch: `cursor/software-completion-c293`  
-Implementation HEAD: `70c77d37d9452ed81b80e7faf3a9a82c682528b6`  
+Implementation HEAD: `8ed00ba2f416cbfa9e927d7fe87f1b4de23a960b`  
 Environment: isolated local (`BUZZARD_SALES_ENABLED` unset).  
 No production database.
 
@@ -9,16 +9,17 @@ No production database.
 
 | Command | Exit | Result |
 | --- | --- | --- |
-| `npm run test:software` | 0 | **51/51** (Vitest 5.0.3) on `70c77d3` |
-| `npm run test:ai` | 0 | **58/58** (Vitest 5.0.3) on `70c77d3` |
-| `npm run test:unit` | 0 | **744/744** (59 files) on `70c77d3` |
+| `npm run test:software` | 0 | **56/56** (Vitest 5.0.3) on `8ed00ba` |
+| `npm run test:ai` | 0 | **58/58** on `8ed00ba` |
+| `npm run test:unit` | 0 | **749/749** (60 files) on `8ed00ba` |
 | `npm run lint` | 0 | no errors |
 | `npm run typecheck` | 0 | no errors |
-| `npm run build` | 0 | Next static export with postcss/sharp overrides |
-| `npm run diagnostics:providers` | 0 | dry-run, attempted=false, live=0, 31 items, all NOT_CONFIGURED |
+| `npm run build` | 0 | Next static export |
+| `npm run diagnostics:providers` | 0 | dry-run, attempted=false, live=0, 31 items |
+| `npm run test:backup-restore` | 0 | local dry-run only |
 | `npm run security:check` | 0 | 1 warning (eslint-config-next/braces, dev-only) |
 | `npm audit --omit=dev` | 0 | **0** production vulnerabilities |
-| Playwright storefront/admin | CI, not local | **SUCCESS** on `de95d5f` run 38163750323 (quality + e2e-storefront + e2e-admin). Also SUCCESS on implementation `70c77d3` run 38163582824. |
+| Playwright storefront/admin | CI, not local this pass | last CI SUCCESS `de95d5f` run 38163750323 — **not** `8ed00ba` |
 
 ## What tests do not prove
 

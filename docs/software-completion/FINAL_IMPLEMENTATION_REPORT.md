@@ -1,24 +1,22 @@
 # Final Implementation Report
 
-Timestamp: 2026-10-11T18:28:00Z  
+Timestamp: 2026-10-11T19:45:00Z  
 Branch: `cursor/software-completion-c293`  
-Implementation HEAD: `70c77d37d9452ed81b80e7faf3a9a82c682528b6`  
-CI HEAD: `de95d5f48a61bc97c061117e6a01992aa44ecef5` run 38163750323 (quality, e2e-storefront, e2e-admin SUCCESS)  
+Implementation HEAD: `8ed00ba2f416cbfa9e927d7fe87f1b4de23a960b`  
+Prior CI HEAD: `de95d5f48a61bc97c061117e6a01992aa44ecef5` run 38163750323 — **not** this implementation SHA  
 Environment: isolated local + GitHub Actions  
 Sales: locked (`BUZZARD_SALES_ENABLED` unset)  
 Product SoT: inactive  
 Production access: none  
-Prior HEAD: `fb96743839e52694469a4a4e69250ce58224da56`
+Prior HEAD: `e493a688afcb204c144eb374e87cae18df5ffd50`
 
 ## What was implemented in this pass
 
-1. **Vitest 5.0.3** migration. Tinypool is gone. `.nvmrc` is **22** so CI matches Vitest’s Node ≥22.12 requirement. App `engines` stay `>=20`.
-2. Targeted npm **overrides**: postcss 8.5.29, sharp 0.35.5, source-map-js 1.2.2, js-yaml 4.3.2, brace-expansion 1.1.21. Production `npm audit --omit=dev` is **0**.
-3. Remaining high findings are **dev-only** `eslint-config-next` → braces/micromatch. No Next-15-compatible patch. Not force-downgraded.
-4. Production **BUZZARD_DB_PATH** missing or ephemeral fails closed **before** plugin load and before `db.js` mkdir/open. No silent local fallback. `/tmp` create refused in production.
-5. Provider diagnostics distinguish configured / attempted / reachable / authenticated / endToEnd / production. Reject write URLs, private hosts, production hosts. Timeouts capped. Still no sockets.
-6. Operator procedure: `RENDER_STORAGE_OPERATOR.md`.
-7. Software version **1.5.0**. €0.10 undercut remains unimplemented.
+1. Deterministic commercial lifecycle harness (`software/lifecycle.js`) with A–K traces. No commercial writes.
+2. Safe marketplace adapter interface for all 11 channels. Classification-only channels (OTTO/eMAG/Skroutz/bol/Cdiscount) stay `adapterExists=false` and `liveEndpoint=null`. Publish is always BLOCKED. Price is required on every draft.
+3. Health `readiness` object: processAlive / applicationReady / databaseReady / providerConfigured / reachable / authenticated / endToEnd / productionVerified are separate.
+4. Lifecycle ledger helper. Software version **1.6.0**.
+5. braces/micromatch still **BLOCKED_HUMAN_APPROVAL** — braces latest remains 3.0.3; eslint-config-next 15.5.27 still suggested-fix 14.2.35.
 
 ## Safety
 

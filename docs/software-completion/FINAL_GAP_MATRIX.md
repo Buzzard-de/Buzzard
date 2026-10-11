@@ -13,7 +13,8 @@ Statuses used only: PASS, PARTIAL, FAIL, BLOCKED_EXTERNAL_ACCESS, BLOCKED_HUMAN_
 | Sales lock | `salesMode` | none | high | yes | preserved | health + journey | salesEnabled false | PASS |
 | Product SoT inactive | productCore | none | high | yes | preserved | software 2 | ACTIVE throw | PASS |
 | Provider diagnostics | `providerDiagnostics` | none this pass | med | yes | preserved | software 39 | dry-run, prod URL rejected | PASS |
-| Live providers | adapters | credentials | high | no | checklist only | inventory counts.live=0 | no probe | NOT_CONFIGURED / NOT_VERIFIED |
+| Live providers | adapters | credentials | high | no | checklist + safe marketplace interface | inventory counts.live=0 | no probe | NOT_CONFIGURED / NOT_VERIFIED |
+| Commercial lifecycle | `software/lifecycle.js` | no single A–K trace | med | yes | fixture harness | softwareLifecycle 5/5 | LIFECYCLE_EVIDENCE.md | PASS (non-production) |
 | Next RCE <15.5.24 | next 15.5.27 | none | high | yes | already on 15.5.27 | lint/typecheck/build | RCE GHSA out of range | PASS |
 | Vitest/tinypool RCE | vitest 3.2.7 | Node 20 vs Vitest 5 Node 22.12 | high | yes after `.nvmrc` 22 | vitest **5.0.3**, tinypool removed | unit/ai/software | 744/744 | PASS (dev toolchain) |
 | Next postcss / sharp | 8.4.31 / 0.34.5 | bundled vulns | high | yes override | postcss 8.5.29, sharp 0.35.5 | build | `npm audit --omit=dev` 0 | PASS |

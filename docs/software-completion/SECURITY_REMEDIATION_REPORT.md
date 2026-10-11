@@ -24,7 +24,7 @@ This is not a penetration test.
 
 | Package | Severity | Direct? | Production reachable? | Why not patched here |
 | --- | --- | --- | --- | --- |
-| `braces` 3.0.3 via `eslint-config-next` → `micromatch` → `fast-glob` | high | eslint-config-next is direct | **no** (dev lint only) | Advisory range is `*`. Suggested fix is **eslint-config-next 14.2.35**, incompatible with Next 15.5.27. No braces 3.x patch exists. |
+| `braces` 3.0.3 via `eslint-config-next` → `micromatch` → `fast-glob` | high | eslint-config-next is direct | **no** (dev lint only) | Re-checked 2026-10-11: `braces` latest still **3.0.3**. Suggested fix still **eslint-config-next 14.2.35**, incompatible with Next 15.5.27. No braces 3.x patch. Not downgraded. |
 | Contact time-trap | resolved | n/a | n/a | Hidden `_formStarted` + server fail-closed. |
 
 ## Application security (this pass)

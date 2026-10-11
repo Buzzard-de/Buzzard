@@ -1,15 +1,16 @@
 {
-  "generatedAt": "2026-10-11T18:28:00Z",
+  "generatedAt": "2026-10-11T19:45:00Z",
   "verification": {
     "branch": "cursor/software-completion-c293",
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "de95d5f48a61bc97c061117e6a01992aa44ecef5",
-    "implementationHead": "70c77d37d9452ed81b80e7faf3a9a82c682528b6",
-    "headBeforeThisReport": "fb96743839e52694469a4a4e69250ce58224da56",
+    "head": "pending-docs-commit",
+    "implementationHead": "8ed00ba2f416cbfa9e927d7fe87f1b4de23a960b",
+    "headBeforeThisReport": "e493a688afcb204c144eb374e87cae18df5ffd50",
     "observedCiGreenHead": "de95d5f48a61bc97c061117e6a01992aa44ecef5",
     "observedCiRun": 38163750323,
+    "observedCiNote": "CI SUCCESS on de95d5f is not CI for 8ed00ba",
     "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, adapters, workflow audit, worker recovery, and external checklist"
   },
   "method": {
@@ -30,24 +31,25 @@
     "productionVerification": 0.0
   },
   "scores": {
-    "codeImplementation": 81.0,
-    "testVerification": 80.8,
-    "integrationVerification": 63.2,
+    "codeImplementation": 81.2,
+    "testVerification": 81.3,
+    "integrationVerification": 64.1,
     "operationalReadiness": 19.4,
     "productionVerification": 0.0,
     "totalWeight": 148,
     "previousVerificationPass": {
-      "codeImplementation": 80.6,
-      "testVerification": 80.5,
+      "codeImplementation": 81.0,
+      "testVerification": 80.8,
       "integrationVerification": 63.2,
       "operationalReadiness": 19.4,
       "productionVerification": 0.0
     }
   },
   "commandsRun": {
-    "test:software": { "exit": 0, "tests": 51, "passed": 51, "runner": "vitest@5.0.3", "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6" },
-    "test:ai": { "exit": 0, "tests": 58, "passed": 58, "runner": "vitest@5.0.3", "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6" },
-    "test:unit": { "exit": 0, "files": 59, "passed": 744, "failed": 0, "runner": "vitest@5.0.3", "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6" },
+    "test:software": { "exit": 0, "tests": 56, "passed": 56, "runner": "vitest@5.0.3", "head": "8ed00ba2f416cbfa9e927d7fe87f1b4de23a960b" },
+    "test:ai": { "exit": 0, "tests": 58, "passed": 58, "runner": "vitest@5.0.3", "head": "8ed00ba2f416cbfa9e927d7fe87f1b4de23a960b" },
+    "test:unit": { "exit": 0, "files": 60, "passed": 749, "failed": 0, "runner": "vitest@5.0.3", "head": "8ed00ba2f416cbfa9e927d7fe87f1b4de23a960b" },
+    "test:backup-restore": { "exit": 0, "dryRun": true, "head": "8ed00ba2f416cbfa9e927d7fe87f1b4de23a960b" },
     "playwright_admin_pim": { "exit": 0, "passed": 13, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_admin_pim_journey": { "exit": 0, "passed": 37, "skipped": 4, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_homepage_viewports": { "exit": 0, "passed": 18, "locales": ["de", "en", "tr", "fr", "ar"] },
@@ -86,12 +88,12 @@
     {"id":"SW-PRICE","name":"Pricing","weight":6,"impl":0.88,"test":0.88,"integ":0.70,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-INV","name":"Inventory","weight":6,"impl":0.8,"test":0.75,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SUP","name":"Supplier","weight":5,"impl":0.66,"test":0.68,"integ":0.45,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-ORD","name":"Order engine","weight":7,"impl":0.75,"test":0.8,"integ":0.72,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-PAY","name":"Payment","weight":5,"impl":0.72,"test":0.72,"integ":0.42,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-RMA","name":"Returns","weight":4,"impl":0.72,"test":0.74,"integ":0.5,"ops":0,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-MP","name":"Marketplace","weight":5,"impl":0.48,"test":0.46,"integ":0.2,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-SHIP","name":"Shipping/tracking","weight":5,"impl":0.78,"test":0.78,"integ":0.50,"ops":0.1,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-CUS","name":"Customer","weight":5,"impl":0.78,"test":0.78,"integ":0.62,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-ORD","name":"Order engine","weight":7,"impl":0.75,"test":0.8,"integ":0.76,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-PAY","name":"Payment","weight":5,"impl":0.72,"test":0.72,"integ":0.46,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
+    {"id":"SW-RMA","name":"Returns","weight":4,"impl":0.72,"test":0.76,"integ":0.52,"ops":0,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-MP","name":"Marketplace","weight":5,"impl":0.52,"test":0.52,"integ":0.28,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
+    {"id":"SW-SHIP","name":"Shipping/tracking","weight":5,"impl":0.78,"test":0.78,"integ":0.52,"ops":0.1,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
+    {"id":"SW-CUS","name":"Customer","weight":5,"impl":0.78,"test":0.80,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-ADM","name":"Admin/control","weight":5,"impl":0.85,"test":0.90,"integ":0.82,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SF","name":"Storefront","weight":6,"impl":0.7,"test":0.82,"integ":0.6,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SEA","name":"Search","weight":3,"impl":0.75,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
@@ -99,9 +101,9 @@
     {"id":"SW-DB","name":"Database","weight":5,"impl":0.90,"test":0.78,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-API","name":"API","weight":5,"impl":0.72,"test":0.78,"integ":0.66,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SEC","name":"Security","weight":6,"impl":0.86,"test":0.84,"integ":0.55,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-OBS","name":"Observability","weight":3,"impl":0.91,"test":0.83,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-OBS","name":"Observability","weight":3,"impl":0.92,"test":0.85,"integ":0.68,"ops":0.2,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-WRK","name":"Workers","weight":4,"impl":0.87,"test":0.92,"integ":0.75,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-CI","name":"CI","weight":3,"impl":0.95,"test":0.95,"integ":0.90,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.96,"test":0.92,"integ":0.70,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}
+    {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.97,"test":0.93,"integ":0.72,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}
   ]
 }

@@ -4,7 +4,7 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. Financial jobs no longer auto-retry. Local suites on `70c77d3`: software 51/51, AI 58/58, unit 744/744. CI SUCCESS on `de95d5f` run 38163750323 (quality + e2e-storefront + e2e-admin).
+None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. Local suites on `8ed00ba`: software 56/56, AI 58/58, unit 749/749. Last CI SUCCESS is `de95d5f` run 38163750323 — **not** `8ed00ba`.
 
 ## HIGH
 

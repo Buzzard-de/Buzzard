@@ -1,7 +1,8 @@
 # Security Remediation Report
 
-Timestamp: 2026-10-11T18:18:00Z  
+Timestamp: 2026-10-11T18:25:00Z  
 Branch: `cursor/software-completion-c293`  
+Implementation HEAD: `70c77d37d9452ed81b80e7faf3a9a82c682528b6`  
 This is not a penetration test.
 
 ## Targeted remediations applied
@@ -28,7 +29,7 @@ This is not a penetration test.
 
 ## Application security (this pass)
 
-- Production missing `BUZZARD_DB_PATH` fails closed; local default is not production storage.
+- Production missing `BUZZARD_DB_PATH` fails closed before plugin load and before `db.js` mkdir/open; local default is not production storage.
 - Production refuses ephemeral `/tmp` database creation.
 - Provider diagnostics reject write URLs, private/invalid hosts, and production hosts; never open sockets; never print secrets.
 - Contact anti-abuse and Guardian fail-closed remain.

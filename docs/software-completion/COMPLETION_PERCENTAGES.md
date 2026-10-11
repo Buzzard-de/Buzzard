@@ -14,7 +14,7 @@ Two scoring systems are kept **separate**. Method name remains `whole-software-w
 
 Fractions rose for Vitest 5 / audit remediations, production path fail-closed, and diagnostic honesty. Ops and production did not rise. Live providers stay NOT_CONFIGURED.
 
-CI SUCCESS on `f4ba504` run 38161918900 is **not** CI for this HEAD.
+Local suites on `70c77d3`: software 51/51, AI 58/58, unit 744/744, lint/typecheck/build pass. CI SUCCESS on `f4ba504` run 38161918900 is **not** CI for this HEAD.
 
 ## 2. AI / automation (unchanged)
 

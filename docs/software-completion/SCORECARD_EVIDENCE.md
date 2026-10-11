@@ -7,7 +7,7 @@ Weights were **not** changed.
 | Layer | Previous | Now | Evidence class |
 | --- | --- | --- | --- |
 | Code | 80.6% | **81.0%** | local implementation |
-| Tests | 80.5% | **80.8%** | local automated (50/50 software, 743 unit, Vitest 5.0.3) |
+| Tests | 80.5% | **80.8%** | local automated (51/51 software, 744 unit, Vitest 5.0.3) |
 | Integration | 63.2% | **63.2%** | no new live wiring |
 | Operations | 19.4% | **19.4%** | sales locked; providers NOT_CONFIGURED |
 | Production | 0.0% | **0.0%** | no production access |

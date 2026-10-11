@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-10-11T16:08:00Z",
+  "generatedAt": "2026-10-11T18:25:00Z",
   "verification": {
     "branch": "cursor/software-completion-c293",
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "pending-this-commit",
+    "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6",
     "headBeforeThisReport": "fb96743839e52694469a4a4e69250ce58224da56",
     "observedCiGreenHead": "f4ba504b0fbf4c61e689cc8d8f151f333eb1c7e6",
     "observedCiRun": 38161918900,
@@ -44,9 +44,9 @@
     }
   },
   "commandsRun": {
-    "test:software": { "exit": 0, "tests": 50, "passed": 50, "runner": "vitest@5.0.3" },
-    "test:ai": { "exit": 0, "tests": 58, "passed": 58, "runner": "vitest@5.0.3" },
-    "test:unit": { "exit": 0, "files": 59, "passed": 743, "failed": 0, "runner": "vitest@5.0.3" },
+    "test:software": { "exit": 0, "tests": 51, "passed": 51, "runner": "vitest@5.0.3", "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6" },
+    "test:ai": { "exit": 0, "tests": 58, "passed": 58, "runner": "vitest@5.0.3", "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6" },
+    "test:unit": { "exit": 0, "files": 59, "passed": 744, "failed": 0, "runner": "vitest@5.0.3", "head": "70c77d37d9452ed81b80e7faf3a9a82c682528b6" },
     "playwright_admin_pim": { "exit": 0, "passed": 13, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_admin_pim_journey": { "exit": 0, "passed": 37, "skipped": 4, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_homepage_viewports": { "exit": 0, "passed": 18, "locales": ["de", "en", "tr", "fr", "ar"] },

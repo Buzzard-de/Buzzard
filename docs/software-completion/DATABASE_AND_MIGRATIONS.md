@@ -17,6 +17,7 @@ Tables (all `CREATE TABLE IF NOT EXISTS`):
 | `software_shipment_events` | Carrier-normalized events | FK to shipments |
 | `software_audit` | Software-layer audit | kind index |
 | `software_return_ledger` | Customer refund vs supplier credit | executed flags default 0; `assumed_supplier_will_reimburse` default 0 |
+| `software_message_drafts` | Customer communication drafts | unique `input_hash`; `sent` default 0 |
 
 Foreign keys: `PRAGMA foreign_keys = ON` already set in `db.js`.
 
@@ -28,7 +29,7 @@ Local catalog note: this development SQLite has public PIM rows. Demo SKU `BZ-CO
 
 ## Rollback strategy (not executed)
 
-Software tables are additive. Rollback is `DROP TABLE` of the seven names above. No existing column was removed. No production apply.
+Software tables are additive. Rollback is `DROP TABLE` of the eight names above. No existing column was removed. No production apply.
 
 ## Tests
 

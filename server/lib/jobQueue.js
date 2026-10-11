@@ -214,24 +214,39 @@ function releaseStaleLocks(now = new Date()) {
   return stale.length;
 }
 
-function claimNextJob(workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS) {
+function claimNextJob(workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS, options = {}) {
   releaseStaleLocks();
   const now = new Date();
   const lockExpires = new Date(now.getTime() + lockTtlMs).toISOString();
   const nowIso = now.toISOString();
+  const jobType = options.jobType || null;
 
-  const candidates = db.prepare(`
-    SELECT * FROM core_background_jobs
-    WHERE status IN ('QUEUED', 'RETRYING')
-    AND (next_run_at IS NULL OR next_run_at <= ?)
-    AND (lock_owner IS NULL OR lock_expires_at IS NULL OR lock_expires_at < ?)
-    ORDER BY
-      CASE priority
-        WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'NORMAL' THEN 2 WHEN 'LOW' THEN 1 ELSE 2
-      END DESC,
-      created_at ASC
-    LIMIT 5
-  `).all(nowIso, nowIso);
+  const candidates = jobType
+    ? db.prepare(`
+        SELECT * FROM core_background_jobs
+        WHERE status IN ('QUEUED', 'RETRYING')
+        AND job_type = ?
+        AND (next_run_at IS NULL OR next_run_at <= ?)
+        AND (lock_owner IS NULL OR lock_expires_at IS NULL OR lock_expires_at < ?)
+        ORDER BY
+          CASE priority
+            WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'NORMAL' THEN 2 WHEN 'LOW' THEN 1 ELSE 2
+          END DESC,
+          created_at ASC
+        LIMIT 5
+      `).all(jobType, nowIso, nowIso)
+    : db.prepare(`
+        SELECT * FROM core_background_jobs
+        WHERE status IN ('QUEUED', 'RETRYING')
+        AND (next_run_at IS NULL OR next_run_at <= ?)
+        AND (lock_owner IS NULL OR lock_expires_at IS NULL OR lock_expires_at < ?)
+        ORDER BY
+          CASE priority
+            WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'NORMAL' THEN 2 WHEN 'LOW' THEN 1 ELSE 2
+          END DESC,
+          created_at ASC
+        LIMIT 5
+      `).all(nowIso, nowIso);
 
   for (const row of candidates) {
     const result = db.prepare(`

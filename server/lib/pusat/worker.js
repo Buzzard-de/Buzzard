@@ -20,8 +20,13 @@ async function claimAndExecute(workerId = "pusat-worker", { jobType = "AI_TASK",
     return { claimed: true, jobId: job.id, result };
   } catch (error) {
     const retries = (job.retryCount || 0) + 1;
-    if (retries >= (job.maxRetries || 3)) {
-      jobQueue.markDeadLetter(job.id, error.message, error.failureKind || "CRASH");
+    const financial = jobQueue.isFinancialJobType(job.jobType);
+    if (financial || retries >= (job.maxRetries || 3)) {
+      jobQueue.markDeadLetter(
+        job.id,
+        financial ? `financial_no_retry: ${error.message}` : error.message,
+        financial ? "FINANCIAL_NO_RETRY" : error.failureKind || "CRASH"
+      );
     } else {
       jobQueue.updateJob(job.id, {
         status: "RETRYING",
@@ -30,7 +35,7 @@ async function claimAndExecute(workerId = "pusat-worker", { jobType = "AI_TASK",
         failureKind: error.failureKind || "CRASH",
       });
     }
-    return { claimed: true, jobId: job.id, error: error.message };
+    return { claimed: true, jobId: job.id, error: error.message, retried: !financial };
   }
 }
 

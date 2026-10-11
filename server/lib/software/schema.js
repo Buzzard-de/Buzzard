@@ -121,6 +121,21 @@ function migrateSoftwareSchema(db) {
     );
     CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_msg_hash ON software_message_drafts(input_hash);
     CREATE INDEX IF NOT EXISTS idx_sw_msg_customer ON software_message_drafts(customer_id);
+
+    CREATE TABLE IF NOT EXISTS software_marketplace_drafts (
+      id TEXT PRIMARY KEY,
+      channel TEXT NOT NULL,
+      sku TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'DRAFT',
+      input_hash TEXT NOT NULL,
+      published INTEGER NOT NULL DEFAULT 0,
+      listing_id TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_mp_hash ON software_marketplace_drafts(input_hash);
+    CREATE INDEX IF NOT EXISTS idx_sw_mp_channel ON software_marketplace_drafts(channel);
   `);
 }
 

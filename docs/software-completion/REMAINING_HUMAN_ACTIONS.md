@@ -9,4 +9,4 @@ No secret values.
 5. Decide whether Next’s bundled **postcss/sharp** overrides are acceptable; do not `audit fix --force`.
 6. Production Render disk: set/confirm `BUZZARD_DB_PATH` only through the operator dashboard. This task did not change production config.
 7. Sales unlock and Product SoT activation remain separate human decisions. Not requested here.
-8. Add the contact-form time-trap if operators want that `security:check` warning gone.
+8. Contact time-trap is implemented. Remaining `security:check` warning is frontend npm audit (vitest 5 / bundled postcss-sharp), not the form.

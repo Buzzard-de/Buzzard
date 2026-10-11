@@ -115,6 +115,7 @@ describe("software completion — isolated engines", () => {
     });
     expect(draft.draft).toBe(true);
     expect(draft.commercial).toBe(false);
+    expect(draft.commercialCreated).toBe(false);
     expect(draft.sent).toBe(false);
     expect(draft.salesLocked).toBe(true);
   });
@@ -224,10 +225,13 @@ describe("software completion — isolated engines", () => {
     const err = software.marketplace.draftListing({ channel: "amazon", sku: "X", forceError: "timeout" });
     expect(err.ok).toBe(false);
     expect(err.published).toBe(false);
-    const draft = software.marketplace.draftListing({ channel: "kaufland", sku: "Y" });
+    const draft = software.marketplace.draftListing({ channel: "kaufland", sku: "Y", price: 12.5 });
     expect(draft.published).toBe(false);
     expect(draft.live).toBe(false);
+    expect(draft.listingId).toBeNull();
     expect(software.marketplace.classify("amazon").status).toBe("mock_connector");
+    expect(software.marketplace.classify("otto").adapterExists).toBe(false);
+    expect(software.marketplace.classify("otto").classificationOnly).toBe(true);
   });
 
   it("16-17 tracking is limited to the owning customer", () => {
@@ -301,15 +305,16 @@ describe("software completion — isolated engines", () => {
   });
 
   it("23 expired lock recovery stays consistent after worker crash", async () => {
+    const jobType = `SW_LOCK_${Date.now()}`;
     const job = jobQueue.enqueueJob({
-      jobType: "SOFTWARE_RECOVERY",
+      jobType,
       payload: { mock: true },
       createdBy: "software-test",
     });
-    const claimed = jobQueue.claimNextJob("sw-crash", 1, { jobType: "SOFTWARE_RECOVERY" });
+    const claimed = jobQueue.claimNextJob("sw-crash", 1, { jobType });
     expect(claimed.id).toBe(job.id);
     await new Promise((r) => setTimeout(r, 20));
-    const recovered = jobQueue.claimNextJob("sw-recover", 5000, { jobType: "SOFTWARE_RECOVERY" });
+    const recovered = jobQueue.claimNextJob("sw-recover", 5000, { jobType });
     expect(recovered?.id).toBe(job.id);
     jobQueue.updateJob(job.id, { status: "COMPLETED", result: { recovered: true } });
   });
@@ -648,4 +653,138 @@ describe("software completion — isolated engines", () => {
     expect(health.volatileFallback).toBe(false);
     expect(health.tmpPath).toBe(false);
   });
+
+  it("41 contact anti-abuse fails closed without a form start stamp", () => {
+    const { validateContactAntiAbuse } = require("../plugins/contactStoragePlugin");
+    expect(validateContactAntiAbuse({ name: "A", email: "a@b.de", message: "hi" }).ok).toBe(false);
+    expect(validateContactAntiAbuse({ _formStarted: Date.now() }).reason).toBe("FORM_TOO_FAST");
+    expect(validateContactAntiAbuse({ _honey: "bot" }).discarded).toBe(true);
+    expect(validateContactAntiAbuse({ _formStarted: Date.now() - 4000 }).ok).toBe(true);
+  });
+
+  it("42 Guardian evaluation exceptions fail closed", () => {
+    const circular = {};
+    circular.self = circular;
+    const denied = pusat.guardian.evaluate({
+      agentId: "price_ai",
+      employee: { id: "price_ai", status: "ACTIVE", permissions: ["ai.execute"] },
+      action: "price.recommend",
+      payload: circular,
+    });
+    expect(denied.allowed).toBe(false);
+    expect(denied.failClosed).toBe(true);
+  });
+
+  it("43 /tmp database paths are not production-persistent", () => {
+    const dbPaths = require("../lib/dbPaths");
+    const previous = process.env.BUZZARD_DB_PATH;
+    process.env.BUZZARD_DB_PATH = "/tmp/buzzard-not-durable.db";
+    const info = dbPaths.getPersistenceInfo();
+    expect(info.path).toContain("/tmp");
+    expect(info.persistent).toBe(false);
+    expect(dbPaths.isEphemeralPath("/var/tmp/buzzard.db")).toBe(true);
+    const previousNode = process.env.NODE_ENV;
+    const startup = dbPaths.validateStartupPersistence({
+      env: { NODE_ENV: "production" },
+      dbPath: "/tmp/buzzard-not-durable.db",
+    });
+    expect(startup.ok).toBe(false);
+    expect(startup.reason).toBe("PRODUCTION_EPHEMERAL_DB");
+    if (previous == null) delete process.env.BUZZARD_DB_PATH;
+    else process.env.BUZZARD_DB_PATH = previous;
+    if (previousNode == null) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = previousNode;
+  });
+
+  it("44 HTTP 200 is not a paid payment and live capture stays blocked", async () => {
+    const httpOk = software.payments.interpretHttpStatus(200);
+    expect(httpOk.paid).toBe(false);
+    expect(httpOk.paidInferredFromHttp).toBe(false);
+    expect(httpOk.success).toBe(false);
+    expect(httpOk.outcome).toBe("UNCERTAIN");
+    const paymentService = require("../lib/commerce/paymentService");
+    const stripe = new paymentService.StripeProvider();
+    const captured = await stripe.capture();
+    const refunded = await stripe.refund();
+    expect(captured.executed).toBe(false);
+    expect(captured.realMoneyMovement).toBe(false);
+    expect(refunded.refunded).toBe(false);
+    expect(healthBlockedLive()).toBe(true);
+  });
+
+  it("45 marketplace drafts require channel fields, stay unpublished, and are idempotent", () => {
+    const missing = software.marketplace.draftListing({ channel: "amazon", sku: "SW-MP-1" });
+    expect(missing.ok).toBe(false);
+    expect(missing.reason).toBe("MARKETPLACE_FIELDS_REQUIRED");
+    expect(missing.listingId).toBeNull();
+    const first = software.marketplace.draftListing(
+      { channel: "amazon", sku: "SW-MP-1", price: 19.9, category: "automotive" },
+      db
+    );
+    const second = software.marketplace.draftListing(
+      { channel: "amazon", sku: "SW-MP-1", price: 19.9, category: "automotive" },
+      db
+    );
+    expect(first.published).toBe(false);
+    expect(first.listingId).toBeNull();
+    expect(first.inventedListingId).toBe(false);
+    expect(second.duplicate).toBe(true);
+    expect(second.listingId).toBeNull();
+    expect(software.marketplace.classify("otto").adapterExists).toBe(false);
+  });
+
+  it("46 customer refund transitions never execute money movement", () => {
+    const opened = software.returns.openCase(db, {
+      orderNumber: `SW-RMA-T-${Date.now()}`,
+      customerId: "cust_sw",
+      reason: "wrong_item",
+    });
+    const drafted = software.returns.transitionCustomerRefund(db, opened.id, "DRAFTED");
+    expect(drafted.ok).toBe(true);
+    expect(drafted.executed).toBe(false);
+    const invalid = software.returns.transitionCustomerRefund(db, opened.id, "RECEIVED");
+    expect(invalid.ok).toBe(false);
+    expect(invalid.executed).toBe(false);
+    expect(software.returns.inspect(db, opened.id).refundExecuted).toBe(false);
+  });
+
+  it("47 supplier live URL fetch is rejected", () => {
+    const blocked = software.supplierFeeds.preview({
+      format: "csv",
+      url: "https://supplier.example/feed.csv",
+      payload: "sku,price\nA,1",
+    });
+    expect(blocked.ok).toBe(false);
+    expect(blocked.live).toBe(false);
+    expect(blocked.written).toBe(false);
+    expect(blocked.reason).toBe("LIVE_FETCH_BLOCKED");
+    expect(software.supplierFeeds.rejectLiveFetch("https://supplier.example").purchaseOrderSent).toBe(false);
+  });
+
+  it("48 financial jobs do not auto-retry after stale lock", () => {
+    const job = jobQueue.enqueueJob({
+      jobType: "payment.capture",
+      payload: { mock: true },
+      createdBy: "software-test",
+      maxRetries: 5,
+    });
+    expect(job.payload.maxRetries).toBe(0);
+    expect(jobQueue.isFinancialJobType(job.jobType)).toBe(true);
+    const past = new Date(Date.now() - 60_000).toISOString();
+    db.prepare(
+      `UPDATE core_background_jobs
+       SET status = 'RUNNING', lock_owner = 'dead-pay', lock_expires_at = ?
+       WHERE id = ?`
+    ).run(past, job.id);
+    expect(jobQueue.releaseStaleLocks()).toBeGreaterThanOrEqual(1);
+    expect(jobQueue.getJob(job.id).status).toBe("DEAD_LETTER");
+    const refused = jobQueue.retryJob(job.id);
+    expect(refused.retried).toBe(false);
+    expect(refused.reason).toBe("FINANCIAL_NO_RETRY");
+  });
 });
+
+function healthBlockedLive() {
+  const health = require("../lib/software").health();
+  return health.blocked.includes("stripe") && health.blocked.includes("twilio") && health.liveReady === false;
+}

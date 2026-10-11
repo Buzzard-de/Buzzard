@@ -4,7 +4,7 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. CI on code HEAD `a26b51d` run 38153709074 is quality + e2e-storefront + e2e-admin SUCCESS. CI for the subsequent gap-close/docs commit is pending until observed.
+None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. Financial jobs no longer auto-retry. CI for this HEAD must be observed on the commit SHA, not on superseded `da0dfd3`.
 
 ## HIGH
 
@@ -23,9 +23,8 @@ None that currently stop isolated software tests. Sales lock, ACTIVE reject, and
 
 ## LOW
 
-1. Contact form time-trap (pre-existing security warning).
-2. Reduce duplicate marketplace list sources (`marketplaceHub` vs software classification).
-3. Voice Python leftovers: keep or quarantine so operators do not assume live telephony.
+1. Reduce duplicate marketplace list sources (`marketplaceHub` vs software classification).
+2. Voice Python leftovers: keep or quarantine so operators do not assume live telephony.
 
 ## Explicitly out of scope here
 

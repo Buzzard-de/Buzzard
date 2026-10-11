@@ -45,6 +45,20 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function validateContactAntiAbuse(body, now = Date.now()) {
+  if (body && (body._honey || body._website)) {
+    return { ok: true, discarded: true, reason: "honeypot" };
+  }
+  const startedAt = Number(body && body._formStarted);
+  if (!Number.isFinite(startedAt) || startedAt <= 0 || startedAt > now + 60_000) {
+    return { ok: false, status: 400, reason: "FORM_START_REQUIRED", stored: false };
+  }
+  if (now - startedAt < 3000) {
+    return { ok: false, status: 400, reason: "FORM_TOO_FAST", stored: false };
+  }
+  return { ok: true, discarded: false };
+}
+
 function ensureDataDirectory() {
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
@@ -73,6 +87,7 @@ function writeSubmissions(submissions) {
 }
 
 module.exports = {
+  validateContactAntiAbuse,
   register(app) {
     ensureDataDirectory();
 
@@ -83,13 +98,12 @@ module.exports = {
         return res.status(429).json({ message: 'Zu viele Anfragen. Bitte versuchen Sie es in einigen Minuten erneut.' });
       }
 
-      if (req.body?._honey || req.body?._website) {
+      const abuse = validateContactAntiAbuse(req.body);
+      if (abuse.discarded) {
         return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.' });
       }
-
-      const startedAt = Number(req.body?._formStarted || 0);
-      if (startedAt > 0 && Date.now() - startedAt < 3000) {
-        return res.status(400).json({ message: 'Bitte Formular kurz ausfüllen und erneut senden.' });
+      if (!abuse.ok) {
+        return res.status(abuse.status || 400).json({ message: 'Bitte Formular kurz ausfüllen und erneut senden.' });
       }
 
       const name = normalizeText(req.body && req.body.name);

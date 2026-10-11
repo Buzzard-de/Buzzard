@@ -8,17 +8,14 @@ No production database.
 
 | Command | Exit | Result |
 | --- | --- | --- |
-| `npm run test:software` | 0 | **38/38** |
+| `npm run test:software` | 0 | **46/46** |
 | `npm run test:ai` | 0 | **58/58** |
-| `npm run test:unit` | 0 | **731/731** (59 files) |
-| `npm run typecheck` | 0 | no errors |
-| `npm run lint` | 0 | no warnings/errors (`next lint` deprecation notice only) |
-| `npm run build` | 0 | static export completed |
-| `npm run security:check` | 0 | 2 warnings (frontend remaining advisories; contact time-trap) |
-| `npm run diagnostics:providers` | 0 | dry-run, attempted=false, live=0, 31 items |
-| `npm run render:preflight` | not re-run this pass | previously exit 0; CI will run |
-| Playwright admin unauth + diagnostics 401 | 0 | **2/2** |
-| Homepage / full admin / journey | not re-run after Next bump | last local 37+18; CI will re-run |
+| `npm run test:unit` | pending this commit | run after push |
+| `npm run typecheck` | pending this commit | run after push |
+| `npm run lint` | pending this commit | run after push |
+| `npm run security:check` | pending this commit | run after push |
+| `npm run diagnostics:providers` | pending this commit | dry-run harness unchanged |
+| Playwright storefront/admin | not re-run locally this pass | last CI SUCCESS was `da0dfd3` run 38158295514 — **not** this HEAD |
 
 Skipped Playwright cases from the prior full run are viewport/project filters, not silent passes.
 

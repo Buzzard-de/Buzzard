@@ -1,6 +1,6 @@
 # Security Remediation Report
 
-Timestamp: 2026-10-11T17:06:00Z  
+Timestamp: 2026-10-11T17:56:00Z  
 Branch: `cursor/software-completion-c293`  
 This is not a penetration test.
 
@@ -21,7 +21,7 @@ This is not a penetration test.
 | `next` via bundled `postcss` / `sharp` | moderate/high | transitive through Next | Next 15.5.27 still vendors older postcss/sharp. Overriding those independently is unreviewed. |
 | `eslint-config-next` via `braces`/`micromatch` | high | eslint-config-next is direct | Suggested fix is **downgrade to 14.2.35** — incompatible with Next 15. |
 | `js-yaml`, `brace-expansion`, `source-map-js` | high | transitive | Dev-tool chain; not a targeted compatible bump in this task. |
-| Contact time-trap | warning | n/a | Pre-existing `security:check` warning. |
+| Contact time-trap | resolved in code | n/a | Hidden `_formStarted` field + server fail-closed. `security:check` now OK. |
 
 ## Controls still enforced
 

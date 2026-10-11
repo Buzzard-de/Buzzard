@@ -83,6 +83,52 @@ function inspect(db, id) {
   };
 }
 
+const CUSTOMER_REFUND_TRANSITIONS = Object.freeze({
+  [RETURN_SIDE_STATUS.NOT_REQUESTED]: [RETURN_SIDE_STATUS.REQUESTED, RETURN_SIDE_STATUS.BLOCKED],
+  [RETURN_SIDE_STATUS.REQUESTED]: [
+    RETURN_SIDE_STATUS.DRAFTED,
+    RETURN_SIDE_STATUS.APPROVED,
+    RETURN_SIDE_STATUS.REJECTED,
+    RETURN_SIDE_STATUS.BLOCKED,
+  ],
+  [RETURN_SIDE_STATUS.DRAFTED]: [
+    RETURN_SIDE_STATUS.APPROVED,
+    RETURN_SIDE_STATUS.REJECTED,
+    RETURN_SIDE_STATUS.BLOCKED,
+  ],
+  [RETURN_SIDE_STATUS.APPROVED]: [RETURN_SIDE_STATUS.BLOCKED],
+  [RETURN_SIDE_STATUS.REJECTED]: [RETURN_SIDE_STATUS.BLOCKED],
+  [RETURN_SIDE_STATUS.PENDING]: [RETURN_SIDE_STATUS.BLOCKED, RETURN_SIDE_STATUS.REJECTED],
+  [RETURN_SIDE_STATUS.RECEIVED]: [],
+  [RETURN_SIDE_STATUS.BLOCKED]: [],
+});
+
+function transitionCustomerRefund(db, id, status) {
+  const allowed = new Set(Object.values(RETURN_SIDE_STATUS));
+  if (!allowed.has(status)) {
+    return { ok: false, error: "invalid_customer_refund_status", executed: false };
+  }
+  if (status === RETURN_SIDE_STATUS.RECEIVED) {
+    return { ok: false, error: "customer_refund_execution_blocked", executed: false };
+  }
+  const current = inspect(db, id);
+  if (!current.ok) return current;
+  const from = current.customerRefund.status;
+  if (from === status) {
+    return { ...current, duplicate: true, executed: false };
+  }
+  const allowedNext = CUSTOMER_REFUND_TRANSITIONS[from] || [];
+  if (!allowedNext.includes(status)) {
+    return { ok: false, error: "invalid_customer_refund_transition", from, to: status, executed: false };
+  }
+  db.prepare(`
+    UPDATE software_return_ledger
+    SET customer_refund_status = ?, customer_refund_executed = 0, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).run(status, id);
+  return { ...inspect(db, id), executed: false, refundExecuted: false };
+}
+
 function recordSupplierCredit(db, id, status) {
   const allowed = new Set(Object.values(RETURN_SIDE_STATUS));
   if (!allowed.has(status)) {
@@ -98,4 +144,11 @@ function recordSupplierCredit(db, id, status) {
   return inspect(db, id);
 }
 
-module.exports = { openCase, inspect, recordSupplierCredit, RETURN_SIDE_STATUS };
+module.exports = {
+  openCase,
+  inspect,
+  recordSupplierCredit,
+  transitionCustomerRefund,
+  CUSTOMER_REFUND_TRANSITIONS,
+  RETURN_SIDE_STATUS,
+};

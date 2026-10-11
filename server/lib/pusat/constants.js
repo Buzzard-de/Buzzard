@@ -75,6 +75,7 @@ const EXCEPTION_CODES = Object.freeze({
 
 const SENSITIVE_ACTIONS = Object.freeze([
   "payment.charge",
+  "payment.capture",
   "payment.refund",
   "purchase.supplier",
   "order.create",

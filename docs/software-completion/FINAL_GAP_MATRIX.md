@@ -5,16 +5,24 @@ Statuses used only: PASS, PARTIAL, FAIL, BLOCKED_EXTERNAL_ACCESS, BLOCKED_HUMAN_
 | Requirement | Existing path | Missing before this pass | Risk | Code possible? | Implementation | Test | Evidence | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Pusat sole orchestrator | `server/lib/pusat` | none | high | yes | preserved | `test:ai` | 58/58 | PASS |
-| Task cancel | lifecycle had no export | cancel missing | med | yes | `cancelTask` | software 40 | cancelled, no side effects | PASS |
-| Durable memory | `pusat/memory` SQLite | /tmp honesty | med | yes | `tmpPath`/`productionPersistent` | software 40 + restart tests | sqlite, not /tmp | PARTIAL (production disk NOT_VERIFIED) |
-| Guardian / approval | `pusat/guardian` + `approval` | none critical | high | yes | preserved | `test:ai` + software 10–12 | deny / expire / bind | PASS |
-| Pricing €0.50 after fees | `software/pricing` | sale not lifted for commission+VAT | high | yes | lift + `saleApproved` | software 3, 37 | net ≥ 0.50 when precise | PASS |
+| Task cancel | lifecycle | none this pass | med | yes | preserved | software 40 | cancelled, no side effects | PASS |
+| Durable memory | `pusat/memory` SQLite | /var/tmp honesty | med | yes | ephemeral path + startup fail-closed | software 43 | sqlite, not /tmp | PARTIAL (production disk NOT_VERIFIED) |
+| Guardian / approval | `pusat/guardian` + `approval` | circular hang / throw | high | yes | WeakSet + wrap | software 42 + `test:ai` | deny / expire / bind | PASS |
+| Pricing €0.50 after fees | `software/pricing` | none this pass | high | yes | preserved | software 3, 37 | net ≥ 0.50 when precise | PASS |
 | €0.10 undercut | constants | intentionally absent | n/a | no | not implemented | software 3 | `implemented:false` | NOT_APPLICABLE |
 | Sales lock | `salesMode` | none | high | yes | preserved | health + journey | salesEnabled false | PASS |
 | Product SoT inactive | productCore | none | high | yes | preserved | software 2 | ACTIVE throw | PASS |
-| Provider diagnostics | missing harness | no dry-run CLI | med | yes | `providerDiagnostics` + script | software 39 | dry-run, prod URL rejected | PASS |
+| Provider diagnostics | `providerDiagnostics` | none this pass | med | yes | preserved | software 39 | dry-run, prod URL rejected | PASS |
 | Live providers | adapters | credentials | high | no | checklist only | inventory counts.live=0 | no probe | NOT_CONFIGURED / NOT_VERIFIED |
-| Next RCE <15.5.24 | next 15.5.23 | unpatched | high | yes | 15.5.27 | lint/typecheck/build/unit | RCE GHSA out of range | PARTIAL (bundled postcss/sharp remain) |
+| Next RCE <15.5.24 | next 15.5.27 | bundled postcss/sharp | high | partial | already patched | lint/typecheck | RCE GHSA out of range | PARTIAL (bundled postcss/sharp remain) |
 | Vitest/tinypool RCE | vitest 3.2.7 | major upgrade | high | no (breaking) | isolated plan | — | remains | BLOCKED_HUMAN_APPROVAL |
-| Production DB / Render disk | `dbPaths.js` | no production access | high | no | unchanged | local path only | — | BLOCKED_EXTERNAL_ACCESS |
+| Production DB / Render disk | `dbPaths.js` | no production access | high | no | startup fail-closed locally | local path only | — | BLOCKED_EXTERNAL_ACCESS |
 | Production verification | — | no prod access | high | no | — | — | score 0 | NOT_VERIFIED |
+| Contact time-trap | ContactForm + contact plugin | missing field; missing stamp allowed | med | yes | `_formStarted` + fail-closed | software 41 | security:check OK | PASS |
+| Payment HTTP ≠ paid | `software/payments` | HTTP 200 treated as ambiguous | high | yes | `interpretHttpStatus` | software 44 | UNCERTAIN, not paid | PASS |
+| Live capture/refund throw | Stripe/PayPal providers | `Not implemented` throw | high | yes | fail-closed blocked result | software 44 | executed:false | PASS |
+| Marketplace required fields / fake IDs | `software/marketplace` | missing fields accepted; no persist | med | yes | validate + idempotent draft | software 45 | listingId null | PASS |
+| Return refund transitions | `software/returns` | any status accepted for customer side | high | yes | transition table | software 46 | RECEIVED blocked | PASS |
+| Supplier live fetch | `software/supplierFeeds` | URL path undefined | high | yes | `rejectLiveFetch` | software 47 | LIVE_FETCH_BLOCKED | PASS |
+| Financial job retry | `jobQueue` + worker | stale lock retried payment jobs | high | yes | maxRetries=0 + DLQ | software 48 | DEAD_LETTER | PASS |
+| Health env ≠ live | `software/health` | stripe dropped from blocked if env set | med | yes | always-blocked live ids | software 21, 44 | stripe/twilio blocked | PASS |

@@ -46,6 +46,7 @@ function createDraft(input = {}) {
     ok,
     draft: true,
     commercial: false,
+    commercialCreated: false,
     sent: false,
     salesEnabled,
     salesLocked: blockedBySales,
@@ -71,6 +72,7 @@ function createPoDraft(input = {}) {
       supplierId: input.supplierId || null,
     },
     realSupplierOrder: false,
+    commercialCreated: false,
   };
 }
 

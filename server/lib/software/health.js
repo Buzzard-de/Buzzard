@@ -18,10 +18,6 @@ function engineStatus({ pass, blocked, configured }) {
   return HEALTH_STATUS.PARTIAL;
 }
 
-function envFlag(name) {
-  return Boolean(process.env[name]);
-}
-
 function getSoftwareHealth(pusatHealth) {
   const database = getDatabaseHealth();
   const providers = providerStatus();
@@ -42,16 +38,17 @@ function getSoftwareHealth(pusatHealth) {
   };
 
   const blocked = [
-    !providers.configured || providers.stub ? "llm_live" : null,
-    !envFlag("STRIPE_SECRET_KEY") ? "stripe" : null,
-    !envFlag("TWILIO_ACCOUNT_SID") ? "twilio" : null,
+    "llm_live",
+    "stripe",
+    "paypal",
+    "twilio",
     "marketplace_publish",
     "carrier_shipment_create",
     "supplier_purchase_order_send",
     "customer_message_send",
     "product_source_of_truth",
     "sales_unlock",
-  ].filter(Boolean);
+  ];
 
   const code = {
     database: !database.error,
@@ -84,8 +81,8 @@ function getSoftwareHealth(pusatHealth) {
     inventory: HEALTH_STATUS.PASS,
     order: HEALTH_STATUS.PASS,
     returns: HEALTH_STATUS.PARTIAL,
-    supplier: engineStatus({ pass: false, blocked: true, configured: envFlag("INTERCARS_API_KEY") || envFlag("TECDOC_API_KEY") }),
-    payment: engineStatus({ pass: false, blocked: true, configured: envFlag("STRIPE_SECRET_KEY") }),
+    supplier: engineStatus({ pass: false, blocked: true, configured: Boolean(process.env.INTERCARS_API_KEY || process.env.TECDOC_API_KEY) }),
+    payment: engineStatus({ pass: false, blocked: true, configured: Boolean(process.env.STRIPE_SECRET_KEY) }),
     marketplace: HEALTH_STATUS.BLOCKED,
     tracking: HEALTH_STATUS.BLOCKED,
     voice: HEALTH_STATUS.NOT_CONFIGURED,

@@ -69,7 +69,12 @@ function runSafeCustomerWorkflow(software, db, input = {}) {
     message: `Workflow inquiry for ${sku}`,
   });
   const sent = software.communications.sendPrepared(db, message.draft?.id);
-  const listing = software.marketplace.draftListing({ channel: "amazon", sku, price: price.salePrice });
+  const listing = software.marketplace.draftListing({
+    channel: "amazon",
+    sku,
+    price: price.salePrice,
+    category: "automotive",
+  });
   const carrier = software.carriers.lookup({ carrier: "dhl", trackingNumber: null });
   const refund = software.payments.draftRefund({ amount: 5, timeout: true });
 

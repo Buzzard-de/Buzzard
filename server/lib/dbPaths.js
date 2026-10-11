@@ -2,11 +2,24 @@
  * Part 12 — Central SQLite path configuration
  */
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const serverDataDir = path.join(__dirname, "..", "data");
 const defaultDbPath = path.join(serverDataDir, "buzzard.db");
 const defaultBackupDir = path.join(serverDataDir, "backups");
+
+function isEphemeralPath(dbPath) {
+  const resolved = path.resolve(String(dbPath || ""));
+  const tmp = path.resolve(os.tmpdir());
+  return (
+    resolved === tmp ||
+    resolved.startsWith(`${tmp}${path.sep}`) ||
+    /(^|\/)tmp(\/|$)/.test(resolved) ||
+    resolved.startsWith("/var/tmp") ||
+    resolved.startsWith("/dev/shm")
+  );
+}
 
 function resolveDbPath() {
   if (process.env.BUZZARD_DB_PATH) {
@@ -49,11 +62,24 @@ function getRenderDiskDiagnostics() {
   };
 }
 
+function validateStartupPersistence({ env = process.env, dbPath = resolveDbPath() } = {}) {
+  const info = getPersistenceInfo(dbPath);
+  if (env.NODE_ENV === "production" && !info.persistent) {
+    return {
+      ok: false,
+      failClosed: true,
+      reason: "PRODUCTION_EPHEMERAL_DB",
+      info,
+    };
+  }
+  return { ok: true, failClosed: false, info };
+}
+
 function getPersistenceInfo(dbPath = resolveDbPath()) {
   const isProduction = process.env.NODE_ENV === "production";
   const onRenderDisk = dbPath.startsWith("/var/data");
   const customPath = Boolean(process.env.BUZZARD_DB_PATH);
-  const persistent = onRenderDisk || (customPath && !dbPath.includes("/tmp"));
+  const persistent = onRenderDisk || (customPath && !isEphemeralPath(dbPath));
   const ephemeralRisk =
     isProduction && !persistent
       ? "Production without persistent disk — SQLite data lost on redeploy"
@@ -99,4 +125,6 @@ module.exports = {
   ensureDbDirectory,
   getRenderDiskDiagnostics,
   getPersistenceInfo,
+  isEphemeralPath,
+  validateStartupPersistence,
 };

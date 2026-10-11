@@ -31,7 +31,11 @@ function resetRateLimiter() {
 function scanSecrets(payload) {
   if (!payload || typeof payload !== "object") return [];
   const found = [];
+  const seen = new WeakSet();
   const walk = (obj, path) => {
+    if (!obj || typeof obj !== "object") return;
+    if (seen.has(obj)) return;
+    seen.add(obj);
     for (const [key, value] of Object.entries(obj)) {
       const lower = String(key).toLowerCase();
       if (/(password|secret|api_key|apikey|token|private_key|authorization)/.test(lower)) {
@@ -49,7 +53,23 @@ function actionRequiresApproval(action, priority) {
   return SENSITIVE_ACTIONS.includes(action);
 }
 
-function evaluate({
+function evaluate(input = {}) {
+  try {
+    return evaluateUnsafe(input);
+  } catch {
+    return {
+      ok: false,
+      allowed: false,
+      failClosed: true,
+      code: EXCEPTION_CODES.GUARDIAN_BLOCKED,
+      message: "Guardian evaluation failed closed",
+      requireApproval: true,
+      decisions: [{ check: "exception", pass: false }],
+    };
+  }
+}
+
+function evaluateUnsafe({
   agentId,
   employee,
   action,
@@ -122,7 +142,12 @@ function evaluate({
     });
   }
 
-  const serialized = `${action || ""} ${tool || ""} ${JSON.stringify(payload || {})}`;
+  let serialized = `${action || ""} ${tool || ""}`;
+  try {
+    serialized += ` ${JSON.stringify(payload || {})}`;
+  } catch {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Guardian evaluation failed closed", { failClosed: true });
+  }
   if (DANGEROUS_PATTERN.test(serialized)) {
     decisions.push({ check: "dangerous", pass: false });
     return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Dangerous or unexpected action detected", {

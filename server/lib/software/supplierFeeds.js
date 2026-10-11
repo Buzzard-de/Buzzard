@@ -152,7 +152,25 @@ function classifyStatus({ configured, parsed, errors, live }) {
   return FEED_STATUS.CONFIGURED;
 }
 
-function preview({ format, payload, supplierId = "fixture", credentialsConfigured = false } = {}) {
+function rejectLiveFetch(url) {
+  return {
+    ok: false,
+    status: FEED_STATUS.BLOCKED,
+    written: false,
+    live: false,
+    importReady: false,
+    purchaseOrderSent: false,
+    urlRejected: true,
+    reason: "LIVE_FETCH_BLOCKED",
+    note: "Supplier feeds accept local payloads only. Network fetch and purchase-order send stay BLOCKED.",
+    target: typeof url === "string" ? url.slice(0, 80) : null,
+  };
+}
+
+function preview({ format, payload, supplierId = "fixture", credentialsConfigured = false, url } = {}) {
+  if (url) {
+    return rejectLiveFetch(url);
+  }
   const kind = String(format || "").toLowerCase();
   let rawRows = [];
   try {
@@ -253,4 +271,5 @@ module.exports = {
   preview,
   adapterStatus,
   recordPreview,
+  rejectLiveFetch,
 };

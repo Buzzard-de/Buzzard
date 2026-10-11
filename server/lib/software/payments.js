@@ -92,6 +92,23 @@ function draftRefund(input = {}) {
   };
 }
 
+function interpretHttpStatus(httpStatus) {
+  const status = Number(httpStatus);
+  return {
+    outcome: PAYMENT_OUTCOME.UNCERTAIN,
+    success: false,
+    failure: false,
+    executed: false,
+    paid: false,
+    retryable: false,
+    requiresReconciliation: true,
+    realMoneyMovement: false,
+    paidInferredFromHttp: false,
+    httpStatus: Number.isFinite(status) ? status : null,
+    note: "HTTP success is not a payment result. Ambiguous provider HTTP must be reconciled.",
+  };
+}
+
 function validateWebhook({ headers = {}, secretConfigured } = {}) {
   const configured = secretConfigured === undefined ? envPresent("STRIPE_WEBHOOK_SECRET") : Boolean(secretConfigured);
   const signature = headers["stripe-signature"] || headers["paypal-transmission-sig"] || headers.signature;
@@ -135,6 +152,7 @@ function health() {
 module.exports = {
   PAYMENT_OUTCOME,
   interpretProviderResult,
+  interpretHttpStatus,
   draftCharge,
   draftRefund,
   validateWebhook,

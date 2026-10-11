@@ -8,7 +8,7 @@ Product SoT: inactive
 Production access: none  
 Prior HEAD: `da0dfd3652b09ff4a99a4f096163a431a4213ff0`
 
-HEAD at documentation time is the commit that records this report. Implementation changes are in the same branch as PR #426. Do not treat CI on `da0dfd3` as CI for this HEAD.
+Implementation HEAD is `6bf14c1`. Evidence/docs HEAD is recorded after push. Do not treat CI on `da0dfd3` as CI for this branch head.
 
 ## What was implemented in this pass
 

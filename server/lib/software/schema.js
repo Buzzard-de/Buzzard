@@ -103,6 +103,24 @@ function migrateSoftwareSchema(db) {
     );
     CREATE INDEX IF NOT EXISTS idx_sw_ret_order ON software_return_ledger(order_number);
     CREATE INDEX IF NOT EXISTS idx_sw_ret_customer ON software_return_ledger(customer_id);
+
+    CREATE TABLE IF NOT EXISTS software_message_drafts (
+      id TEXT PRIMARY KEY,
+      channel TEXT NOT NULL DEFAULT 'email',
+      locale TEXT,
+      customer_id TEXT,
+      order_id TEXT,
+      status TEXT NOT NULL DEFAULT 'DRAFT',
+      input_hash TEXT NOT NULL,
+      body TEXT NOT NULL,
+      classification TEXT,
+      sent INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_msg_hash ON software_message_drafts(input_hash);
+    CREATE INDEX IF NOT EXISTS idx_sw_msg_customer ON software_message_drafts(customer_id);
   `);
 }
 

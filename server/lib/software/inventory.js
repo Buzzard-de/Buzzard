@@ -172,10 +172,56 @@ function withTransaction(db, fn) {
   return db.transaction(fn)();
 }
 
+function tableExists(db, name) {
+  try {
+    return Boolean(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").get(name));
+  } catch {
+    return false;
+  }
+}
+
+function recordWmsReservationAudit(db, wmsReservation = {}) {
+  const sku = String(wmsReservation.product_sku || wmsReservation.productSku || wmsReservation.sku || "").trim();
+  db.prepare(`INSERT INTO software_audit(id, kind, subject, details_json) VALUES(?,?,?,?)`).run(
+    newId("saud"),
+    "wms_reservation",
+    sku || "unknown",
+    JSON.stringify({
+      wmsReservationId: wmsReservation.id || null,
+      quantity: wmsReservation.quantity || null,
+      orderNumber: wmsReservation.order_number || wmsReservation.orderNumber || null,
+      commercialPath: "software.inventory",
+      secondReservationCreated: false,
+    })
+  );
+  return { ok: true, recorded: true, secondReservationCreated: false };
+}
+
+function inspectReservationTables(db, sku) {
+  const softwareRows = sku
+    ? db.prepare("SELECT * FROM software_reservations WHERE sku = ?").all(sku)
+    : [];
+  let wmsRows = [];
+  if (tableExists(db, "wms_reservations") && sku) {
+    wmsRows = db.prepare("SELECT * FROM wms_reservations WHERE product_sku = ?").all(sku);
+  }
+  return {
+    sku,
+    softwareReservations: softwareRows,
+    wmsReservations: wmsRows,
+    sharedAuthority: false,
+    commercialPath: "software.inventory",
+    purchaseOwnStock: false,
+    note: "WMS warehouse reservations stay separate. Commercial fail-closed uses software.inventory.",
+  };
+}
+
 module.exports = {
   evaluateReliability,
   reserve,
   release,
   history,
   withTransaction,
+  recordWmsReservationAudit,
+  inspectReservationTables,
 };

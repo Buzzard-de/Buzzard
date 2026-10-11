@@ -16,6 +16,8 @@ const { getSoftwareHealth } = require("./health");
 const { searchCatalog, searchCanonicalCatalog } = require("./search");
 const returns = require("./returns");
 const reporting = require("./reporting");
+const supplierFeeds = require("./supplierFeeds");
+const communications = require("./communications");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -45,4 +47,6 @@ module.exports = {
   searchCanonicalCatalog,
   returns,
   reporting,
+  supplierFeeds,
+  communications,
 };

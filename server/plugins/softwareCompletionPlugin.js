@@ -75,6 +75,37 @@ module.exports = {
       res.json({ success: true, ...result });
     });
 
+    app.post("/api/admin/software/supplier-feeds/preview", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      const preview = software.supplierFeeds.preview(req.body || {});
+      software.supplierFeeds.recordPreview(db, preview);
+      res.status(preview.ok || preview.status === "FEED_AVAILABLE" ? 200 : 400).json({
+        success: Boolean(preview.ok),
+        ...preview,
+      });
+    });
+
+    app.post("/api/admin/software/communications/draft", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      const drafted = software.communications.draft(db, req.body || {});
+      res.status(drafted.ok ? 200 : 400).json({ success: Boolean(drafted.ok), ...drafted });
+    });
+
+    app.post("/api/admin/software/communications/:id/send", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      const result = software.communications.sendPrepared(db, req.params.id);
+      res.status(403).json({ success: false, ...result });
+    });
+
     app.get("/api/customer/tracking/:orderId", (req, res) => {
       const session = requireCustomer(req, res);
       if (!session) return;

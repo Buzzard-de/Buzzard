@@ -410,4 +410,99 @@ describe("software completion — isolated engines", () => {
     const health = pusat.agents.executeAgent("software_health_assistant", {});
     expect(health.liveReady).toBe(false);
   });
+
+  it("30 CSV and XML feed previews validate without writing or buying stock", () => {
+    const csv = software.supplierFeeds.preview({
+      format: "csv",
+      payload: [
+        "sku,ean,price,currency,stock,timestamp,category,title",
+        "SW-FEED-1,5901234123457,12.5,EUR,4,2026-10-11T12:00:00Z,automotive,Pad",
+        "SW-FEED-1,5901234123457,12.5,EUR,4,2026-10-11T12:00:00Z,automotive,Pad",
+      ].join("\n"),
+    });
+    expect(csv.written).toBe(false);
+    expect(csv.live).toBe(false);
+    expect(csv.purchaseOrderSent).toBe(false);
+    expect(csv.duplicates.length).toBeGreaterThan(0);
+    expect(csv.status).not.toBe("CONNECTED");
+
+    const xml = software.supplierFeeds.preview({
+      format: "xml",
+      payload:
+        "<products><product><sku>SW-FEED-2</sku><ean>4006381333931</ean><price>9.9</price><currency>EUR</currency><stock>3</stock></product></products>",
+    });
+    expect(xml.rowCount).toBe(1);
+    expect(xml.written).toBe(false);
+    expect(xml.importReady).toBe(false);
+    expect(software.supplierFeeds.adapterStatus("csv").networkBlocked).toBe(true);
+    expect(software.supplierFeeds.adapterStatus("xml").status).toBe("NOT_CONFIGURED");
+  });
+
+  it("31 customer message drafts never send and reject duplicate send", () => {
+    const first = software.communications.draft(db, {
+      customerId: "cust_sw",
+      channel: "email",
+      message: "Wo ist meine Bestellung SW-MSG?",
+    });
+    expect(first.status).toBe("DRAFT");
+    expect(first.sent).toBe(false);
+    expect(first.classification).toBe("order");
+    const dup = software.communications.draft(db, {
+      customerId: "cust_sw",
+      channel: "email",
+      message: "Wo ist meine Bestellung SW-MSG?",
+    });
+    expect(dup.duplicate).toBe(true);
+    expect(dup.sent).toBe(false);
+    const queued = software.communications.queue(db, first.draft.id);
+    expect(queued.status).toBe("QUEUED");
+    const blocked = software.communications.sendPrepared(db, first.draft.id);
+    expect(blocked.sent).toBe(false);
+    expect(blocked.status).toBe("BLOCKED");
+    const persisted = db.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(first.draft.id);
+    expect(persisted.sent).toBe(0);
+    expect(persisted.status).toBe("BLOCKED");
+  });
+
+  it("32 WMS reservations stay a separate table and do not create a second commercial reserve", () => {
+    const sku = `SW-WMS-${Date.now()}`;
+    const reserved = software.inventory.reserve(db, {
+      sku,
+      quantity: 5,
+      requestQuantity: 1,
+      source: "supplier_feed",
+      lastSupplierUpdate: new Date().toISOString(),
+    });
+    expect(reserved.ok).toBe(true);
+    const audit = software.inventory.recordWmsReservationAudit(db, {
+      id: 99,
+      product_sku: sku,
+      quantity: 1,
+      order_number: "READINESS_TEST",
+    });
+    expect(audit.secondReservationCreated).toBe(false);
+    const inspect = software.inventory.inspectReservationTables(db, sku);
+    expect(inspect.sharedAuthority).toBe(false);
+    expect(inspect.softwareReservations).toHaveLength(1);
+    expect(inspect.purchaseOwnStock).toBe(false);
+  });
+
+  it("33 API contract shapes stay fail-closed and unauthenticated admin routes require auth", async () => {
+    const health = software.health();
+    expect(health).toMatchObject({
+      liveReady: false,
+      salesEnabled: false,
+      productSourceOfTruthActive: false,
+    });
+    expect(health.engines.live).toBe("BLOCKED");
+    expect(health.engines.production).toBe("NOT_TESTED");
+    expect(JSON.stringify(health)).not.toMatch(/sk-|TWILIO_AUTH_TOKEN|BEGIN PRIVATE/i);
+
+    const { requireAuth } = require("../lib/auth");
+    const denied = { statusCode: 200, body: null, status(code) { this.statusCode = code; return this; }, json(payload) { this.body = payload; return this; } };
+    const session = requireAuth({ headers: {} }, denied);
+    expect(session).toBeFalsy();
+    expect(denied.statusCode).toBe(401);
+    expect(denied.body.success).toBe(false);
+  });
 });

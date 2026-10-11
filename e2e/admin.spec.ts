@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { ADMIN_EMAIL, ADMIN_PASSWORD, seedAdminSession } from "./helpers/adminAuth";
+import { ADMIN_EMAIL, ADMIN_PASSWORD, API, seedAdminSession } from "./helpers/adminAuth";
 
 test.describe("Admin E2E (Part 5 foundation)", () => {
   test.skip(!process.env.NEXT_PUBLIC_BUZZARD_API_URL && !process.env.BUZZARD_API_URL, "API URL required for admin E2E");
@@ -52,5 +52,36 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
     await page.goto("/admin/sessions/");
     await expect(page).not.toHaveURL(/\/admin\/login\//);
     await expect(page.locator("body")).toContainText(/Session/i);
+  });
+
+  test("Control Center tabs expose approvals, commerce, workers, and blocked integrations", async ({ page, request }) => {
+    await seedAdminSession(page, request);
+    await page.goto("/admin/control-center/");
+    await expect(page).not.toHaveURL(/\/admin\/login\//);
+    const tabs = page.locator("nav.cc-tabs");
+    await expect(tabs).toBeVisible();
+
+    await tabs.getByRole("button", { name: "Onaylar" }).click();
+    await expect(page.locator("body")).toContainText(/Human Approval Center|Bekleyen onay/i);
+
+    await tabs.getByRole("button", { name: "Commerce" }).click();
+    await expect(page.locator("body")).toContainText(/Commerce Readiness|Katalogmodus|BUZZARD_SALES_ENABLED=0/i);
+
+    await tabs.getByRole("button", { name: "Workers" }).click();
+    await expect(page.locator("body")).toContainText(/Workers/i);
+
+    await tabs.getByRole("button", { name: "Entegrasyonlar" }).click();
+    await expect(page.locator("body")).toContainText(/Integration Center|BLOCKED|NOT_CONFIGURED|CONNECTED|OFFLINE/i);
+  });
+
+  test("unauthenticated admin software APIs return 401", async ({ request }) => {
+    const health = await request.get(`${API}/api/admin/software/health`);
+    expect(health.status()).toBe(401);
+    const report = await request.get(`${API}/api/admin/software/report`);
+    expect(report.status()).toBe(401);
+    const preview = await request.post(`${API}/api/admin/software/supplier-feeds/preview`, {
+      data: { format: "csv", payload: "sku,price\nX,1" },
+    });
+    expect(preview.status()).toBe(401);
   });
 });

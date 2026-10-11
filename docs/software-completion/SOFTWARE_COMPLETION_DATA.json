@@ -52,7 +52,8 @@
     "playwright_admin": { "exit": 1, "passed": 2, "failed": 2, "note": "login + dashboard passed; Control Center and Sessions failed on static export" },
     "playwright_commerce_api": { "exit": 0, "tests": 9, "passed": 9, "baseURL": "http://127.0.0.1:3001" },
     "github_actions_8adcc87": { "run": 38138267824, "job": "quality", "conclusion": "SUCCESS" },
-    "github_actions_ba95c26": { "run": 38140924702, "job": "quality", "conclusion": "SUCCESS" }
+    "github_actions_ba95c26": { "run": 38140924702, "job": "quality", "conclusion": "SUCCESS" },
+    "github_actions_a56674d": { "run": 38141461171, "job": "quality", "conclusion": "SUCCESS" }
   },
   "safety": {
     "productionDeployed": false,

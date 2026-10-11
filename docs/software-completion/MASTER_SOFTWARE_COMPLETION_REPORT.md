@@ -41,7 +41,7 @@ See `TEST_RESULTS.md`. Headline:
 - Playwright homepage-viewports → **18/18** on `:3040`
 - Playwright admin → **2/4**
 - Playwright commerce API → **9/9** after checkout diagnostic fix
-- GitHub Actions `quality` → SUCCESS on `8adcc87` and `ba95c26`
+- GitHub Actions `quality` → SUCCESS on `8adcc87`, `ba95c26`, and `a56674d`
 
 ## Scores (do not mix)
 

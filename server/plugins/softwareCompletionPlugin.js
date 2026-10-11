@@ -119,6 +119,18 @@ module.exports = {
       });
     });
 
+    app.get("/api/admin/software/provider-diagnostics", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      res.json({
+        success: true,
+        liveReady: false,
+        secretsIncluded: false,
+        diagnostics: software.providerDiagnostics.diagnose({ allowNetwork: false }),
+      });
+    });
+
     app.post("/api/admin/software/safe-workflow", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "ai.read")) return;

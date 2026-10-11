@@ -272,6 +272,30 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
   }
 }
 
+function cancelTask(taskId, { cancelledBy, reason } = {}) {
+  const task = loadTask(taskId);
+  if (!task) {
+    return { ok: false, code: EXCEPTION_CODES.TASK_NOT_FOUND, cancelled: false };
+  }
+  if (task.status === TASK_STATUS.COMPLETED) {
+    return { ok: false, cancelled: false, alreadyComplete: true, status: task.status };
+  }
+  if (task.status === TASK_STATUS.CANCELLED) {
+    return { ok: true, cancelled: true, alreadyTerminal: true, status: task.status, sideEffects: false };
+  }
+  const updated = controlCenter.updateTaskStatus(taskId, TASK_STATUS.CANCELLED, {
+    error: reason || "cancelled",
+    result: { cancelledBy: cancelledBy || null, sideEffects: false },
+  });
+  return {
+    ok: true,
+    cancelled: true,
+    status: TASK_STATUS.CANCELLED,
+    sideEffects: false,
+    task: updated,
+  };
+}
+
 function enqueueTask(taskId) {
   setImmediate(() => {
     executeTask(taskId).catch((err) => {
@@ -290,6 +314,7 @@ function enqueueTask(taskId) {
 module.exports = {
   executeTask,
   enqueueTask,
+  cancelTask,
   loadTask,
   isTimedOut,
 };

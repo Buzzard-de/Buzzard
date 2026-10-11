@@ -18,6 +18,7 @@
     "postinstall": "npm --prefix server install",
     "security:audit": "npm audit --audit-level=high",
     "security:check": "node scripts/security-check.mjs",
+    "diagnostics:providers": "node scripts/provider-diagnostics.mjs",
     "verify:go-live": "node scripts/verify-go-live.mjs",
     "verify:admin-pages-deploy": "node scripts/verify-admin-pages-deploy.mjs",
     "verify:local": "BUZZARD_SITE_URL=http://localhost:3000 BUZZARD_API_URL=http://localhost:3001 node scripts/verify-go-live.mjs",
@@ -106,7 +107,7 @@
     "gizli:start": "python Buzzard/app.py all"
   },
   "dependencies": {
-    "next": "^15.1.0",
+    "next": "15.5.27",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -116,7 +117,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^15.5.23",
+    "eslint-config-next": "15.5.27",
     "typescript": "^5.7.0",
     "vitest": "^3.2.7"
   }

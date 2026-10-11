@@ -91,7 +91,7 @@ function runSafeCustomerWorkflow(software, db, input = {}) {
     steps: {
       productDryRun: { pass: dryRun.dryRun === true && dryRun.written === false },
       productValidation: { pass: activeRejected },
-      canonicalPrice: { pass: price.ok === true && price.marketUndercut.implemented === false },
+      canonicalPrice: { pass: price.ok === true && price.saleApproved === true && price.marketUndercut.implemented === false },
       inventory: { pass: stock.purchaseOwnStock === false },
       orderDraft: { pass: draft.draft === true && draft.commercial === false && draft.sent === false },
       approvalRequired: { pass: denied.allowed === false },

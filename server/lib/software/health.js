@@ -70,6 +70,7 @@ function getSoftwareHealth(pusatHealth) {
     payments: true,
     carriers: true,
     externalIntegrations: true,
+    providerDiagnostics: true,
   };
 
   const engines = {

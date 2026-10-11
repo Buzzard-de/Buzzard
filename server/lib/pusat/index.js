@@ -5,7 +5,7 @@
 const { migratePusatSchema } = require("./schema");
 const { PUSAT_VERSION, AGENT_CODES } = require("./constants");
 const { submitTask, getMeta } = require("./submit");
-const { executeTask, enqueueTask } = require("./lifecycle");
+const { executeTask, enqueueTask, cancelTask } = require("./lifecycle");
 const memory = require("./memory");
 const guardian = require("./guardian");
 const approval = require("./approval");
@@ -30,6 +30,7 @@ module.exports = {
   submitTask,
   executeTask,
   enqueueTask,
+  cancelTask,
   getMeta,
   getHealth,
   report: reportingAutomation,

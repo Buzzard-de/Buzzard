@@ -56,10 +56,22 @@ describe("software completion — isolated engines", () => {
     expect(quote.engine).toBe("server/lib/pricing.js");
     expect(quote.marketUndercut.implemented).toBe(false);
     expect(quote.salePrice).toBeGreaterThan(10);
+    expect(quote.saleApproved).toBe(true);
+    expect(quote.netProfit).toBeGreaterThanOrEqual(0.5);
     const incomplete = software.pricing.quote({ supplierCost: 10 });
     expect(incomplete.precise).toBe(false);
+    expect(incomplete.saleApproved).toBe(false);
     expect(incomplete.missingOptional.length).toBeGreaterThan(0);
     expect(software.pricing.quote({}).failClosed).toBe(true);
+    expect(software.pricing.quote({ supplierCost: 10, shippingCost: -1 }).failClosed).toBe(true);
+    expect(software.pricing.quote({
+      supplierCost: 10,
+      shippingCost: 2,
+      extraCosts: 0.5,
+      returnReserve: 0.4,
+      marketplaceCommissionRate: 0.9,
+      taxRate: 0.2,
+    }).failClosed).toBe(true);
   });
 
   it("4 unreliable stock blocks reservation", () => {
@@ -596,5 +608,44 @@ describe("software completion — isolated engines", () => {
     expect(paymentTimeout.retryable).toBe(false);
     const refundTimeout = pusat.exceptions.classify(new Error("timeout"), { action: "payment.refund" });
     expect(refundTimeout.retryable).toBe(false);
+  });
+
+  it("39 provider diagnostics stay dry-run and never infer auth from reachability", () => {
+    const result = software.providerDiagnostics.diagnose({
+      allowNetwork: true,
+      url: "https://buzzard-api.onrender.com/api/health",
+    });
+    expect(result.ok).toBe(false);
+    expect(result.reason).toBe("PRODUCTION_URL_REJECTED");
+    expect(result.attempted).toBe(false);
+    expect(result.probeAllowed).toBe(false);
+    const dry = software.providerDiagnostics.diagnose();
+    expect(dry.dryRun).toBe(true);
+    expect(dry.attempted).toBe(false);
+    expect(dry.authenticated).toBe(false);
+    expect(dry.reachable).toBe(false);
+    expect(dry.writeRequests).toBe(0);
+    expect(dry.paidSessions).toBe(0);
+    expect(dry.counts.live).toBe(0);
+    expect(JSON.stringify(dry)).not.toMatch(/sk-|whsec_|BEGIN PRIVATE/);
+  });
+
+  it("40 Pusat cancel is deterministic and does not replay completed work", () => {
+    const submitted = pusat.submitTask({
+      title: "Cancel me",
+      agentCode: "sales_assistant",
+      payload: {},
+      createdBy: "software-test",
+      enqueue: false,
+    });
+    const cancelled = pusat.cancelTask(submitted.task.id, { cancelledBy: "software-test", reason: "test" });
+    expect(cancelled.cancelled).toBe(true);
+    expect(cancelled.sideEffects).toBe(false);
+    const again = pusat.cancelTask(submitted.task.id);
+    expect(again.alreadyTerminal).toBe(true);
+    const health = pusat.memory.memoryHealth();
+    expect(health.backend).toBe("sqlite");
+    expect(health.volatileFallback).toBe(false);
+    expect(health.tmpPath).toBe(false);
   });
 });

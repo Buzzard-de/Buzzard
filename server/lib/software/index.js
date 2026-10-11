@@ -22,6 +22,7 @@ const payments = require("./payments");
 const carriers = require("./carriers");
 const externalIntegrations = require("./externalIntegrations");
 const workflow = require("./workflow");
+const providerDiagnostics = require("./providerDiagnostics");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -57,4 +58,5 @@ module.exports = {
   carriers,
   externalIntegrations,
   workflow,
+  providerDiagnostics,
 };

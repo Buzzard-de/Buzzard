@@ -226,6 +226,8 @@ function purgeExpired() {
 
 function memoryHealth() {
   try {
+    const { getPersistenceInfo } = require("../dbPaths");
+    const persistence = getPersistenceInfo();
     const counts = db.prepare("SELECT kind, COUNT(*) n FROM core_ai_memory GROUP BY kind").all();
     const total = db.prepare("SELECT COUNT(*) n FROM core_ai_memory").get().n;
     return {
@@ -233,11 +235,15 @@ function memoryHealth() {
       persistent: true,
       backend: "sqlite",
       ephemeral: false,
+      volatileFallback: false,
+      tmpPath: String(persistence.path || "").includes("/tmp"),
+      productionPersistent: Boolean(persistence.persistent),
+      pathMode: persistence.mode,
       total,
       byKind: Object.fromEntries(counts.map((r) => [r.kind, r.n])),
     };
   } catch (error) {
-    return { ok: false, error: error.message };
+    return { ok: false, error: error.message, persistent: false, volatileFallback: false };
   }
 }
 

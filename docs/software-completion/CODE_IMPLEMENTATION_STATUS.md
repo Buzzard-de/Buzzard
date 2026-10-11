@@ -1,6 +1,6 @@
 # Code Implementation Status
 
-Lineage: `40c35af` (AI) → software facade → admin browser CI (`a2879e4`) → `de6b95c`/`f967c01` (feed preview, message drafts, WMS audit). Implementation status is **code present and reachable**, not production proof.
+Lineage: `40c35af` (AI) → software facade → admin browser CI → `a26b51d` (adapters/workflow/checklist, CI green) → this gap-close (workflow audit, refund UNCERTAIN, honest marketplace flags). Implementation status is **code present and reachable**, not production proof.
 
 ## New / changed implementation
 
@@ -13,7 +13,11 @@ Lineage: `40c35af` (AI) → software facade → admin browser CI (`a2879e4`) →
 | `server/lib/software/search.js` | Canonical catalog search via `catalogReadService`. |
 | `server/lib/software/reporting.js` | Local diagnostic counts; `inventedRevenue:false`. |
 | `server/lib/software/schema.js` | Additive tables including `software_return_ledger`. |
-| `server/plugins/softwareCompletionPlugin.js` | Health + admin report + search + tracking routes. |
+| `server/plugins/softwareCompletionPlugin.js` | Health + report + search + tracking + checklist + safe-workflow. |
+| `server/lib/software/payments.js` | Charge/refund interpretation; timeout = UNCERTAIN, never retried. |
+| `server/lib/software/carriers.js` | DHL/DPD/GLS/Hermes/UPS stubs; outage/malformed fail-closed. |
+| `server/lib/software/externalIntegrations.js` | Secret-free inventory + checklist. |
+| `server/lib/software/workflow.js` | Safe customer workflow + `software_audit` row. |
 | `server/lib/pusat/agents.js` | Extra recommendation-only assistants. |
 | `server/lib/db.js` | `migrateSoftwareCompletion()`. |
 | `lib/admin/client.ts` | Runtime `window.__BUZZARD_API_URL__` override. |

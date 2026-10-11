@@ -32,7 +32,7 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | API | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Health + commerce + admin PIM + software report |
 | Security | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Sales lock + guardian + isolation + tamper e2e |
 | Workers | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | No double-claim; expired lock recovery |
-| CI | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `a2879e4` quality + e2e-storefront + e2e-admin SUCCESS (run 38150381530) |
+| CI | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `a26b51d` quality + e2e-storefront + e2e-admin SUCCESS (run 38153709074) |
 
 ## Wiring that was proven in code
 
@@ -47,6 +47,9 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 9. `/api/admin/software/report` and `/api/software/search`.
 10. `db.js` → `migrateSoftwareCompletion()` after Pusat schema.
 11. `/api/commerce/checkout/attempt` → diagnostic block when demo SKU hidden and sales off.
+12. `software.workflow.runSafeCustomerWorkflow` → product + price + inventory + draft + Guardian + UNCERTAIN payment/refund + blocked comms/listing/carrier + audit.
+13. `/api/admin/software/external-checklist` and `/api/admin/software/safe-workflow` → admin auth + `ai.read`.
+14. `pusat.worker.recoverAbandoned` + `jobQueue.markDeadLetter` → stale lock → RETRYING → DEAD_LETTER; payment/refund classify `retryable:false`.
 
 ## Documented conflicts (not silently merged)
 

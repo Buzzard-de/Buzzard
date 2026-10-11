@@ -76,9 +76,14 @@ function health() {
   };
 }
 
+function requiredEnv(id) {
+  return ENV_HINTS[id] ? [...ENV_HINTS[id]] : [];
+}
+
 module.exports = {
   adapterStatus,
   listAdapters,
+  requiredEnv,
   validateConfig,
   routeTextTask,
   health,

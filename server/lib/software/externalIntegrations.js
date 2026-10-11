@@ -151,11 +151,11 @@ function inventory() {
         id: `marketplace_${c.id}`,
         name: c.name,
         category: "marketplace",
-        adapterExists: Boolean(c.existingModule) || c.status !== "connector_absent",
+        adapterExists: Boolean(c.existingModule),
         adapterPath: c.existingModule || "server/lib/software/marketplace.js",
         envVars: [],
         humanAction: `Provide ${c.name} account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED.`,
-        extra: { connectorStatus: c.status, published: false },
+        extra: { connectorStatus: c.status, published: false, classificationOnly: !c.existingModule },
       })
     ),
     ...voice.listAdapters().map((a) =>
@@ -165,7 +165,7 @@ function inventory() {
         category: "voice",
         adapterExists: true,
         adapterPath: "server/lib/software/voice.js",
-        envVars: [],
+        envVars: voice.requiredEnv(a.id),
         humanAction: `Configure ${a.id} credentials. Signaling success is not media proof. Paid calls stay disabled.`,
         extra: { configured: a.configured, callStarted: false },
       })

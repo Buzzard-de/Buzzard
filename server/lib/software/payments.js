@@ -84,6 +84,14 @@ function draftCharge(input = {}) {
   };
 }
 
+function draftRefund(input = {}) {
+  return {
+    ...draftCharge({ ...input, kind: "refund" }),
+    kind: "refund",
+    refundExecuted: false,
+  };
+}
+
 function validateWebhook({ headers = {}, secretConfigured } = {}) {
   const configured = secretConfigured === undefined ? envPresent("STRIPE_WEBHOOK_SECRET") : Boolean(secretConfigured);
   const signature = headers["stripe-signature"] || headers["paypal-transmission-sig"] || headers.signature;
@@ -128,6 +136,7 @@ module.exports = {
   PAYMENT_OUTCOME,
   interpretProviderResult,
   draftCharge,
+  draftRefund,
   validateWebhook,
   health,
 };

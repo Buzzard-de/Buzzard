@@ -85,5 +85,7 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
     expect(preview.status()).toBe(401);
     const checklist = await request.get(`${API}/api/admin/software/external-checklist`);
     expect(checklist.status()).toBe(401);
+    const workflow = await request.post(`${API}/api/admin/software/safe-workflow`, { data: {} });
+    expect(workflow.status()).toBe(401);
   });
 });

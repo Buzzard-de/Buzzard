@@ -15,7 +15,7 @@ Tables (all `CREATE TABLE IF NOT EXISTS`):
 | `software_reservation_events` | History | FK to reservations |
 | `software_shipments` | Tracking | unique tracking number; customer + order indexes |
 | `software_shipment_events` | Carrier-normalized events | FK to shipments |
-| `software_audit` | Software-layer audit | kind index |
+| `software_audit` | Software-layer audit | kind index; safe customer workflow writes `safe_customer_workflow` |
 | `software_return_ledger` | Customer refund vs supplier credit | executed flags default 0; `assumed_supplier_will_reimburse` default 0 |
 | `software_message_drafts` | Customer communication drafts | unique `input_hash`; `sent` default 0 |
 

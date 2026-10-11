@@ -4,7 +4,7 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. CI on HEAD `0d71a18` run 38150996642 is quality + e2e-storefront + e2e-admin SUCCESS.
+None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. CI on code HEAD `a26b51d` run 38153709074 is quality + e2e-storefront + e2e-admin SUCCESS. CI for the subsequent gap-close/docs commit is pending until observed.
 
 ## HIGH
 
@@ -19,6 +19,7 @@ None that currently stop isolated software tests. Sales lock, ACTIVE reject, and
 3. Supplier feed validation is fixture/dry-run only. Live fetch stays BLOCKED.
 4. Arabic homepage does not show the German photo band (expected locale-specific).
 5. Authenticated admin Playwright still uses static export + runtime API override, not a Next server.
+6. Marketplace channels without an existing module (OTTO, eMAG, Skroutz, bol.com, Cdiscount) are classification-only. Do not treat them as live adapters.
 
 ## LOW
 

@@ -517,6 +517,10 @@ describe("software completion — isolated engines", () => {
     expect(software.payments.validateWebhook({ headers: {} }).accepted).toBe(false);
     expect(software.payments.validateWebhook({ headers: { "stripe-signature": "sig" }, secretConfigured: true }).accepted).toBe(false);
     expect(software.payments.draftCharge({ amount: 10, timeout: true }).executed).toBe(false);
+    const refund = software.payments.draftRefund({ amount: 5, timeout: true });
+    expect(refund.outcome).toBe("UNCERTAIN");
+    expect(refund.retryable).toBe(false);
+    expect(refund.refundExecuted).toBe(false);
   });
 
   it("35 carriers stay scan-based and fail closed on outage or malformed payloads", () => {
@@ -540,6 +544,11 @@ describe("software completion — isolated engines", () => {
     const stripe = inventory.items.find((i) => i.id === "stripe");
     expect(stripe.authTested).toBe(false);
     expect(stripe.liveWriteConfigured).toBe(false);
+    const realtime = inventory.items.find((i) => i.id === "voice_realtime");
+    expect(realtime.requiredEnv.map((v) => v.name)).toContain("OPENAI_API_KEY");
+    const otto = inventory.items.find((i) => i.id === "marketplace_otto");
+    expect(otto.adapterExists).toBe(false);
+    expect(otto.classificationOnly).toBe(true);
     const checklist = software.externalIntegrations.checklist();
     expect(checklist.every((row) => row.status !== "LIVE")).toBe(true);
     expect(checklist.every((row) => Array.isArray(row.environmentVariables))).toBe(true);
@@ -560,5 +569,32 @@ describe("software completion — isolated engines", () => {
     expect(result.customerMessageSent).toBe(false);
     expect(result.carrierAction).toBe(false);
     expect(result.salesEnabled).toBe(false);
+    expect(result.audit.recorded).toBe(true);
+    const audit = db.prepare("SELECT * FROM software_audit WHERE id = ?").get(result.audit.id);
+    expect(audit.kind).toBe("safe_customer_workflow");
+  });
+
+  it("38 worker recover and dead-letter never auto-retry financial work", () => {
+    const jobType = `SW_RECOVERY_${Date.now()}`;
+    const job = jobQueue.enqueueJob({
+      jobType,
+      payload: { probe: "software-recovery" },
+      createdBy: "software-test",
+    });
+    const past = new Date(Date.now() - 60_000).toISOString();
+    db.prepare(
+      `UPDATE core_background_jobs
+       SET status = 'RUNNING', lock_owner = 'dead-worker', lock_expires_at = ?
+       WHERE id = ?`
+    ).run(past, job.id);
+    const recovered = pusat.worker.recoverAbandoned();
+    expect(recovered.recovered).toBeGreaterThanOrEqual(1);
+    expect(jobQueue.getJob(job.id).status).toBe("RETRYING");
+    jobQueue.markDeadLetter(job.id, "forced isolation", "CRASH");
+    expect(jobQueue.getJob(job.id).status).toBe("DEAD_LETTER");
+    const paymentTimeout = pusat.exceptions.classify(new Error("timeout"), { action: "payment.capture" });
+    expect(paymentTimeout.retryable).toBe(false);
+    const refundTimeout = pusat.exceptions.classify(new Error("timeout"), { action: "payment.refund" });
+    expect(refundTimeout.retryable).toBe(false);
   });
 });

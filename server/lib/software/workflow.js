@@ -2,6 +2,7 @@
  * Safe customer workflow using existing engines. No commercial side effects.
  */
 
+const crypto = require("crypto");
 const productCore = require("../pim/productCore");
 const guardian = require("../pusat/guardian");
 
@@ -70,6 +71,21 @@ function runSafeCustomerWorkflow(software, db, input = {}) {
   const sent = software.communications.sendPrepared(db, message.draft?.id);
   const listing = software.marketplace.draftListing({ channel: "amazon", sku, price: price.salePrice });
   const carrier = software.carriers.lookup({ carrier: "dhl", trackingNumber: null });
+  const refund = software.payments.draftRefund({ amount: 5, timeout: true });
+
+  const auditId = `swa_${crypto.randomBytes(6).toString("hex")}`;
+  db.prepare("INSERT INTO software_audit(id, kind, subject, details_json) VALUES(?,?,?,?)").run(
+    auditId,
+    "safe_customer_workflow",
+    sku,
+    JSON.stringify({
+      commercialOrders: 0,
+      paymentExecuted: false,
+      refundExecuted: false,
+      guardianAllowed: denied.allowed,
+    })
+  );
+  const auditRow = db.prepare("SELECT * FROM software_audit WHERE id = ?").get(auditId);
 
   return {
     steps: {
@@ -82,10 +98,13 @@ function runSafeCustomerWorkflow(software, db, input = {}) {
       guardian: { pass: denied.allowed === false },
       commercialBlocked: { pass: draft.salesLocked === true },
       paymentUncertain: { pass: payment.outcome === "UNCERTAIN" && payment.retryable === false },
+      refundUncertain: { pass: refund.outcome === "UNCERTAIN" && refund.refundExecuted === false },
       communicationsBlocked: { pass: sent.sent === false },
       marketplaceUnpublished: { pass: listing.published === false },
       carrierIdle: { pass: carrier.shipmentCreated === false && carrier.gpsInvented === false },
+      audit: { pass: Boolean(auditRow) && auditRow.kind === "safe_customer_workflow" },
     },
+    audit: { id: auditId, recorded: Boolean(auditRow) },
     commercialOrders: 0,
     paymentExecuted: false,
     refundExecuted: false,

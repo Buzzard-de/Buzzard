@@ -16,8 +16,8 @@ These are **not** missing software modules in the same sense as an empty handler
 | Production DB migrate | policy | no production touch | local/isolated SQLite |
 | Production deploy | policy | out of scope | — |
 | Admin Control Center / Sessions / PIM UI | environment | static export does not keep the admin session | login page + dashboard + admin APIs work |
-| CI `quality` on `25a48da` | empty catalog assumption | part8 listed leftover public PIM rows | fixture now seeds READY/PUBLIC `UNIT-CART-*`; not yet observed in Actions |
+| CI `quality` on `25a48da` | empty catalog assumption | part8 listed leftover public PIM rows | fixed on `7f81585`; run 38144084891 SUCCESS |
 
 Health payloads list blocked ids (`llm_live`, `stripe`, `twilio`, `marketplace_publish`, `carrier_shipment_create`, `supplier_purchase_order_send`, `customer_message_send`, `product_source_of_truth`, `sales_unlock`). A green `/api/health/software` `code` object does **not** mean `liveReady`.
 
-GitHub Actions on `25a48da`: `e2e-storefront` SUCCESS, `quality` FAILURE. Earlier SHAs `8adcc87`, `ba95c26`, `a56674d`, `65a5b3a` had `quality` SUCCESS before `test:unit` was added to the job.
+GitHub Actions on `7f81585` run [38144084891](https://github.com/Buzzard-de/Buzzard/actions/runs/38144084891): `quality` SUCCESS (including `test:unit`) and `e2e-storefront` SUCCESS. `25a48da` remains the documented failed predecessor.

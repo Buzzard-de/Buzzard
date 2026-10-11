@@ -27,6 +27,7 @@ All commands below were run on isolated local data or observed GitHub Actions. N
 | Playwright `customer-journey` page loads | 0 | 2 | 0 | homepage + `/warenkorb/` |
 | Playwright `customer-journey` checkout UI | — | — | — | **NOT VERIFIED** |
 | Playwright commerce API | 0 | 12 | 0 | API `:3001`, sales locked |
+| GitHub Actions `7f81585` | 0 | quality + e2e-storefront | 0 | run 38144084891; includes `test:unit` |
 
 ## Required scenarios → tests
 
@@ -108,8 +109,9 @@ Observed, not inferred:
 | `a56674d` | [38141461171](https://github.com/Buzzard-de/Buzzard/actions/runs/38141461171) | SUCCESS | n/a |
 | `65a5b3a` | [38141677035](https://github.com/Buzzard-de/Buzzard/actions/runs/38141677035) | SUCCESS | n/a |
 | `25a48da` | [38143086398](https://github.com/Buzzard-de/Buzzard/actions/runs/38143086398) / [38143084048](https://github.com/Buzzard-de/Buzzard/actions/runs/38143084048) | **FAILURE** (`test:unit` 2 failed) | **SUCCESS** |
+| `7f81585` | [38144084891](https://github.com/Buzzard-de/Buzzard/actions/runs/38144084891) | **SUCCESS** (lint, typecheck, build, `test:ai`, `test:software`, `test:unit`, preflight, `security:check`) | **SUCCESS** |
 
-Current workflow: `quality` runs lint, typecheck, build, `test:ai`, `test:software`, `test:unit`, `render:preflight`, `security:check`. Separate `e2e-storefront` serves `out/` on `:3040` and runs homepage Playwright. `25a48da` is the first SHA that included those added jobs; quality failed on empty-CI catalog assumptions.
+Current workflow: `quality` runs lint, typecheck, build, `test:ai`, `test:software`, `test:unit`, `render:preflight`, `security:check`. Separate `e2e-storefront` serves `out/` on `:3040` and runs homepage Playwright. The empty-CI catalog failure on `25a48da` is fixed and observed green on `7f81585`.
 
 ## What tests do not prove
 
@@ -119,4 +121,4 @@ Current workflow: `quality` runs lint, typecheck, build, `test:ai`, `test:softwa
 - Admin Control Center / Sessions / PIM in a browser against a session-aware Next server.
 - Full customer-journey checkout UI.
 - Production verification (`PRODUCTION_VERIFIED` stays 0).
-- That `test:unit` is green in GitHub Actions after `25a48da` until the fixture fix is observed.
+- Authenticated admin Control Center / PIM browser tests (still not in CI).

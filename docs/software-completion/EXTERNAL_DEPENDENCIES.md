@@ -56,5 +56,5 @@ See classification in `server/lib/software/marketplace.js`. All `liveVerified: f
 | Production Render API | not called |
 | Production database | not opened |
 | Customer email/SMS | `customerSend` blocked |
-| GitHub Actions `quality` | SUCCESS on `8adcc87`, `ba95c26`, `a56674d`, `65a5b3a`; **FAILURE** on `25a48da` (`test:unit`) |
-| GitHub Actions `e2e-storefront` | SUCCESS on `25a48da` |
+| GitHub Actions `quality` | SUCCESS on `8adcc87`, `ba95c26`, `a56674d`, `65a5b3a`; **FAILURE** on `25a48da`; **SUCCESS** on `7f81585` (run 38144084891, includes `test:unit`) |
+| GitHub Actions `e2e-storefront` | SUCCESS on `25a48da` and `7f81585` |

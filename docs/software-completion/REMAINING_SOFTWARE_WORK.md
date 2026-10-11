@@ -4,7 +4,7 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-1. Observe GitHub Actions `quality` after the part8 isolated-catalog fixture. `25a48da` failed `test:unit` 715/717. Do not treat local 717/717 as CI-green until the next run is observed.
+None that currently stop isolated software tests or the observed `7f81585` CI jobs. Sales lock, ACTIVE reject, and Guardian deny remain in place.
 
 ## HIGH
 

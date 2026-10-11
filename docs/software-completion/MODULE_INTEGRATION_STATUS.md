@@ -32,7 +32,7 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | API | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Health + commerce + admin PIM + software report |
 | Security | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Sales lock + guardian + isolation + tamper e2e |
 | Workers | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | No double-claim; expired lock recovery |
-| CI | TESTED | PARTIALLY_IMPLEMENTED | NOT_IMPLEMENTED | unit + e2e jobs exist; quality FAILED on `25a48da` |
+| CI | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `7f81585` quality + e2e-storefront SUCCESS (run 38144084891) |
 
 ## Wiring that was proven in code
 

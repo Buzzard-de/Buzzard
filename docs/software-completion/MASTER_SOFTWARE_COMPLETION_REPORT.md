@@ -36,6 +36,7 @@ See `TEST_RESULTS.md`. Headline:
 
 - Local `npm run test:unit` → **717/717**
 - CI `test:unit` on `25a48da` → **715/717 FAIL** (part8 empty catalog)
+- CI on `7f81585` run 38144084891 → **quality SUCCESS** + **e2e-storefront SUCCESS**
 - part8 after isolated READY/PUBLIC fixture → **17/17**
 - `npm run test:ai` → **58/58**
 - `npm run test:software` → **27/27** (CI SUCCESS on `25a48da`)
@@ -53,8 +54,8 @@ See `TEST_RESULTS.md`. Headline:
 | Layer | Previous | Now |
 | --- | --- | --- |
 | Code implementation | 76.4% | **78.0%** |
-| Test verification | 73.6% | **75.9%** |
-| Integration verification | 56.8% | **59.0%** |
+| Test verification | 73.6% | **76.1%** |
+| Integration verification | 56.8% | **59.2%** |
 | Operational readiness | 19.4% | **19.4%** |
 | Production verification | 0.0% | **0.0%** |
 
@@ -81,7 +82,7 @@ Pusat remains the single orchestrator. No second task authority. No brand rewrit
 
 ## Honest limits
 
-Admin Control Center, Sessions, and PIM Core were **not** browser-verified on static export. Full customer-journey checkout UI was **not** run. Live LLM, Stripe, Twilio, carrier, marketplace publish, and supplier PO send remain **BLOCKED**. CI `quality` on `25a48da` failed `test:unit`; the fixture fix is not GitHub-proven until the next observed run. Production verification is **0%**.
+Admin Control Center, Sessions, and PIM Core were **not** browser-verified on static export. Full customer-journey checkout UI was **not** run. Live LLM, Stripe, Twilio, carrier, marketplace publish, and supplier PO send remain **BLOCKED**. CI `quality` + `e2e-storefront` on `7f81585` are observed SUCCESS. Production verification is **0%**.
 
 See `REMAINING_SOFTWARE_WORK.md` and `BLOCKED_ITEMS.md`.
 

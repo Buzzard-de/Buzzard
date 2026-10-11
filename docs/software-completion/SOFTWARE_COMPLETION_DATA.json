@@ -5,7 +5,7 @@
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "headBeforeThisReport": "25a48da49050886e205246be20c0d601f4f858a3",
+    "headBeforeThisReport": "7f815851bca9c9160d6346aeed85141cd046b447",
     "basedOn": "Pusat AI completion HEAD (PR #425 commits 3e06198, 4c83d3e, 40c35af) plus software facade and verification commits through 25a48da"
   },
   "method": {
@@ -27,8 +27,8 @@
   },
   "scores": {
     "codeImplementation": 78.0,
-    "testVerification": 75.9,
-    "integrationVerification": 59.0,
+    "testVerification": 76.1,
+    "integrationVerification": 59.2,
     "operationalReadiness": 19.4,
     "productionVerification": 0.0,
     "totalWeight": 148,
@@ -72,6 +72,12 @@
       "e2eStorefront": "SUCCESS",
       "failedJob": "quality / npm run test:unit",
       "failedTests": ["part8Foundation cartService", "part8Foundation checkoutService"]
+    },
+    "github_actions_7f81585": {
+      "run": 38144084891,
+      "quality": "SUCCESS",
+      "e2eStorefront": "SUCCESS",
+      "steps": ["lint", "typecheck", "build", "test:ai", "test:software", "test:unit", "render:preflight", "security:check", "homepage-viewports"]
     }
   },
   "safety": {
@@ -111,7 +117,7 @@
     {"id":"SW-SEC","name":"Security","weight":6,"impl":0.75,"test":0.75,"integ":0.55,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-OBS","name":"Observability","weight":3,"impl":0.85,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-WRK","name":"Workers","weight":4,"impl":0.85,"test":0.85,"integ":0.7,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-CI","name":"CI","weight":3,"impl":0.9,"test":0.82,"integ":0.7,"ops":0.15,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-CI","name":"CI","weight":3,"impl":0.9,"test":0.9,"integ":0.8,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.9,"test":0.8,"integ":0.55,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}
   ]
 }

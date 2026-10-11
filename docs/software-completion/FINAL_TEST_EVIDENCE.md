@@ -16,7 +16,8 @@ No production database.
 | `npm run security:check` | 0 | **1 warning** (frontend npm audit: vitest/tinypool + Next bundled postcss/sharp) |
 | `npm run diagnostics:providers` | 0 | dry-run, attempted=false, live=0, 31 items |
 | `npm run render:preflight` | 0 | 2 warnings; deploy not executed; existing script performed a read-only `/api/health` GET |
-| Playwright storefront/admin | not re-run locally this pass | last CI SUCCESS was `da0dfd3` run 38158295514 — **not** this HEAD |
+| Playwright storefront/admin | not re-run locally this pass | CI `e2e-storefront` + `e2e-admin` SUCCESS on `f4ba504` run 38161918900 |
+| GitHub Actions CI `f4ba504` | 0 | run [38161918900](https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900): quality + e2e-storefront + e2e-admin SUCCESS |
 
 Skipped Playwright cases from the prior full run are viewport/project filters, not silent passes.
 

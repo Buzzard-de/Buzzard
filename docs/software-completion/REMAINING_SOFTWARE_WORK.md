@@ -4,7 +4,7 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. Financial jobs no longer auto-retry. CI for this HEAD must be observed on the commit SHA, not on superseded `da0dfd3`.
+None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. Financial jobs no longer auto-retry. CI SUCCESS on `f4ba504` run 38161918900 (quality + e2e-storefront + e2e-admin). A later docs-only SHA is not that run.
 
 ## HIGH
 

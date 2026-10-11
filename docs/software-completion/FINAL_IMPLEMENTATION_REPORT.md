@@ -8,7 +8,7 @@ Product SoT: inactive
 Production access: none  
 Prior HEAD: `da0dfd3652b09ff4a99a4f096163a431a4213ff0`
 
-Implementation HEAD is `6bf14c1`. Evidence/docs HEAD is recorded after push. Do not treat CI on `da0dfd3` as CI for this branch head.
+Implementation HEAD is `6bf14c1`. Report SHA with observed CI is `f4ba504` run 38161918900 (quality + e2e-storefront + e2e-admin SUCCESS). A later docs-only commit is not that CI run.
 
 ## What was implemented in this pass
 

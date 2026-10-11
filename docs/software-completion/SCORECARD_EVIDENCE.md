@@ -12,7 +12,7 @@ Weights were **not** changed.
 | Operations | 19.4% | **19.4%** | sales locked; providers NOT_CONFIGURED |
 | Production | 0.0% | **0.0%** | no production access |
 
-Fractions moved only for fail-closed payment/marketplace/returns/workers/persistence/security tests. Live providers were not raised. CI for this HEAD is recorded only after the matching Actions run.
+Fractions moved only for fail-closed payment/marketplace/returns/workers/persistence/security tests. Live providers were not raised. CI SUCCESS for `f4ba504` is run [38161918900](https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900) (quality + e2e-storefront + e2e-admin). That is CI evidence for that SHA only, not production verification.
 
 ## AI — 161 weights (unchanged)
 

@@ -19,7 +19,7 @@ AI 161 weights were **not** edited.
 
 Fractions rose only where this pass added fail-closed payment, marketplace draft, refund-transition, financial-job, persistence, and contact/Guardian tests. Operational stays **19.4%** because sales remain locked, live providers stay BLOCKED/NOT_CONFIGURED, and nothing was staged. Production stays **0.0%**. Integration is unchanged because no sandbox or live provider was exercised.
 
-CI on prior HEAD `da0dfd3` is not CI for this HEAD. Observe the new SHA after push.
+CI on HEAD `f4ba504` run [38161918900](https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900): quality + e2e-storefront + e2e-admin SUCCESS. That run is not production verification.
 
 ## 2. AI / automation (unchanged)
 

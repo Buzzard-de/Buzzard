@@ -5,10 +5,10 @@
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "86e8877e5e626d1c37a97d6cc5fcaab4a4d90ddd",
+    "head": "f4ba504b0fbf4c61e689cc8d8f151f333eb1c7e6",
     "headBeforeThisReport": "da0dfd3652b09ff4a99a4f096163a431a4213ff0",
-    "observedCiGreenHead": "da0dfd3652b09ff4a99a4f096163a431a4213ff0",
-    "observedCiRun": 38158295514,
+    "observedCiGreenHead": "f4ba504b0fbf4c61e689cc8d8f151f333eb1c7e6",
+    "observedCiRun": 38161918900,
     "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, adapters, workflow audit, worker recovery, and external checklist"
   },
   "method": {
@@ -55,6 +55,8 @@
     "diagnostics:providers": { "exit": 0, "dryRun": true, "live": 0, "items": 31 },
     "render:preflight": { "exit": 0, "warnings": 2, "deployed": false, "note": "existing script; read-only health GET; not production verification" },
     "security:check": { "exit": 0, "warnings": 1 },
+    "github_actions_f4ba504": { "run": 38161918900, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS", "url": "https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900" },
+    "github_actions_da0dfd3": { "run": 38158295514, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS", "superseded": true },
     "github_actions_a26b51d": { "run": 38153709074, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" },
     "github_actions_0d71a18": { "run": 38150996642, "quality": "SUCCESS", "e2eStorefront": "SUCCESS", "e2eAdmin": "SUCCESS" }
   },

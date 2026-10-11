@@ -439,10 +439,11 @@ describe("software completion — isolated engines", () => {
   });
 
   it("31 customer message drafts never send and reject duplicate send", () => {
+    const message = `Wo ist meine Bestellung SW-MSG-${Date.now()}?`;
     const first = software.communications.draft(db, {
       customerId: "cust_sw",
       channel: "email",
-      message: "Wo ist meine Bestellung SW-MSG?",
+      message,
     });
     expect(first.status).toBe("DRAFT");
     expect(first.sent).toBe(false);
@@ -450,7 +451,7 @@ describe("software completion — isolated engines", () => {
     const dup = software.communications.draft(db, {
       customerId: "cust_sw",
       channel: "email",
-      message: "Wo ist meine Bestellung SW-MSG?",
+      message,
     });
     expect(dup.duplicate).toBe(true);
     expect(dup.sent).toBe(false);

@@ -42,6 +42,11 @@ function taskRequiresApproval(task) {
 }
 
 async function processTask(taskId) {
+  const pusat = require("./pusat");
+  if (typeof pusat.executeTask === "function") {
+    return pusat.executeTask(taskId);
+  }
+
   const row = db.prepare("SELECT * FROM core_ai_tasks WHERE id = ?").get(taskId);
   if (!row) return null;
 

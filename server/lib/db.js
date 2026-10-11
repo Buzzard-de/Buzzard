@@ -3860,6 +3860,11 @@ function migrateCoreFoundationPart17() {
   }
 }
 
+function migrateCoreFoundationPusat() {
+  const { migratePusatSchema } = require("./pusat/schema");
+  migratePusatSchema(db);
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
@@ -3867,6 +3872,7 @@ migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
+migrateCoreFoundationPusat();
 
 
 function seed() {

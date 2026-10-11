@@ -9,18 +9,38 @@ export const API = (process.env.NEXT_PUBLIC_BUZZARD_API_URL || process.env.BUZZA
 
 let cachedToken: string | undefined;
 
-export async function seedAdminSession(page: Page, request: APIRequestContext) {
-  if (!cachedToken) {
-    const login = await request.post(`${API}/api/admin/login`, {
-      data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
+export async function loginAdminApi(request: APIRequestContext): Promise<string> {
+  if (cachedToken) {
+    const probe = await request.get(`${API}/api/admin/me`, {
+      headers: { Authorization: `Bearer ${cachedToken}` },
     });
-    const body = await login.json();
-    cachedToken = body.token as string | undefined;
+    if (probe.ok()) return cachedToken;
+    cachedToken = undefined;
   }
-  const token = cachedToken;
+
+  const login = await request.post(`${API}/api/admin/login`, {
+    data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
+  });
+  if (login.status() === 429) {
+    throw new Error("admin_login_rate_limited");
+  }
+  const body = await login.json();
+  const token = body.token as string | undefined;
   if (!token) {
-    throw new Error("admin_login_failed");
+    throw new Error(`admin_login_failed:${login.status()}`);
   }
+  const me = await request.get(`${API}/api/admin/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!me.ok()) {
+    throw new Error(`admin_me_failed:${me.status()}`);
+  }
+  cachedToken = token;
+  return token;
+}
+
+export async function seedAdminSession(page: Page, request: APIRequestContext) {
+  const token = await loginAdminApi(request);
   await page.addInitScript(
     ({ api, token: sessionToken }) => {
       (window as Window & { __BUZZARD_API_URL__?: string }).__BUZZARD_API_URL__ = api;

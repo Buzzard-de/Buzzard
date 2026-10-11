@@ -12,6 +12,7 @@ test.describe("Admin PIM Core E2E (Part 6)", () => {
   test("PIM Core page loads", async ({ page, request }) => {
     await adminLogin(page, request);
     await page.goto("/admin/pim-core/");
+    await expect(page).not.toHaveURL(/\/admin\/login\//);
     await expect(page.locator("body")).toContainText(/Product Core|PIM/i);
   });
 

@@ -44,3 +44,34 @@ jobs:
             sleep 1
           done
           PLAYWRIGHT_BASE_URL=http://127.0.0.1:3040 PLAYWRIGHT_SKIP_WEBSERVER=1 npx playwright test e2e/homepage-viewports.spec.ts --project=homepage-viewports
+
+  e2e-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: NEXT_PUBLIC_BUZZARD_API_URL=http://127.0.0.1:3001 npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Start API, serve static export, run admin and journey tests
+        env:
+          BUZZARD_SALES_ENABLED: "0"
+          NEXT_PUBLIC_SALES_ENABLED: "0"
+          BUZZARD_TEST_MODE: "1"
+          NEXT_PUBLIC_BUZZARD_API_URL: http://127.0.0.1:3001
+          BUZZARD_API_URL: http://127.0.0.1:3001
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:3040
+          PLAYWRIGHT_SKIP_WEBSERVER: "1"
+        run: |
+          node server/server.js &
+          python3 -m http.server 3040 --directory out --bind 127.0.0.1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:3001/api/health >/dev/null && curl -sf http://127.0.0.1:3040/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npx playwright test e2e/admin.spec.ts e2e/admin-pim-core.spec.ts e2e/customer-journey.spec.ts --project=chromium-desktop

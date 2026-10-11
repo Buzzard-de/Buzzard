@@ -19,7 +19,7 @@ No production database.
 | `npm run test:backup-restore` | 0 | local dry-run only |
 | `npm run security:check` | 0 | 1 warning (eslint-config-next/braces, dev-only) |
 | `npm audit --omit=dev` | 0 | **0** production vulnerabilities |
-| Playwright storefront/admin | CI, not local this pass | last CI SUCCESS `de95d5f` run 38163750323 — **not** `8ed00ba` |
+| Playwright storefront/admin | CI, not local this pass | **SUCCESS** on `5cd97d0` run 38169328697 (quality + e2e-storefront + e2e-admin). Includes implementation `8ed00ba`. |
 
 ## What tests do not prove
 

@@ -14,7 +14,7 @@ Two scoring systems are kept **separate**. Method name remains `whole-software-w
 
 Fractions rose for the A–K lifecycle harness, marketplace safe-adapter interface, and health readiness split. Ops and production did not rise. Live providers stay NOT_CONFIGURED.
 
-Local suites on `8ed00ba`: software 56/56, AI 58/58, unit 749/749, lint/typecheck/build pass. Last CI SUCCESS is `de95d5f` run 38163750323 — **not** this implementation SHA.
+Local suites on `8ed00ba`: software 56/56, AI 58/58, unit 749/749, lint/typecheck/build pass. CI SUCCESS on `5cd97d0` run **38169328697** (quality, e2e-storefront, e2e-admin). That SHA includes implementation `8ed00ba`.
 
 ## 2. AI / automation (unchanged)
 

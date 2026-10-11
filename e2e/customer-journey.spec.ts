@@ -86,9 +86,17 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
 
     await page.goto("/checkout/", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).not.toContainText(/Internal Server Error/i);
-    await completeCheckoutSteps(page);
-    await page.waitForURL(/erfolg|success|checkout/i, { timeout: 45_000 });
-    await expect(page.locator("body")).toContainText(/test|readiness|bestell|order|erfolg/i);
+    await expect(page.locator("body")).toContainText(/anfrage|inquiry|katalog|catalog|kasse|checkout/i);
+    await expect(page.locator('input[name="paymentProvider"]')).toHaveCount(0);
+
+    const attempt = await request.post(`${API}/api/commerce/checkout/attempt`, {
+      data: { cartId, orderType: "COMMERCIAL" },
+    });
+    expect(attempt.ok()).toBeTruthy();
+    const attemptBody = await attempt.json();
+    expect(attemptBody.blocked === true || attemptBody.salesEnabled === false).toBeTruthy();
+    expect(Number(attemptBody.commercialOrders || 0)).toBe(0);
+    expect(attemptBody.realPayment).not.toBe(true);
   });
 });
 

@@ -12,8 +12,8 @@ AI 161 weights were **not** edited.
 | Layer | Previous verification | Now | Meaning |
 | --- | --- | --- | --- |
 | Code implementation | 76.4% | **78.0%** | Code exists and is reachable in-repo |
-| Test verification | 73.6% | **76.1%** | Automated tests cover the module |
-| Integration verification | 56.8% | **59.2%** | Wired to another real module in tests |
+| Test verification | 73.6% | **76.9%** | Automated tests cover the module |
+| Integration verification | 56.8% | **59.9%** | Wired to another real module in tests |
 | Operational readiness | 19.4% | **19.4%** | Could run with current env/locks |
 | Production verification | 0.0% | **0.0%** | No production evidence |
 

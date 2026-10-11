@@ -15,7 +15,7 @@ These are **not** missing software modules in the same sense as an empty handler
 | Sales unlock | policy | `BUZZARD_SALES_ENABLED` must stay off | catalog mode |
 | Production DB migrate | policy | no production touch | local/isolated SQLite |
 | Production deploy | policy | out of scope | — |
-| Admin Control Center / Sessions / PIM UI | environment | static export does not keep the admin session | login page + dashboard + admin APIs work |
+| Admin Control Center / Sessions / PIM UI | was environment | CORS omitted `127.0.0.1:3040` | fixed; local browser now PASS |
 | CI `quality` on `25a48da` | empty catalog assumption | part8 listed leftover public PIM rows | fixed on `7f81585`; run 38144084891 SUCCESS |
 
 Health payloads list blocked ids (`llm_live`, `stripe`, `twilio`, `marketplace_publish`, `carrier_shipment_create`, `supplier_purchase_order_send`, `customer_message_send`, `product_source_of_truth`, `sales_unlock`). A green `/api/health/software` `code` object does **not** mean `liveReady`.

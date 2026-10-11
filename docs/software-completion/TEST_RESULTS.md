@@ -22,10 +22,9 @@ All commands below were run on isolated local data or observed GitHub Actions. N
 | `npm run test:part34` | 0 | 26 | 0 | |
 | `npm run test:part35` | 0 | 25 | 0 | |
 | Playwright `homepage-viewports` | 0 | 18 | 0 | static `out/` on `:3040`; CI `e2e-storefront` SUCCESS |
-| Playwright `admin.spec` | 1 | 2 | 2 | login + dashboard OK; Control Center / Sessions failed |
-| Playwright `admin-pim-core` browser | — | — | — | **NOT VERIFIED** (static AdminGuard / session) |
-| Playwright `customer-journey` page loads | 0 | 2 | 0 | homepage + `/warenkorb/` |
-| Playwright `customer-journey` checkout UI | — | — | — | **NOT VERIFIED** |
+| Playwright `admin.spec` | 0 | 6 | 0 | login, unauth redirect, token, dashboard, Control Center, Sessions on `:3040` |
+| Playwright `admin-pim-core` browser | 0 | 5 | 0 | Product Core, demo SKU, Validate, dry-run, Brands |
+| Playwright `customer-journey` chromium-desktop | 0 | 18 | 0 | 1 skipped (phone-only UX); checkout catalog/blocked, `commercialOrders:0` |
 | Playwright commerce API | 0 | 12 | 0 | API `:3001`, sales locked |
 | GitHub Actions `7f81585` | 0 | quality + e2e-storefront | 0 | run 38144084891; includes `test:unit` |
 

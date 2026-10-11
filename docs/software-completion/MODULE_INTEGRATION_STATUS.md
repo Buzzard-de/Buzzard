@@ -24,7 +24,7 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | Marketplace | PARTIALLY_IMPLEMENTED | TESTED (mock) | BLOCKED | Classified; publish blocked |
 | Shipping / tracking | TESTED | PARTIALLY_IMPLEMENTED | BLOCKED | No live carrier; no invented GPS |
 | Customer | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Isolation on order + tracking + cart IDOR e2e |
-| Admin / Control Center | PARTIALLY_IMPLEMENTED | PARTIALLY_IMPLEMENTED | NOT_IMPLEMENTED | APIs verified; Control Center / Sessions / PIM UI not |
+| Admin / Control Center | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Authenticated browser on static `:3040` + API `:3001` |
 | Storefront | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Static `:3040` homepage 18/18 + CI e2e-storefront |
 | Search | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `software.search` uses `catalogReadService`; invented:false |
 | Voice / digital human | PARTIALLY_IMPLEMENTED | TESTED (blocked) | BLOCKED | No call placed |

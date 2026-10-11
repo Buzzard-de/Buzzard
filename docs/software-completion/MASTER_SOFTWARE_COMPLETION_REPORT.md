@@ -42,9 +42,9 @@ See `TEST_RESULTS.md`. Headline:
 - `npm run test:software` → **27/27** (CI SUCCESS on `25a48da`)
 - `node --test` part24 + part27–35 → **221/221**
 - Playwright homepage-viewports → **18/18** on `:3040` and CI `e2e-storefront` SUCCESS
-- Playwright admin → **2/4** (Control Center / Sessions **NOT VERIFIED**)
-- Admin PIM browser → **NOT VERIFIED**; PIM APIs proven
-- customer-journey page loads → **2/2**; checkout UI **NOT VERIFIED**
+- Playwright admin → **6/6** (login page, unauth redirect, login token, dashboard, Control Center, Sessions)
+- Admin PIM browser → **5/5**
+- customer-journey chromium-desktop → **18 passed / 1 skipped** (checkout remains catalog/blocked; commercialOrders 0)
 - Playwright commerce API → **12/12**
 
 ## Scores (do not mix)
@@ -54,8 +54,8 @@ See `TEST_RESULTS.md`. Headline:
 | Layer | Previous | Now |
 | --- | --- | --- |
 | Code implementation | 76.4% | **78.0%** |
-| Test verification | 73.6% | **76.1%** |
-| Integration verification | 56.8% | **59.2%** |
+| Test verification | 73.6% | **76.9%** |
+| Integration verification | 56.8% | **59.9%** |
 | Operational readiness | 19.4% | **19.4%** |
 | Production verification | 0.0% | **0.0%** |
 
@@ -82,7 +82,7 @@ Pusat remains the single orchestrator. No second task authority. No brand rewrit
 
 ## Honest limits
 
-Admin Control Center, Sessions, and PIM Core were **not** browser-verified on static export. Full customer-journey checkout UI was **not** run. Live LLM, Stripe, Twilio, carrier, marketplace publish, and supplier PO send remain **BLOCKED**. CI `quality` + `e2e-storefront` on `7f81585` are observed SUCCESS. Production verification is **0%**.
+Authenticated admin Control Center, Sessions, dashboard, and PIM Core were browser-verified on static `:3040` against API `:3001`. Customer-journey checkout stays catalog/blocked with `commercialOrders:0`. Live LLM, Stripe, Twilio, carrier, marketplace publish, and supplier PO send remain **BLOCKED**. Production verification is **0%**. The new `e2e-admin` CI job is not yet observed.
 
 See `REMAINING_SOFTWARE_WORK.md` and `BLOCKED_ITEMS.md`.
 

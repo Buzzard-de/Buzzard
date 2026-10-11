@@ -15,14 +15,29 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
     await expect(page.locator("body")).toContainText(/Admin|Login|Anmelden/i);
   });
 
-  test("Admin login → dashboard", async ({ page }) => {
+  test("Admin login form stores a session token", async ({ page }) => {
     await page.goto("/admin/login/");
-    await page.fill('input[type="email"], input[name="email"], #email', ADMIN_EMAIL);
-    await page.fill('input[type="password"], input[name="password"], #password', ADMIN_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\/admin\/?$/, { timeout: 20_000 });
-    await expect(page.locator("body")).toContainText(/BUZZARD|Admin|Dashboard/i);
+    const acceptCookies = page.getByRole("button", { name: /accept|akzept/i });
+    if (await acceptCookies.isVisible().catch(() => false)) {
+      await acceptCookies.click();
+    }
+    const form = page.locator("form.admin-login-card");
+    await expect(form.locator("#email")).toBeVisible();
+    await form.locator("#email").fill(ADMIN_EMAIL);
+    await expect(form.locator("#email")).toHaveValue(ADMIN_EMAIL);
+    await form.locator("#password").fill(ADMIN_PASSWORD);
+    await expect(form.locator("#password")).toHaveValue(ADMIN_PASSWORD);
+    await form.locator('button[type="submit"]').click();
+    await expect
+      .poll(async () => page.evaluate(() => sessionStorage.getItem("buzzard_admin_token")), { timeout: 20_000 })
+      .toBeTruthy();
+  });
+
+  test("authenticated dashboard loads", async ({ page, request }) => {
+    await seedAdminSession(page, request);
+    await page.goto("/admin/");
     await expect(page).not.toHaveURL(/\/admin\/login\//);
+    await expect(page.locator("body")).toContainText(/BUZZARD|Admin|Dashboard/i);
   });
 
   test("Control Center loads", async ({ page, request }) => {

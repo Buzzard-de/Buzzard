@@ -8,7 +8,7 @@ None that currently stop isolated software tests or the observed `7f81585` CI jo
 
 ## HIGH
 
-1. Admin Control Center, Sessions, and PIM Core in a **session-aware** browser (Next runtime, not only static export). On static `:3040` those pages re-show the login form. APIs work with bearer.
+1. Observe the new GitHub Actions `e2e-admin` job (API + static `:3040` + admin/PIM/journey). Local browser proof exists; CI is not yet observed.
 2. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
 3. Broader API contract tests (auth, rate limit, error shape) beyond health + commerce e2e.
 4. Local SQLite contains public PIM rows. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.

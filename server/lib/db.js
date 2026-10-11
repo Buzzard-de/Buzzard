@@ -3865,6 +3865,11 @@ function migrateCoreFoundationPusat() {
   migratePusatSchema(db);
 }
 
+function migrateSoftwareCompletion() {
+  const { migrateSoftwareSchema } = require("./software/schema");
+  migrateSoftwareSchema(db);
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
@@ -3873,6 +3878,7 @@ migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
 migrateCoreFoundationPusat();
+migrateSoftwareCompletion();
 
 
 function seed() {

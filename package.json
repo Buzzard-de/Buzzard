@@ -48,6 +48,7 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:ai": "vitest run pusatOrchestrator pusatMemoryGuardian pusatApprovalExceptions pusatAgentsAutomations pusatWorkerIntegration pusatMasterCompletion",
+    "test:software": "vitest run softwareCompletion",
     "test:e2e": "playwright test",
     "test:e2e:api": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test e2e/commerce-storefront.spec.ts e2e/commerce-security.spec.ts",
     "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",

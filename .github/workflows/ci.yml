@@ -20,5 +20,6 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm run test:ai
+      - run: npm run test:software
       - run: npm run render:preflight
       - run: npm run security:check

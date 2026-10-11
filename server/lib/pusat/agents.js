@@ -127,6 +127,30 @@ const SPECIALIST_EMPLOYEES = [
     tools: ["triage.route"],
   },
   {
+    id: "supplier_ai",
+    name: "Supplier Assistant",
+    department: "Procurement",
+    description: "Mock-safe supplier feed inspection",
+    responsibility: "Supplier import analysis",
+    permissions: ["products.read", "ai.execute"],
+    capabilities: ["supplier_inspect"],
+    priority: 58,
+    code: AGENT_CODES.SUPPLIER,
+    tools: ["supplier.inspect"],
+  },
+  {
+    id: "customs_ai",
+    name: "Customs Assistant",
+    department: "Compliance",
+    description: "Fail-closed customs input checks",
+    responsibility: "Customs decision support",
+    permissions: ["products.read", "ai.execute"],
+    capabilities: ["customs_review"],
+    priority: 57,
+    code: AGENT_CODES.CUSTOMS,
+    tools: ["customs.review"],
+  },
+  {
     id: "esat_bey",
     name: "Esat Bey",
     department: "Security",
@@ -507,6 +531,26 @@ function runProductAssistant(input, ctx = {}) {
   };
 }
 
+function runSupplierAssistant(input, ctx = {}) {
+  const automations = require("./automations");
+  return {
+    ...automations.supplierImport(input),
+    agent: AGENT_CODES.SUPPLIER,
+    invented: false,
+    taskId: ctx.taskId,
+  };
+}
+
+function runCustomsAssistant(input, ctx = {}) {
+  const automations = require("./automations");
+  return {
+    ...automations.customsAutomation(input),
+    agent: AGENT_CODES.CUSTOMS,
+    invented: false,
+    taskId: ctx.taskId,
+  };
+}
+
 function runOrderAssistant(input, ctx = {}) {
   const invalid = requireObject(input);
   if (invalid) return invalid;
@@ -542,6 +586,8 @@ const AGENT_BY_CODE = {
   [AGENT_CODES.CATEGORY]: { employeeId: "category_ai", schema: ["legacyId?"], execute: runCategoryAssistant, permissions: ["categories.read", "ai.execute"] },
   [AGENT_CODES.PRODUCT]: { employeeId: "product_ai", schema: ["sku?"], execute: runProductAssistant, permissions: ["products.read", "ai.execute"] },
   [AGENT_CODES.ORDER]: { employeeId: "order_ai", schema: ["orderId?"], execute: runOrderAssistant, permissions: ["orders.read", "ai.execute"] },
+  [AGENT_CODES.SUPPLIER]: { employeeId: "supplier_ai", schema: ["supplierId?"], execute: runSupplierAssistant, permissions: ["products.read", "ai.execute"] },
+  [AGENT_CODES.CUSTOMS]: { employeeId: "customs_ai", schema: ["origin_country?"], execute: runCustomsAssistant, permissions: ["products.read", "ai.execute"] },
   [AGENT_CODES.DOGU_BEY]: { employeeId: "dogu_bey", schema: ["question"], execute: runDoguBey, permissions: ["ai.execute"] },
   [AGENT_CODES.ESAT_BEY]: { employeeId: "esat_bey", schema: ["action?"], execute: runEsatBey, permissions: ["security.read", "ai.execute"] },
   [AGENT_CODES.ASLAN_BEY]: { employeeId: "aslan_bey", schema: ["request?"], execute: runAslanBey, permissions: ["ai.read", "ai.execute"] },
@@ -557,7 +603,8 @@ function classifyAgent(title, payload = {}) {
   if (/customer|support|refund/.test(text)) return AGENT_CODES.CUSTOMER;
   if (/sales|revenue|umsatz/.test(text)) return AGENT_CODES.SALES;
   if (/categor|taxonomy/.test(text)) return AGENT_CODES.CATEGORY;
-  if (/customs|gtip|taric/.test(text)) return AGENT_CODES.DOGU_BEY;
+  if (/customs|gtip|taric/.test(text)) return AGENT_CODES.CUSTOMS;
+  if (/supplier|feed|xml|csv/.test(text)) return AGENT_CODES.SUPPLIER;
   if (/guardian|security|esat/.test(text)) return AGENT_CODES.ESAT_BEY;
   if (/aslan|triage|route/.test(text)) return AGENT_CODES.ASLAN_BEY;
   if (/order/.test(text)) return AGENT_CODES.ORDER;
@@ -606,4 +653,6 @@ module.exports = {
   runAslanBey,
   runProductAssistant,
   runOrderAssistant,
+  runSupplierAssistant,
+  runCustomsAssistant,
 };

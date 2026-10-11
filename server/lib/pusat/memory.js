@@ -199,6 +199,24 @@ function readMemory({ subject, kind, taskId, role, includeExpired = false, limit
   }
 }
 
+function invalidateMemory(id, { role } = {}) {
+  const record = getMemory(id, { role });
+  if (!record) return { ok: false, error: "not_found" };
+  if (record.denied) return { ok: false, error: "denied" };
+  db.prepare(
+    "UPDATE core_ai_memory SET expires_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+  ).run(id);
+  return { ok: true, invalidated: true, id };
+}
+
+function deleteMemory(id, { role } = {}) {
+  const record = getMemory(id, { role });
+  if (!record) return { ok: false, error: "not_found" };
+  if (record.denied) return { ok: false, error: "denied" };
+  db.prepare("DELETE FROM core_ai_memory WHERE id = ?").run(id);
+  return { ok: true, deleted: true, id };
+}
+
 function purgeExpired() {
   const result = db.prepare(
     "DELETE FROM core_ai_memory WHERE expires_at IS NOT NULL AND expires_at <= CURRENT_TIMESTAMP"
@@ -228,6 +246,8 @@ module.exports = {
   writeMemory,
   getMemory,
   readMemory,
+  invalidateMemory,
+  deleteMemory,
   purgeExpired,
   memoryHealth,
   canAccess,

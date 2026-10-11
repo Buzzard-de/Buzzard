@@ -19,6 +19,8 @@ const AGENT_CODES = Object.freeze({
   DOGU_BEY: "dogu_bey",
   ESAT_BEY: "esat_bey",
   ASLAN_BEY: "aslan_bey",
+  SUPPLIER: "supplier_assistant",
+  CUSTOMS: "customs_assistant",
 });
 
 const MEMORY_KIND = Object.freeze({

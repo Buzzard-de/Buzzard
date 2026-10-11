@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-11T10:50:00Z",
+  "generatedAt": "2026-10-11T11:32:00Z",
   "baseline": {
     "implementation": 33,
     "operational": 10.8,
     "source": "docs/progress-audit historical AI system I"
   },
   "scores": {
-    "implementation": 70.5,
-    "testVerification": 69.4,
-    "operationalReadiness": 22.9,
+    "implementation": 72.2,
+    "testVerification": 71.9,
+    "operationalReadiness": 23.1,
     "productionVerification": 0,
     "totalWeight": 161
   },
@@ -21,8 +21,8 @@
   "commandsRun": {
     "test:ai": {
       "exit": 0,
-      "tests": 40,
-      "passed": 40
+      "tests": 58,
+      "passed": 58
     },
     "lint": {
       "exit": 0
@@ -35,7 +35,8 @@
     },
     "security:check": {
       "exit": 0,
-      "warnings": 2
+      "warnings": 2,
+      "note": "existing frontend audit / contact time-trap; not introduced here"
     }
   },
   "safety": {
@@ -43,7 +44,8 @@
     "salesLockChanged": false,
     "featureFlagsChanged": false,
     "realOrdersPaymentsPurchasesMessages": false,
-    "productSotActivated": false
+    "productSotActivated": false,
+    "activeProductsCreated": false
   },
   "requirements": [
     {
@@ -325,23 +327,23 @@
       "id": "MEM-06",
       "name": "Retention purge",
       "weight": 1,
-      "impl": 0.8,
-      "test": 0.3,
-      "ops": 0.2,
+      "impl": 1,
+      "test": 0.8,
+      "ops": 0.3,
       "prod": 0,
-      "status": "partial",
+      "status": "partial_tested",
       "blocker": null
     },
     {
       "id": "MEM-07",
       "name": "Restart persistence proof",
       "weight": 2,
-      "impl": 0.7,
-      "test": 0.5,
-      "ops": 0.2,
+      "impl": 1,
+      "test": 1,
+      "ops": 0.3,
       "prod": 0,
-      "status": "partial",
-      "blocker": "no_process_restart_test"
+      "status": "complete_tested",
+      "blocker": null
     },
     {
       "id": "AGT-01",
@@ -468,8 +470,8 @@
       "id": "AUT-01",
       "name": "Product creation automation",
       "weight": 2,
-      "impl": 0.7,
-      "test": 0.7,
+      "impl": 0.9,
+      "test": 0.9,
       "ops": 0.2,
       "prod": 0,
       "status": "partial_tested",
@@ -534,12 +536,12 @@
       "id": "AUT-07",
       "name": "Customs automation",
       "weight": 2,
-      "impl": 0.5,
-      "test": 0.5,
+      "impl": 0.8,
+      "test": 0.9,
       "ops": 0.2,
       "prod": 0,
       "status": "partial_tested",
-      "blocker": "validateCustoms_missing"
+      "blocker": null
     },
     {
       "id": "AUT-08",
@@ -611,8 +613,8 @@
       "id": "WRK-01",
       "name": "Worker recover enqueue",
       "weight": 3,
-      "impl": 0.7,
-      "test": 0.7,
+      "impl": 0.9,
+      "test": 0.9,
       "ops": 0.3,
       "prod": 0,
       "status": "partial_tested",
@@ -622,11 +624,11 @@
       "id": "WRK-02",
       "name": "No duplicate worker side effects",
       "weight": 2,
-      "impl": 0.6,
-      "test": 0.5,
+      "impl": 0.8,
+      "test": 0.8,
       "ops": 0.2,
       "prod": 0,
-      "status": "partial",
+      "status": "partial_tested",
       "blocker": null
     },
     {

@@ -5,8 +5,8 @@
 const jobQueue = require("../jobQueue");
 const { executeTask } = require("./lifecycle");
 
-async function claimAndExecute(workerId = "pusat-worker") {
-  const job = jobQueue.claimNextJob(workerId);
+async function claimAndExecute(workerId = "pusat-worker", { jobType = "AI_TASK", lockTtlMs } = {}) {
+  const job = jobQueue.claimNextJob(workerId, lockTtlMs, { jobType });
   if (!job) {
     return { claimed: false };
   }

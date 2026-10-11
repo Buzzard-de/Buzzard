@@ -8,19 +8,21 @@ None that currently stop isolated software tests. Sales lock, ACTIVE reject, and
 
 ## HIGH
 
-1. Full admin/Control Center click-through: bind remaining display-only screens to real APIs or mark them inert.
+1. Admin Control Center and Sessions in a **session-aware** browser (Next or authenticated static). On static `:3040` both pages re-show the login form after a successful dashboard login. Not verified.
 2. Returns financial consistency (customer refund vs supplier receivable) beyond mock payment safety.
 3. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
-4. Storefront e2e on desktop + mobile + RTL overflow (Playwright / browser). Not done this session.
-5. Broader API contract tests (auth, rate limit, error shape) beyond the new health routes.
+4. CI `quality` does not run `test:unit` or Playwright. Local 713 and 18 homepage tests are not GitHub-proven.
+5. Broader API contract tests (auth, rate limit, error shape) beyond health + commerce e2e.
+6. Local SQLite contains public PIM rows. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
 
 ## MEDIUM
 
-1. Search: wire `software.searchCatalog` to the real catalog index; keep empty/invalid query behavior.
+1. Search: wire `software.searchCatalog` to the real catalog index; keep empty/invalid query behavior. Mobile search → `/products/?q=` was Playwright-verified; the software helper remains isolated.
 2. WMS `reserveInventory` vs `software.inventory.reserve` — two reservation tables; document operator path and eventually share events.
 3. Returns RMA + order engine state machine integration tests.
 4. Supplier feed validation (CSV/XML) on fixtures, still mock.
-5. Observe GitHub Actions for `test:software` on the PR.
+5. `customer-journey` and `admin-pim-core` Playwright projects were not used as proof this session.
+6. Arabic homepage does not show the German photo band (expected locale-specific). Confirm that is intentional for every RTL market.
 
 ## LOW
 
@@ -35,3 +37,4 @@ None that currently stop isolated software tests. Sales lock, ACTIVE reject, and
 - Activating Product SoT.
 - Inventing catalog images or live prices.
 - Production deploy or production DB changes.
+- Auto-merging PR #425 or #426.

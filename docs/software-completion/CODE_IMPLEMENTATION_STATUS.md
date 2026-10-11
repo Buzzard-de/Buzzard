@@ -1,25 +1,18 @@
 # Code Implementation Status
 
-Start HEAD: `40c35af`. Implementation status is **code present and reachable**, not production proof.
+Verification HEAD lineage: `40c35af` (AI) → `8adcc87` (software facade) → `ba95c26` (isolation/catalog tests) → checkout diagnostic + e2e catalog lookup. Implementation status is **code present and reachable**, not production proof.
 
 ## New / changed implementation
 
 | Path | Role |
 | --- | --- |
-| `server/lib/software/index.js` | Facade. Not a second orchestrator. |
-| `server/lib/software/canonical.js` | Canonical engine map + documented conflicts. |
-| `server/lib/software/schema.js` | SQLite tables for reservations, shipments, audit. |
-| `server/lib/software/inventory.js` | Reliability + reserve/release + events. |
-| `server/lib/software/pricing.js` | Quote wrapper over `pricing.js`. No undercut. |
-| `server/lib/software/tracking.js` | Canonical tracking + customer isolation. |
-| `server/lib/software/marketplace.js` | Connector classification + draft listing. |
-| `server/lib/software/voice.js` | Adapter interface; live always blocked here. |
-| `server/lib/software/customerAccess.js` | Own-order assertion. |
-| `server/lib/software/orders.js` | Order/PO draft only. |
-| `server/lib/software/health.js` | Code vs live health. |
-| `server/lib/software/search.js` | Isolated catalog search over provided rows. |
+| `server/lib/software/*` | Facade. Not a second orchestrator. |
 | `server/plugins/softwareCompletionPlugin.js` | Health + admin + customer tracking routes. |
 | `server/lib/db.js` | `migrateSoftwareCompletion()`. |
+| `server/lib/pim/importPipeline.js` | Dry-run still emits a `validation` stage, `written:false`. |
+| `server/lib/commerce/commerceGuards.js` | Guest resources without `customerId` skip IDOR unauth. |
+| `server/plugins/commerceCorePlugin.js` | `checkout/attempt` stays diagnostic when demo SKU is hidden. |
+| `vitest.config.ts` | Sequential files; exclude `node:test` part24/27–35. |
 | `package.json` | `test:software`. |
 | `.github/workflows/ci.yml` | runs `test:software`. |
 
@@ -45,8 +38,8 @@ Start HEAD: `40c35af`. Implementation status is **code present and reachable**, 
 | --- | --- |
 | Product SoT | Intentionally closed. Code exists to keep it off. |
 | Returns | `returnsRma` exists; this slice did not finish financial reconciliation. |
-| Admin UI | Plugins exist; many screens were not behavior-verified. |
-| Storefront | Existing UI kept. No redesign. No browser proof this session. |
+| Admin UI | Login + dashboard browser-verified; Control Center / Sessions **not**. Admin APIs work with bearer. |
+| Storefront | Existing UI kept. Homepage viewports verified on static export only. |
 | Voice | Python/legacy files exist; Node adapter is interface + BLOCKED. |
 | Marketplace live | Classification only. |
 | Supplier live | Mock adapter only. |

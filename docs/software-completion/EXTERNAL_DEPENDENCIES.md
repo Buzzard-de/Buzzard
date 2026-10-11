@@ -20,7 +20,7 @@ Live probe requires key **and** `BUZZARD_AI_LIVE_PROBE=1`. Neither was used.
 | Service | Code | Live |
 | --- | --- | --- |
 | Mock payment provider | yes | no money movement |
-| Stripe | stub deny | BLOCKED (`STRIPE_SECRET_KEY` absent) |
+| Stripe | stub deny | BLOCKED (`STRIPE_SECRET_KEY` absent; health `live.stripe:false`) |
 | PayPal | stub deny | BLOCKED |
 
 ## Voice / phone
@@ -56,4 +56,4 @@ See classification in `server/lib/software/marketplace.js`. All `liveVerified: f
 | Production Render API | not called |
 | Production database | not opened |
 | Customer email/SMS | `customerSend` blocked |
-| GitHub Actions result | not observed this session |
+| GitHub Actions `quality` | observed SUCCESS for `8adcc87` (run 38138267824) and `ba95c26` (run 38140924702) |

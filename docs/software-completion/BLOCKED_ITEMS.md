@@ -15,7 +15,9 @@ These are **not** missing software modules in the same sense as an empty handler
 | Sales unlock | policy | `BUZZARD_SALES_ENABLED` must stay off | catalog mode |
 | Production DB migrate | policy | no production touch | local/isolated SQLite |
 | Production deploy | policy | out of scope | — |
-| GitHub Actions green | observation | this session did not read the workflow run | workflow file updated |
-| Storefront visual QA | environment | no browser verification this session | existing UI unchanged |
+| Admin Control Center UI | environment | static export does not keep the admin session across `/admin/control-center/` | login page + dashboard + admin APIs work |
+| Full CI matrix | workflow scope | `quality` does not run `test:unit` or Playwright | those ran locally this session |
 
 Health payloads list blocked ids (`llm_live`, `stripe`, `twilio`, `marketplace_publish`, `carrier_shipment_create`, `supplier_purchase_order_send`, `customer_message_send`, `product_source_of_truth`, `sales_unlock`). A green `/api/health/software` `code` object does **not** mean `liveReady`.
+
+GitHub Actions `quality` was observed SUCCESS for `8adcc87` and `ba95c26`. That is not production verification and is not a full-suite green.

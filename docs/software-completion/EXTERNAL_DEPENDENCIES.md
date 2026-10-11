@@ -2,6 +2,8 @@
 
 Classification: **code present** vs **credentials present** vs **live verified**.
 
+Canonical machine-readable list: `EXTERNAL_CONFIGURATION_CHECKLIST.json` (from `software.externalIntegrations`).
+
 No fake keys were generated. Env presence is boolean only; values are never printed.
 
 ## LLM

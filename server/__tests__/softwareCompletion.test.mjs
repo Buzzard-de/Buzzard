@@ -506,4 +506,59 @@ describe("software completion — isolated engines", () => {
     expect(denied.statusCode).toBe(401);
     expect(denied.body.success).toBe(false);
   });
+
+  it("34 payment timeout is uncertain and not retried", () => {
+    const uncertain = software.payments.interpretProviderResult({ timeout: true });
+    expect(uncertain.outcome).toBe("UNCERTAIN");
+    expect(uncertain.success).toBe(false);
+    expect(uncertain.failure).toBe(false);
+    expect(uncertain.retryable).toBe(false);
+    expect(uncertain.requiresReconciliation).toBe(true);
+    expect(software.payments.validateWebhook({ headers: {} }).accepted).toBe(false);
+    expect(software.payments.validateWebhook({ headers: { "stripe-signature": "sig" }, secretConfigured: true }).accepted).toBe(false);
+    expect(software.payments.draftCharge({ amount: 10, timeout: true }).executed).toBe(false);
+  });
+
+  it("35 carriers stay scan-based and fail closed on outage or malformed payloads", () => {
+    const ids = software.carriers.listCarriers().map((c) => c.id);
+    expect(ids).toEqual(["dhl", "dpd", "gls", "hermes", "ups"]);
+    expect(software.carriers.lookup({ carrier: "dhl" }).gpsInvented).toBe(false);
+    expect(software.carriers.lookup({ carrier: "dhl" }).shipmentCreated).toBe(false);
+    expect(software.carriers.lookup({ forceError: "outage" }).reason).toBe("CARRIER_OUTAGE");
+    expect(software.carriers.lookup({ forceError: "malformed" }).reason).toBe("MALFORMED_TRACKING_PAYLOAD");
+  });
+
+  it("36 external checklist never includes secrets or live connections", () => {
+    const inventory = software.externalIntegrations.inventory();
+    expect(inventory.liveReady).toBe(false);
+    expect(inventory.inventedConnections).toBe(false);
+    expect(inventory.secretsIncluded).toBe(false);
+    expect(inventory.counts.live).toBe(0);
+    expect(inventory.items.length).toBeGreaterThan(15);
+    const blob = JSON.stringify(inventory);
+    expect(blob).not.toMatch(/sk-|whsec_|BEGIN PRIVATE|TWILIO_AUTH_TOKEN=/);
+    const stripe = inventory.items.find((i) => i.id === "stripe");
+    expect(stripe.authTested).toBe(false);
+    expect(stripe.liveWriteConfigured).toBe(false);
+    const checklist = software.externalIntegrations.checklist();
+    expect(checklist.every((row) => row.status !== "LIVE")).toBe(true);
+    expect(checklist.every((row) => Array.isArray(row.environmentVariables))).toBe(true);
+  });
+
+  it("37 safe customer workflow stays non-commercial", () => {
+    const result = software.workflow.runSafeCustomerWorkflow(software, db, {
+      sku: `SW-WF-${Date.now()}`,
+      customerId: "cust_workflow",
+    });
+    expect(Object.values(result.steps).every((step) => step.pass)).toBe(true);
+    expect(result.commercialOrders).toBe(0);
+    expect(result.paymentExecuted).toBe(false);
+    expect(result.refundExecuted).toBe(false);
+    expect(result.supplierOrderSent).toBe(false);
+    expect(result.productActivated).toBe(false);
+    expect(result.listingPublished).toBe(false);
+    expect(result.customerMessageSent).toBe(false);
+    expect(result.carrierAction).toBe(false);
+    expect(result.salesEnabled).toBe(false);
+  });
 });

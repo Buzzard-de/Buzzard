@@ -8,8 +8,9 @@ None that currently stop isolated software tests. Sales lock, ACTIVE reject, and
 
 ## HIGH
 
-1. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
-2. Local SQLite can contain leftover public PIM rows and draft hashes. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
+1. Live external credentials and a separately approved probe. See `EXTERNAL_CONFIGURATION_CHECKLIST.md`.
+2. Frontend dependency CVEs (Next/sharp/vitest) — needs a planned upgrade, not `audit fix --force`.
+3. Local SQLite can contain leftover public PIM rows and draft hashes. Catalog-mode is on and sales are off; operators must not read that as “0 public products in every environment”.
 
 ## MEDIUM
 

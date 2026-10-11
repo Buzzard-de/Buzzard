@@ -67,6 +67,9 @@ function getSoftwareHealth(pusatHealth) {
     search: true,
     supplierFeeds: true,
     communications: true,
+    payments: true,
+    carriers: true,
+    externalIntegrations: true,
   };
 
   const engines = {

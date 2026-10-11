@@ -6,7 +6,7 @@ All commands below were run on isolated local data or observed GitHub Actions. N
 
 | Command | Exit | Passed | Failed | Notes |
 | --- | --- | --- | --- | --- |
-| `npm run test:software` | 0 | 31 | 0 | Includes feed preview, message drafts, WMS audit, auth 401 |
+| `npm run test:software` | 0 | 35 | 0 | Adds payment uncertainty, carriers, external checklist, safe workflow |
 | `npm run test:ai` | 0 | 58 | 0 | Memory restart, Guardian, approval, workers |
 | `npm run test:unit` (local, before unique draft) | 1 | 723 | 1 | Shared SQLite leftover `BLOCKED` draft hash; fixed in `f967c01` |
 | `vitest run softwareCompletion` after unique draft | 0 | 31 | 0 | Isolated message body |
@@ -47,7 +47,7 @@ Served `out/` on **`:3040`** against API **`:3001`**. Sales locked.
 
 ## Live local API (sales locked)
 
-`GET /api/health/software` → `ready:true`, `liveReady:false`, `salesEnabled:false`, `productSourceOfTruthActive:false`, `version:1.2.0`.
+`GET /api/health/software` → `ready:true`, `liveReady:false`, `salesEnabled:false`, `productSourceOfTruthActive:false`, `version:1.3.0`.
 
 ## GitHub Actions
 

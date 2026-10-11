@@ -106,6 +106,28 @@ module.exports = {
       res.status(403).json({ success: false, ...result });
     });
 
+    app.get("/api/admin/software/external-checklist", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      res.json({
+        success: true,
+        liveReady: false,
+        secretsIncluded: false,
+        checklist: software.externalIntegrations.checklist(),
+        inventory: software.externalIntegrations.inventory(),
+      });
+    });
+
+    app.post("/api/admin/software/safe-workflow", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      const result = software.workflow.runSafeCustomerWorkflow(software, db, req.body || {});
+      res.json({ success: true, live: false, ...result });
+    });
+
     app.get("/api/customer/tracking/:orderId", (req, res) => {
       const session = requireCustomer(req, res);
       if (!session) return;

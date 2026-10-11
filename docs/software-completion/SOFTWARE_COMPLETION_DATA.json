@@ -5,7 +5,7 @@
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "0d71a18",
+    "head": "pending-this-commit",
     "headBeforeThisReport": "a2879e43058e277b19770f4aa2714eda5295033c",
     "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, admin browser CI, supplier-feed preview, message drafts, and WMS audit"
   },
@@ -27,22 +27,22 @@
     "productionVerification": 0.0
   },
   "scores": {
-    "codeImplementation": 79.1,
-    "testVerification": 78.2,
-    "integrationVerification": 61.5,
+    "codeImplementation": 79.7,
+    "testVerification": 78.9,
+    "integrationVerification": 62.5,
     "operationalReadiness": 19.4,
     "productionVerification": 0.0,
     "totalWeight": 148,
     "previousVerificationPass": {
-      "codeImplementation": 78.0,
-      "testVerification": 76.9,
-      "integrationVerification": 59.9,
+      "codeImplementation": 79.1,
+      "testVerification": 78.2,
+      "integrationVerification": 61.5,
       "operationalReadiness": 19.4,
       "productionVerification": 0.0
     }
   },
   "commandsRun": {
-    "test:software": { "exit": 0, "tests": 31, "passed": 31 },
+    "test:software": { "exit": 0, "tests": 35, "passed": 35 },
     "test:ai": { "exit": 0, "tests": 58, "passed": 58 },
     "test:unit_local_after_unique_draft": { "exit": 1, "files": 59, "passed": 723, "failed": 1, "note": "first shared-SQLite collision on leftover BLOCKED draft; fixed in f967c01; softwareCompletion 31/31 after unique message" },
     "playwright_admin_pim_journey": { "exit": 0, "passed": 26, "skipped": 1, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
@@ -74,22 +74,22 @@
     {"id":"SW-PRICE","name":"Pricing","weight":6,"impl":0.85,"test":0.85,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-INV","name":"Inventory","weight":6,"impl":0.8,"test":0.75,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SUP","name":"Supplier","weight":5,"impl":0.65,"test":0.65,"integ":0.45,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-ORD","name":"Order engine","weight":7,"impl":0.75,"test":0.8,"integ":0.65,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-PAY","name":"Payment","weight":5,"impl":0.6,"test":0.55,"integ":0.3,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
+    {"id":"SW-ORD","name":"Order engine","weight":7,"impl":0.75,"test":0.8,"integ":0.70,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-PAY","name":"Payment","weight":5,"impl":0.68,"test":0.65,"integ":0.40,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-RMA","name":"Returns","weight":4,"impl":0.7,"test":0.7,"integ":0.5,"ops":0,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-MP","name":"Marketplace","weight":5,"impl":0.45,"test":0.4,"integ":0.2,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-SHIP","name":"Shipping/tracking","weight":5,"impl":0.7,"test":0.7,"integ":0.4,"ops":0.1,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
+    {"id":"SW-SHIP","name":"Shipping/tracking","weight":5,"impl":0.78,"test":0.78,"integ":0.50,"ops":0.1,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-CUS","name":"Customer","weight":5,"impl":0.78,"test":0.78,"integ":0.62,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-ADM","name":"Admin/control","weight":5,"impl":0.85,"test":0.90,"integ":0.82,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SF","name":"Storefront","weight":6,"impl":0.7,"test":0.82,"integ":0.6,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SEA","name":"Search","weight":3,"impl":0.75,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-VOICE","name":"Voice/phone","weight":4,"impl":0.35,"test":0.3,"integ":0.1,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-DB","name":"Database","weight":5,"impl":0.85,"test":0.7,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-API","name":"API","weight":5,"impl":0.7,"test":0.75,"integ":0.63,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-API","name":"API","weight":5,"impl":0.72,"test":0.78,"integ":0.66,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SEC","name":"Security","weight":6,"impl":0.75,"test":0.75,"integ":0.55,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-OBS","name":"Observability","weight":3,"impl":0.85,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-WRK","name":"Workers","weight":4,"impl":0.85,"test":0.85,"integ":0.7,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-CI","name":"CI","weight":3,"impl":0.95,"test":0.95,"integ":0.90,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.9,"test":0.85,"integ":0.60,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}
+    {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.92,"test":0.88,"integ":0.65,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}
   ]
 }

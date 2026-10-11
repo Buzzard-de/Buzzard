@@ -48,9 +48,9 @@ See `TEST_RESULTS.md`. Headline:
 
 | Layer | Previous | Now |
 | --- | --- | --- |
-| Code implementation | 78.0% | **79.1%** |
-| Test verification | 76.9% | **78.2%** |
-| Integration verification | 59.9% | **61.5%** |
+| Code implementation | 79.1% | **79.7%** |
+| Test verification | 78.2% | **78.9%** |
+| Integration verification | 61.5% | **62.5%** |
 | Operational readiness | 19.4% | **19.4%** |
 | Production verification | 0.0% | **0.0%** |
 

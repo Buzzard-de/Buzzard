@@ -18,6 +18,10 @@ const returns = require("./returns");
 const reporting = require("./reporting");
 const supplierFeeds = require("./supplierFeeds");
 const communications = require("./communications");
+const payments = require("./payments");
+const carriers = require("./carriers");
+const externalIntegrations = require("./externalIntegrations");
+const workflow = require("./workflow");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -49,4 +53,8 @@ module.exports = {
   reporting,
   supplierFeeds,
   communications,
+  payments,
+  carriers,
+  externalIntegrations,
+  workflow,
 };

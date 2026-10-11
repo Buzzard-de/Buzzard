@@ -6,13 +6,11 @@ Weights were **not** changed.
 
 | Layer | Previous | Now | Evidence class |
 | --- | --- | --- | --- |
-| Code | 80.3% | **80.6%** | local implementation |
-| Tests | 79.9% | **80.5%** | local automated (`test:software` 46/46, `test:ai` 58/58) |
-| Integration | 63.2% | **63.2%** | module-to-module tests; no new live wiring |
+| Code | 80.6% | **81.0%** | local implementation |
+| Tests | 80.5% | **80.8%** | local automated (50/50 software, 743 unit, Vitest 5.0.3) |
+| Integration | 63.2% | **63.2%** | no new live wiring |
 | Operations | 19.4% | **19.4%** | sales locked; providers NOT_CONFIGURED |
 | Production | 0.0% | **0.0%** | no production access |
-
-Fractions moved only for fail-closed payment/marketplace/returns/workers/persistence/security tests. Live providers were not raised. CI SUCCESS for `f4ba504` is run [38161918900](https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900) (quality + e2e-storefront + e2e-admin). That is CI evidence for that SHA only, not production verification.
 
 ## AI — 161 weights (unchanged)
 
@@ -20,7 +18,5 @@ Fractions moved only for fail-closed payment/marketplace/returns/workers/persist
 | --- | --- | --- |
 | Code | 72.2% | prior Pusat slice |
 | Tests | 71.9% | `test:ai` 58/58 |
-| Operations | 23.1% | stub LLM; no live probe |
+| Operations | 23.1% | stub LLM |
 | Production | 0.0% | none |
-
-Do not average the two scorecards.

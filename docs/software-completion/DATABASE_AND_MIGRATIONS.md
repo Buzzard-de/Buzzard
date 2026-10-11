@@ -39,6 +39,13 @@ Software tables are additive. Rollback is `DROP TABLE` of the eight names above.
 - Idempotent reserve: same `idempotency_key` returns the same row (scenario 25).
 - Returns ledger: supplier credit REJECTED does not imply customer refund executed (scenario 26).
 
+## Production path safety (code)
+
+- Missing `BUZZARD_DB_PATH` in `NODE_ENV=production` fails closed (`PRODUCTION_DB_PATH_UNCONFIGURED`). The local `server/data/buzzard.db` default is not used as production storage.
+- `assertDurableOpenAllowed()` runs in `server.js` before plugin load and in `server/lib/db.js` before `mkdir` or `better-sqlite3` open, so production cannot create an unintended local file and then exit.
+- Ephemeral paths (`/tmp`, `/var/tmp`, `os.tmpdir()`, `/dev/shm`) cannot be created as durable production databases.
+- Operator procedure: `RENDER_STORAGE_OPERATOR.md`.
+
 ## Production
 
 `PRODUCTION_VERIFIED` is false. Render disk / live `buzzard.db` was not opened. `BUZZARD_DB_PATH` production path was not changed.

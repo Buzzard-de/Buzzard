@@ -1,23 +1,26 @@
 # Provider Readiness Matrix
 
 Derived from `software.externalIntegrations` + `software.providerDiagnostics`.  
-No secret values. No network probe executed.
+No secret values. No network probe executed in this task.
 
-Columns: code / unit-tested / locally configured / credentials present / auth verified / non-prod health / e2e / production.
+Status vocabulary: IMPLEMENTED / PARTIAL / NOT_IMPLEMENTED / NOT_CONFIGURED / CONFIGURED_NOT_VERIFIED / AUTHENTICATION_NOT_VERIFIED / NON_PRODUCTION_VERIFIED / BLOCKED_EXTERNAL_ACCESS / BLOCKED_HUMAN_APPROVAL / PRODUCTION_NOT_VERIFIED.
 
-| Provider | Code | Unit | Local cfg | Creds | Auth | Health | E2E live | Prod |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| OpenAI | yes | fail-closed | no | no | no | no | no | no |
-| Anthropic | yes | fail-closed | no | no | no | no | no | no |
-| Google AI | yes | fail-closed | no | no | no | no | no | no |
-| Stripe | yes | UNCERTAIN/webhook deny | no | no | no | no | no | no |
-| PayPal | yes | blocked draft | no | no | no | no | no | no |
-| SMTP | yes | send BLOCKED | no | no | no | no | no | no |
-| Twilio | yes | voice BLOCKED | no | no | no | no | no | no |
-| STT/TTS/WebRTC/Realtime | interface | dry-run | no | no | no | no | no | no |
-| Supplier API / TecDoc | yes | feed preview | no | no | no | no | no | no |
-| DHL/DPD/GLS/Hermes/UPS | stubs | outage/malformed | no | no | no | no | no | no |
-| Amazon/eBay/Kaufland/Allegro | classification + hub | draft only | no | no | no | no | no | no |
-| OTTO/eMAG/Skroutz/bol/Cdiscount | classification only | adapterExists=false | no | no | no | no | no | no |
+Columns: adapter / unit / configured / creds present / auth / reachable / sandbox e2e / production.
 
-Diagnostics CLI: `configured=false` for all 31, `attempted=false`, `authenticated=false`, `reachable=false`, `live=0`.
+| Provider | Adapter | Unit | Cfg | Creds | Auth | Reach | E2E | Prod | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| OpenAI | `server/lib/aiProviders.js` | fail-closed | no | no | no | no | no | no | NOT_CONFIGURED |
+| Anthropic | `server/lib/aiProviders.js` | fail-closed | no | no | no | no | no | no | NOT_CONFIGURED |
+| Google AI | `server/lib/aiProviders.js` | fail-closed | no | no | no | no | no | no | NOT_CONFIGURED |
+| Stripe | `paymentService` + `software/payments` | UNCERTAIN / webhook deny | no | no | no | no | no | no | NOT_CONFIGURED |
+| PayPal | `paymentService` | blocked draft | no | no | no | no | no | no | NOT_CONFIGURED |
+| SMTP | `software/communications` | send BLOCKED | no | no | no | no | no | no | NOT_CONFIGURED |
+| Twilio | `software/voice` | BLOCKED | no | no | no | no | no | no | NOT_CONFIGURED |
+| STT/TTS/WebRTC/Realtime/digital human | `software/voice` | interface | no | no | no | no | no | no | NOT_CONFIGURED |
+| Supplier API / TecDoc | `software/supplierFeeds` | preview + URL reject | no | no | no | no | no | no | NOT_CONFIGURED |
+| DHL/DPD/GLS/Hermes/UPS | `software/carriers` | outage/malformed | no | no | no | no | no | no | NOT_CONFIGURED |
+| Amazon/eBay/Kaufland/Allegro | marketplace hub + drafts | unpublished | no | no | no | no | no | no | NOT_CONFIGURED |
+| OTTO/eMAG/Skroutz/bol/Cdiscount | classification only | `adapterExists=false` | no | no | no | no | no | no | NOT_IMPLEMENTED adapter |
+
+Diagnostics: `configured=false` for all 31, `attempted=false`, `authenticated=false`, `reachable=false`, `endToEndVerified=false`, `productionVerified=false`, `live=0`.  
+HTTP reachability is never treated as authentication. Not attempted is not failed authentication.

@@ -4,26 +4,19 @@ Two scoring systems are kept **separate**. Method name remains `whole-software-w
 
 ## 1. Whole software (this slice)
 
-Source: `SOFTWARE_COMPLETION_DATA.json`  
-Method: `score = Σ(weight × fraction) / Σ(weight)`  
-Total weight: **148** (not the AI 161 list).  
-AI 161 weights were **not** edited.
-
-| Layer | Previous verification | Now | Meaning |
+| Layer | Previous | Now | Meaning |
 | --- | --- | --- | --- |
-| Code implementation | 80.3% | **80.6%** | Code exists and is reachable in-repo |
-| Test verification | 79.9% | **80.5%** | Automated tests cover the module |
+| Code implementation | 80.6% | **81.0%** | Code exists and is reachable in-repo |
+| Test verification | 80.5% | **80.8%** | Automated tests cover the module |
 | Integration verification | 63.2% | **63.2%** | Wired to another real module in tests |
 | Operational readiness | 19.4% | **19.4%** | Could run with current env/locks |
 | Production verification | 0.0% | **0.0%** | No production evidence |
 
-Fractions rose only where this pass added fail-closed payment, marketplace draft, refund-transition, financial-job, persistence, and contact/Guardian tests. Operational stays **19.4%** because sales remain locked, live providers stay BLOCKED/NOT_CONFIGURED, and nothing was staged. Production stays **0.0%**. Integration is unchanged because no sandbox or live provider was exercised.
+Fractions rose for Vitest 5 / audit remediations, production path fail-closed, and diagnostic honesty. Ops and production did not rise. Live providers stay NOT_CONFIGURED.
 
-CI on HEAD `f4ba504` run [38161918900](https://github.com/Buzzard-de/Buzzard/actions/runs/38161918900): quality + e2e-storefront + e2e-admin SUCCESS. That run is not production verification.
+CI SUCCESS on `f4ba504` run 38161918900 is **not** CI for this HEAD.
 
 ## 2. AI / automation (unchanged)
-
-Source: `docs/ai-automation-completion/AI_AUTOMATION_COMPLETION_DATA.json` (161 weights).
 
 | Layer | Score |
 | --- | --- |
@@ -31,18 +24,3 @@ Source: `docs/ai-automation-completion/AI_AUTOMATION_COMPLETION_DATA.json` (161 
 | Test verification | **71.9%** |
 | Operational readiness | **23.1%** |
 | Production verification | **0.0%** |
-
-## How not to read these numbers
-
-- Do not average 80.5% and 72.2% into a single “Buzzard is X% done”.
-- Do not promote test % into production %.
-- Do not treat mock connector tests as live marketplace completion.
-- Do not treat `/api/health/software` `ready:true` as `liveReady`.
-- Do not treat homepage Playwright on static `:3040` as production Pages verification.
-- Do not treat a local browser pass as production verification.
-
-## Module fractions
-
-Every module row with `impl` / `test` / `integ` / `ops` / `prod` is in `SOFTWARE_COMPLETION_DATA.json`. LIVE/blocked modules contribute ~0 to ops and prod.
-
-Largest honest moves this pass: payment fail-closed + HTTP honesty, marketplace draft validation, financial job DLQ, refund transitions, ephemeral DB paths. Live providers were **not** raised.

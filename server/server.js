@@ -219,6 +219,15 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+try {
+  const { assertDurableOpenAllowed } = require("./lib/dbPaths");
+  assertDurableOpenAllowed();
+} catch (err) {
+  console.error(err.message);
+  if (process.env.NODE_ENV === "production") process.exit(1);
+  throw err;
+}
+
 loadPlugins();
 
 try {

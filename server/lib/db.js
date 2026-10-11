@@ -1,10 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
-const { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require("./dbPaths");
+const { resolveDbPath, ensureDbDirectory, getPersistenceInfo, assertDurableOpenAllowed } = require("./dbPaths");
+
+assertDurableOpenAllowed();
 
 const dataDir = path.join(__dirname, "..", "data");
-fs.mkdirSync(dataDir, { recursive: true });
+if (process.env.NODE_ENV !== "production") {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 
 const dbPath = ensureDbDirectory(resolveDbPath());
 const db = new Database(dbPath);

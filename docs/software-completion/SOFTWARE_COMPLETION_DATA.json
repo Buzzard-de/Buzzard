@@ -5,8 +5,8 @@
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "f4ba504b0fbf4c61e689cc8d8f151f333eb1c7e6",
-    "headBeforeThisReport": "da0dfd3652b09ff4a99a4f096163a431a4213ff0",
+    "head": "pending-this-commit",
+    "headBeforeThisReport": "fb96743839e52694469a4a4e69250ce58224da56",
     "observedCiGreenHead": "f4ba504b0fbf4c61e689cc8d8f151f333eb1c7e6",
     "observedCiRun": 38161918900,
     "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, adapters, workflow audit, worker recovery, and external checklist"
@@ -29,24 +29,24 @@
     "productionVerification": 0.0
   },
   "scores": {
-    "codeImplementation": 80.6,
-    "testVerification": 80.5,
+    "codeImplementation": 81.0,
+    "testVerification": 80.8,
     "integrationVerification": 63.2,
     "operationalReadiness": 19.4,
     "productionVerification": 0.0,
     "totalWeight": 148,
     "previousVerificationPass": {
-      "codeImplementation": 80.3,
-      "testVerification": 79.9,
+      "codeImplementation": 80.6,
+      "testVerification": 80.5,
       "integrationVerification": 63.2,
       "operationalReadiness": 19.4,
       "productionVerification": 0.0
     }
   },
   "commandsRun": {
-    "test:software": { "exit": 0, "tests": 46, "passed": 46 },
-    "test:ai": { "exit": 0, "tests": 58, "passed": 58 },
-    "test:unit": { "exit": 0, "files": 59, "passed": 739, "failed": 0 },
+    "test:software": { "exit": 0, "tests": 50, "passed": 50, "runner": "vitest@5.0.3" },
+    "test:ai": { "exit": 0, "tests": 58, "passed": 58, "runner": "vitest@5.0.3" },
+    "test:unit": { "exit": 0, "files": 59, "passed": 743, "failed": 0, "runner": "vitest@5.0.3" },
     "playwright_admin_pim": { "exit": 0, "passed": 13, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_admin_pim_journey": { "exit": 0, "passed": 37, "skipped": 4, "baseURL": "http://127.0.0.1:3040", "api": "http://127.0.0.1:3001" },
     "playwright_homepage_viewports": { "exit": 0, "passed": 18, "locales": ["de", "en", "tr", "fr", "ar"] },
@@ -93,10 +93,10 @@
     {"id":"SW-SF","name":"Storefront","weight":6,"impl":0.7,"test":0.82,"integ":0.6,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-SEA","name":"Search","weight":3,"impl":0.75,"test":0.75,"integ":0.6,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-VOICE","name":"Voice/phone","weight":4,"impl":0.38,"test":0.35,"integ":0.1,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
-    {"id":"SW-DB","name":"Database","weight":5,"impl":0.86,"test":0.74,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-DB","name":"Database","weight":5,"impl":0.90,"test":0.78,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-API","name":"API","weight":5,"impl":0.72,"test":0.78,"integ":0.66,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-SEC","name":"Security","weight":6,"impl":0.80,"test":0.80,"integ":0.55,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-OBS","name":"Observability","weight":3,"impl":0.89,"test":0.81,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-SEC","name":"Security","weight":6,"impl":0.86,"test":0.84,"integ":0.55,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-OBS","name":"Observability","weight":3,"impl":0.91,"test":0.83,"integ":0.65,"ops":0.2,"prod":0,"code":"TESTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-WRK","name":"Workers","weight":4,"impl":0.87,"test":0.92,"integ":0.75,"ops":0.25,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-CI","name":"CI","weight":3,"impl":0.95,"test":0.95,"integ":0.90,"ops":0.15,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-DOC","name":"Docs","weight":2,"impl":0.96,"test":0.92,"integ":0.70,"ops":0.2,"prod":0,"code":"IMPLEMENTED","integration":"PARTIALLY_IMPLEMENTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"}

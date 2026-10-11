@@ -36,6 +36,11 @@ function resolveBackupDir() {
 }
 
 function ensureDbDirectory(dbPath = resolveDbPath()) {
+  if (process.env.NODE_ENV === "production" && isEphemeralPath(dbPath)) {
+    const err = new Error("Refusing to create a durable database under an ephemeral path in production");
+    err.code = "PRODUCTION_EPHEMERAL_PATH";
+    throw err;
+  }
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
   return dbPath;
 }
@@ -64,6 +69,24 @@ function getRenderDiskDiagnostics() {
 
 function validateStartupPersistence({ env = process.env, dbPath = resolveDbPath() } = {}) {
   const info = getPersistenceInfo(dbPath);
+  if (env.NODE_ENV === "production" && !env.BUZZARD_DB_PATH) {
+    return {
+      ok: false,
+      failClosed: true,
+      reason: "PRODUCTION_DB_PATH_UNCONFIGURED",
+      silentFallbackPrevented: true,
+      info,
+    };
+  }
+  if (env.NODE_ENV === "production" && isEphemeralPath(dbPath)) {
+    return {
+      ok: false,
+      failClosed: true,
+      reason: "PRODUCTION_EPHEMERAL_PATH",
+      silentFallbackPrevented: true,
+      info,
+    };
+  }
   if (env.NODE_ENV === "production" && !info.persistent) {
     return {
       ok: false,
@@ -72,7 +95,18 @@ function validateStartupPersistence({ env = process.env, dbPath = resolveDbPath(
       info,
     };
   }
-  return { ok: true, failClosed: false, info };
+  return { ok: true, failClosed: false, silentFallbackPrevented: false, info };
+}
+
+function assertDurableOpenAllowed({ env = process.env, dbPath = resolveDbPath() } = {}) {
+  const result = validateStartupPersistence({ env, dbPath });
+  if (!result.ok && result.failClosed) {
+    const err = new Error(`Refusing to open a database: ${result.reason}`);
+    err.code = result.reason;
+    err.details = result;
+    throw err;
+  }
+  return result;
 }
 
 function getPersistenceInfo(dbPath = resolveDbPath()) {
@@ -109,6 +143,9 @@ function getPersistenceInfo(dbPath = resolveDbPath()) {
     mode,
     persistent,
     ephemeralRisk,
+    configured: customPath,
+    silentFallbackPrevented: Boolean(isProduction && !customPath),
+    productionFallbackUsed: false,
     backupDir: resolveBackupDir(),
     env: process.env.NODE_ENV || "development",
     renderDisk: disk,
@@ -127,4 +164,5 @@ module.exports = {
   getPersistenceInfo,
   isEphemeralPath,
   validateStartupPersistence,
+  assertDurableOpenAllowed,
 };

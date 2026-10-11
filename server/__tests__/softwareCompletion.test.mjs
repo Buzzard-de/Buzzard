@@ -311,9 +311,12 @@ describe("software completion — isolated engines", () => {
       payload: { mock: true },
       createdBy: "software-test",
     });
-    const claimed = jobQueue.claimNextJob("sw-crash", 1, { jobType });
+    const claimed = jobQueue.claimNextJob("sw-crash", 60_000, { jobType });
     expect(claimed.id).toBe(job.id);
-    await new Promise((r) => setTimeout(r, 20));
+    const past = new Date(Date.now() - 60_000).toISOString();
+    db.prepare(
+      `UPDATE core_background_jobs SET lock_expires_at = ? WHERE id = ?`
+    ).run(past, job.id);
     const recovered = jobQueue.claimNextJob("sw-recover", 5000, { jobType });
     expect(recovered?.id).toBe(job.id);
     jobQueue.updateJob(job.id, { status: "COMPLETED", result: { recovered: true } });
@@ -684,12 +687,19 @@ describe("software completion — isolated engines", () => {
     expect(info.persistent).toBe(false);
     expect(dbPaths.isEphemeralPath("/var/tmp/buzzard.db")).toBe(true);
     const previousNode = process.env.NODE_ENV;
-    const startup = dbPaths.validateStartupPersistence({
+    const unconfigured = dbPaths.validateStartupPersistence({
       env: { NODE_ENV: "production" },
       dbPath: "/tmp/buzzard-not-durable.db",
     });
-    expect(startup.ok).toBe(false);
-    expect(startup.reason).toBe("PRODUCTION_EPHEMERAL_DB");
+    expect(unconfigured.ok).toBe(false);
+    expect(unconfigured.reason).toBe("PRODUCTION_DB_PATH_UNCONFIGURED");
+    expect(unconfigured.silentFallbackPrevented).toBe(true);
+    const ephemeral = dbPaths.validateStartupPersistence({
+      env: { NODE_ENV: "production", BUZZARD_DB_PATH: "/tmp/buzzard-not-durable.db" },
+      dbPath: "/tmp/buzzard-not-durable.db",
+    });
+    expect(ephemeral.ok).toBe(false);
+    expect(ephemeral.reason).toBe("PRODUCTION_EPHEMERAL_PATH");
     if (previous == null) delete process.env.BUZZARD_DB_PATH;
     else process.env.BUZZARD_DB_PATH = previous;
     if (previousNode == null) delete process.env.NODE_ENV;
@@ -781,6 +791,105 @@ describe("software completion — isolated engines", () => {
     const refused = jobQueue.retryJob(job.id);
     expect(refused.retried).toBe(false);
     expect(refused.reason).toBe("FINANCIAL_NO_RETRY");
+  });
+
+  it("49 provider diagnostics reject write URLs, private hosts, and bound timeouts", () => {
+    const write = software.providerDiagnostics.diagnose({
+      allowNetwork: true,
+      url: "https://sandbox.example/payments/charges",
+    });
+    expect(write.attempted).toBe(false);
+    expect(write.reason).toBe("WRITE_ENDPOINT_REJECTED");
+    expect(write.endToEndVerified).toBe(false);
+    const privateUrl = software.providerDiagnostics.diagnose({
+      allowNetwork: true,
+      url: "http://127.0.0.1:9/health",
+    });
+    expect(privateUrl.reason).toBe("INVALID_OR_PRIVATE_URL_REJECTED");
+    expect(software.providerDiagnostics.boundTimeout(60_000)).toBe(software.providerDiagnostics.MAX_TIMEOUT_MS);
+    const dry = software.providerDiagnostics.diagnose();
+    expect(dry.timeoutMs).toBeLessThanOrEqual(software.providerDiagnostics.MAX_TIMEOUT_MS);
+    expect(dry.authenticated).toBe(false);
+    expect(dry.reachable).toBe(false);
+  });
+
+  it("50 production missing BUZZARD_DB_PATH does not silently use the local default", () => {
+    const dbPaths = require("../lib/dbPaths");
+    const missing = dbPaths.validateStartupPersistence({
+      env: { NODE_ENV: "production" },
+      dbPath: dbPaths.defaultDbPath,
+    });
+    expect(missing.ok).toBe(false);
+    expect(missing.silentFallbackPrevented).toBe(true);
+    expect(missing.reason).toBe("PRODUCTION_DB_PATH_UNCONFIGURED");
+    expect(() => {
+      const previous = process.env.NODE_ENV;
+      process.env.NODE_ENV = "production";
+      try {
+        dbPaths.ensureDbDirectory("/tmp/buzzard-prod-refuse.db");
+      } finally {
+        if (previous == null) delete process.env.NODE_ENV;
+        else process.env.NODE_ENV = previous;
+      }
+    }).toThrow(/ephemeral path/);
+  });
+
+  it("51 sales lock cannot be bypassed by a worker financial job", () => {
+    expect(salesMode.isSalesEnabled()).toBe(false);
+    const classified = pusat.exceptions.classify(new Error("retry"), { action: "order.create" });
+    expect(classified.retryable).toBe(false);
+    const draft = software.orders.createDraft({ sku: "SW-SALES-1", customerId: "cust-a" });
+    expect(draft.commercialCreated).toBe(false);
+    expect(draft.salesLocked).toBe(true);
+  });
+
+  it("53 production database open refuses missing or ephemeral paths before create", () => {
+    const dbPaths = require("../lib/dbPaths");
+    expect(() =>
+      dbPaths.assertDurableOpenAllowed({
+        env: { NODE_ENV: "production" },
+        dbPath: dbPaths.defaultDbPath,
+      })
+    ).toThrow(/PRODUCTION_DB_PATH_UNCONFIGURED/);
+    expect(() =>
+      dbPaths.assertDurableOpenAllowed({
+        env: { NODE_ENV: "production", BUZZARD_DB_PATH: "/tmp/buzzard-open-refuse.db" },
+        dbPath: "/tmp/buzzard-open-refuse.db",
+      })
+    ).toThrow(/PRODUCTION_EPHEMERAL_PATH/);
+    const { spawnSync } = require("node:child_process");
+    const script = [
+      "process.env.NODE_ENV='production';",
+      "process.env.BUZZARD_DB_PATH='/tmp/buzzard-child-open-refuse.db';",
+      "try { require('./server/lib/db'); process.exit(2); }",
+      "catch (err) {",
+      "  const fs = require('fs');",
+      "  if (err.code !== 'PRODUCTION_EPHEMERAL_PATH') process.exit(3);",
+      "  if (fs.existsSync('/tmp/buzzard-child-open-refuse.db')) process.exit(4);",
+      "  process.exit(0);",
+      "}",
+    ].join("");
+    const child = spawnSync(process.execPath, ["-e", script], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      env: { ...process.env, NODE_ENV: "production", BUZZARD_DB_PATH: "/tmp/buzzard-child-open-refuse.db" },
+    });
+    expect(child.status).toBe(0);
+  });
+
+  it("52 repeated software schema migration stays idempotent", () => {
+    const { migrateSoftwareSchema } = require("../lib/software/schema");
+    migrateSoftwareSchema(db);
+    migrateSoftwareSchema(db);
+    const tables = db
+      .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'software_%'")
+      .all()
+      .map((row) => row.name);
+    expect(tables).toEqual(expect.arrayContaining([
+      "software_reservations",
+      "software_marketplace_drafts",
+      "software_return_ledger",
+    ]));
   });
 });
 

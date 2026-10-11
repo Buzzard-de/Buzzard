@@ -14,9 +14,11 @@ Statuses used only: PASS, PARTIAL, FAIL, BLOCKED_EXTERNAL_ACCESS, BLOCKED_HUMAN_
 | Product SoT inactive | productCore | none | high | yes | preserved | software 2 | ACTIVE throw | PASS |
 | Provider diagnostics | `providerDiagnostics` | none this pass | med | yes | preserved | software 39 | dry-run, prod URL rejected | PASS |
 | Live providers | adapters | credentials | high | no | checklist only | inventory counts.live=0 | no probe | NOT_CONFIGURED / NOT_VERIFIED |
-| Next RCE <15.5.24 | next 15.5.27 | bundled postcss/sharp | high | partial | already patched | lint/typecheck | RCE GHSA out of range | PARTIAL (bundled postcss/sharp remain) |
-| Vitest/tinypool RCE | vitest 3.2.7 | major upgrade | high | no (breaking) | isolated plan | — | remains | BLOCKED_HUMAN_APPROVAL |
-| Production DB / Render disk | `dbPaths.js` | no production access | high | no | startup fail-closed locally | local path only | — | BLOCKED_EXTERNAL_ACCESS |
+| Next RCE <15.5.24 | next 15.5.27 | none | high | yes | already on 15.5.27 | lint/typecheck/build | RCE GHSA out of range | PASS |
+| Vitest/tinypool RCE | vitest 3.2.7 | Node 20 vs Vitest 5 Node 22.12 | high | yes after `.nvmrc` 22 | vitest **5.0.3**, tinypool removed | unit/ai/software | 743/743 | PASS (dev toolchain) |
+| Next postcss / sharp | 8.4.31 / 0.34.5 | bundled vulns | high | yes override | postcss 8.5.29, sharp 0.35.5 | build | `npm audit --omit=dev` 0 | PASS |
+| braces/micromatch | eslint-config-next 15.5.27 | no 3.x patch | high | no | not downgraded to 14.2.35 | lint | advisory remains | BLOCKED_HUMAN_APPROVAL (dev-only) |
+| Production DB / Render disk | `dbPaths.js` | no production access | high | code yes | missing path fail-closed | software 50 | operator procedure | BLOCKED_EXTERNAL_ACCESS |
 | Production verification | — | no prod access | high | no | — | — | score 0 | NOT_VERIFIED |
 | Contact time-trap | ContactForm + contact plugin | missing field; missing stamp allowed | med | yes | `_formStarted` + fail-closed | software 41 | security:check OK | PASS |
 | Payment HTTP ≠ paid | `software/payments` | HTTP 200 treated as ambiguous | high | yes | `interpretHttpStatus` | software 44 | UNCERTAIN, not paid | PASS |

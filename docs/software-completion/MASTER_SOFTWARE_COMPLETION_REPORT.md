@@ -3,7 +3,7 @@
 Date: 2026-10-11 (final gap closure)  
 Branch: `cursor/software-completion-c293`  
 Last observed CI-green code HEAD: `a26b51d` (run 38153709074)  
-This report HEAD is `efb9a7d`. CI for that SHA is pending until observed. Last observed CI-green code HEAD remains `a26b51d` (run 38153709074).
+This report HEAD is `b478ed3`. CI for that SHA is pending until observed. Last observed CI-green code HEAD remains `a26b51d` (run 38153709074).
 
 Work is additive on top of the Pusat AI slice (PR #425 @ `40c35af`). PR #425 was not recreated or merged.
 

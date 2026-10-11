@@ -5,7 +5,7 @@
     "pr": 426,
     "base": "main",
     "relatedPr": 425,
-    "head": "efb9a7da9551831a16e42e3cbc841168001750cf",
+    "head": "b478ed3a48c8cf274935d9fd071dce0a9f583061",
     "headBeforeThisReport": "a26b51d401f494c49fc714a698ff6c207a1f3031",
     "observedCiGreenHead": "a26b51d401f494c49fc714a698ff6c207a1f3031",
     "observedCiRun": 38153709074,

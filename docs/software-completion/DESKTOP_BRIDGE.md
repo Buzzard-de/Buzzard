@@ -31,6 +31,14 @@ Binds `127.0.0.1` only. A random token is required for UI/API routes except `/he
 
 State directory: `BUZZARD_BRIDGE_HOME` or `~/.buzzard-desktop-bridge` (not `/tmp`).
 
+## Laptop download
+
+One zip, no git commands:
+
+https://github.com/Buzzard-de/Buzzard/raw/cursor/desktop-bridge-shortcut-c293/desktop-bridge/BuzzardDesktopBridge.zip
+
+Extract, then double-click `START.cmd`. Node.js 20+ is required.
+
 ## Windows desktop shortcut
 
 On a Windows PC, from the Buzzard repo:

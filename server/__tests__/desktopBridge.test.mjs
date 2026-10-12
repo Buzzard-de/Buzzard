@@ -233,6 +233,16 @@ describe("Buzzard desktop bridge", () => {
     await new Promise((resolve) => blocker.close(resolve));
   });
 
+  it("ships a portable zip a laptop can extract and start", () => {
+    const zip = path.join(process.cwd(), "desktop-bridge", "BuzzardDesktopBridge.zip");
+    expect(fs.existsSync(zip)).toBe(true);
+    const { execFileSync } = require("node:child_process");
+    const listing = execFileSync("unzip", ["-l", zip], { encoding: "utf8" });
+    expect(listing).toContain("START.cmd");
+    expect(listing).toContain("src/index.js");
+    expect(listing).toContain("MASAUSTUNE-KOY.ps1");
+  });
+
   it("Windows launcher scripts create a Desktop shortcut", () => {
     const windows = path.join(process.cwd(), "desktop-bridge", "windows");
     const shortcut = fs.readFileSync(path.join(windows, "install-desktop-shortcut.ps1"), "utf8");

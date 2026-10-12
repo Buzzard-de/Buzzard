@@ -1,0 +1,10 @@
+Buzzard Desktop Bridge
+
+1. ZIP klasorunu ac (Extract / Cikar).
+2. START.cmd dosyasina cift tikla.
+3. Tarayici acilir. Masaustune kisayol da yazilir.
+
+Node.js 20+ gerekir. Yoksa START.cmd nodejs.org sayfasini acar.
+
+Bu arac ChatGPT oturumunu acmaz. Yerel dosya aktarimi yapar.
+Pusat is orkestratorudur. Satis kilidi acilmaz.

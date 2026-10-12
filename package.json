@@ -54,6 +54,7 @@
     "bridge:start": "node desktop-bridge/src/index.js start",
     "bridge:status": "node desktop-bridge/src/index.js status",
     "bridge:desktop": "node desktop-bridge/src/index.js start",
+    "bridge:pack": "node scripts/pack-desktop-bridge.mjs",
     "test:e2e": "playwright test",
     "test:e2e:api": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test e2e/commerce-storefront.spec.ts e2e/commerce-security.spec.ts",
     "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",

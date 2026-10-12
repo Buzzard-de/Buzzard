@@ -3,7 +3,7 @@
  * MARKET_UNDERCUT stays unimplemented in this slice.
  */
 
-const SOFTWARE_VERSION = "1.6.10";
+const SOFTWARE_VERSION = "1.7.0";
 
 const CANONICAL_ENGINES = Object.freeze({
   orchestrator: "pusat",
@@ -57,6 +57,9 @@ const LOCATION_TYPE = Object.freeze({
   CARRIER_GPS: "carrier_gps",
   CARRIER_EVENT: "carrier_event",
   ESTIMATED: "estimated",
+  VERIFIED_DELIVERY: "verified_delivery",
+  PLANNED_DESTINATION: "planned_destination",
+  CARRIER_DEPOT: "carrier_depot",
   NOT_AVAILABLE: "not_available",
 });
 

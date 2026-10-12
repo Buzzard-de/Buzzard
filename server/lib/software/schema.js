@@ -136,6 +136,145 @@ function migrateSoftwareSchema(db) {
     );
     CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_mp_hash ON software_marketplace_drafts(input_hash);
     CREATE INDEX IF NOT EXISTS idx_sw_mp_channel ON software_marketplace_drafts(channel);
+
+    CREATE TABLE IF NOT EXISTS software_payments (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      provider TEXT NOT NULL DEFAULT 'mock',
+      state TEXT NOT NULL,
+      amount_cents INTEGER NOT NULL,
+      currency TEXT NOT NULL DEFAULT 'EUR',
+      capture_required INTEGER NOT NULL DEFAULT 1,
+      idempotency_key TEXT,
+      last_event_id TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_pay_idem
+      ON software_payments(idempotency_key) WHERE idempotency_key IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_sw_pay_order ON software_payments(order_id);
+
+    CREATE TABLE IF NOT EXISTS software_payment_events (
+      id TEXT PRIMARY KEY,
+      payment_id TEXT NOT NULL,
+      event_id TEXT NOT NULL,
+      event_type TEXT NOT NULL,
+      accepted INTEGER NOT NULL DEFAULT 0,
+      applied INTEGER NOT NULL DEFAULT 0,
+      reason TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(event_id),
+      FOREIGN KEY(payment_id) REFERENCES software_payments(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_pay_evt ON software_payment_events(payment_id);
+
+    CREATE TABLE IF NOT EXISTS software_transfers (
+      id TEXT PRIMARY KEY,
+      payment_id TEXT,
+      order_id TEXT,
+      from_role TEXT NOT NULL DEFAULT 'incoming',
+      to_role TEXT NOT NULL DEFAULT 'reserve',
+      state TEXT NOT NULL,
+      amount_cents INTEGER NOT NULL,
+      currency TEXT NOT NULL DEFAULT 'EUR',
+      idempotency_key TEXT,
+      irreversible INTEGER NOT NULL DEFAULT 0,
+      executed INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_xfer_idem
+      ON software_transfers(idempotency_key) WHERE idempotency_key IS NOT NULL;
+
+    CREATE TABLE IF NOT EXISTS software_risk_assessments (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      outcome TEXT NOT NULL,
+      reasons_json TEXT DEFAULT '[]',
+      signals_json TEXT DEFAULT '[]',
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_risk_order ON software_risk_assessments(order_id);
+
+    CREATE TABLE IF NOT EXISTS software_confirmations (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      token_hash TEXT NOT NULL,
+      state TEXT NOT NULL DEFAULT 'PENDING',
+      notification_state TEXT NOT NULL DEFAULT 'PENDING',
+      channel TEXT NOT NULL DEFAULT 'email',
+      locale TEXT,
+      expires_at TEXT NOT NULL,
+      attempts INTEGER NOT NULL DEFAULT 0,
+      used INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_conf_hash ON software_confirmations(token_hash);
+    CREATE INDEX IF NOT EXISTS idx_sw_conf_order ON software_confirmations(order_id);
+
+    CREATE TABLE IF NOT EXISTS software_identity_signals (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      declared_json TEXT DEFAULT '{}',
+      verified_json TEXT DEFAULT '{}',
+      status TEXT NOT NULL DEFAULT 'UNVERIFIED',
+      source TEXT,
+      verified_at TEXT,
+      limitations TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_ident_order ON software_identity_signals(order_id);
+
+    CREATE TABLE IF NOT EXISTS software_delivery_evidence (
+      id TEXT PRIMARY KEY,
+      shipment_id TEXT,
+      order_id TEXT,
+      kind TEXT NOT NULL,
+      verified INTEGER NOT NULL DEFAULT 0,
+      carrier_event_id TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_ev_dup
+      ON software_delivery_evidence(shipment_id, kind, carrier_event_id)
+      WHERE carrier_event_id IS NOT NULL;
+
+    CREATE TABLE IF NOT EXISTS software_location_records (
+      id TEXT PRIMARY KEY,
+      shipment_id TEXT,
+      order_id TEXT,
+      kind TEXT NOT NULL,
+      latitude REAL,
+      longitude REAL,
+      occurred_at TEXT,
+      source TEXT,
+      authorized INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_loc_ship ON software_location_records(shipment_id);
+
+    CREATE TABLE IF NOT EXISTS software_disputes (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      payment_id TEXT,
+      shipment_id TEXT,
+      kind TEXT NOT NULL,
+      state TEXT NOT NULL DEFAULT 'OPEN',
+      event_id TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_disp_evt
+      ON software_disputes(event_id) WHERE event_id IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_sw_disp_order ON software_disputes(order_id);
   `);
 }
 

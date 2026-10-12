@@ -27,6 +27,7 @@ const lifecycle = require("./lifecycle");
 const operationsPack = require("./operationsPack");
 const restoreGuard = require("./restoreGuard");
 const connectorInventory = require("./connectorInventory");
+const secureCommerce = require("./secureCommerce");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -67,4 +68,5 @@ module.exports = {
   operationsPack,
   restoreGuard,
   connectorInventory,
+  secureCommerce,
 };

@@ -4,9 +4,11 @@
  */
 
 const architecture = require("./productArchitecture");
+const { scanProductIdentity } = require("./productIdentityScan");
 
-function simulateProductMigration() {
+function simulateProductMigration(db = null) {
   const map = architecture.getProductArchitecture();
+  const identity = scanProductIdentity(db);
   return {
     simulation: true,
     written: false,
@@ -20,8 +22,10 @@ function simulateProductMigration() {
     classifiedNonMaster: map.classifiedNonMaster.map((row) => ({ id: row.id, class: row.class })),
     identityMapping: {
       required: ["sku", "ean", "gtin"],
-      implemented: false,
-      note: "Cross-store identity map is a migration prerequisite, not this simulation.",
+      implemented: true,
+      productionMap: false,
+      scan: identity,
+      note: "Local read-only scan only. Not a selected canonical map.",
     },
     duplicatePolicy: "fail-closed per store; no auto-merge across stores",
     backupRollback: [

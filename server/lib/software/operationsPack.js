@@ -36,6 +36,24 @@ function runLocalBackupRestoreRoundtrip(sourceDb) {
   };
 }
 
+function inspectIncompleteWork(db) {
+  if (!db) return { available: false, staleShipments: 0, queuedMessages: 0 };
+  try {
+    const staleShipments = db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM software_shipments
+         WHERE last_update IS NULL OR last_update < datetime('now', '-6 hours')`
+      )
+      .get().n;
+    const queuedMessages = db
+      .prepare("SELECT COUNT(*) AS n FROM software_message_drafts WHERE status = 'QUEUED'")
+      .get().n;
+    return { available: true, staleShipments, queuedMessages, executed: false };
+  } catch {
+    return { available: false, staleShipments: 0, queuedMessages: 0 };
+  }
+}
+
 function runLocalOperationsPack(options = {}) {
   const sourceDb = options.dbPath || path.join(process.cwd(), "server", "data", "buzzard.db");
   const salesLocked = !isSalesEnabled();
@@ -60,6 +78,7 @@ function runLocalOperationsPack(options = {}) {
       configured: providers.counts?.configured ?? 0,
       live: providers.counts?.live ?? 0,
     },
+    incompleteWork: inspectIncompleteWork(options.db || null),
     pass: salesLocked && sotInactive && restoreBlocked && roundtrip.ok,
   };
 }
@@ -67,4 +86,5 @@ function runLocalOperationsPack(options = {}) {
 module.exports = {
   runLocalOperationsPack,
   runLocalBackupRestoreRoundtrip,
+  inspectIncompleteWork,
 };

@@ -1104,9 +1104,11 @@ describe("software completion — isolated engines", () => {
 
   it("63 SoT migration simulation does not write or activate", () => {
     const { simulateProductMigration } = require("../lib/pim/productMigrationPlan");
-    const plan = simulateProductMigration();
+    const plan = simulateProductMigration(db);
     expect(plan.written).toBe(false);
     expect(plan.productSourceOfTruthActive).toBe(false);
+    expect(plan.identityMapping.scan.written).toBe(false);
+    expect(plan.identityMapping.productionMap).toBe(false);
     expect(salesMode.isSalesEnabled()).toBe(false);
   });
 
@@ -1129,6 +1131,47 @@ describe("software completion — isolated engines", () => {
     expect(
       software.restoreGuard.assertRestoreAllowed("/tmp/buzzard-test.db", { NODE_ENV: "test" }).allowed
     ).toBe(true);
+  });
+
+  it("66 tracking rejects invalid numbers and status regression", () => {
+    expect(software.tracking.createShipment(db, {
+      orderId: "ord-bad",
+      customerId: "c1",
+      trackingNumber: "!!",
+    }).reason).toBe("TRACKING_NUMBER_INVALID");
+    const created = software.tracking.createShipment(db, {
+      orderId: `ord-reg-${Date.now()}`,
+      customerId: "owner-reg",
+      trackingNumber: `DHL-REG-${Date.now()}`,
+      events: [{ status: "DELIVERED", occurredAt: "2026-10-11T10:00:00.000Z" }],
+    });
+    const rewind = software.tracking.appendEvent(db, created.shipment.id, {
+      status: "CREATED",
+      occurredAt: "2026-10-11T18:00:00.000Z",
+    });
+    expect(rewind.statusRegressed).toBe(true);
+    expect(rewind.statusAdvanced).toBe(false);
+    const shipment = software.tracking.mapShipment(
+      db.prepare("SELECT * FROM software_shipments WHERE id = ?").get(created.shipment.id),
+      db
+    );
+    expect(shipment.status).toBe("DELIVERED");
+  });
+
+  it("67 identity scan is read-only and does not consolidate stores", () => {
+    const { scanProductIdentity } = require("../lib/pim/productIdentityScan");
+    const scan = scanProductIdentity(db);
+    expect(scan.written).toBe(false);
+    expect(scan.merged).toBe(false);
+    expect(scan.productSourceOfTruthActive).toBe(false);
+    expect(scan.storesScanned.length).toBeGreaterThan(0);
+  });
+
+  it("68 operations pack can inspect incomplete work without executing it", () => {
+    const report = software.operationsPack.runLocalOperationsPack({ db });
+    expect(report.incompleteWork.executed).toBe(false);
+    expect(report.productionVerified).toBe(false);
+    expect(report.salesLocked).toBe(true);
   });
 });
 

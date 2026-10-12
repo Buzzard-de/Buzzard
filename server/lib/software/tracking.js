@@ -7,6 +7,24 @@ const crypto = require("crypto");
 const shippingProvider = require("../commerce/shippingProvider");
 const { TRACKING_STATUS, LOCATION_TYPE, DEFAULT_STALE_TRACKING_MS } = require("./constants");
 
+const STATUS_RANK = Object.freeze({
+  [TRACKING_STATUS.UNKNOWN]: 0,
+  [TRACKING_STATUS.CREATED]: 1,
+  [TRACKING_STATUS.IN_TRANSIT]: 2,
+  [TRACKING_STATUS.DELAYED]: 2,
+  [TRACKING_STATUS.OUT_FOR_DELIVERY]: 3,
+  [TRACKING_STATUS.EXCEPTION]: 3,
+  [TRACKING_STATUS.DELIVERED]: 4,
+});
+
+function validateTrackingNumber(value) {
+  const trackingNumber = String(value || "").trim();
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$/.test(trackingNumber)) {
+    return { ok: false, reason: "TRACKING_NUMBER_INVALID" };
+  }
+  return { ok: true, trackingNumber };
+}
+
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
 }
@@ -36,10 +54,14 @@ function normalizeEvent(event = {}) {
 function createShipment(db, input = {}) {
   const orderId = String(input.orderId || "").trim();
   const customerId = String(input.customerId || "").trim();
-  const trackingNumber = String(input.trackingNumber || "").trim();
-  if (!orderId || !customerId || !trackingNumber) {
+  const trackingCheck = validateTrackingNumber(input.trackingNumber);
+  if (!orderId || !customerId) {
     return { ok: false, reason: "ORDER_CUSTOMER_TRACKING_REQUIRED" };
   }
+  if (!trackingCheck.ok) {
+    return { ok: false, reason: trackingCheck.reason };
+  }
+  const trackingNumber = trackingCheck.trackingNumber;
 
   const estimate = shippingProvider.calculateShipping({
     methodId: input.methodId,
@@ -123,7 +145,10 @@ function appendEvent(db, shipmentId, event) {
   const eventTime = Date.parse(normalized.occurredAt);
   const lastTime = shipment.last_update ? Date.parse(shipment.last_update) : Number.NEGATIVE_INFINITY;
   const newer = Number.isFinite(eventTime) && (!Number.isFinite(lastTime) || eventTime >= lastTime);
-  if (newer) {
+  const currentRank = STATUS_RANK[shipment.status] ?? 0;
+  const nextRank = STATUS_RANK[normalized.status] ?? 0;
+  const regression = nextRank < currentRank && normalized.status !== TRACKING_STATUS.EXCEPTION;
+  if (newer && !regression) {
     db.prepare(
       `UPDATE software_shipments
        SET status = ?, last_update = ?, location_type = ?, updated_at = CURRENT_TIMESTAMP
@@ -134,8 +159,9 @@ function appendEvent(db, shipmentId, event) {
     ...normalized,
     ok: true,
     duplicate: false,
-    statusAdvanced: newer,
+    statusAdvanced: newer && !regression,
     outOfOrder: !newer,
+    statusRegressed: regression,
   };
 }
 
@@ -198,6 +224,7 @@ function getForCustomer(db, { shipmentId, orderId, trackingNumber, customerId } 
 
 module.exports = {
   normalizeEvent,
+  validateTrackingNumber,
   createShipment,
   appendEvent,
   getForCustomer,

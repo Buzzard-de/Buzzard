@@ -59,22 +59,85 @@ function getPayment(db, id) {
 }
 
 function mapPayment(row) {
+  const details = parseJson(row.details_json, {});
   return {
     id: row.id,
     orderId: row.order_id,
     provider: row.provider,
+    providerPaymentId: row.provider_payment_id || details.providerPaymentId || null,
     state: row.state,
     amountCents: row.amount_cents,
     currency: row.currency,
     captureRequired: row.capture_required === 1,
     captured: row.state === PAYMENT_STATE.PAYMENT_CAPTURED,
     authorizedOnly: row.state === PAYMENT_STATE.PAYMENT_AUTHORIZED,
+    requiresCustomerAction: row.state === PAYMENT_STATE.PAYMENT_REQUIRES_CUSTOMER_ACTION,
+    capturePending: row.state === PAYMENT_STATE.PAYMENT_CAPTURE_PENDING,
+    partiallyRefunded: row.state === PAYMENT_STATE.PAYMENT_PARTIALLY_REFUNDED,
+    refunded: row.state === PAYMENT_STATE.PAYMENT_REFUNDED,
     reconciliationRequired: row.state === PAYMENT_STATE.PAYMENT_RECONCILIATION_REQUIRED,
     disputed: row.state === PAYMENT_STATE.PAYMENT_DISPUTED || row.state === PAYMENT_STATE.CHARGEBACK,
     realMoneyMovement: false,
     irreversible: false,
-    details: parseJson(row.details_json, {}),
+    details,
   };
+}
+
+function getPaymentByProviderRef(db, provider, providerPaymentId) {
+  if (!provider || !providerPaymentId) return null;
+  const row = db
+    .prepare("SELECT * FROM software_payments WHERE provider = ? AND provider_payment_id = ?")
+    .get(provider, providerPaymentId);
+  return row ? mapPayment(row) : null;
+}
+
+function attachProviderRef(db, paymentId, providerPaymentId) {
+  const payment = getPayment(db, paymentId);
+  if (!payment || !providerPaymentId) return payment;
+  const existing = getPaymentByProviderRef(db, payment.provider, providerPaymentId);
+  if (existing && existing.id !== paymentId) {
+    writeAudit(db, "payment.provider_ref_conflict", paymentId, { providerPaymentId });
+    return payment;
+  }
+  const details = { ...payment.details, providerPaymentId };
+  try {
+    db.prepare(
+      `UPDATE software_payments
+       SET provider_payment_id = ?, details_json = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE id = ?`
+    ).run(String(providerPaymentId), JSON.stringify(details), paymentId);
+  } catch (err) {
+    if (!isUniqueConstraint(err)) throw err;
+    writeAudit(db, "payment.provider_ref_conflict", paymentId, { providerPaymentId });
+    return payment;
+  }
+  return getPayment(db, paymentId);
+}
+
+function isUniqueConstraint(err) {
+  return err && (err.code === "SQLITE_CONSTRAINT_UNIQUE" || /UNIQUE/i.test(String(err.message || "")));
+}
+
+function recordEventExclusive(db, input = {}) {
+  try {
+    db.prepare(
+      `INSERT INTO software_payment_events(id, payment_id, event_id, event_type, accepted, applied, reason, details_json)
+       VALUES(?,?,?,?,?,?,?,?)`
+    ).run(
+      newId("spevt"),
+      input.paymentId,
+      input.eventId,
+      input.eventType || "unknown",
+      input.accepted ? 1 : 0,
+      input.applied ? 1 : 0,
+      input.reason || null,
+      JSON.stringify(input.details || {})
+    );
+    return { inserted: true, duplicate: false };
+  } catch (err) {
+    if (isUniqueConstraint(err)) return { inserted: false, duplicate: true };
+    throw err;
+  }
 }
 
 function applyState(db, paymentId, to, reason) {
@@ -161,10 +224,14 @@ function ingestEvent(db, input = {}) {
   const amountCents = moneyCents(input.amount ?? payment.amountCents / 100);
   const currency = String(input.currency || payment.currency).toUpperCase();
   if (currency !== payment.currency || amountCents !== payment.amountCents) {
-    db.prepare(
-      `INSERT INTO software_payment_events(id, payment_id, event_id, event_type, accepted, applied, reason, details_json)
-       VALUES(?,?,?,?,0,0,?,?)`
-    ).run(newId("spevt"), payment.id, eventId, input.eventType || "unknown", "AMOUNT_CURRENCY_MISMATCH", "{}");
+    recordEventExclusive(db, {
+      paymentId: payment.id,
+      eventId,
+      eventType: input.eventType || "unknown",
+      accepted: false,
+      applied: false,
+      reason: "AMOUNT_CURRENCY_MISMATCH",
+    });
     applyState(db, payment.id, PAYMENT_STATE.PAYMENT_REVIEW, "amount_currency_mismatch");
     return { ok: false, accepted: false, applied: false, reason: "AMOUNT_CURRENCY_MISMATCH" };
   }
@@ -174,18 +241,34 @@ function ingestEvent(db, input = {}) {
     return { ok: false, accepted: false, reason: "TARGET_STATE_REQUIRED" };
   }
 
+  const reserved = recordEventExclusive(db, {
+    paymentId: payment.id,
+    eventId,
+    eventType: input.eventType || target,
+    accepted: true,
+    applied: false,
+    reason: "RESERVED",
+    details: { to: target },
+  });
+  if (reserved.duplicate) {
+    return {
+      ok: true,
+      accepted: true,
+      duplicate: true,
+      applied: false,
+      financialEffect: false,
+      reason: "DUPLICATE_EVENT",
+    };
+  }
+
   const applied = applyState(db, payment.id, target, input.eventType || target);
   db.prepare(
-    `INSERT INTO software_payment_events(id, payment_id, event_id, event_type, accepted, applied, reason, details_json)
-     VALUES(?,?,?,?,1,?,?,?)`
+    "UPDATE software_payment_events SET applied = ?, reason = ?, details_json = ? WHERE event_id = ?"
   ).run(
-    newId("spevt"),
-    payment.id,
-    eventId,
-    input.eventType || target,
-    applied.ok ? 1 : 0,
+    applied.ok && !applied.duplicate ? 1 : 0,
     applied.reason || null,
-    JSON.stringify({ from: applied.from || payment.state, to: target })
+    JSON.stringify({ from: applied.from || payment.state, to: target }),
+    eventId
   );
   db.prepare("UPDATE software_payments SET last_event_id = ? WHERE id = ?").run(eventId, payment.id);
 
@@ -196,6 +279,117 @@ function ingestEvent(db, input = {}) {
     duplicate: Boolean(applied.duplicate),
     financialEffect: applied.ok && applied.to === PAYMENT_STATE.PAYMENT_CAPTURED,
     payment: applied.payment || getPayment(db, payment.id),
+    reason: applied.reason || null,
+  };
+}
+
+function ingestVerifiedEvent(db, input = {}) {
+  if (input.timeout === true || input.uncertain === true) {
+    const payment = input.paymentId ? getPayment(db, input.paymentId) : null;
+    if (payment) applyState(db, payment.id, PAYMENT_STATE.PAYMENT_RECONCILIATION_REQUIRED, "timeout");
+    return {
+      ok: true,
+      accepted: true,
+      applied: Boolean(payment),
+      success: false,
+      financialEffect: false,
+      shipmentAuthorized: false,
+      requiresReconciliation: true,
+      reason: "PROVIDER_TIMEOUT_NOT_SUCCESS",
+    };
+  }
+
+  const eventId = String(input.eventId || "").trim();
+  if (!eventId) return { ok: false, accepted: false, reason: "EVENT_ID_REQUIRED", shipmentAuthorized: false };
+
+  const existing = db.prepare("SELECT * FROM software_payment_events WHERE event_id = ?").get(eventId);
+  if (existing) {
+    return {
+      ok: true,
+      accepted: true,
+      duplicate: true,
+      applied: false,
+      financialEffect: false,
+      shipmentAuthorized: false,
+      reason: "DUPLICATE_EVENT",
+    };
+  }
+
+  const payment = getPayment(db, input.paymentId);
+  if (!payment) return { ok: false, accepted: false, reason: "PAYMENT_NOT_FOUND", shipmentAuthorized: false };
+
+  if (input.amount != null || input.currency) {
+    const amountCents = moneyCents(input.amount ?? payment.amountCents / 100);
+    const currency = String(input.currency || payment.currency).toUpperCase();
+    if (currency !== payment.currency || amountCents !== payment.amountCents) {
+      recordEventExclusive(db, {
+        paymentId: payment.id,
+        eventId,
+        eventType: input.eventType || "unknown",
+        accepted: false,
+        applied: false,
+        reason: "AMOUNT_CURRENCY_MISMATCH",
+      });
+      applyState(db, payment.id, PAYMENT_STATE.PAYMENT_REVIEW, "amount_currency_mismatch");
+      return {
+        ok: false,
+        accepted: false,
+        applied: false,
+        shipmentAuthorized: false,
+        reason: "AMOUNT_CURRENCY_MISMATCH",
+      };
+    }
+  }
+
+  const target = input.targetState;
+  if (!target || !Object.values(PAYMENT_STATE).includes(target)) {
+    return { ok: false, accepted: false, reason: "TARGET_STATE_REQUIRED", shipmentAuthorized: false };
+  }
+
+  const reserved = recordEventExclusive(db, {
+    paymentId: payment.id,
+    eventId,
+    eventType: input.eventType || target,
+    accepted: true,
+    applied: false,
+    reason: "RESERVED",
+    details: { to: target, officialVerify: true },
+  });
+  if (reserved.duplicate) {
+    return {
+      ok: true,
+      accepted: true,
+      duplicate: true,
+      applied: false,
+      financialEffect: false,
+      shipmentAuthorized: false,
+      reason: "DUPLICATE_EVENT",
+    };
+  }
+
+  const applied = applyState(db, payment.id, target, input.eventType || target);
+  db.prepare(
+    "UPDATE software_payment_events SET applied = ?, reason = ?, details_json = ? WHERE event_id = ?"
+  ).run(
+    applied.ok && !applied.duplicate ? 1 : 0,
+    applied.reason || (applied.ok ? null : "ILLEGAL_TRANSITION"),
+    JSON.stringify({ from: applied.from || payment.state, to: target, officialVerify: true }),
+    eventId
+  );
+  if (applied.ok) {
+    db.prepare("UPDATE software_payments SET last_event_id = ? WHERE id = ?").run(eventId, payment.id);
+  }
+
+  const next = applied.payment || getPayment(db, payment.id);
+  return {
+    ok: applied.ok,
+    accepted: true,
+    applied: applied.ok && !applied.duplicate,
+    duplicate: Boolean(applied.duplicate),
+    financialEffect: false,
+    shipmentAuthorized: false,
+    payment: next,
+    captured: next?.captured === true,
     reason: applied.reason || null,
   };
 }
@@ -215,8 +409,11 @@ module.exports = {
   canTransition,
   createPayment,
   getPayment,
+  getPaymentByProviderRef,
+  attachProviderRef,
   applyState,
   verifyWebhookSignature,
   ingestEvent,
+  ingestVerifiedEvent,
   clientStatusIsNotProof,
 };

@@ -166,6 +166,7 @@ function parseBody(req) {
 
     req.on("end", () => {
       const raw = Buffer.concat(chunks).toString("utf8");
+      req.rawBody = raw;
       const contentType = (req.headers["content-type"] || "").split(";")[0].trim();
 
       if (!raw) {

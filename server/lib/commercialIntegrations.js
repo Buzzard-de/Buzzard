@@ -4,7 +4,34 @@
 
 const PUBLIC_BASE = (process.env.PUBLIC_BASE_URL || "https://buzzard24.de").replace(/\/$/, "");
 
+function liveHttpBlocked() {
+  return process.env.BUZZARD_SALES_ENABLED !== "1" || process.env.BUZZARD_LIVE_PAYMENTS !== "1";
+}
+
+function blockedProviderPayload(provider, extra = {}) {
+  return {
+    provider,
+    status: "blocked",
+    executed: false,
+    realMoneyMovement: false,
+    checkoutUrl: null,
+    approvalUrl: null,
+    reason: "LIVE_HTTP_BLOCKED",
+    hint: "Sales lock and BUZZARD_LIVE_PAYMENTS block live provider HTTP even when secrets exist.",
+    ...extra,
+  };
+}
+
 async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", successUrl, cancelUrl }) {
+  if (liveHttpBlocked()) {
+    return blockedProviderPayload("stripe", {
+      orderId,
+      amount,
+      currency,
+      status: process.env.STRIPE_SECRET_KEY ? "blocked" : "adapter_ready",
+    });
+  }
+
   const secret = process.env.STRIPE_SECRET_KEY;
   if (!secret) {
     return {
@@ -57,6 +84,15 @@ async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", 
 }
 
 async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
+  if (liveHttpBlocked()) {
+    return blockedProviderPayload("paypal", {
+      orderId,
+      amount,
+      currency,
+      status: process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET ? "blocked" : "adapter_ready",
+    });
+  }
+
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
@@ -131,6 +167,9 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
 
 const payments = {
   stripe: async ({ orderId, amount, currency, successUrl, cancelUrl }) => {
+    if (liveHttpBlocked()) {
+      return createStripeCheckoutSession({ orderId, amount, currency, successUrl, cancelUrl });
+    }
     if (process.env.STRIPE_SECRET_KEY) {
       return createStripeCheckoutSession({ orderId, amount, currency, successUrl, cancelUrl });
     }
@@ -144,6 +183,9 @@ const payments = {
     };
   },
   paypal: async ({ orderId, amount, currency }) => {
+    if (liveHttpBlocked()) {
+      return createPayPalOrder({ orderId, amount, currency });
+    }
     if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET) {
       return createPayPalOrder({ orderId, amount, currency });
     }

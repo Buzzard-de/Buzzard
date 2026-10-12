@@ -56,6 +56,30 @@ function assess(input = {}) {
     signals.push({ type: "conflicting_account_info", weight: "review" });
     reasons.push("CONFLICTING_ACCOUNT_INFO");
   }
+  if (input.webhookVerificationFailed === true) {
+    signals.push({ type: "webhook_verification_failed", weight: "block" });
+    reasons.push("WEBHOOK_VERIFICATION_FAILED");
+  }
+  if (input.duplicatePaymentAttempt === true) {
+    signals.push({ type: "duplicate_payment_attempt", weight: "review" });
+    reasons.push("DUPLICATE_PAYMENT_ATTEMPT");
+  }
+  if (input.inconsistentIdentifiers === true) {
+    signals.push({ type: "inconsistent_identifiers", weight: "block" });
+    reasons.push("INCONSISTENT_IDENTIFIERS");
+  }
+  if (input.suspiciousEventSequencing === true) {
+    signals.push({ type: "suspicious_event_sequencing", weight: "review" });
+    reasons.push("SUSPICIOUS_EVENT_SEQUENCING");
+  }
+  if (input.unresolvedDispute === true) {
+    signals.push({ type: "unresolved_dispute", weight: "block" });
+    reasons.push("UNRESOLVED_DISPUTE");
+  }
+  if (input.clientClaimedPaid === true) {
+    signals.push({ type: "client_claimed_paid", weight: "review" });
+    reasons.push("CLIENT_STATUS_NOT_AUTHORITATIVE");
+  }
 
   const blocked = signals.some((s) => s.weight === "block");
   const review = signals.some((s) => s.weight === "review");

@@ -12,6 +12,8 @@ const cartRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPref
 const checkoutRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "commerce-checkout:" });
 const orderRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 10, keyPrefix: "commerce-order:" });
 const readinessRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 60, keyPrefix: "commerce-readiness:" });
+const paymentRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 20, keyPrefix: "commerce-pay:" });
+const webhookRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: "commerce-wh:" });
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -283,10 +285,113 @@ module.exports = {
       res.json({ success: true, order });
     });
 
-    app.post("/api/commerce/webhooks/:provider", (req, res) => {
-      const rawBody = JSON.stringify(req.body || {});
+    app.get("/api/commerce/payments/providers", (_req, res) => {
+      const diagnostics = commerce.dualPaymentEngine.providerDiagnostics();
+      res.json({
+        success: true,
+        stripe: diagnostics.stripe,
+        paypal: diagnostics.paypal,
+        liveVerified: false,
+        sandboxVerified: false,
+        realMoneyMovement: false,
+        salesEnabled: diagnostics.salesEnabled,
+      });
+    });
+
+    app.post("/api/commerce/payments", async (req, res) => {
+      if (!rateLimit(req, res, paymentRateLimit)) return;
+      const body = parseBody(req);
+      const db = require("../lib/db").db;
+      const result = await commerce.dualPaymentEngine.createPayment(db, {
+        provider: body.provider,
+        orderId: body.orderId,
+        expectedAmount: body.expectedAmount ?? body.serverAmount,
+        expectedCurrency: body.expectedCurrency || body.serverCurrency || "EUR",
+        clientAmount: body.amount,
+        clientCurrency: body.currency,
+        idempotencyKey: req.headers["idempotency-key"] || body.idempotencyKey,
+      });
+      const status = result.ok ? 200 : result.reason === "AMOUNT_TAMPERING" || result.reason === "CURRENCY_TAMPERING" ? 400 : 422;
+      res.status(status).json({
+        success: result.ok === true,
+        payment: result.payment || null,
+        checkoutUrl: result.checkoutUrl || null,
+        approvalUrl: result.approvalUrl || null,
+        reason: result.reason || null,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.get("/api/commerce/payments/:id", (req, res) => {
+      const db = require("../lib/db").db;
+      const result = commerce.dualPaymentEngine.retrievePayment(db, req.params.id);
+      if (!result.ok) return res.status(404).json({ success: false, reason: result.reason });
+      res.json({
+        success: true,
+        payment: result.payment,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.post("/api/commerce/payments/:id/fail", (req, res) => {
+      if (!rateLimit(req, res, paymentRateLimit)) return;
+      const db = require("../lib/db").db;
+      const result = commerce.dualPaymentEngine.recordFailure(db, req.params.id, parseBody(req).reason || "provider_failure");
+      res.status(result.ok ? 200 : 404).json({
+        success: result.ok === true,
+        payment: result.payment || null,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.post("/api/commerce/payments/:id/reconcile", async (req, res) => {
+      if (!rateLimit(req, res, paymentRateLimit)) return;
+      const db = require("../lib/db").db;
+      const result = await commerce.dualPaymentEngine.reconcilePayment(db, req.params.id);
+      res.status(result.ok ? 200 : 404).json({
+        success: result.ok === true,
+        executed: false,
+        financialEffect: false,
+        mismatch: result.mismatch === true,
+        diagnostic: result.diagnostic || result.reason || null,
+        payment: result.payment || null,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.post("/api/commerce/webhooks/:provider", async (req, res) => {
+      if (!rateLimit(req, res, webhookRateLimit)) return;
+      const provider = String(req.params.provider || "").toLowerCase();
+      if (provider === "stripe" || provider === "paypal") {
+        const db = require("../lib/db").db;
+        const result = await commerce.dualPaymentEngine.handleWebhook(db, {
+          provider,
+          rawBody: req.rawBody || JSON.stringify(req.body || {}),
+          headers: req.headers,
+          body: req.body,
+          eventId: req.headers["x-event-id"] || req.body?.id,
+        });
+        return res.status(result.status || 200).json({
+          success: result.accepted === true,
+          accepted: result.accepted === true,
+          applied: result.applied === true,
+          duplicate: result.duplicate === true,
+          reason: result.reason || null,
+          payment: result.payment || null,
+          orderCreated: false,
+          paymentCreated: false,
+          shipmentAuthorized: false,
+          realMoneyMovement: false,
+        });
+      }
+
+      const rawBody = req.rawBody || JSON.stringify(req.body || {});
       const result = commerce.webhookFoundation.handleWebhook({
-        provider: req.params.provider,
+        provider,
         eventId: req.headers["x-event-id"] || `evt_${Date.now()}`,
         eventType: req.body?.type || "unknown",
         rawBody,

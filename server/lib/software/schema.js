@@ -276,6 +276,20 @@ function migrateSoftwareSchema(db) {
       ON software_disputes(event_id) WHERE event_id IS NOT NULL;
     CREATE INDEX IF NOT EXISTS idx_sw_disp_order ON software_disputes(order_id);
   `);
+
+  ensureColumn(db, "software_payments", "provider_payment_id", "provider_payment_id TEXT");
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_pay_provider_ref
+      ON software_payments(provider, provider_payment_id)
+      WHERE provider_payment_id IS NOT NULL;
+  `);
+}
+
+function ensureColumn(db, table, column, ddl) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all();
+  if (!cols.some((row) => row.name === column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+  }
 }
 
 module.exports = { migrateSoftwareSchema };

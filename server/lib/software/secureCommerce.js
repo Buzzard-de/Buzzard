@@ -15,6 +15,7 @@ const deliveryProof = require("./deliveryProof");
 const locationEvidence = require("./locationEvidence");
 const shipmentGate = require("./shipmentGate");
 const disputes = require("./disputes");
+const dualPaymentEngine = require("../commerce/providers/dualPaymentEngine");
 
 function flags() {
   return {
@@ -40,4 +41,5 @@ module.exports = {
   locationEvidence,
   shipmentGate,
   disputes,
+  dualPaymentEngine,
 };

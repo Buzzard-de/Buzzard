@@ -115,6 +115,12 @@ function createPaymentIntent({ amount, currency = "EUR", customerId, idempotency
 
 function getProviderHealth() {
   const flags = getEffectiveFlags();
+  let dual = null;
+  try {
+    dual = require("./providers/dualPaymentEngine").providerDiagnostics();
+  } catch {
+    dual = null;
+  }
   return {
     activeProvider: flags.stripeEnabled ? "stripe" : flags.paypalEnabled ? "paypal" : "mock",
     stripeEnabled: flags.stripeEnabled,
@@ -122,6 +128,10 @@ function getProviderHealth() {
     mockPaymentOnly: flags.mockPaymentOnly,
     realMoneyMovement: false,
     credentialsStored: false,
+    stripe: dual?.stripe || { status: "IMPLEMENTED", liveVerified: false },
+    paypal: dual?.paypal || { status: "IMPLEMENTED", liveVerified: false },
+    liveVerified: false,
+    sandboxVerified: false,
   };
 }
 

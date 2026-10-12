@@ -40,6 +40,8 @@ const PUBLIC_ROUTES = new Set([
   "GET /api/commerce/status",
   "GET /api/commerce/readiness",
   "GET /api/commerce/shipping/methods",
+  "GET /api/commerce/payments/providers",
+  "POST /api/commerce/webhooks/:provider",
   "GET /api/security/health",
   "GET /api/p1/status",
   "GET /api/orchestrator/status",

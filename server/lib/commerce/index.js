@@ -15,6 +15,7 @@ module.exports = {
   idempotency: require("./idempotency"),
   riskEngine: require("./riskEngine"),
   webhookFoundation: require("./webhookFoundation"),
+  dualPaymentEngine: require("./providers/dualPaymentEngine"),
   goLiveApproval: require("./goLiveApproval"),
   legacyPimMigration: require("./legacyPimMigration"),
   productSearch: require("./productSearchAbstraction"),

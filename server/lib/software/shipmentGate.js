@@ -56,6 +56,19 @@ function evaluate(db, input = {}) {
     }
   }
 
+  if (input.browserRedirectSuccess === true || input.frontendSuccess === true) {
+    checks.browserRedirectRejected = true;
+    reasons.push("CLIENT_STATUS_NOT_AUTHORITATIVE");
+  }
+  if (input.unverifiedWebhook === true) {
+    checks.unverifiedWebhookRejected = true;
+    reasons.push("UNVERIFIED_WEBHOOK");
+  }
+  if (input.providerTimeout === true) {
+    checks.timeoutRejected = true;
+    reasons.push("PROVIDER_TIMEOUT_NOT_SUCCESS");
+  }
+
   const risk = input.risk || paymentRisk.assess(input.riskInput || {});
   checks.riskOutcome = risk.outcome;
   if (risk.outcome === RISK_OUTCOME.HIGH_RISK_BLOCKED) reasons.push("HIGH_RISK_BLOCKED");

@@ -32,8 +32,8 @@ function marketplaceConnectors() {
 
 function paymentBankConnectors() {
   return [
-    { id: "stripe", class: "CODE_READY", live: "BLOCKED_EXTERNAL_DEPENDENCY", liveVerified: false },
-    { id: "paypal", class: "CODE_READY", live: "BLOCKED_EXTERNAL_DEPENDENCY", liveVerified: false },
+    { id: "stripe", class: "IMPLEMENTED", live: "BLOCKED_EXTERNAL_DEPENDENCY", liveVerified: false, note: "Mock-tested adapter. Not sandbox/live verified." },
+    { id: "paypal", class: "IMPLEMENTED", live: "BLOCKED_EXTERNAL_DEPENDENCY", liveVerified: false, note: "Mock-tested adapter. Not sandbox/live verified." },
     { id: "sepa", class: "STUB", live: "BLOCKED_EXTERNAL_DEPENDENCY", liveVerified: false },
     { id: "commercial_bank", class: "NOT_IMPLEMENTED", live: "BLOCKED_EXTERNAL_DEPENDENCY", liveVerified: false },
     { id: "deutsche_bundesbank", class: "NOT_IMPLEMENTED", live: "NOT_IMPLEMENTED", liveVerified: false, note: "No private-account query API assumed." },

@@ -46,6 +46,20 @@ SW-SOT identity scan + SW-SHIP regression/validation. Playwright E2E **NOT_VERIF
 | Operations | 20.1% | **20.3%** |
 | Production | 0.0% | **0.0%** |
 
+## 1e. After safe master audit / 320px + cents rounding (same method)
+
+Weights remain **148**. Production stays **0.0%**. Ops unchanged. E2E on :3010 is local verification, not Render production.
+
+| Layer | Recomputed from JSON before this pass | Now |
+| --- | ---: | ---: |
+| Code | 82.7% | **82.8%** |
+| Tests | 83.7% | **84.0%** |
+| Integration | 65.7% | **65.7%** |
+| Operations | 20.3% | **20.3%** |
+| Production | 0.0% | **0.0%** |
+
+Moved fractions: SW-PRICE impl/test 0.91/0.92 → 0.92/0.94; SW-SHIP test 0.88 → 0.90; SW-SF impl/test/integ 0.70/0.82/0.60 → 0.72/0.86/0.62.
+
 ### Windows Desktop Bridge (separate, not mixed into 148)
 
 | Slice | Score | Evidence |

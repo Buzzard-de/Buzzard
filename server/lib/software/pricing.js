@@ -10,7 +10,9 @@ const { MIN_NET_PROFIT_EUR, MARKET_UNDERCUT_IMPLEMENTED, MARKET_UNDERCUT_EUR } =
 function money(value) {
   const n = Number(value);
   if (!Number.isFinite(n)) return null;
-  return Math.round(n * 100) / 100;
+  const sign = n < 0 ? -1 : 1;
+  // Half-up to cents. Plain Math.round(n * 100) drops 1.005 to 1.00 in IEEE float.
+  return sign * (Math.round(Math.abs(n) * 100 + 1e-10) / 100);
 }
 
 function quote(input = {}) {

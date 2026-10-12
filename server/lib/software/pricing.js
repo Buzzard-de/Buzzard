@@ -14,6 +14,20 @@ function money(value) {
 }
 
 function quote(input = {}) {
+  const currency = String(input.currency || "EUR").trim().toUpperCase();
+  if (currency !== "EUR") {
+    return {
+      ok: false,
+      failClosed: true,
+      engine: "server/lib/pricing.js",
+      reason: "CURRENCY_UNSUPPORTED",
+      currency,
+      invented: false,
+      conversionInvented: false,
+      marketUndercutImplemented: MARKET_UNDERCUT_IMPLEMENTED,
+      note: "No FX rate is invented. Quotes stay EUR-only unless a verified conversion exists.",
+    };
+  }
   const supplierCost = money(input.supplierCost ?? input.supplierPrice);
   if (supplierCost == null || supplierCost <= 0) {
     return {
@@ -49,7 +63,7 @@ function quote(input = {}) {
     supplierPrice: supplierCost,
     markupPercent: input.markupPercent ?? 38,
     minimumMarginPercent: input.minimumMarginPercent ?? 12,
-    currency: input.currency || "EUR",
+    currency,
   });
 
   const landed = money(supplierCost + shipping + extras + (returnReserve || 0));
@@ -86,7 +100,7 @@ function quote(input = {}) {
     ok: true,
     failClosed: false,
     engine: "server/lib/pricing.js",
-    currency: input.currency || "EUR",
+    currency,
     supplierCost,
     shippingCost: shipping,
     extraCosts: extras,

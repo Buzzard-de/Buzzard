@@ -152,6 +152,29 @@ function classifyStatus({ configured, parsed, errors, live }) {
   return FEED_STATUS.CONFIGURED;
 }
 
+const feedFailures = new Map();
+
+function recordCircuit(supplierId, ok) {
+  const id = String(supplierId || "fixture");
+  if (ok) {
+    feedFailures.delete(id);
+    return { open: false, failures: 0 };
+  }
+  const next = (feedFailures.get(id) || 0) + 1;
+  feedFailures.set(id, next);
+  return { open: next >= 3, failures: next };
+}
+
+function circuitStatus(supplierId) {
+  const failures = feedFailures.get(String(supplierId || "fixture")) || 0;
+  return { open: failures >= 3, failures };
+}
+
+function resetCircuit(supplierId) {
+  if (supplierId) feedFailures.delete(String(supplierId));
+  else feedFailures.clear();
+}
+
 function rejectLiveFetch(url) {
   return {
     ok: false,
@@ -170,6 +193,20 @@ function rejectLiveFetch(url) {
 function preview({ format, payload, supplierId = "fixture", credentialsConfigured = false, url } = {}) {
   if (url) {
     return rejectLiveFetch(url);
+  }
+  const circuit = circuitStatus(supplierId);
+  if (circuit.open) {
+    return {
+      ok: false,
+      status: FEED_STATUS.BLOCKED,
+      written: false,
+      live: false,
+      importReady: false,
+      purchaseOrderSent: false,
+      reason: "CIRCUIT_OPEN",
+      failures: circuit.failures,
+      note: "Local circuit is open after repeated feed errors. No live fetch is attempted.",
+    };
   }
   const kind = String(format || "").toLowerCase();
   let rawRows = [];
@@ -210,9 +247,11 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
     live: false,
   });
 
+  const ok = rowErrors.length === 0 && duplicates.length === 0;
+  const breaker = recordCircuit(supplierId, ok);
   return {
-    ok: rowErrors.length === 0 && duplicates.length === 0,
-    status,
+    ok,
+    status: breaker.open ? FEED_STATUS.BLOCKED : status,
     format: kind,
     supplierId,
     written: false,
@@ -225,6 +264,7 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
     rows: validated,
     duplicates,
     errors: rowErrors,
+    circuit: breaker,
     note: "Dry-run feed preview. Catalog is not written. Live supplier fetch remains BLOCKED.",
   };
 }
@@ -272,4 +312,6 @@ module.exports = {
   adapterStatus,
   recordPreview,
   rejectLiveFetch,
+  circuitStatus,
+  resetCircuit,
 };

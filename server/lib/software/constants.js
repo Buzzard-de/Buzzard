@@ -3,7 +3,7 @@
  * MARKET_UNDERCUT stays unimplemented in this slice.
  */
 
-const SOFTWARE_VERSION = "1.6.9";
+const SOFTWARE_VERSION = "1.6.10";
 
 const CANONICAL_ENGINES = Object.freeze({
   orchestrator: "pusat",
@@ -46,6 +46,8 @@ const TRACKING_STATUS = Object.freeze({
   IN_TRANSIT: "IN_TRANSIT",
   OUT_FOR_DELIVERY: "OUT_FOR_DELIVERY",
   DELIVERED: "DELIVERED",
+  FAILED_DELIVERY: "FAILED_DELIVERY",
+  RETURN_TO_SENDER: "RETURN_TO_SENDER",
   EXCEPTION: "EXCEPTION",
   DELAYED: "DELAYED",
   UNKNOWN: "UNKNOWN",

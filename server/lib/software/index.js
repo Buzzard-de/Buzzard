@@ -26,6 +26,7 @@ const providerDiagnostics = require("./providerDiagnostics");
 const lifecycle = require("./lifecycle");
 const operationsPack = require("./operationsPack");
 const restoreGuard = require("./restoreGuard");
+const connectorInventory = require("./connectorInventory");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -65,4 +66,5 @@ module.exports = {
   lifecycle,
   operationsPack,
   restoreGuard,
+  connectorInventory,
 };

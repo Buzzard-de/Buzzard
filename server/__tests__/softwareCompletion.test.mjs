@@ -1173,6 +1173,58 @@ describe("software completion — isolated engines", () => {
     expect(report.productionVerified).toBe(false);
     expect(report.salesLocked).toBe(true);
   });
+
+  it("69 unsupported currency fails closed without inventing FX", () => {
+    const usd = software.pricing.quote({
+      supplierCost: 10,
+      shippingCost: 2,
+      returnReserve: 0.4,
+      marketplaceCommissionRate: 0.12,
+      taxRate: 0.19,
+      currency: "USD",
+    });
+    expect(usd.ok).toBe(false);
+    expect(usd.failClosed).toBe(true);
+    expect(usd.reason).toBe("CURRENCY_UNSUPPORTED");
+    expect(usd.conversionInvented).toBe(false);
+  });
+
+  it("70 marketplace drafts reject non-EUR currency and stay unpublished", () => {
+    const drafted = software.marketplace.draftListing({
+      channel: "otto",
+      sku: "SW-OTTO-1",
+      price: 12,
+      currency: "USD",
+    });
+    expect(drafted.ok).toBe(false);
+    expect(drafted.reason).toBe("CURRENCY_UNSUPPORTED");
+    expect(drafted.published).toBe(false);
+  });
+
+  it("71 supplier circuit opens after repeated local feed errors and never fetches live", () => {
+    software.supplierFeeds.resetCircuit("circuit-a");
+    const bad = { format: "json", supplierId: "circuit-a", payload: [{ sku: "", price: -1 }] };
+    software.supplierFeeds.preview(bad);
+    software.supplierFeeds.preview(bad);
+    const third = software.supplierFeeds.preview(bad);
+    expect(third.circuit.open).toBe(true);
+    const fourth = software.supplierFeeds.preview({ format: "json", supplierId: "circuit-a", payload: [{ sku: "OK", price: 4, currency: "EUR" }] });
+    expect(fourth.reason).toBe("CIRCUIT_OPEN");
+    expect(fourth.live).toBe(false);
+    expect(fourth.written).toBe(false);
+    software.supplierFeeds.resetCircuit("circuit-a");
+  });
+
+  it("72 identity scan reports attribute conflicts without merging", () => {
+    const { scanProductIdentity } = require("../lib/pim/productIdentityScan");
+    const scan = scanProductIdentity(db);
+    expect(Array.isArray(scan.attributeConflicts)).toBe(true);
+    expect(scan.merged).toBe(false);
+    expect(scan.written).toBe(false);
+    const connectors = software.connectorInventory.marketplaceConnectors();
+    expect(connectors.find((row) => row.id === "otto").class).toBe("STUB");
+    expect(connectors.every((row) => row.liveVerified === false)).toBe(true);
+  });
 });
 
 function healthBlockedLive() {

@@ -96,6 +96,9 @@ function validateDraftInput(input, channel) {
   if (input.price != null && (!Number.isFinite(Number(input.price)) || Number(input.price) < 0)) {
     return { ok: false, reason: "PRICE_INVALID", missing };
   }
+  if (input.currency != null && String(input.currency).trim() && String(input.currency).trim().toUpperCase() !== "EUR") {
+    return { ok: false, reason: "CURRENCY_UNSUPPORTED", missing };
+  }
   if (missing.length) {
     return { ok: false, reason: "MARKETPLACE_FIELDS_REQUIRED", missing };
   }

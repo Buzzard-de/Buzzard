@@ -7,10 +7,10 @@ const fs = require("fs");
 const path = require("path");
 
 const STORE_QUERIES = Object.freeze([
-  { store: "pim_core_products", sql: "SELECT sku, ean, gtin FROM pim_core_products" },
-  { store: "pim30_products", sql: "SELECT sku, barcode AS ean, NULL AS gtin FROM pim30_products" },
-  { store: "pim_products", sql: "SELECT sku, ean, gtin FROM pim_products" },
-  { store: "products", sql: "SELECT sku, NULL AS ean, NULL AS gtin FROM products" },
+  { store: "pim_core_products", sql: "SELECT sku, ean, gtin, title, price, status FROM pim_core_products" },
+  { store: "pim30_products", sql: "SELECT sku, barcode AS ean, NULL AS gtin, NULL AS title, selling_price AS price, status FROM pim30_products" },
+  { store: "pim_products", sql: "SELECT sku, ean, gtin, NULL AS title, price, status FROM pim_products" },
+  { store: "products", sql: "SELECT sku, NULL AS ean, NULL AS gtin, name AS title, price_eur AS price, active AS status FROM products" },
 ]);
 
 function readJsonCatalog() {
@@ -23,6 +23,8 @@ function readJsonCatalog() {
       sku: String(row.sku || "").trim(),
       ean: row.ean || row.gtin || null,
       gtin: row.gtin || null,
+      title: row.name || row.title || null,
+      price: row.price ?? row.price_eur ?? null,
     }));
   } catch {
     return [];
@@ -37,6 +39,9 @@ function rowsFromDb(db, spec) {
       sku: String(row.sku || "").trim(),
       ean: row.ean || null,
       gtin: row.gtin || null,
+      title: row.title || null,
+      price: row.price == null ? null : Number(row.price),
+      status: row.status == null ? null : String(row.status),
     }));
   } catch {
     return [];
@@ -82,10 +87,37 @@ function scanProductIdentity(db) {
     duplicateSkuInStore: duplicates(withSku, "sku"),
     duplicateEanInStore: duplicates(withSku, "ean"),
     skuInMultipleStores: crossStoreSkus(withSku),
+    missingEan: withSku.filter((row) => !row.ean && !row.gtin).length,
+    attributeConflicts: attributeConflicts(withSku),
     failClosed: true,
     merged: false,
     note: "Read-only scan. No store was selected or consolidated.",
   };
+}
+
+function attributeConflicts(items) {
+  const bySku = new Map();
+  for (const item of items) {
+    if (!item.sku) continue;
+    const list = bySku.get(item.sku) || [];
+    list.push(item);
+    bySku.set(item.sku, list);
+  }
+  const conflicts = [];
+  for (const [sku, rows] of bySku) {
+    if (rows.length < 2) continue;
+    const eans = new Set(rows.map((row) => String(row.ean || row.gtin || "")).filter(Boolean));
+    const prices = new Set(rows.map((row) => (row.price == null ? "" : String(row.price))).filter(Boolean));
+    if (eans.size > 1 || prices.size > 1) {
+      conflicts.push({
+        sku,
+        stores: [...new Set(rows.map((row) => row.store))],
+        eanConflict: eans.size > 1,
+        priceConflict: prices.size > 1,
+      });
+    }
+  }
+  return conflicts;
 }
 
 module.exports = { scanProductIdentity };

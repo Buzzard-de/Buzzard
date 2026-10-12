@@ -46,6 +46,7 @@
     "test:production-smoke": "node scripts/production-smoke.mjs",
     "poll:render-live": "node scripts/poll-render-until-live.mjs",
     "test:backup-restore": "node scripts/restore-db.mjs --dry-run --from server/data/buzzard.db",
+    "ops:local": "node -e \"const s=require('./server/lib/software'); console.log(JSON.stringify(s.operationsPack.runLocalOperationsPack(),null,2))\"",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:ai": "vitest run pusatOrchestrator pusatMemoryGuardian pusatApprovalExceptions pusatAgentsAutomations pusatWorkerIntegration pusatMasterCompletion",

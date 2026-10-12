@@ -22,6 +22,18 @@ Buzzard weights stay **148**. The desktop app is **not** a 149th Buzzard module.
 
 SW-SOT fractions moved to impl **0.62** / test **0.64** / integ **0.36** (reader inventory encoded + projection labeled). Rounded Buzzard scores are **unchanged**: **82.0 / 82.4 / 65.1 / 19.4 / 0.0**. Raw code 0.820405 still rounds to 82.0.
 
+## 1c. After local operations pack (same method)
+
+Only **SW-DB** moved: impl 0.90→0.92, test 0.78→0.86, integ 0.70→0.74, ops 0.30→0.50. Evidence: temp-dir backup/restore roundtrip + production restore fail-closed. 31 providers still NOT_CONFIGURED. Production verification stays **0.0%**.
+
+| Layer | Before | Now |
+| --- | --- | --- |
+| Code | 82.0% | **82.1%** |
+| Tests | 82.4% | **82.7%** |
+| Integration | 65.1% | **65.2%** |
+| Operations | 19.4% | **20.1%** |
+| Production | 0.0% | **0.0%** |
+
 ### Windows Desktop Bridge (separate, not mixed into 148)
 
 | Slice | Score | Evidence |

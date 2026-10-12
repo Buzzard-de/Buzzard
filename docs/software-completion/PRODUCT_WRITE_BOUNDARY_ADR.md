@@ -15,7 +15,7 @@ Multiple independent product write stores exist. None is verified as production 
 | Product catalog PIM v3 | `productCatalogPim.createProduct` | `pim30_products` | Separate schema. Previously accepted `status` including ACTIVE. Admin required at HTTP layer. |
 | PIM catalog v1.9 | `pimCatalog.createProduct` | `pim_products` | Separate schema. Admin HTTP. Gated by `productWriteBoundary` (`requireExplicitAuth`). Persist still `pim_products` only. |
 | Catalog SEO | `catalogSeo.createProduct` | `products` | Storefront/SEO table. Admin HTTP. Now gated by `productWriteBoundary` (`requireExplicitAuth`). Persist still `products` only, `active=0` on create. |
-| JSON catalog | `productStore.upsertProduct` | `data/buzzard_products.json` | File catalog. Admin catalog plugin. Not routed. |
+| JSON catalog | `productStore.upsertProduct` | `data/buzzard_products.json` | File catalog. Admin catalog plugin + import pipeline. Now gated by `authorizeCreate` / `authorizeUpdate` (`requireExplicitAuth`). Persist still the JSON file only. Tests use `BUZZARD_PRODUCT_STORE_PATH`. |
 | Search index | `advancedSearch.createProduct` | `srch_products` | Search document, not commercial identity. |
 | Supplier staging | `productStagingService` | `pim_core_product_staging` | Promotes to `productCore` after safety checks. |
 
@@ -28,7 +28,28 @@ Consumers: admin PIM UIs, import pipeline, storefront `catalogReadService` / sea
 
 The boundary validates and authorizes mutations. Persistence stays on the caller’s existing destination. Dual-write is rejected by design (`dualWrite: false`).
 
-This increment does **not** declare `pim_core_products` or `pim30_products` as Source of Truth. Choosing a store requires a migration plan, consumer cutover, and operator approval that this task does not authorize.
+This increment does **not** declare any table as a live Source of Truth. Choosing a store still requires a migration plan, consumer cutover, and operator approval.
+
+## Recommended candidate (NOT selected, NOT activated)
+
+**Candidate:** `pim_core_products` via `productCore`.
+
+Evidence, not convenience:
+
+- `CANONICAL_ENGINES.productCreate` already names `productCore.createProduct`.
+- Identifier uniqueness exists for sku/ean/gtin/mpn.
+- `pim_core_product_audit` is the only dedicated product mutation audit table.
+- Status lifecycle already refuses ACTIVE create and READY→ACTIVE while sales are locked.
+- PIM import promotion (`server/lib/pim/importPipeline.js`) already writes here after staging.
+
+Why it is **not** activated:
+
+- Storefront and admin still read JSON catalog, `products`, `pim_products`, and `pim30_products`.
+- No cross-store SKU/EAN map exists.
+- No production migration is authorized.
+- Dual-write is forbidden, so readers cannot be cut over implicitly.
+
+Operator approval plus a reader inventory and identity backfill remain prerequisites. Until then Product SoT stays **INACTIVE**.
 
 ## Product identity and duplicates
 
@@ -80,13 +101,14 @@ Phase 2: `pimCatalog.createProduct` → boundary (`requireExplicitAuth`) → `pi
 
 Phase 3: `catalogSeo.createProduct` → boundary (`requireExplicitAuth`) → `products` only. HTTP still returns `result.product`. Missing sku/name still `{ error: "sku and name required" }`. Duplicate still `{ error: "SKU or slug already exists" }` 409. Creates persist `active=0` so the table default of `active=1` cannot silently publish. `updateProduct` refuses inactive→active while sales are locked (minimum bypass guard; already-active seed rows can still be edited).
 
+Phase 4: `productStore.upsertProduct` → `authorizeCreate` / `authorizeUpdate` (`requireExplicitAuth`) → `data/buzzard_products.json` only. Admin/import/p1 callers pass session-derived identity. Duplicate SKU 409 on create and on SKU-changing updates (self excluded). ACTIVE create and draft→active updates fail closed. `productStore.deleteProduct` uses `authorizeDelete` (`requireExplicitAuth`); there is no HTTP delete caller. Shared `authorizeUpdate` also gates `pimCatalog.updateProduct`, `catalogSeo.updateProduct`, and `productCore.updateProduct`. `productCore` identifier uniqueness now runs before persist so a colliding EAN/GTIN/MPN cannot leave a written row.
+
 No dual-write. SoT inactive.
 
 ## Remaining writer classification (not routed)
 
 | Path | Class | Rationale |
 | --- | --- | --- |
-| `productStore.upsertProduct` | A — Canonical product master write (file JSON) | Mutates `data/buzzard_products.json` product records. Remaining master authoring path. |
 | `advancedSearch.createProduct` | B — Read model / search index | Writes `srch_products` search documents, not master identity. Do not route through the product-master boundary. |
 | `db.js` `seed()` product inserts | C — Seed/test fixture | Inserts demo `products` rows only when the table is empty. |
 | `catalogProductSync.syncCatalogProducts` | D — Synchronization projection | Copies JSON catalog into `products`. Projection, not a new master authoring path. |

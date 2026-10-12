@@ -1,6 +1,5 @@
 const { db } = require("./db");
 const productWriteBoundary = require("./pim/productWriteBoundary");
-const { isSalesEnabled } = require("./salesMode");
 
 function isEnabled() {
   return process.env.BUZZARD_CATALOG_SEO !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -221,17 +220,24 @@ function createProduct(body = {}, context = {}) {
   }
 }
 
-function updateProduct(id, body = {}) {
+function updateProduct(id, body = {}, context = {}) {
   const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
   if (!product) return { error: "Product not found", status: 404 };
 
   const nextActive = body.active === undefined ? product.active : body.active ? 1 : 0;
-  if (!Number(product.active) && Number(nextActive) && !isSalesEnabled()) {
-    return {
-      error: "ACTIVE status is not allowed while sales are locked",
-      status: 400,
-      reason: "ACTIVE_UPDATE_REJECTED",
-    };
+  const gate = productWriteBoundary.authorizeUpdate(
+    { ...body, active: nextActive, sku: product.sku },
+    {
+      source: context.source || "ADMIN",
+      actorId: context.actorId || null,
+      authorized: context.authorized === true,
+      requireExplicitAuth: true,
+      destination: "products",
+      existing: product,
+    }
+  );
+  if (!gate.ok) {
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
   }
 
   const cost =

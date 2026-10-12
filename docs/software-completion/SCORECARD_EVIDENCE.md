@@ -6,10 +6,10 @@ Weights were **not** changed.
 
 | Layer | Previous | Now | Evidence class |
 | --- | --- | --- | --- |
-| Code | 81.8% | **81.9%** | SW-SOT impl 0.52→0.55 (`catalogSeo` on the shared policy). Weighted raw 81.8986 rounds to 81.9. SoT inactive. |
-| Tests | 82.2% | **82.3%** | local software 64/64, AI 58/58, unit 775/775 |
-| Integration | 64.9% | **65.0%** | authorized draft persists `products` only, `active=0`; no dual-write |
-| Operations | 19.4% | **19.4%** | sales locked; providers NOT_CONFIGURED |
+| Code | 81.9% | **82.0%** | SW-SOT impl 0.55→0.60 (`productStore` + `authorizeUpdate`). Raw 82.0. SoT inactive. |
+| Tests | 82.3% | **82.4%** | local software 65/65, AI 58/58, unit 779/779 |
+| Integration | 65.0% | **65.1%** | JSON catalog persist-only; update paths fail closed |
+| Operations | 19.4% | **19.4%** | sales locked; 31 providers NOT_CONFIGURED |
 | Production | 0.0% | **0.0%** | no production access |
 
 Fractions moved only for SW-SOT in this phase. Ops and production did not rise. A mock is not a live integration. Scores use `whole-software-weighted-v1` rounded to 1 decimal; they are not increased merely because files were added.

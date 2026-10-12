@@ -12,7 +12,7 @@ These are **not** missing software modules in the same sense as an empty handler
 | Live carrier create/GPS | credentials | stubs only | tracking model + estimates, `gpsInvented: false` |
 | Customer email/SMS send | credentials + policy | no provider | draft/queued only; send returns BLOCKED |
 | Product Source of Truth activate | policy | must stay closed | dry-run / DRAFT / READY only; never ACTIVE from this task |
-| Remaining product master writers | architecture | `productStore.upsertProduct` (file JSON) not on the boundary | policy increment only; no store migration |
+| Product store consolidation | architecture | five independent stores remain; candidate `pim_core_products` is not activated | policy coverage complete for known master writers; migration needs operator approval |
 | Sales unlock | policy | `BUZZARD_SALES_ENABLED` must stay off | catalog mode |
 | Production DB migrate | policy | no production touch | local/isolated SQLite |
 | Production deploy | policy | out of scope | — |

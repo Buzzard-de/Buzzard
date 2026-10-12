@@ -11,7 +11,7 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | Specialist agents | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Recommend only; extra returns/shipping/marketplace/i18n/health assistants |
 | LLM providers | IMPLEMENTED | TESTED (stub) | BLOCKED | Live keys missing |
 | Product engine | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | dry-run + ACTIVE reject; admin PIM API proven |
-| Product SoT | PARTIALLY_IMPLEMENTED | PARTIALLY_IMPLEMENTED | NOT_IMPLEMENTED | **INACTIVE.** Shared policy boundary now gates `productCore`, `productCatalogPim.createProduct`, `pimCatalog.createProduct`, and `catalogSeo.createProduct`. Persistence is still per-store (no dual-write, no store chosen as SoT). Remaining master writer: `productStore.upsertProduct`. Search index and seed/sync are not master authoring. |
+| Product SoT | PARTIALLY_IMPLEMENTED | PARTIALLY_IMPLEMENTED | NOT_IMPLEMENTED | **INACTIVE.** Shared create+update policy now gates `productCore`, `productCatalogPim.createProduct`, `pimCatalog` create/update, `catalogSeo` create/update, and `productStore.upsertProduct`. Persistence is still per-store (no dual-write). Candidate store `pim_core_products` is documented, not activated. Search index and seed/sync are not master authoring. |
 | Catalog / 50-tree | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | 50 customer L1 / 48 taxonomy / 53 shop JSON is intentional |
 | i18n 30 locales | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Playwright DE/EN/TR/FR/AR + `dir=rtl` for AR |
 | Market 35 | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | locale ≠ market on homepage controls |

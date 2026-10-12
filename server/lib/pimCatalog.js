@@ -143,9 +143,20 @@ function createProduct(body = {}, context = {}) {
   }
 }
 
-function updateProduct(id, body = {}) {
+function updateProduct(id, body = {}, context = {}) {
   const product = db.prepare("SELECT * FROM pim_products WHERE id = ?").get(id);
   if (!product) return { error: "Product not found", status: 404 };
+  const gate = productWriteBoundary.authorizeUpdate(body, {
+    source: context.source || "ADMIN",
+    actorId: context.actorId || null,
+    authorized: context.authorized === true,
+    requireExplicitAuth: true,
+    destination: "pim_products",
+    existing: product,
+  });
+  if (!gate.ok) {
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
+  }
   db.prepare(`
     UPDATE pim_products
     SET brand_id = ?, category_id = ?, ean = ?, gtin = ?, status = ?, price = ?, cost = ?, weight_kg = ?, stock = ?,

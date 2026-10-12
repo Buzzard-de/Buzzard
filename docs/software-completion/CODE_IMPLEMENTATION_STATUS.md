@@ -1,6 +1,6 @@
 # Code Implementation Status
 
-Lineage: `40c35af` (AI) → software facade → `8ed00ba` lifecycle/safe marketplace → `0d76330` gap-closure → product write boundary (`productWriteBoundary`, SoT still inactive) → phase 2 `pimCatalog.createProduct` → phase 3 `catalogSeo.createProduct`. Implementation status is **code present and reachable**, not production proof.
+Lineage: `40c35af` (AI) → software facade → `8ed00ba` lifecycle/safe marketplace → `0d76330` gap-closure → product write boundary (`productWriteBoundary`, SoT still inactive) → phase 2 `pimCatalog` → phase 3 `catalogSeo` → phase 4 `productStore` + `authorizeUpdate`. Implementation status is **code present and reachable**, not production proof.
 
 ## New / changed implementation
 
@@ -9,8 +9,10 @@ Lineage: `40c35af` (AI) → software facade → `8ed00ba` lifecycle/safe marketp
 | `server/lib/pim/productWriteBoundary.js` | Shared product mutation policy. Not a store. SoT stays inactive. |
 | `server/lib/pimCatalog.js` | `createProduct` calls `authorizeCreate` (`requireExplicitAuth`); persist `pim_products` only. |
 | `server/plugins/pimCatalogPlugin.js` | Admin session → `authorized:true` + actor from identity, never the body. HTTP still returns `result.product`. |
-| `server/lib/catalogSeo.js` | `createProduct` calls `authorizeCreate` (`requireExplicitAuth`); persist `products` only with `active=0`. Inactive→active update blocked while sales locked. |
+| `server/lib/catalogSeo.js` | `createProduct` / `updateProduct` use the shared boundary; persist `products` only with `active=0` on create. |
 | `server/plugins/catalogSeoPlugin.js` | Admin session → `authorized:true` + actor from identity, never the body. HTTP still returns `result.product`. |
+| `server/lib/productStore.js` | `upsertProduct` uses `authorizeCreate` / `authorizeUpdate`; persist JSON catalog only. SKU uniqueness on create and update (self excluded). `deleteProduct` uses `authorizeDelete`. Optional `BUZZARD_PRODUCT_STORE_PATH` for tests. |
+| `server/lib/pim/productWriteBoundary.js` | Shared create, update, and delete policy. Not a store. SoT stays inactive. |
 | `server/lib/software/*` | Facade. Not a second orchestrator. |
 | `server/lib/software/supplierFeeds.js` | CSV/XML/JSON dry-run preview. No live fetch. No PO. |
 | `server/lib/software/communications.js` | Message drafts; send always BLOCKED. |

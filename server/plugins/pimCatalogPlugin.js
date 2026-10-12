@@ -74,8 +74,13 @@ module.exports = {
     });
 
     app.patch("/api/admin/pim-catalog/products/:id", (req, res) => {
-      if (!requireAnyAdmin(req, res)) return;
-      const result = pimCatalog.updateProduct(req.params.id, req.body || {});
+      const identity = requireAnyAdmin(req, res);
+      if (!identity) return;
+      const result = pimCatalog.updateProduct(req.params.id, req.body || {}, {
+        authorized: true,
+        source: "ADMIN",
+        actorId: identity.email || identity.userId || identity.sub || null,
+      });
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.json(result.product);
     });

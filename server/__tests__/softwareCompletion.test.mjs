@@ -1051,6 +1051,46 @@ describe("software completion — isolated engines", () => {
     expect(count("pim_products")).toBe(0);
     expect(salesMode.isSalesEnabled()).toBe(false);
   });
+
+  it("61 productStore upsert uses the shared write boundary and stays on the JSON catalog", () => {
+    const fs = require("node:fs");
+    const os = require("node:os");
+    const path = require("node:path");
+    const previous = process.env.BUZZARD_PRODUCT_STORE_PATH;
+    const file = path.join(os.tmpdir(), `sw-json-${Date.now()}.json`);
+    fs.writeFileSync(file, JSON.stringify({ products: [] }));
+    process.env.BUZZARD_PRODUCT_STORE_PATH = file;
+    try {
+      const store = require("../lib/productStore");
+      expect(store.upsertProduct({ id: "sw-json-deny", sku: `SW-JSON-${Date.now()}`, status: "draft" }).reason).toBe(
+        "UNAUTHORIZED"
+      );
+      expect(
+        store.upsertProduct(
+          { id: "sw-json-act", sku: `SW-JSON-ACT-${Date.now()}`, status: "active" },
+          { authorized: true, source: "ADMIN", actorId: "vitest" }
+        ).reason
+      ).toBe("ACTIVE_CREATE_REJECTED");
+      const sku = `SW-JSON-OK-${Date.now()}`;
+      const created = store.upsertProduct(
+        { id: "sw-json-ok", sku, name: "JSON draft", status: "draft" },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      );
+      expect(created.error).toBeUndefined();
+      expect(created.sku).toBe(sku);
+      expect(created.status).toBe("draft");
+      expect(created.boundary).toBeUndefined();
+      expect(db.prepare("SELECT COUNT(*) AS n FROM products WHERE sku = ?").get(sku).n).toBe(0);
+      expect(db.prepare("SELECT COUNT(*) AS n FROM pim_core_products WHERE sku = ?").get(sku).n).toBe(0);
+      expect(store.deleteProduct("sw-json-ok").reason).toBe("UNAUTHORIZED");
+      expect(salesMode.isSalesEnabled()).toBe(false);
+      expect(software.canonical.getCanonicalMap().productSourceOfTruthActive).toBe(false);
+    } finally {
+      if (previous === undefined) delete process.env.BUZZARD_PRODUCT_STORE_PATH;
+      else process.env.BUZZARD_PRODUCT_STORE_PATH = previous;
+      if (fs.existsSync(file)) fs.unlinkSync(file);
+    }
+  });
 });
 
 function healthBlockedLive() {

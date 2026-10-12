@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { createRequire } from "node:module";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const require = createRequire(import.meta.url);
 
@@ -251,5 +254,114 @@ describe("product write boundary — policy only, SoT inactive", () => {
     expect(activated.reason).toBe("ACTIVE_UPDATE_REJECTED");
     expect(countSku("products", sku)).toBe(1);
     expect(db.prepare("SELECT active FROM products WHERE sku = ?").get(sku).active).toBe(0);
+  });
+
+  describe("productStore JSON catalog", () => {
+    const previousPath = process.env.BUZZARD_PRODUCT_STORE_PATH;
+    const tempFiles = [];
+
+    function withTempCatalog() {
+      const file = path.join(os.tmpdir(), `buzzard-products-${Date.now()}-${Math.random().toString(16).slice(2)}.json`);
+      fs.writeFileSync(file, JSON.stringify({ products: [], updated_at: new Date().toISOString() }));
+      process.env.BUZZARD_PRODUCT_STORE_PATH = file;
+      tempFiles.push(file);
+      return file;
+    }
+
+    afterEach(() => {
+      if (previousPath === undefined) delete process.env.BUZZARD_PRODUCT_STORE_PATH;
+      else process.env.BUZZARD_PRODUCT_STORE_PATH = previousPath;
+      for (const file of tempFiles.splice(0)) {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+      }
+    });
+
+    it("rejects unauthorized and ACTIVE productStore creates without touching other stores", () => {
+      withTempCatalog();
+      const sku = `JSON-UNAUTH-${Date.now()}`;
+      const denied = productStore.upsertProduct({ id: "prod-unauth", sku, name: "Nope", status: "draft" });
+      expect(denied.reason).toBe("UNAUTHORIZED");
+      expect(productStore.listProducts().some((row) => row.sku === sku)).toBe(false);
+      expect(
+        productStore.upsertProduct(
+          { id: "prod-act", sku: `JSON-ACT-${Date.now()}`, name: "Live", status: "active" },
+          { authorized: true, source: "ADMIN", actorId: "vitest" }
+        ).reason
+      ).toBe("ACTIVE_CREATE_REJECTED");
+    });
+
+    it("allows an authorized JSON draft only in the file catalog and blocks activation", () => {
+      const file = withTempCatalog();
+      const sku = `JSON-OK-${Date.now()}`;
+      const created = productStore.upsertProduct(
+        { id: "prod-json-ok", sku, name: "File draft", status: "draft" },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      );
+      expect(created.error).toBeUndefined();
+      expect(created.sku).toBe(sku);
+      expect(created.status).toBe("draft");
+      expect(countSku("products", sku)).toBe(0);
+      expect(countSku("pim_core_products", sku)).toBe(0);
+      expect(countSku("pim30_products", sku)).toBe(0);
+      expect(countSku("pim_products", sku)).toBe(0);
+      const saved = JSON.parse(fs.readFileSync(file, "utf8"));
+      expect(saved.products.filter((row) => row.sku === sku)).toHaveLength(1);
+
+      const duplicate = productStore.upsertProduct(
+        { id: "prod-json-dup", sku, name: "File draft", status: "draft" },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      );
+      expect(duplicate.error).toBe("SKU already exists");
+      expect(duplicate.status).toBe(409);
+
+      const activated = productStore.upsertProduct(
+        { ...created, status: "active" },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      );
+      expect(activated.reason).toBe("ACTIVE_UPDATE_REJECTED");
+      expect(productStore.getProductById("prod-json-ok").status).toBe("draft");
+
+      const otherSku = `JSON-OTHER-${Date.now()}`;
+      const other = productStore.upsertProduct(
+        { id: "prod-json-other", sku: otherSku, name: "Other draft", status: "draft" },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      );
+      expect(other.error).toBeUndefined();
+      const collide = productStore.upsertProduct(
+        { ...other, sku },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      );
+      expect(collide.error).toBe("SKU already exists");
+      expect(collide.status).toBe(409);
+      expect(productStore.getProductById("prod-json-other").sku).toBe(otherSku);
+
+      expect(productStore.deleteProduct("prod-json-ok").reason).toBe("UNAUTHORIZED");
+      expect(productStore.getProductById("prod-json-ok")).toBeTruthy();
+      const removed = productStore.deleteProduct("prod-json-ok", {
+        authorized: true,
+        source: "ADMIN",
+        actorId: "vitest",
+      });
+      expect(removed.deleted).toBe(true);
+      expect(removed.dualWrite).toBe(false);
+      expect(productStore.getProductById("prod-json-ok")).toBeUndefined();
+    });
+  });
+
+  it("rejects unauthorized pimCatalog updates and ACTIVE status transitions", () => {
+    const sku = `PIM19-UPD-${Date.now()}`;
+    const created = pimCatalog.createProduct(
+      { sku, status: "draft" },
+      { authorized: true, source: "ADMIN", actorId: "vitest" }
+    );
+    expect(created.product.id).toBeTruthy();
+    expect(pimCatalog.updateProduct(created.product.id, { status: "published" }).reason).toBe("UNAUTHORIZED");
+    const activated = pimCatalog.updateProduct(
+      created.product.id,
+      { status: "ACTIVE" },
+      { authorized: true, source: "ADMIN", actorId: "vitest" }
+    );
+    expect(activated.reason).toBe("ACTIVE_UPDATE_REJECTED");
+    expect(db.prepare("SELECT status FROM pim_products WHERE sku = ?").get(sku).status).toBe("draft");
   });
 });

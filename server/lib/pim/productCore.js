@@ -182,9 +182,32 @@ function createProduct(input, { source = "ADMIN", actorId, dryRun = false, autho
   return product;
 }
 
-function updateProduct(id, patch, { source = "ADMIN", actorId } = {}) {
+function updateProduct(id, patch, { source = "ADMIN", actorId, authorized } = {}) {
   const before = getProduct(id);
   if (!before) throw new Error("Product not found");
+
+  const gate = productWriteBoundary.authorizeUpdate(patch, {
+    source,
+    actorId,
+    authorized,
+    destination: "pim_core_products",
+    existing: before,
+  });
+  if (!gate.ok) {
+    const error = new Error(gate.message);
+    error.code = gate.reason;
+    throw error;
+  }
+
+  if (patch.ean || patch.gtin || patch.mpn || patch.sku) {
+    productIdentifiers.assertUnique({
+      sku: patch.sku || before.sku,
+      ean: patch.ean ?? before.ean,
+      gtin: patch.gtin ?? before.gtin,
+      mpn: patch.mpn ?? before.mpn,
+      excludeId: id,
+    });
+  }
 
   if (patch.status && patch.status !== before.status) {
     transitionStatus(id, patch.status, { source, actorId });
@@ -235,16 +258,6 @@ function updateProduct(id, patch, { source = "ADMIN", actorId } = {}) {
     fields.push("updated_at = CURRENT_TIMESTAMP");
     params.push(id);
     db.prepare(`UPDATE pim_core_products SET ${fields.join(", ")} WHERE id = ?`).run(...params);
-  }
-
-  if (patch.ean || patch.gtin || patch.mpn || patch.sku) {
-    productIdentifiers.assertUnique({
-      sku: patch.sku || before.sku,
-      ean: patch.ean ?? before.ean,
-      gtin: patch.gtin ?? before.gtin,
-      mpn: patch.mpn ?? before.mpn,
-      excludeId: id,
-    });
   }
 
   const after = getProduct(id);

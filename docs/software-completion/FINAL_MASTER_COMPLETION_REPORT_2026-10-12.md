@@ -28,7 +28,7 @@ Güvenlik sınırları bu geçişte aşılamadı: satışlar kapalı, SoT inacti
 | Madde | Değer |
 | --- | --- |
 | Branch | `cursor/final-completion-execution-c293` (aynı) |
-| Bitiş HEAD | bu raporun commit’i (aşağıdaki git kaydına bakın) |
+| Bitiş HEAD | `38460f614f022d77a992abbcfc7d4a15d072b20d` |
 | Push / PR / merge / deploy | **yapılmadı** (görev yasağı) |
 | Satış | kapalı |
 | SoT | INACTIVE (`SOT_ACTIVATION_BLOCKED`) |

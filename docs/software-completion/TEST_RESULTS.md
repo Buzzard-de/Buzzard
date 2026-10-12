@@ -2,22 +2,24 @@
 
 All commands below were run on isolated local data or observed GitHub Actions. No production database. `BUZZARD_SALES_ENABLED` stayed unset / `0`.
 
-## Product write boundary phase 4 — productStore + authorizeUpdate (local, unpushed)
+## Product write boundary phase 4 — productStore + authorizeUpdate (local HEAD `2f09db7`, unpushed)
+
+Code SHA for these commands: `2f09db7915ca77580a88ae2981391446ad05df5e`. Docs-only follow-up commits do not change this implementation SHA.
 
 | Command | Exit | Passed | Failed | Notes |
 | --- | --- | --- | --- | --- |
-| `npx vitest run productWriteBoundary catalogSeoPlugin pimCatalogPlugin softwareCompletion part6Foundation` | 0 | 100 | 0 | JSON catalog isolated via temp path; ACTIVE create/update rejected |
+| `npx vitest run productWriteBoundary catalogSeoPlugin pimCatalogPlugin softwareCompletion part6Foundation` | 0 | 100 | 0 | JSON catalog isolated via temp path; ACTIVE create/update/delete gated; SKU collide 409 |
 | `npm run test:software` | 0 | 65 | 0 | includes software 61 |
 | `npm run test:ai` | 0 | 58 | 0 | Pusat unchanged |
 | `npm run test:unit` | 0 | 779 | 0 | 64 files |
 | `npm run lint` | 0 | — | — | no errors |
-| `npm run typecheck` | 0 | — | — | no errors |
 | `npm run build` | 0 | — | — | Next static export |
+| `npm run typecheck` | 0 | — | — | PASS after build generated `.next/types`; first run failed TS6053 while `.next` was incomplete |
 | `npm run security:check` | 0 | — | 1 warning | braces/micromatch via eslint-config-next |
-| `npm run diagnostics:providers` | 0 | 31 | — | dry-run, all NOT_CONFIGURED, no sockets |
+| `npm run diagnostics:providers` | 0 | 31 | — | dry-run, all NOT_CONFIGURED, live=0, no sockets |
 | `npm run test:backup-restore` | 0 | dry-run | — | local only |
 | `npm audit --omit=dev` | 0 | 0 vulns | — | production tree |
-| Playwright E2E | not run | — | — | not executed on this HEAD; historical CI does not substitute |
+| Playwright E2E | not run | — | — | NOT_VERIFIED on this HEAD; historical CI on `0d76330` does not substitute |
 | CI / push | not run | — | — | this task forbade push |
 
 ## Product write boundary phase 3 — catalogSeo (local, unpushed)

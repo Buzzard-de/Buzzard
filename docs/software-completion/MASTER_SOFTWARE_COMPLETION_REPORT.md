@@ -108,6 +108,6 @@ Whole-software scores after this increment (formula, 1 decimal): code **81.9%**,
 
 ## Addendum — product write boundary phase 4 (local, unpushed)
 
-Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `7c2c8f8`. `productStore.upsertProduct` now uses `authorizeCreate` / `authorizeUpdate`. Shared update policy also gates `pimCatalog`, `catalogSeo`, and `productCore` updates. Candidate canonical store is documented as `pim_core_products` and is **not** activated. Product SoT stays **INACTIVE**. Sales stay locked.
+Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `7c2c8f8`, local HEAD `2f09db7` (unpushed). `productStore.upsertProduct` now uses `authorizeCreate` / `authorizeUpdate`. Shared update policy also gates `pimCatalog`, `catalogSeo`, and `productCore` updates. JSON SKU uniqueness applies on update (self excluded). `deleteProduct` uses `authorizeDelete`. Candidate canonical store is documented as `pim_core_products` and is **not** activated. Product SoT stays **INACTIVE**. Sales stay locked.
 
 Whole-software scores after this increment: code **82.0%**, tests **82.4%**, integration **65.1%**, ops **19.4%**, production **0.0%**. See `FINAL_MASTER_COMPLETION_REPORT.md`.

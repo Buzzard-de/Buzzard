@@ -20,6 +20,16 @@ function isActiveStatus(status) {
   return String(status || "").trim().toUpperCase() === PRODUCT_STATUS.ACTIVE;
 }
 
+function isActiveFlag(value) {
+  if (value === true || value === 1) return true;
+  const normalized = String(value || "").trim().toLowerCase();
+  return normalized === "true" || normalized === "1" || normalized === "active";
+}
+
+function isActiveCreate(input = {}) {
+  return isActiveStatus(input.status) || isActiveFlag(input.active);
+}
+
 function fail(reason, message, status = 400, extra = {}) {
   return {
     ok: false,
@@ -46,7 +56,7 @@ function authorizeCreate(input = {}, context = {}) {
     return fail("SKU_REQUIRED", "SKU required");
   }
 
-  if (isActiveStatus(input.status)) {
+  if (isActiveCreate(input)) {
     return fail(
       "ACTIVE_CREATE_REJECTED",
       "ACTIVE status is not allowed on create — sales lock and Product SoT remain closed"
@@ -93,5 +103,6 @@ module.exports = {
   BOUNDARY_ID,
   isProductSourceOfTruthActive,
   isActiveStatus,
+  isActiveCreate,
   authorizeCreate,
 };

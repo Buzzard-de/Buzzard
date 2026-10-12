@@ -1024,6 +1024,33 @@ describe("software completion — isolated engines", () => {
     expect(count("products")).toBe(0);
     expect(salesMode.isSalesEnabled()).toBe(false);
   });
+
+  it("60 catalogSeo create uses the shared write boundary and stays on products", () => {
+    const catalogSeo = require("../lib/catalogSeo");
+    expect(catalogSeo.createProduct({ sku: `SW-SEO-${Date.now()}`, name: "Nope" }).reason).toBe("UNAUTHORIZED");
+    expect(
+      catalogSeo.createProduct(
+        { sku: `SW-SEO-ACT-${Date.now()}`, name: "Nope", active: true },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      ).reason
+    ).toBe("ACTIVE_CREATE_REJECTED");
+    const sku = `SW-SEO-OK-${Date.now()}`;
+    const created = catalogSeo.createProduct(
+      { sku, name: "Software catalog draft" },
+      { authorized: true, source: "ADMIN", actorId: "vitest" }
+    );
+    expect(created.error).toBeUndefined();
+    expect(created.product.sku).toBe(sku);
+    expect(created.product.active).toBe(false);
+    expect(created.dualWrite).toBe(false);
+    expect(created.productSourceOfTruthActive).toBe(false);
+    const count = (table) => db.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE sku = ?`).get(sku).n;
+    expect(count("products")).toBe(1);
+    expect(count("pim_core_products")).toBe(0);
+    expect(count("pim30_products")).toBe(0);
+    expect(count("pim_products")).toBe(0);
+    expect(salesMode.isSalesEnabled()).toBe(false);
+  });
 });
 
 function healthBlockedLive() {

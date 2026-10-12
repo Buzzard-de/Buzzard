@@ -6,9 +6,9 @@ Weights were **not** changed.
 
 | Layer | Previous | Now | Evidence class |
 | --- | --- | --- | --- |
-| Code | 81.8% | **81.8%** | SW-SOT impl 0.48→0.52 (`pimCatalog` on the shared policy). Weighted raw 81.8378 still rounds to 81.8. SoT inactive. |
-| Tests | 82.1% | **82.2%** | local software / AI / unit after phase 2; see TEST_RESULTS.md |
-| Integration | 64.8% | **64.9%** | authorized draft persists `pim_products` only; no dual-write |
+| Code | 81.8% | **81.9%** | SW-SOT impl 0.52→0.55 (`catalogSeo` on the shared policy). Weighted raw 81.8986 rounds to 81.9. SoT inactive. |
+| Tests | 82.2% | **82.3%** | local software 64/64, AI 58/58, unit 775/775 |
+| Integration | 64.9% | **65.0%** | authorized draft persists `products` only, `active=0`; no dual-write |
 | Operations | 19.4% | **19.4%** | sales locked; providers NOT_CONFIGURED |
 | Production | 0.0% | **0.0%** | no production access |
 

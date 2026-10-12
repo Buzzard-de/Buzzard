@@ -8,6 +8,7 @@ describe("product write boundary — policy only, SoT inactive", () => {
   const productCatalogPim = require("../lib/productCatalogPim");
   const productCore = require("../lib/pim/productCore");
   const pimCatalog = require("../lib/pimCatalog");
+  const catalogSeo = require("../lib/catalogSeo");
   const { db } = require("../lib/db");
   const productStore = require("../lib/productStore");
 
@@ -164,5 +165,91 @@ describe("product write boundary — policy only, SoT inactive", () => {
     expect(duplicate.error).toBe("SKU already exists");
     expect(duplicate.status).toBe(409);
     expect(countSku("pim_products", sku)).toBe(1);
+  });
+
+  it("rejects unauthorized catalogSeo writes and preserves sku and name required", () => {
+    const unauthorized = catalogSeo.createProduct({ sku: `SEO-UNAUTH-${Date.now()}`, name: "Nope" });
+    expect(unauthorized.status).toBe(403);
+    expect(unauthorized.reason).toBe("UNAUTHORIZED");
+    expect(catalogSeo.createProduct({}).error).toBe("sku and name required");
+    expect(catalogSeo.createProduct({ sku: `SEO-NONAME-${Date.now()}` }, { authorized: true, source: "ADMIN", actorId: "vitest" }).error).toBe(
+      "sku and name required"
+    );
+    expect(
+      catalogSeo.createProduct(
+        { sku: `SEO-ACT-${Date.now()}`, name: "Live", status: "ACTIVE" },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      ).reason
+    ).toBe("ACTIVE_CREATE_REJECTED");
+    expect(
+      catalogSeo.createProduct(
+        { sku: `SEO-FLAG-${Date.now()}`, name: "Live", active: true },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      ).reason
+    ).toBe("ACTIVE_CREATE_REJECTED");
+  });
+
+  it("does not trust body identity and cannot activate SoT via catalogSeo", () => {
+    const sku = `SEO-FORGE-${Date.now()}`;
+    const forged = catalogSeo.createProduct({
+      sku,
+      name: "Forged",
+      authorized: true,
+      actorId: "forged-admin",
+      activateSourceOfTruth: true,
+    });
+    expect(forged.reason).toBe("SOT_ACTIVATION_BLOCKED");
+    expect(countSku("products", sku)).toBe(0);
+  });
+
+  it("rejects conflicting supplier offers on catalogSeo without buying stock", () => {
+    const sku = `SEO-CONF-${Date.now()}`;
+    const result = catalogSeo.createProduct(
+      {
+        sku,
+        name: "Conflict",
+        offers: [
+          { quantity: 8, source: "supplier_a" },
+          { quantity: 2, source: "supplier_b" },
+        ],
+      },
+      { authorized: true, source: "ADMIN", actorId: "vitest" }
+    );
+    expect(result.reason).toBe("CONFLICTING_SUPPLIER_OFFERS");
+    expect(result.status).toBe(409);
+    expect(countSku("products", sku)).toBe(0);
+  });
+
+  it("allows an authorized catalogSeo draft only in products and blocks inactive-to-active while sales are locked", () => {
+    const sku = `SEO-OK-${Date.now()}`;
+    const created = catalogSeo.createProduct(
+      { sku, name: "Catalog draft" },
+      { authorized: true, source: "ADMIN", actorId: "vitest" }
+    );
+    expect(created.error).toBeUndefined();
+    expect(created.product.sku).toBe(sku);
+    expect(created.product.name).toBe("Catalog draft");
+    expect(created.product.active).toBe(false);
+    expect(created.dualWrite).toBe(false);
+    expect(created.productSourceOfTruthActive).toBe(false);
+    expect(created.boundary).toBe(boundary.BOUNDARY_ID);
+    expect(countSku("products", sku)).toBe(1);
+    expect(countSku("pim_core_products", sku)).toBe(0);
+    expect(countSku("pim30_products", sku)).toBe(0);
+    expect(countSku("pim_products", sku)).toBe(0);
+    expect(productStore.listProducts().some((row) => row.sku === sku)).toBe(false);
+
+    const duplicate = catalogSeo.createProduct(
+      { sku, name: "Catalog draft" },
+      { authorized: true, source: "ADMIN", actorId: "vitest" }
+    );
+    expect(duplicate.error).toBe("SKU or slug already exists");
+    expect(duplicate.status).toBe(409);
+    expect(countSku("products", sku)).toBe(1);
+
+    const activated = catalogSeo.updateProduct(created.product.id, { active: true });
+    expect(activated.reason).toBe("ACTIVE_UPDATE_REJECTED");
+    expect(countSku("products", sku)).toBe(1);
+    expect(db.prepare("SELECT active FROM products WHERE sku = ?").get(sku).active).toBe(0);
   });
 });

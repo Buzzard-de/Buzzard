@@ -29,3 +29,7 @@ No production deploy, no PR merge, no live probe, no commercial side effects.
 ## Addendum — product write boundary phase 2 (local, unpushed)
 
 `pimCatalog.createProduct` is now gated by the shared policy boundary. Persistence is still `pim_products` only. No dual-write, no schema change, no SoT activation, no sales unlock. Actor identity is taken from the authenticated admin context, never from the request body. Scores: see `SCORECARD_EVIDENCE.md` (code remains 81.8% after honest rounding).
+
+## Addendum — product write boundary phase 3 (local, unpushed)
+
+`catalogSeo.createProduct` is now gated by the shared policy boundary. Persistence is still `products` only (`active=0` on create). Inactive→active updates are rejected while sales are locked. No dual-write, no schema change, no SoT activation, no sales unlock. Actor identity is taken from the authenticated admin context, never from the request body. Scores: see `SCORECARD_EVIDENCE.md`.

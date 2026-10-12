@@ -99,3 +99,9 @@ See `EXTERNAL_CONFIGURATION_CHECKLIST.md`. No secret values are included. An aut
 Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `a7ec746`. `pimCatalog.createProduct` now uses `productWriteBoundary.authorizeCreate` (`requireExplicitAuth`) and still persists only to `pim_products`. HTTP still returns `result.product`. Product SoT stays **INACTIVE**. Sales stay locked. Remaining master writers: `catalogSeo.createProduct`, `productStore.upsertProduct`. Search index / seed / catalogProductSync were classified and not routed.
 
 Whole-software scores after this increment (formula, 1 decimal): code **81.8%** (unchanged rounding), tests **82.2%**, integration **64.9%**, ops **19.4%**, production **0.0%**. This addendum does not rewrite the historical table above.
+
+## Addendum — product write boundary phase 3 (local, unpushed)
+
+Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `53b6aae`. `catalogSeo.createProduct` now uses `productWriteBoundary.authorizeCreate` (`requireExplicitAuth`) and still persists only to `products` with `active=0`. HTTP still returns `result.product`. Inactive→active `updateProduct` is rejected while sales are locked. Product SoT stays **INACTIVE**. Sales stay locked. Remaining master writer: `productStore.upsertProduct`. Search index / seed / catalogProductSync were not routed.
+
+Whole-software scores after this increment (formula, 1 decimal): code **81.9%**, tests **82.3%**, integration **65.0%**, ops **19.4%**, production **0.0%**. This addendum does not rewrite the historical table above.

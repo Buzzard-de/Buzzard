@@ -4,7 +4,7 @@ Independent of BLOCKED externals. Do not treat this as a feature backlog of new 
 
 ## CRITICAL
 
-None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. Product SoT is still inactive. Remaining master writers: `catalogSeo.createProduct` and `productStore.upsertProduct`. Search index, seed(), and catalogProductSync are not master-authoring paths. Local suites after phase 2: software 63/63, AI 58/58, unit 769/769. Push/CI were not authorized.
+None that currently stop isolated software tests. Sales lock, ACTIVE reject, and Guardian deny remain in place. Product SoT is still inactive. Remaining master writer: `productStore.upsertProduct`. Search index, seed(), and catalogProductSync are not master-authoring paths. Local suites after phase 3: software 64/64, AI 58/58, unit 775/775. Push/CI were not authorized.
 
 ## HIGH
 

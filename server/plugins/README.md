@@ -135,8 +135,9 @@ The `catalogSeoPlugin.js` module adds SQLite catalog management, pricing rules a
 - `GET /api/catalog/products/slug/:slug` — product detail + images
 - `GET /api/catalog/products/:id/jsonld` — structured Product JSON-LD
 - `GET /api/catalog/sitemap.xml`, `/api/catalog/robots.txt` — SEO feed endpoints
-- `GET/POST /api/admin/catalog/products` — admin product list/create
-- `PATCH /api/admin/catalog/products/:id` — update/deactivate products
+- `GET /api/admin/catalog/products` — admin product list
+- `POST /api/admin/catalog/products` — admin create via `productWriteBoundary` (`requireExplicitAuth`); persist `products` only with `active=0`; ACTIVE rejected; HTTP returns the product row
+- `PATCH /api/admin/catalog/products/:id` — update existing catalog rows; inactive→active is rejected while sales are locked
 - `POST /api/admin/catalog/products/bulk-price` — margin-based bulk repricing
 - `POST /api/admin/catalog/products/:id/images` — product image URLs
 - `POST /api/admin/catalog/categories` — create category

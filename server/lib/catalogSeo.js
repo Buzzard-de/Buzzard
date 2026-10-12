@@ -1,4 +1,6 @@
 const { db } = require("./db");
+const productWriteBoundary = require("./pim/productWriteBoundary");
+const { isSalesEnabled } = require("./salesMode");
 
 function isEnabled() {
   return process.env.BUZZARD_CATALOG_SEO !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -150,9 +152,8 @@ function createCategory(body = {}) {
   }
 }
 
-function createProduct(body = {}) {
+function createProduct(body = {}, context = {}) {
   const {
-    sku,
     name,
     description = "",
     categoryId,
@@ -165,21 +166,37 @@ function createProduct(body = {}) {
     seoDescription,
     slug,
   } = body;
-  if (!sku || !name) return { error: "sku and name required", status: 400 };
+  const gate = productWriteBoundary.authorizeCreate(body, {
+    source: context.source || "ADMIN",
+    actorId: context.actorId || null,
+    authorized: context.authorized === true,
+    requireExplicitAuth: true,
+    destination: "products",
+  });
+  if (!gate.ok) {
+    if (gate.reason === "SKU_REQUIRED") {
+      return { error: "sku and name required", status: 400, reason: gate.reason, boundary: gate.boundary };
+    }
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
+  }
+  const productName = String(name || "").trim();
+  if (!productName) {
+    return { error: "sku and name required", status: 400 };
+  }
   const cost = Number(supplierCostEur) || 0;
   const floor = Number(marginFloor);
   const price = priceEur != null && priceEur !== "" ? Number(priceEur) : autoPrice(cost, floor);
-  const productSlug = slugify(slug || name);
+  const productSlug = slugify(slug || productName);
   try {
     const result = db
       .prepare(`
         INSERT INTO products
-        (sku, name, slug, description, category_id, supplier_cost_eur, price_eur, margin_floor, stock, image_url, seo_title, seo_description)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+        (sku, name, slug, description, category_id, supplier_cost_eur, price_eur, margin_floor, stock, active, image_url, seo_title, seo_description)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
       `)
       .run(
-        sku,
-        name,
+        gate.sku,
+        productName,
         productSlug,
         description,
         categoryId || null,
@@ -187,12 +204,18 @@ function createProduct(body = {}) {
         price,
         floor,
         Number(stock) || 0,
+        0,
         imageUrl,
-        seoTitle || name,
-        seoDescription || description || name
+        seoTitle || productName,
+        seoDescription || description || productName
       );
-    audit(result.lastInsertRowid, "created", body);
-    return { product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid)) };
+    audit(result.lastInsertRowid, "created", { sku: gate.sku, source: context.source || "ADMIN" });
+    return {
+      product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid)),
+      boundary: gate.boundary,
+      dualWrite: false,
+      productSourceOfTruthActive: false,
+    };
   } catch {
     return { error: "SKU or slug already exists", status: 409 };
   }
@@ -201,6 +224,15 @@ function createProduct(body = {}) {
 function updateProduct(id, body = {}) {
   const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
   if (!product) return { error: "Product not found", status: 404 };
+
+  const nextActive = body.active === undefined ? product.active : body.active ? 1 : 0;
+  if (!Number(product.active) && Number(nextActive) && !isSalesEnabled()) {
+    return {
+      error: "ACTIVE status is not allowed while sales are locked",
+      status: 400,
+      reason: "ACTIVE_UPDATE_REJECTED",
+    };
+  }
 
   const cost =
     body.supplierCostEur === undefined ? product.supplier_cost_eur : Number(body.supplierCostEur);
@@ -225,7 +257,7 @@ function updateProduct(id, body = {}) {
     price,
     floor,
     body.stock ?? product.stock,
-    body.active === undefined ? product.active : body.active ? 1 : 0,
+    nextActive,
     body.imageUrl ?? product.image_url,
     body.seoTitle ?? product.seo_title,
     body.seoDescription ?? product.seo_description,

@@ -6,15 +6,15 @@ Two scoring systems are kept **separate**. Method name remains `whole-software-w
 
 | Layer | Previous | Now | Meaning |
 | --- | --- | --- | --- |
-| Code implementation | 81.8% | **81.8%** | Code exists and is reachable in-repo. SW-SOT impl 0.48→0.52; overall 1-decimal score unchanged. |
-| Test verification | 82.1% | **82.2%** | Automated tests cover the module |
-| Integration verification | 64.8% | **64.9%** | Wired to another real module in tests |
+| Code implementation | 81.8% | **81.9%** | Code exists and is reachable in-repo. SW-SOT impl 0.52→0.55; raw 81.8986 rounds to 81.9. |
+| Test verification | 82.2% | **82.3%** | Automated tests cover the module |
+| Integration verification | 64.9% | **65.0%** | Wired to another real module in tests |
 | Operational readiness | 19.4% | **19.4%** | Could run with current env/locks |
 | Production verification | 0.0% | **0.0%** | No production evidence |
 
-Fractions rose only for SW-SOT (`pimCatalog.createProduct` now on the shared write policy, still inactive). Ops and production did not rise. Remaining master writers are `catalogSeo` and `productStore`.
+Fractions rose only for SW-SOT (`catalogSeo.createProduct` now on the shared write policy, still inactive). Ops and production did not rise. Remaining master writer is `productStore.upsertProduct`.
 
-Local suites after phase 2 are recorded in `TEST_RESULTS.md`. Push and CI were not authorized for this task.
+Local suites after phase 3 are recorded in `TEST_RESULTS.md`. Push and CI were not authorized for this task.
 
 ## 2. AI / automation (unchanged)
 

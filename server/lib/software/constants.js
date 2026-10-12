@@ -3,7 +3,7 @@
  * MARKET_UNDERCUT stays unimplemented in this slice.
  */
 
-const SOFTWARE_VERSION = "1.6.3";
+const SOFTWARE_VERSION = "1.6.4";
 
 const CANONICAL_ENGINES = Object.freeze({
   orchestrator: "pusat",

@@ -2,11 +2,24 @@
  * Part 12 — Central SQLite path configuration
  */
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const serverDataDir = path.join(__dirname, "..", "data");
 const defaultDbPath = path.join(serverDataDir, "buzzard.db");
 const defaultBackupDir = path.join(serverDataDir, "backups");
+
+function isEphemeralPath(dbPath) {
+  const resolved = path.resolve(String(dbPath || ""));
+  const tmp = path.resolve(os.tmpdir());
+  return (
+    resolved === tmp ||
+    resolved.startsWith(`${tmp}${path.sep}`) ||
+    /(^|\/)tmp(\/|$)/.test(resolved) ||
+    resolved.startsWith("/var/tmp") ||
+    resolved.startsWith("/dev/shm")
+  );
+}
 
 function resolveDbPath() {
   if (process.env.BUZZARD_DB_PATH) {
@@ -23,6 +36,11 @@ function resolveBackupDir() {
 }
 
 function ensureDbDirectory(dbPath = resolveDbPath()) {
+  if (process.env.NODE_ENV === "production" && isEphemeralPath(dbPath)) {
+    const err = new Error("Refusing to create a durable database under an ephemeral path in production");
+    err.code = "PRODUCTION_EPHEMERAL_PATH";
+    throw err;
+  }
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
   return dbPath;
 }
@@ -49,11 +67,53 @@ function getRenderDiskDiagnostics() {
   };
 }
 
+function validateStartupPersistence({ env = process.env, dbPath = resolveDbPath() } = {}) {
+  const info = getPersistenceInfo(dbPath);
+  if (env.NODE_ENV === "production" && !env.BUZZARD_DB_PATH) {
+    return {
+      ok: false,
+      failClosed: true,
+      reason: "PRODUCTION_DB_PATH_UNCONFIGURED",
+      silentFallbackPrevented: true,
+      info,
+    };
+  }
+  if (env.NODE_ENV === "production" && isEphemeralPath(dbPath)) {
+    return {
+      ok: false,
+      failClosed: true,
+      reason: "PRODUCTION_EPHEMERAL_PATH",
+      silentFallbackPrevented: true,
+      info,
+    };
+  }
+  if (env.NODE_ENV === "production" && !info.persistent) {
+    return {
+      ok: false,
+      failClosed: true,
+      reason: "PRODUCTION_EPHEMERAL_DB",
+      info,
+    };
+  }
+  return { ok: true, failClosed: false, silentFallbackPrevented: false, info };
+}
+
+function assertDurableOpenAllowed({ env = process.env, dbPath = resolveDbPath() } = {}) {
+  const result = validateStartupPersistence({ env, dbPath });
+  if (!result.ok && result.failClosed) {
+    const err = new Error(`Refusing to open a database: ${result.reason}`);
+    err.code = result.reason;
+    err.details = result;
+    throw err;
+  }
+  return result;
+}
+
 function getPersistenceInfo(dbPath = resolveDbPath()) {
   const isProduction = process.env.NODE_ENV === "production";
   const onRenderDisk = dbPath.startsWith("/var/data");
   const customPath = Boolean(process.env.BUZZARD_DB_PATH);
-  const persistent = onRenderDisk || (customPath && !dbPath.includes("/tmp"));
+  const persistent = onRenderDisk || (customPath && !isEphemeralPath(dbPath));
   const ephemeralRisk =
     isProduction && !persistent
       ? "Production without persistent disk — SQLite data lost on redeploy"
@@ -83,6 +143,9 @@ function getPersistenceInfo(dbPath = resolveDbPath()) {
     mode,
     persistent,
     ephemeralRisk,
+    configured: customPath,
+    silentFallbackPrevented: Boolean(isProduction && !customPath),
+    productionFallbackUsed: false,
     backupDir: resolveBackupDir(),
     env: process.env.NODE_ENV || "development",
     renderDisk: disk,
@@ -99,4 +162,7 @@ module.exports = {
   ensureDbDirectory,
   getRenderDiskDiagnostics,
   getPersistenceInfo,
+  isEphemeralPath,
+  validateStartupPersistence,
+  assertDurableOpenAllowed,
 };

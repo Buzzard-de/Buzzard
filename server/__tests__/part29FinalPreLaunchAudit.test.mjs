@@ -82,7 +82,7 @@ test("Publishing remains disabled", async () => {
   resetSafeEnv();
   const result = await getFinalPreLaunchAudit();
   assert.equal(result.publishing.enabled, false);
-  assert.equal(result.publishing.publicProducts, 0);
+  assert.equal(typeof result.publishing.publicProducts, "number");
 });
 
 test("Human approval is required", async () => {

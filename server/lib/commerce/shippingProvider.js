@@ -44,7 +44,7 @@ function getProviderHealth() {
     provider: "foundation",
     status: "READY",
     realShipmentEnabled: false,
-    adapters: ["DHL", "DPD", "Hermes"],
+    adapters: ["DHL", "DPD", "GLS", "Hermes", "UPS"],
     note: "Adapter stubs only — no live shipment creation",
   };
 }

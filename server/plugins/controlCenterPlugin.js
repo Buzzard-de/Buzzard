@@ -131,23 +131,33 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "ai.assign")) return;
       try {
-        const task = controlCenter.createAiTask({
+        const pusat = require("../lib/pusat");
+        const submitted = pusat.submitTask({
           title: req.body?.title,
           description: req.body?.description,
           employeeId: req.body?.employeeId,
+          agentCode: req.body?.agentCode,
           priority: req.body?.priority,
           permissionsRequired: req.body?.permissionsRequired,
           payload: req.body?.payload,
           createdBy: req.adminUser.email,
           dependsOnTaskId: req.body?.dependsOnTaskId,
+          idempotencyKey: req.body?.idempotencyKey || req.headers["idempotency-key"],
+          correlationId: req.body?.correlationId,
+          timeoutMs: req.body?.timeoutMs,
+          enqueue: false,
         });
         logAuditFromRequest(req, {
           action: "ai.task.create",
           entityType: "ai_task",
-          entityId: task.id,
+          entityId: submitted.task?.id,
         });
-        enqueueTaskProcessing(task.id);
-        res.status(201).json({ success: true, task });
+        if (!submitted.duplicate) enqueueTaskProcessing(submitted.task.id);
+        res.status(submitted.duplicate ? 200 : 201).json({
+          success: true,
+          duplicate: Boolean(submitted.duplicate),
+          task: submitted.task,
+        });
       } catch (error) {
         res.status(400).json({ success: false, errorKey: "ai.task.createFailed", message: error.message });
       }
@@ -191,18 +201,22 @@ module.exports = {
     app.post("/api/admin/approvals/:id/decide", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "ai.execute")) return;
-      const decision = req.body?.decision === "approve" ? "approve" : "reject";
-      const approval = controlCenter.decideApproval(req.params.id, decision, req.adminUser.email);
-      if (!approval) return res.status(404).json({ success: false, errorKey: "approval.notFound" });
+      const decision = req.body?.decision === "approve" ? "approve" : req.body?.decision === "cancel" ? "cancel" : "reject";
+      const pusat = require("../lib/pusat");
+      const decided = pusat.approval.decide(req.params.id, decision, req.adminUser.email, {
+        currentInput: req.body?.currentInput,
+      });
+      if (!decided) return res.status(404).json({ success: false, errorKey: "approval.notFound" });
+      const approval = decided.approval;
       logAuditFromRequest(req, {
         action: `approval.${decision}`,
         entityType: "approval",
         entityId: req.params.id,
       });
-      if (decision === "approve" && approval?.taskId) {
+      if (decision === "approve" && approval?.taskId && !decided.inputChanged && !decided.expired && !decided.duplicate) {
         resumeAfterApproval(approval.taskId);
       }
-      res.json({ success: true, approval });
+      res.json({ success: true, ...decided });
     });
 
     app.get("/api/admin/control-center/escalations", (req, res) => {

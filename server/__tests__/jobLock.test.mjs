@@ -14,16 +14,18 @@ describe("jobQueue lock", () => {
 
   it("claimNextJob sets RUNNING with lock", () => {
     jobQueue.releaseStaleLocks();
-    const job = jobQueue.enqueueJob({ jobType: "SYSTEM_HEALTH", priority: "HIGH" });
-    const claimed = jobQueue.claimNextJob("test_worker_1");
+    const jobType = `SYSTEM_HEALTH_LOCK_${Date.now()}`;
+    const job = jobQueue.enqueueJob({ jobType, priority: "HIGH" });
+    const claimed = jobQueue.claimNextJob("test_worker_1", 60_000, { jobType });
     expect(claimed?.id).toBe(job.id);
     expect(claimed?.status).toBe("RUNNING");
     expect(claimed?.lockOwner).toBe("test_worker_1");
   });
 
   it("duplicate claim prevented for locked job", () => {
-    const job = jobQueue.enqueueJob({ jobType: "SYSTEM_HEALTH", priority: "CRITICAL" });
-    const first = jobQueue.claimNextJob("worker_a");
+    const jobType = `SYSTEM_HEALTH_DUP_${Date.now()}`;
+    const job = jobQueue.enqueueJob({ jobType, priority: "CRITICAL" });
+    const first = jobQueue.claimNextJob("worker_a", 60_000, { jobType });
     expect(first?.id).toBeTruthy();
     const locked = jobQueue.getJob(job.id);
     if (locked.status === "RUNNING") {
@@ -40,8 +42,10 @@ describe("jobQueue lock", () => {
   });
 
   it("releaseStaleLocks recovers expired RUNNING jobs", () => {
-    const job = jobQueue.enqueueJob({ jobType: "SYSTEM_HEALTH" });
-    jobQueue.claimNextJob("stale_worker");
+    const jobType = `SYSTEM_HEALTH_STALE_${Date.now()}`;
+    const job = jobQueue.enqueueJob({ jobType });
+    const claimed = jobQueue.claimNextJob("stale_worker", 60_000, { jobType });
+    expect(claimed?.id).toBe(job.id);
     const { db } = require("../lib/db.js");
     db.prepare(`
       UPDATE core_background_jobs SET lock_expires_at = '2000-01-01T00:00:00.000Z' WHERE id = ?

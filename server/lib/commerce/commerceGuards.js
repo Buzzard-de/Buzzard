@@ -58,11 +58,14 @@ function assertCanSubmitSupplierOrder({ req } = {}) {
 }
 
 function assertCustomerResourceAccess({ resourceCustomerId, requestCustomerId, resourceType, req }) {
+  if (!resourceCustomerId) {
+    return null;
+  }
   if (!requestCustomerId) {
     logCommerceBlock("commerce_permission_denied", { resourceType, reason: "unauthenticated" }, req);
     return { blocked: true, code: "auth_required", message: "Authentication required", status: 401 };
   }
-  if (resourceCustomerId && resourceCustomerId !== requestCustomerId) {
+  if (resourceCustomerId !== requestCustomerId) {
     logCommerceBlock("idor_attempt", { resourceType, resourceCustomerId }, req);
     return { blocked: true, code: "idor_denied", message: "Access denied", status: 403 };
   }

@@ -165,6 +165,11 @@ function reserveInventory(body = {}) {
   const reservation = db
     .prepare("SELECT * FROM wms_reservations WHERE id = ?")
     .get(result.lastInsertRowid);
+  try {
+    require("./software/inventory").recordWmsReservationAudit(db, reservation);
+  } catch {
+    /* software audit is optional; reservation already committed */
+  }
   return { reservation };
 }
 

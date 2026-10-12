@@ -4,7 +4,7 @@ All commands below were run on isolated local data or observed GitHub Actions. N
 
 ## Architecture inventory + desktop bridge (local, unpushed)
 
-Code of this pass was committed after these commands. Exact SHA is recorded in SOFTWARE_COMPLETION_DATA.json after commit.
+Implementation SHA: `bb5cb02e2775d70b53d2d608f08bf395a5002ce0`. Commands below ran on the working tree that became this commit (docs SHA stamp may follow).
 
 | Command | Exit | Passed | Failed | Notes |
 | --- | --- | --- | --- | --- |

@@ -13,7 +13,7 @@ Historical reports were preserved. This file is an addendum, not a rewrite of ea
 
 Starting: `23530f5` on `cursor/product-sot-write-boundary-c293`.  
 Working tree at start: only untracked `.buzzard-audit-ci.db` / `.sqlite` (left uncommitted).  
-Final HEAD is the local commit of this pass (recorded after `git commit`).
+Final HEAD: `bb5cb02e2775d70b53d2d608f08bf395a5002ce0` (local, unpushed).
 
 ## Safety assertion
 

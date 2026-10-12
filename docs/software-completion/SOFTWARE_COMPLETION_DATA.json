@@ -87,6 +87,7 @@
   "architectureAndDesktopBridge": {
     "branch": "cursor/product-sot-write-boundary-c293",
     "baselineHead": "23530f5bb530ec378c86d75fbcd467af11fb31b0",
+    "implementationHead": "bb5cb02e2775d70b53d2d608f08bf395a5002ce0",
     "softwareVersion": "1.6.6",
     "productSotActivated": false,
     "salesEnabled": false,

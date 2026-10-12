@@ -1,4 +1,5 @@
 const { db } = require("./db");
+const productWriteBoundary = require("./pim/productWriteBoundary");
 
 function isEnabled() {
   return process.env.BUZZARD_PRODUCT_CATALOG_PIM !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -97,8 +98,17 @@ function listCategories() {
     .all();
 }
 
-function createProduct(body = {}) {
-  if (!body.sku) return { error: "SKU required", status: 400 };
+function createProduct(body = {}, context = {}) {
+  const gate = productWriteBoundary.authorizeCreate(body, {
+    source: context.source || "ADMIN",
+    actorId: context.actorId || null,
+    authorized: context.authorized === true,
+    requireExplicitAuth: true,
+    destination: "pim30_products",
+  });
+  if (!gate.ok) {
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
+  }
 
   try {
     const result = db
@@ -132,7 +142,14 @@ function createProduct(body = {}) {
 
     const product = db.prepare("SELECT * FROM pim30_products WHERE id = ?").get(result.lastInsertRowid);
     const score = updateCompleteness(product.id);
-    return { product, completeness: score, created: true };
+    return {
+      product,
+      completeness: score,
+      created: true,
+      boundary: gate.boundary,
+      dualWrite: false,
+      productSourceOfTruthActive: false,
+    };
   } catch {
     return { error: "SKU already exists", status: 409 };
   }

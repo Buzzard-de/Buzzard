@@ -106,7 +106,17 @@ module.exports = {
       });
       if (!result.ok) return res.status(400).json({ success: false, ...result });
       if (!result.requiresApproval) {
-        productStore.upsertProduct({ ...product, ...result.update });
+        const saved = productStore.upsertProduct(
+          { ...product, ...result.update },
+          {
+            authorized: true,
+            source: "ADMIN",
+            actorId: req.adminUser?.email || req.adminUser?.userId || null,
+          }
+        );
+        if (saved.error) {
+          return res.status(saved.status || 400).json({ success: false, error: saved.error, reason: saved.reason });
+        }
       }
       return res.json({ success: true, ...result });
     });

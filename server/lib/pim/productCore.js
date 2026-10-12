@@ -7,6 +7,7 @@ const { PRODUCT_STATUS, canTransition, SALES_BLOCKED_STATUSES } = require("../..
 const productAudit = require("./productAudit");
 const productIdentifiers = require("./productIdentifiers");
 const qualityScore = require("./qualityScore");
+const productWriteBoundary = require("./productWriteBoundary");
 
 function newId(prefix = "pim_prod") {
   return `${prefix}_${crypto.randomBytes(6).toString("hex")}`;
@@ -107,10 +108,34 @@ function getProduct(idOrSku) {
   return attachRelations(mapProduct(row));
 }
 
-function createProduct(input, { source = "ADMIN", actorId } = {}) {
-  const sku = String(input.sku || "").trim();
-  if (!sku) throw new Error("SKU required");
+function createProduct(input, { source = "ADMIN", actorId, dryRun = false, authorized } = {}) {
+  const gate = productWriteBoundary.authorizeCreate(input, {
+    source,
+    actorId,
+    dryRun,
+    authorized,
+    destination: "pim_core_products",
+  });
+  if (!gate.ok) {
+    const error = new Error(gate.message);
+    error.code = gate.reason;
+    throw error;
+  }
+  const sku = gate.sku;
   productIdentifiers.assertUnique({ sku, ean: input.ean, gtin: input.gtin, mpn: input.mpn });
+
+  if (dryRun) {
+    return {
+      dryRun: true,
+      written: false,
+      wouldCreate: true,
+      sku,
+      status: PRODUCT_STATUS.DRAFT,
+      visibility: input.visibility || "HIDDEN",
+      source,
+      actorId: actorId || null,
+    };
+  }
 
   const id = input.id || newId();
   db.prepare(`
@@ -157,9 +182,32 @@ function createProduct(input, { source = "ADMIN", actorId } = {}) {
   return product;
 }
 
-function updateProduct(id, patch, { source = "ADMIN", actorId } = {}) {
+function updateProduct(id, patch, { source = "ADMIN", actorId, authorized } = {}) {
   const before = getProduct(id);
   if (!before) throw new Error("Product not found");
+
+  const gate = productWriteBoundary.authorizeUpdate(patch, {
+    source,
+    actorId,
+    authorized,
+    destination: "pim_core_products",
+    existing: before,
+  });
+  if (!gate.ok) {
+    const error = new Error(gate.message);
+    error.code = gate.reason;
+    throw error;
+  }
+
+  if (patch.ean || patch.gtin || patch.mpn || patch.sku) {
+    productIdentifiers.assertUnique({
+      sku: patch.sku || before.sku,
+      ean: patch.ean ?? before.ean,
+      gtin: patch.gtin ?? before.gtin,
+      mpn: patch.mpn ?? before.mpn,
+      excludeId: id,
+    });
+  }
 
   if (patch.status && patch.status !== before.status) {
     transitionStatus(id, patch.status, { source, actorId });
@@ -212,16 +260,6 @@ function updateProduct(id, patch, { source = "ADMIN", actorId } = {}) {
     db.prepare(`UPDATE pim_core_products SET ${fields.join(", ")} WHERE id = ?`).run(...params);
   }
 
-  if (patch.ean || patch.gtin || patch.mpn || patch.sku) {
-    productIdentifiers.assertUnique({
-      sku: patch.sku || before.sku,
-      ean: patch.ean ?? before.ean,
-      gtin: patch.gtin ?? before.gtin,
-      mpn: patch.mpn ?? before.mpn,
-      excludeId: id,
-    });
-  }
-
   const after = getProduct(id);
   qualityScore.updateScore(id);
   productAudit.logChange({
@@ -269,4 +307,5 @@ module.exports = {
   transitionStatus,
   mapProduct,
   newId,
+  productWriteBoundary,
 };

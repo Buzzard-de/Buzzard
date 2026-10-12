@@ -178,7 +178,14 @@ function processRecords(records, supplierId, ctx = {}) {
       }
 
       const { product, action } = buildBuzzardProduct(normalized, supplier, ctx);
-      productStore.upsertProduct(product);
+      const saved = productStore.upsertProduct(product, {
+        authorized: true,
+        source: "IMPORT",
+        actorId: ctx.actorId || "import-pipeline",
+      });
+      if (saved.error) {
+        throw new Error(saved.error);
+      }
       if (action === "created") created += 1;
       else updated += 1;
     } catch (error) {

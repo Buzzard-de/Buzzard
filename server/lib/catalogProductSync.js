@@ -75,7 +75,15 @@ function collectCatalogRows(product) {
 
 function syncCatalogProducts() {
   const products = loadCatalogProducts();
-  if (!products.length) return { synced: 0 };
+  if (!products.length) {
+    return {
+      synced: 0,
+      kind: "projection",
+      dualWrite: false,
+      productSourceOfTruthActive: false,
+      boundaryRouted: false,
+    };
+  }
 
   const upsert = db.prepare(`
     INSERT INTO products (sku, name, description, category_id, price_eur, weight_kg, stock, active)
@@ -107,7 +115,14 @@ function syncCatalogProducts() {
     }
   }
 
-  return { synced };
+  return {
+    synced,
+    kind: "projection",
+    dualWrite: false,
+    productSourceOfTruthActive: false,
+    boundaryRouted: false,
+    destination: "products",
+  };
 }
 
 function findProductBySku(sku) {

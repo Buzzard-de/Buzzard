@@ -123,3 +123,15 @@ Rounded whole-software scores **unchanged**: 82.0 / 82.4 / 65.1 / 19.4 / 0.0. De
 Baseline HEAD `8bf0d89`. Hardened desktop-bridge schema/import evaluation, loopback port retry, Windows uninstall script, realpath allowlist, and a **simulation-only** Product SoT migration plan (`written: false`). Product SoT stays **INACTIVE**. Sales stay locked. Direct ChatGPT session stays **SESSION_NOT_AVAILABLE**.
 
 Rounded Buzzard scores **unchanged**. Desktop test count 11→15. Windows verification remains **NOT_VERIFIED**.
+
+## Addendum — layer targets (local ops pack)
+
+Target was: fill code/test gaps, close integrations or name blockers, raise local operations. Done without production changes.
+
+- Local backup/restore roundtrip: PASS (`LOCAL_ROUNDTRIP_OK`, same byte size)
+- Production restore without flag: BLOCKED
+- Providers: 31 NOT_CONFIGURED, live 0
+- Sales locked, SoT inactive
+- Scores: 82.1 / 82.7 / 65.2 / 20.1 / 0.0
+
+Remaining blockers unchanged: credentials, SoT activation (separate), sales unlock (separate), Render disk evidence, marketplace vendor contracts.

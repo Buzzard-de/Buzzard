@@ -1109,6 +1109,27 @@ describe("software completion — isolated engines", () => {
     expect(plan.productSourceOfTruthActive).toBe(false);
     expect(salesMode.isSalesEnabled()).toBe(false);
   });
+
+  it("64 local operations pack backs up/restores without touching production", () => {
+    const report = software.operationsPack.runLocalOperationsPack();
+    expect(report.local).toBe(true);
+    expect(report.productionVerified).toBe(false);
+    expect(report.salesLocked).toBe(true);
+    expect(report.productSourceOfTruthActive).toBe(false);
+    expect(report.productionRestoreBlocked).toBe(true);
+    expect(report.backupRestore.ok).toBe(true);
+    expect(report.providers.live).toBe(0);
+    expect(report.pass).toBe(true);
+  });
+
+  it("65 production restore stays blocked without an explicit flag", () => {
+    expect(() =>
+      software.restoreGuard.assertRestoreAllowed("/var/data/buzzard.db", { NODE_ENV: "production" })
+    ).toThrow(/production target/);
+    expect(
+      software.restoreGuard.assertRestoreAllowed("/tmp/buzzard-test.db", { NODE_ENV: "test" }).allowed
+    ).toBe(true);
+  });
 });
 
 function healthBlockedLive() {

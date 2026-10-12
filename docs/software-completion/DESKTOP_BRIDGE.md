@@ -37,7 +37,7 @@ One zip, no git commands:
 
 https://github.com/Buzzard-de/Buzzard/raw/cursor/desktop-bridge-shortcut-c293/desktop-bridge/BuzzardDesktopBridge.zip
 
-Extract, then double-click `START.cmd`. Node.js 20+ is required.
+Extract, then double-click `START.cmd`. For a laptop-open file watcher use `WATCH.cmd`. Paste `CHATGPT-YAPISTIR.txt` into ChatGPT. This is still **not** a 24/7 ChatGPT session. Node.js 20+ is required.
 
 ## Windows desktop shortcut
 

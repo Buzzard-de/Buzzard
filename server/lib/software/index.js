@@ -24,6 +24,8 @@ const externalIntegrations = require("./externalIntegrations");
 const workflow = require("./workflow");
 const providerDiagnostics = require("./providerDiagnostics");
 const lifecycle = require("./lifecycle");
+const operationsPack = require("./operationsPack");
+const restoreGuard = require("./restoreGuard");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -61,4 +63,6 @@ module.exports = {
   workflow,
   providerDiagnostics,
   lifecycle,
+  operationsPack,
+  restoreGuard,
 };

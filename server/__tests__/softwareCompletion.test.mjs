@@ -1091,6 +1091,16 @@ describe("software completion — isolated engines", () => {
       if (fs.existsSync(file)) fs.unlinkSync(file);
     }
   });
+
+  it("62 product architecture inventory stays SoT-inactive and lists master writers", () => {
+    const architecture = require("../lib/pim/productArchitecture");
+    const map = architecture.getProductArchitecture();
+    expect(map.productSourceOfTruthActive).toBe(false);
+    expect(map.dualWrite).toBe(false);
+    expect(map.candidate.activated).toBe(false);
+    expect(map.masterWriters.length).toBeGreaterThanOrEqual(8);
+    expect(software.CANONICAL_ENGINES.orchestrator).toBe("pusat");
+  });
 });
 
 function healthBlockedLive() {

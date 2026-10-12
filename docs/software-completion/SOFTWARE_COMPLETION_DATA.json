@@ -84,9 +84,35 @@
       "playwright_e2e": { "run": false, "status": "NOT_VERIFIED", "head": "2f09db7915ca77580a88ae2981391446ad05df5e" }
     }
   },
+  "architectureAndDesktopBridge": {
+    "branch": "cursor/product-sot-write-boundary-c293",
+    "baselineHead": "23530f5bb530ec378c86d75fbcd467af11fb31b0",
+    "softwareVersion": "1.6.6",
+    "productSotActivated": false,
+    "salesEnabled": false,
+    "dualWrite": false,
+    "pushed": false,
+    "prCreated": false,
+    "twoWayDirect": false,
+    "chatgptSession": "NOT_AVAILABLE",
+    "cursorConnection": "FILE_HANDOFF",
+    "windowsInstallerVerified": false,
+    "note": "Local unpushed increment. Desktop bridge is not mixed into the 148-weight Buzzard score. Rounded Buzzard scores unchanged.",
+    "desktopBridge": {
+      "sourceImplementation": 0.85,
+      "automatedTests": 0.80,
+      "buildPackage": 0.20,
+      "cursorConnection": 0.40,
+      "chatgptOpenai": 0.25,
+      "security": 0.75,
+      "recovery": 0.80,
+      "userAcceptance": 0.0,
+      "windowsVerification": 0.0
+    }
+  },
   "method": {
     "name": "whole-software-weighted-v1",
-    "note": "Separate from AI 161-weight scores. Weights were not taken from AI_AUTOMATION_COMPLETION_DATA.json and AI weights were not changed. Phase 4 moved only SW-SOT (impl 0.55→0.60, test 0.56→0.62, integ 0.32→0.36). Code layer is exactly 82.0. Ops/prod unchanged.",
+    "note": "Separate from AI 161-weight scores. Weights were not changed. Desktop bridge is scored separately and is not added to the 148-weight total. After architecture inventory SW-SOT impl 0.62 / test 0.64; rounded Buzzard layers remain 82.0 / 82.4 / 65.1 / 19.4 / 0.0.",
     "formula": "score = sum(weight * fraction) / sum(weight)",
     "complete": 1.0,
     "partial": "documented fraction",
@@ -155,7 +181,7 @@
     {"id":"SW-AGENTS","name":"Specialist agents","weight":5,"impl":0.95,"test":0.9,"integ":0.75,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-LLM","name":"LLM providers","weight":4,"impl":0.7,"test":0.7,"integ":0.2,"ops":0,"prod":0,"code":"IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-PIM","name":"Product engine","weight":8,"impl":0.85,"test":0.9,"integ":0.75,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-SOT","name":"Product Source of Truth","weight":3,"impl":0.60,"test":0.62,"integ":0.36,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-SOT","name":"Product Source of Truth","weight":3,"impl":0.62,"test":0.64,"integ":0.36,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-CAT","name":"Catalog/categories","weight":6,"impl":0.9,"test":0.85,"integ":0.7,"ops":0.4,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-I18N","name":"i18n/RTL","weight":5,"impl":0.95,"test":0.95,"integ":0.85,"ops":0.4,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-MKT","name":"Market engine","weight":5,"impl":0.9,"test":0.85,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},

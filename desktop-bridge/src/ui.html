@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buzzard Desktop Bridge</title>
+  <style>
+    :root { color-scheme: dark; --bg:#111113; --panel:#1b1b1f; --line:#2c2c33; --gold:#c9a227; --text:#f4f1ea; --muted:#9a958a; --danger:#c45c5c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Segoe UI, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 18px; margin: 0; color: var(--gold); }
+    main { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; padding: 16px; }
+    section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+    h2 { margin: 0 0 10px; font-size: 14px; color: var(--gold); }
+    label, p, li, td, th { font-size: 13px; }
+    input, textarea, select { width: 100%; background: #0e0e10; color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 8px; margin: 4px 0 10px; }
+    textarea { min-height: 110px; }
+    button { background: var(--gold); color: #111; border: 0; border-radius: 6px; padding: 8px 12px; font-weight: 600; cursor: pointer; margin-right: 6px; }
+    button.secondary { background: #2c2c33; color: var(--text); }
+    .muted { color: var(--muted); }
+    .status { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #2c2c33; font-size: 11px; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .error { color: var(--danger); min-height: 18px; }
+    #audit { max-height: 180px; overflow: auto; white-space: pre-wrap; font-family: Consolas, monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Buzzard Desktop Bridge</h1>
+    <div>
+      <span class="status" id="mode">FILE HANDOFF</span>
+      <span class="muted">Pusat remains the orchestrator. This is not a ChatGPT session bridge.</span>
+    </div>
+  </header>
+  <main>
+    <section>
+      <h2>Create task</h2>
+      <label>Title<input id="title" /></label>
+      <label>Approved instructions<textarea id="instructions" placeholder="Paste the ChatGPT or operator task here. Commands in later reports will not be executed."></textarea></label>
+      <label>Workspace<select id="workspace"></select></label>
+      <button id="create">Save draft</button>
+      <button id="export" class="secondary">Export for Cursor</button>
+      <p class="error" id="error"></p>
+      <h2>Settings</h2>
+      <label>Add authorized workspace<input id="root" placeholder="C:\\src\\Buzzard" /></label>
+      <button id="addRoot" class="secondary">Authorize folder</button>
+      <p class="muted">Paths outside authorized roots are rejected. No unauthenticated LAN bind. No auto commit/push/deploy.</p>
+    </section>
+    <section>
+      <h2>Connections</h2>
+      <div id="connections"></div>
+      <h2>History</h2>
+      <table><thead><tr><th>ID</th><th>Status</th><th>Title</th></tr></thead><tbody id="history"></tbody></table>
+      <h2>Import Cursor report</h2>
+      <label>Report file path<input id="reportPath" /></label>
+      <button id="import" class="secondary">Import</button>
+      <h2>Audit</h2>
+      <div id="audit"></div>
+    </section>
+  </main>
+  <script>
+    const TOKEN = "__BRIDGE_TOKEN__";
+    async function api(pathname, method, body) {
+      const res = await fetch(pathname, {
+        method,
+        headers: { "Content-Type": "application/json", "x-bridge-token": TOKEN },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Request failed");
+      return data;
+    }
+    function render(snap) {
+      document.getElementById("mode").textContent = snap.connections.twoWayDirect ? "DIRECT" : "FILE HANDOFF";
+      document.getElementById("connections").innerHTML = Object.entries(snap.connections)
+        .filter(([k]) => k !== "twoWayDirect")
+        .map(([k, v]) => `<p><strong>${k}</strong>: ${v.status} — <span class="muted">${v.note}</span></p>`)
+        .join("");
+      const select = document.getElementById("workspace");
+      select.innerHTML = (snap.settings.workspaceRoots || []).map((p) => `<option value="${p}">${p}</option>`).join("");
+      document.getElementById("history").innerHTML = (snap.tasks || []).map((t) =>
+        `<tr data-id="${t.id}"><td>${t.id}</td><td>${t.status}</td><td>${t.title}</td></tr>`
+      ).join("");
+    }
+    async function refresh() {
+      const snap = await api("/api/snapshot", "GET");
+      render(snap);
+      const audit = await api("/api/audit", "GET");
+      document.getElementById("audit").textContent = (audit.events || []).map((e) => `${e.at} ${e.event} ${e.id || ""}`).join("\n");
+      return snap;
+    }
+    document.getElementById("addRoot").onclick = async () => {
+      document.getElementById("error").textContent = "";
+      try { await api("/api/workspace", "POST", { path: document.getElementById("root").value }); await refresh(); }
+      catch (e) { document.getElementById("error").textContent = e.message; }
+    };
+    document.getElementById("create").onclick = async () => {
+      document.getElementById("error").textContent = "";
+      try {
+        const task = await api("/api/tasks", "POST", {
+          title: document.getElementById("title").value,
+          instructions: document.getElementById("instructions").value,
+          workspace: document.getElementById("workspace").value,
+        });
+        window.currentTaskId = task.id;
+        await refresh();
+      } catch (e) { document.getElementById("error").textContent = e.message; }
+    };
+    document.getElementById("export").onclick = async () => {
+      document.getElementById("error").textContent = "";
+      try {
+        if (!window.currentTaskId) throw new Error("Create a draft first");
+        await api("/api/tasks/" + window.currentTaskId + "/export", "POST", {});
+        await refresh();
+      } catch (e) { document.getElementById("error").textContent = e.message; }
+    };
+    document.getElementById("import").onclick = async () => {
+      document.getElementById("error").textContent = "";
+      try { await api("/api/reports", "POST", { path: document.getElementById("reportPath").value }); await refresh(); }
+      catch (e) { document.getElementById("error").textContent = e.message; }
+    };
+    document.getElementById("history").onclick = (ev) => {
+      const row = ev.target.closest("tr");
+      if (row) window.currentTaskId = row.getAttribute("data-id");
+    };
+    refresh().catch((e) => { document.getElementById("error").textContent = e.message; });
+  </script>
+</body>
+</html>

@@ -2,6 +2,29 @@
 
 All commands below were run on isolated local data or observed GitHub Actions. No production database. `BUZZARD_SALES_ENABLED` stayed unset / `0`.
 
+## Architecture inventory + desktop bridge (local, unpushed)
+
+Code of this pass was committed after these commands. Exact SHA is recorded in SOFTWARE_COMPLETION_DATA.json after commit.
+
+| Command | Exit | Passed | Failed | Notes |
+| --- | --- | --- | --- | --- |
+| `npx vitest run desktopBridge productArchitecture productWriteBoundary softwareCompletion` | 0 | 92 | 0 | focused |
+| `npm run test:bridge` | 0 | 11 | 0 | file handoff, traversal, redaction, approval, recover, loopback 401 |
+| `npm run test:software` | 0 | 66 | 0 | includes software 62 |
+| `npm run test:ai` | 0 | 58 | 0 | Pusat unchanged |
+| `npm run test:unit` | 0 | 795 | 0 | 66 files |
+| `npm run lint` | 0 | — | — | no errors |
+| `npm run typecheck` | 0 | — | — | PASS (existing `.next/types`) |
+| `npm run build` | 0 | — | — | Next static export; desktop-bridge is Node, not part of Next |
+| `npm run security:check` | 0 | — | 1 warning | braces/micromatch via eslint-config-next |
+| `npm run diagnostics:providers` | 0 | 31 | — | dry-run, all NOT_CONFIGURED, live=0 |
+| `npm run test:backup-restore` | 0 | dry-run | — | local only |
+| `npm audit --omit=dev` | 0 | 0 vulns | — | production tree |
+| `node desktop-bridge/src/index.js status` | 0 | — | — | twoWayDirect false; ChatGPT session NOT_AVAILABLE |
+| Playwright E2E | not run | — | — | NOT_VERIFIED |
+| Windows installer | not run | — | — | Linux environment; NOT_VERIFIED |
+| CI / push | not run | — | — | this task forbade push |
+
 ## Product write boundary phase 4 — productStore + authorizeUpdate (local HEAD `2f09db7`, unpushed)
 
 Code SHA for these commands: `2f09db7915ca77580a88ae2981391446ad05df5e`. Docs-only follow-up commits do not change this implementation SHA.

@@ -14,6 +14,8 @@ Weights were **not** changed.
 
 Fractions moved only for SW-SOT in this phase. Ops and production did not rise. A mock is not a live integration. Scores use `whole-software-weighted-v1` rounded to 1 decimal; they are not increased merely because files were added.
 
+Addendum — architecture inventory + desktop bridge: SW-SOT impl 0.62 / test 0.64. Rounded Buzzard layers stay **82.0 / 82.4 / 65.1 / 19.4 / 0.0**. Desktop scores are tracked separately and do not raise production verification.
+
 ## AI — 161 weights (unchanged)
 
 | Layer | Score | Evidence class |

@@ -111,3 +111,9 @@ Whole-software scores after this increment (formula, 1 decimal): code **81.9%**,
 Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `7c2c8f8`, local HEAD `2f09db7` (unpushed). `productStore.upsertProduct` now uses `authorizeCreate` / `authorizeUpdate`. Shared update policy also gates `pimCatalog`, `catalogSeo`, and `productCore` updates. JSON SKU uniqueness applies on update (self excluded). `deleteProduct` uses `authorizeDelete`. Candidate canonical store is documented as `pim_core_products` and is **not** activated. Product SoT stays **INACTIVE**. Sales stay locked.
 
 Whole-software scores after this increment: code **82.0%**, tests **82.4%**, integration **65.1%**, ops **19.4%**, production **0.0%**. See `FINAL_MASTER_COMPLETION_REPORT.md`.
+
+## Addendum — architecture inventory + Windows desktop bridge (local, unpushed)
+
+Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `23530f5`. Encoded product writer/reader inventory in `server/lib/pim/productArchitecture.js`. Labeled `catalogProductSync` as a projection (`boundaryRouted: false`). Added `desktop-bridge/` file-handoff app (ChatGPT session **NOT_AVAILABLE**, Cursor **FILE_HANDOFF**, loopback token, no command execution). Pusat remains the sole orchestrator.
+
+Rounded whole-software scores **unchanged**: 82.0 / 82.4 / 65.1 / 19.4 / 0.0. Desktop readiness is separate. See `DESKTOP_BRIDGE.md`.

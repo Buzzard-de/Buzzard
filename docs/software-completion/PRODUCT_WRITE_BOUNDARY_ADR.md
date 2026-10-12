@@ -111,4 +111,25 @@ No dual-write. SoT inactive.
 | --- | --- | --- |
 | `advancedSearch.createProduct` | B — Read model / search index | Writes `srch_products` search documents, not master identity. Do not route through the product-master boundary. |
 | `db.js` `seed()` product inserts | C — Seed/test fixture | Inserts demo `products` rows only when the table is empty. |
-| `catalogProductSync.syncCatalogProducts` | D — Synchronization projection | Copies JSON catalog into `products`. Projection, not a new master authoring path. |
+| `catalogProductSync.syncCatalogProducts` | D — Synchronization projection | Copies JSON catalog into `products`. Projection, not a new master authoring path. Returns `kind:"projection"` / `boundaryRouted:false`. Still not routed through the master boundary because it is storefront visibility copy, not authoring. |
+
+Machine-readable inventory: `server/lib/pim/productArchitecture.js`.
+
+## Reader inventory (blocks SoT activation)
+
+Readers still consume more than one store. SoT cannot be activated until these are cut over.
+
+| Reader | Sources |
+| --- | --- |
+| `catalogReadService` | visible PIM / storefront |
+| `storefrontBridgePlugin` | `catalogReadService` |
+| `software.search` | `catalogReadService` |
+| `productStore.listProducts` | JSON catalog |
+| `catalogSeo.listProducts` | `products` |
+| `pimCatalog` / `productCatalogPim` / `productCore` getters | their own tables |
+| `advancedSearch` | `srch_products` |
+| `ordersPlugin` | JSON catalog |
+
+## Desktop bridge relationship
+
+`desktop-bridge/` is a local ChatGPT↔Cursor **file-handoff** tool. It is not a second orchestrator and must not call product writers. Pusat remains sole business/AI orchestrator.

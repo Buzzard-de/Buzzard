@@ -51,6 +51,31 @@ Installer generation and Windows UI verification: **NOT_VERIFIED**. `install-dev
 - RUNNING requires explicit approval.
 - Interrupted RUNNING tasks recover as BLOCKED.
 
+## Task/report protocol
+
+- Task schema: `buzzard.desktop-bridge.task.v1`
+- Report schema: `buzzard.desktop-bridge.report.v1`
+- Unsupported versions are rejected.
+- Max import size: 256 KiB.
+- Imported `productionVerified` / `liveVerified` claims do **not** complete a task. The bridge evaluates completion.
+- Imported `commands` / `shell` / `exec` keys are ignored and never executed.
+
+## One-command handoff (manual remaining steps)
+
+`exportTask` writes inbox/outbox files and returns `steps` plus `cursorAutoInvoked: false`. Operator still pastes into ChatGPT and opens Cursor. No private session API.
+
+## Windows operator commands (NOT_VERIFIED on this Linux host)
+
+```powershell
+desktop-bridge\windows\BuzzardBridge.cmd
+powershell -File desktop-bridge\windows\install-dev.ps1
+powershell -File desktop-bridge\windows\uninstall.ps1
+$env:BUZZARD_BRIDGE_OPEN_BROWSER = "1"
+$env:BUZZARD_BRIDGE_PORT = "47821"
+```
+
+Logs: `%USERPROFILE%\.buzzard-desktop-bridge\bridge.log`
+
 ## Tests
 
 ```bash

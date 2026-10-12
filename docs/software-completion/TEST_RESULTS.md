@@ -2,6 +2,28 @@
 
 All commands below were run on isolated local data or observed GitHub Actions. No production database. `BUZZARD_SALES_ENABLED` stayed unset / `0`.
 
+## Ultimate finalization pass (local, unpushed)
+
+Implementation SHA is recorded after commit. Commands below ran on the working tree of this pass.
+
+| Command | Exit | Passed | Failed | Notes |
+| --- | --- | --- | --- | --- |
+| `npx vitest run desktopBridge productArchitecture softwareCompletion` | 0 | 81 | 0 | schema, size, production-claim, port retry, UI HTTP |
+| `npm run test:bridge` | 0 | 15 | 0 | |
+| `npm run test:software` | 0 | 67 | 0 | includes software 63 migration simulation |
+| `npm run test:ai` | 0 | 58 | 0 | |
+| `npm run test:unit` | 0 | 801 | 0 | 66 files |
+| `npm run lint` | 0 | — | — | |
+| `npm run typecheck` | 0 | — | — | |
+| `npm run build` | 0 | — | — | |
+| `npm run security:check` | 0 | — | 1 warning | braces/micromatch |
+| `npm run diagnostics:providers` | 0 | 31 NOT_CONFIGURED | — | dry-run |
+| `npm run test:backup-restore` | 0 | dry-run | — | |
+| `npm audit --omit=dev` | 0 | 0 vulns | — | |
+| Playwright E2E | not run | — | — | NOT_VERIFIED |
+| Windows installer | not run | — | — | Linux host; NOT_VERIFIED |
+| CI / push | not run | — | — | forbidden |
+
 ## Architecture inventory + desktop bridge (local, unpushed)
 
 Implementation SHA: `bb5cb02e2775d70b53d2d608f08bf395a5002ce0`. Commands below ran on the working tree that became this commit (docs SHA stamp may follow).

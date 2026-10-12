@@ -15,6 +15,8 @@ Starting: `23530f5` on `cursor/product-sot-write-boundary-c293`.
 Working tree at start: only untracked `.buzzard-audit-ci.db` / `.sqlite` (left uncommitted).  
 Final HEAD: `bb5cb02e2775d70b53d2d608f08bf395a5002ce0` (local, unpushed).
 
+Later ultimate-finalization increment is recorded in TEST_RESULTS.md and SOFTWARE_COMPLETION_DATA.json `ultimateFinalization`. Product SoT remains INACTIVE. Direct ChatGPT session remains SESSION_NOT_AVAILABLE.
+
 ## Safety assertion
 
 - `BUZZARD_SALES_ENABLED` unset

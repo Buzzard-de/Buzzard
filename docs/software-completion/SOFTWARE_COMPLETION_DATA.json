@@ -111,6 +111,32 @@
       "windowsVerification": 0.0
     }
   },
+  "ultimateFinalization": {
+    "branch": "cursor/product-sot-write-boundary-c293",
+    "baselineHead": "8bf0d89fdc0e256a28c26bddaf45926162f0b5f0",
+    "softwareVersion": "1.6.7",
+    "productSotActivated": false,
+    "salesEnabled": false,
+    "dualWrite": false,
+    "simulationWritten": false,
+    "pushed": false,
+    "prCreated": false,
+    "twoWayDirect": false,
+    "chatgptSession": "SESSION_NOT_AVAILABLE",
+    "cursorConnection": "FILE_HANDOFF",
+    "windowsInstallerVerified": false,
+    "desktopBridge": {
+      "sourceImplementation": 0.90,
+      "automatedTests": 0.88,
+      "buildPackage": 0.25,
+      "cursorConnection": 0.40,
+      "chatgptOpenai": 0.25,
+      "security": 0.82,
+      "recovery": 0.80,
+      "userAcceptance": 0.0,
+      "windowsVerification": 0.0
+    }
+  },
   "method": {
     "name": "whole-software-weighted-v1",
     "note": "Separate from AI 161-weight scores. Weights were not changed. Desktop bridge is scored separately and is not added to the 148-weight total. After architecture inventory SW-SOT impl 0.62 / test 0.64; rounded Buzzard layers remain 82.0 / 82.4 / 65.1 / 19.4 / 0.0.",

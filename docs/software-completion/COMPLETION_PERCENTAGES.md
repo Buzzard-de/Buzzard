@@ -26,12 +26,12 @@ SW-SOT fractions moved to impl **0.62** / test **0.64** / integ **0.36** (reader
 
 | Slice | Score | Evidence |
 | --- | --- | --- |
-| Source implementation | 85% | Node engine + loopback UI + Windows `.cmd` |
-| Automated tests | 80% | `npm run test:bridge` 11/11 |
-| Build/package | 20% | launcher scripts; installer **NOT_VERIFIED** on Linux |
-| Cursor connection | 40% | file handoff; CLI optional |
-| ChatGPT/OpenAI | 25% | session **NOT_AVAILABLE**; file/clipboard implemented; API **NOT_CONFIGURED** |
-| Security | 75% | path allowlist, token, redaction, no command exec |
+| Source implementation | 90% | schema evaluation, port retry, handoff steps, optional OpenAI disabled |
+| Automated tests | 88% | `npm run test:bridge` 15/15 |
+| Build/package | 25% | `.cmd` + install/uninstall scripts; installer **NOT_VERIFIED** on Linux |
+| Cursor connection | 40% | file handoff; CLI optional; auto-invoke false |
+| ChatGPT/OpenAI | 25% | `SESSION_NOT_AVAILABLE`; file handoff; API **NOT_CONFIGURED** / not live |
+| Security | 82% | size limits, schema reject, production-claim ignore, HTML escape, realpath |
 | Recovery | 80% | RUNNING → BLOCKED on restart |
 | User acceptance | 0% | no Windows UAT |
 | Windows verification | 0% | environment is Linux |

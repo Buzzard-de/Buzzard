@@ -23,16 +23,26 @@ function normalize(candidate) {
   return path.resolve(raw);
 }
 
-function isInside(root, candidate) {
-  const resolvedRoot = path.resolve(root);
+function realpathIfExists(candidate) {
   const resolved = path.resolve(candidate);
+  try {
+    if (fs.existsSync(resolved)) return fs.realpathSync(resolved);
+  } catch {
+    throw fail("PATH_ESCAPE", "Path could not be canonicalized");
+  }
+  return resolved;
+}
+
+function isInside(root, candidate) {
+  const resolvedRoot = realpathIfExists(root);
+  const resolved = realpathIfExists(candidate);
   if (resolved === resolvedRoot) return true;
   const prefix = resolvedRoot.endsWith(path.sep) ? resolvedRoot : resolvedRoot + path.sep;
   return resolved.startsWith(prefix);
 }
 
 function assertAuthorized(candidate, roots = []) {
-  const resolved = normalize(candidate);
+  const resolved = realpathIfExists(normalize(candidate));
   const list = Array.isArray(roots) ? roots.filter(Boolean) : [];
   if (!list.length) {
     throw fail("WORKSPACE_NOT_AUTHORIZED", "No authorized workspace roots are configured");
@@ -63,4 +73,5 @@ module.exports = {
   assertAuthorized,
   ensureDir,
   writeAtomic,
+  realpathIfExists,
 };

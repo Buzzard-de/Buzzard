@@ -44,4 +44,15 @@ describe("product architecture inventory", () => {
     expect(ids).toContain("productStore.listProducts");
     expect(ids).toContain("catalogSeo.listProducts");
   });
+
+  it("simulates SoT migration without writing or activating", () => {
+    const { simulateProductMigration } = require("../lib/pim/productMigrationPlan");
+    const plan = simulateProductMigration();
+    expect(plan.simulation).toBe(true);
+    expect(plan.written).toBe(false);
+    expect(plan.dualWrite).toBe(false);
+    expect(plan.productSourceOfTruthActive).toBe(false);
+    expect(plan.candidate.activated).toBe(false);
+    expect(plan.nextUnauthorized).toContain("activate SoT");
+  });
 });

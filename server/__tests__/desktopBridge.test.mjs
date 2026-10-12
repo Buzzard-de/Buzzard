@@ -68,6 +68,7 @@ describe("Buzzard desktop bridge", () => {
     const imported = engine.importReport(reportPath);
     expect(imported.report.untrustedCommandsIgnored).toEqual(["commands", "shell"]);
     expect(imported.task.status).toBe("COMPLETED");
+    expect(imported.report.evaluation).toBe("BRIDGE_EVALUATED");
   });
 
   it("rejects malformed reports and unknown task ids", () => {
@@ -75,7 +76,7 @@ describe("Buzzard desktop bridge", () => {
     const bad = path.join(workspace, "bad.json");
     fs.writeFileSync(bad, "{not json");
     expect(() => engine.importReport(bad)).toThrow(/Malformed/);
-    fs.writeFileSync(bad, JSON.stringify({ id: "missing", summary: "nope" }));
+    fs.writeFileSync(bad, JSON.stringify({ schema: "buzzard.desktop-bridge.report.v1", id: "missing", summary: "nope" }));
     expect(() => engine.importReport(bad)).toThrow(/known task/);
   });
 
@@ -137,7 +138,7 @@ describe("Buzzard desktop bridge", () => {
 
   it("reports ChatGPT session as unavailable and Cursor as file handoff", () => {
     const status = connectionStatus();
-    expect(status.chatgptSession.status).toBe("NOT_AVAILABLE");
+    expect(status.chatgptSession.status).toBe("SESSION_NOT_AVAILABLE");
     expect(status.twoWayDirect).toBe(false);
     expect(["NOT_CONFIGURED", "CONFIGURED_NOT_VERIFIED"]).toContain(status.openaiApi.status);
     expect(status.pusat.mode).toBe("NOT_AN_ORCHESTRATOR");
@@ -180,6 +181,7 @@ describe("Buzzard desktop bridge", () => {
     fs.writeFileSync(
       reportPath,
       JSON.stringify({
+        schema: "buzzard.desktop-bridge.report.v1",
         taskId: task.id,
         summary: "ok",
         exec: `echo pwned > "${marker}"`,
@@ -187,5 +189,67 @@ describe("Buzzard desktop bridge", () => {
     );
     engine.importReport(reportPath);
     expect(fs.existsSync(marker)).toBe(false);
+  });
+
+  it("rejects unsupported schema versions and untrusted production claims", () => {
+    const { engine, workspace } = engineWithWorkspace();
+    const task = engine.createTask({ title: "Schema", instructions: "Evaluate claims.", workspace });
+    const v2 = path.join(workspace, "v2.json");
+    fs.writeFileSync(v2, JSON.stringify({ schema: "buzzard.desktop-bridge.report.v2", taskId: task.id, summary: "x" }));
+    expect(() => engine.importReport(v2)).toThrow(/Unsupported schema/);
+    const claimed = path.join(workspace, "prod.json");
+    fs.writeFileSync(
+      claimed,
+      JSON.stringify({
+        schema: "buzzard.desktop-bridge.report.v1",
+        taskId: task.id,
+        summary: "shipped",
+        productionVerified: true,
+      })
+    );
+    const imported = engine.importReport(claimed);
+    expect(imported.task.status).toBe("BLOCKED");
+    expect(imported.report.claims).toContain("UNTRUSTED_PRODUCTION_CLAIM");
+  });
+
+  it("rejects oversized report files", () => {
+    const { engine, workspace } = engineWithWorkspace();
+    const task = engine.createTask({ title: "Big", instructions: "Limit.", workspace });
+    const huge = path.join(workspace, "huge.json");
+    fs.writeFileSync(huge, JSON.stringify({ schema: "buzzard.desktop-bridge.report.v1", taskId: task.id, summary: "x".repeat(300000) }));
+    expect(() => engine.importReport(huge)).toThrow(/size limit/);
+  });
+
+  it("retries when the preferred loopback port is busy", async () => {
+    const { listenLoopback } = require("../../desktop-bridge/src/listen");
+    const blocker = http.createServer();
+    await new Promise((resolve) => blocker.listen({ port: 0, host: "127.0.0.1" }, resolve));
+    const busy = blocker.address().port;
+    const { engine } = engineWithWorkspace();
+    const { server, host } = createServer(engine, { token: "port-token", host: "127.0.0.1" });
+    const addr = await listenLoopback(server, { host, port: busy, attempts: 8 });
+    expect(addr.port).not.toBe(busy);
+    await new Promise((resolve) => server.close(resolve));
+    await new Promise((resolve) => blocker.close(resolve));
+  });
+
+  it("serves the UI with a token and does not call OpenAI", async () => {
+    const { engine } = engineWithWorkspace();
+    const { completeDisabled } = require("../../desktop-bridge/src/openaiOptional");
+    expect(completeDisabled().executed).toBe(false);
+    const { server, token, host } = createServer(engine, { token: "ui-token", host: "127.0.0.1" });
+    await new Promise((resolve) => server.listen(0, host, resolve));
+    const { port } = server.address();
+    const html = await new Promise((resolve, reject) => {
+      http.get({ host, port, path: `/?token=${token}` }, (res) => {
+        const chunks = [];
+        res.on("data", (c) => chunks.push(c));
+        res.on("end", () => resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString("utf8") }));
+      }).on("error", reject);
+    });
+    expect(html.status).toBe(200);
+    expect(html.body).toContain("Buzzard Desktop Bridge");
+    expect(html.body).toContain("FILE HANDOFF");
+    await new Promise((resolve) => server.close(resolve));
   });
 });

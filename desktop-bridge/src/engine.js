@@ -1,17 +1,20 @@
 const fs = require("fs");
 const path = require("path");
 const { loadState, saveSettings, saveTasks } = require("./store");
-const { assertAuthorized, ensureDir, writeAtomic, normalize } = require("./paths");
+const { assertAuthorized, ensureDir, writeAtomic, normalize, realpathIfExists } = require("./paths");
 const { appendAudit, readAudit } = require("./audit");
 const { redactValue, containsSecret } = require("./redact");
-const { connectionStatus } = require("./connections");
+const { connectionStatus, handoffSteps } = require("./connections");
 const {
   SCHEMA_TASK,
   SCHEMA_REPORT,
   TASK_STATUSES,
+  MAX_IMPORT_BYTES,
   nowIso,
   newId,
   canTransition,
+  assertSupportedSchema,
+  evaluateImportedReport,
 } = require("./schema");
 
 const UNTRUSTED_COMMAND_KEYS = ["commands", "shell", "exec", "spawn", "bash", "powershell", "cmd"];
@@ -42,7 +45,7 @@ function createEngine(options = {}) {
         openaiApiKeyPresent: Boolean(state.settings.openaiApiKeyPresent),
       },
       tasks: state.tasks.map((task) => redactValue(task)),
-      connections: connectionStatus(state.settings),
+      connections: connectionStatus(state.settings, { processRunning: Boolean(options.processRunning) }),
       salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
       productSourceOfTruthActive: false,
       orchestrator: "pusat",
@@ -59,7 +62,7 @@ function createEngine(options = {}) {
   }
 
   function addWorkspaceRoot(candidate) {
-    const resolved = normalize(candidate);
+    const resolved = realpathIfExists(normalize(candidate));
     if (!fs.existsSync(resolved) || !fs.statSync(resolved).isDirectory()) {
       const error = new Error("Workspace root must be an existing directory");
       error.code = "WORKSPACE_INVALID";
@@ -179,9 +182,13 @@ function createEngine(options = {}) {
     const inbox = ensureDir(path.join(workspace, ".buzzard-bridge", "inbox"));
     const payload = redactValue({
       schema: SCHEMA_TASK,
+      schemaVersion: 1,
       id: task.id,
+      project: "buzzard",
       title: task.title,
       instructions: task.instructions,
+      expectedOutputs: task.expectedOutputs || ["report.json"],
+      requestedTests: task.requestedTests || [],
       status: "READY",
       workspace,
       createdAt: task.createdAt,
@@ -189,7 +196,7 @@ function createEngine(options = {}) {
       orchestrator: "pusat",
       bridge: "desktop-bridge",
       connection: {
-        chatgpt: "FILE_AND_CLIPBOARD",
+        chatgpt: "FILE_HANDOFF",
         cursor: "FILE_HANDOFF",
         twoWayDirect: false,
       },
@@ -216,7 +223,14 @@ function createEngine(options = {}) {
     if (task.status === "DRAFT") task.status = "READY";
     persistTasks();
     audit("TASK_EXPORTED", { id: task.id, path: jsonPath });
-    return { task: { ...task }, files: { jsonPath, mdPath, inboxPath }, clipboardText: payload.instructions };
+    const files = { jsonPath, mdPath, inboxPath };
+    return {
+      task: { ...task },
+      files,
+      clipboardText: payload.instructions,
+      cursorAutoInvoked: false,
+      steps: handoffSteps({ files }),
+    };
   }
 
   function ignoredUntrusted(report) {
@@ -234,6 +248,12 @@ function createEngine(options = {}) {
         error.code = "REPORT_NOT_FOUND";
         throw error;
       }
+      const stat = fs.statSync(fromPath);
+      if (stat.size > MAX_IMPORT_BYTES) {
+        const error = new Error("Report file exceeds size limit");
+        error.code = "REPORT_TOO_LARGE";
+        throw error;
+      }
       try {
         report = JSON.parse(fs.readFileSync(fromPath, "utf8"));
       } catch {
@@ -247,6 +267,7 @@ function createEngine(options = {}) {
       error.code = "REPORT_MALFORMED";
       throw error;
     }
+    assertSupportedSchema(report.schema, "report");
     const untrusted = ignoredUntrusted(report);
     if (untrusted.length) {
       audit("UNTRUSTED_COMMAND_IGNORED", { keys: untrusted, id: report.id || null });
@@ -258,20 +279,25 @@ function createEngine(options = {}) {
       error.code = "REPORT_UNKNOWN_TASK";
       throw error;
     }
+    const evaluation = evaluateImportedReport(report, task);
     const clean = redactValue({
       schema: SCHEMA_REPORT,
       taskId: task.id,
       importedAt: nowIso(),
-      summary: report.summary || report.result || report.body || "",
-      status: report.status === "FAILED" ? "FAILED" : "COMPLETED",
+      summary: evaluation.summary,
+      reportStatus: report.status || null,
+      taskStatus: evaluation.status,
+      evaluation: evaluation.reason,
+      claims: evaluation.claims,
       untrustedCommandsIgnored: untrusted,
       sourcePath: fromPath,
+      sourceCommit: report.sourceCommit || report.head || null,
     });
     task.reportPath = fromPath;
     task.updatedAt = nowIso();
-    task.status = clean.status;
+    task.status = evaluation.status;
     persistTasks();
-    audit("REPORT_IMPORTED", { id: task.id, status: task.status, untrusted: untrusted.length });
+    audit("REPORT_IMPORTED", { id: task.id, status: task.status, evaluation: evaluation.reason, untrusted: untrusted.length });
     return { task: { ...task }, report: clean };
   }
 

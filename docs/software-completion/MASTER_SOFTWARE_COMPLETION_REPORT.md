@@ -117,3 +117,9 @@ Whole-software scores after this increment: code **82.0%**, tests **82.4%**, int
 Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `23530f5`. Encoded product writer/reader inventory in `server/lib/pim/productArchitecture.js`. Labeled `catalogProductSync` as a projection (`boundaryRouted: false`). Added `desktop-bridge/` file-handoff app (ChatGPT session **NOT_AVAILABLE**, Cursor **FILE_HANDOFF**, loopback token, no command execution). Pusat remains the sole orchestrator.
 
 Rounded whole-software scores **unchanged**: 82.0 / 82.4 / 65.1 / 19.4 / 0.0. Desktop readiness is separate. See `DESKTOP_BRIDGE.md`.
+
+## Addendum — ultimate finalization (local, unpushed)
+
+Baseline HEAD `8bf0d89`. Hardened desktop-bridge schema/import evaluation, loopback port retry, Windows uninstall script, realpath allowlist, and a **simulation-only** Product SoT migration plan (`written: false`). Product SoT stays **INACTIVE**. Sales stay locked. Direct ChatGPT session stays **SESSION_NOT_AVAILABLE**.
+
+Rounded Buzzard scores **unchanged**. Desktop test count 11→15. Windows verification remains **NOT_VERIFIED**.

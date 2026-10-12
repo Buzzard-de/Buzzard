@@ -1101,6 +1101,14 @@ describe("software completion — isolated engines", () => {
     expect(map.masterWriters.length).toBeGreaterThanOrEqual(8);
     expect(software.CANONICAL_ENGINES.orchestrator).toBe("pusat");
   });
+
+  it("63 SoT migration simulation does not write or activate", () => {
+    const { simulateProductMigration } = require("../lib/pim/productMigrationPlan");
+    const plan = simulateProductMigration();
+    expect(plan.written).toBe(false);
+    expect(plan.productSourceOfTruthActive).toBe(false);
+    expect(salesMode.isSalesEnabled()).toBe(false);
+  });
 });
 
 function healthBlockedLive() {

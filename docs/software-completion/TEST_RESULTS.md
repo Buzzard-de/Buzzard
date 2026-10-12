@@ -2,6 +2,19 @@
 
 All commands below were run on isolated local data or observed GitHub Actions. No production database. `BUZZARD_SALES_ENABLED` stayed unset / `0`.
 
+## Product write boundary phase 2 — pimCatalog (local, unpushed)
+
+| Command | Exit | Passed | Failed | Notes |
+| --- | --- | --- | --- | --- |
+| `npx vitest run productWriteBoundary pimCatalogPlugin softwareCompletion` | 0 | 68 | 0 | unauthorized / ACTIVE / sku required / duplicate 409 / no dual-write / conflict 409 / plugin 403 |
+| `npm run test:software` | 0 | 63 | 0 | includes software 59 persist-only `pim_products` |
+| `npm run test:ai` | 0 | 58 | 0 | Pusat unchanged |
+| `npm run test:unit` | 0 | 769 | 0 | 63 files |
+| `npm run lint` | 0 | — | — | no errors |
+| `npm run typecheck` | 0 | — | — | no errors |
+| `npm run build` | 0 | — | — | Next static export |
+| CI / push | not run | — | — | this task forbade push |
+
 ## Product write boundary (local, unpushed)
 
 | Command | Exit | Passed | Failed | Notes |

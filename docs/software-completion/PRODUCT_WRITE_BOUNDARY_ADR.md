@@ -13,7 +13,7 @@ Multiple independent product write stores exist. None is verified as production 
 | --- | --- | --- | --- |
 | PIM core | `productCore.createProduct` / `updateProduct` | `pim_core_products` | Declared authorized persistence in `canonical.js`. ACTIVE create rejected. Sales lock blocks ACTIVE transition. |
 | Product catalog PIM v3 | `productCatalogPim.createProduct` | `pim30_products` | Separate schema. Previously accepted `status` including ACTIVE. Admin required at HTTP layer. |
-| PIM catalog v1.9 | `pimCatalog.createProduct` | `pim_products` | Separate schema. Admin HTTP. Not routed in this increment. |
+| PIM catalog v1.9 | `pimCatalog.createProduct` | `pim_products` | Separate schema. Admin HTTP. Now gated by `productWriteBoundary` (`requireExplicitAuth`). Persist still `pim_products` only. |
 | Catalog SEO | `catalogSeo.createProduct` | `products` | Storefront/SEO table. Admin HTTP. Not routed. |
 | JSON catalog | `productStore.upsertProduct` | `data/buzzard_products.json` | File catalog. Admin catalog plugin. Not routed. |
 | Search index | `advancedSearch.createProduct` | `srch_products` | Search document, not commercial identity. |
@@ -44,7 +44,8 @@ Conflicting `offers` fail closed via `inventory.resolveSupplierConflict`. Suppli
 ## Validation and authorization
 
 - HTTP `/api/product-catalog-pim` writes already require admin + `products.write`.
-- Library `productCatalogPim.createProduct` now requires `authorized: true` (`requireExplicitAuth`).
+- HTTP `/api/admin/pim-catalog/products` already requires admin (`requireAnyAdmin`). Actor identity is taken from the session, never the body.
+- Library `productCatalogPim.createProduct` and `pimCatalog.createProduct` require `authorized: true` (`requireExplicitAuth`). SYSTEM/IMPORT without that flag fail closed on those two libraries.
 - ACTIVE create is rejected on the boundary for every caller.
 - SoT activation via payload is rejected.
 - `productCore` keeps inherited ADMIN/IMPORT/SYSTEM+actorId authorization so existing tests and import promotion still persist to `pim_core_products` only.
@@ -73,4 +74,18 @@ Remove the `authorizeCreate` calls and restore direct inserts. No schema migrati
 
 ## Increment implemented
 
-`productCatalogPim.createProduct` is routed through the boundary, then writes **only** to `pim30_products`. `productCore.createProduct` uses the same policy function, then writes **only** to `pim_core_products`. No dual-write. SoT inactive.
+Phase 1: `productCatalogPim.createProduct` → boundary → `pim30_products` only. `productCore.createProduct` → boundary → `pim_core_products` only.
+
+Phase 2: `pimCatalog.createProduct` → boundary (`requireExplicitAuth`) → `pim_products` only. HTTP still returns `result.product`. Missing SKU still `{ error: "sku required" }`. Duplicate SKU still 409. Actor identity is taken only from the authenticated plugin context, never from the request body.
+
+No dual-write. SoT inactive.
+
+## Remaining writer classification (not routed)
+
+| Path | Class | Rationale |
+| --- | --- | --- |
+| `catalogSeo.createProduct` | A — Canonical product master write (legacy storefront/SEO table `products`) | Mutates sellable product rows. Next candidate for the same policy, still a separate store. |
+| `productStore.upsertProduct` | A — Canonical product master write (file JSON) | Mutates `data/buzzard_products.json` product records. |
+| `advancedSearch.createProduct` | B — Read model / search index | Writes `srch_products` search documents, not master identity. Do not route through the product-master boundary. |
+| `db.js` `seed()` product inserts | C — Seed/test fixture | Inserts demo `products` rows only when the table is empty. |
+| `catalogProductSync.syncCatalogProducts` | D — Synchronization projection | Copies JSON catalog into `products`. Projection, not a new master authoring path. |

@@ -40,3 +40,4 @@ Statuses used only: PASS, PARTIAL, FAIL, BLOCKED_EXTERNAL_ACCESS, BLOCKED_HUMAN_
 | braces/micromatch | eslint-config-next | no Next 15 patch | high | no | not force-fixed | security:check | 1 warning | BLOCKED_HUMAN_DECISION |
 | Product write boundary | `productWriteBoundary` | catalog-PIM could persist ACTIVE and skip shared policy | high | yes | policy-only gateway; pim30 persist unchanged | productWriteBoundary + software 58 | SoT inactive; no dual-write | PARTIALLY_FIXED |
 | Cross-store SoT consolidation | pim_core / pim30 / pim_products / products / JSON | multiple stores | high | no without migration | ADR only | PRODUCT_WRITE_BOUNDARY_ADR.md | remaining writers | BLOCKED_HUMAN_DECISION |
+| pimCatalog create bypass | `pimCatalog.createProduct` | library write without shared policy | high | yes | requireExplicitAuth + pim_products only | productWriteBoundary + software 59 | SoT inactive; no dual-write | FIXED |

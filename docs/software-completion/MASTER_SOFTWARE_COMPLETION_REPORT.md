@@ -93,3 +93,9 @@ Live LLM, Stripe, Twilio, carrier, marketplace publish, and supplier PO send rem
 ## Human actions still required
 
 See `EXTERNAL_CONFIGURATION_CHECKLIST.md`. No secret values are included. An authorized human must supply non-production credentials and approve a guarded probe before any live read is claimed.
+
+## Addendum — product write boundary phase 2 (local, unpushed)
+
+Branch `cursor/product-sot-write-boundary-c293`, baseline HEAD `a7ec746`. `pimCatalog.createProduct` now uses `productWriteBoundary.authorizeCreate` (`requireExplicitAuth`) and still persists only to `pim_products`. HTTP still returns `result.product`. Product SoT stays **INACTIVE**. Sales stay locked. Remaining master writers: `catalogSeo.createProduct`, `productStore.upsertProduct`. Search index / seed / catalogProductSync were classified and not routed.
+
+Whole-software scores after this increment (formula, 1 decimal): code **81.8%** (unchanged rounding), tests **82.2%**, integration **64.9%**, ops **19.4%**, production **0.0%**. This addendum does not rewrite the historical table above.

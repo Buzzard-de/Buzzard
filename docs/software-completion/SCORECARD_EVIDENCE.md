@@ -6,13 +6,13 @@ Weights were **not** changed.
 
 | Layer | Previous | Now | Evidence class |
 | --- | --- | --- | --- |
-| Code | 81.6% | **81.8%** | product write boundary; SoT still inactive |
-| Tests | 81.8% | **82.1%** | local software 62/62, AI 58/58, unit 763/763 |
-| Integration | 64.6% | **64.8%** | catalog-PIM create routed through shared policy |
+| Code | 81.8% | **81.8%** | SW-SOT impl 0.48→0.52 (`pimCatalog` on the shared policy). Weighted raw 81.8378 still rounds to 81.8. SoT inactive. |
+| Tests | 82.1% | **82.2%** | local software / AI / unit after phase 2; see TEST_RESULTS.md |
+| Integration | 64.8% | **64.9%** | authorized draft persists `pim_products` only; no dual-write |
 | Operations | 19.4% | **19.4%** | sales locked; providers NOT_CONFIGURED |
 | Production | 0.0% | **0.0%** | no production access |
 
-Fractions moved only for SW-INV, SW-SHIP, SW-CUS, SW-SEC. Ops and production did not rise. A mock is not a live integration.
+Fractions moved only for SW-SOT in this phase. Ops and production did not rise. A mock is not a live integration. Scores use `whole-software-weighted-v1` rounded to 1 decimal; they are not increased merely because files were added.
 
 ## AI — 161 weights (unchanged)
 

@@ -308,7 +308,8 @@ The `pimCatalogPlugin.js` module adds central product information management:
 
 - `GET /api/pim-catalog/categories|brands|products|feed` — public catalog and marketplace feed
 - `GET /api/pim-catalog/products/:sku` — full product graph (translations, attributes, variants, media, SEO)
-- `POST|PATCH /api/admin/pim-catalog/products` — master product CRUD
+- `POST /api/admin/pim-catalog/products` — admin create via `productWriteBoundary` (`requireExplicitAuth`); persist `pim_products` only; ACTIVE rejected; HTTP returns the product row
+- `PATCH /api/admin/pim-catalog/products/:id` — update an existing PIM catalog row (not on the shared create boundary yet)
 - `POST /api/admin/pim-catalog/translations|attributes|media|seo|variants` — enrich product data
 - `GET /api/admin/pim-catalog/completeness|import-jobs` — completeness KPIs and import queue
 - `POST /api/admin/pim-catalog/import` — bulk import job boundary

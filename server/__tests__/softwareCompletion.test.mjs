@@ -997,6 +997,33 @@ describe("software completion — isolated engines", () => {
     expect(software.canonical.getCanonicalMap().productSourceOfTruthActive).toBe(false);
     expect(software.CANONICAL_ENGINES.productWriteBoundary).toBe("server/lib/pim/productWriteBoundary");
   });
+
+  it("59 pimCatalog create uses the shared write boundary and stays on pim_products", () => {
+    const pimCatalog = require("../lib/pimCatalog");
+    expect(pimCatalog.createProduct({ sku: `SW-PIM19-${Date.now()}` }).reason).toBe("UNAUTHORIZED");
+    expect(
+      pimCatalog.createProduct(
+        { sku: `SW-PIM19-ACT-${Date.now()}`, status: "ACTIVE" },
+        { authorized: true, source: "ADMIN", actorId: "vitest" }
+      ).reason
+    ).toBe("ACTIVE_CREATE_REJECTED");
+    const sku = `SW-PIM19-OK-${Date.now()}`;
+    const created = pimCatalog.createProduct(
+      { sku, status: "draft" },
+      { authorized: true, source: "ADMIN", actorId: "vitest" }
+    );
+    expect(created.error).toBeUndefined();
+    expect(created.product.sku).toBe(sku);
+    expect(created.product.status).toBe("draft");
+    expect(created.dualWrite).toBe(false);
+    expect(created.productSourceOfTruthActive).toBe(false);
+    const count = (table) => db.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE sku = ?`).get(sku).n;
+    expect(count("pim_products")).toBe(1);
+    expect(count("pim_core_products")).toBe(0);
+    expect(count("pim30_products")).toBe(0);
+    expect(count("products")).toBe(0);
+    expect(salesMode.isSalesEnabled()).toBe(false);
+  });
 });
 
 function healthBlockedLive() {

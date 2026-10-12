@@ -13,9 +13,29 @@
     "observedCiNote": "CI SUCCESS on implementation 0d76330: quality, e2e-storefront, e2e-admin. Historical 9e88695/5cd97d0 do not substitute for this SHA.",
     "basedOn": "Pusat AI completion HEAD (PR #425 @ 40c35af) plus software facade, adapters, workflow audit, worker recovery, lifecycle harness, and this gap-closure pass"
   },
+  "productWriteBoundaryPhase2": {
+    "branch": "cursor/product-sot-write-boundary-c293",
+    "baselineHead": "a7ec746f53f14d62860e3afa11e2b0a5f91bec9f",
+    "writePath": "pimCatalog.createProduct → productWriteBoundary.authorizeCreate → pim_products",
+    "requireExplicitAuth": true,
+    "dualWrite": false,
+    "productSotActivated": false,
+    "pushed": false,
+    "prCreated": false,
+    "note": "Local unpushed increment. Does not replace observed CI on 0d76330. Product SoT remains inactive.",
+    "commandsRun": {
+      "focused": { "command": "npx vitest run productWriteBoundary pimCatalogPlugin softwareCompletion", "exit": 0, "passed": 68 },
+      "test:software": { "exit": 0, "passed": 63 },
+      "test:ai": { "exit": 0, "passed": 58 },
+      "test:unit": { "exit": 0, "files": 63, "passed": 769 },
+      "lint": { "exit": 0 },
+      "typecheck": { "exit": 0 },
+      "build": { "exit": 0 }
+    }
+  },
   "method": {
     "name": "whole-software-weighted-v1",
-    "note": "Separate from AI 161-weight scores. Weights were not taken from AI_AUTOMATION_COMPLETION_DATA.json and AI weights were not changed. Fractions moved only for SW-INV, SW-SHIP, SW-CUS, SW-SEC in this gap-closure pass.",
+    "note": "Separate from AI 161-weight scores. Weights were not taken from AI_AUTOMATION_COMPLETION_DATA.json and AI weights were not changed. Gap-closure moved SW-INV/SW-SHIP/SW-CUS/SW-SEC. Product write boundary phase 2 moved only SW-SOT (impl 0.48→0.52, test 0.45→0.52, integ 0.22→0.28). Code layer 81.8378 rounds to 81.8.",
     "formula": "score = sum(weight * fraction) / sum(weight)",
     "complete": 1.0,
     "partial": "documented fraction",
@@ -32,15 +52,15 @@
   },
   "scores": {
     "codeImplementation": 81.8,
-    "testVerification": 82.1,
-    "integrationVerification": 64.8,
+    "testVerification": 82.2,
+    "integrationVerification": 64.9,
     "operationalReadiness": 19.4,
     "productionVerification": 0.0,
     "totalWeight": 148,
     "previousVerificationPass": {
-      "codeImplementation": 81.6,
-      "testVerification": 81.8,
-      "integrationVerification": 64.6,
+      "codeImplementation": 81.8,
+      "testVerification": 82.1,
+      "integrationVerification": 64.8,
       "operationalReadiness": 19.4,
       "productionVerification": 0.0
     }
@@ -84,7 +104,7 @@
     {"id":"SW-AGENTS","name":"Specialist agents","weight":5,"impl":0.95,"test":0.9,"integ":0.75,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-LLM","name":"LLM providers","weight":4,"impl":0.7,"test":0.7,"integ":0.2,"ops":0,"prod":0,"code":"IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"BLOCKED"},
     {"id":"SW-PIM","name":"Product engine","weight":8,"impl":0.85,"test":0.9,"integ":0.75,"ops":0.2,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
-    {"id":"SW-SOT","name":"Product Source of Truth","weight":3,"impl":0.48,"test":0.45,"integ":0.22,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
+    {"id":"SW-SOT","name":"Product Source of Truth","weight":3,"impl":0.52,"test":0.52,"integ":0.28,"ops":0,"prod":0,"code":"PARTIALLY_IMPLEMENTED","integration":"BLOCKED","opsStatus":"BLOCKED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-CAT","name":"Catalog/categories","weight":6,"impl":0.9,"test":0.85,"integ":0.7,"ops":0.4,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-I18N","name":"i18n/RTL","weight":5,"impl":0.95,"test":0.95,"integ":0.85,"ops":0.4,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},
     {"id":"SW-MKT","name":"Market engine","weight":5,"impl":0.9,"test":0.85,"integ":0.7,"ops":0.3,"prod":0,"code":"TESTED","integration":"INTEGRATION_TESTED","opsStatus":"PARTIALLY_IMPLEMENTED","prodStatus":"NOT_IMPLEMENTED"},

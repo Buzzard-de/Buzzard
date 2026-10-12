@@ -11,7 +11,7 @@
 | `npm run ops:local` | 0 | local pass, productionVerified false |
 | `npm run test:backup-restore` | 0 | dry-run |
 
-# Test Results (historical)
+## Historical
 
 All commands below were run on isolated local data or observed GitHub Actions. No production database. `BUZZARD_SALES_ENABLED` stayed unset / `0`.
 

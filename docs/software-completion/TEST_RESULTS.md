@@ -2,6 +2,22 @@
 
 All commands below were run on isolated local data or observed GitHub Actions. No production database. `BUZZARD_SALES_ENABLED` stayed unset / `0`.
 
+## Current SHA `0d76330` (2026-10-12)
+
+| Command | Exit | Passed | Failed | Notes |
+| --- | --- | --- | --- | --- |
+| `npm run test:software` | 0 | 61 | 0 | 55 software + 6 lifecycle; TEST_VERIFIED only |
+| `npm run test:ai` | 0 | 58 | 0 | Pusat/Guardian unchanged |
+| `npm run test:unit` | 0 | 756 | 0 | 61 files |
+| `npm run lint` | 0 | — | — | no errors |
+| `npm run typecheck` | 0 | — | — | no errors |
+| `npm run build` | 0 | — | — | Next static export |
+| `npm run security:check` | 0 | — | — | 1 warning (braces/micromatch) |
+| `npm audit --omit=dev` | 0 | 0 vulns | — | production tree |
+| `node scripts/provider-diagnostics.mjs` | 0 | 31 NOT_CONFIGURED | — | dry-run, no sockets |
+| `npm run test:backup-restore` | 0 | dry-run | — | local only |
+| GitHub Actions `0d76330` | 0 | quality + e2e-storefront + e2e-admin | 0 | run 38245468242 |
+
 ## Suites
 
 | Command | Exit | Passed | Failed | Notes |

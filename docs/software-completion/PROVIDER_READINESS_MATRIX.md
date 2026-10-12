@@ -14,11 +14,11 @@ Columns: adapter / unit / configured / creds present / auth / reachable / sandbo
 | Google AI | `server/lib/aiProviders.js` | fail-closed | no | no | no | no | no | no | NOT_CONFIGURED |
 | Stripe | `paymentService` + `software/payments` | UNCERTAIN / webhook deny | no | no | no | no | no | no | NOT_CONFIGURED |
 | PayPal | `paymentService` | blocked draft | no | no | no | no | no | no | NOT_CONFIGURED |
-| SMTP | `software/communications` | send BLOCKED | no | no | no | no | no | no | NOT_CONFIGURED |
+| SMTP | `software/communications` | draft/queued ≠ delivered; send BLOCKED | no | no | no | no | no | no | NOT_CONFIGURED |
 | Twilio | `software/voice` | BLOCKED | no | no | no | no | no | no | NOT_CONFIGURED |
 | STT/TTS/WebRTC/Realtime/digital human | `software/voice` | interface | no | no | no | no | no | no | NOT_CONFIGURED |
 | Supplier API / TecDoc | `software/supplierFeeds` | preview + URL reject | no | no | no | no | no | no | NOT_CONFIGURED |
-| DHL/DPD/GLS/Hermes/UPS | `software/carriers` | outage/malformed | no | no | no | no | no | no | NOT_CONFIGURED |
+| DHL/DPD/GLS/Hermes/UPS | `software/carriers` | outage/malformed/empty tracking | no | no | no | no | no | no | NOT_CONFIGURED |
 | Amazon/eBay/Kaufland/Allegro | marketplace hub + drafts | unpublished | no | no | no | no | no | no | NOT_CONFIGURED |
 | OTTO/eMAG/Skroutz/bol/Cdiscount | safe draft/publish-block interface; no vendor contract | `adapterExists=false`, `safeInterface=true` | no | no | no | no | no | no | NOT_IMPLEMENTED vendor adapter / safe interface TESTED |
 

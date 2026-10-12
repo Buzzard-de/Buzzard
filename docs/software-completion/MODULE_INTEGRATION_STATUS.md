@@ -16,14 +16,14 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | i18n 30 locales | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Playwright DE/EN/TR/FR/AR + `dir=rtl` for AR |
 | Market 35 | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | locale ≠ market on homepage controls |
 | Pricing | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Node canonical; price-tamper e2e |
-| Inventory | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Fail-closed reserve |
+| Inventory | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Fail-closed reserve; conflicting supplier offers not auto-resolved |
 | Supplier | PARTIALLY_IMPLEMENTED | TESTED (fixture dry-run) | BLOCKED | CSV/XML preview; live fetch BLOCKED |
 | Order / PO | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Draft ≠ send; commercial attempt blocked |
 | Payment | PARTIALLY_IMPLEMENTED | TESTED (mock) | BLOCKED | No auto financial retry |
 | Returns | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Ledger keeps customer refund ≠ supplier credit; no refund executed |
 | Marketplace | PARTIALLY_IMPLEMENTED | TESTED (mock) | BLOCKED | Classified; publish blocked |
-| Shipping / tracking | TESTED | PARTIALLY_IMPLEMENTED | BLOCKED | No live carrier; no invented GPS |
-| Customer | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Isolation + blocked message drafts |
+| Shipping / tracking | TESTED | PARTIALLY_IMPLEMENTED | BLOCKED | No live carrier; no invented GPS; out-of-order held; simulated labelled |
+| Customer | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Isolation + blocked message drafts; queued ≠ delivered |
 | Admin / Control Center | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Authenticated browser on static `:3040` + API `:3001` |
 | Storefront | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Static `:3040` homepage 18/18 + CI e2e-storefront |
 | Search | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | `software.search` uses `catalogReadService`; invented:false |

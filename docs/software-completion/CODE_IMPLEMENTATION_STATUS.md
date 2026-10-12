@@ -1,6 +1,6 @@
 # Code Implementation Status
 
-Lineage: `40c35af` (AI) → software facade → admin browser CI → `a26b51d` (adapters/workflow/checklist, CI green) → this gap-close (workflow audit, refund UNCERTAIN, honest marketplace flags). Implementation status is **code present and reachable**, not production proof.
+Lineage: `40c35af` (AI) → software facade → `8ed00ba` lifecycle/safe marketplace → `0d76330` gap-closure (PIM write auth, supplier conflict, tracking/comms fail-closed). Implementation status is **code present and reachable**, not production proof.
 
 ## New / changed implementation
 

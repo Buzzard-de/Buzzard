@@ -1,8 +1,8 @@
 # Security Remediation Report
 
-Timestamp: 2026-10-11T18:25:00Z  
+Timestamp: 2026-10-12T12:00:00Z  
 Branch: `cursor/software-completion-c293`  
-Implementation HEAD: `70c77d37d9452ed81b80e7faf3a9a82c682528b6`  
+Implementation HEAD: `0d763301c45f26be67a499d742c8bfdde2057fc0`  
 This is not a penetration test.
 
 ## Targeted remediations applied
@@ -33,7 +33,8 @@ This is not a penetration test.
 - Production refuses ephemeral `/tmp` database creation.
 - Provider diagnostics reject write URLs, private/invalid hosts, and production hosts; never open sockets; never print secrets.
 - Contact anti-abuse and Guardian fail-closed remain.
+- `/api/product-catalog-pim` writes require admin authentication in the plugin and `products.write` in `routePermissions` / `wrapRouteHandler`. Anonymous writes return 403.
 
 ## What was not performed
 
-A penetration test was **not** performed.
+A penetration test was **not** performed. Status: **PENETRATION_TEST_NOT_PERFORMED**.

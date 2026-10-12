@@ -43,14 +43,18 @@ Sales remain locked. Product SoT remains inactive. Do not run this procedure as 
 
 | Stage | Status |
 | --- | --- |
-| Local database tests | PASS |
-| CI database/unit tests | recorded against the SHA that CI ran |
+| Local database tests | PASS on `0d76330` |
+| CI database/unit tests | recorded only against the SHA CI actually ran |
 | Deployment configuration inspected (`render.yaml`) | PASS (code) |
-| Render configuration verified by operator | NOT_VERIFIED |
-| Production disk verified | NOT_VERIFIED |
-| Production DB path verified | NOT_VERIFIED |
-| Production database health verified | NOT_VERIFIED |
-| Backup/restore verified | NOT_VERIFIED |
+| Render service identity verified by operator | NOT_VERIFIED |
+| Disk exists | NOT_VERIFIED |
+| Disk attached to intended service | NOT_VERIFIED |
+| Mount path `/var/data` | NOT_VERIFIED |
+| `BUZZARD_DB_PATH` runtime value | NOT_VERIFIED |
+| Persistence after authorized restart | NOT_VERIFIED |
+| Database readiness healthy in production | NOT_VERIFIED |
+| Backup exists and is restorable | NOT_VERIFIED |
+| Rollback/recovery exercised | NOT_VERIFIED |
 | Production end-to-end | NOT_VERIFIED |
 
-Production readiness remains **0%** until an authorized operator records evidence for the NOT_VERIFIED rows.
+This gap-closure pass did **not** execute these operator steps against production. Production readiness remains **0%** until an authorized operator records evidence for the NOT_VERIFIED rows.

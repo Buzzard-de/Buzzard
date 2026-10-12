@@ -29,3 +29,12 @@ Statuses used only: PASS, PARTIAL, FAIL, BLOCKED_EXTERNAL_ACCESS, BLOCKED_HUMAN_
 | Supplier live fetch | `software/supplierFeeds` | URL path undefined | high | yes | `rejectLiveFetch` | software 47 | LIVE_FETCH_BLOCKED | PASS |
 | Financial job retry | `jobQueue` + worker | stale lock retried payment jobs | high | yes | maxRetries=0 + DLQ | software 48 | DEAD_LETTER | PASS |
 | Health env ≠ live | `software/health` | stripe dropped from blocked if env set | med | yes | always-blocked live ids | software 21, 44 | stripe/twilio blocked | PASS |
+| PIM alternate write IDOR | `productCatalogPimPlugin` + `routePermissions` | `/api/product-catalog-pim` writes unauthenticated (`wrapRouteHandler` returned null) | high | yes | admin + `products.write` | productCatalogPimPlugin + software 57 | anonymous 403 | FIXED |
+| Conflicting supplier stock | `software/inventory` | no resolver; auto-winner risk | high | yes | fail-closed, no speculative buy | software 54 + lifecycle C | CONFLICTING_SUPPLIER_OFFERS | FIXED |
+| Out-of-order / duplicate tracking | `software/tracking` | later status always overwrote | med | yes | ignore rewind; duplicate idempotent; simulated labelled | software 55 + lifecycle G | status held | FIXED |
+| Empty tracking number | `software/carriers` | blank accepted | low | yes | TRACKING_NUMBER_INVALID | software 56 | fail-closed | FIXED |
+| Queued ≠ delivered | `software/communications` | queue could be read as send | med | yes | explicit providerAccepted/delivered flags | software 56 + lifecycle I | QUEUED_NOT_DELIVERED | FIXED |
+| OTTO/eMAG/Skroutz/bol/Cdiscount vendor API | marketplace | no official contract in-repo | high | no | safe interface only | lifecycle J | classification-only | BLOCKED_VENDOR_CONTRACT |
+| Live providers (31) | diagnostics | credentials absent | high | no | offline inventory | diagnostics dry-run | 31 NOT_CONFIGURED | BLOCKED_CREDENTIAL |
+| Production Render disk | dbPaths + operator guide | no production access | high | code yes | fail-closed local | software 50, 53 | operator procedure | BLOCKED_PRODUCTION_ACCESS |
+| braces/micromatch | eslint-config-next | no Next 15 patch | high | no | not force-fixed | security:check | 1 warning | BLOCKED_HUMAN_DECISION |

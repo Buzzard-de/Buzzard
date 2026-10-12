@@ -16,5 +16,7 @@ These are **not** missing software modules in the same sense as an empty handler
 | Production DB migrate | policy | no production touch | local/isolated SQLite |
 | Production deploy | policy | out of scope | — |
 | CI on `a26b51d` | observed | run 38153709074 quality + e2e-storefront + e2e-admin SUCCESS | does not prove live providers |
+| CI on `0d76330` | observed | run 38245468242 quality + e2e-storefront + e2e-admin SUCCESS | does not prove live providers |
+| braces/micromatch | human | no Next 15 compatible patch | lint toolchain only |
 
 Health payloads list blocked ids (`llm_live`, `stripe`, `twilio`, `marketplace_publish`, `carrier_shipment_create`, `supplier_purchase_order_send`, `customer_message_send`, `product_source_of_truth`, `sales_unlock`). A green `/api/health/software` `code` object does **not** mean `liveReady`.

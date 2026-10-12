@@ -7,6 +7,7 @@ const { PRODUCT_STATUS, canTransition, SALES_BLOCKED_STATUSES } = require("../..
 const productAudit = require("./productAudit");
 const productIdentifiers = require("./productIdentifiers");
 const qualityScore = require("./qualityScore");
+const productWriteBoundary = require("./productWriteBoundary");
 
 function newId(prefix = "pim_prod") {
   return `${prefix}_${crypto.randomBytes(6).toString("hex")}`;
@@ -107,12 +108,20 @@ function getProduct(idOrSku) {
   return attachRelations(mapProduct(row));
 }
 
-function createProduct(input, { source = "ADMIN", actorId, dryRun = false } = {}) {
-  const sku = String(input.sku || "").trim();
-  if (!sku) throw new Error("SKU required");
-  if (input.status === PRODUCT_STATUS.ACTIVE) {
-    throw new Error("ACTIVE status is not allowed on create — sales lock and Product SoT remain closed");
+function createProduct(input, { source = "ADMIN", actorId, dryRun = false, authorized } = {}) {
+  const gate = productWriteBoundary.authorizeCreate(input, {
+    source,
+    actorId,
+    dryRun,
+    authorized,
+    destination: "pim_core_products",
+  });
+  if (!gate.ok) {
+    const error = new Error(gate.message);
+    error.code = gate.reason;
+    throw error;
   }
+  const sku = gate.sku;
   productIdentifiers.assertUnique({ sku, ean: input.ean, gtin: input.gtin, mpn: input.mpn });
 
   if (dryRun) {
@@ -285,4 +294,5 @@ module.exports = {
   transitionStatus,
   mapProduct,
   newId,
+  productWriteBoundary,
 };

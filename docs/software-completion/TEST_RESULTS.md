@@ -2,6 +2,16 @@
 
 All commands below were run on isolated local data or observed GitHub Actions. No production database. `BUZZARD_SALES_ENABLED` stayed unset / `0`.
 
+## Product write boundary (local, unpushed)
+
+| Command | Exit | Passed | Failed | Notes |
+| --- | --- | --- | --- | --- |
+| `npx vitest run productWriteBoundary` | 0 | 6 | 0 | unauthorized / ACTIVE / conflict / no dual-write |
+| `npm run test:software` | 0 | 62 | 0 | includes software 58 |
+| `npm run test:ai` | 0 | 58 | 0 | Pusat unchanged |
+| `npm run test:unit` | 0 | 763 | 0 | 62 files |
+| CI / push | not run | — | — | this task forbade push |
+
 ## Current SHA `0d76330` (2026-10-12)
 
 | Command | Exit | Passed | Failed | Notes |

@@ -3,12 +3,13 @@
  * MARKET_UNDERCUT stays unimplemented in this slice.
  */
 
-const SOFTWARE_VERSION = "1.6.1";
+const SOFTWARE_VERSION = "1.6.2";
 
 const CANONICAL_ENGINES = Object.freeze({
   orchestrator: "pusat",
   pricing: "server/lib/pricing.js",
   productCreate: "server/lib/pim/productCore.createProduct",
+  productWriteBoundary: "server/lib/pim/productWriteBoundary",
   productValidate: "server/lib/pim/productValidation + productValidator",
   inventory: "server/lib/operations/stockEngine + server/lib/software/inventory",
   order: "server/lib/commerce/orderService + pusat.automations.orderAutomation",

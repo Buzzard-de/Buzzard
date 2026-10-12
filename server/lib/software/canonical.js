@@ -24,7 +24,7 @@ function getCanonicalMap() {
         topic: "product_create",
         canonical: CANONICAL_ENGINES.productCreate,
         other: "orderManagement.createOrder / dbOrders / p1CatalogPlatform",
-        resolution: "Authorized product write is productCore.createProduct. Other paths stay legacy/read or catalog-mode.",
+        resolution: "Authorized product write policy is productWriteBoundary; persistence for that engine remains productCore.createProduct → pim_core_products. Other stores stay independent. Dual-write is forbidden. Product SoT stays inactive.",
       },
       {
         topic: "orchestrator",

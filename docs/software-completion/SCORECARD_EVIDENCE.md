@@ -6,9 +6,9 @@ Weights were **not** changed.
 
 | Layer | Previous | Now | Evidence class |
 | --- | --- | --- | --- |
-| Code | 81.2% | **81.6%** | implementation `0d76330` (PIM write auth, supplier conflict, tracking/comms fail-closed) |
-| Tests | 81.3% | **81.8%** | local software 61/61, AI 58/58, unit 756/756 on `0d76330` |
-| Integration | 64.1% | **64.6%** | lifecycle C/G/I extended; PIM routePermissions |
+| Code | 81.6% | **81.8%** | product write boundary; SoT still inactive |
+| Tests | 81.8% | **82.1%** | local software 62/62, AI 58/58, unit 763/763 |
+| Integration | 64.6% | **64.8%** | catalog-PIM create routed through shared policy |
 | Operations | 19.4% | **19.4%** | sales locked; providers NOT_CONFIGURED |
 | Production | 0.0% | **0.0%** | no production access |
 

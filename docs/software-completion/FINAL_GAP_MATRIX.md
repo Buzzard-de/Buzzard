@@ -38,3 +38,5 @@ Statuses used only: PASS, PARTIAL, FAIL, BLOCKED_EXTERNAL_ACCESS, BLOCKED_HUMAN_
 | Live providers (31) | diagnostics | credentials absent | high | no | offline inventory | diagnostics dry-run | 31 NOT_CONFIGURED | BLOCKED_CREDENTIAL |
 | Production Render disk | dbPaths + operator guide | no production access | high | code yes | fail-closed local | software 50, 53 | operator procedure | BLOCKED_PRODUCTION_ACCESS |
 | braces/micromatch | eslint-config-next | no Next 15 patch | high | no | not force-fixed | security:check | 1 warning | BLOCKED_HUMAN_DECISION |
+| Product write boundary | `productWriteBoundary` | catalog-PIM could persist ACTIVE and skip shared policy | high | yes | policy-only gateway; pim30 persist unchanged | productWriteBoundary + software 58 | SoT inactive; no dual-write | PARTIALLY_FIXED |
+| Cross-store SoT consolidation | pim_core / pim30 / pim_products / products / JSON | multiple stores | high | no without migration | ADR only | PRODUCT_WRITE_BOUNDARY_ADR.md | remaining writers | BLOCKED_HUMAN_DECISION |

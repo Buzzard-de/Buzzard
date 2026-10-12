@@ -1,11 +1,12 @@
 # Code Implementation Status
 
-Lineage: `40c35af` (AI) → software facade → `8ed00ba` lifecycle/safe marketplace → `0d76330` gap-closure (PIM write auth, supplier conflict, tracking/comms fail-closed). Implementation status is **code present and reachable**, not production proof.
+Lineage: `40c35af` (AI) → software facade → `8ed00ba` lifecycle/safe marketplace → `0d76330` gap-closure → product write boundary (`productWriteBoundary`, SoT still inactive). Implementation status is **code present and reachable**, not production proof.
 
 ## New / changed implementation
 
 | Path | Role |
 | --- | --- |
+| `server/lib/pim/productWriteBoundary.js` | Shared product mutation policy. Not a store. SoT stays inactive. |
 | `server/lib/software/*` | Facade. Not a second orchestrator. |
 | `server/lib/software/supplierFeeds.js` | CSV/XML/JSON dry-run preview. No live fetch. No PO. |
 | `server/lib/software/communications.js` | Message drafts; send always BLOCKED. |

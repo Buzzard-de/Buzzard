@@ -70,6 +70,7 @@ module.exports = {
         const product = productCore.createProduct(req.body || {}, {
           source: "ADMIN",
           actorId: req.adminUser.email,
+          authorized: true,
         });
         logAuditFromRequest(req, { action: "pim.product.create", entityType: "product", entityId: product.id });
         res.status(201).json({ success: true, product });

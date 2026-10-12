@@ -11,7 +11,7 @@ Columns: **code** / **test** / **production**. Production is never inferred from
 | Specialist agents | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Recommend only; extra returns/shipping/marketplace/i18n/health assistants |
 | LLM providers | IMPLEMENTED | TESTED (stub) | BLOCKED | Live keys missing |
 | Product engine | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | dry-run + ACTIVE reject; admin PIM API proven |
-| Product SoT | PARTIALLY_IMPLEMENTED | PARTIALLY_IMPLEMENTED | NOT_IMPLEMENTED | Kept closed: `productCore` is declared canonical, but `product-catalog-pim`, `pim-catalog`, storefront catalog, and search retain separate product stores/write paths. `product-catalog-pim` writes now require admin auth; storage consolidation and cross-path verification remain blocked. |
+| Product SoT | PARTIALLY_IMPLEMENTED | PARTIALLY_IMPLEMENTED | NOT_IMPLEMENTED | **INACTIVE.** Shared policy boundary `productWriteBoundary` now gates `productCore` and `productCatalogPim.createProduct`. Persistence is still per-store (no dual-write, no store chosen as SoT). Remaining writers: `pimCatalog`, `catalogSeo`, `productStore`, search index. |
 | Catalog / 50-tree | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | 50 customer L1 / 48 taxonomy / 53 shop JSON is intentional |
 | i18n 30 locales | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | Playwright DE/EN/TR/FR/AR + `dir=rtl` for AR |
 | Market 35 | TESTED | INTEGRATION_TESTED | NOT_IMPLEMENTED | locale ≠ market on homepage controls |

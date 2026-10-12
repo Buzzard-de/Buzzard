@@ -58,7 +58,11 @@ module.exports = {
 
     app.post("/api/product-catalog-pim/products", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = productCatalogPim.createProduct(req.body || {});
+      const result = productCatalogPim.createProduct(req.body || {}, {
+        authorized: true,
+        source: "ADMIN",
+        actorId: req.user?.email || req.adminUser?.email || req.adminUser?.userId || null,
+      });
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json({ product: result.product, completeness: result.completeness });
     });

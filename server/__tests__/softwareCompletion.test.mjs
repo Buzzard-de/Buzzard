@@ -986,6 +986,17 @@ describe("software completion — isolated engines", () => {
     );
     expect(resolveRoutePermission("GET", "/api/product-catalog-pim/products/:sku")).toBeNull();
   });
+
+  it("58 catalog-pim create uses the shared write boundary without dual-write or SoT activation", () => {
+    const productCatalogPim = require("../lib/productCatalogPim");
+    const denied = productCatalogPim.createProduct({ sku: `SW-PIM30-${Date.now()}` });
+    expect(denied.reason).toBe("UNAUTHORIZED");
+    expect(() =>
+      productCore.createProduct({ sku: `SW-ACT2-${Date.now()}`, title: "Nope", status: "ACTIVE" }, { dryRun: true })
+    ).toThrow(/ACTIVE/);
+    expect(software.canonical.getCanonicalMap().productSourceOfTruthActive).toBe(false);
+    expect(software.CANONICAL_ENGINES.productWriteBoundary).toBe("server/lib/pim/productWriteBoundary");
+  });
 });
 
 function healthBlockedLive() {

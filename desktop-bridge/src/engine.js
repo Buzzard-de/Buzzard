@@ -314,6 +314,46 @@ function createEngine(options = {}) {
     return snapshot();
   }
 
+  function pollInbox() {
+    const imported = state.settings.importedReports || {};
+    const found = [];
+    const errors = [];
+    for (const root of state.settings.workspaceRoots || []) {
+      const inbox = path.join(root, ".buzzard-bridge", "inbox");
+      if (!fs.existsSync(inbox)) continue;
+      const names = fs.readdirSync(inbox).filter((name) => name.endsWith(".report.json") || name.endsWith(".task.json"));
+      for (const name of names) {
+        const file = path.join(inbox, name);
+        const stamp = `${file}:${fs.statSync(file).mtimeMs}`;
+        if (imported[file] === stamp) continue;
+        try {
+          if (name.endsWith(".report.json")) {
+            found.push(importReport(file));
+          }
+          imported[file] = stamp;
+        } catch (error) {
+          errors.push({ file, code: error.code || "WATCH_ERROR", message: error.message });
+        }
+      }
+    }
+    state.settings.importedReports = imported;
+    persistSettings();
+    const heartbeat = {
+      at: nowIso(),
+      chatgptSession: "SESSION_NOT_AVAILABLE",
+      cursorAutoInvoked: false,
+      twoWayDirect: false,
+      scanned: Object.keys(imported).length,
+      imported: found.length,
+      errors: errors.length,
+    };
+    writeAtomic(path.join(state.home, "heartbeat.json"), `${JSON.stringify(heartbeat, null, 2)}\n`);
+    if (found.length || errors.length) {
+      audit("WATCH_TICK", { imported: found.length, errors: errors.length });
+    }
+    return { heartbeat, imported: found, errors };
+  }
+
   return {
     snapshot,
     listTasks,
@@ -325,6 +365,7 @@ function createEngine(options = {}) {
     exportTask,
     importReport,
     recover,
+    pollInbox,
     auditLog: (limit) => readAudit(state.home, limit),
     home: () => state.home,
   };

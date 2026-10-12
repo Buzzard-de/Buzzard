@@ -239,8 +239,36 @@ describe("Buzzard desktop bridge", () => {
     const { execFileSync } = require("node:child_process");
     const listing = execFileSync("unzip", ["-l", zip], { encoding: "utf8" });
     expect(listing).toContain("START.cmd");
+    expect(listing).toContain("WATCH.cmd");
+    expect(listing).toContain("CHATGPT-YAPISTIR.txt");
     expect(listing).toContain("src/index.js");
     expect(listing).toContain("MASAUSTUNE-KOY.ps1");
+  });
+
+  it("watch tick imports a new inbox report once and never executes it", () => {
+    const { engine, home, workspace } = engineWithWorkspace();
+    const task = engine.createTask({ title: "Watch", instructions: "Import only.", workspace });
+    const inbox = path.join(workspace, ".buzzard-bridge", "inbox");
+    fs.mkdirSync(inbox, { recursive: true });
+    const reportPath = path.join(inbox, `${task.id}.report.json`);
+    const marker = path.join(workspace, "should-not-run.txt");
+    fs.writeFileSync(
+      reportPath,
+      JSON.stringify({
+        schema: "buzzard.desktop-bridge.report.v1",
+        taskId: task.id,
+        summary: "from chatgpt paste",
+        exec: `echo no > "${marker}"`,
+      })
+    );
+    const first = engine.pollInbox();
+    expect(first.imported).toHaveLength(1);
+    expect(first.heartbeat.chatgptSession).toBe("SESSION_NOT_AVAILABLE");
+    expect(first.heartbeat.cursorAutoInvoked).toBe(false);
+    expect(fs.existsSync(marker)).toBe(false);
+    expect(fs.existsSync(path.join(home, "heartbeat.json"))).toBe(true);
+    const second = engine.pollInbox();
+    expect(second.imported).toHaveLength(0);
   });
 
   it("Windows launcher scripts create a Desktop shortcut", () => {

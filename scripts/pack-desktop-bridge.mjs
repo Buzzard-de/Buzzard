@@ -15,14 +15,16 @@ if (fs.existsSync(zipPath)) fs.rmSync(zipPath);
 
 const zipCmd = process.platform === "win32" ? "powershell" : "zip";
 if (zipCmd === "zip") {
-  execFileSync("zip", ["-r", "-q", path.basename(zipPath), "START.cmd", "MASAUSTUNE-KOY.ps1", "OKU.txt", "src"], {
-    cwd: portable,
-  });
+  execFileSync(
+    "zip",
+    ["-r", "-q", path.basename(zipPath), "START.cmd", "WATCH.cmd", "MASAUSTUNE-KOY.ps1", "OKU.txt", "CHATGPT-YAPISTIR.txt", "src"],
+    { cwd: portable }
+  );
   fs.renameSync(path.join(portable, path.basename(zipPath)), zipPath);
 } else {
   execFileSync(
     "powershell",
-    ["-NoProfile", "-Command", `Compress-Archive -Path START.cmd,MASAUSTUNE-KOY.ps1,OKU.txt,src -DestinationPath '${zipPath}' -Force`],
+    ["-NoProfile", "-Command", `Compress-Archive -Path START.cmd,WATCH.cmd,MASAUSTUNE-KOY.ps1,OKU.txt,CHATGPT-YAPISTIR.txt,src -DestinationPath '${zipPath}' -Force`],
     { cwd: portable }
   );
 }

@@ -11,6 +11,7 @@ function printHelp() {
   process.stdout.write(`Buzzard Desktop Bridge
 Usage:
   node desktop-bridge/src/index.js start
+  node desktop-bridge/src/index.js watch
   node desktop-bridge/src/index.js status
   node desktop-bridge/src/index.js recover
 
@@ -34,6 +35,13 @@ async function main(argv) {
   }
   if (command === "recover") {
     process.stdout.write(`${JSON.stringify(engine.recover(), null, 2)}\n`);
+    return;
+  }
+  if (command === "watch") {
+    const { watchForever } = require("./watch");
+    const intervalMs = Number(process.env.BUZZARD_BRIDGE_WATCH_MS || 5000);
+    process.stdout.write("24/7 file watch only. This does not connect the ChatGPT app session.\n");
+    await watchForever(engine, { intervalMs });
     return;
   }
   if (command !== "start") {

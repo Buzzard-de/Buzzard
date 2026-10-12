@@ -8,8 +8,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const API_URL = "http://localhost:3001";
-const WEB_URL = "http://localhost:3000";
+const API_PORT = Number(process.env.PLAYWRIGHT_API_PORT || 3001);
+const WEB_PORT = Number(process.env.PLAYWRIGHT_WEB_PORT || 3000);
+const API_URL = `http://localhost:${API_PORT}`;
+const WEB_URL = `http://localhost:${WEB_PORT}`;
 
 const env = {
   ...process.env,
@@ -17,6 +19,9 @@ const env = {
   NEXT_PUBLIC_SALES_ENABLED: "0",
   NEXT_PUBLIC_COMMERCE_CORE: "1",
   NEXT_PUBLIC_BUZZARD_API_URL: API_URL,
+  PORT: String(process.env.PORT || API_PORT),
+  PLAYWRIGHT_API_PORT: String(API_PORT),
+  PLAYWRIGHT_WEB_PORT: String(WEB_PORT),
   BUZZARD_COMMERCE_CORE: "1",
   BUZZARD_TEST_MODE: "1",
   FORCE_COLOR: "1",
@@ -91,13 +96,13 @@ let web = null;
 try {
   const probe = await fetch(WEB_URL, { redirect: "manual" });
   if (probe.status < 500) {
-    console.log("[e2e] Reusing existing storefront on :3000");
+    console.log(`[e2e] Reusing existing storefront on :${WEB_PORT}`);
   } else {
     throw new Error("storefront unhealthy");
   }
 } catch {
   console.log(`[e2e] Starting storefront → ${WEB_URL}`);
-  web = run("web", "npm", ["run", "dev"], root);
+  web = run("web", "npx", ["next", "dev", "-p", String(WEB_PORT)], root);
   await waitForWeb(WEB_URL);
 }
 

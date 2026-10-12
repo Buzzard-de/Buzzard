@@ -253,3 +253,7 @@ test-results/
 
 # Staged copy used only while packing the portable zip
 desktop-bridge/portable/src/
+
+# Local audit scratch DBs (never commit)
+.buzzard-audit-ci.db
+.buzzard-audit-ci.sqlite

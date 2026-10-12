@@ -1215,6 +1215,71 @@ describe("software completion — isolated engines", () => {
     software.supplierFeeds.resetCircuit("circuit-a");
   });
 
+  it("74 price rounding stays two-decimal and unprofitable quotes stay unapproved", () => {
+    const halfCent = software.pricing.quote({
+      supplierCost: 10.005,
+      shippingCost: 1.005,
+      extraCosts: 0,
+      returnReserve: 0.4,
+      marketplaceCommissionRate: 0.12,
+      taxRate: 0.19,
+    });
+    expect(halfCent.ok).toBe(true);
+    expect(halfCent.supplierCost).toBe(10.01);
+    expect(halfCent.shippingCost).toBe(1.01);
+    expect(Number.isInteger(Math.round(halfCent.salePrice * 100))).toBe(true);
+    expect(halfCent.salePrice).toBe(Number(halfCent.salePrice.toFixed(2)));
+    expect(halfCent.netProfit).toBeGreaterThanOrEqual(0.5);
+    expect(halfCent.saleApproved).toBe(true);
+
+    const missingTax = software.pricing.quote({
+      supplierCost: 12,
+      shippingCost: 3,
+      marketplaceCommissionRate: 0.15,
+    });
+    expect(missingTax.ok).toBe(true);
+    expect(missingTax.precise).toBe(false);
+    expect(missingTax.saleApproved).toBe(false);
+    expect(missingTax.missingOptional).toContain("taxRate");
+    expect(missingTax.missingOptional).toContain("returnReserve");
+
+    const expensiveLanded = software.pricing.quote({
+      supplierCost: 40,
+      shippingCost: 20,
+      extraCosts: 10,
+      returnReserve: 5,
+      marketplaceCommissionRate: 0.12,
+      taxRate: 0.19,
+      markupPercent: 0,
+      minimumMarginPercent: 0,
+    });
+    expect(expensiveLanded.ok).toBe(true);
+    expect(expensiveLanded.precise).toBe(true);
+    expect(expensiveLanded.netProfit).toBeGreaterThanOrEqual(0.5);
+    expect(expensiveLanded.saleApproved).toBe(true);
+    expect(expensiveLanded.salePrice).toBeGreaterThan(expensiveLanded.supplierCost);
+  });
+
+  it("73 terminal delivery states do not rewind to CREATED", () => {
+    const created = software.tracking.createShipment(db, {
+      orderId: `ord-term-${Date.now()}`,
+      customerId: "owner-term",
+      trackingNumber: `DHL-TERM-${Date.now()}`,
+      events: [{ status: "FAILED_DELIVERY", occurredAt: "2026-10-11T10:00:00.000Z" }],
+    });
+    const rewind = software.tracking.appendEvent(db, created.shipment.id, {
+      status: "CREATED",
+      occurredAt: "2026-10-11T20:00:00.000Z",
+    });
+    expect(rewind.statusRegressed).toBe(true);
+    const shipment = software.tracking.mapShipment(
+      db.prepare("SELECT * FROM software_shipments WHERE id = ?").get(created.shipment.id),
+      db
+    );
+    expect(shipment.status).toBe("FAILED_DELIVERY");
+    expect(shipment.location.gpsInvented).toBe(false);
+  });
+
   it("72 identity scan reports attribute conflicts without merging", () => {
     const { scanProductIdentity } = require("../lib/pim/productIdentityScan");
     const scan = scanProductIdentity(db);

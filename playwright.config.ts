@@ -57,7 +57,7 @@ export default defineConfig({
     ? undefined
     : {
         command: "node scripts/e2e-webserver.mjs",
-        url: "http://localhost:3000",
+        url: process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${process.env.PLAYWRIGHT_WEB_PORT || 3000}`,
         reuseExistingServer: true,
         timeout: 180_000,
       },

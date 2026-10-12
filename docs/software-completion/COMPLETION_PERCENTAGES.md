@@ -34,6 +34,18 @@ Only **SW-DB** moved: impl 0.90→0.92, test 0.78→0.86, integ 0.70→0.74, ops
 | Operations | 19.4% | **20.1%** |
 | Production | 0.0% | **0.0%** |
 
+## 1d. After final completion execution (same method)
+
+SW-SOT identity scan + SW-SHIP regression/validation. Playwright E2E **NOT_VERIFIED** (port 3000 busy). Production stays 0.
+
+| Layer | Before this execution | Now |
+| --- | --- | --- |
+| Code | 82.1% | **82.4%** |
+| Tests | 82.7% | **83.1%** |
+| Integration | 65.2% | **65.5%** |
+| Operations | 20.1% | **20.3%** |
+| Production | 0.0% | **0.0%** |
+
 ### Windows Desktop Bridge (separate, not mixed into 148)
 
 | Slice | Score | Evidence |

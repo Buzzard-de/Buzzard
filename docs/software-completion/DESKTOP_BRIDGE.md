@@ -31,16 +31,25 @@ Binds `127.0.0.1` only. A random token is required for UI/API routes except `/he
 
 State directory: `BUZZARD_BRIDGE_HOME` or `~/.buzzard-desktop-bridge` (not `/tmp`).
 
-## Windows packaging
+## Windows desktop shortcut
 
-This environment is Linux. Commands:
+On a Windows PC, from the Buzzard repo:
+
+```powershell
+powershell -File desktop-bridge\windows\install-desktop-shortcut.ps1
+```
+
+This creates:
+
+- Desktop: `Buzzard Desktop Bridge.lnk`
+- Start Menu: `Buzzard`
+
+Double-click the desktop shortcut. The first launch also recreates that shortcut. The browser opens on `127.0.0.1`. This environment is Linux, so desktop-shortcut creation is **NOT_VERIFIED** here.
 
 ```powershell
 desktop-bridge\windows\BuzzardBridge.cmd
-powershell -File desktop-bridge\windows\install-dev.ps1
+powershell -File desktop-bridge\windows\uninstall.ps1
 ```
-
-Installer generation and Windows UI verification: **NOT_VERIFIED**. `install-dev.ps1` only creates a Start Menu shortcut when Node is present. No code signing.
 
 ## Security
 

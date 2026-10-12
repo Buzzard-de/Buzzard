@@ -60,7 +60,8 @@ async function main(argv) {
   process.stdout.write(`Open: ${url}\n`);
   process.stdout.write(`Log: ${logFile}\n`);
   process.stdout.write("DIRECT_CHATGPT_SESSION: NOT_AVAILABLE. Mode: FILE_HANDOFF.\n");
-  if (process.env.BUZZARD_BRIDGE_OPEN_BROWSER === "1" && process.platform === "win32") {
+  const openBrowser = process.env.BUZZARD_BRIDGE_OPEN_BROWSER !== "0";
+  if (openBrowser && process.platform === "win32") {
     spawn("cmd", ["/c", "start", "", url], { detached: true, stdio: "ignore" }).unref();
   }
   const shutdown = () => {

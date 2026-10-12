@@ -233,6 +233,18 @@ describe("Buzzard desktop bridge", () => {
     await new Promise((resolve) => blocker.close(resolve));
   });
 
+  it("Windows launcher scripts create a Desktop shortcut", () => {
+    const windows = path.join(process.cwd(), "desktop-bridge", "windows");
+    const shortcut = fs.readFileSync(path.join(windows, "install-desktop-shortcut.ps1"), "utf8");
+    const launcher = fs.readFileSync(path.join(windows, "BuzzardBridge.cmd"), "utf8");
+    const uninstall = fs.readFileSync(path.join(windows, "uninstall.ps1"), "utf8");
+    expect(shortcut).toContain("GetFolderPath(\"Desktop\")");
+    expect(shortcut).toContain("Buzzard Desktop Bridge.lnk");
+    expect(launcher).toContain("install-desktop-shortcut.ps1");
+    expect(launcher).toContain("BUZZARD_BRIDGE_OPEN_BROWSER");
+    expect(uninstall).toContain("GetFolderPath(\"Desktop\")");
+  });
+
   it("serves the UI with a token and does not call OpenAI", async () => {
     const { engine } = engineWithWorkspace();
     const { completeDisabled } = require("../../desktop-bridge/src/openaiOptional");

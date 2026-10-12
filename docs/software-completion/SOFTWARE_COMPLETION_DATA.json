@@ -114,6 +114,7 @@
   "ultimateFinalization": {
     "branch": "cursor/product-sot-write-boundary-c293",
     "baselineHead": "8bf0d89fdc0e256a28c26bddaf45926162f0b5f0",
+    "implementationHead": "99b694cc880827b8ea505b7cffb70b7c71ef815f",
     "softwareVersion": "1.6.7",
     "productSotActivated": false,
     "salesEnabled": false,
@@ -139,7 +140,7 @@
   },
   "method": {
     "name": "whole-software-weighted-v1",
-    "note": "Separate from AI 161-weight scores. Weights were not changed. Desktop bridge is scored separately and is not added to the 148-weight total. After architecture inventory SW-SOT impl 0.62 / test 0.64; rounded Buzzard layers remain 82.0 / 82.4 / 65.1 / 19.4 / 0.0.",
+    "note": "Separate from AI 161-weight scores. Weights were not changed. Desktop bridge is scored separately. Rounded Buzzard layers remain 82.0 / 82.4 / 65.1 / 19.4 / 0.0 after ultimate finalization.",
     "formula": "score = sum(weight * fraction) / sum(weight)",
     "complete": 1.0,
     "partial": "documented fraction",

@@ -4,7 +4,7 @@ All commands below were run on isolated local data or observed GitHub Actions. N
 
 ## Ultimate finalization pass (local, unpushed)
 
-Implementation SHA is recorded after commit. Commands below ran on the working tree of this pass.
+Implementation SHA: `99b694cc880827b8ea505b7cffb70b7c71ef815f`. Commands below ran on the working tree that became this commit.
 
 | Command | Exit | Passed | Failed | Notes |
 | --- | --- | --- | --- | --- |

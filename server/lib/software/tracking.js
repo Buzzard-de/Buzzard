@@ -14,6 +14,7 @@ function newId(prefix) {
 function normalizeEvent(event = {}) {
   const gpsClaimed = Boolean(event.gps || event.latitude || event.longitude);
   const carrierGps = Boolean(event.carrierGps === true && gpsClaimed);
+  const simulated = event.simulated === true;
   return {
     status: event.status || TRACKING_STATUS.UNKNOWN,
     description: event.description || event.message || null,
@@ -21,7 +22,14 @@ function normalizeEvent(event = {}) {
     locationType: carrierGps ? LOCATION_TYPE.CARRIER_GPS : event.locationType || LOCATION_TYPE.CARRIER_EVENT,
     gpsInvented: false,
     carrierGps,
-    note: carrierGps ? null : gpsClaimed ? "Coordinate-like fields ignored without carrierGps=true" : null,
+    simulated,
+    note: simulated
+      ? "Simulated tracking event. Not carrier-reported live GPS."
+      : carrierGps
+        ? null
+        : gpsClaimed
+          ? "Coordinate-like fields ignored without carrierGps=true"
+          : null,
   };
 }
 
@@ -40,6 +48,7 @@ function createShipment(db, input = {}) {
 
   const id = newId("sship");
   const now = new Date().toISOString();
+  const events = Array.isArray(input.events) ? input.events : [];
   try {
     db.prepare(
       `INSERT INTO software_shipments(
@@ -54,7 +63,7 @@ function createShipment(db, input = {}) {
       input.carrier || null,
       input.status || TRACKING_STATUS.CREATED,
       input.estimatedDelivery || estimate.estimatedDelivery,
-      now,
+      events.length ? null : now,
       LOCATION_TYPE.NOT_AVAILABLE
     );
   } catch (error) {
@@ -65,7 +74,6 @@ function createShipment(db, input = {}) {
     return { ok: false, reason: "SHIPMENT_WRITE_FAILED", error: error.message };
   }
 
-  const events = Array.isArray(input.events) ? input.events : [];
   for (const event of events) {
     appendEvent(db, id, event);
   }
@@ -79,7 +87,21 @@ function createShipment(db, input = {}) {
 }
 
 function appendEvent(db, shipmentId, event) {
+  const shipment = db.prepare("SELECT * FROM software_shipments WHERE id = ?").get(shipmentId);
+  if (!shipment) {
+    return { ok: false, reason: "NOT_FOUND", gpsInvented: false, statusAdvanced: false };
+  }
   const normalized = normalizeEvent(event);
+  const existing = db
+    .prepare(
+      `SELECT id FROM software_shipment_events
+       WHERE shipment_id = ? AND status = ? AND occurred_at = ?`
+    )
+    .get(shipmentId, normalized.status, normalized.occurredAt);
+  if (existing) {
+    return { ...normalized, ok: true, duplicate: true, statusAdvanced: false, outOfOrder: false };
+  }
+
   db.prepare(
     `INSERT INTO software_shipment_events(
       id, shipment_id, status, description, occurred_at, location_type, gps_invented, raw_json
@@ -91,14 +113,30 @@ function appendEvent(db, shipmentId, event) {
     normalized.description,
     normalized.occurredAt,
     normalized.locationType,
-    JSON.stringify({ note: normalized.note, carrierGps: normalized.carrierGps })
+    JSON.stringify({
+      note: normalized.note,
+      carrierGps: normalized.carrierGps,
+      simulated: normalized.simulated,
+    })
   );
-  db.prepare(
-    `UPDATE software_shipments
-     SET status = ?, last_update = ?, location_type = ?, updated_at = CURRENT_TIMESTAMP
-     WHERE id = ?`
-  ).run(normalized.status, normalized.occurredAt, normalized.locationType, shipmentId);
-  return normalized;
+
+  const eventTime = Date.parse(normalized.occurredAt);
+  const lastTime = shipment.last_update ? Date.parse(shipment.last_update) : Number.NEGATIVE_INFINITY;
+  const newer = Number.isFinite(eventTime) && (!Number.isFinite(lastTime) || eventTime >= lastTime);
+  if (newer) {
+    db.prepare(
+      `UPDATE software_shipments
+       SET status = ?, last_update = ?, location_type = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE id = ?`
+    ).run(normalized.status, normalized.occurredAt, normalized.locationType, shipmentId);
+  }
+  return {
+    ...normalized,
+    ok: true,
+    duplicate: false,
+    statusAdvanced: newer,
+    outOfOrder: !newer,
+  };
 }
 
 function mapShipment(row, db) {
@@ -122,13 +160,22 @@ function mapShipment(row, db) {
       type: row.location_type,
       gpsInvented: Boolean(row.gps_invented),
     },
-    events: events.map((e) => ({
-      status: e.status,
-      description: e.description,
-      occurredAt: e.occurred_at,
-      locationType: e.location_type,
-      gpsInvented: Boolean(e.gps_invented),
-    })),
+    events: events.map((e) => {
+      let raw = {};
+      try {
+        raw = JSON.parse(e.raw_json || "{}");
+      } catch {
+        raw = {};
+      }
+      return {
+        status: e.status,
+        description: e.description,
+        occurredAt: e.occurred_at,
+        locationType: e.location_type,
+        gpsInvented: Boolean(e.gps_invented),
+        simulated: raw.simulated === true,
+      };
+    }),
     shipmentCreated: false,
     liveCarrier: false,
   };

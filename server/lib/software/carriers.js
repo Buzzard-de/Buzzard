@@ -46,6 +46,16 @@ function listCarriers() {
 }
 
 function lookup(input = {}) {
+  if (input.trackingNumber != null && !String(input.trackingNumber).trim()) {
+    return {
+      ok: false,
+      live: false,
+      shipmentCreated: false,
+      gpsInvented: false,
+      status: "ERROR",
+      reason: "TRACKING_NUMBER_INVALID",
+    };
+  }
   if (input.forceError === "outage") {
     return {
       ok: false,

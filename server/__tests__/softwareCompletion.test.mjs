@@ -891,6 +891,101 @@ describe("software completion — isolated engines", () => {
       "software_return_ledger",
     ]));
   });
+
+  it("54 conflicting supplier offers fail closed and never buy stock", () => {
+    const conflict = software.inventory.resolveSupplierConflict([
+      { sku: "SW-CONF-1", quantity: 8, source: "supplier_a" },
+      { sku: "SW-CONF-1", quantity: 2, source: "supplier_b" },
+    ]);
+    expect(conflict.conflict).toBe(true);
+    expect(conflict.failClosed).toBe(true);
+    expect(conflict.selected).toBeNull();
+    expect(conflict.purchaseOwnStock).toBe(false);
+
+    const reserved = software.inventory.reserve(db, {
+      sku: "SW-CONF-1",
+      quantity: 8,
+      requestQuantity: 1,
+      source: "supplier_feed",
+      lastSupplierUpdate: new Date().toISOString(),
+      offers: [
+        { sku: "SW-CONF-1", quantity: 8, source: "supplier_a" },
+        { sku: "SW-CONF-1", quantity: 2, source: "supplier_b" },
+      ],
+    });
+    expect(reserved.ok).toBe(false);
+    expect(reserved.reserved).toBe(false);
+    expect(reserved.reason).toBe("CONFLICTING_SUPPLIER_OFFERS");
+  });
+
+  it("55 tracking ignores out-of-order rewinds, duplicates, and simulated GPS claims", () => {
+    const created = software.tracking.createShipment(db, {
+      orderId: `ord-ooo-${Date.now()}`,
+      customerId: "owner-ooo",
+      trackingNumber: `DHL-OOO-${Date.now()}`,
+      carrier: "DHL",
+      events: [{ status: "IN_TRANSIT", occurredAt: "2026-10-11T10:00:00.000Z" }],
+    });
+    const later = software.tracking.appendEvent(db, created.shipment.id, {
+      status: "OUT_FOR_DELIVERY",
+      occurredAt: "2026-10-11T12:00:00.000Z",
+    });
+    const older = software.tracking.appendEvent(db, created.shipment.id, {
+      status: "CREATED",
+      occurredAt: "2026-10-11T08:00:00.000Z",
+    });
+    const duplicate = software.tracking.appendEvent(db, created.shipment.id, {
+      status: "OUT_FOR_DELIVERY",
+      occurredAt: "2026-10-11T12:00:00.000Z",
+    });
+    const simulated = software.tracking.appendEvent(db, created.shipment.id, {
+      status: "OUT_FOR_DELIVERY",
+      occurredAt: "2026-10-11T13:00:00.000Z",
+      simulated: true,
+      latitude: 52.5,
+      longitude: 13.4,
+    });
+    const shipment = software.tracking.mapShipment(
+      db.prepare("SELECT * FROM software_shipments WHERE id = ?").get(created.shipment.id),
+      db
+    );
+    expect(later.statusAdvanced).toBe(true);
+    expect(older.outOfOrder).toBe(true);
+    expect(older.statusAdvanced).toBe(false);
+    expect(shipment.status).toBe("OUT_FOR_DELIVERY");
+    expect(duplicate.duplicate).toBe(true);
+    expect(simulated.simulated).toBe(true);
+    expect(simulated.note).toMatch(/Simulated tracking event/);
+    expect(shipment.events.some((event) => event.simulated)).toBe(true);
+    expect(shipment.location.gpsInvented).toBe(false);
+  });
+
+  it("56 empty tracking numbers and queued messages are not live outcomes", () => {
+    expect(software.carriers.lookup({ trackingNumber: "   " }).reason).toBe("TRACKING_NUMBER_INVALID");
+    const drafted = software.communications.draft(db, {
+      customerId: "cust-gap",
+      channel: "email",
+      message: `Queued is not delivered ${Date.now()}`,
+    });
+    const queued = software.communications.queue(db, drafted.draft.id);
+    expect(queued.status).toBe("QUEUED");
+    expect(queued.sent).toBe(false);
+    expect(queued.delivered).toBe(false);
+    expect(queued.providerAccepted).toBe(false);
+    const blocked = software.communications.sendPrepared(db, drafted.draft.id);
+    expect(blocked.status).toBe("BLOCKED");
+    expect(blocked.providerAccepted).toBe(false);
+    expect(blocked.deliveryUnknown).toBe(false);
+  });
+
+  it("57 product-catalog-pim writes require products.write", () => {
+    const { resolveRoutePermission } = require("../lib/routePermissions");
+    expect(resolveRoutePermission("POST", "/api/product-catalog-pim/products").permission).toBe("products.write");
+    expect(resolveRoutePermission("PUT", "/api/product-catalog-pim/products/:sku/translation/:language").permission).toBe(
+      "products.write"
+    );
+    expect(resolveRoutePermission("GET", "/api/product-catalog-pim/products/:sku")).toBeNull();
+  });
 });
 
 function healthBlockedLive() {

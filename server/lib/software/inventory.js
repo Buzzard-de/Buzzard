@@ -62,6 +62,36 @@ function evaluateReliability(input = {}) {
   };
 }
 
+function resolveSupplierConflict(offers = []) {
+  const rows = Array.isArray(offers) ? offers : [];
+  if (rows.length <= 1) {
+    return {
+      conflict: false,
+      failClosed: false,
+      selected: rows[0] || null,
+      purchaseOwnStock: false,
+    };
+  }
+  const quantities = new Set(rows.map((row) => Number(row.quantity)));
+  const sources = new Set(rows.map((row) => String(row.source || "")));
+  if (quantities.size > 1 || sources.size > 1) {
+    return {
+      conflict: true,
+      failClosed: true,
+      selected: null,
+      purchaseOwnStock: false,
+      reason: "CONFLICTING_SUPPLIER_OFFERS",
+      note: "Conflicting supplier stock is not auto-resolved. Do not buy stock speculatively.",
+    };
+  }
+  return {
+    conflict: false,
+    failClosed: false,
+    selected: rows[0],
+    purchaseOwnStock: false,
+  };
+}
+
 function writeEvent(db, reservationId, eventType, details) {
   db.prepare(
     `INSERT INTO software_reservation_events(id, reservation_id, event_type, details_json)
@@ -70,6 +100,19 @@ function writeEvent(db, reservationId, eventType, details) {
 }
 
 function reserve(db, input = {}) {
+  if (Array.isArray(input.offers) && input.offers.length) {
+    const conflict = resolveSupplierConflict(input.offers);
+    if (conflict.failClosed) {
+      return {
+        ok: false,
+        reserved: false,
+        failClosed: true,
+        reason: conflict.reason,
+        purchaseOwnStock: false,
+        conflict,
+      };
+    }
+  }
   const reliability = evaluateReliability(input);
   const quantity = Number(input.requestQuantity ?? input.reserveQuantity ?? 1);
   if (!Number.isFinite(quantity) || quantity <= 0) {
@@ -218,6 +261,7 @@ function inspectReservationTables(db, sku) {
 
 module.exports = {
   evaluateReliability,
+  resolveSupplierConflict,
   reserve,
   release,
   history,

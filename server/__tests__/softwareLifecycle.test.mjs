@@ -40,6 +40,8 @@ describe("software commercial lifecycle — non-production traces", () => {
     expect(result.productSourceOfTruthActive).toBe(false);
     expect(result.productionVerified).toBe(false);
     expect(result.live).toBe(false);
+    expect(result.verification).toBe("TEST_VERIFIED");
+    expect(result.liveVerified).toBe(false);
   });
 
   it("records a structured trace for each A–K stage", () => {
@@ -86,6 +88,21 @@ describe("software commercial lifecycle — non-production traces", () => {
     expect(otto.liveEndpoint).toBeNull();
     expect(otto.publish().reason).toBe("PUBLISH_BLOCKED");
     expect(software.marketplace.listSafeAdapters()).toHaveLength(11);
+  });
+
+  it("fails closed on supplier conflict, out-of-order tracking, and queued-not-delivered mail", () => {
+    const inventory = result.traces.find((row) => row.id === "C-inventory");
+    expect(inventory.actualTransition).toContain("CONFLICT_FAIL_CLOSED");
+    expect(inventory.finalState.conflictReason).toBe("CONFLICTING_SUPPLIER_OFFERS");
+    const carrier = result.traces.find((row) => row.id === "G-carrier");
+    expect(carrier.actualTransition).toEqual(
+      expect.arrayContaining(["HELD", "IDEMPOTENT", "LABELLED", "INVALID"])
+    );
+    expect(carrier.finalState.status).toBe("OUT_FOR_DELIVERY");
+    const communications = result.traces.find((row) => row.id === "I-communications");
+    expect(communications.actualTransition).toContain("QUEUED_NOT_DELIVERED");
+    expect(communications.finalState.providerAccepted).toBe(false);
+    expect(communications.finalState.delivered).toBe(false);
   });
 
   it("does not collapse process health into provider or production readiness", () => {

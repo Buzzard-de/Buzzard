@@ -127,30 +127,51 @@ function runInventory(software, db, input) {
     lastSupplierUpdate: new Date().toISOString(),
     idempotencyKey: `lc-res-${input.sku}`,
   });
+  const conflict = software.inventory.resolveSupplierConflict([
+    { sku: input.sku, quantity: 8, source: "supplier_a" },
+    { sku: input.sku, quantity: 2, source: "supplier_b" },
+  ]);
+  const conflictReserve = software.inventory.reserve(db, {
+    sku: `${input.sku}-conflict`,
+    quantity: 8,
+    requestQuantity: 1,
+    source: "supplier_feed",
+    lastSupplierUpdate: new Date().toISOString(),
+    offers: [
+      { sku: input.sku, quantity: 8, source: "supplier_a" },
+      { sku: input.sku, quantity: 2, source: "supplier_b" },
+    ],
+  });
   return scenario({
     id: "C-inventory",
     name: "Stock reliability, no speculative purchase",
     initialState: { sku: input.sku, reserved: false },
-    events: ["evaluate_fresh", "evaluate_stale", "reserve", "reserve_duplicate"],
-    expectedTransition: ["RELIABLE", "UNRELIABLE", "RESERVED", "IDEMPOTENT"],
+    events: ["evaluate_fresh", "evaluate_stale", "reserve", "reserve_duplicate", "supplier_conflict"],
+    expectedTransition: ["RELIABLE", "UNRELIABLE", "RESERVED", "IDEMPOTENT", "CONFLICT_FAIL_CLOSED"],
     actualTransition: [
       fresh.unreliable ? "UNRELIABLE" : "RELIABLE",
       stale.unreliable ? "UNRELIABLE" : "RELIABLE",
       reserved.ok ? "RESERVED" : "BLOCKED",
       again.duplicate ? "IDEMPOTENT" : "DUPLICATE_CREATED",
+      conflict.failClosed && !conflictReserve.reserved ? "CONFLICT_FAIL_CLOSED" : "AUTO_RESOLVED",
     ],
     ledger: { purchaseOwnStock: false, speculativeBuy: false },
-    security: { failClosed: stale.failClosed === true },
+    security: { failClosed: stale.failClosed === true && conflict.failClosed === true },
     finalState: {
       reservationId: reserved.reservation?.id || null,
       purchaseOwnStock: fresh.purchaseOwnStock,
+      conflictReason: conflict.reason || null,
     },
     pass:
       fresh.unreliable === false &&
       fresh.purchaseOwnStock === false &&
       stale.unreliable === true &&
       reserved.ok === true &&
-      again.duplicate === true,
+      again.duplicate === true &&
+      conflict.failClosed === true &&
+      conflict.selected === null &&
+      conflictReserve.reserved === false &&
+      conflictReserve.reason === "CONFLICTING_SUPPLIER_OFFERS",
     evidence: "server/lib/software/inventory",
   });
 }
@@ -284,35 +305,74 @@ function runCarrier(software, db, input) {
     customerId: input.customerId,
     trackingNumber,
     carrier: "DHL",
-    events: [{ status: "IN_TRANSIT", description: "scan", latitude: 1, longitude: 2 }],
+    events: [{ status: "IN_TRANSIT", description: "scan", latitude: 1, longitude: 2, occurredAt: "2026-10-11T10:00:00.000Z" }],
   });
+  const later = software.tracking.appendEvent(db, created.shipment.id, {
+    status: "OUT_FOR_DELIVERY",
+    description: "newer scan",
+    occurredAt: "2026-10-11T12:00:00.000Z",
+  });
+  const older = software.tracking.appendEvent(db, created.shipment.id, {
+    status: "PICKED_UP",
+    description: "older scan",
+    occurredAt: "2026-10-11T08:00:00.000Z",
+  });
+  const duplicate = software.tracking.appendEvent(db, created.shipment.id, {
+    status: "OUT_FOR_DELIVERY",
+    description: "newer scan",
+    occurredAt: "2026-10-11T12:00:00.000Z",
+  });
+  const simulated = software.tracking.appendEvent(db, created.shipment.id, {
+    status: "OUT_FOR_DELIVERY",
+    description: "simulated hop",
+    occurredAt: "2026-10-11T13:00:00.000Z",
+    simulated: true,
+  });
+  const after = software.tracking.mapShipment(
+    db.prepare("SELECT * FROM software_shipments WHERE id = ?").get(created.shipment.id),
+    db
+  );
   const own = software.tracking.getForCustomer(db, { trackingNumber, customerId: input.customerId });
   const other = software.tracking.getForCustomer(db, { trackingNumber, customerId: "intruder" });
   const lookup = software.carriers.lookup({ carrier: "dhl", trackingNumber: null });
+  const empty = software.carriers.lookup({ carrier: "dhl", trackingNumber: "   " });
   return scenario({
     id: "G-carrier",
     name: "Tracking fixture, no invented GPS, IDOR denied",
     initialState: { shipmentCreated: false, gpsLive: false },
-    events: ["create_fixture", "owner_read", "intruder_read", "carrier_lookup"],
-    expectedTransition: ["FIXTURE", "OWN", "DENIED", "NO_SHIPMENT"],
+    events: ["create_fixture", "owner_read", "intruder_read", "carrier_lookup", "out_of_order", "duplicate", "simulated", "empty_tracking"],
+    expectedTransition: ["FIXTURE", "OWN", "DENIED", "NO_SHIPMENT", "HELD", "IDEMPOTENT", "LABELLED", "INVALID"],
     actualTransition: [
       created.ok && created.shipment?.location?.gpsInvented === false ? "FIXTURE" : "LIVE_GPS",
       own.ok ? "OWN" : "DENIED",
       other.denied ? "DENIED" : "LEAKED",
       lookup.shipmentCreated ? "SHIPMENT" : "NO_SHIPMENT",
+      older.outOfOrder && after.status === "OUT_FOR_DELIVERY" ? "HELD" : "REWOUND",
+      duplicate.duplicate ? "IDEMPOTENT" : "DUPLICATE_CREATED",
+      simulated.simulated ? "LABELLED" : "UNLABELLED",
+      empty.reason === "TRACKING_NUMBER_INVALID" ? "INVALID" : "ACCEPTED",
     ],
     ledger: { liveShipments: 0 },
     security: { crossCustomerDenied: other.denied === true },
     finalState: {
       gpsInvented: created.shipment?.location?.gpsInvented === true,
       liveCarrier: created.liveCarrier === true,
+      status: after.status,
+      simulated: simulated.simulated === true,
     },
     pass:
       created.ok === true &&
       created.shipment.location.gpsInvented === false &&
       own.ok === true &&
       other.denied === true &&
-      lookup.shipmentCreated === false,
+      lookup.shipmentCreated === false &&
+      later.statusAdvanced === true &&
+      older.outOfOrder === true &&
+      older.statusAdvanced === false &&
+      after.status === "OUT_FOR_DELIVERY" &&
+      duplicate.duplicate === true &&
+      simulated.simulated === true &&
+      empty.reason === "TRACKING_NUMBER_INVALID",
     evidence: "server/lib/software/tracking + carriers",
   });
 }
@@ -379,30 +439,43 @@ function runCommunications(software, db, input) {
     locale: "de",
     message: `Bestellung ${input.sku}`,
   });
+  const queued = software.communications.queue(db, de.draft?.id);
   const sent = software.communications.sendPrepared(db, de.draft?.id);
   return scenario({
     id: "I-communications",
     name: "Locale drafts, RTL detect, send blocked",
     initialState: { sent: false },
-    events: ["draft_de", "draft_ar", "draft_tr", "duplicate", "send"],
-    expectedTransition: ["de", "ar", "tr", "IDEMPOTENT", "BLOCKED"],
+    events: ["draft_de", "draft_ar", "draft_tr", "duplicate", "queue", "send"],
+    expectedTransition: ["de", "ar", "tr", "IDEMPOTENT", "QUEUED_NOT_DELIVERED", "BLOCKED"],
     actualTransition: [
       de.locale,
       ar.locale,
       tr.locale,
       dup.duplicate ? "IDEMPOTENT" : "NEW",
+      queued.status === "QUEUED" && queued.delivered === false ? "QUEUED_NOT_DELIVERED" : "DELIVERED",
       sent.sent ? "SENT" : "BLOCKED",
     ],
     ledger: { messagesSent: sent.sent ? 1 : 0 },
     security: { redacted: true },
-    finalState: { sent: sent.sent === true, rtlDetected: ar.locale === "ar" },
+    finalState: {
+      sent: sent.sent === true,
+      providerAccepted: sent.providerAccepted === true,
+      delivered: sent.delivered === true,
+      rtlDetected: ar.locale === "ar",
+    },
     pass:
       de.ok === true &&
+      de.delivered === false &&
       ar.locale === "ar" &&
       tr.locale === "tr" &&
       dup.duplicate === true &&
+      queued.status === "QUEUED" &&
+      queued.delivered === false &&
+      queued.providerAccepted === false &&
       sent.sent === false &&
-      sent.blocked === true,
+      sent.blocked === true &&
+      sent.providerAccepted === false &&
+      sent.delivered === false,
     evidence: "server/lib/software/communications",
   });
 }
@@ -548,6 +621,8 @@ function runCommercialLifecycle(software, db, input = {}) {
     productSourceOfTruthActive: false,
     productionVerified: false,
     live: false,
+    verification: "TEST_VERIFIED",
+    liveVerified: false,
     audit: { id: auditId, recorded: true },
     evidence: "software_audit.kind=commercial_lifecycle",
   };

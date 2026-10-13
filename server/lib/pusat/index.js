@@ -14,6 +14,10 @@ const agents = require("./agents");
 const automations = require("./automations");
 const integrations = require("./integrations");
 const worker = require("./worker");
+const circuitBreaker = require("./circuitBreaker");
+const events = require("./events");
+const taskConflict = require("./taskConflict");
+const schedulerBridge = require("./schedulerBridge");
 const { getHealth } = require("./health");
 const { reportingAutomation } = require("./automations");
 
@@ -42,4 +46,8 @@ module.exports = {
   automations,
   integrations,
   worker,
+  circuitBreaker,
+  events,
+  taskConflict,
+  schedulerBridge,
 };

@@ -28,6 +28,17 @@ const operationsPack = require("./operationsPack");
 const restoreGuard = require("./restoreGuard");
 const connectorInventory = require("./connectorInventory");
 const secureCommerce = require("./secureCommerce");
+const officialPaymentIngress = require("./officialPaymentIngress");
+const supplierSelection = require("./supplierSelection");
+const supplierCredit = require("./supplierCredit");
+const partialFulfillment = require("./partialFulfillment");
+const competitorPrices = require("./competitorPrices");
+const bankAdapters = require("./bankAdapters");
+const carrierWebhooks = require("./carrierWebhooks");
+const secretVault = require("./secretVault");
+const monitoringReady = require("./monitoringReady");
+const reportingModels = require("./reportingModels");
+const localeCoverage = require("./localeCoverage");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -69,4 +80,15 @@ module.exports = {
   restoreGuard,
   connectorInventory,
   secureCommerce,
+  officialPaymentIngress,
+  supplierSelection,
+  supplierCredit,
+  partialFulfillment,
+  competitorPrices,
+  bankAdapters,
+  carrierWebhooks,
+  secretVault,
+  monitoringReady,
+  reportingModels,
+  localeCoverage,
 };

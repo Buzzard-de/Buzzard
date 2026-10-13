@@ -278,10 +278,57 @@ function migrateSoftwareSchema(db) {
   `);
 
   ensureColumn(db, "software_payments", "provider_payment_id", "provider_payment_id TEXT");
+  ensureColumn(db, "software_reservations", "consumed_at", "consumed_at TEXT");
   db.exec(`
     CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_pay_provider_ref
       ON software_payments(provider, provider_payment_id)
       WHERE provider_payment_id IS NOT NULL;
+
+    CREATE TABLE IF NOT EXISTS software_price_history (
+      id TEXT PRIMARY KEY,
+      sku TEXT NOT NULL,
+      channel TEXT NOT NULL DEFAULT 'direct',
+      sale_price REAL NOT NULL,
+      net_profit REAL,
+      currency TEXT NOT NULL DEFAULT 'EUR',
+      sale_approved INTEGER NOT NULL DEFAULT 0,
+      published INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_price_hist_sku ON software_price_history(sku);
+
+    CREATE TABLE IF NOT EXISTS software_supplier_decisions (
+      id TEXT PRIMARY KEY,
+      sku TEXT NOT NULL,
+      selected_supplier TEXT,
+      status TEXT NOT NULL,
+      reason TEXT,
+      scores_json TEXT DEFAULT '{}',
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_sup_dec_sku ON software_supplier_decisions(sku);
+
+    CREATE TABLE IF NOT EXISTS software_fulfillment_plans (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      live_bound INTEGER NOT NULL DEFAULT 0,
+      sent INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_ff_order ON software_fulfillment_plans(order_id);
+
+    CREATE TABLE IF NOT EXISTS software_circuit_events (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      state TEXT NOT NULL,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_cb_name ON software_circuit_events(name);
   `);
 }
 

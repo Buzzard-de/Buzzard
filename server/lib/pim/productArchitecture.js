@@ -164,6 +164,19 @@ function getProductArchitecture() {
   };
 }
 
+function activationStatus() {
+  return {
+    productSourceOfTruthActive: false,
+    activated: false,
+    dualWrite: false,
+    candidate: CANDIDATE_STORE.table,
+    humanApprovalRequired: true,
+    productionMigration: false,
+    envFlag: process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1",
+    note: "SoT stays inactive in this slice. Activation is a separate human approval.",
+  };
+}
+
 function assertNoDualWrite(result = {}) {
   if (result.dualWrite === true) {
     throw new Error("Dual-write is forbidden");
@@ -178,5 +191,6 @@ module.exports = {
   READERS,
   CANDIDATE_STORE,
   getProductArchitecture,
+  activationStatus,
   assertNoDualWrite,
 };

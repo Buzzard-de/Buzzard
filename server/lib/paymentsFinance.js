@@ -161,19 +161,28 @@ function createRefund(id, body = {}) {
 
 function handlePaymentWebhook(body = {}) {
   const externalId = String(body.externalId || body.external_id || "").trim();
-  const status = String(body.status || "").trim();
-  if (!externalId || !status) return { error: "externalId and status required", status: 400 };
+  const claimedStatus = String(body.status || "").trim();
+  if (!externalId || !claimedStatus) return { error: "externalId and status required", status: 400 };
 
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
     .get(externalId);
   if (!intent) return { error: "Payment intent not found", status: 404 };
 
-  db.prepare(`
-    UPDATE finance_payment_intents SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(status, intent.id);
-  audit("provider_webhook", intent.id, { status });
-  return { ok: true, status: 202 };
+  audit("unsigned_webhook_isolated", intent.id, {
+    claimedStatus,
+    applied: false,
+    officialPath: "/api/commerce/webhooks/:provider",
+  });
+  return {
+    ok: true,
+    status: 202,
+    accepted: true,
+    applied: false,
+    intentStatusUnchanged: intent.status,
+    reason: "UNSIGNED_WEBHOOK_ISOLATED",
+    officialPath: "/api/commerce/webhooks/:provider",
+  };
 }
 
 function createInvoice(body = {}) {
@@ -216,18 +225,20 @@ function handlePayoutWebhook(body = {}) {
     .get(body.provider);
   if (!provider) return { error: "Unknown provider", status: 400 };
 
-  db.prepare(`
-    INSERT INTO finance_payouts(provider_id, external_payout_id, amount, currency, status, payout_date)
-    VALUES(?,?,?,?,?,?)
-  `).run(
-    provider.id,
-    body.externalPayoutId || body.external_payout_id || uuid(),
-    Number(body.amount || 0),
-    body.currency || "EUR",
-    body.status || "received",
-    body.payoutDate || body.payout_date || new Date().toISOString()
-  );
-  return { ok: true, status: 202 };
+  audit("unsigned_payout_webhook_isolated", provider.id, {
+    claimedExternalPayoutId: body.externalPayoutId || body.external_payout_id || null,
+    claimedStatus: body.status || null,
+    applied: false,
+    financialEffect: false,
+  });
+  return {
+    ok: true,
+    status: 202,
+    accepted: true,
+    applied: false,
+    financialEffect: false,
+    reason: "UNSIGNED_WEBHOOK_ISOLATED",
+  };
 }
 
 function handleDisputeWebhook(body = {}) {
@@ -236,25 +247,22 @@ function handleDisputeWebhook(body = {}) {
     .get(body.externalId || body.external_id);
   if (!intent) return { error: "Payment not found", status: 404 };
 
-  const result = db
-    .prepare(`
-      INSERT INTO finance_disputes(
-        payment_intent_id, provider_code, external_case_id, amount, currency, status, reason
-      )
-      VALUES(?,?,?,?,?,?,?)
-    `)
-    .run(
-      intent.id,
-      body.provider || "",
-      body.caseId || body.case_id || uuid(),
-      Number(body.amount || 0),
-      body.currency || intent.currency,
-      body.status || "open",
-      body.reason || ""
-    );
-
-  audit("dispute_received", result.lastInsertRowid, { paymentIntentId: intent.id });
-  return { ok: true, status: 202 };
+  audit("unsigned_dispute_webhook_isolated", intent.id, {
+    claimedCaseId: body.caseId || body.case_id || null,
+    claimedStatus: body.status || null,
+    applied: false,
+    distinctFromRefund: true,
+    distinctFromSupplierCredit: true,
+  });
+  return {
+    ok: true,
+    status: 202,
+    accepted: true,
+    applied: false,
+    reason: "UNSIGNED_WEBHOOK_ISOLATED",
+    distinctFromRefund: true,
+    distinctFromSupplierCredit: true,
+  };
 }
 
 function getFinanceOverview() {

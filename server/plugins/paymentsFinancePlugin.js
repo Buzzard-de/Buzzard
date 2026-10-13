@@ -59,7 +59,12 @@ module.exports = {
     app.post("/api/payments-finance/webhook", (req, res) => {
       const result = paymentsFinance.handlePaymentWebhook(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(result.status || 202).json({ ok: result.ok });
+      return res.status(result.status || 202).json({
+        ok: result.ok,
+        applied: result.applied === true,
+        reason: result.reason || null,
+        officialPath: result.officialPath || "/api/commerce/webhooks/:provider",
+      });
     });
 
     app.post("/api/payments-finance/invoices", (req, res) => {

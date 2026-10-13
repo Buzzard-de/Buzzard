@@ -124,4 +124,48 @@ function quote(input = {}) {
   };
 }
 
-module.exports = { quote };
+function recordHistory(db, input = {}, quoteResult = null) {
+  const quoted = quoteResult || quote(input);
+  if (!quoted.ok) return { ...quoted, recorded: false, published: false };
+  if (!db) return { ...quoted, recorded: false, published: false };
+  const crypto = require("crypto");
+  const id = `sph_${crypto.randomBytes(8).toString("hex")}`;
+  db.prepare(
+    `INSERT INTO software_price_history(
+      id, sku, channel, sale_price, net_profit, currency, sale_approved, published, details_json
+    ) VALUES(?,?,?,?,?,?,?,0,?)`
+  ).run(
+    id,
+    String(input.sku || "unknown"),
+    String(input.channel || "direct"),
+    quoted.salePrice == null ? 0 : quoted.salePrice,
+    quoted.netProfit,
+    quoted.currency || "EUR",
+    quoted.saleApproved ? 1 : 0,
+    JSON.stringify({ failClosed: Boolean(quoted.failClosed), invented: false, published: false })
+  );
+  return { ...quoted, recorded: true, published: false, historyId: id };
+}
+
+function channelQuote(input = {}) {
+  const channel = String(input.channel || "direct");
+  const commissions = {
+    direct: input.marketplaceCommissionRate ?? 0,
+    amazon: input.marketplaceCommissionRate ?? 0.15,
+    ebay: input.marketplaceCommissionRate ?? 0.12,
+    kaufland: input.marketplaceCommissionRate ?? 0.12,
+  };
+  const quoted = quote({
+    ...input,
+    marketplaceCommissionRate: commissions[channel] ?? input.marketplaceCommissionRate,
+  });
+  return {
+    ...quoted,
+    channel,
+    published: false,
+    fxEnabled: false,
+    undercutApplied: false,
+  };
+}
+
+module.exports = { quote, recordHistory, channelQuote };

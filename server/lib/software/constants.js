@@ -3,7 +3,7 @@
  * MARKET_UNDERCUT stays unimplemented in this slice.
  */
 
-const SOFTWARE_VERSION = "1.8.0";
+const SOFTWARE_VERSION = "1.9.0";
 
 const CANONICAL_ENGINES = Object.freeze({
   orchestrator: "pusat",
@@ -39,6 +39,7 @@ const RESERVATION_STATUS = Object.freeze({
   RELEASED: "RELEASED",
   EXPIRED: "EXPIRED",
   BLOCKED: "BLOCKED",
+  CONSUMED: "CONSUMED",
 });
 
 const TRACKING_STATUS = Object.freeze({

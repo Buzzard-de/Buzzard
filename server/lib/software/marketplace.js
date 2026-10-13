@@ -222,11 +222,42 @@ function createSafeAdapter(channelId) {
     publish(input = {}) {
       return publishListing({ ...input, channel: channel.id });
     },
+    importOrder(input = {}) {
+      return importChannelOrder({ ...input, channel: channel.id });
+    },
+    syncStatus(input = {}) {
+      return syncChannelStatus({ ...input, channel: channel.id });
+    },
   };
 }
 
 function listSafeAdapters() {
   return CONNECTORS.map((connector) => createSafeAdapter(connector.id));
+}
+
+function importChannelOrder(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  return {
+    ok: false,
+    imported: false,
+    live: false,
+    channel: channel.id,
+    reason: "ORDER_IMPORT_BLOCKED",
+    adapterExists: channel.adapterExists,
+    note: "Channel order import is a safe interface only. No live marketplace account is used.",
+  };
+}
+
+function syncChannelStatus(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  return {
+    ok: false,
+    synced: false,
+    live: false,
+    channel: channel.id,
+    reason: "STATUS_SYNC_BLOCKED",
+    adapterExists: channel.adapterExists,
+  };
 }
 
 function health() {
@@ -255,5 +286,7 @@ module.exports = {
   publishListing,
   createSafeAdapter,
   listSafeAdapters,
+  importChannelOrder,
+  syncChannelStatus,
   health,
 };

@@ -51,7 +51,10 @@ module.exports = {
     app.post("/api/webhooks/payment", (req, res) => {
       const result = orderAutomation.handlePaymentWebhook(req.body || {});
       if (!result.ok) return res.status(result.status || 400).json(result);
-      return res.json(result);
+      return res.status(202).json({
+        ...result,
+        officialPath: "/api/commerce/webhooks/:provider",
+      });
     });
 
     app.post("/api/admin/shipment-created", (req, res) => {

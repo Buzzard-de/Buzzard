@@ -189,6 +189,8 @@ describe("dual Stripe/PayPal adapters — existing payment engine", () => {
     const good = await stripeWebhook(created.payment, event);
     expect(good.accepted).toBe(true);
     expect(good.payment.captured).toBe(true);
+    expect(good.shipmentAuthorized).toBe(false);
+    expect(good.inventoryCommit === null || good.inventoryCommit.shipmentAuthorized === false).toBe(true);
     const badTs = Math.floor(Date.now() / 1000);
     const bad = await stripeWebhook(created.payment, { ...event, id: `evt_bad_${crypto.randomBytes(3).toString("hex")}` }, { signature: `t=${badTs},v1=deadbeef` });
     expect(bad.accepted).toBe(false);
@@ -349,6 +351,44 @@ describe("dual Stripe/PayPal adapters — existing payment engine", () => {
     );
     expect(invalid.accepted).toBe(false);
     expect(invalid.reason).toBe("WEBHOOK_SIGNATURE_INVALID");
+    expect(invalid.inventoryCommit).toBeFalsy();
+  });
+
+  it("official captured webhook consumes reserved stock once and never authorizes shipment", async () => {
+    const oid = orderId("inv-cap");
+    const sku = `INV-${Date.now()}`;
+    const reserved = software.orderInventoryBridge.reserveForOrder(db, {
+      sku,
+      quantity: 2,
+      requestQuantity: 1,
+      source: "supplier_feed",
+      lastSupplierUpdate: new Date().toISOString(),
+      orderId: oid,
+    });
+    expect(reserved.ok).toBe(true);
+    const created = await engine.createPayment(
+      db,
+      { provider: "stripe", orderId: oid, expectedAmount: 20, idempotencyKey: `inv-${crypto.randomBytes(3).toString("hex")}` },
+      { client: stripeClient({ paymentIntentId: `pi_inv_${crypto.randomBytes(3).toString("hex")}` }) }
+    );
+    const event = {
+      id: `evt_inv_${crypto.randomBytes(3).toString("hex")}`,
+      type: "payment_intent.succeeded",
+      data: { object: { id: created.payment.providerPaymentId || "pi_inv", amount: 2000, currency: "eur", status: "succeeded" } },
+    };
+    const captured = await stripeWebhook(created.payment, event);
+    expect(captured.applied).toBe(true);
+    expect(captured.payment.captured).toBe(true);
+    expect(captured.inventoryCommit.ok).toBe(true);
+    expect(captured.inventoryCommit.consumed).toBe(1);
+    expect(captured.shipmentAuthorized).toBe(false);
+
+    const again = await stripeWebhook(created.payment, event);
+    expect(again.duplicate).toBe(true);
+    expect(again.applied).toBe(false);
+    expect(again.inventoryCommit).toBeFalsy();
+    const row = db.prepare("SELECT status FROM software_reservations WHERE order_id = ?").get(oid);
+    expect(row.status).toBe("CONSUMED");
   });
 
   it("B paypal timeout, cancel, mismatch, invalid order, unavailable", async () => {

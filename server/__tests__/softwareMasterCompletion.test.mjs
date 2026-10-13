@@ -119,6 +119,79 @@ describe("master software completion — P0-P10 local", () => {
     expect(multi.purchaseOrders).toHaveLength(2);
   });
 
+  it("P0 official captured payment consumes reserved stock once; unsigned and cancel stay safe", () => {
+    const sku = `SW-BR-${Date.now()}-${crypto.randomBytes(2).toString("hex")}`;
+    const orderId = `ord-br-${Date.now()}`;
+    const stock = {
+      sku,
+      quantity: 2,
+      requestQuantity: 1,
+      source: "supplier_feed",
+      lastSupplierUpdate: new Date().toISOString(),
+      orderId,
+    };
+    const reserved = software.orderInventoryBridge.reserveForOrder(db, stock);
+    expect(reserved.ok).toBe(true);
+
+    const unsigned = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId,
+      official: false,
+      unverifiedWebhook: true,
+      payment: { captured: true, state: "PAYMENT_CAPTURED", amountCents: 1990, currency: "EUR" },
+    });
+    expect(unsigned.ok).toBe(false);
+    expect(unsigned.reason).toBe("UNVERIFIED_WEBHOOK");
+    expect(unsigned.consumed).toBe(0);
+
+    const authorizedOnly = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId,
+      official: true,
+      payment: { captured: false, state: "PAYMENT_AUTHORIZED", amountCents: 1990, currency: "EUR" },
+    });
+    expect(authorizedOnly.ok).toBe(false);
+    expect(authorizedOnly.reason).toBe("PAYMENT_NOT_CAPTURED");
+
+    const payment = {
+      id: `pay-${orderId}`,
+      captured: true,
+      state: "PAYMENT_CAPTURED",
+      amountCents: 1990,
+      currency: "EUR",
+    };
+    const first = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId,
+      official: true,
+      payment,
+    });
+    expect(first.ok).toBe(true);
+    expect(first.consumed).toBe(1);
+    expect(first.shipmentAuthorized).toBe(false);
+
+    const again = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId,
+      official: true,
+      payment,
+    });
+    expect(again.ok).toBe(true);
+    expect(again.results.every((row) => row.duplicate === true)).toBe(true);
+
+    const cancelConsumed = software.orderInventoryBridge.releaseOnCancel(db, { orderId });
+    expect(cancelConsumed.skippedConsumed).toBe(1);
+    expect(cancelConsumed.released).toBe(0);
+    expect(cancelConsumed.liveOrderCancelled).toBe(false);
+
+    const cancelOrder = `ord-can-${Date.now()}`;
+    const reservedCancel = software.orderInventoryBridge.reserveForOrder(db, {
+      ...stock,
+      sku: `${sku}-c`,
+      orderId: cancelOrder,
+    });
+    expect(reservedCancel.ok).toBe(true);
+    const released = software.orderInventoryBridge.releaseOnCancel(db, { orderId: cancelOrder });
+    expect(released.released).toBe(1);
+    expect(released.skippedConsumed).toBe(0);
+  });
+
   it("P2 Product SoT stays inactive and duplicate scan does not merge", () => {
     const architecture = require("../lib/pim/productArchitecture");
     const plan = require("../lib/pim/productMigrationPlan");
@@ -129,6 +202,12 @@ describe("master software completion — P0-P10 local", () => {
     expect(scan.written).toBe(false);
     expect(scan.merged).toBe(false);
     expect(plan.simulateProductMigration(db).written).toBe(false);
+    const guards = plan.verifyDryRunGuards(db);
+    expect(guards.ok).toBe(true);
+    expect(guards.written).toBe(false);
+    expect(guards.activated).toBe(false);
+    expect(guards.checks.backupRollbackPresent).toBe(true);
+    expect(guards.checks.noAutoMerge).toBe(true);
   });
 
   it("P3 supplier selection fails closed without guessing", () => {
@@ -199,6 +278,30 @@ describe("master software completion — P0-P10 local", () => {
     });
     expect(bridged.pusat).toBe(true);
     expect(bridged.job.payload.taskId).toBe(submitted.task.id);
+  });
+
+  it("P3 abandoned worker lock is recovered without a second orchestrator", () => {
+    const submitted = pusat.submitTask({
+      title: "Abandoned recover",
+      agentCode: "stock_assistant",
+      payload: { sku: `REC-${Date.now()}`, quantity: 0, source: "unverified" },
+      createdBy: "test@pusat",
+      enqueue: false,
+    });
+    const job = pusat.worker.enqueueTaskJob(submitted.task.id, {
+      createdBy: "test@pusat",
+      priority: "CRITICAL",
+    });
+    const jobQueue = require("../lib/jobQueue");
+    const expired = new Date(Date.now() - 60_000).toISOString();
+    db.prepare(
+      "UPDATE core_background_jobs SET status = 'RUNNING', lock_owner = ?, lock_expires_at = ? WHERE id = ?"
+    ).run("crashed-worker", expired, job.id);
+    const recovered = pusat.worker.recoverAbandoned();
+    expect(recovered.recovered).toBeGreaterThanOrEqual(1);
+    const stored = jobQueue.getJob(job.id);
+    expect(stored.status).toBe("RETRYING");
+    expect(stored.lockOwner).toBeFalsy();
   });
 
   it("P4 price history records without publishing or undercut", () => {

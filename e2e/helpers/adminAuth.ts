@@ -49,3 +49,10 @@ export async function seedAdminSession(page: Page, request: APIRequestContext) {
     { api: API, token },
   );
 }
+
+export async function waitForAdminReady(page: Page) {
+  await page.locator(".admin-loading").waitFor({ state: "hidden", timeout: 20_000 }).catch(() => undefined);
+  if (/\/admin\/login\//.test(page.url())) {
+    throw new Error("admin_session_lost_redirected_to_login");
+  }
+}

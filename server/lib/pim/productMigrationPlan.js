@@ -42,4 +42,28 @@ function simulateProductMigration(db = null) {
   };
 }
 
-module.exports = { simulateProductMigration };
+function verifyDryRunGuards(db = null) {
+  const simulation = simulateProductMigration(db);
+  const scan = simulation.identityMapping?.scan || {};
+  const checks = {
+    written: simulation.written === false,
+    dualWrite: simulation.dualWrite === false,
+    sotInactive: simulation.productSourceOfTruthActive === false,
+    envSotInactive: process.env.BUZZARD_PRODUCT_SOT_ACTIVE !== "1",
+    salesLocked: process.env.BUZZARD_SALES_ENABLED !== "1",
+    backupRollbackPresent: Array.isArray(simulation.backupRollback) && simulation.backupRollback.length >= 2,
+    identityScanReadOnly: scan.written === false && scan.merged === false,
+    noAutoMerge: String(simulation.duplicatePolicy || "").includes("no auto-merge"),
+    verificationQueriesPresent: Array.isArray(simulation.verificationQueries) && simulation.verificationQueries.length > 0,
+  };
+  return {
+    ok: Object.values(checks).every(Boolean),
+    written: false,
+    activated: false,
+    merged: false,
+    checks,
+    simulation,
+  };
+}
+
+module.exports = { simulateProductMigration, verifyDryRunGuards };

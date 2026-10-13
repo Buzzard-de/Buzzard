@@ -85,7 +85,7 @@ console.log("[e2e] Starting Buzzard stack for Playwright…");
 
 let api = null;
 if (await isHealthy(API_URL)) {
-  console.log("[e2e] Reusing existing API on :3001");
+  console.log(`[e2e] Reusing existing API on :${API_PORT}`);
 } else {
   console.log(`[e2e] Starting API → ${API_URL}`);
   api = run("api", "npm", ["run", "dev:api"], root);

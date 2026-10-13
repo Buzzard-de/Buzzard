@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { ADMIN_EMAIL, ADMIN_PASSWORD, API, seedAdminSession } from "./helpers/adminAuth";
+import { ADMIN_EMAIL, ADMIN_PASSWORD, API, seedAdminSession, waitForAdminReady } from "./helpers/adminAuth";
 
 test.describe("Admin E2E (Part 5 foundation)", () => {
   test.skip(!process.env.NEXT_PUBLIC_BUZZARD_API_URL && !process.env.BUZZARD_API_URL, "API URL required for admin E2E");
@@ -36,6 +36,7 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
   test("authenticated dashboard loads", async ({ page, request }) => {
     await seedAdminSession(page, request);
     await page.goto("/admin/");
+    await waitForAdminReady(page);
     await expect(page).not.toHaveURL(/\/admin\/login\//);
     await expect(page.locator("body")).toContainText(/BUZZARD|Admin|Dashboard/i);
   });
@@ -43,13 +44,15 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
   test("Control Center loads", async ({ page, request }) => {
     await seedAdminSession(page, request);
     await page.goto("/admin/control-center/");
+    await waitForAdminReady(page);
     await expect(page).not.toHaveURL(/\/admin\/login\//);
-    await expect(page.locator("body")).toContainText(/Control Center/i);
+    await expect(page.locator("h1")).toContainText(/Control Center/i);
   });
 
   test("Sessions page loads", async ({ page, request }) => {
     await seedAdminSession(page, request);
     await page.goto("/admin/sessions/");
+    await waitForAdminReady(page);
     await expect(page).not.toHaveURL(/\/admin\/login\//);
     await expect(page.locator("body")).toContainText(/Session/i);
   });
@@ -57,6 +60,7 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
   test("Control Center tabs expose approvals, commerce, workers, and blocked integrations", async ({ page, request }) => {
     await seedAdminSession(page, request);
     await page.goto("/admin/control-center/");
+    await waitForAdminReady(page);
     await expect(page).not.toHaveURL(/\/admin\/login\//);
     const tabs = page.locator("nav.cc-tabs");
     await expect(tabs).toBeVisible();

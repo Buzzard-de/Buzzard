@@ -3,17 +3,21 @@ const DEFAULT_ORIGINS = Object.freeze([
   "http://localhost:3000",
   "http://localhost:3001",
   "http://localhost:3040",
+  "http://localhost:3010",
+  "http://localhost:3002",
   "http://127.0.0.1:8000",
   "http://127.0.0.1:3000",
   "http://127.0.0.1:3001",
   "http://127.0.0.1:3040",
+  "http://127.0.0.1:3010",
+  "http://127.0.0.1:3002",
   "https://buzzard24.de",
   "https://www.buzzard24.de",
   "null",
 ]);
 
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1"]);
-const LOOPBACK_PORTS = new Set(["3000", "3001", "3040", "8000"]);
+const LOOPBACK_PORTS = new Set(["3000", "3001", "3002", "3010", "3040", "8000"]);
 
 function extraOrigins(raw = process.env.BUZZARD_CORS_ORIGINS) {
   return String(raw || "")

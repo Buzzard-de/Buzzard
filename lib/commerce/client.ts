@@ -1,4 +1,4 @@
-import { getAccountToken } from "@/lib/account/client";
+import { withAccountCredentials } from "@/lib/admin/authTransport";
 import type {
   CommerceCartResponse,
   CommerceCompleteResponse,
@@ -20,15 +20,6 @@ function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
 }
 
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? getAccountToken() : null;
-  return {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
 export class CommerceClientError extends Error {
   constructor(
     message: string,
@@ -48,7 +39,6 @@ async function request<T>(
   if (!base) throw new CommerceClientError("commerce.apiUnavailable", "commerce.apiUnavailable", 503);
 
   const headers: HeadersInit = {
-    ...authHeaders(),
     ...(init?.headers || {}),
   };
   if (init?.idempotencyKey) {
@@ -57,7 +47,7 @@ async function request<T>(
 
   let res: Response;
   try {
-    res = await fetch(`${base}${path}`, { ...init, headers });
+    res = await fetch(`${base}${path}`, withAccountCredentials({ ...init, headers }));
   } catch {
     throw new CommerceClientError("commerce.networkError", "commerce.networkError", 0);
   }

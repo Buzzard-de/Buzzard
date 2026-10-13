@@ -24,5 +24,8 @@ This does not overwrite earlier Phase/verification reports.
 - Production not probed.
 - Sales / Product SoT / live payments remain off.
 - Seed admin material still exists in the repo for local bootstrap.
-- Customer account tokens remain in `sessionStorage` (separate follow-up).
+- Customer account tokens are no longer stored in `sessionStorage`.
+  The customer session uses an HttpOnly `buzzard_customer` cookie and CSRF.
 - No production readiness claim.
+- Sales / live payments stay disabled on purpose.
+- This change is not deployed to production by this work.

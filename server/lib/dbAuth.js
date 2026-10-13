@@ -13,9 +13,10 @@ function verifyToken(token) {
 }
 
 function extractToken(req) {
-  const header = req.headers.authorization || "";
+  const header = req.headers?.authorization || "";
   if (header.startsWith("Bearer ")) return header.slice(7).trim();
-  return null;
+  const { readCustomerSessionCookie, readAdminSessionCookie } = require("./authCookies");
+  return readAdminSessionCookie(req) || readCustomerSessionCookie(req);
 }
 
 function requireAuth(req, res) {

@@ -9,6 +9,11 @@ const {
   serializeCookie,
 } = require("../lib/authCookies");
 const { extractToken } = require("../lib/auth");
+const customerAuth = require("../lib/customerAuth");
+const {
+  applyCustomerSessionCookies,
+  readCustomerSessionCookie,
+} = require("../lib/authCookies");
 
 function mockRes() {
   const headers = {};
@@ -65,5 +70,30 @@ describe("admin session cookies", () => {
   it("never serializes the session cookie without HttpOnly", () => {
     const cookie = serializeCookie("buzzard_admin", "x", { httpOnly: true });
     expect(cookie).toMatch(/HttpOnly/);
+  });
+});
+
+describe("customer session cookies", () => {
+  it("sets an HttpOnly customer session cookie", () => {
+    const res = mockRes();
+    applyCustomerSessionCookies(res, { token: "cust-secret", csrfToken: "csrf-c" });
+    const cookies = res.getHeader("set-cookie");
+    const session = cookies.find((c) => c.startsWith("buzzard_customer="));
+    expect(session).toMatch(/HttpOnly/);
+    expect(session).toMatch(/SameSite=None/);
+    expect(session).toContain("cust-secret");
+  });
+
+  it("extracts the customer token from the cookie", () => {
+    expect(
+      customerAuth.extractToken({
+        headers: { cookie: "buzzard_customer=customer-cookie-token" },
+      })
+    ).toBe("customer-cookie-token");
+    expect(
+      readCustomerSessionCookie({
+        headers: { cookie: "buzzard_customer=customer-cookie-token" },
+      })
+    ).toBe("customer-cookie-token");
   });
 });

@@ -24,14 +24,21 @@ function validateCsrfForRequest(req, res) {
   if (!STATE_CHANGING.has((req.method || "GET").toUpperCase())) return true;
   if (usesBearerAuth(req)) return true;
 
-  const publicPaths = ["/api/admin/login", "/api/admin/login/2fa", "/api/account/login", "/api/auth/login"];
+  const publicPaths = [
+    "/api/admin/login",
+    "/api/admin/login/2fa",
+    "/api/account/login",
+    "/api/account/register",
+    "/api/auth/login",
+    "/api/auth/register",
+  ];
   const path = (req.url || "").split("?")[0];
   if (publicPaths.some((p) => path === p || path.startsWith(p))) return true;
 
   if (process.env.BUZZARD_CSRF_ENFORCE === "0") return true;
 
-  const { readAdminSessionCookie } = require("./authCookies");
-  const sessionCookie = readAdminSessionCookie(req);
+  const { readAnySessionCookie } = require("./authCookies");
+  const sessionCookie = readAnySessionCookie(req);
   const cookieToken = getCsrfCookie(req);
   if (!sessionCookie && !cookieToken) return true;
 

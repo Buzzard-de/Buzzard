@@ -18,6 +18,9 @@ const {
   CUSTOMER_AUDIT_ACTIONS,
 } = require("../lib/customer/customerExperienceAudit");
 
+const { applyCustomerSessionCookies, clearCustomerSessionCookies } = require("../lib/authCookies");
+const { generateCsrfToken } = require("../lib/csrf");
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateRegister(body) {
@@ -83,9 +86,13 @@ module.exports = {
         /* non-blocking */
       }
 
+      const csrfToken = generateCsrfToken();
+      applyCustomerSessionCookies(res, { token: session.token, csrfToken });
       return res.status(201).json({
         success: true,
         token: session.token,
+        csrfToken,
+        tokenStoredInCookie: true,
         user: session.user,
         emailVerificationPending: !result.customer.emailVerified,
       });
@@ -94,11 +101,14 @@ module.exports = {
     app.post("/api/account/login", (req, res) => {
       const result = login(req.body?.email, req.body?.password, customerStore.verifyPassword, req);
       if (!result.success) return res.status(401).json(result);
-      return res.json(result);
+      const csrfToken = generateCsrfToken();
+      applyCustomerSessionCookies(res, { token: result.token, csrfToken });
+      return res.json({ ...result, csrfToken, tokenStoredInCookie: true });
     });
 
     app.post("/api/account/logout", (req, res) => {
       logout(extractToken(req), req);
+      clearCustomerSessionCookies(res);
       return res.json({ success: true });
     });
 

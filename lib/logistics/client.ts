@@ -1,8 +1,6 @@
 import type { Fulfillment, ReturnRequest, Shipment, SupplierOrder } from "./types";
 import { apiBaseUrl } from "@/lib/api/config";
-import { withAdminCredentials } from "@/lib/admin/authTransport";
-
-const TOKEN_KEY = "buzzard_account_token";
+import { withAccountCredentials, withAdminCredentials } from "@/lib/admin/authTransport";
 
 function apiBase(): string {
   return apiBaseUrl();
@@ -14,22 +12,13 @@ function requireApiBase(): string {
   return base;
 }
 
-function accountHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
-
 export async function fetchOrderShipments(orderNumber: string): Promise<Shipment[]> {
   const base = apiBase();
   if (!base) return [];
-  const res = await fetch(`${base}/api/account/orders/${encodeURIComponent(orderNumber)}/shipments`, {
-    headers: accountHeaders(),
-  });
+  const res = await fetch(
+    `${base}/api/account/orders/${encodeURIComponent(orderNumber)}/shipments`,
+    withAccountCredentials()
+  );
   if (!res.ok) return [];
   const data = (await res.json()) as { shipments?: Shipment[] };
   return data.shipments || [];
@@ -41,11 +30,10 @@ export async function submitReturnRequest(
 ): Promise<ReturnRequest | null> {
   const base = apiBase();
   if (!base) return null;
-  const res = await fetch(`${base}/api/account/orders/${encodeURIComponent(orderNumber)}/returns`, {
-    method: "POST",
-    headers: accountHeaders(),
-    body: JSON.stringify(body),
-  });
+  const res = await fetch(
+    `${base}/api/account/orders/${encodeURIComponent(orderNumber)}/returns`,
+    withAccountCredentials({ method: "POST", body: JSON.stringify(body) })
+  );
   if (!res.ok) return null;
   const data = (await res.json()) as { returnRequest?: ReturnRequest };
   return data.returnRequest || null;

@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   // `output: "export"` or unknown /produkt/[slug] paths overlay a
   // generateStaticParams error instead of a 404. PIM API slugs stay
   // out of generateStaticParams (Product SoT inactive; no dual-publish).
+  // Isolated distDir keeps `next build` from overwriting a live `next dev` cache.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   ...(process.env.NODE_ENV === "production" ? { output: "export" as const } : {}),
   images: { unoptimized: true },
   trailingSlash: true,

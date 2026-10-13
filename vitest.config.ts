@@ -19,6 +19,7 @@ export default defineConfig({
       "lib/market-engine/marketEngine.test.ts",
       "lib/categories/i18n.test.ts",
       "lib/storefront/mergePolicy.test.ts",
+      "lib/nextDistIsolation.test.ts",
       "lib/home/homepage.test.ts",
       "lib/mobile/isolation.test.ts",
       "lib/mobile/categoryFilters.test.ts",

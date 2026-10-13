@@ -8,9 +8,12 @@ async function resolvePublicProduct(request: import("@playwright/test").APIReque
   if (!catalog.ok()) return null;
   const body = await catalog.json();
   const product = (body.items || []).find(
-    (item: { id?: string; price?: number; slug?: string; name?: string }) => item?.id && Number(item.price) > 0
+    (item: { id?: string; price?: number; slug?: string; name?: string; title?: string; seo?: { slug?: string } }) =>
+      item?.id && Number(item.price) > 0
   );
-  return (product as { id: string; slug?: string; name?: string } | undefined) || null;
+  if (!product) return null;
+  const slug = product.slug || product.seo?.slug;
+  return { id: product.id, slug, name: product.name || product.title };
 }
 
 async function assertNoHorizontalOverflow(page: import("@playwright/test").Page) {

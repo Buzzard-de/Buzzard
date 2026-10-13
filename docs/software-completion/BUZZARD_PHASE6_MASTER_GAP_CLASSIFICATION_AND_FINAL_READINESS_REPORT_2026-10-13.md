@@ -541,4 +541,4 @@ The system is **not** launch-ready for paid production. Local catalog-mode softw
 
 ---
 
-Final HEAD (after report commit): see the following pin commit on this branch.
+Final HEAD (report commit): 7d8888d3306569f986063f198377cad960d00083

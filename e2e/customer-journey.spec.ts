@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { VIEWPORTS } from "../playwright.config";
+import { postCommerce } from "./helpers/commerceRequest";
 
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
@@ -102,14 +103,20 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     await assertNoHorizontalOverflow(page);
   });
 
-  test("invalid product cannot enter the cart", async ({ request }) => {
-    const cartRes = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-bad-${Date.now()}`, country: "DE" },
+  test("invalid product cannot enter the cart", async ({ request }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== "chromium-desktop",
+      "API cart invariant is project-independent; extra projects share the IP cart limiter",
+    );
+    const cartRes = await postCommerce(request, `${API}/api/commerce/cart`, {
+      sessionId: `e2e-bad-${Date.now()}`,
+      country: "DE",
     });
     expect(cartRes.ok()).toBeTruthy();
     const cartId = (await cartRes.json()).cart.id;
-    const addRes = await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId: "missing-product-xyz", quantity: 1 },
+    const addRes = await postCommerce(request, `${API}/api/commerce/cart/${cartId}/items`, {
+      productId: "missing-product-xyz",
+      quantity: 1,
     });
     expect(addRes.ok()).toBeFalsy();
     const body = await addRes.json();
@@ -129,18 +136,24 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     await assertNoHorizontalOverflow(page);
   });
 
-  test("product → cart → checkout → READINESS_TEST success", async ({ page, request }) => {
+  test("product → cart → checkout → READINESS_TEST success", async ({ page, request }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== "chromium-desktop",
+      "checkout API setup is project-independent; extra projects share the IP cart limiter",
+    );
     const product = await resolvePublicProduct(request);
     test.skip(!product, "no public catalog product in this isolated environment");
     if (!product) return;
 
-    const cartRes = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-ui-${Date.now()}`, country: "DE" },
+    const cartRes = await postCommerce(request, `${API}/api/commerce/cart`, {
+      sessionId: `e2e-ui-${Date.now()}`,
+      country: "DE",
     });
     expect(cartRes.ok()).toBeTruthy();
     const cartId = (await cartRes.json()).cart.id;
-    const addRes = await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId: product.id, quantity: 1 },
+    const addRes = await postCommerce(request, `${API}/api/commerce/cart/${cartId}/items`, {
+      productId: product.id,
+      quantity: 1,
     });
     expect(addRes.ok()).toBeTruthy();
 

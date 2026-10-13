@@ -20,6 +20,7 @@ import { getAccountToken } from "@/lib/account/client";
 
 interface LocaleContextValue {
   locale: BuzzardLocale;
+  ready: boolean;
   setLocale: (locale: BuzzardLocale, manual?: boolean) => void;
   t: (key: string) => string;
   dir: "ltr" | "rtl";
@@ -83,6 +84,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     (): LocaleContextValue => ({
       locale,
+      ready,
       setLocale,
       t: (key: string) => translate(locale, key),
       dir: localeDirection(locale),
@@ -92,7 +94,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       formatDate: (value) => formatDate(value, locale),
       formatDateTime: (value) => formatDateTime(value, locale),
     }),
-    [locale, setLocale]
+    [locale, ready, setLocale]
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

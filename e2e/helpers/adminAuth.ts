@@ -2,7 +2,7 @@ import type { APIRequestContext, Page } from "@playwright/test";
 
 export const ADMIN_EMAIL = process.env.BUZZARD_ADMIN_EMAIL || "admin@buzzard.de";
 export const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "BuzzardAdmin2026!";
-export const API = (process.env.NEXT_PUBLIC_BUZZARD_API_URL || process.env.BUZZARD_API_URL || "http://127.0.0.1:3001").replace(
+export const API = (process.env.BUZZARD_API_URL || process.env.NEXT_PUBLIC_BUZZARD_API_URL || "http://127.0.0.1:3001").replace(
   /\/$/,
   "",
 );

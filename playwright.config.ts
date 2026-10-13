@@ -34,7 +34,7 @@ export default defineConfig({
     },
     {
       name: "chromium-desktop",
-      testMatch: /customer-journey|admin\.spec\.ts|admin-pim-core\.spec\.ts/,
+      testMatch: /customer-journey|admin\.spec\.ts|admin-pim-core\.spec\.ts|storefront-bridge\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
     },
     {

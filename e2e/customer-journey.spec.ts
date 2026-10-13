@@ -7,7 +7,9 @@ async function resolvePublicProduct(request: import("@playwright/test").APIReque
   const catalog = await request.get(`${API}/api/catalog/products?page=1&limit=5`);
   if (!catalog.ok()) return null;
   const body = await catalog.json();
-  const product = (body.items || []).find((item: { id?: string; price?: number }) => item?.id && Number(item.price) > 0);
+  const product = (body.items || []).find(
+    (item: { id?: string; price?: number; slug?: string; name?: string }) => item?.id && Number(item.price) > 0
+  );
   return (product as { id: string; slug?: string; name?: string } | undefined) || null;
 }
 
@@ -49,6 +51,28 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
   test("homepage loads", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).toBeVisible();
+    await assertNoHorizontalOverflow(page);
+  });
+
+  test("homepage skip link is keyboard reachable and targets main", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.keyboard.press("Tab");
+    const skip = page.locator("a.skip-link");
+    await expect(skip).toBeFocused();
+    await expect(skip).toHaveAttribute("href", "#maincontent");
+    await skip.press("Enter");
+    await expect(page.locator("#maincontent")).toBeVisible();
+  });
+
+  test("product detail page loads for a public catalog slug", async ({ page, request }) => {
+    const product = await resolvePublicProduct(request);
+    test.skip(!product?.slug, "no public catalog product slug in this isolated environment");
+    if (!product?.slug) return;
+
+    await page.goto(`/produkt/${product.slug}/`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("body")).not.toContainText(/Internal Server Error/i);
+    await expect(page.locator("body")).toBeVisible();
+    await expect(page.locator("#maincontent")).toBeVisible();
     await assertNoHorizontalOverflow(page);
   });
 

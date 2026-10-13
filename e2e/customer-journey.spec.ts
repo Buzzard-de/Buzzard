@@ -67,15 +67,12 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     await expect(page.locator("#maincontent")).toBeVisible();
   });
 
-  test("product detail page loads for a public catalog slug", async ({ page, request }) => {
-    const product = await resolvePublicProduct(request);
-    test.skip(!product?.slug, "no public catalog product slug in this isolated environment");
-    if (!product?.slug) return;
-
-    await page.goto(`/produkt/${product.slug}/`, { waitUntil: "domcontentloaded" });
-    await expect(page.locator("body")).not.toContainText(/Internal Server Error/i);
-    await expect(page.locator("body")).toBeVisible();
+  test("product detail page loads for a static catalog slug", async ({ page }) => {
+    // Static export PDP params come from lib/products, not the PIM /api/catalog list.
+    await page.goto("/produkt/premium-bremsscheibe-testprodukt/", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("body")).not.toContainText(/missing param|Internal Server Error/i);
     await expect(page.locator("#maincontent")).toBeVisible();
+    await expect(page.locator("body")).toContainText(/Bremsscheibe|Buzzard/i);
     await assertNoHorizontalOverflow(page);
   });
 

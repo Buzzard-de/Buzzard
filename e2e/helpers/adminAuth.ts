@@ -14,7 +14,8 @@ export async function loginAdminApi(request: APIRequestContext): Promise<string>
     const probe = await request.get(`${API}/api/admin/me`, {
       headers: { Authorization: `Bearer ${cachedToken}` },
     });
-    if (probe.ok()) return cachedToken;
+    // 429 is a limiter response, not proof the session is invalid.
+    if (probe.ok() || probe.status() === 429) return cachedToken;
     cachedToken = undefined;
   }
 

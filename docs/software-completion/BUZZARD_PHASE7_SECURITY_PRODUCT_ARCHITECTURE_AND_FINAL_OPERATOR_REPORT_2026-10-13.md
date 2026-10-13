@@ -429,4 +429,4 @@ The system is **not** paid-launch ready. Local catalog-mode software on this HEA
 
 ---
 
-Final HEAD (after report commit): see the following pin commit on this branch.
+Final HEAD (report commit): d9085b5c6b79b21242ccdf1a6f7c2c2c7f5d686b

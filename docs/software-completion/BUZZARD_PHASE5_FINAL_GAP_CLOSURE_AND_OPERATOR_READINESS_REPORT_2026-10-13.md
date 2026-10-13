@@ -418,5 +418,5 @@ Render disk attach, runtime `BUZZARD_DB_PATH`, restart persistence, production b
 
 ## 17. Ending HEAD
 
-Report content commit SHA is pinned in the follow-up commit on this branch.  
+Report content commit: `7fd0d8f0d679797902bfa1caec847a15afa8df8a`.  
 Working tree after this file: local commits only; **ahead of origin; not pushed**.

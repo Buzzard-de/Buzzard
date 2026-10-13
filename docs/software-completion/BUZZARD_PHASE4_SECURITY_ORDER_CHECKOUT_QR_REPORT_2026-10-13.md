@@ -394,4 +394,4 @@ Minimum net product profit remains **EUR 0.50** (`MIN_NET_PROFIT_EUR = 0.5`). No
 - No invented credentials, provider capabilities, or infrastructure evidence.
 - Pusat is still the only orchestrator.
 
-Ending HEAD (this report commit): see Git log after commit `docs/software-completion/BUZZARD_PHASE4_SECURITY_ORDER_CHECKOUT_QR_REPORT_2026-10-13.md`.
+Ending HEAD (this report commit): `36db56005cec1fb25e2e9d2701a038084893bc21`.

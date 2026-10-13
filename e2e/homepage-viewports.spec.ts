@@ -662,7 +662,9 @@ test.describe("homepage viewports", () => {
     await expect(marketSelect.locator("option")).toHaveCount(35);
     const marketBefore = await marketSelect.inputValue();
     await languageSelect.selectOption("tr");
-    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.tr);
+    await expect(languageSelect).toHaveValue("tr");
+    await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", "tr");
+    await expect(page.locator(".home-hero-campaign .home-hero-title")).toHaveText(HERO_TITLE.tr);
     await expect(marketSelect).toHaveValue(marketBefore);
     await assertNoHorizontalOverflow(page);
     await page.screenshot({ path: "test-results/homepage-de-desktop.png", fullPage: false });

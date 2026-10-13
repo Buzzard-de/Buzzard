@@ -14,7 +14,7 @@ test.describe("Admin PIM Core E2E (Part 6)", () => {
     await page.goto("/admin/pim-core/");
     await waitForAdminReady(page);
     await expect(page).not.toHaveURL(/\/admin\/login\//);
-    await expect(page.locator("h1, h2, body")).toContainText(/Product Core|PIM Core|PIM/i);
+    await expect(page.getByRole("heading", { name: /Product Core|PIM Core|PIM/i })).toBeVisible();
   });
 
   test("Product list shows demo SKU", async ({ page, request }) => {

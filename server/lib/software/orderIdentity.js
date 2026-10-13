@@ -180,6 +180,9 @@ function describeContract() {
     aliasKinds: Object.values(ORDER_ALIAS_KIND),
     destructiveMigration: false,
     productSotActive: false,
+    canonicalOrderIdColumn: false,
+    columnDecision:
+      "Rejected. Alias lookup already joins reservations, payments, cancels and returns. A new column would dual-write without changing store IDs.",
     unresolvedRisks: [
       "Historical reservation.order_id values stay as written; consume/release joins through aliases.",
       "Numeric OMS ids can collide with unrelated numeric strings if adopted blindly — bind only with an explicit kind.",

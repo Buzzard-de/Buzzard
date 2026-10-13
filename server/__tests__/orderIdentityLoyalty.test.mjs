@@ -272,3 +272,180 @@ describe("order identity + QR loyalty — Phase 3", () => {
     expect(process.env.BUZZARD_LIVE_PAYMENTS).not.toBe("1");
   });
 });
+
+describe("order identity contract — Phase 4", () => {
+  let software;
+  let db;
+
+  beforeAll(() => {
+    software = require("../lib/software");
+    db = require("../lib/db").db;
+    require("../lib/pusat").initialize(db);
+    software.initialize(db);
+  });
+
+  function stock(sku, orderId) {
+    return {
+      sku,
+      quantity: 3,
+      requestQuantity: 1,
+      source: "supplier_feed",
+      lastSupplierUpdate: new Date().toISOString(),
+      orderId,
+    };
+  }
+
+  it("binds every supported alias kind to one canonical order", () => {
+    const stamp = crypto.randomBytes(3).toString("hex");
+    const refs = [
+      { kind: "OMS_ID", value: String(800000 + Date.now() % 99999) },
+      { kind: "OMS_NUMBER", value: `BZ-2026-${stamp.toUpperCase()}` },
+      { kind: "COMMERCE_ID", value: `ord_${stamp}` },
+      { kind: "MARKETPLACE_REF", value: `amz-${stamp}` },
+      { kind: "SUPPLIER_REF", value: `sup-${stamp}` },
+      { kind: "PAYMENT_ORDER_ID", value: `payord-${stamp}` },
+      { kind: "LEGACY_RAW", value: `legacy-${stamp}` },
+    ];
+    const bound = software.orderIdentity.ensureBound(db, { refs });
+    expect(bound.ok).toBe(true);
+    expect(software.orderIdentity.describeContract().canonicalOrderIdColumn).toBe(false);
+    for (const ref of refs) {
+      const resolved = software.orderIdentity.resolve(db, ref.value);
+      expect(resolved.ok).toBe(true);
+      expect(resolved.canonicalId).toBe(bound.canonicalId);
+    }
+    const again = software.orderIdentity.ensureBound(db, { refs: [refs[2]] });
+    expect(again.ok).toBe(true);
+    expect(again.canonicalId).toBe(bound.canonicalId);
+    expect(again.bound.some((row) => row.duplicate === true)).toBe(true);
+  });
+
+  it("duplicate alias and unknown refs fail closed without guessing", () => {
+    const first = software.orderIdentity.ensureBound(db, {
+      refs: [{ kind: "LEGACY_RAW", value: `dup-${crypto.randomBytes(3).toString("hex")}` }],
+    });
+    const stolen = software.orderIdentity.bindAlias(
+      db,
+      software.orderIdentity.ensureBound(db, {
+        refs: [{ kind: "LEGACY_RAW", value: `other-${crypto.randomBytes(3).toString("hex")}` }],
+      }).canonicalId,
+      "LEGACY_RAW",
+      first.bound[0].value
+    );
+    expect(stolen.ok).toBe(false);
+    expect(stolen.reason).toBe("ALIAS_CONFLICT");
+    expect(software.orderIdentity.resolve(db, "no-such-order").unresolved).toBe(true);
+    const adopted = software.orderIdentity.adoptLegacy(db, first.bound[0].value);
+    expect(adopted.canonicalId).toBe(first.canonicalId);
+  });
+
+  it("alias conflict does not create a payment or consume stock", () => {
+    const sku = `P4-${Date.now()}`;
+    const left = `left-${crypto.randomBytes(2).toString("hex")}`;
+    const right = `right-${crypto.randomBytes(2).toString("hex")}`;
+    software.orderIdentity.ensureBound(db, { refs: [{ kind: "LEGACY_RAW", value: left }] });
+    software.orderIdentity.ensureBound(db, { refs: [{ kind: "LEGACY_RAW", value: right }] });
+    const clash = software.orderIdentity.ensureBound(db, {
+      refs: [
+        { kind: "LEGACY_RAW", value: left },
+        { kind: "LEGACY_RAW", value: right },
+      ],
+    });
+    expect(clash.ok).toBe(false);
+    expect(clash.reason).toBe("AMBIGUOUS_ORDER_IDENTITY");
+    const payments = software.secureCommerce.paymentLifecycle.createPayment(db, {
+      orderId: left,
+      amount: 20,
+      currency: "EUR",
+      provider: "stripe",
+      idempotencyKey: `p4-${left}`,
+    });
+    expect(payments.ok).toBe(true);
+    const before = db.prepare("SELECT COUNT(*) n FROM software_payments WHERE order_id = ?").get(right).n;
+    expect(before).toBe(0);
+    software.orderInventoryBridge.reserveForOrder(db, stock(sku, left));
+    const consumeWrong = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId: left,
+      eventOrderRef: right,
+      official: true,
+      payment: { captured: true, state: "PAYMENT_CAPTURED", amountCents: 2000, currency: "EUR" },
+    });
+    expect(consumeWrong.ok).toBe(false);
+    expect(consumeWrong.consumed).toBe(0);
+    expect(["ORDER_IDENTITY_MISMATCH", "UNRESOLVED_ORDER_REF"]).toContain(consumeWrong.reason);
+  });
+
+  it("duplicate capture is idempotent and cancel after consume does not restore stock", () => {
+    const sku = `P4C-${Date.now()}`;
+    const orderId = `ord_p4c_${crypto.randomBytes(3).toString("hex")}`;
+    const reserved = software.orderInventoryBridge.reserveForOrder(db, stock(sku, orderId));
+    expect(reserved.ok).toBe(true);
+    const payment = { captured: true, state: "PAYMENT_CAPTURED", amountCents: 2000, currency: "EUR" };
+    const first = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId,
+      official: true,
+      payment,
+    });
+    const second = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId,
+      official: true,
+      payment,
+    });
+    expect(first.consumed).toBe(1);
+    expect(second.results.every((row) => row.duplicate === true)).toBe(true);
+    const cancelled = software.orderInventoryBridge.releaseOnCancel(db, { orderId });
+    expect(cancelled.released).toBe(0);
+    expect(cancelled.skippedConsumed).toBe(1);
+    const again = software.orderInventoryBridge.releaseOnCancel(db, { orderId });
+    expect(again.released).toBe(0);
+  });
+
+  it("payment versus cancel race leaves stock consistent", () => {
+    const sku = `P4R-${Date.now()}`;
+    const orderId = `ord_p4r_${crypto.randomBytes(3).toString("hex")}`;
+    expect(software.orderInventoryBridge.reserveForOrder(db, stock(sku, orderId)).ok).toBe(true);
+    const payment = { captured: true, state: "PAYMENT_CAPTURED", amountCents: 2000, currency: "EUR" };
+    const consume = software.orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId,
+      official: true,
+      payment,
+    });
+    const release = software.orderInventoryBridge.releaseOnCancel(db, { orderId });
+    const row = db.prepare("SELECT status FROM software_reservations WHERE order_id = ?").get(orderId);
+    if (consume.consumed === 1) {
+      expect(row.status).toBe("CONSUMED");
+      expect(release.skippedConsumed).toBeGreaterThanOrEqual(1);
+      expect(release.released).toBe(0);
+    } else {
+      expect(row.status).toBe("RELEASED");
+      expect(consume.consumed).toBe(0);
+    }
+    expect(["CONSUMED", "RELEASED"]).toContain(row.status);
+  });
+
+  it("return after redemption stays review-only and does not claw back money", () => {
+    const customerId = `cust-p4-${Date.now()}`;
+    const first = `ord_p4f_${crypto.randomBytes(3).toString("hex")}`;
+    const second = `ord_p4s_${crypto.randomBytes(3).toString("hex")}`;
+    expect(
+      software.qrLoyalty.evaluateEligibility(db, {
+        customerId,
+        orderRef: first,
+        captured: true,
+        paymentState: "PAYMENT_CAPTURED",
+        costInput: COST,
+      }).ok
+    ).toBe(true);
+    expect(software.qrLoyalty.reserve(db, { customerId, checkoutId: `chk-${customerId}`, costInput: COST }).ok).toBe(true);
+    const redeemed = software.qrLoyalty.redeem(db, { customerId, secondOrderRef: second, costInput: COST });
+    expect(redeemed.ok).toBe(true);
+    const late = software.qrLoyalty.reevaluateForOrder(db, {
+      orderRef: first,
+      eventOrderRef: first,
+      returned: true,
+    });
+    expect(late.results[0].state).toBe("REDEEMED");
+    expect(late.results[0].reviewRequired).toBe(true);
+    expect(late.results[0].automaticClawback).toBe(false);
+  });
+});

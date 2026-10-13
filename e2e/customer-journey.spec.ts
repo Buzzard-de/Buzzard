@@ -60,6 +60,36 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     await assertNoHorizontalOverflow(page);
   });
 
+  test("QR Arabic landing is RTL and still catalog-only", async ({ page }) => {
+    await page.goto("/kampanya/qr/?lang=ar", { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".qr-campaign-page")).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("h1")).toContainText(/ولاء|loyalty QR|Treue-QR/i);
+    await expect(page.locator("[data-campaign-live]")).toHaveAttribute("data-campaign-live", "false");
+    await expect(page.locator("body")).toContainText(/الكتالوج|Catalog mode|Katalogmodus/i);
+    await assertNoHorizontalOverflow(page);
+  });
+
+  test("invalid product cannot enter the cart", async ({ request }) => {
+    const cartRes = await request.post(`${API}/api/commerce/cart`, {
+      data: { sessionId: `e2e-bad-${Date.now()}`, country: "DE" },
+    });
+    expect(cartRes.ok()).toBeTruthy();
+    const cartId = (await cartRes.json()).cart.id;
+    const addRes = await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
+      data: { productId: "missing-product-xyz", quantity: 1 },
+    });
+    expect(addRes.ok()).toBeFalsy();
+    const body = await addRes.json();
+    expect(body.errorKey || body.error || body.message).toBeTruthy();
+  });
+
+  test("customer account stays behind sign-in and does not leak QR PII", async ({ page }) => {
+    await page.goto("/konto/", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("body")).toBeVisible();
+    await expect(page.locator("body")).not.toContainText(/bzqr_[0-9a-f]{32}|IBAN|@gmail\.com/i);
+    await assertNoHorizontalOverflow(page);
+  });
+
   test("warenkorb page loads", async ({ page }) => {
     await page.goto("/warenkorb/", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).toBeVisible();

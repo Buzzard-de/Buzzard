@@ -5,7 +5,7 @@ Date: 2026-10-13
 Branch: `cursor/final-completion-execution-c293`  
 Phase 9 reference HEAD (historical only): `8e3ce04ecd7aaf3ae1f93605f83f25514988ee5e`  
 Observed starting HEAD: `8e3ce04ecd7aaf3ae1f93605f83f25514988ee5e` (matched; working tree then dirty with Phase 10 edits)  
-Final HEAD: recorded in section A after the local report commit.
+Final evidence commit: `16e6ba4797778fa730888cc833b88afb15a87eb4`.
 
 Git push / PR / merge / deploy: **not performed**.  
 `git reset --hard` / `git clean -fd`: **not used**.  
@@ -23,6 +23,7 @@ No overall completion percentage. Local HTTP 200 is not production readiness. No
 | --- | --- |
 | Branch | `cursor/final-completion-execution-c293` |
 | Start HEAD | `8e3ce04ecd7aaf3ae1f93605f83f25514988ee5e` |
+| Evidence HEAD | `16e6ba4797778fa730888cc833b88afb15a87eb4` |
 | Start status | dirty after Phase 10 investigation (cart/language helpers) |
 | Port 3000 | `next-server` PID `1997897`, parent `next dev --port 3000`, cwd `/workspace`. **Not terminated.** HTTP **200** before and after `npm run build`. |
 | Port 3001 | Identified `node --watch server.js`, cwd `/workspace/server`. Restarted only by terminating the identified child and letting `--watch` respawn (in-memory limiters). |

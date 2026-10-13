@@ -5,7 +5,7 @@ Date: 2026-10-13
 Branch: `cursor/final-completion-execution-c293`  
 Expected prior Phase 8 HEAD: `99290b16ae8c3b7cf21cac8dc2f57d10e3c4a20b`  
 Observed starting HEAD: `99290b16ae8c3b7cf21cac8dc2f57d10e3c4a20b` (matched; working tree clean)  
-Final HEAD: recorded after the local pin commit.
+Final HEAD: `1cc81ce0dce9ceb6b0ed8b2b88cf1c978320fb3f` (report commit; code parent is the login fix).
 
 Git push / PR / merge / deploy: **not performed**.  
 `git reset --hard` / `git clean -fd`: **not used**.  

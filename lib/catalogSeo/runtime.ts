@@ -29,10 +29,10 @@ export async function loadLiveCatalogProductBySlug(slug: string): Promise<Public
 
 export function mergeCatalogProducts(staticItems: PublicProduct[], liveItems: PublicProduct[]): PublicProduct[] {
   const bySlug = new Map<string, PublicProduct>();
-  for (const item of staticItems) {
+  for (const item of liveItems) {
     bySlug.set(item.seo.slug, item);
   }
-  for (const item of liveItems) {
+  for (const item of staticItems) {
     bySlug.set(item.seo.slug, item);
   }
   return [...bySlug.values()];

@@ -159,8 +159,52 @@ const CATALOG_ROUTING = Object.freeze({
     source: "catalogReadService <- pim_core_products (visible PIM)",
     includesJsonCatalogSlugs: false,
   },
+  listingMerge: "static_slug_wins",
   reason:
-    "Static export PDPs are generated from the JSON catalog. The PIM API catalog is a separate read path. Merging slugs into generateStaticParams would dual-publish stores and is forbidden while Product SoT is inactive.",
+    "Static export PDPs are generated from the JSON catalog. The PIM API catalog is a separate read path. Merging slugs into generateStaticParams would dual-publish stores and is forbidden while Product SoT is inactive. Overlapping listing slugs keep the JSON PDP identity (static_slug_wins).",
+});
+
+/**
+ * Recommended future architecture. Not activated. Not a migration.
+ * Requires human approval before any store cutover.
+ */
+const CANONICAL_RECOMMENDATION = Object.freeze({
+  activated: false,
+  productSourceOfTruthActive: false,
+  dualWrite: false,
+  dualPublish: false,
+  requiresHumanApproval: true,
+  canonicalProductRecord: "pim_core_products via productCore (candidate only)",
+  canonicalIdentity: "sku required; ean/gtin/mpn unique on the canonical store after cutover",
+  canonicalSlugStrategy:
+    "One slug per canonical product; generateStaticParams / PDP reads that store after SoT activation. Until then JSON slugs own /produkt/[slug].",
+  variantIdentifierOwnership: "Child SKUs under the canonical parent (pim_core / related variant tables), not a second master row",
+  priceOwnership: "Commercial price from pricing engine using supplier cost + tax; product row stores offer inputs, not invented list prices",
+  inventoryOwnership: "stockEngine reservations/consumption by SKU; supplier feed stock is not a guarantee",
+  localizationOwnership: "Translation rows on the canonical product; English technical fallback; no silent German UI fallback",
+  importValidation: "Staging → productWriteBoundary; dry-run default; ACTIVE create blocked while sales locked",
+  exportReadProjection:
+    "Search (srch_products) and optional products table remain projections. Do not treat projections as masters.",
+  legacyStoreCompatibility:
+    "Keep pim30_products, pim_products, products, buzzard_products.json readable until identity map + reader cutover. No deletes in this phase.",
+  migrationOrder: [
+    "Read-only identity scan (sku/ean/gtin) across stores",
+    "Human selects pim_core_products",
+    "Build identity map; fail closed on conflicts",
+    "Filesystem backup of SQLite + JSON",
+    "Cut readers one at a time; dual-write forbidden",
+    "Static PDP generateStaticParams from canonical store",
+    "Separate SoT activation flag (still off here)",
+    "Sales unlock is a later, separate owner decision",
+  ],
+  rollbackStrategy:
+    "Restore SQLite + data/buzzard_products.json from pre-cutover copies. Do not reverse by dual-writing.",
+  requiredHumanApproval: [
+    "canonical store selection",
+    "migration window",
+    "SoT activation (separate)",
+    "sales unlock (separate)",
+  ],
 });
 
 const CANDIDATE_STORE = Object.freeze({
@@ -182,6 +226,7 @@ function getProductArchitecture() {
     readers: READERS,
     stores: ["pim_core_products", "pim30_products", "pim_products", "products", "data/buzzard_products.json"],
     catalogRouting: CATALOG_ROUTING,
+    recommendation: CANONICAL_RECOMMENDATION,
   };
 }
 
@@ -212,6 +257,7 @@ module.exports = {
   READERS,
   CANDIDATE_STORE,
   CATALOG_ROUTING,
+  CANONICAL_RECOMMENDATION,
   getProductArchitecture,
   activationStatus,
   assertNoDualWrite,

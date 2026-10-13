@@ -143,6 +143,26 @@ const READERS = Object.freeze([
   { id: "ordersPlugin", module: "server/plugins/ordersPlugin.js", sources: ["data/buzzard_products.json"] },
 ]);
 
+const CATALOG_ROUTING = Object.freeze({
+  unified: false,
+  productSourceOfTruthActive: false,
+  dualPublish: false,
+  storefrontPdp: {
+    path: "/produkt/[slug]",
+    source: "lib/products <- data/buzzard_products.json",
+    generateStaticParams: "getProductStaticParams",
+    outputExportProduction: true,
+    includesPimApiSlugs: false,
+  },
+  apiCatalog: {
+    path: "/api/catalog/products",
+    source: "catalogReadService <- pim_core_products (visible PIM)",
+    includesJsonCatalogSlugs: false,
+  },
+  reason:
+    "Static export PDPs are generated from the JSON catalog. The PIM API catalog is a separate read path. Merging slugs into generateStaticParams would dual-publish stores and is forbidden while Product SoT is inactive.",
+});
+
 const CANDIDATE_STORE = Object.freeze({
   table: "pim_core_products",
   writer: "productCore",
@@ -161,6 +181,7 @@ function getProductArchitecture() {
     classifiedNonMaster: CLASSIFIED_NON_MASTER,
     readers: READERS,
     stores: ["pim_core_products", "pim30_products", "pim_products", "products", "data/buzzard_products.json"],
+    catalogRouting: CATALOG_ROUTING,
   };
 }
 
@@ -190,6 +211,7 @@ module.exports = {
   CLASSIFIED_NON_MASTER,
   READERS,
   CANDIDATE_STORE,
+  CATALOG_ROUTING,
   getProductArchitecture,
   activationStatus,
   assertNoDualWrite,

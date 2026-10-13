@@ -38,6 +38,25 @@ describe("product architecture inventory", () => {
     expect(result.productSourceOfTruthActive).toBe(false);
   });
 
+  it("keeps storefront PDP slugs separate from the PIM API catalog", () => {
+    const map = architecture.getProductArchitecture();
+    expect(map.catalogRouting.unified).toBe(false);
+    expect(map.catalogRouting.dualPublish).toBe(false);
+    expect(map.catalogRouting.storefrontPdp.includesPimApiSlugs).toBe(false);
+    expect(map.catalogRouting.storefrontPdp.source).toContain("buzzard_products.json");
+    expect(map.catalogRouting.apiCatalog.source).toContain("pim_core_products");
+    expect(map.catalogRouting.storefrontPdp.outputExportProduction).toBe(true);
+
+    const catalog = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), "data/buzzard_products.json"), "utf8")
+    );
+    const jsonSlugs = (catalog.products || [])
+      .filter((row) => row.status === "active" && row.seo?.slug)
+      .map((row) => row.seo.slug);
+    expect(jsonSlugs).toContain("premium-bremsscheibe-testprodukt");
+    expect(jsonSlugs).not.toContain("isolated-cart-fixture");
+  });
+
   it("lists storefront readers that still prevent SoT activation", () => {
     const ids = architecture.READERS.map((row) => row.id);
     expect(ids).toContain("catalogReadService");

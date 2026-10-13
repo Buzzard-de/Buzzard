@@ -76,6 +76,15 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     await assertNoHorizontalOverflow(page);
   });
 
+  test("unknown product slug fails closed without inventing a product", async ({ page }) => {
+    const response = await page.goto("/produkt/zz-kein-produkt-xyz/", { waitUntil: "domcontentloaded" });
+    const status = response?.status() ?? 0;
+    expect([404, 200]).toContain(status);
+    await expect(page.locator("body")).not.toContainText(/missing param/i);
+    await expect(page.locator("body")).toContainText(/nicht gefunden|404/i);
+    await expect(page.locator("body")).not.toContainText(/€9,99|live campaign/i);
+  });
+
   test("QR campaign landing stays catalog-only", async ({ page }) => {
     await page.goto("/kampanya/qr/?lang=de", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1")).toContainText(/Treue-QR|loyalty QR|sadakat QR/i);

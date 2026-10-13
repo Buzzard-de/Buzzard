@@ -34,8 +34,9 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
     await form.locator('button[type="submit"]').click();
     await expect(form.locator(".shop-modal-error")).toHaveCount(0);
     await expect
-      .poll(async () => page.evaluate(() => sessionStorage.getItem("buzzard_admin_token")), { timeout: 20_000 })
-      .toBeTruthy();
+      .poll(async () => page.evaluate(() => sessionStorage.getItem("buzzard_admin_session")), { timeout: 20_000 })
+      .toBe("1");
+    expect(await page.evaluate(() => sessionStorage.getItem("buzzard_admin_token"))).toBeNull();
   });
 
   test("invalid admin password does not store a session token", async ({ page }) => {

@@ -42,12 +42,32 @@ export async function loginAdminApi(request: APIRequestContext): Promise<string>
 
 export async function seedAdminSession(page: Page, request: APIRequestContext) {
   const token = await loginAdminApi(request);
-  await page.addInitScript(
-    ({ api, token: sessionToken }) => {
-      (window as Window & { __BUZZARD_API_URL__?: string }).__BUZZARD_API_URL__ = api;
-      sessionStorage.setItem("buzzard_admin_token", sessionToken);
+  const apiUrl = new URL(API.includes("://") ? API : `http://${API}`);
+  await page.context().addCookies([
+    {
+      name: "buzzard_admin",
+      value: token,
+      domain: apiUrl.hostname,
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
     },
-    { api: API, token },
+    {
+      name: "buzzard_admin_ui",
+      value: "1",
+      domain: apiUrl.hostname,
+      path: "/",
+      secure: true,
+      sameSite: "None",
+    },
+  ]);
+  await page.addInitScript(
+    ({ api }) => {
+      (window as Window & { __BUZZARD_API_URL__?: string }).__BUZZARD_API_URL__ = api;
+      sessionStorage.setItem("buzzard_admin_session", "1");
+    },
+    { api: API },
   );
 }
 

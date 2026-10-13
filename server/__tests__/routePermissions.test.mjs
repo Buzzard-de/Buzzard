@@ -53,4 +53,39 @@ describe("routePermissions", () => {
     });
     expect(resolveRoutePermission("GET", "/api/product-catalog-pim/brands")).toBeNull();
   });
+
+  it("privileged non-admin finance and engine prefixes require admin permissions", () => {
+    expect(resolveRoutePermission("POST", "/api/payments-finance/intents")).toEqual({
+      permission: "orders.write",
+    });
+    expect(resolveRoutePermission("POST", "/api/payments-finance/intents/12/confirm")).toEqual({
+      permission: "orders.write",
+    });
+    expect(resolveRoutePermission("POST", "/api/payments-finance/intents/12/refunds")).toEqual({
+      permission: "orders.write",
+    });
+    expect(resolveRoutePermission("POST", "/api/payments-finance/invoices")).toEqual({
+      permission: "orders.write",
+    });
+    expect(resolveRoutePermission("GET", "/api/payments-v36/records")).toEqual({
+      permission: "orders.read",
+    });
+    expect(resolveRoutePermission("POST", "/api/supplier-integration-hub/suppliers")).toEqual({
+      permission: "suppliers.write",
+    });
+    expect(resolveRoutePermission("POST", "/api/marketing-loyalty/points")).toEqual({
+      permission: "analytics.export",
+    });
+  });
+
+  it("intended public payment-method and unsigned webhook sinks stay public", () => {
+    expect(resolveRoutePermission("GET", "/api/payments-finance/methods")).toEqual({ public: true });
+    expect(resolveRoutePermission("POST", "/api/payments-finance/webhook")).toEqual({ public: true });
+    expect(resolveRoutePermission("POST", "/api/webhooks/payment")).toEqual({ public: true });
+    expect(resolveRoutePermission("POST", "/api/marketing-loyalty/campaigns/SUMMER/apply")).toEqual({
+      public: true,
+    });
+    expect(resolveRoutePermission("POST", "/api/commerce/cart")).toEqual({ public: true });
+    expect(resolveRoutePermission("POST", "/api/commerce/payments/abc/fail").permission).toBe("orders.write");
+  });
 });

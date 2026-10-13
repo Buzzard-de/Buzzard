@@ -3923,6 +3923,21 @@ function seed() {
 
 seed();
 
+function toPublicDatabaseHealth(health = getDatabaseHealth()) {
+  return {
+    enabled: Boolean(health?.enabled),
+    ok: !health?.error,
+    persistent: Boolean(health?.persistence?.persistent),
+    ephemeralRisk: Boolean(health?.persistence?.ephemeralRisk),
+    version: health?.version || "0.3.0",
+    persistence: {
+      mode: health?.persistence?.mode || "unknown",
+      persistent: Boolean(health?.persistence?.persistent),
+      ephemeralRisk: Boolean(health?.persistence?.ephemeralRisk),
+    },
+  };
+}
+
 function getDatabaseHealth() {
   try {
     const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
@@ -3967,5 +3982,6 @@ module.exports = {
   db,
   dbPath,
   getDatabaseHealth,
+  toPublicDatabaseHealth,
   getPersistenceInfo: () => getPersistenceInfo(dbPath),
 };

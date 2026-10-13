@@ -3,7 +3,7 @@ const { requirePermission } = require("../lib/rbac");
 const { logAuditFromRequest } = require("../lib/coreAudit");
 const controlCenter = require("../lib/controlCenter");
 const { enqueueTaskProcessing, resumeAfterApproval } = require("../lib/aiOrchestrator");
-const { getDatabaseHealth } = require("../lib/db");
+const { toPublicDatabaseHealth } = require("../lib/db");
 const { getOrchestratorStatus } = require("../lib/orchestratorBridge");
 const { getGuardianStatus } = require("../lib/guardianBridge");
 
@@ -28,7 +28,7 @@ function requirePerm(req, res, permission) {
 module.exports = {
   register(app) {
     app.get("/api/health/db", (_req, res) => {
-      res.json({ success: true, database: getDatabaseHealth() });
+      res.json({ success: true, database: toPublicDatabaseHealth() });
     });
 
     app.get("/api/health/ai", async (_req, res) => {

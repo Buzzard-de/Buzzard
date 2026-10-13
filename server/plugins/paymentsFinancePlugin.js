@@ -39,18 +39,21 @@ module.exports = {
     });
 
     app.post("/api/payments-finance/intents", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.createPaymentIntent(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(result.intent?.id ? 201 : 200).json(result.intent);
     });
 
     app.post("/api/payments-finance/intents/:id/confirm", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.confirmPaymentIntent(req.params.id);
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.json(result.intent);
     });
 
     app.post("/api/payments-finance/intents/:id/refunds", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.createRefund(req.params.id, req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.refund);
@@ -68,6 +71,7 @@ module.exports = {
     });
 
     app.post("/api/payments-finance/invoices", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.createInvoice(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.invoice);

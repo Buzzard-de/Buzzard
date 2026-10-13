@@ -86,77 +86,42 @@ function confirmPaymentIntent(id) {
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
   if (!intent) return { error: "Payment intent not found", status: 404 };
   if (["succeeded", "refunded", "partially_refunded"].includes(intent.status)) {
-    return { intent };
+    return { intent, applied: false, reason: "ALREADY_TERMINAL" };
   }
 
-  db.prepare(`
-    UPDATE finance_payment_intents SET status = 'succeeded', updated_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(intent.id);
-  db.prepare(`
-    INSERT INTO finance_payment_transactions(
-      payment_intent_id, type, amount, currency, external_id, status, metadata_json
-    )
-    VALUES(?,?,?,?,?,?,?)
-  `).run(intent.id, "capture", intent.amount, intent.currency, intent.external_id, "succeeded", "{}");
-
-  audit("payment_succeeded", intent.id, { amount: intent.amount, currency: intent.currency });
-  return { intent: db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(intent.id) };
+  audit("manual_confirm_rejected", intent.id, {
+    applied: false,
+    officialPath: "/api/commerce/webhooks/:provider",
+  });
+  return {
+    error: "Confirmation requires an official provider result",
+    status: 409,
+    applied: false,
+    reason: "PROVIDER_CONFIRMATION_REQUIRED",
+    officialPath: "/api/commerce/webhooks/:provider",
+    intentStatusUnchanged: intent.status,
+  };
 }
 
-function createRefund(id, body = {}) {
+function createRefund(id, _body = {}) {
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
-  if (!intent || intent.status !== "succeeded") {
-    return { error: "Payment must be succeeded before refund", status: 400 };
+  if (!intent) {
+    return { error: "Payment intent not found", status: 404 };
   }
 
-  const already = db
-    .prepare(`
-      SELECT COALESCE(SUM(amount), 0) AS total
-      FROM finance_refunds
-      WHERE payment_intent_id = ? AND status IN ('pending', 'succeeded')
-    `)
-    .get(intent.id).total;
-  const amount = Math.min(Number(body.amount || intent.amount - already), intent.amount - already);
-  if (amount <= 0) return { error: "No refundable amount remaining", status: 400 };
-
-  const result = db
-    .prepare(`
-      INSERT INTO finance_refunds(payment_intent_id, external_id, amount, currency, reason, status)
-      VALUES(?,?,?,?,?,?)
-    `)
-    .run(
-      intent.id,
-      `re_${uuid().replace(/-/g, "")}`,
-      amount,
-      intent.currency,
-      body.reason || "customer_request",
-      "succeeded"
-    );
-
-  const total = already + amount;
-  db.prepare(`
-    UPDATE finance_payment_intents
-    SET status = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(total >= intent.amount ? "refunded" : "partially_refunded", intent.id);
-
-  db.prepare(`
-    INSERT INTO finance_payment_transactions(
-      payment_intent_id, type, amount, currency, external_id, status, metadata_json
-    )
-    VALUES(?,?,?,?,?,?,?)
-  `).run(
-    intent.id,
-    "refund",
-    amount,
-    intent.currency,
-    `re_${result.lastInsertRowid}`,
-    "succeeded",
-    "{}"
-  );
-
-  audit("refund_succeeded", result.lastInsertRowid, { paymentIntentId: intent.id, amount });
-  return { refund: db.prepare("SELECT * FROM finance_refunds WHERE id = ?").get(result.lastInsertRowid) };
+  audit("manual_refund_rejected", intent.id, {
+    applied: false,
+    financialEffect: false,
+    officialPath: "/api/commerce/webhooks/:provider",
+  });
+  return {
+    error: "Refund execution is disabled without an official provider result",
+    status: 409,
+    applied: false,
+    financialEffect: false,
+    reason: "PROVIDER_REFUND_REQUIRED",
+    officialPath: "/api/commerce/webhooks/:provider",
+  };
 }
 
 function handlePaymentWebhook(body = {}) {

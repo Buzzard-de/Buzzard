@@ -6,17 +6,10 @@ import {
   ANALYTICS_FOUNDATION_KPIS_PATH,
   ANALYTICS_FOUNDATION_OVERVIEW_PATH,
 } from "./storefront/constants";
+import { withAdminCredentials } from "@/lib/admin/authTransport";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
-}
-
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? sessionStorage.getItem("buzzard_admin_token") : null;
-  return {
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
 }
 
 export async function fetchFoundationAnalyticsOverview(): Promise<DashboardOverview | null> {
@@ -25,7 +18,7 @@ export async function fetchFoundationAnalyticsOverview(): Promise<DashboardOverv
   const url = `${base}${ANALYTICS_FOUNDATION_OVERVIEW_PATH}`;
 
   try {
-    const res = await fetch(url, { headers: authHeaders() });
+    const res = await fetch(url, withAdminCredentials({ headers: { Accept: "application/json" } }));
     if (!res.ok) return null;
     const json = (await res.json()) as { success?: boolean; data?: DashboardOverview };
     return json.data ?? null;
@@ -57,7 +50,7 @@ export async function fetchFoundationKpis(options: {
   const url = `${base}${ANALYTICS_FOUNDATION_KPIS_PATH}${query ? `?${query}` : ""}`;
 
   try {
-    const res = await fetch(url, { headers: authHeaders() });
+    const res = await fetch(url, withAdminCredentials({ headers: { Accept: "application/json" } }));
     if (!res.ok) return null;
     const json = (await res.json()) as {
       success?: boolean;

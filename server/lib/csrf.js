@@ -1,7 +1,7 @@
 /**
  * CSRF — Bearer-token admin API does NOT require CSRF tokens.
  * Cookie/session state-changing requests must send X-Buzzard-CSRF-Token
- * matching the csrf cookie when BUZZARD_CSRF_ENFORCE=1.
+ * matching the csrf cookie. Disabled only when BUZZARD_CSRF_ENFORCE=0.
  */
 const crypto = require("crypto");
 const { logSecurityEvent } = require("./securityLog");
@@ -28,10 +28,14 @@ function validateCsrfForRequest(req, res) {
   const path = (req.url || "").split("?")[0];
   if (publicPaths.some((p) => path === p || path.startsWith(p))) return true;
 
-  if (process.env.BUZZARD_CSRF_ENFORCE !== "1") return true;
+  if (process.env.BUZZARD_CSRF_ENFORCE === "0") return true;
+
+  const { readAdminSessionCookie } = require("./authCookies");
+  const sessionCookie = readAdminSessionCookie(req);
+  const cookieToken = getCsrfCookie(req);
+  if (!sessionCookie && !cookieToken) return true;
 
   const headerToken = req.headers["x-buzzard-csrf-token"];
-  const cookieToken = getCsrfCookie(req);
   if (!headerToken || !cookieToken || headerToken !== cookieToken) {
     logSecurityEvent({
       type: "csrf_failure",

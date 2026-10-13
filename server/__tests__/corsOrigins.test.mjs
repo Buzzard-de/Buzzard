@@ -25,4 +25,14 @@ describe("corsOrigins", () => {
   it("does not allow arbitrary remote origins", () => {
     expect(isAllowedOrigin("https://evil.example")).toBe(false);
   });
+
+  it("does not treat the opaque Origin null as an allowed browser origin", () => {
+    expect(isAllowedOrigin("null")).toBe(false);
+    expect(getAllowedOrigins().has("null")).toBe(false);
+  });
+
+  it("does not treat CORS as a wildcard allowlist", () => {
+    expect(isAllowedOrigin("*")).toBe(false);
+    expect(isAllowedOrigin("https://evil.example")).toBe(false);
+  });
 });

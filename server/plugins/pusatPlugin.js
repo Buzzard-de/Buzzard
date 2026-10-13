@@ -20,7 +20,16 @@ module.exports = {
     app.get("/api/health/pusat", async (_req, res) => {
       const pusat = require("../lib/pusat");
       const health = await pusat.getHealth();
-      res.json({ success: true, ...health });
+      const { path: _omittedPath, error: _omittedError, ...publicDb } = health.database || {};
+      res.json({
+        success: true,
+        ...health,
+        database: {
+          ok: publicDb.ok,
+          persistent: publicDb.persistent,
+          ephemeralRisk: publicDb.ephemeralRisk,
+        },
+      });
     });
 
     app.get("/api/admin/pusat/health", async (req, res) => {

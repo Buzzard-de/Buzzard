@@ -52,7 +52,16 @@ module.exports = {
 
     app.get("/api/health/production", async (_req, res) => {
       const summary = await productionHealth.getProductionSummary();
-      res.json({ success: true, ...summary });
+      const database = summary.database ? { ...summary.database } : {};
+      delete database.path;
+      delete database.users;
+      if (database.persistence) {
+        const persistence = { ...database.persistence };
+        delete persistence.backupDir;
+        delete persistence.renderDisk;
+        database.persistence = persistence;
+      }
+      res.json({ success: true, ...summary, database });
     });
 
     app.get("/api/health/go-live-readiness", async (_req, res) => {

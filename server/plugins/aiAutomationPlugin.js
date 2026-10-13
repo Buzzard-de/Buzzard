@@ -44,7 +44,7 @@ function collectHealth() {
   let database = { enabled: false };
   if (process.env.BUZZARD_DB_ENABLED !== "0") {
     try {
-      database = require("../lib/db").getDatabaseHealth();
+      database = require("../lib/db").toPublicDatabaseHealth();
     } catch (error) {
       database = { enabled: true, error: error.message };
     }

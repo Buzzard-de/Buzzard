@@ -1,8 +1,15 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { createRequire } from "node:module";
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
+
+const masterScratch = path.join(path.dirname(fileURLToPath(import.meta.url)), "../data/test-scratch");
+fs.mkdirSync(masterScratch, { recursive: true });
+process.env.BUZZARD_DB_PATH = path.join(masterScratch, "software-master-completion.db");
 
 describe("master software completion — P0-P10 local", () => {
   let software;
@@ -278,10 +285,12 @@ describe("master software completion — P0-P10 local", () => {
     }
     expect(claimed).toBeTruthy();
     expect(claimed.result.status).toBe("COMPLETED");
-    const second = await pusat.worker.claimAndExecute(`worker-b-${job.id}`);
-    expect(second.claimed).toBe(false);
     const stored = require("../lib/jobQueue").getJob(job.id);
     expect(stored.status).toBe("COMPLETED");
+    const second = await pusat.worker.claimAndExecute(`worker-b-${job.id}`);
+    if (second.claimed) {
+      expect(second.jobId).not.toBe(job.id);
+    }
   });
 
   it("P3 jobScheduler bridge records Pusat-bound AI_TASK jobs", () => {

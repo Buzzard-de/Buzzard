@@ -13,7 +13,6 @@ const DEFAULT_ORIGINS = Object.freeze([
   "http://127.0.0.1:3002",
   "https://buzzard24.de",
   "https://www.buzzard24.de",
-  "null",
 ]);
 
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1"]);
@@ -41,6 +40,9 @@ function isLoopbackHttpOrigin(origin) {
 
 function isAllowedOrigin(origin) {
   if (!origin) return false;
+  if (origin === "null") {
+    return extraOrigins().includes("null");
+  }
   if (getAllowedOrigins().has(origin)) return true;
   if (process.env.NODE_ENV === "production" && process.env.BUZZARD_ALLOW_LOOPBACK_CORS !== "1") {
     return false;

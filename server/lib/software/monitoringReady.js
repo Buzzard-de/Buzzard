@@ -12,14 +12,24 @@ function alertRules() {
 }
 
 function readiness() {
+  let disk = { exists: false, writable: false, envBuzzardDbPath: process.env.BUZZARD_DB_PATH || null };
+  try {
+    disk = require("../dbPaths").getRenderDiskDiagnostics();
+  } catch {
+    disk = { exists: false, writable: false, envBuzzardDbPath: process.env.BUZZARD_DB_PATH || null };
+  }
+  const localPathKnown = Boolean(process.env.BUZZARD_DB_PATH);
+  const productionEvidence = disk.exists && disk.writable && disk.envBuzzardDbPath === "/var/data/buzzard.db";
   return {
     codeReady: true,
     productionWired: false,
     productionStatus: "UNKNOWN",
-    renderDisk: "UNKNOWN",
+    renderDisk: productionEvidence ? "CONFIGURED" : "UNKNOWN",
     productionDb: "UNKNOWN",
     rollback: "UNKNOWN",
-    reason: "BLOCKED_EXTERNAL",
+    localDbPathConfigured: localPathKnown,
+    renderMountExists: disk.exists === true,
+    reason: productionEvidence ? "LOCAL_CONFIG_ONLY" : "BLOCKED_EXTERNAL",
     rules: alertRules(),
     liveVerified: false,
   };

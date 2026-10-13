@@ -955,6 +955,21 @@ select, input, button { font-family: inherit; }
     font-size: 0.88rem;
     line-height: 1.6;
 }
+.qr-campaign-brand {
+    letter-spacing: 0.28em;
+    font-size: 0.78rem;
+    color: var(--gold);
+    margin: 0 0 8px;
+}
+.qr-campaign-card {
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    padding: 22px 20px;
+}
+.qr-campaign-status {
+    color: var(--gold);
+    font-weight: 600;
+}
 
 /* ===========================
    CONTACT SECTION

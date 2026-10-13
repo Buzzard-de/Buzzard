@@ -40,6 +40,8 @@ const monitoringReady = require("./monitoringReady");
 const reportingModels = require("./reportingModels");
 const localeCoverage = require("./localeCoverage");
 const orderInventoryBridge = require("./orderInventoryBridge");
+const orderIdentity = require("./orderIdentity");
+const qrLoyalty = require("./qrLoyalty");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -93,4 +95,6 @@ module.exports = {
   reportingModels,
   localeCoverage,
   orderInventoryBridge,
+  orderIdentity,
+  qrLoyalty,
 };

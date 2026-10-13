@@ -52,6 +52,14 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     await assertNoHorizontalOverflow(page);
   });
 
+  test("QR campaign landing stays catalog-only", async ({ page }) => {
+    await page.goto("/kampanya/qr/?lang=de", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1")).toContainText(/Treue-QR|loyalty QR|sadakat QR/i);
+    await expect(page.locator("body")).toContainText(/Katalogmodus|Catalog mode|Katalog modu/i);
+    await expect(page.locator("body")).not.toContainText(/€9,99|€19,99|live campaign/i);
+    await assertNoHorizontalOverflow(page);
+  });
+
   test("warenkorb page loads", async ({ page }) => {
     await page.goto("/warenkorb/", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).toBeVisible();

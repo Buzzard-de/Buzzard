@@ -29,6 +29,15 @@ function createPayment(db, input = {}) {
     if (existing) return { ok: true, duplicate: true, payment: mapPayment(existing) };
   }
 
+  const orderIdentity = require("./orderIdentity");
+  const identity = orderIdentity.ensureBound(db, {
+    refs: [{ kind: orderIdentity.inferKind(orderId) || "PAYMENT_ORDER_ID", value: orderId }],
+    createdBy: "paymentLifecycle",
+  });
+  if (!identity.ok) {
+    return { ok: false, reason: identity.reason || "AMBIGUOUS_ORDER_IDENTITY", identity };
+  }
+
   const id = newId("spay");
   db.prepare(
     `INSERT INTO software_payments(
@@ -49,8 +58,8 @@ function createPayment(db, input = {}) {
       timeoutIsNotSuccess: true,
     })
   );
-  writeAudit(db, "payment.create", id, { orderId, amountCents, currency });
-  return { ok: true, duplicate: false, payment: getPayment(db, id) };
+  writeAudit(db, "payment.create", id, { orderId, amountCents, currency, canonicalOrderId: identity.canonicalId });
+  return { ok: true, duplicate: false, payment: getPayment(db, id), canonicalOrderId: identity.canonicalId };
 }
 
 function getPayment(db, id) {

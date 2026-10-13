@@ -147,6 +147,43 @@ function recordHistory(db, input = {}, quoteResult = null) {
   return { ...quoted, recorded: true, published: false, historyId: id };
 }
 
+function evaluateGivenSale(input = {}, salePrice) {
+  const base = quote(input);
+  if (!base.ok) return { ...base, saleApproved: false };
+  const sale = money(salePrice);
+  if (sale == null || sale <= 0) {
+    return { ok: false, failClosed: true, reason: "INVALID_SALE_PRICE", invented: false, saleApproved: false };
+  }
+  if (base.missingOptional.length) {
+    return {
+      ...base,
+      ok: false,
+      failClosed: true,
+      reason: "MISSING_ESSENTIAL_COST_DATA",
+      salePrice: sale,
+      saleApproved: false,
+      note: "Campaign discounts require supplier, shipping, return reserve, commission and tax inputs.",
+    };
+  }
+  const landed = money(base.supplierCost + base.shippingCost + base.extraCosts + (base.returnReserve || 0));
+  const commissionRate = input.marketplaceCommissionRate != null ? Number(input.marketplaceCommissionRate) : null;
+  const taxRate = input.taxRate != null ? Number(input.taxRate) : null;
+  const commission = money(sale * commissionRate);
+  const tax = money(sale * taxRate);
+  const net = money(sale - landed - commission - tax);
+  return {
+    ...base,
+    salePrice: sale,
+    marketplaceCommission: commission,
+    tax,
+    netProfit: net,
+    saleApproved: net != null && net + 1e-9 >= base.minNetProfitEur,
+    belowMinProfit: net != null && net + 1e-9 < base.minNetProfitEur,
+    givenSale: true,
+    invented: false,
+  };
+}
+
 function channelQuote(input = {}) {
   const channel = String(input.channel || "direct");
   const commissions = {
@@ -168,4 +205,4 @@ function channelQuote(input = {}) {
   };
 }
 
-module.exports = { quote, recordHistory, channelQuote };
+module.exports = { quote, recordHistory, channelQuote, evaluateGivenSale };

@@ -218,21 +218,46 @@ function cancelOrder(id, body = {}) {
   );
   recordEvent(order.id, "cancelled", order.order_status, "cancelled", body.reason || "Customer/admin cancellation");
   const updated = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id);
-  return { ok: true, order: updated, inventoryRelease: releaseReservationsForCancelledOrder(updated) };
+  try {
+    const orderIdentity = require("./software/orderIdentity");
+    orderIdentity.ensureBound(db, {
+      refs: [
+        { kind: "OMS_ID", value: String(updated.id) },
+        updated.order_number ? { kind: "OMS_NUMBER", value: String(updated.order_number) } : null,
+      ].filter(Boolean),
+    });
+  } catch {
+    /* identity bind is best-effort around existing OMS rows */
+  }
+  let loyalty = null;
+  try {
+    const qrLoyalty = require("./software/qrLoyalty");
+    loyalty = qrLoyalty.reevaluateForOrder(db, {
+      orderRef: String(updated.id),
+      eventOrderRef: String(updated.id),
+      cancelled: true,
+    });
+  } catch (error) {
+    loyalty = { ok: false, reason: error.message };
+  }
+  return {
+    ok: true,
+    order: updated,
+    inventoryRelease: releaseReservationsForCancelledOrder(updated),
+    loyalty,
+  };
 }
 
 function releaseReservationsForCancelledOrder(order) {
   try {
     const orderInventoryBridge = require("./software/orderInventoryBridge");
-    const keys = [...new Set([String(order.id), String(order.order_number || "")].filter(Boolean))];
-    let released = 0;
-    let skippedConsumed = 0;
-    for (const key of keys) {
-      const result = orderInventoryBridge.releaseOnCancel(db, { orderId: key });
-      released += result.released || 0;
-      skippedConsumed += result.skippedConsumed || 0;
-    }
-    return { ok: true, released, skippedConsumed, liveOrderCancelled: false };
+    const result = orderInventoryBridge.releaseOnCancel(db, { orderId: String(order.id) });
+    return {
+      ok: true,
+      released: result.released || 0,
+      skippedConsumed: result.skippedConsumed || 0,
+      liveOrderCancelled: false,
+    };
   } catch (error) {
     return { ok: false, released: 0, skippedConsumed: 0, reason: error.message, liveOrderCancelled: false };
   }

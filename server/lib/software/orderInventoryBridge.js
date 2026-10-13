@@ -5,12 +5,16 @@
 
 const inventory = require("./inventory");
 const shipmentGate = require("./shipmentGate");
+const orderIdentity = require("./orderIdentity");
 const { PAYMENT_STATE } = require("./secureCommerceConstants");
 const { RESERVATION_STATUS } = require("./constants");
 
 function reservationsForOrder(db, orderId) {
   if (!orderId) return [];
-  return db.prepare("SELECT * FROM software_reservations WHERE order_id = ?").all(String(orderId));
+  const keys = orderIdentity.lookupKeys(db, orderId);
+  if (!keys.length) return [];
+  const placeholders = keys.map(() => "?").join(",");
+  return db.prepare(`SELECT * FROM software_reservations WHERE order_id IN (${placeholders})`).all(...keys);
 }
 
 function commitOnCapturedPayment(db, input = {}) {
@@ -18,6 +22,12 @@ function commitOnCapturedPayment(db, input = {}) {
   const payment = input.payment || null;
   if (!orderId) {
     return { ok: false, consumed: 0, reason: "ORDER_ID_REQUIRED", shipmentAuthorized: false };
+  }
+  if (input.eventOrderRef) {
+    const same = orderIdentity.assertSameOrder(db, orderId, input.eventOrderRef);
+    if (!same.ok) {
+      return { ok: false, consumed: 0, reason: same.reason, shipmentAuthorized: false };
+    }
   }
   if (input.unverifiedWebhook === true || input.official !== true) {
     return {
@@ -47,7 +57,7 @@ function commitOnCapturedPayment(db, input = {}) {
       results.push({ id: row.id, consumed: false, reason: row.status });
       continue;
     }
-    const consumed = inventory.consume(db, row.id, { orderId, retry: true });
+    const consumed = inventory.consume(db, row.id, { orderId: row.order_id, retry: true });
     results.push({ id: row.id, consumed: consumed.consumed === true, duplicate: consumed.duplicate === true });
   }
 
@@ -90,6 +100,9 @@ function releaseOnCancel(db, input = {}) {
 }
 
 function reserveForOrder(db, input = {}) {
+  if (input.orderId) {
+    orderIdentity.ensureBound(db, { refs: [orderIdentity.refFromValue(input.orderId)] });
+  }
   return inventory.reserve(db, {
     ...input,
     orderId: input.orderId,

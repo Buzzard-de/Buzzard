@@ -5,7 +5,7 @@ Date: 2026-10-13
 Branch: `cursor/final-completion-execution-c293`  
 Expected prior Phase 7 HEAD: `5d00b14613a095439d33a1358fcc34e657baebc6`  
 Observed starting HEAD: `d6e7e185dff0839136f8ea05b6aa9aed9d97e90d` (Phase 7 pin `5d00b14` plus already-committed isolation attempt `d6e7e18`)  
-Code HEAD after the local software commit (before this report): recorded at the bottom after the local report commit.
+Code HEAD after the local software commit (before this report): see Final HEAD `96c88a77a458360a731a9dd849e70c4877641b39` (report commit; isolation is the parent).
 
 Git push / PR / merge / deploy: **not performed**.  
 `git reset --hard` / `git clean -fd`: **not used**.  
@@ -382,4 +382,4 @@ Confirmed:
 ## Final HEAD
 
 Starting HEAD: `d6e7e185dff0839136f8ea05b6aa9aed9d97e90d`  
-Ending HEAD: *updated in the follow-up pin commit after this file is committed locally.*
+Ending HEAD: `96c88a77a458360a731a9dd849e70c4877641b39`

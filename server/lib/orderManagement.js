@@ -217,7 +217,25 @@ function cancelOrder(id, body = {}) {
     order.id
   );
   recordEvent(order.id, "cancelled", order.order_status, "cancelled", body.reason || "Customer/admin cancellation");
-  return { ok: true, order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id) };
+  const updated = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id);
+  return { ok: true, order: updated, inventoryRelease: releaseReservationsForCancelledOrder(updated) };
+}
+
+function releaseReservationsForCancelledOrder(order) {
+  try {
+    const orderInventoryBridge = require("./software/orderInventoryBridge");
+    const keys = [...new Set([String(order.id), String(order.order_number || "")].filter(Boolean))];
+    let released = 0;
+    let skippedConsumed = 0;
+    for (const key of keys) {
+      const result = orderInventoryBridge.releaseOnCancel(db, { orderId: key });
+      released += result.released || 0;
+      skippedConsumed += result.skippedConsumed || 0;
+    }
+    return { ok: true, released, skippedConsumed, liveOrderCancelled: false };
+  } catch (error) {
+    return { ok: false, released: 0, skippedConsumed: 0, reason: error.message, liveOrderCancelled: false };
+  }
 }
 
 function splitOrder(id, body = {}) {

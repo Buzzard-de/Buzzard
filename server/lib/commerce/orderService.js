@@ -140,7 +140,16 @@ function transitionOrderStatus(orderId, toStatus) {
     return { error: "illegal_order_transition", from: row.status, to: toStatus, status: 409 };
   }
   db.prepare("UPDATE commerce_orders SET status = ? WHERE id = ?").run(toStatus, orderId);
-  return getOrder(orderId);
+  const next = getOrder(orderId);
+  if (String(toStatus).toLowerCase() === "cancelled" || toStatus === ORDER_STATUS.CANCELLED) {
+    try {
+      const orderInventoryBridge = require("../software/orderInventoryBridge");
+      next.inventoryRelease = orderInventoryBridge.releaseOnCancel(db, { orderId });
+    } catch (error) {
+      next.inventoryRelease = { ok: false, released: 0, reason: error.message };
+    }
+  }
+  return next;
 }
 
 function submitSupplierOrder(orderId, { req } = {}) {

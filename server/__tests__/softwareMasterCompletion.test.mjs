@@ -190,6 +190,29 @@ describe("master software completion — P0-P10 local", () => {
     const released = software.orderInventoryBridge.releaseOnCancel(db, { orderId: cancelOrder });
     expect(released.released).toBe(1);
     expect(released.skippedConsumed).toBe(0);
+
+    const orderManagement = require("../lib/orderManagement");
+    const omsSku = `${sku}-oms`;
+    const created = orderManagement.createOrder({
+      customerEmail: "phase2-fixture@local",
+      items: [{ sku: omsSku, title: "Phase2 cancel fixture", quantity: 1, unitPrice: 1 }],
+      paymentStatus: "pending",
+    });
+    expect(created.error).toBeUndefined();
+    const reservedOms = software.orderInventoryBridge.reserveForOrder(db, {
+      sku: omsSku,
+      quantity: 2,
+      requestQuantity: 1,
+      source: "supplier_feed",
+      lastSupplierUpdate: new Date().toISOString(),
+      orderId: String(created.order.id),
+    });
+    expect(reservedOms.ok).toBe(true);
+    const cancelled = orderManagement.cancelOrder(created.order.id, { reason: "phase2-test" });
+    expect(cancelled.ok).toBe(true);
+    expect(cancelled.inventoryRelease.released).toBe(1);
+    expect(cancelled.inventoryRelease.skippedConsumed).toBe(0);
+    expect(cancelled.inventoryRelease.liveOrderCancelled).toBe(false);
   });
 
   it("P2 Product SoT stays inactive and duplicate scan does not merge", () => {

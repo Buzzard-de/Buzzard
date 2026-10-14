@@ -2,7 +2,8 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `31d968b596c0a049a8ca700602a40f1d1a644402`
+Starting HEAD this pass: `563d9199f2c3c31f76e7654ea0489bf9ca51fe14`  
+Quality HEAD this pass: `47312068b21937582fafb9b9c9c0dfa81d07313a`
 
 Safety at evidence time:
 
@@ -27,9 +28,9 @@ Working directory: `/workspace`
 | `npx next lint` | 0 | No ESLint warnings or errors |
 | `npm run test:backup-restore` | 0 | dry-run only |
 | `NODE_ENV=production npx next build` | 0 | 2044 pages |
-| Isolated Playwright after export settled | 0 | **107 passed, 12 skipped, 0 failed** (47.9s) |
+| Isolated Playwright this pass | SKIPPED | Existing listeners on `:3000` (next-server), `:3001` (node), `:3010` (python3). Not killed. Prior isolated run on earlier HEAD: 107 passed / 12 skipped. |
 
-Isolated Playwright:
+Isolated Playwright (previous session, not re-run this pass):
 
 ```
 PLAYWRIGHT_SKIP_WEBSERVER=1 \
@@ -43,8 +44,9 @@ npx playwright test
 
 | File | Established coverage |
 | --- | --- |
-| `server/__tests__/softwareReliabilityBatch.test.mjs` | Payment fees, draft/order cancel idempotency, estimated vs actual returns, marketplace dry-run/auth/rate-limit, supplier sourceId + invalid cost |
-| `server/__tests__/pusatTaskApprovalHold.test.mjs` | Consume after expiry refused |
+| `server/__tests__/fortressAuthz.test.mjs` | 401 on production/go-live/ai/commerce health, commerce/readiness, security/health; public `/api/health` + `/api/health/db` + `/api/health/version` |
+| part21–35 readiness RBAC | operational `/api/health/*` now `system.read` |
+| `server/__tests__/notificationHub.test.mjs` | external channels `BLOCKED` |
 
 ## Original 237 source search
 

@@ -27,6 +27,21 @@ Canonical 237-item register (established scope; **original titles UNKNOWN**):
 
 Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE.md`, `BUZZARD_237_FINAL_HANDOVER.md`.
 
+---
+
+## Continuation — 2026-10-14 CONTINUOUS-237-V2 (no push) — HEAD `4731206`
+
+Start HEAD `563d919`. Operational health/readiness public leak closed; commerce status slimmed; notification channels BLOCKED. Counts unchanged (0 / 216 / 13 / 7 / 1). Mean 69.3%. Playwright not re-run (ports 3000/3001/3010 occupied; not killed).
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| Focused RBAC + fortress + notification | 0 | 158 + 211 node:test + later 26 focused |
+| `npx vitest run` | 0 | 92 files, 978 passed |
+| `npx tsc --noEmit` | 0 | clean |
+| `npx next lint` | 0 | clean |
+| `npm run test:backup-restore` | 0 | dry-run only |
+| `NODE_ENV=production npx next build` | 0 | 2044 pages |
+
 Status vocabulary used below: `NOT_IMPLEMENTED` | `STUB` | `PARTIAL` | `CODE_READY` | `CONFIGURED` | `SANDBOX_VERIFIED` | `LIVE_VERIFIED`.
 
 Nothing in this report is `LIVE_VERIFIED`. No item is VERIFIED_100 solely because code exists.

@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: working tree after dispatch-idempotency / approval / public-health lock (base `6790de4`)  
+Inspected HEAD at quality pass: `4731206` (operational health lock; base `563d919`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -80,11 +80,14 @@ Mean established-scope completion: **69.3%**. This is not 237/237 done. Original
 30. Return inspect distinguishes estimated vs actual money; supplier credit is not assumed.
 31. Marketplace dry-run, auth presence-only check, and error classification (RATE_LIMIT/AUTH) stay live=false.
 32. Supplier feed rows preserve sourceId and reject invalid supplier costs.
+33. Operational `/api/health/*` readiness/go-live/production/ai/commerce routes require `system.read` (fail-closed GET). Public liveness remains `GET /api/health`, `GET /api/health/db`, `GET /api/health/version` (version slimmed to service+commit).
+34. `GET /api/commerce/readiness` and `GET /api/security/health` require auth. Public `GET /api/commerce/status` is a fixed sales-off storefront subset (no raw flags).
+35. External notification channels return `BLOCKED` / `sent:false` / `live:false` (not PENDING). Live customer send remains HUMAN 155/165.
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL items after pricing/cancel/returns/marketplace local work. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 213–226 unchanged. Do not restart the register.
+Next session: remaining PARTIAL items after the operational-health lock. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 67,73,115/129,155/165,182,213,214,219,221,225,226 unchanged. Do not restart the register. Do not push/PR without explicit authorization.
 
 ---
 
@@ -4119,7 +4122,7 @@ Next session: remaining PARTIAL items after pricing/cancel/returns/marketplace l
 | Established scope | Notifications draft / send blocked |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: communications.js send BLOCKED |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | software/communications.sendPrepared BLOCKED; notificationHub external channels not_configured; notificationHub.test.mjs
+| Existing implementation evidence | software/communications.sendPrepared BLOCKED; notificationHub external channels BLOCKED (not PENDING); notificationHub.test.mjs
 | Identified gaps | Draft + send-blocked implemented; live customer send still requires human approval and provider config
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/communications.js |
@@ -5138,7 +5141,7 @@ Next session: remaining PARTIAL items after pricing/cancel/returns/marketplace l
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: /api/health/software |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | softwareCompletionPlugin |
-| Identified gaps | salesEnabled false |
+| Identified gaps | `/api/health/software` requires system.read; public readiness no longer leaks operational gates. Original criteria UNKNOWN. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | softwareCompletionPlugin |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |

@@ -8,7 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `31d968b596c0a049a8ca700602a40f1d1a644402` |
+| Starting HEAD | `563d9199f2c3c31f76e7654ea0489bf9ca51fe14` |
+| Ending HEAD (code) | `47312068b21937582fafb9b9c9c0dfa81d07313a` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -27,16 +28,14 @@ Mean established-scope completion: **69.3%** (was 69.1%). Not 237/237.
 
 ## What was implemented this pass
 
-- Pricing: paymentFee / paymentFeeRate when provided; no invented fees; €0.50 floor; no €0.10 undercut.
-- Idempotent draft cancel and commerce `cancelOrder` (no commercial side effects).
-- Returns: estimated vs actual; supplier credit not assumed.
-- Marketplace: dry-run listing, presence-only auth config, RATE_LIMIT/AUTH classification; live=false.
-- Supplier feeds: sourceId preserved; invalid supplier cost rejected.
-- Approval consume after expiry refused.
-- Original 237 checklist re-searched and still not found.
+- Operational `/api/health/*` readiness/go-live/production/ai/commerce locked to `system.read` (fail-closed). Public liveness: `/api/health`, `/api/health/db`, slim `/api/health/version`.
+- `GET /api/commerce/readiness` and `GET /api/security/health` require auth. Public commerce status is a sales-off subset (no raw flags).
+- External notification channels return BLOCKED (not PENDING). Items 155/165 stay HUMAN_APPROVAL_REQUIRED.
+- Original 237 checklist re-searched and still not found (`4b0ce17` first numbered register).
 
 ## Highest-priority remaining work
 
 1. Recover original 237 titles/criteria or obtain an explicit waiver.
-2. Remaining PARTIAL items that still need missing requirements.
+2. Remaining PARTIAL items (VAT missing-rate honesty, exception taxonomy, inventory reserve authority, backup production UNKNOWN).
 3. Human approvals and external credentials (never invent LIVE_VERIFIED).
+4. Isolated Playwright after `:3010`/`:3001` are dedicated and export has settled — not re-run this pass.

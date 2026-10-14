@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: working tree on `90d9a14` (plugin public errors, webhook timestamp, uncertain no-capture, ephemeral restore)  
+Inspected HEAD at quality pass: `7390e49` (plugin public errors, webhook timestamp, uncertain no-capture, ephemeral restore; base `90d9a14`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)

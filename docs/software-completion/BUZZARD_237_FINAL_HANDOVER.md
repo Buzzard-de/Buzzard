@@ -9,7 +9,7 @@ This document is a session handover, not a claim that 237/237 items are complete
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
 | Starting HEAD | `90d9a14884af317db972822b28ce6b1adf937e7f` |
-| Ending HEAD (code) | see git after local commit |
+| Ending HEAD (code) | `7390e49e76b1cb94a6232ebea3e333278384f4f2` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,16 +24,15 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **69.4%** (was 69.3%; register average 69.38%). Not 237/237. Not +1 pp.
+Mean established-scope completion: **69.73%** (was 69.38%). Not 237/237. Session delta **+0.35 pp**. Target +1.0 **NOT MET**.
 
 ## What was implemented this pass
 
-- Public error keys sanitized; Control Center / Pusat submit no longer return exception text.
-- Commerce idempotency fingerprints payloads (409) and does not store failures.
-- Incoming correlation/request IDs reject injection/oversize.
-- Reservation expire parses SQLite timestamps; job FAILED retries backups only, never financial ops.
-- Production backup destination under `/tmp` fail-closed.
-- Vitest 991 passed. Playwright not re-run this pass.
+- Plugin/admin-gate errors use public keys only.
+- Webhook event id + stale stripe-shaped timestamp rejected; stored payloads redacted.
+- UNCERTAIN payments cannot auto-capture; not counted as revenue.
+- Production restore to `/tmp` blocked even with allow flag.
+- Vitest 997 passed. Playwright not re-run this pass.
 
 ## Highest-priority remaining work
 

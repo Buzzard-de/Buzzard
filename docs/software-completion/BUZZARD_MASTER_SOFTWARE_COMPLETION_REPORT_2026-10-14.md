@@ -23,7 +23,7 @@ Canonical 237-item register (established scope; **original titles UNKNOWN**):
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 |
 | NOT_IMPLEMENTED | 0 |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 |
-| Mean established-scope % | 68.9% |
+| Mean established-scope % | 69.1% |
 
 Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE.md`, `BUZZARD_237_FINAL_HANDOVER.md`.
 
@@ -97,6 +97,31 @@ Started at docs HEAD `b8732fa` / code `10bca62`. Sequential Pusat governance sof
 | Isolated Playwright `:3010` + `:3001` after export settled | 0 | **107 passed, 12 skipped, 0 failed**, 47.1s |
 
 First Playwright attempt overlapped `next build` rewriting `out/` (ENVIRONMENT_MISMATCH: mega-menu timeout + admin "Error response"). Re-run on settled export: 107/12/0. `BUZZARD_TEST_MODE` not set. Counts remain 216+13+7+1=237. VERIFIED_100 remains 0.
+
+---
+
+## Continuation — 2026-10-14 batches A–G (no push)
+
+Started at `6790de4` (docs) / `71db6b5` (code), ahead 9, clean. Historical `67d82d4` on `cursor/pusat-idempotency-c293` is **not** an ancestor; its dedicated `pusat_idempotency` table was **not** copied.
+
+Software this continuation:
+
+- Dispatch idempotency on existing `core_ai_task_meta` (replay, 409 conflict, RUNNING in-progress, FAILED replay, UNIQUE-race orphan cancel).
+- Approval expireDue Date.parse; latestForTask rowid; no remint after EXECUTION_FAILED; EXPIRED remints.
+- `GET /api/health/pusat` and `GET /api/health/software` require `system.read`.
+- Inter-Cars inventory honesty; supplier feed preview local idempotency.
+- Mega-menu Playwright opener locale-safe (`ALL CATEGORIES`).
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `npx vitest run` | 0 | 91 files, **971 passed** |
+| `npx tsc --noEmit` | 0 | clean |
+| `npx next lint` | 0 | clean |
+| `npm run test:backup-restore` | 0 | dry-run only |
+| `NODE_ENV=production npx next build` | 0 | 2044 pages |
+| Isolated Playwright `:3010` + `:3001` after export settled | 0 | **107 passed, 12 skipped, 0 failed**, 49.3s |
+
+Sales / Product SoT / live payments remain off. Push / merge / deploy **not** performed. VERIFIED_100 remains **0**.
 
 ---
 

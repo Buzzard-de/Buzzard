@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `71db6b5acfd05a572cb1146db920ea4ebb14176d`  
+Inspected HEAD at quality pass: working tree after dispatch-idempotency / approval / public-health lock (base `6790de4`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (git history, docs, and project files re-searched this pass)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **68.9%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **69.1%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -71,11 +71,15 @@ Mean established-scope completion: **68.9%**. This is not 237/237 done. Original
 21. `GET /api/orchestrator/status` requires `system.read` (401 unauthenticated).
 22. `executeAgent` stamps `recommendationOnly` / `commercialSideEffects: false`.
 23. Pusat health reports provider requested vs effective stub; `live: false`.
+24. Dispatch idempotency (item 42) uses existing `core_ai_task_meta` — replay, 409 conflict, RUNNING in-progress, FAILED replay, UNIQUE-race orphan cancel. No second idempotency store. Historical `67d82d4` on `cursor/pusat-idempotency-c293` was **not** merged.
+25. Approval `expireDue` uses `Date.parse`; `latestForTask` ties break on `rowid`. EXPIRED remints; REJECTED/CANCELLED/EXECUTION_FAILED do not.
+26. `GET /api/health/pusat` and `GET /api/health/software` require `system.read` (no longer public). Generic `GET /api/health` stays public.
+27. Inter-Cars inventory classified PARTIAL / BLOCKED_EXTERNAL locally. Supplier feed preview is locally idempotent (in-memory, not live).
 
 
 ## Resume pointer
 
-Next session: continue from item 42 (dispatch idempotency) then remaining PARTIAL items after 39/47/49/51/54/55. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 213–226 unchanged. Do not restart the register.
+Next session: remaining PARTIAL items after 17/39/42/51/55/93. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 213–226 unchanged. Do not restart the register.
 
 ---
 
@@ -506,8 +510,8 @@ Next session: continue from item 42 (dispatch idempotency) then remaining PARTIA
 | Established scope | Diagnostic / Guardian / Orchestrator / DB GET protection |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Unauthenticated diagnostic prefixes 401 |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | routePermissions, globalAuthMiddleware |
-| Identified gaps | fortressAuthz / routePermissions tests |
+| Existing implementation evidence | routePermissions + fail-closed wrap; guardian/orchestrator/health/pusat/health/software 401 |
+| Identified gaps | Other public /api/health/* readiness pages still public by design |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | routePermissions, globalAuthMiddleware |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -1090,7 +1094,7 @@ Next session: continue from item 42 (dispatch idempotency) then remaining PARTIA
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — reject/cancel stay CANCELLED, reminted false |
+| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — reject/cancel/execution_failed stay CANCELLED; EXPIRED remints after Date.parse expireDue |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
@@ -1160,8 +1164,8 @@ Next session: continue from item 42 (dispatch idempotency) then remaining PARTIA
 | Established scope | Dispatch idempotency |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Durable read-only dispatch keys |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pusat idempotency |
-| Identified gaps | Branch ancestry includes pusat-idempotency |
+| Existing implementation evidence | `submit.js` + `core_ai_task_meta` UNIQUE key; replay/conflict/in-progress/FAILED; orphan cancel on UNIQUE race |
+| Identified gaps | Cross-process concurrency only serialized by SQLite; no second store copied from 67d82d4 |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat idempotency |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -1172,8 +1176,8 @@ Next session: continue from item 42 (dispatch idempotency) then remaining PARTIA
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Branch ancestry includes pusat-idempotency |
+| Completion percentage | 85% (established: replay, conflict, in-progress, failed replay, UNIQUE orphan cancel; original UNKNOWN) |
+| Remaining work | Original criteria UNKNOWN; multi-process race only covered by UNIQUE catch |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1402,7 +1406,7 @@ Next session: continue from item 42 (dispatch idempotency) then remaining PARTIA
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `fortressAuthz.test.mjs` — GET /api/orchestrator/status 401 unauthenticated |
+| Exact tests executed and results | `fortressAuthz.test.mjs` — GET /api/orchestrator/status, /api/health/pusat, /api/health/software 401 unauthenticated |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
@@ -2490,8 +2494,8 @@ Next session: continue from item 42 (dispatch idempotency) then remaining PARTIA
 | Established scope | Supplier retry/idempotency |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Fail-closed outage |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software/carriers and feeds |
-| Identified gaps | Feeds not live |
+| Existing implementation evidence | `previewIdempotent` local map + Inter-Cars inventory honesty |
+| Identified gaps | Preview cache is process-local; live supplier fetch remains blocked |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/carriers and feeds |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -2502,8 +2506,8 @@ Next session: continue from item 42 (dispatch idempotency) then remaining PARTIA
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Feeds not live |
+| Completion percentage | 65% (local preview idempotency + conflict; live feeds still blocked) |
+| Remaining work | Live supplier credentials and durable preview store remain external |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

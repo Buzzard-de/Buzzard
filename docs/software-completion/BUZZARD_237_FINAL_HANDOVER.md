@@ -9,7 +9,7 @@ This document is a session handover, not a claim that 237/237 items are complete
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
 | Starting HEAD | `229f6c94d48efe07fe95b650fd8ce520f667c1a4` |
-| Ending HEAD (code) | local commit after evidence |
+| Ending HEAD (code) | `c7e183d8d48bcc5da209d7cf8580564380018fe7` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -37,6 +37,6 @@ Mean established-scope completion: **70.03%** (was 69.73%). Session delta **+0.3
 ## Highest-priority remaining work
 
 1. Recover original 237 titles/criteria or obtain an explicit waiver.
-2. Remaining PARTIAL: remaining plugin error leaks, item 109 webhook live verify, item 187 production restore HUMAN, live inventory/supplier BLOCKED.
+2. Remaining PARTIAL: `productionHealth` internal error strings, item 185 alerting EXTERNAL, item 109 live webhook, item 187 restore HUMAN.
 3. Human approvals and external credentials (never invent LIVE_VERIFIED).
 4. Isolated Playwright after `:3010`/`:3001` are dedicated — not re-run this pass.

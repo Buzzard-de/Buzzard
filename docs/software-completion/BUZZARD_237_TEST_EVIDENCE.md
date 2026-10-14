@@ -3,7 +3,7 @@
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
 Starting HEAD this pass: `229f6c94d48efe07fe95b650fd8ce520f667c1a4`  
-Code HEAD this pass: working tree (local commit follows)
+Code HEAD this pass: `c7e183d8d48bcc5da209d7cf8580564380018fe7`
 
 Safety at evidence time:
 

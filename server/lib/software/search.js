@@ -64,4 +64,16 @@ function searchCanonicalCatalog(query = {}) {
   return searchCatalog(undefined, query);
 }
 
-module.exports = { searchCatalog, searchCanonicalCatalog };
+function getLocalSearchIndexStatus() {
+  return {
+    mode: "local_catalog_filter",
+    liveOpenSearch: false,
+    opensearchDeployed: false,
+    invented: false,
+    fitmentClaimed: false,
+    syncScript: "scripts/sync-search-index.mjs",
+    syncScriptLiveClaim: false,
+  };
+}
+
+module.exports = { searchCatalog, searchCanonicalCatalog, getLocalSearchIndexStatus };

@@ -55,6 +55,54 @@ function remember(agentId, taskId, kind, subject, content, source) {
 
 const SPECIALIST_EMPLOYEES = [
   {
+    id: "price_ai",
+    name: "Price Assistant",
+    department: "Pricing",
+    description: "Cost-based pricing analysis — never invents supplier cost or undercut rules",
+    responsibility: "Price recommendations",
+    permissions: ["products.read", "prices.read", "ai.execute"],
+    capabilities: ["price_check", "min_net_profit"],
+    priority: 70,
+    code: AGENT_CODES.PRICE,
+    tools: ["pricing.calculate", "memory.write"],
+  },
+  {
+    id: "product_ai",
+    name: "Product Assistant",
+    department: "Catalog",
+    description: "PIM validation only — does not activate Product SoT or sales",
+    responsibility: "Product validation",
+    permissions: ["products.read", "ai.execute"],
+    capabilities: ["product_validate"],
+    priority: 66,
+    code: AGENT_CODES.PRODUCT,
+    tools: ["pim.validate"],
+  },
+  {
+    id: "order_ai",
+    name: "Order Assistant",
+    department: "Commerce",
+    description: "Order inspection without supplier purchase orders while sales are locked",
+    responsibility: "Order decision support",
+    permissions: ["orders.read", "ai.execute"],
+    capabilities: ["order_inspect"],
+    priority: 64,
+    code: AGENT_CODES.ORDER,
+    tools: ["orders.inspect"],
+  },
+  {
+    id: "category_ai",
+    name: "Category Assistant",
+    department: "Taxonomy",
+    description: "Canonical category mapping — flags ambiguous legacy ids",
+    responsibility: "Category mapping",
+    permissions: ["categories.read", "ai.execute"],
+    capabilities: ["category_map"],
+    priority: 63,
+    code: AGENT_CODES.CATEGORY,
+    tools: ["taxonomy.map"],
+  },
+  {
     id: "stock_ai",
     name: "Stock Assistant",
     department: "Operations",
@@ -756,13 +804,43 @@ function getAgent(code) {
   return AGENT_BY_CODE[code] || null;
 }
 
+function specialistRosterStatus() {
+  const seededIds = new Set(SPECIALIST_EMPLOYEES.map((emp) => emp.id));
+  const codes = Object.values(AGENT_CODES);
+  const missingEmployees = Object.entries(AGENT_BY_CODE)
+    .filter(([, def]) => !seededIds.has(def.employeeId))
+    .map(([code, def]) => ({ code, employeeId: def.employeeId }));
+  const missingExecute = Object.entries(AGENT_BY_CODE)
+    .filter(([, def]) => typeof def.execute !== "function")
+    .map(([code]) => code);
+  const missingCodes = codes.filter((code) => !AGENT_BY_CODE[code]);
+  return {
+    agentCodeCount: codes.length,
+    executeBoundCount: Object.keys(AGENT_BY_CODE).length,
+    employeeSeedCount: SPECIALIST_EMPLOYEES.length,
+    complete: missingEmployees.length === 0 && missingExecute.length === 0 && missingCodes.length === 0,
+    missingEmployees,
+    missingExecute,
+    missingCodes,
+    recommendationOnly: true,
+    liveMutations: false,
+  };
+}
+
 function listAgents() {
   ensureSpecialistEmployees();
+  const roster = specialistRosterStatus();
+  const seededIds = new Set(SPECIALIST_EMPLOYEES.map((emp) => emp.id));
   return Object.entries(AGENT_BY_CODE).map(([code, def]) => ({
     code,
     employeeId: def.employeeId,
     permissions: def.permissions,
     schema: def.schema,
+    recommendationOnly: true,
+    liveMutations: false,
+    employeeSeeded: seededIds.has(def.employeeId),
+    executeBound: typeof def.execute === "function",
+    rosterComplete: roster.complete,
   }));
 }
 
@@ -778,6 +856,7 @@ module.exports = {
   SPECIALIST_EMPLOYEES,
   AGENT_BY_CODE,
   ensureSpecialistEmployees,
+  specialistRosterStatus,
   classifyAgent,
   getAgent,
   listAgents,

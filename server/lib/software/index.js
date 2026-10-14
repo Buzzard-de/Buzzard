@@ -13,7 +13,7 @@ const voice = require("./voice");
 const customerAccess = require("./customerAccess");
 const orders = require("./orders");
 const { getSoftwareHealth } = require("./health");
-const { searchCatalog, searchCanonicalCatalog } = require("./search");
+const { searchCatalog, searchCanonicalCatalog, getLocalSearchIndexStatus } = require("./search");
 const returns = require("./returns");
 const reporting = require("./reporting");
 const supplierFeeds = require("./supplierFeeds");
@@ -69,6 +69,7 @@ module.exports = {
   orders,
   searchCatalog,
   searchCanonicalCatalog,
+  getLocalSearchIndexStatus,
   returns,
   reporting,
   supplierFeeds,

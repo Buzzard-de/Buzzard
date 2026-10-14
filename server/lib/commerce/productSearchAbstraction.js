@@ -42,12 +42,18 @@ function searchOpenSearchStub(query) {
 }
 
 function getSearchHealth() {
-  const backend = getBackend();
+  const requested = getBackend();
+  const stubActive = requested === "opensearch";
   return {
-    activeBackend: backend,
+    activeBackend: requested,
+    servingBackend: stubActive ? "sql_fallback" : "sql",
+    liveOpenSearch: false,
+    opensearchStubActive: stubActive,
     opensearchUrl: process.env.BUZZARD_OPENSEARCH_URL ? "configured" : "not_configured",
     opensearchEnabled: process.env.BUZZARD_OPENSEARCH_ENABLED === "1",
     fallbackAvailable: true,
+    localIndex: "sql_or_catalog",
+    invented: false,
   };
 }
 

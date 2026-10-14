@@ -34,7 +34,7 @@ Standing locks (must remain until an independent authenticated human approves th
 | --- | --- | --- |
 | 87 | Inter-Cars live credentials / authorization | Authorized sandbox then live |
 | 88 | TecDoc live credentials | Authorized sandbox then live |
-| 185 | Alerting backend | Configured destination |
+| 185 | Alerting backend | Configured destination. Local `generateLocalAlerts()` is implemented (`liveDispatch: false`). Remaining human/external action: authorize SMTP/webhook/pager credentials. Do not treat local generation as live delivery. |
 | 205 / 212 | GitHub CI for this HEAD vs PR #430 | Independent CI on the pushed SHA |
 | 217 | Production monitoring probe | Authorized production access |
 | 220 | Production persistent disk | Independent production evidence — local DB copy is not proof |

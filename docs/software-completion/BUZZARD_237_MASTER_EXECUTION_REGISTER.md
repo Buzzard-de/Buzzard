@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `1a40186f5336a2085146e39dc24018515ac71abe` (docs commit follows)  
+Inspected HEAD at quality pass: working tree after items 38/69/70/143/184–185 (docs commit follows)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (git history, docs, and project files re-searched this pass)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **68.1%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN.
+Mean established-scope completion: **68.7%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -62,11 +62,15 @@ Mean established-scope completion: **68.1%**. This is not 237/237 done. Original
 12. Carrier `purchaseLabel` / `createShipment` always blocked, including when env keys are present.
 13. WMS location reserves and commerce software reserves declare separate authorities.
 14. Approval `consumeForExecution` consumes the token once, refuses replay, and does not perform the live action.
+15. Specialist roster now seeds `price_ai`, `product_ai`, `order_ai`, and `category_ai` so every `AGENT_CODES` entry has an employee + execute binding (recommendation-only).
+16. Search health reports `liveOpenSearch: false` and `servingBackend` sql/sql_fallback even when the OpenSearch env stub is armed.
+17. Storefront skip-link href is bound to `MAIN_CONTENT_ID` (`maincontent`); landmark contract tests added. Not a WCAG claim.
+18. Local metrics snapshot (`prometheus: false`) and local alert generation (`liveDispatch: false`) added. Alert delivery remains externally blocked.
 
 
 ## Resume pointer
 
-Next session: continue from item 1 (original criteria still UNKNOWN). Next safely executable software gaps after this pass include specialist-agent honesty (38), local search index (69), accessibility beyond skip-link (143), metrics/alerting backends (184–185), and remaining production HUMAN items (213–226). Do not restart the register.
+Next session: continue from the first unfinished/insufficiently verified item (original criteria still UNKNOWN). Items 38/69/70/143/184 local software advanced this pass; item 185 remains BLOCKED_EXTERNAL_DEPENDENCY for live pager delivery. Remaining HUMAN items 213–226 and external blockers (CI, Inter-Cars, TecDoc, production persistence/monitoring) are unchanged. Do not restart the register.
 
 ---
 
@@ -1047,20 +1051,20 @@ Next session: continue from item 1 (original criteria still UNKNOWN). Next safel
 | Established scope | Specialist agents |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Named agents with tools |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pusat/agents.js |
-| Identified gaps | Some agents NOT_IMPLEMENTED |
+| Existing implementation evidence | `server/lib/pusat/agents.js` `SPECIALIST_EMPLOYEES` + `AGENT_BY_CODE` + `specialistRosterStatus()` |
+| Identified gaps | Original criteria UNKNOWN; live specialist execution not claimed. Established roster is complete (every AGENT_CODES has employee seed + execute). |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat/agents.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `pusatAgentsAutomations.test.mjs` — seeds + execute for price/product/order/category; roster.complete true |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Some agents NOT_IMPLEMENTED |
+| Completion percentage | 80% (4/5 established: execute, employee seed, recommendation-only, no live mutations; live/original remaining) |
+| Remaining work | Original criteria UNKNOWN; live agent verification not claimed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1855,20 +1859,20 @@ Next session: continue from item 1 (original criteria still UNKNOWN). Next safel
 | Established scope | Search index local |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: sync-search-index; not live OpenSearch |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | search.js, productSearchAbstraction |
-| Identified gaps | opensearch_stub |
+| Existing implementation evidence | `server/lib/software/search.js`, `productSearchAbstraction.js`, `scripts/sync-search-index.mjs` |
+| Identified gaps | OpenSearch remains a stub/SQL fallback. Local catalog search is implemented and does not claim live OpenSearch. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | search.js, productSearchAbstraction |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `searchIndexHonesty.test.mjs` — liveOpenSearch false; stub uses sql_fallback |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | opensearch_stub |
+| Completion percentage | 75% (3/4 established: local search, sync script, honest stub; live OpenSearch remaining) |
+| Remaining work | Live OpenSearch not deployed (do not claim LIVE_VERIFIED) |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1882,19 +1886,19 @@ Next session: continue from item 1 (original criteria still UNKNOWN). Next safel
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: fill-product-i18n-gaps |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | scripts/fill-product-i18n-gaps.mjs |
-| Identified gaps | Gaps fillable; not all locales proven |
+| Identified gaps | Curated fill packs exist; `localeCoverage.measure()` reports `inventedTranslations: false`. Not every catalog SKU locale proven. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | scripts/fill-product-i18n-gaps.mjs |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `localeCoverageHonesty.test.mjs` — inventedTranslations false; fill script dry-run / no sales enable |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Gaps fillable; not all locales proven |
+| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Remaining work | Not all catalog locales proven; original criteria UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -3787,20 +3791,20 @@ Next session: continue from item 1 (original criteria still UNKNOWN). Next safel
 | Established scope | Accessibility |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Not a full WCAG audit this session |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | UI |
-| Identified gaps | No dedicated a11y run this session |
+| Existing implementation evidence | `lib/a11y/landmarks.ts`, `components/SkipLink.tsx`, `app/layout.tsx` `#maincontent`, `.skip-link:focus` |
+| Identified gaps | Landmark/skip-link contract tested. Not a WCAG 2.x audit. Screen-reader / axe suite not run this session. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontA11yLandmarks.test.mjs` — skip-link href bound to MAIN_CONTENT_ID |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 30% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | No dedicated a11y run this session |
+| Completion percentage | 60% (3/5 established: skip-link, main landmark, focus style; WCAG audit and axe remaining) |
+| Remaining work | Full WCAG audit not run; original criteria UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4859,20 +4863,20 @@ Next session: continue from item 1 (original criteria still UNKNOWN). Next safel
 | Established scope | Metrics |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Limited local counters |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productionHealth |
-| Identified gaps | No Prometheus LIVE |
+| Existing implementation evidence | `server/lib/operations/operationalMetrics.js`, `localMetrics.js` |
+| Identified gaps | Local snapshot only. Prometheus exporter is not implemented. Production scrape UNKNOWN. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | productionHealth |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `localMetricsAlerts.test.mjs` — prometheus/liveExporter false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | No Prometheus LIVE |
+| Completion percentage | 65% (2/3 established local counters + no-secret snapshot; Prometheus remaining) |
+| Remaining work | No Prometheus LIVE; production metrics UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4885,20 +4889,20 @@ Next session: continue from item 1 (original criteria still UNKNOWN). Next safel
 | Established scope | Alerting |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Not a live pager |
 | Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | ops |
-| Identified gaps | No authorized alerting backend |
+| Existing implementation evidence | `server/lib/operations/alertReadiness.js`, `localAlerts.js` |
+| Identified gaps | Local generation exists (`liveDispatch: false`). No authorized SMTP/webhook/pager backend. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | ops |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `localMetricsAlerts.test.mjs` — alerts generated, dispatched false, deliveryBlocked |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 20% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | No authorized alerting backend |
+| Completion percentage | 40% (2/5: local generate + no-dispatch proven; SMTP/webhook/pager/production remaining) |
+| Remaining work | No authorized alerting backend — live delivery BLOCKED_EXTERNAL_DEPENDENCY |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
 

@@ -23,7 +23,7 @@ Canonical 237-item register (established scope; **original titles UNKNOWN**):
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 |
 | NOT_IMPLEMENTED | 0 |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 |
-| Mean established-scope % | 68.1% |
+| Mean established-scope % | 68.7% |
 
 Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE.md`, `BUZZARD_237_FINAL_HANDOVER.md`.
 
@@ -49,6 +49,31 @@ Quality on `1a40186`:
 | Isolated Playwright `:3010` + `:3001` | 0 | 107 passed, 12 skipped, 0 failed, 47.9s |
 
 Unresolved Playwright failures: **none**. Canonical 237 source still **not found**. VERIFIED_100 remains **0**.
+
+---
+
+## Continuation — 2026-10-14 items 38 / 69 / 70 / 143 / 184–185 (no push)
+
+Inspected actual HEAD `cbc366e` then implemented missing local software. Status-count discrepancy (historical 216+13+7=236) is **resolved**: the omitted state is `NOT_APPLICABLE_WITH_EVIDENCE` item 82. Totals remain **216 + 13 + 7 + 1 = 237**.
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `npx vitest run` | 0 | 87 files, 956 passed |
+| `npx tsc --noEmit` | 0 | clean |
+| `npx next lint` | 0 | clean |
+| `npm run test:backup-restore` | 0 | dry-run only |
+| `NODE_ENV=production npx next build` | 0 | 2044 pages |
+| Isolated Playwright | not re-run | last 107/12/0 on `1a40186` |
+
+Software this continuation:
+
+- Specialist employees for `price_ai`, `product_ai`, `order_ai`, `category_ai`; `specialistRosterStatus().complete === true`; recommendation-only.
+- Search health honesty: `liveOpenSearch: false`, serving backend sql/sql_fallback.
+- Skip-link/`maincontent` landmark contract; not WCAG.
+- Local metrics snapshot (no Prometheus) and local alerts (no dispatch). Item 185 stays `BLOCKED_EXTERNAL_DEPENDENCY`.
+- Locale coverage honesty: no invented translations.
+
+API `:3001` `salesEnabled: false`. Sales / Product SoT / live payments remain off. Canonical 237 source still **not found**. VERIFIED_100 remains **0**.
 
 ---
 

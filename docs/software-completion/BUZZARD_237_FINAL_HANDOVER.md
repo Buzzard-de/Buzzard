@@ -8,9 +8,9 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Quality code HEAD | `1a40186f5336a2085146e39dc24018515ac71abe` |
+| Quality code HEAD | working tree after items 38/69/70/143/184–185 (commit follows) |
 | Push / merge / deploy | **not performed** |
-| Working tree at handover | evidence docs for this continuation (committed with this handover) |
+| Working tree at handover | software + evidence docs for this continuation |
 
 ## Totals
 
@@ -29,7 +29,7 @@ Established-scope register: **exactly 237 items**, numbers 1–237 in order.
 | NOT_IMPLEMENTED | 0 | 0.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **68.1%**.
+Mean established-scope completion: **68.7%**.
 
 Items blocked by missing original acceptance criteria: **all 237** cannot be VERIFIED_100. Confirmed original requirements: **none recovered**. Requirements supported by current source/tests: see register “established scope”. Reconstructed category-level scope: directive bands only.
 
@@ -38,7 +38,7 @@ Separate dimensions:
 | Dimension | This session |
 | --- | --- |
 | Implementation (local software, established scope) | ~68.1% mean; no VERIFIED_100 |
-| Automated tests | Full vitest **947/947**; tsc 0; next lint 0; backup dry-run 0; isolated Playwright **107 passed / 12 skipped / 0 failed** |
+| Automated tests | Full vitest **956/956** (87 files); tsc 0; next lint 0; backup dry-run 0; production build 2044 pages; isolated Playwright **not re-run** (last 107/12/0 on `1a40186`) |
 | Integration | ADAPTER_IMPLEMENTED / MOCK_OR_SIMULATED; not LIVE |
 | Sandbox | UNKNOWN |
 | Production | UNKNOWN (no probe/deploy) |
@@ -50,14 +50,13 @@ Separate dimensions:
 
 ## What was implemented this pass
 
-- Fail-closed parent/child flags for live payments and Product SoT env (SoT remains software-inactive).
-- Production environment validation: live payments without sales is an error; SoT env is a warning only.
-- Diagnostics use effective flags.
-- Approval `decide()` rejects AI/self identity, named AI actors, and missing approver on approve.
-- Separate health rate-limit helper/bucket (still enabled).
-- Canonical marketplace classification list; hub mutations 409 while sales off; classification-only channels not treated as live adapters.
-- Playwright identity isolation (Bearer on HTTP split origins; unique TEST-NET IPs on APIRequestContext; no browser X-Forwarded-For CORS header).
-- Register + companion docs updated.
+- Specialist roster complete: `price_ai`, `product_ai`, `order_ai`, `category_ai` seeded; every `AGENT_CODES` entry has execute + employee; recommendation-only.
+- Search health honesty (`liveOpenSearch: false`, sql/sql_fallback serving).
+- Skip-link bound to `MAIN_CONTENT_ID`; landmark contract tests. Not a WCAG claim.
+- Local metrics snapshot (no Prometheus) and local alert generation (no live dispatch). Item 185 remains externally blocked.
+- Locale coverage honesty: no invented translations; fill script cannot enable sales.
+- Status-count discrepancy explained: historical 236 omitted `NOT_APPLICABLE_WITH_EVIDENCE` (item 82).
+- Register + companion docs updated. No push.
 
 ## What remains unverified
 

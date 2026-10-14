@@ -80,6 +80,21 @@ describe("Pusat approval center", () => {
     expect(human.approval.status).toBe("APPROVED");
   });
 
+  it("rejects named AI actors as approvers without mutating the pending record", () => {
+    for (const actor of ["pusat", "guardian", "AI", "orchestrator", "esat_bey"]) {
+      const created = pusat.approval.requestApproval({
+        requestingAgent: "price_ai",
+        action: "prices.update",
+        reason: `Reject ${actor}`,
+        input: { sku: `APPR-${actor}` },
+      });
+      const decided = pusat.approval.decide(created.id, "approve", actor);
+      expect(decided.rejected).toBe(true);
+      expect(decided.code).toBe("ai_cannot_self_approve");
+      expect(decided.approval.status).toBe("PENDING");
+    }
+  });
+
   it("cancels approval when material inputs change", () => {
     const created = pusat.approval.requestApproval({
       requestingAgent: "price_ai",

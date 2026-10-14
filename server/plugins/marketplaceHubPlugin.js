@@ -48,17 +48,23 @@ module.exports = {
 
     app.post("/api/admin/marketplace-hub/sync/stock", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(marketplaceHub.queueStockSync());
+      const result = marketplaceHub.queueStockSync();
+      if (result.error) return res.status(result.status || 400).json({ error: result.error, live: false, queued: 0 });
+      return res.json(result);
     });
 
     app.post("/api/admin/marketplace-hub/sync/prices", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(marketplaceHub.queuePriceSync());
+      const result = marketplaceHub.queuePriceSync();
+      if (result.error) return res.status(result.status || 400).json({ error: result.error, live: false, queued: 0 });
+      return res.json(result);
     });
 
     app.post("/api/admin/marketplace-hub/sync/orders", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(marketplaceHub.queueOrderSync());
+      const result = marketplaceHub.queueOrderSync();
+      if (result.error) return res.status(result.status || 400).json({ error: result.error, live: false, queued: 0 });
+      return res.json(result);
     });
 
     app.post("/api/admin/marketplace-hub/listings", (req, res) => {

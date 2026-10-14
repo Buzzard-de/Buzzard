@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const { URL, URLSearchParams } = require('url');
 const { isDefaultJwtSecret } = require('./lib/dbAuth');
-const { isAllowedOrigin } = require('./lib/corsOrigins');
+const { isAllowedOrigin, API_CORS_ALLOW_HEADERS } = require('./lib/corsOrigins');
+const { isHealthPath } = require('./lib/healthPaths');
 const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
 const { wrapRouteHandler } = require('./lib/globalAuthMiddleware');
@@ -14,10 +15,6 @@ const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
 const healthRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: 'api-health:' });
-
-function isHealthPath(pathname) {
-  return pathname === '/api/health' || pathname.startsWith('/api/health/');
-}
 
 function setCommonHeaders(res) {
   setSecurityHeaders(res);
@@ -31,10 +28,7 @@ function setApiCorsHeaders(req, res) {
     res.setHeader("Access-Control-Allow-Credentials", "true");
   }
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type,Accept,Authorization,X-Buzzard-CSRF-Token,X-Buzzard-Commerce-Session,X-Buzzard-Guest-Token,Idempotency-Key"
-  );
+  res.setHeader("Access-Control-Allow-Headers", API_CORS_ALLOW_HEADERS);
 }
 
 function addRoute(method, routePath, handler) {

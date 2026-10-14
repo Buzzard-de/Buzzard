@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const { isAllowedOrigin, getAllowedOrigins } = require("../lib/corsOrigins.js");
+const { isAllowedOrigin, getAllowedOrigins, API_CORS_ALLOW_HEADERS } = require("../lib/corsOrigins.js");
 
 describe("corsOrigins", () => {
   it("allows documented production and local storefront origins", () => {
@@ -34,5 +34,11 @@ describe("corsOrigins", () => {
   it("does not treat CORS as a wildcard allowlist", () => {
     expect(isAllowedOrigin("*")).toBe(false);
     expect(isAllowedOrigin("https://evil.example")).toBe(false);
+  });
+
+  it("does not advertise X-Forwarded-For as a browser CORS request header", () => {
+    expect(API_CORS_ALLOW_HEADERS.toLowerCase()).not.toContain("x-forwarded-for");
+    expect(API_CORS_ALLOW_HEADERS).toContain("Authorization");
+    expect(API_CORS_ALLOW_HEADERS).toContain("X-Buzzard-CSRF-Token");
   });
 });

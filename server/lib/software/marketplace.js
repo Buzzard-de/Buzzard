@@ -5,20 +5,14 @@
 const crypto = require("crypto");
 const { CONNECTOR_STATUS } = require("./constants");
 const { marketplaceDraft } = require("../pusat/integrations");
+const { MARKETPLACE_CHANNELS } = require("./marketplaceChannels");
 
-const CONNECTORS = Object.freeze([
-  { id: "amazon", name: "Amazon", status: CONNECTOR_STATUS.MOCK, existingModule: "marketplaceHub + pusat.integrations" },
-  { id: "ebay", name: "eBay", status: CONNECTOR_STATUS.MOCK, existingModule: "marketplaceHub" },
-  { id: "google_shopping", name: "Google Shopping", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceHub" },
-  { id: "tiktok_shop", name: "TikTok Shop", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceHub" },
-  { id: "kaufland", name: "Kaufland", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceV35" },
-  { id: "allegro", name: "Allegro", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceV35" },
-  { id: "bol", name: "bol.com", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "cdiscount", name: "Cdiscount", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "otto", name: "OTTO", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "emag", name: "eMAG", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "skroutz", name: "Skroutz", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-]);
+const CONNECTORS = Object.freeze(
+  MARKETPLACE_CHANNELS.map((channel) => ({
+    ...channel,
+    status: channel.status === "mock_connector" ? CONNECTOR_STATUS.MOCK : CONNECTOR_STATUS.DRAFT,
+  }))
+);
 
 const CHANNEL_REQUIRED_FIELDS = Object.freeze({
   amazon: ["sku", "price", "category"],

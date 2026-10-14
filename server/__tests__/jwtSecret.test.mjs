@@ -75,4 +75,29 @@ describe("production JWT fail-closed", () => {
     expect(result.ok).toBe(false);
     expect(result.errors.some((row) => row.code === "live_payments_without_sales")).toBe(true);
   });
+
+  it("warns when Product SoT env is set but does not treat SoT as active", () => {
+    const prev = {
+      NODE_ENV: process.env.NODE_ENV,
+      JWT_SECRET: process.env.JWT_SECRET,
+      AUTH_SECRET: process.env.AUTH_SECRET,
+      SOT: process.env.BUZZARD_PRODUCT_SOT_ACTIVE,
+    };
+    process.env.NODE_ENV = "production";
+    process.env.JWT_SECRET = "unique-operator-secret-for-validation";
+    delete process.env.AUTH_SECRET;
+    delete process.env.BUZZARD_TEST_MODE;
+    process.env.BUZZARD_PRODUCT_SOT_ACTIVE = "1";
+    const result = require("../lib/environmentValidation.js").validateEnvironment();
+    const flags = require("../lib/commerce/commerceFeatureFlags.js").getEffectiveFlags();
+    process.env.NODE_ENV = prev.NODE_ENV;
+    if (prev.JWT_SECRET === undefined) delete process.env.JWT_SECRET;
+    else process.env.JWT_SECRET = prev.JWT_SECRET;
+    if (prev.AUTH_SECRET === undefined) delete process.env.AUTH_SECRET;
+    else process.env.AUTH_SECRET = prev.AUTH_SECRET;
+    if (prev.SOT === undefined) delete process.env.BUZZARD_PRODUCT_SOT_ACTIVE;
+    else process.env.BUZZARD_PRODUCT_SOT_ACTIVE = prev.SOT;
+    expect(result.warnings.some((row) => row.code === "product_sot_env_flag_set")).toBe(true);
+    expect(flags.productSotActive).toBe(false);
+  });
 });

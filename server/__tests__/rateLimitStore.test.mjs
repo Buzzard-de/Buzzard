@@ -71,6 +71,15 @@ describe("rateLimitStore", () => {
     expect(limiter(req)).toBe(false);
   });
 
+  it("treats /api/health paths as independent of /api commerce routes", () => {
+    const { isHealthPath } = require("../lib/healthPaths");
+    expect(isHealthPath("/api/health")).toBe(true);
+    expect(isHealthPath("/api/health/live")).toBe(true);
+    expect(isHealthPath("/api/cart")).toBe(false);
+    expect(isHealthPath("/api/admin/login")).toBe(false);
+    expect(isHealthPath("/health")).toBe(false);
+  });
+
   it("resolveBackend respects env", () => {
     delete process.env.BUZZARD_TEST_MODE;
     process.env.BUZZARD_RATE_LIMIT_STORE = "file";

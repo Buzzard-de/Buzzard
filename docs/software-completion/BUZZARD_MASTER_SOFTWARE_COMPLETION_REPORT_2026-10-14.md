@@ -350,7 +350,7 @@ Backlog only:
 
 1. **P0** Human CI + review of PRs #429 / #430; do not deploy until cookie/CORS/HTTPS is checked.
 2. **P0** Confirm production never uses seed JWT/admin defaults.
-3. **P1** Isolated Playwright on :3010/:3002 with a **separate** Next dist dir (do not share `.next` with :3000).
+3. **P1** Re-run admin Playwright against cookie-compatible HTTP(S) origins; static `:3010` export did not prove HttpOnly sessions. Do not disable 429 rate limits.
 4. **P1** One payment **sandbox** webhook rehearsal with real test keys.
 5. **P1** Catalog identity mapping plan — still no SoT activation.
 6. **P2** Operator persistence proof.

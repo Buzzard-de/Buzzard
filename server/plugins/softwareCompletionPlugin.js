@@ -80,10 +80,14 @@ module.exports = {
       if (!requirePermission(req, res, "ai.read")) return;
       const software = require("../lib/software");
       const { db } = require("../lib/db");
-      const preview = software.supplierFeeds.preview(req.body || {});
+      const preview = software.supplierFeeds.previewIdempotent({
+        ...(req.body || {}),
+        idempotencyKey: req.body?.idempotencyKey || req.headers["idempotency-key"],
+      });
       software.supplierFeeds.recordPreview(db, preview);
-      res.status(preview.ok || preview.status === "FEED_AVAILABLE" ? 200 : 400).json({
-        success: Boolean(preview.ok),
+      const conflict = preview.code === "IDEMPOTENCY_CONFLICT";
+      res.status(conflict ? 409 : preview.ok || preview.status === "FEED_AVAILABLE" ? 200 : 400).json({
+        success: Boolean(preview.ok) && !conflict,
         ...preview,
       });
     });

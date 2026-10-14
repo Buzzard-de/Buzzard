@@ -22,7 +22,8 @@ test.describe("Storefront Bridge E2E (Part 7)", () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/");
     const opener = page
-      .locator('button[aria-label*="Kategorien"], .nav-categories-btn, button:has-text("Kategorien")')
+      .locator("nav")
+      .getByRole("button", { name: /all categories|alle kategorien|kategorien/i })
       .first();
     if (!(await opener.isVisible().catch(() => false))) {
       test.info().annotations.push({ type: "note", description: "desktop mega-menu opener not present on this shell" });

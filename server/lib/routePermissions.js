@@ -51,9 +51,6 @@ const PUBLIC_ROUTES = new Set([
   "GET /api/security/health",
   "GET /api/p1/status",
   "GET /api/p1/health",
-  "GET /api/guardian/status",
-  "GET /api/health/software",
-  "GET /api/health/pusat",
   "POST /api/commerce/cart",
   "GET /api/commerce/cart/:id",
   "GET /api/commerce/checkout/:id",
@@ -213,6 +210,8 @@ const EXACT = {
   "POST /api/commerce/payments/:id/fail": "orders.write",
   "POST /api/commerce/payments/:id/reconcile": "orders.write",
   "GET /api/commerce/payments/:id": "orders.read",
+  "GET /api/health/pusat": "system.read",
+  "GET /api/health/software": "system.read",
 };
 
 const PREFIX = [
@@ -256,6 +255,8 @@ const PREFIX = [
   { prefix: "/api/p1/", read: "system.read", write: "system.configure" },
   { prefix: "/api/guardian/", read: "system.read", write: "system.configure" },
   { prefix: "/api/orchestrator/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/health/pusat", read: "system.read", write: "system.configure" },
+  { prefix: "/api/health/software", read: "system.read", write: "system.configure" },
   { prefix: "/api/db/", read: "orders.read", write: "orders.write" },
 ];
 

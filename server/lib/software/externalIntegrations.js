@@ -135,6 +135,16 @@ function inventory() {
       envVars: ["TECDOC_API_KEY"],
       humanAction: "Provide TECDOC_API_KEY for catalog mapping only. Not a purchase-order channel.",
     }),
+    row({
+      id: "inter_cars",
+      name: "Inter-Cars",
+      category: "supplier",
+      adapterExists: true,
+      adapterPath: "server/lib/software/connectorInventory.js",
+      envVars: ["INTERCARS_API_KEY", "INTERCARS_API_URL"],
+      humanAction: "Provide authorized Inter-Cars credentials. Live purchase orders stay blocked without human approval.",
+      extra: { liveWriteConfigured: false, purchaseOrderSent: false },
+    }),
     ...carriers.listCarriers().map((c) =>
       row({
         id: `carrier_${c.id}`,

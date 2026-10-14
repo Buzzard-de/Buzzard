@@ -109,7 +109,13 @@ module.exports = {
         });
         res.status(submitted.duplicate ? 200 : 201).json({ success: true, ...submitted });
       } catch (error) {
-        res.status(400).json({ success: false, errorKey: "pusat.task.submitFailed", message: error.message });
+        const status = Number(error.statusCode) || (error.code === "IDEMPOTENCY_CONFLICT" ? 409 : 400);
+        res.status(status).json({
+          success: false,
+          errorKey: error.code === "IDEMPOTENCY_CONFLICT" ? "pusat.task.idempotencyConflict" : "pusat.task.submitFailed",
+          code: error.code || null,
+          message: error.message,
+        });
       }
     });
   },

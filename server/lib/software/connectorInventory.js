@@ -11,6 +11,7 @@ function supplierConnectors() {
     { id: "api", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "Interface exists. Live HTTP blocked without credentials." },
     { id: "real_supplier", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "realSupplierConnector dry-run default." },
     { id: "tecdoc", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "No live credentials in this environment." },
+    { id: "inter_cars", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "Adapter classified locally. INTERCARS_API_KEY not used for live orders in this environment." },
   ];
 }
 

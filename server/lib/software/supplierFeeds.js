@@ -283,6 +283,40 @@ function adapterStatus(format) {
   };
 }
 
+const previewCache = new Map();
+
+function previewIdempotent(input = {}) {
+  const key = input.idempotencyKey ? String(input.idempotencyKey).trim() : "";
+  const hash = crypto.createHash("sha256").update(JSON.stringify({
+    format: input.format || null,
+    payload: input.payload || null,
+    supplierId: input.supplierId || null,
+  })).digest("hex");
+  if (key && previewCache.has(key)) {
+    const prior = previewCache.get(key);
+    if (prior.hash !== hash) {
+      return {
+        ok: false,
+        status: FEED_STATUS.ERROR,
+        written: false,
+        live: false,
+        importReady: false,
+        purchaseOrderSent: false,
+        code: "IDEMPOTENCY_CONFLICT",
+        replayed: false,
+      };
+    }
+    return { ...prior.result, replayed: true, written: false, live: false, purchaseOrderSent: false };
+  }
+  const result = preview(input);
+  if (key) previewCache.set(key, { hash, result });
+  return { ...result, replayed: false };
+}
+
+function resetPreviewIdempotency() {
+  previewCache.clear();
+}
+
 function recordPreview(db, previewResult) {
   if (!db) return previewResult;
   db.prepare(
@@ -309,6 +343,8 @@ module.exports = {
   parseXml,
   parseJson,
   preview,
+  previewIdempotent,
+  resetPreviewIdempotency,
   adapterStatus,
   recordPreview,
   rejectLiveFetch,

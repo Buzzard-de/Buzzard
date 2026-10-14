@@ -57,6 +57,48 @@ describe("Pusat task orchestration holds for approval (item 39)", () => {
     expect(again.result.reminted).toBe(false);
     expect(pusat.approval.latestForTask(submitted.task.id).status).toBe("CANCELLED");
   });
+
+  it("remints only after expiry, not after reject", async () => {
+    const submitted = pusat.submitTask({
+      title: "Critical expire remint",
+      agentCode: "order_assistant",
+      priority: "CRITICAL",
+      payload: { action: "order.create", orderId: "HOLD-3" },
+      createdBy: "test@pusat",
+      enqueue: false,
+    });
+    await pusat.executeTask(submitted.task.id);
+    const pending = pusat.approval.latestForTask(submitted.task.id);
+    require("../lib/db").db.prepare("UPDATE core_approvals SET expires_at = ? WHERE id = ?").run(
+      new Date(Date.now() - 1000).toISOString(),
+      pending.id
+    );
+    pusat.approval.expireDue();
+    const afterExpire = await pusat.executeTask(submitted.task.id);
+    expect(afterExpire.status).toBe("WAITING_APPROVAL");
+    const newest = pusat.approval.latestForTask(submitted.task.id);
+    expect(newest.id).not.toBe(pending.id);
+    expect(newest.status).toBe("PENDING");
+  });
+
+  it("does not remint after execution failure", async () => {
+    const submitted = pusat.submitTask({
+      title: "Critical execution fail hold",
+      agentCode: "order_assistant",
+      priority: "CRITICAL",
+      payload: { action: "order.create", orderId: "HOLD-4" },
+      createdBy: "test@pusat",
+      enqueue: false,
+    });
+    await pusat.executeTask(submitted.task.id);
+    const pending = pusat.approval.latestForTask(submitted.task.id);
+    pusat.approval.markExecutionFailed(pending.id, { reason: "downstream" });
+    const again = await pusat.executeTask(submitted.task.id);
+    expect(again.status).toBe("CANCELLED");
+    expect(again.result.reminted).toBe(false);
+    expect(again.result.approvalStatus).toBe("EXECUTION_FAILED");
+    expect(pusat.approval.latestForTask(submitted.task.id).id).toBe(pending.id);
+  });
 });
 
 describe("Guardian employee identity fail-closed (item 49)", () => {

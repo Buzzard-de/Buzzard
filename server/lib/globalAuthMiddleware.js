@@ -10,6 +10,8 @@ const FAIL_CLOSED_GET_PREFIXES = [
   "/api/p1/",
   "/api/guardian/",
   "/api/orchestrator/",
+  "/api/health/pusat",
+  "/api/health/software",
   "/api/db/",
   "/api/debug/",
   "/api/internal/",

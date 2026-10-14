@@ -143,6 +143,7 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
   }
 
   if (gate.requireApproval || task.payload.requiresApproval || task.priority === "CRITICAL") {
+    approval.expireDue();
     const existing = approval.latestForTask(taskId);
     if (existing && ["REJECTED", "CANCELLED", "EXECUTION_FAILED"].includes(existing.status)) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.CANCELLED, {

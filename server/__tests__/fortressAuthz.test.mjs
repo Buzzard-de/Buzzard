@@ -142,9 +142,18 @@ describe("Phase 13 fortress authorization", () => {
     expect(resolveRoutePermission("GET", "/api/p1/i18n/gaps")).toEqual({
       permission: "system.read",
     });
+    expect(resolveRoutePermission("GET", "/api/guardian/status")).toEqual({
+      permission: "system.read",
+    });
     expect(resolveRoutePermission("GET", "/api/guardian/health")).toEqual({
       permission: "system.read",
     });
+    const guardStatus = wrapRouteHandler("GET", "/api/guardian/status", () => {
+      throw new Error("handler must not run");
+    });
+    const guardRes = mockRes();
+    guardStatus(mockReq({ method: "GET", url: "/api/guardian/status" }), guardRes);
+    expect(guardRes.statusCode).toBe(401);
     expect(resolveRoutePermission("GET", "/api/orchestrator/status")).toEqual({
       permission: "system.read",
     });
@@ -157,6 +166,25 @@ describe("Phase 13 fortress authorization", () => {
     const orchRes = mockRes();
     orchStatus(mockReq({ method: "GET", url: "/api/orchestrator/status" }), orchRes);
     expect(orchRes.statusCode).toBe(401);
+    expect(resolveRoutePermission("GET", "/api/health/pusat")).toEqual({
+      permission: "system.read",
+    });
+    expect(resolveRoutePermission("GET", "/api/health/software")).toEqual({
+      permission: "system.read",
+    });
+    const pusatHealth = wrapRouteHandler("GET", "/api/health/pusat", () => {
+      throw new Error("handler must not run");
+    });
+    const pusatHealthRes = mockRes();
+    pusatHealth(mockReq({ method: "GET", url: "/api/health/pusat" }), pusatHealthRes);
+    expect(pusatHealthRes.statusCode).toBe(401);
+    const softwareHealth = wrapRouteHandler("GET", "/api/health/software", () => {
+      throw new Error("handler must not run");
+    });
+    const softwareHealthRes = mockRes();
+    softwareHealth(mockReq({ method: "GET", url: "/api/health/software" }), softwareHealthRes);
+    expect(softwareHealthRes.statusCode).toBe(401);
+    expect(resolveRoutePermission("GET", "/api/health")).toEqual({ public: true });
     expect(resolveRoutePermission("GET", "/api/db/status")).toEqual({
       permission: "orders.read",
     });

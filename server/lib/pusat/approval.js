@@ -50,13 +50,17 @@ function getApproval(id) {
 }
 
 function expireDue(now = new Date()) {
-  const iso = now.toISOString();
-  const due = db
+  const cutoff = now.getTime();
+  const pending = db
     .prepare(
-      `SELECT id FROM core_approvals
-       WHERE status = 'PENDING' AND expires_at IS NOT NULL AND expires_at <= ?`
+      `SELECT id, expires_at FROM core_approvals
+       WHERE status = 'PENDING' AND expires_at IS NOT NULL`
     )
-    .all(iso);
+    .all();
+  const due = pending.filter((row) => {
+    const stamp = Date.parse(row.expires_at);
+    return Number.isFinite(stamp) && stamp <= cutoff;
+  });
   for (const row of due) {
     db.prepare(
       `UPDATE core_approvals SET status = ?, decided_at = CURRENT_TIMESTAMP, decided_by = 'system_expiry'
@@ -341,7 +345,7 @@ function listApprovals(status) {
 
 function latestForTask(taskId) {
   const row = db
-    .prepare("SELECT * FROM core_approvals WHERE task_id = ? ORDER BY created_at DESC LIMIT 1")
+    .prepare("SELECT * FROM core_approvals WHERE task_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 1")
     .get(taskId);
   return mapApproval(row);
 }

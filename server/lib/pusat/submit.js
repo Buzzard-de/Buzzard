@@ -6,6 +6,7 @@ const controlCenter = require("../controlCenter");
 const { db } = require("../db");
 const { hashInput, newCorrelationId } = require("./hash");
 const { DEFAULT_TASK_TIMEOUT_MS, TASK_PRIORITY } = require("./constants");
+const { TASK_STATUS } = require("../../core/constants");
 const agents = require("./agents");
 
 function getMeta(taskId) {
@@ -56,6 +57,29 @@ function upsertMeta(taskId, fields) {
   return getMeta(taskId);
 }
 
+function replayExisting(idempotencyKey, inputHash) {
+  const existingMeta = findByIdempotency(idempotencyKey);
+  if (!existingMeta) return null;
+  if (existingMeta.input_hash && existingMeta.input_hash !== inputHash) {
+    const err = new Error("The idempotency key was already used with a different payload");
+    err.code = "IDEMPOTENCY_CONFLICT";
+    err.statusCode = 409;
+    throw err;
+  }
+  const task = controlCenter.getAiTask(existingMeta.task_id);
+  const inProgress = Boolean(task && task.status === TASK_STATUS.RUNNING);
+  return {
+    duplicate: true,
+    idempotent: true,
+    replayed: !inProgress,
+    inProgress,
+    conflict: false,
+    enqueued: false,
+    task,
+    meta: existingMeta,
+  };
+}
+
 function submitTask({
   title,
   description,
@@ -79,19 +103,6 @@ function submitTask({
 
   agents.ensureSpecialistEmployees();
 
-  if (idempotencyKey) {
-    const existingMeta = findByIdempotency(idempotencyKey);
-    if (existingMeta) {
-      const task = controlCenter.listAiTasks({ limit: 1000 }).find((t) => t.id === existingMeta.task_id);
-      return {
-        duplicate: true,
-        idempotent: true,
-        task,
-        meta: existingMeta,
-      };
-    }
-  }
-
   const classified = agents.classifyAgent(title, { ...payload, agentCode, kind: agentCode });
   const agent = agents.getAgent(classified);
   const resolvedEmployee = employeeId || agent?.employeeId || null;
@@ -100,6 +111,11 @@ function submitTask({
   const inputHash = hashInput(body);
   const corr = correlationId || newCorrelationId();
   const timeoutAt = new Date(Date.now() + (timeoutMs || DEFAULT_TASK_TIMEOUT_MS)).toISOString();
+
+  if (idempotencyKey) {
+    const replay = replayExisting(idempotencyKey, inputHash);
+    if (replay) return replay;
+  }
 
   let task;
   try {
@@ -127,14 +143,31 @@ function submitTask({
     /* columns may be missing on older snapshots — meta table is the source for Pusat */
   }
 
-  const meta = upsertMeta(task.id, {
-    correlationId: corr,
-    idempotencyKey: idempotencyKey || null,
-    inputHash,
-    timeoutAt,
-    classifiedAs: classified,
-    agentCode: classified,
-  });
+  let meta;
+  try {
+    meta = upsertMeta(task.id, {
+      correlationId: corr,
+      idempotencyKey: idempotencyKey || null,
+      inputHash,
+      timeoutAt,
+      classifiedAs: classified,
+      agentCode: classified,
+    });
+  } catch (error) {
+    if (idempotencyKey && /UNIQUE|unique/i.test(String(error.message || ""))) {
+      try {
+        controlCenter.updateTaskStatus(task.id, TASK_STATUS.CANCELLED, {
+          error: "idempotency_race",
+          result: { orphan: true, sideEffects: false, enqueued: false },
+        });
+      } catch {
+        /* best-effort cancel of the losing race task */
+      }
+      const replay = replayExisting(idempotencyKey, inputHash);
+      if (replay) return replay;
+    }
+    throw error;
+  }
 
   controlCenter.recordSystemEvent({
     eventType: "pusat.task.submitted",
@@ -153,6 +186,9 @@ function submitTask({
 
   return {
     duplicate: false,
+    replayed: false,
+    inProgress: false,
+    conflict: false,
     task: { ...task, correlationId: corr, agentCode: classified, inputHash, timeoutAt },
     meta,
   };
@@ -163,4 +199,5 @@ module.exports = {
   getMeta,
   upsertMeta,
   findByIdempotency,
+  replayExisting,
 };

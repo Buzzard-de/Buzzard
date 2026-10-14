@@ -115,6 +115,19 @@ describe("Pusat approval center", () => {
     expect(second.ok).toBe(false);
     expect(second.code).toBe("already_executed");
     expect(second.replay).toBe(true);
+
+    const mismatched = pusat.approval.requestApproval({
+      requestingAgent: "price_ai",
+      action: "prices.update",
+      reason: "Bound consume",
+      input: { sku: "APPR-BIND", price: 10 },
+    });
+    const bound = pusat.approval.decide(mismatched.id, "approve", "reviewer@test");
+    const wrong = pusat.approval.consumeForExecution(bound.approval.id, { sku: "APPR-BIND", price: 77 }, {
+      actor: "reviewer@test",
+    });
+    expect(wrong.ok).toBe(false);
+    expect(wrong.code).toBe("input_changed");
   });
 
   it("cancels approval when material inputs change", () => {

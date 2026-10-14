@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `563d9199f2c3c31f76e7654ea0489bf9ca51fe14` |
-| Ending HEAD (code) | `47312068b21937582fafb9b9c9c0dfa81d07313a` |
+| Starting HEAD | `8c00e7c81599ca558ce9fd1caf8abfc0d4acabcf` |
+| Ending HEAD (code) | `6f6c6726013927e205ab196338ef876999d83a75` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -28,10 +28,11 @@ Mean established-scope completion: **69.3%** (was 69.1%). Not 237/237.
 
 ## What was implemented this pass
 
-- Operational `/api/health/*` readiness/go-live/production/ai/commerce locked to `system.read` (fail-closed). Public liveness: `/api/health`, `/api/health/db`, slim `/api/health/version`.
-- `GET /api/commerce/readiness` and `GET /api/security/health` require auth. Public commerce status is a sales-off subset (no raw flags).
-- External notification channels return BLOCKED (not PENDING). Items 155/165 stay HUMAN_APPROVAL_REQUIRED.
-- Original 237 checklist re-searched and still not found (`4b0ce17` first numbered register).
+- Public `/api/health` slimmed to `{success, ok, status}`. Isolated curl 200; readiness 401.
+- VAT unknown country/category fail-closed (no invented 19%).
+- Exception AUTH_FAILED / RATE_LIMIT non-retryable; secrets redacted.
+- Reservation `expireDue` + estimated stock cannot reserve.
+- Isolated Playwright on this HEAD: 107 passed / 12 skipped / 0 failed.
 
 ## Highest-priority remaining work
 

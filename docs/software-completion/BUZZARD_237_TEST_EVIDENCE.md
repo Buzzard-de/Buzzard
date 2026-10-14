@@ -2,8 +2,8 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `563d9199f2c3c31f76e7654ea0489bf9ca51fe14`  
-Quality HEAD this pass: `47312068b21937582fafb9b9c9c0dfa81d07313a`
+Starting HEAD this pass: `8c00e7c81599ca558ce9fd1caf8abfc0d4acabcf`  
+Code HEAD this pass: `6f6c6726013927e205ab196338ef876999d83a75`
 
 Safety at evidence time:
 
@@ -23,14 +23,14 @@ Working directory: `/workspace`
 | Command | Exit | Totals |
 | --- | --- | --- |
 | Focused vitest (softwareReliabilityBatch + softwareCompletion + pusatTaskApprovalHold) | 0 | **86 passed** |
-| `npx vitest run` | 0 | 92 files, **978 passed**, 0 failed |
+| `npx vitest run` | 0 | 93 files, **982 passed**, 0 failed |
 | `npx tsc --noEmit` | 0 | clean |
 | `npx next lint` | 0 | No ESLint warnings or errors |
 | `npm run test:backup-restore` | 0 | dry-run only |
 | `NODE_ENV=production npx next build` | 0 | 2044 pages |
-| Isolated Playwright this pass | SKIPPED | Existing listeners on `:3000` (next-server), `:3001` (node), `:3010` (python3). Not killed. Prior isolated run on earlier HEAD: 107 passed / 12 skipped. |
+| Isolated Playwright this pass | 0 | **107 passed, 12 skipped, 0 failed** (47.0s) on HEAD `6f6c672` |
 
-Isolated Playwright (previous session, not re-run this pass):
+Isolated Playwright:
 
 ```
 PLAYWRIGHT_SKIP_WEBSERVER=1 \
@@ -44,9 +44,7 @@ npx playwright test
 
 | File | Established coverage |
 | --- | --- |
-| `server/__tests__/fortressAuthz.test.mjs` | 401 on production/go-live/ai/commerce health, commerce/readiness, security/health; public `/api/health` + `/api/health/db` + `/api/health/version` |
-| part21–35 readiness RBAC | operational `/api/health/*` now `system.read` |
-| `server/__tests__/notificationHub.test.mjs` | external channels `BLOCKED` |
+| `server/__tests__/commerceIntegrityBatch.test.mjs` | VAT unknown fail-closed; AUTH/RATE_LIMIT; reservation expire; €0.50 floor |
 
 ## Original 237 source search
 

@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `4731206` (operational health lock; base `563d919`)  
+Inspected HEAD at quality pass: `6f6c672` (tax fail-closed + public health slim; base `8c00e7c`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -83,11 +83,15 @@ Mean established-scope completion: **69.3%**. This is not 237/237 done. Original
 33. Operational `/api/health/*` readiness/go-live/production/ai/commerce routes require `system.read` (fail-closed GET). Public liveness remains `GET /api/health`, `GET /api/health/db`, `GET /api/health/version` (version slimmed to service+commit).
 34. `GET /api/commerce/readiness` and `GET /api/security/health` require auth. Public `GET /api/commerce/status` is a fixed sales-off storefront subset (no raw flags).
 35. External notification channels return `BLOCKED` / `sent:false` / `live:false` (not PENDING). Live customer send remains HUMAN 155/165.
+36. Public `GET /api/health` is liveness-only (`ok`/`status`). Catalog/storefront health slimmed. Live curl on isolated `:3001` confirmed 200 + 401 on readiness.
+37. VAT: unknown country/category no longer defaults to 19%. `calculateTaxSync` and checkout quotes fail-closed. Fiscal LIVE still UNKNOWN.
+38. Exception taxonomy: AUTH_FAILED and RATE_LIMIT are non-retryable; lastError is redacted. Generic "missing" is not MISSING_COST.
+39. Inventory: estimated/stale stock cannot reserve; `expireDue` marks EXPIRED and frees quantity. Buzzard still does not buy own stock.
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL items after the operational-health lock. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 67,73,115/129,155/165,182,213,214,219,221,225,226 unchanged. Do not restart the register. Do not push/PR without explicit authorization.
+Next session: remaining PARTIAL after tax/exception/reservation work. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL. HUMAN list unchanged. Isolated Playwright on this HEAD: 107 passed / 12 skipped. Do not restart the register. Do not push/PR without explicit authorization.
 
 ---
 
@@ -3131,7 +3135,7 @@ Next session: remaining PARTIAL items after the operational-health lock. Origina
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Per-market VAT |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | market engine / tax |
-| Identified gaps | Rules present; fiscal LIVE UNKNOWN |
+| Identified gaps | Configured-country table only; unknown country/category fail-closed (no 19% default). Fiscal LIVE UNKNOWN. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | market engine / tax |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -4489,7 +4493,7 @@ Next session: remaining PARTIAL items after the operational-health lock. Origina
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Pusat exceptions |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | pusat/exceptions |
-| Identified gaps | Unit |
+| Identified gaps | AUTH/RATE_LIMIT classified locally; production exception volume UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat/exceptions |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |

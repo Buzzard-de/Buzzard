@@ -29,6 +29,20 @@ Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE
 
 ---
 
+## Continuation — 2026-10-14 CONTINUOUS-237-V3 (no push) — HEAD `6f6c672`
+
+Start HEAD `8c00e7c`. Tax fail-closed, public health slim, exception redact, reservation expire. Counts unchanged (0 / 216 / 13 / 7 / 1). Isolated Playwright **107 passed / 12 skipped / 0 failed**.
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| Isolated curl `/api/health` | 200 | `{success,ok,status}` only |
+| Isolated curl `/api/commerce/readiness` | 401 | auth required |
+| Isolated curl `/api/health/version` | 200 | `service` + `commit` only |
+| `npx vitest run` | 0 | 93 files, 982 passed |
+| Isolated Playwright `:3010` + `:3001` | 0 | 107 passed, 12 skipped |
+
+---
+
 ## Continuation — 2026-10-14 CONTINUOUS-237-V2 (no push) — HEAD `4731206`
 
 Start HEAD `563d919`. Operational health/readiness public leak closed; commerce status slimmed; notification channels BLOCKED. Counts unchanged (0 / 216 / 13 / 7 / 1). Mean 69.3%. Playwright not re-run (ports 3000/3001/3010 occupied; not killed).

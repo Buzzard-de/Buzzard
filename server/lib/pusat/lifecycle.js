@@ -144,7 +144,17 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
 
   if (gate.requireApproval || task.payload.requiresApproval || task.priority === "CRITICAL") {
     const existing = approval.latestForTask(taskId);
-    if (!existing || existing.status === "PENDING" || existing.status === "EXPIRED" || existing.status === "CANCELLED") {
+    if (existing && ["REJECTED", "CANCELLED", "EXECUTION_FAILED"].includes(existing.status)) {
+      return controlCenter.updateTaskStatus(taskId, TASK_STATUS.CANCELLED, {
+        error: `approval_${String(existing.status).toLowerCase()}`,
+        result: {
+          executed: false,
+          approvalStatus: existing.status,
+          reminted: false,
+        },
+      });
+    }
+    if (!existing || existing.status === "PENDING" || existing.status === "EXPIRED") {
       if (!existing || existing.status !== "PENDING") {
         approval.requestApproval({
           taskId,

@@ -145,9 +145,18 @@ describe("Phase 13 fortress authorization", () => {
     expect(resolveRoutePermission("GET", "/api/guardian/health")).toEqual({
       permission: "system.read",
     });
+    expect(resolveRoutePermission("GET", "/api/orchestrator/status")).toEqual({
+      permission: "system.read",
+    });
     expect(resolveRoutePermission("GET", "/api/orchestrator/agents")).toEqual({
       permission: "system.read",
     });
+    const orchStatus = wrapRouteHandler("GET", "/api/orchestrator/status", () => {
+      throw new Error("handler must not run");
+    });
+    const orchRes = mockRes();
+    orchStatus(mockReq({ method: "GET", url: "/api/orchestrator/status" }), orchRes);
+    expect(orchRes.statusCode).toBe(401);
     expect(resolveRoutePermission("GET", "/api/db/status")).toEqual({
       permission: "orders.read",
     });

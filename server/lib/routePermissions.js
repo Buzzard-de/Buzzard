@@ -51,7 +51,6 @@ const PUBLIC_ROUTES = new Set([
   "GET /api/security/health",
   "GET /api/p1/status",
   "GET /api/p1/health",
-  "GET /api/orchestrator/status",
   "GET /api/guardian/status",
   "GET /api/health/software",
   "GET /api/health/pusat",

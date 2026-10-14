@@ -20,6 +20,20 @@ function getActiveProvider() {
   return process.env.BUZZARD_AI_PROVIDER || PROVIDERS.STUB;
 }
 
+function getProviderHonesty() {
+  const requested = getActiveProvider();
+  const liveProbe = process.env.BUZZARD_AI_LIVE_PROBE === "1";
+  const stub = requested === PROVIDERS.STUB || !liveProbe;
+  return {
+    requested,
+    effective: stub ? PROVIDERS.STUB : requested,
+    live: false,
+    liveProbe,
+    stub,
+    configured: isProviderConfigured(requested),
+  };
+}
+
 function providerEnvKey(name) {
   if (name === PROVIDERS.OPENAI) return "OPENAI_API_KEY";
   if (name === PROVIDERS.ANTHROPIC) return "ANTHROPIC_API_KEY";
@@ -155,6 +169,7 @@ async function executeWithProvider({ provider, prompt, context, timeoutMs = DEFA
 module.exports = {
   PROVIDERS,
   getActiveProvider,
+  getProviderHonesty,
   isProviderConfigured,
   executeWithProvider,
   classifyProviderError,

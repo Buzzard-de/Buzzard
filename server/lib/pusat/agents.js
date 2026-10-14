@@ -847,9 +847,22 @@ function listAgents() {
 function executeAgent(code, input, ctx) {
   const agent = getAgent(code);
   if (!agent) {
-    return { ok: false, error: "agent_unavailable", agent: code };
+    return {
+      ok: false,
+      error: "agent_unavailable",
+      agent: code,
+      recommendationOnly: true,
+      commercialSideEffects: false,
+      liveMutations: false,
+    };
   }
-  return agent.execute(input || {}, ctx || {});
+  const result = agent.execute(input || {}, ctx || {}) || {};
+  return {
+    ...result,
+    recommendationOnly: true,
+    commercialSideEffects: false,
+    liveMutations: false,
+  };
 }
 
 module.exports = {

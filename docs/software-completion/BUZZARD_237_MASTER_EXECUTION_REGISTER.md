@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `10bca62832e54e907ef7a76b0fd204f42e4a5e6a`  
+Inspected HEAD at quality pass: working tree after items 39/47/49/51/54/55 (commit follows)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (git history, docs, and project files re-searched this pass)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **68.7%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **68.9%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -66,11 +66,16 @@ Mean established-scope completion: **68.7%**. This is not 237/237 done. Original
 16. Search health reports `liveOpenSearch: false` and `servingBackend` sql/sql_fallback even when the OpenSearch env stub is armed.
 17. Storefront skip-link href is bound to `MAIN_CONTENT_ID` (`maincontent`); landmark contract tests added. Not a WCAG claim.
 18. Local metrics snapshot (`prometheus: false`) and local alert generation (`liveDispatch: false`) added. Alert delivery remains externally blocked.
+19. `executeTask` no longer remints approval after REJECTED/CANCELLED/EXECUTION_FAILED (stays cancelled, `executed: false`).
+20. Guardian denies missing employee identity (agentId alone is not enough).
+21. `GET /api/orchestrator/status` requires `system.read` (401 unauthenticated).
+22. `executeAgent` stamps `recommendationOnly` / `commercialSideEffects: false`.
+23. Pusat health reports provider requested vs effective stub; `live: false`.
 
 
 ## Resume pointer
 
-Next session: continue from the first unfinished/insufficiently verified item (original criteria still UNKNOWN). Items 38/69/70/143/184 local software advanced this pass; item 185 remains BLOCKED_EXTERNAL_DEPENDENCY for live pager delivery. Remaining HUMAN items 213–226 and external blockers (CI, Inter-Cars, TecDoc, production persistence/monitoring) are unchanged. Do not restart the register.
+Next session: continue from item 42 (dispatch idempotency) then remaining PARTIAL items after 39/47/49/51/54/55. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 213–226 unchanged. Do not restart the register.
 
 ---
 
@@ -1077,20 +1082,20 @@ Next session: continue from the first unfinished/insufficiently verified item (o
 | Established scope | Task orchestration |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Tasks wait on approval |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pusat/lifecycle.js |
-| Identified gaps | WAITING_APPROVAL path |
+| Existing implementation evidence | `server/lib/pusat/lifecycle.js` WAITING_APPROVAL; reject/cancel do not remint |
+| Identified gaps | Original criteria UNKNOWN; live workers not claimed |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat/lifecycle.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — reject/cancel stay CANCELLED, reminted false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | WAITING_APPROVAL path |
+| Completion percentage | 85% (established: wait, consume-once, no remint after reject/cancel; original UNKNOWN) |
+| Remaining work | Original criteria UNKNOWN; production orchestration not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1285,20 +1290,20 @@ Next session: continue from the first unfinished/insufficiently verified item (o
 | Established scope | Stub vs live LLM providers |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Stub default; live not claimed |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | aiProviders.js |
-| Identified gaps | STUB default |
+| Existing implementation evidence | `server/lib/aiProviders.js` `getProviderHonesty()` |
+| Identified gaps | Live LLM probe remains disabled; no LIVE_VERIFIED provider |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | aiProviders.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` provider honesty — live false, effective stub |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | STUB default |
+| Completion percentage | 80% (stub default + honesty; live provider remaining) |
+| Remaining work | Authorized live LLM credentials/probe not enabled |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1337,20 +1342,20 @@ Next session: continue from the first unfinished/insufficiently verified item (o
 | Established scope | Agent isolation via permissions |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: aiCanExecute + tool allow-list |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | rbac + guardian |
-| Identified gaps | Missing identity fail-closed |
+| Existing implementation evidence | `server/lib/pusat/guardian.js` — employee.id required |
+| Identified gaps | Original criteria UNKNOWN; production agent isolation not probed |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | rbac + guardian |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — deny without employee identity |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Missing identity fail-closed |
+| Completion percentage | 85% (employee identity fail-closed + permission/tool checks; original UNKNOWN) |
+| Remaining work | Original criteria UNKNOWN; production isolation not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1389,20 +1394,20 @@ Next session: continue from the first unfinished/insufficiently verified item (o
 | Established scope | Orchestrator HTTP protection |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: GET /api/orchestrator prefix authenticated |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | routePermissions |
-| Identified gaps | Diagnostic prefix 401 |
+| Existing implementation evidence | `routePermissions.js` — `/api/orchestrator/` requires `system.read` including status |
+| Identified gaps | Original criteria UNKNOWN; production auth not observed |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | routePermissions |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `fortressAuthz.test.mjs` — GET /api/orchestrator/status 401 unauthenticated |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Diagnostic prefix 401 |
+| Completion percentage | 88% (prefix authenticated locally; original UNKNOWN) |
+| Remaining work | Production orchestrator HTTP not probed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1467,20 +1472,20 @@ Next session: continue from the first unfinished/insufficiently verified item (o
 | Established scope | Recommendation-only assistants |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Cannot execute commercial side effects |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pusat/agents.js |
-| Identified gaps | status NOT_IMPLEMENTED on some |
+| Existing implementation evidence | `executeAgent` stamps recommendationOnly / commercialSideEffects false |
+| Identified gaps | Original criteria UNKNOWN; live commercial side effects still forbidden (by design) |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat/agents.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` executeAgent stamps commercialSideEffects false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | status NOT_IMPLEMENTED on some |
+| Completion percentage | 85% (wrapper + roster recommendation-only; original UNKNOWN) |
+| Remaining work | Original criteria UNKNOWN; no live commercial execution claimed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1493,20 +1498,20 @@ Next session: continue from the first unfinished/insufficiently verified item (o
 | Established scope | Pusat health/status |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Health reports stub/live honestly |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pusat/health.js |
-| Identified gaps | stub:true when STUB |
+| Existing implementation evidence | `pusat/health.js` uses `getProviderHonesty()` (`live: false`, requested vs effective) |
+| Identified gaps | Production health endpoint not observed |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat/health.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — health.provider.live false, stub true |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | stub:true when STUB |
+| Completion percentage | 85% (honest stub/live fields locally; original UNKNOWN) |
+| Remaining work | Production Pusat health not probed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

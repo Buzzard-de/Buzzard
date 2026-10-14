@@ -110,6 +110,9 @@ function evaluateUnsafe({
   if (!agentId && !employee) {
     return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent identity required");
   }
+  if (!employee || !employee.id) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent employee identity required");
+  }
 
   if (employee && employee.status && employee.status !== "ACTIVE") {
     return deny(EXCEPTION_CODES.AGENT_UNAVAILABLE, `Agent ${employee.id} is ${employee.status}`);

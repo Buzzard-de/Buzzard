@@ -1,5 +1,5 @@
 const { getDatabaseHealth } = require("../db");
-const { getActiveProvider, isProviderConfigured } = require("../aiProviders");
+const { getProviderHonesty } = require("../aiProviders");
 const { getOrchestratorStatus } = require("../orchestratorBridge");
 const { memoryHealth } = require("./memory");
 const { remoteStatus } = require("./guardian");
@@ -33,11 +33,7 @@ async function getHealth() {
       error: database.error || null,
     },
     memory,
-    provider: {
-      active: getActiveProvider(),
-      configured: isProviderConfigured(),
-      stub: getActiveProvider() === "stub",
-    },
+    provider: getProviderHonesty(),
     guardian: {
       local: true,
       remoteConfigured: remoteGuardian.configured,

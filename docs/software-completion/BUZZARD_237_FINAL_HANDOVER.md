@@ -8,7 +8,7 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Quality code HEAD | `10bca62832e54e907ef7a76b0fd204f42e4a5e6a` |
+| Quality code HEAD | working tree after items 39/47/49/51/54/55 (commit follows) |
 | Push / merge / deploy | **not performed** |
 | Working tree at handover | software + evidence docs for this continuation |
 
@@ -29,7 +29,7 @@ Established-scope register: **exactly 237 items**, numbers 1–237 in order.
 | NOT_IMPLEMENTED | 0 | 0.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **68.7%**.
+Mean established-scope completion: **68.9%**.
 
 Items blocked by missing original acceptance criteria: **all 237** cannot be VERIFIED_100. Confirmed original requirements: **none recovered**. Requirements supported by current source/tests: see register “established scope”. Reconstructed category-level scope: directive bands only.
 
@@ -38,7 +38,7 @@ Separate dimensions:
 | Dimension | This session |
 | --- | --- |
 | Implementation (local software, established scope) | ~68.1% mean; no VERIFIED_100 |
-| Automated tests | Full vitest **956/956** (87 files); tsc 0; next lint 0; backup dry-run 0; production build 2044 pages; isolated Playwright **not re-run** (last 107/12/0 on `1a40186`) |
+| Automated tests | Full vitest **961/961** (88 files); tsc 0; next lint 0; backup dry-run 0; production build 2044 pages; isolated Playwright **107 passed / 12 skipped / 0 failed** |
 | Integration | ADAPTER_IMPLEMENTED / MOCK_OR_SIMULATED; not LIVE |
 | Sandbox | UNKNOWN |
 | Production | UNKNOWN (no probe/deploy) |
@@ -50,12 +50,11 @@ Separate dimensions:
 
 ## What was implemented this pass
 
-- Specialist roster complete: `price_ai`, `product_ai`, `order_ai`, `category_ai` seeded; every `AGENT_CODES` entry has execute + employee; recommendation-only.
-- Search health honesty (`liveOpenSearch: false`, sql/sql_fallback serving).
-- Skip-link bound to `MAIN_CONTENT_ID`; landmark contract tests. Not a WCAG claim.
-- Local metrics snapshot (no Prometheus) and local alert generation (no live dispatch). Item 185 remains externally blocked.
-- Locale coverage honesty: no invented translations; fill script cannot enable sales.
-- Status-count discrepancy explained: historical 236 omitted `NOT_APPLICABLE_WITH_EVIDENCE` (item 82).
+- Task orchestration: reject/cancel/execution-failed approvals do not remint or execute (item 39).
+- Guardian fail-closed without employee identity (item 49).
+- `GET /api/orchestrator/status` requires `system.read` (item 51).
+- `executeAgent` stamps recommendation-only / no commercial side effects (item 54).
+- LLM provider honesty: requested vs effective stub, `live: false` (items 47, 55).
 - Register + companion docs updated. No push.
 
 ## What remains unverified

@@ -2,15 +2,16 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Quality HEAD: `10bca62832e54e907ef7a76b0fd204f42e4a5e6a`
+Quality HEAD: working tree after items 39/47/49/51/54/55 (commit follows)
 
 Safety at evidence time:
 
 - `BUZZARD_SALES_ENABLED=0`; running API `version.salesEnabled: false`
 - `BUZZARD_PRODUCT_SOT_ACTIVE` unset
 - `BUZZARD_LIVE_PAYMENTS` unset
+- `:3000` left running (not killed)
 - `:3001/api/health` HTTP 200, `salesEnabled: false`
-- `:3000` not killed
+- Isolated Playwright used `:3010` static `out/` + `:3001` API
 
 Nothing below is production verification. Nothing is LIVE_VERIFIED.
 
@@ -20,27 +21,33 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals | Duration |
 | --- | --- | --- | --- |
-| `npx vitest run` | 0 | 87 files, **956 passed**, 0 failed | 36.07s |
-| `npx tsc --noEmit` | 0 | clean | combined with lint ~4.2s |
+| `npx vitest run` | 0 | 88 files, **961 passed**, 0 failed | 35.89s |
+| `npx tsc --noEmit` | 0 | clean | with lint ~3.8s |
 | `npx next lint` | 0 | No ESLint warnings or errors | same |
-| `npm run test:backup-restore` | 0 | dry-run only; did not write production DB | <1s |
-| `NODE_ENV=production npx next build` | 0 | 2044 pages; export succeeded | ~29s |
+| `npm run test:backup-restore` | 0 | dry-run only; not a production restore | <1s |
+| `NODE_ENV=production npx next build` | 0 | 2044 pages | ~31s |
+| Isolated Playwright (after export settled) | 0 | **107 passed, 12 skipped, 0 failed** | 47.1s |
 
-Focused pre-suite: `pusatAgentsAutomations`, `searchIndexHonesty`, `storefrontA11yLandmarks`, `localMetricsAlerts`, `part8Foundation`, `part21SecurityObservabilityReadiness` — 6 files, 63 passed.
+Isolated Playwright:
 
-Isolated Playwright was **not re-run** on this HEAD. Last isolated run (HEAD `1a40186`): **107 passed, 12 skipped, 0 failed**. Layout landmark change is covered by `storefrontA11yLandmarks.test.mjs`. Re-run Playwright before claiming E2E on this tree.
+```
+PLAYWRIGHT_SKIP_WEBSERVER=1 \
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:3010 \
+BUZZARD_API_URL=http://127.0.0.1:3001 \
+NEXT_PUBLIC_BUZZARD_API_URL=http://127.0.0.1:3001 \
+npx playwright test
+```
 
-`BUZZARD_TEST_MODE` was **not** set for these commands. `npm audit --audit-level=high` remains **5 high** via eslint-config-next; not force-fixed this pass.
+`BUZZARD_TEST_MODE` was **not** set.
+
+First Playwright run overlapped `next build` rewriting `out/` on `:3010`: 105 passed, 2 failed, 12 skipped. Classification: **ENVIRONMENT_MISMATCH** (mega-menu opener timeout; admin `h1` "Error response"). After export settled: full suite **107/12/0**. Not an application defect.
 
 ## New tests this pass
 
 | File | Established coverage |
 | --- | --- |
-| `server/__tests__/pusatAgentsAutomations.test.mjs` | Every `AGENT_CODES` employee seeded + execute bound; product/order remain sales-locked |
-| `server/__tests__/searchIndexHonesty.test.mjs` | `liveOpenSearch: false`; stub uses `sql_fallback` |
-| `server/__tests__/storefrontA11yLandmarks.test.mjs` | Skip-link href bound to `MAIN_CONTENT_ID` |
-| `server/__tests__/localMetricsAlerts.test.mjs` | Local metrics/alerts; no Prometheus; no live dispatch |
-| `server/__tests__/localeCoverageHonesty.test.mjs` | i18n does not invent translations; fill script cannot enable sales |
+| `server/__tests__/pusatTaskApprovalHold.test.mjs` | No remint after reject/cancel; employee identity deny; provider honesty; recommendation-only execute |
+| `server/__tests__/fortressAuthz.test.mjs` | `GET /api/orchestrator/status` 401 without session |
 
 ## GitHub CI
 

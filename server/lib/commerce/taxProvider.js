@@ -25,7 +25,7 @@ function calculateTax({ country, subtotal = 0, discount = 0, category = null } =
     return {
       ok: false,
       code: "tax_category_rate_unknown",
-      message: `No verified category VAT for ${category}; country rate is not applied as category tax`,
+      message: "No verified category VAT; country rate is not applied as category tax",
       blocked: true,
       invented: false,
     };
@@ -36,7 +36,7 @@ function calculateTax({ country, subtotal = 0, discount = 0, category = null } =
     return {
       ok: false,
       code: "tax_rate_unknown",
-      message: `No tax rate configured for country ${country}`,
+      message: "No tax rate configured for country",
       blocked: true,
       invented: false,
     };

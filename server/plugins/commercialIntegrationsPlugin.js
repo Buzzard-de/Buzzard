@@ -91,8 +91,13 @@ module.exports = {
         const payload = { orderId, amount, currency, successUrl, cancelUrl };
         return res.json(await payments[provider](payload));
       } catch (error) {
-        console.error("Payment session error:", error);
-        return res.status(500).json({ error: error.message || "Internal server error" });
+        console.error("Payment session error:", error.code || "payment.session_failed");
+        return require("../lib/http/publicPluginError").sendPublicError(
+          res,
+          500,
+          "payment.session_failed",
+          error
+        );
       }
     });
 

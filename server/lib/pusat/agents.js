@@ -487,7 +487,7 @@ function runSalesAssistant(input = {}, ctx = {}) {
        FROM orders`
     ).get();
   } catch (error) {
-    return { ok: false, agent: AGENT_CODES.SALES, error: "database_failure", message: error.message, invented: false };
+    return { ok: false, agent: AGENT_CODES.SALES, error: "database_failure", invented: false };
   }
 
   const result = {

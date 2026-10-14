@@ -69,7 +69,9 @@ async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", 
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.error?.message || "Stripe checkout session failed");
+    const err = new Error("stripe.session_failed");
+    err.code = "stripe.session_failed";
+    throw err;
   }
 
   return {
@@ -122,7 +124,9 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
   });
   const tokenData = await tokenRes.json();
   if (!tokenRes.ok) {
-    throw new Error(tokenData.error_description || "PayPal auth failed");
+    const err = new Error("paypal.auth_failed");
+    err.code = "paypal.auth_failed";
+    throw err;
   }
 
   const orderRes = await fetch(`${base}/v2/checkout/orders`, {
@@ -150,7 +154,9 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
   });
   const orderData = await orderRes.json();
   if (!orderRes.ok) {
-    throw new Error(orderData.message || "PayPal order creation failed");
+    const err = new Error("paypal.order_failed");
+    err.code = "paypal.order_failed";
+    throw err;
   }
 
   const approvalUrl = (orderData.links || []).find((link) => link.rel === "approve")?.href || null;

@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `90d9a14884af317db972822b28ce6b1adf937e7f` |
-| Ending HEAD (code) | `7390e49e76b1cb94a6232ebea3e333278384f4f2` |
+| Starting HEAD | `229f6c94d48efe07fe95b650fd8ce520f667c1a4` |
+| Ending HEAD (code) | local commit after evidence |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,15 +24,15 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **69.73%** (was 69.38%). Not 237/237. Session delta **+0.35 pp**. Target +1.0 **NOT MET**.
+Mean established-scope completion: **70.03%** (was 69.73%). Session delta **+0.30 pp**. Target +1.0 **NOT MET**.
 
 ## What was implemented this pass
 
-- Plugin/admin-gate errors use public keys only.
-- Webhook event id + stale stripe-shaped timestamp rejected; stored payloads redacted.
-- UNCERTAIN payments cannot auto-capture; not counted as revenue.
-- Production restore to `/tmp` blocked even with allow flag.
-- Vitest 997 passed. Playwright not re-run this pass.
+- collectHealth probe failures use `health.probeFailed`.
+- Stripe/PayPal session failures use stable codes; payment session API no longer returns provider `error.message`.
+- `redactForLog` redacts secret-shaped strings without mutating the original.
+- Job API sanitizes free-text errors; VAT messages do not echo request input.
+- Vitest 1003 passed. Playwright not re-run this pass.
 
 ## Highest-priority remaining work
 

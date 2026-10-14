@@ -36,8 +36,20 @@ function setSecurityHeaders(res) {
   }
 }
 
+const SECRET_VALUE_PATTERN =
+  /(sk_live_|sk_test_|rk_live_|rk_test_|whsec_|pk_live_|pk_test_)[A-Za-z0-9]+|Bearer\s+[A-Za-z0-9\-._~+/]+=*|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]+|-----BEGIN [A-Z ]*PRIVATE KEY-----/i;
+
+function redactSecretString(text) {
+  const value = String(text);
+  if (SECRET_VALUE_PATTERN.test(value)) {
+    return value.replace(SECRET_VALUE_PATTERN, "[redacted]");
+  }
+  return text;
+}
+
 function redactForLog(value, depth = 0) {
   if (depth > 5) return "[truncated]";
+  if (typeof value === "string") return redactSecretString(value);
   if (value == null || typeof value !== "object") return value;
   if (Array.isArray(value)) return value.map((item) => redactForLog(item, depth + 1));
 
@@ -147,6 +159,7 @@ module.exports = {
   createRateLimiter,
   setSecurityHeaders,
   redactForLog,
+  redactSecretString,
   publicErrorBody,
   toPublicError,
   sanitizeErrorKey,

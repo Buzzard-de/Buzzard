@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `7390e49` (plugin public errors, webhook timestamp, uncertain no-capture, ephemeral restore; base `90d9a14`)  
+Inspected HEAD at quality pass: working tree on `229f6c9` (health probe keys, payment session codes, secret-string redact, job error sanitize)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **69.7%** (was 69.38%; register average recalculated after this pass). This is not 237/237 done. Session delta is below the +1.0 pp target. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **70.03%** (was 69.73%; 237-item arithmetic mean). Session delta **+0.30 pp**. Target +1.0 not met. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -97,11 +97,15 @@ Mean established-scope completion: **69.7%** (was 69.38%; register average recal
 47. Webhook foundation requires event id, verifies stripe-shaped `t=`/`v1=` timestamps (stale rejected), verifies before replay, redacts stored payloads. Live delivery remains off.
 48. UNCERTAIN / `PAYMENT_RECONCILIATION_REQUIRED` cannot auto-transition to `PAYMENT_CAPTURED`.
 49. Production restore to `/tmp` is blocked even when `BUZZARD_ALLOW_PRODUCTION_RESTORE=1`. Integrity issues no longer embed exception text.
+50. `collectHealth` probe failures use `health.probeFailed` (no exception text).
+51. Stripe/PayPal session failures throw stable codes; payment session API uses `sendPublicError`.
+52. `redactForLog` redacts secret-shaped strings in nested values without mutating the original object.
+53. Job queue public `error` is classified (`TIMEOUT` or `job.failed`); VAT fail-closed messages do not echo request input.
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncertain-no-capture / ephemeral-restore work. Start from leftover plugin internals (`aiAutomationPlugin`), item 185 alerting BLOCKED_EXTERNAL, item 109 live provider verification (not authorized), item 187 production restore HUMAN. Original criteria still UNKNOWN. Playwright not re-run this pass. Do not restart the register. Do not push/PR without explicit authorization.
+Next session: remaining PARTIAL after health-probe / payment-session / secret-string / job-error work. Start from leftover `productionHealth` internal error strings, item 185 alerting BLOCKED_EXTERNAL, item 109 live webhook verify (unauthorized), item 187 production restore HUMAN. Original criteria still UNKNOWN. Playwright not re-run. Do not restart the register. Do not push/PR.
 
 ---
 
@@ -492,8 +496,8 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (plugin public errors; original UNKNOWN) |
-| Remaining work | Remaining internal plugin error objects |
+| Completion percentage | 92% (collectHealth uses health.probeFailed; original UNKNOWN) |
+| Remaining work | Other unused health blobs may still exist in intelligence copies |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -910,8 +914,8 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Separated from global 180/min API bucket; still limited |
+| Completion percentage | 82% (public /api/health slim; collectHealth probe keys; original UNKNOWN) |
+| Remaining work | Rate-limited health bucket; production probe UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1042,7 +1046,7 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 78% (sales agent database_failure has no exception text; original UNKNOWN) |
 | Remaining work | Recommendation-only extras exist |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1224,8 +1228,8 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Local unit; no live workers claimed |
+| Completion percentage | 76% (job API sanitizes free-text errors; original UNKNOWN) |
+| Remaining work | Live workers not claimed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2660,8 +2664,8 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | ADAPTER_IMPLEMENTED; LIVE_VERIFIED false; MOCK/sandbox UNKNOWN |
+| Completion percentage | 66% (Stripe session failures use stripe.session_failed; live HTTP still blocked) |
+| Remaining work | LIVE_VERIFIED false; sandbox UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2686,8 +2690,8 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | ADAPTER_IMPLEMENTED; not live |
+| Completion percentage | 66% (PayPal auth/order failures use stable codes; live HTTP still blocked) |
+| Remaining work | LIVE_VERIFIED false |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -3156,8 +3160,8 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Rules present; fiscal LIVE UNKNOWN |
+| Completion percentage | 70% (unknown VAT fail-closed; messages do not echo request input; fiscal LIVE UNKNOWN) |
+| Remaining work | Fiscal LIVE UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5140,8 +5144,8 @@ Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncerta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Local |
+| Completion percentage | 80% (secret-shaped strings redacted in nested logs without mutating input) |
+| Remaining work | Local log file only; production SIEM UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

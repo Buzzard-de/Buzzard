@@ -46,7 +46,7 @@ function collectHealth() {
     try {
       database = require("../lib/db").toPublicDatabaseHealth();
     } catch (error) {
-      database = { enabled: true, error: error.message };
+      database = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -55,7 +55,7 @@ function collectHealth() {
     try {
       commercial = { enabled: true, ...require("../lib/commercialIntegrations").getIntegrationStatus() };
     } catch (error) {
-      commercial = { enabled: true, error: error.message };
+      commercial = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -64,7 +64,7 @@ function collectHealth() {
     try {
       orderAutomation = { enabled: true, ...require("../lib/orderAutomation").getAutomationStatus() };
     } catch (error) {
-      orderAutomation = { enabled: true, error: error.message };
+      orderAutomation = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -73,7 +73,7 @@ function collectHealth() {
     try {
       supplierHub = { enabled: true, ...require("../lib/supplierHub").getSupplierHubStatus() };
     } catch (error) {
-      supplierHub = { enabled: true, error: error.message };
+      supplierHub = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -82,7 +82,7 @@ function collectHealth() {
     try {
       catalogSeo = { enabled: true, ...require("../lib/catalogSeo").getCatalogSeoStatus() };
     } catch (error) {
-      catalogSeo = { enabled: true, error: error.message };
+      catalogSeo = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -91,7 +91,7 @@ function collectHealth() {
     try {
       localizationFeeds = { enabled: true, ...require("../lib/localizationFeeds").getLocalizationFeedsStatus() };
     } catch (error) {
-      localizationFeeds = { enabled: true, error: error.message };
+      localizationFeeds = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -100,7 +100,7 @@ function collectHealth() {
     try {
       customerCheckout = { enabled: true, ...require("../lib/customerCheckout").getCustomerCheckoutStatus() };
     } catch (error) {
-      customerCheckout = { enabled: true, error: error.message };
+      customerCheckout = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -109,7 +109,7 @@ function collectHealth() {
     try {
       customerSupport = { enabled: true, ...require("../lib/customerSupport").getCustomerSupportStatus() };
     } catch (error) {
-      customerSupport = { enabled: true, error: error.message };
+      customerSupport = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -118,7 +118,7 @@ function collectHealth() {
     try {
       crmLoyalty = { enabled: true, ...require("../lib/crmLoyalty").getCrmLoyaltyStatus() };
     } catch (error) {
-      crmLoyalty = { enabled: true, error: error.message };
+      crmLoyalty = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -130,7 +130,7 @@ function collectHealth() {
         ...require("../lib/analyticsDashboard").getAnalyticsDashboardStatus(),
       };
     } catch (error) {
-      analyticsDashboard = { enabled: true, error: error.message };
+      analyticsDashboard = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -142,7 +142,7 @@ function collectHealth() {
         ...require("../lib/marketingCenter").getMarketingCenterStatus(),
       };
     } catch (error) {
-      marketingCenter = { enabled: true, error: error.message };
+      marketingCenter = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -154,7 +154,7 @@ function collectHealth() {
         ...require("../lib/marketplaceHub").getMarketplaceHubStatus(),
       };
     } catch (error) {
-      marketplaceHub = { enabled: true, error: error.message };
+      marketplaceHub = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -166,7 +166,7 @@ function collectHealth() {
         ...require("../lib/logisticsFulfillment").getLogisticsFulfillmentStatus(),
       };
     } catch (error) {
-      logisticsFulfillment = { enabled: true, error: error.message };
+      logisticsFulfillment = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -178,7 +178,7 @@ function collectHealth() {
         ...require("../lib/wmsInventory").getWmsInventoryStatus(),
       };
     } catch (error) {
-      wmsInventory = { enabled: true, error: error.message };
+      wmsInventory = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -190,7 +190,7 @@ function collectHealth() {
         ...require("../lib/pimCatalog").getPimCatalogStatus(),
       };
     } catch (error) {
-      pimCatalog = { enabled: true, error: error.message };
+      pimCatalog = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -202,7 +202,7 @@ function collectHealth() {
         ...require("../lib/identitySecurity").getIdentitySecurityStatus(),
       };
     } catch (error) {
-      identitySecurity = { enabled: true, error: error.message };
+      identitySecurity = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -214,7 +214,7 @@ function collectHealth() {
         ...require("../lib/paymentsFinance").getPaymentsFinanceStatus(),
       };
     } catch (error) {
-      paymentsFinance = { enabled: true, error: error.message };
+      paymentsFinance = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -226,7 +226,7 @@ function collectHealth() {
         ...require("../lib/orderManagement").getOrderManagementStatus(),
       };
     } catch (error) {
-      orderManagement = { enabled: true, error: error.message };
+      orderManagement = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -238,7 +238,7 @@ function collectHealth() {
         ...require("../lib/cartCheckout").getCartCheckoutStatus(),
       };
     } catch (error) {
-      cartCheckout = { enabled: true, error: error.message };
+      cartCheckout = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -250,7 +250,7 @@ function collectHealth() {
         ...require("../lib/crmCustomerService").getCrmCustomerServiceStatus(),
       };
     } catch (error) {
-      crmCustomerService = { enabled: true, error: error.message };
+      crmCustomerService = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -262,7 +262,7 @@ function collectHealth() {
         ...require("../lib/returnsRma").getReturnsRmaStatus(),
       };
     } catch (error) {
-      returnsRma = { enabled: true, error: error.message };
+      returnsRma = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -274,7 +274,7 @@ function collectHealth() {
         ...require("../lib/marketingLoyalty").getMarketingLoyaltyStatus(),
       };
     } catch (error) {
-      marketingLoyalty = { enabled: true, error: error.message };
+      marketingLoyalty = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -286,7 +286,7 @@ function collectHealth() {
         ...require("../lib/reviewsRatings").getReviewsRatingsStatus(),
       };
     } catch (error) {
-      reviewsRatings = { enabled: true, error: error.message };
+      reviewsRatings = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -298,7 +298,7 @@ function collectHealth() {
         ...require("../lib/aiCenter").getAiCenterStatus(),
       };
     } catch (error) {
-      aiCenter = { enabled: true, error: error.message };
+      aiCenter = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -310,7 +310,7 @@ function collectHealth() {
         ...require("../lib/advancedSearch").getAdvancedSearchStatus(),
       };
     } catch (error) {
-      advancedSearch = { enabled: true, error: error.message };
+      advancedSearch = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -322,7 +322,7 @@ function collectHealth() {
         ...require("../lib/productCatalogPim").getProductCatalogPimStatus(),
       };
     } catch (error) {
-      productCatalogPim = { enabled: true, error: error.message };
+      productCatalogPim = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -334,7 +334,7 @@ function collectHealth() {
         ...require("../lib/supplierIntegrationHub").getSupplierIntegrationHubStatus(),
       };
     } catch (error) {
-      supplierIntegrationHub = { enabled: true, error: error.message };
+      supplierIntegrationHub = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -346,7 +346,7 @@ function collectHealth() {
         ...require("../lib/orderManagementV32").getOrderManagementV32Status(),
       };
     } catch (error) {
-      orderManagementV32 = { enabled: true, error: error.message };
+      orderManagementV32 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -358,7 +358,7 @@ function collectHealth() {
         ...require("../lib/fulfillmentV33").getFulfillmentV33Status(),
       };
     } catch (error) {
-      fulfillmentV33 = { enabled: true, error: error.message };
+      fulfillmentV33 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -370,7 +370,7 @@ function collectHealth() {
         ...require("../lib/logisticsV34").getLogisticsV34Status(),
       };
     } catch (error) {
-      logisticsV34 = { enabled: true, error: error.message };
+      logisticsV34 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -382,7 +382,7 @@ function collectHealth() {
         ...require("../lib/marketplaceV35").getMarketplaceV35Status(),
       };
     } catch (error) {
-      marketplaceV35 = { enabled: true, error: error.message };
+      marketplaceV35 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -394,7 +394,7 @@ function collectHealth() {
         ...require("../lib/paymentsV36").getPaymentsV36Status(),
       };
     } catch (error) {
-      paymentsV36 = { enabled: true, error: error.message };
+      paymentsV36 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -406,7 +406,7 @@ function collectHealth() {
         ...require("../lib/internationalV37").getInternationalV37Status(),
       };
     } catch (error) {
-      internationalV37 = { enabled: true, error: error.message };
+      internationalV37 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -418,7 +418,7 @@ function collectHealth() {
         ...require("../lib/securityV38").getSecurityV38Status(),
       };
     } catch (error) {
-      securityV38 = { enabled: true, error: error.message };
+      securityV38 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -430,7 +430,7 @@ function collectHealth() {
         ...require("../lib/analyticsV39").getAnalyticsV39Status(),
       };
     } catch (error) {
-      analyticsV39 = { enabled: true, error: error.message };
+      analyticsV39 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -442,7 +442,7 @@ function collectHealth() {
         ...require("../lib/masterAdminV40").getMasterAdminV40Status(),
       };
     } catch (error) {
-      masterAdminV40 = { enabled: true, error: error.message };
+      masterAdminV40 = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 
@@ -456,7 +456,7 @@ function collectHealth() {
       contactSubmissions = { enabled: true, count: Array.isArray(rows) ? rows.length : 0 };
     }
   } catch (error) {
-    contactSubmissions = { enabled: true, error: error.message };
+    contactSubmissions = { enabled: true, errorKey: "health.probeFailed" };
   }
 
   return {
@@ -548,7 +548,7 @@ function collectHealth() {
           commerce: ph.getCommerceHealthSummary(),
         };
       } catch (err) {
-        return { error: err.message };
+        return { errorKey: "health.probeFailed" };
       }
     })(),
   };

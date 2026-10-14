@@ -112,7 +112,7 @@ async function processOneJob() {
     const retry = (job.retryCount || 0) + 1;
     const maxRetries = job.maxRetries ?? DEFAULT_MAX_RETRIES;
 
-    appendJobLog(job.id, err.message, { level: "ERROR", metadata: { failureKind, retry } });
+    appendJobLog(job.id, failureKind, { level: "ERROR", metadata: { failureKind, retry } });
 
     if (retry < maxRetries) {
       const delayMs = computeRetryDelay(retry);
@@ -123,9 +123,9 @@ async function processOneJob() {
           execution_ms = ?, next_run_at = ?, lock_owner = NULL, lock_expires_at = NULL,
           updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
-      `).run(retry, err.message, failureKind, executionMs, nextRun, job.id);
+      `).run(retry, failureKind, failureKind, executionMs, nextRun, job.id);
     } else {
-      jobQueue.markDeadLetter(job.id, err.message, failureKind);
+      jobQueue.markDeadLetter(job.id, failureKind, failureKind);
       jobQueue.updateJob(job.id, { executionMs });
     }
   } finally {

@@ -7,6 +7,7 @@ const { createRateLimiter, getClientIp } = require("../lib/security");
 const { isCommerceCoreEnabled } = require("../core/commerceConstants");
 const commerce = require("../lib/commerce");
 const { logAuditFromRequest } = require("../lib/coreAudit");
+const { sendAdminGateError } = require("../lib/http/publicPluginError");
 
 const cartRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: "commerce-cart:" });
 const checkoutRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "commerce-checkout:" });
@@ -469,12 +470,7 @@ module.exports = {
         const adminSafetyGate = require("../lib/operations/adminSafetyGate");
         adminSafetyGate.requireAdminAction("go_live", { req, body });
       } catch (err) {
-        return res.status(403).json({
-          success: false,
-          errorKey: err.code || "admin_action_blocked",
-          message: err.message,
-          details: err.details,
-        });
+        return sendAdminGateError(res, err);
       }
       const result = commerce.goLiveApproval.requestGoLive({
         requestedBy: req.adminUser.email,
@@ -491,12 +487,7 @@ module.exports = {
         const adminSafetyGate = require("../lib/operations/adminSafetyGate");
         adminSafetyGate.requireAdminAction("go_live", { req, body: parseBody(req) });
       } catch (err) {
-        return res.status(403).json({
-          success: false,
-          errorKey: err.code || "admin_action_blocked",
-          message: err.message,
-          details: err.details,
-        });
+        return sendAdminGateError(res, err);
       }
       const result = commerce.goLiveApproval.approveGoLive({
         requestId: req.params.id,

@@ -2,8 +2,8 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `a7da1604518e3f7bf31b04d293e5243fe173e8bb`  
-Code HEAD this pass: `3667081f7ec4ddfbeef7a6c7845ab731703a3e0a`
+Starting HEAD this pass: `90d9a14884af317db972822b28ce6b1adf937e7f`  
+Code HEAD this pass: working tree (commit follows tests)
 
 Safety at evidence time:
 
@@ -22,8 +22,8 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (`continuousIntegrity237` + part8 + part17 + commerceIntegrity + backupRestore) | 0 | **57 passed** |
-| `npx vitest run` | 0 | 94 files, **991 passed**, 0 failed |
+| Focused vitest (`continuousIntegrity238` + secureCommerce + part8 + dualPayment + backupRestore) | 0 | **64 passed** |
+| `npx vitest run` | 0 | 95 files, **997 passed**, 0 failed |
 | `npx tsc --noEmit` | 0 | clean |
 | `npx next lint` | 0 | No ESLint warnings or errors |
 | `npm run test:backup-restore` | 0 | dry-run only |
@@ -46,6 +46,7 @@ npx playwright test
 | --- | --- |
 | `server/__tests__/commerceIntegrityBatch.test.mjs` | VAT unknown fail-closed; AUTH/RATE_LIMIT; reservation expire; €0.50 floor |
 | `server/__tests__/continuousIntegrity237.test.mjs` | public error keys; idempotency fingerprint 409; correlation sanitize; sqlite reservation expire; financial job no-retry; production /tmp backup refuse |
+| `server/__tests__/continuousIntegrity238.test.mjs` | plugin public errors; webhook redaction; stale `t=` timestamp; uncertain no-capture; ephemeral restore blocked |
 
 ## Original 237 source search
 

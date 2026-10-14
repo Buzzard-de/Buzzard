@@ -148,7 +148,7 @@ function writeMemory({
       expires
     );
   } catch (error) {
-    return { ok: false, error: "database_failure", message: error.message };
+    return { ok: false, error: "database_failure" };
   }
 
   return {
@@ -195,7 +195,7 @@ function readMemory({ subject, kind, taskId, role, includeExpired = false, limit
       .map(mapRow)
       .filter((record) => !role || canAccess(record, role));
   } catch (error) {
-    return { ok: false, error: "database_failure", message: error.message };
+    return { ok: false, error: "database_failure" };
   }
 }
 
@@ -243,7 +243,7 @@ function memoryHealth() {
       byKind: Object.fromEntries(counts.map((r) => [r.kind, r.n])),
     };
   } catch (error) {
-    return { ok: false, error: error.message, persistent: false, volatileFallback: false };
+    return { ok: false, error: "database_failure", persistent: false, volatileFallback: false };
   }
 }
 

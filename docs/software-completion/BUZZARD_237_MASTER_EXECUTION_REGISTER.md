@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `3667081` (public errors, idempotency fingerprint, reservation Date.parse; base `a7da160`)  
+Inspected HEAD at quality pass: working tree on `90d9a14` (plugin public errors, webhook timestamp, uncertain no-capture, ephemeral restore)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **69.4%** (was 69.3%; register average of 237 completion-percentage fields = 69.38%). This is not 237/237 done and is not +1 pp. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **69.7%** (was 69.38%; register average recalculated after this pass). This is not 237/237 done. Session delta is below the +1.0 pp target. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -93,11 +93,15 @@ Mean established-scope completion: **69.4%** (was 69.3%; register average of 237
 43. Reservation `expireDue` / orphan recover compare `Date.parse` (SQLite `YYYY-MM-DD HH:MM:SS` and ISO). Reserve/consume do not leak `error.message`.
 44. Job idempotency retries FAILED backup jobs; financial `payment_or_refund` FAILED/PERMANENTLY_FAILED never retry. UNCERTAIN payment `retry:true` is refused.
 45. Production backup directory under `/tmp` is fail-closed (`PRODUCTION_EPHEMERAL_PATH`).
+46. Remaining admin/PIM/automation/go-live plugin catches use `sendPublicError` / `sendAdminGateError` (no `message`/`details`).
+47. Webhook foundation requires event id, verifies stripe-shaped `t=`/`v1=` timestamps (stale rejected), verifies before replay, redacts stored payloads. Live delivery remains off.
+48. UNCERTAIN / `PAYMENT_RECONCILIATION_REQUIRED` cannot auto-transition to `PAYMENT_CAPTURED`.
+49. Production restore to `/tmp` is blocked even when `BUZZARD_ALLOW_PRODUCTION_RESTORE=1`. Integrity issues no longer embed exception text.
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL after public-error / idempotency-fingerprint / reservation-parse / job-retry / ephemeral-backup work. Start from items 15 (remaining plugins), 105 (live payment timeout), 109 (webhook live verify), 187 restore production HUMAN, 79 live inventory sync BLOCKED. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL. HUMAN list unchanged. Playwright not re-run this pass (server-only). Do not restart the register. Do not push/PR without explicit authorization.
+Next session: remaining PARTIAL after plugin-error / webhook-timestamp / uncertain-no-capture / ephemeral-restore work. Start from leftover plugin internals (`aiAutomationPlugin`), item 185 alerting BLOCKED_EXTERNAL, item 109 live provider verification (not authorized), item 187 production restore HUMAN. Original criteria still UNKNOWN. Playwright not re-run this pass. Do not restart the register. Do not push/PR without explicit authorization.
 
 ---
 
@@ -450,8 +454,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Established scope | Secrets redaction and secure configuration |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No secrets in logs/reports/commits |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | securityLog, guardian.scanSecrets |
-| Identified gaps | Guardian rejects secret-bearing payloads; no production secret audit this session |
+| Existing implementation evidence | securityLog, guardian.scanSecrets, webhook payload redactForLog |
+| Identified gaps | No production secret audit this session |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | securityLog, guardian.scanSecrets |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -462,8 +466,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Guardian rejects secret-bearing payloads; no production secret audit this session |
+| Completion percentage | 80% (webhook payload redaction; production secret audit UNKNOWN) |
+| Remaining work | Production secret audit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -476,8 +480,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Established scope | Request validation and safe error messages |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Client totals rejected; public errors do not leak internals |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerceValidation.js, publicErrorBody |
-| Identified gaps | part8 validation tests |
+| Existing implementation evidence | commerceValidation.js, publicErrorBody, `sendPublicError` on PIM/automation plugins |
+| Identified gaps | `aiAutomationPlugin` internal error text remaining; original criteria UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | commerceValidation.js, publicErrorBody |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -488,8 +492,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | part8 validation tests |
+| Completion percentage | 88% (plugin public errors; original UNKNOWN) |
+| Remaining work | Remaining internal plugin error objects |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -646,8 +650,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (safe keys + Control Center/Pusat message stripped; original UNKNOWN) |
-| Remaining work | Remaining plugins may still echo messages; original criteria UNKNOWN |
+| Completion percentage | 90% (admin-gate and remaining readiness plugins use public error keys; original UNKNOWN) |
+| Remaining work | `aiAutomationPlugin` internal `{ error: err.message }` remains |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1052,8 +1056,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Established scope | Central AI memory |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Host/kv style memory in Pusat |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pusat memory modules |
-| Identified gaps | pusatMemoryGuardian tests |
+| Existing implementation evidence | pusat memory modules; database_failure without exception text |
+| Identified gaps | Production memory store UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat memory modules |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -1064,8 +1068,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | pusatMemoryGuardian tests |
+| Completion percentage | 80% (no raw SQL in memory failures; original UNKNOWN) |
+| Remaining work | Production memory persistence UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2800,8 +2804,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Established scope | Financial reconciliation local |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No invented revenue |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software/reporting.js |
-| Identified gaps | inventedRevenue:false |
+| Existing implementation evidence | software/reporting.js + RECONCILIATION_REQUIRED cannot auto-capture |
+| Identified gaps | Live reconciliation HUMAN; original criteria UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/reporting.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -2812,8 +2816,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | inventedRevenue:false |
+| Completion percentage | 74% (uncertain never auto-capture; uncertain not revenue; original UNKNOWN) |
+| Remaining work | Live provider reconciliation HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2930,8 +2934,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Established scope | Webhook signature verification |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Unsigned cannot mark paid |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | officialPaymentIngress |
-| Identified gaps | Legacy paths audit-only |
+| Existing implementation evidence | officialPaymentIngress + webhookFoundation eventId/timestamp/signature + paymentLifecycle.verifyWebhookSignature |
+| Identified gaps | Live Stripe/PayPal verification not executed; sales-off blocks delivery |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -2942,8 +2946,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Legacy paths audit-only |
+| Completion percentage | 84% (stale timestamp + event id + verify-before-replay; live verify UNKNOWN) |
+| Remaining work | Live provider verification not authorized |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4876,7 +4880,7 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 74% (webhook payload redaction in stored events; not a full log pipeline) |
 | Remaining work | Events; not a full log pipeline |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4968,8 +4972,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Established scope | Restore |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: restore-db.mjs --dry-run |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | restore-db.mjs |
-| Identified gaps | Dry-run script; production restore HUMAN |
+| Existing implementation evidence | restore-db.mjs + restoreGuard ephemeral block + restoreSafety INTEGRITY_ERROR without exception text |
+| Identified gaps | Production restore remains HUMAN_APPROVAL |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | restore-db.mjs |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -4980,8 +4984,8 @@ Next session: remaining PARTIAL after public-error / idempotency-fingerprint / r
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Dry-run script; production restore HUMAN |
+| Completion percentage | 70% (ephemeral production target blocked even with allow flag; restore HUMAN) |
+| Remaining work | Production restore remains HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

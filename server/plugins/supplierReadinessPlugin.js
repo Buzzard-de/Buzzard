@@ -11,6 +11,7 @@ const { evaluateCapabilityMatrix } = require("../lib/supplier/supplierCapability
 const supplierImportPipeline = require("../lib/supplier/supplierImportPipeline");
 const { recordSupplierAction } = require("../lib/supplier/supplierAudit");
 const { AUDIT_ACTIONS } = require("../core/operationsConstants");
+const { sendAdminGateError } = require("../lib/http/publicPluginError");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -58,7 +59,7 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun: true });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
+        return sendAdminGateError(res, err);
       }
       const records = req.body?.records || (req.body?.raw ? [req.body.raw] : []);
       const result = await supplierImportPipeline.validateSupplierRecords(req.params.id, records, { req });
@@ -78,7 +79,7 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun: true });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
+        return sendAdminGateError(res, err);
       }
       const result = await supplierImportPipeline.runSupplierImportPipeline(req.params.id, {
         dryRun: true,

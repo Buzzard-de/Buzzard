@@ -39,7 +39,7 @@ function validateBackupFile(sourcePath) {
     integrityCheck = row?.integrity_check || "unknown";
     db.close();
   } catch (err) {
-    issues.push(`INTEGRITY_ERROR:${err.message}`);
+    issues.push("INTEGRITY_ERROR");
   }
 
   if (integrityCheck !== "ok") {
@@ -71,14 +71,20 @@ function validateBackupFile(sourcePath) {
 
 function reviewRestorePlan({ sourcePath, targetPath, environment = process.env.NODE_ENV }) {
   const validation = validateBackupFile(sourcePath);
+  const { isEphemeralPath } = require("../dbPaths");
   const isProduction = environment === "production" || String(targetPath).startsWith("/var/data");
+  const ephemeralBlocked = environment === "production" && isEphemeralPath(targetPath);
 
   return {
     phase: "REVIEW",
     validation,
     targetPath,
     isProduction,
-    allowed: validation.ok && (!isProduction || process.env.BUZZARD_ALLOW_PRODUCTION_RESTORE === "1"),
+    ephemeralBlocked,
+    allowed:
+      validation.ok &&
+      !ephemeralBlocked &&
+      (!isProduction || process.env.BUZZARD_ALLOW_PRODUCTION_RESTORE === "1"),
     steps: [
       "1. VALIDATE backup integrity (automatic)",
       "2. REVIEW target path and environment",

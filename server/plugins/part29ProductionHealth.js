@@ -9,7 +9,7 @@ module.exports = {
         const summary = await getPublicFinalPreLaunchSummary();
         res.json({ success: true, ...summary });
       } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        require("../lib/http/publicPluginError").sendPublicError(res, 500, "health.prelaunchFailed", err);
       }
     });
   },

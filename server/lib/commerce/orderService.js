@@ -30,6 +30,8 @@ function parseJson(val, fallback = {}) {
 }
 
 function mapOrder(row) {
+  const metadata = parseJson(row.metadata_json, {});
+  delete metadata.guestToken;
   return {
     id: row.id,
     checkoutId: row.checkout_id,
@@ -45,7 +47,7 @@ function mapOrder(row) {
     discount: row.discount,
     total: row.total,
     items: parseJson(row.items_json, []),
-    metadata: parseJson(row.metadata_json, {}),
+    metadata,
     createdAt: row.created_at,
     isCommercial: isCommercialOrderType(row.order_type),
   };
@@ -109,6 +111,7 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
       paymentReference: payment?.reference,
       realMoneyMovement: false,
       supplierOrderSubmitted: false,
+      guestToken: checkout.metadata?.guestToken || null,
     })
   );
 
@@ -119,15 +122,32 @@ function getOrder(orderId, ctx = {}) {
   const row = db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(orderId);
   if (!row) return { error: "order_not_found", status: 404 };
 
-  const { assertCustomerResourceAccess } = require("./commerceGuards");
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: row.customer_id,
-    requestCustomerId: ctx.customerId,
-    resourceType: "order",
-    req: ctx.req,
-  });
-  if (access?.blocked && row.customer_id) {
-    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  if (!ctx.skipAccessCheck) {
+    const { assertCustomerResourceAccess, readCommerceGuestProof, guestProofMatches } = require("./commerceGuards");
+    const metadata = parseJson(row.metadata_json, {});
+    const checkout = row.checkout_id
+      ? db.prepare("SELECT cart_id, metadata_json FROM commerce_checkouts WHERE id = ?").get(row.checkout_id)
+      : null;
+    const cart = checkout?.cart_id
+      ? db.prepare("SELECT session_id FROM commerce_carts WHERE id = ?").get(checkout.cart_id)
+      : null;
+    const checkoutMeta = parseJson(checkout?.metadata_json, {});
+    const proof = readCommerceGuestProof(ctx.req, ctx);
+    const access = assertCustomerResourceAccess({
+      resourceCustomerId: row.customer_id,
+      requestCustomerId: ctx.customerId,
+      resourceType: "order",
+      req: ctx.req,
+      guestProofValid: guestProofMatches(
+        proof,
+        metadata.guestToken,
+        checkoutMeta.guestToken,
+        cart?.session_id
+      ),
+    });
+    if (access?.blocked) {
+      return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+    }
   }
 
   return mapOrder(row);
@@ -140,7 +160,7 @@ function transitionOrderStatus(orderId, toStatus) {
     return { error: "illegal_order_transition", from: row.status, to: toStatus, status: 409 };
   }
   db.prepare("UPDATE commerce_orders SET status = ? WHERE id = ?").run(toStatus, orderId);
-  const next = getOrder(orderId);
+  const next = getOrder(orderId, { skipAccessCheck: true });
   if (String(toStatus).toLowerCase() === "cancelled" || toStatus === ORDER_STATUS.CANCELLED) {
     try {
       const orderInventoryBridge = require("../software/orderInventoryBridge");
@@ -158,7 +178,7 @@ function submitSupplierOrder(orderId, { req } = {}) {
     return { ...block, supplierOrderCreated: false };
   }
 
-  const order = getOrder(orderId);
+  const order = getOrder(orderId, { skipAccessCheck: true });
   if (order.error) return order;
 
   logCommerceBlock("order_creation_blocked", { orderId, type: "supplier_boundary", dryRun: true }, req);

@@ -52,6 +52,9 @@ describe("routePermissions", () => {
       permission: "products.write",
     });
     expect(resolveRoutePermission("GET", "/api/product-catalog-pim/brands")).toBeNull();
+    expect(resolveRoutePermission("GET", "/api/p1/i18n/gaps")).toEqual({
+      permission: "system.read",
+    });
   });
 
   it("privileged non-admin finance and engine prefixes require admin permissions", () => {

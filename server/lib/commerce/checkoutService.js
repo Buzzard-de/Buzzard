@@ -18,6 +18,9 @@ const {
   assertCanCreateOrder,
   logCommerceBlock,
   resolveOrderType,
+  assertCustomerResourceAccess,
+  readCommerceGuestProof,
+  guestProofMatches,
 } = require("./commerceGuards");
 const { withIdempotency } = require("./idempotency");
 const { logSecurityEvent } = require("../securityLog");
@@ -44,15 +47,22 @@ function getCheckout(checkoutId, ctx = {}) {
   const row = db.prepare("SELECT * FROM commerce_checkouts WHERE id = ?").get(checkoutId);
   if (!row) return { error: "checkout_not_found", status: 404 };
 
-  const { assertCustomerResourceAccess } = require("./commerceGuards");
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: row.customer_id,
-    requestCustomerId: ctx.customerId,
-    resourceType: "checkout",
-    req: ctx.req,
-  });
-  if (access?.blocked && row.customer_id) {
-    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  const metadata = parseJson(row.metadata_json);
+  if (!ctx.skipAccessCheck) {
+    const cart = row.cart_id
+      ? db.prepare("SELECT session_id FROM commerce_carts WHERE id = ?").get(row.cart_id)
+      : null;
+    const proof = readCommerceGuestProof(ctx.req, ctx);
+    const access = assertCustomerResourceAccess({
+      resourceCustomerId: row.customer_id,
+      requestCustomerId: ctx.customerId,
+      resourceType: "checkout",
+      req: ctx.req,
+      guestProofValid: guestProofMatches(proof, metadata.guestToken, cart?.session_id),
+    });
+    if (access?.blocked) {
+      return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+    }
   }
 
   return {
@@ -67,7 +77,8 @@ function getCheckout(checkoutId, ctx = {}) {
     idempotencyKey: row.idempotency_key,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    metadata: parseJson(row.metadata_json),
+    metadata: { ...metadata, guestToken: undefined },
+    guestToken: metadata.guestToken || undefined,
   };
 }
 
@@ -78,7 +89,7 @@ function transitionCheckout(checkoutId, toState) {
     return { error: "illegal_state_transition", from: row.state, to: toState, status: 409 };
   }
   db.prepare("UPDATE commerce_checkouts SET state = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(toState, checkoutId);
-  return getCheckout(checkoutId);
+  return getCheckout(checkoutId, { skipAccessCheck: true });
 }
 
 function startCheckout({ cartId, customerId, orderType, idempotencyKey, req } = {}) {
@@ -99,12 +110,21 @@ function startCheckout({ cartId, customerId, orderType, idempotencyKey, req } = 
   if (!cart.items?.length) return { error: "cart_empty", status: 400 };
 
   const id = newId("chk");
+  const guestToken = cart.cart?.sessionId || newId("gst");
   db.prepare(`
-    INSERT INTO commerce_checkouts(id, cart_id, customer_id, state, order_type, idempotency_key)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(id, cartId, customerId || null, CHECKOUT_STATE.DRAFT, resolved.orderType, idempotencyKey || null);
+    INSERT INTO commerce_checkouts(id, cart_id, customer_id, state, order_type, idempotency_key, metadata_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    id,
+    cartId,
+    customerId || null,
+    CHECKOUT_STATE.DRAFT,
+    resolved.orderType,
+    idempotencyKey || null,
+    JSON.stringify({ guestToken })
+  );
 
-  return getCheckout(id, { customerId, req });
+  return getCheckout(id, { customerId, req, sessionId: guestToken, guestToken });
 }
 
 function validateCheckout(checkoutId, body = {}, ctx = {}) {
@@ -186,7 +206,11 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
     JSON.stringify(billing),
     JSON.stringify({ address: shippingAddr, method: shipping }),
     JSON.stringify({ ...totals, shipping: shipping.price, tax: tax.tax, risk }),
-    JSON.stringify({ validatedAt: new Date().toISOString() }),
+    JSON.stringify({
+      ...(checkout.metadata || {}),
+      guestToken: checkout.metadata?.guestToken,
+      validatedAt: new Date().toISOString(),
+    }),
     checkoutId
   );
 

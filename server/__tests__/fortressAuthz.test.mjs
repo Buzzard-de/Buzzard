@@ -136,6 +136,43 @@ describe("Phase 13 fortress authorization", () => {
     expect(res.statusCode).toBe(401);
   });
 
+  it("requires auth for previously open diagnostic GET routes", () => {
+    expect(resolveRoutePermission("GET", "/api/p1/status")).toEqual({ public: true });
+    expect(resolveRoutePermission("GET", "/api/p1/health")).toEqual({ public: true });
+    expect(resolveRoutePermission("GET", "/api/p1/i18n/gaps")).toEqual({
+      permission: "system.read",
+    });
+    expect(resolveRoutePermission("GET", "/api/guardian/health")).toEqual({
+      permission: "system.read",
+    });
+    expect(resolveRoutePermission("GET", "/api/orchestrator/agents")).toEqual({
+      permission: "system.read",
+    });
+    expect(resolveRoutePermission("GET", "/api/db/status")).toEqual({
+      permission: "orders.read",
+    });
+
+    const gaps = wrapRouteHandler("GET", "/api/p1/i18n/gaps", () => {
+      throw new Error("handler must not run");
+    });
+    const gapsRes = mockRes();
+    gaps(mockReq({ method: "GET", url: "/api/p1/i18n/gaps" }), gapsRes);
+    expect(gapsRes.statusCode).toBe(401);
+
+    const dbStatus = wrapRouteHandler("GET", "/api/db/status", () => {
+      throw new Error("handler must not run");
+    });
+    const dbRes = mockRes();
+    dbStatus(mockReq({ method: "GET", url: "/api/db/status" }), dbRes);
+    expect(dbRes.statusCode).toBe(401);
+  });
+
+  it("keeps guest commerce reads public at the wrapper and handler-guarded", () => {
+    expect(resolveRoutePermission("GET", "/api/commerce/cart/cart_1")).toEqual({ public: true });
+    expect(resolveRoutePermission("GET", "/api/commerce/checkout/chk_1")).toEqual({ public: true });
+    expect(resolveRoutePermission("GET", "/api/commerce/orders/ord_1")).toEqual({ public: true });
+  });
+
   it("rejects unauthenticated GET of JSON orders and commerce payments", () => {
     expect(resolveRoutePermission("GET", "/api/orders/BZ-1")).toEqual({
       authenticated: true,

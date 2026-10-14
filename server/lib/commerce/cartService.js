@@ -80,8 +80,9 @@ function getCart(cartId, { customerId, req } = {}) {
     requestCustomerId: customerId,
     resourceType: "cart",
     req,
+    allowGuestCapability: true,
   });
-  if (access?.blocked && cart.customer_id) {
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 
@@ -152,8 +153,9 @@ function addItem(cartId, { productId, variantId, quantity, clientPrice, metadata
     requestCustomerId: customerId,
     resourceType: "cart",
     req,
+    allowGuestCapability: true,
   });
-  if (access?.blocked && cartRow.customer_id) {
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 
@@ -280,8 +282,9 @@ function clearCart(cartId, ctx = {}) {
     requestCustomerId: ctx.customerId,
     resourceType: "cart",
     req: ctx.req,
+    allowGuestCapability: true,
   });
-  if (access?.blocked && cartRow.customer_id) {
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 
@@ -299,8 +302,9 @@ function applyCoupon(cartId, { couponCode, clientDiscount, customerId, req } = {
     requestCustomerId: customerId,
     resourceType: "cart",
     req,
+    allowGuestCapability: true,
   });
-  if (access?.blocked && cartRow.customer_id) {
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 
@@ -332,8 +336,9 @@ function removeCoupon(cartId, ctx = {}) {
     requestCustomerId: ctx.customerId,
     resourceType: "cart",
     req: ctx.req,
+    allowGuestCapability: true,
   });
-  if (access?.blocked && cartRow.customer_id) {
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 

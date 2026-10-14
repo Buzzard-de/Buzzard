@@ -249,6 +249,29 @@ describe("commerceGuards IDOR", () => {
     expect(block.blocked).toBe(true);
     expect(block.code).toBe("idor_denied");
   });
+
+  it("fails closed on guest resources without proof", () => {
+    const { assertCustomerResourceAccess } = require("../lib/commerce/commerceGuards.js");
+    const block = assertCustomerResourceAccess({
+      resourceCustomerId: null,
+      requestCustomerId: null,
+      resourceType: "checkout",
+    });
+    expect(block.blocked).toBe(true);
+    expect(block.code).toBe("auth_required");
+    expect(block.status).toBe(401);
+  });
+
+  it("allows guest resources only with a matching proof", () => {
+    const { assertCustomerResourceAccess } = require("../lib/commerce/commerceGuards.js");
+    const allowed = assertCustomerResourceAccess({
+      resourceCustomerId: null,
+      requestCustomerId: null,
+      resourceType: "checkout",
+      guestProofValid: true,
+    });
+    expect(allowed).toBeNull();
+  });
 });
 
 describe("webhookFoundation", () => {

@@ -26,10 +26,12 @@ function validateEnvironment() {
         message: "BUZZARD_SALES_ENABLED=1 — commercial sales active",
       });
     }
-    if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "dev-secret-change-me") {
-      warnings.push({
+    const jwtSecret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "";
+    const defaultSecrets = new Set(["", "dev-secret-change-me", "DEV_ONLY_CHANGE_ME"]);
+    if (defaultSecrets.has(jwtSecret)) {
+      errors.push({
         code: "default_jwt_secret",
-        message: "JWT_SECRET should be set to a strong value in production",
+        message: "JWT_SECRET must be set to a unique non-default value in production",
       });
     }
   }

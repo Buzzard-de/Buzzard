@@ -50,11 +50,15 @@ const PUBLIC_ROUTES = new Set([
   "POST /api/marketing-loyalty/campaigns/:code/apply",
   "GET /api/security/health",
   "GET /api/p1/status",
+  "GET /api/p1/health",
   "GET /api/orchestrator/status",
   "GET /api/guardian/status",
   "GET /api/health/software",
   "GET /api/health/pusat",
   "POST /api/commerce/cart",
+  "GET /api/commerce/cart/:id",
+  "GET /api/commerce/checkout/:id",
+  "GET /api/commerce/orders/:id",
   "POST /api/commerce/cart/:id/items",
   "PATCH /api/commerce/cart/:id/items/:itemId",
   "DELETE /api/commerce/cart/:id/items/:itemId",
@@ -250,6 +254,10 @@ const PREFIX = [
   { prefix: "/api/master-admin-v40", read: "system.read", write: "system.configure" },
   { prefix: "/api/supplier-integration-hub", read: "suppliers.read", write: "suppliers.write" },
   { prefix: "/api/marketing-loyalty", read: "analytics.read", write: "analytics.export" },
+  { prefix: "/api/p1/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/guardian/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/orchestrator/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/db/", read: "orders.read", write: "orders.write" },
 ];
 
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);

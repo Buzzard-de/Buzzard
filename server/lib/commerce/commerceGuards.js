@@ -57,19 +57,51 @@ function assertCanSubmitSupplierOrder({ req } = {}) {
   return null;
 }
 
-function assertCustomerResourceAccess({ resourceCustomerId, requestCustomerId, resourceType, req }) {
-  if (!resourceCustomerId) {
+function readCommerceGuestProof(req, ctx = {}) {
+  const headers = req?.headers || {};
+  const query = req?.query || {};
+  return (
+    ctx.sessionId ||
+    ctx.guestToken ||
+    headers["x-buzzard-commerce-session"] ||
+    headers["x-buzzard-guest-token"] ||
+    query.sessionId ||
+    query.guestToken ||
+    null
+  );
+}
+
+function guestProofMatches(proof, ...candidates) {
+  if (!proof) return false;
+  return candidates.some((value) => value && String(value) === String(proof));
+}
+
+function assertCustomerResourceAccess({
+  resourceCustomerId,
+  requestCustomerId,
+  resourceType,
+  req,
+  allowGuestCapability = false,
+  guestProofValid = false,
+} = {}) {
+  if (resourceCustomerId) {
+    if (!requestCustomerId) {
+      logCommerceBlock("commerce_permission_denied", { resourceType, reason: "unauthenticated" }, req);
+      return { blocked: true, code: "auth_required", message: "Authentication required", status: 401 };
+    }
+    if (resourceCustomerId !== requestCustomerId) {
+      logCommerceBlock("idor_attempt", { resourceType, resourceCustomerId }, req);
+      return { blocked: true, code: "idor_denied", message: "Access denied", status: 403 };
+    }
     return null;
   }
-  if (!requestCustomerId) {
-    logCommerceBlock("commerce_permission_denied", { resourceType, reason: "unauthenticated" }, req);
-    return { blocked: true, code: "auth_required", message: "Authentication required", status: 401 };
+
+  if (allowGuestCapability || guestProofValid) {
+    return null;
   }
-  if (resourceCustomerId !== requestCustomerId) {
-    logCommerceBlock("idor_attempt", { resourceType, resourceCustomerId }, req);
-    return { blocked: true, code: "idor_denied", message: "Access denied", status: 403 };
-  }
-  return null;
+
+  logCommerceBlock("commerce_permission_denied", { resourceType, reason: "guest_proof_required" }, req);
+  return { blocked: true, code: "auth_required", message: "Authentication required", status: 401 };
 }
 
 function resolveOrderType(requestedType) {
@@ -99,6 +131,8 @@ module.exports = {
   assertCanProcessPayment,
   assertCanSubmitSupplierOrder,
   assertCustomerResourceAccess,
+  readCommerceGuestProof,
+  guestProofMatches,
   resolveOrderType,
   getSalesSafetyStatus,
 };

@@ -82,7 +82,7 @@ describe("product architecture inventory", () => {
   });
 
   it("simulates SoT migration without writing or activating", () => {
-    const { simulateProductMigration } = require("../lib/pim/productMigrationPlan");
+    const { simulateProductMigration, verifyDryRunGuards } = require("../lib/pim/productMigrationPlan");
     const plan = simulateProductMigration();
     expect(plan.simulation).toBe(true);
     expect(plan.written).toBe(false);
@@ -90,5 +90,12 @@ describe("product architecture inventory", () => {
     expect(plan.productSourceOfTruthActive).toBe(false);
     expect(plan.candidate.activated).toBe(false);
     expect(plan.nextUnauthorized).toContain("activate SoT");
+    const dryRun = verifyDryRunGuards();
+    expect(dryRun.ok).toBe(true);
+    expect(dryRun.written).toBe(false);
+    expect(dryRun.activated).toBe(false);
+    expect(dryRun.merged).toBe(false);
+    expect(dryRun.checks.envSotInactive).toBe(true);
+    expect(process.env.BUZZARD_PRODUCT_SOT_ACTIVE).not.toBe("1");
   });
 });

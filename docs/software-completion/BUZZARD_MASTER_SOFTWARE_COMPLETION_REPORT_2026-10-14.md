@@ -18,12 +18,12 @@ Canonical 237-item register (established scope; **original titles UNKNOWN**):
 | State | Count / 237 |
 | --- | --- |
 | VERIFIED_100 | 0 |
-| PARTIAL | 211 |
+| PARTIAL | 216 |
 | HUMAN_APPROVAL_REQUIRED | 13 |
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 |
-| NOT_IMPLEMENTED | 5 |
+| NOT_IMPLEMENTED | 0 |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 |
-| Mean established-scope % | 65.6% |
+| Mean established-scope % | 66.7% |
 
 Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE.md`, `BUZZARD_237_FINAL_HANDOVER.md`.
 
@@ -32,6 +32,28 @@ Status vocabulary used below: `NOT_IMPLEMENTED` | `STUB` | `PARTIAL` | `CODE_REA
 Nothing in this report is `LIVE_VERIFIED`. No item is VERIFIED_100 solely because code exists.
 
 ---
+
+## Continuation — 2026-10-14 evening (no push) — HEAD `fe1cd25`
+
+Inspected actual flag/approval/health/architecture code. Sales / Product SoT / live payments remain off. Canonical 237-item source still **not found**.
+
+Quality on current code (after marketplace/health/CORS/E2E + `notificationHub.test.mjs`):
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `npx vitest run` | 0 | 81 files, 942 passed |
+| `npx tsc --noEmit` | 0 | clean |
+| `npx next lint` | 0 | clean |
+| `npm audit --audit-level=high` | 1 | 5 high via eslint-config-next; no `--force` |
+| `NODE_ENV=production npx next build` | 0 | 2044 pages; `:3000` stayed 200 |
+| Isolated Playwright `:3010` + `:3001` | 0 | 107 passed, 12 skipped, 0 failed, 48.1s |
+
+Previous six Playwright failures classified and repaired (TEST_DEFECT / ENVIRONMENT_MISMATCH / RATE_LIMIT_INTERFERENCE). Controls not disabled.
+
+Software this continuation: canonical marketplace channel list; hub mutations 409 while sales off; `isHealthPath` helper; CORS allow-headers exclude `X-Forwarded-For`; named-AI approval rejection tests; customer send remains blocked.
+
+---
+
 
 ## Continuation — 2026-10-14 237-item execution
 

@@ -41,7 +41,7 @@ Standing locks (must remain until an independent authenticated human approves th
 
 ## Marketplace channels classified not implemented (live adapters)
 
-Items 123–127: OTTO, eMAG, Skroutz, bol.com, Cdiscount — classification only.
+Items 123–127: OTTO, eMAG, Skroutz, bol.com, Cdiscount — **classification-only software** now exists (`MARKETPLACE_CHANNELS`, `PUBLISH_BLOCKED`, unit coverage). They are **not** live adapters. Item 129 (live listing/publish) remains HUMAN_APPROVAL_REQUIRED. Hub enable/sync/webhook is 409 while `BUZZARD_SALES_ENABLED` is not 1.
 
 ## Explicitly not executed
 

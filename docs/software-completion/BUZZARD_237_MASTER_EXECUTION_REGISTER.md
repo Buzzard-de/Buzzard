@@ -2,9 +2,10 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected ancestor HEAD: `5ba16b2` plus working-tree changes in this pass  
+Inspected HEAD at quality pass: `fe1cd253ce243bcae51d19a236aeb4aadd9bb160` (docs commit follows)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
-Sales / Product SoT / live payments: **remain OFF**
+Sales / Product SoT / live payments: **remain OFF**  
+Canonical original 237-item checklist: **still not found** (git history, docs, and project files re-searched this pass)
 
 ## Canonical source status
 
@@ -26,17 +27,17 @@ Therefore:
 | State | Count | % of 237 |
 | --- | --- | --- |
 | VERIFIED_100 | 0 | 0.0% |
-| PARTIAL | 211 | 89.0% |
+| PARTIAL | 216 | 91.1% |
 | HUMAN_APPROVAL_REQUIRED | 13 | 5.5% |
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | BLOCKED_AUTHORIZATION | 0 | 0.0% |
 | BLOCKED_SECURITY | 0 | 0.0% |
-| NOT_IMPLEMENTED | 5 | 2.1% |
+| NOT_IMPLEMENTED | 0 | 0.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **65.6%**. This is not 237/237 done.
+Mean established-scope completion: **66.7%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN.
 
 ## Safety locks this workspace
 
@@ -50,9 +51,13 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 1. Feature-flag parent/child now includes `BUZZARD_LIVE_PAYMENTS` and `BUZZARD_PRODUCT_SOT_ACTIVE` (SoT stays software-inactive).
 2. Production environment validation errors when live payments are armed without sales.
 3. Payment diagnostics and secureCommerce flags report **effective** flags, not raw env for SoT/live payments.
-4. Human Approval Center rejects AI self-approval and missing approver identity.
-5. `/api/health*` uses a separate still-enabled rate-limit bucket so probes do not share the global `api:` 180/min bucket. Rate limiting is **not** disabled.
+4. Human Approval Center rejects AI self-approval and missing approver identity (including named actors `pusat`, `guardian`, `orchestrator`).
+5. `/api/health*` uses a dedicated `isHealthPath` helper and still-enabled `api-health:` bucket (max 120) separate from `api:` (max 180). Rate limiting is **not** disabled.
 6. Product architecture tests resolve files from the repository root, not `process.cwd()`.
+7. Browser CORS allow-headers do not include `X-Forwarded-For` (Playwright identity isolation uses APIRequestContext / route injection, not extraHTTPHeaders).
+8. Canonical marketplace channel list shared by software classification, hub CHANNELS, and DB seed. OTTO/eMAG/Skroutz/bol.com/Cdiscount are classification-only; publish remains `PUBLISH_BLOCKED`.
+9. Marketplace hub enablement, sync queues, and order webhooks return 409 `marketplace_mutations_disabled` while sales are off. Live publish still requires human approval (item 129).
+10. Isolated Playwright on HEAD `fe1cd25`: **107 passed, 12 skipped, 0 failed**. Rate limits, CSRF, and auth remain enabled. 12 skips are viewport/project filters, not failures.
 
 ---
 
@@ -3250,23 +3255,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136) |
 | Established scope | OTTO classification-only |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No live adapter claimed |
-| Current implementation status | NOT_IMPLEMENTED |
-| Existing implementation evidence | REMAINING_SOFTWARE_WORK |
-| Identified gaps | Classification only |
+| Current implementation status | PARTIAL
+| Existing implementation evidence | `server/lib/software/marketplaceChannels.js`, `marketplace.publishListing` PUBLISH_BLOCKED, `marketplaceClassification.test.mjs`
+| Identified gaps | Classification + fail-closed publish tests exist. Original acceptance criteria UNKNOWN. No live vendor adapter. Not LIVE_VERIFIED.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | REMAINING_SOFTWARE_WORK |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `npx vitest run marketplaceClassification` pass (included in full 81 files / 942 tests)
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 10% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Classification only |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | NOT_IMPLEMENTED / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-14
 
 ### Item 124
 
@@ -3276,23 +3281,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136) |
 | Established scope | eMAG classification-only |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No live adapter |
-| Current implementation status | NOT_IMPLEMENTED |
-| Existing implementation evidence | same |
-| Identified gaps | Classification only |
+| Current implementation status | PARTIAL
+| Existing implementation evidence | `server/lib/software/marketplaceChannels.js`, `marketplace.publishListing` PUBLISH_BLOCKED, `marketplaceClassification.test.mjs`
+| Identified gaps | Classification + fail-closed publish tests exist. Original acceptance criteria UNKNOWN. No live vendor adapter. Not LIVE_VERIFIED.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | same |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `npx vitest run marketplaceClassification` pass (included in full 81 files / 942 tests)
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 10% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Classification only |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | NOT_IMPLEMENTED / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-14
 
 ### Item 125
 
@@ -3302,23 +3307,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136) |
 | Established scope | Skroutz classification-only |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No live adapter |
-| Current implementation status | NOT_IMPLEMENTED |
-| Existing implementation evidence | same |
-| Identified gaps | Classification only |
+| Current implementation status | PARTIAL
+| Existing implementation evidence | `server/lib/software/marketplaceChannels.js`, `marketplace.publishListing` PUBLISH_BLOCKED, `marketplaceClassification.test.mjs`
+| Identified gaps | Classification + fail-closed publish tests exist. Original acceptance criteria UNKNOWN. No live vendor adapter. Not LIVE_VERIFIED.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | same |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `npx vitest run marketplaceClassification` pass (included in full 81 files / 942 tests)
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 10% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Classification only |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | NOT_IMPLEMENTED / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-14
 
 ### Item 126
 
@@ -3328,23 +3333,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136) |
 | Established scope | bol.com classification-only |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No live adapter |
-| Current implementation status | NOT_IMPLEMENTED |
-| Existing implementation evidence | same |
-| Identified gaps | Classification only |
+| Current implementation status | PARTIAL
+| Existing implementation evidence | `server/lib/software/marketplaceChannels.js`, `marketplace.publishListing` PUBLISH_BLOCKED, `marketplaceClassification.test.mjs`
+| Identified gaps | Classification + fail-closed publish tests exist. Original acceptance criteria UNKNOWN. No live vendor adapter. Not LIVE_VERIFIED.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | same |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `npx vitest run marketplaceClassification` pass (included in full 81 files / 942 tests)
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 10% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Classification only |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | NOT_IMPLEMENTED / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-14
 
 ### Item 127
 
@@ -3354,23 +3359,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136) |
 | Established scope | Cdiscount classification-only |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No live adapter |
-| Current implementation status | NOT_IMPLEMENTED |
-| Existing implementation evidence | same |
-| Identified gaps | Classification only |
+| Current implementation status | PARTIAL
+| Existing implementation evidence | `server/lib/software/marketplaceChannels.js`, `marketplace.publishListing` PUBLISH_BLOCKED, `marketplaceClassification.test.mjs`
+| Identified gaps | Classification + fail-closed publish tests exist. Original acceptance criteria UNKNOWN. No live vendor adapter. Not LIVE_VERIFIED.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | same |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `npx vitest run marketplaceClassification` pass (included in full 81 files / 942 tests)
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 10% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Classification only |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | NOT_IMPLEMENTED / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-14
 
 ### Item 128
 
@@ -3380,23 +3385,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136) |
 | Established scope | Channel mapping |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Hub vs software lists |
-| Current implementation status | PARTIAL |
-| Existing implementation evidence | marketplaceHub |
-| Identified gaps | Duplicate sources noted |
+| Current implementation status | PARTIAL
+| Existing implementation evidence | Shared MARKETPLACE_CHANNELS used by marketplace.js, marketplaceHub.CHANNELS, and db seed
+| Identified gaps | Hub still has a separate listings table; original mapping criteria UNKNOWN. Not LIVE_VERIFIED.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | marketplaceHub |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | marketplaceClassification hub/software id alignment pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Duplicate sources noted |
+| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Listing table vs classification still two stores; no live channel mapping
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-14
 
 ### Item 129
 
@@ -3406,23 +3411,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136) |
 | Established scope | Marketplace mutations gated |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No publish without approval |
-| Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | approval + flags |
-| Identified gaps | Workflow exists; action pending |
+| Current implementation status | HUMAN_APPROVAL_REQUIRED
+| Existing implementation evidence | marketplaceHub.marketplaceMutationGuard HTTP 409 while sales off; software.publishListing PUBLISH_BLOCKED
+| Identified gaps | Workflow and fail-closed gates exist; live publish action remains pending independent human approval
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | approval + flags |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | marketplaceClassification blocks enable/sync/webhook while sales off
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Workflow exists; action pending |
+| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Authorized human must approve the exact listing payload; this agent must not approve it
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14 |
+| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14
 
 ### Item 130
 
@@ -3876,23 +3881,23 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151) |
 | Established scope | UI regression Playwright |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Isolated :3010 static + :3001 API |
-| Current implementation status | PARTIAL |
-| Existing implementation evidence | e2e/ |
-| Identified gaps | 100 passed / 6 failed / 13 skipped last isolated run |
+| Current implementation status | PARTIAL
+| Existing implementation evidence | Isolated Playwright PLAYWRIGHT_SKIP_WEBSERVER=1 BASE 3010 API 3001 on HEAD fe1cd25
+| Identified gaps | 12 skipped (viewport/project filters). Original UI checklist UNKNOWN. Production E2E not run.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | e2e/ |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | 107 passed, 12 skipped, 0 failed, 48.1s, exit 0. Previously reported 6 failures classified and repaired as TEST_DEFECT / ENVIRONMENT_MISMATCH / RATE_LIMIT_INTERFERENCE — not by disabling controls.
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | 100 passed / 6 failed / 13 skipped last isolated run |
+| Completion percentage | 82% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Skipped tests are filters not failures. Canonical original UI criteria still UNKNOWN. Production verification UNKNOWN.
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-14
 
 ### Item 148
 
@@ -4087,20 +4092,20 @@ Mean established-scope completion: **65.6%**. This is not 237/237 done.
 | Established scope | Notifications draft / send blocked |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: communications.js send BLOCKED |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | software/communications.js |
-| Identified gaps | Drafts only |
+| Existing implementation evidence | software/communications.sendPrepared BLOCKED; notificationHub external channels not_configured; notificationHub.test.mjs
+| Identified gaps | Draft + send-blocked implemented; live customer send still requires human approval and provider config
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/communications.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | notificationHub.test.mjs 2 passed; softwareCompletion sendPrepared historically blocked
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Drafts only |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Do not send customer messages until authorized; alerting backend still external (item 185)
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14 |
 

@@ -20,7 +20,7 @@ const {
 const { logSecurityEvent } = require("../securityLog");
 const { MAX_CART_ITEMS } = require("../../core/commerceConstants");
 const commerceCouponService = require("./commerceCouponService");
-const { withIdempotency } = require("./idempotency");
+const { withIdempotency, fingerprintOf } = require("./idempotency");
 
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
@@ -166,6 +166,11 @@ function addItem(cartId, ctx = {}) {
     scope: `cart_add:${cartId}`,
     handler: () => addItemOnce(cartId, ctx),
     req: ctx.req,
+    fingerprint: fingerprintOf({
+      productId: ctx.productId,
+      variantId: ctx.variantId || null,
+      quantity: ctx.quantity,
+    }),
   });
   return result;
 }

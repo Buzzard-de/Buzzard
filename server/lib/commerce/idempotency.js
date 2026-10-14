@@ -10,14 +10,26 @@ function hashKey(key) {
   return crypto.createHash("sha256").update(String(key)).digest("hex");
 }
 
-function storeIdempotency({ key, scope, resourceId, response, ttlHours = DEFAULT_TTL_HOURS }) {
+function fingerprintOf(value) {
+  if (value == null) return null;
+  return crypto.createHash("sha256").update(typeof value === "string" ? value : JSON.stringify(value)).digest("hex");
+}
+
+function storeIdempotency({ key, scope, resourceId, response, fingerprint = null, ttlHours = DEFAULT_TTL_HOURS }) {
   const keyHash = hashKey(`${scope}:${key}`);
   const expiresAt = new Date(Date.now() + ttlHours * 3600 * 1000).toISOString();
+  const payload = response && typeof response === "object" && !Array.isArray(response) ? response : { value: response };
   db.prepare(`
     INSERT INTO commerce_idempotency(key_hash, scope, resource_id, response_json, expires_at)
     VALUES (?, ?, ?, ?, ?)
     ON CONFLICT(key_hash) DO NOTHING
-  `).run(keyHash, scope, resourceId || null, JSON.stringify(response), expiresAt);
+  `).run(
+    keyHash,
+    scope,
+    resourceId || null,
+    JSON.stringify({ ...payload, __fp: fingerprint || null }),
+    expiresAt
+  );
   return keyHash;
 }
 
@@ -31,17 +43,30 @@ function getIdempotency({ key, scope }) {
     .get(keyHash, scope);
   if (!row) return null;
   try {
-    return { keyHash, resourceId: row.resource_id, response: JSON.parse(row.response_json || "{}"), replay: true };
+    const parsed = JSON.parse(row.response_json || "{}");
+    const fingerprint = parsed.__fp || null;
+    delete parsed.__fp;
+    return { keyHash, resourceId: row.resource_id, response: parsed, fingerprint, replay: true };
   } catch {
     return null;
   }
 }
 
-function withIdempotency({ key, scope, handler, req }) {
+function withIdempotency({ key, scope, handler, req, fingerprint = null }) {
   if (!key) return handler({ replay: false });
 
   const existing = getIdempotency({ key, scope });
   if (existing) {
+    if (fingerprint && existing.fingerprint && existing.fingerprint !== fingerprint) {
+      const { logSecurityEvent } = require("../securityLog");
+      logSecurityEvent({
+        type: "idempotency_payload_conflict",
+        success: false,
+        path: req?.url,
+        detail: { scope, conflict: true },
+      });
+      return { error: "idempotency_conflict", status: 409, conflict: true, idempotencyReplay: false };
+    }
     const { logSecurityEvent } = require("../securityLog");
     logSecurityEvent({
       type: "idempotency_conflict",
@@ -53,7 +78,15 @@ function withIdempotency({ key, scope, handler, req }) {
   }
 
   const result = handler({ replay: false });
-  storeIdempotency({ key, scope, resourceId: result?.id || result?.checkoutId || result?.orderId, response: result });
+  if (!result?.error) {
+    storeIdempotency({
+      key,
+      scope,
+      resourceId: result?.id || result?.checkoutId || result?.orderId,
+      response: result,
+      fingerprint,
+    });
+  }
   return result;
 }
 
@@ -66,5 +99,6 @@ module.exports = {
   storeIdempotency,
   getIdempotency,
   withIdempotency,
+  fingerprintOf,
   purgeExpired,
 };

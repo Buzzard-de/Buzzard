@@ -2,8 +2,8 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `8c00e7c81599ca558ce9fd1caf8abfc0d4acabcf`  
-Code HEAD this pass: `6f6c6726013927e205ab196338ef876999d83a75`
+Starting HEAD this pass: `a7da1604518e3f7bf31b04d293e5243fe173e8bb`  
+Code HEAD this pass: `7c6cbbf9e4f9454be7f212a5771b5018016b7fa1`
 
 Safety at evidence time:
 
@@ -22,13 +22,13 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (softwareReliabilityBatch + softwareCompletion + pusatTaskApprovalHold) | 0 | **86 passed** |
-| `npx vitest run` | 0 | 93 files, **982 passed**, 0 failed |
+| Focused vitest (`continuousIntegrity237` + part8 + part17 + commerceIntegrity + backupRestore) | 0 | **57 passed** |
+| `npx vitest run` | 0 | 94 files, **991 passed**, 0 failed |
 | `npx tsc --noEmit` | 0 | clean |
 | `npx next lint` | 0 | No ESLint warnings or errors |
 | `npm run test:backup-restore` | 0 | dry-run only |
-| `NODE_ENV=production npx next build` | 0 | 2044 pages |
-| Isolated Playwright this pass | 0 | **107 passed, 12 skipped, 0 failed** (47.0s) on HEAD `6f6c672` |
+| `NODE_ENV=production npx next build` | skipped | server-only changes this pass |
+| Isolated Playwright this pass | skipped | not re-run; last recorded 107 passed / 12 skipped on `6f6c672` |
 
 Isolated Playwright:
 
@@ -45,6 +45,7 @@ npx playwright test
 | File | Established coverage |
 | --- | --- |
 | `server/__tests__/commerceIntegrityBatch.test.mjs` | VAT unknown fail-closed; AUTH/RATE_LIMIT; reservation expire; €0.50 floor |
+| `server/__tests__/continuousIntegrity237.test.mjs` | public error keys; idempotency fingerprint 409; correlation sanitize; sqlite reservation expire; financial job no-retry; production /tmp backup refuse |
 
 ## Original 237 source search
 

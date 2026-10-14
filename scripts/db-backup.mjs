@@ -30,6 +30,15 @@ if (!fs.existsSync(dbPath)) {
   process.exit(1);
 }
 
+const { isEphemeralPath } = require("../server/lib/dbPaths");
+if (process.env.NODE_ENV === "production" && isEphemeralPath(backupDir)) {
+  console.error(JSON.stringify({
+    ok: false,
+    error: "PRODUCTION_EPHEMERAL_PATH",
+    backupDir,
+  }));
+  process.exit(1);
+}
 fs.mkdirSync(backupDir, { recursive: true });
 const stamp = new Date().toISOString().replace(/[:.]/g, "-");
 const target = path.join(backupDir, `buzzard-${stamp}.db`);

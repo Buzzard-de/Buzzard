@@ -52,8 +52,26 @@ function redactForLog(value, depth = 0) {
   return output;
 }
 
+const SAFE_ERROR_KEY = /^[A-Za-z0-9._:-]{1,80}$/;
+
+function sanitizeErrorKey(value, fallbackKey = "security.internalError") {
+  const text = String(value || "").trim();
+  if (SAFE_ERROR_KEY.test(text)) return text;
+  const fallback = String(fallbackKey || "security.internalError").trim();
+  return SAFE_ERROR_KEY.test(fallback) ? fallback : "security.internalError";
+}
+
 function publicErrorBody(errorKey = "security.internalError") {
-  return { success: false, errorKey };
+  return { success: false, errorKey: sanitizeErrorKey(errorKey) };
+}
+
+function toPublicError(result, fallbackKey = "security.internalError") {
+  const candidate =
+    result?.errorKey ||
+    result?.code ||
+    (typeof result?.error === "string" ? result.error : null) ||
+    fallbackKey;
+  return publicErrorBody(sanitizeErrorKey(candidate, fallbackKey));
 }
 
 function isSafeId(id, maxLen = 64) {
@@ -130,6 +148,8 @@ module.exports = {
   setSecurityHeaders,
   redactForLog,
   publicErrorBody,
+  toPublicError,
+  sanitizeErrorKey,
   isSafeId,
   normalizeText,
   sanitizeFilename,

@@ -6,6 +6,7 @@ const { enqueueTaskProcessing, resumeAfterApproval } = require("../lib/aiOrchest
 const { toPublicDatabaseHealth } = require("../lib/db");
 const { getOrchestratorStatus } = require("../lib/orchestratorBridge");
 const { getGuardianStatus } = require("../lib/guardianBridge");
+const { toPublicError } = require("../lib/security");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -90,7 +91,7 @@ module.exports = {
         });
         res.json({ success: true, config: result });
       } catch (error) {
-        res.status(400).json({ success: false, errorKey: "core.config.forbidden", message: error.message });
+        res.status(400).json(toPublicError(error, "core.config.forbidden"));
       }
     });
 
@@ -159,7 +160,7 @@ module.exports = {
           task: submitted.task,
         });
       } catch (error) {
-        res.status(400).json({ success: false, errorKey: "ai.task.createFailed", message: error.message });
+        res.status(400).json(toPublicError(error, "ai.task.createFailed"));
       }
     });
 
@@ -254,7 +255,7 @@ module.exports = {
           }),
         });
       } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json(toPublicError(error, "system.jobs.listFailed"));
       }
     });
 
@@ -277,7 +278,7 @@ module.exports = {
         });
         res.status(201).json({ success: true, job });
       } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        res.status(400).json(toPublicError(error, "system.jobs.enqueueFailed"));
       }
     });
 
@@ -319,7 +320,7 @@ module.exports = {
         });
         res.json({ success: true, visibility: entry });
       } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        res.status(400).json(toPublicError(error, "categories.visibility.invalid"));
       }
     });
   },

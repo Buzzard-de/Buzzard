@@ -35,14 +35,24 @@ function resolveBackupDir() {
   return defaultBackupDir;
 }
 
-function ensureDbDirectory(dbPath = resolveDbPath()) {
-  if (process.env.NODE_ENV === "production" && isEphemeralPath(dbPath)) {
-    const err = new Error("Refusing to create a durable database under an ephemeral path in production");
+function assertDurablePath(targetPath, { env = process.env, role = "path" } = {}) {
+  if (env.NODE_ENV === "production" && isEphemeralPath(targetPath)) {
+    const err = new Error(`Refusing ${role} under an ephemeral path in production`);
     err.code = "PRODUCTION_EPHEMERAL_PATH";
+    err.target = targetPath;
     throw err;
   }
+  return { ok: true, path: path.resolve(String(targetPath || "")) };
+}
+
+function ensureDbDirectory(dbPath = resolveDbPath()) {
+  assertDurablePath(dbPath, { role: "database" });
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
   return dbPath;
+}
+
+function assertDurableBackupDir(backupDir = resolveBackupDir(), env = process.env) {
+  return assertDurablePath(backupDir, { env, role: "backup directory" });
 }
 
 function getRenderDiskDiagnostics() {
@@ -163,6 +173,8 @@ module.exports = {
   getRenderDiskDiagnostics,
   getPersistenceInfo,
   isEphemeralPath,
+  assertDurablePath,
+  assertDurableBackupDir,
   validateStartupPersistence,
   assertDurableOpenAllowed,
 };

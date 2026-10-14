@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `6f6c672` (tax fail-closed + public health slim; base `8c00e7c`)  
+Inspected HEAD at quality pass: `7c6cbbf` (public errors, idempotency fingerprint, reservation Date.parse; base `a7da160`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **69.3%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **69.4%** (was 69.3%; register average of 237 completion-percentage fields = 69.38%). This is not 237/237 done and is not +1 pp. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -87,11 +87,17 @@ Mean established-scope completion: **69.3%**. This is not 237/237 done. Original
 37. VAT: unknown country/category no longer defaults to 19%. `calculateTaxSync` and checkout quotes fail-closed. Fiscal LIVE still UNKNOWN.
 38. Exception taxonomy: AUTH_FAILED and RATE_LIMIT are non-retryable; lastError is redacted. Generic "missing" is not MISSING_COST.
 39. Inventory: estimated/stale stock cannot reserve; `expireDue` marks EXPIRED and frees quantity. Buzzard still does not buy own stock.
+40. Public error keys are sanitized (`SAFE_ERROR_KEY`); Control Center and Pusat submit no longer return exception `message`.
+41. Commerce `withIdempotency` fingerprints payloads (409 conflict) and does not store failed results. Cart add and checkout complete pass fingerprints.
+42. Incoming `X-Request-Id` / `X-Correlation-Id` / jobId must match `[A-Za-z0-9._:-]{1,128}` or are replaced.
+43. Reservation `expireDue` / orphan recover compare `Date.parse` (SQLite `YYYY-MM-DD HH:MM:SS` and ISO). Reserve/consume do not leak `error.message`.
+44. Job idempotency retries FAILED backup jobs; financial `payment_or_refund` FAILED/PERMANENTLY_FAILED never retry. UNCERTAIN payment `retry:true` is refused.
+45. Production backup directory under `/tmp` is fail-closed (`PRODUCTION_EPHEMERAL_PATH`).
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL after tax/exception/reservation work. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL. HUMAN list unchanged. Isolated Playwright on this HEAD: 107 passed / 12 skipped. Do not restart the register. Do not push/PR without explicit authorization.
+Next session: remaining PARTIAL after public-error / idempotency-fingerprint / reservation-parse / job-retry / ephemeral-backup work. Start from items 15 (remaining plugins), 105 (live payment timeout), 109 (webhook live verify), 187 restore production HUMAN, 79 live inventory sync BLOCKED. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL. HUMAN list unchanged. Playwright not re-run this pass (server-only). Do not restart the register. Do not push/PR without explicit authorization.
 
 ---
 
@@ -628,20 +634,20 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Established scope | Common error contracts |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Public error keys without stack traces |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | publicErrorBody |
-| Identified gaps | Used on API; not every plugin audited this pass |
+| Existing implementation evidence | `publicErrorBody` + `toPublicError` + `sanitizeErrorKey`; Control Center catch blocks |
+| Identified gaps | Not every remaining plugin audited; original criteria UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | publicErrorBody |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `continuousIntegrity237.test.mjs` public-error cases; full vitest 991 passed |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Used on API; not every plugin audited this pass |
+| Completion percentage | 82% (safe keys + Control Center/Pusat message stripped; original UNKNOWN) |
+| Remaining work | Remaining plugins may still echo messages; original criteria UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -810,19 +816,19 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Established scope | Idempotency-key plumbing |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sensitive commerce operations accept Idempotency-Key |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerce/idempotency.js; cartService.addItem replays Idempotency-Key; checkout_complete withIdempotency
-| Identified gaps | Header allowed. Cart add and checkout replay covered in unit tests. Not every mutation proven. Original criteria UNKNOWN.
+| Existing implementation evidence | commerce/idempotency.js fingerprint + 409 payload conflict; cart add and checkout_complete pass fingerprints
+| Identified gaps | Not every plugin mutation is wrapped; production replay UNKNOWN. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | server.js CORS allow-headers, payment paths |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | part8Foundation cart addItem replay + withIdempotency; included in 83/947
+| Exact tests executed and results | `continuousIntegrity237.test.mjs` fingerprint 409 + failed-result not stored; part8Foundation replay still passing
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 88% (fingerprint conflict + no store on error; original UNKNOWN)
 | Remaining work | Not every plugin mutation is wrapped; production replay UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -836,20 +842,20 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Established scope | Request correlation IDs |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: X-Request-Id / X-Correlation-Id on API |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | correlationContext |
-| Identified gaps | Set on API responses |
+| Existing implementation evidence | correlationContext `acceptIncomingId` (`[A-Za-z0-9._:-]{1,128}`) |
+| Identified gaps | Incoming injection rejected locally; production header path not probed | |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | correlationContext |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `continuousIntegrity237.test.mjs` reject newline/oversize/script ids |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Set on API responses |
+| Completion percentage | 85% (incoming ids sanitized; original UNKNOWN) |
+| Remaining work | Production header observation UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1124,20 +1130,20 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Established scope | Pusat error handling fail-closed |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Exceptions classified; payments not retried |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pusat/exceptions |
-| Identified gaps | pusatApprovalExceptions |
+| Existing implementation evidence | pusat/exceptions + Pusat submit catch uses `toPublicError` (no `error.message`) |
+| Identified gaps | Other Pusat routes may still echo messages; original criteria UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pusat/exceptions |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `continuousIntegrity237.test.mjs` Pusat error-key mapping; no SQLITE leak |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | pusatApprovalExceptions |
+| Completion percentage | 88% (submit path fail-closed public body; original UNKNOWN) |
+| Remaining work | Remaining Pusat plugin paths not all audited |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2298,20 +2304,20 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Established scope | Stock engine |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: operations/stockEngine.js |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | stockEngine.js |
-| Identified gaps | Implemented/tested historically |
+| Existing implementation evidence | stockEngine.js + software/inventory expireDue Date.parse (SQLite + ISO) |
+| Identified gaps | Live supplier stock still BLOCKED; original criteria UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | stockEngine.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `continuousIntegrity237.test.mjs` SQLite stamp expire; commerceIntegrityBatch estimated stock |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Implemented/tested historically |
+| Completion percentage | 80% (sqlite stamp expire + no error.message leak; original UNKNOWN) |
+| Remaining work | Live supplier stock still BLOCKED_EXTERNAL |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2506,7 +2512,7 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Established scope | Supplier retry/idempotency |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Fail-closed outage |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `previewIdempotent` local map + Inter-Cars inventory honesty |
+| Existing implementation evidence | `previewIdempotent` + jobIdempotency FAILED retry for non-financial ops; financial `failed_do_not_retry` |
 | Identified gaps | Preview cache is process-local; live supplier fetch remains blocked |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/carriers and feeds |
@@ -2518,7 +2524,7 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (local preview idempotency + conflict; live feeds still blocked) |
+| Completion percentage | 72% (FAILED backup retry + financial no-retry; live feeds still blocked) |
 | Remaining work | Live supplier credentials and durable preview store remain external |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4948,8 +4954,8 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Local script; production backup UNKNOWN |
+| Completion percentage | 70% (local backup + production /tmp destination fail-closed; production backup UNKNOWN) |
+| Remaining work | Production backup destination and schedule UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5182,8 +5188,8 @@ Next session: remaining PARTIAL after tax/exception/reservation work. Original c
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Honored; tests use server/data/test-scratch |
+| Completion percentage | 86% (DB + backup dir refuse /tmp in production; original UNKNOWN) |
+| Remaining work | Production persistence still UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

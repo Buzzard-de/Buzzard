@@ -1,6 +1,7 @@
 const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
 const { logAuditFromRequest } = require("../lib/coreAudit");
+const { toPublicError } = require("../lib/security");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -111,10 +112,11 @@ module.exports = {
       } catch (error) {
         const status = Number(error.statusCode) || (error.code === "IDEMPOTENCY_CONFLICT" ? 409 : 400);
         res.status(status).json({
-          success: false,
-          errorKey: error.code === "IDEMPOTENCY_CONFLICT" ? "pusat.task.idempotencyConflict" : "pusat.task.submitFailed",
-          code: error.code || null,
-          message: error.message,
+          ...toPublicError(
+            error,
+            error.code === "IDEMPOTENCY_CONFLICT" ? "pusat.task.idempotencyConflict" : "pusat.task.submitFailed"
+          ),
+          code: typeof error.code === "string" && /^[A-Za-z0-9._:-]{1,80}$/.test(error.code) ? error.code : null,
         });
       }
     });

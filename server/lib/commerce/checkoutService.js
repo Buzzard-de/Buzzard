@@ -22,7 +22,7 @@ const {
   readCommerceGuestProof,
   guestProofMatches,
 } = require("./commerceGuards");
-const { withIdempotency } = require("./idempotency");
+const { withIdempotency, fingerprintOf } = require("./idempotency");
 const { logSecurityEvent } = require("../securityLog");
 const {
   CHECKOUT_STATE,
@@ -303,7 +303,13 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
 
   const key = body.idempotencyKey || ctx.idempotencyKey;
   if (key) {
-    return withIdempotency({ key, scope: "checkout_complete", handler: run, req: ctx.req });
+    return withIdempotency({
+      key,
+      scope: "checkout_complete",
+      handler: run,
+      req: ctx.req,
+      fingerprint: fingerprintOf({ checkoutId, salesEnabled: getEffectiveFlags().salesEnabled }),
+    });
   }
   return run();
 }

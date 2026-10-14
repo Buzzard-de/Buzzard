@@ -66,6 +66,13 @@ function interpretProviderResult(result = {}) {
 }
 
 function draftCharge(input = {}) {
+  if (input.retry === true && (input.timeout || input.uncertain || input.previousOutcome === "UNCERTAIN")) {
+    return {
+      ...interpretProviderResult({ timeout: true }),
+      refusedRetry: true,
+      note: "UNCERTAIN payment outcomes must be reconciled. Blind retry is refused.",
+    };
+  }
   if (input.timeout || input.uncertain) {
     return interpretProviderResult({ timeout: true });
   }

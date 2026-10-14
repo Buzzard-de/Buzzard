@@ -23,6 +23,8 @@ const NON_RETRYABLE = new Set([
   EXCEPTION_CODES.SALES_LOCKED,
   EXCEPTION_CODES.APPROVAL_INVALID,
   EXCEPTION_CODES.INPUT_CHANGED,
+  EXCEPTION_CODES.AUTH_FAILED,
+  EXCEPTION_CODES.RATE_LIMIT,
   EXCEPTION_CODES.SENSITIVE_NO_RETRY,
 ]);
 
@@ -37,24 +39,36 @@ function classify(error, { action } = {}) {
     code,
     retryable,
     sensitive,
-    message,
+    message: redactError(message),
     action: action || null,
   };
 }
 
 function inferCode(message, action) {
   const text = String(message || "").toLowerCase();
+  if (/\b(401|unauthorized|unauthenticated|auth required)\b/.test(text)) return EXCEPTION_CODES.AUTH_FAILED;
+  if (/\b(429|rate limit|throttl)\b/.test(text)) return EXCEPTION_CODES.RATE_LIMIT;
   if (text.includes("timeout")) return EXCEPTION_CODES.TASK_TIMEOUT;
-  if (text.includes("permission")) return EXCEPTION_CODES.PERMISSION_DENIED;
+  if (text.includes("permission") || text.includes("forbidden") || text.includes("403")) {
+    return EXCEPTION_CODES.PERMISSION_DENIED;
+  }
   if (text.includes("guardian")) return EXCEPTION_CODES.GUARDIAN_BLOCKED;
   if (text.includes("approval")) return EXCEPTION_CODES.APPROVAL_REQUIRED;
   if (text.includes("sales") || text.includes("catalog mode")) return EXCEPTION_CODES.SALES_LOCKED;
-  if (text.includes("cost") || text.includes("missing")) return EXCEPTION_CODES.MISSING_COST;
+  if (text.includes("missing cost") || text.includes("supplier cost")) return EXCEPTION_CODES.MISSING_COST;
   if (text.includes("stock")) return EXCEPTION_CODES.STOCK_UNCONFIRMED;
   if (text.includes("not found")) return EXCEPTION_CODES.TASK_NOT_FOUND;
-  if (text.includes("unavailable") || text.includes("not active")) return EXCEPTION_CODES.AGENT_UNAVAILABLE;
+  if (text.includes("unavailable") || text.includes("econnreset") || text.includes("503")) {
+    return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
+  }
   if (SENSITIVE_ACTIONS.includes(action)) return EXCEPTION_CODES.SENSITIVE_NO_RETRY;
   return EXCEPTION_CODES.UNKNOWN;
+}
+
+function redactError(text) {
+  return String(text || "")
+    .replace(/(api[_-]?key|secret|token|password|authorization|bearer)\s*[=:]\s*\S+/gi, "$1=[REDACTED]")
+    .slice(0, 400);
 }
 
 function recordException({
@@ -80,7 +94,7 @@ function recordException({
     maxRetries,
     retryable ? EXCEPTION_STATUS.OPEN : EXCEPTION_STATUS.ESCALATED,
     JSON.stringify(details || {}),
-    lastError || null
+    redactError(lastError)
   );
 
   if (!retryable) {

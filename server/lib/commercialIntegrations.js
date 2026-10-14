@@ -264,27 +264,38 @@ function calculateTaxSync(countryCode, netAmount, shipping = 0) {
       tax: null,
       source: "provider_required",
       status: "tax_provider_configured",
+      ok: false,
+      blocked: true,
+      invented: false,
     };
   }
 
-  const indicativeRates = {
-    DE: 0.19,
-    FR: 0.2,
-    NL: 0.21,
-    PL: 0.23,
-    ES: 0.21,
-    IT: 0.22,
-    GB: 0.2,
-    CH: 0.081,
-    TR: 0.2,
-  };
-  const rate = indicativeRates[countryCode] ?? 0.19;
-  const taxable = Number(netAmount || 0) + Number(shipping || 0);
+  const taxProvider = require("./commerce/taxProvider");
+  const result = taxProvider.calculateTax({
+    country: countryCode,
+    subtotal: Number(netAmount || 0) + Number(shipping || 0),
+  });
+  if (!result.ok) {
+    return {
+      countryCode,
+      rate: null,
+      tax: null,
+      source: "unconfigured",
+      status: result.code || "tax_rate_unknown",
+      ok: false,
+      blocked: true,
+      invented: false,
+    };
+  }
   return {
-    countryCode,
-    rate,
-    tax: Number((taxable * rate).toFixed(2)),
-    source: "placeholder",
+    countryCode: result.country,
+    rate: result.rate / 100,
+    tax: result.tax,
+    source: "configured_table",
+    ok: true,
+    blocked: false,
+    invented: false,
+    dryRun: true,
   };
 }
 

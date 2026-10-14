@@ -6,9 +6,15 @@ function isEnabled() {
 }
 
 function getTaxRate(countryCode) {
-  const country = String(countryCode || "DE").toUpperCase();
+  const country = String(countryCode || "").toUpperCase();
+  if (!country) return null;
   const row = db.prepare("SELECT rate FROM tax_rates WHERE country_code = ?").get(country);
-  return row?.rate ?? 0.19;
+  if (row?.rate != null && Number.isFinite(Number(row.rate))) {
+    return Number(row.rate);
+  }
+  const { getTaxRate: configuredRate } = require("./commerce/taxProvider");
+  const percent = configuredRate(country);
+  return percent == null ? null : percent / 100;
 }
 
 function resolveCurrency(countryCode, currency) {
@@ -199,7 +205,10 @@ function calculateCheckoutQuote(body = {}) {
   const method = db
     .prepare("SELECT * FROM shipping_methods WHERE country_code = ? AND code = ?")
     .get(country, body.shippingMethod || "standard");
-  const shipping = method ? (subtotal >= method.free_from ? 0 : method.price) : 9.99;
+  if (!method) {
+    return { ok: false, blocked: true, code: "shipping_method_unknown", invented: false, country };
+  }
+  const shipping = subtotal >= method.free_from ? 0 : method.price;
 
   let discount = 0;
   if (body.couponCode) {
@@ -209,10 +218,16 @@ function calculateCheckoutQuote(body = {}) {
 
   const net = Math.max(0, subtotal - discount);
   const taxRate = getTaxRate(country);
+  if (taxRate == null) {
+    return { ok: false, blocked: true, code: "tax_rate_unknown", invented: false, country };
+  }
   const tax = Number((net * taxRate).toFixed(2));
   const total = Number((net + shipping + tax).toFixed(2));
 
   return {
+    ok: true,
+    blocked: false,
+    invented: false,
     subtotal,
     discount: Number(discount.toFixed(2)),
     shipping,
@@ -286,6 +301,7 @@ function getCustomerCheckoutStatus() {
 
 module.exports = {
   isEnabled,
+  getTaxRate,
   listShippingMethods,
   getCustomerProfile,
   createAddress,

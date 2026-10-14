@@ -15,11 +15,22 @@ const VAT_BY_COUNTRY = Object.freeze({
 });
 
 function getTaxRate(country) {
-  const code = String(country || "DE").toUpperCase();
+  const code = String(country || "").toUpperCase();
+  if (!code) return null;
   return VAT_BY_COUNTRY[code] ?? null;
 }
 
-function calculateTax({ country = "DE", subtotal = 0, discount = 0 } = {}) {
+function calculateTax({ country, subtotal = 0, discount = 0, category = null } = {}) {
+  if (category) {
+    return {
+      ok: false,
+      code: "tax_category_rate_unknown",
+      message: `No verified category VAT for ${category}; country rate is not applied as category tax`,
+      blocked: true,
+      invented: false,
+    };
+  }
+
   const rate = getTaxRate(country);
   if (rate === null) {
     return {
@@ -27,6 +38,7 @@ function calculateTax({ country = "DE", subtotal = 0, discount = 0 } = {}) {
       code: "tax_rate_unknown",
       message: `No tax rate configured for country ${country}`,
       blocked: true,
+      invented: false,
     };
   }
 

@@ -37,9 +37,10 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
   const weight = items.reduce((sum, item) => sum + item.weight_kg * item.quantity, 0);
   const shipping = calculateShipping(countryCode, weight, subtotal);
   const taxInfo = calculateTaxSync(countryCode, subtotal, shipping);
-  const tax =
-    taxInfo.tax ??
-    Number(((subtotal + shipping) * (taxInfo.rate ?? 0.19)).toFixed(2));
+  if (!taxInfo.ok || taxInfo.tax == null) {
+    return { error: taxInfo.status || "tax_rate_unknown", status: 400, blocked: true, invented: false };
+  }
+  const tax = taxInfo.tax;
   const total = Number((subtotal + shipping + tax).toFixed(2));
   const number = orderNumber();
 

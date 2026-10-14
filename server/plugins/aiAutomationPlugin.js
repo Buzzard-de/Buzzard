@@ -557,7 +557,7 @@ function collectHealth() {
 module.exports = {
   register(app) {
     app.get("/api/health", (_req, res) => {
-      return res.json({ success: true, ...collectHealth() });
+      return res.json({ success: true, ok: true, status: "ok" });
     });
 
     app.post("/api/ai/chat", (req, res) => {

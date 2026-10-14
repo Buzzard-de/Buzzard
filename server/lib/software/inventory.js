@@ -288,6 +288,35 @@ function release(db, reservationId) {
   return { ok: true, reservation: db.prepare("SELECT * FROM software_reservations WHERE id = ?").get(reservationId) };
 }
 
+function expireDue(db, { olderThanMs = 30 * 60 * 1000, sku = null, orderId = null } = {}) {
+  if (!sku && !orderId) {
+    return { ok: false, reason: "SKU_OR_ORDER_REQUIRED", expired: 0 };
+  }
+  const cutoff = new Date(Date.now() - olderThanMs).toISOString();
+  const due = sku
+    ? db
+        .prepare(
+          `SELECT * FROM software_reservations
+           WHERE status = ? AND sku = ? AND created_at <= ?`
+        )
+        .all(RESERVATION_STATUS.ACTIVE, sku, cutoff)
+    : db
+        .prepare(
+          `SELECT * FROM software_reservations
+           WHERE status = ? AND order_id = ? AND created_at <= ?`
+        )
+        .all(RESERVATION_STATUS.ACTIVE, orderId, cutoff);
+  const expired = [];
+  for (const row of due) {
+    db.prepare(
+      "UPDATE software_reservations SET status = ?, released_at = CURRENT_TIMESTAMP WHERE id = ?"
+    ).run(RESERVATION_STATUS.EXPIRED, row.id);
+    writeEvent(db, row.id, "expired", { cutoff });
+    expired.push(row.id);
+  }
+  return { ok: true, scanned: due.length, expired: expired.length, ids: expired };
+}
+
 function recoverOrphanReservations(db, { olderThanMs = 30 * 60 * 1000, sku = null, orderId = null } = {}) {
   if (!sku && !orderId) {
     return { ok: false, reason: "SKU_OR_ORDER_REQUIRED", released: 0 };
@@ -384,6 +413,7 @@ module.exports = {
   release,
   reservedQuantity,
   recoverOrphanReservations,
+  expireDue,
   history,
   withTransaction,
   recordWmsReservationAudit,

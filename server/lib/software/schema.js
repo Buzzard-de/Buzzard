@@ -278,10 +278,148 @@ function migrateSoftwareSchema(db) {
   `);
 
   ensureColumn(db, "software_payments", "provider_payment_id", "provider_payment_id TEXT");
+  ensureColumn(db, "software_reservations", "consumed_at", "consumed_at TEXT");
   db.exec(`
     CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_pay_provider_ref
       ON software_payments(provider, provider_payment_id)
       WHERE provider_payment_id IS NOT NULL;
+
+    CREATE TABLE IF NOT EXISTS software_price_history (
+      id TEXT PRIMARY KEY,
+      sku TEXT NOT NULL,
+      channel TEXT NOT NULL DEFAULT 'direct',
+      sale_price REAL NOT NULL,
+      net_profit REAL,
+      currency TEXT NOT NULL DEFAULT 'EUR',
+      sale_approved INTEGER NOT NULL DEFAULT 0,
+      published INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_price_hist_sku ON software_price_history(sku);
+
+    CREATE TABLE IF NOT EXISTS software_supplier_decisions (
+      id TEXT PRIMARY KEY,
+      sku TEXT NOT NULL,
+      selected_supplier TEXT,
+      status TEXT NOT NULL,
+      reason TEXT,
+      scores_json TEXT DEFAULT '{}',
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_sup_dec_sku ON software_supplier_decisions(sku);
+
+    CREATE TABLE IF NOT EXISTS software_fulfillment_plans (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      live_bound INTEGER NOT NULL DEFAULT 0,
+      sent INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_ff_order ON software_fulfillment_plans(order_id);
+
+    CREATE TABLE IF NOT EXISTS software_circuit_events (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      state TEXT NOT NULL,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_cb_name ON software_circuit_events(name);
+
+    CREATE TABLE IF NOT EXISTS software_order_identities (
+      canonical_id TEXT PRIMARY KEY,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      details_json TEXT DEFAULT '{}'
+    );
+
+    CREATE TABLE IF NOT EXISTS software_order_aliases (
+      id TEXT PRIMARY KEY,
+      canonical_id TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      external_ref TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(canonical_id) REFERENCES software_order_identities(canonical_id)
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_ord_alias_ref
+      ON software_order_aliases(kind, external_ref);
+    CREATE INDEX IF NOT EXISTS idx_sw_ord_alias_canon ON software_order_aliases(canonical_id);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_ord_alias_value
+      ON software_order_aliases(external_ref);
+
+    CREATE TABLE IF NOT EXISTS software_customer_qr (
+      id TEXT PRIMARY KEY,
+      customer_id TEXT NOT NULL,
+      token TEXT NOT NULL UNIQUE,
+      status TEXT NOT NULL DEFAULT 'ACTIVE',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      revoked_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_cqr_customer ON software_customer_qr(customer_id);
+
+    CREATE TABLE IF NOT EXISTS software_package_qr (
+      id TEXT PRIMARY KEY,
+      token TEXT NOT NULL UNIQUE,
+      canonical_order_id TEXT NOT NULL,
+      package_ref TEXT,
+      campaign_id TEXT,
+      channel TEXT,
+      attribution_source TEXT NOT NULL DEFAULT 'UNKNOWN',
+      eligibility_status TEXT NOT NULL DEFAULT 'REVIEW_REQUIRED',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      details_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_pqr_order ON software_package_qr(canonical_order_id);
+
+    CREATE TABLE IF NOT EXISTS software_qr_scans (
+      id TEXT PRIMARY KEY,
+      qr_kind TEXT NOT NULL,
+      token TEXT NOT NULL,
+      visitor_hash TEXT,
+      customer_id TEXT,
+      marketing_consent INTEGER NOT NULL DEFAULT 0,
+      bot_suspect INTEGER NOT NULL DEFAULT 0,
+      review_required INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      details_json TEXT DEFAULT '{}'
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_qrs_token ON software_qr_scans(token);
+
+    CREATE TABLE IF NOT EXISTS software_loyalty_entitlements (
+      id TEXT PRIMARY KEY,
+      customer_id TEXT NOT NULL,
+      campaign_code TEXT NOT NULL,
+      canonical_first_order_id TEXT,
+      canonical_redeem_order_id TEXT,
+      state TEXT NOT NULL,
+      discount_percent REAL NOT NULL DEFAULT 0,
+      reserved_checkout_id TEXT,
+      reserved_until TEXT,
+      idempotency_key TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_loy_customer_campaign
+      ON software_loyalty_entitlements(customer_id, campaign_code);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_loy_idem
+      ON software_loyalty_entitlements(idempotency_key) WHERE idempotency_key IS NOT NULL;
+
+    CREATE TABLE IF NOT EXISTS software_loyalty_events (
+      id TEXT PRIMARY KEY,
+      entitlement_id TEXT,
+      customer_id TEXT,
+      event_type TEXT NOT NULL,
+      from_state TEXT,
+      to_state TEXT,
+      canonical_order_id TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_loy_evt ON software_loyalty_events(entitlement_id);
   `);
 }
 

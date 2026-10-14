@@ -280,9 +280,10 @@ function getSession(token) {
 }
 
 function extractToken(req) {
-  const header = req.headers.authorization || "";
+  const header = req.headers?.authorization || "";
   if (header.startsWith("Bearer ")) return header.slice(7).trim();
-  return null;
+  const { readAdminSessionCookie } = require("./authCookies");
+  return readAdminSessionCookie(req);
 }
 
 function requireAuth(req, res) {

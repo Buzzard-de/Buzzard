@@ -155,5 +155,70 @@ module.exports = {
       }
       res.json({ success: true, shipment: result.shipment });
     });
+
+    app.get("/api/software/qr/campaign", (req, res) => {
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      software.initialize(db);
+      const token = String(req.query.c || req.query.p || req.query.token || "").trim();
+      const locale = String(req.query.lang || req.query.locale || "de");
+      res.json({
+        success: true,
+        live: false,
+        landing: software.qrLoyalty.landingPublic(db, token),
+        copy: software.qrLoyalty.copy(locale),
+        redirect: software.qrLoyalty.safeRedirect(req.query.next),
+      });
+    });
+
+    app.post("/api/software/qr/scan", (req, res) => {
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      software.initialize(db);
+      const body = req.body || {};
+      const result = software.qrLoyalty.recordScan(db, {
+        token: body.token,
+        marketingConsent: body.marketingConsent === true,
+        userAgent: req.headers["user-agent"],
+        ip: req.ip,
+      });
+      res.status(result.ok ? 200 : 400).json({ success: result.ok, live: false, ...result });
+    });
+
+    app.get("/api/account/qr/loyalty", (req, res) => {
+      const session = requireCustomer(req, res);
+      if (!session) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      software.initialize(db);
+      const token = String(req.query.token || "");
+      const reveal = token
+        ? software.qrLoyalty.revealAccount(db, { token, requesterCustomerId: session.customerId })
+        : { ok: true };
+      if (reveal.denied) {
+        res.status(403).json({ success: false, error: reveal.reason });
+        return;
+      }
+      const eligibility = software.qrLoyalty.evaluateEligibility(db, {
+        customerId: session.customerId,
+        orderRef: req.query.orderRef,
+      });
+      res.json({ success: true, live: false, reveal, eligibility });
+    });
+
+    app.get("/api/admin/software/qr/analytics", (req, res) => {
+      if (!attachAdmin(req, res)) return;
+      if (!requirePermission(req, res, "ai.read")) return;
+      const software = require("../lib/software");
+      const { db } = require("../lib/db");
+      software.initialize(db);
+      res.json({
+        success: true,
+        live: false,
+        analytics: software.qrLoyalty.analytics(db),
+        privacy: software.qrLoyalty.privacyNotes(),
+        identity: software.orderIdentity.describeContract(),
+      });
+    });
   },
 };

@@ -46,46 +46,57 @@ function queueOrderCreated(orderNumber) {
   return { ok: true, orderNumber, status: "automation_queued" };
 }
 
+const OFFICIAL_PAYMENT_WEBHOOK = "/api/commerce/webhooks/:provider";
+
 function handlePaymentWebhook(body = {}) {
-  const { provider = "stripe", eventId, type, orderNumber, status } = body;
+  const { provider = "unsigned", eventId, type, orderNumber, status } = body;
   if (!eventId || !orderNumber) {
     return { ok: false, error: "eventId and orderNumber required", status: 400 };
   }
 
   const eventKey = `payment:${eventId}`;
   const existing = db.prepare("SELECT id FROM integration_events WHERE event_key = ?").get(eventKey);
-  if (existing) return { ok: true, idempotent: true };
+  if (existing) {
+    return {
+      ok: true,
+      accepted: true,
+      applied: false,
+      idempotent: true,
+      reason: "UNSIGNED_WEBHOOK_ISOLATED",
+      officialPath: OFFICIAL_PAYMENT_WEBHOOK,
+    };
+  }
 
   db.prepare(`
     INSERT INTO integration_events(event_key, type, order_number, provider, status, payload)
     VALUES(?,?,?,?,?,?)
   `).run(
     eventKey,
-    "payment_webhook",
+    "payment_webhook_unsigned",
     orderNumber,
     provider,
-    status || "received",
-    JSON.stringify({ eventId, type })
+    "unsigned_ignored",
+    JSON.stringify({
+      eventId,
+      type: type || null,
+      claimedStatus: status || null,
+      applied: false,
+      officialPath: OFFICIAL_PAYMENT_WEBHOOK,
+    })
   );
 
   ensureFlow(orderNumber);
+  const flow = db.prepare("SELECT payment_status FROM order_flow WHERE order_number = ?").get(orderNumber);
 
-  if (status === "paid") {
-    db.prepare(`
-      UPDATE order_flow
-      SET payment_status = 'paid', updated_at = CURRENT_TIMESTAMP
-      WHERE order_number = ?
-    `).run(orderNumber);
-    queueJob("fulfillment", orderNumber, {});
-  } else if (status === "failed") {
-    db.prepare(`
-      UPDATE order_flow
-      SET payment_status = 'failed', last_error = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE order_number = ?
-    `).run("Payment failed", orderNumber);
-  }
-
-  return { ok: true };
+  return {
+    ok: true,
+    accepted: true,
+    applied: false,
+    paymentStatusUnchanged: flow?.payment_status || null,
+    reason: "UNSIGNED_WEBHOOK_ISOLATED",
+    officialPath: OFFICIAL_PAYMENT_WEBHOOK,
+    note: "Unsigned /api/webhooks/payment cannot mark paid, failed, or queue fulfillment. Official Stripe/PayPal events use dualPaymentEngine.",
+  };
 }
 
 function recordShipmentCreated({ orderNumber, carrier = "dhl", trackingNumber = null }) {
@@ -174,6 +185,7 @@ function getAutomationStatus() {
 
 module.exports = {
   isEnabled,
+  OFFICIAL_PAYMENT_WEBHOOK,
   queueOrderCreated,
   handlePaymentWebhook,
   recordShipmentCreated,

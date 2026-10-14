@@ -154,6 +154,15 @@ function reserve(db, input = {}) {
           return { duplicate: true, reservation: existing };
         }
       }
+      const activeReserved = reservedQuantity(db, sku);
+      const available = Number(reliability.quantity) - activeReserved;
+      if (available < quantity) {
+        return {
+          insufficient: true,
+          available,
+          activeReserved,
+        };
+      }
       db.prepare(
         `INSERT INTO software_reservations(id, sku, quantity, order_id, customer_id, status, source, idempotency_key)
          VALUES(?,?,?,?,?,?,?,?)`
@@ -167,10 +176,22 @@ function reserve(db, input = {}) {
         reliability.source,
         key
       );
-      writeEvent(db, id, "reserved", { sku, quantity, source: reliability.source });
+      writeEvent(db, id, "reserved", { sku, quantity, source: reliability.source, availableAfter: available - quantity });
       return { duplicate: false, reservation: db.prepare("SELECT * FROM software_reservations WHERE id = ?").get(id) };
     });
     const result = run();
+    if (result.insufficient) {
+      return {
+        ok: false,
+        reserved: false,
+        failClosed: true,
+        reason: "INSUFFICIENT_STOCK",
+        available: result.available,
+        activeReserved: result.activeReserved,
+        reliability,
+        purchaseOwnStock: false,
+      };
+    }
     return {
       ok: true,
       reserved: !result.duplicate || result.reservation.status === RESERVATION_STATUS.ACTIVE,
@@ -185,9 +206,76 @@ function reserve(db, input = {}) {
   }
 }
 
+function reservedQuantity(db, sku) {
+  const row = db
+    .prepare(
+      `SELECT COALESCE(SUM(quantity), 0) AS n
+       FROM software_reservations
+       WHERE sku = ? AND status = ?`
+    )
+    .get(sku, RESERVATION_STATUS.ACTIVE);
+  return Number(row?.n || 0);
+}
+
+function consume(db, reservationId, input = {}) {
+  if (!reservationId) return { ok: false, consumed: false, reason: "RESERVATION_REQUIRED" };
+  try {
+    const run = db.transaction(() => {
+      const row = db.prepare("SELECT * FROM software_reservations WHERE id = ?").get(reservationId);
+      if (!row) return { missing: true };
+      if (row.status === RESERVATION_STATUS.CONSUMED) {
+        return { duplicate: true, reservation: row };
+      }
+      if (row.status !== RESERVATION_STATUS.ACTIVE) {
+        return { invalid: true, reservation: row };
+      }
+      if (input.orderId && row.order_id && String(row.order_id) !== String(input.orderId)) {
+        return { mismatch: true, reservation: row };
+      }
+      db.prepare(
+        "UPDATE software_reservations SET status = ?, consumed_at = CURRENT_TIMESTAMP WHERE id = ?"
+      ).run(RESERVATION_STATUS.CONSUMED, reservationId);
+      writeEvent(db, reservationId, "consumed", {
+        sku: row.sku,
+        quantity: row.quantity,
+        orderId: row.order_id,
+        retry: Boolean(input.retry),
+      });
+      return { reservation: db.prepare("SELECT * FROM software_reservations WHERE id = ?").get(reservationId) };
+    });
+    const result = run();
+    if (result.missing) return { ok: false, consumed: false, reason: "NOT_FOUND" };
+    if (result.duplicate) {
+      return { ok: true, consumed: true, duplicate: true, reservation: result.reservation };
+    }
+    if (result.mismatch) {
+      return { ok: false, consumed: false, failClosed: true, reason: "ORDER_MISMATCH", reservation: result.reservation };
+    }
+    if (result.invalid) {
+      return {
+        ok: false,
+        consumed: false,
+        failClosed: true,
+        reason: result.reservation.status === RESERVATION_STATUS.RELEASED ? "ALREADY_RELEASED" : "INVALID_STATUS",
+        reservation: result.reservation,
+      };
+    }
+    return { ok: true, consumed: true, duplicate: false, reservation: result.reservation };
+  } catch (error) {
+    return { ok: false, consumed: false, failClosed: true, reason: "CONSUME_FAILED", error: error.message };
+  }
+}
+
+function commit(db, reservationId, input = {}) {
+  return consume(db, reservationId, input);
+}
+
 function release(db, reservationId) {
   const row = db.prepare("SELECT * FROM software_reservations WHERE id = ?").get(reservationId);
   if (!row) return { ok: false, reason: "NOT_FOUND" };
+  if (row.status === RESERVATION_STATUS.CONSUMED) {
+    return { ok: false, reason: "ALREADY_CONSUMED", reservation: row };
+  }
   if (row.status === RESERVATION_STATUS.RELEASED) {
     return { ok: true, alreadyReleased: true, reservation: row };
   }
@@ -196,6 +284,32 @@ function release(db, reservationId) {
   ).run(RESERVATION_STATUS.RELEASED, reservationId);
   writeEvent(db, reservationId, "released", {});
   return { ok: true, reservation: db.prepare("SELECT * FROM software_reservations WHERE id = ?").get(reservationId) };
+}
+
+function recoverOrphanReservations(db, { olderThanMs = 30 * 60 * 1000, sku = null, orderId = null } = {}) {
+  if (!sku && !orderId) {
+    return { ok: false, reason: "SKU_OR_ORDER_REQUIRED", released: 0 };
+  }
+  const cutoff = new Date(Date.now() - olderThanMs).toISOString();
+  const orphans = sku
+    ? db
+        .prepare(
+          `SELECT * FROM software_reservations
+           WHERE status = ? AND sku = ? AND created_at <= ?`
+        )
+        .all(RESERVATION_STATUS.ACTIVE, sku, cutoff)
+    : db
+        .prepare(
+          `SELECT * FROM software_reservations
+           WHERE status = ? AND order_id = ? AND created_at <= ?`
+        )
+        .all(RESERVATION_STATUS.ACTIVE, orderId, cutoff);
+  const released = [];
+  for (const row of orphans) {
+    const result = release(db, row.id);
+    if (result.ok) released.push(row.id);
+  }
+  return { ok: true, scanned: orphans.length, released: released.length, ids: released };
 }
 
 function history(db, sku) {
@@ -263,7 +377,11 @@ module.exports = {
   evaluateReliability,
   resolveSupplierConflict,
   reserve,
+  consume,
+  commit,
   release,
+  reservedQuantity,
+  recoverOrphanReservations,
   history,
   withTransaction,
   recordWmsReservationAudit,

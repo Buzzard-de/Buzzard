@@ -1,18 +1,8 @@
 import { test, expect } from "@playwright/test";
-
-const ADMIN_EMAIL = process.env.BUZZARD_ADMIN_EMAIL || "admin@buzzard.de";
-const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "BuzzardAdmin2026!";
-
-async function adminLogin(page: import("@playwright/test").Page) {
-  await page.goto("/admin/login/");
-  await page.fill('input[type="email"], input[name="email"], #email', ADMIN_EMAIL);
-  await page.fill('input[type="password"], input[name="password"], #password', ADMIN_PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL(/\/admin/, { timeout: 15_000 });
-}
+import { seedAdminSession, waitForAdminReady } from "./helpers/adminAuth";
 
 test.describe("Storefront Bridge E2E (Part 7)", () => {
-  test.skip(!process.env.NEXT_PUBLIC_BUZZARD_API_URL, "API URL required");
+  test.skip(!process.env.NEXT_PUBLIC_BUZZARD_API_URL && !process.env.BUZZARD_API_URL, "API URL required");
 
   test("Homepage loads without horizontal overflow", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
@@ -53,9 +43,11 @@ test.describe("Storefront Bridge E2E (Part 7)", () => {
     await expect(page.locator("body")).toContainText(/Produkt|gefunden|Demo/i);
   });
 
-  test("Admin storefront health", async ({ page }) => {
-    await adminLogin(page);
+  test("Admin storefront health", async ({ page, request }) => {
+    await seedAdminSession(page, request);
     await page.goto("/admin/control-center/");
-    await expect(page.locator("body")).toContainText(/Control Center/i);
+    await waitForAdminReady(page);
+    await expect(page).not.toHaveURL(/\/admin\/login\//);
+    await expect(page.locator("h1")).toContainText(/Control Center/i);
   });
 });

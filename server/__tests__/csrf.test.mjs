@@ -42,8 +42,14 @@ describe("csrf", () => {
     expect(validateCsrfForRequest(req, res)).toBe(true);
   });
 
+  it("can disable CSRF only with explicit 0", () => {
+    process.env.BUZZARD_CSRF_ENFORCE = "0";
+    const req = mockReq({ headers: { cookie: "buzzard_admin=abc" } });
+    const res = mockRes();
+    expect(validateCsrfForRequest(req, res)).toBe(true);
+  });
+
   it("Bearer auth exempt from CSRF", () => {
-    process.env.BUZZARD_CSRF_ENFORCE = "1";
     const req = mockReq({
       headers: { authorization: "Bearer test-token" },
     });
@@ -52,8 +58,8 @@ describe("csrf", () => {
     expect(usesBearerAuth(req)).toBe(true);
   });
 
-  it("rejects cookie session POST without matching CSRF when enforced", () => {
-    process.env.BUZZARD_CSRF_ENFORCE = "1";
+  it("rejects cookie session POST without matching CSRF by default", () => {
+    delete process.env.BUZZARD_CSRF_ENFORCE;
     const token = generateCsrfToken();
     const req = mockReq({
       headers: {
@@ -66,8 +72,8 @@ describe("csrf", () => {
     expect(res.statusCode).toBe(403);
   });
 
-  it("accepts matching CSRF token when enforced", () => {
-    process.env.BUZZARD_CSRF_ENFORCE = "1";
+  it("accepts matching CSRF token by default", () => {
+    delete process.env.BUZZARD_CSRF_ENFORCE;
     const token = generateCsrfToken();
     const req = mockReq({
       headers: {

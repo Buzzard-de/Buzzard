@@ -124,4 +124,85 @@ function quote(input = {}) {
   };
 }
 
-module.exports = { quote };
+function recordHistory(db, input = {}, quoteResult = null) {
+  const quoted = quoteResult || quote(input);
+  if (!quoted.ok) return { ...quoted, recorded: false, published: false };
+  if (!db) return { ...quoted, recorded: false, published: false };
+  const crypto = require("crypto");
+  const id = `sph_${crypto.randomBytes(8).toString("hex")}`;
+  db.prepare(
+    `INSERT INTO software_price_history(
+      id, sku, channel, sale_price, net_profit, currency, sale_approved, published, details_json
+    ) VALUES(?,?,?,?,?,?,?,0,?)`
+  ).run(
+    id,
+    String(input.sku || "unknown"),
+    String(input.channel || "direct"),
+    quoted.salePrice == null ? 0 : quoted.salePrice,
+    quoted.netProfit,
+    quoted.currency || "EUR",
+    quoted.saleApproved ? 1 : 0,
+    JSON.stringify({ failClosed: Boolean(quoted.failClosed), invented: false, published: false })
+  );
+  return { ...quoted, recorded: true, published: false, historyId: id };
+}
+
+function evaluateGivenSale(input = {}, salePrice) {
+  const base = quote(input);
+  if (!base.ok) return { ...base, saleApproved: false };
+  const sale = money(salePrice);
+  if (sale == null || sale <= 0) {
+    return { ok: false, failClosed: true, reason: "INVALID_SALE_PRICE", invented: false, saleApproved: false };
+  }
+  if (base.missingOptional.length) {
+    return {
+      ...base,
+      ok: false,
+      failClosed: true,
+      reason: "MISSING_ESSENTIAL_COST_DATA",
+      salePrice: sale,
+      saleApproved: false,
+      note: "Campaign discounts require supplier, shipping, return reserve, commission and tax inputs.",
+    };
+  }
+  const landed = money(base.supplierCost + base.shippingCost + base.extraCosts + (base.returnReserve || 0));
+  const commissionRate = input.marketplaceCommissionRate != null ? Number(input.marketplaceCommissionRate) : null;
+  const taxRate = input.taxRate != null ? Number(input.taxRate) : null;
+  const commission = money(sale * commissionRate);
+  const tax = money(sale * taxRate);
+  const net = money(sale - landed - commission - tax);
+  return {
+    ...base,
+    salePrice: sale,
+    marketplaceCommission: commission,
+    tax,
+    netProfit: net,
+    saleApproved: net != null && net + 1e-9 >= base.minNetProfitEur,
+    belowMinProfit: net != null && net + 1e-9 < base.minNetProfitEur,
+    givenSale: true,
+    invented: false,
+  };
+}
+
+function channelQuote(input = {}) {
+  const channel = String(input.channel || "direct");
+  const commissions = {
+    direct: input.marketplaceCommissionRate ?? 0,
+    amazon: input.marketplaceCommissionRate ?? 0.15,
+    ebay: input.marketplaceCommissionRate ?? 0.12,
+    kaufland: input.marketplaceCommissionRate ?? 0.12,
+  };
+  const quoted = quote({
+    ...input,
+    marketplaceCommissionRate: commissions[channel] ?? input.marketplaceCommissionRate,
+  });
+  return {
+    ...quoted,
+    channel,
+    published: false,
+    fxEnabled: false,
+    undercutApplied: false,
+  };
+}
+
+module.exports = { quote, recordHistory, channelQuote, evaluateGivenSale };

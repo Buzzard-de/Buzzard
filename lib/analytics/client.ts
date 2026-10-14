@@ -9,17 +9,10 @@ import type {
   SalesAnalytics,
   SupplierAnalyticsRow,
 } from "./types";
+import { withAdminCredentials } from "@/lib/admin/authTransport";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
-}
-
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? sessionStorage.getItem("buzzard_admin_token") : null;
-  return {
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
 }
 
 function rangeQuery(range: AnalyticsRangePreset, from?: string, to?: string): string {
@@ -32,7 +25,7 @@ function rangeQuery(range: AnalyticsRangePreset, from?: string, to?: string): st
 async function request<T>(path: string): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { headers: authHeaders() });
+  const res = await fetch(`${base}${path}`, withAdminCredentials({ headers: { Accept: "application/json" } }));
   const data = (await res.json()) as T & { success?: boolean; errorKey?: string };
   if (!res.ok) throw new Error(data.errorKey || "admin.requestFailed");
   return data;
@@ -90,9 +83,10 @@ export async function fetchFinanceAnalytics(range: AnalyticsRangePreset, from?: 
 export async function downloadAnalyticsExport(section: string, range: AnalyticsRangePreset, format: "csv" | "json" = "csv"): Promise<void> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}/api/admin/analytics/export?section=${encodeURIComponent(section)}&format=${format}&${rangeQuery(range)}`, {
-    headers: authHeaders(),
-  });
+  const res = await fetch(
+    `${base}/api/admin/analytics/export?section=${encodeURIComponent(section)}&format=${format}&${rangeQuery(range)}`,
+    withAdminCredentials()
+  );
   if (!res.ok) throw new Error("admin.requestFailed");
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);

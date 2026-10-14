@@ -46,7 +46,7 @@ export async function loadLocalizedProductBySlug(
 
 export function mergeLocalizedProducts(staticItems: PublicProduct[], liveItems: PublicProduct[]): PublicProduct[] {
   const bySlug = new Map<string, PublicProduct>();
-  for (const item of staticItems) bySlug.set(item.seo.slug, item);
   for (const item of liveItems) bySlug.set(item.seo.slug, item);
+  for (const item of staticItems) bySlug.set(item.seo.slug, item);
   return [...bySlug.values()];
 }

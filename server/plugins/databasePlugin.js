@@ -13,6 +13,18 @@ const {
 } = require("../lib/authSecurity");
 const { getLockoutInfo, recordFailure, clearFailures } = require("../lib/accountLockout");
 const { getClientIp } = require("../lib/security");
+const { applyAdminSessionCookies, applyCustomerSessionCookies } = require("../lib/authCookies");
+const { generateCsrfToken } = require("../lib/csrf");
+
+function applyRoleSessionCookies(res, user, token) {
+  const csrfToken = generateCsrfToken();
+  if (user?.role === "admin" || user?.role === "administrator") {
+    applyAdminSessionCookies(res, { token, csrfToken });
+  } else {
+    applyCustomerSessionCookies(res, { token, csrfToken });
+  }
+  return csrfToken;
+}
 
 function isEnabled() {
   return process.env.BUZZARD_DB_ENABLED !== "0";
@@ -96,7 +108,9 @@ module.exports = {
           .prepare("INSERT INTO users(email, password_hash, name) VALUES(?,?,?)")
           .run(normalizedEmail, hashPassword(password), normalizedName);
         const user = db.prepare("SELECT id, email, name, role FROM users WHERE id = ?").get(info.lastInsertRowid);
-        return res.status(201).json({ user, token: signUser(user) });
+        const token = signUser(user);
+        const csrfToken = applyRoleSessionCookies(res, user, token);
+        return res.status(201).json({ user, token, csrfToken, tokenStoredInCookie: true });
       } catch {
         logAuthFailure(req, { type: "auth_register_rejected", email: normalizedEmail, path: "/api/auth/register" });
         return res.status(409).json({ error: "Email already exists" });
@@ -144,7 +158,9 @@ module.exports = {
       }
       clearFailures("auth", normalizedEmail);
       delete user.password_hash;
-      return res.json({ user, token: signUser(user) });
+      const token = signUser(user);
+      const csrfToken = applyRoleSessionCookies(res, user, token);
+      return res.json({ user, token, csrfToken, tokenStoredInCookie: true });
     });
 
     app.get("/api/me", (req, res) => {

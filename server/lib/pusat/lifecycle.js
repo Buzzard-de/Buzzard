@@ -65,6 +65,18 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
   }
 
   const meta = getMeta(taskId);
+  const taskConflict = require("./taskConflict");
+  const conflict = taskConflict.detect(task);
+  if (conflict.blocked) {
+    return {
+      ok: false,
+      status: task.status,
+      code: "TASK_CONFLICT",
+      reason: conflict.reason,
+      otherTaskId: conflict.otherTaskId,
+      executed: false,
+    };
+  }
   if (isTimedOut(task, meta)) {
     const handled = exceptions.handleFailure(
       { message: "Task timed out before execution", code: EXCEPTION_CODES.TASK_TIMEOUT },

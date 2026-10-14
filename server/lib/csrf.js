@@ -1,7 +1,7 @@
 /**
  * CSRF — Bearer-token admin API does NOT require CSRF tokens.
  * Cookie/session state-changing requests must send X-Buzzard-CSRF-Token
- * matching the csrf cookie when BUZZARD_CSRF_ENFORCE=1.
+ * matching the csrf cookie. Disabled only when BUZZARD_CSRF_ENFORCE=0.
  */
 const crypto = require("crypto");
 const { logSecurityEvent } = require("./securityLog");
@@ -24,14 +24,25 @@ function validateCsrfForRequest(req, res) {
   if (!STATE_CHANGING.has((req.method || "GET").toUpperCase())) return true;
   if (usesBearerAuth(req)) return true;
 
-  const publicPaths = ["/api/admin/login", "/api/admin/login/2fa", "/api/account/login", "/api/auth/login"];
+  const publicPaths = [
+    "/api/admin/login",
+    "/api/admin/login/2fa",
+    "/api/account/login",
+    "/api/account/register",
+    "/api/auth/login",
+    "/api/auth/register",
+  ];
   const path = (req.url || "").split("?")[0];
   if (publicPaths.some((p) => path === p || path.startsWith(p))) return true;
 
-  if (process.env.BUZZARD_CSRF_ENFORCE !== "1") return true;
+  if (process.env.BUZZARD_CSRF_ENFORCE === "0") return true;
+
+  const { readAnySessionCookie } = require("./authCookies");
+  const sessionCookie = readAnySessionCookie(req);
+  const cookieToken = getCsrfCookie(req);
+  if (!sessionCookie && !cookieToken) return true;
 
   const headerToken = req.headers["x-buzzard-csrf-token"];
-  const cookieToken = getCsrfCookie(req);
   if (!headerToken || !cookieToken || headerToken !== cookieToken) {
     logSecurityEvent({
       type: "csrf_failure",

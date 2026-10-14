@@ -65,6 +65,21 @@ function routeTextTask(input = {}) {
   };
 }
 
+function mockSession(input = {}) {
+  const config = validateConfig(input);
+  if (!config.ok) return { ...config, live: false, callStarted: false, mediaOpen: false };
+  return {
+    ok: true,
+    mock: true,
+    live: false,
+    callStarted: false,
+    mediaOpen: false,
+    webrtcConnected: false,
+    adapter: config.adapter,
+    note: "Mock session only. No Twilio, Realtime, or TURN connection is opened.",
+  };
+}
+
 function health() {
   const adapters = listAdapters();
   return {
@@ -86,5 +101,6 @@ module.exports = {
   requiredEnv,
   validateConfig,
   routeTextTask,
+  mockSession,
   health,
 };

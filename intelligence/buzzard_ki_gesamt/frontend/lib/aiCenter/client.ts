@@ -1,26 +1,18 @@
 import type { AiCenterOverview, AiCenterStatus, AiChatResponse, AiJobRow } from "./types";
+import { adminAuthHeaders, withAdminCredentials } from "@/lib/admin/authTransport";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
 }
 
 function adminHeaders(): HeadersInit {
-  const adminToken =
-    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_admin_token") : null;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
-  };
+  return adminAuthHeaders();
 }
 
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("aiCenter.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers: { ...adminHeaders(), ...(init?.headers || {}) },
-  });
+  const res = await fetch(`${base}${path}`, withAdminCredentials(init));
   const data = (await res.json()) as T & { error?: string };
   if (!res.ok) throw new Error(data.error || "aiCenter.requestFailed");
   return data;

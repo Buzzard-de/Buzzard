@@ -58,7 +58,19 @@ function openCase(db, input = {}) {
     })
   );
 
-  return inspect(db, id);
+  const opened = inspect(db, id);
+  try {
+    const qrLoyalty = require("./qrLoyalty");
+    opened.loyalty = qrLoyalty.reevaluateForOrder(db, {
+      orderRef: String(orderNumber),
+      eventOrderRef: String(orderNumber),
+      unresolvedReturn: true,
+      returned: false,
+    });
+  } catch (error) {
+    opened.loyalty = { ok: false, reason: error.message };
+  }
+  return opened;
 }
 
 function inspect(db, id) {

@@ -369,6 +369,15 @@ async function handleWebhook(db, input = {}, deps = {}) {
   });
 
   const next = paymentLifecycle.getPayment(db, payment.id);
+  let inventoryCommit = null;
+  if (ingested.applied === true && next.captured === true) {
+    const orderInventoryBridge = require("../../software/orderInventoryBridge");
+    inventoryCommit = orderInventoryBridge.commitOnCapturedPayment(db, {
+      orderId: next.orderId,
+      payment: next,
+      official: true,
+    });
+  }
   const gate = shipmentGate.evaluate(db, {
     orderId: next.orderId,
     paymentId: next.id,
@@ -397,6 +406,7 @@ async function handleWebhook(db, input = {}, deps = {}) {
     shipmentAuthorized: false,
     shipmentGateBlocked: gate.blocked,
     shipmentReasons: gate.reasons,
+    inventoryCommit,
   });
 }
 

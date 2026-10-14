@@ -1,4 +1,3 @@
-import { getAccountToken } from "@/lib/account/client";
 import type {
   CustomerCheckoutDraft,
   CustomerCheckoutQuote,
@@ -13,25 +12,13 @@ function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
 }
 
-function authHeaders(): HeadersInit {
-  const adminToken =
-    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_admin_token") : null;
-  const accountToken = getAccountToken();
-  const token = adminToken || accountToken;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
+import { withAdminOrAccountCredentials } from "@/lib/admin/authTransport";
+
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("customerCheckout.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers: { ...authHeaders(), ...init?.headers },
-  });
+  const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
   const data = (await res.json()) as T & { error?: string };
   if (!res.ok) throw new Error(data.error || "customerCheckout.requestFailed");
   return data;

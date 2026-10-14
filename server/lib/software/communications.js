@@ -167,6 +167,31 @@ function sendPrepared(db, draftId) {
   };
 }
 
+function consentGate(input = {}) {
+  if (input.consentGranted === true) {
+    return { ok: true, consentGranted: true, sent: false };
+  }
+  return {
+    ok: false,
+    consentGranted: false,
+    sent: false,
+    reason: "CONSENT_REQUIRED",
+  };
+}
+
+function humanHandoff(input = {}) {
+  return {
+    ok: true,
+    status: "QUEUED_FOR_HUMAN",
+    assigned: false,
+    sent: false,
+    live: false,
+    channel: input.channel || "support",
+    customerId: input.customerId || null,
+    note: "Handoff is a state record. No customer message is sent.",
+  };
+}
+
 module.exports = {
   MESSAGE_STATUS,
   classifyInquiry,
@@ -174,4 +199,6 @@ module.exports = {
   draft,
   queue,
   sendPrepared,
+  consentGate,
+  humanHandoff,
 };

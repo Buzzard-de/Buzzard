@@ -412,6 +412,17 @@ async function assertNoForbiddenCopy(page: import("@playwright/test").Page) {
   }
 }
 
+async function selectHydratedLanguage(
+  page: import("@playwright/test").Page,
+  languageSelect: import("@playwright/test").Locator,
+  locale: (typeof LOCALES)[number],
+) {
+  await expect(languageSelect).toBeEnabled();
+  await languageSelect.selectOption(locale);
+  await expect(languageSelect).toHaveValue(locale);
+  await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", locale);
+}
+
 async function assertCanonicalHome(
   page: import("@playwright/test").Page,
   locale: (typeof LOCALES)[number],
@@ -656,13 +667,14 @@ test.describe("homepage viewports", () => {
     await page.goto("/");
     await assertCanonicalHome(page, "de");
     await expect(page.locator(".vehicle-select-btn")).toBeVisible();
-    const languageSelect = page.locator(".site-header .language-selector select");
-    const marketSelect = page.locator(".site-header .country-selector select");
+    const languageSelect = page.locator(".header-inner > .language-selector select");
+    const marketSelect = page.locator(".header-inner > .country-selector select");
     await expect(languageSelect.locator("option")).toHaveCount(30);
     await expect(marketSelect.locator("option")).toHaveCount(35);
     const marketBefore = await marketSelect.inputValue();
-    await languageSelect.selectOption("tr");
-    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.tr);
+    await expect(languageSelect).toHaveValue("de");
+    await selectHydratedLanguage(page, languageSelect, "tr");
+    await expect(page.locator(".home-hero-campaign .home-hero-title")).toHaveText(HERO_TITLE.tr);
     await expect(marketSelect).toHaveValue(marketBefore);
     await assertNoHorizontalOverflow(page);
     await page.screenshot({ path: "test-results/homepage-de-desktop.png", fullPage: false });

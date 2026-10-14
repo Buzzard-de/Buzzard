@@ -120,17 +120,11 @@ function tickScheduler(now = new Date()) {
   `).all(now.toISOString());
 
   const enqueued = [];
+  const schedulerBridge = require("./pusat/schedulerBridge");
   for (const row of due) {
     const schedule = mapRow(row);
-    const job = jobQueue.enqueueJob({
-      jobType: schedule.jobType,
-      payload: { ...schedule.payload, scheduleName: schedule.name },
-      priority: schedule.priority,
-      maxRetries: schedule.maxRetries,
-      scheduleId: schedule.id,
-      createdBy: schedule.createdBy,
-    });
-    enqueued.push(job);
+    const bridged = schedulerBridge.enqueueScheduled(schedule);
+    enqueued.push(bridged.job);
 
     if (schedule.scheduleType === SCHEDULE_TYPE.ONE_TIME) {
       db.prepare(`

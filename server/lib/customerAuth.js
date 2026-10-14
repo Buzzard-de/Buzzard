@@ -147,9 +147,10 @@ function getSession(token) {
 }
 
 function extractToken(req) {
-  const header = req.headers.authorization || "";
+  const header = req.headers?.authorization || "";
   if (header.startsWith("Bearer ")) return header.slice(7).trim();
-  return null;
+  const { readCustomerSessionCookie } = require("./authCookies");
+  return readCustomerSessionCookie(req);
 }
 
 function requireCustomer(req, res) {

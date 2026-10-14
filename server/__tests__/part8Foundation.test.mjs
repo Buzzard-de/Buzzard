@@ -1,8 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { createRequire } from "node:module";
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
+
+const part8Dir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../data/test-scratch");
+fs.mkdirSync(part8Dir, { recursive: true });
+const part8Db = path.join(part8Dir, "part8-foundation.db");
+process.env.BUZZARD_DB_PATH = part8Db;
 
 describe("commerceConstants", () => {
   it("controls checkout transitions", () => {
@@ -57,7 +65,15 @@ describe("commerceValidation", () => {
   });
 });
 
+function assertIsolatedDb() {
+  const { resolveDbPath } = require("../lib/dbPaths.js");
+  const resolved = resolveDbPath();
+  expect(resolved).toBe(part8Db);
+  expect(resolved).not.toMatch(/server[\\/]data[\\/]buzzard\.db$/);
+}
+
 function seedVisibleCatalogProduct() {
+  assertIsolatedDb();
   const productCore = require("../lib/pim/productCore.js");
   const catalogCache = require("../lib/storefront/catalogCache.js");
   const suffix = crypto.randomBytes(3).toString("hex");
@@ -78,13 +94,31 @@ function seedVisibleCatalogProduct() {
   return product;
 }
 
+function seedHiddenCatalogProduct() {
+  assertIsolatedDb();
+  const productCore = require("../lib/pim/productCore.js");
+  const suffix = crypto.randomBytes(3).toString("hex");
+  return productCore.createProduct(
+    {
+      sku: `UNIT-HIDDEN-${suffix}`,
+      title: "Isolated hidden fixture",
+      description: "Not purchasable on the storefront.",
+      category: "cat-05",
+      price: 12.5,
+      stock: 10,
+      status: "READY",
+      visibility: "HIDDEN",
+    },
+    { source: "SYSTEM", actorId: "vitest" }
+  );
+}
+
 describe("cartService", () => {
   it("creates cart and resolves authoritative price", () => {
     const cartService = require("../lib/commerce/cartService.js");
-    const productCore = require("../lib/pim/productCore.js");
-    const demo = productCore.getProduct("pim_prod_demo001") || productCore.listProducts({ q: "BZ-CORE-DEMO-001", limit: 20 }).find((p) => p.sku === "BZ-CORE-DEMO-001");
-    expect(demo).toBeTruthy();
-    const hiddenPrice = cartService.resolveAuthoritativePrice(demo.id);
+    const hidden = seedHiddenCatalogProduct();
+    expect(hidden?.id).toBeTruthy();
+    const hiddenPrice = cartService.resolveAuthoritativePrice(hidden.id);
     expect(hiddenPrice.error).toBeTruthy();
 
     const visible = seedVisibleCatalogProduct();

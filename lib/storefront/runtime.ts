@@ -36,7 +36,8 @@ export async function loadPimStorefrontProductBySlug(slug: string): Promise<Publ
 
 export function mergeStorefrontProducts(staticItems: PublicProduct[], liveItems: PublicProduct[]): PublicProduct[] {
   const bySlug = new Map<string, PublicProduct>();
-  for (const item of staticItems) bySlug.set(item.seo.slug, item);
+  // Live-only slugs may appear in listings; overlapping slugs keep JSON PDP identity.
   for (const item of liveItems) bySlug.set(item.seo.slug, item);
+  for (const item of staticItems) bySlug.set(item.seo.slug, item);
   return [...bySlug.values()];
 }

@@ -17,7 +17,22 @@ describe("corsOrigins", () => {
     expect(isAllowedOrigin("http://localhost:3040")).toBe(true);
   });
 
+  it("allows the Playwright E2E storefront origin on 3010", () => {
+    expect(isAllowedOrigin("http://localhost:3010")).toBe(true);
+    expect(isAllowedOrigin("http://127.0.0.1:3010")).toBe(true);
+  });
+
   it("does not allow arbitrary remote origins", () => {
+    expect(isAllowedOrigin("https://evil.example")).toBe(false);
+  });
+
+  it("does not treat the opaque Origin null as an allowed browser origin", () => {
+    expect(isAllowedOrigin("null")).toBe(false);
+    expect(getAllowedOrigins().has("null")).toBe(false);
+  });
+
+  it("does not treat CORS as a wildcard allowlist", () => {
+    expect(isAllowedOrigin("*")).toBe(false);
     expect(isAllowedOrigin("https://evil.example")).toBe(false);
   });
 });

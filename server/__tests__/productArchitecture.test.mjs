@@ -38,6 +38,42 @@ describe("product architecture inventory", () => {
     expect(result.productSourceOfTruthActive).toBe(false);
   });
 
+  it("records a canonical future architecture without activating SoT", () => {
+    const map = architecture.getProductArchitecture();
+    const rec = map.recommendation;
+    expect(rec.activated).toBe(false);
+    expect(rec.productSourceOfTruthActive).toBe(false);
+    expect(rec.dualWrite).toBe(false);
+    expect(rec.requiresHumanApproval).toBe(true);
+    expect(rec.canonicalProductRecord).toContain("pim_core_products");
+    expect(rec.canonicalIdentity).toMatch(/sku/i);
+    expect(rec.canonicalSlugStrategy).toContain("/produkt/[slug]");
+    expect(rec.migrationOrder[0]).toMatch(/identity scan/i);
+    expect(rec.requiredHumanApproval).toContain("SoT activation (separate)");
+    expect(map.catalogRouting.listingMerge).toBe("static_slug_wins");
+    expect(architecture.activationStatus().activated).toBe(false);
+    expect(process.env.BUZZARD_PRODUCT_SOT_ACTIVE).not.toBe("1");
+  });
+
+  it("keeps storefront PDP slugs separate from the PIM API catalog", () => {
+    const map = architecture.getProductArchitecture();
+    expect(map.catalogRouting.unified).toBe(false);
+    expect(map.catalogRouting.dualPublish).toBe(false);
+    expect(map.catalogRouting.storefrontPdp.includesPimApiSlugs).toBe(false);
+    expect(map.catalogRouting.storefrontPdp.source).toContain("buzzard_products.json");
+    expect(map.catalogRouting.apiCatalog.source).toContain("pim_core_products");
+    expect(map.catalogRouting.storefrontPdp.outputExportProduction).toBe(true);
+
+    const catalog = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), "data/buzzard_products.json"), "utf8")
+    );
+    const jsonSlugs = (catalog.products || [])
+      .filter((row) => row.status === "active" && row.seo?.slug)
+      .map((row) => row.seo.slug);
+    expect(jsonSlugs).toContain("premium-bremsscheibe-testprodukt");
+    expect(jsonSlugs).not.toContain("isolated-cart-fixture");
+  });
+
   it("lists storefront readers that still prevent SoT activation", () => {
     const ids = architecture.READERS.map((row) => row.id);
     expect(ids).toContain("catalogReadService");

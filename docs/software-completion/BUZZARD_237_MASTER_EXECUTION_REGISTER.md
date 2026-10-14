@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: working tree after items 38/69/70/143/184–185 (docs commit follows)  
+Inspected HEAD at quality pass: `10bca62832e54e907ef7a76b0fd204f42e4a5e6a`  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (git history, docs, and project files re-searched this pass)

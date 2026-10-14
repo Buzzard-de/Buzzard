@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Quality HEAD: working tree after items 38/69/70/143/184–185 (commit follows this evidence)
+Quality HEAD: `10bca62832e54e907ef7a76b0fd204f42e4a5e6a`
 
 Safety at evidence time:
 

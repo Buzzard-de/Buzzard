@@ -8,7 +8,7 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Quality code HEAD | working tree after items 38/69/70/143/184–185 (commit follows) |
+| Quality code HEAD | `10bca62832e54e907ef7a76b0fd204f42e4a5e6a` |
 | Push / merge / deploy | **not performed** |
 | Working tree at handover | software + evidence docs for this continuation |
 

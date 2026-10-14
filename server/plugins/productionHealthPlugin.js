@@ -43,7 +43,12 @@ function mapReadinessStatus(summary) {
 module.exports = {
   register(app) {
     app.get("/api/health/version", (_req, res) => {
-      res.json({ success: true, ...productionHealth.getVersionPayload() });
+      const identity = productionHealth.getVersionPayload();
+      res.json({
+        success: true,
+        service: identity.service,
+        commit: identity.commit,
+      });
     });
 
     app.get("/api/health/worker", (_req, res) => {

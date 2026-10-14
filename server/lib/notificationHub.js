@@ -23,9 +23,11 @@ function deliverNotification(notification) {
     };
   }
   return {
-    status: "PENDING",
+    status: "BLOCKED",
     deliveryResult: `${channel}_not_configured`,
     channel,
+    sent: false,
+    live: false,
   };
 }
 

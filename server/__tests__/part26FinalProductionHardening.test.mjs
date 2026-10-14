@@ -277,7 +277,9 @@ describe("Part 26 — final go-live decision", () => {
 describe("Part 26 — RBAC and public endpoint", () => {
   it("34. public final health route is public", () => {
     const { resolveRoutePermission } = require("../lib/routePermissions.js");
-    expect(resolveRoutePermission("GET", "/api/health/final-production-readiness").public).toBe(true);
+    expect(resolveRoutePermission("GET", "/api/health/final-production-readiness")).toEqual({
+      permission: "system.read",
+    });
   });
 
   it("35. admin final routes require permissions", () => {

@@ -14,7 +14,9 @@ describe("notification delivery fail-closed", () => {
       NOTIFICATION_CHANNELS.WHATSAPP,
     ]) {
       const result = deliverNotification({ channel, body: "test" });
-      expect(result.status).not.toBe("DELIVERED");
+      expect(result.status).toBe("BLOCKED");
+      expect(result.sent).toBe(false);
+      expect(result.live).toBe(false);
       expect(result.deliveryResult).toContain("not_configured");
     }
   });

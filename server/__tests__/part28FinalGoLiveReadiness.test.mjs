@@ -170,9 +170,12 @@ test("Final result is fail-closed", () => {
   assert.equal(result.ready, result.blockers.length === 0);
 });
 
-test("RBAC public health route is public", () => {
+test("RBAC operational health route requires system.read", () => {
   const { resolveRoutePermission } = require("../lib/routePermissions.js");
-  assert.equal(resolveRoutePermission("GET", "/api/health/final-go-live-readiness").public, true);
+  assert.equal(
+    resolveRoutePermission("GET", "/api/health/final-go-live-readiness").permission,
+    "system.read"
+  );
 });
 
 test("RBAC admin final go-live routes require system.read", () => {

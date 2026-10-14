@@ -221,11 +221,11 @@ test('Final state cannot authorize activation', () => {
   assert.equal(result.activationAllowed, false);
   assert.equal(result.ready, false);
 });
-test('RBAC public health route is public', () => {
+test('RBAC operational health route requires system.read', () => {
   const { resolveRoutePermission } = require('../lib/routePermissions.js');
   assert.equal(
-    resolveRoutePermission('GET', '/api/health/final-operational-readiness').public,
-    true
+    resolveRoutePermission('GET', '/api/health/final-operational-readiness').permission,
+    'system.read'
   );
 });
 test('RBAC admin final operational routes require system.read', () => {

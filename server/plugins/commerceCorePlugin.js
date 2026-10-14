@@ -48,9 +48,15 @@ module.exports = {
     app.get("/api/commerce/status", (_req, res) => {
       res.json({
         success: true,
-        flags: commerce.getEffectiveFlags(),
-        safety: commerce.getSalesSafetyStatus(),
         salesEnabled: false,
+        flags: {
+          salesEnabled: false,
+          checkoutEnabled: false,
+          checkoutDryRunOnly: true,
+          paymentEnabled: false,
+          mockPaymentOnly: true,
+        },
+        safety: { salesEnabled: false, catalogMode: true },
       });
     });
 

@@ -34,6 +34,8 @@ function calculateShipping({ methodId = "standard", country = "DE", subtotal = 0
     currency: "EUR",
     estimatedDelivery: estimatedDelivery.toISOString().slice(0, 10),
     dryRun: true,
+    live: false,
+    liveRate: false,
     shipmentCreated: false,
     itemCount,
   };

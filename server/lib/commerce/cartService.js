@@ -20,6 +20,7 @@ const {
 const { logSecurityEvent } = require("../securityLog");
 const { MAX_CART_ITEMS } = require("../../core/commerceConstants");
 const commerceCouponService = require("./commerceCouponService");
+const { withIdempotency } = require("./idempotency");
 
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
@@ -157,7 +158,19 @@ function buildCouponTotals(couponCode, subtotal) {
   };
 }
 
-function addItem(cartId, { productId, variantId, quantity, clientPrice, metadata, customerId, req, sessionId, guestToken } = {}) {
+function addItem(cartId, ctx = {}) {
+  const key = ctx.idempotencyKey || ctx.req?.headers?.["idempotency-key"] || ctx.req?.headers?.["Idempotency-Key"];
+  if (!key) return addItemOnce(cartId, ctx);
+  const result = withIdempotency({
+    key,
+    scope: `cart_add:${cartId}`,
+    handler: () => addItemOnce(cartId, ctx),
+    req: ctx.req,
+  });
+  return result;
+}
+
+function addItemOnce(cartId, { productId, variantId, quantity, clientPrice, metadata, customerId, req, sessionId, guestToken } = {}) {
   const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
   if (!cartRow) return { error: "cart_not_found", status: 404 };
 

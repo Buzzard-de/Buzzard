@@ -95,6 +95,28 @@ describe("Pusat approval center", () => {
     }
   });
 
+  it("consumes an approved token once and refuses replay without executing the live action", () => {
+    const created = pusat.approval.requestApproval({
+      requestingAgent: "price_ai",
+      action: "prices.update",
+      reason: "Consume once",
+      input: { sku: "APPR-CONSUME", price: 10 },
+    });
+    const approved = pusat.approval.decide(created.id, "approve", "reviewer@test");
+    const first = pusat.approval.consumeForExecution(approved.approval.id, { sku: "APPR-CONSUME", price: 10 }, {
+      actor: "reviewer@test",
+    });
+    expect(first.ok).toBe(true);
+    expect(first.executed).toBe(false);
+    expect(first.liveAction).toBe(false);
+    const second = pusat.approval.consumeForExecution(approved.approval.id, { sku: "APPR-CONSUME", price: 10 }, {
+      actor: "reviewer@test",
+    });
+    expect(second.ok).toBe(false);
+    expect(second.code).toBe("already_executed");
+    expect(second.replay).toBe(true);
+  });
+
   it("cancels approval when material inputs change", () => {
     const created = pusat.approval.requestApproval({
       requestingAgent: "price_ai",

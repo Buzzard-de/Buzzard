@@ -170,7 +170,13 @@ function reserveInventory(body = {}) {
   } catch {
     /* software audit is optional; reservation already committed */
   }
-  return { reservation };
+  return {
+    reservation,
+    authority: "wms_location",
+    commerceReservation: false,
+    liveFulfillment: false,
+    softwareReservationId: null,
+  };
 }
 
 function createWarehouseJob(body = {}) {

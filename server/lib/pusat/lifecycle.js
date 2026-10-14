@@ -158,13 +158,18 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
       }
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.WAITING_APPROVAL);
     }
-    const bound = approval.assertBound(existing, task.payload);
-    if (!bound.ok) {
+    const consumed = approval.consumeForExecution(existing.id, task.payload, {
+      actor: existing.decidedBy,
+    });
+    if (!consumed.ok) {
+      if (consumed.code === "already_executed") {
+        return controlCenter.getAiTask(taskId);
+      }
       exceptions.handleFailure(
-        { message: `Approval invalid: ${bound.code}`, code: EXCEPTION_CODES.APPROVAL_INVALID },
+        { message: `Approval invalid: ${consumed.code}`, code: EXCEPTION_CODES.APPROVAL_INVALID },
         { taskId, correlationId: meta?.correlation_id, action }
       );
-      if (bound.code === "input_changed") {
+      if (consumed.code === "input_changed") {
         approval.requestApproval({
           taskId,
           requestingAgent: employee.id,
@@ -175,7 +180,7 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
         });
       }
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.WAITING_APPROVAL, {
-        error: bound.code,
+        error: consumed.code,
       });
     }
   }

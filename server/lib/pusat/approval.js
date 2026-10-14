@@ -155,6 +155,64 @@ function assertBound(approval, currentInput) {
   return { ok: true, approval: fresh };
 }
 
+function executionConsumed(approval) {
+  if (!approval?.executionResult) return false;
+  try {
+    const parsed = JSON.parse(approval.executionResult);
+    return parsed && parsed.consumed === true;
+  } catch {
+    return false;
+  }
+}
+
+function consumeForExecution(id, currentInput, { actor } = {}) {
+  expireDue();
+  const existing = getApproval(id);
+  const bound = assertBound(existing, currentInput);
+  if (!bound.ok) return bound;
+
+  const forbidden = isForbiddenApprover(actor || existing.decidedBy, existing.requestingAgent);
+  if (forbidden.forbidden) {
+    return { ok: false, code: forbidden.code, approval: existing, liveAction: false };
+  }
+
+  if (executionConsumed(existing)) {
+    return { ok: false, code: "already_executed", replay: true, liveAction: false, approval: existing };
+  }
+
+  const payload = JSON.stringify({
+    consumed: true,
+    consumedAt: new Date().toISOString(),
+    consumedBy: actor || existing.decidedBy || null,
+    liveAction: false,
+  });
+  const result = db.prepare(
+    `UPDATE core_approvals SET execution_result = ?
+     WHERE id = ? AND status = ? AND (execution_result IS NULL OR execution_result NOT LIKE '%"consumed":true%')`
+  ).run(payload, id, APPROVAL_STATUS.APPROVED);
+
+  if (result.changes !== 1) {
+    return { ok: false, code: "already_executed", replay: true, liveAction: false, approval: getApproval(id) };
+  }
+
+  controlCenter.recordSystemEvent({
+    eventType: "approval.execution_consumed",
+    actorType: "system",
+    actorId: actor || existing.decidedBy,
+    resourceType: "approval",
+    resourceId: id,
+    summary: "Approval token consumed; live action still not executed by software",
+  });
+
+  return {
+    ok: true,
+    executed: false,
+    liveAction: false,
+    replay: false,
+    approval: getApproval(id),
+  };
+}
+
 function isForbiddenApprover(decidedBy, requestingAgent) {
   const actor = String(decidedBy || "").trim();
   if (!actor) {
@@ -294,6 +352,8 @@ module.exports = {
   cancel,
   expireDue,
   assertBound,
+  consumeForExecution,
+  executionConsumed,
   markExecutionFailed,
   getApproval,
   listApprovals,

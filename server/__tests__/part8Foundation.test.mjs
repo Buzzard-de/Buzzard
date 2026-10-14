@@ -259,6 +259,29 @@ describe("idempotency", () => {
     expect(second.id).toBe("once");
     expect(calls).toBe(1);
   });
+
+  it("replays cart addItem when Idempotency-Key is repeated", () => {
+    const cartService = require("../lib/commerce/cartService.js");
+    const visible = seedVisibleCatalogProduct();
+    const cart = cartService.createCart({ sessionId: `vitest-${crypto.randomBytes(3).toString("hex")}` });
+    const key = `cart-${crypto.randomBytes(4).toString("hex")}`;
+    const first = cartService.addItem(cart.cart.id, {
+      productId: visible.id,
+      quantity: 1,
+      sessionId: cart.cart.sessionId,
+      idempotencyKey: key,
+    });
+    const second = cartService.addItem(cart.cart.id, {
+      productId: visible.id,
+      quantity: 1,
+      sessionId: cart.cart.sessionId,
+      idempotencyKey: key,
+    });
+    expect(second.idempotencyReplay).toBe(true);
+    const firstQty = first.items?.find((row) => row.productId === visible.id)?.quantity;
+    const secondQty = second.items?.find((row) => row.productId === visible.id)?.quantity;
+    expect(secondQty).toBe(firstQty);
+  });
 });
 
 describe("commerceReadiness", () => {

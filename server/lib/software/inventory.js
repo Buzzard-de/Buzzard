@@ -198,6 +198,8 @@ function reserve(db, input = {}) {
       duplicate: Boolean(result.duplicate),
       failClosed: false,
       purchaseOwnStock: false,
+      authority: "commerce_software",
+      wmsReservationId: null,
       reservation: result.reservation,
       reliability,
     };

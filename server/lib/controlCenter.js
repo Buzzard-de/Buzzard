@@ -296,6 +296,10 @@ function createAiTask({ title, description, employeeId, priority, permissionsReq
   return mapTaskRow(db.prepare("SELECT * FROM core_ai_tasks WHERE id = ?").get(id));
 }
 
+function getAiTask(id) {
+  return mapTaskRow(db.prepare("SELECT * FROM core_ai_tasks WHERE id = ?").get(id));
+}
+
 function listAiTasks(filters = {}) {
   let sql = "SELECT * FROM core_ai_tasks WHERE 1=1";
   const params = [];
@@ -592,6 +596,7 @@ module.exports = {
   getAiEmployee,
   updateAiEmployeeStatus,
   createAiTask,
+  getAiTask,
   listAiTasks,
   updateTaskStatus,
   createApproval,

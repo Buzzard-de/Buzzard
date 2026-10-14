@@ -97,11 +97,38 @@ function lookup(input = {}) {
   };
 }
 
+function purchaseLabel(input = {}) {
+  const carrier = classify(String(input.carrier || "dhl").toLowerCase());
+  return {
+    ok: false,
+    purchased: false,
+    live: false,
+    labelUrl: null,
+    trackingNumber: null,
+    shipmentCreated: false,
+    gpsInvented: false,
+    amountCharged: 0,
+    reason: "LABEL_PURCHASE_BLOCKED",
+    carrier: carrier.id,
+    credentialsPresent: carrier.credentialsPresent === true,
+    note: "Label purchase is never executed from this adapter. Credentials in env do not authorize a live buy.",
+  };
+}
+
+function createShipment(input = {}) {
+  return {
+    ...purchaseLabel(input),
+    reason: "SHIPMENT_CREATE_BLOCKED",
+    created: false,
+  };
+}
+
 function health() {
   return {
     codeReady: true,
     liveReady: false,
     shipmentCreateEnabled: false,
+    labelPurchaseEnabled: false,
     carriers: listCarriers(),
     provider: shippingProvider.getProviderHealth(),
   };
@@ -112,5 +139,7 @@ module.exports = {
   classify,
   listCarriers,
   lookup,
+  purchaseLabel,
+  createShipment,
   health,
 };

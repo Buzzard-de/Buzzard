@@ -34,6 +34,32 @@ describe("guest commerce checkout and order access", () => {
     expect(allowed.guestToken).toBe(sessionId);
   });
 
+  it("rejects guest cart writes without the bound session", () => {
+    const cartService = require("../lib/commerce/cartService.js");
+    const sessionId = `sess_write_${Date.now().toString(36)}`;
+    const cart = cartService.createCart({ sessionId });
+    const denied = cartService.addItem(cart.cart.id, {
+      productId: "missing-product",
+      quantity: 1,
+    });
+    expect(denied.status).toBe(401);
+    expect(denied.blocked).toBe(true);
+
+    const other = cartService.addItem(cart.cart.id, {
+      productId: "missing-product",
+      quantity: 1,
+      sessionId: "sess_other_guest",
+    });
+    expect(other.status).toBe(401);
+
+    const allowed = cartService.addItem(cart.cart.id, {
+      productId: "missing-product",
+      quantity: 1,
+      sessionId,
+    });
+    expect(allowed.error).toBe("product_not_found");
+  });
+
   it("rejects guest order lookup without session proof", () => {
     const { checkoutId, sessionId } = insertGuestCheckout();
     const orderId = `ord_gst_${Date.now().toString(36)}`;

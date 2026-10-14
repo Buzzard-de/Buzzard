@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { db } = require("./db");
 const { hashPassword, verifyPassword, needsRehash } = require("./password");
+const { resolveJwtSecret, isUnsafeJwtSecret } = require("./jwtSecret");
 
-const secret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "DEV_ONLY_CHANGE_ME";
+const secret = resolveJwtSecret();
 
 function signUser(user) {
   return jwt.sign({ sub: user.id, email: user.email, role: user.role }, secret, { expiresIn: "7d" });
@@ -85,7 +86,7 @@ function getJwtSecret() {
 }
 
 function isDefaultJwtSecret() {
-  return secret === "DEV_ONLY_CHANGE_ME";
+  return isUnsafeJwtSecret(secret);
 }
 
 module.exports = {

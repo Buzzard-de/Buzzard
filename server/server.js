@@ -26,7 +26,10 @@ function setApiCorsHeaders(req, res) {
     res.setHeader("Access-Control-Allow-Credentials", "true");
   }
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept,Authorization,X-Buzzard-CSRF-Token");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type,Accept,Authorization,X-Buzzard-CSRF-Token,X-Buzzard-Commerce-Session,X-Buzzard-Guest-Token,Idempotency-Key"
+  );
 }
 
 function addRoute(method, routePath, handler) {

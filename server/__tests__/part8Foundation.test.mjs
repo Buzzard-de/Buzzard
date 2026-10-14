@@ -132,7 +132,11 @@ describe("cartService", () => {
     const price = cartService.resolveAuthoritativePrice(visible.id);
     expect(price.priceSnapshot).toBeGreaterThan(0);
 
-    const updated = cartService.addItem(cart.cart.id, { productId: visible.id, quantity: 1 });
+    const updated = cartService.addItem(cart.cart.id, {
+      productId: visible.id,
+      quantity: 1,
+      sessionId: cart.cart.sessionId,
+    });
     if (updated.error === "insufficient_stock") {
       expect(updated.dryRun).toBe(true);
     } else {
@@ -148,7 +152,11 @@ describe("checkoutService state machine", () => {
     const visible = seedVisibleCatalogProduct();
     expect(visible?.id).toBeTruthy();
     const cart = cartService.createCart({ sessionId: `state-test-${Date.now()}` });
-    cartService.addItem(cart.cart.id, { productId: visible.id, quantity: 1 });
+    cartService.addItem(cart.cart.id, {
+      productId: visible.id,
+      quantity: 1,
+      sessionId: cart.cart.sessionId,
+    });
 
     const chk = checkoutService.startCheckout({ cartId: cart.cart.id, orderType: "DRY_RUN" });
     expect(chk.id).toBeTruthy();

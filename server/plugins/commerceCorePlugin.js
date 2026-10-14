@@ -240,6 +240,7 @@ module.exports = {
       commerce.cartService.addItem(cart.cart.id, {
         productId: demo.productId,
         quantity: 1,
+        sessionId: cart.cart.sessionId,
         req,
       });
 

@@ -27,6 +27,8 @@ function mapApproval(row) {
     requestingAgent: row.requesting_agent,
     action: row.action,
     reason: row.reason,
+    requiredApprover: parseJson(row.metadata_json, {}).requiredApprover || "admin",
+    financialImpact: parseJson(row.metadata_json, {}).financialImpact || null,
     aiRecommendation: row.ai_recommendation,
     input: parseJson(row.metadata_json, {}).input || null,
     expectedSideEffects: row.expected_side_effects || parseJson(row.metadata_json, {}).expectedSideEffects || null,
@@ -80,6 +82,8 @@ function requestApproval({
   riskLevel,
   ttlMs = DEFAULT_APPROVAL_TTL_MS,
   aiRecommendation,
+  requiredApprover,
+  financialImpact,
 } = {}) {
   const id = newId("appr");
   const inputHash = hashInput(input || {});
@@ -89,6 +93,8 @@ function requestApproval({
     expectedSideEffects: expectedSideEffects || [],
     requestingAgent,
     action,
+    requiredApprover: requiredApprover || "admin",
+    financialImpact: financialImpact || null,
   };
 
   db.prepare(

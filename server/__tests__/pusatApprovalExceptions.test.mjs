@@ -24,6 +24,8 @@ describe("Pusat approval center", () => {
     expect(created.status).toBe("PENDING");
     expect(created.inputHash).toBeTruthy();
     expect(created.expiresAt).toBeTruthy();
+    expect(created.requiredApprover).toBe("admin");
+    expect(created.financialImpact).toBeNull();
 
     const approved = pusat.approval.decide(created.id, "approve", "reviewer@test");
     expect(approved.approval.status).toBe("APPROVED");

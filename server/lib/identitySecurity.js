@@ -3,7 +3,9 @@ const jwt = require("jsonwebtoken");
 const { db } = require("./db");
 const { hashPassword: legacyHashPassword } = require("./dbAuth");
 
-const secret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "DEV_ONLY_CHANGE_ME";
+const { resolveJwtSecret } = require("./jwtSecret");
+
+const secret = resolveJwtSecret();
 const accessMinutes = Number(process.env.ACCESS_TOKEN_MINUTES || 30);
 const refreshDays = Number(process.env.REFRESH_TOKEN_DAYS || 30);
 

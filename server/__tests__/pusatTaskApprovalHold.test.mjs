@@ -99,6 +99,26 @@ describe("Pusat task orchestration holds for approval (item 39)", () => {
     expect(again.result.approvalStatus).toBe("EXECUTION_FAILED");
     expect(pusat.approval.latestForTask(submitted.task.id).id).toBe(pending.id);
   });
+
+  it("refuses consume after expiry", () => {
+    const created = pusat.approval.requestApproval({
+      requestingAgent: "order_ai",
+      action: "order.create",
+      reason: "Expire consume",
+      input: { orderId: "HOLD-EXP" },
+      ttlMs: 60_000,
+    });
+    require("../lib/db").db.prepare("UPDATE core_approvals SET expires_at = ? WHERE id = ?").run(
+      new Date(Date.now() - 2000).toISOString(),
+      created.id
+    );
+    pusat.approval.expireDue();
+    const consumed = pusat.approval.consumeForExecution(created.id, { orderId: "HOLD-EXP" }, {
+      actor: "reviewer@test",
+    });
+    expect(consumed.ok).toBe(false);
+    expect(consumed.code).toBe("expired");
+  });
 });
 
 describe("Guardian employee identity fail-closed (item 49)", () => {

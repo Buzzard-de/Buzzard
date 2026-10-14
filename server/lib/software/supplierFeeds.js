@@ -95,9 +95,14 @@ function normalizeRow(raw, index) {
     brand: raw.brand || null,
     category: raw.supplier_category || raw.category || null,
     price: Number.isFinite(price) ? price : null,
+    supplierCost: Number.isFinite(Number(raw.supplier_cost ?? raw.cost ?? raw.supplierCost))
+      ? Number(raw.supplier_cost ?? raw.cost ?? raw.supplierCost)
+      : null,
     currency,
     stock: Number.isFinite(stock) ? stock : null,
     timestamp,
+    sourceId: raw.source_id || raw.sourceId || raw.external_id || raw.supplier_item_id || null,
+    live: false,
   };
 }
 
@@ -123,6 +128,10 @@ function validateRow(row) {
     warnings.push("TIMESTAMP_MISSING");
   }
   if (!row.category) warnings.push("CATEGORY_UNMAPPED");
+  const cost = Number(row.supplierCost ?? row.cost);
+  if (row.supplierCost != null || row.cost != null) {
+    if (!Number.isFinite(cost) || cost <= 0) errors.push("SUPPLIER_COST_INVALID");
+  }
   return { errors, warnings };
 }
 

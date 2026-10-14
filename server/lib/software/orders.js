@@ -61,6 +61,42 @@ function createDraft(input = {}) {
   };
 }
 
+const cancelledDrafts = new Map();
+
+function cancelDraft(input = {}) {
+  const draftId = String(input.orderId || input.draftId || "").trim();
+  if (!draftId) {
+    return { ok: false, cancelled: false, reason: "DRAFT_ID_REQUIRED", commercial: false, commercialCreated: false };
+  }
+  if (cancelledDrafts.has(draftId)) {
+    return {
+      ok: true,
+      cancelled: true,
+      duplicate: true,
+      draftId,
+      commercial: false,
+      commercialCreated: false,
+      sent: false,
+      salesLocked: !isSalesEnabled(),
+    };
+  }
+  cancelledDrafts.set(draftId, { cancelledAt: new Date().toISOString() });
+  return {
+    ok: true,
+    cancelled: true,
+    duplicate: false,
+    draftId,
+    commercial: false,
+    commercialCreated: false,
+    sent: false,
+    salesLocked: !isSalesEnabled(),
+  };
+}
+
+function resetCancelledDrafts() {
+  cancelledDrafts.clear();
+}
+
 function createPoDraft(input = {}) {
   const draft = createDraft(input);
   return {
@@ -79,4 +115,6 @@ function createPoDraft(input = {}) {
 module.exports = {
   createDraft,
   createPoDraft,
+  cancelDraft,
+  resetCancelledDrafts,
 };

@@ -5,13 +5,13 @@ Branch: `cursor/software-completion-local-c293`
 Inspected HEAD at quality pass: working tree after dispatch-idempotency / approval / public-health lock (base `6790de4`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
-Canonical original 237-item checklist: **still not found** (git history, docs, and project files re-searched this pass)
+Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
 
 ## Canonical source status
 
 The directive requires preserving the original 237-item numbering, wording, order, and acceptance criteria.
 
-**Search result:** no file in this repository contains a numbered Buzzard software checklist with items 1 through 237. Matches for "237" are GitHub PR #237, EAN `4006633001237`, and unrelated commit SHAs. `FINAL_MASTER_CHECKLIST.md` is a short unchecked architecture list. Historical phase reports are not a 237-item source.
+**Search result (2026-10-14 re-search):** the numbered 1–237 register first appears in commit `4b0ce17` (`docs/software-completion/BUZZARD_237_MASTER_EXECUTION_REGISTER.md`). No earlier numbered 237-item source exists in `git log --all`, other branches, `docs/`, or GitHub issues. `intelligence/production/FINAL_MASTER_CHECKLIST.md` is an 89-line architecture list, not the 237 register. Therefore original titles/criteria remain UNKNOWN.
 
 Therefore:
 
@@ -75,11 +75,16 @@ Mean established-scope completion: **69.1%**. This is not 237/237 done. Original
 25. Approval `expireDue` uses `Date.parse`; `latestForTask` ties break on `rowid`. EXPIRED remints; REJECTED/CANCELLED/EXECUTION_FAILED do not.
 26. `GET /api/health/pusat` and `GET /api/health/software` require `system.read` (no longer public). Generic `GET /api/health` stays public.
 27. Inter-Cars inventory classified PARTIAL / BLOCKED_EXTERNAL locally. Supplier feed preview is locally idempotent (in-memory, not live).
+28. Pricing quotes account for paymentFee/paymentFeeRate when provided; missing payment fees are not invented; €0.50 floor and no €0.10 undercut preserved.
+29. Draft and commerce order cancel are idempotent and non-commercial.
+30. Return inspect distinguishes estimated vs actual money; supplier credit is not assumed.
+31. Marketplace dry-run, auth presence-only check, and error classification (RATE_LIMIT/AUTH) stay live=false.
+32. Supplier feed rows preserve sourceId and reject invalid supplier costs.
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL items after 17/39/42/51/55/93. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 213–226 unchanged. Do not restart the register.
+Next session: remaining PARTIAL items after pricing/cancel/returns/marketplace local work. Original criteria still UNKNOWN. Item 185 remains BLOCKED_EXTERNAL_DEPENDENCY. HUMAN 213–226 unchanged. Do not restart the register.
 
 ---
 
@@ -2026,8 +2031,8 @@ Next session: remaining PARTIAL items after 17/39/42/51/55/93. Original criteria
 | Established scope | Pricing engine |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: server/lib/pricing.js |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pricing.js |
-| Identified gaps | Unit historically |
+| Existing implementation evidence | `software/pricing.js` quote + paymentFeeRate/paymentFee when provided |
+| Identified gaps | Original criteria UNKNOWN; live price feeds not used |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pricing.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -2038,8 +2043,8 @@ Next session: remaining PARTIAL items after 17/39/42/51/55/93. Original criteria
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Unit historically |
+| Completion percentage | 82% (payment fees accounted when provided; original UNKNOWN) |
+| Remaining work | Original criteria UNKNOWN; FX and live fees remain unconfigured |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

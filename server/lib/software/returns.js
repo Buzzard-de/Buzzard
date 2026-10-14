@@ -55,6 +55,10 @@ function openCase(db, input = {}) {
       reason: input.reason,
       rmaError: rma?.error || null,
       refundExecuted: false,
+      estimatedCustomerRefund: input.refundAmount == null ? null : Number(input.refundAmount) || 0,
+      actualCustomerRefund: null,
+      estimatedSupplierCredit: null,
+      actualSupplierCredit: null,
     })
   );
 
@@ -76,6 +80,7 @@ function openCase(db, input = {}) {
 function inspect(db, id) {
   const row = db.prepare("SELECT * FROM software_return_ledger WHERE id = ?").get(id);
   if (!row) return { ok: false, error: "not_found", executed: false };
+  const details = readDetails(row);
   return {
     ok: true,
     id: row.id,
@@ -91,8 +96,26 @@ function inspect(db, id) {
       assumedFromCustomerRefund: row.assumed_supplier_will_reimburse === 1,
     },
     refundExecuted: false,
-    note: "A customer refund request is not a supplier credit. Execution stays disabled.",
+    estimated: {
+      customerRefund: details.estimatedCustomerRefund ?? null,
+      supplierCredit: details.estimatedSupplierCredit ?? null,
+      invented: false,
+    },
+    actual: {
+      customerRefund: details.actualCustomerRefund ?? null,
+      supplierCredit: row.supplier_credit_received === 1 ? details.actualSupplierCredit ?? null : null,
+      executed: false,
+    },
+    note: "A customer refund request is not a supplier credit. Estimated amounts are not actual. Execution stays disabled.",
   };
+}
+
+function readDetails(row) {
+  try {
+    return JSON.parse(row.details_json || "{}");
+  } catch {
+    return {};
+  }
 }
 
 const CUSTOMER_REFUND_TRANSITIONS = Object.freeze({

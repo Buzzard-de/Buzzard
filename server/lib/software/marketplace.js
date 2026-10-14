@@ -114,13 +114,15 @@ function persistDraft(db, row) {
 function draftListing(input = {}, db = null) {
   const channel = classify(input.channel || input.marketplace || "amazon");
   if (input.forceError) {
+    const classified = classifyMarketplaceError(input.forceError);
     return {
       ok: false,
       live: false,
       published: false,
       listingId: null,
       error: input.forceError,
-      retryable: input.retryable === true,
+      retryable: classified.retryable,
+      errorClass: classified.code,
       channel: channel.id,
       adapterExists: channel.adapterExists,
     };
@@ -254,6 +256,60 @@ function syncChannelStatus(input = {}) {
   };
 }
 
+const CHANNEL_AUTH_ENV = Object.freeze({
+  amazon: ["AMAZON_SP_CLIENT_ID", "AMAZON_SP_CLIENT_SECRET"],
+  ebay: ["EBAY_CLIENT_ID", "EBAY_CLIENT_SECRET"],
+  google_shopping: ["GOOGLE_MERCHANT_ID"],
+  tiktok_shop: ["TIKTOK_SHOP_APP_KEY"],
+  kaufland: ["KAUFLAND_CLIENT_KEY"],
+  allegro: ["ALLEGRO_CLIENT_ID"],
+  bol: ["BOL_CLIENT_ID"],
+  cdiscount: ["CDISCOUNT_API_KEY"],
+  otto: ["OTTO_CLIENT_ID"],
+  emag: ["EMAG_API_KEY"],
+  skroutz: ["SKROUTZ_API_KEY"],
+});
+
+function validateAuthConfig(channelId, env = process.env) {
+  const channel = classify(channelId);
+  const names = CHANNEL_AUTH_ENV[channel.id] || [`${String(channel.id).toUpperCase()}_API_KEY`];
+  const requiredEnv = names.map((name) => ({ name, present: Boolean(env[name]) }));
+  return {
+    channel: channel.id,
+    requiredEnv,
+    credentialsPresent: requiredEnv.every((row) => row.present),
+    configured: requiredEnv.every((row) => row.present),
+    authTested: false,
+    live: false,
+    liveVerified: false,
+    secretsIncluded: false,
+    note: "Presence-only check. No live marketplace authentication is performed.",
+  };
+}
+
+function classifyMarketplaceError(error) {
+  const message = String(error?.message || error || "");
+  if (/429|rate.?limit/i.test(message)) {
+    return { code: "RATE_LIMIT", retryable: true, live: false, published: false };
+  }
+  if (/timeout|temporar|503|502|ECONNRESET/i.test(message)) {
+    return { code: "TRANSIENT", retryable: true, live: false, published: false };
+  }
+  if (/401|403|unauthor|forbidden|auth/i.test(message)) {
+    return { code: "AUTH", retryable: false, live: false, published: false };
+  }
+  return { code: "UNKNOWN", retryable: false, live: false, published: false };
+}
+
+function dryRunListing(input = {}, db = null) {
+  return {
+    ...draftListing(input, db),
+    dryRun: true,
+    published: false,
+    live: false,
+  };
+}
+
 function health() {
   const connectors = classifyConnectors();
   return {
@@ -277,6 +333,10 @@ module.exports = {
   requiredFields,
   validateDraftInput,
   draftListing,
+  dryRunListing,
+  validateAuthConfig,
+  classifyMarketplaceError,
+  CHANNEL_AUTH_ENV,
   publishListing,
   createSafeAdapter,
   listSafeAdapters,

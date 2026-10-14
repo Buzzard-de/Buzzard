@@ -23,7 +23,7 @@ Canonical 237-item register (established scope; **original titles UNKNOWN**):
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 |
 | NOT_IMPLEMENTED | 0 |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 |
-| Mean established-scope % | 69.1% |
+| Mean established-scope % | 69.3% |
 
 Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE.md`, `BUZZARD_237_FINAL_HANDOVER.md`.
 
@@ -122,6 +122,25 @@ Software this continuation:
 | Isolated Playwright `:3010` + `:3001` after export settled | 0 | **107 passed, 12 skipped, 0 failed**, 49.3s |
 
 Sales / Product SoT / live payments remain off. Push / merge / deploy **not** performed. VERIFIED_100 remains **0**.
+
+---
+
+## Continuation — 2026-10-14 final local pass from `31d968b` (no push)
+
+Original 237 source re-searched (git history, docs, FINAL_MASTER_CHECKLIST, GitHub issues). First numbered register is `4b0ce17`. Criteria remain UNKNOWN.
+
+Software: payment fees in quotes; idempotent cancel; estimated vs actual returns; marketplace dry-run/auth/error class; supplier sourceId + cost reject; expire consume denied.
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `npx vitest run` | 0 | 92 files, **978 passed** |
+| `npx tsc --noEmit` | 0 | clean |
+| `npx next lint` | 0 | clean |
+| `npm run test:backup-restore` | 0 | dry-run only |
+| `NODE_ENV=production npx next build` | 0 | 2044 pages |
+| Isolated Playwright `:3010` + `:3001` | 0 | **107 passed, 12 skipped, 0 failed** |
+
+VERIFIED_100 remains **0**. Counts 216+13+7+1=237.
 
 ---
 

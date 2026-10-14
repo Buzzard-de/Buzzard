@@ -172,6 +172,27 @@ function transitionOrderStatus(orderId, toStatus) {
   return next;
 }
 
+function cancelOrder(orderId, ctx = {}) {
+  const existing = getOrder(orderId, { ...ctx, skipAccessCheck: ctx.skipAccessCheck !== false });
+  if (existing.error) return existing;
+  if (existing.status === ORDER_STATUS.CANCELLED) {
+    return {
+      ...existing,
+      cancelled: true,
+      duplicate: true,
+      commercialSideEffects: false,
+    };
+  }
+  const next = transitionOrderStatus(orderId, ORDER_STATUS.CANCELLED);
+  if (next.error) return next;
+  return {
+    ...next,
+    cancelled: true,
+    duplicate: false,
+    commercialSideEffects: false,
+  };
+}
+
 function submitSupplierOrder(orderId, { req } = {}) {
   const block = assertCanSubmitSupplierOrder({ req });
   if (block) {
@@ -218,6 +239,7 @@ module.exports = {
   createOrderFromCheckout,
   getOrder,
   transitionOrderStatus,
+  cancelOrder,
   submitSupplierOrder,
   countOrdersByType,
   getCommercialOrderCount,

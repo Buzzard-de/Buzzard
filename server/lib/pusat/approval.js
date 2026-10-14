@@ -84,6 +84,8 @@ function requestApproval({
   aiRecommendation,
   requiredApprover,
   financialImpact,
+  resourceType,
+  resourceId,
 } = {}) {
   const id = newId("appr");
   const inputHash = hashInput(input || {});
@@ -105,8 +107,8 @@ function requestApproval({
   ).run(
     id,
     taskId || null,
-    "ai_task",
-    taskId || null,
+    resourceType || "ai_task",
+    resourceId || taskId || null,
     aiRecommendation || `Review ${action || "action"} before execution`,
     reason || "",
     riskLevel || RISK_LEVEL.HIGH,

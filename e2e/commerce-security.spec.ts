@@ -24,12 +24,13 @@ test.describe("Part 10 — Commerce safety E2E", () => {
   test("price tampering rejected", async ({ request }) => {
     const product = await firstPublicCatalogItem(request);
     const productId = product?.id;
+    const sessionId = `e2e-tamper-${Date.now()}`;
     const cart = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-tamper-${Date.now()}` },
+      data: { sessionId },
     });
     const cartId = (await cart.json()).cart.id;
     const add = await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId, quantity: 1, clientPrice: 0.01 },
+      data: { productId, quantity: 1, clientPrice: 0.01, sessionId },
     });
     expect(add.ok()).toBeFalsy();
     const body = await add.json();
@@ -40,16 +41,17 @@ test.describe("Part 10 — Commerce safety E2E", () => {
     const product = await firstPublicCatalogItem(request);
     const productId = product?.id;
     const quantity = Math.max(2, Math.ceil(30 / Math.max(Number(product?.price) || 1, 1)));
+    const sessionId = `e2e-coupon-${Date.now()}`;
     const cart = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-coupon-${Date.now()}` },
+      data: { sessionId },
     });
     const cartId = (await cart.json()).cart.id;
     await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId, quantity },
+      data: { productId, quantity, sessionId },
     });
 
     const tamper = await request.post(`${API}/api/commerce/cart/${cartId}/coupon`, {
-      data: { couponCode: "WELCOME10", clientDiscount: 999 },
+      data: { couponCode: "WELCOME10", clientDiscount: 999, sessionId },
     });
     expect(tamper.ok()).toBeFalsy();
     const body = await tamper.json();
@@ -57,19 +59,20 @@ test.describe("Part 10 — Commerce safety E2E", () => {
   });
 
   test("server coupon validation authoritative", async ({ request }) => {
+    const sessionId = `e2e-coupon-valid-${Date.now()}`;
     const cart = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-coupon-valid-${Date.now()}` },
+      data: { sessionId },
     });
     const cartId = (await cart.json()).cart.id;
     const product = await firstPublicCatalogItem(request);
     const productId = product?.id;
     const quantity = Math.max(2, Math.ceil(30 / Math.max(Number(product?.price) || 1, 1)));
     await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId, quantity },
+      data: { productId, quantity, sessionId },
     });
 
     const apply = await request.post(`${API}/api/commerce/cart/${cartId}/coupon`, {
-      data: { couponCode: "WELCOME10" },
+      data: { couponCode: "WELCOME10", sessionId },
     });
     expect(apply.ok()).toBeTruthy();
     const applied = await apply.json();
@@ -95,30 +98,31 @@ test.describe("Part 10 — Commerce safety E2E", () => {
   test("duplicate checkout submit uses idempotency", async ({ request }) => {
     const product = await firstPublicCatalogItem(request);
     const productId = product?.id;
+    const sessionId = `e2e-idem-${Date.now()}`;
     const cart = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-idem-${Date.now()}` },
+      data: { sessionId },
     });
     const cartId = (await cart.json()).cart.id;
-    await request.post(`${API}/api/commerce/cart/${cartId}/items`, { data: { productId, quantity: 1 } });
+    await request.post(`${API}/api/commerce/cart/${cartId}/items`, { data: { productId, quantity: 1, sessionId } });
 
     const start = await request.post(`${API}/api/commerce/checkout/start`, {
-      data: { cartId, orderType: "READINESS_TEST" },
+      data: { cartId, orderType: "READINESS_TEST", sessionId },
     });
     const checkoutId = (await start.json()).checkout.id;
     const addr = { line1: "Test 1", city: "Berlin", postalCode: "10115", country: "DE" };
     await request.post(`${API}/api/commerce/checkout/${checkoutId}/validate`, {
-      data: { billingAddress: addr, shippingAddress: addr },
+      data: { billingAddress: addr, shippingAddress: addr, sessionId },
     });
 
     const key = `e2e-idem-${Date.now()}`;
     const first = await request.post(`${API}/api/commerce/checkout/${checkoutId}/complete`, {
-      data: { orderType: "READINESS_TEST" },
+      data: { orderType: "READINESS_TEST", sessionId },
       headers: { "Idempotency-Key": key },
     });
     expect(first.ok()).toBeTruthy();
 
     const second = await request.post(`${API}/api/commerce/checkout/${checkoutId}/complete`, {
-      data: { orderType: "READINESS_TEST" },
+      data: { orderType: "READINESS_TEST", sessionId },
       headers: { "Idempotency-Key": key },
     });
     const secondBody = await second.json();

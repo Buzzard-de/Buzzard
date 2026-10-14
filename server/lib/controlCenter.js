@@ -352,82 +352,43 @@ function updateTaskStatus(id, status, { error, result, actorType } = {}) {
   return mapTaskRow(db.prepare("SELECT * FROM core_ai_tasks WHERE id = ?").get(id));
 }
 
-function createApproval({ taskId, resourceType, resourceId, aiRecommendation, reason, riskLevel }) {
-  const id = newId("appr");
-  db.prepare(`
-    INSERT INTO core_approvals(id, task_id, resource_type, resource_id, ai_recommendation, reason, risk_level, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING')
-  `).run(id, taskId || null, resourceType || null, resourceId || null, aiRecommendation || "", reason || "", riskLevel || RISK_LEVEL.MEDIUM);
+function approvalCenter() {
+  return require("./pusat").approval;
+}
 
-  if (taskId) {
-    updateTaskStatus(taskId, TASK_STATUS.WAITING_APPROVAL);
-  }
-
-  recordSystemEvent({
-    eventType: "approval.created",
-    resourceType: "approval",
-    resourceId: id,
-    summary: `Approval requested: ${reason || resourceType}`,
-    metadata: { riskLevel: riskLevel || RISK_LEVEL.MEDIUM },
+function createApproval(input = {}) {
+  return approvalCenter().requestApproval({
+    taskId: input.taskId,
+    resourceType: input.resourceType,
+    resourceId: input.resourceId,
+    requestingAgent: input.requestingAgent || input.resourceType || "control_center",
+    action: input.action || "ai.task.execute",
+    reason: input.reason,
+    input: input.input || {
+      taskId: input.taskId || null,
+      resourceType: input.resourceType || null,
+      resourceId: input.resourceId || null,
+    },
+    expectedSideEffects: input.expectedSideEffects,
+    riskLevel: input.riskLevel,
+    aiRecommendation: input.aiRecommendation,
+    requiredApprover: input.requiredApprover,
+    financialImpact: input.financialImpact,
+    ttlMs: input.ttlMs,
   });
-
-  return getApproval(id);
 }
 
 function getApproval(id) {
-  const row = db.prepare("SELECT * FROM core_approvals WHERE id = ?").get(id);
-  if (!row) return null;
-  return {
-    id: row.id,
-    taskId: row.task_id,
-    resourceType: row.resource_type,
-    resourceId: row.resource_id,
-    aiRecommendation: row.ai_recommendation,
-    reason: row.reason,
-    riskLevel: row.risk_level,
-    status: row.status,
-    decidedBy: row.decided_by,
-    decidedAt: row.decided_at,
-    metadata: parseJson(row.metadata_json, {}),
-    createdAt: row.created_at,
-  };
+  return approvalCenter().getApproval(id);
 }
 
 function listApprovals(status) {
-  let sql = "SELECT * FROM core_approvals";
-  const params = [];
-  if (status) {
-    sql += " WHERE status = ?";
-    params.push(status);
-  }
-  sql += " ORDER BY created_at DESC LIMIT 100";
-  return db.prepare(sql).all(...params).map((row) => getApproval(row.id));
+  return approvalCenter().listApprovals(status);
 }
 
-function decideApproval(id, decision, decidedBy) {
-  const status = decision === "approve" ? "APPROVED" : "REJECTED";
-  db.prepare(`
-    UPDATE core_approvals SET status = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(status, decidedBy, id);
-
-  const approval = getApproval(id);
-  if (approval?.taskId) {
-    updateTaskStatus(
-      approval.taskId,
-      decision === "approve" ? TASK_STATUS.ASSIGNED : TASK_STATUS.CANCELLED
-    );
-  }
-
-  recordSystemEvent({
-    eventType: `approval.${decision}`,
-    actorType: "admin",
-    actorId: decidedBy,
-    resourceType: "approval",
-    resourceId: id,
-    summary: `Approval ${status.toLowerCase()}`,
-  });
-
-  return approval;
+function decideApproval(id, decision, decidedBy, extra = {}) {
+  const result = approvalCenter().decide(id, decision, decidedBy, extra);
+  return result?.approval || result;
 }
 
 function createEscalation({ sourceType, sourceId, title, message, riskLevel, metadata }) {

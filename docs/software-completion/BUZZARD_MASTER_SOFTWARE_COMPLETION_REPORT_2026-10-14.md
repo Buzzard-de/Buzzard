@@ -18,6 +18,74 @@ Nothing in this report is `LIVE_VERIFIED`.
 
 ---
 
+## Continuation — 2026-10-14 afternoon (no push)
+
+### Re-verified PR #430 and local git
+
+| Field | Evidence at this continuation |
+| --- | --- |
+| Branch | `cursor/software-completion-local-c293` |
+| Preserved commit | `ba80abd43a059899a681b4d8819c78e7602ebf12` still an ancestor; working tree was clean at start then gained HAC/e2e/plugin edits |
+| PR #430 | **OPEN, draft, unmerged** (`mergedAt: null`) |
+| GitHub head OID | still `2b1be1f452de6e5fa93748fbbd521b77d4e14950` (local `ba80abd` **not** on the PR because push is forbidden) |
+| CI | **UNKNOWN** — `statusCheckRollup: []`; ManagePullRequest reported no checks. **Not claimed passed.** |
+| Active :3000 | `next-dev` left running; HTTP 200 before and after isolated `next build` |
+| Active :3001 | Buzzard API, `salesEnabled: false`, commit `ba80abd` in `/api/health` version |
+| Active :3040 | left running; not used as Playwright base |
+
+### Independent security re-check (unit)
+
+`npx vitest run guestCommerceAccess part8Foundation jwtSecret fortressAuthz csrf corsOrigins pusatApprovalExceptions controlCenterApprovalBridge productArchitecture routePermissions`
+
+**10 files, 72 passed, 0 failed.**
+
+Full unit suite afterwards: **79 files, 927 passed, 0 failed.**
+
+| Control | Evidence |
+| --- | --- |
+| Guest checkout/order without proof | 401 (`guestCommerceAccess`) |
+| Guest cart write without bound session | 401; matching session proceeds to product lookup |
+| Cross-customer cart GET | 403/404 (`commerce-security` E2E + unit IDOR) |
+| CORS `Origin: null` | rejected unless explicitly listed |
+| CSRF mutating cookie session | existing `csrf.test.mjs` passed |
+| JWT production default | `resolveJwtSecret({ NODE_ENV: "production" })` throws; `validateEnvironment` errors |
+| Finance confirm/refund | still 409 provider-required (`fortressAuthz`) |
+| Diagnostic GET | `/api/p1/i18n/gaps` and `/api/db/status` 401 unauthenticated |
+
+### Isolated build and Playwright (did not touch :3000)
+
+| Step | Evidence |
+| --- | --- |
+| `NODE_ENV=production npx next build` | Compiled, 2044 static pages, export OK. Uses `.next` (dev remains `.next-dev`). |
+| :3000 after build | HTTP 200 |
+| Static export served | `python3 -m http.server 3010 --directory /workspace/out` (stopped after tests) |
+| Playwright | `PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://127.0.0.1:3010 BUZZARD_API_URL=http://127.0.0.1:3001` |
+| Result | **100 passed, 6 failed, 13 skipped** (119 tests, 3.1m). Exit 1. |
+
+Playwright failures (not marked passed):
+
+| Test | Observed cause |
+| --- | --- |
+| PIM Validation tab / Import dry-run | Static-export admin UI did not show Overall/PASS or “Dry run” after click; copy is `dry-run`. Not weakened. |
+| Admin Sessions page | `admin_session_lost_redirected_to_login` — HttpOnly cookie on static `:3010` vs API `:3001` over HTTP |
+| Control Center tabs | `admin_login_rate_limited` (429) |
+| Invalid product cart | `POST /api/commerce/cart` not ok — API `/api/health` itself returned **429** after the suite |
+| Mega menu click | 90s timeout on static export |
+
+API commerce E2E (tamper, coupon, IDOR, blocked commercial checkout, READINESS_TEST) **passed** before the limiter saturated.
+
+### Software completed this continuation
+
+- Human Approval Center: `controlCenter.createApproval` / `list` / `get` / `decide` now delegate to `pusat.approval` (input hash, expiry, requiredApprover, financialImpact). Previously the admin POST path inserted unbound rows.
+- Checkout/order/cart plugins accept `sessionId`/`guestToken` in body/query as well as headers so legitimate API clients stay functional.
+- Playwright fixtures send the bound session on cart/checkout mutations.
+
+### Still not LIVE_VERIFIED / still human
+
+Unchanged: merge, deploy, production secrets, sandbox payments, SoT, sales, Esat Bey max phase, GitHub CI for #430.
+
+---
+
 ## A–D. Verified repository baseline
 
 | Field | Evidence |
@@ -110,10 +178,10 @@ Additional local work after that inspection (this closeout, unpushed unless late
 | Categories | 50 customer-facing L1 | `APPROVED_CUSTOMER_FACING_L1_COUNT`; internal JSON 53 | Not rewritten | CONFIGURED |
 | Localization | 30 locales | `lib/i18n/supported-locales.json` has 30 codes | Not rewritten | CONFIGURED — **not** “all translations complete” |
 | Shipping / tracking | Normalize events | Software tracking + customer route | No carrier contact | PARTIAL — no live GPS |
-| Website / UX | Existing storefront | Next app | No redesign | CODE_READY locally; E2E **NOT_RUN** this pass |
+| Website / UX | Existing storefront | Next app | Isolated static E2E on :3010 | CODE_READY; Playwright **100 passed / 6 failed / 13 skipped** |
 | Email / notifications | Templates, no send | Emit/readiness helpers | No real send | CODE_READY |
 | Observability / backup | Health, audit, restore scripts | Existing ops scripts | Isolated restore **NOT_RUN** this pass | CODE_READY |
-| Human Approval Center | Bound action + hash + expiry | `pusat/approval.js` | `requiredApprover`, `financialImpact` | CODE_READY |
+| Human Approval Center | Bound action + hash + expiry | `pusat/approval.js` + control-center bridge | Admin create/list/decide now uses Pusat bind | CODE_READY (unit); admin cookie E2E on static export **failed** |
 | Esat Bey max phase | Deferred | Guardian status/health remain | Not expanded | Existing Guardian CODE_READY |
 
 ---
@@ -124,21 +192,21 @@ Additional local work after that inspection (this closeout, unpushed unless late
 
 | Command | Result |
 | --- | --- |
-| `npx vitest run` | **78 files, 925 passed, 0 failed** (2026-10-14, ~34s) |
+| `npx vitest run` | **79 files, 927 passed, 0 failed** (continuation) |
 | `npx tsc --noEmit` | Pass (exit 0) |
 | `npx next lint --max-warnings 0` | Pass — no ESLint warnings or errors |
 | Targeted security set (`guestCommerceAccess fortressAuthz part8Foundation jwtSecret corsOrigins pusatApprovalExceptions productArchitecture routePermissions`) | **65 passed** before full suite |
 
-### NOT_RUN (safe-limit)
+### Isolated build / E2E (continuation)
 
-| Check | Why |
+| Check | Result |
 | --- | --- |
-| Playwright / isolated E2E on :3010/:3002 | Prior phases documented `.next-dev` collision with any live `:3000` Next process. This pass did not start a second Next server or kill port 3000. |
-| `npm run build` | Shares `.next` with `next dev` in this repo; previously caused isolated-stack HTTP 500. |
-| Live Stripe/PayPal sandbox webhook | Needs authorized test keys; not present / not used. |
-| Live supplier / marketplace / carrier | Forbidden. |
-| Production persistence / CORS on HTTPS | Forbidden to probe production. |
-| GitHub CI for PR #430 | Rollup empty — UNKNOWN. |
+| `NODE_ENV=production npx next build` | Pass; :3000 remained HTTP 200 (`.next` vs `.next-dev`) |
+| Playwright on :3010 + API :3001 | **100 passed, 6 failed, 13 skipped** — see continuation |
+| Live Stripe/PayPal sandbox webhook | NOT_RUN — no authorized test keys used |
+| Live supplier / marketplace / carrier | NOT_RUN — forbidden |
+| Production persistence / CORS on HTTPS | NOT_RUN — forbidden to probe production |
+| GitHub CI for PR #430 | UNKNOWN |
 
 A green unit suite is **not** production readiness.
 
@@ -190,9 +258,11 @@ Existing `core_approvals` flow:
 - `assertBound` before execution
 - Audit via control-center events
 
-This pass added explicit `requiredApprover` (default `admin`) and `financialImpact` on the mapped record. High-impact actions still cannot execute merely because an agent recommended them. Live payments/purchases/publication remain locked.
+`controlCenter.createApproval` previously inserted rows without `input_hash` / `expires_at`. It now delegates to `pusat.approval.requestApproval`. Decide/list/get use the same bound store. `requiredApprover` defaults to `admin`. Financial impact is recorded when provided.
 
-Classification: **CODE_READY**. Isolated unit tests updated. No UI redesign.
+High-impact actions still cannot execute merely because an agent recommended them. Live payments/purchases/publication remain locked.
+
+Classification: **CODE_READY** (unit `controlCenterApprovalBridge` + Pusat approval tests). Admin UI cookie path on static `:3010` is **not** SANDBOX_VERIFIED (Playwright session loss / 429).
 
 ---
 

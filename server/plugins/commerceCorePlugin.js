@@ -179,6 +179,8 @@ module.exports = {
     app.get("/api/commerce/checkout/:id", (req, res) => {
       const checkout = commerce.checkoutService.getCheckout(req.params.id, {
         customerId: req.query.customerId,
+        sessionId: req.query.sessionId,
+        guestToken: req.query.guestToken,
         req,
       });
       if (checkout.error) return res.status(checkout.status || 404).json({ success: false, errorKey: checkout.error });
@@ -198,6 +200,8 @@ module.exports = {
       const body = parseBody(req);
       const result = commerce.checkoutService.validateCheckout(req.params.id, body, {
         customerId: body.customerId,
+        sessionId: body.sessionId,
+        guestToken: body.guestToken,
         req,
       });
       if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
@@ -209,6 +213,8 @@ module.exports = {
       const body = parseBody(req);
       const result = commerce.checkoutService.completeCheckout(req.params.id, body, {
         customerId: body.customerId,
+        sessionId: body.sessionId,
+        guestToken: body.guestToken,
         idempotencyKey: body.idempotencyKey || req.headers["idempotency-key"],
         req,
       });
@@ -281,7 +287,12 @@ module.exports = {
     });
 
     app.get("/api/commerce/orders/:id", (req, res) => {
-      const order = commerce.orderService.getOrder(req.params.id, { customerId: req.query.customerId, req });
+      const order = commerce.orderService.getOrder(req.params.id, {
+        customerId: req.query.customerId,
+        sessionId: req.query.sessionId,
+        guestToken: req.query.guestToken,
+        req,
+      });
       if (order.error) return res.status(order.status || 404).json({ success: false, errorKey: order.error });
       res.json({ success: true, order });
     });

@@ -65,6 +65,13 @@ describe("commerceFeatureFlags", () => {
     else process.env.BUZZARD_PRODUCT_SOT_ACTIVE = prevSot;
     delete require.cache[require.resolve("../lib/commerce/commerceFeatureFlags.js")];
   });
+
+  it("assertFeatureAllowed denies live payments and Product SoT while locks hold", () => {
+    const { assertFeatureAllowed } = require("../lib/commerce/commerceFeatureFlags.js");
+    expect(assertFeatureAllowed("live_payments").allowed).toBe(false);
+    expect(assertFeatureAllowed("product_sot").allowed).toBe(false);
+    expect(assertFeatureAllowed("sales").allowed).toBe(false);
+  });
 });
 
 describe("commerceValidation", () => {
@@ -225,6 +232,32 @@ describe("idempotency", () => {
     const hit = idempotency.getIdempotency({ key, scope: "unit" });
     expect(hit?.response?.ok).toBe(true);
     expect(hit.replay).toBe(true);
+  });
+
+  it("replays withIdempotency without invoking the handler twice", () => {
+    const idempotency = require("../lib/commerce/idempotency.js");
+    const key = `with-${crypto.randomBytes(4).toString("hex")}`;
+    let calls = 0;
+    const first = idempotency.withIdempotency({
+      key,
+      scope: "unit-with",
+      handler: () => {
+        calls += 1;
+        return { ok: true, id: "once" };
+      },
+    });
+    const second = idempotency.withIdempotency({
+      key,
+      scope: "unit-with",
+      handler: () => {
+        calls += 1;
+        return { ok: false, id: "twice" };
+      },
+    });
+    expect(first.id).toBe("once");
+    expect(second.idempotencyReplay).toBe(true);
+    expect(second.id).toBe("once");
+    expect(calls).toBe(1);
   });
 });
 

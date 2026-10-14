@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { ADMIN_EMAIL, ADMIN_PASSWORD, API, seedAdminSession, waitForAdminReady } from "./helpers/adminAuth";
+import { identityHeaders } from "./helpers/testIdentity";
 
 test.describe("Admin E2E (Part 5 foundation)", () => {
   test.skip(!process.env.NEXT_PUBLIC_BUZZARD_API_URL && !process.env.BUZZARD_API_URL, "API URL required for admin E2E");
@@ -23,6 +24,7 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
   }
 
   test("Admin login form stores a session token", async ({ page }) => {
+    await page.setExtraHTTPHeaders(identityHeaders("admin-form"));
     await page.goto("/admin/login/");
     await dismissCookieBanner(page);
     const form = page.locator("form.admin-login-card");
@@ -40,6 +42,7 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
   });
 
   test("invalid admin password does not store a session token", async ({ page }) => {
+    await page.setExtraHTTPHeaders(identityHeaders("admin-bad"));
     await page.goto("/admin/login/");
     await dismissCookieBanner(page);
     const form = page.locator("form.admin-login-card");

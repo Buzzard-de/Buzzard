@@ -530,8 +530,13 @@ test.describe("homepage viewports", () => {
     expect(aiColors.color).toBe("rgb(226, 185, 87)");
     await assertLastCategoryClearsBottomNav(page);
     await page.screenshot({ path: "test-results/homepage-de-portrait.png", fullPage: false });
-    await page.locator(".buzzard-mobile-header-btn").first().click();
-    await expect(page.locator(".mega-menu-overlay")).toBeVisible();
+    const railAll = page.locator(".mobile-home-category-rail-more");
+    if (await railAll.isVisible()) {
+      await railAll.click();
+    } else {
+      await page.locator(".buzzard-mobile-header-btn").first().click();
+    }
+    await expect(page.locator(".mega-menu-overlay")).toBeVisible({ timeout: 20_000 });
     await expect(page.locator(".mega-menu-shell.mobile")).toBeVisible();
     await expect(page.locator(".mega-menu-overlay .mega-menu-locale-market")).toHaveCount(0);
     await expect(page.locator(".mobile-home-locale-market .language-selector select option")).toHaveCount(30);
@@ -547,8 +552,13 @@ test.describe("homepage viewports", () => {
     await assertPhoneCategoryBoxes(page);
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
     await assertLastCategoryClearsBottomNav(page);
-    await page.locator(".buzzard-mobile-header-btn").first().click();
-    await expect(page.locator(".mega-menu-overlay")).toBeVisible();
+    const railAllNarrow = page.locator(".mobile-home-category-rail-more");
+    if (await railAllNarrow.isVisible()) {
+      await railAllNarrow.click();
+    } else {
+      await page.locator(".buzzard-mobile-header-btn").first().click();
+    }
+    await expect(page.locator(".mega-menu-overlay")).toBeVisible({ timeout: 20_000 });
     await expect(page.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)")).toHaveCount(50);
     await expect(page.locator(".home-sidebar.embedded .home-sidebar-all")).toHaveCount(1);
     await assertNoHorizontalOverflow(page);

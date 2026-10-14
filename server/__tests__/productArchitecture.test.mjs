@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { createRequire } from "node:module";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 const require = createRequire(import.meta.url);
 const architecture = require("../lib/pim/productArchitecture");
@@ -20,7 +23,7 @@ describe("product architecture inventory", () => {
 
   it("classifies every declared master writer against source files", () => {
     for (const writer of architecture.MASTER_WRITERS) {
-      const file = path.join(process.cwd(), writer.module);
+      const file = path.join(repoRoot, writer.module);
       expect(fs.existsSync(file), writer.module).toBe(true);
       const source = fs.readFileSync(file, "utf8");
       expect(source).toContain("productWriteBoundary");
@@ -65,7 +68,7 @@ describe("product architecture inventory", () => {
     expect(map.catalogRouting.storefrontPdp.outputExportProduction).toBe(true);
 
     const catalog = JSON.parse(
-      fs.readFileSync(path.join(process.cwd(), "data/buzzard_products.json"), "utf8")
+      fs.readFileSync(path.join(repoRoot, "data/buzzard_products.json"), "utf8")
     );
     const jsonSlugs = (catalog.products || [])
       .filter((row) => row.status === "active" && row.seo?.slug)

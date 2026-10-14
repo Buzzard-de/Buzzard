@@ -2,19 +2,53 @@
 
 Date: 2026-10-14  
 Mode: LOCAL IMPLEMENTATION + VERIFICATION  
-Esat Bey dedicated maximum-capability phase: **DEFERRED** (existing Guardian/security patches still applied)
+Esat Bey dedicated maximum-capability phase: **in canonical order 227–237 as local deny/fail-closed only** (no autonomous destructive containment)
 
 Safety locks observed in this workspace:
 
 - `BUZZARD_SALES_ENABLED=0`
-- `BUZZARD_PRODUCT_SOT_ACTIVE` unset (not `1`)
-- `BUZZARD_LIVE_PAYMENTS` unset
+- `BUZZARD_PRODUCT_SOT_ACTIVE` unset (not `1`); software `productSotActive` remains `false`
+- `BUZZARD_LIVE_PAYMENTS` unset; effective live payments false without sales
 - No production probe, deploy, merge, or live money movement
-- No push in this closeout pass (mission rule 16)
+
+Canonical 237-item register (established scope; **original titles UNKNOWN**):
+
+`docs/software-completion/BUZZARD_237_MASTER_EXECUTION_REGISTER.md`
+
+| State | Count / 237 |
+| --- | --- |
+| VERIFIED_100 | 0 |
+| PARTIAL | 211 |
+| HUMAN_APPROVAL_REQUIRED | 13 |
+| BLOCKED_EXTERNAL_DEPENDENCY | 7 |
+| NOT_IMPLEMENTED | 5 |
+| NOT_APPLICABLE_WITH_EVIDENCE | 1 |
+| Mean established-scope % | 65.6% |
+
+Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE.md`, `BUZZARD_237_FINAL_HANDOVER.md`.
 
 Status vocabulary used below: `NOT_IMPLEMENTED` | `STUB` | `PARTIAL` | `CODE_READY` | `CONFIGURED` | `SANDBOX_VERIFIED` | `LIVE_VERIFIED`.
 
-Nothing in this report is `LIVE_VERIFIED`.
+Nothing in this report is `LIVE_VERIFIED`. No item is VERIFIED_100 solely because code exists.
+
+---
+
+## Continuation — 2026-10-14 237-item execution
+
+Canonical numbered checklist **not found** in the repository. Items 1–237 are recorded from directive category bands plus inspected code.
+
+Software closed in this pass (sales/SoT/live payments still off):
+
+- `commerceFeatureFlags` parent/child for `BUZZARD_LIVE_PAYMENTS` and `BUZZARD_PRODUCT_SOT_ACTIVE`
+- `environmentValidation` errors on live payments without sales in production
+- `dualPaymentEngine.providerDiagnostics`, `officialPaymentIngress`, `secureCommerce.flags` use effective flags
+- `pusat.approval.decide` rejects AI self-approval and empty approver identity
+- `/api/health*` separate rate-limit bucket (limiter still on)
+- Product architecture tests resolve files from repo root
+
+Focused tests: **105 passed / 0 failed** (`softwareMasterCompletion dualPaymentAdapters secureCommerce pusatMemoryGuardian` + security/flag files). Full suite and Playwright were **not** re-run on this SHA. Last isolated Playwright remains 100 passed / 6 failed / 13 skipped.
+
+`:3000` left running (HTTP 200). `:3001/api/health` HTTP 200.
 
 ---
 

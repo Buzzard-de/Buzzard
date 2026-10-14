@@ -29,6 +29,22 @@ describe("rateLimitStore", () => {
     expect(limiter(req)).toBe(true);
   });
 
+  it("health limiter is a separate bucket from the general API limiter", () => {
+    delete process.env.BUZZARD_TEST_MODE;
+    process.env.BUZZARD_RATE_LIMIT_STORE = "memory";
+    delete require.cache[require.resolve("../lib/rateLimitStore")];
+    const { createRateLimiter } = require("../lib/rateLimitStore");
+    const api = createRateLimiter({ windowMs: 60000, max: 2, keyPrefix: "api:" });
+    const health = createRateLimiter({ windowMs: 60000, max: 2, keyPrefix: "api-health:" });
+    const req = { headers: { "x-forwarded-for": "10.0.0.8" }, socket: { remoteAddress: "10.0.0.8" } };
+    expect(api(req)).toBe(false);
+    expect(api(req)).toBe(false);
+    expect(api(req)).toBe(true);
+    expect(health(req)).toBe(false);
+    expect(health(req)).toBe(false);
+    expect(health(req)).toBe(true);
+  });
+
   it("commerce-cart limiter is IP-scoped so a second client is not blocked", () => {
     delete process.env.BUZZARD_TEST_MODE;
     process.env.BUZZARD_RATE_LIMIT_STORE = "memory";

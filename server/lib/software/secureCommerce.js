@@ -18,11 +18,14 @@ const disputes = require("./disputes");
 const dualPaymentEngine = require("../commerce/providers/dualPaymentEngine");
 
 function flags() {
+  const commerce = require("../commerce/commerceFeatureFlags").getEffectiveFlags();
   return {
-    salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
-    transferExecution: process.env.BUZZARD_TRANSFER_EXECUTION === "1",
+    salesEnabled: commerce.salesEnabled,
+    transferExecution: process.env.BUZZARD_TRANSFER_EXECUTION === "1" && commerce.salesEnabled,
     confirmationRequired: process.env.BUZZARD_CUSTOMER_CONFIRMATION_REQUIRED !== "0",
-    productSotActive: process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1",
+    productSotActive: commerce.productSotActive,
+    productSotEnvFlag: commerce.productSotEnvFlag,
+    livePaymentsEnabled: commerce.livePaymentsEnabled,
     realMoneyMovement: false,
   };
 }

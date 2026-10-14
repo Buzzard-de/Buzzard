@@ -13,6 +13,11 @@ const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
+const healthRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: 'api-health:' });
+
+function isHealthPath(pathname) {
+  return pathname === '/api/health' || pathname.startsWith('/api/health/');
+}
 
 function setCommonHeaders(res) {
   setSecurityHeaders(res);
@@ -299,7 +304,8 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (apiRateLimit(req)) {
+    const limited = isHealthPath(pathname) ? healthRateLimit(req) : apiRateLimit(req);
+    if (limited) {
       logSecurityEvent({
         type: 'api_rate_limited',
         success: false,

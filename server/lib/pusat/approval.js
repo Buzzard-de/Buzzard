@@ -155,6 +155,30 @@ function assertBound(approval, currentInput) {
   return { ok: true, approval: fresh };
 }
 
+function isForbiddenApprover(decidedBy, requestingAgent) {
+  const actor = String(decidedBy || "").trim();
+  if (!actor) {
+    return { forbidden: true, code: "approver_identity_required" };
+  }
+  const actorLc = actor.toLowerCase();
+  const agentLc = String(requestingAgent || "").trim().toLowerCase();
+  if (agentLc && actorLc === agentLc) {
+    return { forbidden: true, code: "ai_cannot_self_approve" };
+  }
+  if (
+    actorLc === "ai" ||
+    actorLc === "pusat" ||
+    actorLc === "guardian" ||
+    actorLc === "orchestrator" ||
+    actorLc === "esat_bey" ||
+    /_ai$/.test(actorLc) ||
+    /^(ai|agent)[-_]/.test(actorLc)
+  ) {
+    return { forbidden: true, code: "ai_cannot_self_approve" };
+  }
+  return { forbidden: false };
+}
+
 function decide(id, decision, decidedBy, { currentInput } = {}) {
   expireDue();
   const existing = getApproval(id);
@@ -172,6 +196,12 @@ function decide(id, decision, decidedBy, { currentInput } = {}) {
   }
 
   const normalized = String(decision || "").toLowerCase();
+  if (normalized === "approve") {
+    const forbidden = isForbiddenApprover(decidedBy, existing.requestingAgent);
+    if (forbidden.forbidden) {
+      return { rejected: true, code: forbidden.code, approval: existing };
+    }
+  }
   if (normalized === "approve" && currentInput !== undefined) {
     const currentHash = hashInput(currentInput);
     if (existing.inputHash && existing.inputHash !== currentHash) {
@@ -269,4 +299,5 @@ module.exports = {
   listApprovals,
   latestForTask,
   hashInput,
+  isForbiddenApprover,
 };

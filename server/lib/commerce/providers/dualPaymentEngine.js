@@ -425,12 +425,14 @@ function evaluateShipment(db, input = {}) {
 }
 
 function providerDiagnostics({ mockTestsPassed = false } = {}) {
+  const flags = require("../../commerce/commerceFeatureFlags").getEffectiveFlags();
   return {
     stripe: stripeAdapter.operationalStatus({ mockTestsPassed }),
     paypal: paypalAdapter.operationalStatus({ mockTestsPassed }),
-    salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
-    livePayments: process.env.BUZZARD_LIVE_PAYMENTS === "1",
-    productSotActive: process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1",
+    salesEnabled: flags.salesEnabled,
+    livePayments: flags.livePaymentsEnabled,
+    productSotActive: flags.productSotActive,
+    productSotEnvFlag: flags.productSotEnvFlag,
     realMoneyMovement: false,
     sandboxVerified: false,
     liveVerified: false,

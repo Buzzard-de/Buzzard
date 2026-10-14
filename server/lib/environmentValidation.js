@@ -26,6 +26,24 @@ function validateEnvironment() {
         message: "BUZZARD_SALES_ENABLED=1 — commercial sales active",
       });
     }
+    if (process.env.BUZZARD_LIVE_PAYMENTS === "1" && process.env.BUZZARD_SALES_ENABLED !== "1") {
+      errors.push({
+        code: "live_payments_without_sales",
+        message: "BUZZARD_LIVE_PAYMENTS=1 is invalid while BUZZARD_SALES_ENABLED is not 1",
+      });
+    }
+    if (process.env.BUZZARD_LIVE_PAYMENTS === "1" && process.env.BUZZARD_SALES_ENABLED === "1") {
+      warnings.push({
+        code: "live_payments_armed_in_production",
+        message: "BUZZARD_LIVE_PAYMENTS=1 with sales enabled — live money movement possible; human authorization required",
+      });
+    }
+    if (process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1") {
+      warnings.push({
+        code: "product_sot_env_flag_set",
+        message: "BUZZARD_PRODUCT_SOT_ACTIVE=1 — Product SoT remains software-inactive until independent human approval",
+      });
+    }
     const jwtSecret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "";
     const defaultSecrets = new Set(["", "dev-secret-change-me", "DEV_ONLY_CHANGE_ME"]);
     if (defaultSecrets.has(jwtSecret)) {
@@ -43,6 +61,8 @@ function validateEnvironment() {
     warnings,
     testMode: process.env.BUZZARD_TEST_MODE === "1",
     salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
+    livePayments: process.env.BUZZARD_LIVE_PAYMENTS === "1",
+    productSotEnvFlag: process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1",
   };
 }
 

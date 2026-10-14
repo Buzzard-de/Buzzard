@@ -44,4 +44,35 @@ describe("production JWT fail-closed", () => {
     expect(result.ok).toBe(false);
     expect(result.errors.some((row) => row.code === "default_jwt_secret")).toBe(true);
   });
+
+  it("fails production validation when live payments are armed without sales", () => {
+    const prev = {
+      NODE_ENV: process.env.NODE_ENV,
+      JWT_SECRET: process.env.JWT_SECRET,
+      AUTH_SECRET: process.env.AUTH_SECRET,
+      TEST: process.env.BUZZARD_TEST_MODE,
+      SALES: process.env.BUZZARD_SALES_ENABLED,
+      LIVE: process.env.BUZZARD_LIVE_PAYMENTS,
+    };
+    process.env.NODE_ENV = "production";
+    process.env.JWT_SECRET = "unique-operator-secret-for-validation";
+    delete process.env.AUTH_SECRET;
+    delete process.env.BUZZARD_TEST_MODE;
+    process.env.BUZZARD_SALES_ENABLED = "0";
+    process.env.BUZZARD_LIVE_PAYMENTS = "1";
+    const result = require("../lib/environmentValidation.js").validateEnvironment();
+    process.env.NODE_ENV = prev.NODE_ENV;
+    if (prev.JWT_SECRET === undefined) delete process.env.JWT_SECRET;
+    else process.env.JWT_SECRET = prev.JWT_SECRET;
+    if (prev.AUTH_SECRET === undefined) delete process.env.AUTH_SECRET;
+    else process.env.AUTH_SECRET = prev.AUTH_SECRET;
+    if (prev.TEST === undefined) delete process.env.BUZZARD_TEST_MODE;
+    else process.env.BUZZARD_TEST_MODE = prev.TEST;
+    if (prev.SALES === undefined) delete process.env.BUZZARD_SALES_ENABLED;
+    else process.env.BUZZARD_SALES_ENABLED = prev.SALES;
+    if (prev.LIVE === undefined) delete process.env.BUZZARD_LIVE_PAYMENTS;
+    else process.env.BUZZARD_LIVE_PAYMENTS = prev.LIVE;
+    expect(result.ok).toBe(false);
+    expect(result.errors.some((row) => row.code === "live_payments_without_sales")).toBe(true);
+  });
 });

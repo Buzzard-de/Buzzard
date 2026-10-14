@@ -59,6 +59,27 @@ describe("Pusat approval center", () => {
     expect(again.duplicate || again.expired).toBe(true);
   });
 
+  it("refuses AI self-approval and missing approver identity", () => {
+    const created = pusat.approval.requestApproval({
+      requestingAgent: "price_ai",
+      action: "prices.update",
+      reason: "Self approve",
+      input: { sku: "APPR-SELF" },
+    });
+    const self = pusat.approval.decide(created.id, "approve", "price_ai");
+    expect(self.rejected).toBe(true);
+    expect(self.code).toBe("ai_cannot_self_approve");
+    expect(self.approval.status).toBe("PENDING");
+
+    const missing = pusat.approval.decide(created.id, "approve", "");
+    expect(missing.rejected).toBe(true);
+    expect(missing.code).toBe("approver_identity_required");
+    expect(missing.approval.status).toBe("PENDING");
+
+    const human = pusat.approval.decide(created.id, "approve", "reviewer@test");
+    expect(human.approval.status).toBe("APPROVED");
+  });
+
   it("cancels approval when material inputs change", () => {
     const created = pusat.approval.requestApproval({
       requestingAgent: "price_ai",

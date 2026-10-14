@@ -17,6 +17,8 @@ function getRawFlags() {
     BUZZARD_SUPPLIER_ORDERS_ENABLED: envFlag("BUZZARD_SUPPLIER_ORDERS_ENABLED", "0"),
     BUZZARD_STRIPE_ENABLED: envFlag("BUZZARD_STRIPE_ENABLED", "0") && Boolean(process.env.STRIPE_SECRET_KEY),
     BUZZARD_PAYPAL_ENABLED: envFlag("BUZZARD_PAYPAL_ENABLED", "0") && Boolean(process.env.PAYPAL_CLIENT_ID),
+    BUZZARD_LIVE_PAYMENTS: envFlag("BUZZARD_LIVE_PAYMENTS", "0"),
+    BUZZARD_PRODUCT_SOT_ACTIVE: envFlag("BUZZARD_PRODUCT_SOT_ACTIVE", "0"),
   };
 }
 
@@ -32,7 +34,10 @@ function getEffectiveFlags() {
     supplierOrdersEnabled: sales && raw.BUZZARD_SUPPLIER_ORDERS_ENABLED,
     stripeEnabled: sales && raw.BUZZARD_STRIPE_ENABLED,
     paypalEnabled: sales && raw.BUZZARD_PAYPAL_ENABLED,
-    mockPaymentOnly: !sales || !raw.BUZZARD_PAYMENT_ENABLED,
+    livePaymentsEnabled: sales && raw.BUZZARD_LIVE_PAYMENTS,
+    productSotActive: false,
+    productSotEnvFlag: raw.BUZZARD_PRODUCT_SOT_ACTIVE,
+    mockPaymentOnly: !sales || !raw.BUZZARD_PAYMENT_ENABLED || !raw.BUZZARD_LIVE_PAYMENTS,
     raw,
     violations: detectFlagViolations(raw),
   };
@@ -54,6 +59,15 @@ function detectFlagViolations(raw) {
   if (!sales && raw.BUZZARD_PAYPAL_ENABLED) {
     violations.push({ flag: "BUZZARD_PAYPAL_ENABLED", reason: "PayPal cannot be enabled while SALES=0" });
   }
+  if (!sales && raw.BUZZARD_LIVE_PAYMENTS) {
+    violations.push({ flag: "BUZZARD_LIVE_PAYMENTS", reason: "Live payments cannot be enabled while SALES=0" });
+  }
+  if (raw.BUZZARD_PRODUCT_SOT_ACTIVE) {
+    violations.push({
+      flag: "BUZZARD_PRODUCT_SOT_ACTIVE",
+      reason: "Product SoT env flag is set; software keeps SoT inactive until independent human approval",
+    });
+  }
   return violations;
 }
 
@@ -66,6 +80,8 @@ function assertFeatureAllowed(feature) {
     supplier_order: flags.supplierOrdersEnabled,
     stripe: flags.stripeEnabled,
     paypal: flags.paypalEnabled,
+    live_payments: flags.livePaymentsEnabled,
+    product_sot: flags.productSotActive,
   };
   if (!map[feature]) {
     return {

@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `fe1cd253ce243bcae51d19a236aeb4aadd9bb160` (docs commit follows)  
+Inspected HEAD at quality pass: `1a40186f5336a2085146e39dc24018515ac71abe` (docs commit follows)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (git history, docs, and project files re-searched this pass)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **66.7%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN.
+Mean established-scope completion: **68.1%**. This is not 237/237 done. Original titles and acceptance criteria remain UNKNOWN.
 
 ## Safety locks this workspace
 
@@ -57,7 +57,16 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 7. Browser CORS allow-headers do not include `X-Forwarded-For` (Playwright identity isolation uses APIRequestContext / route injection, not extraHTTPHeaders).
 8. Canonical marketplace channel list shared by software classification, hub CHANNELS, and DB seed. OTTO/eMAG/Skroutz/bol.com/Cdiscount are classification-only; publish remains `PUBLISH_BLOCKED`.
 9. Marketplace hub enablement, sync queues, and order webhooks return 409 `marketplace_mutations_disabled` while sales are off. Live publish still requires human approval (item 129).
-10. Isolated Playwright on HEAD `fe1cd25`: **107 passed, 12 skipped, 0 failed**. Rate limits, CSRF, and auth remain enabled. 12 skips are viewport/project filters, not failures.
+10. Isolated Playwright on HEAD `1a40186`: **107 passed, 12 skipped, 0 failed**. Rate limits, CSRF, and auth remain enabled. 12 skips are viewport/project filters, not failures.
+11. Cart `addItem` replays `Idempotency-Key` without a second mutation.
+12. Carrier `purchaseLabel` / `createShipment` always blocked, including when env keys are present.
+13. WMS location reserves and commerce software reserves declare separate authorities.
+14. Approval `consumeForExecution` consumes the token once, refuses replay, and does not perform the live action.
+
+
+## Resume pointer
+
+Next session: continue from item 1 (original criteria still UNKNOWN). Next safely executable software gaps after this pass include specialist-agent honesty (38), local search index (69), accessibility beyond skip-link (143), metrics/alerting backends (184–185), and remaining production HUMAN items (213–226). Do not restart the register.
 
 ---
 
@@ -776,20 +785,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Idempotency-key plumbing |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sensitive commerce operations accept Idempotency-Key |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | server.js CORS allow-headers, payment paths |
-| Identified gaps | Header allowed; not every mutation proven idempotent |
+| Existing implementation evidence | commerce/idempotency.js; cartService.addItem replays Idempotency-Key; checkout_complete withIdempotency
+| Identified gaps | Header allowed. Cart add and checkout replay covered in unit tests. Not every mutation proven. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | server.js CORS allow-headers, payment paths |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | part8Foundation cart addItem replay + withIdempotency; included in 83/947
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Header allowed; not every mutation proven idempotent |
+| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Not every plugin mutation is wrapped; production replay UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2160,20 +2169,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Shipping cost calculation local |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: shippingProvider stubs |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | shippingProvider.js |
-| Identified gaps | No live rates |
+| Existing implementation evidence | shippingProvider.calculateShipping dryRun/liveRate false; carriers.purchaseLabel LABEL_PURCHASE_BLOCKED
+| Identified gaps | Local quote table only. No live carrier rates. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | shippingProvider.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | carrierLabelPurchase.test.mjs pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | No live rates |
+| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Live rate APIs remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2290,20 +2299,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | WMS reserve vs software reserve |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Two tables; shared audit only |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | REMAINING_SOFTWARE_WORK |
-| Identified gaps | Do not share reservation authority |
+| Existing implementation evidence | wmsInventory.reserveInventory authority wms_location; software.inventory.reserve authority commerce_software
+| Identified gaps | Two tables remain by design. Shared audit only. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | REMAINING_SOFTWARE_WORK |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | reservationAuthority.test.mjs pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Do not share reservation authority |
+| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Do not unify reservation authority; live WMS UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -3649,19 +3658,19 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Desktop mega menu |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | nav components |
-| Identified gaps | E2E timeout 90s on static export |
+| Identified gaps | Isolated Playwright mega-menu test passed on 1a40186. Original UI checklist UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | nav components |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | storefront-bridge mega menu pass in 107/12/0 isolated run
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | E2E timeout 90s on static export |
+| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Original mega-menu acceptance UNKNOWN; production UI not probed
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -3882,20 +3891,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | UI regression Playwright |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Isolated :3010 static + :3001 API |
 | Current implementation status | PARTIAL
-| Existing implementation evidence | Isolated Playwright PLAYWRIGHT_SKIP_WEBSERVER=1 BASE 3010 API 3001 on HEAD fe1cd25
-| Identified gaps | 12 skipped (viewport/project filters). Original UI checklist UNKNOWN. Production E2E not run.
+| Existing implementation evidence | Isolated Playwright on HEAD 1a40186: 107 passed, 12 skipped, 0 failed
+| Identified gaps | 12 skipped viewport/project filters. Original UI checklist UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | e2e/ |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | 107 passed, 12 skipped, 0 failed, 48.1s, exit 0. Previously reported 6 failures classified and repaired as TEST_DEFECT / ENVIRONMENT_MISMATCH / RATE_LIMIT_INTERFERENCE — not by disabling controls.
+| Exact tests executed and results | 107 passed, 12 skipped, 0 failed, 47.9s, exit 0
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
 | Completion percentage | 82% (established-criteria weighting; original unknown criteria cannot be 100%)
-| Remaining work | Skipped tests are filters not failures. Canonical original UI criteria still UNKNOWN. Production verification UNKNOWN.
+| Remaining work | Skipped tests are filters. Production E2E UNKNOWN.
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14
 
@@ -4170,20 +4179,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Carrier adapter DHL |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Stub |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | carriers.js |
-| Identified gaps | ADAPTER stub; no label purchase |
+| Existing implementation evidence | software/carriers.js classify + purchaseLabel BLOCKED; shippingProvider dry-run
+| Identified gaps | Safe adapter class exists. No live label, tracking API, or GPS. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | carriers.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | carrierLabelPurchase.test.mjs pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 30% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | ADAPTER stub; no label purchase |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4196,20 +4205,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Carrier adapter DPD |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Stub |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | carriers.js |
-| Identified gaps | Stub |
+| Existing implementation evidence | software/carriers.js classify + purchaseLabel BLOCKED; shippingProvider dry-run
+| Identified gaps | Safe adapter class exists. No live label, tracking API, or GPS. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | carriers.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | carrierLabelPurchase.test.mjs pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 30% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Stub |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4222,20 +4231,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Carrier adapter GLS |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Stub |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | carriers.js |
-| Identified gaps | Stub |
+| Existing implementation evidence | software/carriers.js classify + purchaseLabel BLOCKED; shippingProvider dry-run
+| Identified gaps | Safe adapter class exists. No live label, tracking API, or GPS. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | carriers.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | carrierLabelPurchase.test.mjs pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 30% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Stub |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4248,20 +4257,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Carrier adapter Hermes |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Stub |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | carriers.js |
-| Identified gaps | Stub |
+| Existing implementation evidence | software/carriers.js classify + purchaseLabel BLOCKED; shippingProvider dry-run
+| Identified gaps | Safe adapter class exists. No live label, tracking API, or GPS. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | carriers.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | carrierLabelPurchase.test.mjs pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 30% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Stub |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4274,20 +4283,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Carrier adapter UPS |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Stub |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | carriers.js |
-| Identified gaps | Stub |
+| Existing implementation evidence | software/carriers.js classify + purchaseLabel BLOCKED; shippingProvider dry-run
+| Identified gaps | Safe adapter class exists. No live label, tracking API, or GPS. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | carriers.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | carrierLabelPurchase.test.mjs pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 30% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Stub |
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4300,20 +4309,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | No real label purchase |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Policy |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | safety |
-| Identified gaps | Honored this session |
+| Existing implementation evidence | carriers.purchaseLabel always LABEL_PURCHASE_BLOCKED including when DHL_API_KEY is set
+| Identified gaps | Policy honored in software. Live label buy remains unauthorized.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | safety |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | carrierLabelPurchase.test.mjs
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Honored this session |
+| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Do not purchase labels without human authorization
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4614,20 +4623,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Replay protection |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Second decide duplicate |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | approval.js |
-| Identified gaps | Unit duplicate |
+| Existing implementation evidence | decide() duplicate; consumeForExecution already_executed
+| Identified gaps | Replay of execute token covered in unit tests. Live execute still not performed.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | approval.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | pusatApprovalExceptions consume-once pass
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Unit duplicate |
+| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Production replay UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4666,20 +4675,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Controlled execution |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: assertBound before execute |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | approval.assertBound |
-| Identified gaps | Software gate; no live execute |
+| Existing implementation evidence | consumeForExecution sets consumed token, executed:false, liveAction:false; lifecycle uses it before RUNNING
+| Identified gaps | Software gate complete; real-world action still pending human for high-impact catalog
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | approval.assertBound |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | pusatApprovalExceptions + pusatOrchestrator
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Software gate; no live execute |
+| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Do not execute live high-impact actions
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4744,20 +4753,20 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Established scope | Revalidate before execute |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: assertBound hash check |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | approval.js |
-| Identified gaps | Unit |
+| Existing implementation evidence | consumeForExecution re-runs assertBound then atomic consume
+| Identified gaps | Revalidation implemented for software execute window. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | approval.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | pusatApprovalExceptions consume-once
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Unit |
+| Completion percentage | 88% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Authorization revalidation before any future live adapter remains required
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5172,12 +5181,12 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | npx vitest run 83 files 947 passed exit 0 on 1a40186
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Focused suite this session; full suite recorded in TEST_EVIDENCE |
+| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5243,19 +5252,19 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Playwright |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | e2e/ |
-| Identified gaps | Last isolated: 100/6/13; rate limit + cookie + PIM copy |
+| Identified gaps | Isolated 107/12/0. Historic 6 failures repaired. 12 skips are filters.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | e2e/ |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | Playwright isolated 107 passed 12 skipped 0 failed 47.9s exit 0
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Last isolated: 100/6/13; rate limit + cookie + PIM copy |
+| Completion percentage | 82% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Skipped filters; production E2E UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5328,12 +5337,12 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | NODE_ENV=production npx next build exit 0, 2044 pages, :3000 stayed 200
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior isolated production export 2044 pages; not rebuilt this pass unless recorded |
+| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Production deploy not performed
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5354,12 +5363,12 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | npx next lint exit 0
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Run when recorded in TEST_EVIDENCE |
+| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | eslint-config-next braces/micromatch audit remains
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5380,12 +5389,12 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | npx tsc --noEmit exit 0
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Run when recorded |
+| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Original typecheck criteria UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5562,12 +5571,12 @@ Mean established-scope completion: **66.7%**. This is not 237/237 done. Original
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | backupRestoreIntegrity unit historically; npm run test:backup-restore dry-run exit 0
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Dry-run only |
+| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Remaining work | Production restore HUMAN; dry-run only
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

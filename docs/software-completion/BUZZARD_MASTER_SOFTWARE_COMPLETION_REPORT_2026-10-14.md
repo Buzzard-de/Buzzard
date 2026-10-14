@@ -23,7 +23,7 @@ Canonical 237-item register (established scope; **original titles UNKNOWN**):
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 |
 | NOT_IMPLEMENTED | 0 |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 |
-| Mean established-scope % | 66.7% |
+| Mean established-scope % | 68.1% |
 
 Companions: `BUZZARD_237_HUMAN_APPROVAL_BLOCKERS.md`, `BUZZARD_237_TEST_EVIDENCE.md`, `BUZZARD_237_FINAL_HANDOVER.md`.
 
@@ -32,6 +32,26 @@ Status vocabulary used below: `NOT_IMPLEMENTED` | `STUB` | `PARTIAL` | `CODE_REA
 Nothing in this report is `LIVE_VERIFIED`. No item is VERIFIED_100 solely because code exists.
 
 ---
+
+## Continuation — 2026-10-14 later (no push) — HEAD `1a40186`
+
+Sequential software (sales/SoT/live payments still off): cart Idempotency-Key replay; carrier label purchase blocked; WMS vs commerce reservation authorities isolated; approval consume-once without live execute.
+
+Quality on `1a40186`:
+
+| Command | Exit | Result |
+| --- | --- | --- |
+| `npx vitest run` | 0 | 83 files, 947 passed |
+| `npx tsc --noEmit` | 0 | clean |
+| `npx next lint` | 0 | clean |
+| `npm run test:backup-restore` | 0 | dry-run only |
+| `NODE_ENV=production npx next build` | 0 | 2044 pages; `:3000` stayed 200 |
+| Isolated Playwright `:3010` + `:3001` | 0 | 107 passed, 12 skipped, 0 failed, 47.9s |
+
+Unresolved Playwright failures: **none**. Canonical 237 source still **not found**. VERIFIED_100 remains **0**.
+
+---
+
 
 ## Continuation — 2026-10-14 evening (no push) — HEAD `fe1cd25`
 

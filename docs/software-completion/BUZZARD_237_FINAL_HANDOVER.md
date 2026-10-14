@@ -8,9 +8,9 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Quality code HEAD | `fe1cd253ce243bcae51d19a236aeb4aadd9bb160` |
+| Quality code HEAD | `1a40186f5336a2085146e39dc24018515ac71abe` |
 | Push / merge / deploy | **not performed** |
-| Working tree at handover | evidence docs + `notificationHub.test.mjs` (committed with this handover) |
+| Working tree at handover | evidence docs for this continuation (committed with this handover) |
 
 ## Totals
 
@@ -29,7 +29,7 @@ Established-scope register: **exactly 237 items**, numbers 1–237 in order.
 | NOT_IMPLEMENTED | 0 | 0.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **66.7%**.
+Mean established-scope completion: **68.1%**.
 
 Items blocked by missing original acceptance criteria: **all 237** cannot be VERIFIED_100. Confirmed original requirements: **none recovered**. Requirements supported by current source/tests: see register “established scope”. Reconstructed category-level scope: directive bands only.
 
@@ -37,8 +37,8 @@ Separate dimensions:
 
 | Dimension | This session |
 | --- | --- |
-| Implementation (local software, established scope) | ~66.7% mean; no VERIFIED_100 |
-| Automated tests | Full vitest **942/942**; tsc 0; next lint 0; isolated Playwright **107 passed / 12 skipped / 0 failed** |
+| Implementation (local software, established scope) | ~68.1% mean; no VERIFIED_100 |
+| Automated tests | Full vitest **947/947**; tsc 0; next lint 0; backup dry-run 0; isolated Playwright **107 passed / 12 skipped / 0 failed** |
 | Integration | ADAPTER_IMPLEMENTED / MOCK_OR_SIMULATED; not LIVE |
 | Sandbox | UNKNOWN |
 | Production | UNKNOWN (no probe/deploy) |

@@ -47,7 +47,7 @@ Items 123–127: OTTO, eMAG, Skroutz, bol.com, Cdiscount — **classification-on
 
 - Live Stripe/PayPal charges or refunds
 - Supplier purchase orders
-- Carrier label purchase
+- Carrier label purchase (`purchaseLabel` returns `LABEL_PURCHASE_BLOCKED` even if env keys exist)
 - Production secret rotation
 - `git reset --hard` / `git clean -fd`
 - Disabling rate limits, CSRF, CORS, auth, or finance 409 gates

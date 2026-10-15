@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `76eecce` (SQLite unique by constraint code; contact errorKey)  
+Inspected HEAD at quality pass: `f69cb46` (system failure by err.code; bridge/API keys)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **72.05%** (was 71.97%; 237-item arithmetic mean). This pass **+0.08 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~19 puan gerçek iş).
+Mean established-scope completion: **72.14%** (was 72.05%; 237-item arithmetic mean). This pass **+0.09 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~21 puan gerçek iş).
 
 ## Safety locks this workspace
 
@@ -109,11 +109,12 @@ Mean established-scope completion: **72.05%** (was 71.97%; 237-item arithmetic m
 59. Diagnostic health/go-live/Pusat payloads omit filesystem paths; restore targets are class keys; startup and API error logs use publicTaskError.
 60. Browser/admin clients throw `errorKey` only; desktop-bridge HTTP/watch omit exception text; intelligence snapshot collectHealth uses `health.probeFailed`.
 61. SQLite unique/PK conflicts classified by `err.code` (`SQLITE_CONSTRAINT_UNIQUE` / `PRIMARYKEY`); generic `SQLITE_CONSTRAINT`/`19` still reads constraint-failed text only. Contact plugin returns `errorKey` and logs `{received,id}` without email.
+62. `classifySystemFailure` maps AbortError/ETIMEDOUT/ECONN*/SQLITE_* by code; jobWorker no longer scans `err.message`. Pusat exceptions prefer those codes. Payload 413 by `PAYLOAD_TOO_LARGE` only. Static 403 and desktop-bridge 401/404/stderr are keys. Automation timeout/cost counts use exception keys.
 
 
 ## Resume pointer
 
-Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message; contact API still includes German UX `message`; jobWorker `classifyError` still substring-scans `err.message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: exceptions `inferCode` still scans free-text when no structured code; generic SQLITE_CONSTRAINT still reads constraint-failed text; contact API still includes German UX `message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -896,7 +897,7 @@ Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (desktop-bridge HTTP/watch errors are keys; not a second orchestrator) |
+| Completion percentage | 88% (bridge 401/404/stderr are keys; not a second orchestrator) |
 | Remaining work | CODE_IMPLEMENTATION_STATUS |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1236,7 +1237,7 @@ Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (worker dead-letter/retry stores publicTaskError keys; original UNKNOWN) |
+| Completion percentage | 92% (worker classifyError uses codes/failureKind only; original UNKNOWN) |
 | Remaining work | Live workers not claimed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1288,7 +1289,7 @@ Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (dead-letter lastError is a key; listExceptions sanitizes legacy text; original UNKNOWN) |
+| Completion percentage | 90% (sqlite/network codes map to PUSAT_* before message infer; original UNKNOWN) |
 | Remaining work | Live exception operations UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4526,8 +4527,8 @@ Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Unit |
+| Completion percentage | 84% (structured sqlite/network codes before inferCode; original UNKNOWN) |
+| Remaining work | inferCode still scans message when no code; production volume UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4892,7 +4893,7 @@ Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (API/startup/scheduler/worker console uses publicTaskError; not a full log pipeline) |
+| Completion percentage | 85% (bridge stderr and payload-too-large logs are codes; not a full log pipeline) |
 | Remaining work | Events; not a full log pipeline |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5232,7 +5233,7 @@ Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 95% (continuousIntegrity247 added; original unit checklist UNKNOWN) |
+| Completion percentage | 96% (continuousIntegrity248 added; original unit checklist UNKNOWN) |
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5258,7 +5259,7 @@ Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (1042 vitest this pass; historical subset remains) |
+| Completion percentage | 81% (1048 vitest this pass; historical subset remains) |
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

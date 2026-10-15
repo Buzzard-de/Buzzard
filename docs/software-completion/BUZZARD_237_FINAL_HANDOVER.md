@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `000954b` |
-| Ending HEAD (code) | `76eecce` |
+| Starting HEAD | `8fb4cf7` |
+| Ending HEAD (code) | `f69cb46` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,19 +24,22 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **72.05%** (was 71.97%). This pass **+0.08 pp**. Target +1.0 **NOT MET** (237 puan gerekir; ~19 puan gerçek iş).
+Mean established-scope completion: **72.14%** (was 72.05%). This pass **+0.09 pp**. Target +1.0 **NOT MET** (237 puan gerekir; ~21 puan gerçek iş).
 
 ## What was implemented this pass
 
-- `isUniqueConstraint` prefers `SQLITE_CONSTRAINT_UNIQUE` / `PRIMARYKEY`; generic `SQLITE_CONSTRAINT`/`19` only then reads constraint-failed text.
-- tracking, deliveryProof, Pusat submit, paymentLifecycle no longer `/UNIQUE/i` on free text.
-- Contact plugin returns `errorKey`; logs `{ received: true, id }` without email.
-- Vitest 1042 passed. tsc clean.
+- `classifySystemFailure` maps AbortError/timeout/network/SQLite **codes**, not free-text.
+- jobWorker `classifyError` no longer substring-scans `err.message`.
+- Pusat exceptions prefer structured/system codes before `inferCode`.
+- API 413 uses `PAYLOAD_TOO_LARGE` only; static 403 is `security.forbidden`.
+- Desktop-bridge 401/404/stderr emit keys.
+- Automation dashboard timeout/cost counts use exception keys.
+- Vitest 1048 passed. tsc clean.
 
 ## Highest-priority remaining work
 
 1. Recover original 237 titles/criteria or obtain an explicit waiver.
-2. Generic SQLITE_CONSTRAINT still reads constraint-failed message internally.
-3. jobWorker `classifyError` still substring-scans `err.message`.
+2. `inferCode` still scans free-text when no structured code (kept for existing 401/429 tests).
+3. Generic SQLITE_CONSTRAINT still reads constraint-failed message internally.
 4. Marketplace/carrier adapters, item 185 EXTERNAL, 109 live webhook, 187 HUMAN.
 5. Human approvals and external credentials (never invent LIVE_VERIFIED).

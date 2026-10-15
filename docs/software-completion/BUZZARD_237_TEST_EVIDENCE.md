@@ -2,8 +2,8 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `000954b`  
-Code HEAD this pass: `76eecce`
+Starting HEAD this pass: `8fb4cf7`  
+Code HEAD this pass: `f69cb46`
 
 Safety at evidence time:
 
@@ -22,8 +22,8 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (`continuousIntegrity247`) | 0 | included in full run |
-| `npx vitest run` | 0 | 104 files, **1042 passed**, 0 failed |
+| Focused vitest (`continuousIntegrity248` + related) | 0 | **115 passed** |
+| `npx vitest run` | 0 | 105 files, **1048 passed**, 0 failed |
 | `npx tsc --noEmit` | 0 | clean |
 | `NODE_ENV=production npx next build` | skipped | `:3000` next-server owns `.next` |
 | Isolated Playwright this pass | skipped | last recorded 107 passed / 12 skipped on `6f6c672` |
@@ -32,7 +32,7 @@ Working directory: `/workspace`
 
 | File | Established coverage |
 | --- | --- |
-| `server/__tests__/continuousIntegrity247.test.mjs` | `isUniqueConstraint` by sqlite code; free-text UNIQUE rejected; tracking/delivery/submit/paymentLifecycle wired; contact no email log + errorKey |
+| `server/__tests__/continuousIntegrity248.test.mjs` | classifySystemFailure/jobWorker by code; exceptions sqlite/network; payload 413 code-only; bridge keys; automation counts |
 
 ## Original 237 source search
 

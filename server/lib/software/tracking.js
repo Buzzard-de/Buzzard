@@ -91,7 +91,7 @@ function createShipment(db, input = {}) {
       LOCATION_TYPE.NOT_AVAILABLE
     );
   } catch (error) {
-    if (String(error.message || "").includes("UNIQUE")) {
+    if (require("../security").isUniqueConstraint(error)) {
       const existing = db.prepare("SELECT * FROM software_shipments WHERE tracking_number = ?").get(trackingNumber);
       return { ok: true, duplicate: true, shipment: mapShipment(existing, db), shipmentCreated: false };
     }

@@ -42,7 +42,7 @@ function record(db, input = {}) {
       verified: kind === EVIDENCE_KIND.SIGNATURE && input.verified === true,
     };
   } catch (error) {
-    if (String(error.message || "").includes("UNIQUE")) {
+    if (require("../security").isUniqueConstraint(error)) {
       return { ok: true, duplicate: true, kind };
     }
     return { ok: false, reason: "EVIDENCE_WRITE_FAILED" };

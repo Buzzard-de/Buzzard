@@ -154,7 +154,7 @@ function submitTask({
       agentCode: classified,
     });
   } catch (error) {
-    if (idempotencyKey && /UNIQUE|unique/i.test(String(error.message || ""))) {
+    if (idempotencyKey && require("../security").isUniqueConstraint(error)) {
       try {
         controlCenter.updateTaskStatus(task.id, TASK_STATUS.CANCELLED, {
           error: "idempotency_race",

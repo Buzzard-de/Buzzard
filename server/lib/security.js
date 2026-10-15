@@ -73,6 +73,19 @@ function sanitizeErrorKey(value, fallbackKey = "security.internalError") {
   return SAFE_ERROR_KEY.test(fallback) ? fallback : "security.internalError";
 }
 
+const SQLITE_UNIQUE_CODES = new Set(["SQLITE_CONSTRAINT_UNIQUE", "SQLITE_CONSTRAINT_PRIMARYKEY"]);
+
+function isUniqueConstraint(err) {
+  if (!err) return false;
+  const code = String(err.code || "");
+  if (SQLITE_UNIQUE_CODES.has(code)) return true;
+  if (code === "SQLITE_CONSTRAINT" || code === "19") {
+    const text = String(err.message || "");
+    return /UNIQUE constraint failed/i.test(text) || /PRIMARY KEY constraint failed/i.test(text);
+  }
+  return false;
+}
+
 function publicTaskError(err, fallbackKey = "ai.task.failed") {
   const code = err?.code || err?.pusatCode || err?.errorKey;
   if (typeof code === "string") return sanitizeErrorKey(code, fallbackKey);
@@ -172,6 +185,7 @@ module.exports = {
   toPublicError,
   sanitizeErrorKey,
   publicTaskError,
+  isUniqueConstraint,
   isSafeId,
   normalizeText,
   sanitizeFilename,

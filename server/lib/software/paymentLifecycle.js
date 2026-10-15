@@ -124,7 +124,7 @@ function attachProviderRef(db, paymentId, providerPaymentId) {
 }
 
 function isUniqueConstraint(err) {
-  return err && (err.code === "SQLITE_CONSTRAINT_UNIQUE" || /UNIQUE/i.test(String(err.message || "")));
+  return require("../security").isUniqueConstraint(err);
 }
 
 function recordEventExclusive(db, input = {}) {

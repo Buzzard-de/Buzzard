@@ -20,7 +20,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!base) throw new Error("customerCheckout.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
   const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "customerCheckout.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "customerCheckout.requestFailed");
   return data;
 }
 

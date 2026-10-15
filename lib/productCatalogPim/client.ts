@@ -15,7 +15,7 @@ async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   if (!base) throw new Error("productCatalogPim.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminCredentials(init));
   const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "productCatalogPim.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "productCatalogPim.requestFailed");
   return data;
 }
 

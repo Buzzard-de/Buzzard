@@ -92,9 +92,12 @@ function createServer(engine, options = {}) {
       }
       json(res, 404, { error: "Not found" });
     } catch (error) {
+      const code = typeof error.code === "string" && /^[A-Za-z0-9._:-]{1,80}$/.test(error.code)
+        ? error.code
+        : "BRIDGE_ERROR";
       json(res, error.code === "BRIDGE_UNAUTHORIZED" ? 401 : 400, {
-        error: error.message,
-        code: error.code || "BRIDGE_ERROR",
+        errorKey: code,
+        code,
       });
     }
   });

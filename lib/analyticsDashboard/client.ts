@@ -20,7 +20,7 @@ async function adminRequest<T>(path: string): Promise<T> {
   if (!base) throw new Error("analyticsDashboard.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminCredentials());
   const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "analyticsDashboard.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "analyticsDashboard.requestFailed");
   return data;
 }
 

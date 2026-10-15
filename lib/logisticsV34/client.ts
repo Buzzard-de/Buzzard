@@ -11,7 +11,7 @@ async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   if (!base) throw new Error("logisticsV34.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminCredentials(init));
   const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "logisticsV34.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "logisticsV34.requestFailed");
   return data;
 }
 

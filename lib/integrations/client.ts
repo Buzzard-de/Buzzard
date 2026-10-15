@@ -12,7 +12,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!base) throw new Error("integrations.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
   const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "integrations.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "integrations.requestFailed");
   return data;
 }
 

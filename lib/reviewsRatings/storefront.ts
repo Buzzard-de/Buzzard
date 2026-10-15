@@ -65,8 +65,8 @@ export async function submitProductReview(input: {
       }),
     });
     if (!res.ok) {
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
-      return { ok: false, error: data.error || "reviews.submitFailed" };
+      const data = (await res.json().catch(() => ({}))) as { errorKey?: string };
+      return { ok: false, error: data.errorKey || "reviews.submitFailed" };
     }
     return { ok: true };
   } catch {

@@ -16,7 +16,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!base) throw new Error("localizationFeeds.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
   const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "localizationFeeds.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "localizationFeeds.requestFailed");
   return data;
 }
 
@@ -74,7 +74,7 @@ export async function fetchLocalizedProductBySlug(
   url.searchParams.set("locale", locale);
   const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
   const data = (await res.json()) as LocalizedCatalogProduct & { error?: string };
-  if (!res.ok) throw new Error(data.error || "localizationFeeds.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "localizationFeeds.requestFailed");
   return data;
 }
 

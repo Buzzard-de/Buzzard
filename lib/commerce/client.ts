@@ -71,7 +71,7 @@ async function request<T>(
 
   if (!res.ok) {
     throw new CommerceClientError(
-      data.message || data.errorKey || "commerce.requestFailed",
+      data.errorKey || "commerce.requestFailed",
       data.errorKey || "commerce.requestFailed",
       res.status
     );

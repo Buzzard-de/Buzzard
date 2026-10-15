@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `c7e183d` (health probe keys, payment session codes, secret-string redact; base `229f6c9`)  
+Inspected HEAD at quality pass: working tree on `5f9263d` (productionHealth errorKey; command 1/10)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **70.03%** (was 69.73%; 237-item arithmetic mean). Session delta **+0.30 pp**. Target +1.0 not met. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **70.06%** (was 70.03%; 237-item arithmetic mean). Command 1/10 delta **+0.03 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -101,11 +101,12 @@ Mean established-scope completion: **70.03%** (was 69.73%; 237-item arithmetic m
 51. Stripe/PayPal session failures throw stable codes; payment session API uses `sendPublicError`.
 52. `redactForLog` redacts secret-shaped strings in nested values without mutating the original object.
 53. Job queue public `error` is classified (`TIMEOUT` or `job.failed`); VAT fail-closed messages do not echo request input.
+54. `productionHealth` probe failures return `errorKey` only; Redis health uses `redis.failed`; public production payload strips `backupDir`.
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL after health-probe / payment-session / secret-string / job-error work. Start from leftover `productionHealth` internal error strings, item 185 alerting BLOCKED_EXTERNAL, item 109 live webhook verify (unauthorized), item 187 production restore HUMAN. Original criteria still UNKNOWN. Playwright not re-run. Do not restart the register. Do not push/PR.
+Next session (command 2/10): leftover lifecycle/orchestrator `err.message` on internal task status; item 185 alerting EXTERNAL; item 109 live webhook; item 187 restore HUMAN. `next build` skipped while `:3000` next-server owns `.next`. Original criteria UNKNOWN. Do not restart the register. Do not push/PR.
 
 ---
 
@@ -914,8 +915,8 @@ Next session: remaining PARTIAL after health-probe / payment-session / secret-st
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (public /api/health slim; collectHealth probe keys; original UNKNOWN) |
-| Remaining work | Rate-limited health bucket; production probe UNKNOWN |
+| Completion percentage | 88% (probe failures use errorKey; redis.failed; no err.message; original UNKNOWN) |
+| Remaining work | Rate-limited health bucket; live production probe UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

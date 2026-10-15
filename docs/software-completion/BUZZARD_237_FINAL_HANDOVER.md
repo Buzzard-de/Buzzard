@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `229f6c94d48efe07fe95b650fd8ce520f667c1a4` |
-| Ending HEAD (code) | `c7e183d8d48bcc5da209d7cf8580564380018fe7` |
+| Starting HEAD | `5f9263d0727daad7b6250f591587d8cf85b3d2df` |
+| Ending HEAD (code) | command 1/10 working tree |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,15 +24,13 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **70.03%** (was 69.73%). Session delta **+0.30 pp**. Target +1.0 **NOT MET**.
+Mean established-scope completion: **70.06%** (was 70.03%). Command 1/10 delta **+0.03 pp**.
 
 ## What was implemented this pass
 
-- collectHealth probe failures use `health.probeFailed`.
-- Stripe/PayPal session failures use stable codes; payment session API no longer returns provider `error.message`.
-- `redactForLog` redacts secret-shaped strings without mutating the original.
-- Job API sanitizes free-text errors; VAT messages do not echo request input.
-- Vitest 1003 passed. Playwright not re-run this pass.
+- `productionHealth` probe failures return `errorKey` only; Redis uses `redis.failed`.
+- Public `/api/health/production` strips `backupDir`.
+- Vitest 1008 passed. Playwright API 9 passed (`:3001`, skip webserver). `next build` skipped (`:3000` next-server).
 
 ## Highest-priority remaining work
 

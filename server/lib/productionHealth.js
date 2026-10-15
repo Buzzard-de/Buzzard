@@ -10,6 +10,26 @@ const { getStoreInfo } = require("./rateLimitStore");
 const { isSalesEnabled } = require("./salesMode");
 const goLiveApproval = require("./commerce/goLiveApproval");
 
+const SAFE_PROBE_ERROR = /^[A-Za-z0-9._:-]{1,64}$/;
+
+function logProbeFailure(probe, err) {
+  console.error("[productionHealth]", probe, {
+    name: err?.name || "Error",
+    code: typeof err?.code === "string" ? err.code : undefined,
+  });
+}
+
+function probeFailure(probe, err, extra = {}) {
+  logProbeFailure(probe, err);
+  return { ...extra, errorKey: `health.${probe}Failed` };
+}
+
+function publicProbeError(value) {
+  if (value == null) return null;
+  const text = String(value).trim();
+  return SAFE_PROBE_ERROR.test(text) ? text : "health.probeFailed";
+}
+
 async function getRedisHealth() {
   const redisClient = require("./redisClient");
   const configured = redisClient.isConfigured();
@@ -33,10 +53,10 @@ async function getRedisHealth() {
       ok: health.ok,
       status: health.ok ? "OK" : "FAILED",
       latencyMs: health.latencyMs,
-      error: health.error,
+      error: publicProbeError(health.error),
     };
   } catch (err) {
-    return { ...base, ok: false, status: "FAILED", error: err.message };
+    return probeFailure("redis", err, { ...base, ok: false, status: "FAILED" });
   }
 }
 
@@ -64,7 +84,7 @@ function getWorkerHealth() {
       supplierOrdersBlocked: !isSalesEnabled(),
     };
   } catch (err) {
-    return { enabled: false, status: "ERROR", error: err.message };
+    return probeFailure("worker", err, { enabled: false, status: "ERROR" });
   }
 }
 
@@ -83,7 +103,7 @@ function getSchedulerHealth() {
         .map((s) => ({ id: s.id, name: s.name, nextRunAt: s.nextRunAt })),
     };
   } catch (err) {
-    return { enabled: false, error: err.message };
+    return probeFailure("scheduler", err, { enabled: false });
   }
 }
 
@@ -114,7 +134,7 @@ async function getAiHealthSummary() {
       provider: process.env.AI_PROVIDER || "rules",
     };
   } catch (err) {
-    return { error: err.message };
+    return probeFailure("ai", err);
   }
 }
 
@@ -130,7 +150,7 @@ function getCatalogHealthSummary() {
       taxonomy: { ok: taxonomy.ok, count: taxonomy.count },
     };
   } catch (err) {
-    return { status: "ERROR", error: err.message };
+    return probeFailure("catalog", err, { status: "ERROR" });
   }
 }
 
@@ -151,7 +171,7 @@ function getSupplierIntegrationHealth() {
       note: "No real supplier connected — Part 15/16 scaffold only",
     };
   } catch (err) {
-    return { connected: false, error: err.message };
+    return probeFailure("supplier", err, { connected: false });
   }
 }
 
@@ -160,7 +180,7 @@ function getBackupHealthSummary() {
     const backupAutomation = require("./backupAutomation");
     return backupAutomation.getBackupReadiness();
   } catch (err) {
-    return { error: err.message };
+    return probeFailure("backup", err);
   }
 }
 
@@ -179,7 +199,7 @@ function getCommerceHealthSummary() {
       violations: flags.violations?.length || 0,
     };
   } catch (err) {
-    return { error: err.message };
+    return probeFailure("commerce", err);
   }
 }
 
@@ -202,7 +222,7 @@ async function getProductionSummary() {
   try {
     jobSafety = require("./jobSafetyGate").getJobSafetyStatus();
   } catch (err) {
-    jobSafety = { error: err.message };
+    jobSafety = probeFailure("jobSafety", err);
   }
 
   let overall = "OK";
@@ -259,4 +279,6 @@ module.exports = {
   getCommerceHealthSummary,
   getSupplierIntegrationHealth,
   getBackupHealthSummary,
+  probeFailure,
+  publicProbeError,
 };

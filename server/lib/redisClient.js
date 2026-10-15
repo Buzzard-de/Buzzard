@@ -71,7 +71,7 @@ async function healthCheck() {
       ok: false,
       configured: true,
       latencyMs: Date.now() - start,
-      error: err.message,
+      error: "redis.failed",
     };
   }
 }

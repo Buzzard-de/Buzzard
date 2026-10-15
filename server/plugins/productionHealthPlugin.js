@@ -66,7 +66,9 @@ module.exports = {
         delete persistence.renderDisk;
         database.persistence = persistence;
       }
-      res.json({ success: true, ...summary, database });
+      const backup = summary.backup ? { ...summary.backup } : {};
+      delete backup.backupDir;
+      res.json({ success: true, ...summary, database, backup });
     });
 
     app.get("/api/health/go-live-readiness", async (_req, res) => {

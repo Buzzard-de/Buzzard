@@ -88,6 +88,7 @@ const EXACT = {
   "GET /api/admin/sessions": "security.read",
   "DELETE /api/admin/sessions/:sessionId": "security.manage",
   "GET /api/admin/audit": "audit.read",
+  "GET /api/admin/pusat/exceptions": "security.read",
   "GET /api/admin/control-center/deployment": "system.read",
   "GET /api/admin/operations/summary": "system.read",
   "GET /api/admin/operations/audit": "audit.read",

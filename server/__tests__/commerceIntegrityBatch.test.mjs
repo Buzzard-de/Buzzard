@@ -77,8 +77,9 @@ describe("commerce integrity — tax, exceptions, reservation", () => {
       retryable: false,
       lastError: "provider failed api_key=sk-live-secret token=abc",
     });
-    expect(recorded.lastError).toContain("[REDACTED]");
-    expect(recorded.lastError).not.toContain("sk-live-secret");
+    expect(recorded.lastError).toBe("PUSAT_AUTH_FAILED");
+    expect(JSON.stringify(recorded)).not.toContain("sk-live-secret");
+    expect(JSON.stringify(recorded)).not.toContain("api_key=");
   });
 
   it("expires stale reservations and refuses estimated stock", () => {

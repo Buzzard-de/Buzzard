@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `96aa360da9b92d14c28e054c5a45f947ee4c60d1` |
-| Ending HEAD (code) | `5c0c5a93502b4541d099f2bb1c6d35c862cd51d1` |
+| Starting HEAD | `28e45999fcd4d3355539f753d07b051c2fa5453a` |
+| Ending HEAD (code) | command 3/10 working tree |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals

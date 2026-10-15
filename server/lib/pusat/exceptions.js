@@ -13,6 +13,7 @@ const {
   DEFAULT_MAX_RETRIES,
 } = require("./constants");
 const { newId } = require("./hash");
+const { publicTaskError } = require("../security");
 
 const NON_RETRYABLE = new Set([
   EXCEPTION_CODES.PERMISSION_DENIED,
@@ -94,7 +95,7 @@ function recordException({
     maxRetries,
     retryable ? EXCEPTION_STATUS.OPEN : EXCEPTION_STATUS.ESCALATED,
     JSON.stringify(details || {}),
-    redactError(lastError)
+    publicTaskError(lastError, code || EXCEPTION_CODES.UNKNOWN)
   );
 
   if (!retryable) {
@@ -102,7 +103,7 @@ function recordException({
       sourceType: "ai_exception",
       sourceId: id,
       title: `AI exception ${code}`,
-      message: lastError || code,
+      message: publicTaskError(lastError, code || EXCEPTION_CODES.UNKNOWN),
       riskLevel: "HIGH",
       metadata: { taskId, correlationId },
     });
@@ -132,7 +133,7 @@ function getException(id) {
     maxRetries: row.max_retries,
     status: row.status,
     details: row.details_json ? JSON.parse(row.details_json) : {},
-    lastError: row.last_error,
+    lastError: publicTaskError(row.last_error, row.code || EXCEPTION_CODES.UNKNOWN),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     recoveredAt: row.recovered_at,
@@ -190,13 +191,17 @@ function deadLetter(id, reason) {
     `UPDATE core_ai_exceptions
      SET status = ?, last_error = ?, updated_at = CURRENT_TIMESTAMP
      WHERE id = ?`
-  ).run(EXCEPTION_STATUS.DEAD_LETTER, reason || "dead_letter", id);
+  ).run(
+    EXCEPTION_STATUS.DEAD_LETTER,
+    publicTaskError(reason, "dead_letter"),
+    id
+  );
   const row = getException(id);
   controlCenter.createEscalation({
     sourceType: "ai_exception",
     sourceId: id,
     title: "AI task dead-lettered",
-    message: reason || row?.code,
+    message: publicTaskError(reason, row?.code || "dead_letter"),
     riskLevel: "CRITICAL",
   });
   return row;
@@ -210,7 +215,7 @@ function handleFailure(error, context = {}) {
     correlationId: context.correlationId,
     retryable: classified.retryable,
     details: { action: classified.action, sensitive: classified.sensitive },
-    lastError: classified.message,
+    lastError: classified.code,
     maxRetries: context.maxRetries,
   });
   const retry = shouldRetry(recorded);

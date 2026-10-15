@@ -151,7 +151,7 @@ function createProduct(body = {}, context = {}) {
       productSourceOfTruthActive: false,
     };
   } catch {
-    return { error: "SKU already exists", status: 409 };
+    return { error: "product.skuExists", status: 409 };
   }
 }
 
@@ -166,7 +166,7 @@ function getProductBySku(sku) {
     `)
     .get(sku);
 
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   return {
     product,
@@ -185,7 +185,7 @@ function getProductBySku(sku) {
 
 function upsertTranslation(sku, language, body = {}) {
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   db.prepare(`
     INSERT INTO pim30_product_translations(
@@ -220,7 +220,7 @@ function upsertTranslation(sku, language, body = {}) {
 
 function upsertAttribute(sku, body = {}) {
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
   if (!body.code) return { error: "Attribute code required", status: 400 };
 
   db.prepare(`
@@ -234,7 +234,7 @@ function upsertAttribute(sku, body = {}) {
 
 function addMedia(sku, body = {}) {
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   const result = db
     .prepare(`

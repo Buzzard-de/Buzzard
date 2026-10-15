@@ -222,7 +222,7 @@ function createProduct(body = {}, context = {}) {
 
 function updateProduct(id, body = {}, context = {}) {
   const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   const nextActive = body.active === undefined ? product.active : body.active ? 1 : 0;
   const gate = productWriteBoundary.authorizeUpdate(
@@ -289,7 +289,7 @@ function addProductImage(productId, body = {}) {
   const { url, altText = "", sortOrder = 0 } = body;
   if (!url) return { error: "url required", status: 400 };
   const product = db.prepare("SELECT id FROM products WHERE id = ?").get(productId);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
   const result = db
     .prepare("INSERT INTO product_images(product_id, url, alt_text, sort_order) VALUES(?,?,?,?)")
     .run(product.id, url, altText, sortOrder);

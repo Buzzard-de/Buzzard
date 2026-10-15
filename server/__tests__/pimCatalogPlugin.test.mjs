@@ -43,6 +43,6 @@ describe("PIM catalog v1.9 write access", () => {
     };
     await handler({ headers: {}, body: { sku: "anon-sku", status: "draft" } }, response);
     expect(response.statusCode).toBe(403);
-    expect(response.json).toHaveBeenCalledWith({ error: "Admin access required" });
+    expect(response.json).toHaveBeenCalledWith({ success: false, errorKey: "security.adminRequired" });
   });
 });

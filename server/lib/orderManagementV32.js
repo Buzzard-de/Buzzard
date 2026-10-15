@@ -6,7 +6,7 @@ function isEnabled() {
 
 function createRecord(body = {}) {
   if (!body.code || !body.name) {
-    return { error: "code and name required", status: 400 };
+    return { error: "validation.codeNameRequired", status: 400 };
   }
   try {
     const result = db

@@ -68,7 +68,7 @@ function createSupplier(body = {}) {
     leadTimeDays = 3,
     status = "active",
   } = body;
-  if (!code || !name) return { error: "code and name required", status: 400 };
+  if (!code || !name) return { error: "validation.codeNameRequired", status: 400 };
   try {
     const result = db
       .prepare(`
@@ -100,13 +100,13 @@ function createSupplier(body = {}) {
     const supplier = db.prepare("SELECT * FROM suppliers WHERE id = ?").get(result.lastInsertRowid);
     return { supplier: listSuppliers().find((row) => row.id === supplier.id) || supplier };
   } catch {
-    return { error: "Supplier code already exists", status: 409 };
+    return { error: "supplier.codeExists", status: 409 };
   }
 }
 
 function updateSupplier(id, body = {}) {
   const supplier = db.prepare("SELECT * FROM suppliers WHERE id = ?").get(id);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
   db.prepare(`
     UPDATE suppliers
     SET name = ?, country = ?, feed_type = ?, feed_url = ?, api_key = ?, active = ?, dropship = ?,
@@ -157,8 +157,8 @@ function listSupplierProducts(supplierId) {
 
 function upsertSupplierProduct(supplierId, body = {}) {
   const supplier = db.prepare("SELECT id FROM suppliers WHERE id = ?").get(supplierId);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
-  if (!body.supplierSku || !body.name) return { error: "supplierSku and name required", status: 400 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
+  if (!body.supplierSku || !body.name) return { error: "supplier.skuNameRequired", status: 400 };
 
   const productSku = body.productSku || body.buzzardSku || "";
   db.prepare(`
@@ -196,7 +196,7 @@ function upsertSupplierProduct(supplierId, body = {}) {
 
 function syncSupplierFeed(supplierId, body = {}) {
   const supplier = db.prepare("SELECT * FROM suppliers WHERE id = ?").get(supplierId);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
 
   const { format = "json", payload = [] } = body;
   let list = [];
@@ -314,10 +314,10 @@ function seedDemoVehicles() {
 
 function linkCompatibility({ productSku, vehicleId }) {
   if (!productSku || !vehicleId) {
-    return { error: "productSku and vehicleId required", status: 400 };
+    return { error: "supplier.vehicleBindRequired", status: 400 };
   }
   const vehicle = db.prepare("SELECT * FROM vehicles WHERE id = ?").get(vehicleId);
-  if (!vehicle) return { error: "Vehicle not found", status: 404 };
+  if (!vehicle) return { error: "vehicle.notFound", status: 404 };
 
   const status = process.env.TECDOC_API_KEY ? "pending_tecdoc" : "pending_tecdoc";
   db.prepare(`
@@ -417,7 +417,7 @@ function listSupplierSyncJobs() {
 
 function updateSupplierSyncJobResult(jobId, body = {}) {
   const job = db.prepare("SELECT id FROM supplier_sync_jobs WHERE id = ?").get(jobId);
-  if (!job) return { error: "Sync job not found", status: 404 };
+  if (!job) return { error: "supplier.syncJobNotFound", status: 404 };
   db.prepare(`
     UPDATE supplier_sync_jobs
     SET status = ?, attempts = attempts + 1, error_message = ?, finished_at = CURRENT_TIMESTAMP
@@ -459,9 +459,9 @@ function createSupplierOrder(body = {}, req = null) {
   if (block) return salesGuard.blockHttpResult(block);
 
   const supplier = db.prepare("SELECT * FROM suppliers WHERE id = ?").get(body.supplierId);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
-  if (!supplier.dropship) return { error: "Supplier does not support dropshipping", status: 400 };
-  if (!body.orderNumber) return { error: "orderNumber required", status: 400 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
+  if (!supplier.dropship) return { error: "supplier.dropshipUnsupported", status: 400 };
+  if (!body.orderNumber) return { error: "order.numberRequired", status: 400 };
 
   const result = db
     .prepare(`

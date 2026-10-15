@@ -61,8 +61,8 @@ function registerUser(body = {}, req) {
     .toLowerCase()
     .trim();
   const password = String(body.password || "");
-  if (!email || !password) return { error: "Email and password required", status: 400 };
-  if (password.length < 10) return { error: "Password must be at least 10 characters", status: 400 };
+  if (!email || !password) return { error: "auth.credentialsRequired", status: 400 };
+  if (password.length < 10) return { error: "auth.passwordTooShort", status: 400 };
 
   try {
     const result = db
@@ -90,7 +90,7 @@ function registerUser(body = {}, req) {
     audit(result.lastInsertRowid, "register", req);
     return { userId: result.lastInsertRowid, verificationTokenForDevelopment: raw };
   } catch {
-    return { error: "Email already registered", status: 409 };
+    return { error: "auth.emailExists", status: 409 };
   }
 }
 
@@ -101,7 +101,7 @@ function verifyEmail(body = {}, req) {
       WHERE token_hash = ? AND token_type = 'email_verification' AND used = 0 AND expires_at > datetime('now')
     `)
     .get(sha256(body.token || ""));
-  if (!row) return { error: "Invalid or expired verification token", status: 400 };
+  if (!row) return { error: "auth.verifyTokenInvalid", status: 400 };
 
   db.prepare("UPDATE users SET email_verified = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(row.user_id);
   db.prepare("UPDATE identity_verification_tokens SET used = 1 WHERE id = ?").run(row.id);
@@ -122,7 +122,7 @@ function loginUser(body = {}, req) {
     ipHash(req)
   );
 
-  if (!ok) return { error: "Invalid email or password", status: 401 };
+  if (!ok) return { error: "auth.invalidCredentials", status: 401 };
 
   const refreshRaw = crypto.randomBytes(48).toString("hex");
   db.prepare(`
@@ -155,7 +155,7 @@ function refreshAccessToken(body = {}) {
     .get(sha256(body.refreshToken || ""));
 
   if (!session || session.status !== "active") {
-    return { error: "Invalid refresh token", status: 401 };
+    return { error: "auth.refreshInvalid", status: 401 };
   }
 
   return {
@@ -185,7 +185,7 @@ function getAccount(userId) {
       FROM users WHERE id = ?
     `)
     .get(userId);
-  if (!user) return { error: "User not found", status: 404 };
+  if (!user) return { error: "user.notFound", status: 404 };
   return { account: mapPublicUser(user) };
 }
 
@@ -210,7 +210,7 @@ function listAddresses(userId) {
 
 function createAddress(userId, body = {}) {
   if (!body.street || !body.postalCode || !body.city || !body.countryCode) {
-    return { error: "Address fields missing", status: 400 };
+    return { error: "address.incomplete", status: 400 };
   }
   if (body.isDefault) {
     db.prepare("UPDATE identity_addresses SET is_default = 0 WHERE user_id = ? AND type = ?").run(
@@ -266,7 +266,7 @@ function requestPasswordReset(body = {}, req) {
 
 function completePasswordReset(body = {}, req) {
   const password = String(body.password || "");
-  if (password.length < 10) return { error: "Password must be at least 10 characters", status: 400 };
+  if (password.length < 10) return { error: "auth.passwordTooShort", status: 400 };
 
   const token = db
     .prepare(`
@@ -274,7 +274,7 @@ function completePasswordReset(body = {}, req) {
       WHERE token_hash = ? AND token_type = 'password_reset' AND used = 0 AND expires_at > datetime('now')
     `)
     .get(sha256(body.token || ""));
-  if (!token) return { error: "Invalid or expired reset token", status: 400 };
+  if (!token) return { error: "auth.resetTokenInvalid", status: 400 };
 
   db.prepare("UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
     hashPassword(password),
@@ -311,7 +311,7 @@ function disableTwoFactor(userId, req) {
 function createPrivacyRequest(userId, body = {}, req) {
   const type = body.type;
   if (!["export", "delete"].includes(type)) {
-    return { error: "Request type must be export or delete", status: 400 };
+    return { error: "privacy.requestTypeInvalid", status: 400 };
   }
   const result = db
     .prepare("INSERT INTO identity_privacy_requests(user_id, request_type) VALUES(?,?)")

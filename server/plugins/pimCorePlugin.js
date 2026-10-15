@@ -216,7 +216,7 @@ module.exports = {
       if (!requirePerm(req, res, "products.write")) return;
       const { action, ids } = req.body || {};
       if (!Array.isArray(ids) || !ids.length) {
-        return res.status(400).json({ success: false, message: "ids required" });
+        return res.status(400).json({ success: false, errorKey: "pim.idsRequired" });
       }
       let results;
       const actorId = req.adminUser.email;
@@ -237,7 +237,7 @@ module.exports = {
           results = bulkOperations.bulkBrandMapping(ids, req.body.brandId, actorId);
           break;
         default:
-          return res.status(400).json({ success: false, message: "unknown action" });
+          return res.status(400).json({ success: false, errorKey: "pim.unknownAction" });
       }
       logAuditFromRequest(req, { action: `pim.bulk.${action}`, entityType: "product", metadata: { count: ids.length } });
       res.json({ success: true, results });

@@ -95,7 +95,7 @@ function upsertProduct(product = {}, context = {}) {
     gate.sku &&
     catalog.products.some((row) => row.sku === gate.sku && (!existing || row.id !== existing.id))
   ) {
-    return { error: "SKU already exists", status: 409 };
+    return { error: "product.skuExists", status: 409 };
   }
 
   const now = new Date().toISOString();
@@ -121,7 +121,7 @@ function deleteProduct(id, context = {}) {
   const catalog = readCatalog();
   if (!Array.isArray(catalog.products)) catalog.products = [];
   const existing = catalog.products.find((p) => p.id === id);
-  if (!existing) return { error: "Product not found", status: 404 };
+  if (!existing) return { error: "product.notFound", status: 404 };
   const gate = productWriteBoundary.authorizeDelete(existing, {
     source: context.source || "ADMIN",
     actorId: context.actorId || null,

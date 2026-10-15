@@ -87,7 +87,7 @@ function assertFeatureAllowed(feature) {
     return {
       allowed: false,
       code: `${feature}_disabled`,
-      message: `Feature '${feature}' is not enabled`,
+      errorKey: `${feature}_disabled`,
       flags,
     };
   }

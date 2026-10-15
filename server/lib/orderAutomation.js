@@ -124,7 +124,7 @@ function recordSupplierResult({ orderNumber, supplier, status, supplierOrderId =
 
 function retryJob(id) {
   const job = db.prepare("SELECT * FROM automation_jobs WHERE id = ?").get(id);
-  if (!job) return { ok: false, error: "Job not found", status: 404 };
+  if (!job) return { ok: false, error: "job.notFound", status: 404 };
   db.prepare(`
     UPDATE automation_jobs
     SET status = 'queued', attempts = attempts + 1, next_run_at = datetime('now'), last_error = NULL

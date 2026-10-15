@@ -288,7 +288,7 @@ function cancelJob(id) {
   const job = getJob(id);
   if (!job) return null;
   if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELLED].includes(job.status)) return job;
-  return updateJob(id, { status: JOB_STATUS.CANCELLED, error: "Cancelled by admin" });
+  return updateJob(id, { status: JOB_STATUS.CANCELLED, error: "job.cancelled" });
 }
 
 function retryJob(id) {

@@ -22,7 +22,7 @@ function assertSalesEnabledForCommercialAction(context = {}) {
   return {
     blocked: true,
     code: "sales_disabled",
-    message: "Commercial commerce actions are blocked (catalog mode)",
+    errorKey: "sales_disabled",
     status: 403,
     orderType: context.orderType || ORDER_TYPE.COMMERCIAL,
   };
@@ -43,7 +43,7 @@ function assertCanProcessPayment({ req } = {}) {
   const check = assertFeatureAllowed("payment");
   if (!check.allowed) {
     logCommerceBlock("payment_attempt_blocked", { reason: check.code }, req);
-    return { blocked: true, code: check.code, message: check.message, status: 403 };
+    return { blocked: true, code: check.code, errorKey: check.code, status: 403 };
   }
   return null;
 }
@@ -52,7 +52,7 @@ function assertCanSubmitSupplierOrder({ req } = {}) {
   const check = assertFeatureAllowed("supplier_order");
   if (!check.allowed) {
     logCommerceBlock("supplier_order_blocked", { type: "supplier_order", reason: check.code }, req);
-    return { blocked: true, code: check.code, message: "Supplier orders are disabled", status: 403 };
+    return { blocked: true, code: check.code, errorKey: check.code, status: 403 };
   }
   return null;
 }
@@ -87,11 +87,11 @@ function assertCustomerResourceAccess({
   if (resourceCustomerId) {
     if (!requestCustomerId) {
       logCommerceBlock("commerce_permission_denied", { resourceType, reason: "unauthenticated" }, req);
-      return { blocked: true, code: "auth_required", message: "Authentication required", status: 401 };
+      return { blocked: true, code: "auth_required", errorKey: "auth_required", status: 401 };
     }
     if (resourceCustomerId !== requestCustomerId) {
       logCommerceBlock("idor_attempt", { resourceType, resourceCustomerId }, req);
-      return { blocked: true, code: "idor_denied", message: "Access denied", status: 403 };
+      return { blocked: true, code: "idor_denied", errorKey: "idor_denied", status: 403 };
     }
     return null;
   }
@@ -101,7 +101,7 @@ function assertCustomerResourceAccess({
   }
 
   logCommerceBlock("commerce_permission_denied", { resourceType, reason: "guest_proof_required" }, req);
-  return { blocked: true, code: "auth_required", message: "Authentication required", status: 401 };
+  return { blocked: true, code: "auth_required", errorKey: "auth_required", status: 401 };
 }
 
 function resolveOrderType(requestedType) {

@@ -14,7 +14,7 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
   if (blocked) return blocked;
 
   const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(userId);
-  if (!cart) return { error: "Cart is empty", status: 400 };
+  if (!cart) return { error: "cart.empty", status: 400 };
 
   const items = db
     .prepare(`
@@ -25,11 +25,11 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
     `)
     .all(cart.id);
 
-  if (!items.length) return { error: "Cart is empty", status: 400 };
+  if (!items.length) return { error: "cart.empty", status: 400 };
 
   for (const item of items) {
     if (item.quantity > item.stock) {
-      return { error: `Insufficient stock: ${item.sku}`, status: 409 };
+      return { error: "inventory.insufficient", status: 409 };
     }
   }
 

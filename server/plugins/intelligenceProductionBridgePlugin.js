@@ -5,7 +5,7 @@ function blockSales(res) {
   const blocked = salesDisabledResponse();
   return res.status(blocked.status).json({
     success: false,
-    error: blocked.error,
+    errorKey: blocked.errorKey,
     code: blocked.code,
     catalogMode: true,
   });

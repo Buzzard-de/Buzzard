@@ -165,7 +165,7 @@ describe("product write boundary — policy only, SoT inactive", () => {
       { sku, status: "draft" },
       { authorized: true, source: "ADMIN", actorId: "vitest" }
     );
-    expect(duplicate.error).toBe("SKU already exists");
+    expect(duplicate.error).toBe("product.skuExists");
     expect(duplicate.status).toBe(409);
     expect(countSku("pim_products", sku)).toBe(1);
   });
@@ -311,7 +311,7 @@ describe("product write boundary — policy only, SoT inactive", () => {
         { id: "prod-json-dup", sku, name: "File draft", status: "draft" },
         { authorized: true, source: "ADMIN", actorId: "vitest" }
       );
-      expect(duplicate.error).toBe("SKU already exists");
+      expect(duplicate.error).toBe("product.skuExists");
       expect(duplicate.status).toBe(409);
 
       const activated = productStore.upsertProduct(
@@ -331,7 +331,7 @@ describe("product write boundary — policy only, SoT inactive", () => {
         { ...other, sku },
         { authorized: true, source: "ADMIN", actorId: "vitest" }
       );
-      expect(collide.error).toBe("SKU already exists");
+      expect(collide.error).toBe("product.skuExists");
       expect(collide.status).toBe(409);
       expect(productStore.getProductById("prod-json-other").sku).toBe(otherSku);
 

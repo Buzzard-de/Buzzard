@@ -36,7 +36,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -58,7 +58,7 @@ function requireAnyAuth(req, res) {
     return session;
   }
 
-  res.status(401).json({ error: "Authentication required" });
+  res.status(401).json({ success: false, errorKey: "security.authRequired" });
   return null;
 }
 
@@ -85,7 +85,7 @@ module.exports = {
         cancelUrl,
       } = req.body || {};
       if (!payments[provider]) {
-        return res.status(400).json({ error: "Unsupported payment provider" });
+        return res.status(400).json({ success: false, errorKey: "payment.unsupportedProvider" });
       }
       try {
         const payload = { orderId, amount, currency, successUrl, cancelUrl };
@@ -105,13 +105,13 @@ module.exports = {
       if (!requireAnyAdmin(req, res)) return;
       const { carrier = "dhl", orderNumber, countryCode, weightKg, address } = req.body || {};
       if (!carriers[carrier]) {
-        return res.status(400).json({ error: "Unsupported carrier" });
+        return res.status(400).json({ success: false, errorKey: "shipping.unsupportedCarrier" });
       }
       try {
         return res.json(await carriers[carrier]({ orderNumber, countryCode, weightKg, address }));
       } catch (error) {
-        console.error("Shipping label error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("Shipping label error:", require("../lib/security").publicTaskError(error, "shipping.labelFailed"));
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     });
 
@@ -121,8 +121,8 @@ module.exports = {
       try {
         return res.json(await calculateTax({ countryCode, netAmount, shipping }));
       } catch (error) {
-        console.error("Tax quote error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("Tax quote error:", require("../lib/security").publicTaskError(error, "tax.quoteFailed"));
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     });
 
@@ -132,8 +132,8 @@ module.exports = {
       try {
         return res.json(await getExchangeRate({ from, to }));
       } catch (error) {
-        console.error("FX rate error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("FX rate error:", require("../lib/security").publicTaskError(error, "fx.rateFailed"));
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     });
 
@@ -143,8 +143,8 @@ module.exports = {
       try {
         return res.json(await importSupplierFeed({ supplier, format, payload }));
       } catch (error) {
-        console.error("Supplier import error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("Supplier import error:", require("../lib/security").publicTaskError(error, "supplier.importFailed"));
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     });
 
@@ -153,8 +153,8 @@ module.exports = {
       try {
         return res.json(await checkTecDocCompatibility({ vehicle, productSku }));
       } catch (error) {
-        console.error("TecDoc compatibility error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("TecDoc compatibility error:", require("../lib/security").publicTaskError(error, "tecdoc.compatFailed"));
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     });
 
@@ -164,16 +164,15 @@ module.exports = {
       try {
         return res.json(await forwardDropshipOrder({ supplier, order }));
       } catch (error) {
-        console.error("Dropship forward error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("Dropship forward error:", require("../lib/security").publicTaskError(error, "dropship.forwardFailed"));
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     });
 
     app.post("/api/webhooks/:provider", (req, res) => {
       return res.status(501).json({
-        error: "Webhook adapter not configured",
-        provider: req.params.provider,
-        hint: "Implement official signature verification per provider before production",
+        success: false,
+        errorKey: "webhook.notConfigured",
       });
     });
   },

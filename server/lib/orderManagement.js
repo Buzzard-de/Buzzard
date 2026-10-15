@@ -40,7 +40,7 @@ function createOrder(body = {}) {
   }
 
   const items = Array.isArray(body.items) ? body.items : [];
-  if (!items.length) return { error: "At least one item is required", status: 400 };
+  if (!items.length) return { error: "order.itemsRequired", status: 400 };
 
   const subtotal = items.reduce(
     (sum, item) => sum + Number(item.unitPrice || item.unit_price || 0) * Number(item.quantity || 0),
@@ -111,13 +111,13 @@ function createOrder(body = {}) {
     const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(result.lastInsertRowid);
     return { order, created: true };
   } catch (error) {
-    return { error: "Order creation conflict", detail: require("./security").publicTaskError(error, "order.conflict"), status: 409 };
+    return { error: "order.conflict", detail: require("./security").publicTaskError(error, "order.conflict"), status: 409 };
   }
 }
 
 function getOrderByNumber(orderNumber) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE order_number = ?").get(orderNumber);
-  if (!order) return { error: "Order not found", status: 404 };
+  if (!order) return { error: "order.notFound", status: 404 };
   return {
     order,
     items: db.prepare("SELECT * FROM oms_order_items WHERE order_id = ?").all(order.id),
@@ -165,7 +165,7 @@ function listOrders(query = {}) {
 
 function updateOrderStatus(id, body = {}) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { error: "Order not found", status: 404 };
+  if (!order) return { error: "order.notFound", status: 404 };
 
   const next = body.status;
   if (!VALID_TRANSITIONS[order.order_status]?.includes(next)) {
@@ -182,7 +182,7 @@ function updateOrderStatus(id, body = {}) {
 
 function updatePaymentStatus(id, body = {}) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { error: "Order not found", status: 404 };
+  if (!order) return { error: "order.notFound", status: 404 };
 
   const status = body.status;
   db.prepare("UPDATE oms_orders SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
@@ -195,7 +195,7 @@ function updatePaymentStatus(id, body = {}) {
 
 function updateFulfillmentStatus(id, body = {}) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { error: "Order not found", status: 404 };
+  if (!order) return { error: "order.notFound", status: 404 };
 
   const status = body.status;
   db.prepare("UPDATE oms_orders SET fulfillment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
@@ -208,9 +208,9 @@ function updateFulfillmentStatus(id, body = {}) {
 
 function cancelOrder(id, body = {}) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { error: "Order not found", status: 404 };
+  if (!order) return { error: "order.notFound", status: 404 };
   if (!["pending", "confirmed", "processing", "partially_fulfilled"].includes(order.order_status)) {
-    return { error: "Order cannot be cancelled", status: 400 };
+    return { error: "order.cannotCancel", status: 400 };
   }
 
   db.prepare("UPDATE oms_orders SET order_status = 'cancelled', updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
@@ -265,10 +265,10 @@ function releaseReservationsForCancelledOrder(order) {
 
 function splitOrder(id, body = {}) {
   const parent = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
-  if (!parent) return { error: "Order not found", status: 404 };
+  if (!parent) return { error: "order.notFound", status: 404 };
 
   const requested = Array.isArray(body.items) ? body.items : [];
-  if (!requested.length) return { error: "Split items required", status: 400 };
+  if (!requested.length) return { error: "order.splitItemsRequired", status: 400 };
 
   const childNo = orderNumber();
   const result = db
@@ -337,7 +337,7 @@ function splitOrder(id, body = {}) {
 
 function addFulfillmentLink(id, body = {}) {
   const order = db.prepare("SELECT id FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { error: "Order not found", status: 404 };
+  if (!order) return { error: "order.notFound", status: 404 };
 
   const result = db
     .prepare(`
@@ -361,7 +361,7 @@ function addFulfillmentLink(id, body = {}) {
 
 function addOrderNote(id, body = {}) {
   const order = db.prepare("SELECT id FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { error: "Order not found", status: 404 };
+  if (!order) return { error: "order.notFound", status: 404 };
 
   db.prepare("INSERT INTO oms_order_notes(order_id, note, internal) VALUES(?,?,?)").run(
     order.id,

@@ -137,7 +137,7 @@ function applyCoupon(token, body = {}) {
 
   const preview = computeTotals({ ...cart, coupon: code });
   if (preview.subtotal < coupon.min_order) {
-    return { error: "Minimum order not reached", status: 400 };
+    return { error: "coupon.minOrder", status: 400 };
   }
 
   db.prepare("UPDATE cc_carts SET coupon = ? WHERE id = ?").run(code, cart.id);

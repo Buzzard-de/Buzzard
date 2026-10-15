@@ -137,7 +137,7 @@ function sendFile(res, filePath) {
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      sendJson(res, 404, { message: 'Datei nicht gefunden.' });
+      sendJson(res, 404, publicErrorBody('security.notFound'));
       return;
     }
     res.writeHead(200, { 'Content-Type': contentType });
@@ -353,7 +353,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (!fs.existsSync(filePath)) {
-    sendJson(res, 404, { message: 'Seite nicht gefunden.' });
+    sendJson(res, 404, publicErrorBody('security.notFound'));
     return;
   }
 

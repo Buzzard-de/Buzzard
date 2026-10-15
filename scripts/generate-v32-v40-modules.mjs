@@ -160,7 +160,7 @@ function isEnabled() {
 
 function createRecord(body = {}) {
   if (!body.code || !body.name) {
-    return { error: "code and name required", status: 400 };
+    return { error: "validation.codeNameRequired", status: 400 };
   }
   try {
     const result = db
@@ -276,7 +276,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 

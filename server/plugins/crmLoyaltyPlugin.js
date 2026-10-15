@@ -23,21 +23,21 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
 function requireCustomer(req, res) {
   const bearer = extractToken(req);
   if (!bearer) {
-    res.status(401).json({ error: "Authentication required" });
+    res.status(401).json({ success: false, errorKey: "security.authRequired" });
     return null;
   }
   try {
     req.user = verifyToken(bearer);
     return req.user;
   } catch {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ success: false, errorKey: "security.invalidToken" });
     return null;
   }
 }
@@ -67,7 +67,7 @@ module.exports = {
     app.post("/api/customer/loyalty/redeem", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = crmLoyalty.redeemReward(req.user.sub, req.body?.rewardId);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -114,9 +114,9 @@ module.exports = {
     app.post("/api/admin/crm-loyalty/points/earn", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const userId = Number(req.body?.userId);
-      if (!userId) return res.status(400).json({ error: "userId required" });
+      if (!userId) return res.status(400).json({ success: false, errorKey: "user.idRequired" });
       const result = crmLoyalty.earnPoints(userId, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -52,13 +52,13 @@ module.exports = {
 
     app.get("/api/catalog/products/slug/:slug", (req, res) => {
       const product = catalogSeo.getProductBySlug(req.params.slug);
-      if (!product) return res.status(404).json({ error: "Product not found" });
+      if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       return res.json(product);
     });
 
     app.get("/api/catalog/products/:id/jsonld", (req, res) => {
       const jsonld = catalogSeo.getProductJsonLd(req.params.id);
-      if (!jsonld) return res.status(404).json({ error: "Product not found" });
+      if (!jsonld) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       return res.json(jsonld);
     });
 
@@ -82,7 +82,7 @@ module.exports = {
     app.post("/api/admin/catalog/categories", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = catalogSeo.createCategory(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.category);
     });
 
@@ -94,7 +94,7 @@ module.exports = {
         source: "ADMIN",
         actorId: identity.email || identity.userId || identity.sub || null,
       });
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.product);
     });
 
@@ -106,7 +106,7 @@ module.exports = {
         source: "ADMIN",
         actorId: identity.email || identity.userId || identity.sub || null,
       });
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.product);
     });
 
@@ -119,7 +119,7 @@ module.exports = {
     app.post("/api/admin/catalog/products/:id/images", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = catalogSeo.addProductImage(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.image);
     });
   },

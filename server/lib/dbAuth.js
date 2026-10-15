@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const { db } = require("./db");
 const { hashPassword, verifyPassword, needsRehash } = require("./password");
 const { resolveJwtSecret, isUnsafeJwtSecret } = require("./jwtSecret");
+const { sendAuthRequired, sendAdminRequired, sendInvalidToken } = require("./http/publicPluginError");
 
 const secret = resolveJwtSecret();
 
@@ -23,14 +24,14 @@ function extractToken(req) {
 function requireAuth(req, res) {
   const token = extractToken(req);
   if (!token) {
-    res.status(401).json({ error: "Authentication required" });
+    sendAuthRequired(res);
     return null;
   }
   try {
     req.user = verifyToken(token);
     return req.user;
   } catch {
-    res.status(401).json({ error: "Invalid or expired token" });
+    sendInvalidToken(res);
     return null;
   }
 }
@@ -39,7 +40,7 @@ function requireAdmin(req, res) {
   const user = requireAuth(req, res);
   if (!user) return null;
   if (user.role !== "admin") {
-    res.status(403).json({ error: "Admin access required" });
+    sendAdminRequired(res);
     return null;
   }
   return user;

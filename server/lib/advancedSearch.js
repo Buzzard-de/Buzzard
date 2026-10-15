@@ -162,7 +162,7 @@ function search(queryParams = {}) {
 
 function recordClick(sku) {
   const product = db.prepare("SELECT sku FROM srch_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   db.prepare(`
     UPDATE srch_events
@@ -208,7 +208,7 @@ function createProduct(body = {}) {
       created: true,
     };
   } catch {
-    return { error: "SKU already exists", status: 409 };
+    return { error: "product.skuExists", status: 409 };
   }
 }
 

@@ -121,7 +121,7 @@ function applyCampaign(code, body = {}) {
 
   const subtotal = Number(body.subtotal || 0);
   if (subtotal < campaign.minimum_order) {
-    return { error: "Minimum order not reached", status: 400 };
+    return { error: "coupon.minOrder", status: 400 };
   }
   if (campaign.max_uses > 0 && campaign.used_count >= campaign.max_uses) {
     return { error: "Campaign usage limit reached", status: 400 };

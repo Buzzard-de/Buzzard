@@ -43,6 +43,6 @@ describe("Catalog SEO write access", () => {
     };
     await handler({ headers: {}, body: { sku: "anon-seo-sku", name: "Anon" } }, response);
     expect(response.statusCode).toBe(403);
-    expect(response.json).toHaveBeenCalledWith({ error: "Admin access required" });
+    expect(response.json).toHaveBeenCalledWith({ success: false, errorKey: "security.adminRequired" });
   });
 });

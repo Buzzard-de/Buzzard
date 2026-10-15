@@ -27,7 +27,7 @@ function listWarehouses() {
 function createWarehouse(body = {}) {
   const code = String(body.code || "").trim();
   const name = String(body.name || "").trim();
-  if (!code || !name) return { error: "code and name required", status: 400 };
+  if (!code || !name) return { error: "validation.codeNameRequired", status: 400 };
   try {
     const result = db
       .prepare(
@@ -37,21 +37,21 @@ function createWarehouse(body = {}) {
     const warehouse = db.prepare("SELECT * FROM wms_warehouses WHERE id = ?").get(result.lastInsertRowid);
     return { warehouse: listWarehouses().find((row) => row.id === warehouse.id) || warehouse };
   } catch {
-    return { error: "Warehouse code already exists", status: 409 };
+    return { error: "warehouse.codeExists", status: 409 };
   }
 }
 
 function createLocation(body = {}) {
   const warehouseId = Number(body.warehouseId || body.warehouse_id);
   const code = String(body.code || "").trim();
-  if (!warehouseId || !code) return { error: "warehouseId and code required", status: 400 };
+  if (!warehouseId || !code) return { error: "warehouse.locationRequired", status: 400 };
   try {
     db.prepare(
       "INSERT INTO wms_locations(warehouse_id, code, zone, bin_type) VALUES(?,?,?,?)"
     ).run(warehouseId, code, body.zone || "", body.binType || body.bin_type || "standard");
     return { ok: true };
   } catch {
-    return { error: "Location exists", status: 409 };
+    return { error: "warehouse.locationExists", status: 409 };
   }
 }
 
@@ -84,10 +84,10 @@ function recordMovement(body = {}, userId) {
       "SELECT * FROM wms_inventory WHERE warehouse_id = ? AND location_id = ? AND product_sku = ?"
     )
     .get(warehouseId, locationId, productSku);
-  if (!row) return { error: "Inventory item not found", status: 404 };
+  if (!row) return { error: "inventory.notFound", status: 404 };
 
   if (["out", "damage"].includes(type) && row.on_hand - row.reserved < quantity) {
-    return { error: "Insufficient available stock", status: 400 };
+    return { error: "inventory.insufficient", status: 400 };
   }
 
   db.prepare(`
@@ -127,7 +127,7 @@ function recordMovement(body = {}, userId) {
 
 function scanBarcode(barcode) {
   const row = db.prepare("SELECT * FROM wms_inventory WHERE barcode = ? LIMIT 1").get(barcode);
-  if (!row) return { error: "Barcode not found", status: 404 };
+  if (!row) return { error: "inventory.barcodeNotFound", status: 404 };
   return {
     item: {
       ...row,
@@ -148,7 +148,7 @@ function reserveInventory(body = {}) {
     )
     .get(warehouseId, locationId, productSku);
   if (!row || row.on_hand - row.reserved - row.damaged < quantity) {
-    return { error: "Insufficient available stock", status: 400 };
+    return { error: "inventory.insufficient", status: 400 };
   }
 
   db.prepare(
@@ -181,7 +181,7 @@ function reserveInventory(body = {}) {
 
 function createWarehouseJob(body = {}) {
   const warehouseId = Number(body.warehouseId || body.warehouse_id);
-  if (!warehouseId) return { error: "warehouseId required", status: 400 };
+  if (!warehouseId) return { error: "warehouse.idRequired", status: 400 };
   const result = db
     .prepare("INSERT INTO wms_warehouse_jobs(warehouse_id, order_number, job_type) VALUES(?,?,?)")
     .run(warehouseId, body.orderNumber || body.order_number || "", body.jobType || body.job_type || "pick");
@@ -211,7 +211,7 @@ function createTransfer(body = {}) {
     .prepare("SELECT * FROM wms_inventory WHERE warehouse_id = ? AND product_sku = ? LIMIT 1")
     .get(fromWarehouseId, productSku);
   if (!row || row.on_hand - row.reserved < quantity) {
-    return { error: "Insufficient source stock", status: 400 };
+    return { error: "inventory.insufficient", status: 400 };
   }
 
   const result = db
@@ -235,7 +235,7 @@ function createStocktake(body = {}) {
       "SELECT * FROM wms_inventory WHERE warehouse_id = ? AND location_id = ? AND product_sku = ?"
     )
     .get(warehouseId, locationId, productSku);
-  if (!row) return { error: "Inventory item not found", status: 404 };
+  if (!row) return { error: "inventory.notFound", status: 404 };
 
   const result = db
     .prepare(`

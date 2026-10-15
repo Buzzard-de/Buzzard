@@ -82,7 +82,7 @@ function getProductBySku(sku) {
       WHERE p.sku = ?
     `)
     .get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
   return {
     product,
     translations: db
@@ -139,13 +139,13 @@ function createProduct(body = {}, context = {}) {
       productSourceOfTruthActive: false,
     };
   } catch {
-    return { error: "SKU already exists", status: 409 };
+    return { error: "product.skuExists", status: 409 };
   }
 }
 
 function updateProduct(id, body = {}, context = {}) {
   const product = db.prepare("SELECT * FROM pim_products WHERE id = ?").get(id);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
   const gate = productWriteBoundary.authorizeUpdate(body, {
     source: context.source || "ADMIN",
     actorId: context.actorId || null,

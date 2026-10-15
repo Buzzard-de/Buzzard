@@ -47,7 +47,7 @@ function updateMarketplace(code, body = {}) {
     if (blocked) return blocked;
   }
   const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(code);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
+  if (!marketplace) return { error: "marketplace.notFound", status: 404 };
   db.prepare(
     "UPDATE marketplace_channels SET enabled = ?, account_label = ?, status = ?, last_sync = CURRENT_TIMESTAMP WHERE id = ?"
   ).run(
@@ -116,7 +116,7 @@ function queueOrderSync() {
 
 function upsertListing(body = {}) {
   const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(body.marketplace);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
+  if (!marketplace) return { error: "marketplace.notFound", status: 404 };
   if (!body.productSku) return { error: "productSku required", status: 400 };
 
   db.prepare(`
@@ -146,7 +146,7 @@ function upsertListing(body = {}) {
 
 function upsertSkuMapping(body = {}) {
   const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
+  if (!marketplace) return { error: "marketplace.notFound", status: 404 };
   if (!body.productSku || !body.channelSku) {
     return { error: "productSku and channelSku required", status: 400 };
   }
@@ -174,7 +174,7 @@ function listSyncJobs() {
 
 function updateSyncJobResult(jobId, body = {}) {
   const job = db.prepare("SELECT id FROM marketplace_sync_jobs WHERE id = ?").get(jobId);
-  if (!job) return { error: "Sync job not found", status: 404 };
+  if (!job) return { error: "supplier.syncJobNotFound", status: 404 };
   db.prepare(`
     UPDATE marketplace_sync_jobs
     SET status = ?, attempts = attempts + 1, error_message = ?, finished_at = CURRENT_TIMESTAMP

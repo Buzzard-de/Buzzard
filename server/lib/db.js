@@ -3941,7 +3941,6 @@ function getDatabaseHealth() {
     const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
-      path: dbPath,
       version: "0.3.0",
       users,
       products,
@@ -3950,8 +3949,6 @@ function getDatabaseHealth() {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
-        backupDir: persistence.backupDir,
-        renderDisk: persistence.renderDisk,
         syncHint: persistence.syncHint,
       },
     };
@@ -3959,14 +3956,12 @@ function getDatabaseHealth() {
     const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
-      path: dbPath,
       version: "0.3.0",
       error: require("./security").publicTaskError(error, "database.health_failed"),
       persistence: {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
-        renderDisk: persistence.renderDisk,
         syncHint: persistence.syncHint,
       },
     };

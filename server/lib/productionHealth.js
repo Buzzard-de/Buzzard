@@ -1,7 +1,7 @@
 /**
  * Part 13 — Production health aggregation (no secrets)
  */
-const { getDatabaseHealth } = require("./db");
+const { getDatabaseHealth, toPublicDatabaseHealth } = require("./db");
 const { getDatabaseStartupStatus } = require("./dbStartup");
 const { runIntegrityCheck } = require("./dbIntegrity");
 const { getDeploymentIdentity, getDeploymentDrift } = require("./deploymentIdentity");
@@ -178,7 +178,9 @@ function getSupplierIntegrationHealth() {
 function getBackupHealthSummary() {
   try {
     const backupAutomation = require("./backupAutomation");
-    return backupAutomation.getBackupReadiness();
+    const readiness = backupAutomation.getBackupReadiness();
+    const { backupDir: _backupDir, ...publicReady } = readiness;
+    return publicReady;
   } catch (err) {
     return probeFailure("backup", err);
   }
@@ -201,6 +203,26 @@ function getCommerceHealthSummary() {
   } catch (err) {
     return probeFailure("commerce", err);
   }
+}
+
+function publicStartup(startup) {
+  if (!startup || typeof startup !== "object") return startup;
+  return {
+    ok: startup.ok,
+    message: startup.message,
+    errors: startup.errors,
+    warnings: startup.warnings,
+    validatedAt: startup.validatedAt,
+    integrity: startup.integrity,
+    persistence: startup.persistence
+      ? {
+          mode: startup.persistence.mode,
+          persistent: startup.persistence.persistent,
+          ephemeralRisk: Boolean(startup.persistence.ephemeralRisk),
+        }
+      : undefined,
+    migrated: Boolean(startup.migration),
+  };
 }
 
 async function getProductionSummary() {
@@ -236,8 +258,8 @@ async function getProductionSummary() {
     deployment: drift,
     environment: envValidation,
     database: {
-      ...dbHealth,
-      startup: dbStartup,
+      ...toPublicDatabaseHealth(dbHealth),
+      startup: publicStartup(dbStartup),
       integrity,
     },
     redis,

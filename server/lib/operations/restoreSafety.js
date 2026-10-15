@@ -43,7 +43,7 @@ function validateBackupFile(sourcePath) {
   }
 
   if (integrityCheck !== "ok") {
-    issues.push(`INTEGRITY_FAILED:${integrityCheck}`);
+    issues.push("INTEGRITY_FAILED");
   }
 
   const metaPath = `${sourcePath}.meta.json`;

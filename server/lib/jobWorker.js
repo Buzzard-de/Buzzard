@@ -156,7 +156,7 @@ function startWorker({ pollIntervalMs = 3000 } = {}) {
   });
   jobQueue.releaseStaleLocks();
   pollTimer = setInterval(() => {
-    tick().catch((err) => console.error("[worker] tick error:", err.message));
+    tick().catch((err) => console.error("[worker] tick error:", require("./security").publicTaskError(err, "worker.tick_failed")));
   }, pollIntervalMs);
   if (pollTimer.unref) pollTimer.unref();
   tick().catch(() => {});

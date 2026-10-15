@@ -28,7 +28,7 @@ async function evaluateGoLiveReadiness() {
     gate(
       "DATABASE",
       integrity.status === "OK" && dbHealth.enabled !== false ? READINESS_GATE_STATUS.PASS : READINESS_GATE_STATUS.CONDITION,
-      `integrity=${integrity.status} path=${dbHealth.path || "unknown"} persistent=${dbHealth.persistence?.persistent ?? false}`
+      `integrity=${integrity.status} persistent=${dbHealth.persistence?.persistent ?? false}`
     )
   );
 

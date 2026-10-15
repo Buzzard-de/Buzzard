@@ -27,7 +27,6 @@ async function getHealth() {
     status: ready ? "ready" : "degraded",
     database: {
       ok: !database.error,
-      path: database.path,
       persistent: database.persistence?.persistent ?? null,
       ephemeralRisk: database.persistence?.ephemeralRisk ?? null,
       error: database.error || null,

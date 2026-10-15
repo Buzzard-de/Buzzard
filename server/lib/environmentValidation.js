@@ -69,14 +69,16 @@ function validateEnvironment() {
 function assertProductionSafeStartup() {
   const result = validateEnvironment();
   if (!result.ok) {
-    const msg = result.errors.map((e) => e.message).join("; ");
-    console.error("[env-validation] FATAL:", msg);
+    const codes = result.errors.map((e) => e.code).join("; ");
+    console.error("[env-validation] FATAL:", codes);
     if (process.env.NODE_ENV === "production") {
-      throw new Error(`Environment validation failed: ${msg}`);
+      const err = new Error(`Environment validation failed: ${codes}`);
+      err.code = "environment.validation_failed";
+      throw err;
     }
   }
   for (const w of result.warnings) {
-    console.warn("[env-validation]", w.message);
+    console.warn("[env-validation]", w.code);
   }
   return result;
 }

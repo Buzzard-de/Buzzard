@@ -5,7 +5,7 @@ const { URL, URLSearchParams } = require('url');
 const { isDefaultJwtSecret } = require('./lib/dbAuth');
 const { isAllowedOrigin, API_CORS_ALLOW_HEADERS } = require('./lib/corsOrigins');
 const { isHealthPath } = require('./lib/healthPaths');
-const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
+const { createRateLimiter, setSecurityHeaders, publicErrorBody, publicTaskError } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
 const { wrapRouteHandler } = require('./lib/globalAuthMiddleware');
 
@@ -160,7 +160,9 @@ function parseBody(req) {
     req.on("data", (chunk) => {
       totalBytes += chunk.length;
       if (totalBytes > MAX_BODY_BYTES) {
-        reject(new Error("Payload too large"));
+        const tooLarge = new Error("Payload too large");
+        tooLarge.code = "PAYLOAD_TOO_LARGE";
+        reject(tooLarge);
         req.destroy();
         return;
       }
@@ -227,7 +229,7 @@ try {
   const { assertDurableOpenAllowed } = require("./lib/dbPaths");
   assertDurableOpenAllowed();
 } catch (err) {
-  console.error(err.message);
+  console.error(publicTaskError(err, "database.open_refused"));
   if (process.env.NODE_ENV === "production") process.exit(1);
   throw err;
 }
@@ -240,14 +242,14 @@ try {
   const { validateConfiguration } = require("./lib/operations/configurationValidation");
   const configResult = validateConfiguration();
   if (!configResult.ok) {
-    console.error("[config-validation] FAIL CLOSED:", configResult.errors.map((e) => e.message).join("; "));
+    console.error("[config-validation] FAIL CLOSED:", configResult.errors.map((e) => e.code).join("; "));
     if (process.env.NODE_ENV === "production") process.exit(1);
   }
   for (const w of configResult.warnings) {
-    console.warn("[config-validation]", w.message);
+    console.warn("[config-validation]", w.code);
   }
 } catch (err) {
-  console.error(err.message);
+  console.error(publicTaskError(err, "environment.validation_failed"));
   if (process.env.NODE_ENV === "production") process.exit(1);
 }
 
@@ -255,7 +257,7 @@ try {
   const { validateDatabaseStartup } = require("./lib/dbStartup");
   validateDatabaseStartup();
 } catch (err) {
-  console.error(err.message);
+  console.error(publicTaskError(err, "database.startup_failed"));
   if (process.env.NODE_ENV === "production") process.exit(1);
 }
 
@@ -268,7 +270,7 @@ if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
     try {
       jobScheduler.tickScheduler();
     } catch (err) {
-      console.error("[scheduler] tick error:", err.message);
+      console.error("[scheduler] tick error:", publicTaskError(err, "scheduler.tick_failed"));
     }
   }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
 }
@@ -325,14 +327,14 @@ const server = http.createServer(async (req, res) => {
       }
       route.handler(req, res);
     } catch (error) {
-      console.error('API error:', error);
+      console.error("API error:", publicTaskError(error, "security.internalError"));
       logSecurityEvent({
         type: 'api_error',
         success: false,
         path: pathname,
-        detail: { errorKey: error.message === 'Payload too large' ? 'security.payloadTooLarge' : 'security.internalError' },
+        detail: { errorKey: error.code === "PAYLOAD_TOO_LARGE" || error.message === "Payload too large" ? "security.payloadTooLarge" : "security.internalError" },
       });
-      const statusCode = error.message === 'Payload too large' ? 413 : 500;
+      const statusCode = error.code === "PAYLOAD_TOO_LARGE" || error.message === "Payload too large" ? 413 : 500;
       sendJson(res, statusCode, publicErrorBody(statusCode === 413 ? 'security.payloadTooLarge' : 'security.internalError'));
     }
     return;
@@ -367,6 +369,6 @@ server.listen(port, "0.0.0.0", () => {
 });
 
 server.on("error", (err) => {
-  console.error("Buzzard API server failed to start:", err.message);
+  console.error("Buzzard API server failed to start:", publicTaskError(err, "server.listen_failed"));
   process.exit(1);
 });

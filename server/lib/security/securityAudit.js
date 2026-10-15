@@ -69,7 +69,7 @@ function runSecurityAudit() {
         finding(
           AUDIT_FINDING_SEVERITY.CRITICAL,
           err.code,
-          err.message,
+          err.code || "config.invalid",
           "CONFIG"
         )
       );
@@ -81,7 +81,7 @@ function runSecurityAudit() {
       finding(
         AUDIT_FINDING_SEVERITY.MEDIUM,
         warn.code,
-        warn.message,
+        warn.code || "config.warning",
         "CONFIG"
       )
     );

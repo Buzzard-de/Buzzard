@@ -22,10 +22,10 @@ function migrateEphemeralToPersistentIfNeeded(targetPath) {
     const stat = fs.statSync(legacyPath);
     if (!stat.isFile() || stat.size === 0) return null;
     fs.copyFileSync(legacyPath, targetPath);
-    console.log(`[db-startup] Migrated SQLite ${legacyPath} → ${targetPath}`);
-    return { from: legacyPath, to: targetPath, bytes: stat.size };
+    console.log("[db-startup] Migrated SQLite ephemeral→persistent");
+    return { from: "ephemeral", to: "persistent", bytes: stat.size };
   } catch (err) {
-    console.warn("[db-startup] Ephemeral→persistent migration skipped:", err.message);
+    console.warn("[db-startup] Ephemeral→persistent migration skipped:", publicTaskError(err, "database.migration_skipped"));
     return null;
   }
 }

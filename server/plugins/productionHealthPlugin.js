@@ -66,6 +66,12 @@ module.exports = {
         delete persistence.renderDisk;
         database.persistence = persistence;
       }
+      if (database.startup) {
+        const startup = { ...database.startup };
+        delete startup.dbPath;
+        delete startup.migration;
+        database.startup = startup;
+      }
       const backup = summary.backup ? { ...summary.backup } : {};
       delete backup.backupDir;
       res.json({ success: true, ...summary, database, backup });

@@ -2,8 +2,8 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `b83acdff9bf089d9732c61f38429d0dcea983dfc`  
-Code HEAD this pass: `5838756`
+Starting HEAD this pass: `5b8681b23579abf25d44c3ef105973079162ec12`  
+Code HEAD this pass: `13979a3`
 
 Safety at evidence time:
 
@@ -22,9 +22,9 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (245 + 240 + 238 + fortress + part16/17 + pusat master) | 0 | **89 passed** |
-| `npx vitest run` | 0 | 102 files, **1034 passed**, 0 failed |
-| `npx tsc --noEmit` | 0 | clean |
+| Focused vitest (`continuousIntegrity246`) | 0 | **5 passed** |
+| `npx vitest run` | 0 | 103 files, **1039 passed**, 0 failed |
+| `npx tsc --noEmit` | 0 | clean (after errorKey types) |
 | `NODE_ENV=production npx next build` | skipped | `:3000` next-server owns `.next` |
 | Isolated Playwright this pass | skipped | last recorded 107 passed / 12 skipped on `6f6c672` |
 
@@ -32,7 +32,7 @@ Working directory: `/workspace`
 
 | File | Established coverage |
 | --- | --- |
-| `server/__tests__/continuousIntegrity245.test.mjs` | no db path on health/Pusat/production/go-live; audit codes; restore target class; payload-too-large code |
+| `server/__tests__/continuousIntegrity246.test.mjs` | lib clients no `data.error`/`data.message` throws; desktop-bridge errorKey; snapshot collectHealth; wire script |
 
 ## Original 237 source search
 

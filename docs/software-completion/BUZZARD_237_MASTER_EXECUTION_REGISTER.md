@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `5838756` (path-stripped diagnostics; base `b83acdf`)  
+Inspected HEAD at quality pass: `13979a3` (client/bridge errorKey; base `5b8681b`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **71.88%** (was 71.59%; 237-item arithmetic mean). This pass **+0.29 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~68 puan gerçek iş).
+Mean established-scope completion: **71.97%** (was 71.88%; 237-item arithmetic mean). This pass **+0.09 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~21 puan gerçek iş).
 
 ## Safety locks this workspace
 
@@ -107,11 +107,12 @@ Mean established-scope completion: **71.88%** (was 71.59%; 237-item arithmetic m
 57. Batch `publicTaskError` on worker, automations, returns, identity, tracking, supplier hub/feeds, PIM bulk/import, taxonomy, backup, OMS, bridges, and API error logs.
 58. Remaining health/readiness/gate `err.message` payloads (controlCenter, dbStartup/integrity, rate-limit Redis, automations, commerce/category readiness, integration health, safety gates, notifications, storefront sync, production/go-live/monitoring) now use `publicTaskError` keys; persistFile and backupDir stripped from public store/monitoring info.
 59. Diagnostic health/go-live/Pusat payloads omit filesystem paths; restore targets are class keys; startup and API error logs use publicTaskError.
+60. Browser/admin clients throw `errorKey` only; desktop-bridge HTTP/watch omit exception text; intelligence snapshot collectHealth uses `health.probeFailed`.
 
 
 ## Resume pointer
 
-Next session: leftover leaks are UNIQUE detection and intelligence/export copies. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: UNIQUE constraint detection still inspects err.message internally; contact form still uses API `message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -502,7 +503,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 97% (diagnostic payloads omit paths; intelligence copies remain) |
+| Completion percentage | 98% (clients throw errorKey only; intelligence collectHealth keyed; original UNKNOWN) |
 | Remaining work | Other unused health blobs may still exist in intelligence copies |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -660,7 +661,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (audit findings and startup logs are codes; intelligence copies remain) |
+| Completion percentage | 97% (admin/store/commerce no longer surface data.error/message; snapshot collectHealth keyed) |
 | Remaining work | `aiAutomationPlugin` internal `{ error: err.message }` remains |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -712,7 +713,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (checkout sqlite-store catch uses checkout.apiUnavailable; sales still off) |
+| Completion percentage | 88% (commerce client uses errorKey for both message and code; sales still off) |
 | Remaining work | Commercial checkout blocked while sales off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -894,7 +895,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 84% (desktop-bridge HTTP/watch errors are keys; not a second orchestrator) |
 | Remaining work | CODE_IMPLEMENTATION_STATUS |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -946,7 +947,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (productionHealthPlugin environment detail uses code; plugins still wrapped) |
+| Completion percentage | 88% (intelligence snapshot collectHealth uses health.probeFailed; plugins wrapped) |
 | Remaining work | Unregistered paths 404 |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1886,7 +1887,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (storefront sync error_message is a key; original UNKNOWN) |
+| Completion percentage | 85% (store client throws errorKey; original UNKNOWN) |
 | Remaining work | Search uses canonical read |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4052,7 +4053,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 68% (admin module clients throw errorKey not data.error; session cookie gap remains) |
 | Remaining work | Guest session headers wired |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5230,7 +5231,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (continuousIntegrity245 added; original unit checklist UNKNOWN) |
+| Completion percentage | 94% (continuousIntegrity246 added; original unit checklist UNKNOWN) |
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5256,7 +5257,7 @@ Next session: leftover leaks are UNIQUE detection and intelligence/export copies
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 76% (full vitest this pass; historical subset remains) |
+| Completion percentage | 78% (full vitest this pass; historical subset remains) |
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

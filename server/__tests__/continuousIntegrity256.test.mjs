@@ -107,6 +107,11 @@ describe("Esat Bey final hardening — login, HAC, fail-closed, incidents", () =
 
     const human = pusat.approval.decide(asked.id, "approve", "admin@buzzard.de", { currentInput: input });
     expect(human.approval.status).toBe("APPROVED");
+    const omitted = pusat.approval.consumeForExecution(asked.id, input, {
+      actor: "admin@buzzard.de",
+    });
+    expect(omitted.ok).toBe(false);
+    expect(omitted.code).toBe("action_required");
     const mismatched = pusat.approval.consumeForExecution(asked.id, input, {
       actor: "admin@buzzard.de",
       action: "payment.refund",

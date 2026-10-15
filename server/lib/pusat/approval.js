@@ -175,8 +175,13 @@ function consumeForExecution(id, currentInput, { actor, action } = {}) {
   const bound = assertBound(existing, currentInput);
   if (!bound.ok) return bound;
 
-  if (action && existing.action && String(action) !== String(existing.action)) {
-    return { ok: false, code: "action_mismatch", approval: existing, liveAction: false };
+  if (existing.action) {
+    if (!action) {
+      return { ok: false, code: "action_required", approval: existing, liveAction: false };
+    }
+    if (String(action) !== String(existing.action)) {
+      return { ok: false, code: "action_mismatch", approval: existing, liveAction: false };
+    }
   }
 
   const actorName = actor || existing.decidedBy;

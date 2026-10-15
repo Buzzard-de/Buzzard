@@ -117,10 +117,11 @@ Mean established-scope completion: **73.90%** (was 73.77%; 237-item arithmetic m
 67. Password reset HTTP responses no longer include `resetToken` / `resetTokenForDevelopment`. Unknown and known emails share one body. Reset request/confirm are public routes. HTTP rate limit applies before lookup. GET `/api/submissions` requires `security.manage`. No live reset email is sent.
 68. Identity 2FA confirm-enable: AES-GCM at-rest secret, TOTP confirm, recovery hashes, login requires TOTP when enrolled. HTTP omits raw secrets. Identity register HTTP omits verification tokens.
 69. Esat local incident engine classifies observation / suspicious / confirmed_violation (first injection is suspicious). Rule-based anomaly only (`ml: false`). Monitoring unhealthy if audit write fails. Approval unavailable fail-closes executeTask. Marketplace publish is Guardian-denied on the software lifecycle path.
+70. HAC consumeForExecution requires the stored action; omitting action is `action_required` (fail-closed). Percentages this pass **unchanged** (audit, not score inflation).
 
 ## Resume pointer
 
-Next session: marketplace/carrier BLOCKED_EXTERNAL; production restore HUMAN (local fixture restore is not RESTORE_TESTED); remote SOC/SIEM absent; Esat Bey not LIVE_VERIFIED. Original criteria UNKNOWN. Do not push/PR.
+Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); marketplace/carrier BLOCKED_EXTERNAL; production restore HUMAN; remote SOC/SIEM absent; Esat Bey not LIVE_VERIFIED. Do not push/PR.
 
 ---
 

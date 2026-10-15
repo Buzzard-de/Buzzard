@@ -105,12 +105,14 @@ describe("Pusat approval center", () => {
     const approved = pusat.approval.decide(created.id, "approve", "reviewer@test");
     const first = pusat.approval.consumeForExecution(approved.approval.id, { sku: "APPR-CONSUME", price: 10 }, {
       actor: "reviewer@test",
+      action: "prices.update",
     });
     expect(first.ok).toBe(true);
     expect(first.executed).toBe(false);
     expect(first.liveAction).toBe(false);
     const second = pusat.approval.consumeForExecution(approved.approval.id, { sku: "APPR-CONSUME", price: 10 }, {
       actor: "reviewer@test",
+      action: "prices.update",
     });
     expect(second.ok).toBe(false);
     expect(second.code).toBe("already_executed");
@@ -125,6 +127,7 @@ describe("Pusat approval center", () => {
     const bound = pusat.approval.decide(mismatched.id, "approve", "reviewer@test");
     const wrong = pusat.approval.consumeForExecution(bound.approval.id, { sku: "APPR-BIND", price: 77 }, {
       actor: "reviewer@test",
+      action: "prices.update",
     });
     expect(wrong.ok).toBe(false);
     expect(wrong.code).toBe("input_changed");

@@ -1,47 +1,39 @@
-# Buzzard 237 — Final handover (this execution)
+# Buzzard 237 — Final handover (Komut 7–10)
 
 Date: 2026-10-15  
-This document is a session handover, not a claim that 237/237 items are complete.
+Esat Bey is **not** 100% and **not** LIVE_VERIFIED.
 
 ## Git
 
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `12e24c5` |
-| Ending HEAD (code) | `af95675` plus register evidence commit |
-| Push / merge / deploy / PR | **not performed** (KOMUT 6) |
+| Start | `1096f29` |
+| Push / PR / deploy | **not performed** |
 
-## Totals
+## Scores (same 237-item arithmetic mean)
 
-Canonical original titles: **UNKNOWN**.
+| Scope | Previous | New | Delta |
+| --- | --- | --- | --- |
+| Buzzard 237 | 73.20% | **73.53%** | +0.33 pp |
+| Esat Bey items 227–237 | 71.36% | **77.82%** | +6.45 pp |
 
-| Final state | Count | % of 237 |
-| --- | --- | --- |
-| VERIFIED_100 | 0 | 0.0% |
-| PARTIAL | 216 | 91.1% |
-| HUMAN_APPROVAL_REQUIRED | 13 | 5.5% |
-| BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
-| NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
+VERIFIED_100 = 0. HUMAN = 13. BLOCKED_EXTERNAL = 7.
 
-Mean established-scope completion: **73.20%** (was 73.12%). This pass **+0.08 pp**. Target +0.30 **NOT MET**.
+## Implemented
 
-## What was implemented this pass
+- SHA-256 password-reset storage; legacy plaintext not honored.
+- Identity 2FA HTTP: no `secretForDevelopment`; unauthenticated 401.
+- Contact PII: `security.manage`.
+- Guardian: prompt-injection, privilege keys, isolation, audit fail-closed.
+- Pusat `executeTask`: circuit breaker; money actions FINANCIAL_BLOCKED.
+- HAC: Esat Bey cannot self-approve; input hash bind (existing + regression).
 
-- `/api/account/password-reset/request` no longer returns `resetToken`.
-- Identity HTTP reset-request returns `{ ok: true }` only.
-- Same success body for existing and missing emails.
-- Reset request/confirm marked public; CSRF allow-list updated.
-- HTTP reset rate limit 5/hour before account lookup.
-- `createRateLimiter` honors TEST_MODE per call.
-- GET `/api/submissions` requires `security.read`.
-- Storefront reset UI no longer displays a demo token.
-- Confirm still works when tests mint via `createResetToken`.
-- No live email delivery (none was configured).
+## Not 100% — remaining Esat/Buzzard work
 
-## Highest-priority remaining work
-
-1. Hash/at-rest protection for `password-reset-tokens.json`.
-2. Identity `secretForDevelopment` on 2FA setup HTTP.
-3. `/api/account/login` and `/register` still sit under the customer-auth catch-all (reset is public).
-4. Marketplace/carrier BLOCKED_EXTERNAL; Esat Bey 227–237 not started.
+- Live SOC / remote Guardian / IR drill
+- Production backup restore (HUMAN)
+- Identity 2FA confirm-enable still incomplete
+- Login/register still under customer-auth catch-all
+- Marketplace/carrier live credentials
+- Original 237 acceptance criteria UNKNOWN

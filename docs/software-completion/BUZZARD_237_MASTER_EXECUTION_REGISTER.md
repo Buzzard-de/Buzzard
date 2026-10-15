@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `af95675` (password-reset token removed from API; submissions security.read)  
+Inspected HEAD at quality pass: `adc36a7` (hashed reset tokens, 2FA HTTP strip, Esat/Guardian gates)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **73.20%** (was 73.12%; 237-item arithmetic mean). This pass **+0.08 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +0.30 **NOT MET** (71 puan gerekir; 20 puan gerçek iş / 237).
+Mean established-scope completion: **73.53%** (was 73.20%; 237-item arithmetic mean). This pass **+0.33 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Esat Bey 227–237 mean **77.82%** (was 71.36%). Target +0.30 **MET for this package** (78 puan / 237).
 
 ## Safety locks this workspace
 
@@ -119,7 +119,7 @@ Mean established-scope completion: **73.20%** (was 73.12%; 237-item arithmetic m
 
 ## Resume pointer
 
-Next session: tokens still stored plaintext in `password-reset-tokens.json`; identity `secretForDevelopment` on 2FA setup; `/api/account/login|register` still customer-auth wrapped (reset is public); marketplace/carrier BLOCKED_EXTERNAL; Esat Bey 227–237 not started. Original criteria UNKNOWN. Do not push/PR.
+Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login|register` still customer-auth wrapped; marketplace/carrier BLOCKED_EXTERNAL; backup/IR live HUMAN; Esat Bey not LIVE_VERIFIED. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -224,7 +224,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (GET /api/submissions uses security.read; order_manager 403; original UNKNOWN) |
+| Completion percentage | 88% (GET /api/submissions security.manage; read_only 403; original UNKNOWN) |
 | Remaining work | Plugin audit exists; not every alternate path production-probed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4192,7 +4192,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (reset token not in API; confirm still works via createResetToken; original UNKNOWN)
+| Completion percentage | 96% (reset tokens stored as SHA-256 hashes; confirm still works; original UNKNOWN)
 | Remaining work | Rate limit 8/15min |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6048,7 +6048,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 82% (prompt-injection + dangerous pattern deny; original UNKNOWN) |
 | Remaining work | Detect + deny; no destructive containment |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6074,7 +6074,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 86% (privilege-escalation payload denied; original UNKNOWN) |
 | Remaining work | Permission deny |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6100,7 +6100,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 68% (rate + isolation heuristics; not ML; original UNKNOWN) |
 | Remaining work | Heuristic only; not ML production |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6126,7 +6126,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 76% (deny/allow events local only; original UNKNOWN) |
 | Remaining work | Local events |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6152,7 +6152,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 78% (isolateAgent grants no extra permissions; original UNKNOWN) |
 | Remaining work | No kill-switch of prod infra |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6178,7 +6178,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 80% (allow-path audit failure fail-closed; original UNKNOWN) |
 | Remaining work | actor esat_bey recorded |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6204,7 +6204,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 86% (isolated agents cannot execute; original UNKNOWN) |
 | Remaining work | Missing agentId fail-closed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6230,7 +6230,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 48% (deny path tested; no live IR drill; original UNKNOWN) |
 | Remaining work | No live IR drill |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6256,7 +6256,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 84% (scanSecrets + hashed reset tokens; original UNKNOWN) |
 | Remaining work | Rejects password/token keys |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6282,7 +6282,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 80% (dangerous + injection + money circuit; original UNKNOWN) |
 | Remaining work | Require approval / deny |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6308,7 +6308,7 @@ Next session: tokens still stored plaintext in `password-reset-tokens.json`; ide
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 88% (evaluate catch + audit fail-closed; original UNKNOWN) |
 | Remaining work | failClosed true on throw |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

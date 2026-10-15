@@ -153,7 +153,7 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
       { taskId, correlationId: meta?.correlation_id, action }
     );
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-      error: "PUSAT_GUARDIAN_BLOCKED",
+      error: publicTaskError({ code: EXCEPTION_CODES.GUARDIAN_BLOCKED }, EXCEPTION_CODES.GUARDIAN_BLOCKED),
       result: { failureKind: "CIRCUIT", circuit, executed: false },
     });
   }

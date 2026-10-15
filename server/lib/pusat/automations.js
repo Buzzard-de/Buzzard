@@ -15,6 +15,7 @@ const memory = require("./memory");
 const { listExceptions } = require("./exceptions");
 const approval = require("./approval");
 const controlCenter = require("../controlCenter");
+const { publicTaskError } = require("../security");
 
 function productCreation(input = {}) {
   const dryRun = input.dryRun !== false;
@@ -55,7 +56,7 @@ function productCreation(input = {}) {
       { source: "AI", actorId: "product_assistant", dryRun: true }
     );
   } catch (error) {
-    coreError = error.message;
+    coreError = publicTaskError(error, "product.core.dry_run_failed");
   }
 
   return {
@@ -100,7 +101,7 @@ function supplierImport(input = {}) {
       mock: adapter.id === "mock" || /mock/i.test(adapter.name || ""),
     };
   } catch (error) {
-    return { ok: false, workflow: "supplier_import", error: error.message, live: false };
+    return { ok: false, workflow: "supplier_import", error: publicTaskError(error, "supplier.import.failed"), live: false };
   }
 
   return {
@@ -202,7 +203,7 @@ function customsAutomation(input = {}) {
       customs: { review_required: true, source: "module_unavailable" },
       review_required: true,
       disclaimer: "Customs classification could not be validated. Not legal or tax advice.",
-      error: error.message,
+      error: publicTaskError(error, "customs.module_unavailable"),
     };
   }
   return {

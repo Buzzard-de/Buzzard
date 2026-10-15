@@ -33,7 +33,7 @@ function openCase(db, input = {}) {
       items: input.items || [],
     });
   } catch (error) {
-    rma = { error: error.message, status: 500 };
+    rma = { error: require("../security").publicTaskError(error, "returns.rma_failed"), status: 500 };
   }
 
   const id = newId();
@@ -72,7 +72,7 @@ function openCase(db, input = {}) {
       returned: false,
     });
   } catch (error) {
-    opened.loyalty = { ok: false, reason: error.message };
+    opened.loyalty = { ok: false, reason: require("../security").publicTaskError(error, "loyalty.reevaluate_failed") };
   }
   return opened;
 }

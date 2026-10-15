@@ -205,8 +205,8 @@ function syncSupplierFeed(supplierId, body = {}) {
   } catch (error) {
     const run = db
       .prepare("INSERT INTO sync_runs(supplier_id, status, errors, message) VALUES(?,?,?,?)")
-      .run(supplier.id, "failed", 1, error.message);
-    return { error: error.message, runId: run.lastInsertRowid, status: 400 };
+      .run(supplier.id, "failed", 1, require("./security").publicTaskError(error, "supplier.feed.parse_failed"));
+    return { error: require("./security").publicTaskError(error, "supplier.feed.parse_failed"), runId: run.lastInsertRowid, status: 400 };
   }
 
   let imported = 0;
@@ -242,7 +242,7 @@ function syncSupplierFeed(supplierId, body = {}) {
         errors += 1;
         db.prepare("INSERT INTO sync_errors(supplier_id, message, payload) VALUES(?,?,?)").run(
           supplier.id,
-          error.message,
+          require("./security").publicTaskError(error, "supplier.sync.row_failed"),
           JSON.stringify(item)
         );
       }

@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `95d7b0a` (exceptions.lastError keys; command 3/10; base `28e4599`)  
+Inspected HEAD at quality pass: working tree on `f906509` (batch publicTaskError; acceleration pass)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **70.13%** (was 70.10%; 237-item arithmetic mean). Command 3/10 delta **+0.03 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **70.96%** (was 70.13%; 237-item arithmetic mean). This pass **+0.83 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -104,11 +104,12 @@ Mean established-scope completion: **70.13%** (was 70.10%; 237-item arithmetic m
 54. `productionHealth` probe failures return `errorKey` only; Redis health uses `redis.failed`; public production payload strips `backupDir`.
 55. Pusat lifecycle and aiOrchestrator store/escalate `publicTaskError` keys; `mapTaskRow.error` sanitizes leftover free text.
 56. `core_ai_exceptions.last_error` stored/returned as classified keys; GET `/api/admin/pusat/exceptions` requires `security.read`.
+57. Batch `publicTaskError` on worker, automations, returns, identity, tracking, supplier hub/feeds, PIM bulk/import, taxonomy, backup, OMS, bridges, and API error logs.
 
 
 ## Resume pointer
 
-Next session (command 4/10): leftover `classify.message` in-process; item 185 alerting EXTERNAL; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not restart the register. Do not push/PR.
+Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EXTERNAL); item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -735,7 +736,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 88% (order/OMS/inventory failure reasons keyed; original UNKNOWN) |
 | Remaining work | Unit + E2E blocked commercial path |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -761,7 +762,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 82% (PIM bulk update errors keyed; SoT off) |
 | Remaining work | Multiple stores still classified; SoT off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -917,7 +918,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (probe failures use errorKey; redis.failed; no err.message; original UNKNOWN) |
+| Completion percentage | 92% (getDatabaseHealth error is database.health_failed; probe keys; original UNKNOWN) |
 | Remaining work | Rate-limited health bucket; live production probe UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -943,8 +944,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Registered plugins wrapped; unregistered paths 404 |
+| Completion percentage | 78% (API catch logs errorKey only; plugins still wrapped) |
+| Remaining work | Unregistered paths 404 |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1153,8 +1154,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 94% (exceptions.lastError is a classified key on get/list; original UNKNOWN) |
-| Remaining work | classify.message still exists in-process; live exception ops UNKNOWN |
+| Completion percentage | 96% (classify.message is the classified code; lastError keyed; original UNKNOWN) |
+| Remaining work | Live exception operations UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1231,7 +1232,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 76% (job API sanitizes free-text errors; original UNKNOWN) |
+| Completion percentage | 88% (worker dead-letter/retry stores publicTaskError keys; original UNKNOWN) |
 | Remaining work | Live workers not claimed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1309,8 +1310,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Existing suite |
+| Completion percentage | 82% (guardian bridge unreachable uses key not exception text) |
+| Remaining work | Existing suite; live Guardian UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1439,7 +1440,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (prefix authenticated locally; original UNKNOWN) |
+| Completion percentage | 92% (orchestrator_unreachable keyed; prefix still authenticated) |
 | Remaining work | Production orchestrator HTTP not probed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1465,8 +1466,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Sensitive actions gated |
+| Completion percentage | 84% (automation catch paths use publicTaskError; original UNKNOWN) |
+| Remaining work | Sensitive actions gated; live PO still blocked |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1543,7 +1544,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (honest stub/live fields locally; original UNKNOWN) |
+| Completion percentage | 90% (bridges and classify no longer leak fetch exception text) |
 | Remaining work | Production Pusat health not probed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1571,7 +1572,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 82% (canonical taxonomy load failures keyed; SoT not cut over) |
 | Remaining work | SoT not cut over |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1597,7 +1598,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 88% (bulk write errors keyed; dual-write still forbidden) |
 | Remaining work | Dual-write forbidden |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1831,7 +1832,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 72% (import record failures keyed; live import still flagged off) |
 | Remaining work | E2E dry-run UI mismatch (copy) |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2119,7 +2120,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 68% (supplier error wrap + hub parse/sync keys; live adapters BLOCKED) |
 | Remaining work | Many NOT_IMPLEMENTED live |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2171,7 +2172,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 76% (price/stock job errors keyed; live supplier sync BLOCKED) |
 | Remaining work | Local tables; live supplier sync BLOCKED |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2275,8 +2276,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Fixture only |
+| Completion percentage | 82% (PARSE_FAILED detail is a key; live fetch still off) |
+| Remaining work | Fixture only; live fetch off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2797,8 +2798,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Ledger wrap |
+| Completion percentage | 84% (RMA/loyalty failure reasons are keys; original UNKNOWN) |
+| Remaining work | Ledger wrap; live refund UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -3005,8 +3006,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Historical unit |
+| Completion percentage | 82% (IDENTITY_BIND_FAILED no longer embeds exception text; original UNKNOWN) |
+| Remaining work | Historical unit; live QR UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -3031,8 +3032,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Not fully re-audited this pass |
+| Completion percentage | 72% (loyalty reevaluate failures keyed; original UNKNOWN) |
+| Remaining work | Abuse paths not fully re-audited |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4207,8 +4208,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Refund ≠ supplier credit |
+| Completion percentage | 84% (returns workflow errors keyed; refund still ≠ supplier credit) |
+| Remaining work | Live refund/credit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -4965,7 +4966,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (local backup + production /tmp destination fail-closed; production backup UNKNOWN) |
+| Completion percentage | 80% (backup.run_failed key; /tmp fail-closed; production backup UNKNOWN) |
 | Remaining work | Production backup destination and schedule UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5095,8 +5096,8 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Secret-free inventory |
+| Completion percentage | 67% (health/bridge/intelligence failures keyed; secret-free inventory still local) |
+| Remaining work | Secret-free inventory; production scrape UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5147,7 +5148,7 @@ Next session (command 4/10): leftover `classify.message` in-process; item 185 al
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (secret-shaped strings redacted in nested logs without mutating input) |
+| Completion percentage | 86% (api_error logs store errorKey not exception text; secret-shaped strings redacted) |
 | Remaining work | Local log file only; production SIEM UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

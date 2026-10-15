@@ -95,7 +95,7 @@ function createShipment(db, input = {}) {
       const existing = db.prepare("SELECT * FROM software_shipments WHERE tracking_number = ?").get(trackingNumber);
       return { ok: true, duplicate: true, shipment: mapShipment(existing, db), shipmentCreated: false };
     }
-    return { ok: false, reason: "SHIPMENT_WRITE_FAILED", error: error.message };
+    return { ok: false, reason: "SHIPMENT_WRITE_FAILED", error: require("../security").publicTaskError(error, "SHIPMENT_WRITE_FAILED") };
   }
 
   for (const event of events) {

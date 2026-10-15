@@ -47,7 +47,7 @@ async function fetchOrchestrator(path, options = {}) {
     return {
       ok: false,
       status: "UNREACHABLE",
-      error: error.name === "AbortError" ? "orchestrator_timeout" : error.message,
+      error: error.name === "AbortError" ? "orchestrator_timeout" : require("./security").publicTaskError(error, "orchestrator_unreachable"),
     };
   } finally {
     clearTimeout(timer);

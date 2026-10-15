@@ -241,7 +241,7 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
       live: false,
       purchaseOrderSent: false,
       errors: ["PARSE_FAILED"],
-      detail: error.message,
+      detail: require("../security").publicTaskError(error, "PARSE_FAILED"),
     };
   }
 

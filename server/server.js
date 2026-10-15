@@ -330,7 +330,7 @@ const server = http.createServer(async (req, res) => {
         type: 'api_error',
         success: false,
         path: pathname,
-        detail: { message: error.message },
+        detail: { errorKey: error.message === 'Payload too large' ? 'security.payloadTooLarge' : 'security.internalError' },
       });
       const statusCode = error.message === 'Payload too large' ? 413 : 500;
       sendJson(res, statusCode, publicErrorBody(statusCode === 413 ? 'security.payloadTooLarge' : 'security.internalError'));

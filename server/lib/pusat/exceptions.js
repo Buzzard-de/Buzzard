@@ -40,7 +40,7 @@ function classify(error, { action } = {}) {
     code,
     retryable,
     sensitive,
-    message: redactError(message),
+    message: code,
     action: action || null,
   };
 }

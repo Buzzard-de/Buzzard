@@ -2,8 +2,8 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `28e45999fcd4d3355539f753d07b051c2fa5453a`  
-Code HEAD this pass: `95d7b0a86e057e0c749914d15e10471f1d772168`
+Starting HEAD this pass: `f9065098d933e75b1988abc3f19ffbf7d35aaf6a`  
+Code HEAD this pass: working tree (acceleration pass)
 
 Safety at evidence time:
 
@@ -22,8 +22,8 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (`continuousIntegrity242` + commerceIntegrity + exceptions + fortressAuthz) | 0 | **28 passed** |
-| `npx vitest run` | 0 | 99 files, **1016 passed**, 0 failed |
+| Focused vitest (`continuousIntegrity243` + exceptions + part16) | 0 | **36 passed** |
+| `npx vitest run` | 0 | 100 files, **1020 passed**, 0 failed |
 | `npx tsc --noEmit` | 0 | clean |
 | `npx next lint` | 0 | No ESLint warnings or errors |
 | `npm run test:backup-restore` | 0 | dry-run only |
@@ -51,6 +51,7 @@ npx playwright test
 | `server/__tests__/continuousIntegrity240.test.mjs` | productionHealth probeFailure has no SQL/path; version payload slim |
 | `server/__tests__/continuousIntegrity241.test.mjs` | publicTaskError; mapTaskRow sanitizes SQL; lifecycle/orchestrator source |
 | `server/__tests__/continuousIntegrity242.test.mjs` | exceptions lastError keys; 401 on admin list; legacy SQL row sanitized |
+| `server/__tests__/continuousIntegrity243.test.mjs` | batch publicTaskError source scan; classify.message is code; supplier wrapError |
 
 ## Original 237 source search
 

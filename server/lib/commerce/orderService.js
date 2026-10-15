@@ -166,7 +166,7 @@ function transitionOrderStatus(orderId, toStatus) {
       const orderInventoryBridge = require("../software/orderInventoryBridge");
       next.inventoryRelease = orderInventoryBridge.releaseOnCancel(db, { orderId });
     } catch (error) {
-      next.inventoryRelease = { ok: false, released: 0, reason: error.message };
+      next.inventoryRelease = { ok: false, released: 0, reason: require("../security").publicTaskError(error, "inventory.release_failed") };
     }
   }
   return next;

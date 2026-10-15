@@ -111,7 +111,7 @@ function createOrder(body = {}) {
     const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(result.lastInsertRowid);
     return { order, created: true };
   } catch (error) {
-    return { error: "Order creation conflict", detail: error.message, status: 409 };
+    return { error: "Order creation conflict", detail: require("./security").publicTaskError(error, "order.conflict"), status: 409 };
   }
 }
 
@@ -238,7 +238,7 @@ function cancelOrder(id, body = {}) {
       cancelled: true,
     });
   } catch (error) {
-    loyalty = { ok: false, reason: error.message };
+    loyalty = { ok: false, reason: require("./security").publicTaskError(error, "loyalty.reevaluate_failed") };
   }
   return {
     ok: true,
@@ -259,7 +259,7 @@ function releaseReservationsForCancelledOrder(order) {
       liveOrderCancelled: false,
     };
   } catch (error) {
-    return { ok: false, released: 0, skippedConsumed: 0, reason: error.message, liveOrderCancelled: false };
+    return { ok: false, released: 0, skippedConsumed: 0, reason: require("./security").publicTaskError(error, "inventory.release_failed"), liveOrderCancelled: false };
   }
 }
 

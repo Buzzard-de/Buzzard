@@ -159,7 +159,7 @@ async function executeWithProvider({ provider, prompt, context, timeoutMs = DEFA
       live: false,
       error: classified.code,
       retryable: classified.retryable,
-      message: redact(error.message),
+      message: classified.code,
     };
   } finally {
     clearTimeout(timer);

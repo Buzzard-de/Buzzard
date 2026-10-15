@@ -3961,7 +3961,7 @@ function getDatabaseHealth() {
       enabled: true,
       path: dbPath,
       version: "0.3.0",
-      error: error.message,
+      error: require("./security").publicTaskError(error, "database.health_failed"),
       persistence: {
         mode: persistence.mode,
         persistent: persistence.persistent,

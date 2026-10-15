@@ -12,7 +12,7 @@ function bulkUpdate(ids, patch, { source = AUDIT_SOURCE.ADMIN, actorId } = {}) {
       const updated = productCore.updateProduct(id, patch, { source, actorId });
       results.push({ id, ok: true, product: updated });
     } catch (err) {
-      results.push({ id, ok: false, error: err.message });
+      results.push({ id, ok: false, error: require("../security").publicTaskError(err, "pim.bulk.update_failed") });
     }
   }
   productAudit.logChange({

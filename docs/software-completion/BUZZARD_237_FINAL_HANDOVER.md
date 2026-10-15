@@ -1,6 +1,6 @@
 # Buzzard 237 — Final handover (this execution)
 
-Date: 2026-10-14  
+Date: 2026-10-15  
 This document is a session handover, not a claim that 237/237 items are complete.
 
 ## Git
@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `f9065098d933e75b1988abc3f19ffbf7d35aaf6a` |
-| Ending HEAD (code) | `8e59a622fd8bc5d4560cc6a440520083ff7f37e3` |
+| Starting HEAD | `70037633b2e26dbd1965e03246d8e843a3c7be41` |
+| Ending HEAD (code) | `14742e4` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,16 +24,18 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **70.96%** (was 70.13%). This pass **+0.83 pp**. Target +1.0 **NOT MET** (237 puan gerekir; ~197 puan gerçek iş).
+Mean established-scope completion: **71.59%** (was 70.96%). This pass **+0.63 pp**. Target +1.0 **NOT MET** (237 puan gerekir; 136 puan gerçek iş).
 
 ## What was implemented this pass
 
-- Batch publicTaskError across worker, automations, RMA, identity, tracking, supplier, PIM, OMS, bridges, backup, logs.
-- Vitest 1020 passed.
+- Remaining API-visible health/readiness/gate `err.message` payloads mapped to `publicTaskError` keys.
+- Rate-limit `persistFile` path and monitoring `backupDir` stripped from public snapshots.
+- Checkout sqlite-store catch uses `checkout.apiUnavailable`.
+- Vitest 1027 passed. `next build` skipped (`:3000` live).
 
 ## Highest-priority remaining work
 
 1. Recover original 237 titles/criteria or obtain an explicit waiver.
-2. Remaining PARTIAL: marketplace/carrier adapters, item 185 EXTERNAL, 109 live webhook, 187 HUMAN.
-3. Human approvals and external credentials (never invent LIVE_VERIFIED).
-4. Isolated Playwright after `:3010`/`:3001` are dedicated — not re-run this pass.
+2. Leftover `err.message`: UNIQUE detection, `console.error`, intelligence/export copies.
+3. Marketplace/carrier adapters, item 185 EXTERNAL, 109 live webhook, 187 HUMAN.
+4. Human approvals and external credentials (never invent LIVE_VERIFIED).

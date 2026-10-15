@@ -1,8 +1,8 @@
 # Buzzard 237 Master Execution Register
 
-Date: 2026-10-14  
+Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `8e59a62` (batch publicTaskError; acceleration pass; base `f906509`)  
+Inspected HEAD at quality pass: `14742e4` (health/readiness publicTaskError; base `7003763`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **70.96%** (was 70.13%; 237-item arithmetic mean). This pass **+0.83 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **71.59%** (was 70.96%; 237-item arithmetic mean). This pass **+0.63 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; 136 puan gerçek iş).
 
 ## Safety locks this workspace
 
@@ -105,11 +105,12 @@ Mean established-scope completion: **70.96%** (was 70.13%; 237-item arithmetic m
 55. Pusat lifecycle and aiOrchestrator store/escalate `publicTaskError` keys; `mapTaskRow.error` sanitizes leftover free text.
 56. `core_ai_exceptions.last_error` stored/returned as classified keys; GET `/api/admin/pusat/exceptions` requires `security.read`.
 57. Batch `publicTaskError` on worker, automations, returns, identity, tracking, supplier hub/feeds, PIM bulk/import, taxonomy, backup, OMS, bridges, and API error logs.
+58. Remaining health/readiness/gate `err.message` payloads (controlCenter, dbStartup/integrity, rate-limit Redis, automations, commerce/category readiness, integration health, safety gates, notifications, storefront sync, production/go-live/monitoring) now use `publicTaskError` keys; persistFile and backupDir stripped from public store/monitoring info.
 
 
 ## Resume pointer
 
-Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EXTERNAL); item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`, and intelligence/export copies. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -396,7 +397,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 87% (redis lastError keyed; persistFile path stripped from getStoreInfo; original UNKNOWN) |
 | Remaining work | TEST_MODE still disables limiter for CI E2E isolation only; production forbids TEST_MODE |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -448,7 +449,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 91% (startup errors are keys; mapReadiness uses env error code; original UNKNOWN) |
 | Remaining work | Unit tested; production startup not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -474,7 +475,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (webhook payload redaction; production secret audit UNKNOWN) |
+| Completion percentage | 83% (rate-limit persist path no longer in store info; production secret audit UNKNOWN) |
 | Remaining work | Production secret audit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -500,7 +501,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (collectHealth uses health.probeFailed; original UNKNOWN) |
+| Completion percentage | 96% (health/readiness/gates no longer echo err.message; intelligence copies remain) |
 | Remaining work | Other unused health blobs may still exist in intelligence copies |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -578,7 +579,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 66% (dbStartup omits directory paths in errors; production persistence UNKNOWN) |
 | Remaining work | Local SQLite path known; production persistence UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -658,7 +659,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (admin-gate and remaining readiness plugins use public error keys; original UNKNOWN) |
+| Completion percentage | 94% (readiness/gate/plugin details are keys; intelligence copies remain) |
 | Remaining work | `aiAutomationPlugin` internal `{ error: err.message }` remains |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -710,7 +711,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 85% (checkout sqlite-store catch uses checkout.apiUnavailable; sales still off) |
 | Remaining work | Commercial checkout blocked while sales off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -918,7 +919,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (getDatabaseHealth error is database.health_failed; probe keys; original UNKNOWN) |
+| Completion percentage | 96% (controlCenter/integrationHealth/production readiness details keyed; live probe UNKNOWN) |
 | Remaining work | Rate-limited health bucket; live production probe UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -944,7 +945,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (API catch logs errorKey only; plugins still wrapped) |
+| Completion percentage | 84% (productionHealthPlugin environment detail uses code; plugins still wrapped) |
 | Remaining work | Unregistered paths 404 |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1466,7 +1467,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (automation catch paths use publicTaskError; original UNKNOWN) |
+| Completion percentage | 90% (automationEngine event.error is publicTaskError; live PO still blocked) |
 | Remaining work | Sensitive actions gated; live PO still blocked |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1884,7 +1885,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 82% (storefront sync error_message is a key; original UNKNOWN) |
 | Remaining work | Search uses canonical read |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1988,7 +1989,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 75% (category supplier check detail keyed; admin workflow remains) |
 | Remaining work | Admin workflow |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2120,7 +2121,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 68% (supplier error wrap + hub parse/sync keys; live adapters BLOCKED) |
+| Completion percentage | 75% (supplierSafetyGate reason is a key; live adapters BLOCKED) |
 | Remaining work | Many NOT_IMPLEMENTED live |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -3816,7 +3817,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 73% (notification emit reason keyed; live send still HUMAN) |
 | Remaining work | part19 tests historically |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4390,7 +4391,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 78% (controlCenter commerce service detail keyed; original UNKNOWN) |
 | Remaining work | System events recorded |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5018,7 +5019,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 48% (integrity/startup failures keyed without paths; production persistence UNKNOWN) |
 | Remaining work | Production persistence UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5096,7 +5097,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 67% (health/bridge/intelligence failures keyed; secret-free inventory still local) |
+| Completion percentage | 75% (integration lastError keyed; secret-free inventory still local) |
 | Remaining work | Secret-free inventory; production scrape UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5174,7 +5175,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 77% (go-live/monitoring use config codes; backup dir stripped from snapshot) |
 | Remaining work | salesEnabled false |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5228,7 +5229,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 92% (continuousIntegrity244 added; original unit checklist UNKNOWN) |
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5254,7 +5255,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 73% (focused + full vitest this pass; historical subset remains) |
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5802,7 +5803,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 78% (commerceReadiness catch detail keyed; sales stay off until HUMAN) |
 | Remaining work | Ready to stay off until HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5906,7 +5907,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 54% (goLiveReadiness SECURITY detail is error code; live URL not hit) |
 | Remaining work | Script exists; live URL not hit |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5958,7 +5959,7 @@ Next session: remaining PARTIAL in marketplace/carrier adapters (many BLOCKED_EX
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 70% (adminSafetyGate reason is production_safety_blocked; original UNKNOWN) |
 | Remaining work | Local /api/commerce/status |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

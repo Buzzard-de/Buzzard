@@ -80,8 +80,14 @@ function buildOtpAuthUri({ secret, email, issuer = "Buzzard Admin" }) {
   return `otpauth://totp/${label}?${query.toString()}`;
 }
 
+function generateTotp(secret, { step = 30 } = {}) {
+  const counter = Math.floor(Date.now() / 1000 / step);
+  return hotp(secret, counter);
+}
+
 module.exports = {
   generateSecret,
+  generateTotp,
   verifyTotp,
   buildOtpAuthUri,
 };

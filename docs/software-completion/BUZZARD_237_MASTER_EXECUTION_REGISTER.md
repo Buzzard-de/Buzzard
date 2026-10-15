@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `adc36a7` (hashed reset tokens, 2FA HTTP strip, Esat/Guardian gates)  
+Inspected HEAD at quality pass: working tree after Esat Bey master security (2FA confirm-enable, local incident engine)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **73.53%** (was 73.20%; 237-item arithmetic mean). This pass **+0.33 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Esat Bey 227–237 mean **77.82%** (was 71.36%). Target +0.30 **MET for this package** (78 puan / 237).
+Mean established-scope completion: **73.77%** (was 73.53%; 237-item arithmetic mean). This pass **+0.24 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Esat Bey 227–237 mean **83.00%** (was 77.82%; register-verified start this pass). Esat Bey is **not** 100% and **not** LIVE_VERIFIED.
 
 ## Safety locks this workspace
 
@@ -114,12 +114,13 @@ Mean established-scope completion: **73.53%** (was 73.20%; 237-item arithmetic m
 64. Batch: plugin admin/auth JSON, dbAuth, salesMode, OMS/identity/WMS/supplier/checkout/payments/product store English `error` strings, and `{ error: result.error }` echos now use `errorKey` / `sendKeyedResult`. Insufficient stock no longer interpolates SKU. Guardian/orchestrator 502 omit `detail`. Webhook 501 is keyed without adapter hints.
 65. Second English batch: cartCheckout, catalogSeo, PIM catalog, marketing/loyalty, reviews, RMA, logistics, CRM/support, AI center, localization feeds; v32–v40 `record.*` keys; taxonomy/menu/intelligence plugins `errorKey`.
 66. `sqliteConstraintKind` classifies UNIQUE/PRIMARY/CHECK/FOREIGN/NOTNULL. Generic `SQLITE_CONSTRAINT`/`19` still reads constraint text **internally only**. Public keys are `db.uniqueConstraint` / `db.constraint` / `db.error`. UNIQUE is `CONFLICT` → `PUSAT_VALIDATION_FAILED` (non-retryable). Submit unique-race no longer rethrows sqlite. Contact write fail-closed (German UX kept). Account/analytics export strips secret-shaped fields.
-67. Password reset HTTP responses no longer include `resetToken` / `resetTokenForDevelopment`. Unknown and known emails share one body. Reset request/confirm are public routes. HTTP rate limit applies before lookup. GET `/api/submissions` requires `security.read` (not `orders.read`). No live reset email is sent.
-
+67. Password reset HTTP responses no longer include `resetToken` / `resetTokenForDevelopment`. Unknown and known emails share one body. Reset request/confirm are public routes. HTTP rate limit applies before lookup. GET `/api/submissions` requires `security.manage`. No live reset email is sent.
+68. Identity 2FA confirm-enable: AES-GCM at-rest secret, TOTP confirm, recovery hashes, login requires TOTP when enrolled. HTTP omits raw secrets. Identity register HTTP omits verification tokens.
+69. Esat local incident engine classifies observation / suspicious / confirmed_violation (first injection is suspicious). Rule-based anomaly only (`ml: false`). Monitoring unhealthy if audit write fails. Approval unavailable fail-closes executeTask. Marketplace publish is Guardian-denied on the software lifecycle path.
 
 ## Resume pointer
 
-Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login|register` still customer-auth wrapped; marketplace/carrier BLOCKED_EXTERNAL; backup/IR live HUMAN; Esat Bey not LIVE_VERIFIED. Original criteria UNKNOWN. Do not push/PR.
+Next session: `/api/account/login|register` still customer-auth wrapped; marketplace/carrier BLOCKED_EXTERNAL; backup/IR live HUMAN; remote SOC/SIEM absent; Esat Bey not LIVE_VERIFIED. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -6048,7 +6049,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (prompt-injection + dangerous pattern deny; original UNKNOWN) |
+| Completion percentage | 86% (prompt-injection + exfil + config-mutation deny; original UNKNOWN) |
 | Remaining work | Detect + deny; no destructive containment |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6074,7 +6075,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (privilege-escalation payload denied; original UNKNOWN) |
+| Completion percentage | 88% (privilege-escalation + config mutation denied; original UNKNOWN) |
 | Remaining work | Permission deny |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6100,7 +6101,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 68% (rate + isolation heuristics; not ML; original UNKNOWN) |
+| Completion percentage | 74% (rule-based volume thresholds tested; ml:false; original UNKNOWN) |
 | Remaining work | Heuristic only; not ML production |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6126,7 +6127,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 76% (deny/allow events local only; original UNKNOWN) |
+| Completion percentage | 82% (local incidents + monitoringHealthy tied to audit write; no SIEM; original UNKNOWN) |
 | Remaining work | Local events |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6152,7 +6153,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (isolateAgent grants no extra permissions; original UNKNOWN) |
+| Completion percentage | 80% (isolateAgent grants no extra permissions; original UNKNOWN) |
 | Remaining work | No kill-switch of prod infra |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6178,7 +6179,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (allow-path audit failure fail-closed; original UNKNOWN) |
+| Completion percentage | 84% (policyVersion on allow/deny events; audit fail-closed; not immutable store; original UNKNOWN) |
 | Remaining work | actor esat_bey recorded |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6204,7 +6205,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (isolated agents cannot execute; original UNKNOWN) |
+| Completion percentage | 88% (isolated agents cannot execute; call budget; original UNKNOWN) |
 | Remaining work | Missing agentId fail-closed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6230,7 +6231,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 48% (deny path tested; no live IR drill; original UNKNOWN) |
+| Completion percentage | 66% (local incident id/class/severity; liveDispatch false; no SOC; original UNKNOWN) |
 | Remaining work | No live IR drill |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6256,7 +6257,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (scanSecrets + hashed reset tokens; original UNKNOWN) |
+| Completion percentage | 90% (scanSecrets + hashed reset + encrypted 2FA at rest + confirm-enable; original UNKNOWN) |
 | Remaining work | Rejects password/token keys |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6282,7 +6283,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (dangerous + injection + money circuit; original UNKNOWN) |
+| Completion percentage | 84% (dangerous + injection + money circuit + marketplace publish gate; original UNKNOWN) |
 | Remaining work | Require approval / deny |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6308,7 +6309,7 @@ Next session: identity 2FA enroll still not confirm-enabled; `/api/account/login
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (evaluate catch + audit fail-closed; original UNKNOWN) |
+| Completion percentage | 91% (evaluate catch + audit + approval-unavailable fail-closed; original UNKNOWN) |
 | Remaining work | failClosed true on throw |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

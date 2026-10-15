@@ -124,6 +124,15 @@ function loginUser(body = {}, req) {
 
   if (!ok) return { error: "auth.invalidCredentials", status: 401 };
 
+  if (user.twofa_enabled) {
+    if (!body.totp && !body.code) return { error: "auth.totpRequired", status: 401 };
+    if (!verifyStoredTotp(user.twofa_secret, body.totp || body.code)) {
+      recordTwoFaFailure(user.id);
+      audit(user.id, "login_2fa_failed", req);
+      return { error: "auth.totpInvalid", status: 401 };
+    }
+  }
+
   const refreshRaw = crypto.randomBytes(48).toString("hex");
   db.prepare(`
     INSERT INTO identity_sessions(user_id, refresh_hash, user_agent, ip_hash, expires_at)
@@ -286,13 +295,103 @@ function completePasswordReset(body = {}, req) {
   return { ok: true };
 }
 
+const twoFaFailures = new Map();
+const TWO_FA_FAIL_LIMIT = 8;
+
+function twoFaWrapKey() {
+  return crypto.createHash("sha256").update(String(secret)).digest();
+}
+
+function encryptTwoFaSecret(plain) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv("aes-256-gcm", twoFaWrapKey(), iv);
+  const enc = Buffer.concat([cipher.update(String(plain), "utf8"), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `enc:v1:${iv.toString("hex")}:${tag.toString("hex")}:${enc.toString("hex")}`;
+}
+
+function decryptTwoFaSecret(stored) {
+  const value = String(stored || "");
+  if (!value) return "";
+  if (!value.startsWith("enc:v1:")) return value;
+  const parts = value.split(":");
+  if (parts.length !== 5) return "";
+  try {
+    const iv = Buffer.from(parts[2], "hex");
+    const tag = Buffer.from(parts[3], "hex");
+    const enc = Buffer.from(parts[4], "hex");
+    const decipher = crypto.createDecipheriv("aes-256-gcm", twoFaWrapKey(), iv);
+    decipher.setAuthTag(tag);
+    return Buffer.concat([decipher.update(enc), decipher.final()]).toString("utf8");
+  } catch {
+    return "";
+  }
+}
+
+function twoFaLocked(userId) {
+  const now = Date.now();
+  const list = (twoFaFailures.get(String(userId)) || []).filter((t) => now - t < 15 * 60 * 1000);
+  twoFaFailures.set(String(userId), list);
+  return list.length >= TWO_FA_FAIL_LIMIT;
+}
+
+function recordTwoFaFailure(userId) {
+  const list = twoFaFailures.get(String(userId)) || [];
+  list.push(Date.now());
+  twoFaFailures.set(String(userId), list);
+}
+
+function clearTwoFaFailures(userId) {
+  twoFaFailures.delete(String(userId));
+}
+
+function verifyStoredTotp(storedSecret, code) {
+  const { verifyTotp } = require("./totp");
+  const plain = decryptTwoFaSecret(storedSecret);
+  if (!plain) return false;
+  return verifyTotp(plain, code);
+}
+
+function consumeRecoveryCode(userId, code) {
+  const raw = String(code || "").trim().toLowerCase();
+  if (!raw) return false;
+  const row = db
+    .prepare(
+      `SELECT * FROM identity_verification_tokens
+       WHERE user_id = ? AND token_type = 'twofa_recovery' AND used = 0 AND expires_at > datetime('now')
+         AND token_hash = ?`
+    )
+    .get(userId, sha256(raw));
+  if (!row) return false;
+  db.prepare("UPDATE identity_verification_tokens SET used = 1 WHERE id = ?").run(row.id);
+  return true;
+}
+
+function issueRecoveryCodes(userId) {
+  db.prepare(
+    `UPDATE identity_verification_tokens SET used = 1
+     WHERE user_id = ? AND token_type = 'twofa_recovery' AND used = 0`
+  ).run(userId);
+  const codes = [];
+  for (let i = 0; i < 8; i += 1) {
+    const raw = crypto.randomBytes(5).toString("hex");
+    codes.push(raw);
+    db.prepare(
+      `INSERT INTO identity_verification_tokens(user_id, token_hash, token_type, expires_at)
+       VALUES(?,?,?,datetime('now','+400 days'))`
+    ).run(userId, sha256(raw), "twofa_recovery");
+  }
+  return codes;
+}
+
 function setupTwoFactor(userId, req) {
   const { generateSecret, buildOtpAuthUri } = require("./totp");
-  const user = db.prepare("SELECT email FROM users WHERE id = ?").get(userId);
+  const user = db.prepare("SELECT email, twofa_enabled FROM users WHERE id = ?").get(userId);
   if (!user) return { error: "account.notFound", status: 404 };
+  if (user.twofa_enabled) return { error: "auth.twofaAlreadyEnabled", status: 409 };
   const secretValue = generateSecret();
   db.prepare("UPDATE users SET twofa_secret = ?, twofa_enabled = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    secretValue,
+    encryptTwoFaSecret(secretValue),
     userId
   );
   audit(userId, "2fa_setup_started", req);
@@ -303,12 +402,43 @@ function setupTwoFactor(userId, req) {
   };
 }
 
-function disableTwoFactor(userId, req) {
+function confirmTwoFactor(userId, body = {}, req) {
+  if (twoFaLocked(userId)) return { error: "auth.twofaLocked", status: 429 };
+  const user = db.prepare("SELECT twofa_secret, twofa_enabled, email FROM users WHERE id = ?").get(userId);
+  if (!user) return { error: "account.notFound", status: 404 };
+  if (user.twofa_enabled) return { error: "auth.twofaAlreadyEnabled", status: 409 };
+  if (!user.twofa_secret) return { error: "auth.twofaNotStarted", status: 400 };
+  if (!verifyStoredTotp(user.twofa_secret, body.code || body.totp)) {
+    recordTwoFaFailure(userId);
+    audit(userId, "2fa_confirm_failed", req);
+    return { error: "auth.totpInvalid", status: 401 };
+  }
+  db.prepare("UPDATE users SET twofa_enabled = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(userId);
+  const recoveryCodes = issueRecoveryCodes(userId);
+  clearTwoFaFailures(userId);
+  audit(userId, "2fa_enabled", req);
+  return { ok: true, enrolled: true, recoveryCodes };
+}
+
+function disableTwoFactor(userId, req, body = {}) {
+  const user = db.prepare("SELECT twofa_secret, twofa_enabled FROM users WHERE id = ?").get(userId);
+  if (!user) return { error: "account.notFound", status: 404 };
+  if (user.twofa_enabled) {
+    const totpOk = verifyStoredTotp(user.twofa_secret, body.code || body.totp);
+    const recoveryOk = consumeRecoveryCode(userId, body.recoveryCode);
+    if (!totpOk && !recoveryOk) {
+      recordTwoFaFailure(userId);
+      return { error: "auth.totpInvalid", status: 401 };
+    }
+  }
   db.prepare(`
     UPDATE users SET twofa_secret = '', twofa_enabled = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?
   `).run(userId);
+  db.prepare(
+    `UPDATE identity_verification_tokens SET used = 1 WHERE user_id = ? AND token_type = 'twofa_recovery'`
+  ).run(userId);
   audit(userId, "2fa_disabled", req);
-  return { ok: true };
+  return { ok: true, enrolled: false };
 }
 
 function createPrivacyRequest(userId, body = {}, req) {
@@ -411,7 +541,10 @@ module.exports = {
   requestPasswordReset,
   completePasswordReset,
   setupTwoFactor,
+  confirmTwoFactor,
   disableTwoFactor,
+  encryptTwoFaSecret,
+  decryptTwoFaSecret,
   createPrivacyRequest,
   listPrivacyRequests,
   getSecurityOverview,

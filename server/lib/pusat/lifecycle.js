@@ -159,8 +159,21 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
   }
 
   if (gate.requireApproval || task.payload.requiresApproval || task.priority === "CRITICAL") {
-    approval.expireDue();
-    const existing = approval.latestForTask(taskId);
+    const approvalReady = esatSecurity.wrapApprovalCall(() => {
+      approval.expireDue();
+      return { ok: true, existing: approval.latestForTask(taskId) };
+    });
+    if (!approvalReady.ok) {
+      exceptions.handleFailure(
+        { message: "Approval service unavailable", code: EXCEPTION_CODES.APPROVAL_INVALID },
+        { taskId, correlationId: meta?.correlation_id, action }
+      );
+      return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
+        error: publicTaskError({ code: EXCEPTION_CODES.APPROVAL_INVALID }, EXCEPTION_CODES.APPROVAL_INVALID),
+        result: { failureKind: "APPROVAL_UNAVAILABLE", executed: false, failClosed: true },
+      });
+    }
+    const existing = approvalReady.existing;
     if (existing && ["REJECTED", "CANCELLED", "EXECUTION_FAILED"].includes(existing.status)) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.CANCELLED, {
         error: `approval_${String(existing.status).toLowerCase()}`,

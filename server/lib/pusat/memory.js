@@ -97,6 +97,10 @@ function writeMemory({
   if (!check.ok) {
     return { ok: false, ...check };
   }
+  const esatSecurity = require("./esatSecurity");
+  if (esatSecurity.memoryLooksLikePolicyChange(content) || esatSecurity.securityMemoryMayChangePolicy()) {
+    return { ok: false, error: "policy_change_rejected" };
+  }
 
   const existing = db
     .prepare(

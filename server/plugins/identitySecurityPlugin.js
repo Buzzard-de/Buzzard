@@ -60,7 +60,7 @@ module.exports = {
     app.post("/api/identity-security/auth/register", (req, res) => {
       const result = identitySecurity.registerUser(req.body || {}, req);
       if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
-      return res.status(201).json({ ok: true, userId: result.userId, verificationTokenForDevelopment: result.verificationTokenForDevelopment });
+      return res.status(201).json({ ok: true, userId: result.userId });
     });
 
     app.post("/api/identity-security/auth/verify-email", (req, res) => {
@@ -139,14 +139,25 @@ module.exports = {
       if (!user) return;
       const result = identitySecurity.setupTwoFactor(user.sub, req);
       if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
-      const { secretForDevelopment, secret, ...publicResult } = result;
+      const { secretForDevelopment, secret, recoveryCodes, ...publicResult } = result;
+      return res.json(publicResult);
+    });
+
+    app.post("/api/identity-security/account/2fa/confirm", (req, res) => {
+      const user = requireIdentityAuth(req, res);
+      if (!user) return;
+      const result = identitySecurity.confirmTwoFactor(user.sub, req.body || {}, req);
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      const { secretForDevelopment, secret, twofa_secret, ...publicResult } = result;
       return res.json(publicResult);
     });
 
     app.post("/api/identity-security/account/2fa/disable", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
-      return res.json(identitySecurity.disableTwoFactor(user.sub, req));
+      const result = identitySecurity.disableTwoFactor(user.sub, req, req.body || {});
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      return res.json(result);
     });
 
     app.post("/api/identity-security/privacy/request", (req, res) => {

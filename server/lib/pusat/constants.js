@@ -103,6 +103,9 @@ const BLOCKED_MEMORY_KEYS = Object.freeze([
   "cvv",
   "iban",
   "private_key",
+  "grantrole",
+  "impersonate",
+  "securitypolicy",
 ]);
 
 const DEFAULT_TASK_TIMEOUT_MS = 30_000;

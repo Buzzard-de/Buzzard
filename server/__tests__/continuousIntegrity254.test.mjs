@@ -65,7 +65,7 @@ describe("KOMUT 7–10 hashed reset, 2FA public body, Esat/Guardian gates", () =
     const src = fs.readFileSync(path.join(__dirname, "../lib/identitySecurity.js"), "utf8");
     expect(src).not.toMatch(/secretForDevelopment/);
     const plugin = fs.readFileSync(path.join(__dirname, "../plugins/identitySecurityPlugin.js"), "utf8");
-    expect(plugin).toMatch(/secretForDevelopment,\s*secret,\s*\.\.\.publicResult/);
+    expect(plugin).toMatch(/secretForDevelopment,\s*secret/);
   });
 
   it("Esat Bey / Guardian deny prompt injection, self-escalation, isolation, and money circuits", () => {

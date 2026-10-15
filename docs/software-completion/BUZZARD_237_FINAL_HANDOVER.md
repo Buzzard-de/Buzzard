@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `b0002fb` |
-| Ending HEAD (code) | `9424e73` |
+| Starting HEAD | `18dda24` |
+| Ending HEAD (code) | `444dae1` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,21 +24,20 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **72.18%** (was 72.14%). This pass **+0.04 pp**. Target +1.0 **NOT MET** (237 puan gerekir; ~10 puan gerçek iş).
+Mean established-scope completion: **72.69%** (was 72.18%). This pass **+0.51 pp**. Target +1.0 **NOT MET** (237 puan gerekir; 120 puan gerçek iş).
 
 ## What was implemented this pass
 
-- Removed `inferCode` free-text scanning (`timeout`, `unauthorized`, `guardian`, …).
-- Exceptions classify from pusat/system codes or HTTP `status`/`statusCode` (401/403/408/429/502/503/504).
-- Uncoded errors are `PUSAT_UNKNOWN`, or `PUSAT_SENSITIVE_NO_RETRY` on sensitive actions.
-- Sensitive flag uses the action string only, not exception text.
-- Contact submissions file IO logs `publicTaskError` keys.
-- Vitest 1051 passed. tsc clean.
+- Plugin admin/auth responses use `security.adminRequired` / `security.authRequired` instead of English prose.
+- `dbAuth`, `salesMode`, commerce guards, OMS, identity, WMS, supplier, checkout, payments, and product store return keys.
+- Plugin `{ error: result.error }` goes through `sendKeyedResult` (`success: false, errorKey`).
+- Insufficient stock no longer includes SKU. Guardian/orchestrator 502 omit `detail`.
+- Vitest 1055 passed. tsc clean.
 
 ## Highest-priority remaining work
 
 1. Recover original 237 titles/criteria or obtain an explicit waiver.
-2. Generic SQLITE_CONSTRAINT still reads constraint-failed message internally.
-3. Contact API still includes German UX `message` (now with errorKey).
-4. Marketplace/carrier adapters, item 185 EXTERNAL, 109 live webhook, 187 HUMAN.
+2. Leftover English `error:` strings in some lib modules.
+3. Contact German UX `message`; generic SQLITE_CONSTRAINT text.
+4. Marketplace/carrier adapters, item 185 EXTERNAL, live webhook, 187 HUMAN.
 5. Human approvals and external credentials (never invent LIVE_VERIFIED).

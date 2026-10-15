@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `9424e73` (no exception inferCode; HTTP status classify)  
+Inspected HEAD at quality pass: `444dae1` (plugin/commerce English errors → errorKey)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **72.18%** (was 72.14%; 237-item arithmetic mean). This pass **+0.04 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~10 puan gerçek iş).
+Mean established-scope completion: **72.69%** (was 72.18%; 237-item arithmetic mean). This pass **+0.51 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; 120 puan gerçek iş / 237 gerekir).
 
 ## Safety locks this workspace
 
@@ -111,11 +111,12 @@ Mean established-scope completion: **72.18%** (was 72.14%; 237-item arithmetic m
 61. SQLite unique/PK conflicts classified by `err.code` (`SQLITE_CONSTRAINT_UNIQUE` / `PRIMARYKEY`); generic `SQLITE_CONSTRAINT`/`19` still reads constraint-failed text only. Contact plugin returns `errorKey` and logs `{received,id}` without email.
 62. `classifySystemFailure` maps AbortError/ETIMEDOUT/ECONN*/SQLITE_* by code; jobWorker no longer scans `err.message`. Pusat exceptions prefer those codes. Payload 413 by `PAYLOAD_TOO_LARGE` only. Static 403 and desktop-bridge 401/404/stderr are keys. Automation timeout/cost counts use exception keys.
 63. Removed `inferCode` message scanning. Exceptions classify from pusat/system codes or HTTP `status`/`statusCode` only; uncoded errors are UNKNOWN (or SENSITIVE_NO_RETRY on sensitive actions). Contact file IO logs publicTaskError keys.
+64. Batch: plugin admin/auth JSON, dbAuth, salesMode, OMS/identity/WMS/supplier/checkout/payments/product store English `error` strings, and `{ error: result.error }` echos now use `errorKey` / `sendKeyedResult`. Insufficient stock no longer interpolates SKU. Guardian/orchestrator 502 omit `detail`. Webhook 501 is keyed without adapter hints.
 
 
 ## Resume pointer
 
-Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text internally; contact API still includes German UX `message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: remaining lib English `error:` strings (marketing/CRM/search leftover); contact German UX `message`; generic SQLITE_CONSTRAINT text; marketplace/carrier adapters BLOCKED_EXTERNAL; item 185 alerting; live webhook HUMAN; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -480,7 +481,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (contact IO logs keys; unique by sqlite code; production secret audit UNKNOWN) |
+| Completion percentage | 96% (plugin/auth/OMS errors are keys; production secret audit UNKNOWN)
 | Remaining work | Production secret audit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -532,7 +533,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 92% (cart.empty/inventory.insufficient keyed; guest proof still local)
 | Remaining work | guestCommerceAccess unit passed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -690,7 +691,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 90% (cart errors keyed; original UNKNOWN)
 | Remaining work | Writes require bound session |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -716,7 +717,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (commerce client uses errorKey for both message and code; sales still off) |
+| Completion percentage | 91% (checkout address/coupon errors keyed; original UNKNOWN)
 | Remaining work | Commercial checkout blocked while sales off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -742,7 +743,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (order/OMS/inventory failure reasons keyed; original UNKNOWN) |
+| Completion percentage | 91% (OMS English errors replaced with order.* keys)
 | Remaining work | Unit + E2E blocked commercial path |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -768,7 +769,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (PIM bulk update errors keyed; SoT off) |
+| Completion percentage | 86% (product.skuExists/product.notFound keys; SoT off)
 | Remaining work | Multiple stores still classified; SoT off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -950,7 +951,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (intelligence snapshot collectHealth uses health.probeFailed; plugins wrapped) |
+| Completion percentage | 92% (plugin admin/auth JSON uses errorKey)
 | Remaining work | Unregistered paths 404 |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -976,7 +977,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 92% (salesDisabledResponse is errorKey only)
 | Remaining work | isSalesEnabled === false in workspace |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1002,7 +1003,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 84% (plugin access tests expect errorKey)
 | Remaining work | 927 passed historically; re-run this session focused |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2126,7 +2127,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (supplierSafetyGate reason is a key; live adapters BLOCKED) |
+| Completion percentage | 80% (supplierHub error strings keyed)
 | Remaining work | Many NOT_IMPLEMENTED live |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2178,7 +2179,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 76% (price/stock job errors keyed; live supplier sync BLOCKED) |
+| Completion percentage | 80% (WMS inventory errors keyed)
 | Remaining work | Local tables; live supplier sync BLOCKED |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2334,7 +2335,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (sqlite stamp expire + no error.message leak; original UNKNOWN) |
+| Completion percentage | 84% (wmsInventory public errors keyed)
 | Remaining work | Live supplier stock still BLOCKED_EXTERNAL |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2360,7 +2361,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 75% (WMS insufficient stock no SKU echo)
 | Remaining work | Do not unify reservation authority; live WMS UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2596,7 +2597,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 90% (cart service empty/insufficient keyed)
 | Remaining work | assertCartAccess |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2622,7 +2623,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 85% (customerCheckout errors keyed)
 | Remaining work | Commercial blocked |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2648,7 +2649,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 86% (orderManagement English replaced with keys)
 | Remaining work | Guest token stripped |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2674,7 +2675,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 66% (Stripe session failures use stripe.session_failed; live HTTP still blocked) |
+| Completion percentage | 70% (paymentsFinance errors keyed; live Stripe UNKNOWN)
 | Remaining work | LIVE_VERIFIED false; sandbox UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2700,7 +2701,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 66% (PayPal auth/order failures use stable codes; live HTTP still blocked) |
+| Completion percentage | 70% (paymentsFinance errors keyed; live PayPal UNKNOWN)
 | Remaining work | LIVE_VERIFIED false |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2726,7 +2727,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 74% (payment intent errors keyed; live dual UNKNOWN)
 | Remaining work | providerDiagnostics now effective flags |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2752,7 +2753,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 88% (payment confirm blocked is a key)
 | Remaining work | fortressAuthz |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2778,7 +2779,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 88% (refund blocked is a key)
 | Remaining work | fortressAuthz |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2804,7 +2805,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (RMA/loyalty failure reasons are keys; original UNKNOWN) |
+| Completion percentage | 87% (returns plugin admin gate keyed)
 | Remaining work | Ledger wrap; live refund UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2856,7 +2857,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (payment unique insert uses isUniqueConstraint; timeout UNCERTAIN still local) |
+| Completion percentage | 83% (payment intent notFound keyed)
 | Remaining work | Timeout policy; live payments off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2960,7 +2961,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (stale timestamp + event id + verify-before-replay; live verify UNKNOWN) |
+| Completion percentage | 88% (webhook 501 errorKey only; no adapter hint leak)
 | Remaining work | Live provider verification not authorized |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4110,7 +4111,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 75% (customer support/checkout plugin errors keyed)
 | Remaining work | Implemented/tested historically |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4188,7 +4189,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 82% (identitySecurity errors keyed; rate-limit keyed)
 | Remaining work | Rate limit 8/15min |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4214,7 +4215,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (returns workflow errors keyed; refund still ≠ supplier credit) |
+| Completion percentage | 86% (returns RMA plugin admin errorKey)
 | Remaining work | Live refund/credit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4396,7 +4397,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (controlCenter commerce service detail keyed; original UNKNOWN) |
+| Completion percentage | 82% (ops plugins 404/auth keyed)
 | Remaining work | System events recorded |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4528,7 +4529,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (no free-text inferCode; status/code only; original UNKNOWN) |
+| Completion percentage | 90% (sales/auth blocks keyed on gates)
 | Remaining work | Production exception volume UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4894,7 +4895,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (bridge stderr and payload-too-large logs are codes; not a full log pipeline) |
+| Completion percentage | 88% (commercial catch logs publicTaskError)
 | Remaining work | Events; not a full log pipeline |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5234,7 +5235,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 97% (continuousIntegrity249 added; original unit checklist UNKNOWN) |
+| Completion percentage | 98% (continuousIntegrity250 added)
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5260,7 +5261,7 @@ Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text inter
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (1051 vitest this pass; historical subset remains) |
+| Completion percentage | 86% (1055 vitest this pass)
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

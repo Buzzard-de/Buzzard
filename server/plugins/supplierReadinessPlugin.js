@@ -39,7 +39,7 @@ module.exports = {
       if (!requirePermission(req, res, "suppliers.read")) return;
       const health = supplierHealth.evaluateSupplierHealth(req.params.id);
       if (!health.ok && health.error === "unknown_supplier") {
-        return res.status(404).json({ success: false, error: health.error });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 404, error: health.error });
       }
       res.json({ success: true, health });
     });
@@ -48,7 +48,7 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "suppliers.read")) return;
       const def = supplierRegistry.getSupplierDefinition(req.params.id);
-      if (!def) return res.status(404).json({ success: false, error: "unknown_supplier" });
+      if (!def) return res.status(404).json({ success: false, errorKey: "unknown_supplier" });
       const capabilities = evaluateCapabilityMatrix(def);
       res.json({ success: true, supplierId: def.id, ...capabilities });
     });

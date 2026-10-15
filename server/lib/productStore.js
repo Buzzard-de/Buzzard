@@ -87,7 +87,7 @@ function upsertProduct(product = {}, context = {}) {
     : productWriteBoundary.authorizeCreate(product, gateContext);
   if (!gate.ok) {
     if (gate.reason === "SKU_REQUIRED") {
-      return { error: "sku required", status: 400, reason: gate.reason, boundary: gate.boundary };
+      return { error: "product.skuRequired", status: 400, reason: gate.reason, boundary: gate.boundary };
     }
     return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
   }

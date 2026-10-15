@@ -20,7 +20,7 @@ function createRecord(body = {}) {
       created: true,
     };
   } catch {
-    return { error: "code already exists", status: 409 };
+    return { error: "record.codeExists", status: 409 };
   }
 }
 
@@ -34,7 +34,7 @@ function getRecordByCode(code) {
 
 function updateRecord(id, body = {}) {
   const existing = db.prepare("SELECT * FROM pay36_records WHERE id = ?").get(id);
-  if (!existing) return { error: "not found", status: 404 };
+  if (!existing) return { error: "record.notFound", status: 404 };
   db.prepare(`
     UPDATE pay36_records
     SET name = ?, status = ?, data_json = ?, updated_at = CURRENT_TIMESTAMP

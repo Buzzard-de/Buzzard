@@ -81,14 +81,14 @@ function createCart(body = {}) {
 
 function getCart(token) {
   const cart = getActiveCart(token);
-  if (!cart) return { error: "Cart not found", status: 404 };
+  if (!cart) return { error: "cart.notFound", status: 404 };
   return { cart, ...computeTotals(cart) };
 }
 
 function addCartItem(token, body = {}) {
   const cart = getActiveCart(token);
-  if (!cart) return { error: "Cart not found", status: 404 };
-  if (!body.sku || Number(body.quantity) < 1) return { error: "Invalid item", status: 400 };
+  if (!cart) return { error: "cart.notFound", status: 404 };
+  if (!body.sku || Number(body.quantity) < 1) return { error: "cart.invalidItem", status: 400 };
 
   db.prepare(`
     INSERT INTO cc_cart_items(cart_id, sku, title, qty, price, tax)
@@ -111,7 +111,7 @@ function addCartItem(token, body = {}) {
 
 function updateCartItem(token, sku, body = {}) {
   const cart = getActiveCart(token);
-  if (!cart) return { error: "Cart not found", status: 404 };
+  if (!cart) return { error: "cart.notFound", status: 404 };
 
   const quantity = Number(body.quantity || 0);
   if (quantity <= 0) {
@@ -129,11 +129,11 @@ function updateCartItem(token, sku, body = {}) {
 
 function applyCoupon(token, body = {}) {
   const cart = getActiveCart(token);
-  if (!cart) return { error: "Cart not found", status: 404 };
+  if (!cart) return { error: "cart.notFound", status: 404 };
 
   const code = String(body.code || "").toUpperCase();
   const coupon = db.prepare("SELECT * FROM cc_coupons WHERE code = ? AND active = 1").get(code);
-  if (!coupon) return { error: "Coupon invalid", status: 400 };
+  if (!coupon) return { error: "coupon.invalid", status: 400 };
 
   const preview = computeTotals({ ...cart, coupon: code });
   if (preview.subtotal < coupon.min_order) {
@@ -156,7 +156,7 @@ function createCheckoutSession(body = {}) {
   if (blocked) return blocked;
 
   const cart = getActiveCart(body.cartToken || body.cart_token);
-  if (!cart) return { error: "Cart not found", status: 404 };
+  if (!cart) return { error: "cart.notFound", status: 404 };
 
   const totals = computeTotals(cart);
   const shippingRate = body.shippingId || body.shipping_id
@@ -205,7 +205,7 @@ function createCheckoutSession(body = {}) {
 
 function validateCheckoutSession(token) {
   const session = db.prepare("SELECT * FROM cc_checkout_sessions WHERE token = ?").get(token);
-  if (!session) return { error: "Checkout not found", status: 404 };
+  if (!session) return { error: "checkout.notFound", status: 404 };
 
   const errors = [];
   if (!session.email) errors.push("email");
@@ -222,7 +222,7 @@ function completeCheckoutSession(token) {
   if (blocked) return blocked;
 
   const session = db.prepare("SELECT * FROM cc_checkout_sessions WHERE token = ?").get(token);
-  if (!session) return { error: "Checkout not found", status: 404 };
+  if (!session) return { error: "checkout.notFound", status: 404 };
 
   db.prepare("UPDATE cc_checkout_sessions SET status = 'ready_for_payment' WHERE id = ?").run(session.id);
 

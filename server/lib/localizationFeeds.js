@@ -205,7 +205,7 @@ function getAdminLocalizationStatus() {
 
 function upsertProductTranslation(productId, body = {}) {
   const { locale, name, description = "", seoTitle, seoDescription, slug } = body;
-  if (!locale || !name) return { error: "locale and name required", status: 400 };
+  if (!locale || !name) return { error: "locale.nameRequired", status: 400 };
   const product = db.prepare("SELECT id FROM products WHERE id = ?").get(productId);
   if (!product) return { error: "product.notFound", status: 404 };
 
@@ -233,7 +233,7 @@ function upsertProductTranslation(productId, body = {}) {
 
 function upsertPriceOverride(productId, body = {}) {
   const { locale, price, currency } = body;
-  if (!locale || price === undefined) return { error: "locale and price required", status: 400 };
+  if (!locale || price === undefined) return { error: "locale.priceRequired", status: 400 };
   const product = db.prepare("SELECT id FROM products WHERE id = ?").get(productId);
   if (!product) return { error: "product.notFound", status: 404 };
 
@@ -252,7 +252,7 @@ function upsertPriceOverride(productId, body = {}) {
 function upsertShippingRate(body = {}) {
   const { countryCode, method = "standard", price, freeFrom = 0 } = body;
   if (!countryCode || price === undefined) {
-    return { error: "countryCode and price required", status: 400 };
+    return { error: "country.priceRequired", status: 400 };
   }
 
   db.prepare(`

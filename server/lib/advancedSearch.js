@@ -175,7 +175,7 @@ function recordClick(sku) {
 
 function createProduct(body = {}) {
   if (!body.sku || !body.title) {
-    return { error: "SKU and title required", status: 400 };
+    return { error: "product.skuTitleRequired", status: 400 };
   }
 
   try {
@@ -213,7 +213,7 @@ function createProduct(body = {}) {
 }
 
 function upsertSynonym(body = {}) {
-  if (!body.term) return { error: "Term required", status: 400 };
+  if (!body.term) return { error: "search.termRequired", status: 400 };
 
   db.prepare(`
     INSERT OR REPLACE INTO srch_synonyms(term, synonyms_json, active)

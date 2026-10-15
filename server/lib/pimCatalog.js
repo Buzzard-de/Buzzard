@@ -107,7 +107,7 @@ function createProduct(body = {}, context = {}) {
   });
   if (!gate.ok) {
     if (gate.reason === "SKU_REQUIRED") {
-      return { error: "sku required", status: 400, reason: gate.reason, boundary: gate.boundary };
+      return { error: "product.skuRequired", status: 400, reason: gate.reason, boundary: gate.boundary };
     }
     return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
   }
@@ -181,7 +181,7 @@ function updateProduct(id, body = {}, context = {}) {
 
 function upsertTranslation(body = {}) {
   const productId = Number(body.productId || body.product_id);
-  if (!productId) return { error: "productId required", status: 400 };
+  if (!productId) return { error: "product.idRequired", status: 400 };
   db.prepare(`
     INSERT INTO pim_product_translations(product_id, language, title, short_description, description)
     VALUES(?,?,?,?,?)
@@ -202,7 +202,7 @@ function upsertTranslation(body = {}) {
 
 function upsertAttribute(body = {}) {
   const productId = Number(body.productId || body.product_id);
-  if (!productId || !body.key) return { error: "productId and key required", status: 400 };
+  if (!productId || !body.key) return { error: "product.attributeRequired", status: 400 };
   db.prepare(`
     INSERT INTO pim_product_attributes(product_id, attribute_key, attribute_value, unit)
     VALUES(?,?,?,?)
@@ -216,7 +216,7 @@ function upsertAttribute(body = {}) {
 
 function addMedia(body = {}) {
   const productId = Number(body.productId || body.product_id);
-  if (!productId || !body.url) return { error: "productId and url required", status: 400 };
+  if (!productId || !body.url) return { error: "product.mediaUrlRequired", status: 400 };
   db.prepare(
     "INSERT INTO pim_product_media(product_id, media_type, url, alt_text, sort_order) VALUES(?,?,?,?,?)"
   ).run(
@@ -232,7 +232,7 @@ function addMedia(body = {}) {
 
 function upsertSeo(body = {}) {
   const productId = Number(body.productId || body.product_id);
-  if (!productId) return { error: "productId required", status: 400 };
+  if (!productId) return { error: "product.idRequired", status: 400 };
   db.prepare(`
     INSERT INTO pim_product_seo(product_id, meta_title, meta_description, slug)
     VALUES(?,?,?,?)
@@ -248,7 +248,7 @@ function upsertSeo(body = {}) {
 function addVariant(body = {}) {
   const productId = Number(body.productId || body.product_id);
   const variantSku = String(body.variantSku || body.variant_sku || "").trim();
-  if (!productId || !variantSku) return { error: "productId and variantSku required", status: 400 };
+  if (!productId || !variantSku) return { error: "product.variantRequired", status: 400 };
   db.prepare(`
     INSERT INTO pim_product_variants(product_id, variant_sku, option_name, option_value, ean, price_delta, stock)
     VALUES(?,?,?,?,?,?,?)

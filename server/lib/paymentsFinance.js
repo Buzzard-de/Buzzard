@@ -32,7 +32,7 @@ function createPaymentIntent(body = {}) {
   const orderNumber = String(body.orderNumber || body.order_number || "").trim();
   const amount = Number(body.amount || 0);
   if (!orderNumber || amount <= 0) {
-    return { error: "orderNumber and positive amount required", status: 400 };
+    return { error: "payment.amountRequired", status: 400 };
   }
 
   const idempotencyKey = body.idempotencyKey || body.idempotency_key || uuid();
@@ -127,7 +127,7 @@ function createRefund(id, _body = {}) {
 function handlePaymentWebhook(body = {}) {
   const externalId = String(body.externalId || body.external_id || "").trim();
   const claimedStatus = String(body.status || "").trim();
-  if (!externalId || !claimedStatus) return { error: "externalId and status required", status: 400 };
+  if (!externalId || !claimedStatus) return { error: "payment.externalStatusRequired", status: 400 };
 
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")

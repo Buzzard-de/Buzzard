@@ -39,14 +39,14 @@ function quoteShipment(body = {}) {
     `)
     .all(country, weight);
   const best = rows[0];
-  if (!best) return { error: "No shipping service available", status: 404 };
+  if (!best) return { error: "shipping.serviceUnavailable", status: 404 };
   return { quote: { ...best, estimatedCost: best.base_price } };
 }
 
 function createShipment(body = {}) {
   const orderNumber = String(body.orderNumber || "").trim();
   const country = String(body.country || "").trim();
-  if (!orderNumber || !country) return { error: "orderNumber and country required", status: 400 };
+  if (!orderNumber || !country) return { error: "shipping.orderCountryRequired", status: 400 };
 
   const service = body.serviceId
     ? db
@@ -58,7 +58,7 @@ function createShipment(body = {}) {
         `)
         .get(body.serviceId)
     : null;
-  if (!service) return { error: "Shipping service not found", status: 404 };
+  if (!service) return { error: "shipping.serviceNotFound", status: 404 };
 
   try {
     const result = db
@@ -74,13 +74,13 @@ function createShipment(body = {}) {
     const shipment = db.prepare("SELECT * FROM logistics_shipments WHERE id = ?").get(result.lastInsertRowid);
     return { shipment };
   } catch {
-    return { error: "Shipment already exists for order", status: 409 };
+    return { error: "shipment.exists", status: 409 };
   }
 }
 
 function updateLabelResult(id, body = {}) {
   const shipment = db.prepare("SELECT * FROM logistics_shipments WHERE id = ?").get(id);
-  if (!shipment) return { error: "Shipment not found", status: 404 };
+  if (!shipment) return { error: "shipment.notFound", status: 404 };
 
   const status = body.status || "label_created";
   db.prepare(`
@@ -121,7 +121,7 @@ function getShipmentTracking(orderNumber) {
       WHERE sh.order_number = ?
     `)
     .get(orderNumber);
-  if (!shipment) return { error: "Shipment not found", status: 404 };
+  if (!shipment) return { error: "shipment.notFound", status: 404 };
   const events = db
     .prepare(
       "SELECT * FROM logistics_tracking_events WHERE shipment_id = ? ORDER BY event_time DESC, id DESC"
@@ -133,12 +133,12 @@ function getShipmentTracking(orderNumber) {
 function handleCarrierWebhook(body = {}) {
   const orderNumber = String(body.orderNumber || "").trim();
   const status = String(body.status || "").trim();
-  if (!orderNumber || !status) return { error: "orderNumber and status required", status: 400 };
+  if (!orderNumber || !status) return { error: "order.statusRequired", status: 400 };
 
   const shipment = db
     .prepare("SELECT id FROM logistics_shipments WHERE order_number = ?")
     .get(orderNumber);
-  if (!shipment) return { error: "Shipment not found", status: 404 };
+  if (!shipment) return { error: "shipment.notFound", status: 404 };
 
   db.prepare("UPDATE logistics_shipments SET status = ? WHERE id = ?").run(status, shipment.id);
   db.prepare(
@@ -156,7 +156,7 @@ function handleCarrierWebhook(body = {}) {
 function createReturn(body = {}, customerId) {
   const orderNumber = String(body.orderNumber || "").trim();
   const reason = String(body.reason || "").trim();
-  if (!orderNumber || !reason) return { error: "orderNumber and reason required", status: 400 };
+  if (!orderNumber || !reason) return { error: "return.orderReasonRequired", status: 400 };
 
   const number = rmaNumber();
   const result = db
@@ -181,7 +181,7 @@ function listAdminReturns() {
 
 function updateReturn(id, body = {}) {
   const row = db.prepare("SELECT id FROM logistics_returns WHERE id = ?").get(id);
-  if (!row) return { error: "Return not found", status: 404 };
+  if (!row) return { error: "return.notFound", status: 404 };
   db.prepare(`
     UPDATE logistics_returns
     SET status = COALESCE(?, status),

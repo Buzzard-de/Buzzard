@@ -154,7 +154,7 @@ module.exports = {
         customerId: session.customerId,
       });
       if (result.denied || !result.ok) {
-        res.status(result.denied ? 403 : 404).json({ success: false, error: result.denied ? "access_denied" : "not_found" });
+        res.status(result.denied ? 403 : 404).json({ success: false, errorKey: result.denied ? "access_denied" : "not_found" });
         return;
       }
       res.json({ success: true, shipment: result.shipment });
@@ -200,7 +200,7 @@ module.exports = {
         ? software.qrLoyalty.revealAccount(db, { token, requesterCustomerId: session.customerId })
         : { ok: true };
       if (reveal.denied) {
-        res.status(403).json({ success: false, error: reveal.reason });
+        require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 403, error: reveal.reason });
         return;
       }
       const eligibility = software.qrLoyalty.evaluateEligibility(db, {

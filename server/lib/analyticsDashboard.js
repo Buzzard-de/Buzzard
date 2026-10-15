@@ -5,7 +5,7 @@ function isEnabled() {
 }
 
 function recordEvent(body = {}) {
-  if (!body.eventType) return { error: "eventType required", status: 400 };
+  if (!body.eventType) return { error: "automation.eventTypeRequired", status: 400 };
   db.prepare(
     `INSERT INTO analytics_events(user_id, session_id, event_type, page, product_sku, source, country_code)
      VALUES(?,?,?,?,?,?,?)`

@@ -117,7 +117,7 @@ function queueOrderSync() {
 function upsertListing(body = {}) {
   const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(body.marketplace);
   if (!marketplace) return { error: "marketplace.notFound", status: 404 };
-  if (!body.productSku) return { error: "productSku required", status: 400 };
+  if (!body.productSku) return { error: "product.skuRequired", status: 400 };
 
   db.prepare(`
     INSERT INTO marketplace_listings(marketplace_id, product_sku, channel_sku, title, price, currency, stock, status)
@@ -148,7 +148,7 @@ function upsertSkuMapping(body = {}) {
   const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
   if (!marketplace) return { error: "marketplace.notFound", status: 404 };
   if (!body.productSku || !body.channelSku) {
-    return { error: "productSku and channelSku required", status: 400 };
+    return { error: "marketplace.channelSkuRequired", status: 400 };
   }
 
   db.prepare(`
@@ -200,7 +200,7 @@ function importOrderWebhook(body = {}) {
   if (blocked) return blocked;
   const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
   if (!marketplace || !body.externalOrderId) {
-    return { error: "marketplace and externalOrderId required", status: 400 };
+    return { error: "marketplace.externalOrderRequired", status: 400 };
   }
   try {
     db.prepare(`

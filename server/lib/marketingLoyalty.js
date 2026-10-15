@@ -40,7 +40,7 @@ function refreshTier(customerId) {
 
 function createCampaign(body = {}) {
   if (!body.code || !body.name) {
-    return { error: "Code and name required", status: 400 };
+    return { error: "validation.codeNameRequired", status: 400 };
   }
 
   try {
@@ -72,7 +72,7 @@ function createCampaign(body = {}) {
       created: true,
     };
   } catch {
-    return { error: "Campaign code already exists", status: 409 };
+    return { error: "campaign.codeExists", status: 409 };
   }
 }
 
@@ -82,7 +82,7 @@ function listCampaigns() {
 
 function updateCampaign(id, body = {}) {
   const campaign = db.prepare("SELECT * FROM mktloy_campaigns WHERE id = ?").get(id);
-  if (!campaign) return { error: "Campaign not found", status: 404 };
+  if (!campaign) return { error: "campaign.notFound", status: 404 };
 
   db.prepare(`
     UPDATE mktloy_campaigns
@@ -117,14 +117,14 @@ function applyCampaign(code, body = {}) {
     `)
     .get(String(code).toUpperCase());
 
-  if (!campaign) return { error: "Campaign inactive or not found", status: 404 };
+  if (!campaign) return { error: "campaign.inactive", status: 404 };
 
   const subtotal = Number(body.subtotal || 0);
   if (subtotal < campaign.minimum_order) {
     return { error: "coupon.minOrder", status: 400 };
   }
   if (campaign.max_uses > 0 && campaign.used_count >= campaign.max_uses) {
-    return { error: "Campaign usage limit reached", status: 400 };
+    return { error: "campaign.limitReached", status: 400 };
   }
 
   const discount =
@@ -142,7 +142,7 @@ function applyCampaign(code, body = {}) {
 
 function useCampaign(code, body = {}) {
   const campaign = db.prepare("SELECT * FROM mktloy_campaigns WHERE code = ?").get(String(code).toUpperCase());
-  if (!campaign) return { error: "Campaign not found", status: 404 };
+  if (!campaign) return { error: "campaign.notFound", status: 404 };
 
   db.prepare("UPDATE mktloy_campaigns SET used_count = used_count + 1 WHERE id = ?").run(campaign.id);
   db.prepare(`
@@ -160,7 +160,7 @@ function useCampaign(code, body = {}) {
 
 function createLoyaltyAccount(body = {}) {
   const customerId = body.customerId || body.customer_id;
-  if (!customerId) return { error: "customerId required", status: 400 };
+  if (!customerId) return { error: "customer.idRequired", status: 400 };
 
   let account = db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?").get(customerId);
   if (!account) {
@@ -182,7 +182,7 @@ function adjustPoints(body = {}) {
   const points = Number(body.points || 0);
   const customerId = body.customerId || body.customer_id;
   if (!customerId || !points) {
-    return { error: "Customer and points required", status: 400 };
+    return { error: "loyalty.pointsRequired", status: 400 };
   }
 
   let account = db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?").get(customerId);
@@ -216,7 +216,7 @@ function adjustPoints(body = {}) {
 
 function getLoyaltyProfile(customerId) {
   const account = db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?").get(customerId);
-  if (!account) return { error: "Loyalty account not found", status: 404 };
+  if (!account) return { error: "loyalty.accountNotFound", status: 404 };
 
   return {
     account,
@@ -229,7 +229,7 @@ function getLoyaltyProfile(customerId) {
 
 function createReferral(body = {}) {
   const referrerCustomerId = body.referrerCustomerId || body.referrer_customer_id;
-  if (!referrerCustomerId) return { error: "Referrer required", status: 400 };
+  if (!referrerCustomerId) return { error: "referral.referrerRequired", status: 400 };
 
   let code;
   do {
@@ -250,7 +250,7 @@ function completeReferral(body = {}) {
   const referral = db
     .prepare("SELECT * FROM mktloy_referrals WHERE code = ? AND status = 'pending'")
     .get(body.code);
-  if (!referral) return { error: "Referral not found", status: 404 };
+  if (!referral) return { error: "referral.notFound", status: 404 };
 
   db.prepare(`
     UPDATE mktloy_referrals

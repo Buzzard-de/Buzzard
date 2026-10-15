@@ -19,7 +19,7 @@ function notify(userId, channel, type, subject, body) {
 
 function createTicket(userId, body = {}) {
   if (!body.subject || !body.message) {
-    return { error: "Subject and message required", status: 400 };
+    return { error: "support.fieldsRequired", status: 400 };
   }
   const number = ticketNumber();
   const info = db
@@ -58,11 +58,11 @@ function getUserTicket(userId, ticketId) {
 }
 
 function addCustomerMessage(userId, ticketId, message) {
-  if (!message) return { error: "Message required", status: 400 };
+  if (!message) return { error: "support.messageRequired", status: 400 };
   const ticket = db
     .prepare("SELECT * FROM tickets WHERE id = ? AND user_id = ?")
     .get(ticketId, userId);
-  if (!ticket) return { error: "Ticket not found", status: 404 };
+  if (!ticket) return { error: "support.ticketNotFound", status: 404 };
   db.prepare(
     `INSERT INTO ticket_messages(ticket_id, user_id, sender_type, message) VALUES(?,?,?,?)`
   ).run(ticket.id, userId, "customer", message);
@@ -100,9 +100,9 @@ function getTicketAdmin(ticketId) {
 }
 
 function replyTicketAdmin(adminUserId, ticketId, message) {
-  if (!message) return { error: "Message required", status: 400 };
+  if (!message) return { error: "support.messageRequired", status: 400 };
   const ticket = db.prepare("SELECT * FROM tickets WHERE id = ?").get(ticketId);
-  if (!ticket) return { error: "Ticket not found", status: 404 };
+  if (!ticket) return { error: "support.ticketNotFound", status: 404 };
   db.prepare(
     `INSERT INTO ticket_messages(ticket_id, user_id, sender_type, message) VALUES(?,?,?,?)`
   ).run(ticket.id, adminUserId, "admin", message);
@@ -135,7 +135,7 @@ function updateTicketAdmin(ticketId, body = {}) {
 
 function createTrackingEvent(body = {}) {
   if (!body.orderNumber || !body.status) {
-    return { error: "orderNumber and status required", status: 400 };
+    return { error: "order.statusRequired", status: 400 };
   }
   db.prepare(
     `INSERT INTO tracking_events(order_number, carrier, tracking_number, status, location, event_time)
@@ -153,7 +153,7 @@ function createTrackingEvent(body = {}) {
 
 function queueEmailNotification(body = {}) {
   if (!body.userId || !body.subject || !body.body) {
-    return { error: "userId, subject and body required", status: 400 };
+    return { error: "support.composeRequired", status: 400 };
   }
   notify(body.userId, "email", body.type || "general", body.subject, body.body);
   return { queued: true, providerConfigured: Boolean(process.env.EMAIL_PROVIDER_URL) };
@@ -161,7 +161,7 @@ function queueEmailNotification(body = {}) {
 
 function queueWhatsAppNotification(body = {}) {
   if (!body.userId || !body.body) {
-    return { error: "userId and body required", status: 400 };
+    return { error: "support.replyRequired", status: 400 };
   }
   notify(body.userId, "whatsapp", body.type || "general", "Buzzard WhatsApp", body.body);
   return { queued: true, providerConfigured: Boolean(process.env.WHATSAPP_API_URL) };

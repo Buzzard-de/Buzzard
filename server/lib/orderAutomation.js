@@ -51,7 +51,7 @@ const OFFICIAL_PAYMENT_WEBHOOK = "/api/commerce/webhooks/:provider";
 function handlePaymentWebhook(body = {}) {
   const { provider = "unsigned", eventId, type, orderNumber, status } = body;
   if (!eventId || !orderNumber) {
-    return { ok: false, error: "eventId and orderNumber required", status: 400 };
+    return { ok: false, error: "automation.eventRequired", status: 400 };
   }
 
   const eventKey = `payment:${eventId}`;

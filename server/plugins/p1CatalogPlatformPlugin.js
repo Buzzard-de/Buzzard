@@ -115,7 +115,7 @@ module.exports = {
           }
         );
         if (saved.error) {
-          return res.status(saved.status || 400).json({ success: false, error: saved.error, reason: saved.reason });
+          return require("../lib/http/publicPluginError").sendKeyedResult(res, saved);
         }
       }
       return res.json({ success: true, ...result });

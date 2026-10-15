@@ -103,7 +103,7 @@ module.exports = {
         }
       );
       if (product.error) {
-        return res.status(product.status || 400).json({ success: false, error: product.error, reason: product.reason });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, product);
       }
 
       audit(req, { action: "create", entityType: "product", entityId: product.id, field: null, oldValue: null, newValue: product.id });
@@ -142,7 +142,7 @@ module.exports = {
         }
       );
       if (updated.error) {
-        return res.status(updated.status || 400).json({ success: false, error: updated.error, reason: updated.reason });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, updated);
       }
       Object.keys(body).forEach((field) => {
         audit(req, {
@@ -175,7 +175,7 @@ module.exports = {
         }
       );
       if (updated.error) {
-        return res.status(updated.status || 400).json({ success: false, error: updated.error, reason: updated.reason });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, updated);
       }
       audit(req, { action: "status", entityType: "product", entityId: existing.id, field: "status", oldValue: existing.status, newValue: status });
       return res.json({ success: true, product: updated });

@@ -545,6 +545,7 @@ module.exports = {
   disableTwoFactor,
   encryptTwoFaSecret,
   decryptTwoFaSecret,
+  consumeRecoveryCode,
   createPrivacyRequest,
   listPrivacyRequests,
   getSecurityOverview,

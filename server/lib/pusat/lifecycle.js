@@ -200,6 +200,7 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
     }
     const consumed = approval.consumeForExecution(existing.id, task.payload, {
       actor: existing.decidedBy,
+      action,
     });
     if (!consumed.ok) {
       if (consumed.code === "already_executed") {

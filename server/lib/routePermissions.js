@@ -80,6 +80,8 @@ const PUBLIC_ROUTES = new Set([
   "POST /api/identity-security/auth/logout",
   "POST /api/identity-security/auth/password-reset-request",
   "POST /api/identity-security/auth/password-reset",
+  "POST /api/account/register",
+  "POST /api/account/login",
   "POST /api/account/password-reset/request",
   "POST /api/account/password-reset/confirm",
   "POST /api/webhooks/:provider",

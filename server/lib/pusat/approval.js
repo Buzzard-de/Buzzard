@@ -169,13 +169,23 @@ function executionConsumed(approval) {
   }
 }
 
-function consumeForExecution(id, currentInput, { actor } = {}) {
+function consumeForExecution(id, currentInput, { actor, action } = {}) {
   expireDue();
   const existing = getApproval(id);
   const bound = assertBound(existing, currentInput);
   if (!bound.ok) return bound;
 
-  const forbidden = isForbiddenApprover(actor || existing.decidedBy, existing.requestingAgent);
+  if (action && existing.action && String(action) !== String(existing.action)) {
+    return { ok: false, code: "action_mismatch", approval: existing, liveAction: false };
+  }
+
+  const actorName = actor || existing.decidedBy;
+  const unauthorized = isUnauthorizedApprover(actorName, existing.requiredApprover);
+  if (unauthorized.unauthorized) {
+    return { ok: false, code: unauthorized.code, approval: existing, liveAction: false };
+  }
+
+  const forbidden = isForbiddenApprover(actorName, existing.requestingAgent);
   if (forbidden.forbidden) {
     return { ok: false, code: forbidden.code, approval: existing, liveAction: false };
   }
@@ -215,6 +225,21 @@ function consumeForExecution(id, currentInput, { actor } = {}) {
     replay: false,
     approval: getApproval(id),
   };
+}
+
+const INSUFFICIENT_APPROVERS = new Set(["read_only", "staff", "customer", "anonymous", "guest", "order_manager"]);
+
+function isUnauthorizedApprover(decidedBy, requiredApprover) {
+  const actor = String(decidedBy || "").trim().toLowerCase();
+  if (!actor) return { unauthorized: true, code: "approver_identity_required" };
+  const required = String(requiredApprover || "admin").toLowerCase();
+  if (INSUFFICIENT_APPROVERS.has(actor)) {
+    return { unauthorized: true, code: "approver_unauthorized" };
+  }
+  if (required === "admin" && (actor === "read_only" || actor.endsWith(":staff"))) {
+    return { unauthorized: true, code: "approver_unauthorized" };
+  }
+  return { unauthorized: false };
 }
 
 function isForbiddenApprover(decidedBy, requestingAgent) {
@@ -259,6 +284,10 @@ function decide(id, decision, decidedBy, { currentInput } = {}) {
 
   const normalized = String(decision || "").toLowerCase();
   if (normalized === "approve") {
+    const unauthorized = isUnauthorizedApprover(decidedBy, existing.requiredApprover);
+    if (unauthorized.unauthorized) {
+      return { rejected: true, code: unauthorized.code, approval: existing };
+    }
     const forbidden = isForbiddenApprover(decidedBy, existing.requestingAgent);
     if (forbidden.forbidden) {
       return { rejected: true, code: forbidden.code, approval: existing };
@@ -364,4 +393,5 @@ module.exports = {
   latestForTask,
   hashInput,
   isForbiddenApprover,
+  isUnauthorizedApprover,
 };

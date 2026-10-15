@@ -140,7 +140,10 @@ function recordIncident({
   actorId = null,
   repeats = 0,
 } = {}) {
-  const classification = classifyEvent(reason, { repeats });
+  const prior = incidents.filter(
+    (row) => row.reason === reason && String(row.actorId || "") === String(actorId || "") && row.status !== "RESOLVED"
+  );
+  const repeatCount = prior.length;
   const incident = {
     id: `inc_${crypto.randomBytes(6).toString("hex")}`,
     at: new Date().toISOString(),
@@ -148,16 +151,46 @@ function recordIncident({
     actorId,
     reason,
     severity,
-    classification,
+    classification: classifyEvent(reason, { repeats: repeats || repeatCount }),
     evidenceRef,
     policyVersion: POLICY_VERSION,
     liveSoc: false,
     siem: false,
     dispatched: false,
+    deliveryBlocked: true,
+    deliveryReason: "no_authorized_alerting_backend",
+    status: "OPEN",
+    reviewStatus: "unreviewed",
+    resolution: null,
+    repeats: repeats || repeatCount,
   };
   incidents.push(incident);
   if (incidents.length > 500) incidents.shift();
   return incident;
+}
+
+const INCIDENT_TRANSITIONS = Object.freeze({
+  OPEN: ["REVIEWING", "CONTAINED", "FALSE_POSITIVE", "RESOLVED"],
+  REVIEWING: ["CONTAINED", "FALSE_POSITIVE", "RESOLVED"],
+  CONTAINED: ["RESOLVED", "FALSE_POSITIVE"],
+  FALSE_POSITIVE: ["RESOLVED"],
+  RESOLVED: [],
+});
+
+function transitionIncident(id, nextStatus, { actor = null, note = null } = {}) {
+  const incident = incidents.find((row) => row.id === id);
+  if (!incident) return { ok: false, code: "incident_not_found" };
+  const allowed = INCIDENT_TRANSITIONS[incident.status] || [];
+  if (!allowed.includes(nextStatus)) {
+    return { ok: false, code: "invalid_incident_transition", status: incident.status };
+  }
+  incident.status = nextStatus;
+  incident.reviewStatus = nextStatus === "RESOLVED" || nextStatus === "FALSE_POSITIVE" ? "closed" : "in_review";
+  incident.resolution = nextStatus === "RESOLVED" || nextStatus === "FALSE_POSITIVE" ? nextStatus : incident.resolution;
+  incident.updatedAt = new Date().toISOString();
+  incident.updatedBy = actor;
+  incident.note = note;
+  return { ok: true, incident, dispatched: false, liveSoc: false };
 }
 
 function listIncidents() {
@@ -258,6 +291,7 @@ module.exports = {
   failClosedDenial,
   classifyEvent,
   recordIncident,
+  transitionIncident,
   listIncidents,
   markAuditWrite,
   getEsatHealth,

@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **73.77%** (was 73.53%; 237-item arithmetic mean). This pass **+0.24 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Esat Bey 227–237 mean **83.00%** (was 77.82%; register-verified start this pass). Esat Bey is **not** 100% and **not** LIVE_VERIFIED.
+Mean established-scope completion: **73.90%** (was 73.77%; 237-item arithmetic mean). This pass **+0.13 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Esat Bey 227–237 mean **83.73%** (was 83.00%; register-verified start this pass). Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED.
 
 ## Safety locks this workspace
 
@@ -120,7 +120,7 @@ Mean established-scope completion: **73.77%** (was 73.53%; 237-item arithmetic m
 
 ## Resume pointer
 
-Next session: `/api/account/login|register` still customer-auth wrapped; marketplace/carrier BLOCKED_EXTERNAL; backup/IR live HUMAN; remote SOC/SIEM absent; Esat Bey not LIVE_VERIFIED. Original criteria UNKNOWN. Do not push/PR.
+Next session: marketplace/carrier BLOCKED_EXTERNAL; production restore HUMAN (local fixture restore is not RESTORE_TESTED); remote SOC/SIEM absent; Esat Bey not LIVE_VERIFIED. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -329,7 +329,7 @@ Next session: `/api/account/login|register` still customer-auth wrapped; marketp
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 87% (password-reset paths CSRF-public like login/register; original UNKNOWN) |
+| Completion percentage | 91% (account login/register are public CSRF-exempt auth entrypoints; original UNKNOWN) |
 | Remaining work | csrf.test.mjs passed locally |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4507,8 +4507,8 @@ Next session: `/api/account/login|register` still customer-auth wrapped; marketp
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Bridge tests |
+| Completion percentage | 89% (action mismatch + insufficient approver + AI self-approve; original UNKNOWN) |
+| Remaining work | Live human approval not produced |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5395,7 +5395,7 @@ Next session: `/api/account/login|register` still customer-auth wrapped; marketp
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 90% (NODE_ENV=production next build 2044 pages this pass; :3000 stayed 200; original UNKNOWN)
 | Remaining work | Production deploy not performed
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5629,8 +5629,8 @@ Next session: `/api/account/login|register` still customer-auth wrapped; marketp
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%)
-| Remaining work | Production restore HUMAN; dry-run only
+| Completion percentage | 70% (isolated scratch restore recovered marker; not production RESTORE_TESTED)
+| Remaining work | Production restore HUMAN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -6231,7 +6231,7 @@ Next session: `/api/account/login|register` still customer-auth wrapped; marketp
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 66% (local incident id/class/severity; liveDispatch false; no SOC; original UNKNOWN) |
+| Completion percentage | 72% (local OPEN→REVIEWING→RESOLVED; deliveryBlocked; no SOC; original UNKNOWN) |
 | Remaining work | No live IR drill |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -6309,7 +6309,7 @@ Next session: `/api/account/login|register` still customer-auth wrapped; marketp
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (evaluate catch + audit + approval-unavailable fail-closed; original UNKNOWN) |
+| Completion percentage | 93% (circular payload + circuit open + HAC down fail-closed; original UNKNOWN) |
 | Remaining work | failClosed true on throw |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

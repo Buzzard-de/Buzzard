@@ -206,13 +206,8 @@ if (backend.name === "file") {
 }
 
 function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
-  if (isRateLimitDisabled()) {
-    return function isRateLimited() {
-      return false;
-    };
-  }
-
   return function isRateLimited(req, options = {}) {
+    if (isRateLimitDisabled()) return false;
     const { getClientIp } = require("./security");
     const key = `${keyPrefix}${options.key || getClientIp(req)}`;
     const now = Date.now();

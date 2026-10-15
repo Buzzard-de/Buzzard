@@ -89,8 +89,8 @@ module.exports = {
     });
 
     app.post("/api/identity-security/auth/password-reset-request", (req, res) => {
-      const result = identitySecurity.requestPasswordReset(req.body || {}, req);
-      return res.json(result);
+      identitySecurity.requestPasswordReset(req.body || {}, req);
+      return res.json({ ok: true });
     });
 
     app.post("/api/identity-security/auth/password-reset", (req, res) => {

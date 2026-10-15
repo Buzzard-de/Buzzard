@@ -144,7 +144,7 @@ module.exports = {
 
     app.get('/api/submissions', (req, res) => {
       if (!requireAuth(req, res)) return;
-      if (!requirePermission(req, res, 'orders.read')) return;
+      if (!requirePermission(req, res, 'security.read')) return;
       const submissions = readSubmissions();
       return res.json({ submissions });
     });

@@ -80,11 +80,14 @@ const PUBLIC_ROUTES = new Set([
   "POST /api/identity-security/auth/logout",
   "POST /api/identity-security/auth/password-reset-request",
   "POST /api/identity-security/auth/password-reset",
+  "POST /api/account/password-reset/request",
+  "POST /api/account/password-reset/confirm",
   "POST /api/webhooks/:provider",
 ]);
 
 const EXACT = {
   "GET /api/admin/me": null,
+  "GET /api/submissions": "security.read",
   "GET /api/admin/sessions": "security.read",
   "DELETE /api/admin/sessions/:sessionId": "security.manage",
   "GET /api/admin/audit": "audit.read",

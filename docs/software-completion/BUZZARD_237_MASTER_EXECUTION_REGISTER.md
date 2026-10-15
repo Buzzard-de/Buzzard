@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `444dae1` (plugin/commerce English errors → errorKey)  
+Inspected HEAD at quality pass: `6797a12` (CRM/marketing/RMA/catalog remaining English → keys)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **72.69%** (was 72.18%; 237-item arithmetic mean). This pass **+0.51 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; 120 puan gerçek iş / 237 gerekir).
+Mean established-scope completion: **73.03%** (was 72.69%; 237-item arithmetic mean). This pass **+0.34 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; 80 puan gerçek iş / 237 gerekir).
 
 ## Safety locks this workspace
 
@@ -112,11 +112,12 @@ Mean established-scope completion: **72.69%** (was 72.18%; 237-item arithmetic m
 62. `classifySystemFailure` maps AbortError/ETIMEDOUT/ECONN*/SQLITE_* by code; jobWorker no longer scans `err.message`. Pusat exceptions prefer those codes. Payload 413 by `PAYLOAD_TOO_LARGE` only. Static 403 and desktop-bridge 401/404/stderr are keys. Automation timeout/cost counts use exception keys.
 63. Removed `inferCode` message scanning. Exceptions classify from pusat/system codes or HTTP `status`/`statusCode` only; uncoded errors are UNKNOWN (or SENSITIVE_NO_RETRY on sensitive actions). Contact file IO logs publicTaskError keys.
 64. Batch: plugin admin/auth JSON, dbAuth, salesMode, OMS/identity/WMS/supplier/checkout/payments/product store English `error` strings, and `{ error: result.error }` echos now use `errorKey` / `sendKeyedResult`. Insufficient stock no longer interpolates SKU. Guardian/orchestrator 502 omit `detail`. Webhook 501 is keyed without adapter hints.
+65. Second English batch: cartCheckout, catalogSeo, PIM catalog, marketing/loyalty, reviews, RMA, logistics, CRM/support, AI center, localization feeds; v32–v40 `record.*` keys; taxonomy/menu/intelligence plugins `errorKey`.
 
 
 ## Resume pointer
 
-Next session: remaining lib English `error:` strings (marketing/CRM/search leftover); contact German UX `message`; generic SQLITE_CONSTRAINT text; marketplace/carrier adapters BLOCKED_EXTERNAL; item 185 alerting; live webhook HUMAN; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; leftover plugin `{ error }` echos if any; marketplace/carrier adapters BLOCKED_EXTERNAL; item 185 alerting; live webhook HUMAN; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -691,7 +692,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (cart errors keyed; original UNKNOWN)
+| Completion percentage | 93% (cartCheckout remaining English keyed)
 | Remaining work | Writes require bound session |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -717,7 +718,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (checkout address/coupon errors keyed; original UNKNOWN)
+| Completion percentage | 93% (checkout session errors keyed)
 | Remaining work | Commercial checkout blocked while sales off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -769,7 +770,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (product.skuExists/product.notFound keys; SoT off)
+| Completion percentage | 90% (PIM catalog brand/variant errors keyed)
 | Remaining work | Multiple stores still classified; SoT off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -951,7 +952,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (plugin admin/auth JSON uses errorKey)
+| Completion percentage | 93% (taxonomy/menu plugins use errorKey)
 | Remaining work | Unregistered paths 404 |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1003,7 +1004,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (plugin access tests expect errorKey)
+| Completion percentage | 86% (continuousIntegrity251 + write-boundary keys)
 | Remaining work | 927 passed historically; re-run this session focused |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1605,7 +1606,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (bulk write errors keyed; dual-write still forbidden) |
+| Completion percentage | 91% (pimCatalog field errors keyed)
 | Remaining work | Dual-write forbidden |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1787,7 +1788,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 76% (catalogSeo category/sku errors keyed)
 | Remaining work | Admin session actor |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1917,7 +1918,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (3/4 established: local search, sync script, honest stub; live OpenSearch remaining) |
+| Completion percentage | 80% (advancedSearch term/sku errors keyed)
 | Remaining work | Live OpenSearch not deployed (do not claim LIVE_VERIFIED) |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1995,7 +1996,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (category supplier check detail keyed; admin workflow remains) |
+| Completion percentage | 80% (catalog health plugins keyed)
 | Remaining work | Admin workflow |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2597,7 +2598,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (cart service empty/insufficient keyed)
+| Completion percentage | 93% (cartCheckout notFound/invalid keyed)
 | Remaining work | assertCartAccess |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2623,7 +2624,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (customerCheckout errors keyed)
+| Completion percentage | 88% (checkout notFound keyed)
 | Remaining work | Commercial blocked |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2805,7 +2806,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 87% (returns plugin admin gate keyed)
+| Completion percentage | 91% (returnsRma English replaced with rma.* keys)
 | Remaining work | Ledger wrap; live refund UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -3039,7 +3040,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 72% (loyalty reevaluate failures keyed; original UNKNOWN) |
+| Completion percentage | 77% (loyalty/campaign errors keyed)
 | Remaining work | Abuse paths not fully re-audited |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -3197,7 +3198,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 80% (localizationFeeds errors keyed)
 | Remaining work | 30 locales claimed in prior status |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -3639,7 +3640,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 46% (locale/price feed validation keyed; live export UNKNOWN)
 | Remaining work | Dry-run only |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4085,7 +4086,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 66% (logisticsFulfillment shipment errors keyed)
 | Remaining work | Gate exists |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4111,7 +4112,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (customer support/checkout plugin errors keyed)
+| Completion percentage | 80% (customerSupport/CRM ticket errors keyed)
 | Remaining work | Implemented/tested historically |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4189,7 +4190,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (identitySecurity errors keyed; rate-limit keyed)
+| Completion percentage | 84% (CRM customer errors keyed)
 | Remaining work | Rate limit 8/15min |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4215,7 +4216,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (returns RMA plugin admin errorKey)
+| Completion percentage | 90% (RMA refund/exchange keys)
 | Remaining work | Live refund/credit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4397,7 +4398,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (ops plugins 404/auth keyed)
+| Completion percentage | 85% (v32–v40 record.* keys)
 | Remaining work | System events recorded |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5235,7 +5236,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 98% (continuousIntegrity250 added)
+| Completion percentage | 99% (continuousIntegrity251 added)
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5261,7 +5262,7 @@ Next session: remaining lib English `error:` strings (marketing/CRM/search lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (1055 vitest this pass)
+| Completion percentage | 88% (1057 vitest this pass)
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

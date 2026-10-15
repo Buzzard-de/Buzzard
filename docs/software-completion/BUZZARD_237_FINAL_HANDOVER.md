@@ -9,7 +9,7 @@ This document is a session handover, not a claim that 237/237 items are complete
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
 | Starting HEAD | `28e45999fcd4d3355539f753d07b051c2fa5453a` |
-| Ending HEAD (code) | command 3/10 working tree |
+| Ending HEAD (code) | `95d7b0a86e057e0c749914d15e10471f1d772168` |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,17 +24,17 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **70.10%** (was 70.06%). Command 2/10 delta **+0.04 pp**.
+Mean established-scope completion: **70.13%** (was 70.10%). Command 3/10 delta **+0.03 pp**.
 
 ## What was implemented this pass
 
-- Lifecycle/orchestrator task failures store `publicTaskError` keys; escalations do not copy `err.message`.
-- `mapTaskRow.error` sanitizes leftover free-text for admin task APIs.
-- Vitest 1012 passed. Local `next build` compiled and exported (no deploy).
+- Exception `lastError` is a classified key on write and read; legacy SQL rows sanitized.
+- GET `/api/admin/pusat/exceptions` mapped to `security.read`; unauthenticated requests 401.
+- Vitest 1016 passed.
 
 ## Highest-priority remaining work
 
 1. Recover original 237 titles/criteria or obtain an explicit waiver.
-2. Remaining PARTIAL: `exceptions.lastError` on admin exceptions API; item 185 alerting EXTERNAL; item 109 live webhook; item 187 restore HUMAN.
+2. Remaining PARTIAL: in-process `classify.message`; item 185 alerting EXTERNAL; item 109 live webhook; item 187 restore HUMAN.
 3. Human approvals and external credentials (never invent LIVE_VERIFIED).
 4. Isolated Playwright after `:3010`/`:3001` are dedicated — not re-run this pass.

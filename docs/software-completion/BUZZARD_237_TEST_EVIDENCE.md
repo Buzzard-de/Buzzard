@@ -2,8 +2,8 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `8fb4cf7`  
-Code HEAD this pass: `f69cb46`
+Starting HEAD this pass: `b0002fb`  
+Code HEAD this pass: `9424e73`
 
 Safety at evidence time:
 
@@ -22,8 +22,8 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (`continuousIntegrity248` + related) | 0 | **115 passed** |
-| `npx vitest run` | 0 | 105 files, **1048 passed**, 0 failed |
+| Focused vitest (249 + exception suite) | 0 | **116 passed** |
+| `npx vitest run` | 0 | 106 files, **1051 passed**, 0 failed |
 | `npx tsc --noEmit` | 0 | clean |
 | `NODE_ENV=production npx next build` | skipped | `:3000` next-server owns `.next` |
 | Isolated Playwright this pass | skipped | last recorded 107 passed / 12 skipped on `6f6c672` |
@@ -32,7 +32,7 @@ Working directory: `/workspace`
 
 | File | Established coverage |
 | --- | --- |
-| `server/__tests__/continuousIntegrity248.test.mjs` | classifySystemFailure/jobWorker by code; exceptions sqlite/network; payload 413 code-only; bridge keys; automation counts |
+| `server/__tests__/continuousIntegrity249.test.mjs` | no inferCode; HTTP status classify; free-text does not become AUTH/TIMEOUT; contact IO keys |
 
 ## Original 237 source search
 

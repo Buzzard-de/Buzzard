@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `f69cb46` (system failure by err.code; bridge/API keys)  
+Inspected HEAD at quality pass: `9424e73` (no exception inferCode; HTTP status classify)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **72.14%** (was 72.05%; 237-item arithmetic mean). This pass **+0.09 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~21 puan gerçek iş).
+Mean established-scope completion: **72.18%** (was 72.14%; 237-item arithmetic mean). This pass **+0.04 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~10 puan gerçek iş).
 
 ## Safety locks this workspace
 
@@ -110,11 +110,12 @@ Mean established-scope completion: **72.14%** (was 72.05%; 237-item arithmetic m
 60. Browser/admin clients throw `errorKey` only; desktop-bridge HTTP/watch omit exception text; intelligence snapshot collectHealth uses `health.probeFailed`.
 61. SQLite unique/PK conflicts classified by `err.code` (`SQLITE_CONSTRAINT_UNIQUE` / `PRIMARYKEY`); generic `SQLITE_CONSTRAINT`/`19` still reads constraint-failed text only. Contact plugin returns `errorKey` and logs `{received,id}` without email.
 62. `classifySystemFailure` maps AbortError/ETIMEDOUT/ECONN*/SQLITE_* by code; jobWorker no longer scans `err.message`. Pusat exceptions prefer those codes. Payload 413 by `PAYLOAD_TOO_LARGE` only. Static 403 and desktop-bridge 401/404/stderr are keys. Automation timeout/cost counts use exception keys.
+63. Removed `inferCode` message scanning. Exceptions classify from pusat/system codes or HTTP `status`/`statusCode` only; uncoded errors are UNKNOWN (or SENSITIVE_NO_RETRY on sensitive actions). Contact file IO logs publicTaskError keys.
 
 
 ## Resume pointer
 
-Next session: exceptions `inferCode` still scans free-text when no structured code; generic SQLITE_CONSTRAINT still reads constraint-failed text; contact API still includes German UX `message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: generic SQLITE_CONSTRAINT still reads constraint-failed text internally; contact API still includes German UX `message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -479,7 +480,7 @@ Next session: exceptions `inferCode` still scans free-text when no structured co
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (contact logs no email; unique classified by sqlite code; production secret audit UNKNOWN) |
+| Completion percentage | 93% (contact IO logs keys; unique by sqlite code; production secret audit UNKNOWN) |
 | Remaining work | Production secret audit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1289,7 +1290,7 @@ Next session: exceptions `inferCode` still scans free-text when no structured co
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (sqlite/network codes map to PUSAT_* before message infer; original UNKNOWN) |
+| Completion percentage | 93% (inferCode removed; HTTP status maps 401/403/429; original UNKNOWN) |
 | Remaining work | Live exception operations UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4527,8 +4528,8 @@ Next session: exceptions `inferCode` still scans free-text when no structured co
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (structured sqlite/network codes before inferCode; original UNKNOWN) |
-| Remaining work | inferCode still scans message when no code; production volume UNKNOWN |
+| Completion percentage | 88% (no free-text inferCode; status/code only; original UNKNOWN) |
+| Remaining work | Production exception volume UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5233,7 +5234,7 @@ Next session: exceptions `inferCode` still scans free-text when no structured co
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (continuousIntegrity248 added; original unit checklist UNKNOWN) |
+| Completion percentage | 97% (continuousIntegrity249 added; original unit checklist UNKNOWN) |
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5259,7 +5260,7 @@ Next session: exceptions `inferCode` still scans free-text when no structured co
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 81% (1048 vitest this pass; historical subset remains) |
+| Completion percentage | 82% (1051 vitest this pass; historical subset remains) |
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

@@ -74,6 +74,24 @@ function sanitizeErrorKey(value, fallbackKey = "security.internalError") {
 }
 
 const SQLITE_UNIQUE_CODES = new Set(["SQLITE_CONSTRAINT_UNIQUE", "SQLITE_CONSTRAINT_PRIMARYKEY"]);
+const NETWORK_FAILURE_CODES = new Set([
+  "ECONNREFUSED",
+  "ECONNRESET",
+  "ECONNABORTED",
+  "ENOTFOUND",
+  "EAI_AGAIN",
+  "ENETUNREACH",
+  "EHOSTUNREACH",
+  "EPIPE",
+]);
+const TIMEOUT_FAILURE_CODES = new Set([
+  "ETIMEDOUT",
+  "ETIME",
+  "ABORT_ERR",
+  "UND_ERR_CONNECT_TIMEOUT",
+  "UND_ERR_HEADERS_TIMEOUT",
+  "UND_ERR_BODY_TIMEOUT",
+]);
 
 function isUniqueConstraint(err) {
   if (!err) return false;
@@ -84,6 +102,16 @@ function isUniqueConstraint(err) {
     return /UNIQUE constraint failed/i.test(text) || /PRIMARY KEY constraint failed/i.test(text);
   }
   return false;
+}
+
+function classifySystemFailure(err) {
+  if (!err) return null;
+  if (err.name === "AbortError" || err.name === "TimeoutError") return "TIMEOUT";
+  const code = String(err.code || "");
+  if (TIMEOUT_FAILURE_CODES.has(code)) return "TIMEOUT";
+  if (NETWORK_FAILURE_CODES.has(code)) return "NETWORK";
+  if (code.startsWith("SQLITE_") || code === "19") return "DATABASE";
+  return null;
 }
 
 function publicTaskError(err, fallbackKey = "ai.task.failed") {
@@ -186,6 +214,7 @@ module.exports = {
   sanitizeErrorKey,
   publicTaskError,
   isUniqueConstraint,
+  classifySystemFailure,
   isSafeId,
   normalizeText,
   sanitizeFilename,

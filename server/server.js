@@ -328,14 +328,15 @@ const server = http.createServer(async (req, res) => {
       route.handler(req, res);
     } catch (error) {
       console.error("API error:", publicTaskError(error, "security.internalError"));
+      const tooLarge = error.code === "PAYLOAD_TOO_LARGE";
       logSecurityEvent({
         type: 'api_error',
         success: false,
         path: pathname,
-        detail: { errorKey: error.code === "PAYLOAD_TOO_LARGE" || error.message === "Payload too large" ? "security.payloadTooLarge" : "security.internalError" },
+        detail: { errorKey: tooLarge ? "security.payloadTooLarge" : "security.internalError" },
       });
-      const statusCode = error.code === "PAYLOAD_TOO_LARGE" || error.message === "Payload too large" ? 413 : 500;
-      sendJson(res, statusCode, publicErrorBody(statusCode === 413 ? 'security.payloadTooLarge' : 'security.internalError'));
+      const statusCode = tooLarge ? 413 : 500;
+      sendJson(res, statusCode, publicErrorBody(tooLarge ? 'security.payloadTooLarge' : 'security.internalError'));
     }
     return;
   }
@@ -343,7 +344,7 @@ const server = http.createServer(async (req, res) => {
   let filePath = pathname === '/' ? path.join(rootDir, 'index.html') : safePath(pathname);
 
   if (!filePath.startsWith(rootDir)) {
-    sendJson(res, 403, { message: 'Zugriff verweigert.' });
+    sendJson(res, 403, publicErrorBody('security.forbidden'));
     return;
   }
 

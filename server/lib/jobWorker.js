@@ -13,6 +13,7 @@ const {
   DEFAULT_MAX_RETRIES,
   FAILURE_KIND,
 } = require("../core/jobConstants");
+const { classifySystemFailure } = require("./security");
 
 const WORKER_ID = `worker_${crypto.randomBytes(4).toString("hex")}`;
 let pollTimer = null;
@@ -55,12 +56,14 @@ function setWorkerState(partial) {
 }
 
 function classifyError(err) {
-  if (err.failureKind) return err.failureKind;
-  const msg = String(err.message || "").toLowerCase();
-  if (msg.includes("timeout") || err.name === "AbortError") return FAILURE_KIND.TIMEOUT;
-  if (msg.includes("network") || msg.includes("fetch")) return FAILURE_KIND.NETWORK;
-  if (msg.includes("sql") || msg.includes("database")) return FAILURE_KIND.DATABASE;
-  if (msg.includes("provider") || msg.includes("supplier")) return FAILURE_KIND.PROVIDER;
+  if (!err) return FAILURE_KIND.UNKNOWN;
+  if (err.failureKind && Object.values(FAILURE_KIND).includes(err.failureKind)) {
+    return err.failureKind;
+  }
+  const sys = classifySystemFailure(err);
+  if (sys === "TIMEOUT") return FAILURE_KIND.TIMEOUT;
+  if (sys === "NETWORK") return FAILURE_KIND.NETWORK;
+  if (sys === "DATABASE") return FAILURE_KIND.DATABASE;
   return FAILURE_KIND.UNKNOWN;
 }
 
@@ -206,5 +209,6 @@ module.exports = {
   stopWorker,
   processOneJob,
   tick,
+  classifyError,
   setupGracefulShutdown,
 };

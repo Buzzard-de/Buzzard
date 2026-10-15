@@ -13,7 +13,7 @@ const {
   DEFAULT_MAX_RETRIES,
 } = require("./constants");
 const { newId } = require("./hash");
-const { publicTaskError } = require("../security");
+const { publicTaskError, classifySystemFailure } = require("../security");
 
 const NON_RETRYABLE = new Set([
   EXCEPTION_CODES.PERMISSION_DENIED,
@@ -31,9 +31,21 @@ const NON_RETRYABLE = new Set([
 
 const SENSITIVE_HINT = /\b(payment|refund|purchase|payout|supplier\.order|marketplace\.publish)\b/i;
 
+function structuredExceptionCode(error) {
+  if (!error) return null;
+  if (error.pusatCode && Object.values(EXCEPTION_CODES).includes(error.pusatCode)) return error.pusatCode;
+  if (error.code && Object.values(EXCEPTION_CODES).includes(error.code)) return error.code;
+  if (error.errorKey && Object.values(EXCEPTION_CODES).includes(error.errorKey)) return error.errorKey;
+  const sys = classifySystemFailure(error);
+  if (sys === "TIMEOUT") return EXCEPTION_CODES.TASK_TIMEOUT;
+  if (sys === "NETWORK") return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
+  if (sys === "DATABASE") return EXCEPTION_CODES.DATABASE_FAILURE;
+  return null;
+}
+
 function classify(error, { action } = {}) {
   const message = error?.message || String(error || "unknown");
-  const code = error?.code || error?.pusatCode || inferCode(message, action);
+  const code = structuredExceptionCode(error) || inferCode(message, action);
   const sensitive = SENSITIVE_ACTIONS.includes(action) || SENSITIVE_HINT.test(`${action || ""} ${message}`);
   const retryable = !sensitive && !NON_RETRYABLE.has(code);
   return {

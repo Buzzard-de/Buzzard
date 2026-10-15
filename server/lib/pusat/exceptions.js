@@ -49,6 +49,7 @@ function structuredExceptionCode(error) {
   const sys = classifySystemFailure(error);
   if (sys === "TIMEOUT") return EXCEPTION_CODES.TASK_TIMEOUT;
   if (sys === "NETWORK") return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
+  if (sys === "CONFLICT") return EXCEPTION_CODES.VALIDATION_FAILED;
   if (sys === "DATABASE") return EXCEPTION_CODES.DATABASE_FAILURE;
   return httpStatusExceptionCode(error);
 }

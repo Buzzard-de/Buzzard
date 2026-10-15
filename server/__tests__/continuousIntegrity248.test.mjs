@@ -12,6 +12,7 @@ describe("system failure classification by code", () => {
     expect(classifySystemFailure({ code: "ETIMEDOUT" })).toBe("TIMEOUT");
     expect(classifySystemFailure({ code: "ECONNRESET", message: "sql network timeout" })).toBe("NETWORK");
     expect(classifySystemFailure({ code: "SQLITE_BUSY" })).toBe("DATABASE");
+    expect(classifySystemFailure({ code: "SQLITE_CONSTRAINT_UNIQUE" })).toBe("CONFLICT");
     expect(classifySystemFailure(new Error("timeout network sql provider"))).toBe(null);
   });
 

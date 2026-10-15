@@ -15,6 +15,9 @@ describe("sqlite unique constraint classification", () => {
     ).toBe(true);
     expect(isUniqueConstraint(new Error("UNIQUE jwt must be unique"))).toBe(false);
     expect(isUniqueConstraint({ code: "SQLITE_BUSY", message: "UNIQUE constraint failed" })).toBe(false);
+    expect(
+      isUniqueConstraint({ code: "SQLITE_CONSTRAINT", message: "CHECK constraint failed: amount_cents" })
+    ).toBe(false);
   });
 
   it("tracking, delivery, submit, and paymentLifecycle classify via isUniqueConstraint", () => {

@@ -74,6 +74,13 @@ function sanitizeErrorKey(value, fallbackKey = "security.internalError") {
 }
 
 const SQLITE_UNIQUE_CODES = new Set(["SQLITE_CONSTRAINT_UNIQUE", "SQLITE_CONSTRAINT_PRIMARYKEY"]);
+const SQLITE_KIND_BY_CODE = Object.freeze({
+  SQLITE_CONSTRAINT_UNIQUE: "UNIQUE",
+  SQLITE_CONSTRAINT_PRIMARYKEY: "PRIMARY",
+  SQLITE_CONSTRAINT_CHECK: "CHECK",
+  SQLITE_CONSTRAINT_FOREIGNKEY: "FOREIGN",
+  SQLITE_CONSTRAINT_NOTNULL: "NOTNULL",
+});
 const NETWORK_FAILURE_CODES = new Set([
   "ECONNREFUSED",
   "ECONNRESET",
@@ -93,15 +100,38 @@ const TIMEOUT_FAILURE_CODES = new Set([
   "UND_ERR_BODY_TIMEOUT",
 ]);
 
-function isUniqueConstraint(err) {
-  if (!err) return false;
+function sqliteConstraintKind(err) {
+  if (!err) return null;
   const code = String(err.code || "");
-  if (SQLITE_UNIQUE_CODES.has(code)) return true;
-  if (code === "SQLITE_CONSTRAINT" || code === "19") {
-    const text = String(err.message || "");
-    return /UNIQUE constraint failed/i.test(text) || /PRIMARY KEY constraint failed/i.test(text);
+  if (SQLITE_KIND_BY_CODE[code]) return SQLITE_KIND_BY_CODE[code];
+  if (code !== "SQLITE_CONSTRAINT" && code !== "19") return null;
+  const text = String(err.message || "");
+  if (/UNIQUE constraint failed/i.test(text)) return "UNIQUE";
+  if (/PRIMARY KEY constraint failed/i.test(text)) return "PRIMARY";
+  if (/CHECK constraint failed/i.test(text)) return "CHECK";
+  if (/FOREIGN KEY constraint failed/i.test(text)) return "FOREIGN";
+  if (/NOT NULL constraint failed/i.test(text)) return "NOTNULL";
+  return "CONSTRAINT";
+}
+
+function isUniqueConstraint(err) {
+  const kind = sqliteConstraintKind(err);
+  return kind === "UNIQUE" || kind === "PRIMARY";
+}
+
+function sqlitePublicErrorKey(errOrCode) {
+  if (errOrCode && typeof errOrCode === "object") {
+    if (isUniqueConstraint(errOrCode)) return "db.uniqueConstraint";
+    const code = String(errOrCode.code || "");
+    if (code.startsWith("SQLITE_CONSTRAINT") || code === "19") return "db.constraint";
+    if (code.startsWith("SQLITE_")) return "db.error";
+    return null;
   }
-  return false;
+  const code = String(errOrCode || "");
+  if (SQLITE_UNIQUE_CODES.has(code)) return "db.uniqueConstraint";
+  if (code.startsWith("SQLITE_CONSTRAINT") || code === "19") return "db.constraint";
+  if (code.startsWith("SQLITE_")) return "db.error";
+  return null;
 }
 
 function classifySystemFailure(err) {
@@ -110,12 +140,17 @@ function classifySystemFailure(err) {
   const code = String(err.code || "");
   if (TIMEOUT_FAILURE_CODES.has(code)) return "TIMEOUT";
   if (NETWORK_FAILURE_CODES.has(code)) return "NETWORK";
+  if (isUniqueConstraint(err)) return "CONFLICT";
   if (code.startsWith("SQLITE_") || code === "19") return "DATABASE";
   return null;
 }
 
 function publicTaskError(err, fallbackKey = "ai.task.failed") {
+  const sqliteKey = sqlitePublicErrorKey(err);
+  if (sqliteKey) return sqliteKey;
   const code = err?.code || err?.pusatCode || err?.errorKey;
+  const mappedCode = typeof code === "string" ? sqlitePublicErrorKey(code) : null;
+  if (mappedCode) return mappedCode;
   if (typeof code === "string") return sanitizeErrorKey(code, fallbackKey);
   if (typeof err === "string") return sanitizeErrorKey(err, fallbackKey);
   if (typeof err?.error === "string") return sanitizeErrorKey(err.error, fallbackKey);
@@ -123,16 +158,18 @@ function publicTaskError(err, fallbackKey = "ai.task.failed") {
 }
 
 function publicErrorBody(errorKey = "security.internalError") {
-  return { success: false, errorKey: sanitizeErrorKey(errorKey) };
+  return { success: false, errorKey: sanitizeErrorKey(sqlitePublicErrorKey(errorKey) || errorKey) };
 }
 
 function toPublicError(result, fallbackKey = "security.internalError") {
+  const sqliteKey = sqlitePublicErrorKey(result);
+  if (sqliteKey) return publicErrorBody(sqliteKey);
   const candidate =
     result?.errorKey ||
     result?.code ||
     (typeof result?.error === "string" ? result.error : null) ||
     fallbackKey;
-  return publicErrorBody(sanitizeErrorKey(candidate, fallbackKey));
+  return publicErrorBody(sanitizeErrorKey(sqlitePublicErrorKey(candidate) || candidate, fallbackKey));
 }
 
 function isSafeId(id, maxLen = 64) {
@@ -214,6 +251,8 @@ module.exports = {
   sanitizeErrorKey,
   publicTaskError,
   isUniqueConstraint,
+  sqliteConstraintKind,
+  sqlitePublicErrorKey,
   classifySystemFailure,
   isSafeId,
   normalizeText,

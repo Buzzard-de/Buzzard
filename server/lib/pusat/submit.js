@@ -154,7 +154,8 @@ function submitTask({
       agentCode: classified,
     });
   } catch (error) {
-    if (idempotencyKey && require("../security").isUniqueConstraint(error)) {
+    const { isUniqueConstraint, publicTaskError } = require("../security");
+    if (idempotencyKey && isUniqueConstraint(error)) {
       try {
         controlCenter.updateTaskStatus(task.id, TASK_STATUS.CANCELLED, {
           error: "idempotency_race",
@@ -166,7 +167,11 @@ function submitTask({
       const replay = replayExisting(idempotencyKey, inputHash);
       if (replay) return replay;
     }
-    throw error;
+    const classified = new Error(isUniqueConstraint(error) ? "PUSAT_VALIDATION_FAILED" : "PUSAT_DATABASE_FAILURE");
+    classified.code = isUniqueConstraint(error) ? "PUSAT_VALIDATION_FAILED" : "PUSAT_DATABASE_FAILURE";
+    classified.errorKey = publicTaskError(error, classified.code);
+    classified.statusCode = isUniqueConstraint(error) ? 409 : 500;
+    throw classified;
   }
 
   controlCenter.recordSystemEvent({

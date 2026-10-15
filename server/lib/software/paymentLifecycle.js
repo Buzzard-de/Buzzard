@@ -116,9 +116,13 @@ function attachProviderRef(db, paymentId, providerPaymentId) {
        WHERE id = ?`
     ).run(String(providerPaymentId), JSON.stringify(details), paymentId);
   } catch (err) {
-    if (!isUniqueConstraint(err)) throw err;
-    writeAudit(db, "payment.provider_ref_conflict", paymentId, { providerPaymentId });
-    return payment;
+    if (isUniqueConstraint(err)) {
+      writeAudit(db, "payment.provider_ref_conflict", paymentId, { providerPaymentId });
+      return payment;
+    }
+    const classified = new Error("db.error");
+    classified.code = require("../security").publicTaskError(err, "db.error");
+    throw classified;
   }
   return getPayment(db, paymentId);
 }
@@ -145,7 +149,9 @@ function recordEventExclusive(db, input = {}) {
     return { inserted: true, duplicate: false };
   } catch (err) {
     if (isUniqueConstraint(err)) return { inserted: false, duplicate: true };
-    throw err;
+    const classified = new Error("db.error");
+    classified.code = require("../security").publicTaskError(err, "db.error");
+    throw classified;
   }
 }
 

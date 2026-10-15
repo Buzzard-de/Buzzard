@@ -81,13 +81,16 @@ function readSubmissions() {
 function writeSubmissions(submissions) {
   try {
     fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2), 'utf8');
+    return true;
   } catch (err) {
     console.error('Error writing submissions file:', require('../lib/security').publicTaskError(err, 'contact.writeFailed'));
+    return false;
   }
 }
 
 module.exports = {
   validateContactAntiAbuse,
+  writeSubmissions,
   register(app) {
     ensureDataDirectory();
 
@@ -128,7 +131,12 @@ module.exports = {
         message,
         createdAt: new Date().toISOString(),
       });
-      writeSubmissions(submissions);
+      if (!writeSubmissions(submissions)) {
+        return res.status(500).json({
+          message: 'Nachricht konnte nicht gespeichert werden. Bitte später erneut versuchen.',
+          errorKey: 'contact.writeFailed',
+        });
+      }
 
       console.log('Kontaktanfrage gespeichert:', { received: true, id: submissions[submissions.length - 1].id });
       return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.', errorKey: 'contact.received' });

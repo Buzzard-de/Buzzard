@@ -14,6 +14,7 @@ const memory = require("./memory");
 const automations = require("./automations");
 const { getMeta, upsertMeta } = require("./submit");
 const { EXCEPTION_CODES, MEMORY_KIND, SENSITIVE_ACTIONS } = require("./constants");
+const { publicTaskError } = require("../security");
 
 function parseJson(val, fallback) {
   if (!val) return fallback;
@@ -273,14 +274,14 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
 
     if (SENSITIVE_ACTIONS.includes(action) || !handled.classified.retryable) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-        error: error.message,
+        error: publicTaskError(error, handled.classified.code),
         result: { failureKind: handled.classified.code, exceptionId: handled.exception?.id, retryable: false },
       });
     }
 
     if (handled.retry.retry && retryCount < (task.max_retries || 3)) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.ASSIGNED, {
-        error: error.message,
+        error: publicTaskError(error, handled.classified.code),
         result: { failureKind: handled.classified.code, retry: true, delayMs: handled.retry.delayMs },
       });
     }
@@ -294,7 +295,7 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
       riskLevel: "HIGH",
     });
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-      error: error.message,
+      error: publicTaskError(error, handled.classified.code),
       result: { failureKind: handled.classified.code, exceptionId: handled.exception?.id },
     });
   }
@@ -327,12 +328,14 @@ function cancelTask(taskId, { cancelledBy, reason } = {}) {
 function enqueueTask(taskId) {
   setImmediate(() => {
     executeTask(taskId).catch((err) => {
-      controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, { error: err.message });
+      const errorKey = publicTaskError(err, "ai.orchestrator.failed");
+      console.error("[pusat.lifecycle]", { name: err?.name, code: err?.code });
+      controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, { error: errorKey });
       controlCenter.createEscalation({
         sourceType: "ai_task",
         sourceId: taskId,
         title: "Pusat orchestrator error",
-        message: err.message,
+        message: errorKey,
         riskLevel: "CRITICAL",
       });
     });

@@ -73,6 +73,14 @@ function sanitizeErrorKey(value, fallbackKey = "security.internalError") {
   return SAFE_ERROR_KEY.test(fallback) ? fallback : "security.internalError";
 }
 
+function publicTaskError(err, fallbackKey = "ai.task.failed") {
+  const code = err?.code || err?.pusatCode || err?.errorKey;
+  if (typeof code === "string") return sanitizeErrorKey(code, fallbackKey);
+  if (typeof err === "string") return sanitizeErrorKey(err, fallbackKey);
+  if (typeof err?.error === "string") return sanitizeErrorKey(err.error, fallbackKey);
+  return sanitizeErrorKey(fallbackKey);
+}
+
 function publicErrorBody(errorKey = "security.internalError") {
   return { success: false, errorKey: sanitizeErrorKey(errorKey) };
 }
@@ -163,6 +171,7 @@ module.exports = {
   publicErrorBody,
   toPublicError,
   sanitizeErrorKey,
+  publicTaskError,
   isSafeId,
   normalizeText,
   sanitizeFilename,

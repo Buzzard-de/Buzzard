@@ -2,8 +2,8 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `5f9263d0727daad7b6250f591587d8cf85b3d2df`  
-Code HEAD this pass: `861adaacd22559630fb326cd51305cf91e895160`
+Starting HEAD this pass: `96aa360da9b92d14c28e054c5a45f947ee4c60d1`  
+Code HEAD this pass: working tree (command 2/10)
 
 Safety at evidence time:
 
@@ -22,10 +22,9 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (`continuousIntegrity240` + part16 + 238/239 + fortressAuthz) | 0 | **51 passed** |
-| `npx vitest run` | 0 | 97 files, **1008 passed**, 0 failed |
-| Playwright API (`commerce-security` + `commerce-readiness`, skip webserver, `:3001`) | 0 | **9 passed** |
-| `next build` | skipped | Running `next-server` on `:3000` uses `.next`; production export would clobber it |
+| Focused vitest (`continuousIntegrity241` + pusatOrchestrator + exceptions + 240) | 0 | **25 passed** |
+| `npx vitest run` | 0 | 98 files, **1012 passed**, 0 failed |
+| `npm run build` | 0 | Compiled successfully; 2044 static pages exported locally (no deploy) |
 | `npx tsc --noEmit` | 0 | clean |
 | `npx next lint` | 0 | No ESLint warnings or errors |
 | `npm run test:backup-restore` | 0 | dry-run only |
@@ -51,6 +50,7 @@ npx playwright test
 | `server/__tests__/continuousIntegrity238.test.mjs` | plugin public errors; webhook redaction; stale `t=` timestamp; uncertain no-capture; ephemeral restore blocked |
 | `server/__tests__/continuousIntegrity239.test.mjs` | secret-string redact; health.probeFailed; payment session codes; VAT no input echo; job.failed |
 | `server/__tests__/continuousIntegrity240.test.mjs` | productionHealth probeFailure has no SQL/path; version payload slim |
+| `server/__tests__/continuousIntegrity241.test.mjs` | publicTaskError; mapTaskRow sanitizes SQL; lifecycle/orchestrator source |
 
 ## Original 237 source search
 

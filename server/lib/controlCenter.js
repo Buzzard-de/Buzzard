@@ -205,7 +205,9 @@ function mapTaskRow(row) {
     permissionsRequired: parseJson(row.permissions_required_json, []),
     payload: parseJson(row.payload_json, {}),
     result: parseJson(row.result_json, null),
-    error: row.error_message,
+    error: row.error_message
+      ? require("./security").sanitizeErrorKey(row.error_message, "ai.task.failed")
+      : null,
     retryCount: row.retry_count,
     maxRetries: row.max_retries,
     dependsOnTaskId: row.depends_on_task_id,

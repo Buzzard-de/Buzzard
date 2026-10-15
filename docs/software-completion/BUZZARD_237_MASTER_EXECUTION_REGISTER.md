@@ -2,7 +2,7 @@
 
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `861adaa` (productionHealth errorKey; command 1/10; base `5f9263d`)  
+Inspected HEAD at quality pass: working tree on `96aa360` (lifecycle/orchestrator publicTaskError; command 2/10)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **70.06%** (was 70.03%; 237-item arithmetic mean). Command 1/10 delta **+0.03 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
+Mean established-scope completion: **70.10%** (was 70.06%; 237-item arithmetic mean). Command 2/10 delta **+0.04 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237.
 
 ## Safety locks this workspace
 
@@ -102,11 +102,12 @@ Mean established-scope completion: **70.06%** (was 70.03%; 237-item arithmetic m
 52. `redactForLog` redacts secret-shaped strings in nested values without mutating the original object.
 53. Job queue public `error` is classified (`TIMEOUT` or `job.failed`); VAT fail-closed messages do not echo request input.
 54. `productionHealth` probe failures return `errorKey` only; Redis health uses `redis.failed`; public production payload strips `backupDir`.
+55. Pusat lifecycle and aiOrchestrator store/escalate `publicTaskError` keys; `mapTaskRow.error` sanitizes leftover free text.
 
 
 ## Resume pointer
 
-Next session (command 2/10): leftover lifecycle/orchestrator `err.message` on internal task status; item 185 alerting EXTERNAL; item 109 live webhook; item 187 restore HUMAN. `next build` skipped while `:3000` next-server owns `.next`. Original criteria UNKNOWN. Do not restart the register. Do not push/PR.
+Next session (command 3/10): `exceptions.lastError` still returned on admin `/api/admin/pusat/exceptions`; item 185 alerting EXTERNAL; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not restart the register. Do not push/PR.
 
 ---
 
@@ -1125,7 +1126,7 @@ Next session (command 2/10): leftover lifecycle/orchestrator `err.message` on in
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established: wait, consume-once, no remint after reject/cancel; original UNKNOWN) |
+| Completion percentage | 90% (task error_message mapped to keys; enqueue escalations use errorKey; original UNKNOWN) |
 | Remaining work | Original criteria UNKNOWN; production orchestration not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1151,8 +1152,8 @@ Next session (command 2/10): leftover lifecycle/orchestrator `err.message` on in
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (submit path fail-closed public body; original UNKNOWN) |
-| Remaining work | Remaining Pusat plugin paths not all audited |
+| Completion percentage | 92% (lifecycle/orchestrator no err.message on tasks; mapTaskRow sanitizes; original UNKNOWN) |
+| Remaining work | exceptions.lastError still stored redacted for admin security.read |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 

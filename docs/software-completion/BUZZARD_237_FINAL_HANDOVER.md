@@ -8,8 +8,8 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `5f9263d0727daad7b6250f591587d8cf85b3d2df` |
-| Ending HEAD (code) | `861adaacd22559630fb326cd51305cf91e895160`
+| Starting HEAD | `96aa360da9b92d14c28e054c5a45f947ee4c60d1` |
+| Ending HEAD (code) | command 2/10 working tree |
 | Push / merge / deploy / PR | **not performed** |
 
 ## Totals
@@ -24,13 +24,13 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **70.06%** (was 70.03%). Command 1/10 delta **+0.03 pp**.
+Mean established-scope completion: **70.10%** (was 70.06%). Command 2/10 delta **+0.04 pp**.
 
 ## What was implemented this pass
 
-- `productionHealth` probe failures return `errorKey` only; Redis uses `redis.failed`.
-- Public `/api/health/production` strips `backupDir`.
-- Vitest 1008 passed. Playwright API 9 passed (`:3001`, skip webserver). `next build` skipped (`:3000` next-server).
+- Lifecycle/orchestrator task failures store `publicTaskError` keys; escalations do not copy `err.message`.
+- `mapTaskRow.error` sanitizes leftover free-text for admin task APIs.
+- Vitest 1012 passed. Local `next build` compiled and exported (no deploy).
 
 ## Highest-priority remaining work
 

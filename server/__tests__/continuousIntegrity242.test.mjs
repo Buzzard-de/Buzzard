@@ -86,6 +86,7 @@ describe("item 40/45 — pusat exceptions lastError", () => {
     );
     const fetched = pusat.exceptions.getException(recorded.id);
     expect(fetched.lastError).toBe("PUSAT_UNKNOWN");
+    expect(JSON.stringify(fetched)).not.toContain("SQLITE_ERROR");
     expect(JSON.stringify(fetched)).not.toContain("sk_live_abc");
     expect(JSON.stringify(fetched)).not.toContain("/tmp/secret");
   });

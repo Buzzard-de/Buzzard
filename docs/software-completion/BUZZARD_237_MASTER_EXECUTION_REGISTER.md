@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `6797a12` (CRM/marketing/RMA/catalog remaining English → keys)  
+Inspected HEAD at quality pass: `ebcdcdf` (UNIQUE vs CHECK classification, contact write fail-closed, export secret strip)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **73.03%** (was 72.69%; 237-item arithmetic mean). This pass **+0.34 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; 80 puan gerçek iş / 237 gerekir).
+Mean established-scope completion: **73.12%** (was 73.03%; 237-item arithmetic mean). This pass **+0.09 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +0.30 **NOT MET** (71 puan gerekir; 22 puan gerçek iş / 237).
 
 ## Safety locks this workspace
 
@@ -113,11 +113,12 @@ Mean established-scope completion: **73.03%** (was 72.69%; 237-item arithmetic m
 63. Removed `inferCode` message scanning. Exceptions classify from pusat/system codes or HTTP `status`/`statusCode` only; uncoded errors are UNKNOWN (or SENSITIVE_NO_RETRY on sensitive actions). Contact file IO logs publicTaskError keys.
 64. Batch: plugin admin/auth JSON, dbAuth, salesMode, OMS/identity/WMS/supplier/checkout/payments/product store English `error` strings, and `{ error: result.error }` echos now use `errorKey` / `sendKeyedResult`. Insufficient stock no longer interpolates SKU. Guardian/orchestrator 502 omit `detail`. Webhook 501 is keyed without adapter hints.
 65. Second English batch: cartCheckout, catalogSeo, PIM catalog, marketing/loyalty, reviews, RMA, logistics, CRM/support, AI center, localization feeds; v32–v40 `record.*` keys; taxonomy/menu/intelligence plugins `errorKey`.
+66. `sqliteConstraintKind` classifies UNIQUE/PRIMARY/CHECK/FOREIGN/NOTNULL. Generic `SQLITE_CONSTRAINT`/`19` still reads constraint text **internally only**. Public keys are `db.uniqueConstraint` / `db.constraint` / `db.error`. UNIQUE is `CONFLICT` → `PUSAT_VALIDATION_FAILED` (non-retryable). Submit unique-race no longer rethrows sqlite. Contact write fail-closed (German UX kept). Account/analytics export strips secret-shaped fields.
 
 
 ## Resume pointer
 
-Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; leftover plugin `{ error }` echos if any; marketplace/carrier adapters BLOCKED_EXTERNAL; item 185 alerting; live webhook HUMAN; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: remaining plugin `{ error }` echos if any; marketplace/carrier stay BLOCKED_EXTERNAL / CODE_READY+blocked; item 185 alerting; live webhook HUMAN; item 187 restore HUMAN; Esat Bey 227–237 not started. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -482,8 +483,8 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (plugin/auth/OMS errors are keys; production secret audit UNKNOWN)
-| Remaining work | Production secret audit UNKNOWN |
+| Completion percentage | 98% (analytics/account export strips secret-shaped keys; production secret audit UNKNOWN)
+| Remaining work | Production secret audit UNKNOWN; live reports not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -508,7 +509,7 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 98% (clients throw errorKey only; intelligence collectHealth keyed; original UNKNOWN) |
+| Completion percentage | 99% (sqlite constraint text not in publicErrorBody; original UNKNOWN) |
 | Remaining work | Other unused health blobs may still exist in intelligence copies |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -666,7 +667,7 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 97% (admin/store/commerce no longer surface data.error/message; snapshot collectHealth keyed) |
+| Completion percentage | 99% (sqlite public keys db.uniqueConstraint/db.constraint/db.error; original UNKNOWN) |
 | Remaining work | `aiAutomationPlugin` internal `{ error: err.message }` remains |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -848,7 +849,7 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (fingerprint + UNIQUE classified by sqlite code; original UNKNOWN)
+| Completion percentage | 94% (UNIQUE vs CHECK kinds; public keys hide constraint text; original UNKNOWN)
 | Remaining work | Not every plugin mutation is wrapped; production replay UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1162,7 +1163,7 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (classify.message is the classified code; lastError keyed; original UNKNOWN) |
+| Completion percentage | 98% (UNIQUE is non-retryable VALIDATION_FAILED; submit throws classified codes; original UNKNOWN) |
 | Remaining work | Live exception operations UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1214,8 +1215,8 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (UNIQUE race uses isUniqueConstraint codes; original UNKNOWN) |
-| Remaining work | Original criteria UNKNOWN; generic SQLITE_CONSTRAINT still reads constraint-failed text |
+| Completion percentage | 95% (unique race replay or classified 409; raw sqlite not rethrown; original UNKNOWN) |
+| Remaining work | Original criteria UNKNOWN; generic SQLITE_CONSTRAINT still parsed internally for kind only |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -1292,7 +1293,7 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (inferCode removed; HTTP status maps 401/403/429; original UNKNOWN) |
+| Completion percentage | 96% (UNIQUE CONFLICT does not retry as DATABASE_FAILURE; original UNKNOWN) |
 | Remaining work | Live exception operations UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2858,7 +2859,7 @@ Next session: contact German UX `message`; generic SQLITE_CONSTRAINT text; lefto
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 83% (payment intent notFound keyed)
+| Completion percentage | 87% (payment unique events classified; non-unique sqlite rethrow is keyed)
 | Remaining work | Timeout policy; live payments off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

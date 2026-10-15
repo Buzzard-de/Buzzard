@@ -119,19 +119,23 @@ function isUniqueConstraint(err) {
   return kind === "UNIQUE" || kind === "PRIMARY";
 }
 
+function isSqliteResultCode(code) {
+  return code === "19" || /^SQLITE_[A-Z0-9_]+$/.test(String(code || ""));
+}
+
 function sqlitePublicErrorKey(errOrCode) {
   if (errOrCode && typeof errOrCode === "object") {
     if (isUniqueConstraint(errOrCode)) return "db.uniqueConstraint";
     const code = String(errOrCode.code || "");
+    if (!isSqliteResultCode(code)) return null;
     if (code.startsWith("SQLITE_CONSTRAINT") || code === "19") return "db.constraint";
-    if (code.startsWith("SQLITE_")) return "db.error";
-    return null;
+    return "db.error";
   }
   const code = String(errOrCode || "");
+  if (!isSqliteResultCode(code)) return null;
   if (SQLITE_UNIQUE_CODES.has(code)) return "db.uniqueConstraint";
   if (code.startsWith("SQLITE_CONSTRAINT") || code === "19") return "db.constraint";
-  if (code.startsWith("SQLITE_")) return "db.error";
-  return null;
+  return "db.error";
 }
 
 function classifySystemFailure(err) {

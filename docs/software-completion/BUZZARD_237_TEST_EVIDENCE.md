@@ -3,7 +3,7 @@
 Date: 2026-10-14  
 Branch: `cursor/software-completion-local-c293`  
 Starting HEAD this pass: `f9065098d933e75b1988abc3f19ffbf7d35aaf6a`  
-Code HEAD this pass: working tree (acceleration pass)
+Code HEAD this pass: `8e59a622fd8bc5d4560cc6a440520083ff7f37e3`
 
 Safety at evidence time:
 

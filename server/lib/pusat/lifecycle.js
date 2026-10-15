@@ -15,6 +15,8 @@ const automations = require("./automations");
 const { getMeta, upsertMeta } = require("./submit");
 const { EXCEPTION_CODES, MEMORY_KIND, SENSITIVE_ACTIONS } = require("./constants");
 const { publicTaskError } = require("../security");
+const circuitBreaker = require("./circuitBreaker");
+const esatSecurity = require("./esatSecurity");
 
 function parseJson(val, fallback) {
   if (!val) return fallback;
@@ -133,13 +135,26 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
   });
 
   if (!gate.allowed) {
+    circuitBreaker.recordFailure(`pusat:${agentCode}`, db);
     exceptions.handleFailure(
       { message: gate.message, code: gate.code },
       { taskId, correlationId: meta?.correlation_id, action }
     );
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-      error: gate.message,
+      error: publicTaskError({ code: gate.code }, "PUSAT_GUARDIAN_BLOCKED"),
       result: { failureKind: "GUARDIAN", guardian: gate },
+    });
+  }
+
+  const circuit = circuitBreaker.allow(`pusat:${agentCode}`, { financial: esatSecurity.isMoneyAction(action) });
+  if (!circuit.allowed) {
+    exceptions.handleFailure(
+      { message: circuit.reason || "CIRCUIT_OPEN", code: EXCEPTION_CODES.GUARDIAN_BLOCKED },
+      { taskId, correlationId: meta?.correlation_id, action }
+    );
+    return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
+      error: "PUSAT_GUARDIAN_BLOCKED",
+      result: { failureKind: "CIRCUIT", circuit, executed: false },
     });
   }
 
@@ -258,10 +273,12 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
       taskId,
     });
 
+    circuitBreaker.recordSuccess(`pusat:${agentCode}`, db);
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.COMPLETED, {
       result: { agentCode, output, skipEnqueueSideEffects },
     });
   } catch (error) {
+    circuitBreaker.recordFailure(`pusat:${agentCode}`, db);
     const handled = exceptions.handleFailure(error, {
       taskId,
       correlationId: meta?.correlation_id,

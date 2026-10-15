@@ -87,7 +87,7 @@ const PUBLIC_ROUTES = new Set([
 
 const EXACT = {
   "GET /api/admin/me": null,
-  "GET /api/submissions": "security.read",
+  "GET /api/submissions": "security.manage",
   "GET /api/admin/sessions": "security.read",
   "DELETE /api/admin/sessions/:sessionId": "security.manage",
   "GET /api/admin/audit": "audit.read",

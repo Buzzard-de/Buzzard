@@ -137,7 +137,10 @@ module.exports = {
     app.post("/api/identity-security/account/2fa/setup", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
-      return res.json(identitySecurity.setupTwoFactor(user.sub, req));
+      const result = identitySecurity.setupTwoFactor(user.sub, req);
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      const { secretForDevelopment, secret, ...publicResult } = result;
+      return res.json(publicResult);
     });
 
     app.post("/api/identity-security/account/2fa/disable", (req, res) => {

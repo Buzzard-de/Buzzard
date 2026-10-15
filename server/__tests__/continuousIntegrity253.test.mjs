@@ -124,6 +124,10 @@ describe("KOMUT 6 password reset token and submissions authz", () => {
     expect(res.body).toEqual({ success: true });
     expect(customerStore.verifyPassword(email, "NewPassw0rd!")).toBeTruthy();
     expect(customerStore.verifyPassword(email, "OldPassw0rd!")).toBeFalsy();
+    const resetFile = path.join(__dirname, "../data/password-reset-tokens.json");
+    const stored = fs.existsSync(resetFile) ? fs.readFileSync(resetFile, "utf8") : "";
+    expect(stored).not.toContain(minted.token);
+    expect(JSON.parse(stored || "[]").some((row) => row.token)).toBe(false);
   });
 
   it("E expired token is rejected", () => {
@@ -239,8 +243,8 @@ describe("KOMUT 6 password reset token and submissions authz", () => {
     expect(ui).not.toMatch(/Demo-Token/);
   });
 
-  it("I GET /api/submissions rejects anonymous and orders.read-only staff, allows security.read", () => {
-    expect(resolveRoutePermission("GET", "/api/submissions")).toEqual({ permission: "security.read" });
+  it("I GET /api/submissions rejects anonymous and orders.read-only staff, allows security.manage", () => {
+    expect(resolveRoutePermission("GET", "/api/submissions")).toEqual({ permission: "security.manage" });
     const unauth = mockRes();
     wrapRouteHandler("GET", "/api/submissions", () => {
       throw new Error("handler must not run");
@@ -268,6 +272,19 @@ describe("KOMUT 6 password reset token and submissions authz", () => {
     expect(forbidden.statusCode).toBe(403);
     expect(forbidden.body.errorKey).toBe("admin.auth.forbidden");
 
+    const readonlyLogin = auth.login("readonly@buzzard.de", "BuzzardRead2026!", mockReq({ url: "/api/admin/login" }));
+    expect(readonlyLogin.success).toBe(true);
+    const readonlyDenied = mockRes();
+    handler(
+      mockReq({
+        method: "GET",
+        url: "/api/submissions",
+        headers: { authorization: `Bearer ${readonlyLogin.token}` },
+      }),
+      readonlyDenied
+    );
+    expect(readonlyDenied.statusCode).toBe(403);
+
     const adminLogin = auth.login("admin@buzzard.de", "BuzzardAdmin2026!", mockReq({ url: "/api/admin/login" }));
     expect(adminLogin.success).toBe(true);
     const allowed = mockRes();
@@ -283,7 +300,8 @@ describe("KOMUT 6 password reset token and submissions authz", () => {
     expect(Array.isArray(allowed.body.submissions)).toBe(true);
 
     const pluginSrc = fs.readFileSync(path.join(__dirname, "../plugins/contactStoragePlugin.js"), "utf8");
-    expect(pluginSrc).toMatch(/requirePermission\(req, res, 'security\.read'\)/);
+    expect(pluginSrc).toMatch(/requirePermission\(req, res, 'security\.manage'\)/);
     expect(pluginSrc).not.toMatch(/requirePermission\(req, res, 'orders\.read'\)/);
+    expect(pluginSrc).not.toMatch(/requirePermission\(req, res, 'security\.read'\)/);
   });
 });

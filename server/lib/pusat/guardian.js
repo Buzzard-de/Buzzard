@@ -8,6 +8,7 @@ const { aiCanExecute } = require("../rbac");
 const { getGuardianStatus } = require("../guardianBridge");
 const { SENSITIVE_ACTIONS, EXCEPTION_CODES, RISK_LEVEL } = require("./constants");
 const { logSecurityEvent } = require("../securityLog");
+const esatSecurity = require("./esatSecurity");
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 60;
@@ -113,6 +114,12 @@ function evaluateUnsafe({
   if (!employee || !employee.id) {
     return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent employee identity required");
   }
+  if (esatSecurity.isIsolated(employee.id) || esatSecurity.isIsolated(agentId)) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent is isolated", {
+      isolated: true,
+      grantedPermissions: [],
+    });
+  }
 
   if (employee && employee.status && employee.status !== "ACTIVE") {
     return deny(EXCEPTION_CODES.AGENT_UNAVAILABLE, `Agent ${employee.id} is ${employee.status}`);
@@ -145,6 +152,19 @@ function evaluateUnsafe({
     });
   }
 
+  const untrusted = esatSecurity.inspectUntrustedPayload(payload);
+  if (untrusted.includes("prompt_injection")) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Untrusted content cannot override policy", {
+      riskLevel: RISK_LEVEL.CRITICAL,
+      requireApproval: true,
+    });
+  }
+  if (untrusted.includes("privilege_escalation")) {
+    return deny(EXCEPTION_CODES.PERMISSION_DENIED, "Agent cannot raise its own privileges", {
+      riskLevel: RISK_LEVEL.CRITICAL,
+    });
+  }
+
   let serialized = `${action || ""} ${tool || ""}`;
   try {
     serialized += ` ${JSON.stringify(payload || {})}`;
@@ -171,15 +191,19 @@ function evaluateUnsafe({
     decisions.push({ check: "approval", required: true });
   }
 
-  controlCenter.recordSystemEvent({
-    eventType: "guardian.allow",
-    actorType: "guardian",
-    actorId: "esat_bey",
-    resourceType: "ai_agent",
-    resourceId: agentId || employee?.id || null,
-    summary: `Guardian allowed ${action || "task"}`,
-    metadata: { tool, requireApproval: needsApproval },
-  });
+  try {
+    controlCenter.recordSystemEvent({
+      eventType: "guardian.allow",
+      actorType: "guardian",
+      actorId: "esat_bey",
+      resourceType: "ai_agent",
+      resourceId: agentId || employee?.id || null,
+      summary: `Guardian allowed ${action || "task"}`,
+      metadata: { tool, requireApproval: needsApproval },
+    });
+  } catch {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Guardian evaluation failed closed", { failClosed: true });
+  }
 
   return {
     ok: true,
@@ -200,4 +224,6 @@ module.exports = {
   scanSecrets,
   resetRateLimiter,
   remoteStatus,
+  isolateAgent: esatSecurity.isolateAgent,
+  clearIsolation: esatSecurity.clearIsolation,
 };

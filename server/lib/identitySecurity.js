@@ -287,7 +287,10 @@ function completePasswordReset(body = {}, req) {
 }
 
 function setupTwoFactor(userId, req) {
-  const secretValue = crypto.randomBytes(20).toString("hex");
+  const { generateSecret, buildOtpAuthUri } = require("./totp");
+  const user = db.prepare("SELECT email FROM users WHERE id = ?").get(userId);
+  if (!user) return { error: "account.notFound", status: 404 };
+  const secretValue = generateSecret();
   db.prepare("UPDATE users SET twofa_secret = ?, twofa_enabled = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
     secretValue,
     userId
@@ -295,8 +298,8 @@ function setupTwoFactor(userId, req) {
   audit(userId, "2fa_setup_started", req);
   return {
     ok: true,
-    secretForDevelopment: secretValue,
-    productionNote: "Connect a TOTP library and QR provisioning before enabling 2FA.",
+    enrolled: false,
+    otpauthUri: buildOtpAuthUri({ secret: secretValue, email: user.email, issuer: "Buzzard Identity" }),
   };
 }
 

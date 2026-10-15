@@ -2,15 +2,15 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Starting HEAD this pass: `70037633b2e26dbd1965e03246d8e843a3c7be41`  
-Code HEAD this pass: `14742e4`
+Starting HEAD this pass: `b83acdff9bf089d9732c61f38429d0dcea983dfc`  
+Code HEAD this pass: `5838756`
 
 Safety at evidence time:
 
 - `BUZZARD_SALES_ENABLED=0`
 - `BUZZARD_PRODUCT_SOT_ACTIVE` unset
 - `BUZZARD_LIVE_PAYMENTS` unset
-- `:3000` next-server left running (not killed); `next build` skipped to avoid clobbering `.next`
+- `:3000` next-server left running (not killed); `next build` skipped
 - Isolated Playwright not re-run
 - `BUZZARD_TEST_MODE` was **not** set
 
@@ -22,8 +22,8 @@ Working directory: `/workspace`
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| Focused vitest (244 + rateLimit + part 5/7/8/13/17/19/23) | 0 | **131 passed** |
-| `npx vitest run` | 0 | 101 files, **1027 passed**, 0 failed |
+| Focused vitest (245 + 240 + 238 + fortress + part16/17 + pusat master) | 0 | **89 passed** |
+| `npx vitest run` | 0 | 102 files, **1034 passed**, 0 failed |
 | `npx tsc --noEmit` | 0 | clean |
 | `NODE_ENV=production npx next build` | skipped | `:3000` next-server owns `.next` |
 | Isolated Playwright this pass | skipped | last recorded 107 passed / 12 skipped on `6f6c672` |
@@ -32,7 +32,7 @@ Working directory: `/workspace`
 
 | File | Established coverage |
 | --- | --- |
-| `server/__tests__/continuousIntegrity244.test.mjs` | health/readiness `err.message` source scan; persistFile omitted; checkout `errorKey`; notification missing_order; monitoring no backupDir |
+| `server/__tests__/continuousIntegrity245.test.mjs` | no db path on health/Pusat/production/go-live; audit codes; restore target class; payload-too-large code |
 
 ## Original 237 source search
 

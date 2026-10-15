@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `14742e4` (health/readiness publicTaskError; base `7003763`)  
+Inspected HEAD at quality pass: `5838756` (path-stripped diagnostics; base `b83acdf`)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **71.59%** (was 70.96%; 237-item arithmetic mean). This pass **+0.63 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; 136 puan gerçek iş).
+Mean established-scope completion: **71.88%** (was 71.59%; 237-item arithmetic mean). This pass **+0.29 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~68 puan gerçek iş).
 
 ## Safety locks this workspace
 
@@ -106,11 +106,12 @@ Mean established-scope completion: **71.59%** (was 70.96%; 237-item arithmetic m
 56. `core_ai_exceptions.last_error` stored/returned as classified keys; GET `/api/admin/pusat/exceptions` requires `security.read`.
 57. Batch `publicTaskError` on worker, automations, returns, identity, tracking, supplier hub/feeds, PIM bulk/import, taxonomy, backup, OMS, bridges, and API error logs.
 58. Remaining health/readiness/gate `err.message` payloads (controlCenter, dbStartup/integrity, rate-limit Redis, automations, commerce/category readiness, integration health, safety gates, notifications, storefront sync, production/go-live/monitoring) now use `publicTaskError` keys; persistFile and backupDir stripped from public store/monitoring info.
+59. Diagnostic health/go-live/Pusat payloads omit filesystem paths; restore targets are class keys; startup and API error logs use publicTaskError.
 
 
 ## Resume pointer
 
-Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`, and intelligence/export copies. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: leftover leaks are UNIQUE detection and intelligence/export copies. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -449,7 +450,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (startup errors are keys; mapReadiness uses env error code; original UNKNOWN) |
+| Completion percentage | 93% (env validation logs/codes only; production startup not observed) |
 | Remaining work | Unit tested; production startup not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -475,7 +476,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 83% (rate-limit persist path no longer in store info; production secret audit UNKNOWN) |
+| Completion percentage | 89% (startup/API/worker logs keyed; persistFile stripped; production secret audit UNKNOWN) |
 | Remaining work | Production secret audit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -501,7 +502,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (health/readiness/gates no longer echo err.message; intelligence copies remain) |
+| Completion percentage | 97% (diagnostic payloads omit paths; intelligence copies remain) |
 | Remaining work | Other unused health blobs may still exist in intelligence copies |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -553,7 +554,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 90% (auth health payloads slimmed of db paths; other public liveness remains) |
 | Remaining work | fortressAuthz / routePermissions tests |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -579,7 +580,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 66% (dbStartup omits directory paths in errors; production persistence UNKNOWN) |
+| Completion percentage | 70% (getDatabaseHealth has no path; production persistence UNKNOWN) |
 | Remaining work | Local SQLite path known; production persistence UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -659,7 +660,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 94% (readiness/gate/plugin details are keys; intelligence copies remain) |
+| Completion percentage | 96% (audit findings and startup logs are codes; intelligence copies remain) |
 | Remaining work | `aiAutomationPlugin` internal `{ error: err.message }` remains |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -919,7 +920,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (controlCenter/integrationHealth/production readiness details keyed; live probe UNKNOWN) |
+| Completion percentage | 97% (production summary public-shaped at source; live probe UNKNOWN) |
 | Remaining work | Rate-limited health bucket; live production probe UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1545,7 +1546,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (bridges and classify no longer leak fetch exception text) |
+| Completion percentage | 94% (Pusat health omits database.path; production probe UNKNOWN) |
 | Remaining work | Production Pusat health not probed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4889,7 +4890,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 74% (webhook payload redaction in stored events; not a full log pipeline) |
+| Completion percentage | 82% (API/startup/scheduler/worker console uses publicTaskError; not a full log pipeline) |
 | Remaining work | Events; not a full log pipeline |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4967,7 +4968,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (backup.run_failed key; /tmp fail-closed; production backup UNKNOWN) |
+| Completion percentage | 84% (production backup snapshot omits backupDir; production backup UNKNOWN) |
 | Remaining work | Production backup destination and schedule UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4993,7 +4994,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (ephemeral production target blocked even with allow flag; restore HUMAN) |
+| Completion percentage | 74% (restore target is ephemeral/production class; production restore HUMAN) |
 | Remaining work | Production restore remains HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5019,7 +5020,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 48% (integrity/startup failures keyed without paths; production persistence UNKNOWN) |
+| Completion percentage | 54% (health/startup omit filesystem paths; production persistence UNKNOWN) |
 | Remaining work | Production persistence UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5149,7 +5150,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (api_error logs store errorKey not exception text; secret-shaped strings redacted) |
+| Completion percentage | 88% (api_error console no longer dumps exception objects; SIEM UNKNOWN) |
 | Remaining work | Local log file only; production SIEM UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5175,7 +5176,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 77% (go-live/monitoring use config codes; backup dir stripped from snapshot) |
+| Completion percentage | 83% (production/go-live/software health omit paths; salesEnabled false) |
 | Remaining work | salesEnabled false |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5201,7 +5202,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (DB + backup dir refuse /tmp in production; original UNKNOWN) |
+| Completion percentage | 88% (restore/health refuse path leakage; production persistence UNKNOWN) |
 | Remaining work | Production persistence still UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5229,7 +5230,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (continuousIntegrity244 added; original unit checklist UNKNOWN) |
+| Completion percentage | 93% (continuousIntegrity245 added; original unit checklist UNKNOWN) |
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5255,7 +5256,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 73% (focused + full vitest this pass; historical subset remains) |
+| Completion percentage | 76% (full vitest this pass; historical subset remains) |
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5907,7 +5908,7 @@ Next session: leftover `err.message` is mostly UNIQUE detection, `console.error`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 54% (goLiveReadiness SECURITY detail is error code; live URL not hit) |
+| Completion percentage | 62% (go-live DATABASE detail has no filesystem path; live URL not hit) |
 | Remaining work | Script exists; live URL not hit |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

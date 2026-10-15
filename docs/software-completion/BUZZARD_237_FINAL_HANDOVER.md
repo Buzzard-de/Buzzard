@@ -8,13 +8,13 @@ This document is a session handover, not a claim that 237/237 items are complete
 | Field | Value |
 | --- | --- |
 | Branch | `cursor/software-completion-local-c293` |
-| Starting HEAD | `c2d7c8f` (claimed 9424e73 / 72.18% was stale) |
-| Ending HEAD (code) | local commits after `ebcdcdf` |
-| Push / merge / deploy / PR | **not performed** (KOMUT 5) |
+| Starting HEAD | `12e24c5` |
+| Ending HEAD (code) | `af95675` plus register evidence commit |
+| Push / merge / deploy / PR | **not performed** (KOMUT 6) |
 
 ## Totals
 
-Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no earlier 237 source recovered.
+Canonical original titles: **UNKNOWN**.
 
 | Final state | Count | % of 237 |
 | --- | --- | --- |
@@ -24,21 +24,24 @@ Canonical original titles: **UNKNOWN**. Register first created in `4b0ce17`; no 
 | BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
 | NOT_APPLICABLE_WITH_EVIDENCE | 1 | 0.4% |
 
-Mean established-scope completion: **73.12%** (was 73.03%). This pass **+0.09 pp**. Target +0.30 **NOT MET** (22 puan gerçek iş / 237).
+Mean established-scope completion: **73.20%** (was 73.12%). This pass **+0.08 pp**. Target +0.30 **NOT MET**.
 
 ## What was implemented this pass
 
-- SQLite UNIQUE/PRIMARY classified separately from CHECK/FK; public responses use `db.uniqueConstraint` / `db.constraint` / `db.error`.
-- UNIQUE conflicts are `CONFLICT` → `PUSAT_VALIDATION_FAILED` and are not retried as generic database failures.
-- Pusat submit unique-race no longer rethrows raw sqlite errors.
-- Contact file write is fail-closed; German UX `message` kept.
-- Account and analytics exports drop secret-shaped fields.
-- Marketplace/carrier inspected only: still blocked stubs, not LIVE_VERIFIED.
-- Esat Bey items 227–237 were **not** started.
+- `/api/account/password-reset/request` no longer returns `resetToken`.
+- Identity HTTP reset-request returns `{ ok: true }` only.
+- Same success body for existing and missing emails.
+- Reset request/confirm marked public; CSRF allow-list updated.
+- HTTP reset rate limit 5/hour before account lookup.
+- `createRateLimiter` honors TEST_MODE per call.
+- GET `/api/submissions` requires `security.read`.
+- Storefront reset UI no longer displays a demo token.
+- Confirm still works when tests mint via `createResetToken`.
+- No live email delivery (none was configured).
 
 ## Highest-priority remaining work
 
-1. Recover original 237 titles/criteria or obtain an explicit waiver.
-2. Marketplace/carrier adapters remain BLOCKED_EXTERNAL / unpublished.
-3. Item 185 alerting; live webhook HUMAN; item 187 restore HUMAN.
-4. Human Approval Center work, then Esat Bey maximum-security stage.
+1. Hash/at-rest protection for `password-reset-tokens.json`.
+2. Identity `secretForDevelopment` on 2FA setup HTTP.
+3. `/api/account/login` and `/register` still sit under the customer-auth catch-all (reset is public).
+4. Marketplace/carrier BLOCKED_EXTERNAL; Esat Bey 227–237 not started.

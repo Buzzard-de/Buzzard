@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `ebcdcdf` (UNIQUE vs CHECK classification, contact write fail-closed, export secret strip)  
+Inspected HEAD at quality pass: `af95675` (password-reset token removed from API; submissions security.read)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **73.12%** (was 73.03%; 237-item arithmetic mean). This pass **+0.09 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +0.30 **NOT MET** (71 puan gerekir; 22 puan gerçek iş / 237).
+Mean established-scope completion: **73.20%** (was 73.12%; 237-item arithmetic mean). This pass **+0.08 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +0.30 **NOT MET** (71 puan gerekir; 20 puan gerçek iş / 237).
 
 ## Safety locks this workspace
 
@@ -114,11 +114,12 @@ Mean established-scope completion: **73.12%** (was 73.03%; 237-item arithmetic m
 64. Batch: plugin admin/auth JSON, dbAuth, salesMode, OMS/identity/WMS/supplier/checkout/payments/product store English `error` strings, and `{ error: result.error }` echos now use `errorKey` / `sendKeyedResult`. Insufficient stock no longer interpolates SKU. Guardian/orchestrator 502 omit `detail`. Webhook 501 is keyed without adapter hints.
 65. Second English batch: cartCheckout, catalogSeo, PIM catalog, marketing/loyalty, reviews, RMA, logistics, CRM/support, AI center, localization feeds; v32–v40 `record.*` keys; taxonomy/menu/intelligence plugins `errorKey`.
 66. `sqliteConstraintKind` classifies UNIQUE/PRIMARY/CHECK/FOREIGN/NOTNULL. Generic `SQLITE_CONSTRAINT`/`19` still reads constraint text **internally only**. Public keys are `db.uniqueConstraint` / `db.constraint` / `db.error`. UNIQUE is `CONFLICT` → `PUSAT_VALIDATION_FAILED` (non-retryable). Submit unique-race no longer rethrows sqlite. Contact write fail-closed (German UX kept). Account/analytics export strips secret-shaped fields.
+67. Password reset HTTP responses no longer include `resetToken` / `resetTokenForDevelopment`. Unknown and known emails share one body. Reset request/confirm are public routes. HTTP rate limit applies before lookup. GET `/api/submissions` requires `security.read` (not `orders.read`). No live reset email is sent.
 
 
 ## Resume pointer
 
-Next session: remaining plugin `{ error }` echos if any; marketplace/carrier stay BLOCKED_EXTERNAL / CODE_READY+blocked; item 185 alerting; live webhook HUMAN; item 187 restore HUMAN; Esat Bey 227–237 not started. Original criteria UNKNOWN. Do not push/PR.
+Next session: tokens still stored plaintext in `password-reset-tokens.json`; identity `secretForDevelopment` on 2FA setup; `/api/account/login|register` still customer-auth wrapped (reset is public); marketplace/carrier BLOCKED_EXTERNAL; Esat Bey 227–237 not started. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -223,7 +224,7 @@ Next session: remaining plugin `{ error }` echos if any; marketplace/carrier sta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 85% (GET /api/submissions uses security.read; order_manager 403; original UNKNOWN) |
 | Remaining work | Plugin audit exists; not every alternate path production-probed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -327,7 +328,7 @@ Next session: remaining plugin `{ error }` echos if any; marketplace/carrier sta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 87% (password-reset paths CSRF-public like login/register; original UNKNOWN) |
 | Remaining work | csrf.test.mjs passed locally |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -405,7 +406,7 @@ Next session: remaining plugin `{ error }` echos if any; marketplace/carrier sta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 87% (redis lastError keyed; persistFile path stripped from getStoreInfo; original UNKNOWN) |
+| Completion percentage | 91% (limiter disable is per-call; reset HTTP bucket 5/hour; original UNKNOWN) |
 | Remaining work | TEST_MODE still disables limiter for CI E2E isolation only; production forbids TEST_MODE |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -483,7 +484,7 @@ Next session: remaining plugin `{ error }` echos if any; marketplace/carrier sta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 98% (analytics/account export strips secret-shaped keys; production secret audit UNKNOWN)
+| Completion percentage | 99% (password-reset tokens stripped from HTTP JSON; production secret audit UNKNOWN)
 | Remaining work | Production secret audit UNKNOWN; live reports not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4191,7 +4192,7 @@ Next session: remaining plugin `{ error }` echos if any; marketplace/carrier sta
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (CRM customer errors keyed)
+| Completion percentage | 92% (reset token not in API; confirm still works via createResetToken; original UNKNOWN)
 | Remaining work | Rate limit 8/15min |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

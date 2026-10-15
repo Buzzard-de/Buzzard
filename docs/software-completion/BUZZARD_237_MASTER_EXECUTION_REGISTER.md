@@ -2,7 +2,7 @@
 
 Date: 2026-10-15  
 Branch: `cursor/software-completion-local-c293`  
-Inspected HEAD at quality pass: `13979a3` (client/bridge errorKey; base `5b8681b`)  
+Inspected HEAD at quality pass: `76eecce` (SQLite unique by constraint code; contact errorKey)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
 Sales / Product SoT / live payments: **remain OFF**  
 Canonical original 237-item checklist: **still not found** (this pass re-searched git history, docs, branches, `FINAL_MASTER_CHECKLIST.md`, and GitHub issues)
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **71.97%** (was 71.88%; 237-item arithmetic mean). This pass **+0.09 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~21 puan gerçek iş).
+Mean established-scope completion: **72.05%** (was 71.97%; 237-item arithmetic mean). This pass **+0.08 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Target +1.0 **NOT MET** (237 puan gerekir; ~19 puan gerçek iş).
 
 ## Safety locks this workspace
 
@@ -108,11 +108,12 @@ Mean established-scope completion: **71.97%** (was 71.88%; 237-item arithmetic m
 58. Remaining health/readiness/gate `err.message` payloads (controlCenter, dbStartup/integrity, rate-limit Redis, automations, commerce/category readiness, integration health, safety gates, notifications, storefront sync, production/go-live/monitoring) now use `publicTaskError` keys; persistFile and backupDir stripped from public store/monitoring info.
 59. Diagnostic health/go-live/Pusat payloads omit filesystem paths; restore targets are class keys; startup and API error logs use publicTaskError.
 60. Browser/admin clients throw `errorKey` only; desktop-bridge HTTP/watch omit exception text; intelligence snapshot collectHealth uses `health.probeFailed`.
+61. SQLite unique/PK conflicts classified by `err.code` (`SQLITE_CONSTRAINT_UNIQUE` / `PRIMARYKEY`); generic `SQLITE_CONSTRAINT`/`19` still reads constraint-failed text only. Contact plugin returns `errorKey` and logs `{received,id}` without email.
 
 
 ## Resume pointer
 
-Next session: UNIQUE constraint detection still inspects err.message internally; contact form still uses API `message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
+Next session: generic SQLITE_CONSTRAINT still inspects constraint-failed message; contact API still includes German UX `message`; jobWorker `classifyError` still substring-scans `err.message`. Marketplace/carrier adapters remain BLOCKED_EXTERNAL; item 185 alerting; item 109 live webhook; item 187 restore HUMAN. Original criteria UNKNOWN. Do not push/PR.
 
 ---
 
@@ -477,7 +478,7 @@ Next session: UNIQUE constraint detection still inspects err.message internally;
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 89% (startup/API/worker logs keyed; persistFile stripped; production secret audit UNKNOWN) |
+| Completion percentage | 92% (contact logs no email; unique classified by sqlite code; production secret audit UNKNOWN) |
 | Remaining work | Production secret audit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -843,7 +844,7 @@ Next session: UNIQUE constraint detection still inspects err.message internally;
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (fingerprint conflict + no store on error; original UNKNOWN)
+| Completion percentage | 91% (fingerprint + UNIQUE classified by sqlite code; original UNKNOWN)
 | Remaining work | Not every plugin mutation is wrapped; production replay UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1209,8 +1210,8 @@ Next session: UNIQUE constraint detection still inspects err.message internally;
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established: replay, conflict, in-progress, failed replay, UNIQUE orphan cancel; original UNKNOWN) |
-| Remaining work | Original criteria UNKNOWN; multi-process race only covered by UNIQUE catch |
+| Completion percentage | 90% (UNIQUE race uses isUniqueConstraint codes; original UNKNOWN) |
+| Remaining work | Original criteria UNKNOWN; generic SQLITE_CONSTRAINT still reads constraint-failed text |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -2853,8 +2854,8 @@ Next session: UNIQUE constraint detection still inspects err.message internally;
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Timeout policy |
+| Completion percentage | 80% (payment unique insert uses isUniqueConstraint; timeout UNCERTAIN still local) |
+| Remaining work | Timeout policy; live payments off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -5231,7 +5232,7 @@ Next session: UNIQUE constraint detection still inspects err.message internally;
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 94% (continuousIntegrity246 added; original unit checklist UNKNOWN) |
+| Completion percentage | 95% (continuousIntegrity247 added; original unit checklist UNKNOWN) |
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5257,7 +5258,7 @@ Next session: UNIQUE constraint detection still inspects err.message internally;
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (full vitest this pass; historical subset remains) |
+| Completion percentage | 80% (1042 vitest this pass; historical subset remains) |
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |

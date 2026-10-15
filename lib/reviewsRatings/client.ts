@@ -10,7 +10,7 @@ async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("reviewsRatings.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminCredentials(init));
-  const data = (await res.json()) as T & { error?: string };
+  const data = (await res.json()) as T & { errorKey?: string };
   if (!res.ok) throw new Error(data.errorKey || "reviewsRatings.requestFailed");
   return data;
 }

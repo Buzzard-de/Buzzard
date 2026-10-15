@@ -60,11 +60,11 @@ describe("commerce integrity — tax, exceptions, reservation", () => {
   });
 
   it("classifies auth/rate-limit as non-retryable and redacts secrets", () => {
-    const auth = pusat.exceptions.classify(new Error("401 unauthorized"), { action: "prices.update" });
+    const auth = pusat.exceptions.classify({ status: 401 }, { action: "prices.update" });
     expect(auth.code).toBe("PUSAT_AUTH_FAILED");
     expect(auth.retryable).toBe(false);
 
-    const limit = pusat.exceptions.classify(new Error("429 rate limit"), { action: "prices.update" });
+    const limit = pusat.exceptions.classify({ status: 429 }, { action: "prices.update" });
     expect(limit.code).toBe("PUSAT_RATE_LIMIT");
     expect(limit.retryable).toBe(false);
 

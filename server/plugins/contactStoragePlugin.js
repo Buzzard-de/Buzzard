@@ -73,7 +73,7 @@ function readSubmissions() {
     const content = fs.readFileSync(submissionsFile, 'utf8');
     return JSON.parse(content || '[]');
   } catch (err) {
-    console.error('Error reading submissions file:', err);
+    console.error('Error reading submissions file:', require('../lib/security').publicTaskError(err, 'contact.readFailed'));
     return [];
   }
 }
@@ -82,7 +82,7 @@ function writeSubmissions(submissions) {
   try {
     fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2), 'utf8');
   } catch (err) {
-    console.error('Error writing submissions file:', err);
+    console.error('Error writing submissions file:', require('../lib/security').publicTaskError(err, 'contact.writeFailed'));
   }
 }
 

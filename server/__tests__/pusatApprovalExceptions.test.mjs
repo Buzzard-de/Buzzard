@@ -178,7 +178,7 @@ describe("Pusat exceptions and retries", () => {
   });
 
   it("records structured exception details", () => {
-    const handled = pusat.exceptions.handleFailure(new Error("Permission denied for tool"), {
+    const handled = pusat.exceptions.handleFailure({ status: 403, code: "PUSAT_PERMISSION_DENIED" }, {
       taskId: "task_exc_perm",
       correlationId: "corr_perm",
       action: "prices.update",

@@ -31,6 +31,16 @@ const NON_RETRYABLE = new Set([
 
 const SENSITIVE_HINT = /\b(payment|refund|purchase|payout|supplier\.order|marketplace\.publish)\b/i;
 
+function httpStatusExceptionCode(error) {
+  const status = Number(error?.status || error?.statusCode || 0);
+  if (status === 401) return EXCEPTION_CODES.AUTH_FAILED;
+  if (status === 403) return EXCEPTION_CODES.PERMISSION_DENIED;
+  if (status === 408 || status === 504) return EXCEPTION_CODES.TASK_TIMEOUT;
+  if (status === 429) return EXCEPTION_CODES.RATE_LIMIT;
+  if (status === 502 || status === 503) return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
+  return null;
+}
+
 function structuredExceptionCode(error) {
   if (!error) return null;
   if (error.pusatCode && Object.values(EXCEPTION_CODES).includes(error.pusatCode)) return error.pusatCode;
@@ -40,42 +50,23 @@ function structuredExceptionCode(error) {
   if (sys === "TIMEOUT") return EXCEPTION_CODES.TASK_TIMEOUT;
   if (sys === "NETWORK") return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
   if (sys === "DATABASE") return EXCEPTION_CODES.DATABASE_FAILURE;
-  return null;
+  return httpStatusExceptionCode(error);
 }
 
 function classify(error, { action } = {}) {
-  const message = error?.message || String(error || "unknown");
-  const code = structuredExceptionCode(error) || inferCode(message, action);
-  const sensitive = SENSITIVE_ACTIONS.includes(action) || SENSITIVE_HINT.test(`${action || ""} ${message}`);
+  const actionKey = action || null;
+  const code =
+    structuredExceptionCode(error) ||
+    (SENSITIVE_ACTIONS.includes(actionKey) ? EXCEPTION_CODES.SENSITIVE_NO_RETRY : EXCEPTION_CODES.UNKNOWN);
+  const sensitive = SENSITIVE_ACTIONS.includes(actionKey) || SENSITIVE_HINT.test(String(actionKey || ""));
   const retryable = !sensitive && !NON_RETRYABLE.has(code);
   return {
     code,
     retryable,
     sensitive,
     message: code,
-    action: action || null,
+    action: actionKey,
   };
-}
-
-function inferCode(message, action) {
-  const text = String(message || "").toLowerCase();
-  if (/\b(401|unauthorized|unauthenticated|auth required)\b/.test(text)) return EXCEPTION_CODES.AUTH_FAILED;
-  if (/\b(429|rate limit|throttl)\b/.test(text)) return EXCEPTION_CODES.RATE_LIMIT;
-  if (text.includes("timeout")) return EXCEPTION_CODES.TASK_TIMEOUT;
-  if (text.includes("permission") || text.includes("forbidden") || text.includes("403")) {
-    return EXCEPTION_CODES.PERMISSION_DENIED;
-  }
-  if (text.includes("guardian")) return EXCEPTION_CODES.GUARDIAN_BLOCKED;
-  if (text.includes("approval")) return EXCEPTION_CODES.APPROVAL_REQUIRED;
-  if (text.includes("sales") || text.includes("catalog mode")) return EXCEPTION_CODES.SALES_LOCKED;
-  if (text.includes("missing cost") || text.includes("supplier cost")) return EXCEPTION_CODES.MISSING_COST;
-  if (text.includes("stock")) return EXCEPTION_CODES.STOCK_UNCONFIRMED;
-  if (text.includes("not found")) return EXCEPTION_CODES.TASK_NOT_FOUND;
-  if (text.includes("unavailable") || text.includes("econnreset") || text.includes("503")) {
-    return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
-  }
-  if (SENSITIVE_ACTIONS.includes(action)) return EXCEPTION_CODES.SENSITIVE_NO_RETRY;
-  return EXCEPTION_CODES.UNKNOWN;
 }
 
 function redactError(text) {

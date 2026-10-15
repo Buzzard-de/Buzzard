@@ -107,7 +107,7 @@ async function checkSuppliers() {
     upsertHealth("suppliers", {
       status: INTEGRATION_HEALTH.ERROR,
       lastFailureAt: new Date().toISOString(),
-      lastError: err.message,
+      lastError: require("./security").publicTaskError(err, "integration.suppliers_failed"),
       errorCount: 1,
     });
   }

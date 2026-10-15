@@ -151,7 +151,8 @@ async function getSystemStatus() {
             detail: `Readiness ${readiness.overall}, sales blocked=${health.sales?.salesEnabled === false}`,
           };
         } catch (err) {
-          return { status: SERVICE_STATUS.UNKNOWN, detail: err.message };
+          const { publicTaskError } = require("./security");
+          return { status: SERVICE_STATUS.UNKNOWN, detail: publicTaskError(err, "commerce.readiness_failed") };
         }
       })(),
     },

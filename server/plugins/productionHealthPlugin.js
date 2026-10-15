@@ -26,7 +26,7 @@ function mapReadinessStatus(summary) {
 
   push("database", summary.database?.integrity?.status === "OK", summary.database?.integrity?.integrityCheck);
   push("persistence", summary.database?.persistence?.persistent === true, summary.database?.persistence?.mode);
-  push("environment", summary.environment?.ok === true, summary.environment?.errors?.[0]?.message || "ok");
+  push("environment", summary.environment?.ok === true, summary.environment?.errors?.[0]?.code || "ok");
   push("deployment", summary.deployment?.status === "SYNCED", summary.deployment?.status);
   push("redis", summary.redis?.ok !== false, summary.redis?.status);
   push("worker", summary.worker?.enabled && summary.worker?.status === "RUNNING", summary.worker?.status);

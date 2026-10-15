@@ -59,7 +59,8 @@ async function checkSupplier() {
     if (health.ok) return { status: CHECK_STATUS.PASS, detail: "Mock supplier OK" };
     return { status: CHECK_STATUS.FAIL, detail: health.error || "Supplier down" };
   } catch (err) {
-    return { status: CHECK_STATUS.UNKNOWN, detail: err.message };
+    const { publicTaskError } = require("./security");
+    return { status: CHECK_STATUS.UNKNOWN, detail: publicTaskError(err, "category.supplier_check_failed") };
   }
 }
 

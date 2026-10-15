@@ -48,7 +48,8 @@ function emitCheckoutNotification(order, ctx = {}) {
     );
     return { ok: true, queued: true };
   } catch (err) {
-    return { ok: false, reason: err.message };
+    const { publicTaskError } = require("../security");
+    return { ok: false, reason: publicTaskError(err, "notification.emit_failed") };
   }
 }
 

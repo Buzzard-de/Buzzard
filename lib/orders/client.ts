@@ -66,10 +66,10 @@ export async function submitOrder(request: CreateOrderRequest): Promise<CreateOr
           request.customer.email
         ),
       };
-    } catch (err) {
+    } catch {
       return {
         success: false,
-        errorKey: err instanceof Error ? err.message : "checkout.apiUnavailable",
+        errorKey: "checkout.apiUnavailable",
       };
     }
   }

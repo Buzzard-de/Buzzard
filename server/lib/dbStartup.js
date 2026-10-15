@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const { resolveDbPath, getPersistenceInfo, ensureDbDirectory, defaultDbPath, assertDurableOpenAllowed } = require("./dbPaths");
 const { runIntegrityCheck } = require("./dbIntegrity");
+const { publicTaskError } = require("./security");
 
 let startupResult = null;
 
@@ -37,7 +38,7 @@ function validateDatabaseStartup() {
   try {
     assertDurableOpenAllowed({ dbPath });
   } catch (err) {
-    errors.push(err.message);
+    errors.push(publicTaskError(err, "database.open_refused"));
     startupResult = {
       ok: false,
       dbPath,
@@ -57,7 +58,7 @@ function validateDatabaseStartup() {
   try {
     ensureDbDirectory(dbPath);
   } catch (err) {
-    errors.push(`Cannot create DB directory: ${err.message}`);
+    errors.push(publicTaskError(err, "database.directory_create_failed"));
   }
 
   const migration = migrateEphemeralToPersistentIfNeeded(dbPath);
@@ -67,7 +68,7 @@ function validateDatabaseStartup() {
   try {
     fs.accessSync(dir, fs.constants.W_OK);
   } catch {
-    errors.push(`Database directory not writable: ${dir}`);
+    errors.push("database.directory_unwritable");
   }
 
   if (process.env.NODE_ENV === "production" && !process.env.BUZZARD_DB_PATH) {
@@ -88,12 +89,12 @@ function validateDatabaseStartup() {
   try {
     integrity = runIntegrityCheck();
     if (integrity.status === "FAILED") {
-      errors.push(`SQLite integrity_check failed: ${integrity.integrityCheck}`);
+      errors.push(publicTaskError({ error: integrity.integrityCheck }, "database.integrity_failed"));
     } else if (integrity.status === "DEGRADED") {
       warnings.push(`Missing critical tables: ${integrity.missingCritical.join(", ")}`);
     }
   } catch (err) {
-    errors.push(`Database integrity check error: ${err.message}`);
+    errors.push(publicTaskError(err, "database.integrity_check_failed"));
   }
 
   startupResult = {

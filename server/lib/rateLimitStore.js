@@ -142,9 +142,10 @@ function createRedisBackend() {
         return Array.isArray(parsed) ? parsed : [];
       } catch (err) {
         connectionFailed = true;
-        lastError = err.message;
+        const { publicTaskError } = require("./security");
+        lastError = publicTaskError(err, "rateLimit.redis_failed");
         backend.connectionFailed = true;
-        backend.lastError = err.message;
+        backend.lastError = lastError;
         return null;
       }
     },
@@ -156,9 +157,10 @@ function createRedisBackend() {
       backend._cache.set(key, records);
       redisClient.set(`${prefix}${key}`, JSON.stringify(records), 3600).catch((err) => {
         connectionFailed = true;
-        lastError = err.message;
+        const { publicTaskError } = require("./security");
+        lastError = publicTaskError(err, "rateLimit.redis_failed");
         backend.connectionFailed = true;
-        backend.lastError = err.message;
+        backend.lastError = lastError;
       });
     },
     size() {
@@ -232,7 +234,7 @@ function getStoreInfo() {
     configured: resolveBackend(),
     disabled: isRateLimitDisabled(),
     bucketCount: backend.size(),
-    persistFile: backend.name === "file" ? persistFile : null,
+    persistEnabled: backend.name === "file",
     fallbackFrom: backend.fallbackFrom || null,
     note:
       backend.name === "redis"

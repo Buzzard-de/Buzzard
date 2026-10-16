@@ -1,6 +1,6 @@
 # Buzzard 237 Master Execution Register
 
-Date: 2026-10-15  
+Date: 2026-10-16  
 Branch: `cursor/software-completion-local-c293`  
 Inspected HEAD at quality pass: working tree after Esat Bey master security (2FA confirm-enable, local incident engine)  
 Mode: LOCAL SOFTWARE IMPLEMENTATION + EVIDENCE  
@@ -27,9 +27,9 @@ Therefore:
 | State | Count | % of 237 |
 | --- | --- | --- |
 | VERIFIED_100 | 0 | 0.0% |
-| PARTIAL | 216 | 91.1% |
+| PARTIAL | 220 | 92.8% |
 | HUMAN_APPROVAL_REQUIRED | 13 | 5.5% |
-| BLOCKED_EXTERNAL_DEPENDENCY | 7 | 3.0% |
+| BLOCKED_EXTERNAL_DEPENDENCY | 3 | 1.3% |
 | BLOCKED_AUTHORIZATION | 0 | 0.0% |
 | BLOCKED_SECURITY | 0 | 0.0% |
 | NOT_IMPLEMENTED | 0 | 0.0% |
@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **73.90%** (was 73.77%; 237-item arithmetic mean). This pass **+0.13 pp**. Official VERIFIED_100 remains 0. Original titles and acceptance criteria remain UNKNOWN. Counts: 216 + 13 + 7 + 1 = 237. Esat Bey 227–237 mean **83.73%** (was 83.00%; register-verified start this pass). Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED.
+Mean established-scope completion: **75.42%** (Σ 17875 / 237 = 75.4219…; one decimal **75.4%**). Was **73.90%** (17515/237). This pass **+1.52 pp** from operator evidence 2026-10-16 on items **205, 212, 217, 220** (each recorded **100%** established-scope; original criteria still UNKNOWN so VERIFIED_100 remains **0**). Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -5461,9 +5461,9 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212) |
 | Established scope | Release quality |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: CI UNKNOWN for PR head vs local |
-| Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | GitHub |
-| Identified gaps | CI statusCheckRollup empty / UNKNOWN |
+| Current implementation status | PARTIAL |
+| Existing implementation evidence | PR #431 → `main`, SHA `b9d3ae835fdf0e31b1815dc577d6b98b07a1ce54`; Actions run `38958546249` (`quality`, `e2e-storefront`, `e2e-admin` SUCCESS, 2m32s) |
+| Identified gaps | Original 237 criteria UNKNOWN; PR #431 must not be merged from this scoring pass |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | GitHub |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -5474,10 +5474,10 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 20% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | CI statusCheckRollup empty / UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
+| Completion percentage | 100% (established CI jobs green on this SHA; original UNKNOWN so not VERIFIED_100) |
+| Remaining work | Do not merge #431 from this pass; original checklist still UNKNOWN |
+| Final evidence references | https://github.com/Buzzard-de/Buzzard/pull/431 ; https://github.com/Buzzard-de/Buzzard/actions/runs/38958546249 |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ### Item 206
 
@@ -5643,9 +5643,9 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212) |
 | Established scope | CI evidence |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: PR #430 checks |
-| Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | GitHub |
-| Identified gaps | UNKNOWN — empty rollup; local HEAD ahead of PR |
+| Current implementation status | PARTIAL |
+| Existing implementation evidence | PR #430 Checks 3 SUCCESS on the same SHA as run `38958546249` (trigger was #431 `pull_request` to `main`) |
+| Identified gaps | Workflow `on:` did not fire because #430 base is not `main`; checks are commit-scoped |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | GitHub |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -5656,10 +5656,10 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 0% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | UNKNOWN — empty rollup; local HEAD ahead of PR |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
+| Completion percentage | 100% (established: #430 shows CI SUCCESS for head SHA; original UNKNOWN so not VERIFIED_100) |
+| Remaining work | Optional: retarget #430 to `main` for a PR-event rerun; do not merge |
+| Final evidence references | https://github.com/Buzzard-de/Buzzard/pull/430 ; https://github.com/Buzzard-de/Buzzard/actions/runs/38958546249 |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ## Items 213–226: Production readiness, env config, deployment preparation, integrations, secrets, monitoring, launch controls
 
@@ -5775,9 +5775,9 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226) |
 | Established scope | Monitoring |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Local health only |
-| Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | ops |
-| Identified gaps | No authorized prod monitor probe |
+| Current implementation status | PARTIAL |
+| Existing implementation evidence | Operator GET `https://buzzard-api.onrender.com/api/health` 2026-10-16: `ok`, `persistent: true`, `mode: render_persistent_disk`, `salesEnabled: false` (live `main` commit `84166bb`) |
+| Identified gaps | Probe is `main` SHA not `b9d3ae8`; public payload on live `main` is a full dump (not the slim liveness handler on the software-completion branch) |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | ops |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -5788,10 +5788,10 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 20% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | No authorized prod monitor probe |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
+| Completion percentage | 100% (established: authorized operator captured live health + persistence flags; original UNKNOWN so not VERIFIED_100) |
+| Remaining work | Render “Payment failed” banner; uptime job still `main`-scheduled |
+| Final evidence references | Operator screenshot of `/api/health` 2026-10-16; Render `buzzard-api` Live |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ### Item 218
 
@@ -5853,9 +5853,9 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Title source | SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226) |
 | Established scope | Render persistence |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Prior proof branch; this HEAD UNKNOWN |
-| Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | docs RENDER |
-| Identified gaps | Must not claim from local DB copy |
+| Current implementation status | PARTIAL |
+| Existing implementation evidence | Render `buzzard-api` (`srv-da5ehw3m8hqz73cds090`): Disk 1GB, mount `/var/data`; operator confirmed `BUZZARD_DB_PATH`; live health `persistent: true` `/var/data/buzzard.db` |
+| Identified gaps | Controlled restart-after-disk not re-run this pass; Render payment-failed banner |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | docs RENDER |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -5866,10 +5866,10 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 0% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Must not claim from local DB copy |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
+| Completion percentage | 100% (established: live disk + mount + DB path + persistent health; original UNKNOWN so not VERIFIED_100) |
+| Remaining work | Restart-survival optional; do not add a second disk; payment banner is ops not this score |
+| Final evidence references | https://dashboard.render.com/web/srv-da5ehw3m8hqz73cds090/disks ; operator `/api/health` 2026-10-16 |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ### Item 221
 

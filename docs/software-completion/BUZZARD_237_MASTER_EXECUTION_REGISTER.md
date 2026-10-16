@@ -5634,7 +5634,7 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Completion percentage | 76% (isolated dry-run + integrity unit; not production RESTORE_TESTED)
 | Remaining work | Production restore HUMAN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; restore dry-run 2026-10-16 |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ### Item 212
 

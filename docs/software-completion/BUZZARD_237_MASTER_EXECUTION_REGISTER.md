@@ -122,7 +122,13 @@ Mean established-scope completion: **75.76%** (Σ 17955 / 237 = 75.7595…; one 
 
 ## Resume pointer
 
-Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); marketplace/carrier BLOCKED_EXTERNAL; production restore HUMAN; remote SOC/SIEM absent; Esat Bey not LIVE_VERIFIED. Do not push/PR.
+Stopped 2026-10-16 night. Saved on `cursor/software-completion-local-c293` / PR **#431** (do **not** merge). Official mean **75.76%** (one decimal **75.8%**; Σ 17955/237). VERIFIED_100 **0**. Sales / SoT / live payments **OFF**.
+
+Next session continue from:
+1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`) — operator/credentials, no fake complete
+2. `npm audit` 5 high in `eslint-config-next`/`braces` — do not `audit fix --force` without a dedicated pass
+3. Original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE)
+4. Production restore HUMAN; Esat Bey not LIVE_VERIFIED
 
 ---
 

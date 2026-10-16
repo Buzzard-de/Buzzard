@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **75.42%** (Σ 17875 / 237 = 75.4219…; one decimal **75.4%**). Was **73.90%** (17515/237). This pass **+1.52 pp** from operator evidence 2026-10-16 on items **205, 212, 217, 220** (each recorded **100%** established-scope; original criteria still UNKNOWN so VERIFIED_100 remains **0**). Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **75.76%** (Σ 17955 / 237 = 75.7595…; one decimal **75.8%**). Was **75.42%** (17875/237). This pass **+0.34 pp** from local trial 2026-10-16: item **201** 40→68 (burst limiter tests), **210** 40→62 (`npm audit --audit-level=high` recorded; 5 high in eslint-config-next/braces, no `--force` upgrade), **188** 54→78 (Render disk evidence already captured + `backupRestoreIntegrity` this session), **211** 70→76 (dry-run restore re-run). Original criteria still UNKNOWN so VERIFIED_100 remains **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -118,6 +118,7 @@ Mean established-scope completion: **75.42%** (Σ 17875 / 237 = 75.4219…; one 
 68. Identity 2FA confirm-enable: AES-GCM at-rest secret, TOTP confirm, recovery hashes, login requires TOTP when enrolled. HTTP omits raw secrets. Identity register HTTP omits verification tokens.
 69. Esat local incident engine classifies observation / suspicious / confirmed_violation (first injection is suspicious). Rule-based anomaly only (`ml: false`). Monitoring unhealthy if audit write fails. Approval unavailable fail-closes executeTask. Marketplace publish is Guardian-denied on the software lifecycle path.
 70. HAC consumeForExecution requires the stored action; omitting action is `action_required` (fail-closed). Percentages this pass **unchanged** (audit, not score inflation).
+71. Local load-safe rate-limit burst tests (item 201): serial 40 vs max 10 and same-tick 24 vs max 8. `npm audit --audit-level=high` recorded 5 high (`braces` via `eslint-config-next`); no `audit fix --force`. Restore dry-run and `backupRestoreIntegrity` re-run. Persistence item 188 uses prior Render disk evidence plus /tmp fail-closed tests. Not production load, not RESTORE_TESTED, not a clean audit.
 
 ## Resume pointer
 
@@ -5018,22 +5019,22 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Established scope | Persistence design |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Intended durable disk not /tmp |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | dbPaths, RENDER docs |
-| Identified gaps | Production persistence UNKNOWN |
+| Existing implementation evidence | dbPaths, RENDER docs; operator 2026-10-16 disk 1GB `/var/data`; live health `persistent: true` |
+| Identified gaps | Restart-survival not re-run; production restore HUMAN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | dbPaths, RENDER docs |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `backupRestoreIntegrity.test.mjs` pass 2026-10-16; operator `/api/health` persistent disk |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 54% (health/startup omit filesystem paths; production persistence UNKNOWN) |
-| Remaining work | Production persistence UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 78% (design + live disk mount + /tmp fail-closed; restart-survival and original criteria remaining) |
+| Remaining work | Restart-survival optional; production restore HUMAN; original UNKNOWN so not VERIFIED_100 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; Render disks; operator health 2026-10-16 |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ### Item 189
 
@@ -5358,22 +5359,22 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Established scope | Load-related safe checks |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Rate limiter unit |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | rateLimitStore.test.mjs |
-| Identified gaps | No production load test |
+| Existing implementation evidence | `rateLimitStore.test.mjs` serial burst + same-tick concurrent burst |
+| Identified gaps | No production load test; in-memory limiter only |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | rateLimitStore.test.mjs |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `npx vitest run server/__tests__/rateLimitStore.test.mjs` 2026-10-16 — 8 passed including burst 40/max 10 and concurrent 24/max 8 |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 68% (local load-safe burst proven; production load remaining) |
 | Remaining work | No production load test |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `server/__tests__/rateLimitStore.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ### Item 202
 
@@ -5593,21 +5594,21 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: npm audit --audit-level=high |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | security:audit |
-| Identified gaps | Not re-run unless recorded |
+| Identified gaps | 5 high (`braces`/`micromatch` via `eslint-config-next`); force-upgrade refused |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | security:audit |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `npm run security:audit` 2026-10-16 exit 1 — 5 high in eslint toolchain; no `audit fix --force` |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Not re-run unless recorded |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 62% (audit executed and findings classified; highs not remediated; original UNKNOWN) |
+| Remaining work | Do not force-upgrade eslint-config-next this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; npm audit report 2026-10-16 |
+| Final state and date | PARTIAL / 2026-10-16 |
 
 ### Item 211
 
@@ -5626,13 +5627,13 @@ Next session: original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE); 
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | backupRestoreIntegrity unit historically; npm run test:backup-restore dry-run exit 0
+| Exact tests executed and results | `backupRestoreIntegrity.test.mjs` pass; `npm run test:backup-restore` 2026-10-16 exit 0 dry-run to `server/data/test-scratch/phase11-unit.db`
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (isolated scratch restore recovered marker; not production RESTORE_TESTED)
+| Completion percentage | 76% (isolated dry-run + integrity unit; not production RESTORE_TESTED)
 | Remaining work | Production restore HUMAN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; restore dry-run 2026-10-16 |
 | Final state and date | PARTIAL / 2026-10-14 |
 
 ### Item 212

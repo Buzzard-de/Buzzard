@@ -18,7 +18,7 @@ Standing locks (must remain until an independent authenticated human approves th
 | --- | --- | --- | --- |
 | 67 | PIM live publish | High | Publish is not SoT, but is customer-visible catalog mutation |
 | 73 | Product SoT activation | Critical | Dual-write forbidden; activation is a separate human gate |
-| 115 / 129 | Marketplace live listing / publish | High | Irreversible external marketplace effect |
+| 115 / 129 | Marketplace live listing / publish | High | Irreversible external marketplace effect. Local 115: draft-only; vendor listing ids rejected; activateDraft blocked. Live listing still pending independent approval |
 | 155 / 165 | Customer notification send | Medium–High | External customer-facing message. Local channels now return BLOCKED; live send still requires independent approval |
 | 182 | High-impact catalog (sales, SoT, live pay, PO, listing, ship, deploy) | Critical | AI cannot approve itself |
 | 213 | Production environment configuration | Critical | Production config change |

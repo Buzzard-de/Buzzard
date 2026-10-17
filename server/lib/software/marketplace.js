@@ -113,6 +113,19 @@ function persistDraft(db, row) {
 
 function draftListing(input = {}, db = null) {
   const channel = classify(input.channel || input.marketplace || "amazon");
+  if (input.listingId || input.vendorListingId) {
+    return {
+      ok: false,
+      live: false,
+      published: false,
+      listingId: null,
+      inventedListingId: false,
+      reason: "VENDOR_LISTING_ID_REJECTED",
+      channel: channel.id,
+      adapterExists: channel.adapterExists,
+      note: "A caller-supplied marketplace listing id is not accepted. Item 115.",
+    };
+  }
   if (input.forceError) {
     const classified = classifyMarketplaceError(input.forceError);
     return {
@@ -203,12 +216,39 @@ function mapCategory(input = {}) {
     channel: channel.id,
     sourceCategory: source,
     marketplaceCategoryId: null,
+    vendorCategoryIdIgnored: Boolean(input.marketplaceCategoryId || input.vendorCategoryId),
     note: "No vendor category map is invented. Unmapped source categories stay unpublished.",
+  };
+}
+
+function activateDraft(input = {}) {
+  return {
+    ok: false,
+    activated: false,
+    published: false,
+    live: false,
+    listingId: null,
+    inventedListingId: false,
+    status: "DRAFT",
+    draftId: input.draftId || null,
+    reason: "LISTING_ACTIVATE_BLOCKED",
+    note: "A draft cannot be promoted to a live listing. Item 115.",
   };
 }
 
 function transformListing(input = {}) {
   const channel = classify(input.channel || input.marketplace || "amazon");
+  if (input.listingId || input.vendorListingId) {
+    return {
+      ok: false,
+      live: false,
+      published: false,
+      listingId: null,
+      inventedListingId: false,
+      reason: "VENDOR_LISTING_ID_REJECTED",
+      channel: channel.id,
+    };
+  }
   const validation = validateDraftInput(input, channel);
   if (!validation.ok) {
     return {
@@ -299,6 +339,9 @@ function createSafeAdapter(channelId) {
     },
     draft(input = {}, db = null) {
       return draftListing({ ...input, channel: channel.id }, db);
+    },
+    activate(input = {}) {
+      return activateDraft({ ...input, channel: channel.id });
     },
     transform(input = {}) {
       return transformListing({ ...input, channel: channel.id });
@@ -464,6 +507,7 @@ module.exports = {
   requiredFields,
   validateDraftInput,
   draftListing,
+  activateDraft,
   transformListing,
   mapCategory,
   exportFeedDryRun,

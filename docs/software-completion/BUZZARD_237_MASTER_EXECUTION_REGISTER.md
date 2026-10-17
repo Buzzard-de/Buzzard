@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **76.95%** (Σ 18238 / 237 = 76.9536…; one decimal **77.0%**). Was **76.87%** (18218/237). This pass **+0.08 pp**. **%80 reached: NO** (need Σ 18960; shortfall 722). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **76.99%** (Σ 18247 / 237 = 76.9915…; one decimal **77.0%**). Was **76.95%** (18238/237). This pass **+0.04 pp**. **%80 reached: NO** (need Σ 18960; shortfall 713). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -127,16 +127,18 @@ Mean established-scope completion: **76.95%** (Σ 18238 / 237 = 76.9536…; one 
 77. Record sprint 2 2026-10-17: quoteForMarket unknown/FX fail-closed; VAT unknown market no DE default; feed export dry-run; future timestamp/sourceId conflict; GPS claim ≠ telematics. Items 78/91/117/135/152. Mean **76.78%** (18198/237). 80% not reached. LIVE_VERIFIED 0.
 78. Easiest remaining HUMAN items 165/182 local gates only (no live send or high-impact execute). Mean **76.87%** (18218/237). Both stay HUMAN_APPROVAL_REQUIRED.
 79. Next HUMAN items 67/129 local refuse-only (no catalog mutation from software.pimPublish; no listing write). Mean **76.95%** (18238/237). Both stay HUMAN_APPROVAL_REQUIRED.
+80. HUMAN item 115 local listing model only (no live listing). Mean **76.99%** (18247/237). Stays HUMAN_APPROVAL_REQUIRED.
 
 ## Resume pointer
 
-Human-gate local pass 2 (2026-10-17): items **67** then **129**. No live PIM/customer publish, no marketplace write. **67** 40→**52**: `pimPublish.livePublish` refuses AI and forceLive; no mutation. **129** 50→**58**: `forcePublish` ignored; `approvePublish` self-approve denied and does not write. Both stay **HUMAN_APPROVAL_REQUIRED**. Mean **76.95%** (18238/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+Human-gate local pass 3 (2026-10-17): item **115**. No live marketplace listing. **115** 55→**64**: caller-supplied vendor listing ids rejected; unpublished category map ignores vendor ids; `activateDraft` stays `LISTING_ACTIVATE_BLOCKED`. Status **HUMAN_APPROVAL_REQUIRED**. Item **129** unchanged (58%). Mean **76.99%** (18247/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
 Next:
-1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
-2. Human/production: **220** disk, **217** monitoring, then 213/214/219/221/225/226 — do not self-approve
-3. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
-4. Original 237 checklist still UNKNOWN
+1. Remaining HUMAN (easiest remaining after 115): **155** (paired with already-gated 165), then **73** SoT — do not self-approve
+2. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
+3. Human/production: **220** disk, **217** monitoring, then 213/214/219/221/225/226 — do not self-approve
+4. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
+5. Original 237 checklist still UNKNOWN
 
 ---
 
@@ -3127,8 +3129,8 @@ Next:
 | Established scope | Listing model without live publish |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Mutations gated |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | marketplace software |
-| Identified gaps | No live listing |
+| Existing implementation evidence | marketplace software: draft-only listing; vendor listing/category ids ignored; activateDraft blocked |
+| Identified gaps | Live listing / vendor publish still HUMAN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | marketplace software |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -3139,9 +3141,9 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (local transform + unpublished category map; no invented vendor IDs; live publish remaining) |
-| Remaining work | No live listing |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2026-10-17.md`; `buzzardRecordSprint.test.mjs` |
+| Completion percentage | 64% (draft listing model + vendor id refuse + activate blocked; live listing remaining) |
+| Remaining work | Live listing HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 116

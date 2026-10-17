@@ -149,3 +149,13 @@ No live PIM visibility mutation via `software.pimPublish`. No marketplace listin
 | buzzardHumanGatesEasy + buzzard80NextAdvancement | 0 | 2 files, **8 passed** |
 
 **67** 40→52. **129** 50→58. Both HUMAN_APPROVAL_REQUIRED. Mean **76.95%** (18238/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 HUMAN item 115 listing model (no live listing)
+
+No marketplace write, no invented vendor listing id, no activate-to-live.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardHumanGatesEasy + buzzardRecordSprint | pending this pass | see command output |
+
+**115** 55→64. Stays HUMAN_APPROVAL_REQUIRED. **129** unchanged at 58%. Mean **76.99%** (18247/237). LIVE_VERIFIED 0.

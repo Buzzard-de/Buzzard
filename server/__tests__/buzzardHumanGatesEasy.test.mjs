@@ -96,4 +96,41 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
     expect(human.executed).toBe(false);
     expect(human.live).toBe(false);
   });
+
+  it("item 115: listing model stays draft; vendor ids and activate are refused", () => {
+    const software = require("../lib/software");
+    const rejected = software.marketplace.draftListing({
+      channel: "amazon",
+      sku: "SKU-115",
+      price: 12,
+      listingId: "amzn-live-1",
+    });
+    expect(rejected.ok).toBe(false);
+    expect(rejected.reason).toBe("VENDOR_LISTING_ID_REJECTED");
+    expect(rejected.listingId).toBe(null);
+    expect(rejected.published).toBe(false);
+    expect(rejected.live).toBe(false);
+
+    const mapped = software.marketplace.mapCategory({
+      channel: "amazon",
+      sourceCategory: "bremsen",
+      marketplaceCategoryId: "auto-invented",
+    });
+    expect(mapped.mapped).toBe(false);
+    expect(mapped.invented).toBe(false);
+    expect(mapped.marketplaceCategoryId).toBe(null);
+    expect(mapped.vendorCategoryIdIgnored).toBe(true);
+
+    const activated = software.marketplace.activateDraft({ draftId: "smd_local" });
+    expect(activated.ok).toBe(false);
+    expect(activated.activated).toBe(false);
+    expect(activated.reason).toBe("LISTING_ACTIVATE_BLOCKED");
+    expect(activated.listingId).toBe(null);
+    expect(activated.status).toBe("DRAFT");
+
+    const adapter = software.marketplace.createSafeAdapter("amazon");
+    const adapterActivate = adapter.activate({ draftId: "smd_local" });
+    expect(adapterActivate.reason).toBe("LISTING_ACTIVATE_BLOCKED");
+    expect(adapterActivate.live).toBe(false);
+  });
 });

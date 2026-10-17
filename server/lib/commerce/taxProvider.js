@@ -60,9 +60,12 @@ function calculateTax({ country, subtotal = 0, discount = 0, category = null } =
 function getProviderHealth() {
   return {
     provider: "foundation",
-    status: "READY",
+    status: "PARTIAL",
+    live: false,
+    fiscalLive: false,
+    invented: false,
     countriesConfigured: Object.keys(VAT_BY_COUNTRY).length,
-    note: "Replace with real tax engine before go-live",
+    note: "Configured country rates only. Unknown country/category stay blocked. Not a live fiscal engine.",
   };
 }
 

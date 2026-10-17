@@ -61,4 +61,40 @@ function resolveMessage(input = {}) {
   };
 }
 
-module.exports = { measure, resolveMessage };
+function bindLocaleToMarket(input = {}) {
+  const locale = String(input.locale || "").trim();
+  const market = String(input.market || input.country || "").trim().toUpperCase();
+  if (!locale || !market) {
+    return {
+      ok: false,
+      rewritten: false,
+      invented: false,
+      languageIndependentFromMarket: true,
+      reason: "LOCALE_AND_MARKET_REQUIRED",
+    };
+  }
+  return {
+    ok: true,
+    locale,
+    market,
+    rewritten: false,
+    invented: false,
+    languageIndependentFromMarket: true,
+    rtlForced: false,
+    note: "Selecting a market does not rewrite the active language.",
+  };
+}
+
+function legalCopyForMarket(input = {}) {
+  return {
+    ok: false,
+    invented: false,
+    liveLegal: false,
+    copy: null,
+    market: String(input.market || input.country || "").trim().toUpperCase() || null,
+    reason: "LEGAL_COPY_NOT_INVENTED",
+    note: "Per-market legal pages are not generated from this module.",
+  };
+}
+
+module.exports = { measure, resolveMessage, bindLocaleToMarket, legalCopyForMarket };

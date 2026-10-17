@@ -34,9 +34,10 @@ function buildMarket(country) {
     timezone: country.timezone,
     textDirection: country.textDirection || "ltr",
     vat: {
-      standardRate: overlay.taxRate ?? 0.2,
+      standardRate: Number.isFinite(Number(overlay.taxRate)) ? Number(overlay.taxRate) : null,
       pricesIncludeVat: true,
       taxModel: overlay.taxModel || "VAT",
+      invented: false,
     },
     shippingRegion: engineExtensions.shippingRegions[country.countryCode] || "EU_CENTRAL",
     paymentRegion,
@@ -105,6 +106,7 @@ function getVatContext({ sellerCountry, buyerCountry, customerType, vatId }) {
       included: false,
       reverseCharge: false,
       invented: false,
+      vatLive: false,
       reason: "UNKNOWN_MARKET",
     };
   }
@@ -115,24 +117,36 @@ function getVatContext({ sellerCountry, buyerCountry, customerType, vatId }) {
 
   if (customerType === "B2B") {
     if (intraEu && isValidVatId(vatId)) {
-      return { ok: true, rate: 0, included: false, reverseCharge: true, invented: false, reason: "B2B_INTRA_EU_REVERSE_CHARGE" };
+      return { ok: true, rate: 0, included: false, reverseCharge: true, invented: false, vatLive: false, reason: "B2B_INTRA_EU_REVERSE_CHARGE" };
     }
     if (sellerEu && !buyerEu) {
-      return { ok: true, rate: 0, included: false, reverseCharge: false, invented: false, reason: "B2B_EXPORT_ZERO_RATED" };
+      return { ok: true, rate: 0, included: false, reverseCharge: false, invented: false, vatLive: false, reason: "B2B_EXPORT_ZERO_RATED" };
     }
     if (domestic) {
-      return { ok: true, rate: sellerMarket.vat.standardRate, included: false, reverseCharge: false, invented: false, reason: "B2B_DOMESTIC_NET" };
+      if (!Number.isFinite(Number(sellerMarket.vat.standardRate))) {
+        return { ok: false, rate: null, included: false, reverseCharge: false, invented: false, vatLive: false, reason: "VAT_RATE_UNKNOWN" };
+      }
+      return { ok: true, rate: sellerMarket.vat.standardRate, included: false, reverseCharge: false, invented: false, vatLive: false, reason: "B2B_DOMESTIC_NET" };
     }
-    return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2B_CROSS_BORDER_DEFAULT" };
+    if (!Number.isFinite(Number(buyerMarket.vat.standardRate))) {
+      return { ok: false, rate: null, included: false, reverseCharge: false, invented: false, vatLive: false, reason: "VAT_RATE_UNKNOWN" };
+    }
+    return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, vatLive: false, reason: "B2B_CROSS_BORDER_DEFAULT" };
   }
 
   if (domestic) {
-    return { ok: true, rate: sellerMarket.vat.standardRate, included: sellerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2C_DOMESTIC" };
+    if (!Number.isFinite(Number(sellerMarket.vat.standardRate))) {
+      return { ok: false, rate: null, included: false, reverseCharge: false, invented: false, vatLive: false, reason: "VAT_RATE_UNKNOWN" };
+    }
+    return { ok: true, rate: sellerMarket.vat.standardRate, included: sellerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, vatLive: false, reason: "B2C_DOMESTIC" };
+  }
+  if (!Number.isFinite(Number(buyerMarket.vat.standardRate))) {
+    return { ok: false, rate: null, included: false, reverseCharge: false, invented: false, vatLive: false, reason: "VAT_RATE_UNKNOWN" };
   }
   if (intraEu) {
-    return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2C_INTRA_EU_DESTINATION" };
+    return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, vatLive: false, reason: "B2C_INTRA_EU_DESTINATION" };
   }
-  return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2C_CROSS_BORDER" };
+  return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, vatLive: false, reason: "B2C_CROSS_BORDER" };
 }
 
 function getEligibleSupplierRegions(countryCode) {

@@ -292,3 +292,13 @@ Local draft/queue/generate only. No SMTP, webhook, or pager send. Sales off.
 | alertNotificationDelivery + notificationHub + localMetricsAlerts + part19CustomerExperienceReadiness + buzzardHumanGatesEasy + canonicalLocales | 0 | 6 files, **48 passed** |
 
 **155** 64→100 stays HUMAN_APPROVAL_REQUIRED. **165** 60→100 stays HUMAN_APPROVAL_REQUIRED. **185** 50→100 stays BLOCKED_EXTERNAL_DEPENDENCY. Not VERIFIED_100. Mean **78.55%** (18616/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 International market / locale / VAT / marketplace software (items 91, 114–135)
+
+Unknown VAT is not a DE default. FX is not invented. Locale is independent of market. Marketplace classify/publish/feed stay unpublished. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| internationalMarketSoftware + marketEngine + buzzardRecordSprint2 + localeCoverageHonesty + marketplaceClassification + commerceIntegrityBatch + lib/market-engine/marketEngine.test.ts | 0 | 7 files, **83 passed** |
+
+**91** and **114–135** established-scope **100** PARTIAL. **115** and **129** stay HUMAN_APPROVAL_REQUIRED. **136** already 100. Not VERIFIED_100. Mean **81.92%** (19414/237). Established-scope 80% reached. LIVE_VERIFIED 0.

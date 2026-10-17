@@ -484,6 +484,38 @@ function exportFeedDryRun(input = {}) {
   };
 }
 
+function confirmPublished() {
+  return {
+    ok: false,
+    published: false,
+    live: false,
+    listingId: null,
+    inventedListingId: false,
+    reason: "PUBLISH_CONFIRM_BLOCKED",
+    note: "A provider listing id is not treated as a published listing.",
+  };
+}
+
+function inboundMarketplaceWebhook() {
+  return {
+    ok: false,
+    published: false,
+    live: false,
+    imported: false,
+    httpAttempted: false,
+    reason: "MARKETPLACE_WEBHOOK_BLOCKED",
+    note: "Inbound marketplace webhooks do not create listings or orders.",
+  };
+}
+
+function pushFeed(input = {}) {
+  return {
+    ...exportFeedDryRun({ ...input, live: true, push: true }),
+    reason: "FEED_EXPORT_LIVE_BLOCKED",
+    pushed: false,
+  };
+}
+
 function health() {
   const connectors = classifyConnectors();
   return {
@@ -521,5 +553,8 @@ module.exports = {
   listSafeAdapters,
   importChannelOrder,
   syncChannelStatus,
+  confirmPublished,
+  inboundMarketplaceWebhook,
+  pushFeed,
   health,
 };

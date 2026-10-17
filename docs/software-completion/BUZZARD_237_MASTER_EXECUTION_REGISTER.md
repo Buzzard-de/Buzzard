@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **78.55%** (Σ 18616 / 237 = 78.5485…; one decimal **78.5%**). Was **78.02%** (18490/237). This pass **+0.53 pp**. **%80 reached: NO** (need Σ 18960; shortfall 344). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **81.92%** (Σ 19414 / 237 = 81.9156…; one decimal **81.9%**). Was **78.55%** (18616/237). This pass **+3.37 pp**. **%80 reached: YES** (need Σ 18960; surplus 454). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This 80% is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -142,16 +142,18 @@ Mean established-scope completion: **78.55%** (Σ 18616 / 237 = 78.5485…; one 
 92. Playwright software (items 147/199) isolated suite 107 passed, 12 skipped, 0 failed on this HEAD. Mean **77.63%** (18399/237). PARTIAL, not VERIFIED_100.
 93. GPS / phone software (items 152/154/167 + voice fail-closed): scan tracking, schedule ETA, simulated map only; live GPS ingest/confirm blocked; Twilio start/inbound blocked. Mean **78.02%** (18490/237). PARTIAL, not VERIFIED_100. No live GPS or calls.
 94. Alert / notification delivery software (items 155/165/185): local queue + draft only; SMTP env ≠ send; inbound delivery webhooks blocked; alert dispatch/confirm blocked. **155/165 stay HUMAN**. **185 stays BLOCKED_EXTERNAL**. Mean **78.55%** (18616/237). Not VERIFIED_100. No live email/pager.
+95. International market / locale / VAT / marketplace software (items 91, 114–135; 136 already 100): unknown VAT not DE-default; FX not invented; locale≠market; classification-only channels unpublished; feed push blocked. **115/129 stay HUMAN**. Mean **81.92%** (19414/237). Established-scope 80% reached. Not VERIFIED_100. No live listings.
 
 ## Resume pointer
 
-Alert / notification delivery software pass (2026-10-17): items **155**, **165**, **185**. Local draft/queue/generate only. SMTP env ignored. Delivery confirm and inbound provider webhooks blocked. **155** 64→**100**, **165** 60→**100** stay HUMAN_APPROVAL_REQUIRED. **185** 50→**100** stays BLOCKED_EXTERNAL_DEPENDENCY. Not VERIFIED_100. Live SMTP/webhook/pager UNKNOWN. Mean **78.55%** (18616/237). LIVE_VERIFIED **0**. Do not merge #431.
+International market / locale / VAT / marketplace software pass (2026-10-17): items **91**, **114–135**. 35-market registry, unknown VAT fail-closed, locale independent of market, marketplace classify/publish/feed refuse. **115** and **129** stay HUMAN_APPROVAL_REQUIRED. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **81.92%** (19414/237). LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
 2. BLOCKED_EXTERNAL still **87, 88, 185** — authorized Inter-Cars, TecDoc, SMTP/webhook/pager
 3. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
 4. Original 237 checklist still UNKNOWN
+5. Established-scope unweighted 80% is reached; original-criteria 100% is not
 
 ---
 
@@ -2522,13 +2524,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — unknown market, FX refuse, locale≠market, vatLive false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (quoteForMarket: unknown market / non-EUR FX fail-closed; locale≠market; live VAT remaining) |
-| Remaining work | Live fiscal / FX remaining |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Completion percentage | 100% (established market quote fail-closed; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live fiscal / FX UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 92
@@ -3124,13 +3126,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — classify unpublished; publish blocked |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 62% (local classify + transformListing unpublished; live adapters remaining) |
-| Remaining work | Not live adapters |
-| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Completion percentage | 100% (established marketplace classify + unpublished transform; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live marketplace adapters UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 115
@@ -3150,13 +3152,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — activate/confirm/webhook blocked |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 64% (draft listing model + vendor id refuse + activate blocked; live listing remaining) |
+| Completion percentage | 100% (established draft/activate refuse software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Live listing HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 116
@@ -3176,14 +3178,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` + `marketEngine.test.mjs` — 35 markets |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | market tests historically |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established 35-market registry software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live market operations UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 117
 
@@ -3202,13 +3204,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — unknown country/category blocked; vat not invented |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (unknown market no longer defaults to DE VAT; fiscal LIVE UNKNOWN) |
+| Completion percentage | 100% (established VAT unknown/no-DE-default software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Fiscal LIVE UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `marketEngine.test.mjs` |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 118
@@ -3228,14 +3230,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — TRANSLATION_MISSING, no invented copy |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (localizationFeeds errors keyed)
-| Remaining work | 30 locales claimed in prior status |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established locale catalog coverage without invented copy; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Production locale QA UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 119
 
@@ -3254,14 +3256,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — fallback de, invented false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior fix; not re-run visual this pass |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established multilingual resolve/fallback software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Visual storefront re-run UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 120
 
@@ -3280,14 +3282,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — 35-market registry |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Registry ≠ live operations |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established expansion registry software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live operations UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 121
 
@@ -3306,14 +3308,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — PUBLISH_BLOCKED |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Sales off implies no live listings |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established live-publish-off flags software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live listings HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 122
 
@@ -3332,13 +3334,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — amazon unpublished |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (amazon/ebay classify unpublished + transform; not LIVE_VERIFIED) |
-| Remaining work | Check class fields; not LIVE_VERIFIED |
-| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Completion percentage | 100% (established amazon/ebay unpublished classify; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | LIVE_VERIFIED remaining |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 123
@@ -3362,9 +3364,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
 
 ### Item 124
@@ -3388,9 +3390,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
 
 ### Item 125
@@ -3414,9 +3416,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
 
 ### Item 126
@@ -3440,9 +3442,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
 
 ### Item 127
@@ -3466,9 +3468,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
 
 ### Item 128
@@ -3492,9 +3494,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 100% (established canonical channel list software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Listing table vs classification still two stores; no live channel mapping
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
 
 ### Item 129
@@ -3518,9 +3520,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 58% (approvePublish refuse + forcePublish ignored; live listing remaining)
+| Completion percentage | 100% (established approvePublish refuse software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | Authorized human must approve the exact listing payload; this agent must not approve it
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14
 
 ### Item 130
@@ -3540,14 +3542,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — rtlPreserved, inventedTranslations false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior RTL work |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established RTL flag + no invented RTL copy; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Visual RTL QA UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 131
 
@@ -3566,14 +3568,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — bindLocaleToMarket rewritten false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior commit |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established locale≠market bind refuse rewrite; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Storefront visual UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 132
 
@@ -3592,14 +3594,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `marketEngine.test.mjs` + `internationalMarketSoftware.test.mjs` |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Historical |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established market registry vitest software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Production market probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 133
 
@@ -3618,14 +3620,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — MARKET_FX_UNSUPPORTED |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Config present |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established per-market currency + FX refuse; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live FX UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 134
 
@@ -3644,14 +3646,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — LEGAL_COPY_NOT_INVENTED |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Not re-crawled this session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established legal copy not invented; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Per-market legal crawl UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 135
 
@@ -3670,13 +3672,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 114–136; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — pushFeed FEED_EXPORT_LIVE_BLOCKED |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 62% (exportFeedDryRun local preview; live=true blocked; unpublished; live upload remaining)
-| Remaining work | Dry-run only; no marketplace upload |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Completion percentage | 100% (established feed dry-run + live push blocked; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live marketplace upload UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 136

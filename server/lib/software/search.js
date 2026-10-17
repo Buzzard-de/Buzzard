@@ -65,14 +65,19 @@ function searchCanonicalCatalog(query = {}) {
 }
 
 function getLocalSearchIndexStatus() {
+  const { getSearchHealth } = require("../commerce/productSearchAbstraction");
+  const health = getSearchHealth();
   return {
     mode: "local_catalog_filter",
     liveOpenSearch: false,
     opensearchDeployed: false,
+    servingBackend: health.servingBackend,
+    opensearchStubActive: health.opensearchStubActive,
     invented: false,
     fitmentClaimed: false,
     syncScript: "scripts/sync-search-index.mjs",
     syncScriptLiveClaim: false,
+    note: "BUZZARD_OPENSEARCH_URL presence is not live OpenSearch.",
   };
 }
 

@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **75.97%** (Σ 18006 / 237 = 75.9747…; one decimal **76.0%**). Was **75.91%** (17991/237). This pass **+0.06 pp** from 2026-10-17 infrastructure day: item **154** 40→55 (ETA schedule + live-map fixtures + webhook ingest tests; still not live GPS). **87/88** remain BLOCKED_EXTERNAL at 58%. **185** unchanged. Original criteria still UNKNOWN so VERIFIED_100 remains **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. This day did **not** push or merge. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **76.29%** (Σ 18080 / 237 = 76.2869…; one decimal **76.3%**). Was **75.97%** (18006/237). This pass **+0.32 pp**. **%80 reached: NO** (need Σ 18960; shortfall 880). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. This command did **not** push. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -121,10 +121,11 @@ Mean established-scope completion: **75.97%** (Σ 18006 / 237 = 75.9747…; one 
 71. Local load-safe rate-limit burst tests (item 201): serial 40 vs max 10 and same-tick 24 vs max 8. `npm audit --audit-level=high` recorded 5 high (`braces` via `eslint-config-next`); no `audit fix --force`. Restore dry-run and `backupRestoreIntegrity` re-run. Persistence item 188 uses prior Render disk evidence plus /tmp fail-closed tests. Not production load, not RESTORE_TESTED, not a clean audit.
 72. TecDoc and Inter-Cars mock adapters refuse to treat API-key presence as live HTTP. Inter-Cars `purchaseOrder` is `LIVE_PO_BLOCKED`. Still BLOCKED_EXTERNAL.
 73. Infrastructure day: schedule ETA, synthetic live-map fixtures (`simulated:true` required), webhook delay map + eventId duplicate, voice STT/TTS/WebRTC/Realtime/digital-human fail-closed, marketplace `transformListing` local-only. No live GPS, calls, listings, or labels.
+74. Buzzard 80 round: OpenSearch env ≠ live search; ops pack refuses `/tmp` source; amazon/ebay unpublished; sendPrepared blocked; localeCoverage no invented translations. 80% not reached.
 
 ## Resume pointer
 
-Infrastructure day 2026-10-17. Branch `cursor/software-completion-local-c293`. Official mean **75.97%** (one decimal **76.0%**; Σ 18006/237). VERIFIED_100 **0**. Sales / SoT / live payments **OFF**. Operator forbade push/PR this command.
+Buzzard 80 round 2026-10-17. Branch `cursor/software-completion-local-c293` HEAD after local commit. Official mean **76.29%** (Σ 18080/237). **80% not reached.** VERIFIED_100 **0**. LIVE_VERIFIED **0**. Push/PR forbidden this command. Sales / SoT / live payments **OFF**.
 
 Next:
 1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc (local mock 58%; live catalog/PO still needs authorized credentials), **185** alerts (`liveDispatch: false`)
@@ -3107,10 +3108,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 62% (local classify + transformListing unpublished; live adapters remaining) |
 | Remaining work | Not live adapters |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 115
 
@@ -3315,10 +3316,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 55% (amazon/ebay classify unpublished + transform; not LIVE_VERIFIED) |
 | Remaining work | Check class fields; not LIVE_VERIFIED |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 123
 
@@ -3785,10 +3786,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Index stub |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 68% (local catalog filter + OpenSearch env ≠ live; storefront E2E NOT_RUN) |
+| Remaining work | Index stub; live OpenSearch not deployed |
+| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 141
 
@@ -5065,10 +5066,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Not disaster-tested |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 55% (local ops pack: sales/SoT locked, production restore blocked, /tmp source refused; not disaster-tested) |
+| Remaining work | Not disaster-tested; not production RESTORE_TESTED |
+| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 190
 
@@ -5745,10 +5746,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 62% (secret-free inventory + ops pack live:0; live BLOCKED) |
 | Remaining work | Secret-free; live BLOCKED |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 216
 
@@ -5953,10 +5954,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Secret-free |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 62% (diagnose live:false via ops pack; secrets not included) |
+| Remaining work | Secret-free; no live provider probe |
+| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 224
 

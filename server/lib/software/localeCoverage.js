@@ -14,6 +14,8 @@ function measure() {
     languageIndependentFromMarket: true,
     inventedTranslations: false,
     rtlPreserved: readiness.rtlSupport === true,
+    rtlStylesheet: readiness.rtlStylesheet === true,
+    liveVerified: false,
   };
 }
 

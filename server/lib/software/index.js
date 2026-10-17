@@ -46,6 +46,7 @@ const orderIdentity = require("./orderIdentity");
 const qrLoyalty = require("./qrLoyalty");
 const gatedActions = require("./gatedActions");
 const pimPublish = require("./pimPublish");
+const sotActivation = require("./sotActivation");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -106,4 +107,5 @@ module.exports = {
   qrLoyalty,
   gatedActions,
   pimPublish,
+  sotActivation,
 };

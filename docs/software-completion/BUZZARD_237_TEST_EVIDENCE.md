@@ -170,3 +170,13 @@ No customer message send, no invented provider message id, no PROVIDER_ACCEPTED 
 | buzzardHumanGatesEasy + notificationHub | 0 | 2 files, **8 passed** |
 
 **155** 55→64. Stays HUMAN_APPROVAL_REQUIRED. **165** unchanged at 60%. Mean **77.03%** (18256/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 HUMAN item 73 Product SoT (no activation)
+
+No SoT cutover, no dual-write, env `BUZZARD_PRODUCT_SOT_ACTIVE=1` does not activate software SoT.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardHumanGatesEasy + buzzard80NextAdvancement + productWriteBoundary | pending | see command output |
+
+**73** 50→60. Stays HUMAN_APPROVAL_REQUIRED. **182** unchanged. Mean **77.07%** (18266/237). LIVE_VERIFIED 0.

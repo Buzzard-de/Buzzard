@@ -17,7 +17,7 @@ Standing locks (must remain until an independent authenticated human approves th
 | Item | Action | Risk | Why it stays pending |
 | --- | --- | --- | --- |
 | 67 | PIM live publish | High | Publish is not SoT, but is customer-visible catalog mutation |
-| 73 | Product SoT activation | Critical | Dual-write forbidden; activation is a separate human gate |
+| 73 | Product SoT activation | Critical | Dual-write forbidden. Local refuse: env flag and forceActivate do not activate software SoT. Real cutover still requires independent human approval |
 | 115 / 129 | Marketplace live listing / publish | High | Irreversible external marketplace effect. Local 115: draft-only; vendor listing ids rejected; activateDraft blocked. Live listing still pending independent approval |
 | 155 / 165 | Customer notification send | Medium–High | External customer-facing message. Local 155: provider ids rejected; approveSend does not send; PROVIDER_ACCEPTED not written. Live send still requires independent approval |
 | 182 | High-impact catalog (sales, SoT, live pay, PO, listing, ship, deploy) | Critical | AI cannot approve itself |

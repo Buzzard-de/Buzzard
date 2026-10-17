@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **77.03%** (Σ 18256 / 237 = 77.0295…; one decimal **77.0%**). Was **76.99%** (18247/237). This pass **+0.04 pp**. **%80 reached: NO** (need Σ 18960; shortfall 704). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **77.07%** (Σ 18266 / 237 = 77.0717…; one decimal **77.1%**). Was **77.03%** (18256/237). This pass **+0.04 pp**. **%80 reached: NO** (need Σ 18960; shortfall 694). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -129,15 +129,16 @@ Mean established-scope completion: **77.03%** (Σ 18256 / 237 = 77.0295…; one 
 79. Next HUMAN items 67/129 local refuse-only (no catalog mutation from software.pimPublish; no listing write). Mean **76.95%** (18238/237). Both stay HUMAN_APPROVAL_REQUIRED.
 80. HUMAN item 115 local listing model only (no live listing). Mean **76.99%** (18247/237). Stays HUMAN_APPROVAL_REQUIRED.
 81. HUMAN item 155 local notification draft/send-blocked only (no live send). Mean **77.03%** (18256/237). Stays HUMAN_APPROVAL_REQUIRED. Item 165 unchanged.
+82. HUMAN item 73 local SoT refuse-only (no activation, no dual-write). Mean **77.07%** (18266/237). Stays HUMAN_APPROVAL_REQUIRED.
 
 ## Resume pointer
 
-Human-gate local pass 4 (2026-10-17): item **155**. No live customer send. **155** 55→**64**: provider message ids rejected; `approveSend` self-approve denied and still does not send; `recordProviderAccepted` blocked. Status **HUMAN_APPROVAL_REQUIRED**. Item **165** unchanged (60%). Mean **77.03%** (18256/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+Human-gate local pass 5 (2026-10-17): item **73**. No Product SoT activation. **73** 50→**60**: `sotActivation.activate` refuses AI and forceActivate; env `BUZZARD_PRODUCT_SOT_ACTIVE=1` does not activate software SoT; dual-write stays false. Status **HUMAN_APPROVAL_REQUIRED**. Item **182** unchanged. Mean **77.07%** (18266/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
 Next:
-1. Remaining HUMAN (easiest remaining after 155): **73** SoT — do not self-activate
+1. Remaining HUMAN (easiest remaining after 73): production-class 213/214/219 — do not self-approve; or **185** still BLOCKED_EXTERNAL
 2. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
-3. Human/production: **220** disk, **217** monitoring, then 213/214/219/221/225/226 — do not self-approve
+3. Human/production: **220** disk, **217** monitoring, then 221/225/226 — do not self-approve
 4. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
 5. Original 237 checklist still UNKNOWN
 
@@ -2032,8 +2033,8 @@ Next:
 | Established scope | SoT activation remains human-gated |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: humanApprovalRequired true |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | activationStatus() |
-| Identified gaps | Safe software keeps SoT off |
+| Existing implementation evidence | activationStatus(); software/sotActivation.js refuses activate; env flag ≠ software SoT |
+| Identified gaps | Independent human must still approve real SoT cutover |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | activationStatus() |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -2044,10 +2045,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Safe software keeps SoT off |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14 |
+| Completion percentage | 60% (local refuse + env ignored; live SoT cutover remaining) |
+| Remaining work | Independent human SoT activation — do not self-activate |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 74
 

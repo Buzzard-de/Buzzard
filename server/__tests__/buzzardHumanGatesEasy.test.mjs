@@ -174,4 +174,38 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
     expect(accepted.providerAccepted).toBe(false);
     db.close();
   });
+
+  it("item 73: Product SoT stays inactive even if env or forceActivate is set", () => {
+    const software = require("../lib/software");
+    const previous = process.env.BUZZARD_PRODUCT_SOT_ACTIVE;
+    process.env.BUZZARD_PRODUCT_SOT_ACTIVE = "1";
+    try {
+      const reported = software.sotActivation.status();
+      expect(reported.productSourceOfTruthActive).toBe(false);
+      expect(reported.productSotEnvFlag).toBe(true);
+      expect(reported.envDoesNotActivate).toBe(true);
+      expect(reported.dualWrite).toBe(false);
+      expect(reported.writeBoundaryActive).toBe(false);
+
+      const ai = software.sotActivation.activate({ actor: "pusat", forceActivate: true });
+      expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+      expect(ai.activated).toBe(false);
+      expect(ai.productSourceOfTruthActive).toBe(false);
+
+      const forced = software.sotActivation.activate({
+        actor: "operator",
+        forceActivate: true,
+        envFlag: true,
+      });
+      expect(forced.reason).toBe("HUMAN_SOT_ACTIVATION_REQUIRED");
+      expect(forced.forceActivateIgnored).toBe(true);
+      expect(forced.envFlagIgnored).toBe(true);
+      expect(forced.mutated).toBe(false);
+      expect(forced.dualWrite).toBe(false);
+      expect(forced.productSourceOfTruthActive).toBe(false);
+    } finally {
+      if (previous === undefined) delete process.env.BUZZARD_PRODUCT_SOT_ACTIVE;
+      else process.env.BUZZARD_PRODUCT_SOT_ACTIVE = previous;
+    }
+  });
 });

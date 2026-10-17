@@ -50,6 +50,7 @@ const gatedActions = require("./gatedActions");
 const pimPublish = require("./pimPublish");
 const sotActivation = require("./sotActivation");
 const catalogIntegrity = require("./catalogIntegrity");
+const supplierStockIntegrity = require("./supplierStockIntegrity");
 const productionConfigGate = require("./productionConfigGate");
 const productionDeployGate = require("./productionDeployGate");
 const goLiveGate = require("./goLiveGate");
@@ -120,6 +121,7 @@ module.exports = {
   pimPublish,
   sotActivation,
   catalogIntegrity,
+  supplierStockIntegrity,
   productionConfigGate,
   productionDeployGate,
   goLiveGate,

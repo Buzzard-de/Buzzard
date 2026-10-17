@@ -353,3 +353,13 @@ Exact sku/ean match only. Live import, OpenSearch, catalog confirm, and invented
 | catalogIntegritySoftware + buzzardHumanGatesEasy | 0 | 2 files, **19 passed** |
 
 Items **56–66**, **68–72**, **74** established-scope **100** PARTIAL. **67** 52→100 stays HUMAN_APPROVAL_REQUIRED. **73** 60→100 stays HUMAN_APPROVAL_REQUIRED. Not VERIFIED_100. Mean **93.07%** (22057/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-17 Supplier and stock infrastructure software (items 75–94)
+
+Live purchase orders, feed fetch, and inventory sync stay blocked. Outage/malformed/stale is not stock. €0.50 floor. €0.10 undercut unimplemented. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| supplierStockIntegritySoftware + externalIntegrationHonesty + reservationAuthority | 0 | 3 files, **8 passed** |
+
+Items **75–86**, **89–94** established-scope **100** (82 stays NOT_APPLICABLE_WITH_EVIDENCE). **87** 64→100 stays BLOCKED_EXTERNAL_DEPENDENCY. **88** 64→100 stays BLOCKED_EXTERNAL_DEPENDENCY. Not VERIFIED_100. Mean **94.82%** (22472/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

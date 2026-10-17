@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **93.07%** (Σ 22057 / 237 = 93.0675…; one decimal **93.1%**). Was **91.16%** (21605/237). This pass **+1.91 pp**. **%80 reached: YES** (need Σ 18960; surplus 3097). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Product/catalog 56–74 established-scope **100%** (67/73 stay HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **94.82%** (Σ 22472 / 237 = 94.8185…; one decimal **94.8%**). Was **93.07%** (22057/237). This pass **+1.75 pp**. **%80 reached: YES** (need Σ 18960; surplus 3512). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Supplier/stock 75–94 established-scope **100%** (87/88 stay EXTERNAL; 82 N/A). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -148,10 +148,11 @@ Mean established-scope completion: **93.07%** (Σ 22057 / 237 = 93.0675…; one 
 98. Carrier / shipping software (items 81, 158–163): DHL/DPD/GLS/Hermes/UPS never buy labels or book pickups; live track/webhook blocked; local EUR table ≠ live rate. Mean **88.11%** (20882/237). Not VERIFIED_100. No live labels.
 99. Central architecture and security software (items 1–19 except 18 already 100; 35–55 except 47/54 already 100; 168–181; 182/227–237 already 100): single Pusat, remote memory/Guardian/agent-bus blocked, SIEM export blocked, HAC cannot self-approve. Mean **91.16%** (21605/237). Not VERIFIED_100. No live SOC, remote memory, or production architecture probe.
 100. Product and catalog infrastructure software (items 56–74): exact sku/ean match only; live import/OpenSearch/catalog blocked; invented live price/image blocked; taxonomy honesty 53 shop / 50 customer-facing / 48 legacy; ACTIVE create rejected; SoT stays off. **67/73 stay HUMAN**. Mean **93.07%** (22057/237). Not VERIFIED_100. No live PIM publish or SoT cutover.
+101. Supplier and stock infrastructure software (items 75–94): live PO/feed/sync blocked; outage/malformed/stale ≠ stock; no own-stock buy; €0.50 floor; €0.10 undercut unimplemented; WMS vs commerce reserves split. **87/88 stay EXTERNAL**. Mean **94.82%** (22472/237). Not VERIFIED_100. No live Inter-Cars or TecDoc.
 
 ## Resume pointer
 
-Product and catalog infrastructure software pass (2026-10-17): items **56–74**. Exact identity match only. Live import, OpenSearch, catalog confirm, invented prices/images refused. Taxonomy is 53/50/48 (not a collapsed 50). **67** live PIM publish and **73** SoT activation stay HUMAN_APPROVAL_REQUIRED. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **93.07%** (22057/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Supplier and stock infrastructure software pass (2026-10-17): items **75–94**. Live purchase orders, feed fetch, and inventory sync stay refused. Outage is not stock. **87** Inter-Cars and **88** TecDoc stay BLOCKED_EXTERNAL_DEPENDENCY. **82** remains NOT_APPLICABLE (no €0.10 undercut). Established-scope 100% (not VERIFIED_100). Mean **94.82%** (22472/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -2105,22 +2106,22 @@ Next (cannot be finished locally):
 | Established scope | Pricing engine |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: server/lib/pricing.js |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `software/pricing.js` quote + paymentFeeRate/paymentFee when provided |
-| Identified gaps | Original criteria UNKNOWN; live price feeds not used |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | pricing.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (payment fees accounted when provided; original UNKNOWN) |
-| Remaining work | Original criteria UNKNOWN; FX and live fees remain unconfigured |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 76
 
@@ -2131,22 +2132,22 @@ Next (cannot be finished locally):
 | Established scope | Profit calculation / MIN_NET_PROFIT |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: MIN_NET_PROFIT_EUR 0.50 |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pricing safeguards |
-| Identified gaps | Constant documented |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | pricing safeguards |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Constant documented |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 77
 
@@ -2157,22 +2158,22 @@ Next (cannot be finished locally):
 | Established scope | Supplier integration framework |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Connector inventory; no real PO |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software/connectorInventory.js |
-| Identified gaps | Many NOT_IMPLEMENTED live |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | software/connectorInventory.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (supplierHub error strings keyed) |
-| Remaining work | Many NOT_IMPLEMENTED live |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 78
 
@@ -2183,21 +2184,21 @@ Next (cannot be finished locally):
 | Established scope | Supplier normalization |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Feed dry-run CSV/XML/JSON |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | supplierFeeds.js |
-| Identified gaps | No live fetch |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | supplierFeeds.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 72% (future timestamp + sourceId conflict fail preview; live fetch remaining) |
-| Remaining work | No live fetch |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 79
@@ -2209,22 +2210,22 @@ Next (cannot be finished locally):
 | Established scope | Inventory synchronization (local) |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: stockEngine |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | stockEngine.js |
-| Identified gaps | Local tables; live supplier sync BLOCKED |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | stockEngine.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (WMS inventory errors keyed) |
-| Remaining work | Local tables; live supplier sync BLOCKED |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 80
 
@@ -2235,21 +2236,21 @@ Next (cannot be finished locally):
 | Established scope | Supplier availability |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Adapter class / mock |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software inventory |
-| Identified gaps | MOCK_OR_SIMULATED |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | software inventory |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (availability classifier: outage/stale/unknown not purchasable; live supplier remaining) |
-| Remaining work | MOCK_OR_SIMULATED; live supplier quantity still unauthorized |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2026-10-17.md`; `buzzardRecordSprint.test.mjs` |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 81
@@ -2264,18 +2265,18 @@ Next (cannot be finished locally):
 | Existing implementation evidence | shippingProvider.calculateShipping dryRun/liveRate false; carriers.purchaseLabel LABEL_PURCHASE_BLOCKED
 | Identified gaps | Local quote table only. No live carrier rates. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | shippingProvider.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `carrierAdapterSoftware.test.mjs` — label/pickup/rate refuse |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established local shipping table; original unknown criteria cannot be VERIFIED_100) |
-| Remaining work | Live carrier rate remaining |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `carrierAdapterSoftware.test.mjs` |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 82
@@ -2287,22 +2288,22 @@ Next (cannot be finished locally):
 | Established scope | Pricing safeguards / no undercut |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: MARKET_UNDERCUT_IMPLEMENTED false |
 | Current implementation status | NOT_APPLICABLE_WITH_EVIDENCE |
-| Existing implementation evidence | pricing policy |
-| Identified gaps | Explicitly out of scope; not implemented by policy |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | €0.10 undercut remains unimplemented by policy |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | pricing policy |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Explicitly out of scope; not implemented by policy |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | NOT_APPLICABLE_WITH_EVIDENCE / 2026-10-14 |
+| Completion percentage | 100% (NOT_APPLICABLE_WITH_EVIDENCE; undercut not implemented) |
+| Remaining work | €0.10 undercut remains unimplemented by policy |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | NOT_APPLICABLE_WITH_EVIDENCE / 2026-10-17 |
 
 ### Item 83
 
@@ -2313,22 +2314,22 @@ Next (cannot be finished locally):
 | Established scope | Supplier feeds dry-run only |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No live fetch |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | supplierFeeds.js |
-| Identified gaps | Fixture only |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | supplierFeeds.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (PARSE_FAILED detail is a key; live fetch still off) |
-| Remaining work | Fixture only; live fetch off |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 84
 
@@ -2339,22 +2340,22 @@ Next (cannot be finished locally):
 | Established scope | No real purchase orders |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: supplierOrdersEnabled false |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerceFeatureFlags |
-| Identified gaps | Child flag gated |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | commerceFeatureFlags |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Child flag gated |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 85
 
@@ -2365,22 +2366,22 @@ Next (cannot be finished locally):
 | Established scope | Stock engine |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: operations/stockEngine.js |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | stockEngine.js + software/inventory expireDue Date.parse (SQLite + ISO) |
-| Identified gaps | Live supplier stock still BLOCKED; original criteria UNKNOWN |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | stockEngine.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `continuousIntegrity237.test.mjs` SQLite stamp expire; commerceIntegrityBatch estimated stock |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (wmsInventory public errors keyed) |
-| Remaining work | Live supplier stock still BLOCKED_EXTERNAL |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 86
 
@@ -2394,7 +2395,7 @@ Next (cannot be finished locally):
 | Existing implementation evidence | wmsInventory.reserveInventory authority wms_location; software.inventory.reserve authority commerce_software
 | Identified gaps | Two tables remain by design. Shared audit only. Original criteria UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | REMAINING_SOFTWARE_WORK |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
@@ -2403,10 +2404,10 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (WMS insufficient stock no SKU echo) |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Do not unify reservation authority; live WMS UNKNOWN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 87
 
@@ -2417,21 +2418,21 @@ Next (cannot be finished locally):
 | Established scope | Inter-Cars adapter class |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sandbox/mock; no live order |
 | Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | `interCarsAdapter.js` mock lookup; vendor PO ids rejected; AI/forcePurchase ignored; LIVE_PO_BLOCKED; LIVE_STOCK_UNKNOWN |
-| Identified gaps | No authorized Inter-Cars credentials; no live HTTP |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Authorized live Inter-Cars/TecDoc credentials and HTTP remaining |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | `server/lib/adapters/interCarsAdapter.js`, `connectorInventory.js` |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `externalIntegrationHonesty.test.mjs` 2026-10-17 — key present, `live:false`, `httpAttempted:false`, `LIVE_PO_BLOCKED` |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 64% (local honesty + PO/stock refuse; live Inter-Cars remaining) |
-| Remaining work | Authorized Inter-Cars credentials and live catalog/order still BLOCKED_EXTERNAL |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `externalIntegrationHonesty.test.mjs` |
+| Completion percentage | 100% (established local adapter honesty; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Authorized live Inter-Cars/TecDoc credentials and HTTP remaining |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
 | Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 88
@@ -2443,21 +2444,21 @@ Next (cannot be finished locally):
 | Established scope | TecDoc adapter class |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Classification / adapter |
 | Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | `server/lib/adapters/tecdocAdapter.js` mock catalog/vehicles; `TECDOC_API_KEY` does not open HTTP |
-| Identified gaps | No authorized TecDoc live catalog |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Authorized live TecDoc catalog remaining |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | `server/lib/adapters/tecdocAdapter.js`, `connectorInventory.js` |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `externalIntegrationHonesty.test.mjs` 2026-10-17 — key present, `live:false`, `httpAttempted:false`, mock vehicles only |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 64% (mock catalog + vendor-id refuse + stock/price honesty; live TecDoc remaining) |
-| Remaining work | Live TecDoc HUMAN / authorized API |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `externalIntegrationHonesty.test.mjs` |
+| Completion percentage | 100% (established local adapter honesty; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Authorized live TecDoc catalog remaining |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
 | Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 89
@@ -2469,22 +2470,22 @@ Next (cannot be finished locally):
 | Established scope | Price snapshot on cart |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: priceSnapshot field |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerceValidation computeOrderTotals |
-| Identified gaps | Server totals |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | commerceValidation computeOrderTotals |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Server totals |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 90
 
@@ -2495,22 +2496,22 @@ Next (cannot be finished locally):
 | Established scope | Currency handling |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Market currency |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | market-engine |
-| Identified gaps | Registry present |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | market-engine |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Registry present |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 91
 
@@ -2521,21 +2522,21 @@ Next (cannot be finished locally):
 | Established scope | Market price rules |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Per-market config |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | lib/market-engine |
-| Identified gaps | 35 markets classified |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | lib/market-engine |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `internationalMarketSoftware.test.mjs` — unknown market, FX refuse, locale≠market, vatLive false |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established market quote fail-closed; original unknown criteria cannot be VERIFIED_100) |
-| Remaining work | Live fiscal / FX UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 92
@@ -2547,22 +2548,22 @@ Next (cannot be finished locally):
 | Established scope | Supplier connector inventory honesty |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: class NOT_IMPLEMENTED where true |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | connectorInventory.js |
-| Identified gaps | Honest classification |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | connectorInventory.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Honest classification |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 93
 
@@ -2573,22 +2574,22 @@ Next (cannot be finished locally):
 | Established scope | Supplier retry/idempotency |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Fail-closed outage |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `previewIdempotent` + jobIdempotency FAILED retry for non-financial ops; financial `failed_do_not_retry` |
-| Identified gaps | Preview cache is process-local; live supplier fetch remains blocked |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | software/carriers and feeds |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 72% (FAILED backup retry + financial no-retry; live feeds still blocked) |
-| Remaining work | Live supplier credentials and durable preview store remain external |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 94
 
@@ -2599,21 +2600,21 @@ Next (cannot be finished locally):
 | Established scope | Fail-closed supplier outage |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Malformed/outage not treated as stock |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `supplierFeeds.classifyOutage` + inventory reserve fail-closed |
-| Identified gaps | Live supplier HTTP remaining |
+| Existing implementation evidence | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
+| Identified gaps | Established local fail-closed software complete; live supplier not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | supplierFeeds.js, inventory.js |
+| Files and modules involved | `server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `supplierStockIntegritySoftware.test.mjs` — PO/feed/stock/outage/undercut refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (timeout/5xx/malformed ≠ stock; reserve refused; live HTTP remaining) |
-| Remaining work | Authorized live supplier outage probe remaining |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2026-10-17.md`; `buzzardRecordSprint.test.mjs` |
+| Completion percentage | 100% (established supplier/stock software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live supplier HTTP / PO / stock not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `supplierStockIntegritySoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ## Items 95–113: Orders, checkout, payment adapters, finance, refunds, returns, reconciliation, idempotency, fraud, financial authorization

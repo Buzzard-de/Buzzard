@@ -2,7 +2,12 @@
  * Honest local classification. Not live verification.
  */
 
+const tecdocAdapter = require("../adapters/tecdocAdapter");
+const interCarsAdapter = require("../adapters/interCarsAdapter");
+
 function supplierConnectors() {
+  const tecdoc = tecdocAdapter.describeStatus();
+  const interCars = interCarsAdapter.describeStatus();
   return [
     { id: "csv", class: "IMPLEMENTED", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "Local CSV preview only." },
     { id: "xml", class: "IMPLEMENTED", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "Local XML preview only." },
@@ -10,8 +15,24 @@ function supplierConnectors() {
     { id: "mock", class: "IMPLEMENTED", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "Test adapter. Orders disabled." },
     { id: "api", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "Interface exists. Live HTTP blocked without credentials." },
     { id: "real_supplier", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "realSupplierConnector dry-run default." },
-    { id: "tecdoc", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "No live credentials in this environment." },
-    { id: "inter_cars", class: "PARTIAL", live: "BLOCKED_EXTERNAL_DEPENDENCY", note: "Adapter classified locally. INTERCARS_API_KEY not used for live orders in this environment." },
+    {
+      id: "tecdoc",
+      class: "PARTIAL",
+      live: tecdoc.blocked,
+      liveVerified: false,
+      httpAttempted: tecdoc.httpAttempted,
+      keyPresent: tecdoc.keyPresent,
+      note: tecdoc.note,
+    },
+    {
+      id: "inter_cars",
+      class: "PARTIAL",
+      live: interCars.blocked,
+      liveVerified: false,
+      httpAttempted: interCars.httpAttempted,
+      keyPresent: interCars.keyPresent,
+      note: interCars.note,
+    },
   ];
 }
 

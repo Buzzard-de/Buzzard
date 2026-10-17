@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **94.82%** (Σ 22472 / 237 = 94.8185…; one decimal **94.8%**). Was **93.07%** (22057/237). This pass **+1.75 pp**. **%80 reached: YES** (need Σ 18960; surplus 3512). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Supplier/stock 75–94 established-scope **100%** (87/88 stay EXTERNAL; 82 N/A). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **95.00%** (Σ 22514 / 237 = 94.9958…; one decimal **95.0%**). Was **94.82%** (22472/237). This pass **+0.18 pp**. **%80 reached: YES** (need Σ 18960; surplus 3554). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Pricing/profit remaining **22/23/27/104** established-scope **100%** (75–94 already 100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -149,10 +149,11 @@ Mean established-scope completion: **94.82%** (Σ 22472 / 237 = 94.8185…; one 
 99. Central architecture and security software (items 1–19 except 18 already 100; 35–55 except 47/54 already 100; 168–181; 182/227–237 already 100): single Pusat, remote memory/Guardian/agent-bus blocked, SIEM export blocked, HAC cannot self-approve. Mean **91.16%** (21605/237). Not VERIFIED_100. No live SOC, remote memory, or production architecture probe.
 100. Product and catalog infrastructure software (items 56–74): exact sku/ean match only; live import/OpenSearch/catalog blocked; invented live price/image blocked; taxonomy honesty 53 shop / 50 customer-facing / 48 legacy; ACTIVE create rejected; SoT stays off. **67/73 stay HUMAN**. Mean **93.07%** (22057/237). Not VERIFIED_100. No live PIM publish or SoT cutover.
 101. Supplier and stock infrastructure software (items 75–94): live PO/feed/sync blocked; outage/malformed/stale ≠ stock; no own-stock buy; €0.50 floor; €0.10 undercut unimplemented; WMS vs commerce reserves split. **87/88 stay EXTERNAL**. Mean **94.82%** (22472/237). Not VERIFIED_100. No live Inter-Cars or TecDoc.
+102. Pricing and profitability software (items 22, 23, 27, 104; 75/76/82/89/90/91 already 100): client totals rejected; missing cost fail-closed; €0.50 floor; undercut unimplemented; competitor prices not invented; UNCERTAIN is not revenue. Mean **95.00%** (22514/237). Not VERIFIED_100. No live price publish.
 
 ## Resume pointer
 
-Supplier and stock infrastructure software pass (2026-10-17): items **75–94**. Live purchase orders, feed fetch, and inventory sync stay refused. Outage is not stock. **87** Inter-Cars and **88** TecDoc stay BLOCKED_EXTERNAL_DEPENDENCY. **82** remains NOT_APPLICABLE (no €0.10 undercut). Established-scope 100% (not VERIFIED_100). Mean **94.82%** (22472/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Pricing and profitability software pass (2026-10-17): items **22, 23, 27, 104** (band 75–94 already at 100). Client totals and client-paid are not proof. Missing supplier cost is not invented. UNCERTAIN payments are not revenue. €0.10 undercut stays unimplemented. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **95.00%** (22514/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -722,22 +723,22 @@ Next (cannot be finished locally):
 | Established scope | Cart data contract |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Server-owned totals; session binding |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | cartService.js |
-| Identified gaps | Writes require bound session |
+| Existing implementation evidence | `server/lib/software/pricingProfitIntegrity.js`; cartService.js; commerceValidation |
+| Identified gaps | Established local fail-closed pricing/profit software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | cartService.js |
+| Files and modules involved | `server/lib/software/pricingProfitIntegrity.js`; cartService.js; commerceValidation |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `pricingProfitIntegritySoftware.test.mjs` — floor/undercut/client totals/invented revenue refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (cartCheckout remaining English keyed) |
-| Remaining work | Writes require bound session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established pricing/profit software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live payments / live price publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `pricingProfitIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 23
 
@@ -748,10 +749,10 @@ Next (cannot be finished locally):
 | Established scope | Checkout data contract |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sales lock; guest proof |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | checkoutService.js |
-| Identified gaps | Commercial checkout blocked while sales off |
+| Existing implementation evidence | `server/lib/software/pricingProfitIntegrity.js`; checkoutService.js; commerceValidation |
+| Identified gaps | Established local fail-closed pricing/profit software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | checkoutService.js |
+| Files and modules involved | `server/lib/software/pricingProfitIntegrity.js`; checkoutService.js; commerceValidation |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
@@ -760,10 +761,10 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (checkout session errors keyed) |
-| Remaining work | Commercial checkout blocked while sales off |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established pricing/profit software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live payments / live price publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `pricingProfitIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 24
 
@@ -852,10 +853,10 @@ Next (cannot be finished locally):
 | Established scope | Shared quantity and total validation |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Negative qty and client totals rejected |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerceValidation.js |
-| Identified gaps | part8Foundation |
+| Existing implementation evidence | `server/lib/software/pricingProfitIntegrity.js`; commerceValidation.js |
+| Identified gaps | Established local fail-closed pricing/profit software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | commerceValidation.js |
+| Files and modules involved | `server/lib/software/pricingProfitIntegrity.js`; commerceValidation.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
@@ -864,10 +865,10 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | part8Foundation |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established pricing/profit software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live payments / live price publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `pricingProfitIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 28
 
@@ -2862,10 +2863,10 @@ Next (cannot be finished locally):
 | Established scope | Financial reconciliation local |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No invented revenue |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software/reporting.js + RECONCILIATION_REQUIRED cannot auto-capture |
-| Identified gaps | Live reconciliation HUMAN; original criteria UNKNOWN |
+| Existing implementation evidence | `server/lib/software/pricingProfitIntegrity.js`; reporting.js; payments.js |
+| Identified gaps | Live provider reconciliation remaining; invented revenue still refused |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | software/reporting.js |
+| Files and modules involved | `server/lib/software/pricingProfitIntegrity.js`; reporting.js; payments.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
@@ -2874,9 +2875,9 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (uncertain no auto-capture; return reconcile not auto-matched; live remaining) |
-| Remaining work | Live provider reconciliation HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2026-10-17.md`; `buzzardRecordSprint.test.mjs` |
+| Completion percentage | 100% (established pricing/profit software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live provider reconciliation HUMAN; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `pricingProfitIntegritySoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 105

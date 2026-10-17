@@ -363,3 +363,13 @@ Live purchase orders, feed fetch, and inventory sync stay blocked. Outage/malfor
 | supplierStockIntegritySoftware + externalIntegrationHonesty + reservationAuthority | 0 | 3 files, **8 passed** |
 
 Items **75–86**, **89–94** established-scope **100** (82 stays NOT_APPLICABLE_WITH_EVIDENCE). **87** 64→100 stays BLOCKED_EXTERNAL_DEPENDENCY. **88** 64→100 stays BLOCKED_EXTERNAL_DEPENDENCY. Not VERIFIED_100. Mean **94.82%** (22472/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-17 Pricing and profitability software (items 22 / 23 / 27 / 104)
+
+Client totals and client-paid are not proof. Missing supplier cost is not invented. €0.50 floor. €0.10 undercut unimplemented. UNCERTAIN payments are not revenue. Band 75–94 already 100. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| pricingProfitIntegritySoftware + part8Foundation | 0 | 2 files, **27 passed** |
+
+**22** 93→100. **23** 93→100. **27** 90→100. **104** 82→100. All PARTIAL (not VERIFIED_100). Mean **95.00%** (22514/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

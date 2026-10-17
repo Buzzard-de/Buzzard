@@ -31,7 +31,7 @@ Minimum net ürün kârı: **€0,50**. €0,10 undercut: **uygulanmıyor**.
 
 ## 2. Bitiş HEAD
 
-`ffaf12ad52e1f15e2b362b94f452e3104a22a62e` (yerel; origin’den 3 commit önde). Push yok.
+Yerel uç: `git log -1` bu dalda (oturum ölçümü `493559faad01507f0ed14cb6c2324b12aece0e46`). Origin’den 3 commit önde. Push yok.
 
 ---
 
@@ -282,4 +282,4 @@ Gerçekçi tahmin: kalanın çoğu BLOCKED_EXTERNAL / HUMAN / LIVE. Bu turda yer
 ## Git notu
 
 Başlangıç: `e68a2b4`, origin’den 2 commit önde, ağaç temiz.  
-Bu tur: yerel commit `ffaf12a` + push yok.
+Bu tur: yerel commit (mesaj: Record Buzzard 80 master audit) + push yok.

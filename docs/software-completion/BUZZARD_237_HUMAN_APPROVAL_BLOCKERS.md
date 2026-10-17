@@ -24,7 +24,7 @@ Standing locks (must remain until an independent authenticated human approves th
 | 213 | Production environment configuration | Critical | Local refuse: inspect is presence-only; apply does not write process.env. Live production config still requires independent human approval |
 | 214 | Production deploy | Critical | Local refuse: hook presence ≠ deploy; trigger does not HTTP. Live release still requires independent human approval |
 | 219 | Go-live approval execution | Critical | Local refuse: goLiveGate does not approve or enable sales; commerce AI approve is denied. Live go-live still requires independent human approval |
-| 221 | Live DNS / access policy | Critical | Not touched |
+| 221 | Live DNS / access policy | Critical | Local refuse: token present ≠ DNS write; apply does not HTTP. Live DNS still requires independent human approval |
 | 225 | First real customer order | Critical | Real money / fulfillment |
 | 226 | Merge to protected production branch | Critical | Feature-branch PR is not a merge |
 

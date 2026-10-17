@@ -302,4 +302,44 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
     expect(goLiveApproval.canActivateSales().allowed).toBe(false);
     expect(process.env.BUZZARD_SALES_ENABLED).toBe(salesBefore);
   });
+
+  it("item 221: DNS and access policy inspect is presence-only and apply does not write", () => {
+    const software = require("../lib/software");
+    const previous = process.env.CLOUDFLARE_API_TOKEN;
+    process.env.CLOUDFLARE_API_TOKEN = "must-not-be-used";
+    try {
+      const seen = software.dnsAccessGate.inspect();
+      expect(seen.cloudflareTokenPresent).toBe(true);
+      expect(seen.secretsIncluded).toBe(false);
+      expect(seen.zoneIdIncluded).toBe(false);
+      expect(seen.dnsChanged).toBe(false);
+      expect(seen.httpAttempted).toBe(false);
+
+      const ai = software.dnsAccessGate.applyDnsRecord({
+        actor: "orchestrator",
+        forceApply: true,
+        name: "buzzard.de",
+      });
+      expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+      expect(ai.dnsChanged).toBe(false);
+      expect(ai.httpAttempted).toBe(false);
+
+      const dns = software.dnsAccessGate.applyDnsRecord({
+        actor: "operator",
+        forceApply: true,
+        name: "buzzard.de",
+      });
+      expect(dns.reason).toBe("HUMAN_DNS_CHANGE_REQUIRED");
+      expect(dns.forceApplyIgnored).toBe(true);
+      expect(dns.dnsChanged).toBe(false);
+
+      const policy = software.dnsAccessGate.applyAccessPolicy({ actor: "operator", forceApply: true });
+      expect(policy.reason).toBe("HUMAN_ACCESS_POLICY_REQUIRED");
+      expect(policy.accessPolicyChanged).toBe(false);
+      expect(policy.httpAttempted).toBe(false);
+    } finally {
+      if (previous === undefined) delete process.env.CLOUDFLARE_API_TOKEN;
+      else process.env.CLOUDFLARE_API_TOKEN = previous;
+    }
+  });
 });

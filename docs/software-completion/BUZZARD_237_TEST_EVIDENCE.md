@@ -210,3 +210,13 @@ No go-live approve write from the software gate. Sales stay off. AI commerce app
 | buzzardHumanGatesEasy + part8Foundation | 0 | 2 files, **33 passed** |
 
 **219** 50→60. Stays HUMAN_APPROVAL_REQUIRED. Mean **77.20%** (18296/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 HUMAN item 221 DNS / access policy (no live write)
+
+No DNS API call, no access-policy write, token/zone values not returned.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardHumanGatesEasy | 0 | 1 file, **11 passed** |
+
+**221** 0→15. Stays HUMAN_APPROVAL_REQUIRED. Mean **77.26%** (18311/237). LIVE_VERIFIED 0.

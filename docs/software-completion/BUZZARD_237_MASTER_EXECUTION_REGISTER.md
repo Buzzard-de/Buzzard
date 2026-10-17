@@ -128,13 +128,13 @@ Mean established-scope completion: **76.78%** (Σ 18198 / 237 = 76.7848…; one 
 
 ## Resume pointer
 
-Record sprint 2 2026-10-17. Branch `cursor/software-completion-local-c293`. Official mean **76.78%** (Σ 18198/237). Numbered 80-item plan **SOURCE NOT FOUND**. **80% not reached.** VERIFIED_100 **0**. LIVE_VERIFIED **0**. Push/PR forbidden. Sales / SoT / live payments **OFF**. Evidence: `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`.
+Item 205 GitHub `CI` 2026-10-17. Branch `cursor/software-completion-local-c293`. Evidence SHA **`c4a6e4ede4f0772a5e2b05069f0a0c2c73430b35`**. Run **39032743095** SUCCESS (`quality`, `e2e-storefront`, `e2e-admin`). PR #431 base `main` (do not merge). Item 212: #430 rollup same three SUCCESS on that SHA (checks commit-scoped; #430 base still not `main`). Official mean **unchanged 76.78%** (18198/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**.
 
 Next:
-1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc (local mock 58%; live catalog/PO still needs authorized credentials), **185** alerts (`liveDispatch: false`)
-2. `npm audit` 5 high in `eslint-config-next`/`braces` — do not `audit fix --force` without a dedicated pass
-3. Original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE)
-4. Production restore HUMAN; Esat Bey not LIVE_VERIFIED
+1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
+2. Human/production: **220** disk, **217** monitoring, then 213/214/219/221/225/226 — do not self-approve
+3. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
+4. Original 237 checklist still UNKNOWN
 
 ---
 
@@ -5475,8 +5475,8 @@ Next:
 | Established scope | Release quality |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: CI UNKNOWN for PR head vs local |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | PR #431 → `main`, SHA `b9d3ae835fdf0e31b1815dc577d6b98b07a1ce54`; Actions run `38958546249` (`quality`, `e2e-storefront`, `e2e-admin` SUCCESS, 2m32s) |
-| Identified gaps | Original 237 criteria UNKNOWN; PR #431 must not be merged from this scoring pass |
+| Existing implementation evidence | PR #431 → `main`, SHA `c4a6e4ede4f0772a5e2b05069f0a0c2c73430b35`; Actions run `39032743095` (`quality`, `e2e-storefront`, `e2e-admin` SUCCESS, 2m5s). Prior SHA `b9d3ae8` / run `38958546249` superseded. |
+| Identified gaps | Original 237 criteria UNKNOWN; PR #431 must not be merged |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | GitHub |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -5488,9 +5488,9 @@ Next:
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
 | Completion percentage | 100% (established CI jobs green on this SHA; original UNKNOWN so not VERIFIED_100) |
-| Remaining work | Do not merge #431 from this pass; original checklist still UNKNOWN |
-| Final evidence references | https://github.com/Buzzard-de/Buzzard/pull/431 ; https://github.com/Buzzard-de/Buzzard/actions/runs/38958546249 |
-| Final state and date | PARTIAL / 2026-10-16 |
+| Remaining work | Do not merge #431; original checklist still UNKNOWN. This SHA is CI-green; a later docs stamp will need its own run. |
+| Final evidence references | https://github.com/Buzzard-de/Buzzard/pull/431 ; https://github.com/Buzzard-de/Buzzard/actions/runs/39032743095 |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 206
 
@@ -5657,8 +5657,7 @@ Next:
 | Established scope | CI evidence |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: PR #430 checks |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | PR #430 Checks 3 SUCCESS on the same SHA as run `38958546249` (trigger was #431 `pull_request` to `main`) |
-| Identified gaps | Workflow `on:` did not fire because #430 base is not `main`; checks are commit-scoped |
+| Existing implementation evidence | PR #430 Checks 3 SUCCESS on SHA `c4a6e4ede4f0772a5e2b05069f0a0c2c73430b35` (run `39032743095`; trigger was #431 `pull_request` to `main`). Base of #430 remains not `main`. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | GitHub |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -5670,9 +5669,9 @@ Next:
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
 | Completion percentage | 100% (established: #430 shows CI SUCCESS for head SHA; original UNKNOWN so not VERIFIED_100) |
-| Remaining work | Optional: retarget #430 to `main` for a PR-event rerun; do not merge |
-| Final evidence references | https://github.com/Buzzard-de/Buzzard/pull/430 ; https://github.com/Buzzard-de/Buzzard/actions/runs/38958546249 |
-| Final state and date | PARTIAL / 2026-10-16 |
+| Remaining work | Optional: retarget #430 to `main` for a PR-event rerun; do not merge #430 or #431 |
+| Final evidence references | https://github.com/Buzzard-de/Buzzard/pull/430 ; https://github.com/Buzzard-de/Buzzard/actions/runs/39032743095 |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ## Items 213–226: Production readiness, env config, deployment preparation, integrations, secrets, monitoring, launch controls
 

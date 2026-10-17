@@ -113,3 +113,18 @@ Push/PR/deploy **not** executed.
 | Playwright | not run | did not touch :3000 |
 
 Mean **76.78%** (18198/237). LIVE_VERIFIED 0. Items 78/91/117/135/152. Previously raised 80/81/94/104/115/114/122/140/189/215/223 unchanged.
+
+## 2026-10-17 item 205 / 212 GitHub CI
+
+Push of SHA `c4a6e4ede4f0772a5e2b05069f0a0c2c73430b35` to `cursor/software-completion-local-c293`. Sales/SoT/live payments off. **#431 not merged.**
+
+| Check | Result | URL |
+| --- | --- | --- |
+| `CI` / quality | SUCCESS | https://github.com/Buzzard-de/Buzzard/actions/runs/39032743095/job/117396353633 |
+| `CI` / e2e-storefront | SUCCESS | https://github.com/Buzzard-de/Buzzard/actions/runs/39032743095/job/117396353697 |
+| `CI` / e2e-admin | SUCCESS | https://github.com/Buzzard-de/Buzzard/actions/runs/39032743095/job/117396353690 |
+| Workflow run | SUCCESS, 2m5s, `pull_request` | https://github.com/Buzzard-de/Buzzard/actions/runs/39032743095 |
+| PR #431 checks | 3 SUCCESS, `headRefOid` = this SHA, base `main` | https://github.com/Buzzard-de/Buzzard/pull/431 |
+| PR #430 checks | 3 SUCCESS, same SHA (commit-scoped; base still not `main`) | https://github.com/Buzzard-de/Buzzard/pull/430 |
+
+237 mean **unchanged**. Items 205 and 212 stay PARTIAL (original criteria UNKNOWN, not VERIFIED_100).

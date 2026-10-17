@@ -28,7 +28,7 @@ LIVE_VERIFIED: **0**. VERIFIED_100: **0**.
 
 ## 2. Bitiş HEAD
 
-Yerel sprint-2 commit’i (push yok). Origin farkı artacak.
+`49eb64d2560396f585050e011807a7ccb166ffa2` (origin’den 7 önde). Push yok.
 
 ---
 

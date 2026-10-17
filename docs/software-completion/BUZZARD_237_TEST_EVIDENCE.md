@@ -156,6 +156,7 @@ No marketplace write, no invented vendor listing id, no activate-to-live.
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| buzzardHumanGatesEasy + buzzardRecordSprint | pending this pass | see command output |
+| buzzardHumanGatesEasy + buzzardRecordSprint + marketplaceClassification | 0 | 3 files, **12 passed** |
+| softwareCompletion `-t marketplace` | 0 | **3 passed**, 69 skipped |
 
 **115** 55→64. Stays HUMAN_APPROVAL_REQUIRED. **129** unchanged at 58%. Mean **76.99%** (18247/237). LIVE_VERIFIED 0.

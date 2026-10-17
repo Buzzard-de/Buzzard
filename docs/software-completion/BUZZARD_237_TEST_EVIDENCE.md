@@ -38,3 +38,11 @@ Safety: sales/SoT/live payments off. No `npm audit fix --force`. No merge of #43
 | `npm run diagnostics:providers` | 0 | `secretsIncluded: false`, `attempted: false`, `live: 0` |
 
 Register mean after this trial: **75.76%** (17955/237; one decimal **75.8%**). VERIFIED_100 remains 0.
+
+## 2026-10-17 morning — items 87 / 88 local honesty
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| `npx vitest run server/__tests__/externalIntegrationHonesty.test.mjs` | 0 | 2 passed (key present ≠ live HTTP; Inter-Cars `LIVE_PO_BLOCKED`) |
+
+Register mean after this pass: **75.91%** (17991/237; one decimal **75.9%**). 87 and 88 remain BLOCKED_EXTERNAL. 185 unchanged. VERIFIED_100 remains 0.

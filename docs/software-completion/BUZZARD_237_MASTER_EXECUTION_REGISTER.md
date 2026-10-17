@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **75.76%** (Σ 17955 / 237 = 75.7595…; one decimal **75.8%**). Was **75.42%** (17875/237). This pass **+0.34 pp** from local trial 2026-10-16: item **201** 40→68 (burst limiter tests), **210** 40→62 (`npm audit --audit-level=high` recorded; 5 high in eslint-config-next/braces, no `--force` upgrade), **188** 54→78 (Render disk evidence already captured + `backupRestoreIntegrity` this session), **211** 70→76 (dry-run restore re-run). Original criteria still UNKNOWN so VERIFIED_100 remains **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **75.91%** (Σ 17991 / 237 = 75.9114…; one decimal **75.9%**). Was **75.76%** (17955/237). This pass **+0.15 pp** from 2026-10-17 local adapter honesty: items **87** and **88** 40→58 (mock class + key≠live + no HTTP + Inter-Cars PO blocked). Still **BLOCKED_EXTERNAL** — no live catalog/order. **185** unchanged. Original criteria still UNKNOWN so VERIFIED_100 remains **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -119,13 +119,14 @@ Mean established-scope completion: **75.76%** (Σ 17955 / 237 = 75.7595…; one 
 69. Esat local incident engine classifies observation / suspicious / confirmed_violation (first injection is suspicious). Rule-based anomaly only (`ml: false`). Monitoring unhealthy if audit write fails. Approval unavailable fail-closes executeTask. Marketplace publish is Guardian-denied on the software lifecycle path.
 70. HAC consumeForExecution requires the stored action; omitting action is `action_required` (fail-closed). Percentages this pass **unchanged** (audit, not score inflation).
 71. Local load-safe rate-limit burst tests (item 201): serial 40 vs max 10 and same-tick 24 vs max 8. `npm audit --audit-level=high` recorded 5 high (`braces` via `eslint-config-next`); no `audit fix --force`. Restore dry-run and `backupRestoreIntegrity` re-run. Persistence item 188 uses prior Render disk evidence plus /tmp fail-closed tests. Not production load, not RESTORE_TESTED, not a clean audit.
+72. TecDoc and Inter-Cars mock adapters refuse to treat API-key presence as live HTTP. Inter-Cars `purchaseOrder` is `LIVE_PO_BLOCKED`. Still BLOCKED_EXTERNAL.
 
 ## Resume pointer
 
-Stopped 2026-10-16 night. Saved on `cursor/software-completion-local-c293` / PR **#431** (do **not** merge). Official mean **75.76%** (one decimal **75.8%**; Σ 17955/237). VERIFIED_100 **0**. Sales / SoT / live payments **OFF**.
+In progress 2026-10-17 morning. Saved on `cursor/software-completion-local-c293` / PR **#431** (do **not** merge). Official mean **75.91%** (one decimal **75.9%**; Σ 17991/237). VERIFIED_100 **0**. Sales / SoT / live payments **OFF**.
 
-Next session continue from:
-1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`) — operator/credentials, no fake complete
+Next:
+1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc (local mock 58%; live catalog/PO still needs authorized credentials), **185** alerts (`liveDispatch: false`)
 2. `npm audit` 5 high in `eslint-config-next`/`braces` — do not `audit fix --force` without a dedicated pass
 3. Original 237 checklist still UNKNOWN (score NOT FULLY AUDITABLE)
 4. Production restore HUMAN; Esat Bey not LIVE_VERIFIED
@@ -2387,22 +2388,22 @@ Next session continue from:
 | Established scope | Inter-Cars adapter class |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sandbox/mock; no live order |
 | Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | supplier connectors |
-| Identified gaps | Credentials / authorization |
+| Existing implementation evidence | `server/lib/adapters/interCarsAdapter.js` mock class; `purchaseOrder` LIVE_PO_BLOCKED even if `INTERCARS_API_KEY` is set |
+| Identified gaps | No authorized Inter-Cars credentials; no live HTTP |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | supplier connectors |
+| Files and modules involved | `server/lib/adapters/interCarsAdapter.js`, `connectorInventory.js` |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
-| Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
+| Exact tests executed and results | `externalIntegrationHonesty.test.mjs` 2026-10-17 — key present, `live:false`, `httpAttempted:false`, `LIVE_PO_BLOCKED` |
+| Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Credentials / authorization |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
+| Completion percentage | 58% (adapter class + mock lookup + PO fail-closed; live stock/order remaining) |
+| Remaining work | Authorized Inter-Cars credentials and live catalog/order still BLOCKED_EXTERNAL |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `interCarsAdapter.js` |
+| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 88
 
@@ -2413,22 +2414,22 @@ Next session continue from:
 | Established scope | TecDoc adapter class |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Classification / adapter |
 | Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | supplier tecdoc |
-| Identified gaps | Live TecDoc HUMAN |
+| Existing implementation evidence | `server/lib/adapters/tecdocAdapter.js` mock catalog/vehicles; `TECDOC_API_KEY` does not open HTTP |
+| Identified gaps | No authorized TecDoc live catalog |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | supplier tecdoc |
+| Files and modules involved | `server/lib/adapters/tecdocAdapter.js`, `connectorInventory.js` |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 75–94; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
-| Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
+| Exact tests executed and results | `externalIntegrationHonesty.test.mjs` 2026-10-17 — key present, `live:false`, `httpAttempted:false`, mock vehicles only |
+| Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Live TecDoc HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
+| Completion percentage | 58% (mock adapter + key≠live; live TecDoc catalog remaining) |
+| Remaining work | Live TecDoc HUMAN / authorized API |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `tecdocAdapter.js` |
+| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 89
 
